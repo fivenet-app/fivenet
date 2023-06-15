@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { BriefcaseIcon, DocumentTextIcon, MapIcon, TruckIcon, UsersIcon } from '@heroicons/vue/24/outline';
+import { mdiAccountMultiple, mdiBriefcase, mdiCar, mdiFileDocumentMultiple, mdiMap } from '@mdi/js';
 import Cards from '~/components/partials/Cards.vue';
 import ContentCenterWrapper from '~/components/partials/ContentCenterWrapper.vue';
 import { CardElements } from '~/utils/types';
@@ -20,7 +20,7 @@ const features = [
         description: t('pages.overview.features.citizens'),
         href: { name: 'citizens' },
         permission: 'CitizenStoreService.ListCitizens',
-        icon: UsersIcon,
+        icon: mdiAccountMultiple,
         iconForeground: 'text-purple-900',
         iconBackground: 'bg-purple-50',
     },
@@ -29,7 +29,7 @@ const features = [
         description: t('pages.overview.features.vehicles'),
         href: { name: 'vehicles' },
         permission: 'DMVService.ListVehicles',
-        icon: TruckIcon,
+        icon: mdiCar,
         iconForeground: 'text-zinc-900',
         iconBackground: 'bg-zinc-50',
     },
@@ -38,7 +38,7 @@ const features = [
         description: t('pages.overview.features.documents'),
         href: { name: 'documents' },
         permission: 'DocStoreService.ListDocuments',
-        icon: DocumentTextIcon,
+        icon: mdiFileDocumentMultiple,
         iconForeground: 'text-sky-900',
         iconBackground: 'bg-sky-50',
     },
@@ -47,7 +47,7 @@ const features = [
         description: t('pages.overview.features.jobs'),
         href: { name: 'jobs' },
         permission: 'Jobs.View',
-        icon: BriefcaseIcon,
+        icon: mdiBriefcase,
         iconForeground: 'text-yellow-900',
         iconBackground: 'bg-yellow-50',
     },
@@ -56,7 +56,7 @@ const features = [
         description: t('pages.overview.features.livemap'),
         href: { name: 'livemap' },
         permission: 'LivemapperService.Stream',
-        icon: MapIcon,
+        icon: mdiMap,
         iconForeground: 'text-teal-900',
         iconBackground: 'bg-teal-50',
     },

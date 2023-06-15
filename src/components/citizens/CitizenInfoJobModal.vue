@@ -10,7 +10,8 @@ import {
     TransitionChild,
     TransitionRoot,
 } from '@headlessui/vue';
-import { CheckIcon } from '@heroicons/vue/24/solid';
+import SvgIcon from '@jamescoyle/vue-icon';
+import { mdiCheck } from '@mdi/js';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { watchDebounced } from '@vueuse/core';
 import { useNotificationsStore } from '~/store/notifications';
@@ -19,8 +20,6 @@ import { User, UserProps } from '~~/gen/ts/resources/users/users';
 
 const { $grpc } = useNuxtApp();
 const notifications = useNotificationsStore();
-
-const { t } = useI18n();
 
 const props = defineProps<{
     open: boolean;
@@ -170,7 +169,12 @@ async function setJobProp(): Promise<void> {
                                                             'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                                         ]"
                                                     >
-                                                        <CheckIcon class="w-5 h-5" aria-hidden="true" />
+                                                        <SvgIcon
+                                                            class="w-5 h-5"
+                                                            aria-hidden="true"
+                                                            type="mdi"
+                                                            :path="mdiCheck"
+                                                        />
                                                     </span>
                                                 </li>
                                             </ComboboxOption>

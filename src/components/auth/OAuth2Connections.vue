@@ -1,5 +1,6 @@
 <script lang="ts" setup>
-import { XCircleIcon } from '@heroicons/vue/24/solid';
+import SvgIcon from '@jamescoyle/vue-icon';
+import { mdiCloseCircle } from '@mdi/js';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { OAuth2Account, OAuth2Provider } from '~~/gen/ts/resources/accounts/oauth2';
 import OAuth2ConnectButton from './OAuth2ConnectButton.vue';
@@ -67,7 +68,7 @@ async function disconnect(provider: OAuth2Provider): Promise<void> {
                             </span>
 
                             <button @click="disconnect(prov)">
-                                <XCircleIcon class="w-6 h-6 mx-auto text-neutral" />
+                                <SvgIcon class="w-6 h-6 mx-auto text-neutral" type="mdi" :path="mdiCloseCircle" />
                                 {{ $t('common.disconnect') }}
                             </button>
                         </div>

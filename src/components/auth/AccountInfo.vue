@@ -1,9 +1,10 @@
 <script lang="ts" setup>
-import { UserIcon } from '@heroicons/vue/24/outline';
+import { mdiAccount } from '@mdi/js';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import DataErrorBlock from '~/components/partials/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';
 import { GetAccountInfoResponse } from '~~/gen/ts/services/auth/auth';
+import DataNoDataBlock from '../partials/DataNoDataBlock.vue';
 import ChangePasswordModal from './ChangePasswordModal.vue';
 import DebugInfo from './DebugInfo.vue';
 import OAuth2Connections from './OAuth2Connections.vue';
@@ -46,16 +47,7 @@ async function removeOAuth2Connection(provider: string): Promise<void> {
             :title="$t('common.unable_to_load', [`${$t('common.account')} ${$t('common.info')}`])"
             :retry="refresh"
         />
-        <button
-            v-else-if="!account"
-            type="button"
-            class="relative block w-full p-12 text-center border-2 border-gray-300 border-dashed rounded-lg hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-        >
-            <UserIcon class="w-12 h-12 mx-auto text-neutral" />
-            <span class="block mt-2 text-sm font-semibold text-gray-300">
-                {{ $t('common.not_found', [`${$t('common.account')} ${$t('common.data')}`]) }}
-            </span>
-        </button>
+        <DataNoDataBlock v-else-if="!account" :type="`${$t('common.account')} ${$t('common.data')}`" :icon="mdiAccount" />
         <div v-else>
             <div class="overflow-hidden bg-base-800 shadow sm:rounded-lg text-neutral">
                 <div class="px-4 py-5 sm:px-6">

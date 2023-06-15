@@ -1,5 +1,6 @@
 <script lang="ts" setup>
-import { ArrowUpRightIcon } from '@heroicons/vue/24/solid';
+import SvgIcon from '@jamescoyle/vue-icon';
+import { mdiChevronRight } from '@mdi/js';
 import { CardElement } from '~/utils/types';
 
 defineProps<{
@@ -34,7 +35,7 @@ defineEmits<{
         >
             <div v-if="item.icon">
                 <span :class="[item.iconBackground, item.iconForeground, 'inline-flex rounded-lg p-3']">
-                    <component :is="item.icon" class="h-auto w-7" aria-hidden="true" />
+                    <SvgIcon :is="item.icon" class="h-auto w-7" aria-hidden="true" type="mdi" :path="item.icon" />
                 </span>
             </div>
             <div class="mt-4" @click="$emit('selected', itemIdx)">
@@ -61,7 +62,7 @@ defineEmits<{
                 class="absolute pointer-events-none top-6 right-6 text-base-300 group-hover:text-base-200"
                 aria-hidden="true"
             >
-                <ArrowUpRightIcon class="w-6 h-6" />
+                <SvgIcon class="w-6 h-6" type="mdi" :path="mdiChevronRight" />
             </span>
         </div>
     </div>

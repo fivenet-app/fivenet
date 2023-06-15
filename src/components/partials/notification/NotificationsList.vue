@@ -1,11 +1,13 @@
 <script lang="ts" setup>
 import { Switch } from '@headlessui/vue';
-import { BellSlashIcon, ChevronRightIcon } from '@heroicons/vue/24/solid';
+import SvgIcon from '@jamescoyle/vue-icon';
+import { mdiBell, mdiChevronRight } from '@mdi/js';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { watchDebounced } from '@vueuse/core';
 import { PaginationResponse } from '~~/gen/ts/resources/common/database/database';
 import { Notification } from '~~/gen/ts/resources/notifications/notifications';
 import DataErrorBlock from '../DataErrorBlock.vue';
+import DataNoDataBlock from '../DataNoDataBlock.vue';
 import DataPendingBlock from '../DataPendingBlock.vue';
 import TablePagination from '../TablePagination.vue';
 
@@ -138,17 +140,11 @@ watchDebounced(includeRead, async () => refresh(), { debounce: 500, maxWait: 150
                             :title="$t('common.unable_to_load', [$t('common.notification', 2)])"
                             :retry="refresh"
                         />
-                        <button
+                        <DataNoDataBlock
                             v-else-if="notifications && notifications.length === 0"
-                            type="button"
-                            class="relative block w-full p-12 text-center border-2 border-gray-300 border-dashed rounded-lg hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                        >
-                            <BellSlashIcon class="w-12 h-12 mx-auto text-neutral" />
-                            <span class="block mt-2 text-sm font-semibold text-gray-300">
-                                {{ $t('common.not_found', [$t('common.notification', 2)]) }}
-                                {{ $t('components.documents.document_list.no_documents_hint') }}
-                            </span>
-                        </button>
+                            :type="$t('common.notification', 2)"
+                            :icon="mdiBell"
+                        />
                         <div v-else>
                             <ul class="flex flex-col">
                                 <li
@@ -191,10 +187,12 @@ watchDebounced(includeRead, async () => refresh(), { debounce: 500, maxWait: 150
                                                 </p>
                                             </div>
                                         </div>
-                                        <ChevronRightIcon
+                                        <SvgIcon
                                             v-if="not.data && not.data.link"
                                             class="h-5 w-5 flex-none text-gray-400"
                                             aria-hidden="true"
+                                            type="mdi"
+                                            :path="mdiChevronRight"
                                         />
                                         <span class="h-5 w-5" v-else></span>
                                     </div>

@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/vue';
-import { DocumentTextIcon, RectangleGroupIcon, TruckIcon, UserIcon } from '@heroicons/vue/20/solid';
+import SvgIcon from '@jamescoyle/vue-icon';
+import { mdiAccount, mdiBulletinBoard, mdiCar, mdiFileDocumentMultiple } from '@mdi/js';
 import VehiclesList from '~/components/vehicles/VehiclesList.vue';
 import { useClipboardStore } from '~/store/clipboard';
 import { useNotificationsStore } from '~/store/notifications';
@@ -18,22 +19,22 @@ const { t } = useI18n();
 const tabs = [
     {
         name: t('common.profile'),
-        icon: UserIcon,
+        icon: mdiAccount,
         permission: 'CitizenStoreService.ListCitizens',
     },
     {
         name: t('common.vehicle', 2),
-        icon: TruckIcon,
+        icon: mdiCar,
         permission: 'DMVService.ListVehicles',
     },
     {
         name: t('common.document', 2),
-        icon: DocumentTextIcon,
+        icon: mdiFileDocumentMultiple,
         permission: 'DocStoreService.ListUserDocuments',
     },
     {
         name: t('common.activity'),
-        icon: RectangleGroupIcon,
+        icon: mdiBulletinBoard,
         permission: 'CitizenStoreService.ListUserActivity',
     },
 ];
@@ -80,13 +81,14 @@ function addToClipboard(): void {
                         ]"
                         :aria-current="selected ? 'page' : undefined"
                     >
-                        <component
-                            :is="tab.icon"
+                        <SvgIcon
                             :class="[
                                 selected ? 'text-primary-400' : 'text-base-500 group-hover:text-base-300',
                                 '-ml-0.5 mr-2 h-5 w-5',
                             ]"
                             aria-hidden="true"
+                            type="mdi"
+                            :path="tab.icon"
                         />
                         <span>
                             {{ tab.name }}

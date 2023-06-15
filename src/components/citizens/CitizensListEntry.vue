@@ -1,5 +1,6 @@
 <script lang="ts" setup>
-import { ClipboardDocumentIcon, EyeIcon } from '@heroicons/vue/24/solid';
+import SvgIcon from '@jamescoyle/vue-icon';
+import { mdiClipboardPlus, mdiEye } from '@mdi/js';
 import { useClipboardStore } from '~/store/clipboard';
 import { useNotificationsStore } from '~/store/notifications';
 import { User } from '~~/gen/ts/resources/users/users';
@@ -53,7 +54,7 @@ function addToClipboard(): void {
         <td class="whitespace-nowrap py-2 pl-3 pr-4 text-sm font-medium sm:pr-0">
             <div class="flex flex-row justify-end">
                 <button class="flex-initial text-primary-500 hover:text-primary-400" @click="addToClipboard">
-                    <ClipboardDocumentIcon class="w-6 h-auto ml-auto mr-2.5" />
+                    <SvgIcon class="w-6 h-auto ml-auto mr-2.5" type="mdi" :path="mdiClipboardPlus" />
                 </button>
                 <NuxtLink
                     v-can="'CitizenStoreService.ListCitizens'"
@@ -63,7 +64,7 @@ function addToClipboard(): void {
                     }"
                     class="flex-initial text-primary-500 hover:text-primary-400"
                 >
-                    <EyeIcon class="w-6 h-auto ml-auto mr-2.5" />
+                    <SvgIcon class="w-6 h-auto ml-auto mr-2.5" type="mdi" :path="mdiEye" />
                 </NuxtLink>
             </div>
         </td>

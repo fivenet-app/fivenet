@@ -1,5 +1,6 @@
 <script lang="ts" setup>
-import { ClipboardDocumentListIcon } from '@heroicons/vue/24/solid';
+import SvgIcon from '@jamescoyle/vue-icon';
+import { mdiClipboardList } from '@mdi/js';
 import { ref } from 'vue';
 import ClipboardModal from './ClipboardModal.vue';
 
@@ -14,6 +15,6 @@ const open = ref(false);
         class="fixed flex items-center justify-center w-12 h-12 rounded-full z-90 bottom-10 right-8 bg-primary-500 shadow-float text-neutral hover:bg-primary-400"
         @click="open = true"
     >
-        <ClipboardDocumentListIcon class="w-10 h-auto" />
+        <SvgIcon class="w-10 h-auto" type="mdi" :path="mdiClipboardList" />
     </button>
 </template>

@@ -1,11 +1,12 @@
 <script lang="ts" setup>
-import { LockClosedIcon, LockOpenIcon } from '@heroicons/vue/20/solid';
-import { ArrowsRightLeftIcon, ChevronRightIcon, DocumentTextIcon } from '@heroicons/vue/24/outline';
+import SvgIcon from '@jamescoyle/vue-icon';
+import { mdiArrowExpand, mdiChevronRight, mdiFileDocumentMultiple, mdiLock, mdiLockOpenVariant } from '@mdi/js';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { ref } from 'vue';
 import DataErrorBlock from '~/components/partials/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';
 import { DOC_RELATION, DocumentRelation } from '~~/gen/ts/resources/documents/documents';
+import DataNoDataBlock from '../partials/DataNoDataBlock.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -54,17 +55,11 @@ async function getDocumentRelations(): Promise<Array<DocumentRelation>> {
             :title="$t('common.unable_to_load', [`${$t('common.user', 1)} ${$t('common.document', 2)}`])"
             :retry="refresh"
         />
-        <button
+        <DataNoDataBlock
             v-else-if="relations && relations.length === 0"
-            type="button"
-            class="relative block w-full p-12 text-center border-2 border-dashed rounded-lg border-base-300 hover:border-base-400 focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2"
-            disabled
-        >
-            <DocumentTextIcon class="w-12 h-12 mx-auto text-neutral" />
-            <span class="block mt-2 text-sm font-semibold text-gray-300">
-                {{ $t('common.not_found', [`${$t('common.document', 1)} ${$t('common.relation', 2)}`]) }}
-            </span>
-        </button>
+            :type="`${$t('common.document', 1)} ${$t('common.relation', 2)}`"
+            :icon="mdiFileDocumentMultiple"
+        />
         <div v-if="relations">
             <!-- Relations list (smallest breakpoint only) -->
             <div v-if="relations.length > 0" class="sm:hidden text-neutral">
@@ -73,7 +68,12 @@ async function getDocumentRelations(): Promise<Array<DocumentRelation>> {
                         <a href="#" class="block px-4 py-4 bg-base-800 hover:bg-base-700">
                             <span class="flex items-center space-x-4">
                                 <span class="flex flex-1 space-x-2 truncate">
-                                    <ArrowsRightLeftIcon class="flex-shrink-0 w-5 h-5 text-gray-400" aria-hidden="true" />
+                                    <SvgIcon
+                                        class="flex-shrink-0 w-5 h-5 text-gray-400"
+                                        aria-hidden="true"
+                                        type="mdi"
+                                        :path="mdiArrowExpand"
+                                    />
                                     <span class="flex flex-col text-sm truncate">
                                         <span>
                                             <NuxtLink
@@ -96,7 +96,12 @@ async function getDocumentRelations(): Promise<Array<DocumentRelation>> {
                                                 v-if="relation.document?.closed"
                                                 class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-error-100"
                                             >
-                                                <LockClosedIcon class="w-5 h-5 text-error-400" aria-hidden="true" />
+                                                <SvgIcon
+                                                    class="w-5 h-5 text-error-400"
+                                                    aria-hidden="true"
+                                                    type="mdi"
+                                                    :path="mdiLock"
+                                                />
                                                 <span class="text-sm font-medium text-error-700">
                                                     {{ $t('common.close', 2) }}
                                                 </span>
@@ -105,7 +110,12 @@ async function getDocumentRelations(): Promise<Array<DocumentRelation>> {
                                                 v-else
                                                 class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-success-100"
                                             >
-                                                <LockOpenIcon class="w-5 h-5 text-green-500" aria-hidden="true" />
+                                                <SvgIcon
+                                                    class="w-5 h-5 text-green-500"
+                                                    aria-hidden="true"
+                                                    type="mdi"
+                                                    :path="mdiLockOpenVariant"
+                                                />
                                                 <span class="text-sm font-medium text-green-700">
                                                     {{ $t('common.open') }}
                                                 </span>
@@ -136,7 +146,12 @@ async function getDocumentRelations(): Promise<Array<DocumentRelation>> {
                                         </time>
                                     </span>
                                 </span>
-                                <ChevronRightIcon class="flex-shrink-0 w-5 h-5 text-base-200" aria-hidden="true" />
+                                <SvgIcon
+                                    class="flex-shrink-0 w-5 h-5 text-base-200"
+                                    aria-hidden="true"
+                                    type="mdi"
+                                    :path="mdiChevronRight"
+                                />
                             </span>
                         </a>
                     </li>
@@ -193,7 +208,12 @@ async function getDocumentRelations(): Promise<Array<DocumentRelation>> {
                                                 v-if="relation.document?.closed"
                                                 class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-error-100"
                                             >
-                                                <LockClosedIcon class="w-5 h-5 text-error-400" aria-hidden="true" />
+                                                <SvgIcon
+                                                    class="w-5 h-5 text-error-400"
+                                                    aria-hidden="true"
+                                                    type="mdi"
+                                                    :path="mdiLock"
+                                                />
                                                 <span class="text-sm font-medium text-error-700">
                                                     {{ $t('common.close', 2) }}
                                                 </span>
@@ -202,7 +222,12 @@ async function getDocumentRelations(): Promise<Array<DocumentRelation>> {
                                                 v-else
                                                 class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-success-100"
                                             >
-                                                <LockOpenIcon class="w-5 h-5 text-green-500" aria-hidden="true" />
+                                                <SvgIcon
+                                                    class="w-5 h-5 text-green-500"
+                                                    aria-hidden="true"
+                                                    type="mdi"
+                                                    :path="mdiLockOpenVariant"
+                                                />
                                                 <span class="text-sm font-medium text-green-700">
                                                     {{ $t('common.open') }}
                                                 </span>

@@ -1,11 +1,6 @@
 <script lang="ts" setup>
-import { XMarkIcon } from '@heroicons/vue/20/solid';
-import {
-    CheckCircleIcon,
-    ExclamationCircleIcon,
-    ExclamationTriangleIcon,
-    InformationCircleIcon,
-} from '@heroicons/vue/24/outline';
+import SvgIcon from '@jamescoyle/vue-icon';
+import { mdiAlert, mdiAlertCircle, mdiCheckCircle, mdiClose, mdiInformation } from '@mdi/js';
 import { Notification } from '~/composables/notification/interfaces/Notification.interface';
 import { useNotificationsStore } from '~/store/notifications';
 
@@ -34,21 +29,33 @@ async function closeNotification(id: string): Promise<void> {
             <div class="p-4">
                 <div class="flex items-start">
                     <div class="flex-shrink-0 w-8 my-auto" v-if="notification.type">
-                        <CheckCircleIcon v-if="notification.type === 'success'" class="text-success-400" aria-hidden="true" />
-                        <InformationCircleIcon
+                        <SvgIcon
+                            v-if="notification.type === 'success'"
+                            class="text-success-400"
+                            aria-hidden="true"
+                            type="mdi"
+                            :path="mdiCheckCircle"
+                        />
+                        <SvgIcon
                             v-else-if="notification.type === 'info'"
                             class="text-info-400"
                             aria-hidden="true"
+                            type="mdi"
+                            :path="mdiInformation"
                         />
-                        <ExclamationTriangleIcon
+                        <SvgIcon
                             v-else-if="notification.type === 'warning'"
                             class="text-warn-400"
                             aria-hidden="true"
+                            type="mdi"
+                            :path="mdiAlert"
                         />
-                        <ExclamationCircleIcon
+                        <SvgIcon
                             v-else-if="notification.type === 'error'"
                             class="text-error-400"
                             aria-hidden="true"
+                            type="mdi"
+                            :path="mdiAlertCircle"
                         />
                     </div>
                     <div class="ml-3 w-0 flex-1 pt-0.5">
@@ -66,7 +73,7 @@ async function closeNotification(id: string): Promise<void> {
                             class="inline-flex text-neutral hover:text-base-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
                         >
                             <span class="sr-only">{{ $t('common.close') }}</span>
-                            <XMarkIcon class="w-5 h-5" aria-hidden="true" />
+                            <SvgIcon class="w-5 h-5" aria-hidden="true" type="mdi" :path="mdiClose" />
                         </button>
                     </div>
                 </div>

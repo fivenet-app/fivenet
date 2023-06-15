@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
-import { CheckIcon, PlusIcon } from '@heroicons/vue/20/solid';
+import { mdiCheck, mdiPlus } from '@mdi/js';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { max, min, numeric, required } from '@vee-validate/rules';
 import { watchDebounced } from '@vueuse/core';
@@ -646,7 +646,7 @@ watchDebounced(
                     :title="$t('components.documents.document_editor.add_permission')"
                     @click="addAccessEntry()"
                 >
-                    <PlusIcon class="w-5 h-5" aria-hidden="true" />
+                    <SvgIcon class="w-5 h-5" aria-hidden="true" type="mdi" :path="mdiPlus" />
                 </button>
             </div>
             <label for="contentTitle" class="block font-medium text-sm mt-2">
@@ -709,7 +709,7 @@ watchDebounced(
                                             'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                         ]"
                                     >
-                                        <CheckIcon class="w-5 h-5" aria-hidden="true" />
+                                        <SvgIcon class="w-5 h-5" aria-hidden="true" type="mdi" :path="mdiCheck" />
                                     </span>
                                 </li>
                             </ComboboxOption>
@@ -758,7 +758,7 @@ watchDebounced(
                     :title="$t('components.documents.document_editor.add_permission')"
                     @click="addContentAccessEntry()"
                 >
-                    <PlusIcon class="w-5 h-5" aria-hidden="true" />
+                    <SvgIcon class="w-5 h-5" aria-hidden="true" type="mdi" :path="mdiPlus" />
                 </button>
             </div>
             <button

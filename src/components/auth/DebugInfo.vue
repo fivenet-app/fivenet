@@ -1,5 +1,6 @@
 <script lang="ts" setup>
-import { KeyIcon } from '@heroicons/vue/20/solid';
+import SvgIcon from '@jamescoyle/vue-icon';
+import { mdiKey } from '@mdi/js';
 import { useAuthStore } from '~/store/auth';
 import { useClipboardStore } from '~/store/clipboard';
 
@@ -97,7 +98,12 @@ async function resetLocalStorage(): Promise<void> {
                                 v-for="perm in permissions"
                                 class="flex items-center justify-between py-4 pl-4 pr-5 text-sm leading-6"
                             >
-                                <KeyIcon class="h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />
+                                <SvgIcon
+                                    class="h-5 w-5 flex-shrink-0 text-gray-400"
+                                    aria-hidden="true"
+                                    type="mdi"
+                                    :path="mdiKey"
+                                />
                                 <div class="ml-4 flex min-w-0 flex-1 gap-2">
                                     <span class="truncate font-medium">
                                         {{ perm }}

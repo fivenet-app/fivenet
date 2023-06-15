@@ -1,9 +1,10 @@
 <script lang="ts" setup>
-import { AdjustmentsVerticalIcon } from '@heroicons/vue/24/outline';
+import { mdiTune } from '@mdi/js';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { useNotificationsStore } from '~/store/notifications';
 import { JobProps } from '~~/gen/ts/resources/jobs/jobs';
 import DataErrorBlock from '../partials/DataErrorBlock.vue';
+import DataNoDataBlock from '../partials/DataNoDataBlock.vue';
 import DataPendingBlock from '../partials/DataPendingBlock.vue';
 
 const { $grpc } = useNuxtApp();
@@ -103,14 +104,7 @@ async function saveJobProps(): Promise<void> {
             :title="$t('common.unable_to_load', [`${$t('common.job', 1)} ${$t('common.prop')}`])"
             :retry="refresh"
         />
-        <button
-            v-else-if="!jobProps"
-            type="button"
-            class="relative block w-full p-12 text-center border-2 border-gray-300 border-dashed rounded-lg hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
-        >
-            <AdjustmentsVerticalIcon class="w-12 h-12 mx-auto text-neutral" />
-            <span class="block mt-2 text-sm font-semibold"> </span>
-        </button>
+        <DataNoDataBlock v-else-if="!jobProps" :icon="mdiTune" :type="`${$t('common.job', 1)} ${$t('common.prop')}`" />
         <div v-else>
             <div class="overflow-hidden bg-base-800 shadow sm:rounded-lg text-neutral">
                 <div class="px-4 py-5 sm:px-6">

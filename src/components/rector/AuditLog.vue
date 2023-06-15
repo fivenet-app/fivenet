@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
-import { CheckIcon } from '@heroicons/vue/20/solid';
-import { MagnifyingGlassIcon } from '@heroicons/vue/24/solid';
+import SvgIcon from '@jamescoyle/vue-icon';
+import { mdiCheck } from '@mdi/js';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { watchDebounced } from '@vueuse/core';
 import DataErrorBlock from '~/components//partials/DataErrorBlock.vue';
@@ -12,6 +12,7 @@ import { PaginationResponse } from '~~/gen/ts/resources/common/database/database
 import { AuditEntry } from '~~/gen/ts/resources/rector/audit';
 import { UserShort } from '~~/gen/ts/resources/users/users';
 import { ViewAuditLogRequest } from '~~/gen/ts/services/rector/rector';
+import DataNoDataBlock from '../partials/DataNoDataBlock.vue';
 import AuditLogEntry from './AuditLogEntry.vue';
 
 const { $grpc } = useNuxtApp();
@@ -203,7 +204,12 @@ watchDebounced(queryChar, async () => await findChars(), {
                                                                 'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                                             ]"
                                                         >
-                                                            <CheckIcon class="w-5 h-5" aria-hidden="true" />
+                                                            <SvgIcon
+                                                                class="w-5 h-5"
+                                                                aria-hidden="true"
+                                                                type="mdi"
+                                                                :path="mdiCheck"
+                                                            />
                                                         </span>
                                                     </li>
                                                 </ComboboxOption>
@@ -246,6 +252,7 @@ watchDebounced(queryChar, async () => await findChars(), {
                                 </label>
                                 <div class="relative flex items-center mt-2">
                                     <input
+                                        ref="searchInput"
                                         v-model="query.search"
                                         type="text"
                                         name="data"
@@ -267,17 +274,11 @@ watchDebounced(queryChar, async () => await findChars(), {
                             :title="$t('common.unable_to_load', [$t('common.audit_log', 2)])"
                             :retry="refresh"
                         />
-                        <button
+                        <DataNoDataBlock
                             v-else-if="logs && logs.length === 0"
-                            type="button"
-                            @click="focusSearch"
-                            class="relative block w-full p-12 text-center border-2 border-dashed rounded-lg border-base-300 hover:border-base-400 focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2"
-                        >
-                            <MagnifyingGlassIcon class="w-12 h-12 mx-auto text-neutral" />
-                            <span class="block mt-2 text-sm font-semibold text-gray-300">
-                                {{ $t('common.not_found', [$t('common.audit_log', 2)]) }}
-                            </span>
-                        </button>
+                            :type="$t('common.audit_log', 2)"
+                            :focus="focusSearch"
+                        />
                         <div v-else>
                             <table class="min-w-full divide-y divide-base-600">
                                 <thead>

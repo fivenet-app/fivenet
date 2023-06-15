@@ -1,10 +1,11 @@
 <script setup lang="ts">
-import { ChatBubbleLeftEllipsisIcon } from '@heroicons/vue/20/solid';
+import { mdiCommentTextMultiple } from '@mdi/js';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import TablePagination from '~/components/partials/TablePagination.vue';
 import { useAuthStore } from '~/store/auth';
 import { PaginationResponse } from '~~/gen/ts/resources/common/database/database';
 import { DocumentComment } from '~~/gen/ts/resources/documents/documents';
+import DataNoDataBlock from '../partials/DataNoDataBlock.vue';
 import DocumentCommentEntry from './DocumentCommentEntry.vue';
 
 const { $grpc } = useNuxtApp();
@@ -168,17 +169,12 @@ watch(offset, async () => refresh());
         </div>
     </div>
     <div class="bg-base-800">
-        <button
+        <DataNoDataBlock
             v-if="!comments || comments.length === 0"
-            type="button"
-            @click="focusComment()"
-            class="relative block w-full p-12 text-center border-2 border-dashed rounded-lg border-base-300 hover:border-base-400 focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2"
-        >
-            <ChatBubbleLeftEllipsisIcon class="w-12 h-12 mx-auto text-neutral" />
-            <span class="block mt-2 text-sm font-semibold text-gray-300">
-                {{ $t('components.documents.document_comments.no_comments') }}
-            </span>
-        </button>
+            :message="$t('components.documents.document_comments.no_comments')"
+            :icon="mdiCommentTextMultiple"
+            :focus="focusComment"
+        />
         <div v-else v-can="'DocStoreService.DeleteDocumentComment'" class="flow-root px-4 rounded-lg text-neutral">
             <ul role="list" class="divide-y divide-gray-200">
                 <DocumentCommentEntry

@@ -11,20 +11,25 @@ import {
     TransitionChild,
     TransitionRoot,
 } from '@headlessui/vue';
+import SvgIcon from '@jamescoyle/vue-icon';
 import {
-    ArrowTopRightOnSquareIcon,
-    ClipboardDocumentListIcon,
-    DocumentMinusIcon,
-    DocumentPlusIcon,
-    MagnifyingGlassIcon,
-    XMarkIcon,
-} from '@heroicons/vue/24/outline';
-import { ChevronDoubleUpIcon, DocumentCheckIcon, DocumentTextIcon, LockClosedIcon } from '@heroicons/vue/24/solid';
+    mdiCheck,
+    mdiClipboardList,
+    mdiClose,
+    mdiCloseBox,
+    mdiFileDocumentMinus,
+    mdiFileDocumentMultiple,
+    mdiFileDocumentPlus,
+    mdiFileSearch,
+    mdiLink,
+    mdiLockClock,
+    mdiOpenInNew,
+} from '@mdi/js';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { watchDebounced } from '@vueuse/core';
-import { FunctionalComponent } from 'vue';
 import { ClipboardDocument, getDocument, useClipboardStore } from '~/store/clipboard';
 import { DocumentReference, DocumentShort } from '~~/gen/ts/resources/documents/documents';
+import DataNoDataBlock from '../partials/DataNoDataBlock.vue';
 
 const { $grpc } = useNuxtApp();
 const clipboardStore = useClipboardStore();
@@ -42,15 +47,15 @@ const emit = defineEmits<{
     (e: 'update:modelValue', payload: Map<bigint, DocumentReference>): void;
 }>();
 
-const tabs = ref<{ name: string; icon: FunctionalComponent }[]>([
+const tabs = ref<{ name: string; icon: string }[]>([
     {
         name: t('components.documents.document_managers.view_current'),
-        icon: MagnifyingGlassIcon,
+        icon: mdiFileSearch,
     },
-    { name: t('common.clipboard'), icon: ClipboardDocumentListIcon },
+    { name: t('common.clipboard'), icon: mdiClipboardList },
     {
         name: t('components.documents.document_managers.add_new'),
-        icon: DocumentPlusIcon,
+        icon: mdiFileDocumentPlus,
     },
 ]);
 
@@ -161,7 +166,7 @@ function removeReference(id: bigint): void {
                                     <span class="sr-only">
                                         {{ $t('common.close', 1) }}
                                     </span>
-                                    <XMarkIcon class="w-6 h-6" aria-hidden="true" />
+                                    <SvgIcon class="w-6 h-6" aria-hidden="true" type="mdi" :path="mdiClose" />
                                 </button>
                             </div>
                             <DialogTitle as="h3" class="text-base font-semibold leading-6">
@@ -262,10 +267,11 @@ function removeReference(id: bigint): void {
                                                                                         )
                                                                                     "
                                                                                 >
-                                                                                    <ArrowTopRightOnSquareIcon
+                                                                                    <SvgIcon
                                                                                         class="w-6 h-auto text-primary-500 hover:text-primary-300"
-                                                                                    >
-                                                                                    </ArrowTopRightOnSquareIcon>
+                                                                                        type="mdi"
+                                                                                        :path="mdiOpenInNew"
+                                                                                    />
                                                                                 </NuxtLink>
                                                                             </div>
                                                                             <div class="flex">
@@ -279,10 +285,11 @@ function removeReference(id: bigint): void {
                                                                                         )
                                                                                     "
                                                                                 >
-                                                                                    <DocumentMinusIcon
+                                                                                    <SvgIcon
                                                                                         class="w-6 h-auto text-error-400 hover:text-error-200"
-                                                                                    >
-                                                                                    </DocumentMinusIcon>
+                                                                                        type="mdi"
+                                                                                        :path="mdiFileDocumentMinus"
+                                                                                    />
                                                                                 </button>
                                                                             </div>
                                                                         </div>
@@ -298,21 +305,11 @@ function removeReference(id: bigint): void {
                                             <div class="flow-root mt-2">
                                                 <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                                                     <div class="inline-block min-w-full py-2 align-middle">
-                                                        <button
+                                                        <DataNoDataBlock
                                                             v-if="clipboardStore.$state.documents.length === 0"
-                                                            type="button"
-                                                            class="relative block w-full p-4 text-center border-2 border-dashed rounded-lg border-base-300 hover:border-base-400 focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2"
-                                                            disabled
-                                                        >
-                                                            <DocumentTextIcon class="w-12 h-12 mx-auto text-neutral" />
-                                                            <span class="block mt-2 text-sm font-semibold text-gray-300">
-                                                                {{
-                                                                    $t('components.clipboard.clipboard_modal.no_data', [
-                                                                        $t('common.reference', 2),
-                                                                    ])
-                                                                }}
-                                                            </span>
-                                                        </button>
+                                                            :type="$t('common.reference', 2)"
+                                                            :icon="mdiFileDocumentMultiple"
+                                                        />
                                                         <table v-else class="min-w-full divide-y divide-base-200">
                                                             <thead>
                                                                 <tr>
@@ -388,8 +385,10 @@ function removeReference(id: bigint): void {
                                                                                         )
                                                                                     "
                                                                                 >
-                                                                                    <DocumentPlusIcon
+                                                                                    <SvgIcon
                                                                                         class="w-6 h-auto text-info-500 hover:text-info-300"
+                                                                                        type="mdi"
+                                                                                        :path="mdiLink"
                                                                                     />
                                                                                 </button>
                                                                                 <button
@@ -402,8 +401,10 @@ function removeReference(id: bigint): void {
                                                                                         )
                                                                                     "
                                                                                 >
-                                                                                    <DocumentCheckIcon
+                                                                                    <SvgIcon
                                                                                         class="w-6 h-auto text-success-500 hover:text-success-300"
+                                                                                        type="mdi"
+                                                                                        :path="mdiCheck"
                                                                                     />
                                                                                 </button>
                                                                                 <button
@@ -416,8 +417,10 @@ function removeReference(id: bigint): void {
                                                                                         )
                                                                                     "
                                                                                 >
-                                                                                    <LockClosedIcon
+                                                                                    <SvgIcon
                                                                                         class="w-6 h-auto text-error-500 hover:text-error-300"
+                                                                                        type="mdi"
+                                                                                        :path="mdiCloseBox"
                                                                                     />
                                                                                 </button>
                                                                                 <button
@@ -430,8 +433,10 @@ function removeReference(id: bigint): void {
                                                                                         )
                                                                                     "
                                                                                 >
-                                                                                    <ChevronDoubleUpIcon
+                                                                                    <SvgIcon
                                                                                         class="w-6 h-auto text-warn-500 hover:text-warn-300"
+                                                                                        type="mdi"
+                                                                                        :path="mdiLockClock"
                                                                                     />
                                                                                 </button>
                                                                             </div>
@@ -538,8 +543,10 @@ function removeReference(id: bigint): void {
                                                                                             )
                                                                                         "
                                                                                     >
-                                                                                        <DocumentPlusIcon
+                                                                                        <SvgIcon
                                                                                             class="w-6 h-auto text-info-500 hover:text-info-300"
+                                                                                            type="mdi"
+                                                                                            :path="mdiLink"
                                                                                         />
                                                                                     </button>
                                                                                     <button
@@ -552,8 +559,10 @@ function removeReference(id: bigint): void {
                                                                                             )
                                                                                         "
                                                                                     >
-                                                                                        <DocumentCheckIcon
+                                                                                        <SvgIcon
                                                                                             class="w-6 h-auto text-success-500 hover:text-success-300"
+                                                                                            type="mdi"
+                                                                                            :path="mdiCheck"
                                                                                         />
                                                                                     </button>
                                                                                     <button
@@ -566,8 +575,10 @@ function removeReference(id: bigint): void {
                                                                                             )
                                                                                         "
                                                                                     >
-                                                                                        <LockClosedIcon
+                                                                                        <SvgIcon
                                                                                             class="w-6 h-auto text-error-500 hover:text-error-300"
+                                                                                            type="mdi"
+                                                                                            :path="mdiCloseBox"
                                                                                         />
                                                                                     </button>
                                                                                     <button
@@ -580,8 +591,10 @@ function removeReference(id: bigint): void {
                                                                                             )
                                                                                         "
                                                                                     >
-                                                                                        <ChevronDoubleUpIcon
+                                                                                        <SvgIcon
                                                                                             class="w-6 h-auto text-warn-500 hover:text-warn-300"
+                                                                                            type="mdi"
+                                                                                            :path="mdiLockClock"
                                                                                         />
                                                                                     </button>
                                                                                 </div>

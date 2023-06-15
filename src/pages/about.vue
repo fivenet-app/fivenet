@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
-import { LockClosedIcon, MagnifyingGlassIcon, ServerIcon } from '@heroicons/vue/20/solid';
-import { MinusSmallIcon, PlusSmallIcon } from '@heroicons/vue/24/outline';
+import SvgIcon from '@jamescoyle/vue-icon';
+import { mdiLock, mdiMagnify, mdiMap, mdiMinus, mdiPlus } from '@mdi/js';
 import '~/assets/css/herofull-pattern.css';
 import Footer from '~/components/partials/Footer.vue';
 import DiscordLogo from '~/components/partials/logos/DiscordLogo.vue';
@@ -93,9 +93,11 @@ const faqs = [
                                 <p></p>
                                 <ul role="list" class="mt-8 space-y-8 text-gray-400">
                                     <li class="flex gap-x-3">
-                                        <MagnifyingGlassIcon
+                                        <SvgIcon
                                             class="mt-1 h-5 w-5 flex-none text-primary-300"
                                             aria-hidden="true"
+                                            type="mdi"
+                                            :path="mdiMagnify"
                                         />
                                         <span>
                                             <strong class="font-semibold text-gray-200">{{
@@ -105,7 +107,12 @@ const faqs = [
                                         </span>
                                     </li>
                                     <li class="flex gap-x-3">
-                                        <LockClosedIcon class="mt-1 h-5 w-5 flex-none text-primary-300" aria-hidden="true" />
+                                        <SvgIcon
+                                            class="mt-1 h-5 w-5 flex-none text-primary-300"
+                                            aria-hidden="true"
+                                            type="mdi"
+                                            :path="mdiLock"
+                                        />
                                         <span>
                                             <strong class="font-semibold text-gray-200">{{
                                                 $t('pages.about.introduction.feature_two.title')
@@ -114,7 +121,12 @@ const faqs = [
                                         </span>
                                     </li>
                                     <li class="flex gap-x-3">
-                                        <ServerIcon class="mt-1 h-5 w-5 flex-none text-primary-300" aria-hidden="true" />
+                                        <SvgIcon
+                                            class="mt-1 h-5 w-5 flex-none text-primary-300"
+                                            aria-hidden="true"
+                                            type="mdi"
+                                            :path="mdiMap"
+                                        />
                                         <span>
                                             <strong class="font-semibold text-gray-200">{{
                                                 $t('pages.about.introduction.feature_three.title')
@@ -140,8 +152,14 @@ const faqs = [
                                     <DisclosureButton class="flex w-full items-start justify-between text-left text-white">
                                         <span class="text-base font-semibold leading-7">{{ faq.question }}</span>
                                         <span class="ml-6 flex h-7 items-center">
-                                            <PlusSmallIcon v-if="!open" class="h-6 w-6" aria-hidden="true" />
-                                            <MinusSmallIcon v-else class="h-6 w-6" aria-hidden="true" />
+                                            <SvgIcon
+                                                v-if="!open"
+                                                class="h-6 w-6"
+                                                aria-hidden="true"
+                                                type="mdi"
+                                                :path="mdiPlus"
+                                            />
+                                            <SvgIcon v-else class="h-6 w-6" aria-hidden="true" type="mdi" :path="mdiMinus" />
                                         </span>
                                     </DisclosureButton>
                                 </dt>
