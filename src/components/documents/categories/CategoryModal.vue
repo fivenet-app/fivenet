@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
-import { TagIcon } from '@heroicons/vue/24/solid';
+import SvgIcon from '@jamescoyle/vue-icon';
+import { mdiTag } from '@mdi/js';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { max, min, required } from '@vee-validate/rules';
 import { defineRule } from 'vee-validate';
@@ -9,8 +10,6 @@ import { DocumentCategory } from '~~/gen/ts/resources/documents/category';
 
 const { $grpc } = useNuxtApp();
 const notifications = useNotificationsStore();
-
-const { t } = useI18n();
 
 const emit = defineEmits<{
     (e: 'deleted'): void;
@@ -124,7 +123,12 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await updateCateg
                                         <div
                                             class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-base-800"
                                         >
-                                            <TagIcon class="h-6 w-6 text-primary-500" aria-hidden="true" />
+                                            <SvgIcon
+                                                class="h-6 w-6 text-primary-500"
+                                                aria-hidden="true"
+                                                type="mdi"
+                                                :path="mdiTag"
+                                            />
                                         </div>
                                         <div class="mt-3 text-center sm:mt-5">
                                             <DialogTitle as="h3" class="text-base font-semibold leading-6">

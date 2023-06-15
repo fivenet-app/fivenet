@@ -1,9 +1,10 @@
 <script lang="ts" setup>
-import { TruckIcon } from '@heroicons/vue/20/solid';
-import { TrashIcon } from '@heroicons/vue/24/solid';
+import SvgIcon from '@jamescoyle/vue-icon';
+import { mdiCar, mdiTrashCan } from '@mdi/js';
 import { ClipboardVehicle, useClipboardStore } from '~/store/clipboard';
 import { useNotificationsStore } from '~/store/notifications';
 import { ObjectSpecs } from '~~/gen/ts/resources/documents/templates';
+import DataNoDataBlock from '../partials/DataNoDataBlock.vue';
 
 const clipboardStore = useClipboardStore();
 const notifications = useNotificationsStore();
@@ -98,17 +99,11 @@ watch(props, (newVal) => {
 
 <template>
     <h3 class="font-medium pt-2 pb-1">Vehicles</h3>
-    <button
+    <DataNoDataBlock
         v-if="vehicles?.length === 0"
-        type="button"
-        class="relative block w-full p-4 text-center border-2 border-dashed rounded-lg border-base-300 hover:border-base-400 focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2"
-        disabled
-    >
-        <TruckIcon class="w-12 h-12 mx-auto text-neutral" />
-        <span class="block mt-2 text-sm font-semibold text-gray-300">
-            {{ $t('components.clipboard.clipboard_modal.no_data', [$t('common.vehicle', 2)]) }}
-        </span>
-    </button>
+        :icon="mdiCar"
+        :message="$t('components.clipboard.clipboard_modal.no_data', [$t('common.vehicle', 2)])"
+    />
     <table v-else class="min-w-full divide-y divide-gray-700">
         <thead>
             <tr>
@@ -127,7 +122,7 @@ watch(props, (newVal) => {
                 <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-0">
                     <span class="sr-only">{{ $t('common.action', 2) }}</span>
                     <button v-if="selected.length > 0" @click="removeAll()">
-                        <TrashIcon class="w-6 h-6 mx-auto text-neutral" />
+                        <SvgIcon class="w-6 h-6 mx-auto text-neutral" type="mdi" :path="mdiTrashCan" />
                     </button>
                 </th>
             </tr>
@@ -171,7 +166,7 @@ watch(props, (newVal) => {
                 </td>
                 <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
                     <button @click="remove(item, true)">
-                        <TrashIcon class="w-6 h-6 mx-auto text-neutral" />
+                        <SvgIcon class="w-6 h-6 mx-auto text-neutral" type="mdi" :path="mdiTrashCan" />
                     </button>
                 </td>
             </tr>

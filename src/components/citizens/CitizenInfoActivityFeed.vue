@@ -1,10 +1,11 @@
 <script lang="ts" setup>
-import { RectangleGroupIcon } from '@heroicons/vue/24/outline';
+import { mdiBulletinBoard } from '@mdi/js';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import CitizenInfoActivityFeedEntry from '~/components/citizens/CitizenInfoActivityFeedEntry.vue';
 import DataErrorBlock from '~/components/partials/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';
 import { UserActivity } from '~~/gen/ts/resources/users/users';
+import DataNoDataBlock from '../partials/DataNoDataBlock.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -47,17 +48,11 @@ async function listUserActivity(): Promise<Array<UserActivity>> {
             :title="$t('common.not_found', [`${$t('common.user', 1)} ${$t('common.activity')}`])"
             :retry="refresh"
         />
-        <button
+        <DataNoDataBlock
             v-else-if="activities && activities.length === 0"
-            type="button"
-            class="relative block w-full p-12 text-center border-2 border-dashed rounded-lg border-base-300 hover:border-base-400 focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2"
-            disabled
-        >
-            <RectangleGroupIcon class="w-12 h-12 mx-auto text-neutral" />
-            <span class="block mt-2 text-sm font-semibold text-gray-300">
-                {{ $t('common.not_found', [`${$t('common.user', 1)} ${$t('common.activity')}`]) }}
-            </span>
-        </button>
+            :icon="mdiBulletinBoard"
+            :type="`${$t('common.citizen', 1)} ${$t('common.activity')}`"
+        />
         <ul v-else role="list" class="divide-y divide-gray-200">
             <li v-for="activity in activities" :key="activity.id?.toString()" class="py-4">
                 <CitizenInfoActivityFeedEntry :activity="activity" />

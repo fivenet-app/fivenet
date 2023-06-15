@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
-import { CheckIcon } from '@heroicons/vue/20/solid';
+import SvgIcon from '@jamescoyle/vue-icon';
+import { mdiCheck } from '@mdi/js';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { watchDebounced } from '@vueuse/shared';
 import { useAuthStore } from '~/store/auth';
@@ -128,7 +129,7 @@ watchDebounced(selectedJob, () => setJob());
                                 'absolute inset-y-0 left-0 flex items-center pl-1.5',
                             ]"
                         >
-                            <CheckIcon class="w-5 h-5" aria-hidden="true" />
+                            <SvgIcon class="w-5 h-5" aria-hidden="true" type="mdi" :path="mdiCheck" />
                         </span>
                     </li>
                 </ComboboxOption>

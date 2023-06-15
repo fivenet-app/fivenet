@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
-import { CheckIcon } from '@heroicons/vue/20/solid';
-import { MagnifyingGlassIcon } from '@heroicons/vue/24/outline';
+import SvgIcon from '@jamescoyle/vue-icon';
+import { mdiCheck } from '@mdi/js';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { watchDebounced } from '@vueuse/core';
 import DataErrorBlock from '~/components/partials/DataErrorBlock.vue';
@@ -10,6 +10,7 @@ import { useAuthStore } from '~/store/auth';
 import { useNotificationsStore } from '~/store/notifications';
 import { JobGrade } from '~~/gen/ts/resources/jobs/jobs';
 import { Role } from '~~/gen/ts/resources/permissions/permissions';
+import DataNoDataBlock from '../partials/DataNoDataBlock.vue';
 import RolesListEntry from './RolesListEntry.vue';
 
 const { $grpc } = useNuxtApp();
@@ -172,7 +173,12 @@ onMounted(async () => {
                                                                 'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                                             ]"
                                                         >
-                                                            <CheckIcon class="w-5 h-5" aria-hidden="true" />
+                                                            <SvgIcon
+                                                                class="w-5 h-5"
+                                                                aria-hidden="true"
+                                                                type="mdi"
+                                                                :path="mdiCheck"
+                                                            />
                                                         </span>
                                                     </li>
                                                 </ComboboxOption>
@@ -204,16 +210,7 @@ onMounted(async () => {
                             :title="$t('common.unable_to_load', [$t('common.role', 2)])"
                             :retry="refresh"
                         />
-                        <button
-                            v-else-if="roles && roles.length === 0"
-                            type="button"
-                            class="relative block w-full p-12 text-center border-2 border-dashed rounded-lg border-base-300 hover:border-base-400 focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2"
-                        >
-                            <MagnifyingGlassIcon class="w-12 h-12 mx-auto text-neutral" />
-                            <span class="block mt-2 text-sm font-semibold text-gray-300">
-                                {{ $t('common.not_found', [$t('common.role', 2)]) }}
-                            </span>
-                        </button>
+                        <DataNoDataBlock v-else-if="roles && roles.length === 0" :type="$t('common.role', 2)" />
                         <div v-else>
                             <table class="min-w-full divide-y divide-base-600">
                                 <thead>

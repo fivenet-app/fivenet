@@ -1,10 +1,10 @@
 <script lang="ts" setup>
-import { MagnifyingGlassIcon } from '@heroicons/vue/20/solid';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { max, min, required } from '@vee-validate/rules';
 import { defineRule } from 'vee-validate';
 import Cards from '~/components/partials/Cards.vue';
 import DataErrorBlock from '~/components/partials/DataErrorBlock.vue';
+import DataNoDataBlock from '~/components/partials/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';
 import { CardElements } from '~/utils/types';
 import { DocumentCategory } from '~~/gen/ts/resources/documents/category';
@@ -151,24 +151,16 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await createDocum
                                 :title="$t('common.unable_to_load', [$t('common.category', 2)])"
                                 :retry="refresh"
                             />
-                            <button
+                            <DataNoDataBlock
                                 v-else-if="categories && categories.length === 0"
-                                type="button"
-                                class="relative block w-full p-12 text-center rounded-md bg-base-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-base-400"
-                            >
-                                <MagnifyingGlassIcon class="w-12 h-12 mx-auto text-neutral" />
-                                <span class="block mt-2 text-sm font-semibold text-base-200">
-                                    {{
-                                        $t('common.not_found', [
-                                            $t('components.documents.categories.categories_list.categories_for_your_job', [
-                                                $t('common.category', 2),
-                                                $t('common.job', 1),
-                                                $t('common.rank'),
-                                            ]),
-                                        ])
-                                    }}
-                                </span>
-                            </button>
+                                :type="
+                                    $t('components.documents.categories.categories_list.categories_for_your_job', [
+                                        $t('common.category', 2),
+                                        $t('common.job', 1),
+                                        $t('common.rank'),
+                                    ])
+                                "
+                            />
                             <div v-else>
                                 <Cards :items="items" :show-icon="true" @selected="openCategory($event)" />
                             </div>

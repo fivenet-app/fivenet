@@ -14,7 +14,8 @@
     "dependencies": {
         "@fontsource/inter": "^5.0.3",
         "@headlessui/vue": "^1.7.14",
-        "@heroicons/vue": "^2.0.18",
+        "@jamescoyle/vue-icon": "^0.1.2",
+        "@mdi/js": "^7.2.96",
         "@nuxtjs/robots": "^3.0.0",
         "@originjs/vite-plugin-commonjs": "^1.0.3",
         "@pinia/nuxt": "^0.4.11",

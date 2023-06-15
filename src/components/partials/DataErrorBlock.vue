@@ -1,5 +1,6 @@
 <script lang="ts" setup>
-import { XCircleIcon } from '@heroicons/vue/20/solid';
+import SvgIcon from '@jamescoyle/vue-icon';
+import { mdiClose } from '@mdi/js';
 
 defineProps<{
     title?: string;
@@ -13,7 +14,7 @@ defineProps<{
     <div class="p-4 rounded-md bg-red-50 max-w-md mx-auto">
         <div class="flex">
             <div class="flex-shrink-0">
-                <XCircleIcon class="h-5 w-5 text-error-400" aria-hidden="true" />
+                <SvgIcon class="h-5 w-5 text-error-400" aria-hidden="true" type="mdi" :path="mdiClose" />
             </div>
             <div class="ml-3">
                 <h3 class="text-sm font-medium text-error-800">

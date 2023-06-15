@@ -11,25 +11,26 @@ import {
     TransitionChild,
     TransitionRoot,
 } from '@headlessui/vue';
+import SvgIcon from '@jamescoyle/vue-icon';
 import {
-    ArrowTopRightOnSquareIcon,
-    ChatBubbleBottomCenterTextIcon,
-    ClipboardDocumentListIcon,
-    ExclamationTriangleIcon,
-    MagnifyingGlassIcon,
-    ShieldExclamationIcon,
-    UserMinusIcon,
-    UserPlusIcon,
-    XMarkIcon,
-} from '@heroicons/vue/24/outline';
-import { UsersIcon } from '@heroicons/vue/24/solid';
+    mdiAccountMinus,
+    mdiAccountMultiple,
+    mdiAccountSearch,
+    mdiAt,
+    mdiClipboardList,
+    mdiClose,
+    mdiOpenInNew,
+    mdiSourceCommitStart,
+    mdiTarget,
+    mdiViewListOutline,
+} from '@mdi/js';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { watchDebounced } from '@vueuse/core';
-import { FunctionalComponent } from 'vue';
 import { useAuthStore } from '~/store/auth';
 import { getUser, useClipboardStore } from '~/store/clipboard';
 import { DOC_RELATION, DocumentRelation } from '~~/gen/ts/resources/documents/documents';
 import { User } from '~~/gen/ts/resources/users/users';
+import DataNoDataBlock from '../partials/DataNoDataBlock.vue';
 
 const { $grpc } = useNuxtApp();
 const authStore = useAuthStore();
@@ -50,15 +51,15 @@ const emit = defineEmits<{
     (e: 'update:modelValue', payload: Map<bigint, DocumentRelation>): void;
 }>();
 
-const tabs = ref<{ name: string; icon: FunctionalComponent }[]>([
+const tabs = ref<{ name: string; icon: string }[]>([
     {
         name: t('components.documents.document_managers.view_current'),
-        icon: MagnifyingGlassIcon,
+        icon: mdiViewListOutline,
     },
-    { name: t('common.clipboard'), icon: ClipboardDocumentListIcon },
+    { name: t('common.clipboard'), icon: mdiClipboardList },
     {
         name: t('components.documents.document_managers.add_new'),
-        icon: UserPlusIcon,
+        icon: mdiAccountSearch,
     },
 ]);
 
@@ -157,7 +158,7 @@ function removeRelation(id: bigint): void {
                                     @click="emit('close')"
                                 >
                                     <span class="sr-only">{{ $t('common.close') }}</span>
-                                    <XMarkIcon class="w-6 h-6" aria-hidden="true" />
+                                    <SvgIcon class="w-6 h-6" aria-hidden="true" type="mdi" :path="mdiClose" />
                                 </button>
                             </div>
                             <DialogTitle as="h3" class="text-base font-semibold leading-6">
@@ -265,10 +266,11 @@ function removeRelation(id: bigint): void {
                                                                                         )
                                                                                     "
                                                                                 >
-                                                                                    <ArrowTopRightOnSquareIcon
+                                                                                    <SvgIcon
                                                                                         class="w-6 h-auto text-primary-500 hover:text-primary-300"
-                                                                                    >
-                                                                                    </ArrowTopRightOnSquareIcon>
+                                                                                        type="mdi"
+                                                                                        :path="mdiOpenInNew"
+                                                                                    />
                                                                                 </NuxtLink>
                                                                             </div>
                                                                             <div class="flex">
@@ -282,10 +284,11 @@ function removeRelation(id: bigint): void {
                                                                                         )
                                                                                     "
                                                                                 >
-                                                                                    <UserMinusIcon
+                                                                                    <SvgIcon
                                                                                         class="w-6 h-auto text-error-400 hover:text-error-200"
-                                                                                    >
-                                                                                    </UserMinusIcon>
+                                                                                        type="mdi"
+                                                                                        :path="mdiAccountMinus"
+                                                                                    />
                                                                                 </button>
                                                                             </div>
                                                                         </div>
@@ -301,21 +304,11 @@ function removeRelation(id: bigint): void {
                                             <div class="flow-root mt-2">
                                                 <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                                                     <div class="inline-block min-w-full py-2 align-middle">
-                                                        <button
+                                                        <DataNoDataBlock
                                                             v-if="clipboardStore.$state.users.length === 0"
-                                                            type="button"
-                                                            class="relative block w-full p-4 text-center border-2 border-dashed rounded-lg border-base-300 hover:border-base-400 focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2"
-                                                            disabled
-                                                        >
-                                                            <UsersIcon class="w-12 h-12 mx-auto text-neutral" />
-                                                            <span class="block mt-2 text-sm font-semibold text-gray-300">
-                                                                {{
-                                                                    $t('components.clipboard.clipboard_modal.no_data', [
-                                                                        $t('common.citizen', 2),
-                                                                    ])
-                                                                }}
-                                                            </span>
-                                                        </button>
+                                                            :type="t('common.citizen', 2)"
+                                                            :icon="mdiAccountMultiple"
+                                                        />
                                                         <table v-else class="min-w-full divide-y divide-base-200">
                                                             <thead>
                                                                 <tr>
@@ -370,10 +363,11 @@ function removeRelation(id: bigint): void {
                                                                                         )
                                                                                     "
                                                                                 >
-                                                                                    <ChatBubbleBottomCenterTextIcon
+                                                                                    <SvgIcon
                                                                                         class="w-6 h-auto text-success-500 hover:text-success-300"
-                                                                                    >
-                                                                                    </ChatBubbleBottomCenterTextIcon>
+                                                                                        type="mdi"
+                                                                                        :path="mdiAt"
+                                                                                    />
                                                                                 </button>
                                                                             </div>
                                                                             <div class="flex">
@@ -387,10 +381,11 @@ function removeRelation(id: bigint): void {
                                                                                         )
                                                                                     "
                                                                                 >
-                                                                                    <ExclamationTriangleIcon
+                                                                                    <SvgIcon
                                                                                         class="w-6 h-auto text-warn-400 hover:text-warn-200"
-                                                                                    >
-                                                                                    </ExclamationTriangleIcon>
+                                                                                        type="mdi"
+                                                                                        :path="mdiTarget"
+                                                                                    />
                                                                                 </button>
                                                                             </div>
                                                                             <div class="flex">
@@ -404,10 +399,11 @@ function removeRelation(id: bigint): void {
                                                                                         )
                                                                                     "
                                                                                 >
-                                                                                    <ShieldExclamationIcon
+                                                                                    <SvgIcon
                                                                                         class="w-6 h-auto text-error-400 hover:text-error-200"
-                                                                                    >
-                                                                                    </ShieldExclamationIcon>
+                                                                                        type="mdi"
+                                                                                        :path="mdiSourceCommitStart"
+                                                                                    />
                                                                                 </button>
                                                                             </div>
                                                                         </div>
@@ -484,10 +480,11 @@ function removeRelation(id: bigint): void {
                                                                                         )
                                                                                     "
                                                                                 >
-                                                                                    <ChatBubbleBottomCenterTextIcon
+                                                                                    <SvgIcon
                                                                                         class="w-6 h-auto text-success-500 hover:text-success-300"
-                                                                                    >
-                                                                                    </ChatBubbleBottomCenterTextIcon>
+                                                                                        type="mdi"
+                                                                                        :path="mdiAt"
+                                                                                    />
                                                                                 </button>
                                                                             </div>
                                                                             <div class="flex">
@@ -501,10 +498,11 @@ function removeRelation(id: bigint): void {
                                                                                         )
                                                                                     "
                                                                                 >
-                                                                                    <ExclamationTriangleIcon
+                                                                                    <SvgIcon
                                                                                         class="w-6 h-auto text-warn-400 hover:text-warn-200"
-                                                                                    >
-                                                                                    </ExclamationTriangleIcon>
+                                                                                        type="mdi"
+                                                                                        :path="mdiTarget"
+                                                                                    />
                                                                                 </button>
                                                                             </div>
                                                                             <div class="flex">
@@ -518,10 +516,11 @@ function removeRelation(id: bigint): void {
                                                                                         )
                                                                                     "
                                                                                 >
-                                                                                    <ShieldExclamationIcon
+                                                                                    <SvgIcon
                                                                                         class="w-6 h-auto text-error-400 hover:text-error-200"
-                                                                                    >
-                                                                                    </ShieldExclamationIcon>
+                                                                                        type="mdi"
+                                                                                        :path="mdiSourceCommitStart"
+                                                                                    />
                                                                                 </button>
                                                                             </div>
                                                                         </div>

@@ -10,8 +10,8 @@ import {
     ListboxOption,
     ListboxOptions,
 } from '@headlessui/vue';
-import { CheckIcon, ChevronDownIcon, PlusIcon } from '@heroicons/vue/20/solid';
-import { ArrowPathIcon } from '@heroicons/vue/24/solid';
+import SvgIcon from '@jamescoyle/vue-icon';
+import { mdiCheck, mdiChevronDown, mdiContentSave, mdiPlus } from '@mdi/js';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { QuillEditor } from '@vueup/vue-quill';
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
@@ -336,11 +336,11 @@ function saveToStore(): void {
     documentStore.save(doc.value);
     setTimeout(() => {
         saving.value = false;
-    }, 850);
+    }, 1300);
 }
 
 watchDebounced(doc.value, () => saveToStore(), {
-    debounce: 1250,
+    debounce: 1350,
     maxWait: 3500,
 });
 
@@ -718,7 +718,7 @@ async function editForm(): Promise<void> {
                                             'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                         ]"
                                     >
-                                        <CheckIcon class="w-5 h-5" aria-hidden="true" />
+                                        <SvgIcon class="w-5 h-5" aria-hidden="true" type="mdi" :path="mdiCheck" />
                                     </span>
                                 </li>
                             </ComboboxOption>
@@ -751,7 +751,7 @@ async function editForm(): Promise<void> {
                                 openclose.find((e) => e.closed === doc.closed.closed)?.label
                             }}</span>
                             <span class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                                <ChevronDownIcon class="w-5 h-5 text-gray-400" aria-hidden="true" />
+                                <SvgIcon class="w-5 h-5 text-gray-400" aria-hidden="true" type="mdi" :path="mdiChevronDown" />
                             </span>
                         </ListboxButton>
 
@@ -787,7 +787,7 @@ async function editForm(): Promise<void> {
                                                 'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                             ]"
                                         >
-                                            <CheckIcon class="w-5 h-5" aria-hidden="true" />
+                                            <SvgIcon class="w-5 h-5" aria-hidden="true" type="mdi" :path="mdiCheck" />
                                         </span>
                                     </li>
                                 </ListboxOption>
@@ -846,7 +846,7 @@ async function editForm(): Promise<void> {
             :title="$t('components.documents.document_editor.add_permission')"
             @click="addAccessEntry()"
         >
-            <PlusIcon class="w-5 h-5" aria-hidden="true" />
+            <SvgIcon class="w-5 h-5" aria-hidden="true" type="mdi" :path="mdiPlus" />
         </button>
     </div>
     <div class="sm:flex sm:flex-row-reverse">
@@ -867,7 +867,7 @@ async function editForm(): Promise<void> {
             {{ $t('common.edit') }}
         </button>
         <div v-if="saving" class="text-gray-400 mr-4 flex flex-items">
-            <ArrowPathIcon class="w-6 h-auto ml-auto mr-2.5 animate-spin" />
+            <SvgIcon class="w-6 h-auto ml-auto mr-2.5 animate-spin" type="mdi" :path="mdiContentSave" />
             <span class="mt-2">{{ $t('common.save', 2) }}...</span>
         </div>
     </div>

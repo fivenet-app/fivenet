@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { AdjustmentsVerticalIcon, KeyIcon, QueueListIcon } from '@heroicons/vue/24/outline';
+import { mdiAccountGroup, mdiMathLog, mdiTune } from '@mdi/js';
 import Cards from '~/components/partials/Cards.vue';
 import ContentCenterWrapper from '~/components/partials/ContentCenterWrapper.vue';
 import { CardElements } from '~/utils/types';
@@ -22,7 +22,7 @@ const features = [
         description: t('pages.rector.features.properties'),
         href: { name: 'rector-props' },
         permission: 'RectorService.GetJobProps',
-        icon: AdjustmentsVerticalIcon,
+        icon: mdiTune,
         iconForeground: 'text-yellow-900',
         iconBackground: 'bg-yellow-50',
     },
@@ -31,7 +31,7 @@ const features = [
         description: t('components.rector.role_view.add_permission'),
         href: { name: 'rector-roles' },
         permission: 'RectorService.GetRoles',
-        icon: KeyIcon,
+        icon: mdiAccountGroup,
         iconForeground: 'text-purple-900',
         iconBackground: 'bg-purple-50',
     },
@@ -40,7 +40,7 @@ const features = [
         description: t('pages.rector.features.audit_log'),
         href: { name: 'rector-audit' },
         permission: 'RectorService.ViewAuditLog',
-        icon: QueueListIcon,
+        icon: mdiMathLog,
         iconForeground: 'text-teal-900',
         iconBackground: 'bg-teal-50',
     },

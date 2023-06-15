@@ -1,4 +1,3 @@
-import { FunctionalComponent } from 'vue';
 import { RoutesNamedLocations } from '~~/.nuxt/typed-router/__routes';
 
 export type ArrayElement<ArrayType extends readonly unknown[]> = ArrayType extends readonly (infer ElementType)[]
@@ -12,7 +11,7 @@ export type CardElement = {
     description?: string;
     href?: RoutesNamedLocations;
     permission?: string;
-    icon?: FunctionalComponent;
+    icon?: string;
     iconForeground?: string;
     iconBackground?: string;
 };

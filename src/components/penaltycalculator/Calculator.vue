@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
-import { MinusSmallIcon, PlusSmallIcon } from '@heroicons/vue/24/outline';
+import SvgIcon from '@jamescoyle/vue-icon';
+import { mdiMinus, mdiPlus } from '@mdi/js';
 import { useClipboard } from '@vueuse/core';
 import ListEntry from '~/components/penaltycalculator/ListEntry.vue';
 import Stats from '~/components/penaltycalculator/Stats.vue';
@@ -924,8 +925,14 @@ onMounted(async () => {
                                     <DisclosureButton class="flex w-full items-start justify-between text-left text-white">
                                         <span class="text-base font-semibold leading-7">{{ ps.name }}</span>
                                         <span class="ml-6 flex h-7 items-center">
-                                            <PlusSmallIcon v-if="!open" class="h-6 w-6" aria-hidden="true" />
-                                            <MinusSmallIcon v-else class="h-6 w-6" aria-hidden="true" />
+                                            <SvgIcon
+                                                v-if="!open"
+                                                class="h-6 w-6"
+                                                aria-hidden="true"
+                                                type="mdi"
+                                                :path="mdiPlus"
+                                            />
+                                            <SvgIcon v-else class="h-6 w-6" aria-hidden="true" type="mdi" :path="mdiMinus" />
                                         </span>
                                     </DisclosureButton>
                                 </dt>

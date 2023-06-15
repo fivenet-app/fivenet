@@ -1,17 +1,18 @@
 <script lang="ts" setup>
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/vue';
+import SvgIcon from '@jamescoyle/vue-icon';
 import {
-    CalendarIcon,
-    ChatBubbleLeftEllipsisIcon,
-    DocumentMagnifyingGlassIcon,
-    FingerPrintIcon,
-    LockClosedIcon,
-    LockOpenIcon,
-    MagnifyingGlassIcon,
-    PencilIcon,
-    TrashIcon,
-    UserIcon,
-} from '@heroicons/vue/20/solid';
+    mdiAccount,
+    mdiCalendar,
+    mdiCommentTextMultiple,
+    mdiFileSearch,
+    mdiFingerprint,
+    mdiLock,
+    mdiLockOpenVariant,
+    mdiMagnify,
+    mdiPencil,
+    mdiTrashCan,
+} from '@mdi/js';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { QuillEditor } from '@vueup/vue-quill';
 import { useClipboard } from '@vueuse/core';
@@ -22,6 +23,7 @@ import { ACCESS_LEVEL } from '~~/gen/ts/resources/documents/access';
 import { Document, DocumentAccess } from '~~/gen/ts/resources/documents/documents';
 import AddToClipboardButton from '../clipboard/AddToClipboardButton.vue';
 import DataErrorBlock from '../partials/DataErrorBlock.vue';
+import DataNoDataBlock from '../partials/DataNoDataBlock.vue';
 import DataPendingBlock from '../partials/DataPendingBlock.vue';
 import DocumentComments from './DocumentComments.vue';
 import DocumentReferences from './DocumentReferences.vue';
@@ -36,9 +38,9 @@ const { t } = useI18n();
 
 const access = ref<undefined | DocumentAccess>(undefined);
 const commentCount = ref(-1n);
-const tabs = ref<{ name: string; icon: typeof LockOpenIcon }[]>([
-    { name: t('common.relation', 2), icon: UserIcon },
-    { name: t('common.reference', 2), icon: DocumentMagnifyingGlassIcon },
+const tabs = ref<{ name: string; icon: string }[]>([
+    { name: t('common.relation', 2), icon: mdiAccount },
+    { name: t('common.reference', 2), icon: mdiMagnify },
 ]);
 
 const props = defineProps<{
@@ -122,16 +124,11 @@ function copyDocumentIDToClipboard(): void {
     <div class="mt-2">
         <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.document', 2)])" />
         <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.document', 2)])" :retry="refresh" />
-        <button
+        <DataNoDataBlock
             v-else-if="!document"
-            type="button"
-            class="relative block w-full p-12 text-center rounded-md bg-base-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-base-400"
-        >
-            <MagnifyingGlassIcon class="w-12 h-12 mx-auto text-neutral" />
-            <span class="block mt-2 text-sm font-semibold text-base-200">
-                {{ $t('common.not_found', [$t('common.document', 2)]) }}
-            </span>
-        </button>
+            :icon="mdiFileSearch"
+            :message="$t('common.not_found', [$t('common.document', 2)])"
+        />
         <div v-else class="rounded-lg bg-base-850">
             <div class="h-full px-4 py-6 sm:px-6 lg:px-8">
                 <div>
@@ -168,7 +165,7 @@ function copyDocumentIDToClipboard(): void {
                                     class="inline-flex justify-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
                                     v-can="'DocStoreService.UpdateDocument'"
                                 >
-                                    <PencilIcon class="-ml-0.5 w-5 h-auto" aria-hidden="true" />
+                                    <SvgIcon class="-ml-0.5 w-5 h-auto" aria-hidden="true" type="mdi" :path="mdiPencil" />
                                     {{ $t('common.edit') }}
                                 </NuxtLink>
                                 <button
@@ -177,7 +174,7 @@ function copyDocumentIDToClipboard(): void {
                                     @click="deleteDocument"
                                     class="inline-flex justify-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
                                 >
-                                    <TrashIcon class="-ml-0.5 w-5 h-auto" aria-hidden="true" />
+                                    <SvgIcon class="-ml-0.5 w-5 h-auto" aria-hidden="true" type="mdi" :path="mdiTrashCan" />
                                     {{ $t('common.delete') }}
                                 </button>
                             </div>
@@ -187,11 +184,11 @@ function copyDocumentIDToClipboard(): void {
                                 class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full text-base-100 bg-base-500"
                                 @click="copyDocumentIDToClipboard"
                             >
-                                <FingerPrintIcon class="w-5 h-auto" aria-hidden="true" />
+                                <SvgIcon class="w-5 h-auto" aria-hidden="true" type="mdi" :path="mdiFingerprint" />
                                 <span class="text-sm font-medium text-base-100">DOC-{{ documentId }}</span>
                             </div>
                             <div class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-base-100 text-base-500">
-                                <CalendarIcon class="w-5 h-auto" aria-hidden="true" />
+                                <SvgIcon class="w-5 h-auto" aria-hidden="true" type="mdi" :path="mdiCalendar" />
                                 <span class="text-sm font-medium text-base-700"
                                     ><time :datetime="$d(toDate(document?.createdAt)!, 'short')">
                                         {{ $d(toDate(document?.createdAt)!, 'short') }}
@@ -202,13 +199,18 @@ function copyDocumentIDToClipboard(): void {
                                 v-if="document?.closed"
                                 class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-error-100"
                             >
-                                <LockClosedIcon class="w-5 h-5 text-error-400" aria-hidden="true" />
+                                <SvgIcon class="w-5 h-5 text-error-400" aria-hidden="true" type="mdi" :path="mdiLock" />
                                 <span class="text-sm font-medium text-error-700">
                                     {{ $t('common.close', 2) }}
                                 </span>
                             </div>
                             <div v-else class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-success-100">
-                                <LockOpenIcon class="w-5 h-5 text-green-500" aria-hidden="true" />
+                                <SvgIcon
+                                    class="w-5 h-5 text-green-500"
+                                    aria-hidden="true"
+                                    type="mdi"
+                                    :path="mdiLockOpenVariant"
+                                />
                                 <span class="text-sm font-medium text-green-700">
                                     {{ $t('common.open') }}
                                 </span>
@@ -216,7 +218,7 @@ function copyDocumentIDToClipboard(): void {
                             <div
                                 class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-primary-100 text-primary-500"
                             >
-                                <ChatBubbleLeftEllipsisIcon class="w-5 h-auto" aria-hidden="true" />
+                                <SvgIcon class="w-5 h-auto" aria-hidden="true" type="mdi" :path="mdiCommentTextMultiple" />
                                 <span class="text-sm font-medium text-primary-700">
                                     {{ commentCount >= 0 ? commentCount : '?' }}
                                     {{ $t('common.comment', 2) }}
@@ -281,13 +283,14 @@ function copyDocumentIDToClipboard(): void {
                                             ]"
                                             :aria-current="selected ? 'page' : undefined"
                                         >
-                                            <component
-                                                :is="tab.icon"
+                                            <SvgIcon
                                                 :class="[
                                                     selected ? 'text-primary-500' : 'text-base-300 group-hover:text-base-200',
                                                     '-ml-0.5 mr-2 h-5 w-5 transition-colors',
                                                 ]"
                                                 aria-hidden="true"
+                                                type="md"
+                                                :path="tab.icon"
                                             />
                                             <span>{{ tab.name }}</span>
                                         </button>

@@ -1,5 +1,6 @@
 <script lang="ts" setup>
-import { KeyIcon } from '@heroicons/vue/20/solid';
+import SvgIcon from '@jamescoyle/vue-icon';
+import { mdiLicense } from '@mdi/js';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { useClipboard } from '@vueuse/core';
 import { ref } from 'vue';
@@ -150,7 +151,12 @@ function openTemplates(): void {
                                             class="flex items-center justify-between py-3 pl-3 pr-4 text-sm"
                                         >
                                             <div class="flex items-center flex-1">
-                                                <KeyIcon class="flex-shrink-0 w-5 h-5 text-base-400" aria-hidden="true" />
+                                                <SvgIcon
+                                                    class="flex-shrink-0 w-5 h-5 text-base-400"
+                                                    aria-hidden="true"
+                                                    type="mdi"
+                                                    :path="mdiLicense"
+                                                />
                                                 <span class="flex-1 ml-2 truncate"
                                                     >{{ license.label }} ({{ license.type.toUpperCase() }})</span
                                                 >

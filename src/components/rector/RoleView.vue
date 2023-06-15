@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
-import { TrashIcon } from '@heroicons/vue/20/solid';
-import { CheckIcon, ChevronDownIcon, MinusIcon, XMarkIcon } from '@heroicons/vue/24/solid';
+import SvgIcon from '@jamescoyle/vue-icon';
+import { mdiCheck, mdiChevronDown, mdiChevronUp, mdiClose, mdiMinus, mdiTrashCan } from '@mdi/js';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import Divider from '~/components/partials/Divider.vue';
 import RoleViewAttr from '~/components/rector/RoleViewAttr.vue';
@@ -13,8 +13,6 @@ import { AttrsUpdate, PermItem, PermsUpdate } from '~~/gen/ts/services/rector/re
 const { $grpc } = useNuxtApp();
 
 const notifications = useNotificationsStore();
-
-const { t } = useI18n();
 
 const props = defineProps<{
     roleId: bigint;
@@ -236,7 +234,7 @@ onMounted(async () => {
                 <h2 class="text-3xl text-white">
                     {{ role?.jobLabel! }} - {{ role?.jobGradeLabel }}
                     <button v-can="'RectorService.DeleteRole'" @click="deleteRole()">
-                        <TrashIcon class="w-6 h-6 mx-auto text-neutral" />
+                        <SvgIcon class="w-6 h-6 mx-auto text-neutral" type="mdi" :path="mdiTrashCan" />
                     </button>
                 </h2>
                 <Divider label="Permissions" />
@@ -258,9 +256,19 @@ onMounted(async () => {
                                 {{ $t(`perms.${category}.category`) }}
                             </span>
                             <span class="ml-6 flex h-7 items-center">
-                                <ChevronDownIcon
-                                    :class="[open ? 'upsidedown' : '', 'h-6 w-6 transition-transform']"
+                                <SvgIcon
+                                    v-if="!open"
+                                    class="h-6 w-6 transition-transform"
                                     aria-hidden="true"
+                                    type="mdi"
+                                    :path="mdiChevronDown"
+                                />
+                                <SvgIcon
+                                    v-else
+                                    class="h-6 w-6 transition-transform"
+                                    aria-hidden="true"
+                                    type="mdi"
+                                    :path="mdiChevronUp"
                                 />
                             </span>
                         </DisclosureButton>
@@ -288,14 +296,14 @@ onMounted(async () => {
                                                 @click="updatePermissionState(perm.id, true)"
                                                 class="transition-colors rounded-l-lg p-1 bg-success-600/50 data-[active=true]:bg-success-600 text-base-300 data-[active=true]:text-neutral hover:bg-success-600/70"
                                             >
-                                                <CheckIcon class="w-6 h-6" />
+                                                <SvgIcon class="w-6 h-6" type="mdi" :path="mdiCheck" />
                                             </button>
                                             <button
                                                 :data-active="!permStates.has(perm.id) || permStates.get(perm.id) === undefined"
                                                 @click="updatePermissionState(perm.id, undefined)"
                                                 class="transition-colors p-1 bg-base-700 data-[active=true]:bg-base-500 text-base-300 data-[active=true]:text-neutral hover:bg-base-600"
                                             >
-                                                <MinusIcon class="w-6 h-6" />
+                                                <SvgIcon class="w-6 h-6" type="mdi" :path="mdiMinus" />
                                             </button>
                                             <button
                                                 :data-active="
@@ -306,7 +314,7 @@ onMounted(async () => {
                                                 @click="updatePermissionState(perm.id, false)"
                                                 class="transition-colors rounded-r-lg p-1 bg-error-600/50 data-[active=true]:bg-error-600 text-base-300 data-[active=true]:text-neutral hover:bg-error-600/70"
                                             >
-                                                <XMarkIcon class="w-6 h-6" />
+                                                <SvgIcon class="w-6 h-6" type="mdi" :path="mdiClose" />
                                             </button>
                                         </div>
                                     </div>

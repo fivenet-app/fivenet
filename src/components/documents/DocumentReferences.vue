@@ -1,7 +1,9 @@
 <script lang="ts" setup>
-import { ArrowsRightLeftIcon, ChevronRightIcon } from '@heroicons/vue/24/outline';
+import SvgIcon from '@jamescoyle/vue-icon';
+import { mdiArrowCollapse, mdiChevronRight, mdiFileDocumentMultiple } from '@mdi/js';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { DOC_REFERENCE, DocumentReference } from '~~/gen/ts/resources/documents/documents';
+import DataNoDataBlock from '../partials/DataNoDataBlock.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -41,12 +43,11 @@ async function getDocumentReferences(): Promise<Array<DocumentReference>> {
 
 <template>
     <div>
-        <span v-if="references && references.length === 0" class="text-neutral">{{
-            $t('common.not_found', [
-                `${$t('common.document', 1)}
-                    ${$t('common.reference', 2)}`,
-            ])
-        }}</span>
+        <DataNoDataBlock
+            v-if="references && references.length === 0"
+            :type="`${$t('common.document', 1)} ${$t('common.reference', 2)}`"
+            :mdi="mdiFileDocumentMultiple"
+        />
         <!-- Relations list (smallest breakpoint only) -->
         <div v-if="references && references.length > 0" class="sm:hidden text-neutral">
             <ul role="list" class="mt-2 overflow-hidden divide-y divide-gray-600 rounded-lg sm:hidden">
@@ -60,7 +61,12 @@ async function getDocumentReferences(): Promise<Array<DocumentReference>> {
                     >
                         <span class="flex items-center space-x-4">
                             <span class="flex flex-1 space-x-2 truncate">
-                                <ArrowsRightLeftIcon class="flex-shrink-0 w-5 h-5 text-base-200" aria-hidden="true" />
+                                <SvgIcon
+                                    class="flex-shrink-0 w-5 h-5 text-base-200"
+                                    aria-hidden="true"
+                                    type="mdi"
+                                    :path="mdiArrowCollapse"
+                                />
                                 <span class="flex flex-col text-sm truncate">
                                     <span>
                                         {{ reference.targetDocument?.title
@@ -90,7 +96,12 @@ async function getDocumentReferences(): Promise<Array<DocumentReference>> {
                                     </time>
                                 </span>
                             </span>
-                            <ChevronRightIcon class="flex-shrink-0 w-5 h-5 text-gray-400" aria-hidden="true" />
+                            <SvgIcon
+                                class="flex-shrink-0 w-5 h-5 text-gray-400"
+                                aria-hidden="true"
+                                type="mdi"
+                                :path="mdiChevronRight"
+                            />
                         </span>
                     </NuxtLink>
                 </li>

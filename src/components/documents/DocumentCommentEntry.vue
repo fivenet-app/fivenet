@@ -1,5 +1,6 @@
 <script lang="ts" setup>
-import { PencilIcon, TrashIcon } from '@heroicons/vue/20/solid';
+import SvgIcon from '@jamescoyle/vue-icon';
+import { mdiPencil, mdiTrashCan } from '@mdi/js';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { useAuthStore } from '~/store/auth';
 import { DocumentComment } from '~~/gen/ts/resources/documents/documents';
@@ -76,10 +77,10 @@ async function deleteComment(): Promise<void> {
                     </NuxtLink>
                     <div v-if="comment.creatorId === activeChar?.userId || permissions.includes('superuser')">
                         <button v-can="'DocStoreService.PostDocumentComment'" @click="editing = true">
-                            <PencilIcon class="w-5 h-auto ml-auto mr-2.5" />
+                            <SvgIcon class="w-5 h-auto ml-auto mr-2.5" type="mdi" :path="mdiPencil" />
                         </button>
                         <button v-can="'DocStoreService.DeleteDocumentComment'" @click="deleteComment()">
-                            <TrashIcon class="w-5 h-auto ml-auto mr-2.5" />
+                            <SvgIcon class="w-5 h-auto ml-auto mr-2.5" type="mdi" :path="mdiTrashCan" />
                         </button>
                     </div>
                 </div>

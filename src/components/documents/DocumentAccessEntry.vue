@@ -10,7 +10,8 @@ import {
     ListboxOption,
     ListboxOptions,
 } from '@headlessui/vue';
-import { CheckIcon, ChevronDownIcon, XMarkIcon } from '@heroicons/vue/20/solid';
+import SvgIcon from '@jamescoyle/vue-icon';
+import { mdiCheck, mdiChevronDown, mdiClose } from '@mdi/js';
 import { listEnumValues } from '@protobuf-ts/runtime';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { watchDebounced } from '@vueuse/core';
@@ -234,7 +235,7 @@ watch(selectedAccessRole, () => {
                     >
                         <span class="block truncate">{{ selectedAccessType?.name }}</span>
                         <span class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                            <ChevronDownIcon class="w-5 h-5 text-gray-400" aria-hidden="true" />
+                            <SvgIcon class="w-5 h-5 text-gray-400" aria-hidden="true" type="mdi" :path="mdiChevronDown" />
                         </span>
                     </ListboxButton>
 
@@ -270,7 +271,7 @@ watch(selectedAccessRole, () => {
                                             'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                         ]"
                                     >
-                                        <CheckIcon class="w-5 h-5" aria-hidden="true" />
+                                        <SvgIcon class="w-5 h-5" aria-hidden="true" type="mdi" :path="mdiCheck" />
                                     </span>
                                 </li>
                             </ListboxOption>
@@ -319,7 +320,7 @@ watch(selectedAccessRole, () => {
                                             'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                         ]"
                                     >
-                                        <CheckIcon class="w-5 h-5" aria-hidden="true" />
+                                        <SvgIcon class="w-5 h-5" aria-hidden="true" type="mdi" :path="mdiCheck" />
                                     </span>
                                 </li>
                             </ComboboxOption>
@@ -368,7 +369,7 @@ watch(selectedAccessRole, () => {
                                             'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                         ]"
                                     >
-                                        <CheckIcon class="w-5 h-5" aria-hidden="true" />
+                                        <SvgIcon class="w-5 h-5" aria-hidden="true" type="mdi" :path="mdiCheck" />
                                     </span>
                                 </li>
                             </ComboboxOption>
@@ -415,7 +416,7 @@ watch(selectedAccessRole, () => {
                                             'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                         ]"
                                     >
-                                        <CheckIcon class="w-5 h-5" aria-hidden="true" />
+                                        <SvgIcon class="w-5 h-5" aria-hidden="true" type="mdi" :path="mdiCheck" />
                                     </span>
                                 </li>
                             </ComboboxOption>
@@ -463,7 +464,7 @@ watch(selectedAccessRole, () => {
                                         'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                     ]"
                                 >
-                                    <CheckIcon class="w-5 h-5" aria-hidden="true" />
+                                    <SvgIcon class="w-5 h-5" aria-hidden="true" type="mdi" :path="mdiCheck" />
                                 </span>
                             </li>
                         </ComboboxOption>
@@ -476,7 +477,13 @@ watch(selectedAccessRole, () => {
                 type="button"
                 class="rounded-full bg-primary-500 p-1.5 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             >
-                <XMarkIcon class="w-6 h-6" @click="$emit('deleteRequest', { id: props.init.id })" aria-hidden="true" />
+                <SvgIcon
+                    class="w-6 h-6"
+                    @click="$emit('deleteRequest', { id: props.init.id })"
+                    aria-hidden="true"
+                    type="mdi"
+                    :path="mdiClose"
+                />
             </button>
         </div>
     </div>

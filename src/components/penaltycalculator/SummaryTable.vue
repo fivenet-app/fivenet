@@ -1,5 +1,6 @@
 <script lang="ts" setup>
-import { CubeTransparentIcon } from '@heroicons/vue/24/solid';
+import SvgIcon from '@jamescoyle/vue-icon';
+import { mdiCalculator } from '@mdi/js';
 import { SelectedPenalty } from '~/utils/penalty';
 
 defineProps<{
@@ -14,7 +15,7 @@ defineProps<{
         disabled
         class="relative block w-full p-12 text-center border-2 border-gray-300 border-dashed rounded-lg hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
     >
-        <CubeTransparentIcon class="w-12 h-12 mx-auto text-neutral" />
+        <SvgIcon class="w-12 h-12 mx-auto text-neutral" type="mdi" :path="mdiCalculator" />
         <span class="block mt-2 text-sm font-semibold text-gray-300">
             {{ $t('common.none_selected', [`${$t('components.penaltycalculator.crime')}`]) }}
         </span>

@@ -24,8 +24,6 @@ const route = useRoute();
 
 const { livemapCenterSelectedMarker, livemapMarkerSize } = storeToRefs(userSettingsStore);
 
-const { t } = useI18n();
-
 $loading.start();
 
 const { activeChar } = storeToRefs(authStore);

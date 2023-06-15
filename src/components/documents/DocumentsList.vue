@@ -9,8 +9,8 @@ import {
     DisclosureButton,
     DisclosurePanel,
 } from '@headlessui/vue';
-import { BriefcaseIcon, CalendarIcon, CheckIcon, DocumentMagnifyingGlassIcon, UserIcon } from '@heroicons/vue/20/solid';
-import { MinusSmallIcon, PlusSmallIcon } from '@heroicons/vue/24/outline';
+import SvgIcon from '@jamescoyle/vue-icon';
+import { mdiAccount, mdiBriefcase, mdiCalendar, mdiCheck, mdiChevronDown, mdiChevronUp } from '@mdi/js';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { watchDebounced } from '@vueuse/shared';
 import { ref } from 'vue';
@@ -23,6 +23,7 @@ import { DocumentCategory } from '~~/gen/ts/resources/documents/category';
 import { DocumentShort } from '~~/gen/ts/resources/documents/documents';
 import { UserShort } from '~~/gen/ts/resources/users/users';
 import { ListDocumentsRequest } from '~~/gen/ts/services/docstore/docstore';
+import DataNoDataBlock from '../partials/DataNoDataBlock.vue';
 import TemplatesModal from './templates/TemplatesModal.vue';
 
 const { $grpc } = useNuxtApp();
@@ -189,8 +190,14 @@ onMounted(async () => {
                             <DisclosureButton class="flex w-full items-start justify-between text-left text-white">
                                 <span class="text-base-200 leading-7">{{ $t('common.advanced_search') }}</span>
                                 <span class="ml-6 flex h-7 items-center">
-                                    <PlusSmallIcon v-if="!open" class="h-6 w-6" aria-hidden="true" />
-                                    <MinusSmallIcon v-else class="h-6 w-6" aria-hidden="true" />
+                                    <SvgIcon
+                                        v-if="!open"
+                                        class="h-6 w-6"
+                                        aria-hidden="true"
+                                        type="mdi"
+                                        :path="mdiChevronDown"
+                                    />
+                                    <SvgIcon v-else class="h-6 w-6" aria-hidden="true" type="mdi" :path="mdiChevronUp" />
                                 </span>
                             </DisclosureButton>
                             <DisclosurePanel class="mt-2 pr-12">
@@ -238,7 +245,12 @@ onMounted(async () => {
                                                                     'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                                                 ]"
                                                             >
-                                                                <CheckIcon class="w-5 h-5" aria-hidden="true" />
+                                                                <SvgIcon
+                                                                    class="w-5 h-5"
+                                                                    aria-hidden="true"
+                                                                    type="mdi"
+                                                                    :path="mdiCheck"
+                                                                />
                                                             </span>
                                                         </li>
                                                     </ComboboxOption>
@@ -289,7 +301,12 @@ onMounted(async () => {
                                                                     'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                                                 ]"
                                                             >
-                                                                <CheckIcon class="w-5 h-5" aria-hidden="true" />
+                                                                <SvgIcon
+                                                                    class="w-5 h-5"
+                                                                    aria-hidden="true"
+                                                                    type="mdi"
+                                                                    :path="mdiCheck"
+                                                                />
                                                             </span>
                                                         </li>
                                                     </ComboboxOption>
@@ -343,18 +360,11 @@ onMounted(async () => {
                             :title="$t('common.unable_to_load', [$t('common.document', 2)])"
                             :retry="refresh"
                         />
-                        <button
+                        <DataNoDataBlock
                             v-else-if="documents && documents.length === 0"
-                            type="button"
-                            @click="focusSearch()"
-                            class="relative block w-full p-12 text-center border-2 border-gray-300 border-dashed rounded-lg hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                        >
-                            <DocumentMagnifyingGlassIcon class="w-12 h-12 mx-auto text-neutral" />
-                            <span class="block mt-2 text-sm font-semibold text-gray-300">
-                                {{ $t('common.not_found', [$t('common.document', 2)]) }}
-                                {{ $t('components.documents.document_list.no_documents_hint') }}
-                            </span>
-                        </button>
+                            :type="$t('common.document', 2)"
+                            :focus="focusSearch"
+                        />
                         <div v-else>
                             <ul class="flex flex-col">
                                 <li
@@ -382,24 +392,30 @@ onMounted(async () => {
                                             </div>
                                             <div class="flex flex-row gap-2 text-base-200">
                                                 <div class="flex flex-row items-center justify-start flex-1">
-                                                    <UserIcon
+                                                    <SvgIcon
                                                         class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400"
                                                         aria-hidden="true"
+                                                        type="mdi"
+                                                        :path="mdiAccount"
                                                     />
                                                     {{ doc.creator?.firstname }},
                                                     {{ doc.creator?.lastname }}
                                                 </div>
                                                 <div class="flex flex-row items-center justify-center flex-1">
-                                                    <BriefcaseIcon
+                                                    <SvgIcon
                                                         class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400"
                                                         aria-hidden="true"
+                                                        type="mdi"
+                                                        :path="mdiBriefcase"
                                                     />
                                                     {{ doc.creator?.jobLabel }}
                                                 </div>
                                                 <div class="flex flex-row items-center justify-end flex-1">
-                                                    <CalendarIcon
+                                                    <SvgIcon
                                                         class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400"
                                                         aria-hidden="true"
+                                                        type="mdi"
+                                                        :path="mdiCalendar"
                                                     />
                                                     <p>
                                                         {{ $t('common.created') }}

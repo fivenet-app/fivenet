@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
-import { ClipboardDocumentListIcon } from '@heroicons/vue/24/solid';
+import SvgIcon from '@jamescoyle/vue-icon';
+import { mdiClipboardList } from '@mdi/js';
 import { useClipboardStore } from '~/store/clipboard';
 import ClipboardModalDocuments from './ClipboardModalDocuments.vue';
 import ClipboardModalUsers from './ClipboardModalUsers.vue';
@@ -48,7 +49,12 @@ defineEmits<{
                         >
                             <div>
                                 <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-base-800">
-                                    <ClipboardDocumentListIcon class="h-6 w-6 text-primary-500" aria-hidden="true" />
+                                    <SvgIcon
+                                        class="h-6 w-6 text-primary-500"
+                                        aria-hidden="true"
+                                        type="mdi"
+                                        :path="mdiClipboardList"
+                                    />
                                 </div>
                                 <div class="mt-3 text-center sm:mt-5">
                                     <DialogTitle as="h3" class="text-base font-semibold leading-6">
