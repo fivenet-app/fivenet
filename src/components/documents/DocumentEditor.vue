@@ -21,7 +21,7 @@ import { ImageFormats } from '@xeger/quill-image-formats';
 import ImageCompress from 'quill-image-compress';
 import MagicUrl from 'quill-magic-url';
 import { useAuthStore } from '~/store/auth';
-import { getUser, useClipboardStore } from '~/store/clipboard';
+import { getDocument, getUser, useClipboardStore } from '~/store/clipboard';
 import { useDocumentEditorStore } from '~/store/documenteditor';
 import { useNotificationsStore } from '~/store/notifications';
 import { TranslateItem } from '~~/gen/ts/resources/common/i18n';
@@ -29,6 +29,7 @@ import { ACCESS_LEVEL } from '~~/gen/ts/resources/documents/access';
 import { DocumentCategory } from '~~/gen/ts/resources/documents/category';
 import {
     DOC_CONTENT_TYPE,
+    DOC_REFERENCE,
     DOC_RELATION,
     DocumentAccess,
     DocumentReference,
@@ -296,7 +297,19 @@ onMounted(async () => {
         });
     }
 
-    clipboardStore.users.forEach((user, i) => {
+    clipboardStore.activeStack.documents.forEach((doc, i) => {
+        const id = BigInt(i);
+        referenceManagerData.value.set(id, {
+            id: id,
+            sourceDocumentId: props.id!,
+            targetDocumentId: doc.id!,
+            targetDocument: getDocument(doc),
+            creatorId: activeChar.value!.userId,
+            creator: activeChar.value!,
+            reference: DOC_REFERENCE.SOLVES,
+        });
+    });
+    clipboardStore.activeStack.users.forEach((user, i) => {
         const id = BigInt(i);
         relationManagerData.value.set(id, {
             id: id,
