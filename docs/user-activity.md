@@ -14,8 +14,6 @@ title: User Activity
         * Sent
         * Paid
         * Removed
-    * `Billing.Bills`
-        * UNUSED
     * `Jail`
         * Jailed
         * Unjailed

@@ -63,19 +63,19 @@ switch (props.activity.key) {
         break;
     }
 
-    case 'Plugin.Licenses': {
+    case 'Licenses': {
         // TODO
         icon.value = mdiLicense;
         break;
     }
 
-    case 'Plugin.Jail': {
+    case 'Jail': {
         // TODO
         icon.value = mdiHandcuffs;
         break;
     }
 
-    case 'Plugin.Fines': {
+    case 'Billing.Fines': {
         // TODO
         icon.value = mdiReceipt;
         break;

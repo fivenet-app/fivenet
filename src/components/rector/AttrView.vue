@@ -99,7 +99,6 @@ async function getPermissions(): Promise<void> {
 
             attrStates.value.clear();
             attrList.value.forEach((attr) => {
-                console.log('GET PERMS', attr.attrId, attr.maxValues);
                 attrStates.value.set(attr.attrId, attr.maxValues);
             });
 

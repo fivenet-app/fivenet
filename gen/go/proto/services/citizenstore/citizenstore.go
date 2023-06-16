@@ -347,6 +347,7 @@ func (s *Server) ListUserActivity(ctx context.Context, req *ListUserActivityRequ
 		return resp, nil
 	}
 
+	tUserActivity := tUserActivity.AS("useractivity")
 	uTarget := tUser.AS("target_user")
 	uSource := tUser.AS("source_user")
 	stmt := tUserActivity.
@@ -380,7 +381,7 @@ func (s *Server) ListUserActivity(ctx context.Context, req *ListUserActivityRequ
 		ORDER_BY(
 			tUserActivity.CreatedAt.DESC(),
 		).
-		LIMIT(12)
+		LIMIT(15)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Activity); err != nil {
 		if !errors.Is(qrm.ErrNoRows, err) {
@@ -389,8 +390,12 @@ func (s *Server) ListUserActivity(ctx context.Context, req *ListUserActivityRequ
 	}
 
 	for i := 0; i < len(resp.Activity); i++ {
-		s.c.EnrichJobInfo(resp.Activity[i].SourceUser)
-		s.c.EnrichJobInfo(resp.Activity[i].TargetUser)
+		if resp.Activity[i].SourceUser != nil {
+			s.c.EnrichJobInfo(resp.Activity[i].SourceUser)
+		}
+		if resp.Activity[i].TargetUser != nil {
+			s.c.EnrichJobInfo(resp.Activity[i].TargetUser)
+		}
 	}
 
 	return resp, nil
