@@ -457,9 +457,9 @@ func (p *Perms) convertRawToRoleAttributes(in []*permissions.RawRoleAttribute) (
 
 func (p *Perms) convertRawValue(targetVal *permissions.AttributeValues, rawVal string, aType permissions.AttributeTypes) error {
 	var val any
-	var err error
 
 	if rawVal != "" {
+		var err error
 		val, err = p.convertRawToAttributeValue(rawVal, permissions.AttributeTypes(aType))
 		if err != nil {
 			return err
@@ -625,17 +625,21 @@ func (p *Perms) FlattenRoleAttributes(job string, grade int32) ([]string, error)
 
 func (p *Perms) AddOrUpdateAttributesToRole(ctx context.Context, roleId uint64, attrs ...*permissions.RoleAttribute) error {
 	for i := 0; i < len(attrs); i++ {
+		a, ok := p.lookupAttributeByID(attrs[i].AttrId)
+		if !ok {
+			return fmt.Errorf("unable to add role attribute, didn't find attribute by ID %d", attrs[i].AttrId)
+		}
+
 		validV := jet.String("")
-		if attrs[i].Value != nil {
+		if attrs[i].Value == nil {
+			attrs[i].Value = a.DefaultValues
+		}
+
+		if attrs[i].Value == nil {
 			var out string
 			var err error
 
 			attrs[i].Value.Default(permissions.AttributeTypes(attrs[i].Type))
-
-			a, ok := p.lookupAttributeByID(attrs[i].AttrId)
-			if !ok {
-				return fmt.Errorf("unable to add role attribute, didn't find attribute by ID %d", attrs[i].AttrId)
-			}
 
 			ar, ok := p.lookupRoleAttribute(roleId, a.ID)
 			if !ok {
@@ -676,7 +680,7 @@ func (p *Perms) AddOrUpdateAttributesToRole(ctx context.Context, roleId uint64, 
 			).
 			VALUES(
 				roleId,
-				attrs[i].AttrId,
+				a.ID,
 				validV,
 			).
 			ON_DUPLICATE_KEY_UPDATE(

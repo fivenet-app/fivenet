@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 	"time"
 
 	cache "github.com/Code-Hex/go-generics-cache"
@@ -353,9 +354,21 @@ func (p *Perms) loadRoleAttributes(ctx context.Context, roleId uint64) error {
 		}
 	}
 
-	for _, v := range dest {
-		if err := p.addOrUpdateRoleAttributeInMap(v.RoleID, v.PermissionID, v.AttrID, v.Key, v.Type, v.Value, v.MaxValues); err != nil {
-			return err
+	for _, ra := range dest {
+		a, ok := p.lookupAttributeByID(ra.AttrID)
+		if !ok {
+			return fmt.Errorf("unable to find attribute ID %d for role %d", ra.AttrID, ra.RoleID)
+		}
+
+		if err := p.addOrUpdateRoleAttributeInMap(ra.RoleID, ra.PermissionID, ra.AttrID, ra.Key, ra.Type, ra.Value, ra.MaxValues); err != nil {
+			// Reset the attribute value to null/ empty
+			if err := p.AddOrUpdateAttributesToRole(p.ctx, ra.RoleID, &permissions.RoleAttribute{
+				RoleId: ra.RoleID,
+				AttrId: ra.AttrID,
+				Value:  a.DefaultValues,
+			}); err != nil {
+				return err
+			}
 		}
 	}
 

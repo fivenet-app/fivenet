@@ -119,4 +119,6 @@ service RectorService {
 
   // @perm
   rpc ViewAuditLog(ViewAuditLogRequest) returns (ViewAuditLogResponse);
+
+  // TODO add "ACP" methods
 }

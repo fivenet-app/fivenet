@@ -135,7 +135,7 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 	}
 	var playersJobs map[string]int32
 	if playersAttr != nil {
-		playersJobs = playersAttr.(map[string]int32)
+		playersJobs, _ = playersAttr.(map[string]int32)
 	}
 
 	resp := &StreamResponse{}
