@@ -478,6 +478,10 @@ func (p *Perms) convertRawToRoleAttributes(in []*permissions.RawRoleAttribute, j
 		}
 
 		res[i].MaxValues = p.getClosestRoleAttrMaxVals(job, grade, in[i].PermissionId, Key(in[i].Key))
+		if res[i].MaxValues == nil {
+			res[i].MaxValues = &permissions.AttributeValues{}
+			res[i].MaxValues.Default(permissions.AttributeTypes(res[i].Type))
+		}
 	}
 
 	return res, nil
@@ -682,7 +686,7 @@ func (p *Perms) addOrUpdateAttributesToRole(ctx context.Context, roleId uint64, 
 			return fmt.Errorf("unable to add role attribute, didn't find attribute by ID %d", attrs[i].AttrId)
 		}
 
-		validV := jet.String("")
+		validV := jet.NULL
 		if attrs[i].Value == nil {
 			attrs[i].Value = a.DefaultValues
 		}
@@ -797,4 +801,73 @@ func (p *Perms) GetRoleAttributeByID(roleId uint64, attrId uint64) (*permissions
 		Type:      string(r.Type),
 		MaxValues: r.Max,
 	}, true
+}
+
+func (p *Perms) UpdateRoleAttributeMaxValues(ctx context.Context, roleId uint64, attrId uint64, maxValues *permissions.AttributeValues) error {
+	a, ok := p.lookupAttributeByID(attrId)
+	if !ok {
+		return fmt.Errorf("unable to update role attribute max values, didn't find attribute by ID %d", attrId)
+	}
+
+	ra, ok := p.lookupRoleAttribute(roleId, attrId)
+	if !ok {
+		return fmt.Errorf("unable to update role attribute max values, didn't find role attribute by ID %d and role ID %d", attrId, roleId)
+	}
+
+	maxVal := jet.NULL
+	if maxValues != nil {
+		var out string
+		var err error
+
+		maxValues.Default(permissions.AttributeTypes(a.Type))
+
+		switch permissions.AttributeTypes(a.Type) {
+		case permissions.StringListAttributeType:
+			out, err = json.MarshalToString(maxValues.GetStringList().Strings)
+			if err != nil {
+				return err
+			}
+		case permissions.JobListAttributeType:
+			out, err = json.MarshalToString(maxValues.GetJobList().Strings)
+			if err != nil {
+				return err
+			}
+		case permissions.JobGradeListAttributeType:
+			out, err = json.MarshalToString(maxValues.GetJobGradeList().Jobs)
+			if err != nil {
+				return err
+			}
+		}
+
+		if out != "" && out != "null" {
+			maxVal = jet.String(out)
+		}
+	}
+
+	stmt := tRoleAttrs.
+		INSERT(
+			tRoleAttrs.RoleID,
+			tRoleAttrs.AttrID,
+			tRoleAttrs.Value,
+			tRoleAttrs.MaxValues,
+		).
+		VALUES(
+			roleId,
+			attrId,
+			jet.NULL,
+			maxVal,
+		).
+		ON_DUPLICATE_KEY_UPDATE(
+			tRoleAttrs.MaxValues.SET(jet.StringExp(jet.Raw("values(`max_values`)"))),
+		)
+
+	if _, err := stmt.ExecContext(ctx, p.db); err != nil {
+		if err != nil && !dbutils.IsDuplicateError(err) {
+			return err
+		}
+	}
+
+	p.updateRoleAttributeInMap(roleId, a.PermissionID, attrId, a.Key, a.Type, ra.Value, maxValues)
+
+	return nil
 }

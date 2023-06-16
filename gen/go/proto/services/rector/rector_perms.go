@@ -405,3 +405,18 @@ func (s *Server) GetPermissions(ctx context.Context, req *GetPermissionsRequest)
 
 	return resp, nil
 }
+
+func (s *Server) UpdateRoleLimits(ctx context.Context, req *UpdateRoleLimitsRequest) (*UpdateRoleLimitsResponse, error) {
+	role, err := s.p.GetRole(ctx, req.RoleId)
+	if err != nil {
+		return nil, ErrInvalidRequest
+	}
+
+	for _, attr := range req.Attrs.ToUpdate {
+		if err := s.p.UpdateRoleAttributeMaxValues(ctx, role.ID, attr.AttrId, attr.MaxValues); err != nil {
+			return nil, err
+		}
+	}
+
+	return &UpdateRoleLimitsResponse{}, nil
+}

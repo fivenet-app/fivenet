@@ -2764,3 +2764,238 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = ViewAuditLogResponseValidationError{}
+
+// Validate checks the field values on UpdateRoleLimitsRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *UpdateRoleLimitsRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UpdateRoleLimitsRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// UpdateRoleLimitsRequestMultiError, or nil if none found.
+func (m *UpdateRoleLimitsRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UpdateRoleLimitsRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for RoleId
+
+	if all {
+		switch v := interface{}(m.GetAttrs()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, UpdateRoleLimitsRequestValidationError{
+					field:  "Attrs",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, UpdateRoleLimitsRequestValidationError{
+					field:  "Attrs",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetAttrs()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return UpdateRoleLimitsRequestValidationError{
+				field:  "Attrs",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return UpdateRoleLimitsRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// UpdateRoleLimitsRequestMultiError is an error wrapping multiple validation
+// errors returned by UpdateRoleLimitsRequest.ValidateAll() if the designated
+// constraints aren't met.
+type UpdateRoleLimitsRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UpdateRoleLimitsRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UpdateRoleLimitsRequestMultiError) AllErrors() []error { return m }
+
+// UpdateRoleLimitsRequestValidationError is the validation error returned by
+// UpdateRoleLimitsRequest.Validate if the designated constraints aren't met.
+type UpdateRoleLimitsRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UpdateRoleLimitsRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UpdateRoleLimitsRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UpdateRoleLimitsRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UpdateRoleLimitsRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UpdateRoleLimitsRequestValidationError) ErrorName() string {
+	return "UpdateRoleLimitsRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e UpdateRoleLimitsRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUpdateRoleLimitsRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UpdateRoleLimitsRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UpdateRoleLimitsRequestValidationError{}
+
+// Validate checks the field values on UpdateRoleLimitsResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *UpdateRoleLimitsResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UpdateRoleLimitsResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// UpdateRoleLimitsResponseMultiError, or nil if none found.
+func (m *UpdateRoleLimitsResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UpdateRoleLimitsResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return UpdateRoleLimitsResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// UpdateRoleLimitsResponseMultiError is an error wrapping multiple validation
+// errors returned by UpdateRoleLimitsResponse.ValidateAll() if the designated
+// constraints aren't met.
+type UpdateRoleLimitsResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UpdateRoleLimitsResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UpdateRoleLimitsResponseMultiError) AllErrors() []error { return m }
+
+// UpdateRoleLimitsResponseValidationError is the validation error returned by
+// UpdateRoleLimitsResponse.Validate if the designated constraints aren't met.
+type UpdateRoleLimitsResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UpdateRoleLimitsResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UpdateRoleLimitsResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UpdateRoleLimitsResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UpdateRoleLimitsResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UpdateRoleLimitsResponseValidationError) ErrorName() string {
+	return "UpdateRoleLimitsResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e UpdateRoleLimitsResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUpdateRoleLimitsResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UpdateRoleLimitsResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UpdateRoleLimitsResponseValidationError{}

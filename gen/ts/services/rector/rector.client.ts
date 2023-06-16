@@ -4,6 +4,8 @@
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
 import { RectorService } from "./rector.js";
+import type { UpdateRoleLimitsResponse } from "./rector.js";
+import type { UpdateRoleLimitsRequest } from "./rector.js";
 import type { ViewAuditLogResponse } from "./rector.js";
 import type { ViewAuditLogRequest } from "./rector.js";
 import type { GetPermissionsResponse } from "./rector.js";
@@ -72,7 +74,7 @@ export interface IRectorServiceClient {
      */
     updateRolePerms(input: UpdateRolePermsRequest, options?: RpcOptions): UnaryCall<UpdateRolePermsRequest, UpdateRolePermsResponse>;
     /**
-     * @perm: Attrs=Jobs/JobList:"config.C.Game.Livemap.Jobs"
+     * @perm: Name=GetRoles
      *
      * @generated from protobuf rpc: GetPermissions(services.rector.GetPermissionsRequest) returns (services.rector.GetPermissionsResponse);
      */
@@ -83,6 +85,12 @@ export interface IRectorServiceClient {
      * @generated from protobuf rpc: ViewAuditLog(services.rector.ViewAuditLogRequest) returns (services.rector.ViewAuditLogResponse);
      */
     viewAuditLog(input: ViewAuditLogRequest, options?: RpcOptions): UnaryCall<ViewAuditLogRequest, ViewAuditLogResponse>;
+    /**
+     * @perm: Name=SuperUser
+     *
+     * @generated from protobuf rpc: UpdateRoleLimits(services.rector.UpdateRoleLimitsRequest) returns (services.rector.UpdateRoleLimitsResponse);
+     */
+    updateRoleLimits(input: UpdateRoleLimitsRequest, options?: RpcOptions): UnaryCall<UpdateRoleLimitsRequest, UpdateRoleLimitsResponse>;
 }
 /**
  * @generated from protobuf service services.rector.RectorService
@@ -157,7 +165,7 @@ export class RectorServiceClient implements IRectorServiceClient, ServiceInfo {
         return stackIntercept<UpdateRolePermsRequest, UpdateRolePermsResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Attrs=Jobs/JobList:"config.C.Game.Livemap.Jobs"
+     * @perm: Name=GetRoles
      *
      * @generated from protobuf rpc: GetPermissions(services.rector.GetPermissionsRequest) returns (services.rector.GetPermissionsResponse);
      */
@@ -173,5 +181,14 @@ export class RectorServiceClient implements IRectorServiceClient, ServiceInfo {
     viewAuditLog(input: ViewAuditLogRequest, options?: RpcOptions): UnaryCall<ViewAuditLogRequest, ViewAuditLogResponse> {
         const method = this.methods[8], opt = this._transport.mergeOptions(options);
         return stackIntercept<ViewAuditLogRequest, ViewAuditLogResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @perm: Name=SuperUser
+     *
+     * @generated from protobuf rpc: UpdateRoleLimits(services.rector.UpdateRoleLimitsRequest) returns (services.rector.UpdateRoleLimitsResponse);
+     */
+    updateRoleLimits(input: UpdateRoleLimitsRequest, options?: RpcOptions): UnaryCall<UpdateRoleLimitsRequest, UpdateRoleLimitsResponse> {
+        const method = this.methods[9], opt = this._transport.mergeOptions(options);
+        return stackIntercept<UpdateRoleLimitsRequest, UpdateRoleLimitsResponse>("unary", this._transport, method, opt, input);
     }
 }

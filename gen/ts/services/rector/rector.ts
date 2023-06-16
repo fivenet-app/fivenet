@@ -240,6 +240,24 @@ export interface ViewAuditLogResponse {
      */
     logs: AuditEntry[];
 }
+/**
+ * @generated from protobuf message services.rector.UpdateRoleLimitsRequest
+ */
+export interface UpdateRoleLimitsRequest {
+    /**
+     * @generated from protobuf field: uint64 role_id = 1;
+     */
+    roleId: bigint;
+    /**
+     * @generated from protobuf field: services.rector.AttrsUpdate attrs = 2;
+     */
+    attrs?: AttrsUpdate;
+}
+/**
+ * @generated from protobuf message services.rector.UpdateRoleLimitsResponse
+ */
+export interface UpdateRoleLimitsResponse {
+}
 // @generated message type with reflection information, may provide speed optimized methods
 class GetJobPropsRequest$Type extends MessageType<GetJobPropsRequest> {
     constructor() {
@@ -498,6 +516,29 @@ class ViewAuditLogResponse$Type extends MessageType<ViewAuditLogResponse> {
  * @generated MessageType for protobuf message services.rector.ViewAuditLogResponse
  */
 export const ViewAuditLogResponse = new ViewAuditLogResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class UpdateRoleLimitsRequest$Type extends MessageType<UpdateRoleLimitsRequest> {
+    constructor() {
+        super("services.rector.UpdateRoleLimitsRequest", [
+            { no: 1, name: "role_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 2, name: "attrs", kind: "message", T: () => AttrsUpdate }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.rector.UpdateRoleLimitsRequest
+ */
+export const UpdateRoleLimitsRequest = new UpdateRoleLimitsRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class UpdateRoleLimitsResponse$Type extends MessageType<UpdateRoleLimitsResponse> {
+    constructor() {
+        super("services.rector.UpdateRoleLimitsResponse", []);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.rector.UpdateRoleLimitsResponse
+ */
+export const UpdateRoleLimitsResponse = new UpdateRoleLimitsResponse$Type();
 /**
  * @generated ServiceType for protobuf service services.rector.RectorService
  */
@@ -510,5 +551,6 @@ export const RectorService = new ServiceType("services.rector.RectorService", [
     { name: "DeleteRole", options: {}, I: DeleteRoleRequest, O: DeleteRoleResponse },
     { name: "UpdateRolePerms", options: {}, I: UpdateRolePermsRequest, O: UpdateRolePermsResponse },
     { name: "GetPermissions", options: {}, I: GetPermissionsRequest, O: GetPermissionsResponse },
-    { name: "ViewAuditLog", options: {}, I: ViewAuditLogRequest, O: ViewAuditLogResponse }
+    { name: "ViewAuditLog", options: {}, I: ViewAuditLogRequest, O: ViewAuditLogResponse },
+    { name: "UpdateRoleLimits", options: {}, I: UpdateRoleLimitsRequest, O: UpdateRoleLimitsResponse }
 ]);

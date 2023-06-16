@@ -9,7 +9,7 @@ const { $grpc } = useNuxtApp();
 const authStore = useAuthStore();
 const notifications = useNotificationsStore();
 
-const { lastId } = storeToRefs(notifications);
+const { getLastId } = storeToRefs(notifications);
 const { setLastId } = notifications;
 const { accessToken, activeChar } = storeToRefs(authStore);
 const { setAccessToken, setActiveChar, setPermissions, setJobProps } = authStore;
@@ -23,13 +23,13 @@ let restartBackoffTime = 0;
 async function streamNotifications(): Promise<void> {
     if (abort.value !== undefined) return;
 
-    console.debug('Notificator: Stream starting, starting at ID:', lastId.value);
+    console.debug('Notificator: Stream starting, starting at ID:', getLastId.value);
     try {
         abort.value = new AbortController();
 
         const call = $grpc.getNotificatorClient().stream(
             {
-                lastId: lastId.value,
+                lastId: getLastId.value,
             },
             {
                 abort: abort.value.signal,
@@ -37,7 +37,7 @@ async function streamNotifications(): Promise<void> {
         );
 
         for await (let resp of call.responses) {
-            if (resp.lastId > lastId.value) setLastId(resp.lastId);
+            if (resp.lastId > getLastId.value) setLastId(resp.lastId);
 
             console.debug('Notifications:', resp.notifications);
             resp.notifications.forEach((n) => {

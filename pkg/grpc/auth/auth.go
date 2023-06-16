@@ -22,6 +22,8 @@ const (
 	AuthSubCtxTag                = "auth.sub"
 )
 
+const PermSuperUser = "SuperUser"
+
 var UserInfoKey struct{}
 
 var (
@@ -141,6 +143,12 @@ func (g *GRPCPerm) GRPCPermissionUnaryFunc(ctx context.Context, info *grpc.Unary
 				remap := overrideSrv.GetPermsRemap()
 				if _, ok := remap[perm]; ok {
 					perm = remap[perm]
+				}
+			}
+
+			if perm == PermSuperUser {
+				if userInfo.SuperUser {
+					return ctx, nil
 				}
 			}
 

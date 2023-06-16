@@ -36,10 +36,12 @@ type RectorServiceClient interface {
 	DeleteRole(ctx context.Context, in *DeleteRoleRequest, opts ...grpc.CallOption) (*DeleteRoleResponse, error)
 	// @perm
 	UpdateRolePerms(ctx context.Context, in *UpdateRolePermsRequest, opts ...grpc.CallOption) (*UpdateRolePermsResponse, error)
-	// @perm: Attrs=Jobs/JobList:"config.C.Game.Livemap.Jobs"
+	// @perm: Name=GetRoles
 	GetPermissions(ctx context.Context, in *GetPermissionsRequest, opts ...grpc.CallOption) (*GetPermissionsResponse, error)
 	// @perm
 	ViewAuditLog(ctx context.Context, in *ViewAuditLogRequest, opts ...grpc.CallOption) (*ViewAuditLogResponse, error)
+	// @perm: Name=SuperUser
+	UpdateRoleLimits(ctx context.Context, in *UpdateRoleLimitsRequest, opts ...grpc.CallOption) (*UpdateRoleLimitsResponse, error)
 }
 
 type rectorServiceClient struct {
@@ -131,6 +133,15 @@ func (c *rectorServiceClient) ViewAuditLog(ctx context.Context, in *ViewAuditLog
 	return out, nil
 }
 
+func (c *rectorServiceClient) UpdateRoleLimits(ctx context.Context, in *UpdateRoleLimitsRequest, opts ...grpc.CallOption) (*UpdateRoleLimitsResponse, error) {
+	out := new(UpdateRoleLimitsResponse)
+	err := c.cc.Invoke(ctx, "/services.rector.RectorService/UpdateRoleLimits", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RectorServiceServer is the server API for RectorService service.
 // All implementations must embed UnimplementedRectorServiceServer
 // for forward compatibility
@@ -149,10 +160,12 @@ type RectorServiceServer interface {
 	DeleteRole(context.Context, *DeleteRoleRequest) (*DeleteRoleResponse, error)
 	// @perm
 	UpdateRolePerms(context.Context, *UpdateRolePermsRequest) (*UpdateRolePermsResponse, error)
-	// @perm: Attrs=Jobs/JobList:"config.C.Game.Livemap.Jobs"
+	// @perm: Name=GetRoles
 	GetPermissions(context.Context, *GetPermissionsRequest) (*GetPermissionsResponse, error)
 	// @perm
 	ViewAuditLog(context.Context, *ViewAuditLogRequest) (*ViewAuditLogResponse, error)
+	// @perm: Name=SuperUser
+	UpdateRoleLimits(context.Context, *UpdateRoleLimitsRequest) (*UpdateRoleLimitsResponse, error)
 	mustEmbedUnimplementedRectorServiceServer()
 }
 
@@ -186,6 +199,9 @@ func (UnimplementedRectorServiceServer) GetPermissions(context.Context, *GetPerm
 }
 func (UnimplementedRectorServiceServer) ViewAuditLog(context.Context, *ViewAuditLogRequest) (*ViewAuditLogResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ViewAuditLog not implemented")
+}
+func (UnimplementedRectorServiceServer) UpdateRoleLimits(context.Context, *UpdateRoleLimitsRequest) (*UpdateRoleLimitsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateRoleLimits not implemented")
 }
 func (UnimplementedRectorServiceServer) mustEmbedUnimplementedRectorServiceServer() {}
 
@@ -362,6 +378,24 @@ func _RectorService_ViewAuditLog_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RectorService_UpdateRoleLimits_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateRoleLimitsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RectorServiceServer).UpdateRoleLimits(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/services.rector.RectorService/UpdateRoleLimits",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RectorServiceServer).UpdateRoleLimits(ctx, req.(*UpdateRoleLimitsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RectorService_ServiceDesc is the grpc.ServiceDesc for RectorService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -404,6 +438,10 @@ var RectorService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ViewAuditLog",
 			Handler:    _RectorService_ViewAuditLog_Handler,
+		},
+		{
+			MethodName: "UpdateRoleLimits",
+			Handler:    _RectorService_UpdateRoleLimits_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

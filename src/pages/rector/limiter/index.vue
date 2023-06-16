@@ -12,5 +12,5 @@ definePageMeta({
 });
 </script>
 <template>
-    <RolesList :to="{ name: 'rector-limiter-id', params: { id: 0 } }" />
+    <RolesList :to="{ name: 'rector-limiter-id', params: { id: '0' } }" />
 </template>

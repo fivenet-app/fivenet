@@ -74,7 +74,6 @@ INSERT INTO `fivenet_permissions` VALUES
 (30,'2023-05-17 13:01:11.394','RectorService','CreateRole','rectorservice-createrole'),
 (31,'2023-05-17 13:01:11.450','RectorService','DeleteRole','rectorservice-deleterole'),
 (32,'2023-05-17 13:01:11.520','RectorService','GetJobProps','rectorservice-getjobprops'),
-(33,'2023-05-17 13:01:11.577','RectorService','GetPermissions','rectorservice-getpermissions'),
 (34,'2023-05-17 13:01:11.711','RectorService','GetRoles','rectorservice-getroles'),
 (35,'2023-05-17 13:01:11.768','RectorService','SetJobProps','rectorservice-setjobprops'),
 (36,'2023-05-17 13:01:11.842','RectorService','UpdateRolePerms','rectorservice-updateroleperms'),

@@ -675,10 +675,6 @@
     "perms": {
         "AuthService": {
             "category": "Authentication",
-            "SetJob": {
-                "key": "Override own Job",
-                "description": "Superuser: Allow to override their own job on the go."
-            },
             "ChooseCharacter": {
                 "key": "Choose Character",
                 "description": "Permission to choose character, basically allow or disallow access to FiveNet."
@@ -688,15 +684,28 @@
             "category": "Citizens",
             "ListCitizens": {
                 "key": "ListCitizens",
-                "description": "List and search through citizens"
+                "description": "List and search through citizens",
+                "attrs": {
+                    "PhoneNumber": "Phone Number",
+                    "Licenses": "Licenses",
+                    "UserProps_Wanted": "Wanted Status",
+                    "UserProps_Job": "Job"
+                }
             },
             "ListUserActivity": {
                 "key": "ListUserActivity",
-                "description": "Citizen Info Activity Feed"
+                "description": "Citizen Info Activity Feed",
+                "attrs": {
+                    "SourceUser": "Source User"
+                }
             },
             "SetUserProps": {
                 "key": "SetUserProps",
-                "description": "Set Citizen Props (e.g., wanted status)"
+                "description": "Set Citizen Props (e.g., wanted status)",
+                "attrs": {
+                    "Wanted": "Wanted Status",
+                    "Job": "Job"
+                }
             },
             "GetUser": {
                 "key": "GetUser",
@@ -741,7 +750,12 @@
             },
             "DeleteDocumentComment": {
                 "key": "DeleteDocumentComment",
-                "description": "Delete own document comment"
+                "description": "Delete own document comment",
+                "attrs": {
+                    "Own": "Own",
+                    "Lower_Rank": "Lower Rank",
+                    "Same_Rank": "Same Rank"
+                }
             },
             "ListDocuments": {
                 "key": "ListDocuments",
@@ -769,7 +783,11 @@
             },
             "UpdateDocument": {
                 "key": "UpdateDocument",
-                "description": "Edit/ Update an existing document"
+                "description": "Edit/ Update an existing document",
+                "attrs": {
+                    "Own": "Own",
+                    "Lower_Rank": "Lower Rank",
+                    "Same_Rank": "Same Rank"}
             },
             "CreateDocumentCategory": {
                 "key": "CreateDocumentCategory",
@@ -793,7 +811,12 @@
             },
             "DeleteDocument": {
                 "key": "DeleteDocument",
-                "description": "Delete a document"
+                "description": "Delete a document",
+                "attrs": {
+                    "Own": "Own",
+                    "Lower_Rank": "Lower Rank",
+                    "Same_Rank": "Same Rank"
+                }
             }
         },
         "LivemapperService": {
@@ -824,10 +847,6 @@
             "DeleteRole": {
                 "key": "Delete Role",
                 "description": "Delete FiveNet job roles"
-            },
-            "GetPermissions": {
-                "key": "GetPermissions",
-                "description": "Get list of available FiveNet permissions"
             },
             "ViewAuditLog": {
                 "key": "Audit Log",

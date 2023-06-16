@@ -100,6 +100,13 @@ message ViewAuditLogResponse {
   repeated resources.rector.AuditEntry logs = 2;
 }
 
+message UpdateRoleLimitsRequest {
+  uint64 role_id = 1;
+  AttrsUpdate attrs = 2;
+}
+
+message UpdateRoleLimitsResponse {}
+
 service RectorService {
   // @perm
   rpc GetJobProps(GetJobPropsRequest) returns (GetJobPropsResponse);
@@ -118,9 +125,12 @@ service RectorService {
   // @perm
   rpc UpdateRolePerms(UpdateRolePermsRequest) returns (UpdateRolePermsResponse);
 
-  // @perm: Attrs=Jobs/JobList:"config.C.Game.Livemap.Jobs"
+  // @perm: Name=GetRoles
   rpc GetPermissions(GetPermissionsRequest) returns (GetPermissionsResponse);
 
   // @perm
   rpc ViewAuditLog(ViewAuditLogRequest) returns (ViewAuditLogResponse);
+
+  // @perm: Name=SuperUser
+  rpc UpdateRoleLimits(UpdateRoleLimitsRequest) returns (UpdateRoleLimitsResponse);
 }

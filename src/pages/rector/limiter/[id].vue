@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import RoleView from '~/components/rector/RoleView.vue';
+import AttrView from '~/components/rector/AttrView.vue';
 import { TypedRouteFromName } from '~~/.nuxt/typed-router/__router';
 
 useHead({
@@ -22,6 +22,6 @@ const route = useRoute('rector-limiter-id');
 
 <template>
     <div class="w-full">
-        <RoleView :role-id="BigInt(route.params.id)" />
+        <AttrView :role-id="BigInt(route.params.id)" />
     </div>
 </template>

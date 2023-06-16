@@ -4,13 +4,14 @@
 package rector
 
 import (
-	"github.com/galexrt/fivenet/gen/go/proto/resources/permissions"
 	"github.com/galexrt/fivenet/pkg/perms"
 )
 
 var PermsRemap = map[string]string{
 	// Service: RectorService
-	"RectorService/GetRole": "RectorService/GetRoles",
+	"RectorService/GetPermissions":   "RectorService/GetRoles",
+	"RectorService/GetRole":          "RectorService/GetRoles",
+	"RectorService/UpdateRoleLimits": "SuperUser",
 }
 
 func (s *Server) GetPermsRemap() map[string]string {
@@ -20,15 +21,13 @@ func (s *Server) GetPermsRemap() map[string]string {
 const (
 	RectorServicePerm perms.Category = "RectorService"
 
-	RectorServiceCreateRolePerm              perms.Name = "CreateRole"
-	RectorServiceDeleteRolePerm              perms.Name = "DeleteRole"
-	RectorServiceGetJobPropsPerm             perms.Name = "GetJobProps"
-	RectorServiceGetPermissionsPerm          perms.Name = "GetPermissions"
-	RectorServiceGetPermissionsJobsPermField perms.Key  = "Jobs"
-	RectorServiceGetRolesPerm                perms.Name = "GetRoles"
-	RectorServiceSetJobPropsPerm             perms.Name = "SetJobProps"
-	RectorServiceUpdateRolePermsPerm         perms.Name = "UpdateRolePerms"
-	RectorServiceViewAuditLogPerm            perms.Name = "ViewAuditLog"
+	RectorServiceCreateRolePerm      perms.Name = "CreateRole"
+	RectorServiceDeleteRolePerm      perms.Name = "DeleteRole"
+	RectorServiceGetJobPropsPerm     perms.Name = "GetJobProps"
+	RectorServiceGetRolesPerm        perms.Name = "GetRoles"
+	RectorServiceSetJobPropsPerm     perms.Name = "SetJobProps"
+	RectorServiceUpdateRolePermsPerm perms.Name = "UpdateRolePerms"
+	RectorServiceViewAuditLogPerm    perms.Name = "ViewAuditLog"
 )
 
 func init() {
@@ -48,17 +47,6 @@ func init() {
 			Category: RectorServicePerm,
 			Name:     RectorServiceGetJobPropsPerm,
 			Attrs:    []perms.Attr{},
-		},
-		{
-			Category: RectorServicePerm,
-			Name:     RectorServiceGetPermissionsPerm,
-			Attrs: []perms.Attr{
-				{
-					Key:         RectorServiceGetPermissionsJobsPermField,
-					Type:        permissions.JobListAttributeType,
-					ValidValues: "config.C.Game.Livemap.Jobs",
-				},
-			},
 		},
 		{
 			Category: RectorServicePerm,

@@ -82,10 +82,7 @@ func (p *Perms) GetRoles(ctx context.Context, excludeSystem bool) (collections.R
 		)
 
 	if excludeSystem {
-		stmt = stmt.WHERE(jet.AND(
-			tRoles.Job.NOT_EQ(jet.String(DefaultRoleJob)),
-			tRoles.Grade.NOT_EQ(jet.Int32(DefaultRoleJobGrade)),
-		))
+		stmt = stmt.WHERE(tRoles.Job.NOT_EQ(jet.String(DefaultRoleJob)))
 	}
 
 	var dest collections.Roles

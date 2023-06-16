@@ -27,11 +27,15 @@ const emit = defineEmits<{
 
 const states = ref<typeof props.states>(props.states);
 const id = ref<bigint>(props.attribute.attrId);
-const maxValues = props.attribute.maxValues;
 
 const jobGrades = ref<Map<string, JobGrade>>(new Map());
 
-const validValues = ref<AttributeValues | undefined>(props.attribute.validValues);
+const state: AttributeValues = states.value.get(id.value)!;
+const maxValues = ref<AttributeValues | undefined>(props.attribute.maxValues);
+if (!maxValues.value) {
+    maxValues.value = props.attribute.validValues;
+}
+
 if (!states.value.has(id.value)) {
     switch (lowercaseFirstLetter(props.attribute.type)) {
         case 'stringList':
@@ -68,8 +72,6 @@ if (!states.value.has(id.value)) {
             break;
     }
 }
-
-const state: AttributeValues = states.value.get(id.value)!;
 
 async function toggleStringListValue(value: string): Promise<void> {
     if (state.validValues.oneofKind !== 'stringList') {
@@ -147,11 +149,6 @@ onMounted(() => {
             if (state.validValues.oneofKind !== 'jobGradeList') {
                 return;
             }
-            if (maxValues && maxValues.validValues.oneofKind === 'jobGradeList') {
-                if (!maxValues.validValues.jobGradeList.jobs[job.name]) {
-                    return;
-                }
-            }
             jobGrades.value.set(job.name, job.grades[(state.validValues?.jobGradeList.jobs[job.name] ?? 1) - 1]);
         });
     }
@@ -192,13 +189,13 @@ onMounted(() => {
                     <div
                         v-if="
                             state.validValues.oneofKind === 'stringList' &&
-                            validValues?.validValues &&
-                            validValues?.validValues.oneofKind === 'stringList'
+                            maxValues?.validValues &&
+                            maxValues?.validValues.oneofKind === 'stringList'
                         "
                         class="flex flex-row gap-4 flex-wrap"
                     >
                         <div
-                            v-for="value in validValues.validValues.stringList.strings"
+                            v-for="value in maxValues.validValues.stringList.strings"
                             :key="value"
                             class="flex flex-row flex-initial flex-nowrap"
                         >
@@ -218,21 +215,12 @@ onMounted(() => {
                     <div
                         v-else-if="
                             state.validValues.oneofKind === 'jobList' &&
-                            validValues?.validValues &&
-                            validValues?.validValues.oneofKind === 'jobList'
+                            maxValues?.validValues &&
+                            maxValues?.validValues.oneofKind === 'jobList'
                         "
                         class="flex flex-row gap-4 flex-wrap"
                     >
-                        <div
-                            v-for="job in props.jobs.filter(
-                                (j) =>
-                                    validValues?.validValues.oneofKind === 'jobList' &&
-                                    (!validValues?.validValues.jobList?.strings.length ||
-                                        validValues.validValues?.jobList?.strings.includes(j.name))
-                            )"
-                            :key="job.name"
-                            class="flex flex-row flex-initial flex-nowrap"
-                        >
+                        <div v-for="job in props.jobs" :key="job.name" class="flex flex-row flex-initial flex-nowrap">
                             <input
                                 :id="job.name"
                                 :name="job.name"
@@ -247,21 +235,12 @@ onMounted(() => {
                     <div
                         v-else-if="
                             state.validValues.oneofKind === 'jobGradeList' &&
-                            validValues?.validValues &&
-                            validValues.validValues.oneofKind === 'jobGradeList'
+                            maxValues?.validValues &&
+                            maxValues.validValues.oneofKind === 'jobGradeList'
                         "
                         class="flex flex-col gap-2"
                     >
-                        <div
-                            v-for="job in props.jobs.filter(
-                                (j) =>
-                                    maxValues &&
-                                    maxValues.validValues.oneofKind === 'jobGradeList' &&
-                                    maxValues.validValues.jobGradeList.jobs[j.name]
-                            )"
-                            :key="job.name"
-                            class="flex flex-row flex-initial flex-nowrap gap-2"
-                        >
+                        <div v-for="job in props.jobs" :key="job.name" class="flex flex-row flex-initial flex-nowrap gap-2">
                             <input
                                 :id="job.name"
                                 :name="job.name"
@@ -303,12 +282,7 @@ onMounted(() => {
                                         >
                                             <ListboxOption
                                                 as="template"
-                                                v-for="grade in job.grades.filter(
-                                                    (g) =>
-                                                        maxValues &&
-                                                        maxValues.validValues.oneofKind === 'jobGradeList' &&
-                                                        maxValues.validValues.jobGradeList.jobs[job.name] + 1 > g.grade
-                                                )"
+                                                v-for="grade in job.grades"
                                                 :key="grade.grade"
                                                 :value="grade"
                                                 v-slot="{ active, selected }"
@@ -347,7 +321,7 @@ onMounted(() => {
                             </Listbox>
                         </div>
                     </div>
-                    <div v-else>{{ state.validValues.oneofKind }} {{ validValues }}</div>
+                    <div v-else>{{ state.validValues.oneofKind }} {{ maxValues }}</div>
                 </div>
             </DisclosurePanel>
         </Disclosure>

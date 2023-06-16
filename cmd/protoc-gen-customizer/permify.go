@@ -99,6 +99,10 @@ func (p *PermifyModule) generate(f pgs.File) {
 				}
 			}
 
+			if perm.Name == "SuperUser" {
+				continue
+			}
+
 			if _, ok := data.Permissions[sName]; !ok {
 				data.Permissions[sName] = map[string]*Perm{}
 			}
@@ -195,8 +199,8 @@ import (
 var PermsRemap = map[string]string{
 	// Service: {{ $service }}
 	{{ range $key, $target := $remap -}}
-	"{{ $service }}/{{ $key }}": "{{ $service }}/{{ $target }}",
-{{ end }}
+	"{{ $service }}/{{ $key }}": "{{- if ne $target "SuperUser" }}{{ $service }}/{{ end }}{{ $target }}",
+    {{ end }}
 }
 {{ end }}
 

@@ -56,6 +56,7 @@ type Permissions interface {
 	GetAllAttributes(ctx context.Context, job string, grade int32) ([]*permissions.RoleAttribute, error)
 	AddOrUpdateAttributesToRole(ctx context.Context, job string, grade int32, roleId uint64, attrs ...*permissions.RoleAttribute) error
 	RemoveAttributesFromRole(ctx context.Context, roleId uint64, attrs ...*permissions.RoleAttribute) error
+	UpdateRoleAttributeMaxValues(ctx context.Context, roleId uint64, attrId uint64, maxValues *permissions.AttributeValues) error
 
 	Attr(userInfo *userinfo.UserInfo, category Category, name Name, key Key) (any, error)
 
