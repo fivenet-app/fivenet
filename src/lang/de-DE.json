@@ -105,13 +105,17 @@
             "features": {
                 "properties": "Stelle deine Job Eigenschaften ein (e.g., Livemap Marker Farbe).",
                 "jobs": "Richten Sie die Rollen, Job Ränge und Berechtigungen für Ihre Fraktion ein.",
-                "audit_log": "Eine Überprüfung der Schritte, die von Ihren Kollegen unternommen wurden."
+                "audit_log": "Eine Überprüfung der Schritte, die von Ihren Kollegen unternommen wurden.",
+                "limiter": "Begrenzen was Fraktionen sehen können."
             },
             "roles": {
                 "title": "Rollen",
                 "id": {
                     "title": "Rolle anzeigen"
                 }
+            },
+            "limiter": {
+                "title": "Begrenzer"
             }
         },
         "notfound": {
@@ -408,7 +412,6 @@
         "id": "ID",
         "time": "Zeit",
         "service": "Service",
-        "method": "Methode",
         "copy": "Kopieren",
         "prop": "Eigenschaft",
         "theme": "Design",
@@ -454,7 +457,8 @@
         "weight": "Gewichtung",
         "notification": "Benachrichtigung | Benachrichtigungen",
         "received": "Erhalten",
-        "advanced_search": "Erweiterte Suche"
+        "advanced_search": "Erweiterte Suche",
+        "method": "Methode"
     },
     "notifications": {
         "clipboard": {
@@ -671,10 +675,6 @@
     "perms": {
         "AuthService": {
             "category": "Authentifizierung",
-            "SetJob": {
-                "key": "Eigenen Job überschreiben",
-                "description": "Superuser: Ermöglicht das Überschreiben des eigenen Jobs während der Laufzeit."
-            },
             "ChooseCharacter": {
                 "key": "Character Auswählen",
                 "description": "Berechtigung zum Charakterauswahl, um den Zugriff auf FiveNet zu erlauben oder zu verweigern."
@@ -684,15 +684,28 @@
             "category": "Bürger",
             "ListCitizens": {
                 "key": "Bürger auflisten",
-                "description": "Bürger auflisten und suchen"
+                "description": "Bürger auflisten und suchen",
+                "attrs": {
+                    "PhoneNumber": "Telefonnummer",
+                    "Licenses": "Lizenzen",
+                    "UserProps_Wanted": "Gesuchten Status",
+                    "UserProps_Job": "Job"
+                }
             },
             "ListUserActivity": {
                 "key": "Nutzeraktivität auflisten",
-                "description": "Aktivitäten-Feed für Bürgerinformationen"
+                "description": "Aktivitäten-Feed für Bürgerinformationen",
+                "attrs": {
+                    "SourceUser": "Quellbenutzer"
+                }
             },
             "SetUserProps": {
                 "key": "Nutzereigenschaften festlegen",
-                "description": "Bürger-Eigenschaften festlegen (z.B. Fahndungsstatus)"
+                "description": "Bürger-Eigenschaften festlegen (z.B. Fahndungsstatus)",
+                "attrs": {
+                    "Wanted": "Gesuchten Status",
+                    "Job": "Job"
+                }
             },
             "GetUser": {
                 "key": "Nutzer abrufen",
@@ -737,7 +750,12 @@
             },
             "DeleteDocumentComment": {
                 "key": "Dokumenten Kommentare löschen",
-                "description": "Eigenen Dokumentenkommentar löschen"
+                "description": "Eigenen Dokumentenkommentar löschen",
+                "attrs": {
+                    "Own": "Eigene",
+                    "Lower_Rank": "Niedrigerer Rang",
+                    "Same_Rank": "Gleicher Rang"
+                }
             },
             "ListDocuments": {
                 "key": "Dokumenten Suchen und Auflisten",
@@ -765,7 +783,12 @@
             },
             "UpdateDocument": {
                 "key": "Dokument aktualisieren",
-                "description": "Ein vorhandenes Dokument bearbeiten/aktualisieren"
+                "description": "Ein vorhandenes Dokument bearbeiten/aktualisieren",
+                "attrs": {
+                    "Own": "Eigene",
+                    "Lower_Rank": "Niedrigerer Rang",
+                    "Same_Rank": "Gleicher Rang"
+                }
             },
             "CreateDocumentCategory": {
                 "key": "Dokumentenkategorie erstellen",
@@ -789,7 +812,12 @@
             },
             "DeleteDocument": {
                 "key": "Dokumenten Löschung",
-                "description": "Ein Dokument löschen"
+                "description": "Ein Dokument löschen",
+                "attrs": {
+                    "Own": "Eigene",
+                    "Lower_Rank": "Niedrigerer Rang",
+                    "Same_Rank": "Gleicher Rang"
+                }
             }
         },
         "LivemapperService": {
@@ -820,10 +848,6 @@
             "DeleteRole": {
                 "key": "Rollen löschen",
                 "description": "FiveNet-Jobrollen löschen"
-            },
-            "GetPermissions": {
-                "key": "Berechtigungen ansehen können",
-                "description": "Benötigt um Rollen zu erstellen/ bearbeiten zu können."
             },
             "ViewAuditLog": {
                 "key": "Zugriff auf Audit Log",
