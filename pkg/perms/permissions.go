@@ -159,3 +159,25 @@ func (p *Perms) GetPermissionsByIDs(ctx context.Context, ids ...uint64) ([]*perm
 
 	return dest, nil
 }
+
+func (p *Perms) GetPermission(ctx context.Context, category Category, name Name) (*permissions.Permission, error) {
+	tPerms := tPerms.AS("permission")
+
+	stmt := tPerms.
+		SELECT(
+			tPerms.AllColumns,
+		).
+		FROM(tPerms).
+		WHERE(jet.AND(
+			tPerms.Category.EQ(jet.String(string(category))),
+			tPerms.Name.EQ(jet.String(string(name))),
+		))
+
+	var dest permissions.Permission
+	err := stmt.QueryContext(ctx, p.db, &dest)
+	if err != nil {
+		return nil, err
+	}
+
+	return &dest, nil
+}

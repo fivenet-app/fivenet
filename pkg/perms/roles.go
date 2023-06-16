@@ -291,8 +291,10 @@ func (p *Perms) UpdateRolePermissions(ctx context.Context, roleId uint64, perms 
 			tRolePerms.Val.SET(jet.BoolExp(jet.Raw("values(`val`)"))),
 		)
 
-	if _, err := stmt.ExecContext(ctx, p.db); err != nil && !dbutils.IsDuplicateError(err) {
-		return err
+	if _, err := stmt.ExecContext(ctx, p.db); err != nil {
+		if !dbutils.IsDuplicateError(err) {
+			return err
+		}
 	}
 
 	roleCache, ok := p.permsRoleMap.Load(roleId)

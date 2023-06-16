@@ -26,6 +26,7 @@ import (
 type Permissions interface {
 	GetAllPermissions(ctx context.Context) ([]*permissions.Permission, error)
 	GetPermissionsByIDs(ctx context.Context, ids ...uint64) ([]*permissions.Permission, error)
+	GetPermission(ctx context.Context, category Category, name Name) (*permissions.Permission, error)
 	CreatePermission(ctx context.Context, category Category, name Name) (uint64, error)
 	GetPermissionsOfUser(userInfo *userinfo.UserInfo) (collections.Permissions, error)
 
@@ -245,7 +246,7 @@ func (p *Perms) loadAttributes(ctx context.Context) error {
 	}
 
 	for _, attr := range dest {
-		if err := p.addOrUpdateAttributeInMap(attr.ID, attr.ID, attr.Key, attr.Type, attr.ValidValues, attr.DefaultValues); err != nil {
+		if err := p.addOrUpdateAttributeInMap(attr.PermissionID, attr.ID, attr.Key, attr.Type, attr.ValidValues, attr.DefaultValues); err != nil {
 			return err
 		}
 	}

@@ -9,7 +9,7 @@ This folder contains base data for tests related to querying, creating, updating
 ### 1. RBAC
 
 ```console
-mysqldump -h 127.0.0.1 -u fivenet -pchangeme --no-create-info --skip-triggers --complete-insert fivenet fivenet_attrs fivenet_permissions fivenet_role_attrs fivenet_role_permissions fivenet_roles > base_000_rbac.sql
+mysqldump -h 127.0.0.1 -u fivenet -pchangeme --no-create-info --skip-triggers --complete-insert fivenet fivenet_attrs fivenet_permissions fivenet_roles fivenet_role_attrs fivenet_role_permissions > base_000_rbac.sql
 ```
 
 ### 2. Documents

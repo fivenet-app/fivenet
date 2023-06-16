@@ -131,15 +131,20 @@ func TestFullAuthFlow(t *testing.T) {
 	assert.Nil(t, chooseCharRes)
 	proto.CompareGRPCError(t, ErrUnableToChooseChar, err)
 
-	// user-1: Choose valid character but we don't have permissions on the role
-	err = p.UpdateRolePermissions(ctx, 1, perms.AddPerm{
-		Id:  1,
-		Val: false,
-	})
+	role, err := p.GetRoleByJobAndGrade(ctx, "ambulance", 1)
 	assert.NoError(t, err)
-	// Remove perm from ambulance rank 1 role as `user-1` is a medic
-	err = p.UpdateRolePermissions(ctx, 2, perms.AddPerm{
-		Id:  1,
+	assert.NotNil(t, role)
+
+	perm, err := p.GetPermission(ctx, AuthServicePerm, AuthServiceChooseCharacterPerm)
+	assert.NoError(t, err)
+	assert.NotNil(t, perm)
+
+	// user-1: Choose valid character but we don't have permissions on the role
+	err = p.RemovePermissionsFromRole(ctx, role.ID, perm.Id)
+	assert.NoError(t, err)
+	// Disable choose char perm from ambulance rank 1 role, `user-1` is a medic rank 1+
+	err = p.UpdateRolePermissions(ctx, role.ID, perms.AddPerm{
+		Id:  perm.Id,
 		Val: false,
 	})
 	assert.NoError(t, err)
@@ -150,9 +155,8 @@ func TestFullAuthFlow(t *testing.T) {
 	proto.CompareGRPCError(t, ErrUnableToChooseChar, err)
 
 	// user-1: Choose valid character, now we add a permssion
-	// Perm ID 1 is `AuthService.ChooseCharacter`
-	err = p.UpdateRolePermissions(ctx, 2, perms.AddPerm{
-		Id:  1,
+	err = p.UpdateRolePermissions(ctx, role.ID, perms.AddPerm{
+		Id:  perm.Id,
 		Val: true,
 	})
 	assert.NoError(t, err)
