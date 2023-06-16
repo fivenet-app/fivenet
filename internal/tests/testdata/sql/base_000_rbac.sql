@@ -29,9 +29,9 @@ INSERT INTO `fivenet_attrs` VALUES
 (6,'2023-05-17 13:01:11.278',29,'Dispatches','JobList','[\"ambulance\",\"doj\",\"fib\",\"police\"]'),
 (7,'2023-05-17 13:01:11.333',29,'Players','JobList','[\"ambulance\",\"doj\",\"fib\",\"police\"]'),
 (8,'2023-05-17 13:01:11.642',33,'Jobs','JobList','[\"ambulance\",\"doj\",\"fib\",\"police\"]'),
-(9,'2023-05-24 10:58:02.261',15,'Access','StringList','[\"Own\",\"Rank_Lower\",\"Rank_Same\",\"Rank_Higher\"]'),
-(10,'2023-05-24 10:58:02.263',17,'Access','StringList','[\"Own\",\"Rank_Lower\",\"Rank_Same\",\"Rank_Higher\"]'),
-(11,'2023-05-24 10:58:02.265',28,'Access','StringList','[\"Own\",\"Rank_Lower\",\"Rank_Same\",\"Rank_Higher\"]');
+(9,'2023-05-24 10:58:02.261',15,'Access','StringList','[\"Own\",\"Lower_Rank\",\"Same_Rank\"]'),
+(10,'2023-05-24 10:58:02.263',17,'Access','StringList','[\"Own\",\"Lower_Rank\",\"Same_Rank\"]'),
+(11,'2023-05-24 10:58:02.265',28,'Access','StringList','[\"Own\",\"Lower_Rank\",\"Same_Rank\"]');
 /*!40000 ALTER TABLE `fivenet_attrs` ENABLE KEYS */;
 UNLOCK TABLES;
 

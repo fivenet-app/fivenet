@@ -3,7 +3,10 @@
 
 package completor
 
-import "github.com/galexrt/fivenet/pkg/perms"
+import (
+	"github.com/galexrt/fivenet/gen/go/proto/resources/permissions"
+	"github.com/galexrt/fivenet/pkg/perms"
+)
 
 const (
 	CompletorServicePerm perms.Category = "CompletorService"
@@ -28,7 +31,7 @@ func init() {
 			Attrs: []perms.Attr{
 				{
 					Key:  CompletorServiceCompleteDocumentCategoriesJobsPermField,
-					Type: perms.JobListAttributeType,
+					Type: permissions.JobListAttributeType,
 				},
 			},
 		},

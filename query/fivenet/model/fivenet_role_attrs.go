@@ -17,4 +17,5 @@ type FivenetRoleAttrs struct {
 	UpdatedAt *time.Time `json:"updated_at"`
 	AttrID    uint64     `sql:"primary_key" json:"attr_id"`
 	Value     string     `json:"value"`
+	MaxValues *string    `json:"max_values"`
 }

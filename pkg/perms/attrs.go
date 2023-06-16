@@ -45,6 +45,7 @@ func (p *Perms) GetAttribute(category Category, name Name, key Key) (*permission
 		Key:          string(attr.Key),
 		Type:         string(attr.Type),
 		ValidValues:  attr.ValidValues,
+		MaxValues:    nil,
 	}, nil
 }
 
@@ -85,6 +86,7 @@ func (p *Perms) GetAttributeByIDs(ctx context.Context, attrIds ...uint64) ([]*pe
 			Category:     string(attr.Category),
 			Name:         string(attr.Name),
 			ValidValues:  attr.ValidValues,
+			MaxValues:    nil,
 		}
 	}
 
@@ -112,7 +114,7 @@ func (p *Perms) getAttributeFromDatabase(ctx context.Context, permId uint64, key
 	return &dest, nil
 }
 
-func (p *Perms) CreateAttribute(ctx context.Context, permId uint64, key Key, aType AttributeTypes, validValues any) (uint64, error) {
+func (p *Perms) CreateAttribute(ctx context.Context, permId uint64, key Key, aType permissions.AttributeTypes, validValues any, defaultValues any) (uint64, error) {
 	validV := jet.NULL
 	if validValues != nil {
 		out, err := json.MarshalToString(validValues)
@@ -125,18 +127,32 @@ func (p *Perms) CreateAttribute(ctx context.Context, permId uint64, key Key, aTy
 		}
 	}
 
+	defaultV := jet.NULL
+	if defaultValues != nil {
+		out, err := json.MarshalToString(defaultValues)
+		if err != nil {
+			return 0, err
+		}
+
+		if out != "" && out != "null" {
+			defaultV = jet.String(out)
+		}
+	}
+
 	stmt := tAttrs.
 		INSERT(
 			tAttrs.PermissionID,
 			tAttrs.Key,
 			tAttrs.Type,
 			tAttrs.ValidValues,
+			tAttrs.DefaultValues,
 		).
 		VALUES(
 			permId,
 			key,
 			aType,
 			validV,
+			defaultV,
 		)
 
 	res, err := stmt.ExecContext(ctx, p.db)
@@ -150,7 +166,7 @@ func (p *Perms) CreateAttribute(ctx context.Context, permId uint64, key Key, aTy
 			return 0, err
 		}
 
-		if err := p.addOrUpdateAttributeInMap(permId, uint64(attr.ID), key, aType, validValues); err != nil {
+		if err := p.addOrUpdateAttributeInMap(permId, uint64(attr.ID), key, aType, validValues, defaultValues); err != nil {
 			return 0, err
 		}
 
@@ -162,25 +178,41 @@ func (p *Perms) CreateAttribute(ctx context.Context, permId uint64, key Key, aTy
 		return 0, err
 	}
 
-	if err := p.addOrUpdateAttributeInMap(permId, uint64(lastId), key, aType, validValues); err != nil {
+	if err := p.addOrUpdateAttributeInMap(permId, uint64(lastId), key, aType, validValues, defaultValues); err != nil {
 		return 0, err
 	}
 
 	return uint64(lastId), nil
 }
 
-func (p *Perms) addOrUpdateAttributeInMap(permId uint64, attrId uint64, key Key, aType AttributeTypes, validValues any) error {
-	var out string
+func (p *Perms) addOrUpdateAttributeInMap(permId uint64, attrId uint64, key Key, aType permissions.AttributeTypes, validValues any, defaultValues any) error {
+	var validValsOut string
 	var err error
 	// if the valid values is a nil or a string, don't do anything extra just set to an empty string
 	if validValues != nil {
 		vType := reflect.TypeOf(validValues).String()
 		if vType == "string" {
 			if validValues != "" {
-				out = validValues.(string)
+				validValsOut = validValues.(string)
 			}
 		} else {
-			out, err = json.MarshalToString(validValues)
+			validValsOut, err = json.MarshalToString(validValues)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	var defaultValsOut string
+	// if the valid values is a nil or a string, don't do anything extra just set to an empty string
+	if validValues != nil {
+		vType := reflect.TypeOf(validValues).String()
+		if vType == "string" {
+			if validValues != "" {
+				defaultValsOut = validValues.(string)
+			}
+		} else {
+			defaultValsOut, err = json.MarshalToString(validValues)
 			if err != nil {
 				return err
 			}
@@ -188,31 +220,37 @@ func (p *Perms) addOrUpdateAttributeInMap(permId uint64, attrId uint64, key Key,
 	}
 
 	validVals := &permissions.AttributeValues{}
-	if err := p.convertRawValue(validVals, out, aType); err != nil {
+	if err := p.convertRawValue(validVals, validValsOut, aType); err != nil {
 		return err
 	}
 
-	if err := p.updateAttributeInMap(permId, attrId, key, aType, validVals); err != nil {
+	defaultVals := &permissions.AttributeValues{}
+	if err := p.convertRawValue(defaultVals, defaultValsOut, aType); err != nil {
+		return err
+	}
+
+	if err := p.updateAttributeInMap(permId, attrId, key, aType, validVals, defaultVals); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-func (p *Perms) updateAttributeInMap(permId uint64, attrId uint64, key Key, aType AttributeTypes, validValues *permissions.AttributeValues) error {
+func (p *Perms) updateAttributeInMap(permId uint64, attrId uint64, key Key, aType permissions.AttributeTypes, validValues *permissions.AttributeValues, defaultValues *permissions.AttributeValues) error {
 	perm, ok := p.lookupPermByID(permId)
 	if !ok {
 		return fmt.Errorf("no permission found by id")
 	}
 
 	attr := &cacheAttr{
-		ID:           attrId,
-		PermissionID: permId,
-		Category:     perm.Category,
-		Name:         perm.Name,
-		Key:          key,
-		Type:         aType,
-		ValidValues:  validValues,
+		ID:            attrId,
+		PermissionID:  permId,
+		Category:      perm.Category,
+		Name:          perm.Name,
+		Key:           key,
+		Type:          aType,
+		ValidValues:   validValues,
+		DefaultValues: defaultValues,
 	}
 
 	p.attrsMap.Store(attrId, attr)
@@ -223,7 +261,7 @@ func (p *Perms) updateAttributeInMap(permId uint64, attrId uint64, key Key, aTyp
 	return nil
 }
 
-func (p *Perms) UpdateAttribute(ctx context.Context, attrId uint64, permId uint64, key Key, aType AttributeTypes, validValues any) error {
+func (p *Perms) UpdateAttribute(ctx context.Context, attrId uint64, permId uint64, key Key, aType permissions.AttributeTypes, validValues any, defaultValues any) error {
 	validV := jet.StringExp(jet.NULL)
 	if validValues != nil {
 		out, err := json.MarshalToString(validValues)
@@ -236,18 +274,32 @@ func (p *Perms) UpdateAttribute(ctx context.Context, attrId uint64, permId uint6
 		}
 	}
 
+	defaultV := jet.StringExp(jet.NULL)
+	if defaultValues != nil {
+		out, err := json.MarshalToString(defaultValues)
+		if err != nil {
+			return err
+		}
+
+		if strings.ToLower(out) != "null" {
+			defaultV = jet.String(out)
+		}
+	}
+
 	stmt := tAttrs.
 		UPDATE(
 			tAttrs.PermissionID,
 			tAttrs.Key,
 			tAttrs.Type,
 			tAttrs.ValidValues,
+			tAttrs.DefaultValues,
 		).
 		SET(
 			tAttrs.PermissionID.SET(jet.Uint64(permId)),
 			tAttrs.Key.SET(jet.String(string(key))),
 			tAttrs.Type.SET(jet.String(string(aType))),
 			tAttrs.ValidValues.SET(validV),
+			tAttrs.DefaultValues.SET(defaultV),
 		).
 		WHERE(
 			tAttrs.ID.EQ(jet.Uint64(attrId)),
@@ -258,7 +310,7 @@ func (p *Perms) UpdateAttribute(ctx context.Context, attrId uint64, permId uint6
 		return err
 	}
 
-	if err := p.addOrUpdateAttributeInMap(permId, attrId, key, aType, validValues); err != nil {
+	if err := p.addOrUpdateAttributeInMap(permId, attrId, key, aType, validValues, defaultValues); err != nil {
 		return nil
 	}
 
@@ -321,32 +373,32 @@ func (p *Perms) Attr(userInfo *userinfo.UserInfo, category Category, name Name, 
 	}
 
 	switch cached.Type {
-	case StringListAttributeType:
+	case permissions.StringListAttributeType:
 		return cached.Value.GetStringList().Strings, nil
-	case JobListAttributeType:
+	case permissions.JobListAttributeType:
 		return cached.Value.GetJobList().Strings, nil
-	case JobGradeListAttributeType:
+	case permissions.JobGradeListAttributeType:
 		return cached.Value.GetJobGradeList().Jobs, nil
 	}
 
 	return nil, fmt.Errorf("unknown role attribute type")
 }
 
-func (p *Perms) convertAttributeValue(val string, aType AttributeTypes) (any, error) {
-	switch AttributeTypes(aType) {
-	case StringListAttributeType:
+func (p *Perms) convertRawToAttributeValue(val string, aType permissions.AttributeTypes) (any, error) {
+	switch permissions.AttributeTypes(aType) {
+	case permissions.StringListAttributeType:
 		x := StringList{}
 		if err := json.UnmarshalFromString(val, &x); err != nil {
 			return nil, err
 		}
 		return x, nil
-	case JobListAttributeType:
+	case permissions.JobListAttributeType:
 		x := JobList{}
 		if err := json.UnmarshalFromString(val, &x); err != nil {
 			return nil, err
 		}
 		return x, nil
-	case JobGradeListAttributeType:
+	case permissions.JobGradeListAttributeType:
 		x := JobGradeList{}
 		if err := json.UnmarshalFromString(val, &x); err != nil {
 			return nil, err
@@ -361,43 +413,61 @@ func (p *Perms) convertRawToRoleAttributes(in []*permissions.RawRoleAttribute) (
 	res := make([]*permissions.RoleAttribute, len(in))
 	for i := 0; i < len(in); i++ {
 		res[i] = &permissions.RoleAttribute{
-			RoleId:       in[i].RoleId,
-			CreatedAt:    in[i].CreatedAt,
-			AttrId:       in[i].AttrId,
-			PermissionId: in[i].PermissionId,
-			Category:     in[i].Category,
-			Name:         in[i].Name,
-			Key:          in[i].Key,
-			Type:         in[i].Type,
-			Value:        &permissions.AttributeValues{},
-			ValidValues:  &permissions.AttributeValues{},
+			RoleId:        in[i].RoleId,
+			CreatedAt:     in[i].CreatedAt,
+			AttrId:        in[i].AttrId,
+			PermissionId:  in[i].PermissionId,
+			Category:      in[i].Category,
+			Name:          in[i].Name,
+			Key:           in[i].Key,
+			Type:          in[i].Type,
+			Value:         &permissions.AttributeValues{},
+			ValidValues:   &permissions.AttributeValues{},
+			DefaultValues: &permissions.AttributeValues{},
+			MaxValues:     &permissions.AttributeValues{},
 		}
 
-		if err := p.convertRawValue(res[i].Value, in[i].RawValue, AttributeTypes(res[i].Type)); err != nil {
+		if err := p.convertRawValue(res[i].Value, in[i].RawValue, permissions.AttributeTypes(res[i].Type)); err != nil {
 			return nil, err
 		}
 
-		if err := p.convertRawValue(res[i].ValidValues, in[i].RawValidValues, AttributeTypes(res[i].Type)); err != nil {
+		if err := p.convertRawValue(res[i].ValidValues, in[i].RawValidValues, permissions.AttributeTypes(res[i].Type)); err != nil {
 			return nil, err
+		}
+
+		if in[i].RawDefaultValues != nil {
+			if err := p.convertRawValue(res[i].DefaultValues, *in[i].RawDefaultValues, permissions.AttributeTypes(res[i].Type)); err != nil {
+				return nil, err
+			}
+		} else {
+			in[i].RawDefaultValues = nil
+		}
+
+		if in[i].RawMaxValues != nil {
+			if err := p.convertRawValue(res[i].ValidValues, *in[i].RawMaxValues, permissions.AttributeTypes(res[i].Type)); err != nil {
+				return nil, err
+			}
+		} else {
+			in[i].RawMaxValues = nil
 		}
 	}
 
 	return res, nil
 }
 
-func (p *Perms) convertRawValue(targetVal *permissions.AttributeValues, rawVal string, aType AttributeTypes) error {
+func (p *Perms) convertRawValue(targetVal *permissions.AttributeValues, rawVal string, aType permissions.AttributeTypes) error {
 	var val any
 	var err error
 
 	if rawVal != "" {
-		val, err = p.convertAttributeValue(rawVal, AttributeTypes(aType))
+		val, err = p.convertRawToAttributeValue(rawVal, permissions.AttributeTypes(aType))
 		if err != nil {
 			return err
 		}
 	}
 
-	switch AttributeTypes(aType) {
-	case StringListAttributeType:
+	switch permissions.AttributeTypes(aType) {
+	case permissions.StringListAttributeType:
 		pVal := &permissions.AttributeValues_StringList{
 			StringList: &permissions.StringList{},
 		}
@@ -405,7 +475,7 @@ func (p *Perms) convertRawValue(targetVal *permissions.AttributeValues, rawVal s
 			pVal.StringList.Strings = val.(StringList)
 		}
 		targetVal.ValidValues = pVal
-	case JobListAttributeType:
+	case permissions.JobListAttributeType:
 		pVal := &permissions.AttributeValues_JobList{
 			JobList: &permissions.StringList{},
 		}
@@ -413,7 +483,7 @@ func (p *Perms) convertRawValue(targetVal *permissions.AttributeValues, rawVal s
 			pVal.JobList.Strings = val.(JobList)
 		}
 		targetVal.ValidValues = pVal
-	case JobGradeListAttributeType:
+	case permissions.JobGradeListAttributeType:
 		pVal := &permissions.AttributeValues_JobGradeList{
 			JobGradeList: &permissions.JobGradeList{},
 		}
@@ -436,6 +506,7 @@ func (p *Perms) GetAllAttributes(ctx context.Context, job string) ([]*permission
 			tAttrs.Key.AS("rawattribute.key"),
 			tAttrs.Type.AS("rawattribute.type"),
 			tAttrs.ValidValues.AS("rawattribute.valid_values"),
+			tAttrs.DefaultValues.AS("rawattribute.default_values"),
 		).
 		FROM(tAttrs.
 			INNER_JOIN(tPerms,
@@ -489,6 +560,7 @@ func (p *Perms) GetRoleAttributes(job string, grade int32) ([]*permissions.RoleA
 			Type:         string(attr.Type),
 			Value:        v.Value,
 			ValidValues:  attr.ValidValues,
+			MaxValues:    v.Max,
 		})
 	}
 
@@ -538,8 +610,8 @@ func (p *Perms) FlattenRoleAttributes(job string, grade int32) ([]string, error)
 			return nil, fmt.Errorf("no attribute found by id")
 		}
 
-		switch AttributeTypes(rAttr.Type) {
-		case StringListAttributeType:
+		switch permissions.AttributeTypes(rAttr.Type) {
+		case permissions.StringListAttributeType:
 			aKey := BuildGuardWithKey(attr.Category, attr.Name, Key(rAttr.Key))
 			for _, v := range rAttr.Value.GetStringList().Strings {
 				guard := helpers.Guard(aKey + "." + v)
@@ -558,42 +630,33 @@ func (p *Perms) AddOrUpdateAttributesToRole(ctx context.Context, roleId uint64, 
 			var out string
 			var err error
 
-			switch AttributeTypes(attrs[i].Type) {
-			case StringListAttributeType:
-				if attrs[i].Value.GetStringList() == nil || attrs[i].Value.GetStringList().Strings == nil {
-					attrs[i].Value.ValidValues = &permissions.AttributeValues_StringList{
-						StringList: &permissions.StringList{
-							Strings: []string{},
-						},
-					}
-				}
+			attrs[i].Value.Default(permissions.AttributeTypes(attrs[i].Type))
 
+			a, ok := p.lookupAttributeByID(attrs[i].AttrId)
+			if !ok {
+				return fmt.Errorf("unable to add role attribute, didn't find attribute by ID %d", attrs[i].AttrId)
+			}
+
+			ar, ok := p.lookupRoleAttribute(roleId, a.ID)
+			if !ok {
+				ar = &cacheRoleAttr{Max: nil}
+			}
+			if !attrs[i].Value.Check(a.Type, a.ValidValues, ar.Max) {
+				return fmt.Errorf("invalid role attribute value")
+			}
+
+			switch permissions.AttributeTypes(attrs[i].Type) {
+			case permissions.StringListAttributeType:
 				out, err = json.MarshalToString(attrs[i].Value.GetStringList().Strings)
 				if err != nil {
 					return err
 				}
-			case JobListAttributeType:
-				if attrs[i].Value.GetJobList() == nil || attrs[i].Value.GetJobList().Strings == nil {
-					attrs[i].Value.ValidValues = &permissions.AttributeValues_JobList{
-						JobList: &permissions.StringList{
-							Strings: []string{},
-						},
-					}
-				}
-
+			case permissions.JobListAttributeType:
 				out, err = json.MarshalToString(attrs[i].Value.GetJobList().Strings)
 				if err != nil {
 					return err
 				}
-			case JobGradeListAttributeType:
-				if attrs[i].Value.GetJobGradeList() == nil || attrs[i].Value.GetJobGradeList().Jobs == nil {
-					attrs[i].Value.ValidValues = &permissions.AttributeValues_JobGradeList{
-						JobGradeList: &permissions.JobGradeList{
-							Jobs: map[string]int32{},
-						},
-					}
-				}
-
+			case permissions.JobGradeListAttributeType:
 				out, err = json.MarshalToString(attrs[i].Value.GetJobGradeList().Jobs)
 				if err != nil {
 					return err
@@ -631,7 +694,7 @@ func (p *Perms) AddOrUpdateAttributesToRole(ctx context.Context, roleId uint64, 
 			return fmt.Errorf("no attribute by id found")
 		}
 
-		p.updateRoleAttributeInMap(attrs[i].RoleId, attr.PermissionID, attr.ID, attr.Key, attr.Type, attrs[i].Value)
+		p.updateRoleAttributeInMap(attrs[i].RoleId, attr.PermissionID, attr.ID, attr.Key, attr.Type, attrs[i].Value, attrs[i].MaxValues)
 
 	}
 

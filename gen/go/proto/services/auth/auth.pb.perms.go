@@ -3,7 +3,9 @@
 
 package auth
 
-import "github.com/galexrt/fivenet/pkg/perms"
+import (
+	"github.com/galexrt/fivenet/pkg/perms"
+)
 
 const (
 	AuthServicePerm perms.Category = "AuthService"

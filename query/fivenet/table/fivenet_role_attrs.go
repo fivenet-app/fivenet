@@ -22,6 +22,7 @@ type fivenetRoleAttrsTable struct {
 	UpdatedAt mysql.ColumnTimestamp
 	AttrID    mysql.ColumnInteger
 	Value     mysql.ColumnString
+	MaxValues mysql.ColumnString
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -67,8 +68,9 @@ func newFivenetRoleAttrsTableImpl(schemaName, tableName, alias string) fivenetRo
 		UpdatedAtColumn = mysql.TimestampColumn("updated_at")
 		AttrIDColumn    = mysql.IntegerColumn("attr_id")
 		ValueColumn     = mysql.StringColumn("value")
-		allColumns      = mysql.ColumnList{RoleIDColumn, CreatedAtColumn, UpdatedAtColumn, AttrIDColumn, ValueColumn}
-		mutableColumns  = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, ValueColumn}
+		MaxValuesColumn = mysql.StringColumn("max_values")
+		allColumns      = mysql.ColumnList{RoleIDColumn, CreatedAtColumn, UpdatedAtColumn, AttrIDColumn, ValueColumn, MaxValuesColumn}
+		mutableColumns  = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, ValueColumn, MaxValuesColumn}
 	)
 
 	return fivenetRoleAttrsTable{
@@ -80,6 +82,7 @@ func newFivenetRoleAttrsTableImpl(schemaName, tableName, alias string) fivenetRo
 		UpdatedAt: UpdatedAtColumn,
 		AttrID:    AttrIDColumn,
 		Value:     ValueColumn,
+		MaxValues: MaxValuesColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

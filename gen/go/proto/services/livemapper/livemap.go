@@ -133,9 +133,9 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 	if err != nil {
 		return ErrStreamFailed
 	}
-	var playersJobs []string
+	var playersJobs map[string]int32
 	if playersAttr != nil {
-		playersJobs = playersAttr.([]string)
+		playersJobs = playersAttr.(map[string]int32)
 	}
 
 	resp := &StreamResponse{}
@@ -156,12 +156,13 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 		}
 		s.c.EnrichJobName(resp.JobsDispatches[i])
 	}
-	resp.JobsUsers = make([]*jobs.Job, len(playersJobs))
-	for i := 0; i < len(playersJobs); i++ {
-		resp.JobsUsers[i] = &jobs.Job{
-			Name: playersJobs[i],
+	resp.JobsUsers = []*jobs.Job{}
+	for job := range playersJobs {
+		j := &jobs.Job{
+			Name: job,
 		}
-		s.c.EnrichJobName(resp.JobsUsers[i])
+		s.c.EnrichJobName(j)
+		resp.JobsUsers = append(resp.JobsUsers, j)
 	}
 
 	signalCh := s.broker.Subscribe()
@@ -192,16 +193,20 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 	}
 }
 
-func (s *Server) getUserLocations(jobs []string, userId int32, userJob string) ([]*livemap.UserMarker, error) {
+func (s *Server) getUserLocations(jobs map[string]int32, userId int32, userJob string) ([]*livemap.UserMarker, error) {
 	ds := []*livemap.UserMarker{}
 
-	for _, job := range jobs {
+	for job, grade := range jobs {
 		markers, ok := s.usersCache.Get(job)
 		if !ok {
 			continue
 		}
 
-		ds = append(ds, markers...)
+		for i := 0; i < len(markers); i++ {
+			if markers[i].User.JobGrade <= grade {
+				ds = append(ds, markers[i])
+			}
+		}
 	}
 
 	return ds, nil

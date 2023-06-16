@@ -106,13 +106,21 @@ export interface RawRoleAttribute {
      */
     type: string; // @gotags: alias:"type"
     /**
-     * @generated from protobuf field: string raw_value = 9;
+     * @generated from protobuf field: string raw_valid_values = 9;
+     */
+    rawValidValues: string; // @gotags: alias:"valid_values"
+    /**
+     * @generated from protobuf field: optional string raw_default_values = 10;
+     */
+    rawDefaultValues?: string; // @gotags: alias:"default_values"
+    /**
+     * @generated from protobuf field: string raw_value = 11;
      */
     rawValue: string; // @gotags: alias:"value"
     /**
-     * @generated from protobuf field: string raw_valid_values = 10;
+     * @generated from protobuf field: optional string raw_max_values = 12;
      */
-    rawValidValues: string; // @gotags: alias:"valid_values"
+    rawMaxValues?: string; // @gotags: alias:"max_values"
 }
 /**
  * @generated from protobuf message resources.permissions.RoleAttribute
@@ -151,13 +159,21 @@ export interface RoleAttribute {
      */
     type: string; // @gotags: alias:"type"
     /**
+     * @generated from protobuf field: resources.permissions.AttributeValues valid_values = 9;
+     */
+    validValues?: AttributeValues;
+    /**
+     * @generated from protobuf field: optional resources.permissions.AttributeValues default_values = 10;
+     */
+    defaultValues?: AttributeValues;
+    /**
      * @generated from protobuf field: resources.permissions.AttributeValues value = 11;
      */
     value?: AttributeValues;
     /**
-     * @generated from protobuf field: resources.permissions.AttributeValues valid_values = 12;
+     * @generated from protobuf field: optional resources.permissions.AttributeValues max_values = 12;
      */
-    validValues?: AttributeValues;
+    maxValues?: AttributeValues;
 }
 /**
  * @generated from protobuf message resources.permissions.AttributeValues
@@ -256,8 +272,10 @@ class RawRoleAttribute$Type extends MessageType<RawRoleAttribute> {
             { no: 6, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
             { no: 7, name: "key", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
             { no: 8, name: "type", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
-            { no: 9, name: "raw_value", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 10, name: "raw_valid_values", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+            { no: 9, name: "raw_valid_values", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 10, name: "raw_default_values", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 11, name: "raw_value", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 12, name: "raw_max_values", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
         ]);
     }
 }
@@ -277,8 +295,10 @@ class RoleAttribute$Type extends MessageType<RoleAttribute> {
             { no: 6, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
             { no: 7, name: "key", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
             { no: 8, name: "type", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
+            { no: 9, name: "valid_values", kind: "message", T: () => AttributeValues },
+            { no: 10, name: "default_values", kind: "message", T: () => AttributeValues },
             { no: 11, name: "value", kind: "message", T: () => AttributeValues },
-            { no: 12, name: "valid_values", kind: "message", T: () => AttributeValues }
+            { no: 12, name: "max_values", kind: "message", T: () => AttributeValues }
         ]);
     }
 }

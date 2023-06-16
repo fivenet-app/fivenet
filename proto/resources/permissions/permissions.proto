@@ -35,8 +35,10 @@ message RawRoleAttribute {
   string name = 6 [(validate.rules).string.max_len = 255]; // @gotags: alias:"name"
   string key = 7 [(validate.rules).string.max_len = 255]; // @gotags: alias:"key"
   string type = 8 [(validate.rules).string.max_len = 255]; // @gotags: alias:"type"
-  string raw_value = 9; // @gotags: alias:"value"
-  string raw_valid_values = 10;  // @gotags: alias:"valid_values"
+  string raw_valid_values = 9; // @gotags: alias:"valid_values"
+  optional string raw_default_values = 10; // @gotags: alias:"default_values"
+  string raw_value = 11; // @gotags: alias:"value"
+  optional string raw_max_values = 12; // @gotags: alias:"max_values"
 }
 
 message RoleAttribute {
@@ -48,8 +50,10 @@ message RoleAttribute {
   string name = 6 [(validate.rules).string.max_len = 255]; // @gotags: alias:"name"
   string key = 7 [(validate.rules).string.max_len = 255]; // @gotags: alias:"key"
   string type = 8 [(validate.rules).string.max_len = 255]; // @gotags: alias:"type"
+  AttributeValues valid_values = 9;
+  optional AttributeValues default_values = 10;
   AttributeValues value = 11;
-  AttributeValues valid_values = 12;
+  optional AttributeValues max_values = 12;
 }
 
 message AttributeValues {

@@ -3,7 +3,10 @@
 
 package docstore
 
-import "github.com/galexrt/fivenet/pkg/perms"
+import (
+	"github.com/galexrt/fivenet/gen/go/proto/resources/permissions"
+	"github.com/galexrt/fivenet/pkg/perms"
+)
 
 var PermsRemap = map[string]string{
 	// Service: DocStoreService
@@ -82,8 +85,8 @@ func init() {
 			Attrs: []perms.Attr{
 				{
 					Key:         DocStoreServiceDeleteDocumentAccessPermField,
-					Type:        perms.StringListAttributeType,
-					ValidValues: []string{"Own", "Rank_Lower", "Rank_Same", "Rank_Higher"},
+					Type:        permissions.StringListAttributeType,
+					ValidValues: []string{"Own", "Lower_Rank", "Same_Rank"},
 				},
 			},
 		},
@@ -98,8 +101,8 @@ func init() {
 			Attrs: []perms.Attr{
 				{
 					Key:         DocStoreServiceDeleteDocumentCommentAccessPermField,
-					Type:        perms.StringListAttributeType,
-					ValidValues: []string{"Own", "Rank_Lower", "Rank_Same", "Rank_Higher"},
+					Type:        permissions.StringListAttributeType,
+					ValidValues: []string{"Own", "Lower_Rank", "Same_Rank"},
 				},
 			},
 		},
@@ -149,8 +152,8 @@ func init() {
 			Attrs: []perms.Attr{
 				{
 					Key:         DocStoreServiceUpdateDocumentAccessPermField,
-					Type:        perms.StringListAttributeType,
-					ValidValues: []string{"Own", "Rank_Lower", "Rank_Same", "Rank_Higher"},
+					Type:        permissions.StringListAttributeType,
+					ValidValues: []string{"Own", "Lower_Rank", "Same_Rank"},
 				},
 			},
 		},

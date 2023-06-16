@@ -529,9 +529,9 @@ func (m *RawRoleAttribute) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	// no validation rules for RawValue
-
 	// no validation rules for RawValidValues
+
+	// no validation rules for RawValue
 
 	if m.CreatedAt != nil {
 
@@ -564,6 +564,14 @@ func (m *RawRoleAttribute) validate(all bool) error {
 			}
 		}
 
+	}
+
+	if m.RawDefaultValues != nil {
+		// no validation rules for RawDefaultValues
+	}
+
+	if m.RawMaxValues != nil {
+		// no validation rules for RawMaxValues
 	}
 
 	if len(errors) > 0 {
@@ -717,35 +725,6 @@ func (m *RoleAttribute) validate(all bool) error {
 	}
 
 	if all {
-		switch v := interface{}(m.GetValue()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, RoleAttributeValidationError{
-					field:  "Value",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, RoleAttributeValidationError{
-					field:  "Value",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetValue()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return RoleAttributeValidationError{
-				field:  "Value",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
-
-	if all {
 		switch v := interface{}(m.GetValidValues()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
@@ -768,6 +747,35 @@ func (m *RoleAttribute) validate(all bool) error {
 		if err := v.Validate(); err != nil {
 			return RoleAttributeValidationError{
 				field:  "ValidValues",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if all {
+		switch v := interface{}(m.GetValue()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, RoleAttributeValidationError{
+					field:  "Value",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, RoleAttributeValidationError{
+					field:  "Value",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetValue()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return RoleAttributeValidationError{
+				field:  "Value",
 				reason: "embedded message failed validation",
 				cause:  err,
 			}
@@ -799,6 +807,72 @@ func (m *RoleAttribute) validate(all bool) error {
 			if err := v.Validate(); err != nil {
 				return RoleAttributeValidationError{
 					field:  "CreatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.DefaultValues != nil {
+
+		if all {
+			switch v := interface{}(m.GetDefaultValues()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, RoleAttributeValidationError{
+						field:  "DefaultValues",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, RoleAttributeValidationError{
+						field:  "DefaultValues",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetDefaultValues()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return RoleAttributeValidationError{
+					field:  "DefaultValues",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.MaxValues != nil {
+
+		if all {
+			switch v := interface{}(m.GetMaxValues()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, RoleAttributeValidationError{
+						field:  "MaxValues",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, RoleAttributeValidationError{
+						field:  "MaxValues",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetMaxValues()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return RoleAttributeValidationError{
+					field:  "MaxValues",
 					reason: "embedded message failed validation",
 					cause:  err,
 				}

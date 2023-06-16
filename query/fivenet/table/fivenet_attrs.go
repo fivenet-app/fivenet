@@ -17,12 +17,13 @@ type fivenetAttrsTable struct {
 	mysql.Table
 
 	// Columns
-	ID           mysql.ColumnInteger
-	CreatedAt    mysql.ColumnTimestamp
-	PermissionID mysql.ColumnInteger
-	Key          mysql.ColumnString
-	Type         mysql.ColumnString
-	ValidValues  mysql.ColumnString
+	ID            mysql.ColumnInteger
+	CreatedAt     mysql.ColumnTimestamp
+	PermissionID  mysql.ColumnInteger
+	Key           mysql.ColumnString
+	Type          mysql.ColumnString
+	ValidValues   mysql.ColumnString
+	DefaultValues mysql.ColumnString
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -63,26 +64,28 @@ func newFivenetAttrsTable(schemaName, tableName, alias string) *FivenetAttrsTabl
 
 func newFivenetAttrsTableImpl(schemaName, tableName, alias string) fivenetAttrsTable {
 	var (
-		IDColumn           = mysql.IntegerColumn("id")
-		CreatedAtColumn    = mysql.TimestampColumn("created_at")
-		PermissionIDColumn = mysql.IntegerColumn("permission_id")
-		KeyColumn          = mysql.StringColumn("key")
-		TypeColumn         = mysql.StringColumn("type")
-		ValidValuesColumn  = mysql.StringColumn("valid_values")
-		allColumns         = mysql.ColumnList{IDColumn, CreatedAtColumn, PermissionIDColumn, KeyColumn, TypeColumn, ValidValuesColumn}
-		mutableColumns     = mysql.ColumnList{CreatedAtColumn, PermissionIDColumn, KeyColumn, TypeColumn, ValidValuesColumn}
+		IDColumn            = mysql.IntegerColumn("id")
+		CreatedAtColumn     = mysql.TimestampColumn("created_at")
+		PermissionIDColumn  = mysql.IntegerColumn("permission_id")
+		KeyColumn           = mysql.StringColumn("key")
+		TypeColumn          = mysql.StringColumn("type")
+		ValidValuesColumn   = mysql.StringColumn("valid_values")
+		DefaultValuesColumn = mysql.StringColumn("default_values")
+		allColumns          = mysql.ColumnList{IDColumn, CreatedAtColumn, PermissionIDColumn, KeyColumn, TypeColumn, ValidValuesColumn, DefaultValuesColumn}
+		mutableColumns      = mysql.ColumnList{CreatedAtColumn, PermissionIDColumn, KeyColumn, TypeColumn, ValidValuesColumn, DefaultValuesColumn}
 	)
 
 	return fivenetAttrsTable{
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
-		ID:           IDColumn,
-		CreatedAt:    CreatedAtColumn,
-		PermissionID: PermissionIDColumn,
-		Key:          KeyColumn,
-		Type:         TypeColumn,
-		ValidValues:  ValidValuesColumn,
+		ID:            IDColumn,
+		CreatedAt:     CreatedAtColumn,
+		PermissionID:  PermissionIDColumn,
+		Key:           KeyColumn,
+		Type:          TypeColumn,
+		ValidValues:   ValidValuesColumn,
+		DefaultValues: DefaultValuesColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

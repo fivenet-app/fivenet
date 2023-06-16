@@ -101,28 +101,8 @@ func (s *Server) filterAttributes(ctx context.Context, attrs []*permissions.Role
 		}
 		attr := dbAttrs[0]
 
-		// If the attribute valid values is null, nothing to validate
-		if attrs[i].Value != nil && attrs[i].Value.ValidValues != nil && attr.ValidValues != nil {
-			switch perms.AttributeTypes(attr.Type) {
-			case perms.StringListAttributeType:
-				if attr.ValidValues.GetStringList() != nil && attr.ValidValues.GetStringList().Strings != nil {
-					if !perms.ValidateStringList(attrs[i].Value.GetStringList().Strings, attr.ValidValues.GetStringList().Strings) {
-						return fmt.Errorf("invalid option in list")
-					}
-				}
-			case perms.JobListAttributeType:
-				if attr.ValidValues.GetJobList() != nil && attr.ValidValues.GetJobList().Strings != nil {
-					if !perms.ValidateJobList(attrs[i].Value.GetJobList().Strings, attr.ValidValues.GetJobList().Strings) {
-						return fmt.Errorf("invalid job in job list")
-					}
-				}
-			case perms.JobGradeListAttributeType:
-				if attr.ValidValues.GetJobGradeList() != nil && attr.ValidValues.GetJobGradeList().Jobs != nil {
-					if !perms.ValidateJobGradeList(attrs[i].Value.GetJobGradeList().Jobs) {
-						return fmt.Errorf("invalid job/ grade in job grade list")
-					}
-				}
-			}
+		if !attrs[i].Value.Check(permissions.AttributeTypes(attr.Type), attr.ValidValues, attr.MaxValues) {
+			return fmt.Errorf("failed to validate attribute values")
 		}
 
 		attrs[i].AttrId = attr.AttrId

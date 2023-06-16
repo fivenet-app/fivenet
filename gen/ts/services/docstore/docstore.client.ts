@@ -114,13 +114,13 @@ export interface IDocStoreServiceClient {
      */
     createDocument(input: CreateDocumentRequest, options?: RpcOptions): UnaryCall<CreateDocumentRequest, CreateDocumentResponse>;
     /**
-     * @perm: Attrs=Access/StringList:[]string{"Own", "Rank_Lower", "Rank_Same", "Rank_Higher"}
+     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}
      *
      * @generated from protobuf rpc: UpdateDocument(services.docstore.UpdateDocumentRequest) returns (services.docstore.UpdateDocumentResponse);
      */
     updateDocument(input: UpdateDocumentRequest, options?: RpcOptions): UnaryCall<UpdateDocumentRequest, UpdateDocumentResponse>;
     /**
-     * @perm: Attrs=Access/StringList:[]string{"Own", "Rank_Lower", "Rank_Same", "Rank_Higher"}
+     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}
      *
      * @generated from protobuf rpc: DeleteDocument(services.docstore.DeleteDocumentRequest) returns (services.docstore.DeleteDocumentResponse);
      */
@@ -180,7 +180,7 @@ export interface IDocStoreServiceClient {
      */
     editDocumentComment(input: EditDocumentCommentRequest, options?: RpcOptions): UnaryCall<EditDocumentCommentRequest, EditDocumentCommentResponse>;
     /**
-     * @perm: Attrs=Access/StringList:[]string{"Own", "Rank_Lower", "Rank_Same", "Rank_Higher"}
+     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}
      *
      * @generated from protobuf rpc: DeleteDocumentComment(services.docstore.DeleteDocumentCommentRequest) returns (services.docstore.DeleteDocumentCommentResponse);
      */
@@ -310,7 +310,7 @@ export class DocStoreServiceClient implements IDocStoreServiceClient, ServiceInf
         return stackIntercept<CreateDocumentRequest, CreateDocumentResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Attrs=Access/StringList:[]string{"Own", "Rank_Lower", "Rank_Same", "Rank_Higher"}
+     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}
      *
      * @generated from protobuf rpc: UpdateDocument(services.docstore.UpdateDocumentRequest) returns (services.docstore.UpdateDocumentResponse);
      */
@@ -319,7 +319,7 @@ export class DocStoreServiceClient implements IDocStoreServiceClient, ServiceInf
         return stackIntercept<UpdateDocumentRequest, UpdateDocumentResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Attrs=Access/StringList:[]string{"Own", "Rank_Lower", "Rank_Same", "Rank_Higher"}
+     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}
      *
      * @generated from protobuf rpc: DeleteDocument(services.docstore.DeleteDocumentRequest) returns (services.docstore.DeleteDocumentResponse);
      */
@@ -409,7 +409,7 @@ export class DocStoreServiceClient implements IDocStoreServiceClient, ServiceInf
         return stackIntercept<EditDocumentCommentRequest, EditDocumentCommentResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Attrs=Access/StringList:[]string{"Own", "Rank_Lower", "Rank_Same", "Rank_Higher"}
+     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}
      *
      * @generated from protobuf rpc: DeleteDocumentComment(services.docstore.DeleteDocumentCommentRequest) returns (services.docstore.DeleteDocumentCommentResponse);
      */

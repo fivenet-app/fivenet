@@ -3,7 +3,10 @@
 
 package citizenstore
 
-import "github.com/galexrt/fivenet/pkg/perms"
+import (
+	"github.com/galexrt/fivenet/gen/go/proto/resources/permissions"
+	"github.com/galexrt/fivenet/pkg/perms"
+)
 
 const (
 	CitizenStoreServicePerm perms.Category = "CitizenStoreService"
@@ -27,7 +30,7 @@ func init() {
 			Attrs: []perms.Attr{
 				{
 					Key:  CitizenStoreServiceGetUserJobsPermField,
-					Type: perms.JobGradeListAttributeType,
+					Type: permissions.JobGradeListAttributeType,
 				},
 			},
 		},
@@ -37,7 +40,7 @@ func init() {
 			Attrs: []perms.Attr{
 				{
 					Key:         CitizenStoreServiceListCitizensFieldsPermField,
-					Type:        perms.StringListAttributeType,
+					Type:        permissions.StringListAttributeType,
 					ValidValues: []string{"PhoneNumber", "Licenses", "UserProps.Wanted", "UserProps.Job"},
 				},
 			},
@@ -48,7 +51,7 @@ func init() {
 			Attrs: []perms.Attr{
 				{
 					Key:         CitizenStoreServiceListUserActivityFieldsPermField,
-					Type:        perms.StringListAttributeType,
+					Type:        permissions.StringListAttributeType,
 					ValidValues: []string{"SourceUser"},
 				},
 			},
@@ -59,7 +62,7 @@ func init() {
 			Attrs: []perms.Attr{
 				{
 					Key:         CitizenStoreServiceSetUserPropsFieldsPermField,
-					Type:        perms.StringListAttributeType,
+					Type:        permissions.StringListAttributeType,
 					ValidValues: []string{"Wanted", "Job"},
 				},
 			},

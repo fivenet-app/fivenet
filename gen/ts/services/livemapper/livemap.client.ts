@@ -14,7 +14,7 @@ import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
  */
 export interface ILivemapperServiceClient {
     /**
-     * @perm: Attrs=Dispatches/JobList:"config.C.Game.Livemap.Jobs"|Players/JobList:"config.C.Game.Livemap.Jobs"
+     * @perm: Attrs=Dispatches/JobList:"config.C.Game.Livemap.Jobs"|Players/JobGradeList
      *
      * @generated from protobuf rpc: Stream(services.livemapper.StreamRequest) returns (stream services.livemapper.StreamResponse);
      */
@@ -30,7 +30,7 @@ export class LivemapperServiceClient implements ILivemapperServiceClient, Servic
     constructor(private readonly _transport: RpcTransport) {
     }
     /**
-     * @perm: Attrs=Dispatches/JobList:"config.C.Game.Livemap.Jobs"|Players/JobList:"config.C.Game.Livemap.Jobs"
+     * @perm: Attrs=Dispatches/JobList:"config.C.Game.Livemap.Jobs"|Players/JobGradeList
      *
      * @generated from protobuf rpc: Stream(services.livemapper.StreamRequest) returns (stream services.livemapper.StreamResponse);
      */

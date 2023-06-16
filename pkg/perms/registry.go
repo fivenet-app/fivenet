@@ -7,6 +7,7 @@ import (
 	"sync"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/jobs"
+	"github.com/galexrt/fivenet/gen/go/proto/resources/permissions"
 	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/perms/helpers"
 	"github.com/galexrt/fivenet/query/fivenet/model"
@@ -30,10 +31,11 @@ type Perm struct {
 }
 
 type Attr struct {
-	ID          uint64
-	Key         Key
-	Type        AttributeTypes
-	ValidValues any
+	ID            uint64
+	Key           Key
+	Type          permissions.AttributeTypes
+	ValidValues   any
+	DefaultValues any
 }
 
 func AddPermsToList(perms []*Perm) {
@@ -83,7 +85,7 @@ func (p *Perms) Register(defaultRolePerms []string) error {
 				attr.ValidValues = config.C.Game.Livemap.Jobs
 			}
 
-			if _, err := p.createOrUpdateAttribute(ctx, permId, attr.Key, attr.Type, attr.ValidValues); err != nil {
+			if _, err := p.createOrUpdateAttribute(ctx, permId, attr.Key, attr.Type, attr.ValidValues, attr.DefaultValues); err != nil {
 				return err
 			}
 		}
@@ -140,7 +142,7 @@ func (p *Perms) createOrUpdatePermission(ctx context.Context, category Category,
 	return p.CreatePermission(ctx, category, name)
 }
 
-func (p *Perms) createOrUpdateAttribute(ctx context.Context, permId uint64, key Key, aType AttributeTypes, validValues any) (uint64, error) {
+func (p *Perms) createOrUpdateAttribute(ctx context.Context, permId uint64, key Key, aType permissions.AttributeTypes, validValues any, defaultValues any) (uint64, error) {
 	attr, err := p.getAttributeFromDatabase(ctx, permId, key)
 	if err != nil {
 		if !errors.Is(qrm.ErrNoRows, err) {
@@ -157,24 +159,24 @@ func (p *Perms) createOrUpdateAttribute(ctx context.Context, permId uint64, key 
 			}
 		}
 
-		if err := p.addOrUpdateAttributeInMap(permId, attr.ID, key, aType, validValues); err != nil {
+		if err := p.addOrUpdateAttributeInMap(permId, attr.ID, key, aType, validValues, defaultValues); err != nil {
 			return 0, err
 		}
 
 		if attr.Type != string(aType) ||
 			((attr.ValidValues == nil && validVal != nil) || (validVal != nil && attr.ValidValues != nil && validVal != *attr.ValidValues)) {
-			return attr.ID, p.UpdateAttribute(ctx, attr.ID, permId, key, aType, validValues)
+			return attr.ID, p.UpdateAttribute(ctx, attr.ID, permId, key, aType, validValues, defaultValues)
 		}
 
 		return attr.ID, nil
 	}
 
-	attrId, err := p.CreateAttribute(ctx, permId, key, aType, validValues)
+	attrId, err := p.CreateAttribute(ctx, permId, key, aType, validValues, defaultValues)
 	if err != nil {
 		return 0, err
 	}
 
-	if err := p.addOrUpdateAttributeInMap(permId, attrId, key, aType, validValues); err != nil {
+	if err := p.addOrUpdateAttributeInMap(permId, attrId, key, aType, validValues, defaultValues); err != nil {
 		return 0, err
 	}
 

@@ -3,7 +3,9 @@
 
 package dmv
 
-import "github.com/galexrt/fivenet/pkg/perms"
+import (
+	"github.com/galexrt/fivenet/pkg/perms"
+)
 
 const (
 	DMVServicePerm perms.Category = "DMVService"

@@ -271,9 +271,9 @@ service DocStoreService {
   rpc GetDocument(GetDocumentRequest) returns (GetDocumentResponse);
   // @perm
   rpc CreateDocument(CreateDocumentRequest) returns (CreateDocumentResponse);
-  // @perm: Attrs=Access/StringList:[]string{"Own", "Rank_Lower", "Rank_Same", "Rank_Higher"}
+  // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}
   rpc UpdateDocument(UpdateDocumentRequest) returns (UpdateDocumentResponse);
-  // @perm: Attrs=Access/StringList:[]string{"Own", "Rank_Lower", "Rank_Same", "Rank_Higher"}
+  // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}
   rpc DeleteDocument(DeleteDocumentRequest) returns (DeleteDocumentResponse);
 
   // @perm: Name=GetDocument
@@ -295,7 +295,7 @@ service DocStoreService {
   rpc PostDocumentComment(PostDocumentCommentRequest) returns (PostDocumentCommentResponse);
   // @perm: Name=PostDocumentComment
   rpc EditDocumentComment(EditDocumentCommentRequest) returns (EditDocumentCommentResponse);
-  // @perm: Attrs=Access/StringList:[]string{"Own", "Rank_Lower", "Rank_Same", "Rank_Higher"}
+  // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}
   rpc DeleteDocumentComment(DeleteDocumentCommentRequest) returns (DeleteDocumentCommentResponse);
 
   // @perm: Name=GetDocument
