@@ -217,7 +217,7 @@ func (p *Perms) cleanupRoles(ctx context.Context) error {
 		},
 	})
 
-	allRoles, err := p.getRoles(ctx)
+	allRoles, err := p.GetRoles(ctx, false)
 	if err != nil {
 		return err
 	}

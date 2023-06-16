@@ -26,13 +26,14 @@ const emit = defineEmits<{
 
 const states = ref<typeof props.states>(props.states);
 const id = ref<bigint>(props.attribute.attrId);
+const maxValues = props.attribute.maxValues;
 
 const jobGrades = ref<Map<string, JobGrade>>(new Map());
 
 const validValues = ref<AttributeValues | undefined>(props.attribute.validValues);
 if (!states.value.has(id.value)) {
-    switch (props.attribute.type) {
-        case 'StringList':
+    switch (lowercaseFirstLetter(props.attribute.type)) {
+        case 'stringList':
             states.value.set(id.value, {
                 validValues: {
                     oneofKind: 'stringList',
@@ -43,7 +44,7 @@ if (!states.value.has(id.value)) {
             });
             break;
 
-        case 'JobList':
+        case 'jobList':
             states.value.set(id.value, {
                 validValues: {
                     oneofKind: 'jobList',
@@ -54,7 +55,7 @@ if (!states.value.has(id.value)) {
             });
             break;
 
-        case 'JobGradeList':
+        case 'jobGradeList':
             states.value.set(id.value, {
                 validValues: {
                     oneofKind: 'jobGradeList',
@@ -145,17 +146,16 @@ onMounted(() => {
             if (state.validValues.oneofKind !== 'jobGradeList') {
                 return;
             }
+            if (maxValues && maxValues.validValues.oneofKind === 'jobGradeList') {
+                if (!maxValues.validValues.jobGradeList.jobs[job.name]) {
+                    return;
+                }
+            }
             jobGrades.value.set(job.name, job.grades[(state.validValues?.jobGradeList.jobs[job.name] ?? 1) - 1]);
         });
     }
 });
 </script>
-
-<style scoped>
-.upsidedown {
-    transform: rotate(180deg);
-}
-</style>
 
 <template>
     <div v-if="$props.attribute">
@@ -249,7 +249,16 @@ onMounted(() => {
                         "
                         class="flex flex-col gap-2"
                     >
-                        <div v-for="job in props.jobs" :key="job.name" class="flex flex-row flex-initial flex-nowrap gap-2">
+                        <div
+                            v-for="job in props.jobs.filter(
+                                (j) =>
+                                    maxValues &&
+                                    maxValues.validValues.oneofKind === 'jobGradeList' &&
+                                    maxValues.validValues.jobGradeList.jobs[j.name]
+                            )"
+                            :key="job.name"
+                            class="flex flex-row flex-initial flex-nowrap gap-2"
+                        >
                             <input
                                 :id="job.name"
                                 :name="job.name"
@@ -291,7 +300,12 @@ onMounted(() => {
                                         >
                                             <ListboxOption
                                                 as="template"
-                                                v-for="grade in job.grades"
+                                                v-for="grade in job.grades.filter(
+                                                    (g) =>
+                                                        maxValues &&
+                                                        maxValues.validValues.oneofKind === 'jobGradeList' &&
+                                                        maxValues.validValues.jobGradeList.jobs[job.name] + 1 > g.grade
+                                                )"
                                                 :key="grade.grade"
                                                 :value="grade"
                                                 v-slot="{ active, selected }"

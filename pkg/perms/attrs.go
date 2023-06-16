@@ -19,6 +19,10 @@ import (
 	jsoniter "github.com/json-iterator/go"
 )
 
+var (
+	ErrAttrInvalid = errors.New("invalid attributes")
+)
+
 var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 var (
@@ -344,6 +348,35 @@ func (p *Perms) getClosestRoleAttr(job string, grade int32, permId uint64, key K
 	return nil
 }
 
+func (p *Perms) getClosestRoleAttrMaxVals(job string, grade int32, permId uint64, key Key) *permissions.AttributeValues {
+	roleIds, ok := p.lookupRoleIDsForJobUpToGrade(job, grade)
+	if !ok {
+		return nil
+	}
+
+	pAttrs, ok := p.attrsPermsMap.Load(permId)
+	if !ok {
+		return nil
+	}
+	attrId, ok := pAttrs.Load(key)
+	if !ok {
+		return nil
+	}
+
+	for i := len(roleIds) - 1; i >= 0; i-- {
+		val, ok := p.lookupRoleAttribute(roleIds[i], attrId)
+		if !ok {
+			continue
+		}
+
+		if val.Max != nil {
+			return val.Max
+		}
+	}
+
+	return nil
+}
+
 func (p *Perms) Attr(userInfo *userinfo.UserInfo, category Category, name Name, key Key) (any, error) {
 	permId, ok := p.lookupPermIDByGuard(BuildGuard(category, name))
 	if !ok {
@@ -360,10 +393,11 @@ func (p *Perms) Attr(userInfo *userinfo.UserInfo, category Category, name Name, 
 
 		if attr.ValidValues != nil {
 			cached = &cacheRoleAttr{
-				AttrID: attr.ID,
-				Key:    key,
-				Type:   attr.Type,
-				Value:  attr.ValidValues,
+				AttrID:       attr.ID,
+				PermissionID: attr.PermissionID,
+				Key:          key,
+				Type:         attr.Type,
+				Value:        attr.ValidValues,
 			}
 		}
 	}
@@ -409,7 +443,7 @@ func (p *Perms) convertRawToAttributeValue(val string, aType permissions.Attribu
 	return nil, fmt.Errorf("invalid permission attribute type: %q", aType)
 }
 
-func (p *Perms) convertRawToRoleAttributes(in []*permissions.RawRoleAttribute) ([]*permissions.RoleAttribute, error) {
+func (p *Perms) convertRawToRoleAttributes(in []*permissions.RawRoleAttribute, job string, grade int32) ([]*permissions.RoleAttribute, error) {
 	res := make([]*permissions.RoleAttribute, len(in))
 	for i := 0; i < len(in); i++ {
 		res[i] = &permissions.RoleAttribute{
@@ -440,16 +474,10 @@ func (p *Perms) convertRawToRoleAttributes(in []*permissions.RawRoleAttribute) (
 				return nil, err
 			}
 		} else {
-			in[i].RawDefaultValues = nil
+			res[i].DefaultValues = nil
 		}
 
-		if in[i].RawMaxValues != nil {
-			if err := p.convertRawValue(res[i].ValidValues, *in[i].RawMaxValues, permissions.AttributeTypes(res[i].Type)); err != nil {
-				return nil, err
-			}
-		} else {
-			in[i].RawMaxValues = nil
-		}
+		res[i].MaxValues = p.getClosestRoleAttrMaxVals(job, grade, in[i].PermissionId, Key(in[i].Key))
 	}
 
 	return res, nil
@@ -496,17 +524,17 @@ func (p *Perms) convertRawValue(targetVal *permissions.AttributeValues, rawVal s
 	return nil
 }
 
-func (p *Perms) GetAllAttributes(ctx context.Context, job string) ([]*permissions.RoleAttribute, error) {
+func (p *Perms) GetAllAttributes(ctx context.Context, job string, grade int32) ([]*permissions.RoleAttribute, error) {
 	stmt := tAttrs.
 		SELECT(
-			tAttrs.ID.AS("rawattribute.attr_id"),
-			tAttrs.PermissionID.AS("rawattribute.permission_id"),
-			tPerms.Category.AS("rawattribute.category"),
-			tPerms.Name.AS("rawattribute.name"),
-			tAttrs.Key.AS("rawattribute.key"),
-			tAttrs.Type.AS("rawattribute.type"),
-			tAttrs.ValidValues.AS("rawattribute.valid_values"),
-			tAttrs.DefaultValues.AS("rawattribute.default_values"),
+			tAttrs.ID.AS("rawroleattribute.attr_id"),
+			tAttrs.PermissionID.AS("rawroleattribute.permission_id"),
+			tPerms.Category.AS("rawroleattribute.category"),
+			tPerms.Name.AS("rawroleattribute.name"),
+			tAttrs.Key.AS("rawroleattribute.key"),
+			tAttrs.Type.AS("rawroleattribute.type"),
+			tAttrs.ValidValues.AS("rawroleattribute.valid_values"),
+			tAttrs.DefaultValues.AS("rawroleattribute.default_values"),
 		).
 		FROM(tAttrs.
 			INNER_JOIN(tPerms,
@@ -521,7 +549,7 @@ func (p *Perms) GetAllAttributes(ctx context.Context, job string) ([]*permission
 		}
 	}
 
-	return p.convertRawToRoleAttributes(dest)
+	return p.convertRawToRoleAttributes(dest, job, grade)
 }
 
 func (p *Perms) GetRoleAttributes(job string, grade int32) ([]*permissions.RoleAttribute, error) {
@@ -623,7 +651,31 @@ func (p *Perms) FlattenRoleAttributes(job string, grade int32) ([]string, error)
 	return as, nil
 }
 
-func (p *Perms) AddOrUpdateAttributesToRole(ctx context.Context, roleId uint64, attrs ...*permissions.RoleAttribute) error {
+func (p *Perms) AddOrUpdateAttributesToRole(ctx context.Context, job string, grade int32, roleId uint64, attrs ...*permissions.RoleAttribute) error {
+	for i := 0; i < len(attrs); i++ {
+		if attrs[i].Value != nil {
+			attrs[i].Value.Default(permissions.AttributeTypes(attrs[i].Type))
+
+			a, ok := p.lookupAttributeByID(attrs[i].AttrId)
+			if !ok {
+				return fmt.Errorf("no attribute found by id %d", attrs[i].AttrId)
+			}
+
+			max := p.getClosestRoleAttrMaxVals(job, grade, a.PermissionID, a.Key)
+			if !attrs[i].Value.Check(a.Type, a.ValidValues, max) {
+				return ErrAttrInvalid
+			}
+		}
+	}
+
+	if err := p.addOrUpdateAttributesToRole(ctx, roleId, attrs...); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (p *Perms) addOrUpdateAttributesToRole(ctx context.Context, roleId uint64, attrs ...*permissions.RoleAttribute) error {
 	for i := 0; i < len(attrs); i++ {
 		a, ok := p.lookupAttributeByID(attrs[i].AttrId)
 		if !ok {
@@ -635,19 +687,11 @@ func (p *Perms) AddOrUpdateAttributesToRole(ctx context.Context, roleId uint64, 
 			attrs[i].Value = a.DefaultValues
 		}
 
-		if attrs[i].Value == nil {
+		if attrs[i].Value != nil {
 			var out string
 			var err error
 
 			attrs[i].Value.Default(permissions.AttributeTypes(attrs[i].Type))
-
-			ar, ok := p.lookupRoleAttribute(roleId, a.ID)
-			if !ok {
-				ar = &cacheRoleAttr{Max: nil}
-			}
-			if !attrs[i].Value.Check(a.Type, a.ValidValues, ar.Max) {
-				return fmt.Errorf("invalid role attribute value")
-			}
 
 			switch permissions.AttributeTypes(attrs[i].Type) {
 			case permissions.StringListAttributeType:
@@ -699,7 +743,6 @@ func (p *Perms) AddOrUpdateAttributesToRole(ctx context.Context, roleId uint64, 
 		}
 
 		p.updateRoleAttributeInMap(attrs[i].RoleId, attr.PermissionID, attr.ID, attr.Key, attr.Type, attrs[i].Value, attrs[i].MaxValues)
-
 	}
 
 	if err := p.publishMessage(RoleAttrUpdateSubject, RoleAttrUpdateEvent{
@@ -739,4 +782,19 @@ func (p *Perms) RemoveAttributesFromRole(ctx context.Context, roleId uint64, att
 	}
 
 	return nil
+}
+
+func (p *Perms) GetRoleAttributeByID(roleId uint64, attrId uint64) (*permissions.RoleAttribute, bool) {
+	r, ok := p.lookupRoleAttribute(roleId, attrId)
+	if !ok {
+		return nil, false
+	}
+
+	return &permissions.RoleAttribute{
+		RoleId:    roleId,
+		AttrId:    r.AttrID,
+		Key:       string(r.Key),
+		Type:      string(r.Type),
+		MaxValues: r.Max,
+	}, true
 }

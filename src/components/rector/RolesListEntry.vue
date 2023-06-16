@@ -1,11 +1,17 @@
 <script lang="ts" setup>
 import SvgIcon from '@jamescoyle/vue-icon';
 import { mdiEye } from '@mdi/js';
+import { TypedRouteFromName } from '~~/.nuxt/typed-router/__router';
 import { Role } from '~~/gen/ts/resources/permissions/permissions';
 
-defineProps<{
+const props = defineProps<{
     role: Role;
+    to?: TypedRouteFromName<'rector-roles-id' | 'rector-limiter-id'>;
 }>();
+
+if (props.to) {
+    props.to.params!.id = props.role.id.toString();
+}
 </script>
 
 <template>
@@ -16,7 +22,7 @@ defineProps<{
         <td class="whitespace-nowrap py-2 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
             <div class="flex flex-row justify-end">
                 <NuxtLink
-                    :to="{ name: 'rector-roles-id', params: { id: role.id.toString() } }"
+                    :to="to ?? { name: 'rector-roles-id', params: { id: role.id.toString() } }"
                     class="flex-initial text-primary-500 hover:text-primary-400"
                 >
                     <SvgIcon class="h-6 w-6 text-primary-500" aria-hidden="true" type="mdi" :path="mdiEye" />

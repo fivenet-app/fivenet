@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 import SvgIcon from '@jamescoyle/vue-icon';
-import { mdiLock, mdiMagnify, mdiMap, mdiMinus, mdiPlus } from '@mdi/js';
+import { mdiChevronDown, mdiLock, mdiMagnify, mdiMap } from '@mdi/js';
 import '~/assets/css/herofull-pattern.css';
 import Footer from '~/components/partials/Footer.vue';
 import DiscordLogo from '~/components/partials/logos/DiscordLogo.vue';
@@ -153,13 +153,11 @@ const faqs = [
                                         <span class="text-base font-semibold leading-7">{{ faq.question }}</span>
                                         <span class="ml-6 flex h-7 items-center">
                                             <SvgIcon
-                                                v-if="!open"
-                                                class="h-6 w-6"
+                                                :class="[open ? 'upsidedown' : '', 'h-6 w-6 transition-transform']"
                                                 aria-hidden="true"
                                                 type="mdi"
-                                                :path="mdiPlus"
+                                                :path="mdiChevronDown"
                                             />
-                                            <SvgIcon v-else class="h-6 w-6" aria-hidden="true" type="mdi" :path="mdiMinus" />
                                         </span>
                                     </DisclosureButton>
                                 </dt>

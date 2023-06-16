@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 import SvgIcon from '@jamescoyle/vue-icon';
-import { mdiMinus, mdiPlus } from '@mdi/js';
+import { mdiChevronDown } from '@mdi/js';
 import { useClipboard } from '@vueuse/core';
 import ListEntry from '~/components/penaltycalculator/ListEntry.vue';
 import Stats from '~/components/penaltycalculator/Stats.vue';
@@ -926,13 +926,11 @@ onMounted(async () => {
                                         <span class="text-base font-semibold leading-7">{{ ps.name }}</span>
                                         <span class="ml-6 flex h-7 items-center">
                                             <SvgIcon
-                                                v-if="!open"
-                                                class="h-6 w-6"
+                                                :class="[open ? 'upsidedown' : '', 'h-6 w-6 transition-transform']"
                                                 aria-hidden="true"
                                                 type="mdi"
-                                                :path="mdiPlus"
+                                                :path="mdiChevronDown"
                                             />
-                                            <SvgIcon v-else class="h-6 w-6" aria-hidden="true" type="mdi" :path="mdiMinus" />
                                         </span>
                                     </DisclosureButton>
                                 </dt>

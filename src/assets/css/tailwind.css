@@ -35,3 +35,7 @@ body {
 .h-dscreen {
     height: 100dvh;
 }
+
+.upsidedown {
+    transform: rotate(180deg) !important;
+}

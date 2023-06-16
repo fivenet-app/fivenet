@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 import SvgIcon from '@jamescoyle/vue-icon';
-import { mdiCheck, mdiChevronDown, mdiChevronUp, mdiClose, mdiMinus, mdiTrashCan } from '@mdi/js';
+import { mdiCheck, mdiChevronDown, mdiClose, mdiMinus, mdiTrashCan } from '@mdi/js';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import Divider from '~/components/partials/Divider.vue';
 import RoleViewAttr from '~/components/rector/RoleViewAttr.vue';
@@ -93,7 +93,9 @@ async function deleteRole(): Promise<void> {
 async function getPermissions(): Promise<void> {
     return new Promise(async (res, rej) => {
         try {
-            const call = $grpc.getRectorClient().getPermissions({});
+            const call = $grpc.getRectorClient().getPermissions({
+                roleId: props.roleId,
+            });
             const { response } = await call;
 
             permList.value = response.permissions;
@@ -130,83 +132,88 @@ async function updatePermissionState(perm: bigint, state: boolean | undefined): 
 }
 
 async function updatePermissions(): Promise<void> {
-    const currentPermissions = role.value?.permissions.map((p) => p.id) ?? [];
+    return new Promise(async (res, rej) => {
+        const currentPermissions = role.value?.permissions.map((p) => p.id) ?? [];
 
-    const perms: PermsUpdate = {
-        toRemove: [],
-        toUpdate: [],
-    };
-    permStates.value.forEach((state, perm) => {
-        if (state !== undefined) {
-            const p = role.value?.permissions.find((v) => v.id === perm);
+        const perms: PermsUpdate = {
+            toRemove: [],
+            toUpdate: [],
+        };
+        permStates.value.forEach((state, perm) => {
+            if (state !== undefined) {
+                const p = role.value?.permissions.find((v) => v.id === perm);
 
-            if (p?.val !== state) {
-                const item: PermItem = {
-                    id: perm,
-                    val: state,
-                };
+                if (p?.val !== state) {
+                    const item: PermItem = {
+                        id: perm,
+                        val: state,
+                    };
 
-                perms.toUpdate.push(item);
+                    perms.toUpdate.push(item);
+                }
+            } else if (state === undefined && currentPermissions.includes(perm)) {
+                perms.toRemove.push(perm);
             }
-        } else if (state === undefined && currentPermissions.includes(perm)) {
-            perms.toRemove.push(perm);
-        }
-    });
-
-    const attrs: AttrsUpdate = {
-        toRemove: [],
-        toUpdate: [],
-    };
-    attrStates.value.forEach((state, attr) => {
-        if (state !== undefined) {
-            attrs.toUpdate.push({
-                roleId: role.value!.id,
-                attrId: attr,
-                value: state,
-                category: '',
-                key: '',
-                name: '',
-                permissionId: 0n,
-                type: '',
-            });
-        } else if (state === undefined) {
-            attrs.toRemove.push({
-                roleId: role.value!.id,
-                attrId: attr,
-                category: '',
-                key: '',
-                name: '',
-                permissionId: 0n,
-                type: '',
-            });
-        }
-    });
-
-    if (
-        perms.toUpdate.length === 0 &&
-        perms.toRemove.length === 0 &&
-        attrs.toUpdate.length === 0 &&
-        attrs.toRemove.length === 0
-    )
-        return;
-
-    try {
-        await $grpc.getRectorClient().updateRolePerms({
-            id: props.roleId,
-            perms: perms,
-            attrs: attrs,
         });
 
-        notifications.dispatchNotification({
-            title: { key: 'notifications.rector.role_updated.title', parameters: [] },
-            content: { key: 'notifications.rector.role_updated.content', parameters: [] },
-            type: 'success',
+        const attrs: AttrsUpdate = {
+            toRemove: [],
+            toUpdate: [],
+        };
+        attrStates.value.forEach((state, attr) => {
+            if (state !== undefined) {
+                attrs.toUpdate.push({
+                    roleId: role.value!.id,
+                    attrId: attr,
+                    value: state,
+                    category: '',
+                    key: '',
+                    name: '',
+                    permissionId: 0n,
+                    type: '',
+                });
+            } else if (state === undefined) {
+                attrs.toRemove.push({
+                    roleId: role.value!.id,
+                    attrId: attr,
+                    category: '',
+                    key: '',
+                    name: '',
+                    permissionId: 0n,
+                    type: '',
+                });
+            }
         });
 
-        initializeRoleView();
-    } catch (e) {
-        return;
-    }
+        if (
+            perms.toUpdate.length === 0 &&
+            perms.toRemove.length === 0 &&
+            attrs.toUpdate.length === 0 &&
+            attrs.toRemove.length === 0
+        )
+            return res();
+
+        try {
+            await $grpc.getRectorClient().updateRolePerms({
+                id: props.roleId,
+                perms: perms,
+                attrs: attrs,
+            });
+
+            notifications.dispatchNotification({
+                title: { key: 'notifications.rector.role_updated.title', parameters: [] },
+                content: { key: 'notifications.rector.role_updated.content', parameters: [] },
+                type: 'success',
+            });
+
+            initializeRoleView();
+
+            return res();
+        } catch (e) {
+            $grpc.handleError(e as RpcError);
+            return rej(e as RpcError);
+        }
+    });
 }
 
 async function initializeRoleView(): Promise<void> {
@@ -220,12 +227,6 @@ onMounted(async () => {
     initializeRoleView();
 });
 </script>
-
-<style scoped>
-.upsidedown {
-    transform: rotate(180deg);
-}
-</style>
 
 <template>
     <div class="py-4 max-w-7xl mx-auto">
@@ -257,18 +258,10 @@ onMounted(async () => {
                             </span>
                             <span class="ml-6 flex h-7 items-center">
                                 <SvgIcon
-                                    v-if="!open"
-                                    class="h-6 w-6 transition-transform"
+                                    :class="[open ? 'upsidedown' : '', 'h-6 w-6 transition-transform']"
                                     aria-hidden="true"
                                     type="mdi"
                                     :path="mdiChevronDown"
-                                />
-                                <SvgIcon
-                                    v-else
-                                    class="h-6 w-6 transition-transform"
-                                    aria-hidden="true"
-                                    type="mdi"
-                                    :path="mdiChevronUp"
                                 />
                             </span>
                         </DisclosureButton>

@@ -78,35 +78,38 @@ func (x *AttributeValues) Check(aType AttributeTypes, validVals *AttributeValues
 
 	switch AttributeTypes(aType) {
 	case StringListAttributeType:
-		if maxVals != nil {
-			if !ValidateStringList(x.GetStringList().Strings, validVals.GetStringList().Strings, maxVals.GetStringList().Strings) {
-				return false
-			}
-		} else {
-			if !ValidateStringList(x.GetStringList().Strings, validVals.GetStringList().Strings, nil) {
-				return false
-			}
+		var valid []string
+		if validVals != nil {
+			valid = validVals.GetJobList().Strings
 		}
+		var max []string
+		if maxVals != nil {
+			max = maxVals.GetJobList().Strings
+		}
+
+		return ValidateStringList(x.GetStringList().Strings, valid, max)
 	case JobListAttributeType:
-		if maxVals != nil {
-			if !ValidateJobList(x.GetJobList().Strings, validVals.GetJobList().Strings, maxVals.GetJobList().Strings) {
-				return false
-			}
-		} else {
-			if !ValidateJobList(x.GetJobList().Strings, validVals.GetJobList().Strings, nil) {
-				return false
-			}
+		var valid []string
+		if validVals != nil {
+			valid = validVals.GetJobList().Strings
 		}
+		var max []string
+		if maxVals != nil {
+			max = maxVals.GetJobList().Strings
+		}
+
+		return ValidateJobList(x.GetJobList().Strings, valid, max)
 	case JobGradeListAttributeType:
-		if maxVals != nil {
-			if !ValidateJobGradeList(x.GetJobGradeList().Jobs, validVals.GetJobGradeList().Jobs, maxVals.GetJobGradeList().Jobs) {
-				return false
-			}
-		} else {
-			if !ValidateJobGradeList(x.GetJobGradeList().Jobs, validVals.GetJobGradeList().Jobs, nil) {
-				return false
-			}
+		var valid map[string]int32
+		if validVals != nil {
+			valid = validVals.GetJobGradeList().Jobs
 		}
+		var max map[string]int32
+		if maxVals != nil {
+			max = maxVals.GetJobGradeList().Jobs
+		}
+
+		return ValidateJobGradeList(x.GetJobGradeList().Jobs, valid, max)
 	}
 
 	return true
@@ -147,7 +150,6 @@ func ValidateJobList(in []string, validVals []string, maxVals []string) bool {
 }
 
 func ValidateJobGradeList(in map[string]int32, validVals map[string]int32, maxVals map[string]int32) bool {
-	// TODO validate job grade list, valid vals will contain one rank and that is the "highest" it can be
 	for job, grade := range in {
 		if vg, ok := maxVals[job]; ok {
 			if grade > vg {

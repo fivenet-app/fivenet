@@ -70,7 +70,7 @@ func (p *Perms) GetJobRolesUpTo(ctx context.Context, job string, grade int32) (c
 	return dest, nil
 }
 
-func (p *Perms) getRoles(ctx context.Context) (collections.Roles, error) {
+func (p *Perms) GetRoles(ctx context.Context, excludeSystem bool) (collections.Roles, error) {
 	stmt := tRoles.
 		SELECT(
 			tRoles.AllColumns,
@@ -80,6 +80,13 @@ func (p *Perms) getRoles(ctx context.Context) (collections.Roles, error) {
 			tRoles.Job.ASC(),
 			tRoles.Grade.ASC(),
 		)
+
+	if excludeSystem {
+		stmt = stmt.WHERE(jet.AND(
+			tRoles.Job.NOT_EQ(jet.String(DefaultRoleJob)),
+			tRoles.Grade.NOT_EQ(jet.Int32(DefaultRoleJobGrade)),
+		))
+	}
 
 	var dest collections.Roles
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {

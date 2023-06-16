@@ -523,6 +523,10 @@ func (m *GetRolesRequest) validate(all bool) error {
 
 	var errors []error
 
+	if m.All != nil {
+		// no validation rules for All
+	}
+
 	if len(errors) > 0 {
 		return GetRolesRequestMultiError(errors)
 	}
@@ -2123,6 +2127,8 @@ func (m *GetPermissionsRequest) validate(all bool) error {
 	}
 
 	var errors []error
+
+	// no validation rules for RoleId
 
 	if len(errors) > 0 {
 		return GetPermissionsRequestMultiError(errors)

@@ -105,13 +105,17 @@
             "features": {
                 "properties": "Set your job properties (e.g., livemap color).",
                 "jobs": "Setup your factions roles job rank permissions.",
-                "audit_log": "An audit trail of everything your colleagues have done."
+                "audit_log": "An audit trail of everything your colleagues have done.",
+                "limiter": "Limit what factions can see each other."
             },
             "roles": {
                 "title": "Roles",
                 "id": {
                     "title": "View Role"
                 }
+            },
+            "limiter": {
+                "title": "Limiter"
             }
         },
         "notfound": {

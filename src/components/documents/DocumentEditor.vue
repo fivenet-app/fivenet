@@ -765,9 +765,9 @@ async function editForm(): Promise<void> {
                             >
                                 <ListboxOption
                                     as="template"
-                                    v-for="type in openclose"
-                                    :key="type.id?.toString()"
-                                    :value="type"
+                                    v-for="st in openclose"
+                                    :key="st.id?.toString()"
+                                    :value="st"
                                     v-slot="{ active, selected }"
                                 >
                                     <li
@@ -777,7 +777,7 @@ async function editForm(): Promise<void> {
                                         ]"
                                     >
                                         <span :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']">{{
-                                            type.label
+                                            st.label
                                         }}</span>
 
                                         <span

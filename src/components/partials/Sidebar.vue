@@ -507,7 +507,7 @@ const appVersion = activeChar ? ' v' + __APP_VERSION__ + (import.meta.env.DEV ? 
                             </nav>
                         </div>
                         <div class="flex items-center ml-2 space-x-4 sm:ml-6 sm:space-x-6">
-                            <div v-can="'Superuser'">
+                            <div v-can="'SuperUser'">
                                 <SidebarJobSwitcher v-if="activeChar" />
                             </div>
                             <div v-if="activeChar" class="text-sm font-medium text-base-400">

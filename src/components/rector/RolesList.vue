@@ -8,10 +8,15 @@ import DataErrorBlock from '~/components/partials/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';
 import { useAuthStore } from '~/store/auth';
 import { useNotificationsStore } from '~/store/notifications';
+import { TypedRouteFromName } from '~~/.nuxt/typed-router/__router';
 import { JobGrade } from '~~/gen/ts/resources/jobs/jobs';
 import { Role } from '~~/gen/ts/resources/permissions/permissions';
 import DataNoDataBlock from '../partials/DataNoDataBlock.vue';
 import RolesListEntry from './RolesListEntry.vue';
+
+defineProps<{
+    to?: TypedRouteFromName<'rector-roles-id' | 'rector-limiter-id'>;
+}>();
 
 const { $grpc } = useNuxtApp();
 
@@ -20,14 +25,14 @@ const notifications = useNotificationsStore();
 
 const { activeChar } = storeToRefs(authStore);
 
-const { t } = useI18n();
-
 const { data: roles, pending, refresh, error } = useLazyAsyncData('rector-roles', () => getRoles());
 
 async function getRoles(): Promise<Array<Role>> {
     return new Promise(async (res, rej) => {
         try {
-            const call = $grpc.getRectorClient().getRoles({});
+            const call = $grpc.getRectorClient().getRoles({
+                all: true,
+            });
             const { response } = await call;
 
             return res(response.roles);
@@ -227,7 +232,7 @@ onMounted(async () => {
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-base-800">
-                                    <RolesListEntry v-for="role in roles" :role="role" />
+                                    <RolesListEntry v-for="role in roles" :role="role" :to="to" />
                                 </tbody>
                                 <thead>
                                     <tr>

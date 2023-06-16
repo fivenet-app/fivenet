@@ -9,7 +9,9 @@ import (
 	rector "github.com/galexrt/fivenet/gen/go/proto/resources/rector"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/timestamp"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
+	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/galexrt/fivenet/pkg/perms"
+	"github.com/galexrt/fivenet/pkg/perms/collections"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/go-jet/jet/v2/qrm"
 	"google.golang.org/grpc/codes"
@@ -22,12 +24,11 @@ var (
 	ErrNoPermission      = status.Error(codes.PermissionDenied, "errors.RectorService.ErrNoPermission")
 	ErrRoleAlreadyExists = status.Error(codes.InvalidArgument, "errors.RectorService.ErrRoleAlreadyExists")
 	ErrOwnRoleDeletion   = status.Error(codes.InvalidArgument, "errors.RectorService.ErrOwnRoleDeletion")
+	ErrInvalidAttrs      = status.Error(codes.InvalidArgument, "errors.RectorService.ErrInvalidAttrs")
 )
 
 var (
-	ignoredGuardPermissions = []string{
-		"authservice-setjob",
-	}
+	ignoredGuardPermissions = []string{}
 )
 
 func (s *Server) ensureUserCanAccessRole(ctx context.Context, roleId uint64) (*model.FivenetRoles, bool, error) {
@@ -36,6 +37,10 @@ func (s *Server) ensureUserCanAccessRole(ctx context.Context, roleId uint64) (*m
 	role, err := s.p.GetRole(ctx, roleId)
 	if err != nil {
 		return nil, false, err
+	}
+
+	if userInfo.SuperUser {
+		return role, true, nil
 	}
 
 	// Make sure the user is from the job
@@ -95,17 +100,15 @@ func (s *Server) filterAttributes(ctx context.Context, attrs []*permissions.Role
 	}
 
 	for i := 0; i < len(attrs); i++ {
-		dbAttrs, err := s.p.GetAttributeByIDs(ctx, attrs[i].AttrId)
-		if err != nil {
-			return err
+		attr, ok := s.p.GetRoleAttributeByID(attrs[i].RoleId, attrs[i].AttrId)
+		if !ok {
+			return fmt.Errorf("failed to find role %d attribute by id %d", attrs[i].RoleId, attrs[i].AttrId)
 		}
-		attr := dbAttrs[0]
 
 		if !attrs[i].Value.Check(permissions.AttributeTypes(attr.Type), attr.ValidValues, attr.MaxValues) {
 			return fmt.Errorf("failed to validate attribute values")
 		}
 
-		attrs[i].AttrId = attr.AttrId
 		attrs[i].Type = attr.Type
 	}
 
@@ -115,9 +118,19 @@ func (s *Server) filterAttributes(ctx context.Context, attrs []*permissions.Role
 func (s *Server) GetRoles(ctx context.Context, req *GetRolesRequest) (*GetRolesResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	roles, err := s.p.GetJobRolesUpTo(ctx, userInfo.Job, userInfo.JobGrade)
-	if err != nil {
-		return nil, ErrFailedQuery
+	var roles collections.Roles
+	var err error
+
+	if userInfo.SuperUser && req.All != nil && *req.All {
+		roles, err = s.p.GetRoles(ctx, true)
+		if err != nil {
+			return nil, ErrFailedQuery
+		}
+	} else {
+		roles, err = s.p.GetJobRolesUpTo(ctx, userInfo.Job, userInfo.JobGrade)
+		if err != nil {
+			return nil, ErrFailedQuery
+		}
 	}
 
 	resp := &GetRolesResponse{}
@@ -281,12 +294,12 @@ func (s *Server) UpdateRolePerms(ctx context.Context, req *UpdateRolePermsReques
 
 	if req.Perms != nil {
 		if err := s.handlPermissionsUpdate(ctx, role, req.Perms); err != nil {
-			return nil, ErrFailedQuery
+			return nil, ErrInvalidAttrs
 		}
 	}
 	if req.Attrs != nil {
-		if err := s.handleAttributeUpdate(ctx, role, req.Attrs); err != nil {
-			return nil, ErrFailedQuery
+		if err := s.handleAttributeUpdate(ctx, userInfo, role, req.Attrs); err != nil {
+			return nil, ErrInvalidAttrs
 		}
 	}
 
@@ -336,7 +349,7 @@ func (s *Server) handlPermissionsUpdate(ctx context.Context, role *model.Fivenet
 	return nil
 }
 
-func (s *Server) handleAttributeUpdate(ctx context.Context, role *model.FivenetRoles, attrUpdates *AttrsUpdate) error {
+func (s *Server) handleAttributeUpdate(ctx context.Context, userInfo *userinfo.UserInfo, role *model.FivenetRoles, attrUpdates *AttrsUpdate) error {
 	if err := s.filterAttributes(ctx, attrUpdates.ToUpdate); err != nil {
 		return err
 	}
@@ -346,7 +359,7 @@ func (s *Server) handleAttributeUpdate(ctx context.Context, role *model.FivenetR
 	}
 
 	if len(attrUpdates.ToUpdate) > 0 {
-		if err := s.p.AddOrUpdateAttributesToRole(ctx, role.ID, attrUpdates.ToUpdate...); err != nil {
+		if err := s.p.AddOrUpdateAttributesToRole(ctx, userInfo.Job, userInfo.JobGrade, role.ID, attrUpdates.ToUpdate...); err != nil {
 			return err
 		}
 	}
@@ -375,7 +388,16 @@ func (s *Server) GetPermissions(ctx context.Context, req *GetPermissionsRequest)
 	resp := &GetPermissionsResponse{}
 	resp.Permissions = filtered
 
-	attrs, err := s.p.GetAllAttributes(ctx, userInfo.Job)
+	role, err := s.p.GetRole(ctx, req.RoleId)
+	if err != nil {
+		return nil, ErrInvalidRequest
+	}
+
+	if role.Job != userInfo.Job && !userInfo.SuperUser {
+		return nil, ErrInvalidRequest
+	}
+
+	attrs, err := s.p.GetAllAttributes(ctx, userInfo.Job, userInfo.JobGrade)
 	if err != nil {
 		return nil, ErrInvalidRequest
 	}

@@ -10,30 +10,32 @@ export default defineNuxtPlugin((nuxtApp) => {
             return;
         }
 
-        const permissions = useAuthStore().permissions;
-        if (permissions.includes('superuser')) {
-            vnode.el.hidden = false;
-            return;
-        } else {
-            const input = new Array<String>();
-            if (typeof binding.value === 'string') {
-                input.push(binding.value);
-            } else {
-                const vals = binding.value as Array<String>;
-                input.push(...vals);
-            }
-
-            // Iterate over permissions and check in "OR" condition manner
-            for (let index = 0; index < input.length; index++) {
-                const val = slug(input[index] as string);
-                if (permissions && (permissions.includes(val) || val === '')) {
-                    vnode.el.hidden = false;
-                    return;
-                }
-            }
-        }
-
-        vnode.el.hidden = true;
+        vnode.el.hidden = !can(binding.value);
         return;
     });
 });
+
+export function can(perm: string | string[]): boolean {
+    const permissions = useAuthStore().permissions;
+    if (permissions.includes('superuser')) {
+        return true;
+    } else {
+        const input = new Array<String>();
+        if (typeof perm === 'string') {
+            input.push(perm);
+        } else {
+            const vals = perm as Array<String>;
+            input.push(...vals);
+        }
+
+        // Iterate over permissions and check in "OR" condition manner
+        for (let index = 0; index < input.length; index++) {
+            const val = slug(input[index] as string);
+            if (permissions && (permissions.includes(val) || val === '')) {
+                return true;
+            }
+        }
+    }
+
+    return false;
+}

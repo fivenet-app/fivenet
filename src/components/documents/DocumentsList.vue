@@ -10,7 +10,7 @@ import {
     DisclosurePanel,
 } from '@headlessui/vue';
 import SvgIcon from '@jamescoyle/vue-icon';
-import { mdiAccount, mdiBriefcase, mdiCalendar, mdiCheck, mdiChevronDown, mdiChevronUp } from '@mdi/js';
+import { mdiAccount, mdiBriefcase, mdiCalendar, mdiCheck, mdiChevronDown } from '@mdi/js';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { watchDebounced } from '@vueuse/shared';
 import { ref } from 'vue';
@@ -191,13 +191,11 @@ onMounted(async () => {
                                 <span class="text-base-200 leading-7">{{ $t('common.advanced_search') }}</span>
                                 <span class="ml-6 flex h-7 items-center">
                                     <SvgIcon
-                                        v-if="!open"
-                                        class="h-6 w-6"
+                                        :class="[open ? 'upsidedown' : '', 'h-6 w-6 transition-transform']"
                                         aria-hidden="true"
                                         type="mdi"
                                         :path="mdiChevronDown"
                                     />
-                                    <SvgIcon v-else class="h-6 w-6" aria-hidden="true" type="mdi" :path="mdiChevronUp" />
                                 </span>
                             </DisclosureButton>
                             <DisclosurePanel class="mt-2 pr-12">

@@ -29,6 +29,7 @@ type Permissions interface {
 	CreatePermission(ctx context.Context, category Category, name Name) (uint64, error)
 	GetPermissionsOfUser(userInfo *userinfo.UserInfo) (collections.Permissions, error)
 
+	GetRoles(ctx context.Context, excludeSystem bool) (collections.Roles, error)
 	GetJobRoles(ctx context.Context, job string) (collections.Roles, error)
 	GetJobRolesUpTo(ctx context.Context, job string, grade int32) (collections.Roles, error)
 	GetClosestJobRole(ctx context.Context, job string, grade int32) (*model.FivenetRoles, error)
@@ -50,9 +51,10 @@ type Permissions interface {
 	CreateAttribute(ctx context.Context, permId uint64, key Key, aType permissions.AttributeTypes, validValues any, defaultValues any) (uint64, error)
 	UpdateAttribute(ctx context.Context, attributeId uint64, permId uint64, key Key, aType permissions.AttributeTypes, validValues any, defaultValues any) error
 	GetRoleAttributes(job string, grade int32) ([]*permissions.RoleAttribute, error)
+	GetRoleAttributeByID(roleId uint64, attrId uint64) (*permissions.RoleAttribute, bool)
 	FlattenRoleAttributes(job string, grade int32) ([]string, error)
-	GetAllAttributes(ctx context.Context, job string) ([]*permissions.RoleAttribute, error)
-	AddOrUpdateAttributesToRole(ctx context.Context, roleId uint64, attrs ...*permissions.RoleAttribute) error
+	GetAllAttributes(ctx context.Context, job string, grade int32) ([]*permissions.RoleAttribute, error)
+	AddOrUpdateAttributesToRole(ctx context.Context, job string, grade int32, roleId uint64, attrs ...*permissions.RoleAttribute) error
 	RemoveAttributesFromRole(ctx context.Context, roleId uint64, attrs ...*permissions.RoleAttribute) error
 
 	Attr(userInfo *userinfo.UserInfo, category Category, name Name, key Key) (any, error)
@@ -153,11 +155,12 @@ type cacheAttr struct {
 }
 
 type cacheRoleAttr struct {
-	AttrID uint64
-	Key    Key
-	Type   permissions.AttributeTypes
-	Value  *permissions.AttributeValues
-	Max    *permissions.AttributeValues
+	AttrID       uint64
+	PermissionID uint64
+	Key          Key
+	Type         permissions.AttributeTypes
+	Value        *permissions.AttributeValues
+	Max          *permissions.AttributeValues
 }
 
 func (p *Perms) load() error {
@@ -362,7 +365,7 @@ func (p *Perms) loadRoleAttributes(ctx context.Context, roleId uint64) error {
 
 		if err := p.addOrUpdateRoleAttributeInMap(ra.RoleID, ra.PermissionID, ra.AttrID, ra.Key, ra.Type, ra.Value, ra.MaxValues); err != nil {
 			// Reset the attribute value to null/ empty
-			if err := p.AddOrUpdateAttributesToRole(p.ctx, ra.RoleID, &permissions.RoleAttribute{
+			if err := p.addOrUpdateAttributesToRole(p.ctx, ra.RoleID, &permissions.RoleAttribute{
 				RoleId: ra.RoleID,
 				AttrId: ra.AttrID,
 				Value:  a.DefaultValues,
@@ -381,9 +384,12 @@ func (p *Perms) addOrUpdateRoleAttributeInMap(roleId uint64, permId uint64, attr
 		return err
 	}
 
-	max := &permissions.AttributeValues{}
-	if err := p.convertRawValue(max, rawMax, aType); err != nil {
-		return err
+	var max *permissions.AttributeValues
+	if rawMax != "" {
+		max = &permissions.AttributeValues{}
+		if err := p.convertRawValue(max, rawMax, aType); err != nil {
+			return err
+		}
 	}
 
 	p.updateRoleAttributeInMap(roleId, permId, attrId, key, aType, val, max)
@@ -394,11 +400,12 @@ func (p *Perms) addOrUpdateRoleAttributeInMap(roleId uint64, permId uint64, attr
 func (p *Perms) updateRoleAttributeInMap(roleId uint64, permId uint64, attrId uint64, key Key, aType permissions.AttributeTypes, value *permissions.AttributeValues, max *permissions.AttributeValues) {
 	attrMap, _ := p.attrsRoleMap.LoadOrStore(roleId, &syncx.Map[uint64, *cacheRoleAttr]{})
 	attrMap.Store(attrId, &cacheRoleAttr{
-		AttrID: attrId,
-		Key:    key,
-		Type:   aType,
-		Value:  value,
-		Max:    max,
+		AttrID:       attrId,
+		PermissionID: permId,
+		Key:          key,
+		Type:         aType,
+		Value:        value,
+		Max:          max,
 	})
 }
 

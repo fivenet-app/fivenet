@@ -3,7 +3,7 @@ import SvgIcon from '@jamescoyle/vue-icon';
 import { mdiChevronRight } from '@mdi/js';
 import { CardElement } from '~/utils/types';
 
-defineProps<{
+const props = defineProps<{
     items: CardElement[];
     showIcon?: boolean;
 }>();

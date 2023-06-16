@@ -22,7 +22,9 @@ message SetJobPropsRequest {
 
 message SetJobPropsResponse {}
 
-message GetRolesRequest {}
+message GetRolesRequest {
+  optional bool all = 1;
+}
 
 message GetRolesResponse {
   repeated resources.permissions.Role roles = 1;
@@ -74,7 +76,9 @@ message AttrsUpdate {
 
 message UpdateRolePermsResponse {}
 
-message GetPermissionsRequest {}
+message GetPermissionsRequest {
+  uint64 role_id = 1;
+}
 
 message GetPermissionsResponse {
   repeated resources.permissions.Permission permissions = 1;
@@ -119,6 +123,4 @@ service RectorService {
 
   // @perm
   rpc ViewAuditLog(ViewAuditLogRequest) returns (ViewAuditLogResponse);
-
-  // TODO add "ACP" methods
 }

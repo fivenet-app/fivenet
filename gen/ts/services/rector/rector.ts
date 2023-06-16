@@ -43,6 +43,10 @@ export interface SetJobPropsResponse {
  * @generated from protobuf message services.rector.GetRolesRequest
  */
 export interface GetRolesRequest {
+    /**
+     * @generated from protobuf field: optional bool all = 1;
+     */
+    all?: boolean;
 }
 /**
  * @generated from protobuf message services.rector.GetRolesResponse
@@ -172,6 +176,10 @@ export interface UpdateRolePermsResponse {
  * @generated from protobuf message services.rector.GetPermissionsRequest
  */
 export interface GetPermissionsRequest {
+    /**
+     * @generated from protobuf field: uint64 role_id = 1;
+     */
+    roleId: bigint;
 }
 /**
  * @generated from protobuf message services.rector.GetPermissionsResponse
@@ -279,7 +287,9 @@ export const SetJobPropsResponse = new SetJobPropsResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class GetRolesRequest$Type extends MessageType<GetRolesRequest> {
     constructor() {
-        super("services.rector.GetRolesRequest", []);
+        super("services.rector.GetRolesRequest", [
+            { no: 1, name: "all", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
+        ]);
     }
 }
 /**
@@ -435,7 +445,9 @@ export const UpdateRolePermsResponse = new UpdateRolePermsResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class GetPermissionsRequest$Type extends MessageType<GetPermissionsRequest> {
     constructor() {
-        super("services.rector.GetPermissionsRequest", []);
+        super("services.rector.GetPermissionsRequest", [
+            { no: 1, name: "role_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+        ]);
     }
 }
 /**
