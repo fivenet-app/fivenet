@@ -107,7 +107,7 @@ func (s *Server) ListDocuments(ctx context.Context, req *ListDocumentsRequest) (
 
 	countStmt := s.listDocumentsQuery(
 		condition, jet.ProjectionList{jet.COUNT(jet.DISTINCT(tDocs.ID)).AS("datacount.totalcount")},
-		-1, userInfo)
+		1, userInfo)
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
@@ -133,7 +133,9 @@ func (s *Server) ListDocuments(ctx context.Context, req *ListDocumentsRequest) (
 	}
 
 	for i := 0; i < len(resp.Documents); i++ {
-		s.c.EnrichJobInfo(resp.Documents[i].Creator)
+		if resp.Documents[i].Creator != nil {
+			s.c.EnrichJobInfo(resp.Documents[i].Creator)
+		}
 	}
 
 	resp.Pagination.Update(count.TotalCount, len(resp.Documents))
@@ -197,7 +199,7 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 func (s *Server) getDocument(ctx context.Context, condition jet.BoolExpression, userInfo *userinfo.UserInfo) (*documents.Document, error) {
 	var doc documents.Document
 
-	stmt := s.getDocumentsQuery(condition, nil, -1, userInfo).
+	stmt := s.getDocumentsQuery(condition, nil, userInfo).
 		LIMIT(1)
 
 	if err := stmt.QueryContext(ctx, s.db, &doc); err != nil {
@@ -233,19 +235,19 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
-	docs := table.FivenetDocuments
-	stmt := docs.
+	tDocs := table.FivenetDocuments
+	stmt := tDocs.
 		INSERT(
-			docs.CategoryID,
-			docs.Title,
-			docs.Content,
-			docs.ContentType,
-			docs.Data,
-			docs.CreatorID,
-			docs.CreatorJob,
-			docs.State,
-			docs.Closed,
-			docs.Public,
+			tDocs.CategoryID,
+			tDocs.Title,
+			tDocs.Content,
+			tDocs.ContentType,
+			tDocs.Data,
+			tDocs.CreatorID,
+			tDocs.CreatorJob,
+			tDocs.State,
+			tDocs.Closed,
+			tDocs.Public,
 		).
 		VALUES(
 			req.CategoryId,

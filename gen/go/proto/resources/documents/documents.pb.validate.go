@@ -662,6 +662,28 @@ func (m *DocumentShort) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	if _, ok := DOC_CONTENT_TYPE_name[int32(m.GetContentType())]; !ok {
+		err := DocumentShortValidationError{
+			field:  "ContentType",
+			reason: "value must be one of the defined enum values",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(m.GetContent()) > 1024 {
+		err := DocumentShortValidationError{
+			field:  "Content",
+			reason: "value length must be at most 1024 bytes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if utf8.RuneCountInString(m.GetState()) > 24 {
 		err := DocumentShortValidationError{
 			field:  "State",

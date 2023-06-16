@@ -172,9 +172,13 @@ func (s *Server) GetDocumentReferences(ctx context.Context, req *GetDocumentRefe
 	}
 
 	for i := 0; i < len(dest); i++ {
-		s.c.EnrichJobInfo(dest[i].Creator)
+		if dest[i].Creator != nil {
+			s.c.EnrichJobInfo(dest[i].Creator)
+		}
 		s.c.EnrichDocumentCategory(dest[i].SourceDocument)
-		s.c.EnrichJobInfo(dest[i].SourceDocument.Creator)
+		if dest[i].SourceDocument.Creator != nil {
+			s.c.EnrichJobInfo(dest[i].SourceDocument.Creator)
+		}
 		s.c.EnrichDocumentCategory(dest[i].TargetDocument)
 	}
 

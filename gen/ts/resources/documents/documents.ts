@@ -129,19 +129,27 @@ export interface DocumentShort {
      */
     title: string; // @gotags: alias:"title"
     /**
-     * @generated from protobuf field: optional int32 creator_id = 7;
+     * @generated from protobuf field: resources.documents.DOC_CONTENT_TYPE content_type = 7;
+     */
+    contentType: DOC_CONTENT_TYPE; // @gotags: alias:"content_type"
+    /**
+     * @generated from protobuf field: string content = 8;
+     */
+    content: string; // @gotags: alias:"content"
+    /**
+     * @generated from protobuf field: optional int32 creator_id = 9;
      */
     creatorId?: number; // @gotags: alias:"creator_id"
     /**
-     * @generated from protobuf field: optional resources.users.UserShort creator = 8;
+     * @generated from protobuf field: optional resources.users.UserShort creator = 10;
      */
     creator?: UserShort; // @gotags: alias:"creator"
     /**
-     * @generated from protobuf field: string state = 9;
+     * @generated from protobuf field: string state = 11;
      */
     state: string; // @gotags: alias:"state"
     /**
-     * @generated from protobuf field: bool closed = 10;
+     * @generated from protobuf field: bool closed = 12;
      */
     closed: boolean; // @gotags: alias:"closed"
 }
@@ -418,10 +426,12 @@ class DocumentShort$Type extends MessageType<DocumentShort> {
             { no: 4, name: "category_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
             { no: 5, name: "category", kind: "message", T: () => DocumentCategory },
             { no: 6, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3" } } } },
-            { no: 7, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
-            { no: 8, name: "creator", kind: "message", T: () => UserShort },
-            { no: 9, name: "state", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "24" } } } },
-            { no: 10, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+            { no: 7, name: "content_type", kind: "enum", T: () => ["resources.documents.DOC_CONTENT_TYPE", DOC_CONTENT_TYPE], options: { "validate.rules": { enum: { definedOnly: true } } } },
+            { no: 8, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "1024" } } } },
+            { no: 9, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 10, name: "creator", kind: "message", T: () => UserShort },
+            { no: 11, name: "state", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "24" } } } },
+            { no: 12, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
 }
