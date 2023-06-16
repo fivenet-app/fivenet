@@ -412,7 +412,6 @@
         "id": "ID",
         "time": "Time",
         "service": "Service",
-        "method": "Method",
         "copy": "Copy",
         "prop": "Prop",
         "theme": "Theme",
@@ -458,7 +457,8 @@
         "weight": "Weight",
         "notification": "Notification | Notifications",
         "received": "Received",
-        "advanced_search": "Advanced Search"
+        "advanced_search": "Advanced Search",
+        "method": "Method"
     },
     "notifications": {
         "clipboard": {
@@ -787,7 +787,8 @@
                 "attrs": {
                     "Own": "Own",
                     "Lower_Rank": "Lower Rank",
-                    "Same_Rank": "Same Rank"}
+                    "Same_Rank": "Same Rank"
+                }
             },
             "CreateDocumentCategory": {
                 "key": "CreateDocumentCategory",
