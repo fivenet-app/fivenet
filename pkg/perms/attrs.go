@@ -77,7 +77,7 @@ func (p *Perms) GetAttributeByIDs(ctx context.Context, attrIds ...uint64) ([]*pe
 
 	attrs := make([]*permissions.RoleAttribute, len(dest))
 	for i := 0; i < len(dest); i++ {
-		attr, ok := p.lookupAttributeByID(dest[i].ID)
+		attr, ok := p.LookupAttributeByID(dest[i].ID)
 		if !ok {
 			return nil, fmt.Errorf("no attribute found by id")
 		}
@@ -348,7 +348,7 @@ func (p *Perms) getClosestRoleAttr(job string, grade int32, permId uint64, key K
 	return nil
 }
 
-func (p *Perms) getClosestRoleAttrMaxVals(job string, grade int32, permId uint64, key Key) *permissions.AttributeValues {
+func (p *Perms) GetClosestRoleAttrMaxVals(job string, grade int32, permId uint64, key Key) *permissions.AttributeValues {
 	roleIds, ok := p.lookupRoleIDsForJobUpToGrade(job, grade)
 	if !ok {
 		return nil
@@ -477,7 +477,7 @@ func (p *Perms) convertRawToRoleAttributes(in []*permissions.RawRoleAttribute, j
 			res[i].DefaultValues = nil
 		}
 
-		res[i].MaxValues = p.getClosestRoleAttrMaxVals(job, grade, in[i].PermissionId, Key(in[i].Key))
+		res[i].MaxValues = p.GetClosestRoleAttrMaxVals(job, grade, in[i].PermissionId, Key(in[i].Key))
 		if res[i].MaxValues == nil {
 			res[i].MaxValues = &permissions.AttributeValues{}
 			res[i].MaxValues.Default(permissions.AttributeTypes(res[i].Type))
@@ -572,7 +572,7 @@ func (p *Perms) GetRoleAttributes(job string, grade int32) ([]*permissions.RoleA
 
 	dest := []*permissions.RoleAttribute{}
 	for _, attrId := range as.Keys() {
-		attr, ok := p.lookupAttributeByID(attrId)
+		attr, ok := p.LookupAttributeByID(attrId)
 		if !ok {
 			return nil, fmt.Errorf("no attribute found by id for role")
 		}
@@ -637,7 +637,7 @@ func (p *Perms) FlattenRoleAttributes(job string, grade int32) ([]string, error)
 
 	as := []string{}
 	for _, rAttr := range attrs {
-		attr, ok := p.lookupAttributeByID(rAttr.AttrID)
+		attr, ok := p.LookupAttributeByID(rAttr.AttrID)
 		if !ok {
 			return nil, fmt.Errorf("no attribute found by id")
 		}
@@ -660,12 +660,12 @@ func (p *Perms) AddOrUpdateAttributesToRole(ctx context.Context, job string, gra
 		if attrs[i].Value != nil {
 			attrs[i].Value.Default(permissions.AttributeTypes(attrs[i].Type))
 
-			a, ok := p.lookupAttributeByID(attrs[i].AttrId)
+			a, ok := p.LookupAttributeByID(attrs[i].AttrId)
 			if !ok {
 				return fmt.Errorf("no attribute found by id %d", attrs[i].AttrId)
 			}
 
-			max := p.getClosestRoleAttrMaxVals(job, grade, a.PermissionID, a.Key)
+			max := p.GetClosestRoleAttrMaxVals(job, grade, a.PermissionID, a.Key)
 			if !attrs[i].Value.Check(a.Type, a.ValidValues, max) {
 				return ErrAttrInvalid
 			}
@@ -681,7 +681,7 @@ func (p *Perms) AddOrUpdateAttributesToRole(ctx context.Context, job string, gra
 
 func (p *Perms) addOrUpdateAttributesToRole(ctx context.Context, roleId uint64, attrs ...*permissions.RoleAttribute) error {
 	for i := 0; i < len(attrs); i++ {
-		a, ok := p.lookupAttributeByID(attrs[i].AttrId)
+		a, ok := p.LookupAttributeByID(attrs[i].AttrId)
 		if !ok {
 			return fmt.Errorf("unable to add role attribute, didn't find attribute by ID %d", attrs[i].AttrId)
 		}
@@ -741,7 +741,7 @@ func (p *Perms) addOrUpdateAttributesToRole(ctx context.Context, roleId uint64, 
 			}
 		}
 
-		attr, ok := p.lookupAttributeByID(attrs[i].AttrId)
+		attr, ok := p.LookupAttributeByID(attrs[i].AttrId)
 		if !ok {
 			return fmt.Errorf("no attribute by id found")
 		}
@@ -804,7 +804,7 @@ func (p *Perms) GetRoleAttributeByID(roleId uint64, attrId uint64) (*permissions
 }
 
 func (p *Perms) UpdateRoleAttributeMaxValues(ctx context.Context, roleId uint64, attrId uint64, maxValues *permissions.AttributeValues) error {
-	a, ok := p.lookupAttributeByID(attrId)
+	a, ok := p.LookupAttributeByID(attrId)
 	if !ok {
 		return fmt.Errorf("unable to update role attribute max values, didn't find attribute by ID %d", attrId)
 	}

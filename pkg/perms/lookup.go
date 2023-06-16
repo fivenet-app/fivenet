@@ -4,7 +4,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/utils"
 )
 
-func (p *Perms) lookupAttributeByID(id uint64) (*cacheAttr, bool) {
+func (p *Perms) LookupAttributeByID(id uint64) (*cacheAttr, bool) {
 	return p.attrsMap.Load(id)
 }
 
@@ -19,7 +19,7 @@ func (p *Perms) lookupAttributeByPermID(id uint64, key Key) (*cacheAttr, bool) {
 		return nil, false
 	}
 
-	return p.lookupAttributeByID(aId)
+	return p.LookupAttributeByID(aId)
 }
 
 func (p *Perms) lookupRoleAttribute(roleId uint64, attrId uint64) (*cacheRoleAttr, bool) {

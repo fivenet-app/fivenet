@@ -8,5 +8,14 @@ title: User Activity
     * `UserProps.Job`
 * External
     * `Licenses`
-    * `Fines`
+        * Add
+        * Remove
+    * `Billing.Fines`
+        * Sent
+        * Paid
+        * Removed
+    * `Billing.Bills`
+        * UNUSED
     * `Jail`
+        * Jailed
+        * Unjailed

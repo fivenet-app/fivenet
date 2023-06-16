@@ -314,7 +314,7 @@ onMounted(async () => {
                                     <RoleViewAttr
                                         v-for="attr in attrList.filter((a) => a.permissionId === perm.id)"
                                         :attribute="attr"
-                                        :perm="perm"
+                                        :permission="perm"
                                         v-model:states="attrStates"
                                         :disabled="permStates.get(perm.id) !== true"
                                         :jobs="jobs"

@@ -94,7 +94,7 @@ func (s *Server) filterPermissionIDs(ctx context.Context, ids []uint64) ([]uint6
 	return permIds, nil
 }
 
-func (s *Server) filterAttributes(ctx context.Context, attrs []*permissions.RoleAttribute) error {
+func (s *Server) filterAttributes(ctx context.Context, userInfo *userinfo.UserInfo, attrs []*permissions.RoleAttribute) error {
 	if len(attrs) == 0 {
 		return nil
 	}
@@ -102,10 +102,16 @@ func (s *Server) filterAttributes(ctx context.Context, attrs []*permissions.Role
 	for i := 0; i < len(attrs); i++ {
 		attr, ok := s.p.GetRoleAttributeByID(attrs[i].RoleId, attrs[i].AttrId)
 		if !ok {
-			return fmt.Errorf("failed to find role %d attribute by id %d", attrs[i].RoleId, attrs[i].AttrId)
+			aAttr, ok := s.p.LookupAttributeByID(attrs[i].AttrId)
+			if !ok {
+				return fmt.Errorf("failed to find attribute by ID %d for role %d during filter", attrs[i].AttrId, attrs[i].RoleId)
+			}
+			attr.ValidValues = aAttr.ValidValues
 		}
 
-		if !attrs[i].Value.Check(permissions.AttributeTypes(attr.Type), attr.ValidValues, attr.MaxValues) {
+		maxVal := s.p.GetClosestRoleAttrMaxVals(userInfo.Job, userInfo.JobGrade, attr.PermissionId, perms.Key(attr.Key))
+
+		if !attrs[i].Value.Check(permissions.AttributeTypes(attr.Type), attr.ValidValues, maxVal) {
 			return fmt.Errorf("failed to validate attribute values")
 		}
 
@@ -350,11 +356,11 @@ func (s *Server) handlPermissionsUpdate(ctx context.Context, role *model.Fivenet
 }
 
 func (s *Server) handleAttributeUpdate(ctx context.Context, userInfo *userinfo.UserInfo, role *model.FivenetRoles, attrUpdates *AttrsUpdate) error {
-	if err := s.filterAttributes(ctx, attrUpdates.ToUpdate); err != nil {
+	if err := s.filterAttributes(ctx, userInfo, attrUpdates.ToUpdate); err != nil {
 		return err
 	}
 
-	if err := s.filterAttributes(ctx, attrUpdates.ToRemove); err != nil {
+	if err := s.filterAttributes(ctx, userInfo, attrUpdates.ToRemove); err != nil {
 		return err
 	}
 

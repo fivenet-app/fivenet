@@ -47,6 +47,7 @@ type Permissions interface {
 
 	Can(userInfo *userinfo.UserInfo, category Category, name Name) bool
 
+	LookupAttributeByID(id uint64) (*cacheAttr, bool)
 	GetAttribute(category Category, name Name, key Key) (*permissions.RoleAttribute, error)
 	GetAttributeByIDs(ctx context.Context, ids ...uint64) ([]*permissions.RoleAttribute, error)
 	CreateAttribute(ctx context.Context, permId uint64, key Key, aType permissions.AttributeTypes, validValues any, defaultValues any) (uint64, error)
@@ -58,6 +59,7 @@ type Permissions interface {
 	AddOrUpdateAttributesToRole(ctx context.Context, job string, grade int32, roleId uint64, attrs ...*permissions.RoleAttribute) error
 	RemoveAttributesFromRole(ctx context.Context, roleId uint64, attrs ...*permissions.RoleAttribute) error
 	UpdateRoleAttributeMaxValues(ctx context.Context, roleId uint64, attrId uint64, maxValues *permissions.AttributeValues) error
+	GetClosestRoleAttrMaxVals(job string, grade int32, permId uint64, key Key) *permissions.AttributeValues
 
 	Attr(userInfo *userinfo.UserInfo, category Category, name Name, key Key) (any, error)
 
@@ -360,7 +362,7 @@ func (p *Perms) loadRoleAttributes(ctx context.Context, roleId uint64) error {
 	}
 
 	for _, ra := range dest {
-		a, ok := p.lookupAttributeByID(ra.AttrID)
+		a, ok := p.LookupAttributeByID(ra.AttrID)
 		if !ok {
 			return fmt.Errorf("unable to find attribute ID %d for role %d", ra.AttrID, ra.RoleID)
 		}
