@@ -52,7 +52,7 @@ func init() {
 				{
 					Key:         CitizenStoreServiceListUserActivityFieldsPermField,
 					Type:        permissions.StringListAttributeType,
-					ValidValues: []string{"SourceUser"},
+					ValidValues: []string{"SourceUser", "Own"},
 				},
 			},
 		},

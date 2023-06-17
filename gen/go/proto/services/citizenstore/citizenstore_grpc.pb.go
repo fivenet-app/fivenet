@@ -26,7 +26,7 @@ type CitizenStoreServiceClient interface {
 	ListCitizens(ctx context.Context, in *ListCitizensRequest, opts ...grpc.CallOption) (*ListCitizensResponse, error)
 	// @perm: Attrs=Jobs/JobGradeList
 	GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error)
-	// @perm: Attrs=Fields/StringList:[]string{"SourceUser"}
+	// @perm: Attrs=Fields/StringList:[]string{"SourceUser", "Own"}
 	ListUserActivity(ctx context.Context, in *ListUserActivityRequest, opts ...grpc.CallOption) (*ListUserActivityResponse, error)
 	// @perm: Attrs=Fields/StringList:[]string{"Wanted", "Job"}
 	SetUserProps(ctx context.Context, in *SetUserPropsRequest, opts ...grpc.CallOption) (*SetUserPropsResponse, error)
@@ -84,7 +84,7 @@ type CitizenStoreServiceServer interface {
 	ListCitizens(context.Context, *ListCitizensRequest) (*ListCitizensResponse, error)
 	// @perm: Attrs=Jobs/JobGradeList
 	GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error)
-	// @perm: Attrs=Fields/StringList:[]string{"SourceUser"}
+	// @perm: Attrs=Fields/StringList:[]string{"SourceUser", "Own"}
 	ListUserActivity(context.Context, *ListUserActivityRequest) (*ListUserActivityResponse, error)
 	// @perm: Attrs=Fields/StringList:[]string{"Wanted", "Job"}
 	SetUserProps(context.Context, *SetUserPropsRequest) (*SetUserPropsResponse, error)

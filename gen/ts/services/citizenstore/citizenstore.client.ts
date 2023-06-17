@@ -32,7 +32,7 @@ export interface ICitizenStoreServiceClient {
      */
     getUser(input: GetUserRequest, options?: RpcOptions): UnaryCall<GetUserRequest, GetUserResponse>;
     /**
-     * @perm: Attrs=Fields/StringList:[]string{"SourceUser"}
+     * @perm: Attrs=Fields/StringList:[]string{"SourceUser", "Own"}
      *
      * @generated from protobuf rpc: ListUserActivity(services.citizenstore.ListUserActivityRequest) returns (services.citizenstore.ListUserActivityResponse);
      */
@@ -72,7 +72,7 @@ export class CitizenStoreServiceClient implements ICitizenStoreServiceClient, Se
         return stackIntercept<GetUserRequest, GetUserResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Attrs=Fields/StringList:[]string{"SourceUser"}
+     * @perm: Attrs=Fields/StringList:[]string{"SourceUser", "Own"}
      *
      * @generated from protobuf rpc: ListUserActivity(services.citizenstore.ListUserActivityRequest) returns (services.citizenstore.ListUserActivityResponse);
      */

@@ -340,13 +340,24 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 
 func (s *Server) ListUserActivity(ctx context.Context, req *ListUserActivityRequest) (*ListUserActivityResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-	_ = userInfo
 
 	resp := &ListUserActivityResponse{}
-	// An user can never see their own activity on their "profile"
-	//if userInfo.UserId == req.UserId {
-	//	return resp, nil
-	//}
+	// User can't see their own activities, unless they have "Own" perm attribute, or are a superuser
+	fieldsAttr, err := s.p.Attr(userInfo, CitizenStoreServicePerm, CitizenStoreServiceListUserActivityPerm, CitizenStoreServiceListUserActivityFieldsPermField)
+	if err != nil {
+		return nil, ErrFailedQuery
+	}
+	var fields perms.StringList
+	if fieldsAttr != nil {
+		fields = fieldsAttr.([]string)
+	}
+
+	if userInfo.UserId == req.UserId {
+		// If user isn't
+		if !userInfo.SuperUser || !utils.InStringSlice(fields, "Own") {
+			return resp, nil
+		}
+	}
 
 	tUTarget := tUser.AS("target_user")
 	tUSource := tUser.AS("source_user")

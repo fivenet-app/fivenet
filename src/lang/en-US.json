@@ -702,7 +702,8 @@
                 "key": "ListUserActivity",
                 "description": "Citizen Info Activity Feed",
                 "attrs": {
-                    "SourceUser": "Source User"
+                    "SourceUser": "Source User",
+                    "Own": "Own Activity Feed"
                 }
             },
             "SetUserProps": {

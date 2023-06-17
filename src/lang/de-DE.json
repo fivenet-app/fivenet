@@ -696,7 +696,8 @@
                 "key": "Nutzeraktivität auflisten",
                 "description": "Aktivitäten-Feed für Bürgerinformationen",
                 "attrs": {
-                    "SourceUser": "Quellbenutzer"
+                    "SourceUser": "Quellbenutzer",
+                    "Own": "Eigene Aktivitäten"
                 }
             },
             "SetUserProps": {
