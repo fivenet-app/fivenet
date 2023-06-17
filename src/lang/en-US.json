@@ -212,7 +212,10 @@
                 "plugin_jail_jailed": "Jailed",
                 "plugin_billing_fines_paid": "Fine paid",
                 "plugin_billing_fines_removed": "Fine removed",
-                "plugin_billing_fines_created": "Fine created"
+                "plugin_billing_fines_created": "Fine created",
+                "traffic_infraction_points": {
+                    "action_text": "Set traffic points from"
+                }
             }
         },
         "partials": {

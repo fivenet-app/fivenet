@@ -12,6 +12,7 @@ import {
     mdiReceiptTextPlus,
     mdiReceiptTextRemove,
     mdiRunFast,
+    mdiTrafficCone,
 } from '@mdi/js';
 import { RoutesNamedLocations } from '~~/.nuxt/typed-router/__routes';
 import { UserActivity } from '~~/gen/ts/resources/users/users';
@@ -52,6 +53,15 @@ switch (props.activity.key) {
         actionText.value = t('components.citizens.citizen_info_activity_feed_entry.set_ciizen_job');
         actionValue.value = props.activity.newValue;
         icon.value = mdiBriefcase;
+        iconColor.value = 'text-secondary-400';
+
+        break;
+    }
+
+    case 'UserProps.TrafficInfractionPoints': {
+        actionText.value = t('components.citizens.citizen_info_activity_feed_entry.traffic_infraction_points.action_text');
+        actionValue.value = `${props.activity.oldValue} ${t('common.to')} ${props.activity.newValue}`;
+        icon.value = mdiTrafficCone;
         iconColor.value = 'text-secondary-400';
 
         break;
