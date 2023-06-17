@@ -80,11 +80,11 @@ func (x *AttributeValues) Check(aType AttributeTypes, validVals *AttributeValues
 	case StringListAttributeType:
 		var valid []string
 		if validVals != nil && validVals.GetStringList() != nil && validVals.GetStringList().Strings != nil {
-			valid = validVals.GetJobList().Strings
+			valid = validVals.GetStringList().Strings
 		}
 		var max []string
 		if maxVals != nil {
-			max = maxVals.GetJobList().Strings
+			max = maxVals.GetStringList().Strings
 		}
 
 		return ValidateStringList(x.GetStringList().Strings, valid, max)
@@ -136,6 +136,11 @@ func ValidateStringList(in []string, validVals []string, maxVals []string) bool 
 }
 
 func ValidateJobList(in []string, validVals []string, maxVals []string) bool {
+	// If more values than valid/max values in the list, it can't be valid
+	if len(in) > len(maxVals) || (validVals != nil && len(in) > len(validVals)) {
+		return false
+	}
+
 	for i := 0; i < len(in); i++ {
 		if !utils.InStringSlice(maxVals, in[i]) {
 			return false
@@ -160,7 +165,8 @@ func ValidateJobGradeList(in map[string]int32, validVals map[string]int32, maxVa
 			return false
 		}
 
-		if validVals != nil {
+		// If valid vals are empty/ nil, don't check them
+		if len(validVals) > 0 {
 			if vg, ok := validVals[job]; ok {
 				if grade > vg {
 					return false
