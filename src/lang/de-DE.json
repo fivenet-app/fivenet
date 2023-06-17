@@ -206,7 +206,16 @@
                 "document_relation": "Bürger zugehörig zu",
                 "document_relation_removed": "Bürger nicht mehr zugehörig zu",
                 "with_reason": "mit dem Grund",
-                "set_ciizen_job": "Setzte den Beruf des Bürgers zu "
+                "set_ciizen_job": "Setzte den Beruf des Bürgers zu ",
+                "plugin_license_added": "Lizenz hinzugefügt",
+                "plugin_license_removed": "Lizenz entfernt",
+                "plugin_jail_jailed": "Inhaftiert",
+                "plugin_billing_fines_paid": "Strafe bezahlt",
+                "plugin_billing_fines_removed": "Strafe entfernt",
+                "plugin_billing_fines_created": "Strafe erstellt",
+                "traffic_infraction_points": {
+                    "action_text": "Setzte Verkehrspunkte von"
+                }
             }
         },
         "partials": {
