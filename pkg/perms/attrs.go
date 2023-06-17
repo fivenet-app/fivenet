@@ -243,7 +243,7 @@ func (p *Perms) addOrUpdateAttributeInMap(permId uint64, attrId uint64, key Key,
 func (p *Perms) updateAttributeInMap(permId uint64, attrId uint64, key Key, aType permissions.AttributeTypes, validValues *permissions.AttributeValues, defaultValues *permissions.AttributeValues) error {
 	perm, ok := p.lookupPermByID(permId)
 	if !ok {
-		return fmt.Errorf("no permission found by id")
+		return fmt.Errorf("no permission found by id %d", permId)
 	}
 
 	attr := &cacheAttr{

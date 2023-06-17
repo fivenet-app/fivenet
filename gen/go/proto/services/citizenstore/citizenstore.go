@@ -340,39 +340,39 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 
 func (s *Server) ListUserActivity(ctx context.Context, req *ListUserActivityRequest) (*ListUserActivityResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
+	_ = userInfo
 
 	resp := &ListUserActivityResponse{}
 	// An user can never see their own activity on their "profile"
-	if userInfo.UserId == req.UserId {
-		return resp, nil
-	}
+	//if userInfo.UserId == req.UserId {
+	//	return resp, nil
+	//}
 
-	tUserActivity := tUserActivity.AS("useractivity")
-	uTarget := tUser.AS("target_user")
-	uSource := tUser.AS("source_user")
+	tUTarget := tUser.AS("target_user")
+	tUSource := tUser.AS("source_user")
 	stmt := tUserActivity.
 		SELECT(
 			tUserActivity.AllColumns,
-			uTarget.ID,
-			uTarget.Identifier,
-			uTarget.Job,
-			uTarget.JobGrade,
-			uTarget.Firstname,
-			uTarget.Lastname,
-			uSource.ID,
-			uSource.Identifier,
-			uSource.Job,
-			uSource.JobGrade,
-			uSource.Firstname,
-			uSource.Lastname,
+			tUTarget.ID,
+			tUTarget.Identifier,
+			tUTarget.Job,
+			tUTarget.JobGrade,
+			tUTarget.Firstname,
+			tUTarget.Lastname,
+			tUSource.ID,
+			tUSource.Identifier,
+			tUSource.Job,
+			tUSource.JobGrade,
+			tUSource.Firstname,
+			tUSource.Lastname,
 		).
 		FROM(
 			tUserActivity.
-				LEFT_JOIN(uTarget,
-					uTarget.ID.EQ(tUserActivity.TargetUserID),
+				LEFT_JOIN(tUTarget,
+					tUTarget.ID.EQ(tUserActivity.TargetUserID),
 				).
-				LEFT_JOIN(uSource,
-					uSource.ID.EQ(tUserActivity.SourceUserID),
+				LEFT_JOIN(tUSource,
+					tUSource.ID.EQ(tUserActivity.SourceUserID),
 				),
 		).
 		WHERE(

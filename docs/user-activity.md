@@ -6,14 +6,14 @@ title: User Activity
     * `UserProps.Wanted`
     * `DocStore.Relation`
     * `UserProps.Job`
-* External
-    * `Licenses`
+* External ("Plugin")
+    * `Plugin.Licenses`
         * Add
         * Remove
-    * `Billing.Fines`
+    * `Plugin.Billing.Fines`
         * Sent
         * Paid
         * Removed
-    * `Jail`
+    * `Plugin.Jail`
         * Jailed
         * Unjailed

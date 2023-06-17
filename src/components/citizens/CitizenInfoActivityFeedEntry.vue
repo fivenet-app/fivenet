@@ -1,6 +1,18 @@
 <script setup lang="ts">
 import SvgIcon from '@jamescoyle/vue-icon';
-import { mdiAt, mdiBellAlert, mdiBellSleep, mdiBriefcase, mdiHandcuffs, mdiHelpCircle, mdiLicense, mdiReceipt } from '@mdi/js';
+import {
+    mdiAt,
+    mdiBellAlert,
+    mdiBellSleep,
+    mdiBriefcase,
+    mdiHandcuffs,
+    mdiHelpCircle,
+    mdiLicense,
+    mdiReceiptTextCheck,
+    mdiReceiptTextPlus,
+    mdiReceiptTextRemove,
+    mdiRunFast,
+} from '@mdi/js';
 import { RoutesNamedLocations } from '~~/.nuxt/typed-router/__routes';
 import { UserActivity } from '~~/gen/ts/resources/users/users';
 
@@ -17,6 +29,7 @@ const actionValue = ref<string>(`${props.activity.oldValue} -> ${props.activity.
 const actionReason = ref<string>(props.activity.reason);
 const actionLink = ref<RoutesNamedLocations>();
 const actionLinkText = ref<string>('');
+const reasonText = ref<string>('components.citizens.citizen_info_activity_feed_entry.with_reason');
 
 switch (props.activity.key) {
     case 'UserProps.Wanted': {
@@ -63,21 +76,56 @@ switch (props.activity.key) {
         break;
     }
 
-    case 'Licenses': {
-        // TODO
+    case 'Plugin.Licenses': {
         icon.value = mdiLicense;
+        reasonText.value = '';
+        if (props.activity.newValue != '') {
+            actionText.value = t('components.citizens.citizen_info_activity_feed_entry.plugin_license_added');
+            actionValue.value = '';
+            iconColor.value = 'text-info-600';
+        } else {
+            actionText.value = t('components.citizens.citizen_info_activity_feed_entry.plugin_license_removed');
+            actionValue.value = '';
+            iconColor.value = 'text-warn-600';
+        }
+        // TODO
         break;
     }
 
-    case 'Jail': {
-        // TODO
+    case 'Plugin.Jail': {
         icon.value = mdiHandcuffs;
+        reasonText.value = '';
+        if (props.activity.newValue != '') {
+            actionText.value = t('components.citizens.citizen_info_activity_feed_entry.plugin_jail_jailed');
+            actionValue.value = fromSecondsToFormattedDuration(parseInt(props.activity.newValue));
+        } else {
+            icon.value = mdiRunFast;
+            // TODO
+        }
         break;
     }
 
-    case 'Billing.Fines': {
+    case 'Plugin.Billing.Fines': {
+        // If newValue = 0 and oldValue is set, bill has been paid
+        // If oldValue = newValue, bill has been removed/cleared
+        // If newValue set, bill has been created
+        if (props.activity.newValue === '0' && props.activity.oldValue !== '') {
+            icon.value = mdiReceiptTextCheck;
+            actionText.value = t('components.citizens.citizen_info_activity_feed_entry.plugin_billing_fines_paid');
+            actionValue.value = '$' + props.activity.oldValue;
+            iconColor.value = 'text-green-400';
+        } else if (props.activity.newValue === props.activity.oldValue) {
+            icon.value = mdiReceiptTextRemove;
+            actionText.value = t('components.citizens.citizen_info_activity_feed_entry.plugin_billing_fines_removed');
+            actionValue.value = '$' + props.activity.oldValue;
+            iconColor.value = 'text-secondary-400';
+        } else {
+            icon.value = mdiReceiptTextPlus;
+            actionText.value = t('components.citizens.citizen_info_activity_feed_entry.plugin_billing_fines_created');
+            actionValue.value = '$' + props.activity.newValue;
+            iconColor.value = 'text-info-400';
+        }
         // TODO
-        icon.value = mdiReceipt;
         break;
     }
 }
@@ -91,27 +139,35 @@ switch (props.activity.key) {
         <div class="flex-1 space-y-1">
             <div class="flex items-center justify-between">
                 <h3 class="text-sm font-medium text-neutral">
-                    {{ activity.sourceUser?.firstname }}
-                    {{ activity.sourceUser?.lastname }}
+                    {{ actionText }}
+                    <span class="font-bold">
+                        <NuxtLink v-if="actionLink" :to="actionLink">
+                            {{ actionLinkText }}
+                        </NuxtLink>
+                        <span v-else v-html="actionValue"></span>
+                    </span>
+                    <span v-if="reasonText">
+                        {{ ' ' + $t(reasonText) }}
+                    </span>
+                    <span v-if="actionReason">
+                        <span class="font-bold">
+                            {{ ' ' + actionReason }}
+                        </span>
+                    </span>
                 </h3>
                 <p class="text-sm text-gray-400">
                     {{ useLocaleTimeAgo(toDate(activity.createdAt)!).value }}
                 </p>
             </div>
             <p class="text-sm text-gray-300">
-                {{ actionText }}
-                <span class="font-bold">
-                    <NuxtLink v-if="actionLink" :to="actionLink">
-                        {{ actionLinkText }}
-                    </NuxtLink>
-                    <span v-else v-html="actionValue"></span>
-                </span>
-                <span v-if="actionReason">
-                    {{ ' ' + $t('components.citizens.citizen_info_activity_feed_entry.with_reason') }}
-                    <span class="font-bold">
-                        {{ actionReason }}
-                    </span>
-                </span>
+                {{ $t('common.created_by') + ' ' }}
+                <NuxtLink
+                    :to="{ name: 'citizens-id', params: { id: activity.sourceUser?.userId! } }"
+                    class="underline decoration-solid"
+                >
+                    {{ activity.sourceUser?.firstname }}
+                    {{ activity.sourceUser?.lastname }}
+                </NuxtLink>
             </p>
         </div>
     </div>
