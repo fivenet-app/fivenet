@@ -488,6 +488,19 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 	} else {
 		req.Props.JobName = props.JobName
 	}
+	if req.Props.TrafficInfractionPoints != nil {
+		if !utils.InStringSlice(fields, "TrafficInfractionPoints") {
+			return nil, status.Error(codes.PermissionDenied, "You are not allowed to set a user's traffic infraction points!")
+		}
+
+		if utils.InStringSlice(s.publicJobs, *req.Props.JobName) {
+			return nil, status.Error(codes.InvalidArgument, "You can't set a state job!")
+		}
+
+		updateSets = append(updateSets, tUserProps.TrafficInfractionPoints.SET(jet.Uint64(*req.Props.TrafficInfractionPoints)))
+	} else {
+		req.Props.TrafficInfractionPoints = props.TrafficInfractionPoints
+	}
 
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
@@ -502,11 +515,13 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 			tUserProps.UserID,
 			tUserProps.Wanted,
 			tUserProps.Job,
+			tUserProps.TrafficInfractionPoints,
 		).
 		VALUES(
 			req.Props.UserId,
 			req.Props.Wanted,
 			req.Props.JobName,
+			req.Props.TrafficInfractionPoints,
 		).
 		ON_DUPLICATE_KEY_UPDATE(
 			updateSets...,
@@ -526,6 +541,12 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 	if *req.Props.JobName != *props.JobName {
 		if err := s.addUserActivity(ctx, tx,
 			userInfo.UserId, req.Props.UserId, users.USER_ACTIVITY_TYPE_CHANGED, "UserProps.Job", *props.JobName, *req.Props.JobName, req.Reason); err != nil {
+			return nil, ErrFailedQuery
+		}
+	}
+	if *req.Props.TrafficInfractionPoints != *props.TrafficInfractionPoints {
+		if err := s.addUserActivity(ctx, tx,
+			userInfo.UserId, req.Props.UserId, users.USER_ACTIVITY_TYPE_CHANGED, "UserProps.TrafficInfractionPoints", *props.JobName, *req.Props.JobName, req.Reason); err != nil {
 			return nil, ErrFailedQuery
 		}
 	}

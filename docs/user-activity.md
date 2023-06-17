@@ -3,9 +3,10 @@ title: User Activity
 ---
 
 * Built-in
-    * `UserProps.Wanted`
     * `DocStore.Relation`
     * `UserProps.Job`
+    * `UserProps.TrafficInfractionPoints`
+    * `UserProps.Wanted`
 * External ("Plugin")
     * `Plugin.Licenses`
         * Add

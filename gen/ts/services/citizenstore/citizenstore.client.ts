@@ -20,7 +20,7 @@ import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
  */
 export interface ICitizenStoreServiceClient {
     /**
-     * @perm: Attrs=Fields/StringList:[]string{"PhoneNumber", "Licenses", "UserProps.Wanted", "UserProps.Job"}
+     * @perm: Attrs=Fields/StringList:[]string{"PhoneNumber", "Licenses", "UserProps.Wanted", "UserProps.Job", "TrafficInfractionPoints"}
      *
      * @generated from protobuf rpc: ListCitizens(services.citizenstore.ListCitizensRequest) returns (services.citizenstore.ListCitizensResponse);
      */
@@ -38,7 +38,7 @@ export interface ICitizenStoreServiceClient {
      */
     listUserActivity(input: ListUserActivityRequest, options?: RpcOptions): UnaryCall<ListUserActivityRequest, ListUserActivityResponse>;
     /**
-     * @perm: Attrs=Fields/StringList:[]string{"Wanted", "Job"}
+     * @perm: Attrs=Fields/StringList:[]string{"Wanted", "Job", "TrafficInfractionPoints"}
      *
      * @generated from protobuf rpc: SetUserProps(services.citizenstore.SetUserPropsRequest) returns (services.citizenstore.SetUserPropsResponse);
      */
@@ -54,7 +54,7 @@ export class CitizenStoreServiceClient implements ICitizenStoreServiceClient, Se
     constructor(private readonly _transport: RpcTransport) {
     }
     /**
-     * @perm: Attrs=Fields/StringList:[]string{"PhoneNumber", "Licenses", "UserProps.Wanted", "UserProps.Job"}
+     * @perm: Attrs=Fields/StringList:[]string{"PhoneNumber", "Licenses", "UserProps.Wanted", "UserProps.Job", "TrafficInfractionPoints"}
      *
      * @generated from protobuf rpc: ListCitizens(services.citizenstore.ListCitizensRequest) returns (services.citizenstore.ListCitizensResponse);
      */
@@ -81,7 +81,7 @@ export class CitizenStoreServiceClient implements ICitizenStoreServiceClient, Se
         return stackIntercept<ListUserActivityRequest, ListUserActivityResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Attrs=Fields/StringList:[]string{"Wanted", "Job"}
+     * @perm: Attrs=Fields/StringList:[]string{"Wanted", "Job", "TrafficInfractionPoints"}
      *
      * @generated from protobuf rpc: SetUserProps(services.citizenstore.SetUserPropsRequest) returns (services.citizenstore.SetUserPropsResponse);
      */
