@@ -106,7 +106,16 @@ func (s *Server) filterAttributes(ctx context.Context, userInfo *userinfo.UserIn
 			if !ok {
 				return fmt.Errorf("failed to find attribute by ID %d for role %d during filter", attrs[i].AttrId, attrs[i].RoleId)
 			}
-			attr.ValidValues = aAttr.ValidValues
+			if aAttr.ValidValues != nil {
+				aAttr.ValidValues.Default(aAttr.Type)
+			}
+
+			attr = &permissions.RoleAttribute{
+				PermissionId: aAttr.PermissionID,
+				Key:          string(aAttr.Key),
+				Type:         string(aAttr.Type),
+				ValidValues:  aAttr.ValidValues,
+			}
 		}
 
 		maxVal := s.p.GetClosestRoleAttrMaxVals(userInfo.Job, userInfo.JobGrade, attr.PermissionId, perms.Key(attr.Key))

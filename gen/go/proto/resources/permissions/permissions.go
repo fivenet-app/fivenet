@@ -79,7 +79,7 @@ func (x *AttributeValues) Check(aType AttributeTypes, validVals *AttributeValues
 	switch AttributeTypes(aType) {
 	case StringListAttributeType:
 		var valid []string
-		if validVals != nil {
+		if validVals != nil && validVals.GetStringList() != nil && validVals.GetStringList().Strings != nil {
 			valid = validVals.GetJobList().Strings
 		}
 		var max []string
@@ -90,7 +90,7 @@ func (x *AttributeValues) Check(aType AttributeTypes, validVals *AttributeValues
 		return ValidateStringList(x.GetStringList().Strings, valid, max)
 	case JobListAttributeType:
 		var valid []string
-		if validVals != nil {
+		if validVals != nil && validVals.GetJobList() != nil && validVals.GetJobList().Strings != nil {
 			valid = validVals.GetJobList().Strings
 		}
 		var max []string
@@ -101,7 +101,8 @@ func (x *AttributeValues) Check(aType AttributeTypes, validVals *AttributeValues
 		return ValidateJobList(x.GetJobList().Strings, valid, max)
 	case JobGradeListAttributeType:
 		var valid map[string]int32
-		if validVals != nil {
+
+		if validVals != nil && validVals.GetJobGradeList() != nil && validVals.GetJobGradeList().Jobs != nil {
 			valid = validVals.GetJobGradeList().Jobs
 		}
 		var max map[string]int32

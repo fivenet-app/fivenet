@@ -8,14 +8,15 @@ import DataErrorBlock from '~/components/partials/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';
 import { useAuthStore } from '~/store/auth';
 import { useNotificationsStore } from '~/store/notifications';
-import { TypedRouteFromName } from '~~/.nuxt/typed-router/__router';
+import { RoutesNamedLocations } from '~~/.nuxt/typed-router/__routes';
 import { JobGrade } from '~~/gen/ts/resources/jobs/jobs';
 import { Role } from '~~/gen/ts/resources/permissions/permissions';
 import DataNoDataBlock from '../partials/DataNoDataBlock.vue';
 import RolesListEntry from './RolesListEntry.vue';
 
-defineProps<{
-    to?: TypedRouteFromName<'rector-roles-id' | 'rector-limiter-id'>;
+const props = defineProps<{
+    to?: RoutesNamedLocations;
+    all?: boolean;
 }>();
 
 const { $grpc } = useNuxtApp();
@@ -31,7 +32,7 @@ async function getRoles(): Promise<Array<Role>> {
     return new Promise(async (res, rej) => {
         try {
             const call = $grpc.getRectorClient().getRoles({
-                all: true,
+                all: props.all,
             });
             const { response } = await call;
 

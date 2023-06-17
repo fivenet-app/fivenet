@@ -1,15 +1,15 @@
 <script lang="ts" setup>
 import SvgIcon from '@jamescoyle/vue-icon';
 import { mdiEye } from '@mdi/js';
-import { TypedRouteFromName } from '~~/.nuxt/typed-router/__router';
+import { RoutesNamedLocations } from '~~/.nuxt/typed-router/__routes';
 import { Role } from '~~/gen/ts/resources/permissions/permissions';
 
 const props = defineProps<{
     role: Role;
-    to?: TypedRouteFromName<'rector-roles-id' | 'rector-limiter-id'>;
+    to?: RoutesNamedLocations;
 }>();
 
-if (props.to) {
+if (props.to && (props.to.name === 'rector-limiter-id' || props.to.name === 'rector-roles-id')) {
     props.to.params!.id = props.role.id.toString();
 }
 </script>
