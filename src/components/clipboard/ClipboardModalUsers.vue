@@ -9,7 +9,7 @@ import DataNoDataBlock from '../partials/DataNoDataBlock.vue';
 const clipboardStore = useClipboardStore();
 const notifications = useNotificationsStore();
 
-const { users } = storeToRefs(clipboardStore);
+const { users, activeStack } = storeToRefs(clipboardStore);
 
 const emit = defineEmits<{
     (e: 'statisfied', payload: boolean): void;
@@ -87,9 +87,9 @@ async function removeAll(): Promise<void> {
 
 watch(props, async (newVal) => {
     if (newVal.submit) {
-        if (clipboardStore.activeStack) {
-            clipboardStore.activeStack.users.length = 0;
-            selected.value.forEach((v) => clipboardStore.activeStack.users.push(v));
+        if (activeStack.value) {
+            activeStack.value.users.length = 0;
+            selected.value.forEach((v) => activeStack.value.users.push(v));
         } else if (users.value && users.value.length === 1) {
             selected.value.unshift(users.value[0]);
         }

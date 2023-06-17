@@ -44,7 +44,6 @@ const readyToCreate = ref(false);
 
 watch(reqStatus.value, () => {
     readyToCreate.value = reqStatus.value.documents && reqStatus.value.users && reqStatus.value.vehicles;
-
     // Auto redirect users when the requirements are matched
     if (readyToCreate.value && props.autoFill) {
         clipboardDialog();
@@ -68,9 +67,8 @@ async function templateSelected(t: TemplateShort): Promise<void> {
             let reqUsers = false;
             let reqVehicles = false;
 
+            clipboardStore.clearActiveStack();
             if (reqs.value) {
-                clipboardStore.clearActiveStack();
-
                 if (reqs.value.documents) {
                     reqDocuments = clipboardStore.checkRequirements(reqs.value.documents, 'documents');
                     if (reqDocuments) {
@@ -203,7 +201,7 @@ async function clipboardDialog(): Promise<void> {
                                         </button>
                                     </div>
                                 </div>
-                                <div v-else-if="template && reqs && !autoFill && steps.selectClipboard">
+                                <div v-else-if="template !== undefined && reqs !== undefined && steps.selectClipboard">
                                     <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-gray-100">
                                         <SvgIcon
                                             class="h-6 w-6 text-indigo-600"

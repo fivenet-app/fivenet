@@ -622,6 +622,7 @@ async function editForm(): Promise<void> {
                 name: 'documents-id',
                 params: { id: response.documentId.toString() },
             });
+
             return res();
         } catch (e) {
             $grpc.handleError(e as RpcError);

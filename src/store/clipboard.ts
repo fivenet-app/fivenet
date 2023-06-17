@@ -2,7 +2,7 @@ import { StoreDefinition, defineStore } from 'pinia';
 import { fromString } from '~/utils/time';
 import * as google_protobuf_timestamp from '~~/gen/ts/google/protobuf/timestamp';
 import { DocumentCategory } from '~~/gen/ts/resources/documents/category';
-import { Document, DocumentShort } from '~~/gen/ts/resources/documents/documents';
+import { DOC_CONTENT_TYPE, Document, DocumentShort } from '~~/gen/ts/resources/documents/documents';
 import { ObjectSpecs, TemplateData } from '~~/gen/ts/resources/documents/templates';
 import { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 import { User, UserShort } from '~~/gen/ts/resources/users/users';
@@ -57,13 +57,13 @@ export const useClipboardStore = defineStore('clipboard', {
         promoteToActiveStack(listType: ListType): void {
             switch (listType) {
                 case 'documents':
-                    this.activeStack.documents = this.documents as ClipboardDocument[];
+                    this.activeStack.documents = JSON.parse(JSON.stringify(this.documents)) as ClipboardDocument[];
                     break;
                 case 'users':
-                    this.activeStack.users = this.users as ClipboardUser[];
+                    this.activeStack.users = JSON.parse(JSON.stringify(this.users)) as ClipboardUser[];
                     break;
                 case 'vehicles':
-                    this.activeStack.vehicles = this.vehicles as ClipboardVehicle[];
+                    this.activeStack.vehicles = JSON.parse(JSON.stringify(this.vehicles)) as ClipboardVehicle[];
                     break;
             }
         },
@@ -73,6 +73,7 @@ export const useClipboardStore = defineStore('clipboard', {
             this.activeStack.users.length = 0;
             this.activeStack.vehicles.length = 0;
         },
+
         // Documents
         addDocument(document: Document): void {
             const idx = this.documents.findIndex((o: ClipboardDocument) => {
@@ -242,6 +243,8 @@ export function getDocument(obj: ClipboardDocument): DocumentShort {
             },
         },
         title: obj.title,
+        contentType: DOC_CONTENT_TYPE.PLAIN,
+        content: '',
         state: obj.state,
         creatorId: user.userId,
         creator: user,

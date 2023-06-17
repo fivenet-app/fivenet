@@ -9,7 +9,7 @@ import CitizenInfoJobModal from '~/components/citizens/CitizenInfoJobModal.vue';
 import TemplatesModal from '~/components/documents/templates/TemplatesModal.vue';
 import { useClipboardStore } from '~/store/clipboard';
 import { useNotificationsStore } from '~/store/notifications';
-import { User } from '~~/gen/ts/resources/users/users';
+import { User, UserProps } from '~~/gen/ts/resources/users/users';
 import CitizenInfoReasonModal from './CitizenInfoReasonModal.vue';
 
 const { $grpc } = useNuxtApp();
@@ -33,18 +33,15 @@ async function toggleWantedStatus(): Promise<void> {
             return res();
         }
 
-        wantedState.value = !props.user.props?.wanted;
-
-        let userProps = props.user?.props;
-        if (!userProps) {
-            userProps = {
+        if (!props.user?.props) {
+            props.user.props = {
                 userId: props.user.userId,
+                wanted: false,
             };
-
-            props.user.props = userProps;
         }
 
-        userProps.wanted = wantedState.value;
+        const userProps = JSON.parse(JSON.stringify(props.user.props)) as UserProps;
+        userProps.wanted = !props.user.props?.wanted;
 
         try {
             await $grpc.getCitizenStoreClient().setUserProps({
@@ -57,6 +54,9 @@ async function toggleWantedStatus(): Promise<void> {
                 content: { key: 'notifications.action_successfull.content', parameters: [] },
                 type: 'success',
             });
+
+            wantedState.value = userProps.wanted;
+            props.user.props.wanted = userProps.wanted;
 
             reason.value = '';
             return res();
