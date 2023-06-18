@@ -2,13 +2,13 @@
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/vue';
 import SvgIcon from '@jamescoyle/vue-icon';
 import {
-    mdiAccount,
+    mdiAccountMultiple,
     mdiCalendar,
     mdiCommentTextMultiple,
+    mdiFileDocument,
     mdiFileSearch,
     mdiLock,
     mdiLockOpenVariant,
-    mdiMagnify,
     mdiPencil,
     mdiTrashCan,
 } from '@mdi/js';
@@ -36,8 +36,8 @@ const { t } = useI18n();
 const access = ref<undefined | DocumentAccess>(undefined);
 const commentCount = ref(-1n);
 const tabs = ref<{ name: string; icon: string }[]>([
-    { name: t('common.relation', 2), icon: mdiAccount },
-    { name: t('common.reference', 2), icon: mdiMagnify },
+    { name: t('common.relation', 2), icon: mdiAccountMultiple },
+    { name: t('common.reference', 2), icon: mdiFileDocument },
 ]);
 
 const props = defineProps<{
@@ -275,7 +275,7 @@ function addToClipboard(): void {
                                                     '-ml-0.5 mr-2 h-5 w-5 transition-colors',
                                                 ]"
                                                 aria-hidden="true"
-                                                type="md"
+                                                type="mdi"
                                                 :path="tab.icon"
                                             />
                                             <span>{{ tab.name }}</span>

@@ -11,7 +11,7 @@ import {
     ListboxOptions,
 } from '@headlessui/vue';
 import SvgIcon from '@jamescoyle/vue-icon';
-import { mdiCheck, mdiChevronDown, mdiContentSave, mdiPlus } from '@mdi/js';
+import { mdiAccountMultiple, mdiCheck, mdiChevronDown, mdiContentSave, mdiFileDocument, mdiPlus } from '@mdi/js';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { QuillEditor } from '@vueup/vue-quill';
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
@@ -811,25 +811,39 @@ async function editForm(): Promise<void> {
         <QuillEditor v-model:content="doc.content" content-type="html" toolbar="full" :modules="modules" :options="options" />
     </div>
     <div class="flex flex-row">
-        <div class="flex-1">
+        <div class="flex-1 inline-flex rounded-md shadow-sm" role="group">
             <button
                 type="button"
                 :disabled="!canEdit"
-                class="rounded-br-md bg-primary-500 py-2.5 px-3.5 w-full text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
+                class="inline-flex justify-center rounded-bl-md bg-primary-500 py-2.5 px-3.5 w-full text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
                 @click="relationManagerShow = true"
             >
-                {{ $t('common.citizen', 1) }} {{ $t('common.relation', 2) }}
+                <div class="flex justify-center">
+                    <SvgIcon
+                        class="text-base-300 group-hover:text-base-200 -ml-0.5 mr-2 h-5 w-5 transition-colors"
+                        aria-hidden="true"
+                        type="mdi"
+                        :path="mdiAccountMultiple"
+                    />
+                    {{ $t('common.citizen', 1) }} {{ $t('common.relation', 2) }}
+                </div>
             </button>
-            <div class="flex-1">
-                <button
-                    type="button"
-                    :disabled="!canEdit"
-                    class="rounded-bl-md bg-primary-500 py-2.5 px-3.5 w-full text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
-                    @click="referenceManagerShow = true"
-                >
+            <button
+                type="button"
+                :disabled="!canEdit"
+                class="inline-flex justify-center rounded-brt-md bg-primary-500 py-2.5 px-3.5 w-full text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
+                @click="referenceManagerShow = true"
+            >
+                <div class="flex justify-center">
+                    <SvgIcon
+                        class="text-base-300 group-hover:text-base-200 -ml-0.5 mr-2 h-5 w-5 transition-colors"
+                        aria-hidden="true"
+                        type="mdi"
+                        :path="mdiFileDocument"
+                    />
                     {{ $t('common.document', 1) }} {{ $t('common.reference', 2) }}
-                </button>
-            </div>
+                </div>
+            </button>
         </div>
     </div>
     <div class="my-3">
