@@ -5,6 +5,7 @@ import {
     mdiBellAlert,
     mdiBellSleep,
     mdiBriefcase,
+    mdiDoorOpen,
     mdiHandcuffs,
     mdiHelpCircle,
     mdiLicense,
@@ -33,8 +34,26 @@ const actionLinkText = ref<string>('');
 const reasonText = ref<string>('components.citizens.citizen_info_activity_feed_entry.with_reason');
 
 switch (props.activity.key) {
+    case 'DocStore.Relation': {
+        actionText.value = t('components.citizens.citizen_info_activity_feed_entry.document_relation.added');
+        icon.value = mdiAt;
+        actionLink.value = { name: 'documents-id', params: { id: 0 } };
+        actionLinkText.value = t('common.document', 1);
+        actionReason.value = t(`enums.docstore.DOC_RELATION.${props.activity.reason}`);
+
+        if (props.activity.newValue !== '') {
+            iconColor.value = 'text-info-600';
+            actionLink.value.params.id = props.activity.newValue;
+        } else if (props.activity.oldValue !== '') {
+            actionText.value = t('components.citizens.citizen_info_activity_feed_entry.document_relation.removed');
+            iconColor.value = 'text-base-600';
+            actionLink.value.params.id = props.activity.oldValue;
+        }
+        break;
+    }
+
     case 'UserProps.Wanted': {
-        actionText.value = t('components.citizens.citizen_info_activity_feed_entry.set_citizen_as');
+        actionText.value = t('components.citizens.citizen_info_activity_feed_entry.bool_set_citizen');
         actionValue.value =
             props.activity.newValue === 'true' ? t('common.wanted') : `${t('common.not').toLowerCase()} ${t('common.wanted')}`;
 
@@ -45,16 +64,14 @@ switch (props.activity.key) {
             icon.value = mdiBellSleep;
             iconColor.value = 'text-success-400';
         }
-
         break;
     }
 
     case 'UserProps.Job': {
-        actionText.value = t('components.citizens.citizen_info_activity_feed_entry.set_ciizen_job');
+        actionText.value = t('components.citizens.citizen_info_activity_feed_entry.userprops_job_set');
         actionValue.value = props.activity.newValue;
         icon.value = mdiBriefcase;
         iconColor.value = 'text-secondary-400';
-
         break;
     }
 
@@ -63,79 +80,58 @@ switch (props.activity.key) {
         actionValue.value = `${props.activity.oldValue} ${t('common.to')} ${props.activity.newValue}`;
         icon.value = mdiTrafficCone;
         iconColor.value = 'text-secondary-400';
-
-        break;
-    }
-
-    case 'DocStore.Relation': {
-        actionText.value = t('components.citizens.citizen_info_activity_feed_entry.document_relation');
-        icon.value = mdiAt;
-        actionLink.value = { name: 'documents-id', params: { id: 0 } };
-        actionLinkText.value = t('common.document', 1);
-        actionReason.value = t(`enums.docstore.DOC_RELATION.${props.activity.reason}`);
-
-        if (props.activity.newValue !== '') {
-            iconColor.value = 'text-info-600';
-            actionLink.value.params.id = props.activity.newValue;
-        } else if (props.activity.oldValue !== '') {
-            actionText.value = t('components.citizens.citizen_info_activity_feed_entry.document_relation_removed');
-            iconColor.value = 'text-base-600';
-            actionLink.value.params.id = props.activity.oldValue;
-        }
-
         break;
     }
 
     case 'Plugin.Licenses': {
-        icon.value = mdiLicense;
         reasonText.value = '';
-        if (props.activity.newValue != '') {
-            actionText.value = t('components.citizens.citizen_info_activity_feed_entry.plugin_license_added');
+        icon.value = mdiLicense;
+        if (props.activity.newValue !== '') {
+            actionText.value = t('components.citizens.citizen_info_activity_feed_entry.plugin_license.added');
             actionValue.value = '';
             iconColor.value = 'text-info-600';
         } else {
-            actionText.value = t('components.citizens.citizen_info_activity_feed_entry.plugin_license_removed');
+            actionText.value = t('components.citizens.citizen_info_activity_feed_entry.plugin_license.removed');
             actionValue.value = '';
             iconColor.value = 'text-warn-600';
         }
-        // TODO
         break;
     }
 
     case 'Plugin.Jail': {
-        icon.value = mdiHandcuffs;
         reasonText.value = '';
-        if (props.activity.newValue != '') {
-            actionText.value = t('components.citizens.citizen_info_activity_feed_entry.plugin_jail_jailed');
+        actionValue.value = '';
+        if (props.activity.oldValue === '' && props.activity.newValue !== '0') {
+            icon.value = mdiHandcuffs;
+            actionText.value = t('components.citizens.citizen_info_activity_feed_entry.plugin_jail.jailed');
             actionValue.value = fromSecondsToFormattedDuration(parseInt(props.activity.newValue));
+        } else if (props.activity.newValue === '0') {
+            icon.value = mdiDoorOpen;
+            actionText.value = t('components.citizens.citizen_info_activity_feed_entry.plugin_jail.unjailed');
         } else {
             icon.value = mdiRunFast;
-            // TODO
+            actionText.value = t('components.citizens.citizen_info_activity_feed_entry.plugin_jail.escaped');
         }
         break;
     }
 
     case 'Plugin.Billing.Fines': {
-        // If newValue = 0 and oldValue is set, bill has been paid
-        // If oldValue = newValue, bill has been removed/cleared
-        // If newValue set, bill has been created
-        if (props.activity.newValue === '0' && props.activity.oldValue !== '') {
+        if (props.activity.newValue === '0') {
             icon.value = mdiReceiptTextCheck;
-            actionText.value = t('components.citizens.citizen_info_activity_feed_entry.plugin_billing_fines_paid');
+            actionText.value = t('components.citizens.citizen_info_activity_feed_entry.plugin_billing_fines.paid');
             actionValue.value = '$' + props.activity.oldValue;
             iconColor.value = 'text-green-400';
         } else if (props.activity.newValue === props.activity.oldValue) {
             icon.value = mdiReceiptTextRemove;
-            actionText.value = t('components.citizens.citizen_info_activity_feed_entry.plugin_billing_fines_removed');
+            actionText.value = t('components.citizens.citizen_info_activity_feed_entry.plugin_billing_fines.removed');
             actionValue.value = '$' + props.activity.oldValue;
             iconColor.value = 'text-secondary-400';
         } else {
             icon.value = mdiReceiptTextPlus;
-            actionText.value = t('components.citizens.citizen_info_activity_feed_entry.plugin_billing_fines_created');
+            actionText.value = t('components.citizens.citizen_info_activity_feed_entry.plugin_billing_fines.created');
             actionValue.value = '$' + props.activity.newValue;
             iconColor.value = 'text-info-400';
         }
-        // TODO
         break;
     }
 }

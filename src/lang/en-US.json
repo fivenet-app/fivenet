@@ -106,7 +106,8 @@
                 "properties": "Set your job properties (e.g., livemap color).",
                 "jobs": "Setup your factions roles job rank permissions.",
                 "audit_log": "An audit trail of everything your colleagues have done.",
-                "limiter": "Limit what factions can see each other."
+                "limiter": "Limit what factions can see each other.",
+                "laws": "Set the law books and laws for the state."
             },
             "roles": {
                 "title": "Roles",
@@ -116,6 +117,9 @@
             },
             "limiter": {
                 "title": "Limiter"
+            },
+            "laws": {
+                "title": "Laws"
             }
         },
         "notfound": {
@@ -202,19 +206,29 @@
                 "set_job": "Set Person's Job"
             },
             "citizen_info_activity_feed_entry": {
-                "set_citizen_as": "Set the citizen as",
-                "document_relation": "Related the citizen in a",
-                "document_relation_removed": "Removed citizen document relation in",
                 "with_reason": "with reason",
-                "set_ciizen_job": "Set the citizen's job to ",
-                "plugin_license_added": "License added",
-                "plugin_license_removed": "License removed",
-                "plugin_jail_jailed": "Jailed",
-                "plugin_billing_fines_paid": "Fine paid",
-                "plugin_billing_fines_removed": "Fine removed",
-                "plugin_billing_fines_created": "Fine created",
+                "bool_set_citizen": "Set the citizen as",
+                "document_relation": {
+                    "added": "Related the citizen in a",
+                    "removed": "Removed citizen document relation in"
+                },
+                "userprops_job_set": "Set the citizen's job to ",
                 "traffic_infraction_points": {
                     "action_text": "Set traffic points from"
+                },
+                "plugin_license": {
+                    "added": "License added",
+                    "removed": "License removed"
+                },
+                "plugin_jail": {
+                    "jailed": "Jailed",
+                    "unjailed": "",
+                    "escaped": ""
+                },
+                "plugin_billing_fines": {
+                    "paid": "Fine paid",
+                    "removed": "Fine removed",
+                    "created": "Fine created"
                 }
             }
         },
@@ -467,7 +481,9 @@
         "notification": "Notification | Notifications",
         "received": "Received",
         "advanced_search": "Advanced Search",
-        "method": "Method"
+        "method": "Method",
+        "law": "Law | Laws",
+        "law_book": "Law Book | Law Books"
     },
     "notifications": {
         "clipboard": {

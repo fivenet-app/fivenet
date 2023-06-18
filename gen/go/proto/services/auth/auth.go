@@ -152,7 +152,7 @@ func (s *Server) Login(ctx context.Context, req *LoginRequest) (*LoginResponse, 
 
 	token, claims, err := s.createTokenFromAccountAndChar(account, nil)
 	if err != nil {
-		return nil, ErrInvalidLogin
+		return nil, ErrGenericLogin
 	}
 
 	return &LoginResponse{

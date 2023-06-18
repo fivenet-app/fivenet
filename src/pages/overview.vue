@@ -22,7 +22,7 @@ const features = [
         permission: 'CitizenStoreService.ListCitizens',
         icon: mdiAccountMultiple,
         iconForeground: 'text-purple-900',
-        iconBackground: 'bg-purple-50',
+        iconBackground: 'bg-purple-100',
     },
     {
         title: t('common.vehicle', 2),
@@ -31,7 +31,7 @@ const features = [
         permission: 'DMVService.ListVehicles',
         icon: mdiCar,
         iconForeground: 'text-zinc-900',
-        iconBackground: 'bg-zinc-50',
+        iconBackground: 'bg-zinc-100',
     },
     {
         title: t('common.document', 2),
@@ -40,7 +40,7 @@ const features = [
         permission: 'DocStoreService.ListDocuments',
         icon: mdiFileDocumentMultiple,
         iconForeground: 'text-sky-900',
-        iconBackground: 'bg-sky-50',
+        iconBackground: 'bg-sky-100',
     },
     {
         title: t('common.job', 2),
@@ -49,7 +49,7 @@ const features = [
         permission: 'Jobs.View',
         icon: mdiBriefcase,
         iconForeground: 'text-yellow-900',
-        iconBackground: 'bg-yellow-50',
+        iconBackground: 'bg-yellow-100',
     },
     {
         title: t('common.livemap'),
@@ -58,7 +58,7 @@ const features = [
         permission: 'LivemapperService.Stream',
         icon: mdiMap,
         iconForeground: 'text-teal-900',
-        iconBackground: 'bg-teal-50',
+        iconBackground: 'bg-teal-100',
     },
 ] as CardElements;
 </script>

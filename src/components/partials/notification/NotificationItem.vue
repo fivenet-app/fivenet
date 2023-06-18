@@ -7,13 +7,19 @@ import { useNotificationsStore } from '~/store/notifications';
 const notifications = useNotificationsStore();
 const { removeNotification } = notifications;
 
-defineProps<{
+const { t } = useI18n();
+
+const props = defineProps<{
     notification: Notification;
 }>();
 
 async function closeNotification(id: string): Promise<void> {
     removeNotification(id);
 }
+
+props.notification.content.parameters.forEach((e, i, a) => {
+    if (e.startsWith('errors.')) a[i] = t(e);
+});
 </script>
 
 <template>

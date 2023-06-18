@@ -3,6 +3,7 @@ import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/vue';
 import SvgIcon from '@jamescoyle/vue-icon';
 import { mdiAccount, mdiBulletinBoard, mdiCar, mdiFileDocumentMultiple } from '@mdi/js';
 import VehiclesList from '~/components/vehicles/VehiclesList.vue';
+import { can } from '~/plugins/1.vCan';
 import { useClipboardStore } from '~/store/clipboard';
 import { useNotificationsStore } from '~/store/notifications';
 import { User } from '~~/gen/ts/resources/users/users';
@@ -71,7 +72,12 @@ function addToClipboard(): void {
         </div>
         <TabGroup>
             <TabList class="border-b border-base-200 flex flex-row">
-                <Tab v-for="tab in tabs" :key="tab.name" v-slot="{ selected }" v-can="tab.permission" class="flex-1">
+                <Tab
+                    v-for="tab in tabs.filter((tab) => can(tab.permission))"
+                    :key="tab.name"
+                    v-slot="{ selected }"
+                    class="flex-1"
+                >
                     <button
                         :class="[
                             selected

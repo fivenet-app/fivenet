@@ -4,17 +4,25 @@ title: User Activity
 
 * Built-in
     * `DocStore.Relation`
+        * If `newValue` set, user mention has been added.
+        * If `oldValue` set, user mention has been removed.
     * `UserProps.Job`
+        * `newValue` contains the job and rank "pre-formatted" (e.g., `LSMD (Rettungsassistent)`).
     * `UserProps.TrafficInfractionPoints`
+        * `oldValue` old points and `newValue` new points.
     * `UserProps.Wanted`
+        * `newValue` new wanted state, `oldValue` previous wanted state.
 * External ("Plugin")
     * `Plugin.Licenses`
-        * Add
-        * Remove
+        * Fields:
+            * `reason`: Label of license
+        * Add/Given: If `newValue` is set, user was given a license.
+        * Remove/Revoked: If `oldValue` is set, user got license revoked.
     * `Plugin.Billing.Fines`
-        * Sent
-        * Paid
-        * Removed
+            * Sent: If `newValue` equal `0`, bill has been paid.
+            * Paid: If `oldValue = newValue`, bill has been removed/cleared.
+            * Removed: If `newValue` set, bill has been created.
     * `Plugin.Jail`
-        * Jailed
-        * Unjailed
+        * Jailed: If `oldValue` is empty and `newValue > 0`, player has been jailed for `newValue` time (seconds).
+        * Unjailed: If `newValue` is `0`, player has been unjailed by "police"/"admin" (in reason).
+        * Escaped: If `oldValue` is `0`, player has escaped (police notification triggered).
