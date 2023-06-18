@@ -163,8 +163,7 @@ func (p *Perms) createOrUpdateAttribute(ctx context.Context, permId uint64, key 
 			return 0, err
 		}
 
-		if attr.Type != string(aType) ||
-			((attr.ValidValues == nil && validVal != nil) || (validVal != nil && attr.ValidValues != nil && validVal != *attr.ValidValues)) {
+		if attr.Type != string(aType) || (attr.ValidValues == nil || validVal != *attr.ValidValues) || (attr.DefaultValues == nil || defaultValues != *attr.DefaultValues) {
 			return attr.ID, p.UpdateAttribute(ctx, attr.ID, permId, key, aType, validValues, defaultValues)
 		}
 
