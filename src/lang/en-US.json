@@ -207,23 +207,23 @@
             },
             "citizen_info_activity_feed_entry": {
                 "with_reason": "with reason",
+                "traffic_infraction_points": {
+                    "action_text": "Set traffic points from"
+                },
                 "bool_set_citizen": "Set the citizen as",
                 "document_relation": {
                     "added": "Related the citizen in a",
                     "removed": "Removed citizen document relation in"
                 },
                 "userprops_job_set": "Set the citizen's job to ",
-                "traffic_infraction_points": {
-                    "action_text": "Set traffic points from"
-                },
                 "plugin_license": {
                     "added": "License added",
                     "removed": "License removed"
                 },
                 "plugin_jail": {
                     "jailed": "Jailed",
-                    "unjailed": "",
-                    "escaped": ""
+                    "unjailed": "Released",
+                    "escaped": "Escaped"
                 },
                 "plugin_billing_fines": {
                     "paid": "Fine paid",
