@@ -642,6 +642,16 @@
             "no_permission": {
                 "title": "Du hast keine Berechtigung dazu!",
                 "content": "Keine Berechtigung um zu {0} gehen."
+            },
+            "oauth2_connect": {
+                "success": {
+                    "title": "Erfolgreich mit Social Login verbunden",
+                    "content": "Verbindung mit Social Login erfolgreich hergestellt."
+                },
+                "failed": {
+                    "title": "Fehler beim verbinden deines Kontos",
+                    "content": "Fehler beim Social Login ihres Kontos (Fehler: {0}), bitte versuchen sie es erneut."
+                }
             }
         },
         "language_switched": {
