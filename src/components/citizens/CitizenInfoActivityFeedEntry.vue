@@ -77,7 +77,7 @@ switch (props.activity.key) {
 
     case 'UserProps.TrafficInfractionPoints': {
         actionText.value = t('components.citizens.citizen_info_activity_feed_entry.traffic_infraction_points.action_text');
-        actionValue.value = `${props.activity.oldValue} ${t('common.to')} ${props.activity.newValue}`;
+        actionValue.value = `${props.activity.oldValue} ${t('common.to').toLocaleLowerCase()} ${props.activity.newValue}`;
         icon.value = mdiTrafficCone;
         iconColor.value = 'text-secondary-400';
         break;
