@@ -811,7 +811,17 @@ func (p *Perms) UpdateRoleAttributeMaxValues(ctx context.Context, roleId uint64,
 
 	ra, ok := p.lookupRoleAttribute(roleId, attrId)
 	if !ok {
-		return fmt.Errorf("unable to update role attribute max values, didn't find role attribute by ID %d and role ID %d", attrId, roleId)
+		if err := p.addOrUpdateAttributesToRole(ctx, roleId, &permissions.RoleAttribute{
+			RoleId:    roleId,
+			AttrId:    attrId,
+			Type:      string(a.Type),
+			MaxValues: maxValues,
+		}); err != nil {
+			return fmt.Errorf("failed to add new role %d attribute %d", roleId, attrId)
+		}
+		if ra, ok = p.lookupRoleAttribute(roleId, attrId); !ok {
+			return fmt.Errorf("unable to update role attribute max values, didn't find role attribute by ID %d and role ID %d", attrId, roleId)
+		}
 	}
 
 	maxVal := jet.NULL

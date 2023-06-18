@@ -722,7 +722,8 @@
                     "PhoneNumber": "Phone Number",
                     "Licenses": "Licenses",
                     "UserProps_Wanted": "Wanted Status",
-                    "UserProps_Job": "Job"
+                    "UserProps_Job": "Job",
+                    "UserProps_TrafficInfractionPoints": "Traffic Points"
                 }
             },
             "ListUserActivity": {
@@ -738,7 +739,8 @@
                 "description": "Set Citizen Props (e.g., wanted status)",
                 "attrs": {
                     "Wanted": "Wanted Status",
-                    "Job": "Job"
+                    "Job": "Job",
+                    "TrafficInfractionPoints": "Traffic Points"
                 }
             },
             "GetUser": {

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import RolesList from '~/components/rector/RolesList.vue';
+import AttrRolesList from '~/components/rector/AttrRolesList.vue';
 
 useHead({
     title: 'pages.rector.limiter.title',
@@ -12,5 +12,5 @@ definePageMeta({
 });
 </script>
 <template>
-    <RolesList :to="{ name: 'rector-limiter-id', params: { id: '0' } }" :all="true" />
+    <AttrRolesList :all="true" />
 </template>

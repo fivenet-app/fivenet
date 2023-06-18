@@ -31,6 +31,7 @@ const id = ref<bigint>(props.attribute.attrId);
 const jobGrades = ref<Map<string, JobGrade>>(new Map());
 
 const state: AttributeValues = states.value.get(id.value)!;
+const validValues = ref<AttributeValues | undefined>(props.attribute.validValues);
 const maxValues = ref<AttributeValues | undefined>(props.attribute.maxValues);
 if (!maxValues.value) {
     maxValues.value = props.attribute.validValues;
@@ -189,13 +190,13 @@ onMounted(() => {
                     <div
                         v-if="
                             state.validValues.oneofKind === 'stringList' &&
-                            maxValues?.validValues &&
-                            maxValues?.validValues.oneofKind === 'stringList'
+                            validValues?.validValues &&
+                            validValues?.validValues.oneofKind === 'stringList'
                         "
                         class="flex flex-row gap-4 flex-wrap"
                     >
                         <div
-                            v-for="value in maxValues.validValues.stringList.strings"
+                            v-for="value in validValues.validValues.stringList.strings"
                             :key="value"
                             class="flex flex-row flex-initial flex-nowrap"
                         >
@@ -215,8 +216,8 @@ onMounted(() => {
                     <div
                         v-else-if="
                             state.validValues.oneofKind === 'jobList' &&
-                            maxValues?.validValues &&
-                            maxValues?.validValues.oneofKind === 'jobList'
+                            validValues?.validValues &&
+                            validValues?.validValues.oneofKind === 'jobList'
                         "
                         class="flex flex-row gap-4 flex-wrap"
                     >
@@ -235,8 +236,8 @@ onMounted(() => {
                     <div
                         v-else-if="
                             state.validValues.oneofKind === 'jobGradeList' &&
-                            maxValues?.validValues &&
-                            maxValues.validValues.oneofKind === 'jobGradeList'
+                            validValues?.validValues &&
+                            validValues.validValues.oneofKind === 'jobGradeList'
                         "
                         class="flex flex-col gap-2"
                     >

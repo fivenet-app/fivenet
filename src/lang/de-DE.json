@@ -722,7 +722,8 @@
                     "PhoneNumber": "Telefonnummer",
                     "Licenses": "Lizenzen",
                     "UserProps_Wanted": "Gesuchten Status",
-                    "UserProps_Job": "Job"
+                    "UserProps_Job": "Job",
+                    "UserProps_TrafficInfractionPoints": "Verkehrspunkte"
                 }
             },
             "ListUserActivity": {
@@ -738,7 +739,8 @@
                 "description": "Bürger-Eigenschaften festlegen (z.B. Fahndungsstatus)",
                 "attrs": {
                     "Wanted": "Gesuchten Status",
-                    "Job": "Job"
+                    "Job": "Job",
+                    "TrafficInfractionPoints": "Verkehrspunkte"
                 }
             },
             "GetUser": {

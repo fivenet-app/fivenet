@@ -14,10 +14,16 @@ import { Role } from '~~/gen/ts/resources/permissions/permissions';
 import DataNoDataBlock from '../partials/DataNoDataBlock.vue';
 import RolesListEntry from './RolesListEntry.vue';
 
-const props = defineProps<{
-    to?: RoutesNamedLocations;
-    all?: boolean;
-}>();
+const props = withDefaults(
+    defineProps<{
+        to?: RoutesNamedLocations;
+        all?: boolean;
+        showCreate: boolean;
+    }>(),
+    {
+        showCreate: true,
+    }
+);
 
 const { $grpc } = useNuxtApp();
 
@@ -128,7 +134,7 @@ onMounted(async () => {
     <div class="py-2">
         <div class="px-2 sm:px-6 lg:px-8">
             <div class="flow-root mt-2">
-                <div class="sm:flex sm:items-center">
+                <div class="sm:flex sm:items-center" v-if="showCreate">
                     <div class="sm:flex-auto">
                         <form @submit.prevent="createRole()">
                             <div class="flex flex-row gap-4 mx-auto">

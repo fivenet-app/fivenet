@@ -16,7 +16,7 @@ defineProps<{
         <td class="whitespace-nowrap py-2 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
             <div class="flex flex-row justify-end">
                 <NuxtLink
-                    :to="{ name: 'rector-roles-id', params: { id: role.id.toString() } }"
+                    :to="{ name: 'rector-limiter-id', params: { id: role.id.toString() } }"
                     class="flex-initial text-primary-500 hover:text-primary-400"
                 >
                     <SvgIcon class="h-6 w-6 text-primary-500" aria-hidden="true" type="mdi" :path="mdiEye" />
