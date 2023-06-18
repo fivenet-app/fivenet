@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 import SvgIcon from '@jamescoyle/vue-icon';
-import { mdiChevronDown, mdiTrashCan } from '@mdi/js';
+import { mdiChevronDown } from '@mdi/js';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import Divider from '~/components/partials/Divider.vue';
 import { useNotificationsStore } from '~/store/notifications';
@@ -54,28 +54,6 @@ async function prepareAttributeData(): Promise<void> {
 
             jobs.value = response.jobs;
 
-            return res();
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
-        }
-    });
-}
-
-async function deleteRole(): Promise<void> {
-    return new Promise(async (res, rej) => {
-        try {
-            await $grpc.getRectorClient().deleteRole({
-                id: props.roleId,
-            });
-
-            notifications.dispatchNotification({
-                title: { key: 'notifications.rector.role_deleted.title', parameters: [] },
-                content: { key: 'notifications.rector.role_deleted.content', parameters: [] },
-                type: 'success',
-            });
-
-            await navigateTo({ name: 'rector-roles' });
             return res();
         } catch (e) {
             $grpc.handleError(e as RpcError);
@@ -192,12 +170,7 @@ onMounted(async () => {
     <div class="py-4 max-w-7xl mx-auto">
         <div class="px-2 sm:px-6 lg:px-8">
             <div v-if="role">
-                <h2 class="text-3xl text-white">
-                    {{ role?.jobLabel! }} - {{ role?.jobGradeLabel }}
-                    <button v-can="'RectorService.DeleteRole'" @click="deleteRole()">
-                        <SvgIcon class="w-6 h-6 mx-auto text-neutral" type="mdi" :path="mdiTrashCan" />
-                    </button>
-                </h2>
+                <h2 class="text-3xl text-white">{{ role?.jobLabel! }} - {{ role?.jobGradeLabel }}</h2>
                 <Divider label="Permissions" />
                 <div class="py-2 flex flex-col gap-4">
                     <Disclosure

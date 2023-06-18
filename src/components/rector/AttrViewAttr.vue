@@ -25,17 +25,13 @@ const emit = defineEmits<{
     (e: 'update:states', payload: Map<bigint, AttributeValues | undefined>): void;
 }>();
 
+const jobGrades = ref<Map<string, JobGrade>>(new Map());
+
 const states = ref<typeof props.states>(props.states);
 const id = ref<bigint>(props.attribute.attrId);
 
-const jobGrades = ref<Map<string, JobGrade>>(new Map());
-
 const state: AttributeValues = states.value.get(id.value)!;
 const validValues = ref<AttributeValues | undefined>(props.attribute.validValues);
-const maxValues = ref<AttributeValues | undefined>(props.attribute.maxValues);
-if (!maxValues.value) {
-    maxValues.value = props.attribute.validValues;
-}
 
 if (!states.value.has(id.value)) {
     switch (lowercaseFirstLetter(props.attribute.type)) {
@@ -322,7 +318,7 @@ onMounted(() => {
                             </Listbox>
                         </div>
                     </div>
-                    <div v-else>{{ state.validValues.oneofKind }} {{ maxValues }}</div>
+                    <div v-else>{{ state.validValues.oneofKind }} {{ validValues }}</div>
                 </div>
             </DisclosurePanel>
         </Disclosure>

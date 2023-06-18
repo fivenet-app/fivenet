@@ -45,7 +45,6 @@ const summary = ref<PenaltiesSummary>({
 });
 
 async function applyQuery(): Promise<void> {
-    console.log(lawBooks.value);
     if (!lawBooks.value) return;
 
     let newLawBooks = structuredClone(toRaw(lawBooks.value));

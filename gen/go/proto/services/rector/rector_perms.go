@@ -412,7 +412,7 @@ func (s *Server) GetPermissions(ctx context.Context, req *GetPermissionsRequest)
 		return nil, ErrInvalidRequest
 	}
 
-	attrs, err := s.p.GetAllAttributes(ctx, userInfo.Job, userInfo.JobGrade)
+	attrs, err := s.p.GetAllAttributes(ctx, role.Job, role.Grade)
 	if err != nil {
 		return nil, ErrInvalidRequest
 	}
