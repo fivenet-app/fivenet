@@ -106,7 +106,8 @@
                 "properties": "Stelle deine Job Eigenschaften ein (e.g., Livemap Marker Farbe).",
                 "jobs": "Richten Sie die Rollen, Job Ränge und Berechtigungen für Ihre Fraktion ein.",
                 "audit_log": "Eine Überprüfung der Schritte, die von Ihren Kollegen unternommen wurden.",
-                "limiter": "Begrenzen was Fraktionen sehen können."
+                "limiter": "Begrenzen was Fraktionen sehen können.",
+                "laws": "Erstelle und aktualisiere die Gesetzbücher des Staates."
             },
             "roles": {
                 "title": "Rollen",
@@ -116,6 +117,9 @@
             },
             "limiter": {
                 "title": "Begrenzer"
+            },
+            "laws": {
+                "title": "Gesetzbücher"
             }
         },
         "notfound": {
@@ -202,19 +206,29 @@
                 "set_job": "Job der Person setzen"
             },
             "citizen_info_activity_feed_entry": {
-                "set_citizen_as": "Setze den Bürger als",
-                "document_relation": "Bürger zugehörig zu",
-                "document_relation_removed": "Bürger nicht mehr zugehörig zu",
                 "with_reason": "mit dem Grund",
-                "set_ciizen_job": "Setzte den Beruf des Bürgers zu ",
-                "plugin_license_added": "Lizenz hinzugefügt",
-                "plugin_license_removed": "Lizenz entfernt",
-                "plugin_jail_jailed": "Inhaftiert",
-                "plugin_billing_fines_paid": "Strafe bezahlt",
-                "plugin_billing_fines_removed": "Strafe entfernt",
-                "plugin_billing_fines_created": "Strafe erstellt",
                 "traffic_infraction_points": {
                     "action_text": "Setzte Verkehrspunkte von"
+                },
+                "bool_set_citizen": "Setze den Bürger als",
+                "document_relation": {
+                    "added": "Bürger zugehörig zu",
+                    "removed": "Bürger nicht mehr zugehörig zu"
+                },
+                "userprops_job_set": "Setzte den Beruf des Bürgers zu ",
+                "plugin_license": {
+                    "added": "Lizenz hinzugefügt",
+                    "removed": "Lizenz entfernt"
+                },
+                "plugin_jail": {
+                    "jailed": "Inhaftiert",
+                    "unjailed": "Freigelassen",
+                    "escaped": "Entkommen"
+                },
+                "plugin_billing_fines": {
+                    "paid": "Strafe bezahlt",
+                    "removed": "Strafe entfernt",
+                    "created": "Strafe erstellt"
                 }
             }
         },
@@ -467,7 +481,9 @@
         "notification": "Benachrichtigung | Benachrichtigungen",
         "received": "Erhalten",
         "advanced_search": "Erweiterte Suche",
-        "method": "Methode"
+        "method": "Methode",
+        "law": "Gesetz | Gesetze",
+        "law_book": "Gesetzbuch | Gesetzbücher"
     },
     "notifications": {
         "clipboard": {
