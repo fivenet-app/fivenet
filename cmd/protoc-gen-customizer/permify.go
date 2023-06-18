@@ -99,7 +99,7 @@ func (p *PermifyModule) generate(f pgs.File) {
 				}
 			}
 
-			if perm.Name == "SuperUser" {
+			if perm.Name == "SuperUser" || perm.Name == "Any" {
 				continue
 			}
 
@@ -115,7 +115,7 @@ func (p *PermifyModule) generate(f pgs.File) {
 		}
 	}
 
-	if len(data.Permissions) == 0 {
+	if len(data.Permissions) == 0 && len(data.PermissionRemap) == 0 {
 		return
 	}
 
@@ -199,7 +199,7 @@ import (
 var PermsRemap = map[string]string{
 	// Service: {{ $service }}
 	{{ range $key, $target := $remap -}}
-	"{{ $service }}/{{ $key }}": "{{- if ne $target "SuperUser" }}{{ $service }}/{{ end }}{{ $target }}",
+	"{{ $service }}/{{ $key }}": "{{- if and (ne $target "SuperUser") (ne $target "Any") }}{{ $service }}/{{ end }}{{ $target }}",
     {{ end }}
 }
 {{ end }}

@@ -4,6 +4,8 @@
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
 import { CompletorService } from "./completor.js";
+import type { ListLawBooksResponse } from "./completor.js";
+import type { ListLawBooksRequest } from "./completor.js";
 import type { CompleteDocumentCategoriesResponse } from "./completor.js";
 import type { CompleteDocumentCategoriesRequest } from "./completor.js";
 import type { CompleteJobsResponse } from "./completor.js";
@@ -35,6 +37,12 @@ export interface ICompletorServiceClient {
      * @generated from protobuf rpc: CompleteDocumentCategories(services.completor.CompleteDocumentCategoriesRequest) returns (services.completor.CompleteDocumentCategoriesResponse);
      */
     completeDocumentCategories(input: CompleteDocumentCategoriesRequest, options?: RpcOptions): UnaryCall<CompleteDocumentCategoriesRequest, CompleteDocumentCategoriesResponse>;
+    /**
+     * @perm: Name=Any
+     *
+     * @generated from protobuf rpc: ListLawBooks(services.completor.ListLawBooksRequest) returns (services.completor.ListLawBooksResponse);
+     */
+    listLawBooks(input: ListLawBooksRequest, options?: RpcOptions): UnaryCall<ListLawBooksRequest, ListLawBooksResponse>;
 }
 /**
  * @generated from protobuf service services.completor.CompletorService
@@ -71,5 +79,14 @@ export class CompletorServiceClient implements ICompletorServiceClient, ServiceI
     completeDocumentCategories(input: CompleteDocumentCategoriesRequest, options?: RpcOptions): UnaryCall<CompleteDocumentCategoriesRequest, CompleteDocumentCategoriesResponse> {
         const method = this.methods[2], opt = this._transport.mergeOptions(options);
         return stackIntercept<CompleteDocumentCategoriesRequest, CompleteDocumentCategoriesResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @perm: Name=Any
+     *
+     * @generated from protobuf rpc: ListLawBooks(services.completor.ListLawBooksRequest) returns (services.completor.ListLawBooksResponse);
+     */
+    listLawBooks(input: ListLawBooksRequest, options?: RpcOptions): UnaryCall<ListLawBooksRequest, ListLawBooksResponse> {
+        const method = this.methods[3], opt = this._transport.mergeOptions(options);
+        return stackIntercept<ListLawBooksRequest, ListLawBooksResponse>("unary", this._transport, method, opt, input);
     }
 }

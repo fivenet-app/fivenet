@@ -18,7 +18,6 @@ import (
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/zap"
-	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -56,16 +55,6 @@ func NewServer(logger *zap.Logger, db *sql.DB, p perms.Permissions, tm *auth.Tok
 		tm:     tm,
 		ui:     ui,
 	}
-}
-
-func (s *Server) PermissionUnaryFuncOverride(ctx context.Context, info *grpc.UnaryServerInfo) (context.Context, error) {
-	// Skip permission check for the notificator services
-	return ctx, nil
-}
-
-func (s *Server) PermissionStreamFuncOverride(ctx context.Context, srv interface{}, info *grpc.StreamServerInfo) (context.Context, error) {
-	// Skip permission check for the notificator services
-	return ctx, nil
 }
 
 func (s *Server) GetNotifications(ctx context.Context, req *GetNotificationsRequest) (*GetNotificationsResponse, error) {

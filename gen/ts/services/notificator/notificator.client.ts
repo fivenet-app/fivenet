@@ -19,14 +19,20 @@ import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
  */
 export interface INotificatorServiceClient {
     /**
+     * @perm: Name=Any
+     *
      * @generated from protobuf rpc: GetNotifications(services.notificator.GetNotificationsRequest) returns (services.notificator.GetNotificationsResponse);
      */
     getNotifications(input: GetNotificationsRequest, options?: RpcOptions): UnaryCall<GetNotificationsRequest, GetNotificationsResponse>;
     /**
+     * @perm: Name=Any
+     *
      * @generated from protobuf rpc: ReadNotifications(services.notificator.ReadNotificationsRequest) returns (services.notificator.ReadNotificationsResponse);
      */
     readNotifications(input: ReadNotificationsRequest, options?: RpcOptions): UnaryCall<ReadNotificationsRequest, ReadNotificationsResponse>;
     /**
+     * @perm: Name=Any
+     *
      * @generated from protobuf rpc: Stream(services.notificator.StreamRequest) returns (stream services.notificator.StreamResponse);
      */
     stream(input: StreamRequest, options?: RpcOptions): ServerStreamingCall<StreamRequest, StreamResponse>;
@@ -41,6 +47,8 @@ export class NotificatorServiceClient implements INotificatorServiceClient, Serv
     constructor(private readonly _transport: RpcTransport) {
     }
     /**
+     * @perm: Name=Any
+     *
      * @generated from protobuf rpc: GetNotifications(services.notificator.GetNotificationsRequest) returns (services.notificator.GetNotificationsResponse);
      */
     getNotifications(input: GetNotificationsRequest, options?: RpcOptions): UnaryCall<GetNotificationsRequest, GetNotificationsResponse> {
@@ -48,6 +56,8 @@ export class NotificatorServiceClient implements INotificatorServiceClient, Serv
         return stackIntercept<GetNotificationsRequest, GetNotificationsResponse>("unary", this._transport, method, opt, input);
     }
     /**
+     * @perm: Name=Any
+     *
      * @generated from protobuf rpc: ReadNotifications(services.notificator.ReadNotificationsRequest) returns (services.notificator.ReadNotificationsResponse);
      */
     readNotifications(input: ReadNotificationsRequest, options?: RpcOptions): UnaryCall<ReadNotificationsRequest, ReadNotificationsResponse> {
@@ -55,6 +65,8 @@ export class NotificatorServiceClient implements INotificatorServiceClient, Serv
         return stackIntercept<ReadNotificationsRequest, ReadNotificationsResponse>("unary", this._transport, method, opt, input);
     }
     /**
+     * @perm: Name=Any
+     *
      * @generated from protobuf rpc: Stream(services.notificator.StreamRequest) returns (stream services.notificator.StreamResponse);
      */
     stream(input: StreamRequest, options?: RpcOptions): ServerStreamingCall<StreamRequest, StreamResponse> {

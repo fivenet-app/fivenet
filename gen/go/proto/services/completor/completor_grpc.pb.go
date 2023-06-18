@@ -28,6 +28,8 @@ type CompletorServiceClient interface {
 	CompleteJobs(ctx context.Context, in *CompleteJobsRequest, opts ...grpc.CallOption) (*CompleteJobsResponse, error)
 	// @perm: Attrs=Jobs/JobList
 	CompleteDocumentCategories(ctx context.Context, in *CompleteDocumentCategoriesRequest, opts ...grpc.CallOption) (*CompleteDocumentCategoriesResponse, error)
+	// @perm: Name=Any
+	ListLawBooks(ctx context.Context, in *ListLawBooksRequest, opts ...grpc.CallOption) (*ListLawBooksResponse, error)
 }
 
 type completorServiceClient struct {
@@ -65,6 +67,15 @@ func (c *completorServiceClient) CompleteDocumentCategories(ctx context.Context,
 	return out, nil
 }
 
+func (c *completorServiceClient) ListLawBooks(ctx context.Context, in *ListLawBooksRequest, opts ...grpc.CallOption) (*ListLawBooksResponse, error) {
+	out := new(ListLawBooksResponse)
+	err := c.cc.Invoke(ctx, "/services.completor.CompletorService/ListLawBooks", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CompletorServiceServer is the server API for CompletorService service.
 // All implementations must embed UnimplementedCompletorServiceServer
 // for forward compatibility
@@ -75,6 +86,8 @@ type CompletorServiceServer interface {
 	CompleteJobs(context.Context, *CompleteJobsRequest) (*CompleteJobsResponse, error)
 	// @perm: Attrs=Jobs/JobList
 	CompleteDocumentCategories(context.Context, *CompleteDocumentCategoriesRequest) (*CompleteDocumentCategoriesResponse, error)
+	// @perm: Name=Any
+	ListLawBooks(context.Context, *ListLawBooksRequest) (*ListLawBooksResponse, error)
 	mustEmbedUnimplementedCompletorServiceServer()
 }
 
@@ -90,6 +103,9 @@ func (UnimplementedCompletorServiceServer) CompleteJobs(context.Context, *Comple
 }
 func (UnimplementedCompletorServiceServer) CompleteDocumentCategories(context.Context, *CompleteDocumentCategoriesRequest) (*CompleteDocumentCategoriesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CompleteDocumentCategories not implemented")
+}
+func (UnimplementedCompletorServiceServer) ListLawBooks(context.Context, *ListLawBooksRequest) (*ListLawBooksResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListLawBooks not implemented")
 }
 func (UnimplementedCompletorServiceServer) mustEmbedUnimplementedCompletorServiceServer() {}
 
@@ -158,6 +174,24 @@ func _CompletorService_CompleteDocumentCategories_Handler(srv interface{}, ctx c
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CompletorService_ListLawBooks_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListLawBooksRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CompletorServiceServer).ListLawBooks(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/services.completor.CompletorService/ListLawBooks",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CompletorServiceServer).ListLawBooks(ctx, req.(*ListLawBooksRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // CompletorService_ServiceDesc is the grpc.ServiceDesc for CompletorService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -176,6 +210,10 @@ var CompletorService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CompleteDocumentCategories",
 			Handler:    _CompletorService_CompleteDocumentCategories_Handler,
+		},
+		{
+			MethodName: "ListLawBooks",
+			Handler:    _CompletorService_ListLawBooks_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

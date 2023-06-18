@@ -799,3 +799,241 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = CompleteDocumentCategoriesResponseValidationError{}
+
+// Validate checks the field values on ListLawBooksRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ListLawBooksRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListLawBooksRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ListLawBooksRequestMultiError, or nil if none found.
+func (m *ListLawBooksRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListLawBooksRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return ListLawBooksRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// ListLawBooksRequestMultiError is an error wrapping multiple validation
+// errors returned by ListLawBooksRequest.ValidateAll() if the designated
+// constraints aren't met.
+type ListLawBooksRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListLawBooksRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListLawBooksRequestMultiError) AllErrors() []error { return m }
+
+// ListLawBooksRequestValidationError is the validation error returned by
+// ListLawBooksRequest.Validate if the designated constraints aren't met.
+type ListLawBooksRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListLawBooksRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListLawBooksRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListLawBooksRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListLawBooksRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListLawBooksRequestValidationError) ErrorName() string {
+	return "ListLawBooksRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ListLawBooksRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListLawBooksRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListLawBooksRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListLawBooksRequestValidationError{}
+
+// Validate checks the field values on ListLawBooksResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ListLawBooksResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListLawBooksResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ListLawBooksResponseMultiError, or nil if none found.
+func (m *ListLawBooksResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListLawBooksResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetBooks() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ListLawBooksResponseValidationError{
+						field:  fmt.Sprintf("Books[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ListLawBooksResponseValidationError{
+						field:  fmt.Sprintf("Books[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ListLawBooksResponseValidationError{
+					field:  fmt.Sprintf("Books[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return ListLawBooksResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// ListLawBooksResponseMultiError is an error wrapping multiple validation
+// errors returned by ListLawBooksResponse.ValidateAll() if the designated
+// constraints aren't met.
+type ListLawBooksResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListLawBooksResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListLawBooksResponseMultiError) AllErrors() []error { return m }
+
+// ListLawBooksResponseValidationError is the validation error returned by
+// ListLawBooksResponse.Validate if the designated constraints aren't met.
+type ListLawBooksResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListLawBooksResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListLawBooksResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListLawBooksResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListLawBooksResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListLawBooksResponseValidationError) ErrorName() string {
+	return "ListLawBooksResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ListLawBooksResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListLawBooksResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListLawBooksResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListLawBooksResponseValidationError{}

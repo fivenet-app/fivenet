@@ -49,8 +49,11 @@ message TokenUpdate {
 }
 
 service NotificatorService {
+  // @perm: Name=Any
   rpc GetNotifications(GetNotificationsRequest) returns (GetNotificationsResponse);
+  // @perm: Name=Any
   rpc ReadNotifications(ReadNotificationsRequest) returns (ReadNotificationsResponse);
 
+  // @perm: Name=Any
   rpc Stream(StreamRequest) returns (stream StreamResponse);
 }

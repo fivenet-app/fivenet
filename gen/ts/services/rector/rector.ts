@@ -3,6 +3,7 @@
 // tslint:disable
 import { ServiceType } from "@protobuf-ts/runtime-rpc";
 import { MessageType } from "@protobuf-ts/runtime";
+import { LawBook } from "../../resources/laws/laws.js";
 import { AuditEntry } from "../../resources/rector/audit.js";
 import { PaginationResponse } from "../../resources/common/database/database.js";
 import { Timestamp } from "../../resources/timestamp/timestamp.js";
@@ -257,6 +258,24 @@ export interface UpdateRoleLimitsRequest {
  * @generated from protobuf message services.rector.UpdateRoleLimitsResponse
  */
 export interface UpdateRoleLimitsResponse {
+}
+/**
+ * @generated from protobuf message services.rector.UpdateLawsRequest
+ */
+export interface UpdateLawsRequest {
+    /**
+     * @generated from protobuf field: repeated resources.laws.LawBook books = 1;
+     */
+    books: LawBook[];
+}
+/**
+ * @generated from protobuf message services.rector.UpdateLawsResponse
+ */
+export interface UpdateLawsResponse {
+    /**
+     * @generated from protobuf field: repeated resources.laws.LawBook books = 1;
+     */
+    books: LawBook[];
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class GetJobPropsRequest$Type extends MessageType<GetJobPropsRequest> {
@@ -539,6 +558,30 @@ class UpdateRoleLimitsResponse$Type extends MessageType<UpdateRoleLimitsResponse
  * @generated MessageType for protobuf message services.rector.UpdateRoleLimitsResponse
  */
 export const UpdateRoleLimitsResponse = new UpdateRoleLimitsResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class UpdateLawsRequest$Type extends MessageType<UpdateLawsRequest> {
+    constructor() {
+        super("services.rector.UpdateLawsRequest", [
+            { no: 1, name: "books", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => LawBook }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.rector.UpdateLawsRequest
+ */
+export const UpdateLawsRequest = new UpdateLawsRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class UpdateLawsResponse$Type extends MessageType<UpdateLawsResponse> {
+    constructor() {
+        super("services.rector.UpdateLawsResponse", [
+            { no: 1, name: "books", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => LawBook }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.rector.UpdateLawsResponse
+ */
+export const UpdateLawsResponse = new UpdateLawsResponse$Type();
 /**
  * @generated ServiceType for protobuf service services.rector.RectorService
  */
@@ -552,5 +595,6 @@ export const RectorService = new ServiceType("services.rector.RectorService", [
     { name: "UpdateRolePerms", options: {}, I: UpdateRolePermsRequest, O: UpdateRolePermsResponse },
     { name: "GetPermissions", options: {}, I: GetPermissionsRequest, O: GetPermissionsResponse },
     { name: "ViewAuditLog", options: {}, I: ViewAuditLogRequest, O: ViewAuditLogResponse },
-    { name: "UpdateRoleLimits", options: {}, I: UpdateRoleLimitsRequest, O: UpdateRoleLimitsResponse }
+    { name: "UpdateRoleLimits", options: {}, I: UpdateRoleLimitsRequest, O: UpdateRoleLimitsResponse },
+    { name: "UpdateLaws", options: {}, I: UpdateLawsRequest, O: UpdateLawsResponse }
 ]);

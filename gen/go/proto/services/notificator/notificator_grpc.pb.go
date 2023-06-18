@@ -22,8 +22,11 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type NotificatorServiceClient interface {
+	// @perm: Name=Any
 	GetNotifications(ctx context.Context, in *GetNotificationsRequest, opts ...grpc.CallOption) (*GetNotificationsResponse, error)
+	// @perm: Name=Any
 	ReadNotifications(ctx context.Context, in *ReadNotificationsRequest, opts ...grpc.CallOption) (*ReadNotificationsResponse, error)
+	// @perm: Name=Any
 	Stream(ctx context.Context, in *StreamRequest, opts ...grpc.CallOption) (NotificatorService_StreamClient, error)
 }
 
@@ -89,8 +92,11 @@ func (x *notificatorServiceStreamClient) Recv() (*StreamResponse, error) {
 // All implementations must embed UnimplementedNotificatorServiceServer
 // for forward compatibility
 type NotificatorServiceServer interface {
+	// @perm: Name=Any
 	GetNotifications(context.Context, *GetNotificationsRequest) (*GetNotificationsResponse, error)
+	// @perm: Name=Any
 	ReadNotifications(context.Context, *ReadNotificationsRequest) (*ReadNotificationsResponse, error)
+	// @perm: Name=Any
 	Stream(*StreamRequest, NotificatorService_StreamServer) error
 	mustEmbedUnimplementedNotificatorServiceServer()
 }

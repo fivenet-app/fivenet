@@ -3,6 +3,7 @@
 // tslint:disable
 import { ServiceType } from "@protobuf-ts/runtime-rpc";
 import { MessageType } from "@protobuf-ts/runtime";
+import { LawBook } from "../../resources/laws/laws.js";
 import { DocumentCategory } from "../../resources/documents/category.js";
 import { Job } from "../../resources/jobs/jobs.js";
 import { UserShort } from "../../resources/users/users.js";
@@ -67,6 +68,20 @@ export interface CompleteDocumentCategoriesResponse {
      * @generated from protobuf field: repeated resources.documents.DocumentCategory categories = 1;
      */
     categories: DocumentCategory[];
+}
+/**
+ * @generated from protobuf message services.completor.ListLawBooksRequest
+ */
+export interface ListLawBooksRequest {
+}
+/**
+ * @generated from protobuf message services.completor.ListLawBooksResponse
+ */
+export interface ListLawBooksResponse {
+    /**
+     * @generated from protobuf field: repeated resources.laws.LawBook books = 1;
+     */
+    books: LawBook[];
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class CompleteCitizensRequest$Type extends MessageType<CompleteCitizensRequest> {
@@ -142,11 +157,34 @@ class CompleteDocumentCategoriesResponse$Type extends MessageType<CompleteDocume
  * @generated MessageType for protobuf message services.completor.CompleteDocumentCategoriesResponse
  */
 export const CompleteDocumentCategoriesResponse = new CompleteDocumentCategoriesResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ListLawBooksRequest$Type extends MessageType<ListLawBooksRequest> {
+    constructor() {
+        super("services.completor.ListLawBooksRequest", []);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.completor.ListLawBooksRequest
+ */
+export const ListLawBooksRequest = new ListLawBooksRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ListLawBooksResponse$Type extends MessageType<ListLawBooksResponse> {
+    constructor() {
+        super("services.completor.ListLawBooksResponse", [
+            { no: 1, name: "books", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => LawBook }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.completor.ListLawBooksResponse
+ */
+export const ListLawBooksResponse = new ListLawBooksResponse$Type();
 /**
  * @generated ServiceType for protobuf service services.completor.CompletorService
  */
 export const CompletorService = new ServiceType("services.completor.CompletorService", [
     { name: "CompleteCitizens", options: {}, I: CompleteCitizensRequest, O: CompleteCitizensRespoonse },
     { name: "CompleteJobs", options: {}, I: CompleteJobsRequest, O: CompleteJobsResponse },
-    { name: "CompleteDocumentCategories", options: {}, I: CompleteDocumentCategoriesRequest, O: CompleteDocumentCategoriesResponse }
+    { name: "CompleteDocumentCategories", options: {}, I: CompleteDocumentCategoriesRequest, O: CompleteDocumentCategoriesResponse },
+    { name: "ListLawBooks", options: {}, I: ListLawBooksRequest, O: ListLawBooksResponse }
 ]);

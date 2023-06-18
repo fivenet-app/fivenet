@@ -42,6 +42,8 @@ type RectorServiceClient interface {
 	ViewAuditLog(ctx context.Context, in *ViewAuditLogRequest, opts ...grpc.CallOption) (*ViewAuditLogResponse, error)
 	// @perm: Name=SuperUser
 	UpdateRoleLimits(ctx context.Context, in *UpdateRoleLimitsRequest, opts ...grpc.CallOption) (*UpdateRoleLimitsResponse, error)
+	// @perm: Name=SuperUser
+	UpdateLaws(ctx context.Context, in *UpdateLawsRequest, opts ...grpc.CallOption) (*UpdateLawsResponse, error)
 }
 
 type rectorServiceClient struct {
@@ -142,6 +144,15 @@ func (c *rectorServiceClient) UpdateRoleLimits(ctx context.Context, in *UpdateRo
 	return out, nil
 }
 
+func (c *rectorServiceClient) UpdateLaws(ctx context.Context, in *UpdateLawsRequest, opts ...grpc.CallOption) (*UpdateLawsResponse, error) {
+	out := new(UpdateLawsResponse)
+	err := c.cc.Invoke(ctx, "/services.rector.RectorService/UpdateLaws", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RectorServiceServer is the server API for RectorService service.
 // All implementations must embed UnimplementedRectorServiceServer
 // for forward compatibility
@@ -166,6 +177,8 @@ type RectorServiceServer interface {
 	ViewAuditLog(context.Context, *ViewAuditLogRequest) (*ViewAuditLogResponse, error)
 	// @perm: Name=SuperUser
 	UpdateRoleLimits(context.Context, *UpdateRoleLimitsRequest) (*UpdateRoleLimitsResponse, error)
+	// @perm: Name=SuperUser
+	UpdateLaws(context.Context, *UpdateLawsRequest) (*UpdateLawsResponse, error)
 	mustEmbedUnimplementedRectorServiceServer()
 }
 
@@ -202,6 +215,9 @@ func (UnimplementedRectorServiceServer) ViewAuditLog(context.Context, *ViewAudit
 }
 func (UnimplementedRectorServiceServer) UpdateRoleLimits(context.Context, *UpdateRoleLimitsRequest) (*UpdateRoleLimitsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateRoleLimits not implemented")
+}
+func (UnimplementedRectorServiceServer) UpdateLaws(context.Context, *UpdateLawsRequest) (*UpdateLawsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateLaws not implemented")
 }
 func (UnimplementedRectorServiceServer) mustEmbedUnimplementedRectorServiceServer() {}
 
@@ -396,6 +412,24 @@ func _RectorService_UpdateRoleLimits_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RectorService_UpdateLaws_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateLawsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RectorServiceServer).UpdateLaws(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/services.rector.RectorService/UpdateLaws",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RectorServiceServer).UpdateLaws(ctx, req.(*UpdateLawsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RectorService_ServiceDesc is the grpc.ServiceDesc for RectorService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -442,6 +476,10 @@ var RectorService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateRoleLimits",
 			Handler:    _RectorService_UpdateRoleLimits_Handler,
+		},
+		{
+			MethodName: "UpdateLaws",
+			Handler:    _RectorService_UpdateLaws_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

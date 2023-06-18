@@ -11,6 +11,7 @@ var PermsRemap = map[string]string{
 	// Service: RectorService
 	"RectorService/GetPermissions":   "RectorService/GetRoles",
 	"RectorService/GetRole":          "RectorService/GetRoles",
+	"RectorService/UpdateLaws":       "SuperUser",
 	"RectorService/UpdateRoleLimits": "SuperUser",
 }
 

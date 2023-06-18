@@ -4,6 +4,8 @@
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
 import { RectorService } from "./rector.js";
+import type { UpdateLawsResponse } from "./rector.js";
+import type { UpdateLawsRequest } from "./rector.js";
 import type { UpdateRoleLimitsResponse } from "./rector.js";
 import type { UpdateRoleLimitsRequest } from "./rector.js";
 import type { ViewAuditLogResponse } from "./rector.js";
@@ -91,6 +93,12 @@ export interface IRectorServiceClient {
      * @generated from protobuf rpc: UpdateRoleLimits(services.rector.UpdateRoleLimitsRequest) returns (services.rector.UpdateRoleLimitsResponse);
      */
     updateRoleLimits(input: UpdateRoleLimitsRequest, options?: RpcOptions): UnaryCall<UpdateRoleLimitsRequest, UpdateRoleLimitsResponse>;
+    /**
+     * @perm: Name=SuperUser
+     *
+     * @generated from protobuf rpc: UpdateLaws(services.rector.UpdateLawsRequest) returns (services.rector.UpdateLawsResponse);
+     */
+    updateLaws(input: UpdateLawsRequest, options?: RpcOptions): UnaryCall<UpdateLawsRequest, UpdateLawsResponse>;
 }
 /**
  * @generated from protobuf service services.rector.RectorService
@@ -190,5 +198,14 @@ export class RectorServiceClient implements IRectorServiceClient, ServiceInfo {
     updateRoleLimits(input: UpdateRoleLimitsRequest, options?: RpcOptions): UnaryCall<UpdateRoleLimitsRequest, UpdateRoleLimitsResponse> {
         const method = this.methods[9], opt = this._transport.mergeOptions(options);
         return stackIntercept<UpdateRoleLimitsRequest, UpdateRoleLimitsResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @perm: Name=SuperUser
+     *
+     * @generated from protobuf rpc: UpdateLaws(services.rector.UpdateLawsRequest) returns (services.rector.UpdateLawsResponse);
+     */
+    updateLaws(input: UpdateLawsRequest, options?: RpcOptions): UnaryCall<UpdateLawsRequest, UpdateLawsResponse> {
+        const method = this.methods[10], opt = this._transport.mergeOptions(options);
+        return stackIntercept<UpdateLawsRequest, UpdateLawsResponse>("unary", this._transport, method, opt, input);
     }
 }

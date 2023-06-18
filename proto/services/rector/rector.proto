@@ -5,6 +5,7 @@ option go_package = "github.com/galexrt/fivenet/gen/go/proto/services/rector;rec
 
 import "resources/common/database/database.proto";
 import "resources/jobs/jobs.proto";
+import "resources/laws/laws.proto";
 import "resources/permissions/permissions.proto";
 import "resources/rector/audit.proto";
 import "resources/timestamp/timestamp.proto";
@@ -107,6 +108,14 @@ message UpdateRoleLimitsRequest {
 
 message UpdateRoleLimitsResponse {}
 
+message UpdateLawsRequest {
+  repeated resources.laws.LawBook books = 1;
+}
+
+message UpdateLawsResponse {
+  repeated resources.laws.LawBook books = 1;
+}
+
 service RectorService {
   // @perm
   rpc GetJobProps(GetJobPropsRequest) returns (GetJobPropsResponse);
@@ -133,4 +142,7 @@ service RectorService {
 
   // @perm: Name=SuperUser
   rpc UpdateRoleLimits(UpdateRoleLimitsRequest) returns (UpdateRoleLimitsResponse);
+
+  // @perm: Name=SuperUser
+  rpc UpdateLaws(UpdateLawsRequest) returns (UpdateLawsResponse);
 }

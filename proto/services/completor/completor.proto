@@ -5,6 +5,7 @@ option go_package = "github.com/galexrt/fivenet/gen/go/proto/services/completor;
 
 import "resources/documents/category.proto";
 import "resources/jobs/jobs.proto";
+import "resources/laws/laws.proto";
 import "resources/users/users.proto";
 import "validate/validate.proto";
 
@@ -34,6 +35,12 @@ message CompleteDocumentCategoriesResponse {
   repeated resources.documents.DocumentCategory categories = 1;
 }
 
+message ListLawBooksRequest {}
+
+message ListLawBooksResponse {
+  repeated resources.laws.LawBook books = 1;
+}
+
 service CompletorService {
   // @perm
   rpc CompleteCitizens(CompleteCitizensRequest) returns (CompleteCitizensRespoonse);
@@ -41,4 +48,6 @@ service CompletorService {
   rpc CompleteJobs(CompleteJobsRequest) returns (CompleteJobsResponse);
   // @perm: Attrs=Jobs/JobList
   rpc CompleteDocumentCategories(CompleteDocumentCategoriesRequest) returns (CompleteDocumentCategoriesResponse);
+  // @perm: Name=Any
+  rpc ListLawBooks(ListLawBooksRequest) returns (ListLawBooksResponse);
 }

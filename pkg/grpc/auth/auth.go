@@ -22,7 +22,10 @@ const (
 	AuthSubCtxTag                = "auth.sub"
 )
 
-const PermSuperUser = "SuperUser"
+const (
+	PermSuperUser = "SuperUser"
+	PermAny       = "Any"
+)
 
 var UserInfoKey struct{}
 
@@ -146,10 +149,10 @@ func (g *GRPCPerm) GRPCPermissionUnaryFunc(ctx context.Context, info *grpc.Unary
 				}
 			}
 
-			if perm == PermSuperUser {
-				if userInfo.SuperUser {
-					return ctx, nil
-				}
+			if perm == PermSuperUser && userInfo.SuperUser {
+				return ctx, nil
+			} else if perm == PermAny {
+				return ctx, nil
 			}
 
 			permSplit := strings.Split(perm, "/")

@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package resources.laws;
+option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/laws;laws";
+
+import "validate/validate.proto";
+
+message LawBook {
+  uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
+  string name = 2 [(validate.rules).string.max_len = 50]; // @gotags: alias:"name"
+  string description = 3 [(validate.rules).string.max_len = 255]; // @gotags: alias:"description"
+  repeated Law laws = 4;
+}
+
+message Law {
+  uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
+  uint64 lawbook_id = 2; // @gotags: alias:"lawbook_id"
+  string job_name = 3 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job_name"
+  string description = 4 [(validate.rules).string.max_len = 255]; // @gotags: alias:"description"
+  uint64 fine = 5; // @gotags: alias:"fine"
+  uint64 detention_time = 6; // @gotags: alias:"detention_time"
+  uint64 stvo_points = 7; // @gotags: alias:"stvo_points"
+}
