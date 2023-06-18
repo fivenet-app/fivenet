@@ -23,6 +23,7 @@ type fivenetDocumentsTable struct {
 	DeletedAt   mysql.ColumnTimestamp
 	CategoryID  mysql.ColumnInteger
 	Title       mysql.ColumnString
+	Summary     mysql.ColumnString
 	ContentType mysql.ColumnInteger
 	Content     mysql.ColumnString
 	Data        mysql.ColumnString
@@ -77,6 +78,7 @@ func newFivenetDocumentsTableImpl(schemaName, tableName, alias string) fivenetDo
 		DeletedAtColumn   = mysql.TimestampColumn("deleted_at")
 		CategoryIDColumn  = mysql.IntegerColumn("category_id")
 		TitleColumn       = mysql.StringColumn("title")
+		SummaryColumn     = mysql.StringColumn("summary")
 		ContentTypeColumn = mysql.IntegerColumn("content_type")
 		ContentColumn     = mysql.StringColumn("content")
 		DataColumn        = mysql.StringColumn("data")
@@ -85,8 +87,8 @@ func newFivenetDocumentsTableImpl(schemaName, tableName, alias string) fivenetDo
 		StateColumn       = mysql.StringColumn("state")
 		ClosedColumn      = mysql.BoolColumn("closed")
 		PublicColumn      = mysql.BoolColumn("public")
-		allColumns        = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, CategoryIDColumn, TitleColumn, ContentTypeColumn, ContentColumn, DataColumn, CreatorIDColumn, CreatorJobColumn, StateColumn, ClosedColumn, PublicColumn}
-		mutableColumns    = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, CategoryIDColumn, TitleColumn, ContentTypeColumn, ContentColumn, DataColumn, CreatorIDColumn, CreatorJobColumn, StateColumn, ClosedColumn, PublicColumn}
+		allColumns        = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, CategoryIDColumn, TitleColumn, SummaryColumn, ContentTypeColumn, ContentColumn, DataColumn, CreatorIDColumn, CreatorJobColumn, StateColumn, ClosedColumn, PublicColumn}
+		mutableColumns    = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, CategoryIDColumn, TitleColumn, SummaryColumn, ContentTypeColumn, ContentColumn, DataColumn, CreatorIDColumn, CreatorJobColumn, StateColumn, ClosedColumn, PublicColumn}
 	)
 
 	return fivenetDocumentsTable{
@@ -99,6 +101,7 @@ func newFivenetDocumentsTableImpl(schemaName, tableName, alias string) fivenetDo
 		DeletedAt:   DeletedAtColumn,
 		CategoryID:  CategoryIDColumn,
 		Title:       TitleColumn,
+		Summary:     SummaryColumn,
 		ContentType: ContentTypeColumn,
 		Content:     ContentColumn,
 		Data:        DataColumn,

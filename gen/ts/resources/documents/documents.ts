@@ -38,6 +38,10 @@ export interface DocumentComment {
      * @generated from protobuf field: optional resources.users.UserShort creator = 7;
      */
     creator?: UserShort; // @gotags: alias:"creator"
+    /**
+     * @generated from protobuf field: resources.timestamp.Timestamp deleted_at = 8;
+     */
+    deletedAt?: Timestamp; // @gotags: alias:"deleted_at"
 }
 /**
  * @generated from protobuf message resources.documents.Document
@@ -99,6 +103,10 @@ export interface Document {
      * @generated from protobuf field: bool public = 14;
      */
     public: boolean; // @gotags: alias:"public"
+    /**
+     * @generated from protobuf field: resources.timestamp.Timestamp deleted_at = 15;
+     */
+    deletedAt?: Timestamp; // @gotags: alias:"deleted_at"
 }
 /**
  * @generated from protobuf message resources.documents.DocumentShort
@@ -152,6 +160,14 @@ export interface DocumentShort {
      * @generated from protobuf field: bool closed = 12;
      */
     closed: boolean; // @gotags: alias:"closed"
+    /**
+     * @generated from protobuf field: bool public = 13;
+     */
+    public: boolean; // @gotags: alias:"public"
+    /**
+     * @generated from protobuf field: resources.timestamp.Timestamp deleted_at = 14;
+     */
+    deletedAt?: Timestamp; // @gotags: alias:"deleted_at"
 }
 /**
  * @generated from protobuf message resources.documents.DocumentAccess
@@ -383,7 +399,8 @@ class DocumentComment$Type extends MessageType<DocumentComment> {
             { no: 4, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
             { no: 5, name: "comment", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxBytes: "2048" } } } },
             { no: 6, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
-            { no: 7, name: "creator", kind: "message", T: () => UserShort }
+            { no: 7, name: "creator", kind: "message", T: () => UserShort },
+            { no: 8, name: "deleted_at", kind: "message", T: () => Timestamp }
         ]);
     }
 }
@@ -408,7 +425,8 @@ class Document$Type extends MessageType<Document> {
             { no: 11, name: "creator", kind: "message", T: () => UserShort },
             { no: 12, name: "state", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "24" } } } },
             { no: 13, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 14, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+            { no: 14, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 15, name: "deleted_at", kind: "message", T: () => Timestamp }
         ]);
     }
 }
@@ -431,7 +449,9 @@ class DocumentShort$Type extends MessageType<DocumentShort> {
             { no: 9, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
             { no: 10, name: "creator", kind: "message", T: () => UserShort },
             { no: 11, name: "state", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "24" } } } },
-            { no: 12, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+            { no: 12, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 13, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 14, name: "deleted_at", kind: "message", T: () => Timestamp }
         ]);
     }
 }

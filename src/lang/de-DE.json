@@ -485,7 +485,9 @@
         "law": "Gesetz | Gesetze",
         "law_book": "Gesetzbuch | Gesetzbücher",
         "traffic_infraction_points": "StVo Punkt | StVo Punkte",
-        "point": "Keine Punkte | {n} Punkt | {n} Punkte"
+        "point": "Keine Punkte | {n} Punkt | {n} Punkte",
+        "deleted": "Gelöscht",
+        "summary": "Zusammenfassung"
     },
     "notifications": {
         "clipboard": {

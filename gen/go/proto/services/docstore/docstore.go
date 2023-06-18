@@ -15,6 +15,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/notifi"
 	"github.com/galexrt/fivenet/pkg/perms"
+	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -25,7 +26,7 @@ import (
 
 const (
 	DocsDefaultPageLimit  = 10
-	DocShortContentLength = 200
+	DocShortContentLength = 128
 )
 
 var (
@@ -240,6 +241,7 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 		INSERT(
 			tDocs.CategoryID,
 			tDocs.Title,
+			tDocs.Summary,
 			tDocs.Content,
 			tDocs.ContentType,
 			tDocs.Data,
@@ -252,6 +254,7 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 		VALUES(
 			req.CategoryId,
 			req.Title,
+			htmlsanitizer.StripTags(utils.StringFirstN(req.Content, DocShortContentLength)),
 			htmlsanitizer.Sanitize(req.Content),
 			documents.DOC_CONTENT_TYPE_HTML,
 			req.Data,
@@ -331,6 +334,7 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 	stmt := tDocs.
 		UPDATE(
 			tDocs.Title,
+			tDocs.Summary,
 			tDocs.Content,
 			tDocs.Closed,
 			tDocs.State,
@@ -339,6 +343,7 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 		SET(
 			req.Title,
 			htmlsanitizer.Sanitize(req.Content),
+			htmlsanitizer.StripTags(utils.StringFirstN(req.Content, DocShortContentLength)),
 			req.Closed,
 			req.State,
 			req.Public,

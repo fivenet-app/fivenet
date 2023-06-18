@@ -62,6 +62,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents` (
   `deleted_at` datetime(3) DEFAULT NULL,
   `category_id` bigint(20) unsigned DEFAULT NULL,
   `title` longtext NOT NULL,
+  `summary` varchar(128) NOT NULL,
   `content_type` smallint(2) NOT NULL,
   `content` longtext NOT NULL,
   `data` longtext DEFAULT NULL,

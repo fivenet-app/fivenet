@@ -66,7 +66,12 @@ async function deleteComment(): Promise<void> {
 <template>
     <li class="py-4">
         <div v-if="!editing" class="flex space-x-3">
-            <div class="flex-1 space-y-1">
+            <div
+                :class="[
+                    comment.deletedAt ? 'hover:bg-warn-800 bg-warn-800' : 'hover:bg-base-800 bg-base-850',
+                    'flex-1 space-y-1',
+                ]"
+            >
                 <div class="flex items-center justify-between">
                     <NuxtLink
                         :to="{ name: 'citizens-id', params: { id: comment.creatorId! } }"
@@ -75,6 +80,15 @@ async function deleteComment(): Promise<void> {
                         {{ comment.creator?.firstname }}
                         {{ comment.creator?.lastname }}
                     </NuxtLink>
+                    <div v-if="comment.deletedAt" class="flex flex-row items-center justify-center flex-1 text-base-100">
+                        <SvgIcon
+                            class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400"
+                            aria-hidden="true"
+                            type="mdi"
+                            :path="mdiTrashCan"
+                        />
+                        {{ $t('common.deleted') }}
+                    </div>
                     <div v-if="comment.creatorId === activeChar?.userId || permissions.includes('superuser')">
                         <button v-can="'DocStoreService.PostDocumentComment'" @click="editing = true">
                             <SvgIcon class="w-5 h-auto ml-auto mr-2.5" type="mdi" :path="mdiPencil" />

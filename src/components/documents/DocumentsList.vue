@@ -10,7 +10,7 @@ import {
     DisclosurePanel,
 } from '@headlessui/vue';
 import SvgIcon from '@jamescoyle/vue-icon';
-import { mdiAccount, mdiBriefcase, mdiCalendar, mdiCheck, mdiChevronDown } from '@mdi/js';
+import { mdiCheck, mdiChevronDown } from '@mdi/js';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { watchDebounced } from '@vueuse/shared';
 import { ref } from 'vue';
@@ -24,6 +24,7 @@ import { DocumentShort } from '~~/gen/ts/resources/documents/documents';
 import { UserShort } from '~~/gen/ts/resources/users/users';
 import { ListDocumentsRequest } from '~~/gen/ts/services/docstore/docstore';
 import DataNoDataBlock from '../partials/DataNoDataBlock.vue';
+import DocumentsListEntry from './DocumentsListEntry.vue';
 import TemplatesModal from './templates/TemplatesModal.vue';
 
 const { $grpc } = useNuxtApp();
@@ -365,67 +366,7 @@ onMounted(async () => {
                         />
                         <div v-else>
                             <ul class="flex flex-col">
-                                <li
-                                    v-for="doc in documents"
-                                    :key="doc.id?.toString()"
-                                    class="flex-initial my-1 rounded-lg hover:bg-base-800 bg-base-850"
-                                >
-                                    <NuxtLink
-                                        :to="{
-                                            name: 'documents-id',
-                                            params: { id: doc.id.toString() },
-                                        }"
-                                    >
-                                        <div class="mx-2 mt-1 mb-4">
-                                            <div class="flex flex-row">
-                                                <p class="py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">
-                                                    {{ doc.title }}
-                                                </p>
-                                                <p
-                                                    class="inline-flex px-2 text-xs font-semibold leading-5 rounded-full bg-primary-100 text-primary-700 my-auto"
-                                                    v-if="doc.state"
-                                                >
-                                                    {{ doc.state }}
-                                                </p>
-                                            </div>
-                                            <div class="flex flex-row gap-2 text-base-200">
-                                                <div class="flex flex-row items-center justify-start flex-1">
-                                                    <SvgIcon
-                                                        class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400"
-                                                        aria-hidden="true"
-                                                        type="mdi"
-                                                        :path="mdiAccount"
-                                                    />
-                                                    {{ doc.creator?.firstname }},
-                                                    {{ doc.creator?.lastname }}
-                                                </div>
-                                                <div class="flex flex-row items-center justify-center flex-1">
-                                                    <SvgIcon
-                                                        class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400"
-                                                        aria-hidden="true"
-                                                        type="mdi"
-                                                        :path="mdiBriefcase"
-                                                    />
-                                                    {{ doc.creator?.jobLabel }}
-                                                </div>
-                                                <div class="flex flex-row items-center justify-end flex-1">
-                                                    <SvgIcon
-                                                        class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400"
-                                                        aria-hidden="true"
-                                                        type="mdi"
-                                                        :path="mdiCalendar"
-                                                    />
-                                                    <p>
-                                                        {{ $t('common.created') }}
-                                                        <time :datetime="$d(toDate(doc.createdAt)!, 'short')">
-                                                            {{ useLocaleTimeAgo(toDate(doc.createdAt)!).value }}
-                                                        </time>
-                                                    </p>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </NuxtLink>
-                                </li>
+                                <DocumentsListEntry v-for="doc in documents" :doc="doc" />
                             </ul>
 
                             <TablePagination :pagination="pagination" @offset-change="offset = $event" class="mt-2" />

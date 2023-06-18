@@ -33,18 +33,25 @@ func (s *Server) GetDocumentComments(ctx context.Context, req *GetDocumentCommen
 		return nil, status.Error(codes.PermissionDenied, "You don't have permission to view document comments!")
 	}
 
-	dComments := tDComments.AS("documentcomment")
-	condition := jet.AND(
-		dComments.DocumentID.EQ(jet.Uint64(req.DocumentId)),
-		dComments.DeletedAt.IS_NULL(),
-	)
+	tDComments := tDComments.AS("documentcomment")
+	var condition jet.BoolExpression
+	if userInfo.SuperUser {
+		condition = jet.AND(
+			tDComments.DocumentID.EQ(jet.Uint64(req.DocumentId)),
+		)
+	} else {
+		condition = jet.AND(
+			tDComments.DocumentID.EQ(jet.Uint64(req.DocumentId)),
+			tDComments.DeletedAt.IS_NULL(),
+		)
+	}
 
-	countStmt := dComments.
+	countStmt := tDComments.
 		SELECT(
-			jet.COUNT(dComments.ID).AS("datacount.totalcount"),
+			jet.COUNT(tDComments.ID).AS("datacount.totalcount"),
 		).
 		FROM(
-			dComments,
+			tDComments,
 		).
 		WHERE(condition)
 
@@ -62,25 +69,33 @@ func (s *Server) GetDocumentComments(ctx context.Context, req *GetDocumentCommen
 		return resp, nil
 	}
 
-	stmt := dComments.
+	columns := []jet.Projection{
+		tDComments.ID,
+		tDComments.DocumentID,
+		tDComments.CreatedAt,
+		tDComments.UpdatedAt,
+		tDComments.Comment,
+		tDComments.CreatorID,
+		tCreator.ID,
+		tCreator.Identifier,
+		tCreator.Job,
+		tCreator.JobGrade,
+		tCreator.Firstname,
+		tCreator.Lastname,
+	}
+	if userInfo.SuperUser {
+		columns = append(columns, tDComments.DeletedAt)
+	}
+
+	stmt := tDComments.
 		SELECT(
-			dComments.ID,
-			dComments.DocumentID,
-			dComments.CreatedAt,
-			dComments.UpdatedAt,
-			dComments.Comment,
-			dComments.CreatorID,
-			tCreator.ID,
-			tCreator.Identifier,
-			tCreator.Job,
-			tCreator.JobGrade,
-			tCreator.Firstname,
-			tCreator.Lastname,
+			columns[0],
+			columns[1:]...,
 		).
 		FROM(
-			dComments.
+			tDComments.
 				LEFT_JOIN(tCreator,
-					dComments.CreatorID.EQ(tCreator.ID),
+					tDComments.CreatorID.EQ(tCreator.ID),
 				),
 		).
 		WHERE(condition).
@@ -88,7 +103,7 @@ func (s *Server) GetDocumentComments(ctx context.Context, req *GetDocumentCommen
 			req.Pagination.Offset,
 		).
 		ORDER_BY(
-			dComments.CreatedAt.DESC(),
+			tDComments.CreatedAt.DESC(),
 		).
 		LIMIT(limit)
 

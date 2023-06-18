@@ -65,7 +65,7 @@ func (s *Server) listDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pr
 			tDCategory.Job,
 			tDocs.Title,
 			tDocs.ContentType,
-			tDocs.Data,
+			tDocs.Summary.AS("documentshort.content"),
 			tDocs.CreatorID,
 			tCreator.ID,
 			tCreator.Identifier,
@@ -78,11 +78,11 @@ func (s *Server) listDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pr
 			tDocs.Closed,
 			tDocs.Public,
 		}
-		if contentLength > 0 {
-			columns = append(columns, jet.LEFT(tDocs.Content, jet.Int(int64(contentLength))).AS("documentshort.content"))
-		} else {
-			columns = append(columns, tDocs.Content)
+
+		if userInfo.SuperUser {
+			columns = append(columns, tDocs.DeletedAt)
 		}
+
 		q = tDocs.SELECT(columns[0], columns[1:])
 	}
 
@@ -194,6 +194,11 @@ func (s *Server) getDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pro
 			tDocs.Closed,
 			tDocs.Public,
 		}
+
+		if userInfo.SuperUser {
+			columns = append(columns, tDocs.DeletedAt)
+		}
+
 		q = tDocs.SELECT(columns[0], columns[1:])
 	}
 

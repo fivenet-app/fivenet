@@ -485,7 +485,9 @@
         "law": "Law | Laws",
         "law_book": "Law Book | Law Books",
         "traffic_infraction_points": "Traffic Point | Traffic Points",
-        "point": "No Points | {n} Point | {n} Points"
+        "point": "No Points | {n} Point | {n} Points",
+        "deleted": "Deleted",
+        "summary": "Summary"
     },
     "notifications": {
         "clipboard": {

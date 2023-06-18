@@ -18,6 +18,7 @@ type FivenetDocuments struct {
 	DeletedAt   *time.Time `json:"deleted_at"`
 	CategoryID  *uint64    `json:"category_id"`
 	Title       string     `json:"title"`
+	Summary     string     `json:"summary"`
 	ContentType int16      `json:"content_type"`
 	Content     string     `json:"content"`
 	Data        *string    `json:"data"`
