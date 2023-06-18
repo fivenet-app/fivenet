@@ -45,9 +45,9 @@ export interface SetJobPropsResponse {
  */
 export interface GetRolesRequest {
     /**
-     * @generated from protobuf field: optional bool all = 1;
+     * @generated from protobuf field: optional bool lowest_rank = 1;
      */
-    all?: boolean;
+    lowestRank?: boolean;
 }
 /**
  * @generated from protobuf message services.rector.GetRolesResponse
@@ -325,7 +325,7 @@ export const SetJobPropsResponse = new SetJobPropsResponse$Type();
 class GetRolesRequest$Type extends MessageType<GetRolesRequest> {
     constructor() {
         super("services.rector.GetRolesRequest", [
-            { no: 1, name: "all", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
+            { no: 1, name: "lowest_rank", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
 }

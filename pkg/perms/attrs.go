@@ -363,7 +363,7 @@ func (p *Perms) GetClosestRoleAttrMaxVals(job string, grade int32, permId uint64
 		return nil
 	}
 
-	for i := len(roleIds) - 1; i >= 0; i-- {
+	for i := 0; i < len(roleIds); i++ {
 		val, ok := p.lookupRoleAttribute(roleIds[i], attrId)
 		if !ok {
 			continue

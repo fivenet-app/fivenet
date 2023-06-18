@@ -8,16 +8,13 @@ import DataErrorBlock from '~/components/partials/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';
 import { useAuthStore } from '~/store/auth';
 import { useNotificationsStore } from '~/store/notifications';
-import { RoutesNamedLocations } from '~~/.nuxt/typed-router/__routes';
 import { JobGrade } from '~~/gen/ts/resources/jobs/jobs';
 import { Role } from '~~/gen/ts/resources/permissions/permissions';
 import DataNoDataBlock from '../partials/DataNoDataBlock.vue';
 import RolesListEntry from './RolesListEntry.vue';
 
-const props = withDefaults(
+withDefaults(
     defineProps<{
-        to?: RoutesNamedLocations;
-        all?: boolean;
         showCreate: boolean;
     }>(),
     {
@@ -37,9 +34,7 @@ const { data: roles, pending, refresh, error } = useLazyAsyncData('rector-roles'
 async function getRoles(): Promise<Array<Role>> {
     return new Promise(async (res, rej) => {
         try {
-            const call = $grpc.getRectorClient().getRoles({
-                all: props.all,
-            });
+            const call = $grpc.getRectorClient().getRoles({});
             const { response } = await call;
 
             return res(response.roles);
@@ -239,7 +234,7 @@ onMounted(async () => {
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-base-800">
-                                    <RolesListEntry v-for="role in roles" :role="role" :to="to" />
+                                    <RolesListEntry v-for="role in roles" :role="role" />
                                 </tbody>
                                 <thead>
                                     <tr>

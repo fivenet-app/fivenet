@@ -24,7 +24,7 @@ message SetJobPropsRequest {
 message SetJobPropsResponse {}
 
 message GetRolesRequest {
-  optional bool all = 1;
+  optional bool lowest_rank = 1;
 }
 
 message GetRolesResponse {

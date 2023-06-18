@@ -523,8 +523,8 @@ func (m *GetRolesRequest) validate(all bool) error {
 
 	var errors []error
 
-	if m.All != nil {
-		// no validation rules for All
+	if m.LowestRank != nil {
+		// no validation rules for LowestRank
 	}
 
 	if len(errors) > 0 {

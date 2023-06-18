@@ -136,10 +136,23 @@ func (s *Server) GetRoles(ctx context.Context, req *GetRolesRequest) (*GetRolesR
 	var roles collections.Roles
 	var err error
 
-	if userInfo.SuperUser && req.All != nil && *req.All {
+	if userInfo.SuperUser && req.LowestRank != nil {
 		roles, err = s.p.GetRoles(ctx, true)
 		if err != nil {
 			return nil, ErrFailedQuery
+		}
+
+		collectedRoles := map[string]*model.FivenetRoles{}
+		for _, role := range roles {
+			if _, ok := collectedRoles[role.Job]; !ok {
+				collectedRoles[role.Job] = role
+				continue
+			}
+		}
+
+		roles = collections.Roles{}
+		for _, role := range collectedRoles {
+			roles = append(roles, role)
 		}
 	} else {
 		roles, err = s.p.GetJobRolesUpTo(ctx, userInfo.Job, userInfo.JobGrade)

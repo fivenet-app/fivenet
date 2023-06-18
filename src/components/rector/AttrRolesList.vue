@@ -6,10 +6,6 @@ import { Role } from '~~/gen/ts/resources/permissions/permissions';
 import DataNoDataBlock from '../partials/DataNoDataBlock.vue';
 import AttrRolesListEntry from './AttrRolesListEntry.vue';
 
-const props = defineProps<{
-    all?: boolean;
-}>();
-
 const { $grpc } = useNuxtApp();
 
 const { data: roles, pending, refresh, error } = useLazyAsyncData('rector-roles', () => getRoles());
@@ -18,7 +14,7 @@ async function getRoles(): Promise<Array<Role>> {
     return new Promise(async (res, rej) => {
         try {
             const call = $grpc.getRectorClient().getRoles({
-                all: props.all,
+                lowestRank: true,
             });
             const { response } = await call;
 
