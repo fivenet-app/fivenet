@@ -23,6 +23,8 @@ func UseSchema(schema string) {
 	FivenetDocumentsTemplatesJobAccess = FivenetDocumentsTemplatesJobAccess.FromSchema(schema)
 	FivenetDocumentsUserAccess = FivenetDocumentsUserAccess.FromSchema(schema)
 	FivenetJobProps = FivenetJobProps.FromSchema(schema)
+	FivenetLawbooks = FivenetLawbooks.FromSchema(schema)
+	FivenetLawbooksLaws = FivenetLawbooksLaws.FromSchema(schema)
 	FivenetNotifications = FivenetNotifications.FromSchema(schema)
 	FivenetOauth2Accounts = FivenetOauth2Accounts.FromSchema(schema)
 	FivenetPermissions = FivenetPermissions.FromSchema(schema)

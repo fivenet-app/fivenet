@@ -2,6 +2,7 @@
 // @generated from protobuf file "resources/laws/laws.proto" (package "resources.laws", syntax proto3)
 // tslint:disable
 import { MessageType } from "@protobuf-ts/runtime";
+import { Timestamp } from "../timestamp/timestamp.js";
 /**
  * @generated from protobuf message resources.laws.LawBook
  */
@@ -11,15 +12,23 @@ export interface LawBook {
      */
     id: bigint; // @gotags: sql:"primary_key" alias:"id"
     /**
-     * @generated from protobuf field: string name = 2;
+     * @generated from protobuf field: resources.timestamp.Timestamp created_at = 2;
+     */
+    createdAt?: Timestamp; // @gotags: alias:"created_at"
+    /**
+     * @generated from protobuf field: resources.timestamp.Timestamp updated_at = 3;
+     */
+    updatedAt?: Timestamp; // @gotags: alias:"updated_at"
+    /**
+     * @generated from protobuf field: string name = 4;
      */
     name: string; // @gotags: alias:"name"
     /**
-     * @generated from protobuf field: string description = 3;
+     * @generated from protobuf field: optional string description = 5;
      */
-    description: string; // @gotags: alias:"description"
+    description?: string; // @gotags: alias:"description"
     /**
-     * @generated from protobuf field: repeated resources.laws.Law laws = 4;
+     * @generated from protobuf field: repeated resources.laws.Law laws = 6;
      */
     laws: Law[];
 }
@@ -32,27 +41,35 @@ export interface Law {
      */
     id: bigint; // @gotags: sql:"primary_key" alias:"id"
     /**
-     * @generated from protobuf field: uint64 lawbook_id = 2;
+     * @generated from protobuf field: resources.timestamp.Timestamp created_at = 2;
+     */
+    createdAt?: Timestamp; // @gotags: alias:"created_at"
+    /**
+     * @generated from protobuf field: resources.timestamp.Timestamp updated_at = 3;
+     */
+    updatedAt?: Timestamp; // @gotags: alias:"updated_at"
+    /**
+     * @generated from protobuf field: uint64 lawbook_id = 4;
      */
     lawbookId: bigint; // @gotags: alias:"lawbook_id"
     /**
-     * @generated from protobuf field: string job_name = 3;
+     * @generated from protobuf field: string name = 5;
      */
-    jobName: string; // @gotags: alias:"job_name"
+    name: string; // @gotags: alias:"name"
     /**
-     * @generated from protobuf field: string description = 4;
+     * @generated from protobuf field: string description = 6;
      */
     description: string; // @gotags: alias:"description"
     /**
-     * @generated from protobuf field: uint64 fine = 5;
+     * @generated from protobuf field: uint64 fine = 7;
      */
     fine: bigint; // @gotags: alias:"fine"
     /**
-     * @generated from protobuf field: uint64 detention_time = 6;
+     * @generated from protobuf field: uint64 detention_time = 8;
      */
     detentionTime: bigint; // @gotags: alias:"detention_time"
     /**
-     * @generated from protobuf field: uint64 stvo_points = 7;
+     * @generated from protobuf field: uint64 stvo_points = 9;
      */
     stvoPoints: bigint; // @gotags: alias:"stvo_points"
 }
@@ -61,9 +78,11 @@ class LawBook$Type extends MessageType<LawBook> {
     constructor() {
         super("resources.laws.LawBook", [
             { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 2, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
-            { no: 3, name: "description", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
-            { no: 4, name: "laws", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Law }
+            { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
+            { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
+            { no: 4, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "128" } } } },
+            { no: 5, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
+            { no: 6, name: "laws", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Law }
         ]);
     }
 }
@@ -76,12 +95,14 @@ class Law$Type extends MessageType<Law> {
     constructor() {
         super("resources.laws.Law", [
             { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 2, name: "lawbook_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 3, name: "job_name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
-            { no: 4, name: "description", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
-            { no: 5, name: "fine", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 6, name: "detention_time", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 7, name: "stvo_points", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+            { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
+            { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
+            { no: 4, name: "lawbook_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 5, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "128" } } } },
+            { no: 6, name: "description", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
+            { no: 7, name: "fine", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 8, name: "detention_time", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 9, name: "stvo_points", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
         ]);
     }
 }
