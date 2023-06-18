@@ -25,7 +25,7 @@ defineProps<{
         >
             <div class="mx-2 mt-1 mb-4">
                 <div class="flex flex-row">
-                    <p class="py-2 pl-4 pr-3 text-lg font-medium text-neutral sm:pl-0 truncate max-w-3xl">
+                    <p class="py-2 pl-4 pr-3 text-lg font-medium text-neutral sm:pl-0 truncate max-w-5xl">
                         <span
                             v-if="doc.category"
                             class="inline-flex items-center rounded-md bg-primary-400/10 px-2 py-1 text-xs font-medium text-primary-400 ring-1 ring-inset ring-primary-400/30"
@@ -55,11 +55,11 @@ defineProps<{
                         </div>
                     </div>
                 </div>
-                <div class="flex flex-row gap-2 text-base-300 truncate max-w-5xl">
+                <div class="flex flex-row gap-2 text-base-300 truncate">
                     <div class="flex flex-row items-center justify-start flex-1">
                         <IDCopyBadge :id="doc.id" prefix="DOC" />
                     </div>
-                    <div v-if="doc.deletedAt" class="flex flex-row items-center justify-center flex-1 text-base-100">
+                    <div v-if="doc.deletedAt" class="flex flex-row items-center justify-center flex-1 text-base-100 font-bold">
                         <SvgIcon
                             class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400"
                             aria-hidden="true"
@@ -68,7 +68,7 @@ defineProps<{
                         />
                         {{ $t('common.deleted') }}
                     </div>
-                    <div class="flex flex-row items-center justify-end flex-1">
+                    <div v-if="doc.updatedAt" class="flex flex-row items-end justify-end flex-1">
                         <SvgIcon
                             class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400"
                             aria-hidden="true"
@@ -77,8 +77,8 @@ defineProps<{
                         />
                         <p>
                             {{ $t('common.updated_at') }}
-                            <time :datetime="$d(toDate(doc.deletedAt)!, 'short')">
-                                {{ useLocaleTimeAgo(toDate(doc.deletedAt)!).value }}
+                            <time :datetime="$d(toDate(doc.updatedAt)!, 'short')">
+                                {{ useLocaleTimeAgo(toDate(doc.updatedAt)!).value }}
                             </time>
                         </p>
                     </div>
