@@ -120,7 +120,7 @@ fivenet:
       enabled: false
       # Jaeger Tracing endpoint (should have the right API path in the URL `/api/traces`)
       url: ""
-      environment: "dev"
+      environment: "live"
     http:
       listen: ":8080"
       sessions:
@@ -128,8 +128,6 @@ fivenet:
         domain: "chart-example.local"
     grpc:
       listen: ":9090"
-      # Must be https or on the same URL
-      clientURL: "/grpc"
     database:
       # refer to https://github.com/go-sql-driver/mysql#dsn-data-source-name for details
       dsn: "YOUR_USERNAME:YOUR_PASSWORD@tcp(localhost:3306)/fivem?collation=utf8mb4_unicode_ci&parseTime=True&loc=Local"
@@ -146,6 +144,8 @@ fivenet:
       secret: "YOUR_JWT_SECRET"
     oauth2:
       providers: []
+    cache:
+      refreshTime: 2m
     game:
       superuserGroups:
         - projektleiter
@@ -159,7 +159,7 @@ fivenet:
         - fib
         - police
       livemap:
-        usersCacheSize: 256
+        refreshTime: 3s850ms
         jobs:
           - ambulance
           - doj
