@@ -109,6 +109,7 @@ const { handleSubmit } = useForm<FormData>({
     validationSchema: {
         reason: { required: true, min: 3, max: 255 },
     },
+    validateOnMount: true,
 });
 
 const onSubmit = handleSubmit(async (values): Promise<void> => await setJobProp(values));

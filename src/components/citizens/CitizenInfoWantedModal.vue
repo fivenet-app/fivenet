@@ -18,7 +18,7 @@ const emits = defineEmits<{
     (e: 'close'): void;
 }>();
 
-async function setTrafficPoints(values: FormData): Promise<void> {
+async function setWantedState(values: FormData): Promise<void> {
     return new Promise(async (res, rej) => {
         const userProps: UserProps = {
             userId: props.user.userId,
@@ -64,9 +64,10 @@ const { handleSubmit } = useForm<FormData>({
     validationSchema: {
         reason: { required: true, min: 3, max: 255 },
     },
+    validateOnMount: true,
 });
 
-const onSubmit = handleSubmit(async (values): Promise<void> => await setTrafficPoints(values));
+const onSubmit = handleSubmit(async (values): Promise<void> => await setWantedState(values));
 </script>
 
 <template>

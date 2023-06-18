@@ -25,6 +25,17 @@ async function setTrafficPoints(values: FormData): Promise<void> {
             trafficInfractionPoints: BigInt(values.trafficPoints),
         };
 
+        if (props.user.props && props.user.props.trafficInfractionPoints != userProps.trafficInfractionPoints) {
+            notifications.dispatchNotification({
+                title: { key: 'notifications.action_successfull.title', parameters: [] },
+                content: { key: 'notifications.action_successfull.content', parameters: [] },
+                type: 'success',
+            });
+
+            emits('close');
+            return res();
+        }
+
         try {
             await $grpc.getCitizenStoreClient().setUserProps({
                 props: userProps,
@@ -63,10 +74,18 @@ interface FormData {
 }
 
 const { handleSubmit } = useForm<FormData>({
+    initialValues: {
+        reason: '',
+        trafficPoints:
+            props.user.props && props.user.props.trafficInfractionPoints
+                ? parseInt(props.user.props.trafficInfractionPoints.toString())
+                : 0,
+    },
     validationSchema: {
         reason: { required: true, min: 3, max: 255 },
-        traficPoints: { required: true, numeric: true, max: 5 },
+        trafficPoints: { required: true, numeric: true, min: 0, max: 5 },
     },
+    validateOnMount: true,
 });
 
 const onSubmit = handleSubmit(async (values): Promise<void> => await setTrafficPoints(values));
@@ -104,7 +123,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await setTrafficP
                             <form @submit="onSubmit">
                                 <div class="my-2 space-y-24">
                                     <div class="flex-1 form-control">
-                                        <label for="job" class="block text-sm font-medium leading-6 text-neutral">
+                                        <label for="reason" class="block text-sm font-medium leading-6 text-neutral">
                                             {{ $t('common.reason') }}
                                         </label>
                                         <VeeField
@@ -125,6 +144,8 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await setTrafficP
                                         <VeeField
                                             type="number"
                                             name="trafficPoints"
+                                            min="0"
+                                            max="9999999"
                                             class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                             :placeholder="$t('common.traffic_infraction_points')"
                                             :label="$t('common.traffic_infraction_points')"

@@ -33,7 +33,7 @@ defineProps<{
                     {{ $t('components.penaltycalculator.detention_time') }}
                 </th>
                 <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
-                    {{ $t('components.penaltycalculator.stvo_points', 2) }}
+                    {{ $t('common.traffic_infraction_points', 2) }}
                 </th>
                 <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
                     {{ $t('common.other') }}

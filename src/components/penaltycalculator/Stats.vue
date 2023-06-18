@@ -35,7 +35,7 @@ defineProps<{
             </div>
             <div class="bg-gray-900 px-4 py-6 sm:px-6 lg:px-8">
                 <p class="text-sm font-medium leading-6 text-gray-400">
-                    {{ $t('components.penaltycalculator.stvo_points', 2) }}
+                    {{ $t('common.traffic_infraction_points', 2) }}
                 </p>
                 <p class="mt-2 flex items-baseline gap-x-2">
                     <span class="text-4xl font-semibold tracking-tight text-white">

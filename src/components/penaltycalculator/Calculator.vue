@@ -118,7 +118,7 @@ ${t('components.penaltycalculator.detention_time')}: ${summary.value.detentionTi
             'common.time_ago.month',
             summary.value.detentionTime.toString()
         )}
-${t('components.penaltycalculator.stvo_points', 2)}: ${summary.value.stvoPoints}
+${t('common.traffic_infraction_points', 2)}: ${summary.value.stvoPoints}
 ${t('common.total_count')}: ${summary.value.count}
 `;
 
@@ -219,7 +219,7 @@ ${t('components.penaltycalculator.crime', selectedPenalties.value.length)}:
                                                                 scope="col"
                                                                 class="py-3.5 px-2 text-left text-sm font-semibold text-neutral"
                                                             >
-                                                                {{ $t('components.penaltycalculator.stvo_points', 2) }}
+                                                                {{ $t('common.traffic_infraction_points', 2) }}
                                                             </th>
                                                             <th
                                                                 scope="col"

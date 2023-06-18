@@ -337,8 +337,7 @@
             "title": "Penalty Calculator",
             "crime": "Crime | Crimes",
             "fine": "Fine | Fines",
-            "detention_time": "Jail Time",
-            "stvo_points": "StVo point | StVo points"
+            "detention_time": "Jail Time"
         }
     },
     "common": {
@@ -485,7 +484,8 @@
         "method": "Method",
         "law": "Law | Laws",
         "law_book": "Law Book | Law Books",
-        "traffic_infraction_points": "Traffic Points"
+        "traffic_infraction_points": "Traffic Point | Traffic Points",
+        "point": "No Points | {n} Point | {n} Points"
     },
     "notifications": {
         "clipboard": {
