@@ -636,7 +636,17 @@
                 },
                 "failed": {
                     "title": "Failed to login using provider",
-                    "content": "Error during social login ({0}), please try again."
+                    "content": "Error during social login (Reason: {0}), please try again."
+                }
+            },
+            "oauth2_connect": {
+                "success": {
+                    "title": "Successfully connected social login",
+                    "content": "Successfully connected your account using the social login provider."
+                },
+                "failed": {
+                    "title": "Failed to connect your account",
+                    "content": "Error while connecting your social login (Reason: {0}), please try again."
                 }
             },
             "no_permission": {

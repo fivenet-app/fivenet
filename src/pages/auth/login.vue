@@ -21,6 +21,7 @@ const route = useRoute();
 const { setAccessToken } = authStore;
 
 const query = route.query;
+// `t` and `exp` set, means social login was successful
 if (query.t && query.t !== '' && query.exp) {
     setAccessToken(query.t as string, BigInt(query.exp as string));
 
@@ -31,6 +32,7 @@ if (query.t && query.t !== '' && query.exp) {
     });
 
     await navigateTo({ name: 'auth-character-selector' });
+    // `oauth2Login` can be `failed` (with `reason`)
 } else if (query.oauth2Login && query.oauth2Login === 'failed') {
     const reason = query.reason ?? 'N/A';
 

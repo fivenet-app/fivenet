@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import AccountInfo from '~/components/auth/AccountInfo.vue';
 import ContentWrapper from '~/components/partials/ContentWrapper.vue';
+import { useNotificationsStore } from '~/store/notifications';
 
 useHead({
     title: 'pages.auth.account_info.title',
@@ -11,6 +12,29 @@ definePageMeta({
     authOnlyToken: true,
     showQuickButtons: false,
 });
+
+const notifications = useNotificationsStore();
+const route = useRoute();
+
+// `oauth2Connect` can be `failed` (with `reason`) or `success`
+const query = route.query;
+if (query.oauth2Connect) {
+    if (query.oauth2Connect === 'success') {
+        notifications.dispatchNotification({
+            title: { key: 'notifications.auth.oauth2_connect.success.title', parameters: [] },
+            content: { key: 'notifications.auth.oauth2_connect.success.content', parameters: [] },
+            type: 'info',
+        });
+    } else if (query.oauth2Connect === 'failed') {
+        const reason = query.reason ?? 'N/A';
+
+        notifications.dispatchNotification({
+            title: { key: 'notifications.auth.oauth2_connect.failed.title', parameters: [] },
+            content: { key: 'notifications.auth.oauth2_connect.failed.content', parameters: [reason.toString()] },
+            type: 'error',
+        });
+    }
+}
 </script>
 
 <template>
