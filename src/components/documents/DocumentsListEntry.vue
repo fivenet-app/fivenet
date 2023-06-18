@@ -83,7 +83,7 @@ defineProps<{
                         </p>
                     </div>
                 </div>
-                <div class="flex flex-row gap-2 text-base-200">
+                <div class="mt-2 flex flex-row gap-2 text-base-200">
                     <div class="flex flex-row items-center justify-start flex-1">
                         <SvgIcon
                             class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400"
