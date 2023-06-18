@@ -17,7 +17,7 @@ const { t, d } = useI18n();
 const clipboard = useClipboard();
 const notifications = useNotificationsStore();
 
-const { data: lawBooks, pending, refresh, error } = useLazyAsyncData(`accountinfo`, () => listLawBooks());
+const { data: lawBooks, pending, refresh, error } = useLazyAsyncData(`lawbooks`, () => listLawBooks());
 
 async function listLawBooks(): Promise<PenaltyCategory[]> {
     return new Promise(async (res, rej) => {
@@ -45,6 +45,7 @@ const summary = ref<PenaltiesSummary>({
 });
 
 async function applyQuery(): Promise<void> {
+    console.log(lawBooks.value);
     if (!lawBooks.value) return;
 
     let newLawBooks = structuredClone(toRaw(lawBooks.value));
@@ -80,9 +81,7 @@ watch(lawBooks, async () => applyQuery());
 watch(queryPenalities, async () => applyQuery());
 
 function calculate(e: SelectedPenalty): void {
-    const idx = selectedPenalties.value.findIndex(
-        (v) => v.penalty.lawbookId === e.penalty.lawbookId && v.penalty.name === e.penalty.name
-    );
+    const idx = selectedPenalties.value.findIndex((v) => v.law.lawbookId === e.law.lawbookId && v.law.name === e.law.name);
     let count = e.count;
     if (idx > -1) {
         const existing = selectedPenalties.value.at(idx)!;
@@ -94,14 +93,14 @@ function calculate(e: SelectedPenalty): void {
         selectedPenalties.value.push(e);
     }
 
-    if (e.penalty.fine) {
-        summary.value.fine += count * e.penalty.fine;
+    if (e.law.fine) {
+        summary.value.fine += count * e.law.fine;
     }
-    if (e.penalty.detentionTime) {
-        summary.value.detentionTime += count * e.penalty.detentionTime;
+    if (e.law.detentionTime) {
+        summary.value.detentionTime += count * e.law.detentionTime;
     }
-    if (e.penalty.stvoPoints) {
-        summary.value.stvoPoints += count * e.penalty.stvoPoints;
+    if (e.law.stvoPoints) {
+        summary.value.stvoPoints += count * e.law.stvoPoints;
     }
     summary.value.count = summary.value.count + count;
 }
@@ -128,7 +127,7 @@ ${t('components.penaltycalculator.crime', selectedPenalties.value.length)}:
 `;
 
         selectedPenalties.value.forEach((v) => {
-            text += `* ${getNameForLawBookId(v.penalty.lawbookId)} - ${v.penalty.name} (${v.count}x)
+            text += `* ${getNameForLawBookId(v.law.lawbookId)} - ${v.law.name} (${v.count}x)
 `;
         });
     }
@@ -270,7 +269,11 @@ ${t('components.penaltycalculator.crime', selectedPenalties.value.length)}:
                         <div class="text-neutral text-xl">
                             <Stats :summary="summary" />
                             <div class="mt-4">
-                                <SummaryTable :selected-penalties="selectedPenalties" />
+                                <SummaryTable
+                                    v-if="lawBooks && lawBooks.length > 0"
+                                    :law-books="lawBooks"
+                                    :selected-laws="selectedPenalties"
+                                />
                             </div>
                         </div>
                     </div>

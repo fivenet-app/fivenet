@@ -188,6 +188,7 @@ func (c *Cache) refreshLaws(ctx context.Context) error {
 			tLawBooks.Name,
 			tLawBooks.Description,
 			tLaws.ID,
+			tLaws.LawbookID,
 			tLaws.CreatedAt,
 			tLaws.UpdatedAt,
 			tLaws.Name,

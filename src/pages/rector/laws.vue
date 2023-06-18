@@ -13,5 +13,7 @@ definePageMeta({
 </script>
 
 <template>
-    <Laws />
+    <div>
+        <Laws />
+    </div>
 </template>

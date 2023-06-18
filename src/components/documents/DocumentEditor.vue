@@ -220,6 +220,10 @@ onMounted(async () => {
             }
         } catch (e) {
             $grpc.handleError(e as RpcError);
+
+            await navigateTo({ name: 'documents' });
+
+            return;
         }
     } else if (props.id) {
         try {
@@ -274,6 +278,10 @@ onMounted(async () => {
             }
         } catch (e) {
             $grpc.handleError(e as RpcError);
+
+            await navigateTo({ name: 'documents' });
+
+            return;
         }
     } else {
         if (documentStore.$state) {

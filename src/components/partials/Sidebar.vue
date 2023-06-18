@@ -400,8 +400,9 @@ const appVersion = activeChar ? ' v' + __APP_VERSION__ + (import.meta.env.DEV ? 
                                             ]"
                                             :aria-current="item.current ? 'page' : undefined"
                                         >
-                                            <component
-                                                :is="item.icon"
+                                            <SvgIcon
+                                                type="mdi"
+                                                :path="item.icon"
                                                 :class="[
                                                     item.current ? 'text-neutral' : 'text-accent-100 group-hover:text-neutral',
                                                     'mr-3 h-6 w-6',
@@ -429,8 +430,9 @@ const appVersion = activeChar ? ' v' + __APP_VERSION__ + (import.meta.env.DEV ? 
                                             ]"
                                             :aria-current="item.current ? 'page' : undefined"
                                         >
-                                            <component
-                                                :is="item.icon"
+                                            <SvgIcon
+                                                type="mdi"
+                                                :path="item.icon"
                                                 :class="[
                                                     item.current ? 'text-neutral' : 'text-accent-100 group-hover:text-neutral',
                                                     'mr-3 h-6 w-6',

@@ -185,8 +185,9 @@ function removeReference(id: bigint): void {
                                             ]"
                                             :aria-current="selected ? 'page' : undefined"
                                         >
-                                            <component
-                                                :is="tab.icon"
+                                            <SvgIcon
+                                                type="mdi"
+                                                :path="tab.icon"
                                                 :class="[
                                                     selected ? 'text-primary-500' : 'text-base-300 group-hover:text-base-200',
                                                     '-ml-0.5 mr-2 h-5 w-5 transition-colors',

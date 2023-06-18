@@ -12,7 +12,7 @@ export type PenaltyCategory = LawBook & {
 export type Penalties = Array<PenaltyCategory>;
 
 export type SelectedPenalty = {
-    penalty: Penalty;
+    law: Penalty;
     count: bigint;
 };
 
