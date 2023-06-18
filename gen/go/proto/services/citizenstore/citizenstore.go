@@ -107,6 +107,11 @@ func (s *Server) ListCitizens(ctx context.Context, req *ListCitizensRequest) (*L
 			}
 		case "UserProps.Job":
 			selectors = append(selectors, tUserProps.Job)
+		case "UserProps.TrafficInfractionPoints":
+			selectors = append(selectors, tUserProps.TrafficInfractionPoints)
+			if req.TrafficPoints != nil && *req.TrafficPoints > 0 {
+				condition = condition.AND(tUserProps.TrafficInfractionPoints.GT(jet.Uint64(*req.TrafficPoints)))
+			}
 		}
 	}
 

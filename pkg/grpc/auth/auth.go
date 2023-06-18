@@ -156,11 +156,13 @@ func (g *GRPCPerm) GRPCPermissionUnaryFunc(ctx context.Context, info *grpc.Unary
 			}
 
 			permSplit := strings.Split(perm, "/")
-			category := perms.Category(permSplit[0])
-			name := perms.Name(permSplit[1])
+			if len(permSplit) > 1 {
+				category := perms.Category(permSplit[0])
+				name := perms.Name(permSplit[1])
 
-			if g.p.Can(userInfo, category, name) {
-				return ctx, nil
+				if g.p.Can(userInfo, category, name) {
+					return ctx, nil
+				}
 			}
 		}
 	}
@@ -183,12 +185,20 @@ func (g *GRPCPerm) GRPCPermissionStreamFunc(ctx context.Context, srv interface{}
 				}
 			}
 
-			permSplit := strings.Split(perm, "/")
-			category := perms.Category(permSplit[0])
-			name := perms.Name(permSplit[1])
-
-			if g.p.Can(userInfo, category, name) {
+			if perm == PermSuperUser && userInfo.SuperUser {
 				return ctx, nil
+			} else if perm == PermAny {
+				return ctx, nil
+			}
+
+			permSplit := strings.Split(perm, "/")
+			if len(permSplit) > 1 {
+				category := perms.Category(permSplit[0])
+				name := perms.Name(permSplit[1])
+
+				if g.p.Can(userInfo, category, name) {
+					return ctx, nil
+				}
 			}
 		}
 	}

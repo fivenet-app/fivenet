@@ -137,7 +137,7 @@ func NewGRPCServer(ctx context.Context, logger *zap.Logger, db *sql.DB, tp *trac
 
 	// "Mostly Static Data" Cache
 	cache, err := mstlystcdata.NewCache(ctx,
-		logger.Named("mstlystcdata"), tp, db)
+		logger.Named("mstlystcdata"), tp, db, config.C.Cache.RefreshTime)
 	if err != nil {
 		logger.Fatal("failed to create mostly static data cache", zap.Error(err))
 	}
@@ -155,7 +155,7 @@ func NewGRPCServer(ctx context.Context, logger *zap.Logger, db *sql.DB, tp *trac
 	pbdocstore.RegisterDocStoreServiceServer(grpcServer, pbdocstore.NewServer(db, p, enricher, aud, ui, notif))
 	pbjobs.RegisterJobsServiceServer(grpcServer, pbjobs.NewServer())
 	livemapper := pblivemapper.NewServer(ctx, logger.Named("grpc_livemap"), tp, db, p, enricher,
-		config.C.Game.Livemap.UsersCacheSize, config.C.Game.Livemap.Jobs)
+		config.C.Game.Livemap.RefreshTime, config.C.Game.Livemap.Jobs)
 	go livemapper.Start()
 
 	pblivemapper.RegisterLivemapperServiceServer(grpcServer, livemapper)

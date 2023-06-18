@@ -164,8 +164,7 @@ func (s *Server) CompleteDocumentCategories(ctx context.Context, req *CompleteDo
 }
 
 func (s *Server) ListLawBooks(ctx context.Context, req *ListLawBooksRequest) (*ListLawBooksResponse, error) {
-
-	// TODO
-
-	return nil, nil
+	return &ListLawBooksResponse{
+		Books: s.data.GetLawBooks(),
+	}, nil
 }

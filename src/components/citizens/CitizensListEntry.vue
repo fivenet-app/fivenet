@@ -50,6 +50,12 @@ function addToClipboard(): void {
         <td class="whitespace-nowrap px-2 py-2 text-sm text-base-200">
             {{ user.dateofbirth }}
         </td>
+        <td
+            v-can="'CitizenStoreService.ListCitizens.Fields.UserProps.TrafficInfractionPoints'"
+            class="whitespace-nowrap px-2 py-2 text-sm text-base-200"
+        >
+            {{ user.props?.trafficInfractionPoints ?? 0n }}
+        </td>
         <td class="whitespace-nowrap px-2 py-2 text-sm text-base-200">{{ user.height }}cm</td>
         <td class="whitespace-nowrap py-2 pl-3 pr-4 text-sm font-medium sm:pr-0">
             <div class="flex flex-row justify-end">

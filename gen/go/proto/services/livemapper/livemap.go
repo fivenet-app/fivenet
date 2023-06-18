@@ -55,10 +55,11 @@ type Server struct {
 
 	broker *utils.Broker[interface{}]
 
+	refreshTime time.Duration
 	visibleJobs []string
 }
 
-func NewServer(ctx context.Context, logger *zap.Logger, tp *tracesdk.TracerProvider, db *sql.DB, p perms.Permissions, c *mstlystcdata.Enricher, usersCacheSize int, visibleJobs []string) *Server {
+func NewServer(ctx context.Context, logger *zap.Logger, tp *tracesdk.TracerProvider, db *sql.DB, p perms.Permissions, c *mstlystcdata.Enricher, refreshTime time.Duration, visibleJobs []string) *Server {
 	dispatchesCache := cache.NewContext(
 		ctx,
 		cache.AsLRU[string, []*livemap.DispatchMarker](lru.WithCapacity(len(visibleJobs))),
@@ -66,7 +67,7 @@ func NewServer(ctx context.Context, logger *zap.Logger, tp *tracesdk.TracerProvi
 	)
 	usersCache := cache.NewContext(
 		ctx,
-		cache.AsLRU[string, []*livemap.UserMarker](lru.WithCapacity(usersCacheSize)),
+		cache.AsLRU[string, []*livemap.UserMarker](lru.WithCapacity(len(visibleJobs))),
 		cache.WithJanitorInterval[string, []*livemap.UserMarker](90*time.Second),
 	)
 
@@ -87,6 +88,7 @@ func NewServer(ctx context.Context, logger *zap.Logger, tp *tracesdk.TracerProvi
 
 		broker: broker,
 
+		refreshTime: refreshTime,
 		visibleJobs: visibleJobs,
 	}
 }
@@ -99,7 +101,7 @@ func (s *Server) Start() {
 		case <-s.ctx.Done():
 			return
 		// 3.85 seconds
-		case <-time.After(3850 * time.Millisecond):
+		case <-time.After(s.refreshTime):
 		}
 	}
 }

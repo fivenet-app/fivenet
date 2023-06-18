@@ -114,7 +114,7 @@ type Law struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id            uint64               `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" sql:"primary_key" alias:"id"`                                            // @gotags: sql:"primary_key" alias:"id"
+	Id            uint64               `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" sql:"primary_key" alias:"law.id"`                                            // @gotags: sql:"primary_key" alias:"law.id"
 	CreatedAt     *timestamp.Timestamp `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty" alias:"created_at"`              // @gotags: alias:"created_at"
 	UpdatedAt     *timestamp.Timestamp `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty" alias:"updated_at"`              // @gotags: alias:"updated_at"
 	LawbookId     uint64               `protobuf:"varint,4,opt,name=lawbook_id,json=lawbookId,proto3" json:"lawbook_id,omitempty" alias:"lawbook_id"`             // @gotags: alias:"lawbook_id"

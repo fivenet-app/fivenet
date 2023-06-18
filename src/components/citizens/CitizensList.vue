@@ -179,6 +179,13 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                         <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.date_of_birth') }}
                                         </th>
+                                        <th
+                                            v-can="'CitizenStoreService.ListCitizens.Fields.UserProps.TrafficInfractionPoints'"
+                                            scope="col"
+                                            class="py-3.5 px-2 text-left text-sm font-semibold text-neutral"
+                                        >
+                                            {{ $t('common.traffic_infraction_points') }}
+                                        </th>
                                         <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.height') }}
                                         </th>
@@ -222,6 +229,13 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                         </th>
                                         <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.date_of_birth') }}
+                                        </th>
+                                        <th
+                                            v-can="'CitizenStoreService.ListCitizens.Fields.UserProps.TrafficInfractionPoints'"
+                                            scope="col"
+                                            class="py-3.5 px-2 text-left text-sm font-semibold text-neutral"
+                                        >
+                                            {{ $t('common.traffic_infraction_points') }}
                                         </th>
                                         <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.height') }}

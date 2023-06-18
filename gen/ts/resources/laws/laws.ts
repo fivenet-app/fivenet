@@ -39,7 +39,7 @@ export interface Law {
     /**
      * @generated from protobuf field: uint64 id = 1;
      */
-    id: bigint; // @gotags: sql:"primary_key" alias:"id"
+    id: bigint; // @gotags: sql:"primary_key" alias:"law.id"
     /**
      * @generated from protobuf field: resources.timestamp.Timestamp created_at = 2;
      */

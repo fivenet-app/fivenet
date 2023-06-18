@@ -22,7 +22,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CitizenStoreServiceClient interface {
-	// @perm: Attrs=Fields/StringList:[]string{"PhoneNumber", "Licenses", "UserProps.Wanted", "UserProps.Job", "TrafficInfractionPoints"}
+	// @perm: Attrs=Fields/StringList:[]string{"PhoneNumber", "Licenses", "UserProps.Wanted", "UserProps.Job", "UserProps.TrafficInfractionPoints"}
 	ListCitizens(ctx context.Context, in *ListCitizensRequest, opts ...grpc.CallOption) (*ListCitizensResponse, error)
 	// @perm: Attrs=Jobs/JobGradeList
 	GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error)
@@ -80,7 +80,7 @@ func (c *citizenStoreServiceClient) SetUserProps(ctx context.Context, in *SetUse
 // All implementations must embed UnimplementedCitizenStoreServiceServer
 // for forward compatibility
 type CitizenStoreServiceServer interface {
-	// @perm: Attrs=Fields/StringList:[]string{"PhoneNumber", "Licenses", "UserProps.Wanted", "UserProps.Job", "TrafficInfractionPoints"}
+	// @perm: Attrs=Fields/StringList:[]string{"PhoneNumber", "Licenses", "UserProps.Wanted", "UserProps.Job", "UserProps.TrafficInfractionPoints"}
 	ListCitizens(context.Context, *ListCitizensRequest) (*ListCitizensResponse, error)
 	// @perm: Attrs=Jobs/JobGradeList
 	GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error)

@@ -6,7 +6,6 @@ import {
     mdiCalendar,
     mdiCommentTextMultiple,
     mdiFileSearch,
-    mdiFingerprint,
     mdiLock,
     mdiLockOpenVariant,
     mdiMagnify,
@@ -15,8 +14,6 @@ import {
 } from '@mdi/js';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { QuillEditor } from '@vueup/vue-quill';
-import { useClipboard } from '@vueuse/core';
-import { ref } from 'vue';
 import { useClipboardStore } from '~/store/clipboard';
 import { useNotificationsStore } from '~/store/notifications';
 import { ACCESS_LEVEL } from '~~/gen/ts/resources/documents/access';
@@ -25,6 +22,7 @@ import AddToClipboardButton from '../clipboard/AddToClipboardButton.vue';
 import DataErrorBlock from '../partials/DataErrorBlock.vue';
 import DataNoDataBlock from '../partials/DataNoDataBlock.vue';
 import DataPendingBlock from '../partials/DataPendingBlock.vue';
+import IDCopyBadge from '../partials/IDCopyBadge.vue';
 import DocumentComments from './DocumentComments.vue';
 import DocumentReferences from './DocumentReferences.vue';
 import DocumentRelations from './DocumentRelations.vue';
@@ -32,7 +30,6 @@ import DocumentRelations from './DocumentRelations.vue';
 const { $grpc } = useNuxtApp();
 const clipboardStore = useClipboardStore();
 const notifications = useNotificationsStore();
-const clipboard = useClipboard();
 
 const { t } = useI18n();
 
@@ -98,16 +95,6 @@ function addToClipboard(): void {
     notifications.dispatchNotification({
         title: { key: 'notifications.clipboard.document_added.title', parameters: [] },
         content: { key: 'notifications.clipboard.document_added.content', parameters: [] },
-        duration: 3500,
-        type: 'info',
-    });
-}
-
-function copyDocumentIDToClipboard(): void {
-    clipboard.copy('DOC-' + props.documentId);
-    notifications.dispatchNotification({
-        title: { key: 'notifications.document_view.copy_document_id.title', parameters: [] },
-        content: { key: 'notifications.document_view.copy_document_id.content', parameters: [] },
         duration: 3500,
         type: 'info',
     });
@@ -180,13 +167,12 @@ function copyDocumentIDToClipboard(): void {
                             </div>
                         </div>
                         <div class="flex flex-row gap-2">
-                            <div
-                                class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full text-base-100 bg-base-500"
-                                @click="copyDocumentIDToClipboard"
-                            >
-                                <SvgIcon class="w-5 h-auto" aria-hidden="true" type="mdi" :path="mdiFingerprint" />
-                                <span class="text-sm font-medium text-base-100">DOC-{{ documentId }}</span>
-                            </div>
+                            <IDCopyBadge
+                                :id="document.id"
+                                prefix="DOC"
+                                :title="{ key: 'notifications.document_view.copy_document_id.title', parameters: [] }"
+                                :content="{ key: 'notifications.document_view.copy_document_id.content', parameters: [] }"
+                            />
                             <div class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-base-100 text-base-500">
                                 <SvgIcon class="w-5 h-auto" aria-hidden="true" type="mdi" :path="mdiCalendar" />
                                 <span class="text-sm font-medium text-base-700"

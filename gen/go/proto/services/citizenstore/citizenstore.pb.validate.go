@@ -127,6 +127,10 @@ func (m *ListCitizensRequest) validate(all bool) error {
 
 	}
 
+	if m.TrafficPoints != nil {
+		// no validation rules for TrafficPoints
+	}
+
 	if len(errors) > 0 {
 		return ListCitizensRequestMultiError(errors)
 	}

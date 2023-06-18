@@ -1,20 +1,18 @@
 <script lang="ts" setup>
 import SvgIcon from '@jamescoyle/vue-icon';
 import { mdiLicense } from '@mdi/js';
-import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { useClipboard } from '@vueuse/core';
 import { ref } from 'vue';
 import CharSexBadge from '~/components/citizens/CharSexBadge.vue';
 import CitizenInfoJobModal from '~/components/citizens/CitizenInfoJobModal.vue';
 import TemplatesModal from '~/components/documents/templates/TemplatesModal.vue';
 import { useClipboardStore } from '~/store/clipboard';
-import { useNotificationsStore } from '~/store/notifications';
-import { User, UserProps } from '~~/gen/ts/resources/users/users';
-import CitizenInfoReasonModal from './CitizenInfoReasonModal.vue';
+import { User } from '~~/gen/ts/resources/users/users';
+import IDCopyBadge from '../partials/IDCopyBadge.vue';
+import CitizenInfoTrafficPointsModal from './CitizenInfoTrafficPointsModal.vue';
+import CitizenInfoWantedModal from './CitizenInfoWantedModal.vue';
 
-const { $grpc } = useNuxtApp();
 const clipboardStore = useClipboardStore();
-const notifications = useNotificationsStore();
 
 const w = window;
 const clipboard = useClipboard();
@@ -23,73 +21,24 @@ const props = defineProps<{
     user: User;
 }>();
 
-const wantedState = ref(props.user.props ? props.user.props?.wanted : false);
-const reason = ref<string>('');
-const jobModal = ref<boolean>(false);
-
-async function toggleWantedStatus(): Promise<void> {
-    return new Promise(async (res, rej) => {
-        if (!props.user) {
-            return res();
-        }
-
-        if (!props.user?.props) {
-            props.user.props = {
-                userId: props.user.userId,
-                wanted: false,
-            };
-        }
-
-        const userProps = JSON.parse(JSON.stringify(props.user.props)) as UserProps;
-        userProps.wanted = !props.user.props?.wanted;
-
-        try {
-            await $grpc.getCitizenStoreClient().setUserProps({
-                props: userProps,
-                reason: reason.value,
-            });
-
-            notifications.dispatchNotification({
-                title: { key: 'notifications.action_successfull.title', parameters: [] },
-                content: { key: 'notifications.action_successfull.content', parameters: [] },
-                type: 'success',
-            });
-
-            wantedState.value = userProps.wanted;
-            props.user.props.wanted = userProps.wanted;
-
-            reason.value = '';
-            return res();
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
-        }
-    });
-}
-
 const templatesOpen = ref(false);
-
-const reasonOpen = ref(false);
 
 function openTemplates(): void {
     clipboardStore.addUser(props.user);
 
     templatesOpen.value = true;
 }
+
+const setJobModal = ref(false);
+const setWantedModal = ref(false);
+const trafficPointsModal = ref(false);
 </script>
 
 <template>
     <TemplatesModal :open="templatesOpen" @close="templatesOpen = false" :auto-fill="true" />
-    <CitizenInfoReasonModal
-        :open="reasonOpen"
-        @close="reasonOpen = false"
-        @submit="
-            toggleWantedStatus();
-            jobModal = false;
-        "
-        v-model:reason="reason"
-    />
-    <CitizenInfoJobModal :open="jobModal" @close="jobModal = false" :user="user" @submit="jobModal = false" />
+    <CitizenInfoWantedModal :open="setWantedModal" @close="setWantedModal = false" :user="user" />
+    <CitizenInfoJobModal :open="setJobModal" @close="setJobModal = false" :user="user" />
+    <CitizenInfoTrafficPointsModal :open="trafficPointsModal" @close="trafficPointsModal = false" :user="user" />
     <div class="w-full mx-auto max-w-7xl grow lg:flex xl:px-2">
         <div class="flex-1 xl:flex">
             <div class="px-2 py-3 xl:flex-1">
@@ -172,24 +121,14 @@ function openTemplates(): void {
         </div>
 
         <div class="flex flex-col gap-2 px-2 py-4 pr-2 shrink-0 lg:w-96">
-            <div class="flex-initial">
-                <button
-                    v-can="'CitizenStoreService.SetUserProps.Fields.Job'"
-                    type="button"
-                    class="inline-flex items-center justify-center flex-shrink-0 w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 sm:flex-1"
-                    @click="jobModal = true"
-                >
-                    {{ $t('components.citizens.citizen_info_profile.set_job') }}
-                </button>
-            </div>
             <div class="flex-initial" v-can="'CitizenStoreService.SetUserProps.Fields.Wanted'">
                 <button
                     type="button"
                     class="inline-flex items-center justify-center flex-shrink-0 w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-error-500 text-neutral hover:bg-error-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 sm:flex-1"
-                    @click="reasonOpen = true"
+                    @click="setWantedModal = true"
                 >
                     {{
-                        wantedState
+                        user.props?.wanted
                             ? $t('components.citizens.citizen_info_profile.revoke_wanted')
                             : $t('components.citizens.citizen_info_profile.set_wanted')
                     }}
@@ -197,7 +136,25 @@ function openTemplates(): void {
             </div>
             <div class="flex-initial">
                 <button
-                    v-can="'DocStoreService.CreateDocument'"
+                    v-can="'CitizenStoreService.SetUserProps.Fields.Job'"
+                    type="button"
+                    class="inline-flex items-center justify-center flex-shrink-0 w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 sm:flex-1"
+                    @click="setJobModal = true"
+                >
+                    {{ $t('components.citizens.citizen_info_profile.set_job') }}
+                </button>
+            </div>
+            <div class="flex-initial" v-can="'CitizenStoreService.SetUserProps.Fields.TrafficInfractionPoints'">
+                <button
+                    type="button"
+                    class="inline-flex items-center justify-center flex-shrink-0 w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-secondary-500 text-neutral hover:bg-secondary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 sm:flex-1"
+                    @click="trafficPointsModal = true"
+                >
+                    {{ $t('components.citizens.citizen_info_profile.set_traffic_points') }}
+                </button>
+            </div>
+            <div class="flex-initial" v-can="'DocStoreService.CreateDocument'">
+                <button
                     type="button"
                     class="inline-flex items-center justify-center flex-shrink-0 w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-base-700 text-neutral hover:bg-base-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 sm:flex-1"
                     @click="openTemplates()"
@@ -207,13 +164,20 @@ function openTemplates(): void {
             </div>
             <div class="flex-initial">
                 <button
-                    v-can="'CitizenStoreService.SetUserProps.Fields.Wanted'"
                     type="button"
                     class="inline-flex items-center justify-center flex-shrink-0 w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-base-700 text-neutral hover:bg-base-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 sm:flex-1"
                     @click="clipboard.copy(w.location.href)"
                 >
                     {{ $t('components.citizens.citizen_info_profile.copy_profile_link') }}
                 </button>
+            </div>
+            <div class="flex-initial">
+                <IDCopyBadge
+                    :id="user.userId.toString()"
+                    prefix="CIT"
+                    :title="{ key: 'notifications.citizen_info.copy_citizen_id.title', parameters: [] }"
+                    :content="{ key: 'notifications.citizen_info.copy_citizen_id.content', parameters: [] }"
+                />
             </div>
         </div>
     </div>

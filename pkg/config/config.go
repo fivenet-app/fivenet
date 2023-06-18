@@ -43,6 +43,7 @@ type Config struct {
 	NATS     NATS     `yaml:"nats"`
 	JWT      JWT      `yaml:"jwt"`
 	OAuth2   OAuth2   `yaml:"oauth2"`
+	Cache    Cache    `yaml:"cache"`
 
 	Game Game `yaml:"game"`
 }
@@ -93,28 +94,6 @@ type JWT struct {
 	Secret string `yaml:"secret"`
 }
 
-type Game struct {
-	SuperuserGroups    []string      `yaml:"superuserGroups"`
-	UnemployedJob      UnemployedJob `yaml:"unemployedJob"`
-	PublicJobs         []string      `yaml:"publicJobs"`
-	Livemap            Livemap       `yaml:"livemap"`
-	DefaultPermissions []Perm        `yaml:"defaultPermissions"`
-}
-type UnemployedJob struct {
-	Name  string `default:"unemployed" yaml:"job"`
-	Grade int32  `default:"1" yaml:"grade"`
-}
-
-type Livemap struct {
-	UsersCacheSize int      `default:"256" yaml:"usersCacheSize"`
-	Jobs           []string `yaml:"jobs"`
-}
-
-type Perm struct {
-	Category string `yaml:"category"`
-	Name     string `yaml:"name"`
-}
-
 type OAuth2 struct {
 	Providers []*OAuth2Provider
 }
@@ -150,4 +129,30 @@ type OAuth2Mapping struct {
 	ID       string `yaml:"id"`
 	Username string `yaml:"username"`
 	Avatar   string `yaml:"avatar"`
+}
+
+type Cache struct {
+	RefreshTime time.Duration `default:"2m" yaml:"refreshTime"`
+}
+
+type Game struct {
+	SuperuserGroups    []string      `yaml:"superuserGroups"`
+	UnemployedJob      UnemployedJob `yaml:"unemployedJob"`
+	PublicJobs         []string      `yaml:"publicJobs"`
+	Livemap            Livemap       `yaml:"livemap"`
+	DefaultPermissions []Perm        `yaml:"defaultPermissions"`
+}
+type UnemployedJob struct {
+	Name  string `default:"unemployed" yaml:"job"`
+	Grade int32  `default:"1" yaml:"grade"`
+}
+
+type Livemap struct {
+	RefreshTime time.Duration `default:"3s850ms" yaml:"refreshTime"`
+	Jobs        []string      `yaml:"jobs"`
+}
+
+type Perm struct {
+	Category string `yaml:"category"`
+	Name     string `yaml:"name"`
 }

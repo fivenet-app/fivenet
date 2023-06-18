@@ -3,13 +3,15 @@ package mstlystcdata
 import (
 	"context"
 	"database/sql"
+	"sort"
 	"strings"
 	"time"
 
 	cache "github.com/Code-Hex/go-generics-cache"
-	"github.com/Code-Hex/go-generics-cache/policy/lru"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/documents"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/jobs"
+	"github.com/galexrt/fivenet/gen/go/proto/resources/laws"
+	"github.com/galexrt/fivenet/pkg/utils/syncx"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
@@ -17,50 +19,47 @@ import (
 )
 
 var (
-	j   = table.Jobs.AS("job")
-	jg  = table.JobGrades.AS("jobgrade")
-	adc = table.FivenetDocumentsCategories.AS("documentcategory")
+	tJobs      = table.Jobs.AS("job")
+	tJGrades   = table.JobGrades.AS("jobgrade")
+	tDCategory = table.FivenetDocumentsCategories.AS("documentcategory")
+	tLawBooks  = table.FivenetLawbooks.AS("lawbook")
+	tLaws      = table.FivenetLawbooksLaws.AS("law")
 )
 
 type Cache struct {
 	logger *zap.Logger
 	db     *sql.DB
 
+	refreshTime time.Duration
+
 	tracer             trace.Tracer
 	ctx                context.Context
 	jobs               *cache.Cache[string, *jobs.Job]
 	docCategories      *cache.Cache[uint64, *documents.DocumentCategory]
 	docCategoriesByJob *cache.Cache[string, []*documents.DocumentCategory]
+	lawBooks           *syncx.Map[uint64, *laws.LawBook]
 
 	searcher *Searcher
 }
 
-func NewCache(ctx context.Context, logger *zap.Logger, tp *tracesdk.TracerProvider, db *sql.DB) (*Cache, error) {
-	jobsCache := cache.NewContext(
-		ctx,
-		cache.AsLRU[string, *jobs.Job](lru.WithCapacity(32)),
-		cache.WithJanitorInterval[string, *jobs.Job](5*time.Minute),
-	)
-
-	docCategoriesCache := cache.NewContext(
-		ctx,
-		cache.AsLRU[uint64, *documents.DocumentCategory](lru.WithCapacity(512)),
-	)
-
-	docCategoriesByJobCache := cache.NewContext(
-		ctx,
-		cache.AsLRU[string, []*documents.DocumentCategory](lru.WithCapacity(32)),
-	)
+func NewCache(ctx context.Context, logger *zap.Logger, tp *tracesdk.TracerProvider, db *sql.DB, refreshTime time.Duration) (*Cache, error) {
+	jobsCache := cache.NewContext[string, *jobs.Job](ctx)
+	docCategoriesCache := cache.NewContext[uint64, *documents.DocumentCategory](ctx)
+	docCategoriesByJobCache := cache.NewContext[string, []*documents.DocumentCategory](ctx)
+	lawBooks := &syncx.Map[uint64, *laws.LawBook]{}
 
 	c := &Cache{
 		logger: logger,
 		db:     db,
+
+		refreshTime: refreshTime,
 
 		tracer:             tp.Tracer("mstlystcdata-cache"),
 		ctx:                ctx,
 		jobs:               jobsCache,
 		docCategories:      docCategoriesCache,
 		docCategoriesByJob: docCategoriesByJobCache,
+		lawBooks:           lawBooks,
 	}
 
 	var err error
@@ -73,13 +72,13 @@ func NewCache(ctx context.Context, logger *zap.Logger, tp *tracesdk.TracerProvid
 func (c *Cache) Start() {
 	for {
 		if err := c.refreshCache(); err != nil {
-			c.logger.Error("failed to refresh mostyl static data cache", zap.Error(err))
+			c.logger.Error("failed to refresh mostly static data cache", zap.Error(err))
 		}
 
 		select {
 		case <-c.ctx.Done():
 			return
-		case <-time.After(3 * time.Minute):
+		case <-time.After(c.refreshTime):
 		}
 	}
 }
@@ -100,6 +99,10 @@ func (c *Cache) refreshCache() error {
 		return err
 	}
 
+	if err := c.refreshLaws(ctx); err != nil {
+		return err
+	}
+
 	if c.searcher != nil {
 		c.searcher.addDataToIndex()
 	}
@@ -108,17 +111,17 @@ func (c *Cache) refreshCache() error {
 }
 
 func (c *Cache) refreshDocumentCategories(ctx context.Context) error {
-	stmt := adc.
+	stmt := tDCategory.
 		SELECT(
-			adc.ID,
-			adc.Name,
-			adc.Description,
-			adc.Job,
+			tDCategory.ID,
+			tDCategory.Name,
+			tDCategory.Description,
+			tDCategory.Job,
 		).
-		FROM(adc).
+		FROM(tDCategory).
 		ORDER_BY(
-			adc.Job.ASC(),
-			adc.Name.ASC(),
+			tDCategory.Job.ASC(),
+			tDCategory.Name.ASC(),
 		)
 
 	var dest []*documents.DocumentCategory
@@ -145,22 +148,22 @@ func (c *Cache) refreshDocumentCategories(ctx context.Context) error {
 }
 
 func (c *Cache) refreshJobs(ctx context.Context) error {
-	stmt := j.
+	stmt := tJobs.
 		SELECT(
-			j.Name,
-			j.Label,
-			jg.JobName.AS("job_grade.job_name"),
-			jg.Grade,
-			jg.Label,
+			tJobs.Name,
+			tJobs.Label,
+			tJGrades.JobName.AS("job_grade.job_name"),
+			tJGrades.Grade,
+			tJGrades.Label,
 		).
-		FROM(j.
-			INNER_JOIN(jg,
-				jg.JobName.EQ(j.Name),
+		FROM(tJobs.
+			INNER_JOIN(tJGrades,
+				tJGrades.JobName.EQ(tJobs.Name),
 			),
 		).
 		ORDER_BY(
-			j.Name.ASC(),
-			jg.Grade.ASC(),
+			tJobs.Name.ASC(),
+			tJGrades.Grade.ASC(),
 		)
 
 	var dest []*jobs.Job
@@ -174,4 +177,61 @@ func (c *Cache) refreshJobs(ctx context.Context) error {
 	}
 
 	return nil
+}
+
+func (c *Cache) refreshLaws(ctx context.Context) error {
+	stmt := tLawBooks.
+		SELECT(
+			tLawBooks.ID,
+			tLawBooks.CreatedAt,
+			tLawBooks.UpdatedAt,
+			tLawBooks.Name,
+			tLawBooks.Description,
+			tLaws.ID,
+			tLaws.CreatedAt,
+			tLaws.UpdatedAt,
+			tLaws.Name,
+			tLaws.Description,
+			tLaws.Fine,
+			tLaws.DetentionTime,
+			tLaws.StvoPoints,
+		).
+		FROM(tLawBooks.
+			INNER_JOIN(tLaws,
+				tLaws.LawbookID.EQ(tLawBooks.ID),
+			),
+		).
+		ORDER_BY(
+			tLawBooks.Name.ASC(),
+			tLaws.Name.ASC(),
+		)
+
+	var dest []*laws.LawBook
+	if err := stmt.QueryContext(ctx, c.db, &dest); err != nil {
+		return err
+	}
+
+	// Update cache
+	for _, lawbook := range dest {
+		c.lawBooks.Store(lawbook.Id, lawbook)
+	}
+
+	return nil
+}
+
+func (c *Cache) GetLawBooks() []*laws.LawBook {
+	lawBooks := make([]*laws.LawBook, len(c.lawBooks.Keys()))
+
+	i := 0
+	c.lawBooks.Range(func(key uint64, value *laws.LawBook) bool {
+		lawBooks[i] = value
+		i++
+		return true
+	})
+
+	sort.Slice(lawBooks, func(i, j int) bool {
+		return lawBooks[i].Name < lawBooks[j].Name
+	})
+
+	return lawBooks
 }

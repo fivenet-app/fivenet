@@ -49,6 +49,8 @@ oauth2:
       endpoints:
         authURL: "https://discord.com/api/oauth2/authorize"
         tokenURL: "https://discord.com/api/oauth2/token"
+cache:
+  refreshTime: 2m
 game:
   superuserGroups:
     - projektleiter
@@ -62,7 +64,7 @@ game:
     - fib
     - police
   livemap:
-    usersCacheSize: 256
+    refreshTime: 3s850ms
     jobs:
       - ambulance
       - doj

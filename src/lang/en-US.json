@@ -203,7 +203,8 @@
                 "copy_profile_link": "Copy Profile Link",
                 "revoke_wanted": "Revoke Wanted Status",
                 "set_wanted": "Set Person Wanted",
-                "set_job": "Set Person's Job"
+                "set_job": "Set Person's Job",
+                "set_traffic_points": "Set Traffic Infraction Points"
             },
             "citizen_info_activity_feed_entry": {
                 "with_reason": "with reason",
@@ -483,7 +484,8 @@
         "advanced_search": "Advanced Search",
         "method": "Method",
         "law": "Law | Laws",
-        "law_book": "Law Book | Law Books"
+        "law_book": "Law Book | Law Books",
+        "traffic_infraction_points": "Traffic Points"
     },
     "notifications": {
         "clipboard": {
@@ -672,6 +674,12 @@
             "deleted": {
                 "title": "Template: Deleted",
                 "content": "Template deleted successfully."
+            }
+        },
+        "citizen_info": {
+            "copy_citizen_id": {
+                "title": "Citizen ID",
+                "content": "Citizen ID copied to clipboard."
             }
         }
     },

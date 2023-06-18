@@ -1,16 +1,11 @@
-export type Penalty = {
-    category?: string;
-    name: string;
-    description: string;
-    fine?: number;
-    detentionTime?: number;
-    stvoPoints?: number;
+import { Law, LawBook } from '~~/gen/ts/resources/laws/laws';
+
+export type Penalty = Law & {
     show?: boolean;
 };
 
-export type PenaltyCategory = {
-    name: string;
-    penalties: Array<Penalty>;
+export type PenaltyCategory = LawBook & {
+    laws: Penalty[];
     show?: boolean;
 };
 
@@ -18,12 +13,12 @@ export type Penalties = Array<PenaltyCategory>;
 
 export type SelectedPenalty = {
     penalty: Penalty;
-    count: number;
+    count: bigint;
 };
 
 export type PenaltiesSummary = {
-    fine: number;
-    detentionTime: number;
-    stvoPoints: number;
-    count: number;
+    fine: bigint;
+    detentionTime: bigint;
+    stvoPoints: bigint;
+    count: bigint;
 };
