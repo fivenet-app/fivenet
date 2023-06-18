@@ -636,8 +636,12 @@
                 },
                 "failed": {
                     "title": "Failed to login using provider",
-                    "content": "Error during social login (Reason: {0}), please try again."
+                    "content": "Error during social login ({0}), please try again."
                 }
+            },
+            "no_permission": {
+                "title": "You don't have permission!",
+                "content": "No permission to go to {0}."
             },
             "oauth2_connect": {
                 "success": {
@@ -648,10 +652,6 @@
                     "title": "Failed to connect your account",
                     "content": "Error while connecting your social login (Reason: {0}), please try again."
                 }
-            },
-            "no_permission": {
-                "title": "You don't have permission!",
-                "content": "No permission to go to {0}."
             }
         },
         "language_switched": {
