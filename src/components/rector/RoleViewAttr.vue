@@ -192,13 +192,13 @@ onMounted(() => {
                     <div
                         v-if="
                             state.validValues.oneofKind === 'stringList' &&
-                            validValues?.validValues &&
-                            validValues?.validValues.oneofKind === 'stringList'
+                            maxValues?.validValues &&
+                            maxValues?.validValues.oneofKind === 'stringList'
                         "
                         class="flex flex-row gap-4 flex-wrap"
                     >
                         <div
-                            v-for="value in validValues.validValues.stringList.strings"
+                            v-for="value in maxValues.validValues.stringList.strings"
                             :key="value"
                             class="flex flex-row flex-initial flex-nowrap"
                         >
@@ -218,17 +218,17 @@ onMounted(() => {
                     <div
                         v-else-if="
                             state.validValues.oneofKind === 'jobList' &&
-                            validValues?.validValues &&
-                            validValues?.validValues.oneofKind === 'jobList'
+                            maxValues?.validValues &&
+                            maxValues?.validValues.oneofKind === 'jobList'
                         "
                         class="flex flex-row gap-4 flex-wrap"
                     >
                         <div
                             v-for="job in props.jobs.filter(
                                 (j) =>
-                                    validValues?.validValues.oneofKind === 'jobList' &&
-                                    (!validValues?.validValues.jobList?.strings.length ||
-                                        validValues.validValues?.jobList?.strings.includes(j.name))
+                                    maxValues?.validValues.oneofKind === 'jobList' &&
+                                    (!maxValues?.validValues.jobList?.strings.length ||
+                                        maxValues.validValues?.jobList?.strings.includes(j.name))
                             )"
                             :key="job.name"
                             class="flex flex-row flex-initial flex-nowrap"
@@ -247,8 +247,8 @@ onMounted(() => {
                     <div
                         v-else-if="
                             state.validValues.oneofKind === 'jobGradeList' &&
-                            validValues?.validValues &&
-                            validValues.validValues.oneofKind === 'jobGradeList'
+                            maxValues?.validValues &&
+                            maxValues.validValues.oneofKind === 'jobGradeList'
                         "
                         class="flex flex-col gap-2"
                     >
