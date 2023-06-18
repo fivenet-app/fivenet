@@ -130,6 +130,9 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 	if dispatchesAttr != nil {
 		dispatchesJobs = dispatchesAttr.([]string)
 	}
+	if userInfo.SuperUser {
+		dispatchesJobs = s.visibleJobs
+	}
 
 	playersAttr, err := s.p.Attr(userInfo, LivemapperServicePerm, LivemapperServiceStreamPerm, LivemapperServiceStreamDispatchesPermField)
 	if err != nil {
@@ -138,6 +141,13 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 	var playersJobs map[string]int32
 	if playersAttr != nil {
 		playersJobs, _ = playersAttr.(map[string]int32)
+	}
+
+	if userInfo.SuperUser {
+		playersJobs = map[string]int32{}
+		for _, j := range s.visibleJobs {
+			playersJobs[j] = -1
+		}
 	}
 
 	resp := &StreamResponse{}
@@ -205,7 +215,7 @@ func (s *Server) getUserLocations(jobs map[string]int32, userId int32, userJob s
 		}
 
 		for i := 0; i < len(markers); i++ {
-			if markers[i].User.JobGrade <= grade {
+			if grade == -1 || markers[i].User.JobGrade <= grade {
 				ds = append(ds, markers[i])
 			}
 		}
