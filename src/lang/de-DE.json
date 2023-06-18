@@ -203,7 +203,8 @@
                 "copy_profile_link": "Profil-Link kopieren",
                 "revoke_wanted": "Fahndungsstatus aufheben",
                 "set_wanted": "Person zur Fahndung ausschreiben",
-                "set_job": "Job der Person setzen"
+                "set_job": "Job der Person setzen",
+                "set_traffic_points": "Setze StVo Punkte"
             },
             "citizen_info_activity_feed_entry": {
                 "with_reason": "mit dem Grund",
@@ -336,8 +337,7 @@
             "title": "Strafenrechner",
             "crime": "Verbrechen",
             "fine": "Strafe",
-            "detention_time": "Gefängniszeit",
-            "stvo_points": "StVO Punkte"
+            "detention_time": "Gefängniszeit"
         }
     },
     "common": {
@@ -483,7 +483,9 @@
         "advanced_search": "Erweiterte Suche",
         "method": "Methode",
         "law": "Gesetz | Gesetze",
-        "law_book": "Gesetzbuch | Gesetzbücher"
+        "law_book": "Gesetzbuch | Gesetzbücher",
+        "traffic_infraction_points": "StVo Punkt | StVo Punkte",
+        "point": "Keine Punkte | {n} Punkt | {n} Punkte"
     },
     "notifications": {
         "clipboard": {
@@ -672,6 +674,12 @@
             "deleted": {
                 "title": "Vorlage: Gelöscht",
                 "content": "Vorlage erfolgreich gelöscht."
+            }
+        },
+        "citizen_info": {
+            "copy_citizen_id": {
+                "title": "Bürger-ID",
+                "content": "Bürger-ID in die Zwischenablage kopiert."
             }
         }
     },
