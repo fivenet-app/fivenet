@@ -17,7 +17,6 @@ RUN apk --no-cache add ca-certificates tzdata && \
 COPY --from=nodebuilder /app/.output/public ./.output/public
 COPY --from=gobuilder /go/src/github.com/galexrt/fivenet/fivenet /usr/local/bin
 
-EXPOSE 8080/tcp
-EXPOSE 9090/tcp
+EXPOSE 8080/tcp 9090/tcp
 
 CMD ["fivenet", "server"]
