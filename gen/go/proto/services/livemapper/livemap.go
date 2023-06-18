@@ -126,6 +126,11 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 	if err != nil {
 		return ErrStreamFailed
 	}
+	playersAttr, err := s.p.Attr(userInfo, LivemapperServicePerm, LivemapperServiceStreamPerm, LivemapperServiceStreamPlayersPermField)
+	if err != nil {
+		return ErrStreamFailed
+	}
+
 	var dispatchesJobs []string
 	if dispatchesAttr != nil {
 		dispatchesJobs = dispatchesAttr.([]string)
@@ -134,10 +139,6 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 		dispatchesJobs = s.visibleJobs
 	}
 
-	playersAttr, err := s.p.Attr(userInfo, LivemapperServicePerm, LivemapperServiceStreamPerm, LivemapperServiceStreamDispatchesPermField)
-	if err != nil {
-		return ErrStreamFailed
-	}
 	var playersJobs map[string]int32
 	if playersAttr != nil {
 		playersJobs, _ = playersAttr.(map[string]int32)
