@@ -815,21 +815,21 @@ async function editForm(): Promise<void> {
             <button
                 type="button"
                 :disabled="!canEdit"
-                class="rounded-bl-md bg-primary-500 py-2.5 px-3.5 w-full text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
-                @click="referenceManagerShow = true"
-            >
-                {{ $t('common.document', 1) }} {{ $t('common.reference', 2) }}
-            </button>
-        </div>
-        <div class="flex-1">
-            <button
-                type="button"
-                :disabled="!canEdit"
                 class="rounded-br-md bg-primary-500 py-2.5 px-3.5 w-full text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
                 @click="relationManagerShow = true"
             >
                 {{ $t('common.citizen', 1) }} {{ $t('common.relation', 2) }}
             </button>
+            <div class="flex-1">
+                <button
+                    type="button"
+                    :disabled="!canEdit"
+                    class="rounded-bl-md bg-primary-500 py-2.5 px-3.5 w-full text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
+                    @click="referenceManagerShow = true"
+                >
+                    {{ $t('common.document', 1) }} {{ $t('common.reference', 2) }}
+                </button>
+            </div>
         </div>
     </div>
     <div class="my-3">
