@@ -118,17 +118,19 @@ func (x *AttributeValues) Check(aType AttributeTypes, validVals *AttributeValues
 
 func ValidateStringList(in []string, validVals []string, maxVals []string) bool {
 	// If more values than valid/max values in the list, it can't be valid
-	if len(in) > len(validVals) || len(in) > len(maxVals) {
+	if (validVals != nil && len(in) > len(validVals)) || len(in) > len(maxVals) {
 		return false
 	}
 
 	for i := 0; i < len(in); i++ {
 		if !utils.InStringSlice(maxVals, in[i]) {
-			return false
+			utils.RemoveFromStringSlice(in, i)
+			continue
 		}
 
 		if validVals != nil && !utils.InStringSlice(validVals, in[i]) {
-			return false
+			utils.RemoveFromStringSlice(in, i)
+			continue
 		}
 	}
 
@@ -143,12 +145,14 @@ func ValidateJobList(in []string, validVals []string, maxVals []string) bool {
 
 	for i := 0; i < len(in); i++ {
 		if !utils.InStringSlice(maxVals, in[i]) {
-			return false
+			utils.RemoveFromStringSlice(in, i)
+			continue
 		}
 
 		if validVals != nil && !utils.InStringSlice(validVals, in[i]) {
 			// Remove invalid jobs from list
 			utils.RemoveFromStringSlice(in, i)
+			continue
 		}
 	}
 
@@ -159,20 +163,20 @@ func ValidateJobGradeList(in map[string]int32, validVals map[string]int32, maxVa
 	for job, grade := range in {
 		if vg, ok := maxVals[job]; ok {
 			if grade > vg {
-				return false
+				delete(in, job)
 			}
 		} else {
-			return false
+			delete(in, job)
 		}
 
 		// If valid vals are empty/ nil, don't check them
 		if len(validVals) > 0 {
 			if vg, ok := validVals[job]; ok {
 				if grade > vg {
-					return false
+					delete(in, job)
 				}
 			} else {
-				return false
+				delete(in, job)
 			}
 		}
 	}

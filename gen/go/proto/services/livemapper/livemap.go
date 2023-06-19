@@ -216,7 +216,8 @@ func (s *Server) getUserLocations(jobs map[string]int32, userId int32, userJob s
 		}
 
 		for i := 0; i < len(markers); i++ {
-			if grade == -1 || markers[i].User.JobGrade <= grade {
+			// SuperUser returns grade as `-1`, job has access to that grade or it is the user itself
+			if grade == -1 || (markers[i].User.JobGrade <= grade || markers[i].User.UserId == userId) {
 				ds = append(ds, markers[i])
 			}
 		}

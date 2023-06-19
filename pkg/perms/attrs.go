@@ -670,7 +670,7 @@ func (p *Perms) AddOrUpdateAttributesToRole(ctx context.Context, job string, gra
 
 			max := p.GetClosestRoleAttrMaxVals(job, grade, a.PermissionID, a.Key)
 			attrs[i].MaxValues = max
-			if !attrs[i].Value.Check(a.Type, a.ValidValues, attrs[i].MaxValues) {
+			if !attrs[i].Value.Check(a.Type, a.ValidValues, max) {
 				return errors.Wrapf(ErrAttrInvalid, "attribute %s/%s failed validation", a.Key, a.Name)
 			}
 		}
@@ -724,48 +724,16 @@ func (p *Perms) addOrUpdateAttributesToRole(ctx context.Context, roleId uint64, 
 			}
 		}
 
-		maxV := jet.NULL
-		if attrs[i].MaxValues != nil {
-			var out string
-			var err error
-
-			attrs[i].MaxValues.Default(permissions.AttributeTypes(attrs[i].Type))
-
-			switch permissions.AttributeTypes(attrs[i].Type) {
-			case permissions.StringListAttributeType:
-				out, err = json.MarshalToString(attrs[i].MaxValues.GetStringList().Strings)
-				if err != nil {
-					return err
-				}
-			case permissions.JobListAttributeType:
-				out, err = json.MarshalToString(attrs[i].MaxValues.GetJobList().Strings)
-				if err != nil {
-					return err
-				}
-			case permissions.JobGradeListAttributeType:
-				out, err = json.MarshalToString(attrs[i].MaxValues.GetJobGradeList().Jobs)
-				if err != nil {
-					return err
-				}
-			}
-
-			if out != "" && out != "null" {
-				maxV = jet.String(out)
-			}
-		}
-
 		stmt := tRoleAttrs.
 			INSERT(
 				tRoleAttrs.RoleID,
 				tRoleAttrs.AttrID,
 				tRoleAttrs.Value,
-				tRoleAttrs.MaxValues,
 			).
 			VALUES(
 				roleId,
 				a.ID,
 				validV,
-				maxV,
 			).
 			ON_DUPLICATE_KEY_UPDATE(
 				tRoleAttrs.Value.SET(jet.StringExp(jet.Raw("values(`value`)"))),

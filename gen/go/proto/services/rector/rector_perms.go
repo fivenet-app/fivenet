@@ -25,6 +25,7 @@ var (
 	ErrRoleAlreadyExists = status.Error(codes.InvalidArgument, "errors.RectorService.ErrRoleAlreadyExists")
 	ErrOwnRoleDeletion   = status.Error(codes.InvalidArgument, "errors.RectorService.ErrOwnRoleDeletion")
 	ErrInvalidAttrs      = status.Error(codes.InvalidArgument, "errors.RectorService.ErrInvalidAttrs")
+	ErrInvalidPerms      = status.Error(codes.InvalidArgument, "errors.RectorService.ErrInvalidPerms")
 )
 
 var (
@@ -322,7 +323,7 @@ func (s *Server) UpdateRolePerms(ctx context.Context, req *UpdateRolePermsReques
 
 	if req.Perms != nil {
 		if err := s.handlPermissionsUpdate(ctx, role, req.Perms); err != nil {
-			return nil, ErrInvalidAttrs
+			return nil, ErrInvalidPerms
 		}
 	}
 	if req.Attrs != nil {

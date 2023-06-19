@@ -1001,7 +1001,9 @@
             "ErrInvalidRequest": "Invalid role action requested!",
             "ErrNoPermission": "No permission to create/change/delete role!",
             "ErrRoleAlreadyExists": "Role already exists!",
-            "ErrOwnRoleDeletion": "Can't delete your own role!"
+            "ErrOwnRoleDeletion": "Can't delete your own role!",
+            "ErrInvalidPerms": "Failed to update role permissions!",
+            "ErrInvalidAttrs": "Failed to update role attributes!"
         }
     }
 }
