@@ -1001,7 +1001,9 @@
             "ErrInvalidRequest": "Ungültige Rollen Anfrage!",
             "ErrNoPermission": "Keine Berechtigung um Rollen zu erstellen/ändern/löschen!",
             "ErrRoleAlreadyExists": "Rolle existiert bereits!",
-            "ErrOwnRoleDeletion": "Eigene Rolle kann nicht gelöscht werden!"
+            "ErrOwnRoleDeletion": "Eigene Rolle kann nicht gelöscht werden!",
+            "ErrInvalidPerms": "Fehler beim aktualisieren der Rollen Berechtigungen!",
+            "ErrInvalidAttrs": "Fehler beim aktualisieren der Rollen Attributen!"
         }
     }
 }
