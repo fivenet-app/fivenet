@@ -44,6 +44,7 @@
         "uuid": "^9.0.0",
         "vee-validate": "^4.9.6",
         "vue": "^3.3.4",
+        "vue-command-palette": "^0.1.4",
         "vue-json-pretty": "^2.2.4",
         "vue-template-compiler": "^2.7.14",
         "zxcvbn": "^4.4.2"
