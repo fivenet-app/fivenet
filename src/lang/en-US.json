@@ -1005,5 +1005,9 @@
             "ErrInvalidPerms": "Failed to update role permissions!",
             "ErrInvalidAttrs": "Failed to update role attributes!"
         }
+    },
+    "commandpalette": {
+        "input": "Type a command or search...",
+        "empty": "No results found."
     }
 }

@@ -87,7 +87,7 @@ func (x *AttributeValues) Check(aType AttributeTypes, validVals *AttributeValues
 			max = maxVals.GetStringList().Strings
 		}
 
-		return ValidateStringList(x.GetStringList().Strings, valid, max)
+		return ValidateStringList(x.GetStringList(), valid, max)
 	case JobListAttributeType:
 		var valid []string
 		if validVals != nil && validVals.GetJobList() != nil && validVals.GetJobList().Strings != nil {
@@ -98,7 +98,7 @@ func (x *AttributeValues) Check(aType AttributeTypes, validVals *AttributeValues
 			max = maxVals.GetJobList().Strings
 		}
 
-		return ValidateJobList(x.GetJobList().Strings, valid, max)
+		return ValidateJobList(x.GetJobList(), valid, max)
 	case JobGradeListAttributeType:
 		var valid map[string]int32
 
@@ -110,26 +110,27 @@ func (x *AttributeValues) Check(aType AttributeTypes, validVals *AttributeValues
 			max = maxVals.GetJobGradeList().Jobs
 		}
 
-		return ValidateJobGradeList(x.GetJobGradeList().Jobs, valid, max)
+		return ValidateJobGradeList(x.GetJobGradeList(), valid, max)
 	}
 
 	return true
 }
 
-func ValidateStringList(in []string, validVals []string, maxVals []string) bool {
+func ValidateStringList(in *StringList, validVals []string, maxVals []string) bool {
 	// If more values than valid/max values in the list, it can't be valid
-	if (validVals != nil && len(in) > len(validVals)) || len(in) > len(maxVals) {
-		return false
+	if (validVals != nil && len(in.Strings) > len(validVals)) || len(in.Strings) > len(maxVals) {
+		in.Strings = []string{}
+		return true
 	}
 
-	for i := 0; i < len(in); i++ {
-		if !utils.InStringSlice(maxVals, in[i]) {
-			utils.RemoveFromStringSlice(in, i)
+	for i := 0; i < len(in.Strings); i++ {
+		if !utils.InStringSlice(maxVals, in.Strings[i]) {
+			in.Strings = utils.RemoveFromStringSlice(in.Strings, i)
 			continue
 		}
 
-		if validVals != nil && !utils.InStringSlice(validVals, in[i]) {
-			utils.RemoveFromStringSlice(in, i)
+		if validVals != nil && !utils.InStringSlice(validVals, in.Strings[i]) {
+			in.Strings = utils.RemoveFromStringSlice(in.Strings, i)
 			continue
 		}
 	}
@@ -137,21 +138,22 @@ func ValidateStringList(in []string, validVals []string, maxVals []string) bool 
 	return true
 }
 
-func ValidateJobList(in []string, validVals []string, maxVals []string) bool {
+func ValidateJobList(in *StringList, validVals []string, maxVals []string) bool {
 	// If more values than valid/max values in the list, it can't be valid
-	if len(in) > len(maxVals) || (validVals != nil && len(in) > len(validVals)) {
-		return false
+	if len(in.Strings) > len(maxVals) || (validVals != nil && len(in.Strings) > len(validVals)) {
+		in.Strings = []string{}
+		return true
 	}
 
-	for i := 0; i < len(in); i++ {
-		if !utils.InStringSlice(maxVals, in[i]) {
-			utils.RemoveFromStringSlice(in, i)
+	for i := 0; i < len(in.Strings); i++ {
+		if !utils.InStringSlice(maxVals, in.Strings[i]) {
+			in.Strings = utils.RemoveFromStringSlice(in.Strings, i)
 			continue
 		}
 
-		if validVals != nil && !utils.InStringSlice(validVals, in[i]) {
+		if validVals != nil && !utils.InStringSlice(validVals, in.Strings[i]) {
 			// Remove invalid jobs from list
-			utils.RemoveFromStringSlice(in, i)
+			in.Strings = utils.RemoveFromStringSlice(in.Strings, i)
 			continue
 		}
 	}
@@ -159,24 +161,24 @@ func ValidateJobList(in []string, validVals []string, maxVals []string) bool {
 	return true
 }
 
-func ValidateJobGradeList(in map[string]int32, validVals map[string]int32, maxVals map[string]int32) bool {
-	for job, grade := range in {
+func ValidateJobGradeList(in *JobGradeList, validVals map[string]int32, maxVals map[string]int32) bool {
+	for job, grade := range in.Jobs {
 		if vg, ok := maxVals[job]; ok {
 			if grade > vg {
-				delete(in, job)
+				delete(in.Jobs, job)
 			}
 		} else {
-			delete(in, job)
+			delete(in.Jobs, job)
 		}
 
 		// If valid vals are empty/ nil, don't check them
 		if len(validVals) > 0 {
 			if vg, ok := validVals[job]; ok {
 				if grade > vg {
-					delete(in, job)
+					delete(in.Jobs, job)
 				}
 			} else {
-				delete(in, job)
+				delete(in.Jobs, job)
 			}
 		}
 	}

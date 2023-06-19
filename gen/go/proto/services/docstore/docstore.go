@@ -238,6 +238,7 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 
 	sanitizedContent := htmlsanitizer.Sanitize(req.Content)
 
+	tDocs := table.FivenetDocuments
 	stmt := tDocs.
 		INSERT(
 			tDocs.CategoryID,
@@ -333,6 +334,8 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 	}
 
 	sanitizedContent := htmlsanitizer.Sanitize(req.Content)
+
+	tDocs := table.FivenetDocuments
 	stmt := tDocs.
 		UPDATE(
 			tDocs.CategoryID,

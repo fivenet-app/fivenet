@@ -4,6 +4,10 @@ import LoadingBar from '~/components/partials/LoadingBar.vue';
 import Notificator from '~/components/partials/Notificator.vue';
 import Sidebar from '~/components/partials/Sidebar.vue';
 import NotificationProvider from '~/components/partials/notification/NotificationProvider.vue';
+import { useAuthStore } from '~/store/auth';
+
+const authStore = useAuthStore();
+const { activeChar } = storeToRefs(authStore);
 </script>
 
 <template>
@@ -14,7 +18,7 @@ import NotificationProvider from '~/components/partials/notification/Notificatio
                 <slot />
             </div>
         </Sidebar>
-        <CommandPalette />
+        <CommandPalette v-if="activeChar" />
         <Notificator />
     </NotificationProvider>
 </template>

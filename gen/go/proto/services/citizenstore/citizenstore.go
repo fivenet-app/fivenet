@@ -253,6 +253,8 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 			selectors = append(selectors, tUserProps.Wanted)
 		case "UserProps.Job":
 			selectors = append(selectors, tUserProps.Job)
+		case "UserProps.TrafficInfractionPoints":
+			selectors = append(selectors, tUserProps.TrafficInfractionPoints)
 		}
 	}
 

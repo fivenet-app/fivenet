@@ -1005,5 +1005,9 @@
             "ErrInvalidPerms": "Fehler beim aktualisieren der Rollen Berechtigungen!",
             "ErrInvalidAttrs": "Fehler beim aktualisieren der Rollen Attributen!"
         }
+    },
+    "commandpalette": {
+        "input": "Geben Sie einen Befehl ein oder suchen Sie...",
+        "empty": "Keine Ergebnisse gefunden."
     }
 }
