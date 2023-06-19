@@ -59,7 +59,7 @@ type Permissions interface {
 	AddOrUpdateAttributesToRole(ctx context.Context, job string, grade int32, roleId uint64, attrs ...*permissions.RoleAttribute) error
 	RemoveAttributesFromRole(ctx context.Context, roleId uint64, attrs ...*permissions.RoleAttribute) error
 	UpdateRoleAttributeMaxValues(ctx context.Context, roleId uint64, attrId uint64, maxValues *permissions.AttributeValues) error
-	GetClosestRoleAttrMaxVals(job string, grade int32, permId uint64, key Key) *permissions.AttributeValues
+	GetClosestRoleAttrMaxVals(job string, grade int32, permId uint64, key Key) (*permissions.AttributeValues, uint64)
 
 	Attr(userInfo *userinfo.UserInfo, category Category, name Name, key Key) (any, error)
 

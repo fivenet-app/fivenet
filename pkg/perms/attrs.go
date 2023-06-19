@@ -349,19 +349,19 @@ func (p *Perms) getClosestRoleAttr(job string, grade int32, permId uint64, key K
 	return nil
 }
 
-func (p *Perms) GetClosestRoleAttrMaxVals(job string, grade int32, permId uint64, key Key) *permissions.AttributeValues {
+func (p *Perms) GetClosestRoleAttrMaxVals(job string, grade int32, permId uint64, key Key) (*permissions.AttributeValues, uint64) {
 	roleIds, ok := p.lookupRoleIDsForJobUpToGrade(job, grade)
 	if !ok {
-		return nil
+		return nil, 0
 	}
 
 	pAttrs, ok := p.attrsPermsMap.Load(permId)
 	if !ok {
-		return nil
+		return nil, 0
 	}
 	attrId, ok := pAttrs.Load(key)
 	if !ok {
-		return nil
+		return nil, 0
 	}
 
 	for i := 0; i < len(roleIds); i++ {
@@ -371,11 +371,11 @@ func (p *Perms) GetClosestRoleAttrMaxVals(job string, grade int32, permId uint64
 		}
 
 		if val.Max != nil {
-			return val.Max
+			return val.Max, roleIds[i]
 		}
 	}
 
-	return nil
+	return nil, 0
 }
 
 func (p *Perms) Attr(userInfo *userinfo.UserInfo, category Category, name Name, key Key) (any, error) {
@@ -478,7 +478,7 @@ func (p *Perms) convertRawToRoleAttributes(in []*permissions.RawRoleAttribute, j
 			res[i].DefaultValues = nil
 		}
 
-		res[i].MaxValues = p.GetClosestRoleAttrMaxVals(job, grade, in[i].PermissionId, Key(in[i].Key))
+		res[i].MaxValues, _ = p.GetClosestRoleAttrMaxVals(job, grade, in[i].PermissionId, Key(in[i].Key))
 		if res[i].MaxValues == nil {
 			res[i].MaxValues = &permissions.AttributeValues{}
 			res[i].MaxValues.Default(permissions.AttributeTypes(res[i].Type))
@@ -668,8 +668,13 @@ func (p *Perms) AddOrUpdateAttributesToRole(ctx context.Context, job string, gra
 		if attrs[i].Value != nil {
 			attrs[i].Value.Default(permissions.AttributeTypes(attrs[i].Type))
 
-			max := p.GetClosestRoleAttrMaxVals(job, grade, a.PermissionID, a.Key)
-			attrs[i].MaxValues = max
+			max, aRoleId := p.GetClosestRoleAttrMaxVals(job, grade, a.PermissionID, a.Key)
+			if roleId == aRoleId {
+				attrs[i].MaxValues = max
+			} else {
+				attrs[i].MaxValues = nil
+			}
+
 			if !attrs[i].Value.Check(a.Type, a.ValidValues, max) {
 				return errors.Wrapf(ErrAttrInvalid, "attribute %s/%s failed validation", a.Key, a.Name)
 			}
