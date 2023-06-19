@@ -158,7 +158,7 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 
 	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, false, documents.ACCESS_LEVEL_VIEW)
 	if err != nil {
-		return nil, ErrFailedQuery
+		return nil, ErrNotFoundOrNoPerms
 	}
 	if !check {
 		return nil, status.Error(codes.PermissionDenied, "You don't have permission to view this document!")
@@ -236,7 +236,8 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
-	tDocs := table.FivenetDocuments
+	sanitizedContent := htmlsanitizer.Sanitize(req.Content)
+
 	stmt := tDocs.
 		INSERT(
 			tDocs.CategoryID,
@@ -254,8 +255,8 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 		VALUES(
 			req.CategoryId,
 			req.Title,
-			htmlsanitizer.StripTags(utils.StringFirstN(req.Content, DocShortContentLength)),
-			htmlsanitizer.Sanitize(req.Content),
+			utils.StringFirstN(htmlsanitizer.StripTags(sanitizedContent), DocShortContentLength),
+			sanitizedContent,
 			documents.DOC_CONTENT_TYPE_HTML,
 			req.Data,
 			userInfo.UserId,
@@ -305,7 +306,7 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 
 	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, false, documents.ACCESS_LEVEL_EDIT)
 	if err != nil {
-		return nil, ErrFailedQuery
+		return nil, ErrNotFoundOrNoPerms
 	}
 	if !check {
 		if !userInfo.SuperUser {
@@ -331,21 +332,26 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 		return nil, ErrFailedQuery
 	}
 
+	sanitizedContent := htmlsanitizer.Sanitize(req.Content)
 	stmt := tDocs.
 		UPDATE(
+			tDocs.CategoryID,
 			tDocs.Title,
 			tDocs.Summary,
 			tDocs.Content,
-			tDocs.Closed,
+			tDocs.Data,
 			tDocs.State,
+			tDocs.Closed,
 			tDocs.Public,
 		).
 		SET(
+			req.CategoryId,
 			req.Title,
-			htmlsanitizer.Sanitize(req.Content),
-			htmlsanitizer.StripTags(utils.StringFirstN(req.Content, DocShortContentLength)),
-			req.Closed,
+			utils.StringFirstN(htmlsanitizer.StripTags(sanitizedContent), DocShortContentLength),
+			sanitizedContent,
+			tDocs.Data,
 			req.State,
+			req.Closed,
 			req.Public,
 		).
 		WHERE(
