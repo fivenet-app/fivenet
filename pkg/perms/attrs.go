@@ -2,10 +2,11 @@ package perms
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"reflect"
 	"strings"
+
+	"github.com/pkg/errors"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/permissions"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
@@ -657,17 +658,20 @@ func (p *Perms) FlattenRoleAttributes(job string, grade int32) ([]string, error)
 
 func (p *Perms) AddOrUpdateAttributesToRole(ctx context.Context, job string, grade int32, roleId uint64, attrs ...*permissions.RoleAttribute) error {
 	for i := 0; i < len(attrs); i++ {
+		attrs[i].RoleId = roleId
+
+		a, ok := p.LookupAttributeByID(attrs[i].AttrId)
+		if !ok {
+			return fmt.Errorf("no attribute found by id %d", attrs[i].AttrId)
+		}
+
 		if attrs[i].Value != nil {
 			attrs[i].Value.Default(permissions.AttributeTypes(attrs[i].Type))
 
-			a, ok := p.LookupAttributeByID(attrs[i].AttrId)
-			if !ok {
-				return fmt.Errorf("no attribute found by id %d", attrs[i].AttrId)
-			}
-
 			max := p.GetClosestRoleAttrMaxVals(job, grade, a.PermissionID, a.Key)
-			if !attrs[i].Value.Check(a.Type, a.ValidValues, max) {
-				return ErrAttrInvalid
+			attrs[i].MaxValues = max
+			if !attrs[i].Value.Check(a.Type, a.ValidValues, attrs[i].MaxValues) {
+				return errors.Wrapf(ErrAttrInvalid, "attribute %s/%s failed validation", a.Key, a.Name)
 			}
 		}
 	}
