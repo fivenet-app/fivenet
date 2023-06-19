@@ -410,8 +410,10 @@ func (p *Perms) Attr(userInfo *userinfo.UserInfo, category Category, name Name, 
 	switch cached.Type {
 	case permissions.StringListAttributeType:
 		return cached.Value.GetStringList().Strings, nil
+
 	case permissions.JobListAttributeType:
 		return cached.Value.GetJobList().Strings, nil
+
 	case permissions.JobGradeListAttributeType:
 		return cached.Value.GetJobGradeList().Jobs, nil
 	}
@@ -479,8 +481,7 @@ func (p *Perms) convertRawToRoleAttributes(in []*permissions.RawRoleAttribute, j
 		}
 
 		res[i].MaxValues, _ = p.GetClosestRoleAttrMaxVals(job, grade, in[i].PermissionId, Key(in[i].Key))
-		if res[i].MaxValues == nil {
-			res[i].MaxValues = &permissions.AttributeValues{}
+		if res[i].MaxValues != nil {
 			res[i].MaxValues.Default(permissions.AttributeTypes(res[i].Type))
 		}
 	}
@@ -695,7 +696,7 @@ func (p *Perms) addOrUpdateAttributesToRole(ctx context.Context, roleId uint64, 
 			return fmt.Errorf("unable to add role attribute, didn't find attribute by ID %d", attrs[i].AttrId)
 		}
 
-		validV := jet.NULL
+		value := jet.NULL
 		if attrs[i].Value == nil {
 			attrs[i].Value = a.DefaultValues
 		}
@@ -704,9 +705,9 @@ func (p *Perms) addOrUpdateAttributesToRole(ctx context.Context, roleId uint64, 
 			var out string
 			var err error
 
-			attrs[i].Value.Default(permissions.AttributeTypes(attrs[i].Type))
+			attrs[i].Value.Default(permissions.AttributeTypes(a.Type))
 
-			switch permissions.AttributeTypes(attrs[i].Type) {
+			switch permissions.AttributeTypes(a.Type) {
 			case permissions.StringListAttributeType:
 				out, err = json.MarshalToString(attrs[i].Value.GetStringList().Strings)
 				if err != nil {
@@ -725,7 +726,7 @@ func (p *Perms) addOrUpdateAttributesToRole(ctx context.Context, roleId uint64, 
 			}
 
 			if out != "" && out != "null" {
-				validV = jet.String(out)
+				value = jet.String(out)
 			}
 		}
 
@@ -738,7 +739,7 @@ func (p *Perms) addOrUpdateAttributesToRole(ctx context.Context, roleId uint64, 
 			VALUES(
 				roleId,
 				a.ID,
-				validV,
+				value,
 			).
 			ON_DUPLICATE_KEY_UPDATE(
 				tRoleAttrs.Value.SET(jet.StringExp(jet.Raw("values(`value`)"))),
@@ -750,12 +751,7 @@ func (p *Perms) addOrUpdateAttributesToRole(ctx context.Context, roleId uint64, 
 			}
 		}
 
-		attr, ok := p.LookupAttributeByID(attrs[i].AttrId)
-		if !ok {
-			return fmt.Errorf("no attribute by id found")
-		}
-
-		p.updateRoleAttributeInMap(attrs[i].RoleId, attr.PermissionID, attr.ID, attr.Key, attr.Type, attrs[i].Value, attrs[i].MaxValues)
+		p.updateRoleAttributeInMap(roleId, a.PermissionID, a.ID, a.Key, a.Type, attrs[i].Value, attrs[i].MaxValues)
 	}
 
 	if err := p.publishMessage(RoleAttrUpdateSubject, RoleAttrUpdateEvent{
@@ -823,11 +819,11 @@ func (p *Perms) UpdateRoleAttributeMaxValues(ctx context.Context, roleId uint64,
 		if err := p.addOrUpdateAttributesToRole(ctx, roleId, &permissions.RoleAttribute{
 			RoleId:    roleId,
 			AttrId:    attrId,
-			Type:      string(a.Type),
 			MaxValues: maxValues,
 		}); err != nil {
 			return fmt.Errorf("failed to add new role %d attribute %d", roleId, attrId)
 		}
+
 		if ra, ok = p.lookupRoleAttribute(roleId, attrId); !ok {
 			return fmt.Errorf("unable to update role attribute max values, didn't find role attribute by ID %d and role ID %d", attrId, roleId)
 		}
@@ -887,6 +883,12 @@ func (p *Perms) UpdateRoleAttributeMaxValues(ctx context.Context, roleId uint64,
 	}
 
 	p.updateRoleAttributeInMap(roleId, a.PermissionID, attrId, a.Key, a.Type, ra.Value, maxValues)
+
+	if err := p.publishMessage(RoleAttrUpdateSubject, RoleAttrUpdateEvent{
+		RoleID: roleId,
+	}); err != nil {
+		return err
+	}
 
 	return nil
 }
