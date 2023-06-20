@@ -3,7 +3,7 @@ import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOption
 import SvgIcon from '@jamescoyle/vue-icon';
 import { mdiCheck } from '@mdi/js';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
-import { watchDebounced } from '@vueuse/core';
+import { watchDebounced, watchOnce } from '@vueuse/core';
 import DataErrorBlock from '~/components/partials/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';
 import { useAuthStore } from '~/store/auth';
@@ -12,15 +12,6 @@ import { JobGrade } from '~~/gen/ts/resources/jobs/jobs';
 import { Role } from '~~/gen/ts/resources/permissions/permissions';
 import DataNoDataBlock from '../partials/DataNoDataBlock.vue';
 import RolesListEntry from './RolesListEntry.vue';
-
-withDefaults(
-    defineProps<{
-        showCreate: boolean;
-    }>(),
-    {
-        showCreate: true,
-    }
-);
 
 const { $grpc } = useNuxtApp();
 
@@ -60,7 +51,9 @@ async function findJobGrades(): Promise<void> {
             const { response } = await call;
 
             entriesJobGrades = response.jobs[0].grades;
-            filteredJobGrades.value = entriesJobGrades;
+            filteredJobGrades.value = entriesJobGrades.filter(
+                (g) => (roles.value?.findIndex((r) => r.grade === g.grade) ?? -1) === -1
+            );
 
             return res();
         } catch (e) {
@@ -120,16 +113,14 @@ watchDebounced(
     { debounce: 600, maxWait: 1750 }
 );
 
-onMounted(async () => {
-    await findJobGrades();
-});
+watchOnce(roles, async () => await findJobGrades());
 </script>
 
 <template>
     <div class="py-2">
         <div class="px-2 sm:px-6 lg:px-8">
             <div class="flow-root mt-2">
-                <div class="sm:flex sm:items-center" v-if="showCreate">
+                <div v-can="'RectorService.CreateRole'" class="sm:flex sm:items-center">
                     <div class="sm:flex-auto">
                         <form @submit.prevent="createRole()">
                             <div class="flex flex-row gap-4 mx-auto">
@@ -193,10 +184,7 @@ onMounted(async () => {
                                         </div>
                                     </Combobox>
                                 </div>
-                                <div
-                                    class="flex-initial form-control flex flex-col justify-end"
-                                    v-can="'RectorService.CreateRole'"
-                                >
+                                <div class="flex-initial form-control flex flex-col justify-end">
                                     <button
                                         type="submit"
                                         :disabled="selectedJobGrade && selectedJobGrade.grade <= 0"

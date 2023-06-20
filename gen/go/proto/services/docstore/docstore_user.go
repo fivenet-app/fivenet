@@ -27,6 +27,7 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *ListUserDocumentsRe
 			tDocRel.SourceUserID.EQ(jet.Int32(req.UserId)),
 			tDocRel.TargetUserID.EQ(jet.Int32(req.UserId)),
 		),
+		tDocs.DeletedAt.IS_NULL(),
 		jet.OR(
 			jet.OR(
 				tDocs.Public.IS_TRUE(),
@@ -35,12 +36,12 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *ListUserDocumentsRe
 			jet.OR(
 				jet.AND(
 					tDUserAccess.Access.IS_NOT_NULL(),
-					tDUserAccess.Access.NOT_EQ(jet.Int32(int32(documents.ACCESS_LEVEL_BLOCKED))),
+					tDUserAccess.Access.GT_EQ(jet.Int32(int32(documents.ACCESS_LEVEL_VIEW))),
 				),
 				jet.AND(
 					tDUserAccess.Access.IS_NULL(),
 					tDJobAccess.Access.IS_NOT_NULL(),
-					tDJobAccess.Access.NOT_EQ(jet.Int32(int32(documents.ACCESS_LEVEL_BLOCKED))),
+					tDJobAccess.Access.GT_EQ(jet.Int32(int32(documents.ACCESS_LEVEL_VIEW))),
 				),
 			),
 		),
