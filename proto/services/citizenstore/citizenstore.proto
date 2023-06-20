@@ -30,11 +30,13 @@ message GetUserResponse {
 }
 
 message ListUserActivityRequest {
-  int32 user_id = 1 [(validate.rules).int32.gt = 0];
+  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
+  int32 user_id = 2 [(validate.rules).int32.gt = 0];
 }
 
 message ListUserActivityResponse {
-  repeated resources.users.UserActivity activity = 1;
+  resources.common.database.PaginationResponse pagination = 1;
+  repeated resources.users.UserActivity activity = 2;
 }
 
 message SetUserPropsRequest {

@@ -71,7 +71,11 @@ export interface GetUserResponse {
  */
 export interface ListUserActivityRequest {
     /**
-     * @generated from protobuf field: int32 user_id = 1;
+     * @generated from protobuf field: resources.common.database.PaginationRequest pagination = 1;
+     */
+    pagination?: PaginationRequest;
+    /**
+     * @generated from protobuf field: int32 user_id = 2;
      */
     userId: number;
 }
@@ -80,7 +84,11 @@ export interface ListUserActivityRequest {
  */
 export interface ListUserActivityResponse {
     /**
-     * @generated from protobuf field: repeated resources.users.UserActivity activity = 1;
+     * @generated from protobuf field: resources.common.database.PaginationResponse pagination = 1;
+     */
+    pagination?: PaginationResponse;
+    /**
+     * @generated from protobuf field: repeated resources.users.UserActivity activity = 2;
      */
     activity: UserActivity[];
 }
@@ -163,7 +171,8 @@ export const GetUserResponse = new GetUserResponse$Type();
 class ListUserActivityRequest$Type extends MessageType<ListUserActivityRequest> {
     constructor() {
         super("services.citizenstore.ListUserActivityRequest", [
-            { no: 1, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } }
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
+            { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } }
         ]);
     }
 }
@@ -175,7 +184,8 @@ export const ListUserActivityRequest = new ListUserActivityRequest$Type();
 class ListUserActivityResponse$Type extends MessageType<ListUserActivityResponse> {
     constructor() {
         super("services.citizenstore.ListUserActivityResponse", [
-            { no: 1, name: "activity", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UserActivity }
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse },
+            { no: 2, name: "activity", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UserActivity }
         ]);
     }
 }

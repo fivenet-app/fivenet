@@ -350,7 +350,10 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 func (s *Server) ListUserActivity(ctx context.Context, req *ListUserActivityRequest) (*ListUserActivityResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	resp := &ListUserActivityResponse{}
+	pag, limit := req.Pagination.GetResponseWithPageSize(15)
+	resp := &ListUserActivityResponse{
+		Pagination: pag,
+	}
 	// User can't see their own activities, unless they have "Own" perm attribute, or are a superuser
 	fieldsAttr, err := s.p.Attr(userInfo, CitizenStoreServicePerm, CitizenStoreServiceListUserActivityPerm, CitizenStoreServiceListUserActivityFieldsPermField)
 	if err != nil {
@@ -366,6 +369,25 @@ func (s *Server) ListUserActivity(ctx context.Context, req *ListUserActivityRequ
 		if !userInfo.SuperUser || !utils.InSlice(fields, "Own") {
 			return resp, nil
 		}
+	}
+
+	condition := tUserActivity.TargetUserID.EQ(jet.Int32(req.UserId))
+
+	// Get total count of values
+	countStmt := tUserActivity.
+		SELECT(
+			jet.COUNT(tUserActivity.ID).AS("datacount.totalcount"),
+		).
+		FROM(tUserActivity).
+		WHERE(condition)
+
+	var count database.DataCount
+	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
+		return nil, ErrFailedQuery
+	}
+
+	if count.TotalCount <= 0 {
+		return resp, nil
 	}
 
 	tUTarget := tUser.AS("target_user")
@@ -395,13 +417,12 @@ func (s *Server) ListUserActivity(ctx context.Context, req *ListUserActivityRequ
 					tUSource.ID.EQ(tUserActivity.SourceUserID),
 				),
 		).
-		WHERE(
-			tUserActivity.TargetUserID.EQ(jet.Int32(req.UserId)),
-		).
+		WHERE(condition).
+		OFFSET(*req.Pagination.PageSize).
 		ORDER_BY(
 			tUserActivity.CreatedAt.DESC(),
 		).
-		LIMIT(15)
+		LIMIT(limit)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Activity); err != nil {
 		if !errors.Is(qrm.ErrNoRows, err) {
@@ -417,6 +438,8 @@ func (s *Server) ListUserActivity(ctx context.Context, req *ListUserActivityRequ
 			s.c.EnrichJobInfo(resp.Activity[i].TargetUser)
 		}
 	}
+
+	resp.Pagination.Update(count.TotalCount, len(resp.Activity))
 
 	return resp, nil
 }

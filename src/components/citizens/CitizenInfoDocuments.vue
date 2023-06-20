@@ -24,7 +24,7 @@ const {
     pending,
     refresh,
     error,
-} = useLazyAsyncData(`user-${props.userId}-documents-${offset.value}`, () => getDocumentRelations());
+} = useLazyAsyncData(`citizeninfo-documents-${props.userId}-${offset.value}`, () => getDocumentRelations());
 
 async function getDocumentRelations(): Promise<Array<DocumentRelation>> {
     return new Promise(async (res, rej) => {
@@ -46,6 +46,8 @@ async function getDocumentRelations(): Promise<Array<DocumentRelation>> {
         }
     });
 }
+
+watch(offset, async () => refresh());
 </script>
 
 <template>

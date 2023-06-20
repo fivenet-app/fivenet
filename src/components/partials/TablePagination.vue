@@ -13,6 +13,14 @@ const offset = computed(() => props.pagination?.offset ?? 0n);
 const total = computed(() => props.pagination?.totalCount ?? 0n);
 const pageSize = computed(() => props.pagination?.pageSize ?? 0n);
 const end = computed(() => props.pagination?.end ?? 0n);
+
+function calculateOffset(): bigint {
+    const o = offset.value - pageSize.value;
+    if (o < 0) {
+        return 0n;
+    }
+    return o;
+}
 </script>
 
 <template>
@@ -32,7 +40,7 @@ const end = computed(() => props.pagination?.end ?? 0n);
         <div class="flex justify-between flex-1 sm:justify-end">
             <button
                 :disabled="offset <= 0n"
-                v-on:click="$emit('offsetChange', offset - pageSize)"
+                v-on:click="$emit('offsetChange', calculateOffset())"
                 type="button"
                 :class="[
                     offset <= 0n
