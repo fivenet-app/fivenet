@@ -353,6 +353,7 @@ func (s *Server) ListUserActivity(ctx context.Context, req *ListUserActivityRequ
 	pag, limit := req.Pagination.GetResponseWithPageSize(15)
 	resp := &ListUserActivityResponse{
 		Pagination: pag,
+		Activity:   []*users.UserActivity{},
 	}
 	// User can't see their own activities, unless they have "Own" perm attribute, or are a superuser
 	fieldsAttr, err := s.p.Attr(userInfo, CitizenStoreServicePerm, CitizenStoreServiceListUserActivityPerm, CitizenStoreServiceListUserActivityFieldsPermField)
@@ -394,7 +395,15 @@ func (s *Server) ListUserActivity(ctx context.Context, req *ListUserActivityRequ
 	tUSource := tUser.AS("source_user")
 	stmt := tUserActivity.
 		SELECT(
-			tUserActivity.AllColumns,
+			tUserActivity.ID,
+			tUserActivity.CreatedAt,
+			tUserActivity.SourceUserID,
+			tUserActivity.TargetUserID,
+			tUserActivity.Type,
+			tUserActivity.Key,
+			tUserActivity.OldValue,
+			tUserActivity.NewValue,
+			tUserActivity.Reason,
 			tUTarget.ID,
 			tUTarget.Identifier,
 			tUTarget.Job,
@@ -418,7 +427,7 @@ func (s *Server) ListUserActivity(ctx context.Context, req *ListUserActivityRequ
 				),
 		).
 		WHERE(condition).
-		OFFSET(*req.Pagination.PageSize).
+		OFFSET(req.Pagination.Offset).
 		ORDER_BY(
 			tUserActivity.CreatedAt.DESC(),
 		).

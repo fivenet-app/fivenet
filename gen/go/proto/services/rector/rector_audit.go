@@ -95,7 +95,15 @@ func (s *Server) ViewAuditLog(ctx context.Context, req *ViewAuditLogRequest) (*V
 
 	stmt := tAuditLog.
 		SELECT(
-			tAuditLog.AllColumns,
+			tAuditLog.ID,
+			tAuditLog.CreatedAt,
+			tAuditLog.UserID,
+			tAuditLog.UserJob,
+			tAuditLog.TargetUserID,
+			tAuditLog.Service,
+			tAuditLog.Method,
+			tAuditLog.State,
+			tAuditLog.Data,
 			tUser.ID,
 			tUser.Identifier,
 			tUser.Job,

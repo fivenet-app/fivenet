@@ -21,6 +21,31 @@ var (
 func (s *Server) ListUserDocuments(ctx context.Context, req *ListUserDocumentsRequest) (*ListUserDocumentsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
+	condition := jet.AND(
+		tDocRel.DeletedAt.IS_NULL(),
+		jet.OR(
+			tDocRel.SourceUserID.EQ(jet.Int32(req.UserId)),
+			tDocRel.TargetUserID.EQ(jet.Int32(req.UserId)),
+		),
+		jet.OR(
+			jet.OR(
+				tDocs.Public.IS_TRUE(),
+				tDocs.CreatorID.EQ(jet.Int32(userInfo.UserId)),
+			),
+			jet.OR(
+				jet.AND(
+					tDUserAccess.Access.IS_NOT_NULL(),
+					tDUserAccess.Access.NOT_EQ(jet.Int32(int32(documents.ACCESS_LEVEL_BLOCKED))),
+				),
+				jet.AND(
+					tDUserAccess.Access.IS_NULL(),
+					tDJobAccess.Access.IS_NOT_NULL(),
+					tDJobAccess.Access.NOT_EQ(jet.Int32(int32(documents.ACCESS_LEVEL_BLOCKED))),
+				),
+			),
+		),
+	)
+
 	countStmt := tDocRel.
 		SELECT(
 			jet.COUNT(jet.DISTINCT(tDocRel.DocumentID)).AS("datacount.totalcount"),
@@ -39,27 +64,7 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *ListUserDocumentsRe
 						AND(tDJobAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
 				),
 		).
-		WHERE(jet.AND(
-			tDocRel.DeletedAt.IS_NULL(),
-			tDocRel.TargetUserID.EQ(jet.Int32(req.UserId)),
-			jet.OR(
-				jet.OR(
-					tDocs.Public.IS_TRUE(),
-					tDocs.CreatorID.EQ(jet.Int32(userInfo.UserId)),
-				),
-				jet.OR(
-					jet.AND(
-						tDUserAccess.Access.IS_NOT_NULL(),
-						tDUserAccess.Access.NOT_EQ(jet.Int32(int32(documents.ACCESS_LEVEL_BLOCKED))),
-					),
-					jet.AND(
-						tDUserAccess.Access.IS_NULL(),
-						tDJobAccess.Access.IS_NOT_NULL(),
-						tDJobAccess.Access.NOT_EQ(jet.Int32(int32(documents.ACCESS_LEVEL_BLOCKED))),
-					),
-				),
-			),
-		))
+		WHERE(condition)
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
@@ -69,6 +74,7 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *ListUserDocumentsRe
 	pag, limit := req.Pagination.GetResponseWithPageSize(15)
 	resp := &ListUserDocumentsResponse{
 		Pagination: pag,
+		Relations:  []*documents.DocumentRelation{},
 	}
 	if count.TotalCount <= 0 {
 		return resp, nil
@@ -92,27 +98,7 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *ListUserDocumentsRe
 						AND(tDJobAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
 				),
 		).
-		WHERE(jet.AND(
-			tDocRel.DeletedAt.IS_NULL(),
-			tDocRel.TargetUserID.EQ(jet.Int32(req.UserId)),
-			jet.OR(
-				jet.OR(
-					tDocs.Public.IS_TRUE(),
-					tDocs.CreatorID.EQ(jet.Int32(userInfo.UserId)),
-				),
-				jet.OR(
-					jet.AND(
-						tDUserAccess.Access.IS_NOT_NULL(),
-						tDUserAccess.Access.NOT_EQ(jet.Int32(int32(documents.ACCESS_LEVEL_BLOCKED))),
-					),
-					jet.AND(
-						tDUserAccess.Access.IS_NULL(),
-						tDJobAccess.Access.IS_NOT_NULL(),
-						tDJobAccess.Access.NOT_EQ(jet.Int32(int32(documents.ACCESS_LEVEL_BLOCKED))),
-					),
-				),
-			),
-		)).
+		WHERE(condition).
 		OFFSET(req.Pagination.Offset).
 		GROUP_BY(tDocRel.ID).
 		LIMIT(limit)
@@ -133,8 +119,8 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *ListUserDocumentsRe
 		rIds[i] = jet.Uint64(dbRelIds[i])
 	}
 
-	dCreator := tUsers.AS("creator")
-	uSource := tUsers.AS("source_user")
+	tDCreator := tUsers.AS("creator")
+	tASource := tUsers.AS("source_user")
 	stmt := tDocRel.
 		SELECT(
 			tDocRel.ID,
@@ -153,19 +139,19 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *ListUserDocumentsRe
 			tDCategory.ID,
 			tDCategory.Name,
 			tDCategory.Description,
-			dCreator.ID,
-			dCreator.Identifier,
-			dCreator.Job,
-			dCreator.JobGrade,
-			dCreator.Firstname,
-			dCreator.Lastname,
+			tDCreator.ID,
+			tDCreator.Identifier,
+			tDCreator.Job,
+			tDCreator.JobGrade,
+			tDCreator.Firstname,
+			tDCreator.Lastname,
 			tDocRel.SourceUserID,
-			uSource.ID,
-			uSource.Identifier,
-			uSource.Job,
-			uSource.JobGrade,
-			uSource.Firstname,
-			uSource.Lastname,
+			tASource.ID,
+			tASource.Identifier,
+			tASource.Job,
+			tASource.JobGrade,
+			tASource.Firstname,
+			tASource.Lastname,
 			tDocRel.Relation,
 			tDocRel.TargetUserID,
 		).
@@ -177,24 +163,24 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *ListUserDocumentsRe
 				LEFT_JOIN(tDCategory,
 					tDocs.CategoryID.EQ(tDCategory.ID),
 				).
-				LEFT_JOIN(dCreator,
-					tDocs.CreatorID.EQ(dCreator.ID),
+				LEFT_JOIN(tDCreator,
+					tDocs.CreatorID.EQ(tDCreator.ID),
 				).
-				LEFT_JOIN(uSource,
-					uSource.ID.EQ(tDocRel.SourceUserID),
+				LEFT_JOIN(tASource,
+					tASource.ID.EQ(tDocRel.SourceUserID),
 				),
 		).
 		WHERE(
 			jet.AND(
 				tDocs.DeletedAt.IS_NULL(),
 				tDocRel.ID.IN(rIds...),
-				tDocRel.TargetUserID.EQ(jet.Int32(req.UserId)),
 			),
 		).
 		ORDER_BY(
 			tDocRel.CreatedAt.DESC(),
 		).
-		GROUP_BY(tDocs.ID)
+		GROUP_BY(tDocs.ID).
+		LIMIT(limit)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Relations); err != nil {
 		if !errors.Is(qrm.ErrNoRows, err) {

@@ -5,30 +5,35 @@ import { onClickOutside, useMagicKeys, whenever } from '@vueuse/core';
 import { Command } from 'vue-command-palette';
 import '~/assets/css/command-palette.scss';
 
-const items = [
+const groups = [
     {
-        icon: mdiAccount,
-        label: 'Go to Citizen: CIT-...',
-        action: () => {
-            const id = inputValue.value.substring(inputValue.value.indexOf('-') + 1);
-            if (id.length > 0) {
-                navigateTo({ name: 'citizens-id', params: { id: id } });
-            }
+        name: 'shortcuts',
+        items: [
+            {
+                icon: mdiAccount,
+                name: 'goto-citizen',
+                action: () => {
+                    const id = inputValue.value.substring(inputValue.value.indexOf('-') + 1);
+                    if (id.length > 0) {
+                        navigateTo({ name: 'citizens-id', params: { id: id } });
+                    }
 
-            visible.value = false;
-        },
-    },
-    {
-        icon: mdiFileDocument,
-        label: 'Go to Document: DOC-...',
-        action: () => {
-            const id = inputValue.value.substring(inputValue.value.indexOf('-') + 1);
-            if (id.length > 0) {
-                navigateTo({ name: 'documents-id', params: { id: id } });
-            }
+                    visible.value = false;
+                },
+            },
+            {
+                icon: mdiFileDocument,
+                name: 'goto-doc',
+                action: () => {
+                    const id = inputValue.value.substring(inputValue.value.indexOf('-') + 1);
+                    if (id.length > 0) {
+                        navigateTo({ name: 'documents-id', params: { id: id } });
+                    }
 
-            visible.value = false;
-        },
+                    visible.value = false;
+                },
+            },
+        ],
     },
 ];
 
@@ -66,10 +71,12 @@ onClickOutside(target, () => {
             <Command.List>
                 <Command.Empty>{{ $t('commandpalette.empty') }}</Command.Empty>
 
-                <Command.Item v-for="item in items" :data-value="item.label" @select="item.action">
-                    <SvgIcon type="mdi" :path="item.icon" class="w-6 h-6" />
-                    <div>{{ item.label }}</div>
-                </Command.Item>
+                <Command.Group v-for="group in groups" :heading="$t(`commandpalette.groups.${group.name}.heading`)">
+                    <Command.Item v-for="item in group.items" :data-value="item.name" @select="item.action">
+                        <SvgIcon type="mdi" :path="item.icon" class="w-6 h-6" />
+                        <div>{{ $t(`commandpalette.groups.${group.name}.${item.name}`) }}</div>
+                    </Command.Item>
+                </Command.Group>
             </Command.List>
         </template>
     </Command.Dialog>

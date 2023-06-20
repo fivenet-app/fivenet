@@ -20,16 +20,19 @@ var (
 func (s *Server) ListDocumentCategories(ctx context.Context, req *ListDocumentCategoriesRequest) (*ListDocumentCategoriesResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	dCategory := table.FivenetDocumentsCategories.AS("documentcategory")
-	stmt := dCategory.
+	tDCategory := table.FivenetDocumentsCategories.AS("documentcategory")
+	stmt := tDCategory.
 		SELECT(
-			dCategory.AllColumns,
+			tDCategory.ID,
+			tDCategory.Name,
+			tDCategory.Description,
+			tDCategory.Job,
 		).
 		FROM(
-			dCategory,
+			tDCategory,
 		).
 		WHERE(
-			dCategory.Job.EQ(jet.String(userInfo.Job)),
+			tDCategory.Job.EQ(jet.String(userInfo.Job)),
 		)
 
 	resp := &ListDocumentCategoriesResponse{}
@@ -45,18 +48,21 @@ func (s *Server) ListDocumentCategories(ctx context.Context, req *ListDocumentCa
 func (s *Server) getDocumentCategory(ctx context.Context, id uint64) (*documents.DocumentCategory, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	dCategory := table.FivenetDocumentsCategories.AS("documentcategory")
-	stmt := dCategory.
+	tDCategory := table.FivenetDocumentsCategories.AS("documentcategory")
+	stmt := tDCategory.
 		SELECT(
-			dCategory.AllColumns,
+			tDCategory.ID,
+			tDCategory.Name,
+			tDCategory.Description,
+			tDCategory.Job,
 		).
 		FROM(
-			dCategory,
+			tDCategory,
 		).
 		WHERE(
 			jet.AND(
-				dCategory.Job.EQ(jet.String(userInfo.Job)),
-				dCategory.ID.EQ(jet.Uint64(id)),
+				tDCategory.Job.EQ(jet.String(userInfo.Job)),
+				tDCategory.ID.EQ(jet.Uint64(id)),
 			),
 		)
 

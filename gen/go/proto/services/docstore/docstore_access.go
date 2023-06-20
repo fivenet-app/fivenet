@@ -238,19 +238,19 @@ func (s *Server) compareDocumentAccess(tx *sql.Tx, current, in *documents.Docume
 }
 
 func (s *Server) getDocumentAccess(ctx context.Context, documentId uint64) (*documents.DocumentAccess, error) {
-	dJobAccess := table.FivenetDocumentsJobAccess.AS("documentjobaccess")
-	jobStmt := dJobAccess.
+	tDJobAccess := table.FivenetDocumentsJobAccess.AS("documentjobaccess")
+	jobStmt := tDJobAccess.
 		SELECT(
-			dJobAccess.AllColumns,
+			tDJobAccess.AllColumns,
 		).
 		FROM(
-			dJobAccess,
+			tDJobAccess,
 		).
 		WHERE(
-			dJobAccess.DocumentID.EQ(jet.Uint64(documentId)),
+			tDJobAccess.DocumentID.EQ(jet.Uint64(documentId)),
 		).
 		ORDER_BY(
-			dJobAccess.ID.ASC(),
+			tDJobAccess.ID.ASC(),
 		)
 
 	var jobAccess []*documents.DocumentJobAccess
@@ -260,29 +260,29 @@ func (s *Server) getDocumentAccess(ctx context.Context, documentId uint64) (*doc
 		}
 	}
 
-	user := tUsers.AS("usershort")
-	dUserAccess := table.FivenetDocumentsUserAccess.AS("documentuseraccess")
-	userStmt := dUserAccess.
+	tUsers := tUsers.AS("usershort")
+	tDUserAccess := table.FivenetDocumentsUserAccess.AS("documentuseraccess")
+	userStmt := tDUserAccess.
 		SELECT(
-			dUserAccess.AllColumns,
-			user.ID,
-			user.Identifier,
-			user.Job,
-			user.JobGrade,
-			user.Firstname,
-			user.Lastname,
+			tDUserAccess.AllColumns,
+			tUsers.ID,
+			tUsers.Identifier,
+			tUsers.Job,
+			tUsers.JobGrade,
+			tUsers.Firstname,
+			tUsers.Lastname,
 		).
 		FROM(
-			dUserAccess.
-				LEFT_JOIN(user,
-					user.ID.EQ(dUserAccess.UserID),
+			tDUserAccess.
+				LEFT_JOIN(tUsers,
+					tUsers.ID.EQ(tDUserAccess.UserID),
 				),
 		).
 		WHERE(
-			dUserAccess.DocumentID.EQ(jet.Uint64(documentId)),
+			tDUserAccess.DocumentID.EQ(jet.Uint64(documentId)),
 		).
 		ORDER_BY(
-			dUserAccess.ID.ASC(),
+			tDUserAccess.ID.ASC(),
 		)
 
 	var userAccess []*documents.DocumentUserAccess
