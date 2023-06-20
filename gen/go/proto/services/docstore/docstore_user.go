@@ -5,10 +5,10 @@ import (
 	"database/sql"
 	"errors"
 
+	"github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/documents"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/users"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
-	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -21,12 +21,9 @@ var (
 func (s *Server) ListUserDocuments(ctx context.Context, req *ListUserDocumentsRequest) (*ListUserDocumentsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	resp := &ListUserDocumentsResponse{}
-
-	idStmt := tDocRel.
+	countStmt := tDocRel.
 		SELECT(
-			tDocRel.ID.AS("id"),
-			tDocRel.DocumentID.AS("documentId"),
+			jet.COUNT(jet.DISTINCT(tDocRel.DocumentID)).AS("datacount.totalcount"),
 		).
 		FROM(
 			tDocRel.
@@ -64,50 +61,76 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *ListUserDocumentsRe
 			),
 		))
 
-	var dbRelIds []struct {
-		ID         uint64 `alias:"id"`
-		DocumentID uint64 `alias:"documentId"`
+	var count database.DataCount
+	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
+		return nil, ErrFailedQuery
 	}
+
+	pag, limit := req.Pagination.GetResponseWithPageSize(15)
+	resp := &ListUserDocumentsResponse{
+		Pagination: pag,
+	}
+	if count.TotalCount <= 0 {
+		return resp, nil
+	}
+
+	idStmt := tDocRel.
+		SELECT(
+			tDocRel.ID,
+		).
+		FROM(
+			tDocRel.
+				INNER_JOIN(tDocs,
+					tDocs.ID.EQ(tDocRel.DocumentID),
+				).
+				LEFT_JOIN(tDUserAccess,
+					tDUserAccess.DocumentID.EQ(tDocs.ID).
+						AND(tDUserAccess.UserID.EQ(jet.Int32(userInfo.UserId)))).
+				LEFT_JOIN(tDJobAccess,
+					tDJobAccess.DocumentID.EQ(tDocs.ID).
+						AND(tDJobAccess.Job.EQ(jet.String(userInfo.Job))).
+						AND(tDJobAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
+				),
+		).
+		WHERE(jet.AND(
+			tDocRel.DeletedAt.IS_NULL(),
+			tDocRel.TargetUserID.EQ(jet.Int32(req.UserId)),
+			jet.OR(
+				jet.OR(
+					tDocs.Public.IS_TRUE(),
+					tDocs.CreatorID.EQ(jet.Int32(userInfo.UserId)),
+				),
+				jet.OR(
+					jet.AND(
+						tDUserAccess.Access.IS_NOT_NULL(),
+						tDUserAccess.Access.NOT_EQ(jet.Int32(int32(documents.ACCESS_LEVEL_BLOCKED))),
+					),
+					jet.AND(
+						tDUserAccess.Access.IS_NULL(),
+						tDJobAccess.Access.IS_NOT_NULL(),
+						tDJobAccess.Access.NOT_EQ(jet.Int32(int32(documents.ACCESS_LEVEL_BLOCKED))),
+					),
+				),
+			),
+		)).
+		OFFSET(req.Pagination.Offset).
+		GROUP_BY(tDocRel.ID).
+		LIMIT(limit)
+
+	var dbRelIds []uint64
 	if err := idStmt.QueryContext(ctx, s.db, &dbRelIds); err != nil {
 		if !errors.Is(qrm.ErrNoRows, err) {
-			return nil, err
+			return nil, ErrFailedQuery
 		}
 	}
 
-	relCount := len(dbRelIds)
-	docIds := make([]uint64, relCount)
-	for i := 0; i < relCount; i++ {
-		docIds[i] = dbRelIds[i].DocumentID
-	}
-	docIds = utils.RemoveDuplicatesFromSlice(docIds)
-
-	if len(docIds) == 0 {
+	if len(dbRelIds) <= 0 {
 		return resp, nil
 	}
 
-	ids, err := s.checkIfUserHasAccessToDocIDs(ctx, userInfo, true, documents.ACCESS_LEVEL_VIEW, docIds...)
-	if err != nil {
-		return nil, err
-	}
-
-	if len(ids) == 0 {
-		return resp, nil
-	}
-
-	relIds := []uint64{}
-	for i := 0; i < len(ids); i++ {
-		for k := 0; k < len(dbRelIds); k++ {
-			if dbRelIds[k].DocumentID == ids[i] {
-				relIds = append(relIds, dbRelIds[k].ID)
-			}
-		}
-	}
-
-	relIds = utils.RemoveDuplicatesFromSlice(relIds)
-
-	rIds := make([]jet.Expression, len(relIds))
-	for i := 0; i < len(relIds); i++ {
-		rIds[i] = jet.Uint64(relIds[i])
+	rIds := make([]jet.Expression, len(dbRelIds))
+	for i := 0; i < len(dbRelIds); i++ {
+		rIds[i] = jet.Uint64(dbRelIds[i])
 	}
 
 	dCreator := tUsers.AS("creator")
@@ -170,7 +193,8 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *ListUserDocumentsRe
 		).
 		ORDER_BY(
 			tDocRel.CreatedAt.DESC(),
-		)
+		).
+		GROUP_BY(tDocs.ID)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Relations); err != nil {
 		if !errors.Is(qrm.ErrNoRows, err) {
@@ -183,6 +207,8 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *ListUserDocumentsRe
 			s.c.EnrichJobInfo(resp.Relations[i].SourceUser)
 		}
 	}
+
+	resp.Pagination.Update(count.TotalCount, len(resp.Relations))
 
 	return resp, nil
 }

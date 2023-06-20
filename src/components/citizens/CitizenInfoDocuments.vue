@@ -5,8 +5,10 @@ import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { ref } from 'vue';
 import DataErrorBlock from '~/components/partials/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';
+import { PaginationResponse } from '~~/gen/ts/resources/common/database/database';
 import { DOC_RELATION, DocumentRelation } from '~~/gen/ts/resources/documents/documents';
 import DataNoDataBlock from '../partials/DataNoDataBlock.vue';
+import TablePagination from '../partials/TablePagination.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -14,6 +16,7 @@ const props = defineProps<{
     userId: number;
 }>();
 
+const pagination = ref<PaginationResponse>();
 const offset = ref(0n);
 
 const {
@@ -35,6 +38,7 @@ async function getDocumentRelations(): Promise<Array<DocumentRelation>> {
             });
             const { response } = await call;
 
+            pagination.value = response.pagination;
             return res(response.relations);
         } catch (e) {
             $grpc.handleError(e as RpcError);
@@ -60,7 +64,7 @@ async function getDocumentRelations(): Promise<Array<DocumentRelation>> {
             :type="`${$t('common.document', 1)} ${$t('common.relation', 2)}`"
             :icon="mdiFileDocumentMultiple"
         />
-        <div v-if="relations">
+        <div v-else-if="relations">
             <!-- Relations list (smallest breakpoint only) -->
             <div v-if="relations.length > 0" class="sm:hidden text-neutral">
                 <ul role="list" class="mt-2 overflow-hidden divide-y divide-gray-600 rounded-lg sm:hidden">
@@ -156,14 +160,16 @@ async function getDocumentRelations(): Promise<Array<DocumentRelation>> {
                         </a>
                     </li>
                 </ul>
+
+                <TablePagination :pagination="pagination" @offset-change="offset = $event" />
             </div>
 
             <!-- Relations table (small breakpoint and up) -->
-            <div v-if="relations && relations.length > 0" class="hidden sm:block">
+            <div v-if="relations.length > 0" class="hidden sm:block">
                 <div>
                     <div class="flex flex-col mt-2">
                         <div class="min-w-full overflow-hidden overflow-x-auto align-middle sm:rounded-lg">
-                            <table class="min-w-full bg-base-700 text-neutral">
+                            <table class="min-w-full bg-base-700 text-neutral mb-2">
                                 <thead>
                                     <tr>
                                         <th class="px-6 py-3 text-sm font-semibold text-left" scope="col">
@@ -261,6 +267,8 @@ async function getDocumentRelations(): Promise<Array<DocumentRelation>> {
                                     </tr>
                                 </tbody>
                             </table>
+
+                            <TablePagination :pagination="pagination" @offset-change="offset = $event" />
                         </div>
                     </div>
                 </div>

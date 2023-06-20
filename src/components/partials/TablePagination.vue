@@ -31,20 +31,28 @@ const end = computed(() => props.pagination?.end ?? 0n);
         </div>
         <div class="flex justify-between flex-1 sm:justify-end">
             <button
-                :class="[offset <= 0n ? 'disabled' : '']"
                 :disabled="offset <= 0n"
                 v-on:click="$emit('offsetChange', offset - pageSize)"
                 type="button"
-                class="relative inline-flex items-center px-3 py-2 text-sm font-semibold rounded-md cursor-pointer bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
+                :class="[
+                    offset <= 0n
+                        ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
+                        : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
+                    'relative inline-flex items-center px-3 py-2 ml-3 text-sm font-semibold rounded-md cursor-pointer text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
+                ]"
             >
                 {{ $t('common.previous') }}
             </button>
             <button
-                :class="[offset >= total ? 'disabled' : '']"
                 :disabled="end + offset >= total"
                 v-on:click="$emit('offsetChange', end)"
                 type="button"
-                class="relative inline-flex items-center px-3 py-2 ml-3 text-sm font-semibold rounded-md cursor-pointer bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
+                :class="[
+                    end + offset >= total
+                        ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
+                        : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
+                    'relative inline-flex items-center px-3 py-2 ml-3 text-sm font-semibold rounded-md cursor-pointer text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
+                ]"
             >
                 {{ $t('common.next') }}
             </button>
