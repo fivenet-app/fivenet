@@ -124,13 +124,13 @@ func ValidateStringList(in *StringList, validVals []string, maxVals []string) bo
 	}
 
 	for i := 0; i < len(in.Strings); i++ {
-		if !utils.InStringSlice(maxVals, in.Strings[i]) {
-			in.Strings = utils.RemoveFromStringSlice(in.Strings, i)
+		if !utils.InSlice(maxVals, in.Strings[i]) {
+			in.Strings = utils.RemoveFromSlice(in.Strings, i)
 			continue
 		}
 
-		if validVals != nil && !utils.InStringSlice(validVals, in.Strings[i]) {
-			in.Strings = utils.RemoveFromStringSlice(in.Strings, i)
+		if validVals != nil && !utils.InSlice(validVals, in.Strings[i]) {
+			in.Strings = utils.RemoveFromSlice(in.Strings, i)
 			continue
 		}
 	}
@@ -146,14 +146,14 @@ func ValidateJobList(in *StringList, validVals []string, maxVals []string) bool 
 	}
 
 	for i := 0; i < len(in.Strings); i++ {
-		if !utils.InStringSlice(maxVals, in.Strings[i]) {
-			in.Strings = utils.RemoveFromStringSlice(in.Strings, i)
+		if !utils.InSlice(maxVals, in.Strings[i]) {
+			in.Strings = utils.RemoveFromSlice(in.Strings, i)
 			continue
 		}
 
-		if validVals != nil && !utils.InStringSlice(validVals, in.Strings[i]) {
+		if validVals != nil && !utils.InSlice(validVals, in.Strings[i]) {
 			// Remove invalid jobs from list
-			in.Strings = utils.RemoveFromStringSlice(in.Strings, i)
+			in.Strings = utils.RemoveFromSlice(in.Strings, i)
 			continue
 		}
 	}

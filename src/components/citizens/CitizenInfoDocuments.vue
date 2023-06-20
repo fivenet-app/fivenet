@@ -172,17 +172,14 @@ async function getDocumentRelations(): Promise<Array<DocumentRelation>> {
                                         <th class="px-6 py-3 text-sm font-semibold text-left" scope="col">
                                             {{ $t('common.close', 2) }}
                                         </th>
-                                        <th class="px-6 py-3 text-sm font-semibold text-left" scope="col">
-                                            {{ $t('common.target') }}
-                                        </th>
                                         <th class="px-6 py-3 text-sm font-semibold text-right" scope="col">
                                             {{ $t('common.relation', 1) }}
                                         </th>
-                                        <th class="hidden px-6 py-3 text-sm font-semibold text-left md:block" scope="col">
-                                            {{ $t('common.creator') }}
-                                        </th>
                                         <th class="px-6 py-3 text-sm font-semibold text-right" scope="col">
                                             {{ $t('common.date') }}
+                                        </th>
+                                        <th class="hidden px-6 py-3 text-sm font-semibold text-left md:block" scope="col">
+                                            {{ $t('common.creator') }}
                                         </th>
                                     </tr>
                                 </thead>
@@ -197,10 +194,13 @@ async function getDocumentRelations(): Promise<Array<DocumentRelation>> {
                                                     },
                                                 }"
                                             >
-                                                {{ relation.document?.title
-                                                }}<span v-if="relation.document?.category">
-                                                    ({{ $t('common.category', 1) }}: {{ relation.document?.category?.name }})
+                                                <span
+                                                    v-if="relation.document?.category"
+                                                    class="inline-flex items-center rounded-md bg-primary-400/10 px-2 py-1 text-xs font-medium text-primary-400 ring-1 ring-inset ring-primary-400/30"
+                                                >
+                                                    {{ relation.document.category.name }}
                                                 </span>
+                                                {{ relation.document?.title }}
                                             </NuxtLink>
                                         </td>
                                         <td class="px-6 py-4 text-sm">
@@ -233,25 +233,15 @@ async function getDocumentRelations(): Promise<Array<DocumentRelation>> {
                                                 </span>
                                             </div>
                                         </td>
-                                        <td class="px-6 py-4 text-sm">
-                                            <div class="flex">
-                                                <NuxtLink
-                                                    :to="{
-                                                        name: 'citizens-id',
-                                                        params: {
-                                                            id: relation.targetUserId,
-                                                        },
-                                                    }"
-                                                    class="inline-flex space-x-2 text-sm truncate group"
-                                                >
-                                                    {{ relation.targetUser?.firstname + ', ' + relation.targetUser?.lastname }}
-                                                </NuxtLink>
-                                            </div>
-                                        </td>
                                         <td class="px-6 py-4 text-sm text-right whitespace-nowrap">
                                             <span class="font-medium">
                                                 {{ $t(`enums.docstore.DOC_RELATION.${DOC_RELATION[relation.relation]}`) }}
                                             </span>
+                                        </td>
+                                        <td class="px-6 py-4 text-sm text-right whitespace-nowrap">
+                                            <time :datetime="$d(toDate(relation.createdAt)!, 'short')">
+                                                {{ $d(toDate(relation.createdAt)!, 'short') }}
+                                            </time>
                                         </td>
                                         <td class="hidden px-6 py-4 text-sm whitespace-nowrap md:block">
                                             <div class="flex">
@@ -267,11 +257,6 @@ async function getDocumentRelations(): Promise<Array<DocumentRelation>> {
                                                     {{ relation.sourceUser?.firstname + ', ' + relation.sourceUser?.lastname }}
                                                 </NuxtLink>
                                             </div>
-                                        </td>
-                                        <td class="px-6 py-4 text-sm text-right whitespace-nowrap">
-                                            <time :datetime="$d(toDate(relation.createdAt)!, 'short')">
-                                                {{ $d(toDate(relation.createdAt)!) }}
-                                            </time>
                                         </td>
                                     </tr>
                                 </tbody>

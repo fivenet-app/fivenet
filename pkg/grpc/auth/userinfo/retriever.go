@@ -81,7 +81,7 @@ func (ui *UIRetriever) GetUserInfo(ctx context.Context, userId int32, accountId 
 	}
 
 	// Check if user is superuser
-	if utils.InStringSlice(ui.superuserGroups, dest.Group) {
+	if utils.InSlice(ui.superuserGroups, dest.Group) {
 		dest.SuperUser = true
 		if dest.OrigJob != "" {
 			dest.Job = dest.OrigJob
@@ -118,7 +118,7 @@ func (ui *UIRetriever) GetUserInfoWithoutAccountId(ctx context.Context, userId i
 	}
 
 	// Check if user is superuser
-	if utils.InStringSlice(ui.superuserGroups, dest.Group) {
+	if utils.InSlice(ui.superuserGroups, dest.Group) {
 		dest.SuperUser = true
 	}
 

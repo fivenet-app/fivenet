@@ -1,14 +1,18 @@
 package utils
 
-import "sort"
+import (
+	"sort"
 
-func SortInt32Slice(x []int32) {
-	sort.Sort(Int32Slice(x))
+	"golang.org/x/exp/constraints"
+)
+
+func SortInt32Slice[T constraints.Ordered](x []T) {
+	sort.Sort(Comparable[T](x))
 }
 
-// Int32Slice attaches the methods of Interface to []int32, sorting in increasing order.
-type Int32Slice []int32
+// Comparable generic for sorting in increasing order.
+type Comparable[T constraints.Ordered] []T
 
-func (x Int32Slice) Len() int           { return len(x) }
-func (x Int32Slice) Less(i, j int) bool { return x[i] < x[j] }
-func (x Int32Slice) Swap(i, j int)      { x[i], x[j] = x[j], x[i] }
+func (x Comparable[T]) Len() int           { return len(x) }
+func (x Comparable[T]) Less(i, j int) bool { return x[i] < x[j] }
+func (x Comparable[T]) Swap(i, j int)      { x[i], x[j] = x[j], x[i] }

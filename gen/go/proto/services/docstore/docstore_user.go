@@ -8,6 +8,7 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/documents"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/users"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
+	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -22,10 +23,10 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *ListUserDocumentsRe
 
 	resp := &ListUserDocumentsResponse{}
 
-	var docIds []uint64
 	idStmt := tDocRel.
 		SELECT(
-			tDocRel.DocumentID,
+			tDocRel.ID.AS("id"),
+			tDocRel.DocumentID.AS("documentId"),
 		).
 		FROM(
 			tDocRel.
@@ -43,10 +44,7 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *ListUserDocumentsRe
 		).
 		WHERE(jet.AND(
 			tDocRel.DeletedAt.IS_NULL(),
-			jet.OR(
-				tDocRel.SourceUserID.EQ(jet.Int32(req.UserId)),
-				tDocRel.TargetUserID.EQ(jet.Int32(req.UserId)),
-			),
+			tDocRel.TargetUserID.EQ(jet.Int32(req.UserId)),
 			jet.OR(
 				jet.OR(
 					tDocs.Public.IS_TRUE(),
@@ -66,11 +64,22 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *ListUserDocumentsRe
 			),
 		))
 
-	if err := idStmt.QueryContext(ctx, s.db, &docIds); err != nil {
+	var dbRelIds []struct {
+		ID         uint64 `alias:"id"`
+		DocumentID uint64 `alias:"documentId"`
+	}
+	if err := idStmt.QueryContext(ctx, s.db, &dbRelIds); err != nil {
 		if !errors.Is(qrm.ErrNoRows, err) {
 			return nil, err
 		}
 	}
+
+	relCount := len(dbRelIds)
+	docIds := make([]uint64, relCount)
+	for i := 0; i < relCount; i++ {
+		docIds[i] = dbRelIds[i].DocumentID
+	}
+	docIds = utils.RemoveDuplicatesFromSlice(docIds)
 
 	if len(docIds) == 0 {
 		return resp, nil
@@ -85,14 +94,24 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *ListUserDocumentsRe
 		return resp, nil
 	}
 
-	dIds := make([]jet.Expression, len(ids))
+	relIds := []uint64{}
 	for i := 0; i < len(ids); i++ {
-		dIds[i] = jet.Uint64(ids[i])
+		for k := 0; k < len(dbRelIds); k++ {
+			if dbRelIds[k].DocumentID == ids[i] {
+				relIds = append(relIds, dbRelIds[k].ID)
+			}
+		}
+	}
+
+	relIds = utils.RemoveDuplicatesFromSlice(relIds)
+
+	rIds := make([]jet.Expression, len(relIds))
+	for i := 0; i < len(relIds); i++ {
+		rIds[i] = jet.Uint64(relIds[i])
 	}
 
 	dCreator := tUsers.AS("creator")
 	uSource := tUsers.AS("source_user")
-	uTarget := tUsers.AS("target_user")
 	stmt := tDocRel.
 		SELECT(
 			tDocRel.ID,
@@ -126,12 +145,6 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *ListUserDocumentsRe
 			uSource.Lastname,
 			tDocRel.Relation,
 			tDocRel.TargetUserID,
-			uTarget.ID,
-			uTarget.Identifier,
-			uTarget.Job,
-			uTarget.JobGrade,
-			uTarget.Firstname,
-			uTarget.Lastname,
 		).
 		FROM(
 			tDocRel.
@@ -146,15 +159,13 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *ListUserDocumentsRe
 				).
 				LEFT_JOIN(uSource,
 					uSource.ID.EQ(tDocRel.SourceUserID),
-				).
-				LEFT_JOIN(uTarget,
-					uTarget.ID.EQ(tDocRel.TargetUserID),
 				),
 		).
 		WHERE(
 			jet.AND(
 				tDocs.DeletedAt.IS_NULL(),
-				tDocRel.DocumentID.IN(dIds...),
+				tDocRel.ID.IN(rIds...),
+				tDocRel.TargetUserID.EQ(jet.Int32(req.UserId)),
 			),
 		).
 		ORDER_BY(
@@ -168,8 +179,9 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *ListUserDocumentsRe
 	}
 
 	for i := 0; i < len(resp.Relations); i++ {
-		s.c.EnrichJobInfo(resp.Relations[i].SourceUser)
-		s.c.EnrichJobInfo(resp.Relations[i].TargetUser)
+		if resp.Relations[i].SourceUser != nil {
+			s.c.EnrichJobInfo(resp.Relations[i].SourceUser)
+		}
 	}
 
 	return resp, nil

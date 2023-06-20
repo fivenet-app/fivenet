@@ -497,7 +497,7 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 	}
 	ps := userPs.GuardNames()
 
-	if utils.InStringSlice(s.superuserGroups, userGroup) {
+	if utils.InSlice(s.superuserGroups, userGroup) {
 		ps = append(ps, common.SuperuserPermission)
 	}
 
@@ -509,7 +509,7 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 
 	if len(ps) == 0 {
 		return nil, ErrUnableToChooseChar
-	} else if !utils.InStringSlice(ps, "authservice-choosecharacter") {
+	} else if !utils.InSlice(ps, "authservice-choosecharacter") {
 		return nil, ErrUnableToChooseChar
 	}
 

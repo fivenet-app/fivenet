@@ -94,10 +94,10 @@ func (s *Server) GetDocumentReferences(ctx context.Context, req *GetDocumentRefe
 		dIds[i] = jet.Uint64(ids[i])
 	}
 
-	sourceDoc := tDocs.AS("source_document")
-	targetDoc := tDocs.AS("target_document")
-	refCreator := tUsers.AS("ref_creator")
-	dCreator := tUsers.AS("creator")
+	tSourceDoc := tDocs.AS("source_document")
+	tTargetDoc := tDocs.AS("target_document")
+	tRefCreator := tUsers.AS("ref_creator")
+	tDCreator := tUsers.AS("creator")
 	stmt := tDocRef.
 		SELECT(
 			tDocRef.ID,
@@ -106,48 +106,48 @@ func (s *Server) GetDocumentReferences(ctx context.Context, req *GetDocumentRefe
 			tDocRef.Reference,
 			tDocRef.TargetDocumentID,
 			tDocRef.CreatorID,
-			sourceDoc.ID,
-			sourceDoc.CreatedAt,
-			sourceDoc.UpdatedAt,
-			sourceDoc.CategoryID,
-			sourceDoc.Title,
-			sourceDoc.CreatorID,
-			sourceDoc.State,
-			sourceDoc.Closed,
-			dCreator.ID,
-			dCreator.Identifier,
-			dCreator.Job,
-			dCreator.JobGrade,
-			dCreator.Firstname,
-			dCreator.Lastname,
-			targetDoc.ID,
-			targetDoc.CreatedAt,
-			targetDoc.UpdatedAt,
-			targetDoc.CategoryID,
-			targetDoc.Title,
-			targetDoc.CreatorID,
-			targetDoc.State,
-			targetDoc.Closed,
-			refCreator.ID,
-			refCreator.Identifier,
-			refCreator.Job,
-			refCreator.JobGrade,
-			refCreator.Firstname,
-			refCreator.Lastname,
+			tSourceDoc.ID,
+			tSourceDoc.CreatedAt,
+			tSourceDoc.UpdatedAt,
+			tSourceDoc.CategoryID,
+			tSourceDoc.Title,
+			tSourceDoc.CreatorID,
+			tSourceDoc.State,
+			tSourceDoc.Closed,
+			tDCreator.ID,
+			tDCreator.Identifier,
+			tDCreator.Job,
+			tDCreator.JobGrade,
+			tDCreator.Firstname,
+			tDCreator.Lastname,
+			tTargetDoc.ID,
+			tTargetDoc.CreatedAt,
+			tTargetDoc.UpdatedAt,
+			tTargetDoc.CategoryID,
+			tTargetDoc.Title,
+			tTargetDoc.CreatorID,
+			tTargetDoc.State,
+			tTargetDoc.Closed,
+			tRefCreator.ID,
+			tRefCreator.Identifier,
+			tRefCreator.Job,
+			tRefCreator.JobGrade,
+			tRefCreator.Firstname,
+			tRefCreator.Lastname,
 		).
 		FROM(
 			tDocRef.
-				LEFT_JOIN(sourceDoc,
-					tDocRef.SourceDocumentID.EQ(sourceDoc.ID),
+				LEFT_JOIN(tSourceDoc,
+					tDocRef.SourceDocumentID.EQ(tSourceDoc.ID),
 				).
-				LEFT_JOIN(targetDoc,
-					tDocRef.TargetDocumentID.EQ(targetDoc.ID),
+				LEFT_JOIN(tTargetDoc,
+					tDocRef.TargetDocumentID.EQ(tTargetDoc.ID),
 				).
-				LEFT_JOIN(dCreator,
-					sourceDoc.CreatorID.EQ(dCreator.ID),
+				LEFT_JOIN(tDCreator,
+					tSourceDoc.CreatorID.EQ(tDCreator.ID),
 				).
-				LEFT_JOIN(refCreator,
-					tDocRef.CreatorID.EQ(refCreator.ID),
+				LEFT_JOIN(tRefCreator,
+					tDocRef.CreatorID.EQ(tRefCreator.ID),
 				),
 		).
 		WHERE(
@@ -175,10 +175,12 @@ func (s *Server) GetDocumentReferences(ctx context.Context, req *GetDocumentRefe
 		if dest[i].Creator != nil {
 			s.c.EnrichJobInfo(dest[i].Creator)
 		}
+
 		s.c.EnrichDocumentCategory(dest[i].SourceDocument)
 		if dest[i].SourceDocument.Creator != nil {
 			s.c.EnrichJobInfo(dest[i].SourceDocument.Creator)
 		}
+
 		s.c.EnrichDocumentCategory(dest[i].TargetDocument)
 	}
 
@@ -594,8 +596,12 @@ func (s *Server) getDocumentRelations(ctx context.Context, documentId uint64) ([
 	}
 
 	for i := 0; i < len(dest); i++ {
-		s.c.EnrichJobInfo(dest[i].SourceUser)
-		s.c.EnrichJobInfo(dest[i].TargetUser)
+		if dest[i].SourceUser != nil {
+			s.c.EnrichJobInfo(dest[i].SourceUser)
+		}
+		if dest[i].TargetUser != nil {
+			s.c.EnrichJobInfo(dest[i].TargetUser)
+		}
 	}
 
 	return dest, nil

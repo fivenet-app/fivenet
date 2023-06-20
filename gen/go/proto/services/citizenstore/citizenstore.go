@@ -186,7 +186,7 @@ func (s *Server) ListCitizens(ctx context.Context, req *ListCitizensRequest) (*L
 	}
 
 	for i := 0; i < len(resp.Users); i++ {
-		if utils.InStringSlice(s.publicJobs, resp.Users[i].Job) {
+		if utils.InSlice(s.publicJobs, resp.Users[i].Job) {
 			// Make sure user has permission to see that grade, otherwise "hide" the user's job
 			grade, ok := jobGrades[resp.Users[i].Job]
 			if !ok || grade > resp.Users[i].JobGrade {
@@ -278,11 +278,11 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 		return nil, ErrFailedQuery
 	}
 
-	if resp.User.UserId <= 0 {
+	if resp.User == nil || resp.User.UserId <= 0 {
 		return nil, ErrJobGradeNoPermission
 	}
 
-	if utils.InStringSlice(s.publicJobs, resp.User.Job) {
+	if utils.InSlice(s.publicJobs, resp.User.Job) {
 		// Make sure user has permission to see that grade
 		jobGradesAttr, err := s.p.Attr(userInfo, CitizenStoreServicePerm, CitizenStoreServiceGetUserPerm, CitizenStoreServiceGetUserJobsPermField)
 		if err != nil {
@@ -318,7 +318,7 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 	s.c.EnrichJobInfo(resp.User)
 
 	// Check if user can see licenses and fetch them
-	if utils.InStringSlice(fields, "Licenses") {
+	if utils.InSlice(fields, "Licenses") {
 		stmt := tUser.
 			SELECT(
 				tUserLicenses.Type.AS("license.type"),
@@ -363,7 +363,7 @@ func (s *Server) ListUserActivity(ctx context.Context, req *ListUserActivityRequ
 
 	if userInfo.UserId == req.UserId {
 		// If user isn't
-		if !userInfo.SuperUser || !utils.InStringSlice(fields, "Own") {
+		if !userInfo.SuperUser || !utils.InSlice(fields, "Own") {
 			return resp, nil
 		}
 	}
@@ -470,7 +470,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 	}
 
 	if req.Props.Wanted != nil {
-		if !utils.InStringSlice(fields, "Wanted") {
+		if !utils.InSlice(fields, "Wanted") {
 			return nil, status.Error(codes.PermissionDenied, "You are not allowed to set a user wanted status!")
 		}
 
@@ -483,11 +483,11 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 		req.Props.Wanted = &current
 	}
 	if req.Props.JobName != nil {
-		if !utils.InStringSlice(fields, "Job") {
+		if !utils.InSlice(fields, "Job") {
 			return nil, status.Error(codes.PermissionDenied, "You are not allowed to set a user job!")
 		}
 
-		if utils.InStringSlice(s.publicJobs, *req.Props.JobName) {
+		if utils.InSlice(s.publicJobs, *req.Props.JobName) {
 			return nil, status.Error(codes.InvalidArgument, "You can't set a state job!")
 		}
 
@@ -503,11 +503,11 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 	if req.Props.TrafficInfractionPoints != nil {
 		// Only update when it has actually changed
 		if *req.Props.TrafficInfractionPoints != *props.TrafficInfractionPoints {
-			if !utils.InStringSlice(fields, "TrafficInfractionPoints") {
+			if !utils.InSlice(fields, "TrafficInfractionPoints") {
 				return nil, status.Error(codes.PermissionDenied, "You are not allowed to set a user's traffic infraction points!")
 			}
 
-			if utils.InStringSlice(s.publicJobs, *req.Props.JobName) {
+			if utils.InSlice(s.publicJobs, *req.Props.JobName) {
 				return nil, status.Error(codes.InvalidArgument, "You can't set a state job!")
 			}
 

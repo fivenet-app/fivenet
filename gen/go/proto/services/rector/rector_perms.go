@@ -231,6 +231,14 @@ func (s *Server) CreateRole(ctx context.Context, req *CreateRoleRequest) (*Creat
 	}
 	defer s.a.AddEntryWithData(auditEntry, req)
 
+	// Make sure the user is from the job
+	if req.Job != userInfo.Job {
+		return nil, ErrInvalidRequest
+	}
+	if req.Grade > userInfo.JobGrade {
+		return nil, ErrInvalidRequest
+	}
+
 	role, err := s.p.GetRoleByJobAndGrade(ctx, userInfo.Job, req.Grade)
 	if err != nil {
 		if !errors.Is(qrm.ErrNoRows, err) {
