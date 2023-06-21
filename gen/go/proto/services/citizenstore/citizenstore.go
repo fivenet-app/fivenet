@@ -508,11 +508,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 
 		updateSets = append(updateSets, tUserProps.Wanted.SET(jet.Bool(*req.Props.Wanted)))
 	} else {
-		var current bool
-		if props.Wanted != nil {
-			current = !*props.Wanted
-		}
-		req.Props.Wanted = &current
+		req.Props.Wanted = props.Wanted
 	}
 	if req.Props.JobName != nil {
 		if !utils.InSlice(fields, "Job") {
@@ -534,17 +530,11 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 	}
 	if req.Props.TrafficInfractionPoints != nil {
 		// Only update when it has actually changed
-		if *req.Props.TrafficInfractionPoints != *props.TrafficInfractionPoints {
-			if !utils.InSlice(fields, "TrafficInfractionPoints") {
-				return nil, status.Error(codes.PermissionDenied, "You are not allowed to set a user's traffic infraction points!")
-			}
-
-			if utils.InSlice(s.publicJobs, *req.Props.JobName) {
-				return nil, status.Error(codes.InvalidArgument, "You can't set a state job!")
-			}
-
-			updateSets = append(updateSets, tUserProps.TrafficInfractionPoints.SET(jet.Uint64(*req.Props.TrafficInfractionPoints)))
+		if !utils.InSlice(fields, "TrafficInfractionPoints") {
+			return nil, status.Error(codes.PermissionDenied, "You are not allowed to set a user's traffic infraction points!")
 		}
+
+		updateSets = append(updateSets, tUserProps.TrafficInfractionPoints.SET(jet.Uint64(*req.Props.TrafficInfractionPoints)))
 	} else {
 		req.Props.TrafficInfractionPoints = props.TrafficInfractionPoints
 	}
@@ -618,6 +608,7 @@ func (s *Server) getUserProps(ctx context.Context, userId int32) (*users.UserPro
 			tUserProps.UserID,
 			tUserProps.Wanted,
 			tUserProps.Job,
+			tUserProps.TrafficInfractionPoints,
 		).
 		FROM(tUserProps).
 		WHERE(

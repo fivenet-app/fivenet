@@ -25,17 +25,6 @@ async function setTrafficPoints(values: FormData): Promise<void> {
             trafficInfractionPoints: BigInt(values.trafficPoints),
         };
 
-        if (props.user.props && props.user.props.trafficInfractionPoints != userProps.trafficInfractionPoints) {
-            notifications.dispatchNotification({
-                title: { key: 'notifications.action_successfull.title', parameters: [] },
-                content: { key: 'notifications.action_successfull.content', parameters: [] },
-                type: 'success',
-            });
-
-            emits('close');
-            return res();
-        }
-
         try {
             await $grpc.getCitizenStoreClient().setUserProps({
                 props: userProps,
