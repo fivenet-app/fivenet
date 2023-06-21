@@ -4,9 +4,6 @@
 
 # FiveNet
 
-* [Upcoming Release Plan](https://github.com/users/galexrt/projects/1/views/1)
-* [Future Ideas and Project Roadmap](https://github.com/users/galexrt/projects/2/views/1)
-
 <details>
   <summary>Show Complete Feature List</summary>
 
@@ -79,6 +76,20 @@
     - [x] Livemap - Player position tracker plugin
 
 </details>
+
+## Roadmap
+
+* Employee Management
+    * "Führingsregister": Positive, neutral and negative entries for employees.
+* Dispatch Center ("Leitstelle")
+    * Citizens can easily send a dispatch manually or "automatically" on revivable death.
+    * Radio/ Status Codes are going to be static.
+    * Squads: People can be grouped into "squads".
+        * If no dispatch manager ("Disponent") is available, people can do it by themselves.
+        * A squad can consist of one or more people. The people don't necessarily need to be in the same job.
+    * Dispatches:
+        * Each dispatch will have an ID, so that they be referenced by `DIS-123`.
+        * Can be assigned to one or more "squads" by the dispatch manager, automatically or manually.
 
 ## Development
 

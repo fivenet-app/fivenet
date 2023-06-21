@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
+import SvgIcon from '@jamescoyle/vue-icon';
 import { mdiCheck, mdiPlus } from '@mdi/js';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { max, min, numeric, required } from '@vee-validate/rules';
