@@ -1012,8 +1012,7 @@
         "groups": {
             "shortcuts": {
                 "heading": "Shortcuts",
-                "goto-citizen": "Go to Citizen: CIT-...",
-                "goto-doc": "Go to Document: DOC-..."
+                "goto": "Go to {0}: {1}"
             }
         }
     }
