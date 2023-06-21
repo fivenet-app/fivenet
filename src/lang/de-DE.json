@@ -1009,7 +1009,7 @@
     "commandpalette": {
         "input": {
             "title": "Geben Sie einen Befehl ein oder suchen Sie nach Befehlen...",
-            "content":""
+            "content": "Schneller Zugriff auf Bürger, Dokumente und mehr."
         },
         "empty": {
             "title": "Keine Ergebnisse gefunden.",
@@ -1018,7 +1018,7 @@
         "groups": {
             "shortcuts": {
                 "label": "Abkürzungen",
-                "goto-citizen": "Gehe zu {0}: {1}"
+                "goto": "Gehe zu {0}: {1}"
             },
             "pages": {
                 "label": "Seiten"
