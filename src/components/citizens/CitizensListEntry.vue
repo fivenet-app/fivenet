@@ -58,12 +58,11 @@ function addToClipboard(): void {
         </td>
         <td class="whitespace-nowrap px-2 py-2 text-sm text-base-200">{{ user.height }}cm</td>
         <td class="whitespace-nowrap py-2 pl-3 pr-4 text-sm font-medium sm:pr-0">
-            <div class="flex flex-row justify-end">
+            <div v-can="'CitizenStoreService.GetUser'" class="flex flex-row justify-end">
                 <button class="flex-initial text-primary-500 hover:text-primary-400" @click="addToClipboard">
                     <SvgIcon class="w-6 h-auto ml-auto mr-2.5" type="mdi" :path="mdiClipboardPlus" />
                 </button>
                 <NuxtLink
-                    v-can="'CitizenStoreService.ListCitizens'"
                     :to="{
                         name: 'citizens-id',
                         params: { id: user.userId ?? 0 },

@@ -1007,12 +1007,21 @@
         }
     },
     "commandpalette": {
-        "input": "Type a command or search...",
-        "empty": "No results found.",
+        "input": {
+            "title": "Type a command or search...",
+            "content": "Quickly access citizens, documents and more."
+        },
+        "empty": {
+            "title": "No results found.",
+            "content": "We couldn't find anything with that term. Please try again."
+        },
         "groups": {
             "shortcuts": {
-                "heading": "Shortcuts",
+                "label": "Shortcuts",
                 "goto": "Go to {0}: {1}"
+            },
+            "pages": {
+                "label": "Pages"
             }
         }
     }

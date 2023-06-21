@@ -1007,13 +1007,21 @@
         }
     },
     "commandpalette": {
-        "input": "Geben Sie einen Befehl ein oder suchen Sie...",
-        "empty": "Keine Ergebnisse gefunden.",
+        "input": {
+            "title": "Geben Sie einen Befehl ein oder suchen Sie nach Befehlen...",
+            "content":""
+        },
+        "empty": {
+            "title": "Keine Ergebnisse gefunden.",
+            "content": "Es konnte nichts"
+        },
         "groups": {
             "shortcuts": {
-                "heading": "Abkürzungen",
-                "goto-citizen": "Gehe zu Bürger: CIT-...",
-                "goto-doc": "Gehe zu Dokument: DOC-..."
+                "label": "Abkürzungen",
+                "goto-citizen": "Gehe zu {0}: {1}"
+            },
+            "pages": {
+                "label": "Seiten"
             }
         }
     }

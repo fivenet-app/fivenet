@@ -42,13 +42,13 @@ export const useClipboardStore = defineStore('clipboard', {
             };
 
             this.activeStack.documents.forEach((v: ClipboardDocument) => {
-                data.documents.push(getDocument(v));
+                if (v !== undefined) data.documents.push(getDocument(v));
             });
             this.activeStack.users.forEach((v: ClipboardUser) => {
-                data.users.push(getUser(v));
+                if (v !== undefined) data.users.push(getUser(v));
             });
             this.activeStack.vehicles.forEach((v: ClipboardVehicle) => {
-                data.vehicles.push(v.getVehicle());
+                if (v !== undefined) data.vehicles.push(v.getVehicle());
             });
 
             return data;
@@ -211,19 +211,21 @@ export class ClipboardDocument {
     public id: bigint;
     public createdAt: string;
     public title: string;
-    public state: string;
     public creator: ClipboardUser;
-    public closed: boolean;
     public category: DocumentCategory | undefined;
+    public state: string;
+    public closed: boolean;
+    public public: boolean;
 
     constructor(d: Document) {
         this.id = d.id;
         this.createdAt = google_protobuf_timestamp.Timestamp.toDate(d.createdAt?.timestamp!).toLocaleDateString();
+        this.category = d.category;
         this.title = d.title;
         this.state = d.state;
         this.creator = new ClipboardUser(d.creator!);
         this.closed = d.closed;
-        this.category = d.category;
+        this.public = d.public;
     }
 }
 
@@ -242,15 +244,16 @@ export function getDocument(obj: ClipboardDocument): DocumentShort {
                 seconds: ts.timestamp?.seconds!,
             },
         },
+        categoryId: obj.category && obj.category.id ? obj.category.id : 0n,
+        category: obj.category,
         title: obj.title,
         contentType: DOC_CONTENT_TYPE.PLAIN,
         content: '',
-        state: obj.state,
         creatorId: user.userId,
         creator: user,
+        state: obj.state,
         closed: obj.closed,
-        categoryId: obj.category && obj.category.id ? obj.category.id : 0n,
-        category: obj.category,
+        public: obj.public,
     };
 }
 
