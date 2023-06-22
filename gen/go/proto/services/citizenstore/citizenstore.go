@@ -4,6 +4,7 @@ import (
 	context "context"
 	"database/sql"
 	"errors"
+	"fmt"
 	"strconv"
 	"strings"
 
@@ -253,6 +254,7 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 			selectors = append(selectors, tUserProps.Wanted)
 		case "UserProps.Job":
 			selectors = append(selectors, tUserProps.Job)
+			selectors = append(selectors, tUserProps.JobGrade)
 		case "UserProps.TrafficInfractionPoints":
 			selectors = append(selectors, tUserProps.TrafficInfractionPoints)
 		}
@@ -310,9 +312,14 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 		resp.User.JobGrade = s.unemployedJobGrade
 	}
 
-	if resp.User.Props != nil && resp.User.Props.Job != nil {
-		resp.User.Job = *resp.User.Props.JobName
-		resp.User.JobGrade = 0
+	if resp.User.Props != nil {
+		if resp.User.Props.JobName != nil {
+			resp.User.Job = *resp.User.Props.JobName
+		}
+
+		if resp.User.Props.JobGradeNumber != nil {
+			resp.User.JobGrade = *resp.User.Props.JobGradeNumber
+		}
 	}
 
 	s.c.EnrichJobInfo(resp.User)
@@ -466,10 +473,6 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 	}
 	defer s.a.AddEntryWithData(auditEntry, req)
 
-	resp := &SetUserPropsResponse{
-		Props: &users.UserProps{},
-	}
-
 	if req.Reason == "" {
 		return nil, status.Error(codes.InvalidArgument, "Must give a reason!")
 	}
@@ -485,12 +488,16 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 	}
 	if props.JobName == nil {
 		props.JobName = &s.unemployedJob
+		props.JobGradeNumber = &s.unemployedJobGrade
 	}
 	if props.TrafficInfractionPoints == nil {
 		props.TrafficInfractionPoints = &ZeroTrafficInfractionPoints
 	}
 
-	updateSets := []jet.ColumnAssigment{}
+	resp := &SetUserPropsResponse{
+		Props: &users.UserProps{},
+	}
+
 	// Field Permission Check
 	fieldsAttr, err := s.p.Attr(userInfo, CitizenStoreServicePerm, CitizenStoreServiceSetUserPropsPerm, CitizenStoreServiceSetUserPropsFieldsPermField)
 	if err != nil {
@@ -501,6 +508,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 		fields = fieldsAttr.([]string)
 	}
 
+	updateSets := []jet.ColumnAssigment{}
 	if req.Props.Wanted != nil {
 		if !utils.InSlice(fields, "Wanted") {
 			return nil, status.Error(codes.PermissionDenied, "You are not allowed to set a user wanted status!")
@@ -519,14 +527,16 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 			return nil, status.Error(codes.InvalidArgument, "You can't set a state job!")
 		}
 
-		resp.Props.Job = s.c.GetJobByName(*req.Props.JobName)
-		if resp.Props.Job == nil {
-			return nil, status.Error(codes.PermissionDenied, "Invalid job set!")
+		req.Props.Job, req.Props.JobGrade = s.c.GetJobGrade(*req.Props.JobName, *req.Props.JobGradeNumber)
+		if req.Props.Job == nil || req.Props.JobGrade == nil {
+			return nil, status.Error(codes.PermissionDenied, "Invalid job or job rank set!")
 		}
 
 		updateSets = append(updateSets, tUserProps.Job.SET(jet.String(*req.Props.JobName)))
+		updateSets = append(updateSets, tUserProps.JobGrade.SET(jet.Int32(*req.Props.JobGradeNumber)))
 	} else {
 		req.Props.JobName = props.JobName
+		req.Props.JobGradeNumber = props.JobGradeNumber
 	}
 	if req.Props.TrafficInfractionPoints != nil {
 		// Only update when it has actually changed
@@ -552,12 +562,14 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 			tUserProps.UserID,
 			tUserProps.Wanted,
 			tUserProps.Job,
+			tUserProps.JobGrade,
 			tUserProps.TrafficInfractionPoints,
 		).
 		VALUES(
 			req.Props.UserId,
 			req.Props.Wanted,
 			req.Props.JobName,
+			req.Props.JobGradeNumber,
 			req.Props.TrafficInfractionPoints,
 		).
 		ON_DUPLICATE_KEY_UPDATE(
@@ -576,10 +588,10 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 			return nil, ErrFailedQuery
 		}
 	}
-	if *req.Props.JobName != *props.JobName {
+	if *req.Props.JobName != *props.JobName || *req.Props.JobGradeNumber != *props.JobGradeNumber {
 		if err := s.addUserActivity(ctx, tx,
 			userInfo.UserId, req.Props.UserId, users.USER_ACTIVITY_TYPE_CHANGED, "UserProps.Job",
-			*props.JobName, *req.Props.JobName, req.Reason); err != nil {
+			fmt.Sprintf("%s:%d", *props.JobName, *props.JobGradeNumber), fmt.Sprintf("%s:%d", *req.Props.JobName, *req.Props.JobGradeNumber), req.Reason); err != nil {
 			return nil, ErrFailedQuery
 		}
 	}
@@ -595,6 +607,10 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 	if err = tx.Commit(); err != nil {
 		return nil, ErrFailedQuery
 	}
+
+	// Set Job info
+	resp.Props = req.Props
+	resp.Props.Job, resp.Props.JobGrade = s.c.GetJobGrade(*resp.Props.JobName, *resp.Props.JobGradeNumber)
 
 	auditEntry.State = int16(rector.EVENT_TYPE_UPDATED)
 

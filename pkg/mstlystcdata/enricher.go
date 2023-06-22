@@ -74,11 +74,26 @@ func (e *Enricher) EnrichDocumentCategory(doc common.IDocumentCategory) {
 	}
 }
 
-func (e *Enricher) GetJobByName(name string) *jobs.Job {
-	job, ok := e.c.jobs.Get(name)
+func (e *Enricher) GetJobByName(job string) *jobs.Job {
+	j, ok := e.c.jobs.Get(job)
 	if !ok {
 		return nil
 	}
 
-	return job
+	return j
+}
+
+func (e *Enricher) GetJobGrade(job string, grade int32) (*jobs.Job, *jobs.JobGrade) {
+	j, ok := e.c.jobs.Get(job)
+	if !ok {
+		return nil, nil
+	}
+
+	for i := 0; i < len(j.Grades); i++ {
+		if j.Grades[i].Grade == grade {
+			return j, j.Grades[i]
+		}
+	}
+
+	return nil, nil
 }
