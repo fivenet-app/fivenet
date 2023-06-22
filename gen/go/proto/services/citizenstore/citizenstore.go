@@ -488,11 +488,15 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 	}
 	if props.JobName == nil {
 		props.JobName = &s.unemployedJob
+	}
+	if props.JobGradeNumber == nil {
 		props.JobGradeNumber = &s.unemployedJobGrade
 	}
 	if props.TrafficInfractionPoints == nil {
 		props.TrafficInfractionPoints = &ZeroTrafficInfractionPoints
 	}
+
+	props.Job, props.JobGrade = s.c.GetJobGrade(*props.JobName, *props.JobGradeNumber)
 
 	resp := &SetUserPropsResponse{
 		Props: &users.UserProps{},
@@ -536,7 +540,9 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 		updateSets = append(updateSets, tUserProps.JobGrade.SET(jet.Int32(*req.Props.JobGradeNumber)))
 	} else {
 		req.Props.JobName = props.JobName
+		req.Props.Job = props.Job
 		req.Props.JobGradeNumber = props.JobGradeNumber
+		req.Props.JobGrade = props.JobGrade
 	}
 	if req.Props.TrafficInfractionPoints != nil {
 		// Only update when it has actually changed
@@ -591,7 +597,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 	if *req.Props.JobName != *props.JobName || *req.Props.JobGradeNumber != *props.JobGradeNumber {
 		if err := s.addUserActivity(ctx, tx,
 			userInfo.UserId, req.Props.UserId, users.USER_ACTIVITY_TYPE_CHANGED, "UserProps.Job",
-			fmt.Sprintf("%s:%d", *props.JobName, *props.JobGradeNumber), fmt.Sprintf("%s:%d", *req.Props.JobName, *req.Props.JobGradeNumber), req.Reason); err != nil {
+			fmt.Sprintf("%s|%s", props.Job.Label, props.JobGrade.Label), fmt.Sprintf("%s|%s", req.Props.Job.Label, req.Props.JobGrade.Label), req.Reason); err != nil {
 			return nil, ErrFailedQuery
 		}
 	}
@@ -624,6 +630,7 @@ func (s *Server) getUserProps(ctx context.Context, userId int32) (*users.UserPro
 			tUserProps.UserID,
 			tUserProps.Wanted,
 			tUserProps.Job,
+			tUserProps.JobGrade,
 			tUserProps.TrafficInfractionPoints,
 		).
 		FROM(tUserProps).
