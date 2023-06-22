@@ -110,7 +110,7 @@ watchDebounced(selectedJob, () => setJob());
 
             <ComboboxOptions
                 v-if="filteredJobs.length > 0"
-                class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-60 sm:text-sm"
+                class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-44 sm:text-sm"
             >
                 <ComboboxOption v-for="job in filteredJobs" :key="job.name" :value="job" as="job" v-slot="{ active, selected }">
                     <li

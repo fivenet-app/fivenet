@@ -17,7 +17,7 @@ import { max, min, required } from '@vee-validate/rules';
 import { watchDebounced } from '@vueuse/core';
 import { defineRule } from 'vee-validate';
 import { useNotificationsStore } from '~/store/notifications';
-import { Job } from '~~/gen/ts/resources/jobs/jobs';
+import { Job, JobGrade } from '~~/gen/ts/resources/jobs/jobs';
 import { User, UserProps } from '~~/gen/ts/resources/users/users';
 
 const { $grpc } = useNuxtApp();
@@ -34,6 +34,7 @@ const emits = defineEmits<{
 
 const queryJob = ref<string>('');
 const selectedJob = ref<undefined | Job>();
+const selectedJobGrade = ref<undefined | JobGrade>();
 
 const { data: jobs } = useLazyAsyncData('jobs', () => getJobs());
 
@@ -56,6 +57,7 @@ async function getJobs(): Promise<Array<Job>> {
 watch(jobs, () => {
     if (jobs.value) {
         selectedJob.value = jobs.value.find((j) => j.name === props.user.job);
+        selectedJobGrade.value = selectedJob.value?.grades.find((g) => g.grade === props.user.jobGrade);
     }
 });
 
@@ -71,6 +73,7 @@ async function setJobProp(values: FormData): Promise<void> {
         const userProps: UserProps = {
             userId: props.user.userId,
             jobName: selectedJob.value.name,
+            jobGradeNumber: selectedJobGrade.value ? selectedJobGrade.value?.grade : 1,
         };
 
         try {
@@ -81,6 +84,9 @@ async function setJobProp(values: FormData): Promise<void> {
 
             props.user.job = selectedJob.value?.name!;
             props.user.jobLabel = selectedJob.value?.label!;
+
+            props.user.jobGrade = selectedJobGrade.value?.grade!;
+            props.user.jobGradeLabel = selectedJob.value?.label!;
 
             notifications.dispatchNotification({
                 title: { key: 'notifications.action_successfull.title', parameters: [] },
@@ -160,12 +166,12 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await setJobProp(
                                         <VeeErrorMessage name="reason" as="p" class="mt-2 text-sm text-error-400" />
                                     </div>
                                 </div>
-                                <div class="my-2 space-y-24">
+                                <div class="my-2">
                                     <div class="flex-1 form-control">
                                         <label for="job" class="block text-sm font-medium leading-6 text-neutral">
                                             {{ $t('common.job') }}
                                         </label>
-                                        <Combobox as="div" v-model="selectedJob" nullable>
+                                        <Combobox v-if="selectedJob" as="div" v-model="selectedJob" nullable>
                                             <div class="relative">
                                                 <ComboboxButton as="div">
                                                     <ComboboxInput
@@ -178,7 +184,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await setJobProp(
 
                                                 <ComboboxOptions
                                                     v-if="jobs"
-                                                    class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-60 sm:text-sm"
+                                                    class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-44 sm:text-sm"
                                                 >
                                                     <ComboboxOption
                                                         v-for="job in jobs"
@@ -195,6 +201,62 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await setJobProp(
                                                         >
                                                             <span :class="['block truncate', selected && 'font-semibold']">
                                                                 {{ job.label }}
+                                                            </span>
+
+                                                            <span
+                                                                v-if="selected"
+                                                                :class="[
+                                                                    active ? 'text-neutral' : 'text-primary-500',
+                                                                    'absolute inset-y-0 left-0 flex items-center pl-1.5',
+                                                                ]"
+                                                            >
+                                                                <SvgIcon
+                                                                    class="w-5 h-5"
+                                                                    aria-hidden="true"
+                                                                    type="mdi"
+                                                                    :path="mdiCheck"
+                                                                />
+                                                            </span>
+                                                        </li>
+                                                    </ComboboxOption>
+                                                </ComboboxOptions>
+                                            </div>
+                                        </Combobox>
+                                    </div>
+                                    <div class="flex-1 form-control">
+                                        <label for="job" class="block text-sm font-medium leading-6 text-neutral">
+                                            {{ $t('common.job_grade') }}
+                                        </label>
+                                        <Combobox as="div" v-model="selectedJobGrade" nullable>
+                                            <div class="relative">
+                                                <ComboboxButton as="div">
+                                                    <ComboboxInput
+                                                        class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                        @change="queryJob = $event.target.value"
+                                                        :display-value="(grade: any) => grade.label"
+                                                        autocomplete="off"
+                                                    />
+                                                </ComboboxButton>
+
+                                                <ComboboxOptions
+                                                    v-if="jobs"
+                                                    class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-44 sm:text-sm"
+                                                >
+                                                    <ComboboxOption
+                                                        v-for="grade in selectedJob?.grades"
+                                                        :key="grade.grade"
+                                                        :value="grade"
+                                                        as="char"
+                                                        v-slot="{ active, selected }"
+                                                    >
+                                                        <li
+                                                            :class="[
+                                                                'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
+                                                                active ? 'bg-primary-500' : '',
+                                                            ]"
+                                                        >
+                                                            <span :class="['block truncate', selected && 'font-semibold']">
+                                                                {{ grade.label }}
                                                             </span>
 
                                                             <span

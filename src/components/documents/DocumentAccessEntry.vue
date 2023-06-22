@@ -245,7 +245,7 @@ watch(selectedAccessRole, () => {
                         leave-to-class="opacity-0"
                     >
                         <ListboxOptions
-                            class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-60 sm:text-sm"
+                            class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-44 sm:text-sm"
                         >
                             <ListboxOption
                                 as="template"
@@ -294,7 +294,7 @@ watch(selectedAccessRole, () => {
 
                         <ComboboxOptions
                             v-if="entriesChars.length > 0"
-                            class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-60 sm:text-sm"
+                            class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-44 sm:text-sm"
                         >
                             <ComboboxOption
                                 v-for="char in entriesChars"
@@ -343,7 +343,7 @@ watch(selectedAccessRole, () => {
 
                         <ComboboxOptions
                             v-if="entriesJobs.length > 0"
-                            class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-60 sm:text-sm"
+                            class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-44 sm:text-sm"
                         >
                             <ComboboxOption
                                 v-for="job in entriesJobs"
@@ -390,7 +390,7 @@ watch(selectedAccessRole, () => {
 
                         <ComboboxOptions
                             v-if="entriesMinimumRank.length > 0"
-                            class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-60 sm:text-sm"
+                            class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-44 sm:text-sm"
                         >
                             <ComboboxOption
                                 v-for="rank in entriesMinimumRank"
@@ -438,7 +438,7 @@ watch(selectedAccessRole, () => {
 
                     <ComboboxOptions
                         v-if="entriesAccessRoles.length > 0"
-                        class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-60 sm:text-sm"
+                        class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-44 sm:text-sm"
                     >
                         <ComboboxOption
                             v-for="role in entriesAccessRoles"

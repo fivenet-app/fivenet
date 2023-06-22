@@ -25,7 +25,7 @@ import (
 )
 
 const (
-	DocsDefaultPageLimit  = 10
+	DocsDefaultPageLimit  = 15
 	DocShortContentLength = 128
 )
 

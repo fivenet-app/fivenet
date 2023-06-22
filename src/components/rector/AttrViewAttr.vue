@@ -275,7 +275,7 @@ onMounted(() => {
                                         leave-to-class="opacity-0"
                                     >
                                         <ListboxOptions
-                                            class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-60 sm:text-sm"
+                                            class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-44 sm:text-sm"
                                         >
                                             <ListboxOption
                                                 as="template"
