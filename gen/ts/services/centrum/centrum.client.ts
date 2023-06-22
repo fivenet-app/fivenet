@@ -4,12 +4,51 @@
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
 import { CentrumService } from "./centrum.js";
+import type { AssignSquadResponse } from "./centrum.js";
+import type { AssignSquadRequest } from "./centrum.js";
+import type { DeleteSquadResponse } from "./centrum.js";
+import type { DeleteSquadRequest } from "./centrum.js";
+import type { UpdateSquadResponse } from "./centrum.js";
+import type { UpdateSquadRequest } from "./centrum.js";
+import { stackIntercept } from "@protobuf-ts/runtime-rpc";
+import type { CreateSquadResponse } from "./centrum.js";
+import type { CreateSquadRequest } from "./centrum.js";
+import type { UnaryCall } from "@protobuf-ts/runtime-rpc";
+import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
+// Action + Dispatch Management
+
+// TODO
+
 /**
+ * Squad Management
+ *
  * @generated from protobuf service services.centrum.CentrumService
  */
 export interface ICentrumServiceClient {
+    /**
+     * @generated from protobuf rpc: CreateSquad(services.centrum.CreateSquadRequest) returns (services.centrum.CreateSquadResponse);
+     */
+    createSquad(input: CreateSquadRequest, options?: RpcOptions): UnaryCall<CreateSquadRequest, CreateSquadResponse>;
+    /**
+     * @generated from protobuf rpc: UpdateSquad(services.centrum.UpdateSquadRequest) returns (services.centrum.UpdateSquadResponse);
+     */
+    updateSquad(input: UpdateSquadRequest, options?: RpcOptions): UnaryCall<UpdateSquadRequest, UpdateSquadResponse>;
+    /**
+     * @generated from protobuf rpc: DeleteSquad(services.centrum.DeleteSquadRequest) returns (services.centrum.DeleteSquadResponse);
+     */
+    deleteSquad(input: DeleteSquadRequest, options?: RpcOptions): UnaryCall<DeleteSquadRequest, DeleteSquadResponse>;
+    /**
+     * @generated from protobuf rpc: AssignSquad(services.centrum.AssignSquadRequest) returns (services.centrum.AssignSquadResponse);
+     */
+    assignSquad(input: AssignSquadRequest, options?: RpcOptions): UnaryCall<AssignSquadRequest, AssignSquadResponse>;
 }
+// Action + Dispatch Management
+
+// TODO
+
 /**
+ * Squad Management
+ *
  * @generated from protobuf service services.centrum.CentrumService
  */
 export class CentrumServiceClient implements ICentrumServiceClient, ServiceInfo {
@@ -17,5 +56,33 @@ export class CentrumServiceClient implements ICentrumServiceClient, ServiceInfo 
     methods = CentrumService.methods;
     options = CentrumService.options;
     constructor(private readonly _transport: RpcTransport) {
+    }
+    /**
+     * @generated from protobuf rpc: CreateSquad(services.centrum.CreateSquadRequest) returns (services.centrum.CreateSquadResponse);
+     */
+    createSquad(input: CreateSquadRequest, options?: RpcOptions): UnaryCall<CreateSquadRequest, CreateSquadResponse> {
+        const method = this.methods[0], opt = this._transport.mergeOptions(options);
+        return stackIntercept<CreateSquadRequest, CreateSquadResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @generated from protobuf rpc: UpdateSquad(services.centrum.UpdateSquadRequest) returns (services.centrum.UpdateSquadResponse);
+     */
+    updateSquad(input: UpdateSquadRequest, options?: RpcOptions): UnaryCall<UpdateSquadRequest, UpdateSquadResponse> {
+        const method = this.methods[1], opt = this._transport.mergeOptions(options);
+        return stackIntercept<UpdateSquadRequest, UpdateSquadResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @generated from protobuf rpc: DeleteSquad(services.centrum.DeleteSquadRequest) returns (services.centrum.DeleteSquadResponse);
+     */
+    deleteSquad(input: DeleteSquadRequest, options?: RpcOptions): UnaryCall<DeleteSquadRequest, DeleteSquadResponse> {
+        const method = this.methods[2], opt = this._transport.mergeOptions(options);
+        return stackIntercept<DeleteSquadRequest, DeleteSquadResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @generated from protobuf rpc: AssignSquad(services.centrum.AssignSquadRequest) returns (services.centrum.AssignSquadResponse);
+     */
+    assignSquad(input: AssignSquadRequest, options?: RpcOptions): UnaryCall<AssignSquadRequest, AssignSquadResponse> {
+        const method = this.methods[3], opt = this._transport.mergeOptions(options);
+        return stackIntercept<AssignSquadRequest, AssignSquadResponse>("unary", this._transport, method, opt, input);
     }
 }

@@ -497,6 +497,10 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 	}
 
 	props.Job, props.JobGrade = s.c.GetJobGrade(*props.JobName, *props.JobGradeNumber)
+	// Make sure a job is set
+	if props.Job == nil {
+		props.Job, props.JobGrade = s.c.GetJobGrade(s.unemployedJob, s.unemployedJobGrade)
+	}
 
 	resp := &SetUserPropsResponse{
 		Props: &users.UserProps{},
@@ -586,7 +590,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 		return nil, ErrFailedQuery
 	}
 
-	// Create user activity
+	// Create user activity entries
 	if *req.Props.Wanted != *props.Wanted {
 		if err := s.addUserActivity(ctx, tx,
 			userInfo.UserId, req.Props.UserId, users.USER_ACTIVITY_TYPE_CHANGED, "UserProps.Wanted",

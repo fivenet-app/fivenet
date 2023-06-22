@@ -469,7 +469,7 @@
         "min": "Minimum",
         "count": "Anzahl",
         "other": "Andere",
-        "result": "Ergebnis",
+        "result": "Ergebnis | Ergebnisse",
         "total_count": "Gesamtanzahl",
         "none_selected": "Keine {0} ausgewählt",
         "no_licenses": "Keine Lizenzen.",
@@ -1013,7 +1013,7 @@
         },
         "empty": {
             "title": "Keine Ergebnisse gefunden.",
-            "content": "Es konnte nichts"
+            "content": "Es konnte nichts gefunden werden."
         },
         "groups": {
             "shortcuts": {

@@ -2,7 +2,135 @@
 // @generated from protobuf file "services/centrum/centrum.proto" (package "services.centrum", syntax proto3)
 // tslint:disable
 import { ServiceType } from "@protobuf-ts/runtime-rpc";
+import { MessageType } from "@protobuf-ts/runtime";
+// Squad Management
+
+/**
+ * @generated from protobuf message services.centrum.CreateSquadRequest
+ */
+export interface CreateSquadRequest {
+}
+/**
+ * @generated from protobuf message services.centrum.CreateSquadResponse
+ */
+export interface CreateSquadResponse {
+}
+/**
+ * @generated from protobuf message services.centrum.UpdateSquadRequest
+ */
+export interface UpdateSquadRequest {
+}
+/**
+ * @generated from protobuf message services.centrum.UpdateSquadResponse
+ */
+export interface UpdateSquadResponse {
+}
+/**
+ * @generated from protobuf message services.centrum.DeleteSquadRequest
+ */
+export interface DeleteSquadRequest {
+}
+/**
+ * @generated from protobuf message services.centrum.DeleteSquadResponse
+ */
+export interface DeleteSquadResponse {
+}
+/**
+ * @generated from protobuf message services.centrum.AssignSquadRequest
+ */
+export interface AssignSquadRequest {
+}
+/**
+ * @generated from protobuf message services.centrum.AssignSquadResponse
+ */
+export interface AssignSquadResponse {
+}
+// @generated message type with reflection information, may provide speed optimized methods
+class CreateSquadRequest$Type extends MessageType<CreateSquadRequest> {
+    constructor() {
+        super("services.centrum.CreateSquadRequest", []);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.centrum.CreateSquadRequest
+ */
+export const CreateSquadRequest = new CreateSquadRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class CreateSquadResponse$Type extends MessageType<CreateSquadResponse> {
+    constructor() {
+        super("services.centrum.CreateSquadResponse", []);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.centrum.CreateSquadResponse
+ */
+export const CreateSquadResponse = new CreateSquadResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class UpdateSquadRequest$Type extends MessageType<UpdateSquadRequest> {
+    constructor() {
+        super("services.centrum.UpdateSquadRequest", []);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.centrum.UpdateSquadRequest
+ */
+export const UpdateSquadRequest = new UpdateSquadRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class UpdateSquadResponse$Type extends MessageType<UpdateSquadResponse> {
+    constructor() {
+        super("services.centrum.UpdateSquadResponse", []);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.centrum.UpdateSquadResponse
+ */
+export const UpdateSquadResponse = new UpdateSquadResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class DeleteSquadRequest$Type extends MessageType<DeleteSquadRequest> {
+    constructor() {
+        super("services.centrum.DeleteSquadRequest", []);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.centrum.DeleteSquadRequest
+ */
+export const DeleteSquadRequest = new DeleteSquadRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class DeleteSquadResponse$Type extends MessageType<DeleteSquadResponse> {
+    constructor() {
+        super("services.centrum.DeleteSquadResponse", []);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.centrum.DeleteSquadResponse
+ */
+export const DeleteSquadResponse = new DeleteSquadResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class AssignSquadRequest$Type extends MessageType<AssignSquadRequest> {
+    constructor() {
+        super("services.centrum.AssignSquadRequest", []);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.centrum.AssignSquadRequest
+ */
+export const AssignSquadRequest = new AssignSquadRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class AssignSquadResponse$Type extends MessageType<AssignSquadResponse> {
+    constructor() {
+        super("services.centrum.AssignSquadResponse", []);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.centrum.AssignSquadResponse
+ */
+export const AssignSquadResponse = new AssignSquadResponse$Type();
 /**
  * @generated ServiceType for protobuf service services.centrum.CentrumService
  */
-export const CentrumService = new ServiceType("services.centrum.CentrumService", []);
+export const CentrumService = new ServiceType("services.centrum.CentrumService", [
+    { name: "CreateSquad", options: {}, I: CreateSquadRequest, O: CreateSquadResponse },
+    { name: "UpdateSquad", options: {}, I: UpdateSquadRequest, O: UpdateSquadResponse },
+    { name: "DeleteSquad", options: {}, I: DeleteSquadRequest, O: DeleteSquadResponse },
+    { name: "AssignSquad", options: {}, I: AssignSquadRequest, O: AssignSquadResponse }
+]);

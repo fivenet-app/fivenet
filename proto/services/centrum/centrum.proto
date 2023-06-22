@@ -3,4 +3,48 @@ syntax = "proto3";
 package services.centrum;
 option go_package = "github.com/galexrt/fivenet/gen/go/proto/services/centrum;centrum";
 
-service CentrumService {}
+// Squad Management
+
+message CreateSquadRequest {
+}
+
+message CreateSquadResponse {
+}
+
+message UpdateSquadRequest {
+}
+
+message UpdateSquadResponse {
+}
+
+message DeleteSquadRequest {
+}
+
+message DeleteSquadResponse {
+}
+
+message AssignSquadRequest {
+}
+
+message AssignSquadResponse {
+}
+
+// Action + Dispatch Management
+
+// TODO
+
+service CentrumService {
+  // Squad Management
+
+  rpc CreateSquad(CreateSquadRequest) returns (CreateSquadResponse);
+
+  rpc UpdateSquad(UpdateSquadRequest) returns (UpdateSquadResponse);
+
+  rpc DeleteSquad(DeleteSquadRequest) returns (DeleteSquadResponse);
+
+  rpc AssignSquad(AssignSquadRequest) returns (AssignSquadResponse);
+
+  // Action + Dispatch Management
+
+  // TODO
+}
