@@ -487,7 +487,9 @@
         "traffic_infraction_points": "StVo Punkt | StVo Punkte",
         "point": "Keine Punkte | {n} Punkt | {n} Punkte",
         "deleted": "Gelöscht",
-        "summary": "Zusammenfassung"
+        "summary": "Zusammenfassung",
+        "update": "Aktualisieren",
+        "dispatch_center": "Leitstelle"
     },
     "notifications": {
         "clipboard": {

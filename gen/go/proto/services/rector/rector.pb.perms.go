@@ -7,18 +7,6 @@ import (
 	"github.com/galexrt/fivenet/pkg/perms"
 )
 
-var PermsRemap = map[string]string{
-	// Service: RectorService
-	"RectorService/GetPermissions":   "RectorService/GetRoles",
-	"RectorService/GetRole":          "RectorService/GetRoles",
-	"RectorService/UpdateLaws":       "SuperUser",
-	"RectorService/UpdateRoleLimits": "SuperUser",
-}
-
-func (s *Server) GetPermsRemap() map[string]string {
-	return PermsRemap
-}
-
 const (
 	RectorServicePerm perms.Category = "RectorService"
 
@@ -30,6 +18,18 @@ const (
 	RectorServiceUpdateRolePermsPerm perms.Name = "UpdateRolePerms"
 	RectorServiceViewAuditLogPerm    perms.Name = "ViewAuditLog"
 )
+
+var PermsRemap = map[string]string{
+	// Service: RectorService
+	"RectorService/GetPermissions":   "RectorService/GetRoles",
+	"RectorService/GetRole":          "RectorService/GetRoles",
+	"RectorService/UpdateLaws":       "SuperUser",
+	"RectorService/UpdateRoleLimits": "SuperUser",
+}
+
+func (s *Server) GetPermsRemap() map[string]string {
+	return PermsRemap
+}
 
 func init() {
 	perms.AddPermsToList([]*perms.Perm{

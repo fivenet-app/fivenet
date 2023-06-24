@@ -8,24 +8,6 @@ import (
 	"github.com/galexrt/fivenet/pkg/perms"
 )
 
-var PermsRemap = map[string]string{
-	// Service: DocStoreService
-	"DocStoreService/EditDocumentComment":     "DocStoreService/PostDocumentComment",
-	"DocStoreService/GetDocumentAccess":       "DocStoreService/GetDocument",
-	"DocStoreService/GetDocumentReferences":   "DocStoreService/GetDocument",
-	"DocStoreService/GetDocumentRelations":    "DocStoreService/GetDocument",
-	"DocStoreService/GetTemplate":             "DocStoreService/ListTemplates",
-	"DocStoreService/RemoveDocumentReference": "DocStoreService/AddDocumentReference",
-	"DocStoreService/RemoveDocumentRelation":  "DocStoreService/AddDocumentRelation",
-	"DocStoreService/SetDocumentAccess":       "DocStoreService/CreateDocument",
-	"DocStoreService/UpdateDocumentCategory":  "DocStoreService/CreateDocumentCategory",
-	"DocStoreService/UpdateTemplate":          "DocStoreService/CreateTemplate",
-}
-
-func (s *Server) GetPermsRemap() map[string]string {
-	return PermsRemap
-}
-
 const (
 	DocStoreServicePerm perms.Category = "DocStoreService"
 
@@ -50,6 +32,24 @@ const (
 	DocStoreServiceUpdateDocumentPerm                   perms.Name = "UpdateDocument"
 	DocStoreServiceUpdateDocumentAccessPermField        perms.Key  = "Access"
 )
+
+var PermsRemap = map[string]string{
+	// Service: DocStoreService
+	"DocStoreService/EditDocumentComment":     "DocStoreService/PostDocumentComment",
+	"DocStoreService/GetDocumentAccess":       "DocStoreService/GetDocument",
+	"DocStoreService/GetDocumentReferences":   "DocStoreService/GetDocument",
+	"DocStoreService/GetDocumentRelations":    "DocStoreService/GetDocument",
+	"DocStoreService/GetTemplate":             "DocStoreService/ListTemplates",
+	"DocStoreService/RemoveDocumentReference": "DocStoreService/AddDocumentReference",
+	"DocStoreService/RemoveDocumentRelation":  "DocStoreService/AddDocumentRelation",
+	"DocStoreService/SetDocumentAccess":       "DocStoreService/CreateDocument",
+	"DocStoreService/UpdateDocumentCategory":  "DocStoreService/CreateDocumentCategory",
+	"DocStoreService/UpdateTemplate":          "DocStoreService/CreateTemplate",
+}
+
+func (s *Server) GetPermsRemap() map[string]string {
+	return PermsRemap
+}
 
 func init() {
 	perms.AddPermsToList([]*perms.Perm{

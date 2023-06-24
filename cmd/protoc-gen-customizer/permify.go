@@ -1,6 +1,7 @@
 package main
 
 import (
+	"sort"
 	"strings"
 	"text/template"
 
@@ -64,6 +65,7 @@ func (p *PermifyModule) generate(f pgs.File) {
 		sName := string(s.Name())
 
 		data.PermissionServiceKeys = append(data.PermissionServiceKeys, sName)
+		p.Debugf("Service: %s (%s)", sName, data.PermissionServiceKeys)
 
 		for _, m := range s.Methods() {
 			mName := string(m.Name())
@@ -118,6 +120,8 @@ func (p *PermifyModule) generate(f pgs.File) {
 	if len(data.Permissions) == 0 && len(data.PermissionRemap) == 0 {
 		return
 	}
+
+	sort.Strings(data.PermissionServiceKeys)
 
 	name := p.ctx.OutputPath(f).SetExt(".perms.go")
 	p.AddGeneratorTemplateFile(name.String(), p.tpl, data)
@@ -194,6 +198,23 @@ import (
     "github.com/galexrt/fivenet/gen/go/proto/resources/permissions"
 )
 
+{{ with .PermissionServiceKeys }}
+const (
+{{ range $key, $sName := . -}}
+    {{ $sName }}Perm perms.Category = "{{ $sName }}"
+{{ end }}
+
+{{ range $sName, $service := $.Permissions -}}
+	    {{- range $perm := $service }}
+	{{ $sName }}{{ $perm.Name }}Perm perms.Name = "{{ $perm.Name }}"
+            {{- range $attr := $perm.Attrs }}
+    {{ $sName }}{{ $perm.Name }}{{ $attr.Key }}PermField perms.Key = "{{ $attr.Key }}"
+            {{- end }}
+		{{- end }}
+	{{- end }}
+)
+{{ end }}
+
 {{ with .PermissionRemap }}
 {{ range $service, $remap := . }}
 var PermsRemap = map[string]string{
@@ -208,22 +229,6 @@ func (s *Server) GetPermsRemap() map[string]string {
     return PermsRemap
 }
 
-{{ end }}
-
-{{ with .PermissionServiceKeys }}
-const (
-{{ range $key, $sName := . -}}
-    {{ $sName }}Perm perms.Category = "{{ $sName }}"
-    {{ range $sName, $service := $.Permissions -}}
-	    {{- range $perm := $service }}
-	{{ $sName }}{{ $perm.Name }}Perm perms.Name = "{{ $perm.Name }}"
-            {{- range $attr := $perm.Attrs }}
-    {{ $sName }}{{ $perm.Name }}{{ $attr.Key }}PermField perms.Key = "{{ $attr.Key }}"
-            {{- end }}
-		{{- end }}
-	{{- end }}
-{{ end }}
-)
 {{ end }}
 
 func init() {

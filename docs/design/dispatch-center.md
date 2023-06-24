@@ -4,7 +4,7 @@ title: "Dispatch Center (Leitstelle)"
 
 ## Definition
 
-* Leitstelle
+* Leitstellen
     * Kontext:
         * Eine für exekutive (PD, FIB, DOJ)
         * LSMD kriegt eine separate Leitstelle.
@@ -14,7 +14,8 @@ title: "Dispatch Center (Leitstelle)"
         * (Automatischer) Disponent
             * Personal das verfügbar ist, werden automatisch naheliegende Dispatches "vorgeschlagen"/ "assigned".
 * Squad
-    * Eine oder mehrere Personen aus dem gleichen Job (e.g., ein Wagen mit 2 PDler ist ein Squad).
+    * Eine oder mehrere Personen aus dem gleichen Job (e.g., ein Streifenwagen mit 1 oder mehreren PDler kann sich zu einem Squad zusammen anmelden).
+    * Squads are pre-created by the faction leaders.
     * Von der Leitung "einmalig" die Squads erstellt werden können (damit ist nicht das zuweisen von Leuten gemeint).
 * Aktion
     * Relation: Many Squads to Many Aktionen

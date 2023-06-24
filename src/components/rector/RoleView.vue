@@ -330,7 +330,7 @@ onMounted(async () => {
                     <button
                         type="button"
                         @click="updatePermissions()"
-                        class="inline-flex px-3 py-2 text-center justify-center transition-colors font-semibold rounded-md bg-primary-600 text-neutral hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-success-600"
+                        class="inline-flex px-3 py-2 text-center justify-center transition-colors font-semibold rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-success-600"
                     >
                         {{ $t('common.save', 1) }}
                     </button>

@@ -8,15 +8,6 @@ import (
 	"github.com/galexrt/fivenet/pkg/perms"
 )
 
-var PermsRemap = map[string]string{
-	// Service: CompletorService
-	"CompletorService/ListLawBooks": "Any",
-}
-
-func (s *Server) GetPermsRemap() map[string]string {
-	return PermsRemap
-}
-
 const (
 	CompletorServicePerm perms.Category = "CompletorService"
 
@@ -25,6 +16,15 @@ const (
 	CompletorServiceCompleteDocumentCategoriesJobsPermField perms.Key  = "Jobs"
 	CompletorServiceCompleteJobsPerm                        perms.Name = "CompleteJobs"
 )
+
+var PermsRemap = map[string]string{
+	// Service: CompletorService
+	"CompletorService/ListLawBooks": "Any",
+}
+
+func (s *Server) GetPermsRemap() map[string]string {
+	return PermsRemap
+}
 
 func init() {
 	perms.AddPermsToList([]*perms.Perm{

@@ -62,7 +62,7 @@ interface FormData {
     trafficPoints: number;
 }
 
-const { handleSubmit } = useForm<FormData>({
+const { handleSubmit, meta } = useForm<FormData>({
     initialValues: {
         reason: '',
         trafficPoints:
@@ -152,7 +152,13 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await setTrafficP
                                     </button>
                                     <button
                                         type="submit"
-                                        class="flex-1 rounded-bd bg-primary-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-primary-400"
+                                        class="flex-1 rounded-bd py-2.5 px-3.5 text-sm font-semibold text-neutral"
+                                        :disabled="!meta.valid"
+                                        :class="[
+                                            !meta.valid
+                                                ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
+                                                : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
+                                        ]"
                                     >
                                         {{ $t('common.save') }}
                                     </button>

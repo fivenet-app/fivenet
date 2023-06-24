@@ -13,6 +13,41 @@ import (
 	"google.golang.org/grpc/test/bufconn"
 )
 
+func NewTestSquadServiceClient(srv SquadServiceServer) (SquadServiceClient, context.Context, context.CancelFunc) {
+	ctx, cancel := context.WithCancel(context.Background())
+
+	buffer := 101024 * 1024
+	lis := bufconn.Listen(buffer)
+
+	server := grpc.NewServer()
+	RegisterSquadServiceServer(server, srv)
+	go func() {
+		if err := server.Serve(lis); err != nil {
+			log.Printf("error serving test grpc server: %v", err)
+		}
+	}()
+
+	conn, err := grpc.DialContext(ctx, "",
+		grpc.WithContextDialer(func(context.Context, string) (net.Conn, error) {
+			return lis.Dial()
+		}), grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		log.Printf("error connecting to test grpc server: %v", err)
+	}
+
+	go func() {
+		<-ctx.Done()
+		err := lis.Close()
+		if err != nil {
+			log.Printf("error closing listener: %v", err)
+		}
+		server.Stop()
+	}()
+
+	client := NewSquadServiceClient(conn)
+	return client, ctx, cancel
+}
+
 func NewTestCentrumServiceClient(srv CentrumServiceServer) (CentrumServiceClient, context.Context, context.CancelFunc) {
 	ctx, cancel := context.WithCancel(context.Background())
 

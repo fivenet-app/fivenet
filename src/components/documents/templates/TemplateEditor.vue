@@ -44,7 +44,7 @@ interface FormData {
     content: string;
 }
 
-const { handleSubmit, setValues } = useForm<FormData>({
+const { handleSubmit, setValues, meta } = useForm<FormData>({
     validationSchema: {
         weight: { required: true, numeric: { min: 0, max: 4294967295 } },
         title: { required: true, min: 3, max: 255 },
@@ -764,7 +764,13 @@ watchDebounced(
             </div>
             <button
                 type="submit"
-                class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-primary-600 text-neutral hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300 mt-4"
+                class="mt-4 flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                :disabled="!meta.valid"
+                :class="[
+                    !meta.valid
+                        ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
+                        : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
+                ]"
             >
                 {{ templateId ? $t('common.save') : $t('common.create') }}
             </button>

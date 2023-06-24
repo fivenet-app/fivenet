@@ -487,7 +487,9 @@
         "traffic_infraction_points": "Traffic Point | Traffic Points",
         "point": "No Points | {n} Point | {n} Points",
         "deleted": "Deleted",
-        "summary": "Summary"
+        "summary": "Summary",
+        "update": "Update",
+        "dispatch_center": "Dispatch Center"
     },
     "notifications": {
         "clipboard": {

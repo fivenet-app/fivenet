@@ -78,7 +78,7 @@ interface FormData {
     description: string;
 }
 
-const { handleSubmit } = useForm<FormData>({
+const { handleSubmit, meta } = useForm<FormData>({
     validationSchema: {
         name: { required: true, min: 3, max: 128 },
         description: { required: true, min: 0, max: 255 },
@@ -187,9 +187,15 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await updateCateg
                                                                 <div class="relative flex items-center mt-2">
                                                                     <button
                                                                         type="submit"
-                                                                        class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                                        class="block w-full rounded-md border-0 py-1.5 pr-14 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                                        :disabled="!meta.valid"
+                                                                        :class="[
+                                                                            !meta.valid
+                                                                                ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
+                                                                                : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
+                                                                        ]"
                                                                     >
-                                                                        {{ $t('common.create') }}
+                                                                        {{ $t('common.update') }}
                                                                     </button>
                                                                 </div>
                                                             </div>

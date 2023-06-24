@@ -59,7 +59,7 @@ interface FormData {
     newPassword: string;
 }
 
-const { handleSubmit } = useForm<FormData>({
+const { handleSubmit, meta } = useForm<FormData>({
     validationSchema: {
         password: { required: true, min: 6, max: 70 },
         newPassword: { required: true, min: 6, max: 70 },
@@ -152,7 +152,13 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await changePassw
                                             <div>
                                                 <button
                                                     type="submit"
-                                                    class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-primary-600 text-neutral hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300"
+                                                    class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                                                    :disabled="!meta.valid"
+                                                    :class="[
+                                                        !meta.valid
+                                                            ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
+                                                            : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
+                                                    ]"
                                                 >
                                                     {{ $t('components.auth.change_password_modal.change_password') }}
                                                 </button>

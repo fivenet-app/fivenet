@@ -74,11 +74,11 @@ startButtonTimer();
                     <button
                         @click="handleError"
                         :disabled="buttonDisabled"
+                        class="rounded-md w-60 px-3.5 py-2.5 text-sm font-semibold text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                         :class="[
                             buttonDisabled
-                                ? 'bg-base-600 hover:bg-base-500 focus-visible:outline-base-500'
-                                : 'bg-primary-600 hover:bg-primary-500 focus-visible:outline-primary-500',
-                            'rounded-md w-60 px-3.5 py-2.5 text-sm font-semibold text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
+                                ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
+                                : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
                         ]"
                     >
                         {{ $t('common.home') }}

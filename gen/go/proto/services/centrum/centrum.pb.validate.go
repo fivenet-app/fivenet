@@ -57,6 +57,12 @@ func (m *CreateSquadRequest) validate(all bool) error {
 
 	var errors []error
 
+	// no validation rules for Name
+
+	if m.Limit != nil {
+		// no validation rules for Limit
+	}
+
 	if len(errors) > 0 {
 		return CreateSquadRequestMultiError(errors)
 	}
@@ -158,6 +164,8 @@ func (m *CreateSquadResponse) validate(all bool) error {
 	}
 
 	var errors []error
+
+	// no validation rules for Id
 
 	if len(errors) > 0 {
 		return CreateSquadResponseMultiError(errors)
@@ -261,6 +269,8 @@ func (m *UpdateSquadRequest) validate(all bool) error {
 
 	var errors []error
 
+	// no validation rules for Id
+
 	if len(errors) > 0 {
 		return UpdateSquadRequestMultiError(errors)
 	}
@@ -363,6 +373,8 @@ func (m *UpdateSquadResponse) validate(all bool) error {
 
 	var errors []error
 
+	// no validation rules for Id
+
 	if len(errors) > 0 {
 		return UpdateSquadResponseMultiError(errors)
 	}
@@ -464,6 +476,8 @@ func (m *DeleteSquadRequest) validate(all bool) error {
 	}
 
 	var errors []error
+
+	// no validation rules for Id
 
 	if len(errors) > 0 {
 		return DeleteSquadRequestMultiError(errors)
@@ -669,6 +683,8 @@ func (m *AssignSquadRequest) validate(all bool) error {
 
 	var errors []error
 
+	// no validation rules for SquadId
+
 	if len(errors) > 0 {
 		return AssignSquadRequestMultiError(errors)
 	}
@@ -850,3 +866,750 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = AssignSquadResponseValidationError{}
+
+// Validate checks the field values on SquadStreamRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *SquadStreamRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SquadStreamRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// SquadStreamRequestMultiError, or nil if none found.
+func (m *SquadStreamRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SquadStreamRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return SquadStreamRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// SquadStreamRequestMultiError is an error wrapping multiple validation errors
+// returned by SquadStreamRequest.ValidateAll() if the designated constraints
+// aren't met.
+type SquadStreamRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SquadStreamRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SquadStreamRequestMultiError) AllErrors() []error { return m }
+
+// SquadStreamRequestValidationError is the validation error returned by
+// SquadStreamRequest.Validate if the designated constraints aren't met.
+type SquadStreamRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SquadStreamRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SquadStreamRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SquadStreamRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SquadStreamRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SquadStreamRequestValidationError) ErrorName() string {
+	return "SquadStreamRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e SquadStreamRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSquadStreamRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SquadStreamRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SquadStreamRequestValidationError{}
+
+// Validate checks the field values on SquadStreamResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *SquadStreamResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SquadStreamResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// SquadStreamResponseMultiError, or nil if none found.
+func (m *SquadStreamResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SquadStreamResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetChanges() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, SquadStreamResponseValidationError{
+						field:  fmt.Sprintf("Changes[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, SquadStreamResponseValidationError{
+						field:  fmt.Sprintf("Changes[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return SquadStreamResponseValidationError{
+					field:  fmt.Sprintf("Changes[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return SquadStreamResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// SquadStreamResponseMultiError is an error wrapping multiple validation
+// errors returned by SquadStreamResponse.ValidateAll() if the designated
+// constraints aren't met.
+type SquadStreamResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SquadStreamResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SquadStreamResponseMultiError) AllErrors() []error { return m }
+
+// SquadStreamResponseValidationError is the validation error returned by
+// SquadStreamResponse.Validate if the designated constraints aren't met.
+type SquadStreamResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SquadStreamResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SquadStreamResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SquadStreamResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SquadStreamResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SquadStreamResponseValidationError) ErrorName() string {
+	return "SquadStreamResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e SquadStreamResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSquadStreamResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SquadStreamResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SquadStreamResponseValidationError{}
+
+// Validate checks the field values on SquadChanges with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *SquadChanges) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SquadChanges with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in SquadChangesMultiError, or
+// nil if none found.
+func (m *SquadChanges) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SquadChanges) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	if len(errors) > 0 {
+		return SquadChangesMultiError(errors)
+	}
+
+	return nil
+}
+
+// SquadChangesMultiError is an error wrapping multiple validation errors
+// returned by SquadChanges.ValidateAll() if the designated constraints aren't met.
+type SquadChangesMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SquadChangesMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SquadChangesMultiError) AllErrors() []error { return m }
+
+// SquadChangesValidationError is the validation error returned by
+// SquadChanges.Validate if the designated constraints aren't met.
+type SquadChangesValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SquadChangesValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SquadChangesValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SquadChangesValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SquadChangesValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SquadChangesValidationError) ErrorName() string { return "SquadChangesValidationError" }
+
+// Error satisfies the builtin error interface
+func (e SquadChangesValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSquadChanges.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SquadChangesValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SquadChangesValidationError{}
+
+// Validate checks the field values on CreateActionRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *CreateActionRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CreateActionRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CreateActionRequestMultiError, or nil if none found.
+func (m *CreateActionRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CreateActionRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return CreateActionRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// CreateActionRequestMultiError is an error wrapping multiple validation
+// errors returned by CreateActionRequest.ValidateAll() if the designated
+// constraints aren't met.
+type CreateActionRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CreateActionRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CreateActionRequestMultiError) AllErrors() []error { return m }
+
+// CreateActionRequestValidationError is the validation error returned by
+// CreateActionRequest.Validate if the designated constraints aren't met.
+type CreateActionRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CreateActionRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CreateActionRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CreateActionRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CreateActionRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CreateActionRequestValidationError) ErrorName() string {
+	return "CreateActionRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e CreateActionRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCreateActionRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CreateActionRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CreateActionRequestValidationError{}
+
+// Validate checks the field values on CreateActionResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *CreateActionResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CreateActionResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CreateActionResponseMultiError, or nil if none found.
+func (m *CreateActionResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CreateActionResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return CreateActionResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// CreateActionResponseMultiError is an error wrapping multiple validation
+// errors returned by CreateActionResponse.ValidateAll() if the designated
+// constraints aren't met.
+type CreateActionResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CreateActionResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CreateActionResponseMultiError) AllErrors() []error { return m }
+
+// CreateActionResponseValidationError is the validation error returned by
+// CreateActionResponse.Validate if the designated constraints aren't met.
+type CreateActionResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CreateActionResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CreateActionResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CreateActionResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CreateActionResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CreateActionResponseValidationError) ErrorName() string {
+	return "CreateActionResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e CreateActionResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCreateActionResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CreateActionResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CreateActionResponseValidationError{}
+
+// Validate checks the field values on CentrumStreamRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *CentrumStreamRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CentrumStreamRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CentrumStreamRequestMultiError, or nil if none found.
+func (m *CentrumStreamRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CentrumStreamRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return CentrumStreamRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// CentrumStreamRequestMultiError is an error wrapping multiple validation
+// errors returned by CentrumStreamRequest.ValidateAll() if the designated
+// constraints aren't met.
+type CentrumStreamRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CentrumStreamRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CentrumStreamRequestMultiError) AllErrors() []error { return m }
+
+// CentrumStreamRequestValidationError is the validation error returned by
+// CentrumStreamRequest.Validate if the designated constraints aren't met.
+type CentrumStreamRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CentrumStreamRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CentrumStreamRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CentrumStreamRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CentrumStreamRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CentrumStreamRequestValidationError) ErrorName() string {
+	return "CentrumStreamRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e CentrumStreamRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCentrumStreamRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CentrumStreamRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CentrumStreamRequestValidationError{}
+
+// Validate checks the field values on CentrumStreamResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *CentrumStreamResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CentrumStreamResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CentrumStreamResponseMultiError, or nil if none found.
+func (m *CentrumStreamResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CentrumStreamResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return CentrumStreamResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// CentrumStreamResponseMultiError is an error wrapping multiple validation
+// errors returned by CentrumStreamResponse.ValidateAll() if the designated
+// constraints aren't met.
+type CentrumStreamResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CentrumStreamResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CentrumStreamResponseMultiError) AllErrors() []error { return m }
+
+// CentrumStreamResponseValidationError is the validation error returned by
+// CentrumStreamResponse.Validate if the designated constraints aren't met.
+type CentrumStreamResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CentrumStreamResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CentrumStreamResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CentrumStreamResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CentrumStreamResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CentrumStreamResponseValidationError) ErrorName() string {
+	return "CentrumStreamResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e CentrumStreamResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCentrumStreamResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CentrumStreamResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CentrumStreamResponseValidationError{}

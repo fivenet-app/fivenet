@@ -7,6 +7,10 @@ import (
 	"github.com/galexrt/fivenet/pkg/perms"
 )
 
+const (
+	NotificatorServicePerm perms.Category = "NotificatorService"
+)
+
 var PermsRemap = map[string]string{
 	// Service: NotificatorService
 	"NotificatorService/GetNotifications":  "Any",
@@ -17,10 +21,6 @@ var PermsRemap = map[string]string{
 func (s *Server) GetPermsRemap() map[string]string {
 	return PermsRemap
 }
-
-const (
-	NotificatorServicePerm perms.Category = "NotificatorService"
-)
 
 func init() {
 	perms.AddPermsToList([]*perms.Perm{})

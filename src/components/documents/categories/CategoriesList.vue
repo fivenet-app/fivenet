@@ -51,7 +51,7 @@ async function createDocumentCategory(values: FormData): Promise<void> {
         try {
             await $grpc.getDocStoreClient().createDocumentCategory({
                 category: {
-                    id: 0,
+                    id: 0n,
                     name: values.name,
                     description: values.description,
                 },
@@ -76,7 +76,7 @@ interface FormData {
     description: string;
 }
 
-const { handleSubmit } = useForm<FormData>({
+const { handleSubmit, meta } = useForm<FormData>({
     validationSchema: {
         name: { required: true, min: 3, max: 128 },
         description: { required: true, min: 0, max: 255 },
@@ -132,7 +132,13 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await createDocum
                                     <div class="relative flex items-center mt-2">
                                         <button
                                             type="submit"
-                                            class="block w-full px-3 py-2 text-sm font-semibold rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
+                                            class="block w-full px-3 py-2 text-sm font-semibold rounded-md text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                                            :disabled="!meta.valid"
+                                            :class="[
+                                                !meta.valid
+                                                    ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
+                                                    : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
+                                            ]"
                                         >
                                             {{ $t('common.create') }}
                                         </button>

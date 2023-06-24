@@ -6,45 +6,86 @@ option go_package = "github.com/galexrt/fivenet/gen/go/proto/services/centrum;ce
 // Squad Management
 
 message CreateSquadRequest {
+  string name = 1;
+  optional uint64 limit = 2;
 }
 
 message CreateSquadResponse {
+  uint64 id = 1;
 }
 
 message UpdateSquadRequest {
+  uint64 id = 1;
 }
 
 message UpdateSquadResponse {
+  uint64 id = 1;
 }
 
 message DeleteSquadRequest {
+  uint64 id = 1;
 }
 
-message DeleteSquadResponse {
-}
+message DeleteSquadResponse {}
 
 message AssignSquadRequest {
+  uint64 squad_id = 1;
+  repeated int32 to_add = 2;
+  repeated int32 to_remove = 3;
 }
 
-message AssignSquadResponse {
+message AssignSquadResponse {}
+
+message SquadStreamRequest {}
+
+message SquadStreamResponse {
+  repeated SquadChanges changes = 1;
+}
+
+message SquadChanges {
+  uint64 id = 1;
+  repeated int32 added = 2;
+  repeated int32 removed = 3;
+}
+
+// Squad Management
+service SquadService {
+  // @perm
+  rpc CreateSquad(CreateSquadRequest) returns (CreateSquadResponse);
+  // @perm: Name=CreateSquad
+  rpc UpdateSquad(UpdateSquadRequest) returns (UpdateSquadResponse);
+  // @perm: Name=DeleteSquad
+  rpc DeleteSquad(DeleteSquadRequest) returns (DeleteSquadResponse);
+
+  // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
+  rpc AssignSquad(AssignSquadRequest) returns (AssignSquadResponse);
+
+  // @perm
+  rpc StreamSquads(SquadStreamRequest) returns (stream SquadStreamResponse);
 }
 
 // Action + Dispatch Management
 
+message CreateActionRequest {
+
+}
+
+message CreateActionResponse {
+
+}
+
 // TODO
 
+message CentrumStreamRequest {}
+
+message CentrumStreamResponse {}
+
+// Action + Dispatch Management
 service CentrumService {
-  // Squad Management
-
-  rpc CreateSquad(CreateSquadRequest) returns (CreateSquadResponse);
-
-  rpc UpdateSquad(UpdateSquadRequest) returns (UpdateSquadResponse);
-
-  rpc DeleteSquad(DeleteSquadRequest) returns (DeleteSquadResponse);
-
-  rpc AssignSquad(AssignSquadRequest) returns (AssignSquadResponse);
-
-  // Action + Dispatch Management
-
+  // @perm
+  rpc CreateAction(CreateActionRequest) returns (CreateActionResponse);
   // TODO
+
+  // @perm
+  rpc Stream(CentrumStreamRequest) returns (stream CentrumStreamResponse);
 }

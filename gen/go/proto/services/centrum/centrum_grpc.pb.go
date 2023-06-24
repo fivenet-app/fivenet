@@ -18,14 +18,282 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
+// SquadServiceClient is the client API for SquadService service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type SquadServiceClient interface {
+	// @perm
+	CreateSquad(ctx context.Context, in *CreateSquadRequest, opts ...grpc.CallOption) (*CreateSquadResponse, error)
+	// @perm: Name=CreateSquad
+	UpdateSquad(ctx context.Context, in *UpdateSquadRequest, opts ...grpc.CallOption) (*UpdateSquadResponse, error)
+	// @perm: Name=DeleteSquad
+	DeleteSquad(ctx context.Context, in *DeleteSquadRequest, opts ...grpc.CallOption) (*DeleteSquadResponse, error)
+	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
+	AssignSquad(ctx context.Context, in *AssignSquadRequest, opts ...grpc.CallOption) (*AssignSquadResponse, error)
+	// @perm
+	StreamSquads(ctx context.Context, in *SquadStreamRequest, opts ...grpc.CallOption) (SquadService_StreamSquadsClient, error)
+}
+
+type squadServiceClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewSquadServiceClient(cc grpc.ClientConnInterface) SquadServiceClient {
+	return &squadServiceClient{cc}
+}
+
+func (c *squadServiceClient) CreateSquad(ctx context.Context, in *CreateSquadRequest, opts ...grpc.CallOption) (*CreateSquadResponse, error) {
+	out := new(CreateSquadResponse)
+	err := c.cc.Invoke(ctx, "/services.centrum.SquadService/CreateSquad", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *squadServiceClient) UpdateSquad(ctx context.Context, in *UpdateSquadRequest, opts ...grpc.CallOption) (*UpdateSquadResponse, error) {
+	out := new(UpdateSquadResponse)
+	err := c.cc.Invoke(ctx, "/services.centrum.SquadService/UpdateSquad", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *squadServiceClient) DeleteSquad(ctx context.Context, in *DeleteSquadRequest, opts ...grpc.CallOption) (*DeleteSquadResponse, error) {
+	out := new(DeleteSquadResponse)
+	err := c.cc.Invoke(ctx, "/services.centrum.SquadService/DeleteSquad", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *squadServiceClient) AssignSquad(ctx context.Context, in *AssignSquadRequest, opts ...grpc.CallOption) (*AssignSquadResponse, error) {
+	out := new(AssignSquadResponse)
+	err := c.cc.Invoke(ctx, "/services.centrum.SquadService/AssignSquad", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *squadServiceClient) StreamSquads(ctx context.Context, in *SquadStreamRequest, opts ...grpc.CallOption) (SquadService_StreamSquadsClient, error) {
+	stream, err := c.cc.NewStream(ctx, &SquadService_ServiceDesc.Streams[0], "/services.centrum.SquadService/StreamSquads", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &squadServiceStreamSquadsClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type SquadService_StreamSquadsClient interface {
+	Recv() (*SquadStreamResponse, error)
+	grpc.ClientStream
+}
+
+type squadServiceStreamSquadsClient struct {
+	grpc.ClientStream
+}
+
+func (x *squadServiceStreamSquadsClient) Recv() (*SquadStreamResponse, error) {
+	m := new(SquadStreamResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+// SquadServiceServer is the server API for SquadService service.
+// All implementations must embed UnimplementedSquadServiceServer
+// for forward compatibility
+type SquadServiceServer interface {
+	// @perm
+	CreateSquad(context.Context, *CreateSquadRequest) (*CreateSquadResponse, error)
+	// @perm: Name=CreateSquad
+	UpdateSquad(context.Context, *UpdateSquadRequest) (*UpdateSquadResponse, error)
+	// @perm: Name=DeleteSquad
+	DeleteSquad(context.Context, *DeleteSquadRequest) (*DeleteSquadResponse, error)
+	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
+	AssignSquad(context.Context, *AssignSquadRequest) (*AssignSquadResponse, error)
+	// @perm
+	StreamSquads(*SquadStreamRequest, SquadService_StreamSquadsServer) error
+	mustEmbedUnimplementedSquadServiceServer()
+}
+
+// UnimplementedSquadServiceServer must be embedded to have forward compatible implementations.
+type UnimplementedSquadServiceServer struct {
+}
+
+func (UnimplementedSquadServiceServer) CreateSquad(context.Context, *CreateSquadRequest) (*CreateSquadResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateSquad not implemented")
+}
+func (UnimplementedSquadServiceServer) UpdateSquad(context.Context, *UpdateSquadRequest) (*UpdateSquadResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateSquad not implemented")
+}
+func (UnimplementedSquadServiceServer) DeleteSquad(context.Context, *DeleteSquadRequest) (*DeleteSquadResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteSquad not implemented")
+}
+func (UnimplementedSquadServiceServer) AssignSquad(context.Context, *AssignSquadRequest) (*AssignSquadResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AssignSquad not implemented")
+}
+func (UnimplementedSquadServiceServer) StreamSquads(*SquadStreamRequest, SquadService_StreamSquadsServer) error {
+	return status.Errorf(codes.Unimplemented, "method StreamSquads not implemented")
+}
+func (UnimplementedSquadServiceServer) mustEmbedUnimplementedSquadServiceServer() {}
+
+// UnsafeSquadServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to SquadServiceServer will
+// result in compilation errors.
+type UnsafeSquadServiceServer interface {
+	mustEmbedUnimplementedSquadServiceServer()
+}
+
+func RegisterSquadServiceServer(s grpc.ServiceRegistrar, srv SquadServiceServer) {
+	s.RegisterService(&SquadService_ServiceDesc, srv)
+}
+
+func _SquadService_CreateSquad_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateSquadRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SquadServiceServer).CreateSquad(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/services.centrum.SquadService/CreateSquad",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SquadServiceServer).CreateSquad(ctx, req.(*CreateSquadRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SquadService_UpdateSquad_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateSquadRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SquadServiceServer).UpdateSquad(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/services.centrum.SquadService/UpdateSquad",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SquadServiceServer).UpdateSquad(ctx, req.(*UpdateSquadRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SquadService_DeleteSquad_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteSquadRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SquadServiceServer).DeleteSquad(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/services.centrum.SquadService/DeleteSquad",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SquadServiceServer).DeleteSquad(ctx, req.(*DeleteSquadRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SquadService_AssignSquad_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AssignSquadRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SquadServiceServer).AssignSquad(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/services.centrum.SquadService/AssignSquad",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SquadServiceServer).AssignSquad(ctx, req.(*AssignSquadRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _SquadService_StreamSquads_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(SquadStreamRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(SquadServiceServer).StreamSquads(m, &squadServiceStreamSquadsServer{stream})
+}
+
+type SquadService_StreamSquadsServer interface {
+	Send(*SquadStreamResponse) error
+	grpc.ServerStream
+}
+
+type squadServiceStreamSquadsServer struct {
+	grpc.ServerStream
+}
+
+func (x *squadServiceStreamSquadsServer) Send(m *SquadStreamResponse) error {
+	return x.ServerStream.SendMsg(m)
+}
+
+// SquadService_ServiceDesc is the grpc.ServiceDesc for SquadService service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var SquadService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "services.centrum.SquadService",
+	HandlerType: (*SquadServiceServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "CreateSquad",
+			Handler:    _SquadService_CreateSquad_Handler,
+		},
+		{
+			MethodName: "UpdateSquad",
+			Handler:    _SquadService_UpdateSquad_Handler,
+		},
+		{
+			MethodName: "DeleteSquad",
+			Handler:    _SquadService_DeleteSquad_Handler,
+		},
+		{
+			MethodName: "AssignSquad",
+			Handler:    _SquadService_AssignSquad_Handler,
+		},
+	},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "StreamSquads",
+			Handler:       _SquadService_StreamSquads_Handler,
+			ServerStreams: true,
+		},
+	},
+	Metadata: "services/centrum/centrum.proto",
+}
+
 // CentrumServiceClient is the client API for CentrumService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CentrumServiceClient interface {
-	CreateSquad(ctx context.Context, in *CreateSquadRequest, opts ...grpc.CallOption) (*CreateSquadResponse, error)
-	UpdateSquad(ctx context.Context, in *UpdateSquadRequest, opts ...grpc.CallOption) (*UpdateSquadResponse, error)
-	DeleteSquad(ctx context.Context, in *DeleteSquadRequest, opts ...grpc.CallOption) (*DeleteSquadResponse, error)
-	AssignSquad(ctx context.Context, in *AssignSquadRequest, opts ...grpc.CallOption) (*AssignSquadResponse, error)
+	// @perm
+	CreateAction(ctx context.Context, in *CreateActionRequest, opts ...grpc.CallOption) (*CreateActionResponse, error)
+	// @perm
+	Stream(ctx context.Context, in *CentrumStreamRequest, opts ...grpc.CallOption) (CentrumService_StreamClient, error)
 }
 
 type centrumServiceClient struct {
@@ -36,50 +304,55 @@ func NewCentrumServiceClient(cc grpc.ClientConnInterface) CentrumServiceClient {
 	return &centrumServiceClient{cc}
 }
 
-func (c *centrumServiceClient) CreateSquad(ctx context.Context, in *CreateSquadRequest, opts ...grpc.CallOption) (*CreateSquadResponse, error) {
-	out := new(CreateSquadResponse)
-	err := c.cc.Invoke(ctx, "/services.centrum.CentrumService/CreateSquad", in, out, opts...)
+func (c *centrumServiceClient) CreateAction(ctx context.Context, in *CreateActionRequest, opts ...grpc.CallOption) (*CreateActionResponse, error) {
+	out := new(CreateActionResponse)
+	err := c.cc.Invoke(ctx, "/services.centrum.CentrumService/CreateAction", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *centrumServiceClient) UpdateSquad(ctx context.Context, in *UpdateSquadRequest, opts ...grpc.CallOption) (*UpdateSquadResponse, error) {
-	out := new(UpdateSquadResponse)
-	err := c.cc.Invoke(ctx, "/services.centrum.CentrumService/UpdateSquad", in, out, opts...)
+func (c *centrumServiceClient) Stream(ctx context.Context, in *CentrumStreamRequest, opts ...grpc.CallOption) (CentrumService_StreamClient, error) {
+	stream, err := c.cc.NewStream(ctx, &CentrumService_ServiceDesc.Streams[0], "/services.centrum.CentrumService/Stream", opts...)
 	if err != nil {
 		return nil, err
 	}
-	return out, nil
+	x := &centrumServiceStreamClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
 }
 
-func (c *centrumServiceClient) DeleteSquad(ctx context.Context, in *DeleteSquadRequest, opts ...grpc.CallOption) (*DeleteSquadResponse, error) {
-	out := new(DeleteSquadResponse)
-	err := c.cc.Invoke(ctx, "/services.centrum.CentrumService/DeleteSquad", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
+type CentrumService_StreamClient interface {
+	Recv() (*CentrumStreamResponse, error)
+	grpc.ClientStream
 }
 
-func (c *centrumServiceClient) AssignSquad(ctx context.Context, in *AssignSquadRequest, opts ...grpc.CallOption) (*AssignSquadResponse, error) {
-	out := new(AssignSquadResponse)
-	err := c.cc.Invoke(ctx, "/services.centrum.CentrumService/AssignSquad", in, out, opts...)
-	if err != nil {
+type centrumServiceStreamClient struct {
+	grpc.ClientStream
+}
+
+func (x *centrumServiceStreamClient) Recv() (*CentrumStreamResponse, error) {
+	m := new(CentrumStreamResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
-	return out, nil
+	return m, nil
 }
 
 // CentrumServiceServer is the server API for CentrumService service.
 // All implementations must embed UnimplementedCentrumServiceServer
 // for forward compatibility
 type CentrumServiceServer interface {
-	CreateSquad(context.Context, *CreateSquadRequest) (*CreateSquadResponse, error)
-	UpdateSquad(context.Context, *UpdateSquadRequest) (*UpdateSquadResponse, error)
-	DeleteSquad(context.Context, *DeleteSquadRequest) (*DeleteSquadResponse, error)
-	AssignSquad(context.Context, *AssignSquadRequest) (*AssignSquadResponse, error)
+	// @perm
+	CreateAction(context.Context, *CreateActionRequest) (*CreateActionResponse, error)
+	// @perm
+	Stream(*CentrumStreamRequest, CentrumService_StreamServer) error
 	mustEmbedUnimplementedCentrumServiceServer()
 }
 
@@ -87,17 +360,11 @@ type CentrumServiceServer interface {
 type UnimplementedCentrumServiceServer struct {
 }
 
-func (UnimplementedCentrumServiceServer) CreateSquad(context.Context, *CreateSquadRequest) (*CreateSquadResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateSquad not implemented")
+func (UnimplementedCentrumServiceServer) CreateAction(context.Context, *CreateActionRequest) (*CreateActionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateAction not implemented")
 }
-func (UnimplementedCentrumServiceServer) UpdateSquad(context.Context, *UpdateSquadRequest) (*UpdateSquadResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateSquad not implemented")
-}
-func (UnimplementedCentrumServiceServer) DeleteSquad(context.Context, *DeleteSquadRequest) (*DeleteSquadResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteSquad not implemented")
-}
-func (UnimplementedCentrumServiceServer) AssignSquad(context.Context, *AssignSquadRequest) (*AssignSquadResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method AssignSquad not implemented")
+func (UnimplementedCentrumServiceServer) Stream(*CentrumStreamRequest, CentrumService_StreamServer) error {
+	return status.Errorf(codes.Unimplemented, "method Stream not implemented")
 }
 func (UnimplementedCentrumServiceServer) mustEmbedUnimplementedCentrumServiceServer() {}
 
@@ -112,76 +379,43 @@ func RegisterCentrumServiceServer(s grpc.ServiceRegistrar, srv CentrumServiceSer
 	s.RegisterService(&CentrumService_ServiceDesc, srv)
 }
 
-func _CentrumService_CreateSquad_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateSquadRequest)
+func _CentrumService_CreateAction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateActionRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(CentrumServiceServer).CreateSquad(ctx, in)
+		return srv.(CentrumServiceServer).CreateAction(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/services.centrum.CentrumService/CreateSquad",
+		FullMethod: "/services.centrum.CentrumService/CreateAction",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CentrumServiceServer).CreateSquad(ctx, req.(*CreateSquadRequest))
+		return srv.(CentrumServiceServer).CreateAction(ctx, req.(*CreateActionRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _CentrumService_UpdateSquad_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateSquadRequest)
-	if err := dec(in); err != nil {
-		return nil, err
+func _CentrumService_Stream_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(CentrumStreamRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
 	}
-	if interceptor == nil {
-		return srv.(CentrumServiceServer).UpdateSquad(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/services.centrum.CentrumService/UpdateSquad",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CentrumServiceServer).UpdateSquad(ctx, req.(*UpdateSquadRequest))
-	}
-	return interceptor(ctx, in, info, handler)
+	return srv.(CentrumServiceServer).Stream(m, &centrumServiceStreamServer{stream})
 }
 
-func _CentrumService_DeleteSquad_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteSquadRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(CentrumServiceServer).DeleteSquad(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/services.centrum.CentrumService/DeleteSquad",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CentrumServiceServer).DeleteSquad(ctx, req.(*DeleteSquadRequest))
-	}
-	return interceptor(ctx, in, info, handler)
+type CentrumService_StreamServer interface {
+	Send(*CentrumStreamResponse) error
+	grpc.ServerStream
 }
 
-func _CentrumService_AssignSquad_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AssignSquadRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(CentrumServiceServer).AssignSquad(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/services.centrum.CentrumService/AssignSquad",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CentrumServiceServer).AssignSquad(ctx, req.(*AssignSquadRequest))
-	}
-	return interceptor(ctx, in, info, handler)
+type centrumServiceStreamServer struct {
+	grpc.ServerStream
+}
+
+func (x *centrumServiceStreamServer) Send(m *CentrumStreamResponse) error {
+	return x.ServerStream.SendMsg(m)
 }
 
 // CentrumService_ServiceDesc is the grpc.ServiceDesc for CentrumService service.
@@ -192,22 +426,16 @@ var CentrumService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*CentrumServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "CreateSquad",
-			Handler:    _CentrumService_CreateSquad_Handler,
-		},
-		{
-			MethodName: "UpdateSquad",
-			Handler:    _CentrumService_UpdateSquad_Handler,
-		},
-		{
-			MethodName: "DeleteSquad",
-			Handler:    _CentrumService_DeleteSquad_Handler,
-		},
-		{
-			MethodName: "AssignSquad",
-			Handler:    _CentrumService_AssignSquad_Handler,
+			MethodName: "CreateAction",
+			Handler:    _CentrumService_CreateAction_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "Stream",
+			Handler:       _CentrumService_Stream_Handler,
+			ServerStreams: true,
+		},
+	},
 	Metadata: "services/centrum/centrum.proto",
 }
