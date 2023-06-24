@@ -6,6 +6,7 @@ import {
     mdiAccountMultiple,
     mdiBriefcase,
     mdiCar,
+    mdiCarEmergency,
     mdiChevronRight,
     mdiClose,
     mdiCog,
@@ -88,6 +89,15 @@ const sidebarNavigation = ref<
         href: { name: 'livemap' },
         permission: 'LivemapperService.Stream',
         icon: mdiMap,
+        position: 'top',
+        current: false,
+    },
+
+    {
+        name: 'common.dispatch_center',
+        href: { name: 'centrum' },
+        permission: 'CentrumService.Stream',
+        icon: mdiCarEmergency,
         position: 'top',
         current: false,
     },

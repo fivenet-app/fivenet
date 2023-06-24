@@ -60,6 +60,15 @@ const features = [
         iconForeground: 'text-teal-900',
         iconBackground: 'bg-teal-100',
     },
+    {
+        title: t('common.dispatch_center'),
+        description: t('pages.overview.features.livemap'),
+        href: { name: 'centrum' },
+        permission: 'CentrumService.Stream',
+        icon: mdiMap,
+        iconForeground: 'text-teal-900',
+        iconBackground: 'bg-teal-100',
+    },
 ] as CardElements;
 </script>
 

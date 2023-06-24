@@ -7,7 +7,6 @@ import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import DataErrorBlock from '~/components/partials/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';
-import LoadingBar from '~/components/partials/LoadingBar.vue';
 import { useAuthStore } from '~/store/auth';
 import { useNotificationsStore } from '~/store/notifications';
 import { useUserSettingsStore } from '~/store/usersettings';
@@ -82,14 +81,18 @@ let dispatchMarkers: DispatchMarker[] = [];
 const dispatchMarkersFiltered = ref<DispatchMarker[]>([]);
 
 async function applyPlayerQuery(): Promise<void> {
-    playerMarkersFiltered.value = playerMarkers.filter((m) =>
-        (m.user?.firstname + ' ' + m.user?.lastname).includes(playerQuery.value)
-    );
+    if (playerMarkers) {
+        playerMarkersFiltered.value = playerMarkers.filter((m) =>
+            (m.user?.firstname + ' ' + m.user?.lastname).includes(playerQuery.value)
+        );
+    }
 }
 async function applyDispatchQuery(): Promise<void> {
-    dispatchMarkersFiltered.value = dispatchMarkers.filter(
-        (m) => m.popup.includes(dispatchQuery.value) || m.name.includes(dispatchQuery.value)
-    );
+    if (dispatchMarkers) {
+        dispatchMarkersFiltered.value = dispatchMarkers.filter(
+            (m) => m.popup.includes(dispatchQuery.value) || m.name.includes(dispatchQuery.value)
+        );
+    }
 }
 
 watchDebounced(
@@ -219,6 +222,10 @@ async function startDataStream(): Promise<void> {
 
         for await (let resp of call.responses) {
             error.value = null;
+
+            if (resp === undefined || !resp.jobsDispatches || !resp.jobsDispatches) {
+                continue;
+            }
 
             markerDispatches.value = resp.jobsDispatches;
             markerPlayers.value = resp.jobsUsers;
@@ -433,7 +440,6 @@ watchDebounced(postalQuery, () => findPostal(), {
 </style>
 
 <template>
-    <LoadingBar />
     <div class="relative w-full h-full z-0">
         <div
             v-if="error || abort === undefined"
