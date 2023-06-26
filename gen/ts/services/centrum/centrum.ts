@@ -90,6 +90,10 @@ export interface AssignSquadRequest {
  * @generated from protobuf message services.centrum.AssignSquadResponse
  */
 export interface AssignSquadResponse {
+    /**
+     * @generated from protobuf field: uint64 squad_id = 1;
+     */
+    squadId: bigint;
 }
 /**
  * @generated from protobuf message services.centrum.SquadStreamRequest
@@ -254,7 +258,9 @@ export const AssignSquadRequest = new AssignSquadRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class AssignSquadResponse$Type extends MessageType<AssignSquadResponse> {
     constructor() {
-        super("services.centrum.AssignSquadResponse", []);
+        super("services.centrum.AssignSquadResponse", [
+            { no: 1, name: "squad_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+        ]);
     }
 }
 /**

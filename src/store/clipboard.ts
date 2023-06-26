@@ -58,12 +58,15 @@ export const useClipboardStore = defineStore('clipboard', {
             switch (listType) {
                 case 'documents':
                     this.activeStack.documents = JSON.parse(JSON.stringify(this.documents)) as ClipboardDocument[];
+                    this.clearDocuments();
                     break;
                 case 'users':
                     this.activeStack.users = JSON.parse(JSON.stringify(this.users)) as ClipboardUser[];
+                    this.clearUsers();
                     break;
                 case 'vehicles':
                     this.activeStack.vehicles = JSON.parse(JSON.stringify(this.vehicles)) as ClipboardVehicle[];
+                    this.clearVehicles();
                     break;
             }
         },

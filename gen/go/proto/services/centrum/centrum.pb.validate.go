@@ -991,6 +991,8 @@ func (m *AssignSquadResponse) validate(all bool) error {
 
 	var errors []error
 
+	// no validation rules for SquadId
+
 	if len(errors) > 0 {
 		return AssignSquadResponseMultiError(errors)
 	}
