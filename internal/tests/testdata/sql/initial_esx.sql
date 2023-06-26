@@ -34,7 +34,9 @@ CREATE TABLE IF NOT EXISTS `users` (
   `metadata` longtext DEFAULT NULL,
   PRIMARY KEY (`identifier`),
   UNIQUE KEY `id` (`id`),
-  KEY `users_job_IDX` (`job`) USING BTREE
+  KEY `idx_users_job` (`job`),
+  KEY `idx_users_dateofbirth` (`dateofbirth`),
+  FULLTEXT KEY `idx_users_firstname_lastname_fulltext` (`firstname`,`lastname`)
 ) ENGINE = InnoDB AUTO_INCREMENT = 1 DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
 -- Table data: Add 5 users into the database
 INSERT INTO users (id, identifier, license, `group`, skin, job, job_grade, loadout, `position`, firstname, lastname, dateofbirth, sex, height, is_dead, last_property, jail, inventory, phone_number, accounts, tattoos, disabled, visum, playtime, levelData, onDuty, health, armor, created_at, last_seen, meta)

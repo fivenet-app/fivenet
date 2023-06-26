@@ -62,7 +62,7 @@ func (s *Server) CompleteCitizens(ctx context.Context, req *CompleteCitizensRequ
 			tUsers.Firstname,
 			tUsers.Lastname,
 		).
-		OPTIMIZER_HINTS(jet.OptimizerHint("idx_users_firstname_lastname")).
+		OPTIMIZER_HINTS(jet.OptimizerHint("idx_users_firstname_lastname_fulltext")).
 		FROM(tUsers).
 		WHERE(condition).
 		ORDER_BY(
@@ -145,7 +145,7 @@ func (s *Server) CompleteDocumentCategories(ctx context.Context, req *CompleteDo
 			tDocumentCategory.Description,
 			tDocumentCategory.Job,
 		).
-		OPTIMIZER_HINTS(jet.OptimizerHint("idx_users_firstname_lastname")).
+		OPTIMIZER_HINTS(jet.OptimizerHint("idx_users_firstname_lastname_fulltext")).
 		FROM(tDocumentCategory).
 		WHERE(condition).
 		ORDER_BY(

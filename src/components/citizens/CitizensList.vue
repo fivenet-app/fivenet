@@ -1,5 +1,7 @@
 <script lang="ts" setup>
-import { Switch } from '@headlessui/vue';
+import { Disclosure, DisclosureButton, DisclosurePanel, Switch } from '@headlessui/vue';
+import SvgIcon from '@jamescoyle/vue-icon';
+import { mdiChevronDown } from '@mdi/js';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { watchDebounced } from '@vueuse/core';
 import { ref } from 'vue';
@@ -14,7 +16,7 @@ import CitizenListEntry from './CitizensListEntry.vue';
 
 const { $grpc } = useNuxtApp();
 
-const query = ref<{ name: string; phoneNumber?: string; wanted?: boolean }>({
+const query = ref<{ name: string; phoneNumber?: string; wanted?: boolean; trafficPoints?: number; date_of_birth?: string }>({
     name: '',
 });
 const pagination = ref<PaginationResponse>();
@@ -43,6 +45,12 @@ async function listCitizens(): Promise<Array<User>> {
             }
             if (query.value.phoneNumber) {
                 req.phoneNumber = query.value.phoneNumber;
+            }
+            if (query.value.trafficPoints) {
+                req.trafficPoints = BigInt(query.value.trafficPoints?.toString() ?? '0');
+            }
+            if (query.value.date_of_birth) {
+                req.dateofbirth = query.value.date_of_birth;
             }
 
             const call = $grpc.getCitizenStoreClient().listCitizens(req);
@@ -91,17 +99,17 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                     />
                                 </div>
                             </div>
-                            <div class="flex-1 form-control" v-can="'CitizenStoreService.ListCitizens.Fields.PhoneNumber'">
-                                <label for="searchPhone" class="block text-sm font-medium leading-6 text-neutral">
+                            <div class="flex-1 form-control">
+                                <label for="dateofbirth" class="block text-sm font-medium leading-6 text-neutral">
                                     {{ $t('common.search') }}
-                                    {{ $t('common.phone') }}
+                                    {{ $t('common.date_of_birth') }}
                                 </label>
                                 <div class="relative flex items-center mt-2">
                                     <input
-                                        v-model="query.phoneNumber"
-                                        type="tel"
-                                        name="searchPhone"
-                                        :placeholder="`${$t('common.phone')} ${$t('common.number')}`"
+                                        v-model="query.date_of_birth"
+                                        type="text"
+                                        name="dateofbirth"
+                                        :placeholder="`${$t('common.date_of_birth')} (DD.MM.YYYY)`"
                                         class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                     />
                                 </div>
@@ -135,6 +143,56 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                 </div>
                             </div>
                         </div>
+                        <Disclosure as="div" class="pt-2" v-slot="{ open }">
+                            <DisclosureButton class="flex w-full items-start justify-between text-left text-white">
+                                <span class="text-base-200 leading-7">{{ $t('common.advanced_search') }}</span>
+                                <span class="ml-6 flex h-7 items-center">
+                                    <SvgIcon
+                                        :class="[open ? 'upsidedown' : '', 'h-6 w-6 transition-transform']"
+                                        aria-hidden="true"
+                                        type="mdi"
+                                        :path="mdiChevronDown"
+                                    />
+                                </span>
+                            </DisclosureButton>
+                            <DisclosurePanel class="mt-2 pr-12">
+                                <div class="flex flex-row gap-2">
+                                    <div
+                                        class="flex-1 form-control"
+                                        v-can="'CitizenStoreService.ListCitizens.Fields.PhoneNumber'"
+                                    >
+                                        <label for="searchPhone" class="block text-sm font-medium leading-6 text-neutral">
+                                            {{ $t('common.search') }}
+                                            {{ $t('common.phone') }}
+                                        </label>
+                                        <div class="relative flex items-center mt-2">
+                                            <input
+                                                v-model="query.phoneNumber"
+                                                type="tel"
+                                                name="searchPhone"
+                                                :placeholder="`${$t('common.phone')} ${$t('common.number')}`"
+                                                class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div class="flex-1 form-control">
+                                        <label for="trafficPoints" class="block text-sm font-medium leading-6 text-neutral">
+                                            {{ $t('common.search') }}
+                                            {{ $t('common.traffic_infraction_points', 2) }}
+                                        </label>
+                                        <div class="relative flex items-center mt-2">
+                                            <input
+                                                v-model="query.trafficPoints"
+                                                type="number"
+                                                name="trafficPoints"
+                                                :placeholder="`${$t('common.traffic_infraction_points')}`"
+                                                class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            </DisclosurePanel>
+                        </Disclosure>
                     </form>
                 </div>
             </div>

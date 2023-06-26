@@ -131,6 +131,22 @@ func (m *ListCitizensRequest) validate(all bool) error {
 		// no validation rules for TrafficPoints
 	}
 
+	if m.Dateofbirth != nil {
+
+		if utf8.RuneCountInString(m.GetDateofbirth()) != 10 {
+			err := ListCitizensRequestValidationError{
+				field:  "Dateofbirth",
+				reason: "value length must be 10 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+
+		}
+
+	}
+
 	if len(errors) > 0 {
 		return ListCitizensRequestMultiError(errors)
 	}

@@ -1,6 +1,7 @@
 <script lang="ts" setup>
+import DispatchesList from '~/components/centrum/DispatchesList.vue';
+import SquadList from '~/components/centrum/SquadList.vue';
 import Livemap from '~/components/livemap/Livemap.vue';
-import NotificationsList from '~/components/partials/notification/NotificationsList.vue';
 
 useHead({
     title: 'common.dispatch_center',
@@ -17,14 +18,21 @@ definePageMeta({
     <div class="flex-col h-full">
         <div class="relative w-full h-full z-0 flex">
             <!-- Left column -->
-            <div class="flex-1">
+            <div class="flex-1 flex flex-col">
                 <!-- Main area -->
-                <Livemap />
+                <div class="h-full">
+                    <Livemap />
+                </div>
             </div>
 
-            <div class="flex-1">
+            <div class="flex-1 flex flex-col">
                 <!-- Right column area -->
-                <NotificationsList />
+                <div class="basis-2/3">
+                    <DispatchesList />
+                </div>
+                <div class="basis-1/3">
+                    <SquadList />
+                </div>
             </div>
         </div>
     </div>

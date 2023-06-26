@@ -1396,6 +1396,14 @@
     "@unhead/schema" "1.1.27"
     "@unhead/shared" "1.1.27"
 
+"@unhead/dom@1.1.28":
+  version "1.1.28"
+  resolved "https://registry.yarnpkg.com/@unhead/dom/-/dom-1.1.28.tgz#e5df830376f566d09fee8422280abcb941303901"
+  integrity sha512-o5w3GUo1en9OWNHpUkrkZxmlx2Xf7q++VLb5Lm0MtbHYM578lWmB1zLfmJMN13kvaNKN8RUhTYG5WMtKMzDfGw==
+  dependencies:
+    "@unhead/schema" "1.1.28"
+    "@unhead/shared" "1.1.28"
+
 "@unhead/schema@1.1.27":
   version "1.1.27"
   resolved "https://registry.yarnpkg.com/@unhead/schema/-/schema-1.1.27.tgz#a676da8a4ceeca43c7620817253d7abcea7b5dc3"
@@ -1404,12 +1412,27 @@
     hookable "^5.5.3"
     zhead "^2.0.4"
 
+"@unhead/schema@1.1.28":
+  version "1.1.28"
+  resolved "https://registry.yarnpkg.com/@unhead/schema/-/schema-1.1.28.tgz#400afabded62a8d67d8b31c2edf5d40d6f63f440"
+  integrity sha512-KDAPSYcYZHC3ni3Hd3Ye/piBasaHa/uQWCLICOVADwKi1Pm6hhMxCCwpsPSJtfekN31kOvIA09vZv8roPwTthQ==
+  dependencies:
+    hookable "^5.5.3"
+    zhead "^2.0.7"
+
 "@unhead/shared@1.1.27":
   version "1.1.27"
   resolved "https://registry.yarnpkg.com/@unhead/shared/-/shared-1.1.27.tgz#fe4b141f821ba58a35163990fc65c991dd1419dc"
   integrity sha512-ElZ5WcMnhVlg44OAwTNq4XBkNePcL/BHZk7WKFcqpeGTJrEvSfs40lGJoo4sMsgDAd+XQdhJDd4dJu48jQB3kg==
   dependencies:
     "@unhead/schema" "1.1.27"
+
+"@unhead/shared@1.1.28":
+  version "1.1.28"
+  resolved "https://registry.yarnpkg.com/@unhead/shared/-/shared-1.1.28.tgz#6d6bb76b5d483966ad012cd785e21947549269e3"
+  integrity sha512-mC0k7a4Cb4vKsASjD/Ws5hrRdZfTf5uapRF+1ekVqeyo1VVISoXNB6CdxTjHgqi8vKQr5wmvoSvEt1fOoU1PQQ==
+  dependencies:
+    "@unhead/schema" "1.1.28"
 
 "@unhead/ssr@^1.1.27":
   version "1.1.27"
@@ -1429,26 +1452,36 @@
     hookable "^5.5.3"
     unhead "1.1.27"
 
-"@vee-validate/i18n@^4.10.1":
-  version "4.10.1"
-  resolved "https://registry.yarnpkg.com/@vee-validate/i18n/-/i18n-4.10.1.tgz#b8556054fa477e2b2291de49fa9e21cdffadc68f"
-  integrity sha512-D1fTmLcx/cFu4WL1lWUe3SAzYTlN+1DC5IZfKKaGfGdSfW0VMjv93Bxq77EBYxiKnNhutsPNfMGRqWvT1IbalA==
+"@unhead/vue@^1.1.28":
+  version "1.1.28"
+  resolved "https://registry.yarnpkg.com/@unhead/vue/-/vue-1.1.28.tgz#1ab1e6996800ac8fb94639f523e6873db60955e1"
+  integrity sha512-n/4UusPccA0eyLxeinEagfm7hswzg4Uud+dYNlPByHHThCBobYcHjhnOOeS9YvkMGbdZpG1l7k/kywQIcwYqgg==
+  dependencies:
+    "@unhead/schema" "1.1.28"
+    "@unhead/shared" "1.1.28"
+    hookable "^5.5.3"
+    unhead "1.1.28"
 
-"@vee-validate/nuxt@^4.10.1":
-  version "4.10.1"
-  resolved "https://registry.yarnpkg.com/@vee-validate/nuxt/-/nuxt-4.10.1.tgz#e256bb0ff768cb093377faa83e6d0c75d961e63a"
-  integrity sha512-jjXFaznAy+umXBx9vghyyfBHYfQQOt3CtnFFkahx98gGR4oVYvDjGbWfkEbGWUmkvctlTkkJKXs0ecK+SsxZwg==
+"@vee-validate/i18n@^4.10.2":
+  version "4.10.2"
+  resolved "https://registry.yarnpkg.com/@vee-validate/i18n/-/i18n-4.10.2.tgz#e4ad784a29153b847875f31b81b505310646bf70"
+  integrity sha512-A95F8PRYVy55ZAzfBMfDlpJN8WYZTok7fCOmpzmq2mufMN4+epcP5zJ4DvryIRkHgFgQcVdPZjREbmm47DgIzw==
+
+"@vee-validate/nuxt@^4.10.2":
+  version "4.10.2"
+  resolved "https://registry.yarnpkg.com/@vee-validate/nuxt/-/nuxt-4.10.2.tgz#185badfe7ca0a5a8a029ca72613968118d4bc98c"
+  integrity sha512-YE/Td3yWMwsTQGhk3B8etfUPAjfDEhcS0ouSt+O8Jl4NNrWBcheDVmixWOcAxMiKJzv28S3cCFRhFASbdLYvPg==
   dependencies:
     "@nuxt/kit" "^3.5.3"
     local-pkg "^0.4.3"
-    vee-validate "^4.10.1"
+    vee-validate "^4.10.2"
 
-"@vee-validate/rules@^4.10.1":
-  version "4.10.1"
-  resolved "https://registry.yarnpkg.com/@vee-validate/rules/-/rules-4.10.1.tgz#3e22baf74bfdec9b36043fc6fad92418b3c427f4"
-  integrity sha512-ZxsHo9qP3F4SmFbMLdUKfyBnjFxXQghmu9CN5AKLo3EA5qRK5MrVHfMV62qVpQWV4pirKkEH+VQsCkR8CT3L9A==
+"@vee-validate/rules@^4.10.2":
+  version "4.10.2"
+  resolved "https://registry.yarnpkg.com/@vee-validate/rules/-/rules-4.10.2.tgz#ed5b32c561de9a066dea938cc7ec8e7b244e512d"
+  integrity sha512-XUncoqklCUWEmKgeMGVIlIWzQ6ZZBRaxWZS6U5L0uxMWkpLJ/wkG3RPVbYrcJcY6WZYeGcVPBHtdfmtGP8sJZA==
   dependencies:
-    vee-validate "^4.10.1"
+    vee-validate "^4.10.2"
 
 "@vercel/nft@^0.22.6":
   version "0.22.6"
@@ -7018,6 +7051,16 @@ unhead@1.1.27:
     "@unhead/shared" "1.1.27"
     hookable "^5.5.3"
 
+unhead@1.1.28:
+  version "1.1.28"
+  resolved "https://registry.yarnpkg.com/unhead/-/unhead-1.1.28.tgz#ca6c92c610409cc8e1f0e2a2cac22b63d7086215"
+  integrity sha512-lJqXq5YMAD3p+Nhnvb7fNJwkU91kJNhrnZNcEuAlaTB+0L4es69UvMzekT/wvoE7pde4Yxs0upcTyL4BBz4vQw==
+  dependencies:
+    "@unhead/dom" "1.1.28"
+    "@unhead/schema" "1.1.28"
+    "@unhead/shared" "1.1.28"
+    hookable "^5.5.3"
+
 unimport@^3.0.8:
   version "3.0.8"
   resolved "https://registry.yarnpkg.com/unimport/-/unimport-3.0.8.tgz#f77faa0468f3390844899040849c051570736e3f"
@@ -7146,10 +7189,10 @@ vary@^1.1.2:
   resolved "https://registry.yarnpkg.com/vary/-/vary-1.1.2.tgz#2299f02c6ded30d4a5961b0b9f74524a18f634fc"
   integrity sha512-BNGbWLfd0eUPabhkXUVm0j8uuvREyTh5ovRa/dyow/BqAbZJyC+5fU+IzQOzmAKzYqYRAISoRhdQr3eIZ/PXqg==
 
-vee-validate@^4.10.1:
-  version "4.10.1"
-  resolved "https://registry.yarnpkg.com/vee-validate/-/vee-validate-4.10.1.tgz#014a76db605383be1da53525db38674da696218b"
-  integrity sha512-ZmdEiULBA+PJkpQHa99b0HfN3egLzbbSAT3kZK+fnc0OZqzz7pNC6cClOLoKmbUBVB0vTgPjYp/0qZRz9WeD2g==
+vee-validate@^4.10.2:
+  version "4.10.2"
+  resolved "https://registry.yarnpkg.com/vee-validate/-/vee-validate-4.10.2.tgz#facd48ea32e61bb3f6685938ab6d58d6e235dde9"
+  integrity sha512-J2we1IjIvEKSC32ECw1HWgwwyqDIsrUnhGhZWgrvHeNp6m+pHY5C6PrdSDy1Ly4NcDNNO5XGMNvRZnurIKIdEg==
   dependencies:
     "@vue/devtools-api" "^6.5.0"
     type-fest "^3.12.0"
@@ -7527,6 +7570,11 @@ zhead@^2.0.4:
   version "2.0.4"
   resolved "https://registry.yarnpkg.com/zhead/-/zhead-2.0.4.tgz#42509bbe85b790de9121301eac47d440d9073876"
   integrity sha512-V4R94t3ifk9AURym6OskbKcnowzgp5Z88tkoL/NF67vyryNxC62u6mx5F1Ux4oh4+YN7FFmKYEyWy6m5kfPH6g==
+
+zhead@^2.0.7:
+  version "2.0.7"
+  resolved "https://registry.yarnpkg.com/zhead/-/zhead-2.0.7.tgz#36b3607cd462668d8b395c27f4865911fe38fb93"
+  integrity sha512-q9iCCXBWndfYNMGCN7S970+e3ILAPzmX78Skblx7+SGlo6x6SXW0GJ5mJzigYsq2mkHCGqEUhe0QGDEDZauw8g==
 
 zip-stream@^4.1.0:
   version "4.1.0"

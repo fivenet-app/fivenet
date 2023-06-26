@@ -23,6 +23,8 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type SquadServiceClient interface {
 	// @perm
+	ListSquads(ctx context.Context, in *ListSquadsRequest, opts ...grpc.CallOption) (*ListSquadsResponse, error)
+	// @perm
 	CreateSquad(ctx context.Context, in *CreateSquadRequest, opts ...grpc.CallOption) (*CreateSquadResponse, error)
 	// @perm: Name=CreateSquad
 	UpdateSquad(ctx context.Context, in *UpdateSquadRequest, opts ...grpc.CallOption) (*UpdateSquadResponse, error)
@@ -40,6 +42,15 @@ type squadServiceClient struct {
 
 func NewSquadServiceClient(cc grpc.ClientConnInterface) SquadServiceClient {
 	return &squadServiceClient{cc}
+}
+
+func (c *squadServiceClient) ListSquads(ctx context.Context, in *ListSquadsRequest, opts ...grpc.CallOption) (*ListSquadsResponse, error) {
+	out := new(ListSquadsResponse)
+	err := c.cc.Invoke(ctx, "/services.centrum.SquadService/ListSquads", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *squadServiceClient) CreateSquad(ctx context.Context, in *CreateSquadRequest, opts ...grpc.CallOption) (*CreateSquadResponse, error) {
@@ -115,6 +126,8 @@ func (x *squadServiceStreamSquadsClient) Recv() (*SquadStreamResponse, error) {
 // for forward compatibility
 type SquadServiceServer interface {
 	// @perm
+	ListSquads(context.Context, *ListSquadsRequest) (*ListSquadsResponse, error)
+	// @perm
 	CreateSquad(context.Context, *CreateSquadRequest) (*CreateSquadResponse, error)
 	// @perm: Name=CreateSquad
 	UpdateSquad(context.Context, *UpdateSquadRequest) (*UpdateSquadResponse, error)
@@ -131,6 +144,9 @@ type SquadServiceServer interface {
 type UnimplementedSquadServiceServer struct {
 }
 
+func (UnimplementedSquadServiceServer) ListSquads(context.Context, *ListSquadsRequest) (*ListSquadsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListSquads not implemented")
+}
 func (UnimplementedSquadServiceServer) CreateSquad(context.Context, *CreateSquadRequest) (*CreateSquadResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateSquad not implemented")
 }
@@ -157,6 +173,24 @@ type UnsafeSquadServiceServer interface {
 
 func RegisterSquadServiceServer(s grpc.ServiceRegistrar, srv SquadServiceServer) {
 	s.RegisterService(&SquadService_ServiceDesc, srv)
+}
+
+func _SquadService_ListSquads_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListSquadsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(SquadServiceServer).ListSquads(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/services.centrum.SquadService/ListSquads",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(SquadServiceServer).ListSquads(ctx, req.(*ListSquadsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _SquadService_CreateSquad_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -259,6 +293,10 @@ var SquadService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "services.centrum.SquadService",
 	HandlerType: (*SquadServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "ListSquads",
+			Handler:    _SquadService_ListSquads_Handler,
+		},
 		{
 			MethodName: "CreateSquad",
 			Handler:    _SquadService_CreateSquad_Handler,

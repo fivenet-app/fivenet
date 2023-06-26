@@ -18,6 +18,7 @@ const (
 	SquadServiceAssignSquadAccessPermField perms.Key  = "Access"
 	SquadServiceCreateSquadPerm            perms.Name = "CreateSquad"
 	SquadServiceDeleteSquadPerm            perms.Name = "DeleteSquad"
+	SquadServiceListSquadsPerm             perms.Name = "ListSquads"
 	SquadServiceStreamSquadsPerm           perms.Name = "StreamSquads"
 )
 
@@ -63,6 +64,11 @@ func init() {
 		{
 			Category: SquadServicePerm,
 			Name:     SquadServiceDeleteSquadPerm,
+			Attrs:    []perms.Attr{},
+		},
+		{
+			Category: SquadServicePerm,
+			Name:     SquadServiceListSquadsPerm,
 			Attrs:    []perms.Attr{},
 		},
 		{

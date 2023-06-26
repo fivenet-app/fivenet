@@ -34,6 +34,10 @@ export interface ListCitizensRequest {
      * @generated from protobuf field: optional uint64 traffic_points = 5;
      */
     trafficPoints?: bigint;
+    /**
+     * @generated from protobuf field: optional string dateofbirth = 6;
+     */
+    dateofbirth?: string;
 }
 /**
  * @generated from protobuf message services.citizenstore.ListCitizensResponse
@@ -122,7 +126,8 @@ class ListCitizensRequest$Type extends MessageType<ListCitizensRequest> {
             { no: 2, name: "search_name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
             { no: 3, name: "wanted", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
             { no: 4, name: "phone_number", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
-            { no: 5, name: "traffic_points", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+            { no: 5, name: "traffic_points", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 6, name: "dateofbirth", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { len: "10" } } } }
         ]);
     }
 }

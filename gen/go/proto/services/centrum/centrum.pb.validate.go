@@ -35,6 +35,210 @@ var (
 	_ = sort.Sort
 )
 
+// Validate checks the field values on ListSquadsRequest with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *ListSquadsRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListSquadsRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ListSquadsRequestMultiError, or nil if none found.
+func (m *ListSquadsRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListSquadsRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return ListSquadsRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// ListSquadsRequestMultiError is an error wrapping multiple validation errors
+// returned by ListSquadsRequest.ValidateAll() if the designated constraints
+// aren't met.
+type ListSquadsRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListSquadsRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListSquadsRequestMultiError) AllErrors() []error { return m }
+
+// ListSquadsRequestValidationError is the validation error returned by
+// ListSquadsRequest.Validate if the designated constraints aren't met.
+type ListSquadsRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListSquadsRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListSquadsRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListSquadsRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListSquadsRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListSquadsRequestValidationError) ErrorName() string {
+	return "ListSquadsRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ListSquadsRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListSquadsRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListSquadsRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListSquadsRequestValidationError{}
+
+// Validate checks the field values on ListSquadsResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ListSquadsResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListSquadsResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ListSquadsResponseMultiError, or nil if none found.
+func (m *ListSquadsResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListSquadsResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return ListSquadsResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// ListSquadsResponseMultiError is an error wrapping multiple validation errors
+// returned by ListSquadsResponse.ValidateAll() if the designated constraints
+// aren't met.
+type ListSquadsResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListSquadsResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListSquadsResponseMultiError) AllErrors() []error { return m }
+
+// ListSquadsResponseValidationError is the validation error returned by
+// ListSquadsResponse.Validate if the designated constraints aren't met.
+type ListSquadsResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListSquadsResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListSquadsResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListSquadsResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListSquadsResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListSquadsResponseValidationError) ErrorName() string {
+	return "ListSquadsResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ListSquadsResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListSquadsResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListSquadsResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListSquadsResponseValidationError{}
+
 // Validate checks the field values on CreateSquadRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.

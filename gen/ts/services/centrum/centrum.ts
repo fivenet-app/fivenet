@@ -6,6 +6,16 @@ import { MessageType } from "@protobuf-ts/runtime";
 // Squad Management
 
 /**
+ * @generated from protobuf message services.centrum.ListSquadsRequest
+ */
+export interface ListSquadsRequest {
+}
+/**
+ * @generated from protobuf message services.centrum.ListSquadsResponse
+ */
+export interface ListSquadsResponse {
+}
+/**
  * @generated from protobuf message services.centrum.CreateSquadRequest
  */
 export interface CreateSquadRequest {
@@ -136,6 +146,26 @@ export interface CentrumStreamRequest {
  */
 export interface CentrumStreamResponse {
 }
+// @generated message type with reflection information, may provide speed optimized methods
+class ListSquadsRequest$Type extends MessageType<ListSquadsRequest> {
+    constructor() {
+        super("services.centrum.ListSquadsRequest", []);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.centrum.ListSquadsRequest
+ */
+export const ListSquadsRequest = new ListSquadsRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ListSquadsResponse$Type extends MessageType<ListSquadsResponse> {
+    constructor() {
+        super("services.centrum.ListSquadsResponse", []);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.centrum.ListSquadsResponse
+ */
+export const ListSquadsResponse = new ListSquadsResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class CreateSquadRequest$Type extends MessageType<CreateSquadRequest> {
     constructor() {
@@ -311,6 +341,7 @@ export const CentrumStreamResponse = new CentrumStreamResponse$Type();
  * @generated ServiceType for protobuf service services.centrum.SquadService
  */
 export const SquadService = new ServiceType("services.centrum.SquadService", [
+    { name: "ListSquads", options: {}, I: ListSquadsRequest, O: ListSquadsResponse },
     { name: "CreateSquad", options: {}, I: CreateSquadRequest, O: CreateSquadResponse },
     { name: "UpdateSquad", options: {}, I: UpdateSquadRequest, O: UpdateSquadResponse },
     { name: "DeleteSquad", options: {}, I: DeleteSquadRequest, O: DeleteSquadResponse },

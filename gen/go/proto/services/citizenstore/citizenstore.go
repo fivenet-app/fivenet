@@ -111,7 +111,7 @@ func (s *Server) ListCitizens(ctx context.Context, req *ListCitizensRequest) (*L
 		case "UserProps.TrafficInfractionPoints":
 			selectors = append(selectors, tUserProps.TrafficInfractionPoints)
 			if req.TrafficPoints != nil && *req.TrafficPoints > 0 {
-				condition = condition.AND(tUserProps.TrafficInfractionPoints.GT(jet.Uint64(*req.TrafficPoints)))
+				condition = condition.AND(tUserProps.TrafficInfractionPoints.GT_EQ(jet.Uint64(*req.TrafficPoints)))
 			}
 		}
 	}
@@ -157,7 +157,7 @@ func (s *Server) ListCitizens(ctx context.Context, req *ListCitizensRequest) (*L
 		SELECT(
 			selectors[0], selectors[1:]...,
 		).
-		OPTIMIZER_HINTS(jet.OptimizerHint("idx_users_firstname_lastname")).
+		OPTIMIZER_HINTS(jet.OptimizerHint("idx_users_firstname_lastname_fulltext")).
 		FROM(tUser.
 			LEFT_JOIN(tUserProps,
 				tUserProps.UserID.EQ(tUser.ID),

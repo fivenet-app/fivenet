@@ -5,6 +5,12 @@ option go_package = "github.com/galexrt/fivenet/gen/go/proto/services/centrum;ce
 
 // Squad Management
 
+message ListSquadsRequest {}
+
+message ListSquadsResponse {
+
+}
+
 message CreateSquadRequest {
   string name = 1;
   optional uint64 limit = 2;
@@ -34,7 +40,9 @@ message AssignSquadRequest {
   repeated int32 to_remove = 3;
 }
 
-message AssignSquadResponse {}
+message AssignSquadResponse {
+  uint64 squad_id = 1;
+}
 
 message SquadStreamRequest {}
 
@@ -50,6 +58,8 @@ message SquadChanges {
 
 // Squad Management
 service SquadService {
+  // @perm
+  rpc ListSquads(ListSquadsRequest) returns (ListSquadsResponse);
   // @perm
   rpc CreateSquad(CreateSquadRequest) returns (CreateSquadResponse);
   // @perm: Name=CreateSquad

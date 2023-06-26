@@ -7,8 +7,6 @@ import (
 	"strings"
 	"time"
 
-	cache "github.com/Code-Hex/go-generics-cache"
-	"github.com/Code-Hex/go-generics-cache/policy/lru"
 	jobs "github.com/galexrt/fivenet/gen/go/proto/resources/jobs"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/livemap"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/timestamp"
@@ -16,6 +14,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/perms"
 	"github.com/galexrt/fivenet/pkg/utils"
+	"github.com/galexrt/fivenet/pkg/utils/syncx"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -50,8 +49,8 @@ type Server struct {
 	p      perms.Permissions
 	c      *mstlystcdata.Enricher
 
-	dispatchesCache *cache.Cache[string, []*livemap.DispatchMarker]
-	usersCache      *cache.Cache[string, []*livemap.UserMarker]
+	dispatchesCache syncx.Map[string, []*livemap.DispatchMarker]
+	usersCache      syncx.Map[string, []*livemap.UserMarker]
 
 	broker *utils.Broker[interface{}]
 
@@ -60,17 +59,6 @@ type Server struct {
 }
 
 func NewServer(ctx context.Context, logger *zap.Logger, tp *tracesdk.TracerProvider, db *sql.DB, p perms.Permissions, c *mstlystcdata.Enricher, refreshTime time.Duration, visibleJobs []string) *Server {
-	dispatchesCache := cache.NewContext(
-		ctx,
-		cache.AsLRU[string, []*livemap.DispatchMarker](lru.WithCapacity(len(visibleJobs))),
-		cache.WithJanitorInterval[string, []*livemap.DispatchMarker](90*time.Second),
-	)
-	usersCache := cache.NewContext(
-		ctx,
-		cache.AsLRU[string, []*livemap.UserMarker](lru.WithCapacity(len(visibleJobs))),
-		cache.WithJanitorInterval[string, []*livemap.UserMarker](90*time.Second),
-	)
-
 	broker := utils.NewBroker[interface{}](ctx)
 	go broker.Start()
 
@@ -83,8 +71,8 @@ func NewServer(ctx context.Context, logger *zap.Logger, tp *tracesdk.TracerProvi
 		p:      p,
 		c:      c,
 
-		dispatchesCache: dispatchesCache,
-		usersCache:      usersCache,
+		dispatchesCache: syncx.Map[string, []*livemap.DispatchMarker]{},
+		usersCache:      syncx.Map[string, []*livemap.UserMarker]{},
 
 		broker: broker,
 
@@ -100,7 +88,6 @@ func (s *Server) Start() {
 		select {
 		case <-s.ctx.Done():
 			return
-		// 3.85 seconds
 		case <-time.After(s.refreshTime):
 		}
 	}
@@ -210,7 +197,7 @@ func (s *Server) getUserLocations(jobs map[string]int32, userId int32, userJob s
 	ds := []*livemap.UserMarker{}
 
 	for job, grade := range jobs {
-		markers, ok := s.usersCache.Get(job)
+		markers, ok := s.usersCache.Load(job)
 		if !ok {
 			continue
 		}
@@ -230,7 +217,7 @@ func (s *Server) getUserDispatches(jobs []string) ([]*livemap.DispatchMarker, er
 	ds := []*livemap.DispatchMarker{}
 
 	for _, job := range jobs {
-		markers, ok := s.dispatchesCache.Get(job)
+		markers, ok := s.dispatchesCache.Load(job)
 		if !ok {
 			continue
 		}
@@ -296,7 +283,7 @@ func (s *Server) refreshUserLocations(ctx context.Context) error {
 		markers[job] = append(markers[job], dest[i])
 	}
 	for job, v := range markers {
-		s.usersCache.Set(job, v, cache.WithExpiration(10*time.Minute))
+		s.usersCache.Store(job, v)
 	}
 
 	return nil
@@ -397,7 +384,7 @@ func (s *Server) refreshDispatches(ctx context.Context) error {
 	}
 
 	for job, v := range markers {
-		s.dispatchesCache.Set(job, v, cache.WithExpiration(5*time.Minute))
+		s.dispatchesCache.Store(job, v)
 	}
 
 	return nil

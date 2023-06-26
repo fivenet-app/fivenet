@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { mdiAccountMultiple, mdiBriefcase, mdiCar, mdiFileDocumentMultiple, mdiMap } from '@mdi/js';
+import { mdiAccountMultiple, mdiBriefcase, mdiCar, mdiCarEmergency, mdiFileDocumentMultiple, mdiMap } from '@mdi/js';
 import Cards from '~/components/partials/Cards.vue';
 import ContentCenterWrapper from '~/components/partials/ContentCenterWrapper.vue';
 import { CardElements } from '~/utils/types';
@@ -65,9 +65,9 @@ const features = [
         description: t('pages.overview.features.livemap'),
         href: { name: 'centrum' },
         permission: 'CentrumService.Stream',
-        icon: mdiMap,
-        iconForeground: 'text-teal-900',
-        iconBackground: 'bg-teal-100',
+        icon: mdiCarEmergency,
+        iconForeground: 'text-red-900',
+        iconBackground: 'bg-red-100',
     },
 ] as CardElements;
 </script>

@@ -57,8 +57,20 @@ EXECUTE stmt;
 
 -- Table: users - Should already exist
 -- Add firstname + lastname fulltext index
-set @x := (select count(*) from information_schema.statistics where table_name = 'users' and index_name = 'users_firstname_IDX' and table_schema = database());
-set @sql := if( @x > 0, 'select ''users fulltext index exists.''', 'ALTER TABLE users ADD FULLTEXT KEY `users_firstname_IDX` (`firstname`,`lastname`);');
+set @x := (select count(*) from information_schema.statistics where table_name = 'users' and index_name = 'idx_users_firstname_lastname_fulltext' and table_schema = database());
+set @sql := if( @x > 0, 'select ''users fulltext index exists.''', 'ALTER TABLE users ADD FULLTEXT KEY `idx_users_firstname_lastname_fulltext` (`firstname`,`lastname`);');
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+
+-- Add dateofbirth index
+set @x := (select count(*) from information_schema.statistics where table_name = 'users' and index_name = 'idx_users_dateofbirth' and table_schema = database());
+set @sql := if( @x > 0, 'select ''users fulltext index exists.''', 'ALTER TABLE users ADD KEY `idx_users_dateofbirth` (`dateofbirth`);');
+PREPARE stmt FROM @sql;
+EXECUTE stmt;
+
+-- Add job index
+set @x := (select count(*) from information_schema.statistics where table_name = 'users' and index_name = 'idx_users_job' and table_schema = database());
+set @sql := if( @x > 0, 'select ''users fulltext index exists.''', 'ALTER TABLE users ADD KEY `idx_users_job` (`job`);');
 PREPARE stmt FROM @sql;
 EXECUTE stmt;
 
