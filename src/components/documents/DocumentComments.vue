@@ -2,6 +2,7 @@
 import { mdiCommentTextMultiple } from '@mdi/js';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import TablePagination from '~/components/partials/TablePagination.vue';
+import { can } from '~/plugins/1.vCan';
 import { useAuthStore } from '~/store/auth';
 import { PaginationResponse } from '~~/gen/ts/resources/common/database/database';
 import { DocumentComment } from '~~/gen/ts/resources/documents/documents';
@@ -101,6 +102,10 @@ async function removeComment(comment: DocumentComment): Promise<void> {
             return res();
         }
 
+        if (!can('DocStoreService.DeleteDocumentComment')) {
+            return res();
+        }
+
         const idx = comments.value.findIndex((c) => {
             return c.id === comment.id;
         });
@@ -126,45 +131,47 @@ watch(offset, async () => refresh());
 
 <template>
     <div class="pb-2">
-        <div v-if="!closed" v-can="'DocStoreService.PostDocumentComment'" class="flex items-start space-x-4">
-            <div class="min-w-0 flex-1">
-                <form @submit.prevent="addComment()" class="relative">
-                    <div
-                        class="overflow-hidden rounded-lg shadow-sm ring-1 ring-inset ring-gray-500 focus-within:ring-2 focus-within:ring-indigo-600"
-                    >
-                        <label for="comment" class="sr-only">
-                            {{ $t('components.documents.document_comments.add_comment') }}
-                        </label>
-                        <textarea
-                            rows="3"
-                            name="comment"
-                            class="block w-full resize-none border-0 bg-transparent text-gray-50 placeholder:text-gray-400 focus:ring-0 sm:py-1.5 sm:text-sm sm:leading-6"
-                            ref="commentInput"
-                            v-model="message"
-                            :placeholder="$t('components.documents.document_comments.add_comment')"
-                        />
+        <div v-can="'DocStoreService.PostDocumentComment'">
+            <div v-if="!closed" class="flex items-start space-x-4">
+                <div class="min-w-0 flex-1">
+                    <form @submit.prevent="addComment()" class="relative">
+                        <div
+                            class="overflow-hidden rounded-lg shadow-sm ring-1 ring-inset ring-gray-500 focus-within:ring-2 focus-within:ring-indigo-600"
+                        >
+                            <label for="comment" class="sr-only">
+                                {{ $t('components.documents.document_comments.add_comment') }}
+                            </label>
+                            <textarea
+                                rows="3"
+                                name="comment"
+                                class="block w-full resize-none border-0 bg-transparent text-gray-50 placeholder:text-gray-400 focus:ring-0 sm:py-1.5 sm:text-sm sm:leading-6"
+                                ref="commentInput"
+                                v-model="message"
+                                :placeholder="$t('components.documents.document_comments.add_comment')"
+                            />
 
-                        <!-- Spacer element to match the height of the toolbar -->
-                        <div class="py-2" aria-hidden="true">
-                            <!-- Matches height of button in toolbar (1px border + 36px content height) -->
-                            <div class="py-px">
-                                <div class="h-9" />
+                            <!-- Spacer element to match the height of the toolbar -->
+                            <div class="py-2" aria-hidden="true">
+                                <!-- Matches height of button in toolbar (1px border + 36px content height) -->
+                                <div class="py-px">
+                                    <div class="h-9" />
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="absolute inset-x-0 bottom-0 flex justify-between py-2 pl-3 pr-2">
-                        <div class="flex items-center space-x-5"></div>
-                        <div class="flex-shrink-0">
-                            <button
-                                type="submit"
-                                class="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-                            >
-                                {{ $t('common.post') }}
-                            </button>
+                        <div class="absolute inset-x-0 bottom-0 flex justify-between py-2 pl-3 pr-2">
+                            <div class="flex items-center space-x-5"></div>
+                            <div class="flex-shrink-0">
+                                <button
+                                    type="submit"
+                                    class="inline-flex items-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+                                >
+                                    {{ $t('common.post') }}
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
@@ -177,7 +184,6 @@ watch(offset, async () => refresh());
         />
         <div
             v-else
-            v-can="'DocStoreService.DeleteDocumentComment'"
             class="flow-root rounded-lg text-neutral rounded-lg shadow-sm ring-1 ring-inset ring-gray-500 focus-within:ring-2 focus-within:ring-indigo-600"
         >
             <ul role="list" class="divide-y divide-gray-200 px-4">

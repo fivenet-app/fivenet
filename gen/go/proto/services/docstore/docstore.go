@@ -327,6 +327,19 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 		return nil, status.Error(codes.Canceled, "Document is closed and can't be edited!")
 	}
 
+	// Field Permission Check
+	fieldsAttr, err := s.p.Attr(userInfo, DocStoreServicePerm, DocStoreServiceUpdateDocumentPerm, DocStoreServiceUpdateDocumentAccessPermField)
+	if err != nil {
+		return nil, ErrFailedQuery
+	}
+	var fields perms.StringList
+	if fieldsAttr != nil {
+		fields = fieldsAttr.([]string)
+	}
+	if !s.checkIfHasAccess(fields, userInfo, doc.Creator) {
+		return nil, status.Error(codes.PermissionDenied, "You don't have permission to edit this document!")
+	}
+
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
