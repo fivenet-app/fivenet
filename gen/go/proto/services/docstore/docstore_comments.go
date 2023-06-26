@@ -8,6 +8,7 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/htmlsanitizer"
+	"github.com/galexrt/fivenet/pkg/perms"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -25,7 +26,7 @@ var (
 
 func (s *Server) GetDocumentComments(ctx context.Context, req *GetDocumentCommentsRequest) (*GetDocumentCommentsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-	ok, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, true, documents.ACCESS_LEVEL_VIEW)
+	ok, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.ACCESS_LEVEL_VIEW)
 	if err != nil {
 		return nil, err
 	}
@@ -134,7 +135,7 @@ func (s *Server) PostDocumentComment(ctx context.Context, req *PostDocumentComme
 	}
 	defer s.a.AddEntryWithData(auditEntry, req)
 
-	check, err := s.checkIfUserHasAccessToDoc(ctx, req.Comment.DocumentId, userInfo, false, documents.ACCESS_LEVEL_COMMENT)
+	check, err := s.checkIfUserHasAccessToDoc(ctx, req.Comment.DocumentId, userInfo, documents.ACCESS_LEVEL_COMMENT)
 	if err != nil {
 		return nil, err
 	}
@@ -186,7 +187,7 @@ func (s *Server) EditDocumentComment(ctx context.Context, req *EditDocumentComme
 	}
 	defer s.a.AddEntryWithData(auditEntry, req)
 
-	check, err := s.checkIfUserHasAccessToDoc(ctx, req.Comment.DocumentId, userInfo, false, documents.ACCESS_LEVEL_COMMENT)
+	check, err := s.checkIfUserHasAccessToDoc(ctx, req.Comment.DocumentId, userInfo, documents.ACCESS_LEVEL_COMMENT)
 	if err != nil {
 		return nil, err
 	}
@@ -198,7 +199,7 @@ func (s *Server) EditDocumentComment(ctx context.Context, req *EditDocumentComme
 	if err != nil {
 		return nil, err
 	}
-	if *comment.CreatorId != userInfo.UserId {
+	if !userInfo.SuperUser && *comment.CreatorId != userInfo.UserId {
 		return nil, status.Error(codes.PermissionDenied, "You can't edit others document comments!")
 	}
 
@@ -272,8 +273,25 @@ func (s *Server) DeleteDocumentComment(ctx context.Context, req *DeleteDocumentC
 	if err != nil {
 		return nil, err
 	}
-	// If the requestor is not the creator nor a superuser
-	if *comment.CreatorId != userInfo.UserId && !userInfo.SuperUser {
+
+	check, err := s.checkIfUserHasAccessToDoc(ctx, comment.DocumentId, userInfo, documents.ACCESS_LEVEL_COMMENT)
+	if err != nil {
+		return nil, err
+	}
+	if !check {
+		return nil, status.Error(codes.PermissionDenied, "You can't delete document comments!")
+	}
+
+	// Field Permission Check
+	fieldsAttr, err := s.p.Attr(userInfo, DocStoreServicePerm, DocStoreServiceDeleteDocumentCommentPerm, DocStoreServiceDeleteDocumentCommentAccessPermField)
+	if err != nil {
+		return nil, ErrFailedQuery
+	}
+	var fields perms.StringList
+	if fieldsAttr != nil {
+		fields = fieldsAttr.([]string)
+	}
+	if !s.checkIfHasAccess(fields, userInfo, comment.Creator) {
 		return nil, status.Error(codes.PermissionDenied, "You can't delete others document comments!")
 	}
 

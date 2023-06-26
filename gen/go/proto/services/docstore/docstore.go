@@ -156,7 +156,7 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 	}
 	defer s.a.AddEntryWithData(auditEntry, req)
 
-	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, false, documents.ACCESS_LEVEL_VIEW)
+	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.ACCESS_LEVEL_VIEW)
 	if err != nil {
 		return nil, ErrNotFoundOrNoPerms
 	}
@@ -305,7 +305,7 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 	}
 	defer s.a.AddEntryWithData(auditEntry, req)
 
-	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, false, documents.ACCESS_LEVEL_EDIT)
+	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.ACCESS_LEVEL_EDIT)
 	if err != nil {
 		return nil, ErrNotFoundOrNoPerms
 	}
@@ -393,11 +393,21 @@ func (s *Server) DeleteDocument(ctx context.Context, req *DeleteDocumentRequest)
 	}
 	defer s.a.AddEntryWithData(auditEntry, req)
 
-	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, false, documents.ACCESS_LEVEL_EDIT)
+	doc, err := s.getDocument(ctx, tDocs.ID.EQ(jet.Uint64(req.DocumentId)), userInfo)
 	if err != nil {
 		return nil, ErrFailedQuery
 	}
-	if !check && !userInfo.SuperUser {
+
+	// Field Permission Check
+	fieldsAttr, err := s.p.Attr(userInfo, DocStoreServicePerm, DocStoreServiceDeleteDocumentPerm, DocStoreServiceDeleteDocumentAccessPermField)
+	if err != nil {
+		return nil, ErrFailedQuery
+	}
+	var fields perms.StringList
+	if fieldsAttr != nil {
+		fields = fieldsAttr.([]string)
+	}
+	if !s.checkIfHasAccess(fields, userInfo, doc.Creator) {
 		return nil, status.Error(codes.PermissionDenied, "You don't have permission to delete this document!")
 	}
 

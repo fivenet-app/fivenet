@@ -5,7 +5,9 @@ import (
 	"errors"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/documents"
+	"github.com/galexrt/fivenet/gen/go/proto/resources/users"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
+	"github.com/galexrt/fivenet/pkg/utils"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
@@ -240,17 +242,17 @@ func (s *Server) getDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pro
 		)
 }
 
-func (s *Server) checkIfUserHasAccessToDoc(ctx context.Context, documentId uint64, userInfo *userinfo.UserInfo, publicOk bool, access documents.ACCESS_LEVEL) (bool, error) {
-	out, err := s.checkIfUserHasAccessToDocIDs(ctx, userInfo, publicOk, access, documentId)
+func (s *Server) checkIfUserHasAccessToDoc(ctx context.Context, documentId uint64, userInfo *userinfo.UserInfo, access documents.ACCESS_LEVEL) (bool, error) {
+	out, err := s.checkIfUserHasAccessToDocIDs(ctx, userInfo, access, documentId)
 	return len(out) > 0, err
 }
 
-func (s *Server) checkIfUserHasAccessToDocs(ctx context.Context, userInfo *userinfo.UserInfo, publicOk bool, access documents.ACCESS_LEVEL, documentIds ...uint64) (bool, error) {
-	out, err := s.checkIfUserHasAccessToDocIDs(ctx, userInfo, publicOk, access, documentIds...)
+func (s *Server) checkIfUserHasAccessToDocs(ctx context.Context, userInfo *userinfo.UserInfo, access documents.ACCESS_LEVEL, documentIds ...uint64) (bool, error) {
+	out, err := s.checkIfUserHasAccessToDocIDs(ctx, userInfo, access, documentIds...)
 	return len(out) == len(documentIds), err
 }
 
-func (s *Server) checkIfUserHasAccessToDocIDs(ctx context.Context, userInfo *userinfo.UserInfo, publicOk bool, access documents.ACCESS_LEVEL, documentIds ...uint64) ([]uint64, error) {
+func (s *Server) checkIfUserHasAccessToDocIDs(ctx context.Context, userInfo *userinfo.UserInfo, access documents.ACCESS_LEVEL, documentIds ...uint64) ([]uint64, error) {
 	if len(documentIds) == 0 {
 		return documentIds, nil
 	}
@@ -264,6 +266,23 @@ func (s *Server) checkIfUserHasAccessToDocIDs(ctx context.Context, userInfo *use
 	for i := 0; i < len(documentIds); i++ {
 		ids[i] = jet.Uint64(documentIds[i])
 	}
+
+	condition := jet.AND(
+		tDocs.ID.IN(ids...),
+		tDocs.DeletedAt.IS_NULL(),
+		jet.OR(
+			tDocs.CreatorID.EQ(jet.Int32(userInfo.UserId)),
+			jet.AND(
+				tDUserAccess.Access.IS_NOT_NULL(),
+				tDUserAccess.Access.GT_EQ(jet.Int32(int32(access))),
+			),
+			jet.AND(
+				tDUserAccess.Access.IS_NULL(),
+				tDJobAccess.Access.IS_NOT_NULL(),
+				tDJobAccess.Access.GT_EQ(jet.Int32(int32(access))),
+			),
+		),
+	)
 
 	stmt := tDocs.
 		SELECT(
@@ -280,23 +299,7 @@ func (s *Server) checkIfUserHasAccessToDocIDs(ctx context.Context, userInfo *use
 						AND(tDJobAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
 				),
 		).
-		WHERE(jet.AND(
-			tDocs.ID.IN(ids...),
-			tDocs.DeletedAt.IS_NULL(),
-			jet.OR(
-				tDocs.Public.IS_TRUE(),
-				tDocs.CreatorID.EQ(jet.Int32(userInfo.UserId)),
-				jet.AND(
-					tDUserAccess.Access.IS_NOT_NULL(),
-					tDUserAccess.Access.GT_EQ(jet.Int32(int32(access))),
-				),
-				jet.AND(
-					tDUserAccess.Access.IS_NULL(),
-					tDJobAccess.Access.IS_NOT_NULL(),
-					tDJobAccess.Access.GT_EQ(jet.Int32(int32(access))),
-				),
-			),
-		)).
+		WHERE(condition).
 		GROUP_BY(tDocs.ID).
 		ORDER_BY(tDocs.ID.DESC(), tDJobAccess.MinimumGrade)
 
@@ -310,4 +313,37 @@ func (s *Server) checkIfUserHasAccessToDocIDs(ctx context.Context, userInfo *use
 	}
 
 	return dest.IDs, nil
+}
+
+func (s *Server) checkIfHasAccess(levels []string, userInfo *userinfo.UserInfo, creator *users.UserShort) bool {
+	if userInfo.SuperUser {
+		return true
+	}
+
+	if len(levels) == 0 {
+		return creator.UserId == userInfo.UserId
+	}
+
+	// Make sure both have the same job, otherwise things are fixed in stone
+	if creator.Job != userInfo.Job {
+		return false
+	}
+
+	if utils.InSlice(levels, "Lower_Rank") {
+		if creator.JobGrade < userInfo.JobGrade {
+			return true
+		}
+	}
+	if utils.InSlice(levels, "Same_Rank") {
+		if creator.JobGrade <= userInfo.JobGrade {
+			return true
+		}
+	}
+	if utils.InSlice(levels, "Own") {
+		if creator.UserId == userInfo.UserId {
+			return true
+		}
+	}
+
+	return false
 }

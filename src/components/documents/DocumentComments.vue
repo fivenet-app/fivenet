@@ -168,15 +168,19 @@ watch(offset, async () => refresh());
             </div>
         </div>
     </div>
-    <div class="bg-base-800">
+    <div>
         <DataNoDataBlock
             v-if="!comments || comments.length === 0"
             :message="$t('components.documents.document_comments.no_comments')"
             :icon="mdiCommentTextMultiple"
             :focus="focusComment"
         />
-        <div v-else v-can="'DocStoreService.DeleteDocumentComment'" class="flow-root px-4 rounded-lg text-neutral">
-            <ul role="list" class="divide-y divide-gray-200">
+        <div
+            v-else
+            v-can="'DocStoreService.DeleteDocumentComment'"
+            class="flow-root rounded-lg text-neutral rounded-lg shadow-sm ring-1 ring-inset ring-gray-500 focus-within:ring-2 focus-within:ring-indigo-600"
+        >
+            <ul role="list" class="divide-y divide-gray-200 px-4">
                 <DocumentCommentEntry
                     v-for="com in comments"
                     :key="com.id?.toString()"

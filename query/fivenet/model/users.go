@@ -14,7 +14,6 @@ import (
 type Users struct {
 	ID           int32      `json:"id"`
 	Identifier   string     `sql:"primary_key" json:"identifier"`
-	License      *string    `json:"license"`
 	Group        *string    `json:"group"`
 	Skin         *string    `json:"skin"`
 	Job          *string    `json:"job"`
@@ -42,6 +41,5 @@ type Users struct {
 	Armor        *int32     `json:"armor"`
 	CreatedAt    *time.Time `json:"created_at"`
 	LastSeen     *time.Time `json:"last_seen"`
-	Meta         *string    `json:"meta"`
 	Metadata     *string    `json:"metadata"`
 }

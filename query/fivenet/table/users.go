@@ -19,7 +19,6 @@ type usersTable struct {
 	// Columns
 	ID           mysql.ColumnInteger
 	Identifier   mysql.ColumnString
-	License      mysql.ColumnString
 	Group        mysql.ColumnString
 	Skin         mysql.ColumnString
 	Job          mysql.ColumnString
@@ -47,7 +46,6 @@ type usersTable struct {
 	Armor        mysql.ColumnInteger
 	CreatedAt    mysql.ColumnTimestamp
 	LastSeen     mysql.ColumnTimestamp
-	Meta         mysql.ColumnString
 	Metadata     mysql.ColumnString
 
 	AllColumns     mysql.ColumnList
@@ -91,7 +89,6 @@ func newUsersTableImpl(schemaName, tableName, alias string) usersTable {
 	var (
 		IDColumn           = mysql.IntegerColumn("id")
 		IdentifierColumn   = mysql.StringColumn("identifier")
-		LicenseColumn      = mysql.StringColumn("license")
 		GroupColumn        = mysql.StringColumn("group")
 		SkinColumn         = mysql.StringColumn("skin")
 		JobColumn          = mysql.StringColumn("job")
@@ -119,10 +116,9 @@ func newUsersTableImpl(schemaName, tableName, alias string) usersTable {
 		ArmorColumn        = mysql.IntegerColumn("armor")
 		CreatedAtColumn    = mysql.TimestampColumn("created_at")
 		LastSeenColumn     = mysql.TimestampColumn("last_seen")
-		MetaColumn         = mysql.StringColumn("meta")
 		MetadataColumn     = mysql.StringColumn("metadata")
-		allColumns         = mysql.ColumnList{IDColumn, IdentifierColumn, LicenseColumn, GroupColumn, SkinColumn, JobColumn, JobGradeColumn, LoadoutColumn, PositionColumn, FirstnameColumn, LastnameColumn, DateofbirthColumn, SexColumn, HeightColumn, IsDeadColumn, LastPropertyColumn, JailColumn, InventoryColumn, PhoneNumberColumn, AccountsColumn, TattoosColumn, DisabledColumn, VisumColumn, PlaytimeColumn, LevelDataColumn, OnDutyColumn, HealthColumn, ArmorColumn, CreatedAtColumn, LastSeenColumn, MetaColumn, MetadataColumn}
-		mutableColumns     = mysql.ColumnList{IDColumn, LicenseColumn, GroupColumn, SkinColumn, JobColumn, JobGradeColumn, LoadoutColumn, PositionColumn, FirstnameColumn, LastnameColumn, DateofbirthColumn, SexColumn, HeightColumn, IsDeadColumn, LastPropertyColumn, JailColumn, InventoryColumn, PhoneNumberColumn, AccountsColumn, TattoosColumn, DisabledColumn, VisumColumn, PlaytimeColumn, LevelDataColumn, OnDutyColumn, HealthColumn, ArmorColumn, CreatedAtColumn, LastSeenColumn, MetaColumn, MetadataColumn}
+		allColumns         = mysql.ColumnList{IDColumn, IdentifierColumn, GroupColumn, SkinColumn, JobColumn, JobGradeColumn, LoadoutColumn, PositionColumn, FirstnameColumn, LastnameColumn, DateofbirthColumn, SexColumn, HeightColumn, IsDeadColumn, LastPropertyColumn, JailColumn, InventoryColumn, PhoneNumberColumn, AccountsColumn, TattoosColumn, DisabledColumn, VisumColumn, PlaytimeColumn, LevelDataColumn, OnDutyColumn, HealthColumn, ArmorColumn, CreatedAtColumn, LastSeenColumn, MetadataColumn}
+		mutableColumns     = mysql.ColumnList{IDColumn, GroupColumn, SkinColumn, JobColumn, JobGradeColumn, LoadoutColumn, PositionColumn, FirstnameColumn, LastnameColumn, DateofbirthColumn, SexColumn, HeightColumn, IsDeadColumn, LastPropertyColumn, JailColumn, InventoryColumn, PhoneNumberColumn, AccountsColumn, TattoosColumn, DisabledColumn, VisumColumn, PlaytimeColumn, LevelDataColumn, OnDutyColumn, HealthColumn, ArmorColumn, CreatedAtColumn, LastSeenColumn, MetadataColumn}
 	)
 
 	return usersTable{
@@ -131,7 +127,6 @@ func newUsersTableImpl(schemaName, tableName, alias string) usersTable {
 		//Columns
 		ID:           IDColumn,
 		Identifier:   IdentifierColumn,
-		License:      LicenseColumn,
 		Group:        GroupColumn,
 		Skin:         SkinColumn,
 		Job:          JobColumn,
@@ -159,7 +154,6 @@ func newUsersTableImpl(schemaName, tableName, alias string) usersTable {
 		Armor:        ArmorColumn,
 		CreatedAt:    CreatedAtColumn,
 		LastSeen:     LastSeenColumn,
-		Meta:         MetaColumn,
 		Metadata:     MetadataColumn,
 
 		AllColumns:     allColumns,
