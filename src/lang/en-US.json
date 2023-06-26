@@ -967,6 +967,7 @@
         "AuthService": {
             "ErrGenericAccount": "Failed to get/update your account, please try again.",
             "ErrAccountCreateFailed": "Please check the token you have typed in!",
+            "ErrAccountExistsFailed": "Please use use the forgot password function!",
             "ErrInvalidLogin": "Wrong username or password.",
             "ErrNoAccount": "You need to use your registration token to create an account first.",
             "ErrNoCharFound": "No character(s) found for your account.",

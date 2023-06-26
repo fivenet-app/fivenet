@@ -129,5 +129,9 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await login(value
         </div>
     </div>
 
-    <Alert v-if="loginError" :title="$t('components.auth.login.login_error')" :message="loginError" />
+    <Alert
+        v-if="loginError"
+        :title="$t('components.auth.login.login_error')"
+        :message="loginError.startsWith('errors.') ? $t(loginError) : loginError"
+    />
 </template>

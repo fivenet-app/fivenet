@@ -37,15 +37,16 @@ var (
 )
 
 var (
-	ErrAccountCreateFailed = status.Error(codes.InvalidArgument, "errors.AuthService.ErrAccountCreateFailed")
-	ErrInvalidLogin        = status.Error(codes.InvalidArgument, "errors.AuthService.ErrInvalidLogin")
-	ErrNoAccount           = status.Error(codes.InvalidArgument, "errors.AuthService.ErrNoAccount")
-	ErrNoCharFound         = status.Error(codes.NotFound, "errors.AuthService.ErrNoCharFound")
-	ErrGenericLogin        = status.Error(codes.Internal, "errors.AuthService.ErrGenericLogin")
-	ErrUnableToChooseChar  = status.Error(codes.PermissionDenied, "errors.AuthService.ErrUnableToChooseChar")
-	ErrUpdateAccount       = status.Error(codes.InvalidArgument, "errors.AuthService.ErrUpdateAccount")
-	ErrChangePassword      = status.Error(codes.InvalidArgument, "errors.AuthService.ErrChangePassword")
-	ErrForgotPassword      = status.Error(codes.InvalidArgument, "errors.AuthService.ErrForgotPassword")
+	ErrAccountCreateFailed  = status.Error(codes.InvalidArgument, "errors.AuthService.ErrAccountCreateFailed")
+	ErrAccountAlreadyExists = status.Error(codes.InvalidArgument, "errors.AuthService.ErrAccountExistsFailed")
+	ErrInvalidLogin         = status.Error(codes.InvalidArgument, "errors.AuthService.ErrInvalidLogin")
+	ErrNoAccount            = status.Error(codes.InvalidArgument, "errors.AuthService.ErrNoAccount")
+	ErrNoCharFound          = status.Error(codes.NotFound, "errors.AuthService.ErrNoCharFound")
+	ErrGenericLogin         = status.Error(codes.Internal, "errors.AuthService.ErrGenericLogin")
+	ErrUnableToChooseChar   = status.Error(codes.PermissionDenied, "errors.AuthService.ErrUnableToChooseChar")
+	ErrUpdateAccount        = status.Error(codes.InvalidArgument, "errors.AuthService.ErrUpdateAccount")
+	ErrChangePassword       = status.Error(codes.InvalidArgument, "errors.AuthService.ErrChangePassword")
+	ErrForgotPassword       = status.Error(codes.InvalidArgument, "errors.AuthService.ErrForgotPassword")
 )
 
 type Server struct {
@@ -175,6 +176,10 @@ func (s *Server) CreateAccount(ctx context.Context, req *CreateAccountRequest) (
 		tAccounts.Password.IS_NULL(),
 	))
 	if err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, ErrAccountAlreadyExists
+		}
+
 		return nil, ErrAccountCreateFailed
 	}
 

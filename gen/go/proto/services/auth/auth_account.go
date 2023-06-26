@@ -30,10 +30,10 @@ func (s *Server) GetAccountInfo(ctx context.Context, req *GetAccountInfoRequest)
 
 	// Load account
 	acc, err := s.getAccountFromDB(ctx, tAccounts.ID.EQ(jet.Uint64(claims.AccID)))
-	if err != nil {
+	if err != nil && !errors.Is(err, qrm.ErrNoRows) {
 		return nil, ErrGenericAccount
 	}
-	if acc.ID == 0 {
+	if acc == nil || acc.ID == 0 {
 		return nil, ErrGenericAccount
 	}
 

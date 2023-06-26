@@ -153,5 +153,9 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await createAccou
         </button>
     </div>
 
-    <Alert v-if="accountError" :title="$t('components.auth.create_account.create_error')" :message="accountError" />
+    <Alert
+        v-if="accountError"
+        :title="$t('components.auth.create_account.create_error')"
+        :message="accountError.startsWith('errors.') ? $t(accountError) : accountError"
+    />
 </template>

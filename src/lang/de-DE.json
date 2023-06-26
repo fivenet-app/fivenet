@@ -965,11 +965,12 @@
             "ErrPermissionDenied": "Du hast keine Berechtigung das zu tun!"
         },
         "AuthService": {
-            "ErrGenericAccount": "Fehler beim anzeigen/aktualisieren ihres Accounts.",
+            "ErrGenericAccount": "Fehler beim anzeigen/aktualisieren ihres Kontos.",
             "ErrAccountCreateFailed": "Bitte überprüfen sie ihren Registrierungstoken!",
+            "ErrAccountExistsFailed": "Bitte nutzen sie die Passwort vergessen Funktion!",
             "ErrInvalidLogin": "Falscher Username oder Passwort!",
-            "ErrNoAccount": "Sie müssen zuerst einen Account mit ihrem Registrierungstoken erstellen.",
-            "ErrNoCharFound": "Keine(n) Character für deinen Account gefunden.",
+            "ErrNoAccount": "Sie müssen zuerst ein Konto mit ihrem Registrierungstoken erstellen.",
+            "ErrNoCharFound": "Keine(n) Character für deinen Konto gefunden.",
             "ErrGenericLogin": "Fehler bei der Anmeldung, bitte versuche es erneut.",
             "ErrUnableToChooseChar": "Sie haben nicht genug Berechtigungen um den Character auszuwählen!",
             "ErrUpdateAccount": "Fehler beim aktualisieren ihres Benutzers!",
