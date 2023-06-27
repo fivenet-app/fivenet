@@ -68,11 +68,12 @@ async function streamNotifications(): Promise<void> {
 
             // If the response contains an (updated) token
             if (resp.token) {
-                const tokenUpdate = resp.token!;
-                console.debug('Notificator: New Token received');
+                const tokenUpdate = resp.token;
 
                 // Update active char when updated user info is received
                 if (tokenUpdate.userInfo) {
+                    console.debug('Notificator: Updated UserInfo received');
+
                     setActiveChar(tokenUpdate.userInfo);
                     setPermissions(tokenUpdate.permissions);
                     if (tokenUpdate.jobProps) {
@@ -83,6 +84,8 @@ async function streamNotifications(): Promise<void> {
                 }
 
                 if (tokenUpdate.newToken && tokenUpdate.expires) {
+                    console.debug('Notificator: New Token received');
+
                     setAccessToken(tokenUpdate.newToken, toDate(tokenUpdate.expires) as null | Date);
 
                     notifications.dispatchNotification({
