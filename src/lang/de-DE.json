@@ -489,8 +489,7 @@
         "deleted": "Gelöscht",
         "summary": "Zusammenfassung",
         "update": "Aktualisieren",
-        "dispatch_center": "Leitstelle",
-        "reset": "Zurücksetzen"
+        "dispatch_center": "Leitstelle"
     },
     "notifications": {
         "clipboard": {
@@ -696,6 +695,16 @@
                 "title": "Bürger-ID",
                 "content": "Bürger-ID in die Zwischenablage kopiert."
             }
+        },
+        "document_toggled": {
+            "open": {
+                "title": "Dokument geöffnet!",
+                "content": "Dokument wurde geöffnet."
+            },
+            "closed": {
+                "title": "Dokument geschlossen!",
+                "content": "Dokument wurde geschlossen."
+            }
         }
     },
     "enums": {
@@ -869,6 +878,15 @@
                     "Lower_Rank": "Niedrigerer Rang",
                     "Same_Rank": "Gleicher Rang"
                 }
+            },
+            "ToggleDocument": {
+                "key": "Dokument per Knopf öffnen/schließen",
+                "description": "Dokument per Knopf öffnen/schließen.",
+                "attrs": {
+                    "Own": "Eigene",
+                    "Lower_Rank": "Niedrigerer Rang",
+                    "Same_Rank": "Gleicher Rang"
+                }
             }
         },
         "LivemapperService": {
@@ -950,6 +968,9 @@
             },
             "DeleteDocumentComment": {
                 "Access": "Zugriff"
+            },
+            "ToggleDocument": {
+                "Access": "Zugriff"
             }
         }
     },
@@ -966,17 +987,17 @@
             "ErrPermissionDenied": "Du hast keine Berechtigung das zu tun!"
         },
         "AuthService": {
-            "ErrGenericAccount": "Fehler beim anzeigen/aktualisieren ihres Kontos.",
+            "ErrGenericAccount": "Fehler beim anzeigen/aktualisieren ihres Accounts.",
             "ErrAccountCreateFailed": "Bitte überprüfen sie ihren Registrierungstoken!",
-            "ErrAccountExistsFailed": "Bitte nutzen sie die Passwort vergessen Funktion!",
             "ErrInvalidLogin": "Falscher Username oder Passwort!",
-            "ErrNoAccount": "Sie müssen zuerst ein Konto mit ihrem Registrierungstoken erstellen.",
-            "ErrNoCharFound": "Keine(n) Character für deinen Konto gefunden.",
+            "ErrNoAccount": "Sie müssen zuerst einen Account mit ihrem Registrierungstoken erstellen.",
+            "ErrNoCharFound": "Keine(n) Character für deinen Account gefunden.",
             "ErrGenericLogin": "Fehler bei der Anmeldung, bitte versuche es erneut.",
             "ErrUnableToChooseChar": "Sie haben nicht genug Berechtigungen um den Character auszuwählen!",
             "ErrUpdateAccount": "Fehler beim aktualisieren ihres Benutzers!",
             "ErrChangePassword": "Fehler beim ändern ihres Passworts!",
-            "ErrForgotPassword": "Fehler beim zurücksetzen ihres Passworts!"
+            "ErrForgotPassword": "Fehler beim zurücksetzen ihres Passworts!",
+            "ErrAccountExistsFailed": "Bitte nutzen sie die Passwort vergessen Funktion!"
         },
         "CitizenStoreService": {
             "ErrFailedQuery": "Fehler beim laden von Bürger Daten!",
@@ -1017,7 +1038,7 @@
         },
         "empty": {
             "title": "Keine Ergebnisse gefunden.",
-            "content": "Es konnte nichts gefunden werden."
+            "content": "Es konnte nichts"
         },
         "groups": {
             "shortcuts": {
