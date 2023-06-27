@@ -45,6 +45,24 @@ export interface Dispatch {
      * @generated from protobuf field: optional resources.timestamp.Timestamp updated_at = 3;
      */
     updatedAt?: Timestamp; // @gotags: alias:"updated_at"
+    /**
+     * @generated from protobuf field: optional resources.dispatch.DISPATCH_STATUS status = 4;
+     */
+    status?: DISPATCH_STATUS;
+    /**
+     * @generated from protobuf field: string title = 5;
+     */
+    title: string;
+    /**
+     * @generated from protobuf field: optional string description = 6;
+     */
+    description?: string;
+    /**
+     * @generated from protobuf field: map<string, string> attributes = 7;
+     */
+    attributes: {
+        [key: string]: string;
+    };
 }
 /**
  * @generated from protobuf enum resources.dispatch.SQUAD_STATUS
@@ -82,7 +100,11 @@ export enum DISPATCH_STATUS {
     /**
      * @generated from protobuf enum value: AT_SCENE = 2;
      */
-    AT_SCENE = 2
+    AT_SCENE = 2,
+    /**
+     * @generated from protobuf enum value: NEED_BACKUP = 3;
+     */
+    NEED_BACKUP = 3
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Squad$Type extends MessageType<Squad> {
@@ -106,7 +128,11 @@ class Dispatch$Type extends MessageType<Dispatch> {
         super("resources.dispatch.Dispatch", [
             { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
-            { no: 3, name: "updated_at", kind: "message", T: () => Timestamp }
+            { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
+            { no: 4, name: "status", kind: "enum", opt: true, T: () => ["resources.dispatch.DISPATCH_STATUS", DISPATCH_STATUS] },
+            { no: 5, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 6, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 7, name: "attributes", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "scalar", T: 9 /*ScalarType.STRING*/ } }
         ]);
     }
 }

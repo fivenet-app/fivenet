@@ -1,11 +1,20 @@
 <script lang="ts" setup>
+import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
+
 const dispatches = [
     {
         id: 1,
-        unit: 'AAPS0L',
-        status: 'Chase & Co.',
-        prio: 'CAC',
-        postal: '+$4.37',
+        unit: 'David 1',
+        status: 'EN ROUTE',
+        prio: '',
+        postal: '8040',
+    },
+    {
+        id: 2,
+        unit: 'Overwatch 1',
+        status: 'EN ROUTE',
+        prio: '',
+        postal: '8040',
     },
 ];
 </script>
@@ -23,6 +32,12 @@ const dispatches = [
                     <table class="min-w-full divide-y divide-gray-300">
                         <thead>
                             <tr>
+                                <th
+                                    scope="col"
+                                    class="whitespace-nowrap py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-100 sm:pl-0"
+                                >
+                                    ID
+                                </th>
                                 <th
                                     scope="col"
                                     class="whitespace-nowrap py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-100 sm:pl-0"
@@ -45,7 +60,7 @@ const dispatches = [
                                     scope="col"
                                     class="whitespace-nowrap px-2 py-3.5 text-left text-sm font-semibold text-gray-100"
                                 >
-                                    PIN
+                                    {{ $t('common.postal') }}
                                 </th>
                                 <th scope="col" class="relative whitespace-nowrap py-3.5 pl-3 pr-4 sm:pr-0">
                                     <span class="sr-only">Edit</span>
@@ -55,6 +70,9 @@ const dispatches = [
                         <tbody class="divide-y divide-gray-200">
                             <tr v-for="dispatch in dispatches" :key="dispatch.id">
                                 <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm text-gray-300 sm:pl-0">
+                                    <IDCopyBadge :id="dispatch.id.toString()" prefix="DSP" class="w-28" />
+                                </td>
+                                <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm text-gray-300 sm:pl-0">
                                     {{ dispatch.unit }}
                                 </td>
                                 <td class="whitespace-nowrap px-2 py-2 text-sm font-medium text-gray-100">
@@ -63,9 +81,9 @@ const dispatches = [
                                 <td class="whitespace-nowrap px-2 py-2 text-sm text-gray-100">{{ dispatch.prio }}</td>
                                 <td class="whitespace-nowrap px-2 py-2 text-sm text-gray-300">{{ dispatch.postal }}</td>
                                 <td class="relative whitespace-nowrap py-2 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
-                                    <a href="#" class="text-primary-600 hover:text-primary-900"
-                                        >Edit<span class="sr-only">, {{ dispatch.id }}</span></a
-                                    >
+                                    <a href="#" class="text-primary-400 hover:text-primary-600">
+                                        Edit<span class="sr-only">, {{ dispatch.id }}</span>
+                                    </a>
                                 </td>
                             </tr>
                         </tbody>

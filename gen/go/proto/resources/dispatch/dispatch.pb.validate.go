@@ -219,6 +219,10 @@ func (m *Dispatch) validate(all bool) error {
 
 	// no validation rules for Id
 
+	// no validation rules for Title
+
+	// no validation rules for Attributes
+
 	if m.CreatedAt != nil {
 
 		if all {
@@ -283,6 +287,14 @@ func (m *Dispatch) validate(all bool) error {
 			}
 		}
 
+	}
+
+	if m.Status != nil {
+		// no validation rules for Status
+	}
+
+	if m.Description != nil {
+		// no validation rules for Description
 	}
 
 	if len(errors) > 0 {

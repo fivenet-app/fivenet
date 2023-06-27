@@ -337,7 +337,7 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 		fields = fieldsAttr.([]string)
 	}
 	if !s.checkIfHasAccess(fields, userInfo, doc.Creator) {
-		return nil, status.Error(codes.PermissionDenied, "You don't have permission to edit this document!")
+		return nil, status.Error(codes.PermissionDenied, "You don't have permission to edit other's document!")
 	}
 
 	// Begin transaction
@@ -406,6 +406,16 @@ func (s *Server) DeleteDocument(ctx context.Context, req *DeleteDocumentRequest)
 	}
 	defer s.a.AddEntryWithData(auditEntry, req)
 
+	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.ACCESS_LEVEL_EDIT)
+	if err != nil {
+		return nil, ErrNotFoundOrNoPerms
+	}
+	if !check {
+		if !userInfo.SuperUser {
+			return nil, status.Error(codes.PermissionDenied, "You don't have permission to delete this document!")
+		}
+	}
+
 	doc, err := s.getDocument(ctx, tDocs.ID.EQ(jet.Uint64(req.DocumentId)), userInfo)
 	if err != nil {
 		return nil, ErrFailedQuery
@@ -421,7 +431,7 @@ func (s *Server) DeleteDocument(ctx context.Context, req *DeleteDocumentRequest)
 		fields = fieldsAttr.([]string)
 	}
 	if !s.checkIfHasAccess(fields, userInfo, doc.Creator) {
-		return nil, status.Error(codes.PermissionDenied, "You don't have permission to delete this document!")
+		return nil, status.Error(codes.PermissionDenied, "You don't have permission to delete other's document!")
 	}
 
 	stmt := tDocs.
