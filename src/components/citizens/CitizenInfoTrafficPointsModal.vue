@@ -68,7 +68,6 @@ interface FormData {
 
 const { handleSubmit, meta, setFieldValue } = useForm<FormData>({
     initialValues: {
-        reason: '',
         trafficPoints: 0,
     },
     validationSchema: {
@@ -168,7 +167,11 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await setTrafficP
                                         {{ $t('common.reset') }}
                                     </button>
                                     <button
-                                        type="submit"
+                                        @click="
+                                            setFieldValue('reset', false);
+                                            onSubmit();
+                                        "
+                                        type="button"
                                         class="flex-1 rounded-bd py-2.5 px-3.5 text-sm font-semibold text-neutral"
                                         :disabled="!meta.valid"
                                         :class="[
