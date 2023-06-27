@@ -489,7 +489,8 @@
         "deleted": "Deleted",
         "summary": "Summary",
         "update": "Update",
-        "dispatch_center": "Dispatch Center"
+        "dispatch_center": "Dispatch Center",
+        "reset": "Reset"
     },
     "notifications": {
         "clipboard": {
