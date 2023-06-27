@@ -18,12 +18,11 @@ const authStore = useAuthStore();
 const documentEditorStore = useDocumentEditorStore();
 
 const { setActiveChar, setPermissions, setJobProps } = authStore;
-const { clear } = documentEditorStore;
 
 setActiveChar(null);
 setPermissions([]);
 setJobProps(null);
-clear();
+documentEditorStore.clear();
 </script>
 
 <template>

@@ -517,7 +517,7 @@ async function submitForm(): Promise<void> {
                 content: { key: 'notifications.document_created.content', parameters: [] },
                 type: 'success',
             });
-            clipboardStore.clearActiveStack();
+            clipboardStore.clear();
             documentStore.clear();
 
             await navigateTo({
@@ -623,7 +623,7 @@ async function editForm(): Promise<void> {
                 content: { key: 'notifications.document_updated.content', parameters: [] },
                 type: 'success',
             });
-            clipboardStore.clearActiveStack();
+            clipboardStore.clear();
             documentStore.clear();
 
             await navigateTo({

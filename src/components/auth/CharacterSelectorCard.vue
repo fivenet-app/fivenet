@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
+import { useClipboardStore } from 'store/clipboard';
 import { parseQuery } from 'vue-router';
 import CharSexBadge from '~/components/citizens/CharSexBadge.vue';
 import { useAuthStore } from '~/store/auth';
@@ -8,6 +9,7 @@ import { User } from '~~/gen/ts/resources/users/users';
 
 const { $grpc } = useNuxtApp();
 const authStore = useAuthStore();
+const clipboardStore = useClipboardStore();
 const route = useRoute();
 
 const { lastCharID } = storeToRefs(authStore);
@@ -20,6 +22,10 @@ const props = defineProps<{
 async function chooseCharacter(): Promise<void> {
     return new Promise(async (res, rej) => {
         try {
+            if (authStore.lastCharID !== props.char.userId) {
+                clipboardStore.clear();
+            }
+
             const call = $grpc.getAuthClient().chooseCharacter({
                 charId: props.char.userId,
             });
