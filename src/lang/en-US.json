@@ -489,8 +489,7 @@
         "deleted": "Deleted",
         "summary": "Summary",
         "update": "Update",
-        "dispatch_center": "Dispatch Center",
-        "reset": "Reset"
+        "dispatch_center": "Dispatch Center"
     },
     "notifications": {
         "clipboard": {
@@ -615,16 +614,6 @@
             "title": "Document deleted!",
             "content": "Document has been deleted."
         },
-        "document_toggled": {
-            "open": {
-                "title": "Document opened!",
-                "content": "Document has been opened."
-            },
-            "closed": {
-                "title": "Document closed!",
-                "content": "Document has been closed."
-            }
-        },
         "renewed_token": {
             "title": "Access Token renewed",
             "content": "Your access token has been automatically renewed."
@@ -705,6 +694,16 @@
             "copy_citizen_id": {
                 "title": "Citizen ID",
                 "content": "Citizen ID copied to clipboard."
+            }
+        },
+        "document_toggled": {
+            "open": {
+                "title": "Document opened!",
+                "content": "Document has been opened."
+            },
+            "closed": {
+                "title": "Document closed!",
+                "content": "Document has been closed."
             }
         }
     },
@@ -990,7 +989,6 @@
         "AuthService": {
             "ErrGenericAccount": "Failed to get/update your account, please try again.",
             "ErrAccountCreateFailed": "Please check the token you have typed in!",
-            "ErrAccountExistsFailed": "Please use use the forgot password function!",
             "ErrInvalidLogin": "Wrong username or password.",
             "ErrNoAccount": "You need to use your registration token to create an account first.",
             "ErrNoCharFound": "No character(s) found for your account.",
@@ -998,7 +996,8 @@
             "ErrUnableToChooseChar": "You don't have permission to select this character!",
             "ErrUpdateAccount": "Failed to update your account!",
             "ErrChangePassword": "Failed to change your password!",
-            "ErrForgotPassword": "Failed to reset password!"
+            "ErrForgotPassword": "Failed to reset password!",
+            "ErrAccountExistsFailed": "Please use use the forgot password function!"
         },
         "CitizenStoreService": {
             "ErrFailedQuery": "Failed to list/get citizen(s) data!",
