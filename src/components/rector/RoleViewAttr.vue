@@ -27,12 +27,11 @@ const emit = defineEmits<{
 
 const states = ref<typeof props.states>(props.states);
 const id = ref<bigint>(props.attribute.attrId);
-const maxValues = props.attribute.maxValues;
 
 const jobGrades = ref<Map<string, JobGrade>>(new Map());
 
 const validValues = ref<AttributeValues | undefined>(props.attribute.validValues);
-if (!states.value.has(id.value)) {
+if (!states.value.has(id.value) || states.value.get(id.value) === undefined) {
     switch (lowercaseFirstLetter(props.attribute.type)) {
         case 'stringList':
             states.value.set(id.value, {
@@ -65,6 +64,44 @@ if (!states.value.has(id.value)) {
                     },
                 },
             });
+            break;
+    }
+}
+
+let maxValues = props.attribute.maxValues;
+if (maxValues === undefined) {
+    switch (lowercaseFirstLetter(props.attribute.type)) {
+        case 'stringList':
+            maxValues = {
+                validValues: {
+                    oneofKind: 'stringList',
+                    stringList: {
+                        strings: [],
+                    },
+                },
+            };
+            break;
+
+        case 'jobList':
+            maxValues = {
+                validValues: {
+                    oneofKind: 'jobList',
+                    jobList: {
+                        strings: [],
+                    },
+                },
+            };
+            break;
+
+        case 'jobGradeList':
+            maxValues = {
+                validValues: {
+                    oneofKind: 'jobGradeList',
+                    jobGradeList: {
+                        jobs: {},
+                    },
+                },
+            };
             break;
     }
 }
