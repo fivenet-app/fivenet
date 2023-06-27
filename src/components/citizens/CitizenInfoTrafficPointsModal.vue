@@ -20,21 +20,24 @@ const emits = defineEmits<{
 
 async function setTrafficPoints(values: FormData): Promise<void> {
     return new Promise(async (res, rej) => {
+        const points = values.reset ? BigInt(0) : (props.user.props?.trafficInfractionPoints ?? 0n) + values.trafficPoints;
+
         const userProps: UserProps = {
             userId: props.user.userId,
-            trafficInfractionPoints: BigInt(values.trafficPoints),
+            trafficInfractionPoints: points,
         };
 
         try {
-            await $grpc.getCitizenStoreClient().setUserProps({
+            const call = $grpc.getCitizenStoreClient().setUserProps({
                 props: userProps,
                 reason: values.reason,
             });
+            const { response } = await call;
 
-            if (!props.user.props) {
-                props.user.props = userProps;
+            if (props.user.props === undefined) {
+                props.user.props = response.props;
             } else {
-                props.user.props!.trafficInfractionPoints = BigInt(values.trafficPoints);
+                props.user.props!.trafficInfractionPoints = response.props?.trafficInfractionPoints;
             }
 
             notifications.dispatchNotification({
@@ -60,15 +63,13 @@ defineRule('numeric', numeric);
 interface FormData {
     reason: string;
     trafficPoints: number;
+    reset?: boolean;
 }
 
-const { handleSubmit, meta } = useForm<FormData>({
+const { handleSubmit, meta, setFieldValue } = useForm<FormData>({
     initialValues: {
         reason: '',
-        trafficPoints:
-            props.user.props && props.user.props.trafficInfractionPoints
-                ? parseInt(props.user.props.trafficInfractionPoints.toString())
-                : 0,
+        trafficPoints: 0,
     },
     validationSchema: {
         reason: { required: true, min: 3, max: 255 },
@@ -151,6 +152,22 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await setTrafficP
                                         {{ $t('common.close', 1) }}
                                     </button>
                                     <button
+                                        @click="
+                                            setFieldValue('reset', true);
+                                            onSubmit();
+                                        "
+                                        type="button"
+                                        class="flex-1 rounded-bd py-2.5 px-3.5 text-sm font-semibold text-neutral"
+                                        :disabled="!meta.valid"
+                                        :class="[
+                                            !meta.valid
+                                                ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
+                                                : 'bg-error-500 hover:bg-error-400 focus-visible:outline-error-500',
+                                        ]"
+                                    >
+                                        {{ $t('common.reset') }}
+                                    </button>
+                                    <button
                                         type="submit"
                                         class="flex-1 rounded-bd py-2.5 px-3.5 text-sm font-semibold text-neutral"
                                         :disabled="!meta.valid"
@@ -160,7 +177,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await setTrafficP
                                                 : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
                                         ]"
                                     >
-                                        {{ $t('common.save') }}
+                                        {{ $t('common.add') }}
                                     </button>
                                 </div>
                             </form>

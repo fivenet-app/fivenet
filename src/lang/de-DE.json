@@ -489,7 +489,8 @@
         "deleted": "Gelöscht",
         "summary": "Zusammenfassung",
         "update": "Aktualisieren",
-        "dispatch_center": "Leitstelle"
+        "dispatch_center": "Leitstelle",
+        "reset": "Zurücksetzen"
     },
     "notifications": {
         "clipboard": {

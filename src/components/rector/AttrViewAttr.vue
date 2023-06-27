@@ -30,10 +30,7 @@ const jobGrades = ref<Map<string, JobGrade>>(new Map());
 const states = ref<typeof props.states>(props.states);
 const id = ref<bigint>(props.attribute.attrId);
 
-const state: AttributeValues = states.value.get(id.value)!;
-const validValues = ref<AttributeValues | undefined>(props.attribute.validValues);
-
-if (!states.value.has(id.value)) {
+if (!states.value.has(id.value) || states.value.get(id.value) === undefined) {
     switch (lowercaseFirstLetter(props.attribute.type)) {
         case 'stringList':
             states.value.set(id.value, {
@@ -69,6 +66,9 @@ if (!states.value.has(id.value)) {
             break;
     }
 }
+
+const state: AttributeValues = states.value.get(id.value)!;
+const validValues = ref<AttributeValues | undefined>(props.attribute.validValues);
 
 async function toggleStringListValue(value: string): Promise<void> {
     if (state.validValues.oneofKind !== 'stringList') {

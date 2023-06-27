@@ -489,7 +489,8 @@
         "deleted": "Deleted",
         "summary": "Summary",
         "update": "Update",
-        "dispatch_center": "Dispatch Center"
+        "dispatch_center": "Dispatch Center",
+        "reset": "Reset"
     },
     "notifications": {
         "clipboard": {
@@ -878,6 +879,15 @@
                     "Lower_Rank": "Lower Rank",
                     "Same_Rank": "Same Rank"
                 }
+            },
+            "ToggleDocument": {
+                "key": "Toggle Document Open/Closed Status",
+                "description": "Toggle a document open/ closed.",
+                "attrs": {
+                    "Own": "Own",
+                    "Lower_Rank": "Lower Rank",
+                    "Same_Rank": "Same Rank"
+                }
             }
         },
         "LivemapperService": {
@@ -958,6 +968,9 @@
                 "Access": "Access"
             },
             "DeleteDocumentComment": {
+                "Access": "Access"
+            },
+            "ToggleDocument": {
                 "Access": "Access"
             }
         }
