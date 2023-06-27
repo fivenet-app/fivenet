@@ -489,7 +489,8 @@
         "deleted": "Gelöscht",
         "summary": "Zusammenfassung",
         "update": "Aktualisieren",
-        "dispatch_center": "Leitstelle"
+        "dispatch_center": "Leitstelle",
+        "reset": "Zurücksetzen"
     },
     "notifications": {
         "clipboard": {
@@ -1038,7 +1039,7 @@
         },
         "empty": {
             "title": "Keine Ergebnisse gefunden.",
-            "content": "Es konnte nichts"
+            "content": "Es konnte nichts gefunden werden. Versuchen sie es erneut."
         },
         "groups": {
             "shortcuts": {
