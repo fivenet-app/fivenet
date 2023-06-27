@@ -5153,6 +5153,214 @@ var _ interface {
 	ErrorName() string
 } = DeleteDocumentResponseValidationError{}
 
+// Validate checks the field values on ToggleDocumentRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ToggleDocumentRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ToggleDocumentRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ToggleDocumentRequestMultiError, or nil if none found.
+func (m *ToggleDocumentRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ToggleDocumentRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for DocumentId
+
+	// no validation rules for Closed
+
+	if len(errors) > 0 {
+		return ToggleDocumentRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// ToggleDocumentRequestMultiError is an error wrapping multiple validation
+// errors returned by ToggleDocumentRequest.ValidateAll() if the designated
+// constraints aren't met.
+type ToggleDocumentRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ToggleDocumentRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ToggleDocumentRequestMultiError) AllErrors() []error { return m }
+
+// ToggleDocumentRequestValidationError is the validation error returned by
+// ToggleDocumentRequest.Validate if the designated constraints aren't met.
+type ToggleDocumentRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ToggleDocumentRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ToggleDocumentRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ToggleDocumentRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ToggleDocumentRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ToggleDocumentRequestValidationError) ErrorName() string {
+	return "ToggleDocumentRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ToggleDocumentRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sToggleDocumentRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ToggleDocumentRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ToggleDocumentRequestValidationError{}
+
+// Validate checks the field values on ToggleDocumentResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ToggleDocumentResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ToggleDocumentResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ToggleDocumentResponseMultiError, or nil if none found.
+func (m *ToggleDocumentResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ToggleDocumentResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return ToggleDocumentResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// ToggleDocumentResponseMultiError is an error wrapping multiple validation
+// errors returned by ToggleDocumentResponse.ValidateAll() if the designated
+// constraints aren't met.
+type ToggleDocumentResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ToggleDocumentResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ToggleDocumentResponseMultiError) AllErrors() []error { return m }
+
+// ToggleDocumentResponseValidationError is the validation error returned by
+// ToggleDocumentResponse.Validate if the designated constraints aren't met.
+type ToggleDocumentResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ToggleDocumentResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ToggleDocumentResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ToggleDocumentResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ToggleDocumentResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ToggleDocumentResponseValidationError) ErrorName() string {
+	return "ToggleDocumentResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ToggleDocumentResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sToggleDocumentResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ToggleDocumentResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ToggleDocumentResponseValidationError{}
+
 // Validate checks the field values on GetDocumentAccessRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.

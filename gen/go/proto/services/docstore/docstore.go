@@ -453,3 +453,61 @@ func (s *Server) DeleteDocument(ctx context.Context, req *DeleteDocumentRequest)
 
 	return &DeleteDocumentResponse{}, nil
 }
+
+func (s *Server) ToggleDocument(ctx context.Context, req *ToggleDocumentRequest) (*ToggleDocumentResponse, error) {
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	auditEntry := &model.FivenetAuditLog{
+		Service: DocStoreService_ServiceDesc.ServiceName,
+		Method:  "ToggleDocument",
+		UserID:  userInfo.UserId,
+		UserJob: userInfo.Job,
+		State:   int16(rector.EVENT_TYPE_ERRORED),
+	}
+	defer s.a.AddEntryWithData(auditEntry, req)
+
+	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.ACCESS_LEVEL_EDIT)
+	if err != nil {
+		return nil, ErrNotFoundOrNoPerms
+	}
+	if !check {
+		if !userInfo.SuperUser {
+			return nil, status.Error(codes.PermissionDenied, "You don't have permission to close/open this document!")
+		}
+	}
+
+	doc, err := s.getDocument(ctx, tDocs.ID.EQ(jet.Uint64(req.DocumentId)), userInfo)
+	if err != nil {
+		return nil, ErrFailedQuery
+	}
+
+	// Field Permission Check
+	fieldsAttr, err := s.p.Attr(userInfo, DocStoreServicePerm, DocStoreServiceToggleDocumentPerm, DocStoreServiceToggleDocumentAccessPermField)
+	if err != nil {
+		return nil, ErrFailedQuery
+	}
+	var fields perms.StringList
+	if fieldsAttr != nil {
+		fields = fieldsAttr.([]string)
+	}
+	if !s.checkIfHasAccess(fields, userInfo, doc.Creator) {
+		return nil, status.Error(codes.PermissionDenied, "You don't have permission to close/open other's document!")
+	}
+
+	stmt := tDocs.
+		UPDATE(
+			tDocs.Closed,
+		).
+		SET(
+			tDocs.Closed.SET(jet.Bool(req.Closed)),
+		).
+		WHERE(
+			tDocs.ID.EQ(jet.Uint64(req.DocumentId)),
+		)
+
+	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+		return nil, ErrFailedQuery
+	}
+
+	return &ToggleDocumentResponse{}, nil
+}

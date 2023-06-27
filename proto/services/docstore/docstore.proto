@@ -192,6 +192,13 @@ message DeleteDocumentRequest {
 
 message DeleteDocumentResponse {}
 
+message ToggleDocumentRequest {
+  uint64 document_id = 1;
+  bool closed = 2;
+}
+
+message ToggleDocumentResponse {}
+
 // Access =================================================================
 message GetDocumentAccessRequest {
   uint64 document_id = 1;
@@ -275,6 +282,9 @@ service DocStoreService {
   rpc UpdateDocument(UpdateDocumentRequest) returns (UpdateDocumentResponse);
   // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
   rpc DeleteDocument(DeleteDocumentRequest) returns (DeleteDocumentResponse);
+
+  // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
+  rpc ToggleDocument(ToggleDocumentRequest) returns (ToggleDocumentResponse);
 
   // @perm: Name=GetDocument
   rpc GetDocumentReferences(GetDocumentReferencesRequest) returns (GetDocumentReferencesResponse);

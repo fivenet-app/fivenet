@@ -479,6 +479,24 @@ export interface DeleteDocumentRequest {
 export interface DeleteDocumentResponse {
 }
 /**
+ * @generated from protobuf message services.docstore.ToggleDocumentRequest
+ */
+export interface ToggleDocumentRequest {
+    /**
+     * @generated from protobuf field: uint64 document_id = 1;
+     */
+    documentId: bigint;
+    /**
+     * @generated from protobuf field: bool closed = 2;
+     */
+    closed: boolean;
+}
+/**
+ * @generated from protobuf message services.docstore.ToggleDocumentResponse
+ */
+export interface ToggleDocumentResponse {
+}
+/**
  * Access =================================================================
  *
  * @generated from protobuf message services.docstore.GetDocumentAccessRequest
@@ -1126,6 +1144,29 @@ class DeleteDocumentResponse$Type extends MessageType<DeleteDocumentResponse> {
  */
 export const DeleteDocumentResponse = new DeleteDocumentResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class ToggleDocumentRequest$Type extends MessageType<ToggleDocumentRequest> {
+    constructor() {
+        super("services.docstore.ToggleDocumentRequest", [
+            { no: 1, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 2, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.docstore.ToggleDocumentRequest
+ */
+export const ToggleDocumentRequest = new ToggleDocumentRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ToggleDocumentResponse$Type extends MessageType<ToggleDocumentResponse> {
+    constructor() {
+        super("services.docstore.ToggleDocumentResponse", []);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.docstore.ToggleDocumentResponse
+ */
+export const ToggleDocumentResponse = new ToggleDocumentResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class GetDocumentAccessRequest$Type extends MessageType<GetDocumentAccessRequest> {
     constructor() {
         super("services.docstore.GetDocumentAccessRequest", [
@@ -1304,6 +1345,7 @@ export const DocStoreService = new ServiceType("services.docstore.DocStoreServic
     { name: "CreateDocument", options: {}, I: CreateDocumentRequest, O: CreateDocumentResponse },
     { name: "UpdateDocument", options: {}, I: UpdateDocumentRequest, O: UpdateDocumentResponse },
     { name: "DeleteDocument", options: {}, I: DeleteDocumentRequest, O: DeleteDocumentResponse },
+    { name: "ToggleDocument", options: {}, I: ToggleDocumentRequest, O: ToggleDocumentResponse },
     { name: "GetDocumentReferences", options: {}, I: GetDocumentReferencesRequest, O: GetDocumentReferencesResponse },
     { name: "GetDocumentRelations", options: {}, I: GetDocumentRelationsRequest, O: GetDocumentRelationsResponse },
     { name: "AddDocumentReference", options: {}, I: AddDocumentReferenceRequest, O: AddDocumentReferenceResponse },

@@ -29,6 +29,8 @@ const (
 	DocStoreServiceListTemplatesPerm                    perms.Name = "ListTemplates"
 	DocStoreServiceListUserDocumentsPerm                perms.Name = "ListUserDocuments"
 	DocStoreServicePostDocumentCommentPerm              perms.Name = "PostDocumentComment"
+	DocStoreServiceToggleDocumentPerm                   perms.Name = "ToggleDocument"
+	DocStoreServiceToggleDocumentAccessPermField        perms.Key  = "Access"
 	DocStoreServiceUpdateDocumentPerm                   perms.Name = "UpdateDocument"
 	DocStoreServiceUpdateDocumentAccessPermField        perms.Key  = "Access"
 )
@@ -147,6 +149,18 @@ func init() {
 			Category: DocStoreServicePerm,
 			Name:     DocStoreServicePostDocumentCommentPerm,
 			Attrs:    []perms.Attr{},
+		},
+		{
+			Category: DocStoreServicePerm,
+			Name:     DocStoreServiceToggleDocumentPerm,
+			Attrs: []perms.Attr{
+				{
+					Key:           DocStoreServiceToggleDocumentAccessPermField,
+					Type:          permissions.StringListAttributeType,
+					ValidValues:   []string{"Own", "Lower_Rank", "Same_Rank"},
+					DefaultValues: []string{"Own"},
+				},
+			},
 		},
 		{
 			Category: DocStoreServicePerm,

@@ -614,6 +614,16 @@
             "title": "Document deleted!",
             "content": "Document has been deleted."
         },
+        "document_toggled": {
+            "open": {
+                "title": "Document opened!",
+                "content": "Document has been opened."
+            },
+            "closed": {
+                "title": "Document closed!",
+                "content": "Document has been closed."
+            }
+        },
         "renewed_token": {
             "title": "Access Token renewed",
             "content": "Your access token has been automatically renewed."

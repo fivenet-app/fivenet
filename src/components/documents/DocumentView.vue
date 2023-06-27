@@ -87,6 +87,31 @@ async function deleteDocument(): Promise<void> {
     });
 }
 
+async function toggleDocument(): Promise<void> {
+    return new Promise(async (res, rej) => {
+        try {
+            const closed = !document.value?.closed ?? true;
+            await $grpc.getDocStoreClient().toggleDocument({
+                documentId: props.documentId,
+                closed: closed,
+            });
+
+            document.value!.closed = !document.value?.closed;
+
+            notifications.dispatchNotification({
+                title: { key: `notifications.document_toggled.${!closed ? 'open' : 'closed'}.title`, parameters: [] },
+                content: { key: `notifications.document_toggled.${!closed ? 'open' : 'closed'}.content`, parameters: [] },
+                type: 'success',
+            });
+
+            return res();
+        } catch (e) {
+            $grpc.handleError(e as RpcError);
+            return rej(e as RpcError);
+        }
+    });
+}
+
 function addToClipboard(): void {
     if (document.value) {
         clipboardStore.addDocument(document.value);
@@ -143,20 +168,45 @@ function addToClipboard(): void {
                                 </p>
                             </div>
                             <div class="flex mt-4 space-x-3 md:mt-0">
+                                <div v-can="'DocStoreService.ToggleDocument'">
+                                    <button
+                                        v-if="document?.closed"
+                                        type="button"
+                                        @click="toggleDocument"
+                                        class="inline-flex justify-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
+                                    >
+                                        <SvgIcon
+                                            class="w-5 h-5 text-green-500"
+                                            aria-hidden="true"
+                                            type="mdi"
+                                            :path="mdiLockOpenVariant"
+                                        />
+                                        {{ $t('common.open') }}
+                                    </button>
+                                    <button
+                                        v-else
+                                        type="button"
+                                        @click="toggleDocument"
+                                        class="inline-flex justify-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
+                                    >
+                                        <SvgIcon class="w-5 h-5 text-error-400" aria-hidden="true" type="mdi" :path="mdiLock" />
+                                        {{ $t('common.close', 1) }}
+                                    </button>
+                                </div>
                                 <NuxtLink
+                                    v-can="'DocStoreService.UpdateDocument'"
                                     :to="{
                                         name: 'documents-edit-id',
                                         params: { id: document?.id.toString() ?? 0 },
                                     }"
                                     type="button"
                                     class="inline-flex justify-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
-                                    v-can="'DocStoreService.UpdateDocument'"
                                 >
                                     <SvgIcon class="-ml-0.5 w-5 h-auto" aria-hidden="true" type="mdi" :path="mdiPencil" />
                                     {{ $t('common.edit') }}
                                 </NuxtLink>
                                 <button
-                                    v-can="['DocStoreService.DeleteDocument']"
+                                    v-can="'DocStoreService.DeleteDocument'"
                                     type="button"
                                     @click="deleteDocument"
                                     class="inline-flex justify-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"

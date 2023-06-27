@@ -42,6 +42,8 @@ type DocStoreServiceClient interface {
 	UpdateDocument(ctx context.Context, in *UpdateDocumentRequest, opts ...grpc.CallOption) (*UpdateDocumentResponse, error)
 	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
 	DeleteDocument(ctx context.Context, in *DeleteDocumentRequest, opts ...grpc.CallOption) (*DeleteDocumentResponse, error)
+	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
+	ToggleDocument(ctx context.Context, in *ToggleDocumentRequest, opts ...grpc.CallOption) (*ToggleDocumentResponse, error)
 	// @perm: Name=GetDocument
 	GetDocumentReferences(ctx context.Context, in *GetDocumentReferencesRequest, opts ...grpc.CallOption) (*GetDocumentReferencesResponse, error)
 	// @perm: Name=GetDocument
@@ -170,6 +172,15 @@ func (c *docStoreServiceClient) UpdateDocument(ctx context.Context, in *UpdateDo
 func (c *docStoreServiceClient) DeleteDocument(ctx context.Context, in *DeleteDocumentRequest, opts ...grpc.CallOption) (*DeleteDocumentResponse, error) {
 	out := new(DeleteDocumentResponse)
 	err := c.cc.Invoke(ctx, "/services.docstore.DocStoreService/DeleteDocument", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *docStoreServiceClient) ToggleDocument(ctx context.Context, in *ToggleDocumentRequest, opts ...grpc.CallOption) (*ToggleDocumentResponse, error) {
+	out := new(ToggleDocumentResponse)
+	err := c.cc.Invoke(ctx, "/services.docstore.DocStoreService/ToggleDocument", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -353,6 +364,8 @@ type DocStoreServiceServer interface {
 	UpdateDocument(context.Context, *UpdateDocumentRequest) (*UpdateDocumentResponse, error)
 	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
 	DeleteDocument(context.Context, *DeleteDocumentRequest) (*DeleteDocumentResponse, error)
+	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
+	ToggleDocument(context.Context, *ToggleDocumentRequest) (*ToggleDocumentResponse, error)
 	// @perm: Name=GetDocument
 	GetDocumentReferences(context.Context, *GetDocumentReferencesRequest) (*GetDocumentReferencesResponse, error)
 	// @perm: Name=GetDocument
@@ -423,6 +436,9 @@ func (UnimplementedDocStoreServiceServer) UpdateDocument(context.Context, *Updat
 }
 func (UnimplementedDocStoreServiceServer) DeleteDocument(context.Context, *DeleteDocumentRequest) (*DeleteDocumentResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteDocument not implemented")
+}
+func (UnimplementedDocStoreServiceServer) ToggleDocument(context.Context, *ToggleDocumentRequest) (*ToggleDocumentResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ToggleDocument not implemented")
 }
 func (UnimplementedDocStoreServiceServer) GetDocumentReferences(context.Context, *GetDocumentReferencesRequest) (*GetDocumentReferencesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetDocumentReferences not implemented")
@@ -664,6 +680,24 @@ func _DocStoreService_DeleteDocument_Handler(srv interface{}, ctx context.Contex
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(DocStoreServiceServer).DeleteDocument(ctx, req.(*DeleteDocumentRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DocStoreService_ToggleDocument_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ToggleDocumentRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DocStoreServiceServer).ToggleDocument(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/services.docstore.DocStoreService/ToggleDocument",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DocStoreServiceServer).ToggleDocument(ctx, req.(*ToggleDocumentRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1020,6 +1054,10 @@ var DocStoreService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteDocument",
 			Handler:    _DocStoreService_DeleteDocument_Handler,
+		},
+		{
+			MethodName: "ToggleDocument",
+			Handler:    _DocStoreService_ToggleDocument_Handler,
 		},
 		{
 			MethodName: "GetDocumentReferences",
