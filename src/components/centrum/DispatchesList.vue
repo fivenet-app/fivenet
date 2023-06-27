@@ -1,13 +1,11 @@
 <script lang="ts" setup>
-const transactions = [
+const dispatches = [
     {
-        id: 'AAPS0L',
-        company: 'Chase & Co.',
-        share: 'CAC',
-        commission: '+$4.37',
-        price: '$3,509.00',
-        quantity: '12.00',
-        netAmount: '$4,397.00',
+        id: 1,
+        unit: 'AAPS0L',
+        status: 'Chase & Co.',
+        prio: 'CAC',
+        postal: '+$4.37',
     },
 ];
 </script>
@@ -35,37 +33,19 @@ const transactions = [
                                     scope="col"
                                     class="whitespace-nowrap px-2 py-3.5 text-left text-sm font-semibold text-gray-100"
                                 >
-                                    Company
+                                    Status
                                 </th>
                                 <th
                                     scope="col"
                                     class="whitespace-nowrap px-2 py-3.5 text-left text-sm font-semibold text-gray-100"
                                 >
-                                    Share
+                                    Prio
                                 </th>
                                 <th
                                     scope="col"
                                     class="whitespace-nowrap px-2 py-3.5 text-left text-sm font-semibold text-gray-100"
                                 >
-                                    Commision
-                                </th>
-                                <th
-                                    scope="col"
-                                    class="whitespace-nowrap px-2 py-3.5 text-left text-sm font-semibold text-gray-100"
-                                >
-                                    Price
-                                </th>
-                                <th
-                                    scope="col"
-                                    class="whitespace-nowrap px-2 py-3.5 text-left text-sm font-semibold text-gray-100"
-                                >
-                                    Quantity
-                                </th>
-                                <th
-                                    scope="col"
-                                    class="whitespace-nowrap px-2 py-3.5 text-left text-sm font-semibold text-gray-100"
-                                >
-                                    Net amount
+                                    PIN
                                 </th>
                                 <th scope="col" class="relative whitespace-nowrap py-3.5 pl-3 pr-4 sm:pr-0">
                                     <span class="sr-only">Edit</span>
@@ -73,21 +53,18 @@ const transactions = [
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200">
-                            <tr v-for="transaction in transactions" :key="transaction.id">
+                            <tr v-for="dispatch in dispatches" :key="dispatch.id">
                                 <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm text-gray-300 sm:pl-0">
-                                    {{ transaction.id }}
+                                    {{ dispatch.unit }}
                                 </td>
                                 <td class="whitespace-nowrap px-2 py-2 text-sm font-medium text-gray-100">
-                                    {{ transaction.company }}
+                                    {{ dispatch.status }}
                                 </td>
-                                <td class="whitespace-nowrap px-2 py-2 text-sm text-gray-100">{{ transaction.share }}</td>
-                                <td class="whitespace-nowrap px-2 py-2 text-sm text-gray-300">{{ transaction.commission }}</td>
-                                <td class="whitespace-nowrap px-2 py-2 text-sm text-gray-300">{{ transaction.price }}</td>
-                                <td class="whitespace-nowrap px-2 py-2 text-sm text-gray-300">{{ transaction.quantity }}</td>
-                                <td class="whitespace-nowrap px-2 py-2 text-sm text-gray-300">{{ transaction.netAmount }}</td>
+                                <td class="whitespace-nowrap px-2 py-2 text-sm text-gray-100">{{ dispatch.prio }}</td>
+                                <td class="whitespace-nowrap px-2 py-2 text-sm text-gray-300">{{ dispatch.postal }}</td>
                                 <td class="relative whitespace-nowrap py-2 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
                                     <a href="#" class="text-primary-600 hover:text-primary-900"
-                                        >Edit<span class="sr-only">, {{ transaction.id }}</span></a
+                                        >Edit<span class="sr-only">, {{ dispatch.id }}</span></a
                                     >
                                 </td>
                             </tr>

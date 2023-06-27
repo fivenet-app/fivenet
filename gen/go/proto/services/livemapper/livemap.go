@@ -30,9 +30,9 @@ const (
 )
 
 var (
-	tPlayerLocs = table.FivenetUserLocations
-	tUsers      = table.Users.AS("user")
-	tJobProps   = table.FivenetJobProps
+	tLocs     = table.FivenetUserLocations
+	tUsers    = table.Users.AS("user")
+	tJobProps = table.FivenetJobProps
 )
 
 var (
@@ -231,14 +231,14 @@ func (s *Server) getUserDispatches(jobs []string) ([]*livemap.DispatchMarker, er
 func (s *Server) refreshUserLocations(ctx context.Context) error {
 	markers := map[string][]*livemap.UserMarker{}
 
-	locs := tPlayerLocs.AS("usermarker")
-	stmt := locs.
+	tLocs := tLocs.AS("usermarker")
+	stmt := tLocs.
 		SELECT(
-			locs.Identifier,
-			locs.Job,
-			locs.X,
-			locs.Y,
-			locs.UpdatedAt,
+			tLocs.Identifier,
+			tLocs.Job,
+			tLocs.X,
+			tLocs.Y,
+			tLocs.UpdatedAt,
 			tUsers.ID.AS("user.id"),
 			tUsers.ID.AS("usermarker.id"),
 			tUsers.Identifier,
@@ -249,18 +249,18 @@ func (s *Server) refreshUserLocations(ctx context.Context) error {
 			tJobProps.LivemapMarkerColor.AS("usermarker.icon_color"),
 		).
 		FROM(
-			locs.
+			tLocs.
 				INNER_JOIN(tUsers,
-					locs.Identifier.EQ(tUsers.Identifier),
+					tLocs.Identifier.EQ(tUsers.Identifier),
 				).
 				LEFT_JOIN(tJobProps,
 					tJobProps.Job.EQ(tUsers.Job),
 				),
 		).
 		WHERE(
-			locs.Hidden.IS_FALSE().
+			tLocs.Hidden.IS_FALSE().
 				AND(
-					locs.UpdatedAt.GT_EQ(jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(60, jet.MINUTE))),
+					tLocs.UpdatedAt.GT_EQ(jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(60, jet.MINUTE))),
 				),
 		)
 

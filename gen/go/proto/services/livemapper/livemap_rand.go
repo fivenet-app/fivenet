@@ -77,18 +77,18 @@ func (s *Server) GenerateRandomUserMarker() {
 				moveMarkers()
 			}
 
-			stmt := tPlayerLocs.
+			stmt := tLocs.
 				INSERT(
-					tPlayerLocs.Identifier,
-					tPlayerLocs.Job,
-					tPlayerLocs.X,
-					tPlayerLocs.Y,
-					tPlayerLocs.Hidden,
+					tLocs.Identifier,
+					tLocs.Job,
+					tLocs.X,
+					tLocs.Y,
+					tLocs.Hidden,
 				).
 				MODELS(markers).
 				ON_DUPLICATE_KEY_UPDATE(
-					tPlayerLocs.X.SET(jet.RawFloat("VALUES(x)")),
-					tPlayerLocs.Y.SET(jet.RawFloat("VALUES(y)")),
+					tLocs.X.SET(jet.RawFloat("VALUES(x)")),
+					tLocs.Y.SET(jet.RawFloat("VALUES(y)")),
 				)
 
 			_, err := stmt.ExecContext(ctx, s.db)

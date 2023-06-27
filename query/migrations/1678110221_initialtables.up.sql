@@ -102,7 +102,6 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents_comments` (
 CREATE TABLE IF NOT EXISTS `fivenet_documents_job_access` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` datetime(3) DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   `deleted_at` datetime(3) DEFAULT NULL,
   `document_id` bigint(20) unsigned NOT NULL,
   `job` varchar(40) NOT NULL,

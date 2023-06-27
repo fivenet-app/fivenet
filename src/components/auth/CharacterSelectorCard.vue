@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
-import { useClipboardStore } from 'store/clipboard';
 import { parseQuery } from 'vue-router';
 import CharSexBadge from '~/components/citizens/CharSexBadge.vue';
 import { useAuthStore } from '~/store/auth';
+import { useClipboardStore } from '~/store/clipboard';
 import { fromSecondsToFormattedDuration } from '~/utils/time';
 import { User } from '~~/gen/ts/resources/users/users';
 

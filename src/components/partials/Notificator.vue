@@ -69,6 +69,7 @@ async function streamNotifications(): Promise<void> {
             // If the response contains an (updated) token
             if (resp.token) {
                 const tokenUpdate = resp.token!;
+                console.debug('Notificator: New Token received');
 
                 // Update active char when updated user info is received
                 if (tokenUpdate.userInfo) {

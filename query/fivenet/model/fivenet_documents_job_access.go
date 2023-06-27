@@ -14,7 +14,6 @@ import (
 type FivenetDocumentsJobAccess struct {
 	ID           uint64     `sql:"primary_key" json:"id"`
 	CreatedAt    *time.Time `json:"created_at"`
-	UpdatedAt    *time.Time `json:"updated_at"`
 	DeletedAt    *time.Time `json:"deleted_at"`
 	DocumentID   uint64     `json:"document_id"`
 	Job          string     `json:"job"`

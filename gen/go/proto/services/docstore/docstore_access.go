@@ -19,7 +19,7 @@ import (
 
 func (s *Server) GetDocumentAccess(ctx context.Context, req *GetDocumentAccessRequest) (*GetDocumentAccessResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-	ok, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.ACCESS_LEVEL_ACCESS)
+	ok, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.ACCESS_LEVEL_VIEW)
 	if err != nil {
 		return nil, err
 	}
@@ -241,7 +241,11 @@ func (s *Server) getDocumentAccess(ctx context.Context, documentId uint64) (*doc
 	tDJobAccess := table.FivenetDocumentsJobAccess.AS("documentjobaccess")
 	jobStmt := tDJobAccess.
 		SELECT(
-			tDJobAccess.AllColumns,
+			tDJobAccess.ID,
+			tDJobAccess.DocumentID,
+			tDJobAccess.Job,
+			tDJobAccess.MinimumGrade,
+			tDJobAccess.Access,
 		).
 		FROM(
 			tDJobAccess,
@@ -264,7 +268,10 @@ func (s *Server) getDocumentAccess(ctx context.Context, documentId uint64) (*doc
 	tDUserAccess := table.FivenetDocumentsUserAccess.AS("documentuseraccess")
 	userStmt := tDUserAccess.
 		SELECT(
-			tDUserAccess.AllColumns,
+			tDUserAccess.ID,
+			tDUserAccess.DocumentID,
+			tDUserAccess.UserID,
+			tDUserAccess.Access,
 			tUsers.ID,
 			tUsers.Identifier,
 			tUsers.Job,
@@ -306,13 +313,13 @@ func (s *Server) createDocumentAccess(ctx context.Context, tx *sql.Tx, documentI
 	if access.Jobs != nil {
 		for k := 0; k < len(access.Jobs); k++ {
 			// Create document job access
-			dJobAccess := table.FivenetDocumentsJobAccess
-			stmt := dJobAccess.
+			tDJobAccess := table.FivenetDocumentsJobAccess
+			stmt := tDJobAccess.
 				INSERT(
-					dJobAccess.DocumentID,
-					dJobAccess.Job,
-					dJobAccess.MinimumGrade,
-					dJobAccess.Access,
+					tDJobAccess.DocumentID,
+					tDJobAccess.Job,
+					tDJobAccess.MinimumGrade,
+					tDJobAccess.Access,
 				).
 				VALUES(
 					documentId,
@@ -330,12 +337,12 @@ func (s *Server) createDocumentAccess(ctx context.Context, tx *sql.Tx, documentI
 	if access.Users != nil {
 		for k := 0; k < len(access.Users); k++ {
 			// Create document user access
-			dUserAccess := table.FivenetDocumentsUserAccess
-			stmt := dUserAccess.
+			tDUserAccess := table.FivenetDocumentsUserAccess
+			stmt := tDUserAccess.
 				INSERT(
-					dUserAccess.DocumentID,
-					dUserAccess.UserID,
-					dUserAccess.Access,
+					tDUserAccess.DocumentID,
+					tDUserAccess.UserID,
+					tDUserAccess.Access,
 				).
 				VALUES(
 					documentId,
@@ -360,13 +367,13 @@ func (s *Server) updateDocumentAccess(ctx context.Context, tx *sql.Tx, documentI
 	if access.Jobs != nil {
 		for k := 0; k < len(access.Jobs); k++ {
 			// Create document job access
-			dJobAccess := table.FivenetDocumentsJobAccess
-			stmt := dJobAccess.
+			tDJobAccess := table.FivenetDocumentsJobAccess
+			stmt := tDJobAccess.
 				UPDATE(
-					dJobAccess.DocumentID,
-					dJobAccess.Job,
-					dJobAccess.MinimumGrade,
-					dJobAccess.Access,
+					tDJobAccess.DocumentID,
+					tDJobAccess.Job,
+					tDJobAccess.MinimumGrade,
+					tDJobAccess.Access,
 				).
 				SET(
 					documentId,
@@ -375,7 +382,7 @@ func (s *Server) updateDocumentAccess(ctx context.Context, tx *sql.Tx, documentI
 					access.Jobs[k].Access,
 				).
 				WHERE(
-					dJobAccess.ID.EQ(jet.Uint64(access.Jobs[k].Id)),
+					tDJobAccess.ID.EQ(jet.Uint64(access.Jobs[k].Id)),
 				)
 
 			if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -387,12 +394,12 @@ func (s *Server) updateDocumentAccess(ctx context.Context, tx *sql.Tx, documentI
 	if access.Users != nil {
 		for k := 0; k < len(access.Users); k++ {
 			// Create document user access
-			dUserAccess := table.FivenetDocumentsUserAccess
-			stmt := dUserAccess.
+			tDUserAccess := table.FivenetDocumentsUserAccess
+			stmt := tDUserAccess.
 				UPDATE(
-					dUserAccess.DocumentID,
-					dUserAccess.UserID,
-					dUserAccess.Access,
+					tDUserAccess.DocumentID,
+					tDUserAccess.UserID,
+					tDUserAccess.Access,
 				).
 				SET(
 					documentId,
@@ -400,7 +407,7 @@ func (s *Server) updateDocumentAccess(ctx context.Context, tx *sql.Tx, documentI
 					access.Users[k].Access,
 				).
 				WHERE(
-					dUserAccess.ID.EQ(jet.Uint64(access.Users[k].Id)),
+					tDUserAccess.ID.EQ(jet.Uint64(access.Users[k].Id)),
 				)
 
 			if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -426,13 +433,13 @@ func (s *Server) deleteDocumentAccess(ctx context.Context, tx *sql.Tx, documentI
 			jobIds = append(jobIds, jet.Uint64(access.Jobs[i].Id))
 		}
 
-		dJobAccess := table.FivenetDocumentsJobAccess
-		jobStmt := dJobAccess.
+		tDJobAccess := table.FivenetDocumentsJobAccess
+		jobStmt := tDJobAccess.
 			DELETE().
 			WHERE(
 				jet.AND(
-					dJobAccess.ID.IN(jobIds...),
-					dJobAccess.DocumentID.EQ(jet.Uint64(documentId)),
+					tDJobAccess.ID.IN(jobIds...),
+					tDJobAccess.DocumentID.EQ(jet.Uint64(documentId)),
 				),
 			).
 			LIMIT(25)
@@ -451,13 +458,13 @@ func (s *Server) deleteDocumentAccess(ctx context.Context, tx *sql.Tx, documentI
 			uaIds = append(uaIds, jet.Uint64(access.Users[i].Id))
 		}
 
-		dUserAccess := table.FivenetDocumentsUserAccess
-		userStmt := dUserAccess.
+		tDUserAccess := table.FivenetDocumentsUserAccess
+		userStmt := tDUserAccess.
 			DELETE().
 			WHERE(
 				jet.AND(
-					dUserAccess.ID.IN(uaIds...),
-					dUserAccess.DocumentID.EQ(jet.Uint64(documentId)),
+					tDUserAccess.ID.IN(uaIds...),
+					tDUserAccess.DocumentID.EQ(jet.Uint64(documentId)),
 				),
 			).
 			LIMIT(25)
