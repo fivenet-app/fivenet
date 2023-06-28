@@ -35,21 +35,21 @@ var (
 	_ = sort.Sort
 )
 
-// Validate checks the field values on Squad with the rules defined in the
-// proto definition for this message. If any rules are violated, the first
-// error encountered is returned, or nil if there are no violations.
-func (m *Squad) Validate() error {
+// Validate checks the field values on Unit with the rules defined in the proto
+// definition for this message. If any rules are violated, the first error
+// encountered is returned, or nil if there are no violations.
+func (m *Unit) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on Squad with the rules defined in the
+// ValidateAll checks the field values on Unit with the rules defined in the
 // proto definition for this message. If any rules are violated, the result is
-// a list of violation errors wrapped in SquadMultiError, or nil if none found.
-func (m *Squad) ValidateAll() error {
+// a list of violation errors wrapped in UnitMultiError, or nil if none found.
+func (m *Unit) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *Squad) validate(all bool) error {
+func (m *Unit) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -59,7 +59,7 @@ func (m *Squad) validate(all bool) error {
 	// no validation rules for Id
 
 	if utf8.RuneCountInString(m.GetName()) > 20 {
-		err := SquadValidationError{
+		err := UnitValidationError{
 			field:  "Name",
 			reason: "value length must be at most 20 runes",
 		}
@@ -70,7 +70,7 @@ func (m *Squad) validate(all bool) error {
 	}
 
 	if utf8.RuneCountInString(m.GetInitials()) > 4 {
-		err := SquadValidationError{
+		err := UnitValidationError{
 			field:  "Initials",
 			reason: "value length must be at most 4 runes",
 		}
@@ -87,7 +87,7 @@ func (m *Squad) validate(all bool) error {
 			switch v := interface{}(item).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, SquadValidationError{
+					errors = append(errors, UnitValidationError{
 						field:  fmt.Sprintf("Assigned[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -95,7 +95,7 @@ func (m *Squad) validate(all bool) error {
 				}
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
-					errors = append(errors, SquadValidationError{
+					errors = append(errors, UnitValidationError{
 						field:  fmt.Sprintf("Assigned[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -104,7 +104,7 @@ func (m *Squad) validate(all bool) error {
 			}
 		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				return SquadValidationError{
+				return UnitValidationError{
 					field:  fmt.Sprintf("Assigned[%v]", idx),
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -118,19 +118,23 @@ func (m *Squad) validate(all bool) error {
 		// no validation rules for Status
 	}
 
+	if m.Reason != nil {
+		// no validation rules for Reason
+	}
+
 	if len(errors) > 0 {
-		return SquadMultiError(errors)
+		return UnitMultiError(errors)
 	}
 
 	return nil
 }
 
-// SquadMultiError is an error wrapping multiple validation errors returned by
-// Squad.ValidateAll() if the designated constraints aren't met.
-type SquadMultiError []error
+// UnitMultiError is an error wrapping multiple validation errors returned by
+// Unit.ValidateAll() if the designated constraints aren't met.
+type UnitMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m SquadMultiError) Error() string {
+func (m UnitMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -139,11 +143,11 @@ func (m SquadMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m SquadMultiError) AllErrors() []error { return m }
+func (m UnitMultiError) AllErrors() []error { return m }
 
-// SquadValidationError is the validation error returned by Squad.Validate if
-// the designated constraints aren't met.
-type SquadValidationError struct {
+// UnitValidationError is the validation error returned by Unit.Validate if the
+// designated constraints aren't met.
+type UnitValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -151,22 +155,22 @@ type SquadValidationError struct {
 }
 
 // Field function returns field value.
-func (e SquadValidationError) Field() string { return e.field }
+func (e UnitValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e SquadValidationError) Reason() string { return e.reason }
+func (e UnitValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e SquadValidationError) Cause() error { return e.cause }
+func (e UnitValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e SquadValidationError) Key() bool { return e.key }
+func (e UnitValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e SquadValidationError) ErrorName() string { return "SquadValidationError" }
+func (e UnitValidationError) ErrorName() string { return "UnitValidationError" }
 
 // Error satisfies the builtin error interface
-func (e SquadValidationError) Error() string {
+func (e UnitValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -178,14 +182,14 @@ func (e SquadValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sSquad.%s: %s%s",
+		"invalid %sUnit.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = SquadValidationError{}
+var _ error = UnitValidationError{}
 
 var _ interface {
 	Field() string
@@ -193,7 +197,7 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = SquadValidationError{}
+} = UnitValidationError{}
 
 // Validate checks the field values on Dispatch with the rules defined in the
 // proto definition for this message. If any rules are violated, the first
@@ -220,6 +224,40 @@ func (m *Dispatch) validate(all bool) error {
 	// no validation rules for Id
 
 	// no validation rules for Title
+
+	for idx, item := range m.GetUnits() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, DispatchValidationError{
+						field:  fmt.Sprintf("Units[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, DispatchValidationError{
+						field:  fmt.Sprintf("Units[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return DispatchValidationError{
+					field:  fmt.Sprintf("Units[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
 
 	// no validation rules for Attributes
 
@@ -373,3 +411,106 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = DispatchValidationError{}
+
+// Validate checks the field values on DispatchLog with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *DispatchLog) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DispatchLog with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in DispatchLogMultiError, or
+// nil if none found.
+func (m *DispatchLog) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DispatchLog) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	// no validation rules for DispatchId
+
+	if len(errors) > 0 {
+		return DispatchLogMultiError(errors)
+	}
+
+	return nil
+}
+
+// DispatchLogMultiError is an error wrapping multiple validation errors
+// returned by DispatchLog.ValidateAll() if the designated constraints aren't met.
+type DispatchLogMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DispatchLogMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DispatchLogMultiError) AllErrors() []error { return m }
+
+// DispatchLogValidationError is the validation error returned by
+// DispatchLog.Validate if the designated constraints aren't met.
+type DispatchLogValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DispatchLogValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DispatchLogValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DispatchLogValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DispatchLogValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DispatchLogValidationError) ErrorName() string { return "DispatchLogValidationError" }
+
+// Error satisfies the builtin error interface
+func (e DispatchLogValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDispatchLog.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DispatchLogValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DispatchLogValidationError{}

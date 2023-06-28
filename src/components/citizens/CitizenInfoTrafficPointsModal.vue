@@ -20,7 +20,13 @@ const emits = defineEmits<{
 
 async function setTrafficPoints(values: FormData): Promise<void> {
     return new Promise(async (res, rej) => {
-        const points = values.reset ? BigInt(0) : (props.user.props?.trafficInfractionPoints ?? 0n) + values.trafficPoints;
+        if (!values.reset && values.trafficPoints === 0) {
+            return res();
+        }
+
+        const points = values.reset
+            ? BigInt(0)
+            : (props.user.props?.trafficInfractionPoints ?? 0n) + BigInt(values.trafficPoints);
 
         const userProps: UserProps = {
             userId: props.user.userId,

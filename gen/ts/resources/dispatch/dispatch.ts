@@ -5,9 +5,9 @@ import { MessageType } from "@protobuf-ts/runtime";
 import { Timestamp } from "../timestamp/timestamp.js";
 import { UserShort } from "../users/users.js";
 /**
- * @generated from protobuf message resources.dispatch.Squad
+ * @generated from protobuf message resources.dispatch.Unit
  */
-export interface Squad {
+export interface Unit {
     /**
      * @generated from protobuf field: uint64 id = 1;
      */
@@ -21,11 +21,15 @@ export interface Squad {
      */
     initials: string;
     /**
-     * @generated from protobuf field: optional resources.dispatch.SQUAD_STATUS status = 4;
+     * @generated from protobuf field: optional resources.dispatch.UNIT_STATUS status = 4;
      */
-    status?: SQUAD_STATUS;
+    status?: UNIT_STATUS;
     /**
-     * @generated from protobuf field: repeated resources.users.UserShort assigned = 5;
+     * @generated from protobuf field: optional string reason = 5;
+     */
+    reason?: string;
+    /**
+     * @generated from protobuf field: repeated resources.users.UserShort assigned = 6;
      */
     assigned: UserShort[];
 }
@@ -58,32 +62,49 @@ export interface Dispatch {
      */
     description?: string;
     /**
-     * @generated from protobuf field: map<string, string> attributes = 7;
+     * @generated from protobuf field: repeated resources.dispatch.Unit units = 7;
+     */
+    units: Unit[];
+    /**
+     * @generated from protobuf field: map<string, string> attributes = 8;
      */
     attributes: {
         [key: string]: string;
     };
 }
 /**
- * @generated from protobuf enum resources.dispatch.SQUAD_STATUS
+ * @generated from protobuf message resources.dispatch.DispatchLog
  */
-export enum SQUAD_STATUS {
+export interface DispatchLog {
     /**
-     * @generated from protobuf enum value: UNKNOWN = 0;
+     * @generated from protobuf field: uint64 id = 1;
      */
-    UNKNOWN = 0,
+    id: bigint; // @gotags: sql:"primary_key" alias:"id"
+    /**
+     * @generated from protobuf field: uint64 dispatch_id = 2;
+     */
+    dispatchId: bigint; // @gotags: alias:"dispatch_id"
+}
+/**
+ * @generated from protobuf enum resources.dispatch.UNIT_STATUS
+ */
+export enum UNIT_STATUS {
+    /**
+     * @generated from protobuf enum value: UNAVAILABLE = 0;
+     */
+    UNAVAILABLE = 0,
     /**
      * @generated from protobuf enum value: AVAILABLE = 1;
      */
     AVAILABLE = 1,
     /**
-     * @generated from protobuf enum value: UNAVAILABLE = 2;
+     * @generated from protobuf enum value: ON_BREAK = 2;
      */
-    UNAVAILABLE = 2,
+    ON_BREAK = 2,
     /**
-     * @generated from protobuf enum value: PAUSE = 3;
+     * @generated from protobuf enum value: BUSY = 3;
      */
-    PAUSE = 3
+    BUSY = 3
 }
 /**
  * @generated from protobuf enum resources.dispatch.DISPATCH_STATUS
@@ -102,26 +123,31 @@ export enum DISPATCH_STATUS {
      */
     AT_SCENE = 2,
     /**
-     * @generated from protobuf enum value: NEED_BACKUP = 3;
+     * @generated from protobuf enum value: NEED_ASSISTANCE = 3;
      */
-    NEED_BACKUP = 3
+    NEED_ASSISTANCE = 3,
+    /**
+     * @generated from protobuf enum value: COMPLETED = 4;
+     */
+    COMPLETED = 4
 }
 // @generated message type with reflection information, may provide speed optimized methods
-class Squad$Type extends MessageType<Squad> {
+class Unit$Type extends MessageType<Unit> {
     constructor() {
-        super("resources.dispatch.Squad", [
+        super("resources.dispatch.Unit", [
             { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
             { no: 2, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 3, name: "initials", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "4" } } } },
-            { no: 4, name: "status", kind: "enum", opt: true, T: () => ["resources.dispatch.SQUAD_STATUS", SQUAD_STATUS] },
-            { no: 5, name: "assigned", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UserShort }
+            { no: 4, name: "status", kind: "enum", opt: true, T: () => ["resources.dispatch.UNIT_STATUS", UNIT_STATUS] },
+            { no: 5, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 6, name: "assigned", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UserShort }
         ]);
     }
 }
 /**
- * @generated MessageType for protobuf message resources.dispatch.Squad
+ * @generated MessageType for protobuf message resources.dispatch.Unit
  */
-export const Squad = new Squad$Type();
+export const Unit = new Unit$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class Dispatch$Type extends MessageType<Dispatch> {
     constructor() {
@@ -132,7 +158,8 @@ class Dispatch$Type extends MessageType<Dispatch> {
             { no: 4, name: "status", kind: "enum", opt: true, T: () => ["resources.dispatch.DISPATCH_STATUS", DISPATCH_STATUS] },
             { no: 5, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 6, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
-            { no: 7, name: "attributes", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "scalar", T: 9 /*ScalarType.STRING*/ } }
+            { no: 7, name: "units", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Unit },
+            { no: 8, name: "attributes", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "scalar", T: 9 /*ScalarType.STRING*/ } }
         ]);
     }
 }
@@ -140,3 +167,16 @@ class Dispatch$Type extends MessageType<Dispatch> {
  * @generated MessageType for protobuf message resources.dispatch.Dispatch
  */
 export const Dispatch = new Dispatch$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class DispatchLog$Type extends MessageType<DispatchLog> {
+    constructor() {
+        super("resources.dispatch.DispatchLog", [
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 2, name: "dispatch_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.dispatch.DispatchLog
+ */
+export const DispatchLog = new DispatchLog$Type();

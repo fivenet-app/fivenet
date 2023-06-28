@@ -7,26 +7,28 @@ import "resources/timestamp/timestamp.proto";
 import "resources/users/users.proto";
 import "validate/validate.proto";
 
-enum SQUAD_STATUS {
-  UNKNOWN = 0;
+enum UNIT_STATUS {
+  UNAVAILABLE = 0;
   AVAILABLE = 1;
-  UNAVAILABLE = 2;
-  PAUSE = 3;
+  ON_BREAK = 2;
+  BUSY = 3;
 }
 
-message Squad {
+message Unit {
   uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
   string name = 2 [(validate.rules).string.max_len = 20];
   string initials = 3 [(validate.rules).string.max_len = 4];
-  optional SQUAD_STATUS status = 4;
-  repeated resources.users.UserShort assigned = 5;
+  optional UNIT_STATUS status = 4;
+  optional string reason = 5;
+  repeated resources.users.UserShort assigned = 6;
 }
 
 enum DISPATCH_STATUS {
   UNASSIGNED = 0;
   EN_ROUTE = 1;
   AT_SCENE = 2;
-  NEED_BACKUP = 3;
+  NEED_ASSISTANCE = 3;
+  COMPLETED = 4;
 }
 
 message Dispatch {
@@ -36,5 +38,11 @@ message Dispatch {
   optional DISPATCH_STATUS status = 4;
   string title = 5;
   optional string description = 6;
-  map<string, string> attributes = 7;
+  repeated Unit units = 7;
+  map<string, string> attributes = 8;
+}
+
+message DispatchLog {
+  uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
+  uint64 dispatch_id = 2; // @gotags: alias:"dispatch_id"
 }
