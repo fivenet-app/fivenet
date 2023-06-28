@@ -117,7 +117,7 @@ watch(selectedChar, () => {
 </script>
 
 <template>
-    <div class="py-2">
+    <div class="py-2 pb-14">
         <div class="px-2 sm:px-6 lg:px-8">
             <div class="sm:flex sm:items-center">
                 <div class="sm:flex-auto">
