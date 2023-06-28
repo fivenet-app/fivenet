@@ -73,9 +73,6 @@ interface FormData {
 }
 
 const { handleSubmit, meta, setFieldValue } = useForm<FormData>({
-    initialValues: {
-        trafficPoints: 0,
-    },
     validationSchema: {
         reason: { required: true, min: 3, max: 255 },
         trafficPoints: { required: true, numeric: true, min: 0, max: 5 },
