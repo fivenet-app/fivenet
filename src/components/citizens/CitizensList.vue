@@ -4,6 +4,7 @@ import SvgIcon from '@jamescoyle/vue-icon';
 import { mdiChevronDown } from '@mdi/js';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { watchDebounced } from '@vueuse/core';
+import { vMaska } from 'maska';
 import { ref } from 'vue';
 import DataErrorBlock from '~/components/partials/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';
@@ -16,7 +17,7 @@ import CitizenListEntry from './CitizensListEntry.vue';
 
 const { $grpc } = useNuxtApp();
 
-const query = ref<{ name: string; phoneNumber?: string; wanted?: boolean; trafficPoints?: number; date_of_birth?: string }>({
+const query = ref<{ name: string; phoneNumber?: string; wanted?: boolean; trafficPoints?: number; dateofbirth?: string }>({
     name: '',
 });
 const pagination = ref<PaginationResponse>();
@@ -49,8 +50,8 @@ async function listCitizens(): Promise<Array<User>> {
             if (query.value.trafficPoints) {
                 req.trafficPoints = BigInt(query.value.trafficPoints?.toString() ?? '0');
             }
-            if (query.value.date_of_birth) {
-                req.dateofbirth = query.value.date_of_birth;
+            if (query.value.dateofbirth) {
+                req.dateofbirth = query.value.dateofbirth;
             }
 
             const call = $grpc.getCitizenStoreClient().listCitizens(req);
@@ -106,9 +107,11 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                 </label>
                                 <div class="relative flex items-center mt-2">
                                     <input
-                                        v-model="query.date_of_birth"
+                                        v-model="query.dateofbirth"
                                         type="text"
                                         name="dateofbirth"
+                                        v-maska
+                                        data-maska="##.##.####"
                                         :placeholder="`${$t('common.date_of_birth')} (DD.MM.YYYY)`"
                                         class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                     />

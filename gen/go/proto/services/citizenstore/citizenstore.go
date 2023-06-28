@@ -127,6 +127,10 @@ func (s *Server) ListCitizens(ctx context.Context, req *ListCitizensRequest) (*L
 		)
 	}
 
+	if req.Dateofbirth != nil && *req.Dateofbirth != "" {
+		condition = condition.AND(tUser.Dateofbirth.LIKE(jet.String(strings.ReplaceAll(*req.Dateofbirth, "%", " ") + "%")))
+	}
+
 	// Get total count of values
 	countStmt := tUser.
 		SELECT(
