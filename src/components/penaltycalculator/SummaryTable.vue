@@ -1,10 +1,11 @@
 <script lang="ts" setup>
 import SvgIcon from '@jamescoyle/vue-icon';
 import { mdiCalculator } from '@mdi/js';
-import { PenaltyCategory, SelectedPenalty } from '~/utils/penalty';
+import { SelectedPenalty } from '~/components/penaltycalculator/Calculator.vue';
+import { LawBook } from '../../../gen/ts/resources/laws/laws';
 
 const props = defineProps<{
-    lawBooks: Array<PenaltyCategory>;
+    lawBooks: Array<LawBook>;
     selectedLaws: Array<SelectedPenalty>;
 }>();
 

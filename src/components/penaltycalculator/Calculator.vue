@@ -1,13 +1,16 @@
 <script lang="ts" setup>
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 import SvgIcon from '@jamescoyle/vue-icon';
-import { mdiChevronDown } from '@mdi/js';
+import { mdiChevronDown, mdiGavel } from '@mdi/js';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { useClipboard } from '@vueuse/core';
+import DataErrorBlock from '~/components/partials/DataErrorBlock.vue';
+import DataNoDataBlock from '~/components/partials/DataNoDataBlock.vue';
+import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';
 import ListEntry from '~/components/penaltycalculator/ListEntry.vue';
 import Stats from '~/components/penaltycalculator/Stats.vue';
 import { useNotificationsStore } from '~/store/notifications';
-import { PenaltiesSummary, PenaltyCategory, SelectedPenalty } from '~/utils/penalty';
+import { Law, LawBook } from '../../../gen/ts/resources/laws/laws';
 import SummaryTable from './SummaryTable.vue';
 
 const { $grpc } = useNuxtApp();
@@ -19,7 +22,19 @@ const notifications = useNotificationsStore();
 
 const { data: lawBooks, pending, refresh, error } = useLazyAsyncData(`lawbooks`, () => listLawBooks());
 
-async function listLawBooks(): Promise<PenaltyCategory[]> {
+export type SelectedPenalty = {
+    law: Law;
+    count: bigint;
+};
+
+export type PenaltiesSummary = {
+    fine: bigint;
+    detentionTime: bigint;
+    stvoPoints: bigint;
+    count: bigint;
+};
+
+async function listLawBooks(): Promise<LawBook[]> {
     return new Promise(async (res, rej) => {
         try {
             const call = $grpc.getCompletorClient().listLawBooks({});
@@ -33,8 +48,8 @@ async function listLawBooks(): Promise<PenaltyCategory[]> {
     });
 }
 
-const queryPenalities = ref<string>('');
-const filteredLawBooks = ref<Array<PenaltyCategory>>([]);
+const rawQuery = ref('');
+const query = computed(() => rawQuery.value.toLowerCase());
 const selectedPenalties = ref<Array<SelectedPenalty>>([]);
 
 const summary = ref<PenaltiesSummary>({
@@ -44,40 +59,29 @@ const summary = ref<PenaltiesSummary>({
     count: 0n,
 });
 
-async function applyQuery(): Promise<void> {
-    if (!lawBooks.value) return;
-
-    let newLawBooks = structuredClone(toRaw(lawBooks.value));
-
-    filteredLawBooks.value = newLawBooks!.map((ps) => {
-        const penalties = ps.laws.map((p) => {
-            const show =
-                p.name.toLowerCase().includes(queryPenalities.value.toLowerCase()) ||
-                p.description.toLowerCase().includes(queryPenalities.value.toLowerCase())
-                    ? true
-                    : false;
+const filteredLawBooks = computed(() =>
+    lawBooks.value
+        ?.map((book) => {
+            const laws = book.laws
+                .filter((p) => p.name.toLowerCase().includes(query.value) || p.description.toLowerCase().includes(query.value))
+                .map((p) => {
+                    const show = true;
+                    return {
+                        ...p,
+                        show,
+                    };
+                });
             return {
-                ...p,
-                show,
+                ...book,
+                laws: laws,
             };
-        });
-
-        const show = penalties.some((p) => p.show === true);
-
-        return {
-            ...ps,
-            penalties,
-            show,
-        };
-    });
-}
+        })
+        .filter((books) => books.laws.length > 0)
+);
 
 function getNameForLawBookId(id: bigint): string | undefined {
     return lawBooks.value?.filter((b) => b.id === id)[0].name;
 }
-
-watch(lawBooks, async () => applyQuery());
-watch(queryPenalities, async () => applyQuery());
 
 function calculate(e: SelectedPenalty): void {
     const idx = selectedPenalties.value.findIndex((v) => v.law.lawbookId === e.law.lawbookId && v.law.name === e.law.name);
@@ -88,8 +92,14 @@ function calculate(e: SelectedPenalty): void {
         if (existing.count != e.count) {
             count = e.count - existing.count;
         }
+        // If the selected penalty count is 0, remove it from the list
+        if (e.count === 0n) {
+            selectedPenalties.value.splice(idx, 1);
+        }
     } else {
-        selectedPenalties.value.push(e);
+        if (e.count !== 0n) {
+            selectedPenalties.value.push(e);
+        }
     }
 
     if (e.law.fine) {
@@ -151,10 +161,24 @@ ${t('components.penaltycalculator.crime', selectedPenalties.value.length)}:
             </div>
             <div class="sm:flex sm:items-center pb-4">
                 <div class="sm:flex-auto">
-                    <div class="divide-y divide-white/10">
+                    <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.law', 2)])" class="mt-5" />
+                    <DataErrorBlock
+                        v-else-if="error"
+                        :title="$t('common.not_found', [$t('common.law', 2)])"
+                        :retry="refresh"
+                        class="mt-5"
+                    />
+                    <DataNoDataBlock
+                        v-else-if="lawBooks && lawBooks.length === 0"
+                        :icon="mdiGavel"
+                        :type="`${$t('common.citizen', 1)} ${$t('common.activity')}`"
+                        class="mt-5"
+                    />
+
+                    <div v-else class="divide-y divide-white/10">
                         <div class="mt-5">
                             <input
-                                v-model="queryPenalities"
+                                v-model="rawQuery"
                                 type="text"
                                 name="search"
                                 :placeholder="$t('common.filter')"
@@ -165,10 +189,10 @@ ${t('components.penaltycalculator.crime', selectedPenalties.value.length)}:
                             <Disclosure
                                 as="div"
                                 v-for="lawBook in filteredLawBooks"
-                                :key="lawBook.id.toString()"
+                                :key="`${lawBook.id.toString()}-${query}`"
                                 class="pt-3"
                                 v-slot="{ open }"
-                                v-show="lawBook.show"
+                                :default-open="query.length > 0"
                             >
                                 <dt>
                                     <DisclosureButton class="flex w-full items-start justify-between text-left text-white">
@@ -238,8 +262,10 @@ ${t('components.penaltycalculator.crime', selectedPenalties.value.length)}:
                                                             v-for="law in lawBook.laws"
                                                             :key="law.id.toString()"
                                                             :law="law"
+                                                            :count="
+                                                                selectedPenalties.find((p) => p.law.id === law.id)?.count ?? 0n
+                                                            "
                                                             @selected="calculate($event)"
-                                                            v-show="law.show === undefined || law.show"
                                                         />
                                                     </tbody>
                                                 </table>

@@ -1,16 +1,17 @@
 <script lang="ts" setup>
-import { SelectedPenalty } from '~/utils/penalty';
+import { SelectedPenalty } from '~/components/penaltycalculator/Calculator.vue';
 import { Law } from '~~/gen/ts/resources/laws/laws';
 
-defineProps<{
+const props = defineProps<{
     law: Law;
+    count: bigint;
 }>();
 
 defineEmits<{
     (e: 'selected', p: SelectedPenalty): void;
 }>();
 
-const count = ref(0);
+const count = ref(props.count);
 </script>
 
 <template>
