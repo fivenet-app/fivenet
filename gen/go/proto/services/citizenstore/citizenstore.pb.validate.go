@@ -133,16 +133,15 @@ func (m *ListCitizensRequest) validate(all bool) error {
 
 	if m.Dateofbirth != nil {
 
-		if utf8.RuneCountInString(m.GetDateofbirth()) != 10 {
+		if utf8.RuneCountInString(m.GetDateofbirth()) > 10 {
 			err := ListCitizensRequestValidationError{
 				field:  "Dateofbirth",
-				reason: "value length must be 10 runes",
+				reason: "value length must be at most 10 runes",
 			}
 			if !all {
 				return err
 			}
 			errors = append(errors, err)
-
 		}
 
 	}
