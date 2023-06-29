@@ -13,8 +13,8 @@ title: "Dispatch Center (Leitstelle)"
 ## Squad
 
 * Eine oder mehrere Personen aus dem gleichen Job (e.g., ein Streifenwagen mit 1 oder mehreren PDler kann sich zu einem Squad zusammen anmelden).
-* Squads are pre-created by the faction leaders.
-* Von der Leitung "einmalig" die Squads erstellt werden können (damit ist nicht das zuweisen von Leuten gemeint).
+* Units are pre-created by the faction leaders.
+* Von der Leitung "einmalig" die Units erstellt werden können (damit ist nicht das zuweisen von Leuten gemeint).
 
 ## Dispatch
 
@@ -22,13 +22,13 @@ title: "Dispatch Center (Leitstelle)"
 * Ein manueller, über die Leitstellen Tools erstellten, Dispatch muss nicht unbedingt eine Location haben.
 
 * Aktion
-    * Relation: Many Squads to Many Aktionen
+    * Relation: Many Units to Many Aktionen
     * Beispiele:
         * (Wers möchte) "Ich verbringe TV ins SG"
         * Verkehrskontrolle
         * Großschießerei
 * Dispatch
-    * Relation: Many Squads to Many Dispatches
+    * Relation: Many Units to Many Dispatches
     * Beispiele:
         * Generell: "Positiongebundene Aktion"
         * PD:

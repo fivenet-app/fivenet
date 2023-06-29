@@ -18,9 +18,10 @@ message Unit {
   uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
   string name = 2 [(validate.rules).string.max_len = 20];
   string initials = 3 [(validate.rules).string.max_len = 4];
-  optional UNIT_STATUS status = 4;
-  optional string reason = 5;
-  repeated resources.users.UserShort assigned = 6;
+  optional string description = 4 [(validate.rules).string.max_len = 255];
+  optional UNIT_STATUS status = 5;
+  optional string reason = 6;
+  repeated resources.users.UserShort assigned = 7;
 }
 
 enum DISPATCH_STATUS {

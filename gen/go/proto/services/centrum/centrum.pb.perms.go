@@ -10,21 +10,21 @@ import (
 
 const (
 	CentrumServicePerm perms.Category = "CentrumService"
-	SquadServicePerm   perms.Category = "SquadService"
+	UnitServicePerm    perms.Category = "UnitService"
 
-	CentrumServiceCreateActionPerm         perms.Name = "CreateAction"
-	CentrumServiceStreamPerm               perms.Name = "Stream"
-	SquadServiceAssignSquadPerm            perms.Name = "AssignSquad"
-	SquadServiceAssignSquadAccessPermField perms.Key  = "Access"
-	SquadServiceCreateSquadPerm            perms.Name = "CreateSquad"
-	SquadServiceDeleteSquadPerm            perms.Name = "DeleteSquad"
-	SquadServiceListSquadsPerm             perms.Name = "ListSquads"
-	SquadServiceStreamSquadsPerm           perms.Name = "StreamSquads"
+	CentrumServiceCreateActionPerm       perms.Name = "CreateAction"
+	CentrumServiceStreamPerm             perms.Name = "Stream"
+	UnitServiceAssignUnitPerm            perms.Name = "AssignUnit"
+	UnitServiceAssignUnitAccessPermField perms.Key  = "Access"
+	UnitServiceCreateUnitPerm            perms.Name = "CreateUnit"
+	UnitServiceDeleteUnitPerm            perms.Name = "DeleteUnit"
+	UnitServiceListUnitsPerm             perms.Name = "ListUnits"
+	UnitServiceStreamUnitsPerm           perms.Name = "StreamUnits"
 )
 
 var PermsRemap = map[string]string{
-	// Service: SquadService
-	"SquadService/UpdateSquad": "SquadService/CreateSquad",
+	// Service: UnitService
+	"UnitService/UpdateUnit": "UnitService/CreateUnit",
 }
 
 func (s *Server) GetPermsRemap() map[string]string {
@@ -43,13 +43,13 @@ func init() {
 			Category: CentrumServicePerm,
 			Name:     CentrumServiceStreamPerm,
 			Attrs:    []perms.Attr{},
-		}, // Service: SquadService
+		}, // Service: UnitService
 		{
-			Category: SquadServicePerm,
-			Name:     SquadServiceAssignSquadPerm,
+			Category: UnitServicePerm,
+			Name:     UnitServiceAssignUnitPerm,
 			Attrs: []perms.Attr{
 				{
-					Key:           SquadServiceAssignSquadAccessPermField,
+					Key:           UnitServiceAssignUnitAccessPermField,
 					Type:          permissions.StringListAttributeType,
 					ValidValues:   []string{"Own", "Lower_Rank", "Same_Rank"},
 					DefaultValues: []string{"Own"},
@@ -57,23 +57,23 @@ func init() {
 			},
 		},
 		{
-			Category: SquadServicePerm,
-			Name:     SquadServiceCreateSquadPerm,
+			Category: UnitServicePerm,
+			Name:     UnitServiceCreateUnitPerm,
 			Attrs:    []perms.Attr{},
 		},
 		{
-			Category: SquadServicePerm,
-			Name:     SquadServiceDeleteSquadPerm,
+			Category: UnitServicePerm,
+			Name:     UnitServiceDeleteUnitPerm,
 			Attrs:    []perms.Attr{},
 		},
 		{
-			Category: SquadServicePerm,
-			Name:     SquadServiceListSquadsPerm,
+			Category: UnitServicePerm,
+			Name:     UnitServiceListUnitsPerm,
 			Attrs:    []perms.Attr{},
 		},
 		{
-			Category: SquadServicePerm,
-			Name:     SquadServiceStreamSquadsPerm,
+			Category: UnitServicePerm,
+			Name:     UnitServiceStreamUnitsPerm,
 			Attrs:    []perms.Attr{},
 		},
 	})

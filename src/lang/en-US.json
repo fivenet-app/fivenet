@@ -490,7 +490,9 @@
         "summary": "Summary",
         "update": "Update",
         "dispatch_center": "Dispatch Center",
-        "reset": "Reset"
+        "reset": "Reset",
+        "assign": "Assign",
+        "detail": "Detail | Details"
     },
     "notifications": {
         "clipboard": {

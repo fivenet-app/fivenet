@@ -11,32 +11,45 @@ const squads = [
 </script>
 
 <template>
-    <div class="mx-2">
-        <h2 class="text-sm font-medium text-gray-200">Active Squads (non-empty)</h2>
-        <ul role="list" class="mt-3 grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-2 lg:grid-cols-3">
-            <li v-for="squad in squads" :key="squad.name" class="col-span-1 flex rounded-md shadow-sm">
-                <div
-                    :class="[
-                        squad.bgColor,
-                        'flex w-9 flex-shrink-0 items-center justify-center rounded-l-md text-sm font-medium text-white',
-                    ]"
-                >
-                    {{ squad.initials }}
+    <div class="px-4 sm:px-6 lg:px-8 h-full overflow-y-scroll">
+        <div class="sm:flex sm:items-center">
+            <div class="sm:flex-auto">
+                <h1 class="text-base font-semibold leading-6 text-gray-100">Active Units</h1>
+            </div>
+        </div>
+        <div class="mt-2 flow-root">
+            <div class="-mx-2 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                <div class="inline-block min-w-full py-2 align-middle sm:px-2 lg:px-2">
+                    <ul role="list" class="mt-3 grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-2 lg:grid-cols-3">
+                        <li v-for="squad in squads" :key="squad.name" class="col-span-1 flex rounded-md shadow-sm">
+                            <div
+                                :class="[
+                                    squad.bgColor,
+                                    'flex w-9 flex-shrink-0 items-center justify-center rounded-l-md text-sm font-medium text-white',
+                                ]"
+                            >
+                                {{ squad.initials }}
+                            </div>
+                            <div
+                                class="flex flex-1 items-center justify-between truncate rounded-r-md border-b border-r border-t border-gray-200 bg-white"
+                            >
+                                <div class="flex-1 truncate px-4 py-2 text-sm">
+                                    <span class="font-medium text-gray-900">{{ squad.name }}</span>
+                                    <p class="text-gray-500">{{ squad.members }} Members</p>
+                                </div>
+                                <div class="flex-shrink-0 pr-5">
+                                    <button
+                                        type="button"
+                                        class="inline-flex items-center justify-center text-white bg-green-700"
+                                    >
+                                        {{ squad.status }}
+                                    </button>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
                 </div>
-                <div
-                    class="flex flex-1 items-center justify-between truncate rounded-r-md border-b border-r border-t border-gray-200 bg-white"
-                >
-                    <div class="flex-1 truncate px-4 py-2 text-sm">
-                        <span class="font-medium text-gray-900">{{ squad.name }}</span>
-                        <p class="text-gray-500">{{ squad.members }} Members</p>
-                    </div>
-                    <div class="flex-shrink-0 pr-5">
-                        <button type="button" class="inline-flex items-center justify-center text-white bg-green-700">
-                            {{ squad.status }}
-                        </button>
-                    </div>
-                </div>
-            </li>
-        </ul>
+            </div>
+        </div>
     </div>
 </template>

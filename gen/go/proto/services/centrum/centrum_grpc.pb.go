@@ -18,83 +18,83 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-// SquadServiceClient is the client API for SquadService service.
+// UnitServiceClient is the client API for UnitService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type SquadServiceClient interface {
+type UnitServiceClient interface {
 	// @perm
-	ListSquads(ctx context.Context, in *ListSquadsRequest, opts ...grpc.CallOption) (*ListSquadsResponse, error)
+	ListUnits(ctx context.Context, in *ListUnitsRequest, opts ...grpc.CallOption) (*ListUnitsResponse, error)
 	// @perm
-	CreateSquad(ctx context.Context, in *CreateSquadRequest, opts ...grpc.CallOption) (*CreateSquadResponse, error)
-	// @perm: Name=CreateSquad
-	UpdateSquad(ctx context.Context, in *UpdateSquadRequest, opts ...grpc.CallOption) (*UpdateSquadResponse, error)
-	// @perm: Name=DeleteSquad
-	DeleteSquad(ctx context.Context, in *DeleteSquadRequest, opts ...grpc.CallOption) (*DeleteSquadResponse, error)
+	CreateUnit(ctx context.Context, in *CreateUnitRequest, opts ...grpc.CallOption) (*CreateUnitResponse, error)
+	// @perm: Name=CreateUnit
+	UpdateUnit(ctx context.Context, in *UpdateUnitRequest, opts ...grpc.CallOption) (*UpdateUnitResponse, error)
+	// @perm: Name=DeleteUnit
+	DeleteUnit(ctx context.Context, in *DeleteUnitRequest, opts ...grpc.CallOption) (*DeleteUnitResponse, error)
 	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
-	AssignSquad(ctx context.Context, in *AssignSquadRequest, opts ...grpc.CallOption) (*AssignSquadResponse, error)
+	AssignUnit(ctx context.Context, in *AssignUnitRequest, opts ...grpc.CallOption) (*AssignUnitResponse, error)
 	// @perm
-	StreamSquads(ctx context.Context, in *SquadStreamRequest, opts ...grpc.CallOption) (SquadService_StreamSquadsClient, error)
+	StreamUnits(ctx context.Context, in *UnitStreamRequest, opts ...grpc.CallOption) (UnitService_StreamUnitsClient, error)
 }
 
-type squadServiceClient struct {
+type unitServiceClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewSquadServiceClient(cc grpc.ClientConnInterface) SquadServiceClient {
-	return &squadServiceClient{cc}
+func NewUnitServiceClient(cc grpc.ClientConnInterface) UnitServiceClient {
+	return &unitServiceClient{cc}
 }
 
-func (c *squadServiceClient) ListSquads(ctx context.Context, in *ListSquadsRequest, opts ...grpc.CallOption) (*ListSquadsResponse, error) {
-	out := new(ListSquadsResponse)
-	err := c.cc.Invoke(ctx, "/services.centrum.SquadService/ListSquads", in, out, opts...)
+func (c *unitServiceClient) ListUnits(ctx context.Context, in *ListUnitsRequest, opts ...grpc.CallOption) (*ListUnitsResponse, error) {
+	out := new(ListUnitsResponse)
+	err := c.cc.Invoke(ctx, "/services.centrum.UnitService/ListUnits", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *squadServiceClient) CreateSquad(ctx context.Context, in *CreateSquadRequest, opts ...grpc.CallOption) (*CreateSquadResponse, error) {
-	out := new(CreateSquadResponse)
-	err := c.cc.Invoke(ctx, "/services.centrum.SquadService/CreateSquad", in, out, opts...)
+func (c *unitServiceClient) CreateUnit(ctx context.Context, in *CreateUnitRequest, opts ...grpc.CallOption) (*CreateUnitResponse, error) {
+	out := new(CreateUnitResponse)
+	err := c.cc.Invoke(ctx, "/services.centrum.UnitService/CreateUnit", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *squadServiceClient) UpdateSquad(ctx context.Context, in *UpdateSquadRequest, opts ...grpc.CallOption) (*UpdateSquadResponse, error) {
-	out := new(UpdateSquadResponse)
-	err := c.cc.Invoke(ctx, "/services.centrum.SquadService/UpdateSquad", in, out, opts...)
+func (c *unitServiceClient) UpdateUnit(ctx context.Context, in *UpdateUnitRequest, opts ...grpc.CallOption) (*UpdateUnitResponse, error) {
+	out := new(UpdateUnitResponse)
+	err := c.cc.Invoke(ctx, "/services.centrum.UnitService/UpdateUnit", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *squadServiceClient) DeleteSquad(ctx context.Context, in *DeleteSquadRequest, opts ...grpc.CallOption) (*DeleteSquadResponse, error) {
-	out := new(DeleteSquadResponse)
-	err := c.cc.Invoke(ctx, "/services.centrum.SquadService/DeleteSquad", in, out, opts...)
+func (c *unitServiceClient) DeleteUnit(ctx context.Context, in *DeleteUnitRequest, opts ...grpc.CallOption) (*DeleteUnitResponse, error) {
+	out := new(DeleteUnitResponse)
+	err := c.cc.Invoke(ctx, "/services.centrum.UnitService/DeleteUnit", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *squadServiceClient) AssignSquad(ctx context.Context, in *AssignSquadRequest, opts ...grpc.CallOption) (*AssignSquadResponse, error) {
-	out := new(AssignSquadResponse)
-	err := c.cc.Invoke(ctx, "/services.centrum.SquadService/AssignSquad", in, out, opts...)
+func (c *unitServiceClient) AssignUnit(ctx context.Context, in *AssignUnitRequest, opts ...grpc.CallOption) (*AssignUnitResponse, error) {
+	out := new(AssignUnitResponse)
+	err := c.cc.Invoke(ctx, "/services.centrum.UnitService/AssignUnit", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *squadServiceClient) StreamSquads(ctx context.Context, in *SquadStreamRequest, opts ...grpc.CallOption) (SquadService_StreamSquadsClient, error) {
-	stream, err := c.cc.NewStream(ctx, &SquadService_ServiceDesc.Streams[0], "/services.centrum.SquadService/StreamSquads", opts...)
+func (c *unitServiceClient) StreamUnits(ctx context.Context, in *UnitStreamRequest, opts ...grpc.CallOption) (UnitService_StreamUnitsClient, error) {
+	stream, err := c.cc.NewStream(ctx, &UnitService_ServiceDesc.Streams[0], "/services.centrum.UnitService/StreamUnits", opts...)
 	if err != nil {
 		return nil, err
 	}
-	x := &squadServiceStreamSquadsClient{stream}
+	x := &unitServiceStreamUnitsClient{stream}
 	if err := x.ClientStream.SendMsg(in); err != nil {
 		return nil, err
 	}
@@ -104,220 +104,220 @@ func (c *squadServiceClient) StreamSquads(ctx context.Context, in *SquadStreamRe
 	return x, nil
 }
 
-type SquadService_StreamSquadsClient interface {
-	Recv() (*SquadStreamResponse, error)
+type UnitService_StreamUnitsClient interface {
+	Recv() (*UnitStreamResponse, error)
 	grpc.ClientStream
 }
 
-type squadServiceStreamSquadsClient struct {
+type unitServiceStreamUnitsClient struct {
 	grpc.ClientStream
 }
 
-func (x *squadServiceStreamSquadsClient) Recv() (*SquadStreamResponse, error) {
-	m := new(SquadStreamResponse)
+func (x *unitServiceStreamUnitsClient) Recv() (*UnitStreamResponse, error) {
+	m := new(UnitStreamResponse)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
 	return m, nil
 }
 
-// SquadServiceServer is the server API for SquadService service.
-// All implementations must embed UnimplementedSquadServiceServer
+// UnitServiceServer is the server API for UnitService service.
+// All implementations must embed UnimplementedUnitServiceServer
 // for forward compatibility
-type SquadServiceServer interface {
+type UnitServiceServer interface {
 	// @perm
-	ListSquads(context.Context, *ListSquadsRequest) (*ListSquadsResponse, error)
+	ListUnits(context.Context, *ListUnitsRequest) (*ListUnitsResponse, error)
 	// @perm
-	CreateSquad(context.Context, *CreateSquadRequest) (*CreateSquadResponse, error)
-	// @perm: Name=CreateSquad
-	UpdateSquad(context.Context, *UpdateSquadRequest) (*UpdateSquadResponse, error)
-	// @perm: Name=DeleteSquad
-	DeleteSquad(context.Context, *DeleteSquadRequest) (*DeleteSquadResponse, error)
+	CreateUnit(context.Context, *CreateUnitRequest) (*CreateUnitResponse, error)
+	// @perm: Name=CreateUnit
+	UpdateUnit(context.Context, *UpdateUnitRequest) (*UpdateUnitResponse, error)
+	// @perm: Name=DeleteUnit
+	DeleteUnit(context.Context, *DeleteUnitRequest) (*DeleteUnitResponse, error)
 	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
-	AssignSquad(context.Context, *AssignSquadRequest) (*AssignSquadResponse, error)
+	AssignUnit(context.Context, *AssignUnitRequest) (*AssignUnitResponse, error)
 	// @perm
-	StreamSquads(*SquadStreamRequest, SquadService_StreamSquadsServer) error
-	mustEmbedUnimplementedSquadServiceServer()
+	StreamUnits(*UnitStreamRequest, UnitService_StreamUnitsServer) error
+	mustEmbedUnimplementedUnitServiceServer()
 }
 
-// UnimplementedSquadServiceServer must be embedded to have forward compatible implementations.
-type UnimplementedSquadServiceServer struct {
+// UnimplementedUnitServiceServer must be embedded to have forward compatible implementations.
+type UnimplementedUnitServiceServer struct {
 }
 
-func (UnimplementedSquadServiceServer) ListSquads(context.Context, *ListSquadsRequest) (*ListSquadsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListSquads not implemented")
+func (UnimplementedUnitServiceServer) ListUnits(context.Context, *ListUnitsRequest) (*ListUnitsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListUnits not implemented")
 }
-func (UnimplementedSquadServiceServer) CreateSquad(context.Context, *CreateSquadRequest) (*CreateSquadResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateSquad not implemented")
+func (UnimplementedUnitServiceServer) CreateUnit(context.Context, *CreateUnitRequest) (*CreateUnitResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateUnit not implemented")
 }
-func (UnimplementedSquadServiceServer) UpdateSquad(context.Context, *UpdateSquadRequest) (*UpdateSquadResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateSquad not implemented")
+func (UnimplementedUnitServiceServer) UpdateUnit(context.Context, *UpdateUnitRequest) (*UpdateUnitResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateUnit not implemented")
 }
-func (UnimplementedSquadServiceServer) DeleteSquad(context.Context, *DeleteSquadRequest) (*DeleteSquadResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteSquad not implemented")
+func (UnimplementedUnitServiceServer) DeleteUnit(context.Context, *DeleteUnitRequest) (*DeleteUnitResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteUnit not implemented")
 }
-func (UnimplementedSquadServiceServer) AssignSquad(context.Context, *AssignSquadRequest) (*AssignSquadResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method AssignSquad not implemented")
+func (UnimplementedUnitServiceServer) AssignUnit(context.Context, *AssignUnitRequest) (*AssignUnitResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AssignUnit not implemented")
 }
-func (UnimplementedSquadServiceServer) StreamSquads(*SquadStreamRequest, SquadService_StreamSquadsServer) error {
-	return status.Errorf(codes.Unimplemented, "method StreamSquads not implemented")
+func (UnimplementedUnitServiceServer) StreamUnits(*UnitStreamRequest, UnitService_StreamUnitsServer) error {
+	return status.Errorf(codes.Unimplemented, "method StreamUnits not implemented")
 }
-func (UnimplementedSquadServiceServer) mustEmbedUnimplementedSquadServiceServer() {}
+func (UnimplementedUnitServiceServer) mustEmbedUnimplementedUnitServiceServer() {}
 
-// UnsafeSquadServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to SquadServiceServer will
+// UnsafeUnitServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to UnitServiceServer will
 // result in compilation errors.
-type UnsafeSquadServiceServer interface {
-	mustEmbedUnimplementedSquadServiceServer()
+type UnsafeUnitServiceServer interface {
+	mustEmbedUnimplementedUnitServiceServer()
 }
 
-func RegisterSquadServiceServer(s grpc.ServiceRegistrar, srv SquadServiceServer) {
-	s.RegisterService(&SquadService_ServiceDesc, srv)
+func RegisterUnitServiceServer(s grpc.ServiceRegistrar, srv UnitServiceServer) {
+	s.RegisterService(&UnitService_ServiceDesc, srv)
 }
 
-func _SquadService_ListSquads_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListSquadsRequest)
+func _UnitService_ListUnits_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListUnitsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SquadServiceServer).ListSquads(ctx, in)
+		return srv.(UnitServiceServer).ListUnits(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/services.centrum.SquadService/ListSquads",
+		FullMethod: "/services.centrum.UnitService/ListUnits",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SquadServiceServer).ListSquads(ctx, req.(*ListSquadsRequest))
+		return srv.(UnitServiceServer).ListUnits(ctx, req.(*ListUnitsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _SquadService_CreateSquad_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateSquadRequest)
+func _UnitService_CreateUnit_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateUnitRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SquadServiceServer).CreateSquad(ctx, in)
+		return srv.(UnitServiceServer).CreateUnit(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/services.centrum.SquadService/CreateSquad",
+		FullMethod: "/services.centrum.UnitService/CreateUnit",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SquadServiceServer).CreateSquad(ctx, req.(*CreateSquadRequest))
+		return srv.(UnitServiceServer).CreateUnit(ctx, req.(*CreateUnitRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _SquadService_UpdateSquad_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateSquadRequest)
+func _UnitService_UpdateUnit_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateUnitRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SquadServiceServer).UpdateSquad(ctx, in)
+		return srv.(UnitServiceServer).UpdateUnit(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/services.centrum.SquadService/UpdateSquad",
+		FullMethod: "/services.centrum.UnitService/UpdateUnit",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SquadServiceServer).UpdateSquad(ctx, req.(*UpdateSquadRequest))
+		return srv.(UnitServiceServer).UpdateUnit(ctx, req.(*UpdateUnitRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _SquadService_DeleteSquad_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteSquadRequest)
+func _UnitService_DeleteUnit_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteUnitRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SquadServiceServer).DeleteSquad(ctx, in)
+		return srv.(UnitServiceServer).DeleteUnit(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/services.centrum.SquadService/DeleteSquad",
+		FullMethod: "/services.centrum.UnitService/DeleteUnit",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SquadServiceServer).DeleteSquad(ctx, req.(*DeleteSquadRequest))
+		return srv.(UnitServiceServer).DeleteUnit(ctx, req.(*DeleteUnitRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _SquadService_AssignSquad_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AssignSquadRequest)
+func _UnitService_AssignUnit_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AssignUnitRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SquadServiceServer).AssignSquad(ctx, in)
+		return srv.(UnitServiceServer).AssignUnit(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/services.centrum.SquadService/AssignSquad",
+		FullMethod: "/services.centrum.UnitService/AssignUnit",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SquadServiceServer).AssignSquad(ctx, req.(*AssignSquadRequest))
+		return srv.(UnitServiceServer).AssignUnit(ctx, req.(*AssignUnitRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _SquadService_StreamSquads_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(SquadStreamRequest)
+func _UnitService_StreamUnits_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(UnitStreamRequest)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}
-	return srv.(SquadServiceServer).StreamSquads(m, &squadServiceStreamSquadsServer{stream})
+	return srv.(UnitServiceServer).StreamUnits(m, &unitServiceStreamUnitsServer{stream})
 }
 
-type SquadService_StreamSquadsServer interface {
-	Send(*SquadStreamResponse) error
+type UnitService_StreamUnitsServer interface {
+	Send(*UnitStreamResponse) error
 	grpc.ServerStream
 }
 
-type squadServiceStreamSquadsServer struct {
+type unitServiceStreamUnitsServer struct {
 	grpc.ServerStream
 }
 
-func (x *squadServiceStreamSquadsServer) Send(m *SquadStreamResponse) error {
+func (x *unitServiceStreamUnitsServer) Send(m *UnitStreamResponse) error {
 	return x.ServerStream.SendMsg(m)
 }
 
-// SquadService_ServiceDesc is the grpc.ServiceDesc for SquadService service.
+// UnitService_ServiceDesc is the grpc.ServiceDesc for UnitService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var SquadService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "services.centrum.SquadService",
-	HandlerType: (*SquadServiceServer)(nil),
+var UnitService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "services.centrum.UnitService",
+	HandlerType: (*UnitServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "ListSquads",
-			Handler:    _SquadService_ListSquads_Handler,
+			MethodName: "ListUnits",
+			Handler:    _UnitService_ListUnits_Handler,
 		},
 		{
-			MethodName: "CreateSquad",
-			Handler:    _SquadService_CreateSquad_Handler,
+			MethodName: "CreateUnit",
+			Handler:    _UnitService_CreateUnit_Handler,
 		},
 		{
-			MethodName: "UpdateSquad",
-			Handler:    _SquadService_UpdateSquad_Handler,
+			MethodName: "UpdateUnit",
+			Handler:    _UnitService_UpdateUnit_Handler,
 		},
 		{
-			MethodName: "DeleteSquad",
-			Handler:    _SquadService_DeleteSquad_Handler,
+			MethodName: "DeleteUnit",
+			Handler:    _UnitService_DeleteUnit_Handler,
 		},
 		{
-			MethodName: "AssignSquad",
-			Handler:    _SquadService_AssignSquad_Handler,
+			MethodName: "AssignUnit",
+			Handler:    _UnitService_AssignUnit_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{
 		{
-			StreamName:    "StreamSquads",
-			Handler:       _SquadService_StreamSquads_Handler,
+			StreamName:    "StreamUnits",
+			Handler:       _UnitService_StreamUnits_Handler,
 			ServerStreams: true,
 		},
 	},

@@ -3,80 +3,90 @@
 // tslint:disable
 import { ServiceType } from "@protobuf-ts/runtime-rpc";
 import { MessageType } from "@protobuf-ts/runtime";
-// Squad Management
+import { Unit } from "../../resources/dispatch/dispatch.js";
+import { UNIT_STATUS } from "../../resources/dispatch/dispatch.js";
+// Unit Management
 
 /**
- * @generated from protobuf message services.centrum.ListSquadsRequest
+ * @generated from protobuf message services.centrum.ListUnitsRequest
  */
-export interface ListSquadsRequest {
-}
-/**
- * @generated from protobuf message services.centrum.ListSquadsResponse
- */
-export interface ListSquadsResponse {
-}
-/**
- * @generated from protobuf message services.centrum.CreateSquadRequest
- */
-export interface CreateSquadRequest {
+export interface ListUnitsRequest {
     /**
-     * @generated from protobuf field: string name = 1;
+     * @generated from protobuf field: repeated resources.dispatch.UNIT_STATUS status = 1;
      */
-    name: string;
+    status: UNIT_STATUS[];
     /**
-     * @generated from protobuf field: optional uint64 limit = 2;
+     * @generated from protobuf field: optional string name = 2;
      */
-    limit?: bigint;
+    name?: string;
 }
 /**
- * @generated from protobuf message services.centrum.CreateSquadResponse
+ * @generated from protobuf message services.centrum.ListUnitsResponse
  */
-export interface CreateSquadResponse {
+export interface ListUnitsResponse {
     /**
-     * @generated from protobuf field: uint64 id = 1;
+     * @generated from protobuf field: repeated resources.dispatch.Unit units = 1;
      */
-    id: bigint;
+    units: Unit[];
 }
 /**
- * @generated from protobuf message services.centrum.UpdateSquadRequest
+ * @generated from protobuf message services.centrum.CreateUnitRequest
  */
-export interface UpdateSquadRequest {
+export interface CreateUnitRequest {
     /**
-     * @generated from protobuf field: uint64 id = 1;
+     * @generated from protobuf field: resources.dispatch.Unit unit = 1;
      */
-    id: bigint;
+    unit?: Unit;
 }
 /**
- * @generated from protobuf message services.centrum.UpdateSquadResponse
+ * @generated from protobuf message services.centrum.CreateUnitResponse
  */
-export interface UpdateSquadResponse {
+export interface CreateUnitResponse {
     /**
-     * @generated from protobuf field: uint64 id = 1;
+     * @generated from protobuf field: resources.dispatch.Unit unit = 1;
      */
-    id: bigint;
+    unit?: Unit;
 }
 /**
- * @generated from protobuf message services.centrum.DeleteSquadRequest
+ * @generated from protobuf message services.centrum.UpdateUnitRequest
  */
-export interface DeleteSquadRequest {
+export interface UpdateUnitRequest {
     /**
-     * @generated from protobuf field: uint64 id = 1;
+     * @generated from protobuf field: resources.dispatch.Unit unit = 1;
      */
-    id: bigint;
+    unit?: Unit;
 }
 /**
- * @generated from protobuf message services.centrum.DeleteSquadResponse
+ * @generated from protobuf message services.centrum.UpdateUnitResponse
  */
-export interface DeleteSquadResponse {
+export interface UpdateUnitResponse {
+    /**
+     * @generated from protobuf field: resources.dispatch.Unit unit = 1;
+     */
+    unit?: Unit;
 }
 /**
- * @generated from protobuf message services.centrum.AssignSquadRequest
+ * @generated from protobuf message services.centrum.DeleteUnitRequest
  */
-export interface AssignSquadRequest {
+export interface DeleteUnitRequest {
     /**
-     * @generated from protobuf field: uint64 squad_id = 1;
+     * @generated from protobuf field: uint64 unit_id = 1;
      */
-    squadId: bigint;
+    unitId: bigint;
+}
+/**
+ * @generated from protobuf message services.centrum.DeleteUnitResponse
+ */
+export interface DeleteUnitResponse {
+}
+/**
+ * @generated from protobuf message services.centrum.AssignUnitRequest
+ */
+export interface AssignUnitRequest {
+    /**
+     * @generated from protobuf field: uint64 unit_id = 1;
+     */
+    unitId: bigint;
     /**
      * @generated from protobuf field: repeated int32 to_add = 2;
      */
@@ -87,32 +97,32 @@ export interface AssignSquadRequest {
     toRemove: number[];
 }
 /**
- * @generated from protobuf message services.centrum.AssignSquadResponse
+ * @generated from protobuf message services.centrum.AssignUnitResponse
  */
-export interface AssignSquadResponse {
+export interface AssignUnitResponse {
     /**
-     * @generated from protobuf field: uint64 squad_id = 1;
+     * @generated from protobuf field: uint64 unit_id = 1;
      */
-    squadId: bigint;
+    unitId: bigint;
 }
 /**
- * @generated from protobuf message services.centrum.SquadStreamRequest
+ * @generated from protobuf message services.centrum.UnitStreamRequest
  */
-export interface SquadStreamRequest {
+export interface UnitStreamRequest {
 }
 /**
- * @generated from protobuf message services.centrum.SquadStreamResponse
+ * @generated from protobuf message services.centrum.UnitStreamResponse
  */
-export interface SquadStreamResponse {
+export interface UnitStreamResponse {
     /**
-     * @generated from protobuf field: repeated services.centrum.SquadChanges changes = 1;
+     * @generated from protobuf field: repeated services.centrum.UnitChanges changes = 1;
      */
-    changes: SquadChanges[];
+    changes: UnitChanges[];
 }
 /**
- * @generated from protobuf message services.centrum.SquadChanges
+ * @generated from protobuf message services.centrum.UnitChanges
  */
-export interface SquadChanges {
+export interface UnitChanges {
     /**
      * @generated from protobuf field: uint64 id = 1;
      */
@@ -126,7 +136,7 @@ export interface SquadChanges {
      */
     removed: number[];
 }
-// Action + Dispatch Management
+// Dispatch Management
 
 /**
  * @generated from protobuf message services.centrum.CreateActionRequest
@@ -151,148 +161,152 @@ export interface CentrumStreamRequest {
 export interface CentrumStreamResponse {
 }
 // @generated message type with reflection information, may provide speed optimized methods
-class ListSquadsRequest$Type extends MessageType<ListSquadsRequest> {
+class ListUnitsRequest$Type extends MessageType<ListUnitsRequest> {
     constructor() {
-        super("services.centrum.ListSquadsRequest", []);
-    }
-}
-/**
- * @generated MessageType for protobuf message services.centrum.ListSquadsRequest
- */
-export const ListSquadsRequest = new ListSquadsRequest$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class ListSquadsResponse$Type extends MessageType<ListSquadsResponse> {
-    constructor() {
-        super("services.centrum.ListSquadsResponse", []);
-    }
-}
-/**
- * @generated MessageType for protobuf message services.centrum.ListSquadsResponse
- */
-export const ListSquadsResponse = new ListSquadsResponse$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class CreateSquadRequest$Type extends MessageType<CreateSquadRequest> {
-    constructor() {
-        super("services.centrum.CreateSquadRequest", [
-            { no: 1, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 2, name: "limit", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+        super("services.centrum.ListUnitsRequest", [
+            { no: 1, name: "status", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.dispatch.UNIT_STATUS", UNIT_STATUS] },
+            { no: 2, name: "name", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
         ]);
     }
 }
 /**
- * @generated MessageType for protobuf message services.centrum.CreateSquadRequest
+ * @generated MessageType for protobuf message services.centrum.ListUnitsRequest
  */
-export const CreateSquadRequest = new CreateSquadRequest$Type();
+export const ListUnitsRequest = new ListUnitsRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class CreateSquadResponse$Type extends MessageType<CreateSquadResponse> {
+class ListUnitsResponse$Type extends MessageType<ListUnitsResponse> {
     constructor() {
-        super("services.centrum.CreateSquadResponse", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+        super("services.centrum.ListUnitsResponse", [
+            { no: 1, name: "units", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Unit }
         ]);
     }
 }
 /**
- * @generated MessageType for protobuf message services.centrum.CreateSquadResponse
+ * @generated MessageType for protobuf message services.centrum.ListUnitsResponse
  */
-export const CreateSquadResponse = new CreateSquadResponse$Type();
+export const ListUnitsResponse = new ListUnitsResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class UpdateSquadRequest$Type extends MessageType<UpdateSquadRequest> {
+class CreateUnitRequest$Type extends MessageType<CreateUnitRequest> {
     constructor() {
-        super("services.centrum.UpdateSquadRequest", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+        super("services.centrum.CreateUnitRequest", [
+            { no: 1, name: "unit", kind: "message", T: () => Unit }
         ]);
     }
 }
 /**
- * @generated MessageType for protobuf message services.centrum.UpdateSquadRequest
+ * @generated MessageType for protobuf message services.centrum.CreateUnitRequest
  */
-export const UpdateSquadRequest = new UpdateSquadRequest$Type();
+export const CreateUnitRequest = new CreateUnitRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class UpdateSquadResponse$Type extends MessageType<UpdateSquadResponse> {
+class CreateUnitResponse$Type extends MessageType<CreateUnitResponse> {
     constructor() {
-        super("services.centrum.UpdateSquadResponse", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+        super("services.centrum.CreateUnitResponse", [
+            { no: 1, name: "unit", kind: "message", T: () => Unit }
         ]);
     }
 }
 /**
- * @generated MessageType for protobuf message services.centrum.UpdateSquadResponse
+ * @generated MessageType for protobuf message services.centrum.CreateUnitResponse
  */
-export const UpdateSquadResponse = new UpdateSquadResponse$Type();
+export const CreateUnitResponse = new CreateUnitResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class DeleteSquadRequest$Type extends MessageType<DeleteSquadRequest> {
+class UpdateUnitRequest$Type extends MessageType<UpdateUnitRequest> {
     constructor() {
-        super("services.centrum.DeleteSquadRequest", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+        super("services.centrum.UpdateUnitRequest", [
+            { no: 1, name: "unit", kind: "message", T: () => Unit }
         ]);
     }
 }
 /**
- * @generated MessageType for protobuf message services.centrum.DeleteSquadRequest
+ * @generated MessageType for protobuf message services.centrum.UpdateUnitRequest
  */
-export const DeleteSquadRequest = new DeleteSquadRequest$Type();
+export const UpdateUnitRequest = new UpdateUnitRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class DeleteSquadResponse$Type extends MessageType<DeleteSquadResponse> {
+class UpdateUnitResponse$Type extends MessageType<UpdateUnitResponse> {
     constructor() {
-        super("services.centrum.DeleteSquadResponse", []);
+        super("services.centrum.UpdateUnitResponse", [
+            { no: 1, name: "unit", kind: "message", T: () => Unit }
+        ]);
     }
 }
 /**
- * @generated MessageType for protobuf message services.centrum.DeleteSquadResponse
+ * @generated MessageType for protobuf message services.centrum.UpdateUnitResponse
  */
-export const DeleteSquadResponse = new DeleteSquadResponse$Type();
+export const UpdateUnitResponse = new UpdateUnitResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class AssignSquadRequest$Type extends MessageType<AssignSquadRequest> {
+class DeleteUnitRequest$Type extends MessageType<DeleteUnitRequest> {
     constructor() {
-        super("services.centrum.AssignSquadRequest", [
-            { no: 1, name: "squad_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+        super("services.centrum.DeleteUnitRequest", [
+            { no: 1, name: "unit_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.centrum.DeleteUnitRequest
+ */
+export const DeleteUnitRequest = new DeleteUnitRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class DeleteUnitResponse$Type extends MessageType<DeleteUnitResponse> {
+    constructor() {
+        super("services.centrum.DeleteUnitResponse", []);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.centrum.DeleteUnitResponse
+ */
+export const DeleteUnitResponse = new DeleteUnitResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class AssignUnitRequest$Type extends MessageType<AssignUnitRequest> {
+    constructor() {
+        super("services.centrum.AssignUnitRequest", [
+            { no: 1, name: "unit_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
             { no: 2, name: "to_add", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ },
             { no: 3, name: "to_remove", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ }
         ]);
     }
 }
 /**
- * @generated MessageType for protobuf message services.centrum.AssignSquadRequest
+ * @generated MessageType for protobuf message services.centrum.AssignUnitRequest
  */
-export const AssignSquadRequest = new AssignSquadRequest$Type();
+export const AssignUnitRequest = new AssignUnitRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class AssignSquadResponse$Type extends MessageType<AssignSquadResponse> {
+class AssignUnitResponse$Type extends MessageType<AssignUnitResponse> {
     constructor() {
-        super("services.centrum.AssignSquadResponse", [
-            { no: 1, name: "squad_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+        super("services.centrum.AssignUnitResponse", [
+            { no: 1, name: "unit_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
         ]);
     }
 }
 /**
- * @generated MessageType for protobuf message services.centrum.AssignSquadResponse
+ * @generated MessageType for protobuf message services.centrum.AssignUnitResponse
  */
-export const AssignSquadResponse = new AssignSquadResponse$Type();
+export const AssignUnitResponse = new AssignUnitResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class SquadStreamRequest$Type extends MessageType<SquadStreamRequest> {
+class UnitStreamRequest$Type extends MessageType<UnitStreamRequest> {
     constructor() {
-        super("services.centrum.SquadStreamRequest", []);
+        super("services.centrum.UnitStreamRequest", []);
     }
 }
 /**
- * @generated MessageType for protobuf message services.centrum.SquadStreamRequest
+ * @generated MessageType for protobuf message services.centrum.UnitStreamRequest
  */
-export const SquadStreamRequest = new SquadStreamRequest$Type();
+export const UnitStreamRequest = new UnitStreamRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class SquadStreamResponse$Type extends MessageType<SquadStreamResponse> {
+class UnitStreamResponse$Type extends MessageType<UnitStreamResponse> {
     constructor() {
-        super("services.centrum.SquadStreamResponse", [
-            { no: 1, name: "changes", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => SquadChanges }
+        super("services.centrum.UnitStreamResponse", [
+            { no: 1, name: "changes", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UnitChanges }
         ]);
     }
 }
 /**
- * @generated MessageType for protobuf message services.centrum.SquadStreamResponse
+ * @generated MessageType for protobuf message services.centrum.UnitStreamResponse
  */
-export const SquadStreamResponse = new SquadStreamResponse$Type();
+export const UnitStreamResponse = new UnitStreamResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class SquadChanges$Type extends MessageType<SquadChanges> {
+class UnitChanges$Type extends MessageType<UnitChanges> {
     constructor() {
-        super("services.centrum.SquadChanges", [
+        super("services.centrum.UnitChanges", [
             { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
             { no: 2, name: "added", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ },
             { no: 3, name: "removed", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ }
@@ -300,9 +314,9 @@ class SquadChanges$Type extends MessageType<SquadChanges> {
     }
 }
 /**
- * @generated MessageType for protobuf message services.centrum.SquadChanges
+ * @generated MessageType for protobuf message services.centrum.UnitChanges
  */
-export const SquadChanges = new SquadChanges$Type();
+export const UnitChanges = new UnitChanges$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class CreateActionRequest$Type extends MessageType<CreateActionRequest> {
     constructor() {
@@ -344,15 +358,15 @@ class CentrumStreamResponse$Type extends MessageType<CentrumStreamResponse> {
  */
 export const CentrumStreamResponse = new CentrumStreamResponse$Type();
 /**
- * @generated ServiceType for protobuf service services.centrum.SquadService
+ * @generated ServiceType for protobuf service services.centrum.UnitService
  */
-export const SquadService = new ServiceType("services.centrum.SquadService", [
-    { name: "ListSquads", options: {}, I: ListSquadsRequest, O: ListSquadsResponse },
-    { name: "CreateSquad", options: {}, I: CreateSquadRequest, O: CreateSquadResponse },
-    { name: "UpdateSquad", options: {}, I: UpdateSquadRequest, O: UpdateSquadResponse },
-    { name: "DeleteSquad", options: {}, I: DeleteSquadRequest, O: DeleteSquadResponse },
-    { name: "AssignSquad", options: {}, I: AssignSquadRequest, O: AssignSquadResponse },
-    { name: "StreamSquads", serverStreaming: true, options: {}, I: SquadStreamRequest, O: SquadStreamResponse }
+export const UnitService = new ServiceType("services.centrum.UnitService", [
+    { name: "ListUnits", options: {}, I: ListUnitsRequest, O: ListUnitsResponse },
+    { name: "CreateUnit", options: {}, I: CreateUnitRequest, O: CreateUnitResponse },
+    { name: "UpdateUnit", options: {}, I: UpdateUnitRequest, O: UpdateUnitResponse },
+    { name: "DeleteUnit", options: {}, I: DeleteUnitRequest, O: DeleteUnitResponse },
+    { name: "AssignUnit", options: {}, I: AssignUnitRequest, O: AssignUnitResponse },
+    { name: "StreamUnits", serverStreaming: true, options: {}, I: UnitStreamRequest, O: UnitStreamResponse }
 ]);
 /**
  * @generated ServiceType for protobuf service services.centrum.CentrumService

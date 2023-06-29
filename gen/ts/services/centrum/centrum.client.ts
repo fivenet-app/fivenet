@@ -8,135 +8,129 @@ import type { CreateActionResponse } from "./centrum.js";
 import type { CreateActionRequest } from "./centrum.js";
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
-import { SquadService } from "./centrum.js";
-import type { SquadStreamResponse } from "./centrum.js";
-import type { SquadStreamRequest } from "./centrum.js";
+import { UnitService } from "./centrum.js";
+import type { UnitStreamResponse } from "./centrum.js";
+import type { UnitStreamRequest } from "./centrum.js";
 import type { ServerStreamingCall } from "@protobuf-ts/runtime-rpc";
-import type { AssignSquadResponse } from "./centrum.js";
-import type { AssignSquadRequest } from "./centrum.js";
-import type { DeleteSquadResponse } from "./centrum.js";
-import type { DeleteSquadRequest } from "./centrum.js";
-import type { UpdateSquadResponse } from "./centrum.js";
-import type { UpdateSquadRequest } from "./centrum.js";
-import type { CreateSquadResponse } from "./centrum.js";
-import type { CreateSquadRequest } from "./centrum.js";
+import type { AssignUnitResponse } from "./centrum.js";
+import type { AssignUnitRequest } from "./centrum.js";
+import type { DeleteUnitResponse } from "./centrum.js";
+import type { DeleteUnitRequest } from "./centrum.js";
+import type { UpdateUnitResponse } from "./centrum.js";
+import type { UpdateUnitRequest } from "./centrum.js";
+import type { CreateUnitResponse } from "./centrum.js";
+import type { CreateUnitRequest } from "./centrum.js";
 import { stackIntercept } from "@protobuf-ts/runtime-rpc";
-import type { ListSquadsResponse } from "./centrum.js";
-import type { ListSquadsRequest } from "./centrum.js";
+import type { ListUnitsResponse } from "./centrum.js";
+import type { ListUnitsRequest } from "./centrum.js";
 import type { UnaryCall } from "@protobuf-ts/runtime-rpc";
 import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
 /**
- * Squad Management
- *
- * @generated from protobuf service services.centrum.SquadService
+ * @generated from protobuf service services.centrum.UnitService
  */
-export interface ISquadServiceClient {
+export interface IUnitServiceClient {
     /**
      * @perm
      *
-     * @generated from protobuf rpc: ListSquads(services.centrum.ListSquadsRequest) returns (services.centrum.ListSquadsResponse);
+     * @generated from protobuf rpc: ListUnits(services.centrum.ListUnitsRequest) returns (services.centrum.ListUnitsResponse);
      */
-    listSquads(input: ListSquadsRequest, options?: RpcOptions): UnaryCall<ListSquadsRequest, ListSquadsResponse>;
+    listUnits(input: ListUnitsRequest, options?: RpcOptions): UnaryCall<ListUnitsRequest, ListUnitsResponse>;
     /**
      * @perm
      *
-     * @generated from protobuf rpc: CreateSquad(services.centrum.CreateSquadRequest) returns (services.centrum.CreateSquadResponse);
+     * @generated from protobuf rpc: CreateUnit(services.centrum.CreateUnitRequest) returns (services.centrum.CreateUnitResponse);
      */
-    createSquad(input: CreateSquadRequest, options?: RpcOptions): UnaryCall<CreateSquadRequest, CreateSquadResponse>;
+    createUnit(input: CreateUnitRequest, options?: RpcOptions): UnaryCall<CreateUnitRequest, CreateUnitResponse>;
     /**
-     * @perm: Name=CreateSquad
+     * @perm: Name=CreateUnit
      *
-     * @generated from protobuf rpc: UpdateSquad(services.centrum.UpdateSquadRequest) returns (services.centrum.UpdateSquadResponse);
+     * @generated from protobuf rpc: UpdateUnit(services.centrum.UpdateUnitRequest) returns (services.centrum.UpdateUnitResponse);
      */
-    updateSquad(input: UpdateSquadRequest, options?: RpcOptions): UnaryCall<UpdateSquadRequest, UpdateSquadResponse>;
+    updateUnit(input: UpdateUnitRequest, options?: RpcOptions): UnaryCall<UpdateUnitRequest, UpdateUnitResponse>;
     /**
-     * @perm: Name=DeleteSquad
+     * @perm: Name=DeleteUnit
      *
-     * @generated from protobuf rpc: DeleteSquad(services.centrum.DeleteSquadRequest) returns (services.centrum.DeleteSquadResponse);
+     * @generated from protobuf rpc: DeleteUnit(services.centrum.DeleteUnitRequest) returns (services.centrum.DeleteUnitResponse);
      */
-    deleteSquad(input: DeleteSquadRequest, options?: RpcOptions): UnaryCall<DeleteSquadRequest, DeleteSquadResponse>;
+    deleteUnit(input: DeleteUnitRequest, options?: RpcOptions): UnaryCall<DeleteUnitRequest, DeleteUnitResponse>;
     /**
      * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
      *
-     * @generated from protobuf rpc: AssignSquad(services.centrum.AssignSquadRequest) returns (services.centrum.AssignSquadResponse);
+     * @generated from protobuf rpc: AssignUnit(services.centrum.AssignUnitRequest) returns (services.centrum.AssignUnitResponse);
      */
-    assignSquad(input: AssignSquadRequest, options?: RpcOptions): UnaryCall<AssignSquadRequest, AssignSquadResponse>;
+    assignUnit(input: AssignUnitRequest, options?: RpcOptions): UnaryCall<AssignUnitRequest, AssignUnitResponse>;
     /**
      * @perm
      *
-     * @generated from protobuf rpc: StreamSquads(services.centrum.SquadStreamRequest) returns (stream services.centrum.SquadStreamResponse);
+     * @generated from protobuf rpc: StreamUnits(services.centrum.UnitStreamRequest) returns (stream services.centrum.UnitStreamResponse);
      */
-    streamSquads(input: SquadStreamRequest, options?: RpcOptions): ServerStreamingCall<SquadStreamRequest, SquadStreamResponse>;
+    streamUnits(input: UnitStreamRequest, options?: RpcOptions): ServerStreamingCall<UnitStreamRequest, UnitStreamResponse>;
 }
 /**
- * Squad Management
- *
- * @generated from protobuf service services.centrum.SquadService
+ * @generated from protobuf service services.centrum.UnitService
  */
-export class SquadServiceClient implements ISquadServiceClient, ServiceInfo {
-    typeName = SquadService.typeName;
-    methods = SquadService.methods;
-    options = SquadService.options;
+export class UnitServiceClient implements IUnitServiceClient, ServiceInfo {
+    typeName = UnitService.typeName;
+    methods = UnitService.methods;
+    options = UnitService.options;
     constructor(private readonly _transport: RpcTransport) {
     }
     /**
      * @perm
      *
-     * @generated from protobuf rpc: ListSquads(services.centrum.ListSquadsRequest) returns (services.centrum.ListSquadsResponse);
+     * @generated from protobuf rpc: ListUnits(services.centrum.ListUnitsRequest) returns (services.centrum.ListUnitsResponse);
      */
-    listSquads(input: ListSquadsRequest, options?: RpcOptions): UnaryCall<ListSquadsRequest, ListSquadsResponse> {
+    listUnits(input: ListUnitsRequest, options?: RpcOptions): UnaryCall<ListUnitsRequest, ListUnitsResponse> {
         const method = this.methods[0], opt = this._transport.mergeOptions(options);
-        return stackIntercept<ListSquadsRequest, ListSquadsResponse>("unary", this._transport, method, opt, input);
+        return stackIntercept<ListUnitsRequest, ListUnitsResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @perm
      *
-     * @generated from protobuf rpc: CreateSquad(services.centrum.CreateSquadRequest) returns (services.centrum.CreateSquadResponse);
+     * @generated from protobuf rpc: CreateUnit(services.centrum.CreateUnitRequest) returns (services.centrum.CreateUnitResponse);
      */
-    createSquad(input: CreateSquadRequest, options?: RpcOptions): UnaryCall<CreateSquadRequest, CreateSquadResponse> {
+    createUnit(input: CreateUnitRequest, options?: RpcOptions): UnaryCall<CreateUnitRequest, CreateUnitResponse> {
         const method = this.methods[1], opt = this._transport.mergeOptions(options);
-        return stackIntercept<CreateSquadRequest, CreateSquadResponse>("unary", this._transport, method, opt, input);
+        return stackIntercept<CreateUnitRequest, CreateUnitResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=CreateSquad
+     * @perm: Name=CreateUnit
      *
-     * @generated from protobuf rpc: UpdateSquad(services.centrum.UpdateSquadRequest) returns (services.centrum.UpdateSquadResponse);
+     * @generated from protobuf rpc: UpdateUnit(services.centrum.UpdateUnitRequest) returns (services.centrum.UpdateUnitResponse);
      */
-    updateSquad(input: UpdateSquadRequest, options?: RpcOptions): UnaryCall<UpdateSquadRequest, UpdateSquadResponse> {
+    updateUnit(input: UpdateUnitRequest, options?: RpcOptions): UnaryCall<UpdateUnitRequest, UpdateUnitResponse> {
         const method = this.methods[2], opt = this._transport.mergeOptions(options);
-        return stackIntercept<UpdateSquadRequest, UpdateSquadResponse>("unary", this._transport, method, opt, input);
+        return stackIntercept<UpdateUnitRequest, UpdateUnitResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=DeleteSquad
+     * @perm: Name=DeleteUnit
      *
-     * @generated from protobuf rpc: DeleteSquad(services.centrum.DeleteSquadRequest) returns (services.centrum.DeleteSquadResponse);
+     * @generated from protobuf rpc: DeleteUnit(services.centrum.DeleteUnitRequest) returns (services.centrum.DeleteUnitResponse);
      */
-    deleteSquad(input: DeleteSquadRequest, options?: RpcOptions): UnaryCall<DeleteSquadRequest, DeleteSquadResponse> {
+    deleteUnit(input: DeleteUnitRequest, options?: RpcOptions): UnaryCall<DeleteUnitRequest, DeleteUnitResponse> {
         const method = this.methods[3], opt = this._transport.mergeOptions(options);
-        return stackIntercept<DeleteSquadRequest, DeleteSquadResponse>("unary", this._transport, method, opt, input);
+        return stackIntercept<DeleteUnitRequest, DeleteUnitResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
      *
-     * @generated from protobuf rpc: AssignSquad(services.centrum.AssignSquadRequest) returns (services.centrum.AssignSquadResponse);
+     * @generated from protobuf rpc: AssignUnit(services.centrum.AssignUnitRequest) returns (services.centrum.AssignUnitResponse);
      */
-    assignSquad(input: AssignSquadRequest, options?: RpcOptions): UnaryCall<AssignSquadRequest, AssignSquadResponse> {
+    assignUnit(input: AssignUnitRequest, options?: RpcOptions): UnaryCall<AssignUnitRequest, AssignUnitResponse> {
         const method = this.methods[4], opt = this._transport.mergeOptions(options);
-        return stackIntercept<AssignSquadRequest, AssignSquadResponse>("unary", this._transport, method, opt, input);
+        return stackIntercept<AssignUnitRequest, AssignUnitResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @perm
      *
-     * @generated from protobuf rpc: StreamSquads(services.centrum.SquadStreamRequest) returns (stream services.centrum.SquadStreamResponse);
+     * @generated from protobuf rpc: StreamUnits(services.centrum.UnitStreamRequest) returns (stream services.centrum.UnitStreamResponse);
      */
-    streamSquads(input: SquadStreamRequest, options?: RpcOptions): ServerStreamingCall<SquadStreamRequest, SquadStreamResponse> {
+    streamUnits(input: UnitStreamRequest, options?: RpcOptions): ServerStreamingCall<UnitStreamRequest, UnitStreamResponse> {
         const method = this.methods[5], opt = this._transport.mergeOptions(options);
-        return stackIntercept<SquadStreamRequest, SquadStreamResponse>("serverStreaming", this._transport, method, opt, input);
+        return stackIntercept<UnitStreamRequest, UnitStreamResponse>("serverStreaming", this._transport, method, opt, input);
     }
 }
 /**
- * Action + Dispatch Management
- *
  * @generated from protobuf service services.centrum.CentrumService
  */
 export interface ICentrumServiceClient {
@@ -156,8 +150,6 @@ export interface ICentrumServiceClient {
     stream(input: CentrumStreamRequest, options?: RpcOptions): ServerStreamingCall<CentrumStreamRequest, CentrumStreamResponse>;
 }
 /**
- * Action + Dispatch Management
- *
  * @generated from protobuf service services.centrum.CentrumService
  */
 export class CentrumServiceClient implements ICentrumServiceClient, ServiceInfo {

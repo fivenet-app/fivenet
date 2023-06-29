@@ -21,15 +21,19 @@ export interface Unit {
      */
     initials: string;
     /**
-     * @generated from protobuf field: optional resources.dispatch.UNIT_STATUS status = 4;
+     * @generated from protobuf field: optional string description = 4;
+     */
+    description?: string;
+    /**
+     * @generated from protobuf field: optional resources.dispatch.UNIT_STATUS status = 5;
      */
     status?: UNIT_STATUS;
     /**
-     * @generated from protobuf field: optional string reason = 5;
+     * @generated from protobuf field: optional string reason = 6;
      */
     reason?: string;
     /**
-     * @generated from protobuf field: repeated resources.users.UserShort assigned = 6;
+     * @generated from protobuf field: repeated resources.users.UserShort assigned = 7;
      */
     assigned: UserShort[];
 }
@@ -138,9 +142,10 @@ class Unit$Type extends MessageType<Unit> {
             { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
             { no: 2, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 3, name: "initials", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "4" } } } },
-            { no: 4, name: "status", kind: "enum", opt: true, T: () => ["resources.dispatch.UNIT_STATUS", UNIT_STATUS] },
-            { no: 5, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
-            { no: 6, name: "assigned", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UserShort }
+            { no: 4, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
+            { no: 5, name: "status", kind: "enum", opt: true, T: () => ["resources.dispatch.UNIT_STATUS", UNIT_STATUS] },
+            { no: 6, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 7, name: "assigned", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UserShort }
         ]);
     }
 }

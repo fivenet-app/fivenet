@@ -3,78 +3,81 @@ syntax = "proto3";
 package services.centrum;
 option go_package = "github.com/galexrt/fivenet/gen/go/proto/services/centrum;centrum";
 
-// Squad Management
+import "resources/dispatch/dispatch.proto";
 
-message ListSquadsRequest {}
+// Unit Management
 
-message ListSquadsResponse {
-
+message ListUnitsRequest {
+  repeated resources.dispatch.UNIT_STATUS status = 1;
+  optional string name = 2;
 }
 
-message CreateSquadRequest {
-  string name = 1;
-  optional uint64 limit = 2;
+message ListUnitsResponse {
+  repeated resources.dispatch.Unit units = 1;
 }
 
-message CreateSquadResponse {
-  uint64 id = 1;
+message CreateUnitRequest {
+  resources.dispatch.Unit unit = 1;
 }
 
-message UpdateSquadRequest {
-  uint64 id = 1;
+message CreateUnitResponse {
+  resources.dispatch.Unit unit = 1;
 }
 
-message UpdateSquadResponse {
-  uint64 id = 1;
+message UpdateUnitRequest {
+  resources.dispatch.Unit unit = 1;
 }
 
-message DeleteSquadRequest {
-  uint64 id = 1;
+message UpdateUnitResponse {
+  resources.dispatch.Unit unit = 1;
 }
 
-message DeleteSquadResponse {}
+message DeleteUnitRequest {
+  uint64 unit_id = 1;
+}
 
-message AssignSquadRequest {
-  uint64 squad_id = 1;
+message DeleteUnitResponse {}
+
+message AssignUnitRequest {
+  uint64 unit_id = 1;
   repeated int32 to_add = 2;
   repeated int32 to_remove = 3;
 }
 
-message AssignSquadResponse {
-  uint64 squad_id = 1;
+message AssignUnitResponse {
+  uint64 unit_id = 1;
 }
 
-message SquadStreamRequest {}
+message UnitStreamRequest {}
 
-message SquadStreamResponse {
-  repeated SquadChanges changes = 1;
+message UnitStreamResponse {
+  repeated UnitChanges changes = 1;
 }
 
-message SquadChanges {
+message UnitChanges {
   uint64 id = 1;
   repeated int32 added = 2;
   repeated int32 removed = 3;
 }
 
-// Squad Management
-service SquadService {
+service UnitService {
   // @perm
-  rpc ListSquads(ListSquadsRequest) returns (ListSquadsResponse);
+  rpc ListUnits(ListUnitsRequest) returns (ListUnitsResponse);
   // @perm
-  rpc CreateSquad(CreateSquadRequest) returns (CreateSquadResponse);
-  // @perm: Name=CreateSquad
-  rpc UpdateSquad(UpdateSquadRequest) returns (UpdateSquadResponse);
-  // @perm: Name=DeleteSquad
-  rpc DeleteSquad(DeleteSquadRequest) returns (DeleteSquadResponse);
+  rpc CreateUnit(CreateUnitRequest) returns (CreateUnitResponse);
+  // @perm: Name=CreateUnit
+  rpc UpdateUnit(UpdateUnitRequest) returns (UpdateUnitResponse);
+  // @perm: Name=DeleteUnit
+  rpc DeleteUnit(DeleteUnitRequest) returns (DeleteUnitResponse);
 
   // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
-  rpc AssignSquad(AssignSquadRequest) returns (AssignSquadResponse);
+  rpc AssignUnit(AssignUnitRequest) returns (AssignUnitResponse);
 
   // @perm
-  rpc StreamSquads(SquadStreamRequest) returns (stream SquadStreamResponse);
+  rpc StreamUnits(UnitStreamRequest) returns (stream UnitStreamResponse);
 }
 
-// Action + Dispatch Management
+// Dispatch Management
 
 message CreateActionRequest {
 
@@ -90,7 +93,6 @@ message CentrumStreamRequest {}
 
 message CentrumStreamResponse {}
 
-// Action + Dispatch Management
 service CentrumService {
   // @perm
   rpc CreateAction(CreateActionRequest) returns (CreateActionResponse);

@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import DispatchesList from '~/components/centrum/DispatchesList.vue';
+import DispatchFeed from '~/components/centrum/DispatchFeed.vue';
 import SquadList from '~/components/centrum/SquadList.vue';
 import Livemap from '~/components/livemap/Livemap.vue';
 
@@ -27,10 +28,13 @@ definePageMeta({
 
             <div class="flex-1 flex flex-col">
                 <!-- Right column area -->
-                <div class="basis-2/3">
+                <div class="basis-3/5">
                     <DispatchesList />
                 </div>
-                <div class="basis-1/3">
+                <div class="basis-1/5">
+                    <DispatchFeed />
+                </div>
+                <div class="basis-1/5">
                     <SquadList />
                 </div>
             </div>
