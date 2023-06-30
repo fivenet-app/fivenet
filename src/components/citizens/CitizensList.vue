@@ -158,7 +158,7 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                     />
                                 </span>
                             </DisclosureButton>
-                            <DisclosurePanel class="mt-2 pr-12">
+                            <DisclosurePanel class="mt-2 pr-4">
                                 <div class="flex flex-row gap-2">
                                     <div
                                         class="flex-1 form-control"

@@ -150,6 +150,10 @@ export interface ListDocumentsRequest {
      * @generated from protobuf field: optional resources.timestamp.Timestamp to = 7;
      */
     to?: Timestamp;
+    /**
+     * @generated from protobuf field: optional bool closed = 8;
+     */
+    closed?: boolean;
 }
 /**
  * @generated from protobuf message services.docstore.ListDocumentsResponse
@@ -776,7 +780,8 @@ class ListDocumentsRequest$Type extends MessageType<ListDocumentsRequest> {
             { no: 4, name: "category_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
             { no: 5, name: "creator_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ },
             { no: 6, name: "from", kind: "message", T: () => Timestamp },
-            { no: 7, name: "to", kind: "message", T: () => Timestamp }
+            { no: 7, name: "to", kind: "message", T: () => Timestamp },
+            { no: 8, name: "closed", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
 }

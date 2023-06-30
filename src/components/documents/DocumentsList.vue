@@ -8,6 +8,10 @@ import {
     Disclosure,
     DisclosureButton,
     DisclosurePanel,
+    Listbox,
+    ListboxButton,
+    ListboxOption,
+    ListboxOptions,
 } from '@headlessui/vue';
 import SvgIcon from '@jamescoyle/vue-icon';
 import { mdiCheck, mdiChevronDown } from '@mdi/js';
@@ -29,8 +33,25 @@ import TemplatesModal from './templates/TemplatesModal.vue';
 
 const { $grpc } = useNuxtApp();
 
-const search = ref<{ title: string; category?: DocumentCategory; character?: UserShort; from?: string; to?: string }>({
+const { t } = useI18n();
+
+type OpenClose = { id: number; label: string; closed?: boolean };
+const openclose: OpenClose[] = [
+    { id: 0, label: t('common.not_selected') },
+    { id: 1, label: t('common.open'), closed: false },
+    { id: 2, label: t('common.close', 2), closed: true },
+];
+
+const search = ref<{
+    title: string;
+    category?: DocumentCategory;
+    character?: UserShort;
+    from?: string;
+    to?: string;
+    closed?: OpenClose;
+}>({
     title: '',
+    closed: openclose[0],
 });
 const pagination = ref<PaginationResponse>();
 const offset = ref(0n);
@@ -64,6 +85,11 @@ async function listDocuments(): Promise<Array<DocumentShort>> {
             req.to = {
                 timestamp: google_protobuf_timestamp_pb.Timestamp.fromDate(fromString(search.value.to)!),
             };
+        }
+        if (search.value.closed) {
+            if (search.value.closed !== undefined) {
+                req.closed = search.value.closed.closed;
+            }
         }
 
         try {
@@ -199,7 +225,7 @@ onMounted(async () => {
                                     />
                                 </span>
                             </DisclosureButton>
-                            <DisclosurePanel class="mt-2 pr-12">
+                            <DisclosurePanel class="mt-2 pr-4">
                                 <div class="flex flex-row gap-2">
                                     <div class="flex-1 form-control">
                                         <label for="search" class="block text-sm font-medium leading-6 text-neutral">
@@ -343,6 +369,80 @@ onMounted(async () => {
                                                 class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                             />
                                         </div>
+                                    </div>
+                                    <div class="flex-1 form-control">
+                                        <label for="search" class="block text-sm font-medium leading-6 text-neutral">
+                                            {{ $t('common.close', 2) }}?
+                                        </label>
+                                        <Listbox as="div" class="mt-2" v-model="search.closed">
+                                            <div class="relative">
+                                                <ListboxButton
+                                                    class="block pl-3 text-left w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                >
+                                                    <span class="block truncate">
+                                                        {{ search.closed?.label }}
+                                                    </span>
+                                                    <span
+                                                        class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none"
+                                                    >
+                                                        <SvgIcon
+                                                            class="w-5 h-5 text-gray-400"
+                                                            aria-hidden="true"
+                                                            type="mdi"
+                                                            :path="mdiChevronDown"
+                                                        />
+                                                    </span>
+                                                </ListboxButton>
+
+                                                <transition
+                                                    leave-active-class="transition duration-100 ease-in"
+                                                    leave-from-class="opacity-100"
+                                                    leave-to-class="opacity-0"
+                                                >
+                                                    <ListboxOptions
+                                                        class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-44 sm:text-sm"
+                                                    >
+                                                        <ListboxOption
+                                                            as="template"
+                                                            v-for="st in openclose"
+                                                            :key="st.id?.toString()"
+                                                            :value="st"
+                                                            v-slot="{ active, selected }"
+                                                        >
+                                                            <li
+                                                                :class="[
+                                                                    active ? 'bg-primary-500' : '',
+                                                                    'text-neutral relative cursor-default select-none py-2 pl-8 pr-4',
+                                                                ]"
+                                                            >
+                                                                <span
+                                                                    :class="[
+                                                                        selected ? 'font-semibold' : 'font-normal',
+                                                                        'block truncate',
+                                                                    ]"
+                                                                    >{{ st.label }}</span
+                                                                >
+
+                                                                <span
+                                                                    v-if="selected"
+                                                                    :class="[
+                                                                        active ? 'text-neutral' : 'text-primary-500',
+                                                                        'absolute inset-y-0 left-0 flex items-center pl-1.5',
+                                                                    ]"
+                                                                >
+                                                                    <SvgIcon
+                                                                        class="w-5 h-5"
+                                                                        aria-hidden="true"
+                                                                        type="mdi"
+                                                                        :path="mdiCheck"
+                                                                    />
+                                                                </span>
+                                                            </li>
+                                                        </ListboxOption>
+                                                    </ListboxOptions>
+                                                </transition>
+                                            </div>
+                                        </Listbox>
                                     </div>
                                 </div>
                             </DisclosurePanel>

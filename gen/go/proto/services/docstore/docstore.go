@@ -105,6 +105,11 @@ func (s *Server) ListDocuments(ctx context.Context, req *ListDocumentsRequest) (
 			jet.TimestampT(req.To.AsTime()),
 		))
 	}
+	if req.Closed != nil {
+		condition = condition.AND(tDocs.Closed.EQ(
+			jet.Bool(*req.Closed),
+		))
+	}
 
 	countStmt := s.listDocumentsQuery(
 		condition, jet.ProjectionList{jet.COUNT(jet.DISTINCT(tDocs.ID)).AS("datacount.totalcount")},

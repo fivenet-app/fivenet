@@ -181,7 +181,7 @@ function addToClipboard(): void {
                                             type="mdi"
                                             :path="mdiLockOpenVariant"
                                         />
-                                        {{ $t('common.open') }}
+                                        {{ $t('common.open', 2) }}
                                     </button>
                                     <button
                                         v-else

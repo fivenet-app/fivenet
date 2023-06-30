@@ -1408,6 +1408,10 @@ func (m *ListDocumentsRequest) validate(all bool) error {
 
 	}
 
+	if m.Closed != nil {
+		// no validation rules for Closed
+	}
+
 	if len(errors) > 0 {
 		return ListDocumentsRequestMultiError(errors)
 	}

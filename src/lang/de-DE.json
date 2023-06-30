@@ -375,7 +375,7 @@
         "license": "Lizenz | Lizenzen",
         "not": "Nicht",
         "close": "Schließen | Geschlossen",
-        "open": "Offen",
+        "open": "Offen | Öffnen",
         "last_used": "Zuletzt Genutzt",
         "rank": "Rang",
         "playtime": "Spielzeit",
@@ -490,7 +490,8 @@
         "summary": "Zusammenfassung",
         "update": "Aktualisieren",
         "dispatch_center": "Leitstelle",
-        "reset": "Zurücksetzen"
+        "reset": "Zurücksetzen",
+        "not_selected": "Nicht ausgewählt | Nichts ausgewählt"
     },
     "notifications": {
         "clipboard": {

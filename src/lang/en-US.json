@@ -492,7 +492,8 @@
         "dispatch_center": "Dispatch Center",
         "reset": "Reset",
         "assign": "Assign",
-        "detail": "Detail | Details"
+        "detail": "Detail | Details",
+        "not_selected": "Not Selected"
     },
     "notifications": {
         "clipboard": {
