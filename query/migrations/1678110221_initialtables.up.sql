@@ -209,6 +209,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_user_props` (
   `job` varchar(20) DEFAULT NULL,
   `job_grade` int(11) DEFAULT NULL,
   `traffic_infraction_points` mediumint(8) unsigned DEFAULT 0,
+  `open_fines` bigint(20) DEFAULT 0,
   UNIQUE KEY `idx_fivenet_user_props_unique` (`user_id`),
   KEY `idx_fivenet_user_props_wanted` (`wanted`),
   CONSTRAINT `fk_fivenet_user_props_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE

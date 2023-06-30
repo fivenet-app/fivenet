@@ -94,6 +94,7 @@ export const useClipboardStore = defineStore('clipboard', {
         clearDocuments(): void {
             this.documents.splice(0, this.documents.length);
         },
+
         // Users
         addUser(user: User): void {
             const idx = this.users.findIndex((o: ClipboardUser) => {
@@ -114,6 +115,7 @@ export const useClipboardStore = defineStore('clipboard', {
         clearUsers(): void {
             this.users.splice(0, this.users.length);
         },
+
         // Vehicles
         addVehicle(vehicle: Vehicle): void {
             const idx = this.vehicles.findIndex((o: ClipboardVehicle) => {
@@ -179,9 +181,7 @@ export class ClipboardUser {
         this.jobGradeLabel = u.jobGradeLabel;
         this.firstname = u.firstname;
         this.lastname = u.lastname;
-        if ('dateofbirth' in u) {
-            this.dateofbirth = u.dateofbirth;
-        }
+        this.dateofbirth = u.dateofbirth;
 
         return this;
     }
@@ -200,9 +200,6 @@ export function getUser(obj: ClipboardUser): User {
         dateofbirth: obj.dateofbirth!,
         licenses: [],
     };
-    if ('dateofbirth' in u) {
-        u.dateofbirth = obj.dateofbirth!;
-    }
 
     return u;
 }

@@ -15,6 +15,7 @@ message ListCitizensRequest {
   optional string phone_number = 4 [(validate.rules).string.max_len = 20];
   optional uint64 traffic_points = 5;
   optional string dateofbirth = 6 [(validate.rules).string.max_len = 10];
+  optional uint64 open_fines = 7;
 }
 
 message ListCitizensResponse {
@@ -50,7 +51,7 @@ message SetUserPropsResponse {
 }
 
 service CitizenStoreService {
-  // @perm: Attrs=Fields/StringList:[]string{"PhoneNumber", "Licenses", "UserProps.Wanted", "UserProps.Job", "UserProps.TrafficInfractionPoints"}
+  // @perm: Attrs=Fields/StringList:[]string{"PhoneNumber", "Licenses", "UserProps.Wanted", "UserProps.Job", "UserProps.TrafficInfractionPoints", "UserProps.OpenFines"}
   rpc ListCitizens(ListCitizensRequest) returns (ListCitizensResponse);
   // @perm: Attrs=Jobs/JobGradeList
   rpc GetUser(GetUserRequest) returns (GetUserResponse);

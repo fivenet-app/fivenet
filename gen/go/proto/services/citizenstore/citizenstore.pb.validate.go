@@ -146,6 +146,10 @@ func (m *ListCitizensRequest) validate(all bool) error {
 
 	}
 
+	if m.OpenFines != nil {
+		// no validation rules for OpenFines
+	}
+
 	if len(errors) > 0 {
 		return ListCitizensRequestMultiError(errors)
 	}

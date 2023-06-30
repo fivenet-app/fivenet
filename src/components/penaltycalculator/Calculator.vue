@@ -121,8 +121,8 @@ async function copyToClipboard(): Promise<void> {
         d(new Date(), 'long') +
         `)
 
-${t('components.penaltycalculator.fine')}: $${summary.value.fine}
-${t('components.penaltycalculator.detention_time')}: ${summary.value.detentionTime} ${t(
+${t('common.fine')}: $${summary.value.fine}
+${t('common.detention_time')}: ${summary.value.detentionTime} ${t(
             'common.time_ago.month',
             summary.value.detentionTime.toString()
         )}
@@ -132,7 +132,7 @@ ${t('common.total_count')}: ${summary.value.count}
 
     if (selectedPenalties.value.length > 0) {
         text += `
-${t('components.penaltycalculator.crime', selectedPenalties.value.length)}:
+${t('common.crime', selectedPenalties.value.length)}:
 `;
 
         selectedPenalties.value.forEach((v) => {
@@ -223,19 +223,19 @@ ${t('components.penaltycalculator.crime', selectedPenalties.value.length)}:
                                                                 scope="col"
                                                                 class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-0"
                                                             >
-                                                                {{ $t('components.penaltycalculator.crime') }}
+                                                                {{ $t('common.crime') }}
                                                             </th>
                                                             <th
                                                                 scope="col"
                                                                 class="py-3.5 px-2 text-left text-sm font-semibold text-neutral"
                                                             >
-                                                                {{ $t('components.penaltycalculator.fine') }}
+                                                                {{ $t('common.fine') }}
                                                             </th>
                                                             <th
                                                                 scope="col"
                                                                 class="py-3.5 px-2 text-left text-sm font-semibold text-neutral"
                                                             >
-                                                                {{ $t('components.penaltycalculator.detention_time') }}
+                                                                {{ $t('common.detention_time') }}
                                                             </th>
                                                             <th
                                                                 scope="col"

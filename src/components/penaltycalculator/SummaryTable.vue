@@ -23,20 +23,20 @@ function getNameForLawBookId(id: bigint): string | undefined {
     >
         <SvgIcon class="w-12 h-12 mx-auto text-neutral" type="mdi" :path="mdiCalculator" />
         <span class="block mt-2 text-sm font-semibold text-gray-300">
-            {{ $t('common.none_selected', [`${$t('components.penaltycalculator.crime')}`]) }}
+            {{ $t('common.none_selected', [`${$t('common.crime')}`]) }}
         </span>
     </button>
     <table v-else class="min-w-full divide-y divide-base-600">
         <thead>
             <tr>
                 <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-0">
-                    {{ $t('components.penaltycalculator.crime') }}
+                    {{ $t('common.crime') }}
                 </th>
                 <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
-                    {{ $t('components.penaltycalculator.fine') }}
+                    {{ $t('common.fine') }}
                 </th>
                 <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
-                    {{ $t('components.penaltycalculator.detention_time') }}
+                    {{ $t('common.detention_time') }}
                 </th>
                 <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
                     {{ $t('common.traffic_infraction_points', 2) }}

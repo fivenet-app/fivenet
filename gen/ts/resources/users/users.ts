@@ -41,6 +41,10 @@ export interface UserShort {
      * @generated from protobuf field: string lastname = 8;
      */
     lastname: string; // @gotags: alias:"lastname"
+    /**
+     * @generated from protobuf field: string dateofbirth = 9;
+     */
+    dateofbirth: string; // @gotags: alias:"dateofbirth"
 }
 /**
  * @generated from protobuf message resources.users.User
@@ -156,6 +160,10 @@ export interface UserProps {
      * @generated from protobuf field: optional uint64 traffic_infraction_points = 7;
      */
     trafficInfractionPoints?: bigint; // @gotags: alias:"traffic_infraction_points"
+    /**
+     * @generated from protobuf field: optional uint64 open_fines = 8;
+     */
+    openFines?: bigint; // @gotags: alias:"open_fines"
 }
 /**
  * @generated from protobuf message resources.users.UserActivity
@@ -226,7 +234,8 @@ class UserShort$Type extends MessageType<UserShort> {
             { no: 5, name: "job_grade", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: -1 } } } },
             { no: 6, name: "job_grade_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
             { no: 7, name: "firstname", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "1", maxLen: "50" } } } },
-            { no: 8, name: "lastname", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "1", maxLen: "50" } } } }
+            { no: 8, name: "lastname", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "1", maxLen: "50" } } } },
+            { no: 9, name: "dateofbirth", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { len: "10" } } } }
         ]);
     }
 }
@@ -284,7 +293,8 @@ class UserProps$Type extends MessageType<UserProps> {
             { no: 4, name: "job", kind: "message", T: () => Job },
             { no: 5, name: "job_grade_number", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
             { no: 6, name: "job_grade", kind: "message", T: () => JobGrade },
-            { no: 7, name: "traffic_infraction_points", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+            { no: 7, name: "traffic_infraction_points", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 8, name: "open_fines", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
         ]);
     }
 }

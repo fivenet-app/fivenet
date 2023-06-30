@@ -13,4 +13,5 @@ type FivenetUserProps struct {
 	Job                     *string `json:"job"`
 	JobGrade                *int32  `json:"job_grade"`
 	TrafficInfractionPoints *uint32 `json:"traffic_infraction_points"`
+	OpenFines               *int64  `json:"open_fines"`
 }

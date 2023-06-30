@@ -22,7 +22,7 @@ const props = defineProps<{
     activity: UserActivity;
 }>();
 
-const { t } = useI18n();
+const { t, n } = useI18n();
 
 const icon = ref<string>(mdiHelpCircle);
 const iconColor = ref<string>('text-neutral');
@@ -119,17 +119,17 @@ switch (props.activity.key) {
         if (props.activity.newValue === '0') {
             icon.value = mdiReceiptTextCheck;
             actionText.value = t('components.citizens.citizen_info_activity_feed_entry.plugin_billing_fines.paid');
-            actionValue.value = '$' + props.activity.oldValue;
+            actionValue.value = n(parseInt(props.activity.oldValue), 'currency');
             iconColor.value = 'text-green-400';
         } else if (props.activity.newValue === props.activity.oldValue) {
             icon.value = mdiReceiptTextRemove;
             actionText.value = t('components.citizens.citizen_info_activity_feed_entry.plugin_billing_fines.removed');
-            actionValue.value = '$' + props.activity.oldValue;
+            actionValue.value = n(parseInt(props.activity.oldValue), 'currency');
             iconColor.value = 'text-secondary-400';
         } else {
             icon.value = mdiReceiptTextPlus;
             actionText.value = t('components.citizens.citizen_info_activity_feed_entry.plugin_billing_fines.created');
-            actionValue.value = '$' + props.activity.newValue;
+            actionValue.value = n(parseInt(props.activity.newValue), 'currency');
             iconColor.value = 'text-info-400';
         }
         break;

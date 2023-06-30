@@ -334,10 +334,7 @@
             "factory_reset": "Factory Reset FiveNet App"
         },
         "penaltycalculator": {
-            "title": "Penalty Calculator",
-            "crime": "Crime | Crimes",
-            "fine": "Fine | Fines",
-            "detention_time": "Jail Time"
+            "title": "Penalty Calculator"
         }
     },
     "common": {
@@ -493,7 +490,12 @@
         "reset": "Reset",
         "assign": "Assign",
         "detail": "Detail | Details",
-        "not_selected": "Not Selected"
+        "not_selected": "Not Selected",
+        "crime": "Crime | Crimes",
+        "fine": "Fine | Fines",
+        "detention_time": "Jail Time",
+        "money": "Money",
+        "no_open_fine": "No open fines"
     },
     "notifications": {
         "clipboard": {

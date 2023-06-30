@@ -113,6 +113,11 @@ func (s *Server) ListCitizens(ctx context.Context, req *ListCitizensRequest) (*L
 			if req.TrafficPoints != nil && *req.TrafficPoints > 0 {
 				condition = condition.AND(tUserProps.TrafficInfractionPoints.GT_EQ(jet.Uint64(*req.TrafficPoints)))
 			}
+		case "UserProps.OpenFines":
+			selectors = append(selectors, tUserProps.OpenFines)
+			if req.OpenFines != nil && *req.OpenFines > 0 {
+				condition = condition.AND(tUserProps.OpenFines.GT_EQ(jet.Uint64(*req.OpenFines)))
+			}
 		}
 	}
 
@@ -261,6 +266,8 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 			selectors = append(selectors, tUserProps.JobGrade)
 		case "UserProps.TrafficInfractionPoints":
 			selectors = append(selectors, tUserProps.TrafficInfractionPoints)
+		case "UserProps.OpenFines":
+			selectors = append(selectors, tUserProps.OpenFines)
 		}
 	}
 

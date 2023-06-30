@@ -334,10 +334,7 @@
             "factory_reset": "FiveNet App auf Standard zurücksetzen"
         },
         "penaltycalculator": {
-            "title": "Strafenrechner",
-            "crime": "Verbrechen",
-            "fine": "Strafe",
-            "detention_time": "Gefängniszeit"
+            "title": "Strafenrechner"
         }
     },
     "common": {
@@ -491,7 +488,12 @@
         "update": "Aktualisieren",
         "dispatch_center": "Leitstelle",
         "reset": "Zurücksetzen",
-        "not_selected": "Nicht ausgewählt | Nichts ausgewählt"
+        "not_selected": "Nicht ausgewählt | Nichts ausgewählt",
+        "crime": "Verbrechen",
+        "fine": "Strafe",
+        "detention_time": "Gefängniszeit",
+        "money": "Geld",
+        "no_open_fine": "Keine offenen Geldstrafe"
     },
     "notifications": {
         "clipboard": {

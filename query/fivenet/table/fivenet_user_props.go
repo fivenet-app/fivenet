@@ -22,6 +22,7 @@ type fivenetUserPropsTable struct {
 	Job                     mysql.ColumnString
 	JobGrade                mysql.ColumnInteger
 	TrafficInfractionPoints mysql.ColumnInteger
+	OpenFines               mysql.ColumnInteger
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -67,8 +68,9 @@ func newFivenetUserPropsTableImpl(schemaName, tableName, alias string) fivenetUs
 		JobColumn                     = mysql.StringColumn("job")
 		JobGradeColumn                = mysql.IntegerColumn("job_grade")
 		TrafficInfractionPointsColumn = mysql.IntegerColumn("traffic_infraction_points")
-		allColumns                    = mysql.ColumnList{UserIDColumn, WantedColumn, JobColumn, JobGradeColumn, TrafficInfractionPointsColumn}
-		mutableColumns                = mysql.ColumnList{UserIDColumn, WantedColumn, JobColumn, JobGradeColumn, TrafficInfractionPointsColumn}
+		OpenFinesColumn               = mysql.IntegerColumn("open_fines")
+		allColumns                    = mysql.ColumnList{UserIDColumn, WantedColumn, JobColumn, JobGradeColumn, TrafficInfractionPointsColumn, OpenFinesColumn}
+		mutableColumns                = mysql.ColumnList{UserIDColumn, WantedColumn, JobColumn, JobGradeColumn, TrafficInfractionPointsColumn, OpenFinesColumn}
 	)
 
 	return fivenetUserPropsTable{
@@ -80,6 +82,7 @@ func newFivenetUserPropsTableImpl(schemaName, tableName, alias string) fivenetUs
 		Job:                     JobColumn,
 		JobGrade:                JobGradeColumn,
 		TrafficInfractionPoints: TrafficInfractionPointsColumn,
+		OpenFines:               OpenFinesColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

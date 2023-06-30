@@ -124,6 +124,18 @@ func (m *UserShort) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	if utf8.RuneCountInString(m.GetDateofbirth()) != 10 {
+		err := UserShortValidationError{
+			field:  "Dateofbirth",
+			reason: "value length must be 10 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+
+	}
+
 	if m.JobLabel != nil {
 
 		if utf8.RuneCountInString(m.GetJobLabel()) > 50 {
@@ -789,6 +801,10 @@ func (m *UserProps) validate(all bool) error {
 
 	if m.TrafficInfractionPoints != nil {
 		// no validation rules for TrafficInfractionPoints
+	}
+
+	if m.OpenFines != nil {
+		// no validation rules for OpenFines
 	}
 
 	if len(errors) > 0 {
