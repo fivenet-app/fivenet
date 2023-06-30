@@ -11,6 +11,7 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/livemap"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/timestamp"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
+	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/perms"
 	"github.com/galexrt/fivenet/pkg/utils"
@@ -175,7 +176,7 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 		}
 		resp.Dispatches = dispatchMarkers
 
-		userMarkers, err := s.getUserLocations(playersJobs, userInfo.UserId, userInfo.Job)
+		userMarkers, err := s.getUserLocations(playersJobs, userInfo)
 		if err != nil {
 			return ErrStreamFailed
 		}
@@ -193,9 +194,13 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 	}
 }
 
-func (s *Server) getUserLocations(jobs map[string]int32, userId int32, userJob string) ([]*livemap.UserMarker, error) {
+func (s *Server) getUserLocations(jobs map[string]int32, userInfo *userinfo.UserInfo) ([]*livemap.UserMarker, error) {
 	ds := []*livemap.UserMarker{}
 
+	found := false
+	if userInfo.SuperUser {
+		found = true
+	}
 	for job, grade := range jobs {
 		markers, ok := s.usersCache.Load(job)
 		if !ok {
@@ -204,13 +209,22 @@ func (s *Server) getUserLocations(jobs map[string]int32, userId int32, userJob s
 
 		for i := 0; i < len(markers); i++ {
 			// SuperUser returns grade as `-1`, job has access to that grade or it is the user itself
-			if grade == -1 || (markers[i].User.JobGrade <= grade || markers[i].User.UserId == userId) {
+			if grade == -1 || (markers[i].User.JobGrade <= grade || markers[i].User.UserId == userInfo.UserId) {
 				ds = append(ds, markers[i])
+			}
+
+			// If the user is found in the list of user markers, set found state
+			if !found && (userInfo.Job == job && markers[i].Id == userInfo.UserId) {
+				found = true
 			}
 		}
 	}
 
-	return ds, nil
+	if found {
+		return ds, nil
+	}
+
+	return nil, nil
 }
 
 func (s *Server) getUserDispatches(jobs []string) ([]*livemap.DispatchMarker, error) {
@@ -257,12 +271,10 @@ func (s *Server) refreshUserLocations(ctx context.Context) error {
 					tJobProps.Job.EQ(tUsers.Job),
 				),
 		).
-		WHERE(
-			tLocs.Hidden.IS_FALSE().
-				AND(
-					tLocs.UpdatedAt.GT_EQ(jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(60, jet.MINUTE))),
-				),
-		)
+		WHERE(jet.AND(
+			tLocs.Hidden.IS_FALSE(),
+			tLocs.UpdatedAt.GT_EQ(jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(60, jet.MINUTE))),
+		))
 
 	var dest []*livemap.UserMarker
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
