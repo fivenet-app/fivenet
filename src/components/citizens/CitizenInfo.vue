@@ -61,7 +61,8 @@ function addToClipboard(): void {
         <div class="flex flex-row items-center gap-3">
             <p class="text-xl font-bold text-neutral sm:text-4xl inline-flex">{{ user?.firstname }}, {{ user?.lastname }}</p>
             <span class="inline-flex items-center rounded-full bg-base-100 px-2.5 py-0.5 text-sm font-medium text-base-800">
-                {{ user.jobLabel }} ({{ $t('common.rank') }}: {{ user.jobGradeLabel }})
+                {{ user.jobLabel }}
+                <span v-if="user.jobGrade > 0">&nbsp;({{ $t('common.rank') }}: {{ user.jobGradeLabel }})</span>
             </span>
             <span
                 v-if="user.props?.wanted"

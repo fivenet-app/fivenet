@@ -197,9 +197,9 @@ func (s *Server) ListCitizens(ctx context.Context, req *ListCitizensRequest) (*L
 
 	for i := 0; i < len(resp.Users); i++ {
 		if utils.InSlice(s.publicJobs, resp.Users[i].Job) {
-			// Make sure user has permission to see that grade, otherwise "hide" the user's job
+			// Make sure user has permission to see that grade, otherwise "hide" the user's job grade
 			grade, ok := jobGrades[resp.Users[i].Job]
-			if !ok || grade > resp.Users[i].JobGrade {
+			if !userInfo.SuperUser && (!ok || grade > resp.Users[i].JobGrade) {
 				resp.Users[i].JobGrade = 0
 			}
 		} else {
@@ -209,7 +209,11 @@ func (s *Server) ListCitizens(ctx context.Context, req *ListCitizensRequest) (*L
 
 		if resp.Users[i].Props != nil && resp.Users[i].Props.JobName != nil {
 			resp.Users[i].Job = *resp.Users[i].Props.JobName
-			resp.Users[i].JobGrade = 0
+			if resp.Users[i].Props.JobGradeNumber != nil {
+				resp.Users[i].JobGrade = *resp.Users[i].Props.JobGradeNumber
+			} else {
+				resp.Users[i].JobGrade = 0
+			}
 		}
 
 		s.c.EnrichJobInfo(resp.Users[i])
