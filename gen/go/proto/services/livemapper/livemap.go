@@ -170,17 +170,17 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 	defer s.broker.Unsubscribe(signalCh)
 
 	for {
+		userMarkers, _, err := s.getUserLocations(playersJobs, userInfo)
+		if err != nil {
+			return ErrStreamFailed
+		}
+		resp.Users = userMarkers
+
 		dispatchMarkers, err := s.getUserDispatches(dispatchesJobs)
 		if err != nil {
 			return ErrStreamFailed
 		}
 		resp.Dispatches = dispatchMarkers
-
-		userMarkers, err := s.getUserLocations(playersJobs, userInfo)
-		if err != nil {
-			return ErrStreamFailed
-		}
-		resp.Users = userMarkers
 
 		if err := srv.Send(resp); err != nil {
 			return err
@@ -194,7 +194,7 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 	}
 }
 
-func (s *Server) getUserLocations(jobs map[string]int32, userInfo *userinfo.UserInfo) ([]*livemap.UserMarker, error) {
+func (s *Server) getUserLocations(jobs map[string]int32, userInfo *userinfo.UserInfo) ([]*livemap.UserMarker, bool, error) {
 	ds := []*livemap.UserMarker{}
 
 	found := false
@@ -221,10 +221,10 @@ func (s *Server) getUserLocations(jobs map[string]int32, userInfo *userinfo.User
 	}
 
 	if found {
-		return ds, nil
+		return ds, true, nil
 	}
 
-	return nil, nil
+	return nil, false, nil
 }
 
 func (s *Server) getUserDispatches(jobs []string) ([]*livemap.DispatchMarker, error) {
