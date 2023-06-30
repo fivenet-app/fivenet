@@ -23,12 +23,12 @@
         "@protobuf-ts/plugin": "^2.9.0",
         "@types/leaflet": "^1.9.3",
         "@types/uuid": "^9.0.2",
-        "@vee-validate/i18n": "^4.10.2",
-        "@vee-validate/nuxt": "^4.10.2",
-        "@vee-validate/rules": "^4.10.2",
+        "@vee-validate/i18n": "^4.10.3",
+        "@vee-validate/nuxt": "^4.10.3",
+        "@vee-validate/rules": "^4.10.3",
         "@vue-leaflet/vue-leaflet": "0.10.1",
         "@vueup/vue-quill": "^1.2.0",
-        "@vueuse/core": "^10.2.0",
+        "@vueuse/core": "^10.2.1",
         "@xeger/quill-image-actions": "^0.7.1",
         "@xeger/quill-image-formats": "^0.7.1",
         "cssnano": "^6.0.1",
@@ -43,7 +43,7 @@
         "quill-magic-url": "^4.2.0",
         "slugify": "^1.6.6",
         "uuid": "^9.0.0",
-        "vee-validate": "^4.10.2",
+        "vee-validate": "^4.10.3",
         "vue": "^3.3.4",
         "vue-command-palette": "^0.1.4",
         "vue-json-pretty": "^2.2.4",
@@ -77,9 +77,9 @@
         "protoc-gen-js": "^3.21.2",
         "sass": "^1.63.6",
         "tailwindcss": "^3.3.2",
-        "typescript": "^5.1.3",
+        "typescript": "^5.1.6",
         "vite": "^4.3.9",
-        "vite-plugin-mkcert": "^1.15.0",
-        "vue-tsc": "^1.8.2"
+        "vite-plugin-mkcert": "^1.16.0",
+        "vue-tsc": "^1.8.3"
     }
 }

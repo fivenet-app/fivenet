@@ -1556,12 +1556,12 @@
     hookable "^5.5.3"
     unhead "1.1.28"
 
-"@vee-validate/i18n@^4.10.2":
+"@vee-validate/i18n@^4.10.3":
   version "4.10.3"
   resolved "https://registry.yarnpkg.com/@vee-validate/i18n/-/i18n-4.10.3.tgz#009a691e8cd7772e609c1a0f3c312c0a1e40c4fe"
   integrity sha512-5K9HiHIuvdFs9y635V9WL/D8FYxASIwNiE/vRl6tsbTWHhHvUSPNnCGoCWlmn50q5jUEU96w2HPF8bbi5bKjUA==
 
-"@vee-validate/nuxt@^4.10.2":
+"@vee-validate/nuxt@^4.10.3":
   version "4.10.3"
   resolved "https://registry.yarnpkg.com/@vee-validate/nuxt/-/nuxt-4.10.3.tgz#8349532900f1361875dd229123408b56ac857574"
   integrity sha512-O6row3NdvlnFCKjrXGg8nGi64fFGDqjyfJ5WuvL832cHO6fzkM/CphFsQPAGDHhslpPWxkDFQeu9pyU7X+Py6w==
@@ -1570,7 +1570,7 @@
     local-pkg "^0.4.3"
     vee-validate "^4.10.3"
 
-"@vee-validate/rules@^4.10.2":
+"@vee-validate/rules@^4.10.3":
   version "4.10.3"
   resolved "https://registry.yarnpkg.com/@vee-validate/rules/-/rules-4.10.3.tgz#bb1439d96d5d3dc5d0de497b4e1d50cca9201358"
   integrity sha512-AKMkgwRrecFfzlZBeapp3NvEYqgF27rA57Hjufiq0Nrqzm8jsDVyzNlK36vGNUiEo/qxV+gxTRnyqSDp6EY/sQ==
@@ -1837,7 +1837,7 @@
     quill "^1.3.7"
     quill-delta "^4.2.2"
 
-"@vueuse/core@^10.2.0":
+"@vueuse/core@^10.2.1":
   version "10.2.1"
   resolved "https://registry.yarnpkg.com/@vueuse/core/-/core-10.2.1.tgz#a62b54cdaf1496138a9f8a7df7f9d644892b421f"
   integrity sha512-c441bfMbkAwTNwVRHQ0zdYZNETK//P84rC01aP2Uy/aRFCiie9NE/k9KdIXbno0eDYP5NPUuWv0aA/I4Unr/7w==
@@ -7089,7 +7089,7 @@ typescript@^3.9:
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-3.9.10.tgz#70f3910ac7a51ed6bef79da7800690b19bf778b8"
   integrity sha512-w6fIxVE/H1PkLKcCPsFqKE7Kv7QUwhU8qQY2MueZXWx5cPZdwFupLgKK3vntcK98BtNHZtAF4LA/yl2a7k8R6Q==
 
-typescript@^5.1.3:
+typescript@^5.1.6:
   version "5.1.6"
   resolved "https://registry.yarnpkg.com/typescript/-/typescript-5.1.6.tgz#02f8ac202b6dad2c0dd5e0913745b47a37998274"
   integrity sha512-zaWCozRZ6DLEWAWFrVDz1H6FVXzUSfTy5FUMWsQlU8Ym5JP9eO4xkTIROFCQvhQf61z6O/G6ugw3SgAnvvm+HA==
@@ -7300,30 +7300,6 @@ vary@^1.1.2:
   resolved "https://registry.yarnpkg.com/vary/-/vary-1.1.2.tgz#2299f02c6ded30d4a5961b0b9f74524a18f634fc"
   integrity sha512-BNGbWLfd0eUPabhkXUVm0j8uuvREyTh5ovRa/dyow/BqAbZJyC+5fU+IzQOzmAKzYqYRAISoRhdQr3eIZ/PXqg==
 
-vee-validate@^4.10.2:
-  version "4.10.3"
-  resolved "https://registry.yarnpkg.com/vee-validate/-/vee-validate-4.10.3.tgz#552bbaa4cb418fa2cf460956db9c75f09cf6ad41"
-  integrity sha512-JDEpP765Hg5bLJBBbaYutnmiKXh4YX4Jz1FKIBp2Fw5PiuL8ULdZSuJZNbfvbA3ClMV+aJYWIlzA8iLyWGq+fQ==
-  dependencies:
-    "@vue/devtools-api" "^6.5.0"
-    type-fest "^3.12.0"
-
-vee-validate@^4.10.3:
-  version "4.10.3"
-  resolved "https://registry.yarnpkg.com/vee-validate/-/vee-validate-4.10.3.tgz#552bbaa4cb418fa2cf460956db9c75f09cf6ad41"
-  integrity sha512-JDEpP765Hg5bLJBBbaYutnmiKXh4YX4Jz1FKIBp2Fw5PiuL8ULdZSuJZNbfvbA3ClMV+aJYWIlzA8iLyWGq+fQ==
-  dependencies:
-    "@vue/devtools-api" "^6.5.0"
-    type-fest "^3.12.0"
-
-vee-validate@^4.10.3:
-  version "4.10.3"
-  resolved "https://registry.yarnpkg.com/vee-validate/-/vee-validate-4.10.3.tgz#552bbaa4cb418fa2cf460956db9c75f09cf6ad41"
-  integrity sha512-JDEpP765Hg5bLJBBbaYutnmiKXh4YX4Jz1FKIBp2Fw5PiuL8ULdZSuJZNbfvbA3ClMV+aJYWIlzA8iLyWGq+fQ==
-  dependencies:
-    "@vue/devtools-api" "^6.5.0"
-    type-fest "^3.12.0"
-
 vee-validate@^4.10.3:
   version "4.10.3"
   resolved "https://registry.yarnpkg.com/vee-validate/-/vee-validate-4.10.3.tgz#552bbaa4cb418fa2cf460956db9c75f09cf6ad41"
@@ -7367,7 +7343,7 @@ vite-plugin-checker@^0.6.1:
     vscode-languageserver-textdocument "^1.0.1"
     vscode-uri "^3.0.2"
 
-vite-plugin-mkcert@^1.15.0:
+vite-plugin-mkcert@^1.16.0:
   version "1.16.0"
   resolved "https://registry.yarnpkg.com/vite-plugin-mkcert/-/vite-plugin-mkcert-1.16.0.tgz#f02cce5747295dd3d8b1958b920bb6b9b7fdace8"
   integrity sha512-5r+g8SB9wZzLNUFekGwZo3e0P6QlS6rbxK5p9z/itxNAimsYohgjK/YfVPVxM9EuglP9hjridq0lUejo9v1nVg==
@@ -7517,7 +7493,7 @@ vue-template-compiler@^2.7.14:
     de-indent "^1.0.2"
     he "^1.2.0"
 
-vue-tsc@^1.8.2:
+vue-tsc@^1.8.3:
   version "1.8.3"
   resolved "https://registry.yarnpkg.com/vue-tsc/-/vue-tsc-1.8.3.tgz#246c0798717ec094e51809e027df48f4d85162e1"
   integrity sha512-Ua4DHuYxjudlhCW2nRZtaXbhIDVncRGIbDjZhHpF8Z8vklct/G/35/kAPuGNSOmq0JcvhPAe28Oa7LWaUerZVA==
