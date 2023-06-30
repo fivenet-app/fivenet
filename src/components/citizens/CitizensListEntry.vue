@@ -45,7 +45,7 @@ function addToClipboard(): void {
             v-can="'CitizenStoreService.ListCitizens.Fields.PhoneNumber'"
             class="whitespace-nowrap px-2 py-2 text-sm text-base-200"
         >
-            {{ user.phoneNumber }}
+            {{ (user?.phoneNumber ?? '').match(/.{1,3}/g)?.join(' ') }}
         </td>
         <td class="whitespace-nowrap px-2 py-2 text-sm text-base-200">
             {{ user.dateofbirth }}
@@ -53,6 +53,7 @@ function addToClipboard(): void {
         <td
             v-can="'CitizenStoreService.ListCitizens.Fields.UserProps.TrafficInfractionPoints'"
             class="whitespace-nowrap px-2 py-2 text-sm text-base-200"
+            :class="(user?.props?.trafficInfractionPoints ?? 0n) >= 8 ? 'text-red-500' : ''"
         >
             {{ user.props?.trafficInfractionPoints ?? 0n }}
         </td>

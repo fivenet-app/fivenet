@@ -75,14 +75,14 @@ const trafficPointsModal = ref(false);
                                     {{ $t('common.number') }}
                                 </dt>
                                 <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:mt-0 sm:ml-6">
-                                    {{ user?.phoneNumber }}
+                                    {{ (user?.phoneNumber ?? '').match(/.{1,3}/g)?.join(' ') }}
                                 </dd>
                             </div>
                             <div class="sm:flex sm:px-6 sm:py-5">
                                 <dt class="text-sm font-medium text-neutral sm:w-40 sm:flex-shrink-0 lg:w-48">
                                     {{ $t('common.visum') }}
                                 </dt>
-                                <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:mt-0 sm:ml-6">
+                                <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:mt-0 sm:ml-6 text-blue-400">
                                     {{ user?.visum }}
                                 </dd>
                             </div>
@@ -93,7 +93,10 @@ const trafficPointsModal = ref(false);
                                 <dt class="text-sm font-medium text-neutral sm:w-40 sm:flex-shrink-0 lg:w-48">
                                     {{ $t('common.traffic_infraction_points') }}
                                 </dt>
-                                <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:mt-0 sm:ml-6">
+                                <dd
+                                    class="mt-1 text-sm text-base-300 sm:col-span-2 sm:mt-0 sm:ml-6"
+                                    :class="(user?.props?.trafficInfractionPoints ?? 0n) >= 8 ? 'text-red-500' : ''"
+                                >
                                     {{ $t('common.point', parseInt((user?.props?.trafficInfractionPoints ?? 0n).toString())) }}
                                 </dd>
                             </div>
@@ -108,7 +111,7 @@ const trafficPointsModal = ref(false);
                                     <span v-if="(user.props?.openFines ?? 0n) <= 0n">
                                         {{ $t('common.no_open_fine') }}
                                     </span>
-                                    <span v-else>
+                                    <span v-else class="text-red-500">
                                         {{ $n(parseInt((user?.props?.openFines ?? 0n).toString()), 'currency') }}
                                     </span>
                                 </dd>
