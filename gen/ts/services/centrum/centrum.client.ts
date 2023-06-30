@@ -4,8 +4,8 @@
 import { CentrumService } from "./centrum.js";
 import type { CentrumStreamResponse } from "./centrum.js";
 import type { CentrumStreamRequest } from "./centrum.js";
-import type { CreateActionResponse } from "./centrum.js";
-import type { CreateActionRequest } from "./centrum.js";
+import type { CreateDispatchResponse } from "./centrum.js";
+import type { CreateDispatchRequest } from "./centrum.js";
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
 import { UnitService } from "./centrum.js";
@@ -139,9 +139,9 @@ export interface ICentrumServiceClient {
      *
      * TODO
      *
-     * @generated from protobuf rpc: CreateAction(services.centrum.CreateActionRequest) returns (services.centrum.CreateActionResponse);
+     * @generated from protobuf rpc: CreateDispatch(services.centrum.CreateDispatchRequest) returns (services.centrum.CreateDispatchResponse);
      */
-    createAction(input: CreateActionRequest, options?: RpcOptions): UnaryCall<CreateActionRequest, CreateActionResponse>;
+    createDispatch(input: CreateDispatchRequest, options?: RpcOptions): UnaryCall<CreateDispatchRequest, CreateDispatchResponse>;
     /**
      * @perm
      *
@@ -163,11 +163,11 @@ export class CentrumServiceClient implements ICentrumServiceClient, ServiceInfo 
      *
      * TODO
      *
-     * @generated from protobuf rpc: CreateAction(services.centrum.CreateActionRequest) returns (services.centrum.CreateActionResponse);
+     * @generated from protobuf rpc: CreateDispatch(services.centrum.CreateDispatchRequest) returns (services.centrum.CreateDispatchResponse);
      */
-    createAction(input: CreateActionRequest, options?: RpcOptions): UnaryCall<CreateActionRequest, CreateActionResponse> {
+    createDispatch(input: CreateDispatchRequest, options?: RpcOptions): UnaryCall<CreateDispatchRequest, CreateDispatchResponse> {
         const method = this.methods[0], opt = this._transport.mergeOptions(options);
-        return stackIntercept<CreateActionRequest, CreateActionResponse>("unary", this._transport, method, opt, input);
+        return stackIntercept<CreateDispatchRequest, CreateDispatchResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @perm

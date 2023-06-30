@@ -753,7 +753,8 @@
                     "Licenses": "Licenses",
                     "UserProps_Wanted": "Wanted Status",
                     "UserProps_Job": "Job",
-                    "UserProps_TrafficInfractionPoints": "Traffic Points"
+                    "UserProps_TrafficInfractionPoints": "Traffic Points",
+                    "UserProps_OpenFines": "Open Fines"
                 }
             },
             "ListUserActivity": {

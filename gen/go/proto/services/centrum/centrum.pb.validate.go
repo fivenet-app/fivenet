@@ -1556,22 +1556,22 @@ var _ interface {
 	ErrorName() string
 } = UnitChangesValidationError{}
 
-// Validate checks the field values on CreateActionRequest with the rules
+// Validate checks the field values on CreateDispatchRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *CreateActionRequest) Validate() error {
+func (m *CreateDispatchRequest) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on CreateActionRequest with the rules
+// ValidateAll checks the field values on CreateDispatchRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// CreateActionRequestMultiError, or nil if none found.
-func (m *CreateActionRequest) ValidateAll() error {
+// CreateDispatchRequestMultiError, or nil if none found.
+func (m *CreateDispatchRequest) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *CreateActionRequest) validate(all bool) error {
+func (m *CreateDispatchRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -1579,19 +1579,19 @@ func (m *CreateActionRequest) validate(all bool) error {
 	var errors []error
 
 	if len(errors) > 0 {
-		return CreateActionRequestMultiError(errors)
+		return CreateDispatchRequestMultiError(errors)
 	}
 
 	return nil
 }
 
-// CreateActionRequestMultiError is an error wrapping multiple validation
-// errors returned by CreateActionRequest.ValidateAll() if the designated
+// CreateDispatchRequestMultiError is an error wrapping multiple validation
+// errors returned by CreateDispatchRequest.ValidateAll() if the designated
 // constraints aren't met.
-type CreateActionRequestMultiError []error
+type CreateDispatchRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m CreateActionRequestMultiError) Error() string {
+func (m CreateDispatchRequestMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -1600,11 +1600,11 @@ func (m CreateActionRequestMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m CreateActionRequestMultiError) AllErrors() []error { return m }
+func (m CreateDispatchRequestMultiError) AllErrors() []error { return m }
 
-// CreateActionRequestValidationError is the validation error returned by
-// CreateActionRequest.Validate if the designated constraints aren't met.
-type CreateActionRequestValidationError struct {
+// CreateDispatchRequestValidationError is the validation error returned by
+// CreateDispatchRequest.Validate if the designated constraints aren't met.
+type CreateDispatchRequestValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -1612,24 +1612,24 @@ type CreateActionRequestValidationError struct {
 }
 
 // Field function returns field value.
-func (e CreateActionRequestValidationError) Field() string { return e.field }
+func (e CreateDispatchRequestValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e CreateActionRequestValidationError) Reason() string { return e.reason }
+func (e CreateDispatchRequestValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e CreateActionRequestValidationError) Cause() error { return e.cause }
+func (e CreateDispatchRequestValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e CreateActionRequestValidationError) Key() bool { return e.key }
+func (e CreateDispatchRequestValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e CreateActionRequestValidationError) ErrorName() string {
-	return "CreateActionRequestValidationError"
+func (e CreateDispatchRequestValidationError) ErrorName() string {
+	return "CreateDispatchRequestValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e CreateActionRequestValidationError) Error() string {
+func (e CreateDispatchRequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -1641,14 +1641,14 @@ func (e CreateActionRequestValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sCreateActionRequest.%s: %s%s",
+		"invalid %sCreateDispatchRequest.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = CreateActionRequestValidationError{}
+var _ error = CreateDispatchRequestValidationError{}
 
 var _ interface {
 	Field() string
@@ -1656,24 +1656,24 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = CreateActionRequestValidationError{}
+} = CreateDispatchRequestValidationError{}
 
-// Validate checks the field values on CreateActionResponse with the rules
+// Validate checks the field values on CreateDispatchResponse with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *CreateActionResponse) Validate() error {
+func (m *CreateDispatchResponse) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on CreateActionResponse with the rules
+// ValidateAll checks the field values on CreateDispatchResponse with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// CreateActionResponseMultiError, or nil if none found.
-func (m *CreateActionResponse) ValidateAll() error {
+// CreateDispatchResponseMultiError, or nil if none found.
+func (m *CreateDispatchResponse) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *CreateActionResponse) validate(all bool) error {
+func (m *CreateDispatchResponse) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -1681,19 +1681,19 @@ func (m *CreateActionResponse) validate(all bool) error {
 	var errors []error
 
 	if len(errors) > 0 {
-		return CreateActionResponseMultiError(errors)
+		return CreateDispatchResponseMultiError(errors)
 	}
 
 	return nil
 }
 
-// CreateActionResponseMultiError is an error wrapping multiple validation
-// errors returned by CreateActionResponse.ValidateAll() if the designated
+// CreateDispatchResponseMultiError is an error wrapping multiple validation
+// errors returned by CreateDispatchResponse.ValidateAll() if the designated
 // constraints aren't met.
-type CreateActionResponseMultiError []error
+type CreateDispatchResponseMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m CreateActionResponseMultiError) Error() string {
+func (m CreateDispatchResponseMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -1702,11 +1702,11 @@ func (m CreateActionResponseMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m CreateActionResponseMultiError) AllErrors() []error { return m }
+func (m CreateDispatchResponseMultiError) AllErrors() []error { return m }
 
-// CreateActionResponseValidationError is the validation error returned by
-// CreateActionResponse.Validate if the designated constraints aren't met.
-type CreateActionResponseValidationError struct {
+// CreateDispatchResponseValidationError is the validation error returned by
+// CreateDispatchResponse.Validate if the designated constraints aren't met.
+type CreateDispatchResponseValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -1714,24 +1714,24 @@ type CreateActionResponseValidationError struct {
 }
 
 // Field function returns field value.
-func (e CreateActionResponseValidationError) Field() string { return e.field }
+func (e CreateDispatchResponseValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e CreateActionResponseValidationError) Reason() string { return e.reason }
+func (e CreateDispatchResponseValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e CreateActionResponseValidationError) Cause() error { return e.cause }
+func (e CreateDispatchResponseValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e CreateActionResponseValidationError) Key() bool { return e.key }
+func (e CreateDispatchResponseValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e CreateActionResponseValidationError) ErrorName() string {
-	return "CreateActionResponseValidationError"
+func (e CreateDispatchResponseValidationError) ErrorName() string {
+	return "CreateDispatchResponseValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e CreateActionResponseValidationError) Error() string {
+func (e CreateDispatchResponseValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -1743,14 +1743,14 @@ func (e CreateActionResponseValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sCreateActionResponse.%s: %s%s",
+		"invalid %sCreateDispatchResponse.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = CreateActionResponseValidationError{}
+var _ error = CreateDispatchResponseValidationError{}
 
 var _ interface {
 	Field() string
@@ -1758,7 +1758,7 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = CreateActionResponseValidationError{}
+} = CreateDispatchResponseValidationError{}
 
 // Validate checks the field values on CentrumStreamRequest with the rules
 // defined in the proto definition for this message. If any rules are

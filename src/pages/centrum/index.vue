@@ -19,14 +19,14 @@ definePageMeta({
     <div class="flex-col h-full">
         <div class="relative w-full h-full z-0 flex">
             <!-- Left column -->
-            <div class="flex-1 flex flex-col">
+            <div class="flex-1 flex flex-col divide-x">
                 <!-- Main area -->
                 <div class="h-full">
                     <Livemap />
                 </div>
             </div>
 
-            <div class="flex-1 flex flex-col">
+            <div class="flex-1 flex flex-col divide-y">
                 <!-- Right column area -->
                 <div class="basis-3/5">
                     <DispatchesList />

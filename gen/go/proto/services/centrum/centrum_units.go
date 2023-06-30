@@ -4,8 +4,10 @@ import (
 	"context"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
+	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
+	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 )
@@ -17,6 +19,15 @@ var (
 
 func (s *Server) ListUnits(ctx context.Context, req *ListUnitsRequest) (*ListUnitsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	auditEntry := &model.FivenetAuditLog{
+		Service: UnitService_ServiceDesc.ServiceName,
+		Method:  "ListUnits",
+		UserID:  userInfo.UserId,
+		UserJob: userInfo.Job,
+		State:   int16(rector.EVENT_TYPE_ERRORED),
+	}
+	defer s.a.AddEntryWithData(auditEntry, req)
 
 	stmt := tUnits.
 		SELECT(
@@ -38,6 +49,8 @@ func (s *Server) ListUnits(ctx context.Context, req *ListUnitsRequest) (*ListUni
 	if err := stmt.QueryContext(ctx, s.db, &resp.Units); err != nil {
 		return nil, err
 	}
+
+	auditEntry.State = int16(rector.EVENT_TYPE_VIEWED)
 
 	return resp, nil
 }
@@ -61,6 +74,15 @@ func (s *Server) getUnit(ctx context.Context, userInfo *userinfo.UserInfo, id ui
 
 func (s *Server) CreateUnit(ctx context.Context, req *CreateUnitRequest) (*CreateUnitResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	auditEntry := &model.FivenetAuditLog{
+		Service: UnitService_ServiceDesc.ServiceName,
+		Method:  "CreateUnit",
+		UserID:  userInfo.UserId,
+		UserJob: userInfo.Job,
+		State:   int16(rector.EVENT_TYPE_ERRORED),
+	}
+	defer s.a.AddEntryWithData(auditEntry, req)
 
 	stmt := tUnits.
 		INSERT(
@@ -97,11 +119,22 @@ func (s *Server) CreateUnit(ctx context.Context, req *CreateUnitRequest) (*Creat
 		Unit: unit,
 	}
 
+	auditEntry.State = int16(rector.EVENT_TYPE_CREATED)
+
 	return resp, nil
 }
 
 func (s *Server) UpdateUnit(ctx context.Context, req *UpdateUnitRequest) (*UpdateUnitResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	auditEntry := &model.FivenetAuditLog{
+		Service: UnitService_ServiceDesc.ServiceName,
+		Method:  "UpdateUnit",
+		UserID:  userInfo.UserId,
+		UserJob: userInfo.Job,
+		State:   int16(rector.EVENT_TYPE_ERRORED),
+	}
+	defer s.a.AddEntryWithData(auditEntry, req)
 
 	stmt := tUnits.
 		UPDATE(
@@ -135,11 +168,22 @@ func (s *Server) UpdateUnit(ctx context.Context, req *UpdateUnitRequest) (*Updat
 		Unit: unit,
 	}
 
+	auditEntry.State = int16(rector.EVENT_TYPE_UPDATED)
+
 	return resp, nil
 }
 
 func (s *Server) DeleteUnit(ctx context.Context, req *DeleteUnitRequest) (*DeleteUnitResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	auditEntry := &model.FivenetAuditLog{
+		Service: UnitService_ServiceDesc.ServiceName,
+		Method:  "DeleteUnit",
+		UserID:  userInfo.UserId,
+		UserJob: userInfo.Job,
+		State:   int16(rector.EVENT_TYPE_DELETED),
+	}
+	defer s.a.AddEntryWithData(auditEntry, req)
 
 	stmt := tUnits.
 		DELETE().
@@ -152,6 +196,8 @@ func (s *Server) DeleteUnit(ctx context.Context, req *DeleteUnitRequest) (*Delet
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 		return nil, err
 	}
+
+	auditEntry.State = int16(rector.EVENT_TYPE_DELETED)
 
 	return &DeleteUnitResponse{}, nil
 }

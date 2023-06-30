@@ -514,5 +514,7 @@ func (s *Server) ToggleDocument(ctx context.Context, req *ToggleDocumentRequest)
 		return nil, ErrFailedQuery
 	}
 
+	auditEntry.State = int16(rector.EVENT_TYPE_UPDATED)
+
 	return &ToggleDocumentResponse{}, nil
 }

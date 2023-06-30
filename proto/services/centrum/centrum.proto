@@ -79,11 +79,11 @@ service UnitService {
 
 // Dispatch Management
 
-message CreateActionRequest {
+message CreateDispatchRequest {
 
 }
 
-message CreateActionResponse {
+message CreateDispatchResponse {
 
 }
 
@@ -95,7 +95,7 @@ message CentrumStreamResponse {}
 
 service CentrumService {
   // @perm
-  rpc CreateAction(CreateActionRequest) returns (CreateActionResponse);
+  rpc CreateDispatch(CreateDispatchRequest) returns (CreateDispatchResponse);
   // TODO
 
   // @perm

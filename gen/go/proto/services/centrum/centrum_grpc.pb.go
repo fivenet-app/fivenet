@@ -329,7 +329,7 @@ var UnitService_ServiceDesc = grpc.ServiceDesc{
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CentrumServiceClient interface {
 	// @perm
-	CreateAction(ctx context.Context, in *CreateActionRequest, opts ...grpc.CallOption) (*CreateActionResponse, error)
+	CreateDispatch(ctx context.Context, in *CreateDispatchRequest, opts ...grpc.CallOption) (*CreateDispatchResponse, error)
 	// @perm
 	Stream(ctx context.Context, in *CentrumStreamRequest, opts ...grpc.CallOption) (CentrumService_StreamClient, error)
 }
@@ -342,9 +342,9 @@ func NewCentrumServiceClient(cc grpc.ClientConnInterface) CentrumServiceClient {
 	return &centrumServiceClient{cc}
 }
 
-func (c *centrumServiceClient) CreateAction(ctx context.Context, in *CreateActionRequest, opts ...grpc.CallOption) (*CreateActionResponse, error) {
-	out := new(CreateActionResponse)
-	err := c.cc.Invoke(ctx, "/services.centrum.CentrumService/CreateAction", in, out, opts...)
+func (c *centrumServiceClient) CreateDispatch(ctx context.Context, in *CreateDispatchRequest, opts ...grpc.CallOption) (*CreateDispatchResponse, error) {
+	out := new(CreateDispatchResponse)
+	err := c.cc.Invoke(ctx, "/services.centrum.CentrumService/CreateDispatch", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -388,7 +388,7 @@ func (x *centrumServiceStreamClient) Recv() (*CentrumStreamResponse, error) {
 // for forward compatibility
 type CentrumServiceServer interface {
 	// @perm
-	CreateAction(context.Context, *CreateActionRequest) (*CreateActionResponse, error)
+	CreateDispatch(context.Context, *CreateDispatchRequest) (*CreateDispatchResponse, error)
 	// @perm
 	Stream(*CentrumStreamRequest, CentrumService_StreamServer) error
 	mustEmbedUnimplementedCentrumServiceServer()
@@ -398,8 +398,8 @@ type CentrumServiceServer interface {
 type UnimplementedCentrumServiceServer struct {
 }
 
-func (UnimplementedCentrumServiceServer) CreateAction(context.Context, *CreateActionRequest) (*CreateActionResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateAction not implemented")
+func (UnimplementedCentrumServiceServer) CreateDispatch(context.Context, *CreateDispatchRequest) (*CreateDispatchResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateDispatch not implemented")
 }
 func (UnimplementedCentrumServiceServer) Stream(*CentrumStreamRequest, CentrumService_StreamServer) error {
 	return status.Errorf(codes.Unimplemented, "method Stream not implemented")
@@ -417,20 +417,20 @@ func RegisterCentrumServiceServer(s grpc.ServiceRegistrar, srv CentrumServiceSer
 	s.RegisterService(&CentrumService_ServiceDesc, srv)
 }
 
-func _CentrumService_CreateAction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateActionRequest)
+func _CentrumService_CreateDispatch_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateDispatchRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(CentrumServiceServer).CreateAction(ctx, in)
+		return srv.(CentrumServiceServer).CreateDispatch(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/services.centrum.CentrumService/CreateAction",
+		FullMethod: "/services.centrum.CentrumService/CreateDispatch",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CentrumServiceServer).CreateAction(ctx, req.(*CreateActionRequest))
+		return srv.(CentrumServiceServer).CreateDispatch(ctx, req.(*CreateDispatchRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -464,8 +464,8 @@ var CentrumService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*CentrumServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "CreateAction",
-			Handler:    _CentrumService_CreateAction_Handler,
+			MethodName: "CreateDispatch",
+			Handler:    _CentrumService_CreateDispatch_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

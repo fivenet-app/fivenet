@@ -139,14 +139,14 @@ export interface UnitChanges {
 // Dispatch Management
 
 /**
- * @generated from protobuf message services.centrum.CreateActionRequest
+ * @generated from protobuf message services.centrum.CreateDispatchRequest
  */
-export interface CreateActionRequest {
+export interface CreateDispatchRequest {
 }
 /**
- * @generated from protobuf message services.centrum.CreateActionResponse
+ * @generated from protobuf message services.centrum.CreateDispatchResponse
  */
-export interface CreateActionResponse {
+export interface CreateDispatchResponse {
 }
 // TODO
 
@@ -318,25 +318,25 @@ class UnitChanges$Type extends MessageType<UnitChanges> {
  */
 export const UnitChanges = new UnitChanges$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class CreateActionRequest$Type extends MessageType<CreateActionRequest> {
+class CreateDispatchRequest$Type extends MessageType<CreateDispatchRequest> {
     constructor() {
-        super("services.centrum.CreateActionRequest", []);
+        super("services.centrum.CreateDispatchRequest", []);
     }
 }
 /**
- * @generated MessageType for protobuf message services.centrum.CreateActionRequest
+ * @generated MessageType for protobuf message services.centrum.CreateDispatchRequest
  */
-export const CreateActionRequest = new CreateActionRequest$Type();
+export const CreateDispatchRequest = new CreateDispatchRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class CreateActionResponse$Type extends MessageType<CreateActionResponse> {
+class CreateDispatchResponse$Type extends MessageType<CreateDispatchResponse> {
     constructor() {
-        super("services.centrum.CreateActionResponse", []);
+        super("services.centrum.CreateDispatchResponse", []);
     }
 }
 /**
- * @generated MessageType for protobuf message services.centrum.CreateActionResponse
+ * @generated MessageType for protobuf message services.centrum.CreateDispatchResponse
  */
-export const CreateActionResponse = new CreateActionResponse$Type();
+export const CreateDispatchResponse = new CreateDispatchResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class CentrumStreamRequest$Type extends MessageType<CentrumStreamRequest> {
     constructor() {
@@ -372,6 +372,6 @@ export const UnitService = new ServiceType("services.centrum.UnitService", [
  * @generated ServiceType for protobuf service services.centrum.CentrumService
  */
 export const CentrumService = new ServiceType("services.centrum.CentrumService", [
-    { name: "CreateAction", options: {}, I: CreateActionRequest, O: CreateActionResponse },
+    { name: "CreateDispatch", options: {}, I: CreateDispatchRequest, O: CreateDispatchResponse },
     { name: "Stream", serverStreaming: true, options: {}, I: CentrumStreamRequest, O: CentrumStreamResponse }
 ]);
