@@ -107,7 +107,8 @@
                 "jobs": "Richten Sie die Rollen, Job Ränge und Berechtigungen für Ihre Fraktion ein.",
                 "audit_log": "Eine Überprüfung der Schritte, die von Ihren Kollegen unternommen wurden.",
                 "limiter": "Begrenzen was Fraktionen sehen können.",
-                "laws": "Erstelle und aktualisiere die Gesetzbücher des Staates."
+                "laws": "Erstelle und aktualisiere die Gesetzbücher des Staates.",
+                "units": "Anzeigen, Erstellen und Aktualisieren von Einheiten für die Leitstelle."
             },
             "roles": {
                 "title": "Rollen",
@@ -500,7 +501,10 @@
         "fine": "Strafe",
         "detention_time": "Gefängniszeit",
         "money": "Geld",
-        "no_open_fine": "Keine offenen Geldstrafe"
+        "no_open_fine": "Keine offenen Geldstrafe",
+        "location": "Standort | Standorte",
+        "units": "Einheiten",
+        "unit": "Einheit | Einheiten"
     },
     "notifications": {
         "clipboard": {

@@ -3,8 +3,8 @@
 // tslint:disable
 import { ServiceType } from "@protobuf-ts/runtime-rpc";
 import { MessageType } from "@protobuf-ts/runtime";
-import { Unit } from "../../resources/dispatch/dispatch.js";
-import { UNIT_STATUS } from "../../resources/dispatch/dispatch.js";
+import { Unit } from "../../resources/dispatch/units.js";
+import { UNIT_STATUS } from "../../resources/dispatch/units.js";
 // Unit Management
 
 /**
@@ -104,6 +104,36 @@ export interface AssignUnitResponse {
      * @generated from protobuf field: uint64 unit_id = 1;
      */
     unitId: bigint;
+    /**
+     * @generated from protobuf field: optional bool self = 2;
+     */
+    self?: boolean;
+    /**
+     * @generated from protobuf field: repeated uint64 user_ids = 3;
+     */
+    userIds: bigint[];
+}
+/**
+ * @generated from protobuf message services.centrum.UpdateUnitStatusRequest
+ */
+export interface UpdateUnitStatusRequest {
+    /**
+     * @generated from protobuf field: uint64 unit_id = 1;
+     */
+    unitId: bigint;
+    /**
+     * @generated from protobuf field: resources.dispatch.UNIT_STATUS status = 2;
+     */
+    status: UNIT_STATUS;
+    /**
+     * @generated from protobuf field: optional string reaseon = 3;
+     */
+    reaseon?: string;
+}
+/**
+ * @generated from protobuf message services.centrum.UpdateUnitStatusResponse
+ */
+export interface UpdateUnitStatusResponse {
 }
 /**
  * @generated from protobuf message services.centrum.UnitStreamRequest
@@ -273,7 +303,9 @@ export const AssignUnitRequest = new AssignUnitRequest$Type();
 class AssignUnitResponse$Type extends MessageType<AssignUnitResponse> {
     constructor() {
         super("services.centrum.AssignUnitResponse", [
-            { no: 1, name: "unit_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+            { no: 1, name: "unit_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 2, name: "self", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 3, name: "user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
         ]);
     }
 }
@@ -281,6 +313,30 @@ class AssignUnitResponse$Type extends MessageType<AssignUnitResponse> {
  * @generated MessageType for protobuf message services.centrum.AssignUnitResponse
  */
 export const AssignUnitResponse = new AssignUnitResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class UpdateUnitStatusRequest$Type extends MessageType<UpdateUnitStatusRequest> {
+    constructor() {
+        super("services.centrum.UpdateUnitStatusRequest", [
+            { no: 1, name: "unit_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 2, name: "status", kind: "enum", T: () => ["resources.dispatch.UNIT_STATUS", UNIT_STATUS] },
+            { no: 3, name: "reaseon", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.centrum.UpdateUnitStatusRequest
+ */
+export const UpdateUnitStatusRequest = new UpdateUnitStatusRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class UpdateUnitStatusResponse$Type extends MessageType<UpdateUnitStatusResponse> {
+    constructor() {
+        super("services.centrum.UpdateUnitStatusResponse", []);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.centrum.UpdateUnitStatusResponse
+ */
+export const UpdateUnitStatusResponse = new UpdateUnitStatusResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class UnitStreamRequest$Type extends MessageType<UnitStreamRequest> {
     constructor() {
@@ -366,6 +422,7 @@ export const UnitService = new ServiceType("services.centrum.UnitService", [
     { name: "UpdateUnit", options: {}, I: UpdateUnitRequest, O: UpdateUnitResponse },
     { name: "DeleteUnit", options: {}, I: DeleteUnitRequest, O: DeleteUnitResponse },
     { name: "AssignUnit", options: {}, I: AssignUnitRequest, O: AssignUnitResponse },
+    { name: "UpdateUnitStatus", options: {}, I: UpdateUnitStatusRequest, O: UpdateUnitStatusResponse },
     { name: "StreamUnits", serverStreaming: true, options: {}, I: UnitStreamRequest, O: UnitStreamResponse }
 ]);
 /**

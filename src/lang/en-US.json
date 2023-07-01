@@ -107,7 +107,8 @@
                 "jobs": "Setup your factions roles job rank permissions.",
                 "audit_log": "An audit trail of everything your colleagues have done.",
                 "limiter": "Limit what factions can see each other.",
-                "laws": "Set the law books and laws for the state."
+                "laws": "Set the law books and laws for the state.",
+                "units": "List, create and update units for the dispatch center."
             },
             "roles": {
                 "title": "Roles",
@@ -500,7 +501,10 @@
         "fine": "Fine | Fines",
         "detention_time": "Jail Time",
         "money": "Money",
-        "no_open_fine": "No open fines"
+        "no_open_fine": "No open fines",
+        "location": "Location | Locations",
+        "units": "Units",
+        "unit": "Unit | Units"
     },
     "notifications": {
         "clipboard": {

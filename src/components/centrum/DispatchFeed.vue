@@ -33,11 +33,11 @@ const activity = [
         <div class="mt-2 flow-root">
             <div class="-mx-2 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                 <div class="inline-block min-w-full py-2 align-middle sm:px-2 lg:px-2">
-                    <ul role="list" class="space-y-6">
+                    <ul role="list" class="space-y-2">
                         <li
                             v-for="(activityItem, activityItemIdx) in activity"
                             :key="activityItem.id"
-                            class="relative flex gap-x-4"
+                            class="relative flex gap-x-2"
                         >
                             <div
                                 :class="[
@@ -54,7 +54,7 @@ const activity = [
                                     class="relative mt-3 h-6 w-6 flex-none rounded-full bg-gray-50"
                                 />
                                 <div class="flex-auto rounded-md p-3 pt-1 pb-1 ring-1 ring-inset ring-gray-200">
-                                    <div class="flex justify-between gap-x-4">
+                                    <div class="flex justify-between gap-x-2">
                                         <div class="py-0.5 text-xs leading-5 text-gray-200">
                                             <span class="font-medium text-gray-400">{{ activityItem.person.name }}</span>
                                             commented

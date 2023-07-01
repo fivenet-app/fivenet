@@ -1137,6 +1137,10 @@ func (m *AssignUnitResponse) validate(all bool) error {
 
 	// no validation rules for UnitId
 
+	if m.Self != nil {
+		// no validation rules for Self
+	}
+
 	if len(errors) > 0 {
 		return AssignUnitResponseMultiError(errors)
 	}
@@ -1216,6 +1220,218 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = AssignUnitResponseValidationError{}
+
+// Validate checks the field values on UpdateUnitStatusRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *UpdateUnitStatusRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UpdateUnitStatusRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// UpdateUnitStatusRequestMultiError, or nil if none found.
+func (m *UpdateUnitStatusRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UpdateUnitStatusRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for UnitId
+
+	// no validation rules for Status
+
+	if m.Reaseon != nil {
+		// no validation rules for Reaseon
+	}
+
+	if len(errors) > 0 {
+		return UpdateUnitStatusRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// UpdateUnitStatusRequestMultiError is an error wrapping multiple validation
+// errors returned by UpdateUnitStatusRequest.ValidateAll() if the designated
+// constraints aren't met.
+type UpdateUnitStatusRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UpdateUnitStatusRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UpdateUnitStatusRequestMultiError) AllErrors() []error { return m }
+
+// UpdateUnitStatusRequestValidationError is the validation error returned by
+// UpdateUnitStatusRequest.Validate if the designated constraints aren't met.
+type UpdateUnitStatusRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UpdateUnitStatusRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UpdateUnitStatusRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UpdateUnitStatusRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UpdateUnitStatusRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UpdateUnitStatusRequestValidationError) ErrorName() string {
+	return "UpdateUnitStatusRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e UpdateUnitStatusRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUpdateUnitStatusRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UpdateUnitStatusRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UpdateUnitStatusRequestValidationError{}
+
+// Validate checks the field values on UpdateUnitStatusResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *UpdateUnitStatusResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UpdateUnitStatusResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// UpdateUnitStatusResponseMultiError, or nil if none found.
+func (m *UpdateUnitStatusResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UpdateUnitStatusResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return UpdateUnitStatusResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// UpdateUnitStatusResponseMultiError is an error wrapping multiple validation
+// errors returned by UpdateUnitStatusResponse.ValidateAll() if the designated
+// constraints aren't met.
+type UpdateUnitStatusResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UpdateUnitStatusResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UpdateUnitStatusResponseMultiError) AllErrors() []error { return m }
+
+// UpdateUnitStatusResponseValidationError is the validation error returned by
+// UpdateUnitStatusResponse.Validate if the designated constraints aren't met.
+type UpdateUnitStatusResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UpdateUnitStatusResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UpdateUnitStatusResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UpdateUnitStatusResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UpdateUnitStatusResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UpdateUnitStatusResponseValidationError) ErrorName() string {
+	return "UpdateUnitStatusResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e UpdateUnitStatusResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUpdateUnitStatusResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UpdateUnitStatusResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UpdateUnitStatusResponseValidationError{}
 
 // Validate checks the field values on UnitStreamRequest with the rules defined
 // in the proto definition for this message. If any rules are violated, the

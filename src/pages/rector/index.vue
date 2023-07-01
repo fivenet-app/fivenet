@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { mdiAccountGroup, mdiCarSpeedLimiter, mdiMathLog, mdiScaleBalance, mdiTune } from '@mdi/js';
+import { mdiAccountGroup, mdiCarSpeedLimiter, mdiGroup, mdiMathLog, mdiScaleBalance, mdiTune } from '@mdi/js';
 import Cards from '~/components/partials/Cards.vue';
 import ContentCenterWrapper from '~/components/partials/ContentCenterWrapper.vue';
 import { CardElements } from '~/utils/types';
@@ -34,6 +34,15 @@ const features = [
         icon: mdiAccountGroup,
         iconForeground: 'text-purple-900',
         iconBackground: 'bg-purple-100',
+    },
+    {
+        title: t('common.unit', 2),
+        description: t('pages.rector.features.units'),
+        href: { name: 'rector-units' },
+        permission: 'UnitService.ListUnits',
+        icon: mdiGroup,
+        iconForeground: 'text-blue-900',
+        iconBackground: 'bg-blue-100',
     },
     {
         title: t('common.audit_log', 1),

@@ -33,6 +33,8 @@ type UnitServiceClient interface {
 	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
 	AssignUnit(ctx context.Context, in *AssignUnitRequest, opts ...grpc.CallOption) (*AssignUnitResponse, error)
 	// @perm
+	UpdateUnitStatus(ctx context.Context, in *UpdateUnitStatusRequest, opts ...grpc.CallOption) (*UpdateUnitStatusResponse, error)
+	// @perm
 	StreamUnits(ctx context.Context, in *UnitStreamRequest, opts ...grpc.CallOption) (UnitService_StreamUnitsClient, error)
 }
 
@@ -89,6 +91,15 @@ func (c *unitServiceClient) AssignUnit(ctx context.Context, in *AssignUnitReques
 	return out, nil
 }
 
+func (c *unitServiceClient) UpdateUnitStatus(ctx context.Context, in *UpdateUnitStatusRequest, opts ...grpc.CallOption) (*UpdateUnitStatusResponse, error) {
+	out := new(UpdateUnitStatusResponse)
+	err := c.cc.Invoke(ctx, "/services.centrum.UnitService/UpdateUnitStatus", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *unitServiceClient) StreamUnits(ctx context.Context, in *UnitStreamRequest, opts ...grpc.CallOption) (UnitService_StreamUnitsClient, error) {
 	stream, err := c.cc.NewStream(ctx, &UnitService_ServiceDesc.Streams[0], "/services.centrum.UnitService/StreamUnits", opts...)
 	if err != nil {
@@ -136,6 +147,8 @@ type UnitServiceServer interface {
 	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
 	AssignUnit(context.Context, *AssignUnitRequest) (*AssignUnitResponse, error)
 	// @perm
+	UpdateUnitStatus(context.Context, *UpdateUnitStatusRequest) (*UpdateUnitStatusResponse, error)
+	// @perm
 	StreamUnits(*UnitStreamRequest, UnitService_StreamUnitsServer) error
 	mustEmbedUnimplementedUnitServiceServer()
 }
@@ -158,6 +171,9 @@ func (UnimplementedUnitServiceServer) DeleteUnit(context.Context, *DeleteUnitReq
 }
 func (UnimplementedUnitServiceServer) AssignUnit(context.Context, *AssignUnitRequest) (*AssignUnitResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AssignUnit not implemented")
+}
+func (UnimplementedUnitServiceServer) UpdateUnitStatus(context.Context, *UpdateUnitStatusRequest) (*UpdateUnitStatusResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateUnitStatus not implemented")
 }
 func (UnimplementedUnitServiceServer) StreamUnits(*UnitStreamRequest, UnitService_StreamUnitsServer) error {
 	return status.Errorf(codes.Unimplemented, "method StreamUnits not implemented")
@@ -265,6 +281,24 @@ func _UnitService_AssignUnit_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _UnitService_UpdateUnitStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateUnitStatusRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UnitServiceServer).UpdateUnitStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/services.centrum.UnitService/UpdateUnitStatus",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UnitServiceServer).UpdateUnitStatus(ctx, req.(*UpdateUnitStatusRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _UnitService_StreamUnits_Handler(srv interface{}, stream grpc.ServerStream) error {
 	m := new(UnitStreamRequest)
 	if err := stream.RecvMsg(m); err != nil {
@@ -312,6 +346,10 @@ var UnitService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "AssignUnit",
 			Handler:    _UnitService_AssignUnit_Handler,
+		},
+		{
+			MethodName: "UpdateUnitStatus",
+			Handler:    _UnitService_UpdateUnitStatus_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

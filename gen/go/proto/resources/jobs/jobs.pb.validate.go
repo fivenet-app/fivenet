@@ -369,10 +369,10 @@ func (m *JobProps) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if utf8.RuneCountInString(m.GetLivemapMarkerColor()) > 20 {
+	if utf8.RuneCountInString(m.GetLivemapMarkerColor()) > 6 {
 		err := JobPropsValidationError{
 			field:  "LivemapMarkerColor",
-			reason: "value length must be at most 20 runes",
+			reason: "value length must be at most 6 runes",
 		}
 		if !all {
 			return err

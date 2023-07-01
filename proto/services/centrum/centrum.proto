@@ -3,7 +3,7 @@ syntax = "proto3";
 package services.centrum;
 option go_package = "github.com/galexrt/fivenet/gen/go/proto/services/centrum;centrum";
 
-import "resources/dispatch/dispatch.proto";
+import "resources/dispatch/units.proto";
 
 // Unit Management
 
@@ -46,7 +46,17 @@ message AssignUnitRequest {
 
 message AssignUnitResponse {
   uint64 unit_id = 1;
+  optional bool self = 2;
+  repeated uint64 user_ids = 3;
 }
+
+message UpdateUnitStatusRequest {
+  uint64 unit_id = 1;
+  resources.dispatch.UNIT_STATUS status = 2;
+  optional string reaseon = 3;
+}
+
+message UpdateUnitStatusResponse {}
 
 message UnitStreamRequest {}
 
@@ -72,6 +82,9 @@ service UnitService {
 
   // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
   rpc AssignUnit(AssignUnitRequest) returns (AssignUnitResponse);
+
+  // @perm
+  rpc UpdateUnitStatus(UpdateUnitStatusRequest) returns (UpdateUnitStatusResponse);
 
   // @perm
   rpc StreamUnits(UnitStreamRequest) returns (stream UnitStreamResponse);

@@ -3,26 +3,9 @@ syntax = "proto3";
 package resources.dispatch;
 option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/dispatch;dispatch";
 
+import "resources/dispatch/units.proto";
+import "resources/livemap/livemap.proto";
 import "resources/timestamp/timestamp.proto";
-import "resources/users/users.proto";
-import "validate/validate.proto";
-
-enum UNIT_STATUS {
-  UNAVAILABLE = 0;
-  AVAILABLE = 1;
-  ON_BREAK = 2;
-  BUSY = 3;
-}
-
-message Unit {
-  uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
-  string name = 2 [(validate.rules).string.max_len = 20];
-  string initials = 3 [(validate.rules).string.max_len = 4];
-  optional string description = 4 [(validate.rules).string.max_len = 255];
-  optional UNIT_STATUS status = 5;
-  optional string reason = 6;
-  repeated resources.users.UserShort assigned = 7;
-}
 
 enum DISPATCH_STATUS {
   UNASSIGNED = 0;
@@ -36,14 +19,11 @@ message Dispatch {
   uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
   optional resources.timestamp.Timestamp created_at = 2; // @gotags: alias:"created_at"
 	optional resources.timestamp.Timestamp updated_at = 3; // @gotags: alias:"updated_at"
-  optional DISPATCH_STATUS status = 4;
-  string title = 5;
-  optional string description = 6;
-  repeated Unit units = 7;
-  map<string, string> attributes = 8;
-}
-
-message DispatchLog {
-  uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
-  uint64 dispatch_id = 2; // @gotags: alias:"dispatch_id"
+  string job = 4;
+  optional DISPATCH_STATUS status = 5;
+  string message = 6;
+  optional string description = 7;
+  resources.livemap.DispatchMarker marker = 8;
+  repeated resources.dispatch.Unit units = 9;
+  map<string, string> attributes = 10;
 }

@@ -12,6 +12,8 @@ import { UnitService } from "./centrum.js";
 import type { UnitStreamResponse } from "./centrum.js";
 import type { UnitStreamRequest } from "./centrum.js";
 import type { ServerStreamingCall } from "@protobuf-ts/runtime-rpc";
+import type { UpdateUnitStatusResponse } from "./centrum.js";
+import type { UpdateUnitStatusRequest } from "./centrum.js";
 import type { AssignUnitResponse } from "./centrum.js";
 import type { AssignUnitRequest } from "./centrum.js";
 import type { DeleteUnitResponse } from "./centrum.js";
@@ -59,6 +61,12 @@ export interface IUnitServiceClient {
      * @generated from protobuf rpc: AssignUnit(services.centrum.AssignUnitRequest) returns (services.centrum.AssignUnitResponse);
      */
     assignUnit(input: AssignUnitRequest, options?: RpcOptions): UnaryCall<AssignUnitRequest, AssignUnitResponse>;
+    /**
+     * @perm
+     *
+     * @generated from protobuf rpc: UpdateUnitStatus(services.centrum.UpdateUnitStatusRequest) returns (services.centrum.UpdateUnitStatusResponse);
+     */
+    updateUnitStatus(input: UpdateUnitStatusRequest, options?: RpcOptions): UnaryCall<UpdateUnitStatusRequest, UpdateUnitStatusResponse>;
     /**
      * @perm
      *
@@ -123,10 +131,19 @@ export class UnitServiceClient implements IUnitServiceClient, ServiceInfo {
     /**
      * @perm
      *
+     * @generated from protobuf rpc: UpdateUnitStatus(services.centrum.UpdateUnitStatusRequest) returns (services.centrum.UpdateUnitStatusResponse);
+     */
+    updateUnitStatus(input: UpdateUnitStatusRequest, options?: RpcOptions): UnaryCall<UpdateUnitStatusRequest, UpdateUnitStatusResponse> {
+        const method = this.methods[5], opt = this._transport.mergeOptions(options);
+        return stackIntercept<UpdateUnitStatusRequest, UpdateUnitStatusResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @perm
+     *
      * @generated from protobuf rpc: StreamUnits(services.centrum.UnitStreamRequest) returns (stream services.centrum.UnitStreamResponse);
      */
     streamUnits(input: UnitStreamRequest, options?: RpcOptions): ServerStreamingCall<UnitStreamRequest, UnitStreamResponse> {
-        const method = this.methods[5], opt = this._transport.mergeOptions(options);
+        const method = this.methods[6], opt = this._transport.mergeOptions(options);
         return stackIntercept<UnitStreamRequest, UnitStreamResponse>("serverStreaming", this._transport, method, opt, input);
     }
 }

@@ -20,6 +20,7 @@ const (
 	UnitServiceDeleteUnitPerm            perms.Name = "DeleteUnit"
 	UnitServiceListUnitsPerm             perms.Name = "ListUnits"
 	UnitServiceStreamUnitsPerm           perms.Name = "StreamUnits"
+	UnitServiceUpdateUnitStatusPerm      perms.Name = "UpdateUnitStatus"
 )
 
 var PermsRemap = map[string]string{
@@ -74,6 +75,11 @@ func init() {
 		{
 			Category: UnitServicePerm,
 			Name:     UnitServiceStreamUnitsPerm,
+			Attrs:    []perms.Attr{},
+		},
+		{
+			Category: UnitServicePerm,
+			Name:     UnitServiceUpdateUnitStatusPerm,
 			Attrs:    []perms.Attr{},
 		},
 	})
