@@ -281,7 +281,12 @@
                 "no_comments": "No comments have been posted yet"
             },
             "document_editor": {
-                "add_permission": "Add Permission"
+                "add_permission": "Add Permission",
+                "quill": {
+                    "msg": "Edit HTML here, when you click \"OK\" the quill editor's contents will be replaced.",
+                    "okText": "Ok",
+                    "cancelText": "Cancel"
+                }
             },
             "document_managers": {
                 "view_current": "View current",

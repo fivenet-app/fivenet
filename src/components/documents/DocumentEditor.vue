@@ -18,6 +18,7 @@ import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import { watchDebounced } from '@vueuse/core';
 import { ImageActions } from '@xeger/quill-image-actions';
 import { ImageFormats } from '@xeger/quill-image-formats';
+import htmlEditButton from 'quill-html-edit-button';
 import ImageCompress from 'quill-image-compress';
 import MagicUrl from 'quill-magic-url';
 import { useAuthStore } from '~/store/auth';
@@ -109,6 +110,7 @@ let entriesCategory = [] as DocumentCategory[];
 const queryCategory = ref('');
 const selectedCategory = ref<DocumentCategory | undefined>(undefined);
 
+// Quill Editor modules and options
 const modules = [
     {
         name: 'imageFormats',
@@ -141,35 +143,70 @@ const modules = [
             },
         },
     },
+    {
+        name: 'htmlEditButton',
+        module: htmlEditButton,
+        options: {
+            debug: false,
+            msg: t('components.documents.document_editor.quill.msg'),
+            okText: t('components.documents.document_editor.quill.okText'),
+            cancelText: t('components.documents.document_editor.quill.cancelText'),
+        },
+    },
 ];
 
-// keep what you want but you need the formats option!
 const formats = [
-    'align',
-    'background',
-    'blockquote',
     'bold',
-    'code-block',
-    'color',
-    'float',
-    'font',
-    'header',
-    'height',
-    'image',
     'italic',
-    'link',
-    'script',
-    'strike',
-    'size',
     'underline',
-    'width',
+    'strike',
+    'blockquote',
+    'code-block',
+    'code',
+    'header',
+    'list',
+    'script',
+    'indent',
+    'direction',
+    'size',
+    'color',
+    'background',
+    'font',
+    'align',
+    'float',
+    'link',
     'video',
+    'image',
+    'height',
+    'width',
+];
+const toolbarOptions = [
+    ['bold', 'italic', 'underline', 'strike'], // toggled buttons
+    ['blockquote', 'code-block'],
+
+    [{ header: 1 }, { header: 2 }], // custom button values
+    [{ list: 'ordered' }, { list: 'bullet' }],
+    [{ script: 'sub' }, { script: 'super' }], // superscript/subscript
+    [{ indent: '-1' }, { indent: '+1' }], // outdent/indent
+    [{ direction: 'rtl' }], // text direction
+
+    [{ size: ['small', false, 'large', 'huge'] }], // custom dropdown
+    [{ header: [1, 2, 3, 4, 5, 6, false] }],
+
+    [{ color: [] }, { background: [] }], // dropdown with defaults from theme
+    [{ font: [] }],
+    [{ align: [] }],
+
+    ['link', 'video', 'image'],
+
+    ['clean'], // remove formatting button
 ];
 const options = {
     readOnly: false,
     contentType: 'html',
     theme: 'snow',
     formats: formats,
+    toolbar: toolbarOptions,
 };
 
 onMounted(async () => {
@@ -808,7 +845,13 @@ async function editForm(): Promise<void> {
         </div>
     </div>
     <div class="bg-neutral min-h-[32rem]">
-        <QuillEditor v-model:content="doc.content" content-type="html" toolbar="full" :modules="modules" :options="options" />
+        <QuillEditor
+            v-model:content="doc.content"
+            content-type="html"
+            :toolbar="toolbarOptions"
+            :modules="modules"
+            :options="options"
+        />
     </div>
     <div class="flex flex-row">
         <div class="flex-1 inline-flex rounded-md shadow-sm" role="group">
