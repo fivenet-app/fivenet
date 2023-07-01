@@ -281,7 +281,12 @@
                 "no_comments": "Noch keine Kommentare veröffentlicht"
             },
             "document_editor": {
-                "add_permission": "Berechtigung hinzufügen"
+                "add_permission": "Berechtigung hinzufügen",
+                "quill": {
+                    "msg": "Das HTML des Editors kann hier bearbeitet werden, nach Klicken von \"OK\" wird der Inhalt dadurch ersetzt.",
+                    "okText": "Ok",
+                    "cancelText": "Abbrechen"
+                }
             },
             "document_managers": {
                 "view_current": "Aktuelles anzeigen",
