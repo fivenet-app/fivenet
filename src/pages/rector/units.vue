@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import UnitsList from '~/components/rector/UnitsList.vue';
+
 useHead({
     title: 'common.units',
 });
@@ -10,4 +12,8 @@ definePageMeta({
 });
 </script>
 
-<template>TODO</template>
+<template>
+    <div class="w-full">
+        <UnitsList />
+    </div>
+</template>

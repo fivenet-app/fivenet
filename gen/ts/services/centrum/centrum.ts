@@ -178,6 +178,16 @@ export interface CreateDispatchRequest {
  */
 export interface CreateDispatchResponse {
 }
+/**
+ * @generated from protobuf message services.centrum.UpdateDispatchRequest
+ */
+export interface UpdateDispatchRequest {
+}
+/**
+ * @generated from protobuf message services.centrum.UpdateDispatchResponse
+ */
+export interface UpdateDispatchResponse {
+}
 // TODO
 
 /**
@@ -394,6 +404,26 @@ class CreateDispatchResponse$Type extends MessageType<CreateDispatchResponse> {
  */
 export const CreateDispatchResponse = new CreateDispatchResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class UpdateDispatchRequest$Type extends MessageType<UpdateDispatchRequest> {
+    constructor() {
+        super("services.centrum.UpdateDispatchRequest", []);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.centrum.UpdateDispatchRequest
+ */
+export const UpdateDispatchRequest = new UpdateDispatchRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class UpdateDispatchResponse$Type extends MessageType<UpdateDispatchResponse> {
+    constructor() {
+        super("services.centrum.UpdateDispatchResponse", []);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.centrum.UpdateDispatchResponse
+ */
+export const UpdateDispatchResponse = new UpdateDispatchResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class CentrumStreamRequest$Type extends MessageType<CentrumStreamRequest> {
     constructor() {
         super("services.centrum.CentrumStreamRequest", []);
@@ -430,5 +460,6 @@ export const UnitService = new ServiceType("services.centrum.UnitService", [
  */
 export const CentrumService = new ServiceType("services.centrum.CentrumService", [
     { name: "CreateDispatch", options: {}, I: CreateDispatchRequest, O: CreateDispatchResponse },
+    { name: "UpdateDispatch", options: {}, I: UpdateDispatchRequest, O: UpdateDispatchResponse },
     { name: "Stream", serverStreaming: true, options: {}, I: CentrumStreamRequest, O: CentrumStreamResponse }
 ]);

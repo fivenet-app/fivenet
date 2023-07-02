@@ -95,7 +95,7 @@ const trafficPointsModal = ref(false);
                                 </dt>
                                 <dd
                                     class="mt-1 text-sm text-base-300 sm:col-span-2 sm:mt-0 sm:ml-6"
-                                    :class="(user?.props?.trafficInfractionPoints ?? 0n) >= 8 ? 'text-red-500' : ''"
+                                    :class="(user?.props?.trafficInfractionPoints ?? 0n) >= 10 ? 'text-red-500' : ''"
                                 >
                                     {{ $t('common.point', parseInt((user?.props?.trafficInfractionPoints ?? 0n).toString())) }}
                                 </dd>

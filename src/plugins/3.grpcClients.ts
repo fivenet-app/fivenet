@@ -22,6 +22,7 @@ import { JobsServiceClient } from '~~/gen/ts/services/jobs/jobs.client';
 import { LivemapperServiceClient } from '~~/gen/ts/services/livemapper/livemap.client';
 import { NotificatorServiceClient } from '~~/gen/ts/services/notificator/notificator.client';
 import { RectorServiceClient } from '~~/gen/ts/services/rector/rector.client';
+import { CentrumServiceClient, UnitServiceClient } from '../../gen/ts/services/centrum/centrum.client';
 
 export default defineNuxtPlugin(() => {
     return {
@@ -155,6 +156,11 @@ export class GRPCClients {
         return new AuthServiceClient(this.transport);
     }
 
+    // Centrum
+    getCentrumClient(): CentrumServiceClient {
+        return new CentrumServiceClient(this.transport);
+    }
+
     // Citizens
     getCitizenStoreClient(): CitizenStoreServiceClient {
         return new CitizenStoreServiceClient(this.transport);
@@ -193,6 +199,11 @@ export class GRPCClients {
     // Rector
     getRectorClient(): RectorServiceClient {
         return new RectorServiceClient(this.transport);
+    }
+
+    // Unit
+    getUnitClient(): UnitServiceClient {
+        return new UnitServiceClient(this.transport);
     }
 }
 

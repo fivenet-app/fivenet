@@ -121,6 +121,9 @@
             },
             "laws": {
                 "title": "Laws"
+            },
+            "units": {
+                "create_unit": "Create Unit"
             }
         },
         "notfound": {

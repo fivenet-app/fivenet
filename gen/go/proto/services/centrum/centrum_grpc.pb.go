@@ -369,6 +369,8 @@ type CentrumServiceClient interface {
 	// @perm
 	CreateDispatch(ctx context.Context, in *CreateDispatchRequest, opts ...grpc.CallOption) (*CreateDispatchResponse, error)
 	// @perm
+	UpdateDispatch(ctx context.Context, in *UpdateDispatchRequest, opts ...grpc.CallOption) (*UpdateDispatchResponse, error)
+	// @perm
 	Stream(ctx context.Context, in *CentrumStreamRequest, opts ...grpc.CallOption) (CentrumService_StreamClient, error)
 }
 
@@ -383,6 +385,15 @@ func NewCentrumServiceClient(cc grpc.ClientConnInterface) CentrumServiceClient {
 func (c *centrumServiceClient) CreateDispatch(ctx context.Context, in *CreateDispatchRequest, opts ...grpc.CallOption) (*CreateDispatchResponse, error) {
 	out := new(CreateDispatchResponse)
 	err := c.cc.Invoke(ctx, "/services.centrum.CentrumService/CreateDispatch", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *centrumServiceClient) UpdateDispatch(ctx context.Context, in *UpdateDispatchRequest, opts ...grpc.CallOption) (*UpdateDispatchResponse, error) {
+	out := new(UpdateDispatchResponse)
+	err := c.cc.Invoke(ctx, "/services.centrum.CentrumService/UpdateDispatch", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -428,6 +439,8 @@ type CentrumServiceServer interface {
 	// @perm
 	CreateDispatch(context.Context, *CreateDispatchRequest) (*CreateDispatchResponse, error)
 	// @perm
+	UpdateDispatch(context.Context, *UpdateDispatchRequest) (*UpdateDispatchResponse, error)
+	// @perm
 	Stream(*CentrumStreamRequest, CentrumService_StreamServer) error
 	mustEmbedUnimplementedCentrumServiceServer()
 }
@@ -438,6 +451,9 @@ type UnimplementedCentrumServiceServer struct {
 
 func (UnimplementedCentrumServiceServer) CreateDispatch(context.Context, *CreateDispatchRequest) (*CreateDispatchResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateDispatch not implemented")
+}
+func (UnimplementedCentrumServiceServer) UpdateDispatch(context.Context, *UpdateDispatchRequest) (*UpdateDispatchResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateDispatch not implemented")
 }
 func (UnimplementedCentrumServiceServer) Stream(*CentrumStreamRequest, CentrumService_StreamServer) error {
 	return status.Errorf(codes.Unimplemented, "method Stream not implemented")
@@ -473,6 +489,24 @@ func _CentrumService_CreateDispatch_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CentrumService_UpdateDispatch_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateDispatchRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CentrumServiceServer).UpdateDispatch(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/services.centrum.CentrumService/UpdateDispatch",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CentrumServiceServer).UpdateDispatch(ctx, req.(*UpdateDispatchRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _CentrumService_Stream_Handler(srv interface{}, stream grpc.ServerStream) error {
 	m := new(CentrumStreamRequest)
 	if err := stream.RecvMsg(m); err != nil {
@@ -504,6 +538,10 @@ var CentrumService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "CreateDispatch",
 			Handler:    _CentrumService_CreateDispatch_Handler,
+		},
+		{
+			MethodName: "UpdateDispatch",
+			Handler:    _CentrumService_UpdateDispatch_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

@@ -53,7 +53,7 @@ function addToClipboard(): void {
         <td
             v-can="'CitizenStoreService.ListCitizens.Fields.UserProps.TrafficInfractionPoints'"
             class="whitespace-nowrap px-2 py-2 text-sm text-base-200"
-            :class="(user?.props?.trafficInfractionPoints ?? 0n) >= 8 ? 'text-red-500' : ''"
+            :class="(user?.props?.trafficInfractionPoints ?? 0n) >= 10 ? 'text-red-500' : ''"
         >
             {{ user.props?.trafficInfractionPoints ?? 0n }}
         </td>

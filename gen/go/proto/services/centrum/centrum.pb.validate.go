@@ -1976,6 +1976,210 @@ var _ interface {
 	ErrorName() string
 } = CreateDispatchResponseValidationError{}
 
+// Validate checks the field values on UpdateDispatchRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *UpdateDispatchRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UpdateDispatchRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// UpdateDispatchRequestMultiError, or nil if none found.
+func (m *UpdateDispatchRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UpdateDispatchRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return UpdateDispatchRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// UpdateDispatchRequestMultiError is an error wrapping multiple validation
+// errors returned by UpdateDispatchRequest.ValidateAll() if the designated
+// constraints aren't met.
+type UpdateDispatchRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UpdateDispatchRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UpdateDispatchRequestMultiError) AllErrors() []error { return m }
+
+// UpdateDispatchRequestValidationError is the validation error returned by
+// UpdateDispatchRequest.Validate if the designated constraints aren't met.
+type UpdateDispatchRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UpdateDispatchRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UpdateDispatchRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UpdateDispatchRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UpdateDispatchRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UpdateDispatchRequestValidationError) ErrorName() string {
+	return "UpdateDispatchRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e UpdateDispatchRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUpdateDispatchRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UpdateDispatchRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UpdateDispatchRequestValidationError{}
+
+// Validate checks the field values on UpdateDispatchResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *UpdateDispatchResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UpdateDispatchResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// UpdateDispatchResponseMultiError, or nil if none found.
+func (m *UpdateDispatchResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UpdateDispatchResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return UpdateDispatchResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// UpdateDispatchResponseMultiError is an error wrapping multiple validation
+// errors returned by UpdateDispatchResponse.ValidateAll() if the designated
+// constraints aren't met.
+type UpdateDispatchResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UpdateDispatchResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UpdateDispatchResponseMultiError) AllErrors() []error { return m }
+
+// UpdateDispatchResponseValidationError is the validation error returned by
+// UpdateDispatchResponse.Validate if the designated constraints aren't met.
+type UpdateDispatchResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UpdateDispatchResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UpdateDispatchResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UpdateDispatchResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UpdateDispatchResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UpdateDispatchResponseValidationError) ErrorName() string {
+	return "UpdateDispatchResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e UpdateDispatchResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUpdateDispatchResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UpdateDispatchResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UpdateDispatchResponseValidationError{}
+
 // Validate checks the field values on CentrumStreamRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.

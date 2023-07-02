@@ -100,6 +100,14 @@ message CreateDispatchResponse {
 
 }
 
+message UpdateDispatchRequest {
+
+}
+
+message UpdateDispatchResponse {
+
+}
+
 // TODO
 
 message CentrumStreamRequest {}
@@ -109,7 +117,8 @@ message CentrumStreamResponse {}
 service CentrumService {
   // @perm
   rpc CreateDispatch(CreateDispatchRequest) returns (CreateDispatchResponse);
-  // TODO
+  // @perm
+  rpc UpdateDispatch(UpdateDispatchRequest) returns (UpdateDispatchResponse);
 
   // @perm
   rpc Stream(CentrumStreamRequest) returns (stream CentrumStreamResponse);

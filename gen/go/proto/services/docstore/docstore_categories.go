@@ -33,6 +33,9 @@ func (s *Server) ListDocumentCategories(ctx context.Context, req *ListDocumentCa
 		).
 		WHERE(
 			tDCategory.Job.EQ(jet.String(userInfo.Job)),
+		).
+		ORDER_BY(
+			tDCategory.Name,
 		)
 
 	resp := &ListDocumentCategoriesResponse{}

@@ -210,6 +210,14 @@ func (s *Server) AssignUnit(ctx context.Context, req *AssignUnitRequest) (*Assig
 	return resp, nil
 }
 
+func (s *Server) UpdateUnitStatus(ctx context.Context, req *UpdateUnitStatusRequest) (*UpdateUnitStatusResponse, error) {
+	resp := &UpdateUnitStatusResponse{}
+
+	// TODO
+
+	return resp, nil
+}
+
 func (s *Server) StreamUnits(req *UnitStreamRequest, srv UnitService_StreamUnitsServer) error {
 
 	// TODO
