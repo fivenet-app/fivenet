@@ -23,9 +23,9 @@ type fivenetCentrumUnitsTable struct {
 	Job         mysql.ColumnString
 	Name        mysql.ColumnString
 	Initials    mysql.ColumnString
+	Color       mysql.ColumnString
 	Description mysql.ColumnString
 	Status      mysql.ColumnInteger
-	Reason      mysql.ColumnString
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -72,11 +72,11 @@ func newFivenetCentrumUnitsTableImpl(schemaName, tableName, alias string) fivene
 		JobColumn         = mysql.StringColumn("job")
 		NameColumn        = mysql.StringColumn("name")
 		InitialsColumn    = mysql.StringColumn("initials")
+		ColorColumn       = mysql.StringColumn("color")
 		DescriptionColumn = mysql.StringColumn("description")
 		StatusColumn      = mysql.IntegerColumn("status")
-		ReasonColumn      = mysql.StringColumn("reason")
-		allColumns        = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, JobColumn, NameColumn, InitialsColumn, DescriptionColumn, StatusColumn, ReasonColumn}
-		mutableColumns    = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, JobColumn, NameColumn, InitialsColumn, DescriptionColumn, StatusColumn, ReasonColumn}
+		allColumns        = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, JobColumn, NameColumn, InitialsColumn, ColorColumn, DescriptionColumn, StatusColumn}
+		mutableColumns    = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, JobColumn, NameColumn, InitialsColumn, ColorColumn, DescriptionColumn, StatusColumn}
 	)
 
 	return fivenetCentrumUnitsTable{
@@ -89,9 +89,9 @@ func newFivenetCentrumUnitsTableImpl(schemaName, tableName, alias string) fivene
 		Job:         JobColumn,
 		Name:        NameColumn,
 		Initials:    InitialsColumn,
+		Color:       ColorColumn,
 		Description: DescriptionColumn,
 		Status:      StatusColumn,
-		Reason:      ReasonColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

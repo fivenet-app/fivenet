@@ -25,10 +25,8 @@ type UnitServiceClient interface {
 	// @perm
 	ListUnits(ctx context.Context, in *ListUnitsRequest, opts ...grpc.CallOption) (*ListUnitsResponse, error)
 	// @perm
-	CreateUnit(ctx context.Context, in *CreateUnitRequest, opts ...grpc.CallOption) (*CreateUnitResponse, error)
-	// @perm: Name=CreateUnit
-	UpdateUnit(ctx context.Context, in *UpdateUnitRequest, opts ...grpc.CallOption) (*UpdateUnitResponse, error)
-	// @perm: Name=DeleteUnit
+	CreateOrUpdateUnit(ctx context.Context, in *CreateOrUpdateUnitRequest, opts ...grpc.CallOption) (*CreateOrUpdateUnitResponse, error)
+	// @perm
 	DeleteUnit(ctx context.Context, in *DeleteUnitRequest, opts ...grpc.CallOption) (*DeleteUnitResponse, error)
 	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
 	AssignUnit(ctx context.Context, in *AssignUnitRequest, opts ...grpc.CallOption) (*AssignUnitResponse, error)
@@ -55,18 +53,9 @@ func (c *unitServiceClient) ListUnits(ctx context.Context, in *ListUnitsRequest,
 	return out, nil
 }
 
-func (c *unitServiceClient) CreateUnit(ctx context.Context, in *CreateUnitRequest, opts ...grpc.CallOption) (*CreateUnitResponse, error) {
-	out := new(CreateUnitResponse)
-	err := c.cc.Invoke(ctx, "/services.centrum.UnitService/CreateUnit", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *unitServiceClient) UpdateUnit(ctx context.Context, in *UpdateUnitRequest, opts ...grpc.CallOption) (*UpdateUnitResponse, error) {
-	out := new(UpdateUnitResponse)
-	err := c.cc.Invoke(ctx, "/services.centrum.UnitService/UpdateUnit", in, out, opts...)
+func (c *unitServiceClient) CreateOrUpdateUnit(ctx context.Context, in *CreateOrUpdateUnitRequest, opts ...grpc.CallOption) (*CreateOrUpdateUnitResponse, error) {
+	out := new(CreateOrUpdateUnitResponse)
+	err := c.cc.Invoke(ctx, "/services.centrum.UnitService/CreateOrUpdateUnit", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -139,10 +128,8 @@ type UnitServiceServer interface {
 	// @perm
 	ListUnits(context.Context, *ListUnitsRequest) (*ListUnitsResponse, error)
 	// @perm
-	CreateUnit(context.Context, *CreateUnitRequest) (*CreateUnitResponse, error)
-	// @perm: Name=CreateUnit
-	UpdateUnit(context.Context, *UpdateUnitRequest) (*UpdateUnitResponse, error)
-	// @perm: Name=DeleteUnit
+	CreateOrUpdateUnit(context.Context, *CreateOrUpdateUnitRequest) (*CreateOrUpdateUnitResponse, error)
+	// @perm
 	DeleteUnit(context.Context, *DeleteUnitRequest) (*DeleteUnitResponse, error)
 	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
 	AssignUnit(context.Context, *AssignUnitRequest) (*AssignUnitResponse, error)
@@ -160,11 +147,8 @@ type UnimplementedUnitServiceServer struct {
 func (UnimplementedUnitServiceServer) ListUnits(context.Context, *ListUnitsRequest) (*ListUnitsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListUnits not implemented")
 }
-func (UnimplementedUnitServiceServer) CreateUnit(context.Context, *CreateUnitRequest) (*CreateUnitResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateUnit not implemented")
-}
-func (UnimplementedUnitServiceServer) UpdateUnit(context.Context, *UpdateUnitRequest) (*UpdateUnitResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateUnit not implemented")
+func (UnimplementedUnitServiceServer) CreateOrUpdateUnit(context.Context, *CreateOrUpdateUnitRequest) (*CreateOrUpdateUnitResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateOrUpdateUnit not implemented")
 }
 func (UnimplementedUnitServiceServer) DeleteUnit(context.Context, *DeleteUnitRequest) (*DeleteUnitResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteUnit not implemented")
@@ -209,38 +193,20 @@ func _UnitService_ListUnits_Handler(srv interface{}, ctx context.Context, dec fu
 	return interceptor(ctx, in, info, handler)
 }
 
-func _UnitService_CreateUnit_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateUnitRequest)
+func _UnitService_CreateOrUpdateUnit_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateOrUpdateUnitRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UnitServiceServer).CreateUnit(ctx, in)
+		return srv.(UnitServiceServer).CreateOrUpdateUnit(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/services.centrum.UnitService/CreateUnit",
+		FullMethod: "/services.centrum.UnitService/CreateOrUpdateUnit",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UnitServiceServer).CreateUnit(ctx, req.(*CreateUnitRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _UnitService_UpdateUnit_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateUnitRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(UnitServiceServer).UpdateUnit(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/services.centrum.UnitService/UpdateUnit",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UnitServiceServer).UpdateUnit(ctx, req.(*UpdateUnitRequest))
+		return srv.(UnitServiceServer).CreateOrUpdateUnit(ctx, req.(*CreateOrUpdateUnitRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -332,12 +298,8 @@ var UnitService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _UnitService_ListUnits_Handler,
 		},
 		{
-			MethodName: "CreateUnit",
-			Handler:    _UnitService_CreateUnit_Handler,
-		},
-		{
-			MethodName: "UpdateUnit",
-			Handler:    _UnitService_UpdateUnit_Handler,
+			MethodName: "CreateOrUpdateUnit",
+			Handler:    _UnitService_CreateOrUpdateUnit_Handler,
 		},
 		{
 			MethodName: "DeleteUnit",

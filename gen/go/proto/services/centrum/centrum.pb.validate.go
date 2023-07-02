@@ -279,164 +279,44 @@ var _ interface {
 	ErrorName() string
 } = ListUnitsResponseValidationError{}
 
-// Validate checks the field values on CreateUnitRequest with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// first error encountered is returned, or nil if there are no violations.
-func (m *CreateUnitRequest) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on CreateUnitRequest with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// CreateUnitRequestMultiError, or nil if none found.
-func (m *CreateUnitRequest) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *CreateUnitRequest) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	if all {
-		switch v := interface{}(m.GetUnit()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, CreateUnitRequestValidationError{
-					field:  "Unit",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, CreateUnitRequestValidationError{
-					field:  "Unit",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetUnit()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return CreateUnitRequestValidationError{
-				field:  "Unit",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
-
-	if len(errors) > 0 {
-		return CreateUnitRequestMultiError(errors)
-	}
-
-	return nil
-}
-
-// CreateUnitRequestMultiError is an error wrapping multiple validation errors
-// returned by CreateUnitRequest.ValidateAll() if the designated constraints
-// aren't met.
-type CreateUnitRequestMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m CreateUnitRequestMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m CreateUnitRequestMultiError) AllErrors() []error { return m }
-
-// CreateUnitRequestValidationError is the validation error returned by
-// CreateUnitRequest.Validate if the designated constraints aren't met.
-type CreateUnitRequestValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e CreateUnitRequestValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e CreateUnitRequestValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e CreateUnitRequestValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e CreateUnitRequestValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e CreateUnitRequestValidationError) ErrorName() string {
-	return "CreateUnitRequestValidationError"
-}
-
-// Error satisfies the builtin error interface
-func (e CreateUnitRequestValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sCreateUnitRequest.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = CreateUnitRequestValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = CreateUnitRequestValidationError{}
-
-// Validate checks the field values on CreateUnitResponse with the rules
+// Validate checks the field values on CreateOrUpdateUnitRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *CreateUnitResponse) Validate() error {
+func (m *CreateOrUpdateUnitRequest) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on CreateUnitResponse with the rules
-// defined in the proto definition for this message. If any rules are
+// ValidateAll checks the field values on CreateOrUpdateUnitRequest with the
+// rules defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// CreateUnitResponseMultiError, or nil if none found.
-func (m *CreateUnitResponse) ValidateAll() error {
+// CreateOrUpdateUnitRequestMultiError, or nil if none found.
+func (m *CreateOrUpdateUnitRequest) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *CreateUnitResponse) validate(all bool) error {
+func (m *CreateOrUpdateUnitRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
 	var errors []error
 
+	if m.GetUnit() == nil {
+		err := CreateOrUpdateUnitRequestValidationError{
+			field:  "Unit",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if all {
 		switch v := interface{}(m.GetUnit()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, CreateUnitResponseValidationError{
+				errors = append(errors, CreateOrUpdateUnitRequestValidationError{
 					field:  "Unit",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -444,7 +324,7 @@ func (m *CreateUnitResponse) validate(all bool) error {
 			}
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
-				errors = append(errors, CreateUnitResponseValidationError{
+				errors = append(errors, CreateOrUpdateUnitRequestValidationError{
 					field:  "Unit",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -453,7 +333,7 @@ func (m *CreateUnitResponse) validate(all bool) error {
 		}
 	} else if v, ok := interface{}(m.GetUnit()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
-			return CreateUnitResponseValidationError{
+			return CreateOrUpdateUnitRequestValidationError{
 				field:  "Unit",
 				reason: "embedded message failed validation",
 				cause:  err,
@@ -462,19 +342,19 @@ func (m *CreateUnitResponse) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return CreateUnitResponseMultiError(errors)
+		return CreateOrUpdateUnitRequestMultiError(errors)
 	}
 
 	return nil
 }
 
-// CreateUnitResponseMultiError is an error wrapping multiple validation errors
-// returned by CreateUnitResponse.ValidateAll() if the designated constraints
-// aren't met.
-type CreateUnitResponseMultiError []error
+// CreateOrUpdateUnitRequestMultiError is an error wrapping multiple validation
+// errors returned by CreateOrUpdateUnitRequest.ValidateAll() if the
+// designated constraints aren't met.
+type CreateOrUpdateUnitRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m CreateUnitResponseMultiError) Error() string {
+func (m CreateOrUpdateUnitRequestMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -483,11 +363,11 @@ func (m CreateUnitResponseMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m CreateUnitResponseMultiError) AllErrors() []error { return m }
+func (m CreateOrUpdateUnitRequestMultiError) AllErrors() []error { return m }
 
-// CreateUnitResponseValidationError is the validation error returned by
-// CreateUnitResponse.Validate if the designated constraints aren't met.
-type CreateUnitResponseValidationError struct {
+// CreateOrUpdateUnitRequestValidationError is the validation error returned by
+// CreateOrUpdateUnitRequest.Validate if the designated constraints aren't met.
+type CreateOrUpdateUnitRequestValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -495,24 +375,24 @@ type CreateUnitResponseValidationError struct {
 }
 
 // Field function returns field value.
-func (e CreateUnitResponseValidationError) Field() string { return e.field }
+func (e CreateOrUpdateUnitRequestValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e CreateUnitResponseValidationError) Reason() string { return e.reason }
+func (e CreateOrUpdateUnitRequestValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e CreateUnitResponseValidationError) Cause() error { return e.cause }
+func (e CreateOrUpdateUnitRequestValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e CreateUnitResponseValidationError) Key() bool { return e.key }
+func (e CreateOrUpdateUnitRequestValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e CreateUnitResponseValidationError) ErrorName() string {
-	return "CreateUnitResponseValidationError"
+func (e CreateOrUpdateUnitRequestValidationError) ErrorName() string {
+	return "CreateOrUpdateUnitRequestValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e CreateUnitResponseValidationError) Error() string {
+func (e CreateOrUpdateUnitRequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -524,14 +404,14 @@ func (e CreateUnitResponseValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sCreateUnitResponse.%s: %s%s",
+		"invalid %sCreateOrUpdateUnitRequest.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = CreateUnitResponseValidationError{}
+var _ error = CreateOrUpdateUnitRequestValidationError{}
 
 var _ interface {
 	Field() string
@@ -539,155 +419,24 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = CreateUnitResponseValidationError{}
+} = CreateOrUpdateUnitRequestValidationError{}
 
-// Validate checks the field values on UpdateUnitRequest with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// first error encountered is returned, or nil if there are no violations.
-func (m *UpdateUnitRequest) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on UpdateUnitRequest with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// UpdateUnitRequestMultiError, or nil if none found.
-func (m *UpdateUnitRequest) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *UpdateUnitRequest) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	if all {
-		switch v := interface{}(m.GetUnit()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, UpdateUnitRequestValidationError{
-					field:  "Unit",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, UpdateUnitRequestValidationError{
-					field:  "Unit",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetUnit()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return UpdateUnitRequestValidationError{
-				field:  "Unit",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
-
-	if len(errors) > 0 {
-		return UpdateUnitRequestMultiError(errors)
-	}
-
-	return nil
-}
-
-// UpdateUnitRequestMultiError is an error wrapping multiple validation errors
-// returned by UpdateUnitRequest.ValidateAll() if the designated constraints
-// aren't met.
-type UpdateUnitRequestMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m UpdateUnitRequestMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m UpdateUnitRequestMultiError) AllErrors() []error { return m }
-
-// UpdateUnitRequestValidationError is the validation error returned by
-// UpdateUnitRequest.Validate if the designated constraints aren't met.
-type UpdateUnitRequestValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e UpdateUnitRequestValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e UpdateUnitRequestValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e UpdateUnitRequestValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e UpdateUnitRequestValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e UpdateUnitRequestValidationError) ErrorName() string {
-	return "UpdateUnitRequestValidationError"
-}
-
-// Error satisfies the builtin error interface
-func (e UpdateUnitRequestValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sUpdateUnitRequest.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = UpdateUnitRequestValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = UpdateUnitRequestValidationError{}
-
-// Validate checks the field values on UpdateUnitResponse with the rules
-// defined in the proto definition for this message. If any rules are
+// Validate checks the field values on CreateOrUpdateUnitResponse with the
+// rules defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *UpdateUnitResponse) Validate() error {
+func (m *CreateOrUpdateUnitResponse) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on UpdateUnitResponse with the rules
-// defined in the proto definition for this message. If any rules are
+// ValidateAll checks the field values on CreateOrUpdateUnitResponse with the
+// rules defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// UpdateUnitResponseMultiError, or nil if none found.
-func (m *UpdateUnitResponse) ValidateAll() error {
+// CreateOrUpdateUnitResponseMultiError, or nil if none found.
+func (m *CreateOrUpdateUnitResponse) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *UpdateUnitResponse) validate(all bool) error {
+func (m *CreateOrUpdateUnitResponse) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -698,7 +447,7 @@ func (m *UpdateUnitResponse) validate(all bool) error {
 		switch v := interface{}(m.GetUnit()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, UpdateUnitResponseValidationError{
+				errors = append(errors, CreateOrUpdateUnitResponseValidationError{
 					field:  "Unit",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -706,7 +455,7 @@ func (m *UpdateUnitResponse) validate(all bool) error {
 			}
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
-				errors = append(errors, UpdateUnitResponseValidationError{
+				errors = append(errors, CreateOrUpdateUnitResponseValidationError{
 					field:  "Unit",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -715,7 +464,7 @@ func (m *UpdateUnitResponse) validate(all bool) error {
 		}
 	} else if v, ok := interface{}(m.GetUnit()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
-			return UpdateUnitResponseValidationError{
+			return CreateOrUpdateUnitResponseValidationError{
 				field:  "Unit",
 				reason: "embedded message failed validation",
 				cause:  err,
@@ -724,19 +473,19 @@ func (m *UpdateUnitResponse) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return UpdateUnitResponseMultiError(errors)
+		return CreateOrUpdateUnitResponseMultiError(errors)
 	}
 
 	return nil
 }
 
-// UpdateUnitResponseMultiError is an error wrapping multiple validation errors
-// returned by UpdateUnitResponse.ValidateAll() if the designated constraints
-// aren't met.
-type UpdateUnitResponseMultiError []error
+// CreateOrUpdateUnitResponseMultiError is an error wrapping multiple
+// validation errors returned by CreateOrUpdateUnitResponse.ValidateAll() if
+// the designated constraints aren't met.
+type CreateOrUpdateUnitResponseMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m UpdateUnitResponseMultiError) Error() string {
+func (m CreateOrUpdateUnitResponseMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -745,11 +494,11 @@ func (m UpdateUnitResponseMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m UpdateUnitResponseMultiError) AllErrors() []error { return m }
+func (m CreateOrUpdateUnitResponseMultiError) AllErrors() []error { return m }
 
-// UpdateUnitResponseValidationError is the validation error returned by
-// UpdateUnitResponse.Validate if the designated constraints aren't met.
-type UpdateUnitResponseValidationError struct {
+// CreateOrUpdateUnitResponseValidationError is the validation error returned
+// by CreateOrUpdateUnitResponse.Validate if the designated constraints aren't met.
+type CreateOrUpdateUnitResponseValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -757,24 +506,24 @@ type UpdateUnitResponseValidationError struct {
 }
 
 // Field function returns field value.
-func (e UpdateUnitResponseValidationError) Field() string { return e.field }
+func (e CreateOrUpdateUnitResponseValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e UpdateUnitResponseValidationError) Reason() string { return e.reason }
+func (e CreateOrUpdateUnitResponseValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e UpdateUnitResponseValidationError) Cause() error { return e.cause }
+func (e CreateOrUpdateUnitResponseValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e UpdateUnitResponseValidationError) Key() bool { return e.key }
+func (e CreateOrUpdateUnitResponseValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e UpdateUnitResponseValidationError) ErrorName() string {
-	return "UpdateUnitResponseValidationError"
+func (e CreateOrUpdateUnitResponseValidationError) ErrorName() string {
+	return "CreateOrUpdateUnitResponseValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e UpdateUnitResponseValidationError) Error() string {
+func (e CreateOrUpdateUnitResponseValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -786,14 +535,14 @@ func (e UpdateUnitResponseValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sUpdateUnitResponse.%s: %s%s",
+		"invalid %sCreateOrUpdateUnitResponse.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = UpdateUnitResponseValidationError{}
+var _ error = CreateOrUpdateUnitResponseValidationError{}
 
 var _ interface {
 	Field() string
@@ -801,7 +550,7 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = UpdateUnitResponseValidationError{}
+} = CreateOrUpdateUnitResponseValidationError{}
 
 // Validate checks the field values on DeleteUnitRequest with the rules defined
 // in the proto definition for this message. If any rules are violated, the
@@ -1247,8 +996,8 @@ func (m *UpdateUnitStatusRequest) validate(all bool) error {
 
 	// no validation rules for Status
 
-	if m.Reaseon != nil {
-		// no validation rules for Reaseon
+	if m.Reason != nil {
+		// no validation rules for Reason
 	}
 
 	if len(errors) > 0 {

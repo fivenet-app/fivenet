@@ -31,7 +31,7 @@ export interface Unit {
     /**
      * @generated from protobuf field: optional string color = 6;
      */
-    color?: string; // @gotags: alias:"livemap_marker_color"
+    color?: string;
     /**
      * @generated from protobuf field: optional string description = 7;
      */
@@ -41,11 +41,7 @@ export interface Unit {
      */
     status?: UNIT_STATUS;
     /**
-     * @generated from protobuf field: optional string reason = 9;
-     */
-    reason?: string;
-    /**
-     * @generated from protobuf field: repeated resources.users.UserShort users = 10;
+     * @generated from protobuf field: repeated resources.users.UserShort users = 9;
      */
     users: UserShort[];
 }
@@ -77,13 +73,12 @@ class Unit$Type extends MessageType<Unit> {
             { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
-            { no: 4, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
-            { no: 5, name: "initials", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "4" } } } },
+            { no: 4, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "24" } } } },
+            { no: 5, name: "initials", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "4" } } } },
             { no: 6, name: "color", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "6" } } } },
             { no: 7, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
             { no: 8, name: "status", kind: "enum", opt: true, T: () => ["resources.dispatch.UNIT_STATUS", UNIT_STATUS] },
-            { no: 9, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
-            { no: 10, name: "users", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UserShort }
+            { no: 9, name: "users", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UserShort }
         ]);
     }
 }

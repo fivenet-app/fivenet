@@ -32,7 +32,7 @@ defineEmits<{
                             leave-to="translate-x-full"
                         >
                             <DialogPanel class="pointer-events-auto w-screen max-w-3xl">
-                                <div class="flex h-full flex-col overflow-y-scroll bg-gray-700 py-6 shadow-xl">
+                                <div class="flex h-full flex-col overflow-y-scroll bg-base-850 py-6 shadow-xl">
                                     <div class="px-4 sm:px-6">
                                         <div class="flex items-start justify-between">
                                             <DialogTitle class="text-base font-semibold leading-6 text-gray-100">

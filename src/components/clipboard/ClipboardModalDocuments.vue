@@ -130,7 +130,7 @@ watch(props, async (newVal) => {
                     <div v-if="specs && specs.max === 1n">
                         <button
                             @click="select(item)"
-                            class="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:col-start-2"
+                            class="inline-flex w-full justify-center rounded-md bg-primary-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 sm:col-start-2"
                         >
                             <span v-if="!selected.includes(item)">
                                 {{ $t('common.select', 1).toUpperCase() }}
@@ -148,7 +148,7 @@ watch(props, async (newVal) => {
                             :value="item"
                             v-model="selected"
                             type="checkbox"
-                            class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                            class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600"
                         />
                     </div>
                 </td>

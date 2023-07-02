@@ -58,10 +58,10 @@ func (m *Unit) validate(all bool) error {
 
 	// no validation rules for Id
 
-	if utf8.RuneCountInString(m.GetName()) > 20 {
+	if l := utf8.RuneCountInString(m.GetName()); l < 3 || l > 24 {
 		err := UnitValidationError{
 			field:  "Name",
-			reason: "value length must be at most 20 runes",
+			reason: "value length must be between 3 and 24 runes, inclusive",
 		}
 		if !all {
 			return err
@@ -69,10 +69,10 @@ func (m *Unit) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if utf8.RuneCountInString(m.GetInitials()) > 4 {
+	if l := utf8.RuneCountInString(m.GetInitials()); l < 2 || l > 4 {
 		err := UnitValidationError{
 			field:  "Initials",
-			reason: "value length must be at most 4 runes",
+			reason: "value length must be between 2 and 4 runes, inclusive",
 		}
 		if !all {
 			return err
@@ -212,10 +212,6 @@ func (m *Unit) validate(all bool) error {
 
 	if m.Status != nil {
 		// no validation rules for Status
-	}
-
-	if m.Reason != nil {
-		// no validation rules for Reason
 	}
 
 	if len(errors) > 0 {

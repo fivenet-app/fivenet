@@ -4,6 +4,7 @@ package services.centrum;
 option go_package = "github.com/galexrt/fivenet/gen/go/proto/services/centrum;centrum";
 
 import "resources/dispatch/units.proto";
+import "validate/validate.proto";
 
 // Unit Management
 
@@ -16,19 +17,11 @@ message ListUnitsResponse {
   repeated resources.dispatch.Unit units = 1;
 }
 
-message CreateUnitRequest {
-  resources.dispatch.Unit unit = 1;
+message CreateOrUpdateUnitRequest {
+  resources.dispatch.Unit unit = 1 [(validate.rules).message.required = true];
 }
 
-message CreateUnitResponse {
-  resources.dispatch.Unit unit = 1;
-}
-
-message UpdateUnitRequest {
-  resources.dispatch.Unit unit = 1;
-}
-
-message UpdateUnitResponse {
+message CreateOrUpdateUnitResponse {
   resources.dispatch.Unit unit = 1;
 }
 
@@ -53,7 +46,7 @@ message AssignUnitResponse {
 message UpdateUnitStatusRequest {
   uint64 unit_id = 1;
   resources.dispatch.UNIT_STATUS status = 2;
-  optional string reaseon = 3;
+  optional string reason = 3;
 }
 
 message UpdateUnitStatusResponse {}
@@ -74,10 +67,8 @@ service UnitService {
   // @perm
   rpc ListUnits(ListUnitsRequest) returns (ListUnitsResponse);
   // @perm
-  rpc CreateUnit(CreateUnitRequest) returns (CreateUnitResponse);
-  // @perm: Name=CreateUnit
-  rpc UpdateUnit(UpdateUnitRequest) returns (UpdateUnitResponse);
-  // @perm: Name=DeleteUnit
+  rpc CreateOrUpdateUnit(CreateOrUpdateUnitRequest) returns (CreateOrUpdateUnitResponse);
+  // @perm
   rpc DeleteUnit(DeleteUnitRequest) returns (DeleteUnitResponse);
 
   // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}

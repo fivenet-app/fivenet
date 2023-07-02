@@ -18,7 +18,7 @@ type FivenetCentrumUnits struct {
 	Job         *string    `json:"job"`
 	Name        string     `json:"name"`
 	Initials    string     `json:"initials"`
+	Color       string     `json:"color"`
 	Description *string    `json:"description"`
 	Status      int16      `json:"status"`
-	Reason      *string    `json:"reason"`
 }

@@ -20,10 +20,8 @@ import type { AssignUnitResponse } from "./centrum.js";
 import type { AssignUnitRequest } from "./centrum.js";
 import type { DeleteUnitResponse } from "./centrum.js";
 import type { DeleteUnitRequest } from "./centrum.js";
-import type { UpdateUnitResponse } from "./centrum.js";
-import type { UpdateUnitRequest } from "./centrum.js";
-import type { CreateUnitResponse } from "./centrum.js";
-import type { CreateUnitRequest } from "./centrum.js";
+import type { CreateOrUpdateUnitResponse } from "./centrum.js";
+import type { CreateOrUpdateUnitRequest } from "./centrum.js";
 import { stackIntercept } from "@protobuf-ts/runtime-rpc";
 import type { ListUnitsResponse } from "./centrum.js";
 import type { ListUnitsRequest } from "./centrum.js";
@@ -42,17 +40,11 @@ export interface IUnitServiceClient {
     /**
      * @perm
      *
-     * @generated from protobuf rpc: CreateUnit(services.centrum.CreateUnitRequest) returns (services.centrum.CreateUnitResponse);
+     * @generated from protobuf rpc: CreateOrUpdateUnit(services.centrum.CreateOrUpdateUnitRequest) returns (services.centrum.CreateOrUpdateUnitResponse);
      */
-    createUnit(input: CreateUnitRequest, options?: RpcOptions): UnaryCall<CreateUnitRequest, CreateUnitResponse>;
+    createOrUpdateUnit(input: CreateOrUpdateUnitRequest, options?: RpcOptions): UnaryCall<CreateOrUpdateUnitRequest, CreateOrUpdateUnitResponse>;
     /**
-     * @perm: Name=CreateUnit
-     *
-     * @generated from protobuf rpc: UpdateUnit(services.centrum.UpdateUnitRequest) returns (services.centrum.UpdateUnitResponse);
-     */
-    updateUnit(input: UpdateUnitRequest, options?: RpcOptions): UnaryCall<UpdateUnitRequest, UpdateUnitResponse>;
-    /**
-     * @perm: Name=DeleteUnit
+     * @perm
      *
      * @generated from protobuf rpc: DeleteUnit(services.centrum.DeleteUnitRequest) returns (services.centrum.DeleteUnitResponse);
      */
@@ -97,28 +89,19 @@ export class UnitServiceClient implements IUnitServiceClient, ServiceInfo {
     /**
      * @perm
      *
-     * @generated from protobuf rpc: CreateUnit(services.centrum.CreateUnitRequest) returns (services.centrum.CreateUnitResponse);
+     * @generated from protobuf rpc: CreateOrUpdateUnit(services.centrum.CreateOrUpdateUnitRequest) returns (services.centrum.CreateOrUpdateUnitResponse);
      */
-    createUnit(input: CreateUnitRequest, options?: RpcOptions): UnaryCall<CreateUnitRequest, CreateUnitResponse> {
+    createOrUpdateUnit(input: CreateOrUpdateUnitRequest, options?: RpcOptions): UnaryCall<CreateOrUpdateUnitRequest, CreateOrUpdateUnitResponse> {
         const method = this.methods[1], opt = this._transport.mergeOptions(options);
-        return stackIntercept<CreateUnitRequest, CreateUnitResponse>("unary", this._transport, method, opt, input);
+        return stackIntercept<CreateOrUpdateUnitRequest, CreateOrUpdateUnitResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=CreateUnit
-     *
-     * @generated from protobuf rpc: UpdateUnit(services.centrum.UpdateUnitRequest) returns (services.centrum.UpdateUnitResponse);
-     */
-    updateUnit(input: UpdateUnitRequest, options?: RpcOptions): UnaryCall<UpdateUnitRequest, UpdateUnitResponse> {
-        const method = this.methods[2], opt = this._transport.mergeOptions(options);
-        return stackIntercept<UpdateUnitRequest, UpdateUnitResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @perm: Name=DeleteUnit
+     * @perm
      *
      * @generated from protobuf rpc: DeleteUnit(services.centrum.DeleteUnitRequest) returns (services.centrum.DeleteUnitResponse);
      */
     deleteUnit(input: DeleteUnitRequest, options?: RpcOptions): UnaryCall<DeleteUnitRequest, DeleteUnitResponse> {
-        const method = this.methods[3], opt = this._transport.mergeOptions(options);
+        const method = this.methods[2], opt = this._transport.mergeOptions(options);
         return stackIntercept<DeleteUnitRequest, DeleteUnitResponse>("unary", this._transport, method, opt, input);
     }
     /**
@@ -127,7 +110,7 @@ export class UnitServiceClient implements IUnitServiceClient, ServiceInfo {
      * @generated from protobuf rpc: AssignUnit(services.centrum.AssignUnitRequest) returns (services.centrum.AssignUnitResponse);
      */
     assignUnit(input: AssignUnitRequest, options?: RpcOptions): UnaryCall<AssignUnitRequest, AssignUnitResponse> {
-        const method = this.methods[4], opt = this._transport.mergeOptions(options);
+        const method = this.methods[3], opt = this._transport.mergeOptions(options);
         return stackIntercept<AssignUnitRequest, AssignUnitResponse>("unary", this._transport, method, opt, input);
     }
     /**
@@ -136,7 +119,7 @@ export class UnitServiceClient implements IUnitServiceClient, ServiceInfo {
      * @generated from protobuf rpc: UpdateUnitStatus(services.centrum.UpdateUnitStatusRequest) returns (services.centrum.UpdateUnitStatusResponse);
      */
     updateUnitStatus(input: UpdateUnitStatusRequest, options?: RpcOptions): UnaryCall<UpdateUnitStatusRequest, UpdateUnitStatusResponse> {
-        const method = this.methods[5], opt = this._transport.mergeOptions(options);
+        const method = this.methods[4], opt = this._transport.mergeOptions(options);
         return stackIntercept<UpdateUnitStatusRequest, UpdateUnitStatusResponse>("unary", this._transport, method, opt, input);
     }
     /**
@@ -145,7 +128,7 @@ export class UnitServiceClient implements IUnitServiceClient, ServiceInfo {
      * @generated from protobuf rpc: StreamUnits(services.centrum.UnitStreamRequest) returns (stream services.centrum.UnitStreamResponse);
      */
     streamUnits(input: UnitStreamRequest, options?: RpcOptions): ServerStreamingCall<UnitStreamRequest, UnitStreamResponse> {
-        const method = this.methods[6], opt = this._transport.mergeOptions(options);
+        const method = this.methods[5], opt = this._transport.mergeOptions(options);
         return stackIntercept<UnitStreamRequest, UnitStreamResponse>("serverStreaming", this._transport, method, opt, input);
     }
 }

@@ -507,7 +507,9 @@
         "no_open_fine": "No open fines",
         "location": "Location | Locations",
         "units": "Units",
-        "unit": "Unit | Units"
+        "unit": "Unit | Units",
+        "color": "Color",
+        "initials": "Initial | Initials"
     },
     "notifications": {
         "clipboard": {

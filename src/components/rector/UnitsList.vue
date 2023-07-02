@@ -5,7 +5,7 @@ import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';
 import UnitsListEntry from '~/components/rector/UnitsListEntry.vue';
 import { Unit } from '../../../gen/ts/resources/dispatch/units';
 import DataNoDataBlock from '../partials/DataNoDataBlock.vue';
-import CreateUnitModal from './CreateUnitModal.vue';
+import CreateOrUpdateUnitModal from './CreateOrUpdateUnitModal.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -31,7 +31,7 @@ const open = ref(false);
 </script>
 
 <template>
-    <CreateUnitModal :open="open" />
+    <CreateOrUpdateUnitModal :open="open" @close="open = false" @refresh="refresh" />
     <div class="py-2">
         <div class="px-2 sm:px-6 lg:px-8">
             <div class="flow-root mt-2">
@@ -63,6 +63,15 @@ const open = ref(false);
                                         <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.name') }}
                                         </th>
+                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                            {{ $t('common.initials', 2) }}
+                                        </th>
+                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                            {{ $t('common.description') }}
+                                        </th>
+                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                            {{ $t('common.color') }}
+                                        </th>
                                         <th
                                             scope="col"
                                             class="relative py-3.5 pl-3 pr-4 sm:pr-0 text-right text-sm font-semibold text-neutral"
@@ -78,6 +87,15 @@ const open = ref(false);
                                     <tr>
                                         <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.name') }}
+                                        </th>
+                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                            {{ $t('common.initials', 2) }}
+                                        </th>
+                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                            {{ $t('common.description') }}
+                                        </th>
+                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                            {{ $t('common.color') }}
                                         </th>
                                         <th
                                             scope="col"

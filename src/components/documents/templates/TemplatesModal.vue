@@ -204,7 +204,7 @@ async function clipboardDialog(): Promise<void> {
                                 <div v-else-if="template !== undefined && reqs !== undefined && steps.selectClipboard">
                                     <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-gray-100">
                                         <SvgIcon
-                                            class="h-6 w-6 text-indigo-600"
+                                            class="h-6 w-6 text-primary-600"
                                             aria-hidden="true"
                                             type="mdi"
                                             :path="mdiPencil"
@@ -264,7 +264,7 @@ async function clipboardDialog(): Promise<void> {
                                         </button>
                                         <button
                                             type="button"
-                                            class="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:col-start-2"
+                                            class="inline-flex w-full justify-center rounded-md bg-primary-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 sm:col-start-2"
                                             @click="clipboardDialog()"
                                             :disabled="!readyToCreate"
                                         >

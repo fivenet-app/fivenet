@@ -17,21 +17,12 @@ const (
 	CentrumServiceUpdateDispatchPerm     perms.Name = "UpdateDispatch"
 	UnitServiceAssignUnitPerm            perms.Name = "AssignUnit"
 	UnitServiceAssignUnitAccessPermField perms.Key  = "Access"
-	UnitServiceCreateUnitPerm            perms.Name = "CreateUnit"
+	UnitServiceCreateOrUpdateUnitPerm    perms.Name = "CreateOrUpdateUnit"
 	UnitServiceDeleteUnitPerm            perms.Name = "DeleteUnit"
 	UnitServiceListUnitsPerm             perms.Name = "ListUnits"
 	UnitServiceStreamUnitsPerm           perms.Name = "StreamUnits"
 	UnitServiceUpdateUnitStatusPerm      perms.Name = "UpdateUnitStatus"
 )
-
-var PermsRemap = map[string]string{
-	// Service: UnitService
-	"UnitService/UpdateUnit": "UnitService/CreateUnit",
-}
-
-func (s *Server) GetPermsRemap() map[string]string {
-	return PermsRemap
-}
 
 func init() {
 	perms.AddPermsToList([]*perms.Perm{
@@ -65,7 +56,7 @@ func init() {
 		},
 		{
 			Category: UnitServicePerm,
-			Name:     UnitServiceCreateUnitPerm,
+			Name:     UnitServiceCreateOrUpdateUnitPerm,
 			Attrs:    []perms.Attr{},
 		},
 		{

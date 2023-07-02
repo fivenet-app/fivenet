@@ -467,7 +467,7 @@ const appVersion = activeChar ? ' v' + __APP_VERSION__ + (import.meta.env.DEV ? 
                 <div class="relative z-10 flex flex-shrink-0 h-16 bg-base-850">
                     <button
                         type="button"
-                        class="px-4 text-neutral focus:outline-none focus:ring-2 focus:ring-inset focus:ring-indigo-500 md:hidden"
+                        class="px-4 text-neutral focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500 md:hidden"
                         @click="mobileMenuOpen = true"
                     >
                         <span class="sr-only">{{ $t('components.partials.sidebar.open_sidebar') }}</span>
@@ -531,7 +531,7 @@ const appVersion = activeChar ? ' v' + __APP_VERSION__ + (import.meta.env.DEV ? 
                             <Menu as="div" class="relative flex-shrink-0">
                                 <div>
                                     <MenuButton
-                                        class="flex text-sm rounded-full bg-base-850 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                                        class="flex text-sm rounded-full bg-base-850 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
                                     >
                                         <span class="sr-only">
                                             {{ $t('components.partials.sidebar.open_usermenu') }}

@@ -8,9 +8,9 @@ CREATE TABLE IF NOT EXISTS `fivenet_centrum_units` (
   `job` varchar(20) DEFAULT NULL,
   `name` varchar(128) NOT NULL,
   `initials` varchar(4) NOT NULL,
+  `color` char(6) NOT NULL,
   `description` varchar(255) NULL DEFAULT NULL,
   `status` smallint(2) NOT NULL,
-  `reason` varchar(255) NULL DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

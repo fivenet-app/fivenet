@@ -13,8 +13,8 @@ import (
 )
 
 var (
-	tUnits      = table.FivenetCentrumUnits
-	tUnitsUsers = table.FivenetCentrumUnitsUsers
+	tUnits      = table.FivenetCentrumUnits.AS("unit")
+	tUnitsUsers = table.FivenetCentrumUnitsUsers.AS("user")
 )
 
 func (s *Server) ListUnits(ctx context.Context, req *ListUnitsRequest) (*ListUnitsResponse, error) {
@@ -35,9 +35,9 @@ func (s *Server) ListUnits(ctx context.Context, req *ListUnitsRequest) (*ListUni
 			tUnits.Job,
 			tUnits.Name,
 			tUnits.Initials,
+			tUnits.Color,
 			tUnits.Description,
 			tUnits.Status,
-			tUnits.Reason,
 		).
 		FROM(tUnits).
 		WHERE(
@@ -45,7 +45,6 @@ func (s *Server) ListUnits(ctx context.Context, req *ListUnitsRequest) (*ListUni
 		)
 
 	resp := &ListUnitsResponse{}
-
 	if err := stmt.QueryContext(ctx, s.db, &resp.Units); err != nil {
 		return nil, err
 	}
@@ -72,103 +71,93 @@ func (s *Server) getUnit(ctx context.Context, userInfo *userinfo.UserInfo, id ui
 	return &unit, nil
 }
 
-func (s *Server) CreateUnit(ctx context.Context, req *CreateUnitRequest) (*CreateUnitResponse, error) {
+func (s *Server) CreateOrUpdateUnit(ctx context.Context, req *CreateOrUpdateUnitRequest) (*CreateOrUpdateUnitResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
 		Service: UnitService_ServiceDesc.ServiceName,
-		Method:  "CreateUnit",
+		Method:  "CreateOrUpdateUnit",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
 		State:   int16(rector.EVENT_TYPE_ERRORED),
 	}
 	defer s.a.AddEntryWithData(auditEntry, req)
 
-	stmt := tUnits.
-		INSERT(
-			tUnits.Job,
-			tUnits.Name,
-			tUnits.Initials,
-			tUnits.Description,
-			tUnits.Status,
-		).
-		VALUES(
-			userInfo.Job,
-			req.Unit.Name,
-			req.Unit.Initials,
-			req.Unit.Description,
-			dispatch.UNIT_STATUS_UNAVAILABLE,
-		)
+	resp := &CreateOrUpdateUnitResponse{}
 
-	result, err := stmt.ExecContext(ctx, s.db)
-	if err != nil {
-		return nil, err
+	// No unit id set
+	if req.Unit.Id <= 0 {
+		tUnits := table.FivenetCentrumUnits
+		stmt := tUnits.
+			INSERT(
+				tUnits.Job,
+				tUnits.Name,
+				tUnits.Initials,
+				tUnits.Color,
+				tUnits.Description,
+				tUnits.Status,
+			).
+			VALUES(
+				userInfo.Job,
+				req.Unit.Name,
+				req.Unit.Initials,
+				req.Unit.Color,
+				req.Unit.Description,
+				dispatch.UNIT_STATUS_UNAVAILABLE,
+			)
+
+		result, err := stmt.ExecContext(ctx, s.db)
+		if err != nil {
+			return nil, err
+		}
+
+		lastId, err := result.LastInsertId()
+		if err != nil {
+			return nil, err
+		}
+
+		unit, err := s.getUnit(ctx, userInfo, uint64(lastId))
+		if err != nil {
+			return nil, err
+		}
+
+		resp.Unit = unit
+
+		auditEntry.State = int16(rector.EVENT_TYPE_CREATED)
+	} else {
+		stmt := tUnits.
+			UPDATE(
+				tUnits.Name,
+				tUnits.Initials,
+				tUnits.Color,
+				tUnits.Description,
+				tUnits.Status,
+			).
+			SET(
+				userInfo.Job,
+				req.Unit.Name,
+				req.Unit.Initials,
+				req.Unit.Description,
+				dispatch.UNIT_STATUS_UNAVAILABLE,
+			).
+			WHERE(jet.AND(
+				tUnits.Job.EQ(jet.String(userInfo.Job)),
+				tUnits.Job.EQ(jet.String(userInfo.Job)),
+			))
+
+		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+			return nil, err
+		}
+
+		unit, err := s.getUnit(ctx, userInfo, req.Unit.Id)
+		if err != nil {
+			return nil, err
+		}
+
+		resp.Unit = unit
+
+		auditEntry.State = int16(rector.EVENT_TYPE_UPDATED)
 	}
-
-	lastId, err := result.LastInsertId()
-	if err != nil {
-		return nil, err
-	}
-
-	unit, err := s.getUnit(ctx, userInfo, uint64(lastId))
-	if err != nil {
-		return nil, err
-	}
-
-	resp := &CreateUnitResponse{
-		Unit: unit,
-	}
-
-	auditEntry.State = int16(rector.EVENT_TYPE_CREATED)
-
-	return resp, nil
-}
-
-func (s *Server) UpdateUnit(ctx context.Context, req *UpdateUnitRequest) (*UpdateUnitResponse, error) {
-	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	auditEntry := &model.FivenetAuditLog{
-		Service: UnitService_ServiceDesc.ServiceName,
-		Method:  "UpdateUnit",
-		UserID:  userInfo.UserId,
-		UserJob: userInfo.Job,
-		State:   int16(rector.EVENT_TYPE_ERRORED),
-	}
-	defer s.a.AddEntryWithData(auditEntry, req)
-
-	stmt := tUnits.
-		UPDATE(
-			tUnits.Name,
-			tUnits.Initials,
-			tUnits.Description,
-			tUnits.Status,
-		).
-		SET(
-			userInfo.Job,
-			req.Unit.Name,
-			req.Unit.Initials,
-			req.Unit.Description,
-			dispatch.UNIT_STATUS_UNAVAILABLE,
-		).
-		WHERE(jet.AND(
-			tUnits.Job.EQ(jet.String(userInfo.Job)),
-			tUnits.Job.EQ(jet.String(userInfo.Job)),
-		))
-
-	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return nil, err
-	}
-
-	unit, err := s.getUnit(ctx, userInfo, req.Unit.Id)
-	if err != nil {
-		return nil, err
-	}
-
-	resp := &UpdateUnitResponse{
-		Unit: unit,
-	}
-
-	auditEntry.State = int16(rector.EVENT_TYPE_UPDATED)
 
 	return resp, nil
 }

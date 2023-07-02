@@ -36,6 +36,7 @@ import (
 
 	// GRPC Services
 	pbauth "github.com/galexrt/fivenet/gen/go/proto/services/auth"
+	pbcentrum "github.com/galexrt/fivenet/gen/go/proto/services/centrum"
 	pbcitizenstore "github.com/galexrt/fivenet/gen/go/proto/services/citizenstore"
 	pbcompletor "github.com/galexrt/fivenet/gen/go/proto/services/completor"
 	pbdmv "github.com/galexrt/fivenet/gen/go/proto/services/dmv"
@@ -152,6 +153,9 @@ func NewGRPCServer(ctx context.Context, logger *zap.Logger, db *sql.DB, tp *trac
 	pbcitizenstore.RegisterCitizenStoreServiceServer(grpcServer, pbcitizenstore.NewServer(db, p, enricher, aud,
 		config.C.Game.PublicJobs, config.C.Game.UnemployedJob.Name, config.C.Game.UnemployedJob.Grade))
 	pbcompletor.RegisterCompletorServiceServer(grpcServer, pbcompletor.NewServer(db, p, cache))
+	centrumServer := pbcentrum.NewServer(db, p, aud)
+	pbcentrum.RegisterCentrumServiceServer(grpcServer, centrumServer)
+	pbcentrum.RegisterUnitServiceServer(grpcServer, centrumServer)
 	pbdocstore.RegisterDocStoreServiceServer(grpcServer, pbdocstore.NewServer(db, p, enricher, aud, ui, notif))
 	pbjobs.RegisterJobsServiceServer(grpcServer, pbjobs.NewServer())
 	livemapper := pblivemapper.NewServer(ctx, logger.Named("grpc_livemap"), tp, db, p, enricher,

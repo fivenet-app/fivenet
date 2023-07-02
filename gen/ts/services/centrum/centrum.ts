@@ -30,36 +30,18 @@ export interface ListUnitsResponse {
     units: Unit[];
 }
 /**
- * @generated from protobuf message services.centrum.CreateUnitRequest
+ * @generated from protobuf message services.centrum.CreateOrUpdateUnitRequest
  */
-export interface CreateUnitRequest {
+export interface CreateOrUpdateUnitRequest {
     /**
      * @generated from protobuf field: resources.dispatch.Unit unit = 1;
      */
     unit?: Unit;
 }
 /**
- * @generated from protobuf message services.centrum.CreateUnitResponse
+ * @generated from protobuf message services.centrum.CreateOrUpdateUnitResponse
  */
-export interface CreateUnitResponse {
-    /**
-     * @generated from protobuf field: resources.dispatch.Unit unit = 1;
-     */
-    unit?: Unit;
-}
-/**
- * @generated from protobuf message services.centrum.UpdateUnitRequest
- */
-export interface UpdateUnitRequest {
-    /**
-     * @generated from protobuf field: resources.dispatch.Unit unit = 1;
-     */
-    unit?: Unit;
-}
-/**
- * @generated from protobuf message services.centrum.UpdateUnitResponse
- */
-export interface UpdateUnitResponse {
+export interface CreateOrUpdateUnitResponse {
     /**
      * @generated from protobuf field: resources.dispatch.Unit unit = 1;
      */
@@ -126,9 +108,9 @@ export interface UpdateUnitStatusRequest {
      */
     status: UNIT_STATUS;
     /**
-     * @generated from protobuf field: optional string reaseon = 3;
+     * @generated from protobuf field: optional string reason = 3;
      */
-    reaseon?: string;
+    reason?: string;
 }
 /**
  * @generated from protobuf message services.centrum.UpdateUnitStatusResponse
@@ -226,53 +208,29 @@ class ListUnitsResponse$Type extends MessageType<ListUnitsResponse> {
  */
 export const ListUnitsResponse = new ListUnitsResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class CreateUnitRequest$Type extends MessageType<CreateUnitRequest> {
+class CreateOrUpdateUnitRequest$Type extends MessageType<CreateOrUpdateUnitRequest> {
     constructor() {
-        super("services.centrum.CreateUnitRequest", [
-            { no: 1, name: "unit", kind: "message", T: () => Unit }
+        super("services.centrum.CreateOrUpdateUnitRequest", [
+            { no: 1, name: "unit", kind: "message", T: () => Unit, options: { "validate.rules": { message: { required: true } } } }
         ]);
     }
 }
 /**
- * @generated MessageType for protobuf message services.centrum.CreateUnitRequest
+ * @generated MessageType for protobuf message services.centrum.CreateOrUpdateUnitRequest
  */
-export const CreateUnitRequest = new CreateUnitRequest$Type();
+export const CreateOrUpdateUnitRequest = new CreateOrUpdateUnitRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class CreateUnitResponse$Type extends MessageType<CreateUnitResponse> {
+class CreateOrUpdateUnitResponse$Type extends MessageType<CreateOrUpdateUnitResponse> {
     constructor() {
-        super("services.centrum.CreateUnitResponse", [
+        super("services.centrum.CreateOrUpdateUnitResponse", [
             { no: 1, name: "unit", kind: "message", T: () => Unit }
         ]);
     }
 }
 /**
- * @generated MessageType for protobuf message services.centrum.CreateUnitResponse
+ * @generated MessageType for protobuf message services.centrum.CreateOrUpdateUnitResponse
  */
-export const CreateUnitResponse = new CreateUnitResponse$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class UpdateUnitRequest$Type extends MessageType<UpdateUnitRequest> {
-    constructor() {
-        super("services.centrum.UpdateUnitRequest", [
-            { no: 1, name: "unit", kind: "message", T: () => Unit }
-        ]);
-    }
-}
-/**
- * @generated MessageType for protobuf message services.centrum.UpdateUnitRequest
- */
-export const UpdateUnitRequest = new UpdateUnitRequest$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class UpdateUnitResponse$Type extends MessageType<UpdateUnitResponse> {
-    constructor() {
-        super("services.centrum.UpdateUnitResponse", [
-            { no: 1, name: "unit", kind: "message", T: () => Unit }
-        ]);
-    }
-}
-/**
- * @generated MessageType for protobuf message services.centrum.UpdateUnitResponse
- */
-export const UpdateUnitResponse = new UpdateUnitResponse$Type();
+export const CreateOrUpdateUnitResponse = new CreateOrUpdateUnitResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class DeleteUnitRequest$Type extends MessageType<DeleteUnitRequest> {
     constructor() {
@@ -329,7 +287,7 @@ class UpdateUnitStatusRequest$Type extends MessageType<UpdateUnitStatusRequest> 
         super("services.centrum.UpdateUnitStatusRequest", [
             { no: 1, name: "unit_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
             { no: 2, name: "status", kind: "enum", T: () => ["resources.dispatch.UNIT_STATUS", UNIT_STATUS] },
-            { no: 3, name: "reaseon", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
+            { no: 3, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
         ]);
     }
 }
@@ -448,8 +406,7 @@ export const CentrumStreamResponse = new CentrumStreamResponse$Type();
  */
 export const UnitService = new ServiceType("services.centrum.UnitService", [
     { name: "ListUnits", options: {}, I: ListUnitsRequest, O: ListUnitsResponse },
-    { name: "CreateUnit", options: {}, I: CreateUnitRequest, O: CreateUnitResponse },
-    { name: "UpdateUnit", options: {}, I: UpdateUnitRequest, O: UpdateUnitResponse },
+    { name: "CreateOrUpdateUnit", options: {}, I: CreateOrUpdateUnitRequest, O: CreateOrUpdateUnitResponse },
     { name: "DeleteUnit", options: {}, I: DeleteUnitRequest, O: DeleteUnitResponse },
     { name: "AssignUnit", options: {}, I: AssignUnitRequest, O: AssignUnitResponse },
     { name: "UpdateUnitStatus", options: {}, I: UpdateUnitStatusRequest, O: UpdateUnitStatusResponse },
