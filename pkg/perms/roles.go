@@ -189,13 +189,13 @@ func (p *Perms) CreateRole(ctx context.Context, job string, grade int32) (*model
 }
 
 func (p *Perms) DeleteRole(ctx context.Context, id uint64) error {
-	_, err := tRoles.
+	stmt := tRoles.
 		DELETE().
 		WHERE(
 			tRoles.ID.EQ(jet.Uint64(id)),
-		).
-		ExecContext(ctx, p.db)
-	if err != nil {
+		).LIMIT(1)
+
+	if _, err := stmt.ExecContext(ctx, p.db); err != nil {
 		return err
 	}
 
@@ -213,7 +213,8 @@ func (p *Perms) GetRoleByJobAndGrade(ctx context.Context, job string, grade int3
 		WHERE(jet.AND(
 			tRoles.Job.EQ(jet.String(job)),
 			tRoles.Grade.EQ(jet.Int32(grade)),
-		))
+		)).
+		LIMIT(1)
 
 	var dest model.FivenetRoles
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
@@ -245,8 +246,7 @@ func (p *Perms) GetRolePermissions(ctx context.Context, id uint64) ([]*permissio
 			tRolePerms.RoleID.EQ(jet.Uint64(id)),
 		).
 		ORDER_BY(
-			tPerms.Name.ASC(),
-			tPerms.ID.ASC(),
+			tPerms.GuardName.ASC(),
 		)
 
 	var dest []*permissions.Permission
@@ -326,7 +326,8 @@ func (p *Perms) RemovePermissionsFromRole(ctx context.Context, roleId uint64, pe
 		WHERE(jet.AND(
 			tRolePerms.RoleID.EQ(jet.Uint64(roleId)),
 			tRolePerms.PermissionID.IN(ids...),
-		))
+		)).
+		LIMIT(int64(len(ids)))
 
 	_, err := stmt.ExecContext(ctx, p.db)
 	if err != nil {

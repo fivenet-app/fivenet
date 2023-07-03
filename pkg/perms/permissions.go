@@ -60,8 +60,7 @@ func (p *Perms) loadPermissionFromDatabaseByGuard(ctx context.Context, name stri
 		FROM(tPerms).
 		WHERE(
 			tPerms.GuardName.EQ(jet.String(guard)),
-		).
-		LIMIT(1)
+		)
 
 	var dest model.FivenetPermissions
 	err := stmt.QueryContext(ctx, p.db, &dest)
@@ -104,7 +103,10 @@ func (p *Perms) GetAllPermissions(ctx context.Context) ([]*permissions.Permissio
 		SELECT(
 			tPerms.AllColumns,
 		).
-		FROM(tPerms)
+		FROM(tPerms).
+		ORDER_BY(
+			tPerms.GuardName.ASC(),
+		)
 
 	var dest []*permissions.Permission
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
@@ -149,6 +151,9 @@ func (p *Perms) GetPermissionsByIDs(ctx context.Context, ids ...uint64) ([]*perm
 		FROM(tPerms).
 		WHERE(
 			tPerms.ID.IN(wIds...),
+		).
+		ORDER_BY(
+			tPerms.GuardName.ASC(),
 		)
 
 	var dest []*permissions.Permission
@@ -171,7 +176,8 @@ func (p *Perms) GetPermission(ctx context.Context, category Category, name Name)
 		WHERE(jet.AND(
 			tPerms.Category.EQ(jet.String(string(category))),
 			tPerms.Name.EQ(jet.String(string(name))),
-		))
+		)).
+		LIMIT(1)
 
 	var dest permissions.Permission
 	err := stmt.QueryContext(ctx, p.db, &dest)
