@@ -752,6 +752,9 @@
                 "description": "Berechtigung zum Charakterauswahl, um den Zugriff auf FiveNet zu erlauben oder zu verweigern."
             }
         },
+        "CentrumService": {
+            "category": "Leitstelle"
+        },
         "CitizenStoreService": {
             "category": "Bürger",
             "ListCitizens": {

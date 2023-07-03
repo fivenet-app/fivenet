@@ -757,6 +757,9 @@
                 "description": "Permission to choose character, basically allow or disallow access to FiveNet."
             }
         },
+        "CentrumService": {
+            "category": "Dispatch Center"
+        },
         "CitizenStoreService": {
             "category": "Citizens",
             "ListCitizens": {
