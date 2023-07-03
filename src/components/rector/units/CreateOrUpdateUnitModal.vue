@@ -141,14 +141,14 @@ onMounted(() => {
                                                         for="initials"
                                                         class="block text-sm font-medium leading-6 text-neutral"
                                                     >
-                                                        {{ $t('common.initials', 2) }}
+                                                        {{ $t('common.initials') }}
                                                     </label>
                                                     <VeeField
                                                         name="initials"
                                                         type="text"
                                                         class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                        :placeholder="$t('common.initials', 2)"
-                                                        :label="$t('common.initials', 2)"
+                                                        :placeholder="$t('common.initials')"
+                                                        :label="$t('common.initials')"
                                                     />
                                                     <VeeErrorMessage
                                                         name="initials"

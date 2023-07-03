@@ -64,7 +64,7 @@ const open = ref(false);
                                             {{ $t('common.name') }}
                                         </th>
                                         <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
-                                            {{ $t('common.initials', 2) }}
+                                            {{ $t('common.initials') }}
                                         </th>
                                         <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.description') }}
@@ -89,7 +89,7 @@ const open = ref(false);
                                             {{ $t('common.name') }}
                                         </th>
                                         <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
-                                            {{ $t('common.initials', 2) }}
+                                            {{ $t('common.initials') }}
                                         </th>
                                         <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.description') }}
