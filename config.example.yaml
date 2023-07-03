@@ -80,6 +80,4 @@ game:
     - category: DocStoreService
       name: GetDocument
     - category: DocStoreService
-      name: GetComments
-    - category: DocStoreService
       name: PostComment

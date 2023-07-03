@@ -846,10 +846,6 @@
                 "key": "GetDocument",
                 "description": "View a document"
             },
-            "GetComments": {
-                "key": "GetComments",
-                "description": "View document comments"
-            },
             "ListUserDocuments": {
                 "key": "ListUserDocuments",
                 "description": "View the documents linked to a citizen"

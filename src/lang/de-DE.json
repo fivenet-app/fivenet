@@ -841,10 +841,6 @@
                 "key": "Dokumente Anzeigen können",
                 "description": "Ein Dokument anzeigen"
             },
-            "GetComments": {
-                "key": "Dokumenten Kommentare Sehen",
-                "description": "Dokumentkommentare anzeigen"
-            },
             "ListUserDocuments": {
                 "key": "Bürger-Dokumente Sehen",
                 "description": "Die mit einem Bürger verknüpften Dokumente anzeigen"

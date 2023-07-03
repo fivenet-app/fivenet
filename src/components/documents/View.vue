@@ -342,7 +342,7 @@ function addToClipboard(): void {
                                 </TabPanels>
                             </TabGroup>
                         </div>
-                        <div class="mt-4" v-can="'DocStoreService.GetComments'">
+                        <div class="mt-4">
                             <h2 class="text-lg font-semibold text-neutral">
                                 {{ $t('common.comment', 2) }}
                             </h2>
