@@ -121,6 +121,9 @@
             },
             "laws": {
                 "title": "Gesetzbücher"
+            },
+            "units": {
+                "create_unit": "Einheit erstellen"
             }
         },
         "notfound": {
@@ -504,7 +507,9 @@
         "no_open_fine": "Keine offenen Geldstrafe",
         "location": "Standort | Standorte",
         "units": "Einheiten",
-        "unit": "Einheit | Einheiten"
+        "unit": "Einheit | Einheiten",
+        "color": "Farbe",
+        "initials": "Initialen"
     },
     "notifications": {
         "clipboard": {
@@ -752,9 +757,6 @@
                 "description": "Berechtigung zum Charakterauswahl, um den Zugriff auf FiveNet zu erlauben oder zu verweigern."
             }
         },
-        "CentrumService": {
-            "category": "Leitstelle"
-        },
         "CitizenStoreService": {
             "category": "Bürger",
             "ListCitizens": {
@@ -827,15 +829,6 @@
                 "key": "Dokument Erstellen",
                 "description": "Ein neues Dokument erstellen"
             },
-            "DeleteComment": {
-                "key": "Dokumenten Kommentare löschen",
-                "description": "Eigenen Dokumentenkommentar löschen",
-                "attrs": {
-                    "Own": "Eigene",
-                    "Lower_Rank": "Niedrigerer Rang",
-                    "Same_Rank": "Gleicher Rang"
-                }
-            },
             "ListDocuments": {
                 "key": "Dokumenten Suchen und Auflisten",
                 "description": "Dokumente auflisten/suchen"
@@ -852,10 +845,6 @@
                 "key": "Vorlagen auflisten",
                 "description": "Verfügbare Vorlagen auflisten."
             },
-            "PostComment": {
-                "key": "Kommentar zum Dokument posten",
-                "description": "Dokumentkommentare posten"
-            },
             "UpdateDocument": {
                 "key": "Dokument aktualisieren",
                 "description": "Ein vorhandenes Dokument bearbeiten/aktualisieren",
@@ -864,18 +853,6 @@
                     "Lower_Rank": "Niedrigerer Rang",
                     "Same_Rank": "Gleicher Rang"
                 }
-            },
-            "CreateCategory": {
-                "key": "Dokumentenkategorie erstellen",
-                "description": "Dokumentenkategorien erstellen/aktualisieren"
-            },
-            "DeleteCategory": {
-                "key": "Dokumentenkategorie löschen",
-                "description": "Dokumentenkategorien löschen"
-            },
-            "ListCategories": {
-                "key": "Auflisten der Dokumentenkategorien",
-                "description": "Liste der Dokumentkategorien"
             },
             "CreateTemplate": {
                 "key": "Vorlage erstellen",
@@ -902,6 +879,31 @@
                     "Lower_Rank": "Niedrigerer Rang",
                     "Same_Rank": "Gleicher Rang"
                 }
+            },
+            "DeleteComment": {
+                "key": "Dokumenten Kommentare löschen",
+                "description": "Eigenen Dokumentenkommentar löschen",
+                "attrs": {
+                    "Own": "Eigene",
+                    "Lower_Rank": "Niedrigerer Rang",
+                    "Same_Rank": "Gleicher Rang"
+                }
+            },
+            "PostComment": {
+                "key": "Kommentar zum Dokument posten",
+                "description": "Dokumentkommentare posten"
+            },
+            "CreateCategory": {
+                "key": "Dokumentenkategorie erstellen",
+                "description": "Dokumentenkategorien erstellen/aktualisieren"
+            },
+            "DeleteCategory": {
+                "key": "Dokumentenkategorie löschen",
+                "description": "Dokumentenkategorien löschen"
+            },
+            "ListCategories": {
+                "key": "Auflisten der Dokumentenkategorien",
+                "description": "Liste der Dokumentkategorien"
             }
         },
         "LivemapperService": {
@@ -941,6 +943,9 @@
                 "key": "Berechtigungen für Rollen verwalten",
                 "description": "Hinzufügen/Löschen von Berechtigungen für FiveNet-Jobrollen"
             }
+        },
+        "CentrumService": {
+            "category": "Leitstelle"
         }
     },
     "attrs": {
@@ -956,11 +961,6 @@
             },
             "SetUserProps": {
                 "Fields": "Bürger Eigenschaften"
-            }
-        },
-        "CompletorService": {
-            "CompleteCategories": {
-                "Jobs": "Fraktionen"
             }
         },
         "LivemapperService": {
@@ -981,11 +981,16 @@
             "DeleteDocument": {
                 "Access": "Zugriff"
             },
-            "DeleteComment": {
-                "Access": "Zugriff"
-            },
             "ToggleDocument": {
                 "Access": "Zugriff"
+            },
+            "DeleteComment": {
+                "Access": "Zugriff"
+            }
+        },
+        "CompletorService": {
+            "CompleteCategories": {
+                "Jobs": "Fraktionen"
             }
         }
     },
