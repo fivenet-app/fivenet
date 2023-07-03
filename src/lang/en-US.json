@@ -509,7 +509,7 @@
         "units": "Units",
         "unit": "Unit | Units",
         "color": "Color",
-        "initials": "Initial | Initials"
+        "initials": "Initials"
     },
     "notifications": {
         "clipboard": {
@@ -757,9 +757,6 @@
                 "description": "Permission to choose character, basically allow or disallow access to FiveNet."
             }
         },
-        "CentrumService": {
-            "category": "Dispatch Center"
-        },
         "CitizenStoreService": {
             "category": "Citizens",
             "ListCitizens": {
@@ -832,15 +829,6 @@
                 "key": "CreateDocument",
                 "description": "Create a new document"
             },
-            "DeleteComment": {
-                "key": "DeleteComment",
-                "description": "Delete own document comment",
-                "attrs": {
-                    "Own": "Own",
-                    "Lower_Rank": "Lower Rank",
-                    "Same_Rank": "Same Rank"
-                }
-            },
             "ListDocuments": {
                 "key": "ListDocuments",
                 "description": "List/ Search documents"
@@ -857,10 +845,6 @@
                 "key": "List Templates",
                 "description": "List available templates"
             },
-            "PostComment": {
-                "key": "PostComment",
-                "description": "Post document comments"
-            },
             "UpdateDocument": {
                 "key": "UpdateDocument",
                 "description": "Edit/ Update an existing document",
@@ -869,18 +853,6 @@
                     "Lower_Rank": "Lower Rank",
                     "Same_Rank": "Same Rank"
                 }
-            },
-            "CreateCategory": {
-                "key": "CreateCategory",
-                "description": "Create/ Update document categories"
-            },
-            "DeleteCategory": {
-                "key": "DeleteCategory",
-                "description": "Delete document categories"
-            },
-            "ListCategories": {
-                "key": "ListCategories",
-                "description": "List document categories"
             },
             "CreateTemplate": {
                 "key": "Create Template",
@@ -907,6 +879,31 @@
                     "Lower_Rank": "Lower Rank",
                     "Same_Rank": "Same Rank"
                 }
+            },
+            "DeleteComment": {
+                "key": "DeleteComment",
+                "description": "Delete own document comment",
+                "attrs": {
+                    "Own": "Own",
+                    "Lower_Rank": "Lower Rank",
+                    "Same_Rank": "Same Rank"
+                }
+            },
+            "PostComment": {
+                "key": "PostComment",
+                "description": "Post document comments"
+            },
+            "CreateCategory": {
+                "key": "CreateCategory",
+                "description": "Create/ Update document categories"
+            },
+            "DeleteCategory": {
+                "key": "DeleteCategory",
+                "description": "Delete document categories"
+            },
+            "ListCategories": {
+                "key": "ListCategories",
+                "description": "List document categories"
             }
         },
         "LivemapperService": {
@@ -946,6 +943,9 @@
                 "key": "Manage Role Permissions",
                 "description": "Add/ Delete permissions to FiveNet job roles"
             }
+        },
+        "CentrumService": {
+            "category": "Dispatch Center"
         }
     },
     "attrs": {
@@ -961,11 +961,6 @@
             },
             "SetUserProps": {
                 "Fields": "User Properties Fields"
-            }
-        },
-        "CompletorService": {
-            "CompleteCategories": {
-                "Jobs": "Factions"
             }
         },
         "LivemapperService": {
@@ -986,11 +981,16 @@
             "DeleteDocument": {
                 "Access": "Access"
             },
-            "DeleteComment": {
-                "Access": "Access"
-            },
             "ToggleDocument": {
                 "Access": "Access"
+            },
+            "DeleteComment": {
+                "Access": "Access"
+            }
+        },
+        "CompletorService": {
+            "CompleteCategories": {
+                "Jobs": "Factions"
             }
         }
     },
