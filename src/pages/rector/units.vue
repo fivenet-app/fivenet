@@ -7,7 +7,7 @@ useHead({
 definePageMeta({
     title: 'common.units',
     requiresAuth: true,
-    permission: 'UnitService.ListUnits',
+    permission: 'CentrumService.ListUnits',
     showQuickButtons: false,
 });
 </script>

@@ -8,10 +8,7 @@ declare module '#app' {
     }
 }
 
-// It is always important to ensure you import/export something when augmenting a type
-export {};
-
-//Taken from https://github.com/Pictogrammers/vue-icon/issues/10#issuecomment-1528951622
+// Taken from https://github.com/Pictogrammers/vue-icon/issues/10#issuecomment-1528951622
 declare let SvgIcon: import('vue').DefineComponent<{
     type: {
         type: StringConstructor;
@@ -42,3 +39,6 @@ declare let SvgIcon: import('vue').DefineComponent<{
 declare module '@jamescoyle/vue-icon' {
     export default SvgIcon;
 }
+
+// It is always important to ensure you import/export something when augmenting a type
+export {};

@@ -39,7 +39,7 @@ const features = [
         title: t('common.unit', 2),
         description: t('pages.rector.features.units'),
         href: { name: 'rector-units' },
-        permission: 'UnitService.ListUnits',
+        permission: 'CentrumService.ListUnits',
         icon: mdiGroup,
         iconForeground: 'text-blue-900',
         iconBackground: 'bg-blue-100',

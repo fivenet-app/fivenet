@@ -402,20 +402,15 @@ class CentrumStreamResponse$Type extends MessageType<CentrumStreamResponse> {
  */
 export const CentrumStreamResponse = new CentrumStreamResponse$Type();
 /**
- * @generated ServiceType for protobuf service services.centrum.UnitService
+ * @generated ServiceType for protobuf service services.centrum.CentrumService
  */
-export const UnitService = new ServiceType("services.centrum.UnitService", [
+export const CentrumService = new ServiceType("services.centrum.CentrumService", [
     { name: "ListUnits", options: {}, I: ListUnitsRequest, O: ListUnitsResponse },
     { name: "CreateOrUpdateUnit", options: {}, I: CreateOrUpdateUnitRequest, O: CreateOrUpdateUnitResponse },
     { name: "DeleteUnit", options: {}, I: DeleteUnitRequest, O: DeleteUnitResponse },
     { name: "AssignUnit", options: {}, I: AssignUnitRequest, O: AssignUnitResponse },
     { name: "UpdateUnitStatus", options: {}, I: UpdateUnitStatusRequest, O: UpdateUnitStatusResponse },
-    { name: "StreamUnits", serverStreaming: true, options: {}, I: UnitStreamRequest, O: UnitStreamResponse }
-]);
-/**
- * @generated ServiceType for protobuf service services.centrum.CentrumService
- */
-export const CentrumService = new ServiceType("services.centrum.CentrumService", [
+    { name: "StreamUnits", serverStreaming: true, options: {}, I: UnitStreamRequest, O: UnitStreamResponse },
     { name: "CreateDispatch", options: {}, I: CreateDispatchRequest, O: CreateDispatchResponse },
     { name: "UpdateDispatch", options: {}, I: UpdateDispatchRequest, O: UpdateDispatchResponse },
     { name: "Stream", serverStreaming: true, options: {}, I: CentrumStreamRequest, O: CentrumStreamResponse }

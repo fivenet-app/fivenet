@@ -21,7 +21,7 @@ func (s *Server) ListUnits(ctx context.Context, req *ListUnitsRequest) (*ListUni
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
-		Service: UnitService_ServiceDesc.ServiceName,
+		Service: CentrumService_ServiceDesc.ServiceName,
 		Method:  "ListUnits",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
@@ -75,7 +75,7 @@ func (s *Server) CreateOrUpdateUnit(ctx context.Context, req *CreateOrUpdateUnit
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
-		Service: UnitService_ServiceDesc.ServiceName,
+		Service: CentrumService_ServiceDesc.ServiceName,
 		Method:  "CreateOrUpdateUnit",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
@@ -166,7 +166,7 @@ func (s *Server) DeleteUnit(ctx context.Context, req *DeleteUnitRequest) (*Delet
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
-		Service: UnitService_ServiceDesc.ServiceName,
+		Service: CentrumService_ServiceDesc.ServiceName,
 		Method:  "DeleteUnit",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
@@ -207,7 +207,7 @@ func (s *Server) UpdateUnitStatus(ctx context.Context, req *UpdateUnitStatusRequ
 	return resp, nil
 }
 
-func (s *Server) StreamUnits(req *UnitStreamRequest, srv UnitService_StreamUnitsServer) error {
+func (s *Server) StreamUnits(req *UnitStreamRequest, srv CentrumService_StreamUnitsServer) error {
 
 	// TODO
 

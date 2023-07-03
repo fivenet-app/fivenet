@@ -9,7 +9,6 @@ import (
 
 type Server struct {
 	CentrumServiceServer
-	UnitServiceServer
 
 	db *sql.DB
 	p  perms.Permissions

@@ -153,9 +153,7 @@ func NewGRPCServer(ctx context.Context, logger *zap.Logger, db *sql.DB, tp *trac
 	pbcitizenstore.RegisterCitizenStoreServiceServer(grpcServer, pbcitizenstore.NewServer(db, p, enricher, aud,
 		config.C.Game.PublicJobs, config.C.Game.UnemployedJob.Name, config.C.Game.UnemployedJob.Grade))
 	pbcompletor.RegisterCompletorServiceServer(grpcServer, pbcompletor.NewServer(db, p, cache))
-	centrumServer := pbcentrum.NewServer(db, p, aud)
-	pbcentrum.RegisterCentrumServiceServer(grpcServer, centrumServer)
-	pbcentrum.RegisterUnitServiceServer(grpcServer, centrumServer)
+	pbcentrum.RegisterCentrumServiceServer(grpcServer, pbcentrum.NewServer(db, p, aud))
 	pbdocstore.RegisterDocStoreServiceServer(grpcServer, pbdocstore.NewServer(db, p, enricher, aud, ui, notif))
 	pbjobs.RegisterJobsServiceServer(grpcServer, pbjobs.NewServer())
 	livemapper := pblivemapper.NewServer(ctx, logger.Named("grpc_livemap"), tp, db, p, enricher,

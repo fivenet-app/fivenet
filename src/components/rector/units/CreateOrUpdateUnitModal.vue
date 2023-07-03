@@ -22,7 +22,7 @@ const { $grpc } = useNuxtApp();
 async function createOrUpdateUnit(values: FormData): Promise<void> {
     return new Promise(async (res, rej) => {
         try {
-            const call = $grpc.getUnitClient().createOrUpdateUnit({
+            const call = $grpc.getCentrumClient().createOrUpdateUnit({
                 unit: {
                     id: props.unit?.id ?? 0n,
                     name: values.name,

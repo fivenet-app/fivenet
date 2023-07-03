@@ -14,6 +14,7 @@ import { Notification } from '~/composables/notification/interfaces/Notification
 import { useAuthStore } from '~/store/auth';
 import { useNotificationsStore } from '~/store/notifications';
 import { AuthServiceClient } from '~~/gen/ts/services/auth/auth.client';
+import { CentrumServiceClient } from '~~/gen/ts/services/centrum/centrum.client';
 import { CitizenStoreServiceClient } from '~~/gen/ts/services/citizenstore/citizenstore.client';
 import { CompletorServiceClient } from '~~/gen/ts/services/completor/completor.client';
 import { DMVServiceClient } from '~~/gen/ts/services/dmv/vehicles.client';
@@ -22,7 +23,6 @@ import { JobsServiceClient } from '~~/gen/ts/services/jobs/jobs.client';
 import { LivemapperServiceClient } from '~~/gen/ts/services/livemapper/livemap.client';
 import { NotificatorServiceClient } from '~~/gen/ts/services/notificator/notificator.client';
 import { RectorServiceClient } from '~~/gen/ts/services/rector/rector.client';
-import { CentrumServiceClient, UnitServiceClient } from '~~/gen/ts/services/centrum/centrum.client';
 
 export default defineNuxtPlugin(() => {
     return {
@@ -199,11 +199,6 @@ export class GRPCClients {
     // Rector
     getRectorClient(): RectorServiceClient {
         return new RectorServiceClient(this.transport);
-    }
-
-    // Unit
-    getUnitClient(): UnitServiceClient {
-        return new UnitServiceClient(this.transport);
     }
 }
 

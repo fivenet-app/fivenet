@@ -63,24 +63,6 @@ message UnitChanges {
   repeated int32 removed = 3;
 }
 
-service UnitService {
-  // @perm
-  rpc ListUnits(ListUnitsRequest) returns (ListUnitsResponse);
-  // @perm
-  rpc CreateOrUpdateUnit(CreateOrUpdateUnitRequest) returns (CreateOrUpdateUnitResponse);
-  // @perm
-  rpc DeleteUnit(DeleteUnitRequest) returns (DeleteUnitResponse);
-
-  // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
-  rpc AssignUnit(AssignUnitRequest) returns (AssignUnitResponse);
-
-  // @perm
-  rpc UpdateUnitStatus(UpdateUnitStatusRequest) returns (UpdateUnitStatusResponse);
-
-  // @perm
-  rpc StreamUnits(UnitStreamRequest) returns (stream UnitStreamResponse);
-}
-
 // Dispatch Management
 
 message CreateDispatchRequest {
@@ -106,6 +88,22 @@ message CentrumStreamRequest {}
 message CentrumStreamResponse {}
 
 service CentrumService {
+  // @perm
+  rpc ListUnits(ListUnitsRequest) returns (ListUnitsResponse);
+  // @perm
+  rpc CreateOrUpdateUnit(CreateOrUpdateUnitRequest) returns (CreateOrUpdateUnitResponse);
+  // @perm
+  rpc DeleteUnit(DeleteUnitRequest) returns (DeleteUnitResponse);
+
+  // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
+  rpc AssignUnit(AssignUnitRequest) returns (AssignUnitResponse);
+
+  // @perm
+  rpc UpdateUnitStatus(UpdateUnitStatusRequest) returns (UpdateUnitStatusResponse);
+
+  // @perm
+  rpc StreamUnits(UnitStreamRequest) returns (stream UnitStreamResponse);
+
   // @perm
   rpc CreateDispatch(CreateDispatchRequest) returns (CreateDispatchResponse);
   // @perm

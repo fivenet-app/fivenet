@@ -14,7 +14,7 @@ const { $grpc } = useNuxtApp();
 async function deleteUnit(): Promise<void> {
     return new Promise(async (res, rej) => {
         try {
-            const call = $grpc.getUnitClient().deleteUnit({
+            const call = $grpc.getCentrumClient().deleteUnit({
                 unitId: props.unit.id,
             });
             await call;
@@ -51,7 +51,7 @@ const open = ref(false);
                     <SvgIcon class="h-6 w-6 text-primary-500" aria-hidden="true" type="mdi" :path="mdiPencil" />
                 </button>
                 <button
-                    v-can="'UnitService.DeleteUnit'"
+                    v-can="'CentrumService.DeleteUnit'"
                     @click="deleteUnit"
                     class="flex-initial text-primary-500 hover:text-primary-400"
                 >

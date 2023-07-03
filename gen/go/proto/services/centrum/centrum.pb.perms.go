@@ -10,18 +10,17 @@ import (
 
 const (
 	CentrumServicePerm perms.Category = "CentrumService"
-	UnitServicePerm    perms.Category = "UnitService"
 
-	CentrumServiceCreateDispatchPerm     perms.Name = "CreateDispatch"
-	CentrumServiceStreamPerm             perms.Name = "Stream"
-	CentrumServiceUpdateDispatchPerm     perms.Name = "UpdateDispatch"
-	UnitServiceAssignUnitPerm            perms.Name = "AssignUnit"
-	UnitServiceAssignUnitAccessPermField perms.Key  = "Access"
-	UnitServiceCreateOrUpdateUnitPerm    perms.Name = "CreateOrUpdateUnit"
-	UnitServiceDeleteUnitPerm            perms.Name = "DeleteUnit"
-	UnitServiceListUnitsPerm             perms.Name = "ListUnits"
-	UnitServiceStreamUnitsPerm           perms.Name = "StreamUnits"
-	UnitServiceUpdateUnitStatusPerm      perms.Name = "UpdateUnitStatus"
+	CentrumServiceAssignUnitPerm            perms.Name = "AssignUnit"
+	CentrumServiceAssignUnitAccessPermField perms.Key  = "Access"
+	CentrumServiceCreateDispatchPerm        perms.Name = "CreateDispatch"
+	CentrumServiceCreateOrUpdateUnitPerm    perms.Name = "CreateOrUpdateUnit"
+	CentrumServiceDeleteUnitPerm            perms.Name = "DeleteUnit"
+	CentrumServiceListUnitsPerm             perms.Name = "ListUnits"
+	CentrumServiceStreamPerm                perms.Name = "Stream"
+	CentrumServiceStreamUnitsPerm           perms.Name = "StreamUnits"
+	CentrumServiceUpdateDispatchPerm        perms.Name = "UpdateDispatch"
+	CentrumServiceUpdateUnitStatusPerm      perms.Name = "UpdateUnitStatus"
 )
 
 func init() {
@@ -29,7 +28,34 @@ func init() {
 		// Service: CentrumService
 		{
 			Category: CentrumServicePerm,
+			Name:     CentrumServiceAssignUnitPerm,
+			Attrs: []perms.Attr{
+				{
+					Key:           CentrumServiceAssignUnitAccessPermField,
+					Type:          permissions.StringListAttributeType,
+					ValidValues:   []string{"Own", "Lower_Rank", "Same_Rank"},
+					DefaultValues: []string{"Own"},
+				},
+			},
+		},
+		{
+			Category: CentrumServicePerm,
 			Name:     CentrumServiceCreateDispatchPerm,
+			Attrs:    []perms.Attr{},
+		},
+		{
+			Category: CentrumServicePerm,
+			Name:     CentrumServiceCreateOrUpdateUnitPerm,
+			Attrs:    []perms.Attr{},
+		},
+		{
+			Category: CentrumServicePerm,
+			Name:     CentrumServiceDeleteUnitPerm,
+			Attrs:    []perms.Attr{},
+		},
+		{
+			Category: CentrumServicePerm,
+			Name:     CentrumServiceListUnitsPerm,
 			Attrs:    []perms.Attr{},
 		},
 		{
@@ -39,44 +65,17 @@ func init() {
 		},
 		{
 			Category: CentrumServicePerm,
+			Name:     CentrumServiceStreamUnitsPerm,
+			Attrs:    []perms.Attr{},
+		},
+		{
+			Category: CentrumServicePerm,
 			Name:     CentrumServiceUpdateDispatchPerm,
 			Attrs:    []perms.Attr{},
-		}, // Service: UnitService
-		{
-			Category: UnitServicePerm,
-			Name:     UnitServiceAssignUnitPerm,
-			Attrs: []perms.Attr{
-				{
-					Key:           UnitServiceAssignUnitAccessPermField,
-					Type:          permissions.StringListAttributeType,
-					ValidValues:   []string{"Own", "Lower_Rank", "Same_Rank"},
-					DefaultValues: []string{"Own"},
-				},
-			},
 		},
 		{
-			Category: UnitServicePerm,
-			Name:     UnitServiceCreateOrUpdateUnitPerm,
-			Attrs:    []perms.Attr{},
-		},
-		{
-			Category: UnitServicePerm,
-			Name:     UnitServiceDeleteUnitPerm,
-			Attrs:    []perms.Attr{},
-		},
-		{
-			Category: UnitServicePerm,
-			Name:     UnitServiceListUnitsPerm,
-			Attrs:    []perms.Attr{},
-		},
-		{
-			Category: UnitServicePerm,
-			Name:     UnitServiceStreamUnitsPerm,
-			Attrs:    []perms.Attr{},
-		},
-		{
-			Category: UnitServicePerm,
-			Name:     UnitServiceUpdateUnitStatusPerm,
+			Category: CentrumServicePerm,
+			Name:     CentrumServiceUpdateUnitStatusPerm,
 			Attrs:    []perms.Attr{},
 		},
 	})

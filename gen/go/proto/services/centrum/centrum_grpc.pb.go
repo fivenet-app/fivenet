@@ -18,10 +18,10 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-// UnitServiceClient is the client API for UnitService service.
+// CentrumServiceClient is the client API for CentrumService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type UnitServiceClient interface {
+type CentrumServiceClient interface {
 	// @perm
 	ListUnits(ctx context.Context, in *ListUnitsRequest, opts ...grpc.CallOption) (*ListUnitsResponse, error)
 	// @perm
@@ -33,301 +33,7 @@ type UnitServiceClient interface {
 	// @perm
 	UpdateUnitStatus(ctx context.Context, in *UpdateUnitStatusRequest, opts ...grpc.CallOption) (*UpdateUnitStatusResponse, error)
 	// @perm
-	StreamUnits(ctx context.Context, in *UnitStreamRequest, opts ...grpc.CallOption) (UnitService_StreamUnitsClient, error)
-}
-
-type unitServiceClient struct {
-	cc grpc.ClientConnInterface
-}
-
-func NewUnitServiceClient(cc grpc.ClientConnInterface) UnitServiceClient {
-	return &unitServiceClient{cc}
-}
-
-func (c *unitServiceClient) ListUnits(ctx context.Context, in *ListUnitsRequest, opts ...grpc.CallOption) (*ListUnitsResponse, error) {
-	out := new(ListUnitsResponse)
-	err := c.cc.Invoke(ctx, "/services.centrum.UnitService/ListUnits", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *unitServiceClient) CreateOrUpdateUnit(ctx context.Context, in *CreateOrUpdateUnitRequest, opts ...grpc.CallOption) (*CreateOrUpdateUnitResponse, error) {
-	out := new(CreateOrUpdateUnitResponse)
-	err := c.cc.Invoke(ctx, "/services.centrum.UnitService/CreateOrUpdateUnit", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *unitServiceClient) DeleteUnit(ctx context.Context, in *DeleteUnitRequest, opts ...grpc.CallOption) (*DeleteUnitResponse, error) {
-	out := new(DeleteUnitResponse)
-	err := c.cc.Invoke(ctx, "/services.centrum.UnitService/DeleteUnit", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *unitServiceClient) AssignUnit(ctx context.Context, in *AssignUnitRequest, opts ...grpc.CallOption) (*AssignUnitResponse, error) {
-	out := new(AssignUnitResponse)
-	err := c.cc.Invoke(ctx, "/services.centrum.UnitService/AssignUnit", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *unitServiceClient) UpdateUnitStatus(ctx context.Context, in *UpdateUnitStatusRequest, opts ...grpc.CallOption) (*UpdateUnitStatusResponse, error) {
-	out := new(UpdateUnitStatusResponse)
-	err := c.cc.Invoke(ctx, "/services.centrum.UnitService/UpdateUnitStatus", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *unitServiceClient) StreamUnits(ctx context.Context, in *UnitStreamRequest, opts ...grpc.CallOption) (UnitService_StreamUnitsClient, error) {
-	stream, err := c.cc.NewStream(ctx, &UnitService_ServiceDesc.Streams[0], "/services.centrum.UnitService/StreamUnits", opts...)
-	if err != nil {
-		return nil, err
-	}
-	x := &unitServiceStreamUnitsClient{stream}
-	if err := x.ClientStream.SendMsg(in); err != nil {
-		return nil, err
-	}
-	if err := x.ClientStream.CloseSend(); err != nil {
-		return nil, err
-	}
-	return x, nil
-}
-
-type UnitService_StreamUnitsClient interface {
-	Recv() (*UnitStreamResponse, error)
-	grpc.ClientStream
-}
-
-type unitServiceStreamUnitsClient struct {
-	grpc.ClientStream
-}
-
-func (x *unitServiceStreamUnitsClient) Recv() (*UnitStreamResponse, error) {
-	m := new(UnitStreamResponse)
-	if err := x.ClientStream.RecvMsg(m); err != nil {
-		return nil, err
-	}
-	return m, nil
-}
-
-// UnitServiceServer is the server API for UnitService service.
-// All implementations must embed UnimplementedUnitServiceServer
-// for forward compatibility
-type UnitServiceServer interface {
-	// @perm
-	ListUnits(context.Context, *ListUnitsRequest) (*ListUnitsResponse, error)
-	// @perm
-	CreateOrUpdateUnit(context.Context, *CreateOrUpdateUnitRequest) (*CreateOrUpdateUnitResponse, error)
-	// @perm
-	DeleteUnit(context.Context, *DeleteUnitRequest) (*DeleteUnitResponse, error)
-	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
-	AssignUnit(context.Context, *AssignUnitRequest) (*AssignUnitResponse, error)
-	// @perm
-	UpdateUnitStatus(context.Context, *UpdateUnitStatusRequest) (*UpdateUnitStatusResponse, error)
-	// @perm
-	StreamUnits(*UnitStreamRequest, UnitService_StreamUnitsServer) error
-	mustEmbedUnimplementedUnitServiceServer()
-}
-
-// UnimplementedUnitServiceServer must be embedded to have forward compatible implementations.
-type UnimplementedUnitServiceServer struct {
-}
-
-func (UnimplementedUnitServiceServer) ListUnits(context.Context, *ListUnitsRequest) (*ListUnitsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListUnits not implemented")
-}
-func (UnimplementedUnitServiceServer) CreateOrUpdateUnit(context.Context, *CreateOrUpdateUnitRequest) (*CreateOrUpdateUnitResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateOrUpdateUnit not implemented")
-}
-func (UnimplementedUnitServiceServer) DeleteUnit(context.Context, *DeleteUnitRequest) (*DeleteUnitResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteUnit not implemented")
-}
-func (UnimplementedUnitServiceServer) AssignUnit(context.Context, *AssignUnitRequest) (*AssignUnitResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method AssignUnit not implemented")
-}
-func (UnimplementedUnitServiceServer) UpdateUnitStatus(context.Context, *UpdateUnitStatusRequest) (*UpdateUnitStatusResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateUnitStatus not implemented")
-}
-func (UnimplementedUnitServiceServer) StreamUnits(*UnitStreamRequest, UnitService_StreamUnitsServer) error {
-	return status.Errorf(codes.Unimplemented, "method StreamUnits not implemented")
-}
-func (UnimplementedUnitServiceServer) mustEmbedUnimplementedUnitServiceServer() {}
-
-// UnsafeUnitServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to UnitServiceServer will
-// result in compilation errors.
-type UnsafeUnitServiceServer interface {
-	mustEmbedUnimplementedUnitServiceServer()
-}
-
-func RegisterUnitServiceServer(s grpc.ServiceRegistrar, srv UnitServiceServer) {
-	s.RegisterService(&UnitService_ServiceDesc, srv)
-}
-
-func _UnitService_ListUnits_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListUnitsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(UnitServiceServer).ListUnits(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/services.centrum.UnitService/ListUnits",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UnitServiceServer).ListUnits(ctx, req.(*ListUnitsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _UnitService_CreateOrUpdateUnit_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateOrUpdateUnitRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(UnitServiceServer).CreateOrUpdateUnit(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/services.centrum.UnitService/CreateOrUpdateUnit",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UnitServiceServer).CreateOrUpdateUnit(ctx, req.(*CreateOrUpdateUnitRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _UnitService_DeleteUnit_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteUnitRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(UnitServiceServer).DeleteUnit(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/services.centrum.UnitService/DeleteUnit",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UnitServiceServer).DeleteUnit(ctx, req.(*DeleteUnitRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _UnitService_AssignUnit_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AssignUnitRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(UnitServiceServer).AssignUnit(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/services.centrum.UnitService/AssignUnit",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UnitServiceServer).AssignUnit(ctx, req.(*AssignUnitRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _UnitService_UpdateUnitStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateUnitStatusRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(UnitServiceServer).UpdateUnitStatus(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/services.centrum.UnitService/UpdateUnitStatus",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UnitServiceServer).UpdateUnitStatus(ctx, req.(*UpdateUnitStatusRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _UnitService_StreamUnits_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(UnitStreamRequest)
-	if err := stream.RecvMsg(m); err != nil {
-		return err
-	}
-	return srv.(UnitServiceServer).StreamUnits(m, &unitServiceStreamUnitsServer{stream})
-}
-
-type UnitService_StreamUnitsServer interface {
-	Send(*UnitStreamResponse) error
-	grpc.ServerStream
-}
-
-type unitServiceStreamUnitsServer struct {
-	grpc.ServerStream
-}
-
-func (x *unitServiceStreamUnitsServer) Send(m *UnitStreamResponse) error {
-	return x.ServerStream.SendMsg(m)
-}
-
-// UnitService_ServiceDesc is the grpc.ServiceDesc for UnitService service.
-// It's only intended for direct use with grpc.RegisterService,
-// and not to be introspected or modified (even as a copy)
-var UnitService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "services.centrum.UnitService",
-	HandlerType: (*UnitServiceServer)(nil),
-	Methods: []grpc.MethodDesc{
-		{
-			MethodName: "ListUnits",
-			Handler:    _UnitService_ListUnits_Handler,
-		},
-		{
-			MethodName: "CreateOrUpdateUnit",
-			Handler:    _UnitService_CreateOrUpdateUnit_Handler,
-		},
-		{
-			MethodName: "DeleteUnit",
-			Handler:    _UnitService_DeleteUnit_Handler,
-		},
-		{
-			MethodName: "AssignUnit",
-			Handler:    _UnitService_AssignUnit_Handler,
-		},
-		{
-			MethodName: "UpdateUnitStatus",
-			Handler:    _UnitService_UpdateUnitStatus_Handler,
-		},
-	},
-	Streams: []grpc.StreamDesc{
-		{
-			StreamName:    "StreamUnits",
-			Handler:       _UnitService_StreamUnits_Handler,
-			ServerStreams: true,
-		},
-	},
-	Metadata: "services/centrum/centrum.proto",
-}
-
-// CentrumServiceClient is the client API for CentrumService service.
-//
-// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type CentrumServiceClient interface {
+	StreamUnits(ctx context.Context, in *UnitStreamRequest, opts ...grpc.CallOption) (CentrumService_StreamUnitsClient, error)
 	// @perm
 	CreateDispatch(ctx context.Context, in *CreateDispatchRequest, opts ...grpc.CallOption) (*CreateDispatchResponse, error)
 	// @perm
@@ -342,6 +48,83 @@ type centrumServiceClient struct {
 
 func NewCentrumServiceClient(cc grpc.ClientConnInterface) CentrumServiceClient {
 	return &centrumServiceClient{cc}
+}
+
+func (c *centrumServiceClient) ListUnits(ctx context.Context, in *ListUnitsRequest, opts ...grpc.CallOption) (*ListUnitsResponse, error) {
+	out := new(ListUnitsResponse)
+	err := c.cc.Invoke(ctx, "/services.centrum.CentrumService/ListUnits", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *centrumServiceClient) CreateOrUpdateUnit(ctx context.Context, in *CreateOrUpdateUnitRequest, opts ...grpc.CallOption) (*CreateOrUpdateUnitResponse, error) {
+	out := new(CreateOrUpdateUnitResponse)
+	err := c.cc.Invoke(ctx, "/services.centrum.CentrumService/CreateOrUpdateUnit", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *centrumServiceClient) DeleteUnit(ctx context.Context, in *DeleteUnitRequest, opts ...grpc.CallOption) (*DeleteUnitResponse, error) {
+	out := new(DeleteUnitResponse)
+	err := c.cc.Invoke(ctx, "/services.centrum.CentrumService/DeleteUnit", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *centrumServiceClient) AssignUnit(ctx context.Context, in *AssignUnitRequest, opts ...grpc.CallOption) (*AssignUnitResponse, error) {
+	out := new(AssignUnitResponse)
+	err := c.cc.Invoke(ctx, "/services.centrum.CentrumService/AssignUnit", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *centrumServiceClient) UpdateUnitStatus(ctx context.Context, in *UpdateUnitStatusRequest, opts ...grpc.CallOption) (*UpdateUnitStatusResponse, error) {
+	out := new(UpdateUnitStatusResponse)
+	err := c.cc.Invoke(ctx, "/services.centrum.CentrumService/UpdateUnitStatus", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *centrumServiceClient) StreamUnits(ctx context.Context, in *UnitStreamRequest, opts ...grpc.CallOption) (CentrumService_StreamUnitsClient, error) {
+	stream, err := c.cc.NewStream(ctx, &CentrumService_ServiceDesc.Streams[0], "/services.centrum.CentrumService/StreamUnits", opts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &centrumServiceStreamUnitsClient{stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+type CentrumService_StreamUnitsClient interface {
+	Recv() (*UnitStreamResponse, error)
+	grpc.ClientStream
+}
+
+type centrumServiceStreamUnitsClient struct {
+	grpc.ClientStream
+}
+
+func (x *centrumServiceStreamUnitsClient) Recv() (*UnitStreamResponse, error) {
+	m := new(UnitStreamResponse)
+	if err := x.ClientStream.RecvMsg(m); err != nil {
+		return nil, err
+	}
+	return m, nil
 }
 
 func (c *centrumServiceClient) CreateDispatch(ctx context.Context, in *CreateDispatchRequest, opts ...grpc.CallOption) (*CreateDispatchResponse, error) {
@@ -363,7 +146,7 @@ func (c *centrumServiceClient) UpdateDispatch(ctx context.Context, in *UpdateDis
 }
 
 func (c *centrumServiceClient) Stream(ctx context.Context, in *CentrumStreamRequest, opts ...grpc.CallOption) (CentrumService_StreamClient, error) {
-	stream, err := c.cc.NewStream(ctx, &CentrumService_ServiceDesc.Streams[0], "/services.centrum.CentrumService/Stream", opts...)
+	stream, err := c.cc.NewStream(ctx, &CentrumService_ServiceDesc.Streams[1], "/services.centrum.CentrumService/Stream", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -399,6 +182,18 @@ func (x *centrumServiceStreamClient) Recv() (*CentrumStreamResponse, error) {
 // for forward compatibility
 type CentrumServiceServer interface {
 	// @perm
+	ListUnits(context.Context, *ListUnitsRequest) (*ListUnitsResponse, error)
+	// @perm
+	CreateOrUpdateUnit(context.Context, *CreateOrUpdateUnitRequest) (*CreateOrUpdateUnitResponse, error)
+	// @perm
+	DeleteUnit(context.Context, *DeleteUnitRequest) (*DeleteUnitResponse, error)
+	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
+	AssignUnit(context.Context, *AssignUnitRequest) (*AssignUnitResponse, error)
+	// @perm
+	UpdateUnitStatus(context.Context, *UpdateUnitStatusRequest) (*UpdateUnitStatusResponse, error)
+	// @perm
+	StreamUnits(*UnitStreamRequest, CentrumService_StreamUnitsServer) error
+	// @perm
 	CreateDispatch(context.Context, *CreateDispatchRequest) (*CreateDispatchResponse, error)
 	// @perm
 	UpdateDispatch(context.Context, *UpdateDispatchRequest) (*UpdateDispatchResponse, error)
@@ -411,6 +206,24 @@ type CentrumServiceServer interface {
 type UnimplementedCentrumServiceServer struct {
 }
 
+func (UnimplementedCentrumServiceServer) ListUnits(context.Context, *ListUnitsRequest) (*ListUnitsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListUnits not implemented")
+}
+func (UnimplementedCentrumServiceServer) CreateOrUpdateUnit(context.Context, *CreateOrUpdateUnitRequest) (*CreateOrUpdateUnitResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateOrUpdateUnit not implemented")
+}
+func (UnimplementedCentrumServiceServer) DeleteUnit(context.Context, *DeleteUnitRequest) (*DeleteUnitResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteUnit not implemented")
+}
+func (UnimplementedCentrumServiceServer) AssignUnit(context.Context, *AssignUnitRequest) (*AssignUnitResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AssignUnit not implemented")
+}
+func (UnimplementedCentrumServiceServer) UpdateUnitStatus(context.Context, *UpdateUnitStatusRequest) (*UpdateUnitStatusResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateUnitStatus not implemented")
+}
+func (UnimplementedCentrumServiceServer) StreamUnits(*UnitStreamRequest, CentrumService_StreamUnitsServer) error {
+	return status.Errorf(codes.Unimplemented, "method StreamUnits not implemented")
+}
 func (UnimplementedCentrumServiceServer) CreateDispatch(context.Context, *CreateDispatchRequest) (*CreateDispatchResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateDispatch not implemented")
 }
@@ -431,6 +244,117 @@ type UnsafeCentrumServiceServer interface {
 
 func RegisterCentrumServiceServer(s grpc.ServiceRegistrar, srv CentrumServiceServer) {
 	s.RegisterService(&CentrumService_ServiceDesc, srv)
+}
+
+func _CentrumService_ListUnits_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListUnitsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CentrumServiceServer).ListUnits(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/services.centrum.CentrumService/ListUnits",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CentrumServiceServer).ListUnits(ctx, req.(*ListUnitsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CentrumService_CreateOrUpdateUnit_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateOrUpdateUnitRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CentrumServiceServer).CreateOrUpdateUnit(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/services.centrum.CentrumService/CreateOrUpdateUnit",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CentrumServiceServer).CreateOrUpdateUnit(ctx, req.(*CreateOrUpdateUnitRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CentrumService_DeleteUnit_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteUnitRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CentrumServiceServer).DeleteUnit(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/services.centrum.CentrumService/DeleteUnit",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CentrumServiceServer).DeleteUnit(ctx, req.(*DeleteUnitRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CentrumService_AssignUnit_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AssignUnitRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CentrumServiceServer).AssignUnit(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/services.centrum.CentrumService/AssignUnit",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CentrumServiceServer).AssignUnit(ctx, req.(*AssignUnitRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CentrumService_UpdateUnitStatus_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateUnitStatusRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CentrumServiceServer).UpdateUnitStatus(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/services.centrum.CentrumService/UpdateUnitStatus",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CentrumServiceServer).UpdateUnitStatus(ctx, req.(*UpdateUnitStatusRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CentrumService_StreamUnits_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(UnitStreamRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(CentrumServiceServer).StreamUnits(m, &centrumServiceStreamUnitsServer{stream})
+}
+
+type CentrumService_StreamUnitsServer interface {
+	Send(*UnitStreamResponse) error
+	grpc.ServerStream
+}
+
+type centrumServiceStreamUnitsServer struct {
+	grpc.ServerStream
+}
+
+func (x *centrumServiceStreamUnitsServer) Send(m *UnitStreamResponse) error {
+	return x.ServerStream.SendMsg(m)
 }
 
 func _CentrumService_CreateDispatch_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -498,6 +422,26 @@ var CentrumService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*CentrumServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
+			MethodName: "ListUnits",
+			Handler:    _CentrumService_ListUnits_Handler,
+		},
+		{
+			MethodName: "CreateOrUpdateUnit",
+			Handler:    _CentrumService_CreateOrUpdateUnit_Handler,
+		},
+		{
+			MethodName: "DeleteUnit",
+			Handler:    _CentrumService_DeleteUnit_Handler,
+		},
+		{
+			MethodName: "AssignUnit",
+			Handler:    _CentrumService_AssignUnit_Handler,
+		},
+		{
+			MethodName: "UpdateUnitStatus",
+			Handler:    _CentrumService_UpdateUnitStatus_Handler,
+		},
+		{
 			MethodName: "CreateDispatch",
 			Handler:    _CentrumService_CreateDispatch_Handler,
 		},
@@ -507,6 +451,11 @@ var CentrumService_ServiceDesc = grpc.ServiceDesc{
 		},
 	},
 	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "StreamUnits",
+			Handler:       _CentrumService_StreamUnits_Handler,
+			ServerStreams: true,
+		},
 		{
 			StreamName:    "Stream",
 			Handler:       _CentrumService_Stream_Handler,

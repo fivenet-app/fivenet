@@ -14,7 +14,7 @@ const { data: units, pending, refresh, error } = useLazyAsyncData('rector-units'
 async function getUnits(): Promise<Array<Unit>> {
     return new Promise(async (res, rej) => {
         try {
-            const call = $grpc.getUnitClient().listUnits({
+            const call = $grpc.getCentrumClient().listUnits({
                 status: [],
             });
             const { response } = await call;
