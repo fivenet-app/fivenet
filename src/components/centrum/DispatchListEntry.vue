@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import SvgIcon from '@jamescoyle/vue-icon';
 import { mdiAccountMultiplePlus, mdiDetails } from '@mdi/js';
-import { DISPATCH_STATUS, Dispatch } from '../../../gen/ts/resources/dispatch/dispatch';
+import { DISPATCH_STATUS, Dispatch } from '~~/gen/ts/resources/dispatch/dispatch';
 import DispatchDetails from './DispatchDetails.vue';
 
 defineProps<{

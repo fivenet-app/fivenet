@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import CategoriesList from '~/components/documents/categories/CategoriesList.vue';
+import List from '~/components/documents/categories/List.vue';
 import ContentWrapper from '~/components/partials/ContentWrapper.vue';
 
 useHead({
@@ -8,12 +8,12 @@ useHead({
 definePageMeta({
     title: 'pages.documents.categories.title',
     requiresAuth: true,
-    permission: 'DocStoreService.ListDocumentCategories',
+    permission: 'DocStoreService.ListCategories',
 });
 </script>
 
 <template>
     <ContentWrapper>
-        <CategoriesList />
+        <List />
     </ContentWrapper>
 </template>

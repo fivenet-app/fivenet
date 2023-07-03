@@ -1,0 +1,11 @@
+<script lang="ts" setup>
+import List from '~/components/vehicles/List.vue';
+
+defineProps<{
+    userId: number;
+}>();
+</script>
+
+<template>
+    <List :userId="userId" :hide-owner="true" :hide-citizen-link="true" />
+</template>

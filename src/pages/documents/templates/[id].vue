@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import TemplateView from '~/components/documents/templates/TemplateView.vue';
+import View from '~/components/documents/templates/View.vue';
 import ContentWrapper from '~/components/partials/ContentWrapper.vue';
 import { TypedRouteFromName } from '~~/.nuxt/typed-router/__router';
 
@@ -22,6 +22,6 @@ const route = useRoute('documents-templates-id');
 
 <template>
     <ContentWrapper>
-        <TemplateView :templateId="BigInt(route.params.id)" />
+        <View :templateId="BigInt(route.params.id)" />
     </ContentWrapper>
 </template>

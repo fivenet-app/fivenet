@@ -3327,22 +3327,22 @@ var _ interface {
 	ErrorName() string
 } = RemoveDocumentRelationResponseValidationError{}
 
-// Validate checks the field values on GetDocumentCommentsRequest with the
-// rules defined in the proto definition for this message. If any rules are
+// Validate checks the field values on GetCommentsRequest with the rules
+// defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *GetDocumentCommentsRequest) Validate() error {
+func (m *GetCommentsRequest) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on GetDocumentCommentsRequest with the
-// rules defined in the proto definition for this message. If any rules are
+// ValidateAll checks the field values on GetCommentsRequest with the rules
+// defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// GetDocumentCommentsRequestMultiError, or nil if none found.
-func (m *GetDocumentCommentsRequest) ValidateAll() error {
+// GetCommentsRequestMultiError, or nil if none found.
+func (m *GetCommentsRequest) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *GetDocumentCommentsRequest) validate(all bool) error {
+func (m *GetCommentsRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -3350,7 +3350,7 @@ func (m *GetDocumentCommentsRequest) validate(all bool) error {
 	var errors []error
 
 	if m.GetPagination() == nil {
-		err := GetDocumentCommentsRequestValidationError{
+		err := GetCommentsRequestValidationError{
 			field:  "Pagination",
 			reason: "value is required",
 		}
@@ -3364,7 +3364,7 @@ func (m *GetDocumentCommentsRequest) validate(all bool) error {
 		switch v := interface{}(m.GetPagination()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, GetDocumentCommentsRequestValidationError{
+				errors = append(errors, GetCommentsRequestValidationError{
 					field:  "Pagination",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -3372,7 +3372,7 @@ func (m *GetDocumentCommentsRequest) validate(all bool) error {
 			}
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
-				errors = append(errors, GetDocumentCommentsRequestValidationError{
+				errors = append(errors, GetCommentsRequestValidationError{
 					field:  "Pagination",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -3381,7 +3381,7 @@ func (m *GetDocumentCommentsRequest) validate(all bool) error {
 		}
 	} else if v, ok := interface{}(m.GetPagination()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
-			return GetDocumentCommentsRequestValidationError{
+			return GetCommentsRequestValidationError{
 				field:  "Pagination",
 				reason: "embedded message failed validation",
 				cause:  err,
@@ -3392,19 +3392,19 @@ func (m *GetDocumentCommentsRequest) validate(all bool) error {
 	// no validation rules for DocumentId
 
 	if len(errors) > 0 {
-		return GetDocumentCommentsRequestMultiError(errors)
+		return GetCommentsRequestMultiError(errors)
 	}
 
 	return nil
 }
 
-// GetDocumentCommentsRequestMultiError is an error wrapping multiple
-// validation errors returned by GetDocumentCommentsRequest.ValidateAll() if
-// the designated constraints aren't met.
-type GetDocumentCommentsRequestMultiError []error
+// GetCommentsRequestMultiError is an error wrapping multiple validation errors
+// returned by GetCommentsRequest.ValidateAll() if the designated constraints
+// aren't met.
+type GetCommentsRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m GetDocumentCommentsRequestMultiError) Error() string {
+func (m GetCommentsRequestMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -3413,11 +3413,11 @@ func (m GetDocumentCommentsRequestMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m GetDocumentCommentsRequestMultiError) AllErrors() []error { return m }
+func (m GetCommentsRequestMultiError) AllErrors() []error { return m }
 
-// GetDocumentCommentsRequestValidationError is the validation error returned
-// by GetDocumentCommentsRequest.Validate if the designated constraints aren't met.
-type GetDocumentCommentsRequestValidationError struct {
+// GetCommentsRequestValidationError is the validation error returned by
+// GetCommentsRequest.Validate if the designated constraints aren't met.
+type GetCommentsRequestValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -3425,24 +3425,24 @@ type GetDocumentCommentsRequestValidationError struct {
 }
 
 // Field function returns field value.
-func (e GetDocumentCommentsRequestValidationError) Field() string { return e.field }
+func (e GetCommentsRequestValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e GetDocumentCommentsRequestValidationError) Reason() string { return e.reason }
+func (e GetCommentsRequestValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e GetDocumentCommentsRequestValidationError) Cause() error { return e.cause }
+func (e GetCommentsRequestValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e GetDocumentCommentsRequestValidationError) Key() bool { return e.key }
+func (e GetCommentsRequestValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e GetDocumentCommentsRequestValidationError) ErrorName() string {
-	return "GetDocumentCommentsRequestValidationError"
+func (e GetCommentsRequestValidationError) ErrorName() string {
+	return "GetCommentsRequestValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e GetDocumentCommentsRequestValidationError) Error() string {
+func (e GetCommentsRequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -3454,14 +3454,14 @@ func (e GetDocumentCommentsRequestValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sGetDocumentCommentsRequest.%s: %s%s",
+		"invalid %sGetCommentsRequest.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = GetDocumentCommentsRequestValidationError{}
+var _ error = GetCommentsRequestValidationError{}
 
 var _ interface {
 	Field() string
@@ -3469,24 +3469,24 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = GetDocumentCommentsRequestValidationError{}
+} = GetCommentsRequestValidationError{}
 
-// Validate checks the field values on GetDocumentCommentsResponse with the
-// rules defined in the proto definition for this message. If any rules are
+// Validate checks the field values on GetCommentsResponse with the rules
+// defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *GetDocumentCommentsResponse) Validate() error {
+func (m *GetCommentsResponse) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on GetDocumentCommentsResponse with the
-// rules defined in the proto definition for this message. If any rules are
+// ValidateAll checks the field values on GetCommentsResponse with the rules
+// defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// GetDocumentCommentsResponseMultiError, or nil if none found.
-func (m *GetDocumentCommentsResponse) ValidateAll() error {
+// GetCommentsResponseMultiError, or nil if none found.
+func (m *GetCommentsResponse) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *GetDocumentCommentsResponse) validate(all bool) error {
+func (m *GetCommentsResponse) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -3497,7 +3497,7 @@ func (m *GetDocumentCommentsResponse) validate(all bool) error {
 		switch v := interface{}(m.GetPagination()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, GetDocumentCommentsResponseValidationError{
+				errors = append(errors, GetCommentsResponseValidationError{
 					field:  "Pagination",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -3505,7 +3505,7 @@ func (m *GetDocumentCommentsResponse) validate(all bool) error {
 			}
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
-				errors = append(errors, GetDocumentCommentsResponseValidationError{
+				errors = append(errors, GetCommentsResponseValidationError{
 					field:  "Pagination",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -3514,7 +3514,7 @@ func (m *GetDocumentCommentsResponse) validate(all bool) error {
 		}
 	} else if v, ok := interface{}(m.GetPagination()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
-			return GetDocumentCommentsResponseValidationError{
+			return GetCommentsResponseValidationError{
 				field:  "Pagination",
 				reason: "embedded message failed validation",
 				cause:  err,
@@ -3529,7 +3529,7 @@ func (m *GetDocumentCommentsResponse) validate(all bool) error {
 			switch v := interface{}(item).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, GetDocumentCommentsResponseValidationError{
+					errors = append(errors, GetCommentsResponseValidationError{
 						field:  fmt.Sprintf("Comments[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -3537,7 +3537,7 @@ func (m *GetDocumentCommentsResponse) validate(all bool) error {
 				}
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
-					errors = append(errors, GetDocumentCommentsResponseValidationError{
+					errors = append(errors, GetCommentsResponseValidationError{
 						field:  fmt.Sprintf("Comments[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -3546,7 +3546,7 @@ func (m *GetDocumentCommentsResponse) validate(all bool) error {
 			}
 		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				return GetDocumentCommentsResponseValidationError{
+				return GetCommentsResponseValidationError{
 					field:  fmt.Sprintf("Comments[%v]", idx),
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -3557,19 +3557,19 @@ func (m *GetDocumentCommentsResponse) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return GetDocumentCommentsResponseMultiError(errors)
+		return GetCommentsResponseMultiError(errors)
 	}
 
 	return nil
 }
 
-// GetDocumentCommentsResponseMultiError is an error wrapping multiple
-// validation errors returned by GetDocumentCommentsResponse.ValidateAll() if
-// the designated constraints aren't met.
-type GetDocumentCommentsResponseMultiError []error
+// GetCommentsResponseMultiError is an error wrapping multiple validation
+// errors returned by GetCommentsResponse.ValidateAll() if the designated
+// constraints aren't met.
+type GetCommentsResponseMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m GetDocumentCommentsResponseMultiError) Error() string {
+func (m GetCommentsResponseMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -3578,12 +3578,11 @@ func (m GetDocumentCommentsResponseMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m GetDocumentCommentsResponseMultiError) AllErrors() []error { return m }
+func (m GetCommentsResponseMultiError) AllErrors() []error { return m }
 
-// GetDocumentCommentsResponseValidationError is the validation error returned
-// by GetDocumentCommentsResponse.Validate if the designated constraints
-// aren't met.
-type GetDocumentCommentsResponseValidationError struct {
+// GetCommentsResponseValidationError is the validation error returned by
+// GetCommentsResponse.Validate if the designated constraints aren't met.
+type GetCommentsResponseValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -3591,24 +3590,24 @@ type GetDocumentCommentsResponseValidationError struct {
 }
 
 // Field function returns field value.
-func (e GetDocumentCommentsResponseValidationError) Field() string { return e.field }
+func (e GetCommentsResponseValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e GetDocumentCommentsResponseValidationError) Reason() string { return e.reason }
+func (e GetCommentsResponseValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e GetDocumentCommentsResponseValidationError) Cause() error { return e.cause }
+func (e GetCommentsResponseValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e GetDocumentCommentsResponseValidationError) Key() bool { return e.key }
+func (e GetCommentsResponseValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e GetDocumentCommentsResponseValidationError) ErrorName() string {
-	return "GetDocumentCommentsResponseValidationError"
+func (e GetCommentsResponseValidationError) ErrorName() string {
+	return "GetCommentsResponseValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e GetDocumentCommentsResponseValidationError) Error() string {
+func (e GetCommentsResponseValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -3620,14 +3619,14 @@ func (e GetDocumentCommentsResponseValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sGetDocumentCommentsResponse.%s: %s%s",
+		"invalid %sGetCommentsResponse.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = GetDocumentCommentsResponseValidationError{}
+var _ error = GetCommentsResponseValidationError{}
 
 var _ interface {
 	Field() string
@@ -3635,24 +3634,24 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = GetDocumentCommentsResponseValidationError{}
+} = GetCommentsResponseValidationError{}
 
-// Validate checks the field values on PostDocumentCommentRequest with the
-// rules defined in the proto definition for this message. If any rules are
+// Validate checks the field values on PostCommentRequest with the rules
+// defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *PostDocumentCommentRequest) Validate() error {
+func (m *PostCommentRequest) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on PostDocumentCommentRequest with the
-// rules defined in the proto definition for this message. If any rules are
+// ValidateAll checks the field values on PostCommentRequest with the rules
+// defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// PostDocumentCommentRequestMultiError, or nil if none found.
-func (m *PostDocumentCommentRequest) ValidateAll() error {
+// PostCommentRequestMultiError, or nil if none found.
+func (m *PostCommentRequest) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *PostDocumentCommentRequest) validate(all bool) error {
+func (m *PostCommentRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -3663,7 +3662,7 @@ func (m *PostDocumentCommentRequest) validate(all bool) error {
 		switch v := interface{}(m.GetComment()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, PostDocumentCommentRequestValidationError{
+				errors = append(errors, PostCommentRequestValidationError{
 					field:  "Comment",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -3671,7 +3670,7 @@ func (m *PostDocumentCommentRequest) validate(all bool) error {
 			}
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
-				errors = append(errors, PostDocumentCommentRequestValidationError{
+				errors = append(errors, PostCommentRequestValidationError{
 					field:  "Comment",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -3680,7 +3679,7 @@ func (m *PostDocumentCommentRequest) validate(all bool) error {
 		}
 	} else if v, ok := interface{}(m.GetComment()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
-			return PostDocumentCommentRequestValidationError{
+			return PostCommentRequestValidationError{
 				field:  "Comment",
 				reason: "embedded message failed validation",
 				cause:  err,
@@ -3689,19 +3688,19 @@ func (m *PostDocumentCommentRequest) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return PostDocumentCommentRequestMultiError(errors)
+		return PostCommentRequestMultiError(errors)
 	}
 
 	return nil
 }
 
-// PostDocumentCommentRequestMultiError is an error wrapping multiple
-// validation errors returned by PostDocumentCommentRequest.ValidateAll() if
-// the designated constraints aren't met.
-type PostDocumentCommentRequestMultiError []error
+// PostCommentRequestMultiError is an error wrapping multiple validation errors
+// returned by PostCommentRequest.ValidateAll() if the designated constraints
+// aren't met.
+type PostCommentRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m PostDocumentCommentRequestMultiError) Error() string {
+func (m PostCommentRequestMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -3710,11 +3709,11 @@ func (m PostDocumentCommentRequestMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m PostDocumentCommentRequestMultiError) AllErrors() []error { return m }
+func (m PostCommentRequestMultiError) AllErrors() []error { return m }
 
-// PostDocumentCommentRequestValidationError is the validation error returned
-// by PostDocumentCommentRequest.Validate if the designated constraints aren't met.
-type PostDocumentCommentRequestValidationError struct {
+// PostCommentRequestValidationError is the validation error returned by
+// PostCommentRequest.Validate if the designated constraints aren't met.
+type PostCommentRequestValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -3722,24 +3721,24 @@ type PostDocumentCommentRequestValidationError struct {
 }
 
 // Field function returns field value.
-func (e PostDocumentCommentRequestValidationError) Field() string { return e.field }
+func (e PostCommentRequestValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e PostDocumentCommentRequestValidationError) Reason() string { return e.reason }
+func (e PostCommentRequestValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e PostDocumentCommentRequestValidationError) Cause() error { return e.cause }
+func (e PostCommentRequestValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e PostDocumentCommentRequestValidationError) Key() bool { return e.key }
+func (e PostCommentRequestValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e PostDocumentCommentRequestValidationError) ErrorName() string {
-	return "PostDocumentCommentRequestValidationError"
+func (e PostCommentRequestValidationError) ErrorName() string {
+	return "PostCommentRequestValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e PostDocumentCommentRequestValidationError) Error() string {
+func (e PostCommentRequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -3751,14 +3750,14 @@ func (e PostDocumentCommentRequestValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sPostDocumentCommentRequest.%s: %s%s",
+		"invalid %sPostCommentRequest.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = PostDocumentCommentRequestValidationError{}
+var _ error = PostCommentRequestValidationError{}
 
 var _ interface {
 	Field() string
@@ -3766,24 +3765,24 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = PostDocumentCommentRequestValidationError{}
+} = PostCommentRequestValidationError{}
 
-// Validate checks the field values on PostDocumentCommentResponse with the
-// rules defined in the proto definition for this message. If any rules are
+// Validate checks the field values on PostCommentResponse with the rules
+// defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *PostDocumentCommentResponse) Validate() error {
+func (m *PostCommentResponse) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on PostDocumentCommentResponse with the
-// rules defined in the proto definition for this message. If any rules are
+// ValidateAll checks the field values on PostCommentResponse with the rules
+// defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// PostDocumentCommentResponseMultiError, or nil if none found.
-func (m *PostDocumentCommentResponse) ValidateAll() error {
+// PostCommentResponseMultiError, or nil if none found.
+func (m *PostCommentResponse) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *PostDocumentCommentResponse) validate(all bool) error {
+func (m *PostCommentResponse) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -3793,19 +3792,19 @@ func (m *PostDocumentCommentResponse) validate(all bool) error {
 	// no validation rules for Id
 
 	if len(errors) > 0 {
-		return PostDocumentCommentResponseMultiError(errors)
+		return PostCommentResponseMultiError(errors)
 	}
 
 	return nil
 }
 
-// PostDocumentCommentResponseMultiError is an error wrapping multiple
-// validation errors returned by PostDocumentCommentResponse.ValidateAll() if
-// the designated constraints aren't met.
-type PostDocumentCommentResponseMultiError []error
+// PostCommentResponseMultiError is an error wrapping multiple validation
+// errors returned by PostCommentResponse.ValidateAll() if the designated
+// constraints aren't met.
+type PostCommentResponseMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m PostDocumentCommentResponseMultiError) Error() string {
+func (m PostCommentResponseMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -3814,12 +3813,11 @@ func (m PostDocumentCommentResponseMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m PostDocumentCommentResponseMultiError) AllErrors() []error { return m }
+func (m PostCommentResponseMultiError) AllErrors() []error { return m }
 
-// PostDocumentCommentResponseValidationError is the validation error returned
-// by PostDocumentCommentResponse.Validate if the designated constraints
-// aren't met.
-type PostDocumentCommentResponseValidationError struct {
+// PostCommentResponseValidationError is the validation error returned by
+// PostCommentResponse.Validate if the designated constraints aren't met.
+type PostCommentResponseValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -3827,24 +3825,24 @@ type PostDocumentCommentResponseValidationError struct {
 }
 
 // Field function returns field value.
-func (e PostDocumentCommentResponseValidationError) Field() string { return e.field }
+func (e PostCommentResponseValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e PostDocumentCommentResponseValidationError) Reason() string { return e.reason }
+func (e PostCommentResponseValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e PostDocumentCommentResponseValidationError) Cause() error { return e.cause }
+func (e PostCommentResponseValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e PostDocumentCommentResponseValidationError) Key() bool { return e.key }
+func (e PostCommentResponseValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e PostDocumentCommentResponseValidationError) ErrorName() string {
-	return "PostDocumentCommentResponseValidationError"
+func (e PostCommentResponseValidationError) ErrorName() string {
+	return "PostCommentResponseValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e PostDocumentCommentResponseValidationError) Error() string {
+func (e PostCommentResponseValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -3856,14 +3854,14 @@ func (e PostDocumentCommentResponseValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sPostDocumentCommentResponse.%s: %s%s",
+		"invalid %sPostCommentResponse.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = PostDocumentCommentResponseValidationError{}
+var _ error = PostCommentResponseValidationError{}
 
 var _ interface {
 	Field() string
@@ -3871,24 +3869,24 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = PostDocumentCommentResponseValidationError{}
+} = PostCommentResponseValidationError{}
 
-// Validate checks the field values on EditDocumentCommentRequest with the
-// rules defined in the proto definition for this message. If any rules are
+// Validate checks the field values on EditCommentRequest with the rules
+// defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *EditDocumentCommentRequest) Validate() error {
+func (m *EditCommentRequest) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on EditDocumentCommentRequest with the
-// rules defined in the proto definition for this message. If any rules are
+// ValidateAll checks the field values on EditCommentRequest with the rules
+// defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// EditDocumentCommentRequestMultiError, or nil if none found.
-func (m *EditDocumentCommentRequest) ValidateAll() error {
+// EditCommentRequestMultiError, or nil if none found.
+func (m *EditCommentRequest) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *EditDocumentCommentRequest) validate(all bool) error {
+func (m *EditCommentRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -3899,7 +3897,7 @@ func (m *EditDocumentCommentRequest) validate(all bool) error {
 		switch v := interface{}(m.GetComment()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, EditDocumentCommentRequestValidationError{
+				errors = append(errors, EditCommentRequestValidationError{
 					field:  "Comment",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -3907,7 +3905,7 @@ func (m *EditDocumentCommentRequest) validate(all bool) error {
 			}
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
-				errors = append(errors, EditDocumentCommentRequestValidationError{
+				errors = append(errors, EditCommentRequestValidationError{
 					field:  "Comment",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -3916,7 +3914,7 @@ func (m *EditDocumentCommentRequest) validate(all bool) error {
 		}
 	} else if v, ok := interface{}(m.GetComment()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
-			return EditDocumentCommentRequestValidationError{
+			return EditCommentRequestValidationError{
 				field:  "Comment",
 				reason: "embedded message failed validation",
 				cause:  err,
@@ -3925,19 +3923,19 @@ func (m *EditDocumentCommentRequest) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return EditDocumentCommentRequestMultiError(errors)
+		return EditCommentRequestMultiError(errors)
 	}
 
 	return nil
 }
 
-// EditDocumentCommentRequestMultiError is an error wrapping multiple
-// validation errors returned by EditDocumentCommentRequest.ValidateAll() if
-// the designated constraints aren't met.
-type EditDocumentCommentRequestMultiError []error
+// EditCommentRequestMultiError is an error wrapping multiple validation errors
+// returned by EditCommentRequest.ValidateAll() if the designated constraints
+// aren't met.
+type EditCommentRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m EditDocumentCommentRequestMultiError) Error() string {
+func (m EditCommentRequestMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -3946,11 +3944,11 @@ func (m EditDocumentCommentRequestMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m EditDocumentCommentRequestMultiError) AllErrors() []error { return m }
+func (m EditCommentRequestMultiError) AllErrors() []error { return m }
 
-// EditDocumentCommentRequestValidationError is the validation error returned
-// by EditDocumentCommentRequest.Validate if the designated constraints aren't met.
-type EditDocumentCommentRequestValidationError struct {
+// EditCommentRequestValidationError is the validation error returned by
+// EditCommentRequest.Validate if the designated constraints aren't met.
+type EditCommentRequestValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -3958,24 +3956,24 @@ type EditDocumentCommentRequestValidationError struct {
 }
 
 // Field function returns field value.
-func (e EditDocumentCommentRequestValidationError) Field() string { return e.field }
+func (e EditCommentRequestValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e EditDocumentCommentRequestValidationError) Reason() string { return e.reason }
+func (e EditCommentRequestValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e EditDocumentCommentRequestValidationError) Cause() error { return e.cause }
+func (e EditCommentRequestValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e EditDocumentCommentRequestValidationError) Key() bool { return e.key }
+func (e EditCommentRequestValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e EditDocumentCommentRequestValidationError) ErrorName() string {
-	return "EditDocumentCommentRequestValidationError"
+func (e EditCommentRequestValidationError) ErrorName() string {
+	return "EditCommentRequestValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e EditDocumentCommentRequestValidationError) Error() string {
+func (e EditCommentRequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -3987,14 +3985,14 @@ func (e EditDocumentCommentRequestValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sEditDocumentCommentRequest.%s: %s%s",
+		"invalid %sEditCommentRequest.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = EditDocumentCommentRequestValidationError{}
+var _ error = EditCommentRequestValidationError{}
 
 var _ interface {
 	Field() string
@@ -4002,24 +4000,24 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = EditDocumentCommentRequestValidationError{}
+} = EditCommentRequestValidationError{}
 
-// Validate checks the field values on EditDocumentCommentResponse with the
-// rules defined in the proto definition for this message. If any rules are
+// Validate checks the field values on EditCommentResponse with the rules
+// defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *EditDocumentCommentResponse) Validate() error {
+func (m *EditCommentResponse) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on EditDocumentCommentResponse with the
-// rules defined in the proto definition for this message. If any rules are
+// ValidateAll checks the field values on EditCommentResponse with the rules
+// defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// EditDocumentCommentResponseMultiError, or nil if none found.
-func (m *EditDocumentCommentResponse) ValidateAll() error {
+// EditCommentResponseMultiError, or nil if none found.
+func (m *EditCommentResponse) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *EditDocumentCommentResponse) validate(all bool) error {
+func (m *EditCommentResponse) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -4027,19 +4025,19 @@ func (m *EditDocumentCommentResponse) validate(all bool) error {
 	var errors []error
 
 	if len(errors) > 0 {
-		return EditDocumentCommentResponseMultiError(errors)
+		return EditCommentResponseMultiError(errors)
 	}
 
 	return nil
 }
 
-// EditDocumentCommentResponseMultiError is an error wrapping multiple
-// validation errors returned by EditDocumentCommentResponse.ValidateAll() if
-// the designated constraints aren't met.
-type EditDocumentCommentResponseMultiError []error
+// EditCommentResponseMultiError is an error wrapping multiple validation
+// errors returned by EditCommentResponse.ValidateAll() if the designated
+// constraints aren't met.
+type EditCommentResponseMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m EditDocumentCommentResponseMultiError) Error() string {
+func (m EditCommentResponseMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -4048,12 +4046,11 @@ func (m EditDocumentCommentResponseMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m EditDocumentCommentResponseMultiError) AllErrors() []error { return m }
+func (m EditCommentResponseMultiError) AllErrors() []error { return m }
 
-// EditDocumentCommentResponseValidationError is the validation error returned
-// by EditDocumentCommentResponse.Validate if the designated constraints
-// aren't met.
-type EditDocumentCommentResponseValidationError struct {
+// EditCommentResponseValidationError is the validation error returned by
+// EditCommentResponse.Validate if the designated constraints aren't met.
+type EditCommentResponseValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -4061,24 +4058,24 @@ type EditDocumentCommentResponseValidationError struct {
 }
 
 // Field function returns field value.
-func (e EditDocumentCommentResponseValidationError) Field() string { return e.field }
+func (e EditCommentResponseValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e EditDocumentCommentResponseValidationError) Reason() string { return e.reason }
+func (e EditCommentResponseValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e EditDocumentCommentResponseValidationError) Cause() error { return e.cause }
+func (e EditCommentResponseValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e EditDocumentCommentResponseValidationError) Key() bool { return e.key }
+func (e EditCommentResponseValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e EditDocumentCommentResponseValidationError) ErrorName() string {
-	return "EditDocumentCommentResponseValidationError"
+func (e EditCommentResponseValidationError) ErrorName() string {
+	return "EditCommentResponseValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e EditDocumentCommentResponseValidationError) Error() string {
+func (e EditCommentResponseValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -4090,14 +4087,14 @@ func (e EditDocumentCommentResponseValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sEditDocumentCommentResponse.%s: %s%s",
+		"invalid %sEditCommentResponse.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = EditDocumentCommentResponseValidationError{}
+var _ error = EditCommentResponseValidationError{}
 
 var _ interface {
 	Field() string
@@ -4105,24 +4102,24 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = EditDocumentCommentResponseValidationError{}
+} = EditCommentResponseValidationError{}
 
-// Validate checks the field values on DeleteDocumentCommentRequest with the
-// rules defined in the proto definition for this message. If any rules are
+// Validate checks the field values on DeleteCommentRequest with the rules
+// defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *DeleteDocumentCommentRequest) Validate() error {
+func (m *DeleteCommentRequest) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on DeleteDocumentCommentRequest with the
-// rules defined in the proto definition for this message. If any rules are
+// ValidateAll checks the field values on DeleteCommentRequest with the rules
+// defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// DeleteDocumentCommentRequestMultiError, or nil if none found.
-func (m *DeleteDocumentCommentRequest) ValidateAll() error {
+// DeleteCommentRequestMultiError, or nil if none found.
+func (m *DeleteCommentRequest) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *DeleteDocumentCommentRequest) validate(all bool) error {
+func (m *DeleteCommentRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -4132,19 +4129,19 @@ func (m *DeleteDocumentCommentRequest) validate(all bool) error {
 	// no validation rules for CommentId
 
 	if len(errors) > 0 {
-		return DeleteDocumentCommentRequestMultiError(errors)
+		return DeleteCommentRequestMultiError(errors)
 	}
 
 	return nil
 }
 
-// DeleteDocumentCommentRequestMultiError is an error wrapping multiple
-// validation errors returned by DeleteDocumentCommentRequest.ValidateAll() if
-// the designated constraints aren't met.
-type DeleteDocumentCommentRequestMultiError []error
+// DeleteCommentRequestMultiError is an error wrapping multiple validation
+// errors returned by DeleteCommentRequest.ValidateAll() if the designated
+// constraints aren't met.
+type DeleteCommentRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m DeleteDocumentCommentRequestMultiError) Error() string {
+func (m DeleteCommentRequestMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -4153,12 +4150,11 @@ func (m DeleteDocumentCommentRequestMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m DeleteDocumentCommentRequestMultiError) AllErrors() []error { return m }
+func (m DeleteCommentRequestMultiError) AllErrors() []error { return m }
 
-// DeleteDocumentCommentRequestValidationError is the validation error returned
-// by DeleteDocumentCommentRequest.Validate if the designated constraints
-// aren't met.
-type DeleteDocumentCommentRequestValidationError struct {
+// DeleteCommentRequestValidationError is the validation error returned by
+// DeleteCommentRequest.Validate if the designated constraints aren't met.
+type DeleteCommentRequestValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -4166,24 +4162,24 @@ type DeleteDocumentCommentRequestValidationError struct {
 }
 
 // Field function returns field value.
-func (e DeleteDocumentCommentRequestValidationError) Field() string { return e.field }
+func (e DeleteCommentRequestValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e DeleteDocumentCommentRequestValidationError) Reason() string { return e.reason }
+func (e DeleteCommentRequestValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e DeleteDocumentCommentRequestValidationError) Cause() error { return e.cause }
+func (e DeleteCommentRequestValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e DeleteDocumentCommentRequestValidationError) Key() bool { return e.key }
+func (e DeleteCommentRequestValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e DeleteDocumentCommentRequestValidationError) ErrorName() string {
-	return "DeleteDocumentCommentRequestValidationError"
+func (e DeleteCommentRequestValidationError) ErrorName() string {
+	return "DeleteCommentRequestValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e DeleteDocumentCommentRequestValidationError) Error() string {
+func (e DeleteCommentRequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -4195,14 +4191,14 @@ func (e DeleteDocumentCommentRequestValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sDeleteDocumentCommentRequest.%s: %s%s",
+		"invalid %sDeleteCommentRequest.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = DeleteDocumentCommentRequestValidationError{}
+var _ error = DeleteCommentRequestValidationError{}
 
 var _ interface {
 	Field() string
@@ -4210,24 +4206,24 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = DeleteDocumentCommentRequestValidationError{}
+} = DeleteCommentRequestValidationError{}
 
-// Validate checks the field values on DeleteDocumentCommentResponse with the
-// rules defined in the proto definition for this message. If any rules are
+// Validate checks the field values on DeleteCommentResponse with the rules
+// defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *DeleteDocumentCommentResponse) Validate() error {
+func (m *DeleteCommentResponse) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on DeleteDocumentCommentResponse with
-// the rules defined in the proto definition for this message. If any rules
-// are violated, the result is a list of violation errors wrapped in
-// DeleteDocumentCommentResponseMultiError, or nil if none found.
-func (m *DeleteDocumentCommentResponse) ValidateAll() error {
+// ValidateAll checks the field values on DeleteCommentResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DeleteCommentResponseMultiError, or nil if none found.
+func (m *DeleteCommentResponse) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *DeleteDocumentCommentResponse) validate(all bool) error {
+func (m *DeleteCommentResponse) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -4235,19 +4231,19 @@ func (m *DeleteDocumentCommentResponse) validate(all bool) error {
 	var errors []error
 
 	if len(errors) > 0 {
-		return DeleteDocumentCommentResponseMultiError(errors)
+		return DeleteCommentResponseMultiError(errors)
 	}
 
 	return nil
 }
 
-// DeleteDocumentCommentResponseMultiError is an error wrapping multiple
-// validation errors returned by DeleteDocumentCommentResponse.ValidateAll()
-// if the designated constraints aren't met.
-type DeleteDocumentCommentResponseMultiError []error
+// DeleteCommentResponseMultiError is an error wrapping multiple validation
+// errors returned by DeleteCommentResponse.ValidateAll() if the designated
+// constraints aren't met.
+type DeleteCommentResponseMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m DeleteDocumentCommentResponseMultiError) Error() string {
+func (m DeleteCommentResponseMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -4256,12 +4252,11 @@ func (m DeleteDocumentCommentResponseMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m DeleteDocumentCommentResponseMultiError) AllErrors() []error { return m }
+func (m DeleteCommentResponseMultiError) AllErrors() []error { return m }
 
-// DeleteDocumentCommentResponseValidationError is the validation error
-// returned by DeleteDocumentCommentResponse.Validate if the designated
-// constraints aren't met.
-type DeleteDocumentCommentResponseValidationError struct {
+// DeleteCommentResponseValidationError is the validation error returned by
+// DeleteCommentResponse.Validate if the designated constraints aren't met.
+type DeleteCommentResponseValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -4269,24 +4264,24 @@ type DeleteDocumentCommentResponseValidationError struct {
 }
 
 // Field function returns field value.
-func (e DeleteDocumentCommentResponseValidationError) Field() string { return e.field }
+func (e DeleteCommentResponseValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e DeleteDocumentCommentResponseValidationError) Reason() string { return e.reason }
+func (e DeleteCommentResponseValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e DeleteDocumentCommentResponseValidationError) Cause() error { return e.cause }
+func (e DeleteCommentResponseValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e DeleteDocumentCommentResponseValidationError) Key() bool { return e.key }
+func (e DeleteCommentResponseValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e DeleteDocumentCommentResponseValidationError) ErrorName() string {
-	return "DeleteDocumentCommentResponseValidationError"
+func (e DeleteCommentResponseValidationError) ErrorName() string {
+	return "DeleteCommentResponseValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e DeleteDocumentCommentResponseValidationError) Error() string {
+func (e DeleteCommentResponseValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -4298,14 +4293,14 @@ func (e DeleteDocumentCommentResponseValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sDeleteDocumentCommentResponse.%s: %s%s",
+		"invalid %sDeleteCommentResponse.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = DeleteDocumentCommentResponseValidationError{}
+var _ error = DeleteCommentResponseValidationError{}
 
 var _ interface {
 	Field() string
@@ -4313,7 +4308,7 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = DeleteDocumentCommentResponseValidationError{}
+} = DeleteCommentResponseValidationError{}
 
 // Validate checks the field values on CreateDocumentRequest with the rules
 // defined in the proto definition for this message. If any rules are
@@ -6186,22 +6181,22 @@ var _ interface {
 	ErrorName() string
 } = ListUserDocumentsResponseValidationError{}
 
-// Validate checks the field values on ListDocumentCategoriesRequest with the
-// rules defined in the proto definition for this message. If any rules are
+// Validate checks the field values on ListCategoriesRequest with the rules
+// defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *ListDocumentCategoriesRequest) Validate() error {
+func (m *ListCategoriesRequest) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on ListDocumentCategoriesRequest with
-// the rules defined in the proto definition for this message. If any rules
-// are violated, the result is a list of violation errors wrapped in
-// ListDocumentCategoriesRequestMultiError, or nil if none found.
-func (m *ListDocumentCategoriesRequest) ValidateAll() error {
+// ValidateAll checks the field values on ListCategoriesRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ListCategoriesRequestMultiError, or nil if none found.
+func (m *ListCategoriesRequest) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *ListDocumentCategoriesRequest) validate(all bool) error {
+func (m *ListCategoriesRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -6209,19 +6204,19 @@ func (m *ListDocumentCategoriesRequest) validate(all bool) error {
 	var errors []error
 
 	if len(errors) > 0 {
-		return ListDocumentCategoriesRequestMultiError(errors)
+		return ListCategoriesRequestMultiError(errors)
 	}
 
 	return nil
 }
 
-// ListDocumentCategoriesRequestMultiError is an error wrapping multiple
-// validation errors returned by ListDocumentCategoriesRequest.ValidateAll()
-// if the designated constraints aren't met.
-type ListDocumentCategoriesRequestMultiError []error
+// ListCategoriesRequestMultiError is an error wrapping multiple validation
+// errors returned by ListCategoriesRequest.ValidateAll() if the designated
+// constraints aren't met.
+type ListCategoriesRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m ListDocumentCategoriesRequestMultiError) Error() string {
+func (m ListCategoriesRequestMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -6230,12 +6225,11 @@ func (m ListDocumentCategoriesRequestMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m ListDocumentCategoriesRequestMultiError) AllErrors() []error { return m }
+func (m ListCategoriesRequestMultiError) AllErrors() []error { return m }
 
-// ListDocumentCategoriesRequestValidationError is the validation error
-// returned by ListDocumentCategoriesRequest.Validate if the designated
-// constraints aren't met.
-type ListDocumentCategoriesRequestValidationError struct {
+// ListCategoriesRequestValidationError is the validation error returned by
+// ListCategoriesRequest.Validate if the designated constraints aren't met.
+type ListCategoriesRequestValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -6243,24 +6237,24 @@ type ListDocumentCategoriesRequestValidationError struct {
 }
 
 // Field function returns field value.
-func (e ListDocumentCategoriesRequestValidationError) Field() string { return e.field }
+func (e ListCategoriesRequestValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e ListDocumentCategoriesRequestValidationError) Reason() string { return e.reason }
+func (e ListCategoriesRequestValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e ListDocumentCategoriesRequestValidationError) Cause() error { return e.cause }
+func (e ListCategoriesRequestValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e ListDocumentCategoriesRequestValidationError) Key() bool { return e.key }
+func (e ListCategoriesRequestValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e ListDocumentCategoriesRequestValidationError) ErrorName() string {
-	return "ListDocumentCategoriesRequestValidationError"
+func (e ListCategoriesRequestValidationError) ErrorName() string {
+	return "ListCategoriesRequestValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e ListDocumentCategoriesRequestValidationError) Error() string {
+func (e ListCategoriesRequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -6272,14 +6266,14 @@ func (e ListDocumentCategoriesRequestValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sListDocumentCategoriesRequest.%s: %s%s",
+		"invalid %sListCategoriesRequest.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = ListDocumentCategoriesRequestValidationError{}
+var _ error = ListCategoriesRequestValidationError{}
 
 var _ interface {
 	Field() string
@@ -6287,24 +6281,24 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = ListDocumentCategoriesRequestValidationError{}
+} = ListCategoriesRequestValidationError{}
 
-// Validate checks the field values on ListDocumentCategoriesResponse with the
-// rules defined in the proto definition for this message. If any rules are
+// Validate checks the field values on ListCategoriesResponse with the rules
+// defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *ListDocumentCategoriesResponse) Validate() error {
+func (m *ListCategoriesResponse) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on ListDocumentCategoriesResponse with
-// the rules defined in the proto definition for this message. If any rules
-// are violated, the result is a list of violation errors wrapped in
-// ListDocumentCategoriesResponseMultiError, or nil if none found.
-func (m *ListDocumentCategoriesResponse) ValidateAll() error {
+// ValidateAll checks the field values on ListCategoriesResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ListCategoriesResponseMultiError, or nil if none found.
+func (m *ListCategoriesResponse) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *ListDocumentCategoriesResponse) validate(all bool) error {
+func (m *ListCategoriesResponse) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -6318,7 +6312,7 @@ func (m *ListDocumentCategoriesResponse) validate(all bool) error {
 			switch v := interface{}(item).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, ListDocumentCategoriesResponseValidationError{
+					errors = append(errors, ListCategoriesResponseValidationError{
 						field:  fmt.Sprintf("Category[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -6326,7 +6320,7 @@ func (m *ListDocumentCategoriesResponse) validate(all bool) error {
 				}
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
-					errors = append(errors, ListDocumentCategoriesResponseValidationError{
+					errors = append(errors, ListCategoriesResponseValidationError{
 						field:  fmt.Sprintf("Category[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -6335,7 +6329,7 @@ func (m *ListDocumentCategoriesResponse) validate(all bool) error {
 			}
 		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				return ListDocumentCategoriesResponseValidationError{
+				return ListCategoriesResponseValidationError{
 					field:  fmt.Sprintf("Category[%v]", idx),
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -6346,19 +6340,19 @@ func (m *ListDocumentCategoriesResponse) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return ListDocumentCategoriesResponseMultiError(errors)
+		return ListCategoriesResponseMultiError(errors)
 	}
 
 	return nil
 }
 
-// ListDocumentCategoriesResponseMultiError is an error wrapping multiple
-// validation errors returned by ListDocumentCategoriesResponse.ValidateAll()
-// if the designated constraints aren't met.
-type ListDocumentCategoriesResponseMultiError []error
+// ListCategoriesResponseMultiError is an error wrapping multiple validation
+// errors returned by ListCategoriesResponse.ValidateAll() if the designated
+// constraints aren't met.
+type ListCategoriesResponseMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m ListDocumentCategoriesResponseMultiError) Error() string {
+func (m ListCategoriesResponseMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -6367,12 +6361,11 @@ func (m ListDocumentCategoriesResponseMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m ListDocumentCategoriesResponseMultiError) AllErrors() []error { return m }
+func (m ListCategoriesResponseMultiError) AllErrors() []error { return m }
 
-// ListDocumentCategoriesResponseValidationError is the validation error
-// returned by ListDocumentCategoriesResponse.Validate if the designated
-// constraints aren't met.
-type ListDocumentCategoriesResponseValidationError struct {
+// ListCategoriesResponseValidationError is the validation error returned by
+// ListCategoriesResponse.Validate if the designated constraints aren't met.
+type ListCategoriesResponseValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -6380,24 +6373,24 @@ type ListDocumentCategoriesResponseValidationError struct {
 }
 
 // Field function returns field value.
-func (e ListDocumentCategoriesResponseValidationError) Field() string { return e.field }
+func (e ListCategoriesResponseValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e ListDocumentCategoriesResponseValidationError) Reason() string { return e.reason }
+func (e ListCategoriesResponseValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e ListDocumentCategoriesResponseValidationError) Cause() error { return e.cause }
+func (e ListCategoriesResponseValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e ListDocumentCategoriesResponseValidationError) Key() bool { return e.key }
+func (e ListCategoriesResponseValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e ListDocumentCategoriesResponseValidationError) ErrorName() string {
-	return "ListDocumentCategoriesResponseValidationError"
+func (e ListCategoriesResponseValidationError) ErrorName() string {
+	return "ListCategoriesResponseValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e ListDocumentCategoriesResponseValidationError) Error() string {
+func (e ListCategoriesResponseValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -6409,14 +6402,14 @@ func (e ListDocumentCategoriesResponseValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sListDocumentCategoriesResponse.%s: %s%s",
+		"invalid %sListCategoriesResponse.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = ListDocumentCategoriesResponseValidationError{}
+var _ error = ListCategoriesResponseValidationError{}
 
 var _ interface {
 	Field() string
@@ -6424,24 +6417,24 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = ListDocumentCategoriesResponseValidationError{}
+} = ListCategoriesResponseValidationError{}
 
-// Validate checks the field values on CreateDocumentCategoryRequest with the
-// rules defined in the proto definition for this message. If any rules are
+// Validate checks the field values on CreateCategoryRequest with the rules
+// defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *CreateDocumentCategoryRequest) Validate() error {
+func (m *CreateCategoryRequest) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on CreateDocumentCategoryRequest with
-// the rules defined in the proto definition for this message. If any rules
-// are violated, the result is a list of violation errors wrapped in
-// CreateDocumentCategoryRequestMultiError, or nil if none found.
-func (m *CreateDocumentCategoryRequest) ValidateAll() error {
+// ValidateAll checks the field values on CreateCategoryRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CreateCategoryRequestMultiError, or nil if none found.
+func (m *CreateCategoryRequest) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *CreateDocumentCategoryRequest) validate(all bool) error {
+func (m *CreateCategoryRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -6449,7 +6442,7 @@ func (m *CreateDocumentCategoryRequest) validate(all bool) error {
 	var errors []error
 
 	if m.GetCategory() == nil {
-		err := CreateDocumentCategoryRequestValidationError{
+		err := CreateCategoryRequestValidationError{
 			field:  "Category",
 			reason: "value is required",
 		}
@@ -6463,7 +6456,7 @@ func (m *CreateDocumentCategoryRequest) validate(all bool) error {
 		switch v := interface{}(m.GetCategory()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, CreateDocumentCategoryRequestValidationError{
+				errors = append(errors, CreateCategoryRequestValidationError{
 					field:  "Category",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -6471,7 +6464,7 @@ func (m *CreateDocumentCategoryRequest) validate(all bool) error {
 			}
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
-				errors = append(errors, CreateDocumentCategoryRequestValidationError{
+				errors = append(errors, CreateCategoryRequestValidationError{
 					field:  "Category",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -6480,7 +6473,7 @@ func (m *CreateDocumentCategoryRequest) validate(all bool) error {
 		}
 	} else if v, ok := interface{}(m.GetCategory()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
-			return CreateDocumentCategoryRequestValidationError{
+			return CreateCategoryRequestValidationError{
 				field:  "Category",
 				reason: "embedded message failed validation",
 				cause:  err,
@@ -6489,19 +6482,19 @@ func (m *CreateDocumentCategoryRequest) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return CreateDocumentCategoryRequestMultiError(errors)
+		return CreateCategoryRequestMultiError(errors)
 	}
 
 	return nil
 }
 
-// CreateDocumentCategoryRequestMultiError is an error wrapping multiple
-// validation errors returned by CreateDocumentCategoryRequest.ValidateAll()
-// if the designated constraints aren't met.
-type CreateDocumentCategoryRequestMultiError []error
+// CreateCategoryRequestMultiError is an error wrapping multiple validation
+// errors returned by CreateCategoryRequest.ValidateAll() if the designated
+// constraints aren't met.
+type CreateCategoryRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m CreateDocumentCategoryRequestMultiError) Error() string {
+func (m CreateCategoryRequestMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -6510,12 +6503,11 @@ func (m CreateDocumentCategoryRequestMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m CreateDocumentCategoryRequestMultiError) AllErrors() []error { return m }
+func (m CreateCategoryRequestMultiError) AllErrors() []error { return m }
 
-// CreateDocumentCategoryRequestValidationError is the validation error
-// returned by CreateDocumentCategoryRequest.Validate if the designated
-// constraints aren't met.
-type CreateDocumentCategoryRequestValidationError struct {
+// CreateCategoryRequestValidationError is the validation error returned by
+// CreateCategoryRequest.Validate if the designated constraints aren't met.
+type CreateCategoryRequestValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -6523,24 +6515,24 @@ type CreateDocumentCategoryRequestValidationError struct {
 }
 
 // Field function returns field value.
-func (e CreateDocumentCategoryRequestValidationError) Field() string { return e.field }
+func (e CreateCategoryRequestValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e CreateDocumentCategoryRequestValidationError) Reason() string { return e.reason }
+func (e CreateCategoryRequestValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e CreateDocumentCategoryRequestValidationError) Cause() error { return e.cause }
+func (e CreateCategoryRequestValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e CreateDocumentCategoryRequestValidationError) Key() bool { return e.key }
+func (e CreateCategoryRequestValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e CreateDocumentCategoryRequestValidationError) ErrorName() string {
-	return "CreateDocumentCategoryRequestValidationError"
+func (e CreateCategoryRequestValidationError) ErrorName() string {
+	return "CreateCategoryRequestValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e CreateDocumentCategoryRequestValidationError) Error() string {
+func (e CreateCategoryRequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -6552,14 +6544,14 @@ func (e CreateDocumentCategoryRequestValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sCreateDocumentCategoryRequest.%s: %s%s",
+		"invalid %sCreateCategoryRequest.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = CreateDocumentCategoryRequestValidationError{}
+var _ error = CreateCategoryRequestValidationError{}
 
 var _ interface {
 	Field() string
@@ -6567,24 +6559,24 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = CreateDocumentCategoryRequestValidationError{}
+} = CreateCategoryRequestValidationError{}
 
-// Validate checks the field values on CreateDocumentCategoryResponse with the
-// rules defined in the proto definition for this message. If any rules are
+// Validate checks the field values on CreateCategoryResponse with the rules
+// defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *CreateDocumentCategoryResponse) Validate() error {
+func (m *CreateCategoryResponse) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on CreateDocumentCategoryResponse with
-// the rules defined in the proto definition for this message. If any rules
-// are violated, the result is a list of violation errors wrapped in
-// CreateDocumentCategoryResponseMultiError, or nil if none found.
-func (m *CreateDocumentCategoryResponse) ValidateAll() error {
+// ValidateAll checks the field values on CreateCategoryResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CreateCategoryResponseMultiError, or nil if none found.
+func (m *CreateCategoryResponse) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *CreateDocumentCategoryResponse) validate(all bool) error {
+func (m *CreateCategoryResponse) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -6594,19 +6586,19 @@ func (m *CreateDocumentCategoryResponse) validate(all bool) error {
 	// no validation rules for Id
 
 	if len(errors) > 0 {
-		return CreateDocumentCategoryResponseMultiError(errors)
+		return CreateCategoryResponseMultiError(errors)
 	}
 
 	return nil
 }
 
-// CreateDocumentCategoryResponseMultiError is an error wrapping multiple
-// validation errors returned by CreateDocumentCategoryResponse.ValidateAll()
-// if the designated constraints aren't met.
-type CreateDocumentCategoryResponseMultiError []error
+// CreateCategoryResponseMultiError is an error wrapping multiple validation
+// errors returned by CreateCategoryResponse.ValidateAll() if the designated
+// constraints aren't met.
+type CreateCategoryResponseMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m CreateDocumentCategoryResponseMultiError) Error() string {
+func (m CreateCategoryResponseMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -6615,12 +6607,11 @@ func (m CreateDocumentCategoryResponseMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m CreateDocumentCategoryResponseMultiError) AllErrors() []error { return m }
+func (m CreateCategoryResponseMultiError) AllErrors() []error { return m }
 
-// CreateDocumentCategoryResponseValidationError is the validation error
-// returned by CreateDocumentCategoryResponse.Validate if the designated
-// constraints aren't met.
-type CreateDocumentCategoryResponseValidationError struct {
+// CreateCategoryResponseValidationError is the validation error returned by
+// CreateCategoryResponse.Validate if the designated constraints aren't met.
+type CreateCategoryResponseValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -6628,24 +6619,24 @@ type CreateDocumentCategoryResponseValidationError struct {
 }
 
 // Field function returns field value.
-func (e CreateDocumentCategoryResponseValidationError) Field() string { return e.field }
+func (e CreateCategoryResponseValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e CreateDocumentCategoryResponseValidationError) Reason() string { return e.reason }
+func (e CreateCategoryResponseValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e CreateDocumentCategoryResponseValidationError) Cause() error { return e.cause }
+func (e CreateCategoryResponseValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e CreateDocumentCategoryResponseValidationError) Key() bool { return e.key }
+func (e CreateCategoryResponseValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e CreateDocumentCategoryResponseValidationError) ErrorName() string {
-	return "CreateDocumentCategoryResponseValidationError"
+func (e CreateCategoryResponseValidationError) ErrorName() string {
+	return "CreateCategoryResponseValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e CreateDocumentCategoryResponseValidationError) Error() string {
+func (e CreateCategoryResponseValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -6657,14 +6648,14 @@ func (e CreateDocumentCategoryResponseValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sCreateDocumentCategoryResponse.%s: %s%s",
+		"invalid %sCreateCategoryResponse.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = CreateDocumentCategoryResponseValidationError{}
+var _ error = CreateCategoryResponseValidationError{}
 
 var _ interface {
 	Field() string
@@ -6672,24 +6663,24 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = CreateDocumentCategoryResponseValidationError{}
+} = CreateCategoryResponseValidationError{}
 
-// Validate checks the field values on UpdateDocumentCategoryRequest with the
-// rules defined in the proto definition for this message. If any rules are
+// Validate checks the field values on UpdateCategoryRequest with the rules
+// defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *UpdateDocumentCategoryRequest) Validate() error {
+func (m *UpdateCategoryRequest) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on UpdateDocumentCategoryRequest with
-// the rules defined in the proto definition for this message. If any rules
-// are violated, the result is a list of violation errors wrapped in
-// UpdateDocumentCategoryRequestMultiError, or nil if none found.
-func (m *UpdateDocumentCategoryRequest) ValidateAll() error {
+// ValidateAll checks the field values on UpdateCategoryRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// UpdateCategoryRequestMultiError, or nil if none found.
+func (m *UpdateCategoryRequest) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *UpdateDocumentCategoryRequest) validate(all bool) error {
+func (m *UpdateCategoryRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -6697,7 +6688,7 @@ func (m *UpdateDocumentCategoryRequest) validate(all bool) error {
 	var errors []error
 
 	if m.GetCategory() == nil {
-		err := UpdateDocumentCategoryRequestValidationError{
+		err := UpdateCategoryRequestValidationError{
 			field:  "Category",
 			reason: "value is required",
 		}
@@ -6711,7 +6702,7 @@ func (m *UpdateDocumentCategoryRequest) validate(all bool) error {
 		switch v := interface{}(m.GetCategory()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, UpdateDocumentCategoryRequestValidationError{
+				errors = append(errors, UpdateCategoryRequestValidationError{
 					field:  "Category",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -6719,7 +6710,7 @@ func (m *UpdateDocumentCategoryRequest) validate(all bool) error {
 			}
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
-				errors = append(errors, UpdateDocumentCategoryRequestValidationError{
+				errors = append(errors, UpdateCategoryRequestValidationError{
 					field:  "Category",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -6728,7 +6719,7 @@ func (m *UpdateDocumentCategoryRequest) validate(all bool) error {
 		}
 	} else if v, ok := interface{}(m.GetCategory()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
-			return UpdateDocumentCategoryRequestValidationError{
+			return UpdateCategoryRequestValidationError{
 				field:  "Category",
 				reason: "embedded message failed validation",
 				cause:  err,
@@ -6737,19 +6728,19 @@ func (m *UpdateDocumentCategoryRequest) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return UpdateDocumentCategoryRequestMultiError(errors)
+		return UpdateCategoryRequestMultiError(errors)
 	}
 
 	return nil
 }
 
-// UpdateDocumentCategoryRequestMultiError is an error wrapping multiple
-// validation errors returned by UpdateDocumentCategoryRequest.ValidateAll()
-// if the designated constraints aren't met.
-type UpdateDocumentCategoryRequestMultiError []error
+// UpdateCategoryRequestMultiError is an error wrapping multiple validation
+// errors returned by UpdateCategoryRequest.ValidateAll() if the designated
+// constraints aren't met.
+type UpdateCategoryRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m UpdateDocumentCategoryRequestMultiError) Error() string {
+func (m UpdateCategoryRequestMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -6758,12 +6749,11 @@ func (m UpdateDocumentCategoryRequestMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m UpdateDocumentCategoryRequestMultiError) AllErrors() []error { return m }
+func (m UpdateCategoryRequestMultiError) AllErrors() []error { return m }
 
-// UpdateDocumentCategoryRequestValidationError is the validation error
-// returned by UpdateDocumentCategoryRequest.Validate if the designated
-// constraints aren't met.
-type UpdateDocumentCategoryRequestValidationError struct {
+// UpdateCategoryRequestValidationError is the validation error returned by
+// UpdateCategoryRequest.Validate if the designated constraints aren't met.
+type UpdateCategoryRequestValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -6771,24 +6761,24 @@ type UpdateDocumentCategoryRequestValidationError struct {
 }
 
 // Field function returns field value.
-func (e UpdateDocumentCategoryRequestValidationError) Field() string { return e.field }
+func (e UpdateCategoryRequestValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e UpdateDocumentCategoryRequestValidationError) Reason() string { return e.reason }
+func (e UpdateCategoryRequestValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e UpdateDocumentCategoryRequestValidationError) Cause() error { return e.cause }
+func (e UpdateCategoryRequestValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e UpdateDocumentCategoryRequestValidationError) Key() bool { return e.key }
+func (e UpdateCategoryRequestValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e UpdateDocumentCategoryRequestValidationError) ErrorName() string {
-	return "UpdateDocumentCategoryRequestValidationError"
+func (e UpdateCategoryRequestValidationError) ErrorName() string {
+	return "UpdateCategoryRequestValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e UpdateDocumentCategoryRequestValidationError) Error() string {
+func (e UpdateCategoryRequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -6800,14 +6790,14 @@ func (e UpdateDocumentCategoryRequestValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sUpdateDocumentCategoryRequest.%s: %s%s",
+		"invalid %sUpdateCategoryRequest.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = UpdateDocumentCategoryRequestValidationError{}
+var _ error = UpdateCategoryRequestValidationError{}
 
 var _ interface {
 	Field() string
@@ -6815,24 +6805,24 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = UpdateDocumentCategoryRequestValidationError{}
+} = UpdateCategoryRequestValidationError{}
 
-// Validate checks the field values on UpdateDocumentCategoryResponse with the
-// rules defined in the proto definition for this message. If any rules are
+// Validate checks the field values on UpdateCategoryResponse with the rules
+// defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *UpdateDocumentCategoryResponse) Validate() error {
+func (m *UpdateCategoryResponse) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on UpdateDocumentCategoryResponse with
-// the rules defined in the proto definition for this message. If any rules
-// are violated, the result is a list of violation errors wrapped in
-// UpdateDocumentCategoryResponseMultiError, or nil if none found.
-func (m *UpdateDocumentCategoryResponse) ValidateAll() error {
+// ValidateAll checks the field values on UpdateCategoryResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// UpdateCategoryResponseMultiError, or nil if none found.
+func (m *UpdateCategoryResponse) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *UpdateDocumentCategoryResponse) validate(all bool) error {
+func (m *UpdateCategoryResponse) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -6840,19 +6830,19 @@ func (m *UpdateDocumentCategoryResponse) validate(all bool) error {
 	var errors []error
 
 	if len(errors) > 0 {
-		return UpdateDocumentCategoryResponseMultiError(errors)
+		return UpdateCategoryResponseMultiError(errors)
 	}
 
 	return nil
 }
 
-// UpdateDocumentCategoryResponseMultiError is an error wrapping multiple
-// validation errors returned by UpdateDocumentCategoryResponse.ValidateAll()
-// if the designated constraints aren't met.
-type UpdateDocumentCategoryResponseMultiError []error
+// UpdateCategoryResponseMultiError is an error wrapping multiple validation
+// errors returned by UpdateCategoryResponse.ValidateAll() if the designated
+// constraints aren't met.
+type UpdateCategoryResponseMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m UpdateDocumentCategoryResponseMultiError) Error() string {
+func (m UpdateCategoryResponseMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -6861,12 +6851,11 @@ func (m UpdateDocumentCategoryResponseMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m UpdateDocumentCategoryResponseMultiError) AllErrors() []error { return m }
+func (m UpdateCategoryResponseMultiError) AllErrors() []error { return m }
 
-// UpdateDocumentCategoryResponseValidationError is the validation error
-// returned by UpdateDocumentCategoryResponse.Validate if the designated
-// constraints aren't met.
-type UpdateDocumentCategoryResponseValidationError struct {
+// UpdateCategoryResponseValidationError is the validation error returned by
+// UpdateCategoryResponse.Validate if the designated constraints aren't met.
+type UpdateCategoryResponseValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -6874,24 +6863,24 @@ type UpdateDocumentCategoryResponseValidationError struct {
 }
 
 // Field function returns field value.
-func (e UpdateDocumentCategoryResponseValidationError) Field() string { return e.field }
+func (e UpdateCategoryResponseValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e UpdateDocumentCategoryResponseValidationError) Reason() string { return e.reason }
+func (e UpdateCategoryResponseValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e UpdateDocumentCategoryResponseValidationError) Cause() error { return e.cause }
+func (e UpdateCategoryResponseValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e UpdateDocumentCategoryResponseValidationError) Key() bool { return e.key }
+func (e UpdateCategoryResponseValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e UpdateDocumentCategoryResponseValidationError) ErrorName() string {
-	return "UpdateDocumentCategoryResponseValidationError"
+func (e UpdateCategoryResponseValidationError) ErrorName() string {
+	return "UpdateCategoryResponseValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e UpdateDocumentCategoryResponseValidationError) Error() string {
+func (e UpdateCategoryResponseValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -6903,14 +6892,14 @@ func (e UpdateDocumentCategoryResponseValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sUpdateDocumentCategoryResponse.%s: %s%s",
+		"invalid %sUpdateCategoryResponse.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = UpdateDocumentCategoryResponseValidationError{}
+var _ error = UpdateCategoryResponseValidationError{}
 
 var _ interface {
 	Field() string
@@ -6918,24 +6907,24 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = UpdateDocumentCategoryResponseValidationError{}
+} = UpdateCategoryResponseValidationError{}
 
-// Validate checks the field values on DeleteDocumentCategoryRequest with the
-// rules defined in the proto definition for this message. If any rules are
+// Validate checks the field values on DeleteCategoryRequest with the rules
+// defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *DeleteDocumentCategoryRequest) Validate() error {
+func (m *DeleteCategoryRequest) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on DeleteDocumentCategoryRequest with
-// the rules defined in the proto definition for this message. If any rules
-// are violated, the result is a list of violation errors wrapped in
-// DeleteDocumentCategoryRequestMultiError, or nil if none found.
-func (m *DeleteDocumentCategoryRequest) ValidateAll() error {
+// ValidateAll checks the field values on DeleteCategoryRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DeleteCategoryRequestMultiError, or nil if none found.
+func (m *DeleteCategoryRequest) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *DeleteDocumentCategoryRequest) validate(all bool) error {
+func (m *DeleteCategoryRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -6943,19 +6932,19 @@ func (m *DeleteDocumentCategoryRequest) validate(all bool) error {
 	var errors []error
 
 	if len(errors) > 0 {
-		return DeleteDocumentCategoryRequestMultiError(errors)
+		return DeleteCategoryRequestMultiError(errors)
 	}
 
 	return nil
 }
 
-// DeleteDocumentCategoryRequestMultiError is an error wrapping multiple
-// validation errors returned by DeleteDocumentCategoryRequest.ValidateAll()
-// if the designated constraints aren't met.
-type DeleteDocumentCategoryRequestMultiError []error
+// DeleteCategoryRequestMultiError is an error wrapping multiple validation
+// errors returned by DeleteCategoryRequest.ValidateAll() if the designated
+// constraints aren't met.
+type DeleteCategoryRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m DeleteDocumentCategoryRequestMultiError) Error() string {
+func (m DeleteCategoryRequestMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -6964,12 +6953,11 @@ func (m DeleteDocumentCategoryRequestMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m DeleteDocumentCategoryRequestMultiError) AllErrors() []error { return m }
+func (m DeleteCategoryRequestMultiError) AllErrors() []error { return m }
 
-// DeleteDocumentCategoryRequestValidationError is the validation error
-// returned by DeleteDocumentCategoryRequest.Validate if the designated
-// constraints aren't met.
-type DeleteDocumentCategoryRequestValidationError struct {
+// DeleteCategoryRequestValidationError is the validation error returned by
+// DeleteCategoryRequest.Validate if the designated constraints aren't met.
+type DeleteCategoryRequestValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -6977,24 +6965,24 @@ type DeleteDocumentCategoryRequestValidationError struct {
 }
 
 // Field function returns field value.
-func (e DeleteDocumentCategoryRequestValidationError) Field() string { return e.field }
+func (e DeleteCategoryRequestValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e DeleteDocumentCategoryRequestValidationError) Reason() string { return e.reason }
+func (e DeleteCategoryRequestValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e DeleteDocumentCategoryRequestValidationError) Cause() error { return e.cause }
+func (e DeleteCategoryRequestValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e DeleteDocumentCategoryRequestValidationError) Key() bool { return e.key }
+func (e DeleteCategoryRequestValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e DeleteDocumentCategoryRequestValidationError) ErrorName() string {
-	return "DeleteDocumentCategoryRequestValidationError"
+func (e DeleteCategoryRequestValidationError) ErrorName() string {
+	return "DeleteCategoryRequestValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e DeleteDocumentCategoryRequestValidationError) Error() string {
+func (e DeleteCategoryRequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -7006,14 +6994,14 @@ func (e DeleteDocumentCategoryRequestValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sDeleteDocumentCategoryRequest.%s: %s%s",
+		"invalid %sDeleteCategoryRequest.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = DeleteDocumentCategoryRequestValidationError{}
+var _ error = DeleteCategoryRequestValidationError{}
 
 var _ interface {
 	Field() string
@@ -7021,24 +7009,24 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = DeleteDocumentCategoryRequestValidationError{}
+} = DeleteCategoryRequestValidationError{}
 
-// Validate checks the field values on DeleteDocumentCategoryResponse with the
-// rules defined in the proto definition for this message. If any rules are
+// Validate checks the field values on DeleteCategoryResponse with the rules
+// defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *DeleteDocumentCategoryResponse) Validate() error {
+func (m *DeleteCategoryResponse) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on DeleteDocumentCategoryResponse with
-// the rules defined in the proto definition for this message. If any rules
-// are violated, the result is a list of violation errors wrapped in
-// DeleteDocumentCategoryResponseMultiError, or nil if none found.
-func (m *DeleteDocumentCategoryResponse) ValidateAll() error {
+// ValidateAll checks the field values on DeleteCategoryResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DeleteCategoryResponseMultiError, or nil if none found.
+func (m *DeleteCategoryResponse) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *DeleteDocumentCategoryResponse) validate(all bool) error {
+func (m *DeleteCategoryResponse) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -7046,19 +7034,19 @@ func (m *DeleteDocumentCategoryResponse) validate(all bool) error {
 	var errors []error
 
 	if len(errors) > 0 {
-		return DeleteDocumentCategoryResponseMultiError(errors)
+		return DeleteCategoryResponseMultiError(errors)
 	}
 
 	return nil
 }
 
-// DeleteDocumentCategoryResponseMultiError is an error wrapping multiple
-// validation errors returned by DeleteDocumentCategoryResponse.ValidateAll()
-// if the designated constraints aren't met.
-type DeleteDocumentCategoryResponseMultiError []error
+// DeleteCategoryResponseMultiError is an error wrapping multiple validation
+// errors returned by DeleteCategoryResponse.ValidateAll() if the designated
+// constraints aren't met.
+type DeleteCategoryResponseMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m DeleteDocumentCategoryResponseMultiError) Error() string {
+func (m DeleteCategoryResponseMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -7067,12 +7055,11 @@ func (m DeleteDocumentCategoryResponseMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m DeleteDocumentCategoryResponseMultiError) AllErrors() []error { return m }
+func (m DeleteCategoryResponseMultiError) AllErrors() []error { return m }
 
-// DeleteDocumentCategoryResponseValidationError is the validation error
-// returned by DeleteDocumentCategoryResponse.Validate if the designated
-// constraints aren't met.
-type DeleteDocumentCategoryResponseValidationError struct {
+// DeleteCategoryResponseValidationError is the validation error returned by
+// DeleteCategoryResponse.Validate if the designated constraints aren't met.
+type DeleteCategoryResponseValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -7080,24 +7067,24 @@ type DeleteDocumentCategoryResponseValidationError struct {
 }
 
 // Field function returns field value.
-func (e DeleteDocumentCategoryResponseValidationError) Field() string { return e.field }
+func (e DeleteCategoryResponseValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e DeleteDocumentCategoryResponseValidationError) Reason() string { return e.reason }
+func (e DeleteCategoryResponseValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e DeleteDocumentCategoryResponseValidationError) Cause() error { return e.cause }
+func (e DeleteCategoryResponseValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e DeleteDocumentCategoryResponseValidationError) Key() bool { return e.key }
+func (e DeleteCategoryResponseValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e DeleteDocumentCategoryResponseValidationError) ErrorName() string {
-	return "DeleteDocumentCategoryResponseValidationError"
+func (e DeleteCategoryResponseValidationError) ErrorName() string {
+	return "DeleteCategoryResponseValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e DeleteDocumentCategoryResponseValidationError) Error() string {
+func (e DeleteCategoryResponseValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -7109,14 +7096,14 @@ func (e DeleteDocumentCategoryResponseValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sDeleteDocumentCategoryResponse.%s: %s%s",
+		"invalid %sDeleteCategoryResponse.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = DeleteDocumentCategoryResponseValidationError{}
+var _ error = DeleteCategoryResponseValidationError{}
 
 var _ interface {
 	Field() string
@@ -7124,4 +7111,4 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = DeleteDocumentCategoryResponseValidationError{}
+} = DeleteCategoryResponseValidationError{}

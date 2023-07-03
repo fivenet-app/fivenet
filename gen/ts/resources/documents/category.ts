@@ -3,9 +3,9 @@
 // tslint:disable
 import { MessageType } from "@protobuf-ts/runtime";
 /**
- * @generated from protobuf message resources.documents.DocumentCategory
+ * @generated from protobuf message resources.documents.Category
  */
-export interface DocumentCategory {
+export interface Category {
     /**
      * @generated from protobuf field: uint64 id = 1;
      */
@@ -24,9 +24,9 @@ export interface DocumentCategory {
     job?: string; // @gotags: alias:"job"
 }
 // @generated message type with reflection information, may provide speed optimized methods
-class DocumentCategory$Type extends MessageType<DocumentCategory> {
+class Category$Type extends MessageType<Category> {
     constructor() {
-        super("resources.documents.DocumentCategory", [
+        super("resources.documents.Category", [
             { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
             { no: 2, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "128" } } } },
             { no: 3, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
@@ -35,6 +35,6 @@ class DocumentCategory$Type extends MessageType<DocumentCategory> {
     }
 }
 /**
- * @generated MessageType for protobuf message resources.documents.DocumentCategory
+ * @generated MessageType for protobuf message resources.documents.Category
  */
-export const DocumentCategory = new DocumentCategory$Type();
+export const Category = new Category$Type();

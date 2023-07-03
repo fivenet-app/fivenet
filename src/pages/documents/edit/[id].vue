@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import DocumentEditor from '~/components/documents/DocumentEditor.vue';
+import Editor from '~/components/documents/Editor.vue';
 import ContentWrapper from '~/components/partials/ContentWrapper.vue';
 import { TypedRouteFromName } from '~~/.nuxt/typed-router/__router';
 
@@ -22,6 +22,6 @@ const route = useRoute('documents-edit-id');
 
 <template>
     <ContentWrapper>
-        <DocumentEditor :id="BigInt(route.params.id)" />
+        <Editor :id="BigInt(route.params.id)" />
     </ContentWrapper>
 </template>

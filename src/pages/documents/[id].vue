@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import ClipboardButton from '~/components/clipboard/ClipboardButton.vue';
-import DocumentView from '~/components/documents/DocumentView.vue';
+import View from '~/components/documents/View.vue';
 import ContentWrapper from '~/components/partials/ContentWrapper.vue';
 import { TypedRouteFromName } from '~~/.nuxt/typed-router/__router';
 
@@ -23,7 +23,7 @@ const route = useRoute('documents-id');
 
 <template>
     <ContentWrapper>
-        <DocumentView :documentId="BigInt(route.params.id)" />
+        <View :documentId="BigInt(route.params.id)" />
         <ClipboardButton />
     </ContentWrapper>
 </template>

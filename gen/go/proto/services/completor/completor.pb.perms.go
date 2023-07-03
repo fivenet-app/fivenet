@@ -18,6 +18,7 @@ const (
 )
 
 var PermsRemap = map[string]string{
+
 	// Service: CompletorService
 	"CompletorService/ListLawBooks": "Any",
 }

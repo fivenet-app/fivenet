@@ -2,13 +2,13 @@
 import SvgIcon from '@jamescoyle/vue-icon';
 import { mdiClipboardList } from '@mdi/js';
 import { ref } from 'vue';
-import ClipboardModal from './ClipboardModal.vue';
+import Modal from '~/components/clipboard/modal/Modal.vue';
 
 const open = ref(false);
 </script>
 
 <template>
-    <ClipboardModal :open="open" @close="open = false" />
+    <Modal :open="open" @close="open = false" />
     <button
         type="button"
         :title="$t('common.clipboard')"

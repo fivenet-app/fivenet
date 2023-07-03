@@ -4,11 +4,11 @@ import (
 	"database/sql/driver"
 )
 
-func (x *DocumentShort) SetCategory(cat *DocumentCategory) {
+func (x *DocumentShort) SetCategory(cat *Category) {
 	x.Category = cat
 }
 
-func (x *Document) SetCategory(cat *DocumentCategory) {
+func (x *Document) SetCategory(cat *Category) {
 	x.Category = cat
 }
 

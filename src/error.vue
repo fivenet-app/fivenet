@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { useClipboard } from '@vueuse/core';
+import ContentCenterWrapper from '~/components/partials/ContentCenterWrapper.vue';
 import HeroFull from '~/components/partials/HeroFull.vue';
 import LoadingBar from '~/components/partials/LoadingBar.vue';
-import ContentCenterWrapper from './components/partials/ContentCenterWrapper.vue';
 
 useHead({
     title: 'Error occured - FiveNet',

@@ -56,14 +56,14 @@ type DocStoreServiceClient interface {
 	AddDocumentRelation(ctx context.Context, in *AddDocumentRelationRequest, opts ...grpc.CallOption) (*AddDocumentRelationResponse, error)
 	// @perm: Name=AddDocumentRelation
 	RemoveDocumentRelation(ctx context.Context, in *RemoveDocumentRelationRequest, opts ...grpc.CallOption) (*RemoveDocumentRelationResponse, error)
+	// @perm: Name=GetDocument
+	GetComments(ctx context.Context, in *GetCommentsRequest, opts ...grpc.CallOption) (*GetCommentsResponse, error)
 	// @perm
-	GetDocumentComments(ctx context.Context, in *GetDocumentCommentsRequest, opts ...grpc.CallOption) (*GetDocumentCommentsResponse, error)
-	// @perm
-	PostDocumentComment(ctx context.Context, in *PostDocumentCommentRequest, opts ...grpc.CallOption) (*PostDocumentCommentResponse, error)
-	// @perm: Name=PostDocumentComment
-	EditDocumentComment(ctx context.Context, in *EditDocumentCommentRequest, opts ...grpc.CallOption) (*EditDocumentCommentResponse, error)
+	PostComment(ctx context.Context, in *PostCommentRequest, opts ...grpc.CallOption) (*PostCommentResponse, error)
+	// @perm: Name=PostComment
+	EditComment(ctx context.Context, in *EditCommentRequest, opts ...grpc.CallOption) (*EditCommentResponse, error)
 	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
-	DeleteDocumentComment(ctx context.Context, in *DeleteDocumentCommentRequest, opts ...grpc.CallOption) (*DeleteDocumentCommentResponse, error)
+	DeleteComment(ctx context.Context, in *DeleteCommentRequest, opts ...grpc.CallOption) (*DeleteCommentResponse, error)
 	// @perm: Name=GetDocument
 	GetDocumentAccess(ctx context.Context, in *GetDocumentAccessRequest, opts ...grpc.CallOption) (*GetDocumentAccessResponse, error)
 	// @perm: Name=CreateDocument
@@ -71,13 +71,13 @@ type DocStoreServiceClient interface {
 	// @perm
 	ListUserDocuments(ctx context.Context, in *ListUserDocumentsRequest, opts ...grpc.CallOption) (*ListUserDocumentsResponse, error)
 	// @perm
-	ListDocumentCategories(ctx context.Context, in *ListDocumentCategoriesRequest, opts ...grpc.CallOption) (*ListDocumentCategoriesResponse, error)
+	ListCategories(ctx context.Context, in *ListCategoriesRequest, opts ...grpc.CallOption) (*ListCategoriesResponse, error)
 	// @perm
-	CreateDocumentCategory(ctx context.Context, in *CreateDocumentCategoryRequest, opts ...grpc.CallOption) (*CreateDocumentCategoryResponse, error)
-	// @perm: Name=CreateDocumentCategory
-	UpdateDocumentCategory(ctx context.Context, in *UpdateDocumentCategoryRequest, opts ...grpc.CallOption) (*UpdateDocumentCategoryResponse, error)
+	CreateCategory(ctx context.Context, in *CreateCategoryRequest, opts ...grpc.CallOption) (*CreateCategoryResponse, error)
+	// @perm: Name=CreateCategory
+	UpdateCategory(ctx context.Context, in *UpdateCategoryRequest, opts ...grpc.CallOption) (*UpdateCategoryResponse, error)
 	// @perm
-	DeleteDocumentCategory(ctx context.Context, in *DeleteDocumentCategoryRequest, opts ...grpc.CallOption) (*DeleteDocumentCategoryResponse, error)
+	DeleteCategory(ctx context.Context, in *DeleteCategoryRequest, opts ...grpc.CallOption) (*DeleteCategoryResponse, error)
 }
 
 type docStoreServiceClient struct {
@@ -241,36 +241,36 @@ func (c *docStoreServiceClient) RemoveDocumentRelation(ctx context.Context, in *
 	return out, nil
 }
 
-func (c *docStoreServiceClient) GetDocumentComments(ctx context.Context, in *GetDocumentCommentsRequest, opts ...grpc.CallOption) (*GetDocumentCommentsResponse, error) {
-	out := new(GetDocumentCommentsResponse)
-	err := c.cc.Invoke(ctx, "/services.docstore.DocStoreService/GetDocumentComments", in, out, opts...)
+func (c *docStoreServiceClient) GetComments(ctx context.Context, in *GetCommentsRequest, opts ...grpc.CallOption) (*GetCommentsResponse, error) {
+	out := new(GetCommentsResponse)
+	err := c.cc.Invoke(ctx, "/services.docstore.DocStoreService/GetComments", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *docStoreServiceClient) PostDocumentComment(ctx context.Context, in *PostDocumentCommentRequest, opts ...grpc.CallOption) (*PostDocumentCommentResponse, error) {
-	out := new(PostDocumentCommentResponse)
-	err := c.cc.Invoke(ctx, "/services.docstore.DocStoreService/PostDocumentComment", in, out, opts...)
+func (c *docStoreServiceClient) PostComment(ctx context.Context, in *PostCommentRequest, opts ...grpc.CallOption) (*PostCommentResponse, error) {
+	out := new(PostCommentResponse)
+	err := c.cc.Invoke(ctx, "/services.docstore.DocStoreService/PostComment", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *docStoreServiceClient) EditDocumentComment(ctx context.Context, in *EditDocumentCommentRequest, opts ...grpc.CallOption) (*EditDocumentCommentResponse, error) {
-	out := new(EditDocumentCommentResponse)
-	err := c.cc.Invoke(ctx, "/services.docstore.DocStoreService/EditDocumentComment", in, out, opts...)
+func (c *docStoreServiceClient) EditComment(ctx context.Context, in *EditCommentRequest, opts ...grpc.CallOption) (*EditCommentResponse, error) {
+	out := new(EditCommentResponse)
+	err := c.cc.Invoke(ctx, "/services.docstore.DocStoreService/EditComment", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *docStoreServiceClient) DeleteDocumentComment(ctx context.Context, in *DeleteDocumentCommentRequest, opts ...grpc.CallOption) (*DeleteDocumentCommentResponse, error) {
-	out := new(DeleteDocumentCommentResponse)
-	err := c.cc.Invoke(ctx, "/services.docstore.DocStoreService/DeleteDocumentComment", in, out, opts...)
+func (c *docStoreServiceClient) DeleteComment(ctx context.Context, in *DeleteCommentRequest, opts ...grpc.CallOption) (*DeleteCommentResponse, error) {
+	out := new(DeleteCommentResponse)
+	err := c.cc.Invoke(ctx, "/services.docstore.DocStoreService/DeleteComment", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -304,36 +304,36 @@ func (c *docStoreServiceClient) ListUserDocuments(ctx context.Context, in *ListU
 	return out, nil
 }
 
-func (c *docStoreServiceClient) ListDocumentCategories(ctx context.Context, in *ListDocumentCategoriesRequest, opts ...grpc.CallOption) (*ListDocumentCategoriesResponse, error) {
-	out := new(ListDocumentCategoriesResponse)
-	err := c.cc.Invoke(ctx, "/services.docstore.DocStoreService/ListDocumentCategories", in, out, opts...)
+func (c *docStoreServiceClient) ListCategories(ctx context.Context, in *ListCategoriesRequest, opts ...grpc.CallOption) (*ListCategoriesResponse, error) {
+	out := new(ListCategoriesResponse)
+	err := c.cc.Invoke(ctx, "/services.docstore.DocStoreService/ListCategories", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *docStoreServiceClient) CreateDocumentCategory(ctx context.Context, in *CreateDocumentCategoryRequest, opts ...grpc.CallOption) (*CreateDocumentCategoryResponse, error) {
-	out := new(CreateDocumentCategoryResponse)
-	err := c.cc.Invoke(ctx, "/services.docstore.DocStoreService/CreateDocumentCategory", in, out, opts...)
+func (c *docStoreServiceClient) CreateCategory(ctx context.Context, in *CreateCategoryRequest, opts ...grpc.CallOption) (*CreateCategoryResponse, error) {
+	out := new(CreateCategoryResponse)
+	err := c.cc.Invoke(ctx, "/services.docstore.DocStoreService/CreateCategory", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *docStoreServiceClient) UpdateDocumentCategory(ctx context.Context, in *UpdateDocumentCategoryRequest, opts ...grpc.CallOption) (*UpdateDocumentCategoryResponse, error) {
-	out := new(UpdateDocumentCategoryResponse)
-	err := c.cc.Invoke(ctx, "/services.docstore.DocStoreService/UpdateDocumentCategory", in, out, opts...)
+func (c *docStoreServiceClient) UpdateCategory(ctx context.Context, in *UpdateCategoryRequest, opts ...grpc.CallOption) (*UpdateCategoryResponse, error) {
+	out := new(UpdateCategoryResponse)
+	err := c.cc.Invoke(ctx, "/services.docstore.DocStoreService/UpdateCategory", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *docStoreServiceClient) DeleteDocumentCategory(ctx context.Context, in *DeleteDocumentCategoryRequest, opts ...grpc.CallOption) (*DeleteDocumentCategoryResponse, error) {
-	out := new(DeleteDocumentCategoryResponse)
-	err := c.cc.Invoke(ctx, "/services.docstore.DocStoreService/DeleteDocumentCategory", in, out, opts...)
+func (c *docStoreServiceClient) DeleteCategory(ctx context.Context, in *DeleteCategoryRequest, opts ...grpc.CallOption) (*DeleteCategoryResponse, error) {
+	out := new(DeleteCategoryResponse)
+	err := c.cc.Invoke(ctx, "/services.docstore.DocStoreService/DeleteCategory", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -378,14 +378,14 @@ type DocStoreServiceServer interface {
 	AddDocumentRelation(context.Context, *AddDocumentRelationRequest) (*AddDocumentRelationResponse, error)
 	// @perm: Name=AddDocumentRelation
 	RemoveDocumentRelation(context.Context, *RemoveDocumentRelationRequest) (*RemoveDocumentRelationResponse, error)
+	// @perm: Name=GetDocument
+	GetComments(context.Context, *GetCommentsRequest) (*GetCommentsResponse, error)
 	// @perm
-	GetDocumentComments(context.Context, *GetDocumentCommentsRequest) (*GetDocumentCommentsResponse, error)
-	// @perm
-	PostDocumentComment(context.Context, *PostDocumentCommentRequest) (*PostDocumentCommentResponse, error)
-	// @perm: Name=PostDocumentComment
-	EditDocumentComment(context.Context, *EditDocumentCommentRequest) (*EditDocumentCommentResponse, error)
+	PostComment(context.Context, *PostCommentRequest) (*PostCommentResponse, error)
+	// @perm: Name=PostComment
+	EditComment(context.Context, *EditCommentRequest) (*EditCommentResponse, error)
 	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
-	DeleteDocumentComment(context.Context, *DeleteDocumentCommentRequest) (*DeleteDocumentCommentResponse, error)
+	DeleteComment(context.Context, *DeleteCommentRequest) (*DeleteCommentResponse, error)
 	// @perm: Name=GetDocument
 	GetDocumentAccess(context.Context, *GetDocumentAccessRequest) (*GetDocumentAccessResponse, error)
 	// @perm: Name=CreateDocument
@@ -393,13 +393,13 @@ type DocStoreServiceServer interface {
 	// @perm
 	ListUserDocuments(context.Context, *ListUserDocumentsRequest) (*ListUserDocumentsResponse, error)
 	// @perm
-	ListDocumentCategories(context.Context, *ListDocumentCategoriesRequest) (*ListDocumentCategoriesResponse, error)
+	ListCategories(context.Context, *ListCategoriesRequest) (*ListCategoriesResponse, error)
 	// @perm
-	CreateDocumentCategory(context.Context, *CreateDocumentCategoryRequest) (*CreateDocumentCategoryResponse, error)
-	// @perm: Name=CreateDocumentCategory
-	UpdateDocumentCategory(context.Context, *UpdateDocumentCategoryRequest) (*UpdateDocumentCategoryResponse, error)
+	CreateCategory(context.Context, *CreateCategoryRequest) (*CreateCategoryResponse, error)
+	// @perm: Name=CreateCategory
+	UpdateCategory(context.Context, *UpdateCategoryRequest) (*UpdateCategoryResponse, error)
 	// @perm
-	DeleteDocumentCategory(context.Context, *DeleteDocumentCategoryRequest) (*DeleteDocumentCategoryResponse, error)
+	DeleteCategory(context.Context, *DeleteCategoryRequest) (*DeleteCategoryResponse, error)
 	mustEmbedUnimplementedDocStoreServiceServer()
 }
 
@@ -458,17 +458,17 @@ func (UnimplementedDocStoreServiceServer) AddDocumentRelation(context.Context, *
 func (UnimplementedDocStoreServiceServer) RemoveDocumentRelation(context.Context, *RemoveDocumentRelationRequest) (*RemoveDocumentRelationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemoveDocumentRelation not implemented")
 }
-func (UnimplementedDocStoreServiceServer) GetDocumentComments(context.Context, *GetDocumentCommentsRequest) (*GetDocumentCommentsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetDocumentComments not implemented")
+func (UnimplementedDocStoreServiceServer) GetComments(context.Context, *GetCommentsRequest) (*GetCommentsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetComments not implemented")
 }
-func (UnimplementedDocStoreServiceServer) PostDocumentComment(context.Context, *PostDocumentCommentRequest) (*PostDocumentCommentResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method PostDocumentComment not implemented")
+func (UnimplementedDocStoreServiceServer) PostComment(context.Context, *PostCommentRequest) (*PostCommentResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method PostComment not implemented")
 }
-func (UnimplementedDocStoreServiceServer) EditDocumentComment(context.Context, *EditDocumentCommentRequest) (*EditDocumentCommentResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method EditDocumentComment not implemented")
+func (UnimplementedDocStoreServiceServer) EditComment(context.Context, *EditCommentRequest) (*EditCommentResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method EditComment not implemented")
 }
-func (UnimplementedDocStoreServiceServer) DeleteDocumentComment(context.Context, *DeleteDocumentCommentRequest) (*DeleteDocumentCommentResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteDocumentComment not implemented")
+func (UnimplementedDocStoreServiceServer) DeleteComment(context.Context, *DeleteCommentRequest) (*DeleteCommentResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteComment not implemented")
 }
 func (UnimplementedDocStoreServiceServer) GetDocumentAccess(context.Context, *GetDocumentAccessRequest) (*GetDocumentAccessResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetDocumentAccess not implemented")
@@ -479,17 +479,17 @@ func (UnimplementedDocStoreServiceServer) SetDocumentAccess(context.Context, *Se
 func (UnimplementedDocStoreServiceServer) ListUserDocuments(context.Context, *ListUserDocumentsRequest) (*ListUserDocumentsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListUserDocuments not implemented")
 }
-func (UnimplementedDocStoreServiceServer) ListDocumentCategories(context.Context, *ListDocumentCategoriesRequest) (*ListDocumentCategoriesResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListDocumentCategories not implemented")
+func (UnimplementedDocStoreServiceServer) ListCategories(context.Context, *ListCategoriesRequest) (*ListCategoriesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListCategories not implemented")
 }
-func (UnimplementedDocStoreServiceServer) CreateDocumentCategory(context.Context, *CreateDocumentCategoryRequest) (*CreateDocumentCategoryResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateDocumentCategory not implemented")
+func (UnimplementedDocStoreServiceServer) CreateCategory(context.Context, *CreateCategoryRequest) (*CreateCategoryResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateCategory not implemented")
 }
-func (UnimplementedDocStoreServiceServer) UpdateDocumentCategory(context.Context, *UpdateDocumentCategoryRequest) (*UpdateDocumentCategoryResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UpdateDocumentCategory not implemented")
+func (UnimplementedDocStoreServiceServer) UpdateCategory(context.Context, *UpdateCategoryRequest) (*UpdateCategoryResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateCategory not implemented")
 }
-func (UnimplementedDocStoreServiceServer) DeleteDocumentCategory(context.Context, *DeleteDocumentCategoryRequest) (*DeleteDocumentCategoryResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteDocumentCategory not implemented")
+func (UnimplementedDocStoreServiceServer) DeleteCategory(context.Context, *DeleteCategoryRequest) (*DeleteCategoryResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteCategory not implemented")
 }
 func (UnimplementedDocStoreServiceServer) mustEmbedUnimplementedDocStoreServiceServer() {}
 
@@ -810,74 +810,74 @@ func _DocStoreService_RemoveDocumentRelation_Handler(srv interface{}, ctx contex
 	return interceptor(ctx, in, info, handler)
 }
 
-func _DocStoreService_GetDocumentComments_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetDocumentCommentsRequest)
+func _DocStoreService_GetComments_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetCommentsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(DocStoreServiceServer).GetDocumentComments(ctx, in)
+		return srv.(DocStoreServiceServer).GetComments(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/services.docstore.DocStoreService/GetDocumentComments",
+		FullMethod: "/services.docstore.DocStoreService/GetComments",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DocStoreServiceServer).GetDocumentComments(ctx, req.(*GetDocumentCommentsRequest))
+		return srv.(DocStoreServiceServer).GetComments(ctx, req.(*GetCommentsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _DocStoreService_PostDocumentComment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(PostDocumentCommentRequest)
+func _DocStoreService_PostComment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(PostCommentRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(DocStoreServiceServer).PostDocumentComment(ctx, in)
+		return srv.(DocStoreServiceServer).PostComment(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/services.docstore.DocStoreService/PostDocumentComment",
+		FullMethod: "/services.docstore.DocStoreService/PostComment",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DocStoreServiceServer).PostDocumentComment(ctx, req.(*PostDocumentCommentRequest))
+		return srv.(DocStoreServiceServer).PostComment(ctx, req.(*PostCommentRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _DocStoreService_EditDocumentComment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(EditDocumentCommentRequest)
+func _DocStoreService_EditComment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(EditCommentRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(DocStoreServiceServer).EditDocumentComment(ctx, in)
+		return srv.(DocStoreServiceServer).EditComment(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/services.docstore.DocStoreService/EditDocumentComment",
+		FullMethod: "/services.docstore.DocStoreService/EditComment",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DocStoreServiceServer).EditDocumentComment(ctx, req.(*EditDocumentCommentRequest))
+		return srv.(DocStoreServiceServer).EditComment(ctx, req.(*EditCommentRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _DocStoreService_DeleteDocumentComment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteDocumentCommentRequest)
+func _DocStoreService_DeleteComment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteCommentRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(DocStoreServiceServer).DeleteDocumentComment(ctx, in)
+		return srv.(DocStoreServiceServer).DeleteComment(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/services.docstore.DocStoreService/DeleteDocumentComment",
+		FullMethod: "/services.docstore.DocStoreService/DeleteComment",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DocStoreServiceServer).DeleteDocumentComment(ctx, req.(*DeleteDocumentCommentRequest))
+		return srv.(DocStoreServiceServer).DeleteComment(ctx, req.(*DeleteCommentRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -936,74 +936,74 @@ func _DocStoreService_ListUserDocuments_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
-func _DocStoreService_ListDocumentCategories_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListDocumentCategoriesRequest)
+func _DocStoreService_ListCategories_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListCategoriesRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(DocStoreServiceServer).ListDocumentCategories(ctx, in)
+		return srv.(DocStoreServiceServer).ListCategories(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/services.docstore.DocStoreService/ListDocumentCategories",
+		FullMethod: "/services.docstore.DocStoreService/ListCategories",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DocStoreServiceServer).ListDocumentCategories(ctx, req.(*ListDocumentCategoriesRequest))
+		return srv.(DocStoreServiceServer).ListCategories(ctx, req.(*ListCategoriesRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _DocStoreService_CreateDocumentCategory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateDocumentCategoryRequest)
+func _DocStoreService_CreateCategory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateCategoryRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(DocStoreServiceServer).CreateDocumentCategory(ctx, in)
+		return srv.(DocStoreServiceServer).CreateCategory(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/services.docstore.DocStoreService/CreateDocumentCategory",
+		FullMethod: "/services.docstore.DocStoreService/CreateCategory",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DocStoreServiceServer).CreateDocumentCategory(ctx, req.(*CreateDocumentCategoryRequest))
+		return srv.(DocStoreServiceServer).CreateCategory(ctx, req.(*CreateCategoryRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _DocStoreService_UpdateDocumentCategory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UpdateDocumentCategoryRequest)
+func _DocStoreService_UpdateCategory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateCategoryRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(DocStoreServiceServer).UpdateDocumentCategory(ctx, in)
+		return srv.(DocStoreServiceServer).UpdateCategory(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/services.docstore.DocStoreService/UpdateDocumentCategory",
+		FullMethod: "/services.docstore.DocStoreService/UpdateCategory",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DocStoreServiceServer).UpdateDocumentCategory(ctx, req.(*UpdateDocumentCategoryRequest))
+		return srv.(DocStoreServiceServer).UpdateCategory(ctx, req.(*UpdateCategoryRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _DocStoreService_DeleteDocumentCategory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteDocumentCategoryRequest)
+func _DocStoreService_DeleteCategory_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteCategoryRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(DocStoreServiceServer).DeleteDocumentCategory(ctx, in)
+		return srv.(DocStoreServiceServer).DeleteCategory(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/services.docstore.DocStoreService/DeleteDocumentCategory",
+		FullMethod: "/services.docstore.DocStoreService/DeleteCategory",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DocStoreServiceServer).DeleteDocumentCategory(ctx, req.(*DeleteDocumentCategoryRequest))
+		return srv.(DocStoreServiceServer).DeleteCategory(ctx, req.(*DeleteCategoryRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -1084,20 +1084,20 @@ var DocStoreService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _DocStoreService_RemoveDocumentRelation_Handler,
 		},
 		{
-			MethodName: "GetDocumentComments",
-			Handler:    _DocStoreService_GetDocumentComments_Handler,
+			MethodName: "GetComments",
+			Handler:    _DocStoreService_GetComments_Handler,
 		},
 		{
-			MethodName: "PostDocumentComment",
-			Handler:    _DocStoreService_PostDocumentComment_Handler,
+			MethodName: "PostComment",
+			Handler:    _DocStoreService_PostComment_Handler,
 		},
 		{
-			MethodName: "EditDocumentComment",
-			Handler:    _DocStoreService_EditDocumentComment_Handler,
+			MethodName: "EditComment",
+			Handler:    _DocStoreService_EditComment_Handler,
 		},
 		{
-			MethodName: "DeleteDocumentComment",
-			Handler:    _DocStoreService_DeleteDocumentComment_Handler,
+			MethodName: "DeleteComment",
+			Handler:    _DocStoreService_DeleteComment_Handler,
 		},
 		{
 			MethodName: "GetDocumentAccess",
@@ -1112,20 +1112,20 @@ var DocStoreService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _DocStoreService_ListUserDocuments_Handler,
 		},
 		{
-			MethodName: "ListDocumentCategories",
-			Handler:    _DocStoreService_ListDocumentCategories_Handler,
+			MethodName: "ListCategories",
+			Handler:    _DocStoreService_ListCategories_Handler,
 		},
 		{
-			MethodName: "CreateDocumentCategory",
-			Handler:    _DocStoreService_CreateDocumentCategory_Handler,
+			MethodName: "CreateCategory",
+			Handler:    _DocStoreService_CreateCategory_Handler,
 		},
 		{
-			MethodName: "UpdateDocumentCategory",
-			Handler:    _DocStoreService_UpdateDocumentCategory_Handler,
+			MethodName: "UpdateCategory",
+			Handler:    _DocStoreService_UpdateCategory_Handler,
 		},
 		{
-			MethodName: "DeleteDocumentCategory",
-			Handler:    _DocStoreService_DeleteDocumentCategory_Handler,
+			MethodName: "DeleteCategory",
+			Handler:    _DocStoreService_DeleteCategory_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

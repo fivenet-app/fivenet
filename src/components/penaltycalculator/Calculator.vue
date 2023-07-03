@@ -4,13 +4,13 @@ import SvgIcon from '@jamescoyle/vue-icon';
 import { mdiChevronDown, mdiGavel } from '@mdi/js';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { useClipboard } from '@vueuse/core';
-import DataErrorBlock from '~/components/partials/DataErrorBlock.vue';
-import DataNoDataBlock from '~/components/partials/DataNoDataBlock.vue';
-import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';
+import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
+import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
+import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import ListEntry from '~/components/penaltycalculator/ListEntry.vue';
 import Stats from '~/components/penaltycalculator/Stats.vue';
 import { useNotificationsStore } from '~/store/notifications';
-import { Law, LawBook } from '../../../gen/ts/resources/laws/laws';
+import { Law, LawBook } from '~~/gen/ts/resources/laws/laws';
 import SummaryTable from './SummaryTable.vue';
 
 const { $grpc } = useNuxtApp();

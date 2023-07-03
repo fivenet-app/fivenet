@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import ClipboardButton from '~/components/clipboard/ClipboardButton.vue';
-import VehiclesList from '~/components/vehicles/VehiclesList.vue';
+import List from '~/components/vehicles/List.vue';
 
 useHead({
     title: 'pages.vehicles.title',
@@ -14,7 +14,7 @@ definePageMeta({
 
 <template>
     <div class="w-full">
-        <VehiclesList />
+        <List />
         <ClipboardButton />
     </div>
 </template>

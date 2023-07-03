@@ -2,7 +2,7 @@
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import SvgIcon from '@jamescoyle/vue-icon';
 import { mdiClose } from '@mdi/js';
-import { Dispatch } from '../../../gen/ts/resources/dispatch/dispatch';
+import { Dispatch } from '~~/gen/ts/resources/dispatch/dispatch';
 
 defineProps<{
     open: boolean;

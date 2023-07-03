@@ -20,6 +20,7 @@ const (
 )
 
 var PermsRemap = map[string]string{
+
 	// Service: RectorService
 	"RectorService/GetPermissions":   "RectorService/GetRoles",
 	"RectorService/GetRole":          "RectorService/GetRoles",

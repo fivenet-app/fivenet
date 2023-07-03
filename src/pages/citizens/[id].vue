@@ -1,10 +1,10 @@
 <script lang="ts" setup>
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
-import CitizenInfo from '~/components/citizens/CitizenInfo.vue';
+import Info from '~/components/citizens/info/Info.vue';
 import ClipboardButton from '~/components/clipboard/ClipboardButton.vue';
 import ContentWrapper from '~/components/partials/ContentWrapper.vue';
-import DataErrorBlock from '~/components/partials/DataErrorBlock.vue';
-import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';
+import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
+import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { TypedRouteFromName } from '~~/.nuxt/typed-router/__router';
 import { User } from '~~/gen/ts/resources/users/users';
 
@@ -49,7 +49,7 @@ async function getUser(): Promise<User> {
         <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.citizen', 1)])" />
         <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.citizen', 1)])" :retry="refresh" />
         <div v-else>
-            <CitizenInfo :user="user!" />
+            <Info :user="user!" />
             <ClipboardButton />
         </div>
     </ContentWrapper>

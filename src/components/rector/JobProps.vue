@@ -1,11 +1,11 @@
 <script lang="ts" setup>
 import { mdiTune } from '@mdi/js';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
+import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
+import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
+import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { useNotificationsStore } from '~/store/notifications';
 import { JobProps } from '~~/gen/ts/resources/jobs/jobs';
-import DataErrorBlock from '../partials/DataErrorBlock.vue';
-import DataNoDataBlock from '../partials/DataNoDataBlock.vue';
-import DataPendingBlock from '../partials/DataPendingBlock.vue';
 
 const { $grpc } = useNuxtApp();
 

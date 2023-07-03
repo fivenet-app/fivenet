@@ -2,13 +2,13 @@
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import SvgIcon from '@jamescoyle/vue-icon';
 import { mdiPencil } from '@mdi/js';
-import ClipboardModalDocuments from '~/components/clipboard/ClipboardModalDocuments.vue';
-import ClipboardModalUsers from '~/components/clipboard/ClipboardModalUsers.vue';
-import ClipboardModalVehicles from '~/components/clipboard/ClipboardModalVehicles.vue';
+import Citizens from '~/components/clipboard/modal/Citizens.vue';
+import Documents from '~/components/clipboard/modal/Documents.vue';
+import Vehicles from '~/components/clipboard/modal/Vehicles.vue';
 import { useClipboardStore } from '~/store/clipboard';
 import { TemplateRequirements, TemplateShort } from '~~/gen/ts/resources/documents/templates';
-import TemplateRequirementsList from './TemplateRequirementsList.vue';
-import TemplatesList from './TemplatesList.vue';
+import List from './List.vue';
+import RequirementsList from './RequirementsList.vue';
 
 const clipboardStore = useClipboardStore();
 
@@ -185,7 +185,7 @@ async function clipboardDialog(): Promise<void> {
                                                     {{ $t('components.documents.templates.templates_modal.no_template') }}
                                                 </NuxtLink>
                                                 <div class="pt-4">
-                                                    <TemplatesList @selected="(t: TemplateShort) => templateSelected(t)" />
+                                                    <List @selected="(t: TemplateShort) => templateSelected(t)" />
                                                 </div>
                                             </div>
                                         </div>
@@ -218,10 +218,10 @@ async function clipboardDialog(): Promise<void> {
                                         <div class="mt-2 text-white">
                                             <div v-if="reqs.users">
                                                 <p>
-                                                    <TemplateRequirementsList name="User" :specs="reqs.users!" />
+                                                    <RequirementsList name="User" :specs="reqs.users!" />
                                                 </p>
 
-                                                <ClipboardModalUsers
+                                                <Citizens
                                                     :submit.sync="submit"
                                                     :showSelect="true"
                                                     :specs="reqs.users!"
@@ -230,10 +230,10 @@ async function clipboardDialog(): Promise<void> {
                                             </div>
                                             <div v-if="reqs.vehicles">
                                                 <p>
-                                                    <TemplateRequirementsList name="Vehicle" :specs="reqs.vehicles!" />
+                                                    <RequirementsList name="Vehicle" :specs="reqs.vehicles!" />
                                                 </p>
 
-                                                <ClipboardModalVehicles
+                                                <Vehicles
                                                     :submit.sync="submit"
                                                     :showSelect="true"
                                                     :specs="reqs.vehicles!"
@@ -242,10 +242,10 @@ async function clipboardDialog(): Promise<void> {
                                             </div>
                                             <div v-if="reqs.documents">
                                                 <p>
-                                                    <TemplateRequirementsList name="User" :specs="reqs.documents!" />
+                                                    <RequirementsList name="User" :specs="reqs.documents!" />
                                                 </p>
 
-                                                <ClipboardModalDocuments
+                                                <Documents
                                                     :submit.sync="submit"
                                                     :showSelect="true"
                                                     :specs="reqs.documents!"

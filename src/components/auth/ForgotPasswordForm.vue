@@ -2,7 +2,8 @@
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { digits, max, min, required } from '@vee-validate/rules';
 import { defineRule } from 'vee-validate';
-import Alert from '~/components/partials/Alert.vue';
+import PasswordStrengthMeter from '~/components/auth/PasswordStrengthMeter.vue';
+import Alert from '~/components/partials/elements/Alert.vue';
 import { useNotificationsStore } from '~/store/notifications';
 
 const { $grpc } = useNuxtApp();
@@ -12,8 +13,6 @@ const notifications = useNotificationsStore();
 defineEmits<{
     (e: 'back'): void;
 }>();
-
-const { t } = useI18n();
 
 const newPassword = ref('');
 
@@ -105,7 +104,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await forgotPassw
                     v-model:model-value="newPassword"
                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                 />
-                <PartialsPasswordStrengthMeter :input="newPassword" class="mt-2" />
+                <PasswordStrengthMeter :input="newPassword" class="mt-2" />
                 <VeeErrorMessage name="password" as="p" class="mt-2 text-sm text-error-400" />
             </div>
         </div>

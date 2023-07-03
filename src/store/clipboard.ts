@@ -1,7 +1,7 @@
 import { StoreDefinition, defineStore } from 'pinia';
 import { fromString } from '~/utils/time';
 import * as google_protobuf_timestamp from '~~/gen/ts/google/protobuf/timestamp';
-import { DocumentCategory } from '~~/gen/ts/resources/documents/category';
+import { Category } from '~~/gen/ts/resources/documents/category';
 import { DOC_CONTENT_TYPE, Document, DocumentShort } from '~~/gen/ts/resources/documents/documents';
 import { ObjectSpecs, TemplateData } from '~~/gen/ts/resources/documents/templates';
 import { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
@@ -209,7 +209,7 @@ export class ClipboardDocument {
     public createdAt: string;
     public title: string;
     public creator: ClipboardUser;
-    public category: DocumentCategory | undefined;
+    public category: Category | undefined;
     public state: string;
     public closed: boolean;
     public public: boolean;

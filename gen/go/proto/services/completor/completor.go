@@ -17,8 +17,8 @@ import (
 )
 
 var (
-	tUsers            = table.Users.AS("usershort")
-	tDocumentCategory = table.FivenetDocumentsCategories.AS("document_category")
+	tUsers    = table.Users.AS("usershort")
+	tCategory = table.FivenetDocumentsCategories.AS("category")
 )
 
 var (
@@ -130,26 +130,26 @@ func (s *Server) CompleteDocumentCategories(ctx context.Context, req *CompleteDo
 		jobsExp[i] = jet.String(jobs[i])
 	}
 
-	condition := tDocumentCategory.Job.IN(jobsExp...)
+	condition := tCategory.Job.IN(jobsExp...)
 	if req.Search != "" {
 		req.Search = "%" + req.Search + "%"
 		condition = condition.AND(
-			tDocumentCategory.Name.LIKE(jet.String(req.Search)),
+			tCategory.Name.LIKE(jet.String(req.Search)),
 		)
 	}
 
-	stmt := tDocumentCategory.
+	stmt := tCategory.
 		SELECT(
-			tDocumentCategory.ID,
-			tDocumentCategory.Name,
-			tDocumentCategory.Description,
-			tDocumentCategory.Job,
+			tCategory.ID,
+			tCategory.Name,
+			tCategory.Description,
+			tCategory.Job,
 		).
 		OPTIMIZER_HINTS(jet.OptimizerHint("idx_users_firstname_lastname_fulltext")).
-		FROM(tDocumentCategory).
+		FROM(tCategory).
 		WHERE(condition).
 		ORDER_BY(
-			tDocumentCategory.Name.DESC(),
+			tCategory.Name.DESC(),
 		).
 		LIMIT(15)
 

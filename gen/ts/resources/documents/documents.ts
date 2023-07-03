@@ -3,46 +3,9 @@
 // tslint:disable
 import { MessageType } from "@protobuf-ts/runtime";
 import { ACCESS_LEVEL } from "./access.js";
-import { DocumentCategory } from "./category.js";
 import { UserShort } from "../users/users.js";
+import { Category } from "./category.js";
 import { Timestamp } from "../timestamp/timestamp.js";
-/**
- * @generated from protobuf message resources.documents.DocumentComment
- */
-export interface DocumentComment {
-    /**
-     * @generated from protobuf field: uint64 id = 1;
-     */
-    id: bigint; // @gotags: alias:"id"
-    /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
-     */
-    createdAt?: Timestamp; // @gotags: alias:"created_at"
-    /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp updated_at = 3;
-     */
-    updatedAt?: Timestamp; // @gotags: alias:"updated_at"
-    /**
-     * @generated from protobuf field: uint64 document_id = 4;
-     */
-    documentId: bigint; // @gotags: alias:"document_id"
-    /**
-     * @generated from protobuf field: string comment = 5;
-     */
-    comment: string; // @gotags: alias:"comment"
-    /**
-     * @generated from protobuf field: optional int32 creator_id = 6;
-     */
-    creatorId?: number; // @gotags: alias:"creator_id"
-    /**
-     * @generated from protobuf field: optional resources.users.UserShort creator = 7;
-     */
-    creator?: UserShort; // @gotags: alias:"creator"
-    /**
-     * @generated from protobuf field: resources.timestamp.Timestamp deleted_at = 8;
-     */
-    deletedAt?: Timestamp; // @gotags: alias:"deleted_at"
-}
 /**
  * @generated from protobuf message resources.documents.Document
  */
@@ -64,9 +27,9 @@ export interface Document {
      */
     categoryId?: bigint; // @gotags: alias:"category_id"
     /**
-     * @generated from protobuf field: optional resources.documents.DocumentCategory category = 5;
+     * @generated from protobuf field: optional resources.documents.Category category = 5;
      */
-    category?: DocumentCategory; // @gotags: alias:"category"
+    category?: Category; // @gotags: alias:"category"
     /**
      * @generated from protobuf field: string title = 6;
      */
@@ -129,9 +92,9 @@ export interface DocumentShort {
      */
     categoryId?: bigint; // @gotags: alias:"category_id"
     /**
-     * @generated from protobuf field: optional resources.documents.DocumentCategory category = 5;
+     * @generated from protobuf field: optional resources.documents.Category category = 5;
      */
-    category?: DocumentCategory; // @gotags: alias:"category"
+    category?: Category; // @gotags: alias:"category"
     /**
      * @generated from protobuf field: string title = 6;
      */
@@ -390,25 +353,6 @@ export enum DOC_RELATION {
     CAUSED = 2
 }
 // @generated message type with reflection information, may provide speed optimized methods
-class DocumentComment$Type extends MessageType<DocumentComment> {
-    constructor() {
-        super("resources.documents.DocumentComment", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
-            { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
-            { no: 4, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 5, name: "comment", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxBytes: "2048" } } } },
-            { no: 6, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
-            { no: 7, name: "creator", kind: "message", T: () => UserShort },
-            { no: 8, name: "deleted_at", kind: "message", T: () => Timestamp }
-        ]);
-    }
-}
-/**
- * @generated MessageType for protobuf message resources.documents.DocumentComment
- */
-export const DocumentComment = new DocumentComment$Type();
-// @generated message type with reflection information, may provide speed optimized methods
 class Document$Type extends MessageType<Document> {
     constructor() {
         super("resources.documents.Document", [
@@ -416,7 +360,7 @@ class Document$Type extends MessageType<Document> {
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "category_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 5, name: "category", kind: "message", T: () => DocumentCategory },
+            { no: 5, name: "category", kind: "message", T: () => Category },
             { no: 6, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxBytes: "21845" } } } },
             { no: 7, name: "content_type", kind: "enum", T: () => ["resources.documents.DOC_CONTENT_TYPE", DOC_CONTENT_TYPE], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 8, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "20", maxBytes: "1000000" } } } },
@@ -442,7 +386,7 @@ class DocumentShort$Type extends MessageType<DocumentShort> {
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "category_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 5, name: "category", kind: "message", T: () => DocumentCategory },
+            { no: 5, name: "category", kind: "message", T: () => Category },
             { no: 6, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3" } } } },
             { no: 7, name: "content_type", kind: "enum", T: () => ["resources.documents.DOC_CONTENT_TYPE", DOC_CONTENT_TYPE], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 8, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "1024" } } } },

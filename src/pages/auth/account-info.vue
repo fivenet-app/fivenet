@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import AccountInfo from '~/components/auth/AccountInfo.vue';
+import AccountInfo from '~/components/auth/account/AccountInfo.vue';
 import ContentWrapper from '~/components/partials/ContentWrapper.vue';
 import { useNotificationsStore } from '~/store/notifications';
 

@@ -22,7 +22,7 @@ import { JobsServiceClient } from '~~/gen/ts/services/jobs/jobs.client';
 import { LivemapperServiceClient } from '~~/gen/ts/services/livemapper/livemap.client';
 import { NotificatorServiceClient } from '~~/gen/ts/services/notificator/notificator.client';
 import { RectorServiceClient } from '~~/gen/ts/services/rector/rector.client';
-import { CentrumServiceClient, UnitServiceClient } from '../../gen/ts/services/centrum/centrum.client';
+import { CentrumServiceClient, UnitServiceClient } from '~~/gen/ts/services/centrum/centrum.client';
 
 export default defineNuxtPlugin(() => {
     return {

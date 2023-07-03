@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import AttrRolesList from '~/components/rector/AttrRolesList.vue';
+import AttrRolesList from '~/components/rector/attrs/AttrRolesList.vue';
 
 useHead({
     title: 'pages.rector.limiter.title',

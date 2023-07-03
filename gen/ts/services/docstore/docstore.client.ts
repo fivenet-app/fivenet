@@ -4,28 +4,28 @@
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
 import { DocStoreService } from "./docstore.js";
-import type { DeleteDocumentCategoryResponse } from "./docstore.js";
-import type { DeleteDocumentCategoryRequest } from "./docstore.js";
-import type { UpdateDocumentCategoryResponse } from "./docstore.js";
-import type { UpdateDocumentCategoryRequest } from "./docstore.js";
-import type { CreateDocumentCategoryResponse } from "./docstore.js";
-import type { CreateDocumentCategoryRequest } from "./docstore.js";
-import type { ListDocumentCategoriesResponse } from "./docstore.js";
-import type { ListDocumentCategoriesRequest } from "./docstore.js";
+import type { DeleteCategoryResponse } from "./docstore.js";
+import type { DeleteCategoryRequest } from "./docstore.js";
+import type { UpdateCategoryResponse } from "./docstore.js";
+import type { UpdateCategoryRequest } from "./docstore.js";
+import type { CreateCategoryResponse } from "./docstore.js";
+import type { CreateCategoryRequest } from "./docstore.js";
+import type { ListCategoriesResponse } from "./docstore.js";
+import type { ListCategoriesRequest } from "./docstore.js";
 import type { ListUserDocumentsResponse } from "./docstore.js";
 import type { ListUserDocumentsRequest } from "./docstore.js";
 import type { SetDocumentAccessResponse } from "./docstore.js";
 import type { SetDocumentAccessRequest } from "./docstore.js";
 import type { GetDocumentAccessResponse } from "./docstore.js";
 import type { GetDocumentAccessRequest } from "./docstore.js";
-import type { DeleteDocumentCommentResponse } from "./docstore.js";
-import type { DeleteDocumentCommentRequest } from "./docstore.js";
-import type { EditDocumentCommentResponse } from "./docstore.js";
-import type { EditDocumentCommentRequest } from "./docstore.js";
-import type { PostDocumentCommentResponse } from "./docstore.js";
-import type { PostDocumentCommentRequest } from "./docstore.js";
-import type { GetDocumentCommentsResponse } from "./docstore.js";
-import type { GetDocumentCommentsRequest } from "./docstore.js";
+import type { DeleteCommentResponse } from "./docstore.js";
+import type { DeleteCommentRequest } from "./docstore.js";
+import type { EditCommentResponse } from "./docstore.js";
+import type { EditCommentRequest } from "./docstore.js";
+import type { PostCommentResponse } from "./docstore.js";
+import type { PostCommentRequest } from "./docstore.js";
+import type { GetCommentsResponse } from "./docstore.js";
+import type { GetCommentsRequest } from "./docstore.js";
 import type { RemoveDocumentRelationResponse } from "./docstore.js";
 import type { RemoveDocumentRelationRequest } from "./docstore.js";
 import type { AddDocumentRelationResponse } from "./docstore.js";
@@ -170,29 +170,29 @@ export interface IDocStoreServiceClient {
      */
     removeDocumentRelation(input: RemoveDocumentRelationRequest, options?: RpcOptions): UnaryCall<RemoveDocumentRelationRequest, RemoveDocumentRelationResponse>;
     /**
-     * @perm
+     * @perm: Name=GetDocument
      *
-     * @generated from protobuf rpc: GetDocumentComments(services.docstore.GetDocumentCommentsRequest) returns (services.docstore.GetDocumentCommentsResponse);
+     * @generated from protobuf rpc: GetComments(services.docstore.GetCommentsRequest) returns (services.docstore.GetCommentsResponse);
      */
-    getDocumentComments(input: GetDocumentCommentsRequest, options?: RpcOptions): UnaryCall<GetDocumentCommentsRequest, GetDocumentCommentsResponse>;
+    getComments(input: GetCommentsRequest, options?: RpcOptions): UnaryCall<GetCommentsRequest, GetCommentsResponse>;
     /**
      * @perm
      *
-     * @generated from protobuf rpc: PostDocumentComment(services.docstore.PostDocumentCommentRequest) returns (services.docstore.PostDocumentCommentResponse);
+     * @generated from protobuf rpc: PostComment(services.docstore.PostCommentRequest) returns (services.docstore.PostCommentResponse);
      */
-    postDocumentComment(input: PostDocumentCommentRequest, options?: RpcOptions): UnaryCall<PostDocumentCommentRequest, PostDocumentCommentResponse>;
+    postComment(input: PostCommentRequest, options?: RpcOptions): UnaryCall<PostCommentRequest, PostCommentResponse>;
     /**
-     * @perm: Name=PostDocumentComment
+     * @perm: Name=PostComment
      *
-     * @generated from protobuf rpc: EditDocumentComment(services.docstore.EditDocumentCommentRequest) returns (services.docstore.EditDocumentCommentResponse);
+     * @generated from protobuf rpc: EditComment(services.docstore.EditCommentRequest) returns (services.docstore.EditCommentResponse);
      */
-    editDocumentComment(input: EditDocumentCommentRequest, options?: RpcOptions): UnaryCall<EditDocumentCommentRequest, EditDocumentCommentResponse>;
+    editComment(input: EditCommentRequest, options?: RpcOptions): UnaryCall<EditCommentRequest, EditCommentResponse>;
     /**
      * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
      *
-     * @generated from protobuf rpc: DeleteDocumentComment(services.docstore.DeleteDocumentCommentRequest) returns (services.docstore.DeleteDocumentCommentResponse);
+     * @generated from protobuf rpc: DeleteComment(services.docstore.DeleteCommentRequest) returns (services.docstore.DeleteCommentResponse);
      */
-    deleteDocumentComment(input: DeleteDocumentCommentRequest, options?: RpcOptions): UnaryCall<DeleteDocumentCommentRequest, DeleteDocumentCommentResponse>;
+    deleteComment(input: DeleteCommentRequest, options?: RpcOptions): UnaryCall<DeleteCommentRequest, DeleteCommentResponse>;
     /**
      * @perm: Name=GetDocument
      *
@@ -214,27 +214,27 @@ export interface IDocStoreServiceClient {
     /**
      * @perm
      *
-     * @generated from protobuf rpc: ListDocumentCategories(services.docstore.ListDocumentCategoriesRequest) returns (services.docstore.ListDocumentCategoriesResponse);
+     * @generated from protobuf rpc: ListCategories(services.docstore.ListCategoriesRequest) returns (services.docstore.ListCategoriesResponse);
      */
-    listDocumentCategories(input: ListDocumentCategoriesRequest, options?: RpcOptions): UnaryCall<ListDocumentCategoriesRequest, ListDocumentCategoriesResponse>;
+    listCategories(input: ListCategoriesRequest, options?: RpcOptions): UnaryCall<ListCategoriesRequest, ListCategoriesResponse>;
     /**
      * @perm
      *
-     * @generated from protobuf rpc: CreateDocumentCategory(services.docstore.CreateDocumentCategoryRequest) returns (services.docstore.CreateDocumentCategoryResponse);
+     * @generated from protobuf rpc: CreateCategory(services.docstore.CreateCategoryRequest) returns (services.docstore.CreateCategoryResponse);
      */
-    createDocumentCategory(input: CreateDocumentCategoryRequest, options?: RpcOptions): UnaryCall<CreateDocumentCategoryRequest, CreateDocumentCategoryResponse>;
+    createCategory(input: CreateCategoryRequest, options?: RpcOptions): UnaryCall<CreateCategoryRequest, CreateCategoryResponse>;
     /**
-     * @perm: Name=CreateDocumentCategory
+     * @perm: Name=CreateCategory
      *
-     * @generated from protobuf rpc: UpdateDocumentCategory(services.docstore.UpdateDocumentCategoryRequest) returns (services.docstore.UpdateDocumentCategoryResponse);
+     * @generated from protobuf rpc: UpdateCategory(services.docstore.UpdateCategoryRequest) returns (services.docstore.UpdateCategoryResponse);
      */
-    updateDocumentCategory(input: UpdateDocumentCategoryRequest, options?: RpcOptions): UnaryCall<UpdateDocumentCategoryRequest, UpdateDocumentCategoryResponse>;
+    updateCategory(input: UpdateCategoryRequest, options?: RpcOptions): UnaryCall<UpdateCategoryRequest, UpdateCategoryResponse>;
     /**
      * @perm
      *
-     * @generated from protobuf rpc: DeleteDocumentCategory(services.docstore.DeleteDocumentCategoryRequest) returns (services.docstore.DeleteDocumentCategoryResponse);
+     * @generated from protobuf rpc: DeleteCategory(services.docstore.DeleteCategoryRequest) returns (services.docstore.DeleteCategoryResponse);
      */
-    deleteDocumentCategory(input: DeleteDocumentCategoryRequest, options?: RpcOptions): UnaryCall<DeleteDocumentCategoryRequest, DeleteDocumentCategoryResponse>;
+    deleteCategory(input: DeleteCategoryRequest, options?: RpcOptions): UnaryCall<DeleteCategoryRequest, DeleteCategoryResponse>;
 }
 /**
  * @generated from protobuf service services.docstore.DocStoreService
@@ -399,40 +399,40 @@ export class DocStoreServiceClient implements IDocStoreServiceClient, ServiceInf
         return stackIntercept<RemoveDocumentRelationRequest, RemoveDocumentRelationResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm
+     * @perm: Name=GetDocument
      *
-     * @generated from protobuf rpc: GetDocumentComments(services.docstore.GetDocumentCommentsRequest) returns (services.docstore.GetDocumentCommentsResponse);
+     * @generated from protobuf rpc: GetComments(services.docstore.GetCommentsRequest) returns (services.docstore.GetCommentsResponse);
      */
-    getDocumentComments(input: GetDocumentCommentsRequest, options?: RpcOptions): UnaryCall<GetDocumentCommentsRequest, GetDocumentCommentsResponse> {
+    getComments(input: GetCommentsRequest, options?: RpcOptions): UnaryCall<GetCommentsRequest, GetCommentsResponse> {
         const method = this.methods[17], opt = this._transport.mergeOptions(options);
-        return stackIntercept<GetDocumentCommentsRequest, GetDocumentCommentsResponse>("unary", this._transport, method, opt, input);
+        return stackIntercept<GetCommentsRequest, GetCommentsResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @perm
      *
-     * @generated from protobuf rpc: PostDocumentComment(services.docstore.PostDocumentCommentRequest) returns (services.docstore.PostDocumentCommentResponse);
+     * @generated from protobuf rpc: PostComment(services.docstore.PostCommentRequest) returns (services.docstore.PostCommentResponse);
      */
-    postDocumentComment(input: PostDocumentCommentRequest, options?: RpcOptions): UnaryCall<PostDocumentCommentRequest, PostDocumentCommentResponse> {
+    postComment(input: PostCommentRequest, options?: RpcOptions): UnaryCall<PostCommentRequest, PostCommentResponse> {
         const method = this.methods[18], opt = this._transport.mergeOptions(options);
-        return stackIntercept<PostDocumentCommentRequest, PostDocumentCommentResponse>("unary", this._transport, method, opt, input);
+        return stackIntercept<PostCommentRequest, PostCommentResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=PostDocumentComment
+     * @perm: Name=PostComment
      *
-     * @generated from protobuf rpc: EditDocumentComment(services.docstore.EditDocumentCommentRequest) returns (services.docstore.EditDocumentCommentResponse);
+     * @generated from protobuf rpc: EditComment(services.docstore.EditCommentRequest) returns (services.docstore.EditCommentResponse);
      */
-    editDocumentComment(input: EditDocumentCommentRequest, options?: RpcOptions): UnaryCall<EditDocumentCommentRequest, EditDocumentCommentResponse> {
+    editComment(input: EditCommentRequest, options?: RpcOptions): UnaryCall<EditCommentRequest, EditCommentResponse> {
         const method = this.methods[19], opt = this._transport.mergeOptions(options);
-        return stackIntercept<EditDocumentCommentRequest, EditDocumentCommentResponse>("unary", this._transport, method, opt, input);
+        return stackIntercept<EditCommentRequest, EditCommentResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
      *
-     * @generated from protobuf rpc: DeleteDocumentComment(services.docstore.DeleteDocumentCommentRequest) returns (services.docstore.DeleteDocumentCommentResponse);
+     * @generated from protobuf rpc: DeleteComment(services.docstore.DeleteCommentRequest) returns (services.docstore.DeleteCommentResponse);
      */
-    deleteDocumentComment(input: DeleteDocumentCommentRequest, options?: RpcOptions): UnaryCall<DeleteDocumentCommentRequest, DeleteDocumentCommentResponse> {
+    deleteComment(input: DeleteCommentRequest, options?: RpcOptions): UnaryCall<DeleteCommentRequest, DeleteCommentResponse> {
         const method = this.methods[20], opt = this._transport.mergeOptions(options);
-        return stackIntercept<DeleteDocumentCommentRequest, DeleteDocumentCommentResponse>("unary", this._transport, method, opt, input);
+        return stackIntercept<DeleteCommentRequest, DeleteCommentResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @perm: Name=GetDocument
@@ -464,37 +464,37 @@ export class DocStoreServiceClient implements IDocStoreServiceClient, ServiceInf
     /**
      * @perm
      *
-     * @generated from protobuf rpc: ListDocumentCategories(services.docstore.ListDocumentCategoriesRequest) returns (services.docstore.ListDocumentCategoriesResponse);
+     * @generated from protobuf rpc: ListCategories(services.docstore.ListCategoriesRequest) returns (services.docstore.ListCategoriesResponse);
      */
-    listDocumentCategories(input: ListDocumentCategoriesRequest, options?: RpcOptions): UnaryCall<ListDocumentCategoriesRequest, ListDocumentCategoriesResponse> {
+    listCategories(input: ListCategoriesRequest, options?: RpcOptions): UnaryCall<ListCategoriesRequest, ListCategoriesResponse> {
         const method = this.methods[24], opt = this._transport.mergeOptions(options);
-        return stackIntercept<ListDocumentCategoriesRequest, ListDocumentCategoriesResponse>("unary", this._transport, method, opt, input);
+        return stackIntercept<ListCategoriesRequest, ListCategoriesResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @perm
      *
-     * @generated from protobuf rpc: CreateDocumentCategory(services.docstore.CreateDocumentCategoryRequest) returns (services.docstore.CreateDocumentCategoryResponse);
+     * @generated from protobuf rpc: CreateCategory(services.docstore.CreateCategoryRequest) returns (services.docstore.CreateCategoryResponse);
      */
-    createDocumentCategory(input: CreateDocumentCategoryRequest, options?: RpcOptions): UnaryCall<CreateDocumentCategoryRequest, CreateDocumentCategoryResponse> {
+    createCategory(input: CreateCategoryRequest, options?: RpcOptions): UnaryCall<CreateCategoryRequest, CreateCategoryResponse> {
         const method = this.methods[25], opt = this._transport.mergeOptions(options);
-        return stackIntercept<CreateDocumentCategoryRequest, CreateDocumentCategoryResponse>("unary", this._transport, method, opt, input);
+        return stackIntercept<CreateCategoryRequest, CreateCategoryResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Name=CreateDocumentCategory
+     * @perm: Name=CreateCategory
      *
-     * @generated from protobuf rpc: UpdateDocumentCategory(services.docstore.UpdateDocumentCategoryRequest) returns (services.docstore.UpdateDocumentCategoryResponse);
+     * @generated from protobuf rpc: UpdateCategory(services.docstore.UpdateCategoryRequest) returns (services.docstore.UpdateCategoryResponse);
      */
-    updateDocumentCategory(input: UpdateDocumentCategoryRequest, options?: RpcOptions): UnaryCall<UpdateDocumentCategoryRequest, UpdateDocumentCategoryResponse> {
+    updateCategory(input: UpdateCategoryRequest, options?: RpcOptions): UnaryCall<UpdateCategoryRequest, UpdateCategoryResponse> {
         const method = this.methods[26], opt = this._transport.mergeOptions(options);
-        return stackIntercept<UpdateDocumentCategoryRequest, UpdateDocumentCategoryResponse>("unary", this._transport, method, opt, input);
+        return stackIntercept<UpdateCategoryRequest, UpdateCategoryResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @perm
      *
-     * @generated from protobuf rpc: DeleteDocumentCategory(services.docstore.DeleteDocumentCategoryRequest) returns (services.docstore.DeleteDocumentCategoryResponse);
+     * @generated from protobuf rpc: DeleteCategory(services.docstore.DeleteCategoryRequest) returns (services.docstore.DeleteCategoryResponse);
      */
-    deleteDocumentCategory(input: DeleteDocumentCategoryRequest, options?: RpcOptions): UnaryCall<DeleteDocumentCategoryRequest, DeleteDocumentCategoryResponse> {
+    deleteCategory(input: DeleteCategoryRequest, options?: RpcOptions): UnaryCall<DeleteCategoryRequest, DeleteCategoryResponse> {
         const method = this.methods[27], opt = this._transport.mergeOptions(options);
-        return stackIntercept<DeleteDocumentCategoryRequest, DeleteDocumentCategoryResponse>("unary", this._transport, method, opt, input);
+        return stackIntercept<DeleteCategoryRequest, DeleteCategoryResponse>("unary", this._transport, method, opt, input);
     }
 }

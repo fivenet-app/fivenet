@@ -5,8 +5,8 @@ import { LControl, LControlLayers, LLayerGroup, LMap, LMarker, LPopup, LTileLaye
 import { watchDebounced } from '@vueuse/core';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import DataErrorBlock from '~/components/partials/DataErrorBlock.vue';
-import DataPendingBlock from '~/components/partials/DataPendingBlock.vue';
+import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
+import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { useAuthStore } from '~/store/auth';
 import { useNotificationsStore } from '~/store/notifications';
 import { useUserSettingsStore } from '~/store/usersettings';

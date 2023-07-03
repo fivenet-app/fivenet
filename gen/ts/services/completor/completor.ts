@@ -4,7 +4,7 @@
 import { ServiceType } from "@protobuf-ts/runtime-rpc";
 import { MessageType } from "@protobuf-ts/runtime";
 import { LawBook } from "../../resources/laws/laws.js";
-import { DocumentCategory } from "../../resources/documents/category.js";
+import { Category } from "../../resources/documents/category.js";
 import { Job } from "../../resources/jobs/jobs.js";
 import { UserShort } from "../../resources/users/users.js";
 /**
@@ -65,9 +65,9 @@ export interface CompleteDocumentCategoriesRequest {
  */
 export interface CompleteDocumentCategoriesResponse {
     /**
-     * @generated from protobuf field: repeated resources.documents.DocumentCategory categories = 1;
+     * @generated from protobuf field: repeated resources.documents.Category categories = 1;
      */
-    categories: DocumentCategory[];
+    categories: Category[];
 }
 /**
  * @generated from protobuf message services.completor.ListLawBooksRequest
@@ -149,7 +149,7 @@ export const CompleteDocumentCategoriesRequest = new CompleteDocumentCategoriesR
 class CompleteDocumentCategoriesResponse$Type extends MessageType<CompleteDocumentCategoriesResponse> {
     constructor() {
         super("services.completor.CompleteDocumentCategoriesResponse", [
-            { no: 1, name: "categories", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => DocumentCategory }
+            { no: 1, name: "categories", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Category }
         ]);
     }
 }

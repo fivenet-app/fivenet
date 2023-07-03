@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import SvgIcon from '@jamescoyle/vue-icon';
 import { mdiCalculator, mdiHelpCircle } from '@mdi/js';
+import ComponentModal from '~/components/partials/elements/ComponentModal.vue';
 import Calculator from '~/components/penaltycalculator/Calculator.vue';
-import ComponentModal from './ComponentModal.vue';
 
 export type ButtonComponents = 'PenaltyCalculator';
 

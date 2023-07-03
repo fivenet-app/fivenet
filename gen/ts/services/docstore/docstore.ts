@@ -3,10 +3,10 @@
 // tslint:disable
 import { ServiceType } from "@protobuf-ts/runtime-rpc";
 import { MessageType } from "@protobuf-ts/runtime";
-import { DocumentCategory } from "../../resources/documents/category.js";
+import { Category } from "../../resources/documents/category.js";
 import { DOC_RELATION } from "../../resources/documents/documents.js";
 import { DOC_CONTENT_TYPE } from "../../resources/documents/documents.js";
-import { DocumentComment } from "../../resources/documents/documents.js";
+import { Comment } from "../../resources/documents/comment.js";
 import { DocumentRelation } from "../../resources/documents/documents.js";
 import { DocumentReference } from "../../resources/documents/documents.js";
 import { DocumentAccess } from "../../resources/documents/documents.js";
@@ -293,9 +293,9 @@ export interface RemoveDocumentRelationResponse {
 /**
  * Comments ===============================================================
  *
- * @generated from protobuf message services.docstore.GetDocumentCommentsRequest
+ * @generated from protobuf message services.docstore.GetCommentsRequest
  */
-export interface GetDocumentCommentsRequest {
+export interface GetCommentsRequest {
     /**
      * @generated from protobuf field: resources.common.database.PaginationRequest pagination = 1;
      */
@@ -306,63 +306,63 @@ export interface GetDocumentCommentsRequest {
     documentId: bigint;
 }
 /**
- * @generated from protobuf message services.docstore.GetDocumentCommentsResponse
+ * @generated from protobuf message services.docstore.GetCommentsResponse
  */
-export interface GetDocumentCommentsResponse {
+export interface GetCommentsResponse {
     /**
      * @generated from protobuf field: resources.common.database.PaginationResponse pagination = 1;
      */
     pagination?: PaginationResponse;
     /**
-     * @generated from protobuf field: repeated resources.documents.DocumentComment comments = 2;
+     * @generated from protobuf field: repeated resources.documents.Comment comments = 2;
      */
-    comments: DocumentComment[];
+    comments: Comment[];
 }
 /**
- * @generated from protobuf message services.docstore.PostDocumentCommentRequest
+ * @generated from protobuf message services.docstore.PostCommentRequest
  */
-export interface PostDocumentCommentRequest {
+export interface PostCommentRequest {
     /**
-     * @generated from protobuf field: resources.documents.DocumentComment comment = 1;
+     * @generated from protobuf field: resources.documents.Comment comment = 1;
      */
-    comment?: DocumentComment;
+    comment?: Comment;
 }
 /**
- * @generated from protobuf message services.docstore.PostDocumentCommentResponse
+ * @generated from protobuf message services.docstore.PostCommentResponse
  */
-export interface PostDocumentCommentResponse {
+export interface PostCommentResponse {
     /**
      * @generated from protobuf field: uint64 id = 1;
      */
     id: bigint;
 }
 /**
- * @generated from protobuf message services.docstore.EditDocumentCommentRequest
+ * @generated from protobuf message services.docstore.EditCommentRequest
  */
-export interface EditDocumentCommentRequest {
+export interface EditCommentRequest {
     /**
-     * @generated from protobuf field: resources.documents.DocumentComment comment = 1;
+     * @generated from protobuf field: resources.documents.Comment comment = 1;
      */
-    comment?: DocumentComment;
+    comment?: Comment;
 }
 /**
- * @generated from protobuf message services.docstore.EditDocumentCommentResponse
+ * @generated from protobuf message services.docstore.EditCommentResponse
  */
-export interface EditDocumentCommentResponse {
+export interface EditCommentResponse {
 }
 /**
- * @generated from protobuf message services.docstore.DeleteDocumentCommentRequest
+ * @generated from protobuf message services.docstore.DeleteCommentRequest
  */
-export interface DeleteDocumentCommentRequest {
+export interface DeleteCommentRequest {
     /**
      * @generated from protobuf field: uint64 comment_id = 1;
      */
     commentId: bigint;
 }
 /**
- * @generated from protobuf message services.docstore.DeleteDocumentCommentResponse
+ * @generated from protobuf message services.docstore.DeleteCommentResponse
  */
-export interface DeleteDocumentCommentResponse {
+export interface DeleteCommentResponse {
 }
 /**
  * @generated from protobuf message services.docstore.CreateDocumentRequest
@@ -575,64 +575,64 @@ export interface ListUserDocumentsResponse {
 /**
  * Categories
  *
- * @generated from protobuf message services.docstore.ListDocumentCategoriesRequest
+ * @generated from protobuf message services.docstore.ListCategoriesRequest
  */
-export interface ListDocumentCategoriesRequest {
+export interface ListCategoriesRequest {
 }
 /**
- * @generated from protobuf message services.docstore.ListDocumentCategoriesResponse
+ * @generated from protobuf message services.docstore.ListCategoriesResponse
  */
-export interface ListDocumentCategoriesResponse {
+export interface ListCategoriesResponse {
     /**
-     * @generated from protobuf field: repeated resources.documents.DocumentCategory category = 1;
+     * @generated from protobuf field: repeated resources.documents.Category category = 1;
      */
-    category: DocumentCategory[];
+    category: Category[];
 }
 /**
- * @generated from protobuf message services.docstore.CreateDocumentCategoryRequest
+ * @generated from protobuf message services.docstore.CreateCategoryRequest
  */
-export interface CreateDocumentCategoryRequest {
+export interface CreateCategoryRequest {
     /**
-     * @generated from protobuf field: resources.documents.DocumentCategory category = 1;
+     * @generated from protobuf field: resources.documents.Category category = 1;
      */
-    category?: DocumentCategory;
+    category?: Category;
 }
 /**
- * @generated from protobuf message services.docstore.CreateDocumentCategoryResponse
+ * @generated from protobuf message services.docstore.CreateCategoryResponse
  */
-export interface CreateDocumentCategoryResponse {
+export interface CreateCategoryResponse {
     /**
      * @generated from protobuf field: uint64 id = 1;
      */
     id: bigint;
 }
 /**
- * @generated from protobuf message services.docstore.UpdateDocumentCategoryRequest
+ * @generated from protobuf message services.docstore.UpdateCategoryRequest
  */
-export interface UpdateDocumentCategoryRequest {
+export interface UpdateCategoryRequest {
     /**
-     * @generated from protobuf field: resources.documents.DocumentCategory category = 1;
+     * @generated from protobuf field: resources.documents.Category category = 1;
      */
-    category?: DocumentCategory;
+    category?: Category;
 }
 /**
- * @generated from protobuf message services.docstore.UpdateDocumentCategoryResponse
+ * @generated from protobuf message services.docstore.UpdateCategoryResponse
  */
-export interface UpdateDocumentCategoryResponse {
+export interface UpdateCategoryResponse {
 }
 /**
- * @generated from protobuf message services.docstore.DeleteDocumentCategoryRequest
+ * @generated from protobuf message services.docstore.DeleteCategoryRequest
  */
-export interface DeleteDocumentCategoryRequest {
+export interface DeleteCategoryRequest {
     /**
      * @generated from protobuf field: repeated uint64 ids = 1;
      */
     ids: bigint[];
 }
 /**
- * @generated from protobuf message services.docstore.DeleteDocumentCategoryResponse
+ * @generated from protobuf message services.docstore.DeleteCategoryResponse
  */
-export interface DeleteDocumentCategoryResponse {
+export interface DeleteCategoryResponse {
 }
 /**
  * @generated from protobuf enum services.docstore.ACCESS_LEVEL_UPDATE_MODE
@@ -968,99 +968,99 @@ class RemoveDocumentRelationResponse$Type extends MessageType<RemoveDocumentRela
  */
 export const RemoveDocumentRelationResponse = new RemoveDocumentRelationResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class GetDocumentCommentsRequest$Type extends MessageType<GetDocumentCommentsRequest> {
+class GetCommentsRequest$Type extends MessageType<GetCommentsRequest> {
     constructor() {
-        super("services.docstore.GetDocumentCommentsRequest", [
+        super("services.docstore.GetCommentsRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
             { no: 2, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
         ]);
     }
 }
 /**
- * @generated MessageType for protobuf message services.docstore.GetDocumentCommentsRequest
+ * @generated MessageType for protobuf message services.docstore.GetCommentsRequest
  */
-export const GetDocumentCommentsRequest = new GetDocumentCommentsRequest$Type();
+export const GetCommentsRequest = new GetCommentsRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class GetDocumentCommentsResponse$Type extends MessageType<GetDocumentCommentsResponse> {
+class GetCommentsResponse$Type extends MessageType<GetCommentsResponse> {
     constructor() {
-        super("services.docstore.GetDocumentCommentsResponse", [
+        super("services.docstore.GetCommentsResponse", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse },
-            { no: 2, name: "comments", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => DocumentComment }
+            { no: 2, name: "comments", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Comment }
         ]);
     }
 }
 /**
- * @generated MessageType for protobuf message services.docstore.GetDocumentCommentsResponse
+ * @generated MessageType for protobuf message services.docstore.GetCommentsResponse
  */
-export const GetDocumentCommentsResponse = new GetDocumentCommentsResponse$Type();
+export const GetCommentsResponse = new GetCommentsResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class PostDocumentCommentRequest$Type extends MessageType<PostDocumentCommentRequest> {
+class PostCommentRequest$Type extends MessageType<PostCommentRequest> {
     constructor() {
-        super("services.docstore.PostDocumentCommentRequest", [
-            { no: 1, name: "comment", kind: "message", T: () => DocumentComment }
+        super("services.docstore.PostCommentRequest", [
+            { no: 1, name: "comment", kind: "message", T: () => Comment }
         ]);
     }
 }
 /**
- * @generated MessageType for protobuf message services.docstore.PostDocumentCommentRequest
+ * @generated MessageType for protobuf message services.docstore.PostCommentRequest
  */
-export const PostDocumentCommentRequest = new PostDocumentCommentRequest$Type();
+export const PostCommentRequest = new PostCommentRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class PostDocumentCommentResponse$Type extends MessageType<PostDocumentCommentResponse> {
+class PostCommentResponse$Type extends MessageType<PostCommentResponse> {
     constructor() {
-        super("services.docstore.PostDocumentCommentResponse", [
+        super("services.docstore.PostCommentResponse", [
             { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
         ]);
     }
 }
 /**
- * @generated MessageType for protobuf message services.docstore.PostDocumentCommentResponse
+ * @generated MessageType for protobuf message services.docstore.PostCommentResponse
  */
-export const PostDocumentCommentResponse = new PostDocumentCommentResponse$Type();
+export const PostCommentResponse = new PostCommentResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class EditDocumentCommentRequest$Type extends MessageType<EditDocumentCommentRequest> {
+class EditCommentRequest$Type extends MessageType<EditCommentRequest> {
     constructor() {
-        super("services.docstore.EditDocumentCommentRequest", [
-            { no: 1, name: "comment", kind: "message", T: () => DocumentComment }
+        super("services.docstore.EditCommentRequest", [
+            { no: 1, name: "comment", kind: "message", T: () => Comment }
         ]);
     }
 }
 /**
- * @generated MessageType for protobuf message services.docstore.EditDocumentCommentRequest
+ * @generated MessageType for protobuf message services.docstore.EditCommentRequest
  */
-export const EditDocumentCommentRequest = new EditDocumentCommentRequest$Type();
+export const EditCommentRequest = new EditCommentRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class EditDocumentCommentResponse$Type extends MessageType<EditDocumentCommentResponse> {
+class EditCommentResponse$Type extends MessageType<EditCommentResponse> {
     constructor() {
-        super("services.docstore.EditDocumentCommentResponse", []);
+        super("services.docstore.EditCommentResponse", []);
     }
 }
 /**
- * @generated MessageType for protobuf message services.docstore.EditDocumentCommentResponse
+ * @generated MessageType for protobuf message services.docstore.EditCommentResponse
  */
-export const EditDocumentCommentResponse = new EditDocumentCommentResponse$Type();
+export const EditCommentResponse = new EditCommentResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class DeleteDocumentCommentRequest$Type extends MessageType<DeleteDocumentCommentRequest> {
+class DeleteCommentRequest$Type extends MessageType<DeleteCommentRequest> {
     constructor() {
-        super("services.docstore.DeleteDocumentCommentRequest", [
+        super("services.docstore.DeleteCommentRequest", [
             { no: 1, name: "comment_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
         ]);
     }
 }
 /**
- * @generated MessageType for protobuf message services.docstore.DeleteDocumentCommentRequest
+ * @generated MessageType for protobuf message services.docstore.DeleteCommentRequest
  */
-export const DeleteDocumentCommentRequest = new DeleteDocumentCommentRequest$Type();
+export const DeleteCommentRequest = new DeleteCommentRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class DeleteDocumentCommentResponse$Type extends MessageType<DeleteDocumentCommentResponse> {
+class DeleteCommentResponse$Type extends MessageType<DeleteCommentResponse> {
     constructor() {
-        super("services.docstore.DeleteDocumentCommentResponse", []);
+        super("services.docstore.DeleteCommentResponse", []);
     }
 }
 /**
- * @generated MessageType for protobuf message services.docstore.DeleteDocumentCommentResponse
+ * @generated MessageType for protobuf message services.docstore.DeleteCommentResponse
  */
-export const DeleteDocumentCommentResponse = new DeleteDocumentCommentResponse$Type();
+export const DeleteCommentResponse = new DeleteCommentResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class CreateDocumentRequest$Type extends MessageType<CreateDocumentRequest> {
     constructor() {
@@ -1247,95 +1247,95 @@ class ListUserDocumentsResponse$Type extends MessageType<ListUserDocumentsRespon
  */
 export const ListUserDocumentsResponse = new ListUserDocumentsResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class ListDocumentCategoriesRequest$Type extends MessageType<ListDocumentCategoriesRequest> {
+class ListCategoriesRequest$Type extends MessageType<ListCategoriesRequest> {
     constructor() {
-        super("services.docstore.ListDocumentCategoriesRequest", []);
+        super("services.docstore.ListCategoriesRequest", []);
     }
 }
 /**
- * @generated MessageType for protobuf message services.docstore.ListDocumentCategoriesRequest
+ * @generated MessageType for protobuf message services.docstore.ListCategoriesRequest
  */
-export const ListDocumentCategoriesRequest = new ListDocumentCategoriesRequest$Type();
+export const ListCategoriesRequest = new ListCategoriesRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class ListDocumentCategoriesResponse$Type extends MessageType<ListDocumentCategoriesResponse> {
+class ListCategoriesResponse$Type extends MessageType<ListCategoriesResponse> {
     constructor() {
-        super("services.docstore.ListDocumentCategoriesResponse", [
-            { no: 1, name: "category", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => DocumentCategory }
+        super("services.docstore.ListCategoriesResponse", [
+            { no: 1, name: "category", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Category }
         ]);
     }
 }
 /**
- * @generated MessageType for protobuf message services.docstore.ListDocumentCategoriesResponse
+ * @generated MessageType for protobuf message services.docstore.ListCategoriesResponse
  */
-export const ListDocumentCategoriesResponse = new ListDocumentCategoriesResponse$Type();
+export const ListCategoriesResponse = new ListCategoriesResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class CreateDocumentCategoryRequest$Type extends MessageType<CreateDocumentCategoryRequest> {
+class CreateCategoryRequest$Type extends MessageType<CreateCategoryRequest> {
     constructor() {
-        super("services.docstore.CreateDocumentCategoryRequest", [
-            { no: 1, name: "category", kind: "message", T: () => DocumentCategory, options: { "validate.rules": { message: { required: true } } } }
+        super("services.docstore.CreateCategoryRequest", [
+            { no: 1, name: "category", kind: "message", T: () => Category, options: { "validate.rules": { message: { required: true } } } }
         ]);
     }
 }
 /**
- * @generated MessageType for protobuf message services.docstore.CreateDocumentCategoryRequest
+ * @generated MessageType for protobuf message services.docstore.CreateCategoryRequest
  */
-export const CreateDocumentCategoryRequest = new CreateDocumentCategoryRequest$Type();
+export const CreateCategoryRequest = new CreateCategoryRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class CreateDocumentCategoryResponse$Type extends MessageType<CreateDocumentCategoryResponse> {
+class CreateCategoryResponse$Type extends MessageType<CreateCategoryResponse> {
     constructor() {
-        super("services.docstore.CreateDocumentCategoryResponse", [
+        super("services.docstore.CreateCategoryResponse", [
             { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
         ]);
     }
 }
 /**
- * @generated MessageType for protobuf message services.docstore.CreateDocumentCategoryResponse
+ * @generated MessageType for protobuf message services.docstore.CreateCategoryResponse
  */
-export const CreateDocumentCategoryResponse = new CreateDocumentCategoryResponse$Type();
+export const CreateCategoryResponse = new CreateCategoryResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class UpdateDocumentCategoryRequest$Type extends MessageType<UpdateDocumentCategoryRequest> {
+class UpdateCategoryRequest$Type extends MessageType<UpdateCategoryRequest> {
     constructor() {
-        super("services.docstore.UpdateDocumentCategoryRequest", [
-            { no: 1, name: "category", kind: "message", T: () => DocumentCategory, options: { "validate.rules": { message: { required: true } } } }
+        super("services.docstore.UpdateCategoryRequest", [
+            { no: 1, name: "category", kind: "message", T: () => Category, options: { "validate.rules": { message: { required: true } } } }
         ]);
     }
 }
 /**
- * @generated MessageType for protobuf message services.docstore.UpdateDocumentCategoryRequest
+ * @generated MessageType for protobuf message services.docstore.UpdateCategoryRequest
  */
-export const UpdateDocumentCategoryRequest = new UpdateDocumentCategoryRequest$Type();
+export const UpdateCategoryRequest = new UpdateCategoryRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class UpdateDocumentCategoryResponse$Type extends MessageType<UpdateDocumentCategoryResponse> {
+class UpdateCategoryResponse$Type extends MessageType<UpdateCategoryResponse> {
     constructor() {
-        super("services.docstore.UpdateDocumentCategoryResponse", []);
+        super("services.docstore.UpdateCategoryResponse", []);
     }
 }
 /**
- * @generated MessageType for protobuf message services.docstore.UpdateDocumentCategoryResponse
+ * @generated MessageType for protobuf message services.docstore.UpdateCategoryResponse
  */
-export const UpdateDocumentCategoryResponse = new UpdateDocumentCategoryResponse$Type();
+export const UpdateCategoryResponse = new UpdateCategoryResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class DeleteDocumentCategoryRequest$Type extends MessageType<DeleteDocumentCategoryRequest> {
+class DeleteCategoryRequest$Type extends MessageType<DeleteCategoryRequest> {
     constructor() {
-        super("services.docstore.DeleteDocumentCategoryRequest", [
+        super("services.docstore.DeleteCategoryRequest", [
             { no: 1, name: "ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
         ]);
     }
 }
 /**
- * @generated MessageType for protobuf message services.docstore.DeleteDocumentCategoryRequest
+ * @generated MessageType for protobuf message services.docstore.DeleteCategoryRequest
  */
-export const DeleteDocumentCategoryRequest = new DeleteDocumentCategoryRequest$Type();
+export const DeleteCategoryRequest = new DeleteCategoryRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class DeleteDocumentCategoryResponse$Type extends MessageType<DeleteDocumentCategoryResponse> {
+class DeleteCategoryResponse$Type extends MessageType<DeleteCategoryResponse> {
     constructor() {
-        super("services.docstore.DeleteDocumentCategoryResponse", []);
+        super("services.docstore.DeleteCategoryResponse", []);
     }
 }
 /**
- * @generated MessageType for protobuf message services.docstore.DeleteDocumentCategoryResponse
+ * @generated MessageType for protobuf message services.docstore.DeleteCategoryResponse
  */
-export const DeleteDocumentCategoryResponse = new DeleteDocumentCategoryResponse$Type();
+export const DeleteCategoryResponse = new DeleteCategoryResponse$Type();
 /**
  * @generated ServiceType for protobuf service services.docstore.DocStoreService
  */
@@ -1357,15 +1357,15 @@ export const DocStoreService = new ServiceType("services.docstore.DocStoreServic
     { name: "RemoveDocumentReference", options: {}, I: RemoveDocumentReferenceRequest, O: RemoveDocumentReferenceResponse },
     { name: "AddDocumentRelation", options: {}, I: AddDocumentRelationRequest, O: AddDocumentRelationResponse },
     { name: "RemoveDocumentRelation", options: {}, I: RemoveDocumentRelationRequest, O: RemoveDocumentRelationResponse },
-    { name: "GetDocumentComments", options: {}, I: GetDocumentCommentsRequest, O: GetDocumentCommentsResponse },
-    { name: "PostDocumentComment", options: {}, I: PostDocumentCommentRequest, O: PostDocumentCommentResponse },
-    { name: "EditDocumentComment", options: {}, I: EditDocumentCommentRequest, O: EditDocumentCommentResponse },
-    { name: "DeleteDocumentComment", options: {}, I: DeleteDocumentCommentRequest, O: DeleteDocumentCommentResponse },
+    { name: "GetComments", options: {}, I: GetCommentsRequest, O: GetCommentsResponse },
+    { name: "PostComment", options: {}, I: PostCommentRequest, O: PostCommentResponse },
+    { name: "EditComment", options: {}, I: EditCommentRequest, O: EditCommentResponse },
+    { name: "DeleteComment", options: {}, I: DeleteCommentRequest, O: DeleteCommentResponse },
     { name: "GetDocumentAccess", options: {}, I: GetDocumentAccessRequest, O: GetDocumentAccessResponse },
     { name: "SetDocumentAccess", options: {}, I: SetDocumentAccessRequest, O: SetDocumentAccessResponse },
     { name: "ListUserDocuments", options: {}, I: ListUserDocumentsRequest, O: ListUserDocumentsResponse },
-    { name: "ListDocumentCategories", options: {}, I: ListDocumentCategoriesRequest, O: ListDocumentCategoriesResponse },
-    { name: "CreateDocumentCategory", options: {}, I: CreateDocumentCategoryRequest, O: CreateDocumentCategoryResponse },
-    { name: "UpdateDocumentCategory", options: {}, I: UpdateDocumentCategoryRequest, O: UpdateDocumentCategoryResponse },
-    { name: "DeleteDocumentCategory", options: {}, I: DeleteDocumentCategoryRequest, O: DeleteDocumentCategoryResponse }
+    { name: "ListCategories", options: {}, I: ListCategoriesRequest, O: ListCategoriesResponse },
+    { name: "CreateCategory", options: {}, I: CreateCategoryRequest, O: CreateCategoryResponse },
+    { name: "UpdateCategory", options: {}, I: UpdateCategoryRequest, O: UpdateCategoryResponse },
+    { name: "DeleteCategory", options: {}, I: DeleteCategoryRequest, O: DeleteCategoryResponse }
 ]);

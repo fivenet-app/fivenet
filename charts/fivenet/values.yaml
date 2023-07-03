@@ -175,9 +175,9 @@ fivenet:
         - category: DocStoreService
           name: GetDocument
         - category: DocStoreService
-          name: GetDocumentComments
+          name: GetComments
         - category: DocStoreService
-          name: PostDocumentComment
+          name: PostComment
 
 envoy:
   replicaCount: 1

@@ -803,7 +803,7 @@
                 "key": "Complete job names and ranks",
                 "description": "Complete job names and ranks."
             },
-            "CompleteDocumentCategories": {
+            "CompleteCategories": {
                 "key": "List document categories",
                 "description": "Complete a document categories."
             }
@@ -829,8 +829,8 @@
                 "key": "CreateDocument",
                 "description": "Create a new document"
             },
-            "DeleteDocumentComment": {
-                "key": "DeleteDocumentComment",
+            "DeleteComment": {
+                "key": "DeleteComment",
                 "description": "Delete own document comment",
                 "attrs": {
                     "Own": "Own",
@@ -846,8 +846,8 @@
                 "key": "GetDocument",
                 "description": "View a document"
             },
-            "GetDocumentComments": {
-                "key": "GetDocumentComments",
+            "GetComments": {
+                "key": "GetComments",
                 "description": "View document comments"
             },
             "ListUserDocuments": {
@@ -858,8 +858,8 @@
                 "key": "List Templates",
                 "description": "List available templates"
             },
-            "PostDocumentComment": {
-                "key": "PostDocumentComment",
+            "PostComment": {
+                "key": "PostComment",
                 "description": "Post document comments"
             },
             "UpdateDocument": {
@@ -871,16 +871,16 @@
                     "Same_Rank": "Same Rank"
                 }
             },
-            "CreateDocumentCategory": {
-                "key": "CreateDocumentCategory",
+            "CreateCategory": {
+                "key": "CreateCategory",
                 "description": "Create/ Update document categories"
             },
-            "DeleteDocumentCategory": {
-                "key": "DeleteDocumentCategory",
+            "DeleteCategory": {
+                "key": "DeleteCategory",
                 "description": "Delete document categories"
             },
-            "ListDocumentCategories": {
-                "key": "ListDocumentCategories",
+            "ListCategories": {
+                "key": "ListCategories",
                 "description": "List document categories"
             },
             "CreateTemplate": {
@@ -965,7 +965,7 @@
             }
         },
         "CompletorService": {
-            "CompleteDocumentCategories": {
+            "CompleteCategories": {
                 "Jobs": "Factions"
             }
         },
@@ -987,7 +987,7 @@
             "DeleteDocument": {
                 "Access": "Access"
             },
-            "DeleteDocumentComment": {
+            "DeleteComment": {
                 "Access": "Access"
             },
             "ToggleDocument": {

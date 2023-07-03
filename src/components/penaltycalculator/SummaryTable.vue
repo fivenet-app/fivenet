@@ -2,7 +2,7 @@
 import SvgIcon from '@jamescoyle/vue-icon';
 import { mdiCalculator } from '@mdi/js';
 import { SelectedPenalty } from '~/components/penaltycalculator/Calculator.vue';
-import { LawBook } from '../../../gen/ts/resources/laws/laws';
+import { LawBook } from '~~/gen/ts/resources/laws/laws';
 
 const props = defineProps<{
     lawBooks: Array<LawBook>;

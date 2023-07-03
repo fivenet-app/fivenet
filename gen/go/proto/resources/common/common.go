@@ -18,7 +18,7 @@ type IJobName interface {
 	SetJobLabel(label string)
 }
 
-type IDocumentCategory interface {
+type ICategory interface {
 	GetCategoryId() uint64
-	SetCategory(*documents.DocumentCategory)
+	SetCategory(*documents.Category)
 }

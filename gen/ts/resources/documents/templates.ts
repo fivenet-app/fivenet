@@ -8,7 +8,7 @@ import { DocumentShort } from "./documents.js";
 import { User } from "../users/users.js";
 import { DocumentAccess } from "./documents.js";
 import { UserShort } from "../users/users.js";
-import { DocumentCategory } from "./category.js";
+import { Category } from "./category.js";
 import { Timestamp } from "../timestamp/timestamp.js";
 /**
  * @generated from protobuf message resources.documents.Template
@@ -27,9 +27,9 @@ export interface Template {
      */
     updatedAt?: Timestamp; // @gotags: alias:"updated_at"
     /**
-     * @generated from protobuf field: resources.documents.DocumentCategory category = 4;
+     * @generated from protobuf field: resources.documents.Category category = 4;
      */
-    category?: DocumentCategory; // @gotags: alias:"category"
+    category?: Category; // @gotags: alias:"category"
     /**
      * @generated from protobuf field: uint32 weight = 5;
      */
@@ -96,9 +96,9 @@ export interface TemplateShort {
      */
     weight: number; // @gotags: alias:"weight"
     /**
-     * @generated from protobuf field: resources.documents.DocumentCategory category = 5;
+     * @generated from protobuf field: resources.documents.Category category = 5;
      */
-    category?: DocumentCategory; // @gotags: alias:"category"
+    category?: Category; // @gotags: alias:"category"
     /**
      * @generated from protobuf field: string title = 6;
      */
@@ -236,7 +236,7 @@ class Template$Type extends MessageType<Template> {
             { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
-            { no: 4, name: "category", kind: "message", T: () => DocumentCategory },
+            { no: 4, name: "category", kind: "message", T: () => Category },
             { no: 5, name: "weight", kind: "scalar", T: 13 /*ScalarType.UINT32*/ },
             { no: 6, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3" } } } },
             { no: 7, name: "description", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
@@ -263,7 +263,7 @@ class TemplateShort$Type extends MessageType<TemplateShort> {
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "weight", kind: "scalar", T: 13 /*ScalarType.UINT32*/ },
-            { no: 5, name: "category", kind: "message", T: () => DocumentCategory },
+            { no: 5, name: "category", kind: "message", T: () => Category },
             { no: 6, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3" } } } },
             { no: 7, name: "description", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
             { no: 8, name: "schema", kind: "message", T: () => TemplateSchema },

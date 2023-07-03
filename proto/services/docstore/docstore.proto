@@ -5,6 +5,7 @@ option go_package = "github.com/galexrt/fivenet/gen/go/proto/services/docstore;d
 
 import "resources/common/database/database.proto";
 import "resources/documents/category.proto";
+import "resources/documents/comment.proto";
 import "resources/documents/documents.proto";
 import "resources/documents/templates.proto";
 import "resources/timestamp/timestamp.proto";
@@ -122,35 +123,35 @@ message RemoveDocumentRelationRequest {
 message RemoveDocumentRelationResponse {}
 
 // Comments ===============================================================
-message GetDocumentCommentsRequest {
+message GetCommentsRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
   uint64 document_id = 2;
 }
 
-message GetDocumentCommentsResponse {
+message GetCommentsResponse {
   resources.common.database.PaginationResponse pagination = 1;
-  repeated resources.documents.DocumentComment comments = 2;
+  repeated resources.documents.Comment comments = 2;
 }
 
-message PostDocumentCommentRequest {
-  resources.documents.DocumentComment comment = 1;
+message PostCommentRequest {
+  resources.documents.Comment comment = 1;
 }
 
-message PostDocumentCommentResponse {
+message PostCommentResponse {
   uint64 id = 1;
 }
 
-message EditDocumentCommentRequest {
-  resources.documents.DocumentComment comment = 1;
+message EditCommentRequest {
+  resources.documents.Comment comment = 1;
 }
 
-message EditDocumentCommentResponse {}
+message EditCommentResponse {}
 
-message DeleteDocumentCommentRequest {
+message DeleteCommentRequest {
   uint64 comment_id = 1;
 }
 
-message DeleteDocumentCommentResponse {}
+message DeleteCommentResponse {}
 
 message CreateDocumentRequest {
   optional uint64 category_id = 1; // @gotags: alias:"category_id"
@@ -235,31 +236,31 @@ message ListUserDocumentsResponse {
 }
 
 // Categories
-message ListDocumentCategoriesRequest {}
+message ListCategoriesRequest {}
 
-message ListDocumentCategoriesResponse {
-  repeated resources.documents.DocumentCategory category = 1;
+message ListCategoriesResponse {
+  repeated resources.documents.Category category = 1;
 }
 
-message CreateDocumentCategoryRequest {
-  resources.documents.DocumentCategory category = 1 [(validate.rules).message.required = true];
+message CreateCategoryRequest {
+  resources.documents.Category category = 1 [(validate.rules).message.required = true];
 }
 
-message CreateDocumentCategoryResponse {
+message CreateCategoryResponse {
   uint64 id = 1;
 }
 
-message UpdateDocumentCategoryRequest {
-  resources.documents.DocumentCategory category = 1 [(validate.rules).message.required = true];
+message UpdateCategoryRequest {
+  resources.documents.Category category = 1 [(validate.rules).message.required = true];
 }
 
-message UpdateDocumentCategoryResponse {}
+message UpdateCategoryResponse {}
 
-message DeleteDocumentCategoryRequest {
+message DeleteCategoryRequest {
   repeated uint64 ids = 1;
 }
 
-message DeleteDocumentCategoryResponse {}
+message DeleteCategoryResponse {}
 
 service DocStoreService {
   // @perm
@@ -300,14 +301,14 @@ service DocStoreService {
   // @perm: Name=AddDocumentRelation
   rpc RemoveDocumentRelation(RemoveDocumentRelationRequest) returns (RemoveDocumentRelationResponse);
 
+  // @perm: Name=GetDocument
+  rpc GetComments(GetCommentsRequest) returns (GetCommentsResponse);
   // @perm
-  rpc GetDocumentComments(GetDocumentCommentsRequest) returns (GetDocumentCommentsResponse);
-  // @perm
-  rpc PostDocumentComment(PostDocumentCommentRequest) returns (PostDocumentCommentResponse);
-  // @perm: Name=PostDocumentComment
-  rpc EditDocumentComment(EditDocumentCommentRequest) returns (EditDocumentCommentResponse);
+  rpc PostComment(PostCommentRequest) returns (PostCommentResponse);
+  // @perm: Name=PostComment
+  rpc EditComment(EditCommentRequest) returns (EditCommentResponse);
   // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
-  rpc DeleteDocumentComment(DeleteDocumentCommentRequest) returns (DeleteDocumentCommentResponse);
+  rpc DeleteComment(DeleteCommentRequest) returns (DeleteCommentResponse);
 
   // @perm: Name=GetDocument
   rpc GetDocumentAccess(GetDocumentAccessRequest) returns (GetDocumentAccessResponse);
@@ -318,11 +319,11 @@ service DocStoreService {
   rpc ListUserDocuments(ListUserDocumentsRequest) returns (ListUserDocumentsResponse);
 
   // @perm
-  rpc ListDocumentCategories(ListDocumentCategoriesRequest) returns (ListDocumentCategoriesResponse);
+  rpc ListCategories(ListCategoriesRequest) returns (ListCategoriesResponse);
   // @perm
-  rpc CreateDocumentCategory(CreateDocumentCategoryRequest) returns (CreateDocumentCategoryResponse);
-  // @perm: Name=CreateDocumentCategory
-  rpc UpdateDocumentCategory(UpdateDocumentCategoryRequest) returns (UpdateDocumentCategoryResponse);
+  rpc CreateCategory(CreateCategoryRequest) returns (CreateCategoryResponse);
+  // @perm: Name=CreateCategory
+  rpc UpdateCategory(UpdateCategoryRequest) returns (UpdateCategoryResponse);
   // @perm
-  rpc DeleteDocumentCategory(DeleteDocumentCategoryRequest) returns (DeleteDocumentCategoryResponse);
+  rpc DeleteCategory(DeleteCategoryRequest) returns (DeleteCategoryResponse);
 }

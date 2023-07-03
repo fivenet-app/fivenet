@@ -798,7 +798,7 @@
                 "key": "Vollständige Job-Namen und Ränge",
                 "description": "Vollständige Job-Namen und Ränge."
             },
-            "CompleteDocumentCategories": {
+            "CompleteCategories": {
                 "key": "Dokumentenkategorien auflisten",
                 "description": "Eine Dokumentenkategorie vervollständigen."
             }
@@ -824,7 +824,7 @@
                 "key": "Dokument Erstellen",
                 "description": "Ein neues Dokument erstellen"
             },
-            "DeleteDocumentComment": {
+            "DeleteComment": {
                 "key": "Dokumenten Kommentare löschen",
                 "description": "Eigenen Dokumentenkommentar löschen",
                 "attrs": {
@@ -841,7 +841,7 @@
                 "key": "Dokumente Anzeigen können",
                 "description": "Ein Dokument anzeigen"
             },
-            "GetDocumentComments": {
+            "GetComments": {
                 "key": "Dokumenten Kommentare Sehen",
                 "description": "Dokumentkommentare anzeigen"
             },
@@ -853,7 +853,7 @@
                 "key": "Vorlagen auflisten",
                 "description": "Verfügbare Vorlagen auflisten."
             },
-            "PostDocumentComment": {
+            "PostComment": {
                 "key": "Kommentar zum Dokument posten",
                 "description": "Dokumentkommentare posten"
             },
@@ -866,15 +866,15 @@
                     "Same_Rank": "Gleicher Rang"
                 }
             },
-            "CreateDocumentCategory": {
+            "CreateCategory": {
                 "key": "Dokumentenkategorie erstellen",
                 "description": "Dokumentenkategorien erstellen/aktualisieren"
             },
-            "DeleteDocumentCategory": {
+            "DeleteCategory": {
                 "key": "Dokumentenkategorie löschen",
                 "description": "Dokumentenkategorien löschen"
             },
-            "ListDocumentCategories": {
+            "ListCategories": {
                 "key": "Auflisten der Dokumentenkategorien",
                 "description": "Liste der Dokumentkategorien"
             },
@@ -960,7 +960,7 @@
             }
         },
         "CompletorService": {
-            "CompleteDocumentCategories": {
+            "CompleteCategories": {
                 "Jobs": "Fraktionen"
             }
         },
@@ -982,7 +982,7 @@
             "DeleteDocument": {
                 "Access": "Zugriff"
             },
-            "DeleteDocumentComment": {
+            "DeleteComment": {
                 "Access": "Zugriff"
             },
             "ToggleDocument": {

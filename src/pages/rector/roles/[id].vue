@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import RoleView from '~/components/rector/RoleView.vue';
+import RoleView from '~/components/rector/roles/RoleView.vue';
 import { TypedRouteFromName } from '~~/.nuxt/typed-router/__router';
 
 useHead({

@@ -32,7 +32,7 @@ message CompleteDocumentCategoriesRequest {
 }
 
 message CompleteDocumentCategoriesResponse {
-  repeated resources.documents.DocumentCategory categories = 1;
+  repeated resources.documents.Category categories = 1;
 }
 
 message ListLawBooksRequest {}

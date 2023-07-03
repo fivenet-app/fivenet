@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { UNIT_STATUS, Unit } from '../../../gen/ts/resources/dispatch/units';
+import { UNIT_STATUS, Unit } from '~~/gen/ts/resources/dispatch/units';
 
 const units: Unit[] = [
     { id: 0n, name: 'Charlie 2', initials: 'C2', users: [], status: UNIT_STATUS.AVAILABLE },

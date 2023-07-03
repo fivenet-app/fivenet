@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import AttrView from '~/components/rector/AttrView.vue';
+import AttrView from '~/components/rector/attrs/AttrView.vue';
 import { TypedRouteFromName } from '~~/.nuxt/typed-router/__router';
 
 useHead({

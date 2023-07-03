@@ -2,9 +2,9 @@
 import { NavigationFailure } from 'vue-router';
 import { useAuthStore } from '~/store/auth';
 import { TypedRouteFromName } from '~~/.nuxt/typed-router/__router';
-import CreateAccountForm from './CreateAccountForm.vue';
 import ForgotPasswordForm from './ForgotPasswordForm.vue';
 import LoginForm from './LoginForm.vue';
+import RegistrationForm from './RegistrationForm.vue';
 
 const authStore = useAuthStore();
 const route = useRoute();
@@ -32,7 +32,7 @@ watch(accessToken, async (): Promise<NavigationFailure | TypedRouteFromName<'aut
             <img class="h-auto mx-auto mb-2 w-36" src="/images/logo.png" alt="FiveNet Logo" />
 
             <div v-if="forms.create">
-                <CreateAccountForm @back="forms.create = false" />
+                <RegistrationForm @back="forms.create = false" />
             </div>
             <div v-else-if="forms.forgot">
                 <ForgotPasswordForm @back="forms.forgot = false" />

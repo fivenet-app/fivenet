@@ -1,0 +1,630 @@
+<script setup lang="ts">
+import {
+    Dialog,
+    DialogPanel,
+    DialogTitle,
+    Tab,
+    TabGroup,
+    TabList,
+    TabPanel,
+    TabPanels,
+    TransitionChild,
+    TransitionRoot,
+} from '@headlessui/vue';
+import SvgIcon from '@jamescoyle/vue-icon';
+import {
+    mdiCheck,
+    mdiClipboardList,
+    mdiClose,
+    mdiCloseBox,
+    mdiFileDocumentMinus,
+    mdiFileDocumentMultiple,
+    mdiFileDocumentPlus,
+    mdiFileSearch,
+    mdiLink,
+    mdiLockClock,
+    mdiOpenInNew,
+} from '@mdi/js';
+import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
+import { watchDebounced } from '@vueuse/core';
+import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
+import { ClipboardDocument, getDocument, useClipboardStore } from '~/store/clipboard';
+import { DocumentReference, DocumentShort } from '~~/gen/ts/resources/documents/documents';
+
+const { $grpc } = useNuxtApp();
+const clipboardStore = useClipboardStore();
+
+const { t } = useI18n();
+
+const props = defineProps<{
+    open: boolean;
+    document?: bigint;
+    modelValue: Map<bigint, DocumentReference>;
+}>();
+
+const emit = defineEmits<{
+    (e: 'close'): void;
+    (e: 'update:modelValue', payload: Map<bigint, DocumentReference>): void;
+}>();
+
+const tabs = ref<{ name: string; icon: string }[]>([
+    {
+        name: t('components.documents.document_managers.view_current'),
+        icon: mdiFileSearch,
+    },
+    { name: t('common.clipboard'), icon: mdiClipboardList },
+    {
+        name: t('components.documents.document_managers.add_new'),
+        icon: mdiFileDocumentPlus,
+    },
+]);
+
+const queryDoc = ref('');
+
+const {
+    data: documents,
+    pending,
+    refresh,
+    error,
+} = useLazyAsyncData(`document-${props.document}-references-docs-${queryDoc}`, () => listDocuments());
+
+watchDebounced(queryDoc, async () => listDocuments(), {
+    debounce: 600,
+    maxWait: 1750,
+});
+
+async function listDocuments(): Promise<Array<DocumentShort>> {
+    return new Promise(async (res, rej) => {
+        try {
+            const call = $grpc.getDocStoreClient().listDocuments({
+                pagination: {
+                    offset: 0n,
+                    pageSize: 8n,
+                },
+                orderBy: [],
+                search: queryDoc.value,
+                categoryIds: [],
+                creatorIds: [],
+            });
+            const { response } = await call;
+
+            return res(
+                response.documents.filter(
+                    (doc) =>
+                        !Array.from(props.modelValue.values()).find(
+                            (r) => r.targetDocumentId === doc.id || doc.id === props.document
+                        )
+                )
+            );
+        } catch (e) {
+            $grpc.handleError(e as RpcError);
+            return rej(e as RpcError);
+        }
+    });
+}
+
+function addReference(doc: DocumentShort, reference: number): void {
+    const keys = Array.from(props.modelValue.keys());
+    const key = !keys.length ? 1n : keys[keys.length - 1] + 1n;
+
+    const ref: DocumentReference = {
+        id: key,
+        sourceDocumentId: 0n,
+        reference: reference,
+        targetDocumentId: doc.id,
+    };
+
+    props.modelValue.set(key, ref);
+    listDocuments();
+}
+
+function addReferenceClipboard(doc: ClipboardDocument, reference: number): void {
+    addReference(getDocument(doc), reference);
+}
+
+function removeReference(id: bigint): void {
+    props.modelValue.delete(id);
+    listDocuments();
+}
+</script>
+
+<template>
+    <TransitionRoot as="template" :show="open">
+        <Dialog as="div" class="relative z-10" @close="emit('close')">
+            <TransitionChild
+                as="template"
+                enter="ease-out duration-300"
+                enter-from="opacity-0"
+                enter-to="opacity-100"
+                leave="ease-in duration-200"
+                leave-from="opacity-100"
+                leave-to="opacity-0"
+            >
+                <div class="fixed inset-0 transition-opacity bg-opacity-75 bg-base-900" />
+            </TransitionChild>
+
+            <div class="fixed inset-0 z-10 overflow-y-auto">
+                <div class="flex items-end justify-center min-h-full p-4 text-center sm:items-center sm:p-0">
+                    <TransitionChild
+                        as="template"
+                        enter="ease-out duration-300"
+                        enter-from="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                        enter-to="opacity-100 translate-y-0 sm:scale-100"
+                        leave="ease-in duration-200"
+                        leave-from="opacity-100 translate-y-0 sm:scale-100"
+                        leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+                    >
+                        <DialogPanel
+                            class="relative px-4 pt-5 pb-4 overflow-hidden text-left transition-all transform rounded-lg bg-base-850 text-neutral sm:my-8 sm:w-full sm:max-w-6xl sm:p-6"
+                        >
+                            <div class="absolute top-0 right-0 hidden pt-4 pr-4 sm:block">
+                                <button
+                                    type="button"
+                                    class="transition-colors rounded-md hover:text-base-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+                                    @click="emit('close')"
+                                >
+                                    <span class="sr-only">
+                                        {{ $t('common.close', 1) }}
+                                    </span>
+                                    <SvgIcon class="w-6 h-6" aria-hidden="true" type="mdi" :path="mdiClose" />
+                                </button>
+                            </div>
+                            <DialogTitle as="h3" class="text-base font-semibold leading-6">
+                                {{ $t('common.document', 1) }}
+                                {{ $t('common.reference', 2) }}
+                            </DialogTitle>
+                            <TabGroup>
+                                <TabList class="flex flex-row mb-4">
+                                    <Tab v-for="tab in tabs" :key="tab.name" v-slot="{ selected }" class="flex-initial w-full">
+                                        <button
+                                            :class="[
+                                                selected
+                                                    ? 'border-primary-500 text-primary-500'
+                                                    : 'border-transparent text-base-300 hover:border-base-300 hover:text-base-200',
+                                                'group inline-flex items-center border-b-2 py-4 px-1 text-m font-medium w-full justify-center transition-colors',
+                                            ]"
+                                            :aria-current="selected ? 'page' : undefined"
+                                        >
+                                            <SvgIcon
+                                                type="mdi"
+                                                :path="tab.icon"
+                                                :class="[
+                                                    selected ? 'text-primary-500' : 'text-base-300 group-hover:text-base-200',
+                                                    '-ml-0.5 mr-2 h-5 w-5 transition-colors',
+                                                ]"
+                                                aria-hidden="true"
+                                            />
+                                            <span>{{ tab.name }}</span>
+                                        </button>
+                                    </Tab>
+                                </TabList>
+                                <TabPanels>
+                                    <div class="px-4 sm:flex sm:items-start sm:px-6 lg:px-8">
+                                        <TabPanel class="w-full">
+                                            <div class="flow-root">
+                                                <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                                                    <div class="inline-block min-w-full py-2 align-middle">
+                                                        <table class="min-w-full divide-y divide-base-200 text-neutral">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th
+                                                                        scope="col"
+                                                                        class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-6 lg:pl-8"
+                                                                    >
+                                                                        {{ $t('common.title') }}
+                                                                    </th>
+                                                                    <th
+                                                                        scope="col"
+                                                                        class="px-3 py-3.5 text-left text-sm font-semibold"
+                                                                    >
+                                                                        {{ $t('common.creator') }}
+                                                                    </th>
+                                                                    <th
+                                                                        scope="col"
+                                                                        class="px-3 py-3.5 text-left text-sm font-semibold"
+                                                                    >
+                                                                        {{ $t('common.state') }}
+                                                                    </th>
+                                                                    <th
+                                                                        scope="col"
+                                                                        class="px-3 py-3.5 text-left text-sm font-semibold"
+                                                                    >
+                                                                        {{ $t('common.action', 2) }}
+                                                                    </th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody class="divide-y divide-base-500">
+                                                                <tr
+                                                                    v-for="[key, ref] in $props.modelValue"
+                                                                    :key="key.toString()"
+                                                                >
+                                                                    <td
+                                                                        class="py-4 pl-4 pr-3 text-sm font-medium truncate whitespace-nowrap sm:pl-6 lg:pl-8"
+                                                                    >
+                                                                        {{ ref.targetDocument?.title }}
+                                                                    </td>
+                                                                    <td class="px-3 py-4 text-sm whitespace-nowrap">
+                                                                        {{ ref.creator?.firstname }}
+                                                                        {{ ref.creator?.lastname }}
+                                                                    </td>
+                                                                    <td class="px-3 py-4 text-sm whitespace-nowrap">
+                                                                        {{ ref.targetDocument?.state }}
+                                                                    </td>
+                                                                    <td class="px-3 py-4 text-sm whitespace-nowrap">
+                                                                        <div class="flex flex-row gap-2">
+                                                                            <div class="flex">
+                                                                                <NuxtLink
+                                                                                    :to="{
+                                                                                        name: 'documents-id',
+                                                                                        params: {
+                                                                                            id: ref.targetDocumentId.toString(),
+                                                                                        },
+                                                                                    }"
+                                                                                    target="_blank"
+                                                                                    data-te-toggle="tooltip"
+                                                                                    :title="
+                                                                                        $t(
+                                                                                            'components.documents.document_managers.open_document'
+                                                                                        )
+                                                                                    "
+                                                                                >
+                                                                                    <SvgIcon
+                                                                                        class="w-6 h-auto text-primary-500 hover:text-primary-300"
+                                                                                        type="mdi"
+                                                                                        :path="mdiOpenInNew"
+                                                                                    />
+                                                                                </NuxtLink>
+                                                                            </div>
+                                                                            <div class="flex">
+                                                                                <button
+                                                                                    role="button"
+                                                                                    @click="removeReference(ref.id!)"
+                                                                                    data-te-toggle="tooltip"
+                                                                                    :title="
+                                                                                        $t(
+                                                                                            'components.documents.document_managers.remove_reference'
+                                                                                        )
+                                                                                    "
+                                                                                >
+                                                                                    <SvgIcon
+                                                                                        class="w-6 h-auto text-error-400 hover:text-error-200"
+                                                                                        type="mdi"
+                                                                                        :path="mdiFileDocumentMinus"
+                                                                                    />
+                                                                                </button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </TabPanel>
+                                        <TabPanel class="w-full">
+                                            <div class="flow-root mt-2">
+                                                <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                                                    <div class="inline-block min-w-full py-2 align-middle">
+                                                        <DataNoDataBlock
+                                                            v-if="clipboardStore.$state.documents.length === 0"
+                                                            :type="$t('common.reference', 2)"
+                                                            :icon="mdiFileDocumentMultiple"
+                                                        />
+                                                        <table v-else class="min-w-full divide-y divide-base-200">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th
+                                                                        scope="col"
+                                                                        class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-6 lg:pl-8"
+                                                                    >
+                                                                        {{ $t('common.title') }}
+                                                                    </th>
+                                                                    <th
+                                                                        scope="col"
+                                                                        class="px-3 py-3.5 text-left text-sm font-semibold"
+                                                                    >
+                                                                        {{ $t('common.creator') }}
+                                                                    </th>
+                                                                    <th
+                                                                        scope="col"
+                                                                        class="px-3 py-3.5 text-left text-sm font-semibold"
+                                                                    >
+                                                                        {{ $t('common.state') }}
+                                                                    </th>
+                                                                    <th
+                                                                        scope="col"
+                                                                        class="px-3 py-3.5 text-left text-sm font-semibold"
+                                                                    >
+                                                                        {{ $t('common.created_at') }}
+                                                                    </th>
+                                                                    <th
+                                                                        scope="col"
+                                                                        class="px-3 py-3.5 text-left text-sm font-semibold"
+                                                                    >
+                                                                        {{
+                                                                            $t(
+                                                                                'components.documents.document_managers.add_reference'
+                                                                            )
+                                                                        }}
+                                                                    </th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody class="divide-y divide-base-500">
+                                                                <tr
+                                                                    v-for="doc in clipboardStore.$state.documents"
+                                                                    :key="doc.id?.toString()"
+                                                                >
+                                                                    <td
+                                                                        class="py-4 pl-4 pr-3 text-sm font-medium truncate whitespace-nowrap sm:pl-6 lg:pl-8"
+                                                                    >
+                                                                        {{ doc.title }}
+                                                                    </td>
+                                                                    <td class="px-3 py-4 text-sm whitespace-nowrap">
+                                                                        {{ doc.creator?.firstname }}
+                                                                        {{ doc.creator?.lastname }}
+                                                                    </td>
+                                                                    <td class="px-3 py-4 text-sm whitespace-nowrap">
+                                                                        {{ doc.state }}
+                                                                    </td>
+                                                                    <td class="px-3 py-4 text-sm whitespace-nowrap">
+                                                                        {{ $t('common.created') }}
+                                                                        <time :datetime="doc.createdAt">{{
+                                                                            doc.createdAt
+                                                                        }}</time>
+                                                                    </td>
+                                                                    <td class="px-3 py-4 text-sm whitespace-nowrap">
+                                                                        <div class="flex flex-row gap-2">
+                                                                            <div class="flex">
+                                                                                <button
+                                                                                    role="button"
+                                                                                    @click="addReferenceClipboard(doc, 0)"
+                                                                                    data-te-toggle="tooltip"
+                                                                                    :title="
+                                                                                        $t(
+                                                                                            'components.documents.document_managers.links'
+                                                                                        )
+                                                                                    "
+                                                                                >
+                                                                                    <SvgIcon
+                                                                                        class="w-6 h-auto text-info-500 hover:text-info-300"
+                                                                                        type="mdi"
+                                                                                        :path="mdiLink"
+                                                                                    />
+                                                                                </button>
+                                                                                <button
+                                                                                    role="button"
+                                                                                    @click="addReferenceClipboard(doc, 1)"
+                                                                                    data-te-toggle="tooltip"
+                                                                                    :title="
+                                                                                        $t(
+                                                                                            'components.documents.document_managers.solves'
+                                                                                        )
+                                                                                    "
+                                                                                >
+                                                                                    <SvgIcon
+                                                                                        class="w-6 h-auto text-success-500 hover:text-success-300"
+                                                                                        type="mdi"
+                                                                                        :path="mdiCheck"
+                                                                                    />
+                                                                                </button>
+                                                                                <button
+                                                                                    role="button"
+                                                                                    @click="addReferenceClipboard(doc, 2)"
+                                                                                    data-te-toggle="tooltip"
+                                                                                    :title="
+                                                                                        $t(
+                                                                                            'components.documents.document_managers.closes'
+                                                                                        )
+                                                                                    "
+                                                                                >
+                                                                                    <SvgIcon
+                                                                                        class="w-6 h-auto text-error-500 hover:text-error-300"
+                                                                                        type="mdi"
+                                                                                        :path="mdiCloseBox"
+                                                                                    />
+                                                                                </button>
+                                                                                <button
+                                                                                    role="button"
+                                                                                    @click="addReferenceClipboard(doc, 3)"
+                                                                                    data-te-toggle="tooltip"
+                                                                                    :title="
+                                                                                        $t(
+                                                                                            'components.documents.document_managers.deprecates'
+                                                                                        )
+                                                                                    "
+                                                                                >
+                                                                                    <SvgIcon
+                                                                                        class="w-6 h-auto text-warn-500 hover:text-warn-300"
+                                                                                        type="mdi"
+                                                                                        :path="mdiLockClock"
+                                                                                    />
+                                                                                </button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </TabPanel>
+                                        <TabPanel class="w-full">
+                                            <div>
+                                                <label for="title" class="sr-only"
+                                                    >{{ $t('common.document', 1) }} {{ $t('common.title') }}</label
+                                                >
+                                                <input
+                                                    type="text"
+                                                    name="title"
+                                                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                    :placeholder="`${$t('common.document', 1)} ${$t('common.title')}`"
+                                                    v-model="queryDoc"
+                                                />
+                                            </div>
+                                            <div class="flow-root mt-2">
+                                                <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                                                    <div class="inline-block min-w-full py-2 align-middle">
+                                                        <table class="min-w-full divide-y divide-base-200">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th
+                                                                        scope="col"
+                                                                        class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-6 lg:pl-8"
+                                                                    >
+                                                                        {{ $t('common.title') }}
+                                                                    </th>
+                                                                    <th
+                                                                        scope="col"
+                                                                        class="px-3 py-3.5 text-left text-sm font-semibold"
+                                                                    >
+                                                                        {{ $t('common.creator') }}
+                                                                    </th>
+                                                                    <th
+                                                                        scope="col"
+                                                                        class="px-3 py-3.5 text-left text-sm font-semibold"
+                                                                    >
+                                                                        {{ $t('common.state') }}
+                                                                    </th>
+                                                                    <th
+                                                                        scope="col"
+                                                                        class="px-3 py-3.5 text-left text-sm font-semibold"
+                                                                    >
+                                                                        {{ $t('common.created_at') }}
+                                                                    </th>
+                                                                    <th
+                                                                        scope="col"
+                                                                        class="px-3 py-3.5 text-left text-sm font-semibold"
+                                                                    >
+                                                                        {{ $t('common.add') }}
+                                                                        {{ $t('common.reference', 1) }}
+                                                                    </th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody class="divide-y divide-base-500">
+                                                                <template v-if="documents">
+                                                                    <tr
+                                                                        v-for="doc in documents.slice(0, 8)"
+                                                                        :key="doc.id?.toString()"
+                                                                    >
+                                                                        <td
+                                                                            class="py-4 pl-4 pr-3 text-sm font-medium truncate whitespace-nowrap sm:pl-6 lg:pl-8"
+                                                                        >
+                                                                            {{ doc.title }}
+                                                                        </td>
+                                                                        <td class="px-3 py-4 text-sm whitespace-nowrap">
+                                                                            {{ doc.creator?.firstname }}
+                                                                            {{ doc.creator?.lastname }}
+                                                                        </td>
+                                                                        <td class="px-3 py-4 text-sm whitespace-nowrap">
+                                                                            {{ doc.state }}
+                                                                        </td>
+                                                                        <td class="px-3 py-4 text-sm whitespace-nowrap">
+                                                                            {{ $t('common.created') }}
+                                                                            <time
+                                                                                :datetime="$d(toDate(doc.createdAt)!, 'short')"
+                                                                            >
+                                                                                {{
+                                                                                    useLocaleTimeAgo(toDate(doc.createdAt)!)
+                                                                                        .value
+                                                                                }}
+                                                                            </time>
+                                                                        </td>
+                                                                        <td class="px-3 py-4 text-sm whitespace-nowrap">
+                                                                            <div class="flex flex-row gap-2">
+                                                                                <div class="flex">
+                                                                                    <button
+                                                                                        role="button"
+                                                                                        @click="addReference(doc, 0)"
+                                                                                        data-te-toggle="tooltip"
+                                                                                        :title="
+                                                                                            $t(
+                                                                                                'components.documents.document_managers.links'
+                                                                                            )
+                                                                                        "
+                                                                                    >
+                                                                                        <SvgIcon
+                                                                                            class="w-6 h-auto text-info-500 hover:text-info-300"
+                                                                                            type="mdi"
+                                                                                            :path="mdiLink"
+                                                                                        />
+                                                                                    </button>
+                                                                                    <button
+                                                                                        role="button"
+                                                                                        @click="addReference(doc, 1)"
+                                                                                        data-te-toggle="tooltip"
+                                                                                        :title="
+                                                                                            $t(
+                                                                                                'components.documents.document_managers.solves'
+                                                                                            )
+                                                                                        "
+                                                                                    >
+                                                                                        <SvgIcon
+                                                                                            class="w-6 h-auto text-success-500 hover:text-success-300"
+                                                                                            type="mdi"
+                                                                                            :path="mdiCheck"
+                                                                                        />
+                                                                                    </button>
+                                                                                    <button
+                                                                                        role="button"
+                                                                                        @click="addReference(doc, 2)"
+                                                                                        data-te-toggle="tooltip"
+                                                                                        :title="
+                                                                                            $t(
+                                                                                                'components.documents.document_managers.closes'
+                                                                                            )
+                                                                                        "
+                                                                                    >
+                                                                                        <SvgIcon
+                                                                                            class="w-6 h-auto text-error-500 hover:text-error-300"
+                                                                                            type="mdi"
+                                                                                            :path="mdiCloseBox"
+                                                                                        />
+                                                                                    </button>
+                                                                                    <button
+                                                                                        role="button"
+                                                                                        @click="addReference(doc, 3)"
+                                                                                        data-te-toggle="tooltip"
+                                                                                        :title="
+                                                                                            $t(
+                                                                                                'components.documents.document_managers.deprecates'
+                                                                                            )
+                                                                                        "
+                                                                                    >
+                                                                                        <SvgIcon
+                                                                                            class="w-6 h-auto text-warn-500 hover:text-warn-300"
+                                                                                            type="mdi"
+                                                                                            :path="mdiLockClock"
+                                                                                        />
+                                                                                    </button>
+                                                                                </div>
+                                                                            </div>
+                                                                        </td>
+                                                                    </tr>
+                                                                </template>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </TabPanel>
+                                    </div>
+                                </TabPanels>
+                            </TabGroup>
+                            <div class="gap-2 mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
+                                <button
+                                    type="button"
+                                    class="rounded-md bg-base-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-base-400"
+                                    @click="emit('close')"
+                                >
+                                    {{ $t('common.close', 1) }}
+                                </button>
+                            </div>
+                        </DialogPanel>
+                    </TransitionChild>
+                </div>
+            </div>
+        </Dialog>
+    </TransitionRoot>
+</template>

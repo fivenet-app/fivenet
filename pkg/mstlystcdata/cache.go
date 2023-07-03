@@ -21,7 +21,7 @@ import (
 var (
 	tJobs      = table.Jobs.AS("job")
 	tJGrades   = table.JobGrades.AS("jobgrade")
-	tDCategory = table.FivenetDocumentsCategories.AS("documentcategory")
+	tDCategory = table.FivenetDocumentsCategories.AS("category")
 	tLawBooks  = table.FivenetLawbooks.AS("lawbook")
 	tLaws      = table.FivenetLawbooksLaws.AS("law")
 )
@@ -35,8 +35,8 @@ type Cache struct {
 	tracer             trace.Tracer
 	ctx                context.Context
 	jobs               *cache.Cache[string, *jobs.Job]
-	docCategories      *cache.Cache[uint64, *documents.DocumentCategory]
-	docCategoriesByJob *cache.Cache[string, []*documents.DocumentCategory]
+	docCategories      *cache.Cache[uint64, *documents.Category]
+	docCategoriesByJob *cache.Cache[string, []*documents.Category]
 	lawBooks           *syncx.Map[uint64, *laws.LawBook]
 
 	searcher *Searcher
@@ -44,8 +44,8 @@ type Cache struct {
 
 func NewCache(ctx context.Context, logger *zap.Logger, tp *tracesdk.TracerProvider, db *sql.DB, refreshTime time.Duration) (*Cache, error) {
 	jobsCache := cache.NewContext[string, *jobs.Job](ctx)
-	docCategoriesCache := cache.NewContext[uint64, *documents.DocumentCategory](ctx)
-	docCategoriesByJobCache := cache.NewContext[string, []*documents.DocumentCategory](ctx)
+	docCategoriesCache := cache.NewContext[uint64, *documents.Category](ctx)
+	docCategoriesByJobCache := cache.NewContext[string, []*documents.Category](ctx)
 	lawBooks := &syncx.Map[uint64, *laws.LawBook]{}
 
 	c := &Cache{
@@ -91,7 +91,7 @@ func (c *Cache) refreshCache() error {
 	ctx, span := c.tracer.Start(c.ctx, "mstlystcdata-refresh-cache")
 	defer span.End()
 
-	if err := c.refreshDocumentCategories(ctx); err != nil {
+	if err := c.refreshCategories(ctx); err != nil {
 		return err
 	}
 
@@ -110,7 +110,7 @@ func (c *Cache) refreshCache() error {
 	return nil
 }
 
-func (c *Cache) refreshDocumentCategories(ctx context.Context) error {
+func (c *Cache) refreshCategories(ctx context.Context) error {
 	stmt := tDCategory.
 		SELECT(
 			tDCategory.ID,
@@ -124,17 +124,17 @@ func (c *Cache) refreshDocumentCategories(ctx context.Context) error {
 			tDCategory.Name.ASC(),
 		)
 
-	var dest []*documents.DocumentCategory
+	var dest []*documents.Category
 	if err := stmt.QueryContext(ctx, c.db, &dest); err != nil {
 		return err
 	}
 
-	categoriesPerJob := map[string][]*documents.DocumentCategory{}
+	categoriesPerJob := map[string][]*documents.Category{}
 	for _, d := range dest {
 		c.docCategories.Set(d.Id, d)
 
 		if _, ok := categoriesPerJob[*d.Job]; !ok {
-			categoriesPerJob[*d.Job] = []*documents.DocumentCategory{}
+			categoriesPerJob[*d.Job] = []*documents.Category{}
 		}
 		categoriesPerJob[*d.Job] = append(categoriesPerJob[*d.Job], d)
 	}

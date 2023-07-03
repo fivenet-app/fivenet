@@ -2,7 +2,7 @@
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { alpha_dash, max, min, required } from '@vee-validate/rules';
 import { defineRule } from 'vee-validate';
-import Alert from '~/components/partials/Alert.vue';
+import Alert from '~/components/partials/elements/Alert.vue';
 import config from '~/config';
 import { useAuthStore } from '~/store/auth';
 

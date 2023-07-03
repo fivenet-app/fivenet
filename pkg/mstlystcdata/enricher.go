@@ -53,7 +53,7 @@ func (e *Enricher) EnrichJobName(usr common.IJobName) {
 	}
 }
 
-func (e *Enricher) EnrichDocumentCategory(doc common.IDocumentCategory) {
+func (e *Enricher) EnrichCategory(doc common.ICategory) {
 	cId := doc.GetCategoryId()
 
 	// No category
@@ -64,7 +64,7 @@ func (e *Enricher) EnrichDocumentCategory(doc common.IDocumentCategory) {
 	dc, ok := e.c.docCategories.Get(cId)
 	if !ok {
 		job := NotAvailablePlaceholder
-		doc.SetCategory(&documents.DocumentCategory{
+		doc.SetCategory(&documents.Category{
 			Id:   0,
 			Name: "N/A",
 			Job:  &job,

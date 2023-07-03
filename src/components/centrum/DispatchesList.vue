@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { DISPATCH_STATUS, Dispatch } from '../../../gen/ts/resources/dispatch/dispatch';
+import { DISPATCH_STATUS, Dispatch } from '~~/gen/ts/resources/dispatch/dispatch';
 import DispatchListEntry from './DispatchListEntry.vue';
 
 const dispatches: Dispatch[] = [

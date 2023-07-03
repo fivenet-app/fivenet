@@ -4,12 +4,12 @@ import SvgIcon from '@jamescoyle/vue-icon';
 import { mdiBell, mdiChevronRight } from '@mdi/js';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { watchDebounced } from '@vueuse/core';
+import TablePagination from '~/components/partials/elements/TablePagination.vue';
+import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
+import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
+import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { PaginationResponse } from '~~/gen/ts/resources/common/database/database';
 import { Notification } from '~~/gen/ts/resources/notifications/notifications';
-import DataErrorBlock from '../DataErrorBlock.vue';
-import DataNoDataBlock from '../DataNoDataBlock.vue';
-import DataPendingBlock from '../DataPendingBlock.vue';
-import TablePagination from '../TablePagination.vue';
 
 const { $grpc } = useNuxtApp();
 

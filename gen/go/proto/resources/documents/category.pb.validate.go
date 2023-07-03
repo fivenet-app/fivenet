@@ -35,22 +35,22 @@ var (
 	_ = sort.Sort
 )
 
-// Validate checks the field values on DocumentCategory with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// first error encountered is returned, or nil if there are no violations.
-func (m *DocumentCategory) Validate() error {
+// Validate checks the field values on Category with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *Category) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on DocumentCategory with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// DocumentCategoryMultiError, or nil if none found.
-func (m *DocumentCategory) ValidateAll() error {
+// ValidateAll checks the field values on Category with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in CategoryMultiError, or nil
+// if none found.
+func (m *Category) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *DocumentCategory) validate(all bool) error {
+func (m *Category) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -60,7 +60,7 @@ func (m *DocumentCategory) validate(all bool) error {
 	// no validation rules for Id
 
 	if l := utf8.RuneCountInString(m.GetName()); l < 3 || l > 128 {
-		err := DocumentCategoryValidationError{
+		err := CategoryValidationError{
 			field:  "Name",
 			reason: "value length must be between 3 and 128 runes, inclusive",
 		}
@@ -73,7 +73,7 @@ func (m *DocumentCategory) validate(all bool) error {
 	if m.Description != nil {
 
 		if utf8.RuneCountInString(m.GetDescription()) > 255 {
-			err := DocumentCategoryValidationError{
+			err := CategoryValidationError{
 				field:  "Description",
 				reason: "value length must be at most 255 runes",
 			}
@@ -88,7 +88,7 @@ func (m *DocumentCategory) validate(all bool) error {
 	if m.Job != nil {
 
 		if utf8.RuneCountInString(m.GetJob()) > 50 {
-			err := DocumentCategoryValidationError{
+			err := CategoryValidationError{
 				field:  "Job",
 				reason: "value length must be at most 50 runes",
 			}
@@ -101,19 +101,18 @@ func (m *DocumentCategory) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return DocumentCategoryMultiError(errors)
+		return CategoryMultiError(errors)
 	}
 
 	return nil
 }
 
-// DocumentCategoryMultiError is an error wrapping multiple validation errors
-// returned by DocumentCategory.ValidateAll() if the designated constraints
-// aren't met.
-type DocumentCategoryMultiError []error
+// CategoryMultiError is an error wrapping multiple validation errors returned
+// by Category.ValidateAll() if the designated constraints aren't met.
+type CategoryMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m DocumentCategoryMultiError) Error() string {
+func (m CategoryMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -122,11 +121,11 @@ func (m DocumentCategoryMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m DocumentCategoryMultiError) AllErrors() []error { return m }
+func (m CategoryMultiError) AllErrors() []error { return m }
 
-// DocumentCategoryValidationError is the validation error returned by
-// DocumentCategory.Validate if the designated constraints aren't met.
-type DocumentCategoryValidationError struct {
+// CategoryValidationError is the validation error returned by
+// Category.Validate if the designated constraints aren't met.
+type CategoryValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -134,22 +133,22 @@ type DocumentCategoryValidationError struct {
 }
 
 // Field function returns field value.
-func (e DocumentCategoryValidationError) Field() string { return e.field }
+func (e CategoryValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e DocumentCategoryValidationError) Reason() string { return e.reason }
+func (e CategoryValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e DocumentCategoryValidationError) Cause() error { return e.cause }
+func (e CategoryValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e DocumentCategoryValidationError) Key() bool { return e.key }
+func (e CategoryValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e DocumentCategoryValidationError) ErrorName() string { return "DocumentCategoryValidationError" }
+func (e CategoryValidationError) ErrorName() string { return "CategoryValidationError" }
 
 // Error satisfies the builtin error interface
-func (e DocumentCategoryValidationError) Error() string {
+func (e CategoryValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -161,14 +160,14 @@ func (e DocumentCategoryValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sDocumentCategory.%s: %s%s",
+		"invalid %sCategory.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = DocumentCategoryValidationError{}
+var _ error = CategoryValidationError{}
 
 var _ interface {
 	Field() string
@@ -176,4 +175,4 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = DocumentCategoryValidationError{}
+} = CategoryValidationError{}

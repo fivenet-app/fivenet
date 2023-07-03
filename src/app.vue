@@ -5,10 +5,10 @@ import en from '@vee-validate/i18n/dist/locale/en.json';
 import { NuxtError } from 'nuxt/app';
 import { configure } from 'vee-validate';
 import { loadConfig } from '~/config';
-import { useClipboardStore } from './store/clipboard';
-import { useDocumentEditorStore } from './store/documenteditor';
-import { useNotificationsStore } from './store/notifications';
-import { useUserSettingsStore } from './store/usersettings';
+import { useClipboardStore } from '~/store/clipboard';
+import { useDocumentEditorStore } from '~/store/documenteditor';
+import { useNotificationsStore } from '~/store/notifications';
+import { useUserSettingsStore } from '~/store/usersettings';
 
 const { t, setLocale } = useI18n();
 
