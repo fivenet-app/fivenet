@@ -23,7 +23,8 @@ message Dispatch {
   optional DISPATCH_STATUS status = 5;
   string message = 6;
   optional string description = 7;
-  resources.livemap.DispatchMarker marker = 8;
-  repeated resources.dispatch.Unit units = 9;
-  map<string, string> attributes = 10;
+  map<string, string> attributes = 8;
+  resources.livemap.DispatchMarker marker = 9;
+  repeated uint64 unit_ids = 10;
+  repeated resources.dispatch.Unit units = 11;
 }

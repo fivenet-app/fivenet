@@ -63,6 +63,8 @@ func (m *Dispatch) validate(all bool) error {
 
 	// no validation rules for Message
 
+	// no validation rules for Attributes
+
 	if all {
 		switch v := interface{}(m.GetMarker()).(type) {
 		case interface{ ValidateAll() error }:
@@ -125,8 +127,6 @@ func (m *Dispatch) validate(all bool) error {
 		}
 
 	}
-
-	// no validation rules for Attributes
 
 	if m.CreatedAt != nil {
 

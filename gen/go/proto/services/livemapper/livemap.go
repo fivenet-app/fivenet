@@ -214,7 +214,7 @@ func (s *Server) getUserLocations(jobs map[string]int32, userInfo *userinfo.User
 			}
 
 			// If the user is found in the list of user markers, set found state
-			if !found && (userInfo.Job == job && markers[i].Id == userInfo.UserId) {
+			if !found && (userInfo.Job == job && markers[i].Marker.Id == userInfo.UserId) {
 				found = true
 			}
 		}
@@ -288,8 +288,8 @@ func (s *Server) refreshUserLocations(ctx context.Context) error {
 		if _, ok := markers[job]; !ok {
 			markers[job] = []*livemap.UserMarker{}
 		}
-		if dest[i].IconColor == "" {
-			dest[i].IconColor = jobs.DefaultLivemapMarkerColor
+		if dest[i].Marker.IconColor == "" {
+			dest[i].Marker.IconColor = jobs.DefaultLivemapMarkerColor
 		}
 
 		markers[job] = append(markers[job], dest[i])
@@ -377,15 +377,17 @@ func (s *Server) refreshDispatches(ctx context.Context) error {
 			markers[job] = []*livemap.DispatchMarker{}
 		}
 		marker := &livemap.DispatchMarker{
-			X:         float32(x),
-			Y:         float32(y),
-			Id:        v.ID,
-			Icon:      icon,
-			IconColor: iconColor,
-			Name:      name,
-			Popup:     message,
-			Job:       job,
-			UpdatedAt: timestamp.New(v.Time),
+			Marker: &livemap.GenericMarker{
+				Id:        v.ID,
+				X:         float32(x),
+				Y:         float32(y),
+				Icon:      icon,
+				IconColor: iconColor,
+				Name:      name,
+				Popup:     message,
+				UpdatedAt: timestamp.New(v.Time),
+			},
+			Job: job,
 		}
 		if v.Owner == 0 {
 			marker.Active = true

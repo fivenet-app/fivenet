@@ -90,7 +90,7 @@ async function applyPlayerQuery(): Promise<void> {
 async function applyDispatchQuery(): Promise<void> {
     if (dispatchMarkers) {
         dispatchMarkersFiltered.value = dispatchMarkers.filter(
-            (m) => m.popup.includes(dispatchQuery.value) || m.name.includes(dispatchQuery.value)
+            (m) => m.marker?.popup.includes(dispatchQuery.value) || m.marker?.name.includes(dispatchQuery.value)
         );
     }
 }
@@ -258,13 +258,18 @@ async function applySelectedMarkerCentering(): Promise<void> {
     if (selectedMarker.value === undefined) return;
 
     const marker =
-        playerMarkers.find((m) => m.id === selectedMarker.value) || playerMarkers.find((m) => m.id === selectedMarker.value);
+        playerMarkers.find((m) => m.marker?.id === selectedMarker.value) ||
+        playerMarkers.find((m) => m.marker?.id === selectedMarker.value);
     if (!marker) {
         selectedMarker.value = undefined;
         return;
     }
+    if (!marker.marker) {
+        selectedMarker.value = undefined;
+        return;
+    }
 
-    map?.panTo([marker.y, marker.x], {
+    map?.panTo([marker.marker.y, marker.marker.x], {
         animate: true,
         duration: 0.85,
     });
@@ -274,7 +279,7 @@ type TMarker<TType> = TType extends 'player' ? UserMarker : TType extends 'dispa
 
 function getIcon<TType extends 'player' | 'dispatch'>(type: TType, marker: TMarker<TType>): L.DivIcon {
     let html = '';
-    let color = marker.iconColor;
+    let color = marker.marker!.iconColor;
     let iconClass = '';
     let iconAnchor: L.PointExpression | undefined = undefined;
     let popupAnchor: L.PointExpression = [0, (livemapMarkerSize.value / 2) * -1];
@@ -520,11 +525,11 @@ watchDebounced(postalQuery, () => findPostal(), {
             >
                 <LMarker
                     v-for="marker in playerMarkersFiltered.filter((p) => p.user?.job === job.name)"
-                    :key="marker.id?.toString()"
-                    :latLng="[marker.y, marker.x]"
-                    :name="marker.name"
+                    :key="marker.marker!.id?.toString()"
+                    :latLng="[marker.marker!.y, marker.marker!.x]"
+                    :name="marker.marker!.name"
                     :icon="getIcon('player', marker) as L.Icon"
-                    @click="setSelectedMarker(marker.id)"
+                    @click="setSelectedMarker(marker.marker!.id)"
                     :z-index-offset="activeChar && marker.user?.identifier === activeChar.identifier ? 25 : 20"
                 >
                     <LPopup
@@ -548,16 +553,16 @@ watchDebounced(postalQuery, () => findPostal(), {
             >
                 <LMarker
                     v-for="marker in dispatchMarkersFiltered.filter((m) => m.job === job.name)"
-                    :key="marker.id?.toString()"
-                    :latLng="[marker.y, marker.x]"
-                    :name="marker.name"
+                    :key="marker.marker!.id?.toString()"
+                    :latLng="[marker.marker!.y, marker.marker!.x]"
+                    :name="marker.marker!.name"
                     :icon="getIcon('dispatch', marker) as L.Icon"
-                    @click="setSelectedMarker(marker.id)"
+                    @click="setSelectedMarker(marker.marker!.id)"
                     :z-index-offset="marker.active ? 15 : 10"
                 >
                     <LPopup
                         :options="{ closeButton: false }"
-                        :content="`<span class='font-semibold'>${$t('common.dispatch', 2)} ${marker.jobLabel}</span><br>${marker.popup}<br><span>${useLocaleTimeAgo(toDate(marker.updatedAt)!).value}</span><br><span class='italic'>${$t('components.livemap.sent_by')} ${marker.name}</span>`"
+                        :content="`<span class='font-semibold'>${$t('common.dispatch', 2)} ${marker.jobLabel}</span><br>${marker.marker!.popup}<br><span>${useLocaleTimeAgo(toDate(marker.marker!.updatedAt)!).value}</span><br><span class='italic'>${$t('components.livemap.sent_by')} ${marker.marker!.name}</span>`"
                     >
                     </LPopup>
                 </LMarker>

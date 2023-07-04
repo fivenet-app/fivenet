@@ -7,28 +7,33 @@ import "resources/timestamp/timestamp.proto";
 import "resources/users/users.proto";
 import "validate/validate.proto";
 
+enum MARKER_TYPE {
+  GENERIC = 0;
+  USER = 1;
+  DISPATCH = 2;
+  CIRCLE = 3;
+}
+
+message GenericMarker {
+  int32 id = 1 [(validate.rules).int32.gt = 0];
+  resources.timestamp.Timestamp updated_at = 2; // @gotags: alias:"updated_at"
+  float x = 3;
+  float y = 4;
+  string name = 5;
+  string icon = 6;
+  string icon_color = 7;
+  string popup = 8;
+}
+
 message DispatchMarker {
-  float x = 1; // @gotags: alias:"x"
-  float y = 2; // @gotags: alias:"y"
-  resources.timestamp.Timestamp updated_at = 3; // @gotags: alias:"updated_at"
-  int32 id = 4 [(validate.rules).int32.gt = 0];
-  string job = 5 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job"
-  optional string job_label = 6 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job_label"
-  string name = 7;
-  string icon = 8;
-  string icon_color = 9; // @gotags: alias:"icon_color"
-  string popup = 10;
-  bool active = 11;
+  GenericMarker marker = 1;
+  string job = 2 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job"
+  optional string job_label = 3 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job_label"
+  bool active = 4;
 }
 
 message UserMarker {
-  float x = 1; // @gotags: alias:"x"
-  float y = 2; // @gotags: alias:"y"
-  resources.timestamp.Timestamp updated_at = 3; // @gotags: alias:"updated_at"
-  int32 id = 4 [(validate.rules).int32.gt = 0];
-  string name = 5;
-  string icon = 6;
-  string icon_color = 7; // @gotags: alias:"icon_color"
+  GenericMarker marker = 1;
 
-  resources.users.UserShort user = 8; // @gotags: alias:"user"
+  resources.users.UserShort user = 2; // @gotags: alias:"user"
 }

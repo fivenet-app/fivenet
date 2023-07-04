@@ -38,19 +38,23 @@ export interface Dispatch {
      */
     description?: string;
     /**
-     * @generated from protobuf field: resources.livemap.DispatchMarker marker = 8;
-     */
-    marker?: DispatchMarker;
-    /**
-     * @generated from protobuf field: repeated resources.dispatch.Unit units = 9;
-     */
-    units: Unit[];
-    /**
-     * @generated from protobuf field: map<string, string> attributes = 10;
+     * @generated from protobuf field: map<string, string> attributes = 8;
      */
     attributes: {
         [key: string]: string;
     };
+    /**
+     * @generated from protobuf field: resources.livemap.DispatchMarker marker = 9;
+     */
+    marker?: DispatchMarker;
+    /**
+     * @generated from protobuf field: repeated uint64 unit_ids = 10;
+     */
+    unitIds: bigint[];
+    /**
+     * @generated from protobuf field: repeated resources.dispatch.Unit units = 11;
+     */
+    units: Unit[];
 }
 /**
  * @generated from protobuf enum resources.dispatch.DISPATCH_STATUS
@@ -88,9 +92,10 @@ class Dispatch$Type extends MessageType<Dispatch> {
             { no: 5, name: "status", kind: "enum", opt: true, T: () => ["resources.dispatch.DISPATCH_STATUS", DISPATCH_STATUS] },
             { no: 6, name: "message", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 7, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
-            { no: 8, name: "marker", kind: "message", T: () => DispatchMarker },
-            { no: 9, name: "units", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Unit },
-            { no: 10, name: "attributes", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "scalar", T: 9 /*ScalarType.STRING*/ } }
+            { no: 8, name: "attributes", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "scalar", T: 9 /*ScalarType.STRING*/ } },
+            { no: 9, name: "marker", kind: "message", T: () => DispatchMarker },
+            { no: 10, name: "unit_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 11, name: "units", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Unit }
         ]);
     }
 }

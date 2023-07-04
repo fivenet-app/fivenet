@@ -689,10 +689,10 @@
   resolved "https://registry.yarnpkg.com/@eslint/js/-/js-8.44.0.tgz#961a5903c74139390478bdc808bcde3fc45ab7af"
   integrity sha512-Ag+9YM4ocKQx9AarydN0KY2j0ErMHNIocPDrVo8zAE44xLTjEtz81OdR68/cydGtk6m6jDb5Za3r2useMzYmSw==
 
-"@fontsource/inter@^5.0.3":
-  version "5.0.3"
-  resolved "https://registry.yarnpkg.com/@fontsource/inter/-/inter-5.0.3.tgz#30a1c0b974e29d72eddaec0c45655597ffa0bf80"
-  integrity sha512-JJvh5xht71F6e0E5r2+Ffu8g+CYAxMvnGJm9ZMg5IIjy8UwxLp+8C99TgPJupdEyBpEJv0wuMG2Rd183z/bV8g==
+"@fontsource/inter@^5.0.4":
+  version "5.0.4"
+  resolved "https://registry.yarnpkg.com/@fontsource/inter/-/inter-5.0.4.tgz#95e5c9f082b285ed6375b1ea08af34489d52d236"
+  integrity sha512-rUiTktdsh6B45XRZYTsZb2y4+TVkiVJhkqCSnSXfWxdUl0Rp6Cheu27IcurdjSfxJPUD+nl18wYp5RFf5P5zlA==
 
 "@headlessui/vue@^1.7.14":
   version "1.7.14"
@@ -1581,26 +1581,26 @@
     hookable "^5.5.3"
     unhead "1.1.29"
 
-"@vee-validate/i18n@^4.10.3":
-  version "4.10.3"
-  resolved "https://registry.yarnpkg.com/@vee-validate/i18n/-/i18n-4.10.3.tgz#009a691e8cd7772e609c1a0f3c312c0a1e40c4fe"
-  integrity sha512-5K9HiHIuvdFs9y635V9WL/D8FYxASIwNiE/vRl6tsbTWHhHvUSPNnCGoCWlmn50q5jUEU96w2HPF8bbi5bKjUA==
+"@vee-validate/i18n@^4.10.5":
+  version "4.10.5"
+  resolved "https://registry.yarnpkg.com/@vee-validate/i18n/-/i18n-4.10.5.tgz#69f9cafcec0208efc52283e141414e27f9d113bf"
+  integrity sha512-e9kwsb6J/ao60ZKqLgTfsyp84mbcITPtThC65chPVYsit4Il23xFJVhRxnOoaMSPdb1/7gHGwgnG4pFU6ffJlg==
 
-"@vee-validate/nuxt@^4.10.3":
-  version "4.10.3"
-  resolved "https://registry.yarnpkg.com/@vee-validate/nuxt/-/nuxt-4.10.3.tgz#8349532900f1361875dd229123408b56ac857574"
-  integrity sha512-O6row3NdvlnFCKjrXGg8nGi64fFGDqjyfJ5WuvL832cHO6fzkM/CphFsQPAGDHhslpPWxkDFQeu9pyU7X+Py6w==
+"@vee-validate/nuxt@^4.10.5":
+  version "4.10.5"
+  resolved "https://registry.yarnpkg.com/@vee-validate/nuxt/-/nuxt-4.10.5.tgz#e796ba2ab135cc9097676dd015d9924781160464"
+  integrity sha512-hoCM1JqrZL8cyuDCntFuvK3sOIFB39+zn4KBUchslkibW/S4M0a8HuAubgwSdMwzPCfP+6fm2k5gAihl/ud4Fg==
   dependencies:
     "@nuxt/kit" "^3.6.1"
     local-pkg "^0.4.3"
-    vee-validate "^4.10.3"
+    vee-validate "^4.10.5"
 
-"@vee-validate/rules@^4.10.3":
-  version "4.10.3"
-  resolved "https://registry.yarnpkg.com/@vee-validate/rules/-/rules-4.10.3.tgz#bb1439d96d5d3dc5d0de497b4e1d50cca9201358"
-  integrity sha512-AKMkgwRrecFfzlZBeapp3NvEYqgF27rA57Hjufiq0Nrqzm8jsDVyzNlK36vGNUiEo/qxV+gxTRnyqSDp6EY/sQ==
+"@vee-validate/rules@^4.10.5":
+  version "4.10.5"
+  resolved "https://registry.yarnpkg.com/@vee-validate/rules/-/rules-4.10.5.tgz#a79be27c8a65f8c5eb694029b4e49c63a2385657"
+  integrity sha512-mVqGy1M7tVJdE2Znh8ZLR4HU+UEcXnz0JktSSAdaM+3KJ/dXGrTFQSjrUpqrUQyQyb9mSdSMfKGC320fmtLSSg==
   dependencies:
-    vee-validate "^4.10.3"
+    vee-validate "^4.10.5"
 
 "@vercel/nft@^0.22.6":
   version "0.22.6"
@@ -5888,7 +5888,7 @@ postcss-convert-values@^6.0.0:
     browserslist "^4.21.4"
     postcss-value-parser "^4.2.0"
 
-postcss-custom-properties@^13.2.0:
+postcss-custom-properties@^13.2.0, postcss-custom-properties@^13.2.1:
   version "13.2.1"
   resolved "https://registry.yarnpkg.com/postcss-custom-properties/-/postcss-custom-properties-13.2.1.tgz#82452ea09b796bf0271cc945badcca18ef59df1c"
   integrity sha512-Z8UmzwVkRh8aITyeZoZnT4McSSPmS2EFl+OyPspfvx7v+N36V2UseMAODp3oBriZvcf/tQpzag9165x/VcC3kg==
@@ -7349,10 +7349,10 @@ vary@^1.1.2:
   resolved "https://registry.yarnpkg.com/vary/-/vary-1.1.2.tgz#2299f02c6ded30d4a5961b0b9f74524a18f634fc"
   integrity sha512-BNGbWLfd0eUPabhkXUVm0j8uuvREyTh5ovRa/dyow/BqAbZJyC+5fU+IzQOzmAKzYqYRAISoRhdQr3eIZ/PXqg==
 
-vee-validate@^4.10.3:
-  version "4.10.3"
-  resolved "https://registry.yarnpkg.com/vee-validate/-/vee-validate-4.10.3.tgz#552bbaa4cb418fa2cf460956db9c75f09cf6ad41"
-  integrity sha512-JDEpP765Hg5bLJBBbaYutnmiKXh4YX4Jz1FKIBp2Fw5PiuL8ULdZSuJZNbfvbA3ClMV+aJYWIlzA8iLyWGq+fQ==
+vee-validate@^4.10.5:
+  version "4.10.5"
+  resolved "https://registry.yarnpkg.com/vee-validate/-/vee-validate-4.10.5.tgz#4c01656a205c6e5cb0e530adc7211cfa60228fa5"
+  integrity sha512-5pbMWniCjfuWdeAAhe+rHm2OQ34KLuoEu+Q2jDxG2qbEl1EnqadL/RaYJviS/qnvWi9oULwX/rv09jwd4DuuKQ==
   dependencies:
     "@vue/devtools-api" "^6.5.0"
     type-fest "^3.12.0"
