@@ -29,6 +29,15 @@ func (s *Server) ListUnits(ctx context.Context, req *ListUnitsRequest) (*ListUni
 	}
 	defer s.a.AddEntryWithData(auditEntry, req)
 
+	condition := tUnits.Job.EQ(jet.String(userInfo.Job))
+	if len(req.Status) > 0 {
+		statuses := make([]jet.Expression, len(req.Status))
+		for i := 0; i < len(req.Status); i++ {
+			statuses[i] = jet.Int32(int32(*req.Status[i].Enum()))
+		}
+		condition = condition.AND(tUnits.Status.IN(statuses...))
+	}
+
 	stmt := tUnits.
 		SELECT(
 			tUnits.ID,
@@ -40,8 +49,10 @@ func (s *Server) ListUnits(ctx context.Context, req *ListUnitsRequest) (*ListUni
 			tUnits.Status,
 		).
 		FROM(tUnits).
-		WHERE(
-			tUnits.Job.EQ(jet.String(userInfo.Job)),
+		WHERE(condition).
+		ORDER_BY(
+			tUnits.Status.ASC(),
+			tUnits.Name.ASC(),
 		)
 
 	resp := &ListUnitsResponse{}
