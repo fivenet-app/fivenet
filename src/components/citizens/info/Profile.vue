@@ -75,7 +75,9 @@ const trafficPointsModal = ref(false);
                                     {{ $t('common.number') }}
                                 </dt>
                                 <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:mt-0 sm:ml-6">
-                                    {{ (user?.phoneNumber ?? '').match(/.{1,3}/g)?.join(' ') }}
+                                    <span v-for="part in (user?.phoneNumber ?? '').match(/.{1,3}/g)" class="mr-1">{{
+                                        part
+                                    }}</span>
                                 </dd>
                             </div>
                             <div class="sm:flex sm:px-6 sm:py-5">

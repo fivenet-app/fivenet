@@ -33,11 +33,11 @@ type CentrumServiceClient interface {
 	// @perm
 	UpdateUnitStatus(ctx context.Context, in *UpdateUnitStatusRequest, opts ...grpc.CallOption) (*UpdateUnitStatusResponse, error)
 	// @perm
-	StreamUnits(ctx context.Context, in *UnitStreamRequest, opts ...grpc.CallOption) (CentrumService_StreamUnitsClient, error)
-	// @perm
 	CreateDispatch(ctx context.Context, in *CreateDispatchRequest, opts ...grpc.CallOption) (*CreateDispatchResponse, error)
 	// @perm
 	UpdateDispatch(ctx context.Context, in *UpdateDispatchRequest, opts ...grpc.CallOption) (*UpdateDispatchResponse, error)
+	// @perm
+	TakeDispatch(ctx context.Context, in *TakeDispatchRequest, opts ...grpc.CallOption) (*TakeDispatchResponse, error)
 	// @perm
 	Stream(ctx context.Context, in *CentrumStreamRequest, opts ...grpc.CallOption) (CentrumService_StreamClient, error)
 }
@@ -95,38 +95,6 @@ func (c *centrumServiceClient) UpdateUnitStatus(ctx context.Context, in *UpdateU
 	return out, nil
 }
 
-func (c *centrumServiceClient) StreamUnits(ctx context.Context, in *UnitStreamRequest, opts ...grpc.CallOption) (CentrumService_StreamUnitsClient, error) {
-	stream, err := c.cc.NewStream(ctx, &CentrumService_ServiceDesc.Streams[0], "/services.centrum.CentrumService/StreamUnits", opts...)
-	if err != nil {
-		return nil, err
-	}
-	x := &centrumServiceStreamUnitsClient{stream}
-	if err := x.ClientStream.SendMsg(in); err != nil {
-		return nil, err
-	}
-	if err := x.ClientStream.CloseSend(); err != nil {
-		return nil, err
-	}
-	return x, nil
-}
-
-type CentrumService_StreamUnitsClient interface {
-	Recv() (*UnitStreamResponse, error)
-	grpc.ClientStream
-}
-
-type centrumServiceStreamUnitsClient struct {
-	grpc.ClientStream
-}
-
-func (x *centrumServiceStreamUnitsClient) Recv() (*UnitStreamResponse, error) {
-	m := new(UnitStreamResponse)
-	if err := x.ClientStream.RecvMsg(m); err != nil {
-		return nil, err
-	}
-	return m, nil
-}
-
 func (c *centrumServiceClient) CreateDispatch(ctx context.Context, in *CreateDispatchRequest, opts ...grpc.CallOption) (*CreateDispatchResponse, error) {
 	out := new(CreateDispatchResponse)
 	err := c.cc.Invoke(ctx, "/services.centrum.CentrumService/CreateDispatch", in, out, opts...)
@@ -145,8 +113,17 @@ func (c *centrumServiceClient) UpdateDispatch(ctx context.Context, in *UpdateDis
 	return out, nil
 }
 
+func (c *centrumServiceClient) TakeDispatch(ctx context.Context, in *TakeDispatchRequest, opts ...grpc.CallOption) (*TakeDispatchResponse, error) {
+	out := new(TakeDispatchResponse)
+	err := c.cc.Invoke(ctx, "/services.centrum.CentrumService/TakeDispatch", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *centrumServiceClient) Stream(ctx context.Context, in *CentrumStreamRequest, opts ...grpc.CallOption) (CentrumService_StreamClient, error) {
-	stream, err := c.cc.NewStream(ctx, &CentrumService_ServiceDesc.Streams[1], "/services.centrum.CentrumService/Stream", opts...)
+	stream, err := c.cc.NewStream(ctx, &CentrumService_ServiceDesc.Streams[0], "/services.centrum.CentrumService/Stream", opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -192,11 +169,11 @@ type CentrumServiceServer interface {
 	// @perm
 	UpdateUnitStatus(context.Context, *UpdateUnitStatusRequest) (*UpdateUnitStatusResponse, error)
 	// @perm
-	StreamUnits(*UnitStreamRequest, CentrumService_StreamUnitsServer) error
-	// @perm
 	CreateDispatch(context.Context, *CreateDispatchRequest) (*CreateDispatchResponse, error)
 	// @perm
 	UpdateDispatch(context.Context, *UpdateDispatchRequest) (*UpdateDispatchResponse, error)
+	// @perm
+	TakeDispatch(context.Context, *TakeDispatchRequest) (*TakeDispatchResponse, error)
 	// @perm
 	Stream(*CentrumStreamRequest, CentrumService_StreamServer) error
 	mustEmbedUnimplementedCentrumServiceServer()
@@ -221,14 +198,14 @@ func (UnimplementedCentrumServiceServer) AssignUnit(context.Context, *AssignUnit
 func (UnimplementedCentrumServiceServer) UpdateUnitStatus(context.Context, *UpdateUnitStatusRequest) (*UpdateUnitStatusResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateUnitStatus not implemented")
 }
-func (UnimplementedCentrumServiceServer) StreamUnits(*UnitStreamRequest, CentrumService_StreamUnitsServer) error {
-	return status.Errorf(codes.Unimplemented, "method StreamUnits not implemented")
-}
 func (UnimplementedCentrumServiceServer) CreateDispatch(context.Context, *CreateDispatchRequest) (*CreateDispatchResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateDispatch not implemented")
 }
 func (UnimplementedCentrumServiceServer) UpdateDispatch(context.Context, *UpdateDispatchRequest) (*UpdateDispatchResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateDispatch not implemented")
+}
+func (UnimplementedCentrumServiceServer) TakeDispatch(context.Context, *TakeDispatchRequest) (*TakeDispatchResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method TakeDispatch not implemented")
 }
 func (UnimplementedCentrumServiceServer) Stream(*CentrumStreamRequest, CentrumService_StreamServer) error {
 	return status.Errorf(codes.Unimplemented, "method Stream not implemented")
@@ -336,27 +313,6 @@ func _CentrumService_UpdateUnitStatus_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
-func _CentrumService_StreamUnits_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(UnitStreamRequest)
-	if err := stream.RecvMsg(m); err != nil {
-		return err
-	}
-	return srv.(CentrumServiceServer).StreamUnits(m, &centrumServiceStreamUnitsServer{stream})
-}
-
-type CentrumService_StreamUnitsServer interface {
-	Send(*UnitStreamResponse) error
-	grpc.ServerStream
-}
-
-type centrumServiceStreamUnitsServer struct {
-	grpc.ServerStream
-}
-
-func (x *centrumServiceStreamUnitsServer) Send(m *UnitStreamResponse) error {
-	return x.ServerStream.SendMsg(m)
-}
-
 func _CentrumService_CreateDispatch_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(CreateDispatchRequest)
 	if err := dec(in); err != nil {
@@ -389,6 +345,24 @@ func _CentrumService_UpdateDispatch_Handler(srv interface{}, ctx context.Context
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(CentrumServiceServer).UpdateDispatch(ctx, req.(*UpdateDispatchRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CentrumService_TakeDispatch_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TakeDispatchRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CentrumServiceServer).TakeDispatch(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/services.centrum.CentrumService/TakeDispatch",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CentrumServiceServer).TakeDispatch(ctx, req.(*TakeDispatchRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -449,13 +423,12 @@ var CentrumService_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "UpdateDispatch",
 			Handler:    _CentrumService_UpdateDispatch_Handler,
 		},
+		{
+			MethodName: "TakeDispatch",
+			Handler:    _CentrumService_TakeDispatch_Handler,
+		},
 	},
 	Streams: []grpc.StreamDesc{
-		{
-			StreamName:    "StreamUnits",
-			Handler:       _CentrumService_StreamUnits_Handler,
-			ServerStreams: true,
-		},
 		{
 			StreamName:    "Stream",
 			Handler:       _CentrumService_Stream_Handler,

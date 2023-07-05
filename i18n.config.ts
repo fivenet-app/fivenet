@@ -47,6 +47,8 @@ export default function (_: NuxtApp) {
                     year: 'numeric',
                     month: 'short',
                     day: '2-digit',
+                    hour: 'numeric',
+                    minute: 'numeric',
                 },
                 long: {
                     year: 'numeric',
@@ -62,6 +64,8 @@ export default function (_: NuxtApp) {
                     year: 'numeric',
                     month: 'short',
                     day: '2-digit',
+                    hour: 'numeric',
+                    minute: 'numeric',
                 },
                 long: {
                     year: 'numeric',

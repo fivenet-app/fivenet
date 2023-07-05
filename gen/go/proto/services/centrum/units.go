@@ -206,10 +206,3 @@ func (s *Server) UpdateUnitStatus(ctx context.Context, req *UpdateUnitStatusRequ
 
 	return resp, nil
 }
-
-func (s *Server) StreamUnits(req *UnitStreamRequest, srv CentrumService_StreamUnitsServer) error {
-
-	// TODO
-
-	return nil
-}

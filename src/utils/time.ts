@@ -43,14 +43,14 @@ export function fromSecondsToFormattedDuration(seconds: number): string {
     return parts.join(', ');
 }
 
-export function toDate(ts: resources_timestamp_timestamp.Timestamp | undefined): undefined | Date {
+export function toDate(ts: resources_timestamp_timestamp.Timestamp | undefined): Date {
     if (ts === undefined || ts?.timestamp === undefined) {
         return new Date();
     }
     return google_protobuf_timestamp.Timestamp.toDate(ts?.timestamp!);
 }
 
-export function toDateLocaleString(ts: resources_timestamp_timestamp.Timestamp | undefined, d?: Function): undefined | string {
+export function toDateLocaleString(ts: resources_timestamp_timestamp.Timestamp | undefined, d?: Function): string {
     if (typeof ts === undefined) {
         return '-';
     }
@@ -61,6 +61,6 @@ export function toDateLocaleString(ts: resources_timestamp_timestamp.Timestamp |
     return google_protobuf_timestamp.Timestamp.toDate(ts?.timestamp!).toLocaleDateString();
 }
 
-export function fromString(time: string): undefined | Date {
+export function fromString(time: string): Date {
     return new Date(Date.parse(time));
 }

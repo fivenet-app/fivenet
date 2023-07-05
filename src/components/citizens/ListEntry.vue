@@ -45,7 +45,7 @@ function addToClipboard(): void {
             v-can="'CitizenStoreService.ListCitizens.Fields.PhoneNumber'"
             class="whitespace-nowrap px-2 py-2 text-sm text-base-200"
         >
-            {{ (user?.phoneNumber ?? '').match(/.{1,3}/g)?.join(' ') }}
+            <span v-for="part in (user?.phoneNumber ?? '').match(/.{1,3}/g)" class="mr-1">{{ part }}</span>
         </td>
         <td class="whitespace-nowrap px-2 py-2 text-sm text-base-200">
             {{ user.dateofbirth }}

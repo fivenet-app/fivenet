@@ -4,6 +4,7 @@ import { mdiClipboardPlus } from '@mdi/js';
 import { useClipboard } from '@vueuse/core';
 import VueJsonPretty from 'vue-json-pretty';
 import 'vue-json-pretty/lib/styles.css';
+import Time from '~/components/partials/elements/Time.vue';
 import { useNotificationsStore } from '~/store/notifications';
 import { AuditEntry, EVENT_TYPE } from '~~/gen/ts/resources/rector/audit';
 
@@ -56,9 +57,7 @@ ${JSON.stringify(JSON.parse(props.log.data!), null, 2)}
             {{ log.id }}
         </td>
         <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">
-            <time :datetime="$d(toDate(log.createdAt)!, 'long')">
-                {{ $d(toDate(log.createdAt)!, 'long') }}
-            </time>
+            <Time :value="log.createdAt" type="long" />
         </td>
         <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">
             <NuxtLink :to="{ name: 'citizens-id', params: { id: log.userId.toString() } }">

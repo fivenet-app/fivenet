@@ -51,13 +51,11 @@ message UpdateUnitStatusRequest {
 
 message UpdateUnitStatusResponse {}
 
-message UnitStreamRequest {}
-
-message UnitStreamResponse {
-  repeated UnitChanges changes = 1;
+message UnitChanges {
+  repeated UnitChange changes = 1;
 }
 
-message UnitChanges {
+message UnitChange {
   uint64 id = 1;
   repeated int32 added = 2;
   repeated int32 removed = 3;
@@ -81,11 +79,28 @@ message UpdateDispatchResponse {
 
 }
 
-// TODO
+message TakeDispatchRequest {
+
+}
+
+message TakeDispatchResponse {
+
+}
+
+message DispatchChanges {
+  repeated DispatchChange changes = 1;
+}
+
+message DispatchChange {
+  uint64 id = 1;
+}
 
 message CentrumStreamRequest {}
 
-message CentrumStreamResponse {}
+message CentrumStreamResponse {
+  optional UnitChanges unit_changes = 1;
+  optional DispatchChanges dispatch_changes = 2;
+}
 
 service CentrumService {
   // @perm
@@ -102,12 +117,12 @@ service CentrumService {
   rpc UpdateUnitStatus(UpdateUnitStatusRequest) returns (UpdateUnitStatusResponse);
 
   // @perm
-  rpc StreamUnits(UnitStreamRequest) returns (stream UnitStreamResponse);
-
-  // @perm
   rpc CreateDispatch(CreateDispatchRequest) returns (CreateDispatchResponse);
   // @perm
   rpc UpdateDispatch(UpdateDispatchRequest) returns (UpdateDispatchResponse);
+
+  // @perm
+  rpc TakeDispatch(TakeDispatchRequest) returns (TakeDispatchResponse);
 
   // @perm
   rpc Stream(CentrumStreamRequest) returns (stream CentrumStreamResponse);

@@ -3,6 +3,7 @@ import SvgIcon from '@jamescoyle/vue-icon';
 import { mdiArrowCollapse, mdiChevronRight, mdiFileDocumentMultiple } from '@mdi/js';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
+import Time from '~/components/partials/elements/Time.vue';
 import { DOC_REFERENCE, DocumentReference } from '~~/gen/ts/resources/documents/documents';
 
 const { $grpc } = useNuxtApp();
@@ -91,9 +92,7 @@ async function getDocumentReferences(): Promise<Array<DocumentReference>> {
                                             {{ reference.creator?.lastname }}
                                         </NuxtLink>
                                     </span>
-                                    <time :datetime="$d(toDate(reference.createdAt)!, 'short')">
-                                        {{ $d(toDate(reference.createdAt)!, 'short') }}
-                                    </time>
+                                    <Time :value="reference.createdAt" />
                                 </span>
                             </span>
                             <SvgIcon
@@ -191,9 +190,7 @@ async function getDocumentReferences(): Promise<Array<DocumentReference>> {
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 text-sm text-right whitespace-nowrap">
-                                        <time :datetime="$d(toDate(reference.createdAt)!, 'short')">
-                                            {{ $d(toDate(reference.createdAt)!, 'short') }}
-                                        </time>
+                                        <Time :value="reference.createdAt" />
                                     </td>
                                 </tr>
                             </tbody>

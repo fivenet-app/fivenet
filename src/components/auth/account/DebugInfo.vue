@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import SvgIcon from '@jamescoyle/vue-icon';
 import { mdiKey } from '@mdi/js';
+import Time from '~/components/partials/elements/Time.vue';
 import { useAuthStore } from '~/store/auth';
 import { useClipboardStore } from '~/store/clipboard';
 
@@ -52,10 +53,8 @@ async function resetLocalStorage(): Promise<void> {
                         {{ $t('components.debug_info.access_token_expiration') }}
                     </dt>
                     <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
-                        <time :datetime="getAccessTokenExpiration.toDateString()">
-                            {{ useLocaleTimeAgo(getAccessTokenExpiration).value }}
-                            ({{ $d(getAccessTokenExpiration, 'long') }})
-                        </time>
+                        <Time :value="getAccessTokenExpiration" :ago="true" />
+                        (<Time :value="getAccessTokenExpiration" type="long" />)
                     </dd>
                 </div>
                 <div v-if="clipboardStore" class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">

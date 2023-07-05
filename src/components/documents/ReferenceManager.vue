@@ -28,6 +28,7 @@ import {
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { watchDebounced } from '@vueuse/core';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
+import Time from '~/components/partials/elements/Time.vue';
 import { ClipboardDocument, getDocument, useClipboardStore } from '~/store/clipboard';
 import { DocumentReference, DocumentShort } from '~~/gen/ts/resources/documents/documents';
 
@@ -352,33 +353,33 @@ function removeReference(id: bigint): void {
                                                             </thead>
                                                             <tbody class="divide-y divide-base-500">
                                                                 <tr
-                                                                    v-for="doc in clipboardStore.$state.documents"
-                                                                    :key="doc.id?.toString()"
+                                                                    v-for="document in clipboardStore.$state.documents"
+                                                                    :key="document.id?.toString()"
                                                                 >
                                                                     <td
                                                                         class="py-4 pl-4 pr-3 text-sm font-medium truncate whitespace-nowrap sm:pl-6 lg:pl-8"
                                                                     >
-                                                                        {{ doc.title }}
+                                                                        {{ document.title }}
                                                                     </td>
                                                                     <td class="px-3 py-4 text-sm whitespace-nowrap">
-                                                                        {{ doc.creator?.firstname }}
-                                                                        {{ doc.creator?.lastname }}
+                                                                        {{ document.creator?.firstname }}
+                                                                        {{ document.creator?.lastname }}
                                                                     </td>
                                                                     <td class="px-3 py-4 text-sm whitespace-nowrap">
-                                                                        {{ doc.state }}
+                                                                        {{ document.state }}
                                                                     </td>
                                                                     <td class="px-3 py-4 text-sm whitespace-nowrap">
                                                                         {{ $t('common.created') }}
-                                                                        <time :datetime="doc.createdAt">{{
-                                                                            doc.createdAt
-                                                                        }}</time>
+                                                                        <Time
+                                                                            :value="new Date(Date.parse(document.createdAt))"
+                                                                        />
                                                                     </td>
                                                                     <td class="px-3 py-4 text-sm whitespace-nowrap">
                                                                         <div class="flex flex-row gap-2">
                                                                             <div class="flex">
                                                                                 <button
                                                                                     role="button"
-                                                                                    @click="addReferenceClipboard(doc, 0)"
+                                                                                    @click="addReferenceClipboard(document, 0)"
                                                                                     data-te-toggle="tooltip"
                                                                                     :title="
                                                                                         $t(
@@ -394,7 +395,7 @@ function removeReference(id: bigint): void {
                                                                                 </button>
                                                                                 <button
                                                                                     role="button"
-                                                                                    @click="addReferenceClipboard(doc, 1)"
+                                                                                    @click="addReferenceClipboard(document, 1)"
                                                                                     data-te-toggle="tooltip"
                                                                                     :title="
                                                                                         $t(
@@ -410,7 +411,7 @@ function removeReference(id: bigint): void {
                                                                                 </button>
                                                                                 <button
                                                                                     role="button"
-                                                                                    @click="addReferenceClipboard(doc, 2)"
+                                                                                    @click="addReferenceClipboard(document, 2)"
                                                                                     data-te-toggle="tooltip"
                                                                                     :title="
                                                                                         $t(
@@ -426,7 +427,7 @@ function removeReference(id: bigint): void {
                                                                                 </button>
                                                                                 <button
                                                                                     role="button"
-                                                                                    @click="addReferenceClipboard(doc, 3)"
+                                                                                    @click="addReferenceClipboard(document, 3)"
                                                                                     data-te-toggle="tooltip"
                                                                                     :title="
                                                                                         $t(
@@ -505,38 +506,31 @@ function removeReference(id: bigint): void {
                                                             <tbody class="divide-y divide-base-500">
                                                                 <template v-if="documents">
                                                                     <tr
-                                                                        v-for="doc in documents.slice(0, 8)"
-                                                                        :key="doc.id?.toString()"
+                                                                        v-for="document in documents.slice(0, 8)"
+                                                                        :key="document.id?.toString()"
                                                                     >
                                                                         <td
                                                                             class="py-4 pl-4 pr-3 text-sm font-medium truncate whitespace-nowrap sm:pl-6 lg:pl-8"
                                                                         >
-                                                                            {{ doc.title }}
+                                                                            {{ document.title }}
                                                                         </td>
                                                                         <td class="px-3 py-4 text-sm whitespace-nowrap">
-                                                                            {{ doc.creator?.firstname }}
-                                                                            {{ doc.creator?.lastname }}
+                                                                            {{ document.creator?.firstname }}
+                                                                            {{ document.creator?.lastname }}
                                                                         </td>
                                                                         <td class="px-3 py-4 text-sm whitespace-nowrap">
-                                                                            {{ doc.state }}
+                                                                            {{ document.state }}
                                                                         </td>
                                                                         <td class="px-3 py-4 text-sm whitespace-nowrap">
                                                                             {{ $t('common.created') }}
-                                                                            <time
-                                                                                :datetime="$d(toDate(doc.createdAt)!, 'short')"
-                                                                            >
-                                                                                {{
-                                                                                    useLocaleTimeAgo(toDate(doc.createdAt)!)
-                                                                                        .value
-                                                                                }}
-                                                                            </time>
+                                                                            <Time :value="document.createdAt" :ago="true" />
                                                                         </td>
                                                                         <td class="px-3 py-4 text-sm whitespace-nowrap">
                                                                             <div class="flex flex-row gap-2">
                                                                                 <div class="flex">
                                                                                     <button
                                                                                         role="button"
-                                                                                        @click="addReference(doc, 0)"
+                                                                                        @click="addReference(document, 0)"
                                                                                         data-te-toggle="tooltip"
                                                                                         :title="
                                                                                             $t(
@@ -552,7 +546,7 @@ function removeReference(id: bigint): void {
                                                                                     </button>
                                                                                     <button
                                                                                         role="button"
-                                                                                        @click="addReference(doc, 1)"
+                                                                                        @click="addReference(document, 1)"
                                                                                         data-te-toggle="tooltip"
                                                                                         :title="
                                                                                             $t(
@@ -568,7 +562,7 @@ function removeReference(id: bigint): void {
                                                                                     </button>
                                                                                     <button
                                                                                         role="button"
-                                                                                        @click="addReference(doc, 2)"
+                                                                                        @click="addReference(document, 2)"
                                                                                         data-te-toggle="tooltip"
                                                                                         :title="
                                                                                             $t(
@@ -584,7 +578,7 @@ function removeReference(id: bigint): void {
                                                                                     </button>
                                                                                     <button
                                                                                         role="button"
-                                                                                        @click="addReference(doc, 3)"
+                                                                                        @click="addReference(document, 3)"
                                                                                         data-te-toggle="tooltip"
                                                                                         :title="
                                                                                             $t(

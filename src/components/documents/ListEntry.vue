@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import SvgIcon from '@jamescoyle/vue-icon';
 import { mdiAccount, mdiBriefcase, mdiCalendar, mdiLock, mdiLockOpenVariant, mdiTrashCan, mdiUpdate } from '@mdi/js';
+import Time from '~/components/partials/elements/Time.vue';
 import { DocumentShort } from '~~/gen/ts/resources/documents/documents';
 import IDCopyBadge from '../partials/IDCopyBadge.vue';
 
@@ -76,10 +77,8 @@ defineProps<{
                             :path="mdiUpdate"
                         />
                         <p>
-                            {{ $t('common.updated_at') }}
-                            <time :datetime="$d(toDate(doc.updatedAt)!, 'short')">
-                                {{ useLocaleTimeAgo(toDate(doc.updatedAt)!).value }}
-                            </time>
+                            {{ $t('common.updated') }}
+                            <Time :value="doc.updatedAt" :ago="true" />
                         </p>
                     </div>
                 </div>
@@ -112,9 +111,7 @@ defineProps<{
                         />
                         <p>
                             {{ $t('common.created_at') }}
-                            <time :datetime="$d(toDate(doc.createdAt)!, 'short')">
-                                {{ $d(toDate(doc.createdAt)!, 'short') }}
-                            </time>
+                            <Time :value="doc.createdAt" />
                         </p>
                     </div>
                 </div>

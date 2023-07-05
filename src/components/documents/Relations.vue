@@ -3,6 +3,7 @@ import SvgIcon from '@jamescoyle/vue-icon';
 import { mdiAccountMultiple, mdiArrowCollapse, mdiChevronRight } from '@mdi/js';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
+import Time from '~/components/partials/elements/Time.vue';
 import { DOC_RELATION, DocumentRelation } from '~~/gen/ts/resources/documents/documents';
 
 const { $grpc } = useNuxtApp();
@@ -99,9 +100,7 @@ async function getDocumentRelations(): Promise<Array<DocumentRelation>> {
                                     <span v-if="showSource" class="truncate"
                                         >{{ relation.sourceUser?.firstname + ', ' + relation.sourceUser?.lastname }}
                                     </span>
-                                    <time :datetime="$d(toDate(relation.createdAt)!, 'short')">
-                                        {{ $d(toDate(relation.createdAt)!, 'short') }}
-                                    </time>
+                                    <Time :value="relation.createdAt" />
                                 </span>
                             </span>
                             <SvgIcon
@@ -198,9 +197,7 @@ async function getDocumentRelations(): Promise<Array<DocumentRelation>> {
                                         </div>
                                     </td>
                                     <td class="px-6 py-4 text-sm text-right whitespace-nowrap">
-                                        <time :datetime="$d(toDate(relation.createdAt)!, 'short')">
-                                            {{ $d(toDate(relation.createdAt)!, 'short') }}
-                                        </time>
+                                        <Time :value="relation.createdAt" />
                                     </td>
                                 </tr>
                             </tbody>

@@ -118,23 +118,18 @@ export interface UpdateUnitStatusRequest {
 export interface UpdateUnitStatusResponse {
 }
 /**
- * @generated from protobuf message services.centrum.UnitStreamRequest
- */
-export interface UnitStreamRequest {
-}
-/**
- * @generated from protobuf message services.centrum.UnitStreamResponse
- */
-export interface UnitStreamResponse {
-    /**
-     * @generated from protobuf field: repeated services.centrum.UnitChanges changes = 1;
-     */
-    changes: UnitChanges[];
-}
-/**
  * @generated from protobuf message services.centrum.UnitChanges
  */
 export interface UnitChanges {
+    /**
+     * @generated from protobuf field: repeated services.centrum.UnitChange changes = 1;
+     */
+    changes: UnitChange[];
+}
+/**
+ * @generated from protobuf message services.centrum.UnitChange
+ */
+export interface UnitChange {
     /**
      * @generated from protobuf field: uint64 id = 1;
      */
@@ -170,8 +165,34 @@ export interface UpdateDispatchRequest {
  */
 export interface UpdateDispatchResponse {
 }
-// TODO
-
+/**
+ * @generated from protobuf message services.centrum.TakeDispatchRequest
+ */
+export interface TakeDispatchRequest {
+}
+/**
+ * @generated from protobuf message services.centrum.TakeDispatchResponse
+ */
+export interface TakeDispatchResponse {
+}
+/**
+ * @generated from protobuf message services.centrum.DispatchChanges
+ */
+export interface DispatchChanges {
+    /**
+     * @generated from protobuf field: repeated services.centrum.DispatchChange changes = 1;
+     */
+    changes: DispatchChange[];
+}
+/**
+ * @generated from protobuf message services.centrum.DispatchChange
+ */
+export interface DispatchChange {
+    /**
+     * @generated from protobuf field: uint64 id = 1;
+     */
+    id: bigint;
+}
 /**
  * @generated from protobuf message services.centrum.CentrumStreamRequest
  */
@@ -181,6 +202,14 @@ export interface CentrumStreamRequest {
  * @generated from protobuf message services.centrum.CentrumStreamResponse
  */
 export interface CentrumStreamResponse {
+    /**
+     * @generated from protobuf field: optional services.centrum.UnitChanges unit_changes = 1;
+     */
+    unitChanges?: UnitChanges;
+    /**
+     * @generated from protobuf field: optional services.centrum.DispatchChanges dispatch_changes = 2;
+     */
+    dispatchChanges?: DispatchChanges;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class ListUnitsRequest$Type extends MessageType<ListUnitsRequest> {
@@ -306,34 +335,10 @@ class UpdateUnitStatusResponse$Type extends MessageType<UpdateUnitStatusResponse
  */
 export const UpdateUnitStatusResponse = new UpdateUnitStatusResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class UnitStreamRequest$Type extends MessageType<UnitStreamRequest> {
-    constructor() {
-        super("services.centrum.UnitStreamRequest", []);
-    }
-}
-/**
- * @generated MessageType for protobuf message services.centrum.UnitStreamRequest
- */
-export const UnitStreamRequest = new UnitStreamRequest$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class UnitStreamResponse$Type extends MessageType<UnitStreamResponse> {
-    constructor() {
-        super("services.centrum.UnitStreamResponse", [
-            { no: 1, name: "changes", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UnitChanges }
-        ]);
-    }
-}
-/**
- * @generated MessageType for protobuf message services.centrum.UnitStreamResponse
- */
-export const UnitStreamResponse = new UnitStreamResponse$Type();
-// @generated message type with reflection information, may provide speed optimized methods
 class UnitChanges$Type extends MessageType<UnitChanges> {
     constructor() {
         super("services.centrum.UnitChanges", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 2, name: "added", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ },
-            { no: 3, name: "removed", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ }
+            { no: 1, name: "changes", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UnitChange }
         ]);
     }
 }
@@ -341,6 +346,20 @@ class UnitChanges$Type extends MessageType<UnitChanges> {
  * @generated MessageType for protobuf message services.centrum.UnitChanges
  */
 export const UnitChanges = new UnitChanges$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class UnitChange$Type extends MessageType<UnitChange> {
+    constructor() {
+        super("services.centrum.UnitChange", [
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 2, name: "added", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ },
+            { no: 3, name: "removed", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.centrum.UnitChange
+ */
+export const UnitChange = new UnitChange$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class CreateDispatchRequest$Type extends MessageType<CreateDispatchRequest> {
     constructor() {
@@ -382,6 +401,50 @@ class UpdateDispatchResponse$Type extends MessageType<UpdateDispatchResponse> {
  */
 export const UpdateDispatchResponse = new UpdateDispatchResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class TakeDispatchRequest$Type extends MessageType<TakeDispatchRequest> {
+    constructor() {
+        super("services.centrum.TakeDispatchRequest", []);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.centrum.TakeDispatchRequest
+ */
+export const TakeDispatchRequest = new TakeDispatchRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class TakeDispatchResponse$Type extends MessageType<TakeDispatchResponse> {
+    constructor() {
+        super("services.centrum.TakeDispatchResponse", []);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.centrum.TakeDispatchResponse
+ */
+export const TakeDispatchResponse = new TakeDispatchResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class DispatchChanges$Type extends MessageType<DispatchChanges> {
+    constructor() {
+        super("services.centrum.DispatchChanges", [
+            { no: 1, name: "changes", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => DispatchChange }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.centrum.DispatchChanges
+ */
+export const DispatchChanges = new DispatchChanges$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class DispatchChange$Type extends MessageType<DispatchChange> {
+    constructor() {
+        super("services.centrum.DispatchChange", [
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.centrum.DispatchChange
+ */
+export const DispatchChange = new DispatchChange$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class CentrumStreamRequest$Type extends MessageType<CentrumStreamRequest> {
     constructor() {
         super("services.centrum.CentrumStreamRequest", []);
@@ -394,7 +457,10 @@ export const CentrumStreamRequest = new CentrumStreamRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class CentrumStreamResponse$Type extends MessageType<CentrumStreamResponse> {
     constructor() {
-        super("services.centrum.CentrumStreamResponse", []);
+        super("services.centrum.CentrumStreamResponse", [
+            { no: 1, name: "unit_changes", kind: "message", T: () => UnitChanges },
+            { no: 2, name: "dispatch_changes", kind: "message", T: () => DispatchChanges }
+        ]);
     }
 }
 /**
@@ -410,8 +476,8 @@ export const CentrumService = new ServiceType("services.centrum.CentrumService",
     { name: "DeleteUnit", options: {}, I: DeleteUnitRequest, O: DeleteUnitResponse },
     { name: "AssignUnit", options: {}, I: AssignUnitRequest, O: AssignUnitResponse },
     { name: "UpdateUnitStatus", options: {}, I: UpdateUnitStatusRequest, O: UpdateUnitStatusResponse },
-    { name: "StreamUnits", serverStreaming: true, options: {}, I: UnitStreamRequest, O: UnitStreamResponse },
     { name: "CreateDispatch", options: {}, I: CreateDispatchRequest, O: CreateDispatchResponse },
     { name: "UpdateDispatch", options: {}, I: UpdateDispatchRequest, O: UpdateDispatchResponse },
+    { name: "TakeDispatch", options: {}, I: TakeDispatchRequest, O: TakeDispatchResponse },
     { name: "Stream", serverStreaming: true, options: {}, I: CentrumStreamRequest, O: CentrumStreamResponse }
 ]);

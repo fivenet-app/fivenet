@@ -15,6 +15,7 @@ import {
     mdiRunFast,
     mdiTrafficCone,
 } from '@mdi/js';
+import Time from '~/components/partials/elements/Time.vue';
 import { RoutesNamedLocations } from '~~/.nuxt/typed-router/__routes';
 import { UserActivity } from '~~/gen/ts/resources/users/users';
 
@@ -162,7 +163,7 @@ switch (props.activity.key) {
                     </span>
                 </h3>
                 <p class="text-sm text-gray-400">
-                    {{ useLocaleTimeAgo(toDate(activity.createdAt)!).value }}
+                    <Time :value="activity.createdAt" type="long" />
                 </p>
             </div>
             <p class="text-sm text-gray-300">

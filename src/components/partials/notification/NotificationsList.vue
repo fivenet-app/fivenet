@@ -4,10 +4,11 @@ import SvgIcon from '@jamescoyle/vue-icon';
 import { mdiBell, mdiChevronRight } from '@mdi/js';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { watchDebounced } from '@vueuse/core';
-import TablePagination from '~/components/partials/elements/TablePagination.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
+import TablePagination from '~/components/partials/elements/TablePagination.vue';
+import Time from '~/components/partials/elements/Time.vue';
 import { PaginationResponse } from '~~/gen/ts/resources/common/database/database';
 import { Notification } from '~~/gen/ts/resources/notifications/notifications';
 
@@ -174,9 +175,7 @@ watchDebounced(includeRead, async () => refresh(), { debounce: 500, maxWait: 150
                                         <div class="hidden sm:flex sm:flex-col sm:items-end">
                                             <p class="mt-1 text-xs leading-5 text-gray-500">
                                                 {{ $t('common.received') }}
-                                                <time :datetime="toDate(not.createdAt)?.toLocaleDateString()">
-                                                    {{ useLocaleTimeAgo(toDate(not.createdAt)!).value }}
-                                                </time>
+                                                <Time :value="not.createdAt" :ago="true" />
                                             </p>
                                             <div v-if="!not.readAt" class="mt-1 flex items-center gap-x-1.5">
                                                 <div class="flex-none rounded-full bg-green-500/20 p-1">

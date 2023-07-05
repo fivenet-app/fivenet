@@ -17,6 +17,7 @@ import { QuillEditor } from '@vueup/vue-quill';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
+import Time from '~/components/partials/elements/Time.vue';
 import { useClipboardStore } from '~/store/clipboard';
 import { useNotificationsStore } from '~/store/notifications';
 import { ACCESS_LEVEL } from '~~/gen/ts/resources/documents/access';
@@ -225,10 +226,8 @@ function addToClipboard(): void {
                             />
                             <div class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-base-100 text-base-500">
                                 <SvgIcon class="w-5 h-auto" aria-hidden="true" type="mdi" :path="mdiCalendar" />
-                                <span class="text-sm font-medium text-base-700"
-                                    ><time :datetime="$d(toDate(document?.createdAt)!, 'short')">
-                                        {{ $d(toDate(document?.createdAt)!, 'short') }}
-                                    </time>
+                                <span class="text-sm font-medium text-base-700">
+                                    <Time :value="document.createdAt" type="long" />
                                 </span>
                             </div>
                             <div
