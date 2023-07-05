@@ -510,7 +510,8 @@
         "units": "Einheiten",
         "unit": "Einheit | Einheiten",
         "color": "Farbe",
-        "initials": "Initialen"
+        "initials": "Initialen",
+        "members": "Keine Mitglieder | {n} Mitglied | {n} Mitglieder"
     },
     "notifications": {
         "clipboard": {

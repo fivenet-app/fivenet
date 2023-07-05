@@ -1,15 +1,28 @@
 <script lang="ts" setup>
+import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { UNIT_STATUS, Unit } from '~~/gen/ts/resources/dispatch/units';
 
-const units: Unit[] = [
-    { id: 0n, name: 'Charlie 2', initials: 'C2', users: [], status: UNIT_STATUS.AVAILABLE },
-    { id: 0n, name: 'Overwatch 1', initials: 'O1', users: [], status: UNIT_STATUS.AVAILABLE },
-    { id: 0n, name: 'Delta 2', initials: 'D2', users: [], status: UNIT_STATUS.BUSY },
-    { id: 0n, name: 'Delta 3', initials: 'D3', users: [], status: UNIT_STATUS.BUSY },
-    { id: 0n, name: 'Charlie 1', initials: 'C1', users: [], status: UNIT_STATUS.ON_BREAK },
-    { id: 0n, name: 'Charlie 3', initials: 'C3', users: [], status: UNIT_STATUS.ON_BREAK },
-    { id: 0n, name: 'Delta 1', initials: 'D1', users: [], status: UNIT_STATUS.ON_BREAK },
-];
+const { $grpc } = useNuxtApp();
+
+const { data: units, pending, refresh, error } = useLazyAsyncData(`centrum-units`, () => listUnits());
+
+async function listUnits(): Promise<Array<Unit>> {
+    return new Promise(async (res, rej) => {
+        try {
+            const req = {
+                status: [],
+            };
+
+            const call = $grpc.getCentrumClient().listUnits(req);
+            const { response } = await call;
+
+            return res(response.units);
+        } catch (e) {
+            $grpc.handleError(e as RpcError);
+            return rej(e as RpcError);
+        }
+    });
+}
 </script>
 
 <template>
@@ -25,7 +38,7 @@ const units: Unit[] = [
                     <ul role="list" class="mt-3 grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-2 lg:grid-cols-3">
                         <li v-for="unit in units" :key="unit.name" class="col-span-1 flex rounded-md shadow-sm">
                             <div
-                                class="flex w-9 flex-shrink-0 items-center justify-center rounded-l-md text-sm font-medium text-white"
+                                class="flex w-12 flex-shrink-0 items-center justify-center rounded-l-md text-sm font-medium text-white"
                                 :style="'background-color: #' + unit.color ?? '00000'"
                             >
                                 {{ unit.initials }}
@@ -35,7 +48,7 @@ const units: Unit[] = [
                             >
                                 <div class="flex-1 truncate px-4 py-2 text-sm">
                                     <span class="font-medium text-gray-100">{{ unit.name }}</span>
-                                    <p class="text-gray-400">{{ unit.users.length }} Members</p>
+                                    <p class="text-gray-400">{{ $t('common.members', unit.users.length) }}</p>
                                 </div>
                                 <div class="flex-shrink-0 pr-5">
                                     <button
