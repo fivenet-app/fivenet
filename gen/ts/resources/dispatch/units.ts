@@ -77,7 +77,7 @@ class Unit$Type extends MessageType<Unit> {
             { no: 5, name: "initials", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "4" } } } },
             { no: 6, name: "color", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "6" } } } },
             { no: 7, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
-            { no: 8, name: "status", kind: "enum", opt: true, T: () => ["resources.dispatch.UNIT_STATUS", UNIT_STATUS] },
+            { no: 8, name: "status", kind: "enum", opt: true, T: () => ["resources.dispatch.UNIT_STATUS", UNIT_STATUS], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 9, name: "users", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UserShort }
         ]);
     }

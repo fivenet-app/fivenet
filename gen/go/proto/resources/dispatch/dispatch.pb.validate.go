@@ -59,9 +59,16 @@ func (m *Dispatch) validate(all bool) error {
 
 	// no validation rules for Id
 
-	// no validation rules for Job
-
-	// no validation rules for Message
+	if utf8.RuneCountInString(m.GetMessage()) > 255 {
+		err := DispatchValidationError{
+			field:  "Message",
+			reason: "value length must be at most 255 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	// no validation rules for Attributes
 
@@ -194,12 +201,49 @@ func (m *Dispatch) validate(all bool) error {
 
 	}
 
+	if m.Job != nil {
+
+		if utf8.RuneCountInString(m.GetJob()) > 50 {
+			err := DispatchValidationError{
+				field:  "Job",
+				reason: "value length must be at most 50 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
 	if m.Status != nil {
-		// no validation rules for Status
+
+		if _, ok := DISPATCH_STATUS_name[int32(m.GetStatus())]; !ok {
+			err := DispatchValidationError{
+				field:  "Status",
+				reason: "value must be one of the defined enum values",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
 	}
 
 	if m.Description != nil {
-		// no validation rules for Description
+
+		if utf8.RuneCountInString(m.GetDescription()) > 1024 {
+			err := DispatchValidationError{
+				field:  "Description",
+				reason: "value length must be at most 1024 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
 	}
 
 	if len(errors) > 0 {

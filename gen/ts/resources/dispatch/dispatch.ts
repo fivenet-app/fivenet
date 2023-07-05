@@ -22,9 +22,9 @@ export interface Dispatch {
      */
     updatedAt?: Timestamp; // @gotags: alias:"updated_at"
     /**
-     * @generated from protobuf field: string job = 4;
+     * @generated from protobuf field: optional string job = 4;
      */
-    job: string;
+    job?: string;
     /**
      * @generated from protobuf field: optional resources.dispatch.DISPATCH_STATUS status = 5;
      */
@@ -88,10 +88,10 @@ class Dispatch$Type extends MessageType<Dispatch> {
             { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
-            { no: 4, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 5, name: "status", kind: "enum", opt: true, T: () => ["resources.dispatch.DISPATCH_STATUS", DISPATCH_STATUS] },
-            { no: 6, name: "message", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 7, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 4, name: "job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
+            { no: 5, name: "status", kind: "enum", opt: true, T: () => ["resources.dispatch.DISPATCH_STATUS", DISPATCH_STATUS], options: { "validate.rules": { enum: { definedOnly: true } } } },
+            { no: 6, name: "message", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
+            { no: 7, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "1024" } } } },
             { no: 8, name: "attributes", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "scalar", T: 9 /*ScalarType.STRING*/ } },
             { no: 9, name: "marker", kind: "message", T: () => DispatchMarker },
             { no: 10, name: "unit_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },

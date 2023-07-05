@@ -1201,7 +1201,7 @@ class SetDocumentAccessRequest$Type extends MessageType<SetDocumentAccessRequest
         super("services.docstore.SetDocumentAccessRequest", [
             { no: 1, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
             { no: 2, name: "mode", kind: "enum", T: () => ["services.docstore.ACCESS_LEVEL_UPDATE_MODE", ACCESS_LEVEL_UPDATE_MODE], options: { "validate.rules": { enum: { definedOnly: true } } } },
-            { no: 3, name: "access", kind: "message", T: () => DocumentAccess }
+            { no: 3, name: "access", kind: "message", T: () => DocumentAccess, options: { "validate.rules": { message: { required: true } } } }
         ]);
     }
 }

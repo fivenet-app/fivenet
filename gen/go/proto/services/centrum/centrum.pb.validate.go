@@ -1438,6 +1438,46 @@ func (m *CreateDispatchRequest) validate(all bool) error {
 
 	var errors []error
 
+	if m.GetDispatch() == nil {
+		err := CreateDispatchRequestValidationError{
+			field:  "Dispatch",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if all {
+		switch v := interface{}(m.GetDispatch()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, CreateDispatchRequestValidationError{
+					field:  "Dispatch",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, CreateDispatchRequestValidationError{
+					field:  "Dispatch",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetDispatch()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return CreateDispatchRequestValidationError{
+				field:  "Dispatch",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
 	if len(errors) > 0 {
 		return CreateDispatchRequestMultiError(errors)
 	}
@@ -1539,6 +1579,35 @@ func (m *CreateDispatchResponse) validate(all bool) error {
 	}
 
 	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetDispatch()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, CreateDispatchResponseValidationError{
+					field:  "Dispatch",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, CreateDispatchResponseValidationError{
+					field:  "Dispatch",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetDispatch()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return CreateDispatchResponseValidationError{
+				field:  "Dispatch",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
 
 	if len(errors) > 0 {
 		return CreateDispatchResponseMultiError(errors)
@@ -1642,6 +1711,46 @@ func (m *UpdateDispatchRequest) validate(all bool) error {
 
 	var errors []error
 
+	if m.GetDispatch() == nil {
+		err := UpdateDispatchRequestValidationError{
+			field:  "Dispatch",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if all {
+		switch v := interface{}(m.GetDispatch()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, UpdateDispatchRequestValidationError{
+					field:  "Dispatch",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, UpdateDispatchRequestValidationError{
+					field:  "Dispatch",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetDispatch()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return UpdateDispatchRequestValidationError{
+				field:  "Dispatch",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
 	if len(errors) > 0 {
 		return UpdateDispatchRequestMultiError(errors)
 	}
@@ -1743,6 +1852,35 @@ func (m *UpdateDispatchResponse) validate(all bool) error {
 	}
 
 	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetDispatch()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, UpdateDispatchResponseValidationError{
+					field:  "Dispatch",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, UpdateDispatchResponseValidationError{
+					field:  "Dispatch",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetDispatch()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return UpdateDispatchResponseValidationError{
+				field:  "Dispatch",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
 
 	if len(errors) > 0 {
 		return UpdateDispatchResponseMultiError(errors)
@@ -1846,6 +1984,34 @@ func (m *TakeDispatchRequest) validate(all bool) error {
 
 	var errors []error
 
+	// no validation rules for DispatchId
+
+	if _, ok := TAKE_DISPATCH_RESP_name[int32(m.GetResp())]; !ok {
+		err := TakeDispatchRequestValidationError{
+			field:  "Resp",
+			reason: "value must be one of the defined enum values",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.Reason != nil {
+
+		if utf8.RuneCountInString(m.GetReason()) > 255 {
+			err := TakeDispatchRequestValidationError{
+				field:  "Reason",
+				reason: "value length must be at most 255 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
 	if len(errors) > 0 {
 		return TakeDispatchRequestMultiError(errors)
 	}
@@ -1947,6 +2113,35 @@ func (m *TakeDispatchResponse) validate(all bool) error {
 	}
 
 	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetDispatch()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, TakeDispatchResponseValidationError{
+					field:  "Dispatch",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, TakeDispatchResponseValidationError{
+					field:  "Dispatch",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetDispatch()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return TakeDispatchResponseValidationError{
+				field:  "Dispatch",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
 
 	if len(errors) > 0 {
 		return TakeDispatchResponseMultiError(errors)

@@ -100,7 +100,7 @@ class Notification$Type extends MessageType<Notification> {
             { no: 5, name: "title", kind: "message", T: () => TranslateItem },
             { no: 6, name: "type", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "128" } } } },
             { no: 7, name: "content", kind: "message", T: () => TranslateItem },
-            { no: 8, name: "category", kind: "enum", T: () => ["resources.notifications.NOTIFICATION_CATEGORY", NOTIFICATION_CATEGORY] },
+            { no: 8, name: "category", kind: "enum", T: () => ["resources.notifications.NOTIFICATION_CATEGORY", NOTIFICATION_CATEGORY], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 9, name: "data", kind: "message", T: () => Data }
         ]);
     }

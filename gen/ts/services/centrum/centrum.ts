@@ -3,6 +3,7 @@
 // tslint:disable
 import { ServiceType } from "@protobuf-ts/runtime-rpc";
 import { MessageType } from "@protobuf-ts/runtime";
+import { Dispatch } from "../../resources/dispatch/dispatch.js";
 import { Unit } from "../../resources/dispatch/units.js";
 import { UNIT_STATUS } from "../../resources/dispatch/units.js";
 // Unit Management
@@ -149,31 +150,63 @@ export interface UnitChange {
  * @generated from protobuf message services.centrum.CreateDispatchRequest
  */
 export interface CreateDispatchRequest {
+    /**
+     * @generated from protobuf field: resources.dispatch.Dispatch dispatch = 1;
+     */
+    dispatch?: Dispatch;
 }
 /**
  * @generated from protobuf message services.centrum.CreateDispatchResponse
  */
 export interface CreateDispatchResponse {
+    /**
+     * @generated from protobuf field: resources.dispatch.Dispatch dispatch = 1;
+     */
+    dispatch?: Dispatch;
 }
 /**
  * @generated from protobuf message services.centrum.UpdateDispatchRequest
  */
 export interface UpdateDispatchRequest {
+    /**
+     * @generated from protobuf field: resources.dispatch.Dispatch dispatch = 1;
+     */
+    dispatch?: Dispatch;
 }
 /**
  * @generated from protobuf message services.centrum.UpdateDispatchResponse
  */
 export interface UpdateDispatchResponse {
+    /**
+     * @generated from protobuf field: resources.dispatch.Dispatch dispatch = 1;
+     */
+    dispatch?: Dispatch;
 }
 /**
  * @generated from protobuf message services.centrum.TakeDispatchRequest
  */
 export interface TakeDispatchRequest {
+    /**
+     * @generated from protobuf field: uint64 dispatch_id = 1;
+     */
+    dispatchId: bigint;
+    /**
+     * @generated from protobuf field: services.centrum.TAKE_DISPATCH_RESP resp = 2;
+     */
+    resp: TAKE_DISPATCH_RESP;
+    /**
+     * @generated from protobuf field: optional string reason = 3;
+     */
+    reason?: string;
 }
 /**
  * @generated from protobuf message services.centrum.TakeDispatchResponse
  */
 export interface TakeDispatchResponse {
+    /**
+     * @generated from protobuf field: resources.dispatch.Dispatch dispatch = 1;
+     */
+    dispatch?: Dispatch;
 }
 /**
  * @generated from protobuf message services.centrum.DispatchChanges
@@ -210,6 +243,23 @@ export interface CentrumStreamResponse {
      * @generated from protobuf field: optional services.centrum.DispatchChanges dispatch_changes = 2;
      */
     dispatchChanges?: DispatchChanges;
+}
+/**
+ * @generated from protobuf enum services.centrum.TAKE_DISPATCH_RESP
+ */
+export enum TAKE_DISPATCH_RESP {
+    /**
+     * @generated from protobuf enum value: TIMEOUT = 0;
+     */
+    TIMEOUT = 0,
+    /**
+     * @generated from protobuf enum value: ACCEPTED = 1;
+     */
+    ACCEPTED = 1,
+    /**
+     * @generated from protobuf enum value: DECLINED = 2;
+     */
+    DECLINED = 2
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class ListUnitsRequest$Type extends MessageType<ListUnitsRequest> {
@@ -363,7 +413,9 @@ export const UnitChange = new UnitChange$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class CreateDispatchRequest$Type extends MessageType<CreateDispatchRequest> {
     constructor() {
-        super("services.centrum.CreateDispatchRequest", []);
+        super("services.centrum.CreateDispatchRequest", [
+            { no: 1, name: "dispatch", kind: "message", T: () => Dispatch, options: { "validate.rules": { message: { required: true } } } }
+        ]);
     }
 }
 /**
@@ -373,7 +425,9 @@ export const CreateDispatchRequest = new CreateDispatchRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class CreateDispatchResponse$Type extends MessageType<CreateDispatchResponse> {
     constructor() {
-        super("services.centrum.CreateDispatchResponse", []);
+        super("services.centrum.CreateDispatchResponse", [
+            { no: 1, name: "dispatch", kind: "message", T: () => Dispatch }
+        ]);
     }
 }
 /**
@@ -383,7 +437,9 @@ export const CreateDispatchResponse = new CreateDispatchResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class UpdateDispatchRequest$Type extends MessageType<UpdateDispatchRequest> {
     constructor() {
-        super("services.centrum.UpdateDispatchRequest", []);
+        super("services.centrum.UpdateDispatchRequest", [
+            { no: 1, name: "dispatch", kind: "message", T: () => Dispatch, options: { "validate.rules": { message: { required: true } } } }
+        ]);
     }
 }
 /**
@@ -393,7 +449,9 @@ export const UpdateDispatchRequest = new UpdateDispatchRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class UpdateDispatchResponse$Type extends MessageType<UpdateDispatchResponse> {
     constructor() {
-        super("services.centrum.UpdateDispatchResponse", []);
+        super("services.centrum.UpdateDispatchResponse", [
+            { no: 1, name: "dispatch", kind: "message", T: () => Dispatch }
+        ]);
     }
 }
 /**
@@ -403,7 +461,11 @@ export const UpdateDispatchResponse = new UpdateDispatchResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class TakeDispatchRequest$Type extends MessageType<TakeDispatchRequest> {
     constructor() {
-        super("services.centrum.TakeDispatchRequest", []);
+        super("services.centrum.TakeDispatchRequest", [
+            { no: 1, name: "dispatch_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 2, name: "resp", kind: "enum", T: () => ["services.centrum.TAKE_DISPATCH_RESP", TAKE_DISPATCH_RESP], options: { "validate.rules": { enum: { definedOnly: true } } } },
+            { no: 3, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } }
+        ]);
     }
 }
 /**
@@ -413,7 +475,9 @@ export const TakeDispatchRequest = new TakeDispatchRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class TakeDispatchResponse$Type extends MessageType<TakeDispatchResponse> {
     constructor() {
-        super("services.centrum.TakeDispatchResponse", []);
+        super("services.centrum.TakeDispatchResponse", [
+            { no: 1, name: "dispatch", kind: "message", T: () => Dispatch }
+        ]);
     }
 }
 /**

@@ -95,7 +95,7 @@ class AuditEntry$Type extends MessageType<AuditEntry> {
             { no: 7, name: "target_user", kind: "message", T: () => UserShort },
             { no: 8, name: "service", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 9, name: "method", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 10, name: "state", kind: "enum", T: () => ["resources.rector.EVENT_TYPE", EVENT_TYPE] },
+            { no: 10, name: "state", kind: "enum", T: () => ["resources.rector.EVENT_TYPE", EVENT_TYPE], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 11, name: "data", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
         ]);
     }

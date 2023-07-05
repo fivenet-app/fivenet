@@ -96,7 +96,16 @@ func (m *AuditEntry) validate(all bool) error {
 
 	// no validation rules for Method
 
-	// no validation rules for State
+	if _, ok := EVENT_TYPE_name[int32(m.GetState())]; !ok {
+		err := AuditEntryValidationError{
+			field:  "State",
+			reason: "value must be one of the defined enum values",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if m.User != nil {
 

@@ -5641,6 +5641,17 @@ func (m *SetDocumentAccessRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	if m.GetAccess() == nil {
+		err := SetDocumentAccessRequestValidationError{
+			field:  "Access",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if all {
 		switch v := interface{}(m.GetAccess()).(type) {
 		case interface{ ValidateAll() error }:

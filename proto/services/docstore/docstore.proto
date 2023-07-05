@@ -219,7 +219,7 @@ enum ACCESS_LEVEL_UPDATE_MODE {
 message SetDocumentAccessRequest {
   uint64 document_id = 1;
   ACCESS_LEVEL_UPDATE_MODE mode = 2 [(validate.rules).enum.defined_only = true];
-  resources.documents.DocumentAccess access = 3;
+  resources.documents.DocumentAccess access = 3 [(validate.rules).message.required = true];
 }
 
 message SetDocumentAccessResponse {}

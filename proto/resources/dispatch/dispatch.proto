@@ -6,6 +6,7 @@ option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/dispatch;
 import "resources/dispatch/units.proto";
 import "resources/livemap/livemap.proto";
 import "resources/timestamp/timestamp.proto";
+import "validate/validate.proto";
 
 enum DISPATCH_STATUS {
   UNASSIGNED = 0;
@@ -19,10 +20,10 @@ message Dispatch {
   uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
   optional resources.timestamp.Timestamp created_at = 2; // @gotags: alias:"created_at"
 	optional resources.timestamp.Timestamp updated_at = 3; // @gotags: alias:"updated_at"
-  string job = 4;
-  optional DISPATCH_STATUS status = 5;
-  string message = 6;
-  optional string description = 7;
+  optional string job = 4 [(validate.rules).string.max_len = 50];
+  optional DISPATCH_STATUS status = 5 [(validate.rules).enum.defined_only = true];
+  string message = 6 [(validate.rules).string.max_len = 255];
+  optional string description = 7 [(validate.rules).string.max_len = 1024];
   map<string, string> attributes = 8;
   resources.livemap.DispatchMarker marker = 9;
   repeated uint64 unit_ids = 10;

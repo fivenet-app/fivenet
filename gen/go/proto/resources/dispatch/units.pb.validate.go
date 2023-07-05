@@ -211,7 +211,18 @@ func (m *Unit) validate(all bool) error {
 	}
 
 	if m.Status != nil {
-		// no validation rules for Status
+
+		if _, ok := UNIT_STATUS_name[int32(m.GetStatus())]; !ok {
+			err := UnitValidationError{
+				field:  "Status",
+				reason: "value must be one of the defined enum values",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
 	}
 
 	if len(errors) > 0 {
