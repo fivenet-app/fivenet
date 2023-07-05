@@ -1525,13 +1525,13 @@
   resolved "https://registry.yarnpkg.com/@types/zxcvbn/-/zxcvbn-4.4.1.tgz#46e42cbdcee681b22181478feaf4af2bc4c1abd2"
   integrity sha512-3NoqvZC2W5gAC5DZbTpCeJ251vGQmgcWIHQJGq2J240HY6ErQ9aWKkwfoKJlHLx+A83WPNTZ9+3cd2ILxbvr1w==
 
-"@unhead/dom@1.1.29":
-  version "1.1.29"
-  resolved "https://registry.yarnpkg.com/@unhead/dom/-/dom-1.1.29.tgz#02cf35a6ccf7830128f4cff7ff1944b57126df05"
-  integrity sha512-CyCblipMp3HNf6AJTABHn/F8U5bTA36FDHky/zcXX3MEaj/XzI6uxr6z813H67pxKw+tMlzYb+XM8Lfax61OvQ==
+"@unhead/dom@1.1.30":
+  version "1.1.30"
+  resolved "https://registry.yarnpkg.com/@unhead/dom/-/dom-1.1.30.tgz#d4e8e97304c2f8de2e7774b1f4263b43c8f0f0aa"
+  integrity sha512-EvASOkk36lW5sRfIe+StCojpkPEExsQNt+cqcpdVr9iiRH54jziCDFxcLfjawc+jp4NO86KvmfHo86GIly3/SQ==
   dependencies:
-    "@unhead/schema" "1.1.29"
-    "@unhead/shared" "1.1.29"
+    "@unhead/schema" "1.1.30"
+    "@unhead/shared" "1.1.30"
 
 "@unhead/schema@1.1.28":
   version "1.1.28"
@@ -1541,13 +1541,13 @@
     hookable "^5.5.3"
     zhead "^2.0.7"
 
-"@unhead/schema@1.1.29":
-  version "1.1.29"
-  resolved "https://registry.yarnpkg.com/@unhead/schema/-/schema-1.1.29.tgz#777d43a6e8c73d50b06de857aebc2825f611fda7"
-  integrity sha512-ihgzC2VlEcC7SAt4hlRZAVubgBKvunHqEfSQmWbTNEiPI/Lkjry9rJuDjswo2go54xrDpAqOu3ZOVHq03YtOWQ==
+"@unhead/schema@1.1.30":
+  version "1.1.30"
+  resolved "https://registry.yarnpkg.com/@unhead/schema/-/schema-1.1.30.tgz#aa77da28342a7e7ed0825896a48ebf7551fbe5d7"
+  integrity sha512-lgz0aw+OP1PlKHBhNWAVabV2iAHBhSXCt3Ynswu0m++MwJxOVXizYJRZOVKK7Zx3u7vwPRV/nweYc6rmNHv5gA==
   dependencies:
     hookable "^5.5.3"
-    zhead "^2.0.7"
+    zhead "^2.0.9"
 
 "@unhead/shared@1.1.28":
   version "1.1.28"
@@ -1556,12 +1556,12 @@
   dependencies:
     "@unhead/schema" "1.1.28"
 
-"@unhead/shared@1.1.29":
-  version "1.1.29"
-  resolved "https://registry.yarnpkg.com/@unhead/shared/-/shared-1.1.29.tgz#48ad2b0309a75f5c9b5c94afe38dc49601d26781"
-  integrity sha512-jYERAozHXGYT1jh/1friuRUajqKt/tU5oeLyIBSY+GDPs9k6mSpYHcrRhimqE3PJSN/hvg3UhyeH1/ltpSbyXA==
+"@unhead/shared@1.1.30":
+  version "1.1.30"
+  resolved "https://registry.yarnpkg.com/@unhead/shared/-/shared-1.1.30.tgz#0ae2a78a1d118c0d2a852e2ca9981805c18f7bca"
+  integrity sha512-OPS+d4SZuYSWquQZVLfbyFYggdqKz8DtcdHXObRoKWnosrgVPyGJoOaFnjfkYYuvU6BFYnUtnZNMRQVUjmER1g==
   dependencies:
-    "@unhead/schema" "1.1.29"
+    "@unhead/schema" "1.1.30"
 
 "@unhead/ssr@^1.1.28":
   version "1.1.28"
@@ -1572,14 +1572,14 @@
     "@unhead/shared" "1.1.28"
 
 "@unhead/vue@^1.1.28", "@unhead/vue@^1.1.29":
-  version "1.1.29"
-  resolved "https://registry.yarnpkg.com/@unhead/vue/-/vue-1.1.29.tgz#591e18335ccc2f0e1d0a45ec145a4087f83ba848"
-  integrity sha512-BNNNvP3CJUmYAQw9z2SNHaemiXnbmBorPwpEdjvcb8mLC4IRBC6JHSrgsSl0SgHF6u3tulvi0zqQNHMo8MEnIQ==
+  version "1.1.30"
+  resolved "https://registry.yarnpkg.com/@unhead/vue/-/vue-1.1.30.tgz#ca1b4eac39d5f91d2ee4406317377bba1201105d"
+  integrity sha512-jWDfYDjiNj8a8GTQoYeJrpKisI7YKIWwuMP1IREKa4cx41oCsbCKUDjomjnpmdBcpqvb/Kw32Tm+EMcuE/CYkA==
   dependencies:
-    "@unhead/schema" "1.1.29"
-    "@unhead/shared" "1.1.29"
+    "@unhead/schema" "1.1.30"
+    "@unhead/shared" "1.1.30"
     hookable "^5.5.3"
-    unhead "1.1.29"
+    unhead "1.1.30"
 
 "@vee-validate/i18n@^4.10.5":
   version "4.10.5"
@@ -7194,14 +7194,14 @@ unenv@^1.5.1:
     node-fetch-native "^1.1.1"
     pathe "^1.1.0"
 
-unhead@1.1.29:
-  version "1.1.29"
-  resolved "https://registry.yarnpkg.com/unhead/-/unhead-1.1.29.tgz#3d191ffafca5c0571956035c5634f994c0efe551"
-  integrity sha512-EmFma66Bn0YXIeW4VLHQInSAGNEjmIRnBMGbhpF2T6OEhNnNVbSeMd36xp2d7KwUKajEirZLWmg0ZxLGzaAVXA==
+unhead@1.1.30:
+  version "1.1.30"
+  resolved "https://registry.yarnpkg.com/unhead/-/unhead-1.1.30.tgz#10caa5966004a8f24b73f059d640c1779eaf744e"
+  integrity sha512-25N/P1GnnC8EYCDerzE0hl2nOdRqS1NOFh1STEyKWRo/Bi5dXn8Z2NTaqzkbr5ExJTZEAiDfZ+eALvMTmvlXlA==
   dependencies:
-    "@unhead/dom" "1.1.29"
-    "@unhead/schema" "1.1.29"
-    "@unhead/shared" "1.1.29"
+    "@unhead/dom" "1.1.30"
+    "@unhead/schema" "1.1.30"
+    "@unhead/shared" "1.1.30"
     hookable "^5.5.3"
 
 unimport@^3.0.10:
@@ -7725,6 +7725,11 @@ zhead@^2.0.7:
   version "2.0.7"
   resolved "https://registry.yarnpkg.com/zhead/-/zhead-2.0.7.tgz#36b3607cd462668d8b395c27f4865911fe38fb93"
   integrity sha512-q9iCCXBWndfYNMGCN7S970+e3ILAPzmX78Skblx7+SGlo6x6SXW0GJ5mJzigYsq2mkHCGqEUhe0QGDEDZauw8g==
+
+zhead@^2.0.9:
+  version "2.0.9"
+  resolved "https://registry.yarnpkg.com/zhead/-/zhead-2.0.9.tgz#3972a1f7485cc19fdfb25007fbef44e8d5a87405"
+  integrity sha512-Y3g6EegQc6PVrYXPq2OS7/s27UGVS5Y6NY6SY3XGH4Hg+yQWbQTtWsjCgmpR8kZnYrv8auB54sz+x5FEDrvqzQ==
 
 zip-stream@^4.1.0:
   version "4.1.0"
