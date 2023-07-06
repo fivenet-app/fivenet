@@ -44,7 +44,7 @@ interface FormData {
     content: string;
 }
 
-const { handleSubmit, setValues, meta } = useForm<FormData>({
+const { handleSubmit, setValues, meta, validate } = useForm<FormData>({
     validationSchema: {
         weight: { required: true, numeric: { min: 0, max: 4294967295 } },
         title: { required: true, min: 3, max: 255 },
@@ -52,15 +52,10 @@ const { handleSubmit, setValues, meta } = useForm<FormData>({
         contentTitle: { required: true, min: 3, max: 2048 },
         content: { required: true, min: 3, max: 1500000 },
     },
+    validateOnMount: true,
 });
 
-const onSubmit = handleSubmit(async (values): Promise<void> => {
-    if (props.templateId && props.templateId > 0) {
-        return updateTemplate(values);
-    } else {
-        await createTemplate(values);
-    }
-});
+const onSubmit = handleSubmit(async (values): Promise<void> => createOrUpdateTemplate(values, props.templateId));
 
 const schema = ref<SchemaEditorValue>({
     users: {
@@ -246,7 +241,7 @@ function createObjectSpec(v: ObjectSpecsValue): ObjectSpecs {
     return o;
 }
 
-async function createTemplate(values: FormData): Promise<void> {
+async function createOrUpdateTemplate(values: FormData, templateId?: bigint): Promise<void> {
     return new Promise(async (res, rej) => {
         const tRequirements: TemplateRequirements = {
             users: createObjectSpec(schema.value.users),
@@ -263,7 +258,7 @@ async function createTemplate(values: FormData): Promise<void> {
 
                 jobAccesses.push({
                     id: 0n,
-                    templateId: 0n,
+                    templateId: templateId ?? 0n,
                     access: entry.values.accessrole,
                     job: entry.values.job,
                     minimumGrade: entry.values.minimumrank ? entry.values.minimumrank : 0,
@@ -301,9 +296,10 @@ async function createTemplate(values: FormData): Promise<void> {
         });
 
         if (typeof values.weight === 'string') values.weight = parseInt(values.weight as string);
-        const req: CreateTemplateRequest = {
+
+        const req: CreateTemplateRequest | UpdateTemplateRequest = {
             template: {
-                id: 0n,
+                id: templateId ?? 0n,
                 weight: values.weight as number,
                 title: values.title,
                 description: values.description,
@@ -321,115 +317,30 @@ async function createTemplate(values: FormData): Promise<void> {
         }
 
         try {
-            const call = $grpc.getDocStoreClient().createTemplate(req);
-            const { response } = await call;
+            if (templateId === undefined) {
+                const call = $grpc.getDocStoreClient().createTemplate(req);
+                const { response } = await call;
 
-            notifications.dispatchNotification({
-                title: { key: 'notifications.templates.created.title', parameters: [] },
-                content: { key: 'notifications.templates.created.title', parameters: [] },
-                type: 'success',
-            });
+                notifications.dispatchNotification({
+                    title: { key: 'notifications.templates.created.title', parameters: [] },
+                    content: { key: 'notifications.templates.created.title', parameters: [] },
+                    type: 'success',
+                });
 
-            await navigateTo({
-                name: 'documents-templates-id',
-                params: { id: response.id.toString() },
-            });
+                await navigateTo({
+                    name: 'documents-templates-id',
+                    params: { id: response.id?.toString() },
+                });
+            } else {
+                const call = $grpc.getDocStoreClient().updateTemplate(req);
+                await call;
 
-            return res();
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
-        }
-    });
-}
-
-async function updateTemplate(values: FormData): Promise<void> {
-    return new Promise(async (res, rej) => {
-        const tRequirements: TemplateRequirements = {
-            users: createObjectSpec(schema.value.users),
-            documents: createObjectSpec(schema.value.documents),
-            vehicles: createObjectSpec(schema.value.vehicles),
-        };
-
-        const jobAccesses = new Array<TemplateJobAccess>();
-        access.value.forEach((entry) => {
-            if (entry.values.accessrole === undefined) return;
-
-            if (entry.type === 1) {
-                if (!entry.values.job) return;
-
-                jobAccesses.push({
-                    id: 0n,
-                    templateId: props.templateId!,
-                    access: entry.values.accessrole,
-                    job: entry.values.job,
-                    minimumGrade: entry.values.minimumrank ? entry.values.minimumrank : 0,
+                notifications.dispatchNotification({
+                    title: { key: 'notifications.templates.updated.title', parameters: [] },
+                    content: { key: 'notifications.templates.updated.content', parameters: [] },
+                    type: 'success',
                 });
             }
-        });
-
-        const reqAccess: DocumentAccess = {
-            jobs: [],
-            users: [],
-        };
-        contentAccess.value.forEach((entry) => {
-            if (entry.values.accessrole === undefined) return;
-
-            if (entry.type === 0) {
-                if (!entry.values.char) return;
-
-                reqAccess.users.push({
-                    id: 0n,
-                    documentId: 0n,
-                    userId: entry.values.char,
-                    access: entry.values.accessrole,
-                });
-            } else if (entry.type === 1) {
-                if (!entry.values.job) return;
-
-                reqAccess.jobs.push({
-                    id: 0n,
-                    documentId: 0n,
-                    job: entry.values.job!,
-                    minimumGrade: entry.values.minimumrank ? entry.values.minimumrank : 0,
-                    access: entry.values.accessrole,
-                });
-            }
-        });
-
-        const req: UpdateTemplateRequest = {
-            template: {
-                id: props.templateId!,
-                weight: values.weight,
-                title: values.title,
-                description: values.description,
-                contentTitle: values.contentTitle,
-                content: values.content,
-                schema: {
-                    requirements: tRequirements,
-                },
-                contentAccess: reqAccess,
-                jobAccess: jobAccesses,
-            },
-        };
-        if (selectedCategory.value) {
-            req.template!.category = selectedCategory.value;
-        }
-
-        try {
-            const call = $grpc.getDocStoreClient().updateTemplate(req);
-            const { response } = await call;
-
-            notifications.dispatchNotification({
-                title: { key: 'notifications.templates.updated.title', parameters: [] },
-                content: { key: 'notifications.templates.updated.content', parameters: [] },
-                type: 'success',
-            });
-
-            await navigateTo({
-                name: 'documents-templates-id',
-                params: { id: response.id.toString() },
-            });
 
             return res();
         } catch (e) {
@@ -575,12 +486,14 @@ onMounted(async () => {
     } catch (e) {
         $grpc.handleError(e as RpcError);
     }
+
+    validate();
 });
 
 watchDebounced(
     queryRank,
     async () => (filteredRank.value = entriesRank.value.filter((r) => r.label.startsWith(queryRank.value))),
-    { debounce: 600, maxWait: 1750 }
+    { debounce: 600, maxWait: 1750 },
 );
 </script>
 
