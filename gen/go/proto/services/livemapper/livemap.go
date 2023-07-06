@@ -43,9 +43,9 @@ var (
 type Server struct {
 	LivemapperServiceServer
 
-	tracer trace.Tracer
 	ctx    context.Context
 	logger *zap.Logger
+	tracer trace.Tracer
 	db     *sql.DB
 	p      perms.Permissions
 	c      *mstlystcdata.Enricher

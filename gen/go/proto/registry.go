@@ -152,14 +152,16 @@ func NewGRPCServer(ctx context.Context, logger *zap.Logger, db *sql.DB, tp *trac
 		config.C.Game.SuperuserGroups, config.C.OAuth2.Providers))
 	pbcitizenstore.RegisterCitizenStoreServiceServer(grpcServer, pbcitizenstore.NewServer(db, p, enricher, aud,
 		config.C.Game.PublicJobs, config.C.Game.UnemployedJob.Name, config.C.Game.UnemployedJob.Grade))
+	centrum := pbcentrum.NewServer(ctx, logger.Named("grpc_centrum"), tp, db, p, aud)
+	go centrum.Start()
+	pbcentrum.RegisterCentrumServiceServer(grpcServer, centrum)
 	pbcompletor.RegisterCompletorServiceServer(grpcServer, pbcompletor.NewServer(db, p, cache))
-	pbcentrum.RegisterCentrumServiceServer(grpcServer, pbcentrum.NewServer(db, p, aud))
 	pbdocstore.RegisterDocStoreServiceServer(grpcServer, pbdocstore.NewServer(db, p, enricher, aud, ui, notif))
 	pbjobs.RegisterJobsServiceServer(grpcServer, pbjobs.NewServer())
+
 	livemapper := pblivemapper.NewServer(ctx, logger.Named("grpc_livemap"), tp, db, p, enricher,
 		config.C.Game.Livemap.RefreshTime, config.C.Game.Livemap.Jobs)
 	go livemapper.Start()
-
 	pblivemapper.RegisterLivemapperServiceServer(grpcServer, livemapper)
 	pbnotificator.RegisterNotificatorServiceServer(grpcServer, pbnotificator.NewServer(logger.Named("grpc_notificator"), db, p, tm, ui))
 	pbdmv.RegisterDMVServiceServer(grpcServer, pbdmv.NewServer(db, p, enricher, aud))

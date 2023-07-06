@@ -5,7 +5,6 @@ import { mdiChevronDown } from '@mdi/js';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { watchDebounced } from '@vueuse/core';
 import { vMaska } from 'maska';
-import { ref } from 'vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -29,7 +28,7 @@ const {
     refresh,
     error,
 } = useLazyAsyncData(`citizens-${offset.value}-${query.value.name}-${query.value.wanted}-${query.value.phoneNumber}`, () =>
-    listCitizens()
+    listCitizens(),
 );
 
 async function listCitizens(): Promise<Array<User>> {

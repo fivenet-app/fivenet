@@ -17,10 +17,8 @@ type fivenetCentrumUnitsUsersTable struct {
 	mysql.Table
 
 	// Columns
-	ID         mysql.ColumnInteger
-	CreatedAt  mysql.ColumnTimestamp
-	UpdatedAt  mysql.ColumnTimestamp
 	UnitID     mysql.ColumnInteger
+	UserID     mysql.ColumnInteger
 	Identifier mysql.ColumnString
 
 	AllColumns     mysql.ColumnList
@@ -62,23 +60,19 @@ func newFivenetCentrumUnitsUsersTable(schemaName, tableName, alias string) *Five
 
 func newFivenetCentrumUnitsUsersTableImpl(schemaName, tableName, alias string) fivenetCentrumUnitsUsersTable {
 	var (
-		IDColumn         = mysql.IntegerColumn("id")
-		CreatedAtColumn  = mysql.TimestampColumn("created_at")
-		UpdatedAtColumn  = mysql.TimestampColumn("updated_at")
 		UnitIDColumn     = mysql.IntegerColumn("unit_id")
+		UserIDColumn     = mysql.IntegerColumn("user_id")
 		IdentifierColumn = mysql.StringColumn("identifier")
-		allColumns       = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, UnitIDColumn, IdentifierColumn}
-		mutableColumns   = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, UnitIDColumn, IdentifierColumn}
+		allColumns       = mysql.ColumnList{UnitIDColumn, UserIDColumn, IdentifierColumn}
+		mutableColumns   = mysql.ColumnList{IdentifierColumn}
 	)
 
 	return fivenetCentrumUnitsUsersTable{
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
-		ID:         IDColumn,
-		CreatedAt:  CreatedAtColumn,
-		UpdatedAt:  UpdatedAtColumn,
 		UnitID:     UnitIDColumn,
+		UserID:     UserIDColumn,
 		Identifier: IdentifierColumn,
 
 		AllColumns:     allColumns,

@@ -30,6 +30,7 @@ func New(logger *zap.Logger) *Routes {
 		logger: logger,
 
 		clientCfg: &api.ClientConfig{
+			Version:   "TODO",
 			SentryDSN: config.C.Sentry.ClientDSN,
 			Login: api.LoginConfig{
 				Providers: providers,

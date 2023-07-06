@@ -3,9 +3,30 @@
 // tslint:disable
 import { ServiceType } from "@protobuf-ts/runtime-rpc";
 import { MessageType } from "@protobuf-ts/runtime";
+import { DispatchStatus } from "../../resources/dispatch/dispatch.js";
 import { Dispatch } from "../../resources/dispatch/dispatch.js";
+import { DISPATCH_STATUS } from "../../resources/dispatch/dispatch.js";
+import { UnitAssignment } from "../../resources/dispatch/units.js";
+import { UnitStatus } from "../../resources/dispatch/units.js";
+import { PaginationResponse } from "../../resources/common/database/database.js";
 import { Unit } from "../../resources/dispatch/units.js";
 import { UNIT_STATUS } from "../../resources/dispatch/units.js";
+import { PaginationRequest } from "../../resources/common/database/database.js";
+// Common
+
+/**
+ * @generated from protobuf message services.centrum.ListActivityRequest
+ */
+export interface ListActivityRequest {
+    /**
+     * @generated from protobuf field: resources.common.database.PaginationRequest pagination = 1;
+     */
+    pagination?: PaginationRequest;
+    /**
+     * @generated from protobuf field: uint64 id = 2;
+     */
+    id: bigint;
+}
 // Unit Management
 
 /**
@@ -16,10 +37,6 @@ export interface ListUnitsRequest {
      * @generated from protobuf field: repeated resources.dispatch.UNIT_STATUS status = 1;
      */
     status: UNIT_STATUS[];
-    /**
-     * @generated from protobuf field: optional string name = 2;
-     */
-    name?: string;
 }
 /**
  * @generated from protobuf message services.centrum.ListUnitsResponse
@@ -63,40 +80,6 @@ export interface DeleteUnitRequest {
 export interface DeleteUnitResponse {
 }
 /**
- * @generated from protobuf message services.centrum.AssignUnitRequest
- */
-export interface AssignUnitRequest {
-    /**
-     * @generated from protobuf field: uint64 unit_id = 1;
-     */
-    unitId: bigint;
-    /**
-     * @generated from protobuf field: repeated int32 to_add = 2;
-     */
-    toAdd: number[];
-    /**
-     * @generated from protobuf field: repeated int32 to_remove = 3;
-     */
-    toRemove: number[];
-}
-/**
- * @generated from protobuf message services.centrum.AssignUnitResponse
- */
-export interface AssignUnitResponse {
-    /**
-     * @generated from protobuf field: uint64 unit_id = 1;
-     */
-    unitId: bigint;
-    /**
-     * @generated from protobuf field: optional bool self = 2;
-     */
-    self?: boolean;
-    /**
-     * @generated from protobuf field: repeated uint64 user_ids = 3;
-     */
-    userIds: bigint[];
-}
-/**
  * @generated from protobuf message services.centrum.UpdateUnitStatusRequest
  */
 export interface UpdateUnitStatusRequest {
@@ -112,11 +95,58 @@ export interface UpdateUnitStatusRequest {
      * @generated from protobuf field: optional string reason = 3;
      */
     reason?: string;
+    /**
+     * @generated from protobuf field: optional string code = 4;
+     */
+    code?: string;
 }
 /**
  * @generated from protobuf message services.centrum.UpdateUnitStatusResponse
  */
 export interface UpdateUnitStatusResponse {
+}
+/**
+ * @generated from protobuf message services.centrum.AssignUnitRequest
+ */
+export interface AssignUnitRequest {
+    /**
+     * @generated from protobuf field: uint64 unit_id = 1;
+     */
+    unitId: bigint;
+    /**
+     * @generated from protobuf field: optional bool self_add = 2;
+     */
+    selfAdd?: boolean;
+    /**
+     * @generated from protobuf field: optional bool self_remove = 3;
+     */
+    selfRemove?: boolean;
+    /**
+     * @generated from protobuf field: repeated int32 to_add = 4;
+     */
+    toAdd: number[];
+    /**
+     * @generated from protobuf field: repeated int32 to_remove = 5;
+     */
+    toRemove: number[];
+}
+/**
+ * @generated from protobuf message services.centrum.AssignUnitResponse
+ */
+export interface AssignUnitResponse {
+}
+/**
+ * @generated from protobuf message services.centrum.ListUnitActivityResponse
+ */
+export interface ListUnitActivityResponse {
+    /**
+     * @generated from protobuf field: resources.common.database.PaginationResponse pagination = 1;
+     */
+    pagination?: PaginationResponse;
+    /**
+     * @generated from protobuf field: repeated resources.dispatch.UnitStatus activity = 2;
+     */
+    activity: UnitStatus[];
 }
 /**
  * @generated from protobuf message services.centrum.UnitChanges
@@ -132,20 +162,34 @@ export interface UnitChanges {
  */
 export interface UnitChange {
     /**
-     * @generated from protobuf field: uint64 id = 1;
+     * @generated from protobuf field: repeated resources.dispatch.UnitAssignment added = 1;
      */
-    id: bigint;
+    added: UnitAssignment[];
     /**
-     * @generated from protobuf field: repeated int32 added = 2;
+     * @generated from protobuf field: repeated resources.dispatch.UnitAssignment removed = 2;
      */
-    added: number[];
-    /**
-     * @generated from protobuf field: repeated int32 removed = 3;
-     */
-    removed: number[];
+    removed: UnitAssignment[];
 }
 // Dispatch Management
 
+/**
+ * @generated from protobuf message services.centrum.ListDispatchesRequest
+ */
+export interface ListDispatchesRequest {
+    /**
+     * @generated from protobuf field: repeated resources.dispatch.DISPATCH_STATUS status = 1;
+     */
+    status: DISPATCH_STATUS[];
+}
+/**
+ * @generated from protobuf message services.centrum.ListDispatchesResponse
+ */
+export interface ListDispatchesResponse {
+    /**
+     * @generated from protobuf field: repeated resources.dispatch.Dispatch dispatches = 1;
+     */
+    dispatches: Dispatch[];
+}
 /**
  * @generated from protobuf message services.centrum.CreateDispatchRequest
  */
@@ -181,6 +225,39 @@ export interface UpdateDispatchResponse {
      * @generated from protobuf field: resources.dispatch.Dispatch dispatch = 1;
      */
     dispatch?: Dispatch;
+}
+/**
+ * @generated from protobuf message services.centrum.UpdateDispatchStatusRequest
+ */
+export interface UpdateDispatchStatusRequest {
+}
+/**
+ * @generated from protobuf message services.centrum.UpdateDispatchStatusResponse
+ */
+export interface UpdateDispatchStatusResponse {
+}
+/**
+ * @generated from protobuf message services.centrum.AssignDispatchRequest
+ */
+export interface AssignDispatchRequest {
+}
+/**
+ * @generated from protobuf message services.centrum.AssignDispatchResponse
+ */
+export interface AssignDispatchResponse {
+}
+/**
+ * @generated from protobuf message services.centrum.ListDispatchActivityResponse
+ */
+export interface ListDispatchActivityResponse {
+    /**
+     * @generated from protobuf field: resources.common.database.PaginationResponse pagination = 1;
+     */
+    pagination?: PaginationResponse;
+    /**
+     * @generated from protobuf field: repeated resources.dispatch.DispatchStatus activity = 2;
+     */
+    activity: DispatchStatus[];
 }
 /**
  * @generated from protobuf message services.centrum.TakeDispatchRequest
@@ -236,13 +313,43 @@ export interface CentrumStreamRequest {
  */
 export interface CentrumStreamResponse {
     /**
-     * @generated from protobuf field: optional services.centrum.UnitChanges unit_changes = 1;
+     * @generated from protobuf oneof: change
      */
-    unitChanges?: UnitChanges;
-    /**
-     * @generated from protobuf field: optional services.centrum.DispatchChanges dispatch_changes = 2;
-     */
-    dispatchChanges?: DispatchChanges;
+    change: {
+        oneofKind: "unitsChange";
+        /**
+         * @generated from protobuf field: services.centrum.UnitChanges units_change = 1;
+         */
+        unitsChange: UnitChanges;
+    } | {
+        oneofKind: "unitStatus";
+        /**
+         * @generated from protobuf field: resources.dispatch.UnitStatus unit_status = 2;
+         */
+        unitStatus: UnitStatus;
+    } | {
+        oneofKind: "dispatchesChange";
+        /**
+         * @generated from protobuf field: services.centrum.DispatchChanges dispatches_change = 3;
+         */
+        dispatchesChange: DispatchChanges;
+    } | {
+        oneofKind: "dispatchStatus";
+        /**
+         * @generated from protobuf field: resources.dispatch.DispatchStatus dispatch_status = 4;
+         */
+        dispatchStatus: DispatchStatus;
+    } | {
+        oneofKind: "dispatchAssigned";
+        /**
+         * When a dispatch is assigned to a unit
+         *
+         * @generated from protobuf field: resources.dispatch.Dispatch dispatch_assigned = 5;
+         */
+        dispatchAssigned: Dispatch;
+    } | {
+        oneofKind: undefined;
+    };
 }
 /**
  * @generated from protobuf enum services.centrum.TAKE_DISPATCH_RESP
@@ -262,11 +369,23 @@ export enum TAKE_DISPATCH_RESP {
     DECLINED = 2
 }
 // @generated message type with reflection information, may provide speed optimized methods
+class ListActivityRequest$Type extends MessageType<ListActivityRequest> {
+    constructor() {
+        super("services.centrum.ListActivityRequest", [
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
+            { no: 2, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.centrum.ListActivityRequest
+ */
+export const ListActivityRequest = new ListActivityRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class ListUnitsRequest$Type extends MessageType<ListUnitsRequest> {
     constructor() {
         super("services.centrum.ListUnitsRequest", [
-            { no: 1, name: "status", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.dispatch.UNIT_STATUS", UNIT_STATUS] },
-            { no: 2, name: "name", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
+            { no: 1, name: "status", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.dispatch.UNIT_STATUS", UNIT_STATUS], options: { "validate.rules": { repeated: { items: { enum: { definedOnly: true } } } } } }
         ]);
     }
 }
@@ -333,40 +452,13 @@ class DeleteUnitResponse$Type extends MessageType<DeleteUnitResponse> {
  */
 export const DeleteUnitResponse = new DeleteUnitResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class AssignUnitRequest$Type extends MessageType<AssignUnitRequest> {
-    constructor() {
-        super("services.centrum.AssignUnitRequest", [
-            { no: 1, name: "unit_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 2, name: "to_add", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ },
-            { no: 3, name: "to_remove", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ }
-        ]);
-    }
-}
-/**
- * @generated MessageType for protobuf message services.centrum.AssignUnitRequest
- */
-export const AssignUnitRequest = new AssignUnitRequest$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class AssignUnitResponse$Type extends MessageType<AssignUnitResponse> {
-    constructor() {
-        super("services.centrum.AssignUnitResponse", [
-            { no: 1, name: "unit_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 2, name: "self", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
-            { no: 3, name: "user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
-        ]);
-    }
-}
-/**
- * @generated MessageType for protobuf message services.centrum.AssignUnitResponse
- */
-export const AssignUnitResponse = new AssignUnitResponse$Type();
-// @generated message type with reflection information, may provide speed optimized methods
 class UpdateUnitStatusRequest$Type extends MessageType<UpdateUnitStatusRequest> {
     constructor() {
         super("services.centrum.UpdateUnitStatusRequest", [
             { no: 1, name: "unit_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 2, name: "status", kind: "enum", T: () => ["resources.dispatch.UNIT_STATUS", UNIT_STATUS] },
-            { no: 3, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
+            { no: 2, name: "status", kind: "enum", T: () => ["resources.dispatch.UNIT_STATUS", UNIT_STATUS], options: { "validate.rules": { enum: { definedOnly: true } } } },
+            { no: 3, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 4, name: "code", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
         ]);
     }
 }
@@ -385,6 +477,45 @@ class UpdateUnitStatusResponse$Type extends MessageType<UpdateUnitStatusResponse
  */
 export const UpdateUnitStatusResponse = new UpdateUnitStatusResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class AssignUnitRequest$Type extends MessageType<AssignUnitRequest> {
+    constructor() {
+        super("services.centrum.AssignUnitRequest", [
+            { no: 1, name: "unit_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 2, name: "self_add", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 3, name: "self_remove", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 4, name: "to_add", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ },
+            { no: 5, name: "to_remove", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.centrum.AssignUnitRequest
+ */
+export const AssignUnitRequest = new AssignUnitRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class AssignUnitResponse$Type extends MessageType<AssignUnitResponse> {
+    constructor() {
+        super("services.centrum.AssignUnitResponse", []);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.centrum.AssignUnitResponse
+ */
+export const AssignUnitResponse = new AssignUnitResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ListUnitActivityResponse$Type extends MessageType<ListUnitActivityResponse> {
+    constructor() {
+        super("services.centrum.ListUnitActivityResponse", [
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse },
+            { no: 2, name: "activity", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UnitStatus }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.centrum.ListUnitActivityResponse
+ */
+export const ListUnitActivityResponse = new ListUnitActivityResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class UnitChanges$Type extends MessageType<UnitChanges> {
     constructor() {
         super("services.centrum.UnitChanges", [
@@ -400,9 +531,8 @@ export const UnitChanges = new UnitChanges$Type();
 class UnitChange$Type extends MessageType<UnitChange> {
     constructor() {
         super("services.centrum.UnitChange", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 2, name: "added", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ },
-            { no: 3, name: "removed", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ }
+            { no: 1, name: "added", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UnitAssignment },
+            { no: 2, name: "removed", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UnitAssignment }
         ]);
     }
 }
@@ -410,6 +540,30 @@ class UnitChange$Type extends MessageType<UnitChange> {
  * @generated MessageType for protobuf message services.centrum.UnitChange
  */
 export const UnitChange = new UnitChange$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ListDispatchesRequest$Type extends MessageType<ListDispatchesRequest> {
+    constructor() {
+        super("services.centrum.ListDispatchesRequest", [
+            { no: 1, name: "status", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.dispatch.DISPATCH_STATUS", DISPATCH_STATUS], options: { "validate.rules": { repeated: { items: { enum: { definedOnly: true } } } } } }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.centrum.ListDispatchesRequest
+ */
+export const ListDispatchesRequest = new ListDispatchesRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ListDispatchesResponse$Type extends MessageType<ListDispatchesResponse> {
+    constructor() {
+        super("services.centrum.ListDispatchesResponse", [
+            { no: 1, name: "dispatches", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Dispatch }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.centrum.ListDispatchesResponse
+ */
+export const ListDispatchesResponse = new ListDispatchesResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class CreateDispatchRequest$Type extends MessageType<CreateDispatchRequest> {
     constructor() {
@@ -458,6 +612,59 @@ class UpdateDispatchResponse$Type extends MessageType<UpdateDispatchResponse> {
  * @generated MessageType for protobuf message services.centrum.UpdateDispatchResponse
  */
 export const UpdateDispatchResponse = new UpdateDispatchResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class UpdateDispatchStatusRequest$Type extends MessageType<UpdateDispatchStatusRequest> {
+    constructor() {
+        super("services.centrum.UpdateDispatchStatusRequest", []);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.centrum.UpdateDispatchStatusRequest
+ */
+export const UpdateDispatchStatusRequest = new UpdateDispatchStatusRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class UpdateDispatchStatusResponse$Type extends MessageType<UpdateDispatchStatusResponse> {
+    constructor() {
+        super("services.centrum.UpdateDispatchStatusResponse", []);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.centrum.UpdateDispatchStatusResponse
+ */
+export const UpdateDispatchStatusResponse = new UpdateDispatchStatusResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class AssignDispatchRequest$Type extends MessageType<AssignDispatchRequest> {
+    constructor() {
+        super("services.centrum.AssignDispatchRequest", []);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.centrum.AssignDispatchRequest
+ */
+export const AssignDispatchRequest = new AssignDispatchRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class AssignDispatchResponse$Type extends MessageType<AssignDispatchResponse> {
+    constructor() {
+        super("services.centrum.AssignDispatchResponse", []);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.centrum.AssignDispatchResponse
+ */
+export const AssignDispatchResponse = new AssignDispatchResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ListDispatchActivityResponse$Type extends MessageType<ListDispatchActivityResponse> {
+    constructor() {
+        super("services.centrum.ListDispatchActivityResponse", [
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse },
+            { no: 2, name: "activity", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => DispatchStatus }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.centrum.ListDispatchActivityResponse
+ */
+export const ListDispatchActivityResponse = new ListDispatchActivityResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class TakeDispatchRequest$Type extends MessageType<TakeDispatchRequest> {
     constructor() {
@@ -522,8 +729,11 @@ export const CentrumStreamRequest = new CentrumStreamRequest$Type();
 class CentrumStreamResponse$Type extends MessageType<CentrumStreamResponse> {
     constructor() {
         super("services.centrum.CentrumStreamResponse", [
-            { no: 1, name: "unit_changes", kind: "message", T: () => UnitChanges },
-            { no: 2, name: "dispatch_changes", kind: "message", T: () => DispatchChanges }
+            { no: 1, name: "units_change", kind: "message", oneof: "change", T: () => UnitChanges },
+            { no: 2, name: "unit_status", kind: "message", oneof: "change", T: () => UnitStatus },
+            { no: 3, name: "dispatches_change", kind: "message", oneof: "change", T: () => DispatchChanges },
+            { no: 4, name: "dispatch_status", kind: "message", oneof: "change", T: () => DispatchStatus },
+            { no: 5, name: "dispatch_assigned", kind: "message", oneof: "change", T: () => Dispatch }
         ]);
     }
 }
@@ -538,10 +748,15 @@ export const CentrumService = new ServiceType("services.centrum.CentrumService",
     { name: "ListUnits", options: {}, I: ListUnitsRequest, O: ListUnitsResponse },
     { name: "CreateOrUpdateUnit", options: {}, I: CreateOrUpdateUnitRequest, O: CreateOrUpdateUnitResponse },
     { name: "DeleteUnit", options: {}, I: DeleteUnitRequest, O: DeleteUnitResponse },
-    { name: "AssignUnit", options: {}, I: AssignUnitRequest, O: AssignUnitResponse },
     { name: "UpdateUnitStatus", options: {}, I: UpdateUnitStatusRequest, O: UpdateUnitStatusResponse },
+    { name: "AssignUnit", options: {}, I: AssignUnitRequest, O: AssignUnitResponse },
+    { name: "ListUnitActivity", options: {}, I: ListActivityRequest, O: ListUnitActivityResponse },
+    { name: "ListDispatches", options: {}, I: ListDispatchesRequest, O: ListDispatchesResponse },
     { name: "CreateDispatch", options: {}, I: CreateDispatchRequest, O: CreateDispatchResponse },
     { name: "UpdateDispatch", options: {}, I: UpdateDispatchRequest, O: UpdateDispatchResponse },
     { name: "TakeDispatch", options: {}, I: TakeDispatchRequest, O: TakeDispatchResponse },
+    { name: "UpdateDispatchStatus", options: {}, I: UpdateDispatchStatusRequest, O: UpdateDispatchStatusResponse },
+    { name: "AssignDispatch", options: {}, I: AssignDispatchRequest, O: AssignDispatchResponse },
+    { name: "ListDispatchActivity", options: {}, I: ListActivityRequest, O: ListDispatchActivityResponse },
     { name: "Stream", serverStreaming: true, options: {}, I: CentrumStreamRequest, O: CentrumStreamResponse }
 ]);

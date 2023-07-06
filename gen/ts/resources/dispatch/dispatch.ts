@@ -61,34 +61,26 @@ export interface Dispatch {
      */
     user?: UserShort;
     /**
-     * @generated from protobuf field: repeated uint64 unit_ids = 13;
+     * @generated from protobuf field: repeated resources.dispatch.DispatchAssignment units = 13;
      */
-    unitIds: bigint[];
-    /**
-     * @generated from protobuf field: repeated resources.dispatch.Unit units = 14;
-     */
-    units: Unit[];
+    units: DispatchAssignment[];
 }
 /**
  * @generated from protobuf message resources.dispatch.DispatchAssignment
  */
 export interface DispatchAssignment {
     /**
-     * @generated from protobuf field: uint64 id = 1;
-     */
-    id: bigint; // @gotags: sql:"primary_key" alias:"id"
-    /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
-     */
-    createdAt?: Timestamp;
-    /**
-     * @generated from protobuf field: uint64 dispatch_id = 3;
+     * @generated from protobuf field: uint64 dispatch_id = 1;
      */
     dispatchId: bigint;
     /**
-     * @generated from protobuf field: uint64 unit_id = 4;
+     * @generated from protobuf field: uint64 unit_id = 2;
      */
     unitId: bigint;
+    /**
+     * @generated from protobuf field: optional resources.dispatch.Unit unit = 3;
+     */
+    unit?: Unit;
 }
 /**
  * @generated from protobuf message resources.dispatch.DispatchStatus
@@ -176,8 +168,7 @@ class Dispatch$Type extends MessageType<Dispatch> {
             { no: 10, name: "anon", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
             { no: 11, name: "user_id", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
             { no: 12, name: "user", kind: "message", T: () => UserShort },
-            { no: 13, name: "unit_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 14, name: "units", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Unit }
+            { no: 13, name: "units", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => DispatchAssignment }
         ]);
     }
 }
@@ -189,10 +180,9 @@ export const Dispatch = new Dispatch$Type();
 class DispatchAssignment$Type extends MessageType<DispatchAssignment> {
     constructor() {
         super("resources.dispatch.DispatchAssignment", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
-            { no: 3, name: "dispatch_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 4, name: "unit_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+            { no: 1, name: "dispatch_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 2, name: "unit_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 3, name: "unit", kind: "message", T: () => Unit }
         ]);
     }
 }

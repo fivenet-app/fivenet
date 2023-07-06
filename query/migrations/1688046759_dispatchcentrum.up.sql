@@ -16,15 +16,14 @@ CREATE TABLE IF NOT EXISTS `fivenet_centrum_units` (
 
 -- Table: fivenet_centrum_units_users
 CREATE TABLE IF NOT EXISTS `fivenet_centrum_units_users` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` datetime(3) DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
   `unit_id` bigint(20) unsigned NOT NULL,
+  `user_id` int(11) NOT NULL,
   `identifier` varchar(64) NOT NULL,
-  PRIMARY KEY (`id`),
+  PRIMARY KEY (`unit_id`, `user_id`),
   KEY `idx_fivenet_centrum_units_users_unit_id` (`unit_id`),
-  UNIQUE KEY `idx_fivenet_centrum_units_users_identifier` (`identifier`),
+  KEY `idx_fivenet_centrum_units_users_user_id` (`user_id`),
   CONSTRAINT `fk_fivenet_centrum_units_users_unit_id` FOREIGN KEY (`unit_id`) REFERENCES `fivenet_centrum_units` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_fivenet_centrum_units_users_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_fivenet_centrum_units_users_identifier` FOREIGN KEY (`identifier`) REFERENCES `fivenet_user_locations` (`identifier`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -67,11 +66,9 @@ CREATE TABLE IF NOT EXISTS `fivenet_centrum_dispatches` (
 
 -- Table: fivenet_centrum_dispatches_asgmts
 CREATE TABLE IF NOT EXISTS `fivenet_centrum_dispatches_asgmts` (
-  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP,
   `dispatch_id` bigint(20) unsigned NOT NULL,
   `unit_id` bigint(20) unsigned NOT NULL,
-  PRIMARY KEY (`id`),
+  PRIMARY KEY (`dispatch_id`, `unit_id`),
   KEY `idx_fivenet_centrum_dispatches_asgmts_dispatch_id` (`dispatch_id`),
   KEY `idx_fivenet_centrum_dispatches_asgmts_unit_id` (`unit_id`),
   CONSTRAINT `fk_fivenet_centrum_dispatches_asgmts_dispatch_id` FOREIGN KEY (`dispatch_id`) REFERENCES `fivenet_centrum_dispatches` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,

@@ -21,29 +21,50 @@ export interface Unit {
      */
     updatedAt?: Timestamp;
     /**
-     * @generated from protobuf field: string name = 4;
+     * @generated from protobuf field: string job = 4;
+     */
+    job: string;
+    /**
+     * @generated from protobuf field: string name = 5;
      */
     name: string;
     /**
-     * @generated from protobuf field: string initials = 5;
+     * @generated from protobuf field: string initials = 6;
      */
     initials: string;
     /**
-     * @generated from protobuf field: optional string color = 6;
+     * @generated from protobuf field: optional string color = 7;
      */
     color?: string;
     /**
-     * @generated from protobuf field: optional string description = 7;
+     * @generated from protobuf field: optional string description = 8;
      */
     description?: string;
     /**
-     * @generated from protobuf field: optional resources.dispatch.UnitStatus status = 8;
+     * @generated from protobuf field: optional resources.dispatch.UnitStatus status = 9;
      */
     status?: UnitStatus;
     /**
-     * @generated from protobuf field: repeated resources.users.UserShort users = 9;
+     * @generated from protobuf field: repeated resources.dispatch.UnitAssignment users = 10;
      */
-    users: UserShort[];
+    users: UnitAssignment[];
+}
+/**
+ * @generated from protobuf message resources.dispatch.UnitAssignment
+ */
+export interface UnitAssignment {
+    /**
+     * @generated from protobuf field: uint64 unit_id = 1;
+     */
+    unitId: bigint;
+    /**
+     * @generated from protobuf field: int32 user_id = 2;
+     */
+    userId: number;
+    /**
+     * @generated from protobuf field: optional resources.users.UserShort user = 3;
+     */
+    user?: UserShort;
 }
 /**
  * @generated from protobuf message resources.dispatch.UnitStatus
@@ -103,21 +124,25 @@ export enum UNIT_STATUS {
      */
     UNAVAILABLE = 0,
     /**
-     * @generated from protobuf enum value: AVAILABLE = 1;
+     * @generated from protobuf enum value: USER_ADDED = 1;
      */
-    AVAILABLE = 1,
+    USER_ADDED = 1,
     /**
-     * @generated from protobuf enum value: USER_ADDED = 2;
+     * @generated from protobuf enum value: USER_REMOVED = 2;
      */
-    USER_ADDED = 2,
+    USER_REMOVED = 2,
     /**
-     * @generated from protobuf enum value: ON_BREAK = 3;
+     * @generated from protobuf enum value: AVAILABLE = 3;
      */
-    ON_BREAK = 3,
+    AVAILABLE = 3,
     /**
-     * @generated from protobuf enum value: BUSY = 4;
+     * @generated from protobuf enum value: ON_BREAK = 4;
      */
-    BUSY = 4
+    ON_BREAK = 4,
+    /**
+     * @generated from protobuf enum value: BUSY = 5;
+     */
+    BUSY = 5
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Unit$Type extends MessageType<Unit> {
@@ -126,12 +151,13 @@ class Unit$Type extends MessageType<Unit> {
             { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
-            { no: 4, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "24" } } } },
-            { no: 5, name: "initials", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "4" } } } },
-            { no: 6, name: "color", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "6" } } } },
-            { no: 7, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
-            { no: 8, name: "status", kind: "message", T: () => UnitStatus },
-            { no: 9, name: "users", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UserShort }
+            { no: 4, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
+            { no: 5, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "24" } } } },
+            { no: 6, name: "initials", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "4" } } } },
+            { no: 7, name: "color", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "6" } } } },
+            { no: 8, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
+            { no: 9, name: "status", kind: "message", T: () => UnitStatus },
+            { no: 10, name: "users", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UnitAssignment }
         ]);
     }
 }
@@ -139,6 +165,20 @@ class Unit$Type extends MessageType<Unit> {
  * @generated MessageType for protobuf message resources.dispatch.Unit
  */
 export const Unit = new Unit$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class UnitAssignment$Type extends MessageType<UnitAssignment> {
+    constructor() {
+        super("resources.dispatch.UnitAssignment", [
+            { no: 1, name: "unit_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 3, name: "user", kind: "message", T: () => UserShort }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.dispatch.UnitAssignment
+ */
+export const UnitAssignment = new UnitAssignment$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class UnitStatus$Type extends MessageType<UnitStatus> {
     constructor() {

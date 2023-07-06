@@ -3,15 +3,22 @@ syntax = "proto3";
 package services.centrum;
 option go_package = "github.com/galexrt/fivenet/gen/go/proto/services/centrum;centrum";
 
+import "resources/common/database/database.proto";
 import "resources/dispatch/dispatch.proto";
 import "resources/dispatch/units.proto";
 import "validate/validate.proto";
 
+// Common
+
+message ListActivityRequest {
+  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
+  uint64 id = 2;
+}
+
 // Unit Management
 
 message ListUnitsRequest {
-  repeated resources.dispatch.UNIT_STATUS status = 1;
-  optional string name = 2;
+  repeated resources.dispatch.UNIT_STATUS status = 1 [(validate.rules).repeated.items.enum.defined_only = true];
 }
 
 message ListUnitsResponse {
@@ -32,37 +39,48 @@ message DeleteUnitRequest {
 
 message DeleteUnitResponse {}
 
-message AssignUnitRequest {
-  uint64 unit_id = 1;
-  repeated int32 to_add = 2;
-  repeated int32 to_remove = 3;
-}
-
-message AssignUnitResponse {
-  uint64 unit_id = 1;
-  optional bool self = 2;
-  repeated uint64 user_ids = 3;
-}
-
 message UpdateUnitStatusRequest {
   uint64 unit_id = 1;
-  resources.dispatch.UNIT_STATUS status = 2;
+  resources.dispatch.UNIT_STATUS status = 2 [(validate.rules).enum.defined_only = true];
   optional string reason = 3;
+  optional string code = 4;
 }
 
 message UpdateUnitStatusResponse {}
+
+message AssignUnitRequest {
+  uint64 unit_id = 1;
+  optional bool self_add = 2;
+  optional bool self_remove = 3;
+  repeated int32 to_add = 4;
+  repeated int32 to_remove = 5;
+}
+
+message AssignUnitResponse {}
+
+message ListUnitActivityResponse {
+  resources.common.database.PaginationResponse pagination = 1;
+  repeated resources.dispatch.UnitStatus activity = 2;
+}
 
 message UnitChanges {
   repeated UnitChange changes = 1;
 }
 
 message UnitChange {
-  uint64 id = 1;
-  repeated int32 added = 2;
-  repeated int32 removed = 3;
+  repeated resources.dispatch.UnitAssignment added = 1;
+  repeated resources.dispatch.UnitAssignment removed = 2;
 }
 
 // Dispatch Management
+
+message ListDispatchesRequest {
+  repeated resources.dispatch.DISPATCH_STATUS status = 1 [(validate.rules).repeated.items.enum.defined_only = true];
+}
+
+message ListDispatchesResponse {
+  repeated resources.dispatch.Dispatch dispatches = 1;
+}
 
 message CreateDispatchRequest {
   resources.dispatch.Dispatch dispatch = 1 [(validate.rules).message.required = true];
@@ -78,6 +96,27 @@ message UpdateDispatchRequest {
 
 message UpdateDispatchResponse {
   resources.dispatch.Dispatch dispatch = 1;
+}
+
+message UpdateDispatchStatusRequest {
+
+}
+
+message UpdateDispatchStatusResponse {
+
+}
+
+message AssignDispatchRequest {
+
+}
+
+message AssignDispatchResponse {
+
+}
+
+message ListDispatchActivityResponse {
+  resources.common.database.PaginationResponse pagination = 1;
+  repeated resources.dispatch.DispatchStatus activity = 2;
 }
 
 enum TAKE_DISPATCH_RESP {
@@ -107,8 +146,15 @@ message DispatchChange {
 message CentrumStreamRequest {}
 
 message CentrumStreamResponse {
-  optional UnitChanges unit_changes = 1;
-  optional DispatchChanges dispatch_changes = 2;
+  oneof change {
+    UnitChanges units_change = 1;
+    resources.dispatch.UnitStatus unit_status = 2;
+
+    DispatchChanges dispatches_change = 3;
+    resources.dispatch.DispatchStatus dispatch_status = 4;
+    // When a dispatch is assigned to a unit
+    resources.dispatch.Dispatch dispatch_assigned = 5;
+  }
 }
 
 service CentrumService {
@@ -118,20 +164,27 @@ service CentrumService {
   rpc CreateOrUpdateUnit(CreateOrUpdateUnitRequest) returns (CreateOrUpdateUnitResponse);
   // @perm
   rpc DeleteUnit(DeleteUnitRequest) returns (DeleteUnitResponse);
-
-  // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
-  rpc AssignUnit(AssignUnitRequest) returns (AssignUnitResponse);
-
   // @perm
   rpc UpdateUnitStatus(UpdateUnitStatusRequest) returns (UpdateUnitStatusResponse);
+  // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
+  rpc AssignUnit(AssignUnitRequest) returns (AssignUnitResponse);
+  // @perm: Name=ListUnits
+  rpc ListUnitActivity(ListActivityRequest) returns (ListUnitActivityResponse);
 
+  // @perm
+  rpc ListDispatches(ListDispatchesRequest) returns (ListDispatchesResponse);
   // @perm
   rpc CreateDispatch(CreateDispatchRequest) returns (CreateDispatchResponse);
   // @perm
   rpc UpdateDispatch(UpdateDispatchRequest) returns (UpdateDispatchResponse);
-
   // @perm
   rpc TakeDispatch(TakeDispatchRequest) returns (TakeDispatchResponse);
+  // @perm: Name=TakeDispatch
+  rpc UpdateDispatchStatus(UpdateDispatchStatusRequest) returns (UpdateDispatchStatusResponse);
+  // @perm
+  rpc AssignDispatch(AssignDispatchRequest) returns (AssignDispatchResponse);
+  // @perm: Name=Stream
+  rpc ListDispatchActivity(ListActivityRequest) returns (ListDispatchActivityResponse);
 
   // @perm
   rpc Stream(CentrumStreamRequest) returns (stream CentrumStreamResponse);

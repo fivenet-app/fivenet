@@ -404,20 +404,18 @@ func (m *DispatchAssignment) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Id
-
 	// no validation rules for DispatchId
 
 	// no validation rules for UnitId
 
-	if m.CreatedAt != nil {
+	if m.Unit != nil {
 
 		if all {
-			switch v := interface{}(m.GetCreatedAt()).(type) {
+			switch v := interface{}(m.GetUnit()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
 					errors = append(errors, DispatchAssignmentValidationError{
-						field:  "CreatedAt",
+						field:  "Unit",
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -425,16 +423,16 @@ func (m *DispatchAssignment) validate(all bool) error {
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
 					errors = append(errors, DispatchAssignmentValidationError{
-						field:  "CreatedAt",
+						field:  "Unit",
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
 				}
 			}
-		} else if v, ok := interface{}(m.GetCreatedAt()).(interface{ Validate() error }); ok {
+		} else if v, ok := interface{}(m.GetUnit()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
 				return DispatchAssignmentValidationError{
-					field:  "CreatedAt",
+					field:  "Unit",
 					reason: "embedded message failed validation",
 					cause:  err,
 				}

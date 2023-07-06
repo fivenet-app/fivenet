@@ -1,6 +1,7 @@
 package api
 
 type ClientConfig struct {
+	Version   string      `json:"version"`
 	SentryDSN string      `json:"sentryDSN"`
 	Login     LoginConfig `json:"login"`
 }

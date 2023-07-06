@@ -2,13 +2,13 @@
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import SvgIcon from '@jamescoyle/vue-icon';
 import { mdiClose } from '@mdi/js';
-import { Dispatch, DispatchStatus } from '~~/gen/ts/resources/dispatch/dispatch';
+import { Unit, UnitStatus } from '~~/gen/ts/resources/dispatch/units';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { PaginationResponse } from '~~/gen/ts/resources/common/database/database';
 
 const props = defineProps<{
     open: boolean;
-    dispatch: Dispatch;
+    unit: Unit;
 }>();
 
 defineEmits<{
@@ -25,19 +25,19 @@ const {
     pending,
     refresh,
     error,
-} = useLazyAsyncData(`centrum-dispatch-${props.dispatch.id.toString()}-activity-${offset.value}`, () => listUnitActivity());
+} = useLazyAsyncData(`centrum-unit-${props.unit.id.toString()}-activity-${offset.value}`, () => listUnitActivity());
 
-async function listUnitActivity(): Promise<Array<DispatchStatus>> {
+async function listUnitActivity(): Promise<Array<UnitStatus>> {
     return new Promise(async (res, rej) => {
         try {
             const req = {
                 pagination: {
                     offset: offset.value,
                 },
-                id: props.dispatch.id,
+                id: props.unit.id,
             };
 
-            const call = $grpc.getCentrumClient().listDispatchActivity(req);
+            const call = $grpc.getCentrumClient().listUnitActivity(req);
             const { response } = await call;
 
             pagination.value = response.pagination;
@@ -46,6 +46,16 @@ async function listUnitActivity(): Promise<Array<DispatchStatus>> {
             $grpc.handleError(e as RpcError);
             return rej(e as RpcError);
         }
+    });
+}
+
+async function addUserToUnit(): Promise<void> {
+    return new Promise(async (res, rej) => {
+        $grpc.getCentrumClient().assignUnit({
+            unitId: props.unit.id,
+            toAdd: [],
+            toRemove: [],
+        });
     });
 }
 </script>
@@ -72,7 +82,8 @@ async function listUnitActivity(): Promise<Array<DispatchStatus>> {
                                     <div class="px-4 sm:px-6">
                                         <div class="flex items-start justify-between">
                                             <DialogTitle class="text-base font-semibold leading-6 text-gray-100">
-                                                {{ dispatch.id.toString() }} - {{ dispatch.message }}
+                                                {{ unit.id.toString() }} - {{ unit.name }} ({{ $t('common.initials') }}:
+                                                {{ unit.initials }})
                                             </DialogTitle>
                                             <div class="ml-3 flex h-7 items-center">
                                                 <button
@@ -87,7 +98,14 @@ async function listUnitActivity(): Promise<Array<DispatchStatus>> {
                                         </div>
                                     </div>
                                     <div class="relative mt-6 flex-1 px-4 sm:px-6 text-gray-100">
-                                        {{ dispatch.id.toString() }}
+                                        <ul>
+                                            <li v-for="user in unit.users">
+                                                {{ user.user?.firstname }} {{ user.user?.lastname }}
+                                            </li>
+                                        </ul>
+
+                                        <button type="submit" @click="addUserToUnit">Add User To Unit</button>
+
                                         <hr />
                                         <ul>
                                             <li v-for="activity in activities">

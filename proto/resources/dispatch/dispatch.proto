@@ -22,15 +22,13 @@ message Dispatch {
   optional bool anon = 10;
   optional bool user_id = 11;
   optional resources.users.UserShort user = 12;
-  repeated uint64 unit_ids = 13;
-  repeated resources.dispatch.Unit units = 14;
+  repeated DispatchAssignment units = 13;
 }
 
 message DispatchAssignment {
-  uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
-  optional resources.timestamp.Timestamp created_at = 2;
-  uint64 dispatch_id = 3;
-  uint64 unit_id = 4;
+  uint64 dispatch_id = 1;
+  uint64 unit_id = 2;
+  optional resources.dispatch.Unit unit = 3;
 }
 
 enum DISPATCH_STATUS {
