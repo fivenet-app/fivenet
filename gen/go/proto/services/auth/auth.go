@@ -108,7 +108,16 @@ func (s *Server) createTokenFromAccountAndChar(account *model.FivenetAccounts, a
 func (s *Server) getAccountFromDB(ctx context.Context, condition jet.BoolExpression) (*model.FivenetAccounts, error) {
 	stmt := tAccounts.
 		SELECT(
-			tAccounts.AllColumns,
+			tAccounts.ID,
+			tAccounts.CreatedAt,
+			tAccounts.UpdatedAt,
+			tAccounts.Enabled,
+			tAccounts.Username,
+			tAccounts.Password,
+			tAccounts.License,
+			tAccounts.RegToken,
+			tAccounts.OverrideJob,
+			tAccounts.OverrideJobGrade,
 		).
 		FROM(tAccounts).
 		WHERE(
@@ -598,7 +607,11 @@ func (s *Server) getJobWithProps(ctx context.Context, jobName string) (*jobs.Job
 			js.Name,
 			js.Label,
 			tJobGrades.Grade.AS("job_grade"),
-			tJobProps.AllColumns,
+			tJobProps.Job,
+			tJobProps.UpdatedAt,
+			tJobProps.Theme,
+			tJobProps.LivemapMarkerColor,
+			tJobProps.QuickButtons,
 		).
 		FROM(
 			js.

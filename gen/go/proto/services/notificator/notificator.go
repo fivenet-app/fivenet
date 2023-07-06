@@ -91,7 +91,15 @@ func (s *Server) GetNotifications(ctx context.Context, req *GetNotificationsRequ
 
 	stmt := tNotifications.
 		SELECT(
-			tNotifications.AllColumns,
+			tNotifications.ID,
+			tNotifications.CreatedAt,
+			tNotifications.ReadAt,
+			tNotifications.UserID,
+			tNotifications.Title,
+			tNotifications.Type,
+			tNotifications.Content,
+			tNotifications.Category,
+			tNotifications.Data,
 		).
 		FROM(tNotifications).
 		WHERE(

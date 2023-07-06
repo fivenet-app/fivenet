@@ -55,7 +55,11 @@ func (p *Perms) loadPermissionFromDatabaseByGuard(ctx context.Context, name stri
 
 	stmt := tPerms.
 		SELECT(
-			tPerms.AllColumns,
+			tPerms.ID,
+			tPerms.CreatedAt,
+			tPerms.Category,
+			tPerms.Name,
+			tPerms.GuardName,
 		).
 		FROM(tPerms).
 		WHERE(
@@ -101,7 +105,11 @@ func (p *Perms) GetAllPermissions(ctx context.Context) ([]*permissions.Permissio
 
 	stmt := tPerms.
 		SELECT(
-			tPerms.AllColumns,
+			tPerms.ID,
+			tPerms.CreatedAt,
+			tPerms.Category,
+			tPerms.Name,
+			tPerms.GuardName,
 		).
 		FROM(tPerms).
 		ORDER_BY(
@@ -146,7 +154,11 @@ func (p *Perms) GetPermissionsByIDs(ctx context.Context, ids ...uint64) ([]*perm
 
 	stmt := tPerms.
 		SELECT(
-			tPerms.AllColumns,
+			tPerms.ID,
+			tPerms.CreatedAt,
+			tPerms.Category,
+			tPerms.Name,
+			tPerms.GuardName,
 		).
 		FROM(tPerms).
 		WHERE(
@@ -170,7 +182,11 @@ func (p *Perms) GetPermission(ctx context.Context, category Category, name Name)
 
 	stmt := tPerms.
 		SELECT(
-			tPerms.AllColumns,
+			tPerms.ID,
+			tPerms.CreatedAt,
+			tPerms.Category,
+			tPerms.Name,
+			tPerms.GuardName,
 		).
 		FROM(tPerms).
 		WHERE(jet.AND(

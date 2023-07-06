@@ -28,7 +28,10 @@ var (
 func (p *Perms) GetJobRoles(ctx context.Context, job string) (collections.Roles, error) {
 	stmt := tRoles.
 		SELECT(
-			tRoles.AllColumns,
+			tRoles.ID,
+			tRoles.CreatedAt,
+			tRoles.Job,
+			tRoles.Grade,
 		).
 		FROM(tRoles).
 		WHERE(
@@ -50,7 +53,10 @@ func (p *Perms) GetJobRoles(ctx context.Context, job string) (collections.Roles,
 func (p *Perms) GetJobRolesUpTo(ctx context.Context, job string, grade int32) (collections.Roles, error) {
 	stmt := tRoles.
 		SELECT(
-			tRoles.AllColumns,
+			tRoles.ID,
+			tRoles.CreatedAt,
+			tRoles.Job,
+			tRoles.Grade,
 		).
 		FROM(tRoles).
 		WHERE(jet.AND(
@@ -73,7 +79,10 @@ func (p *Perms) GetJobRolesUpTo(ctx context.Context, job string, grade int32) (c
 func (p *Perms) GetRoles(ctx context.Context, excludeSystem bool) (collections.Roles, error) {
 	stmt := tRoles.
 		SELECT(
-			tRoles.AllColumns,
+			tRoles.ID,
+			tRoles.CreatedAt,
+			tRoles.Job,
+			tRoles.Grade,
 		).
 		FROM(tRoles).
 		ORDER_BY(
@@ -96,7 +105,10 @@ func (p *Perms) GetRoles(ctx context.Context, excludeSystem bool) (collections.R
 func (p *Perms) GetClosestJobRole(ctx context.Context, job string, grade int32) (*model.FivenetRoles, error) {
 	stmt := tRoles.
 		SELECT(
-			tRoles.AllColumns,
+			tRoles.ID,
+			tRoles.CreatedAt,
+			tRoles.Job,
+			tRoles.Grade,
 		).
 		FROM(tRoles).
 		WHERE(jet.AND(
@@ -134,7 +146,10 @@ func (p *Perms) CountRolesForJob(ctx context.Context, job string) (int64, error)
 func (p *Perms) GetRole(ctx context.Context, id uint64) (*model.FivenetRoles, error) {
 	stmt := tRoles.
 		SELECT(
-			tRoles.AllColumns,
+			tRoles.ID,
+			tRoles.CreatedAt,
+			tRoles.Job,
+			tRoles.Grade,
 		).
 		FROM(tRoles).
 		WHERE(
@@ -207,7 +222,10 @@ func (p *Perms) DeleteRole(ctx context.Context, id uint64) error {
 func (p *Perms) GetRoleByJobAndGrade(ctx context.Context, job string, grade int32) (*model.FivenetRoles, error) {
 	stmt := tRoles.
 		SELECT(
-			tRoles.AllColumns,
+			tRoles.ID,
+			tRoles.CreatedAt,
+			tRoles.Job,
+			tRoles.Grade,
 		).
 		FROM(tRoles).
 		WHERE(jet.AND(
@@ -233,7 +251,11 @@ func (p *Perms) GetRolePermissions(ctx context.Context, id uint64) ([]*permissio
 	tPerms := tPerms.AS("permission")
 	stmt := tRolePerms.
 		SELECT(
-			tPerms.AllColumns,
+			tPerms.ID,
+			tPerms.CreatedAt,
+			tPerms.Category,
+			tPerms.Name,
+			tPerms.GuardName,
 			tRolePerms.Val.AS("permission.val"),
 		).
 		FROM(

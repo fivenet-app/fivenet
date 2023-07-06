@@ -26,7 +26,11 @@ func (s *Server) GetJobProps(ctx context.Context, req *GetJobPropsRequest) (*Get
 	jobProps := table.FivenetJobProps.AS("jobprops")
 	stmt := jobProps.
 		SELECT(
-			jobProps.AllColumns,
+			jobProps.Job,
+			jobProps.UpdatedAt,
+			jobProps.Theme,
+			jobProps.LivemapMarkerColor,
+			jobProps.QuickButtons,
 		).
 		FROM(jobProps).
 		WHERE(

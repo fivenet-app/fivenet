@@ -245,7 +245,7 @@ func (s *Server) getUserDispatches(jobs []string) ([]*livemap.DispatchMarker, er
 func (s *Server) refreshUserLocations(ctx context.Context) error {
 	markers := map[string][]*livemap.UserMarker{}
 
-	tLocs := tLocs.AS("usermarker")
+	tLocs := tLocs.AS("genericmarker")
 	stmt := tLocs.
 		SELECT(
 			tLocs.Identifier,
@@ -254,13 +254,13 @@ func (s *Server) refreshUserLocations(ctx context.Context) error {
 			tLocs.Y,
 			tLocs.UpdatedAt,
 			tUsers.ID.AS("user.id"),
-			tUsers.ID.AS("usermarker.id"),
+			tUsers.ID.AS("genericmarker.id"),
 			tUsers.Identifier,
 			tUsers.Job,
 			tUsers.JobGrade,
 			tUsers.Firstname,
 			tUsers.Lastname,
-			tJobProps.LivemapMarkerColor.AS("usermarker.icon_color"),
+			tJobProps.LivemapMarkerColor.AS("genericmarker.icon_color"),
 		).
 		FROM(
 			tLocs.

@@ -44,7 +44,14 @@ func (s *Server) getTemplateJobAccess(ctx context.Context, templateId uint64) ([
 	tDTemplatesJobAccess := table.FivenetDocumentsTemplatesJobAccess.AS("templatejobaccess")
 	jobStmt := tDTemplatesJobAccess.
 		SELECT(
-			tDTemplatesJobAccess.AllColumns,
+			tDTemplatesJobAccess.ID,
+			tDTemplatesJobAccess.CreatedAt,
+			tDTemplatesJobAccess.UpdatedAt,
+			tDTemplatesJobAccess.DeletedAt,
+			tDTemplatesJobAccess.TemplateID,
+			tDTemplatesJobAccess.Job,
+			tDTemplatesJobAccess.MinimumGrade,
+			tDTemplatesJobAccess.Access,
 		).
 		FROM(
 			tDTemplatesJobAccess,

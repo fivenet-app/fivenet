@@ -62,7 +62,13 @@ func (p *Perms) GetAttributeByIDs(ctx context.Context, attrIds ...uint64) ([]*pe
 
 	stmt := tAttrs.
 		SELECT(
-			tAttrs.AllColumns,
+			tAttrs.ID,
+			tAttrs.CreatedAt,
+			tAttrs.PermissionID,
+			tAttrs.Key,
+			tAttrs.Type,
+			tAttrs.ValidValues,
+			tAttrs.DefaultValues,
 		).
 		FROM(tAttrs).
 		WHERE(jet.AND(
@@ -101,7 +107,13 @@ func (p *Perms) GetAttributeByIDs(ctx context.Context, attrIds ...uint64) ([]*pe
 func (p *Perms) getAttributeFromDatabase(ctx context.Context, permId uint64, key Key) (*model.FivenetAttrs, error) {
 	stmt := tAttrs.
 		SELECT(
-			tAttrs.AllColumns,
+			tAttrs.ID,
+			tAttrs.CreatedAt,
+			tAttrs.PermissionID,
+			tAttrs.Key,
+			tAttrs.Type,
+			tAttrs.ValidValues,
+			tAttrs.DefaultValues,
 		).
 		FROM(tAttrs).
 		WHERE(jet.AND(
