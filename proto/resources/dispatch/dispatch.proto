@@ -6,26 +6,50 @@ option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/dispatch;
 import "resources/dispatch/units.proto";
 import "resources/livemap/livemap.proto";
 import "resources/timestamp/timestamp.proto";
+import "resources/users/users.proto";
 import "validate/validate.proto";
-
-enum DISPATCH_STATUS {
-  UNASSIGNED = 0;
-  EN_ROUTE = 1;
-  AT_SCENE = 2;
-  NEED_ASSISTANCE = 3;
-  COMPLETED = 4;
-}
 
 message Dispatch {
   uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
-  optional resources.timestamp.Timestamp created_at = 2; // @gotags: alias:"created_at"
-	optional resources.timestamp.Timestamp updated_at = 3; // @gotags: alias:"updated_at"
+  optional resources.timestamp.Timestamp created_at = 2;
+  optional resources.timestamp.Timestamp updated_at = 3;
   optional string job = 4 [(validate.rules).string.max_len = 50];
-  optional DISPATCH_STATUS status = 5 [(validate.rules).enum.defined_only = true];
+  optional DispatchStatus status = 5;
   string message = 6 [(validate.rules).string.max_len = 255];
   optional string description = 7 [(validate.rules).string.max_len = 1024];
   map<string, string> attributes = 8;
   resources.livemap.DispatchMarker marker = 9;
-  repeated uint64 unit_ids = 10;
-  repeated resources.dispatch.Unit units = 11;
+  optional bool anon = 10;
+  optional bool user_id = 11;
+  optional resources.users.UserShort user = 12;
+  repeated uint64 unit_ids = 13;
+  repeated resources.dispatch.Unit units = 14;
+}
+
+message DispatchAssignment {
+  uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
+  optional resources.timestamp.Timestamp created_at = 2;
+  uint64 dispatch_id = 3;
+  uint64 unit_id = 4;
+}
+
+enum DISPATCH_STATUS {
+  DECLINED = 0;
+  UNASSIGNED = 1;
+  EN_ROUTE = 2;
+  AT_SCENE = 3;
+  NEED_ASSISTANCE = 4;
+  COMPLETED = 5;
+}
+
+message DispatchStatus {
+  uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
+  optional resources.timestamp.Timestamp created_at = 2;
+  uint64 dispatch_id = 3;
+  uint64 unit_id = 4;
+  DISPATCH_STATUS status = 5 [(validate.rules).enum.defined_only = true];
+  optional string reason = 6 [(validate.rules).string.max_len = 255];
+  optional string code = 7 [(validate.rules).string.max_len = 20];
+  int32 user_id = 8 [(validate.rules).int32.gt = 0];
+  resources.users.UserShort user = 9;
 }

@@ -27,11 +27,11 @@ type LawBook struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id          uint64               `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" sql:"primary_key" alias:"id"`                               // @gotags: sql:"primary_key" alias:"id"
-	CreatedAt   *timestamp.Timestamp `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty" alias:"created_at"` // @gotags: alias:"created_at"
-	UpdatedAt   *timestamp.Timestamp `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty" alias:"updated_at"` // @gotags: alias:"updated_at"
-	Name        string               `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty" alias:"name"`                            // @gotags: alias:"name"
-	Description *string              `protobuf:"bytes,5,opt,name=description,proto3,oneof" json:"description,omitempty" alias:"description"`        // @gotags: alias:"description"
+	Id          uint64               `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" sql:"primary_key" alias:"id"` // @gotags: sql:"primary_key" alias:"id"
+	CreatedAt   *timestamp.Timestamp `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt   *timestamp.Timestamp `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	Name        string               `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
+	Description *string              `protobuf:"bytes,5,opt,name=description,proto3,oneof" json:"description,omitempty"`
 	Laws        []*Law               `protobuf:"bytes,6,rep,name=laws,proto3" json:"laws,omitempty"`
 }
 
@@ -114,15 +114,15 @@ type Law struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id            uint64               `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" sql:"primary_key" alias:"law.id"`                                            // @gotags: sql:"primary_key" alias:"law.id"
-	CreatedAt     *timestamp.Timestamp `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty" alias:"created_at"`              // @gotags: alias:"created_at"
-	UpdatedAt     *timestamp.Timestamp `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty" alias:"updated_at"`              // @gotags: alias:"updated_at"
-	LawbookId     uint64               `protobuf:"varint,4,opt,name=lawbook_id,json=lawbookId,proto3" json:"lawbook_id,omitempty" alias:"lawbook_id"`             // @gotags: alias:"lawbook_id"
-	Name          string               `protobuf:"bytes,5,opt,name=name,proto3" json:"name,omitempty" alias:"name"`                                         // @gotags: alias:"name"
-	Description   string               `protobuf:"bytes,6,opt,name=description,proto3" json:"description,omitempty" alias:"description"`                           // @gotags: alias:"description"
-	Fine          uint64               `protobuf:"varint,7,opt,name=fine,proto3" json:"fine,omitempty" alias:"fine"`                                        // @gotags: alias:"fine"
-	DetentionTime uint64               `protobuf:"varint,8,opt,name=detention_time,json=detentionTime,proto3" json:"detention_time,omitempty" alias:"detention_time"` // @gotags: alias:"detention_time"
-	StvoPoints    uint64               `protobuf:"varint,9,opt,name=stvo_points,json=stvoPoints,proto3" json:"stvo_points,omitempty" alias:"stvo_points"`          // @gotags: alias:"stvo_points"
+	Id            uint64               `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" sql:"primary_key" alias:"law.id"` // @gotags: sql:"primary_key" alias:"law.id"
+	CreatedAt     *timestamp.Timestamp `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt     *timestamp.Timestamp `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	LawbookId     uint64               `protobuf:"varint,4,opt,name=lawbook_id,json=lawbookId,proto3" json:"lawbook_id,omitempty"`
+	Name          string               `protobuf:"bytes,5,opt,name=name,proto3" json:"name,omitempty"`
+	Description   string               `protobuf:"bytes,6,opt,name=description,proto3" json:"description,omitempty"`
+	Fine          uint64               `protobuf:"varint,7,opt,name=fine,proto3" json:"fine,omitempty"`
+	DetentionTime uint64               `protobuf:"varint,8,opt,name=detention_time,json=detentionTime,proto3" json:"detention_time,omitempty"`
+	StvoPoints    uint64               `protobuf:"varint,9,opt,name=stvo_points,json=stvoPoints,proto3" json:"stvo_points,omitempty"`
 }
 
 func (x *Law) Reset() {

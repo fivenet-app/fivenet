@@ -7,21 +7,36 @@ import "resources/timestamp/timestamp.proto";
 import "resources/users/users.proto";
 import "validate/validate.proto";
 
-enum UNIT_STATUS {
-  UNAVAILABLE = 0;
-  AVAILABLE = 1;
-  ON_BREAK = 2;
-  BUSY = 3;
-}
-
 message Unit {
   uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
-  optional resources.timestamp.Timestamp created_at = 2; // @gotags: alias:"created_at"
-	optional resources.timestamp.Timestamp updated_at = 3; // @gotags: alias:"updated_at"
+  optional resources.timestamp.Timestamp created_at = 2;
+  optional resources.timestamp.Timestamp updated_at = 3;
   string name = 4 [(validate.rules).string = {min_len: 3, max_len: 24}];
   string initials = 5 [(validate.rules).string = {min_len: 2, max_len: 4}];
   optional string color = 6 [(validate.rules).string.max_len = 6];
   optional string description = 7 [(validate.rules).string.max_len = 255];
-  optional UNIT_STATUS status = 8 [(validate.rules).enum.defined_only = true];
+  optional UnitStatus status = 8;
   repeated resources.users.UserShort users = 9;
+}
+
+enum UNIT_STATUS {
+  UNAVAILABLE = 0;
+  AVAILABLE = 1;
+  USER_ADDED = 2;
+  ON_BREAK = 3;
+  BUSY = 4;
+}
+
+message UnitStatus {
+  uint64 id = 1;
+  uint64 unit_id = 2;
+  optional resources.timestamp.Timestamp created_at = 3;
+  optional UNIT_STATUS status = 4 [(validate.rules).enum.defined_only = true];
+  optional string reason = 5 [(validate.rules).string.max_len = 255];
+  optional string code = 6 [(validate.rules).string.max_len = 20];
+  int32 user_id = 7 [(validate.rules).int32.gt = 0];
+  resources.users.UserShort user = 8;
+  optional bool in_squad = 9;
+  optional float x = 10;
+  optional float y = 11;
 }

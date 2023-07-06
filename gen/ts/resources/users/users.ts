@@ -16,35 +16,35 @@ export interface UserShort {
     /**
      * @generated from protobuf field: string identifier = 2;
      */
-    identifier: string; // @gotags: alias:"identifier"
+    identifier: string;
     /**
      * @generated from protobuf field: string job = 3;
      */
-    job: string; // @gotags: alias:"job"
+    job: string;
     /**
      * @generated from protobuf field: optional string job_label = 4;
      */
-    jobLabel?: string; // @gotags: alias:"job_label"
+    jobLabel?: string;
     /**
      * @generated from protobuf field: int32 job_grade = 5;
      */
-    jobGrade: number; // @gotags: alias:"job_grade"
+    jobGrade: number;
     /**
      * @generated from protobuf field: optional string job_grade_label = 6;
      */
-    jobGradeLabel?: string; // @gotags: alias:"job_grade_label"
+    jobGradeLabel?: string;
     /**
      * @generated from protobuf field: string firstname = 7;
      */
-    firstname: string; // @gotags: alias:"firstname"
+    firstname: string;
     /**
      * @generated from protobuf field: string lastname = 8;
      */
-    lastname: string; // @gotags: alias:"lastname"
+    lastname: string;
     /**
      * @generated from protobuf field: string dateofbirth = 9;
      */
-    dateofbirth: string; // @gotags: alias:"dateofbirth"
+    dateofbirth: string;
 }
 /**
  * @generated from protobuf message resources.users.User
@@ -57,55 +57,55 @@ export interface User {
     /**
      * @generated from protobuf field: string identifier = 2;
      */
-    identifier: string; // @gotags: alias:"identifier"
+    identifier: string;
     /**
      * @generated from protobuf field: string job = 3;
      */
-    job: string; // @gotags: alias:"job"
+    job: string;
     /**
      * @generated from protobuf field: optional string job_label = 4;
      */
-    jobLabel?: string; // @gotags: alias:"job_label"
+    jobLabel?: string;
     /**
      * @generated from protobuf field: int32 job_grade = 5;
      */
-    jobGrade: number; // @gotags: alias:"job_grade"
+    jobGrade: number;
     /**
      * @generated from protobuf field: optional string job_grade_label = 6;
      */
-    jobGradeLabel?: string; // @gotags: alias:"job_grade_label"
+    jobGradeLabel?: string;
     /**
      * @generated from protobuf field: string firstname = 7;
      */
-    firstname: string; // @gotags: alias:"firstname"
+    firstname: string;
     /**
      * @generated from protobuf field: string lastname = 8;
      */
-    lastname: string; // @gotags: alias:"lastname"
+    lastname: string;
     /**
      * @generated from protobuf field: string dateofbirth = 9;
      */
-    dateofbirth: string; // @gotags: alias:"dateofbirth"
+    dateofbirth: string;
     /**
      * @generated from protobuf field: optional string sex = 10;
      */
-    sex?: string; // @gotags: alias:"sex"
+    sex?: string;
     /**
      * @generated from protobuf field: optional string height = 11;
      */
-    height?: string; // @gotags: alias:"height"
+    height?: string;
     /**
      * @generated from protobuf field: optional string phone_number = 12;
      */
-    phoneNumber?: string; // @gotags: alias:"phone_number"
+    phoneNumber?: string;
     /**
      * @generated from protobuf field: optional int32 visum = 13;
      */
-    visum?: number; // @gotags: alias:"visum"
+    visum?: number;
     /**
      * @generated from protobuf field: optional int32 playtime = 14;
      */
-    playtime?: number; // @gotags: alias:"playtime"
+    playtime?: number;
     /**
      * @generated from protobuf field: resources.users.UserProps props = 15;
      */
@@ -122,11 +122,11 @@ export interface License {
     /**
      * @generated from protobuf field: string type = 1;
      */
-    type: string; // @gotags: alias:"type"
+    type: string;
     /**
      * @generated from protobuf field: string label = 2;
      */
-    label: string; // @gotags: alias:"label"
+    label: string;
 }
 /**
  * @generated from protobuf message resources.users.UserProps
@@ -135,11 +135,11 @@ export interface UserProps {
     /**
      * @generated from protobuf field: int32 user_id = 1;
      */
-    userId: number; // @gotags: alias:"user_id"
+    userId: number;
     /**
      * @generated from protobuf field: optional bool wanted = 2;
      */
-    wanted?: boolean; // @gotags: alias:"wanted"
+    wanted?: boolean;
     /**
      * @generated from protobuf field: optional string job_name = 3;
      */
@@ -159,11 +159,11 @@ export interface UserProps {
     /**
      * @generated from protobuf field: optional uint64 traffic_infraction_points = 7;
      */
-    trafficInfractionPoints?: bigint; // @gotags: alias:"traffic_infraction_points"
+    trafficInfractionPoints?: bigint;
     /**
      * @generated from protobuf field: optional uint64 open_fines = 8;
      */
-    openFines?: bigint; // @gotags: alias:"open_fines"
+    openFines?: bigint;
 }
 /**
  * @generated from protobuf message resources.users.UserActivity

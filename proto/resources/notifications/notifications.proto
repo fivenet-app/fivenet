@@ -9,15 +9,15 @@ import "resources/users/users.proto";
 import "validate/validate.proto";
 
 message Notification {
-  uint64 id = 1; // @gotags: alias:"id"
-  resources.timestamp.Timestamp created_at = 2; // @gotags: alias:"created_at"
-  resources.timestamp.Timestamp read_at = 3; // @gotags: alias:"read_at"
-  int32 user_id = 4; // @gotags: alias:"user_id"
-  resources.common.TranslateItem title = 5; // @gotags: alias:"title"
-  optional string type = 6 [(validate.rules).string.max_len = 128]; // @gotags: alias:"type"
-  resources.common.TranslateItem content = 7; // @gotags: alias:"content"
-  NOTIFICATION_CATEGORY category = 8 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"category"
-  optional Data data = 9; // @gotags: alias:"data"
+  uint64 id = 1;
+  resources.timestamp.Timestamp created_at = 2;
+  resources.timestamp.Timestamp read_at = 3;
+  int32 user_id = 4;
+  resources.common.TranslateItem title = 5;
+  optional string type = 6 [(validate.rules).string.max_len = 128];
+  resources.common.TranslateItem content = 7;
+  NOTIFICATION_CATEGORY category = 8 [(validate.rules).enum.defined_only = true];
+  optional Data data = 9;
 }
 
 enum NOTIFICATION_CATEGORY {

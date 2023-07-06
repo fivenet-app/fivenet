@@ -8,21 +8,21 @@ import "validate/validate.proto";
 
 message LawBook {
   uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
-  resources.timestamp.Timestamp created_at = 2; // @gotags: alias:"created_at"
-  resources.timestamp.Timestamp updated_at = 3; // @gotags: alias:"updated_at"
-  string name = 4 [(validate.rules).string.max_len = 128]; // @gotags: alias:"name"
-  optional string description = 5 [(validate.rules).string.max_len = 255]; // @gotags: alias:"description"
+  resources.timestamp.Timestamp created_at = 2;
+  resources.timestamp.Timestamp updated_at = 3;
+  string name = 4 [(validate.rules).string.max_len = 128];
+  optional string description = 5 [(validate.rules).string.max_len = 255];
   repeated Law laws = 6;
 }
 
 message Law {
   uint64 id = 1; // @gotags: sql:"primary_key" alias:"law.id"
-  resources.timestamp.Timestamp created_at = 2; // @gotags: alias:"created_at"
-  resources.timestamp.Timestamp updated_at = 3; // @gotags: alias:"updated_at"
-  uint64 lawbook_id = 4; // @gotags: alias:"lawbook_id"
-  string name = 5 [(validate.rules).string.max_len = 128]; // @gotags: alias:"name"
-  string description = 6 [(validate.rules).string.max_len = 255]; // @gotags: alias:"description"
-  uint64 fine = 7; // @gotags: alias:"fine"
-  uint64 detention_time = 8; // @gotags: alias:"detention_time"
-  uint64 stvo_points = 9; // @gotags: alias:"stvo_points"
+  resources.timestamp.Timestamp created_at = 2;
+  resources.timestamp.Timestamp updated_at = 3;
+  uint64 lawbook_id = 4;
+  string name = 5 [(validate.rules).string.max_len = 128];
+  string description = 6 [(validate.rules).string.max_len = 255];
+  uint64 fine = 7;
+  uint64 detention_time = 8;
+  uint64 stvo_points = 9;
 }

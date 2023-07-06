@@ -16,8 +16,8 @@ enum DOC_CONTENT_TYPE {
 
 message Document {
   uint64 id = 1; // @gotags: alias:"id"
-  resources.timestamp.Timestamp created_at = 2; // @gotags: alias:"created_at"
-  resources.timestamp.Timestamp updated_at = 3; // @gotags: alias:"updated_at"
+  resources.timestamp.Timestamp created_at = 2;
+  resources.timestamp.Timestamp updated_at = 3;
   optional uint64 category_id = 4; // @gotags: alias:"category_id"
   optional resources.documents.Category category = 5; // @gotags: alias:"category"
   string title = 6 [(validate.rules).string = {min_len: 3, max_bytes: 21845}]; // @gotags: alias:"title"
@@ -29,13 +29,13 @@ message Document {
   string state = 12 [(validate.rules).string.max_len = 24]; // @gotags: alias:"state"
   bool closed = 13; // @gotags: alias:"closed"
   bool public = 14; // @gotags: alias:"public"
-  resources.timestamp.Timestamp deleted_at = 15; // @gotags: alias:"deleted_at"
+  resources.timestamp.Timestamp deleted_at = 15;
 }
 
 message DocumentShort {
   uint64 id = 1; // @gotags: alias:"id"
-  resources.timestamp.Timestamp created_at = 2; // @gotags: alias:"created_at"
-  resources.timestamp.Timestamp updated_at = 3; // @gotags: alias:"updated_at"
+  resources.timestamp.Timestamp created_at = 2;
+  resources.timestamp.Timestamp updated_at = 3;
   optional uint64 category_id = 4; // @gotags: alias:"category_id"
   optional resources.documents.Category category = 5; // @gotags: alias:"category"
   string title = 6 [(validate.rules).string.min_len = 3]; // @gotags: alias:"title"
@@ -46,7 +46,7 @@ message DocumentShort {
   string state = 11 [(validate.rules).string.max_len = 24]; // @gotags: alias:"state"
   bool closed = 12; // @gotags: alias:"closed"
   bool public = 13; // @gotags: alias:"public"
-  resources.timestamp.Timestamp deleted_at = 14; // @gotags: alias:"deleted_at"
+  resources.timestamp.Timestamp deleted_at = 14;
 }
 
 message DocumentAccess {
@@ -56,8 +56,8 @@ message DocumentAccess {
 
 message DocumentJobAccess {
   uint64 id = 1; // @gotags: alias:"id"
-  optional resources.timestamp.Timestamp created_at = 2; // @gotags: alias:"created_at"
-  optional resources.timestamp.Timestamp updated_at = 3; // @gotags: alias:"updated_at"
+  optional resources.timestamp.Timestamp created_at = 2;
+  optional resources.timestamp.Timestamp updated_at = 3;
   uint64 document_id = 4; // @gotags: alias:"document_id"
   string job = 5 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job"
   optional string job_label = 6 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job_label"
@@ -68,10 +68,10 @@ message DocumentJobAccess {
 
 message DocumentUserAccess {
   uint64 id = 1; // @gotags: alias:"id"
-  optional resources.timestamp.Timestamp created_at = 2; // @gotags: alias:"created_at"
-  optional resources.timestamp.Timestamp updated_at = 3; // @gotags: alias:"updated_at"
+  optional resources.timestamp.Timestamp created_at = 2;
+  optional resources.timestamp.Timestamp updated_at = 3;
   uint64 document_id = 4; // @gotags: alias:"document_id"
-  int32 user_id = 5 [(validate.rules).int32.gt = 0]; // @gotags: alias:"user_id"
+  int32 user_id = 5 [(validate.rules).int32.gt = 0];
   optional resources.users.UserShort user = 6;
   resources.documents.ACCESS_LEVEL access = 7 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"access"
 }
@@ -85,7 +85,7 @@ enum DOC_REFERENCE {
 
 message DocumentReference {
   optional uint64 id = 1; // @gotags: alias:"id"
-  optional resources.timestamp.Timestamp created_at = 2; // @gotags: alias:"created_at"
+  optional resources.timestamp.Timestamp created_at = 2;
   uint64 source_document_id = 3; // @gotags: alias:"source_document_id"
   optional resources.documents.DocumentShort source_document = 4; // @gotags: alias:"source_document"
   DOC_REFERENCE reference = 5 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"reference"
@@ -103,7 +103,7 @@ enum DOC_RELATION {
 
 message DocumentRelation {
   optional uint64 id = 1; // @gotags: alias:"id"
-  optional resources.timestamp.Timestamp created_at = 2; // @gotags: alias:"created_at"
+  optional resources.timestamp.Timestamp created_at = 2;
   uint64 document_id = 3; // @gotags: alias:"document_id"
   optional resources.documents.DocumentShort document = 4; // @gotags: alias:"document"
   int32 source_user_id = 5 [(validate.rules).int32.gt = 0]; // @gotags: alias:"source_user_id"

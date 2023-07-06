@@ -17,11 +17,11 @@ export interface Document {
     /**
      * @generated from protobuf field: resources.timestamp.Timestamp created_at = 2;
      */
-    createdAt?: Timestamp; // @gotags: alias:"created_at"
+    createdAt?: Timestamp;
     /**
      * @generated from protobuf field: resources.timestamp.Timestamp updated_at = 3;
      */
-    updatedAt?: Timestamp; // @gotags: alias:"updated_at"
+    updatedAt?: Timestamp;
     /**
      * @generated from protobuf field: optional uint64 category_id = 4;
      */
@@ -69,7 +69,7 @@ export interface Document {
     /**
      * @generated from protobuf field: resources.timestamp.Timestamp deleted_at = 15;
      */
-    deletedAt?: Timestamp; // @gotags: alias:"deleted_at"
+    deletedAt?: Timestamp;
 }
 /**
  * @generated from protobuf message resources.documents.DocumentShort
@@ -82,11 +82,11 @@ export interface DocumentShort {
     /**
      * @generated from protobuf field: resources.timestamp.Timestamp created_at = 2;
      */
-    createdAt?: Timestamp; // @gotags: alias:"created_at"
+    createdAt?: Timestamp;
     /**
      * @generated from protobuf field: resources.timestamp.Timestamp updated_at = 3;
      */
-    updatedAt?: Timestamp; // @gotags: alias:"updated_at"
+    updatedAt?: Timestamp;
     /**
      * @generated from protobuf field: optional uint64 category_id = 4;
      */
@@ -130,7 +130,7 @@ export interface DocumentShort {
     /**
      * @generated from protobuf field: resources.timestamp.Timestamp deleted_at = 14;
      */
-    deletedAt?: Timestamp; // @gotags: alias:"deleted_at"
+    deletedAt?: Timestamp;
 }
 /**
  * @generated from protobuf message resources.documents.DocumentAccess
@@ -156,11 +156,11 @@ export interface DocumentJobAccess {
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
      */
-    createdAt?: Timestamp; // @gotags: alias:"created_at"
+    createdAt?: Timestamp;
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp updated_at = 3;
      */
-    updatedAt?: Timestamp; // @gotags: alias:"updated_at"
+    updatedAt?: Timestamp;
     /**
      * @generated from protobuf field: uint64 document_id = 4;
      */
@@ -197,11 +197,11 @@ export interface DocumentUserAccess {
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
      */
-    createdAt?: Timestamp; // @gotags: alias:"created_at"
+    createdAt?: Timestamp;
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp updated_at = 3;
      */
-    updatedAt?: Timestamp; // @gotags: alias:"updated_at"
+    updatedAt?: Timestamp;
     /**
      * @generated from protobuf field: uint64 document_id = 4;
      */
@@ -209,7 +209,7 @@ export interface DocumentUserAccess {
     /**
      * @generated from protobuf field: int32 user_id = 5;
      */
-    userId: number; // @gotags: alias:"user_id"
+    userId: number;
     /**
      * @generated from protobuf field: optional resources.users.UserShort user = 6;
      */
@@ -230,7 +230,7 @@ export interface DocumentReference {
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
      */
-    createdAt?: Timestamp; // @gotags: alias:"created_at"
+    createdAt?: Timestamp;
     /**
      * @generated from protobuf field: uint64 source_document_id = 3;
      */
@@ -271,7 +271,7 @@ export interface DocumentRelation {
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
      */
-    createdAt?: Timestamp; // @gotags: alias:"created_at"
+    createdAt?: Timestamp;
     /**
      * @generated from protobuf field: uint64 document_id = 3;
      */

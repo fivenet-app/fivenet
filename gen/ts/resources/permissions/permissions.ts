@@ -14,7 +14,7 @@ export interface Permission {
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
      */
-    createdAt?: Timestamp; // @gotags: alias:"created_at"
+    createdAt?: Timestamp;
     /**
      * @generated from protobuf field: string category = 3;
      */
@@ -22,7 +22,7 @@ export interface Permission {
     /**
      * @generated from protobuf field: string name = 4;
      */
-    name: string; // @gotags: alias:"name"
+    name: string;
     /**
      * @generated from protobuf field: string guard_name = 5;
      */
@@ -43,7 +43,7 @@ export interface Role {
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
      */
-    createdAt?: Timestamp; // @gotags: alias:"created_at"
+    createdAt?: Timestamp;
     /**
      * @generated from protobuf field: string job = 3;
      */
@@ -80,7 +80,7 @@ export interface RawRoleAttribute {
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
      */
-    createdAt?: Timestamp; // @gotags: alias:"created_at"
+    createdAt?: Timestamp;
     /**
      * @generated from protobuf field: uint64 attr_id = 3;
      */
@@ -96,15 +96,15 @@ export interface RawRoleAttribute {
     /**
      * @generated from protobuf field: string name = 6;
      */
-    name: string; // @gotags: alias:"name"
+    name: string;
     /**
      * @generated from protobuf field: string key = 7;
      */
-    key: string; // @gotags: alias:"key"
+    key: string;
     /**
      * @generated from protobuf field: string type = 8;
      */
-    type: string; // @gotags: alias:"type"
+    type: string;
     /**
      * @generated from protobuf field: string raw_valid_values = 9;
      */
@@ -133,7 +133,7 @@ export interface RoleAttribute {
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
      */
-    createdAt?: Timestamp; // @gotags: alias:"created_at"
+    createdAt?: Timestamp;
     /**
      * @generated from protobuf field: uint64 attr_id = 3;
      */
@@ -149,15 +149,15 @@ export interface RoleAttribute {
     /**
      * @generated from protobuf field: string name = 6;
      */
-    name: string; // @gotags: alias:"name"
+    name: string;
     /**
      * @generated from protobuf field: string key = 7;
      */
-    key: string; // @gotags: alias:"key"
+    key: string;
     /**
      * @generated from protobuf field: string type = 8;
      */
-    type: string; // @gotags: alias:"type"
+    type: string;
     /**
      * @generated from protobuf field: resources.permissions.AttributeValues valid_values = 9;
      */

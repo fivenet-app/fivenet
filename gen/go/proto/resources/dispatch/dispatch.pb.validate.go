@@ -218,15 +218,33 @@ func (m *Dispatch) validate(all bool) error {
 
 	if m.Status != nil {
 
-		if _, ok := DISPATCH_STATUS_name[int32(m.GetStatus())]; !ok {
-			err := DispatchValidationError{
-				field:  "Status",
-				reason: "value must be one of the defined enum values",
+		if all {
+			switch v := interface{}(m.GetStatus()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, DispatchValidationError{
+						field:  "Status",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, DispatchValidationError{
+						field:  "Status",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
 			}
-			if !all {
-				return err
+		} else if v, ok := interface{}(m.GetStatus()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return DispatchValidationError{
+					field:  "Status",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
 			}
-			errors = append(errors, err)
 		}
 
 	}
@@ -242,6 +260,47 @@ func (m *Dispatch) validate(all bool) error {
 				return err
 			}
 			errors = append(errors, err)
+		}
+
+	}
+
+	if m.Anon != nil {
+		// no validation rules for Anon
+	}
+
+	if m.UserId != nil {
+		// no validation rules for UserId
+	}
+
+	if m.User != nil {
+
+		if all {
+			switch v := interface{}(m.GetUser()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, DispatchValidationError{
+						field:  "User",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, DispatchValidationError{
+						field:  "User",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetUser()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return DispatchValidationError{
+					field:  "User",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
 		}
 
 	}
@@ -322,3 +381,364 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = DispatchValidationError{}
+
+// Validate checks the field values on DispatchAssignment with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DispatchAssignment) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DispatchAssignment with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DispatchAssignmentMultiError, or nil if none found.
+func (m *DispatchAssignment) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DispatchAssignment) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	// no validation rules for DispatchId
+
+	// no validation rules for UnitId
+
+	if m.CreatedAt != nil {
+
+		if all {
+			switch v := interface{}(m.GetCreatedAt()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, DispatchAssignmentValidationError{
+						field:  "CreatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, DispatchAssignmentValidationError{
+						field:  "CreatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetCreatedAt()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return DispatchAssignmentValidationError{
+					field:  "CreatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return DispatchAssignmentMultiError(errors)
+	}
+
+	return nil
+}
+
+// DispatchAssignmentMultiError is an error wrapping multiple validation errors
+// returned by DispatchAssignment.ValidateAll() if the designated constraints
+// aren't met.
+type DispatchAssignmentMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DispatchAssignmentMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DispatchAssignmentMultiError) AllErrors() []error { return m }
+
+// DispatchAssignmentValidationError is the validation error returned by
+// DispatchAssignment.Validate if the designated constraints aren't met.
+type DispatchAssignmentValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DispatchAssignmentValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DispatchAssignmentValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DispatchAssignmentValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DispatchAssignmentValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DispatchAssignmentValidationError) ErrorName() string {
+	return "DispatchAssignmentValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DispatchAssignmentValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDispatchAssignment.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DispatchAssignmentValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DispatchAssignmentValidationError{}
+
+// Validate checks the field values on DispatchStatus with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *DispatchStatus) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DispatchStatus with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in DispatchStatusMultiError,
+// or nil if none found.
+func (m *DispatchStatus) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DispatchStatus) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	// no validation rules for DispatchId
+
+	// no validation rules for UnitId
+
+	if _, ok := DISPATCH_STATUS_name[int32(m.GetStatus())]; !ok {
+		err := DispatchStatusValidationError{
+			field:  "Status",
+			reason: "value must be one of the defined enum values",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.GetUserId() <= 0 {
+		err := DispatchStatusValidationError{
+			field:  "UserId",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if all {
+		switch v := interface{}(m.GetUser()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, DispatchStatusValidationError{
+					field:  "User",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, DispatchStatusValidationError{
+					field:  "User",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetUser()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return DispatchStatusValidationError{
+				field:  "User",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if m.CreatedAt != nil {
+
+		if all {
+			switch v := interface{}(m.GetCreatedAt()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, DispatchStatusValidationError{
+						field:  "CreatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, DispatchStatusValidationError{
+						field:  "CreatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetCreatedAt()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return DispatchStatusValidationError{
+					field:  "CreatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.Reason != nil {
+
+		if utf8.RuneCountInString(m.GetReason()) > 255 {
+			err := DispatchStatusValidationError{
+				field:  "Reason",
+				reason: "value length must be at most 255 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
+	if m.Code != nil {
+
+		if utf8.RuneCountInString(m.GetCode()) > 20 {
+			err := DispatchStatusValidationError{
+				field:  "Code",
+				reason: "value length must be at most 20 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return DispatchStatusMultiError(errors)
+	}
+
+	return nil
+}
+
+// DispatchStatusMultiError is an error wrapping multiple validation errors
+// returned by DispatchStatus.ValidateAll() if the designated constraints
+// aren't met.
+type DispatchStatusMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DispatchStatusMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DispatchStatusMultiError) AllErrors() []error { return m }
+
+// DispatchStatusValidationError is the validation error returned by
+// DispatchStatus.Validate if the designated constraints aren't met.
+type DispatchStatusValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DispatchStatusValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DispatchStatusValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DispatchStatusValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DispatchStatusValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DispatchStatusValidationError) ErrorName() string { return "DispatchStatusValidationError" }
+
+// Error satisfies the builtin error interface
+func (e DispatchStatusValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDispatchStatus.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DispatchStatusValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DispatchStatusValidationError{}

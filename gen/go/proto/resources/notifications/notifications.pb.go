@@ -75,15 +75,15 @@ type Notification struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id        uint64                `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id"`                                                                // @gotags: alias:"id"
-	CreatedAt *timestamp.Timestamp  `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty" alias:"created_at"`                                  // @gotags: alias:"created_at"
-	ReadAt    *timestamp.Timestamp  `protobuf:"bytes,3,opt,name=read_at,json=readAt,proto3" json:"read_at,omitempty" alias:"read_at"`                                           // @gotags: alias:"read_at"
-	UserId    int32                 `protobuf:"varint,4,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty" alias:"user_id"`                                          // @gotags: alias:"user_id"
-	Title     *common.TranslateItem `protobuf:"bytes,5,opt,name=title,proto3" json:"title,omitempty" alias:"title"`                                                           // @gotags: alias:"title"
-	Type      *string               `protobuf:"bytes,6,opt,name=type,proto3,oneof" json:"type,omitempty" alias:"type"`                                                       // @gotags: alias:"type"
-	Content   *common.TranslateItem `protobuf:"bytes,7,opt,name=content,proto3" json:"content,omitempty" alias:"content"`                                                       // @gotags: alias:"content"
-	Category  NOTIFICATION_CATEGORY `protobuf:"varint,8,opt,name=category,proto3,enum=resources.notifications.NOTIFICATION_CATEGORY" json:"category,omitempty" alias:"category"` // @gotags: alias:"category"
-	Data      *Data                 `protobuf:"bytes,9,opt,name=data,proto3,oneof" json:"data,omitempty" alias:"data"`                                                       // @gotags: alias:"data"
+	Id        uint64                `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	CreatedAt *timestamp.Timestamp  `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	ReadAt    *timestamp.Timestamp  `protobuf:"bytes,3,opt,name=read_at,json=readAt,proto3" json:"read_at,omitempty"`
+	UserId    int32                 `protobuf:"varint,4,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Title     *common.TranslateItem `protobuf:"bytes,5,opt,name=title,proto3" json:"title,omitempty"`
+	Type      *string               `protobuf:"bytes,6,opt,name=type,proto3,oneof" json:"type,omitempty"`
+	Content   *common.TranslateItem `protobuf:"bytes,7,opt,name=content,proto3" json:"content,omitempty"`
+	Category  NOTIFICATION_CATEGORY `protobuf:"varint,8,opt,name=category,proto3,enum=resources.notifications.NOTIFICATION_CATEGORY" json:"category,omitempty"`
+	Data      *Data                 `protobuf:"bytes,9,opt,name=data,proto3,oneof" json:"data,omitempty"`
 }
 
 func (x *Notification) Reset() {

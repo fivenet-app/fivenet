@@ -3,6 +3,7 @@
 // tslint:disable
 import { MessageType } from "@protobuf-ts/runtime";
 import { Unit } from "./units.js";
+import { UserShort } from "../users/users.js";
 import { DispatchMarker } from "../livemap/livemap.js";
 import { Timestamp } from "../timestamp/timestamp.js";
 /**
@@ -16,19 +17,19 @@ export interface Dispatch {
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
      */
-    createdAt?: Timestamp; // @gotags: alias:"created_at"
+    createdAt?: Timestamp;
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp updated_at = 3;
      */
-    updatedAt?: Timestamp; // @gotags: alias:"updated_at"
+    updatedAt?: Timestamp;
     /**
      * @generated from protobuf field: optional string job = 4;
      */
     job?: string;
     /**
-     * @generated from protobuf field: optional resources.dispatch.DISPATCH_STATUS status = 5;
+     * @generated from protobuf field: optional resources.dispatch.DispatchStatus status = 5;
      */
-    status?: DISPATCH_STATUS;
+    status?: DispatchStatus;
     /**
      * @generated from protobuf field: string message = 6;
      */
@@ -48,38 +49,116 @@ export interface Dispatch {
      */
     marker?: DispatchMarker;
     /**
-     * @generated from protobuf field: repeated uint64 unit_ids = 10;
+     * @generated from protobuf field: optional bool anon = 10;
+     */
+    anon?: boolean;
+    /**
+     * @generated from protobuf field: optional bool user_id = 11;
+     */
+    userId?: boolean;
+    /**
+     * @generated from protobuf field: optional resources.users.UserShort user = 12;
+     */
+    user?: UserShort;
+    /**
+     * @generated from protobuf field: repeated uint64 unit_ids = 13;
      */
     unitIds: bigint[];
     /**
-     * @generated from protobuf field: repeated resources.dispatch.Unit units = 11;
+     * @generated from protobuf field: repeated resources.dispatch.Unit units = 14;
      */
     units: Unit[];
+}
+/**
+ * @generated from protobuf message resources.dispatch.DispatchAssignment
+ */
+export interface DispatchAssignment {
+    /**
+     * @generated from protobuf field: uint64 id = 1;
+     */
+    id: bigint; // @gotags: sql:"primary_key" alias:"id"
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
+     */
+    createdAt?: Timestamp;
+    /**
+     * @generated from protobuf field: uint64 dispatch_id = 3;
+     */
+    dispatchId: bigint;
+    /**
+     * @generated from protobuf field: uint64 unit_id = 4;
+     */
+    unitId: bigint;
+}
+/**
+ * @generated from protobuf message resources.dispatch.DispatchStatus
+ */
+export interface DispatchStatus {
+    /**
+     * @generated from protobuf field: uint64 id = 1;
+     */
+    id: bigint; // @gotags: sql:"primary_key" alias:"id"
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
+     */
+    createdAt?: Timestamp;
+    /**
+     * @generated from protobuf field: uint64 dispatch_id = 3;
+     */
+    dispatchId: bigint;
+    /**
+     * @generated from protobuf field: uint64 unit_id = 4;
+     */
+    unitId: bigint;
+    /**
+     * @generated from protobuf field: resources.dispatch.DISPATCH_STATUS status = 5;
+     */
+    status: DISPATCH_STATUS;
+    /**
+     * @generated from protobuf field: optional string reason = 6;
+     */
+    reason?: string;
+    /**
+     * @generated from protobuf field: optional string code = 7;
+     */
+    code?: string;
+    /**
+     * @generated from protobuf field: int32 user_id = 8;
+     */
+    userId: number;
+    /**
+     * @generated from protobuf field: resources.users.UserShort user = 9;
+     */
+    user?: UserShort;
 }
 /**
  * @generated from protobuf enum resources.dispatch.DISPATCH_STATUS
  */
 export enum DISPATCH_STATUS {
     /**
-     * @generated from protobuf enum value: UNASSIGNED = 0;
+     * @generated from protobuf enum value: DECLINED = 0;
      */
-    UNASSIGNED = 0,
+    DECLINED = 0,
     /**
-     * @generated from protobuf enum value: EN_ROUTE = 1;
+     * @generated from protobuf enum value: UNASSIGNED = 1;
      */
-    EN_ROUTE = 1,
+    UNASSIGNED = 1,
     /**
-     * @generated from protobuf enum value: AT_SCENE = 2;
+     * @generated from protobuf enum value: EN_ROUTE = 2;
      */
-    AT_SCENE = 2,
+    EN_ROUTE = 2,
     /**
-     * @generated from protobuf enum value: NEED_ASSISTANCE = 3;
+     * @generated from protobuf enum value: AT_SCENE = 3;
      */
-    NEED_ASSISTANCE = 3,
+    AT_SCENE = 3,
     /**
-     * @generated from protobuf enum value: COMPLETED = 4;
+     * @generated from protobuf enum value: NEED_ASSISTANCE = 4;
      */
-    COMPLETED = 4
+    NEED_ASSISTANCE = 4,
+    /**
+     * @generated from protobuf enum value: COMPLETED = 5;
+     */
+    COMPLETED = 5
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Dispatch$Type extends MessageType<Dispatch> {
@@ -89,13 +168,16 @@ class Dispatch$Type extends MessageType<Dispatch> {
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
-            { no: 5, name: "status", kind: "enum", opt: true, T: () => ["resources.dispatch.DISPATCH_STATUS", DISPATCH_STATUS], options: { "validate.rules": { enum: { definedOnly: true } } } },
+            { no: 5, name: "status", kind: "message", T: () => DispatchStatus },
             { no: 6, name: "message", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
             { no: 7, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "1024" } } } },
             { no: 8, name: "attributes", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "scalar", T: 9 /*ScalarType.STRING*/ } },
             { no: 9, name: "marker", kind: "message", T: () => DispatchMarker },
-            { no: 10, name: "unit_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 11, name: "units", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Unit }
+            { no: 10, name: "anon", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 11, name: "user_id", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 12, name: "user", kind: "message", T: () => UserShort },
+            { no: 13, name: "unit_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 14, name: "units", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Unit }
         ]);
     }
 }
@@ -103,3 +185,38 @@ class Dispatch$Type extends MessageType<Dispatch> {
  * @generated MessageType for protobuf message resources.dispatch.Dispatch
  */
 export const Dispatch = new Dispatch$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class DispatchAssignment$Type extends MessageType<DispatchAssignment> {
+    constructor() {
+        super("resources.dispatch.DispatchAssignment", [
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
+            { no: 3, name: "dispatch_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 4, name: "unit_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.dispatch.DispatchAssignment
+ */
+export const DispatchAssignment = new DispatchAssignment$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class DispatchStatus$Type extends MessageType<DispatchStatus> {
+    constructor() {
+        super("resources.dispatch.DispatchStatus", [
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
+            { no: 3, name: "dispatch_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 4, name: "unit_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 5, name: "status", kind: "enum", T: () => ["resources.dispatch.DISPATCH_STATUS", DISPATCH_STATUS], options: { "validate.rules": { enum: { definedOnly: true } } } },
+            { no: 6, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
+            { no: 7, name: "code", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
+            { no: 8, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
+            { no: 9, name: "user", kind: "message", T: () => UserShort }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.dispatch.DispatchStatus
+ */
+export const DispatchStatus = new DispatchStatus$Type();

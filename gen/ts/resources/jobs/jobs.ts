@@ -13,7 +13,7 @@ export interface Job {
     /**
      * @generated from protobuf field: string label = 2;
      */
-    label: string; // @gotags: alias:"label"
+    label: string;
     /**
      * @generated from protobuf field: repeated resources.jobs.JobGrade grades = 3;
      */
@@ -26,15 +26,15 @@ export interface JobGrade {
     /**
      * @generated from protobuf field: optional string job_name = 1;
      */
-    jobName?: string; // @gotags: alias:"job_name"
+    jobName?: string;
     /**
      * @generated from protobuf field: int32 grade = 2;
      */
-    grade: number; // @gotags: alias:"grade"
+    grade: number;
     /**
      * @generated from protobuf field: string label = 3;
      */
-    label: string; // @gotags: alias:"label"
+    label: string;
 }
 /**
  * @generated from protobuf message resources.jobs.JobProps
@@ -43,19 +43,19 @@ export interface JobProps {
     /**
      * @generated from protobuf field: string job = 1;
      */
-    job: string; // @gotags: alias:"job"
+    job: string;
     /**
      * @generated from protobuf field: string theme = 2;
      */
-    theme: string; // @gotags: alias:"theme"
+    theme: string;
     /**
      * @generated from protobuf field: string livemap_marker_color = 3;
      */
-    livemapMarkerColor: string; // @gotags: alias:"livemap_marker_color"
+    livemapMarkerColor: string;
     /**
      * @generated from protobuf field: string quick_buttons = 4;
      */
-    quickButtons: string; // @gotags: alias:"quick_buttons"
+    quickButtons: string;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Job$Type extends MessageType<Job> {

@@ -9,19 +9,19 @@ export interface Category {
     /**
      * @generated from protobuf field: uint64 id = 1;
      */
-    id: bigint; // @gotags: alias:"id"
+    id: bigint;
     /**
      * @generated from protobuf field: string name = 2;
      */
-    name: string; // @gotags: alias:"name"
+    name: string;
     /**
      * @generated from protobuf field: optional string description = 3;
      */
-    description?: string; // @gotags: alias:"description"
+    description?: string;
     /**
      * @generated from protobuf field: optional string job = 4;
      */
-    job?: string; // @gotags: alias:"job"
+    job?: string;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Category$Type extends MessageType<Category> {

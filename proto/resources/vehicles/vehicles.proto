@@ -6,8 +6,8 @@ option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/vehicles;
 import "resources/users/users.proto";
 
 message Vehicle {
-  string plate = 1; // @gotags: alias:"plate"
-  string model = 2; // @gotags: alias:"model"
-  string type = 3; // @gotags: alias:"type"
+  string plate = 1;
+  string model = 2;
+  string type = 3;
   resources.users.UserShort owner = 4;
 }

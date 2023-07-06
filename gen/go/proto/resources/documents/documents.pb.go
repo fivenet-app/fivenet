@@ -175,9 +175,9 @@ type Document struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id          uint64               `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id"`                                                                                // @gotags: alias:"id"
-	CreatedAt   *timestamp.Timestamp `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty" alias:"created_at"`                                                  // @gotags: alias:"created_at"
-	UpdatedAt   *timestamp.Timestamp `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty" alias:"updated_at"`                                                  // @gotags: alias:"updated_at"
+	Id          uint64               `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id"` // @gotags: alias:"id"
+	CreatedAt   *timestamp.Timestamp `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt   *timestamp.Timestamp `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	CategoryId  *uint64              `protobuf:"varint,4,opt,name=category_id,json=categoryId,proto3,oneof" json:"category_id,omitempty" alias:"category_id"`                                        // @gotags: alias:"category_id"
 	Category    *Category            `protobuf:"bytes,5,opt,name=category,proto3,oneof" json:"category,omitempty" alias:"category"`                                                               // @gotags: alias:"category"
 	Title       string               `protobuf:"bytes,6,opt,name=title,proto3" json:"title,omitempty" alias:"title"`                                                                           // @gotags: alias:"title"
@@ -189,7 +189,7 @@ type Document struct {
 	State       string               `protobuf:"bytes,12,opt,name=state,proto3" json:"state,omitempty" alias:"state"`                                                                          // @gotags: alias:"state"
 	Closed      bool                 `protobuf:"varint,13,opt,name=closed,proto3" json:"closed,omitempty" alias:"closed"`                                                                       // @gotags: alias:"closed"
 	Public      bool                 `protobuf:"varint,14,opt,name=public,proto3" json:"public,omitempty" alias:"public"`                                                                       // @gotags: alias:"public"
-	DeletedAt   *timestamp.Timestamp `protobuf:"bytes,15,opt,name=deleted_at,json=deletedAt,proto3" json:"deleted_at,omitempty" alias:"deleted_at"`                                                 // @gotags: alias:"deleted_at"
+	DeletedAt   *timestamp.Timestamp `protobuf:"bytes,15,opt,name=deleted_at,json=deletedAt,proto3" json:"deleted_at,omitempty"`
 }
 
 func (x *Document) Reset() {
@@ -334,9 +334,9 @@ type DocumentShort struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id          uint64               `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id"`                                                                                // @gotags: alias:"id"
-	CreatedAt   *timestamp.Timestamp `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty" alias:"created_at"`                                                  // @gotags: alias:"created_at"
-	UpdatedAt   *timestamp.Timestamp `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty" alias:"updated_at"`                                                  // @gotags: alias:"updated_at"
+	Id          uint64               `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id"` // @gotags: alias:"id"
+	CreatedAt   *timestamp.Timestamp `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt   *timestamp.Timestamp `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	CategoryId  *uint64              `protobuf:"varint,4,opt,name=category_id,json=categoryId,proto3,oneof" json:"category_id,omitempty" alias:"category_id"`                                        // @gotags: alias:"category_id"
 	Category    *Category            `protobuf:"bytes,5,opt,name=category,proto3,oneof" json:"category,omitempty" alias:"category"`                                                               // @gotags: alias:"category"
 	Title       string               `protobuf:"bytes,6,opt,name=title,proto3" json:"title,omitempty" alias:"title"`                                                                           // @gotags: alias:"title"
@@ -347,7 +347,7 @@ type DocumentShort struct {
 	State       string               `protobuf:"bytes,11,opt,name=state,proto3" json:"state,omitempty" alias:"state"`                                                                          // @gotags: alias:"state"
 	Closed      bool                 `protobuf:"varint,12,opt,name=closed,proto3" json:"closed,omitempty" alias:"closed"`                                                                       // @gotags: alias:"closed"
 	Public      bool                 `protobuf:"varint,13,opt,name=public,proto3" json:"public,omitempty" alias:"public"`                                                                       // @gotags: alias:"public"
-	DeletedAt   *timestamp.Timestamp `protobuf:"bytes,14,opt,name=deleted_at,json=deletedAt,proto3" json:"deleted_at,omitempty" alias:"deleted_at"`                                                 // @gotags: alias:"deleted_at"
+	DeletedAt   *timestamp.Timestamp `protobuf:"bytes,14,opt,name=deleted_at,json=deletedAt,proto3" json:"deleted_at,omitempty"`
 }
 
 func (x *DocumentShort) Reset() {
@@ -540,9 +540,9 @@ type DocumentJobAccess struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id            uint64               `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id"`                                                   // @gotags: alias:"id"
-	CreatedAt     *timestamp.Timestamp `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty" alias:"created_at"`               // @gotags: alias:"created_at"
-	UpdatedAt     *timestamp.Timestamp `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty" alias:"updated_at"`               // @gotags: alias:"updated_at"
+	Id            uint64               `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id"` // @gotags: alias:"id"
+	CreatedAt     *timestamp.Timestamp `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
+	UpdatedAt     *timestamp.Timestamp `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
 	DocumentId    uint64               `protobuf:"varint,4,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty" alias:"document_id"`                 // @gotags: alias:"document_id"
 	Job           string               `protobuf:"bytes,5,opt,name=job,proto3" json:"job,omitempty" alias:"job"`                                                  // @gotags: alias:"job"
 	JobLabel      *string              `protobuf:"bytes,6,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty" alias:"job_label"`                  // @gotags: alias:"job_label"
@@ -651,11 +651,11 @@ type DocumentUserAccess struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id         uint64               `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id"`                                     // @gotags: alias:"id"
-	CreatedAt  *timestamp.Timestamp `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty" alias:"created_at"` // @gotags: alias:"created_at"
-	UpdatedAt  *timestamp.Timestamp `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty" alias:"updated_at"` // @gotags: alias:"updated_at"
-	DocumentId uint64               `protobuf:"varint,4,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty" alias:"document_id"`   // @gotags: alias:"document_id"
-	UserId     int32                `protobuf:"varint,5,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty" alias:"user_id"`               // @gotags: alias:"user_id"
+	Id         uint64               `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id"` // @gotags: alias:"id"
+	CreatedAt  *timestamp.Timestamp `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
+	UpdatedAt  *timestamp.Timestamp `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
+	DocumentId uint64               `protobuf:"varint,4,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty" alias:"document_id"` // @gotags: alias:"document_id"
+	UserId     int32                `protobuf:"varint,5,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	User       *users.UserShort     `protobuf:"bytes,6,opt,name=user,proto3,oneof" json:"user,omitempty"`
 	Access     ACCESS_LEVEL         `protobuf:"varint,7,opt,name=access,proto3,enum=resources.documents.ACCESS_LEVEL" json:"access,omitempty" alias:"access"` // @gotags: alias:"access"
 }
@@ -746,8 +746,8 @@ type DocumentReference struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id               *uint64              `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty" alias:"id"`                                                 // @gotags: alias:"id"
-	CreatedAt        *timestamp.Timestamp `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty" alias:"created_at"`                   // @gotags: alias:"created_at"
+	Id               *uint64              `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty" alias:"id"` // @gotags: alias:"id"
+	CreatedAt        *timestamp.Timestamp `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	SourceDocumentId uint64               `protobuf:"varint,3,opt,name=source_document_id,json=sourceDocumentId,proto3" json:"source_document_id,omitempty" alias:"source_document_id"` // @gotags: alias:"source_document_id"
 	SourceDocument   *DocumentShort       `protobuf:"bytes,4,opt,name=source_document,json=sourceDocument,proto3,oneof" json:"source_document,omitempty" alias:"source_document"`    // @gotags: alias:"source_document"
 	Reference        DOC_REFERENCE        `protobuf:"varint,5,opt,name=reference,proto3,enum=resources.documents.DOC_REFERENCE" json:"reference,omitempty" alias:"reference"`  // @gotags: alias:"reference"
@@ -857,8 +857,8 @@ type DocumentRelation struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id           *uint64              `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty" alias:"id"`                                             // @gotags: alias:"id"
-	CreatedAt    *timestamp.Timestamp `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty" alias:"created_at"`               // @gotags: alias:"created_at"
+	Id           *uint64              `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty" alias:"id"` // @gotags: alias:"id"
+	CreatedAt    *timestamp.Timestamp `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	DocumentId   uint64               `protobuf:"varint,3,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty" alias:"document_id"`                 // @gotags: alias:"document_id"
 	Document     *DocumentShort       `protobuf:"bytes,4,opt,name=document,proto3,oneof" json:"document,omitempty" alias:"document"`                                  // @gotags: alias:"document"
 	SourceUserId int32                `protobuf:"varint,5,opt,name=source_user_id,json=sourceUserId,proto3" json:"source_user_id,omitempty" alias:"source_user_id"`         // @gotags: alias:"source_user_id"

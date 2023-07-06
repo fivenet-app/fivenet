@@ -12,39 +12,39 @@ export interface Notification {
     /**
      * @generated from protobuf field: uint64 id = 1;
      */
-    id: bigint; // @gotags: alias:"id"
+    id: bigint;
     /**
      * @generated from protobuf field: resources.timestamp.Timestamp created_at = 2;
      */
-    createdAt?: Timestamp; // @gotags: alias:"created_at"
+    createdAt?: Timestamp;
     /**
      * @generated from protobuf field: resources.timestamp.Timestamp read_at = 3;
      */
-    readAt?: Timestamp; // @gotags: alias:"read_at"
+    readAt?: Timestamp;
     /**
      * @generated from protobuf field: int32 user_id = 4;
      */
-    userId: number; // @gotags: alias:"user_id"
+    userId: number;
     /**
      * @generated from protobuf field: resources.common.TranslateItem title = 5;
      */
-    title?: TranslateItem; // @gotags: alias:"title"
+    title?: TranslateItem;
     /**
      * @generated from protobuf field: optional string type = 6;
      */
-    type?: string; // @gotags: alias:"type"
+    type?: string;
     /**
      * @generated from protobuf field: resources.common.TranslateItem content = 7;
      */
-    content?: TranslateItem; // @gotags: alias:"content"
+    content?: TranslateItem;
     /**
      * @generated from protobuf field: resources.notifications.NOTIFICATION_CATEGORY category = 8;
      */
-    category: NOTIFICATION_CATEGORY; // @gotags: alias:"category"
+    category: NOTIFICATION_CATEGORY;
     /**
      * @generated from protobuf field: optional resources.notifications.Data data = 9;
      */
-    data?: Data; // @gotags: alias:"data"
+    data?: Data;
 }
 /**
  * @generated from protobuf message resources.notifications.Data

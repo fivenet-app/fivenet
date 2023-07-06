@@ -38,13 +38,13 @@ async function listUnits(): Promise<Array<Unit>> {
                     <ul role="list" class="mt-3 grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-2 lg:grid-cols-3">
                         <li v-for="unit in units" :key="unit.name" class="col-span-1 flex rounded-md shadow-sm">
                             <div
-                                class="flex w-12 flex-shrink-0 items-center justify-center rounded-l-md text-sm font-medium text-white"
+                                class="flex w-12 flex-shrink-0 items-center justify-center rounded-l-md text-sm font-medium text-white border-l border-t border-b"
                                 :style="'background-color: #' + unit.color ?? '00000'"
                             >
                                 {{ unit.initials }}
                             </div>
                             <div
-                                class="flex flex-1 items-center justify-between truncate rounded-r-md border-b border-r border-t border-gray-200 bg-gray"
+                                class="flex flex-1 items-center justify-between truncate rounded-r-md border border-gray-200 bg-gray"
                             >
                                 <div class="flex-1 truncate px-4 py-2 text-sm">
                                     <span class="font-medium text-gray-100">{{ unit.name }}</span>

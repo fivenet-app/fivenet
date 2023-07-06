@@ -27,12 +27,12 @@ type Permission struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id        uint64               `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id"`                                     // @gotags: alias:"id"
-	CreatedAt *timestamp.Timestamp `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty" alias:"created_at"` // @gotags: alias:"created_at"
-	Category  string               `protobuf:"bytes,3,opt,name=category,proto3" json:"category,omitempty" alias:"category"`                          // @gotags: alias:"category"
-	Name      string               `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty" alias:"name"`                                  // @gotags: alias:"name"
-	GuardName string               `protobuf:"bytes,5,opt,name=guard_name,json=guardName,proto3" json:"guard_name,omitempty" alias:"guard_name"`       // @gotags: alias:"guard_name"
-	Val       bool                 `protobuf:"varint,6,opt,name=val,proto3" json:"val,omitempty" alias:"val"`                                   // @gotags: alias:"val"
+	Id        uint64               `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id"` // @gotags: alias:"id"
+	CreatedAt *timestamp.Timestamp `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
+	Category  string               `protobuf:"bytes,3,opt,name=category,proto3" json:"category,omitempty" alias:"category"` // @gotags: alias:"category"
+	Name      string               `protobuf:"bytes,4,opt,name=name,proto3" json:"name,omitempty"`
+	GuardName string               `protobuf:"bytes,5,opt,name=guard_name,json=guardName,proto3" json:"guard_name,omitempty" alias:"guard_name"` // @gotags: alias:"guard_name"
+	Val       bool                 `protobuf:"varint,6,opt,name=val,proto3" json:"val,omitempty" alias:"val"`                             // @gotags: alias:"val"
 }
 
 func (x *Permission) Reset() {
@@ -114,8 +114,8 @@ type Role struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id            uint64               `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id"`                                                   // @gotags: alias:"id"
-	CreatedAt     *timestamp.Timestamp `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty" alias:"created_at"`               // @gotags: alias:"created_at"
+	Id            uint64               `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id"` // @gotags: alias:"id"
+	CreatedAt     *timestamp.Timestamp `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	Job           string               `protobuf:"bytes,3,opt,name=job,proto3" json:"job,omitempty" alias:"job"`                                                  // @gotags: alias:"job"
 	JobLabel      *string              `protobuf:"bytes,4,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty" alias:"job_label"`                  // @gotags: alias:"job_label"
 	Grade         int32                `protobuf:"varint,5,opt,name=grade,proto3" json:"grade,omitempty" alias:"grade"`                                             // @gotags: alias:"grade"
@@ -217,14 +217,14 @@ type RawRoleAttribute struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	RoleId           uint64               `protobuf:"varint,1,opt,name=role_id,json=roleId,proto3" json:"role_id,omitempty" alias:"role_id"`                                       // @gotags: alias:"role_id"
-	CreatedAt        *timestamp.Timestamp `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty" alias:"created_at"`                         // @gotags: alias:"created_at"
-	AttrId           uint64               `protobuf:"varint,3,opt,name=attr_id,json=attrId,proto3" json:"attr_id,omitempty" alias:"attr_id"`                                       // @gotags: alias:"attr_id"
-	PermissionId     uint64               `protobuf:"varint,4,opt,name=permission_id,json=permissionId,proto3" json:"permission_id,omitempty" alias:"permission_id"`                     // @gotags: alias:"permission_id"
-	Category         string               `protobuf:"bytes,5,opt,name=category,proto3" json:"category,omitempty" alias:"category"`                                                  // @gotags: alias:"category"
-	Name             string               `protobuf:"bytes,6,opt,name=name,proto3" json:"name,omitempty" alias:"name"`                                                          // @gotags: alias:"name"
-	Key              string               `protobuf:"bytes,7,opt,name=key,proto3" json:"key,omitempty" alias:"key"`                                                            // @gotags: alias:"key"
-	Type             string               `protobuf:"bytes,8,opt,name=type,proto3" json:"type,omitempty" alias:"type"`                                                          // @gotags: alias:"type"
+	RoleId           uint64               `protobuf:"varint,1,opt,name=role_id,json=roleId,proto3" json:"role_id,omitempty" alias:"role_id"` // @gotags: alias:"role_id"
+	CreatedAt        *timestamp.Timestamp `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
+	AttrId           uint64               `protobuf:"varint,3,opt,name=attr_id,json=attrId,proto3" json:"attr_id,omitempty" alias:"attr_id"`                   // @gotags: alias:"attr_id"
+	PermissionId     uint64               `protobuf:"varint,4,opt,name=permission_id,json=permissionId,proto3" json:"permission_id,omitempty" alias:"permission_id"` // @gotags: alias:"permission_id"
+	Category         string               `protobuf:"bytes,5,opt,name=category,proto3" json:"category,omitempty" alias:"category"`                              // @gotags: alias:"category"
+	Name             string               `protobuf:"bytes,6,opt,name=name,proto3" json:"name,omitempty"`
+	Key              string               `protobuf:"bytes,7,opt,name=key,proto3" json:"key,omitempty"`
+	Type             string               `protobuf:"bytes,8,opt,name=type,proto3" json:"type,omitempty"`
 	RawValidValues   string               `protobuf:"bytes,9,opt,name=raw_valid_values,json=rawValidValues,proto3" json:"raw_valid_values,omitempty" alias:"valid_values"`              // @gotags: alias:"valid_values"
 	RawDefaultValues *string              `protobuf:"bytes,10,opt,name=raw_default_values,json=rawDefaultValues,proto3,oneof" json:"raw_default_values,omitempty" alias:"default_values"` // @gotags: alias:"default_values"
 	RawValue         string               `protobuf:"bytes,11,opt,name=raw_value,json=rawValue,proto3" json:"raw_value,omitempty" alias:"value"`                                 // @gotags: alias:"value"
@@ -352,14 +352,14 @@ type RoleAttribute struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	RoleId        uint64               `protobuf:"varint,1,opt,name=role_id,json=roleId,proto3" json:"role_id,omitempty" alias:"role_id"`                   // @gotags: alias:"role_id"
-	CreatedAt     *timestamp.Timestamp `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty" alias:"created_at"`     // @gotags: alias:"created_at"
+	RoleId        uint64               `protobuf:"varint,1,opt,name=role_id,json=roleId,proto3" json:"role_id,omitempty" alias:"role_id"` // @gotags: alias:"role_id"
+	CreatedAt     *timestamp.Timestamp `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	AttrId        uint64               `protobuf:"varint,3,opt,name=attr_id,json=attrId,proto3" json:"attr_id,omitempty" alias:"attr_id"`                   // @gotags: alias:"attr_id"
 	PermissionId  uint64               `protobuf:"varint,4,opt,name=permission_id,json=permissionId,proto3" json:"permission_id,omitempty" alias:"permission_id"` // @gotags: alias:"permission_id"
 	Category      string               `protobuf:"bytes,5,opt,name=category,proto3" json:"category,omitempty" alias:"category"`                              // @gotags: alias:"category"
-	Name          string               `protobuf:"bytes,6,opt,name=name,proto3" json:"name,omitempty" alias:"name"`                                      // @gotags: alias:"name"
-	Key           string               `protobuf:"bytes,7,opt,name=key,proto3" json:"key,omitempty" alias:"key"`                                        // @gotags: alias:"key"
-	Type          string               `protobuf:"bytes,8,opt,name=type,proto3" json:"type,omitempty" alias:"type"`                                      // @gotags: alias:"type"
+	Name          string               `protobuf:"bytes,6,opt,name=name,proto3" json:"name,omitempty"`
+	Key           string               `protobuf:"bytes,7,opt,name=key,proto3" json:"key,omitempty"`
+	Type          string               `protobuf:"bytes,8,opt,name=type,proto3" json:"type,omitempty"`
 	ValidValues   *AttributeValues     `protobuf:"bytes,9,opt,name=valid_values,json=validValues,proto3" json:"valid_values,omitempty"`
 	DefaultValues *AttributeValues     `protobuf:"bytes,10,opt,name=default_values,json=defaultValues,proto3,oneof" json:"default_values,omitempty"`
 	Value         *AttributeValues     `protobuf:"bytes,11,opt,name=value,proto3" json:"value,omitempty"`

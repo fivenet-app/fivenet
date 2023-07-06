@@ -14,7 +14,7 @@ import (
 
 var (
 	tUnits      = table.FivenetCentrumUnits.AS("unit")
-	tUnitsUsers = table.FivenetCentrumUnitsUsers.AS("user")
+	tUnitStatus = table.FivenetCentrumUnitsStatus.AS("unitstatus")
 )
 
 func (s *Server) ListUnits(ctx context.Context, req *ListUnitsRequest) (*ListUnitsResponse, error) {
@@ -35,7 +35,7 @@ func (s *Server) ListUnits(ctx context.Context, req *ListUnitsRequest) (*ListUni
 		for i := 0; i < len(req.Status); i++ {
 			statuses[i] = jet.Int32(int32(*req.Status[i].Enum()))
 		}
-		condition = condition.AND(tUnits.Status.IN(statuses...))
+		condition = condition.AND(tUnitStatus.Status.IN(statuses...))
 	}
 
 	stmt := tUnits.
@@ -46,12 +46,14 @@ func (s *Server) ListUnits(ctx context.Context, req *ListUnitsRequest) (*ListUni
 			tUnits.Initials,
 			tUnits.Color,
 			tUnits.Description,
-			tUnits.Status,
 		).
-		FROM(tUnits).
+		FROM(
+			tUnits.
+				LEFT_JOIN(tUnitStatus,
+					tUnitStatus.UnitID.EQ(tUnits.ID)),
+		).
 		WHERE(condition).
 		ORDER_BY(
-			tUnits.Status.ASC(),
 			tUnits.Name.ASC(),
 		)
 
@@ -106,7 +108,6 @@ func (s *Server) CreateOrUpdateUnit(ctx context.Context, req *CreateOrUpdateUnit
 				tUnits.Initials,
 				tUnits.Color,
 				tUnits.Description,
-				tUnits.Status,
 			).
 			VALUES(
 				userInfo.Job,
@@ -114,7 +115,6 @@ func (s *Server) CreateOrUpdateUnit(ctx context.Context, req *CreateOrUpdateUnit
 				req.Unit.Initials,
 				req.Unit.Color,
 				req.Unit.Description,
-				dispatch.UNIT_STATUS_UNAVAILABLE,
 			)
 
 		result, err := stmt.ExecContext(ctx, s.db)
@@ -142,14 +142,12 @@ func (s *Server) CreateOrUpdateUnit(ctx context.Context, req *CreateOrUpdateUnit
 				tUnits.Initials,
 				tUnits.Color,
 				tUnits.Description,
-				tUnits.Status,
 			).
 			SET(
 				userInfo.Job,
 				req.Unit.Name,
 				req.Unit.Initials,
 				req.Unit.Description,
-				dispatch.UNIT_STATUS_UNAVAILABLE,
 			).
 			WHERE(jet.AND(
 				tUnits.Job.EQ(jet.String(userInfo.Job)),

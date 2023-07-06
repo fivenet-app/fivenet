@@ -26,9 +26,9 @@ type Vehicle struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Plate string           `protobuf:"bytes,1,opt,name=plate,proto3" json:"plate,omitempty" alias:"plate"` // @gotags: alias:"plate"
-	Model string           `protobuf:"bytes,2,opt,name=model,proto3" json:"model,omitempty" alias:"model"` // @gotags: alias:"model"
-	Type  string           `protobuf:"bytes,3,opt,name=type,proto3" json:"type,omitempty" alias:"type"`   // @gotags: alias:"type"
+	Plate string           `protobuf:"bytes,1,opt,name=plate,proto3" json:"plate,omitempty"`
+	Model string           `protobuf:"bytes,2,opt,name=model,proto3" json:"model,omitempty"`
+	Type  string           `protobuf:"bytes,3,opt,name=type,proto3" json:"type,omitempty"`
 	Owner *users.UserShort `protobuf:"bytes,4,opt,name=owner,proto3" json:"owner,omitempty"`
 }
 

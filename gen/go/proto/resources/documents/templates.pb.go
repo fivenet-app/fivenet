@@ -29,9 +29,9 @@ type Template struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id            uint64               `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id"`                                        // @gotags: alias:"id"
-	CreatedAt     *timestamp.Timestamp `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty" alias:"created_at"`    // @gotags: alias:"created_at"
-	UpdatedAt     *timestamp.Timestamp `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty" alias:"updated_at"`    // @gotags: alias:"updated_at"
+	Id            uint64               `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id"` // @gotags: alias:"id"
+	CreatedAt     *timestamp.Timestamp `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
+	UpdatedAt     *timestamp.Timestamp `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
 	Category      *Category            `protobuf:"bytes,4,opt,name=category,proto3" json:"category,omitempty" alias:"category"`                             // @gotags: alias:"category"
 	Weight        uint32               `protobuf:"varint,5,opt,name=weight,proto3" json:"weight,omitempty" alias:"weight"`                                // @gotags: alias:"weight"
 	Title         string               `protobuf:"bytes,6,opt,name=title,proto3" json:"title,omitempty" alias:"title"`                                   // @gotags: alias:"title"
@@ -188,9 +188,9 @@ type TemplateShort struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id          uint64               `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id"`                                      // @gotags: alias:"id"
-	CreatedAt   *timestamp.Timestamp `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty" alias:"created_at"`  // @gotags: alias:"created_at"
-	UpdatedAt   *timestamp.Timestamp `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty" alias:"updated_at"`  // @gotags: alias:"updated_at"
+	Id          uint64               `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id"` // @gotags: alias:"id"
+	CreatedAt   *timestamp.Timestamp `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
+	UpdatedAt   *timestamp.Timestamp `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
 	Weight      uint32               `protobuf:"varint,4,opt,name=weight,proto3" json:"weight,omitempty" alias:"weight"`                              // @gotags: alias:"weight"
 	Category    *Category            `protobuf:"bytes,5,opt,name=category,proto3" json:"category,omitempty" alias:"category"`                           // @gotags: alias:"category"
 	Title       string               `protobuf:"bytes,6,opt,name=title,proto3" json:"title,omitempty" alias:"title"`                                 // @gotags: alias:"title"
@@ -559,9 +559,9 @@ type TemplateJobAccess struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id            uint64               `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id"`                                                   // @gotags: alias:"id"
-	CreatedAt     *timestamp.Timestamp `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty" alias:"created_at"`               // @gotags: alias:"created_at"
-	UpdatedAt     *timestamp.Timestamp `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty" alias:"updated_at"`               // @gotags: alias:"updated_at"
+	Id            uint64               `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id"` // @gotags: alias:"id"
+	CreatedAt     *timestamp.Timestamp `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
+	UpdatedAt     *timestamp.Timestamp `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
 	TemplateId    uint64               `protobuf:"varint,4,opt,name=template_id,json=templateId,proto3" json:"template_id,omitempty" alias:"template_id"`                 // @gotags: alias:"template_id"
 	Job           string               `protobuf:"bytes,5,opt,name=job,proto3" json:"job,omitempty" alias:"job"`                                                  // @gotags: alias:"job"
 	JobLabel      *string              `protobuf:"bytes,6,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty" alias:"job_label"`                  // @gotags: alias:"job_label"

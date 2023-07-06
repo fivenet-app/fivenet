@@ -15,7 +15,7 @@ export interface GenericMarker {
     /**
      * @generated from protobuf field: resources.timestamp.Timestamp updated_at = 2;
      */
-    updatedAt?: Timestamp; // @gotags: alias:"updated_at"
+    updatedAt?: Timestamp;
     /**
      * @generated from protobuf field: float x = 3;
      */

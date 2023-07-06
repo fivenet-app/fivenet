@@ -81,7 +81,7 @@ type GenericMarker struct {
 	unknownFields protoimpl.UnknownFields
 
 	Id        int32                `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	UpdatedAt *timestamp.Timestamp `protobuf:"bytes,2,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty" alias:"updated_at"` // @gotags: alias:"updated_at"
+	UpdatedAt *timestamp.Timestamp `protobuf:"bytes,2,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
 	X         float32              `protobuf:"fixed32,3,opt,name=x,proto3" json:"x,omitempty"`
 	Y         float32              `protobuf:"fixed32,4,opt,name=y,proto3" json:"y,omitempty"`
 	Name      string               `protobuf:"bytes,5,opt,name=name,proto3" json:"name,omitempty"`

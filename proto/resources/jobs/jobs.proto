@@ -7,19 +7,19 @@ import "validate/validate.proto";
 
 message Job {
   string name = 1 [(validate.rules).string.max_len = 50]; // @gotags: sql:"primary_key" alias:"name"
-  string label = 2 [(validate.rules).string.max_len = 50]; // @gotags: alias:"label"
+  string label = 2 [(validate.rules).string.max_len = 50];
   repeated JobGrade grades = 3;
 }
 
 message JobGrade {
-  optional string job_name = 1 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job_name"
-  int32 grade = 2 [(validate.rules).int32.gt = 0]; // @gotags: alias:"grade"
-  string label = 3 [(validate.rules).string.max_len = 50]; // @gotags: alias:"label"
+  optional string job_name = 1 [(validate.rules).string.max_len = 50];
+  int32 grade = 2 [(validate.rules).int32.gt = 0];
+  string label = 3 [(validate.rules).string.max_len = 50];
 }
 
 message JobProps {
-  string job = 1 [(validate.rules).string.max_len = 20]; // @gotags: alias:"job"
-  string theme = 2 [(validate.rules).string.max_len = 20]; // @gotags: alias:"theme"
-  string livemap_marker_color = 3 [(validate.rules).string.max_len = 6]; // @gotags: alias:"livemap_marker_color"
-  string quick_buttons = 4; // @gotags: alias:"quick_buttons"
+  string job = 1 [(validate.rules).string.max_len = 20];
+  string theme = 2 [(validate.rules).string.max_len = 20];
+  string livemap_marker_color = 3 [(validate.rules).string.max_len = 6];
+  string quick_buttons = 4;
 }

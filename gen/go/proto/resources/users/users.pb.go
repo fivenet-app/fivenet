@@ -77,15 +77,15 @@ type UserShort struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	UserId        int32   `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty" alias:"id"`                             // @gotags: alias:"id"
-	Identifier    string  `protobuf:"bytes,2,opt,name=identifier,proto3" json:"identifier,omitempty" alias:"identifier"`                                    // @gotags: alias:"identifier"
-	Job           string  `protobuf:"bytes,3,opt,name=job,proto3" json:"job,omitempty" alias:"job"`                                                  // @gotags: alias:"job"
-	JobLabel      *string `protobuf:"bytes,4,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty" alias:"job_label"`                  // @gotags: alias:"job_label"
-	JobGrade      int32   `protobuf:"varint,5,opt,name=job_grade,json=jobGrade,proto3" json:"job_grade,omitempty" alias:"job_grade"`                       // @gotags: alias:"job_grade"
-	JobGradeLabel *string `protobuf:"bytes,6,opt,name=job_grade_label,json=jobGradeLabel,proto3,oneof" json:"job_grade_label,omitempty" alias:"job_grade_label"` // @gotags: alias:"job_grade_label"
-	Firstname     string  `protobuf:"bytes,7,opt,name=firstname,proto3" json:"firstname,omitempty" alias:"firstname"`                                      // @gotags: alias:"firstname"
-	Lastname      string  `protobuf:"bytes,8,opt,name=lastname,proto3" json:"lastname,omitempty" alias:"lastname"`                                        // @gotags: alias:"lastname"
-	Dateofbirth   string  `protobuf:"bytes,9,opt,name=dateofbirth,proto3" json:"dateofbirth,omitempty" alias:"dateofbirth"`                                  // @gotags: alias:"dateofbirth"
+	UserId        int32   `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty" alias:"id"` // @gotags: alias:"id"
+	Identifier    string  `protobuf:"bytes,2,opt,name=identifier,proto3" json:"identifier,omitempty"`
+	Job           string  `protobuf:"bytes,3,opt,name=job,proto3" json:"job,omitempty"`
+	JobLabel      *string `protobuf:"bytes,4,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty"`
+	JobGrade      int32   `protobuf:"varint,5,opt,name=job_grade,json=jobGrade,proto3" json:"job_grade,omitempty"`
+	JobGradeLabel *string `protobuf:"bytes,6,opt,name=job_grade_label,json=jobGradeLabel,proto3,oneof" json:"job_grade_label,omitempty"`
+	Firstname     string  `protobuf:"bytes,7,opt,name=firstname,proto3" json:"firstname,omitempty"`
+	Lastname      string  `protobuf:"bytes,8,opt,name=lastname,proto3" json:"lastname,omitempty"`
+	Dateofbirth   string  `protobuf:"bytes,9,opt,name=dateofbirth,proto3" json:"dateofbirth,omitempty"`
 }
 
 func (x *UserShort) Reset() {
@@ -188,22 +188,22 @@ type User struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	UserId        int32      `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty" alias:"id"`                             // @gotags: alias:"id"
-	Identifier    string     `protobuf:"bytes,2,opt,name=identifier,proto3" json:"identifier,omitempty" alias:"identifier"`                                    // @gotags: alias:"identifier"
-	Job           string     `protobuf:"bytes,3,opt,name=job,proto3" json:"job,omitempty" alias:"job"`                                                  // @gotags: alias:"job"
-	JobLabel      *string    `protobuf:"bytes,4,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty" alias:"job_label"`                  // @gotags: alias:"job_label"
-	JobGrade      int32      `protobuf:"varint,5,opt,name=job_grade,json=jobGrade,proto3" json:"job_grade,omitempty" alias:"job_grade"`                       // @gotags: alias:"job_grade"
-	JobGradeLabel *string    `protobuf:"bytes,6,opt,name=job_grade_label,json=jobGradeLabel,proto3,oneof" json:"job_grade_label,omitempty" alias:"job_grade_label"` // @gotags: alias:"job_grade_label"
-	Firstname     string     `protobuf:"bytes,7,opt,name=firstname,proto3" json:"firstname,omitempty" alias:"firstname"`                                      // @gotags: alias:"firstname"
-	Lastname      string     `protobuf:"bytes,8,opt,name=lastname,proto3" json:"lastname,omitempty" alias:"lastname"`                                        // @gotags: alias:"lastname"
-	Dateofbirth   string     `protobuf:"bytes,9,opt,name=dateofbirth,proto3" json:"dateofbirth,omitempty" alias:"dateofbirth"`                                  // @gotags: alias:"dateofbirth"
-	Sex           *string    `protobuf:"bytes,10,opt,name=sex,proto3,oneof" json:"sex,omitempty" alias:"sex"`                                           // @gotags: alias:"sex"
-	Height        *string    `protobuf:"bytes,11,opt,name=height,proto3,oneof" json:"height,omitempty" alias:"height"`                                     // @gotags: alias:"height"
-	PhoneNumber   *string    `protobuf:"bytes,12,opt,name=phone_number,json=phoneNumber,proto3,oneof" json:"phone_number,omitempty" alias:"phone_number"`        // @gotags: alias:"phone_number"
-	Visum         *int32     `protobuf:"varint,13,opt,name=visum,proto3,oneof" json:"visum,omitempty" alias:"visum"`                                      // @gotags: alias:"visum"
-	Playtime      *int32     `protobuf:"varint,14,opt,name=playtime,proto3,oneof" json:"playtime,omitempty" alias:"playtime"`                                // @gotags: alias:"playtime"
-	Props         *UserProps `protobuf:"bytes,15,opt,name=props,proto3" json:"props,omitempty" alias:"fivenet_user_props"`                                             // @gotags: alias:"fivenet_user_props"
-	Licenses      []*License `protobuf:"bytes,16,rep,name=licenses,proto3" json:"licenses,omitempty" alias:"user_licenses"`                                       // @gotags: alias:"user_licenses"
+	UserId        int32      `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty" alias:"id"` // @gotags: alias:"id"
+	Identifier    string     `protobuf:"bytes,2,opt,name=identifier,proto3" json:"identifier,omitempty"`
+	Job           string     `protobuf:"bytes,3,opt,name=job,proto3" json:"job,omitempty"`
+	JobLabel      *string    `protobuf:"bytes,4,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty"`
+	JobGrade      int32      `protobuf:"varint,5,opt,name=job_grade,json=jobGrade,proto3" json:"job_grade,omitempty"`
+	JobGradeLabel *string    `protobuf:"bytes,6,opt,name=job_grade_label,json=jobGradeLabel,proto3,oneof" json:"job_grade_label,omitempty"`
+	Firstname     string     `protobuf:"bytes,7,opt,name=firstname,proto3" json:"firstname,omitempty"`
+	Lastname      string     `protobuf:"bytes,8,opt,name=lastname,proto3" json:"lastname,omitempty"`
+	Dateofbirth   string     `protobuf:"bytes,9,opt,name=dateofbirth,proto3" json:"dateofbirth,omitempty"`
+	Sex           *string    `protobuf:"bytes,10,opt,name=sex,proto3,oneof" json:"sex,omitempty"`
+	Height        *string    `protobuf:"bytes,11,opt,name=height,proto3,oneof" json:"height,omitempty"`
+	PhoneNumber   *string    `protobuf:"bytes,12,opt,name=phone_number,json=phoneNumber,proto3,oneof" json:"phone_number,omitempty"`
+	Visum         *int32     `protobuf:"varint,13,opt,name=visum,proto3,oneof" json:"visum,omitempty"`
+	Playtime      *int32     `protobuf:"varint,14,opt,name=playtime,proto3,oneof" json:"playtime,omitempty"`
+	Props         *UserProps `protobuf:"bytes,15,opt,name=props,proto3" json:"props,omitempty" alias:"fivenet_user_props"`       // @gotags: alias:"fivenet_user_props"
+	Licenses      []*License `protobuf:"bytes,16,rep,name=licenses,proto3" json:"licenses,omitempty" alias:"user_licenses"` // @gotags: alias:"user_licenses"
 }
 
 func (x *User) Reset() {
@@ -355,8 +355,8 @@ type License struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Type  string `protobuf:"bytes,1,opt,name=type,proto3" json:"type,omitempty" alias:"type"`   // @gotags: alias:"type"
-	Label string `protobuf:"bytes,2,opt,name=label,proto3" json:"label,omitempty" alias:"label"` // @gotags: alias:"label"
+	Type  string `protobuf:"bytes,1,opt,name=type,proto3" json:"type,omitempty"`
+	Label string `protobuf:"bytes,2,opt,name=label,proto3" json:"label,omitempty"`
 }
 
 func (x *License) Reset() {
@@ -410,14 +410,14 @@ type UserProps struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	UserId                  int32          `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty" alias:"user_id"`         // @gotags: alias:"user_id"
-	Wanted                  *bool          `protobuf:"varint,2,opt,name=wanted,proto3,oneof" json:"wanted,omitempty" alias:"wanted"`                 // @gotags: alias:"wanted"
+	UserId                  int32          `protobuf:"varint,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	Wanted                  *bool          `protobuf:"varint,2,opt,name=wanted,proto3,oneof" json:"wanted,omitempty"`
 	JobName                 *string        `protobuf:"bytes,3,opt,name=job_name,json=jobName,proto3,oneof" json:"job_name,omitempty" alias:"job"` // @gotags: alias:"job"
 	Job                     *jobs.Job      `protobuf:"bytes,4,opt,name=job,proto3,oneof" json:"job,omitempty"`
 	JobGradeNumber          *int32         `protobuf:"varint,5,opt,name=job_grade_number,json=jobGradeNumber,proto3,oneof" json:"job_grade_number,omitempty" alias:"job_grade"` // @gotags: alias:"job_grade"
 	JobGrade                *jobs.JobGrade `protobuf:"bytes,6,opt,name=job_grade,json=jobGrade,proto3,oneof" json:"job_grade,omitempty"`
-	TrafficInfractionPoints *uint64        `protobuf:"varint,7,opt,name=traffic_infraction_points,json=trafficInfractionPoints,proto3,oneof" json:"traffic_infraction_points,omitempty" alias:"traffic_infraction_points"` // @gotags: alias:"traffic_infraction_points"
-	OpenFines               *uint64        `protobuf:"varint,8,opt,name=open_fines,json=openFines,proto3,oneof" json:"open_fines,omitempty" alias:"open_fines"`                                             // @gotags: alias:"open_fines"
+	TrafficInfractionPoints *uint64        `protobuf:"varint,7,opt,name=traffic_infraction_points,json=trafficInfractionPoints,proto3,oneof" json:"traffic_infraction_points,omitempty"`
+	OpenFines               *uint64        `protobuf:"varint,8,opt,name=open_fines,json=openFines,proto3,oneof" json:"open_fines,omitempty"`
 }
 
 func (x *UserProps) Reset() {

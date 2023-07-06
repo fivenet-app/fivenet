@@ -15,23 +15,23 @@ export interface Comment {
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
      */
-    createdAt?: Timestamp; // @gotags: alias:"created_at"
+    createdAt?: Timestamp;
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp updated_at = 3;
      */
-    updatedAt?: Timestamp; // @gotags: alias:"updated_at"
+    updatedAt?: Timestamp;
     /**
      * @generated from protobuf field: uint64 document_id = 4;
      */
-    documentId: bigint; // @gotags: alias:"document_id"
+    documentId: bigint;
     /**
      * @generated from protobuf field: string comment = 5;
      */
-    comment: string; // @gotags: alias:"comment"
+    comment: string;
     /**
      * @generated from protobuf field: optional int32 creator_id = 6;
      */
-    creatorId?: number; // @gotags: alias:"creator_id"
+    creatorId?: number;
     /**
      * @generated from protobuf field: optional resources.users.UserShort creator = 7;
      */
@@ -39,7 +39,7 @@ export interface Comment {
     /**
      * @generated from protobuf field: resources.timestamp.Timestamp deleted_at = 8;
      */
-    deletedAt?: Timestamp; // @gotags: alias:"deleted_at"
+    deletedAt?: Timestamp;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Comment$Type extends MessageType<Comment> {

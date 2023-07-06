@@ -14,19 +14,19 @@ export interface LawBook {
     /**
      * @generated from protobuf field: resources.timestamp.Timestamp created_at = 2;
      */
-    createdAt?: Timestamp; // @gotags: alias:"created_at"
+    createdAt?: Timestamp;
     /**
      * @generated from protobuf field: resources.timestamp.Timestamp updated_at = 3;
      */
-    updatedAt?: Timestamp; // @gotags: alias:"updated_at"
+    updatedAt?: Timestamp;
     /**
      * @generated from protobuf field: string name = 4;
      */
-    name: string; // @gotags: alias:"name"
+    name: string;
     /**
      * @generated from protobuf field: optional string description = 5;
      */
-    description?: string; // @gotags: alias:"description"
+    description?: string;
     /**
      * @generated from protobuf field: repeated resources.laws.Law laws = 6;
      */
@@ -43,35 +43,35 @@ export interface Law {
     /**
      * @generated from protobuf field: resources.timestamp.Timestamp created_at = 2;
      */
-    createdAt?: Timestamp; // @gotags: alias:"created_at"
+    createdAt?: Timestamp;
     /**
      * @generated from protobuf field: resources.timestamp.Timestamp updated_at = 3;
      */
-    updatedAt?: Timestamp; // @gotags: alias:"updated_at"
+    updatedAt?: Timestamp;
     /**
      * @generated from protobuf field: uint64 lawbook_id = 4;
      */
-    lawbookId: bigint; // @gotags: alias:"lawbook_id"
+    lawbookId: bigint;
     /**
      * @generated from protobuf field: string name = 5;
      */
-    name: string; // @gotags: alias:"name"
+    name: string;
     /**
      * @generated from protobuf field: string description = 6;
      */
-    description: string; // @gotags: alias:"description"
+    description: string;
     /**
      * @generated from protobuf field: uint64 fine = 7;
      */
-    fine: bigint; // @gotags: alias:"fine"
+    fine: bigint;
     /**
      * @generated from protobuf field: uint64 detention_time = 8;
      */
-    detentionTime: bigint; // @gotags: alias:"detention_time"
+    detentionTime: bigint;
     /**
      * @generated from protobuf field: uint64 stvo_points = 9;
      */
-    stvoPoints: bigint; // @gotags: alias:"stvo_points"
+    stvoPoints: bigint;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class LawBook$Type extends MessageType<LawBook> {

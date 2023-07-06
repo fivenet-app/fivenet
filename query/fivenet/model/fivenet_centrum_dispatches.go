@@ -11,13 +11,17 @@ import (
 	"time"
 )
 
-type FivenetCentrumUnits struct {
+type FivenetCentrumDispatches struct {
 	ID          uint64     `sql:"primary_key" json:"id"`
 	CreatedAt   *time.Time `json:"created_at"`
 	UpdatedAt   *time.Time `json:"updated_at"`
 	Job         *string    `json:"job"`
-	Name        string     `json:"name"`
-	Initials    string     `json:"initials"`
-	Color       string     `json:"color"`
+	Message     string     `json:"message"`
 	Description *string    `json:"description"`
+	Attributes  *string    `json:"attributes"`
+	X           *float64   `json:"x"`
+	Y           *float64   `json:"y"`
+	Anon        *bool      `json:"anon"`
+	UserID      int32      `json:"user_id"`
+	Active      *bool      `json:"active"`
 }

@@ -26,8 +26,8 @@ type Job struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Name   string      `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty" sql:"primary_key" alias:"name"`   // @gotags: sql:"primary_key" alias:"name"
-	Label  string      `protobuf:"bytes,2,opt,name=label,proto3" json:"label,omitempty" alias:"label"` // @gotags: alias:"label"
+	Name   string      `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty" sql:"primary_key" alias:"name"` // @gotags: sql:"primary_key" alias:"name"
+	Label  string      `protobuf:"bytes,2,opt,name=label,proto3" json:"label,omitempty"`
 	Grades []*JobGrade `protobuf:"bytes,3,rep,name=grades,proto3" json:"grades,omitempty"`
 }
 
@@ -89,9 +89,9 @@ type JobGrade struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	JobName *string `protobuf:"bytes,1,opt,name=job_name,json=jobName,proto3,oneof" json:"job_name,omitempty" alias:"job_name"` // @gotags: alias:"job_name"
-	Grade   int32   `protobuf:"varint,2,opt,name=grade,proto3" json:"grade,omitempty" alias:"grade"`                         // @gotags: alias:"grade"
-	Label   string  `protobuf:"bytes,3,opt,name=label,proto3" json:"label,omitempty" alias:"label"`                          // @gotags: alias:"label"
+	JobName *string `protobuf:"bytes,1,opt,name=job_name,json=jobName,proto3,oneof" json:"job_name,omitempty"`
+	Grade   int32   `protobuf:"varint,2,opt,name=grade,proto3" json:"grade,omitempty"`
+	Label   string  `protobuf:"bytes,3,opt,name=label,proto3" json:"label,omitempty"`
 }
 
 func (x *JobGrade) Reset() {
@@ -152,10 +152,10 @@ type JobProps struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Job                string `protobuf:"bytes,1,opt,name=job,proto3" json:"job,omitempty" alias:"job"`                                                           // @gotags: alias:"job"
-	Theme              string `protobuf:"bytes,2,opt,name=theme,proto3" json:"theme,omitempty" alias:"theme"`                                                       // @gotags: alias:"theme"
-	LivemapMarkerColor string `protobuf:"bytes,3,opt,name=livemap_marker_color,json=livemapMarkerColor,proto3" json:"livemap_marker_color,omitempty" alias:"livemap_marker_color"` // @gotags: alias:"livemap_marker_color"
-	QuickButtons       string `protobuf:"bytes,4,opt,name=quick_buttons,json=quickButtons,proto3" json:"quick_buttons,omitempty" alias:"quick_buttons"`                     // @gotags: alias:"quick_buttons"
+	Job                string `protobuf:"bytes,1,opt,name=job,proto3" json:"job,omitempty"`
+	Theme              string `protobuf:"bytes,2,opt,name=theme,proto3" json:"theme,omitempty"`
+	LivemapMarkerColor string `protobuf:"bytes,3,opt,name=livemap_marker_color,json=livemapMarkerColor,proto3" json:"livemap_marker_color,omitempty"`
+	QuickButtons       string `protobuf:"bytes,4,opt,name=quick_buttons,json=quickButtons,proto3" json:"quick_buttons,omitempty"`
 }
 
 func (x *JobProps) Reset() {

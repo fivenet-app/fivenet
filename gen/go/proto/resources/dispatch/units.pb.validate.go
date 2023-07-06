@@ -212,15 +212,33 @@ func (m *Unit) validate(all bool) error {
 
 	if m.Status != nil {
 
-		if _, ok := UNIT_STATUS_name[int32(m.GetStatus())]; !ok {
-			err := UnitValidationError{
-				field:  "Status",
-				reason: "value must be one of the defined enum values",
+		if all {
+			switch v := interface{}(m.GetStatus()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, UnitValidationError{
+						field:  "Status",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, UnitValidationError{
+						field:  "Status",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
 			}
-			if !all {
-				return err
+		} else if v, ok := interface{}(m.GetStatus()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return UnitValidationError{
+					field:  "Status",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
 			}
-			errors = append(errors, err)
 		}
 
 	}
@@ -301,3 +319,236 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = UnitValidationError{}
+
+// Validate checks the field values on UnitStatus with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *UnitStatus) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UnitStatus with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in UnitStatusMultiError, or
+// nil if none found.
+func (m *UnitStatus) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UnitStatus) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	// no validation rules for UnitId
+
+	if m.GetUserId() <= 0 {
+		err := UnitStatusValidationError{
+			field:  "UserId",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if all {
+		switch v := interface{}(m.GetUser()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, UnitStatusValidationError{
+					field:  "User",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, UnitStatusValidationError{
+					field:  "User",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetUser()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return UnitStatusValidationError{
+				field:  "User",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if m.CreatedAt != nil {
+
+		if all {
+			switch v := interface{}(m.GetCreatedAt()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, UnitStatusValidationError{
+						field:  "CreatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, UnitStatusValidationError{
+						field:  "CreatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetCreatedAt()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return UnitStatusValidationError{
+					field:  "CreatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.Status != nil {
+
+		if _, ok := UNIT_STATUS_name[int32(m.GetStatus())]; !ok {
+			err := UnitStatusValidationError{
+				field:  "Status",
+				reason: "value must be one of the defined enum values",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
+	if m.Reason != nil {
+
+		if utf8.RuneCountInString(m.GetReason()) > 255 {
+			err := UnitStatusValidationError{
+				field:  "Reason",
+				reason: "value length must be at most 255 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
+	if m.Code != nil {
+
+		if utf8.RuneCountInString(m.GetCode()) > 20 {
+			err := UnitStatusValidationError{
+				field:  "Code",
+				reason: "value length must be at most 20 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
+	if m.InSquad != nil {
+		// no validation rules for InSquad
+	}
+
+	if m.X != nil {
+		// no validation rules for X
+	}
+
+	if m.Y != nil {
+		// no validation rules for Y
+	}
+
+	if len(errors) > 0 {
+		return UnitStatusMultiError(errors)
+	}
+
+	return nil
+}
+
+// UnitStatusMultiError is an error wrapping multiple validation errors
+// returned by UnitStatus.ValidateAll() if the designated constraints aren't met.
+type UnitStatusMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UnitStatusMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UnitStatusMultiError) AllErrors() []error { return m }
+
+// UnitStatusValidationError is the validation error returned by
+// UnitStatus.Validate if the designated constraints aren't met.
+type UnitStatusValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UnitStatusValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UnitStatusValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UnitStatusValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UnitStatusValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UnitStatusValidationError) ErrorName() string { return "UnitStatusValidationError" }
+
+// Error satisfies the builtin error interface
+func (e UnitStatusValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUnitStatus.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UnitStatusValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UnitStatusValidationError{}

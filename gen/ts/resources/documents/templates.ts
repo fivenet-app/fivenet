@@ -21,11 +21,11 @@ export interface Template {
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
      */
-    createdAt?: Timestamp; // @gotags: alias:"created_at"
+    createdAt?: Timestamp;
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp updated_at = 3;
      */
-    updatedAt?: Timestamp; // @gotags: alias:"updated_at"
+    updatedAt?: Timestamp;
     /**
      * @generated from protobuf field: resources.documents.Category category = 4;
      */
@@ -86,11 +86,11 @@ export interface TemplateShort {
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
      */
-    createdAt?: Timestamp; // @gotags: alias:"created_at"
+    createdAt?: Timestamp;
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp updated_at = 3;
      */
-    updatedAt?: Timestamp; // @gotags: alias:"updated_at"
+    updatedAt?: Timestamp;
     /**
      * @generated from protobuf field: uint32 weight = 4;
      */
@@ -199,11 +199,11 @@ export interface TemplateJobAccess {
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
      */
-    createdAt?: Timestamp; // @gotags: alias:"created_at"
+    createdAt?: Timestamp;
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp updated_at = 3;
      */
-    updatedAt?: Timestamp; // @gotags: alias:"updated_at"
+    updatedAt?: Timestamp;
     /**
      * @generated from protobuf field: uint64 template_id = 4;
      */

@@ -86,9 +86,9 @@ type AuditEntry struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id           uint64               `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id"`                               // @gotags: alias:"id"
-	CreatedAt    *timestamp.Timestamp `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty" alias:"created_at"` // @gotags: alias:"created_at"
-	UserId       uint64               `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty" alias:"user_id"`         // @gotags: alias:"user_id"
+	Id           uint64               `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id"` // @gotags: alias:"id"
+	CreatedAt    *timestamp.Timestamp `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UserId       uint64               `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty" alias:"user_id"` // @gotags: alias:"user_id"
 	User         *users.UserShort     `protobuf:"bytes,4,opt,name=user,proto3,oneof" json:"user,omitempty"`
 	UserJob      string               `protobuf:"bytes,5,opt,name=user_job,json=userJob,proto3" json:"user_job,omitempty" alias:"user_job"`                        // @gotags: alias:"user_job"
 	TargetUserId *string              `protobuf:"bytes,6,opt,name=target_user_id,json=targetUserId,proto3,oneof" json:"target_user_id,omitempty" alias:"target_user_id"` // @gotags: alias:"target_user_id"

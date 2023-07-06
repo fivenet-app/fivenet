@@ -10,15 +10,15 @@ export interface Vehicle {
     /**
      * @generated from protobuf field: string plate = 1;
      */
-    plate: string; // @gotags: alias:"plate"
+    plate: string;
     /**
      * @generated from protobuf field: string model = 2;
      */
-    model: string; // @gotags: alias:"model"
+    model: string;
     /**
      * @generated from protobuf field: string type = 3;
      */
-    type: string; // @gotags: alias:"type"
+    type: string;
     /**
      * @generated from protobuf field: resources.users.UserShort owner = 4;
      */

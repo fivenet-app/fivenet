@@ -28,14 +28,14 @@ type Comment struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id         uint64               `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id"`                                      // @gotags: alias:"id"
-	CreatedAt  *timestamp.Timestamp `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty" alias:"created_at"`  // @gotags: alias:"created_at"
-	UpdatedAt  *timestamp.Timestamp `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty" alias:"updated_at"`  // @gotags: alias:"updated_at"
-	DocumentId uint64               `protobuf:"varint,4,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty" alias:"document_id"`    // @gotags: alias:"document_id"
-	Comment    string               `protobuf:"bytes,5,opt,name=comment,proto3" json:"comment,omitempty" alias:"comment"`                             // @gotags: alias:"comment"
-	CreatorId  *int32               `protobuf:"varint,6,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty" alias:"creator_id"` // @gotags: alias:"creator_id"
-	Creator    *users.UserShort     `protobuf:"bytes,7,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"creator"`                       // @gotags: alias:"creator"
-	DeletedAt  *timestamp.Timestamp `protobuf:"bytes,8,opt,name=deleted_at,json=deletedAt,proto3" json:"deleted_at,omitempty" alias:"deleted_at"`        // @gotags: alias:"deleted_at"
+	Id         uint64               `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id"` // @gotags: alias:"id"
+	CreatedAt  *timestamp.Timestamp `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
+	UpdatedAt  *timestamp.Timestamp `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
+	DocumentId uint64               `protobuf:"varint,4,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
+	Comment    string               `protobuf:"bytes,5,opt,name=comment,proto3" json:"comment,omitempty"`
+	CreatorId  *int32               `protobuf:"varint,6,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty"`
+	Creator    *users.UserShort     `protobuf:"bytes,7,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"creator"` // @gotags: alias:"creator"
+	DeletedAt  *timestamp.Timestamp `protobuf:"bytes,8,opt,name=deleted_at,json=deletedAt,proto3" json:"deleted_at,omitempty"`
 }
 
 func (x *Comment) Reset() {

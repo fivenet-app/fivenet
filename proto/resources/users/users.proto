@@ -9,50 +9,50 @@ import "validate/validate.proto";
 
 message UserShort {
   int32 user_id = 1 [(validate.rules).int32.gt = 0]; // @gotags: alias:"id"
-  string identifier = 2 [(validate.rules).string.len = 46]; // @gotags: alias:"identifier"
-  string job = 3 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job"
-  optional string job_label = 4 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job_label"
-  int32 job_grade = 5 [(validate.rules).int32.gt = -1]; // @gotags: alias:"job_grade"
-  optional string job_grade_label = 6 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job_grade_label"
-  string firstname = 7 [(validate.rules).string = {min_len: 1, max_len: 50}]; // @gotags: alias:"firstname"
-  string lastname = 8 [(validate.rules).string = {min_len: 1, max_len: 50}]; // @gotags: alias:"lastname"
-  string dateofbirth = 9 [(validate.rules).string.len = 10]; // @gotags: alias:"dateofbirth"
+  string identifier = 2 [(validate.rules).string.len = 46];
+  string job = 3 [(validate.rules).string.max_len = 50];
+  optional string job_label = 4 [(validate.rules).string.max_len = 50];
+  int32 job_grade = 5 [(validate.rules).int32.gt = -1];
+  optional string job_grade_label = 6 [(validate.rules).string.max_len = 50];
+  string firstname = 7 [(validate.rules).string = {min_len: 1, max_len: 50}];
+  string lastname = 8 [(validate.rules).string = {min_len: 1, max_len: 50}];
+  string dateofbirth = 9 [(validate.rules).string.len = 10];
 }
 
 message User {
   int32 user_id = 1 [(validate.rules).int32.gt = 0]; // @gotags: alias:"id"
-  string identifier = 2 [(validate.rules).string.len = 46]; // @gotags: alias:"identifier"
-  string job = 3 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job"
-  optional string job_label = 4 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job_label"
-  int32 job_grade = 5 [(validate.rules).int32.gt = -1]; // @gotags: alias:"job_grade"
-  optional string job_grade_label = 6 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job_grade_label"
-  string firstname = 7 [(validate.rules).string = {min_len: 1, max_len: 50}]; // @gotags: alias:"firstname"
-  string lastname = 8 [(validate.rules).string = {min_len: 1, max_len: 50}]; // @gotags: alias:"lastname"
-  string dateofbirth = 9 [(validate.rules).string.len = 10]; // @gotags: alias:"dateofbirth"
-  optional string sex = 10 [(validate.rules).string = {min_len: 1, max_len: 2}]; // @gotags: alias:"sex"
-  optional string height = 11; // @gotags: alias:"height"
-  optional string phone_number = 12 [(validate.rules).string.max_len = 20]; // @gotags: alias:"phone_number"
-  optional int32 visum = 13 [(validate.rules).int32.gte = 0]; // @gotags: alias:"visum"
-  optional int32 playtime = 14 [(validate.rules).int32.gte = 0]; // @gotags: alias:"playtime"
+  string identifier = 2 [(validate.rules).string.len = 46];
+  string job = 3 [(validate.rules).string.max_len = 50];
+  optional string job_label = 4 [(validate.rules).string.max_len = 50];
+  int32 job_grade = 5 [(validate.rules).int32.gt = -1];
+  optional string job_grade_label = 6 [(validate.rules).string.max_len = 50];
+  string firstname = 7 [(validate.rules).string = {min_len: 1, max_len: 50}];
+  string lastname = 8 [(validate.rules).string = {min_len: 1, max_len: 50}];
+  string dateofbirth = 9 [(validate.rules).string.len = 10];
+  optional string sex = 10 [(validate.rules).string = {min_len: 1, max_len: 2}];
+  optional string height = 11;
+  optional string phone_number = 12 [(validate.rules).string.max_len = 20];
+  optional int32 visum = 13 [(validate.rules).int32.gte = 0];
+  optional int32 playtime = 14 [(validate.rules).int32.gte = 0];
 
   UserProps props = 15; // @gotags: alias:"fivenet_user_props"
   repeated License licenses = 16; // @gotags: alias:"user_licenses"
 }
 
 message License {
-  string type = 1 [(validate.rules).string = {min_len: 3, max_len: 60}]; // @gotags: alias:"type"
-  string label = 2; // @gotags: alias:"label"
+  string type = 1 [(validate.rules).string = {min_len: 3, max_len: 60}];
+  string label = 2;
 }
 
 message UserProps {
-  int32 user_id = 1 [(validate.rules).int32.gt = 0]; // @gotags: alias:"user_id"
-  optional bool wanted = 2; // @gotags: alias:"wanted"
+  int32 user_id = 1 [(validate.rules).int32.gt = 0];
+  optional bool wanted = 2;
   optional string job_name = 3; // @gotags: alias:"job"
   optional resources.jobs.Job job = 4;
   optional int32 job_grade_number = 5; // @gotags: alias:"job_grade"
   optional resources.jobs.JobGrade job_grade = 6;
-  optional uint64 traffic_infraction_points = 7; // @gotags: alias:"traffic_infraction_points"
-  optional uint64 open_fines = 8; // @gotags: alias:"open_fines"
+  optional uint64 traffic_infraction_points = 7;
+  optional uint64 open_fines = 8;
 }
 
 enum USER_ACTIVITY_TYPE {

@@ -26,10 +26,10 @@ type Category struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id          uint64  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id"`                        // @gotags: alias:"id"
-	Name        string  `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty" alias:"name"`                     // @gotags: alias:"name"
-	Description *string `protobuf:"bytes,3,opt,name=description,proto3,oneof" json:"description,omitempty" alias:"description"` // @gotags: alias:"description"
-	Job         *string `protobuf:"bytes,4,opt,name=job,proto3,oneof" json:"job,omitempty" alias:"job"`                 // @gotags: alias:"job"
+	Id          uint64  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Name        string  `protobuf:"bytes,2,opt,name=name,proto3" json:"name,omitempty"`
+	Description *string `protobuf:"bytes,3,opt,name=description,proto3,oneof" json:"description,omitempty"`
+	Job         *string `protobuf:"bytes,4,opt,name=job,proto3,oneof" json:"job,omitempty"`
 }
 
 func (x *Category) Reset() {

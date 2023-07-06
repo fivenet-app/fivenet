@@ -15,7 +15,7 @@ export interface AuditEntry {
     /**
      * @generated from protobuf field: resources.timestamp.Timestamp created_at = 2;
      */
-    createdAt?: Timestamp; // @gotags: alias:"created_at"
+    createdAt?: Timestamp;
     /**
      * @generated from protobuf field: uint64 user_id = 3;
      */
