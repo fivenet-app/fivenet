@@ -13,6 +13,8 @@ definePageMeta({
     permission: 'CentrumService.Stream',
     showQuickButtons: false,
 });
+
+const { $grpc } = useNuxtApp();
 </script>
 
 <template>
