@@ -169,7 +169,7 @@
                 "register_account": "Konto mit Token registrieren",
                 "login_error": "Es gab einen Fehler beim Login, bitte versuche es erneut!",
                 "title": "Anmeldung",
-                "forgot_password": "Passwort zurücksetzen"
+                "forgot_password": "Passwort vergessen"
             },
             "create_account": {
                 "title": "Konto erstellen",
@@ -189,7 +189,7 @@
                 "subtitle": "Ihr Third-Party Login, für schnelleres Anmelden und coole zusätzliche Funktionen."
             },
             "forgot_password": {
-                "title": "Passwort zurücksetzen",
+                "title": "Passwort vergessen",
                 "subtitle": "Um Ihr Passwort zurückzusetzen, treten Sie dem FiveM-Server bei und geben Sie den Befehl /fivenet ein, um einen neuen Registrierungstoken zu erhalten.",
                 "registration_token": "Registrierungstoken",
                 "submit_button": "Neues Passwort festlegen",
@@ -422,7 +422,6 @@
         "created": "Erstellt",
         "created_at": "Erstellt am",
         "created_by": "Erstellt von",
-        "updated": "Aktualisiert",
         "updated_at": "Aktualisiert am",
         "target": "Ziel",
         "source": "Quelle",
@@ -511,6 +510,7 @@
         "unit": "Einheit | Einheiten",
         "color": "Farbe",
         "initials": "Initialen",
+        "updated": "Aktualisiert",
         "members": "Keine Mitglieder | {n} Mitglied | {n} Mitglieder"
     },
     "notifications": {
