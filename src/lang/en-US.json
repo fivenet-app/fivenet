@@ -169,7 +169,7 @@
                 "register_account": "Register Account using Token",
                 "login_error": "There was an error signing you in, please try again!",
                 "title": "Login",
-                "forgot_password": "Reset Password"
+                "forgot_password": "Forgot Password"
             },
             "create_account": {
                 "title": "Create Account",
@@ -189,7 +189,7 @@
                 "subtitle": "Your Social Login connections, for faster login and cool additional features."
             },
             "forgot_password": {
-                "title": "Reset Password",
+                "title": "Forgot Password",
                 "subtitle": "To reset your apssword, join the FiveM server and run /fivenet command to get a new registration token.",
                 "registration_token": "Registration Token",
                 "submit_button": "Set new Password",
@@ -422,7 +422,6 @@
         "created": "Created",
         "created_at": "Created at",
         "created_by": "Created by",
-        "updated": "Updated",
         "updated_at": "Updated at",
         "target": "Target",
         "source": "Source",
@@ -511,6 +510,7 @@
         "unit": "Unit | Units",
         "color": "Color",
         "initials": "Initials",
+        "updated": "Updated",
         "members": "No Members | {n} Member | {n} Members"
     },
     "notifications": {
