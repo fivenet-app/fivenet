@@ -230,6 +230,22 @@ export interface UpdateDispatchResponse {
  * @generated from protobuf message services.centrum.UpdateDispatchStatusRequest
  */
 export interface UpdateDispatchStatusRequest {
+    /**
+     * @generated from protobuf field: uint64 dispatch_id = 1;
+     */
+    dispatchId: bigint;
+    /**
+     * @generated from protobuf field: resources.dispatch.DISPATCH_STATUS status = 2;
+     */
+    status: DISPATCH_STATUS;
+    /**
+     * @generated from protobuf field: optional string reason = 3;
+     */
+    reason?: string;
+    /**
+     * @generated from protobuf field: optional string code = 4;
+     */
+    code?: string;
 }
 /**
  * @generated from protobuf message services.centrum.UpdateDispatchStatusResponse
@@ -240,6 +256,26 @@ export interface UpdateDispatchStatusResponse {
  * @generated from protobuf message services.centrum.AssignDispatchRequest
  */
 export interface AssignDispatchRequest {
+    /**
+     * @generated from protobuf field: uint64 dispatch_id = 1;
+     */
+    dispatchId: bigint;
+    /**
+     * @generated from protobuf field: optional bool self_add = 2;
+     */
+    selfAdd?: boolean;
+    /**
+     * @generated from protobuf field: optional bool self_remove = 3;
+     */
+    selfRemove?: boolean;
+    /**
+     * @generated from protobuf field: repeated uint64 to_add = 4;
+     */
+    toAdd: bigint[];
+    /**
+     * @generated from protobuf field: repeated uint64 to_remove = 5;
+     */
+    toRemove: bigint[];
 }
 /**
  * @generated from protobuf message services.centrum.AssignDispatchResponse
@@ -304,14 +340,14 @@ export interface DispatchChange {
     id: bigint;
 }
 /**
- * @generated from protobuf message services.centrum.CentrumStreamRequest
+ * @generated from protobuf message services.centrum.StreamRequest
  */
-export interface CentrumStreamRequest {
+export interface StreamRequest {
 }
 /**
- * @generated from protobuf message services.centrum.CentrumStreamResponse
+ * @generated from protobuf message services.centrum.StreamResponse
  */
-export interface CentrumStreamResponse {
+export interface StreamResponse {
     /**
      * @generated from protobuf oneof: change
      */
@@ -615,7 +651,12 @@ export const UpdateDispatchResponse = new UpdateDispatchResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class UpdateDispatchStatusRequest$Type extends MessageType<UpdateDispatchStatusRequest> {
     constructor() {
-        super("services.centrum.UpdateDispatchStatusRequest", []);
+        super("services.centrum.UpdateDispatchStatusRequest", [
+            { no: 1, name: "dispatch_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 2, name: "status", kind: "enum", T: () => ["resources.dispatch.DISPATCH_STATUS", DISPATCH_STATUS], options: { "validate.rules": { enum: { definedOnly: true } } } },
+            { no: 3, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 4, name: "code", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
+        ]);
     }
 }
 /**
@@ -635,7 +676,13 @@ export const UpdateDispatchStatusResponse = new UpdateDispatchStatusResponse$Typ
 // @generated message type with reflection information, may provide speed optimized methods
 class AssignDispatchRequest$Type extends MessageType<AssignDispatchRequest> {
     constructor() {
-        super("services.centrum.AssignDispatchRequest", []);
+        super("services.centrum.AssignDispatchRequest", [
+            { no: 1, name: "dispatch_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 2, name: "self_add", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 3, name: "self_remove", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 4, name: "to_add", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 5, name: "to_remove", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+        ]);
     }
 }
 /**
@@ -716,19 +763,19 @@ class DispatchChange$Type extends MessageType<DispatchChange> {
  */
 export const DispatchChange = new DispatchChange$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class CentrumStreamRequest$Type extends MessageType<CentrumStreamRequest> {
+class StreamRequest$Type extends MessageType<StreamRequest> {
     constructor() {
-        super("services.centrum.CentrumStreamRequest", []);
+        super("services.centrum.StreamRequest", []);
     }
 }
 /**
- * @generated MessageType for protobuf message services.centrum.CentrumStreamRequest
+ * @generated MessageType for protobuf message services.centrum.StreamRequest
  */
-export const CentrumStreamRequest = new CentrumStreamRequest$Type();
+export const StreamRequest = new StreamRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class CentrumStreamResponse$Type extends MessageType<CentrumStreamResponse> {
+class StreamResponse$Type extends MessageType<StreamResponse> {
     constructor() {
-        super("services.centrum.CentrumStreamResponse", [
+        super("services.centrum.StreamResponse", [
             { no: 1, name: "units_change", kind: "message", oneof: "change", T: () => UnitChanges },
             { no: 2, name: "unit_status", kind: "message", oneof: "change", T: () => UnitStatus },
             { no: 3, name: "dispatches_change", kind: "message", oneof: "change", T: () => DispatchChanges },
@@ -738,9 +785,9 @@ class CentrumStreamResponse$Type extends MessageType<CentrumStreamResponse> {
     }
 }
 /**
- * @generated MessageType for protobuf message services.centrum.CentrumStreamResponse
+ * @generated MessageType for protobuf message services.centrum.StreamResponse
  */
-export const CentrumStreamResponse = new CentrumStreamResponse$Type();
+export const StreamResponse = new StreamResponse$Type();
 /**
  * @generated ServiceType for protobuf service services.centrum.CentrumService
  */
@@ -758,5 +805,5 @@ export const CentrumService = new ServiceType("services.centrum.CentrumService",
     { name: "UpdateDispatchStatus", options: {}, I: UpdateDispatchStatusRequest, O: UpdateDispatchStatusResponse },
     { name: "AssignDispatch", options: {}, I: AssignDispatchRequest, O: AssignDispatchResponse },
     { name: "ListDispatchActivity", options: {}, I: ListActivityRequest, O: ListDispatchActivityResponse },
-    { name: "Stream", serverStreaming: true, options: {}, I: CentrumStreamRequest, O: CentrumStreamResponse }
+    { name: "Stream", serverStreaming: true, options: {}, I: StreamRequest, O: StreamResponse }
 ]);

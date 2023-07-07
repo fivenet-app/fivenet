@@ -2640,6 +2640,27 @@ func (m *UpdateDispatchStatusRequest) validate(all bool) error {
 
 	var errors []error
 
+	// no validation rules for DispatchId
+
+	if _, ok := dispatch.DISPATCH_STATUS_name[int32(m.GetStatus())]; !ok {
+		err := UpdateDispatchStatusRequestValidationError{
+			field:  "Status",
+			reason: "value must be one of the defined enum values",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.Reason != nil {
+		// no validation rules for Reason
+	}
+
+	if m.Code != nil {
+		// no validation rules for Code
+	}
+
 	if len(errors) > 0 {
 		return UpdateDispatchStatusRequestMultiError(errors)
 	}
@@ -2845,6 +2866,16 @@ func (m *AssignDispatchRequest) validate(all bool) error {
 	}
 
 	var errors []error
+
+	// no validation rules for DispatchId
+
+	if m.SelfAdd != nil {
+		// no validation rules for SelfAdd
+	}
+
+	if m.SelfRemove != nil {
+		// no validation rules for SelfRemove
+	}
 
 	if len(errors) > 0 {
 		return AssignDispatchRequestMultiError(errors)
@@ -3691,22 +3722,22 @@ var _ interface {
 	ErrorName() string
 } = DispatchChangeValidationError{}
 
-// Validate checks the field values on CentrumStreamRequest with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the first error encountered is returned, or nil if there are no violations.
-func (m *CentrumStreamRequest) Validate() error {
+// Validate checks the field values on StreamRequest with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *StreamRequest) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on CentrumStreamRequest with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// CentrumStreamRequestMultiError, or nil if none found.
-func (m *CentrumStreamRequest) ValidateAll() error {
+// ValidateAll checks the field values on StreamRequest with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in StreamRequestMultiError, or
+// nil if none found.
+func (m *StreamRequest) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *CentrumStreamRequest) validate(all bool) error {
+func (m *StreamRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -3714,19 +3745,19 @@ func (m *CentrumStreamRequest) validate(all bool) error {
 	var errors []error
 
 	if len(errors) > 0 {
-		return CentrumStreamRequestMultiError(errors)
+		return StreamRequestMultiError(errors)
 	}
 
 	return nil
 }
 
-// CentrumStreamRequestMultiError is an error wrapping multiple validation
-// errors returned by CentrumStreamRequest.ValidateAll() if the designated
-// constraints aren't met.
-type CentrumStreamRequestMultiError []error
+// StreamRequestMultiError is an error wrapping multiple validation errors
+// returned by StreamRequest.ValidateAll() if the designated constraints
+// aren't met.
+type StreamRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m CentrumStreamRequestMultiError) Error() string {
+func (m StreamRequestMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -3735,11 +3766,11 @@ func (m CentrumStreamRequestMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m CentrumStreamRequestMultiError) AllErrors() []error { return m }
+func (m StreamRequestMultiError) AllErrors() []error { return m }
 
-// CentrumStreamRequestValidationError is the validation error returned by
-// CentrumStreamRequest.Validate if the designated constraints aren't met.
-type CentrumStreamRequestValidationError struct {
+// StreamRequestValidationError is the validation error returned by
+// StreamRequest.Validate if the designated constraints aren't met.
+type StreamRequestValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -3747,24 +3778,22 @@ type CentrumStreamRequestValidationError struct {
 }
 
 // Field function returns field value.
-func (e CentrumStreamRequestValidationError) Field() string { return e.field }
+func (e StreamRequestValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e CentrumStreamRequestValidationError) Reason() string { return e.reason }
+func (e StreamRequestValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e CentrumStreamRequestValidationError) Cause() error { return e.cause }
+func (e StreamRequestValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e CentrumStreamRequestValidationError) Key() bool { return e.key }
+func (e StreamRequestValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e CentrumStreamRequestValidationError) ErrorName() string {
-	return "CentrumStreamRequestValidationError"
-}
+func (e StreamRequestValidationError) ErrorName() string { return "StreamRequestValidationError" }
 
 // Error satisfies the builtin error interface
-func (e CentrumStreamRequestValidationError) Error() string {
+func (e StreamRequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -3776,14 +3805,14 @@ func (e CentrumStreamRequestValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sCentrumStreamRequest.%s: %s%s",
+		"invalid %sStreamRequest.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = CentrumStreamRequestValidationError{}
+var _ error = StreamRequestValidationError{}
 
 var _ interface {
 	Field() string
@@ -3791,24 +3820,24 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = CentrumStreamRequestValidationError{}
+} = StreamRequestValidationError{}
 
-// Validate checks the field values on CentrumStreamResponse with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the first error encountered is returned, or nil if there are no violations.
-func (m *CentrumStreamResponse) Validate() error {
+// Validate checks the field values on StreamResponse with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *StreamResponse) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on CentrumStreamResponse with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// CentrumStreamResponseMultiError, or nil if none found.
-func (m *CentrumStreamResponse) ValidateAll() error {
+// ValidateAll checks the field values on StreamResponse with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in StreamResponseMultiError,
+// or nil if none found.
+func (m *StreamResponse) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *CentrumStreamResponse) validate(all bool) error {
+func (m *StreamResponse) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -3816,9 +3845,9 @@ func (m *CentrumStreamResponse) validate(all bool) error {
 	var errors []error
 
 	switch v := m.Change.(type) {
-	case *CentrumStreamResponse_UnitsChange:
+	case *StreamResponse_UnitsChange:
 		if v == nil {
-			err := CentrumStreamResponseValidationError{
+			err := StreamResponseValidationError{
 				field:  "Change",
 				reason: "oneof value cannot be a typed-nil",
 			}
@@ -3832,7 +3861,7 @@ func (m *CentrumStreamResponse) validate(all bool) error {
 			switch v := interface{}(m.GetUnitsChange()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, CentrumStreamResponseValidationError{
+					errors = append(errors, StreamResponseValidationError{
 						field:  "UnitsChange",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -3840,7 +3869,7 @@ func (m *CentrumStreamResponse) validate(all bool) error {
 				}
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
-					errors = append(errors, CentrumStreamResponseValidationError{
+					errors = append(errors, StreamResponseValidationError{
 						field:  "UnitsChange",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -3849,7 +3878,7 @@ func (m *CentrumStreamResponse) validate(all bool) error {
 			}
 		} else if v, ok := interface{}(m.GetUnitsChange()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				return CentrumStreamResponseValidationError{
+				return StreamResponseValidationError{
 					field:  "UnitsChange",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -3857,9 +3886,9 @@ func (m *CentrumStreamResponse) validate(all bool) error {
 			}
 		}
 
-	case *CentrumStreamResponse_UnitStatus:
+	case *StreamResponse_UnitStatus:
 		if v == nil {
-			err := CentrumStreamResponseValidationError{
+			err := StreamResponseValidationError{
 				field:  "Change",
 				reason: "oneof value cannot be a typed-nil",
 			}
@@ -3873,7 +3902,7 @@ func (m *CentrumStreamResponse) validate(all bool) error {
 			switch v := interface{}(m.GetUnitStatus()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, CentrumStreamResponseValidationError{
+					errors = append(errors, StreamResponseValidationError{
 						field:  "UnitStatus",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -3881,7 +3910,7 @@ func (m *CentrumStreamResponse) validate(all bool) error {
 				}
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
-					errors = append(errors, CentrumStreamResponseValidationError{
+					errors = append(errors, StreamResponseValidationError{
 						field:  "UnitStatus",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -3890,7 +3919,7 @@ func (m *CentrumStreamResponse) validate(all bool) error {
 			}
 		} else if v, ok := interface{}(m.GetUnitStatus()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				return CentrumStreamResponseValidationError{
+				return StreamResponseValidationError{
 					field:  "UnitStatus",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -3898,9 +3927,9 @@ func (m *CentrumStreamResponse) validate(all bool) error {
 			}
 		}
 
-	case *CentrumStreamResponse_DispatchesChange:
+	case *StreamResponse_DispatchesChange:
 		if v == nil {
-			err := CentrumStreamResponseValidationError{
+			err := StreamResponseValidationError{
 				field:  "Change",
 				reason: "oneof value cannot be a typed-nil",
 			}
@@ -3914,7 +3943,7 @@ func (m *CentrumStreamResponse) validate(all bool) error {
 			switch v := interface{}(m.GetDispatchesChange()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, CentrumStreamResponseValidationError{
+					errors = append(errors, StreamResponseValidationError{
 						field:  "DispatchesChange",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -3922,7 +3951,7 @@ func (m *CentrumStreamResponse) validate(all bool) error {
 				}
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
-					errors = append(errors, CentrumStreamResponseValidationError{
+					errors = append(errors, StreamResponseValidationError{
 						field:  "DispatchesChange",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -3931,7 +3960,7 @@ func (m *CentrumStreamResponse) validate(all bool) error {
 			}
 		} else if v, ok := interface{}(m.GetDispatchesChange()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				return CentrumStreamResponseValidationError{
+				return StreamResponseValidationError{
 					field:  "DispatchesChange",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -3939,9 +3968,9 @@ func (m *CentrumStreamResponse) validate(all bool) error {
 			}
 		}
 
-	case *CentrumStreamResponse_DispatchStatus:
+	case *StreamResponse_DispatchStatus:
 		if v == nil {
-			err := CentrumStreamResponseValidationError{
+			err := StreamResponseValidationError{
 				field:  "Change",
 				reason: "oneof value cannot be a typed-nil",
 			}
@@ -3955,7 +3984,7 @@ func (m *CentrumStreamResponse) validate(all bool) error {
 			switch v := interface{}(m.GetDispatchStatus()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, CentrumStreamResponseValidationError{
+					errors = append(errors, StreamResponseValidationError{
 						field:  "DispatchStatus",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -3963,7 +3992,7 @@ func (m *CentrumStreamResponse) validate(all bool) error {
 				}
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
-					errors = append(errors, CentrumStreamResponseValidationError{
+					errors = append(errors, StreamResponseValidationError{
 						field:  "DispatchStatus",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -3972,7 +4001,7 @@ func (m *CentrumStreamResponse) validate(all bool) error {
 			}
 		} else if v, ok := interface{}(m.GetDispatchStatus()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				return CentrumStreamResponseValidationError{
+				return StreamResponseValidationError{
 					field:  "DispatchStatus",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -3980,9 +4009,9 @@ func (m *CentrumStreamResponse) validate(all bool) error {
 			}
 		}
 
-	case *CentrumStreamResponse_DispatchAssigned:
+	case *StreamResponse_DispatchAssigned:
 		if v == nil {
-			err := CentrumStreamResponseValidationError{
+			err := StreamResponseValidationError{
 				field:  "Change",
 				reason: "oneof value cannot be a typed-nil",
 			}
@@ -3996,7 +4025,7 @@ func (m *CentrumStreamResponse) validate(all bool) error {
 			switch v := interface{}(m.GetDispatchAssigned()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, CentrumStreamResponseValidationError{
+					errors = append(errors, StreamResponseValidationError{
 						field:  "DispatchAssigned",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -4004,7 +4033,7 @@ func (m *CentrumStreamResponse) validate(all bool) error {
 				}
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
-					errors = append(errors, CentrumStreamResponseValidationError{
+					errors = append(errors, StreamResponseValidationError{
 						field:  "DispatchAssigned",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -4013,7 +4042,7 @@ func (m *CentrumStreamResponse) validate(all bool) error {
 			}
 		} else if v, ok := interface{}(m.GetDispatchAssigned()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				return CentrumStreamResponseValidationError{
+				return StreamResponseValidationError{
 					field:  "DispatchAssigned",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -4026,19 +4055,19 @@ func (m *CentrumStreamResponse) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return CentrumStreamResponseMultiError(errors)
+		return StreamResponseMultiError(errors)
 	}
 
 	return nil
 }
 
-// CentrumStreamResponseMultiError is an error wrapping multiple validation
-// errors returned by CentrumStreamResponse.ValidateAll() if the designated
-// constraints aren't met.
-type CentrumStreamResponseMultiError []error
+// StreamResponseMultiError is an error wrapping multiple validation errors
+// returned by StreamResponse.ValidateAll() if the designated constraints
+// aren't met.
+type StreamResponseMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m CentrumStreamResponseMultiError) Error() string {
+func (m StreamResponseMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -4047,11 +4076,11 @@ func (m CentrumStreamResponseMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m CentrumStreamResponseMultiError) AllErrors() []error { return m }
+func (m StreamResponseMultiError) AllErrors() []error { return m }
 
-// CentrumStreamResponseValidationError is the validation error returned by
-// CentrumStreamResponse.Validate if the designated constraints aren't met.
-type CentrumStreamResponseValidationError struct {
+// StreamResponseValidationError is the validation error returned by
+// StreamResponse.Validate if the designated constraints aren't met.
+type StreamResponseValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -4059,24 +4088,22 @@ type CentrumStreamResponseValidationError struct {
 }
 
 // Field function returns field value.
-func (e CentrumStreamResponseValidationError) Field() string { return e.field }
+func (e StreamResponseValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e CentrumStreamResponseValidationError) Reason() string { return e.reason }
+func (e StreamResponseValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e CentrumStreamResponseValidationError) Cause() error { return e.cause }
+func (e StreamResponseValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e CentrumStreamResponseValidationError) Key() bool { return e.key }
+func (e StreamResponseValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e CentrumStreamResponseValidationError) ErrorName() string {
-	return "CentrumStreamResponseValidationError"
-}
+func (e StreamResponseValidationError) ErrorName() string { return "StreamResponseValidationError" }
 
 // Error satisfies the builtin error interface
-func (e CentrumStreamResponseValidationError) Error() string {
+func (e StreamResponseValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -4088,14 +4115,14 @@ func (e CentrumStreamResponseValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sCentrumStreamResponse.%s: %s%s",
+		"invalid %sStreamResponse.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = CentrumStreamResponseValidationError{}
+var _ error = StreamResponseValidationError{}
 
 var _ interface {
 	Field() string
@@ -4103,4 +4130,4 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = CentrumStreamResponseValidationError{}
+} = StreamResponseValidationError{}

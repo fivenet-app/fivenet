@@ -13,16 +13,20 @@ message Dispatch {
   uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
   optional resources.timestamp.Timestamp created_at = 2;
   optional resources.timestamp.Timestamp updated_at = 3;
-  optional string job = 4 [(validate.rules).string.max_len = 50];
+  string job = 4 [(validate.rules).string.max_len = 50];
   optional DispatchStatus status = 5;
   string message = 6 [(validate.rules).string.max_len = 255];
   optional string description = 7 [(validate.rules).string.max_len = 1024];
-  map<string, string> attributes = 8;
+  optional Attributes attributes = 8;
   resources.livemap.DispatchMarker marker = 9;
   optional bool anon = 10;
-  optional bool user_id = 11;
+  optional int32 user_id = 11;
   optional resources.users.UserShort user = 12;
   repeated DispatchAssignment units = 13;
+}
+
+message Attributes {
+  repeated string list = 1;
 }
 
 message DispatchAssignment {
@@ -32,12 +36,14 @@ message DispatchAssignment {
 }
 
 enum DISPATCH_STATUS {
-  DECLINED = 0;
-  UNASSIGNED = 1;
-  EN_ROUTE = 2;
-  AT_SCENE = 3;
-  NEED_ASSISTANCE = 4;
-  COMPLETED = 5;
+  NEW = 0;
+  DECLINED = 1;
+  UNASSIGNED = 2;
+  UNIT_ASSIGNED = 3;
+  EN_ROUTE = 4;
+  AT_SCENE = 5;
+  NEED_ASSISTANCE = 6;
+  COMPLETED = 7;
 }
 
 message DispatchStatus {
@@ -48,6 +54,6 @@ message DispatchStatus {
   DISPATCH_STATUS status = 5 [(validate.rules).enum.defined_only = true];
   optional string reason = 6 [(validate.rules).string.max_len = 255];
   optional string code = 7 [(validate.rules).string.max_len = 20];
-  int32 user_id = 8 [(validate.rules).int32.gt = 0];
-  resources.users.UserShort user = 9;
+  optional int32 user_id = 8 [(validate.rules).int32.gt = 0];
+  optional resources.users.UserShort user = 9;
 }

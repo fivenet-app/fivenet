@@ -2,14 +2,11 @@ package centrum
 
 import (
 	"context"
-	"fmt"
 
 	database "github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
-	users "github.com/galexrt/fivenet/gen/go/proto/resources/users"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
-	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/galexrt/fivenet/pkg/utils/dbutils"
 	"github.com/galexrt/fivenet/pkg/utils/syncx"
 	"github.com/galexrt/fivenet/query/fivenet/model"
@@ -88,58 +85,6 @@ func (s *Server) loadUnits(ctx context.Context) error {
 	return nil
 }
 
-func (s *Server) resolveUsersForUnit(ctx context.Context, u []*dispatch.UnitAssignment) ([]*dispatch.UnitAssignment, error) {
-	userIds := make([]int32, len(u))
-	for i := 0; i < len(u); i++ {
-		userIds[i] = u[i].UserId
-	}
-
-	if len(userIds) == 0 {
-		return nil, nil
-	}
-
-	us, err := s.resolveUsersById(ctx, userIds)
-	if err != nil {
-		return nil, err
-	}
-
-	for i := 0; i < len(u); i++ {
-		u[i].User = us[i]
-	}
-
-	return u, nil
-}
-
-func (s *Server) resolveUsersById(ctx context.Context, u []int32) ([]*users.UserShort, error) {
-	if len(u) == 0 {
-		return nil, nil
-	}
-
-	userIds := make([]jet.Expression, len(u))
-	for i := 0; i < len(u); i++ {
-		userIds[i] = jet.Int32(u[i])
-	}
-
-	stmt := tUser.
-		SELECT(
-			tUser.ID.AS("user_id"),
-			tUser.Firstname,
-			tUser.Lastname,
-			tUser.Dateofbirth,
-		).
-		FROM(tUser).
-		WHERE(
-			tUser.ID.IN(userIds...),
-		)
-
-	resolvedUsers := []*users.UserShort{}
-	if err := stmt.QueryContext(ctx, s.db, &resolvedUsers); err != nil {
-		return nil, err
-	}
-
-	return resolvedUsers, nil
-}
-
 func (s *Server) ListUnits(ctx context.Context, req *ListUnitsRequest) (*ListUnitsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -172,20 +117,6 @@ func (s *Server) ListUnits(ctx context.Context, req *ListUnitsRequest) (*ListUni
 	auditEntry.State = int16(rector.EVENT_TYPE_VIEWED)
 
 	return resp, nil
-}
-
-func (s *Server) getUnit(ctx context.Context, userInfo *userinfo.UserInfo, id uint64) (*dispatch.Unit, error) {
-	jobUnits, ok := s.units.Load(userInfo.Job)
-	if !ok {
-		return nil, nil
-	}
-
-	unit, ok := jobUnits.Load(id)
-	if !ok {
-		return nil, nil
-	}
-
-	return unit, nil
 }
 
 func (s *Server) CreateOrUpdateUnit(ctx context.Context, req *CreateOrUpdateUnitRequest) (*CreateOrUpdateUnitResponse, error) {
@@ -246,6 +177,22 @@ func (s *Server) CreateOrUpdateUnit(ctx context.Context, req *CreateOrUpdateUnit
 
 		resp.Unit = unit
 
+		stmt = tUnitStatus.
+			INSERT(
+				tUnitStatus.UnitID,
+				tUnitStatus.Status,
+				tUnitStatus.UserID,
+			).
+			VALUES(
+				resp.Unit.Id,
+				dispatch.UNIT_STATUS_UNKNOWN,
+				userInfo.UserId,
+			)
+
+		if _, err := stmt.ExecContext(ctx, tx); err != nil {
+			return nil, err
+		}
+
 		auditEntry.State = int16(rector.EVENT_TYPE_CREATED)
 	} else {
 		stmt := tUnits.
@@ -280,22 +227,6 @@ func (s *Server) CreateOrUpdateUnit(ctx context.Context, req *CreateOrUpdateUnit
 		resp.Unit = unit
 
 		auditEntry.State = int16(rector.EVENT_TYPE_UPDATED)
-	}
-
-	stmt := tUnitStatus.
-		INSERT(
-			tUnitStatus.UnitID,
-			tUnitStatus.Status,
-			tUnitStatus.UserID,
-		).
-		VALUES(
-			resp.Unit.Id,
-			dispatch.UNIT_STATUS_UNAVAILABLE,
-			userInfo.UserId,
-		)
-
-	if _, err := stmt.ExecContext(ctx, tx); err != nil {
-		return nil, err
 	}
 
 	return resp, nil
@@ -389,7 +320,6 @@ func (s *Server) AssignUnit(ctx context.Context, req *AssignUnitRequest) (*Assig
 	for i := 0; i < len(req.ToAdd); i++ {
 		addIds[i] = jet.Int32(req.ToAdd[i])
 	}
-
 	removeIds := make([]jet.Expression, len(req.ToRemove))
 	for i := 0; i < len(req.ToRemove); i++ {
 		removeIds[i] = jet.Int32(req.ToRemove[i])
@@ -398,7 +328,7 @@ func (s *Server) AssignUnit(ctx context.Context, req *AssignUnitRequest) (*Assig
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
-		return nil, fmt.Errorf("failed to create/ update unit")
+		return nil, ErrFailedQuery
 	}
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
@@ -506,11 +436,21 @@ func (s *Server) ListUnitActivity(ctx context.Context, req *ListActivityRequest)
 			tUnitStatus.InSquad,
 			tUnitStatus.X,
 			tUnitStatus.Y,
+			tUser.Firstname,
+			tUser.Lastname,
+			tUser.Dateofbirth,
+			tUser.Job,
 		).
-		FROM(tUnitStatus).
+		FROM(
+			tUnitStatus.
+				LEFT_JOIN(tUser,
+					tUser.ID.EQ(tUnitStatus.UserID),
+				),
+		).
 		WHERE(
 			tUnitStatus.UnitID.EQ(jet.Uint64(req.Id)),
 		).
+		ORDER_BY(tUnitStatus.ID.DESC()).
 		OFFSET(req.Pagination.Offset).
 		LIMIT(limit)
 

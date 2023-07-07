@@ -494,44 +494,15 @@ func (m *UnitStatus) validate(all bool) error {
 
 	// no validation rules for UnitId
 
-	if m.GetUserId() <= 0 {
+	if _, ok := UNIT_STATUS_name[int32(m.GetStatus())]; !ok {
 		err := UnitStatusValidationError{
-			field:  "UserId",
-			reason: "value must be greater than 0",
+			field:  "Status",
+			reason: "value must be one of the defined enum values",
 		}
 		if !all {
 			return err
 		}
 		errors = append(errors, err)
-	}
-
-	if all {
-		switch v := interface{}(m.GetUser()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, UnitStatusValidationError{
-					field:  "User",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, UnitStatusValidationError{
-					field:  "User",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetUser()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return UnitStatusValidationError{
-				field:  "User",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
 	}
 
 	if m.CreatedAt != nil {
@@ -567,21 +538,6 @@ func (m *UnitStatus) validate(all bool) error {
 
 	}
 
-	if m.Status != nil {
-
-		if _, ok := UNIT_STATUS_name[int32(m.GetStatus())]; !ok {
-			err := UnitStatusValidationError{
-				field:  "Status",
-				reason: "value must be one of the defined enum values",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
-
-	}
-
 	if m.Reason != nil {
 
 		if utf8.RuneCountInString(m.GetReason()) > 255 {
@@ -608,6 +564,54 @@ func (m *UnitStatus) validate(all bool) error {
 				return err
 			}
 			errors = append(errors, err)
+		}
+
+	}
+
+	if m.UserId != nil {
+
+		if m.GetUserId() <= 0 {
+			err := UnitStatusValidationError{
+				field:  "UserId",
+				reason: "value must be greater than 0",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
+	if m.User != nil {
+
+		if all {
+			switch v := interface{}(m.GetUser()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, UnitStatusValidationError{
+						field:  "User",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, UnitStatusValidationError{
+						field:  "User",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetUser()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return UnitStatusValidationError{
+					field:  "User",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
 		}
 
 	}

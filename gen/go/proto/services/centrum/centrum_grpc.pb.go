@@ -49,7 +49,7 @@ type CentrumServiceClient interface {
 	// @perm: Name=Stream
 	ListDispatchActivity(ctx context.Context, in *ListActivityRequest, opts ...grpc.CallOption) (*ListDispatchActivityResponse, error)
 	// @perm
-	Stream(ctx context.Context, in *CentrumStreamRequest, opts ...grpc.CallOption) (CentrumService_StreamClient, error)
+	Stream(ctx context.Context, in *StreamRequest, opts ...grpc.CallOption) (CentrumService_StreamClient, error)
 }
 
 type centrumServiceClient struct {
@@ -177,7 +177,7 @@ func (c *centrumServiceClient) ListDispatchActivity(ctx context.Context, in *Lis
 	return out, nil
 }
 
-func (c *centrumServiceClient) Stream(ctx context.Context, in *CentrumStreamRequest, opts ...grpc.CallOption) (CentrumService_StreamClient, error) {
+func (c *centrumServiceClient) Stream(ctx context.Context, in *StreamRequest, opts ...grpc.CallOption) (CentrumService_StreamClient, error) {
 	stream, err := c.cc.NewStream(ctx, &CentrumService_ServiceDesc.Streams[0], "/services.centrum.CentrumService/Stream", opts...)
 	if err != nil {
 		return nil, err
@@ -193,7 +193,7 @@ func (c *centrumServiceClient) Stream(ctx context.Context, in *CentrumStreamRequ
 }
 
 type CentrumService_StreamClient interface {
-	Recv() (*CentrumStreamResponse, error)
+	Recv() (*StreamResponse, error)
 	grpc.ClientStream
 }
 
@@ -201,8 +201,8 @@ type centrumServiceStreamClient struct {
 	grpc.ClientStream
 }
 
-func (x *centrumServiceStreamClient) Recv() (*CentrumStreamResponse, error) {
-	m := new(CentrumStreamResponse)
+func (x *centrumServiceStreamClient) Recv() (*StreamResponse, error) {
+	m := new(StreamResponse)
 	if err := x.ClientStream.RecvMsg(m); err != nil {
 		return nil, err
 	}
@@ -240,7 +240,7 @@ type CentrumServiceServer interface {
 	// @perm: Name=Stream
 	ListDispatchActivity(context.Context, *ListActivityRequest) (*ListDispatchActivityResponse, error)
 	// @perm
-	Stream(*CentrumStreamRequest, CentrumService_StreamServer) error
+	Stream(*StreamRequest, CentrumService_StreamServer) error
 	mustEmbedUnimplementedCentrumServiceServer()
 }
 
@@ -287,7 +287,7 @@ func (UnimplementedCentrumServiceServer) AssignDispatch(context.Context, *Assign
 func (UnimplementedCentrumServiceServer) ListDispatchActivity(context.Context, *ListActivityRequest) (*ListDispatchActivityResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListDispatchActivity not implemented")
 }
-func (UnimplementedCentrumServiceServer) Stream(*CentrumStreamRequest, CentrumService_StreamServer) error {
+func (UnimplementedCentrumServiceServer) Stream(*StreamRequest, CentrumService_StreamServer) error {
 	return status.Errorf(codes.Unimplemented, "method Stream not implemented")
 }
 func (UnimplementedCentrumServiceServer) mustEmbedUnimplementedCentrumServiceServer() {}
@@ -538,7 +538,7 @@ func _CentrumService_ListDispatchActivity_Handler(srv interface{}, ctx context.C
 }
 
 func _CentrumService_Stream_Handler(srv interface{}, stream grpc.ServerStream) error {
-	m := new(CentrumStreamRequest)
+	m := new(StreamRequest)
 	if err := stream.RecvMsg(m); err != nil {
 		return err
 	}
@@ -546,7 +546,7 @@ func _CentrumService_Stream_Handler(srv interface{}, stream grpc.ServerStream) e
 }
 
 type CentrumService_StreamServer interface {
-	Send(*CentrumStreamResponse) error
+	Send(*StreamResponse) error
 	grpc.ServerStream
 }
 
@@ -554,7 +554,7 @@ type centrumServiceStreamServer struct {
 	grpc.ServerStream
 }
 
-func (x *centrumServiceStreamServer) Send(m *CentrumStreamResponse) error {
+func (x *centrumServiceStreamServer) Send(m *StreamResponse) error {
 	return x.ServerStream.SendMsg(m)
 }
 

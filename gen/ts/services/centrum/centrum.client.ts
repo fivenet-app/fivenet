@@ -4,8 +4,8 @@
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
 import { CentrumService } from "./centrum.js";
-import type { CentrumStreamResponse } from "./centrum.js";
-import type { CentrumStreamRequest } from "./centrum.js";
+import type { StreamResponse } from "./centrum.js";
+import type { StreamRequest } from "./centrum.js";
 import type { ServerStreamingCall } from "@protobuf-ts/runtime-rpc";
 import type { ListDispatchActivityResponse } from "./centrum.js";
 import type { AssignDispatchResponse } from "./centrum.js";
@@ -120,9 +120,9 @@ export interface ICentrumServiceClient {
     /**
      * @perm
      *
-     * @generated from protobuf rpc: Stream(services.centrum.CentrumStreamRequest) returns (stream services.centrum.CentrumStreamResponse);
+     * @generated from protobuf rpc: Stream(services.centrum.StreamRequest) returns (stream services.centrum.StreamResponse);
      */
-    stream(input: CentrumStreamRequest, options?: RpcOptions): ServerStreamingCall<CentrumStreamRequest, CentrumStreamResponse>;
+    stream(input: StreamRequest, options?: RpcOptions): ServerStreamingCall<StreamRequest, StreamResponse>;
 }
 /**
  * @generated from protobuf service services.centrum.CentrumService
@@ -253,10 +253,10 @@ export class CentrumServiceClient implements ICentrumServiceClient, ServiceInfo 
     /**
      * @perm
      *
-     * @generated from protobuf rpc: Stream(services.centrum.CentrumStreamRequest) returns (stream services.centrum.CentrumStreamResponse);
+     * @generated from protobuf rpc: Stream(services.centrum.StreamRequest) returns (stream services.centrum.StreamResponse);
      */
-    stream(input: CentrumStreamRequest, options?: RpcOptions): ServerStreamingCall<CentrumStreamRequest, CentrumStreamResponse> {
+    stream(input: StreamRequest, options?: RpcOptions): ServerStreamingCall<StreamRequest, StreamResponse> {
         const method = this.methods[13], opt = this._transport.mergeOptions(options);
-        return stackIntercept<CentrumStreamRequest, CentrumStreamResponse>("serverStreaming", this._transport, method, opt, input);
+        return stackIntercept<StreamRequest, StreamResponse>("serverStreaming", this._transport, method, opt, input);
     }
 }

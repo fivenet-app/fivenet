@@ -8,7 +8,6 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
-	"path"
 	"strings"
 	"syscall"
 	"time"
@@ -258,17 +257,15 @@ func (s *server) setupHTTPServer() *gin.Engine {
 			return
 		}
 
-		pathComponents := strings.Split(requestPath[1:], "/")
-		newPath := "/"
-		if requestPath != "/" && len(pathComponents) > 0 {
-			newPath += path.Join(pathComponents[:len(pathComponents)-1]...) + "/"
-		}
-
-		if fs.Exists("/", newPath) {
-			c.Request.URL.Path = newPath
+		if strings.HasSuffix(requestPath, "/") || !strings.Contains(requestPath, ".") {
+			c.Request.URL.Path = "/"
 			fileserver.ServeHTTP(c.Writer, c.Request)
 			c.Abort()
+			return
 		}
+
+		fileserver.ServeHTTP(c.Writer, c.Request)
+		c.Abort()
 	})
 	// Register output dir for assets and other static files
 	e.Use(static.Serve("/", fs))

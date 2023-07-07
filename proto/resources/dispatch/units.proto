@@ -27,23 +27,24 @@ message UnitAssignment {
 }
 
 enum UNIT_STATUS {
-  UNAVAILABLE = 0;
+  UNKNOWN = 0;
   USER_ADDED = 1;
   USER_REMOVED = 2;
-  AVAILABLE = 3;
-  ON_BREAK = 4;
-  BUSY = 5;
+  UNAVAILABLE = 3;
+  AVAILABLE = 4;
+  ON_BREAK = 5;
+  BUSY = 6;
 }
 
 message UnitStatus {
-  uint64 id = 1;
-  uint64 unit_id = 2;
-  optional resources.timestamp.Timestamp created_at = 3;
-  optional UNIT_STATUS status = 4 [(validate.rules).enum.defined_only = true];
+  uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
+  optional resources.timestamp.Timestamp created_at = 2;
+  uint64 unit_id = 3;
+  UNIT_STATUS status = 4 [(validate.rules).enum.defined_only = true];
   optional string reason = 5 [(validate.rules).string.max_len = 255];
   optional string code = 6 [(validate.rules).string.max_len = 20];
-  int32 user_id = 7 [(validate.rules).int32.gt = 0];
-  resources.users.UserShort user = 8;
+  optional int32 user_id = 7 [(validate.rules).int32.gt = 0];
+  optional resources.users.UserShort user = 8;
   optional bool in_squad = 9;
   optional float x = 10;
   optional float y = 11;

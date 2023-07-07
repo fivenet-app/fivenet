@@ -23,9 +23,9 @@ export interface Dispatch {
      */
     updatedAt?: Timestamp;
     /**
-     * @generated from protobuf field: optional string job = 4;
+     * @generated from protobuf field: string job = 4;
      */
-    job?: string;
+    job: string;
     /**
      * @generated from protobuf field: optional resources.dispatch.DispatchStatus status = 5;
      */
@@ -39,11 +39,9 @@ export interface Dispatch {
      */
     description?: string;
     /**
-     * @generated from protobuf field: map<string, string> attributes = 8;
+     * @generated from protobuf field: optional resources.dispatch.Attributes attributes = 8;
      */
-    attributes: {
-        [key: string]: string;
-    };
+    attributes?: Attributes;
     /**
      * @generated from protobuf field: resources.livemap.DispatchMarker marker = 9;
      */
@@ -53,9 +51,9 @@ export interface Dispatch {
      */
     anon?: boolean;
     /**
-     * @generated from protobuf field: optional bool user_id = 11;
+     * @generated from protobuf field: optional int32 user_id = 11;
      */
-    userId?: boolean;
+    userId?: number;
     /**
      * @generated from protobuf field: optional resources.users.UserShort user = 12;
      */
@@ -64,6 +62,15 @@ export interface Dispatch {
      * @generated from protobuf field: repeated resources.dispatch.DispatchAssignment units = 13;
      */
     units: DispatchAssignment[];
+}
+/**
+ * @generated from protobuf message resources.dispatch.Attributes
+ */
+export interface Attributes {
+    /**
+     * @generated from protobuf field: repeated string list = 1;
+     */
+    list: string[];
 }
 /**
  * @generated from protobuf message resources.dispatch.DispatchAssignment
@@ -115,11 +122,11 @@ export interface DispatchStatus {
      */
     code?: string;
     /**
-     * @generated from protobuf field: int32 user_id = 8;
+     * @generated from protobuf field: optional int32 user_id = 8;
      */
-    userId: number;
+    userId?: number;
     /**
-     * @generated from protobuf field: resources.users.UserShort user = 9;
+     * @generated from protobuf field: optional resources.users.UserShort user = 9;
      */
     user?: UserShort;
 }
@@ -128,29 +135,37 @@ export interface DispatchStatus {
  */
 export enum DISPATCH_STATUS {
     /**
-     * @generated from protobuf enum value: DECLINED = 0;
+     * @generated from protobuf enum value: NEW = 0;
      */
-    DECLINED = 0,
+    NEW = 0,
     /**
-     * @generated from protobuf enum value: UNASSIGNED = 1;
+     * @generated from protobuf enum value: DECLINED = 1;
      */
-    UNASSIGNED = 1,
+    DECLINED = 1,
     /**
-     * @generated from protobuf enum value: EN_ROUTE = 2;
+     * @generated from protobuf enum value: UNASSIGNED = 2;
      */
-    EN_ROUTE = 2,
+    UNASSIGNED = 2,
     /**
-     * @generated from protobuf enum value: AT_SCENE = 3;
+     * @generated from protobuf enum value: UNIT_ASSIGNED = 3;
      */
-    AT_SCENE = 3,
+    UNIT_ASSIGNED = 3,
     /**
-     * @generated from protobuf enum value: NEED_ASSISTANCE = 4;
+     * @generated from protobuf enum value: EN_ROUTE = 4;
      */
-    NEED_ASSISTANCE = 4,
+    EN_ROUTE = 4,
     /**
-     * @generated from protobuf enum value: COMPLETED = 5;
+     * @generated from protobuf enum value: AT_SCENE = 5;
      */
-    COMPLETED = 5
+    AT_SCENE = 5,
+    /**
+     * @generated from protobuf enum value: NEED_ASSISTANCE = 6;
+     */
+    NEED_ASSISTANCE = 6,
+    /**
+     * @generated from protobuf enum value: COMPLETED = 7;
+     */
+    COMPLETED = 7
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Dispatch$Type extends MessageType<Dispatch> {
@@ -159,14 +174,14 @@ class Dispatch$Type extends MessageType<Dispatch> {
             { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
-            { no: 4, name: "job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
+            { no: 4, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
             { no: 5, name: "status", kind: "message", T: () => DispatchStatus },
             { no: 6, name: "message", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
             { no: 7, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "1024" } } } },
-            { no: 8, name: "attributes", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "scalar", T: 9 /*ScalarType.STRING*/ } },
+            { no: 8, name: "attributes", kind: "message", T: () => Attributes },
             { no: 9, name: "marker", kind: "message", T: () => DispatchMarker },
             { no: 10, name: "anon", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
-            { no: 11, name: "user_id", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 11, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
             { no: 12, name: "user", kind: "message", T: () => UserShort },
             { no: 13, name: "units", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => DispatchAssignment }
         ]);
@@ -176,6 +191,18 @@ class Dispatch$Type extends MessageType<Dispatch> {
  * @generated MessageType for protobuf message resources.dispatch.Dispatch
  */
 export const Dispatch = new Dispatch$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class Attributes$Type extends MessageType<Attributes> {
+    constructor() {
+        super("resources.dispatch.Attributes", [
+            { no: 1, name: "list", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.dispatch.Attributes
+ */
+export const Attributes = new Attributes$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class DispatchAssignment$Type extends MessageType<DispatchAssignment> {
     constructor() {
@@ -201,7 +228,7 @@ class DispatchStatus$Type extends MessageType<DispatchStatus> {
             { no: 5, name: "status", kind: "enum", T: () => ["resources.dispatch.DISPATCH_STATUS", DISPATCH_STATUS], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 6, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
             { no: 7, name: "code", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
-            { no: 8, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
+            { no: 8, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
             { no: 9, name: "user", kind: "message", T: () => UserShort }
         ]);
     }

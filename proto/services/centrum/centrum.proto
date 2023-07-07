@@ -99,20 +99,23 @@ message UpdateDispatchResponse {
 }
 
 message UpdateDispatchStatusRequest {
-
+  uint64 dispatch_id = 1;
+  resources.dispatch.DISPATCH_STATUS status = 2 [(validate.rules).enum.defined_only = true];
+  optional string reason = 3;
+  optional string code = 4;
 }
 
-message UpdateDispatchStatusResponse {
-
-}
+message UpdateDispatchStatusResponse {}
 
 message AssignDispatchRequest {
-
+  uint64 dispatch_id = 1;
+  optional bool self_add = 2;
+  optional bool self_remove = 3;
+  repeated uint64 to_add = 4;
+  repeated uint64 to_remove = 5;
 }
 
-message AssignDispatchResponse {
-
-}
+message AssignDispatchResponse {}
 
 message ListDispatchActivityResponse {
   resources.common.database.PaginationResponse pagination = 1;
@@ -143,15 +146,16 @@ message DispatchChange {
   uint64 id = 1;
 }
 
-message CentrumStreamRequest {}
+message StreamRequest {}
 
-message CentrumStreamResponse {
+message StreamResponse {
   oneof change {
     UnitChanges units_change = 1;
     resources.dispatch.UnitStatus unit_status = 2;
 
     DispatchChanges dispatches_change = 3;
     resources.dispatch.DispatchStatus dispatch_status = 4;
+
     // When a dispatch is assigned to a unit
     resources.dispatch.Dispatch dispatch_assigned = 5;
   }
@@ -187,5 +191,5 @@ service CentrumService {
   rpc ListDispatchActivity(ListActivityRequest) returns (ListDispatchActivityResponse);
 
   // @perm
-  rpc Stream(CentrumStreamRequest) returns (stream CentrumStreamResponse);
+  rpc Stream(StreamRequest) returns (stream StreamResponse);
 }

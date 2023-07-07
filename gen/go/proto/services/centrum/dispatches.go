@@ -7,6 +7,7 @@ import (
 	dispatch "github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
+	"github.com/galexrt/fivenet/pkg/utils/dbutils"
 	"github.com/galexrt/fivenet/pkg/utils/syncx"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
@@ -72,7 +73,7 @@ func (s *Server) loadDispatches(ctx context.Context) error {
 	}
 
 	for i := 0; i < len(dispatches); i++ {
-		jobDispatches, _ := s.dispatches.LoadOrStore(*dispatches[i].Job, &syncx.Map[uint64, *dispatch.Dispatch]{})
+		jobDispatches, _ := s.dispatches.LoadOrStore(dispatches[i].Job, &syncx.Map[uint64, *dispatch.Dispatch]{})
 		jobDispatches.Store(dispatches[i].Id, dispatches[i])
 	}
 
@@ -114,15 +115,144 @@ func (s *Server) ListDispatches(ctx context.Context, req *ListDispatchesRequest)
 }
 
 func (s *Server) CreateDispatch(ctx context.Context, req *CreateDispatchRequest) (*CreateDispatchResponse, error) {
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	// TODO
+	auditEntry := &model.FivenetAuditLog{
+		Service: CentrumService_ServiceDesc.ServiceName,
+		Method:  "CreateOrUpdateUnit",
+		UserID:  userInfo.UserId,
+		UserJob: userInfo.Job,
+		State:   int16(rector.EVENT_TYPE_ERRORED),
+	}
+	defer s.a.AddEntryWithData(auditEntry, req)
 
-	return nil, nil
+	resp := &CreateDispatchResponse{}
+
+	// Begin transaction
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return nil, ErrFailedQuery
+	}
+	// Defer a rollback in case anything fails
+	defer tx.Rollback()
+
+	tDispatch := table.FivenetCentrumDispatches
+	stmt := tDispatch.
+		INSERT(
+			tDispatch.Job,
+			tDispatch.Message,
+			tDispatch.Description,
+			tDispatch.Attributes,
+			tDispatch.X,
+			tDispatch.Y,
+			tDispatch.Anon,
+			tDispatch.UserID,
+			tDispatch.Active,
+		).
+		VALUES(
+			userInfo.Job,
+			req.Dispatch.Message,
+			req.Dispatch.Description,
+			req.Dispatch.Attributes,
+			req.Dispatch.Marker.Marker.X,
+			req.Dispatch.Marker.Marker.Y,
+			req.Dispatch.Anon,
+			req.Dispatch.UserId,
+			req.Dispatch.Marker.Active,
+		)
+
+	result, err := stmt.ExecContext(ctx, tx)
+	if err != nil {
+		return nil, err
+	}
+
+	lastId, err := result.LastInsertId()
+	if err != nil {
+		return nil, err
+	}
+
+	disp, err := s.getDispatch(ctx, userInfo, uint64(lastId))
+	if err != nil {
+		return nil, err
+	}
+
+	resp.Dispatch = disp
+
+	stmt = tDispatchStatus.
+		INSERT(
+			tDispatchStatus.UnitID,
+			tDispatchStatus.Status,
+			tDispatchStatus.UserID,
+		).
+		VALUES(
+			resp.Dispatch.Id,
+			dispatch.DISPATCH_STATUS_NEW,
+			userInfo.UserId,
+		)
+
+	if _, err := stmt.ExecContext(ctx, tx); err != nil {
+		return nil, err
+	}
+
+	auditEntry.State = int16(rector.EVENT_TYPE_CREATED)
+
+	return resp, nil
 }
 
 func (s *Server) UpdateDispatch(ctx context.Context, req *UpdateDispatchRequest) (*UpdateDispatchResponse, error) {
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	// TODO
+	auditEntry := &model.FivenetAuditLog{
+		Service: CentrumService_ServiceDesc.ServiceName,
+		Method:  "UpdateDispatch",
+		UserID:  userInfo.UserId,
+		UserJob: userInfo.Job,
+		State:   int16(rector.EVENT_TYPE_ERRORED),
+	}
+	defer s.a.AddEntryWithData(auditEntry, req)
+
+	resp := &UpdateDispatchResponse{}
+
+	stmt := tDispatch.
+		UPDATE(
+			tDispatch.Job,
+			tDispatch.Message,
+			tDispatch.Description,
+			tDispatch.Attributes,
+			tDispatch.X,
+			tDispatch.Y,
+			tDispatch.Anon,
+			tDispatch.UserID,
+			tDispatch.Active,
+		).
+		SET(
+			userInfo.Job,
+			req.Dispatch.Message,
+			req.Dispatch.Description,
+			req.Dispatch.Attributes,
+			req.Dispatch.Marker.Marker.X,
+			req.Dispatch.Marker.Marker.Y,
+			req.Dispatch.Anon,
+			req.Dispatch.UserId,
+			req.Dispatch.Marker.Active,
+		).
+		WHERE(jet.AND(
+			tDispatch.Job.EQ(jet.String(userInfo.Job)),
+			tDispatch.Job.EQ(jet.String(userInfo.Job)),
+		))
+
+	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+		return nil, err
+	}
+
+	dispatch, err := s.getDispatch(ctx, userInfo, req.Dispatch.Id)
+	if err != nil {
+		return nil, err
+	}
+
+	resp.Dispatch = dispatch
+
+	auditEntry.State = int16(rector.EVENT_TYPE_UPDATED)
 
 	return nil, nil
 }
@@ -135,17 +265,149 @@ func (s *Server) TakeDispatch(ctx context.Context, req *TakeDispatchRequest) (*T
 }
 
 func (s *Server) UpdateDispatchStatus(ctx context.Context, req *UpdateDispatchStatusRequest) (*UpdateDispatchStatusResponse, error) {
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	// TODO
+	dsp, err := s.getDispatch(ctx, userInfo, req.DispatchId)
+	if err != nil {
+		return nil, err
+	}
 
-	return nil, nil
+	found := false
+	for i := 0; i < len(dsp.Units); i++ {
+		unit, err := s.getUnit(ctx, userInfo, dsp.Units[i].UnitId)
+		if err != nil {
+			return nil, ErrFailedQuery
+		}
+		for i := 0; i < len(unit.Users); i++ {
+			if unit.Users[i].UserId == userInfo.UserId {
+				found = true
+				break
+			}
+		}
+	}
+	if !found {
+		return nil, ErrFailedQuery
+	}
+
+	stmt := tDispatchStatus.
+		INSERT(
+			tDispatchStatus.UnitID,
+			tDispatchStatus.Status,
+			tDispatchStatus.Reason,
+			tDispatchStatus.Code,
+			tDispatchStatus.UserID,
+		).
+		VALUES(
+			req.DispatchId,
+			req.Status,
+			req.Reason,
+			req.Code,
+			userInfo.UserId,
+			false,
+		)
+
+	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+		return nil, err
+	}
+
+	return &UpdateDispatchStatusResponse{}, nil
 }
 
 func (s *Server) AssignDispatch(ctx context.Context, req *AssignDispatchRequest) (*AssignDispatchResponse, error) {
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	// TODO
+	dsp, err := s.getDispatch(ctx, userInfo, req.DispatchId)
+	if err != nil {
+		return nil, err
+	}
+	if dsp.Job != userInfo.Job {
+		return nil, nil
+	}
 
-	return nil, nil
+	addIds := make([]jet.Expression, len(req.ToAdd))
+	for i := 0; i < len(req.ToAdd); i++ {
+		addIds[i] = jet.Uint64(req.ToAdd[i])
+	}
+	removeIds := make([]jet.Expression, len(req.ToRemove))
+	for i := 0; i < len(req.ToRemove); i++ {
+		removeIds[i] = jet.Uint64(req.ToRemove[i])
+	}
+
+	// Begin transaction
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return nil, ErrFailedQuery
+	}
+	// Defer a rollback in case anything fails
+	defer tx.Rollback()
+
+	if len(removeIds) > 0 {
+		stmt := tUnitUser.
+			DELETE().
+			WHERE(jet.AND(
+				tUnitUser.UnitID.EQ(jet.Uint64(dsp.Id)),
+				tUnitUser.UserID.IN(removeIds...),
+			))
+
+		if _, err := stmt.ExecContext(ctx, tx); err != nil {
+			return nil, err
+		}
+
+		for i := 0; i < len(dsp.Units); i++ {
+			for k := 0; k < len(req.ToRemove); k++ {
+				if dsp.Units[i].UnitId == req.ToRemove[k] {
+					break
+				}
+			}
+		}
+	}
+
+	if len(addIds) > 0 {
+		for _, id := range addIds {
+			stmt := tUnitUser.
+				INSERT(
+					tUnitUser.UnitID,
+					tUnitUser.UserID,
+				).
+				VALUES(
+					dsp.Id,
+					id,
+				)
+
+			if _, err := stmt.ExecContext(ctx, tx); err != nil {
+				if !dbutils.IsDuplicateError(err) {
+					return nil, err
+				}
+			}
+
+		}
+
+		found := []uint64{}
+		for k := 0; k < len(req.ToAdd); k++ {
+			for i := 0; i < len(dsp.Units); i++ {
+				if dsp.Units[i].UnitId == req.ToAdd[k] {
+					found = append(found, req.ToAdd[k])
+				}
+			}
+		}
+
+		assignments := []*dispatch.DispatchAssignment{}
+		for _, v := range found {
+			unit, err := s.getUnit(ctx, userInfo, v)
+			if err != nil {
+				return nil, err
+			}
+
+			assignments = append(assignments, &dispatch.DispatchAssignment{
+				UnitId:     v,
+				DispatchId: dsp.Id,
+				Unit:       unit,
+			})
+		}
+		dsp.Units = assignments
+	}
+
+	return &AssignDispatchResponse{}, nil
 }
 
 func (s *Server) ListDispatchActivity(ctx context.Context, req *ListActivityRequest) (*ListDispatchActivityResponse, error) {
@@ -155,7 +417,7 @@ func (s *Server) ListDispatchActivity(ctx context.Context, req *ListActivityRequ
 		).
 		FROM(tDispatchStatus).
 		WHERE(
-			tDispatchStatus.UnitID.EQ(jet.Uint64(req.Id)),
+			tDispatchStatus.DispatchID.EQ(jet.Uint64(req.Id)),
 		)
 
 	var count database.DataCount
@@ -180,11 +442,21 @@ func (s *Server) ListDispatchActivity(ctx context.Context, req *ListActivityRequ
 			tDispatchStatus.Reason,
 			tDispatchStatus.Code,
 			tDispatchStatus.UserID,
+			tUser.Firstname,
+			tUser.Lastname,
+			tUser.Dateofbirth,
+			tUser.Job,
 		).
-		FROM(tDispatchStatus).
+		FROM(
+			tDispatchStatus.
+				LEFT_JOIN(tUser,
+					tUser.ID.EQ(tDispatchStatus.UserID),
+				),
+		).
 		WHERE(
 			tDispatchStatus.DispatchID.EQ(jet.Uint64(req.Id)),
 		).
+		ORDER_BY(tDispatchStatus.ID.DESC()).
 		OFFSET(req.Pagination.Offset).
 		LIMIT(limit)
 
@@ -197,7 +469,7 @@ func (s *Server) ListDispatchActivity(ctx context.Context, req *ListActivityRequ
 	return resp, nil
 }
 
-func (s *Server) Stream(req *CentrumStreamRequest, srv CentrumService_StreamServer) error {
+func (s *Server) Stream(req *StreamRequest, srv CentrumService_StreamServer) error {
 
 	// TODO
 
