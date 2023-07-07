@@ -4,6 +4,7 @@ import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { LControl, LControlLayers, LLayerGroup, LMap, LMarker, LPopup, LTileLayer } from '@vue-leaflet/vue-leaflet';
 import { watchDebounced } from '@vueuse/core';
 import L from 'leaflet';
+import { LeafletMouseEvent } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -15,11 +16,18 @@ import { Job } from '~~/gen/ts/resources/jobs/jobs';
 import { DispatchMarker, UserMarker } from '~~/gen/ts/resources/livemap/livemap';
 import { LivemapperServiceClient } from '~~/gen/ts/services/livemapper/livemap.client';
 
+const emits = defineEmits<{
+    (e: 'contextmenu', data: LeafletMouseEvent): void;
+}>();
+
+const props = defineProps<{
+    location?: { x: number; y: number };
+}>();
+
 const { $grpc, $loading } = useNuxtApp();
 const userSettingsStore = useUserSettingsStore();
 const authStore = useAuthStore();
 const notifications = useNotificationsStore();
-const route = useRoute();
 
 const { livemapCenterSelectedMarker, livemapMarkerSize } = storeToRefs(userSettingsStore);
 
@@ -83,14 +91,14 @@ const dispatchMarkersFiltered = ref<DispatchMarker[]>([]);
 async function applyPlayerQuery(): Promise<void> {
     if (playerMarkers) {
         playerMarkersFiltered.value = playerMarkers.filter((m) =>
-            (m.user?.firstname + ' ' + m.user?.lastname).includes(playerQuery.value)
+            (m.user?.firstname + ' ' + m.user?.lastname).includes(playerQuery.value),
         );
     }
 }
 async function applyDispatchQuery(): Promise<void> {
     if (dispatchMarkers) {
         dispatchMarkersFiltered.value = dispatchMarkers.filter(
-            (m) => m.marker?.popup.includes(dispatchQuery.value) || m.marker?.name.includes(dispatchQuery.value)
+            (m) => m.marker?.popup.includes(dispatchQuery.value) || m.marker?.name.includes(dispatchQuery.value),
         );
     }
 }
@@ -100,14 +108,14 @@ watchDebounced(
     async () => {
         applyPlayerQuery();
     },
-    { debounce: 600, maxWait: 1750 }
+    { debounce: 600, maxWait: 1750 },
 );
 watchDebounced(
     dispatchQuery,
     async () => {
         applyDispatchQuery();
     },
-    { debounce: 600, maxWait: 1750 }
+    { debounce: 600, maxWait: 1750 },
 );
 
 const mouseLat = ref<string>((0).toFixed(3));
@@ -118,20 +126,7 @@ const isMoving = ref<boolean>(false);
 
 let map: L.Map | undefined = undefined;
 
-watch(currentHash, () => {
-    window.location.replace(currentHash.value);
-});
-
-watchDebounced(
-    isMoving,
-    () => {
-        if (!map || isMoving.value) return;
-
-        const newHash = stringifyHash(map.getZoom(), map.getCenter().lat, map.getCenter().lng);
-        if (currentHash.value !== newHash) currentHash.value = newHash;
-    },
-    { debounce: 1000, maxWait: 3000 }
-);
+watch(currentHash, () => window.location.replace(currentHash.value));
 
 async function updateBackground(layer: string): Promise<void> {
     switch (layer) {
@@ -150,37 +145,8 @@ async function updateBackground(layer: string): Promise<void> {
     }
 }
 
-function stringifyHash(currZoom: number, centerLat: number, centerLong: number): string {
-    const precision = Math.max(0, Math.ceil(Math.log(zoom.value) / Math.LN2));
-
-    const hash = '#' + [currZoom, centerLat.toFixed(precision), centerLong.toFixed(precision)].join('/');
-    return hash;
-}
-
-function parseHash(hash: string): { latlng: L.LatLng; zoom: number } | undefined {
-    if (hash.indexOf('#') === 0) hash = hash.substring(1);
-
-    const args = hash.split('/');
-    if (args.length !== 3) return;
-
-    const zoom = parseInt(args[0], 10);
-    const lat = parseFloat(args[1]);
-    const lng = parseFloat(args[2]);
-
-    if (isNaN(zoom) || isNaN(lat) || isNaN(lng)) return;
-
-    return {
-        latlng: new L.LatLng(lat, lng),
-        zoom,
-    };
-}
-
 async function onMapReady($event: any): Promise<void> {
     map = $event as L.Map;
-
-    const startingHash = route.hash;
-    const startPos = parseHash(startingHash);
-    if (startPos) $event.setView(startPos.latlng, startPos.zoom);
 
     map.on('baselayerchange', async (event: L.LayersControlEvent) => {
         updateBackground(event.name);
@@ -198,15 +164,20 @@ async function onMapReady($event: any): Promise<void> {
     map.on('moveend', async () => {
         isMoving.value = false;
     });
+    map.on('contextmenu', (e: LeafletMouseEvent) => {
+        if (!map) return;
+
+        emits('contextmenu', e);
+    });
 
     setTimeout(() => {
         $loading.finish();
     }, 500);
 
-    startDataStream();
+    startStream();
 }
 
-async function startDataStream(): Promise<void> {
+async function startStream(): Promise<void> {
     if (abort.value !== undefined) return;
 
     console.debug('Livemap: Starting Data Stream');
@@ -217,7 +188,7 @@ async function startDataStream(): Promise<void> {
             {},
             {
                 abort: abort.value.signal,
-            }
+            },
         );
 
         for await (let resp of call.responses) {
@@ -241,13 +212,13 @@ async function startDataStream(): Promise<void> {
         const err = e as RpcError;
         error.value = err.message;
         $loading.errored();
-        stopDataStream();
+        stopStream();
     }
 
     console.debug('Livemap: Data Stream Ended');
 }
 
-async function stopDataStream(): Promise<void> {
+async function stopStream(): Promise<void> {
     console.debug('Livemap: Stopping Data Stream');
     abort.value?.abort();
     abort.value = undefined;
@@ -322,7 +293,7 @@ function getIcon<TType extends 'player' | 'dispatch'>(type: TType, marker: TMark
 }
 
 onBeforeUnmount(() => {
-    stopDataStream();
+    stopStream();
     map = undefined;
 });
 
@@ -457,7 +428,7 @@ watchDebounced(postalQuery, () => findPostal(), {
                 :title="$t('components.livemap.failed_datastream')"
                 :retry="
                     () => {
-                        startDataStream();
+                        startStream();
                     }
                 "
             />
@@ -562,7 +533,11 @@ watchDebounced(postalQuery, () => findPostal(), {
                 >
                     <LPopup
                         :options="{ closeButton: false }"
-                        :content="`<span class='font-semibold'>${$t('common.dispatch', 2)} ${marker.jobLabel}</span><br>${marker.marker!.popup}<br><span>${useLocaleTimeAgo(toDate(marker.marker!.updatedAt)!).value}</span><br><span class='italic'>${$t('components.livemap.sent_by')} ${marker.marker!.name}</span>`"
+                        :content="`<span class='font-semibold'>${$t('common.dispatch', 2)} ${marker.jobLabel}</span><br>${
+                            marker.marker!.popup
+                        }<br><span>${
+                            useLocaleTimeAgo(toDate(marker.marker!.updatedAt)!).value
+                        }</span><br><span class='italic'>${$t('components.livemap.sent_by')} ${marker.marker!.name}</span>`"
                     >
                     </LPopup>
                 </LMarker>
@@ -599,7 +574,7 @@ watchDebounced(postalQuery, () => findPostal(), {
                                 class="w-full"
                                 @change="postalQuery = $event.target.value"
                                 @click="loadPostals"
-                                :display-value="(postal: any) => postal ? postal?.code : ''"
+                                :display-value="(postal: any) => (postal ? postal?.code : '')"
                                 :placeholder="`${$t('common.postal')} ${$t('common.search')}`"
                             />
                             <ComboboxOptions class="z-10 w-full py-1 mt-1 overflow-auto bg-white">

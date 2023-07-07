@@ -1,29 +1,10 @@
 <script lang="ts" setup>
-import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { Unit } from '~~/gen/ts/resources/dispatch/units';
 import UnitsListEntry from './UnitsListEntry.vue';
 
-const { $grpc } = useNuxtApp();
-
-const { data: units, pending, refresh, error } = useLazyAsyncData(`centrum-units`, () => listUnits());
-
-async function listUnits(): Promise<Array<Unit>> {
-    return new Promise(async (res, rej) => {
-        try {
-            const req = {
-                status: [],
-            };
-
-            const call = $grpc.getCentrumClient().listUnits(req);
-            const { response } = await call;
-
-            return res(response.units);
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
-        }
-    });
-}
+defineProps<{
+    units: Unit[] | null;
+}>();
 </script>
 
 <template>

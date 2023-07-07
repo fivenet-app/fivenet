@@ -262,6 +262,7 @@
                 "add": "Add to Clipboard"
             },
             "clipboard_modal": {
+                "title": "Your Clipboard Contents",
                 "clear": "Clear Clipboard",
                 "no_data": "No {0} in clipboard"
             }

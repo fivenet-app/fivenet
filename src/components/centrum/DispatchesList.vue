@@ -1,23 +1,10 @@
 <script lang="ts" setup>
-import { DISPATCH_STATUS, Dispatch } from '~~/gen/ts/resources/dispatch/dispatch';
-import DispatchListEntry from './DispatchListEntry.vue';
+import { Dispatch } from '~~/gen/ts/resources/dispatch/dispatch';
+import DispatchesListEntry from './DispatchesListEntry.vue';
 
-const dispatches: Dispatch[] = [
-    {
-        id: 1n,
-        job: 'ambulance',
-        message: 'Notruf',
-        status: {
-            id: 1n,
-            dispatchId: 1n,
-            unitId: 5n,
-            userId: 26061,
-            status: DISPATCH_STATUS.EN_ROUTE,
-        },
-        units: [],
-        attributes: {},
-    },
-];
+defineProps<{
+    dispatches: Dispatch[] | null;
+}>();
 </script>
 
 <template>
@@ -50,6 +37,12 @@ const dispatches: Dispatch[] = [
                                 </th>
                                 <th
                                     scope="col"
+                                    class="whitespace-nowrap px-2 py-2 text-left text-sm font-semibold text-gray-100"
+                                >
+                                    Created At
+                                </th>
+                                <th
+                                    scope="col"
                                     class="whitespace-nowrap py-2 pl-4 pr-3 text-left text-sm font-semibold text-gray-100 sm:pl-0"
                                 >
                                     Units
@@ -69,9 +62,11 @@ const dispatches: Dispatch[] = [
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200">
-                            <tr v-for="dispatch in dispatches" :key="dispatch.id.toString()">
-                                <DispatchListEntry :dispatch="dispatch" />
-                            </tr>
+                            <DispatchesListEntry
+                                v-for="dispatch in dispatches"
+                                :dispatch="dispatch"
+                                :key="dispatch.id.toString()"
+                            />
                         </tbody>
                     </table>
                 </div>

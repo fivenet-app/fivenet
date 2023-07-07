@@ -1518,139 +1518,6 @@ var _ interface {
 	ErrorName() string
 } = ListUnitActivityResponseValidationError{}
 
-// Validate checks the field values on UnitChanges with the rules defined in
-// the proto definition for this message. If any rules are violated, the first
-// error encountered is returned, or nil if there are no violations.
-func (m *UnitChanges) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on UnitChanges with the rules defined in
-// the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in UnitChangesMultiError, or
-// nil if none found.
-func (m *UnitChanges) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *UnitChanges) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	for idx, item := range m.GetChanges() {
-		_, _ = idx, item
-
-		if all {
-			switch v := interface{}(item).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, UnitChangesValidationError{
-						field:  fmt.Sprintf("Changes[%v]", idx),
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, UnitChangesValidationError{
-						field:  fmt.Sprintf("Changes[%v]", idx),
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return UnitChangesValidationError{
-					field:  fmt.Sprintf("Changes[%v]", idx),
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	}
-
-	if len(errors) > 0 {
-		return UnitChangesMultiError(errors)
-	}
-
-	return nil
-}
-
-// UnitChangesMultiError is an error wrapping multiple validation errors
-// returned by UnitChanges.ValidateAll() if the designated constraints aren't met.
-type UnitChangesMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m UnitChangesMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m UnitChangesMultiError) AllErrors() []error { return m }
-
-// UnitChangesValidationError is the validation error returned by
-// UnitChanges.Validate if the designated constraints aren't met.
-type UnitChangesValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e UnitChangesValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e UnitChangesValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e UnitChangesValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e UnitChangesValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e UnitChangesValidationError) ErrorName() string { return "UnitChangesValidationError" }
-
-// Error satisfies the builtin error interface
-func (e UnitChangesValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sUnitChanges.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = UnitChangesValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = UnitChangesValidationError{}
-
 // Validate checks the field values on UnitChange with the rules defined in the
 // proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
@@ -1672,6 +1539,8 @@ func (m *UnitChange) validate(all bool) error {
 	}
 
 	var errors []error
+
+	// no validation rules for Id
 
 	for idx, item := range m.GetAdded() {
 		_, _ = idx, item
@@ -3486,242 +3355,6 @@ var _ interface {
 	ErrorName() string
 } = TakeDispatchResponseValidationError{}
 
-// Validate checks the field values on DispatchChanges with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// first error encountered is returned, or nil if there are no violations.
-func (m *DispatchChanges) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on DispatchChanges with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// DispatchChangesMultiError, or nil if none found.
-func (m *DispatchChanges) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *DispatchChanges) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	for idx, item := range m.GetChanges() {
-		_, _ = idx, item
-
-		if all {
-			switch v := interface{}(item).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, DispatchChangesValidationError{
-						field:  fmt.Sprintf("Changes[%v]", idx),
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, DispatchChangesValidationError{
-						field:  fmt.Sprintf("Changes[%v]", idx),
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return DispatchChangesValidationError{
-					field:  fmt.Sprintf("Changes[%v]", idx),
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	}
-
-	if len(errors) > 0 {
-		return DispatchChangesMultiError(errors)
-	}
-
-	return nil
-}
-
-// DispatchChangesMultiError is an error wrapping multiple validation errors
-// returned by DispatchChanges.ValidateAll() if the designated constraints
-// aren't met.
-type DispatchChangesMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m DispatchChangesMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m DispatchChangesMultiError) AllErrors() []error { return m }
-
-// DispatchChangesValidationError is the validation error returned by
-// DispatchChanges.Validate if the designated constraints aren't met.
-type DispatchChangesValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e DispatchChangesValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e DispatchChangesValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e DispatchChangesValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e DispatchChangesValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e DispatchChangesValidationError) ErrorName() string { return "DispatchChangesValidationError" }
-
-// Error satisfies the builtin error interface
-func (e DispatchChangesValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sDispatchChanges.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = DispatchChangesValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = DispatchChangesValidationError{}
-
-// Validate checks the field values on DispatchChange with the rules defined in
-// the proto definition for this message. If any rules are violated, the first
-// error encountered is returned, or nil if there are no violations.
-func (m *DispatchChange) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on DispatchChange with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in DispatchChangeMultiError,
-// or nil if none found.
-func (m *DispatchChange) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *DispatchChange) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	// no validation rules for Id
-
-	if len(errors) > 0 {
-		return DispatchChangeMultiError(errors)
-	}
-
-	return nil
-}
-
-// DispatchChangeMultiError is an error wrapping multiple validation errors
-// returned by DispatchChange.ValidateAll() if the designated constraints
-// aren't met.
-type DispatchChangeMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m DispatchChangeMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m DispatchChangeMultiError) AllErrors() []error { return m }
-
-// DispatchChangeValidationError is the validation error returned by
-// DispatchChange.Validate if the designated constraints aren't met.
-type DispatchChangeValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e DispatchChangeValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e DispatchChangeValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e DispatchChangeValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e DispatchChangeValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e DispatchChangeValidationError) ErrorName() string { return "DispatchChangeValidationError" }
-
-// Error satisfies the builtin error interface
-func (e DispatchChangeValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sDispatchChange.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = DispatchChangeValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = DispatchChangeValidationError{}
-
 // Validate checks the field values on StreamRequest with the rules defined in
 // the proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
@@ -3845,7 +3478,7 @@ func (m *StreamResponse) validate(all bool) error {
 	var errors []error
 
 	switch v := m.Change.(type) {
-	case *StreamResponse_UnitsChange:
+	case *StreamResponse_UnitChange:
 		if v == nil {
 			err := StreamResponseValidationError{
 				field:  "Change",
@@ -3858,11 +3491,11 @@ func (m *StreamResponse) validate(all bool) error {
 		}
 
 		if all {
-			switch v := interface{}(m.GetUnitsChange()).(type) {
+			switch v := interface{}(m.GetUnitChange()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
 					errors = append(errors, StreamResponseValidationError{
-						field:  "UnitsChange",
+						field:  "UnitChange",
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -3870,16 +3503,16 @@ func (m *StreamResponse) validate(all bool) error {
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
 					errors = append(errors, StreamResponseValidationError{
-						field:  "UnitsChange",
+						field:  "UnitChange",
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
 				}
 			}
-		} else if v, ok := interface{}(m.GetUnitsChange()).(interface{ Validate() error }); ok {
+		} else if v, ok := interface{}(m.GetUnitChange()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
 				return StreamResponseValidationError{
-					field:  "UnitsChange",
+					field:  "UnitChange",
 					reason: "embedded message failed validation",
 					cause:  err,
 				}
@@ -3927,7 +3560,7 @@ func (m *StreamResponse) validate(all bool) error {
 			}
 		}
 
-	case *StreamResponse_DispatchesChange:
+	case *StreamResponse_DispatchChange:
 		if v == nil {
 			err := StreamResponseValidationError{
 				field:  "Change",
@@ -3940,11 +3573,11 @@ func (m *StreamResponse) validate(all bool) error {
 		}
 
 		if all {
-			switch v := interface{}(m.GetDispatchesChange()).(type) {
+			switch v := interface{}(m.GetDispatchChange()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
 					errors = append(errors, StreamResponseValidationError{
-						field:  "DispatchesChange",
+						field:  "DispatchChange",
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -3952,16 +3585,16 @@ func (m *StreamResponse) validate(all bool) error {
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
 					errors = append(errors, StreamResponseValidationError{
-						field:  "DispatchesChange",
+						field:  "DispatchChange",
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
 				}
 			}
-		} else if v, ok := interface{}(m.GetDispatchesChange()).(interface{ Validate() error }); ok {
+		} else if v, ok := interface{}(m.GetDispatchChange()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
 				return StreamResponseValidationError{
-					field:  "DispatchesChange",
+					field:  "DispatchChange",
 					reason: "embedded message failed validation",
 					cause:  err,
 				}

@@ -63,13 +63,10 @@ message ListUnitActivityResponse {
   repeated resources.dispatch.UnitStatus activity = 2;
 }
 
-message UnitChanges {
-  repeated UnitChange changes = 1;
-}
-
 message UnitChange {
-  repeated resources.dispatch.UnitAssignment added = 1;
-  repeated resources.dispatch.UnitAssignment removed = 2;
+  uint64 id = 1;
+  repeated resources.dispatch.UnitAssignment added = 2;
+  repeated resources.dispatch.UnitAssignment removed = 3;
 }
 
 // Dispatch Management
@@ -138,22 +135,14 @@ message TakeDispatchResponse {
   resources.dispatch.Dispatch dispatch = 1;
 }
 
-message DispatchChanges {
-  repeated DispatchChange changes = 1;
-}
-
-message DispatchChange {
-  uint64 id = 1;
-}
-
 message StreamRequest {}
 
 message StreamResponse {
   oneof change {
-    UnitChanges units_change = 1;
+    UnitChange unit_change = 1;
     resources.dispatch.UnitStatus unit_status = 2;
 
-    DispatchChanges dispatches_change = 3;
+    resources.dispatch.Dispatch dispatch_change = 3;
     resources.dispatch.DispatchStatus dispatch_status = 4;
 
     // When a dispatch is assigned to a unit

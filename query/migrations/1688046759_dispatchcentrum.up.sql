@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_centrum_units_users` (
   `identifier` varchar(64) NOT NULL,
   PRIMARY KEY (`unit_id`, `user_id`),
   KEY `idx_fivenet_centrum_units_users_unit_id` (`unit_id`),
-  KEY `idx_fivenet_centrum_units_users_user_id` (`user_id`),
+  UNIQUE KEY `idx_fivenet_centrum_units_users_user_id` (`user_id`),
   CONSTRAINT `fk_fivenet_centrum_units_users_unit_id` FOREIGN KEY (`unit_id`) REFERENCES `fivenet_centrum_units` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_fivenet_centrum_units_users_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_fivenet_centrum_units_users_identifier` FOREIGN KEY (`identifier`) REFERENCES `fivenet_user_locations` (`identifier`) ON DELETE CASCADE ON UPDATE CASCADE

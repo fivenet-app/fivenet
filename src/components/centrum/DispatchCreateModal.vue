@@ -1,13 +1,7 @@
 <script lang="ts" setup>
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import SvgIcon from '@jamescoyle/vue-icon';
-import { mdiClipboardList } from '@mdi/js';
-import { useClipboardStore } from '~/store/clipboard';
-import Citizens from './Citizens.vue';
-import Documents from './Documents.vue';
-import Vehicles from './Vehicles.vue';
-
-const clipboardStore = useClipboardStore();
+import { mdiCarEmergency, mdiClipboardList } from '@mdi/js';
 
 defineProps<{
     open: boolean;
@@ -53,17 +47,15 @@ defineEmits<{
                                         class="h-6 w-6 text-primary-500"
                                         aria-hidden="true"
                                         type="mdi"
-                                        :path="mdiClipboardList"
+                                        :path="mdiCarEmergency"
                                     />
                                 </div>
                                 <div class="mt-3 text-center sm:mt-5">
                                     <DialogTitle as="h3" class="text-base font-semibold leading-6">
-                                        {{ $t('components.clipboard.clipboard_modal.title') }}
+                                        Your Clipboard Contents
                                     </DialogTitle>
                                     <div class="mt-2">
-                                        <Citizens />
-                                        <Documents />
-                                        <Vehicles />
+                                        <form @submit=""></form>
                                     </div>
                                 </div>
                             </div>
@@ -79,9 +71,8 @@ defineEmits<{
                                 <button
                                     type="button"
                                     class="flex-1 rounded-md bg-primary-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-primary-400"
-                                    @click="clipboardStore.clear()"
                                 >
-                                    {{ $t('components.clipboard.clipboard_modal.clear') }}
+                                    {{ $t('common.create') }}
                                 </button>
                             </div>
                         </DialogPanel>

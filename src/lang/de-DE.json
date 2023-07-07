@@ -262,6 +262,7 @@
                 "add": "Zum Zwischenspeicher hinzufügen"
             },
             "clipboard_modal": {
+                "title": "Deine Zwischenablagen Inhalte",
                 "clear": "Zwischenablage leeren",
                 "no_data": "Keine {0} in der Zwischenablage"
             }

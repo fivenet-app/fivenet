@@ -149,24 +149,19 @@ export interface ListUnitActivityResponse {
     activity: UnitStatus[];
 }
 /**
- * @generated from protobuf message services.centrum.UnitChanges
- */
-export interface UnitChanges {
-    /**
-     * @generated from protobuf field: repeated services.centrum.UnitChange changes = 1;
-     */
-    changes: UnitChange[];
-}
-/**
  * @generated from protobuf message services.centrum.UnitChange
  */
 export interface UnitChange {
     /**
-     * @generated from protobuf field: repeated resources.dispatch.UnitAssignment added = 1;
+     * @generated from protobuf field: uint64 id = 1;
+     */
+    id: bigint;
+    /**
+     * @generated from protobuf field: repeated resources.dispatch.UnitAssignment added = 2;
      */
     added: UnitAssignment[];
     /**
-     * @generated from protobuf field: repeated resources.dispatch.UnitAssignment removed = 2;
+     * @generated from protobuf field: repeated resources.dispatch.UnitAssignment removed = 3;
      */
     removed: UnitAssignment[];
 }
@@ -322,24 +317,6 @@ export interface TakeDispatchResponse {
     dispatch?: Dispatch;
 }
 /**
- * @generated from protobuf message services.centrum.DispatchChanges
- */
-export interface DispatchChanges {
-    /**
-     * @generated from protobuf field: repeated services.centrum.DispatchChange changes = 1;
-     */
-    changes: DispatchChange[];
-}
-/**
- * @generated from protobuf message services.centrum.DispatchChange
- */
-export interface DispatchChange {
-    /**
-     * @generated from protobuf field: uint64 id = 1;
-     */
-    id: bigint;
-}
-/**
  * @generated from protobuf message services.centrum.StreamRequest
  */
 export interface StreamRequest {
@@ -352,11 +329,11 @@ export interface StreamResponse {
      * @generated from protobuf oneof: change
      */
     change: {
-        oneofKind: "unitsChange";
+        oneofKind: "unitChange";
         /**
-         * @generated from protobuf field: services.centrum.UnitChanges units_change = 1;
+         * @generated from protobuf field: services.centrum.UnitChange unit_change = 1;
          */
-        unitsChange: UnitChanges;
+        unitChange: UnitChange;
     } | {
         oneofKind: "unitStatus";
         /**
@@ -364,11 +341,11 @@ export interface StreamResponse {
          */
         unitStatus: UnitStatus;
     } | {
-        oneofKind: "dispatchesChange";
+        oneofKind: "dispatchChange";
         /**
-         * @generated from protobuf field: services.centrum.DispatchChanges dispatches_change = 3;
+         * @generated from protobuf field: resources.dispatch.Dispatch dispatch_change = 3;
          */
-        dispatchesChange: DispatchChanges;
+        dispatchChange: Dispatch;
     } | {
         oneofKind: "dispatchStatus";
         /**
@@ -552,23 +529,12 @@ class ListUnitActivityResponse$Type extends MessageType<ListUnitActivityResponse
  */
 export const ListUnitActivityResponse = new ListUnitActivityResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class UnitChanges$Type extends MessageType<UnitChanges> {
-    constructor() {
-        super("services.centrum.UnitChanges", [
-            { no: 1, name: "changes", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UnitChange }
-        ]);
-    }
-}
-/**
- * @generated MessageType for protobuf message services.centrum.UnitChanges
- */
-export const UnitChanges = new UnitChanges$Type();
-// @generated message type with reflection information, may provide speed optimized methods
 class UnitChange$Type extends MessageType<UnitChange> {
     constructor() {
         super("services.centrum.UnitChange", [
-            { no: 1, name: "added", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UnitAssignment },
-            { no: 2, name: "removed", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UnitAssignment }
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 2, name: "added", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UnitAssignment },
+            { no: 3, name: "removed", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UnitAssignment }
         ]);
     }
 }
@@ -739,30 +705,6 @@ class TakeDispatchResponse$Type extends MessageType<TakeDispatchResponse> {
  */
 export const TakeDispatchResponse = new TakeDispatchResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class DispatchChanges$Type extends MessageType<DispatchChanges> {
-    constructor() {
-        super("services.centrum.DispatchChanges", [
-            { no: 1, name: "changes", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => DispatchChange }
-        ]);
-    }
-}
-/**
- * @generated MessageType for protobuf message services.centrum.DispatchChanges
- */
-export const DispatchChanges = new DispatchChanges$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class DispatchChange$Type extends MessageType<DispatchChange> {
-    constructor() {
-        super("services.centrum.DispatchChange", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
-        ]);
-    }
-}
-/**
- * @generated MessageType for protobuf message services.centrum.DispatchChange
- */
-export const DispatchChange = new DispatchChange$Type();
-// @generated message type with reflection information, may provide speed optimized methods
 class StreamRequest$Type extends MessageType<StreamRequest> {
     constructor() {
         super("services.centrum.StreamRequest", []);
@@ -776,9 +718,9 @@ export const StreamRequest = new StreamRequest$Type();
 class StreamResponse$Type extends MessageType<StreamResponse> {
     constructor() {
         super("services.centrum.StreamResponse", [
-            { no: 1, name: "units_change", kind: "message", oneof: "change", T: () => UnitChanges },
+            { no: 1, name: "unit_change", kind: "message", oneof: "change", T: () => UnitChange },
             { no: 2, name: "unit_status", kind: "message", oneof: "change", T: () => UnitStatus },
-            { no: 3, name: "dispatches_change", kind: "message", oneof: "change", T: () => DispatchChanges },
+            { no: 3, name: "dispatch_change", kind: "message", oneof: "change", T: () => Dispatch },
             { no: 4, name: "dispatch_status", kind: "message", oneof: "change", T: () => DispatchStatus },
             { no: 5, name: "dispatch_assigned", kind: "message", oneof: "change", T: () => Dispatch }
         ]);

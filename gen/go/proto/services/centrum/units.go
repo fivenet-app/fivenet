@@ -256,6 +256,11 @@ func (s *Server) DeleteUnit(ctx context.Context, req *DeleteUnitRequest) (*Delet
 		return nil, err
 	}
 
+	units, ok := s.units.Load(userInfo.Job)
+	if ok {
+		units.Delete(req.UnitId)
+	}
+
 	auditEntry.State = int16(rector.EVENT_TYPE_DELETED)
 
 	return &DeleteUnitResponse{}, nil

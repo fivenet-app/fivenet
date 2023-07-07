@@ -470,8 +470,33 @@ func (s *Server) ListDispatchActivity(ctx context.Context, req *ListActivityRequ
 }
 
 func (s *Server) Stream(req *StreamRequest, srv CentrumService_StreamServer) error {
+	signalCh := s.broker.Subscribe()
+	defer s.broker.Unsubscribe(signalCh)
 
-	// TODO
+	resp := &StreamResponse{}
 
-	return nil
+	for {
+		select {
+		case <-srv.Context().Done():
+			return nil
+		case data := <-signalCh:
+			switch data.(type) {
+			case StreamResponse_UnitChange:
+				resp.Change = data.(*StreamResponse_UnitChange)
+			case StreamResponse_UnitStatus:
+				resp.Change = data.(*StreamResponse_UnitStatus)
+			case StreamResponse_DispatchChange:
+				resp.Change = data.(*StreamResponse_DispatchChange)
+			case StreamResponse_DispatchStatus:
+				resp.Change = data.(*StreamResponse_DispatchStatus)
+
+			case StreamResponse_DispatchAssigned:
+				resp.Change = data.(*StreamResponse_DispatchAssigned)
+			}
+		}
+
+		if err := srv.Send(resp); err != nil {
+			return err
+		}
+	}
 }
