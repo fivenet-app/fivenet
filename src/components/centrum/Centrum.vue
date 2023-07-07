@@ -1,12 +1,12 @@
 <script lang="ts" setup>
-import DispatchFeed from '~/components/centrum/DispatchFeed.vue';
-import DispatchesList from '~/components/centrum/DispatchesList.vue';
+import Feed from '~/components/centrum/dispatches/Feed.vue';
+import { default as DispatchesList } from '~/components/centrum/dispatches/List.vue';
 import Livemap from '~/components/centrum/Livemap.vue';
-import UnitsList from '~/components/centrum/UnitsList.vue';
+import { default as UnitsList } from '~/components/centrum/units/List.vue';
 import { Dispatch } from '~~/gen/ts/resources/dispatch/dispatch';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { Unit } from '~~/gen/ts/resources/dispatch/units';
-import DispatchCreateModal from './DispatchCreateModal.vue';
+import CreateOrUpdateModal from '~/components/centrum/dispatches/CreateOrUpdateModal.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -49,8 +49,6 @@ async function listUnits(): Promise<Array<Unit>> {
         }
     });
 }
-
-// TODO Handle the data storage
 
 const abort = ref<AbortController | undefined>();
 const error = ref<string | null>(null);
@@ -97,11 +95,12 @@ onMounted(() => {
 });
 
 const open = ref(false);
+const location = ref<{ x: number; y: number }>({ x: 0, y: 0 });
 </script>
 
 <template>
     <div class="flex-col h-full">
-        <DispatchCreateModal :open="open" @close="open = false" />
+        <CreateOrUpdateModal :open="open" @close="open = false" :location="location" />
         <div class="relative w-full h-full z-0 flex">
             <!-- Left column -->
             <div class="flex flex-col basis-1/3 divide-x">
@@ -116,7 +115,7 @@ const open = ref(false);
                     <DispatchesList :dispatches="dispatches" :units="units" />
                 </div>
                 <div class="basis-1/5">
-                    <DispatchFeed :units="units" />
+                    <Feed :units="units" />
                 </div>
                 <div class="basis-1/5">
                     <UnitsList :units="units" />

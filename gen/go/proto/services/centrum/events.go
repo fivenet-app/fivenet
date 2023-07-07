@@ -1,7 +1,8 @@
 package centrum
 
 import (
-	"github.com/davecgh/go-spew/spew"
+	"fmt"
+
 	"github.com/nats-io/nats.go"
 )
 
@@ -20,5 +21,5 @@ func (s *Server) registerEvents() error {
 }
 
 func (s *Server) handleMessage(msg *nats.Msg) {
-	spew.Dump(msg)
+	fmt.Printf("CENTRUM MSG: %+v\n", msg)
 }

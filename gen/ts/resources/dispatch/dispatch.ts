@@ -4,7 +4,6 @@
 import { MessageType } from "@protobuf-ts/runtime";
 import { Unit } from "./units.js";
 import { UserShort } from "../users/users.js";
-import { DispatchMarker } from "../livemap/livemap.js";
 import { Timestamp } from "../timestamp/timestamp.js";
 /**
  * @generated from protobuf message resources.dispatch.Dispatch
@@ -43,23 +42,27 @@ export interface Dispatch {
      */
     attributes?: Attributes;
     /**
-     * @generated from protobuf field: resources.livemap.DispatchMarker marker = 9;
+     * @generated from protobuf field: float x = 9;
      */
-    marker?: DispatchMarker;
+    x: number;
     /**
-     * @generated from protobuf field: optional bool anon = 10;
+     * @generated from protobuf field: float y = 10;
+     */
+    y: number;
+    /**
+     * @generated from protobuf field: optional bool anon = 11;
      */
     anon?: boolean;
     /**
-     * @generated from protobuf field: optional int32 user_id = 11;
+     * @generated from protobuf field: optional int32 user_id = 12;
      */
     userId?: number;
     /**
-     * @generated from protobuf field: optional resources.users.UserShort user = 12;
+     * @generated from protobuf field: optional resources.users.UserShort user = 13;
      */
     user?: UserShort;
     /**
-     * @generated from protobuf field: repeated resources.dispatch.DispatchAssignment units = 13;
+     * @generated from protobuf field: repeated resources.dispatch.DispatchAssignment units = 14;
      */
     units: DispatchAssignment[];
 }
@@ -179,11 +182,12 @@ class Dispatch$Type extends MessageType<Dispatch> {
             { no: 6, name: "message", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
             { no: 7, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "1024" } } } },
             { no: 8, name: "attributes", kind: "message", T: () => Attributes },
-            { no: 9, name: "marker", kind: "message", T: () => DispatchMarker },
-            { no: 10, name: "anon", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
-            { no: 11, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
-            { no: 12, name: "user", kind: "message", T: () => UserShort },
-            { no: 13, name: "units", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => DispatchAssignment }
+            { no: 9, name: "x", kind: "scalar", T: 2 /*ScalarType.FLOAT*/ },
+            { no: 10, name: "y", kind: "scalar", T: 2 /*ScalarType.FLOAT*/ },
+            { no: 11, name: "anon", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 12, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 13, name: "user", kind: "message", T: () => UserShort },
+            { no: 14, name: "units", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => DispatchAssignment }
         ]);
     }
 }

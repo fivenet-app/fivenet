@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { UNIT_STATUS, Unit } from '~~/gen/ts/resources/dispatch/units';
-import UnitDetails from './UnitDetails.vue';
+import Details from './Details.vue';
 
 defineProps<{
     unit: Unit;
@@ -10,7 +10,7 @@ const open = ref(false);
 </script>
 
 <template>
-    <UnitDetails :open="open" @close="open = false" :unit="unit" />
+    <Details :open="open" @close="open = false" :unit="unit" />
     <li class="col-span-1 flex rounded-md shadow-sm" @click="open = true">
         <div
             class="flex w-12 flex-shrink-0 items-center justify-center rounded-l-md text-sm font-medium text-white border-l border-t border-b"

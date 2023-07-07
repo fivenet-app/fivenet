@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { Dispatch } from '~~/gen/ts/resources/dispatch/dispatch';
-import DispatchesListEntry from './DispatchesListEntry.vue';
+import ListEntry from './ListEntry.vue';
 
 defineProps<{
     dispatches: Dispatch[] | null;
@@ -62,11 +62,7 @@ defineProps<{
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200">
-                            <DispatchesListEntry
-                                v-for="dispatch in dispatches"
-                                :dispatch="dispatch"
-                                :key="dispatch.id.toString()"
-                            />
+                            <ListEntry v-for="dispatch in dispatches" :dispatch="dispatch" :key="dispatch.id.toString()" />
                         </tbody>
                     </table>
                 </div>

@@ -81,34 +81,9 @@ func (m *Dispatch) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if all {
-		switch v := interface{}(m.GetMarker()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, DispatchValidationError{
-					field:  "Marker",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, DispatchValidationError{
-					field:  "Marker",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetMarker()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return DispatchValidationError{
-				field:  "Marker",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
+	// no validation rules for X
+
+	// no validation rules for Y
 
 	for idx, item := range m.GetUnits() {
 		_, _ = idx, item

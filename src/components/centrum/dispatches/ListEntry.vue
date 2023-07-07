@@ -2,7 +2,7 @@
 import SvgIcon from '@jamescoyle/vue-icon';
 import { mdiAccountMultiplePlus, mdiDetails } from '@mdi/js';
 import { DISPATCH_STATUS, Dispatch } from '~~/gen/ts/resources/dispatch/dispatch';
-import DispatchDetails from './DispatchDetails.vue';
+import Details from './Details.vue';
 import Time from '~/components/partials/elements/Time.vue';
 
 defineProps<{
@@ -14,7 +14,7 @@ const open = ref(false);
 
 <template>
     <tr>
-        <DispatchDetails @close="open = false" :dispatch="dispatch" :open="open" />
+        <Details @close="open = false" :dispatch="dispatch" :open="open" />
         <td
             class="relative whitespace-nowrap py-2 pl-2 text-right text-sm font-medium sm:pr-0 max-w-[42px] flex flex-row justify-start"
         >

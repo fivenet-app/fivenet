@@ -2,15 +2,15 @@
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import SvgIcon from '@jamescoyle/vue-icon';
 import { mdiClose } from '@mdi/js';
-import { Unit, UnitStatus, UNIT_STATUS } from '~~/gen/ts/resources/dispatch/units';
+import { Dispatch, DispatchStatus, DISPATCH_STATUS } from '~~/gen/ts/resources/dispatch/dispatch';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { PaginationResponse } from '~~/gen/ts/resources/common/database/database';
 import Time from '~/components/partials/elements/Time.vue';
-import UnitFeed from './UnitFeed.vue';
+import Feed from './Feed.vue';
 
 const props = defineProps<{
     open: boolean;
-    unit: Unit;
+    dispatch: Dispatch;
 }>();
 
 defineEmits<{
@@ -27,19 +27,19 @@ const {
     pending,
     refresh,
     error,
-} = useLazyAsyncData(`centrum-unit-${props.unit.id.toString()}-activity-${offset.value}`, () => listUnitActivity());
+} = useLazyAsyncData(`centrum-dispatch-${props.dispatch.id.toString()}-activity-${offset.value}`, () => listUnitActivity());
 
-async function listUnitActivity(): Promise<Array<UnitStatus>> {
+async function listUnitActivity(): Promise<Array<DispatchStatus>> {
     return new Promise(async (res, rej) => {
         try {
             const req = {
                 pagination: {
                     offset: offset.value,
                 },
-                id: props.unit.id,
+                id: props.dispatch.id,
             };
 
-            const call = $grpc.getCentrumClient().listUnitActivity(req);
+            const call = $grpc.getCentrumClient().listDispatchActivity(req);
             const { response } = await call;
 
             pagination.value = response.pagination;
@@ -75,8 +75,8 @@ async function listUnitActivity(): Promise<Array<UnitStatus>> {
                                         <div class="bg-primary-700 px-4 py-6 sm:px-6">
                                             <div class="flex items-center justify-between">
                                                 <DialogTitle class="text-base font-semibold leading-6 text-white">
-                                                    {{ $t('common.unit') }}: {{ unit.initials }} -
-                                                    {{ unit.name }}
+                                                    {{ $t('common.dispatch') }}: {{ dispatch.id.toString() }} -
+                                                    {{ dispatch.message }}
                                                 </DialogTitle>
                                                 <div class="ml-3 flex h-7 items-center">
                                                     <button
@@ -96,7 +96,7 @@ async function listUnitActivity(): Promise<Array<UnitStatus>> {
                                             </div>
                                             <div class="mt-1">
                                                 <p class="text-sm text-primary-300">
-                                                    Description: {{ unit.description ?? 'N/A' }}
+                                                    Description: {{ dispatch.description ?? 'N/A' }}
                                                 </p>
                                             </div>
                                         </div>
@@ -109,20 +109,20 @@ async function listUnitActivity(): Promise<Array<UnitStatus>> {
                                                             <dd
                                                                 class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
                                                             >
-                                                                {{ UNIT_STATUS[unit.status?.status ?? 0] }}
-                                                                <span v-if="unit.status?.code">
-                                                                    (Code: '{{ unit.status.code }}')
+                                                                {{ DISPATCH_STATUS[dispatch.status?.status ?? 0] }}
+                                                                <span v-if="dispatch.status?.code">
+                                                                    (Code: 'dispatch.status.code')
                                                                 </span>
                                                             </dd>
                                                         </div>
                                                         <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                                                             <dt class="text-sm font-medium leading-6 text-white">
-                                                                Last Unit Update
+                                                                Last Status
                                                             </dt>
                                                             <dd
                                                                 class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
                                                             >
-                                                                <Time :value="unit.status?.createdAt" />
+                                                                <Time :value="dispatch.status?.createdAt" />
                                                             </dd>
                                                         </div>
                                                         <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
@@ -132,7 +132,7 @@ async function listUnitActivity(): Promise<Array<UnitStatus>> {
                                                             <dd
                                                                 class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
                                                             >
-                                                                {{ unit.status?.reason ?? 'N/A' }}
+                                                                {{ dispatch.status?.reason ?? 'N/A' }}
                                                             </dd>
                                                         </div>
                                                         <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
@@ -142,28 +142,35 @@ async function listUnitActivity(): Promise<Array<UnitStatus>> {
                                                             <dd
                                                                 class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
                                                             >
-                                                                {{ unit.status?.code ?? 'N/A' }}
+                                                                {{ dispatch.status?.code ?? 'N/A' }}
                                                             </dd>
                                                         </div>
                                                         <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                                            <dt class="text-sm font-medium leading-6 text-white">Location</dt>
+                                                            <dt class="text-sm font-medium leading-6 text-white">
+                                                                Status sent by
+                                                            </dt>
                                                             <dd
                                                                 class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
                                                             >
-                                                                <button
-                                                                    v-if="unit.status?.x && unit.status?.y"
-                                                                    type="button"
-                                                                    class="text-primary-400 hover:text-primary-600"
+                                                                {{ dispatch.status?.user?.firstname }}
+                                                                {{ dispatch.status?.user?.lastname }}
+                                                            </dd>
+                                                        </div>
+                                                        <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                                                            <dt class="text-sm font-medium leading-6 text-white">Attributes</dt>
+                                                            <dd class="mt-2 text-sm text-white sm:col-span-2 sm:mt-0">
+                                                                <span
+                                                                    v-for="attribute in dispatch.attributes?.list"
+                                                                    class="inline-flex items-center rounded-md bg-red-400/10 px-2 py-1 text-xs font-medium text-red-400 ring-1 ring-inset ring-red-400/20"
                                                                 >
-                                                                    Go to Location
-                                                                </button>
-                                                                <span v-else>No Location</span>
+                                                                    {{ attribute }}
+                                                                </span>
                                                             </dd>
                                                         </div>
                                                     </dl>
                                                 </div>
 
-                                                <UnitFeed :unit-id="unit.id" />
+                                                <Feed :dispatch-id="dispatch.id" />
                                             </div>
                                         </div>
                                     </div>

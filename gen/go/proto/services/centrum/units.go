@@ -170,9 +170,9 @@ func (s *Server) CreateOrUpdateUnit(ctx context.Context, req *CreateOrUpdateUnit
 			return nil, err
 		}
 
-		unit, err := s.getUnit(ctx, userInfo, uint64(lastId))
+		unit, err := s.getUnitFromDB(ctx, tx, uint64(lastId))
 		if err != nil {
-			return nil, err
+			return nil, ErrFailedQuery
 		}
 
 		resp.Unit = unit
@@ -197,14 +197,12 @@ func (s *Server) CreateOrUpdateUnit(ctx context.Context, req *CreateOrUpdateUnit
 	} else {
 		stmt := tUnits.
 			UPDATE(
-				tUnits.Job,
 				tUnits.Name,
 				tUnits.Initials,
 				tUnits.Color,
 				tUnits.Description,
 			).
 			SET(
-				userInfo.Job,
 				req.Unit.Name,
 				req.Unit.Initials,
 				req.Unit.Color,
@@ -212,21 +210,27 @@ func (s *Server) CreateOrUpdateUnit(ctx context.Context, req *CreateOrUpdateUnit
 			).
 			WHERE(jet.AND(
 				tUnits.Job.EQ(jet.String(userInfo.Job)),
-				tUnits.Job.EQ(jet.String(userInfo.Job)),
+				tUnits.ID.EQ(jet.Uint64(req.Unit.Id)),
 			))
 
 		if _, err := stmt.ExecContext(ctx, tx); err != nil {
 			return nil, err
 		}
 
-		unit, err := s.getUnit(ctx, userInfo, req.Unit.Id)
+		unit, err := s.getUnitFromDB(ctx, tx, req.Unit.Id)
 		if err != nil {
-			return nil, err
+			return nil, ErrFailedQuery
 		}
 
 		resp.Unit = unit
 
 		auditEntry.State = int16(rector.EVENT_TYPE_UPDATED)
+	}
+
+	// Commit the transaction
+	if err = tx.Commit(); err != nil {
+		auditEntry.State = int16(rector.EVENT_TYPE_ERRORED)
+		return nil, ErrFailedQuery
 	}
 
 	return resp, nil
@@ -240,7 +244,7 @@ func (s *Server) DeleteUnit(ctx context.Context, req *DeleteUnitRequest) (*Delet
 		Method:  "DeleteUnit",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EVENT_TYPE_DELETED),
+		State:   int16(rector.EVENT_TYPE_ERRORED),
 	}
 	defer s.a.AddEntryWithData(auditEntry, req)
 
@@ -269,9 +273,18 @@ func (s *Server) DeleteUnit(ctx context.Context, req *DeleteUnitRequest) (*Delet
 func (s *Server) UpdateUnitStatus(ctx context.Context, req *UpdateUnitStatusRequest) (*UpdateUnitStatusResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	unit, err := s.getUnit(ctx, userInfo, req.UnitId)
+	auditEntry := &model.FivenetAuditLog{
+		Service: CentrumService_ServiceDesc.ServiceName,
+		Method:  "UpdateUnitStatus",
+		UserID:  userInfo.UserId,
+		UserJob: userInfo.Job,
+		State:   int16(rector.EVENT_TYPE_ERRORED),
+	}
+	defer s.a.AddEntryWithData(auditEntry, req)
+
+	unit, err := s.getUnitFromDB(ctx, s.db, req.UnitId)
 	if err != nil {
-		return nil, err
+		return nil, ErrFailedQuery
 	}
 
 	found := false
@@ -307,18 +320,29 @@ func (s *Server) UpdateUnitStatus(ctx context.Context, req *UpdateUnitStatusRequ
 		return nil, err
 	}
 
+	auditEntry.State = int16(rector.EVENT_TYPE_CREATED)
+
 	return &UpdateUnitStatusResponse{}, nil
 }
 
 func (s *Server) AssignUnit(ctx context.Context, req *AssignUnitRequest) (*AssignUnitResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	unit, err := s.getUnit(ctx, userInfo, req.UnitId)
+	auditEntry := &model.FivenetAuditLog{
+		Service: CentrumService_ServiceDesc.ServiceName,
+		Method:  "AssignUnit",
+		UserID:  userInfo.UserId,
+		UserJob: userInfo.Job,
+		State:   int16(rector.EVENT_TYPE_ERRORED),
+	}
+	defer s.a.AddEntryWithData(auditEntry, req)
+
+	unit, err := s.getUnitFromDB(ctx, s.db, req.UnitId)
 	if err != nil {
-		return nil, err
+		return nil, ErrFailedQuery
 	}
 	if unit.Job != userInfo.Job {
-		return nil, nil
+		return nil, ErrFailedQuery
 	}
 
 	addIds := make([]jet.Expression, len(req.ToAdd))
@@ -402,6 +426,13 @@ func (s *Server) AssignUnit(ctx context.Context, req *AssignUnitRequest) (*Assig
 		}
 		unit.Users = assignments
 	}
+
+	// Commit the transaction
+	if err = tx.Commit(); err != nil {
+		return nil, ErrFailedQuery
+	}
+
+	auditEntry.State = int16(rector.EVENT_TYPE_UPDATED)
 
 	return &AssignUnitResponse{}, nil
 }
