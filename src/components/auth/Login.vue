@@ -42,19 +42,19 @@ watch(accessToken, async (): Promise<NavigationFailure | TypedRouteFromName<'aut
                 <div class="mt-6">
                     <button
                         type="button"
-                        @click="forms.create = true"
+                        @click="forms.forgot = true"
                         class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-secondary-600 text-neutral hover:bg-secondary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300"
                     >
-                        {{ $t('components.auth.login.register_account') }}
+                        {{ $t('components.auth.login.forgot_password') }}
                     </button>
                 </div>
                 <div class="mt-6">
                     <button
                         type="button"
-                        @click="forms.forgot = true"
+                        @click="forms.create = true"
                         class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-secondary-600 text-neutral hover:bg-secondary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300"
                     >
-                        {{ $t('components.auth.login.forgot_password') }}
+                        {{ $t('components.auth.login.register_account') }}
                     </button>
                 </div>
             </div>
