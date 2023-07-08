@@ -25,6 +25,7 @@ async function createOrUpdateUnit(values: FormData): Promise<void> {
             const call = $grpc.getCentrumClient().createOrUpdateUnit({
                 unit: {
                     id: props.unit?.id ?? 0n,
+                    job: '',
                     name: values.name,
                     initials: values.initials,
                     color: values.color.replaceAll('#', ''),
@@ -35,6 +36,7 @@ async function createOrUpdateUnit(values: FormData): Promise<void> {
             await call;
 
             emits('refresh');
+            emits('close');
 
             return res();
         } catch (e) {

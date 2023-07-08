@@ -1,9 +1,15 @@
 <script lang="ts" setup>
 import { Dispatch } from '~~/gen/ts/resources/dispatch/dispatch';
+import { Unit } from '~~/gen/ts/resources/dispatch/units';
 import ListEntry from './ListEntry.vue';
 
 defineProps<{
-    dispatches: Dispatch[] | null;
+    dispatches?: Dispatch[] | null;
+    units: Unit[] | null;
+}>();
+
+defineEmits<{
+    (e: 'goto', location: { x: number; y: number }): void;
 }>();
 </script>
 
@@ -20,8 +26,11 @@ defineProps<{
                     <table class="min-w-full divide-y divide-gray-300">
                         <thead>
                             <tr>
-                                <th scope="col" class="relative whitespace-nowrap py-2 pl-3 pr-4 sm:pr-0">
-                                    <span class="sr-only">Actions</span>
+                                <th
+                                    scope="col"
+                                    class="whitespace-nowrap py-2 pl-4 pr-3 text-left text-sm font-semibold text-gray-100 sm:pl-0"
+                                >
+                                    Actions
                                 </th>
                                 <th
                                     scope="col"
@@ -62,7 +71,13 @@ defineProps<{
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200">
-                            <ListEntry v-for="dispatch in dispatches" :dispatch="dispatch" :key="dispatch.id.toString()" />
+                            <ListEntry
+                                v-for="dispatch in dispatches"
+                                :key="dispatch.id.toString()"
+                                :dispatch="dispatch"
+                                :units="units"
+                                @goto="$emit('goto', $event)"
+                            />
                         </tbody>
                     </table>
                 </div>

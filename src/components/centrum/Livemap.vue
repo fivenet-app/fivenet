@@ -20,10 +20,6 @@ const emits = defineEmits<{
     (e: 'contextmenu', data: LeafletMouseEvent): void;
 }>();
 
-const props = defineProps<{
-    location?: { x: number; y: number };
-}>();
-
 const { $grpc, $loading } = useNuxtApp();
 const userSettingsStore = useUserSettingsStore();
 const authStore = useAuthStore();
@@ -82,40 +78,16 @@ watch(livemapCenterSelectedMarker, () => {
 
 const playerQuery = ref<string>('');
 let playerMarkers: UserMarker[] = [];
-const playerMarkersFiltered = ref<UserMarker[]>([]);
+const playerMarkersFiltered = computed(() =>
+    playerMarkers.filter((m) => (m.user?.firstname + ' ' + m.user?.lastname).includes(playerQuery.value)),
+);
 
 const dispatchQuery = ref<string>('');
 let dispatchMarkers: DispatchMarker[] = [];
-const dispatchMarkersFiltered = ref<DispatchMarker[]>([]);
-
-async function applyPlayerQuery(): Promise<void> {
-    if (playerMarkers) {
-        playerMarkersFiltered.value = playerMarkers.filter((m) =>
-            (m.user?.firstname + ' ' + m.user?.lastname).includes(playerQuery.value),
-        );
-    }
-}
-async function applyDispatchQuery(): Promise<void> {
-    if (dispatchMarkers) {
-        dispatchMarkersFiltered.value = dispatchMarkers.filter(
-            (m) => m.marker?.popup.includes(dispatchQuery.value) || m.marker?.name.includes(dispatchQuery.value),
-        );
-    }
-}
-
-watchDebounced(
-    playerQuery,
-    async () => {
-        applyPlayerQuery();
-    },
-    { debounce: 600, maxWait: 1750 },
-);
-watchDebounced(
-    dispatchQuery,
-    async () => {
-        applyDispatchQuery();
-    },
-    { debounce: 600, maxWait: 1750 },
+const dispatchMarkersFiltered = computed(() =>
+    dispatchMarkers.filter(
+        (m) => m.marker?.popup.includes(dispatchQuery.value) || m.marker?.name.includes(dispatchQuery.value),
+    ),
 );
 
 const mouseLat = ref<string>((0).toFixed(3));
@@ -127,6 +99,16 @@ const isMoving = ref<boolean>(false);
 let map: L.Map | undefined = undefined;
 
 watch(currentHash, () => window.location.replace(currentHash.value));
+
+const location = ref<{ x: number; y: number }>({ x: 0, y: 0 });
+defineExpose({ location });
+
+watch(location, () => {
+    map?.flyTo([location.value?.x!, location.value?.y!], 5, {
+        animate: true,
+        duration: 0.85,
+    });
+});
 
 async function updateBackground(layer: string): Promise<void> {
     switch (layer) {
@@ -204,8 +186,6 @@ async function startStream(): Promise<void> {
             playerMarkers = resp.users;
             dispatchMarkers = resp.dispatches;
 
-            await applyPlayerQuery();
-            await applyDispatchQuery();
             applySelectedMarkerCentering();
         }
     } catch (e) {

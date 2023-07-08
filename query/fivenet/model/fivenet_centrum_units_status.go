@@ -18,7 +18,7 @@ type FivenetCentrumUnitsStatus struct {
 	Status    int16      `json:"status"`
 	Reason    *string    `json:"reason"`
 	Code      *string    `json:"code"`
-	UserID    int32      `json:"user_id"`
+	UserID    *int32     `json:"user_id"`
 	InSquad   *bool      `json:"in_squad"`
 	X         *float64   `json:"x"`
 	Y         *float64   `json:"y"`

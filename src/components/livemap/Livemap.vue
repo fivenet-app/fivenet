@@ -14,6 +14,7 @@ import { ValueOf } from '~/utils/types';
 import { Job } from '~~/gen/ts/resources/jobs/jobs';
 import { DispatchMarker, UserMarker } from '~~/gen/ts/resources/livemap/livemap';
 import { LivemapperServiceClient } from '~~/gen/ts/services/livemapper/livemap.client';
+import CentrumSidebar from './CentrumSidebar.vue';
 
 const { $grpc, $loading } = useNuxtApp();
 const userSettingsStore = useUserSettingsStore();
@@ -462,190 +463,202 @@ watchDebounced(postalQuery, () => findPostal(), {
             <DataPendingBlock v-else-if="!error" :message="$t('components.livemap.paused_datastream')" :paused="true" />
         </div>
 
-        <LMap
-            class="z-0"
-            v-model:zoom="zoom"
-            v-model:center="center"
-            :crs="customCRS"
-            :min-zoom="1"
-            :max-zoom="6"
-            @click="selectedMarker = undefined"
-            :inertia="false"
-            :style="{ backgroundColor }"
-            @ready="onMapReady($event)"
-            :use-global-leaflet="false"
-        >
-            <LTileLayer
-                url="/images/livemap/tiles/postal/{z}/{x}/{y}.png"
-                layer-type="base"
-                name="Postal"
-                :no-wrap="true"
-                :tms="true"
-                :visible="true"
-                :attribution="attribution"
-            />
-            <LTileLayer
-                url="/images/livemap/tiles/atlas/{z}/{x}/{y}.png"
-                layer-type="base"
-                name="Atlas"
-                :no-wrap="true"
-                :tms="true"
-                :visible="false"
-                :attribution="attribution"
-            />
-            <LTileLayer
-                url="/images/livemap/tiles/road/{z}/{x}/{y}.png"
-                layer-type="base"
-                name="Road"
-                :no-wrap="true"
-                :tms="true"
-                :visible="false"
-                :attribution="attribution"
-            />
-            <LTileLayer
-                url="/images/livemap/tiles/satelite/{z}/{x}/{y}.png"
-                layer-type="base"
-                name="Satelite"
-                :no-wrap="true"
-                :tms="true"
-                :visible="false"
-                :attribution="attribution"
-            />
-
-            <LControlLayers />
-
-            <LLayerGroup
-                v-for="job in markerPlayers"
-                :key="job.name"
-                :name="`${$t('common.employee', 2)} ${job.label}`"
-                layer-type="overlay"
-                :visible="true"
+        <div class="h-full flex flex-row">
+            <LMap
+                class="z-0"
+                v-model:zoom="zoom"
+                v-model:center="center"
+                :crs="customCRS"
+                :min-zoom="1"
+                :max-zoom="6"
+                @click="selectedMarker = undefined"
+                :inertia="false"
+                :style="{ backgroundColor }"
+                @ready="onMapReady($event)"
+                :use-global-leaflet="false"
             >
-                <LMarker
-                    v-for="marker in playerMarkersFiltered.filter((p) => p.user?.job === job.name)"
-                    :key="marker.marker!.id?.toString()"
-                    :latLng="[marker.marker!.y, marker.marker!.x]"
-                    :name="marker.marker!.name"
-                    :icon="getIcon('player', marker) as L.Icon"
-                    @click="setSelectedMarker(marker.marker!.id)"
-                    :z-index-offset="activeChar && marker.user?.identifier === activeChar.identifier ? 25 : 20"
-                >
-                    <LPopup
-                        :options="{ closeButton: false }"
-                        :content="`<span class='font-semibold'>${$t('common.employee', 2)} ${
-                            marker.user?.jobLabel
-                        }</span><br><span class='italic'>[${marker.user?.jobGrade}] ${marker.user?.jobGradeLabel}</span><br>${
-                            marker.user?.firstname
-                        } ${marker.user?.lastname}`"
-                    >
-                    </LPopup>
-                </LMarker>
-            </LLayerGroup>
+                <LTileLayer
+                    url="/images/livemap/tiles/postal/{z}/{x}/{y}.png"
+                    layer-type="base"
+                    name="Postal"
+                    :no-wrap="true"
+                    :tms="true"
+                    :visible="true"
+                    :attribution="attribution"
+                />
+                <LTileLayer
+                    url="/images/livemap/tiles/atlas/{z}/{x}/{y}.png"
+                    layer-type="base"
+                    name="Atlas"
+                    :no-wrap="true"
+                    :tms="true"
+                    :visible="false"
+                    :attribution="attribution"
+                />
+                <LTileLayer
+                    url="/images/livemap/tiles/road/{z}/{x}/{y}.png"
+                    layer-type="base"
+                    name="Road"
+                    :no-wrap="true"
+                    :tms="true"
+                    :visible="false"
+                    :attribution="attribution"
+                />
+                <LTileLayer
+                    url="/images/livemap/tiles/satelite/{z}/{x}/{y}.png"
+                    layer-type="base"
+                    name="Satelite"
+                    :no-wrap="true"
+                    :tms="true"
+                    :visible="false"
+                    :attribution="attribution"
+                />
 
-            <LLayerGroup
-                v-for="job in markerDispatches"
-                :key="job.name"
-                :name="`${$t('common.dispatch', 2)} ${job.label}`"
-                layer-type="overlay"
-                :visible="true"
-            >
-                <LMarker
-                    v-for="marker in dispatchMarkersFiltered.filter((m) => m.job === job.name)"
-                    :key="marker.marker!.id?.toString()"
-                    :latLng="[marker.marker!.y, marker.marker!.x]"
-                    :name="marker.marker!.name"
-                    :icon="getIcon('dispatch', marker) as L.Icon"
-                    @click="setSelectedMarker(marker.marker!.id)"
-                    :z-index-offset="marker.active ? 15 : 10"
-                >
-                    <LPopup
-                        :options="{ closeButton: false }"
-                        :content="`<span class='font-semibold'>${$t('common.dispatch', 2)} ${marker.jobLabel}</span><br>${
-                            marker.marker!.popup
-                        }<br><span>${
-                            useLocaleTimeAgo(toDate(marker.marker!.updatedAt)!).value
-                        }</span><br><span class='italic'>${$t('components.livemap.sent_by')} ${marker.marker!.name}</span>`"
-                    >
-                    </LPopup>
-                </LMarker>
-            </LLayerGroup>
+                <LControlLayers />
 
-            <LControl position="bottomleft" class="leaflet-control-attribution mouseposition">
-                <b>{{ $t('common.longitude') }}</b
-                >: {{ mouseLat }} | <b>{{ $t('common.latitude') }}</b
-                >: {{ mouseLong }}
-            </LControl>
-            <LControl position="topleft">
-                <div class="form-control flex flex-col gap-2">
-                    <div>
-                        <input
-                            v-model="playerQuery"
-                            class="w-full"
-                            type="text"
-                            name="searchPlayer"
-                            :placeholder="`${$t('common.employee', 1)} ${$t('common.filter')}`"
-                        />
-                    </div>
-                    <div>
-                        <input
-                            v-model="dispatchQuery"
-                            class="w-full"
-                            type="text"
-                            name="searchDispatch"
-                            :placeholder="`${$t('common.dispatch', 1)} ${$t('common.filter')}`"
-                        />
-                    </div>
-                    <div>
-                        <Combobox as="div" class="w-full" v-model="selectedPostal" nullable>
-                            <ComboboxInput
+                <LLayerGroup
+                    v-for="job in markerPlayers"
+                    :key="job.name"
+                    :name="`${$t('common.employee', 2)} ${job.label}`"
+                    layer-type="overlay"
+                    :visible="true"
+                >
+                    <LMarker
+                        v-for="marker in playerMarkersFiltered.filter((p) => p.user?.job === job.name)"
+                        :key="marker.marker!.id?.toString()"
+                        :latLng="[marker.marker!.y, marker.marker!.x]"
+                        :name="marker.marker!.name"
+                        :icon="getIcon('player', marker) as L.Icon"
+                        @click="setSelectedMarker(marker.marker!.id)"
+                        :z-index-offset="activeChar && marker.user?.identifier === activeChar.identifier ? 25 : 20"
+                    >
+                        <LPopup
+                            :options="{ closeButton: false }"
+                            :content="`<span class='font-semibold'>${$t('common.employee', 2)} ${
+                                marker.user?.jobLabel
+                            }</span><br><span class='italic'>[${marker.user?.jobGrade}] ${
+                                marker.user?.jobGradeLabel
+                            }</span><br>${marker.user?.firstname} ${marker.user?.lastname}`"
+                        >
+                        </LPopup>
+                    </LMarker>
+                </LLayerGroup>
+
+                <LLayerGroup
+                    v-for="job in markerDispatches"
+                    :key="job.name"
+                    :name="`${$t('common.dispatch', 2)} ${job.label}`"
+                    layer-type="overlay"
+                    :visible="true"
+                >
+                    <LMarker
+                        v-for="marker in dispatchMarkersFiltered.filter((m) => m.job === job.name)"
+                        :key="marker.marker!.id?.toString()"
+                        :latLng="[marker.marker!.y, marker.marker!.x]"
+                        :name="marker.marker!.name"
+                        :icon="getIcon('dispatch', marker) as L.Icon"
+                        @click="setSelectedMarker(marker.marker!.id)"
+                        :z-index-offset="marker.active ? 15 : 10"
+                    >
+                        <LPopup
+                            :options="{ closeButton: false }"
+                            :content="`<span class='font-semibold'>${$t('common.dispatch', 2)} ${marker.jobLabel}</span><br>${
+                                marker.marker!.popup
+                            }<br><span>${
+                                useLocaleTimeAgo(toDate(marker.marker!.updatedAt)!).value
+                            }</span><br><span class='italic'>${$t('components.livemap.sent_by')} ${marker.marker!.name}</span>`"
+                        >
+                        </LPopup>
+                    </LMarker>
+                </LLayerGroup>
+
+                <LControl position="bottomleft" class="leaflet-control-attribution mouseposition">
+                    <b>{{ $t('common.longitude') }}</b
+                    >: {{ mouseLat }} | <b>{{ $t('common.latitude') }}</b
+                    >: {{ mouseLong }}
+                </LControl>
+                <LControl position="topleft">
+                    <div class="form-control flex flex-col gap-2">
+                        <div>
+                            <input
+                                v-model="playerQuery"
                                 class="w-full"
-                                @change="postalQuery = $event.target.value"
-                                @click="loadPostals"
-                                :display-value="(postal: any) => (postal ? postal?.code : '')"
-                                :placeholder="`${$t('common.postal')} ${$t('common.search')}`"
+                                type="text"
+                                name="searchPlayer"
+                                :placeholder="`${$t('common.employee', 1)} ${$t('common.filter')}`"
                             />
-                            <ComboboxOptions class="z-10 w-full py-1 mt-1 overflow-auto bg-white">
-                                <ComboboxOption
-                                    v-for="postal in filteredPostals"
-                                    :key="postal.code"
-                                    :value="postal"
-                                    v-slot="{ active }"
-                                >
-                                    <li
-                                        :class="[
-                                            'relative cursor-default select-none py-2 pl-8 pr-4',
-                                            active ? 'bg-primary-500 text-white' : 'text-gray-600',
-                                        ]"
+                        </div>
+                        <div>
+                            <input
+                                v-model="dispatchQuery"
+                                class="w-full"
+                                type="text"
+                                name="searchDispatch"
+                                :placeholder="`${$t('common.dispatch', 1)} ${$t('common.filter')}`"
+                            />
+                        </div>
+                        <div>
+                            <Combobox as="div" class="w-full" v-model="selectedPostal" nullable>
+                                <ComboboxInput
+                                    class="w-full"
+                                    @change="postalQuery = $event.target.value"
+                                    @click="loadPostals"
+                                    :display-value="(postal: any) => (postal ? postal?.code : '')"
+                                    :placeholder="`${$t('common.postal')} ${$t('common.search')}`"
+                                />
+                                <ComboboxOptions class="z-10 w-full py-1 mt-1 overflow-auto bg-white">
+                                    <ComboboxOption
+                                        v-for="postal in filteredPostals"
+                                        :key="postal.code"
+                                        :value="postal"
+                                        v-slot="{ active }"
                                     >
-                                        {{ postal.code }}
-                                    </li>
-                                </ComboboxOption>
-                            </ComboboxOptions>
-                        </Combobox>
+                                        <li
+                                            :class="[
+                                                'relative cursor-default select-none py-2 pl-8 pr-4',
+                                                active ? 'bg-primary-500 text-white' : 'text-gray-600',
+                                            ]"
+                                        >
+                                            {{ postal.code }}
+                                        </li>
+                                    </ComboboxOption>
+                                </ComboboxOptions>
+                            </Combobox>
+                        </div>
                     </div>
-                </div>
-            </LControl>
-            <LControl position="bottomright">
-                <div class="form-control flex flex-col gap-2">
-                    <div class="p-2 bg-neutral border border-[#6b7280] flex flex-row justify-center">
-                        <span class="text-lg mr-2 text-[#6f7683]">{{ $t('components.livemap.center_selected_marker') }}</span>
-                        <input v-model="livemapCenterSelectedMarker" class="my-auto" name="livemapMarkerSize" type="checkbox" />
+                </LControl>
+                <LControl position="bottomright">
+                    <div class="form-control flex flex-col gap-2">
+                        <div class="p-2 bg-neutral border border-[#6b7280] flex flex-row justify-center">
+                            <span class="text-lg mr-2 text-[#6f7683]">{{
+                                $t('components.livemap.center_selected_marker')
+                            }}</span>
+                            <input
+                                v-model="livemapCenterSelectedMarker"
+                                class="my-auto"
+                                name="livemapMarkerSize"
+                                type="checkbox"
+                            />
+                        </div>
+                        <div class="p-2 bg-neutral border border-[#6b7280] flex flex-row justify-center">
+                            <span class="text-lg mr-2 text-[#6f7683]">{{ livemapMarkerSize }}</span>
+                            <input
+                                name="livemapMarkerSize"
+                                type="range"
+                                class="h-1.5 w-full cursor-grab rounded-full my-auto"
+                                min="14"
+                                max="34"
+                                step="2"
+                                :value="livemapMarkerSize"
+                                @change="livemapMarkerSize = ($event.target as any).value"
+                            />
+                        </div>
                     </div>
-                    <div class="p-2 bg-neutral border border-[#6b7280] flex flex-row justify-center">
-                        <span class="text-lg mr-2 text-[#6f7683]">{{ livemapMarkerSize }}</span>
-                        <input
-                            name="livemapMarkerSize"
-                            type="range"
-                            class="h-1.5 w-full cursor-grab rounded-full my-auto"
-                            min="14"
-                            max="34"
-                            step="2"
-                            :value="livemapMarkerSize"
-                            @change="livemapMarkerSize = ($event.target as any).value"
-                        />
-                    </div>
-                </div>
-            </LControl>
-        </LMap>
+                </LControl>
+            </LMap>
+            <div v-can="'CentrumService.Stream'" class="lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
+                <CentrumSidebar />
+            </div>
+        </div>
     </div>
 </template>

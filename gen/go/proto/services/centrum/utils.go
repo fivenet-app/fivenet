@@ -2,6 +2,7 @@ package centrum
 
 import (
 	"context"
+	"errors"
 
 	dispatch "github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
 	users "github.com/galexrt/fivenet/gen/go/proto/resources/users"
@@ -10,21 +11,7 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 )
 
-func (s *Server) getDispatch(ctx context.Context, userInfo *userinfo.UserInfo, id uint64) (*dispatch.Dispatch, bool) {
-	jobDispatches, ok := s.dispatches.Load(userInfo.Job)
-	if !ok {
-		return nil, false
-	}
-
-	dispatch, ok := jobDispatches.Load(id)
-	if !ok {
-		return nil, false
-	}
-
-	return dispatch, true
-}
-
-func (s *Server) getDispatchFromDB(ctx context.Context, tx qrm.Queryable, id uint64) (*dispatch.Dispatch, error) {
+func (s *Server) getDispatchFromDB(ctx context.Context, tx qrm.DB, id uint64) (*dispatch.Dispatch, error) {
 	condition := tDispatch.ID.EQ(jet.Uint64(id)).AND(jet.OR(
 		tDispatchStatus.ID.IS_NULL(),
 		tDispatchStatus.ID.EQ(
@@ -54,6 +41,8 @@ func (s *Server) getDispatchFromDB(ctx context.Context, tx qrm.Queryable, id uin
 			tDispatchStatus.UserID,
 			tDispatchUnit.UnitID,
 			tDispatchUnit.DispatchID,
+			tDispatchUnit.CreatedAt,
+			tDispatchUnit.ExpiresAt,
 		).
 		FROM(
 			tDispatch.
@@ -80,6 +69,31 @@ func (s *Server) getDispatchFromDB(ctx context.Context, tx qrm.Queryable, id uin
 	return &dispatch, nil
 }
 
+func (s *Server) getDispatchStatus(ctx context.Context, id uint64) (*dispatch.DispatchStatus, error) {
+	stmt := tDispatchStatus.
+		SELECT(
+			tDispatchStatus.ID,
+			tDispatchStatus.CreatedAt,
+			tDispatchStatus.UnitID,
+			tDispatchStatus.Status,
+			tDispatchStatus.Reason,
+			tDispatchStatus.Code,
+			tDispatchStatus.UserID,
+		).
+		FROM(tDispatchStatus).
+		WHERE(
+			tDispatchStatus.ID.EQ(jet.Uint64(id)),
+		).
+		LIMIT(1)
+
+	var dest dispatch.DispatchStatus
+	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
+		return nil, err
+	}
+
+	return &dest, nil
+}
+
 func (s *Server) getUnit(ctx context.Context, userInfo *userinfo.UserInfo, id uint64) (*dispatch.Unit, bool) {
 	jobUnits, ok := s.units.Load(userInfo.Job)
 	if !ok {
@@ -94,7 +108,7 @@ func (s *Server) getUnit(ctx context.Context, userInfo *userinfo.UserInfo, id ui
 	return unit, true
 }
 
-func (s *Server) getUnitFromDB(ctx context.Context, tx qrm.Queryable, id uint64) (*dispatch.Unit, error) {
+func (s *Server) getUnitFromDB(ctx context.Context, tx qrm.DB, id uint64) (*dispatch.Unit, error) {
 	condition := tUnitStatus.ID.IS_NULL().OR(
 		tUnitStatus.ID.EQ(
 			jet.RawInt(`SELECT MAX(unitstatus.id) FROM fivenet_centrum_units_status AS unitstatus WHERE unitstatus.unit_id = unit.id`),
@@ -148,6 +162,42 @@ func (s *Server) getUnitFromDB(ctx context.Context, tx qrm.Queryable, id uint64)
 	return &unit, nil
 }
 
+func (s *Server) getUnitStatus(ctx context.Context, id uint64) (*dispatch.UnitStatus, error) {
+	stmt := tUnitStatus.
+		SELECT(
+			tUnitStatus.ID,
+			tUnitStatus.CreatedAt,
+			tUnitStatus.UnitID,
+			tUnitStatus.Status,
+			tUnitStatus.Reason,
+			tUnitStatus.Code,
+			tUnitStatus.UserID,
+			tUnitStatus.InSquad,
+			tUnitStatus.X,
+			tUnitStatus.Y,
+		).
+		FROM(tUnitStatus).
+		WHERE(
+			tUnitStatus.ID.EQ(jet.Uint64(id)),
+		).
+		LIMIT(1)
+
+	var dest dispatch.UnitStatus
+	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
+		return nil, err
+	}
+
+	if dest.UserId != nil {
+		var err error
+		dest.User, err = s.resolveUserById(ctx, *dest.UserId)
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	return &dest, nil
+}
+
 func (s *Server) resolveUsersForUnit(ctx context.Context, u []*dispatch.UnitAssignment) ([]*dispatch.UnitAssignment, error) {
 	userIds := make([]int32, len(u))
 	for i := 0; i < len(u); i++ {
@@ -158,7 +208,7 @@ func (s *Server) resolveUsersForUnit(ctx context.Context, u []*dispatch.UnitAssi
 		return nil, nil
 	}
 
-	us, err := s.resolveUsersById(ctx, userIds)
+	us, err := s.resolveUsersByIds(ctx, userIds)
 	if err != nil {
 		return nil, err
 	}
@@ -170,7 +220,16 @@ func (s *Server) resolveUsersForUnit(ctx context.Context, u []*dispatch.UnitAssi
 	return u, nil
 }
 
-func (s *Server) resolveUsersById(ctx context.Context, u []int32) ([]*users.UserShort, error) {
+func (s *Server) resolveUserById(ctx context.Context, u int32) (*users.UserShort, error) {
+	us, err := s.resolveUsersByIds(ctx, []int32{u})
+	if err != nil {
+		return nil, err
+	}
+
+	return us[0], nil
+}
+
+func (s *Server) resolveUsersByIds(ctx context.Context, u []int32) ([]*users.UserShort, error) {
 	if len(u) == 0 {
 		return nil, nil
 	}
@@ -198,4 +257,29 @@ func (s *Server) resolveUsersById(ctx context.Context, u []int32) ([]*users.User
 	}
 
 	return resolvedUsers, nil
+}
+
+func (s *Server) getUnitIDFromUserID(ctx context.Context, userId int32) (uint64, error) {
+	stmt := tUnitUser.
+		SELECT(
+			tUnitUser.UnitID.AS("unit_id"),
+		).
+		FROM(tUnitUser).
+		WHERE(
+			tUnitUser.UserID.EQ(jet.Int32(userId)),
+		).
+		LIMIT(1)
+
+	var dest struct {
+		UnitID uint64
+	}
+	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
+		if !errors.Is(qrm.ErrNoRows, err) {
+			return 0, err
+		}
+
+		return 0, nil
+	}
+
+	return dest.UnitID, nil
 }

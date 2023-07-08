@@ -5,9 +5,11 @@ import (
 	"go.uber.org/zap"
 )
 
-type IEvent interface {
-	GetName() string
-}
+type Subject string
+
+type Topic string
+
+type Type string
 
 type Eventus struct {
 	logger *zap.Logger

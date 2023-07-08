@@ -50,10 +50,8 @@ message UpdateUnitStatusResponse {}
 
 message AssignUnitRequest {
   uint64 unit_id = 1;
-  optional bool self_add = 2;
-  optional bool self_remove = 3;
-  repeated int32 to_add = 4;
-  repeated int32 to_remove = 5;
+  repeated int32 to_add = 2;
+  repeated int32 to_remove = 3;
 }
 
 message AssignUnitResponse {}
@@ -61,12 +59,6 @@ message AssignUnitResponse {}
 message ListUnitActivityResponse {
   resources.common.database.PaginationResponse pagination = 1;
   repeated resources.dispatch.UnitStatus activity = 2;
-}
-
-message UnitChange {
-  uint64 id = 1;
-  repeated resources.dispatch.UnitAssignment added = 2;
-  repeated resources.dispatch.UnitAssignment removed = 3;
 }
 
 // Dispatch Management
@@ -106,10 +98,8 @@ message UpdateDispatchStatusResponse {}
 
 message AssignDispatchRequest {
   uint64 dispatch_id = 1;
-  optional bool self_add = 2;
-  optional bool self_remove = 3;
-  repeated uint64 to_add = 4;
-  repeated uint64 to_remove = 5;
+  repeated uint64 to_add = 2;
+  repeated uint64 to_remove = 3;
 }
 
 message AssignDispatchResponse {}
@@ -139,14 +129,15 @@ message StreamRequest {}
 
 message StreamResponse {
   oneof change {
-    UnitChange unit_change = 1;
-    resources.dispatch.UnitStatus unit_status = 2;
+    resources.dispatch.DispatchStatus dispatch_status = 1;
+    resources.dispatch.Dispatch dispatch_update = 2;
+    resources.dispatch.Dispatch dispatch_assigned = 3;
+    resources.dispatch.Dispatch dispatch_unassigned = 4;
 
-    resources.dispatch.Dispatch dispatch_change = 3;
-    resources.dispatch.DispatchStatus dispatch_status = 4;
-
-    // When a dispatch is assigned to a unit
-    resources.dispatch.Dispatch dispatch_assigned = 5;
+    resources.dispatch.UnitStatus unit_status = 5;
+    resources.dispatch.Unit unit_update = 6;
+    resources.dispatch.Unit unit_assigned = 7;
+    uint64 unit_deleted = 8;
   }
 }
 

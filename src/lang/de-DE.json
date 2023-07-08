@@ -512,7 +512,8 @@
         "color": "Farbe",
         "initials": "Initialen",
         "updated": "Aktualisiert",
-        "members": "Keine Mitglieder | {n} Mitglied | {n} Mitglieder"
+        "members": "Keine Mitglieder | {n} Mitglied | {n} Mitglieder",
+        "anon": "Anonym"
     },
     "notifications": {
         "clipboard": {

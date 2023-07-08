@@ -33,6 +33,8 @@ message DispatchAssignment {
   uint64 dispatch_id = 1;
   uint64 unit_id = 2;
   optional resources.dispatch.Unit unit = 3;
+  optional resources.timestamp.Timestamp created_at = 4;
+  optional resources.timestamp.Timestamp expires_at = 5;
 }
 
 enum DISPATCH_STATUS {

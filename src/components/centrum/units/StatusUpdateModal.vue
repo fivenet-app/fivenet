@@ -2,18 +2,18 @@
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import SvgIcon from '@jamescoyle/vue-icon';
 import { mdiCarEmergency } from '@mdi/js';
-import { digits, max, min, required } from '@vee-validate/rules';
+import { max, min, required } from '@vee-validate/rules';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { defineRule } from 'vee-validate';
-import { Dispatch } from '~~/gen/ts/resources/dispatch/dispatch';
+import { UNIT_STATUS, Unit } from '~~/gen/ts/resources/dispatch/units';
 
-defineProps<{
+const props = defineProps<{
     open: boolean;
+    unit: Unit;
 }>();
 
 const emits = defineEmits<{
     (e: 'close'): void;
-    (e: 'created', dsp: Dispatch): void;
 }>();
 
 const location = ref<{ x: number; y: number }>({ x: 0, y: 0 });
@@ -21,27 +21,30 @@ defineExpose({ location });
 
 const { $grpc } = useNuxtApp();
 
-async function createDispatch(values: FormData): Promise<void> {
-    return new Promise(async (res, rej) => {
-        try {
-            const call = $grpc.getCentrumClient().createDispatch({
-                dispatch: {
-                    id: 0n,
-                    job: '',
-                    message: values.message,
-                    description: values.description,
-                    anon: values.anon as boolean,
-                    attributes: {
-                        list: [],
-                    },
-                    x: location.value.x,
-                    y: location.value.y,
-                    units: [],
-                },
-            });
-            const { response } = await call;
+const statuses = ref<{ status: UNIT_STATUS; selected?: boolean }[]>([
+    { status: UNIT_STATUS.AVAILABLE },
+    { status: UNIT_STATUS.BUSY },
+    { status: UNIT_STATUS.ON_BREAK },
+    { status: UNIT_STATUS.UNAVAILABLE },
+]);
+statuses.value.forEach((s) => {
+    if (s.status === props.unit.status?.status) {
+        s.selected = true;
+    }
+});
 
-            emits('created', response.dispatch!);
+async function updateUnitStatus(values: FormData): Promise<void> {
+    return new Promise(async (res, rej) => {
+        console.log(values);
+        try {
+            const call = $grpc.getCentrumClient().updateUnitStatus({
+                unitId: props.unit.id,
+                status: values.status,
+                code: values.code,
+                reason: values.reason,
+            });
+            await call;
+
             emits('close');
 
             return res();
@@ -53,27 +56,27 @@ async function createDispatch(values: FormData): Promise<void> {
 }
 
 defineRule('required', required);
-defineRule('digits', digits);
 defineRule('min', min);
 defineRule('max', max);
 
 interface FormData {
-    message: string;
-    description: string;
-    anon: boolean;
+    status: UNIT_STATUS;
+    code?: string;
+    reason: string;
 }
 
 const { handleSubmit } = useForm<FormData>({
     validationSchema: {
-        message: { required: true, min: 3, max: 255 },
-        description: { required: false, min: 6, max: 512 },
+        status: { required: true },
+        code: { required: false },
+        reason: { required: true, min: 3, max: 255 },
     },
     initialValues: {
-        anon: false,
+        status: props.unit.status?.status,
     },
 });
 
-const onSubmit = handleSubmit(async (values): Promise<void> => await createDispatch(values));
+const onSubmit = handleSubmit(async (values): Promise<void> => await updateUnitStatus(values));
 </script>
 
 <template>
@@ -117,68 +120,71 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await createDispa
                                     </div>
                                     <div class="mt-3 text-center sm:mt-5">
                                         <DialogTitle as="h3" class="text-base font-semibold leading-6">
-                                            Create Dispatch
+                                            Update Unit Status
                                         </DialogTitle>
                                         <div class="mt-2">
                                             <div class="my-2 space-y-24">
                                                 <div class="flex-1 form-control">
                                                     <label
-                                                        for="message"
+                                                        for="status"
                                                         class="block text-sm font-medium leading-6 text-neutral"
                                                     >
-                                                        {{ $t('common.message') }}
+                                                        {{ $t('common.status') }}
+                                                    </label>
+                                                    <VeeField
+                                                        name="status"
+                                                        as="div"
+                                                        :placeholder="$t('common.status')"
+                                                        :label="$t('common.status')"
+                                                        v-slot="{ field }"
+                                                    >
+                                                        <select
+                                                            v-bind="field"
+                                                            class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                        >
+                                                            <option
+                                                                v-for="status in statuses"
+                                                                :selected="status.selected"
+                                                                :value="status.status"
+                                                            >
+                                                                {{ UNIT_STATUS[status.status] }}
+                                                            </option>
+                                                        </select>
+                                                    </VeeField>
+                                                    <VeeErrorMessage name="status" as="p" class="mt-2 text-sm text-error-400" />
+                                                </div>
+                                            </div>
+                                            <div class="my-2 space-y-20">
+                                                <div class="flex-1 form-control">
+                                                    <label for="code" class="block text-sm font-medium leading-6 text-neutral">
+                                                        {{ $t('common.code') }}
                                                     </label>
                                                     <VeeField
                                                         type="text"
-                                                        name="message"
+                                                        name="code"
                                                         class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                        :placeholder="$t('common.message')"
-                                                        :label="$t('common.message')"
+                                                        :placeholder="$t('common.code')"
+                                                        :label="$t('common.code')"
                                                     />
-                                                    <VeeErrorMessage
-                                                        name="message"
-                                                        as="p"
-                                                        class="mt-2 text-sm text-error-400"
-                                                    />
+                                                    <VeeErrorMessage name="code" as="p" class="mt-2 text-sm text-error-400" />
                                                 </div>
                                             </div>
                                             <div class="my-2 space-y-20">
                                                 <div class="flex-1 form-control">
                                                     <label
-                                                        for="description"
+                                                        for="reason"
                                                         class="block text-sm font-medium leading-6 text-neutral"
                                                     >
-                                                        {{ $t('common.description') }}
+                                                        {{ $t('common.reason') }}
                                                     </label>
                                                     <VeeField
                                                         type="text"
-                                                        name="description"
+                                                        name="reason"
                                                         class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                        :placeholder="$t('common.description')"
-                                                        :label="$t('common.description')"
+                                                        :placeholder="$t('common.reason')"
+                                                        :label="$t('common.reason')"
                                                     />
-                                                    <VeeErrorMessage
-                                                        name="description"
-                                                        as="p"
-                                                        class="mt-2 text-sm text-error-400"
-                                                    />
-                                                </div>
-                                            </div>
-                                            <div class="my-2 space-y-20">
-                                                <div class="flex-1 form-control">
-                                                    <label for="anon" class="block text-sm font-medium leading-6 text-neutral">
-                                                        {{ $t('common.anon') }}
-                                                    </label>
-                                                    <div class="flex h-6 items-center">
-                                                        <VeeField
-                                                            type="checkbox"
-                                                            name="anon"
-                                                            class="block border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6 h-6 w-6 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
-                                                            :placeholder="$t('common.anon')"
-                                                            :label="$t('common.anon')"
-                                                        />
-                                                    </div>
-                                                    <VeeErrorMessage name="anon" as="p" class="mt-2 text-sm text-error-400" />
+                                                    <VeeErrorMessage name="reason" as="p" class="mt-2 text-sm text-error-400" />
                                                 </div>
                                             </div>
                                         </div>
@@ -197,7 +203,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await createDispa
                                         type="submit"
                                         class="flex-1 rounded-md bg-primary-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-primary-400"
                                     >
-                                        {{ $t('common.create') }}
+                                        {{ $t('common.update') }}
                                     </button>
                                 </div>
                             </form>

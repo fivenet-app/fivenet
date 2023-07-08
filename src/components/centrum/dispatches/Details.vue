@@ -2,13 +2,11 @@
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import SvgIcon from '@jamescoyle/vue-icon';
 import { mdiClose } from '@mdi/js';
-import { Dispatch, DispatchStatus, DISPATCH_STATUS } from '~~/gen/ts/resources/dispatch/dispatch';
-import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
-import { PaginationResponse } from '~~/gen/ts/resources/common/database/database';
+import { Dispatch, DISPATCH_STATUS } from '~~/gen/ts/resources/dispatch/dispatch';
 import Time from '~/components/partials/elements/Time.vue';
 import Feed from './Feed.vue';
 
-const props = defineProps<{
+defineProps<{
     open: boolean;
     dispatch: Dispatch;
 }>();
@@ -16,40 +14,6 @@ const props = defineProps<{
 defineEmits<{
     (e: 'close'): void;
 }>();
-
-const { $grpc } = useNuxtApp();
-
-const pagination = ref<PaginationResponse>();
-const offset = ref(0n);
-
-const {
-    data: activities,
-    pending,
-    refresh,
-    error,
-} = useLazyAsyncData(`centrum-dispatch-${props.dispatch.id.toString()}-activity-${offset.value}`, () => listUnitActivity());
-
-async function listUnitActivity(): Promise<Array<DispatchStatus>> {
-    return new Promise(async (res, rej) => {
-        try {
-            const req = {
-                pagination: {
-                    offset: offset.value,
-                },
-                id: props.dispatch.id,
-            };
-
-            const call = $grpc.getCentrumClient().listDispatchActivity(req);
-            const { response } = await call;
-
-            pagination.value = response.pagination;
-            return res(response.activity);
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
-        }
-    });
-}
 </script>
 
 <template>

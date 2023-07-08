@@ -3,13 +3,14 @@ package centrum
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"time"
 
 	dispatch "github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
 	"github.com/galexrt/fivenet/pkg/audit"
 	"github.com/galexrt/fivenet/pkg/events"
+	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/perms"
-	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/pkg/utils/syncx"
 	"github.com/nats-io/nats.go"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
@@ -17,6 +18,7 @@ import (
 	"go.uber.org/zap"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	"google.golang.org/protobuf/proto"
 )
 
 var (
@@ -33,20 +35,15 @@ type Server struct {
 	p      perms.Permissions
 	a      audit.IAuditer
 
-	events   *events.Eventus
-	eventSub *nats.Subscription
+	events *events.Eventus
 
-	dispatches syncx.Map[string, *syncx.Map[uint64, *dispatch.Dispatch]]
 	units      syncx.Map[string, *syncx.Map[uint64, *dispatch.Unit]]
 	unitsUsers syncx.Map[int32, uint64]
 
-	broker *utils.Broker[interface{}]
+	visibleJobs []string
 }
 
-func NewServer(ctx context.Context, logger *zap.Logger, tp *tracesdk.TracerProvider, db *sql.DB, p perms.Permissions, aud audit.IAuditer, e *events.Eventus) *Server {
-	broker := utils.NewBroker[interface{}](ctx)
-	go broker.Start()
-
+func NewServer(ctx context.Context, logger *zap.Logger, tp *tracesdk.TracerProvider, db *sql.DB, p perms.Permissions, aud audit.IAuditer, e *events.Eventus, visibleJobs []string) *Server {
 	return &Server{
 		ctx:    ctx,
 		logger: logger,
@@ -58,11 +55,10 @@ func NewServer(ctx context.Context, logger *zap.Logger, tp *tracesdk.TracerProvi
 		a:      aud,
 		events: e,
 
-		dispatches: syncx.Map[string, *syncx.Map[uint64, *dispatch.Dispatch]]{},
 		units:      syncx.Map[string, *syncx.Map[uint64, *dispatch.Unit]]{},
 		unitsUsers: syncx.Map[int32, uint64]{},
 
-		broker: broker,
+		visibleJobs: visibleJobs,
 	}
 }
 
@@ -79,7 +75,6 @@ func (s *Server) Start() {
 
 			select {
 			case <-s.ctx.Done():
-				s.broker.Stop()
 				return
 			case <-time.After(10 * time.Second):
 			}
@@ -88,15 +83,159 @@ func (s *Server) Start() {
 }
 
 func (s *Server) refresh() error {
-	ctx, span := s.tracer.Start(s.ctx, "livemap-refresh-cache")
+	ctx, span := s.tracer.Start(s.ctx, "centrum-refresh-cache")
 	defer span.End()
 
-	if err := s.loadDispatches(ctx); err != nil {
-		s.logger.Error("failed to load dispatches", zap.Error(err))
-	}
-	if err := s.loadUnits(ctx); err != nil {
+	if err := s.loadUnits(ctx, 0); err != nil {
 		s.logger.Error("failed to load units", zap.Error(err))
 	}
 
 	return nil
+}
+
+func (s *Server) Stream(req *StreamRequest, srv CentrumService_StreamServer) error {
+	userInfo := auth.MustGetUserInfoFromContext(srv.Context())
+
+	unitId, err := s.getUnitIDFromUserID(srv.Context(), userInfo.UserId)
+	if err != nil {
+		return err
+	}
+
+	msgCh := make(chan *nats.Msg, 128)
+	if unitId != 0 {
+		sub, err := s.events.JS.ChanSubscribe(fmt.Sprintf(BaseSubject+".%s.*.*.%d", userInfo.Job, unitId), msgCh)
+		if err != nil {
+			return err
+		}
+		defer sub.Unsubscribe()
+	} else {
+		sub, err := s.events.JS.ChanSubscribe(fmt.Sprintf(BaseSubject+".%s.>", userInfo.Job), msgCh)
+		if err != nil {
+			return err
+		}
+		defer sub.Unsubscribe()
+	}
+
+	resp := &StreamResponse{}
+	cancel := false
+
+	for {
+		select {
+		case <-srv.Context().Done():
+			return nil
+		case msg := <-msgCh:
+			msg.Ack()
+			topic, tType := s.getEventTypeFromSubject(msg.Subject)
+
+			switch topic {
+			case TopicDispatch:
+				switch tType {
+				case TypeDispatchUpdated:
+					var dest dispatch.Dispatch
+					if err := proto.Unmarshal(msg.Data, &dest); err != nil {
+						return err
+					}
+
+					resp.Change = &StreamResponse_DispatchUpdate{
+						DispatchUpdate: &dest,
+					}
+
+				case TypeDispatchStatus:
+					var dest dispatch.DispatchStatus
+					if err := proto.Unmarshal(msg.Data, &dest); err != nil {
+						return err
+					}
+
+					resp.Change = &StreamResponse_DispatchStatus{
+						DispatchStatus: &dest,
+					}
+
+				case TypeDispatchAssigned:
+					var dest dispatch.Dispatch
+					if err := proto.Unmarshal(msg.Data, &dest); err != nil {
+						return err
+					}
+
+					resp.Change = &StreamResponse_DispatchAssigned{
+						DispatchAssigned: &dest,
+					}
+
+				case TypeDispatchUnassigned:
+					var dest dispatch.Dispatch
+					if err := proto.Unmarshal(msg.Data, &dest); err != nil {
+						return err
+					}
+
+					resp.Change = &StreamResponse_DispatchUnassigned{
+						DispatchUnassigned: &dest,
+					}
+				}
+
+			case TopicUnit:
+				switch tType {
+				case TypeUnitUpdated:
+					var dest dispatch.Dispatch
+					if err := proto.Unmarshal(msg.Data, &dest); err != nil {
+						return err
+					}
+
+					resp.Change = &StreamResponse_DispatchAssigned{
+						DispatchAssigned: &dest,
+					}
+
+				case TypeUnitStatus:
+					var dest dispatch.UnitStatus
+					if err := proto.Unmarshal(msg.Data, &dest); err != nil {
+						return err
+					}
+
+					resp.Change = &StreamResponse_UnitStatus{
+						UnitStatus: &dest,
+					}
+				case TypeUnitAssigned:
+					var dest dispatch.Unit
+					if err := proto.Unmarshal(msg.Data, &dest); err != nil {
+						return err
+					}
+
+					found := false
+					for _, u := range dest.Users {
+						if u.UserId == userInfo.UserId {
+							found = true
+							break
+						}
+					}
+
+					if found {
+						resp.Change = &StreamResponse_UnitAssigned{
+							UnitAssigned: &dest,
+						}
+					} else {
+						resp.Change = &StreamResponse_UnitAssigned{
+							UnitAssigned: nil,
+						}
+						cancel = true
+					}
+
+				case TypeUnitDeleted:
+					var dest dispatch.Unit
+					if err := proto.Unmarshal(msg.Data, &dest); err != nil {
+						return err
+					}
+
+					resp.Change = &StreamResponse_UnitDeleted{
+						UnitDeleted: dest.Id,
+					}
+				}
+			}
+		}
+
+		if err := srv.Send(resp); err != nil {
+			return err
+		}
+
+		if cancel {
+			return nil
+		}
+	}
 }

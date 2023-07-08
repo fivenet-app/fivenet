@@ -152,7 +152,7 @@ func NewGRPCServer(ctx context.Context, logger *zap.Logger, db *sql.DB, tp *trac
 		config.C.Game.SuperuserGroups, config.C.OAuth2.Providers))
 	pbcitizenstore.RegisterCitizenStoreServiceServer(grpcServer, pbcitizenstore.NewServer(db, p, enricher, aud,
 		config.C.Game.PublicJobs, config.C.Game.UnemployedJob.Name, config.C.Game.UnemployedJob.Grade))
-	centrum := pbcentrum.NewServer(ctx, logger.Named("grpc_centrum"), tp, db, p, aud, eventus)
+	centrum := pbcentrum.NewServer(ctx, logger.Named("grpc_centrum"), tp, db, p, aud, eventus, config.C.Game.Livemap.Jobs)
 	go centrum.Start()
 	pbcentrum.RegisterCentrumServiceServer(grpcServer, centrum)
 	pbcompletor.RegisterCompletorServiceServer(grpcServer, pbcompletor.NewServer(db, p, cache))

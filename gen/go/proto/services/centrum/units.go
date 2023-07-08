@@ -12,6 +12,7 @@ import (
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
+	"google.golang.org/protobuf/proto"
 )
 
 var (
@@ -21,12 +22,18 @@ var (
 	tUser       = table.Users.AS("usershort")
 )
 
-func (s *Server) loadUnits(ctx context.Context) error {
+func (s *Server) loadUnits(ctx context.Context, id uint64) error {
 	condition := tUnitStatus.ID.IS_NULL().OR(
 		tUnitStatus.ID.EQ(
 			jet.RawInt(`SELECT MAX(unitstatus.id) FROM fivenet_centrum_units_status AS unitstatus WHERE unitstatus.unit_id = unit.id`),
 		),
 	)
+
+	if id > 0 {
+		condition = condition.AND(
+			tUnits.ID.EQ(jet.Uint64(id)),
+		)
+	}
 
 	stmt := tUnits.
 		SELECT(
@@ -131,8 +138,6 @@ func (s *Server) CreateOrUpdateUnit(ctx context.Context, req *CreateOrUpdateUnit
 	}
 	defer s.a.AddEntryWithData(auditEntry, req)
 
-	resp := &CreateOrUpdateUnitResponse{}
-
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -141,6 +146,7 @@ func (s *Server) CreateOrUpdateUnit(ctx context.Context, req *CreateOrUpdateUnit
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
+	resp := &CreateOrUpdateUnitResponse{}
 	// No unit id set
 	if req.Unit.Id <= 0 {
 		tUnits := table.FivenetCentrumUnits
@@ -170,13 +176,9 @@ func (s *Server) CreateOrUpdateUnit(ctx context.Context, req *CreateOrUpdateUnit
 			return nil, err
 		}
 
-		unit, err := s.getUnitFromDB(ctx, tx, uint64(lastId))
-		if err != nil {
-			return nil, ErrFailedQuery
-		}
+		req.Unit.Id = uint64(lastId)
 
-		resp.Unit = unit
-
+		tUnitStatus := table.FivenetCentrumUnitsStatus
 		stmt = tUnitStatus.
 			INSERT(
 				tUnitStatus.UnitID,
@@ -189,9 +191,26 @@ func (s *Server) CreateOrUpdateUnit(ctx context.Context, req *CreateOrUpdateUnit
 				userInfo.UserId,
 			)
 
-		if _, err := stmt.ExecContext(ctx, tx); err != nil {
+		res, err := stmt.ExecContext(ctx, tx)
+		if err != nil {
 			return nil, err
 		}
+
+		lastId, err = res.LastInsertId()
+		if err != nil {
+			return nil, err
+		}
+
+		status, err := s.getUnitStatus(ctx, uint64(lastId))
+		if err != nil {
+			return nil, err
+		}
+
+		data, err := proto.Marshal(status)
+		if err != nil {
+			return nil, err
+		}
+		s.events.JS.Publish(s.buildSubject(TopicUnit, TypeUnitStatus, userInfo, status.UnitId), data)
 
 		auditEntry.State = int16(rector.EVENT_TYPE_CREATED)
 	} else {
@@ -233,6 +252,19 @@ func (s *Server) CreateOrUpdateUnit(ctx context.Context, req *CreateOrUpdateUnit
 		return nil, ErrFailedQuery
 	}
 
+	unit, err := s.getUnitFromDB(ctx, tx, uint64(req.Unit.Id))
+	if err != nil {
+		return nil, ErrFailedQuery
+	}
+
+	resp.Unit = unit
+
+	data, err := proto.Marshal(resp.Unit)
+	if err != nil {
+		return nil, err
+	}
+	s.events.JS.Publish(s.buildSubject(TopicUnit, TypeUnitUpdated, userInfo, resp.Unit.Id), data)
+
 	return resp, nil
 }
 
@@ -247,6 +279,13 @@ func (s *Server) DeleteUnit(ctx context.Context, req *DeleteUnitRequest) (*Delet
 		State:   int16(rector.EVENT_TYPE_ERRORED),
 	}
 	defer s.a.AddEntryWithData(auditEntry, req)
+
+	resp := &DeleteUnitResponse{}
+
+	unit, ok := s.getUnit(ctx, userInfo, req.UnitId)
+	if !ok {
+		return resp, nil
+	}
 
 	stmt := tUnits.
 		DELETE().
@@ -265,9 +304,15 @@ func (s *Server) DeleteUnit(ctx context.Context, req *DeleteUnitRequest) (*Delet
 		units.Delete(req.UnitId)
 	}
 
+	data, err := proto.Marshal(unit)
+	if err != nil {
+		return nil, err
+	}
+	s.events.JS.Publish(s.buildSubject(TopicUnit, TypeUnitDeleted, userInfo, req.UnitId), data)
+
 	auditEntry.State = int16(rector.EVENT_TYPE_DELETED)
 
-	return &DeleteUnitResponse{}, nil
+	return resp, nil
 }
 
 func (s *Server) UpdateUnitStatus(ctx context.Context, req *UpdateUnitStatusRequest) (*UpdateUnitStatusResponse, error) {
@@ -287,17 +332,22 @@ func (s *Server) UpdateUnitStatus(ctx context.Context, req *UpdateUnitStatusRequ
 		return nil, ErrFailedQuery
 	}
 
-	found := false
-	for i := 0; i < len(unit.Users); i++ {
-		if unit.Users[i].UserId == userInfo.UserId {
-			found = true
-			break
+	can := s.p.Can(userInfo, CentrumServicePerm, CentrumServiceDeleteUnitPerm)
+
+	if !can {
+		found := false
+		for i := 0; i < len(unit.Users); i++ {
+			if unit.Users[i].UserId == userInfo.UserId {
+				found = true
+				break
+			}
+		}
+		if !found {
+			return nil, ErrFailedQuery
 		}
 	}
-	if !found {
-		return nil, ErrFailedQuery
-	}
 
+	tUnitStatus := table.FivenetCentrumUnitsStatus
 	stmt := tUnitStatus.
 		INSERT(
 			tUnitStatus.UnitID,
@@ -316,9 +366,26 @@ func (s *Server) UpdateUnitStatus(ctx context.Context, req *UpdateUnitStatusRequ
 			false,
 		)
 
-	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+	res, err := stmt.ExecContext(ctx, s.db)
+	if err != nil {
 		return nil, err
 	}
+
+	lastId, err := res.LastInsertId()
+	if err != nil {
+		return nil, err
+	}
+
+	status, err := s.getUnitStatus(ctx, uint64(lastId))
+	if err != nil {
+		return nil, err
+	}
+
+	data, err := proto.Marshal(status)
+	if err != nil {
+		return nil, err
+	}
+	s.events.JS.Publish(s.buildSubject(TopicUnit, TypeUnitStatus, userInfo, status.UnitId), data)
 
 	auditEntry.State = int16(rector.EVENT_TYPE_CREATED)
 
@@ -362,6 +429,7 @@ func (s *Server) AssignUnit(ctx context.Context, req *AssignUnitRequest) (*Assig
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
+	tUnitUser := table.FivenetCentrumUnitsUsers
 	if len(removeIds) > 0 {
 		stmt := tUnitUser.
 			DELETE().
@@ -412,7 +480,7 @@ func (s *Server) AssignUnit(ctx context.Context, req *AssignUnitRequest) (*Assig
 			}
 		}
 
-		users, err := s.resolveUsersById(ctx, found)
+		users, err := s.resolveUsersByIds(ctx, found)
 		if err != nil {
 			return nil, err
 		}
@@ -431,6 +499,12 @@ func (s *Server) AssignUnit(ctx context.Context, req *AssignUnitRequest) (*Assig
 	if err = tx.Commit(); err != nil {
 		return nil, ErrFailedQuery
 	}
+
+	data, err := proto.Marshal(unit)
+	if err != nil {
+		return nil, err
+	}
+	s.events.JS.Publish(s.buildSubject(TopicUnit, TypeUnitAssigned, userInfo, unit.Id), data)
 
 	auditEntry.State = int16(rector.EVENT_TYPE_UPDATED)
 

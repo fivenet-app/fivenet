@@ -6,7 +6,6 @@ import { MessageType } from "@protobuf-ts/runtime";
 import { DispatchStatus } from "../../resources/dispatch/dispatch.js";
 import { Dispatch } from "../../resources/dispatch/dispatch.js";
 import { DISPATCH_STATUS } from "../../resources/dispatch/dispatch.js";
-import { UnitAssignment } from "../../resources/dispatch/units.js";
 import { UnitStatus } from "../../resources/dispatch/units.js";
 import { PaginationResponse } from "../../resources/common/database/database.js";
 import { Unit } from "../../resources/dispatch/units.js";
@@ -114,19 +113,11 @@ export interface AssignUnitRequest {
      */
     unitId: bigint;
     /**
-     * @generated from protobuf field: optional bool self_add = 2;
-     */
-    selfAdd?: boolean;
-    /**
-     * @generated from protobuf field: optional bool self_remove = 3;
-     */
-    selfRemove?: boolean;
-    /**
-     * @generated from protobuf field: repeated int32 to_add = 4;
+     * @generated from protobuf field: repeated int32 to_add = 2;
      */
     toAdd: number[];
     /**
-     * @generated from protobuf field: repeated int32 to_remove = 5;
+     * @generated from protobuf field: repeated int32 to_remove = 3;
      */
     toRemove: number[];
 }
@@ -147,23 +138,6 @@ export interface ListUnitActivityResponse {
      * @generated from protobuf field: repeated resources.dispatch.UnitStatus activity = 2;
      */
     activity: UnitStatus[];
-}
-/**
- * @generated from protobuf message services.centrum.UnitChange
- */
-export interface UnitChange {
-    /**
-     * @generated from protobuf field: uint64 id = 1;
-     */
-    id: bigint;
-    /**
-     * @generated from protobuf field: repeated resources.dispatch.UnitAssignment added = 2;
-     */
-    added: UnitAssignment[];
-    /**
-     * @generated from protobuf field: repeated resources.dispatch.UnitAssignment removed = 3;
-     */
-    removed: UnitAssignment[];
 }
 // Dispatch Management
 
@@ -256,19 +230,11 @@ export interface AssignDispatchRequest {
      */
     dispatchId: bigint;
     /**
-     * @generated from protobuf field: optional bool self_add = 2;
-     */
-    selfAdd?: boolean;
-    /**
-     * @generated from protobuf field: optional bool self_remove = 3;
-     */
-    selfRemove?: boolean;
-    /**
-     * @generated from protobuf field: repeated uint64 to_add = 4;
+     * @generated from protobuf field: repeated uint64 to_add = 2;
      */
     toAdd: bigint[];
     /**
-     * @generated from protobuf field: repeated uint64 to_remove = 5;
+     * @generated from protobuf field: repeated uint64 to_remove = 3;
      */
     toRemove: bigint[];
 }
@@ -329,37 +295,53 @@ export interface StreamResponse {
      * @generated from protobuf oneof: change
      */
     change: {
-        oneofKind: "unitChange";
-        /**
-         * @generated from protobuf field: services.centrum.UnitChange unit_change = 1;
-         */
-        unitChange: UnitChange;
-    } | {
-        oneofKind: "unitStatus";
-        /**
-         * @generated from protobuf field: resources.dispatch.UnitStatus unit_status = 2;
-         */
-        unitStatus: UnitStatus;
-    } | {
-        oneofKind: "dispatchChange";
-        /**
-         * @generated from protobuf field: resources.dispatch.Dispatch dispatch_change = 3;
-         */
-        dispatchChange: Dispatch;
-    } | {
         oneofKind: "dispatchStatus";
         /**
-         * @generated from protobuf field: resources.dispatch.DispatchStatus dispatch_status = 4;
+         * @generated from protobuf field: resources.dispatch.DispatchStatus dispatch_status = 1;
          */
         dispatchStatus: DispatchStatus;
     } | {
+        oneofKind: "dispatchUpdate";
+        /**
+         * @generated from protobuf field: resources.dispatch.Dispatch dispatch_update = 2;
+         */
+        dispatchUpdate: Dispatch;
+    } | {
         oneofKind: "dispatchAssigned";
         /**
-         * When a dispatch is assigned to a unit
-         *
-         * @generated from protobuf field: resources.dispatch.Dispatch dispatch_assigned = 5;
+         * @generated from protobuf field: resources.dispatch.Dispatch dispatch_assigned = 3;
          */
         dispatchAssigned: Dispatch;
+    } | {
+        oneofKind: "dispatchUnassigned";
+        /**
+         * @generated from protobuf field: resources.dispatch.Dispatch dispatch_unassigned = 4;
+         */
+        dispatchUnassigned: Dispatch;
+    } | {
+        oneofKind: "unitStatus";
+        /**
+         * @generated from protobuf field: resources.dispatch.UnitStatus unit_status = 5;
+         */
+        unitStatus: UnitStatus;
+    } | {
+        oneofKind: "unitUpdate";
+        /**
+         * @generated from protobuf field: resources.dispatch.Unit unit_update = 6;
+         */
+        unitUpdate: Unit;
+    } | {
+        oneofKind: "unitAssigned";
+        /**
+         * @generated from protobuf field: resources.dispatch.Unit unit_assigned = 7;
+         */
+        unitAssigned: Unit;
+    } | {
+        oneofKind: "unitDeleted";
+        /**
+         * @generated from protobuf field: uint64 unit_deleted = 8;
+         */
+        unitDeleted: bigint;
     } | {
         oneofKind: undefined;
     };
@@ -494,10 +476,8 @@ class AssignUnitRequest$Type extends MessageType<AssignUnitRequest> {
     constructor() {
         super("services.centrum.AssignUnitRequest", [
             { no: 1, name: "unit_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 2, name: "self_add", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
-            { no: 3, name: "self_remove", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
-            { no: 4, name: "to_add", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ },
-            { no: 5, name: "to_remove", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ }
+            { no: 2, name: "to_add", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ },
+            { no: 3, name: "to_remove", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ }
         ]);
     }
 }
@@ -528,20 +508,6 @@ class ListUnitActivityResponse$Type extends MessageType<ListUnitActivityResponse
  * @generated MessageType for protobuf message services.centrum.ListUnitActivityResponse
  */
 export const ListUnitActivityResponse = new ListUnitActivityResponse$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class UnitChange$Type extends MessageType<UnitChange> {
-    constructor() {
-        super("services.centrum.UnitChange", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 2, name: "added", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UnitAssignment },
-            { no: 3, name: "removed", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UnitAssignment }
-        ]);
-    }
-}
-/**
- * @generated MessageType for protobuf message services.centrum.UnitChange
- */
-export const UnitChange = new UnitChange$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class ListDispatchesRequest$Type extends MessageType<ListDispatchesRequest> {
     constructor() {
@@ -644,10 +610,8 @@ class AssignDispatchRequest$Type extends MessageType<AssignDispatchRequest> {
     constructor() {
         super("services.centrum.AssignDispatchRequest", [
             { no: 1, name: "dispatch_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 2, name: "self_add", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
-            { no: 3, name: "self_remove", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
-            { no: 4, name: "to_add", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 5, name: "to_remove", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+            { no: 2, name: "to_add", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 3, name: "to_remove", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
         ]);
     }
 }
@@ -718,11 +682,14 @@ export const StreamRequest = new StreamRequest$Type();
 class StreamResponse$Type extends MessageType<StreamResponse> {
     constructor() {
         super("services.centrum.StreamResponse", [
-            { no: 1, name: "unit_change", kind: "message", oneof: "change", T: () => UnitChange },
-            { no: 2, name: "unit_status", kind: "message", oneof: "change", T: () => UnitStatus },
-            { no: 3, name: "dispatch_change", kind: "message", oneof: "change", T: () => Dispatch },
-            { no: 4, name: "dispatch_status", kind: "message", oneof: "change", T: () => DispatchStatus },
-            { no: 5, name: "dispatch_assigned", kind: "message", oneof: "change", T: () => Dispatch }
+            { no: 1, name: "dispatch_status", kind: "message", oneof: "change", T: () => DispatchStatus },
+            { no: 2, name: "dispatch_update", kind: "message", oneof: "change", T: () => Dispatch },
+            { no: 3, name: "dispatch_assigned", kind: "message", oneof: "change", T: () => Dispatch },
+            { no: 4, name: "dispatch_unassigned", kind: "message", oneof: "change", T: () => Dispatch },
+            { no: 5, name: "unit_status", kind: "message", oneof: "change", T: () => UnitStatus },
+            { no: 6, name: "unit_update", kind: "message", oneof: "change", T: () => Unit },
+            { no: 7, name: "unit_assigned", kind: "message", oneof: "change", T: () => Unit },
+            { no: 8, name: "unit_deleted", kind: "scalar", oneof: "change", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
         ]);
     }
 }

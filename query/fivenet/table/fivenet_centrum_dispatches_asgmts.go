@@ -19,6 +19,8 @@ type fivenetCentrumDispatchesAsgmtsTable struct {
 	// Columns
 	DispatchID mysql.ColumnInteger
 	UnitID     mysql.ColumnInteger
+	CreatedAt  mysql.ColumnTimestamp
+	ExpiresAt  mysql.ColumnTimestamp
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -61,8 +63,10 @@ func newFivenetCentrumDispatchesAsgmtsTableImpl(schemaName, tableName, alias str
 	var (
 		DispatchIDColumn = mysql.IntegerColumn("dispatch_id")
 		UnitIDColumn     = mysql.IntegerColumn("unit_id")
-		allColumns       = mysql.ColumnList{DispatchIDColumn, UnitIDColumn}
-		mutableColumns   = mysql.ColumnList{}
+		CreatedAtColumn  = mysql.TimestampColumn("created_at")
+		ExpiresAtColumn  = mysql.TimestampColumn("expires_at")
+		allColumns       = mysql.ColumnList{DispatchIDColumn, UnitIDColumn, CreatedAtColumn, ExpiresAtColumn}
+		mutableColumns   = mysql.ColumnList{CreatedAtColumn, ExpiresAtColumn}
 	)
 
 	return fivenetCentrumDispatchesAsgmtsTable{
@@ -71,6 +75,8 @@ func newFivenetCentrumDispatchesAsgmtsTableImpl(schemaName, tableName, alias str
 		//Columns
 		DispatchID: DispatchIDColumn,
 		UnitID:     UnitIDColumn,
+		CreatedAt:  CreatedAtColumn,
+		ExpiresAt:  ExpiresAtColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

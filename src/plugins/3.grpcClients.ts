@@ -74,51 +74,53 @@ export class GRPCClients {
             id: '',
             type: 'error',
             title: { key: 'notifications.grpc_errors.internal.title', parameters: [] },
-            content: { key: err.message, parameters: [] },
+            content: { key: err.message ?? 'Unknown error', parameters: [] },
         } as Notification;
 
-        switch (err.code.toLowerCase()) {
-            case 'internal':
-                break;
+        if (err.code !== undefined) {
+            switch (err.code.toLowerCase()) {
+                case 'internal':
+                    break;
 
-            case 'unavailable':
-                notification.title = { key: 'notifications.grpc_errors.unavailable.title', parameters: [] };
-                notification.content = { key: 'notifications.grpc_errors.unavailable.content', parameters: [] };
-                break;
+                case 'unavailable':
+                    notification.title = { key: 'notifications.grpc_errors.unavailable.title', parameters: [] };
+                    notification.content = { key: 'notifications.grpc_errors.unavailable.content', parameters: [] };
+                    break;
 
-            case 'unauthenticated':
-                await useAuthStore().clearAuthInfo();
+                case 'unauthenticated':
+                    await useAuthStore().clearAuthInfo();
 
-                notification.type = 'warning';
-                notification.title = { key: 'notifications.grpc_errors.unauthenticated.title', parameters: [] };
-                notification.content = { key: 'notifications.grpc_errors.unauthenticated.content', parameters: [] };
+                    notification.type = 'warning';
+                    notification.title = { key: 'notifications.grpc_errors.unauthenticated.title', parameters: [] };
+                    notification.content = { key: 'notifications.grpc_errors.unauthenticated.content', parameters: [] };
 
-                // Only update the redirect query param if it isn't already set
-                const route = useRoute();
-                const redirect = route.query.redirect ?? route.fullPath;
-                navigateTo({
-                    name: 'auth-login',
-                    query: { redirect: redirect },
-                    replace: true,
-                    force: true,
-                });
-                break;
+                    // Only update the redirect query param if it isn't already set
+                    const route = useRoute();
+                    const redirect = route.query.redirect ?? route.fullPath;
+                    navigateTo({
+                        name: 'auth-login',
+                        query: { redirect: redirect },
+                        replace: true,
+                        force: true,
+                    });
+                    break;
 
-            case 'permission_denied':
-                notification.title = { key: 'notifications.grpc_errors.permission_denied.title', parameters: [] };
-                break;
+                case 'permission_denied':
+                    notification.title = { key: 'notifications.grpc_errors.permission_denied.title', parameters: [] };
+                    break;
 
-            case 'not_found':
-                notification.title = { key: 'notifications.grpc_errors.not_found.title', parameters: [] };
-                break;
+                case 'not_found':
+                    notification.title = { key: 'notifications.grpc_errors.not_found.title', parameters: [] };
+                    break;
 
-            default:
-                notification.title = { key: 'notifications.grpc_errors.default.title', parameters: [] };
-                notification.content = {
-                    key: 'notifications.grpc_errors.default.content',
-                    parameters: [err.message, err.code.valueOf()],
-                };
-                break;
+                default:
+                    notification.title = { key: 'notifications.grpc_errors.default.title', parameters: [] };
+                    notification.content = {
+                        key: 'notifications.grpc_errors.default.content',
+                        parameters: [err.message, err.code.valueOf()],
+                    };
+                    break;
+            }
         }
 
         if (err.message.startsWith('errors.')) {
@@ -148,7 +150,7 @@ export class GRPCClients {
             new GrpcWebFetchTransport({
                 baseUrl: '/grpc',
                 format: 'text',
-            })
+            }),
         );
     }
 
@@ -220,7 +222,7 @@ export class AuthInterceptor implements RpcInterceptor {
         next: NextServerStreamingFn,
         method: MethodInfo,
         input: object,
-        options: RpcOptions
+        options: RpcOptions,
     ): ServerStreamingCall {
         if (!options.meta) {
             options.meta = {};

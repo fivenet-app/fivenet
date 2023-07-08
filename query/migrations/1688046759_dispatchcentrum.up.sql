@@ -1,5 +1,16 @@
 BEGIN;
 
+-- Table: fivenet_centrum_settings
+CREATE TABLE IF NOT EXISTS `fivenet_centrum_settings` (
+  `job` varchar(50) NOT NULL,
+	`active` tinyint(1) DEFAULT 0 NULL,
+	`mode` mediumint(2) DEFAULT 0 NULL,
+	`minimum_rank` int(11) DEFAULT 1 NOT NULL,
+	`additional` longtext DEFAULT NULL NULL,
+	`enabled` tinyint(1) DEFAULT 0 NOT NULL,
+  PRIMARY KEY (`job`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 -- Table: fivenet_centrum_units
 CREATE TABLE IF NOT EXISTS `fivenet_centrum_units` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
@@ -67,6 +78,8 @@ CREATE TABLE IF NOT EXISTS `fivenet_centrum_dispatches` (
 CREATE TABLE IF NOT EXISTS `fivenet_centrum_dispatches_asgmts` (
   `dispatch_id` bigint(20) unsigned NOT NULL,
   `unit_id` bigint(20) unsigned NOT NULL,
+  `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP,
+  `expires_at` datetime(3) NULL DEFAULT NULL,
   PRIMARY KEY (`dispatch_id`, `unit_id`),
   KEY `idx_fivenet_centrum_dispatches_asgmts_dispatch_id` (`dispatch_id`),
   KEY `idx_fivenet_centrum_dispatches_asgmts_unit_id` (`unit_id`),

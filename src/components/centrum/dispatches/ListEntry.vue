@@ -2,26 +2,45 @@
 import SvgIcon from '@jamescoyle/vue-icon';
 import { mdiAccountMultiplePlus, mdiDetails } from '@mdi/js';
 import { DISPATCH_STATUS, Dispatch } from '~~/gen/ts/resources/dispatch/dispatch';
+import { Unit } from '~~/gen/ts/resources/dispatch/units';
 import Details from './Details.vue';
 import Time from '~/components/partials/elements/Time.vue';
+import AssignDispatchModal from './AssignDispatchModal.vue';
 
 defineProps<{
     dispatch: Dispatch;
+    units: Unit[] | null;
 }>();
 
-const open = ref(false);
+defineEmits<{
+    (e: 'goto', location: { x: number; y: number }): void;
+}>();
+
+const detailsOpen = ref(false);
+const assignOpen = ref(false);
 </script>
 
 <template>
     <tr>
-        <Details @close="open = false" :dispatch="dispatch" :open="open" />
+        <Details @close="detailsOpen = false" :dispatch="dispatch" :open="detailsOpen" />
+        <AssignDispatchModal @close="assignOpen = false" :dispatch="dispatch" :units="units" :open="assignOpen" />
         <td
             class="relative whitespace-nowrap py-2 pl-2 text-right text-sm font-medium sm:pr-0 max-w-[42px] flex flex-row justify-start"
         >
-            <button class="text-primary-400 hover:text-primary-600" :title="$t('common.detail', 2)" @click="open = true">
+            <button
+                type="button"
+                class="text-primary-400 hover:text-primary-600"
+                :title="$t('common.detail', 2)"
+                @click="detailsOpen = true"
+            >
                 <SvgIcon type="mdi" :path="mdiDetails" class="w-6 h-auto ml-auto mr-2.5" />
             </button>
-            <button class="text-primary-400 hover:text-primary-600" :title="$t('common.assign')">
+            <button
+                type="button"
+                class="text-primary-400 hover:text-primary-600"
+                :title="$t('common.assign')"
+                @click="assignOpen = true"
+            >
                 <SvgIcon type="mdi" :path="mdiAccountMultiplePlus" class="w-6 h-auto ml-auto mr-2.5" aria-hidden="true" />
             </button>
         </td>
@@ -35,11 +54,20 @@ const open = ref(false);
             <Time :value="dispatch.createdAt" />
         </td>
         <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm text-gray-300 sm:pl-0">
-            <span v-for="unit in dispatch.units">
-                {{ unit.unit?.initials }}
+            <span v-if="dispatch.units.length === 0"> No Units assigned. </span>
+            <span v-else v-for="unit in dispatch.units" class="mr-1">
+                {{ (units ?? []).find((u) => u.id === unit.unitId)?.initials }}
             </span>
         </td>
-        <td class="whitespace-nowrap px-2 py-2 text-sm text-gray-300">{{ dispatch.marker }}</td>
+        <td class="whitespace-nowrap px-2 py-2 text-sm text-gray-300">
+            <button
+                type="button"
+                class="rounded bg-white/10 px-2 py-1 text-xs font-semibold text-white shadow-sm hover:bg-white/20"
+                @click="$emit('goto', { x: dispatch.x, y: dispatch.y })"
+            >
+                Go to
+            </button>
+        </td>
         <td class="whitespace-nowrap px-2 py-2 text-sm text-gray-100">{{ dispatch.message }}</td>
     </tr>
 </template>

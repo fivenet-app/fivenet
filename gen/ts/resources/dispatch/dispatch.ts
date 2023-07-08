@@ -91,6 +91,14 @@ export interface DispatchAssignment {
      * @generated from protobuf field: optional resources.dispatch.Unit unit = 3;
      */
     unit?: Unit;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 4;
+     */
+    createdAt?: Timestamp;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp expires_at = 5;
+     */
+    expiresAt?: Timestamp;
 }
 /**
  * @generated from protobuf message resources.dispatch.DispatchStatus
@@ -213,7 +221,9 @@ class DispatchAssignment$Type extends MessageType<DispatchAssignment> {
         super("resources.dispatch.DispatchAssignment", [
             { no: 1, name: "dispatch_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
             { no: 2, name: "unit_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 3, name: "unit", kind: "message", T: () => Unit }
+            { no: 3, name: "unit", kind: "message", T: () => Unit },
+            { no: 4, name: "created_at", kind: "message", T: () => Timestamp },
+            { no: 5, name: "expires_at", kind: "message", T: () => Timestamp }
         ]);
     }
 }

@@ -2,13 +2,12 @@
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import SvgIcon from '@jamescoyle/vue-icon';
 import { mdiClose } from '@mdi/js';
-import { Unit, UnitStatus, UNIT_STATUS } from '~~/gen/ts/resources/dispatch/units';
-import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
-import { PaginationResponse } from '~~/gen/ts/resources/common/database/database';
+import { Unit, UNIT_STATUS } from '~~/gen/ts/resources/dispatch/units';
 import Time from '~/components/partials/elements/Time.vue';
 import UnitFeed from './Feed.vue';
+import StatusUpdateModal from './StatusUpdateModal.vue';
 
-const props = defineProps<{
+defineProps<{
     open: boolean;
     unit: Unit;
 }>();
@@ -17,39 +16,7 @@ defineEmits<{
     (e: 'close'): void;
 }>();
 
-const { $grpc } = useNuxtApp();
-
-const pagination = ref<PaginationResponse>();
-const offset = ref(0n);
-
-const {
-    data: activities,
-    pending,
-    refresh,
-    error,
-} = useLazyAsyncData(`centrum-unit-${props.unit.id.toString()}-activity-${offset.value}`, () => listUnitActivity());
-
-async function listUnitActivity(): Promise<Array<UnitStatus>> {
-    return new Promise(async (res, rej) => {
-        try {
-            const req = {
-                pagination: {
-                    offset: offset.value,
-                },
-                id: props.unit.id,
-            };
-
-            const call = $grpc.getCentrumClient().listUnitActivity(req);
-            const { response } = await call;
-
-            pagination.value = response.pagination;
-            return res(response.activity);
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
-        }
-    });
-}
+const statusOpen = ref(false);
 </script>
 
 <template>
@@ -109,10 +76,18 @@ async function listUnitActivity(): Promise<Array<UnitStatus>> {
                                                             <dd
                                                                 class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
                                                             >
-                                                                {{ UNIT_STATUS[unit.status?.status ?? 0] }}
-                                                                <span v-if="unit.status?.code">
-                                                                    (Code: '{{ unit.status.code }}')
-                                                                </span>
+                                                                <StatusUpdateModal
+                                                                    :open="statusOpen"
+                                                                    :unit="unit"
+                                                                    @close="statusOpen = false"
+                                                                />
+                                                                <button
+                                                                    type="button"
+                                                                    @click="statusOpen = true"
+                                                                    class="rounded bg-white/10 px-2 py-1 text-xs font-semibold text-white shadow-sm hover:bg-white/20"
+                                                                >
+                                                                    {{ UNIT_STATUS[unit.status?.status ?? 0] }}
+                                                                </button>
                                                             </dd>
                                                         </div>
                                                         <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
