@@ -6,5 +6,6 @@
         - [ ] Updating their own dispatch status
         - [ ] Updating their unit status
         - [ ] Sidebar for Livemap
+    - [ ] TakeControl for leitstellen controller needed + "No one is active" when no controller is active
     - [x] Rector - Add Centrum Settings Page
     - [ ] Translations

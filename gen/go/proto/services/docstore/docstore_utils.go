@@ -14,7 +14,7 @@ import (
 
 func (s *Server) listDocumentsQuery(where jet.BoolExpression, onlyColumns jet.ProjectionList, contentLength int, userInfo *userinfo.UserInfo) jet.SelectStatement {
 	tDocs := tDocs.AS("documentshort")
-	var wheres []jet.BoolExpression
+	wheres := []jet.BoolExpression{}
 	if !userInfo.SuperUser {
 		wheres = []jet.BoolExpression{
 			jet.AND(
@@ -37,10 +37,6 @@ func (s *Server) listDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pr
 					),
 				),
 			),
-		}
-	} else {
-		wheres = []jet.BoolExpression{
-			tDocs.CreatorJob.EQ(jet.String(userInfo.Job)),
 		}
 	}
 
@@ -152,10 +148,6 @@ func (s *Server) getDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pro
 					),
 				),
 			),
-		}
-	} else {
-		wheres = []jet.BoolExpression{
-			tDocs.CreatorJob.EQ(jet.String(userInfo.Job)),
 		}
 	}
 
@@ -325,9 +317,10 @@ func (s *Server) checkIfHasAccess(levels []string, userInfo *userinfo.UserInfo, 
 		return creator.UserId == userInfo.UserId
 	}
 
-	// Make sure both have the same job, otherwise things are fixed in stone
+	// If both have the same job, the rank checks are executed, otherwise it is "just another document"
+	// the user has access to
 	if creator.Job != userInfo.Job {
-		return false
+		return true
 	}
 
 	if utils.InSlice(levels, "Lower_Rank") {

@@ -96,7 +96,7 @@ const sidebarNavigation = ref<
     {
         name: 'common.dispatch_center',
         href: { name: 'centrum' },
-        permission: 'CentrumService.Stream',
+        permission: 'CentrumService.TakeControl',
         icon: mdiCarEmergency,
         position: 'top',
         current: false,
@@ -144,7 +144,7 @@ function updateUserNav(): void {
                 name: 'components.partials.sidebar.account_info',
                 href: { name: 'auth-account-info' },
             },
-            { name: 'common.sign_out', href: { name: 'auth-logout' } }
+            { name: 'common.sign_out', href: { name: 'auth-logout' } },
         );
     }
     if (userNavigation.value.length === 0) {

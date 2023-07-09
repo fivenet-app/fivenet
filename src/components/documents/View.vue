@@ -260,7 +260,7 @@ function addToClipboard(): void {
                                 </span>
                             </div>
                         </div>
-                        <div class="flex flex-row gap-2 pb-3 mt-2 overflow-x-auto snap-x sm:pb-0">
+                        <div class="flex flex-row flex-wrap gap-2 pb-3 mt-2 overflow-x-auto snap-x sm:pb-0">
                             <div
                                 v-for="entry in access?.jobs"
                                 :key="entry.id?.toString()"
@@ -269,8 +269,8 @@ function addToClipboard(): void {
                                 <span class="w-2 h-2 rounded-full bg-info-500" aria-hidden="true" />
                                 <span class="text-sm font-medium text-info-800"
                                     >{{ entry.jobLabel
-                                    }}<span :title="entry.jobGradeLabel" v-if="entry.minimumGrade > 0">
-                                        ({{ $t('common.rank') }}: {{ entry.minimumGrade }})</span
+                                    }}<span :title="`$t('common.rank') {{ entry.minimumGrade }}`" v-if="entry.minimumGrade > 0">
+                                        ({{ entry.jobGradeLabel }})</span
                                     >
                                     -
                                     {{ $t(`enums.docstore.ACCESS_LEVEL.${ACCESS_LEVEL[entry.access]}`) }}

@@ -1,19 +1,19 @@
 <script lang="ts" setup>
-import { mdiHoopHouse } from '@mdi/js';
+import { mdiCarEmergency, mdiHoopHouse } from '@mdi/js';
 import SvgIcon from '@jamescoyle/vue-icon';
 
 const navigation = [
-    { name: 'Dashboard', href: '#', current: true },
-    { name: 'Team', href: '#', current: false },
-    { name: 'Projects', href: '#', current: false },
-    { name: 'Calendar', href: '#', current: false },
-    { name: 'Documents', href: '#', current: false },
-    { name: 'Reports', href: '#', current: false },
+    { name: 'Update Unit Status' },
+    { name: 'Update Dispatch Status' },
+    { name: 'TODO' },
+    { name: 'TODO' },
+    { name: 'TODO' },
+    { name: 'TODO' },
+    { name: 'Dispatch: Completed' },
 ];
 const dispatches = [
-    { id: 1, name: 'Heroicons', href: '#', initial: 'H', current: false },
-    { id: 2, name: 'Tailwind Labs', href: '#', initial: 'T', current: false },
-    { id: 3, name: 'Workcation', href: '#', initial: 'W', current: false },
+    { id: 1, name: 'DSP-2019', color: 'H' },
+    { id: 2, name: 'DSP-12345', color: 'T' },
 ];
 </script>
 
@@ -25,26 +25,18 @@ const dispatches = [
                 <li>
                     <ul role="list" class="-mx-2 space-y-1">
                         <li v-for="item in navigation" :key="item.name">
-                            <a
-                                :href="item.href"
-                                :class="[
-                                    item.current
-                                        ? 'bg-base-700 text-white'
-                                        : 'text-base-200 hover:text-white hover:bg-base-700',
-                                    'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold',
-                                ]"
+                            <button
+                                type="button"
+                                class="text-accent-100 bg-primary hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-3 text-xs my-2"
                             >
                                 <SvgIcon
                                     type="mdi"
                                     :path="mdiHoopHouse"
-                                    :class="[
-                                        item.current ? 'text-white' : 'text-base-200 group-hover:text-white',
-                                        'h-6 w-6 shrink-0',
-                                    ]"
+                                    class="text-base-200 group-hover:text-white h-6 w-6 shrink-0"
                                     aria-hidden="true"
                                 />
-                                {{ item.name }}
-                            </a>
+                                <span class="mt-2">{{ item.name }}</span>
+                            </button>
                         </li>
                     </ul>
                 </li>
@@ -52,21 +44,13 @@ const dispatches = [
                     <div class="text-xs font-semibold leading-6 text-base-200">Your Dispatches</div>
                     <ul role="list" class="-mx-2 mt-2 space-y-1">
                         <li v-for="dispatch in dispatches" :key="dispatch.name">
-                            <a
-                                :href="dispatch.href"
-                                :class="[
-                                    dispatch.current
-                                        ? 'bg-base-700 text-white'
-                                        : 'text-base-200 hover:text-white hover:bg-base-700',
-                                    'group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold',
-                                ]"
+                            <button
+                                type="button"
+                                class="text-accent-100 bg-error-700 hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-3 text-xs my-2"
                             >
-                                <span
-                                    class="flex h-6 w-6 shrink-0 items-center justify-center rounded-lg border border-base-400 bg-base-500 text-[0.625rem] font-medium text-white"
-                                    >{{ dispatch.initial }}</span
-                                >
-                                <span class="truncate">{{ dispatch.name }}</span>
-                            </a>
+                                <SvgIcon type="mdi" :path="mdiCarEmergency" class="h-6 w-6" aria-hidden="true" />
+                                <span class="mt-2 truncate">{{ dispatch.name }}</span>
+                            </button>
                         </li>
                     </ul>
                 </li>

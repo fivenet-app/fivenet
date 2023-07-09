@@ -7,7 +7,7 @@ useHead({
 definePageMeta({
     title: 'common.dispatch_center',
     requiresAuth: true,
-    permission: 'CentrumService.Stream',
+    permission: 'CentrumService.TakeControl',
     showQuickButtons: false,
 });
 </script>

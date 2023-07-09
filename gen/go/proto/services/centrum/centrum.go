@@ -153,9 +153,17 @@ func (s *Server) TakeControl(ctx context.Context, req *TakeControlRequest) (*Tak
 				tCentrumUsers.UserID,
 				tCentrumUsers.Identifier,
 			).
-			VALUES(
-				userInfo.Job,
-				userInfo.UserId,
+			QUERY(
+				tUser.
+					SELECT(
+						jet.String(userInfo.Job),
+						jet.Int32(userInfo.UserId),
+						tUser.Identifier,
+					).
+					FROM(tUser).
+					WHERE(
+						tUser.ID.EQ(jet.Int32(userInfo.UserId)),
+					),
 			)
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {

@@ -64,7 +64,7 @@ const features = [
         title: t('common.dispatch_center'),
         description: t('pages.overview.features.livemap'),
         href: { name: 'centrum' },
-        permission: 'CentrumService.Stream',
+        permission: 'CentrumService.TakeControl',
         icon: mdiCarEmergency,
         iconForeground: 'text-red-900',
         iconBackground: 'bg-red-100',

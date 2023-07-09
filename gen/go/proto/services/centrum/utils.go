@@ -365,10 +365,14 @@ func (s *Server) getControllers(ctx context.Context, job string) ([]*users.UserS
 			tUser.Identifier,
 			tUser.Firstname,
 			tUser.Lastname,
+			tUser.Dateofbirth,
 			tUser.Job,
 		).
 		FROM(
-			tCentrumUsers,
+			tCentrumUsers.
+				INNER_JOIN(tUser,
+					tCentrumUsers.UserID.EQ(tUser.ID),
+				),
 		).
 		WHERE(
 			tCentrumUsers.Job.EQ(jet.String(job)),
