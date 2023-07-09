@@ -30,6 +30,10 @@ export interface CreateAccountRequest {
  * @generated from protobuf message services.auth.CreateAccountResponse
  */
 export interface CreateAccountResponse {
+    /**
+     * @generated from protobuf field: uint64 account_id = 1;
+     */
+    accountId: bigint;
 }
 /**
  * @generated from protobuf message services.auth.LoginRequest
@@ -262,7 +266,9 @@ export const CreateAccountRequest = new CreateAccountRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class CreateAccountResponse$Type extends MessageType<CreateAccountResponse> {
     constructor() {
-        super("services.auth.CreateAccountResponse", []);
+        super("services.auth.CreateAccountResponse", [
+            { no: 1, name: "account_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+        ]);
     }
 }
 /**

@@ -34,7 +34,7 @@ func (x *DocumentAccess) Scan(value any) error {
 	return nil
 }
 
-// Scan implements driver.Valuer for protobuf TemplateSchema.
+// Scan implements driver.Valuer for protobuf DocumentAccess.
 func (x *DocumentAccess) Value() (driver.Value, error) {
 	if x == nil {
 		return nil, nil

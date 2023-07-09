@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	dispatch "github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
 	"github.com/galexrt/fivenet/pkg/events"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/nats-io/nats.go"
@@ -12,6 +13,10 @@ import (
 const BaseSubject = "centrum"
 
 const (
+	TopicGeneral           events.Topic = "general"
+	TypeGeneralSettings    events.Type  = "settings"
+	TypeGeneralControllers events.Type  = "controllers"
+
 	TopicDispatch          events.Topic = "dispatch"
 	TypeDispatchUpdated    events.Type  = "updated"
 	TypeDispatchStatus     events.Type  = "status"
@@ -53,4 +58,16 @@ func (s *Server) buildSubject(topic events.Topic, tType events.Type, userInfo *u
 	}
 
 	return fmt.Sprintf(format, userInfo.Job)
+}
+
+func (s *Server) broadcastToAllUnits(topic events.Topic, tType events.Type, userInfo *userinfo.UserInfo, data []byte) {
+	jobUnits, ok := s.units.Load(userInfo.Job)
+	if !ok {
+		return
+	}
+
+	jobUnits.Range(func(key uint64, unit *dispatch.Unit) bool {
+		s.events.JS.Publish(s.buildSubject(TopicGeneral, TypeGeneralSettings, userInfo, unit.Id), data)
+		return true
+	})
 }

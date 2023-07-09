@@ -230,6 +230,8 @@ func (m *CreateAccountResponse) validate(all bool) error {
 
 	var errors []error
 
+	// no validation rules for AccountId
+
 	if len(errors) > 0 {
 		return CreateAccountResponseMultiError(errors)
 	}

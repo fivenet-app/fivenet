@@ -8,6 +8,8 @@ package centrum
 
 import (
 	context "context"
+	common "github.com/galexrt/fivenet/gen/go/proto/resources/common"
+	dispatch "github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -22,6 +24,12 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CentrumServiceClient interface {
+	// @perm
+	GetSettings(ctx context.Context, in *common.EmptyRequest, opts ...grpc.CallOption) (*dispatch.Settings, error)
+	// @perm: Name=GetSettings
+	UpdateSettings(ctx context.Context, in *dispatch.Settings, opts ...grpc.CallOption) (*dispatch.Settings, error)
+	// @perm
+	TakeControl(ctx context.Context, in *TakeControlRequest, opts ...grpc.CallOption) (*TakeControlResponse, error)
 	// @perm
 	ListUnits(ctx context.Context, in *ListUnitsRequest, opts ...grpc.CallOption) (*ListUnitsResponse, error)
 	// @perm
@@ -58,6 +66,33 @@ type centrumServiceClient struct {
 
 func NewCentrumServiceClient(cc grpc.ClientConnInterface) CentrumServiceClient {
 	return &centrumServiceClient{cc}
+}
+
+func (c *centrumServiceClient) GetSettings(ctx context.Context, in *common.EmptyRequest, opts ...grpc.CallOption) (*dispatch.Settings, error) {
+	out := new(dispatch.Settings)
+	err := c.cc.Invoke(ctx, "/services.centrum.CentrumService/GetSettings", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *centrumServiceClient) UpdateSettings(ctx context.Context, in *dispatch.Settings, opts ...grpc.CallOption) (*dispatch.Settings, error) {
+	out := new(dispatch.Settings)
+	err := c.cc.Invoke(ctx, "/services.centrum.CentrumService/UpdateSettings", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *centrumServiceClient) TakeControl(ctx context.Context, in *TakeControlRequest, opts ...grpc.CallOption) (*TakeControlResponse, error) {
+	out := new(TakeControlResponse)
+	err := c.cc.Invoke(ctx, "/services.centrum.CentrumService/TakeControl", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 func (c *centrumServiceClient) ListUnits(ctx context.Context, in *ListUnitsRequest, opts ...grpc.CallOption) (*ListUnitsResponse, error) {
@@ -214,6 +249,12 @@ func (x *centrumServiceStreamClient) Recv() (*StreamResponse, error) {
 // for forward compatibility
 type CentrumServiceServer interface {
 	// @perm
+	GetSettings(context.Context, *common.EmptyRequest) (*dispatch.Settings, error)
+	// @perm: Name=GetSettings
+	UpdateSettings(context.Context, *dispatch.Settings) (*dispatch.Settings, error)
+	// @perm
+	TakeControl(context.Context, *TakeControlRequest) (*TakeControlResponse, error)
+	// @perm
 	ListUnits(context.Context, *ListUnitsRequest) (*ListUnitsResponse, error)
 	// @perm
 	CreateOrUpdateUnit(context.Context, *CreateOrUpdateUnitRequest) (*CreateOrUpdateUnitResponse, error)
@@ -248,6 +289,15 @@ type CentrumServiceServer interface {
 type UnimplementedCentrumServiceServer struct {
 }
 
+func (UnimplementedCentrumServiceServer) GetSettings(context.Context, *common.EmptyRequest) (*dispatch.Settings, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetSettings not implemented")
+}
+func (UnimplementedCentrumServiceServer) UpdateSettings(context.Context, *dispatch.Settings) (*dispatch.Settings, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateSettings not implemented")
+}
+func (UnimplementedCentrumServiceServer) TakeControl(context.Context, *TakeControlRequest) (*TakeControlResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method TakeControl not implemented")
+}
 func (UnimplementedCentrumServiceServer) ListUnits(context.Context, *ListUnitsRequest) (*ListUnitsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListUnits not implemented")
 }
@@ -301,6 +351,60 @@ type UnsafeCentrumServiceServer interface {
 
 func RegisterCentrumServiceServer(s grpc.ServiceRegistrar, srv CentrumServiceServer) {
 	s.RegisterService(&CentrumService_ServiceDesc, srv)
+}
+
+func _CentrumService_GetSettings_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(common.EmptyRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CentrumServiceServer).GetSettings(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/services.centrum.CentrumService/GetSettings",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CentrumServiceServer).GetSettings(ctx, req.(*common.EmptyRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CentrumService_UpdateSettings_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(dispatch.Settings)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CentrumServiceServer).UpdateSettings(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/services.centrum.CentrumService/UpdateSettings",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CentrumServiceServer).UpdateSettings(ctx, req.(*dispatch.Settings))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CentrumService_TakeControl_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TakeControlRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CentrumServiceServer).TakeControl(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/services.centrum.CentrumService/TakeControl",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CentrumServiceServer).TakeControl(ctx, req.(*TakeControlRequest))
+	}
+	return interceptor(ctx, in, info, handler)
 }
 
 func _CentrumService_ListUnits_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -565,6 +669,18 @@ var CentrumService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "services.centrum.CentrumService",
 	HandlerType: (*CentrumServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "GetSettings",
+			Handler:    _CentrumService_GetSettings_Handler,
+		},
+		{
+			MethodName: "UpdateSettings",
+			Handler:    _CentrumService_UpdateSettings_Handler,
+		},
+		{
+			MethodName: "TakeControl",
+			Handler:    _CentrumService_TakeControl_Handler,
+		},
 		{
 			MethodName: "ListUnits",
 			Handler:    _CentrumService_ListUnits_Handler,

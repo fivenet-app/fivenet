@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import SvgIcon from '@jamescoyle/vue-icon';
-import { mdiAccountMultiplePlus, mdiDetails } from '@mdi/js';
+import { mdiAccountMultiplePlus, mdiDetails, mdiMapMarker } from '@mdi/js';
 import { DISPATCH_STATUS, Dispatch } from '~~/gen/ts/resources/dispatch/dispatch';
 import { Unit } from '~~/gen/ts/resources/dispatch/units';
 import Details from './Details.vue';
@@ -62,10 +62,11 @@ const assignOpen = ref(false);
         <td class="whitespace-nowrap px-2 py-2 text-sm text-gray-300">
             <button
                 type="button"
-                class="rounded bg-white/10 px-2 py-1 text-xs font-semibold text-white shadow-sm hover:bg-white/20"
+                class="inline-flex items-center rounded bg-white/10 px-2 py-1 text-xs font-semibold text-white shadow-sm hover:bg-white/20"
                 @click="$emit('goto', { x: dispatch.x, y: dispatch.y })"
             >
                 Go to
+                <SvgIcon type="mdi" :path="mdiMapMarker" class="-mr-0.5 h-4 w-4" aria-hidden="true" />
             </button>
         </td>
         <td class="whitespace-nowrap px-2 py-2 text-sm text-gray-100">{{ dispatch.message }}</td>

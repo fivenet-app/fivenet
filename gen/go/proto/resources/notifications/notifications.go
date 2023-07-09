@@ -18,7 +18,7 @@ func (x *Data) Scan(value any) error {
 	return nil
 }
 
-// Scan implements driver.Valuer for protobuf TemplateSchema.
+// Scan implements driver.Valuer for protobuf Data.
 func (x *Data) Value() (driver.Value, error) {
 	if x == nil {
 		return nil, nil

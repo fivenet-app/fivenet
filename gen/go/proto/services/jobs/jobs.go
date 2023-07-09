@@ -7,3 +7,6 @@ type Server struct {
 func NewServer() *Server {
 	return &Server{}
 }
+
+// TODO time clock
+// TODO employee warns/notes management

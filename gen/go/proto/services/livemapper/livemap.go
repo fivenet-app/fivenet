@@ -105,6 +105,7 @@ func (s *Server) refreshCache() {
 	if err := s.refreshDispatches(ctx); err != nil {
 		s.logger.Error("failed to refresh livemap dispatches cache", zap.Error(err))
 	}
+
 	s.broker.Publish(nil)
 }
 
@@ -308,31 +309,31 @@ func (s *Server) refreshDispatches(ctx context.Context) error {
 		return nil
 	}
 
-	d := table.GksphoneJobMessage
-	stmt := d.
+	gksphoneJobM := table.GksphoneJobMessage
+	stmt := gksphoneJobM.
 		SELECT(
-			d.ID,
-			d.Name,
-			d.Number,
-			d.Message,
-			d.Gps,
-			d.Owner,
-			d.Jobm,
-			d.Anon,
-			d.Time,
+			gksphoneJobM.ID,
+			gksphoneJobM.Name,
+			gksphoneJobM.Number,
+			gksphoneJobM.Message,
+			gksphoneJobM.Gps,
+			gksphoneJobM.Owner,
+			gksphoneJobM.Jobm,
+			gksphoneJobM.Anon,
+			gksphoneJobM.Time,
 		).
 		FROM(
-			d,
+			gksphoneJobM,
 		).
 		WHERE(
 			jet.AND(
-				d.Jobm.REGEXP_LIKE(jet.String("\\[\"("+strings.Join(s.visibleJobs, "|")+")\"\\]")),
-				d.Time.GT_EQ(jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(20, jet.MINUTE))),
+				gksphoneJobM.Jobm.REGEXP_LIKE(jet.String("\\[\"("+strings.Join(s.visibleJobs, "|")+")\"\\]")),
+				gksphoneJobM.Time.GT_EQ(jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(20, jet.MINUTE))),
 			),
 		).
 		ORDER_BY(
-			d.Owner.ASC(),
-			d.Time.DESC(),
+			gksphoneJobM.Owner.ASC(),
+			gksphoneJobM.Time.DESC(),
 		).
 		LIMIT(DispatchMarkerLimit)
 
@@ -372,7 +373,7 @@ func (s *Server) refreshDispatches(ctx context.Context) error {
 			message = "N/A"
 		}
 
-		// Remove the "json" leftovers (in the gksphone table it looks like, e.g., `["ambulance"]`)
+		// Remove the "json" leftovers (the data looks like this, e.g., `["ambulance"]`)
 		job := strings.TrimSuffix(strings.TrimPrefix(*v.Jobm, "[\""), "\"]")
 		if _, ok := markers[job]; !ok {
 			markers[job] = []*livemap.DispatchMarker{}

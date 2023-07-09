@@ -3,9 +3,12 @@ syntax = "proto3";
 package services.centrum;
 option go_package = "github.com/galexrt/fivenet/gen/go/proto/services/centrum;centrum";
 
+import "resources/common/common.proto";
 import "resources/common/database/database.proto";
 import "resources/dispatch/dispatch.proto";
+import "resources/dispatch/settings.proto";
 import "resources/dispatch/units.proto";
+import "resources/users/users.proto";
 import "validate/validate.proto";
 
 // Common
@@ -62,6 +65,19 @@ message ListUnitActivityResponse {
 }
 
 // Dispatch Management
+
+message TakeControlRequest {
+  bool signon = 1;
+}
+
+message TakeControlResponse {
+  ControllerChange change = 1;
+}
+
+message ControllerChange {
+  repeated resources.users.UserShort controllers = 1;
+  bool active = 2;
+}
 
 message ListDispatchesRequest {
   repeated resources.dispatch.DISPATCH_STATUS status = 1 [(validate.rules).repeated.items.enum.defined_only = true];
@@ -125,23 +141,40 @@ message TakeDispatchResponse {
   resources.dispatch.Dispatch dispatch = 1;
 }
 
+message Initial {
+  bool controller = 1;
+  resources.dispatch.Settings settings = 2;
+  resources.dispatch.Unit unit = 3;
+}
+
 message StreamRequest {}
 
 message StreamResponse {
   oneof change {
-    resources.dispatch.DispatchStatus dispatch_status = 1;
-    resources.dispatch.Dispatch dispatch_update = 2;
-    resources.dispatch.Dispatch dispatch_assigned = 3;
-    resources.dispatch.Dispatch dispatch_unassigned = 4;
+    Initial initial = 1;
+    resources.dispatch.Settings settings = 2;
+    ControllerChange controllers = 3;
+    resources.dispatch.DispatchStatus dispatch_status = 4;
+    resources.dispatch.Dispatch dispatch_update = 5;
+    resources.dispatch.Dispatch dispatch_assigned = 6;
+    resources.dispatch.Dispatch dispatch_unassigned = 7;
 
-    resources.dispatch.UnitStatus unit_status = 5;
-    resources.dispatch.Unit unit_update = 6;
-    resources.dispatch.Unit unit_assigned = 7;
-    uint64 unit_deleted = 8;
+    resources.dispatch.UnitStatus unit_status = 8;
+    resources.dispatch.Unit unit_update = 9;
+    resources.dispatch.Unit unit_assigned = 10;
+    uint64 unit_deleted = 11;
   }
 }
 
 service CentrumService {
+  // @perm
+  rpc GetSettings(resources.common.EmptyRequest) returns (resources.dispatch.Settings);
+  // @perm: Name=GetSettings
+  rpc UpdateSettings(resources.dispatch.Settings) returns (resources.dispatch.Settings);
+
+  // @perm
+  rpc TakeControl(TakeControlRequest) returns (TakeControlResponse);
+
   // @perm
   rpc ListUnits(ListUnitsRequest) returns (ListUnitsResponse);
   // @perm

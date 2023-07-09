@@ -1,0 +1,8 @@
+syntax = "proto3";
+
+package resources.common;
+option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/common;common";
+
+message EmptyResponse {}
+
+message EmptyRequest {}

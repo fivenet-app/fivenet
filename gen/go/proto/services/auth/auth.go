@@ -223,7 +223,9 @@ func (s *Server) CreateAccount(ctx context.Context, req *CreateAccountRequest) (
 		return nil, ErrAccountCreateFailed
 	}
 
-	return &CreateAccountResponse{}, nil
+	return &CreateAccountResponse{
+		AccountId: acc.ID,
+	}, nil
 }
 
 func (s *Server) ChangePassword(ctx context.Context, req *ChangePasswordRequest) (*ChangePasswordResponse, error) {

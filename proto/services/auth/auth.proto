@@ -23,7 +23,9 @@ message CreateAccountRequest {
   string password = 3 [(validate.rules).string = {min_len: 6, max_bytes: 70}];
 }
 
-message CreateAccountResponse {}
+message CreateAccountResponse {
+  uint64 account_id = 1;
+}
 
 message LoginRequest {
   string username = 1 [(validate.rules).string = {

@@ -20,7 +20,7 @@ const dispatches = [
 <template>
     <!-- Sidebar component, swap this element with another sidebar if you like -->
     <div class="h-full flex grow gap-y-5 overflow-y-auto bg-base-600 px-6 py-4">
-        <nav class="flex <flex-1> flex-col">
+        <nav class="flex flex-1 flex-col">
             <ul role="list" class="flex flex-1 flex-col gap-y-7">
                 <li>
                     <ul role="list" class="-mx-2 space-y-1">

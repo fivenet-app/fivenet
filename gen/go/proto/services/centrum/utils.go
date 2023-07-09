@@ -7,8 +7,13 @@ import (
 	dispatch "github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
 	users "github.com/galexrt/fivenet/gen/go/proto/resources/users"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
+	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
+)
+
+var (
+	tCentrumSettings = table.FivenetCentrumSettings
 )
 
 func (s *Server) getDispatchFromDB(ctx context.Context, tx qrm.DB, id uint64) (*dispatch.Dispatch, error) {
@@ -282,4 +287,99 @@ func (s *Server) getUnitIDFromUserID(ctx context.Context, userId int32) (uint64,
 	}
 
 	return dest.UnitID, nil
+}
+
+func (s *Server) getSettings(ctx context.Context, job string) (*dispatch.Settings, error) {
+	tCentrumSettings := tCentrumSettings.AS("settings")
+	stmt := tCentrumSettings.
+		SELECT(
+			tCentrumSettings.Job,
+			tCentrumSettings.Enabled,
+			tCentrumSettings.Active,
+			tCentrumSettings.Mode,
+			tCentrumSettings.FallbackMode,
+		).
+		FROM(tCentrumSettings).
+		WHERE(
+			tCentrumSettings.Job.EQ(jet.String(job)),
+		)
+
+	var dest dispatch.Settings
+	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
+		if !errors.Is(qrm.ErrNoRows, err) {
+			return nil, err
+		}
+
+		// Return default settings
+		return &dispatch.Settings{
+			Job:          job,
+			Enabled:      false,
+			Active:       false,
+			Mode:         dispatch.CENTRUM_MODE_MANUAL,
+			FallbackMode: dispatch.CENTRUM_MODE_MANUAL,
+		}, nil
+	}
+
+	return &dest, nil
+}
+
+func (s *Server) updateSettings(ctx context.Context, userInfo *userinfo.UserInfo, settings *dispatch.Settings) error {
+	if !settings.Enabled {
+		settings.Active = false
+	}
+
+	stmt := tCentrumSettings.
+		INSERT(
+			tCentrumSettings.Job,
+			tCentrumSettings.Enabled,
+			tCentrumSettings.Active,
+			tCentrumSettings.Mode,
+			tCentrumSettings.FallbackMode,
+		).
+		VALUES(
+			userInfo.Job,
+			settings.Enabled,
+			settings.Active,
+			settings.Mode,
+			settings.FallbackMode,
+		).
+		ON_DUPLICATE_KEY_UPDATE(
+			tCentrumSettings.Job.SET(jet.String(userInfo.Job)),
+			tCentrumSettings.Enabled.SET(jet.Bool(settings.Enabled)),
+			tCentrumSettings.Active.SET(jet.Bool(settings.Active)),
+			tCentrumSettings.Mode.SET(jet.Int32(int32(settings.Mode))),
+			tCentrumSettings.FallbackMode.SET(jet.Int32(int32(settings.FallbackMode))),
+		)
+
+	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *Server) getControllers(ctx context.Context, job string) ([]*users.UserShort, error) {
+	stmt := tCentrumUsers.
+		SELECT(
+			tUser.ID,
+			tUser.Identifier,
+			tUser.Firstname,
+			tUser.Lastname,
+			tUser.Job,
+		).
+		FROM(
+			tCentrumUsers,
+		).
+		WHERE(
+			tCentrumUsers.Job.EQ(jet.String(job)),
+		)
+
+	var dest []*users.UserShort
+	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
+		if !errors.Is(qrm.ErrNoRows, err) {
+			return nil, err
+		}
+	}
+
+	return dest, nil
 }

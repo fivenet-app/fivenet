@@ -6,12 +6,20 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/galexrt/fivenet/gen/go/proto/resources/common"
 	dispatch "github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
+	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
+	users "github.com/galexrt/fivenet/gen/go/proto/resources/users"
 	"github.com/galexrt/fivenet/pkg/audit"
 	"github.com/galexrt/fivenet/pkg/events"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/perms"
+	"github.com/galexrt/fivenet/pkg/utils"
+	"github.com/galexrt/fivenet/pkg/utils/dbutils"
 	"github.com/galexrt/fivenet/pkg/utils/syncx"
+	"github.com/galexrt/fivenet/query/fivenet/model"
+	"github.com/galexrt/fivenet/query/fivenet/table"
+	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/nats-io/nats.go"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
@@ -23,6 +31,10 @@ import (
 
 var (
 	ErrFailedQuery = status.Error(codes.Internal, "errors.CentrumService.ErrFailedQuery")
+)
+
+var (
+	tCentrumUsers = table.FivenetCentrumUsers
 )
 
 type Server struct {
@@ -93,6 +105,108 @@ func (s *Server) refresh() error {
 	return nil
 }
 
+func (s *Server) GetSettings(ctx context.Context, req *common.EmptyRequest) (*dispatch.Settings, error) {
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	return s.getSettings(ctx, userInfo.Job)
+}
+
+func (s *Server) UpdateSettings(ctx context.Context, req *dispatch.Settings) (*dispatch.Settings, error) {
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	auditEntry := &model.FivenetAuditLog{
+		Service: CentrumService_ServiceDesc.ServiceName,
+		Method:  "UpdateSettings",
+		UserID:  userInfo.UserId,
+		UserJob: userInfo.Job,
+		State:   int16(rector.EVENT_TYPE_ERRORED),
+	}
+	defer s.a.AddEntryWithData(auditEntry, req)
+
+	if err := s.updateSettings(ctx, userInfo, req); err != nil {
+		return nil, err
+	}
+
+	auditEntry.State = int16(rector.EVENT_TYPE_UPDATED)
+
+	settings, err := s.getSettings(ctx, userInfo.Job)
+	if err != nil {
+		return nil, err
+	}
+
+	data, err := proto.Marshal(settings)
+	if err != nil {
+		return nil, err
+	}
+	s.broadcastToAllUnits(TopicGeneral, TypeGeneralSettings, userInfo, data)
+
+	return settings, nil
+}
+
+func (s *Server) TakeControl(ctx context.Context, req *TakeControlRequest) (*TakeControlResponse, error) {
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	if req.Signon {
+		stmt := tCentrumUsers.
+			INSERT(
+				tCentrumUsers.Job,
+				tCentrumUsers.UserID,
+				tCentrumUsers.Identifier,
+			).
+			VALUES(
+				userInfo.Job,
+				userInfo.UserId,
+			)
+
+		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+			if !dbutils.IsDuplicateError(err) {
+				return nil, err
+			}
+		}
+	} else {
+		stmt := tCentrumUsers.
+			DELETE().
+			WHERE(jet.AND(
+				tCentrumUsers.Job.EQ(jet.String(userInfo.Job)),
+				tCentrumUsers.UserID.EQ(jet.Int32(userInfo.UserId)),
+			)).
+			LIMIT(1)
+
+		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+			return nil, err
+		}
+	}
+
+	controllers, err := s.getControllers(ctx, userInfo.Job)
+	if err != nil {
+		return nil, err
+	}
+
+	settings, err := s.getSettings(ctx, userInfo.Job)
+	if err != nil {
+		return nil, err
+	}
+	// If center is enabled update settings active state accordingly
+	if settings.Enabled {
+		settings.Active = len(controllers) > 0
+
+		if err := s.updateSettings(ctx, userInfo, settings); err != nil {
+			return nil, err
+		}
+	}
+
+	data, err := proto.Marshal(&ControllerChange{
+		Controllers: controllers,
+		Active:      settings.Active,
+	})
+	if err != nil {
+		return nil, err
+	}
+	s.broadcastToAllUnits(TopicGeneral, TypeGeneralControllers, userInfo, data)
+
+	return nil, nil
+}
+
 func (s *Server) Stream(req *StreamRequest, srv CentrumService_StreamServer) error {
 	userInfo := auth.MustGetUserInfoFromContext(srv.Context())
 
@@ -100,9 +214,21 @@ func (s *Server) Stream(req *StreamRequest, srv CentrumService_StreamServer) err
 	if err != nil {
 		return err
 	}
+	settings, err := s.getSettings(srv.Context(), userInfo.Job)
+	if err != nil {
+		return err
+	}
 
 	msgCh := make(chan *nats.Msg, 128)
-	if unitId != 0 {
+
+	controllers, err := s.getControllers(srv.Context(), userInfo.Job)
+	if err != nil {
+		return err
+	}
+
+	if utils.InSliceFunc(controllers, func(in *users.UserShort) bool {
+		return in.UserId == userInfo.UserId
+	}) {
 		sub, err := s.events.JS.ChanSubscribe(fmt.Sprintf(BaseSubject+".%s.*.*.%d", userInfo.Job, unitId), msgCh)
 		if err != nil {
 			return err
@@ -116,9 +242,23 @@ func (s *Server) Stream(req *StreamRequest, srv CentrumService_StreamServer) err
 		defer sub.Unsubscribe()
 	}
 
-	resp := &StreamResponse{}
-	cancel := false
+	unit, _ := s.getUnit(srv.Context(), userInfo, unitId)
 
+	// Send initial message to client
+	resp := &StreamResponse{}
+	resp.Change = &StreamResponse_Initial{
+		Initial: &Initial{
+			Controller: true,
+			Settings:   settings,
+			Unit:       unit,
+		},
+	}
+
+	if err := srv.Send(resp); err != nil {
+		return err
+	}
+
+	cancel := false
 	for {
 		select {
 		case <-srv.Context().Done():
@@ -128,6 +268,29 @@ func (s *Server) Stream(req *StreamRequest, srv CentrumService_StreamServer) err
 			topic, tType := s.getEventTypeFromSubject(msg.Subject)
 
 			switch topic {
+			case TopicGeneral:
+				switch tType {
+				case TypeGeneralControllers:
+					var dest ControllerChange
+					if err := proto.Unmarshal(msg.Data, &dest); err != nil {
+						return err
+					}
+
+					resp.Change = &StreamResponse_Controllers{
+						Controllers: &dest,
+					}
+
+				case TypeGeneralSettings:
+					var dest dispatch.Settings
+					if err := proto.Unmarshal(msg.Data, &dest); err != nil {
+						return err
+					}
+
+					resp.Change = &StreamResponse_Settings{
+						Settings: &dest,
+					}
+				}
+
 			case TopicDispatch:
 				switch tType {
 				case TypeDispatchUpdated:

@@ -173,7 +173,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await createDispa
                                                         <VeeField
                                                             type="checkbox"
                                                             name="anon"
-                                                            class="block border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6 h-6 w-6 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600"
+                                                            class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600 h-6 w-6"
                                                             :placeholder="$t('common.anon')"
                                                             :label="$t('common.anon')"
                                                         />

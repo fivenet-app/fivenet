@@ -6,6 +6,7 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { Unit } from '~~/gen/ts/resources/dispatch/units';
 import CreateOrUpdateUnitModal from './CreateOrUpdateUnitModal.vue';
 import ListEntry from './ListEntry.vue';
+import SettingsModal from './SettingsModal.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -28,10 +29,12 @@ async function getUnits(): Promise<Array<Unit>> {
 }
 
 const open = ref(false);
+const openSettings = ref(false);
 </script>
 
 <template>
     <CreateOrUpdateUnitModal :open="open" @close="open = false" @refresh="refresh" />
+    <SettingsModal :open="openSettings" @close="openSettings = false" />
     <div class="py-2">
         <div class="px-2 sm:px-6 lg:px-8">
             <div class="flow-root mt-2">
@@ -43,6 +46,12 @@ const open = ref(false);
                                 class="inline-flex px-3 py-2 text-sm font-semibold rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
                             >
                                 {{ $t('pages.rector.units.create_unit') }}
+                            </button>
+                            <button
+                                @click="openSettings = true"
+                                class="inline-flex px-3 py-2 text-sm font-semibold rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
+                            >
+                                {{ $t('common.setting', 2) }}
                             </button>
                         </div>
                     </div>

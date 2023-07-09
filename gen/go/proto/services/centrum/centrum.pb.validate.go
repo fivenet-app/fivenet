@@ -1510,6 +1510,377 @@ var _ interface {
 	ErrorName() string
 } = ListUnitActivityResponseValidationError{}
 
+// Validate checks the field values on TakeControlRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *TakeControlRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on TakeControlRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// TakeControlRequestMultiError, or nil if none found.
+func (m *TakeControlRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *TakeControlRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Signon
+
+	if len(errors) > 0 {
+		return TakeControlRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// TakeControlRequestMultiError is an error wrapping multiple validation errors
+// returned by TakeControlRequest.ValidateAll() if the designated constraints
+// aren't met.
+type TakeControlRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m TakeControlRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m TakeControlRequestMultiError) AllErrors() []error { return m }
+
+// TakeControlRequestValidationError is the validation error returned by
+// TakeControlRequest.Validate if the designated constraints aren't met.
+type TakeControlRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e TakeControlRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e TakeControlRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e TakeControlRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e TakeControlRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e TakeControlRequestValidationError) ErrorName() string {
+	return "TakeControlRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e TakeControlRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sTakeControlRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = TakeControlRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = TakeControlRequestValidationError{}
+
+// Validate checks the field values on TakeControlResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *TakeControlResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on TakeControlResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// TakeControlResponseMultiError, or nil if none found.
+func (m *TakeControlResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *TakeControlResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetChange()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, TakeControlResponseValidationError{
+					field:  "Change",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, TakeControlResponseValidationError{
+					field:  "Change",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetChange()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return TakeControlResponseValidationError{
+				field:  "Change",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return TakeControlResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// TakeControlResponseMultiError is an error wrapping multiple validation
+// errors returned by TakeControlResponse.ValidateAll() if the designated
+// constraints aren't met.
+type TakeControlResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m TakeControlResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m TakeControlResponseMultiError) AllErrors() []error { return m }
+
+// TakeControlResponseValidationError is the validation error returned by
+// TakeControlResponse.Validate if the designated constraints aren't met.
+type TakeControlResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e TakeControlResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e TakeControlResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e TakeControlResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e TakeControlResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e TakeControlResponseValidationError) ErrorName() string {
+	return "TakeControlResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e TakeControlResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sTakeControlResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = TakeControlResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = TakeControlResponseValidationError{}
+
+// Validate checks the field values on ControllerChange with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *ControllerChange) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ControllerChange with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ControllerChangeMultiError, or nil if none found.
+func (m *ControllerChange) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ControllerChange) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetControllers() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ControllerChangeValidationError{
+						field:  fmt.Sprintf("Controllers[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ControllerChangeValidationError{
+						field:  fmt.Sprintf("Controllers[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ControllerChangeValidationError{
+					field:  fmt.Sprintf("Controllers[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	// no validation rules for Active
+
+	if len(errors) > 0 {
+		return ControllerChangeMultiError(errors)
+	}
+
+	return nil
+}
+
+// ControllerChangeMultiError is an error wrapping multiple validation errors
+// returned by ControllerChange.ValidateAll() if the designated constraints
+// aren't met.
+type ControllerChangeMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ControllerChangeMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ControllerChangeMultiError) AllErrors() []error { return m }
+
+// ControllerChangeValidationError is the validation error returned by
+// ControllerChange.Validate if the designated constraints aren't met.
+type ControllerChangeValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ControllerChangeValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ControllerChangeValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ControllerChangeValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ControllerChangeValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ControllerChangeValidationError) ErrorName() string { return "ControllerChangeValidationError" }
+
+// Error satisfies the builtin error interface
+func (e ControllerChangeValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sControllerChange.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ControllerChangeValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ControllerChangeValidationError{}
+
 // Validate checks the field values on ListDispatchesRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
@@ -3170,6 +3541,164 @@ var _ interface {
 	ErrorName() string
 } = TakeDispatchResponseValidationError{}
 
+// Validate checks the field values on Initial with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *Initial) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on Initial with the rules defined in the
+// proto definition for this message. If any rules are violated, the result is
+// a list of violation errors wrapped in InitialMultiError, or nil if none found.
+func (m *Initial) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *Initial) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Controller
+
+	if all {
+		switch v := interface{}(m.GetSettings()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, InitialValidationError{
+					field:  "Settings",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, InitialValidationError{
+					field:  "Settings",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetSettings()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return InitialValidationError{
+				field:  "Settings",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if all {
+		switch v := interface{}(m.GetUnit()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, InitialValidationError{
+					field:  "Unit",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, InitialValidationError{
+					field:  "Unit",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetUnit()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return InitialValidationError{
+				field:  "Unit",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return InitialMultiError(errors)
+	}
+
+	return nil
+}
+
+// InitialMultiError is an error wrapping multiple validation errors returned
+// by Initial.ValidateAll() if the designated constraints aren't met.
+type InitialMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m InitialMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m InitialMultiError) AllErrors() []error { return m }
+
+// InitialValidationError is the validation error returned by Initial.Validate
+// if the designated constraints aren't met.
+type InitialValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e InitialValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e InitialValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e InitialValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e InitialValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e InitialValidationError) ErrorName() string { return "InitialValidationError" }
+
+// Error satisfies the builtin error interface
+func (e InitialValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sInitial.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = InitialValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = InitialValidationError{}
+
 // Validate checks the field values on StreamRequest with the rules defined in
 // the proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
@@ -3293,6 +3822,129 @@ func (m *StreamResponse) validate(all bool) error {
 	var errors []error
 
 	switch v := m.Change.(type) {
+	case *StreamResponse_Initial:
+		if v == nil {
+			err := StreamResponseValidationError{
+				field:  "Change",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+		if all {
+			switch v := interface{}(m.GetInitial()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, StreamResponseValidationError{
+						field:  "Initial",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, StreamResponseValidationError{
+						field:  "Initial",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetInitial()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return StreamResponseValidationError{
+					field:  "Initial",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	case *StreamResponse_Settings:
+		if v == nil {
+			err := StreamResponseValidationError{
+				field:  "Change",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+		if all {
+			switch v := interface{}(m.GetSettings()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, StreamResponseValidationError{
+						field:  "Settings",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, StreamResponseValidationError{
+						field:  "Settings",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetSettings()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return StreamResponseValidationError{
+					field:  "Settings",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	case *StreamResponse_Controllers:
+		if v == nil {
+			err := StreamResponseValidationError{
+				field:  "Change",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+		if all {
+			switch v := interface{}(m.GetControllers()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, StreamResponseValidationError{
+						field:  "Controllers",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, StreamResponseValidationError{
+						field:  "Controllers",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetControllers()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return StreamResponseValidationError{
+					field:  "Controllers",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
 	case *StreamResponse_DispatchStatus:
 		if v == nil {
 			err := StreamResponseValidationError{

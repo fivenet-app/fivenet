@@ -17,9 +17,11 @@ const (
 	CentrumServiceCreateDispatchPerm        perms.Name = "CreateDispatch"
 	CentrumServiceCreateOrUpdateUnitPerm    perms.Name = "CreateOrUpdateUnit"
 	CentrumServiceDeleteUnitPerm            perms.Name = "DeleteUnit"
+	CentrumServiceGetSettingsPerm           perms.Name = "GetSettings"
 	CentrumServiceListDispatchesPerm        perms.Name = "ListDispatches"
 	CentrumServiceListUnitsPerm             perms.Name = "ListUnits"
 	CentrumServiceStreamPerm                perms.Name = "Stream"
+	CentrumServiceTakeControlPerm           perms.Name = "TakeControl"
 	CentrumServiceTakeDispatchPerm          perms.Name = "TakeDispatch"
 	CentrumServiceUpdateDispatchPerm        perms.Name = "UpdateDispatch"
 	CentrumServiceUpdateUnitStatusPerm      perms.Name = "UpdateUnitStatus"
@@ -31,6 +33,7 @@ var PermsRemap = map[string]string{
 	"CentrumService/ListDispatchActivity": "CentrumService/Stream",
 	"CentrumService/ListUnitActivity":     "CentrumService/ListUnits",
 	"CentrumService/UpdateDispatchStatus": "CentrumService/TakeDispatch",
+	"CentrumService/UpdateSettings":       "CentrumService/GetSettings",
 }
 
 func (s *Server) GetPermsRemap() map[string]string {
@@ -74,6 +77,11 @@ func init() {
 		},
 		{
 			Category: CentrumServicePerm,
+			Name:     CentrumServiceGetSettingsPerm,
+			Attrs:    []perms.Attr{},
+		},
+		{
+			Category: CentrumServicePerm,
 			Name:     CentrumServiceListDispatchesPerm,
 			Attrs:    []perms.Attr{},
 		},
@@ -85,6 +93,11 @@ func init() {
 		{
 			Category: CentrumServicePerm,
 			Name:     CentrumServiceStreamPerm,
+			Attrs:    []perms.Attr{},
+		},
+		{
+			Category: CentrumServicePerm,
+			Name:     CentrumServiceTakeControlPerm,
 			Attrs:    []perms.Attr{},
 		},
 		{

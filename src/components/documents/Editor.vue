@@ -150,7 +150,7 @@ const modules = [
             debug: false,
             msg: t('components.documents.document_editor.quill.msg'),
             okText: t('components.documents.document_editor.quill.okText'),
-            cancelText: t('components.documents.document_editor.quill.cancelText'),
+            cancelText: t('common.cancel'),
         },
     },
 ];

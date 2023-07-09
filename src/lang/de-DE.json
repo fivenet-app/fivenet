@@ -513,7 +513,12 @@
         "initials": "Initialen",
         "updated": "Aktualisiert",
         "members": "Keine Mitglieder | {n} Mitglied | {n} Mitglieder",
-        "anon": "Anonym"
+        "anon": "Anonym",
+        "setting": "Einstellung | Einstellungen",
+        "cancel": "Abbrechen",
+        "enabled": "Aktiviert",
+        "status": "Status",
+        "mode": "Modus | Modi"
     },
     "notifications": {
         "clipboard": {

@@ -1,0 +1,10 @@
+- [ ] Leitstelle
+    - [ ] Player and Marker tracker in backend (`pkg/tracker/tracker.go`)
+        - [ ] Convert GKSPhone Job Messages and delete them afterwards
+    - [ ] Frontend for employees to see their dispatches and manage their status
+        - [ ] Notifications on Livemap when they are assigned a dispatch
+        - [ ] Updating their own dispatch status
+        - [ ] Updating their unit status
+        - [ ] Sidebar for Livemap
+    - [x] Rector - Add Centrum Settings Page
+    - [ ] Translations

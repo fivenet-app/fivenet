@@ -207,7 +207,7 @@ onMounted(() => {
                                         @click="$emit('close')"
                                         ref="cancelButtonRef"
                                     >
-                                        Cancel
+                                        {{ $t('common.cancel') }}
                                     </button>
                                 </div>
                             </form>

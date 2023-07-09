@@ -12,7 +12,7 @@
         "pretty": "yarn prettier --write ./src/"
     },
     "dependencies": {
-        "@fontsource/inter": "^5.0.4",
+        "@fontsource/inter": "^5.0.5",
         "@headlessui/vue": "^1.7.14",
         "@jamescoyle/vue-icon": "^0.1.2",
         "@mdi/js": "^7.2.96",

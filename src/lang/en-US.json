@@ -289,8 +289,7 @@
                 "add_permission": "Add Permission",
                 "quill": {
                     "msg": "Edit HTML here, when you click \"OK\" the quill editor's contents will be replaced.",
-                    "okText": "Ok",
-                    "cancelText": "Cancel"
+                    "okText": "Ok"
                 }
             },
             "document_managers": {
@@ -513,7 +512,12 @@
         "initials": "Initials",
         "updated": "Updated",
         "members": "No Members | {n} Member | {n} Members",
-        "anon": "Anonymous"
+        "anon": "Anonymous",
+        "setting": "Setting | Settings",
+        "cancel": "Cancel",
+        "enabled": "Enabled",
+        "status": "Status",
+        "mode": "Mode | Modes"
     },
     "notifications": {
         "clipboard": {

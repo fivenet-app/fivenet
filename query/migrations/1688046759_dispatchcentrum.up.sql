@@ -3,12 +3,22 @@ BEGIN;
 -- Table: fivenet_centrum_settings
 CREATE TABLE IF NOT EXISTS `fivenet_centrum_settings` (
   `job` varchar(50) NOT NULL,
+	`enabled` tinyint(1) DEFAULT 0 NOT NULL,
 	`active` tinyint(1) DEFAULT 0 NULL,
 	`mode` mediumint(2) DEFAULT 0 NULL,
-	`minimum_rank` int(11) DEFAULT 1 NOT NULL,
-	`additional` longtext DEFAULT NULL NULL,
-	`enabled` tinyint(1) DEFAULT 0 NOT NULL,
+  `fallback_mode` mediumint(2) DEFAULT 0 NULL,
   PRIMARY KEY (`job`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Table: fivenet_centrum_users
+CREATE TABLE IF NOT EXISTS `fivenet_centrum_users` (
+  `job` varchar(50) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `identifier` varchar(64) NOT NULL,
+  PRIMARY KEY (`user_id`),
+  KEY `idx_fivenet_centrum_users_job` (`job`),
+  CONSTRAINT `fk_fivenet_centrum_users_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_fivenet_centrum_users_identifier` FOREIGN KEY (`identifier`) REFERENCES `fivenet_user_locations` (`identifier`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Table: fivenet_centrum_units

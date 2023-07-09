@@ -8,12 +8,15 @@ import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { Unit, UnitStatus } from '~~/gen/ts/resources/dispatch/units';
 import CreateOrUpdateModal from '~/components/centrum/dispatches/CreateOrUpdateModal.vue';
 import { LeafletMouseEvent } from 'leaflet';
+import { Settings } from '~~/gen/ts/resources/dispatch/settings';
 
 const { $grpc } = useNuxtApp();
 
+const settings = ref<Settings>();
+const unit = ref<Unit>();
 const feed = ref<(DispatchStatus | UnitStatus)[]>([]);
 
-const { data: dispatches } = useLazyAsyncData(`centrum-dispatches`, () => listDispatches());
+const { data: dispatches, refresh: refreshDispatches } = useLazyAsyncData(`centrum-dispatches`, () => listDispatches());
 
 async function listDispatches(): Promise<Array<Dispatch>> {
     return new Promise(async (res, rej) => {
@@ -33,7 +36,7 @@ async function listDispatches(): Promise<Array<Dispatch>> {
     });
 }
 
-const { data: units } = useLazyAsyncData(`centrum-units`, () => listUnits());
+const { data: units, refresh: refreshUnits } = useLazyAsyncData(`centrum-units`, () => listUnits());
 
 async function listUnits(): Promise<Array<Unit>> {
     return new Promise(async (res, rej) => {
@@ -81,7 +84,11 @@ async function startStream(): Promise<void> {
 
             console.debug('Centrum: Received change - Kind:', resp.change.oneofKind);
 
-            if (resp.change.oneofKind === 'dispatchUpdate') {
+            if (resp.change.oneofKind === 'initial') {
+                settings.value = resp.change.initial.settings;
+                unit.value = resp.change.initial.unit;
+                // TODO
+            } else if (resp.change.oneofKind === 'dispatchUpdate') {
                 const id = resp.change.dispatchUpdate.id;
                 const idx = dispatches.value?.findIndex((d) => d.id === id) ?? -1;
                 if (idx === -1) {
@@ -118,13 +125,23 @@ async function startStream(): Promise<void> {
             } else if (resp.change.oneofKind === 'unitStatus') {
                 feed.value.unshift(resp.change.unitStatus);
             } else if (resp.change.oneofKind === 'unitAssigned') {
-                // TODO
+                // TODO show popup and notification
             } else if (resp.change.oneofKind === 'unitDeleted') {
                 const id = resp.change.unitDeleted;
                 const idx = units.value?.findIndex((d) => d.id === id) ?? -1;
                 if (idx > -1) {
                     units.value?.splice(idx, 1);
                 }
+            } else if (resp.change.oneofKind === 'controllers') {
+                // If user is part of controllers list, we need to restart the stream
+                stopStream();
+                setTimeout(() => {
+                    refreshDispatches();
+                    refreshUnits();
+                    startStream();
+                }, 250);
+            } else if (resp.change.oneofKind === 'settings') {
+                settings.value = resp.change.settings;
             } else {
                 console.log('Centrum: Unknown change received - Kind: ', resp.change.oneofKind, resp.change);
             }
@@ -146,6 +163,10 @@ async function stopStream(): Promise<void> {
 
 onMounted(() => {
     startStream();
+});
+
+onBeforeUnmount(() => {
+    stopStream();
 });
 
 const createOrUpdateModal = ref<InstanceType<typeof CreateOrUpdateModal>>();
