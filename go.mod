@@ -6,7 +6,7 @@ require (
 	github.com/Code-Hex/go-generics-cache v1.3.1
 	github.com/Masterminds/sprig/v3 v3.2.3
 	github.com/XSAM/otelsql v0.23.0
-	github.com/blevesearch/bleve/v2 v2.3.8
+	github.com/blevesearch/bleve/v2 v2.3.9
 	github.com/creasty/defaults v1.7.0
 	github.com/envoyproxy/protoc-gen-validate v1.0.2
 	github.com/getsentry/sentry-go v0.22.0
@@ -66,16 +66,16 @@ require (
 	github.com/blevesearch/go-porterstemmer v1.0.3 // indirect
 	github.com/blevesearch/gtreap v0.1.1 // indirect
 	github.com/blevesearch/mmap-go v1.0.4 // indirect
-	github.com/blevesearch/scorch_segment_api/v2 v2.1.4 // indirect
+	github.com/blevesearch/scorch_segment_api/v2 v2.1.5 // indirect
 	github.com/blevesearch/segment v0.9.1 // indirect
 	github.com/blevesearch/snowballstem v0.9.0 // indirect
 	github.com/blevesearch/upsidedown_store_api v1.0.2 // indirect
-	github.com/blevesearch/vellum v1.0.9 // indirect
-	github.com/blevesearch/zapx/v11 v11.3.7 // indirect
-	github.com/blevesearch/zapx/v12 v12.3.7 // indirect
-	github.com/blevesearch/zapx/v13 v13.3.7 // indirect
-	github.com/blevesearch/zapx/v14 v14.3.7 // indirect
-	github.com/blevesearch/zapx/v15 v15.3.10 // indirect
+	github.com/blevesearch/vellum v1.0.10 // indirect
+	github.com/blevesearch/zapx/v11 v11.3.9 // indirect
+	github.com/blevesearch/zapx/v12 v12.3.9 // indirect
+	github.com/blevesearch/zapx/v13 v13.3.9 // indirect
+	github.com/blevesearch/zapx/v14 v14.3.9 // indirect
+	github.com/blevesearch/zapx/v15 v15.3.12 // indirect
 	github.com/bytedance/sonic v1.9.1 // indirect
 	github.com/cenkalti/backoff/v4 v4.2.0 // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
