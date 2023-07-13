@@ -9,12 +9,16 @@ import { Unit, UnitStatus } from '~~/gen/ts/resources/dispatch/units';
 import CreateOrUpdateModal from '~/components/centrum/dispatches/CreateOrUpdateModal.vue';
 import { LeafletMouseEvent } from 'leaflet';
 import { Settings } from '~~/gen/ts/resources/dispatch/settings';
+import { UserShort } from '~~/gen/ts/resources/users/users';
+import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
+import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 
 const { $grpc } = useNuxtApp();
 
 const settings = ref<Settings>();
 const unit = ref<Unit>();
 const feed = ref<(DispatchStatus | UnitStatus)[]>([]);
+const controllers = ref<UserShort[]>([]);
 
 const { data: dispatches, refresh: refreshDispatches } = useLazyAsyncData(`centrum-dispatches`, () => listDispatches());
 
@@ -133,13 +137,16 @@ async function startStream(): Promise<void> {
                     units.value?.splice(idx, 1);
                 }
             } else if (resp.change.oneofKind === 'controllers') {
+                controllers.value = resp.change.controllers.controllers;
                 // If user is part of controllers list, we need to restart the stream
-                stopStream();
-                setTimeout(() => {
-                    refreshDispatches();
-                    refreshUnits();
-                    startStream();
-                }, 250);
+                if (!resp.change.controllers.active) {
+                    stopStream();
+                    setTimeout(() => {
+                        refreshDispatches();
+                        refreshUnits();
+                        startStream();
+                    }, 250);
+                }
             } else if (resp.change.oneofKind === 'settings') {
                 settings.value = resp.change.settings;
             } else {
@@ -193,7 +200,25 @@ function goto(e: { x: number; y: number }) {
 
 <template>
     <div class="flex-col h-full">
+        <div
+            v-if="error || abort === undefined"
+            class="absolute inset-0 flex justify-center items-center z-20"
+            style="background-color: rgba(62, 60, 62, 0.5)"
+        >
+            <DataPendingBlock v-if="!error" :message="$t('components.livemap.starting_datastream')" />
+            <DataErrorBlock
+                v-else="error"
+                :title="$t('components.livemap.failed_datastream')"
+                :retry="
+                    () => {
+                        startStream();
+                    }
+                "
+            />
+        </div>
+
         <CreateOrUpdateModal ref="createOrUpdateModal" :open="open" @close="open = false" :location="location" />
+
         <div class="relative w-full h-full z-0 flex">
             <!-- Left column -->
             <div class="flex flex-col basis-1/3 divide-x">

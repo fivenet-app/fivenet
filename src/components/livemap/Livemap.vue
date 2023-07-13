@@ -452,7 +452,7 @@ watchDebounced(postalQuery, () => findPostal(), {
         >
             <DataPendingBlock v-if="!error" :message="$t('components.livemap.starting_datastream')" />
             <DataErrorBlock
-                v-else-if="error"
+                v-else="error"
                 :title="$t('components.livemap.failed_datastream')"
                 :retry="
                     () => {
@@ -460,7 +460,6 @@ watchDebounced(postalQuery, () => findPostal(), {
                     }
                 "
             />
-            <DataPendingBlock v-else-if="!error" :message="$t('components.livemap.paused_datastream')" :paused="true" />
         </div>
 
         <div class="h-full flex flex-row">

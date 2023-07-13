@@ -266,7 +266,6 @@ func (s *Server) Stream(req *StreamRequest, srv CentrumService_StreamServer) err
 		return err
 	}
 
-	cancel := false
 	for {
 		select {
 		case <-srv.Context().Done():
@@ -385,7 +384,6 @@ func (s *Server) Stream(req *StreamRequest, srv CentrumService_StreamServer) err
 						resp.Change = &StreamResponse_UnitAssigned{
 							UnitAssigned: nil,
 						}
-						cancel = true
 					}
 
 				case TypeUnitDeleted:
@@ -403,10 +401,6 @@ func (s *Server) Stream(req *StreamRequest, srv CentrumService_StreamServer) err
 
 		if err := srv.Send(resp); err != nil {
 			return err
-		}
-
-		if cancel {
-			return nil
 		}
 	}
 }

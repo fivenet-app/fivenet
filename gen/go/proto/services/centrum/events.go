@@ -1,6 +1,7 @@
 package centrum
 
 import (
+	"errors"
 	"fmt"
 	"strings"
 
@@ -34,10 +35,18 @@ func (s *Server) registerEvents() error {
 	cfg := &nats.StreamConfig{
 		Name:      "CENTRUM",
 		Retention: nats.InterestPolicy,
-		Subjects:  []string{BaseSubject + ">"},
+		Subjects:  []string{BaseSubject + ".>"},
 	}
 
-	s.events.JS.AddStream(cfg)
+	if _, err := s.events.JS.AddStream(cfg); err != nil {
+		if !errors.Is(nats.ErrStreamNameAlreadyInUse, err) {
+			return err
+		}
+
+		if _, err := s.events.JS.UpdateStream(cfg); err != nil {
+			return err
+		}
+	}
 
 	return nil
 }

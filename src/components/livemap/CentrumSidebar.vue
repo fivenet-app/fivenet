@@ -1,6 +1,15 @@
 <script lang="ts" setup>
 import { mdiCarEmergency, mdiHoopHouse } from '@mdi/js';
 import SvgIcon from '@jamescoyle/vue-icon';
+import { Unit } from '~~/gen/ts/resources/dispatch/units';
+
+const unit: Unit = {
+    id: 0n,
+    job: 'ambulance',
+    name: 'Christoph 1',
+    initials: 'CH1',
+    users: [],
+};
 
 const navigation = [
     { name: 'Update Unit Status' },
@@ -50,6 +59,20 @@ const dispatches = [
                             >
                                 <SvgIcon type="mdi" :path="mdiCarEmergency" class="h-6 w-6" aria-hidden="true" />
                                 <span class="mt-2 truncate">{{ dispatch.name }}</span>
+                            </button>
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    <div class="text-xs font-semibold leading-6 text-base-200">Your Unit</div>
+                    <ul role="list" class="-mx-2 mt-2 space-y-1">
+                        <li>
+                            <button
+                                type="button"
+                                class="text-accent-100 bg-info-700 hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-3 text-xs my-2"
+                            >
+                                <SvgIcon type="mdi" :path="mdiCarEmergency" class="h-6 w-6" aria-hidden="true" />
+                                <span class="mt-2 truncate">{{ unit.name }}</span>
                             </button>
                         </li>
                     </ul>
