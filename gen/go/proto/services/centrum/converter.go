@@ -31,7 +31,7 @@ func (s *Server) ConvertPhoneJobMsgToDispatch() error {
 
 	for _, m := range dest {
 		job := strings.TrimSuffix(strings.TrimPrefix(*m.Jobm, "[\""), "\"]")
-		gps, _ := strings.CutPrefix(*v.Gps, "GPS: ")
+		gps, _ := strings.CutPrefix(*m.Gps, "GPS: ")
 		gpsSplit := strings.Split(gps, ", ")
 		x, _ := strconv.ParseFloat(gpsSplit[0], 32)
 		y, _ := strconv.ParseFloat(gpsSplit[1], 32)
