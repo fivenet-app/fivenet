@@ -1,7 +1,5 @@
 <script lang="ts" setup>
 import SvgIcon from '@jamescoyle/vue-icon';
-import Time from '~/components/partials/elements/Time.vue';
-import { DispatchStatus, DISPATCH_STATUS } from '~~/gen/ts/resources/dispatch/dispatch';
 import {
     mdiAccountCancel,
     mdiAccountPlus,
@@ -12,6 +10,8 @@ import {
     mdiMapMarker,
     mdiNewBox,
 } from '@mdi/js';
+import Time from '~/components/partials/elements/Time.vue';
+import { DISPATCH_STATUS, DispatchStatus } from '~~/gen/ts/resources/dispatch/dispatch';
 
 defineProps<{
     activityLength: number;

@@ -1,17 +1,17 @@
 <script lang="ts" setup>
-import Feed from './Feed.vue';
-import { default as DispatchesList } from '~/components/centrum/dispatches/List.vue';
-import Livemap from '~/components/centrum/Livemap.vue';
-import { default as UnitsList } from '~/components/centrum/units/List.vue';
-import { Dispatch, DispatchStatus } from '~~/gen/ts/resources/dispatch/dispatch';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
-import { Unit, UnitStatus } from '~~/gen/ts/resources/dispatch/units';
-import CreateOrUpdateModal from '~/components/centrum/dispatches/CreateOrUpdateModal.vue';
 import { LeafletMouseEvent } from 'leaflet';
-import { Settings } from '~~/gen/ts/resources/dispatch/settings';
-import { UserShort } from '~~/gen/ts/resources/users/users';
-import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
+import Livemap from '~/components/centrum/Livemap.vue';
+import CreateOrUpdateModal from '~/components/centrum/dispatches/CreateOrUpdateModal.vue';
+import { default as DispatchesList } from '~/components/centrum/dispatches/List.vue';
+import { default as UnitsList } from '~/components/centrum/units/List.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
+import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
+import { Dispatch, DispatchStatus } from '~~/gen/ts/resources/dispatch/dispatch';
+import { Settings } from '~~/gen/ts/resources/dispatch/settings';
+import { Unit, UnitStatus } from '~~/gen/ts/resources/dispatch/units';
+import { UserShort } from '~~/gen/ts/resources/users/users';
+import Feed from './Feed.vue';
 
 const { $grpc } = useNuxtApp();
 

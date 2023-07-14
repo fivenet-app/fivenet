@@ -14,7 +14,7 @@ export const useNotificationsStore = defineStore('notifications', {
         ({
             lastId: '0',
             notifications: [],
-        } as NotificationsState),
+        }) as NotificationsState,
     persist: {
         paths: ['lastId'],
     },

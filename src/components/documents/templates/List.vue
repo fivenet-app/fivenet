@@ -30,10 +30,12 @@ async function listTemplates(): Promise<Array<TemplateShort>> {
 }
 
 const items = ref<CardElements>([]);
-watch(templates, () =>
-    templates.value?.forEach((v) => {
-        items.value.push({ title: v?.title, description: v?.description });
-    })
+watch(
+    templates,
+    () =>
+        templates.value?.forEach((v) => {
+            items.value.push({ title: v?.title, description: v?.description });
+        }),
 );
 
 function selected(idx: number): TemplateShort {

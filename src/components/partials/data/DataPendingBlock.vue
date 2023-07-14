@@ -9,7 +9,7 @@ withDefaults(
     }>(),
     {
         paused: false,
-    }
+    },
 );
 </script>
 

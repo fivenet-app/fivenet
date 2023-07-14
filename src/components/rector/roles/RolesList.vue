@@ -52,7 +52,7 @@ async function findJobGrades(): Promise<void> {
 
             entriesJobGrades = response.jobs[0].grades;
             filteredJobGrades.value = entriesJobGrades.filter(
-                (g) => (roles.value?.findIndex((r) => r.grade === g.grade) ?? -1) === -1
+                (g) => (roles.value?.findIndex((r) => r.grade === g.grade) ?? -1) === -1,
             );
 
             return res();
@@ -107,10 +107,10 @@ watchDebounced(
     queryJobGrade,
     async () => {
         filteredJobGrades.value = entriesJobGrades.filter((g) =>
-            g.label.toLowerCase().includes(queryJobGrade.value.toLowerCase())
+            g.label.toLowerCase().includes(queryJobGrade.value.toLowerCase()),
         );
     },
-    { debounce: 600, maxWait: 1750 }
+    { debounce: 600, maxWait: 1750 },
 );
 
 watchOnce(roles, async () => await findJobGrades());

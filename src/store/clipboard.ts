@@ -31,7 +31,7 @@ export const useClipboardStore = defineStore('clipboard', {
                 documents: [],
                 vehicles: [],
             } as ClipboardData,
-        } as ClipboardState),
+        }) as ClipboardState,
     persist: true,
     actions: {
         getTemplateData(): TemplateData {

@@ -5,8 +5,8 @@ import { mdiGroup } from '@mdi/js';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { max_value, min_value, numeric, required } from '@vee-validate/rules';
 import { defineRule } from 'vee-validate';
-import { CENTRUM_MODE, Settings } from '~~/gen/ts/resources/dispatch/settings';
 import { can } from '~/plugins/1.vCan';
+import { CENTRUM_MODE, Settings } from '~~/gen/ts/resources/dispatch/settings';
 
 defineProps<{
     open: boolean;

@@ -59,24 +59,27 @@ const summary = ref<PenaltiesSummary>({
     count: 0n,
 });
 
-const filteredLawBooks = computed(() =>
-    lawBooks.value
-        ?.map((book) => {
-            const laws = book.laws
-                .filter((p) => p.name.toLowerCase().includes(query.value) || p.description.toLowerCase().includes(query.value))
-                .map((p) => {
-                    const show = true;
-                    return {
-                        ...p,
-                        show,
-                    };
-                });
-            return {
-                ...book,
-                laws: laws,
-            };
-        })
-        .filter((books) => books.laws.length > 0)
+const filteredLawBooks = computed(
+    () =>
+        lawBooks.value
+            ?.map((book) => {
+                const laws = book.laws
+                    .filter(
+                        (p) => p.name.toLowerCase().includes(query.value) || p.description.toLowerCase().includes(query.value),
+                    )
+                    .map((p) => {
+                        const show = true;
+                        return {
+                            ...p,
+                            show,
+                        };
+                    });
+                return {
+                    ...book,
+                    laws: laws,
+                };
+            })
+            .filter((books) => books.laws.length > 0),
 );
 
 function getNameForLawBookId(id: bigint): string | undefined {
@@ -124,7 +127,7 @@ async function copyToClipboard(): Promise<void> {
 ${t('common.fine')}: $${summary.value.fine}
 ${t('common.detention_time')}: ${summary.value.detentionTime} ${t(
             'common.time_ago.month',
-            summary.value.detentionTime.toString()
+            summary.value.detentionTime.toString(),
         )}
 ${t('common.traffic_infraction_points', 2)}: ${summary.value.stvoPoints}
 ${t('common.total_count')}: ${summary.value.count}

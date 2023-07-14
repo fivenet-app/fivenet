@@ -206,7 +206,7 @@ onMounted(async () => {
                                     v-for="(perm, idx) in permList.filter(
                                         (p) =>
                                             p.category === category &&
-                                            attrList.filter((a) => a.permissionId === p.id).length > 0
+                                            attrList.filter((a) => a.permissionId === p.id).length > 0,
                                     )"
                                     :key="perm.id?.toString()"
                                     class="flex flex-col gap-2"

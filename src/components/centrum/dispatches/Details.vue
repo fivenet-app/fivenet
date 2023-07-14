@@ -2,8 +2,8 @@
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import SvgIcon from '@jamescoyle/vue-icon';
 import { mdiClose } from '@mdi/js';
-import { Dispatch, DISPATCH_STATUS } from '~~/gen/ts/resources/dispatch/dispatch';
 import Time from '~/components/partials/elements/Time.vue';
+import { DISPATCH_STATUS, Dispatch } from '~~/gen/ts/resources/dispatch/dispatch';
 import Feed from './Feed.vue';
 
 defineProps<{

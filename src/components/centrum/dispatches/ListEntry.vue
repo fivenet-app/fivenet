@@ -1,11 +1,11 @@
 <script lang="ts" setup>
 import SvgIcon from '@jamescoyle/vue-icon';
 import { mdiAccountMultiplePlus, mdiDetails, mdiMapMarker } from '@mdi/js';
+import Time from '~/components/partials/elements/Time.vue';
 import { DISPATCH_STATUS, Dispatch } from '~~/gen/ts/resources/dispatch/dispatch';
 import { Unit } from '~~/gen/ts/resources/dispatch/units';
-import Details from './Details.vue';
-import Time from '~/components/partials/elements/Time.vue';
 import AssignDispatchModal from './AssignDispatchModal.vue';
+import Details from './Details.vue';
 
 defineProps<{
     dispatch: Dispatch;

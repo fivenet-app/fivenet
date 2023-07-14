@@ -47,7 +47,7 @@ const emit = defineEmits<{
             id: bigint;
             job: Job | undefined;
             char: UserShort | undefined;
-        }
+        },
     ): void;
     (e: 'rankChange', payload: { id: bigint; rank: JobGrade }): void;
     (e: 'accessChange', payload: { id: bigint; access: ACCESS_LEVEL }): void;

@@ -191,15 +191,15 @@ const filteredItems = computed<Item[]>(() =>
                   }
               }
               return item.name.toLowerCase().includes(query.value.toLowerCase());
-          })
+          }),
 );
 
 const citizens = ref<UserShort[]>([]);
 
 const filteredCitizens = computed(() =>
     citizens.value.filter((citizen) =>
-        `${citizen.firstname} ${citizen.lastname}`.toLowerCase().includes(query.value.toLowerCase())
-    )
+        `${citizen.firstname} ${citizen.lastname}`.toLowerCase().includes(query.value.toLowerCase()),
+    ),
 );
 
 async function listCitizens(): Promise<void> {
@@ -230,7 +230,7 @@ async function listCitizens(): Promise<void> {
 const documents = ref<DocumentShort[]>([]);
 
 const filteredDocuments = computed(() =>
-    documents.value.filter((document) => document.title.toLowerCase().includes(query.value.toLowerCase()))
+    documents.value.filter((document) => document.title.toLowerCase().includes(query.value.toLowerCase())),
 );
 
 async function listDocuments(): Promise<void> {
@@ -277,14 +277,14 @@ watchDebounced(
             loading.value = false;
         }
     },
-    { debounce: 500, maxWait: 1500 }
+    { debounce: 500, maxWait: 1500 },
 );
 
 type Groups = { [key: string]: Item[] };
 const groups = computed<Groups>(() =>
     filteredItems.value.reduce((groups, item) => {
         return { ...groups, [item.category]: [...((groups as Groups)[item.category] || []), item] };
-    }, {})
+    }, {}),
 );
 
 async function onSelect(item: any): Promise<any> {

@@ -13,7 +13,7 @@ const props = withDefaults(
     }>(),
     {
         icon: mdiMagnify,
-    }
+    },
 );
 function click() {
     if (props.focus) {

@@ -13,7 +13,7 @@ withDefaults(
         message: undefined,
         icon: mdiCloseCircle,
         type: 'error',
-    }
+    },
 );
 </script>
 

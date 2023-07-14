@@ -265,7 +265,7 @@ onMounted(() => {
                                 (j) =>
                                     maxValues?.validValues.oneofKind === 'jobList' &&
                                     (!maxValues?.validValues.jobList?.strings.length ||
-                                        maxValues.validValues?.jobList?.strings.includes(j.name))
+                                        maxValues.validValues?.jobList?.strings.includes(j.name)),
                             )"
                             :key="job.name"
                             class="flex flex-row flex-initial flex-nowrap"
@@ -294,7 +294,7 @@ onMounted(() => {
                                 (j) =>
                                     maxValues &&
                                     maxValues.validValues.oneofKind === 'jobGradeList' &&
-                                    maxValues.validValues.jobGradeList.jobs[j.name]
+                                    maxValues.validValues.jobGradeList.jobs[j.name],
                             )"
                             :key="job.name"
                             class="flex flex-row flex-initial flex-nowrap gap-2"
@@ -344,7 +344,7 @@ onMounted(() => {
                                                     (g) =>
                                                         maxValues &&
                                                         maxValues.validValues.oneofKind === 'jobGradeList' &&
-                                                        maxValues.validValues.jobGradeList.jobs[job.name] + 1 > g.grade
+                                                        maxValues.validValues.jobGradeList.jobs[job.name] + 1 > g.grade,
                                                 )"
                                                 :key="grade.grade"
                                                 :value="grade"

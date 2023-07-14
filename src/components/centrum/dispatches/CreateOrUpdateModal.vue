@@ -2,8 +2,8 @@
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import SvgIcon from '@jamescoyle/vue-icon';
 import { mdiCarEmergency } from '@mdi/js';
-import { digits, max, min, required } from '@vee-validate/rules';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
+import { digits, max, min, required } from '@vee-validate/rules';
 import { defineRule } from 'vee-validate';
 import { Dispatch } from '~~/gen/ts/resources/dispatch/dispatch';
 

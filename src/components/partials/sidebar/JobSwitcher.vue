@@ -90,7 +90,7 @@ watchDebounced(
     async () => {
         filteredJobs.value = entriesJobs.filter((g) => g.label.toLowerCase().includes(queryJob.value.toLowerCase()));
     },
-    { debounce: 600, maxWait: 1750 }
+    { debounce: 600, maxWait: 1750 },
 );
 watchDebounced(selectedJob, () => setJob());
 </script>
@@ -103,7 +103,7 @@ watchDebounced(selectedJob, () => setJob());
                     @click="findJobs"
                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                     @change="queryJob = $event.target.value"
-                    :display-value="(job: any) => job ? job?.label : ''"
+                    :display-value="(job: any) => (job ? job?.label : '')"
                     :placeholder="`${$t('common.select')} ${$t('common.job')}`"
                 />
             </ComboboxButton>

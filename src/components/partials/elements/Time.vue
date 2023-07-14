@@ -10,7 +10,7 @@ const props = withDefaults(
     {
         type: 'short',
         ago: false,
-    }
+    },
 );
 
 const date: Date = props.value instanceof Date ? props.value : toDate(props.value) ?? new Date();

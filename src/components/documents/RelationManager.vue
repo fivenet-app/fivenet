@@ -90,8 +90,8 @@ async function listCitizens(): Promise<Array<User>> {
 
             return res(
                 response.users.filter(
-                    (user) => !Array.from(props.modelValue.values()).find((r) => r.targetUserId === user.userId)
-                )
+                    (user) => !Array.from(props.modelValue.values()).find((r) => r.targetUserId === user.userId),
+                ),
             );
         } catch (e) {
             $grpc.handleError(e as RpcError);
@@ -245,7 +245,7 @@ function removeRelation(id: bigint): void {
                                                                             $t(
                                                                                 `enums.docstore.DOC_RELATION.${
                                                                                     DOC_RELATION[rel.relation]
-                                                                                }`
+                                                                                }`,
                                                                             )
                                                                         }}
                                                                     </td>
@@ -263,7 +263,7 @@ function removeRelation(id: bigint): void {
                                                                                     data-te-toggle="tooltip"
                                                                                     :title="
                                                                                         $t(
-                                                                                            'components.documents.document_managers.open_citizen'
+                                                                                            'components.documents.document_managers.open_citizen',
                                                                                         )
                                                                                     "
                                                                                 >
@@ -281,7 +281,7 @@ function removeRelation(id: bigint): void {
                                                                                     data-te-toggle="tooltip"
                                                                                     :title="
                                                                                         $t(
-                                                                                            'components.documents.document_managers.remove_relation'
+                                                                                            'components.documents.document_managers.remove_relation',
                                                                                         )
                                                                                     "
                                                                                 >
@@ -331,7 +331,7 @@ function removeRelation(id: bigint): void {
                                                                     >
                                                                         {{
                                                                             $t(
-                                                                                'components.documents.document_managers.add_relation'
+                                                                                'components.documents.document_managers.add_relation',
                                                                             )
                                                                         }}
                                                                     </th>
@@ -360,7 +360,7 @@ function removeRelation(id: bigint): void {
                                                                                     data-te-toggle="tooltip"
                                                                                     :title="
                                                                                         $t(
-                                                                                            'components.documents.document_managers.mentioned'
+                                                                                            'components.documents.document_managers.mentioned',
                                                                                         )
                                                                                     "
                                                                                 >
@@ -378,7 +378,7 @@ function removeRelation(id: bigint): void {
                                                                                     data-te-toggle="tooltip"
                                                                                     :title="
                                                                                         $t(
-                                                                                            'components.documents.document_managers.targets'
+                                                                                            'components.documents.document_managers.targets',
                                                                                         )
                                                                                     "
                                                                                 >
@@ -396,7 +396,7 @@ function removeRelation(id: bigint): void {
                                                                                     data-te-toggle="tooltip"
                                                                                     :title="
                                                                                         $t(
-                                                                                            'components.documents.document_managers.caused'
+                                                                                            'components.documents.document_managers.caused',
                                                                                         )
                                                                                     "
                                                                                 >
@@ -451,7 +451,7 @@ function removeRelation(id: bigint): void {
                                                                     >
                                                                         {{
                                                                             $t(
-                                                                                'components.documents.document_managers.add_relation'
+                                                                                'components.documents.document_managers.add_relation',
                                                                             )
                                                                         }}
                                                                     </th>
@@ -477,7 +477,7 @@ function removeRelation(id: bigint): void {
                                                                                     data-te-toggle="tooltip"
                                                                                     :title="
                                                                                         $t(
-                                                                                            'components.documents.document_managers.mentioned'
+                                                                                            'components.documents.document_managers.mentioned',
                                                                                         )
                                                                                     "
                                                                                 >
@@ -495,7 +495,7 @@ function removeRelation(id: bigint): void {
                                                                                     data-te-toggle="tooltip"
                                                                                     :title="
                                                                                         $t(
-                                                                                            'components.documents.document_managers.targets'
+                                                                                            'components.documents.document_managers.targets',
                                                                                         )
                                                                                     "
                                                                                 >
@@ -513,7 +513,7 @@ function removeRelation(id: bigint): void {
                                                                                     data-te-toggle="tooltip"
                                                                                     :title="
                                                                                         $t(
-                                                                                            'components.documents.document_managers.caused'
+                                                                                            'components.documents.document_managers.caused',
                                                                                         )
                                                                                     "
                                                                                 >

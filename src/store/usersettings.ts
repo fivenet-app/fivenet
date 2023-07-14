@@ -14,7 +14,7 @@ export const useUserSettingsStore = defineStore('userSettings', {
             locale: 'de',
             livemapMarkerSize: 22,
             livemapCenterSelectedMarker: false,
-        } as UserSettingsState),
+        }) as UserSettingsState,
     persist: true,
     actions: {
         setVersion(version: string): void {

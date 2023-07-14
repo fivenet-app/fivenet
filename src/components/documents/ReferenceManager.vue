@@ -93,9 +93,9 @@ async function listDocuments(): Promise<Array<DocumentShort>> {
                 response.documents.filter(
                     (doc) =>
                         !Array.from(props.modelValue.values()).find(
-                            (r) => r.targetDocumentId === doc.id || doc.id === props.document
-                        )
-                )
+                            (r) => r.targetDocumentId === doc.id || doc.id === props.document,
+                        ),
+                ),
             );
         } catch (e) {
             $grpc.handleError(e as RpcError);
@@ -265,7 +265,7 @@ function removeReference(id: bigint): void {
                                                                                     data-te-toggle="tooltip"
                                                                                     :title="
                                                                                         $t(
-                                                                                            'components.documents.document_managers.open_document'
+                                                                                            'components.documents.document_managers.open_document',
                                                                                         )
                                                                                     "
                                                                                 >
@@ -283,7 +283,7 @@ function removeReference(id: bigint): void {
                                                                                     data-te-toggle="tooltip"
                                                                                     :title="
                                                                                         $t(
-                                                                                            'components.documents.document_managers.remove_reference'
+                                                                                            'components.documents.document_managers.remove_reference',
                                                                                         )
                                                                                     "
                                                                                 >
@@ -345,7 +345,7 @@ function removeReference(id: bigint): void {
                                                                     >
                                                                         {{
                                                                             $t(
-                                                                                'components.documents.document_managers.add_reference'
+                                                                                'components.documents.document_managers.add_reference',
                                                                             )
                                                                         }}
                                                                     </th>
@@ -383,7 +383,7 @@ function removeReference(id: bigint): void {
                                                                                     data-te-toggle="tooltip"
                                                                                     :title="
                                                                                         $t(
-                                                                                            'components.documents.document_managers.links'
+                                                                                            'components.documents.document_managers.links',
                                                                                         )
                                                                                     "
                                                                                 >
@@ -399,7 +399,7 @@ function removeReference(id: bigint): void {
                                                                                     data-te-toggle="tooltip"
                                                                                     :title="
                                                                                         $t(
-                                                                                            'components.documents.document_managers.solves'
+                                                                                            'components.documents.document_managers.solves',
                                                                                         )
                                                                                     "
                                                                                 >
@@ -415,7 +415,7 @@ function removeReference(id: bigint): void {
                                                                                     data-te-toggle="tooltip"
                                                                                     :title="
                                                                                         $t(
-                                                                                            'components.documents.document_managers.closes'
+                                                                                            'components.documents.document_managers.closes',
                                                                                         )
                                                                                     "
                                                                                 >
@@ -431,7 +431,7 @@ function removeReference(id: bigint): void {
                                                                                     data-te-toggle="tooltip"
                                                                                     :title="
                                                                                         $t(
-                                                                                            'components.documents.document_managers.deprecates'
+                                                                                            'components.documents.document_managers.deprecates',
                                                                                         )
                                                                                     "
                                                                                 >
@@ -534,7 +534,7 @@ function removeReference(id: bigint): void {
                                                                                         data-te-toggle="tooltip"
                                                                                         :title="
                                                                                             $t(
-                                                                                                'components.documents.document_managers.links'
+                                                                                                'components.documents.document_managers.links',
                                                                                             )
                                                                                         "
                                                                                     >
@@ -550,7 +550,7 @@ function removeReference(id: bigint): void {
                                                                                         data-te-toggle="tooltip"
                                                                                         :title="
                                                                                             $t(
-                                                                                                'components.documents.document_managers.solves'
+                                                                                                'components.documents.document_managers.solves',
                                                                                             )
                                                                                         "
                                                                                     >
@@ -566,7 +566,7 @@ function removeReference(id: bigint): void {
                                                                                         data-te-toggle="tooltip"
                                                                                         :title="
                                                                                             $t(
-                                                                                                'components.documents.document_managers.closes'
+                                                                                                'components.documents.document_managers.closes',
                                                                                             )
                                                                                         "
                                                                                     >
@@ -582,7 +582,7 @@ function removeReference(id: bigint): void {
                                                                                         data-te-toggle="tooltip"
                                                                                         :title="
                                                                                             $t(
-                                                                                                'components.documents.document_managers.deprecates'
+                                                                                                'components.documents.document_managers.deprecates',
                                                                                             )
                                                                                         "
                                                                                     >

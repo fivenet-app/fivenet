@@ -5,6 +5,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -41,16 +42,19 @@ func (s *Server) ConvertPhoneJobMsgToDispatch() error {
 		}
 		userId := int32(26061)
 
-		dsp := &model.FivenetCentrumDispatches{
-			Job:     &job,
+		dsp := &dispatch.Dispatch{
+			Job:     job,
 			Message: *m.Message,
-			X:       &x,
-			Y:       &y,
+			X:       float32(x),
+			Y:       float32(y),
 			Anon:    &anon,
-			UserID:  userId,
+			UserId:  &userId,
 		}
-		_ = dsp
-		// TODO create dispatch in fivenet dispatch table
+
+		_, err := s.createDispatch(s.ctx, dsp)
+		if err != nil {
+			return err
+		}
 
 		if err := s.closePhoneJobMsg(s.ctx, m.ID); err != nil {
 			return err

@@ -9,7 +9,7 @@ withDefaults(
     }>(),
     {
         title: '',
-    }
+    },
 );
 </script>
 

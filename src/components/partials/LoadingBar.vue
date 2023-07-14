@@ -9,7 +9,7 @@ const props = withDefaults(
         throttle: 150,
         duration: 2250,
         height: 3,
-    }
+    },
 );
 
 // Options & Data
@@ -108,7 +108,10 @@ onBeforeUnmount(() => clear);
     right: 0px;
     width: 0%;
     opacity: 1;
-    transition: width 0.1s, height 0.4s, opacity 0.4s;
+    transition:
+        width 0.1s,
+        height 0.4s,
+        opacity 0.4s;
     background: repeating-linear-gradient(to right, #55dde0 0%, #34cdfe 50%, #7161ef 100%);
     z-index: 999999;
 }

@@ -2,8 +2,8 @@
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import SvgIcon from '@jamescoyle/vue-icon';
 import { mdiClose } from '@mdi/js';
-import { Unit, UNIT_STATUS } from '~~/gen/ts/resources/dispatch/units';
 import Time from '~/components/partials/elements/Time.vue';
+import { UNIT_STATUS, Unit } from '~~/gen/ts/resources/dispatch/units';
 import UnitFeed from './Feed.vue';
 import StatusUpdateModal from './StatusUpdateModal.vue';
 

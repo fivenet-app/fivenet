@@ -19,7 +19,7 @@ const props = withDefaults(
     }>(),
     {
         autoFill: false,
-    }
+    },
 );
 
 const emit = defineEmits<{
@@ -225,7 +225,7 @@ async function clipboardDialog(): Promise<void> {
                                                     :submit.sync="submit"
                                                     :showSelect="true"
                                                     :specs="reqs.users!"
-                                                    @statisfied="(v: boolean) => reqStatus.users = v"
+                                                    @statisfied="(v: boolean) => (reqStatus.users = v)"
                                                 />
                                             </div>
                                             <div v-if="reqs.vehicles">
@@ -237,7 +237,7 @@ async function clipboardDialog(): Promise<void> {
                                                     :submit.sync="submit"
                                                     :showSelect="true"
                                                     :specs="reqs.vehicles!"
-                                                    @statisfied="(v: boolean) => reqStatus.vehicles = v"
+                                                    @statisfied="(v: boolean) => (reqStatus.vehicles = v)"
                                                 />
                                             </div>
                                             <div v-if="reqs.documents">
@@ -249,7 +249,7 @@ async function clipboardDialog(): Promise<void> {
                                                     :submit.sync="submit"
                                                     :showSelect="true"
                                                     :specs="reqs.documents!"
-                                                    @statisfied="(v: boolean) => reqStatus.documents = v"
+                                                    @statisfied="(v: boolean) => (reqStatus.documents = v)"
                                                 />
                                             </div>
                                         </div>

@@ -15,7 +15,7 @@ const props = withDefaults(
     }>(),
     {
         showSource: true,
-    }
+    },
 );
 
 const {

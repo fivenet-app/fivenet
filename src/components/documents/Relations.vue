@@ -17,7 +17,7 @@ const props = withDefaults(
     {
         showDocument: true,
         showSource: true,
-    }
+    },
 );
 
 const {

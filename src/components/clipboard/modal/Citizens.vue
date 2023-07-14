@@ -24,7 +24,7 @@ const props = withDefaults(
     {
         submit: false,
         showSelect: false,
-    }
+    },
 );
 
 const selected = ref<ClipboardUser[]>([]);

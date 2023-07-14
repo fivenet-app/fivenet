@@ -14,6 +14,8 @@ import {
 } from '@mdi/js';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { QuillEditor } from '@vueup/vue-quill';
+import AddToButton from '~/components/clipboard/AddToButton.vue';
+import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -22,8 +24,6 @@ import { useClipboardStore } from '~/store/clipboard';
 import { useNotificationsStore } from '~/store/notifications';
 import { ACCESS_LEVEL } from '~~/gen/ts/resources/documents/access';
 import { Document, DocumentAccess } from '~~/gen/ts/resources/documents/documents';
-import AddToButton from '../clipboard/AddToButton.vue';
-import IDCopyBadge from '../partials/IDCopyBadge.vue';
 import Comments from './Comments.vue';
 import References from './References.vue';
 import Relations from './Relations.vue';

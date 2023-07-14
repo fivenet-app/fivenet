@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import SvgIcon from '@jamescoyle/vue-icon';
+import { mdiAccountPlus, mdiAccountRemove, mdiBriefcase, mdiCoffee, mdiHelp, mdiPlay, mdiStop } from '@mdi/js';
 import Time from '~/components/partials/elements/Time.vue';
 import { UNIT_STATUS, UnitStatus } from '~~/gen/ts/resources/dispatch/units';
-import { mdiAccountPlus, mdiAccountRemove, mdiBriefcase, mdiCoffee, mdiHelp, mdiPlay, mdiStop } from '@mdi/js';
 
 defineProps<{
     activityLength: number;

@@ -33,7 +33,7 @@ async function streamNotifications(): Promise<void> {
             },
             {
                 abort: abort.value.signal,
-            }
+            },
         );
 
         for await (let resp of call.responses) {

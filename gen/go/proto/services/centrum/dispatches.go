@@ -7,7 +7,6 @@ import (
 	dispatch "github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
-	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/pkg/utils/dbutils"
 	"github.com/galexrt/fivenet/query/fivenet/model"
@@ -176,66 +175,17 @@ func (s *Server) CreateDispatch(ctx context.Context, req *CreateDispatchRequest)
 
 	auditEntry := &model.FivenetAuditLog{
 		Service: CentrumService_ServiceDesc.ServiceName,
-		Method:  "CreateOrUpdateUnit",
+		Method:  "CreateDispatch",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
 		State:   int16(rector.EVENT_TYPE_ERRORED),
 	}
 	defer s.a.AddEntryWithData(auditEntry, req)
 
-	// Begin transaction
-	tx, err := s.db.BeginTx(ctx, nil)
-	if err != nil {
-		return nil, ErrFailedQuery
-	}
-	// Defer a rollback in case anything fails
-	defer tx.Rollback()
-
-	tDispatch := table.FivenetCentrumDispatches
-	stmt := tDispatch.
-		INSERT(
-			tDispatch.Job,
-			tDispatch.Message,
-			tDispatch.Description,
-			tDispatch.Attributes,
-			tDispatch.X,
-			tDispatch.Y,
-			tDispatch.Anon,
-			tDispatch.UserID,
-		).
-		VALUES(
-			userInfo.Job,
-			req.Dispatch.Message,
-			req.Dispatch.Description,
-			req.Dispatch.Attributes,
-			req.Dispatch.X,
-			req.Dispatch.Y,
-			req.Dispatch.Anon,
-			userInfo.UserId,
-		)
-
-	result, err := stmt.ExecContext(ctx, tx)
+	req.Dispatch.UserId = &userInfo.UserId
+	dsp, err := s.createDispatch(ctx, req.Dispatch)
 	if err != nil {
 		return nil, err
-	}
-
-	lastId, err := result.LastInsertId()
-	if err != nil {
-		return nil, err
-	}
-
-	if err := s.addDispatchStatus(ctx, tx, uint64(lastId), userInfo, dispatch.DISPATCH_STATUS_NEW); err != nil {
-		return nil, err
-	}
-
-	// Commit the transaction
-	if err = tx.Commit(); err != nil {
-		return nil, ErrFailedQuery
-	}
-
-	dsp, err := s.getDispatchFromDB(ctx, s.db, uint64(lastId))
-	if err != nil {
-		return nil, ErrFailedQuery
 	}
 
 	resp := &CreateDispatchResponse{
@@ -261,7 +211,66 @@ func (s *Server) CreateDispatch(ctx context.Context, req *CreateDispatchRequest)
 	return resp, nil
 }
 
-func (s *Server) addDispatchStatus(ctx context.Context, tx qrm.DB, dispatchId uint64, userInfo *userinfo.UserInfo, status dispatch.DISPATCH_STATUS) error {
+func (s *Server) createDispatch(ctx context.Context, d *dispatch.Dispatch) (*dispatch.Dispatch, error) {
+	// Begin transaction
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return nil, err
+	}
+	// Defer a rollback in case anything fails
+	defer tx.Rollback()
+
+	tDispatch := table.FivenetCentrumDispatches
+	stmt := tDispatch.
+		INSERT(
+			tDispatch.Job,
+			tDispatch.Message,
+			tDispatch.Description,
+			tDispatch.Attributes,
+			tDispatch.X,
+			tDispatch.Y,
+			tDispatch.Anon,
+			tDispatch.UserID,
+		).
+		VALUES(
+			d.Job,
+			d.Message,
+			d.Description,
+			d.Attributes,
+			d.X,
+			d.Y,
+			d.Anon,
+			d.UserId,
+		)
+
+	result, err := stmt.ExecContext(ctx, tx)
+	if err != nil {
+		return nil, err
+	}
+
+	lastId, err := result.LastInsertId()
+	if err != nil {
+		return nil, err
+	}
+
+	if err := s.addDispatchStatus(ctx, tx, uint64(lastId), *d.UserId, dispatch.DISPATCH_STATUS_NEW); err != nil {
+		return nil, err
+	}
+
+	// Commit the transaction
+	if err = tx.Commit(); err != nil {
+		return nil, err
+	}
+
+	dsp, err := s.getDispatchFromDB(ctx, s.db, uint64(lastId))
+	if err != nil {
+		return nil, err
+	}
+
+	return dsp, nil
+}
+
+func (s *Server) addDispatchStatus(ctx context.Context, tx qrm.DB, dispatchId uint64, userId int32, status dispatch.DISPATCH_STATUS) error {
 	tDispatchStatus := table.FivenetCentrumDispatchesStatus
 	stmt := tDispatchStatus.
 		INSERT(
@@ -272,7 +281,7 @@ func (s *Server) addDispatchStatus(ctx context.Context, tx qrm.DB, dispatchId ui
 		VALUES(
 			dispatchId,
 			status,
-			userInfo.UserId,
+			userId,
 		)
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {

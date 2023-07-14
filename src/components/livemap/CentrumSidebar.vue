@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { mdiCarEmergency, mdiHoopHouse } from '@mdi/js';
 import SvgIcon from '@jamescoyle/vue-icon';
+import { mdiCarEmergency, mdiHoopHouse } from '@mdi/js';
 import { Unit } from '~~/gen/ts/resources/dispatch/units';
 
 const unit: Unit = {
