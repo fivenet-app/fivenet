@@ -233,13 +233,13 @@ function goto(e: { x: number; y: number }) {
 
             <!-- Right column -->
             <div class="flex flex-col basis-2/3 divide-y">
-                <div class="basis-3/5">
+                <div class="basis-3/5 max-h-[60%]">
                     <DispatchesList :dispatches="dispatches" :units="units" @goto="goto($event)" />
                 </div>
-                <div class="basis-1/5">
+                <div class="basis-1/5 max-h-[20%]">
                     <Feed :items="feed" />
                 </div>
-                <div class="basis-1/5">
+                <div class="basis-1/5 max-h-[20%]">
                     <UnitsList :units="units" @goto="goto($event)" />
                 </div>
             </div>

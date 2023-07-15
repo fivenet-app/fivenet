@@ -21,7 +21,7 @@ defineEmits<{
             </div>
         </div>
         <div class="mt-0.5 flow-root">
-            <div class="-mx-2 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+            <div class="-mx-2 -my-2 sm:-mx-6 lg:-mx-8">
                 <div class="inline-block min-w-full py-2 align-middle sm:px-2 lg:px-2">
                     <table class="min-w-full divide-y divide-gray-300">
                         <thead>
