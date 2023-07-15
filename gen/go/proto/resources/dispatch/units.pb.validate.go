@@ -616,10 +616,6 @@ func (m *UnitStatus) validate(all bool) error {
 
 	}
 
-	if m.InSquad != nil {
-		// no validation rules for InSquad
-	}
-
 	if m.X != nil {
 		// no validation rules for X
 	}

@@ -86,12 +86,11 @@ async function startStream(): Promise<void> {
                 continue;
             }
 
-            console.debug('Centrum: Received change - Kind:', resp.change.oneofKind);
+            console.debug('Centrum: Received change - Kind:', resp.change.oneofKind, resp.change);
 
             if (resp.change.oneofKind === 'initial') {
                 settings.value = resp.change.initial.settings;
                 unit.value = resp.change.initial.unit;
-                // TODO
             } else if (resp.change.oneofKind === 'dispatchUpdate') {
                 const id = resp.change.dispatchUpdate.id;
                 const idx = dispatches.value?.findIndex((d) => d.id === id) ?? -1;

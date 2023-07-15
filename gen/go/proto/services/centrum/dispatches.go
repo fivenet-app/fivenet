@@ -453,28 +453,30 @@ func (s *Server) AssignDispatch(ctx context.Context, req *AssignDispatchRequest)
 			}
 		}
 
-		found := []uint64{}
+		assignments := []*dispatch.DispatchAssignment{}
 		for k := 0; k < len(req.ToAdd); k++ {
+			found := false
 			for i := 0; i < len(dsp.Units); i++ {
 				if dsp.Units[i].UnitId == req.ToAdd[k] {
-					found = append(found, req.ToAdd[k])
+					found = true
+					break
 				}
 			}
-		}
 
-		assignments := []*dispatch.DispatchAssignment{}
-		for _, dId := range found {
-			unit, ok := s.getUnit(ctx, userInfo, dId)
-			if !ok {
-				return nil, ErrFailedQuery
+			if !found {
+				unit, ok := s.getUnit(ctx, userInfo, req.ToAdd[k])
+				if !ok {
+					return nil, ErrFailedQuery
+				}
+
+				assignments = append(assignments, &dispatch.DispatchAssignment{
+					UnitId:     unit.Id,
+					DispatchId: dsp.Id,
+					Unit:       unit,
+				})
 			}
-
-			assignments = append(assignments, &dispatch.DispatchAssignment{
-				UnitId:     dId,
-				DispatchId: dsp.Id,
-				Unit:       unit,
-			})
 		}
+
 		dsp.Units = assignments
 	}
 

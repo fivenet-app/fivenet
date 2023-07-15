@@ -26,7 +26,7 @@ export class LoadingManager implements RpcInterceptor {
     async start(): Promise<void> {
         this.counted++;
         if (this.counted === 1) {
-            //@ts-ignore TODO need to add types in the future
+            //@ts-ignore TODO we are currently unable to add custom event types to the typings
             useNuxtApp().callHook('data:loading:start');
         }
     }
@@ -34,14 +34,14 @@ export class LoadingManager implements RpcInterceptor {
     async finish(): Promise<void> {
         if (this.counted > 0) {
             this.counted--;
-            //@ts-ignore TODO need to add types in the future
+            //@ts-ignore TODO we are currently unable to add custom event types to the typings
             useNuxtApp().callHook('data:loading:finish');
         }
     }
 
     async errored(): Promise<void> {
         this.counted = 0;
-        //@ts-ignore TODO need to add types in the future
+        //@ts-ignore TODO we are currently unable to add custom event types to the typings
         useNuxtApp().callHook('data:loading:finish_error');
     }
 

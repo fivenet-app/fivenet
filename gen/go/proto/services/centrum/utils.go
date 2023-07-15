@@ -136,7 +136,6 @@ func (s *Server) getUnitFromDB(ctx context.Context, tx qrm.DB, id uint64) (*disp
 			tUnitStatus.Reason,
 			tUnitStatus.Code,
 			tUnitStatus.UserID,
-			tUnitStatus.InSquad,
 			tUnitStatus.X,
 			tUnitStatus.Y,
 			tUnitUser.UnitID,
@@ -178,7 +177,6 @@ func (s *Server) getUnitStatus(ctx context.Context, id uint64) (*dispatch.UnitSt
 			tUnitStatus.Reason,
 			tUnitStatus.Code,
 			tUnitStatus.UserID,
-			tUnitStatus.InSquad,
 			tUnitStatus.X,
 			tUnitStatus.Y,
 		).

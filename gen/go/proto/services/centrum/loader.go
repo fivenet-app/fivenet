@@ -110,7 +110,6 @@ func (s *Server) loadUnits(ctx context.Context, id uint64) error {
 			tUnitStatus.Reason,
 			tUnitStatus.Code,
 			tUnitStatus.UserID,
-			tUnitStatus.InSquad,
 			tUnitStatus.X,
 			tUnitStatus.Y,
 			tUnitUser.UnitID,

@@ -103,15 +103,11 @@ export interface UnitStatus {
      */
     user?: UserShort;
     /**
-     * @generated from protobuf field: optional bool in_squad = 9;
-     */
-    inSquad?: boolean;
-    /**
-     * @generated from protobuf field: optional float x = 10;
+     * @generated from protobuf field: optional float x = 9;
      */
     x?: number;
     /**
-     * @generated from protobuf field: optional float y = 11;
+     * @generated from protobuf field: optional float y = 10;
      */
     y?: number;
 }
@@ -195,9 +191,8 @@ class UnitStatus$Type extends MessageType<UnitStatus> {
             { no: 6, name: "code", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 7, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
             { no: 8, name: "user", kind: "message", T: () => UserShort },
-            { no: 9, name: "in_squad", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
-            { no: 10, name: "x", kind: "scalar", opt: true, T: 2 /*ScalarType.FLOAT*/ },
-            { no: 11, name: "y", kind: "scalar", opt: true, T: 2 /*ScalarType.FLOAT*/ }
+            { no: 9, name: "x", kind: "scalar", opt: true, T: 2 /*ScalarType.FLOAT*/ },
+            { no: 10, name: "y", kind: "scalar", opt: true, T: 2 /*ScalarType.FLOAT*/ }
         ]);
     }
 }

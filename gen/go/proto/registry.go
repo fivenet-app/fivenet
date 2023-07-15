@@ -156,7 +156,7 @@ func NewGRPCServer(ctx context.Context, logger *zap.Logger, db *sql.DB, tp *trac
 
 	centrum := pbcentrum.NewServer(ctx, logger.Named("grpc_centrum"), tp, db, p, aud, eventus, config.C.Game.Livemap.Jobs)
 	go centrum.Start()
-	go centrum.ConvertPhoneJobMsgToDispatch()
+	//go centrum.ConvertPhoneJobMsgToDispatch()
 	pbcentrum.RegisterCentrumServiceServer(grpcServer, centrum)
 
 	pbcompletor.RegisterCompletorServiceServer(grpcServer, pbcompletor.NewServer(db, p, cache))

@@ -430,7 +430,6 @@ func (s *Server) ListUnitActivity(ctx context.Context, req *ListActivityRequest)
 			tUnitStatus.Reason,
 			tUnitStatus.Code,
 			tUnitStatus.UserID,
-			tUnitStatus.InSquad,
 			tUnitStatus.X,
 			tUnitStatus.Y,
 			tUser.Firstname,
