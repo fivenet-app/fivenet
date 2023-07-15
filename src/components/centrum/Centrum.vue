@@ -115,7 +115,7 @@ async function startStream(): Promise<void> {
                 if (idx === -1) {
                     dispatches.value?.unshift(resp.change.dispatchAssigned);
                 } else {
-                    dispatches.value![idx].units = resp.change.dispatchAssigned.units;
+                    dispatches.value![idx] = resp.change.dispatchAssigned;
                 }
             } else if (resp.change.oneofKind === 'unitUpdate') {
                 const id = resp.change.unitUpdate.id;

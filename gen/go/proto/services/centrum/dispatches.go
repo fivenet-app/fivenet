@@ -426,6 +426,16 @@ func (s *Server) AssignDispatch(ctx context.Context, req *AssignDispatchRequest)
 			for k := 0; k < len(req.ToRemove); k++ {
 				if dsp.Units[i].UnitId == req.ToRemove[k] {
 					dsp.Units = utils.RemoveFromSlice(dsp.Units, i)
+
+					if _, err := s.updateDispatchStatus(ctx, userInfo, dsp, &dispatch.DispatchStatus{
+						DispatchId: dsp.Id,
+						UnitId:     req.ToRemove[k],
+						UserId:     &userInfo.UserId,
+						Status:     dispatch.DISPATCH_STATUS_UNIT_UNASSIGNED,
+					}); err != nil {
+						return nil, ErrFailedQuery
+					}
+
 					break
 				}
 			}
@@ -474,6 +484,15 @@ func (s *Server) AssignDispatch(ctx context.Context, req *AssignDispatchRequest)
 					DispatchId: dsp.Id,
 					Unit:       unit,
 				})
+
+				if _, err := s.updateDispatchStatus(ctx, userInfo, dsp, &dispatch.DispatchStatus{
+					DispatchId: dsp.Id,
+					UnitId:     unit.Id,
+					UserId:     &userInfo.UserId,
+					Status:     dispatch.DISPATCH_STATUS_UNIT_ASSIGNED,
+				}); err != nil {
+					return nil, ErrFailedQuery
+				}
 			}
 		}
 

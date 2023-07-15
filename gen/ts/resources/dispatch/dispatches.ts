@@ -162,21 +162,25 @@ export enum DISPATCH_STATUS {
      */
     UNIT_ASSIGNED = 3,
     /**
-     * @generated from protobuf enum value: EN_ROUTE = 4;
+     * @generated from protobuf enum value: UNIT_UNASSIGNED = 4;
      */
-    EN_ROUTE = 4,
+    UNIT_UNASSIGNED = 4,
     /**
-     * @generated from protobuf enum value: AT_SCENE = 5;
+     * @generated from protobuf enum value: EN_ROUTE = 5;
      */
-    AT_SCENE = 5,
+    EN_ROUTE = 5,
     /**
-     * @generated from protobuf enum value: NEED_ASSISTANCE = 6;
+     * @generated from protobuf enum value: AT_SCENE = 6;
      */
-    NEED_ASSISTANCE = 6,
+    AT_SCENE = 6,
     /**
-     * @generated from protobuf enum value: COMPLETED = 7;
+     * @generated from protobuf enum value: NEED_ASSISTANCE = 7;
      */
-    COMPLETED = 7
+    NEED_ASSISTANCE = 7,
+    /**
+     * @generated from protobuf enum value: COMPLETED = 8;
+     */
+    COMPLETED = 8
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Dispatch$Type extends MessageType<Dispatch> {
