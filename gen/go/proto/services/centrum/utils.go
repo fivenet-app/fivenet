@@ -10,6 +10,7 @@ import (
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
+	"google.golang.org/protobuf/proto"
 )
 
 var (
@@ -386,4 +387,115 @@ func (s *Server) getControllers(ctx context.Context, job string) ([]*users.UserS
 	}
 
 	return dest, nil
+}
+
+func (s *Server) checkIfUserPartOfDispatchUnits(ctx context.Context, userInfo *userinfo.UserInfo, dsp *dispatch.Dispatch) (bool, error) {
+	for i := 0; i < len(dsp.Units); i++ {
+		unit, ok := s.getUnit(ctx, userInfo, dsp.Units[i].UnitId)
+		if !ok {
+			continue
+		}
+
+		if s.checkIfUserPartOfUnit(userInfo.UserId, unit) {
+			return true, nil
+		}
+	}
+
+	return false, nil
+}
+
+func (s *Server) checkIfUserPartOfUnit(userId int32, unit *dispatch.Unit) bool {
+	for i := 0; i < len(unit.Users); i++ {
+		if unit.Users[i].UserId == userId {
+			return true
+		}
+	}
+
+	return false
+}
+
+func (s *Server) updateDispatchStatus(ctx context.Context, userInfo *userinfo.UserInfo, dsp *dispatch.Dispatch, in *dispatch.DispatchStatus) (*dispatch.DispatchStatus, error) {
+	stmt := tDispatchStatus.
+		INSERT(
+			tDispatchStatus.UnitID,
+			tDispatchStatus.Status,
+			tDispatchStatus.Reason,
+			tDispatchStatus.Code,
+			tDispatchStatus.UserID,
+		).
+		VALUES(
+			in.DispatchId,
+			in.Status,
+			in.Reason,
+			in.Code,
+			in.UserId,
+		)
+
+	res, err := stmt.ExecContext(ctx, s.db)
+	if err != nil {
+		return nil, err
+	}
+
+	lastId, err := res.LastInsertId()
+	if err != nil {
+		return nil, err
+	}
+
+	status, err := s.getDispatchStatus(ctx, uint64(lastId))
+	if err != nil {
+		return nil, err
+	}
+
+	data, err := proto.Marshal(status)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, u := range dsp.Units {
+		s.events.JS.Publish(s.buildSubject(TopicDispatch, TypeDispatchStatus, userInfo, u.UnitId), data)
+	}
+
+	return status, nil
+}
+
+func (s *Server) updateUnitStatus(ctx context.Context, userInfo *userinfo.UserInfo, unit *dispatch.Unit, in *dispatch.UnitStatus) (*dispatch.UnitStatus, error) {
+	tUnitStatus := table.FivenetCentrumUnitsStatus
+	stmt := tUnitStatus.
+		INSERT(
+			tUnitStatus.UnitID,
+			tUnitStatus.Status,
+			tUnitStatus.Reason,
+			tUnitStatus.Code,
+			tUnitStatus.UserID,
+		).
+		VALUES(
+			in.UnitId,
+			in.Status,
+			in.Reason,
+			in.Code,
+			userInfo.UserId,
+		)
+
+	res, err := stmt.ExecContext(ctx, s.db)
+	if err != nil {
+		return nil, err
+	}
+
+	lastId, err := res.LastInsertId()
+	if err != nil {
+		return nil, err
+	}
+
+	status, err := s.getUnitStatus(ctx, uint64(lastId))
+	if err != nil {
+		return nil, err
+	}
+
+	data, err := proto.Marshal(status)
+	if err != nil {
+		return nil, err
+	}
+	s.events.JS.Publish(s.buildSubject(TopicUnit, TypeUnitStatus, userInfo, status.UnitId), data)
+
+	return status, nil
 }

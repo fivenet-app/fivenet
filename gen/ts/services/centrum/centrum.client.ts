@@ -86,7 +86,8 @@ export interface ICentrumServiceClient {
      */
     updateUnitStatus(input: UpdateUnitStatusRequest, options?: RpcOptions): UnaryCall<UpdateUnitStatusRequest, UpdateUnitStatusResponse>;
     /**
-     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
+     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank",
+     * "Same_Rank"}§[]string{"Own"}
      *
      * @generated from protobuf rpc: AssignUnit(services.centrum.AssignUnitRequest) returns (services.centrum.AssignUnitResponse);
      */
@@ -219,7 +220,8 @@ export class CentrumServiceClient implements ICentrumServiceClient, ServiceInfo 
         return stackIntercept<UpdateUnitStatusRequest, UpdateUnitStatusResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
+     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank",
+     * "Same_Rank"}§[]string{"Own"}
      *
      * @generated from protobuf rpc: AssignUnit(services.centrum.AssignUnitRequest) returns (services.centrum.AssignUnitResponse);
      */

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { PaginationResponse } from '~~/gen/ts/resources/common/database/database';
-import { DispatchStatus } from '~~/gen/ts/resources/dispatch/dispatch';
+import { DispatchStatus } from '~~/gen/ts/resources/dispatch/dispatches';
 import FeedItem from './FeedItem.vue';
 
 const props = defineProps<{

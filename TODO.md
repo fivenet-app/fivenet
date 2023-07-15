@@ -1,11 +1,12 @@
 - [ ] Leitstelle
     - [ ] Player and Marker tracker in backend (`pkg/tracker/tracker.go`)
-        - [ ] Convert GKSPhone Job Messages and delete them afterwards
+        - [ ] Convert GKSPhone Job Messages and delete them afterwards - started in `gen/go/proto/services/centrum/converter.go`
     - [ ] Frontend for employees to see their dispatches and manage their status
         - [ ] Notifications on Livemap when they are assigned a dispatch
         - [ ] Updating their own dispatch status
         - [ ] Updating their unit status
         - [ ] Sidebar for Livemap
+    - [ ] Expire assignment after 15 seconds
     - [ ] TakeControl for leitstellen controller needed + "No one is active" when no controller is active
     - [x] Rector - Add Centrum Settings Page
     - [ ] Translations

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { Dispatch } from '~~/gen/ts/resources/dispatch/dispatch';
+import { Dispatch } from '~~/gen/ts/resources/dispatch/dispatches';
 import { Unit } from '~~/gen/ts/resources/dispatch/units';
 import ListEntry from './ListEntry.vue';
 

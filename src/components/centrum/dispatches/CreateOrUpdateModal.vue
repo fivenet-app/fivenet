@@ -5,7 +5,7 @@ import { mdiCarEmergency } from '@mdi/js';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { digits, max, min, required } from '@vee-validate/rules';
 import { defineRule } from 'vee-validate';
-import { Dispatch } from '~~/gen/ts/resources/dispatch/dispatch';
+import { Dispatch } from '~~/gen/ts/resources/dispatch/dispatches';
 
 defineProps<{
     open: boolean;

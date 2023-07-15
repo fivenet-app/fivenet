@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { DispatchStatus } from '~~/gen/ts/resources/dispatch/dispatch';
+import { DispatchStatus } from '~~/gen/ts/resources/dispatch/dispatches';
 import { UnitStatus } from '~~/gen/ts/resources/dispatch/units';
 import { default as DispatchFeedItem } from './dispatches/FeedItem.vue';
 import { default as UnitFeedItem } from './units/FeedItem.vue';

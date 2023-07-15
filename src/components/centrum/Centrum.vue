@@ -7,7 +7,7 @@ import { default as DispatchesList } from '~/components/centrum/dispatches/List.
 import { default as UnitsList } from '~/components/centrum/units/List.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import { Dispatch, DispatchStatus } from '~~/gen/ts/resources/dispatch/dispatch';
+import { Dispatch, DispatchStatus } from '~~/gen/ts/resources/dispatch/dispatches';
 import { Settings } from '~~/gen/ts/resources/dispatch/settings';
 import { Unit, UnitStatus } from '~~/gen/ts/resources/dispatch/units';
 import { UserShort } from '~~/gen/ts/resources/users/users';
@@ -130,6 +130,11 @@ async function startStream(): Promise<void> {
                 feed.value.unshift(resp.change.unitStatus);
             } else if (resp.change.oneofKind === 'unitAssigned') {
                 // TODO show popup and notification
+                if (resp.change.unitAssigned.id === 0n) {
+                    // User has been removed from the unit
+                } else {
+                    // User has been added to unit
+                }
             } else if (resp.change.oneofKind === 'unitDeleted') {
                 const id = resp.change.unitDeleted;
                 const idx = units.value?.findIndex((d) => d.id === id) ?? -1;

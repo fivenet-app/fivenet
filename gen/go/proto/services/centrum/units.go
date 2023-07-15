@@ -8,7 +8,6 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/utils/dbutils"
-	"github.com/galexrt/fivenet/pkg/utils/syncx"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -21,76 +20,6 @@ var (
 	tUnitUser   = table.FivenetCentrumUnitsUsers.AS("unitassignment")
 	tUser       = table.Users.AS("usershort")
 )
-
-func (s *Server) loadUnits(ctx context.Context, id uint64) error {
-	condition := tUnitStatus.ID.IS_NULL().OR(
-		tUnitStatus.ID.EQ(
-			jet.RawInt(`SELECT MAX(unitstatus.id) FROM fivenet_centrum_units_status AS unitstatus WHERE unitstatus.unit_id = unit.id`),
-		),
-	)
-
-	if id > 0 {
-		condition = condition.AND(
-			tUnits.ID.EQ(jet.Uint64(id)),
-		)
-	}
-
-	stmt := tUnits.
-		SELECT(
-			tUnits.ID,
-			tUnits.Job,
-			tUnits.Name,
-			tUnits.Initials,
-			tUnits.Color,
-			tUnits.Description,
-			tUnitStatus.ID,
-			tUnitStatus.CreatedAt,
-			tUnitStatus.UnitID,
-			tUnitStatus.Status,
-			tUnitStatus.Reason,
-			tUnitStatus.Code,
-			tUnitStatus.UserID,
-			tUnitStatus.InSquad,
-			tUnitStatus.X,
-			tUnitStatus.Y,
-			tUnitUser.UnitID,
-			tUnitUser.UserID,
-			tUnitUser.Identifier,
-		).
-		FROM(
-			tUnits.
-				LEFT_JOIN(tUnitStatus,
-					tUnitStatus.UnitID.EQ(tUnits.ID),
-				).
-				LEFT_JOIN(tUnitUser,
-					tUnitUser.UnitID.EQ(tUnits.ID),
-				),
-		).
-		WHERE(condition).
-		ORDER_BY(
-			tUnits.Job.ASC(),
-			tUnits.Name.ASC(),
-			tUnitStatus.Status.ASC(),
-		)
-
-	units := []*dispatch.Unit{}
-	if err := stmt.QueryContext(ctx, s.db, &units); err != nil {
-		return err
-	}
-
-	for i := 0; i < len(units); i++ {
-		var err error
-		units[i].Users, err = s.resolveUsersForUnit(ctx, units[i].Users)
-		if err != nil {
-			return err
-		}
-
-		jobUnits, _ := s.units.LoadOrStore(units[i].Job, &syncx.Map[uint64, *dispatch.Unit]{})
-		jobUnits.Store(units[i].Id, units[i])
-	}
-
-	return nil
-}
 
 func (s *Server) ListUnits(ctx context.Context, req *ListUnitsRequest) (*ListUnitsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
@@ -333,59 +262,17 @@ func (s *Server) UpdateUnitStatus(ctx context.Context, req *UpdateUnitStatusRequ
 	}
 
 	can := s.p.Can(userInfo, CentrumServicePerm, CentrumServiceDeleteUnitPerm)
-
 	if !can {
-		found := false
-		for i := 0; i < len(unit.Users); i++ {
-			if unit.Users[i].UserId == userInfo.UserId {
-				found = true
-				break
-			}
-		}
-		if !found {
+		if !s.checkIfUserPartOfUnit(userInfo.UserId, unit) {
 			return nil, ErrFailedQuery
 		}
 	}
 
-	tUnitStatus := table.FivenetCentrumUnitsStatus
-	stmt := tUnitStatus.
-		INSERT(
-			tUnitStatus.UnitID,
-			tUnitStatus.Status,
-			tUnitStatus.Reason,
-			tUnitStatus.Code,
-			tUnitStatus.UserID,
-			tUnitStatus.InSquad,
-		).
-		VALUES(
-			req.UnitId,
-			req.Status,
-			req.Reason,
-			req.Code,
-			userInfo.UserId,
-			false,
-		)
-
-	res, err := stmt.ExecContext(ctx, s.db)
-	if err != nil {
-		return nil, err
+	if _, err := s.updateUnitStatus(ctx, userInfo, unit, &dispatch.UnitStatus{
+		UnitId: unit.Id,
+	}); err != nil {
+		return nil, ErrFailedQuery
 	}
-
-	lastId, err := res.LastInsertId()
-	if err != nil {
-		return nil, err
-	}
-
-	status, err := s.getUnitStatus(ctx, uint64(lastId))
-	if err != nil {
-		return nil, err
-	}
-
-	data, err := proto.Marshal(status)
-	if err != nil {
-		return nil, err
-	}
-	s.events.JS.Publish(s.buildSubject(TopicUnit, TypeUnitStatus, userInfo, status.UnitId), data)
 
 	auditEntry.State = int16(rector.EVENT_TYPE_CREATED)
 
@@ -504,7 +391,7 @@ func (s *Server) AssignUnit(ctx context.Context, req *AssignUnitRequest) (*Assig
 	if err != nil {
 		return nil, err
 	}
-	s.events.JS.Publish(s.buildSubject(TopicUnit, TypeUnitAssigned, userInfo, unit.Id), data)
+	s.events.JS.Publish(s.buildSubject(TopicUnit, TypeUnitUserAssigned, userInfo, unit.Id), data)
 
 	auditEntry.State = int16(rector.EVENT_TYPE_UPDATED)
 

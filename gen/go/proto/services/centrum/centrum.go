@@ -344,13 +344,13 @@ func (s *Server) Stream(req *StreamRequest, srv CentrumService_StreamServer) err
 			case TopicUnit:
 				switch tType {
 				case TypeUnitUpdated:
-					var dest dispatch.Dispatch
+					var dest dispatch.Unit
 					if err := proto.Unmarshal(msg.Data, &dest); err != nil {
 						return err
 					}
 
-					resp.Change = &StreamResponse_DispatchAssigned{
-						DispatchAssigned: &dest,
+					resp.Change = &StreamResponse_UnitUpdate{
+						UnitUpdate: &dest,
 					}
 
 				case TypeUnitStatus:
@@ -362,7 +362,7 @@ func (s *Server) Stream(req *StreamRequest, srv CentrumService_StreamServer) err
 					resp.Change = &StreamResponse_UnitStatus{
 						UnitStatus: &dest,
 					}
-				case TypeUnitAssigned:
+				case TypeUnitUserAssigned:
 					var dest dispatch.Unit
 					if err := proto.Unmarshal(msg.Data, &dest); err != nil {
 						return err
@@ -382,7 +382,9 @@ func (s *Server) Stream(req *StreamRequest, srv CentrumService_StreamServer) err
 						}
 					} else {
 						resp.Change = &StreamResponse_UnitAssigned{
-							UnitAssigned: nil,
+							UnitAssigned: &dispatch.Unit{
+								Id: 0,
+							},
 						}
 					}
 

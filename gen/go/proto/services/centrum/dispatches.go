@@ -22,80 +22,6 @@ var (
 	tDispatchUnit   = table.FivenetCentrumDispatchesAsgmts.AS("dispatchassignment")
 )
 
-/* func (s *Server) loadDispatches(ctx context.Context, id uint64) error {
-	condition := tDispatchStatus.ID.IS_NULL().OR(
-		tDispatchStatus.ID.EQ(
-			jet.RawInt(`SELECT MAX(dispatchstatus.id) FROM fivenet_centrum_dispatches_status AS dispatchstatus WHERE dispatchstatus.dispatch_id = dispatch.id`),
-		),
-	)
-
-	if id > 0 {
-		condition = condition.AND(
-			tDispatch.ID.EQ(jet.Uint64(id)),
-		)
-	}
-
-	stmt := tDispatch.
-		SELECT(
-			tDispatch.ID,
-			tDispatch.CreatedAt,
-			tDispatch.UpdatedAt,
-			tDispatch.Job,
-			tDispatch.Message,
-			tDispatch.Description,
-			tDispatch.Attributes,
-			tDispatch.X,
-			tDispatch.Y,
-			tDispatch.Anon,
-			tDispatch.UserID,
-			tDispatchStatus.ID,
-			tDispatchStatus.CreatedAt,
-			tDispatchStatus.UnitID,
-			tDispatchStatus.Status,
-			tDispatchStatus.Reason,
-			tDispatchStatus.Code,
-			tDispatchStatus.UserID,
-			tDispatchUnit.UnitID,
-			tDispatchUnit.DispatchID,
-			tDispatchUnit.CreatedAt,
-			tDispatchUnit.ExpiresAt,
-		).
-		FROM(
-			tDispatch.
-				LEFT_JOIN(tDispatchStatus,
-					tDispatchStatus.DispatchID.EQ(tDispatch.ID),
-				).
-				LEFT_JOIN(tDispatchUnit,
-					tDispatchUnit.DispatchID.EQ(tDispatch.ID),
-				),
-		).
-		WHERE(condition).
-		ORDER_BY(
-			tDispatch.ID.ASC(),
-		).LIMIT(120)
-
-	dispatches := []*dispatch.Dispatch{}
-	if err := stmt.QueryContext(ctx, s.db, &dispatches); err != nil {
-		return err
-	}
-
-	for i := 0; i < len(dispatches); i++ {
-		// Add units to the dispatch based on the unit assignments
-		for k := 0; k < len(dispatches[i].Units); k++ {
-			unit, ok := s.getUnit(ctx, &userinfo.UserInfo{
-				Job: dispatches[i].Job,
-			}, dispatches[i].Units[k].UnitId)
-			if !ok {
-				return ErrFailedQuery
-			}
-
-			dispatches[i].Units[k].Unit = unit
-		}
-	}
-
-	return nil
-} */
-
 // TODO does it make sense to distinguish between "All" and "Assigned" dispatches here?
 // A unit user would only want to see their assigned dispatches
 
@@ -394,11 +320,18 @@ func (s *Server) TakeDispatch(ctx context.Context, req *TakeDispatchRequest) (*T
 		}
 	}
 
+	if _, err := s.updateDispatchStatus(ctx, userInfo, dsp, &dispatch.DispatchStatus{
+		DispatchId: req.DispatchId,
+		Status:     dispatch.DISPATCH_STATUS_UNIT_ASSIGNED,
+	}); err != nil {
+		return nil, err
+	}
+
 	auditEntry.State = int16(rector.EVENT_TYPE_UPDATED)
 
-	// TODO event sender missing
-
-	return nil, nil
+	return &TakeDispatchResponse{
+		Dispatch: dsp,
+	}, nil
 }
 
 func (s *Server) UpdateDispatchStatus(ctx context.Context, req *UpdateDispatchStatusRequest) (*UpdateDispatchStatusResponse, error) {
@@ -418,62 +351,20 @@ func (s *Server) UpdateDispatchStatus(ctx context.Context, req *UpdateDispatchSt
 		return nil, ErrFailedQuery
 	}
 
-	found := false
-	for i := 0; i < len(dsp.Units); i++ {
-		unit, ok := s.getUnit(ctx, userInfo, dsp.Units[i].UnitId)
-		if !ok {
-			return nil, ErrFailedQuery
-		}
-		for i := 0; i < len(unit.Users); i++ {
-			if unit.Users[i].UserId == userInfo.UserId {
-				found = true
-				break
-			}
-		}
-	}
-	if !found {
-		return nil, ErrFailedQuery
-	}
+	s.checkIfUserPartOfDispatchUnits(ctx, userInfo, dsp)
 
-	stmt := tDispatchStatus.
-		INSERT(
-			tDispatchStatus.UnitID,
-			tDispatchStatus.Status,
-			tDispatchStatus.Reason,
-			tDispatchStatus.Code,
-			tDispatchStatus.UserID,
-		).
-		VALUES(
-			req.DispatchId,
-			req.Status,
-			req.Reason,
-			req.Code,
-			userInfo.UserId,
-		)
-
-	res, err := stmt.ExecContext(ctx, s.db)
+	unitId, err := s.getUnitIDFromUserID(ctx, userInfo.UserId)
 	if err != nil {
 		return nil, err
 	}
 
-	lastId, err := res.LastInsertId()
-	if err != nil {
-		return nil, err
-	}
-
-	status, err := s.getDispatchStatus(ctx, uint64(lastId))
-	if err != nil {
-		return nil, err
-	}
-
-	data, err := proto.Marshal(status)
-	if err != nil {
-		return nil, err
-	}
-
-	for _, u := range dsp.Units {
-		s.events.JS.Publish(s.buildSubject(TopicDispatch, TypeDispatchStatus, userInfo, u.UnitId), data)
-	}
+	s.updateDispatchStatus(ctx, userInfo, dsp, &dispatch.DispatchStatus{
+		DispatchId: dsp.Id,
+		Status:     req.Status,
+		Code:       req.Code,
+		Reason:     req.Reason,
+		UnitId:     unitId,
+	})
 
 	auditEntry.State = int16(rector.EVENT_TYPE_UPDATED)
 

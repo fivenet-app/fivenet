@@ -38,7 +38,8 @@ type CentrumServiceClient interface {
 	DeleteUnit(ctx context.Context, in *DeleteUnitRequest, opts ...grpc.CallOption) (*DeleteUnitResponse, error)
 	// @perm
 	UpdateUnitStatus(ctx context.Context, in *UpdateUnitStatusRequest, opts ...grpc.CallOption) (*UpdateUnitStatusResponse, error)
-	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
+	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank",
+	// "Same_Rank"}§[]string{"Own"}
 	AssignUnit(ctx context.Context, in *AssignUnitRequest, opts ...grpc.CallOption) (*AssignUnitResponse, error)
 	// @perm: Name=ListUnits
 	ListUnitActivity(ctx context.Context, in *ListActivityRequest, opts ...grpc.CallOption) (*ListUnitActivityResponse, error)
@@ -262,7 +263,8 @@ type CentrumServiceServer interface {
 	DeleteUnit(context.Context, *DeleteUnitRequest) (*DeleteUnitResponse, error)
 	// @perm
 	UpdateUnitStatus(context.Context, *UpdateUnitStatusRequest) (*UpdateUnitStatusResponse, error)
-	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
+	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank",
+	// "Same_Rank"}§[]string{"Own"}
 	AssignUnit(context.Context, *AssignUnitRequest) (*AssignUnitResponse, error)
 	// @perm: Name=ListUnits
 	ListUnitActivity(context.Context, *ListActivityRequest) (*ListUnitActivityResponse, error)

@@ -2,7 +2,7 @@
 import SvgIcon from '@jamescoyle/vue-icon';
 import { mdiAccountMultiplePlus, mdiDetails, mdiMapMarker } from '@mdi/js';
 import Time from '~/components/partials/elements/Time.vue';
-import { DISPATCH_STATUS, Dispatch } from '~~/gen/ts/resources/dispatch/dispatch';
+import { DISPATCH_STATUS, Dispatch } from '~~/gen/ts/resources/dispatch/dispatches';
 import { Unit } from '~~/gen/ts/resources/dispatch/units';
 import AssignDispatchModal from './AssignDispatchModal.vue';
 import Details from './Details.vue';

@@ -11,7 +11,7 @@ import {
     mdiNewBox,
 } from '@mdi/js';
 import Time from '~/components/partials/elements/Time.vue';
-import { DISPATCH_STATUS, DispatchStatus } from '~~/gen/ts/resources/dispatch/dispatch';
+import { DISPATCH_STATUS, DispatchStatus } from '~~/gen/ts/resources/dispatch/dispatches';
 
 defineProps<{
     activityLength: number;

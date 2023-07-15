@@ -5,6 +5,7 @@ excludeTables:
 includeTables:
   - "fivenet_*"
   - "gksphone_job_message"
+  - "gksphone_settings"
   - "job_grades"
   - "jobs"
   - "licenses"

@@ -14,7 +14,7 @@ import {
 import SvgIcon from '@jamescoyle/vue-icon';
 import { mdiCarEmergency, mdiCheck } from '@mdi/js';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
-import { Dispatch } from '~~/gen/ts/resources/dispatch/dispatch';
+import { Dispatch } from '~~/gen/ts/resources/dispatch/dispatches';
 import { UNIT_STATUS, Unit } from '~~/gen/ts/resources/dispatch/units';
 
 const props = defineProps<{

@@ -150,21 +150,29 @@ func NewGRPCServer(ctx context.Context, logger *zap.Logger, db *sql.DB, tp *trac
 	// Attach our GRPC services
 	pbauth.RegisterAuthServiceServer(grpcServer, pbauth.NewServer(db, grpcAuth, tm, p, enricher, aud, ui,
 		config.C.Game.SuperuserGroups, config.C.OAuth2.Providers))
+
 	pbcitizenstore.RegisterCitizenStoreServiceServer(grpcServer, pbcitizenstore.NewServer(db, p, enricher, aud,
 		config.C.Game.PublicJobs, config.C.Game.UnemployedJob.Name, config.C.Game.UnemployedJob.Grade))
+
 	centrum := pbcentrum.NewServer(ctx, logger.Named("grpc_centrum"), tp, db, p, aud, eventus, config.C.Game.Livemap.Jobs)
 	go centrum.Start()
+	go centrum.ConvertPhoneJobMsgToDispatch()
 	pbcentrum.RegisterCentrumServiceServer(grpcServer, centrum)
+
 	pbcompletor.RegisterCompletorServiceServer(grpcServer, pbcompletor.NewServer(db, p, cache))
 	pbdocstore.RegisterDocStoreServiceServer(grpcServer, pbdocstore.NewServer(db, p, enricher, aud, ui, notif))
+
 	pbjobs.RegisterJobsServiceServer(grpcServer, pbjobs.NewServer())
 
 	livemapper := pblivemapper.NewServer(ctx, logger.Named("grpc_livemap"), tp, db, p, enricher,
 		config.C.Game.Livemap.RefreshTime, config.C.Game.Livemap.Jobs)
 	go livemapper.Start()
 	pblivemapper.RegisterLivemapperServiceServer(grpcServer, livemapper)
+
 	pbnotificator.RegisterNotificatorServiceServer(grpcServer, pbnotificator.NewServer(logger.Named("grpc_notificator"), db, p, tm, ui))
+
 	pbdmv.RegisterDMVServiceServer(grpcServer, pbdmv.NewServer(db, p, enricher, aud))
+
 	pbrector.RegisterRectorServiceServer(grpcServer, pbrector.NewServer(logger, db, p, aud, enricher))
 
 	// Only run the livemapper random user marker generator in debug mode
