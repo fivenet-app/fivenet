@@ -26,5 +26,5 @@ appVersion: v0.7.3
 dependencies:
   - name: nats
     repository: https://nats-io.github.io/k8s/helm/charts/
-    version: 1.0.0-rc.0
+    version: 1.0.0-rc.1
     condition: nats.enabled
