@@ -3,7 +3,6 @@ import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOption
 import SvgIcon from '@jamescoyle/vue-icon';
 import { mdiCheck } from '@mdi/js';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
-import { watchDebounced } from '@vueuse/shared';
 import { useAuthStore } from '~/store/auth';
 import { useNotificationsStore } from '~/store/notifications';
 import { Job } from '~~/gen/ts/resources/jobs/jobs';
@@ -16,14 +15,13 @@ const notifications = useNotificationsStore();
 const { activeChar } = storeToRefs(authStore);
 const { setAccessToken, setActiveChar, setJobProps } = authStore;
 
-let entriesJobs = [] as Job[];
-const filteredJobs = ref<Job[]>([]);
+const entriesJobs = ref<Job[]>([]);
 const queryJob = ref('');
 const selectedJob = ref<undefined | Job>();
 
 async function findJobs(): Promise<void> {
     return new Promise(async (res, rej) => {
-        if (entriesJobs.length > 0) {
+        if (entriesJobs.value.length > 0) {
             return res();
         }
 
@@ -33,8 +31,7 @@ async function findJobs(): Promise<void> {
             });
             const { response } = await call;
 
-            entriesJobs = response.jobs;
-            filteredJobs.value = entriesJobs;
+            entriesJobs.value = response.jobs;
 
             return res();
         } catch (e) {
@@ -47,7 +44,8 @@ async function findJobs(): Promise<void> {
 async function setJob(): Promise<void> {
     return new Promise(async (res, rej) => {
         try {
-            const grades = selectedJob.value?.grades!;
+            const grades = selectedJob.value?.grades;
+            if (!grades) return;
 
             const call = $grpc.getAuthClient().setJob({
                 charId: activeChar.value?.userId!,
@@ -85,14 +83,11 @@ async function setJob(): Promise<void> {
     });
 }
 
-watchDebounced(
-    queryJob,
-    async () => {
-        filteredJobs.value = entriesJobs.filter((g) => g.label.toLowerCase().includes(queryJob.value.toLowerCase()));
-    },
-    { debounce: 600, maxWait: 1750 },
+const filteredJobs = computed(() =>
+    entriesJobs.value.filter((g) => g.label.toLowerCase().includes(queryJob.value.toLowerCase())),
 );
-watchDebounced(selectedJob, () => setJob());
+
+watch(selectedJob, () => setJob());
 </script>
 
 <template>

@@ -101,6 +101,9 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *ListUserDocumentsRe
 		).
 		WHERE(condition).
 		OFFSET(req.Pagination.Offset).
+		ORDER_BY(
+			tDocRel.CreatedAt.DESC(),
+		).
 		GROUP_BY(tDocRel.ID).
 		LIMIT(limit)
 
@@ -192,6 +195,9 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *ListUserDocumentsRe
 	for i := 0; i < len(resp.Relations); i++ {
 		if resp.Relations[i].SourceUser != nil {
 			s.c.EnrichJobInfo(resp.Relations[i].SourceUser)
+		}
+		if resp.Relations[i].Document != nil && resp.Relations[i].Document.Creator != nil {
+			s.c.EnrichJobInfo(resp.Relations[i].Document.Creator)
 		}
 	}
 
