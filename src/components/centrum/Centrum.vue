@@ -203,7 +203,7 @@ function goto(e: { x: number; y: number }) {
 </script>
 
 <template>
-    <div class="flex-col h-full">
+    <div class="flex-col h-full relative">
         <div
             v-if="error || abort === undefined"
             class="absolute inset-0 flex justify-center items-center z-20"
