@@ -23,7 +23,7 @@ require (
 	github.com/grpc-ecosystem/go-grpc-middleware/providers/prometheus v1.0.0-rc.0
 	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.0.0-rc.5
 	github.com/json-iterator/go v1.1.12
-	github.com/microcosm-cc/bluemonday v1.0.24
+	github.com/microcosm-cc/bluemonday v1.0.25
 	github.com/nats-io/nats.go v1.27.1
 	github.com/ory/dockertest/v3 v3.10.0
 	github.com/pkg/errors v0.9.1
