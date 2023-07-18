@@ -210,15 +210,7 @@ function goto(e: { x: number; y: number }) {
             style="background-color: rgba(62, 60, 62, 0.5)"
         >
             <DataPendingBlock v-if="!error" :message="$t('components.livemap.starting_datastream')" />
-            <DataErrorBlock
-                v-else="error"
-                :title="$t('components.livemap.failed_datastream')"
-                :retry="
-                    () => {
-                        startStream();
-                    }
-                "
-            />
+            <DataErrorBlock v-else="error" :title="$t('components.livemap.failed_datastream')" :retry="startStream" />
         </div>
 
         <CreateOrUpdateModal ref="createOrUpdateModal" :open="open" @close="open = false" :location="location" />
