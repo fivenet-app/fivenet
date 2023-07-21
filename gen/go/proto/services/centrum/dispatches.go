@@ -23,7 +23,7 @@ var (
 )
 
 // TODO does it make sense to distinguish between "All" and "Assigned" dispatches here?
-// A unit user would only want to see their assigned dispatches
+// A unit user would only get to see their assigned dispatches
 
 func (s *Server) ListDispatches(ctx context.Context, req *ListDispatchesRequest) (*ListDispatchesResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)

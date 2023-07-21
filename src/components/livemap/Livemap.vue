@@ -647,7 +647,7 @@ watchDebounced(postalQuery, () => findPostal(), {
                     </div>
                 </LControl>
             </LMap>
-            <div v-can="'CentrumService.Stream'" class="lg:inset-y-0 lg:z-50 lg:flex lg:w-72 lg:flex-col">
+            <div v-can="'CentrumService.Stream'" class="lg:inset-y-0 lg:flex lg:w-50 lg:flex-col">
                 <CentrumSidebar />
             </div>
         </div>

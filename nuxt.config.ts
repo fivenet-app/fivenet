@@ -30,6 +30,7 @@ const config = defineNuxtConfig({
     telemetry: false,
     ssr: false,
     modules: [
+        '@nuxt/devtools',
         '@pinia/nuxt',
         '@pinia-plugin-persistedstate/nuxt',
         'nuxt-typed-router',
@@ -38,6 +39,13 @@ const config = defineNuxtConfig({
         '@nuxtjs/tailwindcss',
         '@vee-validate/nuxt',
     ],
+    devtools: {
+        enabled: true,
+        vscode: {},
+        timeline: {
+            enabled: true,
+        },
+    },
     pinia: {
         autoImports: [
             // automatically imports `defineStore`
