@@ -454,6 +454,9 @@ func (s *Server) AssignDispatch(ctx context.Context, req *AssignDispatchRequest)
 					dsp.Id,
 					id,
 					jet.CURRENT_TIMESTAMP().ADD(jet.INTERVAL(13, jet.SECOND)),
+				).
+				ON_DUPLICATE_KEY_UPDATE(
+					tDispatchUnit.ExpiresAt.SET(jet.RawTimestamp("VALUES(expires_at)")),
 				)
 
 			if _, err := stmt.ExecContext(ctx, tx); err != nil {

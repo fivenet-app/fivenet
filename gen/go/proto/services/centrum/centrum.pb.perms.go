@@ -53,10 +53,9 @@ func init() {
 			Name:     CentrumServiceAssignUnitPerm,
 			Attrs: []perms.Attr{
 				{
-					Key:  CentrumServiceAssignUnitAccessPermField,
-					Type: permissions.StringListAttributeType,
-					ValidValues: []string{"Own", "Lower_Rank",
-						"Same_Rank"},
+					Key:           CentrumServiceAssignUnitAccessPermField,
+					Type:          permissions.StringListAttributeType,
+					ValidValues:   []string{"Own", "Lower_Rank", "Same_Rank"},
 					DefaultValues: []string{"Own"},
 				},
 			},

@@ -14,34 +14,37 @@ import "validate/validate.proto";
 // Common
 
 message ListActivityRequest {
-  resources.common.database.PaginationRequest pagination = 1
-      [ (validate.rules).message.required = true ];
+  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
   uint64 id = 2;
 }
 
 // Unit Management
 
 message ListUnitsRequest {
-  repeated resources.dispatch.UNIT_STATUS status = 1
-      [ (validate.rules).repeated .items.enum.defined_only = true ];
+  repeated resources.dispatch.UNIT_STATUS status = 1 [(validate.rules).repeated.items.enum.defined_only = true];
 }
 
-message ListUnitsResponse { repeated resources.dispatch.Unit units = 1; }
+message ListUnitsResponse {
+  repeated resources.dispatch.Unit units = 1;
+}
 
 message CreateOrUpdateUnitRequest {
-  resources.dispatch.Unit unit = 1 [ (validate.rules).message.required = true ];
+  resources.dispatch.Unit unit = 1 [(validate.rules).message.required = true];
 }
 
-message CreateOrUpdateUnitResponse { resources.dispatch.Unit unit = 1; }
+message CreateOrUpdateUnitResponse {
+  resources.dispatch.Unit unit = 1;
+}
 
-message DeleteUnitRequest { uint64 unit_id = 1; }
+message DeleteUnitRequest {
+  uint64 unit_id = 1;
+}
 
 message DeleteUnitResponse {}
 
 message UpdateUnitStatusRequest {
   uint64 unit_id = 1;
-  resources.dispatch.UNIT_STATUS status = 2
-      [ (validate.rules).enum.defined_only = true ];
+  resources.dispatch.UNIT_STATUS status = 2 [(validate.rules).enum.defined_only = true];
   optional string reason = 3;
   optional string code = 4;
 }
@@ -63,9 +66,13 @@ message ListUnitActivityResponse {
 
 // Dispatch Management
 
-message TakeControlRequest { bool signon = 1; }
+message TakeControlRequest {
+  bool signon = 1;
+}
 
-message TakeControlResponse { ControllerChange change = 1; }
+message TakeControlResponse {
+  ControllerChange change = 1;
+}
 
 message ControllerChange {
   repeated resources.users.UserShort controllers = 1;
@@ -73,8 +80,7 @@ message ControllerChange {
 }
 
 message ListDispatchesRequest {
-  repeated resources.dispatch.DISPATCH_STATUS status = 1
-      [ (validate.rules).repeated .items.enum.defined_only = true ];
+  repeated resources.dispatch.DISPATCH_STATUS status = 1 [(validate.rules).repeated.items.enum.defined_only = true];
 }
 
 message ListDispatchesResponse {
@@ -82,23 +88,24 @@ message ListDispatchesResponse {
 }
 
 message CreateDispatchRequest {
-  resources.dispatch.Dispatch dispatch = 1
-      [ (validate.rules).message.required = true ];
+  resources.dispatch.Dispatch dispatch = 1 [(validate.rules).message.required = true];
 }
 
-message CreateDispatchResponse { resources.dispatch.Dispatch dispatch = 1; }
+message CreateDispatchResponse {
+  resources.dispatch.Dispatch dispatch = 1;
+}
 
 message UpdateDispatchRequest {
-  resources.dispatch.Dispatch dispatch = 1
-      [ (validate.rules).message.required = true ];
+  resources.dispatch.Dispatch dispatch = 1 [(validate.rules).message.required = true];
 }
 
-message UpdateDispatchResponse { resources.dispatch.Dispatch dispatch = 1; }
+message UpdateDispatchResponse {
+  resources.dispatch.Dispatch dispatch = 1;
+}
 
 message UpdateDispatchStatusRequest {
   uint64 dispatch_id = 1;
-  resources.dispatch.DISPATCH_STATUS status = 2
-      [ (validate.rules).enum.defined_only = true ];
+  resources.dispatch.DISPATCH_STATUS status = 2 [(validate.rules).enum.defined_only = true];
   optional string reason = 3;
   optional string code = 4;
 }
@@ -126,16 +133,20 @@ enum TAKE_DISPATCH_RESP {
 
 message TakeDispatchRequest {
   uint64 dispatch_id = 1;
-  TAKE_DISPATCH_RESP resp = 2 [ (validate.rules).enum.defined_only = true ];
-  optional string reason = 3 [ (validate.rules).string.max_len = 255 ];
+  TAKE_DISPATCH_RESP resp = 2 [(validate.rules).enum.defined_only = true];
+  optional string reason = 3 [(validate.rules).string.max_len = 255];
 }
 
-message TakeDispatchResponse { resources.dispatch.Dispatch dispatch = 1; }
+message TakeDispatchResponse {
+  resources.dispatch.Dispatch dispatch = 1;
+}
 
 message Initial {
   bool controller = 1;
   resources.dispatch.Settings settings = 2;
   resources.dispatch.Unit unit = 3;
+  repeated resources.dispatch.Unit units = 4;
+  repeated resources.dispatch.Dispatch dispatches = 5;
 }
 
 message StreamRequest {}
@@ -159,11 +170,9 @@ message StreamResponse {
 
 service CentrumService {
   // @perm
-  rpc GetSettings(resources.common.EmptyRequest)
-      returns (resources.dispatch.Settings);
+  rpc GetSettings(resources.common.EmptyRequest) returns (resources.dispatch.Settings);
   // @perm: Name=GetSettings
-  rpc UpdateSettings(resources.dispatch.Settings)
-      returns (resources.dispatch.Settings);
+  rpc UpdateSettings(resources.dispatch.Settings) returns (resources.dispatch.Settings);
 
   // @perm
   rpc TakeControl(TakeControlRequest) returns (TakeControlResponse);
@@ -171,15 +180,12 @@ service CentrumService {
   // @perm
   rpc ListUnits(ListUnitsRequest) returns (ListUnitsResponse);
   // @perm
-  rpc CreateOrUpdateUnit(CreateOrUpdateUnitRequest)
-      returns (CreateOrUpdateUnitResponse);
+  rpc CreateOrUpdateUnit(CreateOrUpdateUnitRequest) returns (CreateOrUpdateUnitResponse);
   // @perm
   rpc DeleteUnit(DeleteUnitRequest) returns (DeleteUnitResponse);
   // @perm
-  rpc UpdateUnitStatus(UpdateUnitStatusRequest)
-      returns (UpdateUnitStatusResponse);
-  // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank",
-  // "Same_Rank"}§[]string{"Own"}
+  rpc UpdateUnitStatus(UpdateUnitStatusRequest) returns (UpdateUnitStatusResponse);
+  // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
   rpc AssignUnit(AssignUnitRequest) returns (AssignUnitResponse);
   // @perm: Name=ListUnits
   rpc ListUnitActivity(ListActivityRequest) returns (ListUnitActivityResponse);
@@ -193,13 +199,11 @@ service CentrumService {
   // @perm
   rpc TakeDispatch(TakeDispatchRequest) returns (TakeDispatchResponse);
   // @perm: Name=TakeDispatch
-  rpc UpdateDispatchStatus(UpdateDispatchStatusRequest)
-      returns (UpdateDispatchStatusResponse);
+  rpc UpdateDispatchStatus(UpdateDispatchStatusRequest) returns (UpdateDispatchStatusResponse);
   // @perm
   rpc AssignDispatch(AssignDispatchRequest) returns (AssignDispatchResponse);
   // @perm: Name=Stream
-  rpc ListDispatchActivity(ListActivityRequest)
-      returns (ListDispatchActivityResponse);
+  rpc ListDispatchActivity(ListActivityRequest) returns (ListDispatchActivityResponse);
 
   // @perm
   rpc Stream(StreamRequest) returns (stream StreamResponse);

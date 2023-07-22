@@ -1,4 +1,4 @@
-package livemapper
+package tracker
 
 import (
 	"fmt"
@@ -11,7 +11,7 @@ import (
 	"go.uber.org/zap"
 )
 
-func (s *Server) GenerateRandomUserMarker() {
+func (s *Tracker) GenerateRandomUserMarker() {
 	userIdentifiers := []string{
 		"char1:fcee377a1fda007a8d2cc764a0a272e04d8c5d57",
 		"char1:0ff2f772f2527a0626cac48670cbc20ddbdc09fb",
@@ -102,7 +102,7 @@ func (s *Server) GenerateRandomUserMarker() {
 	}
 }
 
-func (s *Server) GenerateRandomDispatchMarker() {
+func (s *Tracker) GenerateRandomDispatchMarker() {
 	userIdentifiers := []string{
 		"char1:fcee377a1fda007a8d2cc764a0a272e04d8c5d57",
 		"char1:0ff2f772f2527a0626cac48670cbc20ddbdc09fb",

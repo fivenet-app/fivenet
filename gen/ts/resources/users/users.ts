@@ -161,7 +161,7 @@ export interface UserProps {
      */
     trafficInfractionPoints?: bigint;
     /**
-     * @generated from protobuf field: optional uint64 open_fines = 8;
+     * @generated from protobuf field: optional int64 open_fines = 8;
      */
     openFines?: bigint;
 }
@@ -294,7 +294,7 @@ class UserProps$Type extends MessageType<UserProps> {
             { no: 5, name: "job_grade_number", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
             { no: 6, name: "job_grade", kind: "message", T: () => JobGrade },
             { no: 7, name: "traffic_infraction_points", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 8, name: "open_fines", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+            { no: 8, name: "open_fines", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 0 /*LongType.BIGINT*/ }
         ]);
     }
 }

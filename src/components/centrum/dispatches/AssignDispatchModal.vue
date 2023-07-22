@@ -1,21 +1,10 @@
 <script lang="ts" setup>
-import {
-    Combobox,
-    ComboboxButton,
-    ComboboxInput,
-    ComboboxOption,
-    ComboboxOptions,
-    Dialog,
-    DialogPanel,
-    DialogTitle,
-    TransitionChild,
-    TransitionRoot,
-} from '@headlessui/vue';
+import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import SvgIcon from '@jamescoyle/vue-icon';
-import { mdiCarEmergency, mdiCheck } from '@mdi/js';
+import { mdiCarEmergency } from '@mdi/js';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { Dispatch } from '~~/gen/ts/resources/dispatch/dispatches';
-import { UNIT_STATUS, Unit } from '~~/gen/ts/resources/dispatch/units';
+import { Unit } from '~~/gen/ts/resources/dispatch/units';
 
 const props = defineProps<{
     open: boolean;
@@ -29,14 +18,8 @@ const emits = defineEmits<{
 
 const { $grpc } = useNuxtApp();
 
-const queryUnit = ref('');
-const query = computed(() => queryUnit.value.toLowerCase());
-const filteredUnits = computed(() =>
-    (props.units ?? []).filter(
-        (v) => v.name.toLowerCase().includes(query.value) || v.initials.toLowerCase().includes(query.value),
-    ),
-);
-const selectedUnits = ref<undefined | Unit[]>(props.dispatch.units.map((du) => du.unit!));
+const selectedUnits = ref<(undefined | Unit)[]>(props.dispatch.units.map((du) => props.units?.find((u) => u.id === du.unitId)));
+console.log(selectedUnits.value);
 
 async function assignDispatch(): Promise<void> {
     return new Promise(async (res, rej) => {
@@ -44,6 +27,8 @@ async function assignDispatch(): Promise<void> {
             const toAdd: bigint[] = [];
             const toRemove: bigint[] = [];
             selectedUnits.value?.forEach((u) => {
+                if (!u) return;
+
                 const idx = props.dispatch.units.findIndex((s) => s.unitId === u.id);
                 if (idx > -1) {
                     toRemove.push(u.id);
@@ -67,6 +52,15 @@ async function assignDispatch(): Promise<void> {
             return rej(e as RpcError);
         }
     });
+}
+
+function selectUnit(item: Unit): void {
+    const idx = selectedUnits.value?.findIndex((u) => u && u.id === item.id);
+    if (idx > -1) {
+        delete selectedUnits.value[idx];
+    } else {
+        selectedUnits.value.push(item);
+    }
 }
 </script>
 
@@ -118,65 +112,22 @@ async function assignDispatch(): Promise<void> {
                                                 <label for="message" class="block text-sm font-medium leading-6 text-neutral">
                                                     {{ $t('common.unit', 2) }}
                                                 </label>
-                                                <Combobox as="div" v-model="selectedUnits" multiple nullable>
-                                                    <div class="relative">
-                                                        <ComboboxButton as="div">
-                                                            <ComboboxInput
-                                                                class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                                @change="queryUnit = $event.target.value"
-                                                                :display-value="
-                                                                    (units: any) =>
-                                                                        units
-                                                                            ? units.map((u: Unit) => u.initials).join(', ')
-                                                                            : ''
-                                                                "
-                                                                :placeholder="$t('common.unit', 2)"
-                                                            />
-                                                        </ComboboxButton>
-
-                                                        <ComboboxOptions
-                                                            v-if="filteredUnits.length > 0"
-                                                            class="absolute z-50 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-44 sm:text-sm"
-                                                        >
-                                                            <ComboboxOption
-                                                                v-for="unit in filteredUnits"
-                                                                :key="unit?.id.toString()"
-                                                                :value="unit"
-                                                                v-slot="{ active, selected }"
-                                                            >
-                                                                <li
-                                                                    :class="[
-                                                                        'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
-                                                                        active ? 'bg-primary-500' : '',
-                                                                    ]"
-                                                                >
-                                                                    <span
-                                                                        :class="['block truncate', selected && 'font-semibold']"
-                                                                    >
-                                                                        {{ unit?.initials }} - {{ unit?.name }} ({{
-                                                                            UNIT_STATUS[unit?.status?.status ?? 0]
-                                                                        }})
-                                                                    </span>
-
-                                                                    <span
-                                                                        v-if="selected"
-                                                                        :class="[
-                                                                            active ? 'text-neutral' : 'text-primary-500',
-                                                                            'absolute inset-y-0 left-0 flex items-center pl-1.5',
-                                                                        ]"
-                                                                    >
-                                                                        <SvgIcon
-                                                                            class="w-5 h-5"
-                                                                            aria-hidden="true"
-                                                                            type="mdi"
-                                                                            :path="mdiCheck"
-                                                                        />
-                                                                    </span>
-                                                                </li>
-                                                            </ComboboxOption>
-                                                        </ComboboxOptions>
-                                                    </div>
-                                                </Combobox>
+                                                <div class="grid grid-cols-4 gap-4">
+                                                    <button
+                                                        v-for="item in units"
+                                                        :key="item.name"
+                                                        type="button"
+                                                        class="text-white hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-2 text-xs my-0.5"
+                                                        :class="
+                                                            selectedUnits?.findIndex((u) => u && u.id === item.id) > -1
+                                                                ? 'bg-green-600'
+                                                                : 'bg-info-600'
+                                                        "
+                                                        @click="selectUnit(item)"
+                                                    >
+                                                        <span class="mt-1">{{ item.initials }}: {{ item.name }}</span>
+                                                    </button>
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -196,7 +147,7 @@ async function assignDispatch(): Promise<void> {
                                     class="flex-1 rounded-md bg-primary-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-primary-400"
                                     @click="assignDispatch"
                                 >
-                                    {{ $t('common.create') }}
+                                    {{ $t('common.update') }}
                                 </button>
                             </div>
                         </DialogPanel>

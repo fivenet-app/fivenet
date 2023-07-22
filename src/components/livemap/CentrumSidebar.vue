@@ -14,9 +14,11 @@ import {
     mdiMarkerCheck,
 } from '@mdi/js';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
-import { Dispatch, DispatchStatus } from '~~/gen/ts/resources/dispatch/dispatches';
+import { default as UnitDetails } from '~/components/centrum/units/Details.vue';
+import DispatchEntry from '~/components/livemap/centrum/DispatchEntry.vue';
+import { DISPATCH_STATUS, Dispatch, DispatchStatus } from '~~/gen/ts/resources/dispatch/dispatches';
 import { Settings } from '~~/gen/ts/resources/dispatch/settings';
-import { Unit, UnitStatus } from '~~/gen/ts/resources/dispatch/units';
+import { UNIT_STATUS, Unit, UnitStatus } from '~~/gen/ts/resources/dispatch/units';
 import { UserShort } from '~~/gen/ts/resources/users/users';
 
 const { $grpc } = useNuxtApp();
@@ -27,22 +29,22 @@ const feed = ref<(DispatchStatus | UnitStatus)[]>([]);
 const controllers = ref<UserShort[]>([]);
 const dispatches = ref<Array<Dispatch>>([]);
 
-type Action = { icon?: string; name: string; action?: Function };
+type Action = { icon: string; name: string; action?: Function; class?: string; status?: DISPATCH_STATUS | UNIT_STATUS };
 
 const actionsDispatch: Action[] = [
-    { icon: mdiCarBack, name: 'Dispatch: En Route' },
-    { icon: mdiMarkerCheck, name: 'Dispatch: At Scene' },
-    { icon: mdiHelpCircle, name: 'Dispatch: Need Assistance' },
-    { icon: mdiListStatus, name: 'Dispatch: Update Status' },
-    { icon: mdiCheckBold, name: 'Dispatch: Complete' },
+    { icon: mdiCarBack, name: 'En Route', class: 'bg-info-600', status: DISPATCH_STATUS.EN_ROUTE },
+    { icon: mdiMarkerCheck, name: 'At Scene', class: 'bg-primary-600', status: DISPATCH_STATUS.AT_SCENE },
+    { icon: mdiHelpCircle, name: 'Need Assistance', class: 'bg-warn-600', status: DISPATCH_STATUS.NEED_ASSISTANCE },
+    { icon: mdiCheckBold, name: 'Completed', class: 'bg-success-600', status: DISPATCH_STATUS.COMPLETED },
+    { icon: mdiListStatus, name: 'Update Status', class: 'bg-base-800' },
 ];
 
 const actionsUnit: Action[] = [
-    { icon: mdiCarBack, name: 'Unit: Unavailable' },
-    { icon: mdiCalendarCheck, name: 'Unit: Available' },
-    { icon: mdiCoffee, name: 'Unit: On Break' },
-    { icon: mdiCalendarRemove, name: 'Unit: Busy' },
-    { icon: mdiListStatus, name: 'Unit: Update Status', action: () => {} },
+    { icon: mdiCarBack, name: 'Unavailable', class: 'bg-error-600', status: UNIT_STATUS.UNAVAILABLE },
+    { icon: mdiCalendarCheck, name: 'Available', class: 'bg-success-600', status: UNIT_STATUS.AVAILABLE },
+    { icon: mdiCoffee, name: 'On Break', class: 'bg-warn-600', status: UNIT_STATUS.ON_BREAK },
+    { icon: mdiCalendarRemove, name: 'Busy', class: 'bg-info-600', status: UNIT_STATUS.BUSY },
+    { icon: mdiListStatus, name: 'Update Status', class: 'bg-base-800' },
 ];
 
 const abort = ref<AbortController | undefined>();
@@ -67,15 +69,17 @@ async function startStream(): Promise<void> {
             if (resp === undefined || !resp.change) {
                 continue;
             }
+
+            console.debug('Centrum: Received change - Kind:', resp.change.oneofKind, resp.change);
+
             if (!dispatches.value) {
                 continue;
             }
 
-            console.debug('Centrum: Received change - Kind:', resp.change.oneofKind, resp.change);
-
             if (resp.change.oneofKind === 'initial') {
                 settings.value = resp.change.initial.settings;
                 unit.value = resp.change.initial.unit;
+                dispatches.value = resp.change.initial.dispatches;
             } else if (resp.change.oneofKind === 'dispatchUpdate') {
                 const id = resp.change.dispatchUpdate.id;
                 const idx = dispatches.value?.findIndex((d) => d.id === id) ?? -1;
@@ -164,11 +168,13 @@ onMounted(() => {
 onBeforeUnmount(() => {
     stopStream();
 });
+
+const unitOpen = ref(false);
 </script>
 
 <template>
     <!-- Sidebar component, swap this element with another sidebar if you like -->
-    <div class="h-full flex grow gap-y-5 overflow-y-auto bg-base-600 px-6 py-2">
+    <div class="h-full flex grow gap-y-5 overflow-y-auto bg-base-600 px-4 py-0.5">
         <nav class="flex flex-1 flex-col">
             <ul role="list" class="flex flex-1 flex-col gap-y-2 divide-y divide-base-400">
                 <li>
@@ -176,81 +182,87 @@ onBeforeUnmount(() => {
                     <ul role="list" class="-mx-2 mt-2 space-y-1">
                         <li v-if="unit">
                             <button
+                                @click="unitOpen = true"
                                 type="button"
-                                class="text-accent-100 bg-info-700 hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-2 text-xs my-2"
+                                class="text-white bg-info-700 hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-2 text-xs my-0.5"
                             >
-                                <SvgIcon type="mdi" :path="mdiInformationOutline" class="h-6 w-6" aria-hidden="true" />
+                                <SvgIcon type="mdi" :path="mdiInformationOutline" class="h-5 w-5" aria-hidden="true" />
                                 <span class="mt-2 truncate">{{ unit.initials }}: {{ unit.name }}</span>
                             </button>
+                            <UnitDetails :unit="unit" :open="unitOpen" @close="unitOpen = false" />
                         </li>
                         <li v-else>
                             <button
                                 type="button"
-                                class="text-accent-100 bg-info-700 hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-2 text-xs my-2"
+                                class="text-white bg-info-700 hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-2 text-xs my-0.5"
                             >
-                                <SvgIcon type="mdi" :path="mdiInformationOutline" class="h-6 w-6" aria-hidden="true" />
-                                <span class="mt-2 truncate">You are not in any Unit.</span>
+                                <SvgIcon type="mdi" :path="mdiInformationOutline" class="h-5 w-5" aria-hidden="true" />
+                                <span class="mt-2 truncate">Not in any Unit.</span>
                             </button>
                         </li>
                     </ul>
                 </li>
                 <li>
                     <ul role="list" class="-mx-2 space-y-1">
-                        <li v-for="item in actionsDispatch" :key="item.name">
-                            <button
-                                type="button"
-                                class="text-accent-100 bg-primary hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-2 text-xs my-2"
-                            >
-                                <SvgIcon
-                                    type="mdi"
-                                    :path="item.icon ?? mdiHoopHouse"
-                                    class="text-base-200 group-hover:text-white h-6 w-6 shrink-0"
-                                    aria-hidden="true"
-                                />
-                                <span class="mt-2">{{ item.name }}</span>
-                            </button>
+                        <div class="text-xs font-semibold leading-6 text-base-200">Dispatches</div>
+                        <li>
+                            <div class="grid grid-cols-2 gap-0.5">
+                                <button
+                                    v-for="(item, idx) in actionsDispatch"
+                                    :key="item.name"
+                                    type="button"
+                                    class="text-white bg-primary hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-2 text-xs my-0.5"
+                                    :class="[idx >= actionsDispatch.length - 1 ? 'col-span-2' : '', item.class]"
+                                >
+                                    <SvgIcon
+                                        type="mdi"
+                                        :path="item.icon ?? mdiHoopHouse"
+                                        class="text-base-200 group-hover:text-white h-5 w-5 shrink-0"
+                                        aria-hidden="true"
+                                    />
+                                    <span class="mt-1">{{ item.name }}</span>
+                                </button>
+                            </div>
                         </li>
                     </ul>
                 </li>
                 <li>
                     <ul role="list" class="-mx-2 space-y-1">
-                        <li v-for="item in actionsUnit" :key="item.name">
-                            <button
-                                type="button"
-                                class="text-accent-100 bg-primary hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-2 text-xs my-2"
-                            >
-                                <SvgIcon
-                                    type="mdi"
-                                    :path="item.icon ?? mdiHoopHouse"
-                                    class="text-base-200 group-hover:text-white h-6 w-6 shrink-0"
-                                    aria-hidden="true"
-                                />
-                                <span class="mt-2">{{ item.name }}</span>
-                            </button>
+                        <div class="text-xs font-semibold leading-6 text-base-200">Unit</div>
+                        <li>
+                            <div class="grid grid-cols-2 gap-0.5">
+                                <button
+                                    v-for="(item, idx) in actionsUnit"
+                                    :key="item.name"
+                                    type="button"
+                                    class="text-white bg-primary hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-2 text-xs my-0.5"
+                                    :class="[idx >= actionsUnit.length - 1 ? 'col-span-2' : '', item.class]"
+                                >
+                                    <SvgIcon
+                                        type="mdi"
+                                        :path="item.icon ?? mdiHoopHouse"
+                                        class="text-base-200 group-hover:text-white h-5 w-5 shrink-0"
+                                        aria-hidden="true"
+                                    />
+                                    <span class="mt-1">{{ item.name }}</span>
+                                </button>
+                            </div>
                         </li>
                     </ul>
                 </li>
                 <li>
-                    <!-- <div class="text-xs font-semibold leading-6 text-base-200">Your Dispatches</div> -->
+                    <div class="text-xs font-semibold leading-6 text-base-200">Your Dispatches</div>
                     <ul role="list" class="-mx-2 mt-2 space-y-1">
                         <li v-if="!dispatches || dispatches.length === 0">
                             <button
                                 type="button"
-                                class="text-accent-100 bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-2 text-xs my-2"
+                                class="text-white bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-2 text-xs my-0.5"
                             >
-                                <SvgIcon type="mdi" :path="mdiCarEmergency" class="h-6 w-6" aria-hidden="true" />
+                                <SvgIcon type="mdi" :path="mdiCarEmergency" class="h-5 w-5" aria-hidden="true" />
                                 <span class="mt-2 truncate">No assigned Dispatches.</span>
                             </button>
                         </li>
-                        <li v-else v-for="dispatch in dispatches" :key="dispatch.id.toString()">
-                            <button
-                                type="button"
-                                class="text-accent-100 bg-error-700 hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-2 text-xs my-2"
-                            >
-                                <SvgIcon type="mdi" :path="mdiCarEmergency" class="h-6 w-6" aria-hidden="true" />
-                                <span class="mt-2 truncate">DSP-{{ dispatch.id }}</span>
-                            </button>
-                        </li>
+                        <DispatchEntry v-else v-for="dispatch in dispatches" :dispatch="dispatch" />
                     </ul>
                 </li>
             </ul>

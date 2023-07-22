@@ -413,8 +413,10 @@ func (s *Server) checkIfUserPartOfUnit(userId int32, unit *dispatch.Unit) bool {
 }
 
 func (s *Server) updateDispatchStatus(ctx context.Context, userInfo *userinfo.UserInfo, dsp *dispatch.Dispatch, in *dispatch.DispatchStatus) (*dispatch.DispatchStatus, error) {
+	tDispatchStatus := table.FivenetCentrumDispatchesStatus
 	stmt := tDispatchStatus.
 		INSERT(
+			tDispatchStatus.DispatchID,
 			tDispatchStatus.UnitID,
 			tDispatchStatus.Status,
 			tDispatchStatus.Reason,
@@ -423,6 +425,7 @@ func (s *Server) updateDispatchStatus(ctx context.Context, userInfo *userinfo.Us
 		).
 		VALUES(
 			in.DispatchId,
+			in.UnitId,
 			in.Status,
 			in.Reason,
 			in.Code,

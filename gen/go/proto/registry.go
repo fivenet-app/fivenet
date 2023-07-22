@@ -16,6 +16,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/notifi"
 	"github.com/galexrt/fivenet/pkg/perms"
+	"github.com/galexrt/fivenet/pkg/tracker"
 	"github.com/getsentry/sentry-go"
 	"github.com/gin-gonic/gin"
 	grpcprom "github.com/grpc-ecosystem/go-grpc-middleware/providers/prometheus"
@@ -147,6 +148,9 @@ func NewGRPCServer(ctx context.Context, logger *zap.Logger, db *sql.DB, tp *trac
 	// Data enricher helper
 	enricher := mstlystcdata.NewEnricher(cache)
 
+	// Tracker
+	tracker := tracker.New(ctx, logger.Named("tracker"), tp, db, enricher, config.C.Game.Livemap.RefreshTime, config.C.Game.Livemap.Jobs)
+
 	// Attach our GRPC services
 	pbauth.RegisterAuthServiceServer(grpcServer, pbauth.NewServer(db, grpcAuth, tm, p, enricher, aud, ui,
 		config.C.Game.SuperuserGroups, config.C.OAuth2.Providers))
@@ -164,10 +168,8 @@ func NewGRPCServer(ctx context.Context, logger *zap.Logger, db *sql.DB, tp *trac
 
 	pbjobs.RegisterJobsServiceServer(grpcServer, pbjobs.NewServer())
 
-	livemapper := pblivemapper.NewServer(ctx, logger.Named("grpc_livemap"), tp, db, p, enricher,
-		config.C.Game.Livemap.RefreshTime, config.C.Game.Livemap.Jobs)
-	go livemapper.Start()
-	pblivemapper.RegisterLivemapperServiceServer(grpcServer, livemapper)
+	pblivemapper.RegisterLivemapperServiceServer(grpcServer, pblivemapper.NewServer(ctx, logger.Named("grpc_livemap"), tp, db, p, enricher,
+		config.C.Game.Livemap.RefreshTime, config.C.Game.Livemap.Jobs))
 
 	pbnotificator.RegisterNotificatorServiceServer(grpcServer, pbnotificator.NewServer(logger.Named("grpc_notificator"), db, p, tm, ui))
 
@@ -177,8 +179,8 @@ func NewGRPCServer(ctx context.Context, logger *zap.Logger, db *sql.DB, tp *trac
 
 	// Only run the livemapper random user marker generator in debug mode
 	if config.C.Mode == gin.DebugMode {
-		go livemapper.GenerateRandomUserMarker()
-		go livemapper.GenerateRandomDispatchMarker()
+		go tracker.GenerateRandomUserMarker()
+		go tracker.GenerateRandomDispatchMarker()
 	}
 
 	return grpcServer, lis

@@ -332,6 +332,14 @@ export interface Initial {
      * @generated from protobuf field: resources.dispatch.Unit unit = 3;
      */
     unit?: Unit;
+    /**
+     * @generated from protobuf field: repeated resources.dispatch.Unit units = 4;
+     */
+    units: Unit[];
+    /**
+     * @generated from protobuf field: repeated resources.dispatch.Dispatch dispatches = 5;
+     */
+    dispatches: Dispatch[];
 }
 /**
  * @generated from protobuf message services.centrum.StreamRequest
@@ -780,7 +788,9 @@ class Initial$Type extends MessageType<Initial> {
         super("services.centrum.Initial", [
             { no: 1, name: "controller", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 2, name: "settings", kind: "message", T: () => Settings },
-            { no: 3, name: "unit", kind: "message", T: () => Unit }
+            { no: 3, name: "unit", kind: "message", T: () => Unit },
+            { no: 4, name: "units", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Unit },
+            { no: 5, name: "dispatches", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Dispatch }
         ]);
     }
 }

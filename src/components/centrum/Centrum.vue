@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import SvgIcon from '@jamescoyle/vue-icon';
+import { mdiHelpCircle } from '@mdi/js';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { LeafletMouseEvent } from 'leaflet';
 import Livemap from '~/components/centrum/Livemap.vue';
@@ -16,49 +18,12 @@ import Feed from './Feed.vue';
 const { $grpc } = useNuxtApp();
 
 const settings = ref<Settings>();
+const controller = ref(false);
 const unit = ref<Unit>();
 const feed = ref<(DispatchStatus | UnitStatus)[]>([]);
 const controllers = ref<UserShort[]>([]);
-
-const { data: dispatches, refresh: refreshDispatches } = useLazyAsyncData(`centrum-dispatches`, () => listDispatches());
-
-async function listDispatches(): Promise<Array<Dispatch>> {
-    return new Promise(async (res, rej) => {
-        try {
-            const req = {
-                status: [],
-            };
-
-            const call = $grpc.getCentrumClient().listDispatches(req);
-            const { response } = await call;
-
-            return res(response.dispatches);
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
-        }
-    });
-}
-
-const { data: units, refresh: refreshUnits } = useLazyAsyncData(`centrum-units`, () => listUnits());
-
-async function listUnits(): Promise<Array<Unit>> {
-    return new Promise(async (res, rej) => {
-        try {
-            const req = {
-                status: [],
-            };
-
-            const call = $grpc.getCentrumClient().listUnits(req);
-            const { response } = await call;
-
-            return res(response.units);
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
-        }
-    });
-}
+const units = ref<Array<Unit>>([]);
+const dispatches = ref<Array<Dispatch>>([]);
 
 const abort = ref<AbortController | undefined>();
 const error = ref<string | null>(null);
@@ -91,6 +56,9 @@ async function startStream(): Promise<void> {
             if (resp.change.oneofKind === 'initial') {
                 settings.value = resp.change.initial.settings;
                 unit.value = resp.change.initial.unit;
+                units.value = resp.change.initial.units;
+                dispatches.value = resp.change.initial.dispatches;
+                controller.value = resp.change.initial.controller;
             } else if (resp.change.oneofKind === 'dispatchUpdate') {
                 const id = resp.change.dispatchUpdate.id;
                 const idx = dispatches.value?.findIndex((d) => d.id === id) ?? -1;
@@ -146,8 +114,6 @@ async function startStream(): Promise<void> {
                 if (!resp.change.controllers.active) {
                     stopStream();
                     setTimeout(() => {
-                        refreshDispatches();
-                        refreshUnits();
                         startStream();
                     }, 250);
                 }
@@ -200,6 +166,26 @@ function goto(e: { x: number; y: number }) {
         livemapComponent.value.location = { x: e.x, y: e.y };
     }
 }
+
+async function takeControl(): Promise<void> {
+    return new Promise(async (res, rej) => {
+        try {
+            const call = $grpc.getCentrumClient().takeControl({
+                signon: true,
+            });
+            const { response } = await call;
+
+            if (response.change) {
+                controllers.value = response.change?.controllers;
+            }
+
+            return res();
+        } catch (e) {
+            $grpc.handleError(e as RpcError);
+            return rej(e as RpcError);
+        }
+    });
+}
 </script>
 
 <template>
@@ -211,6 +197,20 @@ function goto(e: { x: number; y: number }) {
         >
             <DataPendingBlock v-if="!error" :message="$t('components.livemap.starting_datastream')" />
             <DataErrorBlock v-else="error" :title="$t('components.livemap.failed_datastream')" :retry="startStream" />
+        </div>
+        <div v-else-if="!controller">
+            <div class="absolute inset-0 flex justify-center items-center z-20" style="background-color: rgba(62, 60, 62, 0.5)">
+                <button
+                    @click="takeControl()"
+                    type="button"
+                    class="relative block w-full p-12 text-center border-2 border-dotted rounded-lg border-base-300 hover:border-base-400 focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2"
+                >
+                    <SvgIcon class="w-12 h-12 mx-auto text-neutral" type="mdi" :path="mdiHelpCircle" />
+                    <span class="block mt-2 text-sm font-semibold text-gray-300">
+                        No one is in the dispatch center. Want to take control? Click here.
+                    </span>
+                </button>
+            </div>
         </div>
 
         <CreateOrUpdateModal ref="createOrUpdateModal" :open="open" @close="open = false" :location="location" />

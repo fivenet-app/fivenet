@@ -163,10 +163,12 @@ func (s *Server) TakeControl(ctx context.Context, req *TakeControlRequest) (*Tak
 					FROM(tUser).
 					WHERE(
 						tUser.ID.EQ(jet.Int32(userInfo.UserId)),
-					),
+					).
+					LIMIT(1),
 			)
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+			// TODO Handle if user is not on duty
 			if !dbutils.IsDuplicateError(err) {
 				return nil, err
 			}
@@ -203,16 +205,19 @@ func (s *Server) TakeControl(ctx context.Context, req *TakeControlRequest) (*Tak
 		}
 	}
 
-	data, err := proto.Marshal(&ControllerChange{
+	change := &ControllerChange{
 		Controllers: controllers,
 		Active:      settings.Active,
-	})
+	}
+	data, err := proto.Marshal(change)
 	if err != nil {
 		return nil, err
 	}
 	s.broadcastToAllUnits(TopicGeneral, TypeGeneralControllers, userInfo, data)
 
-	return nil, nil
+	return &TakeControlResponse{
+		Change: change,
+	}, nil
 }
 
 func (s *Server) Stream(req *StreamRequest, srv CentrumService_StreamServer) error {
@@ -234,9 +239,12 @@ func (s *Server) Stream(req *StreamRequest, srv CentrumService_StreamServer) err
 		return err
 	}
 
-	if utils.InSliceFunc(controllers, func(in *users.UserShort) bool {
+	var units []*dispatch.Unit
+
+	controller := utils.InSliceFunc(controllers, func(in *users.UserShort) bool {
 		return in.UserId == userInfo.UserId
-	}) {
+	})
+	if !controller {
 		sub, err := s.events.JS.ChanSubscribe(fmt.Sprintf(BaseSubject+".%s.*.*.%d", userInfo.Job, unitId), msgCh)
 		if err != nil {
 			return err
@@ -248,9 +256,20 @@ func (s *Server) Stream(req *StreamRequest, srv CentrumService_StreamServer) err
 			return err
 		}
 		defer sub.Unsubscribe()
+
+		unitsResp, err := s.ListUnits(srv.Context(), &ListUnitsRequest{})
+		if err != nil {
+			return err
+		}
+		units = unitsResp.Units
 	}
 
 	unit, _ := s.getUnit(srv.Context(), userInfo, unitId)
+
+	dispatches, err := s.ListDispatches(srv.Context(), &ListDispatchesRequest{})
+	if err != nil {
+		return err
+	}
 
 	// Send initial message to client
 	resp := &StreamResponse{}
@@ -259,6 +278,8 @@ func (s *Server) Stream(req *StreamRequest, srv CentrumService_StreamServer) err
 			Controller: true,
 			Settings:   settings,
 			Unit:       unit,
+			Units:      units,
+			Dispatches: dispatches.Dispatches,
 		},
 	}
 
