@@ -323,6 +323,8 @@ func (s *Server) TakeDispatch(ctx context.Context, req *TakeDispatchRequest) (*T
 	if _, err := s.updateDispatchStatus(ctx, userInfo, dsp, &dispatch.DispatchStatus{
 		DispatchId: req.DispatchId,
 		Status:     dispatch.DISPATCH_STATUS_UNIT_ASSIGNED,
+		UserId:     &userInfo.UserId,
+		UnitId:     unitId,
 	}); err != nil {
 		return nil, err
 	}
@@ -351,20 +353,28 @@ func (s *Server) UpdateDispatchStatus(ctx context.Context, req *UpdateDispatchSt
 		return nil, ErrFailedQuery
 	}
 
-	s.checkIfUserPartOfDispatchUnits(ctx, userInfo, dsp)
+	ok, err := s.checkIfUserPartOfDispatchUnits(ctx, userInfo, dsp)
+	if err != nil {
+		return nil, ErrFailedQuery
+	}
+	if !ok && !userInfo.SuperUser {
+		return nil, ErrFailedQuery
+	}
 
 	unitId, err := s.getUnitIDFromUserID(ctx, userInfo.UserId)
 	if err != nil {
 		return nil, err
 	}
 
-	s.updateDispatchStatus(ctx, userInfo, dsp, &dispatch.DispatchStatus{
+	if _, err := s.updateDispatchStatus(ctx, userInfo, dsp, &dispatch.DispatchStatus{
 		DispatchId: dsp.Id,
 		Status:     req.Status,
 		Code:       req.Code,
 		Reason:     req.Reason,
 		UnitId:     unitId,
-	})
+	}); err != nil {
+		return nil, err
+	}
 
 	auditEntry.State = int16(rector.EVENT_TYPE_UPDATED)
 
@@ -436,7 +446,7 @@ func (s *Server) AssignDispatch(ctx context.Context, req *AssignDispatchRequest)
 						return nil, ErrFailedQuery
 					}
 
-					break
+					continue
 				}
 			}
 		}
@@ -467,7 +477,16 @@ func (s *Server) AssignDispatch(ctx context.Context, req *AssignDispatchRequest)
 		}
 
 		assignments := []*dispatch.DispatchAssignment{}
+		needsUpdate := []uint64{}
 		for k := 0; k < len(req.ToAdd); k++ {
+			found := false
+			for i := 0; i < len(dsp.Units); i++ {
+				if dsp.Units[i].UnitId == req.ToAdd[k] {
+					found = true
+					break
+				}
+			}
+
 			unit, ok := s.getUnit(ctx, userInfo, req.ToAdd[k])
 			if !ok {
 				return nil, ErrFailedQuery
@@ -479,17 +498,22 @@ func (s *Server) AssignDispatch(ctx context.Context, req *AssignDispatchRequest)
 				Unit:       unit,
 			})
 
+			if !found {
+				needsUpdate = append(needsUpdate, unit.Id)
+			}
+		}
+		dsp.Units = assignments
+
+		for _, unitId := range needsUpdate {
 			if _, err := s.updateDispatchStatus(ctx, userInfo, dsp, &dispatch.DispatchStatus{
 				DispatchId: dsp.Id,
-				UnitId:     unit.Id,
+				UnitId:     unitId,
 				UserId:     &userInfo.UserId,
 				Status:     dispatch.DISPATCH_STATUS_UNIT_ASSIGNED,
 			}); err != nil {
 				return nil, ErrFailedQuery
 			}
 		}
-
-		dsp.Units = assignments
 	}
 
 	// Commit the transaction

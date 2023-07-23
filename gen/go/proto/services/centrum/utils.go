@@ -85,8 +85,20 @@ func (s *Server) getDispatchStatus(ctx context.Context, id uint64) (*dispatch.Di
 			tDispatchStatus.Reason,
 			tDispatchStatus.Code,
 			tDispatchStatus.UserID,
+			tUser.ID,
+			tUser.Identifier,
+			tUser.Firstname,
+			tUser.Lastname,
+			tUser.Job,
+			tUser.JobGrade,
 		).
-		FROM(tDispatchStatus).
+		FROM(
+			tDispatchStatus.
+				LEFT_JOIN(
+					tUser,
+					tUser.ID.EQ(tDispatchStatus.UserID),
+				),
+		).
 		WHERE(
 			tDispatchStatus.ID.EQ(jet.Uint64(id)),
 		).
@@ -180,7 +192,13 @@ func (s *Server) getUnitStatus(ctx context.Context, id uint64) (*dispatch.UnitSt
 			tUnitStatus.X,
 			tUnitStatus.Y,
 		).
-		FROM(tUnitStatus).
+		FROM(
+			tUnitStatus.
+				LEFT_JOIN(
+					tUser,
+					tUser.ID.EQ(tUnitStatus.UserID),
+				),
+		).
 		WHERE(
 			tUnitStatus.ID.EQ(jet.Uint64(id)),
 		).

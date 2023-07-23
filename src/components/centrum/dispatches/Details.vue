@@ -5,6 +5,7 @@ import { mdiClose } from '@mdi/js';
 import Time from '~/components/partials/elements/Time.vue';
 import { DISPATCH_STATUS, Dispatch } from '~~/gen/ts/resources/dispatch/dispatches';
 import Feed from './Feed.vue';
+import StatusUpdateModal from './StatusUpdateModal.vue';
 
 defineProps<{
     open: boolean;
@@ -14,6 +15,8 @@ defineProps<{
 defineEmits<{
     (e: 'close'): void;
 }>();
+
+const statusOpen = ref(false);
 </script>
 
 <template>
@@ -73,10 +76,21 @@ defineEmits<{
                                                             <dd
                                                                 class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
                                                             >
-                                                                {{ DISPATCH_STATUS[dispatch.status?.status ?? 0] }}
-                                                                <span v-if="dispatch.status?.code">
-                                                                    (Code: 'dispatch.status.code')
-                                                                </span>
+                                                                <StatusUpdateModal
+                                                                    :open="statusOpen"
+                                                                    :dispatch="dispatch"
+                                                                    @close="statusOpen = false"
+                                                                />
+                                                                <button
+                                                                    type="button"
+                                                                    @click="statusOpen = true"
+                                                                    class="rounded bg-white/10 px-2 py-1 text-xs font-semibold text-white shadow-sm hover:bg-white/20"
+                                                                >
+                                                                    {{ DISPATCH_STATUS[dispatch.status?.status ?? 0] }}
+                                                                    <span v-if="dispatch.status?.code">
+                                                                        (Code: 'dispatch.status.code')
+                                                                    </span>
+                                                                </button>
                                                             </dd>
                                                         </div>
                                                         <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
