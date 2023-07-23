@@ -35,7 +35,6 @@ statuses.value.forEach((s) => {
 
 async function updateUnitStatus(values: FormData): Promise<void> {
     return new Promise(async (res, rej) => {
-        console.log(values);
         try {
             const call = $grpc.getCentrumClient().updateUnitStatus({
                 unitId: props.unit.id,

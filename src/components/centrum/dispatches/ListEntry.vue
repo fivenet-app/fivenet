@@ -55,8 +55,8 @@ const assignOpen = ref(false);
         </td>
         <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm text-gray-300 sm:pl-0">
             <span v-if="dispatch.units.length === 0"> No Units assigned. </span>
-            <span v-else v-for="unit in dispatch.units" class="mr-1">
-                {{ (units ?? []).find((u) => u.id === unit.unitId)?.initials }}
+            <span v-else class="mr-1">
+                {{ dispatch.units.map((unit) => (units ?? []).find((u) => u.id === unit.unitId)?.initials).join(', ') }}
             </span>
         </td>
         <td class="whitespace-nowrap px-2 py-2 text-sm text-gray-300">

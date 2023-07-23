@@ -14,6 +14,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/events"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/perms"
+	"github.com/galexrt/fivenet/pkg/tracker"
 	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/pkg/utils/dbutils"
 	"github.com/galexrt/fivenet/pkg/utils/syncx"
@@ -40,14 +41,14 @@ var (
 type Server struct {
 	CentrumServiceServer
 
-	ctx    context.Context
-	logger *zap.Logger
-	tracer trace.Tracer
-	db     *sql.DB
-	p      perms.Permissions
-	a      audit.IAuditer
-
-	events *events.Eventus
+	ctx     context.Context
+	logger  *zap.Logger
+	tracer  trace.Tracer
+	db      *sql.DB
+	p       perms.Permissions
+	a       audit.IAuditer
+	events  *events.Eventus
+	tracker *tracker.Tracker
 
 	units      syncx.Map[string, *syncx.Map[uint64, *dispatch.Unit]]
 	unitsUsers syncx.Map[int32, uint64]
@@ -55,17 +56,18 @@ type Server struct {
 	visibleJobs []string
 }
 
-func NewServer(ctx context.Context, logger *zap.Logger, tp *tracesdk.TracerProvider, db *sql.DB, p perms.Permissions, aud audit.IAuditer, e *events.Eventus, visibleJobs []string) *Server {
+func NewServer(ctx context.Context, logger *zap.Logger, tp *tracesdk.TracerProvider, db *sql.DB, p perms.Permissions, aud audit.IAuditer, e *events.Eventus, tracker *tracker.Tracker, visibleJobs []string) *Server {
 	return &Server{
 		ctx:    ctx,
 		logger: logger,
 
 		tracer: tp.Tracer("centrum-cache"),
 
-		db:     db,
-		p:      p,
-		a:      aud,
-		events: e,
+		db:      db,
+		p:       p,
+		a:       aud,
+		events:  e,
+		tracker: tracker,
 
 		units:      syncx.Map[string, *syncx.Map[uint64, *dispatch.Unit]]{},
 		unitsUsers: syncx.Map[int32, uint64]{},
@@ -147,6 +149,8 @@ func (s *Server) TakeControl(ctx context.Context, req *TakeControlRequest) (*Tak
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	if req.Signon {
+		// TODO check if user is on duty, if not error
+
 		stmt := tCentrumUsers.
 			INSERT(
 				tCentrumUsers.Job,
@@ -156,9 +160,9 @@ func (s *Server) TakeControl(ctx context.Context, req *TakeControlRequest) (*Tak
 			QUERY(
 				tUser.
 					SELECT(
-						jet.String(userInfo.Job),
-						jet.Int32(userInfo.UserId),
-						tUser.Identifier,
+						jet.String(userInfo.Job).AS("job"),
+						jet.Int32(userInfo.UserId).AS("user_id"),
+						tUser.Identifier.AS("identifier"),
 					).
 					FROM(tUser).
 					WHERE(
@@ -168,7 +172,6 @@ func (s *Server) TakeControl(ctx context.Context, req *TakeControlRequest) (*Tak
 			)
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-			// TODO Handle if user is not on duty
 			if !dbutils.IsDuplicateError(err) {
 				return nil, err
 			}

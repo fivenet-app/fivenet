@@ -8,7 +8,6 @@ defineProps<{
     activityLength: number;
     activityItem: UnitStatus;
     activityItemIdx: number;
-    showName?: boolean; // TODO
 }>();
 </script>
 

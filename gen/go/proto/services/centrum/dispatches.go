@@ -468,34 +468,24 @@ func (s *Server) AssignDispatch(ctx context.Context, req *AssignDispatchRequest)
 
 		assignments := []*dispatch.DispatchAssignment{}
 		for k := 0; k < len(req.ToAdd); k++ {
-			found := false
-			for i := 0; i < len(dsp.Units); i++ {
-				if dsp.Units[i].UnitId == req.ToAdd[k] {
-					found = true
-					break
-				}
+			unit, ok := s.getUnit(ctx, userInfo, req.ToAdd[k])
+			if !ok {
+				return nil, ErrFailedQuery
 			}
 
-			if !found {
-				unit, ok := s.getUnit(ctx, userInfo, req.ToAdd[k])
-				if !ok {
-					return nil, ErrFailedQuery
-				}
+			assignments = append(assignments, &dispatch.DispatchAssignment{
+				UnitId:     unit.Id,
+				DispatchId: dsp.Id,
+				Unit:       unit,
+			})
 
-				assignments = append(assignments, &dispatch.DispatchAssignment{
-					UnitId:     unit.Id,
-					DispatchId: dsp.Id,
-					Unit:       unit,
-				})
-
-				if _, err := s.updateDispatchStatus(ctx, userInfo, dsp, &dispatch.DispatchStatus{
-					DispatchId: dsp.Id,
-					UnitId:     unit.Id,
-					UserId:     &userInfo.UserId,
-					Status:     dispatch.DISPATCH_STATUS_UNIT_ASSIGNED,
-				}); err != nil {
-					return nil, ErrFailedQuery
-				}
+			if _, err := s.updateDispatchStatus(ctx, userInfo, dsp, &dispatch.DispatchStatus{
+				DispatchId: dsp.Id,
+				UnitId:     unit.Id,
+				UserId:     &userInfo.UserId,
+				Status:     dispatch.DISPATCH_STATUS_UNIT_ASSIGNED,
+			}); err != nil {
+				return nil, ErrFailedQuery
 			}
 		}
 

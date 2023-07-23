@@ -17,7 +17,6 @@ defineProps<{
     activityLength: number;
     activityItem: DispatchStatus;
     activityItemIdx: number;
-    showName?: boolean; // TODO
 }>();
 </script>
 

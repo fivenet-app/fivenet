@@ -7,7 +7,8 @@ import "validate/validate.proto";
 
 enum CENTRUM_MODE {
   MANUAL = 0;
-  ROUND_ROBIN = 1;
+  CENTRALIZED = 1;
+  ROUND_ROBIN = 2;
 }
 
 message Settings {

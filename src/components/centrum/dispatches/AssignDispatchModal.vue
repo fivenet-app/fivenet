@@ -4,7 +4,7 @@ import SvgIcon from '@jamescoyle/vue-icon';
 import { mdiCarEmergency } from '@mdi/js';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { Dispatch } from '~~/gen/ts/resources/dispatch/dispatches';
-import { Unit } from '~~/gen/ts/resources/dispatch/units';
+import { UNIT_STATUS, Unit } from '~~/gen/ts/resources/dispatch/units';
 
 const props = defineProps<{
     open: boolean;
@@ -18,8 +18,7 @@ const emits = defineEmits<{
 
 const { $grpc } = useNuxtApp();
 
-const selectedUnits = ref<(undefined | Unit)[]>(props.dispatch.units.map((du) => props.units?.find((u) => u.id === du.unitId)));
-console.log(selectedUnits.value);
+const selectedUnits = ref<bigint[]>(props.dispatch.units.map((du) => du.unitId));
 
 async function assignDispatch(): Promise<void> {
     return new Promise(async (res, rej) => {
@@ -27,13 +26,12 @@ async function assignDispatch(): Promise<void> {
             const toAdd: bigint[] = [];
             const toRemove: bigint[] = [];
             selectedUnits.value?.forEach((u) => {
-                if (!u) return;
-
-                const idx = props.dispatch.units.findIndex((s) => s.unitId === u.id);
-                if (idx > -1) {
-                    toRemove.push(u.id);
-                } else {
-                    toAdd.push(u.id);
+                toAdd.push(u);
+            });
+            props.dispatch.units?.forEach((u) => {
+                const idx = selectedUnits.value.findIndex((su) => su === u.unitId);
+                if (idx === -1) {
+                    toRemove.push(u.unitId);
                 }
             });
 
@@ -55,11 +53,11 @@ async function assignDispatch(): Promise<void> {
 }
 
 function selectUnit(item: Unit): void {
-    const idx = selectedUnits.value?.findIndex((u) => u && u.id === item.id);
+    const idx = selectedUnits.value?.findIndex((u) => u === item.id);
     if (idx > -1) {
         delete selectedUnits.value[idx];
     } else {
-        selectedUnits.value.push(item);
+        selectedUnits.value.push(item.id);
     }
 }
 </script>
@@ -119,13 +117,14 @@ function selectUnit(item: Unit): void {
                                                         type="button"
                                                         class="text-white hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-2 text-xs my-0.5"
                                                         :class="
-                                                            selectedUnits?.findIndex((u) => u && u.id === item.id) > -1
+                                                            selectedUnits?.findIndex((u) => u && u === item.id) > -1
                                                                 ? 'bg-green-600'
                                                                 : 'bg-info-600'
                                                         "
                                                         @click="selectUnit(item)"
                                                     >
                                                         <span class="mt-1">{{ item.initials }}: {{ item.name }}</span>
+                                                        <span class="mt-1">{{ UNIT_STATUS[item.status?.status!] }}</span>
                                                     </button>
                                                 </div>
                                             </div>

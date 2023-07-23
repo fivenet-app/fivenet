@@ -150,6 +150,7 @@ func NewGRPCServer(ctx context.Context, logger *zap.Logger, db *sql.DB, tp *trac
 
 	// Tracker
 	tracker := tracker.New(ctx, logger.Named("tracker"), tp, db, enricher, config.C.Game.Livemap.RefreshTime, config.C.Game.Livemap.Jobs)
+	go tracker.Start()
 
 	// Attach our GRPC services
 	pbauth.RegisterAuthServiceServer(grpcServer, pbauth.NewServer(db, grpcAuth, tm, p, enricher, aud, ui,
@@ -158,7 +159,7 @@ func NewGRPCServer(ctx context.Context, logger *zap.Logger, db *sql.DB, tp *trac
 	pbcitizenstore.RegisterCitizenStoreServiceServer(grpcServer, pbcitizenstore.NewServer(db, p, enricher, aud,
 		config.C.Game.PublicJobs, config.C.Game.UnemployedJob.Name, config.C.Game.UnemployedJob.Grade))
 
-	centrum := pbcentrum.NewServer(ctx, logger.Named("grpc_centrum"), tp, db, p, aud, eventus, config.C.Game.Livemap.Jobs)
+	centrum := pbcentrum.NewServer(ctx, logger.Named("grpc_centrum"), tp, db, p, aud, eventus, tracker, config.C.Game.Livemap.Jobs)
 	go centrum.Start()
 	//go centrum.ConvertPhoneJobMsgToDispatch()
 	pbcentrum.RegisterCentrumServiceServer(grpcServer, centrum)

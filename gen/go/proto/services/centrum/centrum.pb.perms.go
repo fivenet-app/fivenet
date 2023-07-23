@@ -4,36 +4,34 @@
 package centrum
 
 import (
-	"github.com/galexrt/fivenet/gen/go/proto/resources/permissions"
 	"github.com/galexrt/fivenet/pkg/perms"
 )
 
 const (
 	CentrumServicePerm perms.Category = "CentrumService"
 
-	CentrumServiceAssignDispatchPerm        perms.Name = "AssignDispatch"
-	CentrumServiceAssignUnitPerm            perms.Name = "AssignUnit"
-	CentrumServiceAssignUnitAccessPermField perms.Key  = "Access"
-	CentrumServiceCreateDispatchPerm        perms.Name = "CreateDispatch"
-	CentrumServiceCreateOrUpdateUnitPerm    perms.Name = "CreateOrUpdateUnit"
-	CentrumServiceDeleteUnitPerm            perms.Name = "DeleteUnit"
-	CentrumServiceGetSettingsPerm           perms.Name = "GetSettings"
-	CentrumServiceListDispatchesPerm        perms.Name = "ListDispatches"
-	CentrumServiceListUnitsPerm             perms.Name = "ListUnits"
-	CentrumServiceStreamPerm                perms.Name = "Stream"
-	CentrumServiceTakeControlPerm           perms.Name = "TakeControl"
-	CentrumServiceTakeDispatchPerm          perms.Name = "TakeDispatch"
-	CentrumServiceUpdateDispatchPerm        perms.Name = "UpdateDispatch"
-	CentrumServiceUpdateUnitStatusPerm      perms.Name = "UpdateUnitStatus"
+	CentrumServiceCreateDispatchPerm     perms.Name = "CreateDispatch"
+	CentrumServiceCreateOrUpdateUnitPerm perms.Name = "CreateOrUpdateUnit"
+	CentrumServiceDeleteUnitPerm         perms.Name = "DeleteUnit"
+	CentrumServiceStreamPerm             perms.Name = "Stream"
+	CentrumServiceTakeControlPerm        perms.Name = "TakeControl"
+	CentrumServiceTakeDispatchPerm       perms.Name = "TakeDispatch"
+	CentrumServiceUpdateDispatchPerm     perms.Name = "UpdateDispatch"
+	CentrumServiceUpdateSettingsPerm     perms.Name = "UpdateSettings"
 )
 
 var PermsRemap = map[string]string{
 
 	// Service: CentrumService
+	"CentrumService/AssignDispatch":       "CentrumService/TakeControl",
+	"CentrumService/AssignUnit":           "CentrumService/TakeControl",
+	"CentrumService/GetSettings":          "CentrumService/Stream",
 	"CentrumService/ListDispatchActivity": "CentrumService/Stream",
-	"CentrumService/ListUnitActivity":     "CentrumService/ListUnits",
+	"CentrumService/ListDispatches":       "CentrumService/Stream",
+	"CentrumService/ListUnitActivity":     "CentrumService/Stream",
+	"CentrumService/ListUnits":            "CentrumService/Stream",
 	"CentrumService/UpdateDispatchStatus": "CentrumService/TakeDispatch",
-	"CentrumService/UpdateSettings":       "CentrumService/GetSettings",
+	"CentrumService/UpdateUnitStatus":     "CentrumService/TakeDispatch",
 }
 
 func (s *Server) GetPermsRemap() map[string]string {
@@ -43,23 +41,6 @@ func (s *Server) GetPermsRemap() map[string]string {
 func init() {
 	perms.AddPermsToList([]*perms.Perm{
 		// Service: CentrumService
-		{
-			Category: CentrumServicePerm,
-			Name:     CentrumServiceAssignDispatchPerm,
-			Attrs:    []perms.Attr{},
-		},
-		{
-			Category: CentrumServicePerm,
-			Name:     CentrumServiceAssignUnitPerm,
-			Attrs: []perms.Attr{
-				{
-					Key:           CentrumServiceAssignUnitAccessPermField,
-					Type:          permissions.StringListAttributeType,
-					ValidValues:   []string{"Own", "Lower_Rank", "Same_Rank"},
-					DefaultValues: []string{"Own"},
-				},
-			},
-		},
 		{
 			Category: CentrumServicePerm,
 			Name:     CentrumServiceCreateDispatchPerm,
@@ -73,21 +54,6 @@ func init() {
 		{
 			Category: CentrumServicePerm,
 			Name:     CentrumServiceDeleteUnitPerm,
-			Attrs:    []perms.Attr{},
-		},
-		{
-			Category: CentrumServicePerm,
-			Name:     CentrumServiceGetSettingsPerm,
-			Attrs:    []perms.Attr{},
-		},
-		{
-			Category: CentrumServicePerm,
-			Name:     CentrumServiceListDispatchesPerm,
-			Attrs:    []perms.Attr{},
-		},
-		{
-			Category: CentrumServicePerm,
-			Name:     CentrumServiceListUnitsPerm,
 			Attrs:    []perms.Attr{},
 		},
 		{
@@ -112,7 +78,7 @@ func init() {
 		},
 		{
 			Category: CentrumServicePerm,
-			Name:     CentrumServiceUpdateUnitStatusPerm,
+			Name:     CentrumServiceUpdateSettingsPerm,
 			Attrs:    []perms.Attr{},
 		},
 	})
