@@ -88,7 +88,7 @@ const statusOpen = ref(false);
                                                                 >
                                                                     {{ DISPATCH_STATUS[dispatch.status?.status ?? 0] }}
                                                                     <span v-if="dispatch.status?.code">
-                                                                        (Code: 'dispatch.status.code')
+                                                                        (Code: '{{ dispatch.status.code }}')
                                                                     </span>
                                                                 </button>
                                                             </dd>

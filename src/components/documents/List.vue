@@ -17,6 +17,7 @@ import SvgIcon from '@jamescoyle/vue-icon';
 import { mdiCheck, mdiChevronDown } from '@mdi/js';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { watchDebounced } from '@vueuse/shared';
+import { can } from 'plugins/1.vCan';
 import { ref } from 'vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
@@ -107,6 +108,10 @@ async function listDocuments(): Promise<Array<DocumentShort>> {
 
 async function findCategories(): Promise<void> {
     return new Promise(async (res, rej) => {
+        if (!can('CompletorService.CompleteDocumentCategories')) {
+            return res();
+        }
+
         try {
             const call = $grpc.getCompletorClient().completeDocumentCategories({
                 search: queryCategories.value,
@@ -125,6 +130,10 @@ async function findCategories(): Promise<void> {
 
 async function findChars(): Promise<void> {
     return new Promise(async (res, rej) => {
+        if (!can('CompletorService.CompleteCitizens')) {
+            return res();
+        }
+
         try {
             const call = $grpc.getCompletorClient().completeCitizens({
                 search: queryChars.value,
