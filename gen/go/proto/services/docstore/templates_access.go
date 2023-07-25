@@ -82,8 +82,8 @@ func (s *Server) compareTemplateJobAccess(tx *sql.Tx, current, in []*documents.T
 		return in, toUpdate, toDelete
 	}
 
-	slices.SortFunc(current, func(a, b *documents.TemplateJobAccess) bool {
-		return a.Id > b.Id
+	slices.SortFunc(current, func(a, b *documents.TemplateJobAccess) int {
+		return int(a.Id - b.Id)
 	})
 
 	if len(current) == 0 {

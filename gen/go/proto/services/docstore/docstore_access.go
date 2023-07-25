@@ -139,8 +139,8 @@ func (s *Server) compareDocumentAccess(tx *sql.Tx, current, in *documents.Docume
 		return in, toUpdate, toDelete
 	}
 
-	slices.SortFunc(current.Jobs, func(a, b *documents.DocumentJobAccess) bool {
-		return a.Id > b.Id
+	slices.SortFunc(current.Jobs, func(a, b *documents.DocumentJobAccess) int {
+		return int(a.Id - b.Id)
 	})
 
 	if len(current.Jobs) == 0 {
