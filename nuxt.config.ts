@@ -11,8 +11,6 @@ type PackageJson = {
 const packageJson = fs.readFileSync('./package.json');
 const version: string = (JSON.parse(packageJson.toString()) as PackageJson).version || '0.0.0';
 
-mkcert();
-
 const project = {
     name: 'FiveNet',
     shortName: 'FiveNet',
@@ -128,6 +126,7 @@ const config = defineNuxtConfig({
                 },
             },
         },
+        plugins: [mkcert()],
     },
     css: [
         // Inter font (all weights)
