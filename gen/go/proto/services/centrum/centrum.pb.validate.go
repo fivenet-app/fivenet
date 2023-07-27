@@ -36,7 +36,7 @@ var (
 	_ = anypb.Any{}
 	_ = sort.Sort
 
-	_ = dispatch.DISPATCH_STATUS(0)
+	_ = dispatch.UNIT_STATUS(0)
 )
 
 // Validate checks the field values on ListActivityRequest with the rules

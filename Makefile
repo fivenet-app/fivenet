@@ -58,7 +58,7 @@ protoc-gen-customizer:
 
 .PHONY: gen-proto
 gen-proto: protoc-gen-validate protoc-gen-customizer
-	PATH="$$PATH:cmd/protoc-gen-customizer/" \
+	PATH="$$PATH:./cmd/protoc-gen-customizer/" \
 	npx protoc \
 		--proto_path=./validate \
 		--proto_path=./proto \

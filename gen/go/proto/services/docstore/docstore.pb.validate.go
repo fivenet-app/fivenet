@@ -36,7 +36,7 @@ var (
 	_ = anypb.Any{}
 	_ = sort.Sort
 
-	_ = documents.DOC_RELATION(0)
+	_ = documents.DOC_CONTENT_TYPE(0)
 )
 
 // Validate checks the field values on ListTemplatesRequest with the rules

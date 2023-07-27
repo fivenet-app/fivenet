@@ -17,9 +17,9 @@ services:
 
   mysql:
     container_name: mysql
-    image: docker.io/library/mariadb:10.11.4-jammy
+    image: docker.io/library/mysql:8.0.34
     command:
-      - "mariadbd"
+      - "mysqld"
       - "--innodb-ft-min-token-size=2"
       - "--innodb-ft-max-token-size=40"
     environment:
