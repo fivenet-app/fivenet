@@ -1628,13 +1628,13 @@
   resolved "https://registry.yarnpkg.com/@types/zxcvbn/-/zxcvbn-4.4.1.tgz#46e42cbdcee681b22181478feaf4af2bc4c1abd2"
   integrity sha512-3NoqvZC2W5gAC5DZbTpCeJ251vGQmgcWIHQJGq2J240HY6ErQ9aWKkwfoKJlHLx+A83WPNTZ9+3cd2ILxbvr1w==
 
-"@unhead/dom@1.1.32":
-  version "1.1.32"
-  resolved "https://registry.yarnpkg.com/@unhead/dom/-/dom-1.1.32.tgz#e5dd890f81ac0aeab97bfa864e34571e39c7416d"
-  integrity sha512-AMpHlKEKcm1dxSAvm6GPXhjoZHzXh7ZeR8DAnXVH7Sd9a48xaJhQjmxETweFAcNBSnAn9e7TxTPZVrUcW0ej2w==
+"@unhead/dom@1.2.2":
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/@unhead/dom/-/dom-1.2.2.tgz#b5e8a5d9ab775f85405eee5c2ae9e981de897fcc"
+  integrity sha512-ohganmg4i1Dd4wwQ2A9oLWEkJNpJRoERJNmFgzmScw9Vi3zMqoS4gPIofT20zUR5rhyyAsFojuDPojJ5vKcmqw==
   dependencies:
-    "@unhead/schema" "1.1.32"
-    "@unhead/shared" "1.1.32"
+    "@unhead/schema" "1.2.2"
+    "@unhead/shared" "1.2.2"
 
 "@unhead/schema@1.1.32":
   version "1.1.32"
@@ -1644,12 +1644,27 @@
     hookable "^5.5.3"
     zhead "^2.0.9"
 
+"@unhead/schema@1.2.2":
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/@unhead/schema/-/schema-1.2.2.tgz#ae76dd94abfea9671252ad77a0d2773b657acb0f"
+  integrity sha512-cGtNvadL76eGl7QxGjWHZxFqLv9a2VrmRpeEb1d7sm0cvnN0bWngdXDTdUyXzn7RVv/Um+/yae6eiT6A+pyQOw==
+  dependencies:
+    hookable "^5.5.3"
+    zhead "^2.0.10"
+
 "@unhead/shared@1.1.32":
   version "1.1.32"
   resolved "https://registry.yarnpkg.com/@unhead/shared/-/shared-1.1.32.tgz#cd5d7c6cc8b186fa17788a7ee286da255d03ca1e"
   integrity sha512-oguyfbwbG4+wNphXQjQ3YrEe4NzabocpTQKNCKdTUPtpK9HYNiI+dffEoSiM3tWcwlG3iYrXj5WvREq3FoACWQ==
   dependencies:
     "@unhead/schema" "1.1.32"
+
+"@unhead/shared@1.2.2":
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/@unhead/shared/-/shared-1.2.2.tgz#144ed5dabfbe30659f6494948eb87b02867ac984"
+  integrity sha512-bWRjRyVzFsunih9GbHctvS8Aenj6KBe5ycql1JE4LawBL/NRYvCYUCPpdK5poVOqjYr0yDAf9m4JGaM2HwpVLw==
+  dependencies:
+    "@unhead/schema" "1.2.2"
 
 "@unhead/ssr@^1.1.30":
   version "1.1.32"
@@ -1660,14 +1675,14 @@
     "@unhead/shared" "1.1.32"
 
 "@unhead/vue@^1.1.30", "@unhead/vue@^1.1.32":
-  version "1.1.32"
-  resolved "https://registry.yarnpkg.com/@unhead/vue/-/vue-1.1.32.tgz#c94a217b8a9fe0bba3599f5dae87d3b2c6ee35d2"
-  integrity sha512-rpQVxgI/crwlC+z8GnfPV6EwVN/kyeVSvEfzJO9VMIdrWMrh6vAV0WNv3v+BFd0bVLiRyNzhvbY76yhmAX4Zvw==
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/@unhead/vue/-/vue-1.2.2.tgz#608d43752efd9c589f9eae8a07625460ff4cedc4"
+  integrity sha512-AxOmY5JPn4fS34ovaivPnqg2my+InIkZDNSxCKfRkmbBtstFre/Fyf0d92Qfx0u8PJiSRPOjthEHx5vKDgTEJQ==
   dependencies:
-    "@unhead/schema" "1.1.32"
-    "@unhead/shared" "1.1.32"
+    "@unhead/schema" "1.2.2"
+    "@unhead/shared" "1.2.2"
     hookable "^5.5.3"
-    unhead "1.1.32"
+    unhead "1.2.2"
 
 "@vee-validate/i18n@^4.10.8":
   version "4.10.8"
@@ -8010,14 +8025,14 @@ unenv@^1.5.1:
     node-fetch-native "^1.2.0"
     pathe "^1.1.1"
 
-unhead@1.1.32:
-  version "1.1.32"
-  resolved "https://registry.yarnpkg.com/unhead/-/unhead-1.1.32.tgz#30706c917dc3ae013fad813c4112ead6481fda99"
-  integrity sha512-WO1NTmljMZZzZjzmkcgZpYKpbEGGB3HC+2DIJxAZd0++WCPT9jD6o0MIgpA71UvueOCqLhIlyfGsa9Hgn0Gnog==
+unhead@1.2.2:
+  version "1.2.2"
+  resolved "https://registry.yarnpkg.com/unhead/-/unhead-1.2.2.tgz#1dede2c0365bfd95757677514981589f5763d6aa"
+  integrity sha512-9wDuiso7YWNe0BTA5NGsHR0dtqn0YrL/5+NumfuXDxxYykavc6N27pzZxTXiuvVHbod8tFicsxA6pC9WhQvzqg==
   dependencies:
-    "@unhead/dom" "1.1.32"
-    "@unhead/schema" "1.1.32"
-    "@unhead/shared" "1.1.32"
+    "@unhead/dom" "1.2.2"
+    "@unhead/schema" "1.2.2"
+    "@unhead/shared" "1.2.2"
     hookable "^5.5.3"
 
 unimport@^3.0.11, unimport@^3.0.14, unimport@^3.1.0:
@@ -8650,7 +8665,7 @@ yocto-queue@^0.1.0:
   resolved "https://registry.yarnpkg.com/yocto-queue/-/yocto-queue-0.1.0.tgz#0294eb3dee05028d31ee1a5fa2c556a6aaf10a1b"
   integrity sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==
 
-zhead@^2.0.9:
+zhead@^2.0.10, zhead@^2.0.9:
   version "2.0.10"
   resolved "https://registry.yarnpkg.com/zhead/-/zhead-2.0.10.tgz#dc89c420081fae78a6f3d10687428ae676bc6291"
   integrity sha512-irug8fXNKjqazkA27cFQs7C6/ZD3qNiEzLC56kDyzQART/Z9GMGfg8h2i6fb9c8ZWnIx/QgOgFJxK3A/CYHG0g==
