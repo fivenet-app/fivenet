@@ -1670,18 +1670,18 @@
     unhead "1.1.32"
 
 "@vee-validate/i18n@^4.10.8":
-  version "4.10.8"
-  resolved "https://registry.yarnpkg.com/@vee-validate/i18n/-/i18n-4.10.8.tgz#26ba9c494173bad6ddab7b9bdde415652fb20929"
-  integrity sha512-ZnmKFUyvHqSyqtvK1TitXj3su7Dy8VlTD1WaEfaI4scqmKaoKJCKCDyUkfT/RiuF8Kkf5JpWFTU9z/EWKuoPUw==
+  version "4.11.1"
+  resolved "https://registry.yarnpkg.com/@vee-validate/i18n/-/i18n-4.11.1.tgz#2170b28598306a42a935be8073621f45275fc352"
+  integrity sha512-HhQwkz+G8PoXv6A3dnttSAslbCXw3ecJI9LF1UQHEoWs/vEYnSH746jf0q6RzDzdJ+7jD3KmS9ahsl658I/qQg==
 
 "@vee-validate/nuxt@^4.10.8":
-  version "4.10.8"
-  resolved "https://registry.yarnpkg.com/@vee-validate/nuxt/-/nuxt-4.10.8.tgz#5732bd537bc6c99dadadda65ef55370b23afe5c4"
-  integrity sha512-7BoZLZiyjAB0DIwz3X5Ne/1v6PzB+72HQ2xnMMnfl8A1DwE8tEmzHPtDbfYMNzoUI2cTxkLIOnGF1QdBtAw+TA==
+  version "4.11.1"
+  resolved "https://registry.yarnpkg.com/@vee-validate/nuxt/-/nuxt-4.11.1.tgz#ab1b77169cbf1068cce115150c6e30ba9d7c1e95"
+  integrity sha512-J22AP1nUhNmW6KhL5w3K/iZVsJegOGiXS5eJ8pf+mkAlXO+q2F2EsCI1ToepuPOPTvzkXzBYdjhfNgAdyQdGgA==
   dependencies:
     "@nuxt/kit" "^3.6.5"
     local-pkg "^0.4.3"
-    vee-validate "^4.10.8"
+    vee-validate "^4.11.1"
 
 "@vee-validate/rules@^4.10.8":
   version "4.10.8"
@@ -8197,6 +8197,14 @@ vee-validate@^4.10.8:
   version "4.10.8"
   resolved "https://registry.yarnpkg.com/vee-validate/-/vee-validate-4.10.8.tgz#0e3ba44463cf52a12e85e6c11609a9422350f983"
   integrity sha512-4VWziid3tdlIMGWr0D24YG/e+Q+M6TMK2DQg8dMvufgNyHFIpKxkMKwWoSMuQS0Pi0wKJEo5F5Kok8pXlei4vA==
+  dependencies:
+    "@vue/devtools-api" "^6.5.0"
+    type-fest "^4.0.0"
+
+vee-validate@^4.11.1:
+  version "4.11.1"
+  resolved "https://registry.yarnpkg.com/vee-validate/-/vee-validate-4.11.1.tgz#82fb210fb23660eaa3710b594e3de0b5017e997d"
+  integrity sha512-NGL2qrhoXAng+pZvu9dgQRhCuNBKeXcusdUloN3jnXUxbmLUCJV2kgleS5Jr7yF2iTWvDlDQd5m+Qp6cP1wSgw==
   dependencies:
     "@vue/devtools-api" "^6.5.0"
     type-fest "^4.0.0"
