@@ -52,7 +52,7 @@
     },
     "devDependencies": {
         "@nuxt/devtools": "^0.7.4",
-        "@nuxtjs/i18n": "8.0.0-beta.10",
+        "@nuxtjs/i18n": "8.0.0-rc.2",
         "@nuxtjs/tailwindcss": "^6.8.0",
         "@pinia-plugin-persistedstate/nuxt": "^1.1.1",
         "@tailwindcss/forms": "^0.5.4",
