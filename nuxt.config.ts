@@ -90,8 +90,8 @@ const config = defineNuxtConfig({
         defaultLocaleRouteNameSuffix: '',
         defaultDirection: 'ltr',
         baseUrl: '',
-        routesNameSeparator: '___',
         trailingSlash: false,
+        types: 'composition',
     },
     veeValidate: {
         // disable or enable auto imports
