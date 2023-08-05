@@ -754,7 +754,7 @@ func (p *Perms) addOrUpdateAttributesToRole(ctx context.Context, roleId uint64, 
 				value,
 			).
 			ON_DUPLICATE_KEY_UPDATE(
-				tRoleAttrs.Value.SET(jet.StringExp(jet.Raw("values(`value`)"))),
+				tRoleAttrs.Value.SET(jet.StringExp(jet.Raw("VALUES(`value`)"))),
 			)
 
 		if _, err := stmt.ExecContext(ctx, p.db); err != nil {
@@ -885,7 +885,7 @@ func (p *Perms) UpdateRoleAttributeMaxValues(ctx context.Context, roleId uint64,
 			maxVal,
 		).
 		ON_DUPLICATE_KEY_UPDATE(
-			tRoleAttrs.MaxValues.SET(jet.StringExp(jet.Raw("values(`max_values`)"))),
+			tRoleAttrs.MaxValues.SET(jet.StringExp(jet.Raw("VALUES(`max_values`)"))),
 		)
 
 	if _, err := stmt.ExecContext(ctx, p.db); err != nil {

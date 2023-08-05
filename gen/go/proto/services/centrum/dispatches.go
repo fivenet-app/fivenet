@@ -44,7 +44,7 @@ func (s *Server) ListDispatches(ctx context.Context, req *ListDispatchesRequest)
 		jet.OR(
 			tDispatchStatus.ID.IS_NULL(),
 			tDispatchStatus.ID.EQ(
-				jet.RawInt(`SELECT MAX(dispatchstatus.id) FROM fivenet_centrum_dispatches_status AS dispatchstatus WHERE dispatchstatus.dispatch_id = dispatch.id`),
+				jet.RawInt("SELECT MAX(`dispatchstatus`.`id`) FROM `fivenet_centrum_dispatches_status` AS `dispatchstatus` WHERE `dispatchstatus`.`dispatch_id` = `dispatch`.`id`"),
 			),
 		),
 	)
@@ -466,7 +466,7 @@ func (s *Server) AssignDispatch(ctx context.Context, req *AssignDispatchRequest)
 					jet.CURRENT_TIMESTAMP().ADD(jet.INTERVAL(13, jet.SECOND)),
 				).
 				ON_DUPLICATE_KEY_UPDATE(
-					tDispatchUnit.ExpiresAt.SET(jet.RawTimestamp("VALUES(expires_at)")),
+					tDispatchUnit.ExpiresAt.SET(jet.RawTimestamp("VALUES(`expires_at`)")),
 				)
 
 			if _, err := stmt.ExecContext(ctx, tx); err != nil {

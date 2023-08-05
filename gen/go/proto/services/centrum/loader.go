@@ -85,7 +85,7 @@ import (
 func (s *Server) loadUnits(ctx context.Context, id uint64) error {
 	condition := tUnitStatus.ID.IS_NULL().OR(
 		tUnitStatus.ID.EQ(
-			jet.RawInt(`SELECT MAX(unitstatus.id) FROM fivenet_centrum_units_status AS unitstatus WHERE unitstatus.unit_id = unit.id`),
+			jet.RawInt("SELECT MAX(`unitstatus`.`id`) FROM `fivenet_centrum_units_status` AS `unitstatus` WHERE `unitstatus`.`unit_id` = `unit`.`id`"),
 		),
 	)
 

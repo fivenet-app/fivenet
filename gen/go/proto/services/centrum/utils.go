@@ -21,7 +21,7 @@ func (s *Server) getDispatchFromDB(ctx context.Context, tx qrm.DB, id uint64) (*
 	condition := tDispatch.ID.EQ(jet.Uint64(id)).AND(jet.OR(
 		tDispatchStatus.ID.IS_NULL(),
 		tDispatchStatus.ID.EQ(
-			jet.RawInt(`SELECT MAX(dispatchstatus.id) FROM fivenet_centrum_dispatches_status AS dispatchstatus WHERE dispatchstatus.dispatch_id = dispatch.id`),
+			jet.RawInt("SELECT MAX(`dispatchstatus`.`id`) FROM `fivenet_centrum_dispatches_status` AS `dispatchstatus` WHERE `dispatchstatus`.`dispatch_id` = `dispatch`.`id`"),
 		),
 	))
 
@@ -129,7 +129,7 @@ func (s *Server) getUnit(ctx context.Context, userInfo *userinfo.UserInfo, id ui
 func (s *Server) getUnitFromDB(ctx context.Context, tx qrm.DB, id uint64) (*dispatch.Unit, error) {
 	condition := tUnitStatus.ID.IS_NULL().OR(
 		tUnitStatus.ID.EQ(
-			jet.RawInt(`SELECT MAX(unitstatus.id) FROM fivenet_centrum_units_status AS unitstatus WHERE unitstatus.unit_id = unit.id`),
+			jet.RawInt("SELECT MAX(`unitstatus`.`id`) FROM `fivenet_centrum_units_status` AS `unitstatus` WHERE `unitstatus`.`unit_id` = `unit`.`id`"),
 		),
 	)
 

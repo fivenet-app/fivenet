@@ -310,7 +310,7 @@ func (p *Perms) UpdateRolePermissions(ctx context.Context, roleId uint64, perms 
 		).
 		MODELS(rolePerms).
 		ON_DUPLICATE_KEY_UPDATE(
-			tRolePerms.Val.SET(jet.BoolExp(jet.Raw("values(`val`)"))),
+			tRolePerms.Val.SET(jet.BoolExp(jet.Raw("VALUES(`val`)"))),
 		)
 
 	if _, err := stmt.ExecContext(ctx, p.db); err != nil {

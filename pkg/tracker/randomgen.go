@@ -87,8 +87,8 @@ func (s *Tracker) GenerateRandomUserMarker() {
 				).
 				MODELS(markers).
 				ON_DUPLICATE_KEY_UPDATE(
-					tLocs.X.SET(jet.RawFloat("VALUES(x)")),
-					tLocs.Y.SET(jet.RawFloat("VALUES(y)")),
+					tLocs.X.SET(jet.RawFloat("VALUES(`x`)")),
+					tLocs.Y.SET(jet.RawFloat("VALUES(`y`)")),
 				)
 
 			_, err := stmt.ExecContext(ctx, s.db)
