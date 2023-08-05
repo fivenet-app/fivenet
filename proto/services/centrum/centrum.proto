@@ -173,6 +173,7 @@ service CentrumService {
   rpc GetSettings(resources.common.EmptyRequest) returns (resources.dispatch.Settings);
   // @perm
   rpc UpdateSettings(resources.dispatch.Settings) returns (resources.dispatch.Settings);
+
   // @perm
   rpc CreateOrUpdateUnit(CreateOrUpdateUnitRequest) returns (CreateOrUpdateUnitResponse);
   // @perm

@@ -39,14 +39,15 @@ message DispatchAssignment {
 
 enum DISPATCH_STATUS {
   NEW = 0;
-  DECLINED = 1;
-  UNASSIGNED = 2;
+  UNASSIGNED = 1;
+  UPDATED = 2;
   UNIT_ASSIGNED = 3;
   UNIT_UNASSIGNED = 4;
   EN_ROUTE = 5;
   ON_SCENE = 6;
   NEED_ASSISTANCE = 7;
   COMPLETED = 8;
+  CANCELLED = 9;
 }
 
 message DispatchStatus {

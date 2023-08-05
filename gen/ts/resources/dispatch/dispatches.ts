@@ -150,13 +150,13 @@ export enum DISPATCH_STATUS {
      */
     NEW = 0,
     /**
-     * @generated from protobuf enum value: DECLINED = 1;
+     * @generated from protobuf enum value: UNASSIGNED = 1;
      */
-    DECLINED = 1,
+    UNASSIGNED = 1,
     /**
-     * @generated from protobuf enum value: UNASSIGNED = 2;
+     * @generated from protobuf enum value: UPDATED = 2;
      */
-    UNASSIGNED = 2,
+    UPDATED = 2,
     /**
      * @generated from protobuf enum value: UNIT_ASSIGNED = 3;
      */
@@ -180,7 +180,11 @@ export enum DISPATCH_STATUS {
     /**
      * @generated from protobuf enum value: COMPLETED = 8;
      */
-    COMPLETED = 8
+    COMPLETED = 8,
+    /**
+     * @generated from protobuf enum value: CANCELLED = 9;
+     */
+    CANCELLED = 9
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Dispatch$Type extends MessageType<Dispatch> {

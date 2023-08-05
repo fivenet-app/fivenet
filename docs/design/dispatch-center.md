@@ -41,14 +41,14 @@ title: "Dispatch Center"
         * `BUSY` - Unit is busy (normally means en route to/on scene dispatch, etc.)
     * Actions:
         * `ListUnits` - List all units that the person has access to.
-        * `CreateUnit` - Create units.
-        * `UpdateUnit` - Update unit info (e.g., name, initials, description).
+        * `CreateOrUpdateUnit` - Create unit or update unit info (e.g., name, initials, description).
         * `DeleteUnit` - Delete unit.
-        * `UpdateUnitStatus` - Update Unit status. Own unit can always be updated, otherwise a disponent can update an unit as well.
+        * `UpdateUnitStatus` - Update Unit status. Own unit can be updated by users, disponents can update any unit of their job.
         * `AssignUnit` - Disponent function to assign an user to an unit, for "normal" users is used to join an unit.
         * `ListUnitActivity` - List own or others units activity.
 * Dispatches
     * Consist of a message, description, and a position (x and y coordinates).
+        * If specified or added/updated later on, attributes (list of strings) can be added.
     * Status of the dispatch is "shared" by multiple units, e.g., unit one sets status `EN_ROUTE` and unit two sets `ON_SCENE`, both are in the dispatch status log.
         * The "informal" status are ignored when getting the status (e.g., `USER_ADDED`, etc.)
     * Can be created manually via the dispatch center, livemap integration or "the phone" (for now the existing GKSPhone dispatch system is used).
@@ -56,9 +56,10 @@ title: "Dispatch Center"
     * Disponents can update dispatches, including their status, as they please.
     * Dispatches assigned to an unit can either be "forced" or "requested".
         * "Requested" means that the assigned units get a popup with a timeout of 20 seconds that requires each unit to give their "approval or denial" to taking the dispatch.
+            * If a dispatch is not accepted, it will be marked as unassigned if no other unit was assigend to it. "Last one" to not accept, will cause the dispatch status to go to `UNASSIGNED`
     * Dispatch Status:
         * `NEW` - Freshly created dispatch.
-        * `TRIAGE` - Waiting for triage from the disponents or units (depending on the mode).
+        * `UNASSIGNED` - Waiting for "triage" by the disponents or units (depending on the mode).
         * `UPDATED` - Dispatch has been updated.
         * `UNIT_ASSIGNED` - Unit assigned to dispatch.
         * `UNIT_UNASSIGNED` - Unit unassigned from dispatch.
