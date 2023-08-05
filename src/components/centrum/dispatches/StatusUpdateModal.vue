@@ -23,7 +23,7 @@ const { $grpc } = useNuxtApp();
 
 const statuses = ref<{ status: DISPATCH_STATUS; selected?: boolean }[]>([
     { status: DISPATCH_STATUS.EN_ROUTE },
-    { status: DISPATCH_STATUS.AT_SCENE },
+    { status: DISPATCH_STATUS.ON_SCENE },
     { status: DISPATCH_STATUS.NEED_ASSISTANCE },
     { status: DISPATCH_STATUS.COMPLETED },
 ]);

@@ -33,7 +33,7 @@ type Action = { icon: string; name: string; action?: Function; class?: string; s
 
 const actionsDispatch: Action[] = [
     { icon: mdiCarBack, name: 'En Route', class: 'bg-info-600', status: DISPATCH_STATUS.EN_ROUTE },
-    { icon: mdiMarkerCheck, name: 'At Scene', class: 'bg-primary-600', status: DISPATCH_STATUS.AT_SCENE },
+    { icon: mdiMarkerCheck, name: 'At Scene', class: 'bg-primary-600', status: DISPATCH_STATUS.ON_SCENE },
     { icon: mdiHelpCircle, name: 'Need Assistance', class: 'bg-warn-600', status: DISPATCH_STATUS.NEED_ASSISTANCE },
     { icon: mdiCheckBold, name: 'Completed', class: 'bg-success-600', status: DISPATCH_STATUS.COMPLETED },
     { icon: mdiListStatus, name: 'Update Status', class: 'bg-base-800' },

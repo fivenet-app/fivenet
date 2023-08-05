@@ -95,7 +95,7 @@ defineProps<{
                 <Time :value="activityItem.createdAt" />
             </span>
         </template>
-        <template v-else-if="activityItem.status === DISPATCH_STATUS.AT_SCENE">
+        <template v-else-if="activityItem.status === DISPATCH_STATUS.ON_SCENE">
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
                 <SvgIcon type="mdi" :path="mdiMapMarker" class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
