@@ -183,6 +183,108 @@ var _ interface {
 	ErrorName() string
 } = ListActivityRequestValidationError{}
 
+// Validate checks the field values on GetSettingsRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetSettingsRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetSettingsRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetSettingsRequestMultiError, or nil if none found.
+func (m *GetSettingsRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetSettingsRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return GetSettingsRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetSettingsRequestMultiError is an error wrapping multiple validation errors
+// returned by GetSettingsRequest.ValidateAll() if the designated constraints
+// aren't met.
+type GetSettingsRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetSettingsRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetSettingsRequestMultiError) AllErrors() []error { return m }
+
+// GetSettingsRequestValidationError is the validation error returned by
+// GetSettingsRequest.Validate if the designated constraints aren't met.
+type GetSettingsRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetSettingsRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetSettingsRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetSettingsRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetSettingsRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetSettingsRequestValidationError) ErrorName() string {
+	return "GetSettingsRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetSettingsRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetSettingsRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetSettingsRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetSettingsRequestValidationError{}
+
 // Validate checks the field values on ListUnitsRequest with the rules defined
 // in the proto definition for this message. If any rules are violated, the
 // first error encountered is returned, or nil if there are no violations.

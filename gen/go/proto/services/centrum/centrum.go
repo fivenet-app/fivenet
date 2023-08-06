@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/galexrt/fivenet/gen/go/proto/resources/common"
 	dispatch "github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
 	users "github.com/galexrt/fivenet/gen/go/proto/resources/users"
@@ -107,7 +106,7 @@ func (s *Server) refresh() error {
 	return nil
 }
 
-func (s *Server) GetSettings(ctx context.Context, req *common.EmptyRequest) (*dispatch.Settings, error) {
+func (s *Server) GetSettings(ctx context.Context, req *GetSettingsRequest) (*dispatch.Settings, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	return s.getSettings(ctx, userInfo.Job)

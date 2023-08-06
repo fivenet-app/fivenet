@@ -22,7 +22,7 @@ import (
 )
 
 const (
-	DispatchMarkerLimit = 60
+	MaxDispatchMarkerLimit = 120
 )
 
 var (
@@ -100,8 +100,6 @@ func (s *Tracker) refreshCache() {
 }
 
 func (s *Tracker) refreshUserLocations(ctx context.Context) error {
-	markers := map[string][]*livemap.UserMarker{}
-
 	tLocs := tLocs.AS("genericmarker")
 	stmt := tLocs.
 		SELECT(
@@ -138,6 +136,7 @@ func (s *Tracker) refreshUserLocations(ctx context.Context) error {
 		return err
 	}
 
+	markers := map[string][]*livemap.UserMarker{}
 	for i := 0; i < len(dest); i++ {
 		s.c.EnrichJobInfo(dest[i].User)
 
@@ -151,6 +150,9 @@ func (s *Tracker) refreshUserLocations(ctx context.Context) error {
 
 		markers[job] = append(markers[job], dest[i])
 	}
+
+	// TODO comprae the markers with the current markers before updating them and use these as events for players going on/off duty
+
 	for job, v := range markers {
 		s.usersCache.Store(job, v)
 	}
@@ -160,7 +162,7 @@ func (s *Tracker) refreshUserLocations(ctx context.Context) error {
 
 func (s *Tracker) refreshDispatches(ctx context.Context) error {
 	if len(s.visibleJobs) == 0 {
-		s.logger.Warn("empty livemap jobs in config, no dispatches can be found because of that")
+		s.logger.Warn("empty livemap jobs in config, no dispatches will be loaded")
 		return nil
 	}
 
@@ -190,7 +192,7 @@ func (s *Tracker) refreshDispatches(ctx context.Context) error {
 			gksphoneJobM.Owner.ASC(),
 			gksphoneJobM.Time.DESC(),
 		).
-		LIMIT(DispatchMarkerLimit)
+		LIMIT(MaxDispatchMarkerLimit)
 
 	var dest []*model.GksphoneJobMessage
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
@@ -259,4 +261,8 @@ func (s *Tracker) refreshDispatches(ctx context.Context) error {
 	}
 
 	return nil
+}
+
+func (s *Tracker) GetPlayers(job string) ([]*livemap.UserMarker, bool) {
+	return s.usersCache.Load(job)
 }
