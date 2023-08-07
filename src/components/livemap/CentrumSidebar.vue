@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 import SvgIcon from '@jamescoyle/vue-icon';
 import {
     mdiCalendarCheck,
@@ -6,6 +7,7 @@ import {
     mdiCarBack,
     mdiCarEmergency,
     mdiCheckBold,
+    mdiChevronDown,
     mdiCoffee,
     mdiHelpCircle,
     mdiHoopHouse,
@@ -33,7 +35,7 @@ type Action = { icon: string; name: string; action?: Function; class?: string; s
 
 const actionsDispatch: Action[] = [
     { icon: mdiCarBack, name: 'En Route', class: 'bg-info-600', status: DISPATCH_STATUS.EN_ROUTE },
-    { icon: mdiMarkerCheck, name: 'At Scene', class: 'bg-primary-600', status: DISPATCH_STATUS.ON_SCENE },
+    { icon: mdiMarkerCheck, name: 'On Scene', class: 'bg-primary-600', status: DISPATCH_STATUS.ON_SCENE },
     { icon: mdiHelpCircle, name: 'Need Assistance', class: 'bg-warn-600', status: DISPATCH_STATUS.NEED_ASSISTANCE },
     { icon: mdiCheckBold, name: 'Completed', class: 'bg-success-600', status: DISPATCH_STATUS.COMPLETED },
     { icon: mdiListStatus, name: 'Update Status', class: 'bg-base-800' },
@@ -178,7 +180,6 @@ const unitOpen = ref(false);
         <nav class="flex flex-1 flex-col">
             <ul role="list" class="flex flex-1 flex-col gap-y-2 divide-y divide-base-400">
                 <li>
-                    <!-- <div class="text-xs font-semibold leading-6 text-base-200">Your Unit</div> -->
                     <ul role="list" class="-mx-2 mt-2 space-y-1">
                         <li v-if="unit">
                             <button
@@ -202,7 +203,49 @@ const unitOpen = ref(false);
                         </li>
                     </ul>
                 </li>
-                <li>
+                <li v-if="unit">
+                    <ul role="list" class="-mx-2 space-y-1">
+                        <li>
+                            <Disclosure as="div" v-slot="{ open }">
+                                <DisclosureButton class="flex w-full items-start justify-between text-left text-white">
+                                    <span class="text-base-200 leading-7">
+                                        <div class="text-xs font-semibold leading-6 text-base-200">Unit</div>
+                                    </span>
+                                    <span class="ml-6 flex h-7 items-center">
+                                        <SvgIcon
+                                            :class="[open ? 'upsidedown' : '', 'h-6 w-6 transition-transform']"
+                                            aria-hidden="true"
+                                            type="mdi"
+                                            :path="mdiChevronDown"
+                                        />
+                                    </span>
+                                </DisclosureButton>
+                                <DisclosurePanel>
+                                    <div class="flex flex-row gap-2">
+                                        <div class="w-full grid grid-cols-2 gap-0.5">
+                                            <button
+                                                v-for="(item, idx) in actionsUnit"
+                                                :key="item.name"
+                                                type="button"
+                                                class="text-white bg-primary hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-2 text-xs my-0.5"
+                                                :class="[idx >= actionsUnit.length - 1 ? 'col-span-2' : '', item.class]"
+                                            >
+                                                <SvgIcon
+                                                    type="mdi"
+                                                    :path="item.icon ?? mdiHoopHouse"
+                                                    class="text-base-200 group-hover:text-white h-5 w-5 shrink-0"
+                                                    aria-hidden="true"
+                                                />
+                                                <span class="mt-1">{{ item.name }}</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </DisclosurePanel>
+                            </Disclosure>
+                        </li>
+                    </ul>
+                </li>
+                <li v-if="unit">
                     <ul role="list" class="-mx-2 space-y-1">
                         <div class="text-xs font-semibold leading-6 text-base-200">Dispatches</div>
                         <li>
@@ -226,31 +269,7 @@ const unitOpen = ref(false);
                         </li>
                     </ul>
                 </li>
-                <li>
-                    <ul role="list" class="-mx-2 space-y-1">
-                        <div class="text-xs font-semibold leading-6 text-base-200">Unit</div>
-                        <li>
-                            <div class="grid grid-cols-2 gap-0.5">
-                                <button
-                                    v-for="(item, idx) in actionsUnit"
-                                    :key="item.name"
-                                    type="button"
-                                    class="text-white bg-primary hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-2 text-xs my-0.5"
-                                    :class="[idx >= actionsUnit.length - 1 ? 'col-span-2' : '', item.class]"
-                                >
-                                    <SvgIcon
-                                        type="mdi"
-                                        :path="item.icon ?? mdiHoopHouse"
-                                        class="text-base-200 group-hover:text-white h-5 w-5 shrink-0"
-                                        aria-hidden="true"
-                                    />
-                                    <span class="mt-1">{{ item.name }}</span>
-                                </button>
-                            </div>
-                        </li>
-                    </ul>
-                </li>
-                <li>
+                <li v-if="unit">
                     <div class="text-xs font-semibold leading-6 text-base-200">Your Dispatches</div>
                     <ul role="list" class="-mx-2 mt-2 space-y-1">
                         <li v-if="!dispatches || dispatches.length === 0">

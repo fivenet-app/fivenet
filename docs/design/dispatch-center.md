@@ -33,7 +33,7 @@ title: "Dispatch Center"
 * Created by the faction leaders via the control center.
 * Users can be assigned by disponents and self-assign into one unit of their own job only.
 * Users can set their own units status.
-    * The "informal" status are ignored when getting the status (e.g., `USER_ADDED`, etc.)
+    * The "informal" status are ignored in the "current status" when getting the status (e.g., `USER_ADDED`, etc.)
 * Disponents can update unit status as they please.
 * Unit Status:
     * `UNKNOWN` - Dummy status should something go (very) wrong.
@@ -56,13 +56,14 @@ title: "Dispatch Center"
 * Consist of a message, description, and a position (x and y coordinates).
     * If specified or added/updated later on, attributes (list of strings) can be added.
 * Status of the dispatch is "shared" by multiple units, e.g., unit one sets status `EN_ROUTE` and unit two sets `ON_SCENE`, both are in the dispatch status log.
-    * The "informal" status are ignored when getting the status (e.g., `USER_ADDED`, etc.)
+    * The "informal" status are ignored in the "current status" when getting the status (e.g., `UNIT_ASSIGNED`, etc.)
 * Can be created manually via the dispatch center, livemap integration or "the phone" (for now the existing GKSPhone dispatch system is used).
 * Can have attributes which are a list of strings attached to them (e.g., `dangerous`, `gun shots`).
 * Disponents can update dispatches, including their status, as they please.
 * Dispatches assigned to an unit can either be "forced" or "requested".
     * "Requested" means that the assigned units get a popup with a timeout of 20 seconds that requires each unit to give their "approval or denial" to taking the dispatch.
         * If a dispatch is not accepted, it will be marked as unassigned if no other unit was assigend to it. "Last one" to not accept, will cause the dispatch status to go to `UNASSIGNED`
+* If an user leaves an unit and it will be empty, or an unit marks itself as `UNAVAILABLE`, the dispatches that are assigned to the unit that aren't `COMPLETED` or `CANCELLED`, will be set as `UNASSIGNED` (when no other unit is assigned then).
 * Dispatch Status:
     * `NEW` - Freshly created dispatch.
     * `UNASSIGNED` - Waiting for "triage" by the disponents or units (depending on the mode).

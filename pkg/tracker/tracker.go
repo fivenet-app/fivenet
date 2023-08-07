@@ -41,8 +41,7 @@ type Tracker struct {
 	db     *sql.DB
 	c      *mstlystcdata.Enricher
 
-	dispatchesCache syncx.Map[string, []*livemap.DispatchMarker]
-	usersCache      syncx.Map[string, []*livemap.UserMarker]
+	usersCache syncx.Map[string, []*livemap.UserMarker]
 
 	broker *utils.Broker[interface{}]
 
@@ -74,8 +73,7 @@ func New(p Params) *Tracker {
 		db:     p.DB,
 		c:      p.Enricher,
 
-		dispatchesCache: syncx.Map[string, []*livemap.DispatchMarker]{},
-		usersCache:      syncx.Map[string, []*livemap.UserMarker]{},
+		usersCache: syncx.Map[string, []*livemap.UserMarker]{},
 
 		broker: broker,
 
@@ -178,7 +176,7 @@ func (s *Tracker) refreshUserLocations(ctx context.Context) error {
 		markers[job] = append(markers[job], dest[i])
 	}
 
-	// TODO comprae the markers with the current markers before updating them and use these as events for players going on/off duty
+	// TODO compare the markers with the current markers before updating them and use these as events for players going on/off duty
 
 	for job, v := range markers {
 		s.usersCache.Store(job, v)
@@ -191,7 +189,7 @@ func (s *Tracker) GetPlayers(job string) ([]*livemap.UserMarker, bool) {
 	return s.usersCache.Load(job)
 }
 
-func (s *Tracker) GetPlayerFromJob(job string) (float64, float64, bool) {
+func (s *Tracker) GetPlayerFromJob(job string, userId int32) (float64, float64, bool) {
 	users, ok := s.usersCache.Load(job)
 	if !ok {
 		return 0, 0, ok

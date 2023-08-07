@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import SvgIcon from '@jamescoyle/vue-icon';
-import { mdiAccountMultiplePlus, mdiDetails, mdiMapMarker } from '@mdi/js';
+import { mdiAccountMultiplePlus, mdiDotsVertical, mdiMapMarker } from '@mdi/js';
 import Time from '~/components/partials/elements/Time.vue';
 import { DISPATCH_STATUS, Dispatch } from '~~/gen/ts/resources/dispatch/dispatches';
 import { Unit } from '~~/gen/ts/resources/dispatch/units';
@@ -30,18 +30,25 @@ const assignOpen = ref(false);
             <button
                 type="button"
                 class="text-primary-400 hover:text-primary-600"
-                :title="$t('common.detail', 2)"
-                @click="detailsOpen = true"
+                :title="$t('common.assign')"
+                @click="assignOpen = true"
             >
-                <SvgIcon type="mdi" :path="mdiDetails" class="w-6 h-auto ml-auto mr-2.5" />
+                <SvgIcon type="mdi" :path="mdiAccountMultiplePlus" class="w-6 h-auto ml-auto mr-1.5" aria-hidden="true" />
             </button>
             <button
                 type="button"
                 class="text-primary-400 hover:text-primary-600"
-                :title="$t('common.assign')"
-                @click="assignOpen = true"
+                @click="$emit('goto', { x: dispatch.x, y: dispatch.y })"
             >
-                <SvgIcon type="mdi" :path="mdiAccountMultiplePlus" class="w-6 h-auto ml-auto mr-2.5" aria-hidden="true" />
+                <SvgIcon type="mdi" :path="mdiMapMarker" class="w-6 h-auto ml-auto mr-1.5" aria-hidden="true" />
+            </button>
+            <button
+                type="button"
+                class="text-primary-400 hover:text-primary-600"
+                :title="$t('common.detail', 2)"
+                @click="detailsOpen = true"
+            >
+                <SvgIcon type="mdi" :path="mdiDotsVertical" class="w-6 h-auto ml-auto mr-1.5" />
             </button>
         </td>
         <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm text-gray-300 sm:pl-0">
@@ -58,16 +65,6 @@ const assignOpen = ref(false);
             <span v-else class="mr-1">
                 {{ dispatch.units.map((unit) => (units ?? []).find((u) => u.id === unit.unitId)?.initials).join(', ') }}
             </span>
-        </td>
-        <td class="whitespace-nowrap px-2 py-2 text-sm text-gray-300">
-            <button
-                type="button"
-                class="inline-flex items-center rounded bg-white/10 px-2 py-1 text-xs font-semibold text-white shadow-sm hover:bg-white/20"
-                @click="$emit('goto', { x: dispatch.x, y: dispatch.y })"
-            >
-                Go to
-                <SvgIcon type="mdi" :path="mdiMapMarker" class="-mr-0.5 h-4 w-4" aria-hidden="true" />
-            </button>
         </td>
         <td class="whitespace-nowrap px-2 py-2 text-sm text-gray-100">{{ dispatch.message }}</td>
     </tr>

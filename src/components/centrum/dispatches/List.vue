@@ -60,12 +60,6 @@ defineEmits<{
                                     scope="col"
                                     class="whitespace-nowrap px-2 py-2 text-left text-sm font-semibold text-gray-100"
                                 >
-                                    {{ $t('common.location') }}
-                                </th>
-                                <th
-                                    scope="col"
-                                    class="whitespace-nowrap px-2 py-2 text-left text-sm font-semibold text-gray-100"
-                                >
                                     Message
                                 </th>
                             </tr>
