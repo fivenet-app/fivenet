@@ -239,6 +239,7 @@ async function startStream(): Promise<void> {
     } catch (e) {
         const err = e as RpcError;
         error.value = err.message;
+        // TODO Restart stream automatically if timedout
         $loading.errored();
         stopStream();
     }

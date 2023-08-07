@@ -1,8 +1,11 @@
 package events
 
 import (
+	"context"
+
 	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/nats-io/nats.go"
+	"go.uber.org/fx"
 	"go.uber.org/zap"
 )
 
@@ -19,9 +22,17 @@ type Eventus struct {
 	JS nats.JetStreamContext
 }
 
-func New(logger *zap.Logger, cfg *config.Config) (*Eventus, error) {
+type Params struct {
+	fx.In
+
+	LC     fx.Lifecycle
+	Logger *zap.Logger
+	Config *config.Config
+}
+
+func New(p Params) (*Eventus, error) {
 	// Connect to NATS
-	nc, err := nats.Connect(cfg.NATS.URL, nats.Name("FiveNet"),
+	nc, err := nats.Connect(p.Config.NATS.URL, nats.Name("FiveNet"),
 		nats.NoEcho())
 	if err != nil {
 		return nil, err
@@ -32,13 +43,19 @@ func New(logger *zap.Logger, cfg *config.Config) (*Eventus, error) {
 		return nil, err
 	}
 
-	return &Eventus{
-		logger: logger,
+	e := &Eventus{
+		logger: p.Logger.Named("eventus"),
 		NC:     nc,
 		JS:     js,
-	}, nil
+	}
+
+	p.LC.Append(fx.StopHook(func(_ context.Context) error {
+		return e.stop()
+	}))
+
+	return e, nil
 }
 
-func (e *Eventus) Stop() error {
+func (e *Eventus) stop() error {
 	return e.NC.Drain()
 }

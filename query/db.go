@@ -11,6 +11,8 @@ import (
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/mysql"
 	"github.com/golang-migrate/migrate/v4/source/iofs"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/collectors"
 	semconv "go.opentelemetry.io/otel/semconv/v1.4.0"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
@@ -54,6 +56,9 @@ func SetupDB(p Params) (*sql.DB, error) {
 	p.LC.Append(fx.StopHook(func(_ context.Context) error {
 		return db.Close()
 	}))
+
+	// Setup SQL Prometheus metrics collector
+	prometheus.MustRegister(collectors.NewDBStatsCollector(db, p.Config.Database.DBName))
 
 	return db, nil
 }

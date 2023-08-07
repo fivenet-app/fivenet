@@ -47,7 +47,7 @@ func New(p Params) IAuditer {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	a := &AuditStorer{
-		logger: p.Logger,
+		logger: p.Logger.Named("audit"),
 		tracer: p.TP.Tracer("audit-storer"),
 		db:     p.DB,
 		ctx:    ctx,

@@ -64,8 +64,6 @@ type Permissions interface {
 	GetClosestRoleAttrMaxVals(job string, grade int32, permId uint64, key Key) (*permissions.AttributeValues, uint64)
 
 	Attr(userInfo *userinfo.UserInfo, category Category, name Name, key Key) (any, error)
-
-	Stop() error
 }
 
 type userCacheKey struct {
@@ -111,13 +109,11 @@ type Params struct {
 	DB     *sql.DB
 	TP     *tracesdk.TracerProvider
 	Events *events.Eventus
+	Config *config.Config
 }
 
 func New(p Params) (Permissions, error) {
 	ctx, cancel := context.WithCancel(context.Background())
-	p.LC.Append(fx.StopHook(func(_ context.Context) {
-		cancel()
-	}))
 
 	userCanCache := cache.NewContext(
 		ctx,
@@ -156,11 +152,22 @@ func New(p Params) (Permissions, error) {
 			return err
 		}
 
+		cfgDefaultPerms := p.Config.Game.DefaultPermissions
+		defaultPerms := make([]string, len(p.Config.Game.DefaultPermissions))
+		for i := 0; i < len(p.Config.Game.DefaultPermissions); i++ {
+			defaultPerms[i] = BuildGuard(Category(cfgDefaultPerms[i].Category), Name(cfgDefaultPerms[i].Name))
+		}
+
+		if err := ps.Register(defaultPerms); err != nil {
+			return fmt.Errorf("failed to register permissions. %w", err)
+		}
+
 		return nil
 	}))
 
 	p.LC.Append(fx.StopHook(func(_ context.Context) error {
-		return ps.Stop()
+		cancel()
+		return ps.stop()
 	}))
 
 	return ps, nil
@@ -448,6 +455,6 @@ func (p *Perms) removeRoleAttributeFromMap(roleId uint64, attrId uint64) {
 	attrMap.Delete(attrId)
 }
 
-func (p *Perms) Stop() error {
+func (p *Perms) stop() error {
 	return p.eventSub.Unsubscribe()
 }

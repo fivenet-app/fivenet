@@ -52,7 +52,10 @@ func TestFullAuthFlow(t *testing.T) {
 
 	cfg.NATS.URL = servers.TestNATSServer.GetURL()
 
-	eventus, err := events.New(logger, cfg)
+	eventus, err := events.New(events.Params{
+		Logger: logger,
+		Config: cfg,
+	})
 	assert.NoError(t, err)
 
 	p, err := perms.New(perms.Params{
@@ -62,7 +65,6 @@ func TestFullAuthFlow(t *testing.T) {
 		Events: eventus,
 	})
 	assert.NoError(t, err)
-	defer p.Stop()
 
 	aud := &audit.Noop{}
 	cfg.Cache.RefreshTime = 1 * time.Hour
