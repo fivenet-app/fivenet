@@ -3,9 +3,9 @@ package rector
 import (
 	"database/sql"
 
-	"github.com/galexrt/fivenet/pkg/audit"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/perms"
+	"github.com/galexrt/fivenet/pkg/server/audit"
 	"go.uber.org/zap"
 )
 

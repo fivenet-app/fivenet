@@ -35,7 +35,7 @@ func (s *Server) ListDispatches(ctx context.Context, req *ListDispatchesRequest)
 		UserJob: userInfo.Job,
 		State:   int16(rector.EVENT_TYPE_ERRORED),
 	}
-	defer s.a.AddEntryWithData(auditEntry, req)
+	defer s.a.Log(auditEntry, req)
 
 	resp := &ListDispatchesResponse{}
 
@@ -109,7 +109,7 @@ func (s *Server) CreateDispatch(ctx context.Context, req *CreateDispatchRequest)
 		UserJob: userInfo.Job,
 		State:   int16(rector.EVENT_TYPE_ERRORED),
 	}
-	defer s.a.AddEntryWithData(auditEntry, req)
+	defer s.a.Log(auditEntry, req)
 
 	req.Dispatch.UserId = &userInfo.UserId
 	dsp, err := s.createDispatch(ctx, req.Dispatch)
@@ -230,7 +230,7 @@ func (s *Server) UpdateDispatch(ctx context.Context, req *UpdateDispatchRequest)
 		UserJob: userInfo.Job,
 		State:   int16(rector.EVENT_TYPE_ERRORED),
 	}
-	defer s.a.AddEntryWithData(auditEntry, req)
+	defer s.a.Log(auditEntry, req)
 
 	resp := &UpdateDispatchResponse{}
 
@@ -286,7 +286,7 @@ func (s *Server) TakeDispatch(ctx context.Context, req *TakeDispatchRequest) (*T
 		UserJob: userInfo.Job,
 		State:   int16(rector.EVENT_TYPE_ERRORED),
 	}
-	defer s.a.AddEntryWithData(auditEntry, req)
+	defer s.a.Log(auditEntry, req)
 
 	dsp, err := s.getDispatchFromDB(ctx, s.db, req.DispatchId)
 	if err != nil {
@@ -346,7 +346,7 @@ func (s *Server) UpdateDispatchStatus(ctx context.Context, req *UpdateDispatchSt
 		UserJob: userInfo.Job,
 		State:   int16(rector.EVENT_TYPE_ERRORED),
 	}
-	defer s.a.AddEntryWithData(auditEntry, req)
+	defer s.a.Log(auditEntry, req)
 
 	dsp, err := s.getDispatchFromDB(ctx, s.db, req.DispatchId)
 	if err != nil {
@@ -391,7 +391,7 @@ func (s *Server) AssignDispatch(ctx context.Context, req *AssignDispatchRequest)
 		UserJob: userInfo.Job,
 		State:   int16(rector.EVENT_TYPE_ERRORED),
 	}
-	defer s.a.AddEntryWithData(auditEntry, req)
+	defer s.a.Log(auditEntry, req)
 
 	dsp, err := s.getDispatchFromDB(ctx, s.db, req.DispatchId)
 	if err != nil {
@@ -534,6 +534,17 @@ func (s *Server) AssignDispatch(ctx context.Context, req *AssignDispatchRequest)
 	}
 
 	auditEntry.State = int16(rector.EVENT_TYPE_UPDATED)
+
+	if len(dsp.Units) <= 0 {
+		if _, err := s.updateDispatchStatus(ctx, userInfo, dsp, &dispatch.DispatchStatus{
+			DispatchId: dsp.Id,
+			Status:     dispatch.DISPATCH_STATUS_UNASSIGNED,
+			UnitId:     0,
+			UserId:     &userInfo.UserId,
+		}); err != nil {
+			return nil, err
+		}
+	}
 
 	return &AssignDispatchResponse{}, nil
 }

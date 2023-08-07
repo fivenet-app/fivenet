@@ -8,7 +8,6 @@ import (
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/jobs"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/permissions"
-	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/perms/helpers"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
@@ -81,8 +80,8 @@ func (p *Perms) Register(defaultRolePerms []string) error {
 
 		for _, attr := range perm.Attrs {
 			switch attr.ValidValues {
-			case "config.C.Game.Livemap.Jobs":
-				attr.ValidValues = config.C.Game.Livemap.Jobs
+			case "config.Game.Livemap.Jobs":
+				attr.ValidValues = p.cfg.Game.Livemap.Jobs
 			}
 
 			if _, err := p.createOrUpdateAttribute(ctx, permId, attr.Key, attr.Type, attr.ValidValues, attr.DefaultValues); err != nil {

@@ -1,34 +1,33 @@
 package query
 
 import (
+	"context"
 	"database/sql"
 	"embed"
 	"errors"
 
 	"github.com/XSAM/otelsql"
-	"github.com/galexrt/fivenet/pkg/config"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/mysql"
 	"github.com/golang-migrate/migrate/v4/source/iofs"
 	semconv "go.opentelemetry.io/otel/semconv/v1.4.0"
+	"go.uber.org/fx"
 	"go.uber.org/zap"
 )
 
 var (
 	//go:embed migrations/*.sql
 	migrationsFS embed.FS
-	db           *sql.DB
 )
 
-func SetupDB(logger *zap.Logger) (*sql.DB, error) {
-	if err := MigrateDB(logger, config.C.Database.DSN); err != nil {
+func SetupDB(p Params) (*sql.DB, error) {
+	if err := MigrateDB(p.Logger, p.Config.Database.DSN); err != nil {
 		return nil, err
 	}
 
 	// Connect to database
-	var err error
-	db, err = otelsql.Open("mysql", config.C.Database.DSN,
+	db, err := otelsql.Open("mysql", p.Config.Database.DSN,
 		otelsql.WithAttributes(
 			semconv.DBSystemMySQL,
 		),
@@ -47,10 +46,14 @@ func SetupDB(logger *zap.Logger) (*sql.DB, error) {
 		return nil, err
 	}
 
-	db.SetMaxOpenConns(config.C.Database.MaxOpenConns)
-	db.SetMaxIdleConns(config.C.Database.MaxIdleConns)
-	db.SetConnMaxIdleTime(config.C.Database.ConnMaxIdleTime)
-	db.SetConnMaxLifetime(config.C.Database.ConnMaxLifetime)
+	db.SetMaxOpenConns(p.Config.Database.MaxOpenConns)
+	db.SetMaxIdleConns(p.Config.Database.MaxIdleConns)
+	db.SetConnMaxIdleTime(p.Config.Database.ConnMaxIdleTime)
+	db.SetConnMaxLifetime(p.Config.Database.ConnMaxLifetime)
+
+	p.LC.Append(fx.StopHook(func(_ context.Context) error {
+		return db.Close()
+	}))
 
 	return db, nil
 }

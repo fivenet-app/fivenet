@@ -52,8 +52,14 @@ func (s *Server) ConvertPhoneJobMsgToDispatch() error {
 		job := strings.TrimSuffix(strings.TrimPrefix(*msg.Jobm, "[\""), "\"]")
 		gps, _ := strings.CutPrefix(*msg.Gps, "GPS: ")
 		gpsSplit := strings.Split(gps, ", ")
-		x, _ := strconv.ParseFloat(gpsSplit[0], 32)
-		y, _ := strconv.ParseFloat(gpsSplit[1], 32)
+		x, err := strconv.ParseFloat(gpsSplit[0], 32)
+		if err != nil {
+			continue
+		}
+		y, err := strconv.ParseFloat(gpsSplit[1], 32)
+		if err != nil {
+			continue
+		}
 		var anon bool
 		if msg.Anon != nil && *msg.Anon == "1" {
 			anon = true
@@ -68,13 +74,14 @@ func (s *Server) ConvertPhoneJobMsgToDispatch() error {
 			UserId:  &msg.UserId,
 		}
 
-		_, err := s.createDispatch(s.ctx, dsp)
-		if err != nil {
+		if _, err := s.createDispatch(s.ctx, dsp); err != nil {
 			return err
 		}
 
-		if err := s.closePhoneJobMsg(s.ctx, msg.ID); err != nil {
-			return err
+		if false {
+			if err := s.closePhoneJobMsg(s.ctx, msg.ID); err != nil {
+				return err
+			}
 		}
 	}
 

@@ -11,12 +11,12 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/timestamp"
 	users "github.com/galexrt/fivenet/gen/go/proto/resources/users"
-	"github.com/galexrt/fivenet/pkg/audit"
 	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/perms"
+	"github.com/galexrt/fivenet/pkg/server/audit"
 	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
@@ -64,7 +64,7 @@ type Server struct {
 	oauth2Providers []*config.OAuth2Provider
 }
 
-func NewServer(db *sql.DB, auth *auth.GRPCAuth, tm *auth.TokenMgr, p perms.Permissions, c *mstlystcdata.Enricher, aud audit.IAuditer, ui userinfo.UserInfoRetriever, superuserGroups []string, oauth2Providers []*config.OAuth2Provider) *Server {
+func NewServer(db *sql.DB, auth *auth.GRPCAuth, tm *auth.TokenMgr, p perms.Permissions, c *mstlystcdata.Enricher, aud audit.IAuditer, ui userinfo.UserInfoRetriever, cfg *config.Config) *Server {
 	return &Server{
 		db:              db,
 		auth:            auth,
@@ -73,8 +73,8 @@ func NewServer(db *sql.DB, auth *auth.GRPCAuth, tm *auth.TokenMgr, p perms.Permi
 		c:               c,
 		a:               aud,
 		ui:              ui,
-		superuserGroups: superuserGroups,
-		oauth2Providers: oauth2Providers,
+		superuserGroups: cfg.Game.SuperuserGroups,
+		oauth2Providers: cfg.OAuth2.Providers,
 	}
 }
 
@@ -532,7 +532,7 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 		return nil, ErrUnableToChooseChar
 	}
 
-	s.a.AddEntryWithData(&model.FivenetAuditLog{
+	s.a.Log(&model.FivenetAuditLog{
 		Service: AuthService_ServiceDesc.ServiceName,
 		Method:  "ChooseCharacter",
 		UserID:  char.UserId,

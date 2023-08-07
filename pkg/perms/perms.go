@@ -10,6 +10,7 @@ import (
 	cache "github.com/Code-Hex/go-generics-cache"
 	"github.com/Code-Hex/go-generics-cache/policy/lru"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/permissions"
+	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/events"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/galexrt/fivenet/pkg/perms/collections"
@@ -20,6 +21,7 @@ import (
 	"github.com/nats-io/nats.go"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
+	"go.uber.org/fx"
 	"go.uber.org/zap"
 )
 
@@ -63,7 +65,7 @@ type Permissions interface {
 
 	Attr(userInfo *userinfo.UserInfo, category Category, name Name, key Key) (any, error)
 
-	Stop()
+	Stop() error
 }
 
 type userCacheKey struct {
@@ -74,6 +76,7 @@ type userCacheKey struct {
 type Perms struct {
 	logger *zap.Logger
 	db     *sql.DB
+	cfg    *config.Config
 
 	tracer trace.Tracer
 	ctx    context.Context
@@ -100,21 +103,36 @@ type Perms struct {
 	userCanCache    *cache.Cache[userCacheKey, bool]
 }
 
-func New(ctx context.Context, logger *zap.Logger, db *sql.DB, tp *tracesdk.TracerProvider, e *events.Eventus) (*Perms, error) {
+type Params struct {
+	fx.In
+
+	LC     fx.Lifecycle
+	Logger *zap.Logger
+	DB     *sql.DB
+	TP     *tracesdk.TracerProvider
+	Events *events.Eventus
+}
+
+func New(p Params) (Permissions, error) {
+	ctx, cancel := context.WithCancel(context.Background())
+	p.LC.Append(fx.StopHook(func(_ context.Context) {
+		cancel()
+	}))
+
 	userCanCache := cache.NewContext(
 		ctx,
 		cache.AsLRU[userCacheKey, bool](lru.WithCapacity(128)),
 		cache.WithJanitorInterval[userCacheKey, bool](15*time.Second),
 	)
 
-	p := &Perms{
-		logger: logger,
-		db:     db,
+	ps := &Perms{
+		logger: p.Logger,
+		db:     p.DB,
 
-		tracer: tp.Tracer("perms"),
+		tracer: p.TP.Tracer("perms"),
 		ctx:    ctx,
 
-		events: e,
+		events: p.Events,
 
 		permsMap:          syncx.Map[uint64, *cachePerm]{},
 		permsGuardToIDMap: syncx.Map[string, uint64]{},
@@ -129,15 +147,23 @@ func New(ctx context.Context, logger *zap.Logger, db *sql.DB, tp *tracesdk.Trace
 		userCanCache:    userCanCache,
 	}
 
-	if err := p.load(); err != nil {
-		return nil, err
-	}
+	p.LC.Append(fx.StartHook(func(_ context.Context) error {
+		if err := ps.load(); err != nil {
+			return err
+		}
 
-	if err := p.registerEvents(); err != nil {
-		return nil, err
-	}
+		if err := ps.registerEvents(); err != nil {
+			return err
+		}
 
-	return p, nil
+		return nil
+	}))
+
+	p.LC.Append(fx.StopHook(func(_ context.Context) error {
+		return ps.Stop()
+	}))
+
+	return ps, nil
 }
 
 type cachePerm struct {
@@ -422,6 +448,6 @@ func (p *Perms) removeRoleAttributeFromMap(roleId uint64, attrId uint64) {
 	attrMap.Delete(attrId)
 }
 
-func (p *Perms) Stop() {
-	p.eventSub.Unsubscribe()
+func (p *Perms) Stop() error {
+	return p.eventSub.Unsubscribe()
 }

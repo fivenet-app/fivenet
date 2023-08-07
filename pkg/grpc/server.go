@@ -1,24 +1,19 @@
-package proto
+package grpc
 
 import (
 	"context"
 	"database/sql"
 	"fmt"
 	"net"
+	"time"
 
-	"github.com/galexrt/fivenet/pkg/audit"
 	"github.com/galexrt/fivenet/pkg/config"
-	"github.com/galexrt/fivenet/pkg/events"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	grpc_auth "github.com/galexrt/fivenet/pkg/grpc/interceptors/auth"
 	grpc_permission "github.com/galexrt/fivenet/pkg/grpc/interceptors/permission"
-	"github.com/galexrt/fivenet/pkg/mstlystcdata"
-	"github.com/galexrt/fivenet/pkg/notifi"
 	"github.com/galexrt/fivenet/pkg/perms"
-	"github.com/galexrt/fivenet/pkg/tracker"
 	"github.com/getsentry/sentry-go"
-	"github.com/gin-gonic/gin"
 	grpcprom "github.com/grpc-ecosystem/go-grpc-middleware/providers/prometheus"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/recovery"
@@ -30,37 +25,50 @@ import (
 	"go.opentelemetry.io/otel/propagation"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
+	"go.uber.org/fx"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-
-	// GRPC Services
-	pbauth "github.com/galexrt/fivenet/gen/go/proto/services/auth"
-	pbcentrum "github.com/galexrt/fivenet/gen/go/proto/services/centrum"
-	pbcitizenstore "github.com/galexrt/fivenet/gen/go/proto/services/citizenstore"
-	pbcompletor "github.com/galexrt/fivenet/gen/go/proto/services/completor"
-	pbdmv "github.com/galexrt/fivenet/gen/go/proto/services/dmv"
-	pbdocstore "github.com/galexrt/fivenet/gen/go/proto/services/docstore"
-	pbjobs "github.com/galexrt/fivenet/gen/go/proto/services/jobs"
-	pblivemapper "github.com/galexrt/fivenet/gen/go/proto/services/livemapper"
-	pbnotificator "github.com/galexrt/fivenet/gen/go/proto/services/notificator"
-	pbrector "github.com/galexrt/fivenet/gen/go/proto/services/rector"
 )
 
 var (
 	ErrInternalServer = status.Error(codes.Internal, "errors.general.internal_error")
 )
 
-type RegisterFunc func() error
+func wrapLogger(log *zap.Logger) *zap.Logger {
+	return log.Named("grpc_server")
+}
 
-func NewGRPCServer(ctx context.Context, logger *zap.Logger, db *sql.DB, tp *tracesdk.TracerProvider, tm *auth.TokenMgr, p perms.Permissions, aud audit.IAuditer, eventus *events.Eventus, notif notifi.INotifi) (*grpc.Server, net.Listener) {
-	// Create GRPC Server
-	lis, err := net.Listen("tcp", config.C.GRPC.Listen)
-	if err != nil {
-		logger.Fatal("failed to listen", zap.Error(err))
-	}
+var ServerModule = fx.Module("grpcserver",
+	fx.Provide(
+		NewServer,
+	),
+	fx.Decorate(wrapLogger),
+)
 
+type ServerParams struct {
+	fx.In
+
+	LC fx.Lifecycle
+
+	Logger   *zap.Logger
+	Config   *config.Config
+	DB       *sql.DB
+	TP       *tracesdk.TracerProvider
+	Services []Service `group:"grpcservices"`
+	TokenMgr *auth.TokenMgr
+	UserInfo userinfo.UserInfoRetriever
+	Perms    perms.Permissions
+}
+
+type ServerResult struct {
+	fx.Out
+
+	Server *grpc.Server
+}
+
+func NewServer(p ServerParams) (ServerResult, error) {
 	logTraceID := func(ctx context.Context) logging.Fields {
 		if span := trace.SpanContextFromContext(ctx); span.IsSampled() {
 			return logging.Fields{"traceID", span.TraceID().String()}
@@ -83,7 +91,7 @@ func NewGRPCServer(ctx context.Context, logger *zap.Logger, db *sql.DB, tp *trac
 	}
 
 	// Setup GRPC tracing
-	otel.SetTracerProvider(tp)
+	otel.SetTracerProvider(p.TP)
 	otel.SetTextMapPropagator(propagation.NewCompositeTextMapPropagator(propagation.TraceContext{}, propagation.Baggage{}))
 
 	// Setup metric for panic recoveries
@@ -91,26 +99,25 @@ func NewGRPCServer(ctx context.Context, logger *zap.Logger, db *sql.DB, tp *trac
 		Name: "grpc_req_panics_recovered_total",
 		Help: "Total number of gRPC requests recovered from internal panic.",
 	})
-	grpcPanicRecoveryHandler := func(p any) (err error) {
+	grpcPanicRecoveryHandler := func(pa any) (err error) {
 		panicsTotal.Inc()
 
-		logger.Error("recovered from panic", zap.Any("err", p), zap.Stack("stacktrace"))
-		if e, ok := p.(error); ok {
+		p.Logger.Error("recovered from panic", zap.Any("err", pa), zap.Stack("stacktrace"))
+		if e, ok := pa.(error); ok {
 			sentry.CaptureException(e)
 		}
 
 		return ErrInternalServer
 	}
 
-	ui := userinfo.NewUIRetriever(ctx, db, config.C.Game.SuperuserGroups)
-	grpcAuth := auth.NewGRPCAuth(ui, tm)
-	grpcPerm := auth.NewGRPCPerms(p)
+	grpcAuth := auth.NewGRPCAuth(p.UserInfo, p.TokenMgr)
+	grpcPerm := auth.NewGRPCPerms(p.Perms)
 
-	grpcServer := grpc.NewServer(
+	srv := grpc.NewServer(
 		grpc.ChainUnaryInterceptor(
 			otelgrpc.UnaryServerInterceptor(),
 			srvMetrics.UnaryServerInterceptor(grpcprom.WithExemplarFromContext(exemplarFromContext)),
-			logging.UnaryServerInterceptor(InterceptorLogger(logger),
+			logging.UnaryServerInterceptor(InterceptorLogger(p.Logger),
 				logging.WithFieldsFromContext(logTraceID),
 				logging.WithLogOnEvents(logging.StartCall, logging.FinishCall),
 			),
@@ -124,7 +131,7 @@ func NewGRPCServer(ctx context.Context, logger *zap.Logger, db *sql.DB, tp *trac
 		grpc.ChainStreamInterceptor(
 			otelgrpc.StreamServerInterceptor(),
 			srvMetrics.StreamServerInterceptor(grpcprom.WithExemplarFromContext(exemplarFromContext)),
-			logging.StreamServerInterceptor(InterceptorLogger(logger),
+			logging.StreamServerInterceptor(InterceptorLogger(p.Logger),
 				logging.WithFieldsFromContext(logTraceID),
 				logging.WithLogOnEvents(logging.StartCall, logging.FinishCall),
 			),
@@ -137,54 +144,39 @@ func NewGRPCServer(ctx context.Context, logger *zap.Logger, db *sql.DB, tp *trac
 		),
 	)
 
-	// "Mostly Static Data" Cache
-	cache, err := mstlystcdata.NewCache(ctx,
-		logger.Named("mstlystcdata"), tp, db, config.C.Cache.RefreshTime)
-	if err != nil {
-		logger.Fatal("failed to create mostly static data cache", zap.Error(err))
-	}
-	go cache.Start()
-
-	// Data enricher helper
-	enricher := mstlystcdata.NewEnricher(cache)
-
-	// Tracker
-	tracker := tracker.New(ctx, logger.Named("tracker"), tp, db, enricher, config.C.Game.Livemap.RefreshTime, config.C.Game.Livemap.Jobs)
-	go tracker.Start()
-
-	// Attach our GRPC services
-	pbauth.RegisterAuthServiceServer(grpcServer, pbauth.NewServer(db, grpcAuth, tm, p, enricher, aud, ui,
-		config.C.Game.SuperuserGroups, config.C.OAuth2.Providers))
-
-	pbcitizenstore.RegisterCitizenStoreServiceServer(grpcServer, pbcitizenstore.NewServer(db, p, enricher, aud,
-		config.C.Game.PublicJobs, config.C.Game.UnemployedJob.Name, config.C.Game.UnemployedJob.Grade))
-
-	centrum := pbcentrum.NewServer(ctx, logger.Named("grpc_centrum"), tp, db, p, aud, eventus, tracker, config.C.Game.Livemap.Jobs)
-	go centrum.Start()
-	//go centrum.ConvertPhoneJobMsgToDispatch()
-	pbcentrum.RegisterCentrumServiceServer(grpcServer, centrum)
-
-	pbcompletor.RegisterCompletorServiceServer(grpcServer, pbcompletor.NewServer(db, p, cache))
-	pbdocstore.RegisterDocStoreServiceServer(grpcServer, pbdocstore.NewServer(db, p, enricher, aud, ui, notif))
-
-	pbjobs.RegisterJobsServiceServer(grpcServer, pbjobs.NewServer())
-
-	pblivemapper.RegisterLivemapperServiceServer(grpcServer, pblivemapper.NewServer(ctx, logger.Named("grpc_livemap"), tp, db, p, enricher,
-		config.C.Game.Livemap.RefreshTime, config.C.Game.Livemap.Jobs))
-
-	pbnotificator.RegisterNotificatorServiceServer(grpcServer, pbnotificator.NewServer(logger.Named("grpc_notificator"), db, p, tm, ui))
-
-	pbdmv.RegisterDMVServiceServer(grpcServer, pbdmv.NewServer(db, p, enricher, aud))
-
-	pbrector.RegisterRectorServiceServer(grpcServer, pbrector.NewServer(logger, db, p, aud, enricher))
-
-	// Only run the livemapper random user marker generator in debug mode
-	if config.C.Mode == gin.DebugMode {
-		go tracker.GenerateRandomUserMarker()
-		go tracker.GenerateRandomDispatchMarker()
+	for _, service := range p.Services {
+		service.RegisterServer(srv)
 	}
 
-	return grpcServer, lis
+	p.LC.Append(fx.Hook{
+		OnStart: func(ctx context.Context) error {
+			ln, err := net.Listen("tcp", p.Config.GRPC.Listen)
+			if err != nil {
+				return err
+			}
+			p.Logger.Info("grpc server listening", zap.String("address", p.Config.HTTP.Listen))
+			go func() {
+				if err := srv.Serve(ln); err != nil {
+					p.Logger.Error("failed to serve grpc server", zap.Error(err))
+				}
+			}()
+			return nil
+		},
+		OnStop: func(ctx context.Context) error {
+			go func() {
+				srv.GracefulStop()
+			}()
+			// Wait 3 seconds before "forceful stop
+			time.Sleep(3 * time.Second)
+
+			srv.Stop()
+			return nil
+		},
+	})
+
+	return ServerResult{
+		Server: srv,
+	}, nil
 }
 
 // InterceptorLogger adapts zap logger to interceptor logger.

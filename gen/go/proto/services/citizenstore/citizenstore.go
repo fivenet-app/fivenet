@@ -11,10 +11,11 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
 	users "github.com/galexrt/fivenet/gen/go/proto/resources/users"
-	"github.com/galexrt/fivenet/pkg/audit"
+	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/perms"
+	"github.com/galexrt/fivenet/pkg/server/audit"
 	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
@@ -53,15 +54,15 @@ type Server struct {
 	unemployedJobGrade int32
 }
 
-func NewServer(db *sql.DB, p perms.Permissions, c *mstlystcdata.Enricher, aud audit.IAuditer, publicJobs []string, unemployedJob string, unemployedJobGrade int32) *Server {
+func NewServer(db *sql.DB, p perms.Permissions, c *mstlystcdata.Enricher, aud audit.IAuditer, cfg *config.Config) *Server {
 	return &Server{
 		db:                 db,
 		p:                  p,
 		c:                  c,
 		a:                  aud,
-		publicJobs:         publicJobs,
-		unemployedJob:      unemployedJob,
-		unemployedJobGrade: unemployedJobGrade,
+		publicJobs:         cfg.Game.PublicJobs,
+		unemployedJob:      cfg.Game.UnemployedJob.Name,
+		unemployedJobGrade: cfg.Game.UnemployedJob.Grade,
 	}
 }
 
@@ -233,7 +234,7 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 		TargetUserID: &req.UserId,
 		State:        int16(rector.EVENT_TYPE_ERRORED),
 	}
-	defer s.a.AddEntryWithData(auditEntry, req)
+	defer s.a.Log(auditEntry, req)
 
 	selectors := jet.ProjectionList{
 		tUser.ID,
@@ -486,7 +487,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 		TargetUserID: &req.Props.UserId,
 		State:        int16(rector.EVENT_TYPE_ERRORED),
 	}
-	defer s.a.AddEntryWithData(auditEntry, req)
+	defer s.a.Log(auditEntry, req)
 
 	if req.Reason == "" {
 		return nil, status.Error(codes.InvalidArgument, "Must give a reason!")

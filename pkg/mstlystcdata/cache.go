@@ -11,10 +11,12 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/documents"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/jobs"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/laws"
+	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/utils/syncx"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
+	"go.uber.org/fx"
 	"go.uber.org/zap"
 )
 
@@ -42,25 +44,46 @@ type Cache struct {
 	searcher *Searcher
 }
 
-func NewCache(ctx context.Context, logger *zap.Logger, tp *tracesdk.TracerProvider, db *sql.DB, refreshTime time.Duration) (*Cache, error) {
+type Params struct {
+	fx.In
+
+	LC fx.Lifecycle
+
+	Logger *zap.Logger
+	TP     *tracesdk.TracerProvider
+	DB     *sql.DB
+	Config *config.Config
+}
+
+func NewCache(p Params) (*Cache, error) {
+	ctx, cancel := context.WithCancel(context.Background())
+
+	p.LC.Append(fx.StopHook(func(_ context.Context) {
+		cancel()
+	}))
+
 	jobsCache := cache.NewContext[string, *jobs.Job](ctx)
 	docCategoriesCache := cache.NewContext[uint64, *documents.Category](ctx)
 	docCategoriesByJobCache := cache.NewContext[string, []*documents.Category](ctx)
 	lawBooks := &syncx.Map[uint64, *laws.LawBook]{}
 
 	c := &Cache{
-		logger: logger,
-		db:     db,
+		logger: p.Logger,
+		db:     p.DB,
 
-		refreshTime: refreshTime,
+		refreshTime: p.Config.Cache.RefreshTime,
 
-		tracer:             tp.Tracer("mstlystcdata-cache"),
+		tracer:             p.TP.Tracer("mstlystcdata-cache"),
 		ctx:                ctx,
 		jobs:               jobsCache,
 		docCategories:      docCategoriesCache,
 		docCategoriesByJob: docCategoriesByJobCache,
 		lawBooks:           lawBooks,
 	}
+
+	p.LC.Append(fx.StartHook(func(_ context.Context) {
+		go c.start()
+	}))
 
 	var err error
 	c.searcher, err = NewSearcher(c)
@@ -69,7 +92,7 @@ func NewCache(ctx context.Context, logger *zap.Logger, tp *tracesdk.TracerProvid
 	return c, err
 }
 
-func (c *Cache) Start() {
+func (c *Cache) start() {
 	for {
 		if err := c.refreshCache(); err != nil {
 			c.logger.Error("failed to refresh mostly static data cache", zap.Error(err))

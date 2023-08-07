@@ -8,15 +8,16 @@ import (
 
 	"github.com/galexrt/fivenet/internal/tests/proto"
 	"github.com/galexrt/fivenet/internal/tests/servers"
-	"github.com/galexrt/fivenet/pkg/audit"
 	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/events"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/perms"
+	"github.com/galexrt/fivenet/pkg/server/audit"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.uber.org/zap"
 	"google.golang.org/grpc/metadata"
@@ -45,18 +46,35 @@ func TestFullAuthFlow(t *testing.T) {
 	ui := userinfo.NewMockUserInfoRetriever(map[int32]*userinfo.UserInfo{})
 	tm := auth.NewTokenMgr("")
 
-	eventus, err := events.NewEventus(logger, servers.TestNATSServer.GetURL())
+	cfg, err := config.LoadTest()
+	require.NoError(t, err)
+	require.NotNil(t, cfg)
+
+	cfg.NATS.URL = servers.TestNATSServer.GetURL()
+
+	eventus, err := events.New(logger, cfg)
 	assert.NoError(t, err)
 
-	p, err := perms.New(ctx, logger, db, tp, eventus)
+	p, err := perms.New(perms.Params{
+		Logger: logger,
+		DB:     db,
+		TP:     tp,
+		Events: eventus,
+	})
 	assert.NoError(t, err)
 	defer p.Stop()
 
 	aud := &audit.Noop{}
-	c, err := mstlystcdata.NewCache(ctx, logger, tp, db, 1*time.Hour)
+	cfg.Cache.RefreshTime = 1 * time.Hour
+	c, err := mstlystcdata.NewCache(mstlystcdata.Params{
+		Logger: logger,
+		TP:     tp,
+		DB:     db,
+		Config: cfg,
+	})
 	assert.NoError(t, err)
 	enricher := mstlystcdata.NewEnricher(c)
-	srv := NewServer(db, auth.NewGRPCAuth(ui, tm), tm, p, enricher, aud, ui, []string{}, []*config.OAuth2Provider{})
+	srv := NewServer(db, auth.NewGRPCAuth(ui, tm), tm, p, enricher, aud, ui, &config.Config{})
 
 	client, _, cancel := NewTestAuthServiceClient(srv)
 	defer cancel()

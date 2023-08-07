@@ -1,6 +1,7 @@
 package events
 
 import (
+	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/nats-io/nats.go"
 	"go.uber.org/zap"
 )
@@ -18,9 +19,9 @@ type Eventus struct {
 	JS nats.JetStreamContext
 }
 
-func NewEventus(logger *zap.Logger, url string) (*Eventus, error) {
+func New(logger *zap.Logger, cfg *config.Config) (*Eventus, error) {
 	// Connect to NATS
-	nc, err := nats.Connect(url, nats.Name("FiveNet"),
+	nc, err := nats.Connect(cfg.NATS.URL, nats.Name("FiveNet"),
 		nats.NoEcho())
 	if err != nil {
 		return nil, err

@@ -2,6 +2,7 @@
 // @generated from protobuf file "resources/livemap/livemap.proto" (package "resources.livemap", syntax proto3)
 // tslint:disable
 import { MessageType } from "@protobuf-ts/runtime";
+import { Unit } from "../dispatch/units.js";
 import { UserShort } from "../users/users.js";
 import { Timestamp } from "../timestamp/timestamp.js";
 /**
@@ -74,6 +75,10 @@ export interface UserMarker {
      * @generated from protobuf field: resources.users.UserShort user = 2;
      */
     user?: UserShort; // @gotags: alias:"user"
+    /**
+     * @generated from protobuf field: optional resources.dispatch.Unit unit = 3;
+     */
+    unit?: Unit;
 }
 /**
  * @generated from protobuf enum resources.livemap.MARKER_TYPE
@@ -135,7 +140,8 @@ class UserMarker$Type extends MessageType<UserMarker> {
     constructor() {
         super("resources.livemap.UserMarker", [
             { no: 1, name: "marker", kind: "message", T: () => GenericMarker },
-            { no: 2, name: "user", kind: "message", T: () => UserShort }
+            { no: 2, name: "user", kind: "message", T: () => UserShort },
+            { no: 3, name: "unit", kind: "message", T: () => Unit }
         ]);
     }
 }

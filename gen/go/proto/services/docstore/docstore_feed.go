@@ -219,7 +219,7 @@ func (s *Server) AddDocumentReference(ctx context.Context, req *AddDocumentRefer
 		UserJob: userInfo.Job,
 		State:   int16(rector.EVENT_TYPE_ERRORED),
 	}
-	defer s.a.AddEntryWithData(auditEntry, req)
+	defer s.a.Log(auditEntry, req)
 
 	if req.Reference.SourceDocumentId == req.Reference.TargetDocumentId {
 		return nil, status.Error(codes.InvalidArgument, "You can't reference a document with itself!")
@@ -292,7 +292,7 @@ func (s *Server) RemoveDocumentReference(ctx context.Context, req *RemoveDocumen
 		UserJob: userInfo.Job,
 		State:   int16(rector.EVENT_TYPE_ERRORED),
 	}
-	defer s.a.AddEntryWithData(auditEntry, req)
+	defer s.a.Log(auditEntry, req)
 
 	var docIDs struct {
 		Source uint64
@@ -351,7 +351,7 @@ func (s *Server) AddDocumentRelation(ctx context.Context, req *AddDocumentRelati
 		UserJob: userInfo.Job,
 		State:   int16(rector.EVENT_TYPE_ERRORED),
 	}
-	defer s.a.AddEntryWithData(auditEntry, req)
+	defer s.a.Log(auditEntry, req)
 
 	check, err := s.checkIfUserHasAccessToDoc(ctx, req.Relation.DocumentId, userInfo, documents.ACCESS_LEVEL_EDIT)
 	if err != nil {
@@ -428,7 +428,7 @@ func (s *Server) RemoveDocumentRelation(ctx context.Context, req *RemoveDocument
 		UserJob: userInfo.Job,
 		State:   int16(rector.EVENT_TYPE_ERRORED),
 	}
-	defer s.a.AddEntryWithData(auditEntry, req)
+	defer s.a.Log(auditEntry, req)
 
 	var docID struct {
 		ID uint64
@@ -640,5 +640,5 @@ func (s *Server) notifyUser(ctx context.Context, documentId uint64, sourceUserId
 			},
 		},
 	}
-	s.n.Add(not)
+	s.n.NotifyUser(ctx, not)
 }

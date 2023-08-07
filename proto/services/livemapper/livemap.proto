@@ -11,11 +11,11 @@ message StreamRequest {}
 message StreamResponse {
   repeated resources.jobs.Job jobs_dispatches = 1;
   repeated resources.jobs.Job jobs_users = 2;
-  repeated resources.livemap.DispatchMarker dispatches = 3;
-  repeated resources.livemap.UserMarker users = 4;
+  repeated resources.livemap.UserMarker users = 3;
+  repeated resources.livemap.DispatchMarker dispatches = 4;
 }
 
 service LivemapperService {
-  // @perm: Attrs=Dispatches/JobList:"config.C.Game.Livemap.Jobs"|Players/JobGradeList
+  // @perm: Attrs=Dispatches/JobList:"config.Game.Livemap.Jobs"|Players/JobGradeList
   rpc Stream(StreamRequest) returns (stream StreamResponse);
 }

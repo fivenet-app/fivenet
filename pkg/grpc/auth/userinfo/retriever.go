@@ -7,8 +7,10 @@ import (
 
 	cache "github.com/Code-Hex/go-generics-cache"
 	"github.com/Code-Hex/go-generics-cache/policy/lru"
+	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/utils"
 	jet "github.com/go-jet/jet/v2/mysql"
+	"go.uber.org/fx"
 )
 
 type UserInfoRetriever interface {
@@ -27,21 +29,35 @@ type UIRetriever struct {
 	superuserGroups []string
 }
 
-func NewUIRetriever(ctx context.Context, db *sql.DB, superUserGroups []string) *UIRetriever {
+type Params struct {
+	fx.In
+
+	LC     fx.Lifecycle
+	DB     *sql.DB
+	Config *config.Config
+}
+
+func NewUIRetriever(p Params) UserInfoRetriever {
+	ctx, cancel := context.WithCancel(context.Background())
+
 	userCache := cache.NewContext(
 		ctx,
 		cache.AsLRU[int32, *UserInfo](lru.WithCapacity(300)),
 		cache.WithJanitorInterval[int32, *UserInfo](40*time.Second),
 	)
 
+	p.LC.Append(fx.StopHook(func(_ context.Context) {
+		cancel()
+	}))
+
 	return &UIRetriever{
 		ctx: ctx,
-		db:  db,
+		db:  p.DB,
 
 		userCache:    userCache,
 		userCacheTTL: 30 * time.Second,
 
-		superuserGroups: superUserGroups,
+		superuserGroups: p.Config.Game.SuperuserGroups,
 	}
 }
 

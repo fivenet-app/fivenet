@@ -424,6 +424,39 @@ func (m *UserMarker) validate(all bool) error {
 		}
 	}
 
+	if m.Unit != nil {
+
+		if all {
+			switch v := interface{}(m.GetUnit()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, UserMarkerValidationError{
+						field:  "Unit",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, UserMarkerValidationError{
+						field:  "Unit",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetUnit()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return UserMarkerValidationError{
+					field:  "Unit",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
 	if len(errors) > 0 {
 		return UserMarkerMultiError(errors)
 	}

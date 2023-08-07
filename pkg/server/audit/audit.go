@@ -5,13 +5,12 @@ import (
 	"database/sql"
 	"sync"
 
-	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
-	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jsoniter "github.com/json-iterator/go"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
+	"go.uber.org/fx"
 	"go.uber.org/zap"
 )
 
@@ -22,9 +21,7 @@ var (
 var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 type IAuditer interface {
-	Log(service string, method string, state rector.EVENT_TYPE, targetUserId int32, data any)
-	AddEntry(in *model.FivenetAuditLog)
-	AddEntryWithData(in *model.FivenetAuditLog, data any)
+	Log(in *model.FivenetAuditLog, data any)
 }
 
 type AuditStorer struct {
@@ -36,52 +33,64 @@ type AuditStorer struct {
 	input  chan *model.FivenetAuditLog
 }
 
-func New(logger *zap.Logger, tp *tracesdk.TracerProvider, db *sql.DB) *AuditStorer {
-	return &AuditStorer{
-		logger: logger,
-		tracer: tp.Tracer("audit-storer"),
-		db:     db,
-		ctx:    context.Background(),
+type Params struct {
+	fx.In
+
+	LC fx.Lifecycle
+
+	Logger *zap.Logger
+	TP     *tracesdk.TracerProvider
+	DB     *sql.DB
+}
+
+func New(p Params) IAuditer {
+	ctx, cancel := context.WithCancel(context.Background())
+
+	a := &AuditStorer{
+		logger: p.Logger,
+		tracer: p.TP.Tracer("audit-storer"),
+		db:     p.DB,
+		ctx:    ctx,
 		wg:     sync.WaitGroup{},
 		input:  make(chan *model.FivenetAuditLog),
 	}
-}
 
-func (a *AuditStorer) Start() {
-	for i := 0; i < 3; i++ {
-		a.wg.Add(1)
-		go a.worker()
-	}
+	p.LC.Append(fx.StartHook(func(_ context.Context) error {
+		for i := 0; i < 4; i++ {
+			a.wg.Add(1)
+			go a.worker()
+		}
+		return nil
+	}))
+	p.LC.Append(fx.StopHook(func(_ context.Context) {
+		close(a.input)
+		cancel()
+		a.wg.Wait()
+	}))
+
+	return a
 }
 
 func (a *AuditStorer) worker() {
 	defer a.wg.Done()
 	for {
 		select {
-		case <-a.ctx.Done():
-			return
 		case in := <-a.input:
 			if err := a.store(in); err != nil {
 				a.logger.Error("failed to store audit log", zap.Error(err))
+				continue
 			}
+		case <-a.ctx.Done():
+			return
 		}
 	}
 }
 
-func (a *AuditStorer) Stop() {
-	close(a.input)
-	a.wg.Wait()
-}
+func (a *AuditStorer) Log(in *model.FivenetAuditLog, data any) {
+	if in == nil {
+		return
+	}
 
-func (a *AuditStorer) Log(service string, method string, state rector.EVENT_TYPE, targetUserId int32, data any) {
-	a.input <- a.createAuditLogEntry(service, method, state, targetUserId, data)
-}
-
-func (a *AuditStorer) AddEntry(in *model.FivenetAuditLog) {
-	a.AddEntryWithData(in, nil)
-}
-
-func (a *AuditStorer) AddEntryWithData(in *model.FivenetAuditLog, data any) {
 	in.Data = a.toJson(data)
 	a.input <- in
 }
@@ -107,24 +116,6 @@ func (a *AuditStorer) store(in *model.FivenetAuditLog) error {
 	}
 
 	return nil
-}
-
-func (a *AuditStorer) createAuditLogEntry(service string, method string, state rector.EVENT_TYPE, targetUserId int32, data any) *model.FivenetAuditLog {
-	userInfo := auth.MustGetUserInfoFromContext(a.ctx)
-
-	log := &model.FivenetAuditLog{
-		Service: service,
-		Method:  method,
-		UserID:  userInfo.UserId,
-		UserJob: userInfo.Job,
-		State:   int16(state),
-		Data:    a.toJson(data),
-	}
-	if targetUserId > 0 {
-		log.TargetUserID = &targetUserId
-	}
-
-	return log
 }
 
 func (a *AuditStorer) toJson(data any) *string {

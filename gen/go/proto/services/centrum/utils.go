@@ -478,6 +478,11 @@ func (s *Server) updateDispatchStatus(ctx context.Context, userInfo *userinfo.Us
 }
 
 func (s *Server) updateUnitStatus(ctx context.Context, userInfo *userinfo.UserInfo, unit *dispatch.Unit, in *dispatch.UnitStatus) (*dispatch.UnitStatus, error) {
+	unitId := jet.NULL
+	if in.UnitId <= 0 {
+		unitId = jet.Uint64(in.UnitId)
+	}
+
 	tUnitStatus := table.FivenetCentrumUnitsStatus
 	stmt := tUnitStatus.
 		INSERT(
@@ -488,7 +493,7 @@ func (s *Server) updateUnitStatus(ctx context.Context, userInfo *userinfo.UserIn
 			tUnitStatus.UserID,
 		).
 		VALUES(
-			in.UnitId,
+			unitId,
 			in.Status,
 			in.Reason,
 			in.Code,

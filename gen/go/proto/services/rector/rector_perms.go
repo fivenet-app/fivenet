@@ -229,7 +229,7 @@ func (s *Server) CreateRole(ctx context.Context, req *CreateRoleRequest) (*Creat
 		UserJob: userInfo.Job,
 		State:   int16(rector.EVENT_TYPE_ERRORED),
 	}
-	defer s.a.AddEntryWithData(auditEntry, req)
+	defer s.a.Log(auditEntry, req)
 
 	// Make sure the user is from the job
 	if req.Job != userInfo.Job {
@@ -274,7 +274,7 @@ func (s *Server) DeleteRole(ctx context.Context, req *DeleteRoleRequest) (*Delet
 		UserJob: userInfo.Job,
 		State:   int16(rector.EVENT_TYPE_ERRORED),
 	}
-	defer s.a.AddEntryWithData(auditEntry, req)
+	defer s.a.Log(auditEntry, req)
 
 	role, check, err := s.ensureUserCanAccessRole(ctx, req.Id)
 	if err != nil {
@@ -318,7 +318,7 @@ func (s *Server) UpdateRolePerms(ctx context.Context, req *UpdateRolePermsReques
 		UserJob: userInfo.Job,
 		State:   int16(rector.EVENT_TYPE_ERRORED),
 	}
-	defer s.a.AddEntryWithData(auditEntry, req)
+	defer s.a.Log(auditEntry, req)
 
 	role, check, err := s.ensureUserCanAccessRole(ctx, req.Id)
 	if err != nil {

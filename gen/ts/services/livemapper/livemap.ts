@@ -3,8 +3,8 @@
 // tslint:disable
 import { ServiceType } from "@protobuf-ts/runtime-rpc";
 import { MessageType } from "@protobuf-ts/runtime";
-import { UserMarker } from "../../resources/livemap/livemap.js";
 import { DispatchMarker } from "../../resources/livemap/livemap.js";
+import { UserMarker } from "../../resources/livemap/livemap.js";
 import { Job } from "../../resources/jobs/jobs.js";
 /**
  * @generated from protobuf message services.livemapper.StreamRequest
@@ -24,13 +24,13 @@ export interface StreamResponse {
      */
     jobsUsers: Job[];
     /**
-     * @generated from protobuf field: repeated resources.livemap.DispatchMarker dispatches = 3;
-     */
-    dispatches: DispatchMarker[];
-    /**
-     * @generated from protobuf field: repeated resources.livemap.UserMarker users = 4;
+     * @generated from protobuf field: repeated resources.livemap.UserMarker users = 3;
      */
     users: UserMarker[];
+    /**
+     * @generated from protobuf field: repeated resources.livemap.DispatchMarker dispatches = 4;
+     */
+    dispatches: DispatchMarker[];
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class StreamRequest$Type extends MessageType<StreamRequest> {
@@ -48,8 +48,8 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
         super("services.livemapper.StreamResponse", [
             { no: 1, name: "jobs_dispatches", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Job },
             { no: 2, name: "jobs_users", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Job },
-            { no: 3, name: "dispatches", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => DispatchMarker },
-            { no: 4, name: "users", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UserMarker }
+            { no: 3, name: "users", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UserMarker },
+            { no: 4, name: "dispatches", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => DispatchMarker }
         ]);
     }
 }

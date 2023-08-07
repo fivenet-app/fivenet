@@ -3,21 +3,20 @@ package tracker
 import (
 	"context"
 	"database/sql"
-	"strconv"
-	"strings"
 	"time"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/jobs"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/livemap"
-	"github.com/galexrt/fivenet/gen/go/proto/resources/timestamp"
+	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/pkg/utils/syncx"
-	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
+	"github.com/gin-gonic/gin"
 	jet "github.com/go-jet/jet/v2/mysql"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
+	"go.uber.org/fx"
 	"go.uber.org/zap"
 )
 
@@ -51,25 +50,56 @@ type Tracker struct {
 	visibleJobs []string
 }
 
-func New(ctx context.Context, logger *zap.Logger, tp *tracesdk.TracerProvider, db *sql.DB, c *mstlystcdata.Enricher, refreshTime time.Duration, visibleJobs []string) *Tracker {
-	broker := utils.NewBroker[interface{}](ctx)
-	go broker.Start()
+type Params struct {
+	fx.In
 
-	return &Tracker{
+	LC fx.Lifecycle
+
+	Logger   *zap.Logger
+	TP       *tracesdk.TracerProvider
+	DB       *sql.DB
+	Enricher *mstlystcdata.Enricher
+	Config   *config.Config
+}
+
+func New(p Params) *Tracker {
+	ctx, cancel := context.WithCancel(context.Background())
+
+	broker := utils.NewBroker[interface{}](ctx)
+
+	t := &Tracker{
 		ctx:    ctx,
-		logger: logger,
-		tracer: tp.Tracer("tracker-cache"),
-		db:     db,
-		c:      c,
+		logger: p.Logger,
+		tracer: p.TP.Tracer("tracker-cache"),
+		db:     p.DB,
+		c:      p.Enricher,
 
 		dispatchesCache: syncx.Map[string, []*livemap.DispatchMarker]{},
 		usersCache:      syncx.Map[string, []*livemap.UserMarker]{},
 
 		broker: broker,
 
-		refreshTime: refreshTime,
-		visibleJobs: visibleJobs,
+		refreshTime: p.Config.Cache.RefreshTime,
+		visibleJobs: p.Config.Game.Livemap.Jobs,
 	}
+
+	p.LC.Append(fx.StartHook(func(_ context.Context) {
+		go broker.Start()
+
+		// Only run the tracker random user marker generator in debug mode
+		if p.Config.Mode == gin.DebugMode {
+			go t.GenerateRandomUserMarker()
+			go t.GenerateRandomDispatchMarker()
+		}
+
+		go t.Start()
+	}))
+
+	p.LC.Append(fx.StopHook(func(_ context.Context) {
+		cancel()
+	}))
+
+	return t
 }
 
 func (s *Tracker) Start() {
@@ -91,9 +121,6 @@ func (s *Tracker) refreshCache() {
 
 	if err := s.refreshUserLocations(ctx); err != nil {
 		s.logger.Error("failed to refresh livemap users cache", zap.Error(err))
-	}
-	if err := s.refreshDispatches(ctx); err != nil {
-		s.logger.Error("failed to refresh livemap dispatches cache", zap.Error(err))
 	}
 
 	s.broker.Publish(nil)
@@ -160,109 +187,18 @@ func (s *Tracker) refreshUserLocations(ctx context.Context) error {
 	return nil
 }
 
-func (s *Tracker) refreshDispatches(ctx context.Context) error {
-	if len(s.visibleJobs) == 0 {
-		s.logger.Warn("empty livemap jobs in config, no dispatches will be loaded")
-		return nil
-	}
-
-	gksphoneJobM := table.GksphoneJobMessage
-	stmt := gksphoneJobM.
-		SELECT(
-			gksphoneJobM.ID,
-			gksphoneJobM.Name,
-			gksphoneJobM.Number,
-			gksphoneJobM.Message,
-			gksphoneJobM.Gps,
-			gksphoneJobM.Owner,
-			gksphoneJobM.Jobm,
-			gksphoneJobM.Anon,
-			gksphoneJobM.Time,
-		).
-		FROM(
-			gksphoneJobM,
-		).
-		WHERE(
-			jet.AND(
-				gksphoneJobM.Jobm.REGEXP_LIKE(jet.String("\\[\"("+strings.Join(s.visibleJobs, "|")+")\"\\]")),
-				gksphoneJobM.Time.GT_EQ(jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(20, jet.MINUTE))),
-			),
-		).
-		ORDER_BY(
-			gksphoneJobM.Owner.ASC(),
-			gksphoneJobM.Time.DESC(),
-		).
-		LIMIT(MaxDispatchMarkerLimit)
-
-	var dest []*model.GksphoneJobMessage
-	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
-		return err
-	}
-
-	markers := map[string][]*livemap.DispatchMarker{}
-	for _, v := range dest {
-		gps, _ := strings.CutPrefix(*v.Gps, "GPS: ")
-		gpsSplit := strings.Split(gps, ", ")
-		x, _ := strconv.ParseFloat(gpsSplit[0], 32)
-		y, _ := strconv.ParseFloat(gpsSplit[1], 32)
-
-		var icon string
-		var iconColor string
-		if v.Owner == 0 {
-			icon = "dispatch-open.svg"
-			iconColor = "96E6B3"
-		} else {
-			icon = "dispatch-closed.svg"
-			iconColor = "DA3E52"
-		}
-
-		var name string
-		if v.Anon != nil && *v.Anon == "1" {
-			name = "Anonym"
-		} else {
-			name = *v.Name
-		}
-
-		var message string
-		if v.Message != nil && *v.Message != "" {
-			message = *v.Message
-		} else {
-			message = "N/A"
-		}
-
-		// Remove the "json" leftovers (the data looks like this, e.g., `["ambulance"]`)
-		job := strings.TrimSuffix(strings.TrimPrefix(*v.Jobm, "[\""), "\"]")
-		if _, ok := markers[job]; !ok {
-			markers[job] = []*livemap.DispatchMarker{}
-		}
-		marker := &livemap.DispatchMarker{
-			Marker: &livemap.GenericMarker{
-				Id:        v.ID,
-				X:         float32(x),
-				Y:         float32(y),
-				Icon:      icon,
-				IconColor: iconColor,
-				Name:      name,
-				Popup:     message,
-				UpdatedAt: timestamp.New(v.Time),
-			},
-			Job: job,
-		}
-		if v.Owner == 0 {
-			marker.Active = true
-		}
-
-		s.c.EnrichJobName(marker)
-		markers[job] = append(markers[job], marker)
-	}
-
-	for job, v := range markers {
-		s.dispatchesCache.Store(job, v)
-	}
-
-	return nil
-}
-
 func (s *Tracker) GetPlayers(job string) ([]*livemap.UserMarker, bool) {
 	return s.usersCache.Load(job)
+}
+
+func (s *Tracker) GetPlayerFromJob(job string) (float64, float64, bool) {
+	users, ok := s.usersCache.Load(job)
+	if !ok {
+		return 0, 0, ok
+	}
+
+	// TODO
+	_ = users
+
+	return 0, 0, true
 }

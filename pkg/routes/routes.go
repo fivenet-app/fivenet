@@ -16,10 +16,10 @@ type Routes struct {
 	clientCfg *api.ClientConfig
 }
 
-func New(logger *zap.Logger) *Routes {
-	providers := make([]*api.ProviderConfig, len(config.C.OAuth2.Providers))
+func New(logger *zap.Logger, cfg *config.Config) *Routes {
+	providers := make([]*api.ProviderConfig, len(cfg.OAuth2.Providers))
 
-	for k, p := range config.C.OAuth2.Providers {
+	for k, p := range cfg.OAuth2.Providers {
 		providers[k] = &api.ProviderConfig{
 			Name:  p.Name,
 			Label: p.Label,
@@ -31,7 +31,7 @@ func New(logger *zap.Logger) *Routes {
 
 		clientCfg: &api.ClientConfig{
 			Version:   "TODO",
-			SentryDSN: config.C.Sentry.ClientDSN,
+			SentryDSN: cfg.Sentry.ClientDSN,
 			Login: api.LoginConfig{
 				Providers: providers,
 			},

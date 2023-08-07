@@ -7,10 +7,10 @@ import (
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
-	"github.com/galexrt/fivenet/pkg/audit"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/perms"
+	"github.com/galexrt/fivenet/pkg/server/audit"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -69,7 +69,7 @@ func (s *Server) ListVehicles(ctx context.Context, req *ListVehiclesRequest) (*L
 	if req.Pagination.Offset <= 0 {
 		userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-		s.a.AddEntryWithData(&model.FivenetAuditLog{
+		s.a.Log(&model.FivenetAuditLog{
 			Service: DMVService_ServiceDesc.ServiceName,
 			Method:  "ListVehicles",
 			UserID:  userInfo.UserId,

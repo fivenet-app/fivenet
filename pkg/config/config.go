@@ -6,18 +6,22 @@ import (
 
 	"github.com/creasty/defaults"
 	"github.com/spf13/viper"
+	"go.uber.org/fx"
 )
 
-var (
-	C = &Config{}
+var Module = fx.Module("config",
+	fx.Provide(
+		Load,
+	),
 )
 
-func init() {
-	// Set defaults on start
-	defaults.Set(C)
+type Result struct {
+	fx.Out
+
+	Config *Config
 }
 
-func InitConfigWithViper() {
+func Load() (*Config, error) {
 	// Viper Config reading setup
 	viper.SetConfigName("config")
 	viper.SetConfigType("yaml")
@@ -25,9 +29,28 @@ func InitConfigWithViper() {
 	viper.AddConfigPath("/config")
 	// Find and read the config file
 	if err := viper.ReadInConfig(); err != nil {
-		panic(fmt.Errorf("fatal error config file: %w", err))
+		return nil, fmt.Errorf("fatal error config file: %w", err)
 	}
-	viper.Unmarshal(C)
+
+	c := &Config{}
+	if err := defaults.Set(c); err != nil {
+		return nil, fmt.Errorf("failed to set config defaults: %w", err)
+	}
+
+	if err := viper.Unmarshal(c); err != nil {
+		return nil, fmt.Errorf("failed to unmarshal config: %w", err)
+	}
+
+	return c, nil
+}
+
+func LoadTest() (*Config, error) {
+	c := &Config{}
+	if err := defaults.Set(c); err != nil {
+		return nil, fmt.Errorf("failed to set config defaults: %w", err)
+	}
+
+	return c, nil
 }
 
 type Config struct {

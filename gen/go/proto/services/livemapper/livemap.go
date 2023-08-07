@@ -7,15 +7,16 @@ import (
 
 	jobs "github.com/galexrt/fivenet/gen/go/proto/resources/jobs"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/livemap"
+	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/perms"
 	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/pkg/utils/syncx"
-	"github.com/galexrt/fivenet/query/fivenet/table"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
+	"go.uber.org/fx"
 	"go.uber.org/zap"
 	codes "google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -26,17 +27,12 @@ const (
 )
 
 var (
-	tLocs = table.FivenetUserLocations
-)
-
-var (
 	ErrStreamFailed = status.Error(codes.Internal, "errors.LivemapperService.ErrStreamFailed")
 )
 
 type Server struct {
 	LivemapperServiceServer
 
-	ctx    context.Context
 	logger *zap.Logger
 	tracer trace.Tracer
 	db     *sql.DB
@@ -52,26 +48,46 @@ type Server struct {
 	visibleJobs []string
 }
 
-func NewServer(ctx context.Context, logger *zap.Logger, tp *tracesdk.TracerProvider, db *sql.DB, p perms.Permissions, c *mstlystcdata.Enricher, refreshTime time.Duration, visibleJobs []string) *Server {
+type Params struct {
+	fx.In
+
+	LC fx.Lifecycle
+
+	Logger   *zap.Logger
+	TP       *tracesdk.TracerProvider
+	DB       *sql.DB
+	Perms    perms.Permissions
+	Enricher *mstlystcdata.Enricher
+	Config   *config.Config
+}
+
+func NewServer(p Params) *Server {
+	ctx, cancel := context.WithCancel(context.Background())
+
 	broker := utils.NewBroker[interface{}](ctx)
-	go broker.Start()
+
+	p.LC.Append(fx.StartHook(func(_ context.Context) {
+		go broker.Start()
+	}))
+	p.LC.Append(fx.StopHook(func(_ context.Context) {
+		cancel()
+	}))
 
 	return &Server{
-		ctx:    ctx,
-		logger: logger,
+		logger: p.Logger,
 
-		tracer: tp.Tracer("livemapper-cache"),
-		db:     db,
-		p:      p,
-		c:      c,
+		tracer: p.TP.Tracer("livemapper-cache"),
+		db:     p.DB,
+		p:      p.Perms,
+		c:      p.Enricher,
 
 		dispatchesCache: syncx.Map[string, []*livemap.DispatchMarker]{},
 		usersCache:      syncx.Map[string, []*livemap.UserMarker]{},
 
 		broker: broker,
 
-		refreshTime: refreshTime,
-		visibleJobs: visibleJobs,
+		refreshTime: p.Config.Cache.RefreshTime,
+		visibleJobs: p.Config.Game.Livemap.Jobs,
 	}
 }
 

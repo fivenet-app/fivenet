@@ -9,10 +9,11 @@ import (
 	dispatch "github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
 	users "github.com/galexrt/fivenet/gen/go/proto/resources/users"
-	"github.com/galexrt/fivenet/pkg/audit"
+	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/events"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/perms"
+	"github.com/galexrt/fivenet/pkg/server/audit"
 	"github.com/galexrt/fivenet/pkg/tracker"
 	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/pkg/utils/dbutils"
@@ -23,6 +24,7 @@ import (
 	"github.com/nats-io/nats.go"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
+	"go.uber.org/fx"
 	"go.uber.org/zap"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -55,27 +57,55 @@ type Server struct {
 	visibleJobs []string
 }
 
-func NewServer(ctx context.Context, logger *zap.Logger, tp *tracesdk.TracerProvider, db *sql.DB, p perms.Permissions, aud audit.IAuditer, e *events.Eventus, tracker *tracker.Tracker, visibleJobs []string) *Server {
-	return &Server{
+type Params struct {
+	fx.In
+
+	LC fx.Lifecycle
+
+	Logger  *zap.Logger
+	TP      *tracesdk.TracerProvider
+	DB      *sql.DB
+	Perms   perms.Permissions
+	Audit   audit.IAuditer
+	Events  *events.Eventus
+	Tracker *tracker.Tracker
+	Config  *config.Config
+}
+
+func NewServer(p Params) *Server {
+	ctx, cancel := context.WithCancel(context.Background())
+
+	s := &Server{
 		ctx:    ctx,
-		logger: logger,
+		logger: p.Logger,
 
-		tracer: tp.Tracer("centrum-cache"),
+		tracer: p.TP.Tracer("centrum-cache"),
 
-		db:      db,
-		p:       p,
-		a:       aud,
-		events:  e,
-		tracker: tracker,
+		db:      p.DB,
+		p:       p.Perms,
+		a:       p.Audit,
+		events:  p.Events,
+		tracker: p.Tracker,
+
+		visibleJobs: p.Config.Game.Livemap.Jobs,
 
 		units:      syncx.Map[string, *syncx.Map[uint64, *dispatch.Unit]]{},
 		unitsUsers: syncx.Map[int32, uint64]{},
-
-		visibleJobs: visibleJobs,
 	}
+
+	p.LC.Append(fx.StopHook(func(_ context.Context) {
+		cancel()
+	}))
+
+	p.LC.Append(fx.StartHook(func(_ context.Context) {
+		go s.start()
+		go s.ConvertPhoneJobMsgToDispatch()
+	}))
+
+	return s
 }
 
-func (s *Server) Start() {
+func (s *Server) start() {
 	if err := s.registerEvents(); err != nil {
 		s.logger.Error("failed to register events", zap.Error(err))
 	}
@@ -122,7 +152,7 @@ func (s *Server) UpdateSettings(ctx context.Context, req *dispatch.Settings) (*d
 		UserJob: userInfo.Job,
 		State:   int16(rector.EVENT_TYPE_ERRORED),
 	}
-	defer s.a.AddEntryWithData(auditEntry, req)
+	defer s.a.Log(auditEntry, req)
 
 	if err := s.updateSettings(ctx, userInfo, req); err != nil {
 		return nil, err
