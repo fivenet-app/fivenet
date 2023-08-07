@@ -124,6 +124,7 @@ func New(p Params) (Permissions, error) {
 	ps := &Perms{
 		logger: p.Logger,
 		db:     p.DB,
+		cfg:    p.Config,
 
 		tracer: p.TP.Tracer("perms"),
 		ctx:    ctx,
