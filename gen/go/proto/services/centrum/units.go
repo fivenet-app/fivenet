@@ -11,6 +11,8 @@ import (
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
+	"google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -299,15 +301,6 @@ func (s *Server) AssignUnit(ctx context.Context, req *AssignUnitRequest) (*Assig
 		return nil, ErrFailedQuery
 	}
 
-	addIds := make([]jet.Expression, len(req.ToAdd))
-	for i := 0; i < len(req.ToAdd); i++ {
-		addIds[i] = jet.Int32(req.ToAdd[i])
-	}
-	removeIds := make([]jet.Expression, len(req.ToRemove))
-	for i := 0; i < len(req.ToRemove); i++ {
-		removeIds[i] = jet.Int32(req.ToRemove[i])
-	}
-
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -317,7 +310,12 @@ func (s *Server) AssignUnit(ctx context.Context, req *AssignUnitRequest) (*Assig
 	defer tx.Rollback()
 
 	tUnitUser := table.FivenetCentrumUnitsUsers
-	if len(removeIds) > 0 {
+	if len(req.ToRemove) > 0 {
+		removeIds := make([]jet.Expression, len(req.ToRemove))
+		for i := 0; i < len(req.ToRemove); i++ {
+			removeIds[i] = jet.Int32(req.ToRemove[i])
+		}
+
 		stmt := tUnitUser.
 			DELETE().
 			WHERE(jet.AND(
@@ -338,7 +336,17 @@ func (s *Server) AssignUnit(ctx context.Context, req *AssignUnitRequest) (*Assig
 		}
 	}
 
-	if len(addIds) > 0 {
+	if len(req.ToAdd) > 0 {
+		addIds := make([]jet.Expression, len(req.ToAdd))
+		for i := 0; i < len(req.ToAdd); i++ {
+			_, ok := s.tracker.GetUserByJobAndID(userInfo.Job, userInfo.UserId)
+			if !ok {
+				continue
+			}
+
+			addIds[i] = jet.Int32(req.ToAdd[i])
+		}
+
 		for _, id := range addIds {
 			stmt := tUnitUser.
 				INSERT(
@@ -355,7 +363,6 @@ func (s *Server) AssignUnit(ctx context.Context, req *AssignUnitRequest) (*Assig
 					return nil, err
 				}
 			}
-
 		}
 
 		found := []int32{}
@@ -399,6 +406,12 @@ func (s *Server) AssignUnit(ctx context.Context, req *AssignUnitRequest) (*Assig
 }
 
 func (s *Server) JoinUnit(ctx context.Context, req *JoinUnitRequest) (*JoinUnitResponse, error) {
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	_, ok := s.tracker.GetUserByJobAndID(userInfo.Job, userInfo.UserId)
+	if !ok {
+		return nil, status.Error(codes.InvalidArgument, "errors.CentrumService.ErrFailedQuery")
+	}
 
 	// TODO
 

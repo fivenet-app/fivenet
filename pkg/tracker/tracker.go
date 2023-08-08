@@ -36,6 +36,11 @@ type Event struct {
 	Removed []int32
 }
 
+type userInfo struct {
+	Time time.Time
+	Job  string
+}
+
 type Tracker struct {
 	ctx    context.Context
 	logger *zap.Logger
@@ -44,7 +49,7 @@ type Tracker struct {
 	c      *mstlystcdata.Enricher
 
 	usersCache *xsync.MapOf[string, *xsync.MapOf[int32, *livemap.UserMarker]]
-	usersID    map[int32]time.Time
+	usersIDs   *xsync.MapOf[int32, userInfo]
 
 	broker *utils.Broker[*Event]
 
@@ -77,7 +82,7 @@ func New(p Params) *Tracker {
 		c:      p.Enricher,
 
 		usersCache: xsync.NewTypedMapOf[string, *xsync.MapOf[int32, *livemap.UserMarker]](maps.HashString),
-		usersID:    map[int32]time.Time{},
+		usersIDs:   xsync.NewTypedMapOf[int32, userInfo](maps.HashInt32),
 
 		broker: broker,
 
@@ -132,12 +137,15 @@ func (s *Tracker) cleanupUserIDs() error {
 	event := &Event{}
 
 	now := time.Now()
-	for k, t := range s.usersID {
-		if now.After(t.Add(3 * s.refreshTime)) {
-			event.Removed = append(event.Removed, k)
-			delete(s.usersID, k)
+	s.usersIDs.Range(func(key int32, info userInfo) bool {
+		if now.After(info.Time.Add(3 * s.refreshTime)) {
+			event.Removed = append(event.Removed, key)
+			s.usersIDs.Delete(key)
+
 		}
-	}
+
+		return true
+	})
 
 	s.broker.Publish(event)
 
@@ -198,14 +206,17 @@ func (s *Tracker) refreshUserLocations(ctx context.Context) error {
 		userId := dest[i].User.UserId
 		markers[job].Store(userId, dest[i])
 
-		if _, ok := s.usersID[userId]; !ok {
+		if _, ok := s.usersIDs.Load(userId); !ok {
 			// User wasn't in the list, so they must be new so add to event for "announcement"
-			if _, ok := s.GetPlayerByJobAndID(job, userId); !ok {
+			if _, ok := s.GetUserByJobAndID(job, userId); !ok {
 				event.Added = append(event.Added, userId)
 			}
 		}
 
-		s.usersID[userId] = now
+		s.usersIDs.Store(userId, userInfo{
+			Time: now,
+			Job:  dest[i].User.Job,
+		})
 	}
 
 	for job, v := range markers {
@@ -217,22 +228,31 @@ func (s *Tracker) refreshUserLocations(ctx context.Context) error {
 	return nil
 }
 
-func (s *Tracker) GetPlayers(job string) (*xsync.MapOf[int32, *livemap.UserMarker], bool) {
+func (s *Tracker) GetUsers(job string) (*xsync.MapOf[int32, *livemap.UserMarker], bool) {
 	return s.usersCache.Load(job)
 }
 
-func (s *Tracker) GetPlayerByJobAndID(job string, userId int32) (*livemap.UserMarker, bool) {
+func (s *Tracker) GetUserByJobAndID(job string, userId int32) (*livemap.UserMarker, bool) {
 	users, ok := s.usersCache.Load(job)
 	if !ok {
-		return nil, ok
+		return nil, false
 	}
 
 	user, ok := users.Load(userId)
 	if !ok {
-		return nil, ok
+		return nil, false
 	}
 
 	return user, true
+}
+
+func (s *Tracker) GetUserById(id int32) (*livemap.UserMarker, bool) {
+	info, ok := s.usersIDs.Load(id)
+	if !ok {
+		return nil, false
+	}
+
+	return s.GetUserByJobAndID(info.Job, id)
 }
 
 func (s *Tracker) Subscribe() chan *Event {
