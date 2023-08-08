@@ -14,9 +14,9 @@ import (
 const BaseSubject = "centrum"
 
 const (
-	TopicGeneral           events.Topic = "general"
-	TypeGeneralSettings    events.Type  = "settings"
-	TypeGeneralControllers events.Type  = "controllers"
+	TopicGeneral          events.Topic = "general"
+	TypeGeneralSettings   events.Type  = "settings"
+	TypeGeneralDisponents events.Type  = "disponents"
 
 	TopicDispatch          events.Topic = "dispatch"
 	TypeDispatchUpdated    events.Type  = "updated"

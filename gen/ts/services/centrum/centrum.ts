@@ -162,14 +162,14 @@ export interface TakeControlRequest {
  */
 export interface TakeControlResponse {
     /**
-     * @generated from protobuf field: services.centrum.ControllerChange change = 1;
+     * @generated from protobuf field: services.centrum.DisponentsChange change = 1;
      */
-    change?: ControllerChange;
+    change?: DisponentsChange;
 }
 /**
- * @generated from protobuf message services.centrum.ControllerChange
+ * @generated from protobuf message services.centrum.DisponentsChange
  */
-export interface ControllerChange {
+export interface DisponentsChange {
     /**
      * @generated from protobuf field: repeated resources.users.UserShort controllers = 1;
      */
@@ -325,9 +325,9 @@ export interface TakeDispatchResponse {
  */
 export interface JoinUnitRequest {
     /**
-     * @generated from protobuf field: uint64 dispatch_id = 1;
+     * @generated from protobuf field: uint64 unit_id = 1;
      */
-    dispatchId: bigint;
+    unitId: bigint;
     /**
      * @generated from protobuf field: optional bool leave = 2;
      */
@@ -347,9 +347,9 @@ export interface JoinUnitResponse {
  */
 export interface Initial {
     /**
-     * @generated from protobuf field: bool controller = 1;
+     * @generated from protobuf field: bool is_disponent = 1;
      */
-    controller: boolean;
+    isDisponent: boolean;
     /**
      * @generated from protobuf field: resources.dispatch.Settings settings = 2;
      */
@@ -359,6 +359,8 @@ export interface Initial {
      */
     unit?: Unit;
     /**
+     * Send the current units and dispatches
+     *
      * @generated from protobuf field: repeated resources.dispatch.Unit units = 4;
      */
     units: Unit[];
@@ -392,11 +394,11 @@ export interface StreamResponse {
          */
         settings: Settings;
     } | {
-        oneofKind: "controllers";
+        oneofKind: "disponents";
         /**
-         * @generated from protobuf field: services.centrum.ControllerChange controllers = 3;
+         * @generated from protobuf field: services.centrum.DisponentsChange disponents = 3;
          */
-        controllers: ControllerChange;
+        disponents: DisponentsChange;
     } | {
         oneofKind: "dispatchStatus";
         /**
@@ -637,7 +639,7 @@ export const TakeControlRequest = new TakeControlRequest$Type();
 class TakeControlResponse$Type extends MessageType<TakeControlResponse> {
     constructor() {
         super("services.centrum.TakeControlResponse", [
-            { no: 1, name: "change", kind: "message", T: () => ControllerChange }
+            { no: 1, name: "change", kind: "message", T: () => DisponentsChange }
         ]);
     }
 }
@@ -646,18 +648,18 @@ class TakeControlResponse$Type extends MessageType<TakeControlResponse> {
  */
 export const TakeControlResponse = new TakeControlResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class ControllerChange$Type extends MessageType<ControllerChange> {
+class DisponentsChange$Type extends MessageType<DisponentsChange> {
     constructor() {
-        super("services.centrum.ControllerChange", [
+        super("services.centrum.DisponentsChange", [
             { no: 1, name: "controllers", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UserShort },
             { no: 2, name: "active", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
 }
 /**
- * @generated MessageType for protobuf message services.centrum.ControllerChange
+ * @generated MessageType for protobuf message services.centrum.DisponentsChange
  */
-export const ControllerChange = new ControllerChange$Type();
+export const DisponentsChange = new DisponentsChange$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class ListDispatchesRequest$Type extends MessageType<ListDispatchesRequest> {
     constructor() {
@@ -822,7 +824,7 @@ export const TakeDispatchResponse = new TakeDispatchResponse$Type();
 class JoinUnitRequest$Type extends MessageType<JoinUnitRequest> {
     constructor() {
         super("services.centrum.JoinUnitRequest", [
-            { no: 1, name: "dispatch_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 1, name: "unit_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
             { no: 2, name: "leave", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
@@ -847,7 +849,7 @@ export const JoinUnitResponse = new JoinUnitResponse$Type();
 class Initial$Type extends MessageType<Initial> {
     constructor() {
         super("services.centrum.Initial", [
-            { no: 1, name: "controller", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 1, name: "is_disponent", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 2, name: "settings", kind: "message", T: () => Settings },
             { no: 3, name: "unit", kind: "message", T: () => Unit },
             { no: 4, name: "units", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Unit },
@@ -875,7 +877,7 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
         super("services.centrum.StreamResponse", [
             { no: 1, name: "initial", kind: "message", oneof: "change", T: () => Initial },
             { no: 2, name: "settings", kind: "message", oneof: "change", T: () => Settings },
-            { no: 3, name: "controllers", kind: "message", oneof: "change", T: () => ControllerChange },
+            { no: 3, name: "disponents", kind: "message", oneof: "change", T: () => DisponentsChange },
             { no: 4, name: "dispatch_status", kind: "message", oneof: "change", T: () => DispatchStatus },
             { no: 5, name: "dispatch_update", kind: "message", oneof: "change", T: () => Dispatch },
             { no: 6, name: "dispatch_assigned", kind: "message", oneof: "change", T: () => Dispatch },

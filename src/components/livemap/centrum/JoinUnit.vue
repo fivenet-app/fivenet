@@ -3,30 +3,36 @@ import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } fro
 import SvgIcon from '@jamescoyle/vue-icon';
 import { mdiCarEmergency } from '@mdi/js';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
-import { Unit } from '~~/gen/ts/resources/dispatch/units';
-import { Dispatch } from '../../../../gen/ts/resources/dispatch/dispatches';
-import { TAKE_DISPATCH_RESP } from '../../../../gen/ts/services/centrum/centrum';
+import { UNIT_STATUS, Unit } from '~~/gen/ts/resources/dispatch/units';
 
 defineProps<{
     open: boolean;
-    ownUnit: Unit;
-    dispatch: Dispatch;
+    ownUnit: Unit | undefined;
+    units: Unit[] | null;
 }>();
 
 const emits = defineEmits<{
+    (e: 'joined', unit: Unit): void;
+    (e: 'left'): void;
     (e: 'close'): void;
 }>();
 
 const { $grpc } = useNuxtApp();
 
-async function takeDispatch(dispatch: Dispatch, resp: TAKE_DISPATCH_RESP): Promise<void> {
+async function joinUnit(unit: Unit | undefined): Promise<void> {
     return new Promise(async (res, rej) => {
         try {
-            const call = $grpc.getCentrumClient().takeDispatch({
-                dispatchId: dispatch.id,
-                resp: resp,
+            const call = $grpc.getCentrumClient().joinUnit({
+                unitId: unit?.id ?? 0n,
+                leave: unit === undefined,
             });
-            await call;
+            const { response } = await call;
+
+            if (response.unit) {
+                emits('joined', response.unit);
+            } else {
+                emits('left');
+            }
 
             emits('close');
 
@@ -94,7 +100,18 @@ async function takeDispatch(dispatch: Dispatch, resp: TAKE_DISPATCH_RESP): Promi
                                                     >
                                                         {{ $t('common.unit', 2) }}
                                                     </label>
-                                                    <div class="grid grid-cols-4 gap-4">TODO</div>
+                                                    <div class="grid grid-cols-4 gap-4">
+                                                        <button
+                                                            v-for="item in units"
+                                                            :key="item.name"
+                                                            type="button"
+                                                            class="text-white hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-2 text-xs my-0.5 bg-info-600"
+                                                            @click="joinUnit(item)"
+                                                        >
+                                                            <span class="mt-1">{{ item.initials }}: {{ item.name }}</span>
+                                                            <span class="mt-1">{{ UNIT_STATUS[item.status?.status!] }}</span>
+                                                        </button>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
@@ -103,23 +120,17 @@ async function takeDispatch(dispatch: Dispatch, resp: TAKE_DISPATCH_RESP): Promi
                             </div>
                             <div class="gap-2 mt-5 sm:mt-4 sm:flex">
                                 <button
+                                    v-if="ownUnit"
                                     type="button"
                                     class="flex-1 rounded-md bg-error-600 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-base-400"
-                                    @click="takeDispatch(dispatch, TAKE_DISPATCH_RESP.ACCEPTED)"
+                                    @click="joinUnit(undefined)"
                                 >
-                                    {{ $t('common.accept') }}
-                                </button>
-                                <button
-                                    type="button"
-                                    class="flex-1 rounded-md bg-error-600 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-base-400"
-                                    @click="takeDispatch(dispatch, TAKE_DISPATCH_RESP.DECLINED)"
-                                >
-                                    {{ $t('common.decline') }}
+                                    {{ $t('common.leave') }}
                                 </button>
                                 <button
                                     type="button"
                                     class="flex-1 rounded-md bg-base-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-base-400"
-                                    @click="takeDispatch(dispatch, TAKE_DISPATCH_RESP.DECLINED)"
+                                    @click="$emit('close')"
                                     ref="cancelButtonRef"
                                 >
                                     {{ $t('common.cancel') }}

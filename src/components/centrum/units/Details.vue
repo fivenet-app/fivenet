@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import SvgIcon from '@jamescoyle/vue-icon';
-import { mdiClose } from '@mdi/js';
+import { mdiAccount, mdiClose } from '@mdi/js';
 import Time from '~/components/partials/elements/Time.vue';
 import { UNIT_STATUS, Unit } from '~~/gen/ts/resources/dispatch/units';
 import UnitFeed from './Feed.vue';
@@ -133,6 +133,38 @@ const statusOpen = ref(false);
                                                                     Go to Location
                                                                 </button>
                                                                 <span v-else>No Location</span>
+                                                            </dd>
+                                                        </div>
+                                                        <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                                                            <dt class="text-sm font-medium leading-6 text-white">Members</dt>
+                                                            <dd
+                                                                class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
+                                                            >
+                                                                <span v-if="unit.users.length === 0">No members </span>
+                                                                <ul
+                                                                    v-else
+                                                                    role="list"
+                                                                    class="border divide-y rounded-md divide-base-200 border-base-200"
+                                                                >
+                                                                    <li
+                                                                        v-for="user in unit.users"
+                                                                        class="flex items-center justify-between py-3 pl-3 pr-4 text-sm"
+                                                                    >
+                                                                        <div class="flex items-center flex-1">
+                                                                            <SvgIcon
+                                                                                class="flex-shrink-0 w-5 h-5 text-base-400"
+                                                                                aria-hidden="true"
+                                                                                type="mdi"
+                                                                                :path="mdiAccount"
+                                                                            />
+                                                                            <span class="flex-1 ml-2 truncate">
+                                                                                {{ user.user?.firstname }}
+                                                                                {{ user.user?.lastname }}
+                                                                                ({{ user.user?.dateofbirth }})
+                                                                            </span>
+                                                                        </div>
+                                                                    </li>
+                                                                </ul>
                                                             </dd>
                                                         </div>
                                                     </dl>

@@ -293,7 +293,7 @@ func (s *Server) TakeDispatch(ctx context.Context, req *TakeDispatchRequest) (*T
 		return nil, ErrFailedQuery
 	}
 
-	unitId, err := s.getUnitIDFromUserID(ctx, userInfo.UserId)
+	unitId, err := s.getUnitIDForUserID(ctx, userInfo.UserId)
 	if err != nil {
 		return nil, err
 	}
@@ -353,7 +353,7 @@ func (s *Server) UpdateDispatchStatus(ctx context.Context, req *UpdateDispatchSt
 		return nil, ErrFailedQuery
 	}
 
-	ok, err := s.checkIfUserPartOfDispatchUnits(ctx, userInfo, dsp)
+	ok, err := s.checkIfUserIsPartOfDispatch(ctx, userInfo, dsp)
 	if err != nil {
 		return nil, ErrFailedQuery
 	}
@@ -361,7 +361,7 @@ func (s *Server) UpdateDispatchStatus(ctx context.Context, req *UpdateDispatchSt
 		return nil, ErrFailedQuery
 	}
 
-	unitId, err := s.getUnitIDFromUserID(ctx, userInfo.UserId)
+	unitId, err := s.getUnitIDForUserID(ctx, userInfo.UserId)
 	if err != nil {
 		return nil, err
 	}

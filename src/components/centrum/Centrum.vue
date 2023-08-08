@@ -19,7 +19,7 @@ const { $grpc } = useNuxtApp();
 
 const settings = ref<Settings>();
 const controller = ref(false);
-const unit = ref<Unit>();
+const ownUnit = ref<Unit>();
 const feed = ref<(DispatchStatus | UnitStatus)[]>([]);
 const controllers = ref<UserShort[]>([]);
 const units = ref<Array<Unit>>([]);
@@ -55,7 +55,7 @@ async function startStream(): Promise<void> {
 
             if (resp.change.oneofKind === 'initial') {
                 settings.value = resp.change.initial.settings;
-                unit.value = resp.change.initial.unit;
+                ownUnit.value = resp.change.initial.unit;
                 units.value = resp.change.initial.units;
                 dispatches.value = resp.change.initial.dispatches;
                 controller.value = resp.change.initial.controller;

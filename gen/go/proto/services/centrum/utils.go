@@ -7,6 +7,8 @@ import (
 	dispatch "github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
 	users "github.com/galexrt/fivenet/gen/go/proto/resources/users"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
+	"github.com/galexrt/fivenet/pkg/utils"
+	"github.com/galexrt/fivenet/pkg/utils/dbutils"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -281,7 +283,7 @@ func (s *Server) resolveUsersByIds(ctx context.Context, u []int32) ([]*users.Use
 	return resolvedUsers, nil
 }
 
-func (s *Server) getUnitIDFromUserID(ctx context.Context, userId int32) (uint64, error) {
+func (s *Server) getUnitIDForUserID(ctx context.Context, userId int32) (uint64, error) {
 	stmt := tUnitUser.
 		SELECT(
 			tUnitUser.UnitID.AS("unit_id"),
@@ -405,7 +407,7 @@ func (s *Server) getControllers(ctx context.Context, job string) ([]*users.UserS
 	return dest, nil
 }
 
-func (s *Server) checkIfUserPartOfDispatchUnits(ctx context.Context, userInfo *userinfo.UserInfo, dsp *dispatch.Dispatch) (bool, error) {
+func (s *Server) checkIfUserIsPartOfDispatch(ctx context.Context, userInfo *userinfo.UserInfo, dsp *dispatch.Dispatch) (bool, error) {
 	for i := 0; i < len(dsp.Units); i++ {
 		unit, ok := s.getUnit(ctx, userInfo, dsp.Units[i].UnitId)
 		if !ok {
@@ -522,4 +524,115 @@ func (s *Server) updateUnitStatus(ctx context.Context, userInfo *userinfo.UserIn
 	s.events.JS.Publish(s.buildSubject(TopicUnit, TypeUnitStatus, userInfo, status.UnitId), data)
 
 	return status, nil
+}
+
+func (s *Server) updateDispatchUnitAssignments(ctx context.Context, userInfo *userinfo.UserInfo, unit *dispatch.Unit, toAdd []int32, toRemove []int32) error {
+	// Begin transaction
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return ErrFailedQuery
+	}
+	// Defer a rollback in case anything fails
+	defer tx.Rollback()
+
+	tUnitUser := table.FivenetCentrumUnitsUsers
+	if len(toRemove) > 0 {
+		removeIds := make([]jet.Expression, len(toRemove))
+		for i := 0; i < len(toRemove); i++ {
+			removeIds[i] = jet.Int32(toRemove[i])
+		}
+
+		stmt := tUnitUser.
+			DELETE().
+			WHERE(jet.AND(
+				tUnitUser.UnitID.EQ(jet.Uint64(unit.Id)),
+				tUnitUser.UserID.IN(removeIds...),
+			))
+
+		if _, err := stmt.ExecContext(ctx, tx); err != nil {
+			return err
+		}
+
+		for i := 0; i < len(unit.Users); i++ {
+			for k := 0; k < len(toRemove); k++ {
+				if unit.Users[i].UserId == toRemove[k] {
+					unit.Users = utils.RemoveFromSlice(unit.Users, i)
+				}
+			}
+		}
+	}
+
+	if len(toAdd) > 0 {
+		addIds := make([]jet.IntegerExpression, len(toAdd))
+		for i := 0; i < len(toAdd); i++ {
+			_, ok := s.tracker.GetUserById(toAdd[i])
+			if !ok {
+				continue
+			}
+
+			addIds[i] = jet.Int32(toAdd[i])
+		}
+
+		for _, id := range addIds {
+			stmt := tUnitUser.
+				INSERT(
+					tUnitUser.UnitID,
+					tUnitUser.UserID,
+					tUnitUser.Identifier,
+				).
+				VALUES(
+					unit.Id,
+					id,
+					tUser.
+						SELECT(
+							tUser.Identifier,
+						).
+						FROM(tUser).
+						WHERE(tUser.ID.EQ(id)).
+						LIMIT(1),
+				)
+
+			if _, err := stmt.ExecContext(ctx, tx); err != nil {
+				if !dbutils.IsDuplicateError(err) {
+					return err
+				}
+			}
+		}
+
+		found := []int32{}
+		for k := 0; k < len(toAdd); k++ {
+			for i := 0; i < len(unit.Users); i++ {
+				if unit.Users[i].UserId == toAdd[k] {
+					found = append(found, toAdd[k])
+				}
+			}
+		}
+
+		users, err := s.resolveUsersByIds(ctx, found)
+		if err != nil {
+			return err
+		}
+		assignments := []*dispatch.UnitAssignment{}
+		for _, v := range users {
+			assignments = append(assignments, &dispatch.UnitAssignment{
+				UnitId: unit.Id,
+				UserId: v.UserId,
+				User:   v,
+			})
+		}
+		unit.Users = assignments
+	}
+
+	// Commit the transaction
+	if err = tx.Commit(); err != nil {
+		return ErrFailedQuery
+	}
+
+	data, err := proto.Marshal(unit)
+	if err != nil {
+		return err
+	}
+	s.events.JS.Publish(s.buildSubject(TopicUnit, TypeUnitUserAssigned, userInfo, unit.Id), data)
+
+	return nil
 }

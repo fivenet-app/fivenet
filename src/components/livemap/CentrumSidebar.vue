@@ -18,17 +18,22 @@ import {
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { default as UnitDetails } from '~/components/centrum/units/Details.vue';
 import DispatchEntry from '~/components/livemap/centrum/DispatchEntry.vue';
+import { useNotificationsStore } from '~/store/notifications';
 import { DISPATCH_STATUS, Dispatch, DispatchStatus } from '~~/gen/ts/resources/dispatch/dispatches';
 import { Settings } from '~~/gen/ts/resources/dispatch/settings';
 import { UNIT_STATUS, Unit, UnitStatus } from '~~/gen/ts/resources/dispatch/units';
 import { UserShort } from '~~/gen/ts/resources/users/users';
+import JoinUnit from './centrum/JoinUnit.vue';
 
 const { $grpc } = useNuxtApp();
 
+const notifications = useNotificationsStore();
+
 const settings = ref<Settings>();
-const unit = ref<Unit>();
+const ownUnit = ref<Unit>();
 const feed = ref<(DispatchStatus | UnitStatus)[]>([]);
 const controllers = ref<UserShort[]>([]);
+const units = ref<Array<Unit>>([]);
 const dispatches = ref<Array<Dispatch>>([]);
 
 type Action = { icon: string; name: string; action?: Function; class?: string; status?: DISPATCH_STATUS | UNIT_STATUS };
@@ -80,7 +85,8 @@ async function startStream(): Promise<void> {
 
             if (resp.change.oneofKind === 'initial') {
                 settings.value = resp.change.initial.settings;
-                unit.value = resp.change.initial.unit;
+                ownUnit.value = resp.change.initial.unit;
+                units.value = resp.change.initial.units;
                 dispatches.value = resp.change.initial.dispatches;
             } else if (resp.change.oneofKind === 'dispatchUpdate') {
                 const id = resp.change.dispatchUpdate.id;
@@ -110,29 +116,51 @@ async function startStream(): Promise<void> {
                 }
             } else if (resp.change.oneofKind === 'unitUpdate') {
                 const id = resp.change.unitUpdate.id;
-                if (!unit.value) continue;
+                if (!ownUnit.value) continue;
 
-                if (unit.value.id === id) {
-                    unit.value = resp.change.unitUpdate;
+                if (ownUnit.value.id === id) {
+                    ownUnit.value = resp.change.unitUpdate;
+                }
+                const idx = units.value?.findIndex((d) => d.id === id) ?? -1;
+                if (idx === -1) {
+                    units.value?.unshift(resp.change.unitUpdate);
+                } else {
+                    units.value![idx] = resp.change.unitUpdate;
                 }
             } else if (resp.change.oneofKind === 'unitStatus') {
                 feed.value.unshift(resp.change.unitStatus);
             } else if (resp.change.oneofKind === 'unitAssigned') {
-                // TODO show popup and notification
                 if (resp.change.unitAssigned.id === 0n) {
                     // User has been removed from the unit
+                    ownUnit.value = undefined;
+
+                    notifications.dispatchNotification({
+                        title: { key: 'notifications.centrum.unitAssigned.removed.title', parameters: [] },
+                        content: { key: 'notifications.centrum.unitAssigned.removed.content', parameters: [] },
+                        type: 'success',
+                    });
                 } else {
                     // User has been added to unit
+                    ownUnit.value = resp.change.unitAssigned;
+
+                    notifications.dispatchNotification({
+                        title: { key: 'notifications.centrum.unitAssigned.added.title', parameters: [] },
+                        content: { key: 'notifications.centrum.unitAssigned.added.content', parameters: [] },
+                        type: 'success',
+                    });
                 }
             } else if (resp.change.oneofKind === 'unitDeleted') {
-                if (!unit.value) continue;
+                if (!ownUnit.value) continue;
 
                 const id = resp.change.unitDeleted;
-                if (unit.value.id === id) {
-                    unit.value = undefined;
+                if (ownUnit.value.id === id) {
+                    ownUnit.value = undefined;
                 }
 
-                // TODO User not in a unit anymore
+                const idx = units.value?.findIndex((d) => d.id === id) ?? -1;
+                if (idx > -1) {
+                    units.value?.splice(idx, 1);
+                }
             } else if (resp.change.oneofKind === 'controllers') {
                 controllers.value = resp.change.controllers.controllers;
                 // If user is part of controllers list, we need to restart the stream
@@ -172,6 +200,7 @@ onBeforeUnmount(() => {
 });
 
 const unitOpen = ref(false);
+const selectUnitOpen = ref(false);
 </script>
 
 <template>
@@ -181,29 +210,42 @@ const unitOpen = ref(false);
             <ul role="list" class="flex flex-1 flex-col gap-y-2 divide-y divide-base-400">
                 <li>
                     <ul role="list" class="-mx-2 mt-2 space-y-1">
-                        <li v-if="unit">
+                        <li>
+                            <div v-if="ownUnit">
+                                <button
+                                    v-if="ownUnit"
+                                    @click="unitOpen = true"
+                                    type="button"
+                                    class="text-white bg-info-700 hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-2 text-xs my-0.5"
+                                >
+                                    <SvgIcon type="mdi" :path="mdiInformationOutline" class="h-5 w-5" aria-hidden="true" />
+                                    <span class="mt-2 truncate">{{ ownUnit.initials }}: {{ ownUnit.name }}</span>
+                                </button>
+                                <UnitDetails :unit="ownUnit" :ownUnit="ownUnit" :open="unitOpen" @close="unitOpen = false" />
+                            </div>
                             <button
-                                @click="unitOpen = true"
+                                @click="selectUnitOpen = true"
                                 type="button"
                                 class="text-white bg-info-700 hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-2 text-xs my-0.5"
                             >
-                                <SvgIcon type="mdi" :path="mdiInformationOutline" class="h-5 w-5" aria-hidden="true" />
-                                <span class="mt-2 truncate">{{ unit.initials }}: {{ unit.name }}</span>
+                                <span v-if="!ownUnit" class="flex w-full flex-col items-center">
+                                    <SvgIcon type="mdi" :path="mdiInformationOutline" class="h-5 w-5" aria-hidden="true" />
+                                    <span class="mt-2 truncate">Not in any Unit.</span>
+                                </span>
+                                <span v-else class="truncate">Leave Unit</span>
                             </button>
-                            <UnitDetails :unit="unit" :open="unitOpen" @close="unitOpen = false" />
-                        </li>
-                        <li v-else>
-                            <button
-                                type="button"
-                                class="text-white bg-info-700 hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-2 text-xs my-0.5"
-                            >
-                                <SvgIcon type="mdi" :path="mdiInformationOutline" class="h-5 w-5" aria-hidden="true" />
-                                <span class="mt-2 truncate">Not in any Unit.</span>
-                            </button>
+
+                            <JoinUnit
+                                :open="selectUnitOpen"
+                                @close="selectUnitOpen = false"
+                                @joined="ownUnit = $event"
+                                :own-unit="ownUnit"
+                                :units="units"
+                            />
                         </li>
                     </ul>
                 </li>
-                <li v-if="unit">
+                <li v-if="ownUnit">
                     <ul role="list" class="-mx-2 space-y-1">
                         <li>
                             <Disclosure as="div" v-slot="{ open }">
@@ -245,7 +287,7 @@ const unitOpen = ref(false);
                         </li>
                     </ul>
                 </li>
-                <li v-if="unit">
+                <li v-if="ownUnit">
                     <ul role="list" class="-mx-2 space-y-1">
                         <div class="text-xs font-semibold leading-6 text-base-200">Dispatches</div>
                         <li>
@@ -269,7 +311,7 @@ const unitOpen = ref(false);
                         </li>
                     </ul>
                 </li>
-                <li v-if="unit">
+                <li v-if="ownUnit">
                     <div class="text-xs font-semibold leading-6 text-base-200">Your Dispatches</div>
                     <ul role="list" class="-mx-2 mt-2 space-y-1">
                         <li v-if="!dispatches || dispatches.length === 0">

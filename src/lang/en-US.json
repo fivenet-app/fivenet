@@ -517,7 +517,9 @@
         "cancel": "Cancel",
         "enabled": "Enabled",
         "status": "Status",
-        "mode": "Mode | Modes"
+        "mode": "Mode | Modes",
+        "join": "Join | Joined",
+        "leave": "Leave | Left"
     },
     "notifications": {
         "clipboard": {

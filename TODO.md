@@ -16,8 +16,8 @@
 
 ***
 
-1. TASK Work on Unit self assignment logic
-2. TASK Work on Unit disponent unit assignment logic
-3. TEST Make sure the unit updating, checking if non empty, etc., works
-4. DISCUSS What tasks and tests are needed for the management of dispatches in backend?
-5. DISCUSS What tasks and tests are needed for the management of dispatches in frontend?
+- [x] TASK Work on Unit self assignment logic
+- [ ] TASK Work on Unit disponent unit assignment logic
+- [ ] TEST Make sure the unit updating, checking if non empty, etc., works
+- [ ] DISCUSS What tasks and tests are needed for the management of dispatches in backend?
+- [ ] DISCUSS What tasks and tests are needed for the management of dispatches in frontend?

@@ -72,10 +72,10 @@ message TakeControlRequest {
 }
 
 message TakeControlResponse {
-  ControllerChange change = 1;
+  DisponentsChange change = 1;
 }
 
-message ControllerChange {
+message DisponentsChange {
   repeated resources.users.UserShort controllers = 1;
   bool active = 2;
 }
@@ -143,7 +143,7 @@ message TakeDispatchResponse {
 }
 
 message JoinUnitRequest {
-  uint64 dispatch_id = 1;
+  uint64 unit_id = 1;
   optional bool leave = 2;
 }
 
@@ -152,9 +152,10 @@ message JoinUnitResponse {
 }
 
 message Initial {
-  bool controller = 1;
+  bool is_disponent = 1;
   resources.dispatch.Settings settings = 2;
   resources.dispatch.Unit unit = 3;
+  // Send the current units and dispatches
   repeated resources.dispatch.Unit units = 4;
   repeated resources.dispatch.Dispatch dispatches = 5;
 }
@@ -165,7 +166,7 @@ message StreamResponse {
   oneof change {
     Initial initial = 1;
     resources.dispatch.Settings settings = 2;
-    ControllerChange controllers = 3;
+    DisponentsChange disponents = 3;
     resources.dispatch.DispatchStatus dispatch_status = 4;
     resources.dispatch.Dispatch dispatch_update = 5;
     resources.dispatch.Dispatch dispatch_assigned = 6;

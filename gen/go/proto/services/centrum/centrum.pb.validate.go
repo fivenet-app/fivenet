@@ -1847,22 +1847,22 @@ var _ interface {
 	ErrorName() string
 } = TakeControlResponseValidationError{}
 
-// Validate checks the field values on ControllerChange with the rules defined
+// Validate checks the field values on DisponentsChange with the rules defined
 // in the proto definition for this message. If any rules are violated, the
 // first error encountered is returned, or nil if there are no violations.
-func (m *ControllerChange) Validate() error {
+func (m *DisponentsChange) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on ControllerChange with the rules
+// ValidateAll checks the field values on DisponentsChange with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// ControllerChangeMultiError, or nil if none found.
-func (m *ControllerChange) ValidateAll() error {
+// DisponentsChangeMultiError, or nil if none found.
+func (m *DisponentsChange) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *ControllerChange) validate(all bool) error {
+func (m *DisponentsChange) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -1876,7 +1876,7 @@ func (m *ControllerChange) validate(all bool) error {
 			switch v := interface{}(item).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, ControllerChangeValidationError{
+					errors = append(errors, DisponentsChangeValidationError{
 						field:  fmt.Sprintf("Controllers[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -1884,7 +1884,7 @@ func (m *ControllerChange) validate(all bool) error {
 				}
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
-					errors = append(errors, ControllerChangeValidationError{
+					errors = append(errors, DisponentsChangeValidationError{
 						field:  fmt.Sprintf("Controllers[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -1893,7 +1893,7 @@ func (m *ControllerChange) validate(all bool) error {
 			}
 		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				return ControllerChangeValidationError{
+				return DisponentsChangeValidationError{
 					field:  fmt.Sprintf("Controllers[%v]", idx),
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -1906,19 +1906,19 @@ func (m *ControllerChange) validate(all bool) error {
 	// no validation rules for Active
 
 	if len(errors) > 0 {
-		return ControllerChangeMultiError(errors)
+		return DisponentsChangeMultiError(errors)
 	}
 
 	return nil
 }
 
-// ControllerChangeMultiError is an error wrapping multiple validation errors
-// returned by ControllerChange.ValidateAll() if the designated constraints
+// DisponentsChangeMultiError is an error wrapping multiple validation errors
+// returned by DisponentsChange.ValidateAll() if the designated constraints
 // aren't met.
-type ControllerChangeMultiError []error
+type DisponentsChangeMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m ControllerChangeMultiError) Error() string {
+func (m DisponentsChangeMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -1927,11 +1927,11 @@ func (m ControllerChangeMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m ControllerChangeMultiError) AllErrors() []error { return m }
+func (m DisponentsChangeMultiError) AllErrors() []error { return m }
 
-// ControllerChangeValidationError is the validation error returned by
-// ControllerChange.Validate if the designated constraints aren't met.
-type ControllerChangeValidationError struct {
+// DisponentsChangeValidationError is the validation error returned by
+// DisponentsChange.Validate if the designated constraints aren't met.
+type DisponentsChangeValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -1939,22 +1939,22 @@ type ControllerChangeValidationError struct {
 }
 
 // Field function returns field value.
-func (e ControllerChangeValidationError) Field() string { return e.field }
+func (e DisponentsChangeValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e ControllerChangeValidationError) Reason() string { return e.reason }
+func (e DisponentsChangeValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e ControllerChangeValidationError) Cause() error { return e.cause }
+func (e DisponentsChangeValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e ControllerChangeValidationError) Key() bool { return e.key }
+func (e DisponentsChangeValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e ControllerChangeValidationError) ErrorName() string { return "ControllerChangeValidationError" }
+func (e DisponentsChangeValidationError) ErrorName() string { return "DisponentsChangeValidationError" }
 
 // Error satisfies the builtin error interface
-func (e ControllerChangeValidationError) Error() string {
+func (e DisponentsChangeValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -1966,14 +1966,14 @@ func (e ControllerChangeValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sControllerChange.%s: %s%s",
+		"invalid %sDisponentsChange.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = ControllerChangeValidationError{}
+var _ error = DisponentsChangeValidationError{}
 
 var _ interface {
 	Field() string
@@ -1981,7 +1981,7 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = ControllerChangeValidationError{}
+} = DisponentsChangeValidationError{}
 
 // Validate checks the field values on ListDispatchesRequest with the rules
 // defined in the proto definition for this message. If any rules are
@@ -3665,7 +3665,7 @@ func (m *JoinUnitRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for DispatchId
+	// no validation rules for UnitId
 
 	if m.Leave != nil {
 		// no validation rules for Leave
@@ -3899,7 +3899,7 @@ func (m *Initial) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Controller
+	// no validation rules for IsDisponent
 
 	if all {
 		switch v := interface{}(m.GetSettings()).(type) {
@@ -4309,7 +4309,7 @@ func (m *StreamResponse) validate(all bool) error {
 			}
 		}
 
-	case *StreamResponse_Controllers:
+	case *StreamResponse_Disponents:
 		if v == nil {
 			err := StreamResponseValidationError{
 				field:  "Change",
@@ -4322,11 +4322,11 @@ func (m *StreamResponse) validate(all bool) error {
 		}
 
 		if all {
-			switch v := interface{}(m.GetControllers()).(type) {
+			switch v := interface{}(m.GetDisponents()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
 					errors = append(errors, StreamResponseValidationError{
-						field:  "Controllers",
+						field:  "Disponents",
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -4334,16 +4334,16 @@ func (m *StreamResponse) validate(all bool) error {
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
 					errors = append(errors, StreamResponseValidationError{
-						field:  "Controllers",
+						field:  "Disponents",
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
 				}
 			}
-		} else if v, ok := interface{}(m.GetControllers()).(interface{ Validate() error }); ok {
+		} else if v, ok := interface{}(m.GetDisponents()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
 				return StreamResponseValidationError{
-					field:  "Controllers",
+					field:  "Disponents",
 					reason: "embedded message failed validation",
 					cause:  err,
 				}

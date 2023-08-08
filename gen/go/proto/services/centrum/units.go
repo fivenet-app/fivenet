@@ -7,7 +7,6 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
-	"github.com/galexrt/fivenet/pkg/utils/dbutils"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -301,104 +300,9 @@ func (s *Server) AssignUnit(ctx context.Context, req *AssignUnitRequest) (*Assig
 		return nil, ErrFailedQuery
 	}
 
-	// Begin transaction
-	tx, err := s.db.BeginTx(ctx, nil)
-	if err != nil {
+	if err := s.updateDispatchUnitAssignments(ctx, userInfo, unit, req.ToAdd, req.ToRemove); err != nil {
 		return nil, ErrFailedQuery
 	}
-	// Defer a rollback in case anything fails
-	defer tx.Rollback()
-
-	tUnitUser := table.FivenetCentrumUnitsUsers
-	if len(req.ToRemove) > 0 {
-		removeIds := make([]jet.Expression, len(req.ToRemove))
-		for i := 0; i < len(req.ToRemove); i++ {
-			removeIds[i] = jet.Int32(req.ToRemove[i])
-		}
-
-		stmt := tUnitUser.
-			DELETE().
-			WHERE(jet.AND(
-				tUnitUser.UnitID.EQ(jet.Uint64(unit.Id)),
-				tUnitUser.UserID.IN(removeIds...),
-			))
-
-		if _, err := stmt.ExecContext(ctx, tx); err != nil {
-			return nil, err
-		}
-
-		for i := 0; i < len(unit.Users); i++ {
-			for k := 0; k < len(req.ToRemove); k++ {
-				if unit.Users[i].UserId == req.ToRemove[k] {
-					break
-				}
-			}
-		}
-	}
-
-	if len(req.ToAdd) > 0 {
-		addIds := make([]jet.Expression, len(req.ToAdd))
-		for i := 0; i < len(req.ToAdd); i++ {
-			_, ok := s.tracker.GetUserByJobAndID(userInfo.Job, userInfo.UserId)
-			if !ok {
-				continue
-			}
-
-			addIds[i] = jet.Int32(req.ToAdd[i])
-		}
-
-		for _, id := range addIds {
-			stmt := tUnitUser.
-				INSERT(
-					tUnitUser.UnitID,
-					tUnitUser.UserID,
-				).
-				VALUES(
-					unit.Id,
-					id,
-				)
-
-			if _, err := stmt.ExecContext(ctx, tx); err != nil {
-				if !dbutils.IsDuplicateError(err) {
-					return nil, err
-				}
-			}
-		}
-
-		found := []int32{}
-		for k := 0; k < len(req.ToAdd); k++ {
-			for i := 0; i < len(unit.Users); i++ {
-				if unit.Users[i].UserId == req.ToAdd[k] {
-					found = append(found, req.ToAdd[k])
-				}
-			}
-		}
-
-		users, err := s.resolveUsersByIds(ctx, found)
-		if err != nil {
-			return nil, err
-		}
-		assignments := []*dispatch.UnitAssignment{}
-		for _, v := range users {
-			assignments = append(assignments, &dispatch.UnitAssignment{
-				UnitId: unit.Id,
-				UserId: v.UserId,
-				User:   v,
-			})
-		}
-		unit.Users = assignments
-	}
-
-	// Commit the transaction
-	if err = tx.Commit(); err != nil {
-		return nil, ErrFailedQuery
-	}
-
-	data, err := proto.Marshal(unit)
-	if err != nil {
-		return nil, err
-	}
-	s.events.JS.Publish(s.buildSubject(TopicUnit, TypeUnitUserAssigned, userInfo, unit.Id), data)
 
 	auditEntry.State = int16(rector.EVENT_TYPE_UPDATED)
 
@@ -408,14 +312,41 @@ func (s *Server) AssignUnit(ctx context.Context, req *AssignUnitRequest) (*Assig
 func (s *Server) JoinUnit(ctx context.Context, req *JoinUnitRequest) (*JoinUnitResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	_, ok := s.tracker.GetUserByJobAndID(userInfo.Job, userInfo.UserId)
-	if !ok {
-		return nil, status.Error(codes.InvalidArgument, "errors.CentrumService.ErrFailedQuery")
+	// Only check if the user is joining an unit
+	if req.Leave != nil && !*req.Leave {
+		_, ok := s.tracker.GetUserByJobAndID(userInfo.Job, userInfo.UserId)
+		if !ok {
+			return nil, status.Error(codes.InvalidArgument, "errors.CentrumService.ErrFailedQuery")
+		}
+
+		unitId, err := s.getUnitIDForUserID(ctx, userInfo.UserId)
+		if err != nil {
+			return nil, ErrFailedQuery
+		}
+		if unitId > 0 {
+			return nil, status.Error(codes.InvalidArgument, "You are already in an unit!")
+		}
 	}
 
-	// TODO
+	unit, err := s.getUnitFromDB(ctx, s.db, req.UnitId)
+	if err != nil {
+		return nil, ErrFailedQuery
+	}
 
-	return nil, nil
+	resp := &JoinUnitResponse{}
+	if req.Leave != nil && !*req.Leave {
+		if err := s.updateDispatchUnitAssignments(ctx, userInfo, unit, []int32{userInfo.UserId}, nil); err != nil {
+			return nil, ErrFailedQuery
+		}
+
+		resp.Unit = unit
+	} else {
+		if err := s.updateDispatchUnitAssignments(ctx, userInfo, unit, nil, []int32{userInfo.UserId}); err != nil {
+			return nil, ErrFailedQuery
+		}
+	}
+
+	return resp, nil
 }
 
 func (s *Server) ListUnitActivity(ctx context.Context, req *ListActivityRequest) (*ListUnitActivityResponse, error) {

@@ -51,8 +51,7 @@ type Server struct {
 	events  *events.Eventus
 	tracker *tracker.Tracker
 
-	units      syncx.Map[string, *syncx.Map[uint64, *dispatch.Unit]]
-	unitsUsers syncx.Map[int32, uint64]
+	units syncx.Map[string, *syncx.Map[uint64, *dispatch.Unit]]
 
 	visibleJobs []string
 }
@@ -88,9 +87,6 @@ func NewServer(p Params) *Server {
 		tracker: p.Tracker,
 
 		visibleJobs: p.Config.Game.Livemap.Jobs,
-
-		units:      syncx.Map[string, *syncx.Map[uint64, *dispatch.Unit]]{},
-		unitsUsers: syncx.Map[int32, uint64]{},
 	}
 
 	p.LC.Append(fx.StopHook(func(_ context.Context) {
@@ -119,7 +115,7 @@ func (s *Server) start() {
 			select {
 			case <-s.ctx.Done():
 				return
-			case <-time.After(10 * time.Second):
+			case <-time.After(2 * time.Second):
 			}
 		}
 	}()
@@ -186,11 +182,11 @@ func (s *Server) TakeControl(ctx context.Context, req *TakeControlRequest) (*Tak
 				tCentrumUsers.UserID,
 				tCentrumUsers.Identifier,
 			).
-			QUERY(
+			VALUES(
+				userInfo.Job,
+				userInfo.UserId,
 				tUser.
 					SELECT(
-						jet.String(userInfo.Job).AS("job"),
-						jet.Int32(userInfo.UserId).AS("user_id"),
 						tUser.Identifier.AS("identifier"),
 					).
 					FROM(tUser).
@@ -237,7 +233,7 @@ func (s *Server) TakeControl(ctx context.Context, req *TakeControlRequest) (*Tak
 		}
 	}
 
-	change := &ControllerChange{
+	change := &DisponentsChange{
 		Controllers: controllers,
 		Active:      settings.Active,
 	}
@@ -245,7 +241,7 @@ func (s *Server) TakeControl(ctx context.Context, req *TakeControlRequest) (*Tak
 	if err != nil {
 		return nil, err
 	}
-	s.broadcastToAllUnits(TopicGeneral, TypeGeneralControllers, userInfo, data)
+	s.broadcastToAllUnits(TopicGeneral, TypeGeneralDisponents, userInfo, data)
 
 	return &TakeControlResponse{
 		Change: change,
@@ -255,7 +251,7 @@ func (s *Server) TakeControl(ctx context.Context, req *TakeControlRequest) (*Tak
 func (s *Server) Stream(req *StreamRequest, srv CentrumService_StreamServer) error {
 	userInfo := auth.MustGetUserInfoFromContext(srv.Context())
 
-	unitId, err := s.getUnitIDFromUserID(srv.Context(), userInfo.UserId)
+	unitId, err := s.getUnitIDForUserID(srv.Context(), userInfo.UserId)
 	if err != nil {
 		return err
 	}
@@ -270,8 +266,6 @@ func (s *Server) Stream(req *StreamRequest, srv CentrumService_StreamServer) err
 	if err != nil {
 		return err
 	}
-
-	var units []*dispatch.Unit
 
 	controller := utils.InSliceFunc(controllers, func(in *users.UserShort) bool {
 		return in.UserId == userInfo.UserId
@@ -288,13 +282,13 @@ func (s *Server) Stream(req *StreamRequest, srv CentrumService_StreamServer) err
 			return err
 		}
 		defer sub.Unsubscribe()
-
-		unitsResp, err := s.ListUnits(srv.Context(), &ListUnitsRequest{})
-		if err != nil {
-			return err
-		}
-		units = unitsResp.Units
 	}
+
+	unitsResp, err := s.ListUnits(srv.Context(), &ListUnitsRequest{})
+	if err != nil {
+		return err
+	}
+	units := unitsResp.Units
 
 	unit, _ := s.getUnit(srv.Context(), userInfo, unitId)
 
@@ -307,11 +301,11 @@ func (s *Server) Stream(req *StreamRequest, srv CentrumService_StreamServer) err
 	resp := &StreamResponse{}
 	resp.Change = &StreamResponse_Initial{
 		Initial: &Initial{
-			Controller: true,
-			Settings:   settings,
-			Unit:       unit,
-			Units:      units,
-			Dispatches: dispatches.Dispatches,
+			IsDisponent: true,
+			Settings:    settings,
+			Unit:        unit,
+			Units:       units,
+			Dispatches:  dispatches.Dispatches,
 		},
 	}
 
@@ -330,14 +324,14 @@ func (s *Server) Stream(req *StreamRequest, srv CentrumService_StreamServer) err
 			switch topic {
 			case TopicGeneral:
 				switch tType {
-				case TypeGeneralControllers:
-					var dest ControllerChange
+				case TypeGeneralDisponents:
+					var dest DisponentsChange
 					if err := proto.Unmarshal(msg.Data, &dest); err != nil {
 						return err
 					}
 
-					resp.Change = &StreamResponse_Controllers{
-						Controllers: &dest,
+					resp.Change = &StreamResponse_Disponents{
+						Disponents: &dest,
 					}
 
 				case TypeGeneralSettings:
@@ -440,7 +434,6 @@ func (s *Server) Stream(req *StreamRequest, srv CentrumService_StreamServer) err
 							},
 						}
 					}
-
 				case TypeUnitDeleted:
 					var dest dispatch.Unit
 					if err := proto.Unmarshal(msg.Data, &dest); err != nil {
