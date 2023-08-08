@@ -1,5 +1,5 @@
 - [ ] Leitstelle
-    - [ ] Player and Marker tracker in backend (`pkg/tracker/tracker.go`)
+    - [x] Player tracker in backend (`pkg/tracker/tracker.go`)
     - [ ] Centrum
         - [x] Convert GKSPhone Job Messages and delete them afterwards - started in `gen/go/proto/services/centrum/converter.go`
     - [ ] Frontend for employees to see their dispatches and manage their status
@@ -13,3 +13,11 @@
     - [ ] TakeControl for leitstellen controller needed + "No one is active" when no controller is active
     - [x] Rector - Add Centrum Settings Page
     - [ ] Translations
+
+***
+
+1. TASK Work on Unit self assignment logic
+2. TASK Work on Unit disponent unit assignment logic
+3. TEST Make sure the unit updating, checking if non empty, etc., works
+4. DISCUSS What tasks and tests are needed for the management of dispatches in backend?
+5. DISCUSS What tasks and tests are needed for the management of dispatches in frontend?

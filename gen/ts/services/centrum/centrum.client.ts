@@ -9,6 +9,8 @@ import type { StreamRequest } from "./centrum.js";
 import type { ServerStreamingCall } from "@protobuf-ts/runtime-rpc";
 import type { TakeDispatchResponse } from "./centrum.js";
 import type { TakeDispatchRequest } from "./centrum.js";
+import type { JoinUnitResponse } from "./centrum.js";
+import type { JoinUnitRequest } from "./centrum.js";
 import type { AssignDispatchResponse } from "./centrum.js";
 import type { AssignDispatchRequest } from "./centrum.js";
 import type { ListDispatchActivityResponse } from "./centrum.js";
@@ -133,6 +135,12 @@ export interface ICentrumServiceClient {
      * @generated from protobuf rpc: AssignDispatch(services.centrum.AssignDispatchRequest) returns (services.centrum.AssignDispatchResponse);
      */
     assignDispatch(input: AssignDispatchRequest, options?: RpcOptions): UnaryCall<AssignDispatchRequest, AssignDispatchResponse>;
+    /**
+     * @perm: Name=Stream
+     *
+     * @generated from protobuf rpc: JoinUnit(services.centrum.JoinUnitRequest) returns (services.centrum.JoinUnitResponse);
+     */
+    joinUnit(input: JoinUnitRequest, options?: RpcOptions): UnaryCall<JoinUnitRequest, JoinUnitResponse>;
     /**
      * @perm
      *
@@ -291,12 +299,21 @@ export class CentrumServiceClient implements ICentrumServiceClient, ServiceInfo 
         return stackIntercept<AssignDispatchRequest, AssignDispatchResponse>("unary", this._transport, method, opt, input);
     }
     /**
+     * @perm: Name=Stream
+     *
+     * @generated from protobuf rpc: JoinUnit(services.centrum.JoinUnitRequest) returns (services.centrum.JoinUnitResponse);
+     */
+    joinUnit(input: JoinUnitRequest, options?: RpcOptions): UnaryCall<JoinUnitRequest, JoinUnitResponse> {
+        const method = this.methods[15], opt = this._transport.mergeOptions(options);
+        return stackIntercept<JoinUnitRequest, JoinUnitResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
      * @perm
      *
      * @generated from protobuf rpc: TakeDispatch(services.centrum.TakeDispatchRequest) returns (services.centrum.TakeDispatchResponse);
      */
     takeDispatch(input: TakeDispatchRequest, options?: RpcOptions): UnaryCall<TakeDispatchRequest, TakeDispatchResponse> {
-        const method = this.methods[15], opt = this._transport.mergeOptions(options);
+        const method = this.methods[16], opt = this._transport.mergeOptions(options);
         return stackIntercept<TakeDispatchRequest, TakeDispatchResponse>("unary", this._transport, method, opt, input);
     }
     /**
@@ -305,7 +322,7 @@ export class CentrumServiceClient implements ICentrumServiceClient, ServiceInfo 
      * @generated from protobuf rpc: Stream(services.centrum.StreamRequest) returns (stream services.centrum.StreamResponse);
      */
     stream(input: StreamRequest, options?: RpcOptions): ServerStreamingCall<StreamRequest, StreamResponse> {
-        const method = this.methods[16], opt = this._transport.mergeOptions(options);
+        const method = this.methods[17], opt = this._transport.mergeOptions(options);
         return stackIntercept<StreamRequest, StreamResponse>("serverStreaming", this._transport, method, opt, input);
     }
 }

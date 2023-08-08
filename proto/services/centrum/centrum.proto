@@ -142,6 +142,15 @@ message TakeDispatchResponse {
   resources.dispatch.Dispatch dispatch = 1;
 }
 
+message JoinUnitRequest {
+  uint64 dispatch_id = 1;
+  optional bool leave = 2;
+}
+
+message JoinUnitResponse {
+  resources.dispatch.Unit unit = 1;
+}
+
 message Initial {
   bool controller = 1;
   resources.dispatch.Settings settings = 2;
@@ -202,6 +211,8 @@ service CentrumService {
   rpc ListDispatchActivity(ListActivityRequest) returns (ListDispatchActivityResponse);
   // @perm: Name=TakeControl
   rpc AssignDispatch(AssignDispatchRequest) returns (AssignDispatchResponse);
+  // @perm: Name=Stream
+  rpc JoinUnit(JoinUnitRequest) returns (JoinUnitResponse);
   // @perm
   rpc TakeDispatch(TakeDispatchRequest) returns (TakeDispatchResponse);
 

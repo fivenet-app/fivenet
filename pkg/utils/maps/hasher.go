@@ -16,6 +16,15 @@ func HashUint64(seed maphash.Seed, id uint64) uint64 {
 	return 31*hash + h.Sum64()
 }
 
+func HashInt32(seed maphash.Seed, id int32) uint64 {
+	var h maphash.Hash
+	h.SetSeed(seed)
+	binary.Write(&h, binary.LittleEndian, id)
+	hash := h.Sum64()
+	h.Reset()
+	return 31*hash + h.Sum64()
+}
+
 func HashString(seed maphash.Seed, in string) uint64 {
 	var h maphash.Hash
 	h.WriteString(in)

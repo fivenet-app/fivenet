@@ -35,6 +35,7 @@ const (
 	CentrumService_UpdateDispatchStatus_FullMethodName = "/services.centrum.CentrumService/UpdateDispatchStatus"
 	CentrumService_ListDispatchActivity_FullMethodName = "/services.centrum.CentrumService/ListDispatchActivity"
 	CentrumService_AssignDispatch_FullMethodName       = "/services.centrum.CentrumService/AssignDispatch"
+	CentrumService_JoinUnit_FullMethodName             = "/services.centrum.CentrumService/JoinUnit"
 	CentrumService_TakeDispatch_FullMethodName         = "/services.centrum.CentrumService/TakeDispatch"
 	CentrumService_Stream_FullMethodName               = "/services.centrum.CentrumService/Stream"
 )
@@ -73,6 +74,8 @@ type CentrumServiceClient interface {
 	ListDispatchActivity(ctx context.Context, in *ListActivityRequest, opts ...grpc.CallOption) (*ListDispatchActivityResponse, error)
 	// @perm: Name=TakeControl
 	AssignDispatch(ctx context.Context, in *AssignDispatchRequest, opts ...grpc.CallOption) (*AssignDispatchResponse, error)
+	// @perm: Name=Stream
+	JoinUnit(ctx context.Context, in *JoinUnitRequest, opts ...grpc.CallOption) (*JoinUnitResponse, error)
 	// @perm
 	TakeDispatch(ctx context.Context, in *TakeDispatchRequest, opts ...grpc.CallOption) (*TakeDispatchResponse, error)
 	// @perm
@@ -222,6 +225,15 @@ func (c *centrumServiceClient) AssignDispatch(ctx context.Context, in *AssignDis
 	return out, nil
 }
 
+func (c *centrumServiceClient) JoinUnit(ctx context.Context, in *JoinUnitRequest, opts ...grpc.CallOption) (*JoinUnitResponse, error) {
+	out := new(JoinUnitResponse)
+	err := c.cc.Invoke(ctx, CentrumService_JoinUnit_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *centrumServiceClient) TakeDispatch(ctx context.Context, in *TakeDispatchRequest, opts ...grpc.CallOption) (*TakeDispatchResponse, error) {
 	out := new(TakeDispatchResponse)
 	err := c.cc.Invoke(ctx, CentrumService_TakeDispatch_FullMethodName, in, out, opts...)
@@ -297,6 +309,8 @@ type CentrumServiceServer interface {
 	ListDispatchActivity(context.Context, *ListActivityRequest) (*ListDispatchActivityResponse, error)
 	// @perm: Name=TakeControl
 	AssignDispatch(context.Context, *AssignDispatchRequest) (*AssignDispatchResponse, error)
+	// @perm: Name=Stream
+	JoinUnit(context.Context, *JoinUnitRequest) (*JoinUnitResponse, error)
 	// @perm
 	TakeDispatch(context.Context, *TakeDispatchRequest) (*TakeDispatchResponse, error)
 	// @perm
@@ -352,6 +366,9 @@ func (UnimplementedCentrumServiceServer) ListDispatchActivity(context.Context, *
 }
 func (UnimplementedCentrumServiceServer) AssignDispatch(context.Context, *AssignDispatchRequest) (*AssignDispatchResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AssignDispatch not implemented")
+}
+func (UnimplementedCentrumServiceServer) JoinUnit(context.Context, *JoinUnitRequest) (*JoinUnitResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method JoinUnit not implemented")
 }
 func (UnimplementedCentrumServiceServer) TakeDispatch(context.Context, *TakeDispatchRequest) (*TakeDispatchResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method TakeDispatch not implemented")
@@ -642,6 +659,24 @@ func _CentrumService_AssignDispatch_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CentrumService_JoinUnit_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(JoinUnitRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CentrumServiceServer).JoinUnit(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CentrumService_JoinUnit_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CentrumServiceServer).JoinUnit(ctx, req.(*JoinUnitRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _CentrumService_TakeDispatch_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(TakeDispatchRequest)
 	if err := dec(in); err != nil {
@@ -747,6 +782,10 @@ var CentrumService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "AssignDispatch",
 			Handler:    _CentrumService_AssignDispatch_Handler,
+		},
+		{
+			MethodName: "JoinUnit",
+			Handler:    _CentrumService_JoinUnit_Handler,
 		},
 		{
 			MethodName: "TakeDispatch",

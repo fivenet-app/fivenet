@@ -178,7 +178,7 @@ func (s *Server) TakeControl(ctx context.Context, req *TakeControlRequest) (*Tak
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	if req.Signon {
-		// TODO check if user is on duty, if not error
+		// TODO check if user is on duty, if not error, use tracker package for that
 
 		stmt := tCentrumUsers.
 			INSERT(

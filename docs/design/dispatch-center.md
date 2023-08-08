@@ -48,7 +48,8 @@ title: "Dispatch Center"
     * `CreateOrUpdateUnit` - Create unit or update unit info (e.g., name, initials, description).
     * `DeleteUnit` - Delete unit.
     * `UpdateUnitStatus` - Update Unit status. Own unit can be updated by users, disponents can update any unit of their job.
-    * `AssignUnit` - Disponent function to assign an user to an unit, for "normal" users is used to join an unit.
+    * `AssignUnit` - Disponent function to assign an user to an unit.
+    * `JoinUnit` - For "normal" users to join and leave an unit via the Centrum Sidebar.
     * `ListUnitActivity` - List own or others units activity.
 
 ## Dispatches

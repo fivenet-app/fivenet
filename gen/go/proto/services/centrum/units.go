@@ -398,6 +398,13 @@ func (s *Server) AssignUnit(ctx context.Context, req *AssignUnitRequest) (*Assig
 	return &AssignUnitResponse{}, nil
 }
 
+func (s *Server) JoinUnit(ctx context.Context, req *JoinUnitRequest) (*JoinUnitResponse, error) {
+
+	// TODO
+
+	return nil, nil
+}
+
 func (s *Server) ListUnitActivity(ctx context.Context, req *ListActivityRequest) (*ListUnitActivityResponse, error) {
 	countStmt := tUnitStatus.
 		SELECT(

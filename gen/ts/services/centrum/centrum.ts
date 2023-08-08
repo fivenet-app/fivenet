@@ -321,6 +321,28 @@ export interface TakeDispatchResponse {
     dispatch?: Dispatch;
 }
 /**
+ * @generated from protobuf message services.centrum.JoinUnitRequest
+ */
+export interface JoinUnitRequest {
+    /**
+     * @generated from protobuf field: uint64 dispatch_id = 1;
+     */
+    dispatchId: bigint;
+    /**
+     * @generated from protobuf field: optional bool leave = 2;
+     */
+    leave?: boolean;
+}
+/**
+ * @generated from protobuf message services.centrum.JoinUnitResponse
+ */
+export interface JoinUnitResponse {
+    /**
+     * @generated from protobuf field: resources.dispatch.Unit unit = 1;
+     */
+    unit?: Unit;
+}
+/**
  * @generated from protobuf message services.centrum.Initial
  */
 export interface Initial {
@@ -797,6 +819,31 @@ class TakeDispatchResponse$Type extends MessageType<TakeDispatchResponse> {
  */
 export const TakeDispatchResponse = new TakeDispatchResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class JoinUnitRequest$Type extends MessageType<JoinUnitRequest> {
+    constructor() {
+        super("services.centrum.JoinUnitRequest", [
+            { no: 1, name: "dispatch_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 2, name: "leave", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.centrum.JoinUnitRequest
+ */
+export const JoinUnitRequest = new JoinUnitRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class JoinUnitResponse$Type extends MessageType<JoinUnitResponse> {
+    constructor() {
+        super("services.centrum.JoinUnitResponse", [
+            { no: 1, name: "unit", kind: "message", T: () => Unit }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.centrum.JoinUnitResponse
+ */
+export const JoinUnitResponse = new JoinUnitResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class Initial$Type extends MessageType<Initial> {
     constructor() {
         super("services.centrum.Initial", [
@@ -863,6 +910,7 @@ export const CentrumService = new ServiceType("services.centrum.CentrumService",
     { name: "UpdateDispatchStatus", options: {}, I: UpdateDispatchStatusRequest, O: UpdateDispatchStatusResponse },
     { name: "ListDispatchActivity", options: {}, I: ListActivityRequest, O: ListDispatchActivityResponse },
     { name: "AssignDispatch", options: {}, I: AssignDispatchRequest, O: AssignDispatchResponse },
+    { name: "JoinUnit", options: {}, I: JoinUnitRequest, O: JoinUnitResponse },
     { name: "TakeDispatch", options: {}, I: TakeDispatchRequest, O: TakeDispatchResponse },
     { name: "Stream", serverStreaming: true, options: {}, I: StreamRequest, O: StreamResponse }
 ]);
