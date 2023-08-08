@@ -5,7 +5,7 @@ COPY . ./
 RUN rm -rf ./.nuxt/ && \
     yarn && yarn generate
 
-FROM docker.io/library/golang:1.20 AS gobuilder
+FROM docker.io/library/golang:1.21 AS gobuilder
 WORKDIR /go/src/github.com/galexrt/fivenet/
 COPY . ./
 RUN CGO_ENABLED=0 go build -a -installsuffix cgo -o fivenet .
