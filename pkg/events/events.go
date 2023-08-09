@@ -43,19 +43,15 @@ func New(p Params) (*Eventus, error) {
 		return nil, err
 	}
 
-	e := &Eventus{
+	events := &Eventus{
 		logger: p.Logger.Named("eventus"),
 		NC:     nc,
 		JS:     js,
 	}
 
 	p.LC.Append(fx.StopHook(func(_ context.Context) error {
-		return e.stop()
+		return events.NC.Drain()
 	}))
 
-	return e, nil
-}
-
-func (e *Eventus) stop() error {
-	return e.NC.Drain()
+	return events, nil
 }

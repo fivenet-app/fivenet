@@ -12,7 +12,12 @@ import "validate/validate.proto";
 
 // Common
 
-message ListActivityRequest {
+message ListDispatchActivityRequest {
+  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
+  uint64 id = 2;
+}
+
+message ListUnitActivityRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
   uint64 id = 2;
 }
@@ -76,7 +81,7 @@ message TakeControlResponse {
 }
 
 message DisponentsChange {
-  repeated resources.users.UserShort controllers = 1;
+  repeated resources.users.UserShort disponents = 1;
   bool active = 2;
 }
 
@@ -167,6 +172,7 @@ message StreamResponse {
     Initial initial = 1;
     resources.dispatch.Settings settings = 2;
     DisponentsChange disponents = 3;
+
     resources.dispatch.DispatchStatus dispatch_status = 4;
     resources.dispatch.Dispatch dispatch_update = 5;
     resources.dispatch.Dispatch dispatch_assigned = 6;
@@ -198,7 +204,7 @@ service CentrumService {
   // @perm: Name=TakeControl
   rpc AssignUnit(AssignUnitRequest) returns (AssignUnitResponse);
   // @perm: Name=Stream
-  rpc ListUnitActivity(ListActivityRequest) returns (ListUnitActivityResponse);
+  rpc ListUnitActivity(ListUnitActivityRequest) returns (ListUnitActivityResponse);
 
   // @perm: Name=Stream
   rpc ListDispatches(ListDispatchesRequest) returns (ListDispatchesResponse);
@@ -209,7 +215,7 @@ service CentrumService {
   // @perm: Name=TakeDispatch
   rpc UpdateDispatchStatus(UpdateDispatchStatusRequest) returns (UpdateDispatchStatusResponse);
   // @perm: Name=Stream
-  rpc ListDispatchActivity(ListActivityRequest) returns (ListDispatchActivityResponse);
+  rpc ListDispatchActivity(ListDispatchActivityRequest) returns (ListDispatchActivityResponse);
   // @perm: Name=TakeControl
   rpc AssignDispatch(AssignDispatchRequest) returns (AssignDispatchResponse);
   // @perm: Name=Stream

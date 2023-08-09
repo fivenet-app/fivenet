@@ -92,6 +92,9 @@ const config = defineNuxtConfig({
         baseUrl: '',
         trailingSlash: false,
         types: 'composition',
+        compilation: {
+            strictMessage: false,
+        },
     },
     veeValidate: {
         // disable or enable auto imports

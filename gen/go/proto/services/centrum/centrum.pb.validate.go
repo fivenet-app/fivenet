@@ -39,22 +39,22 @@ var (
 	_ = dispatch.UNIT_STATUS(0)
 )
 
-// Validate checks the field values on ListActivityRequest with the rules
-// defined in the proto definition for this message. If any rules are
+// Validate checks the field values on ListDispatchActivityRequest with the
+// rules defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *ListActivityRequest) Validate() error {
+func (m *ListDispatchActivityRequest) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on ListActivityRequest with the rules
-// defined in the proto definition for this message. If any rules are
+// ValidateAll checks the field values on ListDispatchActivityRequest with the
+// rules defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// ListActivityRequestMultiError, or nil if none found.
-func (m *ListActivityRequest) ValidateAll() error {
+// ListDispatchActivityRequestMultiError, or nil if none found.
+func (m *ListDispatchActivityRequest) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *ListActivityRequest) validate(all bool) error {
+func (m *ListDispatchActivityRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -62,7 +62,7 @@ func (m *ListActivityRequest) validate(all bool) error {
 	var errors []error
 
 	if m.GetPagination() == nil {
-		err := ListActivityRequestValidationError{
+		err := ListDispatchActivityRequestValidationError{
 			field:  "Pagination",
 			reason: "value is required",
 		}
@@ -76,7 +76,7 @@ func (m *ListActivityRequest) validate(all bool) error {
 		switch v := interface{}(m.GetPagination()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, ListActivityRequestValidationError{
+				errors = append(errors, ListDispatchActivityRequestValidationError{
 					field:  "Pagination",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -84,7 +84,7 @@ func (m *ListActivityRequest) validate(all bool) error {
 			}
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
-				errors = append(errors, ListActivityRequestValidationError{
+				errors = append(errors, ListDispatchActivityRequestValidationError{
 					field:  "Pagination",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -93,7 +93,7 @@ func (m *ListActivityRequest) validate(all bool) error {
 		}
 	} else if v, ok := interface{}(m.GetPagination()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
-			return ListActivityRequestValidationError{
+			return ListDispatchActivityRequestValidationError{
 				field:  "Pagination",
 				reason: "embedded message failed validation",
 				cause:  err,
@@ -104,19 +104,19 @@ func (m *ListActivityRequest) validate(all bool) error {
 	// no validation rules for Id
 
 	if len(errors) > 0 {
-		return ListActivityRequestMultiError(errors)
+		return ListDispatchActivityRequestMultiError(errors)
 	}
 
 	return nil
 }
 
-// ListActivityRequestMultiError is an error wrapping multiple validation
-// errors returned by ListActivityRequest.ValidateAll() if the designated
-// constraints aren't met.
-type ListActivityRequestMultiError []error
+// ListDispatchActivityRequestMultiError is an error wrapping multiple
+// validation errors returned by ListDispatchActivityRequest.ValidateAll() if
+// the designated constraints aren't met.
+type ListDispatchActivityRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m ListActivityRequestMultiError) Error() string {
+func (m ListDispatchActivityRequestMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -125,11 +125,12 @@ func (m ListActivityRequestMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m ListActivityRequestMultiError) AllErrors() []error { return m }
+func (m ListDispatchActivityRequestMultiError) AllErrors() []error { return m }
 
-// ListActivityRequestValidationError is the validation error returned by
-// ListActivityRequest.Validate if the designated constraints aren't met.
-type ListActivityRequestValidationError struct {
+// ListDispatchActivityRequestValidationError is the validation error returned
+// by ListDispatchActivityRequest.Validate if the designated constraints
+// aren't met.
+type ListDispatchActivityRequestValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -137,24 +138,24 @@ type ListActivityRequestValidationError struct {
 }
 
 // Field function returns field value.
-func (e ListActivityRequestValidationError) Field() string { return e.field }
+func (e ListDispatchActivityRequestValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e ListActivityRequestValidationError) Reason() string { return e.reason }
+func (e ListDispatchActivityRequestValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e ListActivityRequestValidationError) Cause() error { return e.cause }
+func (e ListDispatchActivityRequestValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e ListActivityRequestValidationError) Key() bool { return e.key }
+func (e ListDispatchActivityRequestValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e ListActivityRequestValidationError) ErrorName() string {
-	return "ListActivityRequestValidationError"
+func (e ListDispatchActivityRequestValidationError) ErrorName() string {
+	return "ListDispatchActivityRequestValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e ListActivityRequestValidationError) Error() string {
+func (e ListDispatchActivityRequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -166,14 +167,14 @@ func (e ListActivityRequestValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sListActivityRequest.%s: %s%s",
+		"invalid %sListDispatchActivityRequest.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = ListActivityRequestValidationError{}
+var _ error = ListDispatchActivityRequestValidationError{}
 
 var _ interface {
 	Field() string
@@ -181,7 +182,151 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = ListActivityRequestValidationError{}
+} = ListDispatchActivityRequestValidationError{}
+
+// Validate checks the field values on ListUnitActivityRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ListUnitActivityRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListUnitActivityRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ListUnitActivityRequestMultiError, or nil if none found.
+func (m *ListUnitActivityRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListUnitActivityRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.GetPagination() == nil {
+		err := ListUnitActivityRequestValidationError{
+			field:  "Pagination",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if all {
+		switch v := interface{}(m.GetPagination()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, ListUnitActivityRequestValidationError{
+					field:  "Pagination",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, ListUnitActivityRequestValidationError{
+					field:  "Pagination",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetPagination()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return ListUnitActivityRequestValidationError{
+				field:  "Pagination",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	// no validation rules for Id
+
+	if len(errors) > 0 {
+		return ListUnitActivityRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// ListUnitActivityRequestMultiError is an error wrapping multiple validation
+// errors returned by ListUnitActivityRequest.ValidateAll() if the designated
+// constraints aren't met.
+type ListUnitActivityRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListUnitActivityRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListUnitActivityRequestMultiError) AllErrors() []error { return m }
+
+// ListUnitActivityRequestValidationError is the validation error returned by
+// ListUnitActivityRequest.Validate if the designated constraints aren't met.
+type ListUnitActivityRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListUnitActivityRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListUnitActivityRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListUnitActivityRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListUnitActivityRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListUnitActivityRequestValidationError) ErrorName() string {
+	return "ListUnitActivityRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ListUnitActivityRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListUnitActivityRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListUnitActivityRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListUnitActivityRequestValidationError{}
 
 // Validate checks the field values on GetSettingsRequest with the rules
 // defined in the proto definition for this message. If any rules are
@@ -1869,7 +2014,7 @@ func (m *DisponentsChange) validate(all bool) error {
 
 	var errors []error
 
-	for idx, item := range m.GetControllers() {
+	for idx, item := range m.GetDisponents() {
 		_, _ = idx, item
 
 		if all {
@@ -1877,7 +2022,7 @@ func (m *DisponentsChange) validate(all bool) error {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
 					errors = append(errors, DisponentsChangeValidationError{
-						field:  fmt.Sprintf("Controllers[%v]", idx),
+						field:  fmt.Sprintf("Disponents[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -1885,7 +2030,7 @@ func (m *DisponentsChange) validate(all bool) error {
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
 					errors = append(errors, DisponentsChangeValidationError{
-						field:  fmt.Sprintf("Controllers[%v]", idx),
+						field:  fmt.Sprintf("Disponents[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -1894,7 +2039,7 @@ func (m *DisponentsChange) validate(all bool) error {
 		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
 				return DisponentsChangeValidationError{
-					field:  fmt.Sprintf("Controllers[%v]", idx),
+					field:  fmt.Sprintf("Disponents[%v]", idx),
 					reason: "embedded message failed validation",
 					cause:  err,
 				}

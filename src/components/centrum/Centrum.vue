@@ -108,10 +108,10 @@ async function startStream(): Promise<void> {
                 if (idx > -1) {
                     units.value?.splice(idx, 1);
                 }
-            } else if (resp.change.oneofKind === 'controllers') {
-                controllers.value = resp.change.controllers.controllers;
+            } else if (resp.change.oneofKind === 'disponents') {
+                controllers.value = resp.change.disponents.disponents;
                 // If user is part of controllers list, we need to restart the stream
-                if (!resp.change.controllers.active) {
+                if (!resp.change.disponents.active) {
                     stopStream();
                     setTimeout(() => {
                         startStream();

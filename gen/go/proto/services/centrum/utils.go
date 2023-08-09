@@ -377,7 +377,7 @@ func (s *Server) updateSettings(ctx context.Context, userInfo *userinfo.UserInfo
 	return nil
 }
 
-func (s *Server) getControllers(ctx context.Context, job string) ([]*users.UserShort, error) {
+func (s *Server) getDisponents(ctx context.Context, job string) ([]*users.UserShort, error) {
 	stmt := tCentrumUsers.
 		SELECT(
 			tUser.ID,

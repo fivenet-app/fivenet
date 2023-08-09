@@ -61,7 +61,7 @@ type CentrumServiceClient interface {
 	// @perm: Name=TakeControl
 	AssignUnit(ctx context.Context, in *AssignUnitRequest, opts ...grpc.CallOption) (*AssignUnitResponse, error)
 	// @perm: Name=Stream
-	ListUnitActivity(ctx context.Context, in *ListActivityRequest, opts ...grpc.CallOption) (*ListUnitActivityResponse, error)
+	ListUnitActivity(ctx context.Context, in *ListUnitActivityRequest, opts ...grpc.CallOption) (*ListUnitActivityResponse, error)
 	// @perm: Name=Stream
 	ListDispatches(ctx context.Context, in *ListDispatchesRequest, opts ...grpc.CallOption) (*ListDispatchesResponse, error)
 	// @perm
@@ -71,7 +71,7 @@ type CentrumServiceClient interface {
 	// @perm: Name=TakeDispatch
 	UpdateDispatchStatus(ctx context.Context, in *UpdateDispatchStatusRequest, opts ...grpc.CallOption) (*UpdateDispatchStatusResponse, error)
 	// @perm: Name=Stream
-	ListDispatchActivity(ctx context.Context, in *ListActivityRequest, opts ...grpc.CallOption) (*ListDispatchActivityResponse, error)
+	ListDispatchActivity(ctx context.Context, in *ListDispatchActivityRequest, opts ...grpc.CallOption) (*ListDispatchActivityResponse, error)
 	// @perm: Name=TakeControl
 	AssignDispatch(ctx context.Context, in *AssignDispatchRequest, opts ...grpc.CallOption) (*AssignDispatchResponse, error)
 	// @perm: Name=Stream
@@ -162,7 +162,7 @@ func (c *centrumServiceClient) AssignUnit(ctx context.Context, in *AssignUnitReq
 	return out, nil
 }
 
-func (c *centrumServiceClient) ListUnitActivity(ctx context.Context, in *ListActivityRequest, opts ...grpc.CallOption) (*ListUnitActivityResponse, error) {
+func (c *centrumServiceClient) ListUnitActivity(ctx context.Context, in *ListUnitActivityRequest, opts ...grpc.CallOption) (*ListUnitActivityResponse, error) {
 	out := new(ListUnitActivityResponse)
 	err := c.cc.Invoke(ctx, CentrumService_ListUnitActivity_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -207,7 +207,7 @@ func (c *centrumServiceClient) UpdateDispatchStatus(ctx context.Context, in *Upd
 	return out, nil
 }
 
-func (c *centrumServiceClient) ListDispatchActivity(ctx context.Context, in *ListActivityRequest, opts ...grpc.CallOption) (*ListDispatchActivityResponse, error) {
+func (c *centrumServiceClient) ListDispatchActivity(ctx context.Context, in *ListDispatchActivityRequest, opts ...grpc.CallOption) (*ListDispatchActivityResponse, error) {
 	out := new(ListDispatchActivityResponse)
 	err := c.cc.Invoke(ctx, CentrumService_ListDispatchActivity_FullMethodName, in, out, opts...)
 	if err != nil {
@@ -296,7 +296,7 @@ type CentrumServiceServer interface {
 	// @perm: Name=TakeControl
 	AssignUnit(context.Context, *AssignUnitRequest) (*AssignUnitResponse, error)
 	// @perm: Name=Stream
-	ListUnitActivity(context.Context, *ListActivityRequest) (*ListUnitActivityResponse, error)
+	ListUnitActivity(context.Context, *ListUnitActivityRequest) (*ListUnitActivityResponse, error)
 	// @perm: Name=Stream
 	ListDispatches(context.Context, *ListDispatchesRequest) (*ListDispatchesResponse, error)
 	// @perm
@@ -306,7 +306,7 @@ type CentrumServiceServer interface {
 	// @perm: Name=TakeDispatch
 	UpdateDispatchStatus(context.Context, *UpdateDispatchStatusRequest) (*UpdateDispatchStatusResponse, error)
 	// @perm: Name=Stream
-	ListDispatchActivity(context.Context, *ListActivityRequest) (*ListDispatchActivityResponse, error)
+	ListDispatchActivity(context.Context, *ListDispatchActivityRequest) (*ListDispatchActivityResponse, error)
 	// @perm: Name=TakeControl
 	AssignDispatch(context.Context, *AssignDispatchRequest) (*AssignDispatchResponse, error)
 	// @perm: Name=Stream
@@ -346,7 +346,7 @@ func (UnimplementedCentrumServiceServer) UpdateUnitStatus(context.Context, *Upda
 func (UnimplementedCentrumServiceServer) AssignUnit(context.Context, *AssignUnitRequest) (*AssignUnitResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AssignUnit not implemented")
 }
-func (UnimplementedCentrumServiceServer) ListUnitActivity(context.Context, *ListActivityRequest) (*ListUnitActivityResponse, error) {
+func (UnimplementedCentrumServiceServer) ListUnitActivity(context.Context, *ListUnitActivityRequest) (*ListUnitActivityResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListUnitActivity not implemented")
 }
 func (UnimplementedCentrumServiceServer) ListDispatches(context.Context, *ListDispatchesRequest) (*ListDispatchesResponse, error) {
@@ -361,7 +361,7 @@ func (UnimplementedCentrumServiceServer) UpdateDispatch(context.Context, *Update
 func (UnimplementedCentrumServiceServer) UpdateDispatchStatus(context.Context, *UpdateDispatchStatusRequest) (*UpdateDispatchStatusResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateDispatchStatus not implemented")
 }
-func (UnimplementedCentrumServiceServer) ListDispatchActivity(context.Context, *ListActivityRequest) (*ListDispatchActivityResponse, error) {
+func (UnimplementedCentrumServiceServer) ListDispatchActivity(context.Context, *ListDispatchActivityRequest) (*ListDispatchActivityResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListDispatchActivity not implemented")
 }
 func (UnimplementedCentrumServiceServer) AssignDispatch(context.Context, *AssignDispatchRequest) (*AssignDispatchResponse, error) {
@@ -534,7 +534,7 @@ func _CentrumService_AssignUnit_Handler(srv interface{}, ctx context.Context, de
 }
 
 func _CentrumService_ListUnitActivity_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListActivityRequest)
+	in := new(ListUnitActivityRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -546,7 +546,7 @@ func _CentrumService_ListUnitActivity_Handler(srv interface{}, ctx context.Conte
 		FullMethod: CentrumService_ListUnitActivity_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CentrumServiceServer).ListUnitActivity(ctx, req.(*ListActivityRequest))
+		return srv.(CentrumServiceServer).ListUnitActivity(ctx, req.(*ListUnitActivityRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -624,7 +624,7 @@ func _CentrumService_UpdateDispatchStatus_Handler(srv interface{}, ctx context.C
 }
 
 func _CentrumService_ListDispatchActivity_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListActivityRequest)
+	in := new(ListDispatchActivityRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -636,7 +636,7 @@ func _CentrumService_ListDispatchActivity_Handler(srv interface{}, ctx context.C
 		FullMethod: CentrumService_ListDispatchActivity_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CentrumServiceServer).ListDispatchActivity(ctx, req.(*ListActivityRequest))
+		return srv.(CentrumServiceServer).ListDispatchActivity(ctx, req.(*ListDispatchActivityRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

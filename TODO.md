@@ -19,5 +19,7 @@
 - [x] TASK Work on Unit self assignment logic
 - [ ] TASK Work on Unit disponent unit assignment logic
 - [ ] TEST Make sure the unit updating, checking if non empty, etc., works
+- [ ] QUESTION Should we use NATS Jetstream for storing units and dispatches? (as a cache) - Why not just get everything from the database for now and screw caching.
+    - [ ] Don't forget the events from the `tracker.go`
 - [ ] DISCUSS What tasks and tests are needed for the management of dispatches in backend?
 - [ ] DISCUSS What tasks and tests are needed for the management of dispatches in frontend?

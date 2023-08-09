@@ -349,7 +349,7 @@ func (s *Server) JoinUnit(ctx context.Context, req *JoinUnitRequest) (*JoinUnitR
 	return resp, nil
 }
 
-func (s *Server) ListUnitActivity(ctx context.Context, req *ListActivityRequest) (*ListUnitActivityResponse, error) {
+func (s *Server) ListUnitActivity(ctx context.Context, req *ListUnitActivityRequest) (*ListUnitActivityResponse, error) {
 	countStmt := tUnitStatus.
 		SELECT(
 			jet.COUNT(jet.DISTINCT(tUnitStatus.ID)).AS("datacount.totalcount"),

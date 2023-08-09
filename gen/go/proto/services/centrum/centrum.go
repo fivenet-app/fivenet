@@ -174,7 +174,9 @@ func (s *Server) TakeControl(ctx context.Context, req *TakeControlRequest) (*Tak
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	if req.Signon {
-		// TODO check if user is on duty, if not error, use tracker package for that
+		if _, ok := s.tracker.GetUserByJobAndID(userInfo.Job, userInfo.UserId); !ok {
+			return nil, status.Error(codes.InvalidArgument, "You are not on duty!")
+		}
 
 		stmt := tCentrumUsers.
 			INSERT(
@@ -215,7 +217,7 @@ func (s *Server) TakeControl(ctx context.Context, req *TakeControlRequest) (*Tak
 		}
 	}
 
-	controllers, err := s.getControllers(ctx, userInfo.Job)
+	disponents, err := s.getDisponents(ctx, userInfo.Job)
 	if err != nil {
 		return nil, err
 	}
@@ -226,7 +228,7 @@ func (s *Server) TakeControl(ctx context.Context, req *TakeControlRequest) (*Tak
 	}
 	// If center is enabled update settings active state accordingly
 	if settings.Enabled {
-		settings.Active = len(controllers) > 0
+		settings.Active = len(disponents) > 0
 
 		if err := s.updateSettings(ctx, userInfo, settings); err != nil {
 			return nil, err
@@ -234,8 +236,8 @@ func (s *Server) TakeControl(ctx context.Context, req *TakeControlRequest) (*Tak
 	}
 
 	change := &DisponentsChange{
-		Controllers: controllers,
-		Active:      settings.Active,
+		Disponents: disponents,
+		Active:     settings.Active,
 	}
 	data, err := proto.Marshal(change)
 	if err != nil {
@@ -262,12 +264,12 @@ func (s *Server) Stream(req *StreamRequest, srv CentrumService_StreamServer) err
 
 	msgCh := make(chan *nats.Msg, 128)
 
-	controllers, err := s.getControllers(srv.Context(), userInfo.Job)
+	disponents, err := s.getDisponents(srv.Context(), userInfo.Job)
 	if err != nil {
 		return err
 	}
 
-	controller := utils.InSliceFunc(controllers, func(in *users.UserShort) bool {
+	controller := utils.InSliceFunc(disponents, func(in *users.UserShort) bool {
 		return in.UserId == userInfo.UserId
 	})
 	if !controller {
@@ -288,7 +290,6 @@ func (s *Server) Stream(req *StreamRequest, srv CentrumService_StreamServer) err
 	if err != nil {
 		return err
 	}
-	units := unitsResp.Units
 
 	unit, _ := s.getUnit(srv.Context(), userInfo, unitId)
 
@@ -304,7 +305,7 @@ func (s *Server) Stream(req *StreamRequest, srv CentrumService_StreamServer) err
 			IsDisponent: true,
 			Settings:    settings,
 			Unit:        unit,
-			Units:       units,
+			Units:       unitsResp.Units,
 			Dispatches:  dispatches.Dispatches,
 		},
 	}
@@ -313,6 +314,7 @@ func (s *Server) Stream(req *StreamRequest, srv CentrumService_StreamServer) err
 		return err
 	}
 
+	// Watch for events from message queue
 	for {
 		select {
 		case <-srv.Context().Done():

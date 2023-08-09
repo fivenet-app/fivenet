@@ -549,7 +549,7 @@ func (s *Server) AssignDispatch(ctx context.Context, req *AssignDispatchRequest)
 	return &AssignDispatchResponse{}, nil
 }
 
-func (s *Server) ListDispatchActivity(ctx context.Context, req *ListActivityRequest) (*ListDispatchActivityResponse, error) {
+func (s *Server) ListDispatchActivity(ctx context.Context, req *ListDispatchActivityRequest) (*ListDispatchActivityResponse, error) {
 	countStmt := tDispatchStatus.
 		SELECT(
 			jet.COUNT(jet.DISTINCT(tDispatchStatus.ID)).AS("datacount.totalcount"),

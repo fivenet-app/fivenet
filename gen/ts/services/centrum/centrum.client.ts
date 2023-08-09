@@ -14,6 +14,7 @@ import type { JoinUnitRequest } from "./centrum.js";
 import type { AssignDispatchResponse } from "./centrum.js";
 import type { AssignDispatchRequest } from "./centrum.js";
 import type { ListDispatchActivityResponse } from "./centrum.js";
+import type { ListDispatchActivityRequest } from "./centrum.js";
 import type { UpdateDispatchStatusResponse } from "./centrum.js";
 import type { UpdateDispatchStatusRequest } from "./centrum.js";
 import type { UpdateDispatchResponse } from "./centrum.js";
@@ -23,7 +24,7 @@ import type { CreateDispatchRequest } from "./centrum.js";
 import type { ListDispatchesResponse } from "./centrum.js";
 import type { ListDispatchesRequest } from "./centrum.js";
 import type { ListUnitActivityResponse } from "./centrum.js";
-import type { ListActivityRequest } from "./centrum.js";
+import type { ListUnitActivityRequest } from "./centrum.js";
 import type { AssignUnitResponse } from "./centrum.js";
 import type { AssignUnitRequest } from "./centrum.js";
 import type { UpdateUnitStatusResponse } from "./centrum.js";
@@ -96,9 +97,9 @@ export interface ICentrumServiceClient {
     /**
      * @perm: Name=Stream
      *
-     * @generated from protobuf rpc: ListUnitActivity(services.centrum.ListActivityRequest) returns (services.centrum.ListUnitActivityResponse);
+     * @generated from protobuf rpc: ListUnitActivity(services.centrum.ListUnitActivityRequest) returns (services.centrum.ListUnitActivityResponse);
      */
-    listUnitActivity(input: ListActivityRequest, options?: RpcOptions): UnaryCall<ListActivityRequest, ListUnitActivityResponse>;
+    listUnitActivity(input: ListUnitActivityRequest, options?: RpcOptions): UnaryCall<ListUnitActivityRequest, ListUnitActivityResponse>;
     /**
      * @perm: Name=Stream
      *
@@ -126,9 +127,9 @@ export interface ICentrumServiceClient {
     /**
      * @perm: Name=Stream
      *
-     * @generated from protobuf rpc: ListDispatchActivity(services.centrum.ListActivityRequest) returns (services.centrum.ListDispatchActivityResponse);
+     * @generated from protobuf rpc: ListDispatchActivity(services.centrum.ListDispatchActivityRequest) returns (services.centrum.ListDispatchActivityResponse);
      */
-    listDispatchActivity(input: ListActivityRequest, options?: RpcOptions): UnaryCall<ListActivityRequest, ListDispatchActivityResponse>;
+    listDispatchActivity(input: ListDispatchActivityRequest, options?: RpcOptions): UnaryCall<ListDispatchActivityRequest, ListDispatchActivityResponse>;
     /**
      * @perm: Name=TakeControl
      *
@@ -238,11 +239,11 @@ export class CentrumServiceClient implements ICentrumServiceClient, ServiceInfo 
     /**
      * @perm: Name=Stream
      *
-     * @generated from protobuf rpc: ListUnitActivity(services.centrum.ListActivityRequest) returns (services.centrum.ListUnitActivityResponse);
+     * @generated from protobuf rpc: ListUnitActivity(services.centrum.ListUnitActivityRequest) returns (services.centrum.ListUnitActivityResponse);
      */
-    listUnitActivity(input: ListActivityRequest, options?: RpcOptions): UnaryCall<ListActivityRequest, ListUnitActivityResponse> {
+    listUnitActivity(input: ListUnitActivityRequest, options?: RpcOptions): UnaryCall<ListUnitActivityRequest, ListUnitActivityResponse> {
         const method = this.methods[8], opt = this._transport.mergeOptions(options);
-        return stackIntercept<ListActivityRequest, ListUnitActivityResponse>("unary", this._transport, method, opt, input);
+        return stackIntercept<ListUnitActivityRequest, ListUnitActivityResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @perm: Name=Stream
@@ -283,11 +284,11 @@ export class CentrumServiceClient implements ICentrumServiceClient, ServiceInfo 
     /**
      * @perm: Name=Stream
      *
-     * @generated from protobuf rpc: ListDispatchActivity(services.centrum.ListActivityRequest) returns (services.centrum.ListDispatchActivityResponse);
+     * @generated from protobuf rpc: ListDispatchActivity(services.centrum.ListDispatchActivityRequest) returns (services.centrum.ListDispatchActivityResponse);
      */
-    listDispatchActivity(input: ListActivityRequest, options?: RpcOptions): UnaryCall<ListActivityRequest, ListDispatchActivityResponse> {
+    listDispatchActivity(input: ListDispatchActivityRequest, options?: RpcOptions): UnaryCall<ListDispatchActivityRequest, ListDispatchActivityResponse> {
         const method = this.methods[13], opt = this._transport.mergeOptions(options);
-        return stackIntercept<ListActivityRequest, ListDispatchActivityResponse>("unary", this._transport, method, opt, input);
+        return stackIntercept<ListDispatchActivityRequest, ListDispatchActivityResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @perm: Name=TakeControl

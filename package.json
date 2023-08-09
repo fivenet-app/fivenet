@@ -51,7 +51,7 @@
         "zxcvbn": "^4.4.2"
     },
     "devDependencies": {
-        "@nuxt/devtools": "^0.7.5",
+        "@nuxt/devtools": "^0.7.6",
         "@nuxtjs/i18n": "^8.0.0-rc.2",
         "@nuxtjs/tailwindcss": "^6.8.0",
         "@pinia-plugin-persistedstate/nuxt": "^1.1.1",
@@ -59,7 +59,7 @@
         "@tailwindcss/typography": "^0.5.9",
         "@total-typescript/ts-reset": "^0.4.2",
         "@types/google-protobuf": "^3.15.6",
-        "@types/node": "^20.4.8",
+        "@types/node": "^20.4.9",
         "@types/zxcvbn": "^4.4.1",
         "@unhead/vue": "^1.2.2",
         "@vitejs/plugin-vue": "^4.2.3",
@@ -67,7 +67,7 @@
         "autoprefixer": "^10.4.14",
         "cssnano": "^6.0.1",
         "eslint": "^8.46.0",
-        "eslint-plugin-vue": "^9.16.1",
+        "eslint-plugin-vue": "^9.17.0",
         "nuxi": "^3.6.5",
         "nuxt": "^3.6.5",
         "nuxt-typed-router": "^3.2.5",

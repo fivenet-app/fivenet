@@ -5,6 +5,7 @@ export default defineI18nConfig(() => ({
     locale: 'de',
     fallbackLocale: 'en',
     escapeParameterHtml: true,
+    warnHtmlInMessage: false,
     numberFormats: {
         en: {
             currency: {

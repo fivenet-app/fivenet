@@ -32,7 +32,7 @@ const notifications = useNotificationsStore();
 const settings = ref<Settings>();
 const ownUnit = ref<Unit>();
 const feed = ref<(DispatchStatus | UnitStatus)[]>([]);
-const controllers = ref<UserShort[]>([]);
+const disponents = ref<UserShort[]>([]);
 const units = ref<Array<Unit>>([]);
 const dispatches = ref<Array<Dispatch>>([]);
 
@@ -161,10 +161,10 @@ async function startStream(): Promise<void> {
                 if (idx > -1) {
                     units.value?.splice(idx, 1);
                 }
-            } else if (resp.change.oneofKind === 'controllers') {
-                controllers.value = resp.change.controllers.controllers;
-                // If user is part of controllers list, we need to restart the stream
-                if (!resp.change.controllers.active) {
+            } else if (resp.change.oneofKind === 'disponents') {
+                disponents.value = resp.change.disponents.disponents;
+                // If user is part of disponents list, we need to restart the stream
+                if (!resp.change.disponents.active) {
                     stopStream();
                     setTimeout(() => {
                         startStream();

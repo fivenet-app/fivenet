@@ -16,9 +16,22 @@ import { PaginationRequest } from "../../resources/common/database/database.js";
 // Common
 
 /**
- * @generated from protobuf message services.centrum.ListActivityRequest
+ * @generated from protobuf message services.centrum.ListDispatchActivityRequest
  */
-export interface ListActivityRequest {
+export interface ListDispatchActivityRequest {
+    /**
+     * @generated from protobuf field: resources.common.database.PaginationRequest pagination = 1;
+     */
+    pagination?: PaginationRequest;
+    /**
+     * @generated from protobuf field: uint64 id = 2;
+     */
+    id: bigint;
+}
+/**
+ * @generated from protobuf message services.centrum.ListUnitActivityRequest
+ */
+export interface ListUnitActivityRequest {
     /**
      * @generated from protobuf field: resources.common.database.PaginationRequest pagination = 1;
      */
@@ -171,9 +184,9 @@ export interface TakeControlResponse {
  */
 export interface DisponentsChange {
     /**
-     * @generated from protobuf field: repeated resources.users.UserShort controllers = 1;
+     * @generated from protobuf field: repeated resources.users.UserShort disponents = 1;
      */
-    controllers: UserShort[];
+    disponents: UserShort[];
     /**
      * @generated from protobuf field: bool active = 2;
      */
@@ -469,18 +482,31 @@ export enum TAKE_DISPATCH_RESP {
     DECLINED = 2
 }
 // @generated message type with reflection information, may provide speed optimized methods
-class ListActivityRequest$Type extends MessageType<ListActivityRequest> {
+class ListDispatchActivityRequest$Type extends MessageType<ListDispatchActivityRequest> {
     constructor() {
-        super("services.centrum.ListActivityRequest", [
+        super("services.centrum.ListDispatchActivityRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
             { no: 2, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
         ]);
     }
 }
 /**
- * @generated MessageType for protobuf message services.centrum.ListActivityRequest
+ * @generated MessageType for protobuf message services.centrum.ListDispatchActivityRequest
  */
-export const ListActivityRequest = new ListActivityRequest$Type();
+export const ListDispatchActivityRequest = new ListDispatchActivityRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ListUnitActivityRequest$Type extends MessageType<ListUnitActivityRequest> {
+    constructor() {
+        super("services.centrum.ListUnitActivityRequest", [
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
+            { no: 2, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.centrum.ListUnitActivityRequest
+ */
+export const ListUnitActivityRequest = new ListUnitActivityRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class GetSettingsRequest$Type extends MessageType<GetSettingsRequest> {
     constructor() {
@@ -651,7 +677,7 @@ export const TakeControlResponse = new TakeControlResponse$Type();
 class DisponentsChange$Type extends MessageType<DisponentsChange> {
     constructor() {
         super("services.centrum.DisponentsChange", [
-            { no: 1, name: "controllers", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UserShort },
+            { no: 1, name: "disponents", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UserShort },
             { no: 2, name: "active", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
@@ -905,12 +931,12 @@ export const CentrumService = new ServiceType("services.centrum.CentrumService",
     { name: "DeleteUnit", options: {}, I: DeleteUnitRequest, O: DeleteUnitResponse },
     { name: "UpdateUnitStatus", options: {}, I: UpdateUnitStatusRequest, O: UpdateUnitStatusResponse },
     { name: "AssignUnit", options: {}, I: AssignUnitRequest, O: AssignUnitResponse },
-    { name: "ListUnitActivity", options: {}, I: ListActivityRequest, O: ListUnitActivityResponse },
+    { name: "ListUnitActivity", options: {}, I: ListUnitActivityRequest, O: ListUnitActivityResponse },
     { name: "ListDispatches", options: {}, I: ListDispatchesRequest, O: ListDispatchesResponse },
     { name: "CreateDispatch", options: {}, I: CreateDispatchRequest, O: CreateDispatchResponse },
     { name: "UpdateDispatch", options: {}, I: UpdateDispatchRequest, O: UpdateDispatchResponse },
     { name: "UpdateDispatchStatus", options: {}, I: UpdateDispatchStatusRequest, O: UpdateDispatchStatusResponse },
-    { name: "ListDispatchActivity", options: {}, I: ListActivityRequest, O: ListDispatchActivityResponse },
+    { name: "ListDispatchActivity", options: {}, I: ListDispatchActivityRequest, O: ListDispatchActivityResponse },
     { name: "AssignDispatch", options: {}, I: AssignDispatchRequest, O: AssignDispatchResponse },
     { name: "JoinUnit", options: {}, I: JoinUnitRequest, O: JoinUnitResponse },
     { name: "TakeDispatch", options: {}, I: TakeDispatchRequest, O: TakeDispatchResponse },

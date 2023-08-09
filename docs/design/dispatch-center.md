@@ -4,12 +4,11 @@ title: "Dispatch Center"
 
 ## Dispatch Center
 
-* Two views:
+* Two views (only for their own job; no job list attribute):
     * One for disponents.
     * Unit view on the livemap as a sidebar with quick buttons (see below "Livemap" point).
 * Disponents take "control" of the dispatch center and can "sign on"/ "sign off" from it at any time.
     * If no more disponents are signed on, the "fallback mode" is activated.
-* Job-based permissions on the main `Stream` permission (Attribute: job List)
 * Different Modes:
     * `MANUAL`: Disponents **and** units can assign dispatches themselves.
     * `CENTRAL_COMMAND`: Only the disponents can assign dispatches.

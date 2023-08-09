@@ -939,19 +939,19 @@
   resolved "https://registry.yarnpkg.com/@nuxt/devalue/-/devalue-2.0.2.tgz#5749f04df13bda4c863338d8dabaf370f45ef7c7"
   integrity sha512-GBzP8zOc7CGWyFQS6dv1lQz8VVpz5C2yRszbXufwG/9zhStTIH50EtD87NmWbTMwXDvZLNg8GIpb1UFdH93JCA==
 
-"@nuxt/devtools-kit@0.7.5":
-  version "0.7.5"
-  resolved "https://registry.yarnpkg.com/@nuxt/devtools-kit/-/devtools-kit-0.7.5.tgz#f7f6574cbef614f636d46c14be4db0f3c442c5f8"
-  integrity sha512-Zadd4s2vHlFQYRBLqmCADLMs1qxht8KKCZzfdhEdCAHby/s3EkfnYIuRUBlrfuAuNxa4cyExKFpeDpQ67N5fIQ==
+"@nuxt/devtools-kit@0.7.6":
+  version "0.7.6"
+  resolved "https://registry.yarnpkg.com/@nuxt/devtools-kit/-/devtools-kit-0.7.6.tgz#9577c64872c15b5153314e8c308d1424f37c485c"
+  integrity sha512-2jSQ1rgStZifRHtfsdqmmvq/O5NskLCwg34JPchBRAx9Kv5IadABlBIWz1jLuaGarI/jsEEAmA5EpfxI5z/PJQ==
   dependencies:
     "@nuxt/kit" "^3.6.5"
     "@nuxt/schema" "^3.6.5"
     execa "^7.2.0"
 
-"@nuxt/devtools-wizard@0.7.5":
-  version "0.7.5"
-  resolved "https://registry.yarnpkg.com/@nuxt/devtools-wizard/-/devtools-wizard-0.7.5.tgz#904c04f0dca73bf803142f14261c0b2ed402e318"
-  integrity sha512-A8Urgy3hJBi3MSDEsr3yzOhO1jHoE80cQHmQUqAD8sD2e2fQSOwaH5CZMVGPbnSCWDfbchy+1cCwJ30JuEfeKg==
+"@nuxt/devtools-wizard@0.7.6":
+  version "0.7.6"
+  resolved "https://registry.yarnpkg.com/@nuxt/devtools-wizard/-/devtools-wizard-0.7.6.tgz#b891f07715eda7e2b19186f57a09b0a004455bc3"
+  integrity sha512-XCznlUTk66ApYJygGc+6FVborAp2F4PAIvY4b6dVSUf1f47Hs3CPe6eEdatarmEqiTmFMInaX4y8z1hDXrFF0Q==
   dependencies:
     consola "^3.2.3"
     diff "^5.1.0"
@@ -965,13 +965,13 @@
     rc9 "^2.1.1"
     semver "^7.5.4"
 
-"@nuxt/devtools@^0.7.5":
-  version "0.7.5"
-  resolved "https://registry.yarnpkg.com/@nuxt/devtools/-/devtools-0.7.5.tgz#4b644487b3277207ad019e287304e75e013e0852"
-  integrity sha512-Uxjow3J0QcYnbgMA8XR/1myr6Nw8P5vA/PMxTTj8LKqSZhd2+BgjnAg1gRUmMeKQCvkUfNOD+AqTK2HOBdHaBw==
+"@nuxt/devtools@^0.7.6":
+  version "0.7.6"
+  resolved "https://registry.yarnpkg.com/@nuxt/devtools/-/devtools-0.7.6.tgz#0fa1bafd147ce72dbc316a2bc34852e0dd12c60e"
+  integrity sha512-2x/eS0KbzTCK4+OozSZTcbjndM2ySy84MltF/suwLP7Wp/ehY8vzRp+yMTksxLjsf0sbiAa4K8WJCzKd8wLXxA==
   dependencies:
-    "@nuxt/devtools-kit" "0.7.5"
-    "@nuxt/devtools-wizard" "0.7.5"
+    "@nuxt/devtools-kit" "0.7.6"
+    "@nuxt/devtools-wizard" "0.7.6"
     "@nuxt/kit" "^3.6.5"
     birpc "^0.2.12"
     boxen "^7.1.1"
@@ -1000,7 +1000,7 @@
     sirv "^2.0.3"
     unimport "^3.1.3"
     vite-plugin-inspect "^0.7.35"
-    vite-plugin-vue-inspector "^3.5.0"
+    vite-plugin-vue-inspector "^3.6.0"
     wait-on "^7.0.1"
     which "^3.0.1"
     ws "^8.13.0"
@@ -1591,10 +1591,10 @@
   resolved "https://registry.yarnpkg.com/@types/node/-/node-20.4.2.tgz#129cc9ae69f93824f92fac653eebfb4812ab4af9"
   integrity sha512-Dd0BYtWgnWJKwO1jkmTrzofjK2QXXcai0dmtzvIBhcA+RsG5h8R3xlyta0kGOZRNfL9GuRtb1knmPEhQrePCEw==
 
-"@types/node@^20.4.8":
-  version "20.4.8"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-20.4.8.tgz#b5dda19adaa473a9bf0ab5cbd8f30ec7d43f5c85"
-  integrity sha512-0mHckf6D2DiIAzh8fM8f3HQCvMKDpK94YQ0DSVkfWTG9BZleYIWudw9cJxX8oCk9bM+vAkDyujDV6dmKHbvQpg==
+"@types/node@^20.4.9":
+  version "20.4.9"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-20.4.9.tgz#c7164e0f8d3f12dfae336af0b1f7fdec8c6b204f"
+  integrity sha512-8e2HYcg7ohnTUbHk8focoklEQYvemQmu9M/f43DZVx43kHn0tE3BY/6gSDxS7k0SprtS0NHvj+L80cGLnoOUcQ==
 
 "@types/parse-json@^4.0.0":
   version "4.0.0"
@@ -3671,10 +3671,10 @@ escodegen@^2.0.0:
   optionalDependencies:
     source-map "~0.6.1"
 
-eslint-plugin-vue@^9.16.1:
-  version "9.16.1"
-  resolved "https://registry.yarnpkg.com/eslint-plugin-vue/-/eslint-plugin-vue-9.16.1.tgz#3508d9279d797b40889db76da2fd26524e9144e6"
-  integrity sha512-2FtnTqazA6aYONfDuOZTk0QzwhAwi7Z4+uJ7+GHeGxcKapjqWlDsRWDenvyG/utyOfAS5bVRmAG3cEWiYEz2bA==
+eslint-plugin-vue@^9.17.0:
+  version "9.17.0"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-vue/-/eslint-plugin-vue-9.17.0.tgz#4501547373f246547083482838b4c8f4b28e5932"
+  integrity sha512-r7Bp79pxQk9I5XDP0k2dpUC7Ots3OSWgvGZNu3BxmKK6Zg7NgVtcOB6OCna5Kb9oQwJPl5hq183WD0SY5tZtIQ==
   dependencies:
     "@eslint-community/eslint-utils" "^4.4.0"
     natural-compare "^1.4.0"
@@ -8375,10 +8375,10 @@ vite-plugin-mkcert@^1.16.0:
     debug "^4.3.4"
     picocolors "^1.0.0"
 
-vite-plugin-vue-inspector@^3.5.0:
-  version "3.5.0"
-  resolved "https://registry.yarnpkg.com/vite-plugin-vue-inspector/-/vite-plugin-vue-inspector-3.5.0.tgz#09819a2f8863d1b43151c94bd7474aec3fc1dd24"
-  integrity sha512-dDoxEi5VWkfsKflVUYxElC3XD/MOn8s/6mjCqWRDlFIQ+OsY0cW5PNTbqxGllbBBCr5SDnDmPWFS1vMJxrLVEw==
+vite-plugin-vue-inspector@^3.6.0:
+  version "3.6.0"
+  resolved "https://registry.yarnpkg.com/vite-plugin-vue-inspector/-/vite-plugin-vue-inspector-3.6.0.tgz#d3703983ed635070d28d3f6decfd3cb213eb4942"
+  integrity sha512-Fi+9JaMx/reuic+MWbrdw8g5TwZM5a/BmdBT8OKKZi3rK4Qw3wND9smT+Ld+Daitbgly17uvuCiull2KV/hEBQ==
   dependencies:
     "@babel/core" "^7.21.3"
     "@babel/plugin-syntax-import-meta" "^7.10.4"
