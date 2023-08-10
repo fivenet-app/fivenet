@@ -58,7 +58,7 @@ func SetupDB(p Params) (*sql.DB, error) {
 	}))
 
 	// Setup SQL Prometheus metrics collector
-	prometheus.MustRegister(collectors.NewDBStatsCollector(db, p.Config.Database.DBName))
+	prometheus.MustRegister(collectors.NewDBStatsCollector(db, "fivenet"))
 
 	return db, nil
 }

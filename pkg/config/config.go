@@ -99,9 +99,9 @@ type GRPC struct {
 
 type Database struct {
 	// refer to https://github.com/go-sql-driver/mysql#dsn-data-source-name for details
-	DSN    string `yaml:"dsn"`
-	DBName string `yaml:"dbName"`
+	DSN string `yaml:"dsn"`
 
+	// Connection options
 	MaxOpenConns    int           `default:"32" yaml:"maxOpenConns"`
 	MaxIdleConns    int           `default:"5" yaml:"maxIdleConns"`
 	ConnMaxIdleTime time.Duration `default:"15m" yaml:"connMaxIdleTime"`

@@ -131,7 +131,6 @@ fivenet:
     database:
       # refer to https://github.com/go-sql-driver/mysql#dsn-data-source-name for details
       dsn: "YOUR_USERNAME:YOUR_PASSWORD@tcp(localhost:3306)/fivem?collation=utf8mb4_unicode_ci&parseTime=True&loc=Local"
-      dbName: fivem
       maxOpenConns: 32
       maxIdleConns: 5
       connMaxIdleTime: 15m
