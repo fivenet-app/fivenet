@@ -41,8 +41,9 @@ localhost.*
 src/public/images/livemap/tiles/*/
 
 # Repo checkouts
-/gdal2tiles-leaflet/
-/validate/
+.build/
+.build/gdal2tiles-leaflet/
+.build/validate-*/
 
 # Nuxt
 .nuxt

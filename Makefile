@@ -1,8 +1,12 @@
 VERSION := $(shell cat VERSION)
 
-VALIDATE_VERSION ?= v0.10.1
+VALIDATE_VERSION ?= v1.0.2
+BUILD_DIR := .build/
 
 .DEFAULT: run-server
+
+build_dir:
+	mkdir -p $(BUILD_DIR)
 
 .PHONY: clean
 clean:
@@ -45,12 +49,13 @@ gen-sql:
 	# Remove schema/database name from the generated table code, so it uses the currently selected database
 	find ./query/fivenet/table -type f -iname '*.go' -exec sed -i 's~("fivenet", ~("", ~g' {} \;
 
-protoc-gen-validate:
-	if test ! -d validate/; then \
-		git clone --branch $(VALIDATE_VERSION) https://github.com/bufbuild/protoc-gen-validate.git validate; \
+protoc-gen-validate: build_dir
+	mkdir -p $(BUILD_DIR)
+	if test ! -d $(BUILD_DIR)validate-$(VALIDATE_VERSION)/; then \
+		git clone --branch $(VALIDATE_VERSION) https://github.com/bufbuild/protoc-gen-validate.git $(BUILD_DIR)validate-$(VALIDATE_VERSION); \
 	else \
-		git -C validate/ pull --all; \
-		git -C validate/ checkout $(VALIDATE_VERSION); \
+		git -C $(BUILD_DIR)validate-$(VALIDATE_VERSION)/ pull --all; \
+		git -C $(BUILD_DIR)validate-$(VALIDATE_VERSION)/ checkout $(VALIDATE_VERSION); \
 	fi
 
 protoc-gen-customizer:
@@ -60,7 +65,7 @@ protoc-gen-customizer:
 gen-proto: protoc-gen-validate protoc-gen-customizer
 	PATH="$$PATH:./cmd/protoc-gen-customizer/" \
 	npx protoc \
-		--proto_path=./validate \
+		--proto_path=./$(BUILD_DIR)validate-$(VALIDATE_VERSION) \
 		--proto_path=./proto \
 		--go_out=./gen/go/proto \
 		--go_opt=paths=source_relative \
@@ -78,7 +83,7 @@ gen-proto: protoc-gen-validate protoc-gen-customizer
 			-input={} \;
 
 	npx protoc \
-		--proto_path=./validate \
+		--proto_path=./$(BUILD_DIR)validate-$(VALIDATE_VERSION) \
 		--proto_path=./proto \
 		--ts_out=./gen/ts \
 		--ts_opt=optimize_code_size,long_type_bigint \
@@ -89,9 +94,9 @@ gen-proto: protoc-gen-validate protoc-gen-customizer
 	# Remove validate_pb imports from JS files
 	find ./gen -type f \( -iname '*.js' -o -iname '*.ts' \) -exec sed -i '/validate_pb/d' {} +
 
-gdal2tiles-leaflet:
-	if test ! -d gdal2tiles-leaflet/; then \
-		git clone https://github.com/commenthol/gdal2tiles-leaflet.git gdal2tiles-leaflet; \
+gdal2tiles-leaflet: build_dir
+	if test ! -d $(BUILD_DIR)gdal2tiles-leaflet/; then \
+		git clone https://github.com/commenthol/gdal2tiles-leaflet.git $(BUILD_DIR)gdal2tiles-leaflet; \
 	else \
 		git -C gdal2tiles-leaflet pull --all; \
 	fi
