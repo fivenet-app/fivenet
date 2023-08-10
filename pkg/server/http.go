@@ -8,10 +8,10 @@ import (
 	"strings"
 	"time"
 
-	"github.com/galexrt/fivenet/pkg/api"
 	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
-	"github.com/galexrt/fivenet/pkg/oauth2"
+	"github.com/galexrt/fivenet/pkg/server/api"
+	"github.com/galexrt/fivenet/pkg/server/oauth2"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-contrib/static"

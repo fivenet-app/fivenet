@@ -4,7 +4,7 @@ import (
 	"net/http"
 
 	"github.com/galexrt/fivenet/pkg/config"
-	"github.com/galexrt/fivenet/pkg/oauth2"
+	"github.com/galexrt/fivenet/pkg/server/oauth2"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )

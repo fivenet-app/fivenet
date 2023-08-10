@@ -11,7 +11,7 @@ import (
 
 	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
-	"github.com/galexrt/fivenet/pkg/oauth2/providers"
+	"github.com/galexrt/fivenet/pkg/server/oauth2/providers"
 	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
