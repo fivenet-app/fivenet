@@ -9,7 +9,7 @@ type MockUserInfoRetriever struct {
 	userInfo map[int32]*UserInfo
 }
 
-func NewMockUserInfoRetriever(userInfo map[int32]*UserInfo) *MockUserInfoRetriever {
+func NewMockUserInfoRetriever(userInfo map[int32]*UserInfo) UserInfoRetriever {
 	return &MockUserInfoRetriever{
 		userInfo: userInfo,
 	}

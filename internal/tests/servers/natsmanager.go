@@ -44,6 +44,8 @@ func (m *natsServer) Setup() {
 			Repository: "docker.io/library/nats",
 			Tag:        "2.9.17-alpine3.18",
 			Cmd: []string{
+				"--user=fivenet",
+				"--pass=changeme",
 				"--jetstream",
 			},
 		},

@@ -19,6 +19,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
+	"go.uber.org/fx/fxtest"
 	"go.uber.org/zap"
 	"google.golang.org/grpc/metadata"
 )
@@ -51,24 +52,31 @@ func TestFullAuthFlow(t *testing.T) {
 	require.NotNil(t, cfg)
 
 	cfg.NATS.URL = servers.TestNATSServer.GetURL()
+	cfg.Cache.RefreshTime = 1 * time.Hour
+
+	fxLC := fxtest.NewLifecycle(t)
 
 	eventus, err := events.New(events.Params{
+		LC:     fxLC,
 		Logger: logger,
 		Config: cfg,
 	})
 	assert.NoError(t, err)
 
 	p, err := perms.New(perms.Params{
+		LC:     fxLC,
 		Logger: logger,
 		DB:     db,
 		TP:     tp,
 		Events: eventus,
+		Config: cfg,
 	})
 	assert.NoError(t, err)
 
 	aud := &audit.Noop{}
-	cfg.Cache.RefreshTime = 1 * time.Hour
+
 	c, err := mstlystcdata.NewCache(mstlystcdata.Params{
+		LC:     fxLC,
 		Logger: logger,
 		TP:     tp,
 		DB:     db,
@@ -77,6 +85,9 @@ func TestFullAuthFlow(t *testing.T) {
 	assert.NoError(t, err)
 	enricher := mstlystcdata.NewEnricher(c)
 	srv := NewServer(db, auth.NewGRPCAuth(ui, tm), tm, p, enricher, aud, ui, &config.Config{})
+
+	fxLC.RequireStart()
+	defer fxLC.RequireStop()
 
 	client, _, cancel := NewTestAuthServiceClient(srv)
 	defer cancel()
