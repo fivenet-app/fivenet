@@ -58,8 +58,9 @@ type Params struct {
 func NewCache(p Params) (*Cache, error) {
 	ctx, cancel := context.WithCancel(context.Background())
 
-	p.LC.Append(fx.StopHook(func(_ context.Context) {
+	p.LC.Append(fx.StopHook(func(_ context.Context) error {
 		cancel()
+		return nil
 	}))
 
 	jobsCache := cache.NewContext[string, *jobs.Job](ctx)
@@ -81,8 +82,9 @@ func NewCache(p Params) (*Cache, error) {
 		lawBooks:           lawBooks,
 	}
 
-	p.LC.Append(fx.StartHook(func(_ context.Context) {
+	p.LC.Append(fx.StartHook(func(_ context.Context) error {
 		go c.start()
+		return nil
 	}))
 
 	var err error

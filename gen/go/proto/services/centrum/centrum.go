@@ -89,23 +89,26 @@ func NewServer(p Params) *Server {
 		visibleJobs: p.Config.Game.Livemap.Jobs,
 	}
 
-	p.LC.Append(fx.StopHook(func(_ context.Context) {
+	p.LC.Append(fx.StopHook(func(_ context.Context) error {
 		cancel()
+		return nil
 	}))
 
-	p.LC.Append(fx.StartHook(func(_ context.Context) {
+	p.LC.Append(fx.StartHook(func(_ context.Context) error {
+		if err := s.registerEvents(); err != nil {
+			return fmt.Errorf("failed to register events: %w", err)
+		}
+
 		go s.start()
 		go s.ConvertPhoneJobMsgToDispatch()
+
+		return nil
 	}))
 
 	return s
 }
 
 func (s *Server) start() {
-	if err := s.registerEvents(); err != nil {
-		s.logger.Error("failed to register events", zap.Error(err))
-	}
-
 	go func() {
 		for {
 			if err := s.refresh(); err != nil {
@@ -245,9 +248,7 @@ func (s *Server) TakeControl(ctx context.Context, req *TakeControlRequest) (*Tak
 	}
 	s.broadcastToAllUnits(TopicGeneral, TypeGeneralDisponents, userInfo, data)
 
-	return &TakeControlResponse{
-		Change: change,
-	}, nil
+	return &TakeControlResponse{}, nil
 }
 
 func (s *Server) Stream(req *StreamRequest, srv CentrumService_StreamServer) error {
@@ -262,13 +263,12 @@ func (s *Server) Stream(req *StreamRequest, srv CentrumService_StreamServer) err
 		return err
 	}
 
-	msgCh := make(chan *nats.Msg, 128)
-
 	disponents, err := s.getDisponents(srv.Context(), userInfo.Job)
 	if err != nil {
 		return err
 	}
 
+	msgCh := make(chan *nats.Msg, 64)
 	controller := utils.InSliceFunc(disponents, func(in *users.UserShort) bool {
 		return in.UserId == userInfo.UserId
 	})

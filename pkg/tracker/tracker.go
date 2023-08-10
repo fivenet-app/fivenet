@@ -90,7 +90,7 @@ func New(p Params) *Tracker {
 		visibleJobs: p.Config.Game.Livemap.Jobs,
 	}
 
-	p.LC.Append(fx.StartHook(func(_ context.Context) {
+	p.LC.Append(fx.StartHook(func(_ context.Context) error {
 		go broker.Start()
 
 		// Only run the tracker random user marker generator in debug mode
@@ -100,10 +100,13 @@ func New(p Params) *Tracker {
 		}
 
 		go t.start()
+
+		return nil
 	}))
 
-	p.LC.Append(fx.StopHook(func(_ context.Context) {
+	p.LC.Append(fx.StopHook(func(_ context.Context) error {
 		cancel()
+		return nil
 	}))
 
 	return t

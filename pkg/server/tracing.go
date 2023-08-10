@@ -13,7 +13,6 @@ import (
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	semconv "go.opentelemetry.io/otel/semconv/v1.17.0"
 	"go.uber.org/fx"
-	"go.uber.org/zap"
 )
 
 var TracerProviderModule = fx.Module("tracerProvider",
@@ -25,7 +24,6 @@ type TracingParams struct {
 
 	LC fx.Lifecycle
 
-	Logger *zap.Logger
 	Config *config.Config
 }
 

@@ -66,11 +66,13 @@ func NewServer(p Params) *Server {
 
 	broker := utils.NewBroker[interface{}](ctx)
 
-	p.LC.Append(fx.StartHook(func(_ context.Context) {
+	p.LC.Append(fx.StartHook(func(_ context.Context) error {
 		go broker.Start()
+		return nil
 	}))
-	p.LC.Append(fx.StopHook(func(_ context.Context) {
+	p.LC.Append(fx.StopHook(func(_ context.Context) error {
 		cancel()
+		return nil
 	}))
 
 	return &Server{

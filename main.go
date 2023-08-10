@@ -50,7 +50,6 @@ func main() {
 		query.Module,
 		perms.Module,
 		events.Module,
-		userinfo.Module,
 		audit.Module,
 
 		fx.Provide(
@@ -59,6 +58,7 @@ func main() {
 			mstlystcdata.NewSearcher,
 			notifi.New,
 			tracker.New,
+			userinfo.NewUIRetriever,
 		),
 
 		// GRPC Services

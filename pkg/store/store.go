@@ -3,32 +3,31 @@ package store
 import (
 	"errors"
 
-	"github.com/galexrt/fivenet/pkg/events"
 	"github.com/nats-io/nats.go"
 	"google.golang.org/protobuf/proto"
 )
 
-type Store struct {
+type Store[T proto.Message] struct {
 	kv nats.KeyValue
 }
 
-func New(e *events.Eventus) (*Store, error) {
-	kv, err := e.JS.KeyValue("fivenet_store")
+func (s *Store[T]) Start(js nats.JetStreamContext) error {
+	kv, err := js.KeyValue("fivenet_store")
 	if errors.Is(nats.ErrBucketNotFound, err) {
-		kv, err = e.JS.CreateKeyValue(&nats.KeyValueConfig{
+		kv, err = js.CreateKeyValue(&nats.KeyValueConfig{
 			Bucket: "fivenet_store",
 		})
 		if err != nil {
-			return nil, err
+			return err
 		}
 	}
 
-	return &Store{
-		kv: kv,
-	}, nil
+	s.kv = kv
+
+	return nil
 }
 
-func (s *Store) Put(key string, msg proto.Message) error {
+func (s *Store[T]) Put(key string, msg T) error {
 	data, err := proto.Marshal(msg)
 	if err != nil {
 		return err
@@ -41,20 +40,21 @@ func (s *Store) Put(key string, msg proto.Message) error {
 	return nil
 }
 
-func (s *Store) Get(key string, msg proto.Message) (proto.Message, error) {
+func (s *Store[T]) Get(key string) (T, error) {
+	var dest T
 	entry, err := s.kv.Get(key)
 	if err != nil {
-		return nil, err
+		return dest, err
 	}
 
-	if err := proto.Unmarshal(entry.Value(), msg); err != nil {
-		return nil, err
+	if err := proto.Unmarshal(entry.Value(), dest); err != nil {
+		return dest, err
 	}
 
-	return msg, nil
+	return dest, nil
 }
 
-func (s *Store) Keys() ([]string, error) {
+func (s *Store[T]) Keys() ([]string, error) {
 	keys, err := s.kv.Keys(nats.MetaOnly())
 	if err != nil {
 		return nil, err

@@ -46,8 +46,9 @@ func NewUIRetriever(p Params) UserInfoRetriever {
 		cache.WithJanitorInterval[int32, *UserInfo](40*time.Second),
 	)
 
-	p.LC.Append(fx.StopHook(func(_ context.Context) {
+	p.LC.Append(fx.StopHook(func(_ context.Context) error {
 		cancel()
+		return nil
 	}))
 
 	return &UIRetriever{

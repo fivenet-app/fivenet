@@ -174,10 +174,6 @@ export interface TakeControlRequest {
  * @generated from protobuf message services.centrum.TakeControlResponse
  */
 export interface TakeControlResponse {
-    /**
-     * @generated from protobuf field: services.centrum.DisponentsChange change = 1;
-     */
-    change?: DisponentsChange;
 }
 /**
  * @generated from protobuf message services.centrum.DisponentsChange
@@ -241,10 +237,6 @@ export interface UpdateDispatchRequest {
  * @generated from protobuf message services.centrum.UpdateDispatchResponse
  */
 export interface UpdateDispatchResponse {
-    /**
-     * @generated from protobuf field: resources.dispatch.Dispatch dispatch = 1;
-     */
-    dispatch?: Dispatch;
 }
 /**
  * @generated from protobuf message services.centrum.UpdateDispatchStatusRequest
@@ -328,10 +320,6 @@ export interface TakeDispatchRequest {
  * @generated from protobuf message services.centrum.TakeDispatchResponse
  */
 export interface TakeDispatchResponse {
-    /**
-     * @generated from protobuf field: resources.dispatch.Dispatch dispatch = 1;
-     */
-    dispatch?: Dispatch;
 }
 /**
  * @generated from protobuf message services.centrum.JoinUnitRequest
@@ -664,9 +652,7 @@ export const TakeControlRequest = new TakeControlRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class TakeControlResponse$Type extends MessageType<TakeControlResponse> {
     constructor() {
-        super("services.centrum.TakeControlResponse", [
-            { no: 1, name: "change", kind: "message", T: () => DisponentsChange }
-        ]);
+        super("services.centrum.TakeControlResponse", []);
     }
 }
 /**
@@ -749,9 +735,7 @@ export const UpdateDispatchRequest = new UpdateDispatchRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class UpdateDispatchResponse$Type extends MessageType<UpdateDispatchResponse> {
     constructor() {
-        super("services.centrum.UpdateDispatchResponse", [
-            { no: 1, name: "dispatch", kind: "message", T: () => Dispatch }
-        ]);
+        super("services.centrum.UpdateDispatchResponse", []);
     }
 }
 /**
@@ -837,9 +821,7 @@ export const TakeDispatchRequest = new TakeDispatchRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class TakeDispatchResponse$Type extends MessageType<TakeDispatchResponse> {
     constructor() {
-        super("services.centrum.TakeDispatchResponse", [
-            { no: 1, name: "dispatch", kind: "message", T: () => Dispatch }
-        ]);
+        super("services.centrum.TakeDispatchResponse", []);
     }
 }
 /**

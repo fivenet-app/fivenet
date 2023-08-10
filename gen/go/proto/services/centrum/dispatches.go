@@ -232,8 +232,6 @@ func (s *Server) UpdateDispatch(ctx context.Context, req *UpdateDispatchRequest)
 	}
 	defer s.a.Log(auditEntry, req)
 
-	resp := &UpdateDispatchResponse{}
-
 	stmt := tDispatch.
 		UPDATE(
 			tDispatch.Job,
@@ -264,16 +262,9 @@ func (s *Server) UpdateDispatch(ctx context.Context, req *UpdateDispatchRequest)
 		return nil, err
 	}
 
-	dsp, err := s.getDispatchFromDB(ctx, s.db, req.Dispatch.Id)
-	if err != nil {
-		return nil, ErrFailedQuery
-	}
-
-	resp.Dispatch = dsp
-
 	auditEntry.State = int16(rector.EVENT_TYPE_UPDATED)
 
-	return nil, nil
+	return &UpdateDispatchResponse{}, nil
 }
 
 func (s *Server) TakeDispatch(ctx context.Context, req *TakeDispatchRequest) (*TakeDispatchResponse, error) {
@@ -331,9 +322,7 @@ func (s *Server) TakeDispatch(ctx context.Context, req *TakeDispatchRequest) (*T
 
 	auditEntry.State = int16(rector.EVENT_TYPE_UPDATED)
 
-	return &TakeDispatchResponse{
-		Dispatch: dsp,
-	}, nil
+	return &TakeDispatchResponse{}, nil
 }
 
 func (s *Server) UpdateDispatchStatus(ctx context.Context, req *UpdateDispatchStatusRequest) (*UpdateDispatchStatusResponse, error) {

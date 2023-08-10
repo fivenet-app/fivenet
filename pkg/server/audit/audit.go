@@ -47,7 +47,7 @@ func New(p Params) IAuditer {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	a := &AuditStorer{
-		logger: p.Logger.Named("audit"),
+		logger: p.Logger,
 		tracer: p.TP.Tracer("audit-storer"),
 		db:     p.DB,
 		ctx:    ctx,
@@ -60,12 +60,15 @@ func New(p Params) IAuditer {
 			a.wg.Add(1)
 			go a.worker()
 		}
+
 		return nil
 	}))
-	p.LC.Append(fx.StopHook(func(_ context.Context) {
+	p.LC.Append(fx.StopHook(func(_ context.Context) error {
 		close(a.input)
 		cancel()
 		a.wg.Wait()
+
+		return nil
 	}))
 
 	return a
