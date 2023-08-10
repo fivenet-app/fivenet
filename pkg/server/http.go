@@ -8,10 +8,10 @@ import (
 	"strings"
 	"time"
 
+	"github.com/galexrt/fivenet/pkg/api"
 	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/oauth2"
-	"github.com/galexrt/fivenet/pkg/routes"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-contrib/static"
@@ -117,7 +117,7 @@ func setupHTTPServer(p ServerParams) *gin.Engine {
 	oauth := oauth2.New(p.Logger.Named("oauth"), p.DB, p.TokenMgr, p.Config.OAuth2.Providers)
 
 	// Register app routes
-	rs := routes.New(p.Logger, p.Config)
+	rs := api.New(p.Logger, p.Config)
 	rs.Register(e, oauth)
 
 	fs := static.LocalFile(".output/public/", false)

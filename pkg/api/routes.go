@@ -1,9 +1,8 @@
-package routes
+package api
 
 import (
 	"net/http"
 
-	"github.com/galexrt/fivenet/pkg/api"
 	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/oauth2"
 	"github.com/gin-gonic/gin"
@@ -13,14 +12,14 @@ import (
 type Routes struct {
 	logger *zap.Logger
 
-	clientCfg *api.ClientConfig
+	clientCfg *ClientConfig
 }
 
 func New(logger *zap.Logger, cfg *config.Config) *Routes {
-	providers := make([]*api.ProviderConfig, len(cfg.OAuth2.Providers))
+	providers := make([]*ProviderConfig, len(cfg.OAuth2.Providers))
 
 	for k, p := range cfg.OAuth2.Providers {
-		providers[k] = &api.ProviderConfig{
+		providers[k] = &ProviderConfig{
 			Name:  p.Name,
 			Label: p.Label,
 		}
@@ -29,10 +28,10 @@ func New(logger *zap.Logger, cfg *config.Config) *Routes {
 	return &Routes{
 		logger: logger,
 
-		clientCfg: &api.ClientConfig{
+		clientCfg: &ClientConfig{
 			Version:   "TODO",
 			SentryDSN: cfg.Sentry.ClientDSN,
-			Login: api.LoginConfig{
+			Login: LoginConfig{
 				Providers: providers,
 			},
 		},
@@ -47,7 +46,7 @@ func (r *Routes) Register(e *gin.Engine, oa2 *oauth2.OAuth2) {
 	g := e.Group("/api")
 	{
 		g.GET("/ping", func(c *gin.Context) {
-			c.JSON(http.StatusOK, api.PingResponse)
+			c.JSON(http.StatusOK, PingResponse)
 		})
 		g.POST("/config", func(c *gin.Context) {
 			c.JSON(http.StatusOK, r.clientCfg)
