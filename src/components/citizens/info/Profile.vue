@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { useClipboard } from '@vueuse/core';
+import { LicenseIcon } from 'mdi-vue3';
 import { ref } from 'vue';
 import CharSexBadge from '~/components/citizens/CharSexBadge.vue';
 import JobModal from '~/components/citizens/info/JobModal.vue';

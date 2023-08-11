@@ -408,12 +408,11 @@ async function onSelect(item: any): Promise<any> {
                                     </h2>
                                     <ul class="-mx-2 mt-2 text-sm text-gray-400">
                                         <ComboboxOption
-                                            v-for="item in items"
+                                            v-for="item in items.filter((e) => e.permission === undefined || can(e.permission))"
                                             :key="item.id"
                                             :value="item"
                                             as="template"
                                             v-slot="{ active }"
-                                            v-can="item.permission"
                                         >
                                             <li
                                                 :class="[

@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { ClipboardListIcon } from 'mdi-vue3';
 import { ref } from 'vue';
 import Modal from '~/components/clipboard/modal/Modal.vue';
 

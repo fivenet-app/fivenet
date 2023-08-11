@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { AccountIcon, BriefcaseIcon, CalendarIcon, LockIcon, LockOpenVariantIcon, TrashCanIcon } from 'mdi-vue3';
+import { AccountIcon, BriefcaseIcon, CalendarIcon, LockIcon, LockOpenVariantIcon, TrashCanIcon, UpdateIcon } from 'mdi-vue3';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import Time from '~/components/partials/elements/Time.vue';
 import { DocumentShort } from '~~/gen/ts/resources/documents/documents';

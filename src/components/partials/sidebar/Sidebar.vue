@@ -284,11 +284,10 @@ const appVersion = activeChar ? ' v' + __APP_VERSION__ + (import.meta.env.DEV ? 
                         </NuxtLink>
                     </span>
                     <NuxtLink
-                        v-for="item in sidebarNavigation.filter((e) => e.position === 'top')"
                         v-else-if="accessToken && activeChar"
+                        v-for="item in sidebarNavigation.filter((e) => e.position === 'top' && can(e.permission))"
                         :key="item.name"
                         :to="item.href"
-                        v-can="item.permission"
                         :class="[
                             item.current
                                 ? 'bg-accent-100/20 text-neutral font-bold'
@@ -307,10 +306,9 @@ const appVersion = activeChar ? ' v' + __APP_VERSION__ + (import.meta.env.DEV ? 
                 </div>
                 <div class="flex-initial w-full px-2 space-y-1 text-center">
                     <NuxtLink
-                        v-for="item in sidebarNavigation.filter((e) => e.position === 'bottom')"
+                        v-for="item in sidebarNavigation.filter((e) => e.position === 'bottom' && can(e.permission))"
                         :key="item.name"
                         :to="item.href"
-                        v-can="item.permission"
                         :class="[
                             item.current
                                 ? 'bg-accent-100/20 text-neutral font-bold'
@@ -394,11 +392,12 @@ const appVersion = activeChar ? ' v' + __APP_VERSION__ + (import.meta.env.DEV ? 
                                             <span>{{ $t('common.home') }}</span>
                                         </NuxtLink>
                                         <NuxtLink
-                                            v-for="item in sidebarNavigation.filter((e) => e.position === 'top')"
+                                            v-for="item in sidebarNavigation.filter(
+                                                (e) => e.position === 'top' && can(e.permission),
+                                            )"
                                             v-else-if="accessToken && activeChar"
                                             :key="item.name"
                                             :to="item.href"
-                                            v-can="item.permission"
                                             :class="[
                                                 item.current
                                                     ? 'bg-accent-100/20 text-neutral font-bold'
@@ -424,10 +423,11 @@ const appVersion = activeChar ? ' v' + __APP_VERSION__ + (import.meta.env.DEV ? 
                                 <nav class="flex flex-col h-full">
                                     <div class="space-y-1">
                                         <NuxtLink
-                                            v-for="item in sidebarNavigation.filter((e) => e.position === 'bottom')"
+                                            v-for="item in sidebarNavigation.filter(
+                                                (e) => e.position === 'bottom' && can(e.permission),
+                                            )"
                                             :key="item.name"
                                             :to="item.href"
-                                            v-can="item.permission"
                                             :class="[
                                                 item.current
                                                     ? 'bg-accent-100/20 text-neutral font-bold'
@@ -512,6 +512,7 @@ const appVersion = activeChar ? ' v' + __APP_VERSION__ + (import.meta.env.DEV ? 
                             </div>
                             <Notifications v-if="activeChar" />
                             <LanguageSwitcher />
+
                             <!-- Account dropdown -->
                             <Menu as="div" class="relative flex-shrink-0">
                                 <div>
@@ -538,10 +539,11 @@ const appVersion = activeChar ? ' v' + __APP_VERSION__ + (import.meta.env.DEV ? 
                                         class="absolute right-0 w-48 py-1 mt-2 origin-top-right rounded-md shadow-float bg-base-850 ring-1 ring-base-100 ring-opacity-5 focus:outline-none z-40"
                                     >
                                         <MenuItem
-                                            v-for="item in userNavigation"
+                                            v-for="item in userNavigation.filter(
+                                                (e) => e.permission === undefined || can(e.permission),
+                                            )"
                                             :key="item.name"
                                             v-slot="{ active }"
-                                            v-can="item.permission"
                                         >
                                             <NuxtLink
                                                 :to="item.href"

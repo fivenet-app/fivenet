@@ -25,7 +25,7 @@ const props = defineProps<{
 
 const { t, n } = useI18n();
 
-const icon = ref<DefineComponent>(HelpCircleIcon);
+let icon: DefineComponent = markRaw(HelpCircleIcon);
 const iconColor = ref<string>('text-neutral');
 const actionText = ref<string>(props.activity.key);
 const actionValue = ref<string>(`${props.activity.oldValue} -> ${props.activity.newValue}`);
@@ -37,7 +37,7 @@ const reasonText = ref<string>('components.citizens.citizen_info_activity_feed_e
 switch (props.activity.key) {
     case 'DocStore.Relation': {
         actionText.value = t('components.citizens.citizen_info_activity_feed_entry.document_relation.added');
-        icon.value = AtIcon;
+        icon = markRaw(AtIcon);
         actionLink.value = { name: 'documents-id', params: { id: 0 } };
         actionLinkText.value = t('common.document', 1);
         actionReason.value = t(`enums.docstore.DOC_RELATION.${props.activity.reason}`);
@@ -59,10 +59,10 @@ switch (props.activity.key) {
             props.activity.newValue === 'true' ? t('common.wanted') : `${t('common.not').toLowerCase()} ${t('common.wanted')}`;
 
         if (props.activity.newValue === 'true') {
-            icon.value = BellAlertIcon;
+            icon = BellAlertIcon;
             iconColor.value = 'text-error-400';
         } else {
-            icon.value = BellSleepIcon;
+            icon = BellSleepIcon;
             iconColor.value = 'text-success-400';
         }
         break;
@@ -71,7 +71,7 @@ switch (props.activity.key) {
     case 'UserProps.Job': {
         actionText.value = t('components.citizens.citizen_info_activity_feed_entry.userprops_job_set');
         actionValue.value = props.activity.newValue;
-        icon.value = BriefcaseIcon;
+        icon = BriefcaseIcon;
         iconColor.value = 'text-secondary-400';
         break;
     }
@@ -79,14 +79,14 @@ switch (props.activity.key) {
     case 'UserProps.TrafficInfractionPoints': {
         actionText.value = t('components.citizens.citizen_info_activity_feed_entry.traffic_infraction_points.action_text');
         actionValue.value = `${props.activity.oldValue} ${t('common.to').toLocaleLowerCase()} ${props.activity.newValue}`;
-        icon.value = TrafficConeIcon;
+        icon = TrafficConeIcon;
         iconColor.value = 'text-secondary-400';
         break;
     }
 
     case 'Plugin.Licenses': {
         reasonText.value = '';
-        icon.value = LicenseIcon;
+        icon = LicenseIcon;
         if (props.activity.newValue !== '') {
             actionText.value = t('components.citizens.citizen_info_activity_feed_entry.plugin_license.added');
             actionValue.value = '';
@@ -103,14 +103,14 @@ switch (props.activity.key) {
         reasonText.value = '';
         actionValue.value = '';
         if (props.activity.oldValue === '' && props.activity.newValue !== '0') {
-            icon.value = HandcuffsIcon;
+            icon = HandcuffsIcon;
             actionText.value = t('components.citizens.citizen_info_activity_feed_entry.plugin_jail.jailed');
             actionValue.value = fromSecondsToFormattedDuration(parseInt(props.activity.newValue));
         } else if (props.activity.newValue === '0') {
-            icon.value = DoorOpenIcon;
+            icon = DoorOpenIcon;
             actionText.value = t('components.citizens.citizen_info_activity_feed_entry.plugin_jail.unjailed');
         } else {
-            icon.value = RunFastIcon;
+            icon = RunFastIcon;
             actionText.value = t('components.citizens.citizen_info_activity_feed_entry.plugin_jail.escaped');
         }
         break;
@@ -118,17 +118,17 @@ switch (props.activity.key) {
 
     case 'Plugin.Billing.Fines': {
         if (props.activity.newValue === '0') {
-            icon.value = ReceiptTextCheckIcon;
+            icon = ReceiptTextCheckIcon;
             actionText.value = t('components.citizens.citizen_info_activity_feed_entry.plugin_billing_fines.paid');
             actionValue.value = n(parseInt(props.activity.oldValue), 'currency');
             iconColor.value = 'text-green-400';
         } else if (props.activity.newValue === props.activity.oldValue) {
-            icon.value = ReceiptTextRemoveIcon;
+            icon = ReceiptTextRemoveIcon;
             actionText.value = t('components.citizens.citizen_info_activity_feed_entry.plugin_billing_fines.removed');
             actionValue.value = n(parseInt(props.activity.oldValue), 'currency');
             iconColor.value = 'text-secondary-400';
         } else {
-            icon.value = ReceiptTextPlusIcon;
+            icon = ReceiptTextPlusIcon;
             actionText.value = t('components.citizens.citizen_info_activity_feed_entry.plugin_billing_fines.created');
             actionValue.value = n(parseInt(props.activity.newValue), 'currency');
             iconColor.value = 'text-info-400';

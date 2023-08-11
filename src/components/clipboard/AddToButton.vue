@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import { ClipboardPlusIcon } from 'mdi-vue3';
+
 withDefaults(
     defineProps<{
         callback: Function;
