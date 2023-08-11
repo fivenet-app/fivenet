@@ -1,9 +1,8 @@
 <script setup lang="ts">
-import { mdiCommentTextMultiple } from '@mdi/js';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
+import { CommentTextMultipleIcon } from 'mdi-vue3';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import TablePagination from '~/components/partials/elements/TablePagination.vue';
-import { can } from '~/plugins/1.vCan';
 import { useAuthStore } from '~/store/auth';
 import { PaginationResponse } from '~~/gen/ts/resources/common/database/database';
 import { Comment } from '~~/gen/ts/resources/documents/comment';
@@ -131,7 +130,7 @@ watch(offset, async () => refresh());
 
 <template>
     <div class="pb-2">
-        <div v-can="'DocStoreService.PostComment'">
+        <div v-if="can('DocStoreService.PostComment')">
             <div v-if="!closed" class="flex items-start space-x-4">
                 <div class="min-w-0 flex-1">
                     <form @submit.prevent="addComment()" class="relative">
@@ -179,7 +178,7 @@ watch(offset, async () => refresh());
         <DataNoDataBlock
             v-if="!comments || comments.length === 0"
             :message="$t('components.documents.document_comments.no_comments')"
-            :icon="mdiCommentTextMultiple"
+            :icon="CommentTextMultipleIcon"
             :focus="focusComment"
         />
         <div

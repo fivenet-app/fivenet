@@ -24,6 +24,8 @@ type fivenetCentrumDispatchesStatusTable struct {
 	Status     mysql.ColumnInteger
 	Reason     mysql.ColumnString
 	Code       mysql.ColumnString
+	X          mysql.ColumnFloat
+	Y          mysql.ColumnFloat
 	UserID     mysql.ColumnInteger
 
 	AllColumns     mysql.ColumnList
@@ -72,9 +74,11 @@ func newFivenetCentrumDispatchesStatusTableImpl(schemaName, tableName, alias str
 		StatusColumn     = mysql.IntegerColumn("status")
 		ReasonColumn     = mysql.StringColumn("reason")
 		CodeColumn       = mysql.StringColumn("code")
+		XColumn          = mysql.FloatColumn("x")
+		YColumn          = mysql.FloatColumn("y")
 		UserIDColumn     = mysql.IntegerColumn("user_id")
-		allColumns       = mysql.ColumnList{IDColumn, CreatedAtColumn, DispatchIDColumn, UnitIDColumn, StatusColumn, ReasonColumn, CodeColumn, UserIDColumn}
-		mutableColumns   = mysql.ColumnList{CreatedAtColumn, DispatchIDColumn, UnitIDColumn, StatusColumn, ReasonColumn, CodeColumn, UserIDColumn}
+		allColumns       = mysql.ColumnList{IDColumn, CreatedAtColumn, DispatchIDColumn, UnitIDColumn, StatusColumn, ReasonColumn, CodeColumn, XColumn, YColumn, UserIDColumn}
+		mutableColumns   = mysql.ColumnList{CreatedAtColumn, DispatchIDColumn, UnitIDColumn, StatusColumn, ReasonColumn, CodeColumn, XColumn, YColumn, UserIDColumn}
 	)
 
 	return fivenetCentrumDispatchesStatusTable{
@@ -88,6 +92,8 @@ func newFivenetCentrumDispatchesStatusTableImpl(schemaName, tableName, alias str
 		Status:     StatusColumn,
 		Reason:     ReasonColumn,
 		Code:       CodeColumn,
+		X:          XColumn,
+		Y:          YColumn,
 		UserID:     UserIDColumn,
 
 		AllColumns:     allColumns,

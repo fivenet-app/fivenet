@@ -1,9 +1,8 @@
 <script lang="ts" setup>
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
-import SvgIcon from '@jamescoyle/vue-icon';
-import { mdiCheck } from '@mdi/js';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { watchDebounced, watchOnce } from '@vueuse/core';
+import { CheckIcon } from 'mdi-vue3';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -120,7 +119,7 @@ watchOnce(roles, async () => await findJobGrades());
     <div class="py-2">
         <div class="px-2 sm:px-6 lg:px-8">
             <div class="flow-root mt-2">
-                <div v-can="'RectorService.CreateRole'" class="sm:flex sm:items-center">
+                <div v-if="can('RectorService.CreateRole')" class="sm:flex sm:items-center">
                     <div class="sm:flex-auto">
                         <form @submit.prevent="createRole()">
                             <div class="flex flex-row gap-4 mx-auto">
@@ -171,12 +170,7 @@ watchOnce(roles, async () => await findJobGrades());
                                                                 'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                                             ]"
                                                         >
-                                                            <SvgIcon
-                                                                class="w-5 h-5"
-                                                                aria-hidden="true"
-                                                                type="mdi"
-                                                                :path="mdiCheck"
-                                                            />
+                                                            <CheckIcon class="w-5 h-5" aria-hidden="true" />
                                                         </span>
                                                     </li>
                                                 </ComboboxOption>

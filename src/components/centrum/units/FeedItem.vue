@@ -1,6 +1,5 @@
 <script lang="ts" setup>
-import SvgIcon from '@jamescoyle/vue-icon';
-import { mdiAccountPlus, mdiAccountRemove, mdiBriefcase, mdiCoffee, mdiHelp, mdiPlay, mdiStop } from '@mdi/js';
+import { AccountPlusIcon, AccountRemoveIcon, BriefcaseIcon, CoffeeIcon, HelpIcon, PlayIcon, StopIcon } from 'mdi-vue3';
 import Time from '~/components/partials/elements/Time.vue';
 import { UNIT_STATUS, UnitStatus } from '~~/gen/ts/resources/dispatch/units';
 
@@ -23,7 +22,7 @@ defineProps<{
         </div>
         <template v-if="activityItem.status === UNIT_STATUS.UNKNOWN">
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
-                <SvgIcon type="mdi" :path="mdiHelp" class="h-6 w-6 text-primary-600" aria-hidden="true" />
+                <HelpIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">Unit created</p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
@@ -32,7 +31,7 @@ defineProps<{
         </template>
         <template v-else-if="activityItem.status === UNIT_STATUS.USER_ADDED">
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
-                <SvgIcon type="mdi" :path="mdiAccountPlus" class="h-6 w-6 text-primary-600" aria-hidden="true" />
+                <AccountPlusIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
                 Colleague added to Unit
@@ -46,7 +45,7 @@ defineProps<{
         </template>
         <template v-else-if="activityItem.status === UNIT_STATUS.USER_REMOVED">
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
-                <SvgIcon type="mdi" :path="mdiAccountRemove" class="h-6 w-6 text-primary-600" aria-hidden="true" />
+                <AccountRemoveIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
                 Colleague removed from Unit
@@ -60,7 +59,7 @@ defineProps<{
         </template>
         <template v-else-if="activityItem.status === UNIT_STATUS.UNAVAILABLE">
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
-                <SvgIcon type="mdi" :path="mdiStop" class="h-6 w-6 text-primary-600" aria-hidden="true" />
+                <StopIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
                 Unit unavailable
@@ -74,7 +73,7 @@ defineProps<{
         </template>
         <template v-else-if="activityItem.status === UNIT_STATUS.AVAILABLE">
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
-                <SvgIcon type="mdi" :path="mdiPlay" class="h-6 w-6 text-primary-600" aria-hidden="true" />
+                <PlayIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
                 Unit available
@@ -88,7 +87,7 @@ defineProps<{
         </template>
         <template v-else-if="activityItem.status === UNIT_STATUS.ON_BREAK">
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
-                <SvgIcon type="mdi" :path="mdiCoffee" class="h-6 w-6 text-primary-600" aria-hidden="true" />
+                <CoffeeIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
                 Unit on break
@@ -102,7 +101,7 @@ defineProps<{
         </template>
         <template v-else-if="activityItem.status === UNIT_STATUS.BUSY">
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
-                <SvgIcon type="mdi" :path="mdiBriefcase" class="h-6 w-6 text-primary-600" aria-hidden="true" />
+                <BriefcaseIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
                 Unit busy

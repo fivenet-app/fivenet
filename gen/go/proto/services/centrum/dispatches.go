@@ -516,10 +516,10 @@ func (s *Server) AssignDispatch(ctx context.Context, req *AssignDispatchRequest)
 	}
 
 	for i := 0; i < len(req.ToRemove); i++ {
-		s.events.JS.Publish(s.buildSubject(TopicDispatch, TypeDispatchUnassigned, userInfo, req.ToRemove[i]), data)
+		s.events.JS.Publish(s.buildSubject(TopicDispatch, TypeDispatchUpdated, userInfo, req.ToRemove[i]), data)
 	}
 	for i := 0; i < len(req.ToAdd); i++ {
-		s.events.JS.Publish(s.buildSubject(TopicDispatch, TypeDispatchAssigned, userInfo, req.ToAdd[i]), data)
+		s.events.JS.Publish(s.buildSubject(TopicDispatch, TypeDispatchUpdated, userInfo, req.ToAdd[i]), data)
 	}
 
 	auditEntry.State = int16(rector.EVENT_TYPE_UPDATED)

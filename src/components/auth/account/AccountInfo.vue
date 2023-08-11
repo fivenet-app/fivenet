@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { mdiAccount } from '@mdi/js';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
+import { AccountIcon } from 'mdi-vue3';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -47,7 +47,7 @@ async function removeOAuth2Connection(provider: string): Promise<void> {
             :title="$t('common.unable_to_load', [`${$t('common.account')} ${$t('common.info')}`])"
             :retry="refresh"
         />
-        <DataNoDataBlock v-else-if="!account" :type="`${$t('common.account')} ${$t('common.data')}`" :icon="mdiAccount" />
+        <DataNoDataBlock v-else-if="!account" :type="`${$t('common.account')} ${$t('common.data')}`" :icon="AccountIcon" />
         <div v-else>
             <div class="overflow-hidden bg-base-800 shadow sm:rounded-lg text-neutral">
                 <div class="px-4 py-5 sm:px-6">

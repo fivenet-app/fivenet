@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
-import SvgIcon from '@jamescoyle/vue-icon';
-import { mdiClose } from '@mdi/js';
+import { CloseIcon } from 'mdi-vue3';
 import Time from '~/components/partials/elements/Time.vue';
 import { DISPATCH_STATUS, Dispatch } from '~~/gen/ts/resources/dispatch/dispatches';
 import Feed from './Feed.vue';
@@ -52,12 +51,7 @@ const statusOpen = ref(false);
                                                         @click="$emit('close')"
                                                     >
                                                         <span class="sr-only">Close panel</span>
-                                                        <SvgIcon
-                                                            type="mdi"
-                                                            :path="mdiClose"
-                                                            class="h-6 w-6"
-                                                            aria-hidden="true"
-                                                        />
+                                                        <CloseIcon class="h-6 w-6" aria-hidden="true" />
                                                     </button>
                                                 </div>
                                             </div>

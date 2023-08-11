@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import SvgIcon from '@jamescoyle/vue-icon';
-import { mdiClipboardList } from '@mdi/js';
 import { ref } from 'vue';
 import Modal from '~/components/clipboard/modal/Modal.vue';
 
@@ -15,6 +13,6 @@ const open = ref(false);
         class="fixed flex items-center justify-center w-12 h-12 rounded-full z-90 bottom-2 right-6 bg-primary-500 shadow-float text-neutral hover:bg-primary-400"
         @click="open = true"
     >
-        <SvgIcon class="w-10 h-auto" type="mdi" :path="mdiClipboardList" />
+        <ClipboardListIcon class="w-10 h-auto" />
     </button>
 </template>

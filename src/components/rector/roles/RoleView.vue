@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
-import SvgIcon from '@jamescoyle/vue-icon';
-import { mdiCheck, mdiChevronDown, mdiClose, mdiMinus, mdiTrashCan } from '@mdi/js';
+
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
+import { CheckIcon, ChevronDownIcon, CloseIcon, MinusIcon, TrashCanIcon } from 'mdi-vue3';
 import Divider from '~/components/partials/elements/Divider.vue';
 import RoleViewAttr from '~/components/rector/roles/RoleViewAttr.vue';
 import { useNotificationsStore } from '~/store/notifications';
@@ -234,8 +234,8 @@ onMounted(async () => {
             <div v-if="role">
                 <h2 class="text-3xl text-white">
                     {{ role?.jobLabel! }} - {{ role?.jobGradeLabel }}
-                    <button v-can="'RectorService.DeleteRole'" @click="deleteRole()">
-                        <SvgIcon class="w-6 h-6 mx-auto text-neutral" type="mdi" :path="mdiTrashCan" />
+                    <button v-if="can('RectorService.DeleteRole')" @click="deleteRole()">
+                        <TrashCanIcon class="w-6 h-6 mx-auto text-neutral" />
                     </button>
                 </h2>
                 <Divider label="Permissions" />
@@ -257,11 +257,9 @@ onMounted(async () => {
                                 {{ $t(`perms.${category}.category`) }}
                             </span>
                             <span class="ml-6 flex h-7 items-center">
-                                <SvgIcon
+                                <ChevronDownIcon
                                     :class="[open ? 'upsidedown' : '', 'h-6 w-6 transition-transform']"
                                     aria-hidden="true"
-                                    type="mdi"
-                                    :path="mdiChevronDown"
                                 />
                             </span>
                         </DisclosureButton>
@@ -289,14 +287,14 @@ onMounted(async () => {
                                                 @click="updatePermissionState(perm.id, true)"
                                                 class="transition-colors rounded-l-lg p-1 bg-success-600/50 data-[active=true]:bg-success-600 text-base-300 data-[active=true]:text-neutral hover:bg-success-600/70"
                                             >
-                                                <SvgIcon class="w-6 h-6" type="mdi" :path="mdiCheck" />
+                                                <CheckIcon class="w-6 h-6" />
                                             </button>
                                             <button
                                                 :data-active="!permStates.has(perm.id) || permStates.get(perm.id) === undefined"
                                                 @click="updatePermissionState(perm.id, undefined)"
                                                 class="transition-colors p-1 bg-base-700 data-[active=true]:bg-base-500 text-base-300 data-[active=true]:text-neutral hover:bg-base-600"
                                             >
-                                                <SvgIcon class="w-6 h-6" type="mdi" :path="mdiMinus" />
+                                                <MinusIcon class="w-6 h-6" />
                                             </button>
                                             <button
                                                 :data-active="
@@ -307,7 +305,7 @@ onMounted(async () => {
                                                 @click="updatePermissionState(perm.id, false)"
                                                 class="transition-colors rounded-r-lg p-1 bg-error-600/50 data-[active=true]:bg-error-600 text-base-300 data-[active=true]:text-neutral hover:bg-error-600/70"
                                             >
-                                                <SvgIcon class="w-6 h-6" type="mdi" :path="mdiClose" />
+                                                <CloseIcon class="w-6 h-6" />
                                             </button>
                                         </div>
                                     </div>

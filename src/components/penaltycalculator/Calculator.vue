@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
-import SvgIcon from '@jamescoyle/vue-icon';
-import { mdiChevronDown, mdiGavel } from '@mdi/js';
+
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { useClipboard } from '@vueuse/core';
+import { ChevronDownIcon, GavelIcon } from 'mdi-vue3';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -173,7 +173,7 @@ ${t('common.crime', selectedPenalties.value.length)}:
                     />
                     <DataNoDataBlock
                         v-else-if="lawBooks && lawBooks.length === 0"
-                        :icon="mdiGavel"
+                        :icon="GavelIcon"
                         :type="`${$t('common.citizen', 1)} ${$t('common.activity')}`"
                         class="mt-5"
                     />
@@ -206,11 +206,9 @@ ${t('common.crime', selectedPenalties.value.length)}:
                                             </span>
                                         </span>
                                         <span class="ml-6 flex h-7 items-center">
-                                            <SvgIcon
+                                            <ChevronDownIcon
                                                 :class="[open ? 'upsidedown' : '', 'h-6 w-6 transition-transform']"
                                                 aria-hidden="true"
-                                                type="mdi"
-                                                :path="mdiChevronDown"
                                             />
                                         </span>
                                     </DisclosureButton>

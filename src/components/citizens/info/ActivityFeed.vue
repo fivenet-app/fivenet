@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { mdiBulletinBoard } from '@mdi/js';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
+import { BulletinBoardIcon } from 'mdi-vue3';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -61,7 +61,7 @@ watch(offset, async () => refresh());
         />
         <DataNoDataBlock
             v-else-if="activities && activities.length === 0"
-            :icon="mdiBulletinBoard"
+            :icon="BulletinBoardIcon"
             :type="`${$t('common.citizen', 1)} ${$t('common.activity')}`"
         />
         <div v-else>

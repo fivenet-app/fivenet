@@ -1,6 +1,5 @@
 <script lang="ts" setup>
-import SvgIcon from '@jamescoyle/vue-icon';
-import { mdiAlert, mdiAlertCircle, mdiCheckCircle, mdiClose, mdiInformation } from '@mdi/js';
+import { AlertCircleIcon, AlertIcon, CheckCircleIcon, CloseIcon, InformationIcon } from 'mdi-vue3';
 import { Notification } from '~/composables/notification/interfaces/Notification.interface';
 import { useNotificationsStore } from '~/store/notifications';
 
@@ -35,34 +34,10 @@ props.notification.content.parameters.forEach((e, i, a) => {
             <div class="p-4">
                 <div class="flex items-start">
                     <div class="flex-shrink-0 w-8 my-auto" v-if="notification.type">
-                        <SvgIcon
-                            v-if="notification.type === 'success'"
-                            class="text-success-400"
-                            aria-hidden="true"
-                            type="mdi"
-                            :path="mdiCheckCircle"
-                        />
-                        <SvgIcon
-                            v-else-if="notification.type === 'info'"
-                            class="text-info-400"
-                            aria-hidden="true"
-                            type="mdi"
-                            :path="mdiInformation"
-                        />
-                        <SvgIcon
-                            v-else-if="notification.type === 'warning'"
-                            class="text-warn-400"
-                            aria-hidden="true"
-                            type="mdi"
-                            :path="mdiAlert"
-                        />
-                        <SvgIcon
-                            v-else-if="notification.type === 'error'"
-                            class="text-error-400"
-                            aria-hidden="true"
-                            type="mdi"
-                            :path="mdiAlertCircle"
-                        />
+                        <CheckCircleIcon v-if="notification.type === 'success'" class="text-success-400" aria-hidden="true" />
+                        <InformationIcon v-else-if="notification.type === 'info'" class="text-info-400" aria-hidden="true" />
+                        <AlertIcon v-else-if="notification.type === 'warning'" class="text-warn-400" aria-hidden="true" />
+                        <AlertCircleIcon v-else-if="notification.type === 'error'" class="text-error-400" aria-hidden="true" />
                     </div>
                     <div class="ml-3 w-0 flex-1 pt-0.5">
                         <p class="text-sm font-semibold">
@@ -79,7 +54,7 @@ props.notification.content.parameters.forEach((e, i, a) => {
                             class="inline-flex text-neutral hover:text-base-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
                         >
                             <span class="sr-only">{{ $t('common.close') }}</span>
-                            <SvgIcon class="w-5 h-5" aria-hidden="true" type="mdi" :path="mdiClose" />
+                            <CloseIcon class="w-5 h-5" aria-hidden="true" />
                         </button>
                     </div>
                 </div>

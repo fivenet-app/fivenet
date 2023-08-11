@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { mdiAccountGroup, mdiCarSpeedLimiter, mdiGroup, mdiMathLog, mdiScaleBalance, mdiTune } from '@mdi/js';
+import { AccountGroupIcon, CarSpeedLimiterIcon, GroupIcon, MathLogIcon, ScaleBalanceIcon, TuneIcon } from 'mdi-vue3';
 import Cards from '~/components/partials/Cards.vue';
 import ContentCenterWrapper from '~/components/partials/ContentCenterWrapper.vue';
 import { CardElements } from '~/utils/types';
@@ -22,7 +22,7 @@ const features = [
         description: t('pages.rector.features.properties'),
         href: { name: 'rector-props' },
         permission: 'RectorService.GetJobProps',
-        icon: mdiTune,
+        icon: markRaw(TuneIcon),
         iconForeground: 'text-yellow-900',
         iconBackground: 'bg-yellow-100',
     },
@@ -31,7 +31,7 @@ const features = [
         description: t('components.rector.role_view.add_permission'),
         href: { name: 'rector-roles' },
         permission: 'RectorService.GetRoles',
-        icon: mdiAccountGroup,
+        icon: markRaw(AccountGroupIcon),
         iconForeground: 'text-purple-900',
         iconBackground: 'bg-purple-100',
     },
@@ -40,7 +40,7 @@ const features = [
         description: t('pages.rector.features.units'),
         href: { name: 'rector-units' },
         permission: 'CentrumService.ListUnits',
-        icon: mdiGroup,
+        icon: markRaw(GroupIcon),
         iconForeground: 'text-blue-900',
         iconBackground: 'bg-blue-100',
     },
@@ -49,7 +49,7 @@ const features = [
         description: t('pages.rector.features.audit_log'),
         href: { name: 'rector-audit' },
         permission: 'RectorService.ViewAuditLog',
-        icon: mdiMathLog,
+        icon: markRaw(MathLogIcon),
         iconForeground: 'text-teal-900',
         iconBackground: 'bg-teal-100',
     },
@@ -58,7 +58,7 @@ const features = [
         description: t('pages.rector.features.limiter'),
         href: { name: 'rector-limiter' },
         permission: 'SuperUser',
-        icon: mdiCarSpeedLimiter,
+        icon: markRaw(CarSpeedLimiterIcon),
         iconForeground: 'text-warn-900',
         iconBackground: 'bg-warn-100',
     },
@@ -67,7 +67,7 @@ const features = [
         description: t('pages.rector.features.laws'),
         href: { name: 'rector-laws' },
         permission: 'SuperUser',
-        icon: mdiScaleBalance,
+        icon: markRaw(ScaleBalanceIcon),
         iconForeground: 'text-error-900',
         iconBackground: 'bg-error-100',
     },

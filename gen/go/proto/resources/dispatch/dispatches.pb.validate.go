@@ -838,6 +838,14 @@ func (m *DispatchStatus) validate(all bool) error {
 
 	}
 
+	if m.X != nil {
+		// no validation rules for X
+	}
+
+	if m.Y != nil {
+		// no validation rules for Y
+	}
+
 	if len(errors) > 0 {
 		return DispatchStatusMultiError(errors)
 	}

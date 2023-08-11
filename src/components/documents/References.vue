@@ -1,7 +1,6 @@
 <script lang="ts" setup>
-import SvgIcon from '@jamescoyle/vue-icon';
-import { mdiArrowCollapse, mdiChevronRight, mdiFileDocumentMultiple } from '@mdi/js';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
+import { ArrowCollapseIcon, ChevronRightIcon, FileDocumentMultipleIcon } from 'mdi-vue3';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import Time from '~/components/partials/elements/Time.vue';
 import { DOC_REFERENCE, DocumentReference } from '~~/gen/ts/resources/documents/documents';
@@ -47,7 +46,7 @@ async function getDocumentReferences(): Promise<Array<DocumentReference>> {
         <DataNoDataBlock
             v-if="references && references.length === 0"
             :type="`${$t('common.document', 1)} ${$t('common.reference', 2)}`"
-            :mdi="mdiFileDocumentMultiple"
+            :mdi="FileDocumentMultipleIcon"
         />
         <!-- Relations list (smallest breakpoint only) -->
         <div v-if="references && references.length > 0" class="sm:hidden text-neutral">
@@ -62,12 +61,7 @@ async function getDocumentReferences(): Promise<Array<DocumentReference>> {
                     >
                         <span class="flex items-center space-x-4">
                             <span class="flex flex-1 space-x-2 truncate">
-                                <SvgIcon
-                                    class="flex-shrink-0 w-5 h-5 text-base-200"
-                                    aria-hidden="true"
-                                    type="mdi"
-                                    :path="mdiArrowCollapse"
-                                />
+                                <ArrowCollapseIcon class="flex-shrink-0 w-5 h-5 text-base-200" aria-hidden="true" />
                                 <span class="flex flex-col text-sm truncate">
                                     <span>
                                         {{ reference.targetDocument?.title
@@ -95,12 +89,7 @@ async function getDocumentReferences(): Promise<Array<DocumentReference>> {
                                     <Time :value="reference.createdAt" />
                                 </span>
                             </span>
-                            <SvgIcon
-                                class="flex-shrink-0 w-5 h-5 text-gray-400"
-                                aria-hidden="true"
-                                type="mdi"
-                                :path="mdiChevronRight"
-                            />
+                            <ChevronRightIcon class="flex-shrink-0 w-5 h-5 text-gray-400" aria-hidden="true" />
                         </span>
                     </NuxtLink>
                 </li>

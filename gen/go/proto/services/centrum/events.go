@@ -11,31 +11,32 @@ import (
 	"github.com/nats-io/nats.go"
 )
 
-const BaseSubject = "centrum"
-
 const (
+	BaseSubject events.Subject = "centrum"
+
 	TopicGeneral          events.Topic = "general"
 	TypeGeneralSettings   events.Type  = "settings"
 	TypeGeneralDisponents events.Type  = "disponents"
 
-	TopicDispatch          events.Topic = "dispatch"
-	TypeDispatchUpdated    events.Type  = "updated"
-	TypeDispatchStatus     events.Type  = "status"
-	TypeDispatchAssigned   events.Type  = "assigned"
-	TypeDispatchUnassigned events.Type  = "unassigned"
+	TopicDispatch       events.Topic = "dispatch"
+	TypeDispatchCreated events.Type  = "created"
+	TypeDispatchDeleted events.Type  = "deleted"
+	TypeDispatchUpdated events.Type  = "updated"
+	TypeDispatchStatus  events.Type  = "status"
 
 	TopicUnit            events.Topic = "unit"
-	TypeUnitUserAssigned events.Type  = "user_assigned"
+	TypeUnitCreated      events.Type  = "created"
+	TypeUnitDeleted      events.Type  = "deleted"
 	TypeUnitUpdated      events.Type  = "updated"
 	TypeUnitStatus       events.Type  = "status"
-	TypeUnitDeleted      events.Type  = "deleted"
+	TypeUnitUserAssigned events.Type  = "user_assigned"
 )
 
 func (s *Server) registerEvents() error {
 	cfg := &nats.StreamConfig{
 		Name:      "CENTRUM",
 		Retention: nats.InterestPolicy,
-		Subjects:  []string{BaseSubject + ".>"},
+		Subjects:  []string{fmt.Sprintf("%s.>", BaseSubject)},
 	}
 
 	if _, err := s.events.JS.AddStream(cfg); err != nil {
@@ -61,12 +62,12 @@ func (s *Server) getEventTypeFromSubject(subject string) (events.Topic, events.T
 }
 
 func (s *Server) buildSubject(topic events.Topic, tType events.Type, userInfo *userinfo.UserInfo, id uint64) string {
-	format := BaseSubject + ".%s." + string(topic) + "." + string(tType)
+	format := "%s.%s." + string(topic) + "." + string(tType)
 	if id > 0 {
-		return fmt.Sprintf(format+".%d", userInfo.Job, id)
+		return fmt.Sprintf(format+".%d", BaseSubject, userInfo.Job, id)
 	}
 
-	return fmt.Sprintf(format, userInfo.Job)
+	return fmt.Sprintf(format, BaseSubject, userInfo.Job)
 }
 
 func (s *Server) broadcastToAllUnits(topic events.Topic, tType events.Type, userInfo *userinfo.UserInfo, data []byte) {

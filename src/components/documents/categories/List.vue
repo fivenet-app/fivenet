@@ -91,7 +91,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await createCateg
         <Modal :category="chosenCategory" :open="open" @close="open = false" @deleted="refresh()" />
         <div class="py-2 pb-14">
             <div class="px-2 sm:px-6 lg:px-8">
-                <div v-can="'DocStoreService.CreateCategory'" class="sm:flex sm:items-center">
+                <div v-if="can('DocStoreService.CreateCategory')" class="sm:flex sm:items-center">
                     <div class="sm:flex-auto">
                         <form @submit="onSubmit">
                             <div class="flex flex-row gap-4 mx-auto">

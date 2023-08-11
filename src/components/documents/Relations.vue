@@ -1,7 +1,6 @@
 <script lang="ts" setup>
-import SvgIcon from '@jamescoyle/vue-icon';
-import { mdiAccountMultiple, mdiArrowCollapse, mdiChevronRight } from '@mdi/js';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
+import { AccountMultipleIcon, ArrowCollapseIcon, ChevronRightIcon } from 'mdi-vue3';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import Time from '~/components/partials/elements/Time.vue';
 import { DOC_RELATION, DocumentRelation } from '~~/gen/ts/resources/documents/documents';
@@ -49,7 +48,7 @@ async function getDocumentRelations(): Promise<Array<DocumentRelation>> {
         <DataNoDataBlock
             v-if="relations && relations.length === 0"
             :type="`${$t('common.document', 1)} ${$t('common.relation', 2)}`"
-            :icon="mdiAccountMultiple"
+            :icon="AccountMultipleIcon"
         />
         <!-- Relations list (smallest breakpoint only) -->
         <div v-if="relations && relations.length > 0" class="sm:hidden text-neutral">
@@ -58,12 +57,7 @@ async function getDocumentRelations(): Promise<Array<DocumentRelation>> {
                     <a href="#" class="block px-4 py-4 bg-base-800 hover:bg-base-700">
                         <span class="flex items-center space-x-4">
                             <span class="flex flex-1 space-x-2 truncate">
-                                <SvgIcon
-                                    class="flex-shrink-0 w-5 h-5 text-gray-400"
-                                    aria-hidden="true"
-                                    type="mdi"
-                                    :path="mdiArrowCollapse"
-                                />
+                                <ArrowCollapseIcon class="flex-shrink-0 w-5 h-5 text-gray-400" aria-hidden="true" />
                                 <span class="flex flex-col text-sm truncate">
                                     <span v-if="showDocument">
                                         <NuxtLink
@@ -103,12 +97,7 @@ async function getDocumentRelations(): Promise<Array<DocumentRelation>> {
                                     <Time :value="relation.createdAt" />
                                 </span>
                             </span>
-                            <SvgIcon
-                                class="flex-shrink-0 w-5 h-5 text-base-200"
-                                aria-hidden="true"
-                                type="mdi"
-                                :path="mdiChevronRight"
-                            />
+                            <ChevronRightIcon class="flex-shrink-0 w-5 h-5 text-base-200" aria-hidden="true" />
                         </span>
                     </a>
                 </li>

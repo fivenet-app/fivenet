@@ -38,16 +38,18 @@ const openSettings = ref(false);
     <div class="py-2">
         <div class="px-2 sm:px-6 lg:px-8">
             <div class="flow-root mt-2">
-                <div v-can="'RectorService.CreateRole'" class="sm:flex sm:items-center">
+                <div v-if="can('CentrumService.CreateOrUpdateUnit')" class="sm:flex sm:items-center">
                     <div class="sm:flex-auto">
-                        <div class="flex-initial form-control" v-can="'DocStoreService.CreateTemplate'">
+                        <div class="flex-initial form-control grid grid-cols-2 gap-4">
                             <button
+                                v-if="can('CentrumService.CreateOrUpdateUnit')"
                                 @click="open = true"
                                 class="inline-flex px-3 py-2 text-sm font-semibold rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
                             >
                                 {{ $t('pages.rector.units.create_unit') }}
                             </button>
                             <button
+                                v-if="can('CentrumService.GetSettings')"
                                 @click="openSettings = true"
                                 class="inline-flex px-3 py-2 text-sm font-semibold rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
                             >

@@ -1,6 +1,5 @@
 <script lang="ts" setup>
-import SvgIcon from '@jamescoyle/vue-icon';
-import { mdiEye } from '@mdi/js';
+import { EyeIcon } from 'mdi-vue3';
 import { Role } from '~~/gen/ts/resources/permissions/permissions';
 
 defineProps<{
@@ -19,7 +18,7 @@ defineProps<{
                     :to="{ name: 'rector-limiter-id', params: { id: role.id.toString() } }"
                     class="flex-initial text-primary-500 hover:text-primary-400"
                 >
-                    <SvgIcon class="h-6 w-6 text-primary-500" aria-hidden="true" type="mdi" :path="mdiEye" />
+                    <EyeIcon class="h-6 w-6 text-primary-500" aria-hidden="true" />
                 </NuxtLink>
             </div>
         </td>

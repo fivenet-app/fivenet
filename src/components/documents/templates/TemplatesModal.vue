@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
-import SvgIcon from '@jamescoyle/vue-icon';
-import { mdiPencil } from '@mdi/js';
+import { PencilIcon } from 'mdi-vue3';
 import Citizens from '~/components/clipboard/modal/Citizens.vue';
 import Documents from '~/components/clipboard/modal/Documents.vue';
 import Vehicles from '~/components/clipboard/modal/Vehicles.vue';
@@ -162,12 +161,7 @@ async function clipboardDialog(): Promise<void> {
                                         <div
                                             class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-base-800"
                                         >
-                                            <SvgIcon
-                                                class="h-6 w-6 text-primary-500"
-                                                aria-hidden="true"
-                                                type="mdi"
-                                                :path="mdiPencil"
-                                            />
+                                            <PencilIcon class="h-6 w-6 text-primary-500" aria-hidden="true" />
                                         </div>
                                         <div class="mt-3 text-center sm:mt-5">
                                             <DialogTitle as="h3" class="text-base font-semibold leading-6">
@@ -203,12 +197,7 @@ async function clipboardDialog(): Promise<void> {
                                 </div>
                                 <div v-else-if="template !== undefined && reqs !== undefined && steps.selectClipboard">
                                     <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-gray-100">
-                                        <SvgIcon
-                                            class="h-6 w-6 text-primary-600"
-                                            aria-hidden="true"
-                                            type="mdi"
-                                            :path="mdiPencil"
-                                        />
+                                        <PencilIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
                                     </div>
                                     <div class="mt-3 text-center sm:mt-5">
                                         <DialogTitle as="h3" class="text-base font-semibold leading-6 text-white">

@@ -3936,21 +3936,22 @@ var _ interface {
 	ErrorName() string
 } = JoinUnitResponseValidationError{}
 
-// Validate checks the field values on Initial with the rules defined in the
-// proto definition for this message. If any rules are violated, the first
+// Validate checks the field values on LatestState with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
-func (m *Initial) Validate() error {
+func (m *LatestState) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on Initial with the rules defined in the
-// proto definition for this message. If any rules are violated, the result is
-// a list of violation errors wrapped in InitialMultiError, or nil if none found.
-func (m *Initial) ValidateAll() error {
+// ValidateAll checks the field values on LatestState with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in LatestStateMultiError, or
+// nil if none found.
+func (m *LatestState) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *Initial) validate(all bool) error {
+func (m *LatestState) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -3960,39 +3961,10 @@ func (m *Initial) validate(all bool) error {
 	// no validation rules for IsDisponent
 
 	if all {
-		switch v := interface{}(m.GetSettings()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, InitialValidationError{
-					field:  "Settings",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, InitialValidationError{
-					field:  "Settings",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetSettings()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return InitialValidationError{
-				field:  "Settings",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
-
-	if all {
 		switch v := interface{}(m.GetUnit()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, InitialValidationError{
+				errors = append(errors, LatestStateValidationError{
 					field:  "Unit",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -4000,7 +3972,7 @@ func (m *Initial) validate(all bool) error {
 			}
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
-				errors = append(errors, InitialValidationError{
+				errors = append(errors, LatestStateValidationError{
 					field:  "Unit",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -4009,7 +3981,7 @@ func (m *Initial) validate(all bool) error {
 		}
 	} else if v, ok := interface{}(m.GetUnit()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
-			return InitialValidationError{
+			return LatestStateValidationError{
 				field:  "Unit",
 				reason: "embedded message failed validation",
 				cause:  err,
@@ -4024,7 +3996,7 @@ func (m *Initial) validate(all bool) error {
 			switch v := interface{}(item).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, InitialValidationError{
+					errors = append(errors, LatestStateValidationError{
 						field:  fmt.Sprintf("Units[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -4032,7 +4004,7 @@ func (m *Initial) validate(all bool) error {
 				}
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
-					errors = append(errors, InitialValidationError{
+					errors = append(errors, LatestStateValidationError{
 						field:  fmt.Sprintf("Units[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -4041,7 +4013,7 @@ func (m *Initial) validate(all bool) error {
 			}
 		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				return InitialValidationError{
+				return LatestStateValidationError{
 					field:  fmt.Sprintf("Units[%v]", idx),
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -4058,7 +4030,7 @@ func (m *Initial) validate(all bool) error {
 			switch v := interface{}(item).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, InitialValidationError{
+					errors = append(errors, LatestStateValidationError{
 						field:  fmt.Sprintf("Dispatches[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -4066,7 +4038,7 @@ func (m *Initial) validate(all bool) error {
 				}
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
-					errors = append(errors, InitialValidationError{
+					errors = append(errors, LatestStateValidationError{
 						field:  fmt.Sprintf("Dispatches[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -4075,7 +4047,7 @@ func (m *Initial) validate(all bool) error {
 			}
 		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				return InitialValidationError{
+				return LatestStateValidationError{
 					field:  fmt.Sprintf("Dispatches[%v]", idx),
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -4085,19 +4057,52 @@ func (m *Initial) validate(all bool) error {
 
 	}
 
+	if m.Settings != nil {
+
+		if all {
+			switch v := interface{}(m.GetSettings()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, LatestStateValidationError{
+						field:  "Settings",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, LatestStateValidationError{
+						field:  "Settings",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetSettings()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return LatestStateValidationError{
+					field:  "Settings",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
 	if len(errors) > 0 {
-		return InitialMultiError(errors)
+		return LatestStateMultiError(errors)
 	}
 
 	return nil
 }
 
-// InitialMultiError is an error wrapping multiple validation errors returned
-// by Initial.ValidateAll() if the designated constraints aren't met.
-type InitialMultiError []error
+// LatestStateMultiError is an error wrapping multiple validation errors
+// returned by LatestState.ValidateAll() if the designated constraints aren't met.
+type LatestStateMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m InitialMultiError) Error() string {
+func (m LatestStateMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -4106,11 +4111,11 @@ func (m InitialMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m InitialMultiError) AllErrors() []error { return m }
+func (m LatestStateMultiError) AllErrors() []error { return m }
 
-// InitialValidationError is the validation error returned by Initial.Validate
-// if the designated constraints aren't met.
-type InitialValidationError struct {
+// LatestStateValidationError is the validation error returned by
+// LatestState.Validate if the designated constraints aren't met.
+type LatestStateValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -4118,22 +4123,22 @@ type InitialValidationError struct {
 }
 
 // Field function returns field value.
-func (e InitialValidationError) Field() string { return e.field }
+func (e LatestStateValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e InitialValidationError) Reason() string { return e.reason }
+func (e LatestStateValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e InitialValidationError) Cause() error { return e.cause }
+func (e LatestStateValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e InitialValidationError) Key() bool { return e.key }
+func (e LatestStateValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e InitialValidationError) ErrorName() string { return "InitialValidationError" }
+func (e LatestStateValidationError) ErrorName() string { return "LatestStateValidationError" }
 
 // Error satisfies the builtin error interface
-func (e InitialValidationError) Error() string {
+func (e LatestStateValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -4145,14 +4150,14 @@ func (e InitialValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sInitial.%s: %s%s",
+		"invalid %sLatestState.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = InitialValidationError{}
+var _ error = LatestStateValidationError{}
 
 var _ interface {
 	Field() string
@@ -4160,7 +4165,7 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = InitialValidationError{}
+} = LatestStateValidationError{}
 
 // Validate checks the field values on StreamRequest with the rules defined in
 // the proto definition for this message. If any rules are violated, the first
@@ -4285,7 +4290,7 @@ func (m *StreamResponse) validate(all bool) error {
 	var errors []error
 
 	switch v := m.Change.(type) {
-	case *StreamResponse_Initial:
+	case *StreamResponse_LatestState:
 		if v == nil {
 			err := StreamResponseValidationError{
 				field:  "Change",
@@ -4298,11 +4303,11 @@ func (m *StreamResponse) validate(all bool) error {
 		}
 
 		if all {
-			switch v := interface{}(m.GetInitial()).(type) {
+			switch v := interface{}(m.GetLatestState()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
 					errors = append(errors, StreamResponseValidationError{
-						field:  "Initial",
+						field:  "LatestState",
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -4310,16 +4315,16 @@ func (m *StreamResponse) validate(all bool) error {
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
 					errors = append(errors, StreamResponseValidationError{
-						field:  "Initial",
+						field:  "LatestState",
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
 				}
 			}
-		} else if v, ok := interface{}(m.GetInitial()).(interface{ Validate() error }); ok {
+		} else if v, ok := interface{}(m.GetLatestState()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
 				return StreamResponseValidationError{
-					field:  "Initial",
+					field:  "LatestState",
 					reason: "embedded message failed validation",
 					cause:  err,
 				}
@@ -4408,7 +4413,7 @@ func (m *StreamResponse) validate(all bool) error {
 			}
 		}
 
-	case *StreamResponse_DispatchStatus:
+	case *StreamResponse_UnitAssigned:
 		if v == nil {
 			err := StreamResponseValidationError{
 				field:  "Change",
@@ -4421,11 +4426,11 @@ func (m *StreamResponse) validate(all bool) error {
 		}
 
 		if all {
-			switch v := interface{}(m.GetDispatchStatus()).(type) {
+			switch v := interface{}(m.GetUnitAssigned()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
 					errors = append(errors, StreamResponseValidationError{
-						field:  "DispatchStatus",
+						field:  "UnitAssigned",
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -4433,23 +4438,23 @@ func (m *StreamResponse) validate(all bool) error {
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
 					errors = append(errors, StreamResponseValidationError{
-						field:  "DispatchStatus",
+						field:  "UnitAssigned",
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
 				}
 			}
-		} else if v, ok := interface{}(m.GetDispatchStatus()).(interface{ Validate() error }); ok {
+		} else if v, ok := interface{}(m.GetUnitAssigned()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
 				return StreamResponseValidationError{
-					field:  "DispatchStatus",
+					field:  "UnitAssigned",
 					reason: "embedded message failed validation",
 					cause:  err,
 				}
 			}
 		}
 
-	case *StreamResponse_DispatchUpdate:
+	case *StreamResponse_UnitCreated:
 		if v == nil {
 			err := StreamResponseValidationError{
 				field:  "Change",
@@ -4462,11 +4467,11 @@ func (m *StreamResponse) validate(all bool) error {
 		}
 
 		if all {
-			switch v := interface{}(m.GetDispatchUpdate()).(type) {
+			switch v := interface{}(m.GetUnitCreated()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
 					errors = append(errors, StreamResponseValidationError{
-						field:  "DispatchUpdate",
+						field:  "UnitCreated",
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -4474,23 +4479,23 @@ func (m *StreamResponse) validate(all bool) error {
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
 					errors = append(errors, StreamResponseValidationError{
-						field:  "DispatchUpdate",
+						field:  "UnitCreated",
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
 				}
 			}
-		} else if v, ok := interface{}(m.GetDispatchUpdate()).(interface{ Validate() error }); ok {
+		} else if v, ok := interface{}(m.GetUnitCreated()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
 				return StreamResponseValidationError{
-					field:  "DispatchUpdate",
+					field:  "UnitCreated",
 					reason: "embedded message failed validation",
 					cause:  err,
 				}
 			}
 		}
 
-	case *StreamResponse_DispatchAssigned:
+	case *StreamResponse_UnitDeleted:
 		if v == nil {
 			err := StreamResponseValidationError{
 				field:  "Change",
@@ -4503,11 +4508,11 @@ func (m *StreamResponse) validate(all bool) error {
 		}
 
 		if all {
-			switch v := interface{}(m.GetDispatchAssigned()).(type) {
+			switch v := interface{}(m.GetUnitDeleted()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
 					errors = append(errors, StreamResponseValidationError{
-						field:  "DispatchAssigned",
+						field:  "UnitDeleted",
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -4515,23 +4520,23 @@ func (m *StreamResponse) validate(all bool) error {
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
 					errors = append(errors, StreamResponseValidationError{
-						field:  "DispatchAssigned",
+						field:  "UnitDeleted",
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
 				}
 			}
-		} else if v, ok := interface{}(m.GetDispatchAssigned()).(interface{ Validate() error }); ok {
+		} else if v, ok := interface{}(m.GetUnitDeleted()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
 				return StreamResponseValidationError{
-					field:  "DispatchAssigned",
+					field:  "UnitDeleted",
 					reason: "embedded message failed validation",
 					cause:  err,
 				}
 			}
 		}
 
-	case *StreamResponse_DispatchUnassigned:
+	case *StreamResponse_UnitUpdated:
 		if v == nil {
 			err := StreamResponseValidationError{
 				field:  "Change",
@@ -4544,11 +4549,11 @@ func (m *StreamResponse) validate(all bool) error {
 		}
 
 		if all {
-			switch v := interface{}(m.GetDispatchUnassigned()).(type) {
+			switch v := interface{}(m.GetUnitUpdated()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
 					errors = append(errors, StreamResponseValidationError{
-						field:  "DispatchUnassigned",
+						field:  "UnitUpdated",
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -4556,16 +4561,16 @@ func (m *StreamResponse) validate(all bool) error {
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
 					errors = append(errors, StreamResponseValidationError{
-						field:  "DispatchUnassigned",
+						field:  "UnitUpdated",
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
 				}
 			}
-		} else if v, ok := interface{}(m.GetDispatchUnassigned()).(interface{ Validate() error }); ok {
+		} else if v, ok := interface{}(m.GetUnitUpdated()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
 				return StreamResponseValidationError{
-					field:  "DispatchUnassigned",
+					field:  "UnitUpdated",
 					reason: "embedded message failed validation",
 					cause:  err,
 				}
@@ -4613,7 +4618,7 @@ func (m *StreamResponse) validate(all bool) error {
 			}
 		}
 
-	case *StreamResponse_UnitUpdate:
+	case *StreamResponse_DispatchCreated:
 		if v == nil {
 			err := StreamResponseValidationError{
 				field:  "Change",
@@ -4626,11 +4631,11 @@ func (m *StreamResponse) validate(all bool) error {
 		}
 
 		if all {
-			switch v := interface{}(m.GetUnitUpdate()).(type) {
+			switch v := interface{}(m.GetDispatchCreated()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
 					errors = append(errors, StreamResponseValidationError{
-						field:  "UnitUpdate",
+						field:  "DispatchCreated",
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -4638,23 +4643,23 @@ func (m *StreamResponse) validate(all bool) error {
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
 					errors = append(errors, StreamResponseValidationError{
-						field:  "UnitUpdate",
+						field:  "DispatchCreated",
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
 				}
 			}
-		} else if v, ok := interface{}(m.GetUnitUpdate()).(interface{ Validate() error }); ok {
+		} else if v, ok := interface{}(m.GetDispatchCreated()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
 				return StreamResponseValidationError{
-					field:  "UnitUpdate",
+					field:  "DispatchCreated",
 					reason: "embedded message failed validation",
 					cause:  err,
 				}
 			}
 		}
 
-	case *StreamResponse_UnitAssigned:
+	case *StreamResponse_DispatchDeleted:
 		if v == nil {
 			err := StreamResponseValidationError{
 				field:  "Change",
@@ -4667,11 +4672,11 @@ func (m *StreamResponse) validate(all bool) error {
 		}
 
 		if all {
-			switch v := interface{}(m.GetUnitAssigned()).(type) {
+			switch v := interface{}(m.GetDispatchDeleted()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
 					errors = append(errors, StreamResponseValidationError{
-						field:  "UnitAssigned",
+						field:  "DispatchDeleted",
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -4679,23 +4684,23 @@ func (m *StreamResponse) validate(all bool) error {
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
 					errors = append(errors, StreamResponseValidationError{
-						field:  "UnitAssigned",
+						field:  "DispatchDeleted",
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
 				}
 			}
-		} else if v, ok := interface{}(m.GetUnitAssigned()).(interface{ Validate() error }); ok {
+		} else if v, ok := interface{}(m.GetDispatchDeleted()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
 				return StreamResponseValidationError{
-					field:  "UnitAssigned",
+					field:  "DispatchDeleted",
 					reason: "embedded message failed validation",
 					cause:  err,
 				}
 			}
 		}
 
-	case *StreamResponse_UnitDeleted:
+	case *StreamResponse_DispatchUpdated:
 		if v == nil {
 			err := StreamResponseValidationError{
 				field:  "Change",
@@ -4706,7 +4711,77 @@ func (m *StreamResponse) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
-		// no validation rules for UnitDeleted
+
+		if all {
+			switch v := interface{}(m.GetDispatchUpdated()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, StreamResponseValidationError{
+						field:  "DispatchUpdated",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, StreamResponseValidationError{
+						field:  "DispatchUpdated",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetDispatchUpdated()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return StreamResponseValidationError{
+					field:  "DispatchUpdated",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	case *StreamResponse_DispatchStatus:
+		if v == nil {
+			err := StreamResponseValidationError{
+				field:  "Change",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+		if all {
+			switch v := interface{}(m.GetDispatchStatus()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, StreamResponseValidationError{
+						field:  "DispatchStatus",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, StreamResponseValidationError{
+						field:  "DispatchStatus",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetDispatchStatus()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return StreamResponseValidationError{
+					field:  "DispatchStatus",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
 	default:
 		_ = v // ensures v is used
 	}

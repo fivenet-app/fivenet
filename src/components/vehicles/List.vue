@@ -1,9 +1,8 @@
 <script lang="ts" setup>
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
-import SvgIcon from '@jamescoyle/vue-icon';
-import { mdiCarSearch, mdiCheck } from '@mdi/js';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { watchDebounced } from '@vueuse/core';
+import { CarSearchIcon, CheckIcon } from 'mdi-vue3';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -198,12 +197,7 @@ watch(selectedChar, () => {
                                                                 'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                                             ]"
                                                         >
-                                                            <SvgIcon
-                                                                class="w-5 h-5"
-                                                                aria-hidden="true"
-                                                                type="mdi"
-                                                                :path="mdiCheck"
-                                                            />
+                                                            <CheckIcon class="w-5 h-5" aria-hidden="true" />
                                                         </span>
                                                     </li>
                                                 </ComboboxOption>
@@ -227,7 +221,7 @@ watch(selectedChar, () => {
                         />
                         <DataNoDataBlock
                             v-else-if="vehicles && vehicles.length === 0"
-                            :icon="mdiCarSearch"
+                            :icon="CarSearchIcon"
                             :focus="focusSearch"
                             :type="$t('common.vehicle', 2)"
                         />

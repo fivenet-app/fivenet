@@ -1,7 +1,6 @@
 <script lang="ts" setup>
-import SvgIcon from '@jamescoyle/vue-icon';
-import { mdiPencil, mdiTrashCan } from '@mdi/js';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
+import { PencilIcon, TrashCanIcon } from 'mdi-vue3';
 import { useAuthStore } from '~/store/auth';
 import { Comment } from '~~/gen/ts/resources/documents/comment';
 
@@ -76,20 +75,15 @@ async function deleteComment(): Promise<void> {
                         {{ comment.creator?.lastname }}
                     </NuxtLink>
                     <div v-if="comment.deletedAt" class="flex flex-row items-center justify-center flex-1 text-base-100">
-                        <SvgIcon
-                            class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400"
-                            aria-hidden="true"
-                            type="mdi"
-                            :path="mdiTrashCan"
-                        />
+                        <TrashCanIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400" aria-hidden="true" />
                         {{ $t('common.deleted') }}
                     </div>
                     <div v-if="comment.creatorId === activeChar?.userId || permissions.includes('superuser')">
-                        <button v-can="'DocStoreService.PostComment'" @click="editing = true">
-                            <SvgIcon class="w-5 h-auto ml-auto mr-2.5" type="mdi" :path="mdiPencil" />
+                        <button v-if="can('DocStoreService.PostComment')" @click="editing = true">
+                            <PencilIcon class="w-5 h-auto ml-auto mr-2.5" />
                         </button>
-                        <button v-can="'DocStoreService.DeleteComment'" @click="deleteComment()">
-                            <SvgIcon class="w-5 h-auto ml-auto mr-2.5" type="mdi" :path="mdiTrashCan" />
+                        <button v-if="can('DocStoreService.DeleteComment')" @click="deleteComment()">
+                            <TrashCanIcon class="w-5 h-auto ml-auto mr-2.5" />
                         </button>
                     </div>
                 </div>
@@ -98,7 +92,7 @@ async function deleteComment(): Promise<void> {
                 </p>
             </div>
         </div>
-        <div v-else v-can="'DocStoreService.PostComment'" class="flex items-start space-x-4">
+        <div v-else v-if="can('DocStoreService.PostComment')" class="flex items-start space-x-4">
             <div class="min-w-0 flex-1">
                 <form @submit.prevent="editComment" class="relative">
                     <div

@@ -150,9 +150,9 @@ message JoinUnitResponse {
   resources.dispatch.Unit unit = 1;
 }
 
-message Initial {
+message LatestState {
   bool is_disponent = 1;
-  resources.dispatch.Settings settings = 2;
+  optional resources.dispatch.Settings settings = 2;
   resources.dispatch.Unit unit = 3;
   // Send the current units and dispatches
   repeated resources.dispatch.Unit units = 4;
@@ -163,19 +163,20 @@ message StreamRequest {}
 
 message StreamResponse {
   oneof change {
-    Initial initial = 1;
+    LatestState latest_state = 1;
     resources.dispatch.Settings settings = 2;
     DisponentsChange disponents = 3;
 
-    resources.dispatch.DispatchStatus dispatch_status = 4;
-    resources.dispatch.Dispatch dispatch_update = 5;
-    resources.dispatch.Dispatch dispatch_assigned = 6;
-    resources.dispatch.Dispatch dispatch_unassigned = 7;
-
+    resources.dispatch.Unit unit_assigned = 4;
+    resources.dispatch.Unit unit_created = 5;
+    resources.dispatch.Unit unit_deleted = 6;
+    resources.dispatch.Unit unit_updated = 7;
     resources.dispatch.UnitStatus unit_status = 8;
-    resources.dispatch.Unit unit_update = 9;
-    resources.dispatch.Unit unit_assigned = 10;
-    uint64 unit_deleted = 11;
+
+    resources.dispatch.Dispatch dispatch_created = 9;
+    resources.dispatch.Dispatch dispatch_deleted = 10;
+    resources.dispatch.Dispatch dispatch_updated = 11;
+    resources.dispatch.DispatchStatus dispatch_status = 12;
   }
 }
 

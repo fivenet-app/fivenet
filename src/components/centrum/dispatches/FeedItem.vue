@@ -1,15 +1,14 @@
 <script lang="ts" setup>
-import SvgIcon from '@jamescoyle/vue-icon';
 import {
-    mdiAccountCancel,
-    mdiAccountPlus,
-    mdiAccountRemove,
-    mdiCar,
-    mdiCheck,
-    mdiHelp,
-    mdiMapMarker,
-    mdiNewBox,
-} from '@mdi/js';
+    AccountCancelIcon,
+    AccountPlusIcon,
+    AccountRemoveIcon,
+    CarIcon,
+    CheckIcon,
+    HelpIcon,
+    MapMarkerIcon,
+    NewBoxIcon,
+} from 'mdi-vue3';
 import Time from '~/components/partials/elements/Time.vue';
 import { DISPATCH_STATUS, DispatchStatus } from '~~/gen/ts/resources/dispatch/dispatches';
 
@@ -32,19 +31,19 @@ defineProps<{
         </div>
         <template v-if="activityItem.status === DISPATCH_STATUS.NEW">
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
-                <SvgIcon type="mdi" :path="mdiNewBox" class="h-6 w-6 text-primary-600" aria-hidden="true" />
+                <NewBoxIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">Dispatch created</p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
                 <Time :value="activityItem.createdAt" />
             </span>
         </template>
-        <template v-else-if="activityItem.status === DISPATCH_STATUS.DECLINED">
+        <template v-else-if="activityItem.status === DISPATCH_STATUS.CANCELLED">
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
-                <SvgIcon type="mdi" :path="mdiAccountCancel" class="h-6 w-6 text-primary-600" aria-hidden="true" />
+                <AccountCancelIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
-                Dispatch declined by
+                Dispatch cancelled by
                 <span class="font-medium text-gray-400">
                     {{ activityItem.user?.firstname }}, {{ activityItem.user?.lastname }}
                 </span>
@@ -55,7 +54,7 @@ defineProps<{
         </template>
         <template v-else-if="activityItem.status === DISPATCH_STATUS.UNASSIGNED">
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
-                <SvgIcon type="mdi" :path="mdiAccountRemove" class="h-6 w-6 text-primary-600" aria-hidden="true" />
+                <AccountRemoveIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
                 Dispatch unassigned by
@@ -69,7 +68,7 @@ defineProps<{
         </template>
         <template v-else-if="activityItem.status === DISPATCH_STATUS.UNIT_ASSIGNED">
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
-                <SvgIcon type="mdi" :path="mdiAccountPlus" class="h-6 w-6 text-primary-600" aria-hidden="true" />
+                <AccountPlusIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
                 Dispatch accepted
@@ -83,7 +82,7 @@ defineProps<{
         </template>
         <template v-else-if="activityItem.status === DISPATCH_STATUS.EN_ROUTE">
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
-                <SvgIcon type="mdi" :path="mdiCar" class="h-6 w-6 text-primary-600" aria-hidden="true" />
+                <CarIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
                 En Route to Dispatch
@@ -97,7 +96,7 @@ defineProps<{
         </template>
         <template v-else-if="activityItem.status === DISPATCH_STATUS.ON_SCENE">
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
-                <SvgIcon type="mdi" :path="mdiMapMarker" class="h-6 w-6 text-primary-600" aria-hidden="true" />
+                <MapMarkerIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
                 Arrived on scene at Dispatch
@@ -111,7 +110,7 @@ defineProps<{
         </template>
         <template v-else-if="activityItem.status === DISPATCH_STATUS.NEED_ASSISTANCE">
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
-                <SvgIcon type="mdi" :path="mdiHelp" class="h-6 w-6 text-primary-600" aria-hidden="true" />
+                <HelpIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
                 Need Assistance
@@ -125,7 +124,7 @@ defineProps<{
         </template>
         <template v-else-if="activityItem.status === DISPATCH_STATUS.COMPLETED">
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
-                <SvgIcon type="mdi" :path="mdiCheck" class="h-6 w-6 text-primary-600" aria-hidden="true" />
+                <CheckIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
                 Dispatch completed

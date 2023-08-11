@@ -1,9 +1,8 @@
 <script lang="ts" setup>
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
-import SvgIcon from '@jamescoyle/vue-icon';
-import { mdiCarEmergency } from '@mdi/js';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { max, min, required } from '@vee-validate/rules';
+import { CarEmergencyIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import { UNIT_STATUS, Unit } from '~~/gen/ts/resources/dispatch/units';
 
@@ -110,12 +109,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await updateUnitS
                             <form @submit="onSubmit">
                                 <div>
                                     <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-base-800">
-                                        <SvgIcon
-                                            class="h-6 w-6 text-primary-500"
-                                            aria-hidden="true"
-                                            type="mdi"
-                                            :path="mdiCarEmergency"
-                                        />
+                                        <CarEmergencyIcon class="h-6 w-6 text-primary-500" aria-hidden="true" />
                                     </div>
                                     <div class="mt-3 text-center sm:mt-5">
                                         <DialogTitle as="h3" class="text-base font-semibold leading-6">

@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import SvgIcon from '@jamescoyle/vue-icon';
-import { mdiLicense } from '@mdi/js';
 import { useClipboard } from '@vueuse/core';
 import { ref } from 'vue';
 import CharSexBadge from '~/components/citizens/CharSexBadge.vue';
@@ -69,7 +67,10 @@ const trafficPointsModal = ref(false);
                                 </dt>
                                 <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:mt-0 sm:ml-6">{{ user?.height }}cm</dd>
                             </div>
-                            <div v-can="'CitizenStoreService.ListCitizens.Fields.PhoneNumber'" class="sm:flex sm:px-6 sm:py-5">
+                            <div
+                                v-if="can('CitizenStoreService.ListCitizens.Fields.PhoneNumber')"
+                                class="sm:flex sm:px-6 sm:py-5"
+                            >
                                 <dt class="text-sm font-medium text-neutral sm:w-40 sm:flex-shrink-0 lg:w-48">
                                     {{ $t('common.phone') }}
                                     {{ $t('common.number') }}
@@ -89,7 +90,7 @@ const trafficPointsModal = ref(false);
                                 </dd>
                             </div>
                             <div
-                                v-can="'CitizenStoreService.ListCitizens.Fields.UserProps.TrafficInfractionPoints'"
+                                v-if="can('CitizenStoreService.ListCitizens.Fields.UserProps.TrafficInfractionPoints')"
                                 class="sm:flex sm:px-6 sm:py-5"
                             >
                                 <dt class="text-sm font-medium text-neutral sm:w-40 sm:flex-shrink-0 lg:w-48">
@@ -103,7 +104,7 @@ const trafficPointsModal = ref(false);
                                 </dd>
                             </div>
                             <div
-                                v-can="'CitizenStoreService.ListCitizens.Fields.UserProps.OpenFines'"
+                                v-if="can('CitizenStoreService.ListCitizens.Fields.UserProps.OpenFines')"
                                 class="sm:flex sm:px-6 sm:py-5"
                             >
                                 <dt class="text-sm font-medium text-neutral sm:w-40 sm:flex-shrink-0 lg:w-48">
@@ -118,7 +119,7 @@ const trafficPointsModal = ref(false);
                                     </span>
                                 </dd>
                             </div>
-                            <div v-can="'CitizenStoreService.ListCitizens.Fields.Licenses'" class="sm:flex sm:px-6 sm:py-5">
+                            <div v-if="can('CitizenStoreService.ListCitizens.Fields.Licenses')" class="sm:flex sm:px-6 sm:py-5">
                                 <dt class="text-sm font-medium text-neutral sm:w-40 sm:flex-shrink-0 lg:w-48">
                                     {{ $t('common.license', 2) }}
                                 </dt>
@@ -132,12 +133,7 @@ const trafficPointsModal = ref(false);
                                             class="flex items-center justify-between py-3 pl-3 pr-4 text-sm"
                                         >
                                             <div class="flex items-center flex-1">
-                                                <SvgIcon
-                                                    class="flex-shrink-0 w-5 h-5 text-base-400"
-                                                    aria-hidden="true"
-                                                    type="mdi"
-                                                    :path="mdiLicense"
-                                                />
+                                                <LicenseIcon class="flex-shrink-0 w-5 h-5 text-base-400" aria-hidden="true" />
                                                 <span class="flex-1 ml-2 truncate"
                                                     >{{ license.label }} ({{ license.type.toUpperCase() }})</span
                                                 >
@@ -153,7 +149,7 @@ const trafficPointsModal = ref(false);
         </div>
 
         <div class="flex flex-col gap-2 px-2 py-4 pr-2 shrink-0 lg:w-96">
-            <div class="flex-initial" v-can="'CitizenStoreService.SetUserProps.Fields.Wanted'">
+            <div class="flex-initial" v-if="can('CitizenStoreService.SetUserProps.Fields.Wanted')">
                 <button
                     type="button"
                     class="inline-flex items-center justify-center flex-shrink-0 w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-error-500 text-neutral hover:bg-error-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 sm:flex-1"
@@ -168,7 +164,7 @@ const trafficPointsModal = ref(false);
             </div>
             <div class="flex-initial">
                 <button
-                    v-can="'CitizenStoreService.SetUserProps.Fields.Job'"
+                    v-if="can('CitizenStoreService.SetUserProps.Fields.Job')"
                     type="button"
                     class="inline-flex items-center justify-center flex-shrink-0 w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 sm:flex-1"
                     @click="setJobModal = true"
@@ -176,7 +172,7 @@ const trafficPointsModal = ref(false);
                     {{ $t('components.citizens.citizen_info_profile.set_job') }}
                 </button>
             </div>
-            <div class="flex-initial" v-can="'CitizenStoreService.SetUserProps.Fields.TrafficInfractionPoints'">
+            <div class="flex-initial" v-if="can('CitizenStoreService.SetUserProps.Fields.TrafficInfractionPoints')">
                 <button
                     type="button"
                     class="inline-flex items-center justify-center flex-shrink-0 w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-secondary-500 text-neutral hover:bg-secondary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 sm:flex-1"
@@ -185,7 +181,7 @@ const trafficPointsModal = ref(false);
                     {{ $t('components.citizens.citizen_info_profile.set_traffic_points') }}
                 </button>
             </div>
-            <div class="flex-initial" v-can="'DocStoreService.CreateDocument'">
+            <div class="flex-initial" v-if="can('DocStoreService.CreateDocument')">
                 <button
                     type="button"
                     class="inline-flex items-center justify-center flex-shrink-0 w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-base-700 text-neutral hover:bg-base-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 sm:flex-1"

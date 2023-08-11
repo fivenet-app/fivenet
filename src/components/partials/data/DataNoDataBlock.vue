@@ -1,18 +1,18 @@
 <script lang="ts" setup>
-import SvgIcon from '@jamescoyle/vue-icon';
-import { mdiMagnify } from '@mdi/js';
+import { MagnifyIcon } from 'mdi-vue3';
+import { DefineComponent } from 'vue';
 
 const { t } = useI18n();
 
 const props = withDefaults(
     defineProps<{
         message?: string;
-        icon?: string;
+        icon?: DefineComponent;
         type?: string;
         focus?: Function;
     }>(),
     {
-        icon: mdiMagnify,
+        icon: markRaw(MagnifyIcon),
     },
 );
 function click() {
@@ -29,7 +29,7 @@ function click() {
         @click="click"
         class="relative block w-full p-12 text-center border-2 border-dashed rounded-lg border-base-300 hover:border-base-400 focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2"
     >
-        <SvgIcon class="w-12 h-12 mx-auto text-neutral" type="mdi" :path="icon" />
+        <component :is="icon" class="w-12 h-12 mx-auto text-neutral" />
         <span class="block mt-2 text-sm font-semibold text-gray-300">
             <span v-if="message">
                 {{ message }}

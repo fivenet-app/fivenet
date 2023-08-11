@@ -13,15 +13,14 @@ import {
     ListboxOption,
     ListboxOptions,
 } from '@headlessui/vue';
-import SvgIcon from '@jamescoyle/vue-icon';
-import { mdiCheck, mdiChevronDown } from '@mdi/js';
+
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { watchDebounced } from '@vueuse/shared';
+import { CheckIcon, ChevronDownIcon } from 'mdi-vue3';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import TablePagination from '~/components/partials/elements/TablePagination.vue';
-import { can } from '~/plugins/1.vCan';
 import * as google_protobuf_timestamp_pb from '~~/gen/ts/google/protobuf/timestamp';
 import { PaginationResponse } from '~~/gen/ts/resources/common/database/database';
 import { Category } from '~~/gen/ts/resources/documents/category';
@@ -196,7 +195,7 @@ onMounted(async () => {
                                     class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 />
                             </div>
-                            <div class="flex-initial form-control" v-can="'DocStoreService.CreateDocument'">
+                            <div class="flex-initial form-control" v-if="can('DocStoreService.CreateDocument')">
                                 <button
                                     @click="templatesOpen = true"
                                     class="inline-flex px-3 py-2 text-sm font-semibold rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
@@ -204,7 +203,7 @@ onMounted(async () => {
                                     {{ $t('common.create') }}
                                 </button>
                             </div>
-                            <div class="flex-initial" v-can="'CompletorService.CompleteCategories'">
+                            <div class="flex-initial" v-if="can('CompletorService.CompleteCategories')">
                                 <NuxtLink
                                     :to="{ name: 'documents-categories' }"
                                     class="inline-flex px-3 py-2 text-sm font-semibold rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
@@ -212,7 +211,7 @@ onMounted(async () => {
                                     {{ $t('common.category', 2) }}
                                 </NuxtLink>
                             </div>
-                            <div class="flex-initial" v-can="'DocStoreService.ListTemplates'">
+                            <div class="flex-initial" v-if="can('DocStoreService.ListTemplates')">
                                 <NuxtLink
                                     :to="{ name: 'documents-templates' }"
                                     class="inline-flex px-3 py-2 text-sm font-semibold rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
@@ -225,11 +224,9 @@ onMounted(async () => {
                             <DisclosureButton class="flex w-full items-start justify-between text-left text-white">
                                 <span class="text-base-200 leading-7">{{ $t('common.advanced_search') }}</span>
                                 <span class="ml-6 flex h-7 items-center">
-                                    <SvgIcon
+                                    <ChevronDownIcon
                                         :class="[open ? 'upsidedown' : '', 'h-6 w-6 transition-transform']"
                                         aria-hidden="true"
-                                        type="mdi"
-                                        :path="mdiChevronDown"
                                     />
                                 </span>
                             </DisclosureButton>
@@ -278,12 +275,7 @@ onMounted(async () => {
                                                                     'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                                                 ]"
                                                             >
-                                                                <SvgIcon
-                                                                    class="w-5 h-5"
-                                                                    aria-hidden="true"
-                                                                    type="mdi"
-                                                                    :path="mdiCheck"
-                                                                />
+                                                                <CheckIcon class="w-5 h-5" aria-hidden="true" />
                                                             </span>
                                                         </li>
                                                     </ComboboxOption>
@@ -334,12 +326,7 @@ onMounted(async () => {
                                                                     'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                                                 ]"
                                                             >
-                                                                <SvgIcon
-                                                                    class="w-5 h-5"
-                                                                    aria-hidden="true"
-                                                                    type="mdi"
-                                                                    :path="mdiCheck"
-                                                                />
+                                                                <CheckIcon class="w-5 h-5" aria-hidden="true" />
                                                             </span>
                                                         </li>
                                                     </ComboboxOption>
@@ -393,12 +380,7 @@ onMounted(async () => {
                                                     <span
                                                         class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none"
                                                     >
-                                                        <SvgIcon
-                                                            class="w-5 h-5 text-gray-400"
-                                                            aria-hidden="true"
-                                                            type="mdi"
-                                                            :path="mdiChevronDown"
-                                                        />
+                                                        <ChevronDownIcon class="w-5 h-5 text-gray-400" aria-hidden="true" />
                                                     </span>
                                                 </ListboxButton>
 
@@ -438,12 +420,7 @@ onMounted(async () => {
                                                                         'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                                                     ]"
                                                                 >
-                                                                    <SvgIcon
-                                                                        class="w-5 h-5"
-                                                                        aria-hidden="true"
-                                                                        type="mdi"
-                                                                        :path="mdiCheck"
-                                                                    />
+                                                                    <CheckIcon class="w-5 h-5" aria-hidden="true" />
                                                                 </span>
                                                             </li>
                                                         </ListboxOption>

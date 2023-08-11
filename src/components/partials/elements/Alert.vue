@@ -1,17 +1,17 @@
 <script lang="ts" setup>
-import SvgIcon from '@jamescoyle/vue-icon';
-import { mdiCloseCircle } from '@mdi/js';
+import { CloseCircleIcon } from 'mdi-vue3';
+import { DefineComponent } from 'vue';
 
 withDefaults(
     defineProps<{
         title: string;
         message?: string | undefined;
-        icon?: string;
+        icon?: DefineComponent;
         type?: string;
     }>(),
     {
         message: undefined,
-        icon: mdiCloseCircle,
+        icon: markRaw(CloseCircleIcon),
         type: 'error',
     },
 );
@@ -21,7 +21,7 @@ withDefaults(
     <div :class="`p-4 mt-6 rounded-md bg-${type}-100`">
         <div class="flex">
             <div class="flex-shrink-0">
-                <SvgIcon :class="`w-5 h-5 text-${type}-400`" aria-hidden="true" type="mdi" :path="icon" />
+                <component :is="icon" :class="`w-5 h-5 text-${type}-400`" aria-hidden="true" />
             </div>
             <div class="ml-3">
                 <h3 :class="`text-sm font-medium text-${type}-600`">

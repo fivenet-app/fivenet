@@ -9,23 +9,24 @@ import {
     TransitionChild,
     TransitionRoot,
 } from '@headlessui/vue';
-import SvgIcon from '@jamescoyle/vue-icon';
-import {
-    mdiAccount,
-    mdiAccountMultiple,
-    mdiBriefcase,
-    mdiCar,
-    mdiCog,
-    mdiFileDocument,
-    mdiFileDocumentMultiple,
-    mdiGlobeModel,
-    mdiHome,
-    mdiMagnify,
-    mdiMap,
-    mdiRefresh,
-} from '@mdi/js';
+
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { onClickOutside, useMagicKeys, watchDebounced, whenever } from '@vueuse/core';
+import {
+    AccountIcon,
+    AccountMultipleIcon,
+    BriefcaseIcon,
+    CarIcon,
+    CogIcon,
+    FileDocumentIcon,
+    FileDocumentMultipleIcon,
+    GlobeModelIcon,
+    HomeIcon,
+    MagnifyIcon,
+    MapIcon,
+    RefreshIcon,
+} from 'mdi-vue3';
+import { DefineComponent } from 'vue';
 import '~/assets/css/command-palette.scss';
 import { DocumentShort } from '~~/gen/ts/resources/documents/documents';
 import { UserShort } from '~~/gen/ts/resources/users/users';
@@ -68,7 +69,7 @@ type Item = {
     id: number;
     name: string;
     prefix?: string;
-    icon?: string;
+    icon?: DefineComponent;
     category: string;
     permission?: string;
     action: () => any;
@@ -78,7 +79,7 @@ const items = [
     {
         id: 1,
         name: t('commandpalette.groups.shortcuts.goto', [t('common.citizen', 1), 'CIT-...']),
-        icon: mdiAccount,
+        icon: markRaw(AccountIcon),
         category: 'shortcuts',
         permission: 'CitizenStoreService.GetCitizen',
         prefix: 'CIT-',
@@ -93,7 +94,7 @@ const items = [
     {
         id: 2,
         name: t('commandpalette.groups.shortcuts.goto', [t('common.document', 1), 'DOC-...']),
-        icon: mdiFileDocument,
+        icon: markRaw(FileDocumentIcon),
         category: 'shortcuts',
         permission: 'DocStoreService.GetDocument',
         prefix: 'DOC-',
@@ -110,7 +111,7 @@ const items = [
         id: 9,
         name: t('common.overview'),
         href: { name: 'overview' },
-        icon: mdiHome,
+        icon: markRaw(HomeIcon),
         category: 'pages',
     },
     {
@@ -121,7 +122,7 @@ const items = [
             open.value = false;
         },
         permission: 'CitizenStoreService.ListCitizens',
-        icon: mdiAccountMultiple,
+        icon: markRaw(AccountMultipleIcon),
         category: 'pages',
     },
     {
@@ -132,7 +133,7 @@ const items = [
             open.value = false;
         },
         permission: 'DMVService.ListVehicles',
-        icon: mdiCar,
+        icon: markRaw(CarIcon),
         category: 'pages',
     },
     {
@@ -143,7 +144,7 @@ const items = [
             open.value = false;
         },
         permission: 'DocStoreService.ListDocuments',
-        icon: mdiFileDocumentMultiple,
+        icon: markRaw(FileDocumentMultipleIcon),
         category: 'pages',
     },
     {
@@ -154,7 +155,7 @@ const items = [
             open.value = false;
         },
         permission: 'Jobs.View',
-        icon: mdiBriefcase,
+        icon: markRaw(BriefcaseIcon),
         category: 'pages',
     },
     {
@@ -165,7 +166,7 @@ const items = [
             open.value = false;
         },
         permission: 'LivemapperService.Stream',
-        icon: mdiMap,
+        icon: markRaw(MapIcon),
         category: 'pages',
     },
     {
@@ -176,7 +177,7 @@ const items = [
             open.value = false;
         },
         permission: 'RectorService.GetRoles',
-        icon: mdiCog,
+        icon: markRaw(CogIcon),
         category: 'pages',
     },
 ] as Item[];
@@ -332,9 +333,7 @@ async function onSelect(item: any): Promise<any> {
                     >
                         <Combobox @update:modelValue="onSelect">
                             <div class="relative">
-                                <SvgIcon
-                                    type="mdi"
-                                    :path="mdiMagnify"
+                                <MagnifyIcon
                                     class="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-gray-400"
                                     aria-hidden="true"
                                 />
@@ -349,12 +348,7 @@ async function onSelect(item: any): Promise<any> {
                                 v-if="rawQuery === ''"
                                 class="border-t border-gray-100 px-6 py-14 text-center text-sm sm:px-14"
                             >
-                                <SvgIcon
-                                    type="mdi"
-                                    :path="mdiGlobeModel"
-                                    class="mx-auto h-6 w-6 text-gray-400"
-                                    aria-hidden="true"
-                                />
+                                <GlobeModelIcon class="mx-auto h-6 w-6 text-gray-400" aria-hidden="true" />
                                 <p class="mt-4 font-semibold text-gray-200">
                                     {{ $t('commandpalette.input.title') }}
                                 </p>
@@ -427,10 +421,9 @@ async function onSelect(item: any): Promise<any> {
                                                     active && 'bg-gray-800 text-white',
                                                 ]"
                                             >
-                                                <SvgIcon
+                                                <component
                                                     v-if="item.icon"
-                                                    type="mdi"
-                                                    :path="item.icon"
+                                                    :is="item.icon"
                                                     :class="['h-6 w-6 flex-none', active ? 'text-white' : 'text-gray-500']"
                                                     aria-hidden="true"
                                                 />
@@ -446,12 +439,7 @@ async function onSelect(item: any): Promise<any> {
                                 v-if="(rawQuery.startsWith('@') || rawQuery.startsWith('#')) && loading"
                                 class="border-t border-gray-100 px-6 py-14 text-center text-sm sm:px-14"
                             >
-                                <SvgIcon
-                                    type="mdi"
-                                    :path="mdiRefresh"
-                                    class="mx-auto h-6 w-6 text-gray-400 animate-spin"
-                                    aria-hidden="true"
-                                />
+                                <RefreshIcon class="mx-auto h-6 w-6 text-gray-400 animate-spin" aria-hidden="true" />
                                 <p class="mt-4 font-semibold text-gray-200">
                                     {{ $t('common.loading', [$t('common.result', 2)]) }}
                                 </p>
@@ -465,12 +453,7 @@ async function onSelect(item: any): Promise<any> {
                                 "
                                 class="border-t border-gray-100 px-6 py-14 text-center text-sm sm:px-14"
                             >
-                                <SvgIcon
-                                    type="mdi"
-                                    :path="mdiGlobeModel"
-                                    class="mx-auto h-6 w-6 text-gray-400"
-                                    aria-hidden="true"
-                                />
+                                <GlobeModelIcon class="mx-auto h-6 w-6 text-gray-400" aria-hidden="true" />
                                 <p class="mt-4 font-semibold text-gray-200">
                                     {{ $t('commandpalette.empty.title') }}
                                 </p>

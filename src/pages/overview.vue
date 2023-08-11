@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { mdiAccountMultiple, mdiBriefcase, mdiCar, mdiCarEmergency, mdiFileDocumentMultiple, mdiMap } from '@mdi/js';
+import { AccountMultipleIcon, BriefcaseIcon, CarEmergencyIcon, CarIcon, FileDocumentMultipleIcon, MapIcon } from 'mdi-vue3';
 import Cards from '~/components/partials/Cards.vue';
 import ContentCenterWrapper from '~/components/partials/ContentCenterWrapper.vue';
 import { CardElements } from '~/utils/types';
@@ -20,7 +20,7 @@ const features = [
         description: t('pages.overview.features.citizens'),
         href: { name: 'citizens' },
         permission: 'CitizenStoreService.ListCitizens',
-        icon: mdiAccountMultiple,
+        icon: markRaw(AccountMultipleIcon),
         iconForeground: 'text-purple-900',
         iconBackground: 'bg-purple-100',
     },
@@ -29,7 +29,7 @@ const features = [
         description: t('pages.overview.features.vehicles'),
         href: { name: 'vehicles' },
         permission: 'DMVService.ListVehicles',
-        icon: mdiCar,
+        icon: markRaw(CarIcon),
         iconForeground: 'text-zinc-900',
         iconBackground: 'bg-zinc-100',
     },
@@ -38,7 +38,7 @@ const features = [
         description: t('pages.overview.features.documents'),
         href: { name: 'documents' },
         permission: 'DocStoreService.ListDocuments',
-        icon: mdiFileDocumentMultiple,
+        icon: markRaw(FileDocumentMultipleIcon),
         iconForeground: 'text-sky-900',
         iconBackground: 'bg-sky-100',
     },
@@ -47,7 +47,7 @@ const features = [
         description: t('pages.overview.features.jobs'),
         href: { name: 'jobs' },
         permission: 'Jobs.View',
-        icon: mdiBriefcase,
+        icon: markRaw(BriefcaseIcon),
         iconForeground: 'text-yellow-900',
         iconBackground: 'bg-yellow-100',
     },
@@ -56,7 +56,7 @@ const features = [
         description: t('pages.overview.features.livemap'),
         href: { name: 'livemap' },
         permission: 'LivemapperService.Stream',
-        icon: mdiMap,
+        icon: markRaw(MapIcon),
         iconForeground: 'text-teal-900',
         iconBackground: 'bg-teal-100',
     },
@@ -65,7 +65,7 @@ const features = [
         description: t('pages.overview.features.livemap'),
         href: { name: 'centrum' },
         permission: 'CentrumService.TakeControl',
-        icon: mdiCarEmergency,
+        icon: markRaw(CarEmergencyIcon),
         iconForeground: 'text-red-900',
         iconBackground: 'bg-red-100',
     },

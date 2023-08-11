@@ -121,6 +121,8 @@ CREATE TABLE
         `status` smallint(2) NOT NULL,
         `reason` varchar(255) DEFAULT NULL,
         `code` varchar(20) NULL DEFAULT NULL,
+        `x` decimal(24, 14) DEFAULT NULL,
+        `y` decimal(24, 14) DEFAULT NULL,
         `user_id` int(11) NULL DEFAULT NULL,
         PRIMARY KEY (`id`),
         KEY `idx_fivenet_centrum_dispatches_status_dispatch_id` (`dispatch_id`),

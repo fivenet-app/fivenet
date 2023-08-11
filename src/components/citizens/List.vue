@@ -1,10 +1,9 @@
 <script lang="ts" setup>
 import { Disclosure, DisclosureButton, DisclosurePanel, Switch } from '@headlessui/vue';
-import SvgIcon from '@jamescoyle/vue-icon';
-import { mdiChevronDown } from '@mdi/js';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { watchDebounced } from '@vueuse/core';
 import { vMaska } from 'maska';
+import { ChevronDownIcon } from 'mdi-vue3';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -118,7 +117,7 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                             </div>
                             <div
                                 class="flex-initial form-control"
-                                v-can="'CitizenStoreService.ListCitizens.Fields.UserProps.Wanted'"
+                                v-if="can('CitizenStoreService.ListCitizens.Fields.UserProps.Wanted')"
                             >
                                 <label for="search" class="block text-sm font-medium leading-6 text-neutral">
                                     {{ $t('components.citizens.citizens_list.only_wanted') }}
@@ -149,11 +148,9 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                             <DisclosureButton class="flex w-full items-start justify-between text-left text-white">
                                 <span class="text-base-200 leading-7">{{ $t('common.advanced_search') }}</span>
                                 <span class="ml-6 flex h-7 items-center">
-                                    <SvgIcon
+                                    <ChevronDownIcon
                                         :class="[open ? 'upsidedown' : '', 'h-6 w-6 transition-transform']"
                                         aria-hidden="true"
-                                        type="mdi"
-                                        :path="mdiChevronDown"
                                     />
                                 </span>
                             </DisclosureButton>
@@ -161,7 +158,7 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                 <div class="flex flex-row gap-2">
                                     <div
                                         class="flex-1 form-control"
-                                        v-can="'CitizenStoreService.ListCitizens.Fields.PhoneNumber'"
+                                        v-if="can('CitizenStoreService.ListCitizens.Fields.PhoneNumber')"
                                     >
                                         <label for="searchPhone" class="block text-sm font-medium leading-6 text-neutral">
                                             {{ $t('common.search') }}
@@ -229,7 +226,7 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                             {{ $t('common.sex') }}
                                         </th>
                                         <th
-                                            v-can="'CitizenStoreService.ListCitizens.Fields.PhoneNumber'"
+                                            v-if="can('CitizenStoreService.ListCitizens.Fields.PhoneNumber')"
                                             scope="col"
                                             class="py-3.5 px-2 text-left text-sm font-semibold text-neutral"
                                         >
@@ -240,7 +237,9 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                             {{ $t('common.date_of_birth') }}
                                         </th>
                                         <th
-                                            v-can="'CitizenStoreService.ListCitizens.Fields.UserProps.TrafficInfractionPoints'"
+                                            v-if="
+                                                can('CitizenStoreService.ListCitizens.Fields.UserProps.TrafficInfractionPoints')
+                                            "
                                             scope="col"
                                             class="py-3.5 px-2 text-left text-sm font-semibold text-neutral"
                                         >
@@ -280,7 +279,7 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                             {{ $t('common.sex') }}
                                         </th>
                                         <th
-                                            v-can="'CitizenStoreService.ListCitizens.Fields.PhoneNumber'"
+                                            v-if="can('CitizenStoreService.ListCitizens.Fields.PhoneNumber')"
                                             scope="col"
                                             class="py-3.5 px-2 text-left text-sm font-semibold text-neutral"
                                         >
@@ -291,7 +290,9 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                             {{ $t('common.date_of_birth') }}
                                         </th>
                                         <th
-                                            v-can="'CitizenStoreService.ListCitizens.Fields.UserProps.TrafficInfractionPoints'"
+                                            v-if="
+                                                can('CitizenStoreService.ListCitizens.Fields.UserProps.TrafficInfractionPoints')
+                                            "
                                             scope="col"
                                             class="py-3.5 px-2 text-left text-sm font-semibold text-neutral"
                                         >

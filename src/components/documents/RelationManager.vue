@@ -11,21 +11,22 @@ import {
     TransitionChild,
     TransitionRoot,
 } from '@headlessui/vue';
-import SvgIcon from '@jamescoyle/vue-icon';
-import {
-    mdiAccountMinus,
-    mdiAccountMultiple,
-    mdiAccountSearch,
-    mdiAt,
-    mdiClipboardList,
-    mdiClose,
-    mdiOpenInNew,
-    mdiSourceCommitStart,
-    mdiTarget,
-    mdiViewListOutline,
-} from '@mdi/js';
+
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { watchDebounced } from '@vueuse/core';
+import {
+    AccountMinusIcon,
+    AccountMultipleIcon,
+    AccountSearchIcon,
+    AtIcon,
+    ClipboardListIcon,
+    CloseIcon,
+    OpenInNewIcon,
+    SourceCommitStartIcon,
+    TargetIcon,
+    ViewListOutlineIcon,
+} from 'mdi-vue3';
+import { DefineComponent } from 'vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import { useAuthStore } from '~/store/auth';
 import { getUser, useClipboardStore } from '~/store/clipboard';
@@ -51,15 +52,15 @@ const emit = defineEmits<{
     (e: 'update:modelValue', payload: Map<bigint, DocumentRelation>): void;
 }>();
 
-const tabs = ref<{ name: string; icon: string }[]>([
+const tabs = ref<{ name: string; icon: DefineComponent }[]>([
     {
         name: t('components.documents.document_managers.view_current'),
-        icon: mdiViewListOutline,
+        icon: markRaw(ViewListOutlineIcon),
     },
-    { name: t('common.clipboard'), icon: mdiClipboardList },
+    { name: t('common.clipboard'), icon: markRaw(ClipboardListIcon) },
     {
         name: t('components.documents.document_managers.add_new'),
-        icon: mdiAccountSearch,
+        icon: markRaw(AccountSearchIcon),
     },
 ]);
 
@@ -158,7 +159,7 @@ function removeRelation(id: bigint): void {
                                     @click="emit('close')"
                                 >
                                     <span class="sr-only">{{ $t('common.close') }}</span>
-                                    <SvgIcon class="w-6 h-6" aria-hidden="true" type="mdi" :path="mdiClose" />
+                                    <CloseIcon class="w-6 h-6" aria-hidden="true" />
                                 </button>
                             </div>
                             <DialogTitle as="h3" class="text-base font-semibold leading-6">
@@ -177,9 +178,8 @@ function removeRelation(id: bigint): void {
                                             ]"
                                             :aria-current="selected ? 'page' : undefined"
                                         >
-                                            <SvgIcon
-                                                type="mdi"
-                                                :path="tab.icon"
+                                            <component
+                                                :is="tab.icon"
                                                 :class="[
                                                     selected ? 'text-primary-500' : 'text-base-300 group-hover:text-base-200',
                                                     '-ml-0.5 mr-2 h-5 w-5 transition-colors',
@@ -267,10 +267,8 @@ function removeRelation(id: bigint): void {
                                                                                         )
                                                                                     "
                                                                                 >
-                                                                                    <SvgIcon
+                                                                                    <OpenInNewIcon
                                                                                         class="w-6 h-auto text-primary-500 hover:text-primary-300"
-                                                                                        type="mdi"
-                                                                                        :path="mdiOpenInNew"
                                                                                     />
                                                                                 </NuxtLink>
                                                                             </div>
@@ -285,10 +283,8 @@ function removeRelation(id: bigint): void {
                                                                                         )
                                                                                     "
                                                                                 >
-                                                                                    <SvgIcon
+                                                                                    <AccountMinusIcon
                                                                                         class="w-6 h-auto text-error-400 hover:text-error-200"
-                                                                                        type="mdi"
-                                                                                        :path="mdiAccountMinus"
                                                                                     />
                                                                                 </button>
                                                                             </div>
@@ -308,7 +304,7 @@ function removeRelation(id: bigint): void {
                                                         <DataNoDataBlock
                                                             v-if="clipboardStore.$state.users.length === 0"
                                                             :type="t('common.citizen', 2)"
-                                                            :icon="mdiAccountMultiple"
+                                                            :icon="AccountMultipleIcon"
                                                         />
                                                         <table v-else class="min-w-full divide-y divide-base-200">
                                                             <thead>
@@ -364,10 +360,8 @@ function removeRelation(id: bigint): void {
                                                                                         )
                                                                                     "
                                                                                 >
-                                                                                    <SvgIcon
+                                                                                    <AtIcon
                                                                                         class="w-6 h-auto text-success-500 hover:text-success-300"
-                                                                                        type="mdi"
-                                                                                        :path="mdiAt"
                                                                                     />
                                                                                 </button>
                                                                             </div>
@@ -382,10 +376,8 @@ function removeRelation(id: bigint): void {
                                                                                         )
                                                                                     "
                                                                                 >
-                                                                                    <SvgIcon
+                                                                                    <TargetIcon
                                                                                         class="w-6 h-auto text-warn-400 hover:text-warn-200"
-                                                                                        type="mdi"
-                                                                                        :path="mdiTarget"
                                                                                     />
                                                                                 </button>
                                                                             </div>
@@ -400,10 +392,8 @@ function removeRelation(id: bigint): void {
                                                                                         )
                                                                                     "
                                                                                 >
-                                                                                    <SvgIcon
+                                                                                    <SourceCommitStartIcon
                                                                                         class="w-6 h-auto text-error-400 hover:text-error-200"
-                                                                                        type="mdi"
-                                                                                        :path="mdiSourceCommitStart"
                                                                                     />
                                                                                 </button>
                                                                             </div>
@@ -481,10 +471,8 @@ function removeRelation(id: bigint): void {
                                                                                         )
                                                                                     "
                                                                                 >
-                                                                                    <SvgIcon
+                                                                                    <AtIcon
                                                                                         class="w-6 h-auto text-success-500 hover:text-success-300"
-                                                                                        type="mdi"
-                                                                                        :path="mdiAt"
                                                                                     />
                                                                                 </button>
                                                                             </div>
@@ -499,10 +487,8 @@ function removeRelation(id: bigint): void {
                                                                                         )
                                                                                     "
                                                                                 >
-                                                                                    <SvgIcon
+                                                                                    <TargetIcon
                                                                                         class="w-6 h-auto text-warn-400 hover:text-warn-200"
-                                                                                        type="mdi"
-                                                                                        :path="mdiTarget"
                                                                                     />
                                                                                 </button>
                                                                             </div>
@@ -517,10 +503,8 @@ function removeRelation(id: bigint): void {
                                                                                         )
                                                                                     "
                                                                                 >
-                                                                                    <SvgIcon
+                                                                                    <SourceCommitStartIcon
                                                                                         class="w-6 h-auto text-error-400 hover:text-error-200"
-                                                                                        type="mdi"
-                                                                                        :path="mdiSourceCommitStart"
                                                                                     />
                                                                                 </button>
                                                                             </div>

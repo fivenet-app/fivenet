@@ -1,8 +1,7 @@
 <script lang="ts" setup>
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
-import SvgIcon from '@jamescoyle/vue-icon';
-import { mdiCarEmergency } from '@mdi/js';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
+import { CarEmergencyIcon } from 'mdi-vue3';
 import { UNIT_STATUS, Unit } from '~~/gen/ts/resources/dispatch/units';
 
 defineProps<{
@@ -76,12 +75,7 @@ async function joinUnit(unit: Unit | undefined): Promise<void> {
                         >
                             <div>
                                 <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-base-800">
-                                    <SvgIcon
-                                        class="h-6 w-6 text-primary-500"
-                                        aria-hidden="true"
-                                        type="mdi"
-                                        :path="mdiCarEmergency"
-                                    />
+                                    <CarEmergencyIcon class="h-6 w-6 text-primary-500" aria-hidden="true" />
                                 </div>
                                 <div class="mt-3 text-center sm:mt-5">
                                     <div v-if="ownUnit">

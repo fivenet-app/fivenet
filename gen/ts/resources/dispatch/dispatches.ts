@@ -140,6 +140,14 @@ export interface DispatchStatus {
      * @generated from protobuf field: optional resources.users.UserShort user = 9;
      */
     user?: UserShort;
+    /**
+     * @generated from protobuf field: optional float x = 10;
+     */
+    x?: number;
+    /**
+     * @generated from protobuf field: optional float y = 11;
+     */
+    y?: number;
 }
 /**
  * @generated from protobuf enum resources.dispatch.DISPATCH_STATUS
@@ -251,7 +259,9 @@ class DispatchStatus$Type extends MessageType<DispatchStatus> {
             { no: 6, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
             { no: 7, name: "code", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 8, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
-            { no: 9, name: "user", kind: "message", T: () => UserShort }
+            { no: 9, name: "user", kind: "message", T: () => UserShort },
+            { no: 10, name: "x", kind: "scalar", opt: true, T: 2 /*ScalarType.FLOAT*/ },
+            { no: 11, name: "y", kind: "scalar", opt: true, T: 2 /*ScalarType.FLOAT*/ }
         ]);
     }
 }

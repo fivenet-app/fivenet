@@ -2,19 +2,23 @@ package notifi
 
 import (
 	"errors"
+	"fmt"
 
+	"github.com/galexrt/fivenet/pkg/events"
 	"github.com/nats-io/nats.go"
 )
 
-const BaseSubject = "notifi"
+const (
+	BaseSubject events.Subject = "notifi"
 
-const UserNotification = "user"
+	UserNotification events.Type = "user"
+)
 
 func (n *Notifi) registerEvents() error {
 	cfg := &nats.StreamConfig{
 		Name:      "NOTIFI",
 		Retention: nats.InterestPolicy,
-		Subjects:  []string{BaseSubject + ".>"},
+		Subjects:  []string{fmt.Sprintf("%s.>", BaseSubject)},
 	}
 
 	if _, err := n.events.JS.AddStream(cfg); err != nil {

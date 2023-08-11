@@ -1,19 +1,20 @@
 <script lang="ts" setup>
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/vue';
-import SvgIcon from '@jamescoyle/vue-icon';
-import {
-    mdiAccountMultiple,
-    mdiCalendar,
-    mdiCommentTextMultiple,
-    mdiFileDocument,
-    mdiFileSearch,
-    mdiLock,
-    mdiLockOpenVariant,
-    mdiPencil,
-    mdiTrashCan,
-} from '@mdi/js';
+
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { QuillEditor } from '@vueup/vue-quill';
+import {
+    AccountMultipleIcon,
+    CalendarIcon,
+    CommentTextMultipleIcon,
+    FileDocumentIcon,
+    FileSearchIcon,
+    LockIcon,
+    LockOpenVariantIcon,
+    PencilIcon,
+    TrashCanIcon,
+} from 'mdi-vue3';
+import { DefineComponent } from 'vue';
 import AddToButton from '~/components/clipboard/AddToButton.vue';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
@@ -36,9 +37,9 @@ const { t } = useI18n();
 
 const access = ref<undefined | DocumentAccess>(undefined);
 const commentCount = ref(-1n);
-const tabs = ref<{ name: string; icon: string }[]>([
-    { name: t('common.relation', 2), icon: mdiAccountMultiple },
-    { name: t('common.reference', 2), icon: mdiFileDocument },
+const tabs = ref<{ name: string; icon: DefineComponent }[]>([
+    { name: t('common.relation', 2), icon: markRaw(AccountMultipleIcon) },
+    { name: t('common.reference', 2), icon: markRaw(FileDocumentIcon) },
 ]);
 
 const props = defineProps<{
@@ -139,7 +140,7 @@ function addToClipboard(): void {
         <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.document', 2)])" :retry="refresh" />
         <DataNoDataBlock
             v-else-if="!document"
-            :icon="mdiFileSearch"
+            :icon="FileSearchIcon"
             :message="$t('common.not_found', [$t('common.document', 2)])"
         />
         <div v-else class="rounded-lg bg-base-850">
@@ -169,19 +170,14 @@ function addToClipboard(): void {
                                 </p>
                             </div>
                             <div class="flex mt-4 space-x-3 md:mt-0">
-                                <div v-can="'DocStoreService.ToggleDocument'">
+                                <div v-if="can('DocStoreService.ToggleDocument')">
                                     <button
                                         v-if="document?.closed"
                                         type="button"
                                         @click="toggleDocument"
                                         class="inline-flex justify-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
                                     >
-                                        <SvgIcon
-                                            class="w-5 h-5 text-green-500"
-                                            aria-hidden="true"
-                                            type="mdi"
-                                            :path="mdiLockOpenVariant"
-                                        />
+                                        <LockOpenVariantIcon class="w-5 h-5 text-green-500" aria-hidden="true" />
                                         {{ $t('common.open', 2) }}
                                     </button>
                                     <button
@@ -190,12 +186,12 @@ function addToClipboard(): void {
                                         @click="toggleDocument"
                                         class="inline-flex justify-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
                                     >
-                                        <SvgIcon class="w-5 h-5 text-error-400" aria-hidden="true" type="mdi" :path="mdiLock" />
+                                        <LockIcon class="w-5 h-5 text-error-400" aria-hidden="true" />
                                         {{ $t('common.close', 1) }}
                                     </button>
                                 </div>
                                 <NuxtLink
-                                    v-can="'DocStoreService.UpdateDocument'"
+                                    v-if="can('DocStoreService.UpdateDocument')"
                                     :to="{
                                         name: 'documents-edit-id',
                                         params: { id: document?.id.toString() ?? 0 },
@@ -203,16 +199,16 @@ function addToClipboard(): void {
                                     type="button"
                                     class="inline-flex justify-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
                                 >
-                                    <SvgIcon class="-ml-0.5 w-5 h-auto" aria-hidden="true" type="mdi" :path="mdiPencil" />
+                                    <PencilIcon class="-ml-0.5 w-5 h-auto" aria-hidden="true" />
                                     {{ $t('common.edit') }}
                                 </NuxtLink>
                                 <button
-                                    v-can="'DocStoreService.DeleteDocument'"
+                                    v-if="can('DocStoreService.DeleteDocument')"
                                     type="button"
                                     @click="deleteDocument"
                                     class="inline-flex justify-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
                                 >
-                                    <SvgIcon class="-ml-0.5 w-5 h-auto" aria-hidden="true" type="mdi" :path="mdiTrashCan" />
+                                    <TrashCanIcon class="-ml-0.5 w-5 h-auto" aria-hidden="true" />
                                     {{ $t('common.delete') }}
                                 </button>
                             </div>
@@ -225,7 +221,7 @@ function addToClipboard(): void {
                                 :content="{ key: 'notifications.document_view.copy_document_id.content', parameters: [] }"
                             />
                             <div class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-base-100 text-base-500">
-                                <SvgIcon class="w-5 h-auto" aria-hidden="true" type="mdi" :path="mdiCalendar" />
+                                <CalendarIcon class="w-5 h-auto" aria-hidden="true" />
                                 <span class="text-sm font-medium text-base-700">
                                     <Time :value="document.createdAt" type="long" />
                                 </span>
@@ -234,18 +230,13 @@ function addToClipboard(): void {
                                 v-if="document?.closed"
                                 class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-error-100"
                             >
-                                <SvgIcon class="w-5 h-5 text-error-400" aria-hidden="true" type="mdi" :path="mdiLock" />
+                                <LockIcon class="w-5 h-5 text-error-400" aria-hidden="true" />
                                 <span class="text-sm font-medium text-error-700">
                                     {{ $t('common.close', 2) }}
                                 </span>
                             </div>
                             <div v-else class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-success-100">
-                                <SvgIcon
-                                    class="w-5 h-5 text-green-500"
-                                    aria-hidden="true"
-                                    type="mdi"
-                                    :path="mdiLockOpenVariant"
-                                />
+                                <LockOpenVariantIcon class="w-5 h-5 text-green-500" aria-hidden="true" />
                                 <span class="text-sm font-medium text-green-700">
                                     {{ $t('common.open') }}
                                 </span>
@@ -253,7 +244,7 @@ function addToClipboard(): void {
                             <div
                                 class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-primary-100 text-primary-500"
                             >
-                                <SvgIcon class="w-5 h-auto" aria-hidden="true" type="mdi" :path="mdiCommentTextMultiple" />
+                                <CommentTextMultipleIcon class="w-5 h-auto" aria-hidden="true" />
                                 <span class="text-sm font-medium text-primary-700">
                                     {{ commentCount >= 0 ? commentCount : '?' }}
                                     {{ $t('common.comment', 2) }}
@@ -318,14 +309,13 @@ function addToClipboard(): void {
                                             ]"
                                             :aria-current="selected ? 'page' : undefined"
                                         >
-                                            <SvgIcon
+                                            <component
                                                 :class="[
                                                     selected ? 'text-primary-500' : 'text-base-300 group-hover:text-base-200',
                                                     '-ml-0.5 mr-2 h-5 w-5 transition-colors',
                                                 ]"
                                                 aria-hidden="true"
-                                                type="mdi"
-                                                :path="tab.icon"
+                                                :is="tab.icon"
                                             />
                                             <span>{{ tab.name }}</span>
                                         </button>

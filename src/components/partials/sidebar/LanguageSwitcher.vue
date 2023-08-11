@@ -1,13 +1,12 @@
 <script setup lang="ts">
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue';
-import SvgIcon from '@jamescoyle/vue-icon';
-import { mdiTranslate } from '@mdi/js';
 import { setLocale as veeValidateSetLocale } from '@vee-validate/i18n';
+import { TranslateIcon } from 'mdi-vue3';
 import { LocaleObject } from 'vue-i18n-routing';
 import { useNotificationsStore } from '~/store/notifications';
 import { useUserSettingsStore } from '~/store/usersettings';
 
-const { t, locales, setLocale } = useI18n();
+const { locales, setLocale } = useI18n();
 const settings = useUserSettingsStore();
 const notifications = useNotificationsStore();
 
@@ -44,10 +43,8 @@ async function switchLanguage(lang: { name: string; iso: string }): Promise<void
                 class="flex text-sm rounded-full bg-base-850 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
             >
                 <span class="sr-only">{{ $t('components.partials.sidebar_language_switcher.open_switcher') }}</span>
-                <SvgIcon
+                <TranslateIcon
                     class="w-auto h-10 p-1 rounded-full hover:transition-colors text-base-300 bg-base-800 hover:text-base-100"
-                    type="mdi"
-                    :path="mdiTranslate"
                 />
             </MenuButton>
         </div>

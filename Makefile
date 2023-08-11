@@ -58,6 +58,8 @@ protoc-gen-validate: build_dir
 		git -C $(BUILD_DIR)validate-$(VALIDATE_VERSION)/ checkout $(VALIDATE_VERSION); \
 	fi
 
+	cd $(BUILD_DIR) && ln -sfn validate-$(VALIDATE_VERSION)/ validate
+
 protoc-gen-customizer:
 	go build -o ./cmd/protoc-gen-customizer ./cmd/protoc-gen-customizer
 

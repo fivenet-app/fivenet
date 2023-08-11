@@ -10,11 +10,10 @@ import {
     TransitionChild,
     TransitionRoot,
 } from '@headlessui/vue';
-import SvgIcon from '@jamescoyle/vue-icon';
-import { mdiCheck } from '@mdi/js';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { max, min, required } from '@vee-validate/rules';
 import { watchDebounced } from '@vueuse/core';
+import { CheckIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import { useNotificationsStore } from '~/store/notifications';
 import { Job, JobGrade } from '~~/gen/ts/resources/jobs/jobs';
@@ -210,12 +209,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await setJobProp(
                                                                     'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                                                 ]"
                                                             >
-                                                                <SvgIcon
-                                                                    class="w-5 h-5"
-                                                                    aria-hidden="true"
-                                                                    type="mdi"
-                                                                    :path="mdiCheck"
-                                                                />
+                                                                <CheckIcon class="w-5 h-5" aria-hidden="true" />
                                                             </span>
                                                         </li>
                                                     </ComboboxOption>
@@ -266,12 +260,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await setJobProp(
                                                                     'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                                                 ]"
                                                             >
-                                                                <SvgIcon
-                                                                    class="w-5 h-5"
-                                                                    aria-hidden="true"
-                                                                    type="mdi"
-                                                                    :path="mdiCheck"
-                                                                />
+                                                                <CheckIcon class="w-5 h-5" aria-hidden="true" />
                                                             </span>
                                                         </li>
                                                     </ComboboxOption>

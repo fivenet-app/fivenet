@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import SvgIcon from '@jamescoyle/vue-icon';
-import { mdiCalculator, mdiHelpCircle } from '@mdi/js';
+import { CalculatorIcon, HelpCircleIcon } from 'mdi-vue3';
+import { DefineComponent } from 'vue';
 import ComponentModal from '~/components/partials/elements/ComponentModal.vue';
 import Calculator from '~/components/penaltycalculator/Calculator.vue';
 
@@ -10,16 +10,17 @@ const props = defineProps<{
     comp: ButtonComponents;
 }>();
 
-const open = ref(false);
-
-let icon = mdiHelpCircle;
+let icon: DefineComponent;
 switch (props.comp) {
     case 'PenaltyCalculator':
-        icon = mdiCalculator;
+        icon = CalculatorIcon;
         break;
     default:
+        icon = HelpCircleIcon;
         break;
 }
+
+const open = ref(false);
 </script>
 
 <template>
@@ -28,7 +29,7 @@ switch (props.comp) {
         @click="open = true"
         class="fixed flex items-center justify-center w-12 h-12 rounded-full z-90 bottom-2 right-20 bg-primary-500 shadow-float text-neutral hover:bg-primary-400"
     >
-        <SvgIcon class="w-10 h-auto" type="mdi" :path="icon" />
+        <component :is="icon" class="w-10 h-auto" />
     </button>
     <ComponentModal :open="open" @close="open = false">
         <Calculator v-if="comp === 'PenaltyCalculator'" />

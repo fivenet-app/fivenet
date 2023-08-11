@@ -1,11 +1,9 @@
 <script lang="ts" setup>
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
-import SvgIcon from '@jamescoyle/vue-icon';
-import { mdiGroup } from '@mdi/js';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { max_value, min_value, numeric, required } from '@vee-validate/rules';
+import { GroupIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
-import { can } from '~/plugins/1.vCan';
 import { CENTRUM_MODE, Settings } from '~~/gen/ts/resources/dispatch/settings';
 
 defineProps<{
@@ -36,7 +34,8 @@ async function getCentrumSettings(): Promise<Settings> {
 
 const modes = ref<{ mode: CENTRUM_MODE; selected?: boolean }[]>([
     { mode: CENTRUM_MODE.MANUAL },
-    { mode: CENTRUM_MODE.ROUND_ROBIN },
+    { mode: CENTRUM_MODE.CENTRAL_COMMAND },
+    { mode: CENTRUM_MODE.AUTO_ROUND_ROBIN },
 ]);
 
 async function createOrUpdateUnit(values: FormData): Promise<void> {
@@ -134,12 +133,7 @@ watch(settings, () => {
                             <form @submit="onSubmit">
                                 <div>
                                     <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
-                                        <SvgIcon
-                                            type="mdi"
-                                            :path="mdiGroup"
-                                            class="h-6 w-6 text-green-600"
-                                            aria-hidden="true"
-                                        />
+                                        <GroupIcon class="h-6 w-6 text-green-600" aria-hidden="true" />
                                     </div>
                                     <div class="mt-3 text-center sm:mt-5">
                                         <DialogTitle as="h3" class="text-base font-semibold leading-6 text-white">
@@ -246,6 +240,7 @@ watch(settings, () => {
                                 </div>
                                 <div class="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
                                     <button
+                                        v-if="can('CentrumService.UpdateSettings')"
                                         type="submit"
                                         class="inline-flex w-full justify-center rounded-md bg-primary-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 sm:col-start-2"
                                     >
@@ -257,7 +252,7 @@ watch(settings, () => {
                                         @click="$emit('close')"
                                         ref="cancelButtonRef"
                                     >
-                                        {{ $t('common.cancel') }}
+                                        {{ $t('common.close') }}
                                     </button>
                                 </div>
                             </form>

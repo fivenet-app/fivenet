@@ -1,6 +1,5 @@
 <script lang="ts" setup>
-import SvgIcon from '@jamescoyle/vue-icon';
-import { mdiAccountMultiplePlus, mdiDotsVertical, mdiMapMarker } from '@mdi/js';
+import { AccountMultiplePlusIcon, DotsVerticalIcon, MapMarkerIcon } from 'mdi-vue3';
 import Time from '~/components/partials/elements/Time.vue';
 import { DISPATCH_STATUS, Dispatch } from '~~/gen/ts/resources/dispatch/dispatches';
 import { Unit } from '~~/gen/ts/resources/dispatch/units';
@@ -33,14 +32,14 @@ const assignOpen = ref(false);
                 :title="$t('common.assign')"
                 @click="assignOpen = true"
             >
-                <SvgIcon type="mdi" :path="mdiAccountMultiplePlus" class="w-6 h-auto ml-auto mr-1.5" aria-hidden="true" />
+                <AccountMultiplePlusIcon class="w-6 h-auto ml-auto mr-1.5" aria-hidden="true" />
             </button>
             <button
                 type="button"
                 class="text-primary-400 hover:text-primary-600"
                 @click="$emit('goto', { x: dispatch.x, y: dispatch.y })"
             >
-                <SvgIcon type="mdi" :path="mdiMapMarker" class="w-6 h-auto ml-auto mr-1.5" aria-hidden="true" />
+                <MapMarkerIcon class="w-6 h-auto ml-auto mr-1.5" aria-hidden="true" />
             </button>
             <button
                 type="button"
@@ -48,7 +47,7 @@ const assignOpen = ref(false);
                 :title="$t('common.detail', 2)"
                 @click="detailsOpen = true"
             >
-                <SvgIcon type="mdi" :path="mdiDotsVertical" class="w-6 h-auto ml-auto mr-1.5" />
+                <DotsVerticalIcon class="w-6 h-auto ml-auto mr-1.5" />
             </button>
         </td>
         <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm text-gray-300 sm:pl-0">

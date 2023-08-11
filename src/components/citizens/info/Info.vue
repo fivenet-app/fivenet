@@ -1,9 +1,8 @@
 <script lang="ts" setup>
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/vue';
-import SvgIcon from '@jamescoyle/vue-icon';
-import { mdiAccount, mdiBulletinBoard, mdiCar, mdiFileDocumentMultiple } from '@mdi/js';
+
+import { AccountIcon, BulletinBoardIcon, CarIcon, FileDocumentMultipleIcon } from 'mdi-vue3';
 import AddToButton from '~/components/clipboard/AddToButton.vue';
-import { can } from '~/plugins/1.vCan';
 import { useClipboardStore } from '~/store/clipboard';
 import { useNotificationsStore } from '~/store/notifications';
 import { User } from '~~/gen/ts/resources/users/users';
@@ -20,22 +19,22 @@ const { t } = useI18n();
 const tabs = [
     {
         name: t('common.profile'),
-        icon: mdiAccount,
+        icon: markRaw(AccountIcon),
         permission: 'CitizenStoreService.ListCitizens',
     },
     {
         name: t('common.vehicle', 2),
-        icon: mdiCar,
+        icon: markRaw(CarIcon),
         permission: 'DMVService.ListVehicles',
     },
     {
         name: t('common.document', 2),
-        icon: mdiFileDocumentMultiple,
+        icon: markRaw(FileDocumentMultipleIcon),
         permission: 'DocStoreService.ListUserDocuments',
     },
     {
         name: t('common.activity'),
-        icon: mdiBulletinBoard,
+        icon: markRaw(BulletinBoardIcon),
         permission: 'CitizenStoreService.ListUserActivity',
     },
 ];
@@ -88,14 +87,13 @@ function addToClipboard(): void {
                         ]"
                         :aria-current="selected ? 'page' : undefined"
                     >
-                        <SvgIcon
+                        <component
+                            :is="tab.icon"
                             :class="[
                                 selected ? 'text-primary-400' : 'text-base-500 group-hover:text-base-300',
                                 '-ml-0.5 mr-2 h-5 w-5',
                             ]"
                             aria-hidden="true"
-                            type="mdi"
-                            :path="tab.icon"
                         />
                         <span>
                             {{ tab.name }}
@@ -107,13 +105,13 @@ function addToClipboard(): void {
                 <TabPanel>
                     <Profile :user="user" />
                 </TabPanel>
-                <TabPanel v-can="'DMVService.ListVehicles'">
+                <TabPanel v-if="can('DMVService.ListVehicles')">
                     <Vehicles :userId="user.userId" />
                 </TabPanel>
-                <TabPanel v-can="'DocStoreService.ListUserDocuments'">
+                <TabPanel v-if="can('DocStoreService.ListUserDocuments')">
                     <Documents :userId="user.userId" />
                 </TabPanel>
-                <TabPanel v-can="'CitizenStoreService.ListUserActivity'">
+                <TabPanel v-if="can('CitizenStoreService.ListUserActivity')">
                     <ActivityFeed :userId="user.userId" />
                 </TabPanel>
             </TabPanels>

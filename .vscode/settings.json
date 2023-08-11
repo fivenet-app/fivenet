@@ -4,7 +4,7 @@
     "volar.takeOverMode.extension": "Vue.volar",
     "protoc": {
         "options": [
-            "--proto_path=./validate",
+            "--proto_path=./.build/validate",
             "--proto_path=./proto"
         ]
     },

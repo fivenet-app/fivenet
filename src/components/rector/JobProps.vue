@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { mdiTune } from '@mdi/js';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
+import { TuneIcon } from 'mdi-vue3';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -104,7 +104,7 @@ async function saveJobProps(): Promise<void> {
             :title="$t('common.unable_to_load', [`${$t('common.job', 1)} ${$t('common.prop')}`])"
             :retry="refresh"
         />
-        <DataNoDataBlock v-else-if="!jobProps" :icon="mdiTune" :type="`${$t('common.job', 1)} ${$t('common.prop')}`" />
+        <DataNoDataBlock v-else-if="!jobProps" :icon="TuneIcon" :type="`${$t('common.job', 1)} ${$t('common.prop')}`" />
         <div v-else>
             <div class="overflow-hidden bg-base-800 shadow sm:rounded-lg text-neutral">
                 <div class="px-4 py-5 sm:px-6">
@@ -160,7 +160,10 @@ async function saveJobProps(): Promise<void> {
                                 </fieldset>
                             </dd>
                         </div>
-                        <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5" v-can="'RectorService.SetJobProps'">
+                        <div
+                            v-if="can('RectorService.SetJobProps')"
+                            class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5"
+                        >
                             <dt class="text-sm font-medium"></dt>
                             <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
                                 <button

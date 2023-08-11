@@ -1,9 +1,8 @@
 <script lang="ts" setup>
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
-import SvgIcon from '@jamescoyle/vue-icon';
-import { mdiCheck } from '@mdi/js';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { watchDebounced } from '@vueuse/core';
+import { CheckIcon } from 'mdi-vue3';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -206,12 +205,7 @@ watchDebounced(queryChar, async () => await findChars(), {
                                                                 'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                                             ]"
                                                         >
-                                                            <SvgIcon
-                                                                class="w-5 h-5"
-                                                                aria-hidden="true"
-                                                                type="mdi"
-                                                                :path="mdiCheck"
-                                                            />
+                                                            <CheckIcon class="w-5 h-5" aria-hidden="true" />
                                                         </span>
                                                     </li>
                                                 </ComboboxOption>

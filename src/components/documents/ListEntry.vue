@@ -1,6 +1,5 @@
 <script lang="ts" setup>
-import SvgIcon from '@jamescoyle/vue-icon';
-import { mdiAccount, mdiBriefcase, mdiCalendar, mdiLock, mdiLockOpenVariant, mdiTrashCan, mdiUpdate } from '@mdi/js';
+import { AccountIcon, BriefcaseIcon, CalendarIcon, LockIcon, LockOpenVariantIcon, TrashCanIcon } from 'mdi-vue3';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import Time from '~/components/partials/elements/Time.vue';
 import { DocumentShort } from '~~/gen/ts/resources/documents/documents';
@@ -43,13 +42,13 @@ defineProps<{
                     </p>
                     <div class="flex flex-row items-center justify-end flex-1 text-base-200">
                         <div v-if="doc?.closed" class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-error-100">
-                            <SvgIcon class="w-5 h-5 text-error-400" aria-hidden="true" type="mdi" :path="mdiLock" />
+                            <LockIcon class="w-5 h-5 text-error-400" aria-hidden="true" />
                             <span class="text-sm font-medium text-error-700">
                                 {{ $t('common.close', 2) }}
                             </span>
                         </div>
                         <div v-else class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-success-100">
-                            <SvgIcon class="w-5 h-5 text-green-500" aria-hidden="true" type="mdi" :path="mdiLockOpenVariant" />
+                            <LockOpenVariantIcon class="w-5 h-5 text-green-500" aria-hidden="true" />
                             <span class="text-sm font-medium text-green-700">
                                 {{ $t('common.open') }}
                             </span>
@@ -61,21 +60,11 @@ defineProps<{
                         <IDCopyBadge :id="doc.id" prefix="DOC" />
                     </div>
                     <div v-if="doc.deletedAt" class="flex flex-row items-center justify-center flex-1 text-base-100 font-bold">
-                        <SvgIcon
-                            class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400"
-                            aria-hidden="true"
-                            type="mdi"
-                            :path="mdiTrashCan"
-                        />
+                        <TrashCanIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400" aria-hidden="true" />
                         {{ $t('common.deleted') }}
                     </div>
                     <div v-if="doc.updatedAt" class="flex flex-row items-end justify-end flex-1">
-                        <SvgIcon
-                            class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400"
-                            aria-hidden="true"
-                            type="mdi"
-                            :path="mdiUpdate"
-                        />
+                        <UpdateIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400" aria-hidden="true" />
                         <p>
                             {{ $t('common.updated') }}
                             <Time :value="doc.updatedAt" :ago="true" />
@@ -84,31 +73,16 @@ defineProps<{
                 </div>
                 <div class="mt-2 flex flex-row gap-2 text-base-200">
                     <div class="flex flex-row items-center justify-start flex-1">
-                        <SvgIcon
-                            class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400"
-                            aria-hidden="true"
-                            type="mdi"
-                            :path="mdiAccount"
-                        />
+                        <AccountIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400" aria-hidden="true" />
                         {{ doc.creator?.firstname }},
                         {{ doc.creator?.lastname }}
                     </div>
                     <div class="flex flex-row items-center justify-center flex-1">
-                        <SvgIcon
-                            class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400"
-                            aria-hidden="true"
-                            type="mdi"
-                            :path="mdiBriefcase"
-                        />
+                        <BriefcaseIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400" aria-hidden="true" />
                         {{ doc.creator?.jobLabel }}
                     </div>
                     <div class="flex flex-row items-center justify-end flex-1">
-                        <SvgIcon
-                            class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400"
-                            aria-hidden="true"
-                            type="mdi"
-                            :path="mdiCalendar"
-                        />
+                        <CalendarIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400" aria-hidden="true" />
                         <p>
                             {{ $t('common.created_at') }}
                             <Time :value="doc.createdAt" />

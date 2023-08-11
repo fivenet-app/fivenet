@@ -4,15 +4,16 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/galexrt/fivenet/pkg/events"
 	"github.com/nats-io/nats.go"
 	"go.uber.org/zap"
 )
 
 const (
-	BaseSubject = "perms"
+	BaseSubject events.Subject = "perms"
 
-	RolePermUpdateSubject = "roleperm.update"
-	RoleAttrUpdateSubject = "roleattr.update"
+	RolePermUpdateSubject events.Type = "roleperm.update"
+	RoleAttrUpdateSubject events.Type = "roleattr.update"
 )
 
 type RolePermUpdateEvent struct {
@@ -25,7 +26,7 @@ type RoleAttrUpdateEvent struct {
 
 func (p *Perms) registerEvents() error {
 	var err error
-	p.eventSub, err = p.events.NC.Subscribe(BaseSubject+".>", p.handleMessage)
+	p.eventSub, err = p.events.NC.Subscribe(fmt.Sprintf("%s.>", BaseSubject), p.handleMessage)
 	if err != nil {
 		return err
 	}
@@ -36,7 +37,7 @@ func (p *Perms) registerEvents() error {
 func (p *Perms) handleMessage(msg *nats.Msg) {
 	msg.Ack()
 	p.logger.Debug("received message", zap.String("subject", msg.Subject))
-	switch strings.TrimPrefix(msg.Subject, BaseSubject+".") {
+	switch events.Type(strings.TrimPrefix(msg.Subject, string(BaseSubject)+".")) {
 	case RolePermUpdateSubject:
 		event := &RolePermUpdateEvent{}
 		if err := json.Unmarshal(msg.Data, event); err != nil {
@@ -62,7 +63,7 @@ func (p *Perms) handleMessage(msg *nats.Msg) {
 	}
 }
 
-func (p *Perms) publishMessage(subj string, data any) error {
+func (p *Perms) publishMessage(subj events.Type, data any) error {
 	out, err := json.Marshal(data)
 	if err != nil {
 		return err

@@ -1,6 +1,5 @@
 <script lang="ts" setup>
-import SvgIcon from '@jamescoyle/vue-icon';
-import { mdiAccountEye, mdiClipboardPlus } from '@mdi/js';
+import { AccountEyeIcon, ClipboardPlusIcon } from 'mdi-vue3';
 import { useClipboardStore } from '~/store/clipboard';
 import { useNotificationsStore } from '~/store/notifications';
 import { toTitleCase } from '~/utils/strings';
@@ -48,18 +47,17 @@ function addToClipboard(): void {
         >
             <div class="flex flex-row justify-end">
                 <button v-if="!hideCopy" class="flex-initial text-primary-500 hover:text-primary-400" @click="addToClipboard()">
-                    <SvgIcon class="w-6 h-auto ml-auto mr-2.5" type="mdi" :path="mdiClipboardPlus" />
+                    <ClipboardPlusIcon class="w-6 h-auto ml-auto mr-2.5" />
                 </button>
                 <NuxtLink
-                    v-if="!hideCitizenLink"
-                    v-can="'CitizenStoreService.ListCitizens'"
+                    v-if="!hideCitizenLink && can('CitizenStoreService.ListCitizens')"
                     :to="{
                         name: 'citizens-id',
                         params: { id: vehicle.owner?.userId ?? 0 },
                     }"
                     class="flex-initial text-primary-500 hover:text-primary-400"
                 >
-                    <SvgIcon class="w-6 h-auto ml-auto mr-2.5" type="mdi" :path="mdiAccountEye" />
+                    <AccountEyeIcon class="w-6 h-auto ml-auto mr-2.5" />
                 </NuxtLink>
             </div>
         </td>

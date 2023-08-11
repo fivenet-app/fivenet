@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
-import SvgIcon from '@jamescoyle/vue-icon';
-import { mdiAccount, mdiClose } from '@mdi/js';
+import { AccountIcon, CloseIcon } from 'mdi-vue3';
 import Time from '~/components/partials/elements/Time.vue';
 import { UNIT_STATUS, Unit } from '~~/gen/ts/resources/dispatch/units';
 import UnitFeed from './Feed.vue';
@@ -52,12 +51,7 @@ const statusOpen = ref(false);
                                                         @click="$emit('close')"
                                                     >
                                                         <span class="sr-only">Close panel</span>
-                                                        <SvgIcon
-                                                            type="mdi"
-                                                            :path="mdiClose"
-                                                            class="h-6 w-6"
-                                                            aria-hidden="true"
-                                                        />
+                                                        <CloseIcon class="h-6 w-6" aria-hidden="true" />
                                                     </button>
                                                 </div>
                                             </div>
@@ -151,11 +145,9 @@ const statusOpen = ref(false);
                                                                         class="flex items-center justify-between py-3 pl-3 pr-4 text-sm"
                                                                     >
                                                                         <div class="flex items-center flex-1">
-                                                                            <SvgIcon
+                                                                            <AccountIcon
                                                                                 class="flex-shrink-0 w-5 h-5 text-base-400"
                                                                                 aria-hidden="true"
-                                                                                type="mdi"
-                                                                                :path="mdiAccount"
                                                                             />
                                                                             <span class="flex-1 ml-2 truncate">
                                                                                 {{ user.user?.firstname }}

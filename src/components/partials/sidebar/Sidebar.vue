@@ -1,23 +1,24 @@
 <script lang="ts" setup>
 import { Dialog, DialogPanel, Menu, MenuButton, MenuItem, MenuItems, TransitionChild, TransitionRoot } from '@headlessui/vue';
-import SvgIcon from '@jamescoyle/vue-icon';
+
 import {
-    mdiAccount,
-    mdiAccountMultiple,
-    mdiBriefcase,
-    mdiCar,
-    mdiCarEmergency,
-    mdiChevronRight,
-    mdiClose,
-    mdiCog,
-    mdiFileDocumentMultiple,
-    mdiHelpCircle,
-    mdiHome,
-    mdiLogin,
-    mdiMap,
-    mdiMenu,
-    mdiUnfoldMoreHorizontal,
-} from '@mdi/js';
+    AccountIcon,
+    AccountMultipleIcon,
+    BriefcaseIcon,
+    CarEmergencyIcon,
+    CarIcon,
+    ChevronRightIcon,
+    CloseIcon,
+    CogIcon,
+    FileDocumentMultipleIcon,
+    HelpCircleIcon,
+    HomeIcon,
+    LoginIcon,
+    MapIcon,
+    MenuIcon,
+    UnfoldMoreHorizontalIcon,
+} from 'mdi-vue3';
+import { DefineComponent } from 'vue';
 import QuickButtons from '~/components/partials/QuickButtons.vue';
 import JobSwitcher from '~/components/partials/sidebar/JobSwitcher.vue';
 import LanguageSwitcher from '~/components/partials/sidebar/LanguageSwitcher.vue';
@@ -37,7 +38,7 @@ const sidebarNavigation = ref<
         name: string;
         href: RoutesNamedLocations;
         permission: string;
-        icon: string;
+        icon: DefineComponent;
         position: 'top' | 'bottom';
         current: boolean;
         loggedIn?: boolean;
@@ -48,7 +49,7 @@ const sidebarNavigation = ref<
         name: 'common.overview',
         href: { name: 'overview' },
         permission: '',
-        icon: mdiHome,
+        icon: markRaw(HomeIcon),
         position: 'top',
         current: false,
     },
@@ -56,7 +57,7 @@ const sidebarNavigation = ref<
         name: 'common.citizen',
         href: { name: 'citizens' },
         permission: 'CitizenStoreService.ListCitizens',
-        icon: mdiAccountMultiple,
+        icon: markRaw(AccountMultipleIcon),
         position: 'top',
         current: false,
     },
@@ -64,7 +65,7 @@ const sidebarNavigation = ref<
         name: 'common.vehicle',
         href: { name: 'vehicles' },
         permission: 'DMVService.ListVehicles',
-        icon: mdiCar,
+        icon: markRaw(CarIcon),
         position: 'top',
         current: false,
     },
@@ -72,7 +73,7 @@ const sidebarNavigation = ref<
         name: 'common.document',
         href: { name: 'documents' },
         permission: 'DocStoreService.ListDocuments',
-        icon: mdiFileDocumentMultiple,
+        icon: markRaw(FileDocumentMultipleIcon),
         position: 'top',
         current: false,
     },
@@ -80,7 +81,7 @@ const sidebarNavigation = ref<
         name: 'common.job',
         href: { name: 'jobs' },
         permission: 'Jobs.View',
-        icon: mdiBriefcase,
+        icon: markRaw(BriefcaseIcon),
         position: 'top',
         current: false,
     },
@@ -88,7 +89,7 @@ const sidebarNavigation = ref<
         name: 'common.livemap',
         href: { name: 'livemap' },
         permission: 'LivemapperService.Stream',
-        icon: mdiMap,
+        icon: markRaw(MapIcon),
         position: 'top',
         current: false,
     },
@@ -97,7 +98,7 @@ const sidebarNavigation = ref<
         name: 'common.dispatch_center',
         href: { name: 'centrum' },
         permission: 'CentrumService.TakeControl',
-        icon: mdiCarEmergency,
+        icon: markRaw(CarEmergencyIcon),
         position: 'top',
         current: false,
     },
@@ -105,7 +106,7 @@ const sidebarNavigation = ref<
         name: 'common.control_panel',
         href: { name: 'rector' },
         permission: 'RectorService.GetRoles',
-        icon: mdiCog,
+        icon: markRaw(CogIcon),
         position: 'top',
         current: false,
     },
@@ -113,7 +114,7 @@ const sidebarNavigation = ref<
         name: 'common.about',
         href: { name: 'about' },
         permission: '',
-        icon: mdiHelpCircle,
+        icon: markRaw(HelpCircleIcon),
         position: 'bottom',
         current: false,
     },
@@ -246,7 +247,7 @@ const appVersion = activeChar ? ' v' + __APP_VERSION__ + (import.meta.env.DEV ? 
                             exact-active-class="text-neutral"
                             aria-current-value="page"
                         >
-                            <SvgIcon class="h-6 w-6" aria-hidden="true" type="mdi" :path="mdiHome" />
+                            <HomeIcon class="h-6 w-6" aria-hidden="true" />
                             <span class="mt-2">{{ $t('common.home') }}</span>
                         </NuxtLink>
                         <NuxtLink
@@ -256,7 +257,7 @@ const appVersion = activeChar ? ' v' + __APP_VERSION__ + (import.meta.env.DEV ? 
                             exact-active-class="text-neutral"
                             aria-current-value="page"
                         >
-                            <SvgIcon class="h-6 w-6" aria-hidden="true" type="mdi" :path="mdiLogin" />
+                            <LoginIcon class="h-6 w-6" aria-hidden="true" />
                             <span class="mt-2">{{ $t('common.login') }}</span>
                         </NuxtLink>
                     </span>
@@ -268,7 +269,7 @@ const appVersion = activeChar ? ' v' + __APP_VERSION__ + (import.meta.env.DEV ? 
                             exact-active-class="text-neutral"
                             aria-current-value="page"
                         >
-                            <SvgIcon class="h-6 w-6" aria-hidden="true" type="mdi" :path="mdiHome" />
+                            <HomeIcon class="h-6 w-6" aria-hidden="true" />
                             <span class="mt-2">{{ $t('common.home') }}</span>
                         </NuxtLink>
                         <NuxtLink
@@ -278,7 +279,7 @@ const appVersion = activeChar ? ' v' + __APP_VERSION__ + (import.meta.env.DEV ? 
                             exact-active-class="text-neutral"
                             aria-current-value="page"
                         >
-                            <SvgIcon class="h-6 w-6" aria-hidden="true" type="mdi" :path="mdiUnfoldMoreHorizontal" />
+                            <UnfoldMoreHorizontalIcon class="h-6 w-6" aria-hidden="true" />
                             <span class="mt-2">{{ $t('pages.auth.character_selector.title') }}</span>
                         </NuxtLink>
                     </span>
@@ -296,11 +297,10 @@ const appVersion = activeChar ? ' v' + __APP_VERSION__ + (import.meta.env.DEV ? 
                         ]"
                         :aria-current="item.current ? 'page' : undefined"
                     >
-                        <SvgIcon
+                        <component
+                            :is="item.icon"
                             :class="[item.current ? 'text-neutral' : 'text-accent-100 group-hover:text-neutral', 'h-6 w-6']"
                             aria-hidden="true"
-                            type="mdi"
-                            :path="item.icon"
                         />
                         <span class="mt-2">{{ $t(item.name) }}</span>
                     </NuxtLink>
@@ -319,11 +319,10 @@ const appVersion = activeChar ? ' v' + __APP_VERSION__ + (import.meta.env.DEV ? 
                         ]"
                         :aria-current="item.current ? 'page' : undefined"
                     >
-                        <SvgIcon
+                        <component
+                            :is="item.icon"
                             :class="[item.current ? 'text-neutral' : 'text-accent-100 group-hover:text-neutral', 'h-6 w-6']"
                             aria-hidden="true"
-                            type="mdi"
-                            :path="item.icon"
                         />
                         <span class="mt-2">{{ $t(item.name) }}</span>
                     </NuxtLink>
@@ -372,7 +371,7 @@ const appVersion = activeChar ? ' v' + __APP_VERSION__ + (import.meta.env.DEV ? 
                                         class="flex items-center justify-center w-12 h-12 rounded-full focus:outline-none ring-2 ring-neutral"
                                         @click="mobileMenuOpen = false"
                                     >
-                                        <SvgIcon class="w-6 h-6 text-neutral" aria-hidden="true" type="mdi" :path="mdiClose" />
+                                        <CloseIcon class="w-6 h-6 text-neutral" aria-hidden="true" />
                                         <span class="sr-only">{{ $t('components.partials.sidebar.close_sidebar') }}</span>
                                     </button>
                                 </div>
@@ -388,11 +387,9 @@ const appVersion = activeChar ? ' v' + __APP_VERSION__ + (import.meta.env.DEV ? 
                                             :to="{ name: 'index' }"
                                             class="text-accent-100 hover:bg-accent-100/10 hover:text-neutral font-medium group flex items-center rounded-md py-2 px-3 text-sm"
                                         >
-                                            <SvgIcon
+                                            <HomeIcon
                                                 class="text-accent-100 group-hover:text-neutral mr-3 h-6 w-6"
                                                 aria-hidden="true"
-                                                type="mdi"
-                                                :path="mdiHome"
                                             />
                                             <span>{{ $t('common.home') }}</span>
                                         </NuxtLink>
@@ -410,9 +407,8 @@ const appVersion = activeChar ? ' v' + __APP_VERSION__ + (import.meta.env.DEV ? 
                                             ]"
                                             :aria-current="item.current ? 'page' : undefined"
                                         >
-                                            <SvgIcon
-                                                type="mdi"
-                                                :path="item.icon"
+                                            <component
+                                                :is="item.icon"
                                                 :class="[
                                                     item.current ? 'text-neutral' : 'text-accent-100 group-hover:text-neutral',
                                                     'mr-3 h-6 w-6',
@@ -440,9 +436,8 @@ const appVersion = activeChar ? ' v' + __APP_VERSION__ + (import.meta.env.DEV ? 
                                             ]"
                                             :aria-current="item.current ? 'page' : undefined"
                                         >
-                                            <SvgIcon
-                                                type="mdi"
-                                                :path="item.icon"
+                                            <component
+                                                :is="item.icon"
                                                 :class="[
                                                     item.current ? 'text-neutral' : 'text-accent-100 group-hover:text-neutral',
                                                     'mr-3 h-6 w-6',
@@ -471,7 +466,7 @@ const appVersion = activeChar ? ' v' + __APP_VERSION__ + (import.meta.env.DEV ? 
                         @click="mobileMenuOpen = true"
                     >
                         <span class="sr-only">{{ $t('components.partials.sidebar.open_sidebar') }}</span>
-                        <SvgIcon class="w-6 h-6" aria-hidden="true" type="mdi" :path="mdiMenu" />
+                        <MenuIcon class="w-6 h-6" aria-hidden="true" />
                     </button>
                     <div class="flex justify-between flex-1 px-4 sm:px-6">
                         <div class="flex flex-1">
@@ -485,24 +480,14 @@ const appVersion = activeChar ? ' v' + __APP_VERSION__ + (import.meta.env.DEV ? 
                                                 }"
                                                 class="text-base-400 hover:text-neutral hover:transition-colors"
                                             >
-                                                <SvgIcon
-                                                    class="flex-shrink-0 w-5 h-5"
-                                                    aria-hidden="true"
-                                                    type="mdi"
-                                                    :path="mdiHome"
-                                                />
+                                                <HomeIcon class="flex-shrink-0 w-5 h-5" aria-hidden="true" />
                                                 <span class="sr-only">Home</span>
                                             </NuxtLink>
                                         </div>
                                     </li>
                                     <li v-for="page in breadcrumbs" :key="page.name">
                                         <div class="flex items-center">
-                                            <SvgIcon
-                                                class="flex-shrink-0 w-5 h-5 text-base-400"
-                                                aria-hidden="true"
-                                                type="mdi"
-                                                :path="mdiChevronRight"
-                                            />
+                                            <ChevronRightIcon class="flex-shrink-0 w-5 h-5 text-base-400" aria-hidden="true" />
                                             <NuxtLink
                                                 :to="{ path: page.href }"
                                                 :class="[
@@ -519,7 +504,7 @@ const appVersion = activeChar ? ' v' + __APP_VERSION__ + (import.meta.env.DEV ? 
                             </nav>
                         </div>
                         <div class="flex items-center ml-2 space-x-4 sm:ml-6 sm:space-x-6">
-                            <div v-can="'SuperUser'">
+                            <div v-if="can('SuperUser')">
                                 <JobSwitcher v-if="activeChar" />
                             </div>
                             <div v-if="activeChar" class="text-sm font-medium text-base-400">
@@ -536,10 +521,8 @@ const appVersion = activeChar ? ' v' + __APP_VERSION__ + (import.meta.env.DEV ? 
                                         <span class="sr-only">
                                             {{ $t('components.partials.sidebar.open_usermenu') }}
                                         </span>
-                                        <SvgIcon
+                                        <AccountIcon
                                             class="w-auto h-10 rounded-full hover:transition-colors text-base-300 bg-base-800 fill-base-300 hover:text-base-100 hover:fill-base-100"
-                                            type="mdi"
-                                            :path="mdiAccount"
                                         />
                                     </MenuButton>
                                 </div>

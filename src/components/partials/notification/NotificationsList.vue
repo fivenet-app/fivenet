@@ -1,9 +1,8 @@
 <script lang="ts" setup>
 import { Switch } from '@headlessui/vue';
-import SvgIcon from '@jamescoyle/vue-icon';
-import { mdiBell, mdiChevronRight } from '@mdi/js';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { watchDebounced } from '@vueuse/core';
+import { BellIcon, ChevronRightIcon } from 'mdi-vue3';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -144,7 +143,7 @@ watchDebounced(includeRead, async () => refresh(), { debounce: 500, maxWait: 150
                         <DataNoDataBlock
                             v-else-if="notifications && notifications.length === 0"
                             :type="$t('common.notification', 2)"
-                            :icon="mdiBell"
+                            :icon="BellIcon"
                         />
                         <div v-else>
                             <ul class="flex flex-col">
@@ -186,12 +185,10 @@ watchDebounced(includeRead, async () => refresh(), { debounce: 500, maxWait: 150
                                                 </p>
                                             </div>
                                         </div>
-                                        <SvgIcon
+                                        <ChevronRightIcon
                                             v-if="not.data && not.data.link"
                                             class="h-5 w-5 flex-none text-gray-400"
                                             aria-hidden="true"
-                                            type="mdi"
-                                            :path="mdiChevronRight"
                                         />
                                         <span class="h-5 w-5" v-else></span>
                                     </div>

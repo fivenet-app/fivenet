@@ -82,16 +82,16 @@ const openPreview = ref(false);
             <div class="sm:flex sm:items-center">
                 <div class="sm:flex-auto inline-flex">
                     <button
+                        v-if="can('DocStoreService.CreateTemplate')"
                         type="submit"
-                        v-can="'DocStoreService.CreateTemplate'"
                         @click="editTemplate()"
                         class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300"
                     >
                         {{ $t('common.edit') }}
                     </button>
                     <button
+                        v-if="can('DocStoreService.CreateTemplate')"
                         type="button"
-                        v-can="'DocStoreService.CreateTemplate'"
                         @click="openPreview = true"
                         class="flex justify-center w-full px-3 py-2 ml-4 text-sm font-semibold transition-colors rounded-md bg-accent-600 text-neutral hover:bg-accent-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300"
                     >
@@ -171,8 +171,8 @@ const openPreview = ref(false);
             </div>
             <div class="flow-root mt-4">
                 <button
+                    v-if="can('DocStoreService.DeleteTemplate')"
                     type="submit"
-                    v-can="'DocStoreService.DeleteTemplate'"
                     @click="deleteTemplate()"
                     class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-error-600 text-neutral hover:bg-error-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300"
                 >

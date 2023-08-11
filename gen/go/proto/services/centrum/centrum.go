@@ -273,13 +273,13 @@ func (s *Server) Stream(req *StreamRequest, srv CentrumService_StreamServer) err
 		return in.UserId == userInfo.UserId
 	})
 	if !controller {
-		sub, err := s.events.JS.ChanSubscribe(fmt.Sprintf(BaseSubject+".%s.*.*.%d", userInfo.Job, unitId), msgCh)
+		sub, err := s.events.JS.ChanSubscribe(fmt.Sprintf("%s.%s.*.*.%d", BaseSubject, userInfo.Job, unitId), msgCh)
 		if err != nil {
 			return err
 		}
 		defer sub.Unsubscribe()
 	} else {
-		sub, err := s.events.JS.ChanSubscribe(fmt.Sprintf(BaseSubject+".%s.>", userInfo.Job), msgCh)
+		sub, err := s.events.JS.ChanSubscribe(fmt.Sprintf("%s.%s.>", BaseSubject, userInfo.Job), msgCh)
 		if err != nil {
 			return err
 		}
@@ -300,8 +300,8 @@ func (s *Server) Stream(req *StreamRequest, srv CentrumService_StreamServer) err
 
 	// Send initial message to client
 	resp := &StreamResponse{}
-	resp.Change = &StreamResponse_Initial{
-		Initial: &Initial{
+	resp.Change = &StreamResponse_LatestState{
+		LatestState: &LatestState{
 			IsDisponent: true,
 			Settings:    settings,
 			Unit:        unit,
@@ -349,14 +349,33 @@ func (s *Server) Stream(req *StreamRequest, srv CentrumService_StreamServer) err
 
 			case TopicDispatch:
 				switch tType {
+				case TypeDispatchCreated:
+					var dest dispatch.Dispatch
+					if err := proto.Unmarshal(msg.Data, &dest); err != nil {
+						return err
+					}
+
+					resp.Change = &StreamResponse_DispatchCreated{
+						DispatchCreated: &dest,
+					}
+				case TypeDispatchDeleted:
+					var dest dispatch.Dispatch
+					if err := proto.Unmarshal(msg.Data, &dest); err != nil {
+						return err
+					}
+
+					resp.Change = &StreamResponse_DispatchDeleted{
+						DispatchDeleted: &dest,
+					}
+
 				case TypeDispatchUpdated:
 					var dest dispatch.Dispatch
 					if err := proto.Unmarshal(msg.Data, &dest); err != nil {
 						return err
 					}
 
-					resp.Change = &StreamResponse_DispatchUpdate{
-						DispatchUpdate: &dest,
+					resp.Change = &StreamResponse_DispatchUpdated{
+						DispatchUpdated: &dest,
 					}
 
 				case TypeDispatchStatus:
@@ -369,37 +388,48 @@ func (s *Server) Stream(req *StreamRequest, srv CentrumService_StreamServer) err
 						DispatchStatus: &dest,
 					}
 
-				case TypeDispatchAssigned:
-					var dest dispatch.Dispatch
-					if err := proto.Unmarshal(msg.Data, &dest); err != nil {
-						return err
-					}
-
-					resp.Change = &StreamResponse_DispatchAssigned{
-						DispatchAssigned: &dest,
-					}
-
-				case TypeDispatchUnassigned:
-					var dest dispatch.Dispatch
-					if err := proto.Unmarshal(msg.Data, &dest); err != nil {
-						return err
-					}
-
-					resp.Change = &StreamResponse_DispatchUnassigned{
-						DispatchUnassigned: &dest,
-					}
 				}
 
 			case TopicUnit:
 				switch tType {
+				case TypeUnitUserAssigned:
+					var dest dispatch.Unit
+					if err := proto.Unmarshal(msg.Data, &dest); err != nil {
+						return err
+					}
+
+					resp.Change = &StreamResponse_UnitAssigned{
+						UnitAssigned: &dest,
+					}
+
+				case TypeUnitCreated:
+					var dest dispatch.Unit
+					if err := proto.Unmarshal(msg.Data, &dest); err != nil {
+						return err
+					}
+
+					resp.Change = &StreamResponse_UnitCreated{
+						UnitCreated: &dest,
+					}
+
+				case TypeUnitDeleted:
+					var dest dispatch.Unit
+					if err := proto.Unmarshal(msg.Data, &dest); err != nil {
+						return err
+					}
+
+					resp.Change = &StreamResponse_UnitDeleted{
+						UnitDeleted: &dest,
+					}
+
 				case TypeUnitUpdated:
 					var dest dispatch.Unit
 					if err := proto.Unmarshal(msg.Data, &dest); err != nil {
 						return err
 					}
 
-					resp.Change = &StreamResponse_UnitUpdate{
-						UnitUpdate: &dest,
+					resp.Change = &StreamResponse_UnitUpdated{
+						UnitUpdated: &dest,
 					}
 
 				case TypeUnitStatus:
@@ -410,40 +440,6 @@ func (s *Server) Stream(req *StreamRequest, srv CentrumService_StreamServer) err
 
 					resp.Change = &StreamResponse_UnitStatus{
 						UnitStatus: &dest,
-					}
-				case TypeUnitUserAssigned:
-					var dest dispatch.Unit
-					if err := proto.Unmarshal(msg.Data, &dest); err != nil {
-						return err
-					}
-
-					found := false
-					for _, u := range dest.Users {
-						if u.UserId == userInfo.UserId {
-							found = true
-							break
-						}
-					}
-
-					if found {
-						resp.Change = &StreamResponse_UnitAssigned{
-							UnitAssigned: &dest,
-						}
-					} else {
-						resp.Change = &StreamResponse_UnitAssigned{
-							UnitAssigned: &dispatch.Unit{
-								Id: 0,
-							},
-						}
-					}
-				case TypeUnitDeleted:
-					var dest dispatch.Unit
-					if err := proto.Unmarshal(msg.Data, &dest); err != nil {
-						return err
-					}
-
-					resp.Change = &StreamResponse_UnitDeleted{
-						UnitDeleted: dest.Id,
 					}
 				}
 			}

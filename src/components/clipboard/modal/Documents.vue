@@ -1,6 +1,5 @@
 <script lang="ts" setup>
-import SvgIcon from '@jamescoyle/vue-icon';
-import { mdiFileDocumentMultiple, mdiTrashCan } from '@mdi/js';
+import { FileDocumentMultipleIcon, TrashCanIcon } from 'mdi-vue3';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import { ClipboardDocument, useClipboardStore } from '~/store/clipboard';
 import { useNotificationsStore } from '~/store/notifications';
@@ -101,7 +100,7 @@ watch(props, async (newVal) => {
     <h3 class="font-medium pt-1 pb-1">Documents</h3>
     <DataNoDataBlock
         v-if="documents?.length === 0"
-        :icon="mdiFileDocumentMultiple"
+        :icon="FileDocumentMultipleIcon"
         :message="$t('components.clipboard.clipboard_modal.no_data', [$t('common.document', 2)])"
     />
     <table v-else class="min-w-full divide-y divide-gray-700">
@@ -119,7 +118,7 @@ watch(props, async (newVal) => {
                 <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-0">
                     <span class="sr-only">{{ $t('common.action', 2) }}</span>
                     <button v-if="selected.length > 0" @click="removeAll()">
-                        <SvgIcon class="w-6 h-6 mx-auto text-neutral" type="mdi" :path="mdiTrashCan" />
+                        <TrashCanIcon class="w-6 h-6 mx-auto text-neutral" />
                     </button>
                 </th>
             </tr>
@@ -160,7 +159,7 @@ watch(props, async (newVal) => {
                 </td>
                 <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
                     <button @click="remove(item, true)">
-                        <SvgIcon class="w-6 h-6 mx-auto text-neutral" type="mdi" :path="mdiTrashCan" />
+                        <TrashCanIcon class="w-6 h-6 mx-auto text-neutral" />
                     </button>
                 </td>
             </tr>

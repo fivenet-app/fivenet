@@ -1,6 +1,5 @@
 <script lang="ts" setup>
-import SvgIcon from '@jamescoyle/vue-icon';
-import { mdiCalculator } from '@mdi/js';
+import { CalculatorIcon } from 'mdi-vue3';
 import { SelectedPenalty } from '~/components/penaltycalculator/Calculator.vue';
 import { LawBook } from '~~/gen/ts/resources/laws/laws';
 
@@ -21,7 +20,7 @@ function getNameForLawBookId(id: bigint): string | undefined {
         disabled
         class="relative block w-full p-12 text-center border-2 border-gray-300 border-dashed rounded-lg hover:border-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
     >
-        <SvgIcon class="w-12 h-12 mx-auto text-neutral" type="mdi" :path="mdiCalculator" />
+        <CalculatorIcon class="w-12 h-12 mx-auto text-neutral" />
         <span class="block mt-2 text-sm font-semibold text-gray-300">
             {{ $t('common.none_selected', [`${$t('common.crime')}`]) }}
         </span>

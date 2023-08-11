@@ -1,7 +1,6 @@
 <script lang="ts" setup>
-import SvgIcon from '@jamescoyle/vue-icon';
-import { mdiArrowExpand, mdiChevronRight, mdiFileDocumentMultiple, mdiLock, mdiLockOpenVariant } from '@mdi/js';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
+import { ArrowExpandIcon, ChevronRightIcon, FileDocumentMultipleIcon, LockIcon, LockOpenVariantIcon } from 'mdi-vue3';
 import { ref } from 'vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
@@ -65,7 +64,7 @@ watch(offset, async () => refresh());
         <DataNoDataBlock
             v-else-if="relations && relations.length === 0"
             :type="`${$t('common.document', 1)} ${$t('common.relation', 2)}`"
-            :icon="mdiFileDocumentMultiple"
+            :icon="FileDocumentMultipleIcon"
         />
         <div v-else-if="relations">
             <!-- Relations list (smallest breakpoint only) -->
@@ -75,12 +74,7 @@ watch(offset, async () => refresh());
                         <a href="#" class="block px-4 py-4 bg-base-800 hover:bg-base-700">
                             <span class="flex items-center space-x-4">
                                 <span class="flex flex-1 space-x-2 truncate">
-                                    <SvgIcon
-                                        class="flex-shrink-0 w-5 h-5 text-gray-400"
-                                        aria-hidden="true"
-                                        type="mdi"
-                                        :path="mdiArrowExpand"
-                                    />
+                                    <ArrowExpandIcon class="flex-shrink-0 w-5 h-5 text-gray-400" aria-hidden="true" />
                                     <span class="flex flex-col text-sm truncate">
                                         <span>
                                             <NuxtLink
@@ -103,12 +97,7 @@ watch(offset, async () => refresh());
                                                 v-if="relation.document?.closed"
                                                 class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-error-100"
                                             >
-                                                <SvgIcon
-                                                    class="w-5 h-5 text-error-400"
-                                                    aria-hidden="true"
-                                                    type="mdi"
-                                                    :path="mdiLock"
-                                                />
+                                                <LockIcon class="w-5 h-5 text-error-400" aria-hidden="true" />
                                                 <span class="text-sm font-medium text-error-700">
                                                     {{ $t('common.close', 2) }}
                                                 </span>
@@ -117,12 +106,7 @@ watch(offset, async () => refresh());
                                                 v-else
                                                 class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-success-100"
                                             >
-                                                <SvgIcon
-                                                    class="w-5 h-5 text-green-500"
-                                                    aria-hidden="true"
-                                                    type="mdi"
-                                                    :path="mdiLockOpenVariant"
-                                                />
+                                                <LockOpenVariantIcon class="w-5 h-5 text-green-500" aria-hidden="true" />
                                                 <span class="text-sm font-medium text-green-700">
                                                     {{ $t('common.open') }}
                                                 </span>
@@ -151,12 +135,7 @@ watch(offset, async () => refresh());
                                         <Time :value="relation.createdAt" :ago="true" />
                                     </span>
                                 </span>
-                                <SvgIcon
-                                    class="flex-shrink-0 w-5 h-5 text-base-200"
-                                    aria-hidden="true"
-                                    type="mdi"
-                                    :path="mdiChevronRight"
-                                />
+                                <ChevronRightIcon class="flex-shrink-0 w-5 h-5 text-base-200" aria-hidden="true" />
                             </span>
                         </a>
                     </li>
@@ -215,12 +194,7 @@ watch(offset, async () => refresh());
                                                 v-if="relation.document?.closed"
                                                 class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-error-100"
                                             >
-                                                <SvgIcon
-                                                    class="w-5 h-5 text-error-400"
-                                                    aria-hidden="true"
-                                                    type="mdi"
-                                                    :path="mdiLock"
-                                                />
+                                                <LockIcon class="w-5 h-5 text-error-400" aria-hidden="true" />
                                                 <span class="text-sm font-medium text-error-700">
                                                     {{ $t('common.close', 2) }}
                                                 </span>
@@ -229,12 +203,7 @@ watch(offset, async () => refresh());
                                                 v-else
                                                 class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-success-100"
                                             >
-                                                <SvgIcon
-                                                    class="w-5 h-5 text-green-500"
-                                                    aria-hidden="true"
-                                                    type="mdi"
-                                                    :path="mdiLockOpenVariant"
-                                                />
+                                                <LockOpenVariantIcon class="w-5 h-5 text-green-500" aria-hidden="true" />
                                                 <span class="text-sm font-medium text-green-700">
                                                     {{ $t('common.open') }}
                                                 </span>

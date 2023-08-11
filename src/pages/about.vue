@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
-import SvgIcon from '@jamescoyle/vue-icon';
-import { mdiChevronDown, mdiLock, mdiMagnify, mdiMap } from '@mdi/js';
+
+import { ChevronDownIcon, LockIcon, MagnifyIcon, MapIcon } from 'mdi-vue3';
 import '~/assets/css/herofull-pattern.css';
 import Footer from '~/components/partials/Footer.vue';
 import DiscordLogo from '~/components/partials/logos/DiscordLogo.vue';
@@ -93,12 +93,7 @@ const faqs = [
                                 <p></p>
                                 <ul role="list" class="mt-8 space-y-8 text-gray-400">
                                     <li class="flex gap-x-3">
-                                        <SvgIcon
-                                            class="mt-1 h-5 w-5 flex-none text-primary-300"
-                                            aria-hidden="true"
-                                            type="mdi"
-                                            :path="mdiMagnify"
-                                        />
+                                        <MagnifyIcon class="mt-1 h-5 w-5 flex-none text-primary-300" aria-hidden="true" />
                                         <span>
                                             <strong class="font-semibold text-gray-200">{{
                                                 $t('pages.about.introduction.feature_one.title')
@@ -107,12 +102,7 @@ const faqs = [
                                         </span>
                                     </li>
                                     <li class="flex gap-x-3">
-                                        <SvgIcon
-                                            class="mt-1 h-5 w-5 flex-none text-primary-300"
-                                            aria-hidden="true"
-                                            type="mdi"
-                                            :path="mdiLock"
-                                        />
+                                        <LockIcon class="mt-1 h-5 w-5 flex-none text-primary-300" aria-hidden="true" />
                                         <span>
                                             <strong class="font-semibold text-gray-200">{{
                                                 $t('pages.about.introduction.feature_two.title')
@@ -121,12 +111,7 @@ const faqs = [
                                         </span>
                                     </li>
                                     <li class="flex gap-x-3">
-                                        <SvgIcon
-                                            class="mt-1 h-5 w-5 flex-none text-primary-300"
-                                            aria-hidden="true"
-                                            type="mdi"
-                                            :path="mdiMap"
-                                        />
+                                        <MapIcon class="mt-1 h-5 w-5 flex-none text-primary-300" aria-hidden="true" />
                                         <span>
                                             <strong class="font-semibold text-gray-200">{{
                                                 $t('pages.about.introduction.feature_three.title')
@@ -152,11 +137,9 @@ const faqs = [
                                     <DisclosureButton class="flex w-full items-start justify-between text-left text-white">
                                         <span class="text-base font-semibold leading-7">{{ faq.question }}</span>
                                         <span class="ml-6 flex h-7 items-center">
-                                            <SvgIcon
+                                            <ChevronDownIcon
                                                 :class="[open ? 'upsidedown' : '', 'h-6 w-6 transition-transform']"
                                                 aria-hidden="true"
-                                                type="mdi"
-                                                :path="mdiChevronDown"
                                             />
                                         </span>
                                     </DisclosureButton>

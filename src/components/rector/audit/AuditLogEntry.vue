@@ -1,7 +1,6 @@
 <script lang="ts" setup>
-import SvgIcon from '@jamescoyle/vue-icon';
-import { mdiClipboardPlus } from '@mdi/js';
 import { useClipboard } from '@vueuse/core';
+import { ClipboardPlusIcon } from 'mdi-vue3';
 import VueJsonPretty from 'vue-json-pretty';
 import 'vue-json-pretty/lib/styles.css';
 import Time from '~/components/partials/elements/Time.vue';
@@ -87,7 +86,7 @@ ${JSON.stringify(JSON.parse(props.log.data!), null, 2)}
                 class="flex-initial text-primary-500 hover:text-primary-400"
                 :title="$t('components.clipboard.clipboard_button.add')"
             >
-                <SvgIcon class="w-6 h-auto ml-auto mr-2.5" @click="addToClipboard" type="mdi" :path="mdiClipboardPlus" />
+                <ClipboardPlusIcon class="w-6 h-auto ml-auto mr-2.5" @click="addToClipboard" />
             </button>
         </td>
     </tr>

@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
-import SvgIcon from '@jamescoyle/vue-icon';
-import { mdiChevronDown } from '@mdi/js';
+
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
+import { ChevronDownIcon } from 'mdi-vue3';
 import Divider from '~/components/partials/elements/Divider.vue';
 import { useNotificationsStore } from '~/store/notifications';
 import { Job } from '~~/gen/ts/resources/jobs/jobs';
@@ -190,11 +190,9 @@ onMounted(async () => {
                                 {{ $t(`perms.${category}.category`) }}
                             </span>
                             <span class="ml-6 flex h-7 items-center">
-                                <SvgIcon
+                                <ChevronDownIcon
                                     :class="[open ? 'upsidedown' : '', 'h-6 w-6 transition-transform']"
                                     aria-hidden="true"
-                                    type="mdi"
-                                    :path="mdiChevronDown"
                                 />
                             </span>
                         </DisclosureButton>

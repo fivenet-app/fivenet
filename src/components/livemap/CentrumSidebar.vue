@@ -1,21 +1,22 @@
 <script lang="ts" setup>
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
-import SvgIcon from '@jamescoyle/vue-icon';
-import {
-    mdiCalendarCheck,
-    mdiCalendarRemove,
-    mdiCarBack,
-    mdiCarEmergency,
-    mdiCheckBold,
-    mdiChevronDown,
-    mdiCoffee,
-    mdiHelpCircle,
-    mdiHoopHouse,
-    mdiInformationOutline,
-    mdiListStatus,
-    mdiMarkerCheck,
-} from '@mdi/js';
+
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
+import {
+    CalendarCheckIcon,
+    CalendarRemoveIcon,
+    CarBackIcon,
+    CarEmergencyIcon,
+    CheckBoldIcon,
+    ChevronDownIcon,
+    CoffeeIcon,
+    HelpCircleIcon,
+    HoopHouseIcon,
+    InformationOutlineIcon,
+    ListStatusIcon,
+    MarkerCheckIcon,
+} from 'mdi-vue3';
+import { DefineComponent } from 'vue';
 import { default as UnitDetails } from '~/components/centrum/units/Details.vue';
 import DispatchEntry from '~/components/livemap/centrum/DispatchEntry.vue';
 import { useNotificationsStore } from '~/store/notifications';
@@ -36,22 +37,28 @@ const disponents = ref<UserShort[]>([]);
 const units = ref<Array<Unit>>([]);
 const dispatches = ref<Array<Dispatch>>([]);
 
-type Action = { icon: string; name: string; action?: Function; class?: string; status?: DISPATCH_STATUS | UNIT_STATUS };
+type Action = {
+    icon: DefineComponent;
+    name: string;
+    action?: Function;
+    class?: string;
+    status?: DISPATCH_STATUS | UNIT_STATUS;
+};
 
 const actionsDispatch: Action[] = [
-    { icon: mdiCarBack, name: 'En Route', class: 'bg-info-600', status: DISPATCH_STATUS.EN_ROUTE },
-    { icon: mdiMarkerCheck, name: 'On Scene', class: 'bg-primary-600', status: DISPATCH_STATUS.ON_SCENE },
-    { icon: mdiHelpCircle, name: 'Need Assistance', class: 'bg-warn-600', status: DISPATCH_STATUS.NEED_ASSISTANCE },
-    { icon: mdiCheckBold, name: 'Completed', class: 'bg-success-600', status: DISPATCH_STATUS.COMPLETED },
-    { icon: mdiListStatus, name: 'Update Status', class: 'bg-base-800' },
+    { icon: markRaw(CarBackIcon), name: 'En Route', class: 'bg-info-600', status: DISPATCH_STATUS.EN_ROUTE },
+    { icon: markRaw(MarkerCheckIcon), name: 'On Scene', class: 'bg-primary-600', status: DISPATCH_STATUS.ON_SCENE },
+    { icon: markRaw(HelpCircleIcon), name: 'Need Assistance', class: 'bg-warn-600', status: DISPATCH_STATUS.NEED_ASSISTANCE },
+    { icon: markRaw(CheckBoldIcon), name: 'Completed', class: 'bg-success-600', status: DISPATCH_STATUS.COMPLETED },
+    { icon: markRaw(ListStatusIcon), name: 'Update Status', class: 'bg-base-800' },
 ];
 
 const actionsUnit: Action[] = [
-    { icon: mdiCarBack, name: 'Unavailable', class: 'bg-error-600', status: UNIT_STATUS.UNAVAILABLE },
-    { icon: mdiCalendarCheck, name: 'Available', class: 'bg-success-600', status: UNIT_STATUS.AVAILABLE },
-    { icon: mdiCoffee, name: 'On Break', class: 'bg-warn-600', status: UNIT_STATUS.ON_BREAK },
-    { icon: mdiCalendarRemove, name: 'Busy', class: 'bg-info-600', status: UNIT_STATUS.BUSY },
-    { icon: mdiListStatus, name: 'Update Status', class: 'bg-base-800' },
+    { icon: markRaw(CarBackIcon), name: 'Unavailable', class: 'bg-error-600', status: UNIT_STATUS.UNAVAILABLE },
+    { icon: markRaw(CalendarCheckIcon), name: 'Available', class: 'bg-success-600', status: UNIT_STATUS.AVAILABLE },
+    { icon: markRaw(CoffeeIcon), name: 'On Break', class: 'bg-warn-600', status: UNIT_STATUS.ON_BREAK },
+    { icon: markRaw(CalendarRemoveIcon), name: 'Busy', class: 'bg-info-600', status: UNIT_STATUS.BUSY },
+    { icon: markRaw(ListStatusIcon), name: 'Update Status', class: 'bg-base-800' },
 ];
 
 const abort = ref<AbortController | undefined>();
@@ -83,52 +90,22 @@ async function startStream(): Promise<void> {
                 continue;
             }
 
-            if (resp.change.oneofKind === 'initial') {
-                settings.value = resp.change.initial.settings;
-                ownUnit.value = resp.change.initial.unit;
-                units.value = resp.change.initial.units;
-                dispatches.value = resp.change.initial.dispatches;
-            } else if (resp.change.oneofKind === 'dispatchUpdate') {
-                const id = resp.change.dispatchUpdate.id;
-                const idx = dispatches.value?.findIndex((d) => d.id === id) ?? -1;
-                if (idx === -1) {
-                    dispatches.value?.unshift(resp.change.dispatchUpdate);
-                } else {
-                    dispatches.value![idx] = resp.change.dispatchUpdate;
+            if (resp.change.oneofKind === 'latestState') {
+                settings.value = resp.change.latestState.settings;
+                ownUnit.value = resp.change.latestState.unit;
+                units.value = resp.change.latestState.units;
+                dispatches.value = resp.change.latestState.dispatches;
+            } else if (resp.change.oneofKind === 'settings') {
+                settings.value = resp.change.settings;
+            } else if (resp.change.oneofKind === 'disponents') {
+                disponents.value = resp.change.disponents.disponents;
+                // If user is part of disponents list, we need to restart the stream
+                if (!resp.change.disponents.active) {
+                    stopStream();
+                    setTimeout(() => {
+                        startStream();
+                    }, 250);
                 }
-            } else if (resp.change.oneofKind === 'dispatchStatus') {
-                feed.value.unshift(resp.change.dispatchStatus);
-            } else if (resp.change.oneofKind === 'dispatchUnassigned') {
-                const id = resp.change.dispatchUnassigned.id;
-                const idx = dispatches.value?.findIndex((d) => d.id === id) ?? -1;
-                if (idx === -1) {
-                    dispatches.value?.unshift(resp.change.dispatchUnassigned);
-                } else {
-                    dispatches.value![idx].units = resp.change.dispatchUnassigned.units;
-                }
-            } else if (resp.change.oneofKind === 'dispatchAssigned') {
-                const id = resp.change.dispatchAssigned.id;
-                const idx = dispatches.value?.findIndex((d) => d.id === id) ?? -1;
-                if (idx === -1) {
-                    dispatches.value?.unshift(resp.change.dispatchAssigned);
-                } else {
-                    dispatches.value![idx] = resp.change.dispatchAssigned;
-                }
-            } else if (resp.change.oneofKind === 'unitUpdate') {
-                const id = resp.change.unitUpdate.id;
-                if (!ownUnit.value) continue;
-
-                if (ownUnit.value.id === id) {
-                    ownUnit.value = resp.change.unitUpdate;
-                }
-                const idx = units.value?.findIndex((d) => d.id === id) ?? -1;
-                if (idx === -1) {
-                    units.value?.unshift(resp.change.unitUpdate);
-                } else {
-                    units.value![idx] = resp.change.unitUpdate;
-                }
-            } else if (resp.change.oneofKind === 'unitStatus') {
-                feed.value.unshift(resp.change.unitStatus);
             } else if (resp.change.oneofKind === 'unitAssigned') {
                 if (resp.change.unitAssigned.id === 0n) {
                     // User has been removed from the unit
@@ -149,29 +126,55 @@ async function startStream(): Promise<void> {
                         type: 'success',
                     });
                 }
-            } else if (resp.change.oneofKind === 'unitDeleted') {
-                if (!ownUnit.value) continue;
-
-                const id = resp.change.unitDeleted;
-                if (ownUnit.value.id === id) {
-                    ownUnit.value = undefined;
+            } else if (resp.change.oneofKind === 'unitCreated') {
+                const id = resp.change.unitCreated.id;
+                const idx = units.value?.findIndex((d) => d.id === id) ?? -1;
+                if (idx === -1) {
+                    units.value?.unshift(resp.change.unitCreated);
+                } else {
+                    units.value![idx] = resp.change.unitCreated;
                 }
-
+            } else if (resp.change.oneofKind === 'unitDeleted') {
+                const id = resp.change.unitDeleted.id;
                 const idx = units.value?.findIndex((d) => d.id === id) ?? -1;
                 if (idx > -1) {
                     units.value?.splice(idx, 1);
                 }
-            } else if (resp.change.oneofKind === 'disponents') {
-                disponents.value = resp.change.disponents.disponents;
-                // If user is part of disponents list, we need to restart the stream
-                if (!resp.change.disponents.active) {
-                    stopStream();
-                    setTimeout(() => {
-                        startStream();
-                    }, 250);
+            } else if (resp.change.oneofKind === 'unitUpdated') {
+                const id = resp.change.unitUpdated.id;
+                const idx = units.value?.findIndex((d) => d.id === id) ?? -1;
+                if (idx === -1) {
+                    units.value?.unshift(resp.change.unitUpdated);
+                } else {
+                    units.value![idx] = resp.change.unitUpdated;
                 }
-            } else if (resp.change.oneofKind === 'settings') {
-                settings.value = resp.change.settings;
+            } else if (resp.change.oneofKind === 'unitStatus') {
+                feed.value.unshift(resp.change.unitStatus);
+                // TODO add latest status to unit
+            } else if (resp.change.oneofKind === 'dispatchCreated') {
+                const id = resp.change.dispatchCreated.id;
+                const idx = dispatches.value?.findIndex((d) => d.id === id) ?? -1;
+                if (idx === -1) {
+                    dispatches.value?.unshift(resp.change.dispatchCreated);
+                } else {
+                    dispatches.value![idx].units = resp.change.dispatchCreated.units;
+                }
+            } else if (resp.change.oneofKind === 'dispatchDeleted') {
+                const id = resp.change.dispatchDeleted.id;
+                const idx = dispatches.value?.findIndex((d) => d.id === id) ?? -1;
+                if (idx > -1) {
+                    dispatches.value?.splice(idx, 1);
+                }
+            } else if (resp.change.oneofKind === 'dispatchUpdated') {
+                const id = resp.change.dispatchUpdated.id;
+                const idx = dispatches.value?.findIndex((d) => d.id === id) ?? -1;
+                if (idx === -1) {
+                    dispatches.value?.unshift(resp.change.dispatchUpdated);
+                } else {
+                    dispatches.value![idx] = resp.change.dispatchUpdated;
+                }
+            } else if (resp.change.oneofKind === 'dispatchStatus') {
+                feed.value.unshift(resp.change.dispatchStatus);
             } else {
                 console.log('Centrum: Unknown change received - Kind: ', resp.change.oneofKind, resp.change);
             }
@@ -218,7 +221,7 @@ const selectUnitOpen = ref(false);
                                     type="button"
                                     class="text-white bg-info-700 hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-2 text-xs my-0.5"
                                 >
-                                    <SvgIcon type="mdi" :path="mdiInformationOutline" class="h-5 w-5" aria-hidden="true" />
+                                    <InformationOutlineIcon class="h-5 w-5" aria-hidden="true" />
                                     <span class="mt-2 truncate">{{ ownUnit.initials }}: {{ ownUnit.name }}</span>
                                 </button>
                                 <UnitDetails :unit="ownUnit" :ownUnit="ownUnit" :open="unitOpen" @close="unitOpen = false" />
@@ -229,7 +232,7 @@ const selectUnitOpen = ref(false);
                                 class="text-white bg-info-700 hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-2 text-xs my-0.5"
                             >
                                 <span v-if="!ownUnit" class="flex w-full flex-col items-center">
-                                    <SvgIcon type="mdi" :path="mdiInformationOutline" class="h-5 w-5" aria-hidden="true" />
+                                    <InformationOutlineIcon class="h-5 w-5" aria-hidden="true" />
                                     <span class="mt-2 truncate">Not in any Unit.</span>
                                 </span>
                                 <span v-else class="truncate">Leave Unit</span>
@@ -254,11 +257,9 @@ const selectUnitOpen = ref(false);
                                         <div class="text-xs font-semibold leading-6 text-base-200">Unit</div>
                                     </span>
                                     <span class="ml-6 flex h-7 items-center">
-                                        <SvgIcon
+                                        <ChevronDownIcon
                                             :class="[open ? 'upsidedown' : '', 'h-6 w-6 transition-transform']"
                                             aria-hidden="true"
-                                            type="mdi"
-                                            :path="mdiChevronDown"
                                         />
                                     </span>
                                 </DisclosureButton>
@@ -272,9 +273,8 @@ const selectUnitOpen = ref(false);
                                                 class="text-white bg-primary hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-2 text-xs my-0.5"
                                                 :class="[idx >= actionsUnit.length - 1 ? 'col-span-2' : '', item.class]"
                                             >
-                                                <SvgIcon
-                                                    type="mdi"
-                                                    :path="item.icon ?? mdiHoopHouse"
+                                                <component
+                                                    :is="item.icon ?? HoopHouseIcon"
                                                     class="text-base-200 group-hover:text-white h-5 w-5 shrink-0"
                                                     aria-hidden="true"
                                                 />
@@ -299,9 +299,8 @@ const selectUnitOpen = ref(false);
                                     class="text-white bg-primary hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-2 text-xs my-0.5"
                                     :class="[idx >= actionsDispatch.length - 1 ? 'col-span-2' : '', item.class]"
                                 >
-                                    <SvgIcon
-                                        type="mdi"
-                                        :path="item.icon ?? mdiHoopHouse"
+                                    <component
+                                        :is="item.icon ?? HoopHouseIcon"
                                         class="text-base-200 group-hover:text-white h-5 w-5 shrink-0"
                                         aria-hidden="true"
                                     />
@@ -319,7 +318,7 @@ const selectUnitOpen = ref(false);
                                 type="button"
                                 class="text-white bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-2 text-xs my-0.5"
                             >
-                                <SvgIcon type="mdi" :path="mdiCarEmergency" class="h-5 w-5" aria-hidden="true" />
+                                <CarEmergencyIcon class="h-5 w-5" aria-hidden="true" />
                                 <span class="mt-2 truncate">No assigned Dispatches.</span>
                             </button>
                         </li>

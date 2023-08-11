@@ -1,6 +1,5 @@
 <script lang="ts" setup>
-import SvgIcon from '@jamescoyle/vue-icon';
-import { mdiClipboardPlus, mdiEye } from '@mdi/js';
+import { ClipboardPlusIcon, EyeIcon } from 'mdi-vue3';
 import { useClipboardStore } from '~/store/clipboard';
 import { useNotificationsStore } from '~/store/notifications';
 import { User } from '~~/gen/ts/resources/users/users';
@@ -42,7 +41,7 @@ function addToClipboard(): void {
             {{ user.sex!.toUpperCase() }}
         </td>
         <td
-            v-can="'CitizenStoreService.ListCitizens.Fields.PhoneNumber'"
+            v-if="can('CitizenStoreService.ListCitizens.Fields.PhoneNumber')"
             class="whitespace-nowrap px-2 py-2 text-sm text-base-200"
         >
             <span v-for="part in (user?.phoneNumber ?? '').match(/.{1,3}/g)" class="mr-1">{{ part }}</span>
@@ -51,7 +50,7 @@ function addToClipboard(): void {
             {{ user.dateofbirth }}
         </td>
         <td
-            v-can="'CitizenStoreService.ListCitizens.Fields.UserProps.TrafficInfractionPoints'"
+            v-if="can('CitizenStoreService.ListCitizens.Fields.UserProps.TrafficInfractionPoints')"
             class="whitespace-nowrap px-2 py-2 text-sm text-base-200"
             :class="(user?.props?.trafficInfractionPoints ?? 0n) >= 10 ? 'text-red-500' : ''"
         >
@@ -59,9 +58,9 @@ function addToClipboard(): void {
         </td>
         <td class="whitespace-nowrap px-2 py-2 text-sm text-base-200">{{ user.height }}cm</td>
         <td class="whitespace-nowrap py-2 pl-3 pr-4 text-sm font-medium sm:pr-0">
-            <div v-can="'CitizenStoreService.GetUser'" class="flex flex-row justify-end">
+            <div v-if="can('CitizenStoreService.GetUser')" class="flex flex-row justify-end">
                 <button class="flex-initial text-primary-500 hover:text-primary-400" @click="addToClipboard">
-                    <SvgIcon class="w-6 h-auto ml-auto mr-2.5" type="mdi" :path="mdiClipboardPlus" />
+                    <ClipboardPlusIcon class="w-6 h-auto ml-auto mr-2.5" />
                 </button>
                 <NuxtLink
                     :to="{
@@ -70,7 +69,7 @@ function addToClipboard(): void {
                     }"
                     class="flex-initial text-primary-500 hover:text-primary-400"
                 >
-                    <SvgIcon class="w-6 h-auto ml-auto mr-2.5" type="mdi" :path="mdiEye" />
+                    <EyeIcon class="w-6 h-auto ml-auto mr-2.5" />
                 </NuxtLink>
             </div>
         </td>

@@ -8,8 +8,8 @@ import {
     ListboxOption,
     ListboxOptions,
 } from '@headlessui/vue';
-import SvgIcon from '@jamescoyle/vue-icon';
-import { mdiCheck, mdiChevronDown } from '@mdi/js';
+
+import { CheckIcon, ChevronDownIcon } from 'mdi-vue3';
 import { Job, JobGrade } from '~~/gen/ts/resources/jobs/jobs';
 import { AttributeValues, Permission, RoleAttribute } from '~~/gen/ts/resources/permissions/permissions';
 
@@ -173,12 +173,7 @@ onMounted(() => {
                     {{ $t(`attrs.${attribute.category}.${attribute.name}.${attribute.key}`) }}
                 </span>
                 <span class="ml-6 flex h-7 items-center">
-                    <SvgIcon
-                        :class="[open ? 'upsidedown' : '', 'h-6 w-6 transition-transform']"
-                        aria-hidden="true"
-                        type="mdi"
-                        :path="mdiChevronDown"
-                    />
+                    <ChevronDownIcon :class="[open ? 'upsidedown' : '', 'h-6 w-6 transition-transform']" aria-hidden="true" />
                 </span>
             </DisclosureButton>
             <DisclosurePanel class="px-4 pb-2 border-2 border-t-0 rounded-b-lg transition-colors border-inherit -mt-2">
@@ -260,12 +255,7 @@ onMounted(() => {
                                     >
                                         <span class="block truncate">{{ jobGrades.get(job.name)?.label }}</span>
                                         <span class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                                            <SvgIcon
-                                                class="w-5 h-5 text-gray-400"
-                                                aria-hidden="true"
-                                                type="mdi"
-                                                :path="mdiChevronDown"
-                                            />
+                                            <ChevronDownIcon class="w-5 h-5 text-gray-400" aria-hidden="true" />
                                         </span>
                                     </ListboxButton>
 
@@ -303,12 +293,7 @@ onMounted(() => {
                                                             'absolute inset-y-0 left-0 flex items-center pl-1.5',
                                                         ]"
                                                     >
-                                                        <SvgIcon
-                                                            class="w-5 h-5"
-                                                            aria-hidden="true"
-                                                            type="mdi"
-                                                            :path="mdiCheck"
-                                                        />
+                                                        <CheckIcon class="w-5 h-5" aria-hidden="true" />
                                                     </span>
                                                 </li>
                                             </ListboxOption>

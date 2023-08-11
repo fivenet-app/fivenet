@@ -1,8 +1,7 @@
 <script lang="ts" setup>
-import SvgIcon from '@jamescoyle/vue-icon';
-import { mdiHelpCircle } from '@mdi/js';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { LeafletMouseEvent } from 'leaflet';
+import { HelpCircleIcon } from 'mdi-vue3';
 import Livemap from '~/components/centrum/Livemap.vue';
 import CreateOrUpdateModal from '~/components/centrum/dispatches/CreateOrUpdateModal.vue';
 import { default as DispatchesList } from '~/components/centrum/dispatches/List.vue';
@@ -18,10 +17,10 @@ import Feed from './Feed.vue';
 const { $grpc } = useNuxtApp();
 
 const settings = ref<Settings>();
-const controller = ref(false);
+const isDisponent = ref(false);
 const ownUnit = ref<Unit>();
 const feed = ref<(DispatchStatus | UnitStatus)[]>([]);
-const controllers = ref<UserShort[]>([]);
+const disponents = ref<UserShort[]>([]);
 const units = ref<Array<Unit>>([]);
 const dispatches = ref<Array<Dispatch>>([]);
 
@@ -47,54 +46,30 @@ async function startStream(): Promise<void> {
             if (resp === undefined || !resp.change) {
                 continue;
             }
+
+            console.debug('Centrum: Received change - Kind:', resp.change.oneofKind, resp.change);
+
             if (!dispatches.value) {
                 continue;
             }
 
-            console.debug('Centrum: Received change - Kind:', resp.change.oneofKind, resp.change);
-
-            if (resp.change.oneofKind === 'initial') {
-                settings.value = resp.change.initial.settings;
-                ownUnit.value = resp.change.initial.unit;
-                units.value = resp.change.initial.units;
-                dispatches.value = resp.change.initial.dispatches;
-                controller.value = resp.change.initial.controller;
-            } else if (resp.change.oneofKind === 'dispatchUpdate') {
-                const id = resp.change.dispatchUpdate.id;
-                const idx = dispatches.value?.findIndex((d) => d.id === id) ?? -1;
-                if (idx === -1) {
-                    dispatches.value?.unshift(resp.change.dispatchUpdate);
-                } else {
-                    dispatches.value![idx] = resp.change.dispatchUpdate;
+            if (resp.change.oneofKind === 'latestState') {
+                settings.value = resp.change.latestState.settings;
+                ownUnit.value = resp.change.latestState.unit;
+                units.value = resp.change.latestState.units;
+                dispatches.value = resp.change.latestState.dispatches;
+                isDisponent.value = resp.change.latestState.isDisponent;
+            } else if (resp.change.oneofKind === 'settings') {
+                settings.value = resp.change.settings;
+            } else if (resp.change.oneofKind === 'disponents') {
+                disponents.value = resp.change.disponents.disponents;
+                // If user is part of disponents list, we need to restart the stream
+                if (!resp.change.disponents.active) {
+                    stopStream();
+                    setTimeout(() => {
+                        startStream();
+                    }, 250);
                 }
-            } else if (resp.change.oneofKind === 'dispatchStatus') {
-                feed.value.unshift(resp.change.dispatchStatus);
-            } else if (resp.change.oneofKind === 'dispatchUnassigned') {
-                const id = resp.change.dispatchUnassigned.id;
-                const idx = dispatches.value?.findIndex((d) => d.id === id) ?? -1;
-                if (idx === -1) {
-                    dispatches.value?.unshift(resp.change.dispatchUnassigned);
-                } else {
-                    dispatches.value![idx].units = resp.change.dispatchUnassigned.units;
-                }
-            } else if (resp.change.oneofKind === 'dispatchAssigned') {
-                const id = resp.change.dispatchAssigned.id;
-                const idx = dispatches.value?.findIndex((d) => d.id === id) ?? -1;
-                if (idx === -1) {
-                    dispatches.value?.unshift(resp.change.dispatchAssigned);
-                } else {
-                    dispatches.value![idx] = resp.change.dispatchAssigned;
-                }
-            } else if (resp.change.oneofKind === 'unitUpdate') {
-                const id = resp.change.unitUpdate.id;
-                const idx = units.value?.findIndex((d) => d.id === id) ?? -1;
-                if (idx === -1) {
-                    units.value?.unshift(resp.change.unitUpdate);
-                } else {
-                    units.value![idx] = resp.change.unitUpdate;
-                }
-            } else if (resp.change.oneofKind === 'unitStatus') {
-                feed.value.unshift(resp.change.unitStatus);
             } else if (resp.change.oneofKind === 'unitAssigned') {
                 // TODO show popup and notification
                 if (resp.change.unitAssigned.id === 0n) {
@@ -102,23 +77,55 @@ async function startStream(): Promise<void> {
                 } else {
                     // User has been added to unit
                 }
+            } else if (resp.change.oneofKind === 'unitCreated') {
+                const id = resp.change.unitCreated.id;
+                const idx = units.value?.findIndex((d) => d.id === id) ?? -1;
+                if (idx === -1) {
+                    units.value?.unshift(resp.change.unitCreated);
+                } else {
+                    units.value![idx] = resp.change.unitCreated;
+                }
             } else if (resp.change.oneofKind === 'unitDeleted') {
-                const id = resp.change.unitDeleted;
+                const id = resp.change.unitDeleted.id;
                 const idx = units.value?.findIndex((d) => d.id === id) ?? -1;
                 if (idx > -1) {
                     units.value?.splice(idx, 1);
                 }
-            } else if (resp.change.oneofKind === 'disponents') {
-                controllers.value = resp.change.disponents.disponents;
-                // If user is part of controllers list, we need to restart the stream
-                if (!resp.change.disponents.active) {
-                    stopStream();
-                    setTimeout(() => {
-                        startStream();
-                    }, 250);
+            } else if (resp.change.oneofKind === 'unitUpdated') {
+                const id = resp.change.unitUpdated.id;
+                const idx = units.value?.findIndex((d) => d.id === id) ?? -1;
+                if (idx === -1) {
+                    units.value?.unshift(resp.change.unitUpdated);
+                } else {
+                    units.value![idx] = resp.change.unitUpdated;
                 }
-            } else if (resp.change.oneofKind === 'settings') {
-                settings.value = resp.change.settings;
+            } else if (resp.change.oneofKind === 'unitStatus') {
+                feed.value.unshift(resp.change.unitStatus);
+                // TODO add latest status to unit
+            } else if (resp.change.oneofKind === 'dispatchCreated') {
+                const id = resp.change.dispatchCreated.id;
+                const idx = dispatches.value?.findIndex((d) => d.id === id) ?? -1;
+                if (idx === -1) {
+                    dispatches.value?.unshift(resp.change.dispatchCreated);
+                } else {
+                    dispatches.value![idx].units = resp.change.dispatchCreated.units;
+                }
+            } else if (resp.change.oneofKind === 'dispatchDeleted') {
+                const id = resp.change.dispatchDeleted.id;
+                const idx = dispatches.value?.findIndex((d) => d.id === id) ?? -1;
+                if (idx > -1) {
+                    dispatches.value?.splice(idx, 1);
+                }
+            } else if (resp.change.oneofKind === 'dispatchUpdated') {
+                const id = resp.change.dispatchUpdated.id;
+                const idx = dispatches.value?.findIndex((d) => d.id === id) ?? -1;
+                if (idx === -1) {
+                    dispatches.value?.unshift(resp.change.dispatchUpdated);
+                } else {
+                    dispatches.value![idx] = resp.change.dispatchUpdated;
+                }
+            } else if (resp.change.oneofKind === 'dispatchStatus') {
+                feed.value.unshift(resp.change.dispatchStatus);
             } else {
                 console.log('Centrum: Unknown change received - Kind: ', resp.change.oneofKind, resp.change);
             }
@@ -173,11 +180,7 @@ async function takeControl(): Promise<void> {
             const call = $grpc.getCentrumClient().takeControl({
                 signon: true,
             });
-            const { response } = await call;
-
-            if (response.change) {
-                controllers.value = response.change?.controllers;
-            }
+            await call;
 
             return res();
         } catch (e) {
@@ -198,14 +201,14 @@ async function takeControl(): Promise<void> {
             <DataPendingBlock v-if="!error" :message="$t('components.livemap.starting_datastream')" />
             <DataErrorBlock v-else="error" :title="$t('components.livemap.failed_datastream')" :retry="startStream" />
         </div>
-        <div v-else-if="!controller">
+        <div v-else-if="!isDisponent">
             <div class="absolute inset-0 flex justify-center items-center z-20" style="background-color: rgba(62, 60, 62, 0.5)">
                 <button
                     @click="takeControl()"
                     type="button"
                     class="relative block w-full p-12 text-center border-2 border-dotted rounded-lg border-base-300 hover:border-base-400 focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2"
                 >
-                    <SvgIcon class="w-12 h-12 mx-auto text-neutral" type="mdi" :path="mdiHelpCircle" />
+                    <HelpCircleIcon class="w-12 h-12 mx-auto text-neutral" />
                     <span class="block mt-2 text-sm font-semibold text-gray-300">
                         No one is in the dispatch center. Want to take control? Click here.
                     </span>

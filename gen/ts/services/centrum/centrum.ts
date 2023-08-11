@@ -344,15 +344,15 @@ export interface JoinUnitResponse {
     unit?: Unit;
 }
 /**
- * @generated from protobuf message services.centrum.Initial
+ * @generated from protobuf message services.centrum.LatestState
  */
-export interface Initial {
+export interface LatestState {
     /**
      * @generated from protobuf field: bool is_disponent = 1;
      */
     isDisponent: boolean;
     /**
-     * @generated from protobuf field: resources.dispatch.Settings settings = 2;
+     * @generated from protobuf field: optional resources.dispatch.Settings settings = 2;
      */
     settings?: Settings;
     /**
@@ -383,11 +383,11 @@ export interface StreamResponse {
      * @generated from protobuf oneof: change
      */
     change: {
-        oneofKind: "initial";
+        oneofKind: "latestState";
         /**
-         * @generated from protobuf field: services.centrum.Initial initial = 1;
+         * @generated from protobuf field: services.centrum.LatestState latest_state = 1;
          */
-        initial: Initial;
+        latestState: LatestState;
     } | {
         oneofKind: "settings";
         /**
@@ -401,29 +401,29 @@ export interface StreamResponse {
          */
         disponents: DisponentsChange;
     } | {
-        oneofKind: "dispatchStatus";
+        oneofKind: "unitAssigned";
         /**
-         * @generated from protobuf field: resources.dispatch.DispatchStatus dispatch_status = 4;
+         * @generated from protobuf field: resources.dispatch.Unit unit_assigned = 4;
          */
-        dispatchStatus: DispatchStatus;
+        unitAssigned: Unit;
     } | {
-        oneofKind: "dispatchUpdate";
+        oneofKind: "unitCreated";
         /**
-         * @generated from protobuf field: resources.dispatch.Dispatch dispatch_update = 5;
+         * @generated from protobuf field: resources.dispatch.Unit unit_created = 5;
          */
-        dispatchUpdate: Dispatch;
+        unitCreated: Unit;
     } | {
-        oneofKind: "dispatchAssigned";
+        oneofKind: "unitDeleted";
         /**
-         * @generated from protobuf field: resources.dispatch.Dispatch dispatch_assigned = 6;
+         * @generated from protobuf field: resources.dispatch.Unit unit_deleted = 6;
          */
-        dispatchAssigned: Dispatch;
+        unitDeleted: Unit;
     } | {
-        oneofKind: "dispatchUnassigned";
+        oneofKind: "unitUpdated";
         /**
-         * @generated from protobuf field: resources.dispatch.Dispatch dispatch_unassigned = 7;
+         * @generated from protobuf field: resources.dispatch.Unit unit_updated = 7;
          */
-        dispatchUnassigned: Dispatch;
+        unitUpdated: Unit;
     } | {
         oneofKind: "unitStatus";
         /**
@@ -431,23 +431,29 @@ export interface StreamResponse {
          */
         unitStatus: UnitStatus;
     } | {
-        oneofKind: "unitUpdate";
+        oneofKind: "dispatchCreated";
         /**
-         * @generated from protobuf field: resources.dispatch.Unit unit_update = 9;
+         * @generated from protobuf field: resources.dispatch.Dispatch dispatch_created = 9;
          */
-        unitUpdate: Unit;
+        dispatchCreated: Dispatch;
     } | {
-        oneofKind: "unitAssigned";
+        oneofKind: "dispatchDeleted";
         /**
-         * @generated from protobuf field: resources.dispatch.Unit unit_assigned = 10;
+         * @generated from protobuf field: resources.dispatch.Dispatch dispatch_deleted = 10;
          */
-        unitAssigned: Unit;
+        dispatchDeleted: Dispatch;
     } | {
-        oneofKind: "unitDeleted";
+        oneofKind: "dispatchUpdated";
         /**
-         * @generated from protobuf field: uint64 unit_deleted = 11;
+         * @generated from protobuf field: resources.dispatch.Dispatch dispatch_updated = 11;
          */
-        unitDeleted: bigint;
+        dispatchUpdated: Dispatch;
+    } | {
+        oneofKind: "dispatchStatus";
+        /**
+         * @generated from protobuf field: resources.dispatch.DispatchStatus dispatch_status = 12;
+         */
+        dispatchStatus: DispatchStatus;
     } | {
         oneofKind: undefined;
     };
@@ -854,9 +860,9 @@ class JoinUnitResponse$Type extends MessageType<JoinUnitResponse> {
  */
 export const JoinUnitResponse = new JoinUnitResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class Initial$Type extends MessageType<Initial> {
+class LatestState$Type extends MessageType<LatestState> {
     constructor() {
-        super("services.centrum.Initial", [
+        super("services.centrum.LatestState", [
             { no: 1, name: "is_disponent", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 2, name: "settings", kind: "message", T: () => Settings },
             { no: 3, name: "unit", kind: "message", T: () => Unit },
@@ -866,9 +872,9 @@ class Initial$Type extends MessageType<Initial> {
     }
 }
 /**
- * @generated MessageType for protobuf message services.centrum.Initial
+ * @generated MessageType for protobuf message services.centrum.LatestState
  */
-export const Initial = new Initial$Type();
+export const LatestState = new LatestState$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class StreamRequest$Type extends MessageType<StreamRequest> {
     constructor() {
@@ -883,17 +889,18 @@ export const StreamRequest = new StreamRequest$Type();
 class StreamResponse$Type extends MessageType<StreamResponse> {
     constructor() {
         super("services.centrum.StreamResponse", [
-            { no: 1, name: "initial", kind: "message", oneof: "change", T: () => Initial },
+            { no: 1, name: "latest_state", kind: "message", oneof: "change", T: () => LatestState },
             { no: 2, name: "settings", kind: "message", oneof: "change", T: () => Settings },
             { no: 3, name: "disponents", kind: "message", oneof: "change", T: () => DisponentsChange },
-            { no: 4, name: "dispatch_status", kind: "message", oneof: "change", T: () => DispatchStatus },
-            { no: 5, name: "dispatch_update", kind: "message", oneof: "change", T: () => Dispatch },
-            { no: 6, name: "dispatch_assigned", kind: "message", oneof: "change", T: () => Dispatch },
-            { no: 7, name: "dispatch_unassigned", kind: "message", oneof: "change", T: () => Dispatch },
+            { no: 4, name: "unit_assigned", kind: "message", oneof: "change", T: () => Unit },
+            { no: 5, name: "unit_created", kind: "message", oneof: "change", T: () => Unit },
+            { no: 6, name: "unit_deleted", kind: "message", oneof: "change", T: () => Unit },
+            { no: 7, name: "unit_updated", kind: "message", oneof: "change", T: () => Unit },
             { no: 8, name: "unit_status", kind: "message", oneof: "change", T: () => UnitStatus },
-            { no: 9, name: "unit_update", kind: "message", oneof: "change", T: () => Unit },
-            { no: 10, name: "unit_assigned", kind: "message", oneof: "change", T: () => Unit },
-            { no: 11, name: "unit_deleted", kind: "scalar", oneof: "change", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+            { no: 9, name: "dispatch_created", kind: "message", oneof: "change", T: () => Dispatch },
+            { no: 10, name: "dispatch_deleted", kind: "message", oneof: "change", T: () => Dispatch },
+            { no: 11, name: "dispatch_updated", kind: "message", oneof: "change", T: () => Dispatch },
+            { no: 12, name: "dispatch_status", kind: "message", oneof: "change", T: () => DispatchStatus }
         ]);
     }
 }

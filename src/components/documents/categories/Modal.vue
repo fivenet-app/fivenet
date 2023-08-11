@@ -1,7 +1,5 @@
 <script lang="ts" setup>
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
-import SvgIcon from '@jamescoyle/vue-icon';
-import { mdiTag } from '@mdi/js';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { max, min, required } from '@vee-validate/rules';
 import { defineRule } from 'vee-validate';
@@ -123,12 +121,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await updateCateg
                                         <div
                                             class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-base-800"
                                         >
-                                            <SvgIcon
-                                                class="h-6 w-6 text-primary-500"
-                                                aria-hidden="true"
-                                                type="mdi"
-                                                :path="mdiTag"
-                                            />
+                                            <TagIcon class="h-6 w-6 text-primary-500" aria-hidden="true" />
                                         </div>
                                         <div class="mt-3 text-center sm:mt-5">
                                             <DialogTitle as="h3" class="text-base font-semibold leading-6">
@@ -207,8 +200,8 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await updateCateg
                                     </div>
                                     <div class="gap-2 mt-5 sm:mt-4 sm:flex">
                                         <button
+                                            v-if="can('DocStoreService.DeleteCategory')"
                                             type="button"
-                                            v-can="'DocStoreService.DeleteCategory'"
                                             class="flex-1 rounded-md bg-red-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-red-400"
                                             @click="deleteCategory()"
                                             ref="cancelButtonRef"
