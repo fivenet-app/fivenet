@@ -21,8 +21,8 @@ const isDisponent = ref(false);
 const ownUnit = ref<Unit>();
 const feed = ref<(DispatchStatus | UnitStatus)[]>([]);
 const disponents = ref<UserShort[]>([]);
-const units = ref<Array<Unit>>([]);
-const dispatches = ref<Array<Dispatch>>([]);
+const units = ref<Unit[]>([]);
+const dispatches = ref<Dispatch[]>([]);
 
 const abort = ref<AbortController | undefined>();
 const error = ref<string | null>(null);

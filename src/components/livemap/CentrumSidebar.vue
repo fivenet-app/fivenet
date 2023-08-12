@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
-
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import {
     CalendarCheckIcon,
@@ -19,6 +18,7 @@ import {
 import { DefineComponent } from 'vue';
 import { default as UnitDetails } from '~/components/centrum/units/Details.vue';
 import DispatchEntry from '~/components/livemap/centrum/DispatchEntry.vue';
+import { useAuthStore } from '~/store/auth';
 import { useNotificationsStore } from '~/store/notifications';
 import { DISPATCH_STATUS, Dispatch, DispatchStatus } from '~~/gen/ts/resources/dispatch/dispatches';
 import { Settings } from '~~/gen/ts/resources/dispatch/settings';
@@ -30,12 +30,15 @@ const { $grpc } = useNuxtApp();
 
 const notifications = useNotificationsStore();
 
+const authStore = useAuthStore();
+const { activeChar } = storeToRefs(authStore);
+
 const settings = ref<Settings>();
-const ownUnit = ref<Unit>();
-const feed = ref<(DispatchStatus | UnitStatus)[]>([]);
 const disponents = ref<UserShort[]>([]);
-const units = ref<Array<Unit>>([]);
-const dispatches = ref<Array<Dispatch>>([]);
+const ownUnit = ref<Unit>();
+const units = ref<Unit[]>([]);
+const dispatches = ref<Dispatch[]>([]);
+const feed = ref<(DispatchStatus | UnitStatus)[]>([]);
 
 type Action = {
     icon: DefineComponent;
@@ -107,7 +110,8 @@ async function startStream(): Promise<void> {
                     }, 250);
                 }
             } else if (resp.change.oneofKind === 'unitAssigned') {
-                if (resp.change.unitAssigned.id === 0n) {
+                const idx = resp.change.unitAssigned.users.findIndex((u) => u.userId !== activeChar.value?.userId);
+                if (idx === -1) {
                     // User has been removed from the unit
                     ownUnit.value = undefined;
 
@@ -121,8 +125,8 @@ async function startStream(): Promise<void> {
                     ownUnit.value = resp.change.unitAssigned;
 
                     notifications.dispatchNotification({
-                        title: { key: 'notifications.centrum.unitAssigned.added.title', parameters: [] },
-                        content: { key: 'notifications.centrum.unitAssigned.added.content', parameters: [] },
+                        title: { key: 'notifications.centrum.unitAssigned.joined.title', parameters: [] },
+                        content: { key: 'notifications.centrum.unitAssigned.joined.content', parameters: [] },
                         type: 'success',
                     });
                 }
@@ -182,6 +186,10 @@ async function startStream(): Promise<void> {
     } catch (e) {
         const err = e as RpcError;
         error.value = err.message;
+        notifications.dispatchNotification({
+            content: { key: err.message, parameters: [] },
+            title: { key: '', parameters: [] },
+        });
         stopStream();
     }
 

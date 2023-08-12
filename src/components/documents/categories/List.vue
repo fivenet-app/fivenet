@@ -15,7 +15,7 @@ const { $grpc } = useNuxtApp();
 const { data: categories, pending, refresh, error } = useLazyAsyncData(`documents-categories`, () => getCategories());
 const items = ref<CardElements>([]);
 
-async function getCategories(): Promise<Array<Category>> {
+async function getCategories(): Promise<Category[]> {
     return new Promise(async (res, rej) => {
         try {
             const call = $grpc.getDocStoreClient().listCategories({});

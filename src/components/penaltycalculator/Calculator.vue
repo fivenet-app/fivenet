@@ -50,7 +50,7 @@ async function listLawBooks(): Promise<LawBook[]> {
 
 const rawQuery = ref('');
 const query = computed(() => rawQuery.value.toLowerCase());
-const selectedPenalties = ref<Array<SelectedPenalty>>([]);
+const selectedPenalties = ref<SelectedPenalty[]>([]);
 
 const summary = ref<PenaltiesSummary>({
     fine: 0n,

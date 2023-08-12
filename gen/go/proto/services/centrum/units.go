@@ -2,6 +2,9 @@ package centrum
 
 import (
 	"context"
+	"fmt"
+	"strconv"
+	"strings"
 
 	database "github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
@@ -38,16 +41,27 @@ func (s *Server) ListUnits(ctx context.Context, req *ListUnitsRequest) (*ListUni
 		Units: []*dispatch.Unit{},
 	}
 
-	val, ok := s.units.Load(userInfo.Job)
-	if val == nil || !ok {
-		return resp, nil
+	units := []*dispatch.Unit{}
+
+	prefix := fmt.Sprintf("%s/", userInfo.Job)
+	keys, err := s.units.KeysWithPrefix(prefix)
+	if err != nil {
+		return nil, err
 	}
 
-	units := []*dispatch.Unit{}
-	val.Range(func(key uint64, value *dispatch.Unit) bool {
-		units = append(units, value)
-		return true
-	})
+	for i := 0; i < len(keys); i++ {
+		trimmed := strings.TrimPrefix(keys[i], prefix)
+		unitId, err := strconv.Atoi(trimmed)
+		if err != nil {
+			return nil, err
+		}
+
+		unit := &dispatch.Unit{}
+		if err := s.units.Get(fmt.Sprintf("%s/%d", userInfo.Job, unitId), unit); err != nil {
+			return nil, err
+		}
+		units = append(units, unit)
+	}
 
 	resp.Units = units
 
@@ -195,6 +209,10 @@ func (s *Server) CreateOrUpdateUnit(ctx context.Context, req *CreateOrUpdateUnit
 	}
 	s.events.JS.Publish(s.buildSubject(TopicUnit, TypeUnitUpdated, userInfo, resp.Unit.Id), data)
 
+	if err := s.loadUnits(ctx, resp.Unit.Id); err != nil {
+		return nil, err
+	}
+
 	return resp, nil
 }
 
@@ -229,9 +247,8 @@ func (s *Server) DeleteUnit(ctx context.Context, req *DeleteUnitRequest) (*Delet
 		return nil, err
 	}
 
-	units, ok := s.units.Load(userInfo.Job)
-	if ok {
-		units.Delete(req.UnitId)
+	if err := s.units.Delete(fmt.Sprintf("%s/%d", userInfo.Job, req.UnitId)); err != nil {
+		return nil, err
 	}
 
 	data, err := proto.Marshal(unit)
@@ -241,6 +258,10 @@ func (s *Server) DeleteUnit(ctx context.Context, req *DeleteUnitRequest) (*Delet
 	s.events.JS.Publish(s.buildSubject(TopicUnit, TypeUnitDeleted, userInfo, req.UnitId), data)
 
 	auditEntry.State = int16(rector.EVENT_TYPE_DELETED)
+
+	if err := s.units.Delete(fmt.Sprintf("%s/%d", userInfo.Job, req.UnitId)); err != nil {
+		return nil, err
+	}
 
 	return resp, nil
 }
@@ -316,7 +337,7 @@ func (s *Server) JoinUnit(ctx context.Context, req *JoinUnitRequest) (*JoinUnitR
 	if req.Leave != nil && !*req.Leave {
 		_, ok := s.tracker.GetUserByJobAndID(userInfo.Job, userInfo.UserId)
 		if !ok {
-			return nil, status.Error(codes.InvalidArgument, "errors.CentrumService.ErrFailedQuery")
+			return nil, status.Error(codes.InvalidArgument, "You are not on duty!")
 		}
 
 		unitId, err := s.getUnitIDForUserID(ctx, userInfo.UserId)

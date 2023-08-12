@@ -15,7 +15,7 @@ defineEmits<{
 
 const { data: templates, pending, refresh, error } = useLazyAsyncData(`documents-templates`, () => listTemplates());
 
-async function listTemplates(): Promise<Array<TemplateShort>> {
+async function listTemplates(): Promise<TemplateShort[]> {
     return new Promise(async (res, rej) => {
         try {
             const call = $grpc.getDocStoreClient().listTemplates({});

@@ -15,15 +15,11 @@ export interface Settings {
      */
     enabled: boolean;
     /**
-     * @generated from protobuf field: bool active = 3;
-     */
-    active: boolean;
-    /**
-     * @generated from protobuf field: resources.dispatch.CENTRUM_MODE mode = 4;
+     * @generated from protobuf field: resources.dispatch.CENTRUM_MODE mode = 3;
      */
     mode: CENTRUM_MODE;
     /**
-     * @generated from protobuf field: resources.dispatch.CENTRUM_MODE fallback_mode = 5;
+     * @generated from protobuf field: resources.dispatch.CENTRUM_MODE fallback_mode = 4;
      */
     fallbackMode: CENTRUM_MODE;
 }
@@ -50,9 +46,8 @@ class Settings$Type extends MessageType<Settings> {
         super("resources.dispatch.Settings", [
             { no: 1, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
             { no: 2, name: "enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 3, name: "active", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 4, name: "mode", kind: "enum", T: () => ["resources.dispatch.CENTRUM_MODE", CENTRUM_MODE], options: { "validate.rules": { enum: { definedOnly: true } } } },
-            { no: 5, name: "fallback_mode", kind: "enum", T: () => ["resources.dispatch.CENTRUM_MODE", CENTRUM_MODE], options: { "validate.rules": { enum: { definedOnly: true } } } }
+            { no: 3, name: "mode", kind: "enum", T: () => ["resources.dispatch.CENTRUM_MODE", CENTRUM_MODE], options: { "validate.rules": { enum: { definedOnly: true } } } },
+            { no: 4, name: "fallback_mode", kind: "enum", T: () => ["resources.dispatch.CENTRUM_MODE", CENTRUM_MODE], options: { "validate.rules": { enum: { definedOnly: true } } } }
         ]);
     }
 }

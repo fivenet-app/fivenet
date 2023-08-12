@@ -20,7 +20,7 @@ const {
     error,
 } = useLazyAsyncData(`centrum-unit-${props.unitId.toString()}-activity-${offset.value}`, () => listUnitActivity());
 
-async function listUnitActivity(): Promise<Array<UnitStatus>> {
+async function listUnitActivity(): Promise<UnitStatus[]> {
     return new Promise(async (res, rej) => {
         try {
             const req = {

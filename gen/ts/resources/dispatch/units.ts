@@ -56,11 +56,11 @@ export interface UnitAssignment {
     /**
      * @generated from protobuf field: uint64 unit_id = 1;
      */
-    unitId: bigint;
+    unitId: bigint; // @gotags: sql:"primary_key" alias:"unit_id"
     /**
      * @generated from protobuf field: int32 user_id = 2;
      */
-    userId: number;
+    userId: number; // @gotags: sql:"primary_key" alias:"user_id"
     /**
      * @generated from protobuf field: optional resources.users.UserShort user = 3;
      */

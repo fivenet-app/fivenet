@@ -36,9 +36,10 @@ func (s *Server) ConvertPhoneJobMsgToDispatch() error {
 					tUser.Identifier.EQ(tGksPhoneSettings.Identifier),
 				),
 		).
-		WHERE(
-			tGksPhoneJMsg.Jobm.REGEXP_LIKE(jet.String("\\[\"(" + strings.Join(s.visibleJobs, "|") + ")\"\\]")),
-		)
+		WHERE(jet.AND(
+			tGksPhoneJMsg.Jobm.REGEXP_LIKE(jet.String("\\[\"("+strings.Join(s.visibleJobs, "|")+")\"\\]")),
+			tGksPhoneJMsg.Owner.EQ(jet.Int32(0)),
+		))
 
 	var dest []struct {
 		*model.GksphoneJobMessage
@@ -78,7 +79,7 @@ func (s *Server) ConvertPhoneJobMsgToDispatch() error {
 			return err
 		}
 
-		if false {
+		if true {
 			if err := s.closePhoneJobMsg(s.ctx, msg.ID); err != nil {
 				return err
 			}

@@ -26,7 +26,7 @@ const {
     error,
 } = useLazyAsyncData(`document-${props.documentId}-relations`, () => getDocumentRelations());
 
-async function getDocumentRelations(): Promise<Array<DocumentRelation>> {
+async function getDocumentRelations(): Promise<DocumentRelation[]> {
     return new Promise(async (res, rej) => {
         try {
             const call = $grpc.getDocStoreClient().getDocumentRelations({

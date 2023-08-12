@@ -4,8 +4,8 @@ import { SelectedPenalty } from '~/components/penaltycalculator/Calculator.vue';
 import { LawBook } from '~~/gen/ts/resources/laws/laws';
 
 const props = defineProps<{
-    lawBooks: Array<LawBook>;
-    selectedLaws: Array<SelectedPenalty>;
+    lawBooks: LawBook[];
+    selectedLaws: SelectedPenalty[];
 }>();
 
 function getNameForLawBookId(id: bigint): string | undefined {

@@ -22,7 +22,7 @@ const {
     listDispatchActivity(),
 );
 
-async function listDispatchActivity(): Promise<Array<DispatchStatus>> {
+async function listDispatchActivity(): Promise<DispatchStatus[]> {
     return new Promise(async (res, rej) => {
         try {
             const req = {

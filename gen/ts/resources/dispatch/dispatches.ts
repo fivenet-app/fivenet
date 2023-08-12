@@ -82,11 +82,11 @@ export interface DispatchAssignment {
     /**
      * @generated from protobuf field: uint64 dispatch_id = 1;
      */
-    dispatchId: bigint;
+    dispatchId: bigint; // @gotags: sql:"primary_key" alias:"dispatch_id"
     /**
      * @generated from protobuf field: uint64 unit_id = 2;
      */
-    unitId: bigint;
+    unitId: bigint; // @gotags: sql:"primary_key" alias:"unit_id"
     /**
      * @generated from protobuf field: optional resources.dispatch.Unit unit = 3;
      */
@@ -121,31 +121,35 @@ export interface DispatchStatus {
      */
     unitId: bigint;
     /**
-     * @generated from protobuf field: resources.dispatch.DISPATCH_STATUS status = 5;
+     * @generated from protobuf field: optional resources.dispatch.Unit unit = 5;
+     */
+    unit?: Unit;
+    /**
+     * @generated from protobuf field: resources.dispatch.DISPATCH_STATUS status = 6;
      */
     status: DISPATCH_STATUS;
     /**
-     * @generated from protobuf field: optional string reason = 6;
+     * @generated from protobuf field: optional string reason = 7;
      */
     reason?: string;
     /**
-     * @generated from protobuf field: optional string code = 7;
+     * @generated from protobuf field: optional string code = 8;
      */
     code?: string;
     /**
-     * @generated from protobuf field: optional int32 user_id = 8;
+     * @generated from protobuf field: optional int32 user_id = 9;
      */
     userId?: number;
     /**
-     * @generated from protobuf field: optional resources.users.UserShort user = 9;
+     * @generated from protobuf field: optional resources.users.UserShort user = 10;
      */
     user?: UserShort;
     /**
-     * @generated from protobuf field: optional float x = 10;
+     * @generated from protobuf field: optional float x = 11;
      */
     x?: number;
     /**
-     * @generated from protobuf field: optional float y = 11;
+     * @generated from protobuf field: optional float y = 12;
      */
     y?: number;
 }
@@ -255,13 +259,14 @@ class DispatchStatus$Type extends MessageType<DispatchStatus> {
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "dispatch_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
             { no: 4, name: "unit_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 5, name: "status", kind: "enum", T: () => ["resources.dispatch.DISPATCH_STATUS", DISPATCH_STATUS], options: { "validate.rules": { enum: { definedOnly: true } } } },
-            { no: 6, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
-            { no: 7, name: "code", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
-            { no: 8, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
-            { no: 9, name: "user", kind: "message", T: () => UserShort },
-            { no: 10, name: "x", kind: "scalar", opt: true, T: 2 /*ScalarType.FLOAT*/ },
-            { no: 11, name: "y", kind: "scalar", opt: true, T: 2 /*ScalarType.FLOAT*/ }
+            { no: 5, name: "unit", kind: "message", T: () => Unit },
+            { no: 6, name: "status", kind: "enum", T: () => ["resources.dispatch.DISPATCH_STATUS", DISPATCH_STATUS], options: { "validate.rules": { enum: { definedOnly: true } } } },
+            { no: 7, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
+            { no: 8, name: "code", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
+            { no: 9, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
+            { no: 10, name: "user", kind: "message", T: () => UserShort },
+            { no: 11, name: "x", kind: "scalar", opt: true, T: 2 /*ScalarType.FLOAT*/ },
+            { no: 12, name: "y", kind: "scalar", opt: true, T: 2 /*ScalarType.FLOAT*/ }
         ]);
     }
 }

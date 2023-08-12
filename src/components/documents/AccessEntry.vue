@@ -71,11 +71,11 @@ let entriesMinimumRank = [] as JobGrade[];
 const queryMinimumRank = ref('');
 const selectedMinimumRank = ref<JobGrade | undefined>(undefined);
 
-let entriesAccessRoles = new Array<{
+let entriesAccessRoles: {
     id: ACCESS_LEVEL;
     label: string;
     value: string;
-}>();
+}[] = [];
 if (!props.accessRoles || props.accessRoles.length === 0) {
     const enumVals = listEnumValues(ACCESS_LEVEL);
     entriesAccessRoles = enumVals.map((e, k) => {

@@ -342,7 +342,7 @@ func (s *Server) UpdateDispatchStatus(ctx context.Context, req *UpdateDispatchSt
 		return nil, ErrFailedQuery
 	}
 
-	ok, err := s.checkIfUserIsPartOfDispatch(ctx, userInfo, dsp)
+	ok, err := s.checkIfUserIsPartOfDispatch(ctx, userInfo, dsp, false)
 	if err != nil {
 		return nil, ErrFailedQuery
 	}
@@ -539,6 +539,8 @@ func (s *Server) AssignDispatch(ctx context.Context, req *AssignDispatchRequest)
 }
 
 func (s *Server) ListDispatchActivity(ctx context.Context, req *ListDispatchActivityRequest) (*ListDispatchActivityResponse, error) {
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
 	countStmt := tDispatchStatus.
 		SELECT(
 			jet.COUNT(jet.DISTINCT(tDispatchStatus.ID)).AS("datacount.totalcount"),
@@ -590,6 +592,11 @@ func (s *Server) ListDispatchActivity(ctx context.Context, req *ListDispatchActi
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Activity); err != nil {
 		return nil, err
+	}
+	for _, activity := range resp.Activity {
+		if activity.UnitId > 0 {
+			activity.Unit, _ = s.getUnit(ctx, userInfo, activity.UnitId)
+		}
 	}
 
 	resp.Pagination.Update(count.TotalCount, len(resp.Activity))

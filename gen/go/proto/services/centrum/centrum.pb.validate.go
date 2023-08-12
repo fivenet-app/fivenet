@@ -2019,8 +2019,6 @@ func (m *DisponentsChange) validate(all bool) error {
 
 	}
 
-	// no validation rules for Active
-
 	if len(errors) > 0 {
 		return DisponentsChangeMultiError(errors)
 	}

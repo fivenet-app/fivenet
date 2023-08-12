@@ -80,7 +80,6 @@ message TakeControlResponse {}
 
 message DisponentsChange {
   repeated resources.users.UserShort disponents = 1;
-  bool active = 2;
 }
 
 message ListDispatchesRequest {

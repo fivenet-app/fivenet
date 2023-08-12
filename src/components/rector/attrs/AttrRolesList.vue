@@ -10,7 +10,7 @@ const { $grpc } = useNuxtApp();
 
 const { data: roles, pending, refresh, error } = useLazyAsyncData('rector-roles', () => getRoles());
 
-async function getRoles(): Promise<Array<Role>> {
+async function getRoles(): Promise<Role[]> {
     return new Promise(async (res, rej) => {
         try {
             const call = $grpc.getRectorClient().getRoles({

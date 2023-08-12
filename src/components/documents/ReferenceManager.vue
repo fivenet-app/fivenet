@@ -75,7 +75,7 @@ watchDebounced(queryDoc, async () => listDocuments(), {
     maxWait: 1750,
 });
 
-async function listDocuments(): Promise<Array<DocumentShort>> {
+async function listDocuments(): Promise<DocumentShort[]> {
     return new Promise(async (res, rej) => {
         try {
             const call = $grpc.getDocStoreClient().listDocuments({

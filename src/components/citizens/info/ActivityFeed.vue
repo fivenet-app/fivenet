@@ -25,7 +25,7 @@ const {
     error,
 } = useLazyAsyncData(`citizeninfo-activity-${props.userId}-${offset.value}`, () => listUserActivity());
 
-async function listUserActivity(): Promise<Array<UserActivity>> {
+async function listUserActivity(): Promise<UserActivity[]> {
     return new Promise(async (res, rej) => {
         try {
             const call = $grpc.getCitizenStoreClient().listUserActivity({

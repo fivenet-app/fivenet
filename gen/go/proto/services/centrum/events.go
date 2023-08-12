@@ -3,9 +3,9 @@ package centrum
 import (
 	"errors"
 	"fmt"
+	"strconv"
 	"strings"
 
-	dispatch "github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
 	"github.com/galexrt/fivenet/pkg/events"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/nats-io/nats.go"
@@ -71,13 +71,19 @@ func (s *Server) buildSubject(topic events.Topic, tType events.Type, userInfo *u
 }
 
 func (s *Server) broadcastToAllUnits(topic events.Topic, tType events.Type, userInfo *userinfo.UserInfo, data []byte) {
-	jobUnits, ok := s.units.Load(userInfo.Job)
-	if !ok {
+	prefix := fmt.Sprintf("%s/", userInfo.Job)
+	keys, err := s.units.KeysWithPrefix(prefix)
+	if err != nil {
 		return
 	}
 
-	jobUnits.Range(func(key uint64, unit *dispatch.Unit) bool {
-		s.events.JS.Publish(s.buildSubject(TopicGeneral, TypeGeneralSettings, userInfo, unit.Id), data)
-		return true
-	})
+	for i := 0; i < len(keys); i++ {
+		trimmed := strings.TrimPrefix(keys[i], prefix)
+		unitId, err := strconv.Atoi(trimmed)
+		if err != nil {
+			return
+		}
+
+		s.events.JS.Publish(s.buildSubject(TopicGeneral, TypeGeneralSettings, userInfo, uint64(unitId)), data)
+	}
 }

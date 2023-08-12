@@ -24,7 +24,7 @@ const {
     error,
 } = useLazyAsyncData(`document-${props.documentId}-references`, () => getDocumentReferences());
 
-async function getDocumentReferences(): Promise<Array<DocumentReference>> {
+async function getDocumentReferences(): Promise<DocumentReference[]> {
     return new Promise(async (res, rej) => {
         try {
             const call = $grpc.getDocStoreClient().getDocumentReferences({

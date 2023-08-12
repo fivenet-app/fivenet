@@ -64,7 +64,7 @@ const offset = ref(0n);
 
 const { data: vehicles, pending, refresh, error } = useLazyAsyncData(`vehicles-${offset.value}`, () => listVehicles());
 
-async function listVehicles(): Promise<Array<Vehicle>> {
+async function listVehicles(): Promise<Vehicle[]> {
     return new Promise(async (res, rej) => {
         const req: ListVehiclesRequest = {
             pagination: {

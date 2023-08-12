@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
+import { Combobox,ComboboxButton,ComboboxInput,ComboboxOption,ComboboxOptions } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { watchDebounced } from '@vueuse/core';
 import { CheckIcon } from 'mdi-vue3';
@@ -32,7 +32,7 @@ const query = ref<{
 const pagination = ref<PaginationResponse>();
 const offset = ref(0n);
 
-async function getAuditLog(): Promise<Array<AuditEntry>> {
+async function getAuditLog(): Promise<AuditEntry[]> {
     return new Promise(async (res, rej) => {
         const req: ViewAuditLogRequest = {
             pagination: {
@@ -40,7 +40,7 @@ async function getAuditLog(): Promise<Array<AuditEntry>> {
             },
             userIds: [],
         };
-        const users = new Array<number>();
+        const users = new number[]();
         selectedChars.value?.forEach((v) => users.push(v.userId));
         req.userIds = users;
 
@@ -106,7 +106,7 @@ function focusSearch(): void {
 }
 
 function charsGetDisplayValue(chars: UserShort[]): string {
-    const cs = new Array<string>();
+    const cs = new string[]();
     chars.forEach((c) => cs.push(`${c?.firstname} ${c?.lastname}`));
 
     return cs.join(', ');

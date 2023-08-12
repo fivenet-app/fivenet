@@ -285,8 +285,8 @@ type Postal = {
 const selectedPostal = ref<Postal | undefined>();
 const postalQuery = ref('');
 let postalsLoaded = false;
-const postals = ref<Array<Postal>>([]);
-const filteredPostals = ref<Array<Postal>>([]);
+const postals = ref<Postal[]>([]);
+const filteredPostals = ref<Postal[]>([]);
 
 async function loadPostals(): Promise<void> {
     if (postalsLoaded) {

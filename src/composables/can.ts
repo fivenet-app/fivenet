@@ -6,11 +6,11 @@ export function can(perm: string | string[]): boolean {
     if (permissions.includes('superuser')) {
         return true;
     } else {
-        const input = new Array<String>();
+        const input: String[] = [];
         if (typeof perm === 'string') {
             input.push(perm);
         } else {
-            const vals = perm as Array<String>;
+            const vals = perm as String[];
             input.push(...vals);
         }
 

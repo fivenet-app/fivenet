@@ -99,6 +99,10 @@ func (a *AuditStorer) Log(in *model.FivenetAuditLog, data any) {
 }
 
 func (a *AuditStorer) store(in *model.FivenetAuditLog) error {
+	if in == nil {
+		return nil
+	}
+
 	ctx, span := a.tracer.Start(a.ctx, "audit-log-store")
 	defer span.End()
 

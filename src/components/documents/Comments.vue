@@ -37,7 +37,7 @@ const {
     error,
 } = useLazyAsyncData(`document-${props.documentId}-comments-${offset}`, () => getComments());
 
-async function getComments(): Promise<Array<Comment>> {
+async function getComments(): Promise<Comment[]> {
     return new Promise(async (res, rej) => {
         try {
             const call = $grpc.getDocStoreClient().getComments({

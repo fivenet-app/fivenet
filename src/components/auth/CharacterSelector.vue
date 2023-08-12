@@ -13,7 +13,7 @@ const { accountID } = storeToRefs(authStore);
 
 const { data: chars, pending, refresh, error } = useLazyAsyncData(`chars-${accountID}`, () => fetchCharacters());
 
-async function fetchCharacters(): Promise<Array<User>> {
+async function fetchCharacters(): Promise<User[]> {
     return new Promise(async (res, rej) => {
         try {
             const call = $grpc.getAuthClient().getCharacters({});

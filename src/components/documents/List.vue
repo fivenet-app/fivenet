@@ -62,7 +62,7 @@ const queryChars = ref<string>('');
 
 const { data: documents, pending, refresh, error } = useLazyAsyncData(`documents-${offset.value}`, () => listDocuments());
 
-async function listDocuments(): Promise<Array<DocumentShort>> {
+async function listDocuments(): Promise<DocumentShort[]> {
     return new Promise(async (res, rej) => {
         const req: ListDocumentsRequest = {
             pagination: {

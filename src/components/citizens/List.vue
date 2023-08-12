@@ -30,7 +30,7 @@ const {
     listCitizens(),
 );
 
-async function listCitizens(): Promise<Array<User>> {
+async function listCitizens(): Promise<User[]> {
     return new Promise(async (res, rej) => {
         try {
             const req: ListCitizensRequest = {

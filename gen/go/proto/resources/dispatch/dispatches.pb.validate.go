@@ -760,6 +760,39 @@ func (m *DispatchStatus) validate(all bool) error {
 
 	}
 
+	if m.Unit != nil {
+
+		if all {
+			switch v := interface{}(m.GetUnit()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, DispatchStatusValidationError{
+						field:  "Unit",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, DispatchStatusValidationError{
+						field:  "Unit",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetUnit()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return DispatchStatusValidationError{
+					field:  "Unit",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
 	if m.Reason != nil {
 
 		if utf8.RuneCountInString(m.GetReason()) > 255 {

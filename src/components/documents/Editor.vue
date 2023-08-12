@@ -528,7 +528,7 @@ async function submitForm(): Promise<void> {
             const call = $grpc.getDocStoreClient().createDocument(req);
             const { response } = await call;
 
-            const promises = new Array<Promise<any>>();
+            const promises = new Promise<any[]>();
             referenceManagerData.value.forEach((ref) => {
                 ref.sourceDocumentId = response.documentId;
 

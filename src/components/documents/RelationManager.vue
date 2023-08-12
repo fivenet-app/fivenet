@@ -78,7 +78,7 @@ watchDebounced(queryChar, async () => await refresh(), {
     maxWait: 1750,
 });
 
-async function listCitizens(): Promise<Array<User>> {
+async function listCitizens(): Promise<User[]> {
     return new Promise(async (res, rej) => {
         try {
             const call = $grpc.getCitizenStoreClient().listCitizens({

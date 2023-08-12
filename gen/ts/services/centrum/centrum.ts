@@ -183,10 +183,6 @@ export interface DisponentsChange {
      * @generated from protobuf field: repeated resources.users.UserShort disponents = 1;
      */
     disponents: UserShort[];
-    /**
-     * @generated from protobuf field: bool active = 2;
-     */
-    active: boolean;
 }
 /**
  * @generated from protobuf message services.centrum.ListDispatchesRequest
@@ -669,8 +665,7 @@ export const TakeControlResponse = new TakeControlResponse$Type();
 class DisponentsChange$Type extends MessageType<DisponentsChange> {
     constructor() {
         super("services.centrum.DisponentsChange", [
-            { no: 1, name: "disponents", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UserShort },
-            { no: 2, name: "active", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+            { no: 1, name: "disponents", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UserShort }
         ]);
     }
 }

@@ -25,7 +25,7 @@ const {
     error,
 } = useLazyAsyncData(`notifications-${offset.value}`, () => getNotifications());
 
-async function getNotifications(): Promise<Array<Notification>> {
+async function getNotifications(): Promise<Notification[]> {
     return new Promise(async (res, rej) => {
         try {
             const call = $grpc.getNotificatorClient().getNotifications({

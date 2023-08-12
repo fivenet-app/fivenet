@@ -208,8 +208,8 @@ type UnitAssignment struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	UnitId uint64           `protobuf:"varint,1,opt,name=unit_id,json=unitId,proto3" json:"unit_id,omitempty"`
-	UserId int32            `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	UnitId uint64           `protobuf:"varint,1,opt,name=unit_id,json=unitId,proto3" json:"unit_id,omitempty" sql:"primary_key" alias:"unit_id"` // @gotags: sql:"primary_key" alias:"unit_id"
+	UserId int32            `protobuf:"varint,2,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty" sql:"primary_key" alias:"user_id"` // @gotags: sql:"primary_key" alias:"user_id"
 	User   *users.UserShort `protobuf:"bytes,3,opt,name=user,proto3,oneof" json:"user,omitempty"`
 }
 

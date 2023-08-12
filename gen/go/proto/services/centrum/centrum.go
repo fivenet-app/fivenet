@@ -3,6 +3,7 @@ package centrum
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"time"
 
@@ -14,10 +15,10 @@ import (
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/perms"
 	"github.com/galexrt/fivenet/pkg/server/audit"
+	"github.com/galexrt/fivenet/pkg/store"
 	"github.com/galexrt/fivenet/pkg/tracker"
 	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/pkg/utils/dbutils"
-	"github.com/galexrt/fivenet/pkg/utils/syncx"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -51,9 +52,12 @@ type Server struct {
 	events  *events.Eventus
 	tracker *tracker.Tracker
 
-	units syncx.Map[string, *syncx.Map[uint64, *dispatch.Unit]]
-
 	visibleJobs []string
+
+	settings   *store.Store[*dispatch.Settings]
+	disponents *store.Store[*users.UserShort]
+	units      *store.Store[*dispatch.Unit]
+	dispatches *store.Store[*dispatch.Dispatch]
 }
 
 type Params struct {
@@ -71,7 +75,7 @@ type Params struct {
 	Config  *config.Config
 }
 
-func NewServer(p Params) *Server {
+func NewServer(p Params) (*Server, error) {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	s := &Server{
@@ -87,25 +91,47 @@ func NewServer(p Params) *Server {
 		tracker: p.Tracker,
 
 		visibleJobs: p.Config.Game.Livemap.Jobs,
+
+		settings:   store.New[*dispatch.Settings]("centrum_settings"),
+		disponents: store.New[*users.UserShort]("centrum_disponents"),
+		units:      store.New[*dispatch.Unit]("centrum_units"),
+		dispatches: store.New[*dispatch.Dispatch]("centrum_dispatches"),
 	}
+
+	p.LC.Append(fx.StartHook(func(_ context.Context) error {
+		if err := s.settings.Start(p.Events.JS); err != nil {
+			return err
+		}
+		if err := s.disponents.Start(p.Events.JS); err != nil {
+			return err
+		}
+		if err := s.units.Start(p.Events.JS); err != nil {
+			return err
+		}
+		if err := s.dispatches.Start(p.Events.JS); err != nil {
+			return err
+		}
+
+		if err := s.registerEvents(); err != nil {
+			return fmt.Errorf("failed to register events: %w", err)
+		}
+
+		if err := s.loadInitialData(); err != nil {
+			return err
+		}
+
+		go s.start()
+		//go s.ConvertPhoneJobMsgToDispatch()
+
+		return nil
+	}))
 
 	p.LC.Append(fx.StopHook(func(_ context.Context) error {
 		cancel()
 		return nil
 	}))
 
-	p.LC.Append(fx.StartHook(func(_ context.Context) error {
-		if err := s.registerEvents(); err != nil {
-			return fmt.Errorf("failed to register events: %w", err)
-		}
-
-		go s.start()
-		go s.ConvertPhoneJobMsgToDispatch()
-
-		return nil
-	}))
-
-	return s
+	return s, nil
 }
 
 func (s *Server) start() {
@@ -124,21 +150,19 @@ func (s *Server) start() {
 	}()
 }
 
-func (s *Server) refresh() error {
-	ctx, span := s.tracer.Start(s.ctx, "centrum-refresh-cache")
-	defer span.End()
-
-	if err := s.loadUnits(ctx, 0); err != nil {
-		s.logger.Error("failed to load units", zap.Error(err))
-	}
-
-	return nil
-}
-
 func (s *Server) GetSettings(ctx context.Context, req *GetSettingsRequest) (*dispatch.Settings, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	return s.getSettings(ctx, userInfo.Job)
+	settings := &dispatch.Settings{}
+	if err := s.settings.Get(userInfo.Job, settings); err != nil {
+		if !errors.Is(nats.ErrKeyNotFound, err) {
+			return nil, err
+		}
+	}
+
+	settings.Job = userInfo.Job
+
+	return settings, nil
 }
 
 func (s *Server) UpdateSettings(ctx context.Context, req *dispatch.Settings) (*dispatch.Settings, error) {
@@ -153,11 +177,34 @@ func (s *Server) UpdateSettings(ctx context.Context, req *dispatch.Settings) (*d
 	}
 	defer s.a.Log(auditEntry, req)
 
-	if err := s.updateSettings(ctx, userInfo, req); err != nil {
+	stmt := tCentrumSettings.
+		INSERT(
+			tCentrumSettings.Job,
+			tCentrumSettings.Enabled,
+			tCentrumSettings.Mode,
+			tCentrumSettings.FallbackMode,
+		).
+		VALUES(
+			userInfo.Job,
+			req.Enabled,
+			req.Mode,
+			req.FallbackMode,
+		).
+		ON_DUPLICATE_KEY_UPDATE(
+			tCentrumSettings.Job.SET(jet.String(userInfo.Job)),
+			tCentrumSettings.Enabled.SET(jet.Bool(req.Enabled)),
+			tCentrumSettings.Mode.SET(jet.Int32(int32(req.Mode))),
+			tCentrumSettings.FallbackMode.SET(jet.Int32(int32(req.FallbackMode))),
+		)
+
+	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 		return nil, err
 	}
 
-	auditEntry.State = int16(rector.EVENT_TYPE_UPDATED)
+	// Load settings from database so they are updated in the "cache"
+	if err := s.loadSettings(ctx, userInfo.Job); err != nil {
+		return nil, err
+	}
 
 	settings, err := s.getSettings(ctx, userInfo.Job)
 	if err != nil {
@@ -169,6 +216,8 @@ func (s *Server) UpdateSettings(ctx context.Context, req *dispatch.Settings) (*d
 		return nil, err
 	}
 	s.broadcastToAllUnits(TopicGeneral, TypeGeneralSettings, userInfo, data)
+
+	auditEntry.State = int16(rector.EVENT_TYPE_UPDATED)
 
 	return settings, nil
 }
@@ -225,22 +274,8 @@ func (s *Server) TakeControl(ctx context.Context, req *TakeControlRequest) (*Tak
 		return nil, err
 	}
 
-	settings, err := s.getSettings(ctx, userInfo.Job)
-	if err != nil {
-		return nil, err
-	}
-	// If center is enabled update settings active state accordingly
-	if settings.Enabled {
-		settings.Active = len(disponents) > 0
-
-		if err := s.updateSettings(ctx, userInfo, settings); err != nil {
-			return nil, err
-		}
-	}
-
 	change := &DisponentsChange{
 		Disponents: disponents,
-		Active:     settings.Active,
 	}
 	data, err := proto.Marshal(change)
 	if err != nil {

@@ -6,7 +6,6 @@ CREATE TABLE
     IF NOT EXISTS `fivenet_centrum_settings` (
         `job` varchar(50) NOT NULL,
         `enabled` tinyint(1) DEFAULT 0 NOT NULL,
-        `active` tinyint(1) DEFAULT 0 NULL,
         `mode` mediumint(2) DEFAULT 0 NULL,
         `fallback_mode` mediumint(2) DEFAULT 0 NULL,
         PRIMARY KEY (`job`)

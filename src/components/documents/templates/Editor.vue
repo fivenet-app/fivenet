@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
+import { Combobox,ComboboxButton,ComboboxInput,ComboboxOption,ComboboxOptions } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
-import { max, min, numeric, required } from '@vee-validate/rules';
+import { max,min,numeric,required } from '@vee-validate/rules';
 import { watchDebounced } from '@vueuse/core';
-import { CheckIcon, PlusIcon } from 'mdi-vue3';
+import { CheckIcon,PlusIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import AccessEntry from '~/components/documents/AccessEntry.vue';
 import { useAuthStore } from '~/store/auth';
@@ -11,10 +11,10 @@ import { useNotificationsStore } from '~/store/notifications';
 import { ACCESS_LEVEL } from '~~/gen/ts/resources/documents/access';
 import { Category } from '~~/gen/ts/resources/documents/category';
 import { DocumentAccess } from '~~/gen/ts/resources/documents/documents';
-import { ObjectSpecs, TemplateJobAccess, TemplateRequirements } from '~~/gen/ts/resources/documents/templates';
-import { Job, JobGrade } from '~~/gen/ts/resources/jobs/jobs';
-import { CreateTemplateRequest, UpdateTemplateRequest } from '~~/gen/ts/services/docstore/docstore';
-import SchemaEditor, { ObjectSpecsValue, SchemaEditorValue } from './SchemaEditor.vue';
+import { ObjectSpecs,TemplateJobAccess,TemplateRequirements } from '~~/gen/ts/resources/documents/templates';
+import { Job,JobGrade } from '~~/gen/ts/resources/jobs/jobs';
+import { CreateTemplateRequest,UpdateTemplateRequest } from '~~/gen/ts/services/docstore/docstore';
+import SchemaEditor,{ ObjectSpecsValue,SchemaEditorValue } from './SchemaEditor.vue';
 
 const { $grpc } = useNuxtApp();
 const { t } = useI18n();
@@ -248,7 +248,7 @@ async function createOrUpdateTemplate(values: FormData, templateId?: bigint): Pr
             vehicles: createObjectSpec(schema.value.vehicles),
         };
 
-        const jobAccesses = new Array<TemplateJobAccess>();
+        const jobAccesses = new TemplateJobAccess[]();
         access.value.forEach((entry) => {
             if (entry.values.accessrole === undefined) return;
 

@@ -37,7 +37,7 @@ const selectedJobGrade = ref<undefined | JobGrade>();
 
 const { data: jobs } = useLazyAsyncData('jobs', () => getJobs());
 
-async function getJobs(): Promise<Array<Job>> {
+async function getJobs(): Promise<Job[]> {
     return new Promise(async (res, rej) => {
         try {
             const call = $grpc.getCompletorClient().completeJobs({

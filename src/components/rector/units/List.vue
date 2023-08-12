@@ -12,7 +12,7 @@ const { $grpc } = useNuxtApp();
 
 const { data: units, pending, refresh, error } = useLazyAsyncData('rector-units', () => getUnits());
 
-async function getUnits(): Promise<Array<Unit>> {
+async function getUnits(): Promise<Unit[]> {
     return new Promise(async (res, rej) => {
         try {
             const call = $grpc.getCentrumClient().listUnits({

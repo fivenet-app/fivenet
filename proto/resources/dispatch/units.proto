@@ -21,8 +21,8 @@ message Unit {
 }
 
 message UnitAssignment {
-  uint64 unit_id = 1;
-  int32 user_id = 2;
+  uint64 unit_id = 1; // @gotags: sql:"primary_key" alias:"unit_id"
+  int32 user_id = 2; // @gotags: sql:"primary_key" alias:"user_id"
   optional resources.users.UserShort user = 3;
 }
 

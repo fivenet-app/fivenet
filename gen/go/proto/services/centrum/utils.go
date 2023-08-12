@@ -3,6 +3,7 @@ package centrum
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	dispatch "github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
 	users "github.com/galexrt/fivenet/gen/go/proto/resources/users"
@@ -12,6 +13,7 @@ import (
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
+	"github.com/nats-io/nats.go"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -67,7 +69,7 @@ func (s *Server) getDispatchFromDB(ctx context.Context, tx qrm.DB, id uint64) (*
 			tDispatch.Job.ASC(),
 			tDispatchStatus.Status.ASC(),
 		).
-		LIMIT(1)
+		LIMIT(24)
 
 	dispatch := dispatch.Dispatch{}
 	if err := stmt.QueryContext(ctx, tx, &dispatch); err != nil {
@@ -115,13 +117,8 @@ func (s *Server) getDispatchStatus(ctx context.Context, id uint64) (*dispatch.Di
 }
 
 func (s *Server) getUnit(ctx context.Context, userInfo *userinfo.UserInfo, id uint64) (*dispatch.Unit, bool) {
-	jobUnits, ok := s.units.Load(userInfo.Job)
-	if !ok {
-		return nil, false
-	}
-
-	unit, ok := jobUnits.Load(id)
-	if !ok {
+	unit := &dispatch.Unit{}
+	if err := s.units.Get(fmt.Sprintf("%s/%d", userInfo.Job, id), unit); err != nil {
 		return nil, false
 	}
 
@@ -308,106 +305,9 @@ func (s *Server) getUnitIDForUserID(ctx context.Context, userId int32) (uint64, 
 	return dest.UnitID, nil
 }
 
-func (s *Server) getSettings(ctx context.Context, job string) (*dispatch.Settings, error) {
-	tCentrumSettings := tCentrumSettings.AS("settings")
-	stmt := tCentrumSettings.
-		SELECT(
-			tCentrumSettings.Job,
-			tCentrumSettings.Enabled,
-			tCentrumSettings.Active,
-			tCentrumSettings.Mode,
-			tCentrumSettings.FallbackMode,
-		).
-		FROM(tCentrumSettings).
-		WHERE(
-			tCentrumSettings.Job.EQ(jet.String(job)),
-		)
+func (s *Server) checkIfUserIsPartOfDispatch(ctx context.Context, userInfo *userinfo.UserInfo, dsp *dispatch.Dispatch, disponentOkay bool) (bool, error) {
+	// TODO check if user is disponent
 
-	var dest dispatch.Settings
-	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
-		if !errors.Is(qrm.ErrNoRows, err) {
-			return nil, err
-		}
-
-		// Return default settings
-		return &dispatch.Settings{
-			Job:          job,
-			Enabled:      false,
-			Active:       false,
-			Mode:         dispatch.CENTRUM_MODE_MANUAL,
-			FallbackMode: dispatch.CENTRUM_MODE_MANUAL,
-		}, nil
-	}
-
-	return &dest, nil
-}
-
-func (s *Server) updateSettings(ctx context.Context, userInfo *userinfo.UserInfo, settings *dispatch.Settings) error {
-	if !settings.Enabled {
-		settings.Active = false
-	}
-
-	stmt := tCentrumSettings.
-		INSERT(
-			tCentrumSettings.Job,
-			tCentrumSettings.Enabled,
-			tCentrumSettings.Active,
-			tCentrumSettings.Mode,
-			tCentrumSettings.FallbackMode,
-		).
-		VALUES(
-			userInfo.Job,
-			settings.Enabled,
-			settings.Active,
-			settings.Mode,
-			settings.FallbackMode,
-		).
-		ON_DUPLICATE_KEY_UPDATE(
-			tCentrumSettings.Job.SET(jet.String(userInfo.Job)),
-			tCentrumSettings.Enabled.SET(jet.Bool(settings.Enabled)),
-			tCentrumSettings.Active.SET(jet.Bool(settings.Active)),
-			tCentrumSettings.Mode.SET(jet.Int32(int32(settings.Mode))),
-			tCentrumSettings.FallbackMode.SET(jet.Int32(int32(settings.FallbackMode))),
-		)
-
-	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func (s *Server) getDisponents(ctx context.Context, job string) ([]*users.UserShort, error) {
-	stmt := tCentrumUsers.
-		SELECT(
-			tUser.ID,
-			tUser.Identifier,
-			tUser.Firstname,
-			tUser.Lastname,
-			tUser.Dateofbirth,
-			tUser.Job,
-		).
-		FROM(
-			tCentrumUsers.
-				INNER_JOIN(tUser,
-					tCentrumUsers.UserID.EQ(tUser.ID),
-				),
-		).
-		WHERE(
-			tCentrumUsers.Job.EQ(jet.String(job)),
-		)
-
-	var dest []*users.UserShort
-	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
-		if !errors.Is(qrm.ErrNoRows, err) {
-			return nil, err
-		}
-	}
-
-	return dest, nil
-}
-
-func (s *Server) checkIfUserIsPartOfDispatch(ctx context.Context, userInfo *userinfo.UserInfo, dsp *dispatch.Dispatch) (bool, error) {
 	for i := 0; i < len(dsp.Units); i++ {
 		unit, ok := s.getUnit(ctx, userInfo, dsp.Units[i].UnitId)
 		if !ok {
@@ -632,7 +532,57 @@ func (s *Server) updateDispatchUnitAssignments(ctx context.Context, userInfo *us
 	if err != nil {
 		return err
 	}
+	s.events.JS.Publish(s.buildSubject(TopicUnit, TypeUnitUpdated, userInfo, unit.Id), data)
 	s.events.JS.Publish(s.buildSubject(TopicUnit, TypeUnitUserAssigned, userInfo, unit.Id), data)
 
 	return nil
+}
+
+func (s *Server) getSettings(ctx context.Context, job string) (*dispatch.Settings, error) {
+	settings := &dispatch.Settings{}
+	if err := s.settings.Get(job, settings); err != nil {
+		if !errors.Is(nats.ErrKeyNotFound, err) {
+			return nil, err
+		}
+
+		// Return default settings
+		return &dispatch.Settings{
+			Job:          job,
+			Enabled:      false,
+			Mode:         dispatch.CENTRUM_MODE_MANUAL,
+			FallbackMode: dispatch.CENTRUM_MODE_MANUAL,
+		}, nil
+	}
+
+	return settings, nil
+}
+
+func (s *Server) getDisponents(ctx context.Context, job string) ([]*users.UserShort, error) {
+	stmt := tCentrumUsers.
+		SELECT(
+			tUser.ID,
+			tUser.Identifier,
+			tUser.Firstname,
+			tUser.Lastname,
+			tUser.Dateofbirth,
+			tUser.Job,
+		).
+		FROM(
+			tCentrumUsers.
+				INNER_JOIN(tUser,
+					tCentrumUsers.UserID.EQ(tUser.ID),
+				),
+		).
+		WHERE(
+			tCentrumUsers.Job.EQ(jet.String(job)),
+		)
+
+	var dest []*users.UserShort
+	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
+		if !errors.Is(qrm.ErrNoRows, err) {
+			return nil, err
+		}
+	}
+
+	return dest, nil
 }

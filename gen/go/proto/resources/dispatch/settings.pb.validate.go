@@ -70,8 +70,6 @@ func (m *Settings) validate(all bool) error {
 
 	// no validation rules for Enabled
 
-	// no validation rules for Active
-
 	if _, ok := CENTRUM_MODE_name[int32(m.GetMode())]; !ok {
 		err := SettingsValidationError{
 			field:  "Mode",

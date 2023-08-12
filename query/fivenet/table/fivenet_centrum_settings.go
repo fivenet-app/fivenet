@@ -19,7 +19,6 @@ type fivenetCentrumSettingsTable struct {
 	// Columns
 	Job          mysql.ColumnString
 	Enabled      mysql.ColumnBool
-	Active       mysql.ColumnBool
 	Mode         mysql.ColumnInteger
 	FallbackMode mysql.ColumnInteger
 
@@ -64,11 +63,10 @@ func newFivenetCentrumSettingsTableImpl(schemaName, tableName, alias string) fiv
 	var (
 		JobColumn          = mysql.StringColumn("job")
 		EnabledColumn      = mysql.BoolColumn("enabled")
-		ActiveColumn       = mysql.BoolColumn("active")
 		ModeColumn         = mysql.IntegerColumn("mode")
 		FallbackModeColumn = mysql.IntegerColumn("fallback_mode")
-		allColumns         = mysql.ColumnList{JobColumn, EnabledColumn, ActiveColumn, ModeColumn, FallbackModeColumn}
-		mutableColumns     = mysql.ColumnList{EnabledColumn, ActiveColumn, ModeColumn, FallbackModeColumn}
+		allColumns         = mysql.ColumnList{JobColumn, EnabledColumn, ModeColumn, FallbackModeColumn}
+		mutableColumns     = mysql.ColumnList{EnabledColumn, ModeColumn, FallbackModeColumn}
 	)
 
 	return fivenetCentrumSettingsTable{
@@ -77,7 +75,6 @@ func newFivenetCentrumSettingsTableImpl(schemaName, tableName, alias string) fiv
 		//Columns
 		Job:          JobColumn,
 		Enabled:      EnabledColumn,
-		Active:       ActiveColumn,
 		Mode:         ModeColumn,
 		FallbackMode: FallbackModeColumn,
 

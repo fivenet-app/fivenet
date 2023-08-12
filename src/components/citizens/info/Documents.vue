@@ -26,7 +26,7 @@ const {
     error,
 } = useLazyAsyncData(`citizeninfo-documents-${props.userId}-${offset.value}`, () => listUserDocuments());
 
-async function listUserDocuments(): Promise<Array<DocumentRelation>> {
+async function listUserDocuments(): Promise<DocumentRelation[]> {
     return new Promise(async (res, rej) => {
         try {
             const call = $grpc.getDocStoreClient().listUserDocuments({
