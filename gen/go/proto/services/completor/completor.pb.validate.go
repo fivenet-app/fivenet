@@ -68,6 +68,14 @@ func (m *CompleteCitizensRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	if m.CurrentJob != nil {
+		// no validation rules for CurrentJob
+	}
+
+	if m.OnDuty != nil {
+		// no validation rules for OnDuty
+	}
+
 	if len(errors) > 0 {
 		return CompleteCitizensRequestMultiError(errors)
 	}

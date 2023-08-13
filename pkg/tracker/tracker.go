@@ -249,6 +249,19 @@ func (s *Tracker) GetUserByJobAndID(job string, userId int32) (*livemap.UserMark
 	return user, true
 }
 
+func (s *Tracker) IsUserOnDuty(job string, userId int32) bool {
+	users, ok := s.usersCache.Load(job)
+	if !ok {
+		return false
+	}
+
+	if _, ok := users.Load(userId); !ok {
+		return false
+	}
+
+	return true
+}
+
 func (s *Tracker) GetUserById(id int32) (*livemap.UserMarker, bool) {
 	info, ok := s.usersIDs.Load(id)
 	if !ok {

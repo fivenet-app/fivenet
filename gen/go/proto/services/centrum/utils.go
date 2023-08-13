@@ -4,6 +4,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strconv"
+	"strings"
 
 	dispatch "github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
 	users "github.com/galexrt/fivenet/gen/go/proto/resources/users"
@@ -20,6 +22,15 @@ import (
 var (
 	tCentrumSettings = table.FivenetCentrumSettings
 )
+
+func (s *Server) getDispatch(ctx context.Context, userInfo *userinfo.UserInfo, id uint64) (*dispatch.Dispatch, bool) {
+	dispatch := &dispatch.Dispatch{}
+	if err := s.dispatches.Get(fmt.Sprintf("%s/%d", userInfo.Job, id), dispatch); err != nil {
+		return nil, false
+	}
+
+	return dispatch, true
+}
 
 func (s *Server) getDispatchFromDB(ctx context.Context, tx qrm.DB, id uint64) (*dispatch.Dispatch, error) {
 	condition := tDispatch.ID.EQ(jet.Uint64(id)).AND(jet.OR(
@@ -89,18 +100,18 @@ func (s *Server) getDispatchStatus(ctx context.Context, id uint64) (*dispatch.Di
 			tDispatchStatus.Reason,
 			tDispatchStatus.Code,
 			tDispatchStatus.UserID,
-			tUser.ID,
-			tUser.Identifier,
-			tUser.Firstname,
-			tUser.Lastname,
-			tUser.Job,
-			tUser.JobGrade,
+			tUsers.ID,
+			tUsers.Identifier,
+			tUsers.Firstname,
+			tUsers.Lastname,
+			tUsers.Job,
+			tUsers.JobGrade,
 		).
 		FROM(
 			tDispatchStatus.
 				LEFT_JOIN(
-					tUser,
-					tUser.ID.EQ(tDispatchStatus.UserID),
+					tUsers,
+					tUsers.ID.EQ(tDispatchStatus.UserID),
 				),
 		).
 		WHERE(
@@ -123,6 +134,32 @@ func (s *Server) getUnit(ctx context.Context, userInfo *userinfo.UserInfo, id ui
 	}
 
 	return unit, true
+}
+
+func (s *Server) listUnits(ctx context.Context, job string) ([]*dispatch.Unit, error) {
+	units := []*dispatch.Unit{}
+
+	prefix := fmt.Sprintf("%s/", job)
+	keys, err := s.units.KeysWithPrefix(prefix)
+	if err != nil {
+		return nil, err
+	}
+
+	for i := 0; i < len(keys); i++ {
+		trimmed := strings.TrimPrefix(keys[i], prefix)
+		unitId, err := strconv.Atoi(trimmed)
+		if err != nil {
+			return nil, err
+		}
+
+		unit := &dispatch.Unit{}
+		if err := s.units.Get(fmt.Sprintf("%s/%d", job, unitId), unit); err != nil {
+			return nil, err
+		}
+		units = append(units, unit)
+	}
+
+	return units, err
 }
 
 func (s *Server) getUnitFromDB(ctx context.Context, tx qrm.DB, id uint64) (*dispatch.Unit, error) {
@@ -194,8 +231,8 @@ func (s *Server) getUnitStatus(ctx context.Context, id uint64) (*dispatch.UnitSt
 		FROM(
 			tUnitStatus.
 				LEFT_JOIN(
-					tUser,
-					tUser.ID.EQ(tUnitStatus.UserID),
+					tUsers,
+					tUsers.ID.EQ(tUnitStatus.UserID),
 				),
 		).
 		WHERE(
@@ -260,24 +297,26 @@ func (s *Server) resolveUsersByIds(ctx context.Context, u []int32) ([]*users.Use
 		userIds[i] = jet.Int32(u[i])
 	}
 
-	stmt := tUser.
+	stmt := tUsers.
 		SELECT(
-			tUser.ID.AS("user_id"),
-			tUser.Firstname,
-			tUser.Lastname,
-			tUser.Dateofbirth,
+			tUsers.ID,
+			tUsers.Identifier,
+			tUsers.Firstname,
+			tUsers.Lastname,
+			tUsers.Dateofbirth,
 		).
-		FROM(tUser).
+		FROM(tUsers).
 		WHERE(
-			tUser.ID.IN(userIds...),
-		)
+			tUsers.ID.IN(userIds...),
+		).
+		LIMIT(int64(len(u)))
 
-	resolvedUsers := []*users.UserShort{}
-	if err := stmt.QueryContext(ctx, s.db, &resolvedUsers); err != nil {
+	dest := []*users.UserShort{}
+	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		return nil, err
 	}
 
-	return resolvedUsers, nil
+	return dest, nil
 }
 
 func (s *Server) getUnitIDForUserID(ctx context.Context, userId int32) (uint64, error) {
@@ -372,17 +411,23 @@ func (s *Server) updateDispatchStatus(ctx context.Context, userInfo *userinfo.Us
 		return nil, err
 	}
 
-	for _, u := range dsp.Units {
-		s.events.JS.Publish(s.buildSubject(TopicDispatch, TypeDispatchStatus, userInfo, u.UnitId), data)
+	if len(dsp.Units) == 0 {
+		s.events.JS.Publish(s.buildSubject(TopicDispatch, TypeDispatchStatus, userInfo, 0), data)
+	} else {
+		for _, u := range dsp.Units {
+			s.events.JS.Publish(s.buildSubject(TopicDispatch, TypeDispatchStatus, userInfo, u.UnitId), data)
+		}
 	}
 
 	return status, nil
 }
 
 func (s *Server) updateUnitStatus(ctx context.Context, userInfo *userinfo.UserInfo, unit *dispatch.Unit, in *dispatch.UnitStatus) (*dispatch.UnitStatus, error) {
-	unitId := jet.NULL
-	if in.UnitId <= 0 {
-		unitId = jet.Uint64(in.UnitId)
+	x := jet.NULL
+	y := jet.NULL
+	if in.X != nil && in.Y != nil {
+		x = jet.Float(float64(*in.X))
+		y = jet.Float(float64(*in.Y))
 	}
 
 	tUnitStatus := table.FivenetCentrumUnitsStatus
@@ -393,13 +438,17 @@ func (s *Server) updateUnitStatus(ctx context.Context, userInfo *userinfo.UserIn
 			tUnitStatus.Reason,
 			tUnitStatus.Code,
 			tUnitStatus.UserID,
+			tUnitStatus.X,
+			tUnitStatus.Y,
 		).
 		VALUES(
-			unitId,
+			in.UnitId,
 			in.Status,
 			in.Reason,
 			in.Code,
 			userInfo.UserId,
+			x,
+			y,
 		)
 
 	res, err := stmt.ExecContext(ctx, s.db)
@@ -457,6 +506,15 @@ func (s *Server) updateDispatchUnitAssignments(ctx context.Context, userInfo *us
 			for k := 0; k < len(toRemove); k++ {
 				if unit.Users[i].UserId == toRemove[k] {
 					unit.Users = utils.RemoveFromSlice(unit.Users, i)
+
+					if _, err := s.updateUnitStatus(ctx, userInfo, unit, &dispatch.UnitStatus{
+						UnitId:    unit.Id,
+						Status:    dispatch.UNIT_STATUS_USER_REMOVED,
+						UserId:    &toRemove[k],
+						CreatorId: &userInfo.UserId,
+					}); err != nil {
+						return err
+					}
 				}
 			}
 		}
@@ -483,12 +541,12 @@ func (s *Server) updateDispatchUnitAssignments(ctx context.Context, userInfo *us
 				VALUES(
 					unit.Id,
 					id,
-					tUser.
+					tUsers.
 						SELECT(
-							tUser.Identifier,
+							tUsers.Identifier,
 						).
-						FROM(tUser).
-						WHERE(tUser.ID.EQ(id)).
+						FROM(tUsers).
+						WHERE(tUsers.ID.EQ(id)).
 						LIMIT(1),
 				)
 
@@ -504,6 +562,15 @@ func (s *Server) updateDispatchUnitAssignments(ctx context.Context, userInfo *us
 			for i := 0; i < len(unit.Users); i++ {
 				if unit.Users[i].UserId == toAdd[k] {
 					found = append(found, toAdd[k])
+
+					if _, err := s.updateUnitStatus(ctx, userInfo, unit, &dispatch.UnitStatus{
+						UnitId:    unit.Id,
+						Status:    dispatch.UNIT_STATUS_USER_ADDED,
+						UserId:    &toAdd[k],
+						CreatorId: &userInfo.UserId,
+					}); err != nil {
+						return err
+					}
 				}
 			}
 		}
@@ -560,17 +627,17 @@ func (s *Server) getSettings(ctx context.Context, job string) (*dispatch.Setting
 func (s *Server) getDisponents(ctx context.Context, job string) ([]*users.UserShort, error) {
 	stmt := tCentrumUsers.
 		SELECT(
-			tUser.ID,
-			tUser.Identifier,
-			tUser.Firstname,
-			tUser.Lastname,
-			tUser.Dateofbirth,
-			tUser.Job,
+			tUsers.ID,
+			tUsers.Identifier,
+			tUsers.Firstname,
+			tUsers.Lastname,
+			tUsers.Dateofbirth,
+			tUsers.Job,
 		).
 		FROM(
 			tCentrumUsers.
-				INNER_JOIN(tUser,
-					tCentrumUsers.UserID.EQ(tUser.ID),
+				INNER_JOIN(tUsers,
+					tCentrumUsers.UserID.EQ(tUsers.ID),
 				),
 		).
 		WHERE(

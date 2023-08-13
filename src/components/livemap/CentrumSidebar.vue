@@ -89,10 +89,6 @@ async function startStream(): Promise<void> {
 
             console.debug('Centrum: Received change - Kind:', resp.change.oneofKind, resp.change);
 
-            if (!dispatches.value) {
-                continue;
-            }
-
             if (resp.change.oneofKind === 'latestState') {
                 settings.value = resp.change.latestState.settings;
                 ownUnit.value = resp.change.latestState.unit;
@@ -102,13 +98,6 @@ async function startStream(): Promise<void> {
                 settings.value = resp.change.settings;
             } else if (resp.change.oneofKind === 'disponents') {
                 disponents.value = resp.change.disponents.disponents;
-                // If user is part of disponents list, we need to restart the stream
-                if (!resp.change.disponents.active) {
-                    stopStream();
-                    setTimeout(() => {
-                        startStream();
-                    }, 250);
-                }
             } else if (resp.change.oneofKind === 'unitAssigned') {
                 const idx = resp.change.unitAssigned.users.findIndex((u) => u.userId !== activeChar.value?.userId);
                 if (idx === -1) {
@@ -154,7 +143,11 @@ async function startStream(): Promise<void> {
                 }
             } else if (resp.change.oneofKind === 'unitStatus') {
                 feed.value.unshift(resp.change.unitStatus);
-                // TODO add latest status to unit
+                const unitId = resp.change.unitStatus.unitId;
+                const unit = units.value.find((u) => u.id === unitId);
+                if (unit) {
+                    unit.status = resp.change.unitStatus;
+                }
             } else if (resp.change.oneofKind === 'dispatchCreated') {
                 const id = resp.change.dispatchCreated.id;
                 const idx = dispatches.value?.findIndex((d) => d.id === id) ?? -1;

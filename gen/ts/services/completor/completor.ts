@@ -15,6 +15,14 @@ export interface CompleteCitizensRequest {
      * @generated from protobuf field: string search = 1;
      */
     search: string;
+    /**
+     * @generated from protobuf field: optional bool current_job = 2;
+     */
+    currentJob?: boolean;
+    /**
+     * @generated from protobuf field: optional bool on_duty = 3;
+     */
+    onDuty?: boolean;
 }
 /**
  * @generated from protobuf message services.completor.CompleteCitizensRespoonse
@@ -87,7 +95,9 @@ export interface ListLawBooksResponse {
 class CompleteCitizensRequest$Type extends MessageType<CompleteCitizensRequest> {
     constructor() {
         super("services.completor.CompleteCitizensRequest", [
-            { no: 1, name: "search", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } }
+            { no: 1, name: "search", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
+            { no: 2, name: "current_job", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 3, name: "on_duty", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
 }

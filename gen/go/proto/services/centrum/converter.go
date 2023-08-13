@@ -25,15 +25,15 @@ func (s *Server) ConvertPhoneJobMsgToDispatch() error {
 			tGksPhoneJMsg.Gps,
 			tGksPhoneJMsg.Message,
 			tGksPhoneJMsg.Time,
-			tUser.ID.AS("userId"),
+			tUsers.ID.AS("usershort.userid"),
 		).
 		FROM(
 			tGksPhoneJMsg.
 				INNER_JOIN(tGksPhoneSettings,
 					tGksPhoneSettings.PhoneNumber.EQ(tGksPhoneJMsg.Number),
 				).
-				INNER_JOIN(tUser,
-					tUser.Identifier.EQ(tGksPhoneSettings.Identifier),
+				INNER_JOIN(tUsers,
+					tUsers.Identifier.EQ(tGksPhoneSettings.Identifier),
 				),
 		).
 		WHERE(jet.AND(
@@ -69,8 +69,8 @@ func (s *Server) ConvertPhoneJobMsgToDispatch() error {
 		dsp := &dispatch.Dispatch{
 			Job:     job,
 			Message: *msg.Message,
-			X:       float32(x),
-			Y:       float32(y),
+			X:       x,
+			Y:       y,
 			Anon:    &anon,
 			UserId:  &msg.UserId,
 		}

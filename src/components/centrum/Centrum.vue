@@ -8,6 +8,8 @@ import { default as DispatchesList } from '~/components/centrum/dispatches/List.
 import { default as UnitsList } from '~/components/centrum/units/List.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
+import { useAuthStore } from '~/store/auth';
+import { useNotificationsStore } from '~/store/notifications';
 import { Dispatch, DispatchStatus } from '~~/gen/ts/resources/dispatch/dispatches';
 import { Settings } from '~~/gen/ts/resources/dispatch/settings';
 import { Unit, UnitStatus } from '~~/gen/ts/resources/dispatch/units';
@@ -15,6 +17,11 @@ import { UserShort } from '~~/gen/ts/resources/users/users';
 import Feed from './Feed.vue';
 
 const { $grpc } = useNuxtApp();
+
+const notifications = useNotificationsStore();
+
+const authStore = useAuthStore();
+const { activeChar } = storeToRefs(authStore);
 
 const settings = ref<Settings>();
 const isDisponent = ref(false);
@@ -49,10 +56,6 @@ async function startStream(): Promise<void> {
 
             console.debug('Centrum: Received change - Kind:', resp.change.oneofKind, resp.change);
 
-            if (!dispatches.value) {
-                continue;
-            }
-
             if (resp.change.oneofKind === 'latestState') {
                 settings.value = resp.change.latestState.settings;
                 ownUnit.value = resp.change.latestState.unit;
@@ -63,20 +66,16 @@ async function startStream(): Promise<void> {
                 settings.value = resp.change.settings;
             } else if (resp.change.oneofKind === 'disponents') {
                 disponents.value = resp.change.disponents.disponents;
-                // If user is part of disponents list, we need to restart the stream
-                if (!resp.change.disponents.active) {
+                // If user is not part of disponents list anymore, we need to restart the stream
+                const idx = disponents.value.findIndex((d) => d.userId === activeChar.value?.userId);
+                if (idx === -1) {
                     stopStream();
                     setTimeout(() => {
                         startStream();
                     }, 250);
                 }
             } else if (resp.change.oneofKind === 'unitAssigned') {
-                // TODO show popup and notification
-                if (resp.change.unitAssigned.id === 0n) {
-                    // User has been removed from the unit
-                } else {
-                    // User has been added to unit
-                }
+                // Doesn't matter for controllers
             } else if (resp.change.oneofKind === 'unitCreated') {
                 const id = resp.change.unitCreated.id;
                 const idx = units.value?.findIndex((d) => d.id === id) ?? -1;
@@ -101,7 +100,11 @@ async function startStream(): Promise<void> {
                 }
             } else if (resp.change.oneofKind === 'unitStatus') {
                 feed.value.unshift(resp.change.unitStatus);
-                // TODO add latest status to unit
+                const unitId = resp.change.unitStatus.unitId;
+                const unit = units.value.find((u) => u.id === unitId);
+                if (unit) {
+                    unit.status = resp.change.unitStatus;
+                }
             } else if (resp.change.oneofKind === 'dispatchCreated') {
                 const id = resp.change.dispatchCreated.id;
                 const idx = dispatches.value?.findIndex((d) => d.id === id) ?? -1;

@@ -3,8 +3,6 @@ package centrum
 import (
 	"context"
 	"fmt"
-	"strconv"
-	"strings"
 
 	database "github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
@@ -22,7 +20,7 @@ var (
 	tUnits      = table.FivenetCentrumUnits.AS("unit")
 	tUnitStatus = table.FivenetCentrumUnitsStatus.AS("unitstatus")
 	tUnitUser   = table.FivenetCentrumUnitsUsers.AS("unitassignment")
-	tUser       = table.Users.AS("usershort")
+	tUsers      = table.Users.AS("usershort")
 )
 
 func (s *Server) ListUnits(ctx context.Context, req *ListUnitsRequest) (*ListUnitsResponse, error) {
@@ -41,29 +39,11 @@ func (s *Server) ListUnits(ctx context.Context, req *ListUnitsRequest) (*ListUni
 		Units: []*dispatch.Unit{},
 	}
 
-	units := []*dispatch.Unit{}
-
-	prefix := fmt.Sprintf("%s/", userInfo.Job)
-	keys, err := s.units.KeysWithPrefix(prefix)
+	var err error
+	resp.Units, err = s.listUnits(ctx, userInfo.Job)
 	if err != nil {
 		return nil, err
 	}
-
-	for i := 0; i < len(keys); i++ {
-		trimmed := strings.TrimPrefix(keys[i], prefix)
-		unitId, err := strconv.Atoi(trimmed)
-		if err != nil {
-			return nil, err
-		}
-
-		unit := &dispatch.Unit{}
-		if err := s.units.Get(fmt.Sprintf("%s/%d", userInfo.Job, unitId), unit); err != nil {
-			return nil, err
-		}
-		units = append(units, unit)
-	}
-
-	resp.Units = units
 
 	auditEntry.State = int16(rector.EVENT_TYPE_VIEWED)
 
@@ -290,8 +270,22 @@ func (s *Server) UpdateUnitStatus(ctx context.Context, req *UpdateUnitStatusRequ
 		}
 	}
 
+	var x, y *float64
+	marker, ok := s.tracker.GetUserById(userInfo.UserId)
+	if ok {
+		x = &marker.Marker.X
+		y = &marker.Marker.Y
+	}
+
 	if _, err := s.updateUnitStatus(ctx, userInfo, unit, &dispatch.UnitStatus{
-		UnitId: unit.Id,
+		UnitId:    unit.Id,
+		Status:    req.Status,
+		Reason:    req.Reason,
+		Code:      req.Code,
+		UserId:    &userInfo.UserId,
+		X:         x,
+		Y:         y,
+		CreatorId: &userInfo.UserId,
 	}); err != nil {
 		return nil, ErrFailedQuery
 	}
@@ -325,6 +319,12 @@ func (s *Server) AssignUnit(ctx context.Context, req *AssignUnitRequest) (*Assig
 		return nil, ErrFailedQuery
 	}
 
+	data, err := proto.Marshal(unit)
+	if err != nil {
+		return nil, err
+	}
+	s.events.JS.Publish(s.buildSubject(TopicUnit, TypeUnitUserAssigned, userInfo, 0), data)
+
 	auditEntry.State = int16(rector.EVENT_TYPE_UPDATED)
 
 	return &AssignUnitResponse{}, nil
@@ -349,8 +349,8 @@ func (s *Server) JoinUnit(ctx context.Context, req *JoinUnitRequest) (*JoinUnitR
 		}
 	}
 
-	unit, err := s.getUnitFromDB(ctx, s.db, req.UnitId)
-	if err != nil {
+	unit, ok := s.getUnit(ctx, userInfo, req.UnitId)
+	if !ok {
 		return nil, ErrFailedQuery
 	}
 
@@ -359,6 +359,17 @@ func (s *Server) JoinUnit(ctx context.Context, req *JoinUnitRequest) (*JoinUnitR
 		if err := s.updateDispatchUnitAssignments(ctx, userInfo, unit, []int32{userInfo.UserId}, nil); err != nil {
 			return nil, ErrFailedQuery
 		}
+
+		unit, ok := s.getUnit(ctx, userInfo, req.UnitId)
+		if !ok {
+			return nil, ErrFailedQuery
+		}
+
+		data, err := proto.Marshal(unit)
+		if err != nil {
+			return nil, err
+		}
+		s.events.JS.Publish(s.buildSubject(TopicUnit, TypeUnitUserAssigned, userInfo, 0), data)
 
 		resp.Unit = unit
 	} else {
@@ -404,15 +415,15 @@ func (s *Server) ListUnitActivity(ctx context.Context, req *ListUnitActivityRequ
 			tUnitStatus.UserID,
 			tUnitStatus.X,
 			tUnitStatus.Y,
-			tUser.Firstname,
-			tUser.Lastname,
-			tUser.Dateofbirth,
-			tUser.Job,
+			tUsers.Firstname,
+			tUsers.Lastname,
+			tUsers.Dateofbirth,
+			tUsers.Job,
 		).
 		FROM(
 			tUnitStatus.
-				LEFT_JOIN(tUser,
-					tUser.ID.EQ(tUnitStatus.UserID),
+				LEFT_JOIN(tUsers,
+					tUsers.ID.EQ(tUnitStatus.UserID),
 				),
 		).
 		WHERE(

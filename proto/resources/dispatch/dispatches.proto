@@ -17,8 +17,8 @@ message Dispatch {
   string message = 6 [(validate.rules).string.max_len = 255];
   optional string description = 7 [(validate.rules).string.max_len = 1024];
   optional Attributes attributes = 8;
-  float x = 9;
-  float y = 10;
+  double x = 9;
+  double y = 10;
   optional bool anon = 11;
   optional int32 user_id = 12;
   optional resources.users.UserShort user = 13;
@@ -27,6 +27,12 @@ message Dispatch {
 
 message Attributes {
   repeated string list = 1;
+}
+
+message DispatchAssignments {
+  uint64 dispatch_id = 1;
+  string job = 2;
+  repeated DispatchAssignment units = 3;
 }
 
 message DispatchAssignment {
@@ -54,13 +60,13 @@ message DispatchStatus {
   uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
   optional resources.timestamp.Timestamp created_at = 2;
   uint64 dispatch_id = 3;
-  uint64 unit_id = 4;
+  optional uint64 unit_id = 4;
   optional resources.dispatch.Unit unit = 5;
   DISPATCH_STATUS status = 6 [(validate.rules).enum.defined_only = true];
   optional string reason = 7 [(validate.rules).string.max_len = 255];
   optional string code = 8 [(validate.rules).string.max_len = 20];
   optional int32 user_id = 9 [(validate.rules).int32.gt = 0];
   optional resources.users.UserShort user = 10;
-  optional float x = 11;
-  optional float y = 12;
+  optional double x = 11;
+  optional double y = 12;
 }

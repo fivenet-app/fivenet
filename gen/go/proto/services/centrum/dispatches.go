@@ -88,7 +88,7 @@ func (s *Server) ListDispatches(ctx context.Context, req *ListDispatchesRequest)
 			tDispatch.ID.DESC(),
 			tDispatchStatus.Status.ASC(),
 		).
-		LIMIT(150)
+		LIMIT(200)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Dispatches); err != nil {
 		return nil, err
@@ -111,33 +111,37 @@ func (s *Server) CreateDispatch(ctx context.Context, req *CreateDispatchRequest)
 	}
 	defer s.a.Log(auditEntry, req)
 
+	req.Dispatch.Job = userInfo.Job
 	req.Dispatch.UserId = &userInfo.UserId
+
 	dsp, err := s.createDispatch(ctx, req.Dispatch)
 	if err != nil {
 		return nil, err
 	}
 
-	resp := &CreateDispatchResponse{
-		Dispatch: dsp,
-	}
-
-	data, err := proto.Marshal(resp.Dispatch)
+	data, err := proto.Marshal(dsp)
 	if err != nil {
 		return nil, err
 	}
-	s.events.JS.Publish(s.buildSubject(TopicDispatch, TypeDispatchUpdated, userInfo, 0), data)
+	s.events.JS.Publish(s.buildSubject(TopicDispatch, TypeDispatchCreated, userInfo, 0), data)
 
-	data, err = proto.Marshal(resp.Dispatch.Status)
+	data, err = proto.Marshal(dsp.Status)
 	if err != nil {
 		return nil, err
 	}
-	for _, u := range dsp.Units {
-		s.events.JS.Publish(s.buildSubject(TopicDispatch, TypeDispatchStatus, userInfo, u.UnitId), data)
+	if len(dsp.Units) == 0 {
+		s.events.JS.Publish(s.buildSubject(TopicDispatch, TypeDispatchStatus, userInfo, 0), data)
+	} else {
+		for _, u := range dsp.Units {
+			s.events.JS.Publish(s.buildSubject(TopicDispatch, TypeDispatchStatus, userInfo, u.UnitId), data)
+		}
 	}
 
 	auditEntry.State = int16(rector.EVENT_TYPE_CREATED)
 
-	return resp, nil
+	return &CreateDispatchResponse{
+		Dispatch: dsp,
+	}, nil
 }
 
 func (s *Server) createDispatch(ctx context.Context, d *dispatch.Dispatch) (*dispatch.Dispatch, error) {
@@ -182,7 +186,20 @@ func (s *Server) createDispatch(ctx context.Context, d *dispatch.Dispatch) (*dis
 		return nil, err
 	}
 
-	if err := s.addDispatchStatus(ctx, tx, uint64(lastId), *d.UserId, dispatch.DISPATCH_STATUS_NEW); err != nil {
+	var x, y *float64
+	marker, ok := s.tracker.GetUserById(*d.UserId)
+	if ok {
+		x = &marker.Marker.X
+		y = &marker.Marker.Y
+	}
+
+	if err := s.addDispatchStatus(ctx, tx, &dispatch.DispatchStatus{
+		DispatchId: uint64(lastId),
+		UserId:     d.UserId,
+		Status:     dispatch.DISPATCH_STATUS_NEW,
+		X:          x,
+		Y:          y,
+	}); err != nil {
 		return nil, err
 	}
 
@@ -199,18 +216,28 @@ func (s *Server) createDispatch(ctx context.Context, d *dispatch.Dispatch) (*dis
 	return dsp, nil
 }
 
-func (s *Server) addDispatchStatus(ctx context.Context, tx qrm.DB, dispatchId uint64, userId int32, status dispatch.DISPATCH_STATUS) error {
+func (s *Server) addDispatchStatus(ctx context.Context, tx qrm.DB, status *dispatch.DispatchStatus) error {
 	tDispatchStatus := table.FivenetCentrumDispatchesStatus
 	stmt := tDispatchStatus.
 		INSERT(
 			tDispatchStatus.DispatchID,
 			tDispatchStatus.Status,
+			tDispatchStatus.Reason,
+			tDispatchStatus.Code,
+			tDispatchStatus.UnitID,
 			tDispatchStatus.UserID,
+			tDispatchStatus.X,
+			tDispatchStatus.Y,
 		).
 		VALUES(
-			dispatchId,
-			status,
-			userId,
+			status.DispatchId,
+			status.Status,
+			status.Reason,
+			status.Code,
+			status.UnitId,
+			status.UserId,
+			status.X,
+			status.Y,
 		)
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -315,7 +342,7 @@ func (s *Server) TakeDispatch(ctx context.Context, req *TakeDispatchRequest) (*T
 		DispatchId: req.DispatchId,
 		Status:     dispatch.DISPATCH_STATUS_UNIT_ASSIGNED,
 		UserId:     &userInfo.UserId,
-		UnitId:     unitId,
+		UnitId:     &unitId,
 	}); err != nil {
 		return nil, err
 	}
@@ -337,8 +364,8 @@ func (s *Server) UpdateDispatchStatus(ctx context.Context, req *UpdateDispatchSt
 	}
 	defer s.a.Log(auditEntry, req)
 
-	dsp, err := s.getDispatchFromDB(ctx, s.db, req.DispatchId)
-	if err != nil {
+	dsp, ok := s.getDispatch(ctx, userInfo, req.DispatchId)
+	if !ok {
 		return nil, ErrFailedQuery
 	}
 
@@ -357,10 +384,11 @@ func (s *Server) UpdateDispatchStatus(ctx context.Context, req *UpdateDispatchSt
 
 	if _, err := s.updateDispatchStatus(ctx, userInfo, dsp, &dispatch.DispatchStatus{
 		DispatchId: dsp.Id,
+		UnitId:     &unitId,
 		Status:     req.Status,
 		Code:       req.Code,
 		Reason:     req.Reason,
-		UnitId:     unitId,
+		UserId:     &userInfo.UserId,
 	}); err != nil {
 		return nil, err
 	}
@@ -428,7 +456,7 @@ func (s *Server) AssignDispatch(ctx context.Context, req *AssignDispatchRequest)
 
 					if _, err := s.updateDispatchStatus(ctx, userInfo, dsp, &dispatch.DispatchStatus{
 						DispatchId: dsp.Id,
-						UnitId:     req.ToRemove[k],
+						UnitId:     &req.ToRemove[k],
 						UserId:     &userInfo.UserId,
 						Status:     dispatch.DISPATCH_STATUS_UNIT_UNASSIGNED,
 					}); err != nil {
@@ -496,7 +524,7 @@ func (s *Server) AssignDispatch(ctx context.Context, req *AssignDispatchRequest)
 		for _, unitId := range needsUpdate {
 			if _, err := s.updateDispatchStatus(ctx, userInfo, dsp, &dispatch.DispatchStatus{
 				DispatchId: dsp.Id,
-				UnitId:     unitId,
+				UnitId:     &unitId,
 				UserId:     &userInfo.UserId,
 				Status:     dispatch.DISPATCH_STATUS_UNIT_ASSIGNED,
 			}); err != nil {
@@ -522,18 +550,17 @@ func (s *Server) AssignDispatch(ctx context.Context, req *AssignDispatchRequest)
 		s.events.JS.Publish(s.buildSubject(TopicDispatch, TypeDispatchUpdated, userInfo, req.ToAdd[i]), data)
 	}
 
-	auditEntry.State = int16(rector.EVENT_TYPE_UPDATED)
-
 	if len(dsp.Units) <= 0 {
 		if _, err := s.updateDispatchStatus(ctx, userInfo, dsp, &dispatch.DispatchStatus{
 			DispatchId: dsp.Id,
 			Status:     dispatch.DISPATCH_STATUS_UNASSIGNED,
-			UnitId:     0,
 			UserId:     &userInfo.UserId,
 		}); err != nil {
 			return nil, err
 		}
 	}
+
+	auditEntry.State = int16(rector.EVENT_TYPE_UPDATED)
 
 	return &AssignDispatchResponse{}, nil
 }
@@ -572,15 +599,15 @@ func (s *Server) ListDispatchActivity(ctx context.Context, req *ListDispatchActi
 			tDispatchStatus.Reason,
 			tDispatchStatus.Code,
 			tDispatchStatus.UserID,
-			tUser.Firstname,
-			tUser.Lastname,
-			tUser.Dateofbirth,
-			tUser.Job,
+			tUsers.Firstname,
+			tUsers.Lastname,
+			tUsers.Dateofbirth,
+			tUsers.Job,
 		).
 		FROM(
 			tDispatchStatus.
-				LEFT_JOIN(tUser,
-					tUser.ID.EQ(tDispatchStatus.UserID),
+				LEFT_JOIN(tUsers,
+					tUsers.ID.EQ(tDispatchStatus.UserID),
 				),
 		).
 		WHERE(
@@ -594,8 +621,8 @@ func (s *Server) ListDispatchActivity(ctx context.Context, req *ListDispatchActi
 		return nil, err
 	}
 	for _, activity := range resp.Activity {
-		if activity.UnitId > 0 {
-			activity.Unit, _ = s.getUnit(ctx, userInfo, activity.UnitId)
+		if activity.UnitId != nil && *activity.UnitId > 0 {
+			activity.Unit, _ = s.getUnit(ctx, userInfo, *activity.UnitId)
 		}
 	}
 

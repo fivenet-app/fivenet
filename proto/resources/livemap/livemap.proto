@@ -18,8 +18,8 @@ enum MARKER_TYPE {
 message GenericMarker {
   int32 id = 1 [(validate.rules).int32.gt = 0];
   resources.timestamp.Timestamp updated_at = 2;
-  float x = 3;
-  float y = 4;
+  double x = 3;
+  double y = 4;
   string name = 5;
   string icon = 6;
   string icon_color = 7;

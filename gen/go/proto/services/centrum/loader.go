@@ -3,7 +3,6 @@ package centrum
 import (
 	"context"
 	"fmt"
-	"sync"
 
 	dispatch "github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
@@ -30,23 +29,22 @@ func (s *Server) refresh() error {
 	ctx, span := s.tracer.Start(s.ctx, "centrum-refresh-cache")
 	defer span.End()
 
-	wg := sync.WaitGroup{}
+	//wg := sync.WaitGroup{}
+	//wg.Add(1)
+	//go func() {
+	if err := s.loadUnits(ctx, 0); err != nil {
+		s.logger.Error("failed to load centrum units", zap.Error(err))
+	}
+	//}()
 
-	wg.Add(1)
-	go func() {
-		if err := s.loadUnits(ctx, 0); err != nil {
-			s.logger.Error("failed to load centrum units", zap.Error(err))
-		}
-	}()
+	//wg.Add(1)
+	//go func() {
+	if err := s.loadDispatches(ctx, 0); err != nil {
+		s.logger.Error("failed to load centrum dispatches", zap.Error(err))
+	}
+	//}()
 
-	wg.Add(1)
-	go func() {
-		if err := s.loadDispatches(ctx, 0); err != nil {
-			s.logger.Error("failed to load centrum dispatches", zap.Error(err))
-		}
-	}()
-
-	wg.Done()
+	//wg.Done()
 
 	return nil
 }
@@ -193,24 +191,17 @@ func (s *Server) loadDispatches(ctx context.Context, id uint64) error {
 			tDispatchStatus.Reason,
 			tDispatchStatus.Code,
 			tDispatchStatus.UserID,
-			tDispatchUnit.UnitID,
-			tDispatchUnit.DispatchID,
-			tDispatchUnit.CreatedAt,
-			tDispatchUnit.ExpiresAt,
 		).
 		FROM(
 			tDispatch.
 				LEFT_JOIN(tDispatchStatus,
 					tDispatchStatus.DispatchID.EQ(tDispatch.ID),
-				).
-				LEFT_JOIN(tDispatchUnit,
-					tDispatchUnit.DispatchID.EQ(tDispatch.ID),
 				),
 		).
 		WHERE(condition).
 		ORDER_BY(
 			tDispatch.ID.ASC(),
-		).LIMIT(120)
+		).LIMIT(150)
 
 	dispatches := []*dispatch.Dispatch{}
 	if err := stmt.QueryContext(ctx, s.db, &dispatches); err != nil {
@@ -218,6 +209,12 @@ func (s *Server) loadDispatches(ctx context.Context, id uint64) error {
 	}
 
 	for i := 0; i < len(dispatches); i++ {
+		var err error
+		dispatches[i].Units, err = s.loadDispatchAssignments(ctx, dispatches[i].Id)
+		if err != nil {
+			return err
+		}
+
 		// Add units to the dispatch based on the unit assignments
 		for k := 0; k < len(dispatches[i].Units); k++ {
 			unit, ok := s.getUnit(ctx, &userinfo.UserInfo{
@@ -229,7 +226,37 @@ func (s *Server) loadDispatches(ctx context.Context, id uint64) error {
 
 			dispatches[i].Units[k].Unit = unit
 		}
+
+		// TODO need to check if the dispatch already exists in the store, compare and make the changes
+
+		if err := s.dispatches.Put(fmt.Sprintf("%s/%d", dispatches[i].Job, dispatches[i].Id), dispatches[i]); err != nil {
+			return err
+		}
 	}
 
 	return nil
+}
+
+func (s *Server) loadDispatchAssignments(ctx context.Context, dispatchId uint64) ([]*dispatch.DispatchAssignment, error) {
+	stmt := tDispatch.
+		SELECT(
+			tDispatchUnit.DispatchID,
+			tDispatchUnit.UnitID,
+			tDispatchUnit.CreatedAt,
+			tDispatchUnit.ExpiresAt,
+		).
+		FROM(tDispatchUnit).
+		ORDER_BY(
+			tDispatchUnit.CreatedAt.ASC(),
+		).
+		WHERE(
+			tDispatchUnit.DispatchID.EQ(jet.Uint64(dispatchId)),
+		)
+
+	dest := []*dispatch.DispatchAssignment{}
+	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
+		return nil, err
+	}
+
+	return dest, nil
 }

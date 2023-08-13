@@ -42,11 +42,11 @@ export interface Dispatch {
      */
     attributes?: Attributes;
     /**
-     * @generated from protobuf field: float x = 9;
+     * @generated from protobuf field: double x = 9;
      */
     x: number;
     /**
-     * @generated from protobuf field: float y = 10;
+     * @generated from protobuf field: double y = 10;
      */
     y: number;
     /**
@@ -74,6 +74,23 @@ export interface Attributes {
      * @generated from protobuf field: repeated string list = 1;
      */
     list: string[];
+}
+/**
+ * @generated from protobuf message resources.dispatch.DispatchAssignments
+ */
+export interface DispatchAssignments {
+    /**
+     * @generated from protobuf field: uint64 dispatch_id = 1;
+     */
+    dispatchId: bigint;
+    /**
+     * @generated from protobuf field: string job = 2;
+     */
+    job: string;
+    /**
+     * @generated from protobuf field: repeated resources.dispatch.DispatchAssignment units = 3;
+     */
+    units: DispatchAssignment[];
 }
 /**
  * @generated from protobuf message resources.dispatch.DispatchAssignment
@@ -117,9 +134,9 @@ export interface DispatchStatus {
      */
     dispatchId: bigint;
     /**
-     * @generated from protobuf field: uint64 unit_id = 4;
+     * @generated from protobuf field: optional uint64 unit_id = 4;
      */
-    unitId: bigint;
+    unitId?: bigint;
     /**
      * @generated from protobuf field: optional resources.dispatch.Unit unit = 5;
      */
@@ -145,11 +162,11 @@ export interface DispatchStatus {
      */
     user?: UserShort;
     /**
-     * @generated from protobuf field: optional float x = 11;
+     * @generated from protobuf field: optional double x = 11;
      */
     x?: number;
     /**
-     * @generated from protobuf field: optional float y = 12;
+     * @generated from protobuf field: optional double y = 12;
      */
     y?: number;
 }
@@ -210,8 +227,8 @@ class Dispatch$Type extends MessageType<Dispatch> {
             { no: 6, name: "message", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
             { no: 7, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "1024" } } } },
             { no: 8, name: "attributes", kind: "message", T: () => Attributes },
-            { no: 9, name: "x", kind: "scalar", T: 2 /*ScalarType.FLOAT*/ },
-            { no: 10, name: "y", kind: "scalar", T: 2 /*ScalarType.FLOAT*/ },
+            { no: 9, name: "x", kind: "scalar", T: 1 /*ScalarType.DOUBLE*/ },
+            { no: 10, name: "y", kind: "scalar", T: 1 /*ScalarType.DOUBLE*/ },
             { no: 11, name: "anon", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
             { no: 12, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
             { no: 13, name: "user", kind: "message", T: () => UserShort },
@@ -236,6 +253,20 @@ class Attributes$Type extends MessageType<Attributes> {
  */
 export const Attributes = new Attributes$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class DispatchAssignments$Type extends MessageType<DispatchAssignments> {
+    constructor() {
+        super("resources.dispatch.DispatchAssignments", [
+            { no: 1, name: "dispatch_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 2, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "units", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => DispatchAssignment }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.dispatch.DispatchAssignments
+ */
+export const DispatchAssignments = new DispatchAssignments$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class DispatchAssignment$Type extends MessageType<DispatchAssignment> {
     constructor() {
         super("resources.dispatch.DispatchAssignment", [
@@ -258,15 +289,15 @@ class DispatchStatus$Type extends MessageType<DispatchStatus> {
             { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "dispatch_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 4, name: "unit_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 4, name: "unit_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
             { no: 5, name: "unit", kind: "message", T: () => Unit },
             { no: 6, name: "status", kind: "enum", T: () => ["resources.dispatch.DISPATCH_STATUS", DISPATCH_STATUS], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 7, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
             { no: 8, name: "code", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 9, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
             { no: 10, name: "user", kind: "message", T: () => UserShort },
-            { no: 11, name: "x", kind: "scalar", opt: true, T: 2 /*ScalarType.FLOAT*/ },
-            { no: 12, name: "y", kind: "scalar", opt: true, T: 2 /*ScalarType.FLOAT*/ }
+            { no: 11, name: "x", kind: "scalar", opt: true, T: 1 /*ScalarType.DOUBLE*/ },
+            { no: 12, name: "y", kind: "scalar", opt: true, T: 1 /*ScalarType.DOUBLE*/ }
         ]);
     }
 }

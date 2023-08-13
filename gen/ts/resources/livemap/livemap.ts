@@ -18,11 +18,11 @@ export interface GenericMarker {
      */
     updatedAt?: Timestamp;
     /**
-     * @generated from protobuf field: float x = 3;
+     * @generated from protobuf field: double x = 3;
      */
     x: number;
     /**
-     * @generated from protobuf field: float y = 4;
+     * @generated from protobuf field: double y = 4;
      */
     y: number;
     /**
@@ -107,8 +107,8 @@ class GenericMarker$Type extends MessageType<GenericMarker> {
         super("resources.livemap.GenericMarker", [
             { no: 1, name: "id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
             { no: 2, name: "updated_at", kind: "message", T: () => Timestamp },
-            { no: 3, name: "x", kind: "scalar", T: 2 /*ScalarType.FLOAT*/ },
-            { no: 4, name: "y", kind: "scalar", T: 2 /*ScalarType.FLOAT*/ },
+            { no: 3, name: "x", kind: "scalar", T: 1 /*ScalarType.DOUBLE*/ },
+            { no: 4, name: "y", kind: "scalar", T: 1 /*ScalarType.DOUBLE*/ },
             { no: 5, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 6, name: "icon", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 7, name: "icon_color", kind: "scalar", T: 9 /*ScalarType.STRING*/ },

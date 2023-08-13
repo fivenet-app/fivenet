@@ -331,6 +331,144 @@ var _ interface {
 	ErrorName() string
 } = UnitValidationError{}
 
+// Validate checks the field values on UnitAssignments with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *UnitAssignments) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on UnitAssignments with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// UnitAssignmentsMultiError, or nil if none found.
+func (m *UnitAssignments) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *UnitAssignments) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for UnitId
+
+	// no validation rules for Job
+
+	for idx, item := range m.GetUsers() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, UnitAssignmentsValidationError{
+						field:  fmt.Sprintf("Users[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, UnitAssignmentsValidationError{
+						field:  fmt.Sprintf("Users[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return UnitAssignmentsValidationError{
+					field:  fmt.Sprintf("Users[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return UnitAssignmentsMultiError(errors)
+	}
+
+	return nil
+}
+
+// UnitAssignmentsMultiError is an error wrapping multiple validation errors
+// returned by UnitAssignments.ValidateAll() if the designated constraints
+// aren't met.
+type UnitAssignmentsMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m UnitAssignmentsMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m UnitAssignmentsMultiError) AllErrors() []error { return m }
+
+// UnitAssignmentsValidationError is the validation error returned by
+// UnitAssignments.Validate if the designated constraints aren't met.
+type UnitAssignmentsValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e UnitAssignmentsValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e UnitAssignmentsValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e UnitAssignmentsValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e UnitAssignmentsValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e UnitAssignmentsValidationError) ErrorName() string { return "UnitAssignmentsValidationError" }
+
+// Error satisfies the builtin error interface
+func (e UnitAssignmentsValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sUnitAssignments.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = UnitAssignmentsValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = UnitAssignmentsValidationError{}
+
 // Validate checks the field values on UnitAssignment with the rules defined in
 // the proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
@@ -622,6 +760,54 @@ func (m *UnitStatus) validate(all bool) error {
 
 	if m.Y != nil {
 		// no validation rules for Y
+	}
+
+	if m.CreatorId != nil {
+
+		if m.GetCreatorId() <= 0 {
+			err := UnitStatusValidationError{
+				field:  "CreatorId",
+				reason: "value must be greater than 0",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
+	if m.Creator != nil {
+
+		if all {
+			switch v := interface{}(m.GetCreator()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, UnitStatusValidationError{
+						field:  "Creator",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, UnitStatusValidationError{
+						field:  "Creator",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetCreator()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return UnitStatusValidationError{
+					field:  "Creator",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
 	}
 
 	if len(errors) > 0 {

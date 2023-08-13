@@ -1,8 +1,9 @@
 <script lang="ts" setup>
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
-import { AccountIcon, CloseIcon } from 'mdi-vue3';
+import { AccountIcon, CloseIcon, PencilIcon } from 'mdi-vue3';
 import Time from '~/components/partials/elements/Time.vue';
 import { UNIT_STATUS, Unit } from '~~/gen/ts/resources/dispatch/units';
+import AssignUnitModal from './AssignUnitModal.vue';
 import UnitFeed from './Feed.vue';
 import StatusUpdateModal from './StatusUpdateModal.vue';
 
@@ -15,6 +16,7 @@ defineEmits<{
     (e: 'close'): void;
 }>();
 
+const assignOpen = ref(false);
 const statusOpen = ref(false);
 </script>
 
@@ -157,6 +159,18 @@ const statusOpen = ref(false);
                                                                         </div>
                                                                     </li>
                                                                 </ul>
+                                                                <AssignUnitModal
+                                                                    :open="assignOpen"
+                                                                    :unit="unit"
+                                                                    @close="assignOpen = false"
+                                                                />
+                                                                <button
+                                                                    type="button"
+                                                                    @click="assignOpen = true"
+                                                                    class="rounded bg-white/10 px-2 py-1 text-xs font-semibold text-white shadow-sm hover:bg-white/20"
+                                                                >
+                                                                    <PencilIcon class="h-6 w-6" />
+                                                                </button>
                                                             </dd>
                                                         </div>
                                                     </dl>

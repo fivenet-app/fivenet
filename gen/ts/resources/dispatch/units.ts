@@ -50,6 +50,23 @@ export interface Unit {
     users: UnitAssignment[];
 }
 /**
+ * @generated from protobuf message resources.dispatch.UnitAssignments
+ */
+export interface UnitAssignments {
+    /**
+     * @generated from protobuf field: uint64 unit_id = 1;
+     */
+    unitId: bigint;
+    /**
+     * @generated from protobuf field: string job = 2;
+     */
+    job: string;
+    /**
+     * @generated from protobuf field: repeated resources.dispatch.UnitAssignment users = 3;
+     */
+    users: UnitAssignment[];
+}
+/**
  * @generated from protobuf message resources.dispatch.UnitAssignment
  */
 export interface UnitAssignment {
@@ -103,13 +120,21 @@ export interface UnitStatus {
      */
     user?: UserShort;
     /**
-     * @generated from protobuf field: optional float x = 9;
+     * @generated from protobuf field: optional double x = 9;
      */
     x?: number;
     /**
-     * @generated from protobuf field: optional float y = 10;
+     * @generated from protobuf field: optional double y = 10;
      */
     y?: number;
+    /**
+     * @generated from protobuf field: optional int32 creator_id = 11;
+     */
+    creatorId?: number;
+    /**
+     * @generated from protobuf field: optional resources.users.UserShort creator = 12;
+     */
+    creator?: UserShort;
 }
 /**
  * @generated from protobuf enum resources.dispatch.UNIT_STATUS
@@ -166,6 +191,20 @@ class Unit$Type extends MessageType<Unit> {
  */
 export const Unit = new Unit$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class UnitAssignments$Type extends MessageType<UnitAssignments> {
+    constructor() {
+        super("resources.dispatch.UnitAssignments", [
+            { no: 1, name: "unit_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 2, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "users", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UnitAssignment }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.dispatch.UnitAssignments
+ */
+export const UnitAssignments = new UnitAssignments$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class UnitAssignment$Type extends MessageType<UnitAssignment> {
     constructor() {
         super("resources.dispatch.UnitAssignment", [
@@ -191,8 +230,10 @@ class UnitStatus$Type extends MessageType<UnitStatus> {
             { no: 6, name: "code", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 7, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
             { no: 8, name: "user", kind: "message", T: () => UserShort },
-            { no: 9, name: "x", kind: "scalar", opt: true, T: 2 /*ScalarType.FLOAT*/ },
-            { no: 10, name: "y", kind: "scalar", opt: true, T: 2 /*ScalarType.FLOAT*/ }
+            { no: 9, name: "x", kind: "scalar", opt: true, T: 1 /*ScalarType.DOUBLE*/ },
+            { no: 10, name: "y", kind: "scalar", opt: true, T: 1 /*ScalarType.DOUBLE*/ },
+            { no: 11, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
+            { no: 12, name: "creator", kind: "message", T: () => UserShort }
         ]);
     }
 }

@@ -483,6 +483,146 @@ var _ interface {
 	ErrorName() string
 } = AttributesValidationError{}
 
+// Validate checks the field values on DispatchAssignments with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DispatchAssignments) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DispatchAssignments with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DispatchAssignmentsMultiError, or nil if none found.
+func (m *DispatchAssignments) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DispatchAssignments) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for DispatchId
+
+	// no validation rules for Job
+
+	for idx, item := range m.GetUnits() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, DispatchAssignmentsValidationError{
+						field:  fmt.Sprintf("Units[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, DispatchAssignmentsValidationError{
+						field:  fmt.Sprintf("Units[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return DispatchAssignmentsValidationError{
+					field:  fmt.Sprintf("Units[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return DispatchAssignmentsMultiError(errors)
+	}
+
+	return nil
+}
+
+// DispatchAssignmentsMultiError is an error wrapping multiple validation
+// errors returned by DispatchAssignments.ValidateAll() if the designated
+// constraints aren't met.
+type DispatchAssignmentsMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DispatchAssignmentsMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DispatchAssignmentsMultiError) AllErrors() []error { return m }
+
+// DispatchAssignmentsValidationError is the validation error returned by
+// DispatchAssignments.Validate if the designated constraints aren't met.
+type DispatchAssignmentsValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DispatchAssignmentsValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DispatchAssignmentsValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DispatchAssignmentsValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DispatchAssignmentsValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DispatchAssignmentsValidationError) ErrorName() string {
+	return "DispatchAssignmentsValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DispatchAssignmentsValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDispatchAssignments.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DispatchAssignmentsValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DispatchAssignmentsValidationError{}
+
 // Validate checks the field values on DispatchAssignment with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
@@ -714,8 +854,6 @@ func (m *DispatchStatus) validate(all bool) error {
 
 	// no validation rules for DispatchId
 
-	// no validation rules for UnitId
-
 	if _, ok := DISPATCH_STATUS_name[int32(m.GetStatus())]; !ok {
 		err := DispatchStatusValidationError{
 			field:  "Status",
@@ -758,6 +896,10 @@ func (m *DispatchStatus) validate(all bool) error {
 			}
 		}
 
+	}
+
+	if m.UnitId != nil {
+		// no validation rules for UnitId
 	}
 
 	if m.Unit != nil {

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { Combobox,ComboboxButton,ComboboxInput,ComboboxOption,ComboboxOptions } from '@headlessui/vue';
+import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { watchDebounced } from '@vueuse/core';
 import { CheckIcon } from 'mdi-vue3';
@@ -40,7 +40,7 @@ async function getAuditLog(): Promise<AuditEntry[]> {
             },
             userIds: [],
         };
-        const users = new number[]();
+        const users: number[] = [];
         selectedChars.value?.forEach((v) => users.push(v.userId));
         req.userIds = users;
 
@@ -83,7 +83,7 @@ const { data: logs, pending, refresh, error } = useLazyAsyncData(`rector-audit-$
 
 const entriesChars = ref<UserShort[]>([]);
 const queryChar = ref('');
-const selectedChars = ref<undefined | UserShort[]>([]);
+const selectedChars = ref<UserShort[]>([]);
 
 async function findChars(): Promise<void> {
     if (queryChar.value === '') {
@@ -96,6 +96,7 @@ async function findChars(): Promise<void> {
     const { response } = await call;
 
     entriesChars.value = response.users;
+    entriesChars.value.push(...selectedChars.value);
 }
 
 const searchInput = ref<HTMLInputElement | null>(null);
@@ -106,7 +107,7 @@ function focusSearch(): void {
 }
 
 function charsGetDisplayValue(chars: UserShort[]): string {
-    const cs = new string[]();
+    const cs: string[] = [];
     chars.forEach((c) => cs.push(`${c?.firstname} ${c?.lastname}`));
 
     return cs.join(', ');
@@ -182,7 +183,7 @@ watchDebounced(queryChar, async () => await findChars(), {
                                             >
                                                 <ComboboxOption
                                                     v-for="char in entriesChars"
-                                                    :key="char?.identifier"
+                                                    :key="char?.userId"
                                                     :value="char"
                                                     as="char"
                                                     v-slot="{ active, selected }"

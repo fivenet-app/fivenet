@@ -174,7 +174,7 @@ watch(selectedChar, () => {
                                             >
                                                 <ComboboxOption
                                                     v-for="char in entriesChars"
-                                                    :key="char?.identifier"
+                                                    :key="char?.userId"
                                                     :value="char"
                                                     as="char"
                                                     v-slot="{ active, selected }"

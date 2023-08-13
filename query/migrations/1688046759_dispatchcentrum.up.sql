@@ -68,11 +68,13 @@ CREATE TABLE
         `user_id` int(11) NULL DEFAULT NULL,
         `x` decimal(24, 14) DEFAULT NULL,
         `y` decimal(24, 14) DEFAULT NULL,
+        `creator_id` int(11) NULL DEFAULT NULL,
         PRIMARY KEY (`id`),
         KEY `idx_fivenet_centrum_units_status_unit_id` (`unit_id`),
         KEY `idx_fivenet_centrum_units_status_user_id` (`user_id`),
         CONSTRAINT `fk_fivenet_centrum_units_status_unit_id` FOREIGN KEY (`unit_id`) REFERENCES `fivenet_centrum_units` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-        CONSTRAINT `fk_fivenet_centrum_units_status_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+        CONSTRAINT `fk_fivenet_centrum_units_status_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+        CONSTRAINT `fk_fivenet_centrum_units_status_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE SET NULL
     );
 
 -- Table: fivenet_centrum_dispatches
@@ -127,7 +129,7 @@ CREATE TABLE
         KEY `idx_fivenet_centrum_dispatches_status_dispatch_id` (`dispatch_id`),
         KEY `idx_fivenet_centrum_dispatches_status_status` (`status`),
         CONSTRAINT `fk_fivenet_centrum_dispatches_status_dispatch_id` FOREIGN KEY (`dispatch_id`) REFERENCES `fivenet_centrum_dispatches` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-        CONSTRAINT `fk_fivenet_centrum_dispatches_status_unit_id` FOREIGN KEY (`unit_id`) REFERENCES `fivenet_centrum_units` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+        CONSTRAINT `fk_fivenet_centrum_dispatches_status_unit_id` FOREIGN KEY (`unit_id`) REFERENCES `fivenet_centrum_units` (`id`) ON DELETE SET NULL ON UPDATE SET NULL,
         CONSTRAINT `fk_fivenet_centrum_dispatches_status_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
 

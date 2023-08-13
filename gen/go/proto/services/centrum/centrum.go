@@ -13,6 +13,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/events"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
+	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/galexrt/fivenet/pkg/perms"
 	"github.com/galexrt/fivenet/pkg/server/audit"
 	"github.com/galexrt/fivenet/pkg/store"
@@ -239,13 +240,13 @@ func (s *Server) TakeControl(ctx context.Context, req *TakeControlRequest) (*Tak
 			VALUES(
 				userInfo.Job,
 				userInfo.UserId,
-				tUser.
+				tUsers.
 					SELECT(
-						tUser.Identifier.AS("identifier"),
+						tUsers.Identifier.AS("identifier"),
 					).
-					FROM(tUser).
+					FROM(tUsers).
 					WHERE(
-						tUser.ID.EQ(jet.Int32(userInfo.UserId)),
+						tUsers.ID.EQ(jet.Int32(userInfo.UserId)),
 					).
 					LIMIT(1),
 			)
@@ -286,27 +287,103 @@ func (s *Server) TakeControl(ctx context.Context, req *TakeControlRequest) (*Tak
 	return &TakeControlResponse{}, nil
 }
 
+func (s *Server) waitForUnit(srv CentrumService_StreamServer, userInfo *userinfo.UserInfo) (uint64, error) {
+	msgCh := make(chan *nats.Msg, 4)
+	sub, err := s.events.JS.ChanSubscribe(fmt.Sprintf("%s.%s.%s.%s.%d", BaseSubject, userInfo.Job, TopicUnit, TypeUnitUserAssigned, 0), msgCh)
+	if err != nil {
+		return 0, err
+	}
+	defer sub.Unsubscribe()
+
+	for {
+		select {
+		case <-srv.Context().Done():
+			return 0, nil
+		case msg := <-msgCh:
+			msg.Ack()
+			topic, tType := s.getEventTypeFromSubject(msg.Subject)
+
+			if topic == TopicUnit && tType == TypeUnitUserAssigned {
+				var dest dispatch.Unit
+				if err := proto.Unmarshal(msg.Data, &dest); err != nil {
+					return 0, err
+				}
+
+				resp := &StreamResponse{
+					Change: &StreamResponse_UnitAssigned{
+						UnitAssigned: &dest,
+					},
+				}
+
+				// TODO check if user is in unit users list
+
+				if err := srv.Send(resp); err != nil {
+					return 0, err
+				}
+
+				return dest.Id, nil
+			}
+		}
+	}
+}
+
 func (s *Server) Stream(req *StreamRequest, srv CentrumService_StreamServer) error {
 	userInfo := auth.MustGetUserInfoFromContext(srv.Context())
 
-	unitId, err := s.getUnitIDForUserID(srv.Context(), userInfo.UserId)
-	if err != nil {
-		return err
-	}
 	settings, err := s.getSettings(srv.Context(), userInfo.Job)
 	if err != nil {
 		return err
 	}
-
 	disponents, err := s.getDisponents(srv.Context(), userInfo.Job)
 	if err != nil {
 		return err
 	}
 
-	msgCh := make(chan *nats.Msg, 64)
 	controller := utils.InSliceFunc(disponents, func(in *users.UserShort) bool {
 		return in.UserId == userInfo.UserId
 	})
+
+	unitId, err := s.getUnitIDForUserID(srv.Context(), userInfo.UserId)
+	if err != nil {
+		return err
+	}
+
+	units, err := s.listUnits(srv.Context(), userInfo.Job)
+	if err != nil {
+		return err
+	}
+
+	unit, _ := s.getUnit(srv.Context(), userInfo, unitId)
+
+	dispatches, err := s.ListDispatches(srv.Context(), &ListDispatchesRequest{})
+	if err != nil {
+		return err
+	}
+
+	// Send initial state message to client
+	resp := &StreamResponse{
+		Change: &StreamResponse_LatestState{
+			LatestState: &LatestState{
+				IsDisponent: true,
+				Settings:    settings,
+				Unit:        unit,
+				Units:       units,
+				Dispatches:  dispatches.Dispatches,
+			},
+		},
+	}
+	if err := srv.Send(resp); err != nil {
+		return err
+	}
+
+	if !controller && unitId <= 0 {
+		unitId, err = s.waitForUnit(srv, userInfo)
+		if err != nil {
+			return err
+		}
+	}
+
+	msgCh := make(chan *nats.Msg, 48)
 	if !controller {
 		sub, err := s.events.JS.ChanSubscribe(fmt.Sprintf("%s.%s.*.*.%d", BaseSubject, userInfo.Job, unitId), msgCh)
 		if err != nil {
@@ -319,34 +396,6 @@ func (s *Server) Stream(req *StreamRequest, srv CentrumService_StreamServer) err
 			return err
 		}
 		defer sub.Unsubscribe()
-	}
-
-	unitsResp, err := s.ListUnits(srv.Context(), &ListUnitsRequest{})
-	if err != nil {
-		return err
-	}
-
-	unit, _ := s.getUnit(srv.Context(), userInfo, unitId)
-
-	dispatches, err := s.ListDispatches(srv.Context(), &ListDispatchesRequest{})
-	if err != nil {
-		return err
-	}
-
-	// Send initial message to client
-	resp := &StreamResponse{}
-	resp.Change = &StreamResponse_LatestState{
-		LatestState: &LatestState{
-			IsDisponent: true,
-			Settings:    settings,
-			Unit:        unit,
-			Units:       unitsResp.Units,
-			Dispatches:  dispatches.Dispatches,
-		},
-	}
-
-	if err := srv.Send(resp); err != nil {
-		return err
 	}
 
 	// Watch for events from message queue

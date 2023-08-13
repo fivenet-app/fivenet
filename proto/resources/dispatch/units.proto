@@ -20,6 +20,12 @@ message Unit {
   repeated UnitAssignment users = 10;
 }
 
+message UnitAssignments {
+  uint64 unit_id = 1;
+  string job = 2;
+  repeated UnitAssignment users = 3;
+}
+
 message UnitAssignment {
   uint64 unit_id = 1; // @gotags: sql:"primary_key" alias:"unit_id"
   int32 user_id = 2; // @gotags: sql:"primary_key" alias:"user_id"
@@ -45,6 +51,8 @@ message UnitStatus {
   optional string code = 6 [ (validate.rules).string.max_len = 20 ];
   optional int32 user_id = 7 [ (validate.rules).int32.gt = 0 ];
   optional resources.users.UserShort user = 8;
-  optional float x = 9;
-  optional float y = 10;
+  optional double x = 9;
+  optional double y = 10;
+  optional int32 creator_id = 11 [ (validate.rules).int32.gt = 0 ];
+  optional resources.users.UserShort creator = 12;
 }
