@@ -262,9 +262,9 @@
                 "add": "Zum Zwischenspeicher hinzufügen"
             },
             "clipboard_modal": {
-                "title": "Deine Zwischenablagen Inhalte",
                 "clear": "Zwischenablage leeren",
-                "no_data": "Keine {0} in der Zwischenablage"
+                "no_data": "Keine {0} in der Zwischenablage",
+                "title": "Deine Zwischenablagen Inhalte"
             }
         },
         "documents": {
@@ -289,8 +289,7 @@
                 "add_permission": "Berechtigung hinzufügen",
                 "quill": {
                     "msg": "Das HTML des Editors kann hier bearbeitet werden, nach Klicken von \"OK\" wird der Inhalt dadurch ersetzt.",
-                    "okText": "Ok",
-                    "cancelText": "Abbrechen"
+                    "okText": "Ok"
                 }
             },
             "document_managers": {
@@ -518,7 +517,11 @@
         "cancel": "Abbrechen",
         "enabled": "Aktiviert",
         "status": "Status",
-        "mode": "Modus | Modi"
+        "mode": "Modus | Modi",
+        "join": "Beitreten | Beigetreten",
+        "leave": "Verlassen | Verlassen",
+        "message": "Nachricht | Nachrichten",
+        "unknown": "Unbekannt"
     },
     "notifications": {
         "clipboard": {
