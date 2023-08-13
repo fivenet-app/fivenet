@@ -4,11 +4,13 @@ import (
 	"context"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
+	"go.uber.org/zap"
 )
 
 var (
@@ -17,6 +19,16 @@ var (
 )
 
 func (s *Server) ConvertPhoneJobMsgToDispatch() error {
+	for {
+		if err := s.convertPhoneJobMsgToDispatch(); err != nil {
+			s.logger.Error("failed to convert gksphone job messages to dispatches", zap.Error(err))
+		}
+
+		<-time.After(2 * time.Second)
+	}
+}
+
+func (s *Server) convertPhoneJobMsgToDispatch() error {
 	stmt := tGksPhoneJMsg.
 		SELECT(
 			tGksPhoneJMsg.ID,
@@ -25,7 +37,7 @@ func (s *Server) ConvertPhoneJobMsgToDispatch() error {
 			tGksPhoneJMsg.Gps,
 			tGksPhoneJMsg.Message,
 			tGksPhoneJMsg.Time,
-			tUsers.ID.AS("usershort.userid"),
+			tUsers.ID.AS("userid"),
 		).
 		FROM(
 			tGksPhoneJMsg.

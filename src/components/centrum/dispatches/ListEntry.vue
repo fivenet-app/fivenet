@@ -23,9 +23,7 @@ const assignOpen = ref(false);
     <tr>
         <Details @close="detailsOpen = false" :dispatch="dispatch" :open="detailsOpen" />
         <AssignDispatchModal @close="assignOpen = false" :dispatch="dispatch" :units="units" :open="assignOpen" />
-        <td
-            class="relative whitespace-nowrap py-2 pl-2 text-right text-sm font-medium sm:pr-0 max-w-[42px] flex flex-row justify-start"
-        >
+        <td class="relative whitespace-nowrap py-2 pl-2 text-right text-sm font-medium sm:pr-0 flex flex-row justify-start">
             <button
                 type="button"
                 class="text-primary-400 hover:text-primary-600"
@@ -54,21 +52,19 @@ const assignOpen = ref(false);
             {{ dispatch.id }}
         </td>
         <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm text-gray-300 sm:pl-0">
-            <Time :value="dispatch.createdAt" :ago="true" />
+            <Time :value="dispatch.createdAt" type="compact" />
         </td>
         <td class="whitespace-nowrap px-2 py-2 text-sm font-medium text-gray-100">
             {{ $t(`enums.centrum.DISPATCH_STATUS.${DISPATCH_STATUS[dispatch.status?.status as number]}`) }}
         </td>
         <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm text-gray-300 sm:pl-0">
-            <span v-if="dispatch.units.length === 0" class="italic"> Unassigned </span>
+            <span v-if="dispatch.units.length === 0" class="italic">{{ $t('enums.centrum.DISPATCH_STATUS.UNASSIGNED') }}</span>
             <span v-else class="mr-1">
                 {{ dispatch.units.map((unit) => (units ?? []).find((u) => u.id === unit.unitId)?.initials).join(', ') }}
             </span>
         </td>
         <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm text-gray-300 sm:pl-0">
-            <span v-if="!dispatch.anon && dispatch.user">
-                {{ dispatch.user }}
-            </span>
+            <span v-if="!dispatch.anon && dispatch.user"> {{ dispatch.user.firstname }}, {{ dispatch.user.lastname }} </span>
             <span v-else-if="dispatch.anon">
                 {{ $t('common.anon') }}
             </span>

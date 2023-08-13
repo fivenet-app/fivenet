@@ -32,6 +32,32 @@ func (s *Server) getDispatch(ctx context.Context, userInfo *userinfo.UserInfo, i
 	return dispatch, true
 }
 
+func (s *Server) listDispatches(ctx context.Context, job string) ([]*dispatch.Dispatch, error) {
+	dispatches := []*dispatch.Dispatch{}
+
+	prefix := fmt.Sprintf("%s/", job)
+	keys, err := s.dispatches.KeysWithPrefix(prefix)
+	if err != nil {
+		return nil, err
+	}
+
+	for i := 0; i < len(keys); i++ {
+		trimmed := strings.TrimPrefix(keys[i], prefix)
+		dispatchId, err := strconv.Atoi(trimmed)
+		if err != nil {
+			return nil, err
+		}
+
+		dispatch := &dispatch.Dispatch{}
+		if err := s.dispatches.Get(fmt.Sprintf("%s/%d", job, dispatchId), dispatch); err != nil {
+			return nil, err
+		}
+		dispatches = append(dispatches, dispatch)
+	}
+
+	return dispatches, err
+}
+
 func (s *Server) getDispatchFromDB(ctx context.Context, tx qrm.DB, id uint64) (*dispatch.Dispatch, error) {
 	condition := tDispatch.ID.EQ(jet.Uint64(id)).AND(jet.OR(
 		tDispatchStatus.ID.IS_NULL(),

@@ -57,6 +57,12 @@ export default defineI18nConfig(() => ({
                 hour: 'numeric',
                 minute: 'numeric',
             },
+            compact: {
+                hour12: false,
+                hour: 'numeric',
+                minute: 'numeric',
+                second: 'numeric',
+            },
         },
         de: {
             short: {
@@ -73,6 +79,12 @@ export default defineI18nConfig(() => ({
                 weekday: 'long',
                 hour: '2-digit',
                 minute: '2-digit',
+            },
+            compact: {
+                hour12: false,
+                hour: 'numeric',
+                minute: 'numeric',
+                second: 'numeric',
             },
         },
     },

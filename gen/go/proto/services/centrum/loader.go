@@ -191,17 +191,25 @@ func (s *Server) loadDispatches(ctx context.Context, id uint64) error {
 			tDispatchStatus.Reason,
 			tDispatchStatus.Code,
 			tDispatchStatus.UserID,
+			tUsers.ID,
+			tUsers.Identifier,
+			tUsers.Firstname,
+			tUsers.Lastname,
 		).
 		FROM(
 			tDispatch.
 				LEFT_JOIN(tDispatchStatus,
 					tDispatchStatus.DispatchID.EQ(tDispatch.ID),
+				).
+				LEFT_JOIN(tUsers,
+					tUsers.ID.EQ(tDispatchStatus.UserID),
 				),
 		).
 		WHERE(condition).
 		ORDER_BY(
 			tDispatch.ID.ASC(),
-		).LIMIT(150)
+		).
+		LIMIT(150)
 
 	dispatches := []*dispatch.Dispatch{}
 	if err := stmt.QueryContext(ctx, s.db, &dispatches); err != nil {
@@ -225,6 +233,15 @@ func (s *Server) loadDispatches(ctx context.Context, id uint64) error {
 			}
 
 			dispatches[i].Units[k].Unit = unit
+		}
+
+		if dispatches[i].UserId != nil {
+			dispatches[i].User, err = s.resolveUserById(ctx, *dispatches[i].UserId)
+			if err != nil {
+				return err
+			}
+		} else {
+			dispatches[i].User = nil
 		}
 
 		// TODO need to check if the dispatch already exists in the store, compare and make the changes

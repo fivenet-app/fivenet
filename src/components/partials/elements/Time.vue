@@ -4,7 +4,7 @@ import { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 const props = withDefaults(
     defineProps<{
         value: Date | Timestamp | undefined;
-        type?: 'short' | 'long';
+        type?: 'short' | 'long' | 'compact';
         ago?: boolean;
     }>(),
     {

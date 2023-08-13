@@ -37,61 +37,22 @@ func (s *Server) ListDispatches(ctx context.Context, req *ListDispatchesRequest)
 	}
 	defer s.a.Log(auditEntry, req)
 
-	resp := &ListDispatchesResponse{}
+	resp := &ListDispatchesResponse{
+		Dispatches: []*dispatch.Dispatch{},
+	}
 
-	condition := jet.AND(
-		tDispatch.Job.EQ(jet.String(userInfo.Job)),
-		jet.OR(
-			tDispatchStatus.ID.IS_NULL(),
-			tDispatchStatus.ID.EQ(
-				jet.RawInt("SELECT MAX(`dispatchstatus`.`id`) FROM `fivenet_centrum_dispatches_status` AS `dispatchstatus` WHERE `dispatchstatus`.`dispatch_id` = `dispatch`.`id`"),
-			),
-		),
-	)
-
-	stmt := tDispatch.
-		SELECT(
-			tDispatch.ID,
-			tDispatch.CreatedAt,
-			tDispatch.UpdatedAt,
-			tDispatch.Job,
-			tDispatch.Message,
-			tDispatch.Description,
-			tDispatch.Attributes,
-			tDispatch.X,
-			tDispatch.Y,
-			tDispatch.Anon,
-			tDispatch.UserID,
-			tDispatchStatus.ID,
-			tDispatchStatus.CreatedAt,
-			tDispatchStatus.UnitID,
-			tDispatchStatus.Status,
-			tDispatchStatus.Reason,
-			tDispatchStatus.Code,
-			tDispatchStatus.UserID,
-			tDispatchUnit.UnitID,
-			tDispatchUnit.DispatchID,
-			tDispatchUnit.CreatedAt,
-			tDispatchUnit.ExpiresAt,
-		).
-		FROM(
-			tDispatch.
-				LEFT_JOIN(tDispatchStatus,
-					tDispatchStatus.DispatchID.EQ(tDispatch.ID),
-				).
-				LEFT_JOIN(tDispatchUnit,
-					tDispatchUnit.DispatchID.EQ(tDispatch.ID),
-				),
-		).
-		WHERE(condition).
-		ORDER_BY(
-			tDispatch.ID.DESC(),
-			tDispatchStatus.Status.ASC(),
-		).
-		LIMIT(200)
-
-	if err := stmt.QueryContext(ctx, s.db, &resp.Dispatches); err != nil {
+	var err error
+	resp.Dispatches, err = s.listDispatches(ctx, userInfo.Job)
+	if err != nil {
 		return nil, err
+	}
+
+	// Hide user when dispatch is anonymous
+	for i := 0; i < len(resp.Dispatches); i++ {
+		if resp.Dispatches[i].Anon != nil && *resp.Dispatches[i].Anon {
+			resp.Dispatches[i].User = nil
+			resp.Dispatches[i].UserId = nil
+		}
 	}
 
 	auditEntry.State = int16(rector.EVENT_TYPE_VIEWED)

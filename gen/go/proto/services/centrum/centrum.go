@@ -123,7 +123,7 @@ func NewServer(p Params) (*Server, error) {
 		}
 
 		go s.start()
-		//go s.ConvertPhoneJobMsgToDispatch()
+		go s.ConvertPhoneJobMsgToDispatch()
 
 		return nil
 	}))
