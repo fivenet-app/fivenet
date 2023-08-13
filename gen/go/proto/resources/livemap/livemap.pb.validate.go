@@ -424,6 +424,10 @@ func (m *UserMarker) validate(all bool) error {
 		}
 	}
 
+	if m.UnitId != nil {
+		// no validation rules for UnitId
+	}
+
 	if m.Unit != nil {
 
 		if all {

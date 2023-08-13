@@ -9,7 +9,6 @@ import { default as UnitsList } from '~/components/centrum/units/List.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { useAuthStore } from '~/store/auth';
-import { useNotificationsStore } from '~/store/notifications';
 import { Dispatch, DispatchStatus } from '~~/gen/ts/resources/dispatch/dispatches';
 import { Settings } from '~~/gen/ts/resources/dispatch/settings';
 import { Unit, UnitStatus } from '~~/gen/ts/resources/dispatch/units';
@@ -17,8 +16,6 @@ import { UserShort } from '~~/gen/ts/resources/users/users';
 import Feed from './Feed.vue';
 
 const { $grpc } = useNuxtApp();
-
-const notifications = useNotificationsStore();
 
 const authStore = useAuthStore();
 const { activeChar } = storeToRefs(authStore);
@@ -75,15 +72,7 @@ async function startStream(): Promise<void> {
                     }, 250);
                 }
             } else if (resp.change.oneofKind === 'unitAssigned') {
-                // Doesn't matter for controllers
-            } else if (resp.change.oneofKind === 'unitCreated') {
-                const id = resp.change.unitCreated.id;
-                const idx = units.value?.findIndex((d) => d.id === id) ?? -1;
-                if (idx === -1) {
-                    units.value?.unshift(resp.change.unitCreated);
-                } else {
-                    units.value![idx] = resp.change.unitCreated;
-                }
+                // Ignore, doesn't matter for controllers
             } else if (resp.change.oneofKind === 'unitDeleted') {
                 const id = resp.change.unitDeleted.id;
                 const idx = units.value?.findIndex((d) => d.id === id) ?? -1;
@@ -96,14 +85,22 @@ async function startStream(): Promise<void> {
                 if (idx === -1) {
                     units.value?.unshift(resp.change.unitUpdated);
                 } else {
-                    units.value![idx] = resp.change.unitUpdated;
+                    units.value[idx].job = resp.change.unitUpdated.job;
+                    units.value[idx].createdAt = resp.change.unitUpdated.createdAt;
+                    units.value[idx].updatedAt = resp.change.unitUpdated.updatedAt;
+                    units.value[idx].name = resp.change.unitUpdated.name;
+                    units.value[idx].initials = resp.change.unitUpdated.initials;
+                    units.value[idx].color = resp.change.unitUpdated.color;
+                    units.value[idx].description = resp.change.unitUpdated.description;
+                    units.value[idx].status = resp.change.unitUpdated.status;
+                    units.value[idx].users = resp.change.unitUpdated.users;
                 }
             } else if (resp.change.oneofKind === 'unitStatus') {
                 feed.value.unshift(resp.change.unitStatus);
                 const unitId = resp.change.unitStatus.unitId;
-                const unit = units.value.find((u) => u.id === unitId);
-                if (unit) {
-                    unit.status = resp.change.unitStatus;
+                const idx = units.value.findIndex((u) => u.id === unitId);
+                if (idx > -1) {
+                    units.value[idx].status = resp.change.unitStatus;
                 }
             } else if (resp.change.oneofKind === 'dispatchCreated') {
                 const id = resp.change.dispatchCreated.id;
@@ -111,7 +108,7 @@ async function startStream(): Promise<void> {
                 if (idx === -1) {
                     dispatches.value?.unshift(resp.change.dispatchCreated);
                 } else {
-                    dispatches.value![idx].units = resp.change.dispatchCreated.units;
+                    dispatches.value[idx].units = resp.change.dispatchCreated.units;
                 }
             } else if (resp.change.oneofKind === 'dispatchDeleted') {
                 const id = resp.change.dispatchDeleted.id;
@@ -125,12 +122,29 @@ async function startStream(): Promise<void> {
                 if (idx === -1) {
                     dispatches.value?.unshift(resp.change.dispatchUpdated);
                 } else {
-                    dispatches.value![idx] = resp.change.dispatchUpdated;
+                    dispatches.value[idx].createdAt = resp.change.dispatchUpdated.createdAt;
+                    dispatches.value[idx].updatedAt = resp.change.dispatchUpdated.updatedAt;
+                    dispatches.value[idx].job = resp.change.dispatchUpdated.job;
+                    dispatches.value[idx].status = resp.change.dispatchUpdated.status;
+                    dispatches.value[idx].message = resp.change.dispatchUpdated.message;
+                    dispatches.value[idx].description = resp.change.dispatchUpdated.description;
+                    dispatches.value[idx].attributes = resp.change.dispatchUpdated.attributes;
+                    dispatches.value[idx].x = resp.change.dispatchUpdated.x;
+                    dispatches.value[idx].y = resp.change.dispatchUpdated.y;
+                    dispatches.value[idx].anon = resp.change.dispatchUpdated.anon;
+                    dispatches.value[idx].userId = resp.change.dispatchUpdated.userId;
+                    dispatches.value[idx].user = resp.change.dispatchUpdated.user;
+                    dispatches.value[idx].units = resp.change.dispatchUpdated.units;
                 }
             } else if (resp.change.oneofKind === 'dispatchStatus') {
                 feed.value.unshift(resp.change.dispatchStatus);
+                const dispatchId = resp.change.dispatchStatus.dispatchId;
+                const idx = dispatches.value.findIndex((d) => d.id === dispatchId);
+                if (idx > -1) {
+                    dispatches.value[idx].status = resp.change.dispatchStatus;
+                }
             } else {
-                console.log('Centrum: Unknown change received - Kind: ', resp.change.oneofKind, resp.change);
+                console.warn('Centrum: Unknown change received - Kind: ', resp.change.oneofKind, resp.change);
             }
         }
     } catch (e) {

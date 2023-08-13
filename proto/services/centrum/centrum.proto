@@ -167,15 +167,14 @@ message StreamResponse {
     DisponentsChange disponents = 3;
 
     resources.dispatch.Unit unit_assigned = 4;
-    resources.dispatch.Unit unit_created = 5;
-    resources.dispatch.Unit unit_deleted = 6;
-    resources.dispatch.Unit unit_updated = 7;
-    resources.dispatch.UnitStatus unit_status = 8;
+    resources.dispatch.Unit unit_deleted = 5;
+    resources.dispatch.Unit unit_updated = 6;
+    resources.dispatch.UnitStatus unit_status = 7;
 
-    resources.dispatch.Dispatch dispatch_created = 9;
-    resources.dispatch.Dispatch dispatch_deleted = 10;
-    resources.dispatch.Dispatch dispatch_updated = 11;
-    resources.dispatch.DispatchStatus dispatch_status = 12;
+    resources.dispatch.Dispatch dispatch_created = 8;
+    resources.dispatch.Dispatch dispatch_deleted = 9;
+    resources.dispatch.Dispatch dispatch_updated = 10;
+    resources.dispatch.DispatchStatus dispatch_status = 11;
   }
 }
 

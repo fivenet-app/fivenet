@@ -210,7 +210,7 @@ func (s *Tracker) refreshUserLocations(ctx context.Context) error {
 		markers[job].Store(userId, dest[i])
 
 		if _, ok := s.usersIDs.Load(userId); !ok {
-			// User wasn't in the list, so they must be new so add to event for "announcement"
+			// User wasn't in the list, so they must be new so add the user to event for keeping track of users
 			if _, ok := s.GetUserByJobAndID(job, userId); !ok {
 				event.Added = append(event.Added, userId)
 			}
@@ -222,8 +222,8 @@ func (s *Tracker) refreshUserLocations(ctx context.Context) error {
 		})
 	}
 
-	for job, v := range markers {
-		s.usersCache.Store(job, v)
+	for job, marker := range markers {
+		s.usersCache.Store(job, marker)
 	}
 
 	s.broker.Publish(event)

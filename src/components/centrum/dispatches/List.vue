@@ -17,7 +17,7 @@ defineEmits<{
     <div class="px-4 sm:px-6 lg:px-8 h-full overflow-y-scroll">
         <div class="sm:flex sm:items-center">
             <div class="sm:flex-auto">
-                <h1 class="text-base font-semibold leading-6 text-gray-100">Dispatches</h1>
+                <h1 class="text-base font-semibold leading-6 text-gray-100">{{ $t('common.dispatch', 2) }}</h1>
             </div>
         </div>
         <div class="mt-0.5 flow-root">
@@ -30,37 +30,43 @@ defineEmits<{
                                     scope="col"
                                     class="whitespace-nowrap py-2 pl-4 pr-3 text-left text-sm font-semibold text-gray-100 sm:pl-0"
                                 >
-                                    Actions
+                                    {{ $t('common.action', 2) }}
                                 </th>
                                 <th
                                     scope="col"
                                     class="whitespace-nowrap py-2 pl-4 pr-3 text-left text-sm font-semibold text-gray-100 sm:pl-0"
                                 >
-                                    ID
+                                    {{ $t('common.id') }}
                                 </th>
                                 <th
                                     scope="col"
                                     class="whitespace-nowrap px-2 py-2 text-left text-sm font-semibold text-gray-100"
                                 >
-                                    Status
+                                    {{ $t('common.status') }}
                                 </th>
                                 <th
                                     scope="col"
                                     class="whitespace-nowrap px-2 py-2 text-left text-sm font-semibold text-gray-100"
                                 >
-                                    Created At
+                                    {{ $t('common.created_at') }}
                                 </th>
                                 <th
                                     scope="col"
                                     class="whitespace-nowrap py-2 pl-4 pr-3 text-left text-sm font-semibold text-gray-100 sm:pl-0"
                                 >
-                                    Units
+                                    {{ $t('common.unit', 2) }}
                                 </th>
                                 <th
                                     scope="col"
                                     class="whitespace-nowrap px-2 py-2 text-left text-sm font-semibold text-gray-100"
                                 >
-                                    Message
+                                    {{ $t('common.citizen') }}
+                                </th>
+                                <th
+                                    scope="col"
+                                    class="whitespace-nowrap px-2 py-2 text-left text-sm font-semibold text-gray-100"
+                                >
+                                    {{ $t('common.message') }}
                                 </th>
                             </tr>
                         </thead>

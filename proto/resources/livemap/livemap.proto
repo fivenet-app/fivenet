@@ -37,5 +37,6 @@ message UserMarker {
   GenericMarker marker = 1;
 
   resources.users.UserShort user = 2; // @gotags: alias:"user"
-  optional resources.dispatch.Unit unit = 3;
+  optional uint64 unit_id = 3;
+  optional resources.dispatch.Unit unit = 4;
 }

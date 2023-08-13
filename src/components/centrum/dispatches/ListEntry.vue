@@ -53,18 +53,29 @@ const assignOpen = ref(false);
         <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm text-gray-300 sm:pl-0">
             {{ dispatch.id }}
         </td>
+        <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm text-gray-300 sm:pl-0">
+            <Time :value="dispatch.createdAt" :ago="true" />
+        </td>
         <td class="whitespace-nowrap px-2 py-2 text-sm font-medium text-gray-100">
-            {{ DISPATCH_STATUS[dispatch.status?.status as number] }}
+            {{ $t(`enums.centrum.DISPATCH_STATUS.${DISPATCH_STATUS[dispatch.status?.status as number]}`) }}
         </td>
         <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm text-gray-300 sm:pl-0">
-            <Time :value="dispatch.createdAt" />
-        </td>
-        <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm text-gray-300 sm:pl-0">
-            <span v-if="dispatch.units.length === 0"> No Units assigned. </span>
+            <span v-if="dispatch.units.length === 0" class="italic"> Unassigned </span>
             <span v-else class="mr-1">
                 {{ dispatch.units.map((unit) => (units ?? []).find((u) => u.id === unit.unitId)?.initials).join(', ') }}
             </span>
         </td>
-        <td class="whitespace-nowrap px-2 py-2 text-sm text-gray-100">{{ dispatch.message }}</td>
+        <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm text-gray-300 sm:pl-0">
+            <span v-if="!dispatch.anon && dispatch.user">
+                {{ dispatch.user }}
+            </span>
+            <span v-else-if="dispatch.anon">
+                {{ $t('common.anon') }}
+            </span>
+            <span v-else>
+                {{ $t('common.unknown') }}
+            </span>
+        </td>
+        <td class="whitespace-nowrap px-2 py-2 text-sm text-gray-100 truncate">{{ dispatch.message }}</td>
     </tr>
 </template>

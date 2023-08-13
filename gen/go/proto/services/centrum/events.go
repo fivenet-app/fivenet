@@ -25,7 +25,6 @@ const (
 	TypeDispatchStatus  events.Type  = "status"
 
 	TopicUnit            events.Topic = "unit"
-	TypeUnitCreated      events.Type  = "created"
 	TypeUnitDeleted      events.Type  = "deleted"
 	TypeUnitUpdated      events.Type  = "updated"
 	TypeUnitStatus       events.Type  = "status"

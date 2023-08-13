@@ -307,8 +307,8 @@ func (s *Server) AssignUnit(ctx context.Context, req *AssignUnitRequest) (*Assig
 	}
 	defer s.a.Log(auditEntry, req)
 
-	unit, err := s.getUnitFromDB(ctx, s.db, req.UnitId)
-	if err != nil {
+	unit, ok := s.getUnit(ctx, userInfo, req.UnitId)
+	if !ok {
 		return nil, ErrFailedQuery
 	}
 	if unit.Job != userInfo.Job {
@@ -316,13 +316,14 @@ func (s *Server) AssignUnit(ctx context.Context, req *AssignUnitRequest) (*Assig
 	}
 
 	if err := s.updateDispatchUnitAssignments(ctx, userInfo, unit, req.ToAdd, req.ToRemove); err != nil {
-		return nil, ErrFailedQuery
+		return nil, err
 	}
 
 	data, err := proto.Marshal(unit)
 	if err != nil {
 		return nil, err
 	}
+	s.events.JS.Publish(s.buildSubject(TopicUnit, TypeUnitUserAssigned, userInfo, unit.Id), data)
 	s.events.JS.Publish(s.buildSubject(TopicUnit, TypeUnitUserAssigned, userInfo, 0), data)
 
 	auditEntry.State = int16(rector.EVENT_TYPE_UPDATED)
@@ -345,7 +346,7 @@ func (s *Server) JoinUnit(ctx context.Context, req *JoinUnitRequest) (*JoinUnitR
 			return nil, ErrFailedQuery
 		}
 		if unitId > 0 {
-			return nil, status.Error(codes.InvalidArgument, "You are already in an unit!")
+			return nil, ErrAlreadyInUnit
 		}
 	}
 
@@ -357,7 +358,7 @@ func (s *Server) JoinUnit(ctx context.Context, req *JoinUnitRequest) (*JoinUnitR
 	resp := &JoinUnitResponse{}
 	if req.Leave != nil && !*req.Leave {
 		if err := s.updateDispatchUnitAssignments(ctx, userInfo, unit, []int32{userInfo.UserId}, nil); err != nil {
-			return nil, ErrFailedQuery
+			return nil, err
 		}
 
 		unit, ok := s.getUnit(ctx, userInfo, req.UnitId)
@@ -365,16 +366,10 @@ func (s *Server) JoinUnit(ctx context.Context, req *JoinUnitRequest) (*JoinUnitR
 			return nil, ErrFailedQuery
 		}
 
-		data, err := proto.Marshal(unit)
-		if err != nil {
-			return nil, err
-		}
-		s.events.JS.Publish(s.buildSubject(TopicUnit, TypeUnitUserAssigned, userInfo, 0), data)
-
 		resp.Unit = unit
 	} else {
 		if err := s.updateDispatchUnitAssignments(ctx, userInfo, unit, nil, []int32{userInfo.UserId}); err != nil {
-			return nil, ErrFailedQuery
+			return nil, err
 		}
 	}
 

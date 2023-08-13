@@ -31,7 +31,6 @@ const { $grpc } = useNuxtApp();
 const entriesUsers = ref<UserShort[]>([]);
 const selectedUsers = ref<UserShort[]>(props.unit.users.filter((u) => u !== undefined).map((u) => u.user!));
 const queryUser = ref('');
-console.log(props.unit.users.filter((u) => u !== undefined).map((u) => u.user!));
 
 async function assignUnit(): Promise<void> {
     return new Promise(async (res, rej) => {
@@ -47,8 +46,6 @@ async function assignUnit(): Promise<void> {
                     toRemove.push(u.userId);
                 }
             });
-
-            console.log(toAdd, toRemove);
 
             const call = $grpc.getCentrumClient().assignUnit({
                 unitId: props.unit.id,

@@ -509,8 +509,7 @@ watchDebounced(postalQuery, () => findPostal(), {
                         }<br><span>${
                             useLocaleTimeAgo(toDate(marker.marker!.updatedAt)!).value
                         }</span><br><span class='italic'>${$t('components.livemap.sent_by')} ${marker.marker!.name}</span>`"
-                    >
-                    </LPopup>
+                    />
                 </LMarker>
             </LLayerGroup>
 

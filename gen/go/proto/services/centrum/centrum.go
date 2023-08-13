@@ -34,7 +34,8 @@ import (
 )
 
 var (
-	ErrFailedQuery = status.Error(codes.Internal, "errors.CentrumService.ErrFailedQuery")
+	ErrFailedQuery   = status.Error(codes.Internal, "errors.CentrumService.ErrFailedQuery")
+	ErrAlreadyInUnit = status.Error(codes.InvalidArgument, "errors.CentrumService.ErrAlreadyInUnit")
 )
 
 var (
@@ -484,16 +485,6 @@ func (s *Server) Stream(req *StreamRequest, srv CentrumService_StreamServer) err
 
 					resp.Change = &StreamResponse_UnitAssigned{
 						UnitAssigned: &dest,
-					}
-
-				case TypeUnitCreated:
-					var dest dispatch.Unit
-					if err := proto.Unmarshal(msg.Data, &dest); err != nil {
-						return err
-					}
-
-					resp.Change = &StreamResponse_UnitCreated{
-						UnitCreated: &dest,
 					}
 
 				case TypeUnitDeleted:

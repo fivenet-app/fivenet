@@ -26,7 +26,7 @@ const sortedUnits = computed(
     <div class="px-4 sm:px-6 lg:px-8 h-full overflow-y-scroll">
         <div class="sm:flex sm:items-center">
             <div class="sm:flex-auto">
-                <h1 class="text-base font-semibold leading-6 text-gray-100">Active Units</h1>
+                <h1 class="text-base font-semibold leading-6 text-gray-100">{{ $t('common.unit', 2) }}</h1>
             </div>
         </div>
         <div class="mt-0.5 flow-root">

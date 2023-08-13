@@ -76,7 +76,11 @@ export interface UserMarker {
      */
     user?: UserShort; // @gotags: alias:"user"
     /**
-     * @generated from protobuf field: optional resources.dispatch.Unit unit = 3;
+     * @generated from protobuf field: optional uint64 unit_id = 3;
+     */
+    unitId?: bigint;
+    /**
+     * @generated from protobuf field: optional resources.dispatch.Unit unit = 4;
      */
     unit?: Unit;
 }
@@ -141,7 +145,8 @@ class UserMarker$Type extends MessageType<UserMarker> {
         super("resources.livemap.UserMarker", [
             { no: 1, name: "marker", kind: "message", T: () => GenericMarker },
             { no: 2, name: "user", kind: "message", T: () => UserShort },
-            { no: 3, name: "unit", kind: "message", T: () => Unit }
+            { no: 3, name: "unit_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 4, name: "unit", kind: "message", T: () => Unit }
         ]);
     }
 }

@@ -756,6 +756,34 @@
                 "TARGETS": "zielt auf",
                 "CAUSED": "verursacht"
             }
+        },
+        "centrum": {
+            "CENTRUM_MODE": {
+                "MANUAL": "Manuell",
+                "CENTRAL_COMMAND": "Zentrale Stelle",
+                "AUTO_ROUND_ROBIN": "Automatisch: Round Robin"
+            },
+            "DISPATCH_STATUS": {
+                "NEW": "Neu",
+                "UNASSIGNED": "Nicht zugewiesen",
+                "UPDATED": "Aktualisiert",
+                "UNIT_ASSIGNED": "Einheit zugewiesen",
+                "UNIT_UNASSIGNED": "Einheit entfernt",
+                "EN_ROUTE": "Auf dem Weg",
+                "ON_SCENE": "Vor Ort",
+                "NEED_ASSISTANCE": "Verstärkung Benötigt",
+                "COMPLETED": "Abgeschlossen",
+                "CANCELLED": "Abgebrochen"
+            },
+            "UNIT_STATUS": {
+                "UNKNOWN": "Unbekannt",
+                "USER_ADDED": "User hinzugefügt",
+                "USER_REMOVED": "User entfernt",
+                "UNAVAILABLE": "Nicht verfügbar",
+                "AVAILABLE": "Verfügbar",
+                "ON_BREAK": "Pause",
+                "BUSY": "Beschäftigt"
+            }
         }
     },
     "perms": {

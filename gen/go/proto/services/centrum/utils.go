@@ -228,13 +228,7 @@ func (s *Server) getUnitStatus(ctx context.Context, id uint64) (*dispatch.UnitSt
 			tUnitStatus.X,
 			tUnitStatus.Y,
 		).
-		FROM(
-			tUnitStatus.
-				LEFT_JOIN(
-					tUsers,
-					tUsers.ID.EQ(tUnitStatus.UserID),
-				),
-		).
+		FROM(tUnitStatus).
 		WHERE(
 			tUnitStatus.ID.EQ(jet.Uint64(id)),
 		).
@@ -248,6 +242,13 @@ func (s *Server) getUnitStatus(ctx context.Context, id uint64) (*dispatch.UnitSt
 	if dest.UserId != nil {
 		var err error
 		dest.User, err = s.resolveUserById(ctx, *dest.UserId)
+		if err != nil {
+			return nil, err
+		}
+	}
+	if dest.CreatorId != nil {
+		var err error
+		dest.Creator, err = s.resolveUserById(ctx, *dest.CreatorId)
 		if err != nil {
 			return nil, err
 		}
@@ -449,6 +450,7 @@ func (s *Server) updateUnitStatus(ctx context.Context, userInfo *userinfo.UserIn
 			userInfo.UserId,
 			x,
 			y,
+			in.CreatorId,
 		)
 
 	res, err := stmt.ExecContext(ctx, s.db)
@@ -521,14 +523,20 @@ func (s *Server) updateDispatchUnitAssignments(ctx context.Context, userInfo *us
 	}
 
 	if len(toAdd) > 0 {
-		addIds := make([]jet.IntegerExpression, len(toAdd))
+		addIds := []jet.IntegerExpression{}
 		for i := 0; i < len(toAdd); i++ {
 			_, ok := s.tracker.GetUserById(toAdd[i])
 			if !ok {
 				continue
 			}
 
-			addIds[i] = jet.Int32(toAdd[i])
+			if utils.InSliceFunc(unit.Users, func(in *dispatch.UnitAssignment) bool {
+				return in.UserId == toAdd[i]
+			}) {
+				continue
+			}
+
+			addIds = append(addIds, jet.Int32(toAdd[i]))
 		}
 
 		for _, id := range addIds {
@@ -551,7 +559,9 @@ func (s *Server) updateDispatchUnitAssignments(ctx context.Context, userInfo *us
 				)
 
 			if _, err := stmt.ExecContext(ctx, tx); err != nil {
-				if !dbutils.IsDuplicateError(err) {
+				if dbutils.IsDuplicateError(err) {
+					return ErrAlreadyInUnit
+				} else {
 					return err
 				}
 			}
@@ -600,7 +610,7 @@ func (s *Server) updateDispatchUnitAssignments(ctx context.Context, userInfo *us
 		return err
 	}
 	s.events.JS.Publish(s.buildSubject(TopicUnit, TypeUnitUpdated, userInfo, unit.Id), data)
-	s.events.JS.Publish(s.buildSubject(TopicUnit, TypeUnitUserAssigned, userInfo, unit.Id), data)
+	s.events.JS.Publish(s.buildSubject(TopicUnit, TypeUnitUserAssigned, userInfo, 0), data)
 
 	return nil
 }

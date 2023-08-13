@@ -519,7 +519,9 @@
         "status": "Status",
         "mode": "Mode | Modes",
         "join": "Join | Joined",
-        "leave": "Leave | Left"
+        "leave": "Leave | Left",
+        "message": "Message | Messages",
+        "unknown": "Unknown"
     },
     "notifications": {
         "clipboard": {
@@ -756,6 +758,34 @@
                 "MENTIONED": "mentioned",
                 "TARGETS": "targets",
                 "CAUSED": "caused"
+            }
+        },
+        "centrum": {
+            "CENTRUM_MODE": {
+                "MANUAL": "Manual",
+                "CENTRAL_COMMAND": "Central Command",
+                "AUTO_ROUND_ROBIN": "Automatic: Round Robin"
+            },
+            "DISPATCH_STATUS": {
+                "NEW": "New",
+                "UNASSIGNED": "Unassigned",
+                "UPDATED": "Updated",
+                "UNIT_ASSIGNED": "Unit assigned",
+                "UNIT_UNASSIGNED": "Unit unassigned",
+                "EN_ROUTE": "En Route",
+                "ON_SCENE": "On Scene",
+                "NEED_ASSISTANCE": "Need Assistance",
+                "COMPLETED": "Abgeschlossen",
+                "CANCELLED": "Abgebrochen"
+            },
+            "UNIT_STATUS": {
+                "UNKNOWN": "Unknown",
+                "USER_ADDED": "User added",
+                "USER_REMOVED": "User removed",
+                "UNAVAILABLE": "Unavailable",
+                "AVAILABLE": "Available",
+                "ON_BREAK": "On Break",
+                "BUSY": "Busy"
             }
         }
     },
