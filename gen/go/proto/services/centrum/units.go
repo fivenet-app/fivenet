@@ -258,8 +258,8 @@ func (s *Server) UpdateUnitStatus(ctx context.Context, req *UpdateUnitStatusRequ
 	}
 	defer s.a.Log(auditEntry, req)
 
-	unit, err := s.getUnitFromDB(ctx, s.db, req.UnitId)
-	if err != nil {
+	unit, ok := s.getUnit(ctx, userInfo, req.UnitId)
+	if !ok {
 		return nil, ErrFailedQuery
 	}
 

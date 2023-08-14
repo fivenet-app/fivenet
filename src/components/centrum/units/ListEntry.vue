@@ -24,7 +24,7 @@ const open = ref(false);
                 <p class="text-gray-400">{{ $t('common.members', unit.users.length) }}</p>
             </div>
             <div class="flex-shrink-0 pr-5 inline-flex items-center justify-center text-white">
-                {{ UNIT_STATUS[unit.status?.status ?? (0 as number)] }}
+                {{ $t(`enums.centrum.UNIT_STATUS.${UNIT_STATUS[unit.status?.status ?? (0 as number)]}`) }}
             </div>
         </div>
     </li>

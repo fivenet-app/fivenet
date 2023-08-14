@@ -236,6 +236,15 @@ const selectUnitOpen = ref(false);
                                 >
                                     <InformationOutlineIcon class="h-5 w-5" aria-hidden="true" />
                                     <span class="mt-2 truncate">{{ ownUnit.initials }}: {{ ownUnit.name }}</span>
+                                    <span class="mt-2 truncate">
+                                        {{
+                                            $t(
+                                                `enums.centrum.DISPATCH_STATUS.${
+                                                    DISPATCH_STATUS[ownUnit.status?.status ?? (0 as number)]
+                                                }`,
+                                            )
+                                        }}
+                                    </span>
                                 </button>
                                 <UnitDetails :unit="ownUnit" :ownUnit="ownUnit" :open="unitOpen" @close="unitOpen = false" />
                             </div>

@@ -262,6 +262,7 @@ watch(selectedChar, () => {
                                         v-for="vehicle in vehicles"
                                         :key="vehicle.plate"
                                         :vehicle="vehicle"
+                                        :hide-owner="hideOwner"
                                         :hide-citizen-link="hideCitizenLink"
                                         :hide-copy="hideCopy"
                                         class="transition-colors hover:bg-neutral/5"

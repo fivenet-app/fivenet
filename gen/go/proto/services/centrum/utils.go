@@ -467,6 +467,7 @@ func (s *Server) updateUnitStatus(ctx context.Context, userInfo *userinfo.UserIn
 			tUnitStatus.UserID,
 			tUnitStatus.X,
 			tUnitStatus.Y,
+			tUnitStatus.CreatorID,
 		).
 		VALUES(
 			in.UnitId,

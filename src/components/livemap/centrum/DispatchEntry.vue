@@ -19,7 +19,9 @@ const detailsOpen = ref(false);
         >
             <CarEmergencyIcon class="h-5 w-5" aria-hidden="true" />
             <span class="mt-2 truncate">DSP-{{ dispatch.id }}</span>
-            <span class="mt-2 truncate">{{ DISPATCH_STATUS[dispatch.status?.status!] }}</span>
+            <span class="mt-2 truncate">
+                {{ $t(`enums.centrum.DISPATCH_STATUS.${DISPATCH_STATUS[dispatch.status?.status ?? (0 as number)]}`) }}
+            </span>
         </button>
         <Details @close="detailsOpen = false" :dispatch="dispatch" :open="detailsOpen" />
     </li>

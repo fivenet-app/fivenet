@@ -42,13 +42,13 @@ defineEmits<{
                                     scope="col"
                                     class="whitespace-nowrap px-2 py-2 text-left text-sm font-semibold text-gray-100"
                                 >
-                                    {{ $t('common.status') }}
+                                    {{ $t('common.created_at') }}
                                 </th>
                                 <th
                                     scope="col"
                                     class="whitespace-nowrap px-2 py-2 text-left text-sm font-semibold text-gray-100"
                                 >
-                                    {{ $t('common.created_at') }}
+                                    {{ $t('common.status') }}
                                 </th>
                                 <th
                                     scope="col"

@@ -55,7 +55,7 @@ const assignOpen = ref(false);
             <Time :value="dispatch.createdAt" type="compact" />
         </td>
         <td class="whitespace-nowrap px-2 py-2 text-sm font-medium text-gray-100">
-            {{ $t(`enums.centrum.DISPATCH_STATUS.${DISPATCH_STATUS[dispatch.status?.status as number]}`) }}
+            {{ $t(`enums.centrum.DISPATCH_STATUS.${DISPATCH_STATUS[dispatch.status?.status ?? (0 as number)]}`) }}
         </td>
         <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm text-gray-300 sm:pl-0">
             <span v-if="dispatch.units.length === 0" class="italic">{{ $t('enums.centrum.DISPATCH_STATUS.UNASSIGNED') }}</span>
