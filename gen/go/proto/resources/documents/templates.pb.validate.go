@@ -353,10 +353,10 @@ func (m *Template) validate(all bool) error {
 
 	if m.Job != nil {
 
-		if utf8.RuneCountInString(m.GetJob()) > 50 {
+		if utf8.RuneCountInString(m.GetJob()) > 20 {
 			err := TemplateValidationError{
 				field:  "Job",
-				reason: "value length must be at most 50 runes",
+				reason: "value length must be at most 20 runes",
 			}
 			if !all {
 				return err
@@ -549,10 +549,10 @@ func (m *TemplateShort) validate(all bool) error {
 		}
 	}
 
-	if utf8.RuneCountInString(m.GetJob()) > 50 {
+	if utf8.RuneCountInString(m.GetJob()) > 20 {
 		err := TemplateShortValidationError{
 			field:  "Job",
-			reason: "value length must be at most 50 runes",
+			reason: "value length must be at most 20 runes",
 		}
 		if !all {
 			return err
@@ -1471,10 +1471,10 @@ func (m *TemplateJobAccess) validate(all bool) error {
 
 	// no validation rules for TemplateId
 
-	if utf8.RuneCountInString(m.GetJob()) > 50 {
+	if utf8.RuneCountInString(m.GetJob()) > 20 {
 		err := TemplateJobAccessValidationError{
 			field:  "Job",
-			reason: "value length must be at most 50 runes",
+			reason: "value length must be at most 20 runes",
 		}
 		if !all {
 			return err

@@ -2,17 +2,37 @@
 // @generated from protobuf file "resources/jobs/training.proto" (package "resources.jobs", syntax proto3)
 // tslint:disable
 import { MessageType } from "@protobuf-ts/runtime";
-// import "validate/validate.proto";
-
+import { Timestamp } from "../timestamp/timestamp.js";
 /**
  * @generated from protobuf message resources.jobs.TrainingModule
  */
 export interface TrainingModule {
+    /**
+     * @generated from protobuf field: uint64 id = 1;
+     */
+    id: bigint; // @gotags: sql:"primary_key" alias:"id"
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
+     */
+    createdAt?: Timestamp;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp updated_at = 3;
+     */
+    updatedAt?: Timestamp;
+    /**
+     * @generated from protobuf field: string job = 4;
+     */
+    job: string;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class TrainingModule$Type extends MessageType<TrainingModule> {
     constructor() {
-        super("resources.jobs.TrainingModule", []);
+        super("resources.jobs.TrainingModule", [
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
+            { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
+            { no: 4, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } }
+        ]);
     }
 }
 /**

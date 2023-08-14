@@ -129,7 +129,7 @@ class DispatchMarker$Type extends MessageType<DispatchMarker> {
     constructor() {
         super("resources.livemap.DispatchMarker", [
             { no: 1, name: "marker", kind: "message", T: () => GenericMarker },
-            { no: 2, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
+            { no: 2, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 3, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
             { no: 4, name: "active", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);

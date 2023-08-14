@@ -874,10 +874,10 @@ func (m *DocumentJobAccess) validate(all bool) error {
 
 	// no validation rules for DocumentId
 
-	if utf8.RuneCountInString(m.GetJob()) > 50 {
+	if utf8.RuneCountInString(m.GetJob()) > 20 {
 		err := DocumentJobAccessValidationError{
 			field:  "Job",
-			reason: "value length must be at most 50 runes",
+			reason: "value length must be at most 20 runes",
 		}
 		if !all {
 			return err

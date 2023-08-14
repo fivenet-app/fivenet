@@ -57,10 +57,10 @@ func (m *Settings) validate(all bool) error {
 
 	var errors []error
 
-	if utf8.RuneCountInString(m.GetJob()) > 50 {
+	if utf8.RuneCountInString(m.GetJob()) > 20 {
 		err := SettingsValidationError{
 			field:  "Job",
-			reason: "value length must be at most 50 runes",
+			reason: "value length must be at most 20 runes",
 		}
 		if !all {
 			return err

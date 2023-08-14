@@ -2417,10 +2417,10 @@ func (m *SetJobRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if utf8.RuneCountInString(m.GetJob()) > 50 {
+	if utf8.RuneCountInString(m.GetJob()) > 20 {
 		err := SetJobRequestValidationError{
 			field:  "Job",
-			reason: "value length must be at most 50 runes",
+			reason: "value length must be at most 20 runes",
 		}
 		if !all {
 			return err

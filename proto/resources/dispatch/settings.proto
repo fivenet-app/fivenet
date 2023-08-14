@@ -12,7 +12,7 @@ enum CENTRUM_MODE {
 }
 
 message Settings {
-  string job = 1 [(validate.rules).string.max_len = 50];
+  string job = 1 [(validate.rules).string.max_len = 20];
   bool enabled = 2;
   CENTRUM_MODE mode = 3 [(validate.rules).enum.defined_only = true];
   CENTRUM_MODE fallback_mode = 4 [(validate.rules).enum.defined_only = true];

@@ -12,7 +12,7 @@ message Dispatch {
   uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
   optional resources.timestamp.Timestamp created_at = 2;
   optional resources.timestamp.Timestamp updated_at = 3;
-  string job = 4 [(validate.rules).string.max_len = 50];
+  string job = 4 [(validate.rules).string.max_len = 20];
   optional DispatchStatus status = 5;
   string message = 6 [(validate.rules).string.max_len = 255];
   optional string description = 7 [(validate.rules).string.max_len = 1024];

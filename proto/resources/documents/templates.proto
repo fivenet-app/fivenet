@@ -24,7 +24,7 @@ message Template {
   resources.documents.TemplateSchema schema = 10; // @gotags: alias:"schema"
   optional int32 creator_id = 11; // @gotags: alias:"creator_id"
   optional resources.users.UserShort creator = 12;
-  optional string job = 13 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job"
+  optional string job = 13 [(validate.rules).string.max_len = 20]; // @gotags: alias:"job"
   repeated TemplateJobAccess job_access = 14;
   resources.documents.DocumentAccess content_access = 15; // @gotags: alias:"access"
 }
@@ -40,7 +40,7 @@ message TemplateShort {
   resources.documents.TemplateSchema schema = 8; // @gotags: alias:"schema"
   optional int32 creator_id = 9; // @gotags: alias:"creator_id"
   optional resources.users.UserShort creator = 10;
-  string job = 11 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job"
+  string job = 11 [(validate.rules).string.max_len = 20]; // @gotags: alias:"job"
 }
 
 message TemplateSchema {
@@ -71,7 +71,7 @@ message TemplateJobAccess {
   optional resources.timestamp.Timestamp created_at = 2;
   optional resources.timestamp.Timestamp updated_at = 3;
   uint64 template_id = 4; // @gotags: alias:"template_id"
-  string job = 5 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job"
+  string job = 5 [(validate.rules).string.max_len = 20]; // @gotags: alias:"job"
   optional string job_label = 6 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job_label"
   int32 minimumGrade = 7 [(validate.rules).int32.gt = 0]; // @gotags: alias:"minimum_grade"
   optional string job_grade_label = 8 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job_grade_label"

@@ -104,7 +104,7 @@ message DeleteOAuth2ConnectionResponse {
 
 message SetJobRequest {
   int32 char_id = 1 [(validate.rules).int32.gt = 0];
-  string job = 2 [(validate.rules).string.max_len = 50];
+  string job = 2 [(validate.rules).string.max_len = 20];
   int32 job_grade = 3 [(validate.rules).int32.gt = 0];
 }
 

@@ -44,7 +44,7 @@ export enum CENTRUM_MODE {
 class Settings$Type extends MessageType<Settings> {
     constructor() {
         super("resources.dispatch.Settings", [
-            { no: 1, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
+            { no: 1, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 2, name: "enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 3, name: "mode", kind: "enum", T: () => ["resources.dispatch.CENTRUM_MODE", CENTRUM_MODE], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 4, name: "fallback_mode", kind: "enum", T: () => ["resources.dispatch.CENTRUM_MODE", CENTRUM_MODE], options: { "validate.rules": { enum: { definedOnly: true } } } }

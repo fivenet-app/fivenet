@@ -59,10 +59,10 @@ func (m *Dispatch) validate(all bool) error {
 
 	// no validation rules for Id
 
-	if utf8.RuneCountInString(m.GetJob()) > 50 {
+	if utf8.RuneCountInString(m.GetJob()) > 20 {
 		err := DispatchValidationError{
 			field:  "Job",
-			reason: "value length must be at most 50 runes",
+			reason: "value length must be at most 20 runes",
 		}
 		if !all {
 			return err

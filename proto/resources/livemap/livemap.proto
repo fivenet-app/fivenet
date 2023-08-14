@@ -28,7 +28,7 @@ message GenericMarker {
 
 message DispatchMarker {
   GenericMarker marker = 1;
-  string job = 2 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job"
+  string job = 2 [(validate.rules).string.max_len = 20]; // @gotags: alias:"job"
   optional string job_label = 3 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job_label"
   bool active = 4;
 }

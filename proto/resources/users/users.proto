@@ -10,7 +10,7 @@ import "validate/validate.proto";
 message UserShort {
   int32 user_id = 1 [(validate.rules).int32.gt = 0]; // @gotags: alias:"id"
   string identifier = 2 [(validate.rules).string.len = 46];
-  string job = 3 [(validate.rules).string.max_len = 50];
+  string job = 3 [(validate.rules).string.max_len = 20];
   optional string job_label = 4 [(validate.rules).string.max_len = 50];
   int32 job_grade = 5 [(validate.rules).int32.gt = -1];
   optional string job_grade_label = 6 [(validate.rules).string.max_len = 50];
@@ -22,7 +22,7 @@ message UserShort {
 message User {
   int32 user_id = 1 [(validate.rules).int32.gt = 0]; // @gotags: alias:"id"
   string identifier = 2 [(validate.rules).string.len = 46];
-  string job = 3 [(validate.rules).string.max_len = 50];
+  string job = 3 [(validate.rules).string.max_len = 20];
   optional string job_label = 4 [(validate.rules).string.max_len = 50];
   int32 job_grade = 5 [(validate.rules).int32.gt = -1];
   optional string job_grade_label = 6 [(validate.rules).string.max_len = 50];
