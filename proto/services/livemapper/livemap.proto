@@ -3,14 +3,14 @@ syntax = "proto3";
 package services.livemapper;
 option go_package = "github.com/galexrt/fivenet/gen/go/proto/services/livemapper;livemapper";
 
-import "resources/jobs/jobs.proto";
+import "resources/users/jobs.proto";
 import "resources/livemap/livemap.proto";
 
 message StreamRequest {}
 
 message StreamResponse {
-  repeated resources.jobs.Job jobs_dispatches = 1;
-  repeated resources.jobs.Job jobs_users = 2;
+  repeated resources.users.Job jobs_dispatches = 1;
+  repeated resources.users.Job jobs_users = 2;
   repeated resources.livemap.UserMarker users = 3;
   repeated resources.livemap.DispatchMarker dispatches = 4;
 }

@@ -3,8 +3,8 @@
 // tslint:disable
 import { MessageType } from "@protobuf-ts/runtime";
 import { Timestamp } from "../timestamp/timestamp.js";
-import { JobGrade } from "../jobs/jobs.js";
-import { Job } from "../jobs/jobs.js";
+import { JobGrade } from "./jobs.js";
+import { Job } from "./jobs.js";
 /**
  * @generated from protobuf message resources.users.UserShort
  */
@@ -145,7 +145,7 @@ export interface UserProps {
      */
     jobName?: string; // @gotags: alias:"job"
     /**
-     * @generated from protobuf field: optional resources.jobs.Job job = 4;
+     * @generated from protobuf field: optional resources.users.Job job = 4;
      */
     job?: Job;
     /**
@@ -153,7 +153,7 @@ export interface UserProps {
      */
     jobGradeNumber?: number; // @gotags: alias:"job_grade"
     /**
-     * @generated from protobuf field: optional resources.jobs.JobGrade job_grade = 6;
+     * @generated from protobuf field: optional resources.users.JobGrade job_grade = 6;
      */
     jobGrade?: JobGrade;
     /**

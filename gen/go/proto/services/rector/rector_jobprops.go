@@ -5,8 +5,8 @@ import (
 	"errors"
 	"strings"
 
-	"github.com/galexrt/fivenet/gen/go/proto/resources/jobs"
-	rector "github.com/galexrt/fivenet/gen/go/proto/resources/rector"
+	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
+	"github.com/galexrt/fivenet/gen/go/proto/resources/users"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
@@ -39,7 +39,7 @@ func (s *Server) GetJobProps(ctx context.Context, req *GetJobPropsRequest) (*Get
 		LIMIT(1)
 
 	resp := &GetJobPropsResponse{
-		JobProps: &jobs.JobProps{},
+		JobProps: &users.JobProps{},
 	}
 	if err := stmt.QueryContext(ctx, s.db, resp.JobProps); err != nil {
 		if !errors.Is(qrm.ErrNoRows, err) {

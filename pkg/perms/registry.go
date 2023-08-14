@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"sync"
 
-	"github.com/galexrt/fivenet/gen/go/proto/resources/jobs"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/permissions"
+	"github.com/galexrt/fivenet/gen/go/proto/resources/users"
 	"github.com/galexrt/fivenet/pkg/perms/helpers"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
@@ -198,16 +198,16 @@ func (p *Perms) cleanupRoles(ctx context.Context) error {
 				jg.JobName.EQ(j.Name),
 			))
 
-	var dest []*jobs.Job
+	var dest []*users.Job
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
 		return err
 	}
 	jobName := DefaultRoleJob
 	jobGrade := DefaultRoleJobGrade
 	// Add default job to avoid it being deleted
-	dest = append(dest, &jobs.Job{
+	dest = append(dest, &users.Job{
 		Name: DefaultRoleJob,
-		Grades: []*jobs.JobGrade{
+		Grades: []*users.JobGrade{
 			{
 				JobName: &jobName,
 				Grade:   jobGrade,

@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package resources.jobs;
+option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/jobs;jobs";
+
+import "resources/timestamp/timestamp.proto";
+import "resources/users/users.proto";
+import "validate/validate.proto";
+
+enum CONDUCT_TYPE {
+  NEUTRAL = 0;
+  POSITIVE = 1;
+  NEGATIVE = 2;
+  WARN = 3;
+  SUSPENSION = 4;
+}
+
+message ConductEntry {
+  uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
+  optional resources.timestamp.Timestamp created_at = 2;
+  optional resources.timestamp.Timestamp updated_at = 3;
+  string job = 4 [(validate.rules).string.max_len = 20];
+  CONDUCT_TYPE type = 5 [(validate.rules).enum.defined_only = true];
+  optional resources.timestamp.Timestamp expires_at = 6;
+  int32 target_user_id = 7 [(validate.rules).int32.gt = 0];
+  optional resources.users.UserShort target_user = 8;
+  int32 creator_id = 9 [(validate.rules).int32.gt = 0];
+  optional resources.users.UserShort creator = 10;
+}

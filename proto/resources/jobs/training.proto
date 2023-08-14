@@ -1,0 +1,10 @@
+syntax = "proto3";
+
+package resources.jobs;
+option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/jobs;jobs";
+
+//import "validate/validate.proto";
+
+message TrainingModule {
+
+}

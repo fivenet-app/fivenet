@@ -5,7 +5,7 @@ import (
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/common"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/documents"
-	"github.com/galexrt/fivenet/gen/go/proto/resources/jobs"
+	"github.com/galexrt/fivenet/gen/go/proto/resources/users"
 )
 
 const (
@@ -74,7 +74,7 @@ func (e *Enricher) EnrichCategory(doc common.ICategory) {
 	}
 }
 
-func (e *Enricher) GetJobByName(job string) *jobs.Job {
+func (e *Enricher) GetJobByName(job string) *users.Job {
 	j, ok := e.c.jobs.Get(job)
 	if !ok {
 		return nil
@@ -83,7 +83,7 @@ func (e *Enricher) GetJobByName(job string) *jobs.Job {
 	return j
 }
 
-func (e *Enricher) GetJobGrade(job string, grade int32) (*jobs.Job, *jobs.JobGrade) {
+func (e *Enricher) GetJobGrade(job string, grade int32) (*users.Job, *users.JobGrade) {
 	j, ok := e.c.jobs.Get(job)
 	if !ok {
 		return nil, nil

@@ -4,7 +4,7 @@ package services.rector;
 option go_package = "github.com/galexrt/fivenet/gen/go/proto/services/rector;rector";
 
 import "resources/common/database/database.proto";
-import "resources/jobs/jobs.proto";
+import "resources/users/jobs.proto";
 import "resources/laws/laws.proto";
 import "resources/permissions/permissions.proto";
 import "resources/rector/audit.proto";
@@ -14,11 +14,11 @@ import "validate/validate.proto";
 message GetJobPropsRequest {}
 
 message GetJobPropsResponse {
-  resources.jobs.JobProps job_props = 1;
+  resources.users.JobProps job_props = 1;
 }
 
 message SetJobPropsRequest {
-  resources.jobs.JobProps job_props = 1;
+  resources.users.JobProps job_props = 1;
 }
 
 message SetJobPropsResponse {}

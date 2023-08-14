@@ -5,8 +5,8 @@ import (
 	"database/sql"
 	"time"
 
-	"github.com/galexrt/fivenet/gen/go/proto/resources/jobs"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/livemap"
+	"github.com/galexrt/fivenet/gen/go/proto/resources/users"
 	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/utils"
@@ -203,7 +203,7 @@ func (s *Tracker) refreshUserLocations(ctx context.Context) error {
 			markers[job] = xsync.NewTypedMapOf[int32, *livemap.UserMarker](maps.HashInt32)
 		}
 		if dest[i].Marker.IconColor == "" {
-			dest[i].Marker.IconColor = jobs.DefaultLivemapMarkerColor
+			dest[i].Marker.IconColor = users.DefaultLivemapMarkerColor
 		}
 
 		userId := dest[i].User.UserId

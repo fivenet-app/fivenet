@@ -9,7 +9,6 @@ import (
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/common"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
-	"github.com/galexrt/fivenet/gen/go/proto/resources/jobs"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/notifications"
 	timestamp "github.com/galexrt/fivenet/gen/go/proto/resources/timestamp"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/users"
@@ -412,7 +411,7 @@ func (s *Server) checkAndUpdateUserInfo(ctx context.Context, tu *TokenUpdate, cu
 	return nil
 }
 
-func (s *Server) getCharacter(ctx context.Context, charId int32) (*users.User, *jobs.JobProps, string, error) {
+func (s *Server) getCharacter(ctx context.Context, charId int32) (*users.User, *users.JobProps, string, error) {
 	stmt := tUsers.
 		SELECT(
 			tUsers.ID,
@@ -451,7 +450,7 @@ func (s *Server) getCharacter(ctx context.Context, charId int32) (*users.User, *
 	var dest struct {
 		users.User
 		Group    string
-		JobProps jobs.JobProps
+		JobProps users.JobProps
 	}
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		return nil, nil, "", err

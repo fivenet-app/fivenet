@@ -5,7 +5,7 @@ import { ServiceType } from "@protobuf-ts/runtime-rpc";
 import { MessageType } from "@protobuf-ts/runtime";
 import { DispatchMarker } from "../../resources/livemap/livemap.js";
 import { UserMarker } from "../../resources/livemap/livemap.js";
-import { Job } from "../../resources/jobs/jobs.js";
+import { Job } from "../../resources/users/jobs.js";
 /**
  * @generated from protobuf message services.livemapper.StreamRequest
  */
@@ -16,11 +16,11 @@ export interface StreamRequest {
  */
 export interface StreamResponse {
     /**
-     * @generated from protobuf field: repeated resources.jobs.Job jobs_dispatches = 1;
+     * @generated from protobuf field: repeated resources.users.Job jobs_dispatches = 1;
      */
     jobsDispatches: Job[];
     /**
-     * @generated from protobuf field: repeated resources.jobs.Job jobs_users = 2;
+     * @generated from protobuf field: repeated resources.users.Job jobs_users = 2;
      */
     jobsUsers: Job[];
     /**

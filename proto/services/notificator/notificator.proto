@@ -4,7 +4,7 @@ package services.notificator;
 option go_package = "github.com/galexrt/fivenet/gen/go/proto/services/notificator;notificator";
 
 import "resources/common/database/database.proto";
-import "resources/jobs/jobs.proto";
+import "resources/users/jobs.proto";
 import "resources/notifications/notifications.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/users/users.proto";
@@ -45,7 +45,7 @@ message TokenUpdate {
   resources.timestamp.Timestamp expires = 2;
   repeated string permissions = 3;
   optional resources.users.User user_info = 4;
-  optional resources.jobs.JobProps job_props = 5;
+  optional resources.users.JobProps job_props = 5;
 }
 
 service NotificatorService {

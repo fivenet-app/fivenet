@@ -3,7 +3,7 @@
 // tslint:disable
 import { ServiceType } from "@protobuf-ts/runtime-rpc";
 import { MessageType } from "@protobuf-ts/runtime";
-import { JobProps } from "../../resources/jobs/jobs.js";
+import { JobProps } from "../../resources/users/jobs.js";
 import { User } from "../../resources/users/users.js";
 import { Timestamp } from "../../resources/timestamp/timestamp.js";
 import { Notification } from "../../resources/notifications/notifications.js";
@@ -108,7 +108,7 @@ export interface TokenUpdate {
      */
     userInfo?: User;
     /**
-     * @generated from protobuf field: optional resources.jobs.JobProps job_props = 5;
+     * @generated from protobuf field: optional resources.users.JobProps job_props = 5;
      */
     jobProps?: JobProps;
 }

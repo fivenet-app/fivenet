@@ -3,7 +3,7 @@
 // tslint:disable
 import { ServiceType } from "@protobuf-ts/runtime-rpc";
 import { MessageType } from "@protobuf-ts/runtime";
-import { JobProps } from "../../resources/jobs/jobs.js";
+import { JobProps } from "../../resources/users/jobs.js";
 import { User } from "../../resources/users/users.js";
 import { OAuth2Account } from "../../resources/accounts/oauth2.js";
 import { OAuth2Provider } from "../../resources/accounts/oauth2.js";
@@ -171,7 +171,7 @@ export interface ChooseCharacterResponse {
      */
     permissions: string[];
     /**
-     * @generated from protobuf field: resources.jobs.JobProps job_props = 4;
+     * @generated from protobuf field: resources.users.JobProps job_props = 4;
      */
     jobProps?: JobProps;
     /**
@@ -241,7 +241,7 @@ export interface SetJobResponse {
      */
     expires?: Timestamp;
     /**
-     * @generated from protobuf field: resources.jobs.JobProps job_props = 3;
+     * @generated from protobuf field: resources.users.JobProps job_props = 3;
      */
     jobProps?: JobProps;
     /**

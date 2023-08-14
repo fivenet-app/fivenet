@@ -7,7 +7,7 @@ import (
 
 	"github.com/blevesearch/bleve/v2"
 	"github.com/blevesearch/bleve/v2/search/query"
-	"github.com/galexrt/fivenet/gen/go/proto/resources/jobs"
+	"github.com/galexrt/fivenet/gen/go/proto/resources/users"
 )
 
 type Searcher struct {
@@ -53,7 +53,7 @@ func (s *Searcher) addDataToIndex() {
 	}
 }
 
-func (s *Searcher) SearchJobs(ctx context.Context, search string, exactMatch bool) ([]*jobs.Job, error) {
+func (s *Searcher) SearchJobs(ctx context.Context, search string, exactMatch bool) ([]*users.Job, error) {
 	var searchQuery query.Query
 	if search == "" {
 		searchQuery = bleve.NewMatchAllQuery()
@@ -79,7 +79,7 @@ func (s *Searcher) SearchJobs(ctx context.Context, search string, exactMatch boo
 		return nil, err
 	}
 
-	jobs := make([]*jobs.Job, len(searchResult.Hits))
+	jobs := make([]*users.Job, len(searchResult.Hits))
 	for i, result := range searchResult.Hits {
 		job, ok := s.c.jobs.Get(result.ID)
 		if !ok {

@@ -7,9 +7,9 @@ import (
 	"strings"
 	"time"
 
-	jobs "github.com/galexrt/fivenet/gen/go/proto/resources/jobs"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/livemap"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/timestamp"
+	users "github.com/galexrt/fivenet/gen/go/proto/resources/users"
 	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
@@ -181,16 +181,16 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 	}
 
 	// Add jobs to list visible jobs list
-	resp.JobsDispatches = make([]*jobs.Job, len(dispatchesJobs))
+	resp.JobsDispatches = make([]*users.Job, len(dispatchesJobs))
 	for i := 0; i < len(dispatchesJobs); i++ {
-		resp.JobsDispatches[i] = &jobs.Job{
+		resp.JobsDispatches[i] = &users.Job{
 			Name: dispatchesJobs[i],
 		}
 		s.enricher.EnrichJobName(resp.JobsDispatches[i])
 	}
-	resp.JobsUsers = []*jobs.Job{}
+	resp.JobsUsers = []*users.Job{}
 	for job := range playersJobs {
-		j := &jobs.Job{
+		j := &users.Job{
 			Name: job,
 		}
 		s.enricher.EnrichJobName(j)
@@ -322,7 +322,7 @@ func (s *Server) refreshUserLocations(ctx context.Context) error {
 			markers[job] = []*livemap.UserMarker{}
 		}
 		if dest[i].Marker.IconColor == "" {
-			dest[i].Marker.IconColor = jobs.DefaultLivemapMarkerColor
+			dest[i].Marker.IconColor = users.DefaultLivemapMarkerColor
 		}
 
 		markers[job] = append(markers[job], dest[i])

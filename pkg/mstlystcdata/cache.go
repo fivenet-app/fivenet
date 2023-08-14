@@ -9,8 +9,8 @@ import (
 
 	cache "github.com/Code-Hex/go-generics-cache"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/documents"
-	"github.com/galexrt/fivenet/gen/go/proto/resources/jobs"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/laws"
+	"github.com/galexrt/fivenet/gen/go/proto/resources/users"
 	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/utils/syncx"
 	"github.com/galexrt/fivenet/query/fivenet/table"
@@ -36,7 +36,7 @@ type Cache struct {
 
 	tracer             trace.Tracer
 	ctx                context.Context
-	jobs               *cache.Cache[string, *jobs.Job]
+	jobs               *cache.Cache[string, *users.Job]
 	docCategories      *cache.Cache[uint64, *documents.Category]
 	docCategoriesByJob *cache.Cache[string, []*documents.Category]
 	lawBooks           *syncx.Map[uint64, *laws.LawBook]
@@ -58,7 +58,7 @@ type Params struct {
 func NewCache(p Params) (*Cache, error) {
 	ctx, cancel := context.WithCancel(context.Background())
 
-	jobsCache := cache.NewContext[string, *jobs.Job](ctx)
+	jobsCache := cache.NewContext[string, *users.Job](ctx)
 	docCategoriesCache := cache.NewContext[uint64, *documents.Category](ctx)
 	docCategoriesByJobCache := cache.NewContext[string, []*documents.Category](ctx)
 	lawBooks := &syncx.Map[uint64, *laws.LawBook]{}
@@ -195,7 +195,7 @@ func (c *Cache) refreshJobs(ctx context.Context) error {
 			tJGrades.Grade.ASC(),
 		)
 
-	var dest []*jobs.Job
+	var dest []*users.Job
 	if err := stmt.QueryContext(ctx, c.db, &dest); err != nil {
 		return err
 	}

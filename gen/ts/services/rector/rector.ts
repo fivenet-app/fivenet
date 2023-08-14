@@ -11,7 +11,7 @@ import { PaginationRequest } from "../../resources/common/database/database.js";
 import { Permission } from "../../resources/permissions/permissions.js";
 import { RoleAttribute } from "../../resources/permissions/permissions.js";
 import { Role } from "../../resources/permissions/permissions.js";
-import { JobProps } from "../../resources/jobs/jobs.js";
+import { JobProps } from "../../resources/users/jobs.js";
 /**
  * @generated from protobuf message services.rector.GetJobPropsRequest
  */
@@ -22,7 +22,7 @@ export interface GetJobPropsRequest {
  */
 export interface GetJobPropsResponse {
     /**
-     * @generated from protobuf field: resources.jobs.JobProps job_props = 1;
+     * @generated from protobuf field: resources.users.JobProps job_props = 1;
      */
     jobProps?: JobProps;
 }
@@ -31,7 +31,7 @@ export interface GetJobPropsResponse {
  */
 export interface SetJobPropsRequest {
     /**
-     * @generated from protobuf field: resources.jobs.JobProps job_props = 1;
+     * @generated from protobuf field: resources.users.JobProps job_props = 1;
      */
     jobProps?: JobProps;
 }

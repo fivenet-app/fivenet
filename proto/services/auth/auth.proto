@@ -5,7 +5,7 @@ option go_package = "github.com/galexrt/fivenet/gen/go/proto/services/auth;auth"
 
 import "resources/accounts/accounts.proto";
 import "resources/accounts/oauth2.proto";
-import "resources/jobs/jobs.proto";
+import "resources/users/jobs.proto";
 import "resources/users/users.proto";
 import "resources/timestamp/timestamp.proto";
 import "validate/validate.proto";
@@ -84,7 +84,7 @@ message ChooseCharacterResponse {
   string token = 1;
   resources.timestamp.Timestamp expires = 2;
   repeated string permissions = 3;
-  resources.jobs.JobProps job_props = 4;
+  resources.users.JobProps job_props = 4;
   resources.users.User char = 5;
 }
 
@@ -111,7 +111,7 @@ message SetJobRequest {
 message SetJobResponse {
   string token = 1;
   resources.timestamp.Timestamp expires = 2;
-  resources.jobs.JobProps job_props = 3;
+  resources.users.JobProps job_props = 3;
   resources.users.User char = 4;
 }
 

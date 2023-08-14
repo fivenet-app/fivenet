@@ -1,4 +1,4 @@
-package jobs
+package users
 
 const DefaultLivemapMarkerColor = "5C7AFF"
 

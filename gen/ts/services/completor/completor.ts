@@ -5,7 +5,7 @@ import { ServiceType } from "@protobuf-ts/runtime-rpc";
 import { MessageType } from "@protobuf-ts/runtime";
 import { LawBook } from "../../resources/laws/laws.js";
 import { Category } from "../../resources/documents/category.js";
-import { Job } from "../../resources/jobs/jobs.js";
+import { Job } from "../../resources/users/jobs.js";
 import { UserShort } from "../../resources/users/users.js";
 /**
  * @generated from protobuf message services.completor.CompleteCitizensRequest
@@ -55,7 +55,7 @@ export interface CompleteJobsRequest {
  */
 export interface CompleteJobsResponse {
     /**
-     * @generated from protobuf field: repeated resources.jobs.Job jobs = 1;
+     * @generated from protobuf field: repeated resources.users.Job jobs = 1;
      */
     jobs: Job[];
 }

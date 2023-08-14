@@ -7,7 +7,6 @@ import (
 	"strings"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/common"
-	"github.com/galexrt/fivenet/gen/go/proto/resources/jobs"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/timestamp"
 	users "github.com/galexrt/fivenet/gen/go/proto/resources/users"
@@ -415,7 +414,7 @@ func buildCharSearchIdentifier(license string) string {
 	return "char%:" + license
 }
 
-func (s *Server) getCharacter(ctx context.Context, charId int32) (*users.User, *jobs.JobProps, string, error) {
+func (s *Server) getCharacter(ctx context.Context, charId int32) (*users.User, *users.JobProps, string, error) {
 	stmt := tUsers.
 		SELECT(
 			tUsers.ID,
@@ -454,7 +453,7 @@ func (s *Server) getCharacter(ctx context.Context, charId int32) (*users.User, *
 	var dest struct {
 		users.User
 		Group    string
-		JobProps jobs.JobProps
+		JobProps users.JobProps
 	}
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		if errors.Is(qrm.ErrNoRows, err) {
@@ -604,7 +603,7 @@ func (s *Server) SetJob(ctx context.Context, req *SetJobRequest) (*SetJobRespons
 	}, nil
 }
 
-func (s *Server) getJobWithProps(ctx context.Context, jobName string) (*jobs.Job, int32, *jobs.JobProps, error) {
+func (s *Server) getJobWithProps(ctx context.Context, jobName string) (*users.Job, int32, *users.JobProps, error) {
 	js := tJobs.AS("job")
 	stmt := js.
 		SELECT(
@@ -632,9 +631,9 @@ func (s *Server) getJobWithProps(ctx context.Context, jobName string) (*jobs.Job
 		LIMIT(1)
 
 	var dest struct {
-		Job      *jobs.Job
+		Job      *users.Job
 		JobGrade int32 `alias:"job_grade"`
-		JobProps *jobs.JobProps
+		JobProps *users.JobProps
 	}
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		return nil, 0, nil, err

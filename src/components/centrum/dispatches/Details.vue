@@ -80,7 +80,11 @@ const statusOpen = ref(false);
                                                                     @click="statusOpen = true"
                                                                     class="rounded bg-white/10 px-2 py-1 text-xs font-semibold text-white shadow-sm hover:bg-white/20"
                                                                 >
-                                                                    {{ DISPATCH_STATUS[dispatch.status?.status ?? 0] }}
+                                                                    {{
+                                                                        DISPATCH_STATUS[
+                                                                            dispatch.status?.status ?? (0 as number)
+                                                                        ]
+                                                                    }}
                                                                     <span v-if="dispatch.status?.code">
                                                                         (Code: '{{ dispatch.status.code }}')
                                                                     </span>

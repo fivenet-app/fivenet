@@ -3,7 +3,7 @@ syntax = "proto3";
 package resources.users;
 option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/users;users";
 
-import "resources/jobs/jobs.proto";
+import "resources/users/jobs.proto";
 import "resources/timestamp/timestamp.proto";
 import "validate/validate.proto";
 
@@ -48,9 +48,9 @@ message UserProps {
   int32 user_id = 1 [(validate.rules).int32.gt = 0];
   optional bool wanted = 2;
   optional string job_name = 3; // @gotags: alias:"job"
-  optional resources.jobs.Job job = 4;
+  optional resources.users.Job job = 4;
   optional int32 job_grade_number = 5; // @gotags: alias:"job_grade"
-  optional resources.jobs.JobGrade job_grade = 6;
+  optional resources.users.JobGrade job_grade = 6;
   optional uint64 traffic_infraction_points = 7;
   optional int64 open_fines = 8;
 }
