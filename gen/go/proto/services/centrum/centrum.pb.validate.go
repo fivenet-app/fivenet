@@ -468,6 +468,10 @@ func (m *ListUnitsRequest) validate(all bool) error {
 
 	}
 
+	if m.OwnOnly != nil {
+		// no validation rules for OwnOnly
+	}
+
 	if len(errors) > 0 {
 		return ListUnitsRequestMultiError(errors)
 	}
@@ -2125,6 +2129,22 @@ func (m *ListDispatchesRequest) validate(all bool) error {
 		if _, ok := dispatch.DISPATCH_STATUS_name[int32(item)]; !ok {
 			err := ListDispatchesRequestValidationError{
 				field:  fmt.Sprintf("Status[%v]", idx),
+				reason: "value must be one of the defined enum values",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
+	for idx, item := range m.GetNotStatus() {
+		_, _ = idx, item
+
+		if _, ok := dispatch.DISPATCH_STATUS_name[int32(item)]; !ok {
+			err := ListDispatchesRequestValidationError{
+				field:  fmt.Sprintf("NotStatus[%v]", idx),
 				reason: "value must be one of the defined enum values",
 			}
 			if !all {

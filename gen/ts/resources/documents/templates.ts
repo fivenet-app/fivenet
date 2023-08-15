@@ -217,7 +217,7 @@ export interface TemplateJobAccess {
      */
     jobLabel?: string; // @gotags: alias:"job_label"
     /**
-     * @generated from protobuf field: int32 minimumGrade = 7;
+     * @generated from protobuf field: int32 minimum_grade = 7;
      */
     minimumGrade: number; // @gotags: alias:"minimum_grade"
     /**
@@ -342,7 +342,7 @@ class TemplateJobAccess$Type extends MessageType<TemplateJobAccess> {
             { no: 4, name: "template_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
             { no: 5, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 6, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
-            { no: 7, name: "minimumGrade", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
+            { no: 7, name: "minimum_grade", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
             { no: 8, name: "job_grade_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
             { no: 9, name: "access", kind: "enum", T: () => ["resources.documents.ACCESS_LEVEL", ACCESS_LEVEL], options: { "validate.rules": { enum: { definedOnly: true } } } }
         ]);

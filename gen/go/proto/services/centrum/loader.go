@@ -81,7 +81,7 @@ func (s *Server) loadSettings(ctx context.Context, job string) error {
 }
 
 func (s *Server) loadDisponents(ctx context.Context, job string) error {
-	// TODO
+	// TODO need to load disponents into the store
 
 	return nil
 }

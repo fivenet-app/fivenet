@@ -310,13 +310,17 @@ func (s *Server) waitForUnit(srv CentrumService_StreamServer, userInfo *userinfo
 					return 0, err
 				}
 
+				if !utils.InSliceFunc(dest.Users, func(a *dispatch.UnitAssignment) bool {
+					return userInfo.UserId == a.UserId
+				}) {
+					continue
+				}
+
 				resp := &StreamResponse{
 					Change: &StreamResponse_UnitAssigned{
 						UnitAssigned: &dest,
 					},
 				}
-
-				// TODO check if user is in unit users list
 
 				if err := srv.Send(resp); err != nil {
 					return 0, err
@@ -356,7 +360,9 @@ func (s *Server) Stream(req *StreamRequest, srv CentrumService_StreamServer) err
 
 	unit, _ := s.getUnit(srv.Context(), userInfo, unitId)
 
-	dispatches, err := s.ListDispatches(srv.Context(), &ListDispatchesRequest{})
+	dispatches, err := s.ListDispatches(srv.Context(), &ListDispatchesRequest{
+		NotStatus: []dispatch.DISPATCH_STATUS{},
+	})
 	if err != nil {
 		return err
 	}

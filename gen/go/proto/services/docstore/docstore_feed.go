@@ -621,7 +621,7 @@ func (s *Server) notifyUser(ctx context.Context, documentId uint64, sourceUserId
 		return
 	}
 
-	// TODO add `CausedBy` to Notification Data
+	// TODO add source user as `CausedBy` to `Notification.Data``
 	nType := string(notifi.InfoType)
 	not := &notifications.Notification{
 		UserId: targetUserId,
@@ -637,6 +637,9 @@ func (s *Server) notifyUser(ctx context.Context, documentId uint64, sourceUserId
 		Data: &notifications.Data{
 			Link: &notifications.Link{
 				To: fmt.Sprintf("/documents/%d", documentId),
+			},
+			CausedBy: &users.UserShort{
+				UserId: sourceUserId,
 			},
 		},
 	}

@@ -70,6 +70,23 @@ func (m *TrainingModule) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	// no validation rules for Open
+
+	if m.GetMinimumGrade() <= 0 {
+		err := TrainingModuleValidationError{
+			field:  "MinimumGrade",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	// no validation rules for Title
+
+	// no validation rules for Description
+
 	if m.CreatedAt != nil {
 
 		if all {

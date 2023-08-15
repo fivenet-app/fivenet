@@ -371,9 +371,19 @@ func (s *Server) getUnitIDForUserID(ctx context.Context, userId int32) (uint64, 
 	return dest.UnitID, nil
 }
 
-func (s *Server) checkIfUserIsPartOfDispatch(ctx context.Context, userInfo *userinfo.UserInfo, dsp *dispatch.Dispatch, disponentOkay bool) (bool, error) {
-	// TODO check if user is disponent
+func (s *Server) checkIfUserIsDisponent(userInfo *userinfo.UserInfo) bool {
+	// TODO Check the store if the user is a jobs disponent
 
+	return false
+}
+
+func (s *Server) checkIfUserIsPartOfDispatch(ctx context.Context, userInfo *userinfo.UserInfo, dsp *dispatch.Dispatch, disponentOkay bool) (bool, error) {
+	// Check if user is a disponent
+	if s.checkIfUserIsDisponent(userInfo) {
+		return true, nil
+	}
+
+	// Iterate over units of dispatch and check if the user is in one of the units
 	for i := 0; i < len(dsp.Units); i++ {
 		unit, ok := s.getUnit(ctx, userInfo, dsp.Units[i].UnitId)
 		if !ok {

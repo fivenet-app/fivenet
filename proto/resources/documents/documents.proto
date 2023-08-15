@@ -61,7 +61,7 @@ message DocumentJobAccess {
   uint64 document_id = 4; // @gotags: alias:"document_id"
   string job = 5 [(validate.rules).string.max_len = 20]; // @gotags: alias:"job"
   optional string job_label = 6 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job_label"
-  int32 minimumGrade = 7 [(validate.rules).int32.gt = 0]; // @gotags: alias:"minimum_grade"
+  int32 minimum_grade = 7 [(validate.rules).int32.gt = 0]; // @gotags: alias:"minimum_grade"
   optional string job_grade_label = 8 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job_grade_label"
   resources.documents.ACCESS_LEVEL access = 9 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"access"
 }

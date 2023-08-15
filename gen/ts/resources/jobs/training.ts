@@ -23,6 +23,22 @@ export interface TrainingModule {
      * @generated from protobuf field: string job = 4;
      */
     job: string;
+    /**
+     * @generated from protobuf field: bool open = 5;
+     */
+    open: boolean;
+    /**
+     * @generated from protobuf field: int32 minimum_grade = 6;
+     */
+    minimumGrade: number;
+    /**
+     * @generated from protobuf field: string title = 7;
+     */
+    title: string;
+    /**
+     * @generated from protobuf field: string description = 8;
+     */
+    description: string;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class TrainingModule$Type extends MessageType<TrainingModule> {
@@ -31,7 +47,11 @@ class TrainingModule$Type extends MessageType<TrainingModule> {
             { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
-            { no: 4, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } }
+            { no: 4, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
+            { no: 5, name: "open", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 6, name: "minimum_grade", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
+            { no: 7, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 8, name: "description", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
         ]);
     }
 }

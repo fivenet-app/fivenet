@@ -8,5 +8,5 @@ func NewServer() *Server {
 	return &Server{}
 }
 
-// TODO time clock
 // TODO employee warns/notes management
+// TODO time clock
