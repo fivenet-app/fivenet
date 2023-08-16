@@ -57,12 +57,14 @@ func (s *Server) ListUnits(ctx context.Context, req *ListUnitsRequest) (*ListUni
 		}
 
 		for i := 0; i < len(units); i++ {
-			if units[i].Status != nil {
+			if len(req.Status) > 0 {
 				for _, status := range req.Status {
-					if units[i].Status.Status == status {
+					if units[i].Status != nil && units[i].Status.Status == status {
 						resp.Units = append(resp.Units, units[i])
 					}
 				}
+			} else {
+				resp.Units = append(resp.Units, units[i])
 			}
 		}
 	}
@@ -123,8 +125,11 @@ func (s *Server) CreateOrUpdateUnit(ctx context.Context, req *CreateOrUpdateUnit
 
 		req.Unit.Id = uint64(lastId)
 
-		if err := s.updateUnitStatus(ctx, userInfo, &dispatch.UnitStatus{
-			UnitId: uint64(lastId),
+		if err := s.updateUnitStatus(ctx, userInfo.Job, &dispatch.UnitStatus{
+			UnitId:    uint64(lastId),
+			Status:    dispatch.UNIT_STATUS_UNKNOWN,
+			UserId:    &userInfo.UserId,
+			CreatorId: &userInfo.UserId,
 		}); err != nil {
 			return nil, err
 		}
@@ -265,7 +270,7 @@ func (s *Server) UpdateUnitStatus(ctx context.Context, req *UpdateUnitStatusRequ
 		y = &marker.Marker.Y
 	}
 
-	if err := s.updateUnitStatus(ctx, userInfo, &dispatch.UnitStatus{
+	if err := s.updateUnitStatus(ctx, userInfo.Job, &dispatch.UnitStatus{
 		UnitId:    unit.Id,
 		Status:    req.Status,
 		Reason:    req.Reason,

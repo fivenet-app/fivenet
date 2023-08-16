@@ -121,12 +121,6 @@ async function startStream(): Promise<void> {
                         type: 'success',
                     });
                 }
-            } else if (resp.change.oneofKind === 'unitCreated') {
-                const id = resp.change.unitCreated.id;
-                const idx = units.value?.findIndex((d) => d.id === id) ?? -1;
-                if (idx === -1) {
-                    units.value?.unshift(resp.change.unitCreated);
-                }
             } else if (resp.change.oneofKind === 'unitDeleted') {
                 const id = resp.change.unitDeleted.id;
                 const idx = units.value?.findIndex((d) => d.id === id) ?? -1;
@@ -237,7 +231,7 @@ const selectedDispatchStatus = ref<DISPATCH_STATUS | undefined>();
 
 <template>
     <template v-if="ownUnit">
-        <UpdateUnitStatus :open="unitStatusOpen" :unit="ownUnit" :status="selectedUnitStatus" />-
+        <UpdateUnitStatus :open="unitStatusOpen" :unit="ownUnit" :status="selectedUnitStatus" />
         <UpdateDispatchStatus :open="dispatchStatusOpen" :dispatch="dispatches[0]" :status="selectedDispatchStatus" />
     </template>
 

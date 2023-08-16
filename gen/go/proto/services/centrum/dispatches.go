@@ -11,7 +11,6 @@ import (
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
-	"github.com/go-jet/jet/v2/qrm"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -44,24 +43,28 @@ func (s *Server) ListDispatches(ctx context.Context, req *ListDispatchesRequest)
 
 outer:
 	for i := 0; i < len(dispatches); i++ {
-		if dispatches[i].Status != nil {
-			for _, status := range req.Status {
-				if dispatches[i].Status.Status == status {
-					resp.Dispatches = append(resp.Dispatches, dispatches[i])
-				}
-			}
-			// Which statuses to ignore
-			for _, status := range req.NotStatus {
-				if dispatches[i].Status.Status == status {
-					continue outer
-				}
-			}
-		}
-
 		// Hide user info when dispatch is anonymous
 		if dispatches[i].Anon != nil && *dispatches[i].Anon {
 			dispatches[i].User = nil
 			dispatches[i].UserId = nil
+		}
+
+		// Which statuses to ignore
+		for _, status := range req.NotStatus {
+			if dispatches[i].Status != nil && dispatches[i].Status.Status == status {
+				continue outer
+			}
+		}
+		// Which statuses to only include
+		if len(req.Status) > 0 {
+			for _, status := range req.Status {
+				if dispatches[i].Status != nil && dispatches[i].Status.Status == status {
+					resp.Dispatches = append(resp.Dispatches, dispatches[i])
+					continue outer
+				}
+			}
+		} else {
+			resp.Dispatches = append(resp.Dispatches, dispatches[i])
 		}
 	}
 
@@ -190,38 +193,6 @@ func (s *Server) createDispatch(ctx context.Context, d *dispatch.Dispatch) (*dis
 	}
 
 	return dsp, nil
-}
-
-// TODO Remove this function by using s.updateUnitStatus
-func (s *Server) addDispatchStatus(ctx context.Context, tx qrm.DB, status *dispatch.DispatchStatus) error {
-	tDispatchStatus := table.FivenetCentrumDispatchesStatus
-	stmt := tDispatchStatus.
-		INSERT(
-			tDispatchStatus.DispatchID,
-			tDispatchStatus.Status,
-			tDispatchStatus.Reason,
-			tDispatchStatus.Code,
-			tDispatchStatus.UnitID,
-			tDispatchStatus.UserID,
-			tDispatchStatus.X,
-			tDispatchStatus.Y,
-		).
-		VALUES(
-			status.DispatchId,
-			status.Status,
-			status.Reason,
-			status.Code,
-			status.UnitId,
-			status.UserId,
-			status.X,
-			status.Y,
-		)
-
-	if _, err := stmt.ExecContext(ctx, tx); err != nil {
-		return err
-	}
-
-	return nil
 }
 
 func (s *Server) UpdateDispatch(ctx context.Context, req *UpdateDispatchRequest) (*UpdateDispatchResponse, error) {

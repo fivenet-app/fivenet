@@ -113,11 +113,11 @@ func (s *Server) loadDisponents(ctx context.Context, job string) error {
 }
 
 func (s *Server) loadUnits(ctx context.Context, id uint64) error {
-	condition := tUnitStatus.ID.IS_NULL().OR(
+	condition := jet.AND(tUnitStatus.ID.IS_NULL().OR(
 		tUnitStatus.ID.EQ(
-			jet.RawInt("SELECT MAX(`unitstatus`.`id`) FROM `fivenet_centrum_units_status` AS `unitstatus` WHERE `unitstatus`.`unit_id` = `unit`.`id` AND `unitstatus`.`status` NOT IN (0, 1, 2)"),
+			jet.RawInt("SELECT MAX(`unitstatus`.`id`) FROM `fivenet_centrum_units_status` AS `unitstatus` WHERE `unitstatus`.`unit_id` = `unit`.`id` AND `unitstatus`.`status` NOT IN (1, 2)"),
 		),
-	)
+	))
 
 	if id > 0 {
 		condition = condition.AND(
@@ -172,6 +172,10 @@ func (s *Server) loadUnits(ctx context.Context, id uint64) error {
 		units[i].Users, err = s.resolveUsersForUnit(ctx, units[i].Users)
 		if err != nil {
 			return err
+		}
+
+		for _, user := range units[i].Users {
+			s.userIDToUnitID.Store(user.UserId, units[i].Id)
 		}
 
 		s.getUnitsMap(units[i].Job).Store(units[i].Id, units[i])
@@ -310,7 +314,7 @@ func (s *Server) loadDispatchAssignments(ctx context.Context, job string, dispat
 	for i := 0; i < len(dest); i++ {
 		unit, ok := s.getUnit(job, dest[i].UnitId)
 		if !ok {
-			return nil, ErrFailedQuery
+			return nil, fmt.Errorf("no unit found with id")
 		}
 
 		dest[i].Unit = unit

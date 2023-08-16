@@ -2,6 +2,7 @@ package centrum
 
 import (
 	"context"
+	"strings"
 
 	dispatch "github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
@@ -9,63 +10,9 @@ import (
 	"github.com/galexrt/fivenet/pkg/utils/dbutils"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
+	"golang.org/x/exp/slices"
 	"google.golang.org/protobuf/proto"
 )
-
-func (s *Server) updateUnitStatus(ctx context.Context, userInfo *userinfo.UserInfo, in *dispatch.UnitStatus) error {
-	x := jet.NULL
-	y := jet.NULL
-	if in.X != nil && in.Y != nil {
-		x = jet.Float(float64(*in.X))
-		y = jet.Float(float64(*in.Y))
-	}
-
-	tUnitStatus := table.FivenetCentrumUnitsStatus
-	stmt := tUnitStatus.
-		INSERT(
-			tUnitStatus.UnitID,
-			tUnitStatus.Status,
-			tUnitStatus.Reason,
-			tUnitStatus.Code,
-			tUnitStatus.UserID,
-			tUnitStatus.X,
-			tUnitStatus.Y,
-			tUnitStatus.CreatorID,
-		).
-		VALUES(
-			in.UnitId,
-			in.Status,
-			in.Reason,
-			in.Code,
-			userInfo.UserId,
-			x,
-			y,
-			in.CreatorId,
-		)
-
-	res, err := stmt.ExecContext(ctx, s.db)
-	if err != nil {
-		return err
-	}
-
-	lastId, err := res.LastInsertId()
-	if err != nil {
-		return err
-	}
-
-	status, err := s.getUnitStatusFromDB(ctx, uint64(lastId))
-	if err != nil {
-		return err
-	}
-
-	data, err := proto.Marshal(status)
-	if err != nil {
-		return err
-	}
-	s.events.JS.Publish(s.buildSubject(TopicUnit, TypeUnitStatus, userInfo.Job, status.UnitId), data)
-
-	return nil
-}
 
 func (s *Server) getUnit(job string, id uint64) (*dispatch.Unit, bool) {
 	units, ok := s.units.Load(job)
@@ -87,6 +34,10 @@ func (s *Server) listUnits(job string) ([]*dispatch.Unit, error) {
 	units.Range(func(key uint64, unit *dispatch.Unit) bool {
 		us = append(us, unit)
 		return true
+	})
+
+	slices.SortFunc(us, func(a, b *dispatch.Unit) int {
+		return strings.Compare(a.Name, b.Name)
 	})
 
 	return us, nil
@@ -160,6 +111,54 @@ func (s *Server) getUnitIDForUserID(userId int32) (uint64, bool) {
 	return s.userIDToUnitID.Load(userId)
 }
 
+func (s *Server) updateUnitStatus(ctx context.Context, job string, in *dispatch.UnitStatus) error {
+	tUnitStatus := table.FivenetCentrumUnitsStatus
+	stmt := tUnitStatus.
+		INSERT(
+			tUnitStatus.UnitID,
+			tUnitStatus.Status,
+			tUnitStatus.Reason,
+			tUnitStatus.Code,
+			tUnitStatus.UserID,
+			tUnitStatus.X,
+			tUnitStatus.Y,
+			tUnitStatus.CreatorID,
+		).
+		VALUES(
+			in.UnitId,
+			in.Status,
+			in.Reason,
+			in.Code,
+			in.UserId,
+			in.X,
+			in.Y,
+			in.CreatorId,
+		)
+
+	res, err := stmt.ExecContext(ctx, s.db)
+	if err != nil {
+		return err
+	}
+
+	lastId, err := res.LastInsertId()
+	if err != nil {
+		return err
+	}
+
+	status, err := s.getUnitStatusFromDB(ctx, uint64(lastId))
+	if err != nil {
+		return err
+	}
+
+	data, err := proto.Marshal(status)
+	if err != nil {
+		return err
+	}
+	s.events.JS.Publish(s.buildSubject(TopicUnit, TypeUnitStatus, job, status.UnitId), data)
+
+	return nil
+}
+
 func (s *Server) updateUnitAssignments(ctx context.Context, userInfo *userinfo.UserInfo, unit *dispatch.Unit, toAdd []int32, toRemove []int32) error {
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
@@ -192,7 +191,7 @@ func (s *Server) updateUnitAssignments(ctx context.Context, userInfo *userinfo.U
 				if unit.Users[i].UserId == toRemove[k] {
 					unit.Users = utils.RemoveFromSlice(unit.Users, i)
 
-					if err := s.updateUnitStatus(ctx, userInfo, &dispatch.UnitStatus{
+					if err := s.updateUnitStatus(ctx, userInfo.Job, &dispatch.UnitStatus{
 						UnitId:    unit.Id,
 						Status:    dispatch.UNIT_STATUS_USER_REMOVED,
 						UserId:    &toRemove[k],
@@ -200,6 +199,8 @@ func (s *Server) updateUnitAssignments(ctx context.Context, userInfo *userinfo.U
 					}); err != nil {
 						return err
 					}
+
+					s.userIDToUnitID.Delete(toRemove[k])
 				}
 			}
 		}
@@ -265,7 +266,7 @@ func (s *Server) updateUnitAssignments(ctx context.Context, userInfo *userinfo.U
 				User:   user,
 			})
 
-			if err := s.updateUnitStatus(ctx, userInfo, &dispatch.UnitStatus{
+			if err := s.updateUnitStatus(ctx, userInfo.Job, &dispatch.UnitStatus{
 				UnitId:    unit.Id,
 				Status:    dispatch.UNIT_STATUS_USER_ADDED,
 				UserId:    &user.UserId,
@@ -273,6 +274,8 @@ func (s *Server) updateUnitAssignments(ctx context.Context, userInfo *userinfo.U
 			}); err != nil {
 				return err
 			}
+
+			s.userIDToUnitID.Store(user.UserId, unit.Id)
 		}
 	}
 
@@ -290,10 +293,11 @@ func (s *Server) updateUnitAssignments(ctx context.Context, userInfo *userinfo.U
 
 	// Unit is empty, set unit status to be unavailable automatically
 	if len(unit.Users) == 0 {
-		if err := s.updateUnitStatus(ctx, userInfo, &dispatch.UnitStatus{
-			UnitId: unit.Id,
-			Status: dispatch.UNIT_STATUS_UNAVAILABLE,
-			UserId: &userInfo.UserId,
+		if err := s.updateUnitStatus(ctx, userInfo.Job, &dispatch.UnitStatus{
+			UnitId:    unit.Id,
+			Status:    dispatch.UNIT_STATUS_UNAVAILABLE,
+			UserId:    &userInfo.UserId,
+			CreatorId: &userInfo.UserId,
 		}); err != nil {
 			return err
 		}

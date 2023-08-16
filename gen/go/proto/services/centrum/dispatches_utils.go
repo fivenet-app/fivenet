@@ -9,6 +9,8 @@ import (
 	"github.com/galexrt/fivenet/pkg/utils/dbutils"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/qrm"
+	"golang.org/x/exp/slices"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -32,6 +34,10 @@ func (s *Server) listDispatches(job string) ([]*dispatch.Dispatch, error) {
 	dispatches.Range(func(id uint64, dispatch *dispatch.Dispatch) bool {
 		ds = append(ds, dispatch)
 		return true
+	})
+
+	slices.SortFunc(ds, func(a, b *dispatch.Dispatch) int {
+		return int(a.Id - b.Id)
 	})
 
 	return ds, nil
@@ -72,6 +78,88 @@ func (s *Server) getDispatchStatusFromDB(ctx context.Context, id uint64) (*dispa
 	}
 
 	return &dest, nil
+}
+
+func (s *Server) addDispatchStatus(ctx context.Context, tx qrm.DB, status *dispatch.DispatchStatus) error {
+	tDispatchStatus := table.FivenetCentrumDispatchesStatus
+	stmt := tDispatchStatus.
+		INSERT(
+			tDispatchStatus.DispatchID,
+			tDispatchStatus.Status,
+			tDispatchStatus.Reason,
+			tDispatchStatus.Code,
+			tDispatchStatus.UnitID,
+			tDispatchStatus.UserID,
+			tDispatchStatus.X,
+			tDispatchStatus.Y,
+		).
+		VALUES(
+			status.DispatchId,
+			status.Status,
+			status.Reason,
+			status.Code,
+			status.UnitId,
+			status.UserId,
+			status.X,
+			status.Y,
+		)
+
+	if _, err := stmt.ExecContext(ctx, tx); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *Server) updateDispatchStatus(ctx context.Context, userInfo *userinfo.UserInfo, dsp *dispatch.Dispatch, in *dispatch.DispatchStatus) error {
+	tDispatchStatus := table.FivenetCentrumDispatchesStatus
+	stmt := tDispatchStatus.
+		INSERT(
+			tDispatchStatus.DispatchID,
+			tDispatchStatus.UnitID,
+			tDispatchStatus.Status,
+			tDispatchStatus.Reason,
+			tDispatchStatus.Code,
+			tDispatchStatus.UserID,
+		).
+		VALUES(
+			in.DispatchId,
+			in.UnitId,
+			in.Status,
+			in.Reason,
+			in.Code,
+			in.UserId,
+		)
+
+	res, err := stmt.ExecContext(ctx, s.db)
+	if err != nil {
+		return err
+	}
+
+	lastId, err := res.LastInsertId()
+	if err != nil {
+		return err
+	}
+
+	status, err := s.getDispatchStatusFromDB(ctx, uint64(lastId))
+	if err != nil {
+		return err
+	}
+
+	data, err := proto.Marshal(status)
+	if err != nil {
+		return err
+	}
+
+	if len(dsp.Units) == 0 {
+		s.events.JS.Publish(s.buildSubject(TopicDispatch, TypeDispatchStatus, userInfo.Job, 0), data)
+	} else {
+		for _, u := range dsp.Units {
+			s.events.JS.Publish(s.buildSubject(TopicDispatch, TypeDispatchStatus, userInfo.Job, u.UnitId), data)
+		}
+	}
+
+	return nil
 }
 
 func (s *Server) updateDispatchAssignments(ctx context.Context, userInfo *userinfo.UserInfo, dsp *dispatch.Dispatch, toAdd []uint64, toRemove []uint64) error {
@@ -213,57 +301,6 @@ func (s *Server) updateDispatchAssignments(ctx context.Context, userInfo *userin
 			UserId:     &userInfo.UserId,
 		}); err != nil {
 			return err
-		}
-	}
-
-	return nil
-}
-
-func (s *Server) updateDispatchStatus(ctx context.Context, userInfo *userinfo.UserInfo, dsp *dispatch.Dispatch, in *dispatch.DispatchStatus) error {
-	tDispatchStatus := table.FivenetCentrumDispatchesStatus
-	stmt := tDispatchStatus.
-		INSERT(
-			tDispatchStatus.DispatchID,
-			tDispatchStatus.UnitID,
-			tDispatchStatus.Status,
-			tDispatchStatus.Reason,
-			tDispatchStatus.Code,
-			tDispatchStatus.UserID,
-		).
-		VALUES(
-			in.DispatchId,
-			in.UnitId,
-			in.Status,
-			in.Reason,
-			in.Code,
-			in.UserId,
-		)
-
-	res, err := stmt.ExecContext(ctx, s.db)
-	if err != nil {
-		return err
-	}
-
-	lastId, err := res.LastInsertId()
-	if err != nil {
-		return err
-	}
-
-	status, err := s.getDispatchStatusFromDB(ctx, uint64(lastId))
-	if err != nil {
-		return err
-	}
-
-	data, err := proto.Marshal(status)
-	if err != nil {
-		return err
-	}
-
-	if len(dsp.Units) == 0 {
-		s.events.JS.Publish(s.buildSubject(TopicDispatch, TypeDispatchStatus, userInfo.Job, 0), data)
-	} else {
-		for _, u := range dsp.Units {
-			s.events.JS.Publish(s.buildSubject(TopicDispatch, TypeDispatchStatus, userInfo.Job, u.UnitId), data)
 		}
 	}
 

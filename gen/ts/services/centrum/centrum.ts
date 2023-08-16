@@ -419,51 +419,45 @@ export interface StreamResponse {
          */
         unitAssigned: Unit;
     } | {
-        oneofKind: "unitCreated";
-        /**
-         * @generated from protobuf field: resources.dispatch.Unit unit_created = 5;
-         */
-        unitCreated: Unit;
-    } | {
         oneofKind: "unitDeleted";
         /**
-         * @generated from protobuf field: resources.dispatch.Unit unit_deleted = 6;
+         * @generated from protobuf field: resources.dispatch.Unit unit_deleted = 5;
          */
         unitDeleted: Unit;
     } | {
         oneofKind: "unitUpdated";
         /**
-         * @generated from protobuf field: resources.dispatch.Unit unit_updated = 7;
+         * @generated from protobuf field: resources.dispatch.Unit unit_updated = 6;
          */
         unitUpdated: Unit;
     } | {
         oneofKind: "unitStatus";
         /**
-         * @generated from protobuf field: resources.dispatch.UnitStatus unit_status = 8;
+         * @generated from protobuf field: resources.dispatch.UnitStatus unit_status = 7;
          */
         unitStatus: UnitStatus;
     } | {
         oneofKind: "dispatchCreated";
         /**
-         * @generated from protobuf field: resources.dispatch.Dispatch dispatch_created = 9;
+         * @generated from protobuf field: resources.dispatch.Dispatch dispatch_created = 8;
          */
         dispatchCreated: Dispatch;
     } | {
         oneofKind: "dispatchDeleted";
         /**
-         * @generated from protobuf field: resources.dispatch.Dispatch dispatch_deleted = 10;
+         * @generated from protobuf field: resources.dispatch.Dispatch dispatch_deleted = 9;
          */
         dispatchDeleted: Dispatch;
     } | {
         oneofKind: "dispatchUpdated";
         /**
-         * @generated from protobuf field: resources.dispatch.Dispatch dispatch_updated = 11;
+         * @generated from protobuf field: resources.dispatch.Dispatch dispatch_updated = 10;
          */
         dispatchUpdated: Dispatch;
     } | {
         oneofKind: "dispatchStatus";
         /**
-         * @generated from protobuf field: resources.dispatch.DispatchStatus dispatch_status = 12;
+         * @generated from protobuf field: resources.dispatch.DispatchStatus dispatch_status = 11;
          */
         dispatchStatus: DispatchStatus;
     } | {
@@ -908,14 +902,13 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
             { no: 2, name: "settings", kind: "message", oneof: "change", T: () => Settings },
             { no: 3, name: "disponents", kind: "message", oneof: "change", T: () => DisponentsChange },
             { no: 4, name: "unit_assigned", kind: "message", oneof: "change", T: () => Unit },
-            { no: 5, name: "unit_created", kind: "message", oneof: "change", T: () => Unit },
-            { no: 6, name: "unit_deleted", kind: "message", oneof: "change", T: () => Unit },
-            { no: 7, name: "unit_updated", kind: "message", oneof: "change", T: () => Unit },
-            { no: 8, name: "unit_status", kind: "message", oneof: "change", T: () => UnitStatus },
-            { no: 9, name: "dispatch_created", kind: "message", oneof: "change", T: () => Dispatch },
-            { no: 10, name: "dispatch_deleted", kind: "message", oneof: "change", T: () => Dispatch },
-            { no: 11, name: "dispatch_updated", kind: "message", oneof: "change", T: () => Dispatch },
-            { no: 12, name: "dispatch_status", kind: "message", oneof: "change", T: () => DispatchStatus }
+            { no: 5, name: "unit_deleted", kind: "message", oneof: "change", T: () => Unit },
+            { no: 6, name: "unit_updated", kind: "message", oneof: "change", T: () => Unit },
+            { no: 7, name: "unit_status", kind: "message", oneof: "change", T: () => UnitStatus },
+            { no: 8, name: "dispatch_created", kind: "message", oneof: "change", T: () => Dispatch },
+            { no: 9, name: "dispatch_deleted", kind: "message", oneof: "change", T: () => Dispatch },
+            { no: 10, name: "dispatch_updated", kind: "message", oneof: "change", T: () => Dispatch },
+            { no: 11, name: "dispatch_status", kind: "message", oneof: "change", T: () => DispatchStatus }
         ]);
     }
 }

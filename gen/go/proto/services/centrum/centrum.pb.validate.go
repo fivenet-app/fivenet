@@ -4487,47 +4487,6 @@ func (m *StreamResponse) validate(all bool) error {
 			}
 		}
 
-	case *StreamResponse_UnitCreated:
-		if v == nil {
-			err := StreamResponseValidationError{
-				field:  "Change",
-				reason: "oneof value cannot be a typed-nil",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
-
-		if all {
-			switch v := interface{}(m.GetUnitCreated()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, StreamResponseValidationError{
-						field:  "UnitCreated",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, StreamResponseValidationError{
-						field:  "UnitCreated",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetUnitCreated()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return StreamResponseValidationError{
-					field:  "UnitCreated",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
 	case *StreamResponse_UnitDeleted:
 		if v == nil {
 			err := StreamResponseValidationError{

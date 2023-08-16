@@ -1,11 +1,13 @@
 package centrum
 
 import (
+	"context"
 	"fmt"
 	"time"
 
 	dispatch "github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
+	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/nats-io/nats.go"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/proto"
@@ -110,14 +112,6 @@ func (s *Server) watchForEvents() error {
 							s.loadUnits(ctx, dest.Id)
 						}
 
-					case TypeUnitCreated:
-						var dest dispatch.Unit
-						if err := proto.Unmarshal(msg.Data, &dest); err != nil {
-							return err
-						}
-
-						s.getUnitsMap(job).Store(dest.Id, &dest)
-
 					case TypeUnitDeleted:
 						var dest dispatch.Unit
 						if err := proto.Unmarshal(msg.Data, &dest); err != nil {
@@ -166,6 +160,7 @@ func (s *Server) watchForUserChanges() {
 		select {
 		case <-s.ctx.Done():
 			return
+
 		case event := <-userCh:
 			func() {
 				ctx, span := s.tracer.Start(s.ctx, "centrum-watch-users")
@@ -192,13 +187,22 @@ func (s *Server) watchForUserChanges() {
 						continue
 					}
 
-					if err := s.updateUnitStatus(ctx, &userinfo.UserInfo{}, &dispatch.UnitStatus{
-						UnitId:    unitId,
-						Status:    dispatch.UNIT_STATUS_USER_REMOVED,
-						UserId:    &userId,
-						CreatorId: &userId,
-					}); err != nil {
-						s.logger.Error("failed to update user's unit status", zap.Error(err))
+					user, err := s.resolveUserById(ctx, userId)
+					if err != nil {
+						s.logger.Error("failed to get user info from db", zap.Error(err))
+						continue
+					}
+
+					unit, ok := s.getUnit(user.Job, unitId)
+					if !ok {
+						continue
+					}
+
+					if err := s.updateUnitAssignments(ctx, &userinfo.UserInfo{
+						UserId: userId,
+						Job:    user.Job,
+					}, unit, nil, []int32{userId}); err != nil {
+						s.logger.Error("failed to remove user from unit", zap.Error(err))
 						continue
 					}
 
@@ -214,10 +218,52 @@ func (s *Server) housekeeper() {
 		select {
 		case <-s.ctx.Done():
 			return
+
 		case <-time.After(1 * time.Second):
-			// TODO take care of housekeeper tasks such as:
-			// * Remove empty units from dispatches (if no other unit is assigned to dispatch update status to UNASSIGNED)
-			// * Set dispatches to status ARCHIVED when older than 60 minutes
+			func() {
+				ctx, span := s.tracer.Start(s.ctx, "centrum-housekeeper")
+				defer span.End()
+
+				// TODO handle expired `createdAt` dispatch unit assignments
+
+				if err := s.archiveDispatches(ctx); err != nil {
+					s.logger.Error("failed to archive dispatches", zap.Error(err))
+				}
+
+				if err := s.removeDispatchesFromEmptyUnits(ctx); err != nil {
+					s.logger.Error("failed to clean empty units from dispatches", zap.Error(err))
+				}
+			}()
 		}
 	}
+}
+
+// Set `COMPLETED`/`CANCELLED` dispatches to status `ARCHIVED` when the `COMPLETED`status is older than 15 minutes
+func (s *Server) archiveDispatches(ctx context.Context) error {
+	stmt := tDispatchStatus.
+		SELECT(
+			tDispatchStatus.DispatchID,
+		).
+		FROM(tDispatchStatus).
+		WHERE(
+			tDispatchStatus.CreatedAt.LT_EQ(
+				jet.CURRENT_DATE().SUB(jet.INTERVAL(20, jet.MINUTE)),
+			),
+		)
+
+	var dest []uint64
+	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// Remove empty units from dispatches (if no other unit is assigned to dispatch update status to UNASSIGNED) by
+// iterating over the dispatches and making sure the assigned units aren't empty
+func (s *Server) removeDispatchesFromEmptyUnits(ctx context.Context) error {
+
+	// TODO
+
+	return nil
 }

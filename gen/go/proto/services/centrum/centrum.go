@@ -291,10 +291,7 @@ func (s *Server) Stream(req *StreamRequest, srv CentrumService_StreamServer) err
 		return in.UserId == userInfo.UserId
 	})
 
-	unitId, ok := s.getUnitIDForUserID(userInfo.UserId)
-	if !ok {
-		return ErrFailedQuery
-	}
+	unitId, _ := s.getUnitIDForUserID(userInfo.UserId)
 
 	units, err := s.listUnits(userInfo.Job)
 	if err != nil {
@@ -306,8 +303,7 @@ func (s *Server) Stream(req *StreamRequest, srv CentrumService_StreamServer) err
 	ownOnly := !isController
 
 	dispatches, err := s.ListDispatches(srv.Context(), &ListDispatchesRequest{
-		NotStatus: []dispatch.DISPATCH_STATUS{},
-		OwnOnly:   &ownOnly,
+		OwnOnly: &ownOnly,
 	})
 	if err != nil {
 		return err
@@ -438,16 +434,6 @@ func (s *Server) Stream(req *StreamRequest, srv CentrumService_StreamServer) err
 
 					resp.Change = &StreamResponse_UnitAssigned{
 						UnitAssigned: &dest,
-					}
-
-				case TypeUnitCreated:
-					var dest dispatch.Unit
-					if err := proto.Unmarshal(msg.Data, &dest); err != nil {
-						return err
-					}
-
-					resp.Change = &StreamResponse_UnitCreated{
-						UnitCreated: &dest,
 					}
 
 				case TypeUnitDeleted:

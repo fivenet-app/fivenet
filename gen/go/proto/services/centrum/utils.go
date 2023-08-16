@@ -42,6 +42,7 @@ func (s *Server) resolveUsersByIds(ctx context.Context, u []int32) ([]*users.Use
 			tUsers.Firstname,
 			tUsers.Lastname,
 			tUsers.Dateofbirth,
+			tUsers.Job,
 		).
 		FROM(tUsers).
 		WHERE(

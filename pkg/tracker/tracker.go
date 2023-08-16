@@ -141,10 +141,9 @@ func (s *Tracker) cleanupUserIDs() error {
 
 	now := time.Now()
 	s.usersIDs.Range(func(key int32, info userInfo) bool {
-		if now.After(info.Time.Add(3 * s.refreshTime)) {
+		if now.After(info.Time) {
 			event.Removed = append(event.Removed, key)
 			s.usersIDs.Delete(key)
-
 		}
 
 		return true
@@ -193,7 +192,7 @@ func (s *Tracker) refreshUserLocations(ctx context.Context) error {
 	}
 
 	event := &Event{}
-	now := time.Now()
+	expiration := time.Now().Add(2 * s.refreshTime)
 	markers := map[string]*xsync.MapOf[int32, *livemap.UserMarker]{}
 	for i := 0; i < len(dest); i++ {
 		s.c.EnrichJobInfo(dest[i].User)
@@ -217,7 +216,7 @@ func (s *Tracker) refreshUserLocations(ctx context.Context) error {
 		}
 
 		s.usersIDs.Store(userId, userInfo{
-			Time: now,
+			Time: expiration,
 			Job:  dest[i].User.Job,
 		})
 	}
