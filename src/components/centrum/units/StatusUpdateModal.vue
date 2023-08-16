@@ -9,6 +9,7 @@ import { UNIT_STATUS, Unit } from '~~/gen/ts/resources/dispatch/units';
 const props = defineProps<{
     open: boolean;
     unit: Unit;
+    status?: UNIT_STATUS;
 }>();
 
 const emits = defineEmits<{
@@ -20,6 +21,8 @@ defineExpose({ location });
 
 const { $grpc } = useNuxtApp();
 
+const status: number = props.status ?? props.unit?.status?.status ?? UNIT_STATUS.UNKNOWN;
+
 const statuses = ref<{ status: UNIT_STATUS; selected?: boolean }[]>([
     { status: UNIT_STATUS.AVAILABLE },
     { status: UNIT_STATUS.BUSY },
@@ -27,7 +30,7 @@ const statuses = ref<{ status: UNIT_STATUS; selected?: boolean }[]>([
     { status: UNIT_STATUS.UNAVAILABLE },
 ]);
 statuses.value.forEach((s) => {
-    if (s.status === props.unit.status?.status) {
+    if (s.status.valueOf() === status) {
         s.selected = true;
     }
 });
@@ -58,23 +61,30 @@ defineRule('min', min);
 defineRule('max', max);
 
 interface FormData {
-    status: UNIT_STATUS;
+    status: number;
     code?: string;
     reason: string;
 }
 
-const { handleSubmit } = useForm<FormData>({
+const { handleSubmit, setFieldValue } = useForm<FormData>({
     validationSchema: {
         status: { required: true },
         code: { required: false },
         reason: { required: true, min: 3, max: 255 },
     },
     initialValues: {
-        status: props.unit.status?.status,
+        status: status,
     },
+    validateOnMount: true,
 });
 
 const onSubmit = handleSubmit(async (values): Promise<void> => await updateUnitStatus(values));
+
+watch(props, () => {
+    if (props.status) {
+        setFieldValue('status', props.status.valueOf());
+    }
+});
 </script>
 
 <template>
@@ -140,7 +150,13 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await updateUnitS
                                                                 :selected="status.selected"
                                                                 :value="status.status"
                                                             >
-                                                                {{ UNIT_STATUS[status.status] }}
+                                                                {{
+                                                                    $t(
+                                                                        `enums.centrum.UNIT_STATUS.${
+                                                                            UNIT_STATUS[status.status ?? (0 as number)]
+                                                                        }`,
+                                                                    )
+                                                                }}
                                                             </option>
                                                         </select>
                                                     </VeeField>

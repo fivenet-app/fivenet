@@ -4,11 +4,12 @@ import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { max, min, required } from '@vee-validate/rules';
 import { CarEmergencyIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
-import { DISPATCH_STATUS, Dispatch } from '~~/gen/ts/resources/dispatch/dispatches';
+import { DISPATCH_STATUS, Dispatch } from '../../../../gen/ts/resources/dispatch/dispatches';
 
 const props = defineProps<{
     open: boolean;
-    dispatch: Dispatch;
+    dispatch?: Dispatch;
+    status?: DISPATCH_STATUS;
 }>();
 
 const emits = defineEmits<{
@@ -20,20 +21,25 @@ defineExpose({ location });
 
 const { $grpc } = useNuxtApp();
 
+const status: number = props.status ?? props.dispatch?.status?.status ?? DISPATCH_STATUS.NEW;
+
 const statuses = ref<{ status: DISPATCH_STATUS; selected?: boolean }[]>([
     { status: DISPATCH_STATUS.EN_ROUTE },
     { status: DISPATCH_STATUS.ON_SCENE },
     { status: DISPATCH_STATUS.NEED_ASSISTANCE },
     { status: DISPATCH_STATUS.COMPLETED },
+    { status: DISPATCH_STATUS.CANCELLED },
 ]);
 statuses.value.forEach((s) => {
-    if (s.status === props.dispatch.status?.status) {
+    if (s.status.valueOf() === status) {
         s.selected = true;
     }
 });
 
 async function updateUnitStatus(values: FormData): Promise<void> {
     return new Promise(async (res, rej) => {
+        if (props.dispatch === undefined) return rej();
+
         try {
             const call = $grpc.getCentrumClient().updateDispatchStatus({
                 dispatchId: props.dispatch.id,
@@ -58,23 +64,30 @@ defineRule('min', min);
 defineRule('max', max);
 
 interface FormData {
-    status: DISPATCH_STATUS;
+    status: number;
     code?: string;
     reason: string;
 }
 
-const { handleSubmit } = useForm<FormData>({
+const { handleSubmit, setFieldValue } = useForm<FormData>({
     validationSchema: {
         status: { required: true },
         code: { required: false },
         reason: { required: true, min: 3, max: 255 },
     },
     initialValues: {
-        status: props.dispatch.status?.status,
+        status: status,
     },
+    validateOnMount: true,
 });
 
 const onSubmit = handleSubmit(async (values): Promise<void> => await updateUnitStatus(values));
+
+watch(props, () => {
+    if (props.status) {
+        setFieldValue('status', props.status.valueOf());
+    }
+});
 </script>
 
 <template>
@@ -140,7 +153,13 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await updateUnitS
                                                                 :selected="status.selected"
                                                                 :value="status.status"
                                                             >
-                                                                {{ DISPATCH_STATUS[status.status] }}
+                                                                {{
+                                                                    $t(
+                                                                        `enums.centrum.DISPATCH_STATUS.${
+                                                                            DISPATCH_STATUS[status.status ?? (0 as number)]
+                                                                        }`,
+                                                                    )
+                                                                }}
                                                             </option>
                                                         </select>
                                                     </VeeField>

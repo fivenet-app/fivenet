@@ -16,7 +16,9 @@ import {
     MarkerCheckIcon,
 } from 'mdi-vue3';
 import { DefineComponent } from 'vue';
+import { default as UpdateDispatchStatus } from '~/components/centrum/dispatches/StatusUpdateModal.vue';
 import { default as UnitDetails } from '~/components/centrum/units/Details.vue';
+import { default as UpdateUnitStatus } from '~/components/centrum/units/StatusUpdateModal.vue';
 import DispatchEntry from '~/components/livemap/centrum/DispatchEntry.vue';
 import { useAuthStore } from '~/store/auth';
 import { useNotificationsStore } from '~/store/notifications';
@@ -25,8 +27,6 @@ import { Settings } from '~~/gen/ts/resources/dispatch/settings';
 import { UNIT_STATUS, Unit, UnitStatus } from '~~/gen/ts/resources/dispatch/units';
 import { UserShort } from '~~/gen/ts/resources/users/users';
 import JoinUnit from './centrum/JoinUnit.vue';
-import UpdateDispatchStatus from './centrum/UpdateDispatchStatus.vue';
-import UpdateUnitStatus from './centrum/UpdateUnitStatus.vue';
 
 const { $grpc } = useNuxtApp();
 
