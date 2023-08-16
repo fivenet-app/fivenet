@@ -256,7 +256,7 @@ func (s *Server) CreateTemplate(ctx context.Context, req *CreateTemplateRequest)
 	}
 
 	// Commit the transaction
-	if err = tx.Commit(); err != nil {
+	if err := tx.Commit(); err != nil {
 		return nil, ErrFailedQuery
 	}
 
@@ -341,7 +341,7 @@ func (s *Server) UpdateTemplate(ctx context.Context, req *UpdateTemplateRequest)
 	}
 
 	// Commit the transaction
-	if err = tx.Commit(); err != nil {
+	if err := tx.Commit(); err != nil {
 		return nil, ErrFailedQuery
 	}
 

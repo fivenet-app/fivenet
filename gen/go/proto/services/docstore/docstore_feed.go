@@ -271,7 +271,7 @@ func (s *Server) AddDocumentReference(ctx context.Context, req *AddDocumentRefer
 	}
 
 	// Commit the transaction
-	if err = tx.Commit(); err != nil {
+	if err := tx.Commit(); err != nil {
 		return nil, ErrFailedQuery
 	}
 
@@ -403,7 +403,7 @@ func (s *Server) AddDocumentRelation(ctx context.Context, req *AddDocumentRelati
 	}
 
 	// Commit the transaction
-	if err = tx.Commit(); err != nil {
+	if err := tx.Commit(); err != nil {
 		return nil, ErrFailedQuery
 	}
 
@@ -490,7 +490,7 @@ func (s *Server) RemoveDocumentRelation(ctx context.Context, req *RemoveDocument
 	}
 
 	// Commit the transaction
-	if err = tx.Commit(); err != nil {
+	if err := tx.Commit(); err != nil {
 		return nil, ErrFailedQuery
 	}
 

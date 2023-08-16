@@ -2,15 +2,16 @@ package centrum
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	dispatch "github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
-	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
+	users "github.com/galexrt/fivenet/gen/go/proto/resources/users"
 	jet "github.com/go-jet/jet/v2/mysql"
-	"go.uber.org/zap"
+	"github.com/go-jet/jet/v2/qrm"
 )
 
-func (s *Server) loadInitialData() error {
+func (s *Server) loadData() error {
 	ctx, span := s.tracer.Start(s.ctx, "centrum-initial-cache")
 	defer span.End()
 
@@ -22,29 +23,13 @@ func (s *Server) loadInitialData() error {
 		return fmt.Errorf("failed to load centrum disponents: %w", err)
 	}
 
-	return nil
-}
-
-func (s *Server) refresh() error {
-	ctx, span := s.tracer.Start(s.ctx, "centrum-refresh-cache")
-	defer span.End()
-
-	//wg := sync.WaitGroup{}
-	//wg.Add(1)
-	//go func() {
 	if err := s.loadUnits(ctx, 0); err != nil {
-		s.logger.Error("failed to load centrum units", zap.Error(err))
+		return fmt.Errorf("failed to load centrum units: %w", err)
 	}
-	//}()
 
-	//wg.Add(1)
-	//go func() {
 	if err := s.loadDispatches(ctx, 0); err != nil {
-		s.logger.Error("failed to load centrum dispatches", zap.Error(err))
+		return fmt.Errorf("failed to load centrum dispatches: %w", err)
 	}
-	//}()
-
-	//wg.Done()
 
 	return nil
 }
@@ -72,16 +57,57 @@ func (s *Server) loadSettings(ctx context.Context, job string) error {
 	}
 
 	for _, settings := range dest {
-		if err := s.settings.Put(settings.Job, settings); err != nil {
-			return fmt.Errorf("failed to put job %s settings: %w", settings.Job, err)
-		}
+		s.settings.Store(settings.Job, settings)
 	}
 
 	return nil
 }
 
 func (s *Server) loadDisponents(ctx context.Context, job string) error {
-	// TODO need to load disponents into the store
+	stmt := tCentrumUsers.
+		SELECT(
+			tCentrumUsers.Job,
+			tCentrumUsers.UserID,
+			tUsers.ID,
+			tUsers.Identifier,
+			tUsers.Firstname,
+			tUsers.Lastname,
+			tUsers.Job,
+			tUsers.Dateofbirth,
+		).
+		FROM(
+			tCentrumUsers.
+				INNER_JOIN(tUsers,
+					tUsers.ID.EQ(tCentrumUsers.UserID),
+				),
+		)
+
+	if job != "" {
+		stmt = stmt.WHERE(
+			tCentrumUsers.Job.EQ(jet.String(job)),
+		)
+	}
+
+	var dest []*users.UserShort
+	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
+		return err
+	}
+
+	perJob := map[string][]*users.UserShort{}
+
+	for _, user := range dest {
+		if _, ok := perJob[user.Job]; !ok {
+			perJob[user.Job] = []*users.UserShort{}
+		}
+
+		s.enricher.EnrichJobName(user)
+
+		perJob[user.Job] = append(perJob[user.Job], user)
+	}
+
+	for job, us := range perJob {
+		s.disponents.Store(job, us)
+	}
 
 	return nil
 }
@@ -89,7 +115,7 @@ func (s *Server) loadDisponents(ctx context.Context, job string) error {
 func (s *Server) loadUnits(ctx context.Context, id uint64) error {
 	condition := tUnitStatus.ID.IS_NULL().OR(
 		tUnitStatus.ID.EQ(
-			jet.RawInt("SELECT MAX(`unitstatus`.`id`) FROM `fivenet_centrum_units_status` AS `unitstatus` WHERE `unitstatus`.`unit_id` = `unit`.`id`"),
+			jet.RawInt("SELECT MAX(`unitstatus`.`id`) FROM `fivenet_centrum_units_status` AS `unitstatus` WHERE `unitstatus`.`unit_id` = `unit`.`id` AND `unitstatus`.`status` NOT IN (0, 1, 2)"),
 		),
 	)
 
@@ -148,20 +174,41 @@ func (s *Server) loadUnits(ctx context.Context, id uint64) error {
 			return err
 		}
 
-		// TODO need to check if the unit already exists in the store, compare and make the changes
-
-		if err := s.units.Put(fmt.Sprintf("%s/%d", units[i].Job, units[i].Id), units[i]); err != nil {
-			return err
-		}
+		s.getUnitsMap(units[i].Job).Store(units[i].Id, units[i])
 	}
 
 	return nil
 }
 
+func (s *Server) loadUnitIDForUserID(ctx context.Context, userId int32) (uint64, error) {
+	stmt := tUnitUser.
+		SELECT(
+			tUnitUser.UnitID.AS("unit_id"),
+		).
+		FROM(tUnitUser).
+		WHERE(
+			tUnitUser.UserID.EQ(jet.Int32(userId)),
+		).
+		LIMIT(1)
+
+	var dest struct {
+		UnitID uint64
+	}
+	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
+		if !errors.Is(qrm.ErrNoRows, err) {
+			return 0, err
+		}
+
+		return 0, nil
+	}
+
+	return dest.UnitID, nil
+}
+
 func (s *Server) loadDispatches(ctx context.Context, id uint64) error {
 	condition := tDispatchStatus.ID.IS_NULL().OR(
 		tDispatchStatus.ID.EQ(
-			jet.RawInt(`SELECT MAX(dispatchstatus.id) FROM fivenet_centrum_dispatches_status AS dispatchstatus WHERE dispatchstatus.dispatch_id = dispatch.id`),
+			jet.RawInt("SELECT MAX(`dispatchstatus`.`id`) FROM `fivenet_centrum_dispatches_status` AS `dispatchstatus` WHERE `dispatchstatus`.`dispatch_id` = `dispatch`.`id` AND `dispatchstatus`.`status` NOT IN (2, 3, 4, 10)"),
 		),
 	)
 
@@ -218,21 +265,9 @@ func (s *Server) loadDispatches(ctx context.Context, id uint64) error {
 
 	for i := 0; i < len(dispatches); i++ {
 		var err error
-		dispatches[i].Units, err = s.loadDispatchAssignments(ctx, dispatches[i].Id)
+		dispatches[i].Units, err = s.loadDispatchAssignments(ctx, dispatches[i].Job, dispatches[i].Id)
 		if err != nil {
 			return err
-		}
-
-		// Add units to the dispatch based on the unit assignments
-		for k := 0; k < len(dispatches[i].Units); k++ {
-			unit, ok := s.getUnit(ctx, &userinfo.UserInfo{
-				Job: dispatches[i].Job,
-			}, dispatches[i].Units[k].UnitId)
-			if !ok {
-				return ErrFailedQuery
-			}
-
-			dispatches[i].Units[k].Unit = unit
 		}
 
 		if dispatches[i].UserId != nil {
@@ -244,17 +279,13 @@ func (s *Server) loadDispatches(ctx context.Context, id uint64) error {
 			dispatches[i].User = nil
 		}
 
-		// TODO need to check if the dispatch already exists in the store, compare and make the changes
-
-		if err := s.dispatches.Put(fmt.Sprintf("%s/%d", dispatches[i].Job, dispatches[i].Id), dispatches[i]); err != nil {
-			return err
-		}
+		s.getDispatchesMap(dispatches[i].Job).Store(dispatches[i].Id, dispatches[i])
 	}
 
 	return nil
 }
 
-func (s *Server) loadDispatchAssignments(ctx context.Context, dispatchId uint64) ([]*dispatch.DispatchAssignment, error) {
+func (s *Server) loadDispatchAssignments(ctx context.Context, job string, dispatchId uint64) ([]*dispatch.DispatchAssignment, error) {
 	stmt := tDispatch.
 		SELECT(
 			tDispatchUnit.DispatchID,
@@ -273,6 +304,16 @@ func (s *Server) loadDispatchAssignments(ctx context.Context, dispatchId uint64)
 	dest := []*dispatch.DispatchAssignment{}
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		return nil, err
+	}
+
+	// Resolve units based on the dispatch unit assignments
+	for i := 0; i < len(dest); i++ {
+		unit, ok := s.getUnit(job, dest[i].UnitId)
+		if !ok {
+			return nil, ErrFailedQuery
+		}
+
+		dest[i].Unit = unit
 	}
 
 	return dest, nil

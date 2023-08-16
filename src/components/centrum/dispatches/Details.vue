@@ -146,7 +146,7 @@ const statusOpen = ref(false);
                                                     </dl>
                                                 </div>
 
-                                                <Feed :dispatch-id="dispatch.id" />
+                                                <Feed :dispatch-id="dispatch.id" ref="feedRef" />
                                             </div>
                                         </div>
                                     </div>

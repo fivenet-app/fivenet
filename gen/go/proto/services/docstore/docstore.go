@@ -287,7 +287,7 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 	}
 
 	// Commit the transaction
-	if err = tx.Commit(); err != nil {
+	if err := tx.Commit(); err != nil {
 		return nil, ErrFailedQuery
 	}
 
@@ -388,7 +388,7 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 	}
 
 	// Commit the transaction
-	if err = tx.Commit(); err != nil {
+	if err := tx.Commit(); err != nil {
 		return nil, ErrFailedQuery
 	}
 

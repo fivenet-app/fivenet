@@ -8,7 +8,8 @@ import { DISPATCH_STATUS, Dispatch } from '../../../../gen/ts/resources/dispatch
 
 const props = defineProps<{
     open: boolean;
-    dispatch: Dispatch;
+    dispatch?: Dispatch;
+    status?: DISPATCH_STATUS;
 }>();
 
 const emits = defineEmits<{
@@ -27,14 +28,18 @@ const statuses = ref<{ status: DISPATCH_STATUS; selected?: boolean }[]>([
     { status: DISPATCH_STATUS.COMPLETED },
     { status: DISPATCH_STATUS.CANCELLED },
 ]);
-statuses.value.forEach((s) => {
-    if (s.status === props.dispatch.status?.status) {
-        s.selected = true;
-    }
-});
+if (props.dispatch !== undefined) {
+    statuses.value.forEach((s) => {
+        if (s.status === props.dispatch!.status?.status) {
+            s.selected = true;
+        }
+    });
+}
 
 async function updateUnitStatus(values: FormData): Promise<void> {
     return new Promise(async (res, rej) => {
+        if (props.dispatch === undefined) return rej();
+
         try {
             const call = $grpc.getCentrumClient().updateDispatchStatus({
                 dispatchId: props.dispatch.id,
@@ -71,7 +76,7 @@ const { handleSubmit } = useForm<FormData>({
         reason: { required: true, min: 3, max: 255 },
     },
     initialValues: {
-        status: props.dispatch.status?.status,
+        status: props.dispatch?.status?.status ?? DISPATCH_STATUS.NEW,
     },
 });
 

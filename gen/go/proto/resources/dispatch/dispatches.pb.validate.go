@@ -507,7 +507,16 @@ func (m *DispatchAssignments) validate(all bool) error {
 
 	// no validation rules for DispatchId
 
-	// no validation rules for Job
+	if utf8.RuneCountInString(m.GetJob()) > 20 {
+		err := DispatchAssignmentsValidationError{
+			field:  "Job",
+			reason: "value length must be at most 20 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	for idx, item := range m.GetUnits() {
 		_, _ = idx, item

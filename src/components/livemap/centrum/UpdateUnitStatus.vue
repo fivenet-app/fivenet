@@ -9,6 +9,7 @@ import { UNIT_STATUS, Unit } from '~~/gen/ts/resources/dispatch/units';
 const props = defineProps<{
     open: boolean;
     unit: Unit;
+    status?: UNIT_STATUS;
 }>();
 
 const emits = defineEmits<{

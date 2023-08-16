@@ -355,7 +355,16 @@ func (m *UnitAssignments) validate(all bool) error {
 
 	// no validation rules for UnitId
 
-	// no validation rules for Job
+	if utf8.RuneCountInString(m.GetJob()) > 20 {
+		err := UnitAssignmentsValidationError{
+			field:  "Job",
+			reason: "value length must be at most 20 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	for idx, item := range m.GetUsers() {
 		_, _ = idx, item

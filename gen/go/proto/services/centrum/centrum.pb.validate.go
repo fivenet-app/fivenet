@@ -1989,6 +1989,17 @@ func (m *DisponentsChange) validate(all bool) error {
 
 	var errors []error
 
+	if utf8.RuneCountInString(m.GetJob()) > 20 {
+		err := DisponentsChangeValidationError{
+			field:  "Job",
+			reason: "value length must be at most 20 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	for idx, item := range m.GetDisponents() {
 		_, _ = idx, item
 
@@ -2153,6 +2164,10 @@ func (m *ListDispatchesRequest) validate(all bool) error {
 			errors = append(errors, err)
 		}
 
+	}
+
+	if m.OwnOnly != nil {
+		// no validation rules for OwnOnly
 	}
 
 	if len(errors) > 0 {
@@ -4466,6 +4481,47 @@ func (m *StreamResponse) validate(all bool) error {
 			if err := v.Validate(); err != nil {
 				return StreamResponseValidationError{
 					field:  "UnitAssigned",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	case *StreamResponse_UnitCreated:
+		if v == nil {
+			err := StreamResponseValidationError{
+				field:  "Change",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+		if all {
+			switch v := interface{}(m.GetUnitCreated()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, StreamResponseValidationError{
+						field:  "UnitCreated",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, StreamResponseValidationError{
+						field:  "UnitCreated",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetUnitCreated()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return StreamResponseValidationError{
+					field:  "UnitCreated",
 					reason: "embedded message failed validation",
 					cause:  err,
 				}

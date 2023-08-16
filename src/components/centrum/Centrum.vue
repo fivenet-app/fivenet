@@ -73,6 +73,12 @@ async function startStream(): Promise<void> {
                 }
             } else if (resp.change.oneofKind === 'unitAssigned') {
                 // Ignore, doesn't matter for controllers
+            } else if (resp.change.oneofKind === 'unitCreated') {
+                const id = resp.change.unitCreated.id;
+                const idx = units.value?.findIndex((d) => d.id === id) ?? -1;
+                if (idx === -1) {
+                    units.value?.unshift(resp.change.unitCreated);
+                }
             } else if (resp.change.oneofKind === 'unitDeleted') {
                 const id = resp.change.unitDeleted.id;
                 const idx = units.value?.findIndex((d) => d.id === id) ?? -1;

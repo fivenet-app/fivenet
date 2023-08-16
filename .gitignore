@@ -27,7 +27,7 @@ target/
 *.sw?
 
 # Golang relevant files
-__debug_bin
+__debug_bin*
 /fivenet
 
 /config.yaml

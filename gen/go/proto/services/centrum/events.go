@@ -3,11 +3,10 @@ package centrum
 import (
 	"errors"
 	"fmt"
-	"strconv"
 	"strings"
 
+	dispatch "github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
 	"github.com/galexrt/fivenet/pkg/events"
-	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/nats-io/nats.go"
 )
 
@@ -25,6 +24,7 @@ const (
 	TypeDispatchStatus  events.Type  = "status"
 
 	TopicUnit            events.Topic = "unit"
+	TypeUnitCreated      events.Type  = "created"
 	TypeUnitDeleted      events.Type  = "deleted"
 	TypeUnitUpdated      events.Type  = "updated"
 	TypeUnitStatus       events.Type  = "status"
@@ -52,37 +52,36 @@ func (s *Server) registerEvents() error {
 }
 
 func (s *Server) getEventTypeFromSubject(subject string) (events.Topic, events.Type) {
+	_, topic, eType := s.splitSubject(subject)
+	return topic, eType
+}
+
+func (s *Server) splitSubject(subject string) (string, events.Topic, events.Type) {
 	split := strings.Split(subject, ".")
 	if len(split) < 3 {
-		return "", ""
+		return "", "", ""
 	}
 
-	return events.Topic(split[2]), events.Type(split[3])
+	return split[1], events.Topic(split[2]), events.Type(split[3])
 }
 
-func (s *Server) buildSubject(topic events.Topic, tType events.Type, userInfo *userinfo.UserInfo, id uint64) string {
+func (s *Server) buildSubject(topic events.Topic, tType events.Type, job string, id uint64) string {
 	format := "%s.%s." + string(topic) + "." + string(tType)
 	if id > 0 {
-		return fmt.Sprintf(format+".%d", BaseSubject, userInfo.Job, id)
+		return fmt.Sprintf(format+".%d", BaseSubject, job, id)
 	}
 
-	return fmt.Sprintf(format, BaseSubject, userInfo.Job)
+	return fmt.Sprintf(format, BaseSubject, job)
 }
 
-func (s *Server) broadcastToAllUnits(topic events.Topic, tType events.Type, userInfo *userinfo.UserInfo, data []byte) {
-	prefix := fmt.Sprintf("%s/", userInfo.Job)
-	keys, err := s.units.KeysWithPrefix(prefix)
-	if err != nil {
+func (s *Server) broadcastToAllUnits(topic events.Topic, tType events.Type, job string, data []byte) {
+	units, ok := s.units.Load(job)
+	if !ok {
 		return
 	}
 
-	for i := 0; i < len(keys); i++ {
-		trimmed := strings.TrimPrefix(keys[i], prefix)
-		unitId, err := strconv.Atoi(trimmed)
-		if err != nil {
-			return
-		}
-
-		s.events.JS.Publish(s.buildSubject(TopicGeneral, TypeGeneralSettings, userInfo, uint64(unitId)), data)
-	}
+	units.Range(func(key uint64, unit *dispatch.Unit) bool {
+		s.events.JS.Publish(s.buildSubject(TopicGeneral, TypeGeneralSettings, job, unit.Id), data)
+		return true
+	})
 }

@@ -47,7 +47,7 @@ async function listUnitActivity(): Promise<UnitStatus[]> {
     <div class="px-4 sm:px-6 lg:px-8 h-full">
         <div class="sm:flex sm:items-center">
             <div class="sm:flex-auto">
-                <h1 class="text-base font-semibold leading-6 text-gray-100">Feed</h1>
+                <h2 class="text-base font-semibold leading-6 text-gray-100">Feed</h2>
             </div>
         </div>
         <div class="mt-2 flow-root">

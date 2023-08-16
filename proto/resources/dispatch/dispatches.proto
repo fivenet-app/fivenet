@@ -31,7 +31,7 @@ message Attributes {
 
 message DispatchAssignments {
   uint64 dispatch_id = 1;
-  string job = 2;
+  string job = 2 [ (validate.rules).string.max_len = 20 ];
   repeated DispatchAssignment units = 3;
 }
 
@@ -54,6 +54,7 @@ enum DISPATCH_STATUS {
   NEED_ASSISTANCE = 7;
   COMPLETED = 8;
   CANCELLED = 9;
+  ARCHIVED = 10;
 }
 
 message DispatchStatus {

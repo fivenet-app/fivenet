@@ -184,7 +184,11 @@ export interface TakeControlResponse {
  */
 export interface DisponentsChange {
     /**
-     * @generated from protobuf field: repeated resources.users.UserShort disponents = 1;
+     * @generated from protobuf field: string job = 1;
+     */
+    job: string;
+    /**
+     * @generated from protobuf field: repeated resources.users.UserShort disponents = 2;
      */
     disponents: UserShort[];
 }
@@ -200,6 +204,10 @@ export interface ListDispatchesRequest {
      * @generated from protobuf field: repeated resources.dispatch.DISPATCH_STATUS not_status = 2;
      */
     notStatus: DISPATCH_STATUS[];
+    /**
+     * @generated from protobuf field: optional bool own_only = 3;
+     */
+    ownOnly?: boolean;
 }
 /**
  * @generated from protobuf message services.centrum.ListDispatchesResponse
@@ -411,45 +419,51 @@ export interface StreamResponse {
          */
         unitAssigned: Unit;
     } | {
+        oneofKind: "unitCreated";
+        /**
+         * @generated from protobuf field: resources.dispatch.Unit unit_created = 5;
+         */
+        unitCreated: Unit;
+    } | {
         oneofKind: "unitDeleted";
         /**
-         * @generated from protobuf field: resources.dispatch.Unit unit_deleted = 5;
+         * @generated from protobuf field: resources.dispatch.Unit unit_deleted = 6;
          */
         unitDeleted: Unit;
     } | {
         oneofKind: "unitUpdated";
         /**
-         * @generated from protobuf field: resources.dispatch.Unit unit_updated = 6;
+         * @generated from protobuf field: resources.dispatch.Unit unit_updated = 7;
          */
         unitUpdated: Unit;
     } | {
         oneofKind: "unitStatus";
         /**
-         * @generated from protobuf field: resources.dispatch.UnitStatus unit_status = 7;
+         * @generated from protobuf field: resources.dispatch.UnitStatus unit_status = 8;
          */
         unitStatus: UnitStatus;
     } | {
         oneofKind: "dispatchCreated";
         /**
-         * @generated from protobuf field: resources.dispatch.Dispatch dispatch_created = 8;
+         * @generated from protobuf field: resources.dispatch.Dispatch dispatch_created = 9;
          */
         dispatchCreated: Dispatch;
     } | {
         oneofKind: "dispatchDeleted";
         /**
-         * @generated from protobuf field: resources.dispatch.Dispatch dispatch_deleted = 9;
+         * @generated from protobuf field: resources.dispatch.Dispatch dispatch_deleted = 10;
          */
         dispatchDeleted: Dispatch;
     } | {
         oneofKind: "dispatchUpdated";
         /**
-         * @generated from protobuf field: resources.dispatch.Dispatch dispatch_updated = 10;
+         * @generated from protobuf field: resources.dispatch.Dispatch dispatch_updated = 11;
          */
         dispatchUpdated: Dispatch;
     } | {
         oneofKind: "dispatchStatus";
         /**
-         * @generated from protobuf field: resources.dispatch.DispatchStatus dispatch_status = 11;
+         * @generated from protobuf field: resources.dispatch.DispatchStatus dispatch_status = 12;
          */
         dispatchStatus: DispatchStatus;
     } | {
@@ -668,7 +682,8 @@ export const TakeControlResponse = new TakeControlResponse$Type();
 class DisponentsChange$Type extends MessageType<DisponentsChange> {
     constructor() {
         super("services.centrum.DisponentsChange", [
-            { no: 1, name: "disponents", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UserShort }
+            { no: 1, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
+            { no: 2, name: "disponents", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UserShort }
         ]);
     }
 }
@@ -681,7 +696,8 @@ class ListDispatchesRequest$Type extends MessageType<ListDispatchesRequest> {
     constructor() {
         super("services.centrum.ListDispatchesRequest", [
             { no: 1, name: "status", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.dispatch.DISPATCH_STATUS", DISPATCH_STATUS], options: { "validate.rules": { repeated: { items: { enum: { definedOnly: true } } } } } },
-            { no: 2, name: "not_status", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.dispatch.DISPATCH_STATUS", DISPATCH_STATUS], options: { "validate.rules": { repeated: { items: { enum: { definedOnly: true } } } } } }
+            { no: 2, name: "not_status", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.dispatch.DISPATCH_STATUS", DISPATCH_STATUS], options: { "validate.rules": { repeated: { items: { enum: { definedOnly: true } } } } } },
+            { no: 3, name: "own_only", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
 }
@@ -892,13 +908,14 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
             { no: 2, name: "settings", kind: "message", oneof: "change", T: () => Settings },
             { no: 3, name: "disponents", kind: "message", oneof: "change", T: () => DisponentsChange },
             { no: 4, name: "unit_assigned", kind: "message", oneof: "change", T: () => Unit },
-            { no: 5, name: "unit_deleted", kind: "message", oneof: "change", T: () => Unit },
-            { no: 6, name: "unit_updated", kind: "message", oneof: "change", T: () => Unit },
-            { no: 7, name: "unit_status", kind: "message", oneof: "change", T: () => UnitStatus },
-            { no: 8, name: "dispatch_created", kind: "message", oneof: "change", T: () => Dispatch },
-            { no: 9, name: "dispatch_deleted", kind: "message", oneof: "change", T: () => Dispatch },
-            { no: 10, name: "dispatch_updated", kind: "message", oneof: "change", T: () => Dispatch },
-            { no: 11, name: "dispatch_status", kind: "message", oneof: "change", T: () => DispatchStatus }
+            { no: 5, name: "unit_created", kind: "message", oneof: "change", T: () => Unit },
+            { no: 6, name: "unit_deleted", kind: "message", oneof: "change", T: () => Unit },
+            { no: 7, name: "unit_updated", kind: "message", oneof: "change", T: () => Unit },
+            { no: 8, name: "unit_status", kind: "message", oneof: "change", T: () => UnitStatus },
+            { no: 9, name: "dispatch_created", kind: "message", oneof: "change", T: () => Dispatch },
+            { no: 10, name: "dispatch_deleted", kind: "message", oneof: "change", T: () => Dispatch },
+            { no: 11, name: "dispatch_updated", kind: "message", oneof: "change", T: () => Dispatch },
+            { no: 12, name: "dispatch_status", kind: "message", oneof: "change", T: () => DispatchStatus }
         ]);
     }
 }

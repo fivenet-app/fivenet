@@ -80,12 +80,14 @@ message TakeControlRequest {
 message TakeControlResponse {}
 
 message DisponentsChange {
-  repeated resources.users.UserShort disponents = 1;
+  string job = 1 [ (validate.rules).string.max_len = 20 ];
+  repeated resources.users.UserShort disponents = 2;
 }
 
 message ListDispatchesRequest {
   repeated resources.dispatch.DISPATCH_STATUS status = 1 [(validate.rules).repeated.items.enum.defined_only = true];
   repeated resources.dispatch.DISPATCH_STATUS not_status = 2 [(validate.rules).repeated.items.enum.defined_only = true];
+  optional bool own_only = 3;
 }
 
 message ListDispatchesResponse {
@@ -169,14 +171,15 @@ message StreamResponse {
     DisponentsChange disponents = 3;
 
     resources.dispatch.Unit unit_assigned = 4;
-    resources.dispatch.Unit unit_deleted = 5;
-    resources.dispatch.Unit unit_updated = 6;
-    resources.dispatch.UnitStatus unit_status = 7;
+    resources.dispatch.Unit unit_created = 5;
+    resources.dispatch.Unit unit_deleted = 6;
+    resources.dispatch.Unit unit_updated = 7;
+    resources.dispatch.UnitStatus unit_status = 8;
 
-    resources.dispatch.Dispatch dispatch_created = 8;
-    resources.dispatch.Dispatch dispatch_deleted = 9;
-    resources.dispatch.Dispatch dispatch_updated = 10;
-    resources.dispatch.DispatchStatus dispatch_status = 11;
+    resources.dispatch.Dispatch dispatch_created = 9;
+    resources.dispatch.Dispatch dispatch_deleted = 10;
+    resources.dispatch.Dispatch dispatch_updated = 11;
+    resources.dispatch.DispatchStatus dispatch_status = 12;
   }
 }
 

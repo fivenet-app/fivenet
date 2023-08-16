@@ -3,27 +3,27 @@ package centrum
 import (
 	"context"
 	"database/sql"
-	"errors"
 	"fmt"
+	"sync"
 	"time"
 
 	dispatch "github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
-	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
 	users "github.com/galexrt/fivenet/gen/go/proto/resources/users"
 	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/events"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
+	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/perms"
 	"github.com/galexrt/fivenet/pkg/server/audit"
-	"github.com/galexrt/fivenet/pkg/store"
 	"github.com/galexrt/fivenet/pkg/tracker"
 	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/pkg/utils/dbutils"
-	"github.com/galexrt/fivenet/query/fivenet/model"
+	"github.com/galexrt/fivenet/pkg/utils/maps"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/nats-io/nats.go"
+	"github.com/puzpuzpuz/xsync/v2"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
@@ -45,21 +45,26 @@ var (
 type Server struct {
 	CentrumServiceServer
 
-	ctx     context.Context
-	logger  *zap.Logger
-	tracer  trace.Tracer
-	db      *sql.DB
-	p       perms.Permissions
-	a       audit.IAuditer
-	events  *events.Eventus
-	tracker *tracker.Tracker
+	ctx    context.Context
+	logger *zap.Logger
+	wg     sync.WaitGroup
+
+	tracer   trace.Tracer
+	db       *sql.DB
+	ps       perms.Permissions
+	auditer  audit.IAuditer
+	events   *events.Eventus
+	enricher *mstlystcdata.Enricher
+	tracker  *tracker.Tracker
 
 	visibleJobs []string
 
-	settings   *store.Store[*dispatch.Settings]
-	disponents *store.Store[*users.UserShort]
-	units      *store.Store[*dispatch.Unit]
-	dispatches *store.Store[*dispatch.Dispatch]
+	settings   *xsync.MapOf[string, *dispatch.Settings]
+	disponents *xsync.MapOf[string, []*users.UserShort]
+	units      *xsync.MapOf[string, *xsync.MapOf[uint64, *dispatch.Unit]]
+	dispatches *xsync.MapOf[string, *xsync.MapOf[uint64, *dispatch.Dispatch]]
+
+	userIDToUnitID *xsync.MapOf[int32, uint64]
 }
 
 type Params struct {
@@ -67,14 +72,15 @@ type Params struct {
 
 	LC fx.Lifecycle
 
-	Logger  *zap.Logger
-	TP      *tracesdk.TracerProvider
-	DB      *sql.DB
-	Perms   perms.Permissions
-	Audit   audit.IAuditer
-	Events  *events.Eventus
-	Tracker *tracker.Tracker
-	Config  *config.Config
+	Logger   *zap.Logger
+	TP       *tracesdk.TracerProvider
+	DB       *sql.DB
+	Perms    perms.Permissions
+	Audit    audit.IAuditer
+	Events   *events.Eventus
+	Enricher *mstlystcdata.Enricher
+	Tracker  *tracker.Tracker
+	Config   *config.Config
 }
 
 func NewServer(p Params) (*Server, error) {
@@ -83,53 +89,69 @@ func NewServer(p Params) (*Server, error) {
 	s := &Server{
 		ctx:    ctx,
 		logger: p.Logger,
+		wg:     sync.WaitGroup{},
 
 		tracer: p.TP.Tracer("centrum-cache"),
 
-		db:      p.DB,
-		p:       p.Perms,
-		a:       p.Audit,
-		events:  p.Events,
-		tracker: p.Tracker,
+		db:       p.DB,
+		ps:       p.Perms,
+		auditer:  p.Audit,
+		events:   p.Events,
+		enricher: p.Enricher,
+		tracker:  p.Tracker,
 
 		visibleJobs: p.Config.Game.Livemap.Jobs,
 
-		settings:   store.New[*dispatch.Settings]("centrum_settings"),
-		disponents: store.New[*users.UserShort]("centrum_disponents"),
-		units:      store.New[*dispatch.Unit]("centrum_units"),
-		dispatches: store.New[*dispatch.Dispatch]("centrum_dispatches"),
+		settings:   xsync.NewTypedMapOf[string, *dispatch.Settings](maps.HashString),
+		disponents: xsync.NewTypedMapOf[string, []*users.UserShort](maps.HashString),
+		units:      xsync.NewTypedMapOf[string, *xsync.MapOf[uint64, *dispatch.Unit]](maps.HashString),
+		dispatches: xsync.NewTypedMapOf[string, *xsync.MapOf[uint64, *dispatch.Dispatch]](maps.HashString),
+
+		userIDToUnitID: xsync.NewTypedMapOf[int32, uint64](maps.HashInt32),
 	}
 
 	p.LC.Append(fx.StartHook(func(_ context.Context) error {
-		if err := s.settings.Start(p.Events.JS); err != nil {
-			return err
-		}
-		if err := s.disponents.Start(p.Events.JS); err != nil {
-			return err
-		}
-		if err := s.units.Start(p.Events.JS); err != nil {
-			return err
-		}
-		if err := s.dispatches.Start(p.Events.JS); err != nil {
-			return err
-		}
-
 		if err := s.registerEvents(); err != nil {
 			return fmt.Errorf("failed to register events: %w", err)
 		}
 
-		if err := s.loadInitialData(); err != nil {
+		if err := s.loadData(); err != nil {
 			return err
 		}
 
-		go s.start()
-		go s.ConvertPhoneJobMsgToDispatch()
+		s.wg.Add(1)
+		go func() {
+			defer s.wg.Done()
+			s.start()
+		}()
+		s.wg.Add(1)
+		go func() {
+			defer s.wg.Done()
+			s.ConvertPhoneJobMsgToDispatch()
+		}()
+		s.wg.Add(1)
+		go func() {
+			defer s.wg.Done()
+			s.watchForEvents()
+		}()
+		s.wg.Add(1)
+		go func() {
+			defer s.wg.Done()
+			s.watchForUserChanges()
+		}()
+		s.wg.Add(1)
+		go func() {
+			defer s.wg.Done()
+			s.housekeeper()
+		}()
 
 		return nil
 	}))
 
 	p.LC.Append(fx.StopHook(func(_ context.Context) error {
 		cancel()
+
+		s.wg.Wait()
 		return nil
 	}))
 
@@ -137,91 +159,17 @@ func NewServer(p Params) (*Server, error) {
 }
 
 func (s *Server) start() {
-	go func() {
-		for {
-			if err := s.refresh(); err != nil {
-				s.logger.Error("failed to refresh centrum data", zap.Error(err))
-			}
-
-			select {
-			case <-s.ctx.Done():
-				return
-			case <-time.After(2 * time.Second):
-			}
+	for {
+		if err := s.loadData(); err != nil {
+			s.logger.Error("failed to refresh centrum data", zap.Error(err))
 		}
-	}()
-}
 
-func (s *Server) GetSettings(ctx context.Context, req *GetSettingsRequest) (*dispatch.Settings, error) {
-	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	settings := &dispatch.Settings{}
-	if err := s.settings.Get(userInfo.Job, settings); err != nil {
-		if !errors.Is(nats.ErrKeyNotFound, err) {
-			return nil, err
+		select {
+		case <-s.ctx.Done():
+			return
+		case <-time.After(7 * time.Second):
 		}
 	}
-
-	settings.Job = userInfo.Job
-
-	return settings, nil
-}
-
-func (s *Server) UpdateSettings(ctx context.Context, req *dispatch.Settings) (*dispatch.Settings, error) {
-	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	auditEntry := &model.FivenetAuditLog{
-		Service: CentrumService_ServiceDesc.ServiceName,
-		Method:  "UpdateSettings",
-		UserID:  userInfo.UserId,
-		UserJob: userInfo.Job,
-		State:   int16(rector.EVENT_TYPE_ERRORED),
-	}
-	defer s.a.Log(auditEntry, req)
-
-	stmt := tCentrumSettings.
-		INSERT(
-			tCentrumSettings.Job,
-			tCentrumSettings.Enabled,
-			tCentrumSettings.Mode,
-			tCentrumSettings.FallbackMode,
-		).
-		VALUES(
-			userInfo.Job,
-			req.Enabled,
-			req.Mode,
-			req.FallbackMode,
-		).
-		ON_DUPLICATE_KEY_UPDATE(
-			tCentrumSettings.Job.SET(jet.String(userInfo.Job)),
-			tCentrumSettings.Enabled.SET(jet.Bool(req.Enabled)),
-			tCentrumSettings.Mode.SET(jet.Int32(int32(req.Mode))),
-			tCentrumSettings.FallbackMode.SET(jet.Int32(int32(req.FallbackMode))),
-		)
-
-	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return nil, err
-	}
-
-	// Load settings from database so they are updated in the "cache"
-	if err := s.loadSettings(ctx, userInfo.Job); err != nil {
-		return nil, err
-	}
-
-	settings, err := s.getSettings(ctx, userInfo.Job)
-	if err != nil {
-		return nil, err
-	}
-
-	data, err := proto.Marshal(settings)
-	if err != nil {
-		return nil, err
-	}
-	s.broadcastToAllUnits(TopicGeneral, TypeGeneralSettings, userInfo, data)
-
-	auditEntry.State = int16(rector.EVENT_TYPE_UPDATED)
-
-	return settings, nil
 }
 
 func (s *Server) TakeControl(ctx context.Context, req *TakeControlRequest) (*TakeControlResponse, error) {
@@ -271,11 +219,12 @@ func (s *Server) TakeControl(ctx context.Context, req *TakeControlRequest) (*Tak
 		}
 	}
 
-	disponents, err := s.getDisponents(ctx, userInfo.Job)
-	if err != nil {
+	// Load updated disponents into state
+	if err := s.loadDisponents(ctx, userInfo.Job); err != nil {
 		return nil, err
 	}
 
+	disponents := s.getDisponents(ctx, userInfo.Job)
 	change := &DisponentsChange{
 		Disponents: disponents,
 	}
@@ -283,7 +232,7 @@ func (s *Server) TakeControl(ctx context.Context, req *TakeControlRequest) (*Tak
 	if err != nil {
 		return nil, err
 	}
-	s.broadcastToAllUnits(TopicGeneral, TypeGeneralDisponents, userInfo, data)
+	s.broadcastToAllUnits(TopicGeneral, TypeGeneralDisponents, userInfo.Job, data)
 
 	return &TakeControlResponse{}, nil
 }
@@ -335,33 +284,30 @@ func (s *Server) waitForUnit(srv CentrumService_StreamServer, userInfo *userinfo
 func (s *Server) Stream(req *StreamRequest, srv CentrumService_StreamServer) error {
 	userInfo := auth.MustGetUserInfoFromContext(srv.Context())
 
-	settings, err := s.getSettings(srv.Context(), userInfo.Job)
-	if err != nil {
-		return err
-	}
-	disponents, err := s.getDisponents(srv.Context(), userInfo.Job)
-	if err != nil {
-		return err
-	}
+	settings := s.getSettings(srv.Context(), userInfo.Job)
+	disponents := s.getDisponents(srv.Context(), userInfo.Job)
 
-	controller := utils.InSliceFunc(disponents, func(in *users.UserShort) bool {
+	isController := utils.InSliceFunc(disponents, func(in *users.UserShort) bool {
 		return in.UserId == userInfo.UserId
 	})
 
-	unitId, err := s.getUnitIDForUserID(srv.Context(), userInfo.UserId)
+	unitId, ok := s.getUnitIDForUserID(userInfo.UserId)
+	if !ok {
+		return ErrFailedQuery
+	}
+
+	units, err := s.listUnits(userInfo.Job)
 	if err != nil {
 		return err
 	}
 
-	units, err := s.listUnits(srv.Context(), userInfo.Job)
-	if err != nil {
-		return err
-	}
+	unit, _ := s.getUnit(userInfo.Job, unitId)
 
-	unit, _ := s.getUnit(srv.Context(), userInfo, unitId)
+	ownOnly := !isController
 
 	dispatches, err := s.ListDispatches(srv.Context(), &ListDispatchesRequest{
 		NotStatus: []dispatch.DISPATCH_STATUS{},
+		OwnOnly:   &ownOnly,
 	})
 	if err != nil {
 		return err
@@ -383,7 +329,7 @@ func (s *Server) Stream(req *StreamRequest, srv CentrumService_StreamServer) err
 		return err
 	}
 
-	if !controller && unitId <= 0 {
+	if !isController && unitId <= 0 {
 		unitId, err = s.waitForUnit(srv, userInfo)
 		if err != nil {
 			return err
@@ -391,7 +337,7 @@ func (s *Server) Stream(req *StreamRequest, srv CentrumService_StreamServer) err
 	}
 
 	msgCh := make(chan *nats.Msg, 48)
-	if !controller {
+	if !isController {
 		sub, err := s.events.JS.ChanSubscribe(fmt.Sprintf("%s.%s.*.*.%d", BaseSubject, userInfo.Job, unitId), msgCh)
 		if err != nil {
 			return err
@@ -449,6 +395,7 @@ func (s *Server) Stream(req *StreamRequest, srv CentrumService_StreamServer) err
 					resp.Change = &StreamResponse_DispatchCreated{
 						DispatchCreated: &dest,
 					}
+
 				case TypeDispatchDeleted:
 					var dest dispatch.Dispatch
 					if err := proto.Unmarshal(msg.Data, &dest); err != nil {
@@ -491,6 +438,16 @@ func (s *Server) Stream(req *StreamRequest, srv CentrumService_StreamServer) err
 
 					resp.Change = &StreamResponse_UnitAssigned{
 						UnitAssigned: &dest,
+					}
+
+				case TypeUnitCreated:
+					var dest dispatch.Unit
+					if err := proto.Unmarshal(msg.Data, &dest); err != nil {
+						return err
+					}
+
+					resp.Change = &StreamResponse_UnitCreated{
+						UnitCreated: &dest,
 					}
 
 				case TypeUnitDeleted:

@@ -213,7 +213,11 @@ export enum DISPATCH_STATUS {
     /**
      * @generated from protobuf enum value: CANCELLED = 9;
      */
-    CANCELLED = 9
+    CANCELLED = 9,
+    /**
+     * @generated from protobuf enum value: ARCHIVED = 10;
+     */
+    ARCHIVED = 10
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Dispatch$Type extends MessageType<Dispatch> {
@@ -257,7 +261,7 @@ class DispatchAssignments$Type extends MessageType<DispatchAssignments> {
     constructor() {
         super("resources.dispatch.DispatchAssignments", [
             { no: 1, name: "dispatch_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 2, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 3, name: "units", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => DispatchAssignment }
         ]);
     }

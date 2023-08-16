@@ -25,6 +25,8 @@ import { Settings } from '~~/gen/ts/resources/dispatch/settings';
 import { UNIT_STATUS, Unit, UnitStatus } from '~~/gen/ts/resources/dispatch/units';
 import { UserShort } from '~~/gen/ts/resources/users/users';
 import JoinUnit from './centrum/JoinUnit.vue';
+import UpdateDispatchStatus from './centrum/UpdateDispatchStatus.vue';
+import UpdateUnitStatus from './centrum/UpdateUnitStatus.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -99,7 +101,7 @@ async function startStream(): Promise<void> {
             } else if (resp.change.oneofKind === 'disponents') {
                 disponents.value = resp.change.disponents.disponents;
             } else if (resp.change.oneofKind === 'unitAssigned') {
-                const idx = resp.change.unitAssigned.users.findIndex((u) => u.userId !== activeChar.value?.userId);
+                const idx = resp.change.unitAssigned.users.findIndex((u) => u.userId === activeChar.value?.userId);
                 if (idx === -1) {
                     // User has been removed from the unit
                     ownUnit.value = undefined;
@@ -118,6 +120,12 @@ async function startStream(): Promise<void> {
                         content: { key: 'notifications.centrum.unitAssigned.joined.content', parameters: [] },
                         type: 'success',
                     });
+                }
+            } else if (resp.change.oneofKind === 'unitCreated') {
+                const id = resp.change.unitCreated.id;
+                const idx = units.value?.findIndex((d) => d.id === id) ?? -1;
+                if (idx === -1) {
+                    units.value?.unshift(resp.change.unitCreated);
                 }
             } else if (resp.change.oneofKind === 'unitDeleted') {
                 const id = resp.change.unitDeleted.id;
@@ -217,10 +225,22 @@ onBeforeUnmount(() => {
 
 const unitOpen = ref(false);
 const selectUnitOpen = ref(false);
+
+const unitStatusOpen = ref(false);
+const selectedUnitStatus = ref<UNIT_STATUS | undefined>();
+
+// TODO add function to set the active dispatch (last clicked and manually selected)
+const activeDispatch = ref<Dispatch | undefined>();
+const dispatchStatusOpen = ref(false);
+const selectedDispatchStatus = ref<DISPATCH_STATUS | undefined>();
 </script>
 
 <template>
-    <!-- Sidebar component, swap this element with another sidebar if you like -->
+    <template v-if="ownUnit">
+        <UpdateUnitStatus :open="unitStatusOpen" :unit="ownUnit" :status="selectedUnitStatus" />-
+        <UpdateDispatchStatus :open="dispatchStatusOpen" :dispatch="dispatches[0]" :status="selectedDispatchStatus" />
+    </template>
+
     <div class="h-full flex grow gap-y-5 overflow-y-auto bg-base-600 px-4 py-0.5">
         <nav class="flex flex-1 flex-col">
             <ul role="list" class="flex flex-1 flex-col gap-y-2 divide-y divide-base-400">
@@ -276,7 +296,7 @@ const selectUnitOpen = ref(false);
                             <Disclosure as="div" v-slot="{ open }">
                                 <DisclosureButton class="flex w-full items-start justify-between text-left text-white">
                                     <span class="text-base-200 leading-7">
-                                        <div class="text-xs font-semibold leading-6 text-base-200">Unit</div>
+                                        <div class="text-xs font-semibold leading-6 text-base-200">{{ $t('common.unit') }}</div>
                                     </span>
                                     <span class="ml-6 flex h-7 items-center">
                                         <ChevronDownIcon
@@ -311,7 +331,9 @@ const selectUnitOpen = ref(false);
                 </li>
                 <li v-if="ownUnit">
                     <ul role="list" class="-mx-2 space-y-1">
-                        <div class="text-xs font-semibold leading-6 text-base-200">Dispatches</div>
+                        <div class="text-xs font-semibold leading-6 text-base-200">
+                            {{ $t('common.dispatch', 2) }}
+                        </div>
                         <li>
                             <div class="grid grid-cols-2 gap-0.5">
                                 <button
@@ -320,6 +342,7 @@ const selectUnitOpen = ref(false);
                                     type="button"
                                     class="text-white bg-primary hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-2 text-xs my-0.5"
                                     :class="[idx >= actionsDispatch.length - 1 ? 'col-span-2' : '', item.class]"
+                                    @click=""
                                 >
                                     <component
                                         :is="item.icon ?? HoopHouseIcon"

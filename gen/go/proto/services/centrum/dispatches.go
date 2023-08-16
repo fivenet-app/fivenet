@@ -7,7 +7,6 @@ import (
 	dispatch "github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
-	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/pkg/utils/dbutils"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
@@ -22,9 +21,6 @@ var (
 	tDispatchUnit   = table.FivenetCentrumDispatchesAsgmts.AS("dispatchassignment")
 )
 
-// TODO does it make sense to distinguish between "All" and "Assigned" dispatches here?
-// A unit user would only get to see their assigned dispatches
-
 func (s *Server) ListDispatches(ctx context.Context, req *ListDispatchesRequest) (*ListDispatchesResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -35,23 +31,37 @@ func (s *Server) ListDispatches(ctx context.Context, req *ListDispatchesRequest)
 		UserJob: userInfo.Job,
 		State:   int16(rector.EVENT_TYPE_ERRORED),
 	}
-	defer s.a.Log(auditEntry, req)
+	defer s.auditer.Log(auditEntry, req)
 
 	resp := &ListDispatchesResponse{
 		Dispatches: []*dispatch.Dispatch{},
 	}
 
-	var err error
-	resp.Dispatches, err = s.listDispatches(ctx, userInfo.Job)
+	dispatches, err := s.listDispatches(userInfo.Job)
 	if err != nil {
 		return nil, err
 	}
 
-	// Hide user when dispatch is anonymous
-	for i := 0; i < len(resp.Dispatches); i++ {
-		if resp.Dispatches[i].Anon != nil && *resp.Dispatches[i].Anon {
-			resp.Dispatches[i].User = nil
-			resp.Dispatches[i].UserId = nil
+outer:
+	for i := 0; i < len(dispatches); i++ {
+		if dispatches[i].Status != nil {
+			for _, status := range req.Status {
+				if dispatches[i].Status.Status == status {
+					resp.Dispatches = append(resp.Dispatches, dispatches[i])
+				}
+			}
+			// Which statuses to ignore
+			for _, status := range req.NotStatus {
+				if dispatches[i].Status.Status == status {
+					continue outer
+				}
+			}
+		}
+
+		// Hide user info when dispatch is anonymous
+		if dispatches[i].Anon != nil && *dispatches[i].Anon {
+			dispatches[i].User = nil
+			dispatches[i].UserId = nil
 		}
 	}
 
@@ -70,7 +80,7 @@ func (s *Server) CreateDispatch(ctx context.Context, req *CreateDispatchRequest)
 		UserJob: userInfo.Job,
 		State:   int16(rector.EVENT_TYPE_ERRORED),
 	}
-	defer s.a.Log(auditEntry, req)
+	defer s.auditer.Log(auditEntry, req)
 
 	req.Dispatch.Job = userInfo.Job
 	req.Dispatch.UserId = &userInfo.UserId
@@ -78,24 +88,6 @@ func (s *Server) CreateDispatch(ctx context.Context, req *CreateDispatchRequest)
 	dsp, err := s.createDispatch(ctx, req.Dispatch)
 	if err != nil {
 		return nil, err
-	}
-
-	data, err := proto.Marshal(dsp)
-	if err != nil {
-		return nil, err
-	}
-	s.events.JS.Publish(s.buildSubject(TopicDispatch, TypeDispatchCreated, userInfo, 0), data)
-
-	data, err = proto.Marshal(dsp.Status)
-	if err != nil {
-		return nil, err
-	}
-	if len(dsp.Units) == 0 {
-		s.events.JS.Publish(s.buildSubject(TopicDispatch, TypeDispatchStatus, userInfo, 0), data)
-	} else {
-		for _, u := range dsp.Units {
-			s.events.JS.Publish(s.buildSubject(TopicDispatch, TypeDispatchStatus, userInfo, u.UnitId), data)
-		}
 	}
 
 	auditEntry.State = int16(rector.EVENT_TYPE_CREATED)
@@ -165,18 +157,42 @@ func (s *Server) createDispatch(ctx context.Context, d *dispatch.Dispatch) (*dis
 	}
 
 	// Commit the transaction
-	if err = tx.Commit(); err != nil {
+	if err := tx.Commit(); err != nil {
 		return nil, err
 	}
 
-	dsp, err := s.getDispatchFromDB(ctx, s.db, uint64(lastId))
+	// Load dispatch into cache
+	if err := s.loadDispatches(ctx, uint64(lastId)); err != nil {
+		return nil, err
+	}
+
+	dsp, ok := s.getDispatch(d.Job, uint64(lastId))
+	if !ok {
+		return nil, ErrFailedQuery
+	}
+
+	data, err := proto.Marshal(dsp)
 	if err != nil {
 		return nil, err
+	}
+	s.events.JS.Publish(s.buildSubject(TopicDispatch, TypeDispatchCreated, d.Job, 0), data)
+
+	data, err = proto.Marshal(dsp.Status)
+	if err != nil {
+		return nil, err
+	}
+	if len(dsp.Units) == 0 {
+		s.events.JS.Publish(s.buildSubject(TopicDispatch, TypeDispatchStatus, d.Job, 0), data)
+	} else {
+		for _, u := range dsp.Units {
+			s.events.JS.Publish(s.buildSubject(TopicDispatch, TypeDispatchStatus, d.Job, u.UnitId), data)
+		}
 	}
 
 	return dsp, nil
 }
 
+// TODO Remove this function by using s.updateUnitStatus
 func (s *Server) addDispatchStatus(ctx context.Context, tx qrm.DB, status *dispatch.DispatchStatus) error {
 	tDispatchStatus := table.FivenetCentrumDispatchesStatus
 	stmt := tDispatchStatus.
@@ -218,7 +234,7 @@ func (s *Server) UpdateDispatch(ctx context.Context, req *UpdateDispatchRequest)
 		UserJob: userInfo.Job,
 		State:   int16(rector.EVENT_TYPE_ERRORED),
 	}
-	defer s.a.Log(auditEntry, req)
+	defer s.auditer.Log(auditEntry, req)
 
 	stmt := tDispatch.
 		UPDATE(
@@ -265,16 +281,16 @@ func (s *Server) TakeDispatch(ctx context.Context, req *TakeDispatchRequest) (*T
 		UserJob: userInfo.Job,
 		State:   int16(rector.EVENT_TYPE_ERRORED),
 	}
-	defer s.a.Log(auditEntry, req)
+	defer s.auditer.Log(auditEntry, req)
 
-	dsp, err := s.getDispatchFromDB(ctx, s.db, req.DispatchId)
-	if err != nil {
+	dsp, ok := s.getDispatch(userInfo.Job, req.DispatchId)
+	if !ok {
 		return nil, ErrFailedQuery
 	}
 
-	unitId, err := s.getUnitIDForUserID(ctx, userInfo.UserId)
-	if err != nil {
-		return nil, err
+	unitId, ok := s.getUnitIDForUserID(userInfo.UserId)
+	if !ok {
+		return nil, ErrFailedQuery
 	}
 
 	tDispatchUnit := table.FivenetCentrumDispatchesAsgmts
@@ -299,7 +315,7 @@ func (s *Server) TakeDispatch(ctx context.Context, req *TakeDispatchRequest) (*T
 		}
 	}
 
-	if _, err := s.updateDispatchStatus(ctx, userInfo, dsp, &dispatch.DispatchStatus{
+	if err := s.updateDispatchStatus(ctx, userInfo, dsp, &dispatch.DispatchStatus{
 		DispatchId: req.DispatchId,
 		Status:     dispatch.DISPATCH_STATUS_UNIT_ASSIGNED,
 		UserId:     &userInfo.UserId,
@@ -323,27 +339,23 @@ func (s *Server) UpdateDispatchStatus(ctx context.Context, req *UpdateDispatchSt
 		UserJob: userInfo.Job,
 		State:   int16(rector.EVENT_TYPE_ERRORED),
 	}
-	defer s.a.Log(auditEntry, req)
+	defer s.auditer.Log(auditEntry, req)
 
-	dsp, ok := s.getDispatch(ctx, userInfo, req.DispatchId)
+	dsp, ok := s.getDispatch(userInfo.Job, req.DispatchId)
 	if !ok {
 		return nil, ErrFailedQuery
 	}
 
-	ok, err := s.checkIfUserIsPartOfDispatch(ctx, userInfo, dsp, false)
-	if err != nil {
-		return nil, ErrFailedQuery
-	}
-	if !ok && !userInfo.SuperUser {
+	if !s.checkIfUserIsPartOfDispatch(ctx, userInfo, dsp, false) && !userInfo.SuperUser {
 		return nil, ErrFailedQuery
 	}
 
-	unitId, err := s.getUnitIDForUserID(ctx, userInfo.UserId)
-	if err != nil {
-		return nil, err
+	unitId, ok := s.getUnitIDForUserID(userInfo.UserId)
+	if !ok {
+		return nil, ErrFailedQuery
 	}
 
-	if _, err := s.updateDispatchStatus(ctx, userInfo, dsp, &dispatch.DispatchStatus{
+	if err := s.updateDispatchStatus(ctx, userInfo, dsp, &dispatch.DispatchStatus{
 		DispatchId: dsp.Id,
 		UnitId:     &unitId,
 		Status:     req.Status,
@@ -369,10 +381,10 @@ func (s *Server) AssignDispatch(ctx context.Context, req *AssignDispatchRequest)
 		UserJob: userInfo.Job,
 		State:   int16(rector.EVENT_TYPE_ERRORED),
 	}
-	defer s.a.Log(auditEntry, req)
+	defer s.auditer.Log(auditEntry, req)
 
-	dsp, err := s.getDispatchFromDB(ctx, s.db, req.DispatchId)
-	if err != nil {
+	dsp, ok := s.getDispatch(userInfo.Job, req.DispatchId)
+	if !ok {
 		return nil, ErrFailedQuery
 	}
 
@@ -380,145 +392,8 @@ func (s *Server) AssignDispatch(ctx context.Context, req *AssignDispatchRequest)
 		return nil, ErrFailedQuery
 	}
 
-	addIds := make([]jet.Expression, len(req.ToAdd))
-	for i := 0; i < len(req.ToAdd); i++ {
-		addIds[i] = jet.Uint64(req.ToAdd[i])
-	}
-	removeIds := make([]jet.Expression, len(req.ToRemove))
-	for i := 0; i < len(req.ToRemove); i++ {
-		removeIds[i] = jet.Uint64(req.ToRemove[i])
-	}
-
-	// Begin transaction
-	tx, err := s.db.BeginTx(ctx, nil)
-	if err != nil {
-		return nil, ErrFailedQuery
-	}
-	// Defer a rollback in case anything fails
-	defer tx.Rollback()
-
-	tDispatchUnit := table.FivenetCentrumDispatchesAsgmts
-	if len(removeIds) > 0 {
-		stmt := tDispatchUnit.
-			DELETE().
-			WHERE(jet.AND(
-				tDispatchUnit.DispatchID.EQ(jet.Uint64(dsp.Id)),
-				tDispatchUnit.UnitID.IN(removeIds...),
-			))
-
-		if _, err := stmt.ExecContext(ctx, tx); err != nil {
-			return nil, err
-		}
-
-		for i := 0; i < len(dsp.Units); i++ {
-			for k := 0; k < len(req.ToRemove); k++ {
-				if dsp.Units[i].UnitId == req.ToRemove[k] {
-					dsp.Units = utils.RemoveFromSlice(dsp.Units, i)
-
-					if _, err := s.updateDispatchStatus(ctx, userInfo, dsp, &dispatch.DispatchStatus{
-						DispatchId: dsp.Id,
-						UnitId:     &req.ToRemove[k],
-						UserId:     &userInfo.UserId,
-						Status:     dispatch.DISPATCH_STATUS_UNIT_UNASSIGNED,
-					}); err != nil {
-						return nil, ErrFailedQuery
-					}
-
-					continue
-				}
-			}
-		}
-	}
-
-	if len(addIds) > 0 {
-		for _, id := range addIds {
-			stmt := tDispatchUnit.
-				INSERT(
-					tDispatchUnit.DispatchID,
-					tDispatchUnit.UnitID,
-					tDispatchUnit.ExpiresAt,
-				).
-				VALUES(
-					dsp.Id,
-					id,
-					jet.CURRENT_TIMESTAMP().ADD(jet.INTERVAL(13, jet.SECOND)),
-				).
-				ON_DUPLICATE_KEY_UPDATE(
-					tDispatchUnit.ExpiresAt.SET(jet.RawTimestamp("VALUES(`expires_at`)")),
-				)
-
-			if _, err := stmt.ExecContext(ctx, tx); err != nil {
-				if !dbutils.IsDuplicateError(err) {
-					return nil, err
-				}
-			}
-		}
-
-		assignments := []*dispatch.DispatchAssignment{}
-		needsUpdate := []uint64{}
-		for k := 0; k < len(req.ToAdd); k++ {
-			found := false
-			for i := 0; i < len(dsp.Units); i++ {
-				if dsp.Units[i].UnitId == req.ToAdd[k] {
-					found = true
-					break
-				}
-			}
-
-			unit, ok := s.getUnit(ctx, userInfo, req.ToAdd[k])
-			if !ok {
-				return nil, ErrFailedQuery
-			}
-
-			assignments = append(assignments, &dispatch.DispatchAssignment{
-				UnitId:     unit.Id,
-				DispatchId: dsp.Id,
-				Unit:       unit,
-			})
-
-			if !found {
-				needsUpdate = append(needsUpdate, unit.Id)
-			}
-		}
-		dsp.Units = assignments
-
-		for _, unitId := range needsUpdate {
-			if _, err := s.updateDispatchStatus(ctx, userInfo, dsp, &dispatch.DispatchStatus{
-				DispatchId: dsp.Id,
-				UnitId:     &unitId,
-				UserId:     &userInfo.UserId,
-				Status:     dispatch.DISPATCH_STATUS_UNIT_ASSIGNED,
-			}); err != nil {
-				return nil, ErrFailedQuery
-			}
-		}
-	}
-
-	// Commit the transaction
-	if err = tx.Commit(); err != nil {
-		return nil, ErrFailedQuery
-	}
-
-	data, err := proto.Marshal(dsp)
-	if err != nil {
+	if err := s.updateDispatchAssignments(ctx, userInfo, dsp, req.ToAdd, req.ToRemove); err != nil {
 		return nil, err
-	}
-
-	for i := 0; i < len(req.ToRemove); i++ {
-		s.events.JS.Publish(s.buildSubject(TopicDispatch, TypeDispatchUpdated, userInfo, req.ToRemove[i]), data)
-	}
-	for i := 0; i < len(req.ToAdd); i++ {
-		s.events.JS.Publish(s.buildSubject(TopicDispatch, TypeDispatchUpdated, userInfo, req.ToAdd[i]), data)
-	}
-
-	if len(dsp.Units) <= 0 {
-		if _, err := s.updateDispatchStatus(ctx, userInfo, dsp, &dispatch.DispatchStatus{
-			DispatchId: dsp.Id,
-			Status:     dispatch.DISPATCH_STATUS_UNASSIGNED,
-			UserId:     &userInfo.UserId,
-		}); err != nil {
-			return nil, err
-		}
 	}
 
 	auditEntry.State = int16(rector.EVENT_TYPE_UPDATED)
@@ -583,7 +458,7 @@ func (s *Server) ListDispatchActivity(ctx context.Context, req *ListDispatchActi
 	}
 	for _, activity := range resp.Activity {
 		if activity.UnitId != nil && *activity.UnitId > 0 {
-			activity.Unit, _ = s.getUnit(ctx, userInfo, *activity.UnitId)
+			activity.Unit, _ = s.getUnit(userInfo.Job, *activity.UnitId)
 		}
 	}
 
