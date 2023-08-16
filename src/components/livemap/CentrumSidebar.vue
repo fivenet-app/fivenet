@@ -42,15 +42,13 @@ const units = ref<Unit[]>([]);
 const dispatches = ref<Dispatch[]>([]);
 const feed = ref<(DispatchStatus | UnitStatus)[]>([]);
 
-type Action = {
+const actionsDispatch: {
     icon: DefineComponent;
     name: string;
     action?: Function;
     class?: string;
-    status?: DISPATCH_STATUS | UNIT_STATUS;
-};
-
-const actionsDispatch: Action[] = [
+    status?: DISPATCH_STATUS;
+}[] = [
     { icon: markRaw(CarBackIcon), name: 'En Route', class: 'bg-info-600', status: DISPATCH_STATUS.EN_ROUTE },
     { icon: markRaw(MarkerCheckIcon), name: 'On Scene', class: 'bg-primary-600', status: DISPATCH_STATUS.ON_SCENE },
     { icon: markRaw(HelpCircleIcon), name: 'Need Assistance', class: 'bg-warn-600', status: DISPATCH_STATUS.NEED_ASSISTANCE },
@@ -58,7 +56,13 @@ const actionsDispatch: Action[] = [
     { icon: markRaw(ListStatusIcon), name: 'Update Status', class: 'bg-base-800' },
 ];
 
-const actionsUnit: Action[] = [
+const actionsUnit: {
+    icon: DefineComponent;
+    name: string;
+    action?: Function;
+    class?: string;
+    status?: UNIT_STATUS;
+}[] = [
     { icon: markRaw(CarBackIcon), name: 'Unavailable', class: 'bg-error-600', status: UNIT_STATUS.UNAVAILABLE },
     { icon: markRaw(CalendarCheckIcon), name: 'Available', class: 'bg-success-600', status: UNIT_STATUS.AVAILABLE },
     { icon: markRaw(CoffeeIcon), name: 'On Break', class: 'bg-warn-600', status: UNIT_STATUS.ON_BREAK },
@@ -225,18 +229,23 @@ const unitOpen = ref(false);
 const selectUnitOpen = ref(false);
 
 const unitStatusOpen = ref(false);
-const selectedUnitStatus = ref<UNIT_STATUS | undefined>();
+const unitStatusSelected = ref<UNIT_STATUS | undefined>();
 
 // TODO add function to set the active dispatch (last clicked and manually selected)
 const activeDispatch = ref<Dispatch | undefined>();
 const dispatchStatusOpen = ref(false);
-const selectedDispatchStatus = ref<DISPATCH_STATUS | undefined>();
+const dispatchStatusSelected = ref<DISPATCH_STATUS | undefined>();
 </script>
 
 <template>
     <template v-if="ownUnit">
-        <UpdateUnitStatus :open="unitStatusOpen" :unit="ownUnit" :status="selectedUnitStatus" />
-        <UpdateDispatchStatus :open="dispatchStatusOpen" :dispatch="dispatches[0]" :status="selectedDispatchStatus" />
+        <UpdateUnitStatus :open="unitStatusOpen" @close="unitStatusOpen = false" :unit="ownUnit" :status="unitStatusSelected" />
+        <UpdateDispatchStatus
+            :open="dispatchStatusOpen"
+            @close="dispatchStatusOpen = false"
+            :dispatch="activeDispatch"
+            :status="dispatchStatusSelected"
+        />
     </template>
 
     <div class="h-full flex grow gap-y-5 overflow-y-auto bg-base-600 px-4 py-0.5">
@@ -257,8 +266,8 @@ const selectedDispatchStatus = ref<DISPATCH_STATUS | undefined>();
                                     <span class="mt-2 truncate">
                                         {{
                                             $t(
-                                                `enums.centrum.DISPATCH_STATUS.${
-                                                    DISPATCH_STATUS[ownUnit.status?.status ?? (0 as number)]
+                                                `enums.centrum.UNIT_STATUS.${
+                                                    UNIT_STATUS[ownUnit.status?.status ?? (0 as number)]
                                                 }`,
                                             )
                                         }}
@@ -312,6 +321,10 @@ const selectedDispatchStatus = ref<DISPATCH_STATUS | undefined>();
                                                 type="button"
                                                 class="text-white bg-primary hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-2 text-xs my-0.5"
                                                 :class="[idx >= actionsUnit.length - 1 ? 'col-span-2' : '', item.class]"
+                                                @click="
+                                                    unitStatusSelected = item.status;
+                                                    unitStatusOpen = true;
+                                                "
                                             >
                                                 <component
                                                     :is="item.icon ?? HoopHouseIcon"
@@ -340,7 +353,10 @@ const selectedDispatchStatus = ref<DISPATCH_STATUS | undefined>();
                                     type="button"
                                     class="text-white bg-primary hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-2 text-xs my-0.5"
                                     :class="[idx >= actionsDispatch.length - 1 ? 'col-span-2' : '', item.class]"
-                                    @click=""
+                                    @click="
+                                        dispatchStatusSelected = item.status;
+                                        dispatchStatusOpen = true;
+                                    "
                                 >
                                     <component
                                         :is="item.icon ?? HoopHouseIcon"

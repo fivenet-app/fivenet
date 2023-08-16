@@ -21,6 +21,8 @@ defineExpose({ location });
 
 const { $grpc } = useNuxtApp();
 
+const status: number = props.status ?? props.dispatch?.status?.status ?? DISPATCH_STATUS.NEW;
+
 const statuses = ref<{ status: DISPATCH_STATUS; selected?: boolean }[]>([
     { status: DISPATCH_STATUS.EN_ROUTE },
     { status: DISPATCH_STATUS.ON_SCENE },
@@ -28,13 +30,11 @@ const statuses = ref<{ status: DISPATCH_STATUS; selected?: boolean }[]>([
     { status: DISPATCH_STATUS.COMPLETED },
     { status: DISPATCH_STATUS.CANCELLED },
 ]);
-if (props.dispatch !== undefined) {
-    statuses.value.forEach((s) => {
-        if (s.status === props.dispatch!.status?.status) {
-            s.selected = true;
-        }
-    });
-}
+statuses.value.forEach((s) => {
+    if (s.status.valueOf() === status) {
+        s.selected = true;
+    }
+});
 
 async function updateUnitStatus(values: FormData): Promise<void> {
     return new Promise(async (res, rej) => {
@@ -64,23 +64,30 @@ defineRule('min', min);
 defineRule('max', max);
 
 interface FormData {
-    status: DISPATCH_STATUS;
+    status: number;
     code?: string;
     reason: string;
 }
 
-const { handleSubmit } = useForm<FormData>({
+const { handleSubmit, setFieldValue } = useForm<FormData>({
     validationSchema: {
         status: { required: true },
         code: { required: false },
         reason: { required: true, min: 3, max: 255 },
     },
     initialValues: {
-        status: props.dispatch?.status?.status ?? DISPATCH_STATUS.NEW,
+        status: status,
     },
+    validateOnMount: true,
 });
 
 const onSubmit = handleSubmit(async (values): Promise<void> => await updateUnitStatus(values));
+
+watch(props, () => {
+    if (props.status) {
+        setFieldValue('status', props.status.valueOf());
+    }
+});
 </script>
 
 <template>
@@ -119,7 +126,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await updateUnitS
                                     </div>
                                     <div class="mt-3 text-center sm:mt-5">
                                         <DialogTitle as="h3" class="text-base font-semibold leading-6">
-                                            Update Unit Status
+                                            Update Dispatch Status
                                         </DialogTitle>
                                         <div class="mt-2">
                                             <div class="my-2 space-y-24">
