@@ -37,7 +37,7 @@ func (s *Server) listDispatches(job string) ([]*dispatch.Dispatch, error) {
 	})
 
 	slices.SortFunc(ds, func(a, b *dispatch.Dispatch) int {
-		return int(a.Id - b.Id)
+		return int(b.Id - a.Id)
 	})
 
 	return ds, nil

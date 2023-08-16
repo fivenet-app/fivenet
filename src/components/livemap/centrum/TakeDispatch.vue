@@ -74,7 +74,7 @@ async function takeDispatch(dispatch: Dispatch, resp: TAKE_DISPATCH_RESP): Promi
                                 <div class="mt-3 text-center sm:mt-5">
                                     <div v-if="ownUnit">
                                         <DialogTitle as="h3" class="text-base font-semibold leading-6">
-                                            Leave Unit
+                                            Take Dispatch
                                         </DialogTitle>
                                     </div>
                                     <div v-else>

@@ -4,7 +4,7 @@ import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { CarEmergencyIcon } from 'mdi-vue3';
 import { UNIT_STATUS, Unit } from '~~/gen/ts/resources/dispatch/units';
 
-defineProps<{
+const props = defineProps<{
     open: boolean;
     ownUnit: Unit | undefined;
     units: Unit[] | null;
@@ -22,8 +22,8 @@ async function joinUnit(unit: Unit | undefined): Promise<void> {
     return new Promise(async (res, rej) => {
         try {
             const call = $grpc.getCentrumClient().joinUnit({
-                unitId: unit?.id ?? 0n,
-                leave: unit === undefined,
+                unitId: unit?.id ?? props.ownUnit?.id ?? 0n,
+                leave: props.ownUnit !== undefined,
             });
             const { response } = await call;
 

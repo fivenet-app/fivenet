@@ -237,7 +237,7 @@ func (s *Server) TakeControl(ctx context.Context, req *TakeControlRequest) (*Tak
 	return &TakeControlResponse{}, nil
 }
 
-func (s *Server) waitForUnit(srv CentrumService_StreamServer, userInfo *userinfo.UserInfo) (uint64, error) {
+func (s *Server) waitForUserToBeAssignedUnit(srv CentrumService_StreamServer, userInfo *userinfo.UserInfo) (uint64, error) {
 	msgCh := make(chan *nats.Msg, 4)
 	sub, err := s.events.JS.ChanSubscribe(fmt.Sprintf("%s.%s.%s.%s.%d", BaseSubject, userInfo.Job, TopicUnit, TypeUnitUserAssigned, 0), msgCh)
 	if err != nil {
@@ -249,11 +249,23 @@ func (s *Server) waitForUnit(srv CentrumService_StreamServer, userInfo *userinfo
 		select {
 		case <-srv.Context().Done():
 			return 0, nil
+
 		case msg := <-msgCh:
 			msg.Ack()
 			topic, tType := s.getEventTypeFromSubject(msg.Subject)
 
-			if topic == TopicUnit && tType == TypeUnitUserAssigned {
+			if topic == TopicGeneral && tType == TypeGeneralDisponents {
+				var dest DisponentsChange
+				if err := proto.Unmarshal(msg.Data, &dest); err != nil {
+					return 0, err
+				}
+
+				if utils.InSliceFunc(dest.Disponents, func(in *users.UserShort) bool {
+					return in.UserId == userInfo.UserId
+				}) {
+					return 0, nil
+				}
+			} else if topic == TopicUnit && tType == TypeUnitUserAssigned {
 				var dest dispatch.Unit
 				if err := proto.Unmarshal(msg.Data, &dest); err != nil {
 					return 0, err
@@ -281,9 +293,7 @@ func (s *Server) waitForUnit(srv CentrumService_StreamServer, userInfo *userinfo
 	}
 }
 
-func (s *Server) Stream(req *StreamRequest, srv CentrumService_StreamServer) error {
-	userInfo := auth.MustGetUserInfoFromContext(srv.Context())
-
+func (s *Server) sendLatestState(srv CentrumService_StreamServer, userInfo *userinfo.UserInfo) (uint64, bool, error) {
 	settings := s.getSettings(srv.Context(), userInfo.Job)
 	disponents := s.getDisponents(srv.Context(), userInfo.Job)
 
@@ -295,7 +305,7 @@ func (s *Server) Stream(req *StreamRequest, srv CentrumService_StreamServer) err
 
 	units, err := s.listUnits(userInfo.Job)
 	if err != nil {
-		return err
+		return 0, isController, err
 	}
 
 	unit, _ := s.getUnit(userInfo.Job, unitId)
@@ -306,14 +316,14 @@ func (s *Server) Stream(req *StreamRequest, srv CentrumService_StreamServer) err
 		OwnOnly: &ownOnly,
 	})
 	if err != nil {
-		return err
+		return 0, isController, err
 	}
 
 	// Send initial state message to client
 	resp := &StreamResponse{
 		Change: &StreamResponse_LatestState{
 			LatestState: &LatestState{
-				IsDisponent: true,
+				IsDisponent: isController,
 				Settings:    settings,
 				Unit:        unit,
 				Units:       units,
@@ -322,11 +332,27 @@ func (s *Server) Stream(req *StreamRequest, srv CentrumService_StreamServer) err
 		},
 	}
 	if err := srv.Send(resp); err != nil {
+		return 0, isController, err
+	}
+
+	return unitId, isController, nil
+}
+
+func (s *Server) Stream(req *StreamRequest, srv CentrumService_StreamServer) error {
+	userInfo := auth.MustGetUserInfoFromContext(srv.Context())
+
+	unitId, isController, err := s.sendLatestState(srv, userInfo)
+	if err != nil {
 		return err
 	}
 
-	if !isController && unitId <= 0 {
-		unitId, err = s.waitForUnit(srv, userInfo)
+	// If user is not in unit and not a controller, wait for user to be assigned/join an unit
+	if unitId <= 0 && !isController {
+		if _, err := s.waitForUserToBeAssignedUnit(srv, userInfo); err != nil {
+			return err
+		}
+
+		unitId, isController, err = s.sendLatestState(srv, userInfo)
 		if err != nil {
 			return err
 		}
@@ -347,6 +373,7 @@ func (s *Server) Stream(req *StreamRequest, srv CentrumService_StreamServer) err
 		defer sub.Unsubscribe()
 	}
 
+	resp := &StreamResponse{}
 	// Watch for events from message queue
 	for {
 		select {

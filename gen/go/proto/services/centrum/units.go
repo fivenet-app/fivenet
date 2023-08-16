@@ -334,10 +334,7 @@ func (s *Server) JoinUnit(ctx context.Context, req *JoinUnitRequest) (*JoinUnitR
 			return nil, status.Error(codes.InvalidArgument, "You are not on duty!")
 		}
 
-		unitId, ok := s.getUnitIDForUserID(userInfo.UserId)
-		if !ok {
-			return nil, ErrFailedQuery
-		}
+		unitId, _ := s.getUnitIDForUserID(userInfo.UserId)
 		if unitId > 0 {
 			return nil, ErrAlreadyInUnit
 		}
@@ -349,7 +346,8 @@ func (s *Server) JoinUnit(ctx context.Context, req *JoinUnitRequest) (*JoinUnitR
 	}
 
 	resp := &JoinUnitResponse{}
-	if req.Leave != nil && !*req.Leave {
+	// User joins unit
+	if req.Leave == nil || !*req.Leave {
 		if err := s.updateUnitAssignments(ctx, userInfo, unit, []int32{userInfo.UserId}, nil); err != nil {
 			return nil, err
 		}
@@ -361,6 +359,7 @@ func (s *Server) JoinUnit(ctx context.Context, req *JoinUnitRequest) (*JoinUnitR
 
 		resp.Unit = unit
 	} else {
+		// User leaves unit
 		if err := s.updateUnitAssignments(ctx, userInfo, unit, nil, []int32{userInfo.UserId}); err != nil {
 			return nil, err
 		}

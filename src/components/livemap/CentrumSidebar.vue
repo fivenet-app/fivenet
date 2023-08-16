@@ -101,6 +101,10 @@ async function startStream(): Promise<void> {
             } else if (resp.change.oneofKind === 'disponents') {
                 disponents.value = resp.change.disponents.disponents;
             } else if (resp.change.oneofKind === 'unitAssigned') {
+                if (resp.change.unitAssigned.id !== ownUnit.value?.id) {
+                    continue;
+                }
+
                 const idx = resp.change.unitAssigned.users.findIndex((u) => u.userId === activeChar.value?.userId);
                 if (idx === -1) {
                     // User has been removed from the unit
