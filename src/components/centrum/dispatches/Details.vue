@@ -33,10 +33,10 @@ const assignOpen = ref(false);
                     <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-7xl pl-10 sm:pl-16">
                         <TransitionChild
                             as="template"
-                            enter="transform transition ease-in-out duration-500 sm:duration-700"
+                            enter="transform transition ease-in-out duration-150 sm:duration-300"
                             enter-from="translate-x-full"
                             enter-to="translate-x-0"
-                            leave="transform transition ease-in-out duration-500 sm:duration-700"
+                            leave="transform transition ease-in-out duration-150 sm:duration-300"
                             leave-from="translate-x-0"
                             leave-to="translate-x-full"
                         >
@@ -233,7 +233,7 @@ const assignOpen = ref(false);
                                     <div class="flex flex-shrink-0 justify-end px-4 py-4">
                                         <button
                                             type="button"
-                                            class="rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                                            class="w-full rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
                                             @click="$emit('close')"
                                         >
                                             {{ $t('common.close') }}

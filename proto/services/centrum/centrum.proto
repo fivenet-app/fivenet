@@ -130,6 +130,15 @@ message ListDispatchActivityResponse {
   repeated resources.dispatch.DispatchStatus activity = 2;
 }
 
+message JoinUnitRequest {
+  uint64 unit_id = 1;
+  optional bool leave = 2;
+}
+
+message JoinUnitResponse {
+  resources.dispatch.Unit unit = 1;
+}
+
 enum TAKE_DISPATCH_RESP {
   TIMEOUT = 0;
   ACCEPTED = 1;
@@ -143,15 +152,6 @@ message TakeDispatchRequest {
 }
 
 message TakeDispatchResponse {}
-
-message JoinUnitRequest {
-  uint64 unit_id = 1;
-  optional bool leave = 2;
-}
-
-message JoinUnitResponse {
-  resources.dispatch.Unit unit = 1;
-}
 
 message LatestState {
   bool is_disponent = 1;

@@ -321,8 +321,9 @@ func (s *Server) refreshUserLocations(ctx context.Context) error {
 		if _, ok := markers[job]; !ok {
 			markers[job] = []*livemap.UserMarker{}
 		}
-		if dest[i].Marker.IconColor == "" {
-			dest[i].Marker.IconColor = users.DefaultLivemapMarkerColor
+		if dest[i].Marker.Color == nil {
+			defaultColor := users.DefaultLivemapMarkerColor
+			dest[i].Marker.Color = &defaultColor
 		}
 
 		markers[job] = append(markers[job], dest[i])
@@ -374,55 +375,55 @@ func (s *Server) refreshDispatches(ctx context.Context) error {
 	}
 
 	markers := map[string][]*livemap.DispatchMarker{}
-	for _, v := range dest {
-		gps, _ := strings.CutPrefix(*v.Gps, "GPS: ")
+	for _, d := range dest {
+		gps, _ := strings.CutPrefix(*d.Gps, "GPS: ")
 		gpsSplit := strings.Split(gps, ", ")
 		x, _ := strconv.ParseFloat(gpsSplit[0], 32)
 		y, _ := strconv.ParseFloat(gpsSplit[1], 32)
 
 		var icon string
-		var iconColor string
-		if v.Owner == 0 {
+		var color string
+		if d.Owner == 0 {
 			icon = "dispatch-open.svg"
-			iconColor = "96E6B3"
+			color = "96E6B3"
 		} else {
 			icon = "dispatch-closed.svg"
-			iconColor = "DA3E52"
+			color = "DA3E52"
 		}
 
 		var name string
-		if v.Anon != nil && *v.Anon == "1" {
+		if d.Anon != nil && *d.Anon == "1" {
 			name = "Anonym"
 		} else {
-			name = *v.Name
+			name = *d.Name
 		}
 
 		var message string
-		if v.Message != nil && *v.Message != "" {
-			message = *v.Message
+		if d.Message != nil && *d.Message != "" {
+			message = *d.Message
 		} else {
 			message = "N/A"
 		}
 
 		// Remove the "json" leftovers (the data looks like this, e.g., `["ambulance"]`)
-		job := strings.TrimSuffix(strings.TrimPrefix(*v.Jobm, "[\""), "\"]")
+		job := strings.TrimSuffix(strings.TrimPrefix(*d.Jobm, "[\""), "\"]")
 		if _, ok := markers[job]; !ok {
 			markers[job] = []*livemap.DispatchMarker{}
 		}
 		marker := &livemap.DispatchMarker{
 			Marker: &livemap.GenericMarker{
-				Id:        v.ID,
+				Id:        uint64(d.ID),
 				X:         x,
 				Y:         y,
-				Icon:      icon,
-				IconColor: iconColor,
+				Color:     &color,
+				Icon:      &icon,
 				Name:      name,
-				Popup:     message,
-				UpdatedAt: timestamp.New(v.Time),
+				Popup:     &message,
+				UpdatedAt: timestamp.New(d.Time),
 			},
 			Job: job,
 		}
-		if v.Owner == 0 {
+		if d.Owner == 0 {
 			marker.Active = true
 		}
 

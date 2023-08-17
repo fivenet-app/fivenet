@@ -35,6 +35,153 @@ var (
 	_ = sort.Sort
 )
 
+// Validate checks the field values on ManualMarker with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *ManualMarker) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ManualMarker with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in ManualMarkerMultiError, or
+// nil if none found.
+func (m *ManualMarker) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ManualMarker) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Type
+
+	switch v := m.Marker.(type) {
+	case *ManualMarker_Circle:
+		if v == nil {
+			err := ManualMarkerValidationError{
+				field:  "Marker",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+		if all {
+			switch v := interface{}(m.GetCircle()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ManualMarkerValidationError{
+						field:  "Circle",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ManualMarkerValidationError{
+						field:  "Circle",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetCircle()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ManualMarkerValidationError{
+					field:  "Circle",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	default:
+		_ = v // ensures v is used
+	}
+
+	if len(errors) > 0 {
+		return ManualMarkerMultiError(errors)
+	}
+
+	return nil
+}
+
+// ManualMarkerMultiError is an error wrapping multiple validation errors
+// returned by ManualMarker.ValidateAll() if the designated constraints aren't met.
+type ManualMarkerMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ManualMarkerMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ManualMarkerMultiError) AllErrors() []error { return m }
+
+// ManualMarkerValidationError is the validation error returned by
+// ManualMarker.Validate if the designated constraints aren't met.
+type ManualMarkerValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ManualMarkerValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ManualMarkerValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ManualMarkerValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ManualMarkerValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ManualMarkerValidationError) ErrorName() string { return "ManualMarkerValidationError" }
+
+// Error satisfies the builtin error interface
+func (e ManualMarkerValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sManualMarker.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ManualMarkerValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ManualMarkerValidationError{}
+
 // Validate checks the field values on GenericMarker with the rules defined in
 // the proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
@@ -57,45 +204,7 @@ func (m *GenericMarker) validate(all bool) error {
 
 	var errors []error
 
-	if m.GetId() <= 0 {
-		err := GenericMarkerValidationError{
-			field:  "Id",
-			reason: "value must be greater than 0",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	if all {
-		switch v := interface{}(m.GetUpdatedAt()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, GenericMarkerValidationError{
-					field:  "UpdatedAt",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, GenericMarkerValidationError{
-					field:  "UpdatedAt",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return GenericMarkerValidationError{
-				field:  "UpdatedAt",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
+	// no validation rules for Id
 
 	// no validation rules for X
 
@@ -103,11 +212,50 @@ func (m *GenericMarker) validate(all bool) error {
 
 	// no validation rules for Name
 
-	// no validation rules for Icon
+	if m.UpdatedAt != nil {
 
-	// no validation rules for IconColor
+		if all {
+			switch v := interface{}(m.GetUpdatedAt()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, GenericMarkerValidationError{
+						field:  "UpdatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, GenericMarkerValidationError{
+						field:  "UpdatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return GenericMarkerValidationError{
+					field:  "UpdatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
 
-	// no validation rules for Popup
+	}
+
+	if m.Popup != nil {
+		// no validation rules for Popup
+	}
+
+	if m.Color != nil {
+		// no validation rules for Color
+	}
+
+	if m.Icon != nil {
+		// no validation rules for Icon
+	}
 
 	if len(errors) > 0 {
 		return GenericMarkerMultiError(errors)
@@ -395,6 +543,17 @@ func (m *UserMarker) validate(all bool) error {
 		}
 	}
 
+	if m.GetUserId() <= 0 {
+		err := UserMarkerValidationError{
+			field:  "UserId",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if all {
 		switch v := interface{}(m.GetUser()).(type) {
 		case interface{ ValidateAll() error }:
@@ -537,3 +696,133 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = UserMarkerValidationError{}
+
+// Validate checks the field values on CircleMarker with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *CircleMarker) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CircleMarker with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in CircleMarkerMultiError, or
+// nil if none found.
+func (m *CircleMarker) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CircleMarker) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetMarker()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, CircleMarkerValidationError{
+					field:  "Marker",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, CircleMarkerValidationError{
+					field:  "Marker",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetMarker()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return CircleMarkerValidationError{
+				field:  "Marker",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	// no validation rules for Radius
+
+	if len(errors) > 0 {
+		return CircleMarkerMultiError(errors)
+	}
+
+	return nil
+}
+
+// CircleMarkerMultiError is an error wrapping multiple validation errors
+// returned by CircleMarker.ValidateAll() if the designated constraints aren't met.
+type CircleMarkerMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CircleMarkerMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CircleMarkerMultiError) AllErrors() []error { return m }
+
+// CircleMarkerValidationError is the validation error returned by
+// CircleMarker.Validate if the designated constraints aren't met.
+type CircleMarkerValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CircleMarkerValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CircleMarkerValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CircleMarkerValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CircleMarkerValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CircleMarkerValidationError) ErrorName() string { return "CircleMarkerValidationError" }
+
+// Error satisfies the builtin error interface
+func (e CircleMarkerValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCircleMarker.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CircleMarkerValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CircleMarkerValidationError{}

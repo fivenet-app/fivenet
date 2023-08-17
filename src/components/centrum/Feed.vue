@@ -24,7 +24,7 @@ defineProps<{
                             <template v-if="'dispatchId' in activityItem">
                                 <DispatchFeedItem
                                     :activityLength="items?.length ?? 0"
-                                    :activityItem="activityItem"
+                                    :item="activityItem"
                                     :activityItemIdx="activityItemIdx"
                                     :showName="true"
                                 />
@@ -32,7 +32,7 @@ defineProps<{
                             <template v-else>
                                 <UnitFeedItem
                                     :activityLength="items?.length ?? 0"
-                                    :activityItem="activityItem"
+                                    :item="activityItem"
                                     :activityItemIdx="activityItemIdx"
                                     :showName="true"
                                 />

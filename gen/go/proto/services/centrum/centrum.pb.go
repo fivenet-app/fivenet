@@ -1461,6 +1461,108 @@ func (x *ListDispatchActivityResponse) GetActivity() []*dispatch.DispatchStatus 
 	return nil
 }
 
+type JoinUnitRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	UnitId uint64 `protobuf:"varint,1,opt,name=unit_id,json=unitId,proto3" json:"unit_id,omitempty"`
+	Leave  *bool  `protobuf:"varint,2,opt,name=leave,proto3,oneof" json:"leave,omitempty"`
+}
+
+func (x *JoinUnitRequest) Reset() {
+	*x = JoinUnitRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_services_centrum_centrum_proto_msgTypes[28]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *JoinUnitRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*JoinUnitRequest) ProtoMessage() {}
+
+func (x *JoinUnitRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_services_centrum_centrum_proto_msgTypes[28]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use JoinUnitRequest.ProtoReflect.Descriptor instead.
+func (*JoinUnitRequest) Descriptor() ([]byte, []int) {
+	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{28}
+}
+
+func (x *JoinUnitRequest) GetUnitId() uint64 {
+	if x != nil {
+		return x.UnitId
+	}
+	return 0
+}
+
+func (x *JoinUnitRequest) GetLeave() bool {
+	if x != nil && x.Leave != nil {
+		return *x.Leave
+	}
+	return false
+}
+
+type JoinUnitResponse struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Unit *dispatch.Unit `protobuf:"bytes,1,opt,name=unit,proto3" json:"unit,omitempty"`
+}
+
+func (x *JoinUnitResponse) Reset() {
+	*x = JoinUnitResponse{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_services_centrum_centrum_proto_msgTypes[29]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *JoinUnitResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*JoinUnitResponse) ProtoMessage() {}
+
+func (x *JoinUnitResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_services_centrum_centrum_proto_msgTypes[29]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use JoinUnitResponse.ProtoReflect.Descriptor instead.
+func (*JoinUnitResponse) Descriptor() ([]byte, []int) {
+	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{29}
+}
+
+func (x *JoinUnitResponse) GetUnit() *dispatch.Unit {
+	if x != nil {
+		return x.Unit
+	}
+	return nil
+}
+
 type TakeDispatchRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -1474,7 +1576,7 @@ type TakeDispatchRequest struct {
 func (x *TakeDispatchRequest) Reset() {
 	*x = TakeDispatchRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_services_centrum_centrum_proto_msgTypes[28]
+		mi := &file_services_centrum_centrum_proto_msgTypes[30]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1487,7 +1589,7 @@ func (x *TakeDispatchRequest) String() string {
 func (*TakeDispatchRequest) ProtoMessage() {}
 
 func (x *TakeDispatchRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[28]
+	mi := &file_services_centrum_centrum_proto_msgTypes[30]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1500,7 +1602,7 @@ func (x *TakeDispatchRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TakeDispatchRequest.ProtoReflect.Descriptor instead.
 func (*TakeDispatchRequest) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{28}
+	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{30}
 }
 
 func (x *TakeDispatchRequest) GetDispatchIds() []uint64 {
@@ -1533,7 +1635,7 @@ type TakeDispatchResponse struct {
 func (x *TakeDispatchResponse) Reset() {
 	*x = TakeDispatchResponse{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_services_centrum_centrum_proto_msgTypes[29]
+		mi := &file_services_centrum_centrum_proto_msgTypes[31]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -1546,7 +1648,7 @@ func (x *TakeDispatchResponse) String() string {
 func (*TakeDispatchResponse) ProtoMessage() {}
 
 func (x *TakeDispatchResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[29]
+	mi := &file_services_centrum_centrum_proto_msgTypes[31]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1559,109 +1661,7 @@ func (x *TakeDispatchResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use TakeDispatchResponse.ProtoReflect.Descriptor instead.
 func (*TakeDispatchResponse) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{29}
-}
-
-type JoinUnitRequest struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	UnitId uint64 `protobuf:"varint,1,opt,name=unit_id,json=unitId,proto3" json:"unit_id,omitempty"`
-	Leave  *bool  `protobuf:"varint,2,opt,name=leave,proto3,oneof" json:"leave,omitempty"`
-}
-
-func (x *JoinUnitRequest) Reset() {
-	*x = JoinUnitRequest{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_services_centrum_centrum_proto_msgTypes[30]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *JoinUnitRequest) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*JoinUnitRequest) ProtoMessage() {}
-
-func (x *JoinUnitRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[30]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use JoinUnitRequest.ProtoReflect.Descriptor instead.
-func (*JoinUnitRequest) Descriptor() ([]byte, []int) {
-	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{30}
-}
-
-func (x *JoinUnitRequest) GetUnitId() uint64 {
-	if x != nil {
-		return x.UnitId
-	}
-	return 0
-}
-
-func (x *JoinUnitRequest) GetLeave() bool {
-	if x != nil && x.Leave != nil {
-		return *x.Leave
-	}
-	return false
-}
-
-type JoinUnitResponse struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	Unit *dispatch.Unit `protobuf:"bytes,1,opt,name=unit,proto3" json:"unit,omitempty"`
-}
-
-func (x *JoinUnitResponse) Reset() {
-	*x = JoinUnitResponse{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_services_centrum_centrum_proto_msgTypes[31]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *JoinUnitResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*JoinUnitResponse) ProtoMessage() {}
-
-func (x *JoinUnitResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_services_centrum_centrum_proto_msgTypes[31]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use JoinUnitResponse.ProtoReflect.Descriptor instead.
-func (*JoinUnitResponse) Descriptor() ([]byte, []int) {
 	return file_services_centrum_centrum_proto_rawDescGZIP(), []int{31}
-}
-
-func (x *JoinUnitResponse) GetUnit() *dispatch.Unit {
-	if x != nil {
-		return x.Unit
-	}
-	return nil
 }
 
 type LatestState struct {
@@ -2178,29 +2178,29 @@ var file_services_centrum_centrum_proto_rawDesc = []byte{
 	0x03, 0x28, 0x0b, 0x32, 0x22, 0x2e, 0x72, 0x65, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x73, 0x2e,
 	0x64, 0x69, 0x73, 0x70, 0x61, 0x74, 0x63, 0x68, 0x2e, 0x44, 0x69, 0x73, 0x70, 0x61, 0x74, 0x63,
 	0x68, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x52, 0x08, 0x61, 0x63, 0x74, 0x69, 0x76, 0x69, 0x74,
-	0x79, 0x22, 0xb8, 0x01, 0x0a, 0x13, 0x54, 0x61, 0x6b, 0x65, 0x44, 0x69, 0x73, 0x70, 0x61, 0x74,
-	0x63, 0x68, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x2b, 0x0a, 0x0c, 0x64, 0x69, 0x73,
-	0x70, 0x61, 0x74, 0x63, 0x68, 0x5f, 0x69, 0x64, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x04, 0x42,
-	0x08, 0xfa, 0x42, 0x05, 0x92, 0x01, 0x02, 0x08, 0x01, 0x52, 0x0b, 0x64, 0x69, 0x73, 0x70, 0x61,
-	0x74, 0x63, 0x68, 0x49, 0x64, 0x73, 0x12, 0x42, 0x0a, 0x04, 0x72, 0x65, 0x73, 0x70, 0x18, 0x02,
-	0x20, 0x01, 0x28, 0x0e, 0x32, 0x24, 0x2e, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x73, 0x2e,
-	0x63, 0x65, 0x6e, 0x74, 0x72, 0x75, 0x6d, 0x2e, 0x54, 0x41, 0x4b, 0x45, 0x5f, 0x44, 0x49, 0x53,
-	0x50, 0x41, 0x54, 0x43, 0x48, 0x5f, 0x52, 0x45, 0x53, 0x50, 0x42, 0x08, 0xfa, 0x42, 0x05, 0x82,
-	0x01, 0x02, 0x10, 0x01, 0x52, 0x04, 0x72, 0x65, 0x73, 0x70, 0x12, 0x25, 0x0a, 0x06, 0x72, 0x65,
-	0x61, 0x73, 0x6f, 0x6e, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x42, 0x08, 0xfa, 0x42, 0x05, 0x72,
-	0x03, 0x18, 0xff, 0x01, 0x48, 0x00, 0x52, 0x06, 0x72, 0x65, 0x61, 0x73, 0x6f, 0x6e, 0x88, 0x01,
-	0x01, 0x42, 0x09, 0x0a, 0x07, 0x5f, 0x72, 0x65, 0x61, 0x73, 0x6f, 0x6e, 0x22, 0x16, 0x0a, 0x14,
-	0x54, 0x61, 0x6b, 0x65, 0x44, 0x69, 0x73, 0x70, 0x61, 0x74, 0x63, 0x68, 0x52, 0x65, 0x73, 0x70,
-	0x6f, 0x6e, 0x73, 0x65, 0x22, 0x4f, 0x0a, 0x0f, 0x4a, 0x6f, 0x69, 0x6e, 0x55, 0x6e, 0x69, 0x74,
-	0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x17, 0x0a, 0x07, 0x75, 0x6e, 0x69, 0x74, 0x5f,
-	0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x04, 0x52, 0x06, 0x75, 0x6e, 0x69, 0x74, 0x49, 0x64,
-	0x12, 0x19, 0x0a, 0x05, 0x6c, 0x65, 0x61, 0x76, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x08, 0x48,
-	0x00, 0x52, 0x05, 0x6c, 0x65, 0x61, 0x76, 0x65, 0x88, 0x01, 0x01, 0x42, 0x08, 0x0a, 0x06, 0x5f,
-	0x6c, 0x65, 0x61, 0x76, 0x65, 0x22, 0x40, 0x0a, 0x10, 0x4a, 0x6f, 0x69, 0x6e, 0x55, 0x6e, 0x69,
-	0x74, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x2c, 0x0a, 0x04, 0x75, 0x6e, 0x69,
-	0x74, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x18, 0x2e, 0x72, 0x65, 0x73, 0x6f, 0x75, 0x72,
-	0x63, 0x65, 0x73, 0x2e, 0x64, 0x69, 0x73, 0x70, 0x61, 0x74, 0x63, 0x68, 0x2e, 0x55, 0x6e, 0x69,
-	0x74, 0x52, 0x04, 0x75, 0x6e, 0x69, 0x74, 0x22, 0x98, 0x02, 0x0a, 0x0b, 0x4c, 0x61, 0x74, 0x65,
+	0x79, 0x22, 0x4f, 0x0a, 0x0f, 0x4a, 0x6f, 0x69, 0x6e, 0x55, 0x6e, 0x69, 0x74, 0x52, 0x65, 0x71,
+	0x75, 0x65, 0x73, 0x74, 0x12, 0x17, 0x0a, 0x07, 0x75, 0x6e, 0x69, 0x74, 0x5f, 0x69, 0x64, 0x18,
+	0x01, 0x20, 0x01, 0x28, 0x04, 0x52, 0x06, 0x75, 0x6e, 0x69, 0x74, 0x49, 0x64, 0x12, 0x19, 0x0a,
+	0x05, 0x6c, 0x65, 0x61, 0x76, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x08, 0x48, 0x00, 0x52, 0x05,
+	0x6c, 0x65, 0x61, 0x76, 0x65, 0x88, 0x01, 0x01, 0x42, 0x08, 0x0a, 0x06, 0x5f, 0x6c, 0x65, 0x61,
+	0x76, 0x65, 0x22, 0x40, 0x0a, 0x10, 0x4a, 0x6f, 0x69, 0x6e, 0x55, 0x6e, 0x69, 0x74, 0x52, 0x65,
+	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x2c, 0x0a, 0x04, 0x75, 0x6e, 0x69, 0x74, 0x18, 0x01,
+	0x20, 0x01, 0x28, 0x0b, 0x32, 0x18, 0x2e, 0x72, 0x65, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x73,
+	0x2e, 0x64, 0x69, 0x73, 0x70, 0x61, 0x74, 0x63, 0x68, 0x2e, 0x55, 0x6e, 0x69, 0x74, 0x52, 0x04,
+	0x75, 0x6e, 0x69, 0x74, 0x22, 0xb8, 0x01, 0x0a, 0x13, 0x54, 0x61, 0x6b, 0x65, 0x44, 0x69, 0x73,
+	0x70, 0x61, 0x74, 0x63, 0x68, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x2b, 0x0a, 0x0c,
+	0x64, 0x69, 0x73, 0x70, 0x61, 0x74, 0x63, 0x68, 0x5f, 0x69, 0x64, 0x73, 0x18, 0x01, 0x20, 0x03,
+	0x28, 0x04, 0x42, 0x08, 0xfa, 0x42, 0x05, 0x92, 0x01, 0x02, 0x08, 0x01, 0x52, 0x0b, 0x64, 0x69,
+	0x73, 0x70, 0x61, 0x74, 0x63, 0x68, 0x49, 0x64, 0x73, 0x12, 0x42, 0x0a, 0x04, 0x72, 0x65, 0x73,
+	0x70, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0e, 0x32, 0x24, 0x2e, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63,
+	0x65, 0x73, 0x2e, 0x63, 0x65, 0x6e, 0x74, 0x72, 0x75, 0x6d, 0x2e, 0x54, 0x41, 0x4b, 0x45, 0x5f,
+	0x44, 0x49, 0x53, 0x50, 0x41, 0x54, 0x43, 0x48, 0x5f, 0x52, 0x45, 0x53, 0x50, 0x42, 0x08, 0xfa,
+	0x42, 0x05, 0x82, 0x01, 0x02, 0x10, 0x01, 0x52, 0x04, 0x72, 0x65, 0x73, 0x70, 0x12, 0x25, 0x0a,
+	0x06, 0x72, 0x65, 0x61, 0x73, 0x6f, 0x6e, 0x18, 0x03, 0x20, 0x01, 0x28, 0x09, 0x42, 0x08, 0xfa,
+	0x42, 0x05, 0x72, 0x03, 0x18, 0xff, 0x01, 0x48, 0x00, 0x52, 0x06, 0x72, 0x65, 0x61, 0x73, 0x6f,
+	0x6e, 0x88, 0x01, 0x01, 0x42, 0x09, 0x0a, 0x07, 0x5f, 0x72, 0x65, 0x61, 0x73, 0x6f, 0x6e, 0x22,
+	0x16, 0x0a, 0x14, 0x54, 0x61, 0x6b, 0x65, 0x44, 0x69, 0x73, 0x70, 0x61, 0x74, 0x63, 0x68, 0x52,
+	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x22, 0x98, 0x02, 0x0a, 0x0b, 0x4c, 0x61, 0x74, 0x65,
 	0x73, 0x74, 0x53, 0x74, 0x61, 0x74, 0x65, 0x12, 0x21, 0x0a, 0x0c, 0x69, 0x73, 0x5f, 0x64, 0x69,
 	0x73, 0x70, 0x6f, 0x6e, 0x65, 0x6e, 0x74, 0x18, 0x01, 0x20, 0x01, 0x28, 0x08, 0x52, 0x0b, 0x69,
 	0x73, 0x44, 0x69, 0x73, 0x70, 0x6f, 0x6e, 0x65, 0x6e, 0x74, 0x12, 0x3d, 0x0a, 0x08, 0x73, 0x65,
@@ -2436,10 +2436,10 @@ var file_services_centrum_centrum_proto_goTypes = []interface{}{
 	(*AssignDispatchRequest)(nil),        // 26: services.centrum.AssignDispatchRequest
 	(*AssignDispatchResponse)(nil),       // 27: services.centrum.AssignDispatchResponse
 	(*ListDispatchActivityResponse)(nil), // 28: services.centrum.ListDispatchActivityResponse
-	(*TakeDispatchRequest)(nil),          // 29: services.centrum.TakeDispatchRequest
-	(*TakeDispatchResponse)(nil),         // 30: services.centrum.TakeDispatchResponse
-	(*JoinUnitRequest)(nil),              // 31: services.centrum.JoinUnitRequest
-	(*JoinUnitResponse)(nil),             // 32: services.centrum.JoinUnitResponse
+	(*JoinUnitRequest)(nil),              // 29: services.centrum.JoinUnitRequest
+	(*JoinUnitResponse)(nil),             // 30: services.centrum.JoinUnitResponse
+	(*TakeDispatchRequest)(nil),          // 31: services.centrum.TakeDispatchRequest
+	(*TakeDispatchResponse)(nil),         // 32: services.centrum.TakeDispatchResponse
 	(*LatestState)(nil),                  // 33: services.centrum.LatestState
 	(*StreamRequest)(nil),                // 34: services.centrum.StreamRequest
 	(*StreamResponse)(nil),               // 35: services.centrum.StreamResponse
@@ -2474,8 +2474,8 @@ var file_services_centrum_centrum_proto_depIdxs = []int32{
 	42, // 16: services.centrum.UpdateDispatchStatusRequest.status:type_name -> resources.dispatch.DISPATCH_STATUS
 	39, // 17: services.centrum.ListDispatchActivityResponse.pagination:type_name -> resources.common.database.PaginationResponse
 	44, // 18: services.centrum.ListDispatchActivityResponse.activity:type_name -> resources.dispatch.DispatchStatus
-	0,  // 19: services.centrum.TakeDispatchRequest.resp:type_name -> services.centrum.TAKE_DISPATCH_RESP
-	38, // 20: services.centrum.JoinUnitResponse.unit:type_name -> resources.dispatch.Unit
+	38, // 19: services.centrum.JoinUnitResponse.unit:type_name -> resources.dispatch.Unit
+	0,  // 20: services.centrum.TakeDispatchRequest.resp:type_name -> services.centrum.TAKE_DISPATCH_RESP
 	45, // 21: services.centrum.LatestState.settings:type_name -> resources.dispatch.Settings
 	38, // 22: services.centrum.LatestState.unit:type_name -> resources.dispatch.Unit
 	38, // 23: services.centrum.LatestState.units:type_name -> resources.dispatch.Unit
@@ -2506,8 +2506,8 @@ var file_services_centrum_centrum_proto_depIdxs = []int32{
 	24, // 48: services.centrum.CentrumService.UpdateDispatchStatus:input_type -> services.centrum.UpdateDispatchStatusRequest
 	1,  // 49: services.centrum.CentrumService.ListDispatchActivity:input_type -> services.centrum.ListDispatchActivityRequest
 	26, // 50: services.centrum.CentrumService.AssignDispatch:input_type -> services.centrum.AssignDispatchRequest
-	31, // 51: services.centrum.CentrumService.JoinUnit:input_type -> services.centrum.JoinUnitRequest
-	29, // 52: services.centrum.CentrumService.TakeDispatch:input_type -> services.centrum.TakeDispatchRequest
+	29, // 51: services.centrum.CentrumService.JoinUnit:input_type -> services.centrum.JoinUnitRequest
+	31, // 52: services.centrum.CentrumService.TakeDispatch:input_type -> services.centrum.TakeDispatchRequest
 	34, // 53: services.centrum.CentrumService.Stream:input_type -> services.centrum.StreamRequest
 	45, // 54: services.centrum.CentrumService.GetSettings:output_type -> resources.dispatch.Settings
 	45, // 55: services.centrum.CentrumService.UpdateSettings:output_type -> resources.dispatch.Settings
@@ -2524,8 +2524,8 @@ var file_services_centrum_centrum_proto_depIdxs = []int32{
 	25, // 66: services.centrum.CentrumService.UpdateDispatchStatus:output_type -> services.centrum.UpdateDispatchStatusResponse
 	28, // 67: services.centrum.CentrumService.ListDispatchActivity:output_type -> services.centrum.ListDispatchActivityResponse
 	27, // 68: services.centrum.CentrumService.AssignDispatch:output_type -> services.centrum.AssignDispatchResponse
-	32, // 69: services.centrum.CentrumService.JoinUnit:output_type -> services.centrum.JoinUnitResponse
-	30, // 70: services.centrum.CentrumService.TakeDispatch:output_type -> services.centrum.TakeDispatchResponse
+	30, // 69: services.centrum.CentrumService.JoinUnit:output_type -> services.centrum.JoinUnitResponse
+	32, // 70: services.centrum.CentrumService.TakeDispatch:output_type -> services.centrum.TakeDispatchResponse
 	35, // 71: services.centrum.CentrumService.Stream:output_type -> services.centrum.StreamResponse
 	54, // [54:72] is the sub-list for method output_type
 	36, // [36:54] is the sub-list for method input_type
@@ -2877,30 +2877,6 @@ func file_services_centrum_centrum_proto_init() {
 			}
 		}
 		file_services_centrum_centrum_proto_msgTypes[28].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*TakeDispatchRequest); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_services_centrum_centrum_proto_msgTypes[29].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*TakeDispatchResponse); i {
-			case 0:
-				return &v.state
-			case 1:
-				return &v.sizeCache
-			case 2:
-				return &v.unknownFields
-			default:
-				return nil
-			}
-		}
-		file_services_centrum_centrum_proto_msgTypes[30].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*JoinUnitRequest); i {
 			case 0:
 				return &v.state
@@ -2912,8 +2888,32 @@ func file_services_centrum_centrum_proto_init() {
 				return nil
 			}
 		}
-		file_services_centrum_centrum_proto_msgTypes[31].Exporter = func(v interface{}, i int) interface{} {
+		file_services_centrum_centrum_proto_msgTypes[29].Exporter = func(v interface{}, i int) interface{} {
 			switch v := v.(*JoinUnitResponse); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_services_centrum_centrum_proto_msgTypes[30].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*TakeDispatchRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_services_centrum_centrum_proto_msgTypes[31].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*TakeDispatchResponse); i {
 			case 0:
 				return &v.state
 			case 1:

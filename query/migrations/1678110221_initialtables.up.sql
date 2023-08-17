@@ -3,8 +3,8 @@ BEGIN;
 -- Table: fivenet_accounts
 CREATE TABLE IF NOT EXISTS `fivenet_accounts` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` datetime(3) DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP(3),
+  `updated_at` datetime(3) DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP(3),
   `enabled` tinyint(1) DEFAULT 0,
   `username` varchar(24) NULL,
   `password` varchar(60) NULL,
@@ -57,8 +57,8 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents_templates` (
 -- Table: fivenet_documents
 CREATE TABLE IF NOT EXISTS `fivenet_documents` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` datetime(3) DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP(3),
+  `updated_at` datetime(3) DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP(3),
   `deleted_at` datetime(3) DEFAULT NULL,
   `category_id` bigint(20) unsigned DEFAULT NULL,
   `title` longtext NOT NULL,
@@ -86,7 +86,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents` (
 CREATE TABLE IF NOT EXISTS `fivenet_documents_comments` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `created_at` datetime(3) DEFAULT current_timestamp(3),
-  `updated_at` datetime(3) DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `updated_at` datetime(3) DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP(3),
   `deleted_at` datetime(3) DEFAULT NULL,
   `document_id` bigint(20) unsigned NOT NULL,
   `comment` longtext,
@@ -101,7 +101,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents_comments` (
 -- Table: fivenet_documents_job_access
 CREATE TABLE IF NOT EXISTS `fivenet_documents_job_access` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP,
+  `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP(3),
   `deleted_at` datetime(3) DEFAULT NULL,
   `document_id` bigint(20) unsigned NOT NULL,
   `job` varchar(40) NOT NULL,
@@ -137,7 +137,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents_references` (
 -- Table: fivenet_documents_relations
 CREATE TABLE IF NOT EXISTS `fivenet_documents_relations` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP,
+  `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP(3),
   `deleted_at` datetime(3) DEFAULT NULL,
   `document_id` bigint(20) unsigned NOT NULL,
   `source_user_id` int(11) DEFAULT NULL,
@@ -157,7 +157,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents_relations` (
 -- Table: fivenet_documents_user_access
 CREATE TABLE IF NOT EXISTS `fivenet_documents_user_access` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP,
+  `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP(3),
   `deleted_at` datetime(3) DEFAULT NULL,
   `document_id` bigint(20) unsigned DEFAULT NULL,
   `user_id` int(11) NOT NULL,
@@ -174,7 +174,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents_user_access` (
 -- Table: fivenet_user_activity
 CREATE TABLE IF NOT EXISTS `fivenet_user_activity` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP,
+  `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP(3),
   `source_user_id` int(11) DEFAULT NULL,
   `target_user_id` int(11) NOT NULL,
   `type` smallint(2) NOT NULL,
@@ -196,7 +196,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_user_locations` (
   `x` decimal(24,14) DEFAULT NULL,
   `y` decimal(24,14) DEFAULT NULL,
   `hidden` tinyint(1) DEFAULT NULL,
-  `updated_at` datetime(3) DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `updated_at` datetime(3) DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP(3),
   PRIMARY KEY (`identifier`),
   KEY `idx_fivenet_user_locations_job` (`job`),
   CONSTRAINT `fk_fivenet_user_locations_identifier` FOREIGN KEY (`identifier`) REFERENCES `users` (`identifier`) ON DELETE CASCADE ON UPDATE CASCADE

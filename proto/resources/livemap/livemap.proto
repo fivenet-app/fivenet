@@ -10,20 +10,28 @@ import "validate/validate.proto";
 
 enum MARKER_TYPE {
   GENERIC = 0;
-  USER = 1;
-  DISPATCH = 2;
+  DISPATCH = 1;
+  USER = 2;
   CIRCLE = 3;
 }
 
+message ManualMarker {
+  MARKER_TYPE type = 1;
+
+  oneof marker {
+    CircleMarker circle = 2;
+  }
+}
+
 message GenericMarker {
-  int32 id = 1 [(validate.rules).int32.gt = 0];
-  resources.timestamp.Timestamp updated_at = 2;
+  uint64 id = 1;
+  optional resources.timestamp.Timestamp updated_at = 2;
   double x = 3;
   double y = 4;
   string name = 5;
-  string icon = 6;
-  string icon_color = 7;
-  string popup = 8;
+  optional string popup = 6;
+  optional string color = 7;
+  optional string icon = 8;
 }
 
 message DispatchMarker {
@@ -36,7 +44,14 @@ message DispatchMarker {
 message UserMarker {
   GenericMarker marker = 1;
 
-  resources.users.UserShort user = 2; // @gotags: alias:"user"
-  optional uint64 unit_id = 3;
-  optional resources.dispatch.Unit unit = 4;
+  int32 user_id = 2 [(validate.rules).int32.gt = 0];
+  resources.users.UserShort user = 3; // @gotags: alias:"user"
+  optional uint64 unit_id = 4;
+  optional resources.dispatch.Unit unit = 5;
+}
+
+message CircleMarker {
+  GenericMarker marker = 1;
+
+  int32 radius = 2;
 }

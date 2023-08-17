@@ -3,7 +3,7 @@ BEGIN;
 -- Table: fivenet_permissions
 CREATE TABLE IF NOT EXISTS `fivenet_permissions` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP,
+  `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP(3),
   `category` varchar(128) NOT NULL,
   `name` varchar(255) NOT NULL,
   `guard_name` varchar(255) NOT NULL,
@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_permissions` (
 -- Table: fivenet_attrs
 CREATE TABLE IF NOT EXISTS `fivenet_attrs` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP,
+  `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP(3),
   `permission_id` bigint(20) unsigned NOT NULL,
   `key` varchar(255) NOT NULL,
   `type` varchar(255) NOT NULL,
@@ -30,7 +30,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_attrs` (
 -- Table: fivenet_roles
 CREATE TABLE IF NOT EXISTS `fivenet_roles` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP,
+  `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP(3),
   `job` varchar(50) NOT NULL,
   `grade` int(11) NOT NULL,
   PRIMARY KEY (`id`),
@@ -40,8 +40,8 @@ CREATE TABLE IF NOT EXISTS `fivenet_roles` (
 -- Table: fivenet_role_attrs
 CREATE TABLE IF NOT EXISTS `fivenet_role_attrs` (
   `role_id` bigint(20) unsigned NOT NULL,
-  `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` datetime(3) DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP(3),
+  `updated_at` datetime(3) DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP(3),
   `attr_id` bigint(20) unsigned NOT NULL,
   `value` longtext NOT NULL,
   `max_values` text DEFAULT NULL,

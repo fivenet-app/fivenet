@@ -261,10 +261,12 @@ async function startStream(): Promise<void> {
                     if (ownUnit.value && ownUnit.value.id === resp.change.dispatchStatus.status.unitId) {
                         takeDispatches.value.push(resp.change.dispatchStatus);
                     }
-                } else if (resp.change.dispatchStatus.status?.status === DISPATCH_STATUS.UNIT_UNASSIGNED) {
+                } else if (
+                    resp.change.dispatchStatus.status?.status === DISPATCH_STATUS.UNIT_UNASSIGNED ||
+                    resp.change.dispatchStatus.status?.status === DISPATCH_STATUS.ARCHIVED
+                ) {
                     removeDispatchFromList(id);
                 }
-                console.log('takeDispatches', idx, takeDispatches);
             } else {
                 console.warn('Centrum: Unknown change received - Kind: ', resp.change.oneofKind, resp.change);
             }

@@ -24,8 +24,8 @@ import (
 )
 
 var (
-	accounts      = table.FivenetAccounts
-	oauthAccounts = table.FivenetOauth2Accounts
+	tAccs      = table.FivenetAccounts
+	tOAuthAccs = table.FivenetOauth2Accounts
 )
 
 type OAuth2 struct {
@@ -261,21 +261,21 @@ func (o *OAuth2) Callback(c *gin.Context) {
 }
 
 func (o *OAuth2) getUserInfo(ctx context.Context, provider string, userInfo *providers.UserInfo) (*model.FivenetAccounts, error) {
-	stmt := oauthAccounts.
+	stmt := tOAuthAccs.
 		SELECT(
-			accounts.ID,
-			accounts.Username,
-			accounts.License,
+			tAccs.ID,
+			tAccs.Username,
+			tAccs.License,
 		).
-		FROM(oauthAccounts.
-			INNER_JOIN(accounts,
-				accounts.ID.EQ(oauthAccounts.AccountID),
+		FROM(tOAuthAccs.
+			INNER_JOIN(tAccs,
+				tAccs.ID.EQ(tOAuthAccs.AccountID),
 			),
 		).
 		WHERE(jet.AND(
-			oauthAccounts.Provider.EQ(jet.String(provider)),
-			oauthAccounts.ExternalID.EQ(jet.Uint64(uint64(userInfo.ID))),
-			accounts.Enabled.IS_TRUE(),
+			tOAuthAccs.Provider.EQ(jet.String(provider)),
+			tOAuthAccs.ExternalID.EQ(jet.Uint64(uint64(userInfo.ID))),
+			tAccs.Enabled.IS_TRUE(),
 		)).
 		LIMIT(1)
 
@@ -291,13 +291,13 @@ func (o *OAuth2) getUserInfo(ctx context.Context, provider string, userInfo *pro
 }
 
 func (o *OAuth2) storeUserInfo(ctx context.Context, accountId uint64, provider string, userInfo *providers.UserInfo) error {
-	stmt := oauthAccounts.
+	stmt := tOAuthAccs.
 		INSERT(
-			oauthAccounts.AccountID,
-			oauthAccounts.Provider,
-			oauthAccounts.ExternalID,
-			oauthAccounts.Username,
-			oauthAccounts.Avatar,
+			tOAuthAccs.AccountID,
+			tOAuthAccs.Provider,
+			tOAuthAccs.ExternalID,
+			tOAuthAccs.Username,
+			tOAuthAccs.Avatar,
 		).
 		VALUES(
 			accountId,

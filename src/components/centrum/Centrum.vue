@@ -9,7 +9,7 @@ import { default as UnitsList } from '~/components/centrum/units/List.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { useAuthStore } from '~/store/auth';
-import { Dispatch, DispatchStatus } from '~~/gen/ts/resources/dispatch/dispatches';
+import { DISPATCH_STATUS, Dispatch, DispatchStatus } from '~~/gen/ts/resources/dispatch/dispatches';
 import { Settings } from '~~/gen/ts/resources/dispatch/settings';
 import { Unit, UnitStatus } from '~~/gen/ts/resources/dispatch/units';
 import { UserShort } from '~~/gen/ts/resources/users/users';
@@ -22,11 +22,66 @@ const { activeChar } = storeToRefs(authStore);
 
 const settings = ref<Settings>();
 const isDisponent = ref(false);
-const ownUnit = ref<Unit>();
 const feed = ref<(DispatchStatus | UnitStatus)[]>([]);
 const disponents = ref<UserShort[]>([]);
 const units = ref<Unit[]>([]);
 const dispatches = ref<Dispatch[]>([]);
+
+function addOrUpdateUnit(unit: Unit): void {
+    const idx = units.value?.findIndex((d) => d.id === unit.id) ?? -1;
+    if (idx === -1) {
+        units.value?.unshift(unit);
+    } else {
+        units.value[idx].job = unit.job;
+        units.value[idx].createdAt = unit.createdAt;
+        units.value[idx].updatedAt = unit.updatedAt;
+        units.value[idx].name = unit.name;
+        units.value[idx].initials = unit.initials;
+        units.value[idx].color = unit.color;
+        units.value[idx].description = unit.description;
+        units.value[idx].status = unit.status;
+        units.value[idx].users = unit.users;
+    }
+}
+
+function addOrUpdateDispatch(dispatch: Dispatch): void {
+    const idx = dispatches.value?.findIndex((d) => d.id === dispatch.id) ?? -1;
+    if (idx === -1) {
+        dispatches.value?.unshift(dispatch);
+    } else {
+        dispatches.value[idx].createdAt = dispatch.createdAt;
+        dispatches.value[idx].updatedAt = dispatch.updatedAt;
+        dispatches.value[idx].job = dispatch.job;
+        dispatches.value[idx].status = dispatch.status;
+        dispatches.value[idx].message = dispatch.message;
+        dispatches.value[idx].description = dispatch.description;
+        dispatches.value[idx].attributes = dispatch.attributes;
+        dispatches.value[idx].x = dispatch.x;
+        dispatches.value[idx].y = dispatch.y;
+        dispatches.value[idx].anon = dispatch.anon;
+        dispatches.value[idx].userId = dispatch.userId;
+        dispatches.value[idx].user = dispatch.user;
+        if (dispatch.units.length == 0) {
+            dispatches.value[idx].units.length = 0;
+        } else {
+            dispatches.value[idx].units = dispatch.units;
+        }
+    }
+}
+
+function removeUnit(unit: Unit): void {
+    const idx = units.value?.findIndex((d) => d.id === unit.id) ?? -1;
+    if (idx > -1) {
+        units.value?.splice(idx, 1);
+    }
+}
+
+function removeDispatchFromList(id: bigint): void {
+    const idx = dispatches.value?.findIndex((d) => d.id === id) ?? -1;
+    if (idx > -1) {
+        dispatches.value?.splice(idx, 1);
+    }
+}
 
 const abort = ref<AbortController | undefined>();
 const error = ref<string | null>(null);
@@ -55,7 +110,6 @@ async function startStream(): Promise<void> {
 
             if (resp.change.oneofKind === 'latestState') {
                 settings.value = resp.change.latestState.settings;
-                ownUnit.value = resp.change.latestState.unit;
                 units.value = resp.change.latestState.units;
                 dispatches.value = resp.change.latestState.dispatches;
                 isDisponent.value = resp.change.latestState.isDisponent;
@@ -74,27 +128,9 @@ async function startStream(): Promise<void> {
             } else if (resp.change.oneofKind === 'unitAssigned') {
                 // Ignore, doesn't matter for controllers
             } else if (resp.change.oneofKind === 'unitDeleted') {
-                const id = resp.change.unitDeleted.id;
-                const idx = units.value?.findIndex((d) => d.id === id) ?? -1;
-                if (idx > -1) {
-                    units.value?.splice(idx, 1);
-                }
+                removeUnit(resp.change.unitDeleted);
             } else if (resp.change.oneofKind === 'unitUpdated') {
-                const id = resp.change.unitUpdated.id;
-                const idx = units.value?.findIndex((d) => d.id === id) ?? -1;
-                if (idx === -1) {
-                    units.value?.unshift(resp.change.unitUpdated);
-                } else {
-                    units.value[idx].job = resp.change.unitUpdated.job;
-                    units.value[idx].createdAt = resp.change.unitUpdated.createdAt;
-                    units.value[idx].updatedAt = resp.change.unitUpdated.updatedAt;
-                    units.value[idx].name = resp.change.unitUpdated.name;
-                    units.value[idx].initials = resp.change.unitUpdated.initials;
-                    units.value[idx].color = resp.change.unitUpdated.color;
-                    units.value[idx].description = resp.change.unitUpdated.description;
-                    units.value[idx].status = resp.change.unitUpdated.status;
-                    units.value[idx].users = resp.change.unitUpdated.users;
-                }
+                addOrUpdateUnit(resp.change.unitUpdated);
             } else if (resp.change.oneofKind === 'unitStatus') {
                 const id = resp.change.unitStatus.id;
                 let idx = dispatches.value.findIndex((d) => d.id === id);
@@ -116,31 +152,9 @@ async function startStream(): Promise<void> {
                     dispatches.value[idx].units = resp.change.dispatchCreated.units;
                 }
             } else if (resp.change.oneofKind === 'dispatchDeleted') {
-                const id = resp.change.dispatchDeleted.id;
-                const idx = dispatches.value?.findIndex((d) => d.id === id) ?? -1;
-                if (idx > -1) {
-                    dispatches.value?.splice(idx, 1);
-                }
+                removeDispatchFromList(resp.change.dispatchDeleted.id);
             } else if (resp.change.oneofKind === 'dispatchUpdated') {
-                const id = resp.change.dispatchUpdated.id;
-                const idx = dispatches.value?.findIndex((d) => d.id === id) ?? -1;
-                if (idx === -1) {
-                    dispatches.value?.unshift(resp.change.dispatchUpdated);
-                } else {
-                    dispatches.value[idx].createdAt = resp.change.dispatchUpdated.createdAt;
-                    dispatches.value[idx].updatedAt = resp.change.dispatchUpdated.updatedAt;
-                    dispatches.value[idx].job = resp.change.dispatchUpdated.job;
-                    dispatches.value[idx].status = resp.change.dispatchUpdated.status;
-                    dispatches.value[idx].message = resp.change.dispatchUpdated.message;
-                    dispatches.value[idx].description = resp.change.dispatchUpdated.description;
-                    dispatches.value[idx].attributes = resp.change.dispatchUpdated.attributes;
-                    dispatches.value[idx].x = resp.change.dispatchUpdated.x;
-                    dispatches.value[idx].y = resp.change.dispatchUpdated.y;
-                    dispatches.value[idx].anon = resp.change.dispatchUpdated.anon;
-                    dispatches.value[idx].userId = resp.change.dispatchUpdated.userId;
-                    dispatches.value[idx].user = resp.change.dispatchUpdated.user;
-                    dispatches.value[idx].units = resp.change.dispatchUpdated.units;
-                }
+                addOrUpdateDispatch(resp.change.dispatchUpdated);
             } else if (resp.change.oneofKind === 'dispatchStatus') {
                 const id = resp.change.dispatchStatus.id;
                 let idx = dispatches.value.findIndex((d) => d.id === id);
@@ -152,6 +166,13 @@ async function startStream(): Promise<void> {
 
                 if (resp.change.dispatchStatus.status) {
                     feed.value.unshift(resp.change.dispatchStatus.status);
+                }
+
+                if (
+                    resp.change.dispatchStatus.status?.status === DISPATCH_STATUS.UNIT_UNASSIGNED ||
+                    resp.change.dispatchStatus.status?.status === DISPATCH_STATUS.ARCHIVED
+                ) {
+                    removeDispatchFromList(id);
                 }
             } else {
                 console.warn('Centrum: Unknown change received - Kind: ', resp.change.oneofKind, resp.change);
@@ -193,7 +214,7 @@ const livemapComponent = ref<InstanceType<typeof Livemap>>();
 const open = ref(false);
 const location = ref<{ x: number; y: number }>({ x: 0, y: 0 });
 
-function livemapContextmenu($event: LeafletMouseEvent) {
+function livemapCreateDispatch($event: LeafletMouseEvent) {
     goto({ x: $event.latlng.lat, y: $event.latlng.lng });
 
     open.value = true;
@@ -256,7 +277,7 @@ async function takeControl(): Promise<void> {
             <!-- Left column -->
             <div class="flex flex-col basis-1/3 divide-x">
                 <div class="h-full">
-                    <Livemap ref="livemapComponent" @contextmenu="livemapContextmenu($event)" />
+                    <Livemap ref="livemapComponent" @create-dispatch="livemapCreateDispatch($event)" />
                 </div>
             </div>
 

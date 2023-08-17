@@ -149,7 +149,15 @@ function addToClipboard(): void {
                     <div>
                         <div class="pb-2 md:flex md:items-center md:justify-between md:space-x-4">
                             <div>
-                                <h1 class="text-2xl font-bold text-neutral break-all">
+                                <h1
+                                    class="py-2 pl-4 pr-3 text-2xl font-bold text-neutral sm:pl-0 truncate max-w-5xl break-all flex items-center"
+                                >
+                                    <span
+                                        v-if="document.category"
+                                        class="inline-flex items-center rounded-md bg-primary-400/10 px-2 py-1 text-xs font-medium text-primary-400 ring-1 ring-inset ring-primary-400/30 mr-2"
+                                    >
+                                        {{ document.category.name }}
+                                    </span>
                                     {{ document?.title }}
                                 </h1>
                                 <p class="text-sm text-base-300">

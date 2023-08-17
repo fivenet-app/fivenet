@@ -1,13 +1,14 @@
 <script lang="ts" setup>
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
-import { CloseIcon } from 'mdi-vue3';
+import { CarEmergencyIcon, CloseIcon } from 'mdi-vue3';
+import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import { Dispatch } from '~~/gen/ts/resources/dispatch/dispatches';
 import { Unit } from '~~/gen/ts/resources/dispatch/units';
 import { TAKE_DISPATCH_RESP } from '~~/gen/ts/services/centrum/centrum';
 import TakeDispatchEntry from './TakeDispatchEntry.vue';
 
-defineProps<{
+const props = defineProps<{
     open: boolean;
     ownUnit: Unit;
     dispatches: Dispatch[];
@@ -20,15 +21,15 @@ const emits = defineEmits<{
 
 const { $grpc } = useNuxtApp();
 
-const selectedDispatches = ref<Dispatch[]>([]);
+const unselectedDispatches = ref<bigint[]>([]);
 
-async function takeDispatch(resp: TAKE_DISPATCH_RESP): Promise<void> {
+async function takeDispatches(resp: TAKE_DISPATCH_RESP): Promise<void> {
     return new Promise(async (res, rej) => {
         try {
-            const ids: bigint[] = selectedDispatches.value.map((d) => d.id);
+            if (props.dispatches.length === 0) return;
 
             const call = $grpc.getCentrumClient().takeDispatch({
-                dispatchIds: ids,
+                dispatchIds: props.dispatches.filter((d) => !unselectedDispatches.value.includes(d.id)).map((d) => d.id),
                 resp: resp,
             });
             await call;
@@ -42,6 +43,15 @@ async function takeDispatch(resp: TAKE_DISPATCH_RESP): Promise<void> {
         }
     });
 }
+
+function selectDispatch(id: bigint): void {
+    const idx = unselectedDispatches.value.findIndex((did) => did === id);
+    if (idx > -1) {
+        unselectedDispatches.value.splice(idx, 1);
+    } else {
+        unselectedDispatches.value.push(id);
+    }
+}
 </script>
 
 <template>
@@ -54,10 +64,10 @@ async function takeDispatch(resp: TAKE_DISPATCH_RESP): Promise<void> {
                     <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-2xl pl-10 sm:pl-16">
                         <TransitionChild
                             as="template"
-                            enter="transform transition ease-in-out duration-500 sm:duration-700"
+                            enter="transform transition ease-in-out duration-150 sm:duration-300"
                             enter-from="translate-x-full"
                             enter-to="translate-x-0"
-                            leave="transform transition ease-in-out duration-500 sm:duration-700"
+                            leave="transform transition ease-in-out duration-150 sm:duration-300"
                             leave-from="translate-x-0"
                             leave-to="translate-x-full"
                         >
@@ -88,9 +98,17 @@ async function takeDispatch(resp: TAKE_DISPATCH_RESP): Promise<void> {
                                             <div class="divide-y divide-gray-200 px-4 sm:px-6">
                                                 <div class="mt-1">
                                                     <dl class="border-b border-white/10 divide-y divide-white/10">
+                                                        <DataNoDataBlock
+                                                            v-if="dispatches.length === 0"
+                                                            :icon="CarEmergencyIcon"
+                                                            :type="$t('common.dispatch', 2)"
+                                                        />
                                                         <TakeDispatchEntry
+                                                            v-else
                                                             v-for="dispatch in dispatches"
                                                             :dispatch="dispatch"
+                                                            @selected="selectDispatch(dispatch.id)"
+                                                            @goto="$emit('goto', $event)"
                                                         />
                                                     </dl>
                                                 </div>
@@ -100,27 +118,31 @@ async function takeDispatch(resp: TAKE_DISPATCH_RESP): Promise<void> {
                                     <div class="flex flex-shrink-0 justify-end px-4 py-4">
                                         <span class="isolate inline-flex rounded-md shadow-sm pr-4 w-full">
                                             <button
+                                                :disabled="dispatches.length === 0"
                                                 type="button"
-                                                class="w-full relative inline-flex items-center rounded-l-md bg-success-500 px-3 py-2 text-sm font-semibold text-white hover:text-gray-900 ring-1 ring-inset ring-success-300 hover:bg-success-100 focus:z-10"
-                                                @click="takeDispatch(TAKE_DISPATCH_RESP.ACCEPTED)"
+                                                class="w-full relative inline-flex items-center rounded-l-md bg-success-500 px-3 py-2 text-sm font-semibold text-white hover:text-white ring-1 ring-inset ring-success-300 hover:bg-success-100 focus:z-10"
+                                                :class="dispatches.length === 0 ? 'disabled' : ''"
+                                                @click="takeDispatches(TAKE_DISPATCH_RESP.ACCEPTED)"
                                             >
                                                 {{ $t('common.accept') }}
                                             </button>
                                             <button
+                                                :disabled="dispatches.length === 0"
                                                 type="button"
-                                                class="w-full relative -ml-px inline-flex items-center rounded-r-md bg-error-500 px-3 py-2 text-sm font-semibold text-white hover:text-gray-900 ring-1 ring-inset ring-error-300 hover:bg-error-100 focus:z-10"
-                                                @click="takeDispatch(TAKE_DISPATCH_RESP.DECLINED)"
+                                                class="w-full relative -ml-px inline-flex items-center bg-error-500 px-3 py-2 text-sm font-semibold text-white ring-1 ring-inset ring-error-300 hover:bg-error-100 focus:z-10"
+                                                :class="dispatches.length === 0 ? 'disabled' : ''"
+                                                @click="takeDispatches(TAKE_DISPATCH_RESP.DECLINED)"
                                             >
                                                 {{ $t('common.decline') }}
                                             </button>
+                                            <button
+                                                type="button"
+                                                class="w-full relative -ml-px inline-flex items-center rounded-r-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 hover:text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-10"
+                                                @click="$emit('close')"
+                                            >
+                                                {{ $t('common.close') }}
+                                            </button>
                                         </span>
-                                        <button
-                                            type="button"
-                                            class="rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
-                                            @click="$emit('close')"
-                                        >
-                                            {{ $t('common.close') }}
-                                        </button>
                                     </div>
                                 </form>
                             </DialogPanel>

@@ -67,7 +67,7 @@ const attribution = '<a href="http://www.rockstargames.com/V/">Grand Theft Auto 
 
 const markerDispatches = ref<Job[]>([]);
 const markerPlayers = ref<Job[]>([]);
-const selectedMarker = ref<number>();
+const selectedMarker = ref<bigint>();
 
 watch(livemapCenterSelectedMarker, () => {
     applySelectedMarkerCentering();
@@ -91,7 +91,7 @@ async function applyPlayerQuery(): Promise<void> {
 async function applyDispatchQuery(): Promise<void> {
     if (dispatchMarkers) {
         dispatchMarkersFiltered.value = dispatchMarkers.filter(
-            (m) => m.marker?.popup.includes(dispatchQuery.value) || m.marker?.name.includes(dispatchQuery.value),
+            (m) => m.marker?.popup?.includes(dispatchQuery.value) || m.marker?.name.includes(dispatchQuery.value),
         );
     }
 }
@@ -289,7 +289,7 @@ type TMarker<TType> = TType extends 'player' ? UserMarker : TType extends 'dispa
 
 function getIcon<TType extends 'player' | 'dispatch'>(type: TType, marker: TMarker<TType>): L.DivIcon {
     let html = '';
-    let color = marker.marker!.iconColor;
+    let color = marker.marker!.color;
     let iconClass = '';
     let iconAnchor: L.PointExpression | undefined = undefined;
     let popupAnchor: L.PointExpression = [0, (livemapMarkerSize.value / 2) * -1];
@@ -387,7 +387,7 @@ async function findPostal(): Promise<void> {
     }
 }
 
-async function setSelectedMarker(id: number): Promise<void> {
+async function setSelectedMarker(id: bigint): Promise<void> {
     setTimeout(() => {
         selectedMarker.value = id;
         applySelectedMarkerCentering();

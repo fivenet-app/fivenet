@@ -2,7 +2,7 @@
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { max, min, required } from '@vee-validate/rules';
-import { CarEmergencyIcon } from 'mdi-vue3';
+import { CloseIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import { UNIT_STATUS, Unit } from '~~/gen/ts/resources/dispatch/units';
 
@@ -90,134 +90,176 @@ watch(props, () => {
 <template>
     <TransitionRoot as="template" :show="open">
         <Dialog as="div" class="relative z-10" @close="$emit('close')">
-            <TransitionChild
-                as="template"
-                enter="ease-out duration-300"
-                enter-from="opacity-0"
-                enter-to="opacity-100"
-                leave="ease-in duration-200"
-                leave-from="opacity-100"
-                leave-to="opacity-0"
-            >
-                <div class="fixed inset-0 transition-opacity bg-opacity-75 bg-base-900" />
-            </TransitionChild>
+            <div class="fixed inset-0" />
 
-            <div class="fixed inset-0 z-10 overflow-y-auto">
-                <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-                    <TransitionChild
-                        as="template"
-                        enter="ease-out duration-300"
-                        enter-from="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                        enter-to="opacity-100 translate-y-0 sm:scale-100"
-                        leave="ease-in duration-200"
-                        leave-from="opacity-100 translate-y-0 sm:scale-100"
-                        leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                    >
-                        <DialogPanel
-                            class="relative px-4 pt-5 pb-4 overflow-hidden text-left transition-all transform rounded-lg bg-base-850 text-neutral sm:my-8 sm:w-full sm:max-w-6xl sm:p-6"
+            <div class="fixed inset-0 overflow-hidden">
+                <div class="absolute inset-0 overflow-hidden">
+                    <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-2xl pl-10 sm:pl-16">
+                        <TransitionChild
+                            as="template"
+                            enter="transform transition ease-in-out duration-150 sm:duration-300"
+                            enter-from="translate-x-full"
+                            enter-to="translate-x-0"
+                            leave="transform transition ease-in-out duration-150 sm:duration-300"
+                            leave-from="translate-x-0"
+                            leave-to="translate-x-full"
                         >
-                            <form @submit="onSubmit">
-                                <div>
-                                    <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-base-800">
-                                        <CarEmergencyIcon class="h-6 w-6 text-primary-500" aria-hidden="true" />
-                                    </div>
-                                    <div class="mt-3 text-center sm:mt-5">
-                                        <DialogTitle as="h3" class="text-base font-semibold leading-6">
-                                            Update Unit Status
-                                        </DialogTitle>
-                                        <div class="mt-2">
-                                            <div class="my-2 space-y-24">
-                                                <div class="flex-1 form-control">
-                                                    <label
-                                                        for="status"
-                                                        class="block text-sm font-medium leading-6 text-neutral"
+                            <DialogPanel class="pointer-events-auto w-screen max-w-3xl">
+                                <form
+                                    @submit="onSubmit"
+                                    class="flex h-full flex-col divide-y divide-gray-200 bg-gray-900 shadow-xl"
+                                >
+                                    <div class="h-0 flex-1 overflow-y-auto">
+                                        <div class="bg-primary-700 px-4 py-6 sm:px-6">
+                                            <div class="flex items-center justify-between">
+                                                <DialogTitle class="text-base font-semibold leading-6 text-white">
+                                                    Update Unit Status
+                                                </DialogTitle>
+                                                <div class="ml-3 flex h-7 items-center">
+                                                    <button
+                                                        type="button"
+                                                        class="rounded-md bg-gray-100 text-gray-500 hover:text-gray-400 focus:outline-none focus:ring-2 focus:ring-white"
+                                                        @click="$emit('close')"
                                                     >
-                                                        {{ $t('common.status') }}
-                                                    </label>
-                                                    <VeeField
-                                                        name="status"
-                                                        as="div"
-                                                        :placeholder="$t('common.status')"
-                                                        :label="$t('common.status')"
-                                                        v-slot="{ field }"
-                                                    >
-                                                        <select
-                                                            v-bind="field"
-                                                            class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                        >
-                                                            <option
-                                                                v-for="status in statuses"
-                                                                :selected="status.selected"
-                                                                :value="status.status"
+                                                        <span class="sr-only">{{ $t('common.close') }}</span>
+                                                        <CloseIcon class="h-6 w-6" aria-hidden="true" />
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div class="mt-1">
+                                                <p class="text-sm text-primary-300">TODO</p>
+                                            </div>
+                                        </div>
+                                        <div class="flex flex-1 flex-col justify-between">
+                                            <div class="divide-y divide-gray-200 px-4 sm:px-6">
+                                                <div class="mt-1">
+                                                    <dl class="border-b border-white/10 divide-y divide-white/10">
+                                                        <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                                                            <dt class="text-sm font-medium leading-6 text-white">
+                                                                <label
+                                                                    for="status"
+                                                                    class="block text-sm font-medium leading-6 text-neutral"
+                                                                >
+                                                                    {{ $t('common.status') }}
+                                                                </label>
+                                                            </dt>
+                                                            <dd
+                                                                class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
                                                             >
-                                                                {{
-                                                                    $t(
-                                                                        `enums.centrum.UNIT_STATUS.${
-                                                                            UNIT_STATUS[status.status ?? (0 as number)]
-                                                                        }`,
-                                                                    )
-                                                                }}
-                                                            </option>
-                                                        </select>
-                                                    </VeeField>
-                                                    <VeeErrorMessage name="status" as="p" class="mt-2 text-sm text-error-400" />
-                                                </div>
-                                            </div>
-                                            <div class="my-2 space-y-20">
-                                                <div class="flex-1 form-control">
-                                                    <label for="code" class="block text-sm font-medium leading-6 text-neutral">
-                                                        {{ $t('common.code') }}
-                                                    </label>
-                                                    <VeeField
-                                                        type="text"
-                                                        name="code"
-                                                        class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                        :placeholder="$t('common.code')"
-                                                        :label="$t('common.code')"
-                                                    />
-                                                    <VeeErrorMessage name="code" as="p" class="mt-2 text-sm text-error-400" />
-                                                </div>
-                                            </div>
-                                            <div class="my-2 space-y-20">
-                                                <div class="flex-1 form-control">
-                                                    <label
-                                                        for="reason"
-                                                        class="block text-sm font-medium leading-6 text-neutral"
-                                                    >
-                                                        {{ $t('common.reason') }}
-                                                    </label>
-                                                    <VeeField
-                                                        type="text"
-                                                        name="reason"
-                                                        class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                        :placeholder="$t('common.reason')"
-                                                        :label="$t('common.reason')"
-                                                    />
-                                                    <VeeErrorMessage name="reason" as="p" class="mt-2 text-sm text-error-400" />
+                                                                <VeeField
+                                                                    name="status"
+                                                                    as="div"
+                                                                    :placeholder="$t('common.status')"
+                                                                    :label="$t('common.status')"
+                                                                    v-slot="{ field }"
+                                                                >
+                                                                    <select
+                                                                        v-bind="field"
+                                                                        class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                                    >
+                                                                        <option
+                                                                            v-for="status in statuses"
+                                                                            :selected="status.selected"
+                                                                            :value="status.status"
+                                                                        >
+                                                                            {{
+                                                                                $t(
+                                                                                    `enums.centrum.UNIT_STATUS.${
+                                                                                        UNIT_STATUS[
+                                                                                            status.status ?? (0 as number)
+                                                                                        ]
+                                                                                    }`,
+                                                                                )
+                                                                            }}
+                                                                        </option>
+                                                                    </select>
+                                                                </VeeField>
+                                                                <VeeErrorMessage
+                                                                    name="status"
+                                                                    as="p"
+                                                                    class="mt-2 text-sm text-error-400"
+                                                                />
+                                                            </dd>
+                                                        </div>
+                                                        <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                                                            <dt class="text-sm font-medium leading-6 text-white">
+                                                                <label
+                                                                    for="code"
+                                                                    class="block text-sm font-medium leading-6 text-neutral"
+                                                                >
+                                                                    {{ $t('common.code') }}
+                                                                </label>
+                                                            </dt>
+                                                            <dd
+                                                                class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
+                                                            >
+                                                                <VeeField
+                                                                    type="text"
+                                                                    name="code"
+                                                                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                                    :placeholder="$t('common.code')"
+                                                                    :label="$t('common.code')"
+                                                                />
+                                                                <VeeErrorMessage
+                                                                    name="code"
+                                                                    as="p"
+                                                                    class="mt-2 text-sm text-error-400"
+                                                                />
+                                                            </dd>
+                                                        </div>
+                                                        <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                                                            <dt class="text-sm font-medium leading-6 text-white">
+                                                                <label
+                                                                    for="reason"
+                                                                    class="block text-sm font-medium leading-6 text-neutral"
+                                                                >
+                                                                    {{ $t('common.reason') }}
+                                                                </label>
+                                                            </dt>
+                                                            <dd
+                                                                class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
+                                                            >
+                                                                <VeeField
+                                                                    type="text"
+                                                                    name="reason"
+                                                                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                                    :placeholder="$t('common.reason')"
+                                                                    :label="$t('common.reason')"
+                                                                />
+                                                                <VeeErrorMessage
+                                                                    name="reason"
+                                                                    as="p"
+                                                                    class="mt-2 text-sm text-error-400"
+                                                                />
+                                                            </dd>
+                                                        </div>
+                                                    </dl>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                                <div class="gap-2 mt-5 sm:mt-4 sm:flex">
-                                    <button
-                                        type="button"
-                                        class="flex-1 rounded-md bg-base-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-base-400"
-                                        @click="$emit('close')"
-                                        ref="cancelButtonRef"
-                                    >
-                                        {{ $t('common.close', 1) }}
-                                    </button>
-                                    <button
-                                        type="submit"
-                                        class="flex-1 rounded-md bg-primary-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-primary-400"
-                                    >
-                                        {{ $t('common.update') }}
-                                    </button>
-                                </div>
-                            </form>
-                        </DialogPanel>
-                    </TransitionChild>
+                                    <div class="flex flex-shrink-0 justify-end px-4 py-4">
+                                        <span class="isolate inline-flex rounded-md shadow-sm pr-4 w-full">
+                                            <button
+                                                type="submit"
+                                                class="w-full relative inline-flex items-center rounded-l-md bg-primary-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-primary-400"
+                                            >
+                                                {{ $t('common.update') }}
+                                            </button>
+                                            <button
+                                                type="button"
+                                                class="w-full relative -ml-px inline-flex items-center rounded-r-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 hover:text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-10"
+                                                @click="$emit('close')"
+                                                ref="cancelButtonRef"
+                                            >
+                                                {{ $t('common.close', 1) }}
+                                            </button>
+                                        </span>
+                                    </div>
+                                </form>
+                            </DialogPanel>
+                        </TransitionChild>
+                    </div>
                 </div>
             </div>
         </Dialog>

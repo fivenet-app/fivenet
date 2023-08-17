@@ -3524,6 +3524,241 @@ var _ interface {
 	ErrorName() string
 } = ListDispatchActivityResponseValidationError{}
 
+// Validate checks the field values on JoinUnitRequest with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *JoinUnitRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on JoinUnitRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// JoinUnitRequestMultiError, or nil if none found.
+func (m *JoinUnitRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *JoinUnitRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for UnitId
+
+	if m.Leave != nil {
+		// no validation rules for Leave
+	}
+
+	if len(errors) > 0 {
+		return JoinUnitRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// JoinUnitRequestMultiError is an error wrapping multiple validation errors
+// returned by JoinUnitRequest.ValidateAll() if the designated constraints
+// aren't met.
+type JoinUnitRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m JoinUnitRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m JoinUnitRequestMultiError) AllErrors() []error { return m }
+
+// JoinUnitRequestValidationError is the validation error returned by
+// JoinUnitRequest.Validate if the designated constraints aren't met.
+type JoinUnitRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e JoinUnitRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e JoinUnitRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e JoinUnitRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e JoinUnitRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e JoinUnitRequestValidationError) ErrorName() string { return "JoinUnitRequestValidationError" }
+
+// Error satisfies the builtin error interface
+func (e JoinUnitRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sJoinUnitRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = JoinUnitRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = JoinUnitRequestValidationError{}
+
+// Validate checks the field values on JoinUnitResponse with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *JoinUnitResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on JoinUnitResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// JoinUnitResponseMultiError, or nil if none found.
+func (m *JoinUnitResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *JoinUnitResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetUnit()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, JoinUnitResponseValidationError{
+					field:  "Unit",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, JoinUnitResponseValidationError{
+					field:  "Unit",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetUnit()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return JoinUnitResponseValidationError{
+				field:  "Unit",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return JoinUnitResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// JoinUnitResponseMultiError is an error wrapping multiple validation errors
+// returned by JoinUnitResponse.ValidateAll() if the designated constraints
+// aren't met.
+type JoinUnitResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m JoinUnitResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m JoinUnitResponseMultiError) AllErrors() []error { return m }
+
+// JoinUnitResponseValidationError is the validation error returned by
+// JoinUnitResponse.Validate if the designated constraints aren't met.
+type JoinUnitResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e JoinUnitResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e JoinUnitResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e JoinUnitResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e JoinUnitResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e JoinUnitResponseValidationError) ErrorName() string { return "JoinUnitResponseValidationError" }
+
+// Error satisfies the builtin error interface
+func (e JoinUnitResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sJoinUnitResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = JoinUnitResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = JoinUnitResponseValidationError{}
+
 // Validate checks the field values on TakeDispatchRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
@@ -3764,241 +3999,6 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = TakeDispatchResponseValidationError{}
-
-// Validate checks the field values on JoinUnitRequest with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// first error encountered is returned, or nil if there are no violations.
-func (m *JoinUnitRequest) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on JoinUnitRequest with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// JoinUnitRequestMultiError, or nil if none found.
-func (m *JoinUnitRequest) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *JoinUnitRequest) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	// no validation rules for UnitId
-
-	if m.Leave != nil {
-		// no validation rules for Leave
-	}
-
-	if len(errors) > 0 {
-		return JoinUnitRequestMultiError(errors)
-	}
-
-	return nil
-}
-
-// JoinUnitRequestMultiError is an error wrapping multiple validation errors
-// returned by JoinUnitRequest.ValidateAll() if the designated constraints
-// aren't met.
-type JoinUnitRequestMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m JoinUnitRequestMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m JoinUnitRequestMultiError) AllErrors() []error { return m }
-
-// JoinUnitRequestValidationError is the validation error returned by
-// JoinUnitRequest.Validate if the designated constraints aren't met.
-type JoinUnitRequestValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e JoinUnitRequestValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e JoinUnitRequestValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e JoinUnitRequestValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e JoinUnitRequestValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e JoinUnitRequestValidationError) ErrorName() string { return "JoinUnitRequestValidationError" }
-
-// Error satisfies the builtin error interface
-func (e JoinUnitRequestValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sJoinUnitRequest.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = JoinUnitRequestValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = JoinUnitRequestValidationError{}
-
-// Validate checks the field values on JoinUnitResponse with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// first error encountered is returned, or nil if there are no violations.
-func (m *JoinUnitResponse) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on JoinUnitResponse with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// JoinUnitResponseMultiError, or nil if none found.
-func (m *JoinUnitResponse) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *JoinUnitResponse) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	if all {
-		switch v := interface{}(m.GetUnit()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, JoinUnitResponseValidationError{
-					field:  "Unit",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, JoinUnitResponseValidationError{
-					field:  "Unit",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetUnit()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return JoinUnitResponseValidationError{
-				field:  "Unit",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
-
-	if len(errors) > 0 {
-		return JoinUnitResponseMultiError(errors)
-	}
-
-	return nil
-}
-
-// JoinUnitResponseMultiError is an error wrapping multiple validation errors
-// returned by JoinUnitResponse.ValidateAll() if the designated constraints
-// aren't met.
-type JoinUnitResponseMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m JoinUnitResponseMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m JoinUnitResponseMultiError) AllErrors() []error { return m }
-
-// JoinUnitResponseValidationError is the validation error returned by
-// JoinUnitResponse.Validate if the designated constraints aren't met.
-type JoinUnitResponseValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e JoinUnitResponseValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e JoinUnitResponseValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e JoinUnitResponseValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e JoinUnitResponseValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e JoinUnitResponseValidationError) ErrorName() string { return "JoinUnitResponseValidationError" }
-
-// Error satisfies the builtin error interface
-func (e JoinUnitResponseValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sJoinUnitResponse.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = JoinUnitResponseValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = JoinUnitResponseValidationError{}
 
 // Validate checks the field values on LatestState with the rules defined in
 // the proto definition for this message. If any rules are violated, the first

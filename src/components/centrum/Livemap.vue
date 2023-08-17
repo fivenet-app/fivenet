@@ -18,7 +18,7 @@ import { DispatchMarker, UserMarker } from '~~/gen/ts/resources/livemap/livemap'
 import { LivemapperServiceClient } from '~~/gen/ts/services/livemapper/livemap.client';
 
 const emits = defineEmits<{
-    (e: 'contextmenu', data: LeafletMouseEvent): void;
+    (e: 'createDispatch', data: any): void;
 }>();
 
 const { $grpc, $loading } = useNuxtApp();
@@ -71,7 +71,7 @@ const mapOptions = {
     contextmenuItems: [
         {
             text: 'Copy coordinates',
-            callback: () => alert('Coordinates callback'),
+            callback: (_: LeafletMouseEvent) => alert('Coordinates callback'),
         },
     ],
 };
@@ -79,7 +79,9 @@ const mapOptions = {
 if (can('CentrumService.CreateDispatch')) {
     mapOptions.contextmenuItems.push({
         text: 'Create Dispatch',
-        callback: () => alert('Create Dispatch'),
+        callback: (e: LeafletMouseEvent) => {
+            emits('createDispatch', e);
+        },
     });
 }
 
@@ -89,7 +91,7 @@ const attribution = '<a href="http://www.rockstargames.com/V/">Grand Theft Auto 
 
 const markerDispatches = ref<Job[]>([]);
 const markerPlayers = ref<Job[]>([]);
-const selectedMarker = ref<number>();
+const selectedMarker = ref<bigint>();
 
 watch(livemapCenterSelectedMarker, () => {
     applySelectedMarkerCentering();
@@ -105,7 +107,7 @@ const dispatchQuery = ref<string>('');
 let dispatchMarkers: DispatchMarker[] = [];
 const dispatchMarkersFiltered = computed(() =>
     dispatchMarkers.filter(
-        (m) => m.marker?.popup.includes(dispatchQuery.value) || m.marker?.name.includes(dispatchQuery.value),
+        (m) => m.marker?.popup?.includes(dispatchQuery.value) || m.marker?.name.includes(dispatchQuery.value),
     ),
 );
 
@@ -154,6 +156,7 @@ async function onMapReady($event: any): Promise<void> {
     });
 
     map.addEventListener('mousemove', async (event: L.LeafletMouseEvent) => {
+        if (!event.latlng) return;
         mouseLat.value = (Math.round(event.latlng.lat * 100000) / 100000).toFixed(3);
         mouseLong.value = (Math.round(event.latlng.lng * 100000) / 100000).toFixed(3);
     });
@@ -244,7 +247,7 @@ type TMarker<TType> = TType extends 'player' ? UserMarker : TType extends 'dispa
 
 function getIcon<TType extends 'player' | 'dispatch'>(type: TType, marker: TMarker<TType>): L.DivIcon {
     let html = '';
-    let color = marker.marker!.iconColor;
+    let color = marker.marker!.color;
     let iconClass = '';
     let iconAnchor: L.PointExpression | undefined = undefined;
     let popupAnchor: L.PointExpression = [0, (livemapMarkerSize.value / 2) * -1];
@@ -342,7 +345,7 @@ async function findPostal(): Promise<void> {
     }
 }
 
-async function setSelectedMarker(id: number): Promise<void> {
+async function setSelectedMarker(id: bigint): Promise<void> {
     setTimeout(() => {
         selectedMarker.value = id;
         applySelectedMarkerCentering();

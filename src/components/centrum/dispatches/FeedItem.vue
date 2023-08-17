@@ -16,7 +16,7 @@ import { DISPATCH_STATUS, DispatchStatus } from '~~/gen/ts/resources/dispatch/di
 
 defineProps<{
     activityLength: number;
-    activityItem: DispatchStatus;
+    item: DispatchStatus;
     activityItemIdx: number;
 }>();
 </script>
@@ -31,139 +31,139 @@ defineProps<{
         >
             <div class="w-px bg-gray-200" />
         </div>
-        <template v-if="activityItem.status === DISPATCH_STATUS.NEW">
+        <template v-if="item.status === DISPATCH_STATUS.NEW">
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
                 <NewBoxIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">Dispatch created</p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
-                <Time :value="activityItem.createdAt" />
+                <Time :value="item.createdAt" />
             </span>
         </template>
-        <template v-else-if="activityItem.status === DISPATCH_STATUS.UNASSIGNED">
+        <template v-else-if="item.status === DISPATCH_STATUS.UNASSIGNED">
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
                 <AccountAlertIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
-                Dispatch unassigned by
-                <span class="font-medium text-gray-400">
-                    {{ activityItem.user?.firstname }}, {{ activityItem.user?.lastname }}
+                Dispatch unassigned
+                <span class="font-medium text-gray-400" v-if="item.user">
+                    {{ item.user?.firstname }}, {{ item.user?.lastname }}
                 </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
-                <Time :value="activityItem.createdAt" />
+                <Time :value="item.createdAt" />
             </span>
         </template>
-        <template v-else-if="activityItem.status === DISPATCH_STATUS.UNIT_ASSIGNED">
+        <template v-else-if="item.status === DISPATCH_STATUS.UNIT_ASSIGNED">
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
                 <AccountPlusIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
                 Dispatch assigned
-                <span class="font-medium text-gray-400">
-                    {{ activityItem.user?.firstname }}, {{ activityItem.user?.lastname }}
+                <span class="font-medium text-gray-400" v-if="item.user">
+                    {{ item.user?.firstname }}, {{ item.user?.lastname }}
                 </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
-                <Time :value="activityItem.createdAt" />
+                <Time :value="item.createdAt" />
             </span>
         </template>
-        <template v-else-if="activityItem.status === DISPATCH_STATUS.UNIT_UNASSIGNED">
+        <template v-else-if="item.status === DISPATCH_STATUS.UNIT_UNASSIGNED">
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
                 <AccountRemoveIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
                 Dispatch unassigned
-                <span class="font-medium text-gray-400">
-                    {{ activityItem.user?.firstname }}, {{ activityItem.user?.lastname }}
+                <span class="font-medium text-gray-400" v-if="item.user">
+                    {{ item.user?.firstname }}, {{ item.user?.lastname }}
                 </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
-                <Time :value="activityItem.createdAt" />
+                <Time :value="item.createdAt" />
             </span>
         </template>
-        <template v-else-if="activityItem.status === DISPATCH_STATUS.EN_ROUTE">
+        <template v-else-if="item.status === DISPATCH_STATUS.EN_ROUTE">
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
                 <CarIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
                 En Route to Dispatch
-                <span class="font-medium text-gray-400">
-                    {{ activityItem.user?.firstname }}, {{ activityItem.user?.lastname }}
+                <span class="font-medium text-gray-400" v-if="item.user">
+                    {{ item.user?.firstname }}, {{ item.user?.lastname }}
                 </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
-                <Time :value="activityItem.createdAt" />
+                <Time :value="item.createdAt" />
             </span>
         </template>
-        <template v-else-if="activityItem.status === DISPATCH_STATUS.ON_SCENE">
+        <template v-else-if="item.status === DISPATCH_STATUS.ON_SCENE">
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
                 <MapMarkerIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
                 Arrived on scene at Dispatch
-                <span class="font-medium text-gray-400">
-                    {{ activityItem.user?.firstname }}, {{ activityItem.user?.lastname }}
+                <span class="font-medium text-gray-400" v-if="item.user">
+                    {{ item.user?.firstname }}, {{ item.user?.lastname }}
                 </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
-                <Time :value="activityItem.createdAt" />
+                <Time :value="item.createdAt" />
             </span>
         </template>
-        <template v-else-if="activityItem.status === DISPATCH_STATUS.NEED_ASSISTANCE">
+        <template v-else-if="item.status === DISPATCH_STATUS.NEED_ASSISTANCE">
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
                 <HelpIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
                 Need Assistance
-                <span class="font-medium text-gray-400">
-                    {{ activityItem.user?.firstname }}, {{ activityItem.user?.lastname }}
+                <span class="font-medium text-gray-400" v-if="item.user">
+                    {{ item.user?.firstname }}, {{ item.user?.lastname }}
                 </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
-                <Time :value="activityItem.createdAt" />
+                <Time :value="item.createdAt" />
             </span>
         </template>
-        <template v-else-if="activityItem.status === DISPATCH_STATUS.COMPLETED">
+        <template v-else-if="item.status === DISPATCH_STATUS.COMPLETED">
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
                 <CheckIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
                 Dispatch completed
-                <span class="font-medium text-gray-400">
-                    {{ activityItem.user?.firstname }}, {{ activityItem.user?.lastname }}
+                <span class="font-medium text-gray-400" v-if="item.user">
+                    {{ item.user?.firstname }}, {{ item.user?.lastname }}
                 </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
-                <Time :value="activityItem.createdAt" />
+                <Time :value="item.createdAt" />
             </span>
         </template>
-        <template v-else-if="activityItem.status === DISPATCH_STATUS.CANCELLED">
+        <template v-else-if="item.status === DISPATCH_STATUS.CANCELLED">
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
                 <AccountCancelIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
-                Dispatch cancelled by
-                <span class="font-medium text-gray-400">
-                    {{ activityItem.user?.firstname }}, {{ activityItem.user?.lastname }}
+                Dispatch cancelled
+                <span class="font-medium text-gray-400" v-if="item.user">
+                    {{ item.user?.firstname }}, {{ item.user?.lastname }}
                 </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
-                <Time :value="activityItem.createdAt" />
+                <Time :value="item.createdAt" />
             </span>
         </template>
-        <template v-else-if="activityItem.status === DISPATCH_STATUS.ARCHIVED">
+        <template v-else-if="item.status === DISPATCH_STATUS.ARCHIVED">
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
                 <ArchiveIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
-                Dispatch archived by
-                <span class="font-medium text-gray-400">
-                    {{ activityItem.user?.firstname }}, {{ activityItem.user?.lastname }}
+                Dispatch archived
+                <span class="font-medium text-gray-400" v-if="item.user">
+                    {{ item.user?.firstname }}, {{ item.user?.lastname }}
                 </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
-                <Time :value="activityItem.createdAt" />
+                <Time :value="item.createdAt" />
             </span>
         </template>
     </li>

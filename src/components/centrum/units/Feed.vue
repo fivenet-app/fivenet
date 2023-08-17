@@ -58,7 +58,7 @@ async function listUnitActivity(): Promise<UnitStatus[]> {
                             v-for="(activityItem, activityItemIdx) in activity"
                             :key="activityItem.id.toString()"
                             :activityLength="activity?.length ?? 0"
-                            :activityItem="activityItem"
+                            :item="activityItem"
                             :activityItemIdx="activityItemIdx"
                         />
                     </ul>

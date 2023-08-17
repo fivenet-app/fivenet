@@ -105,7 +105,7 @@ const referenceManagerData = ref<Map<bigint, DocumentReference>>(new Map());
 const currentReferences = ref<Readonly<DocumentReference>[]>([]);
 watch(currentReferences, () => currentReferences.value.forEach((e) => referenceManagerData.value.set(e.id!, e)));
 
-let entriesCategory = [] as Category[];
+const entriesCategory = ref<Category[]>([]);
 const queryCategory = ref('');
 const selectedCategory = ref<Category | undefined>(undefined);
 
@@ -227,7 +227,7 @@ onMounted(async () => {
             const template = response.template;
             doc.value.title = template?.contentTitle!;
             doc.value.content = template?.content!;
-            selectedCategory.value = entriesCategory.find((e) => e.id === template?.category?.id);
+            selectedCategory.value = template?.category;
 
             if (template?.contentAccess) {
                 const docAccess = template?.contentAccess!;
@@ -278,7 +278,7 @@ onMounted(async () => {
                     closed: boolean;
                 };
                 doc.value.state = document.state;
-                selectedCategory.value = entriesCategory.find((e) => e.id === document.category?.id);
+                selectedCategory.value = document.category;
                 isPublic.value = document.public;
 
                 const refs = await $grpc.getDocStoreClient().getDocumentReferences(req);
@@ -401,7 +401,8 @@ async function findCategories(): Promise<void> {
             });
             const { response } = await call;
 
-            entriesCategory = response.categories;
+            entriesCategory.value = response.categories;
+            if (selectedCategory.value) entriesCategory.value.push(selectedCategory.value);
 
             return res();
         } catch (e) {
@@ -528,7 +529,7 @@ async function submitForm(): Promise<void> {
             const call = $grpc.getDocStoreClient().createDocument(req);
             const { response } = await call;
 
-            const promises = new Promise<any[]>();
+            const promises: Promise<any>[] = [];
             referenceManagerData.value.forEach((ref) => {
                 ref.sourceDocumentId = response.documentId;
 

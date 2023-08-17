@@ -201,8 +201,9 @@ func (s *Tracker) refreshUserLocations(ctx context.Context) error {
 		if _, ok := markers[job]; !ok {
 			markers[job] = xsync.NewIntegerMapOf[int32, *livemap.UserMarker]()
 		}
-		if dest[i].Marker.IconColor == "" {
-			dest[i].Marker.IconColor = users.DefaultLivemapMarkerColor
+		if dest[i].Marker.Color == nil {
+			defaultColor := users.DefaultLivemapMarkerColor
+			dest[i].Marker.Color = &defaultColor
 		}
 
 		userId := dest[i].User.UserId

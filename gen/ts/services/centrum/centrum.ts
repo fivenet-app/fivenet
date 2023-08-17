@@ -312,28 +312,6 @@ export interface ListDispatchActivityResponse {
     activity: DispatchStatus[];
 }
 /**
- * @generated from protobuf message services.centrum.TakeDispatchRequest
- */
-export interface TakeDispatchRequest {
-    /**
-     * @generated from protobuf field: repeated uint64 dispatch_ids = 1;
-     */
-    dispatchIds: bigint[];
-    /**
-     * @generated from protobuf field: services.centrum.TAKE_DISPATCH_RESP resp = 2;
-     */
-    resp: TAKE_DISPATCH_RESP;
-    /**
-     * @generated from protobuf field: optional string reason = 3;
-     */
-    reason?: string;
-}
-/**
- * @generated from protobuf message services.centrum.TakeDispatchResponse
- */
-export interface TakeDispatchResponse {
-}
-/**
  * @generated from protobuf message services.centrum.JoinUnitRequest
  */
 export interface JoinUnitRequest {
@@ -354,6 +332,28 @@ export interface JoinUnitResponse {
      * @generated from protobuf field: resources.dispatch.Unit unit = 1;
      */
     unit?: Unit;
+}
+/**
+ * @generated from protobuf message services.centrum.TakeDispatchRequest
+ */
+export interface TakeDispatchRequest {
+    /**
+     * @generated from protobuf field: repeated uint64 dispatch_ids = 1;
+     */
+    dispatchIds: bigint[];
+    /**
+     * @generated from protobuf field: services.centrum.TAKE_DISPATCH_RESP resp = 2;
+     */
+    resp: TAKE_DISPATCH_RESP;
+    /**
+     * @generated from protobuf field: optional string reason = 3;
+     */
+    reason?: string;
+}
+/**
+ * @generated from protobuf message services.centrum.TakeDispatchResponse
+ */
+export interface TakeDispatchResponse {
 }
 /**
  * @generated from protobuf message services.centrum.LatestState
@@ -824,30 +824,6 @@ class ListDispatchActivityResponse$Type extends MessageType<ListDispatchActivity
  */
 export const ListDispatchActivityResponse = new ListDispatchActivityResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class TakeDispatchRequest$Type extends MessageType<TakeDispatchRequest> {
-    constructor() {
-        super("services.centrum.TakeDispatchRequest", [
-            { no: 1, name: "dispatch_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/, options: { "validate.rules": { repeated: { minItems: "1" } } } },
-            { no: 2, name: "resp", kind: "enum", T: () => ["services.centrum.TAKE_DISPATCH_RESP", TAKE_DISPATCH_RESP], options: { "validate.rules": { enum: { definedOnly: true } } } },
-            { no: 3, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } }
-        ]);
-    }
-}
-/**
- * @generated MessageType for protobuf message services.centrum.TakeDispatchRequest
- */
-export const TakeDispatchRequest = new TakeDispatchRequest$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class TakeDispatchResponse$Type extends MessageType<TakeDispatchResponse> {
-    constructor() {
-        super("services.centrum.TakeDispatchResponse", []);
-    }
-}
-/**
- * @generated MessageType for protobuf message services.centrum.TakeDispatchResponse
- */
-export const TakeDispatchResponse = new TakeDispatchResponse$Type();
-// @generated message type with reflection information, may provide speed optimized methods
 class JoinUnitRequest$Type extends MessageType<JoinUnitRequest> {
     constructor() {
         super("services.centrum.JoinUnitRequest", [
@@ -872,6 +848,30 @@ class JoinUnitResponse$Type extends MessageType<JoinUnitResponse> {
  * @generated MessageType for protobuf message services.centrum.JoinUnitResponse
  */
 export const JoinUnitResponse = new JoinUnitResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class TakeDispatchRequest$Type extends MessageType<TakeDispatchRequest> {
+    constructor() {
+        super("services.centrum.TakeDispatchRequest", [
+            { no: 1, name: "dispatch_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/, options: { "validate.rules": { repeated: { minItems: "1" } } } },
+            { no: 2, name: "resp", kind: "enum", T: () => ["services.centrum.TAKE_DISPATCH_RESP", TAKE_DISPATCH_RESP], options: { "validate.rules": { enum: { definedOnly: true } } } },
+            { no: 3, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.centrum.TakeDispatchRequest
+ */
+export const TakeDispatchRequest = new TakeDispatchRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class TakeDispatchResponse$Type extends MessageType<TakeDispatchResponse> {
+    constructor() {
+        super("services.centrum.TakeDispatchResponse", []);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.centrum.TakeDispatchResponse
+ */
+export const TakeDispatchResponse = new TakeDispatchResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class LatestState$Type extends MessageType<LatestState> {
     constructor() {

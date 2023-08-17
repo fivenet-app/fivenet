@@ -3,7 +3,7 @@ BEGIN;
 -- Table: fivenet_job_props
 CREATE TABLE IF NOT EXISTS `fivenet_job_props` (
   `job` varchar(20) NOT NULL,
-  `updated_at` datetime(3) DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `updated_at` datetime(3) DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP(3),
   `theme` varchar(20) DEFAULT "default",
   `livemap_marker_color` char(6) DEFAULT "5C7AFF",
   `quick_buttons` varchar(255) DEFAULT NULL,

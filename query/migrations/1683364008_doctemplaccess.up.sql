@@ -3,8 +3,8 @@ BEGIN;
 -- Table: fivenet_documents_templates_job_access
 CREATE TABLE IF NOT EXISTS `fivenet_documents_templates_job_access` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP,
-  `updated_at` datetime(3) DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP(3),
+  `updated_at` datetime(3) DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP(3),
   `deleted_at` datetime(3) DEFAULT NULL,
   `template_id` bigint(20) unsigned NOT NULL,
   `job` varchar(20) NOT NULL,

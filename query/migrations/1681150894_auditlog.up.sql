@@ -3,7 +3,7 @@ BEGIN;
 -- Table: fivenet_audit_log
 CREATE TABLE IF NOT EXISTS `fivenet_audit_log` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP,
+  `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP(3),
   `user_id` int(11) NOT NULL,
   `user_job` varchar(20) NOT NULL,
   `target_user_id` int(11) DEFAULT NULL,

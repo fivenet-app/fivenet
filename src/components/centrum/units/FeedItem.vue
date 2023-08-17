@@ -5,7 +5,7 @@ import { UNIT_STATUS, UnitStatus } from '~~/gen/ts/resources/dispatch/units';
 
 defineProps<{
     activityLength: number;
-    activityItem: UnitStatus;
+    item: UnitStatus;
     activityItemIdx: number;
 }>();
 </script>
@@ -20,97 +20,101 @@ defineProps<{
         >
             <div class="w-px bg-gray-200" />
         </div>
-        <template v-if="activityItem.status === UNIT_STATUS.UNKNOWN">
+        <template v-if="item.status === UNIT_STATUS.UNKNOWN">
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
                 <HelpIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">Unit created</p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
-                <Time :value="activityItem.createdAt" />
+                <Time :value="item.createdAt" />
             </span>
         </template>
-        <template v-else-if="activityItem.status === UNIT_STATUS.USER_ADDED">
+        <template v-else-if="item.status === UNIT_STATUS.USER_ADDED">
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
                 <AccountPlusIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
-                Colleague added to Unit
-                <span class="font-medium text-gray-400">
-                    {{ activityItem.user?.firstname }}, {{ activityItem.user?.lastname }}
+                Member added to Unit
+
+                <span class="font-medium text-gray-400" v-if="item.user">
+                    {{ item.user?.firstname }}, {{ item.user?.lastname }}
                 </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
-                <Time :value="activityItem.createdAt" />
+                <Time :value="item.createdAt" />
             </span>
         </template>
-        <template v-else-if="activityItem.status === UNIT_STATUS.USER_REMOVED">
+        <template v-else-if="item.status === UNIT_STATUS.USER_REMOVED">
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
                 <AccountRemoveIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
-                Colleague removed from Unit
-                <span class="font-medium text-gray-400">
-                    {{ activityItem.user?.firstname }}, {{ activityItem.user?.lastname }}
+                Member removed from Unit
+                <span class="font-medium text-gray-400" v-if="item.user">
+                    {{ item.user?.firstname }}, {{ item.user?.lastname }}
                 </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
-                <Time :value="activityItem.createdAt" />
+                <Time :value="item.createdAt" />
             </span>
         </template>
-        <template v-else-if="activityItem.status === UNIT_STATUS.UNAVAILABLE">
+        <template v-else-if="item.status === UNIT_STATUS.UNAVAILABLE">
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
                 <StopIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
                 Unit unavailable
-                <span class="font-medium text-gray-400">
-                    {{ activityItem.user?.firstname }}, {{ activityItem.user?.lastname }}
+                <span class="font-medium text-gray-400" v-if="item.user">
+                    {{ item.user?.firstname }}, {{ item.user?.lastname }}
                 </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
-                <Time :value="activityItem.createdAt" />
+                <Time :value="item.createdAt" />
             </span>
         </template>
-        <template v-else-if="activityItem.status === UNIT_STATUS.AVAILABLE">
+        <template v-else-if="item.status === UNIT_STATUS.AVAILABLE">
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
                 <PlayIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
                 Unit available
-                <span class="font-medium text-gray-400">
-                    {{ activityItem.user?.firstname }}, {{ activityItem.user?.lastname }}
+
+                <span class="font-medium text-gray-400" v-if="item.user">
+                    {{ item.user?.firstname }}, {{ item.user?.lastname }}
                 </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
-                <Time :value="activityItem.createdAt" />
+                <Time :value="item.createdAt" />
             </span>
         </template>
-        <template v-else-if="activityItem.status === UNIT_STATUS.ON_BREAK">
+        <template v-else-if="item.status === UNIT_STATUS.ON_BREAK">
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
                 <CoffeeIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
                 Unit on break
-                <span class="font-medium text-gray-400">
-                    {{ activityItem.user?.firstname }}, {{ activityItem.user?.lastname }}
+
+                <span class="font-medium text-gray-400" v-if="item.user">
+                    {{ item.user?.firstname }}, {{ item.user?.lastname }}
                 </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
-                <Time :value="activityItem.createdAt" />
+                <Time :value="item.createdAt" />
             </span>
         </template>
-        <template v-else-if="activityItem.status === UNIT_STATUS.BUSY">
+        <template v-else-if="item.status === UNIT_STATUS.BUSY">
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
                 <BriefcaseIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
                 Unit busy
-                <span class="font-medium text-gray-400">
-                    {{ activityItem.user?.firstname }}, {{ activityItem.user?.lastname }}
+
+                <span class="font-medium text-gray-400" v-if="item.user">
+                    {{ item.user?.firstname }}, {{ item.user?.lastname }}
                 </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
-                <Time :value="activityItem.createdAt" />
+                <Time :value="item.createdAt" />
             </span>
         </template>
     </li>

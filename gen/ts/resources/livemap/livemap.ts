@@ -6,15 +6,36 @@ import { Unit } from "../dispatch/units.js";
 import { UserShort } from "../users/users.js";
 import { Timestamp } from "../timestamp/timestamp.js";
 /**
+ * @generated from protobuf message resources.livemap.ManualMarker
+ */
+export interface ManualMarker {
+    /**
+     * @generated from protobuf field: resources.livemap.MARKER_TYPE type = 1;
+     */
+    type: MARKER_TYPE;
+    /**
+     * @generated from protobuf oneof: marker
+     */
+    marker: {
+        oneofKind: "circle";
+        /**
+         * @generated from protobuf field: resources.livemap.CircleMarker circle = 2;
+         */
+        circle: CircleMarker;
+    } | {
+        oneofKind: undefined;
+    };
+}
+/**
  * @generated from protobuf message resources.livemap.GenericMarker
  */
 export interface GenericMarker {
     /**
-     * @generated from protobuf field: int32 id = 1;
+     * @generated from protobuf field: uint64 id = 1;
      */
-    id: number;
+    id: bigint;
     /**
-     * @generated from protobuf field: resources.timestamp.Timestamp updated_at = 2;
+     * @generated from protobuf field: optional resources.timestamp.Timestamp updated_at = 2;
      */
     updatedAt?: Timestamp;
     /**
@@ -30,17 +51,17 @@ export interface GenericMarker {
      */
     name: string;
     /**
-     * @generated from protobuf field: string icon = 6;
+     * @generated from protobuf field: optional string popup = 6;
      */
-    icon: string;
+    popup?: string;
     /**
-     * @generated from protobuf field: string icon_color = 7;
+     * @generated from protobuf field: optional string color = 7;
      */
-    iconColor: string;
+    color?: string;
     /**
-     * @generated from protobuf field: string popup = 8;
+     * @generated from protobuf field: optional string icon = 8;
      */
-    popup: string;
+    icon?: string;
 }
 /**
  * @generated from protobuf message resources.livemap.DispatchMarker
@@ -72,17 +93,34 @@ export interface UserMarker {
      */
     marker?: GenericMarker;
     /**
-     * @generated from protobuf field: resources.users.UserShort user = 2;
+     * @generated from protobuf field: int32 user_id = 2;
+     */
+    userId: number;
+    /**
+     * @generated from protobuf field: resources.users.UserShort user = 3;
      */
     user?: UserShort; // @gotags: alias:"user"
     /**
-     * @generated from protobuf field: optional uint64 unit_id = 3;
+     * @generated from protobuf field: optional uint64 unit_id = 4;
      */
     unitId?: bigint;
     /**
-     * @generated from protobuf field: optional resources.dispatch.Unit unit = 4;
+     * @generated from protobuf field: optional resources.dispatch.Unit unit = 5;
      */
     unit?: Unit;
+}
+/**
+ * @generated from protobuf message resources.livemap.CircleMarker
+ */
+export interface CircleMarker {
+    /**
+     * @generated from protobuf field: resources.livemap.GenericMarker marker = 1;
+     */
+    marker?: GenericMarker;
+    /**
+     * @generated from protobuf field: int32 radius = 2;
+     */
+    radius: number;
 }
 /**
  * @generated from protobuf enum resources.livemap.MARKER_TYPE
@@ -93,30 +131,43 @@ export enum MARKER_TYPE {
      */
     GENERIC = 0,
     /**
-     * @generated from protobuf enum value: USER = 1;
+     * @generated from protobuf enum value: DISPATCH = 1;
      */
-    USER = 1,
+    DISPATCH = 1,
     /**
-     * @generated from protobuf enum value: DISPATCH = 2;
+     * @generated from protobuf enum value: USER = 2;
      */
-    DISPATCH = 2,
+    USER = 2,
     /**
      * @generated from protobuf enum value: CIRCLE = 3;
      */
     CIRCLE = 3
 }
 // @generated message type with reflection information, may provide speed optimized methods
+class ManualMarker$Type extends MessageType<ManualMarker> {
+    constructor() {
+        super("resources.livemap.ManualMarker", [
+            { no: 1, name: "type", kind: "enum", T: () => ["resources.livemap.MARKER_TYPE", MARKER_TYPE] },
+            { no: 2, name: "circle", kind: "message", oneof: "marker", T: () => CircleMarker }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.livemap.ManualMarker
+ */
+export const ManualMarker = new ManualMarker$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class GenericMarker$Type extends MessageType<GenericMarker> {
     constructor() {
         super("resources.livemap.GenericMarker", [
-            { no: 1, name: "id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
             { no: 2, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "x", kind: "scalar", T: 1 /*ScalarType.DOUBLE*/ },
             { no: 4, name: "y", kind: "scalar", T: 1 /*ScalarType.DOUBLE*/ },
             { no: 5, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 6, name: "icon", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 7, name: "icon_color", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 8, name: "popup", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+            { no: 6, name: "popup", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 7, name: "color", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 8, name: "icon", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
         ]);
     }
 }
@@ -144,9 +195,10 @@ class UserMarker$Type extends MessageType<UserMarker> {
     constructor() {
         super("resources.livemap.UserMarker", [
             { no: 1, name: "marker", kind: "message", T: () => GenericMarker },
-            { no: 2, name: "user", kind: "message", T: () => UserShort },
-            { no: 3, name: "unit_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 4, name: "unit", kind: "message", T: () => Unit }
+            { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
+            { no: 3, name: "user", kind: "message", T: () => UserShort },
+            { no: 4, name: "unit_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 5, name: "unit", kind: "message", T: () => Unit }
         ]);
     }
 }
@@ -154,3 +206,16 @@ class UserMarker$Type extends MessageType<UserMarker> {
  * @generated MessageType for protobuf message resources.livemap.UserMarker
  */
 export const UserMarker = new UserMarker$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class CircleMarker$Type extends MessageType<CircleMarker> {
+    constructor() {
+        super("resources.livemap.CircleMarker", [
+            { no: 1, name: "marker", kind: "message", T: () => GenericMarker },
+            { no: 2, name: "radius", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.livemap.CircleMarker
+ */
+export const CircleMarker = new CircleMarker$Type();

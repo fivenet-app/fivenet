@@ -13,7 +13,7 @@ import {
 } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { watchDebounced } from '@vueuse/core';
-import { CarEmergencyIcon, CheckIcon } from 'mdi-vue3';
+import { CheckIcon, CloseIcon } from 'mdi-vue3';
 import { Unit } from '~~/gen/ts/resources/dispatch/units';
 import { UserShort } from '~~/gen/ts/resources/users/users';
 
@@ -87,6 +87,7 @@ watchDebounced(queryUser, async () => await findChars(), {
     debounce: 500,
     maxWait: 1250,
 });
+
 onMounted(async () => {
     findChars();
 });
@@ -95,127 +96,147 @@ onMounted(async () => {
 <template>
     <TransitionRoot as="template" :show="open">
         <Dialog as="div" class="relative z-10" @close="$emit('close')">
-            <TransitionChild
-                as="template"
-                enter="ease-out duration-300"
-                enter-from="opacity-0"
-                enter-to="opacity-100"
-                leave="ease-in duration-200"
-                leave-from="opacity-100"
-                leave-to="opacity-0"
-            >
-                <div class="fixed inset-0 transition-opacity bg-opacity-75 bg-base-900" />
-            </TransitionChild>
+            <div class="fixed inset-0" />
 
-            <div class="fixed inset-0 z-10 overflow-y-auto">
-                <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-                    <TransitionChild
-                        as="template"
-                        enter="ease-out duration-300"
-                        enter-from="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                        enter-to="opacity-100 translate-y-0 sm:scale-100"
-                        leave="ease-in duration-200"
-                        leave-from="opacity-100 translate-y-0 sm:scale-100"
-                        leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                    >
-                        <DialogPanel
-                            class="relative px-4 pt-5 pb-4 overflow-hidden text-left transition-all transform rounded-lg bg-base-850 text-neutral sm:my-8 sm:w-full sm:max-w-6xl sm:p-6"
+            <div class="fixed inset-0 overflow-hidden">
+                <div class="absolute inset-0 overflow-hidden">
+                    <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-2xl pl-10 sm:pl-16">
+                        <TransitionChild
+                            as="template"
+                            enter="transform transition ease-in-out duration-150 sm:duration-300"
+                            enter-from="translate-x-full"
+                            enter-to="translate-x-0"
+                            leave="transform transition ease-in-out duration-150 sm:duration-300"
+                            leave-from="translate-x-0"
+                            leave-to="translate-x-full"
                         >
-                            <div>
-                                <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-base-800">
-                                    <CarEmergencyIcon class="h-6 w-6 text-primary-500" aria-hidden="true" />
-                                </div>
-                                <div class="mt-3 text-center sm:mt-5">
-                                    <DialogTitle as="h3" class="text-base font-semibold leading-6">
-                                        Assign Users to Unit
-                                    </DialogTitle>
-                                    <div class="mt-2">
-                                        <div class="my-2 space-y-24">
-                                            <div class="flex-1 form-control">
-                                                <label for="message" class="block text-sm font-medium leading-6 text-neutral">
-                                                    {{ $t('common.unit', 2) }}
-                                                </label>
-                                                <div class="grid grid-cols-4 gap-4">
-                                                    <Combobox as="div" v-model="selectedUsers" multiple nullable>
-                                                        <div class="relative">
-                                                            <ComboboxButton as="div">
-                                                                <ComboboxInput
-                                                                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                                    @change="queryUser = $event.target.value"
-                                                                    :display-value="
-                                                                        (chars: any) =>
-                                                                            chars ? charsGetDisplayValue(chars) : 'N/A'
-                                                                    "
-                                                                    :placeholder="$t('common.user', 2)"
-                                                                />
-                                                            </ComboboxButton>
+                            <DialogPanel class="pointer-events-auto w-screen max-w-3xl">
+                                <form class="flex h-full flex-col divide-y divide-gray-200 bg-gray-900 shadow-xl">
+                                    <div class="h-0 flex-1 overflow-y-auto">
+                                        <div class="bg-primary-700 px-4 py-6 sm:px-6">
+                                            <div class="flex items-center justify-between">
+                                                <DialogTitle class="text-base font-semibold leading-6 text-white">
+                                                    Assign Users to Unit
+                                                </DialogTitle>
+                                                <div class="ml-3 flex h-7 items-center">
+                                                    <button
+                                                        type="button"
+                                                        class="rounded-md bg-gray-100 text-gray-500 hover:text-gray-400 focus:outline-none focus:ring-2 focus:ring-white"
+                                                        @click="$emit('close')"
+                                                    >
+                                                        <span class="sr-only">{{ $t('common.close') }}</span>
+                                                        <CloseIcon class="h-6 w-6" aria-hidden="true" />
+                                                    </button>
+                                                </div>
+                                            </div>
+                                            <div class="mt-1">
+                                                <p class="text-sm text-primary-300">TODO</p>
+                                            </div>
+                                        </div>
+                                        <div class="flex flex-1 flex-col justify-between">
+                                            <div class="divide-y divide-gray-200 px-4 sm:px-6">
+                                                <div class="mt-1">
+                                                    <div class="my-2 space-y-24">
+                                                        <div class="flex-1 form-control">
+                                                            <Combobox as="div" v-model="selectedUsers" multiple nullable>
+                                                                <div class="relative">
+                                                                    <ComboboxButton as="div">
+                                                                        <ComboboxInput
+                                                                            class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                                            @change="queryUser = $event.target.value"
+                                                                            :display-value="
+                                                                                (chars: any) =>
+                                                                                    chars ? charsGetDisplayValue(chars) : 'N/A'
+                                                                            "
+                                                                            :placeholder="$t('common.user', 2)"
+                                                                        />
+                                                                    </ComboboxButton>
 
-                                                            <ComboboxOptions
-                                                                v-if="entriesUsers.length > 0"
-                                                                class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-44 sm:text-sm"
-                                                            >
-                                                                <ComboboxOption
-                                                                    v-for="char in entriesUsers"
-                                                                    :key="char?.userId"
-                                                                    :value="char"
-                                                                    as="char"
-                                                                    v-slot="{ active, selected }"
-                                                                >
-                                                                    <li
-                                                                        :class="[
-                                                                            'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
-                                                                            active ? 'bg-primary-500' : '',
-                                                                        ]"
+                                                                    <ComboboxOptions
+                                                                        v-if="entriesUsers.length > 0"
+                                                                        class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-44 sm:text-sm"
                                                                     >
-                                                                        <span
-                                                                            :class="[
-                                                                                'block truncate',
-                                                                                selected && 'font-semibold',
-                                                                            ]"
+                                                                        <ComboboxOption
+                                                                            v-for="user in entriesUsers"
+                                                                            :key="user?.userId"
+                                                                            :value="user"
+                                                                            as="char"
+                                                                            v-slot="{ active, selected }"
                                                                         >
-                                                                            {{ char?.firstname }}
-                                                                            {{ char?.lastname }}
-                                                                        </span>
+                                                                            <li
+                                                                                :class="[
+                                                                                    'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
+                                                                                    active ? 'bg-primary-500' : '',
+                                                                                ]"
+                                                                            >
+                                                                                <span
+                                                                                    :class="[
+                                                                                        'block truncate',
+                                                                                        selected && 'font-semibold',
+                                                                                    ]"
+                                                                                >
+                                                                                    {{ user?.firstname }}
+                                                                                    {{ user?.lastname }}
+                                                                                </span>
 
-                                                                        <span
-                                                                            v-if="selected"
-                                                                            :class="[
-                                                                                active ? 'text-neutral' : 'text-primary-500',
-                                                                                'absolute inset-y-0 left-0 flex items-center pl-1.5',
-                                                                            ]"
-                                                                        >
-                                                                            <CheckIcon class="w-5 h-5" aria-hidden="true" />
-                                                                        </span>
+                                                                                <span
+                                                                                    v-if="selected"
+                                                                                    :class="[
+                                                                                        active
+                                                                                            ? 'text-neutral'
+                                                                                            : 'text-primary-500',
+                                                                                        'absolute inset-y-0 left-0 flex items-center pl-1.5',
+                                                                                    ]"
+                                                                                >
+                                                                                    <CheckIcon
+                                                                                        class="w-5 h-5"
+                                                                                        aria-hidden="true"
+                                                                                    />
+                                                                                </span>
+                                                                            </li>
+                                                                        </ComboboxOption>
+                                                                    </ComboboxOptions>
+                                                                </div>
+                                                            </Combobox>
+                                                            <div class="mt-4">
+                                                                <ul
+                                                                    class="text-sm font-medium max-w-md space-y-1 text-gray-100 list-disc list-inside dark:text-gray-300"
+                                                                >
+                                                                    <li v-for="user in selectedUsers">
+                                                                        {{ user?.firstname }}
+                                                                        {{ user?.lastname }}
                                                                     </li>
-                                                                </ComboboxOption>
-                                                            </ComboboxOptions>
+                                                                </ul>
+                                                            </div>
                                                         </div>
-                                                    </Combobox>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="gap-2 mt-5 sm:mt-4 sm:flex">
-                                <button
-                                    type="button"
-                                    class="flex-1 rounded-md bg-base-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-base-400"
-                                    @click="$emit('close')"
-                                    ref="cancelButtonRef"
-                                >
-                                    {{ $t('common.close', 1) }}
-                                </button>
-                                <button
-                                    type="button"
-                                    class="flex-1 rounded-md bg-primary-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-primary-400"
-                                    @click="assignUnit"
-                                >
-                                    {{ $t('common.update') }}
-                                </button>
-                            </div>
-                        </DialogPanel>
-                    </TransitionChild>
+                                    <div class="flex flex-shrink-0 justify-end px-4 py-4">
+                                        <span class="isolate inline-flex rounded-md shadow-sm pr-4 w-full">
+                                            <button
+                                                type="button"
+                                                class="w-full relative inline-flex items-center rounded-l-md bg-primary-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-primary-400"
+                                                @click="assignUnit"
+                                            >
+                                                {{ $t('common.update') }}
+                                            </button>
+                                            <button
+                                                type="button"
+                                                class="w-full relative -ml-px inline-flex items-center rounded-r-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 hover:text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-10"
+                                                @click="$emit('close')"
+                                                ref="cancelButtonRef"
+                                            >
+                                                {{ $t('common.close', 1) }}
+                                            </button>
+                                        </span>
+                                    </div>
+                                </form>
+                            </DialogPanel>
+                        </TransitionChild>
+                    </div>
                 </div>
             </div>
         </Dialog>

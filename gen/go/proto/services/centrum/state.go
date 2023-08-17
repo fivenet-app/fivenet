@@ -259,13 +259,19 @@ func (s *Server) handleDispatchAssignmentExpiration(ctx context.Context) error {
 	return nil
 }
 
-// Set `COMPLETED`/`CANCELLED` dispatches to status `ARCHIVED` when the `COMPLETED`status is older than 15 minutes
+// Set `COMPLETED`/`CANCELLED` dispatches to status `ARCHIVED` when the status is older than 20 minutes
 func (s *Server) archiveDispatches(ctx context.Context) error {
 	stmt := tDispatchStatus.
 		SELECT(
-			tDispatchStatus.DispatchID,
+			tDispatchStatus.DispatchID.AS("dispatch_id"),
+			tDispatch.Job.AS("job"),
 		).
-		FROM(tDispatchStatus).
+		FROM(
+			tDispatchStatus.
+				INNER_JOIN(tDispatch,
+					tDispatch.ID.EQ(tDispatchStatus.DispatchID),
+				),
+		).
 		WHERE(jet.AND(
 			tDispatchStatus.CreatedAt.LT_EQ(
 				jet.CURRENT_DATE().SUB(jet.INTERVAL(20, jet.MINUTE)),
@@ -276,12 +282,29 @@ func (s *Server) archiveDispatches(ctx context.Context) error {
 			),
 		))
 
-	var dest []uint64
+	var dest []*struct {
+		DispatchID uint64
+		Job        string
+	}
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		return err
 	}
 
-	// TODO add archived status for dispatches and send delete to users
+	for _, ds := range dest {
+
+		dsp, ok := s.getDispatch(ds.Job, ds.DispatchID)
+		if !ok {
+			continue
+		}
+
+		if err := s.updateDispatchStatus(ctx, ds.Job, dsp, &dispatch.DispatchStatus{
+			DispatchId: dsp.Id,
+			Status:     dispatch.DISPATCH_STATUS_ARCHIVED,
+			UserId:     dsp.Status.UserId,
+		}); err != nil {
+			return err
+		}
+	}
 
 	return nil
 }
