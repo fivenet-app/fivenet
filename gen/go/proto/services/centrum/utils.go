@@ -6,7 +6,6 @@ import (
 	dispatch "github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
 	users "github.com/galexrt/fivenet/gen/go/proto/resources/users"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
-	"github.com/galexrt/fivenet/pkg/utils/maps"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/puzpuzpuz/xsync/v2"
@@ -130,7 +129,7 @@ func (s *Server) getDisponents(ctx context.Context, job string) []*users.UserSho
 
 func (s *Server) getDispatchesMap(job string) *xsync.MapOf[uint64, *dispatch.Dispatch] {
 	store, _ := s.dispatches.LoadOrCompute(job, func() *xsync.MapOf[uint64, *dispatch.Dispatch] {
-		return xsync.NewTypedMapOf[uint64, *dispatch.Dispatch](maps.HashUint64)
+		return xsync.NewIntegerMapOf[uint64, *dispatch.Dispatch]()
 	})
 
 	return store
@@ -138,7 +137,7 @@ func (s *Server) getDispatchesMap(job string) *xsync.MapOf[uint64, *dispatch.Dis
 
 func (s *Server) getUnitsMap(job string) *xsync.MapOf[uint64, *dispatch.Unit] {
 	store, _ := s.units.LoadOrCompute(job, func() *xsync.MapOf[uint64, *dispatch.Unit] {
-		return xsync.NewTypedMapOf[uint64, *dispatch.Unit](maps.HashUint64)
+		return xsync.NewIntegerMapOf[uint64, *dispatch.Unit]()
 	})
 
 	return store

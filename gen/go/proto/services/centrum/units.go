@@ -125,15 +125,6 @@ func (s *Server) CreateOrUpdateUnit(ctx context.Context, req *CreateOrUpdateUnit
 
 		req.Unit.Id = uint64(lastId)
 
-		if err := s.updateUnitStatus(ctx, userInfo.Job, &dispatch.UnitStatus{
-			UnitId:    uint64(lastId),
-			Status:    dispatch.UNIT_STATUS_UNKNOWN,
-			UserId:    &userInfo.UserId,
-			CreatorId: &userInfo.UserId,
-		}); err != nil {
-			return nil, err
-		}
-
 		auditEntry.State = int16(rector.EVENT_TYPE_CREATED)
 	} else {
 		stmt := tUnits.
@@ -175,6 +166,18 @@ func (s *Server) CreateOrUpdateUnit(ctx context.Context, req *CreateOrUpdateUnit
 	unit, ok := s.getUnit(userInfo.Job, req.Unit.Id)
 	if !ok {
 		return nil, ErrFailedQuery
+	}
+
+	// A new unit shouldn't have a status, so we make sure it has one
+	if unit.Status == nil {
+		if err := s.updateUnitStatus(ctx, userInfo.Job, unit, &dispatch.UnitStatus{
+			UnitId:    unit.Id,
+			Status:    dispatch.UNIT_STATUS_UNKNOWN,
+			UserId:    &userInfo.UserId,
+			CreatorId: &userInfo.UserId,
+		}); err != nil {
+			return nil, err
+		}
 	}
 
 	data, err := proto.Marshal(unit)
@@ -256,8 +259,7 @@ func (s *Server) UpdateUnitStatus(ctx context.Context, req *UpdateUnitStatusRequ
 		return nil, ErrFailedQuery
 	}
 
-	can := s.ps.Can(userInfo, CentrumServicePerm, CentrumServiceDeleteUnitPerm)
-	if !can {
+	if !s.ps.Can(userInfo, CentrumServicePerm, CentrumServiceDeleteUnitPerm) {
 		if !s.checkIfUserPartOfUnit(userInfo.UserId, unit) {
 			return nil, ErrFailedQuery
 		}
@@ -270,7 +272,7 @@ func (s *Server) UpdateUnitStatus(ctx context.Context, req *UpdateUnitStatusRequ
 		y = &marker.Marker.Y
 	}
 
-	if err := s.updateUnitStatus(ctx, userInfo.Job, &dispatch.UnitStatus{
+	if err := s.updateUnitStatus(ctx, userInfo.Job, unit, &dispatch.UnitStatus{
 		UnitId:    unit.Id,
 		Status:    req.Status,
 		Reason:    req.Reason,
@@ -311,13 +313,6 @@ func (s *Server) AssignUnit(ctx context.Context, req *AssignUnitRequest) (*Assig
 	if err := s.updateUnitAssignments(ctx, userInfo, unit, req.ToAdd, req.ToRemove); err != nil {
 		return nil, err
 	}
-
-	data, err := proto.Marshal(unit)
-	if err != nil {
-		return nil, err
-	}
-	s.events.JS.Publish(s.buildSubject(TopicUnit, TypeUnitUserAssigned, userInfo.Job, 0), data)
-	s.events.JS.Publish(s.buildSubject(TopicUnit, TypeUnitUserAssigned, userInfo.Job, unit.Id), data)
 
 	auditEntry.State = int16(rector.EVENT_TYPE_UPDATED)
 

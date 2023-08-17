@@ -55,6 +55,7 @@ func (s *Server) getUnitStatusFromDB(ctx context.Context, id uint64) (*dispatch.
 			tUnitStatus.UserID,
 			tUnitStatus.X,
 			tUnitStatus.Y,
+			tUnitStatus.CreatorID,
 		).
 		FROM(tUnitStatus).
 		WHERE(
@@ -111,7 +112,7 @@ func (s *Server) getUnitIDForUserID(userId int32) (uint64, bool) {
 	return s.userIDToUnitID.Load(userId)
 }
 
-func (s *Server) updateUnitStatus(ctx context.Context, job string, in *dispatch.UnitStatus) error {
+func (s *Server) updateUnitStatus(ctx context.Context, job string, unit *dispatch.Unit, in *dispatch.UnitStatus) error {
 	tUnitStatus := table.FivenetCentrumUnitsStatus
 	stmt := tUnitStatus.
 		INSERT(
@@ -149,8 +150,9 @@ func (s *Server) updateUnitStatus(ctx context.Context, job string, in *dispatch.
 	if err != nil {
 		return err
 	}
+	unit.Status = status
 
-	data, err := proto.Marshal(status)
+	data, err := proto.Marshal(unit)
 	if err != nil {
 		return err
 	}
@@ -189,9 +191,7 @@ func (s *Server) updateUnitAssignments(ctx context.Context, userInfo *userinfo.U
 		for i := 0; i < len(unit.Users); i++ {
 			for k := len(toRemove) - 1; k >= 0; k-- {
 				if unit.Users[i].UserId == toRemove[k] {
-					unit.Users = utils.RemoveFromSlice(unit.Users, i)
-
-					if err := s.updateUnitStatus(ctx, userInfo.Job, &dispatch.UnitStatus{
+					if err := s.updateUnitStatus(ctx, userInfo.Job, unit, &dispatch.UnitStatus{
 						UnitId:    unit.Id,
 						Status:    dispatch.UNIT_STATUS_USER_REMOVED,
 						UserId:    &toRemove[k],
@@ -200,7 +200,10 @@ func (s *Server) updateUnitAssignments(ctx context.Context, userInfo *userinfo.U
 						return err
 					}
 
+					unit.Users = utils.RemoveFromSlice(unit.Users, i)
 					s.userIDToUnitID.Delete(toRemove[k])
+
+					break
 				}
 			}
 		}
@@ -266,7 +269,7 @@ func (s *Server) updateUnitAssignments(ctx context.Context, userInfo *userinfo.U
 				User:   user,
 			})
 
-			if err := s.updateUnitStatus(ctx, userInfo.Job, &dispatch.UnitStatus{
+			if err := s.updateUnitStatus(ctx, userInfo.Job, unit, &dispatch.UnitStatus{
 				UnitId:    unit.Id,
 				Status:    dispatch.UNIT_STATUS_USER_ADDED,
 				UserId:    &user.UserId,
@@ -288,12 +291,20 @@ func (s *Server) updateUnitAssignments(ctx context.Context, userInfo *userinfo.U
 	if err != nil {
 		return err
 	}
-	s.events.JS.Publish(s.buildSubject(TopicUnit, TypeUnitUserAssigned, userInfo.Job, 0), data)
+
 	s.events.JS.Publish(s.buildSubject(TopicUnit, TypeUnitUpdated, userInfo.Job, unit.Id), data)
+
+	// Send unit user assigned message when needed
+	if len(toAdd) > 0 {
+		s.events.JS.Publish(s.buildSubject(TopicUnit, TypeUnitUserAssigned, userInfo.Job, 0), data)
+	}
+	if len(toRemove) > 0 {
+		s.events.JS.Publish(s.buildSubject(TopicUnit, TypeUnitUserAssigned, userInfo.Job, unit.Id), data)
+	}
 
 	// Unit is empty, set unit status to be unavailable automatically
 	if len(unit.Users) == 0 {
-		if err := s.updateUnitStatus(ctx, userInfo.Job, &dispatch.UnitStatus{
+		if err := s.updateUnitStatus(ctx, userInfo.Job, unit, &dispatch.UnitStatus{
 			UnitId:    unit.Id,
 			Status:    dispatch.UNIT_STATUS_UNAVAILABLE,
 			UserId:    &userInfo.UserId,

@@ -6,11 +6,15 @@ defineProps<{
     unit: Unit;
 }>();
 
+defineEmits<{
+    (e: 'goto', location: { x: number; y: number }): void;
+}>();
+
 const open = ref(false);
 </script>
 
 <template>
-    <Details :open="open" @close="open = false" :unit="unit" />
+    <Details :open="open" @close="open = false" :unit="unit" @goto="$emit('goto', $event)" />
     <li class="col-span-1 flex rounded-md shadow-sm" @click="open = true">
         <div
             class="flex w-12 flex-shrink-0 items-center justify-center rounded-l-md text-sm font-medium text-white border-l border-t border-b"

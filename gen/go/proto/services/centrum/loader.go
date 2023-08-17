@@ -115,7 +115,7 @@ func (s *Server) loadDisponents(ctx context.Context, job string) error {
 func (s *Server) loadUnits(ctx context.Context, id uint64) error {
 	condition := jet.AND(tUnitStatus.ID.IS_NULL().OR(
 		tUnitStatus.ID.EQ(
-			jet.RawInt("SELECT MAX(`unitstatus`.`id`) FROM `fivenet_centrum_units_status` AS `unitstatus` WHERE `unitstatus`.`unit_id` = `unit`.`id` AND `unitstatus`.`status` NOT IN (1, 2)"),
+			jet.RawInt("SELECT MAX(`unitstatus`.`id`) FROM `fivenet_centrum_units_status` AS `unitstatus` WHERE `unitstatus`.`unit_id` = `unit`.`id`"),
 		),
 	))
 
@@ -174,11 +174,11 @@ func (s *Server) loadUnits(ctx context.Context, id uint64) error {
 			return err
 		}
 
+		s.getUnitsMap(units[i].Job).Store(units[i].Id, units[i])
+
 		for _, user := range units[i].Users {
 			s.userIDToUnitID.Store(user.UserId, units[i].Id)
 		}
-
-		s.getUnitsMap(units[i].Job).Store(units[i].Id, units[i])
 	}
 
 	return nil
@@ -212,7 +212,7 @@ func (s *Server) loadUnitIDForUserID(ctx context.Context, userId int32) (uint64,
 func (s *Server) loadDispatches(ctx context.Context, id uint64) error {
 	condition := tDispatchStatus.ID.IS_NULL().OR(
 		tDispatchStatus.ID.EQ(
-			jet.RawInt("SELECT MAX(`dispatchstatus`.`id`) FROM `fivenet_centrum_dispatches_status` AS `dispatchstatus` WHERE `dispatchstatus`.`dispatch_id` = `dispatch`.`id` AND `dispatchstatus`.`status` NOT IN (2, 3, 4, 10)"),
+			jet.RawInt("SELECT MAX(`dispatchstatus`.`id`) FROM `fivenet_centrum_dispatches_status` AS `dispatchstatus` WHERE `dispatchstatus`.`dispatch_id` = `dispatch`.`id` AND `dispatchstatus`.`status` NOT IN (10)"),
 		),
 	)
 

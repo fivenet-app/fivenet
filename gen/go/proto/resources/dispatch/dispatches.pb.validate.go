@@ -271,7 +271,18 @@ func (m *Dispatch) validate(all bool) error {
 	}
 
 	if m.UserId != nil {
-		// no validation rules for UserId
+
+		if m.GetUserId() <= 0 {
+			err := DispatchValidationError{
+				field:  "UserId",
+				reason: "value must be greater than 0",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
 	}
 
 	if m.User != nil {

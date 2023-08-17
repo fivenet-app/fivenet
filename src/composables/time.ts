@@ -1,9 +1,9 @@
-import { UseTimeAgoMessages, UseTimeAgoUnitNamesDefault, useTimeAgo } from '@vueuse/core';
+import { UseTimeAgoMessages, UseTimeAgoOptions, UseTimeAgoUnitNamesDefault, useTimeAgo } from '@vueuse/core';
 
 // Based on https://github.com/vueuse/vueuse/issues/1592#issuecomment-1341786344
 // https://github.com/vueuse/vueuse/issues/1592#issuecomment-1381020982
 
-export function useLocaleTimeAgo(date: Date): ComputedRef<string> {
+export function useLocaleTimeAgo(date: Date, options?: UseTimeAgoOptions<false, any>): ComputedRef<string> {
     const { t } = useI18n();
 
     const I18N_MESSAGES: UseTimeAgoMessages<UseTimeAgoUnitNamesDefault> = {
@@ -40,9 +40,16 @@ export function useLocaleTimeAgo(date: Date): ComputedRef<string> {
         invalid: '',
     };
 
-    return useTimeAgo(date, {
-        fullDateFormatter: (date: Date) => date.toLocaleDateString(),
-        messages: I18N_MESSAGES,
-        updateInterval: 15_000,
-    });
+    if (options === undefined) {
+        options = {
+            updateInterval: 15_000,
+            messages: I18N_MESSAGES,
+            fullDateFormatter: (date: Date) => date.toLocaleDateString(),
+        };
+    } else {
+        options.messages = I18N_MESSAGES;
+        options.fullDateFormatter = (date: Date) => date.toLocaleDateString();
+    }
+
+    return useTimeAgo(date, options);
 }

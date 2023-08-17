@@ -52,8 +52,8 @@ message DeleteUnitResponse {}
 message UpdateUnitStatusRequest {
   uint64 unit_id = 1;
   resources.dispatch.UNIT_STATUS status = 2 [(validate.rules).enum.defined_only = true];
-  optional string reason = 3;
-  optional string code = 4;
+  optional string reason = 3 [(validate.rules).string.max_len = 255];
+  optional string code = 4 [(validate.rules).string.max_len = 20];
 }
 
 message UpdateUnitStatusResponse {}
@@ -137,7 +137,7 @@ enum TAKE_DISPATCH_RESP {
 }
 
 message TakeDispatchRequest {
-  uint64 dispatch_id = 1;
+  repeated uint64 dispatch_ids = 1 [(validate.rules).repeated.min_items = 1];
   TAKE_DISPATCH_RESP resp = 2 [(validate.rules).enum.defined_only = true];
   optional string reason = 3 [(validate.rules).string.max_len = 255];
 }
@@ -173,13 +173,15 @@ message StreamResponse {
     resources.dispatch.Unit unit_assigned = 4;
     resources.dispatch.Unit unit_deleted = 5;
     resources.dispatch.Unit unit_updated = 6;
-    resources.dispatch.UnitStatus unit_status = 7;
+    resources.dispatch.Unit unit_status = 7;
 
-    resources.dispatch.Dispatch dispatch_created = 8;
-    resources.dispatch.Dispatch dispatch_deleted = 9;
+    resources.dispatch.Dispatch dispatch_deleted = 8;
+    resources.dispatch.Dispatch dispatch_created = 9;
     resources.dispatch.Dispatch dispatch_updated = 10;
-    resources.dispatch.DispatchStatus dispatch_status = 11;
+    resources.dispatch.Dispatch dispatch_status = 11;
+
   }
+  optional bool restart = 12;
 }
 
 service CentrumService {

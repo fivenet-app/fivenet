@@ -1201,11 +1201,33 @@ func (m *UpdateUnitStatusRequest) validate(all bool) error {
 	}
 
 	if m.Reason != nil {
-		// no validation rules for Reason
+
+		if utf8.RuneCountInString(m.GetReason()) > 255 {
+			err := UpdateUnitStatusRequestValidationError{
+				field:  "Reason",
+				reason: "value length must be at most 255 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
 	}
 
 	if m.Code != nil {
-		// no validation rules for Code
+
+		if utf8.RuneCountInString(m.GetCode()) > 20 {
+			err := UpdateUnitStatusRequestValidationError{
+				field:  "Code",
+				reason: "value length must be at most 20 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
 	}
 
 	if len(errors) > 0 {
@@ -3524,7 +3546,16 @@ func (m *TakeDispatchRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for DispatchId
+	if len(m.GetDispatchIds()) < 1 {
+		err := TakeDispatchRequestValidationError{
+			field:  "DispatchIds",
+			reason: "value must contain at least 1 item(s)",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if _, ok := TAKE_DISPATCH_RESP_name[int32(m.GetResp())]; !ok {
 		err := TakeDispatchRequestValidationError{
@@ -4610,47 +4641,6 @@ func (m *StreamResponse) validate(all bool) error {
 			}
 		}
 
-	case *StreamResponse_DispatchCreated:
-		if v == nil {
-			err := StreamResponseValidationError{
-				field:  "Change",
-				reason: "oneof value cannot be a typed-nil",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
-
-		if all {
-			switch v := interface{}(m.GetDispatchCreated()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, StreamResponseValidationError{
-						field:  "DispatchCreated",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, StreamResponseValidationError{
-						field:  "DispatchCreated",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetDispatchCreated()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return StreamResponseValidationError{
-					field:  "DispatchCreated",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
 	case *StreamResponse_DispatchDeleted:
 		if v == nil {
 			err := StreamResponseValidationError{
@@ -4686,6 +4676,47 @@ func (m *StreamResponse) validate(all bool) error {
 			if err := v.Validate(); err != nil {
 				return StreamResponseValidationError{
 					field:  "DispatchDeleted",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	case *StreamResponse_DispatchCreated:
+		if v == nil {
+			err := StreamResponseValidationError{
+				field:  "Change",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+		if all {
+			switch v := interface{}(m.GetDispatchCreated()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, StreamResponseValidationError{
+						field:  "DispatchCreated",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, StreamResponseValidationError{
+						field:  "DispatchCreated",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetDispatchCreated()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return StreamResponseValidationError{
+					field:  "DispatchCreated",
 					reason: "embedded message failed validation",
 					cause:  err,
 				}
@@ -4776,6 +4807,10 @@ func (m *StreamResponse) validate(all bool) error {
 
 	default:
 		_ = v // ensures v is used
+	}
+
+	if m.Restart != nil {
+		// no validation rules for Restart
 	}
 
 	if len(errors) > 0 {

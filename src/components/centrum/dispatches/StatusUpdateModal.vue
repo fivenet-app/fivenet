@@ -4,7 +4,7 @@ import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { max, min, required } from '@vee-validate/rules';
 import { CarEmergencyIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
-import { DISPATCH_STATUS, Dispatch } from '../../../../gen/ts/resources/dispatch/dispatches';
+import { DISPATCH_STATUS, Dispatch } from '~~/gen/ts/resources/dispatch/dispatches';
 
 const props = defineProps<{
     open: boolean;

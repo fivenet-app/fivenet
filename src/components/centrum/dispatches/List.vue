@@ -3,14 +3,25 @@ import { Dispatch } from '~~/gen/ts/resources/dispatch/dispatches';
 import { Unit } from '~~/gen/ts/resources/dispatch/units';
 import ListEntry from './ListEntry.vue';
 
-defineProps<{
-    dispatches?: Dispatch[] | null;
-    units: Unit[] | null;
+const props = defineProps<{
+    dispatches: Dispatch[];
+    units: Unit[];
 }>();
 
 defineEmits<{
     (e: 'goto', location: { x: number; y: number }): void;
 }>();
+
+const sortedDispatches = computed(
+    () =>
+        props.dispatches?.sort((a, b) => {
+            if (!b.status) return -1;
+            if (!a.status) return 1;
+            if (a.status < b.status) return -1;
+            if (a.status > b.status) return 1;
+            return 0;
+        }),
+);
 </script>
 
 <template>
@@ -72,7 +83,7 @@ defineEmits<{
                         </thead>
                         <tbody class="divide-y divide-gray-200">
                             <ListEntry
-                                v-for="dispatch in dispatches"
+                                v-for="dispatch in sortedDispatches"
                                 :key="dispatch.id.toString()"
                                 :dispatch="dispatch"
                                 :units="units"

@@ -63,7 +63,7 @@ async function startStream(): Promise<void> {
                 settings.value = resp.change.settings;
             } else if (resp.change.oneofKind === 'disponents') {
                 disponents.value = resp.change.disponents.disponents;
-                // If user is not part of disponents list anymore, we need to restart the stream
+                // If user is not part of disponents list anymore, we need to reset the lists and restart the stream
                 const idx = disponents.value.findIndex((d) => d.userId === activeChar.value?.userId);
                 if (idx === -1) {
                     stopStream();
@@ -96,11 +96,16 @@ async function startStream(): Promise<void> {
                     units.value[idx].users = resp.change.unitUpdated.users;
                 }
             } else if (resp.change.oneofKind === 'unitStatus') {
-                feed.value.unshift(resp.change.unitStatus);
-                const unitId = resp.change.unitStatus.unitId;
-                const idx = units.value.findIndex((u) => u.id === unitId);
-                if (idx > -1) {
-                    units.value[idx].status = resp.change.unitStatus;
+                const id = resp.change.unitStatus.id;
+                let idx = dispatches.value.findIndex((d) => d.id === id);
+                if (idx === -1) {
+                    units.value?.unshift(resp.change.unitStatus);
+                } else {
+                    units.value[idx] = resp.change.unitStatus;
+                }
+
+                if (resp.change.unitStatus.status) {
+                    feed.value.unshift(resp.change.unitStatus.status);
                 }
             } else if (resp.change.oneofKind === 'dispatchCreated') {
                 const id = resp.change.dispatchCreated.id;
@@ -137,14 +142,26 @@ async function startStream(): Promise<void> {
                     dispatches.value[idx].units = resp.change.dispatchUpdated.units;
                 }
             } else if (resp.change.oneofKind === 'dispatchStatus') {
-                feed.value.unshift(resp.change.dispatchStatus);
-                const dispatchId = resp.change.dispatchStatus.dispatchId;
-                const idx = dispatches.value.findIndex((d) => d.id === dispatchId);
-                if (idx > -1) {
-                    dispatches.value[idx].status = resp.change.dispatchStatus;
+                const id = resp.change.dispatchStatus.id;
+                let idx = dispatches.value.findIndex((d) => d.id === id);
+                if (idx === -1) {
+                    dispatches.value?.unshift(resp.change.dispatchStatus);
+                } else {
+                    dispatches.value[idx] = resp.change.dispatchStatus;
+                }
+
+                if (resp.change.dispatchStatus.status) {
+                    feed.value.unshift(resp.change.dispatchStatus.status);
                 }
             } else {
                 console.warn('Centrum: Unknown change received - Kind: ', resp.change.oneofKind, resp.change);
+            }
+
+            if (resp.restart !== undefined && resp.restart) {
+                stopStream();
+                setTimeout(() => {
+                    startStream();
+                }, 250);
             }
         }
     } catch (e) {

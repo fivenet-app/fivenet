@@ -1,8 +1,10 @@
 <script lang="ts" setup>
 import {
+    AccountAlertIcon,
     AccountCancelIcon,
     AccountPlusIcon,
     AccountRemoveIcon,
+    ArchiveIcon,
     CarIcon,
     CheckIcon,
     HelpIcon,
@@ -38,23 +40,9 @@ defineProps<{
                 <Time :value="activityItem.createdAt" />
             </span>
         </template>
-        <template v-else-if="activityItem.status === DISPATCH_STATUS.CANCELLED">
-            <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
-                <AccountCancelIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
-            </div>
-            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
-                Dispatch cancelled by
-                <span class="font-medium text-gray-400">
-                    {{ activityItem.user?.firstname }}, {{ activityItem.user?.lastname }}
-                </span>
-            </p>
-            <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
-                <Time :value="activityItem.createdAt" />
-            </span>
-        </template>
         <template v-else-if="activityItem.status === DISPATCH_STATUS.UNASSIGNED">
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
-                <AccountRemoveIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
+                <AccountAlertIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
                 Dispatch unassigned by
@@ -71,7 +59,21 @@ defineProps<{
                 <AccountPlusIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
-                Dispatch accepted
+                Dispatch assigned
+                <span class="font-medium text-gray-400">
+                    {{ activityItem.user?.firstname }}, {{ activityItem.user?.lastname }}
+                </span>
+            </p>
+            <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
+                <Time :value="activityItem.createdAt" />
+            </span>
+        </template>
+        <template v-else-if="activityItem.status === DISPATCH_STATUS.UNIT_UNASSIGNED">
+            <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
+                <AccountRemoveIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
+            </div>
+            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
+                Dispatch unassigned
                 <span class="font-medium text-gray-400">
                     {{ activityItem.user?.firstname }}, {{ activityItem.user?.lastname }}
                 </span>
@@ -128,6 +130,34 @@ defineProps<{
             </div>
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
                 Dispatch completed
+                <span class="font-medium text-gray-400">
+                    {{ activityItem.user?.firstname }}, {{ activityItem.user?.lastname }}
+                </span>
+            </p>
+            <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
+                <Time :value="activityItem.createdAt" />
+            </span>
+        </template>
+        <template v-else-if="activityItem.status === DISPATCH_STATUS.CANCELLED">
+            <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
+                <AccountCancelIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
+            </div>
+            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
+                Dispatch cancelled by
+                <span class="font-medium text-gray-400">
+                    {{ activityItem.user?.firstname }}, {{ activityItem.user?.lastname }}
+                </span>
+            </p>
+            <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
+                <Time :value="activityItem.createdAt" />
+            </span>
+        </template>
+        <template v-else-if="activityItem.status === DISPATCH_STATUS.ARCHIVED">
+            <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
+                <ArchiveIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
+            </div>
+            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
+                Dispatch archived by
                 <span class="font-medium text-gray-400">
                     {{ activityItem.user?.firstname }}, {{ activityItem.user?.lastname }}
                 </span>

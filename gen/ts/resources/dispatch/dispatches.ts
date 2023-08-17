@@ -234,7 +234,7 @@ class Dispatch$Type extends MessageType<Dispatch> {
             { no: 9, name: "x", kind: "scalar", T: 1 /*ScalarType.DOUBLE*/ },
             { no: 10, name: "y", kind: "scalar", T: 1 /*ScalarType.DOUBLE*/ },
             { no: 11, name: "anon", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
-            { no: 12, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 12, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
             { no: 13, name: "user", kind: "message", T: () => UserShort },
             { no: 14, name: "units", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => DispatchAssignment }
         ]);

@@ -8,7 +8,7 @@ import Details from './Details.vue';
 
 defineProps<{
     dispatch: Dispatch;
-    units: Unit[] | null;
+    units: Unit[];
 }>();
 
 defineEmits<{
@@ -21,7 +21,13 @@ const assignOpen = ref(false);
 
 <template>
     <tr>
-        <Details @close="detailsOpen = false" :dispatch="dispatch" :open="detailsOpen" />
+        <Details
+            @close="detailsOpen = false"
+            :dispatch="dispatch"
+            :units="units"
+            :open="detailsOpen"
+            @goto="$emit('goto', $event)"
+        />
         <AssignDispatchModal @close="assignOpen = false" :dispatch="dispatch" :units="units" :open="assignOpen" />
         <td class="relative whitespace-nowrap py-2 pl-2 text-right text-sm font-medium sm:pr-0 flex flex-row justify-start">
             <button
@@ -60,7 +66,7 @@ const assignOpen = ref(false);
         <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm text-gray-300 sm:pl-0">
             <span v-if="dispatch.units.length === 0" class="italic">{{ $t('enums.centrum.DISPATCH_STATUS.UNASSIGNED') }}</span>
             <span v-else class="mr-1">
-                {{ dispatch.units.map((unit) => (units ?? []).find((u) => u.id === unit.unitId)?.initials).join(', ') }}
+                {{ dispatch.units.map((unit) => unit.unit?.initials ?? 'N/A').join(', ') }}
             </span>
         </td>
         <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm text-gray-300 sm:pl-0">

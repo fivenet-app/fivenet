@@ -316,9 +316,9 @@ export interface ListDispatchActivityResponse {
  */
 export interface TakeDispatchRequest {
     /**
-     * @generated from protobuf field: uint64 dispatch_id = 1;
+     * @generated from protobuf field: repeated uint64 dispatch_ids = 1;
      */
-    dispatchId: bigint;
+    dispatchIds: bigint[];
     /**
      * @generated from protobuf field: services.centrum.TAKE_DISPATCH_RESP resp = 2;
      */
@@ -433,21 +433,21 @@ export interface StreamResponse {
     } | {
         oneofKind: "unitStatus";
         /**
-         * @generated from protobuf field: resources.dispatch.UnitStatus unit_status = 7;
+         * @generated from protobuf field: resources.dispatch.Unit unit_status = 7;
          */
-        unitStatus: UnitStatus;
-    } | {
-        oneofKind: "dispatchCreated";
-        /**
-         * @generated from protobuf field: resources.dispatch.Dispatch dispatch_created = 8;
-         */
-        dispatchCreated: Dispatch;
+        unitStatus: Unit;
     } | {
         oneofKind: "dispatchDeleted";
         /**
-         * @generated from protobuf field: resources.dispatch.Dispatch dispatch_deleted = 9;
+         * @generated from protobuf field: resources.dispatch.Dispatch dispatch_deleted = 8;
          */
         dispatchDeleted: Dispatch;
+    } | {
+        oneofKind: "dispatchCreated";
+        /**
+         * @generated from protobuf field: resources.dispatch.Dispatch dispatch_created = 9;
+         */
+        dispatchCreated: Dispatch;
     } | {
         oneofKind: "dispatchUpdated";
         /**
@@ -457,12 +457,16 @@ export interface StreamResponse {
     } | {
         oneofKind: "dispatchStatus";
         /**
-         * @generated from protobuf field: resources.dispatch.DispatchStatus dispatch_status = 11;
+         * @generated from protobuf field: resources.dispatch.Dispatch dispatch_status = 11;
          */
-        dispatchStatus: DispatchStatus;
+        dispatchStatus: Dispatch;
     } | {
         oneofKind: undefined;
     };
+    /**
+     * @generated from protobuf field: optional bool restart = 12;
+     */
+    restart?: boolean;
 }
 /**
  * @generated from protobuf enum services.centrum.TAKE_DISPATCH_RESP
@@ -594,8 +598,8 @@ class UpdateUnitStatusRequest$Type extends MessageType<UpdateUnitStatusRequest> 
         super("services.centrum.UpdateUnitStatusRequest", [
             { no: 1, name: "unit_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
             { no: 2, name: "status", kind: "enum", T: () => ["resources.dispatch.UNIT_STATUS", UNIT_STATUS], options: { "validate.rules": { enum: { definedOnly: true } } } },
-            { no: 3, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
-            { no: 4, name: "code", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
+            { no: 3, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
+            { no: 4, name: "code", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } }
         ]);
     }
 }
@@ -823,7 +827,7 @@ export const ListDispatchActivityResponse = new ListDispatchActivityResponse$Typ
 class TakeDispatchRequest$Type extends MessageType<TakeDispatchRequest> {
     constructor() {
         super("services.centrum.TakeDispatchRequest", [
-            { no: 1, name: "dispatch_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 1, name: "dispatch_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/, options: { "validate.rules": { repeated: { minItems: "1" } } } },
             { no: 2, name: "resp", kind: "enum", T: () => ["services.centrum.TAKE_DISPATCH_RESP", TAKE_DISPATCH_RESP], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 3, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } }
         ]);
@@ -904,11 +908,12 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
             { no: 4, name: "unit_assigned", kind: "message", oneof: "change", T: () => Unit },
             { no: 5, name: "unit_deleted", kind: "message", oneof: "change", T: () => Unit },
             { no: 6, name: "unit_updated", kind: "message", oneof: "change", T: () => Unit },
-            { no: 7, name: "unit_status", kind: "message", oneof: "change", T: () => UnitStatus },
-            { no: 8, name: "dispatch_created", kind: "message", oneof: "change", T: () => Dispatch },
-            { no: 9, name: "dispatch_deleted", kind: "message", oneof: "change", T: () => Dispatch },
+            { no: 7, name: "unit_status", kind: "message", oneof: "change", T: () => Unit },
+            { no: 8, name: "dispatch_deleted", kind: "message", oneof: "change", T: () => Dispatch },
+            { no: 9, name: "dispatch_created", kind: "message", oneof: "change", T: () => Dispatch },
             { no: 10, name: "dispatch_updated", kind: "message", oneof: "change", T: () => Dispatch },
-            { no: 11, name: "dispatch_status", kind: "message", oneof: "change", T: () => DispatchStatus }
+            { no: 11, name: "dispatch_status", kind: "message", oneof: "change", T: () => Dispatch },
+            { no: 12, name: "restart", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
 }

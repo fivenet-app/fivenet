@@ -121,6 +121,16 @@ let map: L.Map | undefined = undefined;
 
 watch(currentHash, () => window.location.replace(currentHash.value));
 
+const location = ref<{ x: number; y: number }>({ x: 0, y: 0 });
+defineExpose({ location });
+
+watch(location, () => {
+    map?.flyTo([location.value?.x!, location.value?.y!], 5, {
+        animate: true,
+        duration: 0.85,
+    });
+});
+
 watchDebounced(
     isMoving,
     () => {
@@ -399,6 +409,12 @@ watchDebounced(postalQuery, () => findPostal(), {
     debounce: 250,
     maxWait: 850,
 });
+
+function goto(e: { x: number; y: number }) {
+    if (map) {
+        location.value = { x: e.x, y: e.y };
+    }
+}
 </script>
 
 <style>
@@ -649,7 +665,7 @@ watchDebounced(postalQuery, () => findPostal(), {
                 </LControl>
             </LMap>
             <div v-if="can('CentrumService.Stream')" class="lg:inset-y-0 lg:flex lg:w-50 lg:flex-col">
-                <CentrumSidebar />
+                <CentrumSidebar @goto="goto($event)" />
             </div>
         </div>
     </div>

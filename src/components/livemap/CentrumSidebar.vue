@@ -27,6 +27,11 @@ import { Settings } from '~~/gen/ts/resources/dispatch/settings';
 import { UNIT_STATUS, Unit, UnitStatus } from '~~/gen/ts/resources/dispatch/units';
 import { UserShort } from '~~/gen/ts/resources/users/users';
 import JoinUnit from './centrum/JoinUnit.vue';
+import TakeDispatch from './centrum/TakeDispatch.vue';
+
+defineEmits<{
+    (e: 'goto', location: { x: number; y: number }): void;
+}>();
 
 const { $grpc } = useNuxtApp();
 
@@ -41,6 +46,7 @@ const ownUnit = ref<Unit>();
 const units = ref<Unit[]>([]);
 const dispatches = ref<Dispatch[]>([]);
 const feed = ref<(DispatchStatus | UnitStatus)[]>([]);
+const takeDispatches = ref<Dispatch[]>([]);
 
 const actionsDispatch: {
     icon: DefineComponent;
@@ -70,6 +76,78 @@ const actionsUnit: {
     { icon: markRaw(ListStatusIcon), name: 'Update Status', class: 'bg-base-800' },
 ];
 
+function checkIfUnitAssignedToDispatch(dsp: Dispatch, unit?: Unit): boolean {
+    if (unit === undefined) return false;
+
+    return dsp.units.findIndex((d) => d.unitId === unit.id) > -1;
+}
+
+function addOrUpdateUnit(unit: Unit): void {
+    const idx = units.value?.findIndex((d) => d.id === unit.id) ?? -1;
+    if (idx === -1) {
+        units.value?.unshift(unit);
+    } else {
+        units.value[idx].job = unit.job;
+        units.value[idx].createdAt = unit.createdAt;
+        units.value[idx].updatedAt = unit.updatedAt;
+        units.value[idx].name = unit.name;
+        units.value[idx].initials = unit.initials;
+        units.value[idx].color = unit.color;
+        units.value[idx].description = unit.description;
+        units.value[idx].status = unit.status;
+        units.value[idx].users = unit.users;
+    }
+}
+
+function addOrUpdateDispatch(dispatch: Dispatch): void {
+    const idx = dispatches.value?.findIndex((d) => d.id === dispatch.id) ?? -1;
+    if (idx === -1) {
+        dispatches.value?.unshift(dispatch);
+    } else {
+        dispatches.value[idx].createdAt = dispatch.createdAt;
+        dispatches.value[idx].updatedAt = dispatch.updatedAt;
+        dispatches.value[idx].job = dispatch.job;
+        dispatches.value[idx].status = dispatch.status;
+        dispatches.value[idx].message = dispatch.message;
+        dispatches.value[idx].description = dispatch.description;
+        dispatches.value[idx].attributes = dispatch.attributes;
+        dispatches.value[idx].x = dispatch.x;
+        dispatches.value[idx].y = dispatch.y;
+        dispatches.value[idx].anon = dispatch.anon;
+        dispatches.value[idx].userId = dispatch.userId;
+        dispatches.value[idx].user = dispatch.user;
+        if (dispatch.units.length == 0) {
+            dispatches.value[idx].units.length = 0;
+        } else {
+            dispatches.value[idx].units = dispatch.units;
+        }
+    }
+}
+
+function removeUnit(unit: Unit): void {
+    const idx = units.value?.findIndex((d) => d.id === unit.id) ?? -1;
+    if (idx > -1) {
+        units.value?.splice(idx, 1);
+    }
+
+    // User's unit has been deleted, reset it
+    if (ownUnit.value !== undefined && ownUnit.value.id === unit.id) {
+        ownUnit.value = undefined;
+    }
+}
+
+function removeDispatchFromList(id: bigint): void {
+    const idx = dispatches.value?.findIndex((d) => d.id === id) ?? -1;
+    if (idx > -1) {
+        dispatches.value?.splice(idx, 1);
+    }
+
+    const tDIdx = takeDispatches.value.findIndex((d) => d.id === id);
+    if (tDIdx > -1) {
+        takeDispatches.value.splice(tDIdx, 1);
+    }
+}
+
 const abort = ref<AbortController | undefined>();
 const error = ref<string | null>(null);
 async function startStream(): Promise<void> {
@@ -97,7 +175,11 @@ async function startStream(): Promise<void> {
 
             if (resp.change.oneofKind === 'latestState') {
                 settings.value = resp.change.latestState.settings;
-                ownUnit.value = resp.change.latestState.unit;
+                if (resp.change.latestState.unit !== undefined) {
+                    ownUnit.value = resp.change.latestState.unit;
+                } else {
+                    ownUnit.value = undefined;
+                }
                 units.value = resp.change.latestState.units;
                 dispatches.value = resp.change.latestState.dispatches;
             } else if (resp.change.oneofKind === 'settings') {
@@ -105,7 +187,8 @@ async function startStream(): Promise<void> {
             } else if (resp.change.oneofKind === 'disponents') {
                 disponents.value = resp.change.disponents.disponents;
             } else if (resp.change.oneofKind === 'unitAssigned') {
-                if (resp.change.unitAssigned.id !== ownUnit.value?.id) {
+                if (ownUnit.value !== undefined && resp.change.unitAssigned.id !== ownUnit.value?.id) {
+                    console.warn('Received unit user assigned event for other unit'), resp.change.unitAssigned;
                     continue;
                 }
 
@@ -130,35 +213,24 @@ async function startStream(): Promise<void> {
                     });
                 }
             } else if (resp.change.oneofKind === 'unitDeleted') {
-                const id = resp.change.unitDeleted.id;
-                const idx = units.value?.findIndex((d) => d.id === id) ?? -1;
-                if (idx > -1) {
-                    units.value?.splice(idx, 1);
-                }
+                removeUnit(resp.change.unitDeleted);
             } else if (resp.change.oneofKind === 'unitUpdated') {
-                const id = resp.change.unitUpdated.id;
-                const idx = units.value?.findIndex((d) => d.id === id) ?? -1;
-                if (idx === -1) {
-                    units.value?.unshift(resp.change.unitUpdated);
-                } else {
-                    units.value[idx].job = resp.change.unitUpdated.job;
-                    units.value[idx].createdAt = resp.change.unitUpdated.createdAt;
-                    units.value[idx].updatedAt = resp.change.unitUpdated.updatedAt;
-                    units.value[idx].name = resp.change.unitUpdated.name;
-                    units.value[idx].initials = resp.change.unitUpdated.initials;
-                    units.value[idx].color = resp.change.unitUpdated.color;
-                    units.value[idx].description = resp.change.unitUpdated.description;
-                    units.value[idx].status = resp.change.unitUpdated.status;
-                    units.value[idx].users = resp.change.unitUpdated.users;
-                }
+                addOrUpdateUnit(resp.change.unitUpdated);
             } else if (resp.change.oneofKind === 'unitStatus') {
-                feed.value.unshift(resp.change.unitStatus);
-                const unitId = resp.change.unitStatus.unitId;
-                const unit = units.value.find((u) => u.id === unitId);
+                const id = resp.change.unitStatus.id;
+                const unit = units.value.find((u) => u.id === id);
                 if (unit) {
-                    unit.status = resp.change.unitStatus;
+                    unit.status = resp.change.unitStatus.status;
+                } else {
+                    units.value.push(resp.change.unitStatus);
+                }
+
+                if (resp.change.unitStatus.status) {
+                    feed.value.unshift(resp.change.unitStatus.status);
                 }
             } else if (resp.change.oneofKind === 'dispatchCreated') {
+                if (!checkIfUnitAssignedToDispatch(resp.change.dispatchCreated, ownUnit.value)) continue;
+
                 const id = resp.change.dispatchCreated.id;
                 const idx = dispatches.value?.findIndex((d) => d.id === id) ?? -1;
                 if (idx === -1) {
@@ -167,35 +239,41 @@ async function startStream(): Promise<void> {
                     dispatches.value[idx].units = resp.change.dispatchCreated.units;
                 }
             } else if (resp.change.oneofKind === 'dispatchDeleted') {
-                const id = resp.change.dispatchDeleted.id;
-                const idx = dispatches.value?.findIndex((d) => d.id === id) ?? -1;
-                if (idx > -1) {
-                    dispatches.value?.splice(idx, 1);
-                }
+                removeDispatchFromList(resp.change.dispatchDeleted.id);
             } else if (resp.change.oneofKind === 'dispatchUpdated') {
-                const id = resp.change.dispatchUpdated.id;
-                const idx = dispatches.value?.findIndex((d) => d.id === id) ?? -1;
-                if (idx === -1) {
-                    dispatches.value?.unshift(resp.change.dispatchUpdated);
-                } else {
-                    dispatches.value[idx].createdAt = resp.change.dispatchUpdated.createdAt;
-                    dispatches.value[idx].updatedAt = resp.change.dispatchUpdated.updatedAt;
-                    dispatches.value[idx].job = resp.change.dispatchUpdated.job;
-                    dispatches.value[idx].status = resp.change.dispatchUpdated.status;
-                    dispatches.value[idx].message = resp.change.dispatchUpdated.message;
-                    dispatches.value[idx].description = resp.change.dispatchUpdated.description;
-                    dispatches.value[idx].attributes = resp.change.dispatchUpdated.attributes;
-                    dispatches.value[idx].x = resp.change.dispatchUpdated.x;
-                    dispatches.value[idx].y = resp.change.dispatchUpdated.y;
-                    dispatches.value[idx].anon = resp.change.dispatchUpdated.anon;
-                    dispatches.value[idx].userId = resp.change.dispatchUpdated.userId;
-                    dispatches.value[idx].user = resp.change.dispatchUpdated.user;
-                    dispatches.value[idx].units = resp.change.dispatchUpdated.units;
-                }
+                if (!checkIfUnitAssignedToDispatch(resp.change.dispatchUpdated, ownUnit.value)) continue;
+
+                addOrUpdateDispatch(resp.change.dispatchUpdated);
             } else if (resp.change.oneofKind === 'dispatchStatus') {
-                feed.value.unshift(resp.change.dispatchStatus);
+                const id = resp.change.dispatchStatus.id;
+                let idx = dispatches.value.findIndex((d) => d.id === id);
+                if (idx === -1) {
+                    dispatches.value?.unshift(resp.change.dispatchStatus);
+                } else {
+                    dispatches.value[idx] = resp.change.dispatchStatus;
+                }
+
+                if (resp.change.dispatchStatus.status) {
+                    feed.value.unshift(resp.change.dispatchStatus.status);
+                }
+
+                if (resp.change.dispatchStatus.status?.status === DISPATCH_STATUS.UNIT_ASSIGNED) {
+                    if (ownUnit.value && ownUnit.value.id === resp.change.dispatchStatus.status.unitId) {
+                        takeDispatches.value.push(resp.change.dispatchStatus);
+                    }
+                } else if (resp.change.dispatchStatus.status?.status === DISPATCH_STATUS.UNIT_UNASSIGNED) {
+                    removeDispatchFromList(id);
+                }
+                console.log('takeDispatches', idx, takeDispatches);
             } else {
                 console.warn('Centrum: Unknown change received - Kind: ', resp.change.oneofKind, resp.change);
+            }
+
+            if (resp.restart !== undefined && resp.restart) {
+                stopStream();
+                setTimeout(() => {
+                    startStream();
+                }, 250);
             }
         }
     } catch (e) {
@@ -235,6 +313,8 @@ const unitStatusSelected = ref<UNIT_STATUS | undefined>();
 const activeDispatch = ref<Dispatch | undefined>();
 const dispatchStatusOpen = ref(false);
 const dispatchStatusSelected = ref<DISPATCH_STATUS | undefined>();
+
+const openTakeDispatch = ref(false);
 </script>
 
 <template>
@@ -246,6 +326,12 @@ const dispatchStatusSelected = ref<DISPATCH_STATUS | undefined>();
             :dispatch="activeDispatch"
             :status="dispatchStatusSelected"
         />
+        <TakeDispatch
+            :open="openTakeDispatch"
+            @close="openTakeDispatch = false"
+            :own-unit="ownUnit"
+            :dispatches="takeDispatches"
+        />
     </template>
 
     <div class="h-full flex grow gap-y-5 overflow-y-auto bg-base-600 px-4 py-0.5">
@@ -256,7 +342,6 @@ const dispatchStatusSelected = ref<DISPATCH_STATUS | undefined>();
                         <li>
                             <div v-if="ownUnit">
                                 <button
-                                    v-if="ownUnit"
                                     @click="unitOpen = true"
                                     type="button"
                                     class="text-white bg-info-700 hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-2 text-xs my-0.5"
@@ -381,10 +466,30 @@ const dispatchStatusSelected = ref<DISPATCH_STATUS | undefined>();
                                 <span class="mt-2 truncate">No assigned Dispatches.</span>
                             </button>
                         </li>
-                        <DispatchEntry v-else v-for="dispatch in dispatches" :dispatch="dispatch" />
+                        <DispatchEntry
+                            v-else
+                            v-for="dispatch in dispatches"
+                            :dispatch="dispatch"
+                            :units="units"
+                            @goto="$emit('goto', $event)"
+                        />
                     </ul>
                 </li>
             </ul>
         </nav>
     </div>
+
+    <span class="fixed inline-flex z-90 bottom-2 right-1/2">
+        <span class="flex absolute h-3 w-3 top-0 right-0 -mt-1 -mr-1" v-if="takeDispatches.length > 0">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-error-400 opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-3 w-3 bg-error-500"></span>
+        </span>
+        <button
+            type="button"
+            @click="openTakeDispatch = true"
+            class="flex items-center justify-center w-12 h-12 rounded-full bg-primary-500 shadow-float text-neutral hover:bg-primary-400"
+        >
+            <CarEmergencyIcon class="w-10 h-auto" />
+        </button>
+    </span>
 </template>

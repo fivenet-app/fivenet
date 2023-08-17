@@ -3,7 +3,7 @@ import { Unit } from '~~/gen/ts/resources/dispatch/units';
 import ListEntry from './ListEntry.vue';
 
 const props = defineProps<{
-    units: Unit[] | null;
+    units: Unit[];
 }>();
 
 defineEmits<{
@@ -33,7 +33,12 @@ const sortedUnits = computed(
             <div class="-mx-2 -my-2 sm:-mx-6 lg:-mx-8">
                 <div class="inline-block min-w-full py-2 align-middle sm:px-2 lg:px-2">
                     <ul role="list" class="mt-3 grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-2 lg:grid-cols-3">
-                        <ListEntry v-for="unit in sortedUnits" :key="unit.id.toString()" :unit="unit" />
+                        <ListEntry
+                            v-for="unit in sortedUnits"
+                            :key="unit.id.toString()"
+                            :unit="unit"
+                            @goto="$emit('goto', $event)"
+                        />
                     </ul>
                 </div>
             </div>

@@ -58,6 +58,10 @@ func (s *Server) watchForEvents() error {
 				case TopicDispatch:
 					switch tType {
 					case TypeDispatchCreated:
+						fallthrough
+					case TypeDispatchStatus:
+						fallthrough
+					case TypeDispatchUpdated:
 						var dest dispatch.Dispatch
 						if err := proto.Unmarshal(msg.Data, &dest); err != nil {
 							return err
@@ -73,45 +77,10 @@ func (s *Server) watchForEvents() error {
 
 						s.getDispatchesMap(job).Delete(dest.Id)
 
-					case TypeDispatchUpdated:
-						var dest dispatch.Dispatch
-						if err := proto.Unmarshal(msg.Data, &dest); err != nil {
-							return err
-						}
-
-						s.getDispatchesMap(job).Store(dest.Id, &dest)
-
-					case TypeDispatchStatus:
-						var dest dispatch.DispatchStatus
-						if err := proto.Unmarshal(msg.Data, &dest); err != nil {
-							return err
-						}
-
-						dsp, ok := s.getDispatchesMap(job).Load(dest.Id)
-						if ok {
-							dsp.Status = &dest
-						} else {
-							// "Cache/State miss" load from database
-							s.loadDispatches(ctx, dest.DispatchId)
-						}
-
 					}
 
 				case TopicUnit:
 					switch tType {
-					case TypeUnitUserAssigned:
-						var dest dispatch.Unit
-						if err := proto.Unmarshal(msg.Data, &dest); err != nil {
-							return err
-						}
-
-						unit, ok := s.getUnitsMap(job).Load(dest.Id)
-						if ok {
-							unit.Users = dest.Users
-						} else {
-							s.loadUnits(ctx, dest.Id)
-						}
-
 					case TypeUnitDeleted:
 						var dest dispatch.Unit
 						if err := proto.Unmarshal(msg.Data, &dest); err != nil {
@@ -137,12 +106,21 @@ func (s *Server) watchForEvents() error {
 							return err
 						}
 
-						unit, ok := s.getUnitsMap(job).Load(dest.Id)
+						if dest.Status == dispatch.UNIT_STATUS_USER_ADDED {
+							s.userIDToUnitID.Store(*dest.UserId, dest.UnitId)
+						} else if dest.Status == dispatch.UNIT_STATUS_USER_REMOVED {
+							s.userIDToUnitID.Delete(*dest.UserId)
+						}
+
+						unit, ok := s.getUnitsMap(job).Load(dest.UnitId)
 						if ok {
 							unit.Status = &dest
+
 						} else {
 							// "Cache/State miss" load from database
-							s.loadUnits(ctx, dest.UnitId)
+							if err := s.loadUnits(ctx, dest.UnitId); err != nil {
+								s.logger.Error("failed to load unit", zap.Error(err))
+							}
 						}
 					}
 				}
@@ -224,7 +202,9 @@ func (s *Server) housekeeper() {
 				ctx, span := s.tracer.Start(s.ctx, "centrum-housekeeper")
 				defer span.End()
 
-				// TODO handle expired `createdAt` dispatch unit assignments
+				if err := s.handleDispatchAssignmentExpiration(ctx); err != nil {
+					s.logger.Error("failed to handle expired dispatch assignments", zap.Error(err))
+				}
 
 				if err := s.archiveDispatches(ctx); err != nil {
 					s.logger.Error("failed to archive dispatches", zap.Error(err))
@@ -238,6 +218,47 @@ func (s *Server) housekeeper() {
 	}
 }
 
+// TODO handle expired `createdAt` dispatch unit assignments
+func (s *Server) handleDispatchAssignmentExpiration(ctx context.Context) error {
+	stmt := tDispatchUnit.
+		SELECT(
+			tDispatchUnit.DispatchID.AS("dispatch_id"),
+			tDispatchUnit.UnitID.AS("unit_id"),
+			tUnits.Job.AS("job"),
+		).
+		FROM(
+			tDispatchUnit.
+				INNER_JOIN(tUnits,
+					tUnits.ID.EQ(tDispatchUnit.UnitID),
+				),
+		).
+		WHERE(jet.AND(
+			tDispatchUnit.ExpiresAt.LT(jet.NOW()),
+		))
+
+	var dest []*struct {
+		DispatchID uint64
+		UnitID     uint64
+		Job        string
+	}
+	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
+		return err
+	}
+
+	for _, ua := range dest {
+		dsp, ok := s.getDispatch(ua.Job, ua.DispatchID)
+		if !ok {
+			continue
+		}
+
+		if err := s.updateDispatchAssignments(ctx, ua.Job, nil, dsp, nil, []uint64{ua.UnitID}); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 // Set `COMPLETED`/`CANCELLED` dispatches to status `ARCHIVED` when the `COMPLETED`status is older than 15 minutes
 func (s *Server) archiveDispatches(ctx context.Context) error {
 	stmt := tDispatchStatus.
@@ -245,16 +266,22 @@ func (s *Server) archiveDispatches(ctx context.Context) error {
 			tDispatchStatus.DispatchID,
 		).
 		FROM(tDispatchStatus).
-		WHERE(
+		WHERE(jet.AND(
 			tDispatchStatus.CreatedAt.LT_EQ(
 				jet.CURRENT_DATE().SUB(jet.INTERVAL(20, jet.MINUTE)),
 			),
-		)
+			tDispatchStatus.Status.IN(
+				jet.Int16(int16(dispatch.DISPATCH_STATUS_COMPLETED)),
+				jet.Int16(int16(dispatch.DISPATCH_STATUS_CANCELLED)),
+			),
+		))
 
 	var dest []uint64
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		return err
 	}
+
+	// TODO add archived status for dispatches and send delete to users
 
 	return nil
 }

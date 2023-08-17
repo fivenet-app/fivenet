@@ -20,7 +20,7 @@ message Dispatch {
   double x = 9;
   double y = 10;
   optional bool anon = 11;
-  optional int32 user_id = 12;
+  optional int32 user_id = 12 [(validate.rules).int32.gt = 0];;
   optional resources.users.UserShort user = 13;
   repeated DispatchAssignment units = 14;
 }

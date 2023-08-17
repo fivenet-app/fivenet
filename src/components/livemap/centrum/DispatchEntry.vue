@@ -2,9 +2,15 @@
 import { CarEmergencyIcon } from 'mdi-vue3';
 import Details from '~/components/centrum/dispatches/Details.vue';
 import { DISPATCH_STATUS, Dispatch } from '~~/gen/ts/resources/dispatch/dispatches';
+import { Unit } from '~~/gen/ts/resources/dispatch/units';
 
 defineProps<{
     dispatch: Dispatch;
+    units: Unit[];
+}>();
+
+defineEmits<{
+    (e: 'goto', location: { x: number; y: number }): void;
 }>();
 
 const detailsOpen = ref(false);
@@ -23,6 +29,12 @@ const detailsOpen = ref(false);
                 {{ $t(`enums.centrum.DISPATCH_STATUS.${DISPATCH_STATUS[dispatch.status?.status ?? (0 as number)]}`) }}
             </span>
         </button>
-        <Details @close="detailsOpen = false" :dispatch="dispatch" :open="detailsOpen" />
+        <Details
+            @close="detailsOpen = false"
+            :dispatch="dispatch"
+            :open="detailsOpen"
+            @goto="$emit('goto', $event)"
+            :units="units"
+        />
     </li>
 </template>

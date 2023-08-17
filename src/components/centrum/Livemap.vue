@@ -4,6 +4,8 @@ import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { LControl, LControlLayers, LLayerGroup, LMap, LMarker, LPopup, LTileLayer } from '@vue-leaflet/vue-leaflet';
 import { watchDebounced } from '@vueuse/core';
 import L, { LeafletMouseEvent } from 'leaflet';
+import 'leaflet-contextmenu';
+import 'leaflet-contextmenu/dist/leaflet.contextmenu.min.css';
 import 'leaflet/dist/leaflet.css';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -62,6 +64,24 @@ const backgroundColorList = {
     Postal: '#74aace',
 } as const;
 const backgroundColor = ref<ValueOf<typeof backgroundColorList>>(backgroundColorList.Postal);
+
+const mapOptions = {
+    contextmenu: true,
+    contextmenuWidth: 150,
+    contextmenuItems: [
+        {
+            text: 'Copy coordinates',
+            callback: () => alert('Coordinates callback'),
+        },
+    ],
+};
+
+if (can('CentrumService.CreateDispatch')) {
+    mapOptions.contextmenuItems.push({
+        text: 'Create Dispatch',
+        callback: () => alert('Create Dispatch'),
+    });
+}
 
 const zoom = ref(2);
 let center: L.PointExpression = [0, 0];
@@ -144,11 +164,6 @@ async function onMapReady($event: any): Promise<void> {
 
     map.on('moveend', async () => {
         isMoving.value = false;
-    });
-    map.on('contextmenu', (e: LeafletMouseEvent) => {
-        if (!map) return;
-
-        emits('contextmenu', e);
     });
 
     setTimeout(() => {
@@ -417,7 +432,8 @@ watchDebounced(postalQuery, () => findPostal(), {
             :inertia="false"
             :style="{ backgroundColor }"
             @ready="onMapReady($event)"
-            :use-global-leaflet="false"
+            :use-global-leaflet="true"
+            :options="mapOptions"
         >
             <LTileLayer
                 url="/images/livemap/tiles/postal/{z}/{x}/{y}.png"

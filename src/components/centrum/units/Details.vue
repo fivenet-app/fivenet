@@ -14,6 +14,7 @@ defineProps<{
 
 defineEmits<{
     (e: 'close'): void;
+    (e: 'goto', location: { x: number; y: number }): void;
 }>();
 
 const assignOpen = ref(false);
@@ -27,7 +28,7 @@ const statusOpen = ref(false);
 
             <div class="fixed inset-0 overflow-hidden">
                 <div class="absolute inset-0 overflow-hidden">
-                    <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10 sm:pl-16">
+                    <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-7xl pl-10 sm:pl-16">
                         <TransitionChild
                             as="template"
                             enter="transform transition ease-in-out duration-500 sm:duration-700"
@@ -52,14 +53,14 @@ const statusOpen = ref(false);
                                                         class="rounded-md bg-gray-100 text-gray-500 hover:text-gray-400 focus:outline-none focus:ring-2 focus:ring-white"
                                                         @click="$emit('close')"
                                                     >
-                                                        <span class="sr-only">Close panel</span>
+                                                        <span class="sr-only">{{ $t('common.close') }}</span>
                                                         <CloseIcon class="h-6 w-6" aria-hidden="true" />
                                                     </button>
                                                 </div>
                                             </div>
                                             <div class="mt-1">
                                                 <p class="text-sm text-primary-300">
-                                                    Description: {{ unit.description ?? 'N/A' }}
+                                                    {{ $t('common.description') }}: {{ unit.description ?? 'N/A' }}
                                                 </p>
                                             </div>
                                         </div>
@@ -68,7 +69,9 @@ const statusOpen = ref(false);
                                                 <div class="mt-1">
                                                     <dl class="border-b border-white/10 divide-y divide-white/10">
                                                         <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                                            <dt class="text-sm font-medium leading-6 text-white">Status</dt>
+                                                            <dt class="text-sm font-medium leading-6 text-white">
+                                                                {{ $t('common.status') }}
+                                                            </dt>
                                                             <dd
                                                                 class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
                                                             >
@@ -82,7 +85,15 @@ const statusOpen = ref(false);
                                                                     @click="statusOpen = true"
                                                                     class="rounded bg-white/10 px-2 py-1 text-xs font-semibold text-white shadow-sm hover:bg-white/20"
                                                                 >
-                                                                    {{ UNIT_STATUS[unit.status?.status ?? 0] }}
+                                                                    {{
+                                                                        $t(
+                                                                            `enums.centrum.UNIT_STATUS.${
+                                                                                UNIT_STATUS[
+                                                                                    unit.status?.status ?? (0 as number)
+                                                                                ]
+                                                                            }`,
+                                                                        )
+                                                                    }}
                                                                 </button>
                                                             </dd>
                                                         </div>
@@ -108,7 +119,7 @@ const statusOpen = ref(false);
                                                         </div>
                                                         <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                                                             <dt class="text-sm font-medium leading-6 text-white">
-                                                                Status Code
+                                                                {{ $t('common.code') }}
                                                             </dt>
                                                             <dd
                                                                 class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
@@ -117,7 +128,9 @@ const statusOpen = ref(false);
                                                             </dd>
                                                         </div>
                                                         <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                                            <dt class="text-sm font-medium leading-6 text-white">Location</dt>
+                                                            <dt class="text-sm font-medium leading-6 text-white">
+                                                                {{ $t('common.location') }}
+                                                            </dt>
                                                             <dd
                                                                 class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
                                                             >
@@ -125,6 +138,9 @@ const statusOpen = ref(false);
                                                                     v-if="unit.status?.x && unit.status?.y"
                                                                     type="button"
                                                                     class="text-primary-400 hover:text-primary-600"
+                                                                    @click="
+                                                                        $emit('goto', { x: unit.status?.x, y: unit.status?.y })
+                                                                    "
                                                                 >
                                                                     Go to Location
                                                                 </button>
@@ -187,7 +203,7 @@ const statusOpen = ref(false);
                                             class="rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
                                             @click="$emit('close')"
                                         >
-                                            Close
+                                            {{ $t('common.close') }}
                                         </button>
                                     </div>
                                 </form>

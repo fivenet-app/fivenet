@@ -2,9 +2,10 @@ package centrum
 
 import (
 	"context"
+	"time"
 
 	dispatch "github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
-	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
+	"github.com/galexrt/fivenet/gen/go/proto/resources/timestamp"
 	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/pkg/utils/dbutils"
 	"github.com/galexrt/fivenet/query/fivenet/table"
@@ -48,6 +49,7 @@ func (s *Server) getDispatchStatusFromDB(ctx context.Context, id uint64) (*dispa
 		SELECT(
 			tDispatchStatus.ID,
 			tDispatchStatus.CreatedAt,
+			tDispatchStatus.DispatchID,
 			tDispatchStatus.UnitID,
 			tDispatchStatus.Status,
 			tDispatchStatus.Reason,
@@ -111,7 +113,12 @@ func (s *Server) addDispatchStatus(ctx context.Context, tx qrm.DB, status *dispa
 	return nil
 }
 
-func (s *Server) updateDispatchStatus(ctx context.Context, userInfo *userinfo.UserInfo, dsp *dispatch.Dispatch, in *dispatch.DispatchStatus) error {
+func (s *Server) updateDispatchStatus(ctx context.Context, job string, dsp *dispatch.Dispatch, in *dispatch.DispatchStatus) error {
+	userId := jet.NULL
+	if in.UserId != nil && *in.UserId > 0 {
+		userId = jet.Int32(*in.UserId)
+	}
+
 	tDispatchStatus := table.FivenetCentrumDispatchesStatus
 	stmt := tDispatchStatus.
 		INSERT(
@@ -128,7 +135,7 @@ func (s *Server) updateDispatchStatus(ctx context.Context, userInfo *userinfo.Us
 			in.Status,
 			in.Reason,
 			in.Code,
-			in.UserId,
+			userId,
 		)
 
 	res, err := stmt.ExecContext(ctx, s.db)
@@ -145,24 +152,25 @@ func (s *Server) updateDispatchStatus(ctx context.Context, userInfo *userinfo.Us
 	if err != nil {
 		return err
 	}
+	dsp.Status = status
 
-	data, err := proto.Marshal(status)
+	data, err := proto.Marshal(dsp)
 	if err != nil {
 		return err
 	}
 
 	if len(dsp.Units) == 0 {
-		s.events.JS.Publish(s.buildSubject(TopicDispatch, TypeDispatchStatus, userInfo.Job, 0), data)
+		s.events.JS.Publish(s.buildSubject(TopicDispatch, TypeDispatchStatus, job, 0), data)
 	} else {
 		for _, u := range dsp.Units {
-			s.events.JS.Publish(s.buildSubject(TopicDispatch, TypeDispatchStatus, userInfo.Job, u.UnitId), data)
+			s.events.JS.Publish(s.buildSubject(TopicDispatch, TypeDispatchStatus, job, u.UnitId), data)
 		}
 	}
 
 	return nil
 }
 
-func (s *Server) updateDispatchAssignments(ctx context.Context, userInfo *userinfo.UserInfo, dsp *dispatch.Dispatch, toAdd []uint64, toRemove []uint64) error {
+func (s *Server) updateDispatchAssignments(ctx context.Context, job string, userId *int32, dsp *dispatch.Dispatch, toAdd []uint64, toRemove []uint64) error {
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -192,18 +200,18 @@ func (s *Server) updateDispatchAssignments(ctx context.Context, userInfo *userin
 		for i := 0; i < len(dsp.Units); i++ {
 			for k := 0; k < len(toRemove); k++ {
 				if dsp.Units[i].UnitId == toRemove[k] {
-					dsp.Units = utils.RemoveFromSlice(dsp.Units, i)
-
-					if err := s.updateDispatchStatus(ctx, userInfo, dsp, &dispatch.DispatchStatus{
+					if err := s.updateDispatchStatus(ctx, job, dsp, &dispatch.DispatchStatus{
 						DispatchId: dsp.Id,
 						UnitId:     &toRemove[k],
-						UserId:     &userInfo.UserId,
+						UserId:     userId,
 						Status:     dispatch.DISPATCH_STATUS_UNIT_UNASSIGNED,
 					}); err != nil {
 						return ErrFailedQuery
 					}
 
-					continue
+					dsp.Units = utils.RemoveFromSlice(dsp.Units, i)
+
+					break
 				}
 			}
 		}
@@ -215,6 +223,7 @@ func (s *Server) updateDispatchAssignments(ctx context.Context, userInfo *userin
 			addIds[i] = jet.Uint64(toAdd[i])
 		}
 
+		expiresAt := time.Now().Add(16 * time.Second)
 		for _, id := range addIds {
 			stmt := tDispatchUnit.
 				INSERT(
@@ -225,7 +234,7 @@ func (s *Server) updateDispatchAssignments(ctx context.Context, userInfo *userin
 				VALUES(
 					dsp.Id,
 					id,
-					jet.CURRENT_TIMESTAMP().ADD(jet.INTERVAL(16, jet.SECOND)),
+					expiresAt,
 				).
 				ON_DUPLICATE_KEY_UPDATE(
 					tDispatchUnit.ExpiresAt.SET(jet.RawTimestamp("VALUES(`expires_at`)")),
@@ -238,7 +247,7 @@ func (s *Server) updateDispatchAssignments(ctx context.Context, userInfo *userin
 			}
 		}
 
-		needsUpdate := []uint64{}
+		expiresAtTS := timestamp.New(expiresAt)
 		for k := 0; k < len(toAdd); k++ {
 			found := false
 			for i := 0; i < len(dsp.Units); i++ {
@@ -248,30 +257,32 @@ func (s *Server) updateDispatchAssignments(ctx context.Context, userInfo *userin
 				}
 			}
 
-			unit, ok := s.getUnit(userInfo.Job, toAdd[k])
+			unit, ok := s.getUnit(job, toAdd[k])
 			if !ok {
 				return ErrFailedQuery
 			}
 
-			dsp.Units = append(dsp.Units, &dispatch.DispatchAssignment{
-				UnitId:     unit.Id,
-				DispatchId: dsp.Id,
-				Unit:       unit,
-			})
-
-			if !found {
-				needsUpdate = append(needsUpdate, unit.Id)
+			if len(unit.Users) <= 0 {
+				continue
 			}
-		}
 
-		for _, unitId := range needsUpdate {
-			if err := s.updateDispatchStatus(ctx, userInfo, dsp, &dispatch.DispatchStatus{
-				DispatchId: dsp.Id,
-				UnitId:     &unitId,
-				UserId:     &userInfo.UserId,
-				Status:     dispatch.DISPATCH_STATUS_UNIT_ASSIGNED,
-			}); err != nil {
-				return ErrFailedQuery
+			// Only add unit to dispatch if not already assigned
+			if !found {
+				dsp.Units = append(dsp.Units, &dispatch.DispatchAssignment{
+					UnitId:     unit.Id,
+					DispatchId: dsp.Id,
+					Unit:       unit,
+					ExpiresAt:  expiresAtTS,
+				})
+
+				if err := s.updateDispatchStatus(ctx, job, dsp, &dispatch.DispatchStatus{
+					DispatchId: dsp.Id,
+					UnitId:     &unit.Id,
+					UserId:     userId,
+					Status:     dispatch.DISPATCH_STATUS_UNIT_ASSIGNED,
+				}); err != nil {
+					return ErrFailedQuery
+				}
 			}
 		}
 	}
@@ -287,18 +298,18 @@ func (s *Server) updateDispatchAssignments(ctx context.Context, userInfo *userin
 	}
 
 	for i := 0; i < len(toRemove); i++ {
-		s.events.JS.Publish(s.buildSubject(TopicDispatch, TypeDispatchUpdated, userInfo.Job, toRemove[i]), data)
+		s.events.JS.Publish(s.buildSubject(TopicDispatch, TypeDispatchUpdated, job, toRemove[i]), data)
 	}
 	for i := 0; i < len(toAdd); i++ {
-		s.events.JS.Publish(s.buildSubject(TopicDispatch, TypeDispatchUpdated, userInfo.Job, toAdd[i]), data)
+		s.events.JS.Publish(s.buildSubject(TopicDispatch, TypeDispatchUpdated, job, toAdd[i]), data)
 	}
 
 	// Unit is empty, set unit status to be unavailable automatically
 	if len(dsp.Units) <= 0 {
-		if err := s.updateDispatchStatus(ctx, userInfo, dsp, &dispatch.DispatchStatus{
+		if err := s.updateDispatchStatus(ctx, job, dsp, &dispatch.DispatchStatus{
 			DispatchId: dsp.Id,
 			Status:     dispatch.DISPATCH_STATUS_UNASSIGNED,
-			UserId:     &userInfo.UserId,
+			UserId:     userId,
 		}); err != nil {
 			return err
 		}

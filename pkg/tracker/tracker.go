@@ -82,7 +82,7 @@ func New(p Params) *Tracker {
 		c:      p.Enricher,
 
 		usersCache: xsync.NewTypedMapOf[string, *xsync.MapOf[int32, *livemap.UserMarker]](maps.HashString),
-		usersIDs:   xsync.NewTypedMapOf[int32, userInfo](maps.HashInt32),
+		usersIDs:   xsync.NewIntegerMapOf[int32, userInfo](),
 
 		broker: broker,
 
@@ -199,7 +199,7 @@ func (s *Tracker) refreshUserLocations(ctx context.Context) error {
 
 		job := dest[i].User.Job
 		if _, ok := markers[job]; !ok {
-			markers[job] = xsync.NewTypedMapOf[int32, *livemap.UserMarker](maps.HashInt32)
+			markers[job] = xsync.NewIntegerMapOf[int32, *livemap.UserMarker]()
 		}
 		if dest[i].Marker.IconColor == "" {
 			dest[i].Marker.IconColor = users.DefaultLivemapMarkerColor

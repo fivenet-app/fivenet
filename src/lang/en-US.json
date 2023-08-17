@@ -521,7 +521,10 @@
         "join": "Join | Joined",
         "leave": "Leave | Left",
         "message": "Message | Messages",
-        "unknown": "Unknown"
+        "unknown": "Unknown",
+        "code": "Code | Codes",
+        "accept": "Accept | Accepted",
+        "decline": "Decline | Declined"
     },
     "notifications": {
         "clipboard": {

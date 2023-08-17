@@ -66,11 +66,7 @@ func (s *Server) splitSubject(subject string) (string, events.Topic, events.Type
 
 func (s *Server) buildSubject(topic events.Topic, tType events.Type, job string, id uint64) string {
 	format := "%s.%s." + string(topic) + "." + string(tType)
-	if id > 0 {
-		return fmt.Sprintf(format+".%d", BaseSubject, job, id)
-	}
-
-	return fmt.Sprintf(format, BaseSubject, job)
+	return fmt.Sprintf(format+".%d", BaseSubject, job, id)
 }
 
 func (s *Server) broadcastToAllUnits(topic events.Topic, tType events.Type, job string, data []byte) {

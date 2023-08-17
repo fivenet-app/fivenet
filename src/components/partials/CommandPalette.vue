@@ -46,10 +46,7 @@ const query = computed(() => rawQuery.value.replace(/^[@#]/, ''));
 const keys = useMagicKeys({
     passive: false,
     onEventFired(e) {
-        if (
-            ((e.metaKey || e.ctrlKey) && e.key === 'k' && e.type === 'keydown') ||
-            (e.shiftKey && e.key === '/' && e.type === 'keydown')
-        ) {
+        if ((e.metaKey || e.ctrlKey) && e.key === 'k' && e.type === 'keydown') {
             e.preventDefault();
             open.value = true;
         }

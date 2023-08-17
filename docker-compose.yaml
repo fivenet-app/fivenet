@@ -22,6 +22,7 @@ services:
       - "mysqld"
       - "--innodb-ft-min-token-size=2"
       - "--innodb-ft-max-token-size=40"
+      - "--default-time-zone=Europe/Berlin"
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-secret-pw-for-root-user}
       MYSQL_USER: ${MYSQL_USER:-fivenet}

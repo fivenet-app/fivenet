@@ -32,8 +32,7 @@ type Params struct {
 
 func New(p Params) (*Eventus, error) {
 	// Connect to NATS
-	nc, err := nats.Connect(p.Config.NATS.URL, nats.Name("FiveNet"),
-		nats.NoEcho())
+	nc, err := nats.Connect(p.Config.NATS.URL, nats.Name("FiveNet"))
 	if err != nil {
 		return nil, err
 	}

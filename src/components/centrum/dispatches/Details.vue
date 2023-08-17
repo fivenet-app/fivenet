@@ -1,21 +1,26 @@
 <script lang="ts" setup>
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
-import { CloseIcon } from 'mdi-vue3';
+import { AccountIcon, CloseIcon, PencilIcon } from 'mdi-vue3';
 import Time from '~/components/partials/elements/Time.vue';
 import { DISPATCH_STATUS, Dispatch } from '~~/gen/ts/resources/dispatch/dispatches';
+import { Unit } from '~~/gen/ts/resources/dispatch/units';
+import AssignDispatchModal from './AssignDispatchModal.vue';
 import Feed from './Feed.vue';
 import StatusUpdateModal from './StatusUpdateModal.vue';
 
 defineProps<{
     open: boolean;
     dispatch: Dispatch;
+    units: Unit[];
 }>();
 
 defineEmits<{
     (e: 'close'): void;
+    (e: 'goto', location: { x: number; y: number }): void;
 }>();
 
 const statusOpen = ref(false);
+const assignOpen = ref(false);
 </script>
 
 <template>
@@ -25,7 +30,7 @@ const statusOpen = ref(false);
 
             <div class="fixed inset-0 overflow-hidden">
                 <div class="absolute inset-0 overflow-hidden">
-                    <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-full pl-10 sm:pl-16">
+                    <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-7xl pl-10 sm:pl-16">
                         <TransitionChild
                             as="template"
                             enter="transform transition ease-in-out duration-500 sm:duration-700"
@@ -50,14 +55,14 @@ const statusOpen = ref(false);
                                                         class="rounded-md bg-gray-100 text-gray-500 hover:text-gray-400 focus:outline-none focus:ring-2 focus:ring-white"
                                                         @click="$emit('close')"
                                                     >
-                                                        <span class="sr-only">Close panel</span>
+                                                        <span class="sr-only">{{ $t('common.close') }}</span>
                                                         <CloseIcon class="h-6 w-6" aria-hidden="true" />
                                                     </button>
                                                 </div>
                                             </div>
                                             <div class="mt-1">
                                                 <p class="text-sm text-primary-300">
-                                                    Description: {{ dispatch.description ?? 'N/A' }}
+                                                    {{ $t('common.description') }}: {{ dispatch.description ?? 'N/A' }}
                                                 </p>
                                             </div>
                                         </div>
@@ -66,7 +71,9 @@ const statusOpen = ref(false);
                                                 <div class="mt-1">
                                                     <dl class="border-b border-white/10 divide-y divide-white/10">
                                                         <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                                            <dt class="text-sm font-medium leading-6 text-white">Status</dt>
+                                                            <dt class="text-sm font-medium leading-6 text-white">
+                                                                {{ $t('common.status') }}
+                                                            </dt>
                                                             <dd
                                                                 class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
                                                             >
@@ -81,12 +88,16 @@ const statusOpen = ref(false);
                                                                     class="rounded bg-white/10 px-2 py-1 text-xs font-semibold text-white shadow-sm hover:bg-white/20"
                                                                 >
                                                                     {{
-                                                                        DISPATCH_STATUS[
-                                                                            dispatch.status?.status ?? (0 as number)
-                                                                        ]
+                                                                        $t(
+                                                                            `enums.centrum.DISPATCH_STATUS.${
+                                                                                DISPATCH_STATUS[
+                                                                                    dispatch.status?.status ?? (0 as number)
+                                                                                ]
+                                                                            }`,
+                                                                        )
                                                                     }}
                                                                     <span v-if="dispatch.status?.code">
-                                                                        (Code: '{{ dispatch.status.code }}')
+                                                                        ({{ $t('common.code') }}: '{{ dispatch.status.code }}')
                                                                     </span>
                                                                 </button>
                                                             </dd>
@@ -113,12 +124,30 @@ const statusOpen = ref(false);
                                                         </div>
                                                         <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                                                             <dt class="text-sm font-medium leading-6 text-white">
-                                                                Status Code
+                                                                {{ $t('common.code') }}
                                                             </dt>
                                                             <dd
                                                                 class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
                                                             >
                                                                 {{ dispatch.status?.code ?? 'N/A' }}
+                                                            </dd>
+                                                        </div>
+                                                        <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                                                            <dt class="text-sm font-medium leading-6 text-white">
+                                                                {{ $t('common.location') }}
+                                                            </dt>
+                                                            <dd
+                                                                class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
+                                                            >
+                                                                <button
+                                                                    v-if="dispatch.x && dispatch.y"
+                                                                    type="button"
+                                                                    class="text-primary-400 hover:text-primary-600"
+                                                                    @click="$emit('goto', { x: dispatch.x, y: dispatch.y })"
+                                                                >
+                                                                    Go to Location
+                                                                </button>
+                                                                <span v-else>No Location</span>
                                                             </dd>
                                                         </div>
                                                         <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
@@ -138,6 +167,49 @@ const statusOpen = ref(false);
                                                                     {{ dispatch.status?.user?.firstname }}
                                                                     {{ dispatch.status?.user?.lastname }}
                                                                 </NuxtLink>
+                                                            </dd>
+                                                        </div>
+                                                        <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                                                            <dt class="text-sm font-medium leading-6 text-white">Members</dt>
+                                                            <dd
+                                                                class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
+                                                            >
+                                                                <span v-if="dispatch.units.length === 0">No members </span>
+                                                                <ul
+                                                                    v-else
+                                                                    role="list"
+                                                                    class="border divide-y rounded-md divide-base-200 border-base-200"
+                                                                >
+                                                                    <li
+                                                                        v-for="unit in dispatch.units"
+                                                                        class="flex items-center justify-between py-3 pl-3 pr-4 text-sm"
+                                                                    >
+                                                                        <div class="flex items-center flex-1">
+                                                                            <AccountIcon
+                                                                                class="flex-shrink-0 w-5 h-5 text-base-400"
+                                                                                aria-hidden="true"
+                                                                            />
+                                                                            <span class="flex-1 ml-2 truncate">
+                                                                                {{ unit.unit?.name }}
+                                                                                ({{ unit.unit?.initials }})
+                                                                            </span>
+                                                                        </div>
+                                                                    </li>
+                                                                </ul>
+                                                                <AssignDispatchModal
+                                                                    :open="assignOpen"
+                                                                    :dispatch="dispatch"
+                                                                    :units="units"
+                                                                    @close="assignOpen = false"
+                                                                />
+                                                                <button
+                                                                    v-if="can('CentrumService.TakeControl')"
+                                                                    type="button"
+                                                                    @click="assignOpen = true"
+                                                                    class="rounded bg-white/10 px-2 py-1 text-xs font-semibold text-white shadow-sm hover:bg-white/20"
+                                                                >
+                                                                    <PencilIcon class="h-6 w-6" />
+                                                                </button>
                                                             </dd>
                                                         </div>
                                                         <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
@@ -164,7 +236,7 @@ const statusOpen = ref(false);
                                             class="rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
                                             @click="$emit('close')"
                                         >
-                                            Close
+                                            {{ $t('common.close') }}
                                         </button>
                                     </div>
                                 </form>
