@@ -2,6 +2,7 @@
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { digits, max, min, required } from '@vee-validate/rules';
+import { CloseIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import { Dispatch } from '~~/gen/ts/resources/dispatch/dispatches';
 
@@ -100,7 +101,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await createDispa
                                         <div class="bg-primary-700 px-4 py-6 sm:px-6">
                                             <div class="flex items-center justify-between">
                                                 <DialogTitle class="text-base font-semibold leading-6 text-white">
-                                                    Update Unit Status
+                                                    Create Dispatch
                                                 </DialogTitle>
                                                 <div class="ml-3 flex h-7 items-center">
                                                     <button
@@ -212,7 +213,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await createDispa
                                                 type="submit"
                                                 class="w-full relative inline-flex items-center rounded-l-md bg-primary-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-primary-400"
                                             >
-                                                {{ $t('common.update') }}
+                                                {{ $t('common.create') }}
                                             </button>
                                             <button
                                                 type="button"

@@ -3,8 +3,11 @@ import { Combobox, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headl
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { LControl, LControlLayers, LLayerGroup, LMap, LMarker, LPopup, LTileLayer } from '@vue-leaflet/vue-leaflet';
 import { watchDebounced } from '@vueuse/core';
-import L from 'leaflet';
+import L, { LeafletMouseEvent } from 'leaflet';
+import 'leaflet-contextmenu';
+import 'leaflet-contextmenu/dist/leaflet.contextmenu.min.css';
 import 'leaflet/dist/leaflet.css';
+import CreateOrUpdateModal from '~/components/centrum/dispatches/CreateOrUpdateModal.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { useAuthStore } from '~/store/auth';
@@ -15,6 +18,14 @@ import { Job } from '~~/gen/ts/resources/jobs/jobs';
 import { DispatchMarker, UserMarker } from '~~/gen/ts/resources/livemap/livemap';
 import { LivemapperServiceClient } from '~~/gen/ts/services/livemapper/livemap.client';
 import CentrumSidebar from './CentrumSidebar.vue';
+
+defineProps<{
+    enableCentrum?: boolean;
+}>();
+
+const emits = defineEmits<{
+    (e: 'createDispatch', data: any): void;
+}>();
 
 const { $grpc, $loading } = useNuxtApp();
 const userSettingsStore = useUserSettingsStore();
@@ -61,6 +72,26 @@ const backgroundColorList = {
 } as const;
 const backgroundColor = ref<ValueOf<typeof backgroundColorList>>(backgroundColorList.Postal);
 
+interface ContextmenuItem {
+    text: string;
+    callback: (e: LeafletMouseEvent) => void;
+}
+
+const mapOptions = {
+    contextmenu: true,
+    contextmenuWidth: 150,
+    contextmenuItems: [] as ContextmenuItem[],
+};
+
+if (can('CentrumService.CreateDispatch')) {
+    mapOptions.contextmenuItems.push({
+        text: 'Create Dispatch',
+        callback: (e: LeafletMouseEvent) => {
+            createDispatchOpen.value = true;
+        },
+    });
+}
+
 const zoom = ref(2);
 let center: L.PointExpression = [0, 0];
 const attribution = '<a href="http://www.rockstargames.com/V/">Grand Theft Auto V</a>';
@@ -75,40 +106,16 @@ watch(livemapCenterSelectedMarker, () => {
 
 const playerQuery = ref<string>('');
 let playerMarkers: UserMarker[] = [];
-const playerMarkersFiltered = ref<UserMarker[]>([]);
+const playerMarkersFiltered = computed(() =>
+    playerMarkers.filter((m) => (m.user?.firstname + ' ' + m.user?.lastname).includes(playerQuery.value)),
+);
 
 const dispatchQuery = ref<string>('');
 let dispatchMarkers: DispatchMarker[] = [];
-const dispatchMarkersFiltered = ref<DispatchMarker[]>([]);
-
-async function applyPlayerQuery(): Promise<void> {
-    if (playerMarkers) {
-        playerMarkersFiltered.value = playerMarkers.filter((m) =>
-            (m.user?.firstname + ' ' + m.user?.lastname).includes(playerQuery.value),
-        );
-    }
-}
-async function applyDispatchQuery(): Promise<void> {
-    if (dispatchMarkers) {
-        dispatchMarkersFiltered.value = dispatchMarkers.filter(
-            (m) => m.marker?.popup?.includes(dispatchQuery.value) || m.marker?.name.includes(dispatchQuery.value),
-        );
-    }
-}
-
-watchDebounced(
-    playerQuery,
-    async () => {
-        applyPlayerQuery();
-    },
-    { debounce: 600, maxWait: 1750 },
-);
-watchDebounced(
-    dispatchQuery,
-    async () => {
-        applyDispatchQuery();
-    },
-    { debounce: 600, maxWait: 1750 },
+const dispatchMarkersFiltered = computed(() =>
+    dispatchMarkers.filter(
+        (m) => m.marker?.popup?.includes(dispatchQuery.value) || m.marker?.name.includes(dispatchQuery.value),
+    ),
 );
 
 const mouseLat = ref<string>((0).toFixed(3));
@@ -196,6 +203,7 @@ async function onMapReady($event: any): Promise<void> {
     });
 
     map.addEventListener('mousemove', async (event: L.LeafletMouseEvent) => {
+        if (!event.latlng) return;
         mouseLat.value = (Math.round(event.latlng.lat * 100000) / 100000).toFixed(3);
         mouseLong.value = (Math.round(event.latlng.lng * 100000) / 100000).toFixed(3);
     });
@@ -242,8 +250,6 @@ async function startStream(): Promise<void> {
             playerMarkers = resp.users;
             dispatchMarkers = resp.dispatches;
 
-            await applyPlayerQuery();
-            await applyDispatchQuery();
             applySelectedMarkerCentering();
         }
     } catch (e) {
@@ -317,7 +323,7 @@ function getIcon<TType extends 'player' | 'dispatch'>(type: TType, marker: TMark
                 html = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -0.8 16 17.6" fill="${
                     color ? '#' + color : 'currentColor'
                 }" class="w-full h-full">
-                    <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zm.995-14.901a1 1 0 1 0-1.99 0A5.002 5.002 0 0 0 3 6c0 1.098-.5 6-2 7h14c-1.5-1-2-5.902-2-7 0-2.42-1.72-4.44-4.005-4.901z"/>
+                    <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zm.995-14.901a1 1 0 1 0-1.99 0A5.002 5.002 0 0 0 3 6c0 1.098-.5 6-2 7h24c-1.5-1-2-5.902-2-7 0-2.42-1.72-4.44-4.005-4.901z"/>
                 </svg>`;
             }
             break;
@@ -410,7 +416,14 @@ watchDebounced(postalQuery, () => findPostal(), {
     maxWait: 850,
 });
 
+const createOrUpdateModal = ref<InstanceType<typeof CreateOrUpdateModal>>();
+const createDispatchOpen = ref(false);
+
 function goto(e: { x: number; y: number }) {
+    if (createOrUpdateModal.value) {
+        createOrUpdateModal.value.location = { x: e.x, y: e.y };
+    }
+
     if (map) {
         location.value = { x: e.x, y: e.y };
     }
@@ -468,7 +481,8 @@ function goto(e: { x: number; y: number }) {
             style="background-color: rgba(62, 60, 62, 0.5)"
         >
             <DataPendingBlock v-if="!error" :message="$t('components.livemap.starting_datastream')" />
-            <DataErrorBlock v-else="error" :title="$t('components.livemap.failed_datastream')" :retry="startStream" />
+            <DataErrorBlock v-else-if="error" :title="$t('components.livemap.failed_datastream')" :retry="startStream" />
+            <DataPendingBlock v-else-if="!error" :message="$t('components.livemap.paused_datastream')" :paused="true" />
         </div>
 
         <div class="h-full flex flex-row">
@@ -483,7 +497,8 @@ function goto(e: { x: number; y: number }) {
                 :inertia="false"
                 :style="{ backgroundColor }"
                 @ready="onMapReady($event)"
-                :use-global-leaflet="false"
+                :use-global-leaflet="true"
+                :options="mapOptions"
             >
                 <LTileLayer
                     url="/images/livemap/tiles/postal/{z}/{x}/{y}.png"
@@ -664,9 +679,16 @@ function goto(e: { x: number; y: number }) {
                     </div>
                 </LControl>
             </LMap>
-            <div v-if="can('CentrumService.Stream')" class="lg:inset-y-0 lg:flex lg:w-50 lg:flex-col">
+            <div v-if="enableCentrum && can('CentrumService.Stream')" class="lg:inset-y-0 lg:flex lg:w-50 lg:flex-col">
                 <CentrumSidebar @goto="goto($event)" />
             </div>
+            <CreateOrUpdateModal
+                v-if="can('CentrumService.CreateDispatch')"
+                ref="createOrUpdateModal"
+                :open="createDispatchOpen"
+                @close="createDispatchOpen = false"
+                :location="location"
+            />
         </div>
     </div>
 </template>

@@ -2,10 +2,9 @@
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { LeafletMouseEvent } from 'leaflet';
 import { HelpCircleIcon } from 'mdi-vue3';
-import Livemap from '~/components/centrum/Livemap.vue';
-import CreateOrUpdateModal from '~/components/centrum/dispatches/CreateOrUpdateModal.vue';
 import { default as DispatchesList } from '~/components/centrum/dispatches/List.vue';
 import { default as UnitsList } from '~/components/centrum/units/List.vue';
+import Livemap from '~/components/livemap/Livemap.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { useAuthStore } from '~/store/auth';
@@ -208,7 +207,6 @@ onBeforeUnmount(() => {
     stopStream();
 });
 
-const createOrUpdateModal = ref<InstanceType<typeof CreateOrUpdateModal>>();
 const livemapComponent = ref<InstanceType<typeof Livemap>>();
 
 const open = ref(false);
@@ -221,9 +219,6 @@ function livemapCreateDispatch($event: LeafletMouseEvent) {
 }
 
 function goto(e: { x: number; y: number }) {
-    if (createOrUpdateModal.value) {
-        createOrUpdateModal.value.location = { x: e.x, y: e.y };
-    }
     if (livemapComponent.value) {
         livemapComponent.value.location = { x: e.x, y: e.y };
     }
@@ -270,8 +265,6 @@ async function takeControl(): Promise<void> {
                 </button>
             </div>
         </div>
-
-        <CreateOrUpdateModal ref="createOrUpdateModal" :open="open" @close="open = false" :location="location" />
 
         <div class="relative w-full h-full z-0 flex">
             <!-- Left column -->

@@ -274,11 +274,16 @@ func (s *Server) archiveDispatches(ctx context.Context) error {
 		).
 		WHERE(jet.AND(
 			tDispatchStatus.CreatedAt.LT_EQ(
-				jet.CURRENT_DATE().SUB(jet.INTERVAL(20, jet.MINUTE)),
+				jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(20, jet.MINUTE)),
 			),
 			tDispatchStatus.Status.IN(
 				jet.Int16(int16(dispatch.DISPATCH_STATUS_COMPLETED)),
 				jet.Int16(int16(dispatch.DISPATCH_STATUS_CANCELLED)),
+			),
+			tDispatchStatus.ID.IS_NULL().OR(
+				tDispatchStatus.ID.EQ(
+					jet.RawInt("SELECT MAX(`dispatchstatus`.`id`) FROM `fivenet_centrum_dispatches_status` AS `dispatchstatus` WHERE `dispatchstatus`.`dispatch_id` = `dispatch`.`id`"),
+				),
 			),
 		))
 
@@ -291,7 +296,6 @@ func (s *Server) archiveDispatches(ctx context.Context) error {
 	}
 
 	for _, ds := range dest {
-
 		dsp, ok := s.getDispatch(ds.Job, ds.DispatchID)
 		if !ok {
 			continue
@@ -304,6 +308,8 @@ func (s *Server) archiveDispatches(ctx context.Context) error {
 		}); err != nil {
 			return err
 		}
+
+		s.getDispatchesMap(ds.Job).Delete(ds.DispatchID)
 	}
 
 	return nil

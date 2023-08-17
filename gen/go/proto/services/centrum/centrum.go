@@ -302,6 +302,9 @@ func (s *Server) sendLatestState(srv CentrumService_StreamServer, job string, us
 
 	dispatches, err := s.ListDispatches(srv.Context(), &ListDispatchesRequest{
 		OwnOnly: &ownOnly,
+		NotStatus: []dispatch.DISPATCH_STATUS{
+			dispatch.DISPATCH_STATUS_ARCHIVED,
+		},
 	})
 	if err != nil {
 		return 0, isController, err

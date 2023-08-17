@@ -30,7 +30,7 @@ import JoinUnit from './centrum/JoinUnit.vue';
 import TakeDispatch from './centrum/TakeDispatch.vue';
 
 defineEmits<{
-    (e: 'goto', location: { x: number; y: number }): void;
+    (e: 'goto', loc: { x: number; y: number }): void;
 }>();
 
 const { $grpc } = useNuxtApp();
@@ -124,6 +124,13 @@ function addOrUpdateDispatch(dispatch: Dispatch): void {
     }
 }
 
+function addOrUpdateTakenDispatch(dispatch: Dispatch): void {
+    const idx = takeDispatches.value?.findIndex((d) => d.id === dispatch.id) ?? -1;
+    if (idx === -1) {
+        takeDispatches.value?.unshift(dispatch);
+    }
+}
+
 function removeUnit(unit: Unit): void {
     const idx = units.value?.findIndex((d) => d.id === unit.id) ?? -1;
     if (idx > -1) {
@@ -142,6 +149,10 @@ function removeDispatchFromList(id: bigint): void {
         dispatches.value?.splice(idx, 1);
     }
 
+    removeTakenDispatch(id);
+}
+
+function removeTakenDispatch(id: bigint): void {
     const tDIdx = takeDispatches.value.findIndex((d) => d.id === id);
     if (tDIdx > -1) {
         takeDispatches.value.splice(tDIdx, 1);
@@ -259,7 +270,14 @@ async function startStream(): Promise<void> {
 
                 if (resp.change.dispatchStatus.status?.status === DISPATCH_STATUS.UNIT_ASSIGNED) {
                     if (ownUnit.value && ownUnit.value.id === resp.change.dispatchStatus.status.unitId) {
-                        takeDispatches.value.push(resp.change.dispatchStatus);
+                        const assignment = resp.change.dispatchStatus.units.find((u) => u.unitId === ownUnit.value?.id);
+                        // When dispatch has expiration, it needs to be "taken"
+                        console.log(assignment?.expiresAt);
+                        if (assignment?.expiresAt) {
+                            addOrUpdateTakenDispatch(resp.change.dispatchStatus);
+                        } else {
+                            removeTakenDispatch(resp.change.dispatchStatus.id);
+                        }
                     }
                 } else if (
                     resp.change.dispatchStatus.status?.status === DISPATCH_STATUS.UNIT_UNASSIGNED ||
@@ -333,6 +351,7 @@ const openTakeDispatch = ref(false);
             @close="openTakeDispatch = false"
             :own-unit="ownUnit"
             :dispatches="takeDispatches"
+            @goto="$emit('goto', $event)"
         />
     </template>
 
@@ -459,7 +478,7 @@ const openTakeDispatch = ref(false);
                 <li v-if="ownUnit">
                     <div class="text-xs font-semibold leading-6 text-base-200">Your Dispatches</div>
                     <ul role="list" class="-mx-2 mt-2 space-y-1">
-                        <li v-if="!dispatches || dispatches.length === 0">
+                        <li v-if="dispatches.length === 0">
                             <button
                                 type="button"
                                 class="text-white bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-2 text-xs my-0.5"
@@ -481,7 +500,7 @@ const openTakeDispatch = ref(false);
         </nav>
     </div>
 
-    <span class="fixed inline-flex z-90 bottom-2 right-1/2">
+    <span v-if="ownUnit" class="fixed inline-flex z-90 bottom-2 right-1/2">
         <span class="flex absolute h-3 w-3 top-0 right-0 -mt-1 -mr-1" v-if="takeDispatches.length > 0">
             <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-error-400 opacity-75"></span>
             <span class="relative inline-flex rounded-full h-3 w-3 bg-error-500"></span>

@@ -25,7 +25,7 @@ const { activeChar } = storeToRefs(authStore);
     <NotificationProvider>
         <Sidebar>
             <div class="h-full">
-                <Livemap />
+                <Livemap :enable-centrum="true" />
             </div>
         </Sidebar>
         <CommandPalette v-if="activeChar" />

@@ -9,7 +9,7 @@ const props = defineProps<{
 
 defineEmits<{
     (e: 'selected', id: bigint): void;
-    (e: 'goto', location: { x: number; y: number }): void;
+    (e: 'goto', loc: { x: number; y: number }): void;
 }>();
 
 const expiresAt = props.dispatch.units.find((u) => u.expiresAt !== undefined)?.expiresAt;

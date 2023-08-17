@@ -16,7 +16,7 @@ const props = defineProps<{
 
 const emits = defineEmits<{
     (e: 'close'): void;
-    (e: 'goto', location: { x: number; y: number }): void;
+    (e: 'goto', loc: { x: number; y: number }): void;
 }>();
 
 const { $grpc } = useNuxtApp();
@@ -103,13 +103,14 @@ function selectDispatch(id: bigint): void {
                                                             :icon="CarEmergencyIcon"
                                                             :type="$t('common.dispatch', 2)"
                                                         />
-                                                        <TakeDispatchEntry
-                                                            v-else
-                                                            v-for="dispatch in dispatches"
-                                                            :dispatch="dispatch"
-                                                            @selected="selectDispatch(dispatch.id)"
-                                                            @goto="$emit('goto', $event)"
-                                                        />
+                                                        <template v-else>
+                                                            <TakeDispatchEntry
+                                                                v-for="dispatch in dispatches"
+                                                                :dispatch="dispatch"
+                                                                @selected="selectDispatch(dispatch.id)"
+                                                                @goto="$emit('goto', $event)"
+                                                            />
+                                                        </template>
                                                     </dl>
                                                 </div>
                                             </div>

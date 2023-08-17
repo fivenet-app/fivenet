@@ -7,7 +7,7 @@ const props = defineProps<{
 }>();
 
 defineEmits<{
-    (e: 'goto', location: { x: number; y: number }): void;
+    (e: 'goto', loc: { x: number; y: number }): void;
 }>();
 
 const sortedUnits = computed(

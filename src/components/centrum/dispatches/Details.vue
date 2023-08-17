@@ -16,7 +16,7 @@ defineProps<{
 
 defineEmits<{
     (e: 'close'): void;
-    (e: 'goto', location: { x: number; y: number }): void;
+    (e: 'goto', loc: { x: number; y: number }): void;
 }>();
 
 const statusOpen = ref(false);
@@ -30,7 +30,7 @@ const assignOpen = ref(false);
 
             <div class="fixed inset-0 overflow-hidden">
                 <div class="absolute inset-0 overflow-hidden">
-                    <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-7xl pl-10 sm:pl-16">
+                    <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-2xl pl-10 sm:pl-16">
                         <TransitionChild
                             as="template"
                             enter="transform transition ease-in-out duration-150 sm:duration-300"
@@ -40,7 +40,7 @@ const assignOpen = ref(false);
                             leave-from="translate-x-0"
                             leave-to="translate-x-full"
                         >
-                            <DialogPanel class="pointer-events-auto w-screen max-w-3xl">
+                            <DialogPanel class="pointer-events-auto w-screen max-w-2xl">
                                 <form class="flex h-full flex-col divide-y divide-gray-200 bg-gray-900 shadow-xl">
                                     <div class="h-0 flex-1 overflow-y-auto">
                                         <div class="bg-primary-700 px-4 py-6 sm:px-6">
