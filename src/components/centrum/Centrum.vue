@@ -1,7 +1,9 @@
 <script lang="ts" setup>
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
+import { LLayerGroup } from '@vue-leaflet/vue-leaflet';
 import { HelpCircleIcon } from 'mdi-vue3';
 import { default as DispatchesList } from '~/components/centrum/dispatches/List.vue';
+import DispatchMarker from '~/components/centrum/livemap/DispatchMarker.vue';
 import { default as UnitsList } from '~/components/centrum/units/List.vue';
 import Livemap from '~/components/livemap/Livemap.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
@@ -266,7 +268,13 @@ async function takeControl(): Promise<void> {
                         :marker-resize="false"
                         :filter-employee="false"
                         :filter-dispatch="false"
-                    />
+                    >
+                        <template v-slot:default>
+                            <LLayerGroup :name="$t('common.dispatch', 2)" layer-type="overlay" :visible="true">
+                                <DispatchMarker v-for="dispatch in dispatches" :dispatch="dispatch" />
+                            </LLayerGroup>
+                        </template>
+                    </Livemap>
                 </div>
             </div>
 

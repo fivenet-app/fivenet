@@ -12,7 +12,7 @@ const authStore = useAuthStore();
 const { loginError } = storeToRefs(authStore);
 const { loginStart, loginStop, setActiveChar, setPermissions, setAccessToken } = authStore;
 
-const { cookiesEnabled, cookiesEnabledIds, isConsentGiven } = useCookieControl();
+const { cookiesEnabledIds } = useCookieControl();
 
 async function login(values: FormData): Promise<void> {
     return new Promise(async (res, rej) => {
@@ -64,6 +64,10 @@ const { handleSubmit, meta } = useForm<FormData>({
 const onSubmit = handleSubmit(async (values): Promise<void> => await login(values));
 
 const socialLoginEnabled = ref(false);
+if (cookiesEnabledIds.value?.includes('social_login')) {
+    socialLoginEnabled.value = true;
+}
+
 watch(
     () => cookiesEnabledIds.value,
     (current, previous) => {

@@ -12,6 +12,7 @@ const props = defineProps<{
     prefix: string;
     title?: TranslateItem;
     content?: TranslateItem;
+    action?: (id: bigint | string) => void;
 }>();
 
 function copyDocumentIDToClipboard(): void {
@@ -31,7 +32,7 @@ function copyDocumentIDToClipboard(): void {
 <template>
     <div
         class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full text-base-100 bg-base-500"
-        @click="copyDocumentIDToClipboard"
+        @click="action ?? copyDocumentIDToClipboard"
     >
         <FingerprintIcon class="w-5 h-auto" aria-hidden="true" />
         <span class="text-sm font-medium text-base-100">{{ prefix }}-{{ id }}</span>

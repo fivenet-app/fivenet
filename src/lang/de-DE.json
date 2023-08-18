@@ -316,7 +316,6 @@
         "livemap": {
             "starting_datastream": "Starte Livemap Datenstrom...",
             "failed_datastream": "Livemap Datenstrom fehlgeschlagen!",
-            "sent_by": "Gesendet von",
             "center_selected_marker": "Zentriere ausgewählten Marker",
             "paused_datastream": "Livemap Datenstrom pausiert (Fenster nicht im Fokus)."
         },
@@ -521,7 +520,8 @@
         "join": "Beitreten | Beigetreten",
         "leave": "Verlassen | Verlassen",
         "message": "Nachricht | Nachrichten",
-        "unknown": "Unbekannt"
+        "unknown": "Unbekannt",
+        "sent_by": "Gesendet von"
     },
     "notifications": {
         "clipboard": {

@@ -37,6 +37,7 @@ const config = defineNuxtConfig({
         '@nuxtjs/tailwindcss',
         '@vee-validate/nuxt',
         '@dargmuesli/nuxt-cookie-control',
+        '@vueuse/sound/nuxt',
     ],
     devtools: {
         enabled: true,
@@ -131,6 +132,9 @@ const config = defineNuxtConfig({
             },
         },
         plugins: [mkcert()],
+        optimizeDeps: {
+            exclude: ['vue-demi'],
+        },
     },
     css: [
         // Inter font (all weights)
@@ -203,6 +207,11 @@ const config = defineNuxtConfig({
                     targetCookieIds: ['fivenet_oauth2_state', 'fivenet_token'],
                 },
             ],
+        },
+    },
+    sound: {
+        sounds: {
+            scan: true,
         },
     },
 });

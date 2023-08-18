@@ -17,11 +17,10 @@ import { ValueOf } from '~/utils/types';
 import { Job } from '~~/gen/ts/resources/jobs/jobs';
 import { DispatchMarker, UserMarker } from '~~/gen/ts/resources/livemap/livemap';
 import { LivemapperServiceClient } from '~~/gen/ts/services/livemapper/livemap.client';
-import CentrumSidebar from './CentrumSidebar.vue';
+import PlayerMarker from './PlayerMarker.vue';
 
 withDefaults(
     defineProps<{
-        enableCentrum?: boolean;
         centerSelectedMarker?: boolean;
         markerResize?: boolean;
         filterPostals?: boolean;
@@ -140,7 +139,9 @@ let map: L.Map | undefined = undefined;
 watch(currentHash, () => window.location.replace(currentHash.value));
 
 const location = ref<{ x: number; y: number }>({ x: 0, y: 0 });
-defineExpose({ location });
+defineExpose({
+    location,
+});
 
 watch(location, () => {
     map?.flyTo([location.value?.x!, location.value?.y!], 5, {
@@ -302,52 +303,6 @@ async function applySelectedMarkerCentering(): Promise<void> {
     });
 }
 
-type TMarker<TType> = TType extends 'player' ? UserMarker : TType extends 'dispatch' ? DispatchMarker : never;
-
-function getIcon<TType extends 'player' | 'dispatch'>(type: TType, marker: TMarker<TType>): L.DivIcon {
-    let html = '';
-    let color = marker.marker!.color;
-    let iconClass = '';
-    let iconAnchor: L.PointExpression | undefined = undefined;
-    let popupAnchor: L.PointExpression = [0, (livemapMarkerSize.value / 2) * -1];
-
-    switch (type) {
-        case 'player':
-            {
-                if (activeChar.value && (marker as UserMarker).user?.identifier === activeChar.value.identifier)
-                    color = 'FCAB10';
-                iconAnchor = [livemapMarkerSize.value / 2, livemapMarkerSize.value];
-                popupAnchor = [0, livemapMarkerSize.value * -1];
-
-                html = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -0.8 16 17.6" fill="${
-                    color ? '#' + color : 'currentColor'
-                }" class="w-full h-full">
-                    <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/>
-                </svg>`;
-            }
-            break;
-
-        case 'dispatch':
-            {
-                if ((marker as DispatchMarker).active) iconClass = 'animate-dispatch';
-
-                html = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -0.8 16 17.6" fill="${
-                    color ? '#' + color : 'currentColor'
-                }" class="w-full h-full">
-                    <path d="M8 16a2 2 0 0 0 2-2H6a2 2 0 0 0 2 2zm.995-14.901a1 1 0 1 0-1.99 0A5.002 5.002 0 0 0 3 6c0 1.098-.5 6-2 7h24c-1.5-1-2-5.902-2-7 0-2.42-1.72-4.44-4.005-4.901z"/>
-                </svg>`;
-            }
-            break;
-    }
-
-    return new L.DivIcon({
-        html: `<div class="${iconClass}">` + html + '</div>',
-        iconSize: [livemapMarkerSize.value, livemapMarkerSize.value],
-        iconAnchor,
-        popupAnchor,
-    });
-}
-
 onBeforeUnmount(() => {
     stopStream();
     map = undefined;
@@ -457,6 +412,17 @@ function goto(e: { x: number; y: number }) {
     transition: transform 1s ease;
 }
 
+.leaflet-popup-content-wrapper {
+    background-color: #16171a;
+    color: #fff;
+}
+.leaflet-popup-content p {
+    margin: 0.25em 0;
+}
+.leaflet-popup-tip {
+    background-color: #16171a;
+}
+
 .animate-dispatch {
     animation: wiggle 1s infinite;
 }
@@ -557,25 +523,13 @@ function goto(e: { x: number; y: number }) {
                     layer-type="overlay"
                     :visible="true"
                 >
-                    <LMarker
+                    <PlayerMarker
                         v-for="marker in playerMarkersFiltered.filter((p) => p.user?.job === job.name)"
                         :key="marker.marker!.id?.toString()"
-                        :latLng="[marker.marker!.y, marker.marker!.x]"
-                        :name="marker.marker!.name"
-                        :icon="getIcon('player', marker) as L.Icon"
-                        @click="setSelectedMarker(marker.marker!.id)"
-                        :z-index-offset="activeChar && marker.user?.identifier === activeChar.identifier ? 25 : 20"
-                    >
-                        <LPopup
-                            :options="{ closeButton: false }"
-                            :content="`<span class='font-semibold'>${$t('common.employee', 2)} ${
-                                marker.user?.jobLabel
-                            }</span><br><span class='italic'>[${marker.user?.jobGrade}] ${
-                                marker.user?.jobGradeLabel
-                            }</span><br>${marker.user?.firstname} ${marker.user?.lastname}`"
-                        >
-                        </LPopup>
-                    </LMarker>
+                        :marker="marker"
+                        :active-char="activeChar"
+                        @selected="setSelectedMarker(marker.marker!.id)"
+                    />
                 </LLayerGroup>
 
                 <LLayerGroup
@@ -590,7 +544,6 @@ function goto(e: { x: number; y: number }) {
                         :key="marker.marker!.id?.toString()"
                         :latLng="[marker.marker!.y, marker.marker!.x]"
                         :name="marker.marker!.name"
-                        :icon="getIcon('dispatch', marker) as L.Icon"
                         @click="setSelectedMarker(marker.marker!.id)"
                         :z-index-offset="marker.active ? 15 : 10"
                     >
@@ -600,7 +553,7 @@ function goto(e: { x: number; y: number }) {
                                 marker.marker!.popup
                             }<br><span>${
                                 useLocaleTimeAgo(toDate(marker.marker!.updatedAt)!).value
-                            }</span><br><span class='italic'>${$t('components.livemap.sent_by')} ${marker.marker!.name}</span>`"
+                            }</span><br><span class='italic'>${$t('common.sent_by')} ${marker.marker!.name}</span>`"
                         >
                         </LPopup>
                     </LMarker>
@@ -695,9 +648,9 @@ function goto(e: { x: number; y: number }) {
 
                 <slot />
             </LMap>
-            <div v-if="enableCentrum && can('CentrumService.Stream')" class="lg:inset-y-0 lg:flex lg:w-50 lg:flex-col">
-                <CentrumSidebar @goto="goto($event)" />
-            </div>
+
+            <slot name="afterMap" />
+
             <CreateOrUpdateModal
                 v-if="can('CentrumService.CreateDispatch')"
                 ref="createOrUpdateModal"

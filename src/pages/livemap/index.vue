@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import Livemap from '~/components/livemap/Livemap.vue';
+import LivemapHolder from '~/components/livemap/LivemapHolder.vue';
 import CommandPalette from '~/components/partials/CommandPalette.vue';
 import NotificationProvider from '~/components/partials/notification/NotificationProvider.vue';
 import Notificator from '~/components/partials/notification/Notificator.vue';
@@ -25,7 +25,7 @@ const { activeChar } = storeToRefs(authStore);
     <NotificationProvider>
         <Sidebar>
             <div class="h-full">
-                <Livemap :enable-centrum="true" />
+                <LivemapHolder />
             </div>
         </Sidebar>
         <CommandPalette v-if="activeChar" />

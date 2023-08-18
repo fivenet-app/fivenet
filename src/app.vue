@@ -56,6 +56,7 @@ configure({
         de,
     }),
 });
+veeValidateSetLocale(userSettings.locale);
 
 // Cookie Banner Locale handling
 const cookieLocale = ref<Locale>('en');
@@ -67,8 +68,6 @@ switch (userSettings.locale.split('-', 1)[0]) {
         cookieLocale.value = 'en';
         break;
 }
-
-veeValidateSetLocale(userSettings.locale);
 </script>
 
 <template>
