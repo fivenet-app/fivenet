@@ -10,6 +10,7 @@ useHead({
 definePageMeta({
     title: 'common.home',
     requiresAuth: false,
+    showCookieOptions: true,
 });
 
 const authStore = useAuthStore();

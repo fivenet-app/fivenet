@@ -36,6 +36,7 @@ const config = defineNuxtConfig({
         '@nuxtjs/i18n',
         '@nuxtjs/tailwindcss',
         '@vee-validate/nuxt',
+        '@dargmuesli/nuxt-cookie-control',
     ],
     devtools: {
         enabled: true,
@@ -176,6 +177,33 @@ const config = defineNuxtConfig({
     },
     experimental: {
         polyfillVueUseHead: false,
+    },
+    cookieControl: {
+        barPosition: 'bottom-full',
+        closeModalOnClickOutside: true,
+        isControlButtonEnabled: true,
+        colors: {
+            // Tailwind CSS - bg-accent-600
+            modalBackground: '#1f236e',
+            controlButtonBackground: '#1f236e',
+            // Tailwind CSS - bg-accent-600 + bg-accent-100/10
+            controlButtonHoverBackground: '#32357b',
+            controlButtonIconColor: '#fff',
+            controlButtonIconHoverColor: '#fff',
+            modalTextColor: '#fff',
+        },
+        locales: ['en', 'de'],
+        cookies: {
+            necessary: [],
+            optional: [
+                {
+                    name: 'Social Login Cookies',
+                    description: 'Cookies used for FiveNet Social Login functionality.',
+                    id: 'social_login',
+                    targetCookieIds: ['fivenet_oauth2_state', 'fivenet_token'],
+                },
+            ],
+        },
     },
 });
 

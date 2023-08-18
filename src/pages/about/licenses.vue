@@ -12,6 +12,7 @@ useHead({
 definePageMeta({
     title: 'common.licenses',
     requiresAuth: false,
+    showCookieOptions: true,
 });
 
 const licenses = [

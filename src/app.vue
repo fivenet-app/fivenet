@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { Locale } from '@dargmuesli/nuxt-cookie-control/dist/runtime/types';
 import { localize, setLocale as veeValidateSetLocale } from '@vee-validate/i18n';
 import de from '@vee-validate/i18n/dist/locale/de.json';
 import en from '@vee-validate/i18n/dist/locale/en.json';
@@ -56,6 +57,17 @@ configure({
     }),
 });
 
+// Cookie Banner Locale handling
+const cookieLocale = ref<Locale>('en');
+switch (userSettings.locale.split('-', 1)[0]) {
+    case 'de':
+        cookieLocale.value = 'de';
+        break;
+    default:
+        cookieLocale.value = 'en';
+        break;
+}
+
 veeValidateSetLocale(userSettings.locale);
 </script>
 
@@ -68,4 +80,8 @@ veeValidateSetLocale(userSettings.locale);
             }"
         />
     </NuxtLayout>
+    <CookieControl
+        :locale="cookieLocale"
+        v-if="useRoute().meta.showCookieOptions !== undefined && useRoute().meta.showCookieOptions"
+    />
 </template>

@@ -16,7 +16,8 @@
                 "title": "Character Selector"
             },
             "login": {
-                "title": "Login"
+                "title": "Login",
+                "social_login_disabled": "Social login requires you to accept the social login cookies."
             }
         },
         "about": {

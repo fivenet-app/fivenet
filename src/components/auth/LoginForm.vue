@@ -12,6 +12,8 @@ const authStore = useAuthStore();
 const { loginError } = storeToRefs(authStore);
 const { loginStart, loginStop, setActiveChar, setPermissions, setAccessToken } = authStore;
 
+const { cookiesEnabled, cookiesEnabledIds, isConsentGiven } = useCookieControl();
+
 async function login(values: FormData): Promise<void> {
     return new Promise(async (res, rej) => {
         // Start login
@@ -60,6 +62,19 @@ const { handleSubmit, meta } = useForm<FormData>({
 });
 
 const onSubmit = handleSubmit(async (values): Promise<void> => await login(values));
+
+const socialLoginEnabled = ref(false);
+watch(
+    () => cookiesEnabledIds.value,
+    (current, previous) => {
+        if (!previous?.includes('social_login') && current?.includes('social_login')) {
+            socialLoginEnabled.value = true;
+        } else {
+            socialLoginEnabled.value = false;
+        }
+    },
+    { deep: true },
+);
 </script>
 
 <template>
@@ -118,11 +133,24 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await login(value
     </form>
 
     <div class="my-4 space-y-2">
+        <p v-if="!socialLoginEnabled" class="mt-2 text-sm text-error-400">
+            {{ $t('pages.auth.login.social_login_disabled') }}
+        </p>
         <div v-for="prov in providers" class="">
+            <button
+                v-if="!socialLoginEnabled"
+                type="button"
+                class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300"
+                :class="!socialLoginEnabled ? 'disabled' : ''"
+            >
+                {{ prov.label }} {{ $t('common.login') }}
+            </button>
             <NuxtLink
+                v-else
                 :external="true"
                 :to="`/api/oauth2/login/${prov.name}`"
                 class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300"
+                :class="!socialLoginEnabled ? 'disabled' : ''"
             >
                 {{ prov.label }} {{ $t('common.login') }}
             </NuxtLink>

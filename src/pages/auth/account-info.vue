@@ -11,6 +11,7 @@ definePageMeta({
     requiresAuth: true,
     authOnlyToken: true,
     showQuickButtons: false,
+    showCookieOptions: true,
 });
 
 const notifications = useNotificationsStore();

@@ -5,6 +5,7 @@ declare module '#app' {
         permission?: String;
         authOnlyToken?: boolean;
         showQuickButtons?: boolean;
+        showCookieOptions?: boolean;
     }
 }
 

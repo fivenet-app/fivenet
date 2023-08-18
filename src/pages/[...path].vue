@@ -9,6 +9,7 @@ useHead({
 definePageMeta({
     title: 'pages.notfound.title',
     requiresAuth: false,
+    showCookieOptions: true,
 });
 
 const authStore = useAuthStore();

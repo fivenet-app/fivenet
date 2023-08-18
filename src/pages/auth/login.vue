@@ -12,6 +12,7 @@ useHead({
 definePageMeta({
     title: 'pages.auth.login.title',
     requiresAuth: false,
+    showCookieOptions: true,
 });
 
 const authStore = useAuthStore();

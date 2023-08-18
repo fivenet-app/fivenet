@@ -14,6 +14,7 @@ useHead({
 definePageMeta({
     title: 'common.about',
     requiresAuth: false,
+    showCookieOptions: true,
 });
 
 const discordLink = 'https://discord.gg/sWvkHuVQA5';

@@ -14,6 +14,7 @@ definePageMeta({
     title: 'common.logout',
     requiresAuth: true,
     authOnlyToken: true,
+    showCookieOptions: true,
 });
 
 const { $grpc } = useNuxtApp();
@@ -22,8 +23,6 @@ const notifications = useNotificationsStore();
 
 const { accessToken } = storeToRefs(authStore);
 const { clearAuthInfo } = authStore;
-
-const { t } = useI18n();
 
 function redirect(): void {
     setTimeout(async () => {
