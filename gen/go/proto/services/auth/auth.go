@@ -46,6 +46,7 @@ var (
 	ErrUpdateAccount       = status.Error(codes.InvalidArgument, "errors.AuthService.ErrUpdateAccount")
 	ErrChangePassword      = status.Error(codes.InvalidArgument, "errors.AuthService.ErrChangePassword")
 	ErrForgotPassword      = status.Error(codes.InvalidArgument, "errors.AuthService.ErrForgotPassword")
+	ErrSignupDisabled      = status.Error(codes.InvalidArgument, "errors.AuthService.ErrSignupDisabled")
 )
 
 type Server struct {
@@ -59,6 +60,7 @@ type Server struct {
 	a    audit.IAuditer
 	ui   userinfo.UserInfoRetriever
 
+	signupEnabled   bool
 	superuserGroups []string
 	oauth2Providers []*config.OAuth2Provider
 }
@@ -72,6 +74,7 @@ func NewServer(db *sql.DB, auth *auth.GRPCAuth, tm *auth.TokenMgr, p perms.Permi
 		c:               c,
 		a:               aud,
 		ui:              ui,
+		signupEnabled:   cfg.Game.SignupEnabled,
 		superuserGroups: cfg.Game.SuperuserGroups,
 		oauth2Providers: cfg.OAuth2.Providers,
 	}
@@ -178,6 +181,10 @@ func (s *Server) Logout(ctx context.Context, req *LogoutRequest) (*LogoutRespons
 }
 
 func (s *Server) CreateAccount(ctx context.Context, req *CreateAccountRequest) (*CreateAccountResponse, error) {
+	if !s.signupEnabled {
+		return nil, ErrSignupDisabled
+	}
+
 	acc, err := s.getAccountFromDB(ctx, jet.AND(
 		tAccounts.RegToken.EQ(jet.String(req.RegToken)),
 	))

@@ -1060,7 +1060,8 @@
             "ErrUpdateAccount": "Failed to update your account!",
             "ErrChangePassword": "Failed to change your password!",
             "ErrForgotPassword": "Failed to reset password!",
-            "ErrAccountExistsFailed": "Please use use the forgot password function!"
+            "ErrAccountExistsFailed": "Please use use the forgot password function!",
+            "ErrSignupDisabled": "Account signup is disabled!"
         },
         "CitizenStoreService": {
             "ErrFailedQuery": "Failed to list/get citizen(s) data!",

@@ -1,9 +1,10 @@
-type ArpanetConfig = {
+type AppConfig = {
     sentryDSN: string;
     login: LoginConfig;
 };
 
 type LoginConfig = {
+    signupEnabled: boolean;
     providers: ProviderConfig[];
 };
 
@@ -12,9 +13,10 @@ type ProviderConfig = {
     label: string;
 };
 
-const config: ArpanetConfig = {
+const config: AppConfig = {
     sentryDSN: '',
     login: {
+        signupEnabled: true,
         providers: [],
     },
 };
@@ -37,7 +39,7 @@ export async function loadConfig(): Promise<void> {
                     unhandled: false,
                 });
             }
-            const data = (await resp.json()) as ArpanetConfig;
+            const data = (await resp.json()) as AppConfig;
             config.sentryDSN = data.sentryDSN;
             config.login = data.login;
 

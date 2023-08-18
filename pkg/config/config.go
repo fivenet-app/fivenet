@@ -159,6 +159,7 @@ type Cache struct {
 }
 
 type Game struct {
+	SignupEnabled      bool          `default:"true" yaml:"signupEnabled"`
 	SuperuserGroups    []string      `yaml:"superuserGroups"`
 	UnemployedJob      UnemployedJob `yaml:"unemployedJob"`
 	PublicJobs         []string      `yaml:"publicJobs"`

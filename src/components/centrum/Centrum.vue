@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
-import { LeafletMouseEvent } from 'leaflet';
 import { HelpCircleIcon } from 'mdi-vue3';
 import { default as DispatchesList } from '~/components/centrum/dispatches/List.vue';
 import { default as UnitsList } from '~/components/centrum/units/List.vue';
@@ -132,7 +131,7 @@ async function startStream(): Promise<void> {
                 addOrUpdateUnit(resp.change.unitUpdated);
             } else if (resp.change.oneofKind === 'unitStatus') {
                 const id = resp.change.unitStatus.id;
-                let idx = dispatches.value.findIndex((d) => d.id === id);
+                let idx = units.value.findIndex((d) => d.id === id);
                 if (idx === -1) {
                     units.value?.unshift(resp.change.unitStatus);
                 } else {
@@ -209,15 +208,6 @@ onBeforeUnmount(() => {
 
 const livemapComponent = ref<InstanceType<typeof Livemap>>();
 
-const open = ref(false);
-const location = ref<{ x: number; y: number }>({ x: 0, y: 0 });
-
-function livemapCreateDispatch($event: LeafletMouseEvent) {
-    goto({ x: $event.latlng.lat, y: $event.latlng.lng });
-
-    open.value = true;
-}
-
 function goto(e: { x: number; y: number }) {
     if (livemapComponent.value) {
         livemapComponent.value.location = { x: e.x, y: e.y };
@@ -270,7 +260,13 @@ async function takeControl(): Promise<void> {
             <!-- Left column -->
             <div class="flex flex-col basis-1/3 divide-x">
                 <div class="h-full">
-                    <Livemap ref="livemapComponent" @create-dispatch="livemapCreateDispatch($event)" />
+                    <Livemap
+                        ref="livemapComponent"
+                        :center-selected-marker="false"
+                        :marker-resize="false"
+                        :filter-employee="false"
+                        :filter-dispatch="false"
+                    />
                 </div>
             </div>
 

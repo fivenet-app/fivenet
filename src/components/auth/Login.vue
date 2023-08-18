@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { NavigationFailure } from 'vue-router';
+import config from '~/config';
 import { useAuthStore } from '~/store/auth';
 import { TypedRouteFromName } from '~~/.nuxt/typed-router/__router';
 import ForgotPasswordForm from './ForgotPasswordForm.vue';
@@ -24,6 +25,8 @@ watch(accessToken, async (): Promise<NavigationFailure | TypedRouteFromName<'aut
         });
     }
 });
+
+const cfg = config;
 </script>
 
 <template>
@@ -48,7 +51,7 @@ watch(accessToken, async (): Promise<NavigationFailure | TypedRouteFromName<'aut
                         {{ $t('components.auth.login.forgot_password') }}
                     </button>
                 </div>
-                <div class="mt-6">
+                <div class="mt-6" v-if="cfg.login.signupEnabled">
                     <button
                         type="button"
                         @click="forms.create = true"

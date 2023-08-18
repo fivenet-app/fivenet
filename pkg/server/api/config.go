@@ -7,7 +7,8 @@ type ClientConfig struct {
 }
 
 type LoginConfig struct {
-	Providers []*ProviderConfig `json:"providers"`
+	SignupEnabled bool              `json:"signupEnabled"`
+	Providers     []*ProviderConfig `json:"providers"`
 }
 
 type ProviderConfig struct {

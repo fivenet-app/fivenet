@@ -9,6 +9,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/nats-io/nats.go"
+	"github.com/puzpuzpuz/xsync/v2"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/proto"
 )
@@ -218,7 +219,7 @@ func (s *Server) housekeeper() {
 	}
 }
 
-// TODO handle expired `createdAt` dispatch unit assignments
+// Handle expired dispatch unit assignments
 func (s *Server) handleDispatchAssignmentExpiration(ctx context.Context) error {
 	stmt := tDispatchUnit.
 		SELECT(
@@ -318,8 +319,27 @@ func (s *Server) archiveDispatches(ctx context.Context) error {
 // Remove empty units from dispatches (if no other unit is assigned to dispatch update status to UNASSIGNED) by
 // iterating over the dispatches and making sure the assigned units aren't empty
 func (s *Server) removeDispatchesFromEmptyUnits(ctx context.Context) error {
+	s.dispatches.Range(func(job string, value *xsync.MapOf[uint64, *dispatch.Dispatch]) bool {
+		value.Range(func(id uint64, dsp *dispatch.Dispatch) bool {
+			for i := len(dsp.Units) - 1; i >= 0; i-- {
+				unit, _ := s.getUnit(job, dsp.Units[i].UnitId)
 
-	// TODO
+				// If unit isn't empty, continue with the loop
+				if len(unit.Users) > 0 {
+					continue
+				}
+
+				if err := s.updateDispatchAssignments(ctx, job, nil, dsp, nil, []uint64{unit.Id}); err != nil {
+					s.logger.Error("failed to remove empty unit from dispatch", zap.Error(err))
+					continue
+				}
+			}
+
+			return true
+		})
+
+		return true
+	})
 
 	return nil
 }

@@ -2,6 +2,7 @@ package api
 
 import (
 	"net/http"
+	"runtime/debug"
 
 	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/server/oauth2"
@@ -25,14 +26,23 @@ func New(logger *zap.Logger, cfg *config.Config) *Routes {
 		}
 	}
 
+	var version string
+	buildInfo, ok := debug.ReadBuildInfo()
+	if !ok {
+		version = "UNKNOWN"
+	} else {
+		version = buildInfo.Main.Version
+	}
+
 	return &Routes{
 		logger: logger,
 
 		clientCfg: &ClientConfig{
-			Version:   "TODO",
+			Version:   version,
 			SentryDSN: cfg.Sentry.ClientDSN,
 			Login: LoginConfig{
-				Providers: providers,
+				SignupEnabled: cfg.Game.SignupEnabled,
+				Providers:     providers,
 			},
 		},
 	}
@@ -48,9 +58,11 @@ func (r *Routes) Register(e *gin.Engine, oa2 *oauth2.OAuth2) {
 		g.GET("/ping", func(c *gin.Context) {
 			c.JSON(http.StatusOK, PingResponse)
 		})
+
 		g.POST("/config", func(c *gin.Context) {
 			c.JSON(http.StatusOK, r.clientCfg)
 		})
+
 		g.GET("/clear-site-data", func(c *gin.Context) {
 			c.Header("Clear-Site-Data", "\"cache\", \"cookies\", \"storage\"")
 			c.String(http.StatusOK, "Your local site data should be cleared now, please go back to the FiveNet homepage yourself.")

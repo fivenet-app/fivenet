@@ -44,7 +44,6 @@ async function createOrUpdateUnit(values: FormData): Promise<void> {
             const call = $grpc.getCentrumClient().updateSettings({
                 job: '',
                 enabled: values.enabled,
-                active: values.active,
                 mode: values.mode,
                 fallbackMode: values.fallbackMode,
             });
@@ -69,7 +68,6 @@ defineRule('numeric', numeric);
 
 interface FormData {
     enabled: boolean;
-    active: boolean;
     mode: CENTRUM_MODE;
     fallbackMode: CENTRUM_MODE;
 }
@@ -77,7 +75,6 @@ interface FormData {
 const { handleSubmit, setValues } = useForm<FormData>({
     validationSchema: {
         enabled: {},
-        active: {},
         mode: { required: true },
         fallbackMode: { required: true },
     },
@@ -89,7 +86,6 @@ function setSettingsValues(): void {
     if (!settings.value) return;
 
     setValues({
-        active: settings.value.active,
         enabled: settings.value.enabled,
         mode: settings.value.mode,
         fallbackMode: settings.value.fallbackMode,
@@ -164,23 +160,6 @@ watch(settings, () => {
                                                     />
                                                 </div>
                                                 <div class="flex-1 form-control">
-                                                    <label
-                                                        for="active"
-                                                        class="block text-sm font-medium leading-6 text-neutral"
-                                                    >
-                                                        {{ $t('common.active') }}
-                                                    </label>
-                                                    <VeeField
-                                                        name="active"
-                                                        type="checkbox"
-                                                        class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600 h-6 w-6"
-                                                        :placeholder="$t('common.active')"
-                                                        :label="$t('common.active')"
-                                                        :value="true"
-                                                    />
-                                                    <VeeErrorMessage name="active" as="p" class="mt-2 text-sm text-error-400" />
-                                                </div>
-                                                <div class="flex-1 form-control">
                                                     <label for="mode" class="block text-sm font-medium leading-6 text-neutral">
                                                         {{ $t('common.mode') }}
                                                     </label>
@@ -207,11 +186,14 @@ watch(settings, () => {
                                                     <VeeErrorMessage name="mode" as="p" class="mt-2 text-sm text-error-400" />
                                                 </div>
                                                 <div class="flex-1 form-control">
-                                                    <label for="mode" class="block text-sm font-medium leading-6 text-neutral">
+                                                    <label
+                                                        for="fallbackMode"
+                                                        class="block text-sm font-medium leading-6 text-neutral"
+                                                    >
                                                         Fallback {{ $t('common.mode') }}
                                                     </label>
                                                     <VeeField
-                                                        name="mode"
+                                                        name="fallbackMode"
                                                         as="div"
                                                         :placeholder="$t('common.mode')"
                                                         :label="$t('common.mode')"
@@ -232,7 +214,11 @@ watch(settings, () => {
                                                             </option>
                                                         </select>
                                                     </VeeField>
-                                                    <VeeErrorMessage name="mode" as="p" class="mt-2 text-sm text-error-400" />
+                                                    <VeeErrorMessage
+                                                        name="fallbackMode"
+                                                        as="p"
+                                                        class="mt-2 text-sm text-error-400"
+                                                    />
                                                 </div>
                                             </div>
                                         </div>

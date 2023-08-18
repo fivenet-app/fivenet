@@ -10,7 +10,11 @@
             "request": "launch",
             "mode": "auto",
             "program": "${workspaceFolder}",
-            "args": []
+            "args": [],
+            "buildFlags": "-a -installsuffix cgo",
+            "env": {
+                "CGO_ENABLED": "0"
+            }
         }
     ]
 }

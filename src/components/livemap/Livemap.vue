@@ -19,13 +19,23 @@ import { DispatchMarker, UserMarker } from '~~/gen/ts/resources/livemap/livemap'
 import { LivemapperServiceClient } from '~~/gen/ts/services/livemapper/livemap.client';
 import CentrumSidebar from './CentrumSidebar.vue';
 
-defineProps<{
-    enableCentrum?: boolean;
-}>();
-
-const emits = defineEmits<{
-    (e: 'createDispatch', data: any): void;
-}>();
+withDefaults(
+    defineProps<{
+        enableCentrum?: boolean;
+        centerSelectedMarker?: boolean;
+        markerResize?: boolean;
+        filterPostals?: boolean;
+        filterEmployee?: boolean;
+        filterDispatch?: boolean;
+    }>(),
+    {
+        centerSelectedMarker: true,
+        markerResize: true,
+        filterPostals: true,
+        filterEmployee: true,
+        filterDispatch: true,
+    },
+);
 
 const { $grpc, $loading } = useNuxtApp();
 const userSettingsStore = useUserSettingsStore();
@@ -87,6 +97,7 @@ if (can('CentrumService.CreateDispatch')) {
     mapOptions.contextmenuItems.push({
         text: 'Create Dispatch',
         callback: (e: LeafletMouseEvent) => {
+            goto({ x: e.latlng.lat, y: e.latlng.lng });
             createDispatchOpen.value = true;
         },
     });
@@ -255,7 +266,7 @@ async function startStream(): Promise<void> {
     } catch (e) {
         const err = e as RpcError;
         error.value = err.message;
-        // TODO Restart stream automatically if timedout
+        // TODO Restart stream automatically if timeout occurs
         $loading.errored();
         stopStream();
     }
@@ -600,9 +611,9 @@ function goto(e: { x: number; y: number }) {
                     >: {{ mouseLat }} | <b>{{ $t('common.latitude') }}</b
                     >: {{ mouseLong }}
                 </LControl>
-                <LControl position="topleft">
+                <LControl position="topleft" v-if="filterDispatch || filterEmployee || filterPostals">
                     <div class="form-control flex flex-col gap-2">
-                        <div>
+                        <div v-if="filterEmployee">
                             <input
                                 v-model="playerQuery"
                                 class="w-full"
@@ -611,7 +622,7 @@ function goto(e: { x: number; y: number }) {
                                 :placeholder="`${$t('common.employee', 1)} ${$t('common.filter')}`"
                             />
                         </div>
-                        <div>
+                        <div v-if="filterDispatch">
                             <input
                                 v-model="dispatchQuery"
                                 class="w-full"
@@ -620,7 +631,7 @@ function goto(e: { x: number; y: number }) {
                                 :placeholder="`${$t('common.dispatch', 1)} ${$t('common.filter')}`"
                             />
                         </div>
-                        <div>
+                        <div v-if="filterPostals">
                             <Combobox as="div" class="w-full" v-model="selectedPostal" nullable>
                                 <ComboboxInput
                                     class="w-full"
@@ -650,20 +661,23 @@ function goto(e: { x: number; y: number }) {
                         </div>
                     </div>
                 </LControl>
-                <LControl position="bottomright">
+                <LControl position="bottomright" v-if="centerSelectedMarker || markerResize">
                     <div class="form-control flex flex-col gap-2">
-                        <div class="p-2 bg-neutral border border-[#6b7280] flex flex-row justify-center">
+                        <div
+                            v-if="centerSelectedMarker"
+                            class="p-2 bg-neutral border border-[#6b7280] flex flex-row justify-center"
+                        >
                             <span class="text-lg mr-2 text-[#6f7683]">{{
                                 $t('components.livemap.center_selected_marker')
                             }}</span>
                             <input
                                 v-model="livemapCenterSelectedMarker"
                                 class="my-auto"
-                                name="livemapMarkerSize"
+                                name="livemapCenterSelectedMarker"
                                 type="checkbox"
                             />
                         </div>
-                        <div class="p-2 bg-neutral border border-[#6b7280] flex flex-row justify-center">
+                        <div v-if="markerResize" class="p-2 bg-neutral border border-[#6b7280] flex flex-row justify-center">
                             <span class="text-lg mr-2 text-[#6f7683]">{{ livemapMarkerSize }}</span>
                             <input
                                 name="livemapMarkerSize"

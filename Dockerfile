@@ -8,7 +8,7 @@ RUN rm -rf ./.nuxt/ && \
 FROM docker.io/library/golang:1.21 AS gobuilder
 WORKDIR /go/src/github.com/galexrt/fivenet/
 COPY . ./
-RUN CGO_ENABLED=0 go build -a -installsuffix cgo -o fivenet .
+RUN make go-build
 
 FROM docker.io/library/alpine:3.18.3
 WORKDIR /app

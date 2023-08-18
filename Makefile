@@ -27,7 +27,7 @@ release:
 
 .PHONY: build-go
 build-go:
-	go build -o fivenet .
+	CGO_ENABLED=0 go build -a -installsuffix cgo -o fivenet .
 
 .PHONY: build-yarn
 build-yarn:
@@ -50,7 +50,6 @@ gen-sql:
 	find ./query/fivenet/table -type f -iname '*.go' -exec sed -i 's~("fivenet", ~("", ~g' {} \;
 
 protoc-gen-validate: build_dir
-	mkdir -p $(BUILD_DIR)
 	if test ! -d $(BUILD_DIR)validate-$(VALIDATE_VERSION)/; then \
 		git clone --branch $(VALIDATE_VERSION) https://github.com/bufbuild/protoc-gen-validate.git $(BUILD_DIR)validate-$(VALIDATE_VERSION); \
 	else \

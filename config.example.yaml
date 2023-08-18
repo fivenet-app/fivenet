@@ -51,6 +51,7 @@ oauth2:
 cache:
   refreshTime: 2m
 game:
+  signupEnabled: true
   superuserGroups:
     - projektleiter
     - teamleitung
