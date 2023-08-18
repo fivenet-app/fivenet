@@ -1,5 +1,4 @@
 - [ ] Leitstelle
-    - [ ] Centrum
     - [ ] Frontend for employees to see their dispatches and manage their status
         - [ ] Notifications on Livemap when they are assigned a dispatch
         - [ ] Updating their own dispatch status

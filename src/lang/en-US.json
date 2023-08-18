@@ -61,7 +61,11 @@
                 "title": "Got any questions or issues?",
                 "content": "Be sure to join the Discord server should you encounter any issues or have questions regarding FiveNet."
             },
-            "join_discord": "Join Galexrt Discord server"
+            "join_discord": "Join Galexrt Discord server",
+            "licenses_list": "FiveNet License and list of third-party licenses used",
+            "licenses": {
+                "sub_title": "List and information about the Licenses of code, libraries and software, used by FiveNet."
+            }
         },
         "overview": {
             "features": {
@@ -524,7 +528,8 @@
         "unknown": "Unknown",
         "code": "Code | Codes",
         "accept": "Accept | Accepted",
-        "decline": "Decline | Declined"
+        "decline": "Decline | Declined",
+        "licenses": "Licenses"
     },
     "notifications": {
         "clipboard": {

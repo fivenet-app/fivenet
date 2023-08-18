@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 
-import { ChevronDownIcon, LockIcon, MagnifyIcon, MapIcon } from 'mdi-vue3';
+import { ChevronDownIcon, LicenseIcon, LockIcon, MagnifyIcon, MapIcon } from 'mdi-vue3';
 import '~/assets/css/herofull-pattern.css';
 import Footer from '~/components/partials/Footer.vue';
 import DiscordLogo from '~/components/partials/logos/DiscordLogo.vue';
@@ -42,7 +42,7 @@ const faqs = [
 <template>
     <div class="h-full justify-between flex flex-col">
         <div>
-            <div class="relative isolate bg-gray-900 px-6 py-24 sm:py-32 lg:px-8 hero">
+            <div class="relative isolate bg-gray-900 px-6 py-12 sm:py-16 lg:px-8 hero">
                 <div class="hero-overlay absolute z-[-1] h-full w-full top-0 left-0"></div>
                 <div class="mx-auto max-w-2xl text-center">
                     <h2 class="text-4xl font-bold tracking-tight text-white sm:text-6xl">
@@ -54,7 +54,7 @@ const faqs = [
                 </div>
             </div>
 
-            <div class="relative isolate overflow-hidden px-6 py-24 sm:py-32 lg:overflow-visible lg:px-0">
+            <div class="relative isolate overflow-hidden px-6 py-12 sm:py-16 lg:overflow-visible lg:px-0">
                 <div class="absolute inset-0 -z-10 overflow-hidden"></div>
                 <div
                     class="mx-auto grid max-w-2xl grid-cols-1 gap-x-8 gap-y-16 lg:mx-0 lg:max-w-none lg:grid-cols-2 lg:items-start lg:gap-y-10"
@@ -126,7 +126,7 @@ const faqs = [
                 </div>
             </div>
             <div class="bg-gray-900">
-                <div class="mx-auto max-w-7xl px-6 py-24 sm:py-32 lg:px-8 lg:py-20">
+                <div class="mx-auto max-w-7xl px-6 py-12 sm:py-16 lg:px-8 lg:py-10">
                     <div class="mx-auto max-w-4xl divide-y divide-white/10">
                         <h2 class="text-2xl font-bold leading-10 tracking-tight text-white">
                             {{ $t('pages.about.faq.title') }}
@@ -153,7 +153,7 @@ const faqs = [
                 </div>
             </div>
             <div class="relative bg-gray-900">
-                <div class="mx-auto max-w-7xl px-6 py-24 sm:py-32 lg:px-8 lg:py-20">
+                <div class="mx-auto max-w-7xl px-6 py-12 sm:py-16 lg:px-8 lg:py-10">
                     <div class="mx-auto max-w-4xl">
                         <p class="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">
                             {{ $t('pages.about.questions_or_issues.title') }}
@@ -171,6 +171,26 @@ const faqs = [
                                     {{ $t('pages.about.join_discord') }}
                                 </span>
                             </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="relative bg-gray-900">
+                <div class="mx-auto max-w-7xl px-6 py-12 sm:py-16 lg:px-8 lg:py-10">
+                    <div class="mx-auto max-w-4xl">
+                        <p class="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">
+                            {{ $t('common.licenses') }}
+                        </p>
+                        <div class="mt-8">
+                            <NuxtLink
+                                :to="{ name: 'about-licenses' }"
+                                class="inline-flex items-center gap-x-2 rounded-md bg-white/10 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-secondary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-secondary-600"
+                            >
+                                <LicenseIcon class="-ml-0.5 h-5 w-5" aria-hidden="true" />
+                                <span>
+                                    {{ $t('pages.about.licenses_list') }}
+                                </span>
+                            </NuxtLink>
                         </div>
                     </div>
                 </div>

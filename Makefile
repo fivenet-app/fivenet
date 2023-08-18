@@ -95,6 +95,11 @@ gen-proto: protoc-gen-validate protoc-gen-customizer
 	# Remove validate_pb imports from JS files
 	find ./gen -type f \( -iname '*.js' -o -iname '*.ts' \) -exec sed -i '/validate_pb/d' {} +
 
+.PHONY: gen-licenses
+gen-licenses:
+	yarn licenses generate-disclaimer > ./src/public/licenses-frontend.txt
+	go-licenses report . --template internal/scripts/licenses-backend.txt.tpl > ./src/public/licenses-backend.txt
+
 gdal2tiles-leaflet: build_dir
 	if test ! -d $(BUILD_DIR)gdal2tiles-leaflet/; then \
 		git clone https://github.com/commenthol/gdal2tiles-leaflet.git $(BUILD_DIR)gdal2tiles-leaflet; \

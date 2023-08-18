@@ -692,6 +692,8 @@ function goto(e: { x: number; y: number }) {
                         </div>
                     </div>
                 </LControl>
+
+                <slot />
             </LMap>
             <div v-if="enableCentrum && can('CentrumService.Stream')" class="lg:inset-y-0 lg:flex lg:w-50 lg:flex-col">
                 <CentrumSidebar @goto="goto($event)" />
