@@ -1,11 +1,14 @@
 <script lang="ts" setup>
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
-import { LLayerGroup } from '@vue-leaflet/vue-leaflet';
+import { LControl, LLayerGroup } from '@vue-leaflet/vue-leaflet';
 import { HelpCircleIcon } from 'mdi-vue3';
+import { default as DispatchDetails } from '~/components/centrum/dispatches/Details.vue';
 import { default as DispatchesList } from '~/components/centrum/dispatches/List.vue';
 import DispatchMarker from '~/components/centrum/livemap/DispatchMarker.vue';
+import { default as UnitDetails } from '~/components/centrum/units/Details.vue';
 import { default as UnitsList } from '~/components/centrum/units/List.vue';
 import Livemap from '~/components/livemap/Livemap.vue';
+import PostalSearch from '~/components/livemap/controls/PostalSearch.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { useAuthStore } from '~/store/auth';
@@ -14,6 +17,11 @@ import { Settings } from '~~/gen/ts/resources/dispatch/settings';
 import { Unit, UnitStatus } from '~~/gen/ts/resources/dispatch/units';
 import { UserShort } from '~~/gen/ts/resources/users/users';
 import Feed from './Feed.vue';
+import AssignDispatchModal from './dispatches/AssignDispatchModal.vue';
+import { default as DispatchStatusUpdateModal } from './dispatches/StatusUpdateModal.vue';
+import { setWaypoint } from './nui';
+import AssignUnitModal from './units/AssignUnitModal.vue';
+import { default as UnitStatusUpdateModal } from './units/StatusUpdateModal.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -214,6 +222,9 @@ function goto(e: { x: number; y: number }) {
     if (livemapComponent.value) {
         livemapComponent.value.location = { x: e.x, y: e.y };
     }
+
+    // Set in-game waypoint via NUI
+    setWaypoint(e.x, e.y);
 }
 
 async function takeControl(): Promise<void> {
@@ -231,6 +242,16 @@ async function takeControl(): Promise<void> {
         }
     });
 }
+
+const selectedDispatch = ref<Dispatch | undefined>();
+const openDispatchDetails = ref(false);
+const openDispatchAssign = ref(false);
+const openDispatchStatus = ref(false);
+
+const selectedUnit = ref<Unit | undefined>();
+const openUnitDetails = ref(false);
+const openUnitAssign = ref(false);
+const openUnitStatus = ref(false);
 </script>
 
 <template>
@@ -252,7 +273,7 @@ async function takeControl(): Promise<void> {
                 >
                     <HelpCircleIcon class="w-12 h-12 mx-auto text-neutral" />
                     <span class="block mt-2 text-sm font-semibold text-gray-300">
-                        No one is in the dispatch center. Want to take control? Click here.
+                        No one is in the dispatch center. Want to take control? Click here to join it.
                     </span>
                 </button>
             </div>
@@ -270,8 +291,19 @@ async function takeControl(): Promise<void> {
                         :filter-dispatch="false"
                     >
                         <template v-slot:default>
+                            <LControl position="topleft">
+                                <PostalSearch @goto="goto($event)" />
+                            </LControl>
+
                             <LLayerGroup :name="$t('common.dispatch', 2)" layer-type="overlay" :visible="true">
-                                <DispatchMarker v-for="dispatch in dispatches" :dispatch="dispatch" />
+                                <DispatchMarker
+                                    v-for="dispatch in dispatches"
+                                    :dispatch="dispatch"
+                                    @select="
+                                        selectedDispatch = $event;
+                                        openDispatchDetails = true;
+                                    "
+                                />
                             </LLayerGroup>
                         </template>
                     </Livemap>
@@ -281,13 +313,85 @@ async function takeControl(): Promise<void> {
             <!-- Right column -->
             <div class="flex flex-col basis-2/3 divide-y">
                 <div class="basis-3/5 max-h-[60%]">
-                    <DispatchesList :dispatches="dispatches" :units="units" @goto="goto($event)" />
+                    <DispatchesList
+                        :dispatches="dispatches"
+                        :units="units"
+                        @goto="goto($event)"
+                        @details="
+                            selectedDispatch = $event;
+                            openDispatchDetails = true;
+                        "
+                        @assign-unit="
+                            selectedDispatch = $event;
+                            openDispatchAssign = true;
+                        "
+                        @status="
+                            selectedDispatch = $event;
+                            openDispatchStatus = true;
+                        "
+                    />
+
+                    <template v-if="selectedDispatch">
+                        <DispatchDetails
+                            :units="units"
+                            :dispatch="selectedDispatch"
+                            :open="openDispatchDetails"
+                            @close="openDispatchDetails = false"
+                            @goto="goto($event)"
+                            @assign-unit="
+                                selectedDispatch = $event;
+                                openDispatchAssign = true;
+                            "
+                            @status="
+                                selectedDispatch = $event;
+                                openDispatchStatus = true;
+                            "
+                        />
+                        <AssignDispatchModal
+                            :open="openDispatchAssign"
+                            :dispatch="selectedDispatch"
+                            :units="units"
+                            @close="openDispatchAssign = false"
+                        />
+                        <DispatchStatusUpdateModal
+                            :open="openDispatchStatus"
+                            :dispatch="selectedDispatch"
+                            @close="openDispatchStatus = false"
+                        />
+                    </template>
                 </div>
                 <div class="basis-1/5 max-h-[20%]">
                     <Feed :items="feed" />
                 </div>
                 <div class="basis-1/5 max-h-[20%]">
-                    <UnitsList :units="units" @goto="goto($event)" />
+                    <UnitsList
+                        :units="units"
+                        @goto="goto($event)"
+                        @details="
+                            selectedUnit = $event;
+                            openUnitDetails = true;
+                        "
+                    />
+
+                    <template v-if="selectedUnit">
+                        <UnitDetails
+                            :units="units"
+                            :unit="selectedUnit"
+                            :open="openUnitDetails"
+                            @close="openUnitDetails = false"
+                            @goto="goto($event)"
+                            @assign-users="
+                                selectedUnit = $event;
+                                openUnitAssign = true;
+                            "
+                            @status="
+                                selectedUnit = $event;
+                                openUnitStatus = true;
+                            "
+                        />
+                        <AssignUnitModal :open="openUnitAssign" :unit="selectedUnit" @close="openUnitAssign = false" />
+                        <UnitStatusUpdateModal :open="openUnitStatus" :unit="selectedUnit" @close="openUnitStatus = false" />
+                    </template>
                 </div>
             </div>
         </div>

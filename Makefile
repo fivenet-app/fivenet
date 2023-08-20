@@ -97,22 +97,22 @@ gen-proto: protoc-gen-validate protoc-gen-customizer
 
 .PHONY: gen-licenses
 gen-licenses:
-	yarn licenses generate-disclaimer > ./src/public/licenses-frontend.txt
-	go-licenses report . --template internal/scripts/licenses-backend.txt.tpl > ./src/public/licenses-backend.txt
+	yarn licenses generate-disclaimer > ./src/public/licenses/frontend.txt
+	go-licenses report . --template internal/scripts/licenses-backend.txt.tpl > ./src/public/licenses/backend.txt
 
 gdal2tiles-leaflet: build_dir
 	if test ! -d $(BUILD_DIR)gdal2tiles-leaflet/; then \
 		git clone https://github.com/commenthol/gdal2tiles-leaflet.git $(BUILD_DIR)gdal2tiles-leaflet; \
 	else \
-		git -C gdal2tiles-leaflet pull --all; \
+		git -C $(BUILD_DIR)gdal2tiles-leaflet pull --all; \
 	fi
 
 .PHONY: gen-tiles
 gen-tiles: gdal2tiles-leaflet
-	./gdal2tiles-leaflet/gdal2tiles.py -l -p raster -z 0-6 -w none ./maps/GTAV_ATLAS_8192x8192.jpg ./src/public/images/livemap/tiles/atlas
-	./gdal2tiles-leaflet/gdal2tiles.py -l -p raster -z 0-6 -w none ./maps/GTAV_POSTAL_8192x8192.jpg ./src/public/images/livemap/tiles/postal
-	./gdal2tiles-leaflet/gdal2tiles.py -l -p raster -z 0-6 -w none ./maps/GTAV_ROAD_8192x8192.jpg ./src/public/images/livemap/tiles/road
-	./gdal2tiles-leaflet/gdal2tiles.py -l -p raster -z 0-6 -w none ./maps/GTAV_SATELITE_8192x8192.jpg ./src/public/images/livemap/tiles/satelite
+	$(BUILD_DIR)gdal2tiles-leaflet/gdal2tiles.py -l -p raster -z 0-7 -w none ./maps/GTAV_ATLAS_8192x8192.jpg ./src/public/images/livemap/tiles/atlas
+	$(BUILD_DIR)gdal2tiles-leaflet/gdal2tiles.py -l -p raster -z 0-7 -w none ./maps/GTAV_POSTAL_8192x8192.jpg ./src/public/images/livemap/tiles/postal
+	$(BUILD_DIR)gdal2tiles-leaflet/gdal2tiles.py -l -p raster -z 0-7 -w none ./maps/GTAV_ROAD_8192x8192.jpg ./src/public/images/livemap/tiles/road
+	$(BUILD_DIR)gdal2tiles-leaflet/gdal2tiles.py -l -p raster -z 0-7 -w none ./maps/GTAV_SATELITE_8192x8192.jpg ./src/public/images/livemap/tiles/satelite
 
 .PHONY: optimize-tiles
 optimize-tiles:

@@ -4,11 +4,12 @@ import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { max, min, required } from '@vee-validate/rules';
 import { CloseIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
+import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import { DISPATCH_STATUS, Dispatch } from '~~/gen/ts/resources/dispatch/dispatches';
 
 const props = defineProps<{
     open: boolean;
-    dispatch?: Dispatch;
+    dispatch: Dispatch;
     status?: DISPATCH_STATUS;
 }>();
 
@@ -115,8 +116,9 @@ watch(props, () => {
                                     <div class="h-0 flex-1 overflow-y-auto">
                                         <div class="bg-primary-700 px-4 py-6 sm:px-6">
                                             <div class="flex items-center justify-between">
-                                                <DialogTitle class="text-base font-semibold leading-6 text-white">
-                                                    Update Dispatch Status
+                                                <DialogTitle class="inline-flex text-base font-semibold leading-6 text-white">
+                                                    Update Dispatch Status:
+                                                    <IDCopyBadge class="ml-2" :id="dispatch.id" prefix="DSP" />
                                                 </DialogTitle>
                                                 <div class="ml-3 flex h-7 items-center">
                                                     <button
@@ -128,9 +130,6 @@ watch(props, () => {
                                                         <CloseIcon class="h-6 w-6" aria-hidden="true" />
                                                     </button>
                                                 </div>
-                                            </div>
-                                            <div class="mt-1">
-                                                <p class="text-sm text-primary-300">TODO</p>
                                             </div>
                                         </div>
                                         <div class="flex flex-1 flex-col justify-between">

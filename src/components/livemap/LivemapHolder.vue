@@ -1,6 +1,9 @@
 <script lang="ts" setup>
-import CentrumSidebar from './CentrumSidebar.vue';
+import { LControl } from '@vue-leaflet/vue-leaflet';
+import { default as CentrumSidebar } from '~/components/centrum/livemap/Sidebar.vue';
+import { setWaypoint } from '~/components/centrum/nui';
 import Livemap from './Livemap.vue';
+import PostalSearch from './controls/PostalSearch.vue';
 
 const livemapComponent = ref<InstanceType<typeof Livemap>>();
 
@@ -8,11 +11,19 @@ function goto(e: { x: number; y: number }) {
     if (livemapComponent.value) {
         livemapComponent.value.location = { x: e.x, y: e.y };
     }
+
+    // Set in-game waypoint via NUI
+    setWaypoint(e.x, e.y);
 }
 </script>
 
 <template>
     <Livemap ref="livemapComponent" :enable-centrum="true">
+        <template>
+            <LControl position="topleft">
+                <PostalSearch @goto="goto($event)" />
+            </LControl>
+        </template>
         <template v-slot:afterMap>
             <div v-if="can('CentrumService.Stream')" class="lg:inset-y-0 lg:flex lg:w-50 lg:flex-col">
                 <CentrumSidebar @goto="goto($event)" />

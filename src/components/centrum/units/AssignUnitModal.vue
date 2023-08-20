@@ -116,7 +116,7 @@ onMounted(async () => {
                                         <div class="bg-primary-700 px-4 py-6 sm:px-6">
                                             <div class="flex items-center justify-between">
                                                 <DialogTitle class="text-base font-semibold leading-6 text-white">
-                                                    Assign Users to Unit
+                                                    Assign Users to Unit: {{ unit.name }} ({{ unit.initials }})
                                                 </DialogTitle>
                                                 <div class="ml-3 flex h-7 items-center">
                                                     <button
@@ -128,9 +128,6 @@ onMounted(async () => {
                                                         <CloseIcon class="h-6 w-6" aria-hidden="true" />
                                                     </button>
                                                 </div>
-                                            </div>
-                                            <div class="mt-1">
-                                                <p class="text-sm text-primary-300">TODO</p>
                                             </div>
                                         </div>
                                         <div class="flex flex-1 flex-col justify-between">

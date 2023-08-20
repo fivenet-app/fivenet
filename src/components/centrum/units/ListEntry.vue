@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { UNIT_STATUS, Unit } from '~~/gen/ts/resources/dispatch/units';
-import Details from './Details.vue';
 
 defineProps<{
     unit: Unit;
@@ -8,14 +7,12 @@ defineProps<{
 
 defineEmits<{
     (e: 'goto', loc: { x: number; y: number }): void;
+    (e: 'details', unit: Unit): void;
 }>();
-
-const open = ref(false);
 </script>
 
 <template>
-    <Details :open="open" @close="open = false" :unit="unit" @goto="$emit('goto', $event)" />
-    <li class="col-span-1 flex rounded-md shadow-sm" @click="open = true">
+    <li class="col-span-1 flex rounded-md shadow-sm" @click="$emit('details', unit)">
         <div
             class="flex w-12 flex-shrink-0 items-center justify-center rounded-l-md text-sm font-medium text-white border-l border-t border-b"
             :style="'background-color: #' + unit.color ?? '00000'"

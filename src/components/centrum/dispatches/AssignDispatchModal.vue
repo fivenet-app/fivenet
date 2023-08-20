@@ -2,6 +2,7 @@
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { CloseIcon } from 'mdi-vue3';
+import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import { Dispatch } from '~~/gen/ts/resources/dispatch/dispatches';
 import { UNIT_STATUS, Unit } from '~~/gen/ts/resources/dispatch/units';
 
@@ -83,8 +84,9 @@ function selectUnit(item: Unit): void {
                                     <div class="h-0 flex-1 overflow-y-auto">
                                         <div class="bg-primary-700 px-4 py-6 sm:px-6">
                                             <div class="flex items-center justify-between">
-                                                <DialogTitle class="text-base font-semibold leading-6 text-white">
-                                                    Assign Dispatch
+                                                <DialogTitle class="inline-flex text-base font-semibold leading-6 text-white">
+                                                    {{ $t('components.centrum.assign_dispatch.title') }}:
+                                                    <IDCopyBadge class="ml-2" :id="dispatch.id" prefix="DSP" />
                                                 </DialogTitle>
                                                 <div class="ml-3 flex h-7 items-center">
                                                     <button
@@ -97,9 +99,6 @@ function selectUnit(item: Unit): void {
                                                     </button>
                                                 </div>
                                             </div>
-                                            <div class="mt-1">
-                                                <p class="text-sm text-primary-300">TODO</p>
-                                            </div>
                                         </div>
                                         <div class="flex flex-1 flex-col justify-between">
                                             <div class="divide-y divide-gray-200 px-4 sm:px-6">
@@ -111,20 +110,33 @@ function selectUnit(item: Unit): void {
                                                                     v-for="item in units"
                                                                     :key="item.name"
                                                                     type="button"
+                                                                    :disabled="item.users.length === 0"
                                                                     class="text-white hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-2 text-xs my-0.5"
-                                                                    :class="
-                                                                        selectedUnits?.findIndex((u) => u && u === item.id) > -1
+                                                                    :class="[
+                                                                        item.users.length === 0
+                                                                            ? 'disabled bg-red-600'
+                                                                            : selectedUnits?.findIndex(
+                                                                                  (u) => u && u === item.id,
+                                                                              ) > -1
                                                                             ? 'bg-green-600'
-                                                                            : 'bg-info-600'
-                                                                    "
+                                                                            : 'bg-info-600',
+                                                                    ]"
                                                                     @click="selectUnit(item)"
                                                                 >
                                                                     <span class="mt-1"
                                                                         >{{ item.initials }}: {{ item.name }}</span
                                                                     >
-                                                                    <span class="mt-1">{{
-                                                                        UNIT_STATUS[item.status?.status!]
-                                                                    }}</span>
+                                                                    <span class="mt-1">
+                                                                        {{
+                                                                            $t(
+                                                                                `enums.centrum.UNIT_STATUS.${
+                                                                                    UNIT_STATUS[
+                                                                                        item.status?.status ?? (0 as number)
+                                                                                    ]
+                                                                                }`,
+                                                                            )
+                                                                        }}
+                                                                    </span>
                                                                 </button>
                                                             </div>
                                                         </div>

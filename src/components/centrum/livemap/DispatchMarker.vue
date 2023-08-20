@@ -1,8 +1,9 @@
 <script lang="ts" setup>
-import { LMarker, LPopup } from '@vue-leaflet/vue-leaflet';
-import L from 'leaflet';
+import { LIcon, LMarker, LPopup } from '@vue-leaflet/vue-leaflet';
+import { BellIcon } from 'mdi-vue3';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
-import { Dispatch } from '~~/gen/ts/resources/dispatch/dispatches';
+import { DISPATCH_STATUS, Dispatch } from '~~/gen/ts/resources/dispatch/dispatches';
+import { dispatchStatusToFillColor } from './helpers';
 
 const props = withDefaults(
     defineProps<{
@@ -14,35 +15,42 @@ const props = withDefaults(
     },
 );
 
-defineEmits<{
-    (e: 'select'): void;
+const emits = defineEmits<{
+    (e: 'select', dsp: Dispatch): void;
 }>();
 
-const iconClass = props.dispatch.status ? 'animate-dispatch' : '';
+const animateStates = [
+    DISPATCH_STATUS.NEW,
+    DISPATCH_STATUS.UNIT_UNASSIGNED,
+    DISPATCH_STATUS.UNASSIGNED,
+    DISPATCH_STATUS.NEED_ASSISTANCE,
+];
+const status = props.dispatch.status?.status ?? 0;
+
 const iconAnchor: L.PointExpression | undefined = undefined;
 const popupAnchor: L.PointExpression = [0, (props.size / 2) * -1];
-const icon = new L.DivIcon({
-    html: `<div class="${iconClass}">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#56db79" class="w-full h-full">
-                <path d="M21,19V20H3V19L5,17V11C5,7.9 7.03,5.17 10,4.29C10,4.19 10,4.1 10,4A2,2 0 0,1 12,2A2,2 0 0,1 14,4C14,4.1 14,4.19 14,4.29C16.97,5.17 19,7.9 19,11V17L21,19M14,21A2,2 0 0,1 12,23A2,2 0 0,1 10,21"/>
-            </svg>
-        </div>`,
-    iconSize: [props.size, props.size],
-    iconAnchor,
-    popupAnchor,
-}) as L.Icon;
+
+function selected(_: bigint | string) {
+    emits('select', props.dispatch);
+}
 </script>
 
 <template>
-    <LMarker
-        :key="dispatch.id?.toString()"
-        :latLng="[dispatch.y, dispatch.x]"
-        :name="dispatch.message"
-        :z-index-offset="15"
-        :icon="icon"
-    >
+    <LMarker :key="dispatch.id?.toString()" :latLng="[dispatch.y, dispatch.x]" :name="dispatch.message" :z-index-offset="15">
+        <LIcon :icon-anchor="iconAnchor" :popup-anchor="popupAnchor" :icon-size="[size, size]">
+            <div class="uppercase flex flex-col items-center dsp-status-error">
+                <span class="rounded-md bg-white border border-black">DSP-{{ props.dispatch.id }}</span>
+                <BellIcon
+                    class="w-full h-full"
+                    :class="[animateStates.includes(status) ? 'animate-dispatch' : '', dispatchStatusToFillColor(status)]"
+                />
+                <span class="rounded-md bg-white border border-black">
+                    {{ $t(`enums.centrum.DISPATCH_STATUS.${DISPATCH_STATUS[status]}`) }}</span
+                >
+            </div>
+        </LIcon>
         <LPopup :options="{ closeButton: true }">
-            <IDCopyBadge class="mb-1" prefix="DSP" :id="dispatch.id" @action="$emit('select')" />
+            <IDCopyBadge class="mb-1" prefix="DSP" :id="dispatch.id" :action="selected" />
             <ul>
                 <li>{{ $t('common.message') }}: {{ dispatch!.message }}</li>
                 <li>{{ $t('common.description') }}: {{ dispatch!.description ?? 'N/A' }}</li>

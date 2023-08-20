@@ -121,9 +121,9 @@ const config = defineNuxtConfig({
         },
         server: {
             hmr: {
-                protocol: 'ws',
+                protocol: 'wss',
             },
-            https: false,
+            https: true,
             proxy: {
                 '/api': 'http://localhost:8080',
                 '/grpc': {

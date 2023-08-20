@@ -1,8 +1,6 @@
 <script lang="ts" setup>
-import { Combobox, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
-import { LControl, LControlLayers, LLayerGroup, LMap, LMarker, LPopup, LTileLayer } from '@vue-leaflet/vue-leaflet';
-import { watchDebounced } from '@vueuse/core';
+import { LControl, LLayerGroup, LMarker, LPopup } from '@vue-leaflet/vue-leaflet';
 import L, { LeafletMouseEvent } from 'leaflet';
 import 'leaflet-contextmenu';
 import 'leaflet-contextmenu/dist/leaflet.contextmenu.min.css';
@@ -11,36 +9,33 @@ import CreateOrUpdateModal from '~/components/centrum/dispatches/CreateOrUpdateM
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { useAuthStore } from '~/store/auth';
-import { useNotificationsStore } from '~/store/notifications';
 import { useUserSettingsStore } from '~/store/usersettings';
-import { ValueOf } from '~/utils/types';
 import { Job } from '~~/gen/ts/resources/jobs/jobs';
 import { DispatchMarker, UserMarker } from '~~/gen/ts/resources/livemap/livemap';
 import { LivemapperServiceClient } from '~~/gen/ts/services/livemapper/livemap.client';
+import BaseMap from './BaseMap.vue';
 import PlayerMarker from './PlayerMarker.vue';
+import PostalSearch from './controls/PostalSearch.vue';
 
 withDefaults(
     defineProps<{
         centerSelectedMarker?: boolean;
         markerResize?: boolean;
-        filterPostals?: boolean;
         filterEmployee?: boolean;
         filterDispatch?: boolean;
     }>(),
     {
         centerSelectedMarker: true,
         markerResize: true,
-        filterPostals: true,
         filterEmployee: true,
         filterDispatch: true,
     },
 );
 
 const { $grpc, $loading } = useNuxtApp();
+const { t } = useI18n();
 const userSettingsStore = useUserSettingsStore();
 const authStore = useAuthStore();
-const notifications = useNotificationsStore();
-const route = useRoute();
 
 const { livemapCenterSelectedMarker, livemapMarkerSize } = storeToRefs(userSettingsStore);
 
@@ -50,36 +45,6 @@ const { activeChar } = storeToRefs(authStore);
 
 const abort = ref<AbortController | undefined>();
 const error = ref<string | null>(null);
-
-const centerX = 117.3;
-const centerY = 172.8;
-const scaleX = 0.02072;
-const scaleY = 0.0205;
-
-const customCRS = L.extend({}, L.CRS.Simple, {
-    projection: L.Projection.LonLat,
-    scale: function (zoom: number): number {
-        return Math.pow(2, zoom);
-    },
-    zoom: function (sc: number): number {
-        return Math.log(sc) / 0.6931471805599453;
-    },
-    distance: function (pos1: L.LatLng, pos2: L.LatLng): number {
-        var x_difference = pos2.lng - pos1.lng;
-        var y_difference = pos2.lat - pos1.lat;
-        return Math.sqrt(x_difference * x_difference + y_difference * y_difference);
-    },
-    transformation: new L.Transformation(scaleX, centerX, -scaleY, centerY),
-    infinite: true,
-});
-
-const backgroundColorList = {
-    Atlas: '#0fa8d2',
-    Satelite: '#143d6b',
-    Road: '#1862ad',
-    Postal: '#74aace',
-} as const;
-const backgroundColor = ref<ValueOf<typeof backgroundColorList>>(backgroundColorList.Postal);
 
 interface ContextmenuItem {
     text: string;
@@ -94,17 +59,13 @@ const mapOptions = {
 
 if (can('CentrumService.CreateDispatch')) {
     mapOptions.contextmenuItems.push({
-        text: 'Create Dispatch',
+        text: t('components.centrum.create_dispatch.title'),
         callback: (e: LeafletMouseEvent) => {
             goto({ x: e.latlng.lat, y: e.latlng.lng });
             createDispatchOpen.value = true;
         },
     });
 }
-
-const zoom = ref(2);
-let center: L.PointExpression = [0, 0];
-const attribution = '<a href="http://www.rockstargames.com/V/">Grand Theft Auto V</a>';
 
 const markerDispatches = ref<Job[]>([]);
 const markerPlayers = ref<Job[]>([]);
@@ -128,112 +89,14 @@ const dispatchMarkersFiltered = computed(() =>
     ),
 );
 
-const mouseLat = ref<string>((0).toFixed(3));
-const mouseLong = ref<string>((0).toFixed(3));
-
-const currentHash = ref<string>('');
-const isMoving = ref<boolean>(false);
-
 let map: L.Map | undefined = undefined;
-
-watch(currentHash, () => window.location.replace(currentHash.value));
 
 const location = ref<{ x: number; y: number }>({ x: 0, y: 0 });
 defineExpose({
     location,
 });
 
-watch(location, () => {
-    map?.flyTo([location.value?.x!, location.value?.y!], 5, {
-        animate: true,
-        duration: 0.85,
-    });
-});
-
-watchDebounced(
-    isMoving,
-    () => {
-        if (!map || isMoving.value) return;
-
-        const newHash = stringifyHash(map.getZoom(), map.getCenter().lat, map.getCenter().lng);
-        if (currentHash.value !== newHash) currentHash.value = newHash;
-    },
-    { debounce: 1000, maxWait: 3000 },
-);
-
-async function updateBackground(layer: string): Promise<void> {
-    switch (layer) {
-        case 'Atlas':
-            backgroundColor.value = backgroundColorList.Atlas;
-            return;
-        case 'Satelite':
-            backgroundColor.value = backgroundColorList.Satelite;
-            return;
-        case 'Road':
-            backgroundColor.value = backgroundColorList.Road;
-            return;
-        case 'Postal':
-            backgroundColor.value = backgroundColorList.Postal;
-            return;
-    }
-}
-
-function stringifyHash(currZoom: number, centerLat: number, centerLong: number): string {
-    const precision = Math.max(0, Math.ceil(Math.log(zoom.value) / Math.LN2));
-
-    const hash = '#' + [currZoom, centerLat.toFixed(precision), centerLong.toFixed(precision)].join('/');
-    return hash;
-}
-
-function parseHash(hash: string): { latlng: L.LatLng; zoom: number } | undefined {
-    if (hash.indexOf('#') === 0) hash = hash.substring(1);
-
-    const args = hash.split('/');
-    if (args.length !== 3) return;
-
-    const zoom = parseInt(args[0], 10);
-    const lat = parseFloat(args[1]);
-    const lng = parseFloat(args[2]);
-
-    if (isNaN(zoom) || isNaN(lat) || isNaN(lng)) return;
-
-    return {
-        latlng: new L.LatLng(lat, lng),
-        zoom,
-    };
-}
-
-async function onMapReady($event: any): Promise<void> {
-    map = $event as L.Map;
-
-    const startingHash = route.hash;
-    const startPos = parseHash(startingHash);
-    if (startPos) $event.setView(startPos.latlng, startPos.zoom);
-
-    map.on('baselayerchange', async (event: L.LayersControlEvent) => {
-        updateBackground(event.name);
-    });
-
-    map.addEventListener('mousemove', async (event: L.LeafletMouseEvent) => {
-        if (!event.latlng) return;
-        mouseLat.value = (Math.round(event.latlng.lat * 100000) / 100000).toFixed(3);
-        mouseLong.value = (Math.round(event.latlng.lng * 100000) / 100000).toFixed(3);
-    });
-
-    map.on('movestart', async () => {
-        isMoving.value = true;
-    });
-
-    map.on('moveend', async () => {
-        isMoving.value = false;
-    });
-
-    setTimeout(() => {
-        $loading.finish();
-    }, 500);
-
-    startStream();
-}
+watch(location, () => goto({ x: location.value?.x, y: location.value?.y }));
 
 async function startStream(): Promise<void> {
     if (abort.value !== undefined) return;
@@ -297,10 +160,7 @@ async function applySelectedMarkerCentering(): Promise<void> {
         return;
     }
 
-    map?.panTo([marker.marker.y, marker.marker.x], {
-        animate: true,
-        duration: 0.85,
-    });
+    goto({ x: marker.marker.x, y: marker.marker.y });
 }
 
 onBeforeUnmount(() => {
@@ -308,79 +168,12 @@ onBeforeUnmount(() => {
     map = undefined;
 });
 
-type Postal = {
-    x: number;
-    y: number;
-    code: string;
-};
-
-const selectedPostal = ref<Postal | undefined>();
-const postalQuery = ref('');
-let postalsLoaded = false;
-const postals = ref<Postal[]>([]);
-const filteredPostals = ref<Postal[]>([]);
-
-async function loadPostals(): Promise<void> {
-    if (postalsLoaded) {
-        return;
-    }
-    postalsLoaded = true;
-
-    try {
-        const response = await fetch('/data/postals.json');
-        postals.value.push(...((await response.json()) as Postal[]));
-    } catch (_) {
-        notifications.dispatchNotification({
-            title: { key: 'notifications.failed_loading_postals.title', parameters: [] },
-            content: { key: 'notifications.failed_loading_postals.content', parameters: [] },
-            type: 'error',
-        });
-        postalsLoaded = false;
-    }
-}
-
-async function findPostal(): Promise<void> {
-    if (postalQuery.value === '') {
-        return;
-    }
-
-    let results = 0;
-    filteredPostals.value.length = 0;
-    filteredPostals.value = postals.value.filter((p) => {
-        if (results >= 10) {
-            return false;
-        }
-        const result = p.code.startsWith(postalQuery.value!);
-        if (result) results++;
-        return result;
-    });
-    if (filteredPostals.value.length === 0) {
-        return;
-    }
-}
-
 async function setSelectedMarker(id: bigint): Promise<void> {
     setTimeout(() => {
         selectedMarker.value = id;
         applySelectedMarkerCentering();
     }, 100);
 }
-
-watch(selectedPostal, () => {
-    if (!selectedPostal.value) {
-        return;
-    }
-
-    map?.flyTo([selectedPostal.value.y, selectedPostal.value.x], 5, {
-        animate: true,
-        duration: 0.85,
-    });
-});
-
-watchDebounced(postalQuery, () => findPostal(), {
-    debounce: 250,
-    maxWait: 850,
-});
 
 const createOrUpdateModal = ref<InstanceType<typeof CreateOrUpdateModal>>();
 const createDispatchOpen = ref(false);
@@ -394,35 +187,13 @@ function goto(e: { x: number; y: number }) {
         location.value = { x: e.x, y: e.y };
     }
 }
+
+function onMapReady(map: L.Map): void {
+    startStream();
+}
 </script>
 
 <style>
-.leaflet-div-icon {
-    background: none;
-    border: none;
-}
-
-.leaflet-div-icon svg path {
-    stroke: #000;
-    stroke-width: 0.75px;
-    stroke-linejoin: round;
-}
-
-.leaflet-marker-icon {
-    transition: transform 1s ease;
-}
-
-.leaflet-popup-content-wrapper {
-    background-color: #16171a;
-    color: #fff;
-}
-.leaflet-popup-content p {
-    margin: 0.25em 0;
-}
-.leaflet-popup-tip {
-    background-color: #16171a;
-}
-
 .animate-dispatch {
     animation: wiggle 1s infinite;
 }
@@ -461,61 +232,8 @@ function goto(e: { x: number; y: number }) {
             <DataErrorBlock v-else-if="error" :title="$t('components.livemap.failed_datastream')" :retry="startStream" />
             <DataPendingBlock v-else-if="!error" :message="$t('components.livemap.paused_datastream')" :paused="true" />
         </div>
-
-        <div class="h-full flex flex-row">
-            <LMap
-                class="z-0"
-                v-model:zoom="zoom"
-                v-model:center="center"
-                :crs="customCRS"
-                :min-zoom="1"
-                :max-zoom="6"
-                @click="selectedMarker = undefined"
-                :inertia="false"
-                :style="{ backgroundColor }"
-                @ready="onMapReady($event)"
-                :use-global-leaflet="true"
-                :options="mapOptions"
-            >
-                <LTileLayer
-                    url="/images/livemap/tiles/postal/{z}/{x}/{y}.png"
-                    layer-type="base"
-                    name="Postal"
-                    :no-wrap="true"
-                    :tms="true"
-                    :visible="true"
-                    :attribution="attribution"
-                />
-                <LTileLayer
-                    url="/images/livemap/tiles/atlas/{z}/{x}/{y}.png"
-                    layer-type="base"
-                    name="Atlas"
-                    :no-wrap="true"
-                    :tms="true"
-                    :visible="false"
-                    :attribution="attribution"
-                />
-                <LTileLayer
-                    url="/images/livemap/tiles/road/{z}/{x}/{y}.png"
-                    layer-type="base"
-                    name="Road"
-                    :no-wrap="true"
-                    :tms="true"
-                    :visible="false"
-                    :attribution="attribution"
-                />
-                <LTileLayer
-                    url="/images/livemap/tiles/satelite/{z}/{x}/{y}.png"
-                    layer-type="base"
-                    name="Satelite"
-                    :no-wrap="true"
-                    :tms="true"
-                    :visible="false"
-                    :attribution="attribution"
-                />
-
-                <LControlLayers />
-
+        <BaseMap :map-options="mapOptions" @map-ready="onMapReady">
+            <template v-slot:default>
                 <LLayerGroup
                     v-for="job in markerPlayers"
                     :key="job.name"
@@ -559,12 +277,7 @@ function goto(e: { x: number; y: number }) {
                     </LMarker>
                 </LLayerGroup>
 
-                <LControl position="bottomleft" class="leaflet-control-attribution mouseposition">
-                    <b>{{ $t('common.longitude') }}</b
-                    >: {{ mouseLat }} | <b>{{ $t('common.latitude') }}</b
-                    >: {{ mouseLong }}
-                </LControl>
-                <LControl position="topleft" v-if="filterDispatch || filterEmployee || filterPostals">
+                <LControl position="topleft" v-if="filterDispatch || filterEmployee">
                     <div class="form-control flex flex-col gap-2">
                         <div v-if="filterEmployee">
                             <input
@@ -584,34 +297,7 @@ function goto(e: { x: number; y: number }) {
                                 :placeholder="`${$t('common.dispatch', 1)} ${$t('common.filter')}`"
                             />
                         </div>
-                        <div v-if="filterPostals">
-                            <Combobox as="div" class="w-full" v-model="selectedPostal" nullable>
-                                <ComboboxInput
-                                    class="w-full"
-                                    @change="postalQuery = $event.target.value"
-                                    @click="loadPostals"
-                                    :display-value="(postal: any) => (postal ? postal?.code : '')"
-                                    :placeholder="`${$t('common.postal')} ${$t('common.search')}`"
-                                />
-                                <ComboboxOptions class="z-10 w-full py-1 mt-1 overflow-auto bg-white">
-                                    <ComboboxOption
-                                        v-for="postal in filteredPostals"
-                                        :key="postal.code"
-                                        :value="postal"
-                                        v-slot="{ active }"
-                                    >
-                                        <li
-                                            :class="[
-                                                'relative cursor-default select-none py-2 pl-8 pr-4',
-                                                active ? 'bg-primary-500 text-white' : 'text-gray-600',
-                                            ]"
-                                        >
-                                            {{ postal.code }}
-                                        </li>
-                                    </ComboboxOption>
-                                </ComboboxOptions>
-                            </Combobox>
-                        </div>
+                        <PostalSearch @goto="goto($event)" />
                     </div>
                 </LControl>
                 <LControl position="bottomright" v-if="centerSelectedMarker || markerResize">
@@ -647,17 +333,10 @@ function goto(e: { x: number; y: number }) {
                 </LControl>
 
                 <slot />
-            </LMap>
-
-            <slot name="afterMap" />
-
-            <CreateOrUpdateModal
-                v-if="can('CentrumService.CreateDispatch')"
-                ref="createOrUpdateModal"
-                :open="createDispatchOpen"
-                @close="createDispatchOpen = false"
-                :location="location"
-            />
-        </div>
+            </template>
+            <template v-slot:afterMap>
+                <slot name="afterMap" />
+            </template>
+        </BaseMap>
     </div>
 </template>

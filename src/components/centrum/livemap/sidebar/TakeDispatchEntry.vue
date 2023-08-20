@@ -44,9 +44,9 @@ const expiresAt = props.dispatch.units.find((u) => u.expiresAt !== undefined)?.e
                         class="text-primary-400 hover:text-primary-600"
                         @click="$emit('goto', { x: dispatch.x, y: dispatch.y })"
                     >
-                        Go to Location
+                        {{ $t('common.go_to_location') }}
                     </button>
-                    <span v-else>No Location</span>
+                    <span v-else>{{ $t('common.no_location') }}</span>
                 </li>
                 <li class="flex items-center justify-between py-3 pl-3 pr-4 text-sm">
                     <div class="flex items-center flex-1">

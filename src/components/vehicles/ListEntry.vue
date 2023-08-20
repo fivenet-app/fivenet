@@ -32,13 +32,13 @@ function addToClipboard(): void {
         <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">
             {{ vehicle.plate }}
         </td>
-        <td class="whitespace-nowrap px-2 py-2 text-sm text-base-200">
+        <td class="whitespace-nowrap px-1 py-1text-sm text-base-200">
             {{ vehicle.model }}
         </td>
-        <td class="whitespace-nowrap px-2 py-2 text-sm text-base-200">
+        <td class="whitespace-nowrap px-1 py-1text-sm text-base-200">
             {{ toTitleCase(vehicle.type) }}
         </td>
-        <td v-if="!hideOwner" class="whitespace-nowrap px-2 py-2 text-sm text-base-200">
+        <td v-if="!hideOwner" class="whitespace-nowrap px-1 py-1text-sm text-base-200">
             {{ vehicle.owner?.firstname }}, {{ vehicle.owner?.lastname }}
         </td>
         <td

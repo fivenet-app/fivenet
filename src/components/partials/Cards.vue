@@ -14,10 +14,8 @@ defineEmits<{
 
 <template>
     <div
-        :class="[
-            items.length === 1 ? '' : 'sm:grid-cols-2 sm:max-w-6xl',
-            `overflow-hidden divide-y-4 rounded-lg bg-base-900 shadow-float sm:grid sm:gap-1 sm:mx-auto divide-base-900 sm:divide-y-0`,
-        ]"
+        class="overflow-hidden divide-y-4 rounded-lg bg-base-900 shadow-float sm:grid sm:gap-1 sm:mx-2 divide-base-900 sm:divide-y-0"
+        :class="[items.length === 1 ? '' : 'sm:grid-cols-2 sm:max-w-6xl']"
     >
         <template v-for="(item, itemIdx) in items">
             <div

@@ -8,6 +8,7 @@ const props = defineProps<{
 
 defineEmits<{
     (e: 'goto', loc: { x: number; y: number }): void;
+    (e: 'details', unit: Unit): void;
 }>();
 
 const sortedUnits = computed(
@@ -38,6 +39,7 @@ const sortedUnits = computed(
                             :key="unit.id.toString()"
                             :unit="unit"
                             @goto="$emit('goto', $event)"
+                            @details="$emit('details', $event)"
                         />
                     </ul>
                 </div>

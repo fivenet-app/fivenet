@@ -348,6 +348,19 @@
         },
         "penaltycalculator": {
             "title": "Penalty Calculator"
+        },
+        "centrum": {
+            "create_dispatch": {
+                "title": "Create Dispatch",
+                "sub_title": "Create a new Dispatch."
+            },
+            "assign_dispatch": {
+                "title": "Assign Dispatch"
+            },
+            "take_dispatch": {
+                "title": "Take Dispatches",
+                "sub_title": "Take assigned dispatches quickly or take dispatches normally."
+            }
         }
     },
     "common": {
@@ -531,7 +544,14 @@
         "decline": "Decline | Declined",
         "licenses": "Licenses",
         "sent_by": "Sent by",
-        "sent_at": "Sent at"
+        "sent_at": "Sent at",
+        "go_to_location": "Go to Location",
+        "no_location": "No Location",
+        "your_dispatches": "Your Dispatches",
+        "no_assigned_dispatches": "No assigned dispatches.",
+        "join_unit": "Join Unit",
+        "leave_unit": "Leave Unit",
+        "no_own_unit": "Not in any Unit."
     },
     "notifications": {
         "clipboard": {
@@ -746,6 +766,18 @@
             "closed": {
                 "title": "Document closed!",
                 "content": "Document has been closed."
+            }
+        },
+        "centrum": {
+            "unitAssigned": {
+                "joined": {
+                    "title": "Joined Unit",
+                    "content": "You have joined an unit."
+                },
+                "removed": {
+                    "title": "Left Unit",
+                    "content": "You have left your unit."
+                }
             }
         }
     },

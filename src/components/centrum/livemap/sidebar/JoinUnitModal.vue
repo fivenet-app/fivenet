@@ -67,8 +67,8 @@ async function joinUnit(unit?: Unit | undefined): Promise<void> {
                                         <div class="bg-primary-700 px-4 py-6 sm:px-6">
                                             <div class="flex items-center justify-between">
                                                 <DialogTitle class="text-base font-semibold leading-6 text-white">
-                                                    <span v-if="ownUnit"> Join Unit </span>
-                                                    <span v-else> Leave Unit </span>
+                                                    <span v-if="ownUnit"> {{ $t('common.leave_unit') }} </span>
+                                                    <span v-else> {{ $t('common.join_unit') }} </span>
                                                 </DialogTitle>
                                                 <div class="ml-3 flex h-7 items-center">
                                                     <button
@@ -80,9 +80,6 @@ async function joinUnit(unit?: Unit | undefined): Promise<void> {
                                                         <CloseIcon class="h-6 w-6" aria-hidden="true" />
                                                     </button>
                                                 </div>
-                                            </div>
-                                            <div class="mt-1">
-                                                <p class="text-sm text-primary-300">TODO</p>
                                             </div>
                                         </div>
                                         <div v-if="!ownUnit" class="flex flex-1 flex-col justify-between">
@@ -101,9 +98,17 @@ async function joinUnit(unit?: Unit | undefined): Promise<void> {
                                                                     <span class="mt-1"
                                                                         >{{ item.initials }}: {{ item.name }}</span
                                                                     >
-                                                                    <span class="mt-1">{{
-                                                                        UNIT_STATUS[item.status?.status!]
-                                                                    }}</span>
+                                                                    <span class="mt-1">
+                                                                        {{
+                                                                            $t(
+                                                                                `enums.centrum.UNIT_STATUS.${
+                                                                                    UNIT_STATUS[
+                                                                                        item.status?.status ?? (0 as number)
+                                                                                    ]
+                                                                                }`,
+                                                                            )
+                                                                        }}
+                                                                    </span>
                                                                 </button>
                                                             </div>
                                                         </div>

@@ -3,9 +3,7 @@ import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } fro
 import { AccountIcon, CloseIcon, PencilIcon } from 'mdi-vue3';
 import Time from '~/components/partials/elements/Time.vue';
 import { UNIT_STATUS, Unit } from '~~/gen/ts/resources/dispatch/units';
-import AssignUnitModal from './AssignUnitModal.vue';
 import UnitFeed from './Feed.vue';
-import StatusUpdateModal from './StatusUpdateModal.vue';
 
 defineProps<{
     open: boolean;
@@ -15,10 +13,9 @@ defineProps<{
 defineEmits<{
     (e: 'close'): void;
     (e: 'goto', loc: { x: number; y: number }): void;
+    (e: 'assignUsers', unit: Unit): void;
+    (e: 'status', unit: Unit): void;
 }>();
-
-const assignOpen = ref(false);
-const statusOpen = ref(false);
 </script>
 
 <template>
@@ -75,14 +72,9 @@ const statusOpen = ref(false);
                                                             <dd
                                                                 class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
                                                             >
-                                                                <StatusUpdateModal
-                                                                    :open="statusOpen"
-                                                                    :unit="unit"
-                                                                    @close="statusOpen = false"
-                                                                />
                                                                 <button
                                                                     type="button"
-                                                                    @click="statusOpen = true"
+                                                                    @click="$emit('status', unit)"
                                                                     class="rounded bg-white/10 px-2 py-1 text-xs font-semibold text-white shadow-sm hover:bg-white/20"
                                                                 >
                                                                     {{
@@ -142,9 +134,9 @@ const statusOpen = ref(false);
                                                                         $emit('goto', { x: unit.status?.x, y: unit.status?.y })
                                                                     "
                                                                 >
-                                                                    Go to Location
+                                                                    {{ $t('common.go_to_location') }}
                                                                 </button>
-                                                                <span v-else>No Location</span>
+                                                                <span v-else>{{ $t('common.no_location') }}</span>
                                                             </dd>
                                                         </div>
                                                         <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
@@ -175,15 +167,10 @@ const statusOpen = ref(false);
                                                                         </div>
                                                                     </li>
                                                                 </ul>
-                                                                <AssignUnitModal
-                                                                    :open="assignOpen"
-                                                                    :unit="unit"
-                                                                    @close="assignOpen = false"
-                                                                />
                                                                 <button
                                                                     v-if="can('CentrumService.TakeControl')"
                                                                     type="button"
-                                                                    @click="assignOpen = true"
+                                                                    @click="$emit('assignUsers', unit)"
                                                                     class="rounded bg-white/10 px-2 py-1 text-xs font-semibold text-white shadow-sm hover:bg-white/20"
                                                                 >
                                                                     <PencilIcon class="h-6 w-6" />

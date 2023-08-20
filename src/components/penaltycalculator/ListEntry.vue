@@ -19,17 +19,17 @@ const count = ref(props.count);
         <td class="py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">
             {{ law.name }}
         </td>
-        <td class="whitespace-nowrap px-2 py-2 text-sm text-base-200">${{ law.fine }}</td>
-        <td class="whitespace-nowrap px-2 py-2 text-sm text-base-200">
+        <td class="whitespace-nowrap px-1 py-1text-sm text-base-200">${{ law.fine }}</td>
+        <td class="whitespace-nowrap px-1 py-1text-sm text-base-200">
             {{ law.detentionTime }}
         </td>
-        <td class="whitespace-nowrap px-2 py-2 text-sm text-base-200">
+        <td class="whitespace-nowrap px-1 py-1text-sm text-base-200">
             {{ law.stvoPoints }}
         </td>
-        <td class="px-2 py-2 text-sm text-base-200">
+        <td class="px-1 py-1text-sm text-base-200">
             {{ law.description }}
         </td>
-        <td class="w-20 min-w-20 px-2 py-2 text-sm text-base-200">
+        <td class="w-20 min-w-20 px-1 py-1text-sm text-base-200">
             <select
                 name="count"
                 v-model="count"

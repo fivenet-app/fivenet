@@ -340,7 +340,7 @@ const appVersion = activeChar ? ' v' + __APP_VERSION__ + (import.meta.env.DEV ? 
                     leave-from="opacity-100"
                     leave-to="opacity-0"
                 >
-                    <div class="fixed inset-0 bg-opacity-75 bg-base-900" />
+                    <div class="fixed inset-0 bg-opacity-75 bg-base-900/10" />
                 </TransitionChild>
 
                 <div class="fixed inset-0 z-40 flex">
@@ -384,6 +384,7 @@ const appVersion = activeChar ? ' v' + __APP_VERSION__ + (import.meta.env.DEV ? 
                                             v-if="!accessToken || !activeChar"
                                             :to="{ name: 'index' }"
                                             class="text-accent-100 hover:bg-accent-100/10 hover:text-neutral font-medium group flex items-center rounded-md py-2 px-3 text-sm"
+                                            @click.native="mobileMenuOpen = false"
                                         >
                                             <HomeIcon
                                                 class="text-accent-100 group-hover:text-neutral mr-3 h-6 w-6"
@@ -405,6 +406,7 @@ const appVersion = activeChar ? ' v' + __APP_VERSION__ + (import.meta.env.DEV ? 
                                                 'group flex items-center rounded-md py-2 px-3 text-sm',
                                             ]"
                                             :aria-current="item.current ? 'page' : undefined"
+                                            @click.native="mobileMenuOpen = false"
                                         >
                                             <component
                                                 :is="item.icon"
@@ -435,6 +437,7 @@ const appVersion = activeChar ? ' v' + __APP_VERSION__ + (import.meta.env.DEV ? 
                                                 'group flex items-center rounded-md py-2 px-3 text-sm',
                                             ]"
                                             :aria-current="item.current ? 'page' : undefined"
+                                            @click.native="mobileMenuOpen = false"
                                         >
                                             <component
                                                 :is="item.icon"

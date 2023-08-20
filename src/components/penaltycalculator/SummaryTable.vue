@@ -53,17 +53,17 @@ function getNameForLawBookId(id: bigint): string | undefined {
                 <td class="py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">
                     {{ getNameForLawBookId(p.law.lawbookId) }} - {{ p.law.name }}
                 </td>
-                <td class="whitespace-nowrap px-2 py-2 text-sm text-base-200">${{ p.law.fine ? p.law.fine * p.count : 0 }}</td>
-                <td class="whitespace-nowrap px-2 py-2 text-sm text-base-200">
+                <td class="whitespace-nowrap px-1 py-1text-sm text-base-200">${{ p.law.fine ? p.law.fine * p.count : 0 }}</td>
+                <td class="whitespace-nowrap px-1 py-1text-sm text-base-200">
                     {{ p.law.detentionTime ? p.law.detentionTime * p.count : 0 }}
                 </td>
-                <td class="whitespace-nowrap px-2 py-2 text-sm text-base-200">
+                <td class="whitespace-nowrap px-1 py-1text-sm text-base-200">
                     {{ p.law.stvoPoints ? p.law.stvoPoints * p.count : 0 }}
                 </td>
-                <td class="px-2 py-2 text-sm text-base-200">
+                <td class="px-1 py-1text-sm text-base-200">
                     {{ p.law.description }}
                 </td>
-                <td class="w-20 min-w-20 px-2 py-2 text-sm text-base-200">
+                <td class="w-20 min-w-20 px-1 py-1text-sm text-base-200">
                     {{ p.count }}
                 </td>
             </tr>

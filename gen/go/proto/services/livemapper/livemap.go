@@ -293,7 +293,7 @@ func (s *Server) refreshUserLocations(ctx context.Context) error {
 			tUsers.JobGrade,
 			tUsers.Firstname,
 			tUsers.Lastname,
-			tJobProps.LivemapMarkerColor.AS("genericmarker.icon_color"),
+			tJobProps.LivemapMarkerColor.AS("genericmarker.color"),
 		).
 		FROM(
 			tLocs.

@@ -10,6 +10,9 @@ const props = defineProps<{
 
 defineEmits<{
     (e: 'goto', loc: { x: number; y: number }): void;
+    (e: 'details', dsp: Dispatch): void;
+    (e: 'assignUnit', dsp: Dispatch): void;
+    (e: 'status', dsp: Dispatch): void;
 }>();
 
 const sortedDispatches = computed(
@@ -34,7 +37,7 @@ const sortedDispatches = computed(
         <div class="mt-0.5 flow-root">
             <div class="-mx-2 -my-2 sm:-mx-6 lg:-mx-8">
                 <div class="inline-block min-w-full py-2 align-middle sm:px-2 lg:px-2">
-                    <table class="min-w-full divide-y divide-gray-300">
+                    <table class="min-w-full divide-y divide-base-600">
                         <thead>
                             <tr>
                                 <th
@@ -51,13 +54,13 @@ const sortedDispatches = computed(
                                 </th>
                                 <th
                                     scope="col"
-                                    class="whitespace-nowrap px-2 py-2 text-left text-sm font-semibold text-gray-100"
+                                    class="whitespace-nowrap px-1 py-1text-left text-sm font-semibold text-gray-100"
                                 >
                                     {{ $t('common.created_at') }}
                                 </th>
                                 <th
                                     scope="col"
-                                    class="whitespace-nowrap px-2 py-2 text-left text-sm font-semibold text-gray-100"
+                                    class="whitespace-nowrap px-1 py-1text-left text-sm font-semibold text-gray-100"
                                 >
                                     {{ $t('common.status') }}
                                 </th>
@@ -69,25 +72,28 @@ const sortedDispatches = computed(
                                 </th>
                                 <th
                                     scope="col"
-                                    class="whitespace-nowrap px-2 py-2 text-left text-sm font-semibold text-gray-100"
+                                    class="whitespace-nowrap px-1 py-1text-left text-sm font-semibold text-gray-100"
                                 >
                                     {{ $t('common.citizen') }}
                                 </th>
                                 <th
                                     scope="col"
-                                    class="whitespace-nowrap px-2 py-2 text-left text-sm font-semibold text-gray-100"
+                                    class="whitespace-nowrap px-1 py-1text-left text-sm font-semibold text-gray-100"
                                 >
                                     {{ $t('common.message') }}
                                 </th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-gray-200">
+                        <tbody class="divide-y divide-base-800">
                             <ListEntry
                                 v-for="dispatch in sortedDispatches"
                                 :key="dispatch.id.toString()"
                                 :dispatch="dispatch"
                                 :units="units"
                                 @goto="$emit('goto', $event)"
+                                @details="$emit('details', $event)"
+                                @assign-unit="$emit('assignUnit', $event)"
+                                @status="$emit('status', $event)"
                             />
                         </tbody>
                     </table>

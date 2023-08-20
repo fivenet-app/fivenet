@@ -16,18 +16,20 @@ import {
     MarkerCheckIcon,
 } from 'mdi-vue3';
 import { DefineComponent } from 'vue';
+import { default as DispatchDetails } from '~/components/centrum/dispatches/Details.vue';
 import { default as UpdateDispatchStatus } from '~/components/centrum/dispatches/StatusUpdateModal.vue';
 import { default as UnitDetails } from '~/components/centrum/units/Details.vue';
 import { default as UpdateUnitStatus } from '~/components/centrum/units/StatusUpdateModal.vue';
-import DispatchEntry from '~/components/livemap/centrum/DispatchEntry.vue';
 import { useAuthStore } from '~/store/auth';
 import { useNotificationsStore } from '~/store/notifications';
 import { DISPATCH_STATUS, Dispatch, DispatchStatus } from '~~/gen/ts/resources/dispatch/dispatches';
 import { Settings } from '~~/gen/ts/resources/dispatch/settings';
 import { UNIT_STATUS, Unit, UnitStatus } from '~~/gen/ts/resources/dispatch/units';
 import { UserShort } from '~~/gen/ts/resources/users/users';
-import JoinUnit from './centrum/JoinUnit.vue';
-import TakeDispatch from './centrum/TakeDispatch.vue';
+import { dispatchStatusToBGColor } from './helpers';
+import DispatchEntry from './sidebar/DispatchEntry.vue';
+import JoinUnit from './sidebar/JoinUnitModal.vue';
+import TakeDispatch from './sidebar/TakeDispatchModal.vue';
 
 defineEmits<{
     (e: 'goto', loc: { x: number; y: number }): void;
@@ -272,7 +274,6 @@ async function startStream(): Promise<void> {
                     if (ownUnit.value && ownUnit.value.id === resp.change.dispatchStatus.status.unitId) {
                         const assignment = resp.change.dispatchStatus.units.find((u) => u.unitId === ownUnit.value?.id);
                         // When dispatch has expiration, it needs to be "taken"
-                        console.log(assignment?.expiresAt);
                         if (assignment?.expiresAt) {
                             addOrUpdateTakenDispatch(resp.change.dispatchStatus);
                         } else {
@@ -335,12 +336,16 @@ const dispatchStatusOpen = ref(false);
 const dispatchStatusSelected = ref<DISPATCH_STATUS | undefined>();
 
 const openTakeDispatch = ref(false);
+
+const selectedDispatch = ref<Dispatch | undefined>();
+const openDispatchDetails = ref(false);
 </script>
 
 <template>
     <template v-if="ownUnit">
         <UpdateUnitStatus :open="unitStatusOpen" @close="unitStatusOpen = false" :unit="ownUnit" :status="unitStatusSelected" />
         <UpdateDispatchStatus
+            v-if="activeDispatch"
             :open="dispatchStatusOpen"
             @close="dispatchStatusOpen = false"
             :dispatch="activeDispatch"
@@ -388,9 +393,9 @@ const openTakeDispatch = ref(false);
                             >
                                 <span v-if="!ownUnit" class="flex w-full flex-col items-center">
                                     <InformationOutlineIcon class="h-5 w-5" aria-hidden="true" />
-                                    <span class="mt-2 truncate">Not in any Unit.</span>
+                                    <span class="mt-2 truncate">{{ $t('common.no_own_unit') }}</span>
                                 </span>
-                                <span v-else class="truncate">Leave Unit</span>
+                                <span v-else class="truncate">{{ $t('common.leave_unit') }}</span>
                             </button>
 
                             <JoinUnit
@@ -458,7 +463,11 @@ const openTakeDispatch = ref(false);
                                     :key="item.name"
                                     type="button"
                                     class="text-white bg-primary hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-2 text-xs my-0.5"
-                                    :class="[idx >= actionsDispatch.length - 1 ? 'col-span-2' : '', item.class]"
+                                    :class="[
+                                        idx >= actionsDispatch.length - 1 ? 'col-span-2' : '',
+                                        item.class,
+                                        dispatchStatusToBGColor(item.status),
+                                    ]"
                                     @click="
                                         dispatchStatusSelected = item.status;
                                         dispatchStatusOpen = true;
@@ -476,7 +485,7 @@ const openTakeDispatch = ref(false);
                     </ul>
                 </li>
                 <li v-if="ownUnit">
-                    <div class="text-xs font-semibold leading-6 text-base-200">Your Dispatches</div>
+                    <div class="text-xs font-semibold leading-6 text-base-200">{{ $t('common.your_dispatches') }}</div>
                     <ul role="list" class="-mx-2 mt-2 space-y-1">
                         <li v-if="dispatches.length === 0">
                             <button
@@ -484,7 +493,7 @@ const openTakeDispatch = ref(false);
                                 class="text-white bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-2 text-xs my-0.5"
                             >
                                 <CarEmergencyIcon class="h-5 w-5" aria-hidden="true" />
-                                <span class="mt-2 truncate">No assigned Dispatches.</span>
+                                <span class="mt-2 truncate">{{ $t('common.no_assigned_dispatches') }}</span>
                             </button>
                         </li>
                         <DispatchEntry
@@ -493,6 +502,7 @@ const openTakeDispatch = ref(false);
                             :dispatch="dispatch"
                             :units="units"
                             @goto="$emit('goto', $event)"
+                            @details=""
                         />
                     </ul>
                 </li>
@@ -500,6 +510,17 @@ const openTakeDispatch = ref(false);
         </nav>
     </div>
 
+    <template v-if="selectedDispatch">
+        <DispatchDetails
+            @close="openDispatchDetails = false"
+            :dispatch="selectedDispatch"
+            :open="openDispatchDetails"
+            @goto="$emit('goto', $event)"
+            :units="units"
+        />
+    </template>
+
+    <!-- "Take Dispatches" Button -->
     <span v-if="ownUnit" class="fixed inline-flex z-90 bottom-2 right-1/2">
         <span class="flex absolute h-3 w-3 top-0 right-0 -mt-1 -mr-1" v-if="takeDispatches.length > 0">
             <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-error-400 opacity-75"></span>

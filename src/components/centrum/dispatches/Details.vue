@@ -1,26 +1,22 @@
 <script lang="ts" setup>
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { AccountIcon, CloseIcon, PencilIcon } from 'mdi-vue3';
+import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import Time from '~/components/partials/elements/Time.vue';
 import { DISPATCH_STATUS, Dispatch } from '~~/gen/ts/resources/dispatch/dispatches';
-import { Unit } from '~~/gen/ts/resources/dispatch/units';
-import AssignDispatchModal from './AssignDispatchModal.vue';
 import Feed from './Feed.vue';
-import StatusUpdateModal from './StatusUpdateModal.vue';
 
 defineProps<{
     open: boolean;
     dispatch: Dispatch;
-    units: Unit[];
 }>();
 
 defineEmits<{
     (e: 'close'): void;
     (e: 'goto', loc: { x: number; y: number }): void;
+    (e: 'assignUnit', dsp: Dispatch): void;
+    (e: 'status', dsp: Dispatch): void;
 }>();
-
-const statusOpen = ref(false);
-const assignOpen = ref(false);
 </script>
 
 <template>
@@ -45,8 +41,9 @@ const assignOpen = ref(false);
                                     <div class="h-0 flex-1 overflow-y-auto">
                                         <div class="bg-primary-700 px-4 py-6 sm:px-6">
                                             <div class="flex items-center justify-between">
-                                                <DialogTitle class="text-base font-semibold leading-6 text-white">
-                                                    {{ $t('common.dispatch') }}: {{ dispatch.id.toString() }} -
+                                                <DialogTitle class="inline-flex text-base font-semibold leading-6 text-white">
+                                                    {{ $t('common.dispatch') }}:
+                                                    <IDCopyBadge class="ml-2 mr-2" :id="dispatch.id" prefix="DSP" />
                                                     {{ dispatch.message }}
                                                 </DialogTitle>
                                                 <div class="ml-3 flex h-7 items-center">
@@ -77,14 +74,9 @@ const assignOpen = ref(false);
                                                             <dd
                                                                 class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
                                                             >
-                                                                <StatusUpdateModal
-                                                                    :open="statusOpen"
-                                                                    :dispatch="dispatch"
-                                                                    @close="statusOpen = false"
-                                                                />
                                                                 <button
                                                                     type="button"
-                                                                    @click="statusOpen = true"
+                                                                    @click="$emit('status', dispatch)"
                                                                     class="rounded bg-white/10 px-2 py-1 text-xs font-semibold text-white shadow-sm hover:bg-white/20"
                                                                 >
                                                                     {{
@@ -145,9 +137,9 @@ const assignOpen = ref(false);
                                                                     class="text-primary-400 hover:text-primary-600"
                                                                     @click="$emit('goto', { x: dispatch.x, y: dispatch.y })"
                                                                 >
-                                                                    Go to Location
+                                                                    {{ $t('common.go_to_location') }}
                                                                 </button>
-                                                                <span v-else>No Location</span>
+                                                                <span v-else>{{ $t('common.no_location') }}</span>
                                                             </dd>
                                                         </div>
                                                         <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
@@ -196,16 +188,10 @@ const assignOpen = ref(false);
                                                                         </div>
                                                                     </li>
                                                                 </ul>
-                                                                <AssignDispatchModal
-                                                                    :open="assignOpen"
-                                                                    :dispatch="dispatch"
-                                                                    :units="units"
-                                                                    @close="assignOpen = false"
-                                                                />
                                                                 <button
                                                                     v-if="can('CentrumService.TakeControl')"
                                                                     type="button"
-                                                                    @click="assignOpen = true"
+                                                                    @click="$emit('assignUnit', dispatch)"
                                                                     class="rounded bg-white/10 px-2 py-1 text-xs font-semibold text-white shadow-sm hover:bg-white/20"
                                                                 >
                                                                     <PencilIcon class="h-6 w-6" />

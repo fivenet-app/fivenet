@@ -2,8 +2,9 @@
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 import { ChevronDownIcon } from 'mdi-vue3';
 import Footer from '~/components/partials/Footer.vue';
-import licensesBackend from '~/public/licenses-backend.txt?raw';
-import licensesFrontend from '~/public/licenses-frontend.txt?raw';
+import licensesBackend from '~/public/licenses/backend.txt?raw';
+import licensesFrontend from '~/public/licenses/frontend.txt?raw';
+import licensesSounds from '~/public/licenses/sounds.txt?raw';
 import licenseFiveNet from '~~/LICENSE?raw';
 
 useHead({
@@ -23,6 +24,10 @@ const licenses = [
     {
         title: 'Frontend Licenses',
         content: licensesFrontend,
+    },
+    {
+        title: 'Sounds Licenses',
+        content: licensesSounds,
     },
     {
         title: 'Backend Licenses',

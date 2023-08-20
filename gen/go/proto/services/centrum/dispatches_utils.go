@@ -218,35 +218,7 @@ func (s *Server) updateDispatchAssignments(ctx context.Context, job string, user
 	}
 
 	if len(toAdd) > 0 {
-		addIds := make([]jet.Expression, len(toAdd))
-		for i := 0; i < len(toAdd); i++ {
-			addIds[i] = jet.Uint64(toAdd[i])
-		}
-
 		expiresAt := time.Now().Add(16 * time.Second)
-		for _, id := range addIds {
-			stmt := tDispatchUnit.
-				INSERT(
-					tDispatchUnit.DispatchID,
-					tDispatchUnit.UnitID,
-					tDispatchUnit.ExpiresAt,
-				).
-				VALUES(
-					dsp.Id,
-					id,
-					expiresAt,
-				).
-				ON_DUPLICATE_KEY_UPDATE(
-					tDispatchUnit.ExpiresAt.SET(jet.RawTimestamp("VALUES(`expires_at`)")),
-				)
-
-			if _, err := stmt.ExecContext(ctx, tx); err != nil {
-				if !dbutils.IsDuplicateError(err) {
-					return err
-				}
-			}
-		}
-
 		expiresAtTS := timestamp.New(expiresAt)
 		for k := 0; k < len(toAdd); k++ {
 			found := false
@@ -264,6 +236,28 @@ func (s *Server) updateDispatchAssignments(ctx context.Context, job string, user
 
 			if len(unit.Users) <= 0 {
 				continue
+			}
+
+			expiresAt := time.Now().Add(16 * time.Second)
+			stmt := tDispatchUnit.
+				INSERT(
+					tDispatchUnit.DispatchID,
+					tDispatchUnit.UnitID,
+					tDispatchUnit.ExpiresAt,
+				).
+				VALUES(
+					dsp.Id,
+					unit.Id,
+					expiresAt,
+				).
+				ON_DUPLICATE_KEY_UPDATE(
+					tDispatchUnit.ExpiresAt.SET(jet.RawTimestamp("VALUES(`expires_at`)")),
+				)
+
+			if _, err := stmt.ExecContext(ctx, tx); err != nil {
+				if !dbutils.IsDuplicateError(err) {
+					return err
+				}
 			}
 
 			// Only add unit to dispatch if not already assigned
