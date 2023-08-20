@@ -2,11 +2,9 @@
 import { AccountMultiplePlusIcon, DotsVerticalIcon, MapMarkerIcon } from 'mdi-vue3';
 import Time from '~/components/partials/elements/Time.vue';
 import { DISPATCH_STATUS, Dispatch } from '~~/gen/ts/resources/dispatch/dispatches';
-import { Unit } from '~~/gen/ts/resources/dispatch/units';
 
 defineProps<{
     dispatch: Dispatch;
-    units: Unit[];
 }>();
 
 defineEmits<{

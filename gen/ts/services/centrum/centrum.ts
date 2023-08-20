@@ -360,25 +360,29 @@ export interface TakeDispatchResponse {
  */
 export interface LatestState {
     /**
-     * @generated from protobuf field: bool is_disponent = 1;
-     */
-    isDisponent: boolean;
-    /**
-     * @generated from protobuf field: optional resources.dispatch.Settings settings = 2;
+     * @generated from protobuf field: resources.dispatch.Settings settings = 1;
      */
     settings?: Settings;
     /**
-     * @generated from protobuf field: resources.dispatch.Unit unit = 3;
+     * @generated from protobuf field: repeated resources.users.UserShort disponents = 2;
      */
-    unit?: Unit;
+    disponents: UserShort[];
+    /**
+     * @generated from protobuf field: bool is_disponent = 3;
+     */
+    isDisponent: boolean;
+    /**
+     * @generated from protobuf field: resources.dispatch.Unit own_unit = 4;
+     */
+    ownUnit?: Unit;
     /**
      * Send the current units and dispatches
      *
-     * @generated from protobuf field: repeated resources.dispatch.Unit units = 4;
+     * @generated from protobuf field: repeated resources.dispatch.Unit units = 5;
      */
     units: Unit[];
     /**
-     * @generated from protobuf field: repeated resources.dispatch.Dispatch dispatches = 5;
+     * @generated from protobuf field: repeated resources.dispatch.Dispatch dispatches = 6;
      */
     dispatches: Dispatch[];
 }
@@ -876,11 +880,12 @@ export const TakeDispatchResponse = new TakeDispatchResponse$Type();
 class LatestState$Type extends MessageType<LatestState> {
     constructor() {
         super("services.centrum.LatestState", [
-            { no: 1, name: "is_disponent", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 2, name: "settings", kind: "message", T: () => Settings },
-            { no: 3, name: "unit", kind: "message", T: () => Unit },
-            { no: 4, name: "units", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Unit },
-            { no: 5, name: "dispatches", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Dispatch }
+            { no: 1, name: "settings", kind: "message", T: () => Settings },
+            { no: 2, name: "disponents", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UserShort },
+            { no: 3, name: "is_disponent", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 4, name: "own_unit", kind: "message", T: () => Unit },
+            { no: 5, name: "units", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Unit },
+            { no: 6, name: "dispatches", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Dispatch }
         ]);
     }
 }

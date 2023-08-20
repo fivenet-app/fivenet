@@ -4,10 +4,10 @@ import { setLocale as veeValidateSetLocale } from '@vee-validate/i18n';
 import { TranslateIcon } from 'mdi-vue3';
 import { LocaleObject } from 'vue-i18n-routing';
 import { useNotificationsStore } from '~/store/notifications';
-import { useUserSettingsStore } from '~/store/usersettings';
+import { useSettingsStore } from '~/store/settings';
 
 const { locales, setLocale } = useI18n();
-const settings = useUserSettingsStore();
+const settings = useSettingsStore();
 const notifications = useNotificationsStore();
 
 const languages: { name: string; iso: string }[] = [];

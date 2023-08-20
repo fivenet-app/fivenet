@@ -4022,14 +4022,12 @@ func (m *LatestState) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for IsDisponent
-
 	if all {
-		switch v := interface{}(m.GetUnit()).(type) {
+		switch v := interface{}(m.GetSettings()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
 				errors = append(errors, LatestStateValidationError{
-					field:  "Unit",
+					field:  "Settings",
 					reason: "embedded message failed validation",
 					cause:  err,
 				})
@@ -4037,16 +4035,81 @@ func (m *LatestState) validate(all bool) error {
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
 				errors = append(errors, LatestStateValidationError{
-					field:  "Unit",
+					field:  "Settings",
 					reason: "embedded message failed validation",
 					cause:  err,
 				})
 			}
 		}
-	} else if v, ok := interface{}(m.GetUnit()).(interface{ Validate() error }); ok {
+	} else if v, ok := interface{}(m.GetSettings()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
 			return LatestStateValidationError{
-				field:  "Unit",
+				field:  "Settings",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	for idx, item := range m.GetDisponents() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, LatestStateValidationError{
+						field:  fmt.Sprintf("Disponents[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, LatestStateValidationError{
+						field:  fmt.Sprintf("Disponents[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return LatestStateValidationError{
+					field:  fmt.Sprintf("Disponents[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	// no validation rules for IsDisponent
+
+	if all {
+		switch v := interface{}(m.GetOwnUnit()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, LatestStateValidationError{
+					field:  "OwnUnit",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, LatestStateValidationError{
+					field:  "OwnUnit",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetOwnUnit()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return LatestStateValidationError{
+				field:  "OwnUnit",
 				reason: "embedded message failed validation",
 				cause:  err,
 			}
@@ -4113,39 +4176,6 @@ func (m *LatestState) validate(all bool) error {
 			if err := v.Validate(); err != nil {
 				return LatestStateValidationError{
 					field:  fmt.Sprintf("Dispatches[%v]", idx),
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	}
-
-	if m.Settings != nil {
-
-		if all {
-			switch v := interface{}(m.GetSettings()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, LatestStateValidationError{
-						field:  "Settings",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, LatestStateValidationError{
-						field:  "Settings",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetSettings()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return LatestStateValidationError{
-					field:  "Settings",
 					reason: "embedded message failed validation",
 					cause:  err,
 				}

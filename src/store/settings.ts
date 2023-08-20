@@ -1,20 +1,24 @@
 import { StoreDefinition, defineStore } from 'pinia';
 
-export interface UserSettingsState {
+export interface SettingsState {
     version: string;
     locale: string;
-    livemapMarkerSize: number;
-    livemapCenterSelectedMarker: boolean;
+    livemap: {
+        markerSize: number;
+        centerSelectedMarker: boolean;
+    };
 }
 
-export const useUserSettingsStore = defineStore('userSettings', {
+export const useSettingsStore = defineStore('settings', {
     state: () =>
         ({
             version: __APP_VERSION__ as string,
             locale: 'de',
-            livemapMarkerSize: 22,
-            livemapCenterSelectedMarker: false,
-        }) as UserSettingsState,
+            livemap: {
+                markerSize: 22,
+                centerSelectedMarker: false,
+            },
+        }) as SettingsState,
     persist: true,
     actions: {
         setVersion(version: string): void {
@@ -24,10 +28,10 @@ export const useUserSettingsStore = defineStore('userSettings', {
             this.locale = locale;
         },
         setLivemapMarkerSize(size: number): void {
-            this.livemapMarkerSize = size;
+            this.livemap.markerSize = size;
         },
         setLivemapCenterSelectedMarker(value: boolean): void {
-            this.livemapCenterSelectedMarker = value;
+            this.livemap.centerSelectedMarker = value;
         },
     },
     getters: {
@@ -36,5 +40,5 @@ export const useUserSettingsStore = defineStore('userSettings', {
 });
 
 if (import.meta.hot) {
-    import.meta.hot.accept(acceptHMRUpdate(useUserSettingsStore as unknown as StoreDefinition, import.meta.hot));
+    import.meta.hot.accept(acceptHMRUpdate(useSettingsStore as unknown as StoreDefinition, import.meta.hot));
 }

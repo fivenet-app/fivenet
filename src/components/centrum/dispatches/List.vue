@@ -1,12 +1,10 @@
 <script lang="ts" setup>
+import { useCentrumStore } from '~/store/centrum';
 import { Dispatch } from '~~/gen/ts/resources/dispatch/dispatches';
-import { Unit } from '~~/gen/ts/resources/dispatch/units';
 import ListEntry from './ListEntry.vue';
 
-const props = defineProps<{
-    dispatches: Dispatch[];
-    units: Unit[];
-}>();
+const centrumStore = useCentrumStore();
+const { units, dispatches } = storeToRefs(centrumStore);
 
 defineEmits<{
     (e: 'goto', loc: { x: number; y: number }): void;
@@ -14,17 +12,6 @@ defineEmits<{
     (e: 'assignUnit', dsp: Dispatch): void;
     (e: 'status', dsp: Dispatch): void;
 }>();
-
-const sortedDispatches = computed(
-    () =>
-        props.dispatches?.sort((a, b) => {
-            if (!b.status) return -1;
-            if (!a.status) return 1;
-            if (a.status < b.status) return -1;
-            if (a.status > b.status) return 1;
-            return 0;
-        }),
-);
 </script>
 
 <template>
@@ -86,10 +73,9 @@ const sortedDispatches = computed(
                         </thead>
                         <tbody class="divide-y divide-base-800">
                             <ListEntry
-                                v-for="dispatch in sortedDispatches"
+                                v-for="dispatch in dispatches"
                                 :key="dispatch.id.toString()"
                                 :dispatch="dispatch"
-                                :units="units"
                                 @goto="$emit('goto', $event)"
                                 @details="$emit('details', $event)"
                                 @assign-unit="$emit('assignUnit', $event)"

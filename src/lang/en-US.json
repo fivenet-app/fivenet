@@ -360,6 +360,11 @@
             "take_dispatch": {
                 "title": "Take Dispatches",
                 "sub_title": "Take assigned dispatches quickly or take dispatches normally."
+            },
+            "dispatch_center": {
+                "starting_datastream": "Starting Dispatch Center data stream ...",
+                "failed_datastream": "Failed to stream Dispatch Center data!",
+                "join_center": "Want to take control? Click here to join it."
             }
         }
     },

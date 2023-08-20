@@ -17,7 +17,8 @@ message Unit {
   optional string color = 7 [ (validate.rules).string.max_len = 6 ];
   optional string description = 8 [ (validate.rules).string.max_len = 255 ];
   optional UnitStatus status = 9;
-  repeated UnitAssignment users = 10;
+  repeated UnitStatus statuses = 10;
+  repeated UnitAssignment users = 11;
 }
 
 message UnitAssignments {

@@ -41,6 +41,7 @@ const icon = new L.DivIcon({
 
 <template>
     <LMarker
+        ref="marker"
         :key="marker.marker!.id?.toString()"
         :latLng="[marker.marker!.y, marker.marker!.x]"
         :name="marker.marker!.name"
@@ -48,14 +49,12 @@ const icon = new L.DivIcon({
         @click="$emit('selected')"
         :z-index-offset="activeChar && marker.user?.identifier === activeChar.identifier ? 25 : 20"
     >
-        <LPopup
-            :options="{ closeButton: false }"
-            :content="`<span class='font-semibold'>${$t('common.employee', 2)} ${
-                marker.user?.jobLabel
-            }</span><br><span class='italic'>[${marker.user?.jobGrade}] ${marker.user?.jobGradeLabel}</span><br>${
-                marker.user?.firstname
-            } ${marker.user?.lastname}`"
-        >
+        <LPopup :options="{ closeButton: true }">
+            <span class="font-semibold">{{ $t('common.employee', 2) }} {{ marker.user?.jobLabel }} </span>
+            <br />
+            <span class="italic">[{{ marker.user?.jobGrade }} {{ marker.user?.jobGradeLabel }}</span>
+            <br />
+            {{ marker.user?.firstname }} {{ marker.user?.lastname }}
         </LPopup>
     </LMarker>
 </template>

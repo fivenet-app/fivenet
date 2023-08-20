@@ -296,7 +296,10 @@ func (s *Server) sendLatestState(srv CentrumService_StreamServer, job string, us
 		return 0, isController, err
 	}
 
-	unit, _ := s.getUnit(job, unitId)
+	var ownUnit *dispatch.Unit
+	if !isController {
+		ownUnit, _ = s.getUnit(job, unitId)
+	}
 
 	ownOnly := !isController
 
@@ -314,9 +317,10 @@ func (s *Server) sendLatestState(srv CentrumService_StreamServer, job string, us
 	resp := &StreamResponse{
 		Change: &StreamResponse_LatestState{
 			LatestState: &LatestState{
-				IsDisponent: isController,
 				Settings:    settings,
-				Unit:        unit,
+				Disponents:  disponents,
+				IsDisponent: isController,
+				OwnUnit:     ownUnit,
 				Units:       units,
 				Dispatches:  dispatches.Dispatches,
 			},

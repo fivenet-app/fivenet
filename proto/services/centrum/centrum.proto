@@ -154,12 +154,13 @@ message TakeDispatchRequest {
 message TakeDispatchResponse {}
 
 message LatestState {
-  bool is_disponent = 1;
-  optional resources.dispatch.Settings settings = 2;
-  resources.dispatch.Unit unit = 3;
+  resources.dispatch.Settings settings = 1;
+  repeated resources.users.UserShort disponents = 2;
+  bool is_disponent = 3;
+  resources.dispatch.Unit own_unit = 4;
   // Send the current units and dispatches
-  repeated resources.dispatch.Unit units = 4;
-  repeated resources.dispatch.Dispatch dispatches = 5;
+  repeated resources.dispatch.Unit units = 5;
+  repeated resources.dispatch.Dispatch dispatches = 6;
 }
 
 message StreamRequest {}

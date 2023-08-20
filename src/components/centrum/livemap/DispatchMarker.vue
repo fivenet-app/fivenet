@@ -11,7 +11,7 @@ const props = withDefaults(
         size?: number;
     }>(),
     {
-        size: 24,
+        size: 22,
     },
 );
 

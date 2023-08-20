@@ -2,12 +2,11 @@
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { CloseIcon } from 'mdi-vue3';
+import { useCentrumStore } from '~/store/centrum';
 import { UNIT_STATUS, Unit } from '~~/gen/ts/resources/dispatch/units';
 
-const props = defineProps<{
+defineProps<{
     open: boolean;
-    ownUnit: Unit | undefined;
-    units: Unit[] | null;
 }>();
 
 const emits = defineEmits<{
@@ -18,12 +17,15 @@ const emits = defineEmits<{
 
 const { $grpc } = useNuxtApp();
 
+const centrumStore = useCentrumStore();
+const { ownUnit, units } = storeToRefs(centrumStore);
+
 async function joinUnit(unit?: Unit | undefined): Promise<void> {
     return new Promise(async (res, rej) => {
         try {
             const call = $grpc.getCentrumClient().joinUnit({
-                unitId: unit?.id ?? props.ownUnit?.id ?? 0n,
-                leave: props.ownUnit !== undefined,
+                unitId: unit?.id ?? ownUnit.value?.id ?? 0n,
+                leave: ownUnit.value !== undefined,
             });
             const { response } = await call;
 
@@ -132,7 +134,6 @@ async function joinUnit(unit?: Unit | undefined): Promise<void> {
                                                 class="w-full relative inline-flex items-center bg-white px-3 py-2 text-sm font-semibold text-gray-900 hover:text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-10"
                                                 :class="ownUnit ? '-ml-px rounded-r-md' : 'rounded-md'"
                                                 @click="$emit('close')"
-                                                ref="cancelButtonRef"
                                             >
                                                 {{ $t('common.close', 1) }}
                                             </button>

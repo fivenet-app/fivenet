@@ -1,10 +1,11 @@
 <script lang="ts" setup>
 import { LControl, LControlLayers, LMap, LTileLayer } from '@vue-leaflet/vue-leaflet';
-import { watchDebounced } from '@vueuse/core';
+import { useResizeObserver, watchDebounced } from '@vueuse/core';
 import L from 'leaflet';
 import 'leaflet-contextmenu';
 import 'leaflet-contextmenu/dist/leaflet.contextmenu.min.css';
 import 'leaflet/dist/leaflet.css';
+import { useLivemapStore } from '~/store/livemap';
 import { ValueOf } from '~/utils/types';
 
 const { $loading } = useNuxtApp();
@@ -18,9 +19,16 @@ const emits = defineEmits<{
     (e: 'mapReady', map: L.Map): void;
 }>();
 
-const location = ref<{ x: number; y: number }>({ x: 0, y: 0 });
-defineExpose({
-    location,
+const livemapStore = useLivemapStore();
+const { location } = storeToRefs(livemapStore);
+
+let map: L.Map | undefined = undefined;
+
+const mapContainer = ref<HTMLDivElement | null>(null);
+useResizeObserver(mapContainer, (_) => {
+    if (map === undefined) return;
+
+    map.invalidateSize();
 });
 
 const centerX = 117.3;
@@ -45,8 +53,6 @@ const customCRS = L.extend({}, L.CRS.Simple, {
     infinite: true,
 });
 
-let map: L.Map | undefined = undefined;
-
 let center: L.PointExpression = [0, 0];
 const attribution = '<a href="http://www.rockstargames.com/V/">Grand Theft Auto V</a>';
 const selectedMarker = ref<bigint>();
@@ -59,13 +65,13 @@ const currentHash = ref<string>('');
 watch(currentHash, () => window.location.replace(currentHash.value));
 
 watch(location, () => {
-    if (!map) return;
+    if (map === undefined) return;
 
-    map?.panTo([location.value?.x!, location.value?.y!], {
+    map?.setZoom(5);
+    map?.panTo([location.value?.y!, location.value?.x!], {
         animate: true,
         duration: 0.85,
     });
-    map?.setZoom(5);
 });
 
 const isMoving = ref<boolean>(false);
@@ -136,9 +142,11 @@ function parseHash(hash: string): { latlng: L.LatLng; zoom: number } | undefined
 async function onMapReady($event: any): Promise<void> {
     map = $event as L.Map;
 
+    map.invalidateSize();
+
     const startingHash = route.hash;
     const startPos = parseHash(startingHash);
-    if (startPos) $event.setView(startPos.latlng, startPos.zoom);
+    if (startPos) map.setView(startPos.latlng, startPos.zoom);
 
     map.on('baselayerchange', async (event: L.LayersControlEvent) => {
         updateBackground(event.name);
@@ -203,7 +211,7 @@ onBeforeUnmount(() => {
 </style>
 
 <template>
-    <div class="h-full flex flex-row">
+    <div ref="mapContainer" class="h-full flex flex-row">
         <LMap
             class="z-0"
             v-model:zoom="zoom"

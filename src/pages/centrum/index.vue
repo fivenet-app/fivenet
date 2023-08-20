@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import Centrum from '~/components/centrum/Centrum.vue';
+import DispatchCenter from '~/components/centrum/DispatchCenter.vue';
 
 useHead({
     title: 'common.dispatch_center',
@@ -13,5 +13,5 @@ definePageMeta({
 </script>
 
 <template>
-    <Centrum />
+    <DispatchCenter />
 </template>

@@ -9,7 +9,7 @@ import { loadConfig } from '~/config';
 import { useClipboardStore } from '~/store/clipboard';
 import { useDocumentEditorStore } from '~/store/documenteditor';
 import { useNotificationsStore } from '~/store/notifications';
-import { useUserSettingsStore } from '~/store/usersettings';
+import { useSettingsStore } from '~/store/settings';
 
 const { t, setLocale } = useI18n();
 
@@ -38,7 +38,7 @@ try {
     showError(e as NuxtError);
 }
 
-const userSettings = useUserSettingsStore();
+const userSettings = useSettingsStore();
 if (__APP_VERSION__ != userSettings.getVersion) {
     console.info('Resetting app data because new version detected', userSettings.getVersion, __APP_VERSION__);
     useClipboardStore().$reset();

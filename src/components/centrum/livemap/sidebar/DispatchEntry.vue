@@ -1,11 +1,9 @@
 <script lang="ts" setup>
 import { CarEmergencyIcon } from 'mdi-vue3';
 import { DISPATCH_STATUS, Dispatch } from '~~/gen/ts/resources/dispatch/dispatches';
-import { Unit } from '~~/gen/ts/resources/dispatch/units';
 
 defineProps<{
     dispatch: Dispatch;
-    units: Unit[];
 }>();
 
 defineEmits<{

@@ -116,6 +116,7 @@ func (s *Server) watchForEvents() error {
 						unit, ok := s.getUnitsMap(job).Load(dest.UnitId)
 						if ok {
 							unit.Status = &dest
+							unit.Statuses = append(unit.Statuses, &dest)
 
 						} else {
 							// "Cache/State miss" load from database

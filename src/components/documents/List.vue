@@ -341,7 +341,6 @@ onMounted(async () => {
                                         <div class="relative flex items-center mt-2">
                                             <input
                                                 v-model="search.from"
-                                                ref="searchInput"
                                                 type="datetime-local"
                                                 name="search"
                                                 :placeholder="`${$t('common.time_range')} ${$t('common.from')}`"
@@ -357,7 +356,6 @@ onMounted(async () => {
                                         <div class="relative flex items-center mt-2">
                                             <input
                                                 v-model="search.from"
-                                                ref="searchInput"
                                                 type="datetime-local"
                                                 name="search"
                                                 :placeholder="`${$t('common.time_range')} ${$t('common.to')}`"

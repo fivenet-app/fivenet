@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
-import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import {
     CalendarCheckIcon,
     CalendarRemoveIcon,
@@ -20,12 +19,9 @@ import { default as DispatchDetails } from '~/components/centrum/dispatches/Deta
 import { default as UpdateDispatchStatus } from '~/components/centrum/dispatches/StatusUpdateModal.vue';
 import { default as UnitDetails } from '~/components/centrum/units/Details.vue';
 import { default as UpdateUnitStatus } from '~/components/centrum/units/StatusUpdateModal.vue';
-import { useAuthStore } from '~/store/auth';
-import { useNotificationsStore } from '~/store/notifications';
-import { DISPATCH_STATUS, Dispatch, DispatchStatus } from '~~/gen/ts/resources/dispatch/dispatches';
-import { Settings } from '~~/gen/ts/resources/dispatch/settings';
-import { UNIT_STATUS, Unit, UnitStatus } from '~~/gen/ts/resources/dispatch/units';
-import { UserShort } from '~~/gen/ts/resources/users/users';
+import { useCentrumStore } from '~/store/centrum';
+import { DISPATCH_STATUS, Dispatch } from '~~/gen/ts/resources/dispatch/dispatches';
+import { UNIT_STATUS } from '~~/gen/ts/resources/dispatch/units';
 import { dispatchStatusToBGColor } from './helpers';
 import DispatchEntry from './sidebar/DispatchEntry.vue';
 import JoinUnit from './sidebar/JoinUnitModal.vue';
@@ -35,20 +31,9 @@ defineEmits<{
     (e: 'goto', loc: { x: number; y: number }): void;
 }>();
 
-const { $grpc } = useNuxtApp();
-
-const notifications = useNotificationsStore();
-
-const authStore = useAuthStore();
-const { activeChar } = storeToRefs(authStore);
-
-const settings = ref<Settings>();
-const disponents = ref<UserShort[]>([]);
-const ownUnit = ref<Unit>();
-const units = ref<Unit[]>([]);
-const dispatches = ref<Dispatch[]>([]);
-const feed = ref<(DispatchStatus | UnitStatus)[]>([]);
-const takeDispatches = ref<Dispatch[]>([]);
+const centrumStore = useCentrumStore();
+const { error, abort, dispatches, ownUnit, pendingDispatches } = storeToRefs(centrumStore);
+const { startStream, stopStream } = centrumStore;
 
 const actionsDispatch: {
     icon: DefineComponent;
@@ -77,244 +62,6 @@ const actionsUnit: {
     { icon: markRaw(CalendarRemoveIcon), name: 'Busy', class: 'bg-info-600', status: UNIT_STATUS.BUSY },
     { icon: markRaw(ListStatusIcon), name: 'Update Status', class: 'bg-base-800' },
 ];
-
-function checkIfUnitAssignedToDispatch(dsp: Dispatch, unit?: Unit): boolean {
-    if (unit === undefined) return false;
-
-    return dsp.units.findIndex((d) => d.unitId === unit.id) > -1;
-}
-
-function addOrUpdateUnit(unit: Unit): void {
-    const idx = units.value?.findIndex((d) => d.id === unit.id) ?? -1;
-    if (idx === -1) {
-        units.value?.unshift(unit);
-    } else {
-        units.value[idx].job = unit.job;
-        units.value[idx].createdAt = unit.createdAt;
-        units.value[idx].updatedAt = unit.updatedAt;
-        units.value[idx].name = unit.name;
-        units.value[idx].initials = unit.initials;
-        units.value[idx].color = unit.color;
-        units.value[idx].description = unit.description;
-        units.value[idx].status = unit.status;
-        units.value[idx].users = unit.users;
-    }
-}
-
-function addOrUpdateDispatch(dispatch: Dispatch): void {
-    const idx = dispatches.value?.findIndex((d) => d.id === dispatch.id) ?? -1;
-    if (idx === -1) {
-        dispatches.value?.unshift(dispatch);
-    } else {
-        dispatches.value[idx].createdAt = dispatch.createdAt;
-        dispatches.value[idx].updatedAt = dispatch.updatedAt;
-        dispatches.value[idx].job = dispatch.job;
-        dispatches.value[idx].status = dispatch.status;
-        dispatches.value[idx].message = dispatch.message;
-        dispatches.value[idx].description = dispatch.description;
-        dispatches.value[idx].attributes = dispatch.attributes;
-        dispatches.value[idx].x = dispatch.x;
-        dispatches.value[idx].y = dispatch.y;
-        dispatches.value[idx].anon = dispatch.anon;
-        dispatches.value[idx].userId = dispatch.userId;
-        dispatches.value[idx].user = dispatch.user;
-        if (dispatch.units.length == 0) {
-            dispatches.value[idx].units.length = 0;
-        } else {
-            dispatches.value[idx].units = dispatch.units;
-        }
-    }
-}
-
-function addOrUpdateTakenDispatch(dispatch: Dispatch): void {
-    const idx = takeDispatches.value?.findIndex((d) => d.id === dispatch.id) ?? -1;
-    if (idx === -1) {
-        takeDispatches.value?.unshift(dispatch);
-    }
-}
-
-function removeUnit(unit: Unit): void {
-    const idx = units.value?.findIndex((d) => d.id === unit.id) ?? -1;
-    if (idx > -1) {
-        units.value?.splice(idx, 1);
-    }
-
-    // User's unit has been deleted, reset it
-    if (ownUnit.value !== undefined && ownUnit.value.id === unit.id) {
-        ownUnit.value = undefined;
-    }
-}
-
-function removeDispatchFromList(id: bigint): void {
-    const idx = dispatches.value?.findIndex((d) => d.id === id) ?? -1;
-    if (idx > -1) {
-        dispatches.value?.splice(idx, 1);
-    }
-
-    removeTakenDispatch(id);
-}
-
-function removeTakenDispatch(id: bigint): void {
-    const tDIdx = takeDispatches.value.findIndex((d) => d.id === id);
-    if (tDIdx > -1) {
-        takeDispatches.value.splice(tDIdx, 1);
-    }
-}
-
-const abort = ref<AbortController | undefined>();
-const error = ref<string | null>(null);
-async function startStream(): Promise<void> {
-    if (abort.value !== undefined) return;
-
-    console.debug('Centrum: Starting Data Stream');
-    try {
-        abort.value = new AbortController();
-
-        const call = $grpc.getCentrumClient().stream(
-            {},
-            {
-                abort: abort.value.signal,
-            },
-        );
-
-        for await (let resp of call.responses) {
-            error.value = null;
-
-            if (resp === undefined || !resp.change) {
-                continue;
-            }
-
-            console.debug('Centrum: Received change - Kind:', resp.change.oneofKind, resp.change);
-
-            if (resp.change.oneofKind === 'latestState') {
-                settings.value = resp.change.latestState.settings;
-                if (resp.change.latestState.unit !== undefined) {
-                    ownUnit.value = resp.change.latestState.unit;
-                } else {
-                    ownUnit.value = undefined;
-                }
-                units.value = resp.change.latestState.units;
-                dispatches.value = resp.change.latestState.dispatches;
-            } else if (resp.change.oneofKind === 'settings') {
-                settings.value = resp.change.settings;
-            } else if (resp.change.oneofKind === 'disponents') {
-                disponents.value = resp.change.disponents.disponents;
-            } else if (resp.change.oneofKind === 'unitAssigned') {
-                if (ownUnit.value !== undefined && resp.change.unitAssigned.id !== ownUnit.value?.id) {
-                    console.warn('Received unit user assigned event for other unit'), resp.change.unitAssigned;
-                    continue;
-                }
-
-                const idx = resp.change.unitAssigned.users.findIndex((u) => u.userId === activeChar.value?.userId);
-                if (idx === -1) {
-                    // User has been removed from the unit
-                    ownUnit.value = undefined;
-
-                    notifications.dispatchNotification({
-                        title: { key: 'notifications.centrum.unitAssigned.removed.title', parameters: [] },
-                        content: { key: 'notifications.centrum.unitAssigned.removed.content', parameters: [] },
-                        type: 'success',
-                    });
-                } else {
-                    // User has been added to unit
-                    ownUnit.value = resp.change.unitAssigned;
-
-                    notifications.dispatchNotification({
-                        title: { key: 'notifications.centrum.unitAssigned.joined.title', parameters: [] },
-                        content: { key: 'notifications.centrum.unitAssigned.joined.content', parameters: [] },
-                        type: 'success',
-                    });
-                }
-            } else if (resp.change.oneofKind === 'unitDeleted') {
-                removeUnit(resp.change.unitDeleted);
-            } else if (resp.change.oneofKind === 'unitUpdated') {
-                addOrUpdateUnit(resp.change.unitUpdated);
-            } else if (resp.change.oneofKind === 'unitStatus') {
-                const id = resp.change.unitStatus.id;
-                const unit = units.value.find((u) => u.id === id);
-                if (unit) {
-                    unit.status = resp.change.unitStatus.status;
-                } else {
-                    units.value.push(resp.change.unitStatus);
-                }
-
-                if (resp.change.unitStatus.status) {
-                    feed.value.unshift(resp.change.unitStatus.status);
-                }
-            } else if (resp.change.oneofKind === 'dispatchCreated') {
-                if (!checkIfUnitAssignedToDispatch(resp.change.dispatchCreated, ownUnit.value)) continue;
-
-                const id = resp.change.dispatchCreated.id;
-                const idx = dispatches.value?.findIndex((d) => d.id === id) ?? -1;
-                if (idx === -1) {
-                    dispatches.value?.unshift(resp.change.dispatchCreated);
-                } else {
-                    dispatches.value[idx].units = resp.change.dispatchCreated.units;
-                }
-            } else if (resp.change.oneofKind === 'dispatchDeleted') {
-                removeDispatchFromList(resp.change.dispatchDeleted.id);
-            } else if (resp.change.oneofKind === 'dispatchUpdated') {
-                if (!checkIfUnitAssignedToDispatch(resp.change.dispatchUpdated, ownUnit.value)) continue;
-
-                addOrUpdateDispatch(resp.change.dispatchUpdated);
-            } else if (resp.change.oneofKind === 'dispatchStatus') {
-                const id = resp.change.dispatchStatus.id;
-                let idx = dispatches.value.findIndex((d) => d.id === id);
-                if (idx === -1) {
-                    dispatches.value?.unshift(resp.change.dispatchStatus);
-                } else {
-                    dispatches.value[idx] = resp.change.dispatchStatus;
-                }
-
-                if (resp.change.dispatchStatus.status) {
-                    feed.value.unshift(resp.change.dispatchStatus.status);
-                }
-
-                if (resp.change.dispatchStatus.status?.status === DISPATCH_STATUS.UNIT_ASSIGNED) {
-                    if (ownUnit.value && ownUnit.value.id === resp.change.dispatchStatus.status.unitId) {
-                        const assignment = resp.change.dispatchStatus.units.find((u) => u.unitId === ownUnit.value?.id);
-                        // When dispatch has expiration, it needs to be "taken"
-                        if (assignment?.expiresAt) {
-                            addOrUpdateTakenDispatch(resp.change.dispatchStatus);
-                        } else {
-                            removeTakenDispatch(resp.change.dispatchStatus.id);
-                        }
-                    }
-                } else if (
-                    resp.change.dispatchStatus.status?.status === DISPATCH_STATUS.UNIT_UNASSIGNED ||
-                    resp.change.dispatchStatus.status?.status === DISPATCH_STATUS.ARCHIVED
-                ) {
-                    removeDispatchFromList(id);
-                }
-            } else {
-                console.warn('Centrum: Unknown change received - Kind: ', resp.change.oneofKind, resp.change);
-            }
-
-            if (resp.restart !== undefined && resp.restart) {
-                stopStream();
-                setTimeout(() => {
-                    startStream();
-                }, 250);
-            }
-        }
-    } catch (e) {
-        const err = e as RpcError;
-        error.value = err.message;
-        notifications.dispatchNotification({
-            content: { key: err.message, parameters: [] },
-            title: { key: '', parameters: [] },
-        });
-        stopStream();
-    }
-
-    console.debug('Centrum: Data Stream Ended');
-}
-
-async function stopStream(): Promise<void> {
-    console.debug('Centrum: Stopping Data Stream');
-    abort.value?.abort();
-    abort.value = undefined;
-}
 
 onMounted(() => {
     startStream();
@@ -355,7 +102,7 @@ const openDispatchDetails = ref(false);
             :open="openTakeDispatch"
             @close="openTakeDispatch = false"
             :own-unit="ownUnit"
-            :dispatches="takeDispatches"
+            :dispatches="pendingDispatches"
             @goto="$emit('goto', $event)"
         />
     </template>
@@ -398,13 +145,7 @@ const openDispatchDetails = ref(false);
                                 <span v-else class="truncate">{{ $t('common.leave_unit') }}</span>
                             </button>
 
-                            <JoinUnit
-                                :open="selectUnitOpen"
-                                @close="selectUnitOpen = false"
-                                @joined="ownUnit = $event"
-                                :own-unit="ownUnit"
-                                :units="units"
-                            />
+                            <JoinUnit :open="selectUnitOpen" @close="selectUnitOpen = false" @joined="ownUnit = $event" />
                         </li>
                     </ul>
                 </li>
@@ -500,9 +241,8 @@ const openDispatchDetails = ref(false);
                             v-else
                             v-for="dispatch in dispatches"
                             :dispatch="dispatch"
-                            :units="units"
                             @goto="$emit('goto', $event)"
-                            @details=""
+                            @details="$emit('details', $event)"
                         />
                     </ul>
                 </li>
@@ -516,13 +256,12 @@ const openDispatchDetails = ref(false);
             :dispatch="selectedDispatch"
             :open="openDispatchDetails"
             @goto="$emit('goto', $event)"
-            :units="units"
         />
     </template>
 
     <!-- "Take Dispatches" Button -->
     <span v-if="ownUnit" class="fixed inline-flex z-90 bottom-2 right-1/2">
-        <span class="flex absolute h-3 w-3 top-0 right-0 -mt-1 -mr-1" v-if="takeDispatches.length > 0">
+        <span class="flex absolute h-3 w-3 top-0 right-0 -mt-1 -mr-1" v-if="pendingDispatches.length > 0">
             <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-error-400 opacity-75"></span>
             <span class="relative inline-flex rounded-full h-3 w-3 bg-error-500"></span>
         </span>

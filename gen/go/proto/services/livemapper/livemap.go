@@ -81,17 +81,7 @@ func NewServer(p Params) *Server {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	broker := utils.NewBroker[interface{}](ctx)
-
-	p.LC.Append(fx.StartHook(func(_ context.Context) error {
-		go broker.Start()
-		return nil
-	}))
-	p.LC.Append(fx.StopHook(func(_ context.Context) error {
-		cancel()
-		return nil
-	}))
-
-	return &Server{
+	s := &Server{
 		ctx:    ctx,
 		logger: p.Logger,
 
@@ -106,12 +96,24 @@ func NewServer(p Params) *Server {
 
 		broker: broker,
 
-		refreshTime: p.Config.Cache.RefreshTime,
+		refreshTime: p.Config.Game.Livemap.RefreshTime,
 		visibleJobs: p.Config.Game.Livemap.Jobs,
 	}
+
+	p.LC.Append(fx.StartHook(func(_ context.Context) error {
+		go broker.Start()
+		go s.start()
+		return nil
+	}))
+	p.LC.Append(fx.StopHook(func(_ context.Context) error {
+		cancel()
+		return nil
+	}))
+
+	return s
 }
 
-func (s *Server) Start() {
+func (s *Server) start() {
 	for {
 		s.refreshCache()
 
@@ -131,9 +133,9 @@ func (s *Server) refreshCache() {
 	if err := s.refreshUserLocations(ctx); err != nil {
 		s.logger.Error("failed to refresh livemap users cache", zap.Error(err))
 	}
-	if err := s.refreshDispatches(ctx); err != nil {
-		s.logger.Error("failed to refresh livemap dispatches cache", zap.Error(err))
-	}
+	//if err := s.refreshDispatches(ctx); err != nil {
+	//	s.logger.Error("failed to refresh livemap dispatches cache", zap.Error(err))
+	//}
 
 	s.broker.Publish(nil)
 }
@@ -141,21 +143,9 @@ func (s *Server) refreshCache() {
 func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) error {
 	userInfo := auth.MustGetUserInfoFromContext(srv.Context())
 
-	dispatchesAttr, err := s.ps.Attr(userInfo, LivemapperServicePerm, LivemapperServiceStreamPerm, LivemapperServiceStreamDispatchesPermField)
-	if err != nil {
-		return ErrStreamFailed
-	}
 	playersAttr, err := s.ps.Attr(userInfo, LivemapperServicePerm, LivemapperServiceStreamPerm, LivemapperServiceStreamPlayersPermField)
 	if err != nil {
 		return ErrStreamFailed
-	}
-
-	var dispatchesJobs []string
-	if dispatchesAttr != nil {
-		dispatchesJobs = dispatchesAttr.([]string)
-	}
-	if userInfo.SuperUser {
-		dispatchesJobs = s.visibleJobs
 	}
 
 	var playersJobs map[string]int32
@@ -172,7 +162,7 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 
 	resp := &StreamResponse{}
 
-	if len(dispatchesJobs) == 0 && len(playersJobs) == 0 {
+	if len(playersJobs) == 0 {
 		if err := srv.Send(resp); err != nil {
 			return err
 		}
@@ -180,14 +170,6 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 		return nil
 	}
 
-	// Add jobs to list visible jobs list
-	resp.JobsDispatches = make([]*users.Job, len(dispatchesJobs))
-	for i := 0; i < len(dispatchesJobs); i++ {
-		resp.JobsDispatches[i] = &users.Job{
-			Name: dispatchesJobs[i],
-		}
-		s.enricher.EnrichJobName(resp.JobsDispatches[i])
-	}
 	resp.JobsUsers = []*users.Job{}
 	for job := range playersJobs {
 		j := &users.Job{
@@ -206,12 +188,6 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 			return ErrStreamFailed
 		}
 		resp.Users = userMarkers
-
-		dispatchMarkers, err := s.getUserDispatches(dispatchesJobs)
-		if err != nil {
-			return ErrStreamFailed
-		}
-		resp.Dispatches = dispatchMarkers
 
 		if err := srv.Send(resp); err != nil {
 			return err
@@ -286,8 +262,9 @@ func (s *Server) refreshUserLocations(ctx context.Context) error {
 			tLocs.X,
 			tLocs.Y,
 			tLocs.UpdatedAt,
-			tUsers.ID.AS("user.id"),
 			tUsers.ID.AS("genericmarker.id"),
+			tUsers.ID.AS("usermarker.user_id"),
+			tUsers.ID.AS("user.id"),
 			tUsers.Identifier,
 			tUsers.Job,
 			tUsers.JobGrade,

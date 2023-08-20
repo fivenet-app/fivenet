@@ -3,15 +3,12 @@ import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } fro
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { CarEmergencyIcon, CloseIcon } from 'mdi-vue3';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
-import { Dispatch } from '~~/gen/ts/resources/dispatch/dispatches';
-import { Unit } from '~~/gen/ts/resources/dispatch/units';
+import { useCentrumStore } from '~/store/centrum';
 import { TAKE_DISPATCH_RESP } from '~~/gen/ts/services/centrum/centrum';
 import TakeDispatchEntry from './TakeDispatchEntry.vue';
 
-const props = defineProps<{
+defineProps<{
     open: boolean;
-    ownUnit: Unit;
-    dispatches: Dispatch[];
 }>();
 
 const emits = defineEmits<{
@@ -21,15 +18,18 @@ const emits = defineEmits<{
 
 const { $grpc } = useNuxtApp();
 
+const centrumStore = useCentrumStore();
+const { pendingDispatches } = storeToRefs(centrumStore);
+
 const unselectedDispatches = ref<bigint[]>([]);
 
 async function takeDispatches(resp: TAKE_DISPATCH_RESP): Promise<void> {
     return new Promise(async (res, rej) => {
         try {
-            if (props.dispatches.length === 0) return;
+            if (pendingDispatches.value.length === 0) return;
 
             const call = $grpc.getCentrumClient().takeDispatch({
-                dispatchIds: props.dispatches.filter((d) => !unselectedDispatches.value.includes(d.id)).map((d) => d.id),
+                dispatchIds: pendingDispatches.value.filter((d) => !unselectedDispatches.value.includes(d.id)).map((d) => d.id),
                 resp: resp,
             });
             await call;
@@ -101,13 +101,13 @@ function selectDispatch(id: bigint): void {
                                                 <div class="mt-1">
                                                     <dl class="border-b border-white/10 divide-y divide-white/10">
                                                         <DataNoDataBlock
-                                                            v-if="dispatches.length === 0"
+                                                            v-if="pendingDispatches.length === 0"
                                                             :icon="CarEmergencyIcon"
                                                             :type="$t('common.dispatch', 2)"
                                                         />
                                                         <template v-else>
                                                             <TakeDispatchEntry
-                                                                v-for="dispatch in dispatches"
+                                                                v-for="dispatch in pendingDispatches"
                                                                 :dispatch="dispatch"
                                                                 @selected="selectDispatch(dispatch.id)"
                                                                 @goto="$emit('goto', $event)"
@@ -121,19 +121,19 @@ function selectDispatch(id: bigint): void {
                                     <div class="flex flex-shrink-0 justify-end px-4 py-4">
                                         <span class="isolate inline-flex rounded-md shadow-sm pr-4 w-full">
                                             <button
-                                                :disabled="dispatches.length === 0"
+                                                :disabled="pendingDispatches.length === 0"
                                                 type="button"
                                                 class="w-full relative inline-flex items-center rounded-l-md bg-success-500 px-3 py-2 text-sm font-semibold text-white hover:text-white ring-1 ring-inset ring-success-300 hover:bg-success-100 focus:z-10"
-                                                :class="dispatches.length === 0 ? 'disabled' : ''"
+                                                :class="pendingDispatches.length === 0 ? 'disabled' : ''"
                                                 @click="takeDispatches(TAKE_DISPATCH_RESP.ACCEPTED)"
                                             >
                                                 {{ $t('common.accept') }}
                                             </button>
                                             <button
-                                                :disabled="dispatches.length === 0"
+                                                :disabled="pendingDispatches.length === 0"
                                                 type="button"
                                                 class="w-full relative -ml-px inline-flex items-center bg-error-500 px-3 py-2 text-sm font-semibold text-white ring-1 ring-inset ring-error-300 hover:bg-error-100 focus:z-10"
-                                                :class="dispatches.length === 0 ? 'disabled' : ''"
+                                                :class="pendingDispatches.length === 0 ? 'disabled' : ''"
                                                 @click="takeDispatches(TAKE_DISPATCH_RESP.DECLINED)"
                                             >
                                                 {{ $t('common.decline') }}
