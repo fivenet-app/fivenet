@@ -84,8 +84,8 @@ func (e *Enricher) GetJobByName(job string) *users.Job {
 }
 
 func (e *Enricher) GetJobGrade(job string, grade int32) (*users.Job, *users.JobGrade) {
-	j, ok := e.c.jobs.Get(job)
-	if !ok {
+	j := e.GetJobByName(job)
+	if j == nil {
 		return nil, nil
 	}
 

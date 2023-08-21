@@ -1,5 +1,5 @@
 import { StoreDefinition, defineStore } from 'pinia';
-import { JobProps } from '~~/gen/ts/resources/jobs/jobs';
+import { JobProps } from '~~/gen/ts/resources/users/jobs';
 import { User } from '~~/gen/ts/resources/users/users';
 
 export type JobPropsState = {

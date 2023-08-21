@@ -7,7 +7,9 @@ CREATE TABLE IF NOT EXISTS `fivenet_job_props` (
   `theme` varchar(20) DEFAULT "default",
   `livemap_marker_color` char(6) DEFAULT "5C7AFF",
   `quick_buttons` varchar(255) DEFAULT NULL,
-  UNIQUE KEY `idx_fivenet_job_props_unique` (`job`)
+  `discord_guild_id` bigint(20) unsigned DEFAULT NULL,
+  UNIQUE KEY `idx_fivenet_job_props_unique` (`job`),
+  KEY `idx_fivenet_job_props_discord_guild_id` (`discord_guild_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 COMMIT;

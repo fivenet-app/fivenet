@@ -78,17 +78,20 @@ func (s *Server) SetJobProps(ctx context.Context, req *SetJobPropsRequest) (*Set
 			jobProps.Theme,
 			jobProps.LivemapMarkerColor,
 			jobProps.QuickButtons,
+			jobProps.DiscordGuildID,
 		).
 		VALUES(
 			req.JobProps.Job,
 			req.JobProps.Theme,
 			req.JobProps.LivemapMarkerColor,
 			req.JobProps.QuickButtons,
+			req.JobProps.DiscordGuildId,
 		).
 		ON_DUPLICATE_KEY_UPDATE(
 			jobProps.Theme.SET(jet.String(req.JobProps.Theme)),
 			jobProps.LivemapMarkerColor.SET(jet.String(req.JobProps.LivemapMarkerColor)),
 			jobProps.QuickButtons.SET(jet.String(req.JobProps.QuickButtons)),
+			jobProps.DiscordGuildID.SET(jet.IntExp(jet.Raw("VALUES(`discord_guild_id`)"))),
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {

@@ -66,10 +66,10 @@ const disponentsNames = computed(() => {
                             <button
                                 type="button"
                                 @click="takeControl(false)"
-                                class="flex items-center justify-center rounded-full bg-error-500 text-neutral hover:bg-error-400"
+                                class="flex items-center justify-center rounded-full bg-primary-500 text-neutral hover:bg-primary-400"
                             >
                                 <LocationExitIcon class="w-8 h-8" />
-                                {{ $t('common.leave') }}
+                                <span class="px-1">{{ $t('common.leave') }}</span>
                             </button>
                         </div>
                         <div class="flex-1">

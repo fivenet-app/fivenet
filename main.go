@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/galexrt/fivenet/pkg/config"
+	"github.com/galexrt/fivenet/pkg/discord"
 	"github.com/galexrt/fivenet/pkg/events"
 	"github.com/galexrt/fivenet/pkg/grpc"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
@@ -75,8 +76,11 @@ func main() {
 			grpc.AsService(pbrector.NewServer),
 		),
 
+		discord.BotModule,
+
 		fx.Invoke(func(*http.Server) {}),
 		fx.Invoke(func(*grpcserver.Server) {}),
+		//fx.Invoke(func(*discord.Bot) {}),
 	).Run()
 }
 

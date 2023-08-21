@@ -56,6 +56,10 @@ export interface JobProps {
      * @generated from protobuf field: string quick_buttons = 4;
      */
     quickButtons: string;
+    /**
+     * @generated from protobuf field: optional uint64 discord_guild_id = 5;
+     */
+    discordGuildId?: bigint;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Job$Type extends MessageType<Job> {
@@ -92,7 +96,8 @@ class JobProps$Type extends MessageType<JobProps> {
             { no: 1, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 2, name: "theme", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 3, name: "livemap_marker_color", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "6" } } } },
-            { no: 4, name: "quick_buttons", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+            { no: 4, name: "quick_buttons", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 5, name: "discord_guild_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
         ]);
     }
 }

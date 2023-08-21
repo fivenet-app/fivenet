@@ -382,6 +382,10 @@ func (m *JobProps) validate(all bool) error {
 
 	// no validation rules for QuickButtons
 
+	if m.DiscordGuildId != nil {
+		// no validation rules for DiscordGuildId
+	}
+
 	if len(errors) > 0 {
 		return JobPropsMultiError(errors)
 	}

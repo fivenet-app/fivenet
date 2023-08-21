@@ -4,7 +4,7 @@ import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { CheckIcon } from 'mdi-vue3';
 import { useAuthStore } from '~/store/auth';
 import { useNotificationsStore } from '~/store/notifications';
-import { Job } from '~~/gen/ts/resources/jobs/jobs';
+import { Job } from '~~/gen/ts/resources/users/jobs';
 
 const { $grpc } = useNuxtApp();
 

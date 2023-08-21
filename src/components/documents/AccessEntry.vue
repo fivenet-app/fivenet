@@ -17,7 +17,7 @@ import { watchDebounced } from '@vueuse/core';
 import { CheckIcon, ChevronDownIcon, CloseIcon } from 'mdi-vue3';
 import { ArrayElement } from '~/utils/types';
 import { ACCESS_LEVEL } from '~~/gen/ts/resources/documents/access';
-import { Job, JobGrade } from '~~/gen/ts/resources/jobs/jobs';
+import { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
 import { UserShort } from '~~/gen/ts/resources/users/users';
 
 const { $grpc } = useNuxtApp();

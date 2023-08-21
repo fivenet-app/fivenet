@@ -6,8 +6,8 @@ import { CheckIcon, ChevronDownIcon, CloseIcon, MinusIcon, TrashCanIcon } from '
 import Divider from '~/components/partials/elements/Divider.vue';
 import RoleViewAttr from '~/components/rector/roles/RoleViewAttr.vue';
 import { useNotificationsStore } from '~/store/notifications';
-import { Job } from '~~/gen/ts/resources/jobs/jobs';
 import { AttributeValues, Permission, Role, RoleAttribute } from '~~/gen/ts/resources/permissions/permissions';
+import { Job } from '~~/gen/ts/resources/users/jobs';
 import { AttrsUpdate, PermItem, PermsUpdate } from '~~/gen/ts/services/rector/rector';
 
 const { $grpc } = useNuxtApp();

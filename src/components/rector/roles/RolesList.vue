@@ -8,8 +8,8 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { useAuthStore } from '~/store/auth';
 import { useNotificationsStore } from '~/store/notifications';
-import { JobGrade } from '~~/gen/ts/resources/jobs/jobs';
 import { Role } from '~~/gen/ts/resources/permissions/permissions';
+import { JobGrade } from '~~/gen/ts/resources/users/jobs';
 import RolesListEntry from './RolesListEntry.vue';
 
 const { $grpc } = useNuxtApp();

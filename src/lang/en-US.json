@@ -333,7 +333,8 @@
                 "job_properties": "Job Properties",
                 "your_job_properties": "Your job's FiveNet properties.",
                 "livemap_marker_color": "Livemap Marker Color",
-                "quick_buttons": "Quick Access Buttons"
+                "quick_buttons": "Quick Access Buttons",
+                "discord_guild_id": "Discord Guild/Server ID"
             },
             "role_view": {
                 "add_permission": "Add Permission"

@@ -10,8 +10,8 @@ import {
 } from '@headlessui/vue';
 
 import { CheckIcon, ChevronDownIcon } from 'mdi-vue3';
-import { Job, JobGrade } from '~~/gen/ts/resources/jobs/jobs';
 import { AttributeValues, Permission, RoleAttribute } from '~~/gen/ts/resources/permissions/permissions';
+import { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
 
 const props = defineProps<{
     attribute: RoleAttribute;

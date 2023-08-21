@@ -5,8 +5,8 @@ import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { ChevronDownIcon } from 'mdi-vue3';
 import Divider from '~/components/partials/elements/Divider.vue';
 import { useNotificationsStore } from '~/store/notifications';
-import { Job } from '~~/gen/ts/resources/jobs/jobs';
 import { AttributeValues, Permission, Role, RoleAttribute } from '~~/gen/ts/resources/permissions/permissions';
+import { Job } from '~~/gen/ts/resources/users/jobs';
 import { AttrsUpdate } from '~~/gen/ts/services/rector/rector';
 import AttrViewAttr from './AttrViewAttr.vue';
 

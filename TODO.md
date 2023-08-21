@@ -2,9 +2,11 @@
     - [ ] Frontend for employees to see their dispatches and manage their status
         - [ ] Notifications on Livemap when they are assigned a dispatch
         - [ ] Updating their own dispatch status (needs permission checks)
-        - [ ] Based on the dispatch center mode, allow assigning dispatches themselves
+        - [ ] Based on the dispatch center mode, allow assigning dispatches themselves or not
     - [ ] Livemap - Show Panic buttons and Sperrzonen
     - [ ] Translate Activity Feed items
     - [ ] Add more errors and translate them
 - [ ] FiveM Plugin
     - [ ] Clear user locations table on start up
+- [ ] Discord Bot
+    - [ ] Set users into the roles

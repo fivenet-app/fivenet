@@ -35,7 +35,7 @@ import {
     DocumentReference,
     DocumentRelation,
 } from '~~/gen/ts/resources/documents/documents';
-import { Job, JobGrade } from '~~/gen/ts/resources/jobs/jobs';
+import { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
 import { UserShort } from '~~/gen/ts/resources/users/users';
 import { CreateDocumentRequest, UpdateDocumentRequest } from '~~/gen/ts/services/docstore/docstore';
 import AccessEntry from './AccessEntry.vue';

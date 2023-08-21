@@ -16,7 +16,7 @@ import { watchDebounced } from '@vueuse/core';
 import { CheckIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import { useNotificationsStore } from '~/store/notifications';
-import { Job, JobGrade } from '~~/gen/ts/resources/jobs/jobs';
+import { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
 import { User, UserProps } from '~~/gen/ts/resources/users/users';
 
 const { $grpc } = useNuxtApp();

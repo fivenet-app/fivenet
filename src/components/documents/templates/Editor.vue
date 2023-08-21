@@ -12,7 +12,7 @@ import { ACCESS_LEVEL } from '~~/gen/ts/resources/documents/access';
 import { Category } from '~~/gen/ts/resources/documents/category';
 import { DocumentAccess } from '~~/gen/ts/resources/documents/documents';
 import { ObjectSpecs, TemplateJobAccess, TemplateRequirements } from '~~/gen/ts/resources/documents/templates';
-import { Job, JobGrade } from '~~/gen/ts/resources/jobs/jobs';
+import { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
 import { CreateTemplateRequest, UpdateTemplateRequest } from '~~/gen/ts/services/docstore/docstore';
 import SchemaEditor, { ObjectSpecsValue, SchemaEditorValue } from './SchemaEditor.vue';
 
