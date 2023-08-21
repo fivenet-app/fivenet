@@ -20,7 +20,7 @@ const emits = defineEmits<{
 }>();
 
 const livemapStore = useLivemapStore();
-const { location } = storeToRefs(livemapStore);
+const { location, zoom } = storeToRefs(livemapStore);
 
 let map: L.Map | undefined = undefined;
 
@@ -65,12 +65,15 @@ const currentHash = ref<string>('');
 watch(currentHash, () => window.location.replace(currentHash.value));
 
 watch(location, () => {
+    if (location.value === undefined) return;
     if (map === undefined) return;
 
-    map?.setZoom(5);
+    map?.setZoom(5, {
+        animate: false,
+    });
     map?.panTo([location.value?.y!, location.value?.x!], {
         animate: true,
-        duration: 0.85,
+        duration: 1.0,
     });
 });
 
@@ -111,8 +114,6 @@ async function updateBackground(layer: string): Promise<void> {
             return;
     }
 }
-
-const zoom = ref(2);
 
 function stringifyHash(currZoom: number, centerLat: number, centerLong: number): string {
     const precision = Math.max(0, Math.ceil(Math.log(zoom.value) / Math.LN2));

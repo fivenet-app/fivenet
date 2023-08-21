@@ -1,13 +1,11 @@
 <script lang="ts" setup>
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
-import { LControl } from '@vue-leaflet/vue-leaflet';
 import { HelpCircleIcon } from 'mdi-vue3';
 import { default as DispatchDetails } from '~/components/centrum/dispatches/Details.vue';
 import { default as DispatchesList } from '~/components/centrum/dispatches/List.vue';
 import { default as UnitDetails } from '~/components/centrum/units/Details.vue';
 import { default as UnitsList } from '~/components/centrum/units/List.vue';
 import Livemap from '~/components/livemap/Livemap.vue';
-import PostalSearch from '~/components/livemap/controls/PostalSearch.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { useCentrumStore } from '~/store/centrum';
@@ -103,10 +101,6 @@ const openUnitStatus = ref(false);
                 <div class="h-full">
                     <Livemap :center-selected-marker="false" :marker-resize="false" :filter-players="false">
                         <template v-slot:default>
-                            <LControl position="topleft">
-                                <PostalSearch @goto="goto($event)" />
-                            </LControl>
-
                             <DispatchesLayer
                                 @select="
                                     selectedDispatch = $event;

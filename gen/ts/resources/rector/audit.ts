@@ -58,9 +58,9 @@ export interface AuditEntry {
  */
 export enum EVENT_TYPE {
     /**
-     * @generated from protobuf enum value: UNKNOWN = 0;
+     * @generated from protobuf enum value: UNSPECIFIED = 0;
      */
-    UNKNOWN = 0,
+    UNSPECIFIED = 0,
     /**
      * @generated from protobuf enum value: ERRORED = 1;
      */

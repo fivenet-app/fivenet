@@ -38,12 +38,6 @@ export const useCentrumStore = defineStore('centrum', {
         }) as CentrumState,
     persist: false,
     actions: {
-        checkIfUnitAssignedToDispatch(dsp: Dispatch, unit?: Unit): boolean {
-            if (unit === undefined) return false;
-
-            return dsp.units.findIndex((d) => d.unitId === unit.id) > -1;
-        },
-
         addOrUpdateUnit(unit: Unit): void {
             const idx = this.units.findIndex((d) => d.id === unit.id) ?? -1;
             if (idx === -1) {
@@ -59,6 +53,23 @@ export const useCentrumStore = defineStore('centrum', {
                 this.units[idx].status = unit.status;
                 this.units[idx].users = unit.users;
             }
+        },
+        removeUnit(unit: Unit): void {
+            const idx = this.units?.findIndex((d) => d.id === unit.id) ?? -1;
+            if (idx > -1) {
+                this.units?.splice(idx, 1);
+            }
+
+            // User's unit has been deleted, reset it
+            if (this.ownUnit !== undefined && this.ownUnit.id === unit.id) {
+                this.ownUnit = undefined;
+            }
+        },
+
+        checkIfUnitAssignedToDispatch(dsp: Dispatch, unit?: Unit): boolean {
+            if (unit === undefined) return false;
+
+            return dsp.units.findIndex((d) => d.unitId === unit.id) > -1;
         },
         addOrUpdateDispatch(dispatch: Dispatch): void {
             const idx = this.dispatches?.findIndex((d) => d.id === dispatch.id) ?? -1;
@@ -83,25 +94,66 @@ export const useCentrumStore = defineStore('centrum', {
                     this.dispatches[idx].units = dispatch.units;
                 }
             }
+            this.handleDispatchAssignment(dispatch);
         },
-        removeUnit(unit: Unit): void {
-            const idx = this.units?.findIndex((d) => d.id === unit.id) ?? -1;
-            if (idx > -1) {
-                this.units?.splice(idx, 1);
-            }
-
-            // User's unit has been deleted, reset it
-            if (this.ownUnit !== undefined && this.ownUnit.id === unit.id) {
-                this.ownUnit = undefined;
-            }
-        },
-        removeDispatchFromList(id: bigint): void {
+        removeDispatch(id: bigint): void {
             const idx = this.dispatches?.findIndex((d) => d.id === id) ?? -1;
             if (idx > -1) {
                 this.dispatches?.splice(idx, 1);
             }
 
             this.removePendingDispatch(id);
+            this.removeOwnDispatch(id);
+        },
+        addOrUpdateOwnDispatch(dispatch: Dispatch): void {
+            const idx = this.ownDispatches?.findIndex((d) => d.id === dispatch.id) ?? -1;
+            if (idx === -1) {
+                this.ownDispatches?.unshift(dispatch);
+            } else {
+                this.ownDispatches[idx].createdAt = dispatch.createdAt;
+                this.ownDispatches[idx].updatedAt = dispatch.updatedAt;
+                this.ownDispatches[idx].job = dispatch.job;
+                this.ownDispatches[idx].status = dispatch.status;
+                this.ownDispatches[idx].message = dispatch.message;
+                this.ownDispatches[idx].description = dispatch.description;
+                this.ownDispatches[idx].attributes = dispatch.attributes;
+                this.ownDispatches[idx].x = dispatch.x;
+                this.ownDispatches[idx].y = dispatch.y;
+                this.ownDispatches[idx].anon = dispatch.anon;
+                this.ownDispatches[idx].userId = dispatch.userId;
+                this.ownDispatches[idx].user = dispatch.user;
+                if (dispatch.units.length == 0) {
+                    this.ownDispatches[idx].units.length = 0;
+                } else {
+                    this.ownDispatches[idx].units = dispatch.units;
+                }
+            }
+        },
+        removeOwnDispatch(id: bigint): void {
+            const idx = this.ownDispatches?.findIndex((d) => d.id === id) ?? -1;
+            if (idx > -1) {
+                this.ownDispatches?.splice(idx, 1);
+            }
+        },
+        handleDispatchAssignment(dispatch: Dispatch): void {
+            if (
+                dispatch.status?.status === DISPATCH_STATUS.UNIT_UNASSIGNED ||
+                dispatch.status?.status === DISPATCH_STATUS.UNASSIGNED
+            ) {
+                // Handle unassigment of dispatches
+                this.removePendingDispatch(dispatch.id);
+                this.removeOwnDispatch(dispatch.id);
+            } else {
+                const assignment = dispatch.units.find((u) => u.unitId === this.ownUnit?.id);
+                if (assignment === undefined) return;
+                // When dispatch has expiration, it is a "pending" dispatch
+                if (assignment?.expiresAt) {
+                    this.addOrUpdatePendingDispatch(dispatch);
+                } else {
+                    this.removePendingDispatch(dispatch.id);
+                    this.addOrUpdateOwnDispatch(dispatch);
+                }
+            }
         },
 
         addOrUpdatePendingDispatch(dispatch: Dispatch): void {
@@ -153,7 +205,7 @@ export const useCentrumStore = defineStore('centrum', {
                         this.isDisponent = resp.change.latestState.isDisponent;
                         this.ownUnit = resp.change.latestState.ownUnit;
                         this.units = resp.change.latestState.units;
-                        this.dispatches = resp.change.latestState.dispatches;
+                        resp.change.latestState.dispatches.forEach((d) => this.addOrUpdateDispatch(d));
                     } else if (resp.change.oneofKind === 'settings') {
                         this.settings = resp.change.settings;
                     } else if (resp.change.oneofKind === 'disponents') {
@@ -214,25 +266,13 @@ export const useCentrumStore = defineStore('centrum', {
                             this.feed.unshift(resp.change.unitStatus.status);
                         }
                     } else if (resp.change.oneofKind === 'dispatchCreated') {
-                        const id = resp.change.dispatchCreated.id;
-                        const idx = this.dispatches?.findIndex((d) => d.id === id) ?? -1;
-                        if (idx === -1) {
-                            this.dispatches?.unshift(resp.change.dispatchCreated);
-                        } else {
-                            this.dispatches[idx].units = resp.change.dispatchCreated.units;
-                        }
+                        this.addOrUpdateDispatch(resp.change.dispatchCreated);
                     } else if (resp.change.oneofKind === 'dispatchDeleted') {
-                        this.removeDispatchFromList(resp.change.dispatchDeleted.id);
+                        this.removeDispatch(resp.change.dispatchDeleted.id);
                     } else if (resp.change.oneofKind === 'dispatchUpdated') {
                         this.addOrUpdateDispatch(resp.change.dispatchUpdated);
                     } else if (resp.change.oneofKind === 'dispatchStatus') {
                         const id = resp.change.dispatchStatus.id;
-                        const idx = this.dispatches.findIndex((d) => d.id === id);
-                        if (idx === -1) {
-                            this.dispatches?.unshift(resp.change.dispatchStatus);
-                        } else {
-                            this.dispatches[idx] = resp.change.dispatchStatus;
-                        }
 
                         if (resp.change.dispatchStatus.status) {
                             this.feed.unshift(resp.change.dispatchStatus.status);
@@ -240,23 +280,9 @@ export const useCentrumStore = defineStore('centrum', {
 
                         if (resp.change.dispatchStatus.status?.status === DISPATCH_STATUS.ARCHIVED) {
                             // If dispatch has been archived, remove from the main list
-                            this.removeDispatchFromList(id);
-                        } else if (resp.change.dispatchStatus.status?.status === DISPATCH_STATUS.UNIT_ASSIGNED) {
-                            if (this.ownUnit && this.ownUnit.id === resp.change.dispatchStatus.status.unitId) {
-                                const assignment = resp.change.dispatchStatus.units.find((u) => u.unitId === this.ownUnit?.id);
-                                // When dispatch has expiration, it needs to be "taken"
-                                if (assignment?.expiresAt) {
-                                    this.addOrUpdatePendingDispatch(resp.change.dispatchStatus);
-                                } else {
-                                    this.removePendingDispatch(resp.change.dispatchStatus.id);
-                                }
-                            }
-                        } else if (
-                            resp.change.dispatchStatus.status?.status === DISPATCH_STATUS.UNIT_UNASSIGNED ||
-                            resp.change.dispatchStatus.status?.status === DISPATCH_STATUS.UNASSIGNED
-                        ) {
-                            // Handle unassigment of dispatches
-                            this.removePendingDispatch(resp.change.dispatchStatus.id);
+                            this.removeDispatch(id);
+                        } else {
+                            this.addOrUpdateDispatch(resp.change.dispatchStatus);
                         }
                     } else {
                         console.warn('Centrum: Unknown change received - Kind: ', resp.change.oneofKind, resp.change);

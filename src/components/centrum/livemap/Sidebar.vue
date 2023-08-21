@@ -32,7 +32,7 @@ defineEmits<{
 }>();
 
 const centrumStore = useCentrumStore();
-const { error, abort, dispatches, ownUnit, pendingDispatches } = storeToRefs(centrumStore);
+const { ownDispatches, ownUnit, pendingDispatches } = storeToRefs(centrumStore);
 const { startStream, stopStream } = centrumStore;
 
 const actionsDispatch: {
@@ -89,6 +89,7 @@ const openDispatchDetails = ref(false);
 </script>
 
 <template>
+    <!-- Own Unit Modals -->
     <template v-if="ownUnit">
         <UpdateUnitStatus :open="unitStatusOpen" @close="unitStatusOpen = false" :unit="ownUnit" :status="unitStatusSelected" />
         <UpdateDispatchStatus
@@ -98,11 +99,15 @@ const openDispatchDetails = ref(false);
             :dispatch="activeDispatch"
             :status="dispatchStatusSelected"
         />
-        <TakeDispatch
-            :open="openTakeDispatch"
-            @close="openTakeDispatch = false"
-            :own-unit="ownUnit"
-            :dispatches="pendingDispatches"
+    </template>
+
+    <!-- Dispatch -->
+    <TakeDispatch :open="openTakeDispatch" @close="openTakeDispatch = false" @goto="$emit('goto', $event)" />
+    <template v-if="selectedDispatch">
+        <DispatchDetails
+            @close="openDispatchDetails = false"
+            :dispatch="selectedDispatch"
+            :open="openDispatchDetails"
             @goto="$emit('goto', $event)"
         />
     </template>
@@ -113,7 +118,7 @@ const openDispatchDetails = ref(false);
                 <li>
                     <ul role="list" class="-mx-2 mt-2 space-y-1">
                         <li>
-                            <div v-if="ownUnit">
+                            <template v-if="ownUnit">
                                 <button
                                     @click="unitOpen = true"
                                     type="button"
@@ -132,7 +137,7 @@ const openDispatchDetails = ref(false);
                                     </span>
                                 </button>
                                 <UnitDetails :unit="ownUnit" :ownUnit="ownUnit" :open="unitOpen" @close="unitOpen = false" />
-                            </div>
+                            </template>
                             <button
                                 @click="selectUnitOpen = true"
                                 type="button"
@@ -149,115 +154,114 @@ const openDispatchDetails = ref(false);
                         </li>
                     </ul>
                 </li>
-                <li v-if="ownUnit">
-                    <ul role="list" class="-mx-2 space-y-1">
-                        <li>
-                            <Disclosure as="div" v-slot="{ open }">
-                                <DisclosureButton class="flex w-full items-start justify-between text-left text-white">
-                                    <span class="text-base-200 leading-7">
-                                        <div class="text-xs font-semibold leading-6 text-base-200">{{ $t('common.unit') }}</div>
-                                    </span>
-                                    <span class="ml-6 flex h-7 items-center">
-                                        <ChevronDownIcon
-                                            :class="[open ? 'upsidedown' : '', 'h-6 w-6 transition-transform']"
+                <template v-if="ownUnit">
+                    <li>
+                        <ul role="list" class="-mx-2 space-y-1">
+                            <li>
+                                <Disclosure as="div" v-slot="{ open }">
+                                    <DisclosureButton class="flex w-full items-start justify-between text-left text-white">
+                                        <span class="text-base-200 leading-7">
+                                            <div class="text-xs font-semibold leading-6 text-base-200">
+                                                {{ $t('common.unit') }}
+                                            </div>
+                                        </span>
+                                        <span class="ml-6 flex h-7 items-center">
+                                            <ChevronDownIcon
+                                                :class="[open ? 'upsidedown' : '', 'h-6 w-6 transition-transform']"
+                                                aria-hidden="true"
+                                            />
+                                        </span>
+                                    </DisclosureButton>
+                                    <DisclosurePanel>
+                                        <div class="flex flex-row gap-2">
+                                            <div class="w-full grid grid-cols-2 gap-0.5">
+                                                <button
+                                                    v-for="(item, idx) in actionsUnit"
+                                                    :key="item.name"
+                                                    type="button"
+                                                    class="text-white bg-primary hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-2 text-xs my-0.5"
+                                                    :class="[idx >= actionsUnit.length - 1 ? 'col-span-2' : '', item.class]"
+                                                    @click="
+                                                        unitStatusSelected = item.status;
+                                                        unitStatusOpen = true;
+                                                    "
+                                                >
+                                                    <component
+                                                        :is="item.icon ?? HoopHouseIcon"
+                                                        class="text-base-200 group-hover:text-white h-5 w-5 shrink-0"
+                                                        aria-hidden="true"
+                                                    />
+                                                    <span class="mt-1">{{ item.name }}</span>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </DisclosurePanel>
+                                </Disclosure>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <ul role="list" class="-mx-2 space-y-1">
+                            <div class="text-xs font-semibold leading-6 text-base-200">
+                                {{ $t('common.dispatch', 2) }}
+                            </div>
+                            <li>
+                                <div class="grid grid-cols-2 gap-0.5">
+                                    <button
+                                        v-for="(item, idx) in actionsDispatch"
+                                        :key="item.name"
+                                        type="button"
+                                        class="text-white bg-primary hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-2 text-xs my-0.5"
+                                        :class="[
+                                            idx >= actionsDispatch.length - 1 ? 'col-span-2' : '',
+                                            item.class,
+                                            dispatchStatusToBGColor(item.status),
+                                        ]"
+                                        @click="
+                                            dispatchStatusSelected = item.status;
+                                            dispatchStatusOpen = true;
+                                        "
+                                    >
+                                        <component
+                                            :is="item.icon ?? HoopHouseIcon"
+                                            class="text-base-200 group-hover:text-white h-5 w-5 shrink-0"
                                             aria-hidden="true"
                                         />
-                                    </span>
-                                </DisclosureButton>
-                                <DisclosurePanel>
-                                    <div class="flex flex-row gap-2">
-                                        <div class="w-full grid grid-cols-2 gap-0.5">
-                                            <button
-                                                v-for="(item, idx) in actionsUnit"
-                                                :key="item.name"
-                                                type="button"
-                                                class="text-white bg-primary hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-2 text-xs my-0.5"
-                                                :class="[idx >= actionsUnit.length - 1 ? 'col-span-2' : '', item.class]"
-                                                @click="
-                                                    unitStatusSelected = item.status;
-                                                    unitStatusOpen = true;
-                                                "
-                                            >
-                                                <component
-                                                    :is="item.icon ?? HoopHouseIcon"
-                                                    class="text-base-200 group-hover:text-white h-5 w-5 shrink-0"
-                                                    aria-hidden="true"
-                                                />
-                                                <span class="mt-1">{{ item.name }}</span>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </DisclosurePanel>
-                            </Disclosure>
-                        </li>
-                    </ul>
-                </li>
-                <li v-if="ownUnit">
-                    <ul role="list" class="-mx-2 space-y-1">
-                        <div class="text-xs font-semibold leading-6 text-base-200">
-                            {{ $t('common.dispatch', 2) }}
-                        </div>
-                        <li>
-                            <div class="grid grid-cols-2 gap-0.5">
+                                        <span class="mt-1">{{ item.name }}</span>
+                                    </button>
+                                </div>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        <div class="text-xs font-semibold leading-6 text-base-200">{{ $t('common.your_dispatches') }}</div>
+                        <ul role="list" class="-mx-2 mt-2 space-y-1">
+                            <li v-if="ownDispatches.length === 0">
                                 <button
-                                    v-for="(item, idx) in actionsDispatch"
-                                    :key="item.name"
                                     type="button"
-                                    class="text-white bg-primary hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-2 text-xs my-0.5"
-                                    :class="[
-                                        idx >= actionsDispatch.length - 1 ? 'col-span-2' : '',
-                                        item.class,
-                                        dispatchStatusToBGColor(item.status),
-                                    ]"
-                                    @click="
-                                        dispatchStatusSelected = item.status;
-                                        dispatchStatusOpen = true;
-                                    "
+                                    class="text-white bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-2 text-xs my-0.5"
                                 >
-                                    <component
-                                        :is="item.icon ?? HoopHouseIcon"
-                                        class="text-base-200 group-hover:text-white h-5 w-5 shrink-0"
-                                        aria-hidden="true"
-                                    />
-                                    <span class="mt-1">{{ item.name }}</span>
+                                    <CarEmergencyIcon class="h-5 w-5" aria-hidden="true" />
+                                    <span class="mt-2 truncate">{{ $t('common.no_assigned_dispatches') }}</span>
                                 </button>
-                            </div>
-                        </li>
-                    </ul>
-                </li>
-                <li v-if="ownUnit">
-                    <div class="text-xs font-semibold leading-6 text-base-200">{{ $t('common.your_dispatches') }}</div>
-                    <ul role="list" class="-mx-2 mt-2 space-y-1">
-                        <li v-if="dispatches.length === 0">
-                            <button
-                                type="button"
-                                class="text-white bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-2 text-xs my-0.5"
-                            >
-                                <CarEmergencyIcon class="h-5 w-5" aria-hidden="true" />
-                                <span class="mt-2 truncate">{{ $t('common.no_assigned_dispatches') }}</span>
-                            </button>
-                        </li>
-                        <DispatchEntry
-                            v-else
-                            v-for="dispatch in dispatches"
-                            :dispatch="dispatch"
-                            @goto="$emit('goto', $event)"
-                            @details="$emit('details', $event)"
-                        />
-                    </ul>
-                </li>
+                            </li>
+                            <template v-else>
+                                <DispatchEntry
+                                    v-for="dispatch in ownDispatches"
+                                    :dispatch="dispatch"
+                                    @goto="$emit('goto', $event)"
+                                    @details="
+                                        selectedDispatch = $event;
+                                        openDispatchDetails = true;
+                                    "
+                                />
+                            </template>
+                        </ul>
+                    </li>
+                </template>
             </ul>
         </nav>
     </div>
-
-    <template v-if="selectedDispatch">
-        <DispatchDetails
-            @close="openDispatchDetails = false"
-            :dispatch="selectedDispatch"
-            :open="openDispatchDetails"
-            @goto="$emit('goto', $event)"
-        />
-    </template>
 
     <!-- "Take Dispatches" Button -->
     <span v-if="ownUnit" class="fixed inline-flex z-90 bottom-2 right-1/2">

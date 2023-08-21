@@ -1,19 +1,19 @@
 <script lang="ts" setup>
 import { Combobox, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
 import { watchDebounced } from '@vueuse/core';
+import { useLivemapStore } from '~/store/livemap';
 import { useNotificationsStore } from '~/store/notifications';
 
 const notifications = useNotificationsStore();
+
+const livemapStore = useLivemapStore();
+const { location } = storeToRefs(livemapStore);
 
 const selectedPostal = ref<Postal | undefined>();
 const postalQuery = ref('');
 let postalsLoaded = false;
 const postals = ref<Postal[]>([]);
 const filteredPostals = ref<Postal[]>([]);
-
-const emits = defineEmits<{
-    (e: 'goto', loc: { x: number; y: number }): void;
-}>();
 
 type Postal = {
     x: number;
@@ -65,7 +65,7 @@ watch(selectedPostal, () => {
         return;
     }
 
-    emits('goto', selectedPostal.value);
+    location.value = selectedPostal.value;
 });
 
 watchDebounced(postalQuery, () => findPostal(), {

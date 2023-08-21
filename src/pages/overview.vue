@@ -62,7 +62,7 @@ const features = [
     },
     {
         title: t('common.dispatch_center'),
-        description: t('pages.overview.features.livemap'),
+        description: t('pages.overview.features.centrum'),
         href: { name: 'centrum' },
         permission: 'CentrumService.TakeControl',
         icon: markRaw(CarEmergencyIcon),

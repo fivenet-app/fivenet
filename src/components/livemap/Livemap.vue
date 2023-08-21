@@ -13,6 +13,7 @@ import BaseMap from './BaseMap.vue';
 import PlayerAndMarkersLayer from './PlayerAndMarkersLayer.vue';
 import FollowSelectedMarker from './controls/FollowSelectedMarker.vue';
 import MarkerResize from './controls/MarkerResize.vue';
+import PostalSearch from './controls/PostalSearch.vue';
 
 withDefaults(
     defineProps<{
@@ -113,7 +114,9 @@ async function applySelectedMarkerCentering(): Promise<void> {
         </div>
         <BaseMap :map-options="mapOptions">
             <template v-slot:default>
-                <PlayerAndMarkersLayer @marker-selected="selectedMarker = $event.marker" />
+                <LControl position="topleft">
+                    <PostalSearch />
+                </LControl>
 
                 <LControl position="bottomright" v-if="centerSelectedMarker">
                     <div class="form-control flex flex-col gap-2">
@@ -121,6 +124,8 @@ async function applySelectedMarkerCentering(): Promise<void> {
                         <FollowSelectedMarker />
                     </div>
                 </LControl>
+
+                <PlayerAndMarkersLayer @marker-selected="selectedMarker = $event.marker" />
 
                 <slot />
             </template>

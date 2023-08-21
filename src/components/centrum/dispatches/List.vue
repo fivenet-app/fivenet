@@ -3,15 +3,15 @@ import { useCentrumStore } from '~/store/centrum';
 import { Dispatch } from '~~/gen/ts/resources/dispatch/dispatches';
 import ListEntry from './ListEntry.vue';
 
-const centrumStore = useCentrumStore();
-const { units, dispatches } = storeToRefs(centrumStore);
-
 defineEmits<{
     (e: 'goto', loc: { x: number; y: number }): void;
     (e: 'details', dsp: Dispatch): void;
     (e: 'assignUnit', dsp: Dispatch): void;
     (e: 'status', dsp: Dispatch): void;
 }>();
+
+const centrumStore = useCentrumStore();
+const { dispatches } = storeToRefs(centrumStore);
 </script>
 
 <template>

@@ -9,11 +9,18 @@ defineEmits<{
 }>();
 
 const centrumStore = useCentrumStore();
-const { dispatches } = storeToRefs(centrumStore);
+const { dispatches, ownDispatches } = storeToRefs(centrumStore);
 </script>
 
 <template>
+    <LLayerGroup :name="$t('common.your_dispatches')" layer-type="overlay" :visible="true">
+        <DispatchMarker v-for="dispatch in ownDispatches" :dispatch="dispatch" @select="$emit('select', $event)" />
+    </LLayerGroup>
     <LLayerGroup :name="$t('common.dispatch', 2)" layer-type="overlay" :visible="true">
-        <DispatchMarker v-for="dispatch in dispatches" :dispatch="dispatch" @select="$emit('select', $event)" />
+        <DispatchMarker
+            v-for="dispatch in dispatches.filter((d) => !ownDispatches.includes(d))"
+            :dispatch="dispatch"
+            @select="$emit('select', $event)"
+        />
     </LLayerGroup>
 </template>

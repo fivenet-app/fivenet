@@ -301,10 +301,7 @@ func (s *Server) sendLatestState(srv CentrumService_StreamServer, job string, us
 		ownUnit, _ = s.getUnit(job, unitId)
 	}
 
-	ownOnly := !isController
-
 	dispatches, err := s.ListDispatches(srv.Context(), &ListDispatchesRequest{
-		OwnOnly: &ownOnly,
 		NotStatus: []dispatch.DISPATCH_STATUS{
 			dispatch.DISPATCH_STATUS_ARCHIVED,
 		},
@@ -368,7 +365,8 @@ func (s *Server) Stream(req *StreamRequest, srv CentrumService_StreamServer) err
 func (s *Server) stream(srv CentrumService_StreamServer, isController bool, job string, userId int32, unitId uint64) (bool, error) {
 	msgCh := make(chan *nats.Msg, 48)
 	if !isController {
-		sub, err := s.events.JS.ChanSubscribe(fmt.Sprintf("%s.%s.*.*.%d", BaseSubject, job, unitId), msgCh)
+		sub, err := s.events.JS.ChanSubscribe(fmt.Sprintf("%s.%s.>", BaseSubject, job), msgCh)
+		//sub, err := s.events.JS.ChanSubscribe(fmt.Sprintf("%s.%s.*.*.%d", BaseSubject, job, unitId), msgCh)
 		if err != nil {
 			return true, err
 		}

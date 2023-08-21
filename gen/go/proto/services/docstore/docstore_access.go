@@ -101,6 +101,8 @@ func (s *Server) handleDocumentAccessChanges(ctx context.Context, tx *sql.Tx, mo
 	}
 
 	switch mode {
+	case ACCESS_LEVEL_UPDATE_MODE_UNSPECIFIED:
+		fallthrough
 	case ACCESS_LEVEL_UPDATE_MODE_UPDATE:
 		toCreate, toUpdate, toDelete := s.compareDocumentAccess(tx, current, access)
 

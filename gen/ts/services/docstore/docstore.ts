@@ -639,17 +639,21 @@ export interface DeleteCategoryResponse {
  */
 export enum ACCESS_LEVEL_UPDATE_MODE {
     /**
-     * @generated from protobuf enum value: UPDATE = 0;
+     * @generated from protobuf enum value: UNSPECIFIED = 0;
      */
-    UPDATE = 0,
+    UNSPECIFIED = 0,
     /**
-     * @generated from protobuf enum value: DELETE = 1;
+     * @generated from protobuf enum value: UPDATE = 1;
      */
-    DELETE = 1,
+    UPDATE = 1,
     /**
-     * @generated from protobuf enum value: CLEAR = 2;
+     * @generated from protobuf enum value: DELETE = 2;
      */
-    CLEAR = 2
+    DELETE = 2,
+    /**
+     * @generated from protobuf enum value: CLEAR = 3;
+     */
+    CLEAR = 3
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class ListTemplatesRequest$Type extends MessageType<ListTemplatesRequest> {

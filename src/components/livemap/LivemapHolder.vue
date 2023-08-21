@@ -1,10 +1,9 @@
 <script lang="ts" setup>
-import { LControl } from '@vue-leaflet/vue-leaflet';
+import DispatchesLayer from '~/components/centrum/livemap/DispatchesLayer.vue';
 import { default as CentrumSidebar } from '~/components/centrum/livemap/Sidebar.vue';
 import { setWaypoint } from '~/components/centrum/nui';
 import { useLivemapStore } from '~/store/livemap';
 import Livemap from './Livemap.vue';
-import PostalSearch from './controls/PostalSearch.vue';
 
 const livemapStore = useLivemapStore();
 const { location } = storeToRefs(livemapStore);
@@ -18,11 +17,9 @@ function goto(e: { x: number; y: number }) {
 </script>
 
 <template>
-    <Livemap :enable-centrum="true">
-        <template>
-            <LControl position="topleft">
-                <PostalSearch @goto="goto($event)" />
-            </LControl>
+    <Livemap>
+        <template v-slot:default>
+            <DispatchesLayer />
         </template>
         <template v-slot:afterMap>
             <div v-if="can('CentrumService.Stream')" class="lg:inset-y-0 lg:flex lg:w-50 lg:flex-col">

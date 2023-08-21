@@ -211,9 +211,10 @@ message GetDocumentAccessResponse {
 }
 
 enum ACCESS_LEVEL_UPDATE_MODE {
-  UPDATE = 0;
-  DELETE = 1;
-  CLEAR = 2;
+  UNSPECIFIED = 0;
+  UPDATE = 1;
+  DELETE = 2;
+  CLEAR = 3;
 }
 
 message SetDocumentAccessRequest {
