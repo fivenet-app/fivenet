@@ -323,7 +323,10 @@
             "starting_datastream": "Starte Livemap Datenstrom...",
             "failed_datastream": "Livemap Datenstrom fehlgeschlagen!",
             "center_selected_marker": "Zentriere ausgewählten Marker",
-            "paused_datastream": "Livemap Datenstrom pausiert (Fenster nicht im Fokus)."
+            "paused_datastream": "Livemap Datenstrom pausiert (Fenster nicht im Fokus).",
+            "settings": {
+                "marker_size": "Größe der Kartenmarkierung"
+            }
         },
         "rector": {
             "job_props": {
@@ -361,6 +364,20 @@
             "take_dispatch": {
                 "title": "Einsatz Annehmen",
                 "sub_title": "Übernehme zugewiesene Einsätze schnell und einfach."
+            },
+            "update_dispatch_status": {
+                "title": "Aktualisiere Einsatz Status"
+            },
+            "assign_unit": {
+                "title": "Benutzer einer Einheit zuordnen"
+            },
+            "update_unit_status": {
+                "title": "Aktualisiere Einheit Status"
+            },
+            "dispatch_center": {
+                "starting_datastream": "Start Leitstellen Datenstrom...",
+                "failed_datastream": "Leistellen Datenstrom fehlgeschlagen!",
+                "join_center": "Trete der Leitstelle bei in dem du hier klickst."
             }
         }
     },
@@ -552,7 +569,10 @@
         "no_assigned_dispatches": "Keine zugewiesenen Einsätze.",
         "join_unit": "Einheit beitreten",
         "leave_unit": "Einheit verlassen",
-        "no_own_unit": "In keiner Einheit."
+        "no_own_unit": "In keiner Einheit.",
+        "member": "Keine Mitglieder | {n} Mitglied | {n} Mitglieder",
+        "attributes": "Attribut | Attribute",
+        "last_update": "Letzte Aktualisierung"
     },
     "notifications": {
         "clipboard": {
