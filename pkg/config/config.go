@@ -68,7 +68,8 @@ type Config struct {
 	OAuth2   OAuth2   `yaml:"oauth2"`
 	Cache    Cache    `yaml:"cache"`
 
-	Game Game `yaml:"game"`
+	Game    Game    `yaml:"game"`
+	Discord Discord `yaml:"discord"`
 }
 
 type Sentry struct {
@@ -179,4 +180,13 @@ type Livemap struct {
 type Perm struct {
 	Category string `yaml:"category"`
 	Name     string `yaml:"name"`
+}
+
+type Discord struct {
+	Enabled bool       `default:"false" yaml:"enabled"`
+	Bot     DiscordBot `yaml:"bot"`
+}
+
+type DiscordBot struct {
+	Token string `yaml:"token"`
 }

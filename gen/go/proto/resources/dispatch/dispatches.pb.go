@@ -101,12 +101,12 @@ type Dispatch struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id          uint64                `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" sql:"primary_key" alias:"id"` // @gotags: sql:"primary_key" alias:"id"
-	CreatedAt   *timestamp.Timestamp  `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
-	UpdatedAt   *timestamp.Timestamp  `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
-	Job         string                `protobuf:"bytes,4,opt,name=job,proto3" json:"job,omitempty"`
-	Status      *DispatchStatus       `protobuf:"bytes,5,opt,name=status,proto3,oneof" json:"status,omitempty"`
-	Statuses    []*DispatchStatus     `protobuf:"bytes,6,rep,name=statuses,proto3" json:"statuses,omitempty"`
+	Id        uint64               `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" sql:"primary_key" alias:"id"` // @gotags: sql:"primary_key" alias:"id"
+	CreatedAt *timestamp.Timestamp `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
+	UpdatedAt *timestamp.Timestamp `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
+	Job       string               `protobuf:"bytes,4,opt,name=job,proto3" json:"job,omitempty"`
+	Status    *DispatchStatus      `protobuf:"bytes,5,opt,name=status,proto3,oneof" json:"status,omitempty"`
+	// repeated DispatchStatus statuses = 6;
 	Message     string                `protobuf:"bytes,7,opt,name=message,proto3" json:"message,omitempty"`
 	Description *string               `protobuf:"bytes,8,opt,name=description,proto3,oneof" json:"description,omitempty"`
 	Attributes  *Attributes           `protobuf:"bytes,9,opt,name=attributes,proto3,oneof" json:"attributes,omitempty"`
@@ -181,13 +181,6 @@ func (x *Dispatch) GetJob() string {
 func (x *Dispatch) GetStatus() *DispatchStatus {
 	if x != nil {
 		return x.Status
-	}
-	return nil
-}
-
-func (x *Dispatch) GetStatuses() []*DispatchStatus {
-	if x != nil {
-		return x.Statuses
 	}
 	return nil
 }
@@ -593,7 +586,7 @@ var file_resources_dispatch_dispatches_proto_rawDesc = []byte{
 	0x72, 0x65, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x73, 0x2f, 0x75, 0x73, 0x65, 0x72, 0x73, 0x2f,
 	0x75, 0x73, 0x65, 0x72, 0x73, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x17, 0x76, 0x61, 0x6c,
 	0x69, 0x64, 0x61, 0x74, 0x65, 0x2f, 0x76, 0x61, 0x6c, 0x69, 0x64, 0x61, 0x74, 0x65, 0x2e, 0x70,
-	0x72, 0x6f, 0x74, 0x6f, 0x22, 0x8d, 0x06, 0x0a, 0x08, 0x44, 0x69, 0x73, 0x70, 0x61, 0x74, 0x63,
+	0x72, 0x6f, 0x74, 0x6f, 0x22, 0xcd, 0x05, 0x0a, 0x08, 0x44, 0x69, 0x73, 0x70, 0x61, 0x74, 0x63,
 	0x68, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x04, 0x52, 0x02, 0x69,
 	0x64, 0x12, 0x42, 0x0a, 0x0a, 0x63, 0x72, 0x65, 0x61, 0x74, 0x65, 0x64, 0x5f, 0x61, 0x74, 0x18,
 	0x02, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1e, 0x2e, 0x72, 0x65, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65,
@@ -609,11 +602,7 @@ var file_resources_dispatch_dispatches_proto_rawDesc = []byte{
 	0x20, 0x01, 0x28, 0x0b, 0x32, 0x22, 0x2e, 0x72, 0x65, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x73,
 	0x2e, 0x64, 0x69, 0x73, 0x70, 0x61, 0x74, 0x63, 0x68, 0x2e, 0x44, 0x69, 0x73, 0x70, 0x61, 0x74,
 	0x63, 0x68, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x48, 0x02, 0x52, 0x06, 0x73, 0x74, 0x61, 0x74,
-	0x75, 0x73, 0x88, 0x01, 0x01, 0x12, 0x3e, 0x0a, 0x08, 0x73, 0x74, 0x61, 0x74, 0x75, 0x73, 0x65,
-	0x73, 0x18, 0x06, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x22, 0x2e, 0x72, 0x65, 0x73, 0x6f, 0x75, 0x72,
-	0x63, 0x65, 0x73, 0x2e, 0x64, 0x69, 0x73, 0x70, 0x61, 0x74, 0x63, 0x68, 0x2e, 0x44, 0x69, 0x73,
-	0x70, 0x61, 0x74, 0x63, 0x68, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x52, 0x08, 0x73, 0x74, 0x61,
-	0x74, 0x75, 0x73, 0x65, 0x73, 0x12, 0x22, 0x0a, 0x07, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65,
+	0x75, 0x73, 0x88, 0x01, 0x01, 0x12, 0x22, 0x0a, 0x07, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65,
 	0x18, 0x07, 0x20, 0x01, 0x28, 0x09, 0x42, 0x08, 0xfa, 0x42, 0x05, 0x72, 0x03, 0x18, 0xff, 0x01,
 	0x52, 0x07, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x12, 0x2f, 0x0a, 0x0b, 0x64, 0x65, 0x73,
 	0x63, 0x72, 0x69, 0x70, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x08, 0x20, 0x01, 0x28, 0x09, 0x42, 0x08,
@@ -757,23 +746,22 @@ var file_resources_dispatch_dispatches_proto_depIdxs = []int32{
 	6,  // 0: resources.dispatch.Dispatch.created_at:type_name -> resources.timestamp.Timestamp
 	6,  // 1: resources.dispatch.Dispatch.updated_at:type_name -> resources.timestamp.Timestamp
 	5,  // 2: resources.dispatch.Dispatch.status:type_name -> resources.dispatch.DispatchStatus
-	5,  // 3: resources.dispatch.Dispatch.statuses:type_name -> resources.dispatch.DispatchStatus
-	2,  // 4: resources.dispatch.Dispatch.attributes:type_name -> resources.dispatch.Attributes
-	7,  // 5: resources.dispatch.Dispatch.user:type_name -> resources.users.UserShort
-	4,  // 6: resources.dispatch.Dispatch.units:type_name -> resources.dispatch.DispatchAssignment
-	4,  // 7: resources.dispatch.DispatchAssignments.units:type_name -> resources.dispatch.DispatchAssignment
-	8,  // 8: resources.dispatch.DispatchAssignment.unit:type_name -> resources.dispatch.Unit
-	6,  // 9: resources.dispatch.DispatchAssignment.created_at:type_name -> resources.timestamp.Timestamp
-	6,  // 10: resources.dispatch.DispatchAssignment.expires_at:type_name -> resources.timestamp.Timestamp
-	6,  // 11: resources.dispatch.DispatchStatus.created_at:type_name -> resources.timestamp.Timestamp
-	8,  // 12: resources.dispatch.DispatchStatus.unit:type_name -> resources.dispatch.Unit
-	0,  // 13: resources.dispatch.DispatchStatus.status:type_name -> resources.dispatch.DISPATCH_STATUS
-	7,  // 14: resources.dispatch.DispatchStatus.user:type_name -> resources.users.UserShort
-	15, // [15:15] is the sub-list for method output_type
-	15, // [15:15] is the sub-list for method input_type
-	15, // [15:15] is the sub-list for extension type_name
-	15, // [15:15] is the sub-list for extension extendee
-	0,  // [0:15] is the sub-list for field type_name
+	2,  // 3: resources.dispatch.Dispatch.attributes:type_name -> resources.dispatch.Attributes
+	7,  // 4: resources.dispatch.Dispatch.user:type_name -> resources.users.UserShort
+	4,  // 5: resources.dispatch.Dispatch.units:type_name -> resources.dispatch.DispatchAssignment
+	4,  // 6: resources.dispatch.DispatchAssignments.units:type_name -> resources.dispatch.DispatchAssignment
+	8,  // 7: resources.dispatch.DispatchAssignment.unit:type_name -> resources.dispatch.Unit
+	6,  // 8: resources.dispatch.DispatchAssignment.created_at:type_name -> resources.timestamp.Timestamp
+	6,  // 9: resources.dispatch.DispatchAssignment.expires_at:type_name -> resources.timestamp.Timestamp
+	6,  // 10: resources.dispatch.DispatchStatus.created_at:type_name -> resources.timestamp.Timestamp
+	8,  // 11: resources.dispatch.DispatchStatus.unit:type_name -> resources.dispatch.Unit
+	0,  // 12: resources.dispatch.DispatchStatus.status:type_name -> resources.dispatch.DISPATCH_STATUS
+	7,  // 13: resources.dispatch.DispatchStatus.user:type_name -> resources.users.UserShort
+	14, // [14:14] is the sub-list for method output_type
+	14, // [14:14] is the sub-list for method input_type
+	14, // [14:14] is the sub-list for extension type_name
+	14, // [14:14] is the sub-list for extension extendee
+	0,  // [0:14] is the sub-list for field type_name
 }
 
 func init() { file_resources_dispatch_dispatches_proto_init() }

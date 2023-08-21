@@ -81,3 +81,7 @@ game:
       name: GetDocument
     - category: DocStoreService
       name: PostComment
+discord:
+  enabled: true
+  bot:
+    token: "YOUR_BOT_TOKEN_HERE"

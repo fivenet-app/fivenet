@@ -169,7 +169,7 @@ defineEmits<{
                                                                 class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
                                                             >
                                                                 <span v-if="dispatch.units.length === 0">
-                                                                    {{ $t('common.unit', 0) }}
+                                                                    {{ $t('common.unit', 2) }}
                                                                 </span>
                                                                 <ul
                                                                     v-else

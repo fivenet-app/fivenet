@@ -92,7 +92,6 @@ watchDebounced(
 
 const backgroundColorList = {
     Satelite: '#143d6b',
-    Road: '#1862ad',
     Postal: '#74aace',
 } as const;
 const backgroundColor = ref<ValueOf<typeof backgroundColorList>>(backgroundColorList.Postal);
@@ -101,9 +100,6 @@ async function updateBackground(layer: string): Promise<void> {
     switch (layer) {
         case 'Satelite':
             backgroundColor.value = backgroundColorList.Satelite;
-            return;
-        case 'Road':
-            backgroundColor.value = backgroundColorList.Road;
             return;
         case 'Postal':
             backgroundColor.value = backgroundColorList.Postal;
@@ -230,15 +226,6 @@ onBeforeUnmount(() => {
                 :no-wrap="true"
                 :tms="true"
                 :visible="true"
-                :attribution="attribution"
-            />
-            <LTileLayer
-                url="/images/livemap/tiles/road/{z}/{x}/{y}.png"
-                layer-type="base"
-                name="Road"
-                :no-wrap="true"
-                :tms="true"
-                :visible="false"
                 :attribution="attribution"
             />
             <LTileLayer

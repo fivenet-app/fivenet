@@ -30,10 +30,8 @@ export interface Dispatch {
      */
     status?: DispatchStatus;
     /**
-     * @generated from protobuf field: repeated resources.dispatch.DispatchStatus statuses = 6;
-     */
-    statuses: DispatchStatus[];
-    /**
+     * repeated DispatchStatus statuses = 6;
+     *
      * @generated from protobuf field: string message = 7;
      */
     message: string;
@@ -232,7 +230,6 @@ class Dispatch$Type extends MessageType<Dispatch> {
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 5, name: "status", kind: "message", T: () => DispatchStatus },
-            { no: 6, name: "statuses", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => DispatchStatus },
             { no: 7, name: "message", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
             { no: 8, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "1024" } } } },
             { no: 9, name: "attributes", kind: "message", T: () => Attributes },

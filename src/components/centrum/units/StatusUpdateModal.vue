@@ -61,14 +61,14 @@ defineRule('max', max);
 interface FormData {
     status: number;
     code?: string;
-    reason: string;
+    reason?: string;
 }
 
 const { handleSubmit, setFieldValue } = useForm<FormData>({
     validationSchema: {
         status: { required: true },
         code: { required: false },
-        reason: { required: true, min: 3, max: 255 },
+        reason: { required: false, min: 3, max: 255 },
     },
     initialValues: {
         status: status,

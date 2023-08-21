@@ -45,10 +45,8 @@ export interface Unit {
      */
     status?: UnitStatus;
     /**
-     * @generated from protobuf field: repeated resources.dispatch.UnitStatus statuses = 10;
-     */
-    statuses: UnitStatus[];
-    /**
+     * repeated UnitStatus statuses = 10;
+     *
      * @generated from protobuf field: repeated resources.dispatch.UnitAssignment users = 11;
      */
     users: UnitAssignment[];
@@ -186,7 +184,6 @@ class Unit$Type extends MessageType<Unit> {
             { no: 7, name: "color", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "6" } } } },
             { no: 8, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
             { no: 9, name: "status", kind: "message", T: () => UnitStatus },
-            { no: 10, name: "statuses", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UnitStatus },
             { no: 11, name: "users", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UnitAssignment }
         ]);
     }

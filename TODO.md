@@ -2,6 +2,9 @@
     - [ ] Frontend for employees to see their dispatches and manage their status
         - [ ] Notifications on Livemap when they are assigned a dispatch
         - [ ] Updating their own dispatch status (needs permission checks)
-    - [ ] TakeControl for leitstellen controller UI needed + "No one is active" when no controller is active
+        - [ ] Based on the dispatch center mode, allow assigning dispatches themselves
     - [ ] Livemap - Show Panic buttons and Sperrzonen
     - [ ] Translate Activity Feed items
+    - [ ] Add more errors and translate them
+- [ ] FiveM Plugin
+    - [ ] Clear user locations table on start up

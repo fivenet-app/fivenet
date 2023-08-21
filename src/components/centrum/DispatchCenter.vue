@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
-import { HelpCircleIcon } from 'mdi-vue3';
 import { default as DispatchDetails } from '~/components/centrum/dispatches/Details.vue';
 import { default as DispatchesList } from '~/components/centrum/dispatches/List.vue';
 import { default as UnitDetails } from '~/components/centrum/units/Details.vue';
@@ -12,6 +10,7 @@ import { useCentrumStore } from '~/store/centrum';
 import { useLivemapStore } from '~/store/livemap';
 import { Dispatch } from '~~/gen/ts/resources/dispatch/dispatches';
 import { Unit } from '~~/gen/ts/resources/dispatch/units';
+import DisponentsInfo from './DisponentsInfo.vue';
 import Feed from './Feed.vue';
 import AssignDispatchModal from './dispatches/AssignDispatchModal.vue';
 import { default as DispatchStatusUpdateModal } from './dispatches/StatusUpdateModal.vue';
@@ -20,10 +19,8 @@ import { setWaypoint } from './nui';
 import AssignUnitModal from './units/AssignUnitModal.vue';
 import { default as UnitStatusUpdateModal } from './units/StatusUpdateModal.vue';
 
-const { $grpc } = useNuxtApp();
-
 const centrumStore = useCentrumStore();
-const { error, abort, isDisponent, feed } = storeToRefs(centrumStore);
+const { error, abort, isDisponent, disponents, settings, feed } = storeToRefs(centrumStore);
 const { startStream, stopStream } = centrumStore;
 const livemapStore = useLivemapStore();
 const { location } = storeToRefs(livemapStore);
@@ -43,22 +40,6 @@ function goto(e: Coordinate) {
     setWaypoint(e.x, e.y);
 }
 
-async function takeControl(): Promise<void> {
-    return new Promise(async (res, rej) => {
-        try {
-            const call = $grpc.getCentrumClient().takeControl({
-                signon: true,
-            });
-            await call;
-
-            return res();
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
-        }
-    });
-}
-
 const selectedDispatch = ref<Dispatch | undefined>();
 const openDispatchDetails = ref(false);
 const openDispatchAssign = ref(false);
@@ -72,10 +53,7 @@ const openUnitStatus = ref(false);
 
 <template>
     <div class="flex-col h-full relative">
-        <div
-            v-if="error || (!error && abort === undefined)"
-            class="absolute inset-0 flex justify-center items-center z-20 bg-gray-600/70"
-        >
+        <div v-if="error || abort === undefined" class="absolute inset-0 flex justify-center items-center z-20 bg-gray-600/70">
             <DataErrorBlock
                 v-if="error"
                 :title="$t('components.centrum.dispatch_center.failed_datastream')"
@@ -86,25 +64,11 @@ const openUnitStatus = ref(false);
                 :message="$t('components.centrum.dispatch_center.starting_datastream')"
             />
         </div>
-        <div v-else-if="!isDisponent">
-            <div class="absolute inset-0 flex justify-center items-center z-20 bg-gray-600/70">
-                <button
-                    @click="takeControl()"
-                    type="button"
-                    class="relative block w-full p-12 text-center border-2 border-dotted rounded-lg border-base-300 hover:border-base-400 focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2"
-                >
-                    <HelpCircleIcon class="w-12 h-12 mx-auto text-neutral" />
-                    <span class="block mt-2 text-sm font-semibold text-gray-300">
-                        {{ $t('components.centrum.dispatch_center.join_center') }}
-                    </span>
-                </button>
-            </div>
-        </div>
 
         <div class="relative w-full h-full z-0 flex">
             <!-- Left column -->
-            <div class="flex flex-col basis-1/3 divide-x">
-                <div class="h-full">
+            <div class="flex flex-col basis-1/3 divide-x divide-x-reverse divide-base-400 divide-y divide-base-400">
+                <div class="basis-11/12">
                     <Livemap>
                         <template v-slot:default>
                             <DispatchesLayer
@@ -117,10 +81,13 @@ const openUnitStatus = ref(false);
                         </template>
                     </Livemap>
                 </div>
+                <div class="basis-1/12">
+                    <DisponentsInfo :disponents="disponents" :settings="settings" :is-disponent="isDisponent" />
+                </div>
             </div>
 
             <!-- Right column -->
-            <div class="flex flex-col basis-2/3 divide-y">
+            <div class="flex flex-col basis-2/3 divide-y divide-base-400">
                 <div class="basis-3/5 max-h-[60%]">
                     <DispatchesList
                         @goto="goto($event)"

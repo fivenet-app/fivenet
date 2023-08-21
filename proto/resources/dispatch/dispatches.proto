@@ -14,7 +14,7 @@ message Dispatch {
   optional resources.timestamp.Timestamp updated_at = 3;
   string job = 4 [(validate.rules).string.max_len = 20];
   optional DispatchStatus status = 5;
-  repeated DispatchStatus statuses = 6;
+  //repeated DispatchStatus statuses = 6;
   string message = 7 [(validate.rules).string.max_len = 255];
   optional string description = 8 [(validate.rules).string.max_len = 1024];
   optional Attributes attributes = 9;

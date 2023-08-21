@@ -88,6 +88,7 @@ function getNameForLawBookId(id: bigint): string | undefined {
 
 function calculate(e: SelectedPenalty): void {
     const idx = selectedPenalties.value.findIndex((v) => v.law.lawbookId === e.law.lawbookId && v.law.name === e.law.name);
+
     let count = e.count;
     if (idx > -1) {
         const existing = selectedPenalties.value.at(idx)!;
@@ -266,7 +267,7 @@ ${t('common.crime', selectedPenalties.value.length)}:
                                                             :count="
                                                                 selectedPenalties.find((p) => p.law.id === law.id)?.count ?? 0n
                                                             "
-                                                            @selected="calculate($event)"
+                                                            @select="calculate($event)"
                                                         />
                                                     </tbody>
                                                 </table>

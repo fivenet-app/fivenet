@@ -1,0 +1,104 @@
+<script lang="ts" setup>
+import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
+import { LocationEnterIcon, LocationExitIcon } from 'mdi-vue3';
+import { CENTRUM_MODE, Settings } from '~~/gen/ts/resources/dispatch/settings';
+import { UserShort } from '~~/gen/ts/resources/users/users';
+
+const props = defineProps<{
+    disponents: UserShort[];
+    settings: Settings;
+    isDisponent?: boolean;
+}>();
+
+const { $grpc } = useNuxtApp();
+
+async function takeControl(signon: boolean): Promise<void> {
+    return new Promise(async (res, rej) => {
+        try {
+            const call = $grpc.getCentrumClient().takeControl({
+                signon: signon,
+            });
+            await call;
+
+            return res();
+        } catch (e) {
+            $grpc.handleError(e as RpcError);
+            return rej(e as RpcError);
+        }
+    });
+}
+
+const disponentsNames = computed(() => {
+    const names: string[] = [];
+
+    props.disponents.forEach((u) => {
+        names.push(`${u.firstname} ${u.lastname}`);
+    });
+
+    return names.join(', ');
+});
+</script>
+
+<template>
+    <div class="px-4 sm:px-6 lg:px-8 h-full overflow-y-scroll">
+        <div class="sm:flex sm:items-center">
+            <div class="sm:flex-auto">
+                <h2 class="text-base font-semibold leading-6 text-gray-100">{{ $t('common.disponents', 2) }}</h2>
+            </div>
+        </div>
+        <div class="mt-0.5 flow-root">
+            <div class="-mx-2 -my-2 sm:-mx-6 lg:-mx-8">
+                <div class="inline-block min-w-full py-2 align-middle sm:px-2 lg:px-2">
+                    <div class="flex flex-row items-center">
+                        <div v-if="!isDisponent" class="absolute inset-0 flex justify-center items-center z-20 bg-gray-600/70">
+                            <button
+                                @click="takeControl(true)"
+                                type="button"
+                                class="relative block w-full p-12 text-center border-2 border-dotted rounded-lg border-base-300 hover:border-base-400 focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2"
+                            >
+                                <LocationEnterIcon class="w-12 h-12 mx-auto text-neutral" />
+                                <span class="block mt-2 text-sm font-semibold text-gray-300">
+                                    {{ $t('components.centrum.dispatch_center.join_center') }}
+                                </span>
+                            </button>
+                        </div>
+                        <div v-else class="flex-1 inline-flex">
+                            <button
+                                type="button"
+                                @click="takeControl(false)"
+                                class="flex items-center justify-center rounded-full bg-error-500 text-neutral hover:bg-error-400"
+                            >
+                                <LocationExitIcon class="w-8 h-8" />
+                                {{ $t('common.leave') }}
+                            </button>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-neutral text-sm">
+                                <span
+                                    class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset"
+                                    :class="
+                                        disponents.length === 0
+                                            ? 'bg-yellow-400/10 text-yellow-500 ring-yellow-400/20'
+                                            : 'bg-green-500/10 text-green-400 ring-green-500/20'
+                                    "
+                                    :title="disponentsNames"
+                                >
+                                    {{ $t('common.disponent', disponents.length) }}
+                                </span>
+                            </p>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-neutral text-sm">
+                                <span
+                                    class="inline-flex items-center rounded-md bg-gray-400/10 px-2 py-1 text-xs font-medium text-gray-400 ring-1 ring-inset ring-gray-400/20"
+                                >
+                                    {{ CENTRUM_MODE[settings.mode ?? 0] }}
+                                </span>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</template>

@@ -60,7 +60,7 @@ export const useLivemapStore = defineStore('livemap', {
                 }
             } catch (e) {
                 this.error = e as RpcError;
-
+                if (this.error) console.error('Livemap: Data Stream Failed', this.error);
                 this.stopStream();
                 // TODO Restart stream automatically if timeout occurs
             }
@@ -71,6 +71,7 @@ export const useLivemapStore = defineStore('livemap', {
             console.debug('Livemap: Stopping Data Stream');
             if (this.abort) this.abort.abort();
             this.abort = undefined;
+            this.$reset();
         },
     },
 });

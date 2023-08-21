@@ -57,14 +57,14 @@ func (s *Server) resolveUsersByIds(ctx context.Context, u []int32) ([]*users.Use
 	return dest, nil
 }
 
-func (s *Server) checkIfUserIsDisponent(userInfo *userinfo.UserInfo) bool {
-	ds, ok := s.disponents.Load(userInfo.Job)
+func (s *Server) checkIfUserIsDisponent(job string, userId int32) bool {
+	ds, ok := s.disponents.Load(job)
 	if !ok {
 		return false
 	}
 
 	for i := 0; i < len(ds); i++ {
-		if userInfo.UserId == ds[i].UserId {
+		if userId == ds[i].UserId {
 			return true
 		}
 	}
@@ -74,7 +74,7 @@ func (s *Server) checkIfUserIsDisponent(userInfo *userinfo.UserInfo) bool {
 
 func (s *Server) checkIfUserIsPartOfDispatch(ctx context.Context, userInfo *userinfo.UserInfo, dsp *dispatch.Dispatch, disponentOkay bool) bool {
 	// Check if user is a disponent
-	if s.checkIfUserIsDisponent(userInfo) {
+	if s.checkIfUserIsDisponent(userInfo.Job, userInfo.UserId) {
 		return true
 	}
 

@@ -1,9 +1,11 @@
 <script lang="ts" setup>
-import { PenaltiesSummary } from '~/utils/penalty';
+import { PenaltiesSummary } from './Calculator.vue';
 
-defineProps<{
+const props = defineProps<{
     summary: PenaltiesSummary;
 }>();
+
+watch(props, () => console.log(props.summary));
 </script>
 
 <template>
@@ -29,7 +31,7 @@ defineProps<{
                         {{ summary.detentionTime }}
                     </span>
                     <span class="text-sm text-gray-400">
-                        {{ $t('common.time_ago.month', summary.detentionTime) }}
+                        {{ $t('common.time_ago.month', summary.detentionTime.toString()) }}
                     </span>
                 </p>
             </div>

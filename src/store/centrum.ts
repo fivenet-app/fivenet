@@ -254,15 +254,9 @@ export const useCentrumStore = defineStore('centrum', {
                     } else if (resp.change.oneofKind === 'unitUpdated') {
                         this.addOrUpdateUnit(resp.change.unitUpdated);
                     } else if (resp.change.oneofKind === 'unitStatus') {
-                        const id = resp.change.unitStatus.id;
-                        let idx = this.units.findIndex((d) => d.id === id);
-                        if (idx === -1) {
-                            this.units?.unshift(resp.change.unitStatus);
-                        } else {
-                            this.units[idx] = resp.change.unitStatus;
-                        }
+                        this.addOrUpdateUnit(resp.change.unitStatus);
 
-                        if (resp.change.unitStatus.status) {
+                        if (this.isDisponent && resp.change.unitStatus.status) {
                             this.feed.unshift(resp.change.unitStatus.status);
                         }
                     } else if (resp.change.oneofKind === 'dispatchCreated') {
@@ -274,7 +268,7 @@ export const useCentrumStore = defineStore('centrum', {
                     } else if (resp.change.oneofKind === 'dispatchStatus') {
                         const id = resp.change.dispatchStatus.id;
 
-                        if (resp.change.dispatchStatus.status) {
+                        if (this.isDisponent && resp.change.dispatchStatus.status) {
                             this.feed.unshift(resp.change.dispatchStatus.status);
                         }
 
@@ -297,12 +291,9 @@ export const useCentrumStore = defineStore('centrum', {
                 }
             } catch (e) {
                 this.error = e as RpcError;
-
+                if (this.error) console.error('Centrum: Data Stream Failed', this.error);
                 this.stopStream();
-                notifications.dispatchNotification({
-                    content: { key: this.error.message, parameters: [] },
-                    title: { key: '', parameters: [] },
-                });
+                // TODO Restart stream automatically if timeout occurs
             }
 
             console.debug('Centrum: Data Stream Ended');
@@ -311,6 +302,7 @@ export const useCentrumStore = defineStore('centrum', {
             console.debug('Centrum: Stopping Data Stream');
             if (this.abort) this.abort.abort();
             this.abort = undefined;
+            this.$reset();
         },
     },
 });

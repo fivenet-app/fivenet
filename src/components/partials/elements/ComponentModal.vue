@@ -40,7 +40,7 @@ defineEmits<{
                             class="relative px-4 pt-5 pb-4 overflow-hidden text-left transition-all transform rounded-lg bg-base-850 text-neutral sm:my-8 sm:w-full sm:max-w-8xl sm:p-6"
                         >
                             <div>
-                                <div class="mt-3 text-center sm:mt-5">
+                                <div class="text-center">
                                     <slot />
                                 </div>
                             </div>

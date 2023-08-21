@@ -16,13 +16,15 @@ import {
 } from 'mdi-vue3';
 import { DefineComponent } from 'vue';
 import { default as DispatchDetails } from '~/components/centrum/dispatches/Details.vue';
-import { default as UpdateDispatchStatus } from '~/components/centrum/dispatches/StatusUpdateModal.vue';
+import { default as DispatchStatusUpdateModal } from '~/components/centrum/dispatches/StatusUpdateModal.vue';
 import { dispatchStatusToBGColor } from '~/components/centrum/helpers';
 import { default as UnitDetails } from '~/components/centrum/units/Details.vue';
-import { default as UpdateUnitStatus } from '~/components/centrum/units/StatusUpdateModal.vue';
+import { default as UnitStatusUpdateModal } from '~/components/centrum/units/StatusUpdateModal.vue';
 import { useCentrumStore } from '~/store/centrum';
 import { DISPATCH_STATUS, Dispatch } from '~~/gen/ts/resources/dispatch/dispatches';
 import { UNIT_STATUS } from '~~/gen/ts/resources/dispatch/units';
+import AssignDispatchModal from '../dispatches/AssignDispatchModal.vue';
+import AssignUnitModal from '../units/AssignUnitModal.vue';
 import DispatchesLayer from './DispatchesLayer.vue';
 import DispatchEntry from './sidebar/DispatchEntry.vue';
 import JoinUnit from './sidebar/JoinUnitModal.vue';
@@ -72,21 +74,23 @@ onBeforeUnmount(() => {
     stopStream();
 });
 
-const unitOpen = ref(false);
 const selectUnitOpen = ref(false);
 
 const unitStatusOpen = ref(false);
 const unitStatusSelected = ref<UNIT_STATUS | undefined>();
 
 // TODO add function to set the active dispatch (last clicked and manually selected)
-const activeDispatch = ref<Dispatch | undefined>();
-const dispatchStatusOpen = ref(false);
 const dispatchStatusSelected = ref<DISPATCH_STATUS | undefined>();
-
-const openTakeDispatch = ref(false);
 
 const selectedDispatch = ref<Dispatch | undefined>();
 const openDispatchDetails = ref(false);
+const openDispatchAssign = ref(false);
+const openDispatchStatus = ref(false);
+const openTakeDispatch = ref(false);
+
+const openUnitDetails = ref(false);
+const openUnitAssign = ref(false);
+const openUnitStatus = ref(false);
 </script>
 
 <template>
@@ -103,29 +107,41 @@ const openDispatchDetails = ref(false);
             <div class="lg:inset-y-0 lg:flex lg:w-50 lg:flex-col">
                 <!-- Own Unit Modals -->
                 <template v-if="ownUnit">
-                    <UpdateUnitStatus
+                    <UnitStatusUpdateModal
                         :open="unitStatusOpen"
                         @close="unitStatusOpen = false"
                         :unit="ownUnit"
                         :status="unitStatusSelected"
                     />
-                    <UpdateDispatchStatus
-                        v-if="activeDispatch"
-                        :open="dispatchStatusOpen"
-                        @close="dispatchStatusOpen = false"
-                        :dispatch="activeDispatch"
-                        :status="dispatchStatusSelected"
-                    />
                 </template>
 
                 <!-- Dispatch -->
                 <TakeDispatch :open="openTakeDispatch" @close="openTakeDispatch = false" @goto="$emit('goto', $event)" />
+
                 <template v-if="selectedDispatch">
                     <DispatchDetails
-                        @close="openDispatchDetails = false"
                         :dispatch="selectedDispatch"
                         :open="openDispatchDetails"
+                        @close="openDispatchDetails = false"
                         @goto="$emit('goto', $event)"
+                        @assign-unit="
+                            selectedDispatch = $event;
+                            openDispatchAssign = true;
+                        "
+                        @status="
+                            selectedDispatch = $event;
+                            openDispatchStatus = true;
+                        "
+                    />
+                    <AssignDispatchModal
+                        :open="openDispatchAssign"
+                        :dispatch="selectedDispatch"
+                        @close="openDispatchAssign = false"
+                    />
+                    <DispatchStatusUpdateModal
+                        :open="openDispatchStatus"
+                        :dispatch="selectedDispatch"
+                        @close="openDispatchStatus = false"
                     />
                 </template>
 
@@ -137,7 +153,7 @@ const openDispatchDetails = ref(false);
                                     <li>
                                         <template v-if="ownUnit">
                                             <button
-                                                @click="unitOpen = true"
+                                                @click="openUnitDetails = true"
                                                 type="button"
                                                 class="text-white bg-info-700 hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-2 text-xs my-0.5"
                                             >
@@ -156,8 +172,18 @@ const openDispatchDetails = ref(false);
                                             <UnitDetails
                                                 :unit="ownUnit"
                                                 :ownUnit="ownUnit"
-                                                :open="unitOpen"
-                                                @close="unitOpen = false"
+                                                :open="openUnitDetails"
+                                                @close="openUnitDetails = false"
+                                            />
+                                            <AssignUnitModal
+                                                :open="openUnitAssign"
+                                                :unit="ownUnit"
+                                                @close="openUnitAssign = false"
+                                            />
+                                            <UnitStatusUpdateModal
+                                                :open="openUnitStatus"
+                                                :unit="ownUnit"
+                                                @close="openUnitStatus = false"
                                             />
                                         </template>
                                         <button
@@ -250,7 +276,7 @@ const openDispatchDetails = ref(false);
                                                     ]"
                                                     @click="
                                                         dispatchStatusSelected = item.status;
-                                                        dispatchStatusOpen = true;
+                                                        openUnitStatus = true;
                                                     "
                                                 >
                                                     <component

@@ -8,6 +8,7 @@ import (
 	"time"
 
 	dispatch "github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
+	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
 	users "github.com/galexrt/fivenet/gen/go/proto/resources/users"
 	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/events"
@@ -19,6 +20,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/pkg/utils/dbutils"
 	"github.com/galexrt/fivenet/pkg/utils/maps"
+	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/nats-io/nats.go"
@@ -33,8 +35,9 @@ import (
 )
 
 var (
-	ErrFailedQuery   = status.Error(codes.Internal, "errors.CentrumService.ErrFailedQuery")
-	ErrAlreadyInUnit = status.Error(codes.InvalidArgument, "errors.CentrumService.ErrAlreadyInUnit")
+	ErrFailedQuery       = status.Error(codes.Internal, "errors.CentrumService.ErrFailedQuery")
+	ErrAlreadyInUnit     = status.Error(codes.InvalidArgument, "errors.CentrumService.ErrAlreadyInUnit")
+	ErrNotPartOfDispatch = status.Error(codes.InvalidArgument, "errors.CentrumService.ErrNotPartOfDispatch")
 )
 
 var (
@@ -174,6 +177,15 @@ func (s *Server) start() {
 func (s *Server) TakeControl(ctx context.Context, req *TakeControlRequest) (*TakeControlResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
+	auditEntry := &model.FivenetAuditLog{
+		Service: CentrumService_ServiceDesc.ServiceName,
+		Method:  "TakeControl",
+		UserID:  userInfo.UserId,
+		UserJob: userInfo.Job,
+		State:   int16(rector.EVENT_TYPE_ERRORED),
+	}
+	defer s.auditer.Log(auditEntry, req)
+
 	if req.Signon {
 		if _, ok := s.tracker.GetUserByJobAndID(userInfo.Job, userInfo.UserId); !ok {
 			return nil, status.Error(codes.InvalidArgument, "You are not on duty!")
@@ -204,6 +216,8 @@ func (s *Server) TakeControl(ctx context.Context, req *TakeControlRequest) (*Tak
 				return nil, err
 			}
 		}
+
+		auditEntry.State = int16(rector.EVENT_TYPE_CREATED)
 	} else {
 		stmt := tCentrumUsers.
 			DELETE().
@@ -216,6 +230,8 @@ func (s *Server) TakeControl(ctx context.Context, req *TakeControlRequest) (*Tak
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 			return nil, err
 		}
+
+		auditEntry.State = int16(rector.EVENT_TYPE_DELETED)
 	}
 
 	// Load updated disponents into state
@@ -233,49 +249,60 @@ func (s *Server) TakeControl(ctx context.Context, req *TakeControlRequest) (*Tak
 	}
 	s.broadcastToAllUnits(TopicGeneral, TypeGeneralDisponents, userInfo.Job, data)
 
+	auditEntry.State = int16(rector.EVENT_TYPE_UPDATED)
+
 	return &TakeControlResponse{}, nil
 }
 
 func (s *Server) waitForUserToBeAssignedUnit(srv CentrumService_StreamServer, job string, userId int32) (uint64, error) {
-	msgCh := make(chan *nats.Msg, 8)
-	sub, err := s.events.JS.ChanSubscribe(fmt.Sprintf("%s.%s.%s.%s.%d", BaseSubject, job, TopicUnit, TypeUnitUserAssigned, 0), msgCh)
+	assignedMSGCh := make(chan *nats.Msg, 8)
+	sub, err := s.events.JS.ChanSubscribe(fmt.Sprintf("%s.%s.%s.%s.%d", BaseSubject, job, TopicUnit, TypeUnitUserAssigned, 0), assignedMSGCh)
 	if err != nil {
 		return 0, err
 	}
 	defer sub.Unsubscribe()
+
+	disponentsMSGCh := make(chan *nats.Msg, 8)
+	disponentsSub, err := s.events.JS.ChanSubscribe(fmt.Sprintf("%s.%s.%s.%s.%d", BaseSubject, job, TopicGeneral, TypeGeneralDisponents, 0), disponentsMSGCh)
+	if err != nil {
+		return 0, err
+	}
+	defer disponentsSub.Unsubscribe()
 
 	for {
 		select {
 		case <-srv.Context().Done():
 			return 0, nil
 
-		case msg := <-msgCh:
+		case msg := <-assignedMSGCh:
 			msg.Ack()
-			topic, tType := s.getEventTypeFromSubject(msg.Subject)
 
-			if topic == TopicUnit && tType == TypeUnitUserAssigned {
-				var dest dispatch.Unit
-				if err := proto.Unmarshal(msg.Data, &dest); err != nil {
-					return 0, err
-				}
+			var dest dispatch.Unit
+			if err := proto.Unmarshal(msg.Data, &dest); err != nil {
+				return 0, err
+			}
 
-				if !utils.InSliceFunc(dest.Users, func(a *dispatch.UnitAssignment) bool {
-					return userId == a.UserId
-				}) {
-					continue
-				}
+			if !utils.InSliceFunc(dest.Users, func(a *dispatch.UnitAssignment) bool {
+				return userId == a.UserId
+			}) {
+				continue
+			}
 
-				resp := &StreamResponse{
-					Change: &StreamResponse_UnitAssigned{
-						UnitAssigned: &dest,
-					},
-				}
+			resp := &StreamResponse{
+				Change: &StreamResponse_UnitAssigned{
+					UnitAssigned: &dest,
+				},
+			}
 
-				if err := srv.Send(resp); err != nil {
-					return 0, err
-				}
+			if err := srv.Send(resp); err != nil {
+				return 0, err
+			}
 
-				return dest.Id, nil
+			return dest.Id, nil
+
+		case <-disponentsMSGCh:
+			if s.checkIfUserIsDisponent(job, userId) {
+				return 0, nil
 			}
 		}
 	}
@@ -284,10 +311,7 @@ func (s *Server) waitForUserToBeAssignedUnit(srv CentrumService_StreamServer, jo
 func (s *Server) sendLatestState(srv CentrumService_StreamServer, job string, userId int32) (uint64, bool, error) {
 	settings := s.getSettings(srv.Context(), job)
 	disponents := s.getDisponents(srv.Context(), job)
-
-	isController := utils.InSliceFunc(disponents, func(in *users.UserShort) bool {
-		return in.UserId == userId
-	})
+	isController := s.checkIfUserIsDisponent(job, userId)
 
 	unitId, _ := s.getUnitIDForUserID(userId)
 
@@ -363,7 +387,7 @@ func (s *Server) Stream(req *StreamRequest, srv CentrumService_StreamServer) err
 }
 
 func (s *Server) stream(srv CentrumService_StreamServer, isController bool, job string, userId int32, unitId uint64) (bool, error) {
-	msgCh := make(chan *nats.Msg, 48)
+	msgCh := make(chan *nats.Msg, 32)
 	if !isController {
 		sub, err := s.events.JS.ChanSubscribe(fmt.Sprintf("%s.%s.>", BaseSubject, job), msgCh)
 		//sub, err := s.events.JS.ChanSubscribe(fmt.Sprintf("%s.%s.*.*.%d", BaseSubject, job, unitId), msgCh)
@@ -400,6 +424,11 @@ func (s *Server) stream(srv CentrumService_StreamServer, isController bool, job 
 
 					resp.Change = &StreamResponse_Disponents{
 						Disponents: &dest,
+					}
+
+					if isController && !s.checkIfUserIsDisponent(job, userId) {
+						restart := true
+						resp.Restart = &restart
 					}
 
 				case TypeGeneralSettings:

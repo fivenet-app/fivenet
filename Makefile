@@ -110,7 +110,6 @@ gdal2tiles-leaflet: build_dir
 .PHONY: gen-tiles
 gen-tiles: gdal2tiles-leaflet
 	$(BUILD_DIR)gdal2tiles-leaflet/gdal2tiles.py -l -p raster -z 0-7 -w none ./maps/GTAV_POSTAL_8192x8192.jpg ./src/public/images/livemap/tiles/postal
-	$(BUILD_DIR)gdal2tiles-leaflet/gdal2tiles.py -l -p raster -z 0-7 -w none ./maps/GTAV_ROAD_8192x8192.jpg ./src/public/images/livemap/tiles/road
 	$(BUILD_DIR)gdal2tiles-leaflet/gdal2tiles.py -l -p raster -z 0-7 -w none ./maps/GTAV_SATELITE_8192x8192.jpg ./src/public/images/livemap/tiles/satelite
 
 .PHONY: optimize-tiles

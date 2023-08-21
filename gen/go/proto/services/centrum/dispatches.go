@@ -355,7 +355,7 @@ func (s *Server) UpdateDispatchStatus(ctx context.Context, req *UpdateDispatchSt
 	}
 
 	if !s.checkIfUserIsPartOfDispatch(ctx, userInfo, dsp, false) && !userInfo.SuperUser {
-		return nil, ErrFailedQuery
+		return nil, ErrNotPartOfDispatch
 	}
 
 	unitId, ok := s.getUnitIDForUserID(userInfo.UserId)

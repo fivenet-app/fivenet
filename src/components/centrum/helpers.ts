@@ -9,7 +9,7 @@ export function dispatchStatusToFillColor(status: DISPATCH_STATUS | undefined): 
         case DISPATCH_STATUS.EN_ROUTE:
             return 'fill-error-600';
         case DISPATCH_STATUS.ON_SCENE:
-            return 'fill-error-600';
+            return 'fill-info-600';
         case DISPATCH_STATUS.NEED_ASSISTANCE:
             return 'fill-warn-600';
         case DISPATCH_STATUS.COMPLETED:
@@ -32,7 +32,7 @@ export function dispatchStatusToBGColor(status: DISPATCH_STATUS | undefined): st
         case DISPATCH_STATUS.EN_ROUTE:
             return 'bg-error-600';
         case DISPATCH_STATUS.ON_SCENE:
-            return 'bg-error-600';
+            return 'bg-info-600';
         case DISPATCH_STATUS.NEED_ASSISTANCE:
             return 'bg-warn-600';
         case DISPATCH_STATUS.COMPLETED:
