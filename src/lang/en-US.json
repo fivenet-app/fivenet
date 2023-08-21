@@ -74,7 +74,8 @@
                 "vehicles": "Search and find information about Vehicles.",
                 "documents": "Search and create Documents, using templates or from scratch.",
                 "jobs": "Infos about your job and employee management. Coming soon",
-                "livemap": "Live position of dispatches and your colleagues."
+                "livemap": "Live position of dispatches and your colleagues.",
+                "centrum": "Dispatch Center, for dispatching Dispatches."
             }
         },
         "documents": {
@@ -360,11 +361,6 @@
             "take_dispatch": {
                 "title": "Take Dispatches",
                 "sub_title": "Take assigned dispatches quickly or take dispatches normally."
-            },
-            "dispatch_center": {
-                "starting_datastream": "Starting Dispatch Center data stream ...",
-                "failed_datastream": "Failed to stream Dispatch Center data!",
-                "join_center": "Want to take control? Click here to join it."
             }
         }
     },
