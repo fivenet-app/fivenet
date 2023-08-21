@@ -572,7 +572,9 @@
         "no_own_unit": "In keiner Einheit.",
         "member": "Keine Mitglieder | {n} Mitglied | {n} Mitglieder",
         "attributes": "Attribut | Attribute",
-        "last_update": "Letzte Aktualisierung"
+        "last_update": "Letzte Aktualisierung",
+        "disponents": "Disponent | Disponenten",
+        "disponent": "Keine Disponenten | {n} Disponent | {n} Disponenten"
     },
     "notifications": {
         "clipboard": {
