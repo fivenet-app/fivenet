@@ -94,6 +94,11 @@ func (s *Server) loadDisponents(ctx context.Context, job string) error {
 	}
 
 	perJob := map[string][]*users.UserShort{}
+	for _, j := range s.visibleJobs {
+		if _, ok := perJob[j]; !ok {
+			perJob[j] = []*users.UserShort{}
+		}
+	}
 
 	for _, user := range dest {
 		if _, ok := perJob[user.Job]; !ok {
@@ -105,8 +110,21 @@ func (s *Server) loadDisponents(ctx context.Context, job string) error {
 		perJob[user.Job] = append(perJob[user.Job], user)
 	}
 
-	for job, us := range perJob {
-		s.disponents.Store(job, us)
+	if len(perJob) == 0 {
+		if job != "" {
+			s.disponents.Delete(job)
+		} else {
+			// No disponents for any jobs found, clear lists
+			s.disponents.Clear()
+		}
+	} else {
+		for job, us := range perJob {
+			if len(us) == 0 {
+				s.disponents.Delete(job)
+			} else {
+				s.disponents.Store(job, us)
+			}
+		}
 	}
 
 	return nil
