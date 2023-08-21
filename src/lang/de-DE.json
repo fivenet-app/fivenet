@@ -75,7 +75,7 @@
                 "documents": "Suche und erstelle Dokumente, entweder mit Vorlagen oder von Grund auf neu.",
                 "jobs": "Infos über deinen Job und Mitarbeitermanagement. Kommt bald",
                 "livemap": "Live-Positionen von Einsätzen und Kollegen.",
-                "centrum": "Leitstelle, für das zuweisen von Dispatches."
+                "centrum": "Leitstelle, für das zuweisen von Einsätze."
             }
         },
         "documents": {
@@ -352,15 +352,15 @@
         },
         "centrum": {
             "create_dispatch": {
-                "title": "Dispatch Erstellen",
-                "sub_title": "Neuen Dispatch erstellen."
+                "title": "Einsatz Erstellen",
+                "sub_title": "Neuen Einsatz erstellen."
             },
             "assign_dispatch": {
-                "title": "Dispatch Zuweisen"
+                "title": "Einsatz Zuweisen"
             },
             "take_dispatch": {
-                "title": "Dispatch Annehmen",
-                "sub_title": "Übernehme zugewiesene Dispatches schnell und einfach."
+                "title": "Einsatz Annehmen",
+                "sub_title": "Übernehme zugewiesene Einsätze schnell und einfach."
             }
         }
     },
@@ -548,8 +548,8 @@
         "sent_at": "Gesendet am",
         "go_to_location": "Gehe zu Koordinaten",
         "no_location": "Keine Koordinaten",
-        "your_dispatches": "Ihre Dispatches",
-        "no_assigned_dispatches": "Keine zugewiesenen Dispatches.",
+        "your_dispatches": "Ihre Einsätze",
+        "no_assigned_dispatches": "Keine zugewiesenen Einsätze.",
         "join_unit": "Einheit beitreten",
         "leave_unit": "Einheit verlassen",
         "no_own_unit": "In keiner Einheit."
@@ -1048,7 +1048,7 @@
         },
         "LivemapperService": {
             "Stream": {
-                "Dispatches": "Dispatch Positionen",
+                "Dispatches": "Einsatz Positionen",
                 "Players": "Spieler Positionen"
             }
         },
