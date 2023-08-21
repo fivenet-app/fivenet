@@ -5,6 +5,7 @@ import 'leaflet-contextmenu/dist/leaflet.contextmenu.min.css';
 import 'leaflet/dist/leaflet.css';
 import { useAuthStore } from '~/store/auth';
 import { useLivemapStore } from '~/store/livemap';
+import { useSettingsStore } from '~/store/settings';
 import { UserMarker } from '~~/gen/ts/resources/livemap/livemap';
 import PlayerMarker from './PlayerMarker.vue';
 
@@ -26,6 +27,9 @@ defineEmits<{
 const livemapStore = useLivemapStore();
 const { markers, jobs } = storeToRefs(livemapStore);
 const { startStream, stopStream } = livemapStore;
+
+const settingsStore = useSettingsStore();
+const { livemap } = storeToRefs(settingsStore);
 
 const authStore = useAuthStore();
 const { activeChar } = storeToRefs(authStore);
@@ -53,11 +57,12 @@ onBeforeUnmount(() => stopStream());
             :key="marker.marker!.id?.toString()"
             :marker="marker"
             :active-char="activeChar"
-            @selected="$emit('markerSelected', marker)"
+            @select="$emit('markerSelected', marker)"
+            :size="livemap.markerSize"
         />
     </LLayerGroup>
 
-    <LControl position="topleft" v-if="filterPlayers">
+    <LControl position="bottomleft" v-if="filterPlayers">
         <div class="form-control flex flex-col gap-2">
             <input
                 v-model="playerQuery"

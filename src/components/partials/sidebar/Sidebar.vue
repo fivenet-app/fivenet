@@ -569,6 +569,7 @@ const appVersion = activeChar ? ' v' + __APP_VERSION__ + (import.meta.env.DEV ? 
             <main class="h-full overflow-y-auto">
                 <section aria-labelledby="primary-heading" class="h-full min-w-0 lg:order-last">
                     <slot></slot>
+
                     <QuickButtons
                         v-if="activeChar && (route.meta.showQuickButtons === undefined || route.meta.showQuickButtons)"
                     />

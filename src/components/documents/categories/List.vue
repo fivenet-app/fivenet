@@ -90,7 +90,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await createCateg
     <div>
         <Modal :category="chosenCategory" :open="open" @close="open = false" @deleted="refresh()" />
         <div class="py-2 pb-14">
-            <div class="px-2 sm:px-6 lg:px-8">
+            <div class="px-1 sm:px-2 lg:px-4">
                 <div v-if="can('DocStoreService.CreateCategory')" class="sm:flex sm:items-center">
                     <div class="sm:flex-auto">
                         <form @submit="onSubmit">
@@ -149,8 +149,8 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await createCateg
                     </div>
                 </div>
                 <div class="flow-root mt-2">
-                    <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-                        <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+                    <div class="mx-0 -my-2 overflow-x-auto">
+                        <div class="inline-block min-w-full py-2 align-middle px-1">
                             <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.category', 2)])" />
                             <DataErrorBlock
                                 v-else-if="error"

@@ -34,29 +34,29 @@ function addToClipboard(): void {
                 {{ $t('common.wanted').toUpperCase() }}
             </span>
         </td>
-        <td class="whitespace-nowrap px-1 py-1text-sm text-base-200">
+        <td class="whitespace-nowrap px-1 py-1 text-left text-base-200">
             {{ user.jobLabel }}
         </td>
-        <td class="whitespace-nowrap px-1 py-1text-sm text-base-200">
+        <td class="whitespace-nowrap px-1 py-1 text-left text-base-200">
             {{ user.sex!.toUpperCase() }}
         </td>
         <td
             v-if="can('CitizenStoreService.ListCitizens.Fields.PhoneNumber')"
-            class="whitespace-nowrap px-1 py-1text-sm text-base-200"
+            class="whitespace-nowrap px-1 py-1 text-left text-base-200"
         >
             <span v-for="part in (user?.phoneNumber ?? '').match(/.{1,3}/g)" class="mr-1">{{ part }}</span>
         </td>
-        <td class="whitespace-nowrap px-1 py-1text-sm text-base-200">
+        <td class="whitespace-nowrap px-1 py-1 text-left text-base-200">
             {{ user.dateofbirth }}
         </td>
         <td
             v-if="can('CitizenStoreService.ListCitizens.Fields.UserProps.TrafficInfractionPoints')"
-            class="whitespace-nowrap px-1 py-1text-sm text-base-200"
+            class="whitespace-nowrap px-1 py-1 text-left text-base-200"
             :class="(user?.props?.trafficInfractionPoints ?? 0n) >= 10 ? 'text-red-500' : ''"
         >
             {{ user.props?.trafficInfractionPoints ?? 0n }}
         </td>
-        <td class="whitespace-nowrap px-1 py-1text-sm text-base-200">{{ user.height }}cm</td>
+        <td class="whitespace-nowrap px-1 py-1 text-left text-base-200">{{ user.height }}cm</td>
         <td class="whitespace-nowrap py-2 pl-3 pr-4 text-sm font-medium sm:pr-0">
             <div v-if="can('CitizenStoreService.GetUser')" class="flex flex-row justify-end">
                 <button class="flex-initial text-primary-500 hover:text-primary-400" @click="addToClipboard">

@@ -230,7 +230,7 @@ onMounted(async () => {
 
 <template>
     <div class="py-4 max-w-7xl mx-auto">
-        <div class="px-2 sm:px-6 lg:px-8">
+        <div class="px-1 sm:px-2 lg:px-4">
             <div v-if="role">
                 <h2 class="text-3xl text-white">
                     {{ role?.jobLabel! }} - {{ role?.jobGradeLabel }}

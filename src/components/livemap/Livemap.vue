@@ -67,34 +67,6 @@ onBeforeUnmount(() => {
 });
 </script>
 
-<style>
-.animate-dispatch {
-    animation: wiggle 1s infinite;
-}
-
-@keyframes wiggle {
-    0% {
-        transform: rotate(0deg);
-    }
-
-    80% {
-        transform: rotate(0deg);
-    }
-
-    85% {
-        transform: rotate(5deg);
-    }
-
-    95% {
-        transform: rotate(-5deg);
-    }
-
-    100% {
-        transform: rotate(0deg);
-    }
-}
-</style>
-
 <template>
     <div class="relative w-full h-full z-0">
         <CreateOrUpdateModal :open="openCreateDispatch" @close="openCreateDispatch = false" />
@@ -102,12 +74,12 @@ onBeforeUnmount(() => {
             v-if="error || (!error && abort === undefined)"
             class="absolute inset-0 flex justify-center items-center z-20 bg-gray-600/70"
         >
-            <DataPendingBlock v-if="!error && abort === undefined" :message="$t('components.livemap.starting_datastream')" />
-            <DataErrorBlock v-else-if="error" :title="$t('components.livemap.failed_datastream')" :retry="startStream" />
+            <DataErrorBlock v-if="error" :title="$t('components.livemap.failed_datastream')" :retry="startStream" />
+            <DataPendingBlock v-else-if="abort === undefined" :message="$t('components.livemap.starting_datastream')" />
         </div>
         <BaseMap :map-options="mapOptions">
             <template v-slot:default>
-                <LControl position="topleft">
+                <LControl position="bottomleft">
                     <PostalSearch />
                 </LControl>
 

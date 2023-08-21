@@ -5,6 +5,10 @@ import { useCentrumStore } from '~/store/centrum';
 import { useSettingsStore } from '~/store/settings';
 import { Dispatch } from '~~/gen/ts/resources/dispatch/dispatches';
 
+defineProps<{
+    showAllDispatches?: boolean;
+}>();
+
 defineEmits<{
     (e: 'select', dsp: Dispatch): void;
 }>();
@@ -30,7 +34,7 @@ const dispatchesFiltered = computed(() =>
         />
     </LLayerGroup>
 
-    <LLayerGroup key="all_dispatches" :name="$t('common.dispatch', 2)" layer-type="overlay" :visible="false">
+    <LLayerGroup key="all_dispatches" :name="$t('common.dispatch', 2)" layer-type="overlay" :visible="showAllDispatches">
         <DispatchMarker
             v-for="dispatch in dispatchesFiltered.filter((d) => !ownDispatches.includes(d))"
             :key="dispatch.id.toString()"
@@ -40,7 +44,7 @@ const dispatchesFiltered = computed(() =>
         />
     </LLayerGroup>
 
-    <LControl position="topleft">
+    <LControl position="bottomleft">
         <div class="form-control flex flex-col gap-2">
             <div>
                 <input

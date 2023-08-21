@@ -194,7 +194,7 @@ function removeRelation(id: bigint): void {
                                     <div class="px-4 sm:flex sm:items-start sm:px-6 lg:px-8">
                                         <TabPanel class="w-full">
                                             <div class="flow-root">
-                                                <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                                                <div class="mx-0 -my-2 overflow-x-auto">
                                                     <div class="inline-block min-w-full py-2 align-middle">
                                                         <table class="min-w-full divide-y divide-base-200 text-neutral">
                                                             <thead>
@@ -299,7 +299,7 @@ function removeRelation(id: bigint): void {
                                         </TabPanel>
                                         <TabPanel class="w-full">
                                             <div class="flow-root mt-2">
-                                                <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                                                <div class="mx-0 -my-2 overflow-x-auto">
                                                     <div class="inline-block min-w-full py-2 align-middle">
                                                         <DataNoDataBlock
                                                             v-if="clipboardStore.$state.users.length === 0"
@@ -418,7 +418,7 @@ function removeRelation(id: bigint): void {
                                                 />
                                             </div>
                                             <div class="flow-root mt-2">
-                                                <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                                                <div class="mx-0 -my-2 overflow-x-auto">
                                                     <div class="inline-block min-w-full py-2 align-middle">
                                                         <table class="min-w-full divide-y divide-base-200">
                                                             <thead>

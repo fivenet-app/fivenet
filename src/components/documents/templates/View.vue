@@ -78,7 +78,7 @@ const openPreview = ref(false);
 <template>
     <PreviewModal :id="templateId" :open="openPreview" @close="openPreview = false" v-if="openPreview" />
     <div v-if="template" class="py-2">
-        <div class="px-2 sm:px-6 lg:px-8">
+        <div class="px-1 sm:px-2 lg:px-4">
             <div class="sm:flex sm:items-center">
                 <div class="sm:flex-auto inline-flex">
                     <button
@@ -100,7 +100,7 @@ const openPreview = ref(false);
                 </div>
             </div>
             <div class="flow-root mt-4 mb-6">
-                <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+                <div class="mx-0 -my-2 overflow-x-auto">
                     <label for="content" class="block text-sm font-medium leading-6 text-gray-100">
                         {{ $t('common.template', 2) }} {{ $t('common.weight') }}
                     </label>

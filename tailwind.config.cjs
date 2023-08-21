@@ -116,6 +116,28 @@ module.exports = {
             maxWidth: {
                 '8xl': '88rem',
             },
+            animation: {
+                wiggle: 'wiggle 1s infinite',
+            },
+            keyframes: {
+                wiggle: {
+                    '0%': {
+                        transform: 'rotate(0deg)',
+                    },
+                    '80%': {
+                        transform: 'rotate(0deg)',
+                    },
+                    '85%': {
+                        transform: 'rotate(5deg)',
+                    },
+                    '95%': {
+                        transform: 'rotate(-5deg)',
+                    },
+                    '100%': {
+                        transform: 'rotate(0deg)',
+                    },
+                },
+            },
         },
     },
 };

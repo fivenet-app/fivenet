@@ -36,7 +36,7 @@ const openSettings = ref(false);
     <CreateOrUpdateUnitModal :open="open" @close="open = false" @refresh="refresh" />
     <SettingsModal :open="openSettings" @close="openSettings = false" />
     <div class="py-2">
-        <div class="px-2 sm:px-6 lg:px-8">
+        <div class="px-1 sm:px-2 lg:px-4">
             <div class="flow-root mt-2">
                 <div v-if="can('CentrumService.CreateOrUpdateUnit')" class="sm:flex sm:items-center">
                     <div class="sm:flex-auto">
@@ -58,8 +58,8 @@ const openSettings = ref(false);
                         </div>
                     </div>
                 </div>
-                <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-                    <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+                <div class="mx-0 -my-2 overflow-x-auto">
+                    <div class="inline-block min-w-full py-2 align-middle px-1">
                         <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.units')])" />
                         <DataErrorBlock
                             v-else-if="error"

@@ -97,8 +97,8 @@ gen-proto: protoc-gen-validate protoc-gen-customizer
 
 .PHONY: gen-licenses
 gen-licenses:
-	yarn licenses generate-disclaimer > ./src/public/licenses/frontend.txt
-	go-licenses report . --template internal/scripts/licenses-backend.txt.tpl > ./src/public/licenses/backend.txt
+	yarn licenses generate-disclaimer > ./src/static/licenses/frontend.txt
+	go-licenses report . --template internal/scripts/licenses-backend.txt.tpl > ./src/static/licenses/backend.txt
 
 gdal2tiles-leaflet: build_dir
 	if test ! -d $(BUILD_DIR)gdal2tiles-leaflet/; then \

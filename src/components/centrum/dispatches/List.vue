@@ -29,43 +29,43 @@ const { dispatches } = storeToRefs(centrumStore);
                             <tr>
                                 <th
                                     scope="col"
-                                    class="whitespace-nowrap py-2 pl-4 pr-3 text-left text-sm font-semibold text-gray-100 sm:pl-0"
+                                    class="whitespace-nowrap px-1 py-1 text-left text-sm font-semibold text-gray-100"
                                 >
                                     {{ $t('common.action', 2) }}
                                 </th>
                                 <th
                                     scope="col"
-                                    class="whitespace-nowrap py-2 pl-4 pr-3 text-left text-sm font-semibold text-gray-100 sm:pl-0"
+                                    class="whitespace-nowrap px-1 py-1 text-left text-sm font-semibold text-gray-100"
                                 >
                                     {{ $t('common.id') }}
                                 </th>
                                 <th
                                     scope="col"
-                                    class="whitespace-nowrap px-1 py-1text-left text-sm font-semibold text-gray-100"
+                                    class="whitespace-nowrap px-1 py-1 text-left text-sm font-semibold text-gray-100"
                                 >
                                     {{ $t('common.created_at') }}
                                 </th>
                                 <th
                                     scope="col"
-                                    class="whitespace-nowrap px-1 py-1text-left text-sm font-semibold text-gray-100"
+                                    class="whitespace-nowrap px-1 py-1 text-left text-sm font-semibold text-gray-100"
                                 >
                                     {{ $t('common.status') }}
                                 </th>
                                 <th
                                     scope="col"
-                                    class="whitespace-nowrap py-2 pl-4 pr-3 text-left text-sm font-semibold text-gray-100 sm:pl-0"
+                                    class="whitespace-nowrap px-1 py-1 text-left text-sm font-semibold text-gray-100"
                                 >
                                     {{ $t('common.units') }}
                                 </th>
                                 <th
                                     scope="col"
-                                    class="whitespace-nowrap px-1 py-1text-left text-sm font-semibold text-gray-100"
+                                    class="whitespace-nowrap px-1 py-1 text-left text-sm font-semibold text-gray-100"
                                 >
                                     {{ $t('common.citizen') }}
                                 </th>
                                 <th
                                     scope="col"
-                                    class="whitespace-nowrap px-1 py-1text-left text-sm font-semibold text-gray-100"
+                                    class="whitespace-nowrap px-1 py-1 text-left text-sm font-semibold text-gray-100"
                                 >
                                     {{ $t('common.message') }}
                                 </th>

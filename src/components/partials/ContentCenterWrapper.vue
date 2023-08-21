@@ -1,9 +1,7 @@
 <template>
-    <div class="flex overflow-hidden justify-center items-center align-middle h-full">
-        <main class="w-full">
-            <div class="mx-auto max-w-7xl w-full">
-                <slot></slot>
-            </div>
-        </main>
-    </div>
+    <main class="flex w-full h-full">
+        <div class="m-auto py-2">
+            <slot></slot>
+        </div>
+    </main>
 </template>

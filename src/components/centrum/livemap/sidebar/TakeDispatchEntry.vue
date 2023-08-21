@@ -8,7 +8,7 @@ const props = defineProps<{
 }>();
 
 defineEmits<{
-    (e: 'selected', id: bigint): void;
+    (e: 'select', id: bigint): void;
     (e: 'goto', loc: Coordinate): void;
 }>();
 
@@ -24,7 +24,7 @@ const expiresAt = props.dispatch.units.find((u) => u.expiresAt !== undefined)?.e
                     name="selected"
                     checked
                     class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600 h-6 w-6"
-                    @change="$emit('selected')"
+                    @change="$emit('select')"
                 />
                 <IDCopyBadge class="ml-2" prefix="DSP" :id="dispatch.id" />
             </div>

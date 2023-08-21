@@ -91,7 +91,6 @@ const faqs = [
                     >
                         <div class="lg:pr-4">
                             <div class="max-w-xl text-base leading-7 text-gray-100 lg:max-w-lg">
-                                <p></p>
                                 <ul role="list" class="mt-8 space-y-8 text-gray-400">
                                     <li class="flex gap-x-3">
                                         <MagnifyIcon class="mt-1 h-5 w-5 flex-none text-primary-300" aria-hidden="true" />

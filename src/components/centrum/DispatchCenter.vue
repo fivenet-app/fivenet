@@ -72,12 +72,18 @@ const openUnitStatus = ref(false);
 
 <template>
     <div class="flex-col h-full relative">
-        <div v-if="error || abort === undefined" class="absolute inset-0 flex justify-center items-center z-20 bg-gray-600/70">
-            <DataPendingBlock v-if="!error" :message="$t('components.centrum.dispatch_center.starting_datastream')" />
+        <div
+            v-if="error || (!error && abort === undefined)"
+            class="absolute inset-0 flex justify-center items-center z-20 bg-gray-600/70"
+        >
             <DataErrorBlock
-                v-else="error"
+                v-if="error"
                 :title="$t('components.centrum.dispatch_center.failed_datastream')"
                 :retry="startStream"
+            />
+            <DataPendingBlock
+                v-else-if="abort === undefined"
+                :message="$t('components.centrum.dispatch_center.starting_datastream')"
             />
         </div>
         <div v-else-if="!isDisponent">
@@ -106,6 +112,7 @@ const openUnitStatus = ref(false);
                                     selectedDispatch = $event;
                                     openDispatchDetails = true;
                                 "
+                                :show-all-dispatches="true"
                             />
                         </template>
                     </Livemap>

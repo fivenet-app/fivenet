@@ -51,9 +51,9 @@ export default defineI18nConfig(() => ({
             },
             long: {
                 year: 'numeric',
-                month: 'long',
+                month: 'short',
                 day: '2-digit',
-                weekday: 'long',
+                weekday: 'short',
                 hour: 'numeric',
                 minute: 'numeric',
             },

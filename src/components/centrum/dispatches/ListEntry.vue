@@ -2,8 +2,9 @@
 import { AccountMultiplePlusIcon, DotsVerticalIcon, MapMarkerIcon } from 'mdi-vue3';
 import Time from '~/components/partials/elements/Time.vue';
 import { DISPATCH_STATUS, Dispatch } from '~~/gen/ts/resources/dispatch/dispatches';
+import { dispatchStatusAnimate, dispatchStatusToBGColor } from '../helpers';
 
-defineProps<{
+const props = defineProps<{
     dispatch: Dispatch;
 }>();
 
@@ -13,11 +14,15 @@ defineEmits<{
     (e: 'assignUnit', dsp: Dispatch): void;
     (e: 'status', dsp: Dispatch): void;
 }>();
+
+const status = props.dispatch.status?.status ?? (0 as number);
 </script>
 
 <template>
     <tr>
-        <td class="relative whitespace-nowrap py-2 pl-2 text-right text-sm font-medium sm:pr-0 flex flex-row justify-start">
+        <td
+            class="relative whitespace-nowrap pl-0 py-1 pr-0 text-left text-sm font-medium sm:pr-0.5 flex flex-row justify-start"
+        >
             <button
                 type="button"
                 class="text-primary-400 hover:text-primary-600"
@@ -42,22 +47,24 @@ defineEmits<{
                 <DotsVerticalIcon class="w-6 h-auto ml-auto mr-1.5" />
             </button>
         </td>
-        <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm text-gray-300 sm:pl-0">
+        <td class="whitespace-nowrap px-1 py-1 text-sm text-gray-300">
             {{ dispatch.id }}
         </td>
-        <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm text-gray-300 sm:pl-0">
+        <td class="whitespace-nowrap px-1 py-1 text-sm text-gray-300">
             <Time :value="dispatch.createdAt" type="compact" />
         </td>
-        <td class="whitespace-nowrap px-1 py-1text-sm font-medium text-gray-100">
-            {{ $t(`enums.centrum.DISPATCH_STATUS.${DISPATCH_STATUS[dispatch.status?.status ?? (0 as number)]}`) }}
+        <td class="whitespace-nowrap px-1 py-1 text-sm text-gray-100" :class="dispatchStatusToBGColor(status)">
+            <span :class="dispatchStatusAnimate(status) ? 'animate-pulse' : ''">
+                {{ $t(`enums.centrum.DISPATCH_STATUS.${DISPATCH_STATUS[status]}`) }}
+            </span>
         </td>
-        <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm text-gray-300 sm:pl-0">
+        <td class="whitespace-nowrap px-1 py-1 text-sm text-gray-300">
             <span v-if="dispatch.units.length === 0" class="italic">{{ $t('enums.centrum.DISPATCH_STATUS.UNASSIGNED') }}</span>
             <span v-else class="mr-1">
                 {{ dispatch.units.map((unit) => unit.unit?.initials ?? 'N/A').join(', ') }}
             </span>
         </td>
-        <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm text-gray-300 sm:pl-0">
+        <td class="whitespace-nowrap px-1 py-1 text-sm text-gray-300">
             <span v-if="!dispatch.anon && dispatch.user"> {{ dispatch.user.firstname }}, {{ dispatch.user.lastname }} </span>
             <span v-else-if="dispatch.anon">
                 {{ $t('common.anon') }}
@@ -66,6 +73,6 @@ defineEmits<{
                 {{ $t('common.unknown') }}
             </span>
         </td>
-        <td class="whitespace-nowrap px-1 py-1text-sm text-gray-100 truncate">{{ dispatch.message }}</td>
+        <td class="whitespace-nowrap px-1 py-1 text-sm text-gray-300 truncate">{{ dispatch.message }}</td>
     </tr>
 </template>

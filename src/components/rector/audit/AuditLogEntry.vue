@@ -63,10 +63,8 @@ ${JSON.stringify(JSON.parse(props.log.data!), null, 2)}
                 {{ log.user ? log.user?.firstname + ' ' + log.user?.lastname : 'N/A' }}
             </NuxtLink>
         </td>
-        <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">
-            {{ log.service }}/{{ log.method }}
-        </td>
-        <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">
+        <td class="break-all py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">{{ log.service }}/{{ log.method }}</td>
+        <td class="py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">
             {{ EVENT_TYPE[log.state] }}
         </td>
         <td class="py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0 max-w-3xl">
@@ -81,7 +79,7 @@ ${JSON.stringify(JSON.parse(props.log.data!), null, 2)}
                 />
             </span>
         </td>
-        <td class="whitespace-nowrap py-2 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
+        <td class="break-all py-2 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
             <button
                 class="flex-initial text-primary-500 hover:text-primary-400"
                 :title="$t('components.clipboard.clipboard_button.add')"

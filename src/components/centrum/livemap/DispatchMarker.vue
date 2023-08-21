@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { LIcon, LMarker, LPopup } from '@vue-leaflet/vue-leaflet';
 import { BellIcon } from 'mdi-vue3';
-import { dispatchStatusToFillColor } from '~/components/centrum/helpers';
+import { dispatchStatusAnimate, dispatchStatusToFillColor } from '~/components/centrum/helpers';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import { DISPATCH_STATUS, Dispatch } from '~~/gen/ts/resources/dispatch/dispatches';
 
@@ -19,12 +19,6 @@ const emits = defineEmits<{
     (e: 'select', dsp: Dispatch): void;
 }>();
 
-const animateStates = [
-    DISPATCH_STATUS.NEW,
-    DISPATCH_STATUS.UNIT_UNASSIGNED,
-    DISPATCH_STATUS.UNASSIGNED,
-    DISPATCH_STATUS.NEED_ASSISTANCE,
-];
 const status = props.dispatch.status?.status ?? 0;
 
 const iconAnchor: L.PointExpression | undefined = undefined;
@@ -45,8 +39,8 @@ function selected(_: bigint | string) {
                     DSP-{{ props.dispatch.id }}
                 </span>
                 <BellIcon
-                    class="w-full h-full"
-                    :class="[animateStates.includes(status) ? 'animate-dispatch' : '', dispatchStatusToFillColor(status)]"
+                    class="w-full h-full animate-wiggle"
+                    :class="[dispatchStatusAnimate(status) ? 'animate-wiggle' : '', dispatchStatusToFillColor(status)]"
                 />
                 <span
                     class="text-center rounded-md bg-white text-black border-2 border-black/20 bg-clip-padding hover:bg-[#f4f4f4] focus:outline-none inset-0"

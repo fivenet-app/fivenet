@@ -45,3 +45,14 @@ export function dispatchStatusToBGColor(status: DISPATCH_STATUS | undefined): st
             return 'bg-info-600';
     }
 }
+
+export const animateStates = [
+    DISPATCH_STATUS.NEW,
+    DISPATCH_STATUS.UNIT_UNASSIGNED,
+    DISPATCH_STATUS.UNASSIGNED,
+    DISPATCH_STATUS.NEED_ASSISTANCE,
+];
+
+export function dispatchStatusAnimate(status: DISPATCH_STATUS | undefined): boolean {
+    return animateStates.includes(status ?? DISPATCH_STATUS.NEW);
+}

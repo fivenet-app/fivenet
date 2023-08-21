@@ -294,6 +294,7 @@ ${t('common.crime', selectedPenalties.value.length)}:
                     <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
                         <div class="text-neutral text-xl">
                             <Stats :summary="summary" />
+
                             <div class="mt-4">
                                 <SummaryTable
                                     v-if="lawBooks && lawBooks.length > 0"
