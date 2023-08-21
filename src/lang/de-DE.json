@@ -542,7 +542,7 @@
         "no_open_fine": "Keine offenen Geldstrafe",
         "location": "Standort | Standorte",
         "units": "Einheiten",
-        "unit": "Einheit | Einheiten",
+        "unit": "Keine Einheiten | {n} Einheit | {n} Einheiten",
         "color": "Farbe",
         "initials": "Initialen",
         "updated": "Aktualisiert",
