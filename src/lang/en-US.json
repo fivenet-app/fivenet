@@ -354,17 +354,9 @@
             "title": "Penalty Calculator"
         },
         "centrum": {
-            "dispatch_center": {
-                "starting_datastream": "Starting Dispatch Center data stream...",
-                "failed_datastream": "Failed to stream Dispatch Center data!",
-                "join_center": "Join the dispatch center, by clicking here."
-            },
             "create_dispatch": {
                 "title": "Create Dispatch",
                 "sub_title": "Create a new Dispatch."
-            },
-            "update_dispatch_status": {
-                "title": "Update Dispatch Status"
             },
             "assign_dispatch": {
                 "title": "Assign Dispatch"
@@ -373,11 +365,19 @@
                 "title": "Take Dispatches",
                 "sub_title": "Take assigned dispatches quickly or take dispatches normally."
             },
+            "update_dispatch_status": {
+                "title": "Update Dispatch Status"
+            },
             "assign_unit": {
                 "title": "Assign Users to Unit"
             },
             "update_unit_status": {
                 "title": "Update Unit Status"
+            },
+            "dispatch_center": {
+                "starting_datastream": "Starting Dispatch Center data stream...",
+                "failed_datastream": "Failed to stream Dispatch Center data!",
+                "join_center": "Join the dispatch center, by clicking here."
             }
         }
     },
@@ -546,7 +546,6 @@
         "color": "Color",
         "initials": "Initials",
         "updated": "Updated",
-        "member": "No Members | {n} Member | {n} Members",
         "members": "Members",
         "anon": "Anonymous",
         "setting": "Setting | Settings",
@@ -571,6 +570,7 @@
         "join_unit": "Join Unit",
         "leave_unit": "Leave Unit",
         "no_own_unit": "Not in any Unit.",
+        "member": "No Members | {n} Member | {n} Members",
         "attributes": "Attribute | Attributes",
         "last_update": "Last Update"
     },
