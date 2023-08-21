@@ -183,18 +183,18 @@ CREATE TABLE IF NOT EXISTS `owned_vehicles` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 -- Table data: owned_vehicles - Add some normal `aircraft`, `boat` and `car` vehicles to the database
 -- aircraft
-INSERT INTO owned_vehicles (owner, plate, model, vehicle, `type`, stored, carseller, owners, trunk) VALUES('char1:db7e039146d5bf1b6781e7bc1bef31f0bb1298ea', 'ABC 381', 'buzzard2', '{}', 'aircraft', 1, 0, NULL, NULL);
-INSERT INTO owned_vehicles (owner, plate, model, vehicle, `type`, stored, carseller, owners, trunk) VALUES('char1:fcee377a1fda007a8d2cc764a0a272e04d8c5d57', 'DEZ 725', 'supervolito', '{}', 'aircraft', 1, 0, NULL, '{}');
+INSERT INTO owned_vehicles (owner, plate, model, vehicle, `type`, `stored`, carseller, owners, trunk) VALUES('char1:db7e039146d5bf1b6781e7bc1bef31f0bb1298ea', 'ABC 381', 'buzzard2', '{}', 'aircraft', 1, 0, NULL, NULL);
+INSERT INTO owned_vehicles (owner, plate, model, vehicle, `type`, `stored`, carseller, owners, trunk) VALUES('char1:fcee377a1fda007a8d2cc764a0a272e04d8c5d57', 'DEZ 725', 'supervolito', '{}', 'aircraft', 1, 0, NULL, '{}');
 -- boat
-INSERT INTO owned_vehicles (owner, plate, model, vehicle, `type`, stored, carseller, owners, trunk) VALUES('char2:3c7681d6f7ad895eb7b1cc05cf895c7f1d1622c4', 'BCJ 282', 'seashark', '{}', 'boat', 1, 0, NULL, NULL);
-INSERT INTO owned_vehicles (owner, plate, model, vehicle, `type`, stored, carseller, owners, trunk) VALUES('char1:db7e039146d5bf1b6781e7bc1bef31f0bb1298ea', 'BEG 837', 'yaluxe', '{}', 'boat', 1, 0, NULL, NULL);
+INSERT INTO owned_vehicles (owner, plate, model, vehicle, `type`, `stored`, carseller, owners, trunk) VALUES('char2:3c7681d6f7ad895eb7b1cc05cf895c7f1d1622c4', 'BCJ 282', 'seashark', '{}', 'boat', 1, 0, NULL, NULL);
+INSERT INTO owned_vehicles (owner, plate, model, vehicle, `type`, `stored`, carseller, owners, trunk) VALUES('char1:db7e039146d5bf1b6781e7bc1bef31f0bb1298ea', 'BEG 837', 'yaluxe', '{}', 'boat', 1, 0, NULL, NULL);
 -- car
-INSERT INTO owned_vehicles (owner, plate, model, vehicle, `type`, stored, carseller, owners, trunk) VALUES('char1:3c7681d6f7ad895eb7b1cc05cf895c7f1d1622c4', 'AMJV 079', 'xxxxx', '{}', 'car', 1, 0, NULL, NULL);
-INSERT INTO owned_vehicles (owner, plate, model, vehicle, `type`, stored, carseller, owners, trunk) VALUES('char1:db7e039146d5bf1b6781e7bc1bef31f0bb1298ea', 'GFFT 070', 'veto2', '{}', 'car', 1, 0, NULL, NULL);
-INSERT INTO owned_vehicles (owner, plate, model, vehicle, `type`, stored, carseller, owners, trunk) VALUES('char2:3c7681d6f7ad895eb7b1cc05cf895c7f1d1622c4', 'GWU 358', 'rmodsuprapandem', '{}', 'car', 1, 0, NULL, NULL);
+INSERT INTO owned_vehicles (owner, plate, model, vehicle, `type`, `stored`, carseller, owners, trunk) VALUES('char1:3c7681d6f7ad895eb7b1cc05cf895c7f1d1622c4', 'AMJV 079', 'xxxxx', '{}', 'car', 1, 0, NULL, NULL);
+INSERT INTO owned_vehicles (owner, plate, model, vehicle, `type`, `stored`, carseller, owners, trunk) VALUES('char1:db7e039146d5bf1b6781e7bc1bef31f0bb1298ea', 'GFFT 070', 'veto2', '{}', 'car', 1, 0, NULL, NULL);
+INSERT INTO owned_vehicles (owner, plate, model, vehicle, `type`, `stored`, carseller, owners, trunk) VALUES('char2:3c7681d6f7ad895eb7b1cc05cf895c7f1d1622c4', 'GWU 358', 'rmodsuprapandem', '{}', 'car', 1, 0, NULL, NULL);
 -- car job specific
-INSERT INTO owned_vehicles (owner, plate, model, vehicle, `type`, stored, carseller, owners, trunk) VALUES('char1:3c7681d6f7ad895eb7b1cc05cf895c7f1d1622c4', 'OENG 747', '16ramambo', '{}', 'car_ambulance', 1, 0, NULL, NULL);
-INSERT INTO owned_vehicles (owner, plate, model, vehicle, `type`, stored, carseller, owners, trunk) VALUES('char1:fcee377a1fda007a8d2cc764a0a272e04d8c5d57', 'XJMV 726', 'flyhoe', '{}', 'car_ambulance', 1, 0, NULL, '{}');
-INSERT INTO owned_vehicles (owner, plate, model, vehicle, `type`, stored, carseller, owners, trunk) VALUES('char2:fcee377a1fda007a8d2cc764a0a272e04d8c5d57', 'JMI 560', '18chgr', '{}', 'car_police', 1, 0, NULL, NULL);
-INSERT INTO owned_vehicles (owner, plate, model, vehicle, `type`, stored, carseller, owners, trunk) VALUES('char2:fcee377a1fda007a8d2cc764a0a272e04d8c5d57', 'NBH 257', 'poltahoe21', '{}', 'car_police', 1, 0, NULL, NULL);
-INSERT INTO owned_vehicles (owner, plate, model, vehicle, `type`, stored, carseller, owners, trunk) VALUES('char2:fcee377a1fda007a8d2cc764a0a272e04d8c5d57', 'QNT 765', 'poldurango', '{}', 'car_police', 1, 0, NULL, NULL);
+INSERT INTO owned_vehicles (owner, plate, model, vehicle, `type`, `stored`, carseller, owners, trunk) VALUES('char1:3c7681d6f7ad895eb7b1cc05cf895c7f1d1622c4', 'OENG 747', '16ramambo', '{}', 'car_ambulance', 1, 0, NULL, NULL);
+INSERT INTO owned_vehicles (owner, plate, model, vehicle, `type`, `stored`, carseller, owners, trunk) VALUES('char1:fcee377a1fda007a8d2cc764a0a272e04d8c5d57', 'XJMV 726', 'flyhoe', '{}', 'car_ambulance', 1, 0, NULL, '{}');
+INSERT INTO owned_vehicles (owner, plate, model, vehicle, `type`, `stored`, carseller, owners, trunk) VALUES('char2:fcee377a1fda007a8d2cc764a0a272e04d8c5d57', 'JMI 560', '18chgr', '{}', 'car_police', 1, 0, NULL, NULL);
+INSERT INTO owned_vehicles (owner, plate, model, vehicle, `type`, `stored`, carseller, owners, trunk) VALUES('char2:fcee377a1fda007a8d2cc764a0a272e04d8c5d57', 'NBH 257', 'poltahoe21', '{}', 'car_police', 1, 0, NULL, NULL);
+INSERT INTO owned_vehicles (owner, plate, model, vehicle, `type`, `stored`, carseller, owners, trunk) VALUES('char2:fcee377a1fda007a8d2cc764a0a272e04d8c5d57', 'QNT 765', 'poldurango', '{}', 'car_police', 1, 0, NULL, NULL);

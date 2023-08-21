@@ -13,7 +13,7 @@ defineProps<{
 
 defineEmits<{
     (e: 'close'): void;
-    (e: 'goto', loc: { x: number; y: number }): void;
+    (e: 'goto', loc: Coordinate): void;
     (e: 'assignUnit', dsp: Dispatch): void;
     (e: 'status', dsp: Dispatch): void;
 }>();
@@ -69,6 +69,16 @@ defineEmits<{
                                                     <dl class="border-b border-white/10 divide-y divide-white/10">
                                                         <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                                                             <dt class="text-sm font-medium leading-6 text-white">
+                                                                {{ $t('common.last_update') }}
+                                                            </dt>
+                                                            <dd
+                                                                class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
+                                                            >
+                                                                <Time :value="dispatch.status?.createdAt" />
+                                                            </dd>
+                                                        </div>
+                                                        <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                                                            <dt class="text-sm font-medium leading-6 text-white">
                                                                 {{ $t('common.status') }}
                                                             </dt>
                                                             <dd
@@ -96,32 +106,22 @@ defineEmits<{
                                                         </div>
                                                         <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                                                             <dt class="text-sm font-medium leading-6 text-white">
-                                                                Last Status
-                                                            </dt>
-                                                            <dd
-                                                                class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
-                                                            >
-                                                                <Time :value="dispatch.status?.createdAt" />
-                                                            </dd>
-                                                        </div>
-                                                        <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                                            <dt class="text-sm font-medium leading-6 text-white">
-                                                                Status Reason
-                                                            </dt>
-                                                            <dd
-                                                                class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
-                                                            >
-                                                                {{ dispatch.status?.reason ?? 'N/A' }}
-                                                            </dd>
-                                                        </div>
-                                                        <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                                            <dt class="text-sm font-medium leading-6 text-white">
                                                                 {{ $t('common.code') }}
                                                             </dt>
                                                             <dd
                                                                 class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
                                                             >
                                                                 {{ dispatch.status?.code ?? 'N/A' }}
+                                                            </dd>
+                                                        </div>
+                                                        <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                                                            <dt class="text-sm font-medium leading-6 text-white">
+                                                                {{ $t('common.reason') }}
+                                                            </dt>
+                                                            <dd
+                                                                class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
+                                                            >
+                                                                {{ dispatch.status?.reason ?? 'N/A' }}
                                                             </dd>
                                                         </div>
                                                         <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
@@ -144,7 +144,7 @@ defineEmits<{
                                                         </div>
                                                         <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                                                             <dt class="text-sm font-medium leading-6 text-white">
-                                                                Status sent by
+                                                                {{ $t('common.sent_by') }}
                                                             </dt>
                                                             <dd
                                                                 class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
@@ -154,7 +154,7 @@ defineEmits<{
                                                                         name: 'citizens-id',
                                                                         params: { id: dispatch.status?.user?.userId ?? 0 },
                                                                     }"
-                                                                    class="text-accent-100 hover:text-neutral font-medium hover:transition-all text-xs my-2"
+                                                                    class="underline hover:text-neutral hover:transition-all"
                                                                 >
                                                                     {{ dispatch.status?.user?.firstname }}
                                                                     {{ dispatch.status?.user?.lastname }}
@@ -162,11 +162,15 @@ defineEmits<{
                                                             </dd>
                                                         </div>
                                                         <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                                            <dt class="text-sm font-medium leading-6 text-white">Members</dt>
+                                                            <dt class="text-sm font-medium leading-6 text-white">
+                                                                {{ $t('common.units') }}
+                                                            </dt>
                                                             <dd
                                                                 class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
                                                             >
-                                                                <span v-if="dispatch.units.length === 0">No members </span>
+                                                                <span v-if="dispatch.units.length === 0">
+                                                                    {{ $t('common.unit', 0) }}
+                                                                </span>
                                                                 <ul
                                                                     v-else
                                                                     role="list"
@@ -192,27 +196,36 @@ defineEmits<{
                                                                     v-if="can('CentrumService.TakeControl')"
                                                                     type="button"
                                                                     @click="$emit('assignUnit', dispatch)"
-                                                                    class="rounded bg-white/10 px-2 py-1 text-xs font-semibold text-white shadow-sm hover:bg-white/20"
+                                                                    class="ml-2 rounded bg-white/10 px-2 py-1 text-xs font-semibold text-white shadow-sm hover:bg-white/20"
                                                                 >
                                                                     <PencilIcon class="h-6 w-6" />
                                                                 </button>
                                                             </dd>
                                                         </div>
                                                         <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                                            <dt class="text-sm font-medium leading-6 text-white">Attributes</dt>
-                                                            <dd class="mt-2 text-sm text-white sm:col-span-2 sm:mt-0">
-                                                                <span
-                                                                    v-for="attribute in dispatch.attributes?.list"
-                                                                    class="inline-flex items-center rounded-md bg-red-400/10 px-2 py-1 text-xs font-medium text-red-400 ring-1 ring-inset ring-red-400/20"
-                                                                >
-                                                                    {{ attribute }}
+                                                            <dt class="text-sm font-medium leading-6 text-white">
+                                                                {{ $t('common.attributes', 2) }}
+                                                            </dt>
+                                                            <dd class="mt-2 text-sm text-gray-400 sm:col-span-2 sm:mt-0">
+                                                                <template v-if="dispatch.attributes?.list.length === 0">
+                                                                    <span
+                                                                        v-for="attribute in dispatch.attributes?.list"
+                                                                        class="inline-flex items-center rounded-md bg-red-400/10 px-2 py-1 text-xs font-medium text-red-400 ring-1 ring-inset ring-red-400/20"
+                                                                    >
+                                                                        {{ attribute }}
+                                                                    </span>
+                                                                </template>
+                                                                <span v-else>
+                                                                    {{
+                                                                        $t('common.none_selected', [$t('common.attributes', 2)])
+                                                                    }}
                                                                 </span>
                                                             </dd>
                                                         </div>
                                                     </dl>
                                                 </div>
 
-                                                <Feed :dispatch-id="dispatch.id" ref="feedRef" />
+                                                <Feed :dispatch-id="dispatch.id" />
                                             </div>
                                         </div>
                                     </div>

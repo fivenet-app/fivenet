@@ -3,7 +3,7 @@ import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } fro
 import { AccountIcon, CloseIcon, PencilIcon } from 'mdi-vue3';
 import Time from '~/components/partials/elements/Time.vue';
 import { UNIT_STATUS, Unit } from '~~/gen/ts/resources/dispatch/units';
-import UnitFeed from './Feed.vue';
+import Feed from './Feed.vue';
 
 defineProps<{
     open: boolean;
@@ -12,7 +12,7 @@ defineProps<{
 
 defineEmits<{
     (e: 'close'): void;
-    (e: 'goto', loc: { x: number; y: number }): void;
+    (e: 'goto', loc: Coordinate): void;
     (e: 'assignUsers', unit: Unit): void;
     (e: 'status', unit: Unit): void;
 }>();
@@ -67,6 +67,16 @@ defineEmits<{
                                                     <dl class="border-b border-white/10 divide-y divide-white/10">
                                                         <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                                                             <dt class="text-sm font-medium leading-6 text-white">
+                                                                {{ $t('common.last_update') }}
+                                                            </dt>
+                                                            <dd
+                                                                class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
+                                                            >
+                                                                <Time :value="unit.status?.createdAt" />
+                                                            </dd>
+                                                        </div>
+                                                        <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                                                            <dt class="text-sm font-medium leading-6 text-white">
                                                                 {{ $t('common.status') }}
                                                             </dt>
                                                             <dd
@@ -91,32 +101,22 @@ defineEmits<{
                                                         </div>
                                                         <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                                                             <dt class="text-sm font-medium leading-6 text-white">
-                                                                Last Unit Update
-                                                            </dt>
-                                                            <dd
-                                                                class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
-                                                            >
-                                                                <Time :value="unit.status?.createdAt" />
-                                                            </dd>
-                                                        </div>
-                                                        <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                                            <dt class="text-sm font-medium leading-6 text-white">
-                                                                Status Reason
-                                                            </dt>
-                                                            <dd
-                                                                class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
-                                                            >
-                                                                {{ unit.status?.reason ?? 'N/A' }}
-                                                            </dd>
-                                                        </div>
-                                                        <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                                            <dt class="text-sm font-medium leading-6 text-white">
                                                                 {{ $t('common.code') }}
                                                             </dt>
                                                             <dd
                                                                 class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
                                                             >
                                                                 {{ unit.status?.code ?? 'N/A' }}
+                                                            </dd>
+                                                        </div>
+                                                        <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                                                            <dt class="text-sm font-medium leading-6 text-white">
+                                                                {{ $t('common.reason') }}
+                                                            </dt>
+                                                            <dd
+                                                                class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
+                                                            >
+                                                                {{ unit.status?.reason ?? 'N/A' }}
                                                             </dd>
                                                         </div>
                                                         <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
@@ -140,11 +140,15 @@ defineEmits<{
                                                             </dd>
                                                         </div>
                                                         <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                                            <dt class="text-sm font-medium leading-6 text-white">Members</dt>
+                                                            <dt class="text-sm font-medium leading-6 text-white">
+                                                                {{ $t('common.members') }}
+                                                            </dt>
                                                             <dd
                                                                 class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
                                                             >
-                                                                <span v-if="unit.users.length === 0">No members </span>
+                                                                <span v-if="unit.users.length === 0">
+                                                                    {{ $t('common.member', 0) }}
+                                                                </span>
                                                                 <ul
                                                                     v-else
                                                                     role="list"
@@ -171,7 +175,7 @@ defineEmits<{
                                                                     v-if="can('CentrumService.TakeControl')"
                                                                     type="button"
                                                                     @click="$emit('assignUsers', unit)"
-                                                                    class="rounded bg-white/10 px-2 py-1 text-xs font-semibold text-white shadow-sm hover:bg-white/20"
+                                                                    class="ml-2 rounded bg-white/10 px-2 py-1 text-xs font-semibold text-white shadow-sm hover:bg-white/20"
                                                                 >
                                                                     <PencilIcon class="h-6 w-6" />
                                                                 </button>
@@ -180,7 +184,7 @@ defineEmits<{
                                                     </dl>
                                                 </div>
 
-                                                <UnitFeed :unit-id="unit.id" />
+                                                <Feed :unit-id="unit.id" />
                                             </div>
                                         </div>
                                     </div>

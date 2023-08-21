@@ -4,21 +4,21 @@ import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { digits, max, min, required } from '@vee-validate/rules';
 import { CloseIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
-import { Dispatch } from '~~/gen/ts/resources/dispatch/dispatches';
+import { useLivemapStore } from '~/store/livemap';
 
-defineProps<{
+const props = defineProps<{
     open: boolean;
+    location?: Coordinate;
 }>();
 
 const emits = defineEmits<{
     (e: 'close'): void;
-    (e: 'created', dsp: Dispatch): void;
 }>();
 
-const location = ref<{ x: number; y: number }>({ x: 0, y: 0 });
-defineExpose({ location });
-
 const { $grpc } = useNuxtApp();
+
+const livemapStore = useLivemapStore();
+const { location } = storeToRefs(livemapStore);
 
 async function createDispatch(values: FormData): Promise<void> {
     return new Promise(async (res, rej) => {
@@ -33,15 +33,14 @@ async function createDispatch(values: FormData): Promise<void> {
                     attributes: {
                         list: [],
                     },
-                    x: location.value.x,
-                    y: location.value.y,
+                    x: props.location ? props.location.x : location.value?.x ?? 0,
+                    y: props.location ? props.location.y : location.value?.y ?? 0,
                     statuses: [],
                     units: [],
                 },
             });
-            const { response } = await call;
+            await call;
 
-            emits('created', response.dispatch!);
             emits('close');
 
             return res();

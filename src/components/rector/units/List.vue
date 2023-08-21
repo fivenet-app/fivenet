@@ -60,13 +60,13 @@ const openSettings = ref(false);
                 </div>
                 <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
                     <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-                        <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.unit', 2)])" />
+                        <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.units')])" />
                         <DataErrorBlock
                             v-else-if="error"
-                            :title="$t('common.unable_to_load', [$t('common.unit', 2)])"
+                            :title="$t('common.unable_to_load', [$t('common.units')])"
                             :retry="refresh"
                         />
-                        <DataNoDataBlock v-else-if="units && units.length === 0" :type="$t('common.unit', 2)" />
+                        <DataNoDataBlock v-else-if="units && units.length === 0" :type="$t('common.units')" />
                         <div v-else>
                             <table class="min-w-full divide-y divide-base-600">
                                 <thead>

@@ -4,6 +4,7 @@ import { LeafletMouseEvent } from 'leaflet';
 import 'leaflet-contextmenu';
 import 'leaflet-contextmenu/dist/leaflet.contextmenu.min.css';
 import 'leaflet/dist/leaflet.css';
+import CreateOrUpdateModal from '~/components/centrum/dispatches/CreateOrUpdateModal.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { useLivemapStore } from '~/store/livemap';
@@ -11,22 +12,12 @@ import { useSettingsStore } from '~/store/settings';
 import { GenericMarker } from '~~/gen/ts/resources/livemap/livemap';
 import BaseMap from './BaseMap.vue';
 import PlayerAndMarkersLayer from './PlayerAndMarkersLayer.vue';
-import FollowSelectedMarker from './controls/FollowSelectedMarker.vue';
-import MarkerResize from './controls/MarkerResize.vue';
 import PostalSearch from './controls/PostalSearch.vue';
+import Settings from './controls/Settings.vue';
 
-withDefaults(
-    defineProps<{
-        centerSelectedMarker?: boolean;
-        markerResize?: boolean;
-        filterPlayers?: boolean;
-    }>(),
-    {
-        centerSelectedMarker: true,
-        markerResize: true,
-        filterPlayers: true,
-    },
-);
+defineProps<{
+    mapOptions?: Record<string, any>;
+}>();
 
 const { t } = useI18n();
 
@@ -51,17 +42,14 @@ if (can('CentrumService.CreateDispatch')) {
     mapOptions.contextmenuItems.push({
         text: t('components.centrum.create_dispatch.title'),
         callback: (e: LeafletMouseEvent) => {
-            location.value = { x: e.latlng.lat, y: e.latlng.lng };
-            createDispatchOpen.value = true;
+            location.value = { x: e.latlng.lng, y: e.latlng.lat };
+            openCreateDispatch.value = true;
+            console.log(e);
         },
     });
 }
 
-onBeforeUnmount(() => {
-    stopStream();
-});
-
-const createDispatchOpen = ref(false);
+const openCreateDispatch = ref(false);
 
 const selectedMarker = ref<GenericMarker | undefined>();
 
@@ -73,6 +61,10 @@ async function applySelectedMarkerCentering(): Promise<void> {
 
     location.value = { x: selectedMarker.value.x, y: selectedMarker.value.y };
 }
+
+onBeforeUnmount(() => {
+    stopStream();
+});
 </script>
 
 <style>
@@ -105,6 +97,7 @@ async function applySelectedMarkerCentering(): Promise<void> {
 
 <template>
     <div class="relative w-full h-full z-0">
+        <CreateOrUpdateModal :open="openCreateDispatch" @close="openCreateDispatch = false" />
         <div
             v-if="error || (!error && abort === undefined)"
             class="absolute inset-0 flex justify-center items-center z-20 bg-gray-600/70"
@@ -118,10 +111,9 @@ async function applySelectedMarkerCentering(): Promise<void> {
                     <PostalSearch />
                 </LControl>
 
-                <LControl position="bottomright" v-if="centerSelectedMarker">
+                <LControl position="bottomright">
                     <div class="form-control flex flex-col gap-2">
-                        <MarkerResize />
-                        <FollowSelectedMarker />
+                        <Settings />
                     </div>
                 </LControl>
 
@@ -129,6 +121,7 @@ async function applySelectedMarkerCentering(): Promise<void> {
 
                 <slot />
             </template>
+
             <template v-slot:afterMap>
                 <slot name="afterMap" />
             </template>

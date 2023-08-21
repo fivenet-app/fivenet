@@ -323,7 +323,10 @@
             "starting_datastream": "Starting Livemap data stream...",
             "failed_datastream": "Failed to stream Livemap data!",
             "center_selected_marker": "Center selected Marker",
-            "paused_datastream": "Livemap data stream paused (window not in focus)."
+            "paused_datastream": "Livemap data stream paused (window not in focus).",
+            "settings": {
+                "marker_size": "Marker Size"
+            }
         },
         "rector": {
             "job_props": {
@@ -351,9 +354,17 @@
             "title": "Penalty Calculator"
         },
         "centrum": {
+            "dispatch_center": {
+                "starting_datastream": "Starting Dispatch Center data stream...",
+                "failed_datastream": "Failed to stream Dispatch Center data!",
+                "join_center": "Join the dispatch center, by clicking here."
+            },
             "create_dispatch": {
                 "title": "Create Dispatch",
                 "sub_title": "Create a new Dispatch."
+            },
+            "update_dispatch_status": {
+                "title": "Update Dispatch Status"
             },
             "assign_dispatch": {
                 "title": "Assign Dispatch"
@@ -361,6 +372,12 @@
             "take_dispatch": {
                 "title": "Take Dispatches",
                 "sub_title": "Take assigned dispatches quickly or take dispatches normally."
+            },
+            "assign_unit": {
+                "title": "Assign Users to Unit"
+            },
+            "update_unit_status": {
+                "title": "Update Unit Status"
             }
         }
     },
@@ -525,11 +542,12 @@
         "no_open_fine": "No open fines",
         "location": "Location | Locations",
         "units": "Units",
-        "unit": "Unit | Units",
+        "unit": "No Units | {n} Unit | {n} Units",
         "color": "Color",
         "initials": "Initials",
         "updated": "Updated",
-        "members": "No Members | {n} Member | {n} Members",
+        "member": "No Members | {n} Member | {n} Members",
+        "members": "Members",
         "anon": "Anonymous",
         "setting": "Setting | Settings",
         "cancel": "Cancel",
@@ -552,7 +570,9 @@
         "no_assigned_dispatches": "No assigned dispatches.",
         "join_unit": "Join Unit",
         "leave_unit": "Leave Unit",
-        "no_own_unit": "Not in any Unit."
+        "no_own_unit": "Not in any Unit.",
+        "attributes": "Attribute | Attributes",
+        "last_update": "Last Update"
     },
     "notifications": {
         "clipboard": {

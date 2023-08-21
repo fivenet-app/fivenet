@@ -36,7 +36,7 @@ const features = [
         iconBackground: 'bg-purple-100',
     },
     {
-        title: t('common.unit', 2),
+        title: t('common.units'),
         description: t('pages.rector.features.units'),
         href: { name: 'rector-units' },
         permission: 'CentrumService.ListUnits',

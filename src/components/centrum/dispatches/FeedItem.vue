@@ -35,7 +35,12 @@ defineProps<{
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
                 <NewBoxIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
-            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">Dispatch created</p>
+            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
+                Dispatch created
+                <span class="font-medium text-gray-400" v-if="item.user">
+                    {{ item.user?.firstname }}, {{ item.user?.lastname }}
+                </span>
+            </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
                 <Time :value="item.createdAt" />
             </span>

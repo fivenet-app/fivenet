@@ -7,7 +7,7 @@ const centrumStore = useCentrumStore();
 const { units } = storeToRefs(centrumStore);
 
 defineEmits<{
-    (e: 'goto', loc: { x: number; y: number }): void;
+    (e: 'goto', loc: Coordinate): void;
     (e: 'details', unit: Unit): void;
 }>();
 </script>
@@ -16,7 +16,7 @@ defineEmits<{
     <div class="px-4 sm:px-6 lg:px-8 h-full overflow-y-scroll">
         <div class="sm:flex sm:items-center">
             <div class="sm:flex-auto">
-                <h2 class="text-base font-semibold leading-6 text-gray-100">{{ $t('common.unit', 2) }}</h2>
+                <h2 class="text-base font-semibold leading-6 text-gray-100">{{ $t('common.units') }}</h2>
             </div>
         </div>
         <div class="mt-0.5 flow-root">

@@ -9,7 +9,7 @@ const props = defineProps<{
 
 defineEmits<{
     (e: 'selected', id: bigint): void;
-    (e: 'goto', loc: { x: number; y: number }): void;
+    (e: 'goto', loc: Coordinate): void;
 }>();
 
 const expiresAt = props.dispatch.units.find((u) => u.expiresAt !== undefined)?.expiresAt;
@@ -51,8 +51,8 @@ const expiresAt = props.dispatch.units.find((u) => u.expiresAt !== undefined)?.e
                 <li class="flex items-center justify-between py-3 pl-3 pr-4 text-sm">
                     <div class="flex items-center flex-1">
                         <AccountIcon class="flex-shrink-0 w-5 h-5 text-base-400" aria-hidden="true" />
-                        {{ $t('common.members', 2) }}:
-                        <span v-if="dispatch.units.length === 0">{{ $t('common.members', 0) }}</span>
+                        {{ $t('common.member', 2) }}:
+                        <span v-if="dispatch.units.length === 0">{{ $t('common.member', 0) }}</span>
                         <span v-else class="flex-1 ml-2 truncate">
                             <span v-for="unit in dispatch.units">
                                 {{ unit.unit?.name }}

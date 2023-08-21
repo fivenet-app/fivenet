@@ -10,14 +10,12 @@ const props = defineProps<{
     open: boolean;
     unit: Unit;
     status?: UNIT_STATUS;
+    location?: Coordinate;
 }>();
 
 const emits = defineEmits<{
     (e: 'close'): void;
 }>();
-
-const location = ref<{ x: number; y: number }>({ x: 0, y: 0 });
-defineExpose({ location });
 
 const { $grpc } = useNuxtApp();
 
@@ -113,7 +111,9 @@ watch(props, () => {
                                         <div class="bg-primary-700 px-4 py-6 sm:px-6">
                                             <div class="flex items-center justify-between">
                                                 <DialogTitle class="text-base font-semibold leading-6 text-white">
-                                                    Update Unit Status: {{ unit.name }} ({{ unit.initials }})
+                                                    {{ $t('components.centrum.update_unit_status') }}: {{ unit.name }} ({{
+                                                        unit.initials
+                                                    }})
                                                 </DialogTitle>
                                                 <div class="ml-3 flex h-7 items-center">
                                                     <button

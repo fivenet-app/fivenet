@@ -124,7 +124,7 @@ async function joinUnit(unit?: Unit | undefined): Promise<void> {
                                             <button
                                                 v-if="ownUnit"
                                                 type="button"
-                                                class="w-full relative inline-flex items-center rounded-l-md bg-primary-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-primary-400"
+                                                class="w-full relative inline-flex items-center rounded-l-md bg-error-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-primary-400"
                                                 @click="joinUnit(undefined)"
                                             >
                                                 {{ $t('common.leave') }}

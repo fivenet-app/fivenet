@@ -7,7 +7,7 @@ import { LivemapperServiceClient } from '../../gen/ts/services/livemapper/livema
 export interface LivemapState {
     error: RpcError | undefined;
     abort: AbortController | undefined;
-    location: { x: number; y: number } | undefined;
+    location: Coordinate | undefined;
     zoom: number;
     jobs: {
         users: Job[];

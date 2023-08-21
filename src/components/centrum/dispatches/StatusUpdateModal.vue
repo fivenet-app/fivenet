@@ -17,9 +17,6 @@ const emits = defineEmits<{
     (e: 'close'): void;
 }>();
 
-const location = ref<{ x: number; y: number }>({ x: 0, y: 0 });
-defineExpose({ location });
-
 const { $grpc } = useNuxtApp();
 
 const status: number = props.status ?? props.dispatch?.status?.status ?? DISPATCH_STATUS.NEW;
@@ -117,7 +114,7 @@ watch(props, () => {
                                         <div class="bg-primary-700 px-4 py-6 sm:px-6">
                                             <div class="flex items-center justify-between">
                                                 <DialogTitle class="inline-flex text-base font-semibold leading-6 text-white">
-                                                    Update Dispatch Status:
+                                                    {{ $t('components.centrum.update_dispatch_status.title') }}:
                                                     <IDCopyBadge class="ml-2" :id="dispatch.id" prefix="DSP" />
                                                 </DialogTitle>
                                                 <div class="ml-3 flex h-7 items-center">

@@ -4,7 +4,7 @@ import { Dispatch } from '~~/gen/ts/resources/dispatch/dispatches';
 import ListEntry from './ListEntry.vue';
 
 defineEmits<{
-    (e: 'goto', loc: { x: number; y: number }): void;
+    (e: 'goto', loc: Coordinate): void;
     (e: 'details', dsp: Dispatch): void;
     (e: 'assignUnit', dsp: Dispatch): void;
     (e: 'status', dsp: Dispatch): void;
@@ -55,7 +55,7 @@ const { dispatches } = storeToRefs(centrumStore);
                                     scope="col"
                                     class="whitespace-nowrap py-2 pl-4 pr-3 text-left text-sm font-semibold text-gray-100 sm:pl-0"
                                 >
-                                    {{ $t('common.unit', 2) }}
+                                    {{ $t('common.units') }}
                                 </th>
                                 <th
                                     scope="col"

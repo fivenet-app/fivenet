@@ -8,7 +8,7 @@ defineProps<{
 }>();
 
 defineEmits<{
-    (e: 'goto', loc: { x: number; y: number }): void;
+    (e: 'goto', loc: Coordinate): void;
     (e: 'details', dsp: Dispatch): void;
     (e: 'assignUnit', dsp: Dispatch): void;
     (e: 'status', dsp: Dispatch): void;

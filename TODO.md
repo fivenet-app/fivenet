@@ -1,9 +1,7 @@
-- [ ] Leitstelle
+- [ ] Dispatch Center
     - [ ] Frontend for employees to see their dispatches and manage their status
         - [ ] Notifications on Livemap when they are assigned a dispatch
-        - [ ] Updating their own dispatch status
+        - [ ] Updating their own dispatch status (needs permission checks)
     - [ ] TakeControl for leitstellen controller UI needed + "No one is active" when no controller is active
-    - [ ] Translations
     - [ ] Livemap - Show Panic buttons and Sperrzonen
-    - [ ] Livemap - Show Dispatches marker
-    - [ ] Button to mark position via NUI callback
+    - [ ] Translate Activity Feed items

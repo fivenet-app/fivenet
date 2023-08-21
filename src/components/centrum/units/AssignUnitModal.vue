@@ -116,7 +116,9 @@ onMounted(async () => {
                                         <div class="bg-primary-700 px-4 py-6 sm:px-6">
                                             <div class="flex items-center justify-between">
                                                 <DialogTitle class="text-base font-semibold leading-6 text-white">
-                                                    Assign Users to Unit: {{ unit.name }} ({{ unit.initials }})
+                                                    {{ $t('components.centrum.assign_unit.title') }}: {{ unit.name }} ({{
+                                                        unit.initials
+                                                    }})
                                                 </DialogTitle>
                                                 <div class="ml-3 flex h-7 items-center">
                                                     <button

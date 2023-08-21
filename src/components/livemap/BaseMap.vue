@@ -91,7 +91,6 @@ watchDebounced(
 );
 
 const backgroundColorList = {
-    Atlas: '#0fa8d2',
     Satelite: '#143d6b',
     Road: '#1862ad',
     Postal: '#74aace',
@@ -100,9 +99,6 @@ const backgroundColor = ref<ValueOf<typeof backgroundColorList>>(backgroundColor
 
 async function updateBackground(layer: string): Promise<void> {
     switch (layer) {
-        case 'Atlas':
-            backgroundColor.value = backgroundColorList.Atlas;
-            return;
         case 'Satelite':
             backgroundColor.value = backgroundColorList.Satelite;
             return;
@@ -237,15 +233,6 @@ onBeforeUnmount(() => {
                 :attribution="attribution"
             />
             <LTileLayer
-                url="/images/livemap/tiles/atlas/{z}/{x}/{y}.png"
-                layer-type="base"
-                name="Atlas"
-                :no-wrap="true"
-                :tms="true"
-                :visible="false"
-                :attribution="attribution"
-            />
-            <LTileLayer
                 url="/images/livemap/tiles/road/{z}/{x}/{y}.png"
                 layer-type="base"
                 name="Road"
@@ -266,10 +253,8 @@ onBeforeUnmount(() => {
 
             <LControlLayers />
 
-            <LControl position="bottomleft" class="leaflet-control-attribution mouseposition">
-                <b>{{ $t('common.longitude') }}</b
-                >: {{ mouseLat }} | <b>{{ $t('common.latitude') }}</b
-                >: {{ mouseLong }}
+            <LControl position="bottomleft" class="leaflet-control-attribution mouseposition text-xs">
+                {{ $t('common.longitude') }}: {{ mouseLat }} | {{ $t('common.latitude') }}: {{ mouseLong }}
             </LControl>
 
             <slot />

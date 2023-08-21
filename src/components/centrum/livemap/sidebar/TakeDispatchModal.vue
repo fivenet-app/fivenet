@@ -13,7 +13,7 @@ defineProps<{
 
 const emits = defineEmits<{
     (e: 'close'): void;
-    (e: 'goto', loc: { x: number; y: number }): void;
+    (e: 'goto', loc: Coordinate): void;
 }>();
 
 const { $grpc } = useNuxtApp();

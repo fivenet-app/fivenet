@@ -36,7 +36,7 @@ onBeforeUnmount(() => {
     stopStream();
 });
 
-function goto(e: { x: number; y: number }) {
+function goto(e: Coordinate) {
     location.value = { x: e.x, y: e.y };
 
     // Set in-game waypoint via NUI
@@ -99,7 +99,7 @@ const openUnitStatus = ref(false);
             <!-- Left column -->
             <div class="flex flex-col basis-1/3 divide-x">
                 <div class="h-full">
-                    <Livemap :center-selected-marker="false" :marker-resize="false" :filter-players="false">
+                    <Livemap>
                         <template v-slot:default>
                             <DispatchesLayer
                                 @select="

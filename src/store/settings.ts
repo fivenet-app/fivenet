@@ -27,12 +27,6 @@ export const useSettingsStore = defineStore('settings', {
         setLocale(locale: string): void {
             this.locale = locale;
         },
-        setLivemapMarkerSize(size: number): void {
-            this.livemap.markerSize = size;
-        },
-        setLivemapCenterSelectedMarker(value: boolean): void {
-            this.livemap.centerSelectedMarker = value;
-        },
     },
     getters: {
         getVersion: (state) => state.version,

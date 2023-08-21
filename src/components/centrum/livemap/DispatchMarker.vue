@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import { LIcon, LMarker, LPopup } from '@vue-leaflet/vue-leaflet';
 import { BellIcon } from 'mdi-vue3';
+import { dispatchStatusToFillColor } from '~/components/centrum/helpers';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import { DISPATCH_STATUS, Dispatch } from '~~/gen/ts/resources/dispatch/dispatches';
-import { dispatchStatusToFillColor } from './helpers';
 
 const props = withDefaults(
     defineProps<{
@@ -39,14 +39,20 @@ function selected(_: bigint | string) {
     <LMarker :key="dispatch.id?.toString()" :latLng="[dispatch.y, dispatch.x]" :name="dispatch.message" :z-index-offset="15">
         <LIcon :icon-anchor="iconAnchor" :popup-anchor="popupAnchor" :icon-size="[size, size]">
             <div class="uppercase flex flex-col items-center dsp-status-error">
-                <span class="rounded-md bg-white border border-black">DSP-{{ props.dispatch.id }}</span>
+                <span
+                    class="rounded-md bg-white text-black border-2 border-black/20 bg-clip-padding hover:bg-[#f4f4f4] focus:outline-none inset-0"
+                >
+                    DSP-{{ props.dispatch.id }}
+                </span>
                 <BellIcon
                     class="w-full h-full"
                     :class="[animateStates.includes(status) ? 'animate-dispatch' : '', dispatchStatusToFillColor(status)]"
                 />
-                <span class="rounded-md bg-white border border-black">
-                    {{ $t(`enums.centrum.DISPATCH_STATUS.${DISPATCH_STATUS[status]}`) }}</span
+                <span
+                    class="text-center rounded-md bg-white text-black border-2 border-black/20 bg-clip-padding hover:bg-[#f4f4f4] focus:outline-none inset-0"
                 >
+                    {{ $t(`enums.centrum.DISPATCH_STATUS.${DISPATCH_STATUS[status]}`) }}
+                </span>
             </div>
         </LIcon>
         <LPopup :options="{ closeButton: true }">
