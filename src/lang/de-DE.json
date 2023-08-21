@@ -16,7 +16,8 @@
                 "title": "Character Auswahl"
             },
             "login": {
-                "title": "Anmeldung"
+                "title": "Anmeldung",
+                "social_login_disabled": "Um den Third-Party Login zu nutzen müssen Cookies akzeptiert werden."
             }
         },
         "about": {
@@ -61,7 +62,11 @@
                 "title": "Haben Sie Fragen oder Probleme?",
                 "content": "Stelle sicher, dass Sie dem Discord-Server beitreten, falls Sie Probleme oder Fragen zu FiveNet haben."
             },
-            "join_discord": "Tritt dem Discord-Server von Galexrt bei"
+            "join_discord": "Tritt dem Discord-Server von Galexrt bei",
+            "licenses_list": "FiveNet Lizenz und Liste der genutzten Third-Party Lizenzen",
+            "licenses": {
+                "sub_title": "Liste und Informationen zu den Lizenzen des in FiveNet verwendeten Code, Bibliotheken und Medien."
+            }
         },
         "overview": {
             "features": {
@@ -69,7 +74,8 @@
                 "vehicles": "Suche und finde Informationen zu Fahrzeugen.",
                 "documents": "Suche und erstelle Dokumente, entweder mit Vorlagen oder von Grund auf neu.",
                 "jobs": "Infos über deinen Job und Mitarbeitermanagement. Kommt bald",
-                "livemap": "Live-Positionen von Einsätzen und Kollegen."
+                "livemap": "Live-Positionen von Einsätzen und Kollegen.",
+                "centrum": "Leitstelle, für das zuweisen von Dispatches."
             }
         },
         "documents": {
@@ -343,6 +349,19 @@
         },
         "penaltycalculator": {
             "title": "Strafenrechner"
+        },
+        "centrum": {
+            "create_dispatch": {
+                "title": "Dispatch Erstellen",
+                "sub_title": "Neuen Dispatch erstellen."
+            },
+            "assign_dispatch": {
+                "title": "Dispatch Zuweisen"
+            },
+            "take_dispatch": {
+                "title": "Dispatch Annehmen",
+                "sub_title": "Übernehme zugewiesene Dispatches schnell und einfach."
+            }
         }
     },
     "common": {
@@ -521,7 +540,19 @@
         "leave": "Verlassen | Verlassen",
         "message": "Nachricht | Nachrichten",
         "unknown": "Unbekannt",
-        "sent_by": "Gesendet von"
+        "code": "Code | Codes",
+        "accept": "Akzeptieren | Akzeptiert",
+        "decline": "Ablehnen | Abgelehnt",
+        "licenses": "Lizenzen",
+        "sent_by": "Gesendet von",
+        "sent_at": "Gesendet am",
+        "go_to_location": "Gehe zu Koordinaten",
+        "no_location": "Keine Koordinaten",
+        "your_dispatches": "Ihre Dispatches",
+        "no_assigned_dispatches": "Keine zugewiesenen Dispatches.",
+        "join_unit": "Einheit beitreten",
+        "leave_unit": "Einheit verlassen",
+        "no_own_unit": "In keiner Einheit."
     },
     "notifications": {
         "clipboard": {
@@ -736,6 +767,18 @@
             "closed": {
                 "title": "Dokument geschlossen!",
                 "content": "Dokument wurde geschlossen."
+            }
+        },
+        "centrum": {
+            "unitAssigned": {
+                "joined": {
+                    "title": "Einheit beigetreten",
+                    "content": "Sie sind einer Einheit beigetreten."
+                },
+                "removed": {
+                    "title": "Einheit verlassen",
+                    "content": "Sie haben die Einheit verlassen."
+                }
             }
         }
     },
@@ -1057,7 +1100,8 @@
             "ErrUpdateAccount": "Fehler beim aktualisieren ihres Benutzers!",
             "ErrChangePassword": "Fehler beim ändern ihres Passworts!",
             "ErrForgotPassword": "Fehler beim zurücksetzen ihres Passworts!",
-            "ErrAccountExistsFailed": "Bitte nutzen sie die Passwort vergessen Funktion!"
+            "ErrAccountExistsFailed": "Bitte nutzen sie die Passwort vergessen Funktion!",
+            "ErrSignupDisabled": "Konto-Erstellung ist deaktiviert!"
         },
         "CitizenStoreService": {
             "ErrFailedQuery": "Fehler beim laden von Bürger Daten!",
