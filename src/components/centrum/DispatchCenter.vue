@@ -82,7 +82,12 @@ const openUnitStatus = ref(false);
                     </Livemap>
                 </div>
                 <div class="basis-1/12">
-                    <DisponentsInfo :disponents="disponents" :settings="settings" :is-disponent="isDisponent" />
+                    <DisponentsInfo
+                        :disponents="disponents"
+                        :settings="settings"
+                        :is-disponent="isDisponent"
+                        :class="!isDisponent ? 'z-50' : ''"
+                    />
                 </div>
             </div>
 

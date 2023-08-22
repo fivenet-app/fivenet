@@ -49,7 +49,7 @@ const disponentsNames = computed(() => {
         <div class="mt-0.5 flow-root">
             <div class="-mx-2 -my-2 sm:-mx-6 lg:-mx-8">
                 <div class="inline-block min-w-full py-2 align-middle sm:px-2 lg:px-2">
-                    <div class="flex flex-row items-center">
+                    <div class="grid grid-cols-3 items-center justify-items-center">
                         <div v-if="!isDisponent" class="absolute inset-0 flex justify-center items-center z-20 bg-gray-600/70">
                             <button
                                 @click="takeControl(true)"
@@ -62,8 +62,19 @@ const disponentsNames = computed(() => {
                                 </span>
                             </button>
                         </div>
-                        <div v-else class="flex-1 inline-flex">
+
+                        <div class="flex-1 inline-flex">
                             <button
+                                v-if="!isDisponent"
+                                type="button"
+                                @click="takeControl(true)"
+                                class="flex items-center justify-center rounded-full bg-green-500 text-neutral hover:bg-green-400"
+                            >
+                                <LocationEnterIcon class="w-8 h-8" />
+                                <span class="px-1">{{ $t('common.join') }}</span>
+                            </button>
+                            <button
+                                v-else
                                 type="button"
                                 @click="takeControl(false)"
                                 class="flex items-center justify-center rounded-full bg-primary-500 text-neutral hover:bg-primary-400"

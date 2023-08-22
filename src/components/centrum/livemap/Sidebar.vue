@@ -91,11 +91,13 @@ const openTakeDispatch = ref(false);
 const openUnitDetails = ref(false);
 const openUnitAssign = ref(false);
 const openUnitStatus = ref(false);
+
+const canStream = can('CentrumService.Stream');
 </script>
 
 <template>
     <Livemap>
-        <template v-slot:default>
+        <template v-slot:default v-if="canStream">
             <DispatchesLayer
                 @select="
                     selectedDispatch = $event;
@@ -103,7 +105,7 @@ const openUnitStatus = ref(false);
                 "
             />
         </template>
-        <template v-slot:afterMap v-if="can('CentrumService.Stream')">
+        <template v-slot:afterMap v-if="canStream">
             <div class="lg:inset-y-0 lg:flex lg:w-50 lg:flex-col">
                 <!-- Own Unit Modals -->
                 <template v-if="ownUnit">

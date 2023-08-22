@@ -128,6 +128,9 @@ const config = defineNuxtConfig({
                 '/api': 'http://localhost:8080',
                 '/grpc': {
                     target: 'http://localhost:8181',
+                    // Make sure streaming works, but is also limited by the "real world" (3600s = 60m)
+                    proxyTimeout: 3600 * 1000,
+                    timeout: 3600 * 1000,
                 },
             },
         },

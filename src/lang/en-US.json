@@ -1160,6 +1160,12 @@
             "ErrOwnRoleDeletion": "Can't delete your own role!",
             "ErrInvalidPerms": "Failed to update role permissions!",
             "ErrInvalidAttrs": "Failed to update role attributes!"
+        },
+        "CentrumService": {
+            "ErrFailedQuery": "Failed to get/update dispatch center data!",
+            "ErrAlreadyInUnit": "You are already in an unit! You must leave your currrent unit first.",
+            "ErrNotPartOfDispatch": "You are not part of this dispatch!",
+            "ErrNotOnDuty": "You are not on duty!"
         }
     },
     "commandpalette": {
