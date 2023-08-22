@@ -1,7 +1,7 @@
 {
     "name": "fivenet",
     "private": true,
-    "version": "0.7.3",
+    "version": "0.8.0",
     "type": "module",
     "scripts": {
         "build": "yarn nuxi build",
