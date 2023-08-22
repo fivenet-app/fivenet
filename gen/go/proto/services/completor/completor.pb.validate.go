@@ -76,6 +76,21 @@ func (m *CompleteCitizensRequest) validate(all bool) error {
 		// no validation rules for OnDuty
 	}
 
+	if m.UserId != nil {
+
+		if m.GetUserId() <= 0 {
+			err := CompleteCitizensRequestValidationError{
+				field:  "UserId",
+				reason: "value must be greater than 0",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
 	if len(errors) > 0 {
 		return CompleteCitizensRequestMultiError(errors)
 	}

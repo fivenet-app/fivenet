@@ -5,13 +5,15 @@ import de from '@vee-validate/i18n/dist/locale/de.json';
 import en from '@vee-validate/i18n/dist/locale/en.json';
 import { NuxtError } from 'nuxt/app';
 import { configure } from 'vee-validate';
-import { loadConfig } from '~/config';
+import { clientConfig, loadConfig } from '~/config';
 import { useClipboardStore } from '~/store/clipboard';
 import { useDocumentEditorStore } from '~/store/documenteditor';
 import { useNotificationsStore } from '~/store/notifications';
 import { useSettingsStore } from '~/store/settings';
 
 const { t, setLocale } = useI18n();
+
+const route = useRoute();
 
 useHead({
     htmlAttrs: {
@@ -67,6 +69,12 @@ switch (userSettings.locale.split('-', 1)[0]) {
     default:
         cookieLocale.value = 'en';
         break;
+}
+
+if (route.query?.nui) {
+    clientConfig.NUIEnabled = true;
+    clientConfig.NUIResourceName = route.query?.nui as string;
+    console.info('Enabled NUI integration! Resource Name:', clientConfig.NUIResourceName);
 }
 </script>
 

@@ -13,6 +13,7 @@ message CompleteCitizensRequest {
   string search = 1 [(validate.rules).string.max_len = 50];
   optional bool current_job = 2;
   optional bool on_duty = 3;
+  optional int32 user_id = 4 [(validate.rules).int32.gt = 0];
 }
 
 message CompleteCitizensRespoonse {

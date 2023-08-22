@@ -1,14 +1,18 @@
-// When `GetParentResourceName` is not undefined, we should have NUI access
+import { clientConfig } from '~/config';
+
+// Checking for `GetParentResourceName` existance doesn't work (anymore) in FiveM NUI iframes
 export function checkForNUI(): boolean {
-    return typeof (window as any).GetParentResourceName !== 'undefined';
+    //return typeof window.GetParentResourceName !== 'undefined';
+    return clientConfig.NUIEnabled;
 }
 
 function getParentResourceName(): string {
-    return (window as any).GetParentResourceName();
+    //return (window as any).GetParentResourceName();
+    return clientConfig.NUIResourceName ?? 'fivenet';
 }
 
 export async function setWaypoint(x: number, y: number): Promise<void> {
-    if (!checkForNUI()) return;
+    //if (!checkForNUI()) return;
 
     return await fetchNui('setWaypoint', { loc: { x: x, y: y } });
 }

@@ -26,7 +26,7 @@ const settingsStore = useSettingsStore();
 const { livemap } = storeToRefs(settingsStore);
 const livemapStore = useLivemapStore();
 const { error, abort, location } = storeToRefs(livemapStore);
-const { startStream, stopStream } = livemapStore;
+const { startStream } = livemapStore;
 
 interface ContextmenuItem {
     text: string;

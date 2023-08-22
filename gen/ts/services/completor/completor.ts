@@ -23,6 +23,10 @@ export interface CompleteCitizensRequest {
      * @generated from protobuf field: optional bool on_duty = 3;
      */
     onDuty?: boolean;
+    /**
+     * @generated from protobuf field: optional int32 user_id = 4;
+     */
+    userId?: number;
 }
 /**
  * @generated from protobuf message services.completor.CompleteCitizensRespoonse
@@ -97,7 +101,8 @@ class CompleteCitizensRequest$Type extends MessageType<CompleteCitizensRequest> 
         super("services.completor.CompleteCitizensRequest", [
             { no: 1, name: "search", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
             { no: 2, name: "current_job", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
-            { no: 3, name: "on_duty", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
+            { no: 3, name: "on_duty", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 4, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } }
         ]);
     }
 }

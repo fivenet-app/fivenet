@@ -61,20 +61,25 @@ func NewServer(p Params) *Server {
 func (s *Server) CompleteCitizens(ctx context.Context, req *CompleteCitizensRequest) (*CompleteCitizensRespoonse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	req.Search = strings.TrimSpace(req.Search)
-	req.Search = strings.ReplaceAll(req.Search, "%", "")
-	req.Search = strings.ReplaceAll(req.Search, " ", "%")
-
 	condition := jet.Bool(true)
-	if req.Search != "" {
-		req.Search = "%" + req.Search + "%"
-		condition = jet.CONCAT(tUsers.Firstname, jet.String(" "), tUsers.Lastname).
-			LIKE(jet.String(req.Search))
-	}
-	if req.CurrentJob != nil && *req.CurrentJob {
-		condition = condition.AND(
-			tUsers.Job.EQ(jet.String(userInfo.Job)),
-		)
+
+	if req.UserId == nil {
+		req.Search = strings.TrimSpace(req.Search)
+		req.Search = strings.ReplaceAll(req.Search, "%", "")
+		req.Search = strings.ReplaceAll(req.Search, " ", "%")
+
+		if req.Search != "" {
+			req.Search = "%" + req.Search + "%"
+			condition = jet.CONCAT(tUsers.Firstname, jet.String(" "), tUsers.Lastname).
+				LIKE(jet.String(req.Search))
+		}
+		if req.CurrentJob != nil && *req.CurrentJob {
+			condition = condition.AND(
+				tUsers.Job.EQ(jet.String(userInfo.Job)),
+			)
+		}
+	} else {
+		condition = condition.AND(tUsers.ID.EQ(jet.Int32(*req.UserId)))
 	}
 
 	stmt := tUsers.

@@ -57,3 +57,12 @@ export async function loadConfig(): Promise<void> {
         }
     });
 }
+
+type ClientConfig = {
+    NUIEnabled: boolean;
+    NUIResourceName?: string;
+};
+
+export const clientConfig: ClientConfig = {
+    NUIEnabled: false,
+};

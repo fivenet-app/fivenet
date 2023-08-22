@@ -102,6 +102,7 @@ async function findJobs(): Promise<void> {
         try {
             const call = $grpc.getCompletorClient().completeJobs({
                 search: queryJob.value,
+                currentJob: false,
             });
             const { response } = await call;
 
@@ -115,11 +116,12 @@ async function findJobs(): Promise<void> {
     });
 }
 
-async function findChars(): Promise<void> {
+async function findChars(userId?: number): Promise<void> {
     return new Promise(async (res, rej) => {
         try {
             const call = $grpc.getCompletorClient().completeCitizens({
                 search: queryChar.value,
+                userId: userId,
             });
             const { response } = await call;
 
@@ -138,9 +140,10 @@ onMounted(async () => {
     if (passedType) selectedAccessType.value = passedType;
 
     if (props.init.type === 0 && props.init.values.char !== undefined && props.init.values.accessrole !== undefined) {
-        await findChars();
+        await findChars(props.init.values.char);
         selectedChar.value = entriesChars.find((char) => char.userId === props.init.values.char);
         selectedAccessRole.value = entriesAccessRoles.find((type) => type.id === props.init.values.accessrole);
+        queryChar.value = '';
     } else if (
         props.init.type === 1 &&
         props.init.values.job !== undefined &&
