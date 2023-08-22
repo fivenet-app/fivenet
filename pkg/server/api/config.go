@@ -4,6 +4,7 @@ type ClientConfig struct {
 	Version   string      `json:"version"`
 	SentryDSN string      `json:"sentryDSN"`
 	Login     LoginConfig `json:"login"`
+	Discord   *Discord    `json:"discord"`
 }
 
 type LoginConfig struct {
@@ -14,4 +15,8 @@ type LoginConfig struct {
 type ProviderConfig struct {
 	Name  string `json:"name"`
 	Label string `json:"label"`
+}
+
+type Discord struct {
+	BotInviteURL string `json:"botInviteURL"`
 }

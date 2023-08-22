@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"strconv"
+	"regexp"
 	"sync"
 	"time"
 
@@ -13,7 +13,6 @@ import (
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/query/fivenet/table"
-	jet "github.com/go-jet/jet/v2/mysql"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 )
@@ -26,6 +25,10 @@ var (
 )
 
 const RoleFormat = "[%02d] %s"
+
+func wrapLogger(log *zap.Logger) *zap.Logger {
+	return log.Named("discord_bot")
+}
 
 var BotModule = fx.Module("discord_bot",
 	fx.Provide(
@@ -57,21 +60,37 @@ type Bot struct {
 
 	guildsMutex  sync.Mutex
 	joinedGuilds []*discordgo.Guild
+
+	syncInterval  time.Duration
+	roleFormat    string
+	nicknameRegex *regexp.Regexp
 }
 
-func NewBot(p BotParams) *Bot {
-	ctx, cancel := context.WithCancel(context.Background())
+func NewBot(p BotParams) (*Bot, error) {
+	if !p.Config.Discord.Enabled {
+		return nil, nil
+	}
 
+	nicknameRegex, err := regexp.Compile(p.Config.Discord.NicknameRegex)
+	if err != nil {
+		return nil, err
+	}
+
+	ctx, cancel := context.WithCancel(context.Background())
 	b := &Bot{
 		ctx:      ctx,
 		logger:   p.Logger,
 		db:       p.DB,
 		enricher: p.Enricher,
 		token:    p.Config.Discord.Bot.Token,
+
+		syncInterval:  p.Config.Discord.SyncInterval,
+		roleFormat:    p.Config.Discord.RoleFormat,
+		nicknameRegex: nicknameRegex,
 	}
 
 	p.LC.Append(fx.StartHook(func(ctx context.Context) error {
-		if err := b.start(); err != nil {
+		if err := b.start(p.Config.Discord.Bot.Token); err != nil {
 			return err
 		}
 
@@ -86,34 +105,25 @@ func NewBot(p BotParams) *Bot {
 		return b.discord.Close()
 	}))
 
-	return b
+	return b, nil
 }
 
-func (b *Bot) refreshGuilds() error {
-	usr, err := b.discord.User("@me")
-	if err != nil {
-		return fmt.Errorf("error obtaining account details: %w", err)
-	}
-	b.id = usr.ID
-
-	return nil
-}
-
-func (b *Bot) start() error {
+func (b *Bot) start(token string) error {
 	// Create a new Discord session using the provided login information.
-	discord, err := discordgo.New("Bot " + b.token)
+	discord, err := discordgo.New("Bot " + token)
 	if err != nil {
 		return fmt.Errorf("error creating Discord session: %w", err)
 	}
 	b.discord = discord
 
-	if err := b.refreshGuilds(); err != nil {
+	if err := b.refreshBotGuilds(); err != nil {
 		return err
 	}
 
 	discord.AddHandler(func(discord *discordgo.Session, ready *discordgo.Ready) {
 		b.guildsMutex.Lock()
 		defer b.guildsMutex.Unlock()
+
 		b.joinedGuilds = discord.State.Guilds
 		b.logger.Info(fmt.Sprintf("Ready with %d guilds", len(b.joinedGuilds)))
 	})
@@ -125,13 +135,23 @@ func (b *Bot) start() error {
 	return nil
 }
 
+func (b *Bot) refreshBotGuilds() error {
+	usr, err := b.discord.User("@me")
+	if err != nil {
+		return fmt.Errorf("error obtaining account details: %w", err)
+	}
+	b.id = usr.ID
+
+	return nil
+}
+
 func (b *Bot) SyncRoles() error {
 	for {
 		select {
 		case <-b.ctx.Done():
 			return nil
 
-		case <-time.After(2 * time.Second):
+		case <-time.After(b.syncInterval):
 			if err := b.syncRoles(); err != nil {
 				b.logger.Error("failed to sync roles", zap.Error(err))
 			}
@@ -139,9 +159,35 @@ func (b *Bot) SyncRoles() error {
 	}
 }
 
-type Guild struct {
-	Job string `alias:"job"`
-	ID  uint64 `alias:"id"`
+func (b *Bot) getGuilds() ([]*Guild, error) {
+	if err := b.refreshBotGuilds(); err != nil {
+		return nil, err
+	}
+
+	guilds, err := b.getGuildsFromDB()
+	if err != nil {
+		return nil, err
+	}
+
+	for i := len(guilds) - 1; i >= 0; i-- {
+		var found *discordgo.Guild
+		if !utils.InSliceFunc(b.joinedGuilds, func(in *discordgo.Guild) bool {
+			if in.ID == guilds[i].ID {
+				found = in
+				return true
+			}
+			return false
+		}) {
+			guilds = utils.RemoveFromSlice(guilds, i)
+		} else {
+			if found == nil {
+				return nil, fmt.Errorf("didn't find bot being in guild %s", guilds[i].ID)
+			}
+			guilds[i].init(b, found)
+		}
+	}
+
+	return guilds, nil
 }
 
 func (b *Bot) getGuildsFromDB() ([]*Guild, error) {
@@ -164,94 +210,21 @@ func (b *Bot) getGuildsFromDB() ([]*Guild, error) {
 }
 
 func (b *Bot) syncRoles() error {
-	guilds, err := b.getGuildsFromDB()
+	guilds, err := b.getGuilds()
 	if err != nil {
 		return err
 	}
 
-	if err := b.createJobRoles(guilds); err != nil {
-		return err
-	}
-
-	for _, guild := range guilds {
-		stmt := tOauth2Accs.
-			SELECT(
-				tOauth2Accs.ExternalID,
-			).
-			FROM(
-				tOauth2Accs.
-					INNER_JOIN(tAccs,
-						tAccs.ID.EQ(tOauth2Accs.AccountID),
-					).
-					INNER_JOIN(tUsers,
-						tUsers.Identifier.LIKE(jet.CONCAT(jet.String("char%:"), tAccs.License)),
-					),
-			).
-			WHERE(jet.AND(
-				tOauth2Accs.Provider.EQ(jet.String("discord")),
-				tUsers.Job.EQ(jet.String(guild.Job)),
-			))
-
-		var dest []struct {
-			ExternalID uint64
-			Job        string
-			JobGrade   int32
-		}
-		if err := stmt.QueryContext(b.ctx, b.db, &dest); err != nil {
-			return err
-		}
-
-		for _, user := range dest {
-			if err := b.setUserJobRole(user.ExternalID, user.Job, user.JobGrade); err != nil {
-				return err
-			}
-		}
-	}
-
-	return nil
-}
-
-func (b *Bot) createJobRoles(guilds []*Guild) error {
+	// Each guild is effectively associated with a Job via the JobProps
 	for _, g := range guilds {
-		guild, err := b.discord.Guild(strconv.Itoa(int(g.ID)))
-		if err != nil {
+		if err := g.createJobRoles(); err != nil {
 			return err
 		}
 
-		job := b.enricher.GetJobByName(g.Job)
-		if job == nil {
-			b.logger.Error("unknown job for discord guild")
-			continue
-		}
-
-		for i := len(job.Grades) - 1; i >= 0; i-- {
-			grade := job.Grades[i]
-			name := fmt.Sprintf(RoleFormat, grade.Grade, grade.Label)
-
-			if utils.InSliceFunc(guild.Roles, func(in *discordgo.Role) bool {
-				return in.Name == name
-			}) {
-				continue
-			}
-
-			if _, err := b.discord.GuildRoleCreate(guild.ID, &discordgo.RoleParams{
-				Name: name,
-			}); err != nil {
-				return err
-			}
+		if err := g.syncUserInfo(); err != nil {
+			return err
 		}
 	}
 
 	return nil
-}
-
-func (b *Bot) setUserJobRole(ext uint64, job string, grade int32) error {
-	// TODO set user's role in discord
-	//b.discord.GuildMember()
-
-	return nil
-}
-
-func wrapLogger(log *zap.Logger) *zap.Logger {
-	return log.Named("discord_bot")
 }

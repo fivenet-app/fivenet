@@ -34,17 +34,23 @@ func New(logger *zap.Logger, cfg *config.Config) *Routes {
 		version = buildInfo.Main.Version
 	}
 
-	return &Routes{
-		logger: logger,
-
-		clientCfg: &ClientConfig{
-			Version:   version,
-			SentryDSN: cfg.Sentry.ClientDSN,
-			Login: LoginConfig{
-				SignupEnabled: cfg.Game.SignupEnabled,
-				Providers:     providers,
-			},
+	clientCfg := &ClientConfig{
+		Version:   version,
+		SentryDSN: cfg.Sentry.ClientDSN,
+		Login: LoginConfig{
+			SignupEnabled: cfg.Game.SignupEnabled,
+			Providers:     providers,
 		},
+		Discord: &Discord{},
+	}
+
+	if cfg.Discord.Enabled {
+		clientCfg.Discord.BotInviteURL = cfg.Discord.Bot.InviteURL
+	}
+
+	return &Routes{
+		logger:    logger,
+		clientCfg: clientCfg,
 	}
 }
 

@@ -6,7 +6,3 @@
     - [ ] Livemap - Show Panic buttons and Sperrzonen
     - [ ] Translate Activity Feed items
     - [ ] Add more errors and translate them
-- [ ] FiveM Plugin
-    - [ ] Clear user locations table on start up
-- [ ] Discord Bot
-    - [ ] Set users into the roles

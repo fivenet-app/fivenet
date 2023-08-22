@@ -58,7 +58,7 @@ async function chooseCharacter(): Promise<void> {
 </script>
 
 <template>
-    <div :key="char.userId" class="flex flex-col divide-y rounded-lg bg-base-800 shadow-float">
+    <div :key="char.userId" class="divide-y rounded-lg bg-base-800 shadow-float">
         <div class="flex flex-col flex-1 p-8">
             <div class="flex flex-row items-center gap-3 mx-auto">
                 <h2 class="text-2xl font-medium text-center text-neutral">{{ char.firstname }}, {{ char.lastname }}</h2>
@@ -72,21 +72,21 @@ async function chooseCharacter(): Promise<void> {
                 </div>
             </div>
             <dl class="flex flex-col justify-between flex-grow mt-2 text-center">
-                <dd class="mt-3">
+                <dd class="mt-2 mb-2">
                     <span
                         class="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-sm font-medium text-gray-800"
                         >{{ char.jobLabel }} ({{ $t('common.rank') }}: {{ char.jobGradeLabel }})</span
                     >
                 </dd>
-                <dt class="text-sm text-neutral">
+                <dt class="text-sm text-neutral font-medium">
                     {{ $t('common.date_of_birth') }}
                 </dt>
                 <dd class="text-sm text-gray-300">{{ char.dateofbirth }}</dd>
-                <dt class="text-sm text-neutral">{{ $t('common.height') }}</dt>
+                <dt class="text-sm text-neutral font-medium">{{ $t('common.height') }}</dt>
                 <dd class="text-sm text-gray-300">{{ char.height }}cm</dd>
-                <dt class="text-sm text-neutral">{{ $t('common.visum') }}</dt>
+                <dt class="text-sm text-neutral font-medium">{{ $t('common.visum') }}</dt>
                 <dd class="text-sm text-gray-300">{{ char.visum }}</dd>
-                <dt class="text-sm text-neutral">
+                <dt class="text-sm text-neutral font-medium">
                     {{ $t('common.playtime') }}
                 </dt>
                 <dd class="text-sm text-gray-300">

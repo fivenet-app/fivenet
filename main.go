@@ -80,7 +80,7 @@ func main() {
 
 		fx.Invoke(func(*http.Server) {}),
 		fx.Invoke(func(*grpcserver.Server) {}),
-		//fx.Invoke(func(*discord.Bot) {}),
+		fx.Invoke(func(*discord.Bot) {}),
 	).Run()
 }
 

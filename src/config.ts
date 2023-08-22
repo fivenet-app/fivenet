@@ -1,6 +1,7 @@
 type AppConfig = {
     sentryDSN: string;
     login: LoginConfig;
+    discord: DiscordConfig;
 };
 
 type LoginConfig = {
@@ -13,11 +14,18 @@ type ProviderConfig = {
     label: string;
 };
 
+type DiscordConfig = {
+    botInviteURL?: string;
+};
+
 const config: AppConfig = {
     sentryDSN: '',
     login: {
         signupEnabled: true,
         providers: [],
+    },
+    discord: {
+        botInviteURL: '',
     },
 };
 

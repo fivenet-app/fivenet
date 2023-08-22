@@ -175,6 +175,14 @@ fivenet:
           name: GetDocument
         - category: DocStoreService
           name: PostComment
+    discord:
+      enabled: false
+      syncInterval: 15m
+      roleFormat: "[%02d] %s"
+      nicknameRegex: "^(?P<prefix>\\[\\S+][ ]*)?(?P<name>[^\\[]+)(?P<suffix>[ ]*\\[\\S+])?"
+      bot:
+        inviteURL: "your_discord_bot_invite_url"
+        token: "your_discord_bot_token"
 
 envoy:
   replicaCount: 1

@@ -31,6 +31,7 @@ func (s *Server) GetJobProps(ctx context.Context, req *GetJobPropsRequest) (*Get
 			jobProps.Theme,
 			jobProps.LivemapMarkerColor,
 			jobProps.QuickButtons,
+			jobProps.DiscordGuildID,
 		).
 		FROM(jobProps).
 		WHERE(

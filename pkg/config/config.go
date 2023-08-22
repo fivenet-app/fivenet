@@ -183,10 +183,14 @@ type Perm struct {
 }
 
 type Discord struct {
-	Enabled bool       `default:"false" yaml:"enabled"`
-	Bot     DiscordBot `yaml:"bot"`
+	Enabled       bool          `default:"false" yaml:"enabled"`
+	SyncInterval  time.Duration `default:"15m" yaml:"syncInterval"`
+	RoleFormat    string        `default:"[%02d] %s" yaml:"roleFormat"`
+	NicknameRegex string        `yaml:"nicknameRegex"`
+	Bot           DiscordBot    `yaml:"bot"`
 }
 
 type DiscordBot struct {
-	Token string `yaml:"token"`
+	InviteURL string `yaml:"inviteURL"`
+	Token     string `yaml:"token"`
 }
