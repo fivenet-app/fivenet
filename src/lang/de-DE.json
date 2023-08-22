@@ -382,7 +382,7 @@
                 "join_center": "Trete der Leitstelle bei in dem du hier klickst."
             },
             "livemap": {
-                "mark_on_gps": "Auf Navi markieren"
+                "mark_on_gps": "Auf GPS markieren"
             }
         }
     },
@@ -1160,6 +1160,12 @@
             "ErrOwnRoleDeletion": "Eigene Rolle kann nicht gelöscht werden!",
             "ErrInvalidPerms": "Fehler beim aktualisieren der Rollen Berechtigungen!",
             "ErrInvalidAttrs": "Fehler beim aktualisieren der Rollen Attributen!"
+        },
+        "CentrumService": {
+            "ErrFailedQuery": "Fehler beim anzeigen/aktualisieren von Leitstellen Daten!",
+            "ErrAlreadyInUnit": "Sie sind bereits in einer Einheit! Sie müssen diese verlassen bevor sie einer anderen Einheit beitreten können.",
+            "ErrNotPartOfDispatch": "Sie sind nicht Teil dieses Einsatzes!",
+            "ErrNotOnDuty": "Sie sind nicht im Dienst!"
         }
     },
     "commandpalette": {
