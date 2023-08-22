@@ -14,7 +14,7 @@ import (
 func (s *Server) GetSettings(ctx context.Context, req *GetSettingsRequest) (*dispatch.Settings, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	settings := s.getSettings(ctx, userInfo.Job)
+	settings := s.getSettings(userInfo.Job)
 
 	return settings, nil
 }
@@ -60,7 +60,7 @@ func (s *Server) UpdateSettings(ctx context.Context, req *dispatch.Settings) (*d
 		return nil, err
 	}
 
-	settings := s.getSettings(ctx, userInfo.Job)
+	settings := s.getSettings(userInfo.Job)
 
 	data, err := proto.Marshal(settings)
 	if err != nil {

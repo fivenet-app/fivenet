@@ -1520,10 +1520,10 @@
   dependencies:
     escape-string-regexp "^5.0.0"
 
-"@tailwindcss/forms@^0.5.4":
-  version "0.5.4"
-  resolved "https://registry.npmjs.org/@tailwindcss/forms/-/forms-0.5.4.tgz"
-  integrity sha512-YAm12D3R7/9Mh4jFbYSMnsd6jG++8KxogWgqs7hbdo/86aWjjlIEvL7+QYdVELmAI0InXTpZqFIg5e7aDVWI2Q==
+"@tailwindcss/forms@^0.5.5":
+  version "0.5.5"
+  resolved "https://registry.yarnpkg.com/@tailwindcss/forms/-/forms-0.5.5.tgz#2965ee74159a16b5ef012d5eddae20c9b48aa49c"
+  integrity sha512-03sXK1DcPt44GZ0Yg6AcAfQln89IKdbE79g2OwoKqBm1ukaadLO2AH3EiB3mXHeQnxa3tzm7eE0x7INXSjbuug==
   dependencies:
     mini-svg-data-uri "^1.2.3"
 
@@ -1604,10 +1604,10 @@
   resolved "https://registry.npmjs.org/@types/node/-/node-20.4.10.tgz"
   integrity sha512-vwzFiiy8Rn6E0MtA13/Cxxgpan/N6UeNYR9oUu6kuJWxu6zCk98trcDp8CBhbtaeuq9SykCmXkFr2lWLoPcvLg==
 
-"@types/node@^20.5.1":
-  version "20.5.1"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-20.5.1.tgz#178d58ee7e4834152b0e8b4d30cbfab578b9bb30"
-  integrity sha512-4tT2UrL5LBqDwoed9wZ6N3umC4Yhz3W3FloMmiiG4JwmUJWpie0c7lcnUNd4gtMKuDEO4wRVS8B6Xa0uMRsMKg==
+"@types/node@^20.5.3":
+  version "20.5.3"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-20.5.3.tgz#fa52c147f405d56b2f1dd8780d840aa87ddff629"
+  integrity sha512-ITI7rbWczR8a/S6qjAW7DMqxqFMjjTo61qZVWJ1ubPvbIQsL5D/TvwjYEalM8Kthpe3hTzOGrF2TGbAu2uyqeA==
 
 "@types/parse-json@^4.0.0":
   version "4.0.0"
@@ -1783,10 +1783,10 @@
   resolved "https://registry.npmjs.org/@vitejs/plugin-vue/-/plugin-vue-4.2.3.tgz"
   integrity sha512-R6JDUfiZbJA9cMiguQ7jxALsgiprjBeHL5ikpXfJCH62pPHtI+JdJ5xWj6Ev73yXSlYl86+blXn1kZHQ7uElxw==
 
-"@vitejs/plugin-vue@^4.3.2":
-  version "4.3.2"
-  resolved "https://registry.yarnpkg.com/@vitejs/plugin-vue/-/plugin-vue-4.3.2.tgz#9f1b693d56370c5c01c3a2a09858bb5afd9d154d"
-  integrity sha512-iDDhGruwhKkwNwT5qgtGaeTxF4ULs52xpQbsC27F01kf3aQBHtrDP738pmHw4oclVAUA3m+Vk8gxhDV5KbfM+A==
+"@vitejs/plugin-vue@^4.3.3":
+  version "4.3.3"
+  resolved "https://registry.yarnpkg.com/@vitejs/plugin-vue/-/plugin-vue-4.3.3.tgz#3b2337f64495f95cfea5b1497d2d3f4a0b3382b2"
+  integrity sha512-ssxyhIAZqB0TrpUg6R0cBpCuMk9jTIlO1GNSKKQD6S8VjnXi6JXKfUXjSsxey9IwQiaRGsO1WnW9Rkl1L6AJVw==
 
 "@volar/language-core@1.10.0", "@volar/language-core@~1.10.0":
   version "1.10.0"
@@ -6164,10 +6164,10 @@ nuxi@3.6.5, nuxi@^3.6.5:
   optionalDependencies:
     fsevents "~2.3.2"
 
-nuxt-typed-router@^3.2.6:
-  version "3.2.6"
-  resolved "https://registry.yarnpkg.com/nuxt-typed-router/-/nuxt-typed-router-3.2.6.tgz#f43f2bf69f5719eb67d65a6c6d1df1b793ab4c67"
-  integrity sha512-6CRlhVJ3pDxt4joH6GEf0xboqZCYCsYGZ/rwxeiZ4J2xCHdlQNrrFHNi8967e+xB8PIToKSDM7aMWtuJrJRgJA==
+nuxt-typed-router@^3.3.1:
+  version "3.3.1"
+  resolved "https://registry.yarnpkg.com/nuxt-typed-router/-/nuxt-typed-router-3.3.1.tgz#fb3a7624881595f11de359f0489e242610e8596d"
+  integrity sha512-gO7qzU6s2C9rGQwX+d5Vkp8aQTQfKrxlCg1iSYGorvV6NZ/o71zHbyWcVACvzHCflNzQLSGhvuiPJDDvwz2JmQ==
   dependencies:
     "@nuxt/kit" "^3.6.5"
     chalk "^5.3.0"

@@ -7,10 +7,13 @@ import (
 	dispatch "github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
+	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/pkg/utils/dbutils"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -281,6 +284,8 @@ func (s *Server) TakeDispatch(ctx context.Context, req *TakeDispatchRequest) (*T
 	}
 	defer s.auditer.Log(auditEntry, req)
 
+	settings := s.getSettings(userInfo.Job)
+
 	for _, dispatchId := range req.DispatchIds {
 		dsp, ok := s.getDispatch(userInfo.Job, dispatchId)
 		if !ok {
@@ -290,6 +295,15 @@ func (s *Server) TakeDispatch(ctx context.Context, req *TakeDispatchRequest) (*T
 		unitId, ok := s.getUnitIDForUserID(userInfo.UserId)
 		if !ok {
 			return nil, ErrFailedQuery
+		}
+
+		// If the dispatch center is in central command mode, units can't self assign dispatches
+		if settings.Mode == dispatch.CENTRUM_MODE_CENTRAL_COMMAND {
+			if !utils.InSliceFunc(dsp.Units, func(in *dispatch.DispatchAssignment) bool {
+				return in.UnitId == unitId
+			}) {
+				return nil, status.Error(codes.InvalidArgument, "Dispatch center forbides this interaction")
+			}
 		}
 
 		tDispatchUnit := table.FivenetCentrumDispatchesAsgmts
@@ -354,7 +368,7 @@ func (s *Server) UpdateDispatchStatus(ctx context.Context, req *UpdateDispatchSt
 		return nil, ErrFailedQuery
 	}
 
-	if !s.checkIfUserIsPartOfDispatch(ctx, userInfo, dsp, false) && !userInfo.SuperUser {
+	if !s.checkIfUserIsPartOfDispatch(userInfo, dsp, false) && !userInfo.SuperUser {
 		return nil, ErrNotPartOfDispatch
 	}
 

@@ -465,10 +465,16 @@ export interface StreamResponse {
          */
         dispatchStatus: Dispatch;
     } | {
+        oneofKind: "ping";
+        /**
+         * @generated from protobuf field: string ping = 12;
+         */
+        ping: string;
+    } | {
         oneofKind: undefined;
     };
     /**
-     * @generated from protobuf field: optional bool restart = 12;
+     * @generated from protobuf field: optional bool restart = 13;
      */
     restart?: boolean;
 }
@@ -918,7 +924,8 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
             { no: 9, name: "dispatch_created", kind: "message", oneof: "change", T: () => Dispatch },
             { no: 10, name: "dispatch_updated", kind: "message", oneof: "change", T: () => Dispatch },
             { no: 11, name: "dispatch_status", kind: "message", oneof: "change", T: () => Dispatch },
-            { no: 12, name: "restart", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
+            { no: 12, name: "ping", kind: "scalar", oneof: "change", T: 9 /*ScalarType.STRING*/ },
+            { no: 13, name: "restart", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
 }

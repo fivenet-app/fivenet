@@ -170,13 +170,12 @@ export const useCentrumStore = defineStore('centrum', {
             }
         },
 
-        async startStream(isController?: boolean): Promise<void> {
-            if (this.abort !== undefined) return;
-
+        async startStream(): Promise<void> {
             console.debug('Centrum: Starting Data Stream');
 
             const authStore = useAuthStore();
             const notifications = useNotificationsStore();
+
             try {
                 this.abort = new AbortController();
 
@@ -220,7 +219,7 @@ export const useCentrumStore = defineStore('centrum', {
                         }
                     } else if (resp.change.oneofKind === 'unitAssigned') {
                         // Ignore, doesn't matter for controllers
-                        if (!isController) {
+                        if (!this.isDisponent) {
                             if (this.ownUnit !== undefined && resp.change.unitAssigned.id !== this.ownUnit?.id) {
                                 console.warn('Received unit user assigned event for other unit'), resp.change.unitAssigned;
                                 continue;
@@ -278,6 +277,8 @@ export const useCentrumStore = defineStore('centrum', {
                         } else {
                             this.addOrUpdateDispatch(resp.change.dispatchStatus);
                         }
+                    } else if (resp.change.oneofKind === 'ping') {
+                        console.debug('Centrum: Ping received');
                     } else {
                         console.warn('Centrum: Unknown change received - Kind: ', resp.change.oneofKind, resp.change);
                     }
@@ -289,11 +290,10 @@ export const useCentrumStore = defineStore('centrum', {
                 }
             } catch (e) {
                 this.error = e as RpcError;
-                if (this.error) console.error('Centrum: Data Stream Failed', this.error);
-                if (this.error) console.error('Centrum: Code', this.error.code);
-                if (this.error) console.error('Centrum: Cause', this.error.cause);
-                this.stopStream();
-                // TODO Restart stream automatically if timeout occurs
+                if (this.error)
+                    console.error('Centrum: Data Stream Failed', this.error.code, this.error.message, this.error.cause);
+
+                this.restartStream();
             }
 
             console.debug('Centrum: Data Stream Ended');
@@ -305,6 +305,7 @@ export const useCentrumStore = defineStore('centrum', {
             this.$reset();
         },
         async restartStream(): Promise<void> {
+            console.debug('Centrum: Restarting Data Stream');
             await this.stopStream();
 
             setTimeout(async () => this.startStream(), 250);

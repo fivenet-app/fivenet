@@ -240,7 +240,7 @@ func (s *Server) TakeControl(ctx context.Context, req *TakeControlRequest) (*Tak
 		return nil, err
 	}
 
-	disponents := s.getDisponents(ctx, userInfo.Job)
+	disponents := s.getDisponents(userInfo.Job)
 	change := &DisponentsChange{
 		Job:        userInfo.Job,
 		Disponents: disponents,
@@ -311,8 +311,8 @@ func (s *Server) waitForUserToBeAssignedUnit(srv CentrumService_StreamServer, jo
 }
 
 func (s *Server) sendLatestState(srv CentrumService_StreamServer, job string, userId int32) (uint64, bool, error) {
-	settings := s.getSettings(srv.Context(), job)
-	disponents := s.getDisponents(srv.Context(), job)
+	settings := s.getSettings(job)
+	disponents := s.getDisponents(job)
 	isController := s.checkIfUserIsDisponent(job, userId)
 
 	unitId, _ := s.getUnitIDForUserID(userId)
@@ -405,12 +405,21 @@ func (s *Server) stream(srv CentrumService_StreamServer, isController bool, job 
 		defer sub.Unsubscribe()
 	}
 
+	// Ping ticker to ensure better stream quality
+	ticker := time.NewTicker(20 * time.Second)
+
 	resp := &StreamResponse{}
 	// Watch for events from message queue
 	for {
 		select {
 		case <-srv.Context().Done():
 			return true, nil
+
+		case t := <-ticker.C:
+			resp.Change = &StreamResponse_Ping{
+				Ping: t.String(),
+			}
+
 		case msg := <-msgCh:
 			msg.Ack()
 			topic, tType := s.getEventTypeFromSubject(msg.Subject)

@@ -72,7 +72,7 @@ func (s *Server) checkIfUserIsDisponent(job string, userId int32) bool {
 	return false
 }
 
-func (s *Server) checkIfUserIsPartOfDispatch(ctx context.Context, userInfo *userinfo.UserInfo, dsp *dispatch.Dispatch, disponentOkay bool) bool {
+func (s *Server) checkIfUserIsPartOfDispatch(userInfo *userinfo.UserInfo, dsp *dispatch.Dispatch, disponentOkay bool) bool {
 	// Check if user is a disponent
 	if s.checkIfUserIsDisponent(userInfo.Job, userInfo.UserId) {
 		return true
@@ -103,7 +103,7 @@ func (s *Server) checkIfUserPartOfUnit(userId int32, unit *dispatch.Unit) bool {
 	return false
 }
 
-func (s *Server) getSettings(ctx context.Context, job string) *dispatch.Settings {
+func (s *Server) getSettings(job string) *dispatch.Settings {
 	settings, ok := s.settings.Load(job)
 	if !ok {
 		// Return default settings
@@ -118,7 +118,7 @@ func (s *Server) getSettings(ctx context.Context, job string) *dispatch.Settings
 	return settings
 }
 
-func (s *Server) getDisponents(ctx context.Context, job string) []*users.UserShort {
+func (s *Server) getDisponents(job string) []*users.UserShort {
 	disponents, ok := s.disponents.Load(job)
 	if !ok {
 		return nil

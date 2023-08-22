@@ -4835,6 +4835,18 @@ func (m *StreamResponse) validate(all bool) error {
 			}
 		}
 
+	case *StreamResponse_Ping:
+		if v == nil {
+			err := StreamResponseValidationError{
+				field:  "Change",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+		// no validation rules for Ping
 	default:
 		_ = v // ensures v is used
 	}
