@@ -191,6 +191,7 @@ export const useCentrumStore = defineStore('centrum', {
                 for await (let resp of call.responses) {
                     this.error = undefined;
 
+                    console.log(resp);
                     if (resp === undefined || !resp.change) {
                         continue;
                     }
@@ -281,14 +282,14 @@ export const useCentrumStore = defineStore('centrum', {
 
                     if (resp.restart !== undefined && resp.restart) {
                         this.stopStream();
-                        setTimeout(() => {
-                            this.startStream();
-                        }, 250);
+                        setTimeout(async () => this.startStream(), 250);
                     }
                 }
             } catch (e) {
                 this.error = e as RpcError;
                 if (this.error) console.error('Centrum: Data Stream Failed', this.error);
+                if (this.error) console.error('Centrum: Code', this.error.code);
+                if (this.error) console.error('Centrum: Cause', this.error.cause);
                 this.stopStream();
                 // TODO Restart stream automatically if timeout occurs
             }

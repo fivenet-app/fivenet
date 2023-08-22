@@ -22,16 +22,13 @@ import { default as UnitStatusUpdateModal } from './units/StatusUpdateModal.vue'
 const centrumStore = useCentrumStore();
 const { error, abort, isDisponent, disponents, settings, feed } = storeToRefs(centrumStore);
 const { startStream, stopStream } = centrumStore;
+
 const livemapStore = useLivemapStore();
 const { location } = storeToRefs(livemapStore);
 
-onMounted(() => {
-    startStream();
-});
+onMounted(async () => startStream());
 
-onBeforeUnmount(() => {
-    stopStream();
-});
+onBeforeUnmount(() => stopStream());
 
 function goto(e: Coordinate) {
     location.value = { x: e.x, y: e.y };

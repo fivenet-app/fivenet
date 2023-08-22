@@ -66,18 +66,11 @@ const actionsUnit: {
     { icon: markRaw(ListStatusIcon), name: 'Update Status', class: 'bg-base-800' },
 ];
 
-onMounted(() => {
-    startStream();
-});
+onMounted(async () => startStream());
 
-onBeforeUnmount(() => {
-    stopStream();
-});
+onBeforeUnmount(() => stopStream());
 
 const selectUnitOpen = ref(false);
-
-const unitStatusOpen = ref(false);
-const unitStatusSelected = ref<UNIT_STATUS | undefined>();
 
 // TODO add function to set the active dispatch (last clicked and manually selected)
 const dispatchStatusSelected = ref<DISPATCH_STATUS | undefined>();
@@ -88,6 +81,7 @@ const openDispatchAssign = ref(false);
 const openDispatchStatus = ref(false);
 const openTakeDispatch = ref(false);
 
+const unitStatusSelected = ref<UNIT_STATUS | undefined>();
 const openUnitDetails = ref(false);
 const openUnitAssign = ref(false);
 const openUnitStatus = ref(false);
@@ -107,16 +101,6 @@ const canStream = can('CentrumService.Stream');
         </template>
         <template v-slot:afterMap v-if="canStream">
             <div class="lg:inset-y-0 lg:flex lg:w-50 lg:flex-col">
-                <!-- Own Unit Modals -->
-                <template v-if="ownUnit">
-                    <UnitStatusUpdateModal
-                        :open="unitStatusOpen"
-                        @close="unitStatusOpen = false"
-                        :unit="ownUnit"
-                        :status="unitStatusSelected"
-                    />
-                </template>
-
                 <!-- Dispatch -->
                 <TakeDispatch :open="openTakeDispatch" @close="openTakeDispatch = false" @goto="$emit('goto', $event)" />
 
@@ -176,6 +160,8 @@ const canStream = can('CentrumService.Stream');
                                                 :ownUnit="ownUnit"
                                                 :open="openUnitDetails"
                                                 @close="openUnitDetails = false"
+                                                @assign-users="openUnitAssign = true"
+                                                @status="openUnitStatus = true"
                                             />
                                             <AssignUnitModal
                                                 :open="openUnitAssign"
@@ -186,6 +172,7 @@ const canStream = can('CentrumService.Stream');
                                                 :open="openUnitStatus"
                                                 :unit="ownUnit"
                                                 @close="openUnitStatus = false"
+                                                :status="unitStatusSelected"
                                             />
                                         </template>
                                         <button
@@ -242,7 +229,7 @@ const canStream = can('CentrumService.Stream');
                                                                 ]"
                                                                 @click="
                                                                     unitStatusSelected = item.status;
-                                                                    unitStatusOpen = true;
+                                                                    openUnitStatus = true;
                                                                 "
                                                             >
                                                                 <component

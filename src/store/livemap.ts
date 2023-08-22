@@ -51,7 +51,7 @@ export const useLivemapStore = defineStore('livemap', {
                 for await (let resp of call.responses) {
                     this.error = undefined;
 
-                    if (resp === undefined || !resp.jobsDispatches || !resp.jobsDispatches) {
+                    if (resp === undefined || !resp.jobsUsers) {
                         continue;
                     }
 

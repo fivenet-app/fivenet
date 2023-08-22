@@ -39,7 +39,7 @@ const playerMarkersFiltered = computed(() =>
     markers.value.users.filter((m) => (m.user?.firstname + ' ' + m.user?.lastname).includes(playerQuery.value)),
 );
 
-onBeforeMount(async () => startStream());
+onMounted(async () => startStream());
 
 onBeforeUnmount(() => stopStream());
 </script>
