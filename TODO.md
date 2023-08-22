@@ -6,3 +6,5 @@
     - [ ] Livemap - Show Panic buttons and Sperrzonen
     - [ ] Translate Activity Feed items
     - [ ] Add more errors and translate them
+- [ ] Document Editor - src/components/documents/templates/Editor.vue
+    - [ ] Use vee-validate where possible

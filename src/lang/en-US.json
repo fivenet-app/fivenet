@@ -1055,7 +1055,39 @@
             }
         },
         "CentrumService": {
-            "category": "Dispatch Center"
+            "category": "Dispatch Center",
+            "CreateDispatch": {
+                "key": "Create Dispatches",
+                "description": "Create new dispatches via the Livemap/ Dispatch Center."
+            },
+            "Stream": {
+                "key": "Access to Dispatches and Units.",
+                "description": "Basic access required to see dispatches."
+            },
+            "UpdateDispatch": {
+                "key": "Update Dispatches",
+                "description": "Updating dispatches information."
+            },
+            "CreateOrUpdateUnit": {
+                "key": "Create and Update Units",
+                "description": "Allows to create and update units via the control panel."
+            },
+            "DeleteUnit": {
+                "key": "Delete Units",
+                "description": "Allows to delete units via the control panel."
+            },
+            "TakeDispatch": {
+                "key": "Take Dispatches",
+                "description": "Basic access to allow an user to take dispatches."
+            },
+            "TakeControl": {
+                "key": "Join Dispatch Center",
+                "description": "Allows an user to join and act in the dispatch center."
+            },
+            "UpdateSettings": {
+                "key": "Update Dispatch Center Settings",
+                "description": "Allows to update the dispatch center settings via the control panel."
+            }
         }
     },
     "attrs": {

@@ -191,7 +191,6 @@ export const useCentrumStore = defineStore('centrum', {
                 for await (let resp of call.responses) {
                     this.error = undefined;
 
-                    console.log(resp);
                     if (resp === undefined || !resp.change) {
                         continue;
                     }
@@ -214,7 +213,10 @@ export const useCentrumStore = defineStore('centrum', {
                         // If user is not part of disponents list anymore
                         const idx = this.disponents.findIndex((d) => d.userId === authStore.activeChar?.userId);
                         if (idx === -1) {
-                            this.stopStream();
+                            this.isDisponent = false;
+
+                            this.restartStream();
+                            break;
                         }
                     } else if (resp.change.oneofKind === 'unitAssigned') {
                         // Ignore, doesn't matter for controllers
@@ -281,8 +283,8 @@ export const useCentrumStore = defineStore('centrum', {
                     }
 
                     if (resp.restart !== undefined && resp.restart) {
-                        this.stopStream();
-                        setTimeout(async () => this.startStream(), 250);
+                        this.restartStream();
+                        break;
                     }
                 }
             } catch (e) {
@@ -301,6 +303,11 @@ export const useCentrumStore = defineStore('centrum', {
             if (this.abort) this.abort.abort();
             this.abort = undefined;
             this.$reset();
+        },
+        async restartStream(): Promise<void> {
+            await this.stopStream();
+
+            setTimeout(async () => this.startStream(), 250);
         },
     },
 });

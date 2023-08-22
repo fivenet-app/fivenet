@@ -74,7 +74,7 @@ defineProps<{
                 <div class="mt-2 flex flex-row gap-2 text-base-200">
                     <div class="flex flex-row items-center justify-start flex-1">
                         <AccountIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400" aria-hidden="true" />
-                        {{ doc.creator?.firstname }},
+                        {{ doc.creator?.firstname }}
                         {{ doc.creator?.lastname }}
                     </div>
                     <div class="flex flex-row items-center justify-center flex-1">

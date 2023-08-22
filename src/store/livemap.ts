@@ -1,8 +1,8 @@
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { StoreDefinition, defineStore } from 'pinia';
-import { Job } from '../../gen/ts/resources/jobs/jobs';
-import { UserMarker } from '../../gen/ts/resources/livemap/livemap';
-import { LivemapperServiceClient } from '../../gen/ts/services/livemapper/livemap.client';
+import { Job } from '~~/gen/ts/resources/jobs/jobs';
+import { UserMarker } from '~~/gen/ts/resources/livemap/livemap';
+import { LivemapperServiceClient } from '~~/gen/ts/services/livemapper/livemap.client';
 
 export interface LivemapState {
     error: RpcError | undefined;

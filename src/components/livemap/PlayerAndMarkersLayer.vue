@@ -39,9 +39,9 @@ const playerMarkersFiltered = computed(() =>
     markers.value.users.filter((m) => (m.user?.firstname + ' ' + m.user?.lastname).includes(playerQuery.value)),
 );
 
-onMounted(async () => startStream());
+onBeforeMount(async () => startStream());
 
-onBeforeUnmount(() => stopStream());
+onBeforeUnmount(async () => stopStream());
 </script>
 
 <template>
@@ -57,7 +57,7 @@ onBeforeUnmount(() => stopStream());
             :key="marker.marker!.id?.toString()"
             :marker="marker"
             :active-char="activeChar"
-            @select="$emit('markerSelected', marker)"
+            @selected="$emit('markerSelected', marker)"
             :size="livemap.markerSize"
         />
     </LLayerGroup>

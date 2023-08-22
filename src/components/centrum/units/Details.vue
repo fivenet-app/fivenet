@@ -3,19 +3,23 @@ import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } fro
 import { AccountIcon, CloseIcon, PencilIcon } from 'mdi-vue3';
 import Time from '~/components/partials/elements/Time.vue';
 import { UNIT_STATUS, Unit } from '~~/gen/ts/resources/dispatch/units';
+import AssignUnitModal from './AssignUnitModal.vue';
 import Feed from './Feed.vue';
+import StatusUpdateModal from './StatusUpdateModal.vue';
 
 defineProps<{
     open: boolean;
     unit: Unit;
+    statusSelected?: UNIT_STATUS;
 }>();
 
 defineEmits<{
     (e: 'close'): void;
     (e: 'goto', loc: Coordinate): void;
-    (e: 'assignUsers', unit: Unit): void;
-    (e: 'status', unit: Unit): void;
 }>();
+
+const openAssign = ref(false);
+const openStatus = ref(false);
 </script>
 
 <template>
@@ -82,6 +86,13 @@ defineEmits<{
                                                             <dd
                                                                 class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
                                                             >
+                                                                <StatusUpdateModal
+                                                                    :open="openStatus"
+                                                                    :unit="unit"
+                                                                    @close="openStatus = false"
+                                                                    :status="statusSelected"
+                                                                />
+
                                                                 <button
                                                                     type="button"
                                                                     @click="$emit('status', unit)"
@@ -171,6 +182,13 @@ defineEmits<{
                                                                         </div>
                                                                     </li>
                                                                 </ul>
+
+                                                                <AssignUnitModal
+                                                                    :open="openAssign"
+                                                                    :unit="unit"
+                                                                    @close="openAssign = false"
+                                                                />
+
                                                                 <button
                                                                     v-if="can('CentrumService.TakeControl')"
                                                                     type="button"

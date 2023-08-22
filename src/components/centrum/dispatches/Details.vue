@@ -1,10 +1,14 @@
 <script lang="ts" setup>
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
-import { AccountIcon, CloseIcon, PencilIcon } from 'mdi-vue3';
+import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
+import { AccountIcon, CloseIcon, PencilIcon, PlusIcon } from 'mdi-vue3';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import Time from '~/components/partials/elements/Time.vue';
 import { DISPATCH_STATUS, Dispatch } from '~~/gen/ts/resources/dispatch/dispatches';
+import { TAKE_DISPATCH_RESP } from '~~/gen/ts/services/centrum/centrum';
+import AssignDispatchModal from './AssignDispatchModal.vue';
 import Feed from './Feed.vue';
+import StatusUpdateModal from './StatusUpdateModal.vue';
 
 defineProps<{
     open: boolean;
@@ -14,9 +18,30 @@ defineProps<{
 defineEmits<{
     (e: 'close'): void;
     (e: 'goto', loc: Coordinate): void;
-    (e: 'assignUnit', dsp: Dispatch): void;
-    (e: 'status', dsp: Dispatch): void;
 }>();
+
+const { $grpc } = useNuxtApp();
+
+async function selfAssign(dispatch: Dispatch): Promise<void> {
+    return new Promise(async (res, rej) => {
+        try {
+            const call = $grpc.getCentrumClient().takeDispatch({
+                dispatchIds: [dispatch.id],
+                resp: TAKE_DISPATCH_RESP.ACCEPTED,
+            });
+            await call;
+
+            return res();
+        } catch (e) {
+            $grpc.handleError(e as RpcError);
+            return rej(e as RpcError);
+        }
+    });
+}
+
+const openAssign = ref(false);
+const openStatus = ref(false);
+const openSelfAssign = ref(false);
 </script>
 
 <template>
@@ -84,9 +109,15 @@ defineEmits<{
                                                             <dd
                                                                 class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
                                                             >
+                                                                <StatusUpdateModal
+                                                                    v-if="openStatus"
+                                                                    :open="openStatus"
+                                                                    :dispatch="dispatch"
+                                                                    @close="openStatus = false"
+                                                                />
                                                                 <button
                                                                     type="button"
-                                                                    @click="$emit('status', dispatch)"
+                                                                    @click="openStatus = true"
                                                                     class="rounded bg-white/10 px-2 py-1 text-xs font-semibold text-white shadow-sm hover:bg-white/20"
                                                                 >
                                                                     {{
@@ -192,13 +223,29 @@ defineEmits<{
                                                                         </div>
                                                                     </li>
                                                                 </ul>
+
+                                                                <AssignDispatchModal
+                                                                    v-if="openAssign"
+                                                                    :open="openAssign"
+                                                                    :dispatch="dispatch"
+                                                                    @close="openAssign = false"
+                                                                />
+
                                                                 <button
                                                                     v-if="can('CentrumService.TakeControl')"
                                                                     type="button"
-                                                                    @click="$emit('assignUnit', dispatch)"
+                                                                    @click="openAssign = true"
                                                                     class="ml-2 rounded bg-white/10 px-2 py-1 text-xs font-semibold text-white shadow-sm hover:bg-white/20"
                                                                 >
                                                                     <PencilIcon class="h-6 w-6" />
+                                                                </button>
+                                                                <button
+                                                                    v-if="can('CentrumService.TakeDispatch')"
+                                                                    type="button"
+                                                                    @click="openSelfAssign = true"
+                                                                    class="ml-2 rounded bg-white/10 px-2 py-1 text-xs font-semibold text-white shadow-sm hover:bg-white/20"
+                                                                >
+                                                                    <PlusIcon class="h-6 w-6" />
                                                                 </button>
                                                             </dd>
                                                         </div>

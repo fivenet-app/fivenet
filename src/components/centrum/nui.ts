@@ -8,7 +8,7 @@ function getParentResourceName(): string {
 }
 
 export async function setWaypoint(x: number, y: number): Promise<void> {
-    if (checkForNUI()) return;
+    if (!checkForNUI()) return;
 
     return await fetchNui('setWaypoint', { loc: { x: x, y: y } });
 }

@@ -204,7 +204,7 @@ onBeforeUnmount(() => {
 </style>
 
 <template>
-    <div ref="mapContainer" class="h-full flex flex-row">
+    <div ref="mapContainer" class="h-full flex flex-row" :style="{ backgroundColor }">
         <LMap
             class="z-0"
             v-model:zoom="zoom"
@@ -214,7 +214,7 @@ onBeforeUnmount(() => {
             :max-zoom="6"
             @click="selectedMarker = undefined"
             :inertia="false"
-            :style="{ backgroundColor }"
+            :style="{ backgroundColor: 'rgba(0,0,0,0.0)' }"
             @ready="onMapReady($event)"
             :use-global-leaflet="true"
             :options="mapOptions"

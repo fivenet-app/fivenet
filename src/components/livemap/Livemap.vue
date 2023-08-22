@@ -67,10 +67,6 @@ async function applySelectedMarkerCentering(): Promise<void> {
 
     location.value = { x: selectedMarker.value.x, y: selectedMarker.value.y };
 }
-
-onBeforeUnmount(() => {
-    stopStream();
-});
 </script>
 
 <template>

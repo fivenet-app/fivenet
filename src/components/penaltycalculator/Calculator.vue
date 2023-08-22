@@ -267,7 +267,7 @@ ${t('common.crime', selectedPenalties.value.length)}:
                                                             :count="
                                                                 selectedPenalties.find((p) => p.law.id === law.id)?.count ?? 0n
                                                             "
-                                                            @select="calculate($event)"
+                                                            @selected="calculate($event)"
                                                         />
                                                     </tbody>
                                                 </table>

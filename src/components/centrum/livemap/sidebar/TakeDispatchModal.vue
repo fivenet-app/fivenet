@@ -4,11 +4,13 @@ import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { CarEmergencyIcon, CloseIcon } from 'mdi-vue3';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import { useCentrumStore } from '~/store/centrum';
+import { Dispatch } from '~~/gen/ts/resources/dispatch/dispatches';
 import { TAKE_DISPATCH_RESP } from '~~/gen/ts/services/centrum/centrum';
 import TakeDispatchEntry from './TakeDispatchEntry.vue';
 
 defineProps<{
     open: boolean;
+    dispatch?: Dispatch;
 }>();
 
 const emits = defineEmits<{
@@ -101,9 +103,15 @@ function selectDispatch(id: bigint): void {
                                                 <div class="mt-1">
                                                     <dl class="border-b border-white/10 divide-y divide-white/10">
                                                         <DataNoDataBlock
-                                                            v-if="pendingDispatches.length === 0"
+                                                            v-if="pendingDispatches.length === 0 && dispatch === undefined"
                                                             :icon="CarEmergencyIcon"
                                                             :type="$t('common.dispatch', 2)"
+                                                        />
+                                                        <TakeDispatchEntry
+                                                            v-if="dispatch"
+                                                            :dispatch="dispatch"
+                                                            @selected="selectDispatch(dispatch.id)"
+                                                            @goto="$emit('goto', $event)"
                                                         />
                                                         <template v-else>
                                                             <TakeDispatchEntry

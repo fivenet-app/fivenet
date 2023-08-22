@@ -8,7 +8,7 @@ defineProps<{
 }>();
 
 defineEmits<{
-    (e: 'select', idx: number): void;
+    (e: 'selected', idx: number): void;
 }>();
 </script>
 
@@ -35,7 +35,7 @@ defineEmits<{
                         <component :is="item.icon" class="h-auto w-7" aria-hidden="true" />
                     </span>
                 </div>
-                <div class="mt-4" @click="$emit('select', itemIdx)">
+                <div class="mt-4" @click="$emit('selected', itemIdx)">
                     <h3 class="text-base font-semibold leading-6 text-neutral">
                         <span v-if="item.href">
                             <NuxtLink :to="item.href" class="focus:outline-none">

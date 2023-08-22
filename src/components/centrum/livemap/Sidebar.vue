@@ -16,15 +16,11 @@ import {
 } from 'mdi-vue3';
 import { DefineComponent } from 'vue';
 import { default as DispatchDetails } from '~/components/centrum/dispatches/Details.vue';
-import { default as DispatchStatusUpdateModal } from '~/components/centrum/dispatches/StatusUpdateModal.vue';
 import { dispatchStatusToBGColor } from '~/components/centrum/helpers';
 import { default as UnitDetails } from '~/components/centrum/units/Details.vue';
-import { default as UnitStatusUpdateModal } from '~/components/centrum/units/StatusUpdateModal.vue';
 import { useCentrumStore } from '~/store/centrum';
 import { DISPATCH_STATUS, Dispatch } from '~~/gen/ts/resources/dispatch/dispatches';
 import { UNIT_STATUS } from '~~/gen/ts/resources/dispatch/units';
-import AssignDispatchModal from '../dispatches/AssignDispatchModal.vue';
-import AssignUnitModal from '../units/AssignUnitModal.vue';
 import DispatchesLayer from './DispatchesLayer.vue';
 import DispatchEntry from './sidebar/DispatchEntry.vue';
 import JoinUnit from './sidebar/JoinUnitModal.vue';
@@ -66,9 +62,9 @@ const actionsUnit: {
     { icon: markRaw(ListStatusIcon), name: 'Update Status', class: 'bg-base-800' },
 ];
 
-onMounted(async () => startStream());
+onBeforeMount(async () => setTimeout(async () => startStream(), 250));
 
-onBeforeUnmount(() => stopStream());
+onBeforeUnmount(async () => stopStream());
 
 const selectUnitOpen = ref(false);
 
@@ -77,13 +73,10 @@ const dispatchStatusSelected = ref<DISPATCH_STATUS | undefined>();
 
 const selectedDispatch = ref<Dispatch | undefined>();
 const openDispatchDetails = ref(false);
-const openDispatchAssign = ref(false);
-const openDispatchStatus = ref(false);
 const openTakeDispatch = ref(false);
 
 const unitStatusSelected = ref<UNIT_STATUS | undefined>();
 const openUnitDetails = ref(false);
-const openUnitAssign = ref(false);
 const openUnitStatus = ref(false);
 
 const canStream = can('CentrumService.Stream');
@@ -93,7 +86,7 @@ const canStream = can('CentrumService.Stream');
     <Livemap>
         <template v-slot:default v-if="canStream">
             <DispatchesLayer
-                @select="
+                @selected="
                     selectedDispatch = $event;
                     openDispatchDetails = true;
                 "
@@ -102,7 +95,12 @@ const canStream = can('CentrumService.Stream');
         <template v-slot:afterMap v-if="canStream">
             <div class="lg:inset-y-0 lg:flex lg:w-50 lg:flex-col">
                 <!-- Dispatch -->
-                <TakeDispatch :open="openTakeDispatch" @close="openTakeDispatch = false" @goto="$emit('goto', $event)" />
+                <TakeDispatch
+                    v-if="ownUnit"
+                    :open="openTakeDispatch"
+                    @close="openTakeDispatch = false"
+                    @goto="$emit('goto', $event)"
+                />
 
                 <template v-if="selectedDispatch">
                     <DispatchDetails
@@ -110,24 +108,6 @@ const canStream = can('CentrumService.Stream');
                         :open="openDispatchDetails"
                         @close="openDispatchDetails = false"
                         @goto="$emit('goto', $event)"
-                        @assign-unit="
-                            selectedDispatch = $event;
-                            openDispatchAssign = true;
-                        "
-                        @status="
-                            selectedDispatch = $event;
-                            openDispatchStatus = true;
-                        "
-                    />
-                    <AssignDispatchModal
-                        :open="openDispatchAssign"
-                        :dispatch="selectedDispatch"
-                        @close="openDispatchAssign = false"
-                    />
-                    <DispatchStatusUpdateModal
-                        :open="openDispatchStatus"
-                        :dispatch="selectedDispatch"
-                        @close="openDispatchStatus = false"
                     />
                 </template>
 
@@ -160,19 +140,6 @@ const canStream = can('CentrumService.Stream');
                                                 :ownUnit="ownUnit"
                                                 :open="openUnitDetails"
                                                 @close="openUnitDetails = false"
-                                                @assign-users="openUnitAssign = true"
-                                                @status="openUnitStatus = true"
-                                            />
-                                            <AssignUnitModal
-                                                :open="openUnitAssign"
-                                                :unit="ownUnit"
-                                                @close="openUnitAssign = false"
-                                            />
-                                            <UnitStatusUpdateModal
-                                                :open="openUnitStatus"
-                                                :unit="ownUnit"
-                                                @close="openUnitStatus = false"
-                                                :status="unitStatusSelected"
                                             />
                                         </template>
                                         <button

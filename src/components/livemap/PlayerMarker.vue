@@ -16,7 +16,7 @@ const props = withDefaults(
 );
 
 defineEmits<{
-    (e: 'select'): void;
+    (e: 'selected'): void;
 }>();
 
 if (props.activeChar !== null && props.marker.user?.userId === props.activeChar.userId) {
@@ -46,7 +46,7 @@ const icon = new L.DivIcon({
         :latLng="[marker.marker!.y, marker.marker!.x]"
         :name="marker.marker!.name"
         :icon="icon"
-        @click="$emit('select')"
+        @click="$emit('selected')"
         :z-index-offset="activeChar && marker.user?.identifier === activeChar.identifier ? 25 : 20"
     >
         <LPopup :options="{ closeButton: true }">

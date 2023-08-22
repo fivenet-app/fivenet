@@ -16,7 +16,7 @@ const props = withDefaults(
 );
 
 const emits = defineEmits<{
-    (e: 'select', dsp: Dispatch): void;
+    (e: 'selected', dsp: Dispatch): void;
 }>();
 
 const status = props.dispatch.status?.status ?? 0;
@@ -25,7 +25,7 @@ const iconAnchor: L.PointExpression | undefined = undefined;
 const popupAnchor: L.PointExpression = [0, (props.size / 2) * -1];
 
 function selected(_: bigint | string) {
-    emits('select', props.dispatch);
+    emits('selected', props.dispatch);
 }
 </script>
 

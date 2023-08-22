@@ -10,7 +10,7 @@ defineProps<{
 }>();
 
 defineEmits<{
-    (e: 'select', dsp: Dispatch): void;
+    (e: 'selected', dsp: Dispatch): void;
 }>();
 
 const centrumStore = useCentrumStore();
@@ -29,7 +29,7 @@ const dispatchesFiltered = computed(() =>
         <DispatchMarker
             v-for="dispatch in ownDispatches"
             :dispatch="dispatch"
-            @select="$emit('select', $event)"
+            @selected="$emit('selected', $event)"
             :size="livemap.markerSize"
         />
     </LLayerGroup>
@@ -39,7 +39,7 @@ const dispatchesFiltered = computed(() =>
             v-for="dispatch in dispatchesFiltered.filter((d) => !ownDispatches.includes(d))"
             :key="dispatch.id.toString()"
             :dispatch="dispatch"
-            @select="$emit('select', $event)"
+            @selected="$emit('selected', $event)"
             :size="livemap.markerSize"
         />
     </LLayerGroup>

@@ -26,9 +26,9 @@ const { startStream, stopStream } = centrumStore;
 const livemapStore = useLivemapStore();
 const { location } = storeToRefs(livemapStore);
 
-onMounted(async () => startStream());
+onBeforeMount(async () => setTimeout(async () => startStream(), 250));
 
-onBeforeUnmount(() => stopStream());
+onBeforeUnmount(async () => stopStream());
 
 function goto(e: Coordinate) {
     location.value = { x: e.x, y: e.y };
@@ -69,7 +69,7 @@ const openUnitStatus = ref(false);
                     <Livemap>
                         <template v-slot:default>
                             <DispatchesLayer
-                                @select="
+                                @selected="
                                     selectedDispatch = $event;
                                     openDispatchDetails = true;
                                 "
