@@ -8,7 +8,7 @@ RUN rm -rf ./.nuxt/ && \
 FROM docker.io/library/golang:1.21 AS gobuilder
 WORKDIR /go/src/github.com/galexrt/fivenet/
 COPY . ./
-RUN make go-build
+RUN make build-go
 
 FROM docker.io/library/alpine:3.18.3
 WORKDIR /app

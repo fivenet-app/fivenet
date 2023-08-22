@@ -322,6 +322,7 @@ nats:
     merge:
       accounts:
         fivenet:
+          jetstream: enabled
           users:
             # You should change the username and password
             - user: "fivenet"

@@ -2,10 +2,7 @@
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 import { ChevronDownIcon } from 'mdi-vue3';
 import Footer from '~/components/partials/Footer.vue';
-import licensesBackend from '~/static/licenses/backend.txt?raw';
-import licensesFrontend from '~/static/licenses/frontend.txt?raw';
-import licensesSounds from '~/static/licenses/sounds.txt?raw';
-import licenseFiveNet from '~~/LICENSE?raw';
+import LicenseHolder from '~/components/partials/LicenseHolder.vue';
 
 useHead({
     title: 'common.licenses',
@@ -19,19 +16,19 @@ definePageMeta({
 const licenses = [
     {
         title: 'FiveNet License',
-        content: licenseFiveNet,
+        path: '/licenses/LICENSE',
     },
     {
         title: 'Frontend Licenses',
-        content: licensesFrontend,
+        path: '/licenses/frontend.txt',
     },
     {
         title: 'Sounds Licenses',
-        content: licensesSounds,
+        path: '/licenses/sounds.txt',
     },
     {
         title: 'Backend Licenses',
-        content: licensesBackend,
+        path: '/licenses/backend.txt',
     },
 ];
 </script>
@@ -69,10 +66,7 @@ const licenses = [
                                 </dt>
                                 <DisclosurePanel as="dd" class="mt-2 pr-12">
                                     <p class="max-w-full">
-                                        <code
-                                            class="max-w-full mt-2 p-4 whitespace-pre-line block bg-white text-black"
-                                            v-text="license.content"
-                                        ></code>
+                                        <LicenseHolder v-if="open" :path="license.path" />
                                     </p>
                                 </DisclosurePanel>
                             </Disclosure>

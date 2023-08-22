@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/discord"
@@ -41,6 +42,8 @@ func main() {
 		fx.WithLogger(func(log *zap.Logger) fxevent.Logger {
 			return &fxevent.ZapLogger{Logger: log}
 		}),
+		fx.StartTimeout(40*time.Second),
+
 		LoggerModule,
 		config.Module,
 		server.HTTPServerModule,

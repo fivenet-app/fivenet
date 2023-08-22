@@ -19,6 +19,8 @@ var (
 )
 
 func (s *Server) ConvertPhoneJobMsgToDispatch() error {
+	return nil
+
 	for {
 		if err := s.convertPhoneJobMsgToDispatch(); err != nil {
 			s.logger.Error("failed to convert gksphone job messages to dispatches", zap.Error(err))
@@ -36,7 +38,6 @@ func (s *Server) convertPhoneJobMsgToDispatch() error {
 			tGksPhoneJMsg.Anon,
 			tGksPhoneJMsg.Gps,
 			tGksPhoneJMsg.Message,
-			tGksPhoneJMsg.Time,
 			tUsers.ID.AS("userid"),
 		).
 		FROM(
@@ -51,6 +52,9 @@ func (s *Server) convertPhoneJobMsgToDispatch() error {
 		WHERE(jet.AND(
 			tGksPhoneJMsg.Jobm.REGEXP_LIKE(jet.String("\\[\"("+strings.Join(s.visibleJobs, "|")+")\"\\]")),
 			tGksPhoneJMsg.Owner.EQ(jet.Int32(0)),
+			tGksPhoneJMsg.Time.LT_EQ(
+				jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(10, jet.MINUTE)),
+			),
 		))
 
 	var dest []struct {
