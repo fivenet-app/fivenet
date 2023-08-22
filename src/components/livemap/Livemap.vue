@@ -5,6 +5,7 @@ import 'leaflet-contextmenu';
 import 'leaflet-contextmenu/dist/leaflet.contextmenu.min.css';
 import 'leaflet/dist/leaflet.css';
 import CreateOrUpdateModal from '~/components/centrum/dispatches/CreateOrUpdateModal.vue';
+import { checkForNUI, setWaypoint } from '~/components/centrum/nui';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { useLivemapStore } from '~/store/livemap';
@@ -44,8 +45,13 @@ if (can('CentrumService.CreateDispatch')) {
         callback: (e: LeafletMouseEvent) => {
             location.value = { x: e.latlng.lng, y: e.latlng.lat };
             openCreateDispatch.value = true;
-            console.log(e);
         },
+    });
+}
+if (checkForNUI()) {
+    mapOptions.contextmenuItems.push({
+        text: t('components.centrum.livemap.mark_on_gps'),
+        callback: (e: LeafletMouseEvent) => setWaypoint(e.latlng.lng, e.latlng.lat),
     });
 }
 
@@ -79,10 +85,6 @@ onBeforeUnmount(() => {
         </div>
         <BaseMap :map-options="mapOptions">
             <template v-slot:default>
-                <LControl position="bottomleft">
-                    <PostalSearch />
-                </LControl>
-
                 <LControl position="bottomright">
                     <div class="form-control flex flex-col gap-2">
                         <Settings />
@@ -92,6 +94,10 @@ onBeforeUnmount(() => {
                 <PlayerAndMarkersLayer @marker-selected="selectedMarker = $event.marker" />
 
                 <slot />
+
+                <LControl position="topleft">
+                    <PostalSearch />
+                </LControl>
             </template>
 
             <template v-slot:afterMap>

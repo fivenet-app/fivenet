@@ -233,7 +233,7 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 	}
 
 	msgCh := make(chan *nats.Msg, 8)
-	sub, err := s.events.JS.ChanSubscribe(fmt.Sprintf("%s.%s.%d", notifi.BaseSubject, notifi.UserNotification, currentUserInfo.UserId), msgCh)
+	sub, err := s.events.JS.ChanSubscribe(fmt.Sprintf("%s.%s.%d", notifi.BaseSubject, notifi.UserNotification, currentUserInfo.UserId), msgCh, nats.DeliverNew())
 	if err != nil {
 		return err
 	}

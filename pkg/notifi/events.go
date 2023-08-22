@@ -3,6 +3,7 @@ package notifi
 import (
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/galexrt/fivenet/pkg/events"
 	"github.com/nats-io/nats.go"
@@ -19,6 +20,8 @@ func (n *Notifi) registerEvents() error {
 		Name:      "NOTIFI",
 		Retention: nats.InterestPolicy,
 		Subjects:  []string{fmt.Sprintf("%s.>", BaseSubject)},
+		Discard:   nats.DiscardOld,
+		MaxAge:    30 * time.Minute,
 	}
 
 	if _, err := n.events.JS.AddStream(cfg); err != nil {

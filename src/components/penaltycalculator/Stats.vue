@@ -4,8 +4,6 @@ import { PenaltiesSummary } from './Calculator.vue';
 const props = defineProps<{
     summary: PenaltiesSummary;
 }>();
-
-watch(props, () => console.log(props.summary));
 </script>
 
 <template>

@@ -380,6 +380,9 @@
                 "starting_datastream": "Starting Dispatch Center data stream...",
                 "failed_datastream": "Failed to stream Dispatch Center data!",
                 "join_center": "Join the dispatch center, by clicking here."
+            },
+            "livemap": {
+                "mark_on_gps": "Mark on GPS"
             }
         }
     },

@@ -1,5 +1,6 @@
+// When `GetParentResourceName` is not undefined, we should have NUI access
 export function checkForNUI(): boolean {
-    return typeof (window as any).GetParentResourceName === 'undefined';
+    return typeof (window as any).GetParentResourceName !== 'undefined';
 }
 
 function getParentResourceName(): string {

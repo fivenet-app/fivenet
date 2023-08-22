@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"strings"
+	"time"
 
 	dispatch "github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
 	"github.com/galexrt/fivenet/pkg/events"
@@ -35,6 +36,8 @@ func (s *Server) registerEvents() error {
 		Name:      "CENTRUM",
 		Retention: nats.InterestPolicy,
 		Subjects:  []string{fmt.Sprintf("%s.>", BaseSubject)},
+		Discard:   nats.DiscardOld,
+		MaxAge:    30 * time.Second,
 	}
 
 	if _, err := s.events.JS.AddStream(cfg); err != nil {
@@ -75,6 +78,11 @@ func (s *Server) broadcastToAllUnits(topic events.Topic, tType events.Type, job 
 	s.events.JS.Publish(s.buildSubject(topic, tType, job, 0), data)
 
 	units.Range(func(key uint64, unit *dispatch.Unit) bool {
+		// Skip empty units
+		if len(unit.Users) == 0 {
+			return true
+		}
+
 		s.events.JS.Publish(s.buildSubject(topic, tType, job, unit.Id), data)
 		return true
 	})

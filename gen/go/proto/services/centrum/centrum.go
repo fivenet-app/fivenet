@@ -241,6 +241,7 @@ func (s *Server) TakeControl(ctx context.Context, req *TakeControlRequest) (*Tak
 
 	disponents := s.getDisponents(ctx, userInfo.Job)
 	change := &DisponentsChange{
+		Job:        userInfo.Job,
 		Disponents: disponents,
 	}
 	data, err := proto.Marshal(change)
@@ -256,14 +257,14 @@ func (s *Server) TakeControl(ctx context.Context, req *TakeControlRequest) (*Tak
 
 func (s *Server) waitForUserToBeAssignedUnit(srv CentrumService_StreamServer, job string, userId int32) (uint64, error) {
 	assignedMSGCh := make(chan *nats.Msg, 8)
-	sub, err := s.events.JS.ChanSubscribe(fmt.Sprintf("%s.%s.%s.%s.%d", BaseSubject, job, TopicUnit, TypeUnitUserAssigned, 0), assignedMSGCh)
+	sub, err := s.events.JS.ChanSubscribe(fmt.Sprintf("%s.%s.%s.%s.%d", BaseSubject, job, TopicUnit, TypeUnitUserAssigned, 0), assignedMSGCh, nats.DeliverNew())
 	if err != nil {
 		return 0, err
 	}
 	defer sub.Unsubscribe()
 
 	disponentsMSGCh := make(chan *nats.Msg, 8)
-	disponentsSub, err := s.events.JS.ChanSubscribe(fmt.Sprintf("%s.%s.%s.%s.%d", BaseSubject, job, TopicGeneral, TypeGeneralDisponents, 0), disponentsMSGCh)
+	disponentsSub, err := s.events.JS.ChanSubscribe(fmt.Sprintf("%s.%s.%s.%s.%d", BaseSubject, job, TopicGeneral, TypeGeneralDisponents, 0), disponentsMSGCh, nats.DeliverNew())
 	if err != nil {
 		return 0, err
 	}
@@ -389,14 +390,14 @@ func (s *Server) Stream(req *StreamRequest, srv CentrumService_StreamServer) err
 func (s *Server) stream(srv CentrumService_StreamServer, isController bool, job string, userId int32, unitId uint64) (bool, error) {
 	msgCh := make(chan *nats.Msg, 32)
 	if !isController {
-		sub, err := s.events.JS.ChanSubscribe(fmt.Sprintf("%s.%s.>", BaseSubject, job), msgCh)
+		sub, err := s.events.JS.ChanSubscribe(fmt.Sprintf("%s.%s.>", BaseSubject, job), msgCh, nats.DeliverNew())
 		//sub, err := s.events.JS.ChanSubscribe(fmt.Sprintf("%s.%s.*.*.%d", BaseSubject, job, unitId), msgCh)
 		if err != nil {
 			return true, err
 		}
 		defer sub.Unsubscribe()
 	} else {
-		sub, err := s.events.JS.ChanSubscribe(fmt.Sprintf("%s.%s.>", BaseSubject, job), msgCh)
+		sub, err := s.events.JS.ChanSubscribe(fmt.Sprintf("%s.%s.>", BaseSubject, job), msgCh, nats.DeliverNew())
 		if err != nil {
 			return true, err
 		}

@@ -214,9 +214,6 @@ export const useCentrumStore = defineStore('centrum', {
                         const idx = this.disponents.findIndex((d) => d.userId === authStore.activeChar?.userId);
                         if (idx === -1) {
                             this.stopStream();
-                            setTimeout(() => {
-                                this.startStream();
-                            }, 250);
                         }
                     } else if (resp.change.oneofKind === 'unitAssigned') {
                         // Ignore, doesn't matter for controllers

@@ -17,7 +17,7 @@ import (
 func (s *Server) watchForEvents() error {
 	msgCh := make(chan *nats.Msg, 256)
 
-	sub, err := s.events.JS.ChanSubscribe(fmt.Sprintf("%s.>", BaseSubject), msgCh)
+	sub, err := s.events.JS.ChanSubscribe(fmt.Sprintf("%s.>", BaseSubject), msgCh, nats.DeliverLastPerSubject())
 	if err != nil {
 		return err
 	}

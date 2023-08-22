@@ -380,6 +380,9 @@
                 "starting_datastream": "Start Leitstellen Datenstrom...",
                 "failed_datastream": "Leistellen Datenstrom fehlgeschlagen!",
                 "join_center": "Trete der Leitstelle bei in dem du hier klickst."
+            },
+            "livemap": {
+                "mark_on_gps": "Auf Navi markieren"
             }
         }
     },
