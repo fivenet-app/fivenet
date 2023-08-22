@@ -8540,10 +8540,10 @@ vue-bundle-renderer@^1.0.3:
   dependencies:
     ufo "^1.1.1"
 
-vue-command-palette@^0.1.4:
-  version "0.1.4"
-  resolved "https://registry.npmjs.org/vue-command-palette/-/vue-command-palette-0.1.4.tgz"
-  integrity sha512-v9wGV5RG/Qe/GLLP3dJGYEvBOHQAH1kTdfzv7/uDj4v51g9uB0J3dQSaREgsrAvAT7tSj/cSbVrGpaalr8z7tg==
+vue-command-palette@^0.2.0:
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/vue-command-palette/-/vue-command-palette-0.2.0.tgz#a2e55efc24a9482e8879deef6f97af8be86a5ebd"
+  integrity sha512-oYrAnJPxUEEq9uc95okTflyYMJz+4m6oBm4xd/ig9+bl0RccYEDJp0mw37TC4UnuISbb0Lb/T2DQuzrHlyBIsQ==
   dependencies:
     fuse.js "^6.6.2"
     mitt "^3.0.0"
