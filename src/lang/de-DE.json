@@ -333,7 +333,9 @@
                 "job_properties": "Job Eigenschaften",
                 "your_job_properties": "Deine FiveNet Job Eigenschaften.",
                 "livemap_marker_color": "Livemap Marker Farbe",
-                "quick_buttons": "Schnellzugriff Knöpfe"
+                "quick_buttons": "Schnellzugriff Knöpfe",
+                "discord_guild_id": "Discord Guild/Server ID",
+                "invite_bot": "Bot einladen"
             },
             "role_view": {
                 "add_permission": "Berechtigung hinzufügen"
