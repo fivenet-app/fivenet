@@ -53,7 +53,7 @@ src/public/images/livemap/tiles/*/
 .env
 
 # Proto
-*.proto
+#*.proto
 
 # Go and others code
 *.go

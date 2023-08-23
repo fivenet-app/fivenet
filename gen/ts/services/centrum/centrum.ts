@@ -937,22 +937,22 @@ export const StreamResponse = new StreamResponse$Type();
  * @generated ServiceType for protobuf service services.centrum.CentrumService
  */
 export const CentrumService = new ServiceType("services.centrum.CentrumService", [
-    { name: "GetSettings", options: {}, I: GetSettingsRequest, O: Settings },
     { name: "UpdateSettings", options: {}, I: Settings, O: Settings },
-    { name: "TakeControl", options: {}, I: TakeControlRequest, O: TakeControlResponse },
-    { name: "ListUnits", options: {}, I: ListUnitsRequest, O: ListUnitsResponse },
-    { name: "CreateOrUpdateUnit", options: {}, I: CreateOrUpdateUnitRequest, O: CreateOrUpdateUnitResponse },
-    { name: "DeleteUnit", options: {}, I: DeleteUnitRequest, O: DeleteUnitResponse },
-    { name: "UpdateUnitStatus", options: {}, I: UpdateUnitStatusRequest, O: UpdateUnitStatusResponse },
-    { name: "AssignUnit", options: {}, I: AssignUnitRequest, O: AssignUnitResponse },
-    { name: "ListUnitActivity", options: {}, I: ListUnitActivityRequest, O: ListUnitActivityResponse },
-    { name: "ListDispatches", options: {}, I: ListDispatchesRequest, O: ListDispatchesResponse },
     { name: "CreateDispatch", options: {}, I: CreateDispatchRequest, O: CreateDispatchResponse },
     { name: "UpdateDispatch", options: {}, I: UpdateDispatchRequest, O: UpdateDispatchResponse },
-    { name: "UpdateDispatchStatus", options: {}, I: UpdateDispatchStatusRequest, O: UpdateDispatchStatusResponse },
-    { name: "ListDispatchActivity", options: {}, I: ListDispatchActivityRequest, O: ListDispatchActivityResponse },
+    { name: "TakeControl", options: {}, I: TakeControlRequest, O: TakeControlResponse },
     { name: "AssignDispatch", options: {}, I: AssignDispatchRequest, O: AssignDispatchResponse },
+    { name: "Stream", serverStreaming: true, options: {}, I: StreamRequest, O: StreamResponse },
+    { name: "GetSettings", options: {}, I: GetSettingsRequest, O: Settings },
     { name: "JoinUnit", options: {}, I: JoinUnitRequest, O: JoinUnitResponse },
+    { name: "ListUnits", options: {}, I: ListUnitsRequest, O: ListUnitsResponse },
+    { name: "ListUnitActivity", options: {}, I: ListUnitActivityRequest, O: ListUnitActivityResponse },
+    { name: "ListDispatches", options: {}, I: ListDispatchesRequest, O: ListDispatchesResponse },
+    { name: "ListDispatchActivity", options: {}, I: ListDispatchActivityRequest, O: ListDispatchActivityResponse },
+    { name: "CreateOrUpdateUnit", options: {}, I: CreateOrUpdateUnitRequest, O: CreateOrUpdateUnitResponse },
+    { name: "DeleteUnit", options: {}, I: DeleteUnitRequest, O: DeleteUnitResponse },
+    { name: "AssignUnit", options: {}, I: AssignUnitRequest, O: AssignUnitResponse },
     { name: "TakeDispatch", options: {}, I: TakeDispatchRequest, O: TakeDispatchResponse },
-    { name: "Stream", serverStreaming: true, options: {}, I: StreamRequest, O: StreamResponse }
+    { name: "UpdateUnitStatus", options: {}, I: UpdateUnitStatusRequest, O: UpdateUnitStatusResponse },
+    { name: "UpdateDispatchStatus", options: {}, I: UpdateDispatchStatusRequest, O: UpdateDispatchStatusResponse }
 ]);

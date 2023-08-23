@@ -4,7 +4,9 @@ import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { AccountIcon, CloseIcon, PencilIcon, PlusIcon } from 'mdi-vue3';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import Time from '~/components/partials/elements/Time.vue';
+import { useCentrumStore } from '~/store/centrum';
 import { DISPATCH_STATUS, Dispatch } from '~~/gen/ts/resources/dispatch/dispatches';
+import { Settings } from '~~/gen/ts/resources/dispatch/settings';
 import { TAKE_DISPATCH_RESP } from '~~/gen/ts/services/centrum/centrum';
 import AssignDispatchModal from './AssignDispatchModal.vue';
 import Feed from './Feed.vue';
@@ -13,6 +15,7 @@ import StatusUpdateModal from './StatusUpdateModal.vue';
 defineProps<{
     open: boolean;
     dispatch: Dispatch;
+    settings?: Settings;
 }>();
 
 defineEmits<{
@@ -21,6 +24,8 @@ defineEmits<{
 }>();
 
 const { $grpc } = useNuxtApp();
+
+const { canDo } = useCentrumStore();
 
 async function selfAssign(dispatch: Dispatch): Promise<void> {
     return new Promise(async (res, rej) => {
@@ -41,7 +46,6 @@ async function selfAssign(dispatch: Dispatch): Promise<void> {
 
 const openAssign = ref(false);
 const openStatus = ref(false);
-const openSelfAssign = ref(false);
 </script>
 
 <template>
@@ -232,7 +236,7 @@ const openSelfAssign = ref(false);
                                                                 />
 
                                                                 <button
-                                                                    v-if="can('CentrumService.TakeControl')"
+                                                                    v-if="canDo('TakeControl')"
                                                                     type="button"
                                                                     @click="openAssign = true"
                                                                     class="ml-2 rounded bg-white/10 px-2 py-1 text-xs font-semibold text-white shadow-sm hover:bg-white/20"
@@ -240,9 +244,9 @@ const openSelfAssign = ref(false);
                                                                     <PencilIcon class="h-6 w-6" />
                                                                 </button>
                                                                 <button
-                                                                    v-if="can('CentrumService.TakeDispatch')"
+                                                                    v-if="canDo('TakeDispatch')"
                                                                     type="button"
-                                                                    @click="openSelfAssign = true"
+                                                                    @click="selfAssign(dispatch)"
                                                                     class="ml-2 rounded bg-white/10 px-2 py-1 text-xs font-semibold text-white shadow-sm hover:bg-white/20"
                                                                 >
                                                                     <PlusIcon class="h-6 w-6" />

@@ -1,7 +1,7 @@
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { StoreDefinition, defineStore } from 'pinia';
 import { DISPATCH_STATUS, Dispatch, DispatchStatus } from '~~/gen/ts/resources/dispatch/dispatches';
-import { Settings } from '~~/gen/ts/resources/dispatch/settings';
+import { CENTRUM_MODE, Settings } from '~~/gen/ts/resources/dispatch/settings';
 import { Unit, UnitStatus } from '~~/gen/ts/resources/dispatch/units';
 import { UserShort } from '~~/gen/ts/resources/users/users';
 import { useAuthStore } from './auth';
@@ -310,8 +310,38 @@ export const useCentrumStore = defineStore('centrum', {
 
             setTimeout(async () => this.startStream(), 250);
         },
+        // Central "can user do that" method as we will take the dispatch center mode into account further
+        canDo(action: canDoAction, dispatch?: Dispatch): boolean {
+            // TODO check perms and settings mode
+
+            switch (action) {
+                case 'TakeControl':
+                    return can('CentrumService.TakeControl');
+
+                case 'TakeDispatch':
+                    return can('CentrumService.TakeDispatch') && this.settings.mode !== CENTRUM_MODE.CENTRAL_COMMAND;
+
+                case 'AssignDispatch':
+                    return can('CentrumService.AssignDispatch');
+
+                case 'UpdateDispatchStatus':
+                    return (
+                        can('CentrumService.TakeDispatch') &&
+                        dispatch !== undefined &&
+                        this.checkIfUnitAssignedToDispatch(dispatch, this.ownUnit)
+                    );
+
+                case 'UpdateUnitStatus':
+                    return can('CentrumService.TakeDispatch');
+
+                default:
+                    return false;
+            }
+        },
     },
 });
+
+type canDoAction = 'TakeControl' | 'TakeDispatch' | 'AssignDispatch' | 'UpdateDispatchStatus' | 'UpdateUnitStatus';
 
 if (import.meta.hot) {
     import.meta.hot.accept(acceptHMRUpdate(useCentrumStore as unknown as StoreDefinition, import.meta.hot));

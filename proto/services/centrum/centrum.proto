@@ -187,43 +187,47 @@ message StreamResponse {
 }
 
 service CentrumService {
-  // @perm: Name=Stream
-  rpc GetSettings(GetSettingsRequest) returns (resources.dispatch.Settings);
   // @perm
   rpc UpdateSettings(resources.dispatch.Settings) returns (resources.dispatch.Settings);
+
+  // @perm
+  rpc CreateDispatch(CreateDispatchRequest) returns (CreateDispatchResponse);
+  // @perm
+  rpc UpdateDispatch(UpdateDispatchRequest) returns (UpdateDispatchResponse);  
+
   // @perm
   rpc TakeControl(TakeControlRequest) returns (TakeControlResponse);
+  // @perm: Name=TakeControl
+  rpc AssignDispatch(AssignDispatchRequest) returns (AssignDispatchResponse);
+
+  // @perm
+  rpc Stream(StreamRequest) returns (stream StreamResponse);
+  // @perm: Name=Stream
+  rpc GetSettings(GetSettingsRequest) returns (resources.dispatch.Settings);
 
   // @perm: Name=Stream
+  rpc JoinUnit(JoinUnitRequest) returns (JoinUnitResponse);
+  // @perm: Name=Stream
   rpc ListUnits(ListUnitsRequest) returns (ListUnitsResponse);
-  // @perm
-  rpc CreateOrUpdateUnit(CreateOrUpdateUnitRequest) returns (CreateOrUpdateUnitResponse);
-  // @perm
-  rpc DeleteUnit(DeleteUnitRequest) returns (DeleteUnitResponse);
-  // @perm: Name=TakeDispatch
-  rpc UpdateUnitStatus(UpdateUnitStatusRequest) returns (UpdateUnitStatusResponse);
-  // @perm: Name=TakeControl
-  rpc AssignUnit(AssignUnitRequest) returns (AssignUnitResponse);
   // @perm: Name=Stream
   rpc ListUnitActivity(ListUnitActivityRequest) returns (ListUnitActivityResponse);
 
   // @perm: Name=Stream
   rpc ListDispatches(ListDispatchesRequest) returns (ListDispatchesResponse);
-  // @perm
-  rpc CreateDispatch(CreateDispatchRequest) returns (CreateDispatchResponse);
-  // @perm
-  rpc UpdateDispatch(UpdateDispatchRequest) returns (UpdateDispatchResponse);
-  // @perm: Name=TakeDispatch
-  rpc UpdateDispatchStatus(UpdateDispatchStatusRequest) returns (UpdateDispatchStatusResponse);
   // @perm: Name=Stream
   rpc ListDispatchActivity(ListDispatchActivityRequest) returns (ListDispatchActivityResponse);
-  // @perm: Name=TakeControl
-  rpc AssignDispatch(AssignDispatchRequest) returns (AssignDispatchResponse);
-  // @perm: Name=Stream
-  rpc JoinUnit(JoinUnitRequest) returns (JoinUnitResponse);
+  
   // @perm
-  rpc TakeDispatch(TakeDispatchRequest) returns (TakeDispatchResponse);
+  rpc CreateOrUpdateUnit(CreateOrUpdateUnitRequest) returns (CreateOrUpdateUnitResponse);
+  // @perm
+  rpc DeleteUnit(DeleteUnitRequest) returns (DeleteUnitResponse);
+  // @perm: Name=TakeControl
+  rpc AssignUnit(AssignUnitRequest) returns (AssignUnitResponse);
 
   // @perm
-  rpc Stream(StreamRequest) returns (stream StreamResponse);
+  rpc TakeDispatch(TakeDispatchRequest) returns (TakeDispatchResponse);
+  // @perm: Name=TakeDispatch
+  rpc UpdateUnitStatus(UpdateUnitStatusRequest) returns (UpdateUnitStatusResponse);
+  // @perm: Name=TakeDispatch
+  rpc UpdateDispatchStatus(UpdateDispatchStatusRequest) returns (UpdateDispatchStatusResponse);
 }
