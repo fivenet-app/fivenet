@@ -60,19 +60,24 @@ export const useLivemapStore = defineStore('livemap', {
                 }
             } catch (e) {
                 this.error = e as RpcError;
-                if (this.error)
-                    console.error('Livemap: Data Stream Failed', this.error.code, this.error.message, this.error.cause);
+                if (this.error) {
+                    // Only restart when not cancelled and abort is still valid
+                    if (this.error.code != 'CANCELLED') {
+                        console.error('Livemap: Data Stream Failed', this.error.code, this.error.message, this.error.cause);
 
-                this.restartStream();
+                        if (this.abort !== undefined && !this.abort?.signal.aborted) {
+                            this.restartStream();
+                        }
+                    }
+                }
             }
 
             console.debug('Livemap: Data Stream Ended');
         },
         async stopStream(): Promise<void> {
-            console.debug('Livemap: Stopping Data Stream');
-            if (this.abort) this.abort.abort();
+            if (this.abort !== undefined) this.abort.abort();
             this.abort = undefined;
-            this.$reset();
+            console.debug('Livemap: Stopping Data Stream');
         },
         async restartStream(): Promise<void> {
             console.debug('Centrum: Restarting Data Stream');

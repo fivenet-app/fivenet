@@ -7,6 +7,7 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import TablePagination from '~/components/partials/elements/TablePagination.vue';
+import { useCompletorStore } from '~/store/completor';
 import { PaginationResponse } from '~~/gen/ts/resources/common/database/database';
 import { UserShort } from '~~/gen/ts/resources/users/users';
 import { Vehicle } from '~~/gen/ts/resources/vehicles/vehicles';
@@ -30,29 +31,17 @@ const props = withDefaults(
     },
 );
 
-const entriesChars = ref<UserShort[]>([]);
+const completorStore = useCompletorStore();
+const { completeCitizens } = completorStore;
+
 const queryChar = ref('');
 const selectedChar = ref<undefined | UserShort>(undefined);
 
-async function findChars(): Promise<void> {
-    return new Promise(async (res, rej) => {
-        if (queryChar.value === '') {
-            return res();
-        }
-
-        try {
-            const call = $grpc.getCompletorClient().completeCitizens({
-                search: queryChar.value,
-            });
-            const { response } = await call;
-
-            entriesChars.value = response.users;
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
-        }
-    });
-}
+const { data: chars, refresh: charsRefresh } = useLazyAsyncData(`chars-${queryChar.value}`, () =>
+    completeCitizens({
+        search: queryChar.value,
+    }),
+);
 
 const search = ref<{ plate: string; model: string; user_id: number }>({
     plate: '',
@@ -102,7 +91,7 @@ watchDebounced(search.value, async () => refresh(), {
     debounce: 600,
     maxWait: 1400,
 });
-watchDebounced(queryChar, async () => await findChars(), {
+watchDebounced(queryChar, async () => charsRefresh(), {
     debounce: 600,
     maxWait: 1250,
 });
@@ -169,11 +158,11 @@ watch(selectedChar, () => {
                                             </ComboboxButton>
 
                                             <ComboboxOptions
-                                                v-if="entriesChars.length > 0"
+                                                v-if="chars !== null && chars.length > 0"
                                                 class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-44 sm:text-sm"
                                             >
                                                 <ComboboxOption
-                                                    v-for="char in entriesChars"
+                                                    v-for="char in chars"
                                                     :key="char?.userId"
                                                     :value="char"
                                                     as="char"

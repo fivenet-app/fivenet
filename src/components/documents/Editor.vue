@@ -395,6 +395,10 @@ watchDebounced(queryCategory, () => findCategories(), {
 
 async function findCategories(): Promise<void> {
     return new Promise(async (res, rej) => {
+        if (!can('CompletorService.CompleteDocumentCategories')) {
+            return res();
+        }
+
         try {
             const call = $grpc.getCompletorClient().completeDocumentCategories({
                 search: queryCategory.value,

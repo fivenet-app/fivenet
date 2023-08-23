@@ -3,7 +3,6 @@ import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { ChevronDownIcon } from 'mdi-vue3';
-import { useCompletorStore } from 'store/completor';
 import Divider from '~/components/partials/elements/Divider.vue';
 import { useNotificationsStore } from '~/store/notifications';
 import { AttributeValues, Permission, Role, RoleAttribute } from '~~/gen/ts/resources/permissions/permissions';
@@ -17,10 +16,6 @@ const props = defineProps<{
 const { $grpc } = useNuxtApp();
 
 const notifications = useNotificationsStore();
-
-const completorStore = useCompletorStore();
-const { jobs } = storeToRefs(completorStore);
-const { listJobs } = completorStore;
 
 const role = ref<Role>();
 
@@ -142,7 +137,7 @@ async function updateLimits(): Promise<void> {
 }
 
 async function initializeRoleView(): Promise<void> {
-    await Promise.all([getRole(), getPermissions(), listJobs()]);
+    await Promise.all([getRole(), getPermissions()]);
 }
 
 onMounted(async () => {
@@ -208,7 +203,6 @@ onMounted(async () => {
                                         :attribute="attr"
                                         :permission="perm"
                                         v-model:states="attrStates"
-                                        :jobs="jobs"
                                     />
                                     <div
                                         v-if="idx !== permList.filter((p) => p.category === category).length - 1"

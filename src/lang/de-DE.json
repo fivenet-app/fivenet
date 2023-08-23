@@ -913,7 +913,7 @@
                 "key": "Vollständige Job-Namen und Ränge",
                 "description": "Vollständige Job-Namen und Ränge."
             },
-            "CompleteCategories": {
+            "CompleteDocumentCategories": {
                 "key": "Dokumentenkategorien auflisten",
                 "description": "Eine Dokumentenkategorie vervollständigen."
             }
@@ -1099,7 +1099,7 @@
             }
         },
         "CompletorService": {
-            "CompleteCategories": {
+            "CompleteDocumentCategories": {
                 "Jobs": "Fraktionen"
             }
         }

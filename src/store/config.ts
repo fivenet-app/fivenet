@@ -51,7 +51,7 @@ export const useConfigStore = defineStore('config', {
             } as ClientConfig,
         }) as ConfigState,
     persist: {
-        paths: ['appConfig'],
+        paths: ['clientConfig'],
     },
     actions: {
         async loadConfig(): Promise<void> {

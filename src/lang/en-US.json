@@ -913,7 +913,7 @@
                 "key": "Complete job names and ranks",
                 "description": "Complete job names and ranks."
             },
-            "CompleteCategories": {
+            "CompleteDocumentCategories": {
                 "key": "List document categories",
                 "description": "Complete a document categories."
             }
@@ -1131,7 +1131,7 @@
             }
         },
         "CompletorService": {
-            "CompleteCategories": {
+            "CompleteDocumentCategories": {
                 "Jobs": "Factions"
             }
         }

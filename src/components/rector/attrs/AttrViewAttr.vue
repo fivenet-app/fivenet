@@ -10,13 +10,13 @@ import {
 } from '@headlessui/vue';
 
 import { CheckIcon, ChevronDownIcon } from 'mdi-vue3';
+import { useCompletorStore } from '~/store/completor';
 import { AttributeValues, Permission, RoleAttribute } from '~~/gen/ts/resources/permissions/permissions';
 import { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
 
 const props = defineProps<{
     attribute: RoleAttribute;
     states: Map<bigint, AttributeValues | undefined>;
-    jobs: Job[];
     disabled?: boolean;
     permission: Permission;
 }>();
@@ -24,6 +24,9 @@ const props = defineProps<{
 const emit = defineEmits<{
     (e: 'update:states', payload: Map<bigint, AttributeValues | undefined>): void;
 }>();
+
+const completorStore = useCompletorStore();
+const { listJobs } = completorStore;
 
 const jobGrades = ref<Map<string, JobGrade>>(new Map());
 
@@ -140,9 +143,12 @@ async function updateJobGradeValue(job: Job, grade: JobGrade): Promise<void> {
     emit('update:states', states.value);
 }
 
-onMounted(() => {
+const { data: jobs } = useLazyAsyncData(`jobs`, () => listJobs());
+
+watch(jobs, async () => {
     if (state.validValues.oneofKind === 'jobGradeList') {
-        props.jobs.forEach((job) => {
+        const jobs = await listJobs();
+        jobs.forEach((job) => {
             if (state.validValues.oneofKind !== 'jobGradeList') {
                 return;
             }
@@ -212,7 +218,7 @@ onMounted(() => {
                         "
                         class="flex flex-row gap-4 flex-wrap"
                     >
-                        <div v-for="job in props.jobs" :key="job.name" class="flex flex-row flex-initial flex-nowrap">
+                        <div v-for="job in jobs" :key="job.name" class="flex flex-row flex-initial flex-nowrap">
                             <input
                                 :id="job.name"
                                 :name="job.name"
@@ -232,7 +238,7 @@ onMounted(() => {
                         "
                         class="flex flex-col gap-2"
                     >
-                        <div v-for="job in props.jobs" :key="job.name" class="flex flex-row flex-initial flex-nowrap gap-2">
+                        <div v-for="job in jobs" :key="job.name" class="flex flex-row flex-initial flex-nowrap gap-2">
                             <input
                                 :id="job.name"
                                 :name="job.name"

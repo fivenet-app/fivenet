@@ -71,9 +71,16 @@ switch (userSettings.locale.split('-', 1)[0]) {
 }
 
 if (route.query?.nui) {
-    clientConfig.value.NUIEnabled = true;
-    clientConfig.value.NUIResourceName = route.query?.nui as string;
-    console.info('Enabled NUI integration! Resource Name:', clientConfig.value.NUIResourceName);
+    const nuiQuery = route.query?.nui as string;
+    if (nuiQuery.toLowerCase() !== 'false') {
+        clientConfig.value.NUIEnabled = true;
+        clientConfig.value.NUIResourceName = nuiQuery;
+        console.info('Enabled NUI integration! Resource Name:', clientConfig.value.NUIResourceName);
+    } else {
+        clientConfig.value.NUIEnabled = false;
+        clientConfig.value.NUIResourceName = undefined;
+        console.info('Disabled NUI integration!');
+    }
 }
 </script>
 

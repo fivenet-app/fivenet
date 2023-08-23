@@ -203,7 +203,8 @@ export const useCentrumStore = defineStore('centrum', {
                         this.disponents = resp.change.latestState.disponents;
                         this.isDisponent = resp.change.latestState.isDisponent;
                         this.ownUnit = resp.change.latestState.ownUnit;
-                        this.units = resp.change.latestState.units;
+
+                        resp.change.latestState.units.forEach((u) => this.addOrUpdateUnit(u));
                         resp.change.latestState.dispatches.forEach((d) => this.addOrUpdateDispatch(d));
                     } else if (resp.change.oneofKind === 'settings') {
                         this.settings = resp.change.settings;
@@ -290,19 +291,24 @@ export const useCentrumStore = defineStore('centrum', {
                 }
             } catch (e) {
                 this.error = e as RpcError;
-                if (this.error)
-                    console.error('Centrum: Data Stream Failed', this.error.code, this.error.message, this.error.cause);
+                if (this.error) {
+                    // Only restart when not cancelled and abort is still valid
+                    if (this.error.code != 'CANCELLED') {
+                        console.error('Centrum: Data Stream Failed', this.error.code, this.error.message, this.error.cause);
 
-                this.restartStream();
+                        if (this.abort !== undefined && !this.abort?.signal.aborted) {
+                            this.restartStream();
+                        }
+                    }
+                }
             }
 
             console.debug('Centrum: Data Stream Ended');
         },
         async stopStream(): Promise<void> {
-            console.debug('Centrum: Stopping Data Stream');
-            if (this.abort) this.abort.abort();
+            if (this.abort !== undefined) this.abort.abort();
             this.abort = undefined;
-            this.$reset();
+            console.debug('Centrum: Stopping Data Stream');
         },
         async restartStream(): Promise<void> {
             console.debug('Centrum: Restarting Data Stream');
