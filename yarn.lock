@@ -1746,11 +1746,11 @@
     vee-validate "4.11.2"
 
 "@vee-validate/rules@^4.11.2":
-  version "4.11.2"
-  resolved "https://registry.yarnpkg.com/@vee-validate/rules/-/rules-4.11.2.tgz#d7c5d8173a2576caec82f0dc2efd781aefff2912"
-  integrity sha512-07Z2m8k1EdlkXYOHpR8cXheOuYEsEUfEYZKreWzym4XP5gNm/D4xrSVKNn+hnykexjnMaQ0+Vcfv9ppPJVxJ8g==
+  version "4.11.3"
+  resolved "https://registry.yarnpkg.com/@vee-validate/rules/-/rules-4.11.3.tgz#d6a8d385f9e10bef605426193cb447fa7dfb6c4e"
+  integrity sha512-MJmQgTXnt0lEOLfF2z+IE1dViu8dISaLa95axjd/rfjGYLQE9kI/eGQOZ0bojuYIVB7cD+K3xkRNdCPg9Bi7fg==
   dependencies:
-    vee-validate "4.11.2"
+    vee-validate "4.11.3"
 
 "@vercel/nft@^0.22.6":
   version "0.22.6"
@@ -1936,7 +1936,7 @@
 
 "@vue/devtools-api@^6.5.0":
   version "6.5.0"
-  resolved "https://registry.npmjs.org/@vue/devtools-api/-/devtools-api-6.5.0.tgz"
+  resolved "https://registry.yarnpkg.com/@vue/devtools-api/-/devtools-api-6.5.0.tgz#98b99425edee70b4c992692628fa1ea2c1e57d07"
   integrity sha512-o9KfBeaBmCKl10usN4crU53fYtC1r7jJwdGKjPT24t348rHxgfpZ0xL3Xm/gLUYnc0oTp8LAmrxOeLyu6tbk2Q==
 
 "@vue/language-core@1.8.8":
@@ -8380,6 +8380,14 @@ vee-validate@4.11.2, vee-validate@^4.11.2:
   version "4.11.2"
   resolved "https://registry.yarnpkg.com/vee-validate/-/vee-validate-4.11.2.tgz#f6b42776db0545af295f6428171cab12d0cafed9"
   integrity sha512-tIWMCqMzX/GzCaIvlMg3/2ZFP5sVMjrZHIRIFIs9Wa/Y8gg7dnsYRj0Gp5a9X4C3tPfTJRctkFmb0J7/lR+h1w==
+  dependencies:
+    "@vue/devtools-api" "^6.5.0"
+    type-fest "^4.2.0"
+
+vee-validate@4.11.3:
+  version "4.11.3"
+  resolved "https://registry.yarnpkg.com/vee-validate/-/vee-validate-4.11.3.tgz#b95cff30c46bf49102ef49141fd77d36b96edf7f"
+  integrity sha512-YhWORdZRE1GL6vXKj3r9f+Y8fJH5JMwMUJ4DFS44+WcTtiNXggyE3pyJPlZBqS9AgYGZ47EOv4UczkLxHqufiw==
   dependencies:
     "@vue/devtools-api" "^6.5.0"
     type-fest "^4.2.0"
