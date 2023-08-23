@@ -1,10 +1,11 @@
 syntax = "proto3";
 
 package resources.laws;
-option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/laws;laws";
 
 import "resources/timestamp/timestamp.proto";
 import "validate/validate.proto";
+
+option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/laws;laws";
 
 message LawBook {
   uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"

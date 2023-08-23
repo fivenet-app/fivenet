@@ -1,7 +1,6 @@
 syntax = "proto3";
 
 package services.centrum;
-option go_package = "github.com/galexrt/fivenet/gen/go/proto/services/centrum;centrum";
 
 import "resources/common/database/database.proto";
 import "resources/dispatch/dispatches.proto";
@@ -9,6 +8,8 @@ import "resources/dispatch/settings.proto";
 import "resources/dispatch/units.proto";
 import "resources/users/users.proto";
 import "validate/validate.proto";
+
+option go_package = "github.com/galexrt/fivenet/gen/go/proto/services/centrum;centrum";
 
 // Common
 
@@ -80,7 +81,7 @@ message TakeControlRequest {
 message TakeControlResponse {}
 
 message DisponentsChange {
-  string job = 1 [ (validate.rules).string.max_len = 20 ];
+  string job = 1 [(validate.rules).string.max_len = 20];
   repeated resources.users.UserShort disponents = 2;
 }
 
@@ -193,7 +194,7 @@ service CentrumService {
   // @perm
   rpc CreateDispatch(CreateDispatchRequest) returns (CreateDispatchResponse);
   // @perm
-  rpc UpdateDispatch(UpdateDispatchRequest) returns (UpdateDispatchResponse);  
+  rpc UpdateDispatch(UpdateDispatchRequest) returns (UpdateDispatchResponse);
 
   // @perm
   rpc TakeControl(TakeControlRequest) returns (TakeControlResponse);
@@ -216,7 +217,7 @@ service CentrumService {
   rpc ListDispatches(ListDispatchesRequest) returns (ListDispatchesResponse);
   // @perm: Name=Stream
   rpc ListDispatchActivity(ListDispatchActivityRequest) returns (ListDispatchActivityResponse);
-  
+
   // @perm
   rpc CreateOrUpdateUnit(CreateOrUpdateUnitRequest) returns (CreateOrUpdateUnitResponse);
   // @perm

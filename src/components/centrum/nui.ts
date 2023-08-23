@@ -1,14 +1,14 @@
-import { clientConfig } from '~/config';
+import { useConfigStore } from '~/store/config';
 
 // Checking for `GetParentResourceName` existance doesn't work (anymore) in FiveM NUI iframes
 export function checkForNUI(): boolean {
     //return typeof window.GetParentResourceName !== 'undefined';
-    return clientConfig.NUIEnabled;
+    return useConfigStore().clientConfig.NUIEnabled;
 }
 
 function getParentResourceName(): string {
     //return (window as any).GetParentResourceName();
-    return clientConfig.NUIResourceName ?? 'fivenet';
+    return useConfigStore().clientConfig.NUIResourceName ?? 'fivenet';
 }
 
 export async function setWaypoint(x: number, y: number): Promise<void> {

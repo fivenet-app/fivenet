@@ -4,11 +4,14 @@ import { TuneIcon } from 'mdi-vue3';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import config from '~/config';
+import { useConfigStore } from '~/store/config';
 import { useNotificationsStore } from '~/store/notifications';
 import { JobProps } from '~~/gen/ts/resources/users/jobs';
 
 const { $grpc } = useNuxtApp();
+
+const configStore = useConfigStore();
+const { appConfig } = storeToRefs(configStore);
 
 const notifications = useNotificationsStore();
 
@@ -176,16 +179,16 @@ async function saveJobProps(): Promise<void> {
                                 <input
                                     type="text"
                                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                    :class="config.discord.botInviteURL ? 'disabled' : ''"
-                                    :disabled="config.discord.botInviteURL === undefined"
+                                    :class="appConfig.discord.botInviteURL ? 'disabled' : ''"
+                                    :disabled="appConfig.discord.botInviteURL === undefined"
                                     :placeholder="$t('components.rector.job_props.discord_guild_id')"
                                     :label="$t('components.rector.job_props.discord_guild_id')"
                                     maxlength="70"
                                     v-model="properties.discordGuildId"
                                 />
                                 <NuxtLink
-                                    v-if="config.discord.botInviteURL !== undefined"
-                                    :to="config.discord.botInviteURL"
+                                    v-if="appConfig.discord.botInviteURL !== undefined"
+                                    :to="appConfig.discord.botInviteURL"
                                     :external="true"
                                     class="mt-2 flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300 bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500"
                                 >

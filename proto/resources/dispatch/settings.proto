@@ -1,9 +1,10 @@
 syntax = "proto3";
 
 package resources.dispatch;
-option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/dispatch;dispatch";
 
 import "validate/validate.proto";
+
+option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/dispatch;dispatch";
 
 enum CENTRUM_MODE {
   MANUAL = 0;

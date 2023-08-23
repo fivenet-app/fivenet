@@ -1,16 +1,19 @@
 <script lang="ts" setup>
 import { NavigationFailure } from 'vue-router';
-import config from '~/config';
 import { useAuthStore } from '~/store/auth';
+import { useConfigStore } from '~/store/config';
 import { TypedRouteFromName } from '~~/.nuxt/typed-router/__router';
 import ForgotPasswordForm from './ForgotPasswordForm.vue';
 import LoginForm from './LoginForm.vue';
 import RegistrationForm from './RegistrationForm.vue';
 
 const authStore = useAuthStore();
-const route = useRoute();
-
 const { accessToken } = storeToRefs(authStore);
+
+const configStore = useConfigStore();
+const { appConfig } = storeToRefs(configStore);
+
+const route = useRoute();
 
 const forms = ref<{ create: boolean; forgot: boolean }>({
     create: false,
@@ -25,8 +28,6 @@ watch(accessToken, async (): Promise<NavigationFailure | TypedRouteFromName<'aut
         });
     }
 });
-
-const cfg = config;
 </script>
 
 <template>
@@ -51,7 +52,7 @@ const cfg = config;
                         {{ $t('components.auth.login.forgot_password') }}
                     </button>
                 </div>
-                <div class="mt-6" v-if="cfg.login.signupEnabled">
+                <div class="mt-6" v-if="appConfig.login.signupEnabled">
                     <button
                         type="button"
                         @click="forms.create = true"

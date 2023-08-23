@@ -2,7 +2,7 @@ declare module '#app' {
     interface PageMeta {
         title?: string;
         requiresAuth?: boolean;
-        permission?: String;
+        permission?: string;
         authOnlyToken?: boolean;
         showQuickButtons?: boolean;
         showCookieOptions?: boolean;

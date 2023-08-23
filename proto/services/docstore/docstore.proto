@@ -1,7 +1,6 @@
 syntax = "proto3";
 
 package services.docstore;
-option go_package = "github.com/galexrt/fivenet/gen/go/proto/services/docstore;docstore";
 
 import "resources/common/database/database.proto";
 import "resources/documents/category.proto";
@@ -10,6 +9,8 @@ import "resources/documents/documents.proto";
 import "resources/documents/templates.proto";
 import "resources/timestamp/timestamp.proto";
 import "validate/validate.proto";
+
+option go_package = "github.com/galexrt/fivenet/gen/go/proto/services/docstore;docstore";
 
 // Templates ==================================================================
 message ListTemplatesRequest {}
@@ -54,7 +55,7 @@ message DeleteTemplateResponse {}
 // Documents ==================================================================
 message ListDocumentsRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
-  repeated resources.common.database.OrderBy orderBy = 2  [(validate.rules).repeated.max_items = 3];
+  repeated resources.common.database.OrderBy orderBy = 2 [(validate.rules).repeated.max_items = 3];
   // Search param
   optional string search = 3;
   repeated uint64 category_ids = 4;
@@ -155,8 +156,14 @@ message DeleteCommentResponse {}
 
 message CreateDocumentRequest {
   optional uint64 category_id = 1; // @gotags: alias:"category_id"
-  string title = 2 [(validate.rules).string = {min_len: 3, max_bytes: 21845}]; // @gotags: alias:"title"
-  string content = 3 [(validate.rules).string = {min_len: 20, max_bytes: 1000000}]; // @gotags: alias:"content"
+  string title = 2 [(validate.rules).string = {
+    min_len: 3,
+    max_bytes: 21845
+  }]; // @gotags: alias:"title"
+  string content = 3 [(validate.rules).string = {
+    min_len: 20,
+    max_bytes: 1000000
+  }]; // @gotags: alias:"content"
   resources.documents.DOC_CONTENT_TYPE content_type = 4 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"content_type"
   optional string data = 5; // @gotags: alias:"data"
   string state = 6 [(validate.rules).string.max_len = 24]; // @gotags: alias:"state"
@@ -173,8 +180,14 @@ message CreateDocumentResponse {
 message UpdateDocumentRequest {
   uint64 document_id = 1; // @gotags: alias:"id"
   optional uint64 category_id = 2; // @gotags: alias:"category_id"
-  string title = 3 [(validate.rules).string = {min_len: 3, max_bytes: 21845}]; // @gotags: alias:"title"
-  string content = 4 [(validate.rules).string = {min_len: 20, max_bytes: 1000000}]; // @gotags: alias:"content"
+  string title = 3 [(validate.rules).string = {
+    min_len: 3,
+    max_bytes: 21845
+  }]; // @gotags: alias:"title"
+  string content = 4 [(validate.rules).string = {
+    min_len: 20,
+    max_bytes: 1000000
+  }]; // @gotags: alias:"content"
   resources.documents.DOC_CONTENT_TYPE content_type = 5 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"content_type"
   optional string data = 6; // @gotags: alias:"data"
   string state = 7 [(validate.rules).string.max_len = 24]; // @gotags: alias:"state"

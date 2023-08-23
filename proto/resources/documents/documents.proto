@@ -1,13 +1,14 @@
 syntax = "proto3";
 
 package resources.documents;
-option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/documents;documents";
 
 import "resources/documents/access.proto";
 import "resources/documents/category.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/users/users.proto";
 import "validate/validate.proto";
+
+option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/documents;documents";
 
 enum DOC_CONTENT_TYPE {
   HTML = 0;
@@ -20,9 +21,15 @@ message Document {
   resources.timestamp.Timestamp updated_at = 3;
   optional uint64 category_id = 4; // @gotags: alias:"category_id"
   optional resources.documents.Category category = 5; // @gotags: alias:"category"
-  string title = 6 [(validate.rules).string = {min_len: 3, max_bytes: 21845}]; // @gotags: alias:"title"
+  string title = 6 [(validate.rules).string = {
+    min_len: 3,
+    max_bytes: 21845
+  }]; // @gotags: alias:"title"
   DOC_CONTENT_TYPE content_type = 7 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"content_type"
-  string content = 8 [(validate.rules).string = {min_len: 20, max_bytes: 1000000}]; // @gotags: alias:"content"
+  string content = 8 [(validate.rules).string = {
+    min_len: 20,
+    max_bytes: 1000000
+  }]; // @gotags: alias:"content"
   string data = 9; // @gotags: alias:"data"
   optional int32 creator_id = 10; // @gotags: alias:"creator_id"
   optional resources.users.UserShort creator = 11; // @gotags: alias:"creator"

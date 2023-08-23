@@ -1,9 +1,10 @@
 syntax = "proto3";
 
 package resources.accounts;
-option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/accounts;accounts";
 
 import "resources/timestamp/timestamp.proto";
+
+option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/accounts;accounts";
 
 message OAuth2Account {
   uint64 account_id = 1;

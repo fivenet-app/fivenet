@@ -1,10 +1,11 @@
 syntax = "proto3";
 
 package resources.permissions;
-option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/permissions;permissions";
 
 import "resources/timestamp/timestamp.proto";
 import "validate/validate.proto";
+
+option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/permissions;permissions";
 
 message Permission {
   uint64 id = 1; // @gotags: alias:"id"

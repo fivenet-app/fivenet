@@ -1,14 +1,15 @@
 syntax = "proto3";
 
 package services.auth;
-option go_package = "github.com/galexrt/fivenet/gen/go/proto/services/auth;auth";
 
 import "resources/accounts/accounts.proto";
 import "resources/accounts/oauth2.proto";
+import "resources/timestamp/timestamp.proto";
 import "resources/users/jobs.proto";
 import "resources/users/users.proto";
-import "resources/timestamp/timestamp.proto";
 import "validate/validate.proto";
+
+option go_package = "github.com/galexrt/fivenet/gen/go/proto/services/auth;auth";
 
 message CreateAccountRequest {
   string reg_token = 1 [(validate.rules).string = {
@@ -20,7 +21,10 @@ message CreateAccountRequest {
     max_len: 24,
     pattern: "^[a-zA-Z0-9-_]+$",
   }];
-  string password = 3 [(validate.rules).string = {min_len: 6, max_bytes: 70}];
+  string password = 3 [(validate.rules).string = {
+    min_len: 6,
+    max_bytes: 70
+  }];
 }
 
 message CreateAccountResponse {
@@ -33,7 +37,10 @@ message LoginRequest {
     max_len: 24,
     pattern: "^[a-zA-Z0-9-_]+$",
   }];
-  string password = 2 [(validate.rules).string = {min_len: 6, max_bytes: 70}];
+  string password = 2 [(validate.rules).string = {
+    min_len: 6,
+    max_bytes: 70
+  }];
 }
 
 message LoginResponse {
@@ -43,8 +50,14 @@ message LoginResponse {
 }
 
 message ChangePasswordRequest {
-  string current = 1 [(validate.rules).string = {min_len: 6, max_bytes: 70}];
-  string new = 2 [(validate.rules).string = {min_len: 6, max_bytes: 70}];
+  string current = 1 [(validate.rules).string = {
+    min_len: 6,
+    max_bytes: 70
+  }];
+  string new = 2 [(validate.rules).string = {
+    min_len: 6,
+    max_bytes: 70
+  }];
 }
 
 message ChangePasswordResponse {
@@ -57,7 +70,10 @@ message ForgotPasswordRequest {
     len: 6,
     pattern: "^[0-9]{6}$",
   }];
-  string new = 2 [(validate.rules).string = {min_len: 6, max_bytes: 70}];
+  string new = 2 [(validate.rules).string = {
+    min_len: 6,
+    max_bytes: 70
+  }];
 }
 
 message ForgotPasswordResponse {}

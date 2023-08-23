@@ -1,9 +1,10 @@
 syntax = "proto3";
 
 package resources.common.database;
-option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/common/database;database";
 
 import "validate/validate.proto";
+
+option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/common/database;database";
 
 message PaginationRequest {
   int64 offset = 1 [(validate.rules).int64.gte = 0];
@@ -18,6 +19,9 @@ message PaginationResponse {
 }
 
 message OrderBy {
-  string column = 1 [(validate.rules).string = {min_len: 1, max_len: 64}];
+  string column = 1 [(validate.rules).string = {
+    min_len: 1,
+    max_len: 64
+  }];
   bool desc = 2;
 }

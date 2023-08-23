@@ -1,11 +1,12 @@
 syntax = "proto3";
 
 package resources.rector;
-option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/rector;rector";
 
 import "resources/timestamp/timestamp.proto";
 import "resources/users/users.proto";
 import "validate/validate.proto";
+
+option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/rector;rector";
 
 enum EVENT_TYPE {
   UNSPECIFIED = 0;

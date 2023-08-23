@@ -1,15 +1,16 @@
 syntax = "proto3";
 
 package services.rector;
-option go_package = "github.com/galexrt/fivenet/gen/go/proto/services/rector;rector";
 
 import "resources/common/database/database.proto";
-import "resources/users/jobs.proto";
 import "resources/laws/laws.proto";
 import "resources/permissions/permissions.proto";
 import "resources/rector/audit.proto";
 import "resources/timestamp/timestamp.proto";
+import "resources/users/jobs.proto";
 import "validate/validate.proto";
+
+option go_package = "github.com/galexrt/fivenet/gen/go/proto/services/rector;rector";
 
 message GetJobPropsRequest {}
 

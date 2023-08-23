@@ -1,12 +1,13 @@
 syntax = "proto3";
 
 package resources.dispatch;
-option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/dispatch;dispatch";
 
 import "resources/dispatch/units.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/users/users.proto";
 import "validate/validate.proto";
+
+option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/dispatch;dispatch";
 
 message Dispatch {
   uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
@@ -21,7 +22,7 @@ message Dispatch {
   double x = 10;
   double y = 11;
   optional bool anon = 12;
-  optional int32 user_id = 13 [(validate.rules).int32.gt = 0];;
+  optional int32 user_id = 13 [(validate.rules).int32.gt = 0];
   optional resources.users.UserShort user = 14;
   repeated DispatchAssignment units = 15;
 }
@@ -32,7 +33,7 @@ message Attributes {
 
 message DispatchAssignments {
   uint64 dispatch_id = 1;
-  string job = 2 [ (validate.rules).string.max_len = 20 ];
+  string job = 2 [(validate.rules).string.max_len = 20];
   repeated DispatchAssignment units = 3;
 }
 

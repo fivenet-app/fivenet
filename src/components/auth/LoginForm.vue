@@ -3,14 +3,17 @@ import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { alpha_dash, max, min, required } from '@vee-validate/rules';
 import { defineRule } from 'vee-validate';
 import Alert from '~/components/partials/elements/Alert.vue';
-import config from '~/config';
 import { useAuthStore } from '~/store/auth';
+import { useConfigStore } from '~/store/config';
 
 const { $grpc } = useNuxtApp();
-const authStore = useAuthStore();
 
+const authStore = useAuthStore();
 const { loginError } = storeToRefs(authStore);
 const { loginStart, loginStop, setActiveChar, setPermissions, setAccessToken } = authStore;
+
+const configStore = useConfigStore();
+const { appConfig } = storeToRefs(configStore);
 
 const { cookiesEnabledIds } = useCookieControl();
 
@@ -40,8 +43,6 @@ async function login(values: FormData): Promise<void> {
         }
     });
 }
-
-const providers = config.login.providers;
 
 defineRule('required', required);
 defineRule('min', min);
@@ -140,7 +141,7 @@ watch(
         <p v-if="!socialLoginEnabled" class="mt-2 text-sm text-error-400">
             {{ $t('pages.auth.login.social_login_disabled') }}
         </p>
-        <div v-for="prov in providers" class="">
+        <div v-for="prov in appConfig.login.providers" class="">
             <button
                 v-if="!socialLoginEnabled"
                 type="button"

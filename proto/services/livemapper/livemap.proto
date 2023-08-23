@@ -1,10 +1,11 @@
 syntax = "proto3";
 
 package services.livemapper;
-option go_package = "github.com/galexrt/fivenet/gen/go/proto/services/livemapper;livemapper";
 
-import "resources/users/jobs.proto";
 import "resources/livemap/livemap.proto";
+import "resources/users/jobs.proto";
+
+option go_package = "github.com/galexrt/fivenet/gen/go/proto/services/livemapper;livemapper";
 
 message StreamRequest {}
 

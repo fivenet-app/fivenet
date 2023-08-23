@@ -1,10 +1,11 @@
 syntax = "proto3";
 
 package resources.accounts;
-option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/accounts;accounts";
 
 import "resources/timestamp/timestamp.proto";
 import "validate/validate.proto";
+
+option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/accounts;accounts";
 
 message Account {
   uint64 id = 1;

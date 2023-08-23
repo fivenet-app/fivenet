@@ -5,6 +5,46 @@ BUILD_DIR := .build/
 
 .DEFAULT: run-server
 
+# Build, Format, etc., Tools, Dependency checkouts
+
+buf:
+ifeq (, $(shell which buf))
+	go install github.com/bufbuild/buf/cmd/buf@v1.26.1
+endif
+
+protoc-gen-validate: build_dir
+	if test ! -d $(BUILD_DIR)validate-$(VALIDATE_VERSION)/; then \
+		git clone --branch $(VALIDATE_VERSION) https://github.com/bufbuild/protoc-gen-validate.git $(BUILD_DIR)validate-$(VALIDATE_VERSION); \
+	else \
+		git -C $(BUILD_DIR)validate-$(VALIDATE_VERSION)/ pull --all; \
+		git -C $(BUILD_DIR)validate-$(VALIDATE_VERSION)/ checkout $(VALIDATE_VERSION); \
+	fi
+
+	cd $(BUILD_DIR) && ln -sfn validate-$(VALIDATE_VERSION)/ validate
+
+protoc-gen-customizer:
+	go build -o ./cmd/protoc-gen-customizer ./cmd/protoc-gen-customizer
+
+gdal2tiles-leaflet: build_dir
+	if test ! -d $(BUILD_DIR)gdal2tiles-leaflet/; then \
+		git clone https://github.com/commenthol/gdal2tiles-leaflet.git $(BUILD_DIR)gdal2tiles-leaflet; \
+	else \
+		git -C $(BUILD_DIR)gdal2tiles-leaflet pull --all; \
+	fi
+
+# ====================================================================================
+# Makefile helper functions for helm-docs: https://github.com/norwoodj/helm-docs
+#
+
+HELM_DOCS_VERSION := v1.11.0
+HELM_DOCS := helm-docs
+HELM_DOCS_REPO := github.com/norwoodj/helm-docs/cmd/helm-docs
+
+bin-$(HELM_DOCS): ## Installs helm-docs
+	@GO111MODULE=on go install $(HELM_DOCS_REPO)@$(HELM_DOCS_VERSION)
+
+# Actual targets
+
 build_dir:
 	mkdir -p $(BUILD_DIR)
 
@@ -49,19 +89,6 @@ gen-sql:
 	# Remove schema/database name from the generated table code, so it uses the currently selected database
 	find ./query/fivenet/table -type f -iname '*.go' -exec sed -i 's~("fivenet", ~("", ~g' {} \;
 
-protoc-gen-validate: build_dir
-	if test ! -d $(BUILD_DIR)validate-$(VALIDATE_VERSION)/; then \
-		git clone --branch $(VALIDATE_VERSION) https://github.com/bufbuild/protoc-gen-validate.git $(BUILD_DIR)validate-$(VALIDATE_VERSION); \
-	else \
-		git -C $(BUILD_DIR)validate-$(VALIDATE_VERSION)/ pull --all; \
-		git -C $(BUILD_DIR)validate-$(VALIDATE_VERSION)/ checkout $(VALIDATE_VERSION); \
-	fi
-
-	cd $(BUILD_DIR) && ln -sfn validate-$(VALIDATE_VERSION)/ validate
-
-protoc-gen-customizer:
-	go build -o ./cmd/protoc-gen-customizer ./cmd/protoc-gen-customizer
-
 .PHONY: gen-proto
 gen-proto: protoc-gen-validate protoc-gen-customizer
 	PATH="$$PATH:./cmd/protoc-gen-customizer/" \
@@ -95,17 +122,22 @@ gen-proto: protoc-gen-validate protoc-gen-customizer
 	# Remove validate_pb imports from JS files
 	find ./gen -type f \( -iname '*.js' -o -iname '*.ts' \) -exec sed -i '/validate_pb/d' {} +
 
+fmt:
+	$(MAKE) fmt-proto gen-proto
+	$(MAKE) fmt-js
+
+.PHONY: fmt-proto
+fmt-proto: buf
+	buf format --write ./proto
+
+.PHONY: fmt-js
+fmt-js:
+	yarn prettier --write ./src
+
 .PHONY: gen-licenses
 gen-licenses:
 	yarn licenses generate-disclaimer > ./src/public/licenses/frontend.txt
 	go-licenses report . --template internal/scripts/licenses-backend.txt.tpl > ./src/public/licenses/backend.txt
-
-gdal2tiles-leaflet: build_dir
-	if test ! -d $(BUILD_DIR)gdal2tiles-leaflet/; then \
-		git clone https://github.com/commenthol/gdal2tiles-leaflet.git $(BUILD_DIR)gdal2tiles-leaflet; \
-	else \
-		git -C $(BUILD_DIR)gdal2tiles-leaflet pull --all; \
-	fi
 
 .PHONY: gen-tiles
 gen-tiles: gdal2tiles-leaflet
@@ -120,17 +152,6 @@ optimize-tiles:
 tiles:
 	$(MAKE) gen-tiles
 	$(MAKE) optimize-tiles
-
-# ====================================================================================
-# Makefile helper functions for helm-docs: https://github.com/norwoodj/helm-docs
-#
-
-HELM_DOCS_VERSION := v1.11.0
-HELM_DOCS := helm-docs
-HELM_DOCS_REPO := github.com/norwoodj/helm-docs/cmd/helm-docs
-
-bin-$(HELM_DOCS): ## Installs helm-docs
-	@GO111MODULE=on go install $(HELM_DOCS_REPO)@$(HELM_DOCS_VERSION)
 
 helm-docs: bin-$(HELM_DOCS) ## Use helm-docs to generate documentation from helm charts
 	$(HELM_DOCS) -c charts/fivenet \

@@ -1,11 +1,12 @@
 syntax = "proto3";
 
 package resources.jobs;
-option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/jobs;jobs";
 
 import "resources/timestamp/timestamp.proto";
 import "resources/users/users.proto";
 import "validate/validate.proto";
+
+option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/jobs;jobs";
 
 enum CONDUCT_TYPE {
   NEUTRAL = 0;

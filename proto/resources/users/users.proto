@@ -1,11 +1,12 @@
 syntax = "proto3";
 
 package resources.users;
-option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/users;users";
 
-import "resources/users/jobs.proto";
 import "resources/timestamp/timestamp.proto";
+import "resources/users/jobs.proto";
 import "validate/validate.proto";
+
+option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/users;users";
 
 message UserShort {
   int32 user_id = 1 [(validate.rules).int32.gt = 0]; // @gotags: alias:"id"
@@ -14,8 +15,14 @@ message UserShort {
   optional string job_label = 4 [(validate.rules).string.max_len = 50];
   int32 job_grade = 5 [(validate.rules).int32.gt = -1];
   optional string job_grade_label = 6 [(validate.rules).string.max_len = 50];
-  string firstname = 7 [(validate.rules).string = {min_len: 1, max_len: 50}];
-  string lastname = 8 [(validate.rules).string = {min_len: 1, max_len: 50}];
+  string firstname = 7 [(validate.rules).string = {
+    min_len: 1,
+    max_len: 50
+  }];
+  string lastname = 8 [(validate.rules).string = {
+    min_len: 1,
+    max_len: 50
+  }];
   string dateofbirth = 9 [(validate.rules).string.len = 10];
 }
 
@@ -26,10 +33,19 @@ message User {
   optional string job_label = 4 [(validate.rules).string.max_len = 50];
   int32 job_grade = 5 [(validate.rules).int32.gt = -1];
   optional string job_grade_label = 6 [(validate.rules).string.max_len = 50];
-  string firstname = 7 [(validate.rules).string = {min_len: 1, max_len: 50}];
-  string lastname = 8 [(validate.rules).string = {min_len: 1, max_len: 50}];
+  string firstname = 7 [(validate.rules).string = {
+    min_len: 1,
+    max_len: 50
+  }];
+  string lastname = 8 [(validate.rules).string = {
+    min_len: 1,
+    max_len: 50
+  }];
   string dateofbirth = 9 [(validate.rules).string.len = 10];
-  optional string sex = 10 [(validate.rules).string = {min_len: 1, max_len: 2}];
+  optional string sex = 10 [(validate.rules).string = {
+    min_len: 1,
+    max_len: 2
+  }];
   optional string height = 11;
   optional string phone_number = 12 [(validate.rules).string.max_len = 20];
   optional int32 visum = 13 [(validate.rules).int32.gte = 0];
@@ -40,7 +56,10 @@ message User {
 }
 
 message License {
-  string type = 1 [(validate.rules).string = {min_len: 3, max_len: 60}];
+  string type = 1 [(validate.rules).string = {
+    min_len: 3,
+    max_len: 60
+  }];
   string label = 2;
 }
 
@@ -67,7 +86,10 @@ message UserActivity {
   resources.timestamp.Timestamp created_at = 3; // @gotags: alias:"fivenet_user_activity.created_at"
   UserShort source_user = 4; // @gotags: alias:"source_user"
   UserShort target_user = 5; // @gotags: alias:"target_user"
-  string key = 6 [(validate.rules).string = {min_len: 1, max_len: 64}]; // @gotags: alias:"fivenet_user_activity.key"
+  string key = 6 [(validate.rules).string = {
+    min_len: 1,
+    max_len: 64
+  }]; // @gotags: alias:"fivenet_user_activity.key"
   string old_value = 7 [(validate.rules).string.max_len = 256]; // @gotags: alias:"fivenet_user_activity.old_value"
   string new_value = 8 [(validate.rules).string.max_len = 256]; // @gotags: alias:"fivenet_user_activity.new_value"
   string reason = 9; // @gotags: alias:"fivenet_user_activity.reason"
