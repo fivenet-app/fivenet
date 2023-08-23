@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { AccountEyeIcon, ClipboardPlusIcon } from 'mdi-vue3';
+import LicensePlate from '~/components/partials/LicensePlate.vue';
 import { useClipboardStore } from '~/store/clipboard';
 import { useNotificationsStore } from '~/store/notifications';
 import { toTitleCase } from '~/utils/strings';
@@ -29,8 +30,8 @@ function addToClipboard(): void {
 
 <template>
     <tr :key="vehicle.plate">
-        <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">
-            {{ vehicle.plate }}
+        <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0 max-w-[4rem]">
+            <LicensePlate :plate="vehicle.plate" class="mr-2" />
         </td>
         <td class="whitespace-nowrap px-1 py-1 text-left text-base-200">
             {{ vehicle.model }}

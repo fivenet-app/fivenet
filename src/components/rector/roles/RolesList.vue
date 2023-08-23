@@ -1,23 +1,27 @@
 <script lang="ts" setup>
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
-import { watchDebounced, watchOnce } from '@vueuse/core';
+import { watchOnce } from '@vueuse/core';
 import { CheckIcon } from 'mdi-vue3';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { useAuthStore } from '~/store/auth';
+import { useCompletorStore } from '~/store/completor';
 import { useNotificationsStore } from '~/store/notifications';
 import { Role } from '~~/gen/ts/resources/permissions/permissions';
-import { JobGrade } from '~~/gen/ts/resources/users/jobs';
+import { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
 import RolesListEntry from './RolesListEntry.vue';
 
 const { $grpc } = useNuxtApp();
 
-const authStore = useAuthStore();
 const notifications = useNotificationsStore();
 
+const authStore = useAuthStore();
 const { activeChar } = storeToRefs(authStore);
+
+const completorStore = useCompletorStore();
+const { getJobByName } = completorStore;
 
 const { data: roles, pending, refresh, error } = useLazyAsyncData('rector-roles', () => getRoles());
 
@@ -35,32 +39,15 @@ async function getRoles(): Promise<Role[]> {
     });
 }
 
-let entriesJobGrades = [] as JobGrade[];
-const filteredJobGrades = ref<JobGrade[]>([]);
-const queryJobGrade = ref('');
+const job = ref<Job | undefined>();
+watchOnce(roles, async () => (job.value = await getJobByName(activeChar.value!.job)));
+
 const selectedJobGrade = ref<JobGrade>();
-
-async function findJobGrades(): Promise<void> {
-    return new Promise(async (res, rej) => {
-        try {
-            const call = $grpc.getCompletorClient().completeJobs({
-                currentJob: true,
-                exactMatch: true,
-            });
-            const { response } = await call;
-
-            entriesJobGrades = response.jobs[0].grades;
-            filteredJobGrades.value = entriesJobGrades.filter(
-                (g) => (roles.value?.findIndex((r) => r.grade === g.grade) ?? -1) === -1,
-            );
-
-            return res();
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
-        }
-    });
-}
+const queryJobGradeRaw = ref('');
+const queryJobGrade = computed(() => queryJobGradeRaw.value.toLowerCase());
+const availableJobGrades = computed(
+    () => job.value?.grades.filter((g) => (roles.value?.findIndex((r) => r.grade === g.grade) ?? -1) === -1) ?? [],
+);
 
 async function createRole(): Promise<void> {
     return new Promise(async (res, rej) => {
@@ -101,18 +88,6 @@ async function createRole(): Promise<void> {
         }
     });
 }
-
-watchDebounced(
-    queryJobGrade,
-    async () => {
-        filteredJobGrades.value = entriesJobGrades.filter((g) =>
-            g.label.toLowerCase().includes(queryJobGrade.value.toLowerCase()),
-        );
-    },
-    { debounce: 600, maxWait: 1750 },
-);
-
-watchOnce(roles, async () => await findJobGrades());
 </script>
 
 <template>
@@ -137,17 +112,18 @@ watchOnce(roles, async () => await findJobGrades());
                                             <ComboboxButton as="div" class="w-full">
                                                 <ComboboxInput
                                                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                    @change="queryJobGrade = $event.target.value"
+                                                    @change="queryJobGradeRaw = $event.target.value"
                                                     :display-value="(grade: any) => grade?.label"
                                                 />
                                             </ComboboxButton>
 
                                             <ComboboxOptions
-                                                v-if="filteredJobGrades.length > 0"
                                                 class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-44 sm:text-sm"
                                             >
                                                 <ComboboxOption
-                                                    v-for="grade in filteredJobGrades"
+                                                    v-for="grade in availableJobGrades.filter((g) =>
+                                                        g.label.toLowerCase().includes(queryJobGrade),
+                                                    )"
                                                     :key="grade.grade"
                                                     :value="grade"
                                                     as="grade"

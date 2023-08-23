@@ -3,20 +3,24 @@ import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { ChevronDownIcon } from 'mdi-vue3';
+import { useCompletorStore } from 'store/completor';
 import Divider from '~/components/partials/elements/Divider.vue';
 import { useNotificationsStore } from '~/store/notifications';
 import { AttributeValues, Permission, Role, RoleAttribute } from '~~/gen/ts/resources/permissions/permissions';
-import { Job } from '~~/gen/ts/resources/users/jobs';
 import { AttrsUpdate } from '~~/gen/ts/services/rector/rector';
 import AttrViewAttr from './AttrViewAttr.vue';
+
+const props = defineProps<{
+    roleId: bigint;
+}>();
 
 const { $grpc } = useNuxtApp();
 
 const notifications = useNotificationsStore();
 
-const props = defineProps<{
-    roleId: bigint;
-}>();
+const completorStore = useCompletorStore();
+const { jobs } = storeToRefs(completorStore);
+const { listJobs } = completorStore;
 
 const role = ref<Role>();
 
@@ -25,8 +29,6 @@ const permCategories = ref<Set<string>>(new Set());
 
 const attrList = ref<RoleAttribute[]>([]);
 const attrStates = ref<Map<bigint, AttributeValues | undefined>>(new Map());
-
-const jobs = ref<Job[]>([]);
 
 async function getRole(): Promise<void> {
     return new Promise(async (res, rej) => {
@@ -37,22 +39,6 @@ async function getRole(): Promise<void> {
             const { response } = await call;
 
             role.value = response.role;
-
-            return res();
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
-        }
-    });
-}
-
-async function prepareAttributeData(): Promise<void> {
-    return new Promise(async (res, rej) => {
-        try {
-            const call = $grpc.getCompletorClient().completeJobs({});
-            const { response } = await call;
-
-            jobs.value = response.jobs;
 
             return res();
         } catch (e) {
@@ -156,9 +142,7 @@ async function updateLimits(): Promise<void> {
 }
 
 async function initializeRoleView(): Promise<void> {
-    await getRole();
-    await prepareAttributeData();
-    await getPermissions();
+    await Promise.all([getRole(), getPermissions(), listJobs()]);
 }
 
 onMounted(async () => {

@@ -3,6 +3,7 @@ import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOption
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { CheckIcon } from 'mdi-vue3';
 import { useAuthStore } from '~/store/auth';
+import { useCompletorStore } from '~/store/completor';
 import { useNotificationsStore } from '~/store/notifications';
 import { Job } from '~~/gen/ts/resources/users/jobs';
 
@@ -14,31 +15,12 @@ const notifications = useNotificationsStore();
 const { activeChar } = storeToRefs(authStore);
 const { setAccessToken, setActiveChar, setJobProps } = authStore;
 
-const entriesJobs = ref<Job[]>([]);
+const completorStore = useCompletorStore();
+const { jobs } = storeToRefs(completorStore);
+const { listJobs } = completorStore;
+
 const queryJob = ref('');
 const selectedJob = ref<undefined | Job>();
-
-async function findJobs(): Promise<void> {
-    return new Promise(async (res, rej) => {
-        if (entriesJobs.value.length > 0) {
-            return res();
-        }
-
-        try {
-            const call = $grpc.getCompletorClient().completeJobs({
-                search: queryJob.value,
-            });
-            const { response } = await call;
-
-            entriesJobs.value = response.jobs;
-
-            return res();
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
-        }
-    });
-}
 
 async function setJob(): Promise<void> {
     return new Promise(async (res, rej) => {
@@ -82,9 +64,7 @@ async function setJob(): Promise<void> {
     });
 }
 
-const filteredJobs = computed(() =>
-    entriesJobs.value.filter((g) => g.label.toLowerCase().includes(queryJob.value.toLowerCase())),
-);
+const filteredJobs = computed(() => jobs.value.filter((g) => g.label.toLowerCase().includes(queryJob.value.toLowerCase())));
 
 watch(selectedJob, () => setJob());
 </script>
@@ -94,7 +74,7 @@ watch(selectedJob, () => setJob());
         <div class="relative">
             <ComboboxButton as="div">
                 <ComboboxInput
-                    @click="findJobs"
+                    @click="listJobs"
                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                     @change="queryJob = $event.target.value"
                     :display-value="(job: any) => (job ? job?.label : '')"

@@ -52,7 +52,7 @@ const icon = new L.DivIcon({
         <LPopup :options="{ closeButton: true }">
             <span class="font-semibold">{{ $t('common.employee', 2) }} {{ marker.user?.jobLabel }} </span>
             <br />
-            <span class="italic">[{{ marker.user?.jobGrade }} {{ marker.user?.jobGradeLabel }}</span>
+            <span class="italic">[{{ marker.user?.jobGrade }}] {{ marker.user?.jobGradeLabel }}</span>
             <br />
             {{ marker.user?.firstname }} {{ marker.user?.lastname }}
         </LPopup>

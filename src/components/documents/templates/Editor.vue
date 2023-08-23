@@ -227,10 +227,6 @@ function updateContentAccessEntryAccess(event: { id: bigint; access: ACCESS_LEVE
     contentAccess.value.set(event.id, accessEntry);
 }
 
-const entriesRank = ref<JobGrade[]>([]);
-const filteredRank = ref<JobGrade[]>([]);
-const queryRank = ref('');
-
 function createObjectSpec(v: ObjectSpecsValue): ObjectSpecs {
     const o: ObjectSpecs = {
         required: v.req,
@@ -475,25 +471,8 @@ onMounted(async () => {
         });
     }
 
-    try {
-        const call = $grpc.getCompletorClient().completeJobs({
-            exactMatch: true,
-            currentJob: true,
-        });
-        const { response } = await call;
-        entriesRank.value = response.jobs[0].grades;
-    } catch (e) {
-        $grpc.handleError(e as RpcError);
-    }
-
     validate();
 });
-
-watchDebounced(
-    queryRank,
-    async () => (filteredRank.value = entriesRank.value.filter((r) => r.label.startsWith(queryRank.value))),
-    { debounce: 600, maxWait: 1750 },
-);
 </script>
 
 <template>

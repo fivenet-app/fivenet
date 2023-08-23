@@ -15,12 +15,10 @@ import { max, min, required } from '@vee-validate/rules';
 import { watchDebounced } from '@vueuse/core';
 import { CheckIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
+import { useCompletorStore } from '~/store/completor';
 import { useNotificationsStore } from '~/store/notifications';
 import { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
 import { User, UserProps } from '~~/gen/ts/resources/users/users';
-
-const { $grpc } = useNuxtApp();
-const notifications = useNotificationsStore();
 
 const props = defineProps<{
     open: boolean;
@@ -31,36 +29,23 @@ const emits = defineEmits<{
     (e: 'close'): void;
 }>();
 
+const { $grpc } = useNuxtApp();
+const notifications = useNotificationsStore();
+
+const completorStore = useCompletorStore();
+const { jobs } = storeToRefs(completorStore);
+const { listJobs } = completorStore;
+
 const queryJob = ref<string>('');
 const selectedJob = ref<undefined | Job>();
 const selectedJobGrade = ref<undefined | JobGrade>();
 
-const { data: jobs } = useLazyAsyncData('jobs', () => getJobs());
-
-async function getJobs(): Promise<Job[]> {
-    return new Promise(async (res, rej) => {
-        try {
-            const call = $grpc.getCompletorClient().completeJobs({
-                search: queryJob.value,
-            });
-            const { response } = await call;
-
-            return res(response.jobs);
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
-        }
-    });
-}
-
 watch(jobs, () => {
-    if (jobs.value) {
-        selectedJob.value = jobs.value.find((j) => j.name === props.user.job);
-        selectedJobGrade.value = selectedJob.value?.grades.find((g) => g.grade === props.user.jobGrade);
-    }
+    selectedJob.value = jobs.value.find((j) => j.name === props.user.job);
+    selectedJobGrade.value = selectedJob.value?.grades.find((g) => g.grade === props.user.jobGrade);
 });
 
-watchDebounced(queryJob, async () => await getJobs(), {
+watchDebounced(queryJob, async () => await listJobs(), {
     debounce: 600,
     maxWait: 1750,
 });
@@ -170,7 +155,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await setJobProp(
                                         <label for="job" class="block text-sm font-medium leading-6 text-neutral">
                                             {{ $t('common.job') }}
                                         </label>
-                                        <Combobox v-if="selectedJob" as="div" v-model="selectedJob" nullable>
+                                        <Combobox as="div" v-model="selectedJob" nullable>
                                             <div class="relative">
                                                 <ComboboxButton as="div">
                                                     <ComboboxInput

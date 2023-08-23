@@ -5,18 +5,22 @@ import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { CheckIcon, ChevronDownIcon, CloseIcon, MinusIcon, TrashCanIcon } from 'mdi-vue3';
 import Divider from '~/components/partials/elements/Divider.vue';
 import RoleViewAttr from '~/components/rector/roles/RoleViewAttr.vue';
+import { useCompletorStore } from '~/store/completor';
 import { useNotificationsStore } from '~/store/notifications';
 import { AttributeValues, Permission, Role, RoleAttribute } from '~~/gen/ts/resources/permissions/permissions';
-import { Job } from '~~/gen/ts/resources/users/jobs';
 import { AttrsUpdate, PermItem, PermsUpdate } from '~~/gen/ts/services/rector/rector';
+
+const props = defineProps<{
+    roleId: bigint;
+}>();
 
 const { $grpc } = useNuxtApp();
 
 const notifications = useNotificationsStore();
 
-const props = defineProps<{
-    roleId: bigint;
-}>();
+const completorStore = useCompletorStore();
+const { jobs } = storeToRefs(completorStore);
+const { listJobs } = completorStore;
 
 const role = ref<Role>();
 
@@ -26,8 +30,6 @@ const permStates = ref<Map<bigint, boolean | undefined>>(new Map());
 
 const attrList = ref<RoleAttribute[]>([]);
 const attrStates = ref<Map<bigint, AttributeValues | undefined>>(new Map());
-
-const jobs = ref<Job[]>([]);
 
 async function getRole(): Promise<void> {
     return new Promise(async (res, rej) => {
@@ -43,22 +45,6 @@ async function getRole(): Promise<void> {
             role.value?.attributes.forEach((attr) => {
                 attrStates.value.set(attr.attrId, attr.value);
             });
-
-            return res();
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
-        }
-    });
-}
-
-async function prepareAttributeData(): Promise<void> {
-    return new Promise(async (res, rej) => {
-        try {
-            const call = $grpc.getCompletorClient().completeJobs({});
-            const { response } = await call;
-
-            jobs.value = response.jobs;
 
             return res();
         } catch (e) {
@@ -217,10 +203,7 @@ async function updatePermissions(): Promise<void> {
 }
 
 async function initializeRoleView(): Promise<void> {
-    await getRole();
-    await prepareAttributeData();
-    await getPermissions();
-    await propogatePermissionStates();
+    await Promise.all([getRole(), getPermissions(), propogatePermissionStates(), listJobs()]);
 }
 
 onMounted(async () => {

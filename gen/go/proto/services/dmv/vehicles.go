@@ -95,7 +95,7 @@ func (s *Server) ListVehicles(ctx context.Context, req *ListVehiclesRequest) (*L
 		return nil, ErrFailedQuery
 	}
 
-	pag, limit := req.Pagination.GetResponse()
+	pag, limit := req.Pagination.GetResponseWithPageSize(15)
 	resp := &ListVehiclesResponse{
 		Pagination: pag,
 	}

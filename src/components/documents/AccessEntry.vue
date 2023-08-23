@@ -12,17 +12,13 @@ import {
 } from '@headlessui/vue';
 
 import { listEnumValues } from '@protobuf-ts/runtime';
-import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { watchDebounced } from '@vueuse/core';
 import { CheckIcon, ChevronDownIcon, CloseIcon } from 'mdi-vue3';
+import { useCompletorStore } from '~/store/completor';
 import { ArrayElement } from '~/utils/types';
 import { ACCESS_LEVEL } from '~~/gen/ts/resources/documents/access';
 import { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
 import { UserShort } from '~~/gen/ts/resources/users/users';
-
-const { $grpc } = useNuxtApp();
-
-const { t } = useI18n();
 
 const props = defineProps<{
     init: {
@@ -54,17 +50,26 @@ const emit = defineEmits<{
     (e: 'deleteRequest', payload: { id: bigint }): void;
 }>();
 
+const completorStore = useCompletorStore();
+const { getJobByName: getJob, completeCitizens } = completorStore;
+const { jobs } = storeToRefs(completorStore);
+
+const { t } = useI18n();
+
 const selectedAccessType = ref<{ id: number; name: string }>({
     id: -1,
     name: '',
 });
 
-let entriesChars = [] as UserShort[];
+const entriesChars = ref<UserShort[]>();
 const queryChar = ref('');
 const selectedChar = ref<undefined | UserShort>(undefined);
 
-let entriesJobs = [] as Job[];
-const queryJob = ref('');
+const queryJobRaw = ref('');
+const queryJob = computed(() => queryJobRaw.value.toLowerCase());
+const filteredJobs = computed(() =>
+    jobs.value.filter((j) => j.name.toLowerCase().includes(queryJob.value) || j.label.includes(queryJob.value)),
+);
 const selectedJob = ref<Job>();
 
 let entriesMinimumRank = [] as JobGrade[];
@@ -97,41 +102,12 @@ if (!props.accessRoles || props.accessRoles.length === 0) {
 const queryAccessRole = ref('');
 const selectedAccessRole = ref<ArrayElement<typeof entriesAccessRoles>>();
 
-async function findJobs(): Promise<void> {
-    return new Promise(async (res, rej) => {
-        try {
-            const call = $grpc.getCompletorClient().completeJobs({
-                search: queryJob.value,
-                currentJob: false,
-            });
-            const { response } = await call;
+async function findChars(userId?: number): Promise<UserShort[]> {
+    if (queryChar.value === '' && userId === undefined) return [];
 
-            entriesJobs = response.jobs;
-
-            return res();
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
-        }
-    });
-}
-
-async function findChars(userId?: number): Promise<void> {
-    return new Promise(async (res, rej) => {
-        try {
-            const call = $grpc.getCompletorClient().completeCitizens({
-                search: queryChar.value,
-                userId: userId,
-            });
-            const { response } = await call;
-
-            entriesChars = response.users;
-
-            return res();
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
-        }
+    return completeCitizens({
+        search: queryChar.value,
+        userId: userId,
     });
 }
 
@@ -140,34 +116,28 @@ onMounted(async () => {
     if (passedType) selectedAccessType.value = passedType;
 
     if (props.init.type === 0 && props.init.values.char !== undefined && props.init.values.accessrole !== undefined) {
-        await findChars(props.init.values.char);
-        selectedChar.value = entriesChars.find((char) => char.userId === props.init.values.char);
+        const users = await findChars(props.init.values.char);
+        selectedChar.value = users.find((char) => char.userId === props.init.values.char);
         selectedAccessRole.value = entriesAccessRoles.find((type) => type.id === props.init.values.accessrole);
-        queryChar.value = '';
     } else if (
         props.init.type === 1 &&
         props.init.values.job !== undefined &&
         props.init.values.minimumrank !== undefined &&
         props.init.values.accessrole !== undefined
     ) {
-        await findJobs();
-        selectedJob.value = entriesJobs.find((job) => job.name === props.init.values.job);
+        selectedJob.value = await getJob(props.init.values.job);
         if (selectedJob.value) entriesMinimumRank = selectedJob.value.grades;
         selectedMinimumRank.value = entriesMinimumRank.find((rank) => rank.grade === props.init.values.minimumrank);
         selectedAccessRole.value = entriesAccessRoles.find((type) => type.id === props.init.values.accessrole);
     }
 });
 
-watchDebounced(queryJob, async () => await findJobs(), {
-    debounce: 600,
-    maxWait: 1750,
-});
-watchDebounced(queryChar, async () => await findChars(), {
+watchDebounced(queryChar, async () => (entriesChars.value = await findChars()), {
     debounce: 600,
     maxWait: 1750,
 });
 
-watch(selectedAccessType, () => {
+watch(selectedAccessType, async () => {
     emit('typeChange', {
         id: props.init.id,
         type: selectedAccessType.value.id,
@@ -179,11 +149,9 @@ watch(selectedAccessType, () => {
 
     if (selectedAccessType.value.id === 0) {
         queryChar.value = '';
-        findChars();
     } else {
-        queryJob.value = '';
+        queryJobRaw.value = '';
         queryMinimumRank.value = '';
-        findJobs();
     }
 });
 
@@ -296,7 +264,7 @@ watch(selectedAccessRole, () => {
                         </ComboboxButton>
 
                         <ComboboxOptions
-                            v-if="entriesChars.length > 0"
+                            v-if="entriesChars && entriesChars.length > 0"
                             class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-44 sm:text-sm"
                         >
                             <ComboboxOption
@@ -339,17 +307,17 @@ watch(selectedAccessRole, () => {
                         <ComboboxButton as="div">
                             <ComboboxInput
                                 class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                @change="queryJob = $event.target.value"
+                                @change="queryJobRaw = $event.target.value"
                                 :display-value="(job: any) => job?.label"
                             />
                         </ComboboxButton>
 
                         <ComboboxOptions
-                            v-if="entriesJobs.length > 0"
+                            v-if="filteredJobs.length > 0"
                             class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-44 sm:text-sm"
                         >
                             <ComboboxOption
-                                v-for="job in entriesJobs"
+                                v-for="job in filteredJobs"
                                 :key="job.name"
                                 :value="job"
                                 as="job"

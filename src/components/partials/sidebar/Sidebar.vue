@@ -93,7 +93,6 @@ const sidebarNavigation = ref<
         position: 'top',
         current: false,
     },
-
     {
         name: 'common.dispatch_center',
         href: { name: 'centrum' },
@@ -110,6 +109,7 @@ const sidebarNavigation = ref<
         position: 'top',
         current: false,
     },
+
     {
         name: 'common.about',
         href: { name: 'about' },
