@@ -914,8 +914,8 @@
                 "description": "Vollständige Job-Namen und Ränge."
             },
             "CompleteDocumentCategories": {
-                "key": "Dokumentenkategorien auflisten",
-                "description": "Eine Dokumentenkategorie vervollständigen."
+                "key": "Auflisten von Dokumentkategorien",
+                "description": "Auflisten der Dokumentkategorien von bestimmten Jobs."
             }
         },
         "DMVService": {
@@ -1055,7 +1055,39 @@
             }
         },
         "CentrumService": {
-            "category": "Leitstelle"
+            "category": "Leitstelle",
+            "CreateDispatch": {
+                "key": "Einsätze erstellen",
+                "description": ""
+            },
+            "Stream": {
+                "key": "",
+                "description": ""
+            },
+            "UpdateDispatch": {
+                "key": "Einsätze aktualisieren",
+                "description": "Aktualisieren von Einsatz-Informationen."
+            },
+            "CreateOrUpdateUnit": {
+                "key": "Erstellen und Aktualisieren von Einheiten",
+                "description": ""
+            },
+            "DeleteUnit": {
+                "key": "",
+                "description": ""
+            },
+            "TakeDispatch": {
+                "key": "",
+                "description": ""
+            },
+            "TakeControl": {
+                "key": "",
+                "description": ""
+            },
+            "UpdateSettings": {
+                "key": "",
+                "description": ""
+            }
         }
     },
     "attrs": {
