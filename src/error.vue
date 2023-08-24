@@ -36,7 +36,7 @@ function startButtonTimer(): void {
     buttonDisabled.value = true;
 
     setTimeout(() => (buttonDisabled.value = false), 2000);
-    setTimeout(() => $loading.errored(), 250);
+    setTimeout(() => $loading.errored(), 350);
 }
 
 $loading.start();

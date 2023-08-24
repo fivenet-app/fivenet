@@ -10,6 +10,7 @@ import { useNotificationsStore } from './notifications';
 export interface CentrumState {
     error: RpcError | undefined;
     abort: AbortController | undefined;
+    restarting: boolean;
     settings: Settings;
     isDisponent: boolean;
     disponents: UserShort[];
@@ -26,6 +27,7 @@ export const useCentrumStore = defineStore('centrum', {
         ({
             error: undefined,
             abort: undefined,
+            restarting: false,
             settings: {},
             isDisponent: false,
             disponents: [] as UserShort[],
@@ -189,6 +191,9 @@ export const useCentrumStore = defineStore('centrum', {
         },
 
         async startStream(): Promise<void> {
+            if (this.abort !== undefined) return;
+            this.restarting = false;
+
             console.debug('Centrum: Starting Data Stream');
 
             const authStore = useAuthStore();
@@ -329,10 +334,11 @@ export const useCentrumStore = defineStore('centrum', {
             console.debug('Centrum: Stopping Data Stream');
         },
         async restartStream(): Promise<void> {
+            this.restarting = true;
             console.debug('Centrum: Restarting Data Stream');
             await this.stopStream();
 
-            setTimeout(async () => this.startStream(), 250);
+            setTimeout(async () => this.startStream(), 1000);
         },
         // Central "can user do that" method as we will take the dispatch center mode into account further
         canDo(action: canDoAction, dispatch?: Dispatch): boolean {

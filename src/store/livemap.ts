@@ -7,6 +7,7 @@ import { LivemapperServiceClient } from '~~/gen/ts/services/livemapper/livemap.c
 export interface LivemapState {
     error: RpcError | undefined;
     abort: AbortController | undefined;
+    restarting: boolean;
     location: Coordinate | undefined;
     zoom: number;
     jobs: {
@@ -22,6 +23,7 @@ export const useLivemapStore = defineStore('livemap', {
         ({
             error: undefined,
             abort: undefined,
+            restarting: false,
             location: { x: 0, y: 0 },
             zoom: 2,
             jobs: {
@@ -35,6 +37,7 @@ export const useLivemapStore = defineStore('livemap', {
     actions: {
         async startStream(): Promise<void> {
             if (this.abort !== undefined) return;
+            this.restarting = false;
 
             console.debug('Livemap: Starting Data Stream');
             try {
@@ -80,10 +83,11 @@ export const useLivemapStore = defineStore('livemap', {
             console.debug('Livemap: Stopping Data Stream');
         },
         async restartStream(): Promise<void> {
+            this.restarting = true;
             console.debug('Centrum: Restarting Data Stream');
             await this.stopStream();
 
-            setTimeout(async () => this.startStream(), 250);
+            setTimeout(async () => this.startStream(), 1000);
         },
     },
 });
