@@ -1,8 +1,10 @@
 <script lang="ts" setup>
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { max, max_value, min, min_value, required } from '@vee-validate/rules';
+import { useConfirmDialog } from '@vueuse/core';
 import { CancelIcon, ContentSaveIcon, PencilIcon, TrashCanIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
+import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
 import { Law } from '~~/gen/ts/resources/laws/laws';
 
 const props = defineProps<{
@@ -79,7 +81,7 @@ interface FormData {
     stvoPoints: bigint;
 }
 
-const { handleSubmit } = useForm<FormData>({
+const { handleSubmit, setValues } = useForm<FormData>({
     validationSchema: {
         name: { required: true, min: 3, max: 128 },
         description: { required: true, min: 6, max: 500 },
@@ -87,28 +89,41 @@ const { handleSubmit } = useForm<FormData>({
         detentionTime: { required: false, min_value: 0, max: 999_999_999 },
         stvoPoints: { required: false, min_value: 0, max: 999_999_999 },
     },
-    initialValues: {
-        name: props.law.name,
-        description: props.law.description,
-        fine: props.law.fine,
-        detentionTime: props.law.detentionTime,
-        stvoPoints: props.law.stvoPoints,
-    },
     validateOnMount: true,
 });
 
+setValues({
+    name: props.law.name,
+    description: props.law.description,
+    fine: props.law.fine,
+    detentionTime: props.law.detentionTime,
+    stvoPoints: props.law.stvoPoints,
+});
+
 const onSubmit = handleSubmit(async (values): Promise<void> => await saveLaw(props.law.lawbookId, props.law.id, values));
+
+const { isRevealed, reveal, confirm, cancel, onConfirm } = useConfirmDialog();
+
+onConfirm(async (id) => deleteLaw(id));
 
 const editing = ref(props.startInEdit);
 </script>
 
 <template>
+    <ConfirmDialog
+        :open="isRevealed"
+        :title="$t('components.partials.confirm_dialog.title')"
+        :description="$t('components.partials.confirm_dialog.description')"
+        :cancel="cancel"
+        :confirm="confirm"
+    />
+
     <tr v-if="!editing">
         <td class="py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">
             <button type="button" class="pl-2" @click="editing = true" :title="$t('common.edit')">
                 <PencilIcon class="w-6 h-6" />
             </button>
-            <button type="button" class="pl-2" @click="deleteLaw(law.id)" :title="$t('common.delete')">
+            <button type="button" class="pl-2" @click="reveal(law.id)" :title="$t('common.delete')">
                 <TrashCanIcon class="w-6 h-6" />
             </button>
         </td>

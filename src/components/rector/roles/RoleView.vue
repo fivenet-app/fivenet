@@ -2,7 +2,9 @@
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
+import { useConfirmDialog } from '@vueuse/core';
 import { CheckIcon, ChevronDownIcon, CloseIcon, MinusIcon, TrashCanIcon } from 'mdi-vue3';
+import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
 import Divider from '~/components/partials/elements/Divider.vue';
 import RoleViewAttr from '~/components/rector/roles/RoleViewAttr.vue';
 import { useCompletorStore } from '~/store/completor';
@@ -54,11 +56,11 @@ async function getRole(): Promise<void> {
     });
 }
 
-async function deleteRole(): Promise<void> {
+async function deleteRole(id: bigint): Promise<void> {
     return new Promise(async (res, rej) => {
         try {
             await $grpc.getRectorClient().deleteRole({
-                id: props.roleId,
+                id: id,
             });
 
             notifications.dispatchNotification({
@@ -209,15 +211,21 @@ async function initializeRoleView(): Promise<void> {
 onMounted(async () => {
     initializeRoleView();
 });
+
+const { isRevealed, reveal, confirm, cancel, onConfirm } = useConfirmDialog();
+
+onConfirm(async (id) => deleteRole(id));
 </script>
 
 <template>
+    <ConfirmDialog :open="isRevealed" :cancel="cancel" :confirm="confirm" />
+
     <div class="py-4 max-w-7xl mx-auto">
         <div class="px-1 sm:px-2 lg:px-4">
             <div v-if="role">
                 <h2 class="text-3xl text-white">
                     {{ role?.jobLabel! }} - {{ role?.jobGradeLabel }}
-                    <button v-if="can('RectorService.DeleteRole')" @click="deleteRole()">
+                    <button v-if="can('RectorService.DeleteRole')" @click="reveal(role.id)">
                         <TrashCanIcon class="w-6 h-6 mx-auto text-neutral" />
                     </button>
                 </h2>

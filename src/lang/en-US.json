@@ -263,7 +263,11 @@
             "sidebar_language_switcher": {
                 "open_switcher": "Open language menu"
             },
-            "sidebar_notifications": "Go to Notifications"
+            "sidebar_notifications": "Go to Notifications",
+            "confirm_dialog": {
+                "title": "Dangerous Action",
+                "description": "Are you sure want to do this potentially dangerous actions? All data associated will be permanently deleted from our servers forever. This action cannot be undone."
+            }
         },
         "clipboard": {
             "clipboard_button": {
@@ -581,7 +585,8 @@
         "attributes": "Attribute | Attributes",
         "last_update": "Last Update",
         "disponents": "Disponent | Disponents",
-        "disponent": "No Disponents | {n} Disponent | {n} Disponents"
+        "disponent": "No Disponents | {n} Disponent | {n} Disponents",
+        "confirm": "Confirm | Confirmed"
     },
     "notifications": {
         "clipboard": {

@@ -1,8 +1,10 @@
 <script lang="ts" setup>
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { max, min, required } from '@vee-validate/rules';
+import { useConfirmDialog } from '@vueuse/core';
 import { CancelIcon, ContentSaveIcon, PencilIcon, TrashCanIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
+import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
 import { LawBook } from '~~/gen/ts/resources/laws/laws';
 import LawEntry from './LawEntry.vue';
 
@@ -73,16 +75,16 @@ interface FormData {
     description?: string;
 }
 
-const { handleSubmit } = useForm<FormData>({
+const { handleSubmit, setValues } = useForm<FormData>({
     validationSchema: {
         name: { required: true, min: 3, max: 128 },
         description: { required: true, min: 3, max: 255 },
     },
-    initialValues: {
-        name: props.book.name,
-        description: props.book.description,
-    },
     validateOnMount: true,
+});
+setValues({
+    name: props.book.name,
+    description: props.book.description,
 });
 
 const onSubmit = handleSubmit(async (values): Promise<LawBook> => await saveLawBook(props.book.id, values));
@@ -106,16 +108,22 @@ function addLaw(): void {
     lastNewId.value--;
 }
 
+const { isRevealed, reveal, confirm, cancel, onConfirm } = useConfirmDialog();
+
+onConfirm(async (id) => deleteLawBook(id));
+
 const editing = ref(props.startInEdit);
 </script>
 
 <template>
+    <ConfirmDialog :open="isRevealed" :cancel="cancel" :confirm="confirm" />
+
     <div class="my-2">
         <div v-if="!editing" class="flex text-white items-center gap-x-2">
             <button type="button" @click="editing = true" :title="$t('common.edit')">
                 <PencilIcon class="w-6 h-6" />
             </button>
-            <button type="button" @click="deleteLawBook(book.id)" :title="$t('common.delete')">
+            <button type="button" @click="reveal(book.id)" :title="$t('common.delete')">
                 <TrashCanIcon class="w-6 h-6" />
             </button>
             <h2 class="text-xl">{{ book.name }}</h2>
