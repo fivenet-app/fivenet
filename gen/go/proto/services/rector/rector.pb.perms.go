@@ -22,10 +22,13 @@ const (
 var PermsRemap = map[string]string{
 
 	// Service: RectorService
-	"RectorService/GetPermissions":   "RectorService/GetRoles",
-	"RectorService/GetRole":          "RectorService/GetRoles",
-	"RectorService/UpdateLaws":       "SuperUser",
-	"RectorService/UpdateRoleLimits": "SuperUser",
+	"RectorService/CreateOrUpdateLaw":     "SuperUser",
+	"RectorService/CreateOrUpdateLawBook": "SuperUser",
+	"RectorService/DeleteLaw":             "SuperUser",
+	"RectorService/DeleteLawBook":         "SuperUser",
+	"RectorService/GetPermissions":        "RectorService/GetRoles",
+	"RectorService/GetRole":               "RectorService/GetRoles",
+	"RectorService/UpdateRoleLimits":      "SuperUser",
 }
 
 func (s *Server) GetPermsRemap() map[string]string {

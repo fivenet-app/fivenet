@@ -65,7 +65,7 @@ const filteredLawBooks = computed(
             ?.map((book) => {
                 const laws = book.laws
                     .filter(
-                        (p) => p.name.toLowerCase().includes(query.value) || p.description.toLowerCase().includes(query.value),
+                        (p) => p.name.toLowerCase().includes(query.value) || p.description?.toLowerCase().includes(query.value),
                     )
                     .map((p) => {
                         const show = true;
@@ -249,7 +249,7 @@ ${t('common.crime', selectedPenalties.value.length)}:
                                                                 scope="col"
                                                                 class="py-3.5 px-2 text-left text-sm font-semibold text-neutral"
                                                             >
-                                                                {{ $t('common.other') }}
+                                                                {{ $t('common.description') }}
                                                             </th>
                                                             <th
                                                                 scope="col"

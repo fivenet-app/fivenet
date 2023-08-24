@@ -12,6 +12,7 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/laws"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/users"
 	"github.com/galexrt/fivenet/pkg/config"
+	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/pkg/utils/syncx"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
@@ -242,9 +243,21 @@ func (c *Cache) refreshLaws(ctx context.Context) error {
 	}
 
 	// Update cache
+	found := []uint64{}
 	for _, lawbook := range dest {
 		c.lawBooks.Store(lawbook.Id, lawbook)
+		found = append(found, lawbook.Id)
 	}
+
+	// Delete non-existing law books, based on which are in the database
+	c.lawBooks.Range(func(key uint64, value *laws.LawBook) bool {
+		if !utils.InSliceFunc(found, func(in uint64) bool {
+			return in == key
+		}) {
+			c.lawBooks.Delete(key)
+		}
+		return true
+	})
 
 	return nil
 }

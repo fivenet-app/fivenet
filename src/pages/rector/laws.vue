@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import Laws from '~/components/rector/Laws.vue';
+import Laws from '~/components/rector/laws/List.vue';
 
 useHead({
     title: 'pages.rector.laws.title',

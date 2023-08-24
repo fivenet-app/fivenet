@@ -18,7 +18,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_lawbooks_laws` (
   `updated_at` datetime(3) DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP(3),
   `lawbook_id` bigint(20) unsigned NOT NULL,
   `name` varchar(128) NOT NULL,
-  `description` varchar(255) NULL,
+  `description` varchar(511) NULL,
   `fine` bigint(20) unsigned DEFAULT 0,
   `detention_time` bigint(20) unsigned DEFAULT 0,
   `stvo_points` bigint(20) unsigned DEFAULT 0,

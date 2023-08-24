@@ -109,13 +109,16 @@ message UpdateRoleLimitsRequest {
 
 message UpdateRoleLimitsResponse {}
 
-message UpdateLawsRequest {
-  repeated resources.laws.LawBook books = 1;
+message DeleteLawBookRequest {
+  uint64 id = 1;
+}
+message DeleteLawBookResponse {}
+
+message DeleteLawRequest {
+  uint64 id = 1;
 }
 
-message UpdateLawsResponse {
-  repeated resources.laws.LawBook books = 1;
-}
+message DeleteLawResponse {}
 
 service RectorService {
   // @perm
@@ -145,5 +148,11 @@ service RectorService {
   rpc UpdateRoleLimits(UpdateRoleLimitsRequest) returns (UpdateRoleLimitsResponse);
 
   // @perm: Name=SuperUser
-  rpc UpdateLaws(UpdateLawsRequest) returns (UpdateLawsResponse);
+  rpc CreateOrUpdateLawBook(resources.laws.LawBook) returns (resources.laws.LawBook);
+  // @perm: Name=SuperUser
+  rpc DeleteLawBook(DeleteLawBookRequest) returns (DeleteLawBookResponse);
+  // @perm: Name=SuperUser
+  rpc CreateOrUpdateLaw(resources.laws.Law) returns (resources.laws.Law);
+  // @perm: Name=SuperUser
+  rpc DeleteLaw(DeleteLawRequest) returns (DeleteLawResponse);
 }

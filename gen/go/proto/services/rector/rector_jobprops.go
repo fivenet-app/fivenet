@@ -62,7 +62,7 @@ func (s *Server) SetJobProps(ctx context.Context, req *SetJobPropsRequest) (*Set
 		UserJob: userInfo.Job,
 		State:   int16(rector.EVENT_TYPE_ERRORED),
 	}
-	defer s.a.Log(auditEntry, req)
+	defer s.aud.Log(auditEntry, req)
 
 	// Ensure that the job is the user's job
 	req.JobProps.Job = userInfo.Job

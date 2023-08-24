@@ -3000,212 +3000,44 @@ var _ interface {
 	ErrorName() string
 } = UpdateRoleLimitsResponseValidationError{}
 
-// Validate checks the field values on UpdateLawsRequest with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// first error encountered is returned, or nil if there are no violations.
-func (m *UpdateLawsRequest) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on UpdateLawsRequest with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// UpdateLawsRequestMultiError, or nil if none found.
-func (m *UpdateLawsRequest) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *UpdateLawsRequest) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	for idx, item := range m.GetBooks() {
-		_, _ = idx, item
-
-		if all {
-			switch v := interface{}(item).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, UpdateLawsRequestValidationError{
-						field:  fmt.Sprintf("Books[%v]", idx),
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, UpdateLawsRequestValidationError{
-						field:  fmt.Sprintf("Books[%v]", idx),
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return UpdateLawsRequestValidationError{
-					field:  fmt.Sprintf("Books[%v]", idx),
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	}
-
-	if len(errors) > 0 {
-		return UpdateLawsRequestMultiError(errors)
-	}
-
-	return nil
-}
-
-// UpdateLawsRequestMultiError is an error wrapping multiple validation errors
-// returned by UpdateLawsRequest.ValidateAll() if the designated constraints
-// aren't met.
-type UpdateLawsRequestMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m UpdateLawsRequestMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m UpdateLawsRequestMultiError) AllErrors() []error { return m }
-
-// UpdateLawsRequestValidationError is the validation error returned by
-// UpdateLawsRequest.Validate if the designated constraints aren't met.
-type UpdateLawsRequestValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e UpdateLawsRequestValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e UpdateLawsRequestValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e UpdateLawsRequestValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e UpdateLawsRequestValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e UpdateLawsRequestValidationError) ErrorName() string {
-	return "UpdateLawsRequestValidationError"
-}
-
-// Error satisfies the builtin error interface
-func (e UpdateLawsRequestValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sUpdateLawsRequest.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = UpdateLawsRequestValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = UpdateLawsRequestValidationError{}
-
-// Validate checks the field values on UpdateLawsResponse with the rules
+// Validate checks the field values on DeleteLawBookRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *UpdateLawsResponse) Validate() error {
+func (m *DeleteLawBookRequest) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on UpdateLawsResponse with the rules
+// ValidateAll checks the field values on DeleteLawBookRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// UpdateLawsResponseMultiError, or nil if none found.
-func (m *UpdateLawsResponse) ValidateAll() error {
+// DeleteLawBookRequestMultiError, or nil if none found.
+func (m *DeleteLawBookRequest) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *UpdateLawsResponse) validate(all bool) error {
+func (m *DeleteLawBookRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
 	var errors []error
 
-	for idx, item := range m.GetBooks() {
-		_, _ = idx, item
-
-		if all {
-			switch v := interface{}(item).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, UpdateLawsResponseValidationError{
-						field:  fmt.Sprintf("Books[%v]", idx),
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, UpdateLawsResponseValidationError{
-						field:  fmt.Sprintf("Books[%v]", idx),
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return UpdateLawsResponseValidationError{
-					field:  fmt.Sprintf("Books[%v]", idx),
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	}
+	// no validation rules for Id
 
 	if len(errors) > 0 {
-		return UpdateLawsResponseMultiError(errors)
+		return DeleteLawBookRequestMultiError(errors)
 	}
 
 	return nil
 }
 
-// UpdateLawsResponseMultiError is an error wrapping multiple validation errors
-// returned by UpdateLawsResponse.ValidateAll() if the designated constraints
-// aren't met.
-type UpdateLawsResponseMultiError []error
+// DeleteLawBookRequestMultiError is an error wrapping multiple validation
+// errors returned by DeleteLawBookRequest.ValidateAll() if the designated
+// constraints aren't met.
+type DeleteLawBookRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m UpdateLawsResponseMultiError) Error() string {
+func (m DeleteLawBookRequestMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -3214,11 +3046,11 @@ func (m UpdateLawsResponseMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m UpdateLawsResponseMultiError) AllErrors() []error { return m }
+func (m DeleteLawBookRequestMultiError) AllErrors() []error { return m }
 
-// UpdateLawsResponseValidationError is the validation error returned by
-// UpdateLawsResponse.Validate if the designated constraints aren't met.
-type UpdateLawsResponseValidationError struct {
+// DeleteLawBookRequestValidationError is the validation error returned by
+// DeleteLawBookRequest.Validate if the designated constraints aren't met.
+type DeleteLawBookRequestValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -3226,24 +3058,24 @@ type UpdateLawsResponseValidationError struct {
 }
 
 // Field function returns field value.
-func (e UpdateLawsResponseValidationError) Field() string { return e.field }
+func (e DeleteLawBookRequestValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e UpdateLawsResponseValidationError) Reason() string { return e.reason }
+func (e DeleteLawBookRequestValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e UpdateLawsResponseValidationError) Cause() error { return e.cause }
+func (e DeleteLawBookRequestValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e UpdateLawsResponseValidationError) Key() bool { return e.key }
+func (e DeleteLawBookRequestValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e UpdateLawsResponseValidationError) ErrorName() string {
-	return "UpdateLawsResponseValidationError"
+func (e DeleteLawBookRequestValidationError) ErrorName() string {
+	return "DeleteLawBookRequestValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e UpdateLawsResponseValidationError) Error() string {
+func (e DeleteLawBookRequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -3255,14 +3087,14 @@ func (e UpdateLawsResponseValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sUpdateLawsResponse.%s: %s%s",
+		"invalid %sDeleteLawBookRequest.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = UpdateLawsResponseValidationError{}
+var _ error = DeleteLawBookRequestValidationError{}
 
 var _ interface {
 	Field() string
@@ -3270,4 +3102,310 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = UpdateLawsResponseValidationError{}
+} = DeleteLawBookRequestValidationError{}
+
+// Validate checks the field values on DeleteLawBookResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DeleteLawBookResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DeleteLawBookResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DeleteLawBookResponseMultiError, or nil if none found.
+func (m *DeleteLawBookResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DeleteLawBookResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return DeleteLawBookResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// DeleteLawBookResponseMultiError is an error wrapping multiple validation
+// errors returned by DeleteLawBookResponse.ValidateAll() if the designated
+// constraints aren't met.
+type DeleteLawBookResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DeleteLawBookResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DeleteLawBookResponseMultiError) AllErrors() []error { return m }
+
+// DeleteLawBookResponseValidationError is the validation error returned by
+// DeleteLawBookResponse.Validate if the designated constraints aren't met.
+type DeleteLawBookResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DeleteLawBookResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DeleteLawBookResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DeleteLawBookResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DeleteLawBookResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DeleteLawBookResponseValidationError) ErrorName() string {
+	return "DeleteLawBookResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DeleteLawBookResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDeleteLawBookResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DeleteLawBookResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DeleteLawBookResponseValidationError{}
+
+// Validate checks the field values on DeleteLawRequest with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *DeleteLawRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DeleteLawRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DeleteLawRequestMultiError, or nil if none found.
+func (m *DeleteLawRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DeleteLawRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	if len(errors) > 0 {
+		return DeleteLawRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// DeleteLawRequestMultiError is an error wrapping multiple validation errors
+// returned by DeleteLawRequest.ValidateAll() if the designated constraints
+// aren't met.
+type DeleteLawRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DeleteLawRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DeleteLawRequestMultiError) AllErrors() []error { return m }
+
+// DeleteLawRequestValidationError is the validation error returned by
+// DeleteLawRequest.Validate if the designated constraints aren't met.
+type DeleteLawRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DeleteLawRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DeleteLawRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DeleteLawRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DeleteLawRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DeleteLawRequestValidationError) ErrorName() string { return "DeleteLawRequestValidationError" }
+
+// Error satisfies the builtin error interface
+func (e DeleteLawRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDeleteLawRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DeleteLawRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DeleteLawRequestValidationError{}
+
+// Validate checks the field values on DeleteLawResponse with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *DeleteLawResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DeleteLawResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DeleteLawResponseMultiError, or nil if none found.
+func (m *DeleteLawResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DeleteLawResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return DeleteLawResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// DeleteLawResponseMultiError is an error wrapping multiple validation errors
+// returned by DeleteLawResponse.ValidateAll() if the designated constraints
+// aren't met.
+type DeleteLawResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DeleteLawResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DeleteLawResponseMultiError) AllErrors() []error { return m }
+
+// DeleteLawResponseValidationError is the validation error returned by
+// DeleteLawResponse.Validate if the designated constraints aren't met.
+type DeleteLawResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DeleteLawResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DeleteLawResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DeleteLawResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DeleteLawResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DeleteLawResponseValidationError) ErrorName() string {
+	return "DeleteLawResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DeleteLawResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDeleteLawResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DeleteLawResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DeleteLawResponseValidationError{}

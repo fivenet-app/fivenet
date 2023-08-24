@@ -23,7 +23,7 @@ func (s *Server) ViewAuditLog(ctx context.Context, req *ViewAuditLogRequest) (*V
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	if req.Pagination.Offset <= 0 {
-		defer s.a.Log(&model.FivenetAuditLog{
+		defer s.aud.Log(&model.FivenetAuditLog{
 			Service: RectorService_ServiceDesc.ServiceName,
 			Method:  "ViewAuditLog",
 			UserID:  userInfo.UserId,

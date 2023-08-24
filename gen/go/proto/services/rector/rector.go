@@ -15,7 +15,7 @@ type Server struct {
 	logger *zap.Logger
 	db     *sql.DB
 	p      perms.Permissions
-	a      audit.IAuditer
+	aud    audit.IAuditer
 	c      *mstlystcdata.Enricher
 }
 
@@ -24,7 +24,7 @@ func NewServer(logger *zap.Logger, db *sql.DB, p perms.Permissions, aud audit.IA
 		logger: logger,
 		db:     db,
 		p:      p,
-		a:      aud,
+		aud:    aud,
 		c:      c,
 	}
 }

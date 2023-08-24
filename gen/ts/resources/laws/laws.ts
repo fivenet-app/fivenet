@@ -12,11 +12,11 @@ export interface LawBook {
      */
     id: bigint; // @gotags: sql:"primary_key" alias:"id"
     /**
-     * @generated from protobuf field: resources.timestamp.Timestamp created_at = 2;
+     * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
      */
     createdAt?: Timestamp;
     /**
-     * @generated from protobuf field: resources.timestamp.Timestamp updated_at = 3;
+     * @generated from protobuf field: optional resources.timestamp.Timestamp updated_at = 3;
      */
     updatedAt?: Timestamp;
     /**
@@ -41,11 +41,11 @@ export interface Law {
      */
     id: bigint; // @gotags: sql:"primary_key" alias:"law.id"
     /**
-     * @generated from protobuf field: resources.timestamp.Timestamp created_at = 2;
+     * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
      */
     createdAt?: Timestamp;
     /**
-     * @generated from protobuf field: resources.timestamp.Timestamp updated_at = 3;
+     * @generated from protobuf field: optional resources.timestamp.Timestamp updated_at = 3;
      */
     updatedAt?: Timestamp;
     /**
@@ -57,21 +57,21 @@ export interface Law {
      */
     name: string;
     /**
-     * @generated from protobuf field: string description = 6;
+     * @generated from protobuf field: optional string description = 6;
      */
-    description: string;
+    description?: string;
     /**
-     * @generated from protobuf field: uint64 fine = 7;
+     * @generated from protobuf field: optional uint64 fine = 7;
      */
-    fine: bigint;
+    fine?: bigint;
     /**
-     * @generated from protobuf field: uint64 detention_time = 8;
+     * @generated from protobuf field: optional uint64 detention_time = 8;
      */
-    detentionTime: bigint;
+    detentionTime?: bigint;
     /**
-     * @generated from protobuf field: uint64 stvo_points = 9;
+     * @generated from protobuf field: optional uint64 stvo_points = 9;
      */
-    stvoPoints: bigint;
+    stvoPoints?: bigint;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class LawBook$Type extends MessageType<LawBook> {
@@ -80,7 +80,7 @@ class LawBook$Type extends MessageType<LawBook> {
             { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
-            { no: 4, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "128" } } } },
+            { no: 4, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "128" } } } },
             { no: 5, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
             { no: 6, name: "laws", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Law }
         ]);
@@ -98,11 +98,11 @@ class Law$Type extends MessageType<Law> {
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "lawbook_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 5, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "128" } } } },
-            { no: 6, name: "description", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
-            { no: 7, name: "fine", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 8, name: "detention_time", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 9, name: "stvo_points", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+            { no: 5, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "128" } } } },
+            { no: 6, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
+            { no: 7, name: "fine", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 8, name: "detention_time", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 9, name: "stvo_points", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
         ]);
     }
 }
