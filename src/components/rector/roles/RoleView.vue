@@ -220,14 +220,14 @@ onConfirm(async (id) => deleteRole(id));
 </script>
 
 <template>
-    <ConfirmDialog :open="isRevealed" :cancel="cancel" :confirm="confirm" />
+    <ConfirmDialog :open="isRevealed" :cancel="cancel" :confirm="() => confirm(role!.id)" />
 
     <div class="py-4 max-w-7xl mx-auto">
         <div class="px-1 sm:px-2 lg:px-4">
             <div v-if="role">
                 <h2 class="text-3xl text-white">
                     {{ role?.jobLabel! }} - {{ role?.jobGradeLabel }} ({{ role.grade }})
-                    <button v-if="can('RectorService.DeleteRole')" @click="reveal(role.id)">
+                    <button v-if="can('RectorService.DeleteRole')" @click="reveal()">
                         <TrashCanIcon class="w-6 h-6 mx-auto text-neutral" />
                     </button>
                 </h2>

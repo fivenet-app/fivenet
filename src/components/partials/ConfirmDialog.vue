@@ -49,12 +49,12 @@ defineEmits<{
                         leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                     >
                         <DialogPanel
-                            class="relative transform overflow-hidden rounded-lg bg-white px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6"
+                            class="relative transform overflow-hidden rounded-lg bg-base-850 px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6"
                         >
                             <div class="absolute right-0 top-0 hidden pr-4 pt-4 sm:block">
                                 <button
                                     type="button"
-                                    class="rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                                    class="rounded-md bg-gray-100 text-gray-500 hover:text-gray-400 focus:outline-none focus:ring-2 focus:ring-white"
                                     @click="$emit('close')"
                                 >
                                     <span class="sr-only">{{ $t('common.close') }}</span>
@@ -68,11 +68,11 @@ defineEmits<{
                                     <component :is="icon" class="h-6 w-6 text-red-600" aria-hidden="true" />
                                 </div>
                                 <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
-                                    <DialogTitle as="h3" class="text-base font-semibold leading-6 text-gray-900">
+                                    <DialogTitle as="h3" class="text-base font-semibold leading-6 text-gray-100">
                                         {{ title ?? $t('components.partials.confirm_dialog.title') }}
                                     </DialogTitle>
                                     <div class="mt-2">
-                                        <p class="text-sm text-gray-500">
+                                        <p class="text-sm text-gray-300">
                                             {{ description ?? $t('components.partials.confirm_dialog.description') }}
                                         </p>
                                     </div>

@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
+import { useConfirmDialog } from '@vueuse/core';
 import { PencilIcon, TrashCanIcon } from 'mdi-vue3';
+import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
 import { useAuthStore } from '~/store/auth';
 import { Comment } from '~~/gen/ts/resources/documents/comment';
 
@@ -44,11 +46,11 @@ async function editComment(): Promise<void> {
     });
 }
 
-async function deleteComment(): Promise<void> {
+async function deleteComment(id: bigint): Promise<void> {
     return new Promise(async (res, rej) => {
         try {
             await $grpc.getDocStoreClient().deleteComment({
-                commentId: props.comment.id,
+                commentId: id,
             });
 
             emit('removed', props.comment);
@@ -60,9 +62,15 @@ async function deleteComment(): Promise<void> {
         }
     });
 }
+
+const { isRevealed, reveal, confirm, cancel, onConfirm } = useConfirmDialog();
+
+onConfirm(async (id) => deleteComment(id));
 </script>
 
 <template>
+    <ConfirmDialog :open="isRevealed" :cancel="cancel" :confirm="() => confirm(props.comment.id)" />
+
     <li class="py-2">
         <div v-if="!editing" class="flex space-x-3">
             <div :class="[comment.deletedAt ? 'bg-warn-800' : 'bg-base-850', 'flex-1 space-y-1']">
@@ -82,7 +90,7 @@ async function deleteComment(): Promise<void> {
                         <button v-if="can('DocStoreService.PostComment')" @click="editing = true">
                             <PencilIcon class="w-5 h-auto ml-auto mr-2.5" />
                         </button>
-                        <button v-if="can('DocStoreService.DeleteComment')" @click="deleteComment()">
+                        <button v-if="can('DocStoreService.DeleteComment')" @click="reveal()">
                             <TrashCanIcon class="w-5 h-auto ml-auto mr-2.5" />
                         </button>
                     </div>

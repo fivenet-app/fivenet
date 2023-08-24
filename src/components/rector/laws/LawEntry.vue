@@ -86,8 +86,8 @@ const { handleSubmit, setValues } = useForm<FormData>({
         name: { required: true, min: 3, max: 128 },
         description: { required: true, min: 6, max: 500 },
         fine: { required: false, min_value: 0, max_value: 999_999_999 },
-        detentionTime: { required: false, min_value: 0, max: 999_999_999 },
-        stvoPoints: { required: false, min_value: 0, max: 999_999_999 },
+        detentionTime: { required: false, min_value: 0, max_value: 999_999_999 },
+        stvoPoints: { required: false, min_value: 0, max_value: 999_999_999 },
     },
     validateOnMount: true,
 });
@@ -115,7 +115,7 @@ const editing = ref(props.startInEdit);
         :title="$t('components.partials.confirm_dialog.title')"
         :description="$t('components.partials.confirm_dialog.description')"
         :cancel="cancel"
-        :confirm="confirm"
+        :confirm="() => confirm(law.id)"
     />
 
     <tr v-if="!editing">
@@ -123,7 +123,7 @@ const editing = ref(props.startInEdit);
             <button type="button" class="pl-2" @click="editing = true" :title="$t('common.edit')">
                 <PencilIcon class="w-6 h-6" />
             </button>
-            <button type="button" class="pl-2" @click="reveal(law.id)" :title="$t('common.delete')">
+            <button type="button" class="pl-2" @click="reveal()" :title="$t('common.delete')">
                 <TrashCanIcon class="w-6 h-6" />
             </button>
         </td>
@@ -201,8 +201,8 @@ const editing = ref(props.startInEdit);
             <VeeField
                 name="description"
                 type="text"
-                :placeholder="$t('common.detention_time')"
-                :label="$t('common.detention_time')"
+                :placeholder="$t('common.description')"
+                :label="$t('common.description')"
                 class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
             />
             <VeeErrorMessage name="description" as="p" class="mt-2 text-sm text-error-400" />

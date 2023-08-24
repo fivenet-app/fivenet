@@ -116,14 +116,14 @@ const editing = ref(props.startInEdit);
 </script>
 
 <template>
-    <ConfirmDialog :open="isRevealed" :cancel="cancel" :confirm="confirm" />
+    <ConfirmDialog :open="isRevealed" :cancel="cancel" :confirm="() => confirm(book.id)" />
 
     <div class="my-2">
         <div v-if="!editing" class="flex text-white items-center gap-x-2">
             <button type="button" @click="editing = true" :title="$t('common.edit')">
                 <PencilIcon class="w-6 h-6" />
             </button>
-            <button type="button" @click="reveal(book.id)" :title="$t('common.delete')">
+            <button type="button" @click="reveal()" :title="$t('common.delete')">
                 <TrashCanIcon class="w-6 h-6" />
             </button>
             <h2 class="text-xl">{{ book.name }}</h2>
@@ -201,7 +201,7 @@ const editing = ref(props.startInEdit);
                         {{ $t('common.traffic_infraction_points', 2) }}
                     </th>
                     <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
-                        {{ $t('common.other') }}
+                        {{ $t('common.description') }}
                     </th>
                 </tr>
             </thead>

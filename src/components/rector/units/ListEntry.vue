@@ -36,7 +36,7 @@ const open = ref(false);
 </script>
 
 <template>
-    <ConfirmDialog :open="isRevealed" :cancel="cancel" :confirm="confirm" />
+    <ConfirmDialog :open="isRevealed" :cancel="cancel" :confirm="() => confirm(unit.id)" />
 
     <CreateOrUpdateUnitModal v-if="can('CentrumService.CreateOrUpdateUnit')" :unit="unit" :open="open" @close="open = false" />
 

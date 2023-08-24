@@ -3,6 +3,7 @@ import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/vue';
 
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { QuillEditor } from '@vueup/vue-quill';
+import { useConfirmDialog } from '@vueuse/core';
 import {
     AccountMultipleIcon,
     CalendarIcon,
@@ -16,6 +17,7 @@ import {
 } from 'mdi-vue3';
 import { DefineComponent } from 'vue';
 import AddToButton from '~/components/clipboard/AddToButton.vue';
+import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
@@ -46,13 +48,18 @@ const props = defineProps<{
     documentId: bigint;
 }>();
 
-const { data: document, pending, refresh, error } = useLazyAsyncData(`document-${props.documentId}`, () => getDocument());
+const {
+    data: document,
+    pending,
+    refresh,
+    error,
+} = useLazyAsyncData(`document-${props.documentId}`, () => getDocument(props.documentId));
 
-async function getDocument(): Promise<Document> {
+async function getDocument(id: bigint): Promise<Document> {
     return new Promise(async (res, rej) => {
         try {
             const call = $grpc.getDocStoreClient().getDocument({
-                documentId: props.documentId,
+                documentId: id,
             });
             const { response } = await call;
 
@@ -66,11 +73,11 @@ async function getDocument(): Promise<Document> {
     });
 }
 
-async function deleteDocument(): Promise<void> {
+async function deleteDocument(id: bigint): Promise<void> {
     return new Promise(async (res, rej) => {
         try {
             await $grpc.getDocStoreClient().deleteDocument({
-                documentId: props.documentId,
+                documentId: id,
             });
 
             notifications.dispatchNotification({
@@ -89,16 +96,15 @@ async function deleteDocument(): Promise<void> {
     });
 }
 
-async function toggleDocument(): Promise<void> {
+async function toggleDocument(id: bigint, closed: boolean): Promise<void> {
     return new Promise(async (res, rej) => {
         try {
-            const closed = !document.value?.closed ?? true;
             await $grpc.getDocStoreClient().toggleDocument({
-                documentId: props.documentId,
+                documentId: id,
                 closed: closed,
             });
 
-            document.value!.closed = !document.value?.closed;
+            document.value!.closed = closed;
 
             notifications.dispatchNotification({
                 title: { key: `notifications.document_toggled.${!closed ? 'open' : 'closed'}.title`, parameters: [] },
@@ -126,6 +132,9 @@ function addToClipboard(): void {
         type: 'info',
     });
 }
+
+const { isRevealed, reveal, confirm, cancel, onConfirm, onCancel, onReveal } = useConfirmDialog();
+onConfirm(async (id: bigint) => deleteDocument(id));
 </script>
 
 <style>
@@ -135,6 +144,8 @@ function addToClipboard(): void {
 </style>
 
 <template>
+    <ConfirmDialog :open="isRevealed" :cancel="cancel" :confirm="() => confirm(documentId)" />
+
     <div class="mt-2">
         <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.document', 2)])" />
         <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.document', 2)])" :retry="refresh" />
@@ -180,22 +191,18 @@ function addToClipboard(): void {
                             <div class="flex mt-4 space-x-3 md:mt-0">
                                 <div v-if="can('DocStoreService.ToggleDocument')">
                                     <button
-                                        v-if="document?.closed"
                                         type="button"
-                                        @click="toggleDocument"
+                                        @click="toggleDocument(documentId, !document?.closed)"
                                         class="inline-flex justify-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
                                     >
-                                        <LockOpenVariantIcon class="w-5 h-5 text-green-500" aria-hidden="true" />
-                                        {{ $t('common.open', 2) }}
-                                    </button>
-                                    <button
-                                        v-else
-                                        type="button"
-                                        @click="toggleDocument"
-                                        class="inline-flex justify-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
-                                    >
-                                        <LockIcon class="w-5 h-5 text-error-400" aria-hidden="true" />
-                                        {{ $t('common.close', 1) }}
+                                        <template v-if="document?.closed">
+                                            <LockOpenVariantIcon class="w-5 h-5 text-green-500" aria-hidden="true" />
+                                            {{ $t('common.open', 2) }}
+                                        </template>
+                                        <template v-else>
+                                            <LockIcon class="w-5 h-5 text-error-400" aria-hidden="true" />
+                                            {{ $t('common.close', 1) }}
+                                        </template>
                                     </button>
                                 </div>
                                 <NuxtLink
@@ -213,7 +220,7 @@ function addToClipboard(): void {
                                 <button
                                     v-if="can('DocStoreService.DeleteDocument')"
                                     type="button"
-                                    @click="deleteDocument"
+                                    @click="reveal(documentId)"
                                     class="inline-flex justify-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
                                 >
                                     <TrashCanIcon class="-ml-0.5 w-5 h-auto" aria-hidden="true" />
