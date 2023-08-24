@@ -126,7 +126,9 @@
                 "title": "Limiter"
             },
             "laws": {
-                "title": "Laws"
+                "title": "Laws",
+                "add_new_law": "Add new Law",
+                "add_new_law_book": "Add new Law Book"
             },
             "units": {
                 "create_unit": "Create Unit"

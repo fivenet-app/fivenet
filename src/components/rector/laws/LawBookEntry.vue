@@ -112,10 +112,10 @@ const editing = ref(props.startInEdit);
 <template>
     <div class="my-2">
         <div v-if="!editing" class="flex text-white items-center gap-x-2">
-            <button type="button" @click="editing = true">
+            <button type="button" @click="editing = true" :title="$t('common.edit')">
                 <PencilIcon class="w-6 h-6" />
             </button>
-            <button type="button" @click="deleteLawBook(book.id)">
+            <button type="button" @click="deleteLawBook(book.id)" :title="$t('common.delete')">
                 <TrashCanIcon class="w-6 h-6" />
             </button>
             <h2 class="text-xl">{{ book.name }}</h2>
@@ -127,13 +127,13 @@ const editing = ref(props.startInEdit);
                         @click="addLaw"
                         class="px-3 py-2 text-sm font-semibold rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
                     >
-                        Add new Law
+                        {{ $t('pages.rector.laws.add_new_law') }}
                     </button>
                 </div>
             </div>
         </div>
         <form v-else @submit="onSubmit" class="w-full flex flex-row gap-x-4 text-white items-start">
-            <button type="submit">
+            <button type="submit" :title="$t('common.save')">
                 <ContentSaveIcon class="w-6 h-6" />
             </button>
             <button
@@ -142,6 +142,7 @@ const editing = ref(props.startInEdit);
                     editing = false;
                     book.id < BigInt(0) && $emit('deleted', book.id);
                 "
+                :title="$t('common.cancel')"
             >
                 <CancelIcon class="w-6 h-6" />
             </button>
