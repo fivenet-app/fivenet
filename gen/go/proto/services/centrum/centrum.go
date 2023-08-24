@@ -18,11 +18,9 @@ import (
 	"github.com/galexrt/fivenet/pkg/server/audit"
 	"github.com/galexrt/fivenet/pkg/tracker"
 	"github.com/galexrt/fivenet/pkg/utils"
-	"github.com/galexrt/fivenet/pkg/utils/dbutils"
 	"github.com/galexrt/fivenet/pkg/utils/maps"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
-	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/nats-io/nats.go"
 	"github.com/puzpuzpuz/xsync/v2"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
@@ -61,6 +59,7 @@ type Server struct {
 	tracker  *tracker.Tracker
 
 	visibleJobs []string
+	convertJobs []string
 
 	settings   *xsync.MapOf[string, *dispatch.Settings]
 	disponents *xsync.MapOf[string, []*users.UserShort]
@@ -104,6 +103,7 @@ func NewServer(p Params) (*Server, error) {
 		tracker:  p.Tracker,
 
 		visibleJobs: p.Config.Game.Livemap.Jobs,
+		convertJobs: p.Config.Game.DispatchCenter.ConvertJobs,
 
 		settings:   xsync.NewTypedMapOf[string, *dispatch.Settings](maps.HashString),
 		disponents: xsync.NewTypedMapOf[string, []*users.UserShort](maps.HashString),
@@ -187,69 +187,15 @@ func (s *Server) TakeControl(ctx context.Context, req *TakeControlRequest) (*Tak
 	}
 	defer s.auditer.Log(auditEntry, req)
 
+	if err := s.dispatchCenterSignOn(ctx, userInfo.Job, userInfo.UserId, req.Signon); err != nil {
+		return nil, ErrFailedQuery
+	}
+
 	if req.Signon {
-		if _, ok := s.tracker.GetUserByJobAndID(userInfo.Job, userInfo.UserId); !ok {
-			return nil, status.Error(codes.InvalidArgument, "You are not on duty!")
-		}
-
-		stmt := tCentrumUsers.
-			INSERT(
-				tCentrumUsers.Job,
-				tCentrumUsers.UserID,
-				tCentrumUsers.Identifier,
-			).
-			VALUES(
-				userInfo.Job,
-				userInfo.UserId,
-				tUsers.
-					SELECT(
-						tUsers.Identifier.AS("identifier"),
-					).
-					FROM(tUsers).
-					WHERE(
-						tUsers.ID.EQ(jet.Int32(userInfo.UserId)),
-					).
-					LIMIT(1),
-			)
-
-		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-			if !dbutils.IsDuplicateError(err) {
-				return nil, err
-			}
-		}
-
 		auditEntry.State = int16(rector.EVENT_TYPE_CREATED)
 	} else {
-		stmt := tCentrumUsers.
-			DELETE().
-			WHERE(jet.AND(
-				tCentrumUsers.Job.EQ(jet.String(userInfo.Job)),
-				tCentrumUsers.UserID.EQ(jet.Int32(userInfo.UserId)),
-			)).
-			LIMIT(1)
-
-		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-			return nil, err
-		}
-
 		auditEntry.State = int16(rector.EVENT_TYPE_DELETED)
 	}
-
-	// Load updated disponents into state
-	if err := s.loadDisponents(ctx, userInfo.Job); err != nil {
-		return nil, err
-	}
-
-	disponents := s.getDisponents(userInfo.Job)
-	change := &DisponentsChange{
-		Job:        userInfo.Job,
-		Disponents: disponents,
-	}
-	data, err := proto.Marshal(change)
-	if err != nil {
-		return nil, err
-	}
-	s.broadcastToAllUnits(TopicGeneral, TypeGeneralDisponents, userInfo.Job, data)
 
 	auditEntry.State = int16(rector.EVENT_TYPE_UPDATED)
 

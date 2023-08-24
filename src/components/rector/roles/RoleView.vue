@@ -143,6 +143,7 @@ async function updatePermissions(): Promise<void> {
                 perms.toRemove.push(perm);
             }
         });
+        console.log(permStates.value);
 
         const attrs: AttrsUpdate = {
             toRemove: [],
@@ -205,7 +206,8 @@ async function updatePermissions(): Promise<void> {
 }
 
 async function initializeRoleView(): Promise<void> {
-    await Promise.all([getRole(), getPermissions(), propogatePermissionStates(), listJobs()]);
+    await Promise.allSettled([getRole(), getPermissions(), listJobs()]);
+    await propogatePermissionStates();
 }
 
 onMounted(async () => {
@@ -224,7 +226,7 @@ onConfirm(async (id) => deleteRole(id));
         <div class="px-1 sm:px-2 lg:px-4">
             <div v-if="role">
                 <h2 class="text-3xl text-white">
-                    {{ role?.jobLabel! }} - {{ role?.jobGradeLabel }}
+                    {{ role?.jobLabel! }} - {{ role?.jobGradeLabel }} ({{ role.grade }})
                     <button v-if="can('RectorService.DeleteRole')" @click="reveal(role.id)">
                         <TrashCanIcon class="w-6 h-6 mx-auto text-neutral" />
                     </button>

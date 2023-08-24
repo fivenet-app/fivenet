@@ -268,7 +268,7 @@ func (p *Perms) GetRolePermissions(ctx context.Context, id uint64) ([]*permissio
 			tRolePerms.RoleID.EQ(jet.Uint64(id)),
 		).
 		ORDER_BY(
-			tPerms.GuardName.ASC(),
+			tPerms.ID.ASC(),
 		)
 
 	var dest []*permissions.Permission

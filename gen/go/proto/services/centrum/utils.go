@@ -6,9 +6,11 @@ import (
 	dispatch "github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
 	users "github.com/galexrt/fivenet/gen/go/proto/resources/users"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
+	"github.com/galexrt/fivenet/pkg/utils/dbutils"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/puzpuzpuz/xsync/v2"
+	"google.golang.org/protobuf/proto"
 )
 
 var (
@@ -101,6 +103,70 @@ func (s *Server) checkIfUserPartOfUnit(userId int32, unit *dispatch.Unit) bool {
 	}
 
 	return false
+}
+
+func (s *Server) dispatchCenterSignOn(ctx context.Context, job string, userId int32, signon bool) error {
+	if signon {
+		if _, ok := s.tracker.GetUserByJobAndID(job, userId); !ok {
+			return ErrNotOnDuty
+		}
+
+		stmt := tCentrumUsers.
+			INSERT(
+				tCentrumUsers.Job,
+				tCentrumUsers.UserID,
+				tCentrumUsers.Identifier,
+			).
+			VALUES(
+				job,
+				userId,
+				tUsers.
+					SELECT(
+						tUsers.Identifier.AS("identifier"),
+					).
+					FROM(tUsers).
+					WHERE(
+						tUsers.ID.EQ(jet.Int32(userId)),
+					).
+					LIMIT(1),
+			)
+
+		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+			if !dbutils.IsDuplicateError(err) {
+				return err
+			}
+		}
+	} else {
+		stmt := tCentrumUsers.
+			DELETE().
+			WHERE(jet.AND(
+				tCentrumUsers.Job.EQ(jet.String(job)),
+				tCentrumUsers.UserID.EQ(jet.Int32(userId)),
+			)).
+			LIMIT(1)
+
+		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+			return err
+		}
+	}
+
+	// Load updated disponents into state
+	if err := s.loadDisponents(ctx, job); err != nil {
+		return err
+	}
+
+	disponents := s.getDisponents(job)
+	change := &DisponentsChange{
+		Job:        job,
+		Disponents: disponents,
+	}
+	data, err := proto.Marshal(change)
+	if err != nil {
+		return err
+	}
+	s.broadcastToAllUnits(TopicGeneral, TypeGeneralDisponents, job, data)
+
+	return nil
 }
 
 func (s *Server) getSettings(job string) *dispatch.Settings {

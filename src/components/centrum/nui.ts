@@ -12,9 +12,9 @@ function getParentResourceName(): string {
 }
 
 export async function setWaypoint(x: number, y: number): Promise<void> {
-    //if (!checkForNUI()) return;
+    if (!checkForNUI()) return;
 
-    return await fetchNui('setWaypoint', { loc: { x: x, y: y } });
+    return await fetchNui('setWaypoint', { x: x, y: y });
 }
 
 export async function fetchNui<T = any, V = any>(event: string, data: T): Promise<V> {

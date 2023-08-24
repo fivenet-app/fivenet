@@ -70,6 +70,9 @@ game:
       - doj
       - fib
       - police
+  dispatchCenter:
+    convertJobs: []
+      #- police
   defaultPermissions:
     - category: AuthService
       name: ChooseCharacter

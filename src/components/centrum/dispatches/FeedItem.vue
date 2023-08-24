@@ -37,7 +37,7 @@ defineProps<{
             </div>
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
                 Dispatch created
-                <span class="font-medium text-gray-400" v-if="item.user">
+                <span class="font-medium text-gray-400 pl-1" v-if="item.user">
                     {{ item.user?.firstname }}, {{ item.user?.lastname }}
                 </span>
             </p>
@@ -51,10 +51,10 @@ defineProps<{
             </div>
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
                 Dispatch unassigned
-                <span class="font-medium text-gray-400" v-if="item.unit">
+                <span class="font-medium text-gray-400 pl-1" v-if="item.unit">
                     {{ item.unit?.initials }}
                 </span>
-                <span class="font-medium text-gray-400" v-if="item.user">
+                <span class="font-medium text-gray-400 pl-1" v-if="item.user">
                     {{ item.user?.firstname }}, {{ item.user?.lastname }}
                 </span>
             </p>
@@ -68,10 +68,10 @@ defineProps<{
             </div>
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
                 Dispatch assigned
-                <span class="font-medium text-gray-400" v-if="item.unit">
+                <span class="font-medium text-gray-400 pl-1" v-if="item.unit">
                     {{ item.unit?.initials }}
                 </span>
-                <span class="font-medium text-gray-400" v-if="item.user">
+                <span class="font-medium text-gray-400 pl-1" v-if="item.user">
                     {{ item.user?.firstname }}, {{ item.user?.lastname }}
                 </span>
             </p>
@@ -85,10 +85,10 @@ defineProps<{
             </div>
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
                 Dispatch unassigned
-                <span class="font-medium text-gray-400" v-if="item.unit">
+                <span class="font-medium text-gray-400 pl-1" v-if="item.unit">
                     {{ item.unit?.initials }}
                 </span>
-                <span class="font-medium text-gray-400" v-if="item.user">
+                <span class="font-medium text-gray-400 pl-1" v-if="item.user">
                     {{ item.user?.firstname }}, {{ item.user?.lastname }}
                 </span>
             </p>
@@ -102,10 +102,10 @@ defineProps<{
             </div>
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
                 En Route to Dispatch
-                <span class="font-medium text-gray-400" v-if="item.unit">
+                <span class="font-medium text-gray-400 pl-1" v-if="item.unit">
                     {{ item.unit?.initials }}
                 </span>
-                <span class="font-medium text-gray-400" v-if="item.user">
+                <span class="font-medium text-gray-400 pl-1" v-if="item.user">
                     {{ item.user?.firstname }}, {{ item.user?.lastname }}
                 </span>
             </p>
@@ -119,10 +119,10 @@ defineProps<{
             </div>
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
                 Arrived on scene at Dispatch
-                <span class="font-medium text-gray-400" v-if="item.unit">
+                <span class="font-medium text-gray-400 pl-1" v-if="item.unit">
                     {{ item.unit?.initials }}
                 </span>
-                <span class="font-medium text-gray-400" v-if="item.user">
+                <span class="font-medium text-gray-400 pl-1" v-if="item.user">
                     {{ item.user?.firstname }}, {{ item.user?.lastname }}
                 </span>
             </p>
@@ -136,10 +136,10 @@ defineProps<{
             </div>
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
                 Need Assistance
-                <span class="font-medium text-gray-400" v-if="item.unit">
+                <span class="font-medium text-gray-400 pl-1" v-if="item.unit">
                     {{ item.unit?.initials }}
                 </span>
-                <span class="font-medium text-gray-400" v-if="item.user">
+                <span class="font-medium text-gray-400 pl-1" v-if="item.user">
                     {{ item.user?.firstname }}, {{ item.user?.lastname }}
                 </span>
             </p>
@@ -153,10 +153,10 @@ defineProps<{
             </div>
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
                 Dispatch completed
-                <span class="font-medium text-gray-400" v-if="item.unit">
+                <span class="font-medium text-gray-400 pl-1" v-if="item.unit">
                     {{ item.unit?.initials }}
                 </span>
-                <span class="font-medium text-gray-400" v-if="item.user">
+                <span class="font-medium text-gray-400 pl-1" v-if="item.user">
                     {{ item.user?.firstname }}, {{ item.user?.lastname }}
                 </span>
             </p>
@@ -170,10 +170,10 @@ defineProps<{
             </div>
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
                 Dispatch cancelled
-                <span class="font-medium text-gray-400" v-if="item.unit">
+                <span class="font-medium text-gray-400 pl-1" v-if="item.unit">
                     {{ item.unit?.initials }}
                 </span>
-                <span class="font-medium text-gray-400" v-if="item.user">
+                <span class="font-medium text-gray-400 pl-1" v-if="item.user">
                     {{ item.user?.firstname }}, {{ item.user?.lastname }}
                 </span>
             </p>
@@ -187,10 +187,10 @@ defineProps<{
             </div>
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
                 Dispatch archived
-                <span class="font-medium text-gray-400" v-if="item.unit">
+                <span class="font-medium text-gray-400 pl-1" v-if="item.unit">
                     {{ item.unit?.initials }}
                 </span>
-                <span class="font-medium text-gray-400" v-if="item.user">
+                <span class="font-medium text-gray-400 pl-1" v-if="item.user">
                     {{ item.user?.firstname }}, {{ item.user?.lastname }}
                 </span>
             </p>

@@ -3,9 +3,11 @@ package perms
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/galexrt/fivenet/pkg/events"
 	"github.com/nats-io/nats.go"
+	"github.com/pkg/errors"
 	"go.uber.org/zap"
 )
 
@@ -25,11 +27,29 @@ type RoleAttrUpdateEvent struct {
 }
 
 func (p *Perms) registerEvents() error {
-	var err error
-	p.eventSub, err = p.events.NC.Subscribe(fmt.Sprintf("%s.>", BaseSubject), p.handleMessage)
+	cfg := &nats.StreamConfig{
+		Name:      "PERMS",
+		Retention: nats.InterestPolicy,
+		Subjects:  []string{fmt.Sprintf("%s.>", BaseSubject)},
+		Discard:   nats.DiscardOld,
+		MaxAge:    10 * time.Second,
+	}
+
+	if _, err := p.events.JS.AddStream(cfg); err != nil {
+		if !errors.Is(nats.ErrStreamNameAlreadyInUse, err) {
+			return err
+		}
+
+		if _, err := p.events.JS.UpdateStream(cfg); err != nil {
+			return err
+		}
+	}
+
+	sub, err := p.events.JS.Subscribe(fmt.Sprintf("%s.>", BaseSubject), p.handleMessage, nats.DeliverNew())
 	if err != nil {
 		return err
 	}
+	p.eventSub = sub
 
 	return nil
 }
@@ -37,29 +57,34 @@ func (p *Perms) registerEvents() error {
 func (p *Perms) handleMessage(msg *nats.Msg) {
 	msg.Ack()
 	p.logger.Debug("received message", zap.String("subject", msg.Subject))
+
 	switch events.Type(strings.TrimPrefix(msg.Subject, string(BaseSubject)+".")) {
 	case RolePermUpdateSubject:
 		event := &RolePermUpdateEvent{}
 		if err := json.Unmarshal(msg.Data, event); err != nil {
 			p.logger.Error("failed to unmarshal message event data", zap.Error(err))
+			return
 		}
 
 		if err := p.loadRolePermissions(p.ctx, event.RoleID); err != nil {
 			p.logger.Error("failed to update role permissions", zap.Error(err))
+			return
 		}
 
 	case RoleAttrUpdateSubject:
 		event := &RoleAttrUpdateEvent{}
 		if err := json.Unmarshal(msg.Data, event); err != nil {
 			p.logger.Error("failed to unmarshal message event data", zap.Error(err))
+			return
 		}
 
 		if err := p.loadRoleAttributes(p.ctx, event.RoleID); err != nil {
 			p.logger.Error("failed to update role permissions", zap.Error(err))
+			return
 		}
 
 	default:
-		p.logger.Error("unknown perms message received")
+		p.logger.Error("unknown type of perms events message received")
 	}
 }
 
@@ -69,7 +94,7 @@ func (p *Perms) publishMessage(subj events.Type, data any) error {
 		return err
 	}
 
-	if err := p.events.NC.Publish(fmt.Sprintf("%s.%s", BaseSubject, subj), out); err != nil {
+	if _, err := p.events.JS.Publish(fmt.Sprintf("%s.%s", BaseSubject, subj), out); err != nil {
 		return err
 	}
 

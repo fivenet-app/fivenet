@@ -6,6 +6,7 @@ import (
 	"time"
 
 	dispatch "github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
+	users "github.com/galexrt/fivenet/gen/go/proto/resources/users"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/nats-io/nats.go"
@@ -102,25 +103,25 @@ func (s *Server) watchForEvents() error {
 						s.getUnitsMap(job).Store(dest.Id, &dest)
 
 					case TypeUnitStatus:
-						var dest dispatch.UnitStatus
+						var dest dispatch.Unit
 						if err := proto.Unmarshal(msg.Data, &dest); err != nil {
 							return err
 						}
 
-						if dest.Status == dispatch.UNIT_STATUS_USER_ADDED {
-							s.userIDToUnitID.Store(*dest.UserId, dest.UnitId)
-						} else if dest.Status == dispatch.UNIT_STATUS_USER_REMOVED {
-							s.userIDToUnitID.Delete(*dest.UserId)
+						if dest.Status.Status == dispatch.UNIT_STATUS_USER_ADDED {
+							s.userIDToUnitID.Store(*dest.Status.UserId, dest.Status.UnitId)
+						} else if dest.Status.Status == dispatch.UNIT_STATUS_USER_REMOVED {
+							s.userIDToUnitID.Delete(*dest.Status.UserId)
 						}
 
-						unit, ok := s.getUnitsMap(job).Load(dest.UnitId)
+						unit, ok := s.getUnitsMap(job).Load(dest.Status.UnitId)
 						if ok {
-							unit.Status = &dest
+							unit.Status = dest.Status
 							//unit.Statuses = append(unit.Statuses, &dest)
 
 						} else {
 							// "Cache/State miss" load from database
-							if err := s.loadUnits(ctx, dest.UnitId); err != nil {
+							if err := s.loadUnits(ctx, dest.Status.UnitId); err != nil {
 								s.logger.Error("failed to load unit", zap.Error(err))
 							}
 						}
@@ -161,36 +162,55 @@ func (s *Server) watchForUserChanges() {
 				}
 
 				for _, userId := range event.Removed {
-					unitId, ok := s.userIDToUnitID.Load(userId)
-					if !ok {
-						// Nothing to do
-						continue
-					}
-
 					user, err := s.resolveUserById(ctx, userId)
 					if err != nil {
 						s.logger.Error("failed to get user info from db", zap.Error(err))
 						continue
 					}
 
-					unit, ok := s.getUnit(user.Job, unitId)
-					if !ok {
+					s.handleRemovedUserFromDisponents(ctx, user)
+
+					if s.handleRemovedUserFromUnit(ctx, user) {
 						continue
 					}
-
-					if err := s.updateUnitAssignments(ctx, &userinfo.UserInfo{
-						UserId: userId,
-						Job:    user.Job,
-					}, unit, nil, []int32{userId}); err != nil {
-						s.logger.Error("failed to remove user from unit", zap.Error(err))
-						continue
-					}
-
-					s.userIDToUnitID.Delete(userId)
 				}
 			}()
 		}
 	}
+}
+
+func (s *Server) handleRemovedUserFromDisponents(ctx context.Context, user *users.UserShort) {
+	if s.checkIfUserIsDisponent(user.Job, user.UserId) {
+		if err := s.dispatchCenterSignOn(ctx, user.Job, user.UserId, false); err != nil {
+			s.logger.Error("failed to remove user from disponents", zap.Error(err))
+			return
+		}
+	}
+}
+
+func (s *Server) handleRemovedUserFromUnit(ctx context.Context, user *users.UserShort) bool {
+	unitId, ok := s.userIDToUnitID.Load(user.UserId)
+	if !ok {
+		// Nothing to do
+		return false
+	}
+
+	unit, ok := s.getUnit(user.Job, unitId)
+	if !ok {
+		return false
+	}
+
+	if err := s.updateUnitAssignments(ctx, &userinfo.UserInfo{
+		UserId: user.UserId,
+		Job:    user.Job,
+	}, unit, nil, []int32{user.UserId}); err != nil {
+		s.logger.Error("failed to remove user from unit", zap.Error(err))
+		return false
+	}
+
+	s.userIDToUnitID.Delete(user.UserId)
+
+	return true
 }
 
 func (s *Server) housekeeper() {

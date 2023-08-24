@@ -4,7 +4,10 @@
         - [ ] Updating their own dispatch status (needs permission checks)
         - [ ] Based on the dispatch center mode, allow assigning dispatches themselves or not
     - [ ] Livemap - Show Panic buttons and Sperrzonen
-    - [ ] Translate Activity Feed items
+    - [ ] Activity Feed
+        - [ ] Generally better formatting of the information
+        - [ ] Translate Activity Feed items
     - [ ] Add more errors and translate them
 - [ ] Document Editor - src/components/documents/templates/Editor.vue
     - [ ] Use vee-validate where possible
+- [ ] Dispatch Liste: Dispatch nach akzeptieren der Status wurde nicht aktualisiert - Potentially fixed

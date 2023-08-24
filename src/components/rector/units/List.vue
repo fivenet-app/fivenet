@@ -35,6 +35,7 @@ const openSettings = ref(false);
 <template>
     <CreateOrUpdateUnitModal :open="open" @close="open = false" @refresh="refresh" />
     <SettingsModal :open="openSettings" @close="openSettings = false" />
+
     <div class="py-2">
         <div class="px-1 sm:px-2 lg:px-4">
             <div class="flow-root mt-2">

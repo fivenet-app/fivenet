@@ -160,12 +160,13 @@ type Cache struct {
 }
 
 type Game struct {
-	SignupEnabled      bool          `default:"true" yaml:"signupEnabled"`
-	SuperuserGroups    []string      `yaml:"superuserGroups"`
-	UnemployedJob      UnemployedJob `yaml:"unemployedJob"`
-	PublicJobs         []string      `yaml:"publicJobs"`
-	Livemap            Livemap       `yaml:"livemap"`
-	DefaultPermissions []Perm        `yaml:"defaultPermissions"`
+	SignupEnabled      bool           `default:"true" yaml:"signupEnabled"`
+	SuperuserGroups    []string       `yaml:"superuserGroups"`
+	UnemployedJob      UnemployedJob  `yaml:"unemployedJob"`
+	PublicJobs         []string       `yaml:"publicJobs"`
+	Livemap            Livemap        `yaml:"livemap"`
+	DispatchCenter     DispatchCenter `yaml:"dispatchCenter"`
+	DefaultPermissions []Perm         `yaml:"defaultPermissions"`
 }
 type UnemployedJob struct {
 	Name  string `default:"unemployed" yaml:"job"`
@@ -175,6 +176,10 @@ type UnemployedJob struct {
 type Livemap struct {
 	RefreshTime time.Duration `default:"3s850ms" yaml:"refreshTime"`
 	Jobs        []string      `yaml:"jobs"`
+}
+
+type DispatchCenter struct {
+	ConvertJobs []string `yaml:"convertJobs"`
 }
 
 type Perm struct {

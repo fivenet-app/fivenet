@@ -79,7 +79,6 @@ export const useCentrumStore = defineStore('centrum', {
                 this.dispatches[idx].createdAt = dispatch.createdAt;
                 this.dispatches[idx].updatedAt = dispatch.updatedAt;
                 this.dispatches[idx].job = dispatch.job;
-                this.dispatches[idx].status = dispatch.status;
                 this.dispatches[idx].message = dispatch.message;
                 this.dispatches[idx].description = dispatch.description;
                 this.dispatches[idx].attributes = dispatch.attributes;
@@ -92,6 +91,25 @@ export const useCentrumStore = defineStore('centrum', {
                     this.dispatches[idx].units.length = 0;
                 } else {
                     this.dispatches[idx].units = dispatch.units;
+                }
+
+                if (dispatch.status !== undefined) {
+                    if (this.dispatches[idx].status === undefined) {
+                        this.dispatches[idx].status = dispatch.status;
+                    } else if (dispatch.status !== undefined) {
+                        this.dispatches[idx].status!.id = dispatch.status.id;
+                        this.dispatches[idx].status!.createdAt = dispatch.status.createdAt;
+                        this.dispatches[idx].status!.dispatchId = dispatch.status.dispatchId;
+                        this.dispatches[idx].status!.unitId = dispatch.status.unitId;
+                        this.dispatches[idx].status!.unit = dispatch.status.unit;
+                        this.dispatches[idx].status!.status = dispatch.status.status;
+                        this.dispatches[idx].status!.reason = dispatch.status.reason;
+                        this.dispatches[idx].status!.code = dispatch.status.code;
+                        this.dispatches[idx].status!.userId = dispatch.status.userId;
+                        this.dispatches[idx].status!.user = dispatch.status.user;
+                        this.dispatches[idx].status!.x = dispatch.status.x;
+                        this.dispatches[idx].status!.y = dispatch.status.y;
+                    }
                 }
             }
             this.handleDispatchAssignment(dispatch);
@@ -238,7 +256,7 @@ export const useCentrumStore = defineStore('centrum', {
                                     content: { key: 'notifications.centrum.unitAssigned.removed.content', parameters: [] },
                                     type: 'success',
                                 });
-                            } else {
+                            } else if (this.ownUnit !== undefined) {
                                 // User has been added to unit
                                 this.ownUnit = resp.change.unitAssigned;
 

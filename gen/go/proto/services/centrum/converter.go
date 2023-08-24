@@ -19,7 +19,9 @@ var (
 )
 
 func (s *Server) ConvertPhoneJobMsgToDispatch() error {
-	return nil
+	if len(s.convertJobs) == 0 {
+		return nil
+	}
 
 	for {
 		if err := s.convertPhoneJobMsgToDispatch(); err != nil {
@@ -50,7 +52,7 @@ func (s *Server) convertPhoneJobMsgToDispatch() error {
 				),
 		).
 		WHERE(jet.AND(
-			tGksPhoneJMsg.Jobm.REGEXP_LIKE(jet.String("\\[\"("+strings.Join(s.visibleJobs, "|")+")\"\\]")),
+			tGksPhoneJMsg.Jobm.REGEXP_LIKE(jet.String("\\[\"("+strings.Join(s.convertJobs, "|")+")\"\\]")),
 			tGksPhoneJMsg.Owner.EQ(jet.Int32(0)),
 			tGksPhoneJMsg.Time.LT_EQ(
 				jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(10, jet.MINUTE)),

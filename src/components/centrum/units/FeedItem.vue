@@ -36,7 +36,7 @@ defineProps<{
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
                 Member added to Unit
 
-                <span class="font-medium text-gray-400" v-if="item.user">
+                <span class="font-medium text-gray-400 pl-1" v-if="item.user">
                     {{ item.user?.firstname }}, {{ item.user?.lastname }}
                 </span>
             </p>
@@ -50,7 +50,7 @@ defineProps<{
             </div>
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
                 Member removed from Unit
-                <span class="font-medium text-gray-400" v-if="item.user">
+                <span class="font-medium text-gray-400 pl-1" v-if="item.user">
                     {{ item.user?.firstname }}, {{ item.user?.lastname }}
                 </span>
             </p>
@@ -64,7 +64,7 @@ defineProps<{
             </div>
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
                 Unit unavailable
-                <span class="font-medium text-gray-400" v-if="item.user">
+                <span class="font-medium text-gray-400 pl-1" v-if="item.user">
                     {{ item.user?.firstname }}, {{ item.user?.lastname }}
                 </span>
             </p>
@@ -79,7 +79,7 @@ defineProps<{
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
                 Unit available
 
-                <span class="font-medium text-gray-400" v-if="item.user">
+                <span class="font-medium text-gray-400 pl-1" v-if="item.user">
                     {{ item.user?.firstname }}, {{ item.user?.lastname }}
                 </span>
             </p>
@@ -94,7 +94,7 @@ defineProps<{
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
                 Unit on break
 
-                <span class="font-medium text-gray-400" v-if="item.user">
+                <span class="font-medium text-gray-400 pl-1" v-if="item.user">
                     {{ item.user?.firstname }}, {{ item.user?.lastname }}
                 </span>
             </p>
@@ -109,7 +109,7 @@ defineProps<{
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
                 Unit busy
 
-                <span class="font-medium text-gray-400" v-if="item.user">
+                <span class="font-medium text-gray-400 pl-1" v-if="item.user">
                     {{ item.user?.firstname }}, {{ item.user?.lastname }}
                 </span>
             </p>
