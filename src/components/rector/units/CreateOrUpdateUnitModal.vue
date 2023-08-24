@@ -29,7 +29,6 @@ async function createOrUpdateUnit(values: FormData): Promise<void> {
                     initials: values.initials,
                     color: values.color.replaceAll('#', ''),
                     description: values.description,
-                    statuses: [],
                     users: [],
                 },
             });
