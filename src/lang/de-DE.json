@@ -596,7 +596,8 @@
         "disponents": "Disponent | Disponenten",
         "disponent": "Keine Disponenten | {n} Disponent | {n} Disponenten",
         "confirm": "Bestätigen | Bestätigt",
-        "word": "Wort | Wörter"
+        "word": "Wort | Wörter",
+        "marker": "Marker | Markers"
     },
     "notifications": {
         "clipboard": {
