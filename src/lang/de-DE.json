@@ -597,7 +597,9 @@
         "disponent": "Keine Disponenten | {n} Disponent | {n} Disponenten",
         "confirm": "Bestätigen | Bestätigt",
         "word": "Wort | Wörter",
-        "marker": "Marker | Markers"
+        "marker": "Marker | Markierungen",
+        "radius": "Radius",
+        "opacity": "Deckkraft"
     },
     "notifications": {
         "clipboard": {
@@ -874,6 +876,13 @@
                 "AVAILABLE": "Verfügbar",
                 "ON_BREAK": "Pause",
                 "BUSY": "Beschäftigt"
+            }
+        },
+        "livemap": {
+            "MARKER_TYPE": {
+                "DOT": "Punkt",
+                "CIRCLE": "Kreis",
+                "POLYGON": "Polygon"
             }
         }
     },
@@ -1210,7 +1219,7 @@
             "ErrTemplateNoPerms": "Keine Berechtigungen Vorlagen anzuzeigen/aktualisieren/zu löschen!",
             "ErrPermissionDenied": "Du hast keine Berechtigung das zu tun!",
             "ErrClosedDoc": "Dokument ist geschloßen und kann nicht editiert werden!",
-            "ErrDocAccessEditDenied": "You don't have permission to edit the document's access!",
+            "ErrDocAccessEditDenied": "Sie haben keine Rechte den Dokumenten Zugriff zu verwalten!",
             "ErrDocAccessViewDenied": "You don't have permission to view this document's access!"
         },
         "LivemapperService": {
@@ -1229,7 +1238,7 @@
             "ErrOwnRoleDeletion": "Eigene Rolle kann nicht gelöscht werden!",
             "ErrInvalidPerms": "Fehler beim aktualisieren der Rollen Berechtigungen!",
             "ErrInvalidAttrs": "Fehler beim aktualisieren der Rollen Attributen!",
-            "ErrInvalidJPQuickButton": "Invalid quick access button found!"
+            "ErrInvalidJPQuickButton": "Fehlerhafter Schnellzugriff-Knopf!"
         },
         "CentrumService": {
             "ErrFailedQuery": "Fehler beim anzeigen/aktualisieren von Leitstellen Daten!",
