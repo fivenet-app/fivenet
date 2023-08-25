@@ -126,10 +126,9 @@
                 "title": "Begrenzer"
             },
             "laws": {
-                "title": "Gesetzbücher"
-            },
-            "units": {
-                "create_unit": "Einheit erstellen"
+                "title": "Gesetzbücher",
+                "add_new_law": "Gesetz hinzufügen",
+                "add_new_law_book": "Gesetzbuch erstellen"
             }
         },
         "notfound": {
@@ -261,7 +260,11 @@
             "sidebar_language_switcher": {
                 "open_switcher": "Öffne das Sprachmenü"
             },
-            "sidebar_notifications": "Zu Benachrichtigungen gehen"
+            "sidebar_notifications": "Zu Benachrichtigungen gehen",
+            "confirm_dialog": {
+                "title": "Gefährliche Aktion",
+                "description": "Sind Sie sicher, dass Sie diese potenziell gefährlichen Aktionen durchführen wollen? Alle damit verbundenen Daten werden für immer von unseren Servern gelöscht. Diese Aktion kann nicht rückgängig gemacht werden."
+            }
         },
         "clipboard": {
             "clipboard_button": {
@@ -383,6 +386,10 @@
             },
             "livemap": {
                 "mark_on_gps": "Auf GPS markieren"
+            },
+            "units": {
+                "create_unit": "Einheit erstellen",
+                "update_settings": "Einstellungen ändern"
             }
         }
     },
@@ -579,7 +586,9 @@
         "attributes": "Attribut | Attribute",
         "last_update": "Letzte Aktualisierung",
         "disponents": "Disponent | Disponenten",
-        "disponent": "Keine Disponenten | {n} Disponent | {n} Disponenten"
+        "disponent": "Keine Disponenten | {n} Disponent | {n} Disponenten",
+        "confirm": "Bestätigen | Bestätigt",
+        "word": "Wort | Wörter"
     },
     "notifications": {
         "clipboard": {
@@ -1058,11 +1067,11 @@
             "category": "Leitstelle",
             "CreateDispatch": {
                 "key": "Einsätze erstellen",
-                "description": ""
+                "description": "Neue Einsätze per Livemap/ Leitstelle erstellen."
             },
             "Stream": {
-                "key": "",
-                "description": ""
+                "key": "Zugriff auf Einsätze und Einheiten.",
+                "description": "Basiszugang für Einsätze und Einheiten."
             },
             "UpdateDispatch": {
                 "key": "Einsätze aktualisieren",
@@ -1070,23 +1079,23 @@
             },
             "CreateOrUpdateUnit": {
                 "key": "Erstellen und Aktualisieren von Einheiten",
-                "description": ""
+                "description": "Erlaubt das erstellen und aktualisieren von Einheiten via Kontrollzentrum."
             },
             "DeleteUnit": {
-                "key": "",
-                "description": ""
+                "key": "Einheiten Löschen",
+                "description": "Erstellen von Einheiten per Kontrollzentrum."
             },
             "TakeDispatch": {
-                "key": "",
-                "description": ""
+                "key": "Einsätze annehmen",
+                "description": "Basiszugang um Einsätze annehmen zu können."
             },
             "TakeControl": {
-                "key": "",
-                "description": ""
+                "key": "Leitstelle beitreten",
+                "description": "Erlaubt es der Leitstelle beizutreten."
             },
             "UpdateSettings": {
-                "key": "",
-                "description": ""
+                "key": "Aktualisieren der Leitstellen Einstellungen",
+                "description": "Erlaubt es die Einstellungen der Leitstelle zu aktualisieren."
             }
         }
     },
@@ -1175,7 +1184,11 @@
         "DocStoreService": {
             "ErrFailedQuery": "Fehlen beim anzeigen/erstellen/aktualisieren von Dokumenten!",
             "ErrNotFoundOrNoPerms": "Kein Dokument gefunden oder keine Berechtigungen auf das Dokument zuzugreifen!",
-            "ErrTemplateNoPerms": "Keine Berechtigungen Vorlagen anzuzeigen/aktualisieren/zu löschen!"
+            "ErrTemplateNoPerms": "Keine Berechtigungen Vorlagen anzuzeigen/aktualisieren/zu löschen!",
+            "ErrPermissionDenied": "You don't have permission to do this!",
+            "ErrClosedDoc": "Document is closed and can't be edited!",
+            "ErrDocAccessEditDenied": "You don't have permission to edit the document's access!",
+            "ErrDocAccessViewDenied": "You don't have permission to view this document's access!"
         },
         "LivemapperService": {
             "ErrStreamFailed": "Livemap Datenstrom fehlgeschlagen!"
@@ -1191,13 +1204,15 @@
             "ErrRoleAlreadyExists": "Rolle existiert bereits!",
             "ErrOwnRoleDeletion": "Eigene Rolle kann nicht gelöscht werden!",
             "ErrInvalidPerms": "Fehler beim aktualisieren der Rollen Berechtigungen!",
-            "ErrInvalidAttrs": "Fehler beim aktualisieren der Rollen Attributen!"
+            "ErrInvalidAttrs": "Fehler beim aktualisieren der Rollen Attributen!",
+            "ErrInvalidJPQuickButton": "Invalid quick access button found!"
         },
         "CentrumService": {
             "ErrFailedQuery": "Fehler beim anzeigen/aktualisieren von Leitstellen Daten!",
             "ErrAlreadyInUnit": "Sie sind bereits in einer Einheit! Sie müssen diese verlassen bevor sie einer anderen Einheit beitreten können.",
             "ErrNotPartOfDispatch": "Sie sind nicht Teil dieses Einsatzes!",
-            "ErrNotOnDuty": "Sie sind nicht im Dienst!"
+            "ErrNotOnDuty": "Sie sind nicht im Dienst!",
+            "ErrModeForbidsAction": "Dispatch center forbides this interaction. Please contact the dispatch center!"
         }
     },
     "commandpalette": {
