@@ -10,7 +10,7 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { useLivemapStore } from '~/store/livemap';
 import { useSettingsStore } from '~/store/settings';
-import { GenericMarker } from '~~/gen/ts/resources/livemap/livemap';
+import { MarkerInfo } from '~~/gen/ts/resources/livemap/livemap';
 import BaseMap from './BaseMap.vue';
 import PlayerAndMarkersLayer from './PlayerAndMarkersLayer.vue';
 import PostalSearch from './controls/PostalSearch.vue';
@@ -57,7 +57,7 @@ if (checkForNUI()) {
 
 const openCreateDispatch = ref(false);
 
-const selectedMarker = ref<GenericMarker | undefined>();
+const selectedMarker = ref<MarkerInfo | undefined>();
 
 watch(selectedMarker, () => applySelectedMarkerCentering());
 

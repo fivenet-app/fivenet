@@ -155,7 +155,7 @@ func (s *Tracker) cleanupUserIDs() error {
 }
 
 func (s *Tracker) refreshUserLocations(ctx context.Context) error {
-	tLocs := tLocs.AS("genericmarker")
+	tLocs := tLocs.AS("markerInfo")
 	stmt := tLocs.
 		SELECT(
 			tLocs.Identifier,
@@ -164,13 +164,13 @@ func (s *Tracker) refreshUserLocations(ctx context.Context) error {
 			tLocs.Y,
 			tLocs.UpdatedAt,
 			tUsers.ID.AS("user.id"),
-			tUsers.ID.AS("genericmarker.id"),
+			tUsers.ID.AS("markerInfo.id"),
 			tUsers.Identifier,
 			tUsers.Job,
 			tUsers.JobGrade,
 			tUsers.Firstname,
 			tUsers.Lastname,
-			tJobProps.LivemapMarkerColor.AS("genericmarker.color"),
+			tJobProps.LivemapMarkerColor.AS("markerInfo.color"),
 		).
 		FROM(
 			tLocs.
@@ -201,9 +201,9 @@ func (s *Tracker) refreshUserLocations(ctx context.Context) error {
 		if _, ok := markers[job]; !ok {
 			markers[job] = xsync.NewIntegerMapOf[int32, *livemap.UserMarker]()
 		}
-		if dest[i].Marker.Color == nil {
+		if dest[i].Info.Color == nil {
 			defaultColor := users.DefaultLivemapMarkerColor
-			dest[i].Marker.Color = &defaultColor
+			dest[i].Info.Color = &defaultColor
 		}
 
 		userId := dest[i].User.UserId

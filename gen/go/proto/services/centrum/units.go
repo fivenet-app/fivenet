@@ -266,8 +266,8 @@ func (s *Server) UpdateUnitStatus(ctx context.Context, req *UpdateUnitStatusRequ
 	var x, y *float64
 	marker, ok := s.tracker.GetUserById(userInfo.UserId)
 	if ok {
-		x = &marker.Marker.X
-		y = &marker.Marker.Y
+		x = &marker.Info.X
+		y = &marker.Info.Y
 	}
 
 	if err := s.updateUnitStatus(ctx, userInfo.Job, unit, &dispatch.UnitStatus{

@@ -12,19 +12,21 @@ import (
 type Server struct {
 	RectorServiceServer
 
-	logger *zap.Logger
-	db     *sql.DB
-	p      perms.Permissions
-	aud    audit.IAuditer
-	c      *mstlystcdata.Enricher
+	logger   *zap.Logger
+	db       *sql.DB
+	ps       perms.Permissions
+	aud      audit.IAuditer
+	enricher *mstlystcdata.Enricher
+	cache    *mstlystcdata.Cache
 }
 
-func NewServer(logger *zap.Logger, db *sql.DB, p perms.Permissions, aud audit.IAuditer, c *mstlystcdata.Enricher) *Server {
+func NewServer(logger *zap.Logger, db *sql.DB, ps perms.Permissions, aud audit.IAuditer, enricher *mstlystcdata.Enricher, cache *mstlystcdata.Cache) *Server {
 	return &Server{
-		logger: logger,
-		db:     db,
-		p:      p,
-		aud:    aud,
-		c:      c,
+		logger:   logger,
+		db:       db,
+		ps:       ps,
+		aud:      aud,
+		enricher: enricher,
+		cache:    cache,
 	}
 }

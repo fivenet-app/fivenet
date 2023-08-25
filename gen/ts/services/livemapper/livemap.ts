@@ -3,7 +3,7 @@
 // tslint:disable
 import { ServiceType } from "@protobuf-ts/runtime-rpc";
 import { MessageType } from "@protobuf-ts/runtime";
-import { DispatchMarker } from "../../resources/livemap/livemap.js";
+import { Marker } from "../../resources/livemap/livemap.js";
 import { UserMarker } from "../../resources/livemap/livemap.js";
 import { Job } from "../../resources/users/jobs.js";
 /**
@@ -16,21 +16,35 @@ export interface StreamRequest {
  */
 export interface StreamResponse {
     /**
-     * @generated from protobuf field: repeated resources.users.Job jobs_dispatches = 1;
-     */
-    jobsDispatches: Job[];
-    /**
-     * @generated from protobuf field: repeated resources.users.Job jobs_users = 2;
+     * @generated from protobuf field: repeated resources.users.Job jobs_users = 1;
      */
     jobsUsers: Job[];
     /**
-     * @generated from protobuf field: repeated resources.livemap.UserMarker users = 3;
+     * @generated from protobuf field: repeated resources.livemap.UserMarker users = 2;
      */
     users: UserMarker[];
     /**
-     * @generated from protobuf field: repeated resources.livemap.DispatchMarker dispatches = 4;
+     * @generated from protobuf field: repeated resources.users.Job jobs_markers = 3;
      */
-    dispatches: DispatchMarker[];
+    jobsMarkers: Job[];
+    /**
+     * @generated from protobuf field: repeated resources.livemap.Marker markers = 4;
+     */
+    markers: Marker[];
+}
+/**
+ * @generated from protobuf message services.livemapper.DeleteMarkerRequest
+ */
+export interface DeleteMarkerRequest {
+    /**
+     * @generated from protobuf field: uint64 id = 1;
+     */
+    id: bigint;
+}
+/**
+ * @generated from protobuf message services.livemapper.DeleteMarkerResponse
+ */
+export interface DeleteMarkerResponse {
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class StreamRequest$Type extends MessageType<StreamRequest> {
@@ -46,10 +60,10 @@ export const StreamRequest = new StreamRequest$Type();
 class StreamResponse$Type extends MessageType<StreamResponse> {
     constructor() {
         super("services.livemapper.StreamResponse", [
-            { no: 1, name: "jobs_dispatches", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Job },
-            { no: 2, name: "jobs_users", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Job },
-            { no: 3, name: "users", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UserMarker },
-            { no: 4, name: "dispatches", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => DispatchMarker }
+            { no: 1, name: "jobs_users", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Job },
+            { no: 2, name: "users", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UserMarker },
+            { no: 3, name: "jobs_markers", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Job },
+            { no: 4, name: "markers", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Marker }
         ]);
     }
 }
@@ -57,9 +71,33 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
  * @generated MessageType for protobuf message services.livemapper.StreamResponse
  */
 export const StreamResponse = new StreamResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class DeleteMarkerRequest$Type extends MessageType<DeleteMarkerRequest> {
+    constructor() {
+        super("services.livemapper.DeleteMarkerRequest", [
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.livemapper.DeleteMarkerRequest
+ */
+export const DeleteMarkerRequest = new DeleteMarkerRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class DeleteMarkerResponse$Type extends MessageType<DeleteMarkerResponse> {
+    constructor() {
+        super("services.livemapper.DeleteMarkerResponse", []);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.livemapper.DeleteMarkerResponse
+ */
+export const DeleteMarkerResponse = new DeleteMarkerResponse$Type();
 /**
  * @generated ServiceType for protobuf service services.livemapper.LivemapperService
  */
 export const LivemapperService = new ServiceType("services.livemapper.LivemapperService", [
-    { name: "Stream", serverStreaming: true, options: {}, I: StreamRequest, O: StreamResponse }
+    { name: "Stream", serverStreaming: true, options: {}, I: StreamRequest, O: StreamResponse },
+    { name: "CreateOrUpdateMarker", options: {}, I: Marker, O: Marker },
+    { name: "DeleteMarker", options: {}, I: DeleteMarkerRequest, O: DeleteMarkerResponse }
 ]);

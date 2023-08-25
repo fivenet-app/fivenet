@@ -19,14 +19,15 @@ type fivenetCentrumMarkersTable struct {
 	// Columns
 	ID          mysql.ColumnInteger
 	CreatedAt   mysql.ColumnTimestamp
-	UpdatedAt   mysql.ColumnTimestamp
 	Job         mysql.ColumnString
-	MarkerType  mysql.ColumnInteger
-	Message     mysql.ColumnString
+	Name        mysql.ColumnString
 	Description mysql.ColumnString
-	Data        mysql.ColumnString
 	X           mysql.ColumnFloat
 	Y           mysql.ColumnFloat
+	Color       mysql.ColumnString
+	Icon        mysql.ColumnString
+	MarkerType  mysql.ColumnInteger
+	MarkerData  mysql.ColumnString
 	CreatorID   mysql.ColumnInteger
 
 	AllColumns     mysql.ColumnList
@@ -70,17 +71,18 @@ func newFivenetCentrumMarkersTableImpl(schemaName, tableName, alias string) five
 	var (
 		IDColumn          = mysql.IntegerColumn("id")
 		CreatedAtColumn   = mysql.TimestampColumn("created_at")
-		UpdatedAtColumn   = mysql.TimestampColumn("updated_at")
 		JobColumn         = mysql.StringColumn("job")
-		MarkerTypeColumn  = mysql.IntegerColumn("marker_type")
-		MessageColumn     = mysql.StringColumn("message")
+		NameColumn        = mysql.StringColumn("name")
 		DescriptionColumn = mysql.StringColumn("description")
-		DataColumn        = mysql.StringColumn("data")
 		XColumn           = mysql.FloatColumn("x")
 		YColumn           = mysql.FloatColumn("y")
+		ColorColumn       = mysql.StringColumn("color")
+		IconColumn        = mysql.StringColumn("icon")
+		MarkerTypeColumn  = mysql.IntegerColumn("marker_type")
+		MarkerDataColumn  = mysql.StringColumn("marker_data")
 		CreatorIDColumn   = mysql.IntegerColumn("creator_id")
-		allColumns        = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, JobColumn, MarkerTypeColumn, MessageColumn, DescriptionColumn, DataColumn, XColumn, YColumn, CreatorIDColumn}
-		mutableColumns    = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, JobColumn, MarkerTypeColumn, MessageColumn, DescriptionColumn, DataColumn, XColumn, YColumn, CreatorIDColumn}
+		allColumns        = mysql.ColumnList{IDColumn, CreatedAtColumn, JobColumn, NameColumn, DescriptionColumn, XColumn, YColumn, ColorColumn, IconColumn, MarkerTypeColumn, MarkerDataColumn, CreatorIDColumn}
+		mutableColumns    = mysql.ColumnList{CreatedAtColumn, JobColumn, NameColumn, DescriptionColumn, XColumn, YColumn, ColorColumn, IconColumn, MarkerTypeColumn, MarkerDataColumn, CreatorIDColumn}
 	)
 
 	return fivenetCentrumMarkersTable{
@@ -89,14 +91,15 @@ func newFivenetCentrumMarkersTableImpl(schemaName, tableName, alias string) five
 		//Columns
 		ID:          IDColumn,
 		CreatedAt:   CreatedAtColumn,
-		UpdatedAt:   UpdatedAtColumn,
 		Job:         JobColumn,
-		MarkerType:  MarkerTypeColumn,
-		Message:     MessageColumn,
+		Name:        NameColumn,
 		Description: DescriptionColumn,
-		Data:        DataColumn,
 		X:           XColumn,
 		Y:           YColumn,
+		Color:       ColorColumn,
+		Icon:        IconColumn,
+		MarkerType:  MarkerTypeColumn,
+		MarkerData:  MarkerDataColumn,
 		CreatorID:   CreatorIDColumn,
 
 		AllColumns:     allColumns,

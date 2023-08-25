@@ -119,7 +119,7 @@ const editing = ref(props.startInEdit);
     />
 
     <tr v-if="!editing">
-        <td class="py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">
+        <td class="py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0 flex flex-row">
             <button type="button" class="pl-2" @click="editing = true" :title="$t('common.edit')">
                 <PencilIcon class="w-6 h-6" />
             </button>

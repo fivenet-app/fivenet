@@ -14,7 +14,6 @@ const { t, setLocale } = useI18n();
 
 const configStore = useConfigStore();
 const { loadConfig } = configStore;
-const { clientConfig } = storeToRefs(configStore);
 
 const route = useRoute();
 
@@ -37,7 +36,7 @@ useSeoMeta({
     ogImage: '/images/open-graph-image.png',
 });
 
-loadConfig();
+await loadConfig();
 
 const userSettings = useSettingsStore();
 if (__APP_VERSION__ != userSettings.getVersion) {
@@ -69,19 +68,6 @@ switch (userSettings.locale.split('-', 1)[0]) {
         cookieLocale.value = 'en';
         break;
 }
-
-if (route.query?.nui) {
-    const nuiQuery = route.query?.nui as string;
-    if (nuiQuery.toLowerCase() !== 'false') {
-        clientConfig.value.NUIEnabled = true;
-        clientConfig.value.NUIResourceName = nuiQuery;
-        console.info('Enabled NUI integration! Resource Name:', clientConfig.value.NUIResourceName);
-    } else {
-        clientConfig.value.NUIEnabled = false;
-        clientConfig.value.NUIResourceName = undefined;
-        console.info('Disabled NUI integration!');
-    }
-}
 </script>
 
 <template>
@@ -93,8 +79,5 @@ if (route.query?.nui) {
             }"
         />
     </NuxtLayout>
-    <CookieControl
-        :locale="cookieLocale"
-        v-if="useRoute().meta.showCookieOptions !== undefined && useRoute().meta.showCookieOptions"
-    />
+    <CookieControl :locale="cookieLocale" v-if="route.meta.showCookieOptions !== undefined && route.meta.showCookieOptions" />
 </template>

@@ -157,40 +157,6 @@ func (m *StreamResponse) validate(all bool) error {
 
 	var errors []error
 
-	for idx, item := range m.GetJobsDispatches() {
-		_, _ = idx, item
-
-		if all {
-			switch v := interface{}(item).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, StreamResponseValidationError{
-						field:  fmt.Sprintf("JobsDispatches[%v]", idx),
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, StreamResponseValidationError{
-						field:  fmt.Sprintf("JobsDispatches[%v]", idx),
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return StreamResponseValidationError{
-					field:  fmt.Sprintf("JobsDispatches[%v]", idx),
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	}
-
 	for idx, item := range m.GetJobsUsers() {
 		_, _ = idx, item
 
@@ -259,7 +225,7 @@ func (m *StreamResponse) validate(all bool) error {
 
 	}
 
-	for idx, item := range m.GetDispatches() {
+	for idx, item := range m.GetJobsMarkers() {
 		_, _ = idx, item
 
 		if all {
@@ -267,7 +233,7 @@ func (m *StreamResponse) validate(all bool) error {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
 					errors = append(errors, StreamResponseValidationError{
-						field:  fmt.Sprintf("Dispatches[%v]", idx),
+						field:  fmt.Sprintf("JobsMarkers[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -275,7 +241,7 @@ func (m *StreamResponse) validate(all bool) error {
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
 					errors = append(errors, StreamResponseValidationError{
-						field:  fmt.Sprintf("Dispatches[%v]", idx),
+						field:  fmt.Sprintf("JobsMarkers[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -284,7 +250,41 @@ func (m *StreamResponse) validate(all bool) error {
 		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
 				return StreamResponseValidationError{
-					field:  fmt.Sprintf("Dispatches[%v]", idx),
+					field:  fmt.Sprintf("JobsMarkers[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	for idx, item := range m.GetMarkers() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, StreamResponseValidationError{
+						field:  fmt.Sprintf("Markers[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, StreamResponseValidationError{
+						field:  fmt.Sprintf("Markers[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return StreamResponseValidationError{
+					field:  fmt.Sprintf("Markers[%v]", idx),
 					reason: "embedded message failed validation",
 					cause:  err,
 				}
@@ -370,3 +370,209 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = StreamResponseValidationError{}
+
+// Validate checks the field values on DeleteMarkerRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DeleteMarkerRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DeleteMarkerRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DeleteMarkerRequestMultiError, or nil if none found.
+func (m *DeleteMarkerRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DeleteMarkerRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	if len(errors) > 0 {
+		return DeleteMarkerRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// DeleteMarkerRequestMultiError is an error wrapping multiple validation
+// errors returned by DeleteMarkerRequest.ValidateAll() if the designated
+// constraints aren't met.
+type DeleteMarkerRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DeleteMarkerRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DeleteMarkerRequestMultiError) AllErrors() []error { return m }
+
+// DeleteMarkerRequestValidationError is the validation error returned by
+// DeleteMarkerRequest.Validate if the designated constraints aren't met.
+type DeleteMarkerRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DeleteMarkerRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DeleteMarkerRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DeleteMarkerRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DeleteMarkerRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DeleteMarkerRequestValidationError) ErrorName() string {
+	return "DeleteMarkerRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DeleteMarkerRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDeleteMarkerRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DeleteMarkerRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DeleteMarkerRequestValidationError{}
+
+// Validate checks the field values on DeleteMarkerResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DeleteMarkerResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DeleteMarkerResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DeleteMarkerResponseMultiError, or nil if none found.
+func (m *DeleteMarkerResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DeleteMarkerResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return DeleteMarkerResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// DeleteMarkerResponseMultiError is an error wrapping multiple validation
+// errors returned by DeleteMarkerResponse.ValidateAll() if the designated
+// constraints aren't met.
+type DeleteMarkerResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DeleteMarkerResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DeleteMarkerResponseMultiError) AllErrors() []error { return m }
+
+// DeleteMarkerResponseValidationError is the validation error returned by
+// DeleteMarkerResponse.Validate if the designated constraints aren't met.
+type DeleteMarkerResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DeleteMarkerResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DeleteMarkerResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DeleteMarkerResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DeleteMarkerResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DeleteMarkerResponseValidationError) ErrorName() string {
+	return "DeleteMarkerResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DeleteMarkerResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDeleteMarkerResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DeleteMarkerResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DeleteMarkerResponseValidationError{}

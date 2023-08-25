@@ -11,9 +11,13 @@ import (
 const (
 	LivemapperServicePerm perms.Category = "LivemapperService"
 
-	LivemapperServiceStreamPerm                perms.Name = "Stream"
-	LivemapperServiceStreamDispatchesPermField perms.Key  = "Dispatches"
-	LivemapperServiceStreamPlayersPermField    perms.Key  = "Players"
+	LivemapperServiceCreateOrUpdateMarkerPerm            perms.Name = "CreateOrUpdateMarker"
+	LivemapperServiceCreateOrUpdateMarkerAccessPermField perms.Key  = "Access"
+	LivemapperServiceDeleteMarkerPerm                    perms.Name = "DeleteMarker"
+	LivemapperServiceDeleteMarkerAccessPermField         perms.Key  = "Access"
+	LivemapperServiceStreamPerm                          perms.Name = "Stream"
+	LivemapperServiceStreamMarkersPermField              perms.Key  = "Markers"
+	LivemapperServiceStreamPlayersPermField              perms.Key  = "Players"
 )
 
 func init() {
@@ -21,10 +25,34 @@ func init() {
 		// Service: LivemapperService
 		{
 			Category: LivemapperServicePerm,
+			Name:     LivemapperServiceCreateOrUpdateMarkerPerm,
+			Attrs: []perms.Attr{
+				{
+					Key:           LivemapperServiceCreateOrUpdateMarkerAccessPermField,
+					Type:          permissions.StringListAttributeType,
+					ValidValues:   []string{"Own", "Lower_Rank", "Same_Rank"},
+					DefaultValues: []string{"Own"},
+				},
+			},
+		},
+		{
+			Category: LivemapperServicePerm,
+			Name:     LivemapperServiceDeleteMarkerPerm,
+			Attrs: []perms.Attr{
+				{
+					Key:           LivemapperServiceDeleteMarkerAccessPermField,
+					Type:          permissions.StringListAttributeType,
+					ValidValues:   []string{"Own", "Lower_Rank", "Same_Rank"},
+					DefaultValues: []string{"Own"},
+				},
+			},
+		},
+		{
+			Category: LivemapperServicePerm,
 			Name:     LivemapperServiceStreamPerm,
 			Attrs: []perms.Attr{
 				{
-					Key:         LivemapperServiceStreamDispatchesPermField,
+					Key:         LivemapperServiceStreamMarkersPermField,
 					Type:        permissions.JobListAttributeType,
 					ValidValues: "config.Game.Livemap.Jobs",
 				},

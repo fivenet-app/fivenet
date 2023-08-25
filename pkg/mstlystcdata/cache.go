@@ -15,6 +15,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/pkg/utils/syncx"
 	"github.com/galexrt/fivenet/query/fivenet/table"
+	jet "github.com/go-jet/jet/v2/mysql"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
@@ -129,7 +130,7 @@ func (c *Cache) refreshCache() error {
 		return err
 	}
 
-	if err := c.refreshLaws(ctx); err != nil {
+	if err := c.RefreshLaws(ctx, 0); err != nil {
 		return err
 	}
 
@@ -209,7 +210,7 @@ func (c *Cache) refreshJobs(ctx context.Context) error {
 	return nil
 }
 
-func (c *Cache) refreshLaws(ctx context.Context) error {
+func (c *Cache) RefreshLaws(ctx context.Context, lawBookId uint64) error {
 	stmt := tLawBooks.
 		SELECT(
 			tLawBooks.ID,
@@ -237,27 +238,38 @@ func (c *Cache) refreshLaws(ctx context.Context) error {
 			tLaws.Name.ASC(),
 		)
 
+	if lawBookId != 0 {
+		stmt = stmt.WHERE(
+			tLawBooks.ID.EQ(jet.Uint64(lawBookId)),
+		)
+	}
+
 	var dest []*laws.LawBook
 	if err := stmt.QueryContext(ctx, c.db, &dest); err != nil {
 		return err
 	}
 
-	// Update cache
-	found := []uint64{}
-	for _, lawbook := range dest {
-		c.lawBooks.Store(lawbook.Id, lawbook)
-		found = append(found, lawbook.Id)
-	}
-
-	// Delete non-existing law books, based on which are in the database
-	c.lawBooks.Range(func(key uint64, value *laws.LawBook) bool {
-		if !utils.InSliceFunc(found, func(in uint64) bool {
-			return in == key
-		}) {
-			c.lawBooks.Delete(key)
+	// Lawbook not found, need to remove it
+	if lawBookId != 0 && len(dest) == 0 {
+		c.lawBooks.Delete(lawBookId)
+	} else {
+		// Update cache
+		found := []uint64{}
+		for _, lawbook := range dest {
+			c.lawBooks.Store(lawbook.Id, lawbook)
+			found = append(found, lawbook.Id)
 		}
-		return true
-	})
+
+		// Delete non-existing law books, based on which are in the database
+		c.lawBooks.Range(func(key uint64, value *laws.LawBook) bool {
+			if !utils.InSliceFunc(found, func(in uint64) bool {
+				return in == key
+			}) {
+				c.lawBooks.Delete(key)
+			}
+			return true
+		})
+	}
 
 	return nil
 }

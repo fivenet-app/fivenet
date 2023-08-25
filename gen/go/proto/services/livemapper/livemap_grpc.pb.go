@@ -8,6 +8,7 @@ package livemapper
 
 import (
 	context "context"
+	livemap "github.com/galexrt/fivenet/gen/go/proto/resources/livemap"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -19,15 +20,21 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	LivemapperService_Stream_FullMethodName = "/services.livemapper.LivemapperService/Stream"
+	LivemapperService_Stream_FullMethodName               = "/services.livemapper.LivemapperService/Stream"
+	LivemapperService_CreateOrUpdateMarker_FullMethodName = "/services.livemapper.LivemapperService/CreateOrUpdateMarker"
+	LivemapperService_DeleteMarker_FullMethodName         = "/services.livemapper.LivemapperService/DeleteMarker"
 )
 
 // LivemapperServiceClient is the client API for LivemapperService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type LivemapperServiceClient interface {
-	// @perm: Attrs=Dispatches/JobList:"config.Game.Livemap.Jobs"|Players/JobGradeList
+	// @perm: Attrs=Markers/JobList:"config.Game.Livemap.Jobs"|Players/JobGradeList
 	Stream(ctx context.Context, in *StreamRequest, opts ...grpc.CallOption) (LivemapperService_StreamClient, error)
+	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
+	CreateOrUpdateMarker(ctx context.Context, in *livemap.Marker, opts ...grpc.CallOption) (*livemap.Marker, error)
+	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
+	DeleteMarker(ctx context.Context, in *DeleteMarkerRequest, opts ...grpc.CallOption) (*DeleteMarkerResponse, error)
 }
 
 type livemapperServiceClient struct {
@@ -70,12 +77,34 @@ func (x *livemapperServiceStreamClient) Recv() (*StreamResponse, error) {
 	return m, nil
 }
 
+func (c *livemapperServiceClient) CreateOrUpdateMarker(ctx context.Context, in *livemap.Marker, opts ...grpc.CallOption) (*livemap.Marker, error) {
+	out := new(livemap.Marker)
+	err := c.cc.Invoke(ctx, LivemapperService_CreateOrUpdateMarker_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *livemapperServiceClient) DeleteMarker(ctx context.Context, in *DeleteMarkerRequest, opts ...grpc.CallOption) (*DeleteMarkerResponse, error) {
+	out := new(DeleteMarkerResponse)
+	err := c.cc.Invoke(ctx, LivemapperService_DeleteMarker_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // LivemapperServiceServer is the server API for LivemapperService service.
 // All implementations must embed UnimplementedLivemapperServiceServer
 // for forward compatibility
 type LivemapperServiceServer interface {
-	// @perm: Attrs=Dispatches/JobList:"config.Game.Livemap.Jobs"|Players/JobGradeList
+	// @perm: Attrs=Markers/JobList:"config.Game.Livemap.Jobs"|Players/JobGradeList
 	Stream(*StreamRequest, LivemapperService_StreamServer) error
+	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
+	CreateOrUpdateMarker(context.Context, *livemap.Marker) (*livemap.Marker, error)
+	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
+	DeleteMarker(context.Context, *DeleteMarkerRequest) (*DeleteMarkerResponse, error)
 	mustEmbedUnimplementedLivemapperServiceServer()
 }
 
@@ -85,6 +114,12 @@ type UnimplementedLivemapperServiceServer struct {
 
 func (UnimplementedLivemapperServiceServer) Stream(*StreamRequest, LivemapperService_StreamServer) error {
 	return status.Errorf(codes.Unimplemented, "method Stream not implemented")
+}
+func (UnimplementedLivemapperServiceServer) CreateOrUpdateMarker(context.Context, *livemap.Marker) (*livemap.Marker, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateOrUpdateMarker not implemented")
+}
+func (UnimplementedLivemapperServiceServer) DeleteMarker(context.Context, *DeleteMarkerRequest) (*DeleteMarkerResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteMarker not implemented")
 }
 func (UnimplementedLivemapperServiceServer) mustEmbedUnimplementedLivemapperServiceServer() {}
 
@@ -120,13 +155,58 @@ func (x *livemapperServiceStreamServer) Send(m *StreamResponse) error {
 	return x.ServerStream.SendMsg(m)
 }
 
+func _LivemapperService_CreateOrUpdateMarker_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(livemap.Marker)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LivemapperServiceServer).CreateOrUpdateMarker(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: LivemapperService_CreateOrUpdateMarker_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LivemapperServiceServer).CreateOrUpdateMarker(ctx, req.(*livemap.Marker))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _LivemapperService_DeleteMarker_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteMarkerRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LivemapperServiceServer).DeleteMarker(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: LivemapperService_DeleteMarker_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LivemapperServiceServer).DeleteMarker(ctx, req.(*DeleteMarkerRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // LivemapperService_ServiceDesc is the grpc.ServiceDesc for LivemapperService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var LivemapperService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "services.livemapper.LivemapperService",
 	HandlerType: (*LivemapperServiceServer)(nil),
-	Methods:     []grpc.MethodDesc{},
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "CreateOrUpdateMarker",
+			Handler:    _LivemapperService_CreateOrUpdateMarker_Handler,
+		},
+		{
+			MethodName: "DeleteMarker",
+			Handler:    _LivemapperService_DeleteMarker_Handler,
+		},
+	},
 	Streams: []grpc.StreamDesc{
 		{
 			StreamName:    "Stream",

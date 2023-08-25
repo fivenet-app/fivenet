@@ -4,6 +4,10 @@
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
 import { LivemapperService } from "./livemap.js";
+import type { DeleteMarkerResponse } from "./livemap.js";
+import type { DeleteMarkerRequest } from "./livemap.js";
+import type { Marker } from "../../resources/livemap/livemap.js";
+import type { UnaryCall } from "@protobuf-ts/runtime-rpc";
 import { stackIntercept } from "@protobuf-ts/runtime-rpc";
 import type { StreamResponse } from "./livemap.js";
 import type { StreamRequest } from "./livemap.js";
@@ -14,11 +18,23 @@ import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
  */
 export interface ILivemapperServiceClient {
     /**
-     * @perm: Attrs=Dispatches/JobList:"config.Game.Livemap.Jobs"|Players/JobGradeList
+     * @perm: Attrs=Markers/JobList:"config.Game.Livemap.Jobs"|Players/JobGradeList
      *
      * @generated from protobuf rpc: Stream(services.livemapper.StreamRequest) returns (stream services.livemapper.StreamResponse);
      */
     stream(input: StreamRequest, options?: RpcOptions): ServerStreamingCall<StreamRequest, StreamResponse>;
+    /**
+     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
+     *
+     * @generated from protobuf rpc: CreateOrUpdateMarker(resources.livemap.Marker) returns (resources.livemap.Marker);
+     */
+    createOrUpdateMarker(input: Marker, options?: RpcOptions): UnaryCall<Marker, Marker>;
+    /**
+     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
+     *
+     * @generated from protobuf rpc: DeleteMarker(services.livemapper.DeleteMarkerRequest) returns (services.livemapper.DeleteMarkerResponse);
+     */
+    deleteMarker(input: DeleteMarkerRequest, options?: RpcOptions): UnaryCall<DeleteMarkerRequest, DeleteMarkerResponse>;
 }
 /**
  * @generated from protobuf service services.livemapper.LivemapperService
@@ -30,12 +46,30 @@ export class LivemapperServiceClient implements ILivemapperServiceClient, Servic
     constructor(private readonly _transport: RpcTransport) {
     }
     /**
-     * @perm: Attrs=Dispatches/JobList:"config.Game.Livemap.Jobs"|Players/JobGradeList
+     * @perm: Attrs=Markers/JobList:"config.Game.Livemap.Jobs"|Players/JobGradeList
      *
      * @generated from protobuf rpc: Stream(services.livemapper.StreamRequest) returns (stream services.livemapper.StreamResponse);
      */
     stream(input: StreamRequest, options?: RpcOptions): ServerStreamingCall<StreamRequest, StreamResponse> {
         const method = this.methods[0], opt = this._transport.mergeOptions(options);
         return stackIntercept<StreamRequest, StreamResponse>("serverStreaming", this._transport, method, opt, input);
+    }
+    /**
+     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
+     *
+     * @generated from protobuf rpc: CreateOrUpdateMarker(resources.livemap.Marker) returns (resources.livemap.Marker);
+     */
+    createOrUpdateMarker(input: Marker, options?: RpcOptions): UnaryCall<Marker, Marker> {
+        const method = this.methods[1], opt = this._transport.mergeOptions(options);
+        return stackIntercept<Marker, Marker>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
+     *
+     * @generated from protobuf rpc: DeleteMarker(services.livemapper.DeleteMarkerRequest) returns (services.livemapper.DeleteMarkerResponse);
+     */
+    deleteMarker(input: DeleteMarkerRequest, options?: RpcOptions): UnaryCall<DeleteMarkerRequest, DeleteMarkerResponse> {
+        const method = this.methods[2], opt = this._transport.mergeOptions(options);
+        return stackIntercept<DeleteMarkerRequest, DeleteMarkerResponse>("unary", this._transport, method, opt, input);
     }
 }

@@ -10,13 +10,24 @@ option go_package = "github.com/galexrt/fivenet/gen/go/proto/services/livemapper
 message StreamRequest {}
 
 message StreamResponse {
-  repeated resources.users.Job jobs_dispatches = 1;
-  repeated resources.users.Job jobs_users = 2;
-  repeated resources.livemap.UserMarker users = 3;
-  repeated resources.livemap.DispatchMarker dispatches = 4;
+  repeated resources.users.Job jobs_users = 1;
+  repeated resources.livemap.UserMarker users = 2;
+  repeated resources.users.Job jobs_markers = 3;
+  repeated resources.livemap.Marker markers = 4;
 }
 
+message DeleteMarkerRequest {
+  uint64 id = 1;
+}
+
+message DeleteMarkerResponse {}
+
 service LivemapperService {
-  // @perm: Attrs=Dispatches/JobList:"config.Game.Livemap.Jobs"|Players/JobGradeList
+  // @perm: Attrs=Markers/JobList:"config.Game.Livemap.Jobs"|Players/JobGradeList
   rpc Stream(StreamRequest) returns (stream StreamResponse);
+
+  // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
+  rpc CreateOrUpdateMarker(resources.livemap.Marker) returns (resources.livemap.Marker);
+  // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
+  rpc DeleteMarker(DeleteMarkerRequest) returns (DeleteMarkerResponse);
 }

@@ -1030,6 +1030,14 @@
             "Stream": {
                 "key": "View",
                 "description": "Being able to view the Livemap."
+            },
+            "CreateOrUpdateMarker": {
+                "key": "Create and Update Markers",
+                "description": "Being able to create and update markers on the Livemap."
+            },
+            "DeleteMarker": {
+                "key": "Delete Marker",
+                "description": "Being able to delete markers on the Livemap."
             }
         },
         "RectorService": {
@@ -1116,8 +1124,14 @@
         },
         "LivemapperService": {
             "Stream": {
-                "Dispatches": "Dispatch Locations",
+                "Markers": "Dispatch Locations",
                 "Players": "Player Location"
+            },
+            "CreateOrUpdateMarker": {
+                "Access": "Access"
+            },
+            "DeleteMarker": {
+                "Access": "Access"
             }
         },
         "RectorService": {
@@ -1191,7 +1205,8 @@
             "ErrDocAccessViewDenied": "You don't have permission to view this document's access!"
         },
         "LivemapperService": {
-            "ErrStreamFailed": "Failed to stream livemap data!"
+            "ErrStreamFailed": "Failed to stream livemap data!",
+            "ErrMarkerFailed": "Failed to create/update/delete marker!"
         },
         "NotificatorService": {
             "ErrFailedRequest": "Failed to load notifications data!",

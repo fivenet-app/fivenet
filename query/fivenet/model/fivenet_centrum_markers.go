@@ -14,13 +14,14 @@ import (
 type FivenetCentrumMarkers struct {
 	ID          uint64     `sql:"primary_key" json:"id"`
 	CreatedAt   *time.Time `json:"created_at"`
-	UpdatedAt   *time.Time `json:"updated_at"`
 	Job         *string    `json:"job"`
-	MarkerType  int16      `json:"marker_type"`
-	Message     string     `json:"message"`
+	Name        string     `json:"name"`
 	Description *string    `json:"description"`
-	Data        *string    `json:"data"`
 	X           *float64   `json:"x"`
 	Y           *float64   `json:"y"`
+	Color       *string    `json:"color"`
+	Icon        *string    `json:"icon"`
+	MarkerType  int16      `json:"marker_type"`
+	MarkerData  *string    `json:"marker_data"`
 	CreatorID   *int32     `json:"creator_id"`
 }

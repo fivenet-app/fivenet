@@ -78,6 +78,8 @@ func (s *Server) CreateOrUpdateLawBook(ctx context.Context, req *laws.LawBook) (
 		return nil, err
 	}
 
+	s.cache.RefreshLaws(ctx, lawBook.Id)
+
 	return lawBook, nil
 }
 
@@ -93,6 +95,11 @@ func (s *Server) DeleteLawBook(ctx context.Context, req *DeleteLawBookRequest) (
 	}
 	defer s.aud.Log(auditEntry, req)
 
+	lawBook, err := s.getLawBook(ctx, req.Id)
+	if err != nil {
+		return nil, err
+	}
+
 	stmt := tLawBooks.
 		DELETE().
 		WHERE(
@@ -104,7 +111,9 @@ func (s *Server) DeleteLawBook(ctx context.Context, req *DeleteLawBookRequest) (
 		return nil, err
 	}
 
-	return nil, nil
+	s.cache.RefreshLaws(ctx, lawBook.Id)
+
+	return &DeleteLawBookResponse{}, nil
 }
 
 func (s *Server) getLawBook(ctx context.Context, lawbookId uint64) (*laws.LawBook, error) {
@@ -208,6 +217,8 @@ func (s *Server) CreateOrUpdateLaw(ctx context.Context, req *laws.Law) (*laws.La
 		return nil, err
 	}
 
+	s.cache.RefreshLaws(ctx, req.LawbookId)
+
 	return law, nil
 }
 
@@ -223,6 +234,11 @@ func (s *Server) DeleteLaw(ctx context.Context, req *DeleteLawRequest) (*DeleteL
 	}
 	defer s.aud.Log(auditEntry, req)
 
+	law, err := s.getLaw(ctx, req.Id)
+	if err != nil {
+		return nil, err
+	}
+
 	stmt := tLaws.
 		DELETE().
 		WHERE(
@@ -233,6 +249,8 @@ func (s *Server) DeleteLaw(ctx context.Context, req *DeleteLawRequest) (*DeleteL
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 		return nil, err
 	}
+
+	s.cache.RefreshLaws(ctx, law.LawbookId)
 
 	return &DeleteLawResponse{}, nil
 }

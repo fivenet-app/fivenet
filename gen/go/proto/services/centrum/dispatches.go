@@ -172,8 +172,8 @@ func (s *Server) createDispatch(ctx context.Context, d *dispatch.Dispatch) (*dis
 	var x, y *float64
 	marker, ok := s.tracker.GetUserById(*d.UserId)
 	if ok {
-		x = &marker.Marker.X
-		y = &marker.Marker.Y
+		x = &marker.Info.X
+		y = &marker.Info.Y
 	}
 
 	if err := s.addDispatchStatus(ctx, tx, &dispatch.DispatchStatus{

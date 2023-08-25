@@ -25,6 +25,7 @@ const (
 	CentrumService_UpdateDispatch_FullMethodName       = "/services.centrum.CentrumService/UpdateDispatch"
 	CentrumService_TakeControl_FullMethodName          = "/services.centrum.CentrumService/TakeControl"
 	CentrumService_AssignDispatch_FullMethodName       = "/services.centrum.CentrumService/AssignDispatch"
+	CentrumService_AssignUnit_FullMethodName           = "/services.centrum.CentrumService/AssignUnit"
 	CentrumService_Stream_FullMethodName               = "/services.centrum.CentrumService/Stream"
 	CentrumService_GetSettings_FullMethodName          = "/services.centrum.CentrumService/GetSettings"
 	CentrumService_JoinUnit_FullMethodName             = "/services.centrum.CentrumService/JoinUnit"
@@ -34,7 +35,6 @@ const (
 	CentrumService_ListDispatchActivity_FullMethodName = "/services.centrum.CentrumService/ListDispatchActivity"
 	CentrumService_CreateOrUpdateUnit_FullMethodName   = "/services.centrum.CentrumService/CreateOrUpdateUnit"
 	CentrumService_DeleteUnit_FullMethodName           = "/services.centrum.CentrumService/DeleteUnit"
-	CentrumService_AssignUnit_FullMethodName           = "/services.centrum.CentrumService/AssignUnit"
 	CentrumService_TakeDispatch_FullMethodName         = "/services.centrum.CentrumService/TakeDispatch"
 	CentrumService_UpdateUnitStatus_FullMethodName     = "/services.centrum.CentrumService/UpdateUnitStatus"
 	CentrumService_UpdateDispatchStatus_FullMethodName = "/services.centrum.CentrumService/UpdateDispatchStatus"
@@ -54,6 +54,8 @@ type CentrumServiceClient interface {
 	TakeControl(ctx context.Context, in *TakeControlRequest, opts ...grpc.CallOption) (*TakeControlResponse, error)
 	// @perm: Name=TakeControl
 	AssignDispatch(ctx context.Context, in *AssignDispatchRequest, opts ...grpc.CallOption) (*AssignDispatchResponse, error)
+	// @perm: Name=TakeControl
+	AssignUnit(ctx context.Context, in *AssignUnitRequest, opts ...grpc.CallOption) (*AssignUnitResponse, error)
 	// @perm
 	Stream(ctx context.Context, in *StreamRequest, opts ...grpc.CallOption) (CentrumService_StreamClient, error)
 	// @perm: Name=Stream
@@ -72,8 +74,6 @@ type CentrumServiceClient interface {
 	CreateOrUpdateUnit(ctx context.Context, in *CreateOrUpdateUnitRequest, opts ...grpc.CallOption) (*CreateOrUpdateUnitResponse, error)
 	// @perm
 	DeleteUnit(ctx context.Context, in *DeleteUnitRequest, opts ...grpc.CallOption) (*DeleteUnitResponse, error)
-	// @perm: Name=TakeControl
-	AssignUnit(ctx context.Context, in *AssignUnitRequest, opts ...grpc.CallOption) (*AssignUnitResponse, error)
 	// @perm
 	TakeDispatch(ctx context.Context, in *TakeDispatchRequest, opts ...grpc.CallOption) (*TakeDispatchResponse, error)
 	// @perm: Name=TakeDispatch
@@ -129,6 +129,15 @@ func (c *centrumServiceClient) TakeControl(ctx context.Context, in *TakeControlR
 func (c *centrumServiceClient) AssignDispatch(ctx context.Context, in *AssignDispatchRequest, opts ...grpc.CallOption) (*AssignDispatchResponse, error) {
 	out := new(AssignDispatchResponse)
 	err := c.cc.Invoke(ctx, CentrumService_AssignDispatch_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *centrumServiceClient) AssignUnit(ctx context.Context, in *AssignUnitRequest, opts ...grpc.CallOption) (*AssignUnitResponse, error) {
+	out := new(AssignUnitResponse)
+	err := c.cc.Invoke(ctx, CentrumService_AssignUnit_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -239,15 +248,6 @@ func (c *centrumServiceClient) DeleteUnit(ctx context.Context, in *DeleteUnitReq
 	return out, nil
 }
 
-func (c *centrumServiceClient) AssignUnit(ctx context.Context, in *AssignUnitRequest, opts ...grpc.CallOption) (*AssignUnitResponse, error) {
-	out := new(AssignUnitResponse)
-	err := c.cc.Invoke(ctx, CentrumService_AssignUnit_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *centrumServiceClient) TakeDispatch(ctx context.Context, in *TakeDispatchRequest, opts ...grpc.CallOption) (*TakeDispatchResponse, error) {
 	out := new(TakeDispatchResponse)
 	err := c.cc.Invoke(ctx, CentrumService_TakeDispatch_FullMethodName, in, out, opts...)
@@ -289,6 +289,8 @@ type CentrumServiceServer interface {
 	TakeControl(context.Context, *TakeControlRequest) (*TakeControlResponse, error)
 	// @perm: Name=TakeControl
 	AssignDispatch(context.Context, *AssignDispatchRequest) (*AssignDispatchResponse, error)
+	// @perm: Name=TakeControl
+	AssignUnit(context.Context, *AssignUnitRequest) (*AssignUnitResponse, error)
 	// @perm
 	Stream(*StreamRequest, CentrumService_StreamServer) error
 	// @perm: Name=Stream
@@ -307,8 +309,6 @@ type CentrumServiceServer interface {
 	CreateOrUpdateUnit(context.Context, *CreateOrUpdateUnitRequest) (*CreateOrUpdateUnitResponse, error)
 	// @perm
 	DeleteUnit(context.Context, *DeleteUnitRequest) (*DeleteUnitResponse, error)
-	// @perm: Name=TakeControl
-	AssignUnit(context.Context, *AssignUnitRequest) (*AssignUnitResponse, error)
 	// @perm
 	TakeDispatch(context.Context, *TakeDispatchRequest) (*TakeDispatchResponse, error)
 	// @perm: Name=TakeDispatch
@@ -337,6 +337,9 @@ func (UnimplementedCentrumServiceServer) TakeControl(context.Context, *TakeContr
 func (UnimplementedCentrumServiceServer) AssignDispatch(context.Context, *AssignDispatchRequest) (*AssignDispatchResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AssignDispatch not implemented")
 }
+func (UnimplementedCentrumServiceServer) AssignUnit(context.Context, *AssignUnitRequest) (*AssignUnitResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AssignUnit not implemented")
+}
 func (UnimplementedCentrumServiceServer) Stream(*StreamRequest, CentrumService_StreamServer) error {
 	return status.Errorf(codes.Unimplemented, "method Stream not implemented")
 }
@@ -363,9 +366,6 @@ func (UnimplementedCentrumServiceServer) CreateOrUpdateUnit(context.Context, *Cr
 }
 func (UnimplementedCentrumServiceServer) DeleteUnit(context.Context, *DeleteUnitRequest) (*DeleteUnitResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteUnit not implemented")
-}
-func (UnimplementedCentrumServiceServer) AssignUnit(context.Context, *AssignUnitRequest) (*AssignUnitResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method AssignUnit not implemented")
 }
 func (UnimplementedCentrumServiceServer) TakeDispatch(context.Context, *TakeDispatchRequest) (*TakeDispatchResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method TakeDispatch not implemented")
@@ -475,6 +475,24 @@ func _CentrumService_AssignDispatch_Handler(srv interface{}, ctx context.Context
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(CentrumServiceServer).AssignDispatch(ctx, req.(*AssignDispatchRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CentrumService_AssignUnit_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AssignUnitRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CentrumServiceServer).AssignUnit(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CentrumService_AssignUnit_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CentrumServiceServer).AssignUnit(ctx, req.(*AssignUnitRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -644,24 +662,6 @@ func _CentrumService_DeleteUnit_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
-func _CentrumService_AssignUnit_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(AssignUnitRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(CentrumServiceServer).AssignUnit(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: CentrumService_AssignUnit_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CentrumServiceServer).AssignUnit(ctx, req.(*AssignUnitRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _CentrumService_TakeDispatch_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(TakeDispatchRequest)
 	if err := dec(in); err != nil {
@@ -744,6 +744,10 @@ var CentrumService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _CentrumService_AssignDispatch_Handler,
 		},
 		{
+			MethodName: "AssignUnit",
+			Handler:    _CentrumService_AssignUnit_Handler,
+		},
+		{
 			MethodName: "GetSettings",
 			Handler:    _CentrumService_GetSettings_Handler,
 		},
@@ -774,10 +778,6 @@ var CentrumService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteUnit",
 			Handler:    _CentrumService_DeleteUnit_Handler,
-		},
-		{
-			MethodName: "AssignUnit",
-			Handler:    _CentrumService_AssignUnit_Handler,
 		},
 		{
 			MethodName: "TakeDispatch",

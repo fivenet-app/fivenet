@@ -1,13 +1,11 @@
 <script lang="ts" setup>
-import { LMarker, LPopup } from '@vue-leaflet/vue-leaflet';
+import { LCircleMarker, LMarker, LPopup } from '@vue-leaflet/vue-leaflet';
 import L from 'leaflet';
-import { UserMarker } from '~~/gen/ts/resources/livemap/livemap';
-import { User } from '~~/gen/ts/resources/users/users';
+import { Marker } from '~~/gen/ts/resources/livemap/livemap';
 
 const props = withDefaults(
     defineProps<{
-        marker: UserMarker;
-        activeChar: null | User;
+        marker: Marker;
         size?: number;
     }>(),
     {
@@ -18,10 +16,6 @@ const props = withDefaults(
 defineEmits<{
     (e: 'selected'): void;
 }>();
-
-if (props.activeChar !== null && props.marker.user?.userId === props.activeChar.userId) {
-    props.marker.info!.color = 'FCAB10';
-}
 
 const iconAnchor: L.PointExpression = [props.size / 2, props.size];
 const popupAnchor: L.PointExpression = [0, (props.size / 2) * -1];
@@ -40,20 +34,23 @@ const icon = new L.DivIcon({
 </script>
 
 <template>
-    <LMarker
+    <LCircleMarker
+        v-if="marker.data?.data.oneofKind === 'circle'"
         :key="marker.info!.id?.toString()"
+        :latLng="[marker.info!.y, marker.info!.x]"
+        :radius="marker.data?.data.circle.radius"
+    >
+    </LCircleMarker>
+
+    <LMarker
+        v-else
         :latLng="[marker.info!.y, marker.info!.x]"
         :name="marker.info!.name"
         :icon="icon"
         @click="$emit('selected')"
-        :z-index-offset="activeChar && marker.user?.identifier === activeChar.identifier ? 25 : 20"
     >
         <LPopup :options="{ closeButton: true }">
-            <span class="font-semibold">{{ $t('common.employee', 2) }} {{ marker.user?.jobLabel }} </span>
-            <br />
-            <span class="italic">[{{ marker.user?.jobGrade }}] {{ marker.user?.jobGradeLabel }}</span>
-            <br />
-            {{ marker.user?.firstname }} {{ marker.user?.lastname }}
+            {{ marker.info?.name }}
         </LPopup>
     </LMarker>
 </template>

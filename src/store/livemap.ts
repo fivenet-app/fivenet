@@ -1,6 +1,6 @@
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { StoreDefinition, defineStore } from 'pinia';
-import { UserMarker } from '~~/gen/ts/resources/livemap/livemap';
+import { Marker, UserMarker } from '~~/gen/ts/resources/livemap/livemap';
 import { Job } from '~~/gen/ts/resources/users/jobs';
 import { LivemapperServiceClient } from '~~/gen/ts/services/livemapper/livemap.client';
 
@@ -12,9 +12,11 @@ export interface LivemapState {
     zoom: number;
     jobs: {
         users: Job[];
+        markers: Job[];
     };
     markers: {
         users: UserMarker[];
+        markers: Marker[];
     };
 }
 
@@ -54,12 +56,14 @@ export const useLivemapStore = defineStore('livemap', {
                 for await (let resp of call.responses) {
                     this.error = undefined;
 
-                    if (resp === undefined || !resp.jobsUsers) {
+                    if (resp === undefined) {
                         continue;
                     }
 
                     this.jobs.users = resp.jobsUsers;
                     this.markers.users = resp.users;
+                    this.jobs.markers = resp.jobsMarkers;
+                    this.markers.markers = resp.markers;
                 }
             } catch (e) {
                 this.error = e as RpcError;

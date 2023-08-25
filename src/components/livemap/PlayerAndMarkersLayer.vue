@@ -7,6 +7,7 @@ import { useAuthStore } from '~/store/auth';
 import { useLivemapStore } from '~/store/livemap';
 import { useSettingsStore } from '~/store/settings';
 import { UserMarker } from '~~/gen/ts/resources/livemap/livemap';
+import MarkerMarker from './MarkerMarker.vue';
 import PlayerMarker from './PlayerMarker.vue';
 
 withDefaults(
@@ -54,10 +55,25 @@ onBeforeUnmount(async () => stopStream());
     >
         <PlayerMarker
             v-for="marker in playerMarkersFiltered.filter((p) => p.user?.job === job.name)"
-            :key="marker.marker!.id?.toString()"
+            :key="marker.info!.id?.toString()"
             :marker="marker"
             :active-char="activeChar"
             @selected="$emit('markerSelected', marker)"
+            :size="livemap.markerSize"
+        />
+    </LLayerGroup>
+
+    <LLayerGroup
+        v-for="job in jobs.markers"
+        :key="`markers_${job.name}`"
+        :name="`${$t('common.employee', 2)} ${job.label}`"
+        layer-type="overlay"
+        :visible="true"
+    >
+        <MarkerMarker
+            v-for="marker in markers.markers"
+            :key="marker.info!.id?.toString()"
+            :marker="marker"
             :size="livemap.markerSize"
         />
     </LLayerGroup>

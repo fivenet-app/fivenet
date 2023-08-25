@@ -10,8 +10,6 @@ import type { UpdateUnitStatusResponse } from "./centrum.js";
 import type { UpdateUnitStatusRequest } from "./centrum.js";
 import type { TakeDispatchResponse } from "./centrum.js";
 import type { TakeDispatchRequest } from "./centrum.js";
-import type { AssignUnitResponse } from "./centrum.js";
-import type { AssignUnitRequest } from "./centrum.js";
 import type { DeleteUnitResponse } from "./centrum.js";
 import type { DeleteUnitRequest } from "./centrum.js";
 import type { CreateOrUpdateUnitResponse } from "./centrum.js";
@@ -30,6 +28,8 @@ import type { GetSettingsRequest } from "./centrum.js";
 import type { StreamResponse } from "./centrum.js";
 import type { StreamRequest } from "./centrum.js";
 import type { ServerStreamingCall } from "@protobuf-ts/runtime-rpc";
+import type { AssignUnitResponse } from "./centrum.js";
+import type { AssignUnitRequest } from "./centrum.js";
 import type { AssignDispatchResponse } from "./centrum.js";
 import type { AssignDispatchRequest } from "./centrum.js";
 import type { TakeControlResponse } from "./centrum.js";
@@ -76,6 +76,12 @@ export interface ICentrumServiceClient {
      * @generated from protobuf rpc: AssignDispatch(services.centrum.AssignDispatchRequest) returns (services.centrum.AssignDispatchResponse);
      */
     assignDispatch(input: AssignDispatchRequest, options?: RpcOptions): UnaryCall<AssignDispatchRequest, AssignDispatchResponse>;
+    /**
+     * @perm: Name=TakeControl
+     *
+     * @generated from protobuf rpc: AssignUnit(services.centrum.AssignUnitRequest) returns (services.centrum.AssignUnitResponse);
+     */
+    assignUnit(input: AssignUnitRequest, options?: RpcOptions): UnaryCall<AssignUnitRequest, AssignUnitResponse>;
     /**
      * @perm
      *
@@ -130,12 +136,6 @@ export interface ICentrumServiceClient {
      * @generated from protobuf rpc: DeleteUnit(services.centrum.DeleteUnitRequest) returns (services.centrum.DeleteUnitResponse);
      */
     deleteUnit(input: DeleteUnitRequest, options?: RpcOptions): UnaryCall<DeleteUnitRequest, DeleteUnitResponse>;
-    /**
-     * @perm: Name=TakeControl
-     *
-     * @generated from protobuf rpc: AssignUnit(services.centrum.AssignUnitRequest) returns (services.centrum.AssignUnitResponse);
-     */
-    assignUnit(input: AssignUnitRequest, options?: RpcOptions): UnaryCall<AssignUnitRequest, AssignUnitResponse>;
     /**
      * @perm
      *
@@ -210,12 +210,21 @@ export class CentrumServiceClient implements ICentrumServiceClient, ServiceInfo 
         return stackIntercept<AssignDispatchRequest, AssignDispatchResponse>("unary", this._transport, method, opt, input);
     }
     /**
+     * @perm: Name=TakeControl
+     *
+     * @generated from protobuf rpc: AssignUnit(services.centrum.AssignUnitRequest) returns (services.centrum.AssignUnitResponse);
+     */
+    assignUnit(input: AssignUnitRequest, options?: RpcOptions): UnaryCall<AssignUnitRequest, AssignUnitResponse> {
+        const method = this.methods[5], opt = this._transport.mergeOptions(options);
+        return stackIntercept<AssignUnitRequest, AssignUnitResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
      * @perm
      *
      * @generated from protobuf rpc: Stream(services.centrum.StreamRequest) returns (stream services.centrum.StreamResponse);
      */
     stream(input: StreamRequest, options?: RpcOptions): ServerStreamingCall<StreamRequest, StreamResponse> {
-        const method = this.methods[5], opt = this._transport.mergeOptions(options);
+        const method = this.methods[6], opt = this._transport.mergeOptions(options);
         return stackIntercept<StreamRequest, StreamResponse>("serverStreaming", this._transport, method, opt, input);
     }
     /**
@@ -224,7 +233,7 @@ export class CentrumServiceClient implements ICentrumServiceClient, ServiceInfo 
      * @generated from protobuf rpc: GetSettings(services.centrum.GetSettingsRequest) returns (resources.dispatch.Settings);
      */
     getSettings(input: GetSettingsRequest, options?: RpcOptions): UnaryCall<GetSettingsRequest, Settings> {
-        const method = this.methods[6], opt = this._transport.mergeOptions(options);
+        const method = this.methods[7], opt = this._transport.mergeOptions(options);
         return stackIntercept<GetSettingsRequest, Settings>("unary", this._transport, method, opt, input);
     }
     /**
@@ -233,7 +242,7 @@ export class CentrumServiceClient implements ICentrumServiceClient, ServiceInfo 
      * @generated from protobuf rpc: JoinUnit(services.centrum.JoinUnitRequest) returns (services.centrum.JoinUnitResponse);
      */
     joinUnit(input: JoinUnitRequest, options?: RpcOptions): UnaryCall<JoinUnitRequest, JoinUnitResponse> {
-        const method = this.methods[7], opt = this._transport.mergeOptions(options);
+        const method = this.methods[8], opt = this._transport.mergeOptions(options);
         return stackIntercept<JoinUnitRequest, JoinUnitResponse>("unary", this._transport, method, opt, input);
     }
     /**
@@ -242,7 +251,7 @@ export class CentrumServiceClient implements ICentrumServiceClient, ServiceInfo 
      * @generated from protobuf rpc: ListUnits(services.centrum.ListUnitsRequest) returns (services.centrum.ListUnitsResponse);
      */
     listUnits(input: ListUnitsRequest, options?: RpcOptions): UnaryCall<ListUnitsRequest, ListUnitsResponse> {
-        const method = this.methods[8], opt = this._transport.mergeOptions(options);
+        const method = this.methods[9], opt = this._transport.mergeOptions(options);
         return stackIntercept<ListUnitsRequest, ListUnitsResponse>("unary", this._transport, method, opt, input);
     }
     /**
@@ -251,7 +260,7 @@ export class CentrumServiceClient implements ICentrumServiceClient, ServiceInfo 
      * @generated from protobuf rpc: ListUnitActivity(services.centrum.ListUnitActivityRequest) returns (services.centrum.ListUnitActivityResponse);
      */
     listUnitActivity(input: ListUnitActivityRequest, options?: RpcOptions): UnaryCall<ListUnitActivityRequest, ListUnitActivityResponse> {
-        const method = this.methods[9], opt = this._transport.mergeOptions(options);
+        const method = this.methods[10], opt = this._transport.mergeOptions(options);
         return stackIntercept<ListUnitActivityRequest, ListUnitActivityResponse>("unary", this._transport, method, opt, input);
     }
     /**
@@ -260,7 +269,7 @@ export class CentrumServiceClient implements ICentrumServiceClient, ServiceInfo 
      * @generated from protobuf rpc: ListDispatches(services.centrum.ListDispatchesRequest) returns (services.centrum.ListDispatchesResponse);
      */
     listDispatches(input: ListDispatchesRequest, options?: RpcOptions): UnaryCall<ListDispatchesRequest, ListDispatchesResponse> {
-        const method = this.methods[10], opt = this._transport.mergeOptions(options);
+        const method = this.methods[11], opt = this._transport.mergeOptions(options);
         return stackIntercept<ListDispatchesRequest, ListDispatchesResponse>("unary", this._transport, method, opt, input);
     }
     /**
@@ -269,7 +278,7 @@ export class CentrumServiceClient implements ICentrumServiceClient, ServiceInfo 
      * @generated from protobuf rpc: ListDispatchActivity(services.centrum.ListDispatchActivityRequest) returns (services.centrum.ListDispatchActivityResponse);
      */
     listDispatchActivity(input: ListDispatchActivityRequest, options?: RpcOptions): UnaryCall<ListDispatchActivityRequest, ListDispatchActivityResponse> {
-        const method = this.methods[11], opt = this._transport.mergeOptions(options);
+        const method = this.methods[12], opt = this._transport.mergeOptions(options);
         return stackIntercept<ListDispatchActivityRequest, ListDispatchActivityResponse>("unary", this._transport, method, opt, input);
     }
     /**
@@ -278,7 +287,7 @@ export class CentrumServiceClient implements ICentrumServiceClient, ServiceInfo 
      * @generated from protobuf rpc: CreateOrUpdateUnit(services.centrum.CreateOrUpdateUnitRequest) returns (services.centrum.CreateOrUpdateUnitResponse);
      */
     createOrUpdateUnit(input: CreateOrUpdateUnitRequest, options?: RpcOptions): UnaryCall<CreateOrUpdateUnitRequest, CreateOrUpdateUnitResponse> {
-        const method = this.methods[12], opt = this._transport.mergeOptions(options);
+        const method = this.methods[13], opt = this._transport.mergeOptions(options);
         return stackIntercept<CreateOrUpdateUnitRequest, CreateOrUpdateUnitResponse>("unary", this._transport, method, opt, input);
     }
     /**
@@ -287,17 +296,8 @@ export class CentrumServiceClient implements ICentrumServiceClient, ServiceInfo 
      * @generated from protobuf rpc: DeleteUnit(services.centrum.DeleteUnitRequest) returns (services.centrum.DeleteUnitResponse);
      */
     deleteUnit(input: DeleteUnitRequest, options?: RpcOptions): UnaryCall<DeleteUnitRequest, DeleteUnitResponse> {
-        const method = this.methods[13], opt = this._transport.mergeOptions(options);
-        return stackIntercept<DeleteUnitRequest, DeleteUnitResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @perm: Name=TakeControl
-     *
-     * @generated from protobuf rpc: AssignUnit(services.centrum.AssignUnitRequest) returns (services.centrum.AssignUnitResponse);
-     */
-    assignUnit(input: AssignUnitRequest, options?: RpcOptions): UnaryCall<AssignUnitRequest, AssignUnitResponse> {
         const method = this.methods[14], opt = this._transport.mergeOptions(options);
-        return stackIntercept<AssignUnitRequest, AssignUnitResponse>("unary", this._transport, method, opt, input);
+        return stackIntercept<DeleteUnitRequest, DeleteUnitResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @perm

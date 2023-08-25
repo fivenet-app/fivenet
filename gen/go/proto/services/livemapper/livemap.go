@@ -3,22 +3,19 @@ package livemapper
 import (
 	"context"
 	"database/sql"
-	"strconv"
-	"strings"
 	"time"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/livemap"
-	"github.com/galexrt/fivenet/gen/go/proto/resources/timestamp"
 	users "github.com/galexrt/fivenet/gen/go/proto/resources/users"
 	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/perms"
+	"github.com/galexrt/fivenet/pkg/server/audit"
 	"github.com/galexrt/fivenet/pkg/tracker"
 	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/pkg/utils/syncx"
-	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
@@ -53,9 +50,10 @@ type Server struct {
 	ps       perms.Permissions
 	enricher *mstlystcdata.Enricher
 	tracker  *tracker.Tracker
+	auditer  audit.IAuditer
 
-	dispatchesCache syncx.Map[string, []*livemap.DispatchMarker]
-	usersCache      syncx.Map[string, []*livemap.UserMarker]
+	markersCache syncx.Map[string, []*livemap.Marker]
+	usersCache   syncx.Map[string, []*livemap.UserMarker]
 
 	broker *utils.Broker[interface{}]
 
@@ -75,6 +73,7 @@ type Params struct {
 	Enricher *mstlystcdata.Enricher
 	Config   *config.Config
 	Tracker  *tracker.Tracker
+	Audit    audit.IAuditer
 }
 
 func NewServer(p Params) *Server {
@@ -90,9 +89,10 @@ func NewServer(p Params) *Server {
 		ps:       p.Perms,
 		enricher: p.Enricher,
 		tracker:  p.Tracker,
+		auditer:  p.Audit,
 
-		dispatchesCache: syncx.Map[string, []*livemap.DispatchMarker]{},
-		usersCache:      syncx.Map[string, []*livemap.UserMarker]{},
+		markersCache: syncx.Map[string, []*livemap.Marker]{},
+		usersCache:   syncx.Map[string, []*livemap.UserMarker]{},
 
 		broker: broker,
 
@@ -114,6 +114,50 @@ func NewServer(p Params) *Server {
 }
 
 func (s *Server) start() {
+	description := time.Now().String()
+	m := &livemap.Marker{
+		Info: &livemap.MarkerInfo{
+			Job:         "ambulance",
+			Name:        "TEST CIRCLE",
+			Description: &description,
+			X:           0,
+			Y:           0,
+		},
+		Type: livemap.MARKER_TYPE_CIRCLE,
+		Data: &livemap.MarkerData{
+			Data: &livemap.MarkerData_Circle{
+				Circle: &livemap.CircleMarker{
+					Radius: 25,
+				},
+			},
+		},
+	}
+	stmt := tMarkers.INSERT(
+		tMarkers.Job,
+		tMarkers.Name,
+		tMarkers.Description,
+		tMarkers.X,
+		tMarkers.Y,
+		tMarkers.Color,
+		tMarkers.Icon,
+		tMarkers.MarkerType,
+		tMarkers.MarkerData,
+	).VALUES(
+		m.Info.Job,
+		m.Info.Name,
+		m.Info.Description,
+		m.Info.X,
+		m.Info.Y,
+		m.Info.Color,
+		m.Info.Icon,
+		m.Type,
+		m.Data,
+	)
+
+	if _, err := stmt.ExecContext(s.ctx, s.db); err != nil {
+		s.logger.Error("failed to create circle marker")
+	}
+
 	for {
 		s.refreshCache()
 
@@ -133,9 +177,9 @@ func (s *Server) refreshCache() {
 	if err := s.refreshUserLocations(ctx); err != nil {
 		s.logger.Error("failed to refresh livemap users cache", zap.Error(err))
 	}
-	//if err := s.refreshDispatches(ctx); err != nil {
-	//	s.logger.Error("failed to refresh livemap dispatches cache", zap.Error(err))
-	//}
+	if err := s.refreshMarkers(ctx); err != nil {
+		s.logger.Error("failed to refresh livemap markers cache", zap.Error(err))
+	}
 
 	s.broker.Publish(nil)
 }
@@ -143,9 +187,21 @@ func (s *Server) refreshCache() {
 func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) error {
 	userInfo := auth.MustGetUserInfoFromContext(srv.Context())
 
+	dispatchesAttr, err := s.ps.Attr(userInfo, LivemapperServicePerm, LivemapperServiceStreamPerm, LivemapperServiceStreamMarkersPermField)
+	if err != nil {
+		return ErrStreamFailed
+	}
 	playersAttr, err := s.ps.Attr(userInfo, LivemapperServicePerm, LivemapperServiceStreamPerm, LivemapperServiceStreamPlayersPermField)
 	if err != nil {
 		return ErrStreamFailed
+	}
+
+	var dispatchesJobs []string
+	if dispatchesAttr != nil {
+		dispatchesJobs = dispatchesAttr.([]string)
+	}
+	if userInfo.SuperUser {
+		dispatchesJobs = s.visibleJobs
 	}
 
 	var playersJobs map[string]int32
@@ -162,7 +218,7 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 
 	resp := &StreamResponse{}
 
-	if len(playersJobs) == 0 {
+	if len(dispatchesJobs) == 0 && len(playersJobs) == 0 {
 		if err := srv.Send(resp); err != nil {
 			return err
 		}
@@ -170,6 +226,14 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 		return nil
 	}
 
+	// Add jobs to list visible jobs list
+	resp.JobsMarkers = make([]*users.Job, len(dispatchesJobs))
+	for i := 0; i < len(dispatchesJobs); i++ {
+		resp.JobsMarkers[i] = &users.Job{
+			Name: dispatchesJobs[i],
+		}
+		s.enricher.EnrichJobName(resp.JobsMarkers[i])
+	}
 	resp.JobsUsers = []*users.Job{}
 	for job := range playersJobs {
 		j := &users.Job{
@@ -188,6 +252,12 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 			return ErrStreamFailed
 		}
 		resp.Users = userMarkers
+
+		markers, err := s.getMarkers(dispatchesJobs)
+		if err != nil {
+			return ErrStreamFailed
+		}
+		resp.Markers = markers
 
 		if err := srv.Send(resp); err != nil {
 			return err
@@ -236,25 +306,10 @@ func (s *Server) getUserLocations(jobs map[string]int32, userInfo *userinfo.User
 	return nil, false, nil
 }
 
-func (s *Server) getUserDispatches(jobs []string) ([]*livemap.DispatchMarker, error) {
-	ds := []*livemap.DispatchMarker{}
-
-	for _, job := range jobs {
-		markers, ok := s.dispatchesCache.Load(job)
-		if !ok {
-			continue
-		}
-
-		ds = append(ds, markers...)
-	}
-
-	return ds, nil
-}
-
 func (s *Server) refreshUserLocations(ctx context.Context) error {
 	markers := map[string][]*livemap.UserMarker{}
 
-	tLocs := tLocs.AS("genericmarker")
+	tLocs := tLocs.AS("markerInfo")
 	stmt := tLocs.
 		SELECT(
 			tLocs.Identifier,
@@ -262,7 +317,7 @@ func (s *Server) refreshUserLocations(ctx context.Context) error {
 			tLocs.X,
 			tLocs.Y,
 			tLocs.UpdatedAt,
-			tUsers.ID.AS("genericmarker.id"),
+			tUsers.ID.AS("markerInfo.id"),
 			tUsers.ID.AS("usermarker.user_id"),
 			tUsers.ID.AS("user.id"),
 			tUsers.Identifier,
@@ -270,7 +325,7 @@ func (s *Server) refreshUserLocations(ctx context.Context) error {
 			tUsers.JobGrade,
 			tUsers.Firstname,
 			tUsers.Lastname,
-			tJobProps.LivemapMarkerColor.AS("genericmarker.color"),
+			tJobProps.LivemapMarkerColor.AS("markerInfo.color"),
 		).
 		FROM(
 			tLocs.
@@ -298,9 +353,9 @@ func (s *Server) refreshUserLocations(ctx context.Context) error {
 		if _, ok := markers[job]; !ok {
 			markers[job] = []*livemap.UserMarker{}
 		}
-		if dest[i].Marker.Color == nil {
+		if dest[i].Info.Color == nil {
 			defaultColor := users.DefaultLivemapMarkerColor
-			dest[i].Marker.Color = &defaultColor
+			dest[i].Info.Color = &defaultColor
 		}
 
 		markers[job] = append(markers[job], dest[i])
@@ -312,104 +367,66 @@ func (s *Server) refreshUserLocations(ctx context.Context) error {
 	return nil
 }
 
-func (s *Server) refreshDispatches(ctx context.Context) error {
-	if len(s.visibleJobs) == 0 {
-		s.logger.Warn("empty livemap jobs in config, no dispatches can be found because of that")
-		return nil
+func (s *Server) getMarkers(jobs []string) ([]*livemap.Marker, error) {
+	ds := []*livemap.Marker{}
+
+	for _, job := range jobs {
+		markers, ok := s.markersCache.Load(job)
+		if !ok {
+			continue
+		}
+
+		ds = append(ds, markers...)
 	}
 
-	gksphoneJobM := table.GksphoneJobMessage
-	stmt := gksphoneJobM.
+	return ds, nil
+}
+
+func (s *Server) refreshMarkers(ctx context.Context) error {
+	tUsers := tUsers.AS("creator")
+	tMarkers := tMarkers.AS("marker")
+	stmt := tMarkers.
 		SELECT(
-			gksphoneJobM.ID,
-			gksphoneJobM.Name,
-			gksphoneJobM.Number,
-			gksphoneJobM.Message,
-			gksphoneJobM.Gps,
-			gksphoneJobM.Owner,
-			gksphoneJobM.Jobm,
-			gksphoneJobM.Anon,
-			gksphoneJobM.Time,
+			tMarkers.ID.AS("markerinfo.id"),
+			tMarkers.Job.AS("markerinfo.job"),
+			tMarkers.Name.AS("markerinfo.name"),
+			tMarkers.Description.AS("markerinfo.description"),
+			tMarkers.X.AS("markerinfo.x"),
+			tMarkers.Y.AS("markerinfo.y"),
+			tMarkers.MarkerType,
+			tMarkers.MarkerData,
+			tMarkers.CreatorID,
+			tUsers.ID,
+			tUsers.Identifier,
+			tUsers.Job,
+			tUsers.JobGrade,
+			tUsers.Firstname,
+			tUsers.Lastname,
 		).
 		FROM(
-			gksphoneJobM,
-		).
-		WHERE(
-			jet.AND(
-				gksphoneJobM.Jobm.REGEXP_LIKE(jet.String("\\[\"("+strings.Join(s.visibleJobs, "|")+")\"\\]")),
-				gksphoneJobM.Time.GT_EQ(jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(20, jet.MINUTE))),
-			),
-		).
-		ORDER_BY(
-			gksphoneJobM.Owner.ASC(),
-			gksphoneJobM.Time.DESC(),
-		).
-		LIMIT(DispatchMarkerLimit)
+			tMarkers.
+				LEFT_JOIN(tUsers,
+					tMarkers.CreatorID.EQ(tUsers.ID),
+				),
+		)
 
-	var dest []*model.GksphoneJobMessage
+		// TODO where condition for ignoring older than 45-60 minutes
+
+	var dest []*livemap.Marker
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		return err
 	}
-
-	markers := map[string][]*livemap.DispatchMarker{}
-	for _, d := range dest {
-		gps, _ := strings.CutPrefix(*d.Gps, "GPS: ")
-		gpsSplit := strings.Split(gps, ", ")
-		x, _ := strconv.ParseFloat(gpsSplit[0], 32)
-		y, _ := strconv.ParseFloat(gpsSplit[1], 32)
-
-		var icon string
-		var color string
-		if d.Owner == 0 {
-			icon = "dispatch-open.svg"
-			color = "96E6B3"
-		} else {
-			icon = "dispatch-closed.svg"
-			color = "DA3E52"
+	markers := map[string][]*livemap.Marker{}
+	for _, m := range dest {
+		if _, ok := markers[m.Info.Job]; !ok {
+			markers[m.Info.Job] = []*livemap.Marker{}
 		}
 
-		var name string
-		if d.Anon != nil && *d.Anon == "1" {
-			name = "Anonym"
-		} else {
-			name = *d.Name
-		}
-
-		var message string
-		if d.Message != nil && *d.Message != "" {
-			message = *d.Message
-		} else {
-			message = "N/A"
-		}
-
-		// Remove the "json" leftovers (the data looks like this, e.g., `["ambulance"]`)
-		job := strings.TrimSuffix(strings.TrimPrefix(*d.Jobm, "[\""), "\"]")
-		if _, ok := markers[job]; !ok {
-			markers[job] = []*livemap.DispatchMarker{}
-		}
-		marker := &livemap.DispatchMarker{
-			Marker: &livemap.GenericMarker{
-				Id:        uint64(d.ID),
-				X:         x,
-				Y:         y,
-				Color:     &color,
-				Icon:      &icon,
-				Name:      name,
-				Popup:     &message,
-				UpdatedAt: timestamp.New(d.Time),
-			},
-			Job: job,
-		}
-		if d.Owner == 0 {
-			marker.Active = true
-		}
-
-		s.enricher.EnrichJobName(marker)
-		markers[job] = append(markers[job], marker)
+		markers[m.Info.Job] = append(markers[m.Info.Job], m)
 	}
 
-	for job, v := range markers {
-		s.dispatchesCache.Store(job, v)
+	for job, ms := range markers {
+		s.markersCache.Store(job, ms)
 	}
 
 	return nil

@@ -200,6 +200,8 @@ service CentrumService {
   rpc TakeControl(TakeControlRequest) returns (TakeControlResponse);
   // @perm: Name=TakeControl
   rpc AssignDispatch(AssignDispatchRequest) returns (AssignDispatchResponse);
+  // @perm: Name=TakeControl
+  rpc AssignUnit(AssignUnitRequest) returns (AssignUnitResponse);
 
   // @perm
   rpc Stream(StreamRequest) returns (stream StreamResponse);
@@ -222,8 +224,6 @@ service CentrumService {
   rpc CreateOrUpdateUnit(CreateOrUpdateUnitRequest) returns (CreateOrUpdateUnitResponse);
   // @perm
   rpc DeleteUnit(DeleteUnitRequest) returns (DeleteUnitResponse);
-  // @perm: Name=TakeControl
-  rpc AssignUnit(AssignUnitRequest) returns (AssignUnitResponse);
 
   // @perm
   rpc TakeDispatch(TakeDispatchRequest) returns (TakeDispatchResponse);
