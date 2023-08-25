@@ -147,7 +147,7 @@ CREATE TABLE
         `color` char(6) DEFAULT "FFFC31",
         `icon` varchar(128) DEFAULT NULL,
         `marker_type` smallint(2) NOT NULL,
-        `marker_data` longtext DEFAULT NULL,
+        `marker_data` blob DEFAULT NULL,
         `creator_id` int(11) NULL DEFAULT NULL,
         PRIMARY KEY (`id`),
         KEY `idx_fivenet_centrum_markers_job` (`job`),

@@ -836,7 +836,9 @@ func (m *CircleMarker) validate(all bool) error {
 
 	// no validation rules for Radius
 
-	// no validation rules for Oapcity
+	if m.Oapcity != nil {
+		// no validation rules for Oapcity
+	}
 
 	if len(errors) > 0 {
 		return CircleMarkerMultiError(errors)

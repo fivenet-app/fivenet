@@ -80,7 +80,7 @@ func (s *Server) CreateOrUpdateMarker(ctx context.Context, req *livemap.Marker) 
 			tMarkers.MarkerType,
 			tMarkers.MarkerData,
 		).VALUES(
-			req.Info.Job,
+			userInfo.Job,
 			req.Info.Name,
 			req.Info.Description,
 			req.Info.X,
@@ -91,9 +91,17 @@ func (s *Server) CreateOrUpdateMarker(ctx context.Context, req *livemap.Marker) 
 			req.Data,
 		)
 
-		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+		res, err := stmt.ExecContext(ctx, s.db)
+		if err != nil {
 			return nil, err
 		}
+
+		lastId, err := res.LastInsertId()
+		if err != nil {
+			return nil, err
+		}
+
+		req.Info.Id = uint64(lastId)
 
 		auditEntry.State = int16(rector.EVENT_TYPE_CREATED)
 	} else {
@@ -128,7 +136,7 @@ func (s *Server) CreateOrUpdateMarker(ctx context.Context, req *livemap.Marker) 
 				tMarkers.MarkerData,
 			).
 			SET(
-				req.Info.Job,
+				userInfo.Job,
 				req.Info.Name,
 				req.Info.Description,
 				req.Info.X,

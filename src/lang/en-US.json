@@ -597,7 +597,9 @@
         "disponent": "No Disponents | {n} Disponent | {n} Disponents",
         "confirm": "Confirm | Confirmed",
         "word": "Word | Words",
-        "marker": "Marker | Markers"
+        "marker": "Marker | Markers",
+        "radius": "Radius",
+        "opacity": "Opacity"
     },
     "notifications": {
         "clipboard": {
@@ -874,6 +876,13 @@
                 "AVAILABLE": "Available",
                 "ON_BREAK": "On Break",
                 "BUSY": "Busy"
+            }
+        },
+        "livemap": {
+            "MARKER_TYPE": {
+                "DOT": "Dot",
+                "CIRCLE": "Circle",
+                "POLYGON": "Polygon"
             }
         }
     },

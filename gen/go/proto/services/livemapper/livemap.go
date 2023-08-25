@@ -15,9 +15,10 @@ import (
 	"github.com/galexrt/fivenet/pkg/server/audit"
 	"github.com/galexrt/fivenet/pkg/tracker"
 	"github.com/galexrt/fivenet/pkg/utils"
-	"github.com/galexrt/fivenet/pkg/utils/syncx"
+	"github.com/galexrt/fivenet/pkg/utils/maps"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/puzpuzpuz/xsync/v2"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
@@ -52,8 +53,8 @@ type Server struct {
 	tracker  *tracker.Tracker
 	auditer  audit.IAuditer
 
-	markersCache syncx.Map[string, []*livemap.Marker]
-	usersCache   syncx.Map[string, []*livemap.UserMarker]
+	markersCache *xsync.MapOf[string, []*livemap.Marker]
+	usersCache   *xsync.MapOf[string, []*livemap.UserMarker]
 
 	broker *utils.Broker[interface{}]
 
@@ -91,8 +92,8 @@ func NewServer(p Params) *Server {
 		tracker:  p.Tracker,
 		auditer:  p.Audit,
 
-		markersCache: syncx.Map[string, []*livemap.Marker]{},
-		usersCache:   syncx.Map[string, []*livemap.UserMarker]{},
+		markersCache: xsync.NewTypedMapOf[string, []*livemap.Marker](maps.HashString),
+		usersCache:   xsync.NewTypedMapOf[string, []*livemap.UserMarker](maps.HashString),
 
 		broker: broker,
 
@@ -368,8 +369,8 @@ func (s *Server) refreshMarkers(ctx context.Context) error {
 				),
 		).
 		WHERE(
-			tMarkers.CreatedAt.LT_EQ(
-				jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(45, jet.MINUTE)),
+			tMarkers.CreatedAt.GT_EQ(
+				jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(60, jet.MINUTE)),
 			),
 		)
 
@@ -377,7 +378,11 @@ func (s *Server) refreshMarkers(ctx context.Context) error {
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		return err
 	}
+
 	markers := map[string][]*livemap.Marker{}
+	for _, job := range s.visibleJobs {
+		markers[job] = []*livemap.Marker{}
+	}
 	for _, m := range dest {
 		if _, ok := markers[m.Info.Job]; !ok {
 			markers[m.Info.Job] = []*livemap.Marker{}
@@ -387,7 +392,11 @@ func (s *Server) refreshMarkers(ctx context.Context) error {
 	}
 
 	for job, ms := range markers {
-		s.markersCache.Store(job, ms)
+		if len(ms) == 0 {
+			s.markersCache.Delete(job)
+		} else {
+			s.markersCache.Store(job, ms)
+		}
 	}
 
 	return nil

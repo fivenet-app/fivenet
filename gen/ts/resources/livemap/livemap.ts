@@ -132,9 +132,9 @@ export interface CircleMarker {
      */
     radius: number;
     /**
-     * @generated from protobuf field: float oapcity = 2;
+     * @generated from protobuf field: optional float oapcity = 2;
      */
-    oapcity: number;
+    oapcity?: number;
 }
 /**
  * @generated from protobuf message resources.livemap.Coords
@@ -246,7 +246,7 @@ class CircleMarker$Type extends MessageType<CircleMarker> {
     constructor() {
         super("resources.livemap.CircleMarker", [
             { no: 1, name: "radius", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 2, name: "oapcity", kind: "scalar", T: 2 /*ScalarType.FLOAT*/ }
+            { no: 2, name: "oapcity", kind: "scalar", opt: true, T: 2 /*ScalarType.FLOAT*/ }
         ]);
     }
 }

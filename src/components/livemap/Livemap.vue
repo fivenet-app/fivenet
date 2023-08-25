@@ -12,6 +12,7 @@ import { useLivemapStore } from '~/store/livemap';
 import { useSettingsStore } from '~/store/settings';
 import { MarkerInfo } from '~~/gen/ts/resources/livemap/livemap';
 import BaseMap from './BaseMap.vue';
+import CreateOrUpdateMarkerModal from './CreateOrUpdateMarkerModal.vue';
 import PlayerAndMarkersLayer from './PlayerAndMarkersLayer.vue';
 import PostalSearch from './controls/PostalSearch.vue';
 import Settings from './controls/Settings.vue';
@@ -48,6 +49,15 @@ if (can('CentrumService.CreateDispatch')) {
         },
     });
 }
+if (can('CentrumService.CreateOrUpdateMarker')) {
+    mapOptions.contextmenuItems.push({
+        text: t('components.livemap.create_marker.title'),
+        callback: (e: LeafletMouseEvent) => {
+            location.value = { x: e.latlng.lng, y: e.latlng.lat };
+            openCreateMarker.value = true;
+        },
+    });
+}
 if (checkForNUI()) {
     mapOptions.contextmenuItems.push({
         text: t('components.centrum.livemap.mark_on_gps'),
@@ -56,6 +66,7 @@ if (checkForNUI()) {
 }
 
 const openCreateDispatch = ref(false);
+const openCreateMarker = ref(false);
 
 const selectedUserMarker = ref<MarkerInfo | undefined>();
 
@@ -71,7 +82,17 @@ async function applySelectedMarkerCentering(): Promise<void> {
 
 <template>
     <div class="relative w-full h-full z-0">
-        <CreateOrUpdateModal :open="openCreateDispatch" @close="openCreateDispatch = false" />
+        <CreateOrUpdateModal
+            v-if="can('CentrumService.CreateDispatch')"
+            :open="openCreateDispatch"
+            @close="openCreateDispatch = false"
+        />
+        <CreateOrUpdateMarkerModal
+            v-if="can('CentrumService.CreateOrUpdateMarker')"
+            :open="openCreateMarker"
+            @close="openCreateMarker = false"
+        />
+
         <div
             v-if="error || (!error && abort === undefined)"
             class="absolute inset-0 flex justify-center items-center z-20 bg-gray-600/70"

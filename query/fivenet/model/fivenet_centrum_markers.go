@@ -22,6 +22,6 @@ type FivenetCentrumMarkers struct {
 	Color       *string    `json:"color"`
 	Icon        *string    `json:"icon"`
 	MarkerType  int16      `json:"marker_type"`
-	MarkerData  *string    `json:"marker_data"`
+	MarkerData  *[]byte    `json:"marker_data"`
 	CreatorID   *int32     `json:"creator_id"`
 }

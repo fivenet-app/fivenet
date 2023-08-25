@@ -5,10 +5,10 @@ import { digits, max, min, required } from '@vee-validate/rules';
 import { CloseIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import { useLivemapStore } from '~/store/livemap';
+import { MARKER_TYPE, Marker } from '~~/gen/ts/resources/livemap/livemap';
 
-const props = defineProps<{
+defineProps<{
     open: boolean;
-    location?: Coordinate;
 }>();
 
 const emits = defineEmits<{
@@ -20,24 +20,35 @@ const { $grpc } = useNuxtApp();
 const livemapStore = useLivemapStore();
 const { location } = storeToRefs(livemapStore);
 
-async function createDispatch(values: FormData): Promise<void> {
+async function createMarker(values: FormData): Promise<void> {
     return new Promise(async (res, rej) => {
         try {
-            const call = $grpc.getCentrumClient().createDispatch({
-                dispatch: {
-                    id: 0n,
+            const marker: Marker = {
+                info: {
+                    id: BigInt(0),
                     job: '',
-                    message: values.message,
+                    name: values.name,
                     description: values.description,
-                    anon: values.anon as boolean,
-                    attributes: {
-                        list: [],
-                    },
-                    x: props.location ? props.location.x : location.value?.x ?? 0,
-                    y: props.location ? props.location.y : location.value?.y ?? 0,
-                    units: [],
+                    x: location.value?.x ?? 0,
+                    y: location.value?.y ?? 0,
+                    color: values.color.substring(1),
                 },
-            });
+                type: values.markerType,
+            };
+
+            if (values.markerType === MARKER_TYPE.CIRCLE) {
+                marker.data = {
+                    data: {
+                        oneofKind: 'circle',
+                        circle: {
+                            radius: values.circleRadius,
+                            oapcity: values.circleOpacity,
+                        },
+                    },
+                };
+            }
+
+            const call = $grpc.getLivemapperClient().createOrUpdateMarker(marker);
             await call;
 
             emits('close');
@@ -50,28 +61,40 @@ async function createDispatch(values: FormData): Promise<void> {
     });
 }
 
+const markerTypes = ref<{ status: MARKER_TYPE; selected?: boolean }[]>([{ status: MARKER_TYPE.CIRCLE }]);
+
 defineRule('required', required);
 defineRule('digits', digits);
 defineRule('min', min);
 defineRule('max', max);
 
 interface FormData {
-    message: string;
+    name: string;
     description: string;
-    anon: boolean;
+    markerType: MARKER_TYPE.CIRCLE;
+    color: string;
+    circleRadius: number;
+    circleOpacity: number;
 }
 
-const { handleSubmit } = useForm<FormData>({
+const { handleSubmit, values, setValues } = useForm<FormData>({
     validationSchema: {
-        message: { required: true, min: 3, max: 255 },
+        name: { required: true, min: 3, max: 255 },
         description: { required: false, min: 6, max: 512 },
     },
     initialValues: {
-        anon: false,
+        color: '#EE4B2B',
+        circleRadius: 50,
+        circleOpacity: 5,
     },
 });
+setValues({
+    markerType: MARKER_TYPE.CIRCLE,
+    circleRadius: 50,
+    circleOpacity: 5,
+});
 
-const onSubmit = handleSubmit(async (values): Promise<void> => await createDispatch(values));
+const onSubmit = handleSubmit(async (values): Promise<void> => await createMarker(values));
 </script>
 
 <template>
@@ -100,7 +123,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await createDispa
                                         <div class="bg-primary-700 px-4 py-6 sm:px-6">
                                             <div class="flex items-center justify-between">
                                                 <DialogTitle class="text-base font-semibold leading-6 text-white">
-                                                    {{ $t('components.centrum.create_dispatch.title') }}
+                                                    {{ $t('components.livemap.create_marker.title') }}
                                                 </DialogTitle>
                                                 <div class="ml-3 flex h-7 items-center">
                                                     <button
@@ -115,7 +138,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await createDispa
                                             </div>
                                             <div class="mt-1">
                                                 <p class="text-sm text-primary-300">
-                                                    {{ $t('components.centrum.create_dispatch.sub_title') }}
+                                                    {{ $t('components.livemap.create_marker.sub_title') }}
                                                 </p>
                                             </div>
                                         </div>
@@ -126,10 +149,10 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await createDispa
                                                         <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                                                             <dt class="text-sm font-medium leading-6 text-white">
                                                                 <label
-                                                                    for="message"
+                                                                    for="name"
                                                                     class="block text-sm font-medium leading-6 text-neutral"
                                                                 >
-                                                                    {{ $t('common.message') }}
+                                                                    {{ $t('common.name') }}
                                                                 </label>
                                                             </dt>
                                                             <dd
@@ -137,13 +160,13 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await createDispa
                                                             >
                                                                 <VeeField
                                                                     type="text"
-                                                                    name="message"
+                                                                    name="name"
                                                                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                                    :placeholder="$t('common.message')"
-                                                                    :label="$t('common.message')"
+                                                                    :placeholder="$t('common.name')"
+                                                                    :label="$t('common.name')"
                                                                 />
                                                                 <VeeErrorMessage
-                                                                    name="message"
+                                                                    name="name"
                                                                     as="p"
                                                                     class="mt-2 text-sm text-error-400"
                                                                 />
@@ -178,31 +201,105 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await createDispa
                                                         <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                                                             <dt class="text-sm font-medium leading-6 text-white">
                                                                 <label
-                                                                    for="anon"
+                                                                    for="color"
                                                                     class="block text-sm font-medium leading-6 text-neutral"
                                                                 >
-                                                                    {{ $t('common.anon') }}
+                                                                    {{ $t('common.color') }}
                                                                 </label>
                                                             </dt>
                                                             <dd
                                                                 class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
                                                             >
-                                                                <div class="flex h-6 items-center">
-                                                                    <VeeField
-                                                                        type="checkbox"
-                                                                        name="anon"
-                                                                        class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600 h-6 w-6"
-                                                                        :placeholder="$t('common.anon')"
-                                                                        :label="$t('common.anon')"
-                                                                    />
-                                                                </div>
+                                                                <VeeField
+                                                                    type="color"
+                                                                    name="color"
+                                                                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                                    :placeholder="$t('common.color')"
+                                                                    :label="$t('common.color')"
+                                                                />
                                                                 <VeeErrorMessage
-                                                                    name="anon"
+                                                                    name="color"
                                                                     as="p"
                                                                     class="mt-2 text-sm text-error-400"
                                                                 />
                                                             </dd>
                                                         </div>
+                                                        <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                                                            <dt class="text-sm font-medium leading-6 text-white">
+                                                                <label
+                                                                    for="markerType"
+                                                                    class="block text-sm font-medium leading-6 text-neutral"
+                                                                >
+                                                                    {{ $t('common.marker') }}
+                                                                </label>
+                                                            </dt>
+                                                            <dd
+                                                                class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
+                                                            >
+                                                                <VeeField
+                                                                    as="div"
+                                                                    name="markerType"
+                                                                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                                    :placeholder="$t('common.marker')"
+                                                                    :label="$t('common.marker')"
+                                                                    v-slot="{ field }"
+                                                                >
+                                                                    <select
+                                                                        v-bind="field"
+                                                                        class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                                    >
+                                                                        <option
+                                                                            v-for="mtype in markerTypes"
+                                                                            :selected="mtype.selected"
+                                                                            :value="mtype.status"
+                                                                        >
+                                                                            {{
+                                                                                $t(
+                                                                                    `enums.livemap.MARKER_TYPE.${
+                                                                                        MARKER_TYPE[
+                                                                                            mtype.status ?? (0 as number)
+                                                                                        ]
+                                                                                    }`,
+                                                                                )
+                                                                            }}
+                                                                        </option>
+                                                                    </select>
+                                                                </VeeField>
+                                                                <VeeErrorMessage
+                                                                    name="markerType"
+                                                                    as="p"
+                                                                    class="mt-2 text-sm text-error-400"
+                                                                />
+                                                            </dd>
+                                                        </div>
+                                                        <template v-if="values.markerType === MARKER_TYPE.CIRCLE">
+                                                            <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                                                                <dt class="text-sm font-medium leading-6 text-white">
+                                                                    <label
+                                                                        for="circleRadius"
+                                                                        class="block text-sm font-medium leading-6 text-neutral"
+                                                                    >
+                                                                        {{ $t('common.radius') }}
+                                                                    </label>
+                                                                </dt>
+                                                                <dd
+                                                                    class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
+                                                                >
+                                                                    <VeeField
+                                                                        type="number"
+                                                                        name="circleRadius"
+                                                                        class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                                        :placeholder="$t('common.radius')"
+                                                                        :label="$t('common.radius')"
+                                                                    />
+                                                                    <VeeErrorMessage
+                                                                        name="circleRadius"
+                                                                        as="p"
+                                                                        class="mt-2 text-sm text-error-400"
+                                                                    />
+                                                                </dd>
+                                                            </div>
+                                                        </template>
                                                     </dl>
                                                 </div>
                                             </div>

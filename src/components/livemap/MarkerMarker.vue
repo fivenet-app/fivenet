@@ -1,6 +1,10 @@
 <script lang="ts" setup>
+import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { LCircleMarker, LMarker, LPopup } from '@vue-leaflet/vue-leaflet';
+import { useConfirmDialog } from '@vueuse/core';
 import L from 'leaflet';
+import { TrashCanIcon } from 'mdi-vue3';
+import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
 import { Marker } from '~~/gen/ts/resources/livemap/livemap';
 
 const props = withDefaults(
@@ -31,21 +35,52 @@ const icon = new L.DivIcon({
     iconAnchor,
     popupAnchor,
 }) as L.Icon;
+
+const { $grpc } = useNuxtApp();
+
+async function deleteMarker(id: bigint): Promise<void> {
+    return new Promise(async (res, rej) => {
+        try {
+            const call = $grpc.getLivemapperClient().deleteMarker({
+                id: id,
+            });
+            await call;
+
+            return res();
+        } catch (e) {
+            $grpc.handleError(e as RpcError);
+            return rej(e as RpcError);
+        }
+    });
+}
+
+const { isRevealed, reveal, confirm, cancel, onConfirm } = useConfirmDialog();
+
+onConfirm(async (id) => deleteMarker(id));
 </script>
 
 <template>
+    <ConfirmDialog :open="isRevealed" :cancel="cancel" :confirm="() => confirm(marker.info!.id)" />
+
     <LCircleMarker
         v-if="marker.data?.data.oneofKind === 'circle'"
         :key="marker.info!.id?.toString()"
         :latLng="[marker.info!.y, marker.info!.x]"
         :radius="marker.data?.data.circle.radius"
         :color="marker.info?.color ? '#' + marker.info?.color : '#fff'"
+        :fill-opacity="(marker.data.data.circle.oapcity ?? 5) / 100"
     >
         <LPopup :options="{ closeButton: true }">
             <ul>
                 <li>{{ marker.info?.name }}</li>
                 <li>{{ $t('common.description') }}: {{ marker.info?.description }}</li>
             </ul>
+            <template v-if="can('LivemapperService.DeleteMarker')">
+                <button type="button" @click="reveal()" :title="$t('common.delete')" class="flex flex-row items-center">
+                    <TrashCanIcon class="w-6 h-6" />
+                    <span>{{ $t('common.delete') }}</span>
+                </button>
+            </template>
         </LPopup>
     </LCircleMarker>
 
@@ -57,7 +92,10 @@ const icon = new L.DivIcon({
         @click="$emit('selected')"
     >
         <LPopup :options="{ closeButton: true }">
-            {{ marker.info?.name }}
+            <ul>
+                <li>{{ marker.info?.name }}</li>
+                <li>{{ $t('common.description') }}: {{ marker.info?.description }}</li>
+            </ul>
         </LPopup>
     </LMarker>
 </template>
