@@ -329,6 +329,14 @@
             "paused_datastream": "Livemap Datenstrom pausiert (Fenster nicht im Fokus).",
             "settings": {
                 "marker_size": "Größe der Kartenmarkierung"
+            },
+            "create_marker": {
+                "title": "Marker erstellen",
+                "sub_title": ".Neuen Marker erstellen"
+            },
+            "update_marker": {
+                "title": "Marker aktualisieren",
+                "sub_title": "Existierenden Marker aktualisieren."
             }
         },
         "rector": {
@@ -1030,6 +1038,14 @@
             "Stream": {
                 "key": "Aufrufen",
                 "description": "Livemap aufrufen können."
+            },
+            "CreateOrUpdateMarker": {
+                "key": "Create and Update Markers",
+                "description": "Being able to create and update markers on the Livemap."
+            },
+            "DeleteMarker": {
+                "key": "Marker Löschen",
+                "description": "Being able to delete markers on the Livemap."
             }
         },
         "RectorService": {
@@ -1116,8 +1132,14 @@
         },
         "LivemapperService": {
             "Stream": {
-                "Dispatches": "Einsatz Positionen",
-                "Players": "Spieler Positionen"
+                "Players": "Spieler Positionen",
+                "Markers": "Marker"
+            },
+            "CreateOrUpdateMarker": {
+                "Access": "Zugriff"
+            },
+            "DeleteMarker": {
+                "Access": "Zugriff"
             }
         },
         "RectorService": {
@@ -1185,13 +1207,14 @@
             "ErrFailedQuery": "Fehlen beim anzeigen/erstellen/aktualisieren von Dokumenten!",
             "ErrNotFoundOrNoPerms": "Kein Dokument gefunden oder keine Berechtigungen auf das Dokument zuzugreifen!",
             "ErrTemplateNoPerms": "Keine Berechtigungen Vorlagen anzuzeigen/aktualisieren/zu löschen!",
-            "ErrPermissionDenied": "You don't have permission to do this!",
-            "ErrClosedDoc": "Document is closed and can't be edited!",
+            "ErrPermissionDenied": "Du hast keine Berechtigung das zu tun!",
+            "ErrClosedDoc": "Dokument ist geschloßen und kann nicht editiert werden!",
             "ErrDocAccessEditDenied": "You don't have permission to edit the document's access!",
             "ErrDocAccessViewDenied": "You don't have permission to view this document's access!"
         },
         "LivemapperService": {
-            "ErrStreamFailed": "Livemap Datenstrom fehlgeschlagen!"
+            "ErrStreamFailed": "Livemap Datenstrom fehlgeschlagen!",
+            "ErrMarkerFailed": "Fehler beim erstellen/aktualisieren/löschen des Markers!"
         },
         "NotificatorService": {
             "ErrFailedRequest": "Laden von Benachrichtigungs-Daten fehlgeschlagen!",
