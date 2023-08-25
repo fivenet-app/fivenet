@@ -88,7 +88,7 @@ export class GRPCClients {
                     break;
 
                 case 'unauthenticated':
-                    await useAuthStore().clearAuthInfo();
+                    useAuthStore().clearAuthInfo();
 
                     notification.type = 'warning';
                     notification.title = { key: 'notifications.grpc_errors.unauthenticated.title', parameters: [] };

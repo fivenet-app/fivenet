@@ -34,7 +34,7 @@ function redirect(): void {
 }
 
 onBeforeMount(async () => {
-    clearAuthInfo();
+    await clearAuthInfo();
 
     if (!accessToken.value) {
         redirect();

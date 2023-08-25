@@ -66,7 +66,7 @@ export const useAuthStore = defineStore('auth', {
                 };
             }
         },
-        async clearAuthInfo(): Promise<void> {
+        clearAuthInfo(): void {
             this.setAccessToken(null, null);
             this.setActiveChar(null);
             this.setPermissions([]);

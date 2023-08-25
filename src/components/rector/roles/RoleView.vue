@@ -143,7 +143,6 @@ async function updatePermissions(): Promise<void> {
                 perms.toRemove.push(perm);
             }
         });
-        console.log(permStates.value);
 
         const attrs: AttrsUpdate = {
             toRemove: [],
