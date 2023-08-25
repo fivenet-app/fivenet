@@ -1132,8 +1132,8 @@
         },
         "LivemapperService": {
             "Stream": {
-                "Markers": "Markers",
-                "Players": "Player Location"
+                "Players": "Player Location",
+                "Markers": "Markers"
             },
             "CreateOrUpdateMarker": {
                 "Access": "Access"
