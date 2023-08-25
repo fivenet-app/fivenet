@@ -67,7 +67,7 @@ onBeforeUnmount(async () => stopStream());
     <LLayerGroup
         v-for="job in jobs.markers"
         :key="`markers_${job.name}`"
-        :name="`${$t('common.employee', 2)} ${job.label}`"
+        :name="`${$t('common.marker', 2)} ${job.label}`"
         layer-type="overlay"
         :visible="true"
     >
