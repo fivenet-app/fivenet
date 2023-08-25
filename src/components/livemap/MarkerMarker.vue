@@ -39,7 +39,14 @@ const icon = new L.DivIcon({
         :key="marker.info!.id?.toString()"
         :latLng="[marker.info!.y, marker.info!.x]"
         :radius="marker.data?.data.circle.radius"
+        :color="marker.info?.color ? '#' + marker.info?.color : '#fff'"
     >
+        <LPopup :options="{ closeButton: true }">
+            <ul>
+                <li>{{ marker.info?.name }}</li>
+                <li>{{ $t('common.description') }}: {{ marker.info?.description }}</li>
+            </ul>
+        </LPopup>
     </LCircleMarker>
 
     <LMarker

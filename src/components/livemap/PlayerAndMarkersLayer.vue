@@ -6,7 +6,7 @@ import 'leaflet/dist/leaflet.css';
 import { useAuthStore } from '~/store/auth';
 import { useLivemapStore } from '~/store/livemap';
 import { useSettingsStore } from '~/store/settings';
-import { UserMarker } from '~~/gen/ts/resources/livemap/livemap';
+import { Marker, UserMarker } from '~~/gen/ts/resources/livemap/livemap';
 import MarkerMarker from './MarkerMarker.vue';
 import PlayerMarker from './PlayerMarker.vue';
 
@@ -22,7 +22,8 @@ withDefaults(
 );
 
 defineEmits<{
-    (e: 'markerSelected', marker: UserMarker): void;
+    (e: 'userSelected', marker: UserMarker): void;
+    (e: 'markerSelected', marker: Marker): void;
 }>();
 
 const livemapStore = useLivemapStore();
@@ -58,7 +59,7 @@ onBeforeUnmount(async () => stopStream());
             :key="marker.info!.id?.toString()"
             :marker="marker"
             :active-char="activeChar"
-            @selected="$emit('markerSelected', marker)"
+            @selected="$emit('userSelected', marker)"
             :size="livemap.markerSize"
         />
     </LLayerGroup>
@@ -75,6 +76,7 @@ onBeforeUnmount(async () => stopStream());
             :key="marker.info!.id?.toString()"
             :marker="marker"
             :size="livemap.markerSize"
+            @selected="$emit('markerSelected', marker)"
         />
     </LLayerGroup>
 

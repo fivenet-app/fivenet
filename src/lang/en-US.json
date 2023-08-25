@@ -329,6 +329,14 @@
             "paused_datastream": "Livemap data stream paused (window not in focus).",
             "settings": {
                 "marker_size": "Marker Size"
+            },
+            "create_marker": {
+                "title": "Create Marker",
+                "sub_title": "Create a new Marker."
+            },
+            "update_marker": {
+                "title": "Update Marker",
+                "sub_title": "Update existing Marker."
             }
         },
         "rector": {
@@ -1124,7 +1132,7 @@
         },
         "LivemapperService": {
             "Stream": {
-                "Markers": "Dispatch Locations",
+                "Markers": "Markers",
                 "Players": "Player Location"
             },
             "CreateOrUpdateMarker": {

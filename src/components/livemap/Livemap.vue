@@ -57,15 +57,15 @@ if (checkForNUI()) {
 
 const openCreateDispatch = ref(false);
 
-const selectedMarker = ref<MarkerInfo | undefined>();
+const selectedUserMarker = ref<MarkerInfo | undefined>();
 
-watch(selectedMarker, () => applySelectedMarkerCentering());
+watch(selectedUserMarker, () => applySelectedMarkerCentering());
 
 async function applySelectedMarkerCentering(): Promise<void> {
-    if (selectedMarker.value === undefined) return;
+    if (selectedUserMarker.value === undefined) return;
     if (!livemap.value.centerSelectedMarker) return;
 
-    location.value = { x: selectedMarker.value.x, y: selectedMarker.value.y };
+    location.value = { x: selectedUserMarker.value.x, y: selectedUserMarker.value.y };
 }
 </script>
 
@@ -87,7 +87,7 @@ async function applySelectedMarkerCentering(): Promise<void> {
                     </div>
                 </LControl>
 
-                <PlayerAndMarkersLayer @marker-selected="selectedMarker = $event.marker" />
+                <PlayerAndMarkersLayer @user-selected="selectedUserMarker = $event.info" />
 
                 <slot />
 

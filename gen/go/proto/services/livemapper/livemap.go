@@ -114,50 +114,6 @@ func NewServer(p Params) *Server {
 }
 
 func (s *Server) start() {
-	description := time.Now().String()
-	m := &livemap.Marker{
-		Info: &livemap.MarkerInfo{
-			Job:         "ambulance",
-			Name:        "TEST CIRCLE",
-			Description: &description,
-			X:           0,
-			Y:           0,
-		},
-		Type: livemap.MARKER_TYPE_CIRCLE,
-		Data: &livemap.MarkerData{
-			Data: &livemap.MarkerData_Circle{
-				Circle: &livemap.CircleMarker{
-					Radius: 25,
-				},
-			},
-		},
-	}
-	stmt := tMarkers.INSERT(
-		tMarkers.Job,
-		tMarkers.Name,
-		tMarkers.Description,
-		tMarkers.X,
-		tMarkers.Y,
-		tMarkers.Color,
-		tMarkers.Icon,
-		tMarkers.MarkerType,
-		tMarkers.MarkerData,
-	).VALUES(
-		m.Info.Job,
-		m.Info.Name,
-		m.Info.Description,
-		m.Info.X,
-		m.Info.Y,
-		m.Info.Color,
-		m.Info.Icon,
-		m.Type,
-		m.Data,
-	)
-
-	if _, err := stmt.ExecContext(s.ctx, s.db); err != nil {
-		s.logger.Error("failed to create circle marker")
-	}
-
 	for {
 		s.refreshCache()
 
@@ -393,6 +349,8 @@ func (s *Server) refreshMarkers(ctx context.Context) error {
 			tMarkers.Description.AS("markerinfo.description"),
 			tMarkers.X.AS("markerinfo.x"),
 			tMarkers.Y.AS("markerinfo.y"),
+			tMarkers.Color.AS("markerinfo.color"),
+			tMarkers.Icon.AS("markerinfo.icon"),
 			tMarkers.MarkerType,
 			tMarkers.MarkerData,
 			tMarkers.CreatorID,
@@ -408,9 +366,12 @@ func (s *Server) refreshMarkers(ctx context.Context) error {
 				LEFT_JOIN(tUsers,
 					tMarkers.CreatorID.EQ(tUsers.ID),
 				),
+		).
+		WHERE(
+			tMarkers.CreatedAt.LT_EQ(
+				jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(45, jet.MINUTE)),
+			),
 		)
-
-		// TODO where condition for ignoring older than 45-60 minutes
 
 	var dest []*livemap.Marker
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
