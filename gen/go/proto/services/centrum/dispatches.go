@@ -23,6 +23,10 @@ var (
 	tDispatchUnit   = table.FivenetCentrumDispatchesAsgmts.AS("dispatchassignment")
 )
 
+var (
+	ErrModeForbidsAction = status.Error(codes.InvalidArgument, "Dispatch center forbides this interaction")
+)
+
 func (s *Server) ListDispatches(ctx context.Context, req *ListDispatchesRequest) (*ListDispatchesResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -302,7 +306,7 @@ func (s *Server) TakeDispatch(ctx context.Context, req *TakeDispatchRequest) (*T
 			if !utils.InSliceFunc(dsp.Units, func(in *dispatch.DispatchAssignment) bool {
 				return in.UnitId == unitId
 			}) {
-				return nil, status.Error(codes.InvalidArgument, "Dispatch center forbides this interaction")
+				return nil, ErrModeForbidsAction
 			}
 		}
 

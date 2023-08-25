@@ -8,8 +8,8 @@ import {
     ListboxOption,
     ListboxOptions,
 } from '@headlessui/vue';
-
-import { CheckIcon, ChevronDownIcon } from 'mdi-vue3';
+import { CheckIcon, ChevronDownIcon, CodeTagsIcon } from 'mdi-vue3';
+import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import { AttributeValues, Permission, RoleAttribute } from '~~/gen/ts/resources/permissions/permissions';
 import { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
 
@@ -255,6 +255,7 @@ onMounted(() => {
                         "
                         class="flex flex-row gap-4 flex-wrap"
                     >
+                        <DataNoDataBlock :icon="CodeTagsIcon" />
                         <div
                             v-for="job in props.jobs.filter(
                                 (j) =>

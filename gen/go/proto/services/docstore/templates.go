@@ -15,8 +15,6 @@ import (
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	jsoniter "github.com/json-iterator/go"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 var (
@@ -25,10 +23,6 @@ var (
 )
 
 var json = jsoniter.ConfigCompatibleWithStandardLibrary
-
-var (
-	ErrTemplateNoPerms = status.Error(codes.PermissionDenied, "errors.DocStoreService.ErrTemplateNoPerms")
-)
 
 func (s *Server) ListTemplates(ctx context.Context, req *ListTemplatesRequest) (*ListTemplatesResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)

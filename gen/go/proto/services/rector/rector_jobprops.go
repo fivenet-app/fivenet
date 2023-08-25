@@ -20,6 +20,10 @@ var (
 	jobProps = table.FivenetJobProps
 )
 
+var (
+	ErrInvalidJPQuickButton = status.Error(codes.InvalidArgument, "Invalid quick access button found!")
+)
+
 func (s *Server) GetJobProps(ctx context.Context, req *GetJobPropsRequest) (*GetJobPropsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -70,7 +74,7 @@ func (s *Server) SetJobProps(ctx context.Context, req *SetJobPropsRequest) (*Set
 	req.JobProps.LivemapMarkerColor = strings.ToLower(strings.ReplaceAll(req.JobProps.LivemapMarkerColor, "#", ""))
 
 	if !s.validateJobPropsQuickButtons(req.JobProps.QuickButtons) {
-		return nil, status.Error(codes.InvalidArgument, "Invalid quick access button found!")
+		return nil, ErrInvalidJPQuickButton
 	}
 
 	stmt := jobProps.

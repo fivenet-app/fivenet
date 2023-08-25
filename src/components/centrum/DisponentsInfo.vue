@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
-import { LocationEnterIcon, LocationExitIcon } from 'mdi-vue3';
+import { GroupIcon, LocationEnterIcon, LocationExitIcon } from 'mdi-vue3';
 import { CENTRUM_MODE, Settings } from '~~/gen/ts/resources/dispatch/settings';
 import { UserShort } from '~~/gen/ts/resources/users/users';
 
@@ -50,7 +50,10 @@ const disponentsNames = computed(() => {
             <div class="-mx-2 -my-2 sm:-mx-6 lg:-mx-8">
                 <div class="inline-block min-w-full py-2 align-middle sm:px-2 lg:px-2">
                     <div class="grid grid-cols-3 items-center justify-items-center">
-                        <div v-if="!isDisponent" class="absolute inset-0 flex justify-center items-center z-20 bg-gray-600/70">
+                        <div
+                            v-if="!isDisponent"
+                            class="absolute inset-0 flex flex-col justify-center items-center z-20 bg-gray-600/70"
+                        >
                             <button
                                 @click="takeControl(true)"
                                 type="button"
@@ -61,6 +64,15 @@ const disponentsNames = computed(() => {
                                     {{ $t('components.centrum.dispatch_center.join_center') }}
                                 </span>
                             </button>
+                            <div class="flex flex-row">
+                                <NuxtLink
+                                    :to="{ name: 'centrum-units' }"
+                                    class="mt-4 px-2 py-1 flex items-center justify-center rounded-full bg-primary-500 text-neutral hover:bg-primary-400"
+                                >
+                                    <GroupIcon class="w-8 h-8" />
+                                    <span class="px-1">{{ $t('common.units') }}</span>
+                                </NuxtLink>
+                            </div>
                         </div>
 
                         <div class="flex-1 inline-flex">

@@ -10,7 +10,7 @@ import SettingsModal from './SettingsModal.vue';
 
 const { $grpc } = useNuxtApp();
 
-const { data: units, pending, refresh, error } = useLazyAsyncData('rector-units', () => getUnits());
+const { data: units, pending, refresh, error } = useLazyAsyncData('centrum-units', () => getUnits());
 
 async function getUnits(): Promise<Unit[]> {
     return new Promise(async (res, rej) => {
@@ -47,7 +47,7 @@ const openSettings = ref(false);
                                 @click="open = true"
                                 class="inline-flex px-3 py-2 text-sm font-semibold rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
                             >
-                                {{ $t('pages.rector.units.create_unit') }}
+                                {{ $t('components.centrum.units.create_unit') }}
                             </button>
                             <button
                                 v-if="can('CentrumService.GetSettings')"

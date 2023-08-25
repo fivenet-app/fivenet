@@ -10,8 +10,6 @@ import (
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
-	"google.golang.org/grpc/codes"
-	status "google.golang.org/grpc/status"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -326,7 +324,7 @@ func (s *Server) JoinUnit(ctx context.Context, req *JoinUnitRequest) (*JoinUnitR
 	if req.Leave != nil && !*req.Leave {
 		_, ok := s.tracker.GetUserByJobAndID(userInfo.Job, userInfo.UserId)
 		if !ok {
-			return nil, status.Error(codes.InvalidArgument, "You are not on duty!")
+			return nil, ErrNotOnDuty
 		}
 
 		unitId, _ := s.getUnitIDForUserID(userInfo.UserId)

@@ -1,9 +1,9 @@
 - [ ] Dispatch Center
+    - [ ] Livemap - Show Panic buttons and Sperrzonen
     - [ ] Frontend for employees to see their dispatches and manage their status
         - [ ] Notifications on Livemap when they are assigned a dispatch
         - [ ] Updating their own dispatch status (needs permission checks)
         - [ ] Based on the dispatch center mode, allow assigning dispatches themselves or not
-    - [ ] Livemap - Show Panic buttons and Sperrzonen
     - [ ] Activity Feed
         - [ ] Generally better formatting of the information
         - [ ] Translate Activity Feed items

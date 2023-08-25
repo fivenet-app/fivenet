@@ -40,6 +40,9 @@ var (
 var (
 	ErrFailedQuery       = status.Error(codes.Internal, "errors.DocStoreService.ErrFailedQuery")
 	ErrNotFoundOrNoPerms = status.Error(codes.NotFound, "errors.DocStoreService.ErrNotFoundOrNoPerms")
+	ErrTemplateNoPerms   = status.Error(codes.PermissionDenied, "errors.DocStoreService.ErrTemplateNoPerms")
+	ErrPermissionDenied  = status.Error(codes.PermissionDenied, "You don't have permission to do this!")
+	ErrClosedDoc         = status.Error(codes.Canceled, "Document is closed and can't be edited!")
 )
 
 type Server struct {
@@ -314,10 +317,8 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 	if err != nil {
 		return nil, ErrNotFoundOrNoPerms
 	}
-	if !check {
-		if !userInfo.SuperUser {
-			return nil, status.Error(codes.PermissionDenied, "You don't have permission to edit this document!")
-		}
+	if !check && !userInfo.SuperUser {
+		return nil, ErrPermissionDenied
 	}
 
 	doc, err := s.getDocument(ctx,
@@ -329,7 +330,7 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 
 	// Either the document is closed and the update request isn't re-opening the document
 	if doc.Closed && req.Closed && !userInfo.SuperUser {
-		return nil, status.Error(codes.Canceled, "Document is closed and can't be edited!")
+		return nil, ErrClosedDoc
 	}
 
 	// Field Permission Check

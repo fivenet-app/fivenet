@@ -129,9 +129,6 @@
                 "title": "Laws",
                 "add_new_law": "Add new Law",
                 "add_new_law_book": "Add new Law Book"
-            },
-            "units": {
-                "create_unit": "Create Unit"
             }
         },
         "notfound": {
@@ -389,6 +386,10 @@
             },
             "livemap": {
                 "mark_on_gps": "Mark on GPS"
+            },
+            "units": {
+                "create_unit": "Create Unit",
+                "update_settings": "Update Settings"
             }
         }
     },
@@ -586,7 +587,8 @@
         "last_update": "Last Update",
         "disponents": "Disponent | Disponents",
         "disponent": "No Disponents | {n} Disponent | {n} Disponents",
-        "confirm": "Confirm | Confirmed"
+        "confirm": "Confirm | Confirmed",
+        "word": "Word | Words"
     },
     "notifications": {
         "clipboard": {
@@ -1182,7 +1184,11 @@
         "DocStoreService": {
             "ErrFailedQuery": "Failed to get/create/update documents!",
             "ErrNotFoundOrNoPerms": "No document found or no permissions to access document!",
-            "ErrTemplateNoPerms": "You don't have permission to view/update/delete this template!"
+            "ErrTemplateNoPerms": "You don't have permission to view/update/delete this template!",
+            "ErrPermissionDenied": "You don't have permission to do this!",
+            "ErrClosedDoc": "Document is closed and can't be edited!",
+            "ErrDocAccessEditDenied": "You don't have permission to edit the document's access!",
+            "ErrDocAccessViewDenied": "You don't have permission to view this document's access!"
         },
         "LivemapperService": {
             "ErrStreamFailed": "Failed to stream livemap data!"
@@ -1198,13 +1204,15 @@
             "ErrRoleAlreadyExists": "Role already exists!",
             "ErrOwnRoleDeletion": "Can't delete your own role!",
             "ErrInvalidPerms": "Failed to update role permissions!",
-            "ErrInvalidAttrs": "Failed to update role attributes!"
+            "ErrInvalidAttrs": "Failed to update role attributes!",
+            "ErrInvalidJPQuickButton": "Invalid quick access button found!"
         },
         "CentrumService": {
             "ErrFailedQuery": "Failed to get/update dispatch center data!",
             "ErrAlreadyInUnit": "You are already in an unit! You must leave your currrent unit first.",
             "ErrNotPartOfDispatch": "You are not part of this dispatch!",
-            "ErrNotOnDuty": "You are not on duty!"
+            "ErrNotOnDuty": "You are not on duty!",
+            "ErrModeForbidsAction": "Dispatch center forbides this interaction. Please contact the dispatch center!"
         }
     },
     "commandpalette": {

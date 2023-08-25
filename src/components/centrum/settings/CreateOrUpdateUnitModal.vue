@@ -115,7 +115,7 @@ onMounted(() => {
                                     </div>
                                     <div class="mt-3 text-center sm:mt-5">
                                         <DialogTitle as="h3" class="text-base font-semibold leading-6 text-white">
-                                            {{ $t('pages.rector.units.create_unit') }}
+                                            {{ $t('components.centrum.units.create_unit') }}
                                         </DialogTitle>
                                         <div class="mt-2">
                                             <div class="text-sm text-gray-100">
@@ -193,7 +193,7 @@ onMounted(() => {
                                         type="submit"
                                         class="inline-flex w-full justify-center rounded-md bg-primary-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 sm:col-start-2"
                                     >
-                                        {{ $t('pages.rector.units.create_unit') }}
+                                        {{ $t('components.centrum.units.create_unit') }}
                                     </button>
                                     <button
                                         type="button"

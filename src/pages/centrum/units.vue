@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import List from '~/components/rector/units/List.vue';
+import List from '~/components/centrum/settings/List.vue';
 
 useHead({
     title: 'common.units',

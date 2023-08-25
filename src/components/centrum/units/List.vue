@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { CogIcon } from 'mdi-vue3';
 import { useCentrumStore } from '~/store/centrum';
 import { Unit } from '~~/gen/ts/resources/dispatch/units';
 import ListEntry from './ListEntry.vue';
@@ -16,7 +17,12 @@ defineEmits<{
     <div class="px-4 sm:px-6 lg:px-8 h-full overflow-y-scroll">
         <div class="sm:flex sm:items-center">
             <div class="sm:flex-auto">
-                <h2 class="text-base font-semibold leading-6 text-gray-100">{{ $t('common.units') }}</h2>
+                <h2 class="text-base font-semibold leading-6 text-gray-100 inline-flex">
+                    {{ $t('common.units') }}
+                    <NuxtLink :to="{ name: 'centrum-units' }" :title="$t('common.units')" class="ml-2">
+                        <CogIcon class="h-6 w-6" />
+                    </NuxtLink>
+                </h2>
             </div>
         </div>
         <div class="mt-0.5 flow-root">

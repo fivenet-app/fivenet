@@ -17,6 +17,11 @@ import (
 	"google.golang.org/grpc/status"
 )
 
+var (
+	ErrDocAccessEditDenied = status.Error(codes.PermissionDenied, "You don't have permission to edit this document's access!")
+	ErrDocAccessViewDenied = status.Error(codes.PermissionDenied, "You don't have permission to view this document's access!")
+)
+
 func (s *Server) GetDocumentAccess(ctx context.Context, req *GetDocumentAccessRequest) (*GetDocumentAccessResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 	ok, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.ACCESS_LEVEL_VIEW)
@@ -24,7 +29,7 @@ func (s *Server) GetDocumentAccess(ctx context.Context, req *GetDocumentAccessRe
 		return nil, err
 	}
 	if !ok {
-		return nil, status.Error(codes.PermissionDenied, "You don't have permission to view document access!")
+		return nil, ErrDocAccessViewDenied
 	}
 
 	access, err := s.getDocumentAccess(ctx, req.DocumentId)
@@ -66,7 +71,7 @@ func (s *Server) SetDocumentAccess(ctx context.Context, req *SetDocumentAccessRe
 		return nil, err
 	}
 	if !ok {
-		return nil, status.Error(codes.PermissionDenied, "You don't have permission to edit the document access!")
+		return nil, ErrDocAccessEditDenied
 	}
 
 	// Begin transaction

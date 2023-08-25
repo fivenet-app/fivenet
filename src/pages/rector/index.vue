@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { AccountGroupIcon, CarSpeedLimiterIcon, GroupIcon, MathLogIcon, ScaleBalanceIcon, TuneIcon } from 'mdi-vue3';
+import { AccountGroupIcon, CarSpeedLimiterIcon, MathLogIcon, ScaleBalanceIcon, TuneIcon } from 'mdi-vue3';
 import Cards from '~/components/partials/Cards.vue';
 import ContentCenterWrapper from '~/components/partials/ContentCenterWrapper.vue';
 import { CardElements } from '~/utils/types';
@@ -34,15 +34,6 @@ const features = [
         icon: markRaw(AccountGroupIcon),
         iconForeground: 'text-purple-900',
         iconBackground: 'bg-purple-100',
-    },
-    {
-        title: t('common.units'),
-        description: t('pages.rector.features.units'),
-        href: { name: 'rector-units' },
-        permission: 'CentrumService.CreateOrUpdateUnit',
-        icon: markRaw(GroupIcon),
-        iconForeground: 'text-blue-900',
-        iconBackground: 'bg-blue-100',
     },
     {
         title: t('common.audit_log', 1),

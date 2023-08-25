@@ -13,7 +13,7 @@ import {
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { QuillEditor } from '@vueup/vue-quill';
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
-import { watchDebounced } from '@vueuse/core';
+import { useThrottleFn, watchDebounced, watchOnce } from '@vueuse/core';
 import { ImageActions } from '@xeger/quill-image-actions';
 import { ImageFormats } from '@xeger/quill-image-formats';
 import { AccountMultipleIcon, CheckIcon, ChevronDownIcon, ContentSaveIcon, FileDocumentIcon, PlusIcon } from 'mdi-vue3';
@@ -679,6 +679,40 @@ async function editForm(): Promise<void> {
         }
     });
 }
+
+type Stats = {
+    words: number;
+};
+
+const stats = ref<Stats>({
+    words: 0,
+});
+
+const quillEditorRef = ref<null | InstanceType<typeof QuillEditor>>(null);
+
+function calculate(content: string): Stats {
+    const stats: Stats = {
+        words: 0,
+    };
+
+    if (content.length > 0) {
+        stats.words = content.split(/\s+/).length;
+    }
+
+    return stats;
+}
+
+const debounced = useThrottleFn(() => {
+    if (quillEditorRef.value === null) return;
+
+    stats.value = calculate(quillEditorRef.value.getQuill()?.getText());
+}, 1000);
+
+watchOnce(quillEditorRef, () => {
+    if (quillEditorRef.value === null) return;
+
+    quillEditorRef.value.getQuill().on('text-change', debounced);
+});
 </script>
 
 <style>
@@ -850,12 +884,20 @@ async function editForm(): Promise<void> {
     </div>
     <div class="bg-neutral min-h-[32rem]">
         <QuillEditor
+            ref="quillEditorRef"
             v-model:content="doc.content"
             content-type="html"
             :toolbar="toolbarOptions"
             :modules="modules"
             :options="options"
         />
+        <div class="grid grid-cols-2 text-base text-gray-600 h-7 mx-2">
+            <div v-if="!saving" class="flex flex-items items-center">
+                <ContentSaveIcon class="w-6 h-auto mr-2 animate-spin" />
+                {{ $t('common.save', 2) }}...
+            </div>
+            <div class="text-end">{{ $t('common.word', 2) }}: {{ stats.words }}</div>
+        </div>
     </div>
     <div class="flex flex-row">
         <div class="flex-1 inline-flex rounded-md shadow-sm" role="group">
@@ -915,26 +957,22 @@ async function editForm(): Promise<void> {
             <PlusIcon class="w-5 h-5" aria-hidden="true" />
         </button>
     </div>
-    <div class="sm:flex sm:flex-row-reverse">
+    <div class="flex pb-14">
         <button
             v-if="!props.id?.toString()"
             @click="submitForm()"
             :disabled="!canEdit"
             class="rounded-md bg-primary-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-primary-400"
         >
-            {{ t('common.submit') }}
+            {{ t('common.create') }}
         </button>
         <button
             v-if="props.id?.toString()"
             @click="editForm()"
             :disabled="!canEdit"
-            class="rounded-md bg-primary-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-primary-400"
+            class="flex-1 rounded-md bg-primary-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-primary-400"
         >
-            {{ $t('common.edit') }}
+            {{ $t('common.save') }}
         </button>
-        <div v-if="saving" class="text-gray-400 mr-4 flex flex-items">
-            <ContentSaveIcon class="w-6 h-auto ml-auto mr-2.5 animate-spin" />
-            <span class="mt-2">{{ $t('common.save', 2) }}...</span>
-        </div>
     </div>
 </template>
