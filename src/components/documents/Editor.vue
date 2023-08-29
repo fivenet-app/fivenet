@@ -727,16 +727,11 @@ watchOnce(quillEditorRef, () => {
 .ql-container {
     border: none !important;
     height: auto !important;
-    flex: 1;
-    max-height: 27.3rem;
 }
 
 .ql-editor {
     height: 100%;
     width: 100%;
-    overflow-y: scroll;
-    min-height: 27.3rem;
-    max-height: 27.3rem;
 }
 
 .ql-editor img,
@@ -902,7 +897,7 @@ watchOnce(quillEditorRef, () => {
             </div>
         </div>
     </div>
-    <div class="flex flex-col flex-1 bg-neutral min-h-[32rem] max-h-[32rem]">
+    <div class="bg-neutral">
         <QuillEditor
             ref="quillEditorRef"
             v-model:content="doc.content"
