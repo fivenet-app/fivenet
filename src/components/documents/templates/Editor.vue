@@ -54,7 +54,7 @@ const { handleSubmit, setValues, meta, validate } = useForm<FormData>({
     validateOnMount: true,
 });
 
-const onSubmit = handleSubmit(async (values): Promise<void> => createOrUpdateTemplate(values, props.templateId));
+const onSubmit = handleSubmit(async (values): Promise<void> => await createOrUpdateTemplate(values, props.templateId));
 
 const schema = ref<SchemaEditorValue>({
     users: {
@@ -83,8 +83,8 @@ const access = ref<
             type: number;
             values: {
                 job?: string;
-                accessrole?: ACCESS_LEVEL;
-                minimumrank?: number;
+                accessRole?: ACCESS_LEVEL;
+                minimumGrade?: number;
             };
         }
     >
@@ -137,7 +137,7 @@ function updateAccessEntryRank(event: { id: bigint; rank: JobGrade }): void {
     const accessEntry = access.value.get(event.id);
     if (!accessEntry) return;
 
-    accessEntry.values.minimumrank = event.rank.grade;
+    accessEntry.values.minimumGrade = event.rank.grade;
     access.value.set(event.id, accessEntry);
 }
 
@@ -145,7 +145,7 @@ function updateAccessEntryAccess(event: { id: bigint; access: ACCESS_LEVEL }): v
     const accessEntry = access.value.get(event.id);
     if (!accessEntry) return;
 
-    accessEntry.values.accessrole = event.access;
+    accessEntry.values.accessRole = event.access;
     access.value.set(event.id, accessEntry);
 }
 
@@ -158,8 +158,8 @@ const contentAccess = ref<
             values: {
                 job?: string;
                 char?: number;
-                accessrole?: ACCESS_LEVEL;
-                minimumrank?: number;
+                accessRole?: ACCESS_LEVEL;
+                minimumGrade?: number;
             };
         }
     >
@@ -215,7 +215,7 @@ function updateContentAccessEntryRank(event: { id: bigint; rank: JobGrade }): vo
     const accessEntry = contentAccess.value.get(event.id);
     if (!accessEntry) return;
 
-    accessEntry.values.minimumrank = event.rank.grade;
+    accessEntry.values.minimumGrade = event.rank.grade;
     contentAccess.value.set(event.id, accessEntry);
 }
 
@@ -223,7 +223,7 @@ function updateContentAccessEntryAccess(event: { id: bigint; access: ACCESS_LEVE
     const accessEntry = contentAccess.value.get(event.id);
     if (!accessEntry) return;
 
-    accessEntry.values.accessrole = event.access;
+    accessEntry.values.accessRole = event.access;
     contentAccess.value.set(event.id, accessEntry);
 }
 
@@ -246,7 +246,7 @@ async function createOrUpdateTemplate(values: FormData, templateId?: bigint): Pr
 
         const jobAccesses: TemplateJobAccess[] = [];
         access.value.forEach((entry) => {
-            if (entry.values.accessrole === undefined) return;
+            if (entry.values.accessRole === undefined) return;
 
             if (entry.type === 1) {
                 if (!entry.values.job) return;
@@ -254,9 +254,9 @@ async function createOrUpdateTemplate(values: FormData, templateId?: bigint): Pr
                 jobAccesses.push({
                     id: 0n,
                     templateId: templateId ?? 0n,
-                    access: entry.values.accessrole,
+                    access: entry.values.accessRole,
                     job: entry.values.job,
-                    minimumGrade: entry.values.minimumrank ? entry.values.minimumrank : 0,
+                    minimumGrade: entry.values.minimumGrade ? entry.values.minimumGrade : 0,
                 });
             }
         });
@@ -266,7 +266,7 @@ async function createOrUpdateTemplate(values: FormData, templateId?: bigint): Pr
             users: [],
         };
         contentAccess.value.forEach((entry) => {
-            if (entry.values.accessrole === undefined) return;
+            if (entry.values.accessRole === undefined) return;
 
             if (entry.type === 0) {
                 if (!entry.values.char) return;
@@ -275,7 +275,7 @@ async function createOrUpdateTemplate(values: FormData, templateId?: bigint): Pr
                     id: 0n,
                     documentId: 0n,
                     userId: entry.values.char,
-                    access: entry.values.accessrole,
+                    access: entry.values.accessRole,
                 });
             } else if (entry.type === 1) {
                 if (!entry.values.job) return;
@@ -284,8 +284,8 @@ async function createOrUpdateTemplate(values: FormData, templateId?: bigint): Pr
                     id: 0n,
                     documentId: 0n,
                     job: entry.values.job!,
-                    minimumGrade: entry.values.minimumrank ? entry.values.minimumrank : 0,
-                    access: entry.values.accessrole,
+                    minimumGrade: entry.values.minimumGrade ? entry.values.minimumGrade : 0,
+                    access: entry.values.accessRole,
                 });
             }
         });
@@ -410,8 +410,8 @@ onMounted(async () => {
                         type: 1,
                         values: {
                             job: job.job,
-                            accessrole: job.access,
-                            minimumrank: job.minimumGrade,
+                            accessRole: job.access,
+                            minimumGrade: job.minimumGrade,
                         },
                     });
                     accessId++;
@@ -426,7 +426,7 @@ onMounted(async () => {
                     contentAccess.value.set(accessId, {
                         id: accessId,
                         type: 0,
-                        values: { char: user.userId, accessrole: user.access },
+                        values: { char: user.userId, accessRole: user.access },
                     });
                     accessId++;
                 });
@@ -437,8 +437,8 @@ onMounted(async () => {
                         type: 1,
                         values: {
                             job: job.job,
-                            accessrole: job.access,
-                            minimumrank: job.minimumGrade,
+                            accessRole: job.access,
+                            minimumGrade: job.minimumGrade,
                         },
                     });
                     accessId++;
@@ -469,8 +469,8 @@ onMounted(async () => {
             type: 1,
             values: {
                 job: activeChar.value?.job,
-                minimumrank: 1,
-                accessrole: ACCESS_LEVEL.VIEW,
+                minimumGrade: 1,
+                accessRole: ACCESS_LEVEL.VIEW,
             },
         });
     }

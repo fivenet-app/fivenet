@@ -32,7 +32,7 @@ useResizeObserver(mapContainer, (_) => {
 });
 
 const centerX = 117.3;
-const centerY = 172.8;
+const centerY = 140.0; // was 172.8
 const scaleX = 0.02072;
 const scaleY = 0.0205;
 

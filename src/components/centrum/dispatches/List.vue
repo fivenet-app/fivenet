@@ -15,7 +15,7 @@ const { dispatches } = storeToRefs(centrumStore);
 </script>
 
 <template>
-    <div class="px-4 sm:px-6 lg:px-8 h-full overflow-y-scroll">
+    <div class="px-4 sm:px-6 lg:px-8 h-full overflow-y-auto">
         <div class="sm:flex sm:items-center">
             <div class="sm:flex-auto">
                 <h2 class="text-base font-semibold leading-6 text-gray-100">{{ $t('common.dispatch', 2) }}</h2>

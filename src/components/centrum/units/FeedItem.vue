@@ -26,7 +26,7 @@ defineProps<{
             </div>
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">Unit created</p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
-                <Time :value="item.createdAt" />
+                <Time :value="item.createdAt" :type="'compact'" />
             </span>
         </template>
         <template v-else-if="item.status === UNIT_STATUS.USER_ADDED">
@@ -41,7 +41,7 @@ defineProps<{
                 </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
-                <Time :value="item.createdAt" />
+                <Time :value="item.createdAt" :type="'compact'" />
             </span>
         </template>
         <template v-else-if="item.status === UNIT_STATUS.USER_REMOVED">
@@ -55,7 +55,7 @@ defineProps<{
                 </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
-                <Time :value="item.createdAt" />
+                <Time :value="item.createdAt" :type="'compact'" />
             </span>
         </template>
         <template v-else-if="item.status === UNIT_STATUS.UNAVAILABLE">
@@ -69,7 +69,7 @@ defineProps<{
                 </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
-                <Time :value="item.createdAt" />
+                <Time :value="item.createdAt" :type="'compact'" />
             </span>
         </template>
         <template v-else-if="item.status === UNIT_STATUS.AVAILABLE">
@@ -84,7 +84,7 @@ defineProps<{
                 </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
-                <Time :value="item.createdAt" />
+                <Time :value="item.createdAt" :type="'compact'" />
             </span>
         </template>
         <template v-else-if="item.status === UNIT_STATUS.ON_BREAK">
@@ -99,7 +99,7 @@ defineProps<{
                 </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
-                <Time :value="item.createdAt" />
+                <Time :value="item.createdAt" :type="'compact'" />
             </span>
         </template>
         <template v-else-if="item.status === UNIT_STATUS.BUSY">
@@ -114,7 +114,7 @@ defineProps<{
                 </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
-                <Time :value="item.createdAt" />
+                <Time :value="item.createdAt" :type="'compact'" />
             </span>
         </template>
     </li>

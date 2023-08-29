@@ -15,7 +15,7 @@ defineEmits<{
     (e: 'status', dsp: Dispatch): void;
 }>();
 
-const status = props.dispatch.status?.status ?? (0 as number);
+const status = computed(() => props.dispatch.status?.status ?? 0);
 </script>
 
 <template>

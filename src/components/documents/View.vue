@@ -133,11 +133,25 @@ function addToClipboard(): void {
     });
 }
 
-const { isRevealed, reveal, confirm, cancel, onConfirm, onCancel, onReveal } = useConfirmDialog();
+const { isRevealed, reveal, confirm, cancel, onConfirm } = useConfirmDialog();
 onConfirm(async (id: bigint) => deleteDocument(id));
 </script>
 
 <style>
+.ql-container {
+    border: none !important;
+    height: auto !important;
+    display: block;
+    max-height: max-content !important;
+}
+
+.ql-editor {
+    height: 100% !important;
+    width: 100% !important;
+    min-height: fit-content !important;
+    max-height: max-content !important;
+}
+
 #editor .ql-toolbar {
     display: none;
 }

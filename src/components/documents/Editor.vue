@@ -13,7 +13,7 @@ import {
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { QuillEditor } from '@vueup/vue-quill';
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
-import { useThrottleFn, watchDebounced, watchOnce } from '@vueuse/core';
+import { useDebounceFn, watchDebounced, watchOnce } from '@vueuse/core';
 import { ImageActions } from '@xeger/quill-image-actions';
 import { ImageFormats } from '@xeger/quill-image-formats';
 import { AccountMultipleIcon, CheckIcon, ChevronDownIcon, ContentSaveIcon, FileDocumentIcon, PlusIcon } from 'mdi-vue3';
@@ -88,8 +88,8 @@ const access = ref<
             values: {
                 job?: string;
                 char?: number;
-                accessrole?: ACCESS_LEVEL;
-                minimumrank?: number;
+                accessRole?: ACCESS_LEVEL;
+                minimumGrade?: number;
             };
         }
     >
@@ -236,7 +236,7 @@ onMounted(async () => {
                     access.value.set(accessId, {
                         id: accessId,
                         type: 0,
-                        values: { char: user.userId, accessrole: user.access },
+                        values: { char: user.userId, accessRole: user.access },
                     });
                     accessId++;
                 });
@@ -247,8 +247,8 @@ onMounted(async () => {
                         type: 1,
                         values: {
                             job: job.job,
-                            accessrole: job.access,
-                            minimumrank: job.minimumGrade,
+                            accessRole: job.access,
+                            minimumGrade: job.minimumGrade,
                         },
                     });
                     accessId++;
@@ -294,7 +294,7 @@ onMounted(async () => {
                     access.value.set(accessId, {
                         id: accessId,
                         type: 0,
-                        values: { char: user.userId, accessrole: user.access },
+                        values: { char: user.userId, accessRole: user.access },
                     });
                     accessId++;
                 });
@@ -305,8 +305,8 @@ onMounted(async () => {
                         type: 1,
                         values: {
                             job: job.job,
-                            accessrole: job.access,
-                            minimumrank: job.minimumGrade,
+                            accessRole: job.access,
+                            minimumGrade: job.minimumGrade,
                         },
                     });
                     accessId++;
@@ -335,8 +335,8 @@ onMounted(async () => {
             type: 1,
             values: {
                 job: activeChar.value?.job,
-                minimumrank: 1,
-                accessrole: ACCESS_LEVEL.EDIT,
+                minimumGrade: 1,
+                accessRole: ACCESS_LEVEL.EDIT,
             },
         });
     }
@@ -371,7 +371,7 @@ onMounted(async () => {
 
 const saving = ref(false);
 
-function saveToStore(): void {
+async function saveToStore(): Promise<void> {
     if (saving.value) {
         return;
     }
@@ -380,10 +380,10 @@ function saveToStore(): void {
     documentStore.save(doc.value);
     setTimeout(() => {
         saving.value = false;
-    }, 1300);
+    }, 1250);
 }
 
-watchDebounced(doc.value, () => saveToStore(), {
+watchDebounced(doc.value, async () => saveToStore(), {
     debounce: 1350,
     maxWait: 3500,
 });
@@ -473,7 +473,7 @@ function updateAccessEntryRank(event: { id: bigint; rank: JobGrade }): void {
     const accessEntry = access.value.get(event.id);
     if (!accessEntry) return;
 
-    accessEntry.values.minimumrank = event.rank.grade;
+    accessEntry.values.minimumGrade = event.rank.grade;
     access.value.set(event.id, accessEntry);
 }
 
@@ -481,7 +481,7 @@ function updateAccessEntryAccess(event: { id: bigint; access: ACCESS_LEVEL }): v
     const accessEntry = access.value.get(event.id);
     if (!accessEntry) return;
 
-    accessEntry.values.accessrole = event.access;
+    accessEntry.values.accessRole = event.access;
     access.value.set(event.id, accessEntry);
 }
 
@@ -503,7 +503,7 @@ async function submitForm(): Promise<void> {
             users: [],
         };
         access.value.forEach((entry) => {
-            if (entry.values.accessrole === undefined) return;
+            if (entry.values.accessRole === undefined) return;
 
             if (entry.type === 0) {
                 if (!entry.values.char) return;
@@ -512,7 +512,7 @@ async function submitForm(): Promise<void> {
                     id: 0n,
                     documentId: 0n,
                     userId: entry.values.char,
-                    access: entry.values.accessrole,
+                    access: entry.values.accessRole,
                 });
             } else if (entry.type === 1) {
                 if (!entry.values.job) return;
@@ -521,8 +521,8 @@ async function submitForm(): Promise<void> {
                     id: 0n,
                     documentId: 0n,
                     job: entry.values.job,
-                    minimumGrade: entry.values.minimumrank ? entry.values.minimumrank : 0,
-                    access: entry.values.accessrole,
+                    minimumGrade: entry.values.minimumGrade ? entry.values.minimumGrade : 0,
+                    access: entry.values.accessRole,
                 });
             }
         });
@@ -592,7 +592,7 @@ async function editForm(): Promise<void> {
             users: [],
         };
         access.value.forEach((entry) => {
-            if (entry.values.accessrole === undefined) return;
+            if (entry.values.accessRole === undefined) return;
 
             if (entry.type === 0) {
                 if (!entry.values.char) return;
@@ -600,7 +600,7 @@ async function editForm(): Promise<void> {
                 reqAccess.users.push({
                     id: 0n,
                     documentId: 0n,
-                    access: entry.values.accessrole,
+                    access: entry.values.accessRole,
                     userId: entry.values.char,
                 });
             } else if (entry.type === 1) {
@@ -609,9 +609,9 @@ async function editForm(): Promise<void> {
                 reqAccess.jobs.push({
                     id: 0n,
                     documentId: 0n,
-                    access: entry.values.accessrole,
+                    access: entry.values.accessRole,
                     job: entry.values.job,
-                    minimumGrade: entry.values.minimumrank ? entry.values.minimumrank : 0,
+                    minimumGrade: entry.values.minimumGrade ? entry.values.minimumGrade : 0,
                 });
             }
         });
@@ -682,10 +682,12 @@ async function editForm(): Promise<void> {
 
 type Stats = {
     words: number;
+    chars: number;
 };
 
 const stats = ref<Stats>({
     words: 0,
+    chars: 0,
 });
 
 const quillEditorRef = ref<null | InstanceType<typeof QuillEditor>>(null);
@@ -693,20 +695,26 @@ const quillEditorRef = ref<null | InstanceType<typeof QuillEditor>>(null);
 function calculate(content: string): Stats {
     const stats: Stats = {
         words: 0,
+        chars: 0,
     };
 
     if (content.length > 0) {
-        stats.words = content.split(/\s+/).length;
+        stats.words = content.split(/\s+/).length - 1;
+        stats.chars = content.split(/\S/).length - 1;
     }
 
     return stats;
 }
 
-const debounced = useThrottleFn(() => {
-    if (quillEditorRef.value === null) return;
+const debounced = useDebounceFn(
+    () => {
+        if (quillEditorRef.value === null) return;
 
-    stats.value = calculate(quillEditorRef.value.getQuill()?.getText());
-}, 1000);
+        stats.value = calculate(quillEditorRef.value.getQuill()?.getText());
+    },
+    750,
+    { maxWait: 1500 },
+);
 
 watchOnce(quillEditorRef, () => {
     if (quillEditorRef.value === null) return;
@@ -718,6 +726,17 @@ watchOnce(quillEditorRef, () => {
 <style>
 .ql-container {
     border: none !important;
+    height: auto !important;
+    flex: 1;
+    max-height: 27.3rem;
+}
+
+.ql-editor {
+    height: 100%;
+    width: 100%;
+    overflow-y: scroll;
+    min-height: 27.3rem;
+    max-height: 27.3rem;
 }
 
 .ql-editor img,
@@ -745,6 +764,7 @@ watchOnce(quillEditorRef, () => {
         :document="$props.id"
         @close="referenceManagerShow = false"
     />
+
     <div class="flex flex-col gap-2 px-3 py-4 rounded-t-lg bg-base-800 text-neutral">
         <div>
             <label for="name" class="block font-medium text-base">
@@ -882,7 +902,7 @@ watchOnce(quillEditorRef, () => {
             </div>
         </div>
     </div>
-    <div class="bg-neutral min-h-[32rem]">
+    <div class="flex flex-col flex-1 bg-neutral min-h-[32rem] max-h-[32rem]">
         <QuillEditor
             ref="quillEditorRef"
             v-model:content="doc.content"
@@ -892,11 +912,15 @@ watchOnce(quillEditorRef, () => {
             :options="options"
         />
         <div class="grid grid-cols-2 text-base text-gray-600 h-7 mx-2">
-            <div v-if="!saving" class="flex flex-items items-center">
-                <ContentSaveIcon class="w-6 h-auto mr-2 animate-spin" />
-                {{ $t('common.save', 2) }}...
+            <div class="self-end flex flex-items items-center">
+                <template v-if="saving">
+                    <ContentSaveIcon class="w-6 h-auto mr-2 animate-spin" />
+                    {{ $t('common.save', 2) }}...
+                </template>
             </div>
-            <div class="text-end">{{ $t('common.word', 2) }}: {{ stats.words }}</div>
+            <div class="text-end">
+                {{ $t('common.char', 2) }}: {{ stats.chars }}, {{ $t('common.word', 2) }}: {{ stats.words }}
+            </div>
         </div>
     </div>
     <div class="flex flex-row">
@@ -918,7 +942,7 @@ watchOnce(quillEditorRef, () => {
             <button
                 type="button"
                 :disabled="!canEdit"
-                class="inline-flex justify-center rounded-brt-md bg-primary-500 py-2.5 px-3.5 w-full text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
+                class="inline-flex justify-center rounded-br-md bg-primary-500 py-2.5 px-3.5 w-full text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
                 @click="referenceManagerShow = true"
             >
                 <div class="flex justify-center">

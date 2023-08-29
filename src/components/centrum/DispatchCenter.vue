@@ -113,14 +113,6 @@ const openUnitStatus = ref(false);
                             :open="openDispatchDetails"
                             @close="openDispatchDetails = false"
                             @goto="goto($event)"
-                            @assign-unit="
-                                selectedDispatch = $event;
-                                openDispatchAssign = true;
-                            "
-                            @status="
-                                selectedDispatch = $event;
-                                openDispatchStatus = true;
-                            "
                         />
                         <AssignDispatchModal
                             :open="openDispatchAssign"
@@ -152,14 +144,6 @@ const openUnitStatus = ref(false);
                             :open="openUnitDetails"
                             @close="openUnitDetails = false"
                             @goto="goto($event)"
-                            @assign-users="
-                                selectedUnit = $event;
-                                openUnitAssign = true;
-                            "
-                            @status="
-                                selectedUnit = $event;
-                                openUnitStatus = true;
-                            "
                         />
                         <AssignUnitModal :open="openUnitAssign" :unit="selectedUnit" @close="openUnitAssign = false" />
                         <UnitStatusUpdateModal :open="openUnitStatus" :unit="selectedUnit" @close="openUnitStatus = false" />

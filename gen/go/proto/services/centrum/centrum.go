@@ -259,19 +259,16 @@ func (s *Server) waitForUserToBeAssignedUnit(srv CentrumService_StreamServer, jo
 func (s *Server) sendLatestState(srv CentrumService_StreamServer, job string, userId int32) (uint64, bool, error) {
 	settings := s.getSettings(job)
 	disponents := s.getDisponents(job)
-	isController := s.checkIfUserIsDisponent(job, userId)
+	isDisponent := s.checkIfUserIsDisponent(job, userId)
 
 	unitId, _ := s.getUnitIDForUserID(userId)
 
 	units, err := s.listUnits(job)
 	if err != nil {
-		return 0, isController, err
+		return 0, isDisponent, err
 	}
 
-	var ownUnit *dispatch.Unit
-	if !isController {
-		ownUnit, _ = s.getUnit(job, unitId)
-	}
+	ownUnit, _ := s.getUnit(job, unitId)
 
 	dispatches, err := s.ListDispatches(srv.Context(), &ListDispatchesRequest{
 		NotStatus: []dispatch.DISPATCH_STATUS{
@@ -279,7 +276,7 @@ func (s *Server) sendLatestState(srv CentrumService_StreamServer, job string, us
 		},
 	})
 	if err != nil {
-		return 0, isController, err
+		return 0, isDisponent, err
 	}
 
 	// Send initial state message to client
@@ -288,7 +285,7 @@ func (s *Server) sendLatestState(srv CentrumService_StreamServer, job string, us
 			LatestState: &LatestState{
 				Settings:    settings,
 				Disponents:  disponents,
-				IsDisponent: isController,
+				IsDisponent: isDisponent,
 				OwnUnit:     ownUnit,
 				Units:       units,
 				Dispatches:  dispatches.Dispatches,
@@ -296,34 +293,34 @@ func (s *Server) sendLatestState(srv CentrumService_StreamServer, job string, us
 		},
 	}
 	if err := srv.Send(resp); err != nil {
-		return 0, isController, err
+		return 0, isDisponent, err
 	}
 
-	return unitId, isController, nil
+	return unitId, isDisponent, nil
 }
 
 func (s *Server) Stream(req *StreamRequest, srv CentrumService_StreamServer) error {
 	userInfo := *auth.MustGetUserInfoFromContext(srv.Context())
 
 	for {
-		unitId, isController, err := s.sendLatestState(srv, userInfo.Job, userInfo.UserId)
+		unitId, isDisponent, err := s.sendLatestState(srv, userInfo.Job, userInfo.UserId)
 		if err != nil {
 			return err
 		}
 
 		// If user is not in unit and not a controller, wait for user to be assigned/join an unit
-		if unitId <= 0 && !isController {
+		if unitId <= 0 && !isDisponent {
 			if _, err := s.waitForUserToBeAssignedUnit(srv, userInfo.Job, userInfo.UserId); err != nil {
 				return err
 			}
 
-			unitId, isController, err = s.sendLatestState(srv, userInfo.Job, userInfo.UserId)
+			unitId, isDisponent, err = s.sendLatestState(srv, userInfo.Job, userInfo.UserId)
 			if err != nil {
 				return err
 			}
 		}
 
-		end, err := s.stream(srv, isController, userInfo.Job, userInfo.UserId, unitId)
+		end, err := s.stream(srv, isDisponent, userInfo.Job, userInfo.UserId, unitId)
 		if end {
 			return err
 		} else if err != nil {
@@ -334,22 +331,13 @@ func (s *Server) Stream(req *StreamRequest, srv CentrumService_StreamServer) err
 	}
 }
 
-func (s *Server) stream(srv CentrumService_StreamServer, isController bool, job string, userId int32, unitId uint64) (bool, error) {
+func (s *Server) stream(srv CentrumService_StreamServer, isDisponent bool, job string, userId int32, unitId uint64) (bool, error) {
 	msgCh := make(chan *nats.Msg, 32)
-	if !isController {
-		sub, err := s.events.JS.ChanSubscribe(fmt.Sprintf("%s.%s.>", BaseSubject, job), msgCh, nats.DeliverNew())
-		//sub, err := s.events.JS.ChanSubscribe(fmt.Sprintf("%s.%s.*.*.%d", BaseSubject, job, unitId), msgCh)
-		if err != nil {
-			return true, err
-		}
-		defer sub.Unsubscribe()
-	} else {
-		sub, err := s.events.JS.ChanSubscribe(fmt.Sprintf("%s.%s.>", BaseSubject, job), msgCh, nats.DeliverNew())
-		if err != nil {
-			return true, err
-		}
-		defer sub.Unsubscribe()
+	sub, err := s.events.JS.ChanSubscribe(fmt.Sprintf("%s.%s.>", BaseSubject, job), msgCh, nats.DeliverNew())
+	if err != nil {
+		return true, err
 	}
+	defer sub.Unsubscribe()
 
 	// Ping ticker to ensure better stream quality
 	ticker := time.NewTicker(20 * time.Second)
@@ -383,7 +371,7 @@ func (s *Server) stream(srv CentrumService_StreamServer, isController bool, job 
 						Disponents: &dest,
 					}
 
-					if isController && !s.checkIfUserIsDisponent(job, userId) {
+					if isDisponent && !s.checkIfUserIsDisponent(job, userId) {
 						restart := true
 						resp.Restart = &restart
 					}

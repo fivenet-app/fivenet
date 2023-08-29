@@ -153,10 +153,11 @@ const config = defineNuxtConfig({
     ],
     postcss: {
         plugins: {
-            tailwindcss: {
-                configPath: '~~/tailwind.config',
-            },
+            'postcss-import': {},
+            'tailwindcss/nesting': 'postcss-nesting',
+            tailwindcss: {},
             autoprefixer: {},
+            ...(process.env.NODE_ENV === 'production' ? { cssnano: {} } : {}),
         },
     },
     typescript: {
@@ -167,7 +168,14 @@ const config = defineNuxtConfig({
             },
         },
     },
-    devServer: {},
+    devServer: {
+        port: 3000,
+        https: {
+            // Use vite-mkcert-plugin's cert + key for localhost
+            key: path.resolve(process.env.HOME!, '.vite-plugin-mkcert', 'dev.pem'),
+            cert: path.resolve(process.env.HOME!, '.vite-plugin-mkcert', 'cert.pem'),
+        },
+    },
     app: {
         head: {
             charset: 'utf-8',
@@ -181,9 +189,6 @@ const config = defineNuxtConfig({
             },
         },
         pageTransition: { name: 'page', mode: 'out-in' },
-    },
-    experimental: {
-        polyfillVueUseHead: false,
     },
     cookieControl: {
         barPosition: 'bottom-full',
@@ -218,13 +223,5 @@ const config = defineNuxtConfig({
         },
     },
 });
-
-if (process.env.NODE_ENV !== 'production') {
-    config.devServer!.https = {
-        // Use vite-mkcert-plugin's cert + key for localhost
-        key: path.resolve(process.env.HOME!, '.vite-plugin-mkcert', 'dev.pem'),
-        cert: path.resolve(process.env.HOME!, '.vite-plugin-mkcert', 'cert.pem'),
-    };
-}
 
 export default config;

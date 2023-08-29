@@ -114,11 +114,6 @@ func (s *Server) addDispatchStatus(ctx context.Context, tx qrm.DB, status *dispa
 }
 
 func (s *Server) updateDispatchStatus(ctx context.Context, job string, dsp *dispatch.Dispatch, in *dispatch.DispatchStatus) error {
-	userId := jet.NULL
-	if in.UserId != nil && *in.UserId > 0 {
-		userId = jet.Int32(*in.UserId)
-	}
-
 	tDispatchStatus := table.FivenetCentrumDispatchesStatus
 	stmt := tDispatchStatus.
 		INSERT(
@@ -135,7 +130,7 @@ func (s *Server) updateDispatchStatus(ctx context.Context, job string, dsp *disp
 			in.Status,
 			in.Reason,
 			in.Code,
-			userId,
+			in.UserId,
 		)
 
 	res, err := stmt.ExecContext(ctx, s.db)

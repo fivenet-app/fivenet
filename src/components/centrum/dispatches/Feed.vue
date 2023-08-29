@@ -53,7 +53,7 @@ async function listDispatchActivity(): Promise<DispatchStatus[]> {
             </div>
         </div>
         <div class="mt-2 flow-root">
-            <div class="-mx-2 -my-2 overflow-y-scroll sm:-mx-6 lg:-mx-8">
+            <div class="-mx-2 -my-2 overflow-y-auto sm:-mx-6 lg:-mx-8">
                 <div class="inline-block min-w-full py-2 align-middle sm:px-2 lg:px-2">
                     <ul role="list" class="space-y-2">
                         <FeedItem

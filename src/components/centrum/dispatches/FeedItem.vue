@@ -42,7 +42,7 @@ defineProps<{
                 </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
-                <Time :value="item.createdAt" />
+                <Time :value="item.createdAt" :type="'compact'" />
             </span>
         </template>
         <template v-else-if="item.status === DISPATCH_STATUS.UNASSIGNED">
@@ -59,7 +59,7 @@ defineProps<{
                 </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
-                <Time :value="item.createdAt" />
+                <Time :value="item.createdAt" :type="'compact'" />
             </span>
         </template>
         <template v-else-if="item.status === DISPATCH_STATUS.UNIT_ASSIGNED">
@@ -76,7 +76,7 @@ defineProps<{
                 </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
-                <Time :value="item.createdAt" />
+                <Time :value="item.createdAt" :type="'compact'" />
             </span>
         </template>
         <template v-else-if="item.status === DISPATCH_STATUS.UNIT_UNASSIGNED">
@@ -93,7 +93,7 @@ defineProps<{
                 </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
-                <Time :value="item.createdAt" />
+                <Time :value="item.createdAt" :type="'compact'" />
             </span>
         </template>
         <template v-else-if="item.status === DISPATCH_STATUS.EN_ROUTE">
@@ -110,7 +110,7 @@ defineProps<{
                 </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
-                <Time :value="item.createdAt" />
+                <Time :value="item.createdAt" :type="'compact'" />
             </span>
         </template>
         <template v-else-if="item.status === DISPATCH_STATUS.ON_SCENE">
@@ -127,7 +127,7 @@ defineProps<{
                 </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
-                <Time :value="item.createdAt" />
+                <Time :value="item.createdAt" :type="'compact'" />
             </span>
         </template>
         <template v-else-if="item.status === DISPATCH_STATUS.NEED_ASSISTANCE">
@@ -144,7 +144,7 @@ defineProps<{
                 </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
-                <Time :value="item.createdAt" />
+                <Time :value="item.createdAt" :type="'compact'" />
             </span>
         </template>
         <template v-else-if="item.status === DISPATCH_STATUS.COMPLETED">
@@ -161,7 +161,7 @@ defineProps<{
                 </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
-                <Time :value="item.createdAt" />
+                <Time :value="item.createdAt" :type="'compact'" />
             </span>
         </template>
         <template v-else-if="item.status === DISPATCH_STATUS.CANCELLED">
@@ -178,7 +178,7 @@ defineProps<{
                 </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
-                <Time :value="item.createdAt" />
+                <Time :value="item.createdAt" :type="'compact'" />
             </span>
         </template>
         <template v-else-if="item.status === DISPATCH_STATUS.ARCHIVED">
@@ -195,7 +195,7 @@ defineProps<{
                 </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
-                <Time :value="item.createdAt" />
+                <Time :value="item.createdAt" :type="'compact'" />
             </span>
         </template>
     </li>

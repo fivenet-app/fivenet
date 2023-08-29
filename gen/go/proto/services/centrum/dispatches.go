@@ -343,8 +343,8 @@ func (s *Server) TakeDispatch(ctx context.Context, req *TakeDispatchRequest) (*T
 		if err := s.updateDispatchStatus(ctx, userInfo.Job, dsp, &dispatch.DispatchStatus{
 			DispatchId: dispatchId,
 			Status:     dispatch.DISPATCH_STATUS_UNIT_ASSIGNED,
-			UserId:     &userInfo.UserId,
 			UnitId:     &unitId,
+			UserId:     &userInfo.UserId,
 		}); err != nil {
 			return nil, err
 		}
@@ -376,14 +376,19 @@ func (s *Server) UpdateDispatchStatus(ctx context.Context, req *UpdateDispatchSt
 		return nil, ErrNotPartOfDispatch
 	}
 
+	var statusUnitId *uint64
 	unitId, ok := s.getUnitIDForUserID(userInfo.UserId)
 	if !ok {
-		return nil, ErrFailedQuery
+		if !s.checkIfUserIsDisponent(userInfo.Job, userInfo.UserId) {
+			return nil, ErrFailedQuery
+		}
+	} else {
+		statusUnitId = &unitId
 	}
 
 	if err := s.updateDispatchStatus(ctx, userInfo.Job, dsp, &dispatch.DispatchStatus{
 		DispatchId: dsp.Id,
-		UnitId:     &unitId,
+		UnitId:     statusUnitId,
 		Status:     req.Status,
 		Code:       req.Code,
 		Reason:     req.Reason,

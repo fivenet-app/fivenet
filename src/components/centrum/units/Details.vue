@@ -95,7 +95,7 @@ const openStatus = ref(false);
 
                                                                 <button
                                                                     type="button"
-                                                                    @click="$emit('status', unit)"
+                                                                    @click="openStatus = true"
                                                                     class="rounded bg-white/10 px-2 py-1 text-xs font-semibold text-white shadow-sm hover:bg-white/20"
                                                                 >
                                                                     {{

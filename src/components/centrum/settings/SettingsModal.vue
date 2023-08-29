@@ -80,7 +80,7 @@ const { handleSubmit, setValues } = useForm<FormData>({
     },
 });
 
-const onSubmit = handleSubmit(async (values): Promise<void> => createOrUpdateUnit(values));
+const onSubmit = handleSubmit(async (values): Promise<void> => await createOrUpdateUnit(values));
 
 function setSettingsValues(): void {
     if (!settings.value) return;

@@ -29,23 +29,27 @@ export interface ConductEntry {
      */
     type: CONDUCT_TYPE;
     /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp expires_at = 6;
+     * @generated from protobuf field: string description = 6;
+     */
+    description: string;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp expires_at = 7;
      */
     expiresAt?: Timestamp;
     /**
-     * @generated from protobuf field: int32 target_user_id = 7;
+     * @generated from protobuf field: int32 target_user_id = 8;
      */
     targetUserId: number;
     /**
-     * @generated from protobuf field: optional resources.users.UserShort target_user = 8;
+     * @generated from protobuf field: optional resources.users.UserShort target_user = 9;
      */
     targetUser?: UserShort;
     /**
-     * @generated from protobuf field: int32 creator_id = 9;
+     * @generated from protobuf field: int32 creator_id = 10;
      */
     creatorId: number;
     /**
-     * @generated from protobuf field: optional resources.users.UserShort creator = 10;
+     * @generated from protobuf field: optional resources.users.UserShort creator = 11;
      */
     creator?: UserShort;
 }
@@ -83,11 +87,12 @@ class ConductEntry$Type extends MessageType<ConductEntry> {
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 5, name: "type", kind: "enum", T: () => ["resources.jobs.CONDUCT_TYPE", CONDUCT_TYPE], options: { "validate.rules": { enum: { definedOnly: true } } } },
-            { no: 6, name: "expires_at", kind: "message", T: () => Timestamp },
-            { no: 7, name: "target_user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
-            { no: 8, name: "target_user", kind: "message", T: () => UserShort },
-            { no: 9, name: "creator_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
-            { no: 10, name: "creator", kind: "message", T: () => UserShort }
+            { no: 6, name: "description", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "1024" } } } },
+            { no: 7, name: "expires_at", kind: "message", T: () => Timestamp },
+            { no: 8, name: "target_user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
+            { no: 9, name: "target_user", kind: "message", T: () => UserShort },
+            { no: 10, name: "creator_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
+            { no: 11, name: "creator", kind: "message", T: () => UserShort }
         ]);
     }
 }

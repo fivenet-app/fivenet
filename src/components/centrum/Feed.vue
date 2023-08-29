@@ -10,7 +10,7 @@ defineProps<{
 </script>
 
 <template>
-    <div class="px-4 sm:px-6 lg:px-8 h-full overflow-y-scroll">
+    <div class="px-4 sm:px-6 lg:px-8 h-full overflow-y-auto">
         <div class="sm:flex sm:items-center">
             <div class="sm:flex-auto">
                 <h2 class="text-base font-semibold leading-6 text-gray-100">{{ $t('common.activity', 2) }}</h2>
@@ -23,18 +23,16 @@ defineProps<{
                         <template v-for="(activityItem, activityItemIdx) in items">
                             <template v-if="'dispatchId' in activityItem">
                                 <DispatchFeedItem
-                                    :activityLength="items?.length ?? 0"
+                                    :activity-length="items?.length ?? 0"
                                     :item="activityItem"
-                                    :activityItemIdx="activityItemIdx"
-                                    :showName="true"
+                                    :activity-item-idx="activityItemIdx"
                                 />
                             </template>
                             <template v-else>
                                 <UnitFeedItem
-                                    :activityLength="items?.length ?? 0"
+                                    :activity-length="items?.length ?? 0"
                                     :item="activityItem"
-                                    :activityItemIdx="activityItemIdx"
-                                    :showName="true"
+                                    :activity-item-idx="activityItemIdx"
                                 />
                             </template>
                         </template>

@@ -7,16 +7,12 @@ export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, _: 
     const authStore = useAuthStore();
     const { activeChar, accessToken, lastCharID } = storeToRefs(authStore);
 
-    // Default is that a page requires authentication
+    // Default is that a page requires authentication, but if it doesn't exit quickly
     if (to.meta.hasOwnProperty('requiresAuth') && !to.meta.requiresAuth) {
-        // If we don't have an active char, but a last char ID set, try to choose it and immidiately continue
-        if (lastCharID.value > 0) {
-            chooseCharacter();
-        }
-
         return true;
     }
 
+    // Auth token is not null and only needed
     if (to.meta.authOnlyToken && accessToken.value !== null) {
         return true;
     }
@@ -59,7 +55,7 @@ export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, _: 
                 type: 'warning',
             });
 
-            if (accessToken.value) {
+            if (accessToken.value !== null) {
                 return navigateTo({
                     name: 'overview',
                 });

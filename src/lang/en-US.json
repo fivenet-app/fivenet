@@ -599,7 +599,8 @@
         "word": "Word | Words",
         "marker": "Marker | Markers",
         "radius": "Radius",
-        "opacity": "Opacity"
+        "opacity": "Opacity",
+        "char": "Character | Characters"
     },
     "notifications": {
         "clipboard": {

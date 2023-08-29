@@ -41,22 +41,10 @@ export class GRPCClients {
 
         const { $loading } = useNuxtApp();
 
-        // See https://github.com/jrapoport/grpc-web-devtools#grpc-web-interceptor-support
-        const interceptors: RpcInterceptor[] = [this.authInterceptor, $loading];
-
-        /* //@ts-ignore GRPCWeb Devtools only exist when the user has the extension installed
-        const devInterceptors = window.__GRPCWEB_DEVTOOLS__;
-        if (devInterceptors) {
-            const { devToolsUnaryInterceptor, devToolsStreamInterceptor } = devInterceptors();
-
-            devToolsUnaryInterceptor;
-            devToolsStreamInterceptor;
-        } */
-
         this.transport = new GrpcWebFetchTransport({
             baseUrl: '/grpc',
             format: 'text',
-            interceptors: interceptors,
+            interceptors: [this.authInterceptor, $loading],
         });
     }
 

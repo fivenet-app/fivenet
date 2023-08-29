@@ -21,12 +21,12 @@ const forms = ref<{ create: boolean; forgot: boolean }>({
 });
 
 watch(accessToken, async (): Promise<NavigationFailure | TypedRouteFromName<'auth-character-selector'> | void | undefined> => {
-    if (accessToken) {
-        return await navigateTo({
-            name: 'auth-character-selector',
-            query: route.query,
-        });
-    }
+    if (accessToken.value === null) return;
+
+    return await navigateTo({
+        name: 'auth-character-selector',
+        query: route.query,
+    });
 });
 </script>
 

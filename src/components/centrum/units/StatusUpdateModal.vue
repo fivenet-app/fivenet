@@ -111,7 +111,7 @@ watch(props, () => {
                                         <div class="bg-primary-700 px-4 py-6 sm:px-6">
                                             <div class="flex items-center justify-between">
                                                 <DialogTitle class="text-base font-semibold leading-6 text-white">
-                                                    {{ $t('components.centrum.update_unit_status') }}: {{ unit.name }} ({{
+                                                    {{ $t('components.centrum.update_unit_status.title') }}: {{ unit.name }} ({{
                                                         unit.initials
                                                     }})
                                                 </DialogTitle>

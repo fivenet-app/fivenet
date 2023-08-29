@@ -43,7 +43,7 @@ export const useCentrumStore = defineStore('centrum', {
         addOrUpdateUnit(unit: Unit): void {
             const idx = this.units.findIndex((d) => d.id === unit.id) ?? -1;
             if (idx === -1) {
-                this.units.unshift(unit);
+                this.units.push(unit);
             } else {
                 this.units[idx].job = unit.job;
                 this.units[idx].createdAt = unit.createdAt;
@@ -76,7 +76,14 @@ export const useCentrumStore = defineStore('centrum', {
         addOrUpdateDispatch(dispatch: Dispatch): void {
             const idx = this.dispatches?.findIndex((d) => d.id === dispatch.id) ?? -1;
             if (idx === -1) {
-                this.dispatches?.unshift(dispatch);
+                if (dispatch.status === undefined) {
+                    dispatch.status = {
+                        dispatchId: dispatch.id,
+                        id: 0n,
+                        status: DISPATCH_STATUS.NEW,
+                    };
+                }
+                this.dispatches.push(dispatch);
             } else {
                 this.dispatches[idx].createdAt = dispatch.createdAt;
                 this.dispatches[idx].updatedAt = dispatch.updatedAt;
@@ -128,7 +135,7 @@ export const useCentrumStore = defineStore('centrum', {
         addOrUpdateOwnDispatch(dispatch: Dispatch): void {
             const idx = this.ownDispatches?.findIndex((d) => d.id === dispatch.id) ?? -1;
             if (idx === -1) {
-                this.ownDispatches?.unshift(dispatch);
+                this.ownDispatches.push(dispatch);
             } else {
                 this.ownDispatches[idx].createdAt = dispatch.createdAt;
                 this.ownDispatches[idx].updatedAt = dispatch.updatedAt;
@@ -179,7 +186,7 @@ export const useCentrumStore = defineStore('centrum', {
         addOrUpdatePendingDispatch(dispatch: Dispatch): void {
             const idx = this.pendingDispatches?.findIndex((d) => d.id === dispatch.id) ?? -1;
             if (idx === -1) {
-                this.pendingDispatches?.unshift(dispatch);
+                this.pendingDispatches.push(dispatch);
             }
         },
 
@@ -242,35 +249,30 @@ export const useCentrumStore = defineStore('centrum', {
                             break;
                         }
                     } else if (resp.change.oneofKind === 'unitAssigned') {
-                        // Ignore, doesn't matter for controllers
-                        if (!this.isDisponent) {
-                            if (this.ownUnit !== undefined && resp.change.unitAssigned.id !== this.ownUnit?.id) {
-                                console.warn('Received unit user assigned event for other unit'), resp.change.unitAssigned;
-                                continue;
-                            }
+                        if (this.ownUnit !== undefined && resp.change.unitAssigned.id !== this.ownUnit?.id) {
+                            console.warn('Received unit user assigned event for other unit'), resp.change.unitAssigned;
+                            continue;
+                        }
 
-                            const idx = resp.change.unitAssigned.users.findIndex(
-                                (u) => u.userId === authStore.activeChar?.userId,
-                            );
-                            if (idx === -1) {
-                                // User has been removed from the unit
-                                this.ownUnit = undefined;
+                        const idx = resp.change.unitAssigned.users.findIndex((u) => u.userId === authStore.activeChar?.userId);
+                        if (idx === -1) {
+                            // User has been removed from the unit
+                            this.ownUnit = undefined;
 
-                                notifications.dispatchNotification({
-                                    title: { key: 'notifications.centrum.unitAssigned.removed.title', parameters: [] },
-                                    content: { key: 'notifications.centrum.unitAssigned.removed.content', parameters: [] },
-                                    type: 'success',
-                                });
-                            } else if (this.ownUnit !== undefined) {
-                                // User has been added to unit
-                                this.ownUnit = resp.change.unitAssigned;
+                            notifications.dispatchNotification({
+                                title: { key: 'notifications.centrum.unitAssigned.removed.title', parameters: [] },
+                                content: { key: 'notifications.centrum.unitAssigned.removed.content', parameters: [] },
+                                type: 'success',
+                            });
+                        } else if (this.ownUnit !== undefined) {
+                            // User has been added to unit
+                            this.ownUnit = resp.change.unitAssigned;
 
-                                notifications.dispatchNotification({
-                                    title: { key: 'notifications.centrum.unitAssigned.joined.title', parameters: [] },
-                                    content: { key: 'notifications.centrum.unitAssigned.joined.content', parameters: [] },
-                                    type: 'success',
-                                });
-                            }
+                            notifications.dispatchNotification({
+                                title: { key: 'notifications.centrum.unitAssigned.joined.title', parameters: [] },
+                                content: { key: 'notifications.centrum.unitAssigned.joined.content', parameters: [] },
+                                type: 'success',
+                            });
                         }
                     } else if (resp.change.oneofKind === 'unitDeleted') {
                         this.removeUnit(resp.change.unitDeleted);

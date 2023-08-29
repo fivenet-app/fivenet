@@ -18,7 +18,7 @@ async function getAccountInfo(): Promise<GetAccountInfoResponse | undefined> {
         try {
             const call = $grpc.getAuthClient().getAccountInfo({});
 
-            return res(await call.response);
+            return res(call.response);
         } catch (e) {
             $grpc.handleError(e as RpcError);
             return rej(e as RpcError);

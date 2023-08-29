@@ -27,8 +27,8 @@ const props = defineProps<{
         values: {
             job?: string;
             char?: number;
-            accessrole?: ACCESS_LEVEL;
-            minimumrank?: number;
+            accessRole?: ACCESS_LEVEL;
+            minimumGrade?: number;
         };
     };
     accessTypes: { id: number; name: string }[];
@@ -51,7 +51,7 @@ const emit = defineEmits<{
 }>();
 
 const completorStore = useCompletorStore();
-const { getJobByName: getJob, completeCitizens } = completorStore;
+const { getJobByName, completeCitizens } = completorStore;
 const { jobs } = storeToRefs(completorStore);
 
 const { t } = useI18n();
@@ -115,21 +115,20 @@ onMounted(async () => {
     const passedType = props.accessTypes.find((e) => e.id === props.init.type);
     if (passedType) selectedAccessType.value = passedType;
 
-    if (props.init.type === 0 && props.init.values.char !== undefined && props.init.values.accessrole !== undefined) {
+    if (props.init.type === 0 && props.init.values.char !== undefined && props.init.values.accessRole !== undefined) {
         const users = await findChars(props.init.values.char);
         selectedChar.value = users.find((char) => char.userId === props.init.values.char);
-        selectedAccessRole.value = entriesAccessRoles.find((type) => type.id === props.init.values.accessrole);
     } else if (
         props.init.type === 1 &&
         props.init.values.job !== undefined &&
-        props.init.values.minimumrank !== undefined &&
-        props.init.values.accessrole !== undefined
+        props.init.values.minimumGrade !== undefined &&
+        props.init.values.accessRole !== undefined
     ) {
-        selectedJob.value = await getJob(props.init.values.job);
+        selectedJob.value = await getJobByName(props.init.values.job);
         if (selectedJob.value) entriesMinimumRank = selectedJob.value.grades;
-        selectedMinimumRank.value = entriesMinimumRank.find((rank) => rank.grade === props.init.values.minimumrank);
-        selectedAccessRole.value = entriesAccessRoles.find((type) => type.id === props.init.values.accessrole);
+        selectedMinimumRank.value = entriesMinimumRank.find((rank) => rank.grade === props.init.values.minimumGrade);
     }
+    selectedAccessRole.value = entriesAccessRoles.find((type) => type.id === props.init.values.accessRole);
 });
 
 watchDebounced(queryChar, async () => (entriesChars.value = await findChars()), {
@@ -367,7 +366,7 @@ watch(selectedAccessRole, () => {
                                 v-for="rank in entriesMinimumRank"
                                 :key="rank.grade"
                                 :value="rank"
-                                as="minimumrank"
+                                as="minimumGrade"
                                 v-slot="{ active, selected }"
                             >
                                 <li
@@ -415,7 +414,7 @@ watch(selectedAccessRole, () => {
                             v-for="role in entriesAccessRoles"
                             :key="role.id?.toString()"
                             :value="role"
-                            as="accessrole"
+                            as="accessRole"
                             v-slot="{ active, selected }"
                         >
                             <li
