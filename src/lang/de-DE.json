@@ -599,7 +599,8 @@
         "word": "Wort | Wörter",
         "marker": "Marker | Markierungen",
         "radius": "Radius",
-        "opacity": "Deckkraft"
+        "opacity": "Deckkraft",
+        "char": "Charakter | Charaktere"
     },
     "notifications": {
         "clipboard": {
@@ -1050,7 +1051,7 @@
                 "description": "Livemap aufrufen können."
             },
             "CreateOrUpdateMarker": {
-                "key": "Create and Update Markers",
+                "key": "Erstellen und Aktualisieren von Markierungen",
                 "description": "Being able to create and update markers on the Livemap."
             },
             "DeleteMarker": {
