@@ -1,16 +1,18 @@
 <script setup lang="ts">
-import zxcvbn from 'zxcvbn';
+import { zxcvbn, zxcvbnOptions } from '@zxcvbn-ts/core';
 
 const props = defineProps<{
     input: string;
     showFeedback?: boolean;
 }>();
 
-const result = computed(() => zxcvbn(props.input));
+zxcvbnOptions.setOptions({});
 
 const percent = ref<number>(0);
-const feedback = ref<string>('');
+const feedback = ref<string | null>('');
 const color = ref<string>('bg-base-700');
+
+const result = computed(() => zxcvbn(props.input));
 
 watch(result, () => {
     percent.value = (result.value.score * 100) / 4;
@@ -44,7 +46,7 @@ watch(result, () => {
 <template>
     <div>
         <div :class="['h-2 w-full rounded-full transition-colors', color]"></div>
-        <p v-if="showFeedback" class="text-sm text-base-300 my-1">
+        <p v-if="showFeedback && feedback !== null" class="text-sm text-base-300 my-1">
             {{ feedback }}
         </p>
     </div>
