@@ -82,14 +82,26 @@ async function getTemplate(): Promise<Template> {
                                         </DialogTitle>
                                         <div class="mt-2">
                                             <div class="pt-4">
-                                                <label class="block mb-2 text-sm font-medium leading-6 text-neutral">
-                                                    {{ $t('common.title') }}
-                                                </label>
-                                                <h1
-                                                    class="p-2 mt-4 rounded-lg text-2xl font-bold text-neutral bg-base-800 break-words"
-                                                >
-                                                    {{ template?.title }}
-                                                </h1>
+                                                <div>
+                                                    <label class="block mb-2 text-sm font-medium leading-6 text-neutral">
+                                                        {{ $t('common.title') }}
+                                                    </label>
+                                                    <h1
+                                                        class="p-2 mt-4 rounded-lg text-2xl font-bold text-neutral bg-base-800 break-words"
+                                                    >
+                                                        {{ template?.title }}
+                                                    </h1>
+                                                </div>
+                                                <div>
+                                                    <label class="block mb-2 text-sm font-medium leading-6 text-neutral">
+                                                        {{ $t('common.state') }}
+                                                    </label>
+                                                    <p
+                                                        class="p-2 mt-4 rounded-lg text-base font-bold text-neutral bg-base-800 break-words"
+                                                    >
+                                                        {{ template?.state }}
+                                                    </p>
+                                                </div>
 
                                                 <label class="block mb-2 text-sm font-medium leading-6 text-neutral">
                                                     {{ $t('common.content') }}

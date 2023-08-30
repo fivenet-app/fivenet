@@ -1,5 +1,7 @@
 <script lang="ts" setup>
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
+import { useConfirmDialog } from '@vueuse/core';
+import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
 import { useNotificationsStore } from '~/store/notifications';
 import { Template, TemplateRequirements } from '~~/gen/ts/resources/documents/templates';
 import PreviewModal from './PreviewModal.vue';
@@ -42,11 +44,11 @@ async function getTemplate(): Promise<Template | undefined> {
     });
 }
 
-async function deleteTemplate(): Promise<void> {
+async function deleteTemplate(id: bigint): Promise<void> {
     return new Promise(async (res, rej) => {
         try {
             await $grpc.getDocStoreClient().deleteTemplate({
-                id: props.templateId,
+                id: id,
             });
 
             notifications.dispatchNotification({
@@ -73,10 +75,17 @@ async function editTemplate(): Promise<void> {
 }
 
 const openPreview = ref(false);
+
+const { isRevealed, reveal, confirm, cancel, onConfirm } = useConfirmDialog();
+
+onConfirm(async (id) => deleteTemplate(id));
 </script>
 
 <template>
+    <ConfirmDialog :open="isRevealed" :cancel="cancel" :confirm="() => confirm(templateId)" />
+
     <PreviewModal :id="templateId" :open="openPreview" @close="openPreview = false" v-if="openPreview" />
+
     <div v-if="template" class="py-2">
         <div class="px-1 sm:px-2 lg:px-4">
             <div class="sm:flex sm:items-center">
@@ -99,26 +108,35 @@ const openPreview = ref(false);
                     </button>
                 </div>
             </div>
+            <div class="sm:flex sm:items-center">
+                <div>
+                    <h2 class="text-white text-2xl">
+                        {{ template.title }}
+                    </h2>
+                    <p class="text-white text-sm">{{ $t('common.description') }}: {{ template.description }}</p>
+                </div>
+            </div>
             <div class="flow-root mt-4 mb-6">
                 <div class="mx-0 -my-2 overflow-x-auto">
-                    <label for="content" class="block text-sm font-medium leading-6 text-gray-100">
+                    <label for="weight" class="block text-sm font-medium leading-6 text-gray-100">
                         {{ $t('common.template', 2) }} {{ $t('common.weight') }}
                     </label>
                     <div class="mt-2">
                         <input
                             type="text"
+                            name="weight"
                             class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                             disabled
                             :value="template.weight"
                         />
                     </div>
-                    <label for="content" class="block text-sm font-medium leading-6 text-gray-100">
+                    <label for="contentTitle" class="block text-sm font-medium leading-6 text-gray-100">
                         {{ $t('common.content') }} {{ $t('common.title') }}
                     </label>
                     <div class="mt-2">
                         <textarea
                             rows="4"
-                            name="content"
+                            name="contentTitle"
                             class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                             disabled
                             :value="template.contentTitle"
@@ -137,7 +155,7 @@ const openPreview = ref(false);
                         />
                     </div>
                     <div v-if="template.category">
-                        <label for="content" class="block text-sm font-medium leading-6 text-gray-100">
+                        <label for="category" class="block text-sm font-medium leading-6 text-gray-100">
                             {{ $t('common.category') }}
                         </label>
                         <div class="mt-2">
@@ -148,7 +166,7 @@ const openPreview = ref(false);
                         </div>
                     </div>
                     <div v-if="reqs">
-                        <label for="content" class="block text-sm font-medium leading-6 text-gray-100">
+                        <label for="reqs" class="block text-sm font-medium leading-6 text-gray-100">
                             {{ $t('common.schema') }}
                         </label>
                         <div class="mt-2">
@@ -173,7 +191,7 @@ const openPreview = ref(false);
                 <button
                     v-if="can('DocStoreService.DeleteTemplate')"
                     type="submit"
-                    @click="deleteTemplate()"
+                    @click="reveal"
                     class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-error-600 text-neutral hover:bg-error-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300"
                 >
                     {{ $t('common.delete') }}
