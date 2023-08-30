@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { LControl, LLayerGroup } from '@vue-leaflet/vue-leaflet';
+import { default as DispatchDetails } from '~/components/centrum/dispatches/Details.vue';
 import DispatchMarker from '~/components/centrum/livemap/DispatchMarker.vue';
 import { useCentrumStore } from '~/store/centrum';
 import { useSettingsStore } from '~/store/settings';
@@ -10,7 +11,7 @@ defineProps<{
 }>();
 
 defineEmits<{
-    (e: 'selected', dsp: Dispatch): void;
+    (e: 'goto', loc: Coordinate): void;
 }>();
 
 const centrumStore = useCentrumStore();
@@ -22,14 +23,24 @@ const query = ref<string>('');
 const dispatchesFiltered = computed(() =>
     dispatches.value.filter((m) => (m.user?.firstname + ' ' + m.user?.lastname).includes(query.value)),
 );
+
+const selectedDispatch = ref<Dispatch | undefined>();
+const open = ref(false);
 </script>
 
 <template>
+    <template v-if="selectedDispatch">
+        <DispatchDetails :dispatch="selectedDispatch" :open="open" @close="open = false" @goto="$emit('goto', $event)" />
+    </template>
+
     <LLayerGroup key="your_dispatches" :name="$t('common.your_dispatches')" layer-type="overlay" :visible="true">
         <DispatchMarker
             v-for="dispatch in ownDispatches"
             :dispatch="dispatch"
-            @selected="$emit('selected', $event)"
+            @selected="
+                selectedDispatch = $event;
+                open = true;
+            "
             :size="livemap.markerSize"
         />
     </LLayerGroup>
@@ -39,7 +50,10 @@ const dispatchesFiltered = computed(() =>
             v-for="dispatch in dispatchesFiltered.filter((d) => !ownDispatches.includes(d))"
             :key="dispatch.id.toString()"
             :dispatch="dispatch"
-            @selected="$emit('selected', $event)"
+            @selected="
+                selectedDispatch = $event;
+                open = true;
+            "
             :size="livemap.markerSize"
         />
     </LLayerGroup>

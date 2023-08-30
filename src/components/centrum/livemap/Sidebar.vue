@@ -68,9 +68,9 @@ onBeforeUnmount(async () => stopStream());
 
 const selectUnitOpen = ref(false);
 
-// TODO add function to set the active dispatch (last clicked and manually selected)
 const dispatchStatusSelected = ref<DISPATCH_STATUS | undefined>();
 
+// TODO add function to set the active dispatch (last clicked and manually selected)
 const selectedDispatch = ref<Dispatch | undefined>();
 const openDispatchDetails = ref(false);
 const openTakeDispatch = ref(false);
@@ -85,13 +85,7 @@ const canStream = can('CentrumService.Stream');
 <template>
     <Livemap>
         <template v-slot:default v-if="canStream">
-            <DispatchesLayer
-                :show-all-dispatches="!settings.enabled"
-                @selected="
-                    selectedDispatch = $event;
-                    openDispatchDetails = true;
-                "
-            />
+            <DispatchesLayer :show-all-dispatches="!settings.enabled" @goto="$emit('goto', $event)" />
         </template>
         <template v-slot:afterMap v-if="canStream">
             <div class="lg:inset-y-0 lg:flex lg:w-50 lg:flex-col">

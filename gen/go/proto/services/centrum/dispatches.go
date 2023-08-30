@@ -6,6 +6,7 @@ import (
 	database "github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
 	dispatch "github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
+	"github.com/galexrt/fivenet/gen/go/proto/resources/timestamp"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/pkg/utils/dbutils"
@@ -290,13 +291,17 @@ func (s *Server) TakeDispatch(ctx context.Context, req *TakeDispatchRequest) (*T
 
 	settings := s.getSettings(userInfo.Job)
 
+	unitId, ok := s.getUnitIDForUserID(userInfo.UserId)
+	if !ok {
+		return nil, ErrFailedQuery
+	}
+	unit, ok := s.getUnit(userInfo.Job, unitId)
+	if !ok {
+		return nil, ErrFailedQuery
+	}
+
 	for _, dispatchId := range req.DispatchIds {
 		dsp, ok := s.getDispatch(userInfo.Job, dispatchId)
-		if !ok {
-			return nil, ErrFailedQuery
-		}
-
-		unitId, ok := s.getUnitIDForUserID(userInfo.UserId)
 		if !ok {
 			return nil, ErrFailedQuery
 		}
@@ -319,7 +324,7 @@ func (s *Server) TakeDispatch(ctx context.Context, req *TakeDispatchRequest) (*T
 			).
 			VALUES(
 				dsp.Id,
-				unitId,
+				unit.Id,
 				jet.NULL,
 			).
 			ON_DUPLICATE_KEY_UPDATE(
@@ -332,12 +337,23 @@ func (s *Server) TakeDispatch(ctx context.Context, req *TakeDispatchRequest) (*T
 			}
 		}
 
+		found := false
 		// Set unit expires at to nil
-		for _, unit := range dsp.Units {
-			if unit.UnitId == unitId {
-				unit.ExpiresAt = nil
+		for _, u := range dsp.Units {
+			if u.UnitId == unit.Id {
+				u.ExpiresAt = nil
+				found = true
 				break
 			}
+		}
+
+		if !found {
+			dsp.Units = append(dsp.Units, &dispatch.DispatchAssignment{
+				DispatchId: dsp.Id,
+				UnitId:     unit.Id,
+				Unit:       unit,
+				CreatedAt:  timestamp.Now(),
+			})
 		}
 
 		if err := s.updateDispatchStatus(ctx, userInfo.Job, dsp, &dispatch.DispatchStatus{
