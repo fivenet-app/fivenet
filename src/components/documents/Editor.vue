@@ -11,6 +11,7 @@ import {
     ListboxOptions,
 } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
+import { max, min, required } from '@vee-validate/rules';
 import { QuillEditor } from '@vueup/vue-quill';
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import { useDebounceFn, watchDebounced, watchOnce } from '@vueuse/core';
@@ -20,6 +21,7 @@ import { AccountMultipleIcon, CheckIcon, ChevronDownIcon, ContentSaveIcon, FileD
 import htmlEditButton from 'quill-html-edit-button';
 import ImageCompress from 'quill-image-compress';
 import MagicUrl from 'quill-magic-url';
+import { defineRule } from 'vee-validate';
 import { useAuthStore } from '~/store/auth';
 import { getDocument, getUser, useClipboardStore } from '~/store/clipboard';
 import { useDocumentEditorStore } from '~/store/documenteditor';
@@ -68,17 +70,14 @@ const openclose = [
 ];
 
 const doc = ref<{
-    title: string;
     content: string;
     closed: { id: number; label: string; closed: boolean };
-    state: string;
+    public: boolean;
 }>({
-    title: '',
     content: '',
     closed: openclose[0],
-    state: '',
+    public: false,
 });
-const isPublic = ref(false);
 const access = ref<
     Map<
         bigint,
@@ -225,7 +224,8 @@ onMounted(async () => {
             const { response } = await call;
 
             const template = response.template;
-            doc.value.title = template?.contentTitle!;
+            setFieldValue('title', template?.contentTitle!);
+            setFieldValue('state', template?.state!);
             doc.value.content = template?.content!;
             selectedCategory.value = template?.category;
 
@@ -270,16 +270,16 @@ onMounted(async () => {
             const docAccess = response.access;
 
             if (document) {
-                doc.value.title = document.title;
+                setFieldValue('title', document.title);
+                setFieldValue('state', document.state);
                 doc.value.content = document.content;
                 doc.value.closed = openclose.find((e) => e.closed === document.closed) as {
                     id: number;
                     label: string;
                     closed: boolean;
                 };
-                doc.value.state = document.state;
                 selectedCategory.value = document.category;
-                isPublic.value = document.public;
+                doc.value.public = document.public;
 
                 const refs = await $grpc.getDocStoreClient().getDocumentReferences(req);
                 currentReferences.value = refs.response.references;
@@ -321,9 +321,9 @@ onMounted(async () => {
         }
     } else {
         if (documentStore.$state) {
-            doc.value.title = documentStore.$state.title;
+            setFieldValue('title', documentStore.$state.title);
+            setFieldValue('state', documentStore.$state.state);
             doc.value.content = documentStore.$state.content;
-            doc.value.state = documentStore.$state.state;
             if (documentStore.$state.closed) {
                 doc.value.closed = documentStore.$state.closed;
             }
@@ -345,7 +345,7 @@ onMounted(async () => {
         const id = BigInt(i);
         referenceManagerData.value.set(id, {
             id: id,
-            sourceDocumentId: props.id!,
+            sourceDocumentId: props.id ?? 0n,
             targetDocumentId: doc.id!,
             targetDocument: getDocument(doc),
             creatorId: activeChar.value!.userId,
@@ -357,7 +357,7 @@ onMounted(async () => {
         const id = BigInt(i);
         relationManagerData.value.set(id, {
             id: id,
-            documentId: props.id!,
+            documentId: props.id ?? 0n,
             targetUserId: user.userId!,
             targetUser: getUser(user),
             sourceUserId: activeChar.value!.userId,
@@ -371,26 +371,26 @@ onMounted(async () => {
 
 const saving = ref(false);
 
-async function saveToStore(): Promise<void> {
+async function saveToStore(values: FormData): Promise<void> {
     if (saving.value) {
         return;
     }
     saving.value = true;
 
-    documentStore.save(doc.value);
+    documentStore.save({
+        title: values.title,
+        content: doc.value.content,
+        state: values.state,
+        closed: doc.value.closed,
+    });
     setTimeout(() => {
         saving.value = false;
     }, 1250);
 }
 
-watchDebounced(doc.value, async () => saveToStore(), {
+watchDebounced(doc.value, async () => saveToStore(values), {
     debounce: 1350,
     maxWait: 3500,
-});
-
-watchDebounced(queryCategory, () => findCategories(), {
-    debounce: 600,
-    maxWait: 1400,
 });
 
 async function findCategories(): Promise<void> {
@@ -415,6 +415,11 @@ async function findCategories(): Promise<void> {
         }
     });
 }
+
+watchDebounced(queryCategory, () => findCategories(), {
+    debounce: 600,
+    maxWait: 1400,
+});
 
 const accessTypes = [
     { id: 0, name: t('common.citizen', 2) },
@@ -485,16 +490,16 @@ function updateAccessEntryAccess(event: { id: bigint; access: ACCESS_LEVEL }): v
     access.value.set(event.id, accessEntry);
 }
 
-async function submitForm(): Promise<void> {
+async function createDocument(values: FormData, content: string, closed: boolean): Promise<void> {
     return new Promise(async (res, rej) => {
         // Prepare request
         const req: CreateDocumentRequest = {
-            title: doc.value.title,
-            content: doc.value.content,
+            title: values.title,
+            content: content,
             contentType: DOC_CONTENT_TYPE.HTML,
-            closed: doc.value.closed.closed,
-            state: doc.value.state,
-            public: isPublic.value,
+            closed: closed,
+            state: values.state,
+            public: doc.value.public,
         };
         if (selectedCategory.value != undefined) req.categoryId = selectedCategory.value.id;
 
@@ -574,16 +579,16 @@ async function submitForm(): Promise<void> {
     });
 }
 
-async function editForm(): Promise<void> {
+async function updateDocument(id: bigint, values: FormData, content: string, closed: boolean): Promise<void> {
     return new Promise(async (res, rej) => {
         const req: UpdateDocumentRequest = {
-            documentId: props.id!,
-            title: doc.value.title,
-            content: doc.value.content,
+            documentId: id,
+            title: values.title,
+            content: content,
             contentType: DOC_CONTENT_TYPE.HTML,
-            closed: doc.value.closed.closed,
-            state: doc.value.state,
-            public: isPublic.value,
+            closed: closed,
+            state: values.state,
+            public: doc.value.public,
         };
         if (selectedCategory.value != undefined) req.categoryId = selectedCategory.value.id;
 
@@ -721,6 +726,34 @@ watchOnce(quillEditorRef, () => {
 
     quillEditorRef.value.getQuill().on('text-change', debounced);
 });
+
+defineRule('required', required);
+defineRule('max', max);
+defineRule('min', min);
+
+interface FormData {
+    title: string;
+    state: string;
+    public: boolean;
+}
+
+const { handleSubmit, values, setFieldValue, meta } = useForm<FormData>({
+    validationSchema: {
+        title: { required: true, min: 3, max: 21845 },
+        state: { required: false, min: 2, max: 24 },
+    },
+    initialValues: {
+        public: false,
+    },
+});
+
+const onSubmit = handleSubmit(async (values): Promise<void> => {
+    if (props.id === undefined) {
+        await createDocument(values, doc.value.content, doc.value.closed.closed);
+    } else {
+        await updateDocument(props.id, values, doc.value.content, doc.value.closed.closed);
+    }
+});
 </script>
 
 <style>
@@ -732,6 +765,7 @@ watchOnce(quillEditorRef, () => {
 .ql-editor {
     height: 100%;
     width: 100%;
+    min-height: 400px;
 }
 
 .ql-editor img,
@@ -747,137 +781,70 @@ watchOnce(quillEditorRef, () => {
 </style>
 
 <template>
-    <RelationManager
-        v-model="relationManagerData"
-        :open="relationManagerShow"
-        :document="$props.id"
-        @close="relationManagerShow = false"
-    />
-    <ReferenceManager
-        v-model="referenceManagerData"
-        :open="referenceManagerShow"
-        :document="$props.id"
-        @close="referenceManagerShow = false"
-    />
+    <form @submit="onSubmit">
+        <RelationManager
+            v-model="relationManagerData"
+            :open="relationManagerShow"
+            :document="$props.id"
+            @close="relationManagerShow = false"
+        />
+        <ReferenceManager
+            v-model="referenceManagerData"
+            :open="referenceManagerShow"
+            :document="$props.id"
+            @close="referenceManagerShow = false"
+        />
 
-    <div class="flex flex-col gap-2 px-3 py-4 rounded-t-lg bg-base-800 text-neutral">
-        <div>
-            <label for="name" class="block font-medium text-base">
-                {{ $t('common.title') }}
-            </label>
-            <input
-                v-model="doc.title"
-                type="text"
-                name="name"
-                class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-3xl sm:leading-6"
-                :placeholder="`${$t('common.document', 1)} ${$t('common.title')}`"
-                :disabled="!canEdit"
-            />
-        </div>
-        <div class="flex flex-row gap-2">
-            <div class="flex-1">
-                <label for="category" class="block font-medium text-sm">
-                    {{ $t('common.category') }}
+        <div class="flex flex-col gap-2 px-3 py-4 rounded-t-lg bg-base-800 text-neutral">
+            <div>
+                <label for="title" class="block font-medium text-base">
+                    {{ $t('common.title') }}
                 </label>
-                <Combobox as="div" v-model="selectedCategory" :disabled="!canEdit" nullable>
-                    <div class="relative">
-                        <ComboboxButton as="div">
-                            <ComboboxInput
-                                class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                @change="queryCategory = $event.target.value"
-                                :display-value="(category: any) => category?.name"
-                            />
-                        </ComboboxButton>
-
-                        <ComboboxOptions
-                            v-if="entriesCategory.length > 0"
-                            class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-44 sm:text-sm"
-                        >
-                            <ComboboxOption
-                                v-for="category in entriesCategory"
-                                :key="category.id?.toString()"
-                                :value="category"
-                                as="category"
-                                v-slot="{ active, selected }"
-                            >
-                                <li
-                                    :class="[
-                                        'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
-                                        active ? 'bg-primary-500' : '',
-                                    ]"
-                                >
-                                    <span :class="['block truncate', selected && 'font-semibold']">
-                                        {{ category.name }}
-                                    </span>
-
-                                    <span
-                                        v-if="selected"
-                                        :class="[
-                                            active ? 'text-neutral' : 'text-primary-500',
-                                            'absolute inset-y-0 left-0 flex items-center pl-1.5',
-                                        ]"
-                                    >
-                                        <CheckIcon class="w-5 h-5" aria-hidden="true" />
-                                    </span>
-                                </li>
-                            </ComboboxOption>
-                        </ComboboxOptions>
-                    </div>
-                </Combobox>
-            </div>
-            <div class="flex-1">
-                <label for="name" class="block font-medium text-sm">
-                    {{ $t('common.state') }}
-                </label>
-                <input
-                    v-model="doc.state"
+                <VeeField
+                    name="title"
                     type="text"
-                    name="state"
-                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                    :placeholder="`${$t('common.document', 1)} ${$t('common.state')}`"
+                    :placeholder="$t('common.title')"
+                    :label="$t('common.title')"
+                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-3xl sm:leading-6"
                     :disabled="!canEdit"
                 />
+                <VeeErrorMessage name="title" as="p" class="mt-2 text-sm text-error-400" />
             </div>
-            <div class="flex-1">
-                <label for="closed" class="block font-medium text-sm"> {{ $t('common.close', 2) }}? </label>
-                <Listbox as="div" v-model="doc.closed">
-                    <div class="relative">
-                        <ListboxButton
-                            :disabled="!canEdit"
-                            class="block pl-3 text-left w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                        >
-                            <span class="block truncate">{{
-                                openclose.find((e) => e.closed === doc.closed.closed)?.label
-                            }}</span>
-                            <span class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
-                                <ChevronDownIcon class="w-5 h-5 text-gray-400" aria-hidden="true" />
-                            </span>
-                        </ListboxButton>
+            <div class="flex flex-row gap-2">
+                <div class="flex-1">
+                    <label for="category" class="block font-medium text-sm">
+                        {{ $t('common.category') }}
+                    </label>
+                    <Combobox as="div" v-model="selectedCategory" :disabled="!canEdit" nullable>
+                        <div class="relative">
+                            <ComboboxButton as="div">
+                                <ComboboxInput
+                                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                    @change="queryCategory = $event.target.value"
+                                    :display-value="(category: any) => category?.name"
+                                />
+                            </ComboboxButton>
 
-                        <transition
-                            leave-active-class="transition duration-100 ease-in"
-                            leave-from-class="opacity-100"
-                            leave-to-class="opacity-0"
-                        >
-                            <ListboxOptions
+                            <ComboboxOptions
+                                v-if="entriesCategory.length > 0"
                                 class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-44 sm:text-sm"
                             >
-                                <ListboxOption
-                                    as="template"
-                                    v-for="st in openclose"
-                                    :key="st.id?.toString()"
-                                    :value="st"
+                                <ComboboxOption
+                                    v-for="category in entriesCategory"
+                                    :key="category.id?.toString()"
+                                    :value="category"
+                                    as="category"
                                     v-slot="{ active, selected }"
                                 >
                                     <li
                                         :class="[
+                                            'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
                                             active ? 'bg-primary-500' : '',
-                                            'text-neutral relative cursor-default select-none py-2 pl-8 pr-4',
                                         ]"
                                     >
-                                        <span :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']">{{
-                                            st.label
-                                        }}</span>
+                                        <span :class="['block truncate', selected && 'font-semibold']">
+                                            {{ category.name }}
+                                        </span>
 
                                         <span
                                             v-if="selected"
@@ -889,109 +856,182 @@ watchOnce(quillEditorRef, () => {
                                             <CheckIcon class="w-5 h-5" aria-hidden="true" />
                                         </span>
                                     </li>
-                                </ListboxOption>
-                            </ListboxOptions>
-                        </transition>
+                                </ComboboxOption>
+                            </ComboboxOptions>
+                        </div>
+                    </Combobox>
+                </div>
+                <div class="flex-1">
+                    <label for="state" class="block font-medium text-sm">
+                        {{ $t('common.state') }}
+                    </label>
+                    <VeeField
+                        name="state"
+                        type="text"
+                        class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                        :placeholder="`${$t('common.document', 1)} ${$t('common.state')}`"
+                        :label="`${$t('common.document', 1)} ${$t('common.state')}`"
+                        :disabled="!canEdit"
+                    />
+                    <VeeErrorMessage name="state" as="p" class="mt-2 text-sm text-error-400" />
+                </div>
+                <div class="flex-1">
+                    <label for="closed" class="block font-medium text-sm"> {{ $t('common.close', 2) }}? </label>
+                    <Listbox as="div" v-model="doc.closed">
+                        <div class="relative">
+                            <ListboxButton
+                                :disabled="!canEdit"
+                                class="block pl-3 text-left w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                            >
+                                <span class="block truncate">{{
+                                    openclose.find((e) => e.closed === doc.closed.closed)?.label
+                                }}</span>
+                                <span class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+                                    <ChevronDownIcon class="w-5 h-5 text-gray-400" aria-hidden="true" />
+                                </span>
+                            </ListboxButton>
+
+                            <transition
+                                leave-active-class="transition duration-100 ease-in"
+                                leave-from-class="opacity-100"
+                                leave-to-class="opacity-0"
+                            >
+                                <ListboxOptions
+                                    class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-44 sm:text-sm"
+                                >
+                                    <ListboxOption
+                                        as="template"
+                                        v-for="st in openclose"
+                                        :key="st.closed?.toString()"
+                                        :value="st.closed"
+                                        v-slot="{ active, selected }"
+                                    >
+                                        <li
+                                            :class="[
+                                                active ? 'bg-primary-500' : '',
+                                                'text-neutral relative cursor-default select-none py-2 pl-8 pr-4',
+                                            ]"
+                                        >
+                                            <span :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']">{{
+                                                st.label
+                                            }}</span>
+
+                                            <span
+                                                v-if="selected"
+                                                :class="[
+                                                    active ? 'text-neutral' : 'text-primary-500',
+                                                    'absolute inset-y-0 left-0 flex items-center pl-1.5',
+                                                ]"
+                                            >
+                                                <CheckIcon class="w-5 h-5" aria-hidden="true" />
+                                            </span>
+                                        </li>
+                                    </ListboxOption>
+                                </ListboxOptions>
+                            </transition>
+                        </div>
+                    </Listbox>
+                </div>
+            </div>
+        </div>
+        <div class="bg-neutral">
+            <QuillEditor
+                ref="quillEditorRef"
+                v-model:content="doc.content"
+                content-type="html"
+                :toolbar="toolbarOptions"
+                :modules="modules"
+                :options="options"
+            />
+            <div class="grid grid-cols-2 text-base text-gray-600 h-7 mx-2">
+                <div class="self-end flex flex-items items-center">
+                    <template v-if="saving">
+                        <ContentSaveIcon class="w-6 h-auto mr-2 animate-spin" />
+                        {{ $t('common.save', 2) }}...
+                    </template>
+                </div>
+                <div class="text-end">
+                    {{ $t('common.char', 2) }}: {{ stats.chars }}, {{ $t('common.word', 2) }}: {{ stats.words }}
+                </div>
+            </div>
+        </div>
+        <div class="flex flex-row">
+            <div class="flex-1 inline-flex rounded-md shadow-sm" role="group">
+                <button
+                    type="button"
+                    :disabled="!canEdit"
+                    class="inline-flex justify-center rounded-bl-md bg-primary-500 py-2.5 px-3.5 w-full text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
+                    @click="relationManagerShow = true"
+                >
+                    <div class="flex justify-center">
+                        <AccountMultipleIcon
+                            class="text-base-300 group-hover:text-base-200 -ml-0.5 mr-2 h-5 w-5 transition-colors"
+                            aria-hidden="true"
+                        />
+                        {{ $t('common.citizen', 1) }} {{ $t('common.relation', 2) }}
                     </div>
-                </Listbox>
+                </button>
+                <button
+                    type="button"
+                    :disabled="!canEdit"
+                    class="inline-flex justify-center rounded-br-md bg-primary-500 py-2.5 px-3.5 w-full text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
+                    @click="referenceManagerShow = true"
+                >
+                    <div class="flex justify-center">
+                        <FileDocumentIcon
+                            class="text-base-300 group-hover:text-base-200 -ml-0.5 mr-2 h-5 w-5 transition-colors"
+                            aria-hidden="true"
+                        />
+                        {{ $t('common.document', 1) }} {{ $t('common.reference', 2) }}
+                    </div>
+                </button>
             </div>
         </div>
-    </div>
-    <div class="bg-neutral">
-        <QuillEditor
-            ref="quillEditorRef"
-            v-model:content="doc.content"
-            content-type="html"
-            :toolbar="toolbarOptions"
-            :modules="modules"
-            :options="options"
-        />
-        <div class="grid grid-cols-2 text-base text-gray-600 h-7 mx-2">
-            <div class="self-end flex flex-items items-center">
-                <template v-if="saving">
-                    <ContentSaveIcon class="w-6 h-auto mr-2 animate-spin" />
-                    {{ $t('common.save', 2) }}...
-                </template>
-            </div>
-            <div class="text-end">
-                {{ $t('common.char', 2) }}: {{ stats.chars }}, {{ $t('common.word', 2) }}: {{ stats.words }}
-            </div>
-        </div>
-    </div>
-    <div class="flex flex-row">
-        <div class="flex-1 inline-flex rounded-md shadow-sm" role="group">
+        <div class="my-3">
+            <h2 class="text-neutral">
+                {{ $t('common.access') }}
+            </h2>
+            <AccessEntry
+                v-for="entry in access.values()"
+                :key="entry.id?.toString()"
+                :init="entry"
+                :access-types="accessTypes"
+                @typeChange="updateAccessEntryType($event)"
+                @nameChange="updateAccessEntryName($event)"
+                @rankChange="updateAccessEntryRank($event)"
+                @accessChange="updateAccessEntryAccess($event)"
+                @deleteRequest="removeAccessEntry($event)"
+            />
             <button
                 type="button"
                 :disabled="!canEdit"
-                class="inline-flex justify-center rounded-bl-md bg-primary-500 py-2.5 px-3.5 w-full text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
-                @click="relationManagerShow = true"
+                class="p-2 rounded-full bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
+                data-te-toggle="tooltip"
+                :title="$t('components.documents.document_editor.add_permission')"
+                @click="addAccessEntry()"
             >
-                <div class="flex justify-center">
-                    <AccountMultipleIcon
-                        class="text-base-300 group-hover:text-base-200 -ml-0.5 mr-2 h-5 w-5 transition-colors"
-                        aria-hidden="true"
-                    />
-                    {{ $t('common.citizen', 1) }} {{ $t('common.relation', 2) }}
-                </div>
-            </button>
-            <button
-                type="button"
-                :disabled="!canEdit"
-                class="inline-flex justify-center rounded-br-md bg-primary-500 py-2.5 px-3.5 w-full text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
-                @click="referenceManagerShow = true"
-            >
-                <div class="flex justify-center">
-                    <FileDocumentIcon
-                        class="text-base-300 group-hover:text-base-200 -ml-0.5 mr-2 h-5 w-5 transition-colors"
-                        aria-hidden="true"
-                    />
-                    {{ $t('common.document', 1) }} {{ $t('common.reference', 2) }}
-                </div>
+                <PlusIcon class="w-5 h-5" aria-hidden="true" />
             </button>
         </div>
-    </div>
-    <div class="my-3">
-        <h2 class="text-neutral">
-            {{ $t('common.access') }}
-        </h2>
-        <AccessEntry
-            v-for="entry in access.values()"
-            :key="entry.id?.toString()"
-            :init="entry"
-            :access-types="accessTypes"
-            @typeChange="updateAccessEntryType($event)"
-            @nameChange="updateAccessEntryName($event)"
-            @rankChange="updateAccessEntryRank($event)"
-            @accessChange="updateAccessEntryAccess($event)"
-            @deleteRequest="removeAccessEntry($event)"
-        />
-        <button
-            type="button"
-            :disabled="!canEdit"
-            class="p-2 rounded-full bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
-            data-te-toggle="tooltip"
-            :title="$t('components.documents.document_editor.add_permission')"
-            @click="addAccessEntry()"
-        >
-            <PlusIcon class="w-5 h-5" aria-hidden="true" />
-        </button>
-    </div>
-    <div class="flex pb-14">
-        <button
-            v-if="!props.id?.toString()"
-            @click="submitForm()"
-            :disabled="!canEdit"
-            class="rounded-md bg-primary-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-primary-400"
-        >
-            {{ t('common.create') }}
-        </button>
-        <button
-            v-if="props.id?.toString()"
-            @click="editForm()"
-            :disabled="!canEdit"
-            class="flex-1 rounded-md bg-primary-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-primary-400"
-        >
-            {{ $t('common.save') }}
-        </button>
-    </div>
+        <div class="flex pb-14">
+            <button
+                v-if="!props.id?.toString()"
+                type="submit"
+                :disabled="!meta.valid || !canEdit"
+                class="rounded-md py-2.5 px-3.5 text-sm font-semibold text-neutral"
+                :class="[
+                    !canEdit || !meta.valid
+                        ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
+                        : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
+                ]"
+            >
+                <span v-if="!props.id">
+                    {{ t('common.create') }}
+                </span>
+                <span v-else>
+                    {{ $t('common.save') }}
+                </span>
+            </button>
+        </div>
+    </form>
 </template>

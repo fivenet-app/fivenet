@@ -370,6 +370,9 @@ export const useCentrumStore = defineStore('centrum', {
                     return false;
             }
         },
+        async cleanup(): Promise<void> {
+            // TODO remove old dispatches
+        },
     },
 });
 

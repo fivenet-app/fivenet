@@ -51,27 +51,31 @@ export interface Template {
      */
     content: string; // @gotags: alias:"content"
     /**
-     * @generated from protobuf field: resources.documents.TemplateSchema schema = 10;
+     * @generated from protobuf field: string state = 10;
+     */
+    state: string; // @gotags: alias:"state"
+    /**
+     * @generated from protobuf field: resources.documents.TemplateSchema schema = 11;
      */
     schema?: TemplateSchema; // @gotags: alias:"schema"
     /**
-     * @generated from protobuf field: optional int32 creator_id = 11;
+     * @generated from protobuf field: optional int32 creator_id = 12;
      */
     creatorId?: number; // @gotags: alias:"creator_id"
     /**
-     * @generated from protobuf field: optional resources.users.UserShort creator = 12;
+     * @generated from protobuf field: optional resources.users.UserShort creator = 13;
      */
     creator?: UserShort;
     /**
-     * @generated from protobuf field: optional string job = 13;
+     * @generated from protobuf field: optional string job = 14;
      */
     job?: string; // @gotags: alias:"job"
     /**
-     * @generated from protobuf field: repeated resources.documents.TemplateJobAccess job_access = 14;
+     * @generated from protobuf field: repeated resources.documents.TemplateJobAccess job_access = 15;
      */
     jobAccess: TemplateJobAccess[];
     /**
-     * @generated from protobuf field: resources.documents.DocumentAccess content_access = 15;
+     * @generated from protobuf field: resources.documents.DocumentAccess content_access = 16;
      */
     contentAccess?: DocumentAccess; // @gotags: alias:"access"
 }
@@ -242,12 +246,13 @@ class Template$Type extends MessageType<Template> {
             { no: 7, name: "description", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
             { no: 8, name: "content_title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxBytes: "21845" } } } },
             { no: 9, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "0", maxBytes: "1500000" } } } },
-            { no: 10, name: "schema", kind: "message", T: () => TemplateSchema },
-            { no: 11, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
-            { no: 12, name: "creator", kind: "message", T: () => UserShort },
-            { no: 13, name: "job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
-            { no: 14, name: "job_access", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => TemplateJobAccess },
-            { no: 15, name: "content_access", kind: "message", T: () => DocumentAccess }
+            { no: 10, name: "state", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "24" } } } },
+            { no: 11, name: "schema", kind: "message", T: () => TemplateSchema },
+            { no: 12, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 13, name: "creator", kind: "message", T: () => UserShort },
+            { no: 14, name: "job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
+            { no: 15, name: "job_access", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => TemplateJobAccess },
+            { no: 16, name: "content_access", kind: "message", T: () => DocumentAccess }
         ]);
     }
 }

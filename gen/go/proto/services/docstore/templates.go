@@ -96,6 +96,7 @@ func (s *Server) GetTemplate(ctx context.Context, req *GetTemplateRequest) (*Get
 			tDTemplates.Description,
 			tDTemplates.ContentTitle,
 			tDTemplates.Content,
+			tDTemplates.State,
 			tDTemplates.Access,
 			tDTemplates.Schema,
 			tDTemplates.CreatorID,
@@ -129,7 +130,7 @@ func (s *Server) GetTemplate(ctx context.Context, req *GetTemplateRequest) (*Get
 			return nil, err
 		}
 
-		resp.Template.ContentTitle, resp.Template.Content, err = s.renderTemplate(resp.Template, data)
+		resp.Template.ContentTitle, resp.Template.State, resp.Template.Content, err = s.renderTemplate(resp.Template, data)
 		if err != nil {
 			return nil, err
 		}
@@ -140,9 +141,9 @@ func (s *Server) GetTemplate(ctx context.Context, req *GetTemplateRequest) (*Get
 	return resp, nil
 }
 
-func (s *Server) renderTemplate(docTmpl *documents.Template, data map[string]interface{}) (outTile string, out string, err error) {
+func (s *Server) renderTemplate(docTmpl *documents.Template, data map[string]interface{}) (outTile string, outState string, out string, err error) {
 	// Render Title template
-	tmplTitle, err := template.
+	titleTpl, err := template.
 		New("title").
 		Funcs(sprig.FuncMap()).
 		Parse(docTmpl.ContentTitle)
@@ -150,14 +151,30 @@ func (s *Server) renderTemplate(docTmpl *documents.Template, data map[string]int
 		return
 	}
 	buf := &bytes.Buffer{}
-	err = tmplTitle.Execute(buf, data)
+	err = titleTpl.Execute(buf, data)
 	if err != nil {
 		return
 	}
 	outTile = buf.String()
 
-	// Render Content Template
-	tmpl, err := template.
+	// Render State template
+	stateTpl, err := template.
+		New("state").
+		Funcs(sprig.FuncMap()).
+		Parse(docTmpl.State)
+	if err != nil {
+		return
+	}
+
+	buf.Reset()
+	err = stateTpl.Execute(buf, data)
+	if err != nil {
+		return
+	}
+	outState = buf.String()
+
+	// Render Content template
+	contentTpl, err := template.
 		New("content").
 		Funcs(sprig.FuncMap()).
 		Parse(docTmpl.Content)
@@ -166,7 +183,7 @@ func (s *Server) renderTemplate(docTmpl *documents.Template, data map[string]int
 	}
 
 	buf.Reset()
-	err = tmpl.Execute(buf, data)
+	err = contentTpl.Execute(buf, data)
 	if err != nil {
 		return
 	}
@@ -217,6 +234,7 @@ func (s *Server) CreateTemplate(ctx context.Context, req *CreateTemplateRequest)
 			tDTemplates.Description,
 			tDTemplates.ContentTitle,
 			tDTemplates.Content,
+			tDTemplates.State,
 			tDTemplates.Access,
 			tDTemplates.Schema,
 			tDTemplates.CreatorID,
@@ -229,6 +247,7 @@ func (s *Server) CreateTemplate(ctx context.Context, req *CreateTemplateRequest)
 			req.Template.Description,
 			req.Template.ContentTitle,
 			req.Template.Content,
+			req.Template.State,
 			req.Template.ContentAccess,
 			req.Template.Schema,
 			userInfo.UserId,
@@ -309,6 +328,7 @@ func (s *Server) UpdateTemplate(ctx context.Context, req *UpdateTemplateRequest)
 			tDTemplates.Description,
 			tDTemplates.ContentTitle,
 			tDTemplates.Content,
+			tDTemplates.State,
 			tDTemplates.Access,
 			tDTemplates.Schema,
 		).
@@ -319,6 +339,7 @@ func (s *Server) UpdateTemplate(ctx context.Context, req *UpdateTemplateRequest)
 			req.Template.Description,
 			req.Template.ContentTitle,
 			req.Template.Content,
+			req.Template.State,
 			req.Template.ContentAccess,
 			req.Template.Schema,
 		).

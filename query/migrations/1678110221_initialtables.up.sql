@@ -42,6 +42,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents_templates` (
   `description` longtext NOT NULL,
   `content_title` longtext NOT NULL,
   `content` longtext NOT NULL,
+  `state` varchar(24) NOT NULL,
   `access` longtext DEFAULT NULL,
   `schema` longtext DEFAULT NULL,
   `creator_id` int(11) DEFAULT NULL,

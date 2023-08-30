@@ -28,12 +28,13 @@ message Template {
     min_len: 0,
     max_bytes: 1500000
   }]; // @gotags: alias:"content"
-  resources.documents.TemplateSchema schema = 10; // @gotags: alias:"schema"
-  optional int32 creator_id = 11; // @gotags: alias:"creator_id"
-  optional resources.users.UserShort creator = 12;
-  optional string job = 13 [(validate.rules).string.max_len = 20]; // @gotags: alias:"job"
-  repeated TemplateJobAccess job_access = 14;
-  resources.documents.DocumentAccess content_access = 15; // @gotags: alias:"access"
+  string state = 10 [(validate.rules).string.max_len = 24]; // @gotags: alias:"state"
+  resources.documents.TemplateSchema schema = 11; // @gotags: alias:"schema"
+  optional int32 creator_id = 12; // @gotags: alias:"creator_id"
+  optional resources.users.UserShort creator = 13;
+  optional string job = 14 [(validate.rules).string.max_len = 20]; // @gotags: alias:"job"
+  repeated TemplateJobAccess job_access = 15;
+  resources.documents.DocumentAccess content_access = 16; // @gotags: alias:"access"
 }
 
 message TemplateShort {

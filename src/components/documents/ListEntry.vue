@@ -13,7 +13,7 @@ defineProps<{
     <li
         :key="doc.id?.toString()"
         :class="[
-            doc.deletedAt ? 'hover:bg-warn-800 bg-warn-800' : 'hover:bg-base-800 bg-base-850',
+            doc.deletedAt ? 'hover:bg-warn-700 bg-warn-800' : 'hover:bg-base-700 bg-base-800',
             'flex-initial my-1 rounded-lg',
         ]"
     >

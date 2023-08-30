@@ -114,7 +114,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await updateCateg
                     >
                         <div>
                             <DialogPanel
-                                class="relative px-4 pt-5 pb-4 overflow-hidden text-left transition-all transform rounded-lg bg-base-850 text-neutral sm:my-8 sm:w-full sm:max-w-6xl sm:p-6"
+                                class="relative px-4 pt-5 pb-4 overflow-hidden text-left transition-all transform rounded-lg bg-base-800 text-neutral sm:my-8 sm:w-full sm:max-w-6xl sm:p-6"
                             >
                                 <div>
                                     <div>

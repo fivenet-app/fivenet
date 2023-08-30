@@ -27,6 +27,7 @@ type fivenetDocumentsTemplatesTable struct {
 	Description  mysql.ColumnString
 	ContentTitle mysql.ColumnString
 	Content      mysql.ColumnString
+	State        mysql.ColumnString
 	Access       mysql.ColumnString
 	Schema       mysql.ColumnString
 	CreatorID    mysql.ColumnInteger
@@ -81,12 +82,13 @@ func newFivenetDocumentsTemplatesTableImpl(schemaName, tableName, alias string) 
 		DescriptionColumn  = mysql.StringColumn("description")
 		ContentTitleColumn = mysql.StringColumn("content_title")
 		ContentColumn      = mysql.StringColumn("content")
+		StateColumn        = mysql.StringColumn("state")
 		AccessColumn       = mysql.StringColumn("access")
 		SchemaColumn       = mysql.StringColumn("schema")
 		CreatorIDColumn    = mysql.IntegerColumn("creator_id")
 		CreatorJobColumn   = mysql.StringColumn("creator_job")
-		allColumns         = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, WeightColumn, CategoryIDColumn, TitleColumn, DescriptionColumn, ContentTitleColumn, ContentColumn, AccessColumn, SchemaColumn, CreatorIDColumn, CreatorJobColumn}
-		mutableColumns     = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, WeightColumn, CategoryIDColumn, TitleColumn, DescriptionColumn, ContentTitleColumn, ContentColumn, AccessColumn, SchemaColumn, CreatorIDColumn, CreatorJobColumn}
+		allColumns         = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, WeightColumn, CategoryIDColumn, TitleColumn, DescriptionColumn, ContentTitleColumn, ContentColumn, StateColumn, AccessColumn, SchemaColumn, CreatorIDColumn, CreatorJobColumn}
+		mutableColumns     = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, WeightColumn, CategoryIDColumn, TitleColumn, DescriptionColumn, ContentTitleColumn, ContentColumn, StateColumn, AccessColumn, SchemaColumn, CreatorIDColumn, CreatorJobColumn}
 	)
 
 	return fivenetDocumentsTemplatesTable{
@@ -103,6 +105,7 @@ func newFivenetDocumentsTemplatesTableImpl(schemaName, tableName, alias string) 
 		Description:  DescriptionColumn,
 		ContentTitle: ContentTitleColumn,
 		Content:      ContentColumn,
+		State:        StateColumn,
 		Access:       AccessColumn,
 		Schema:       SchemaColumn,
 		CreatorID:    CreatorIDColumn,

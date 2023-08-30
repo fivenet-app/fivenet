@@ -154,7 +154,7 @@ onConfirm(async (id: bigint) => deleteDocument(id));
             :icon="FileSearchIcon"
             :message="$t('common.not_found', [$t('common.document', 2)])"
         />
-        <div v-else class="rounded-lg bg-base-850">
+        <div v-else class="rounded-lg bg-base-800">
             <div class="h-full px-4 py-6 sm:px-6 lg:px-8">
                 <div>
                     <div>

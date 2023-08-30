@@ -6,7 +6,7 @@ import { BellOutlineIcon } from 'mdi-vue3';
     <div class="relative flex-shrink-0">
         <NuxtLink
             :to="{ name: 'notifications' }"
-            class="flex text-sm rounded-full bg-base-850 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+            class="flex text-sm rounded-full bg-base-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
         >
             <span class="sr-only">{{ $t('components.partials.sidebar_notifications') }}</span>
             <BellOutlineIcon

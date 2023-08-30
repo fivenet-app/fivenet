@@ -41,6 +41,7 @@ interface FormData {
     description: string;
     contentTitle: string;
     content: string;
+    contentState: string;
 }
 
 const { handleSubmit, setValues, meta, validate } = useForm<FormData>({
@@ -50,6 +51,7 @@ const { handleSubmit, setValues, meta, validate } = useForm<FormData>({
         description: { required: true, min: 3, max: 255 },
         contentTitle: { required: true, min: 3, max: 2048 },
         content: { required: true, min: 3, max: 1500000 },
+        contentState: { required: false, min: 0, max: 2048 },
     },
     validateOnMount: true,
 });
@@ -300,6 +302,7 @@ async function createOrUpdateTemplate(values: FormData, templateId?: bigint): Pr
                 description: values.description,
                 contentTitle: values.contentTitle,
                 content: values.content,
+                state: values.contentState,
                 schema: {
                     requirements: tRequirements,
                 },
@@ -482,158 +485,190 @@ onMounted(async () => {
 <template>
     <div class="text-neutral">
         <form @submit="onSubmit">
-            <label for="content" class="block text-sm font-medium leading-6 text-gray-100">
-                {{ $t('common.template', 2) }} {{ $t('common.weight') }}
-            </label>
-            <div class="mt-2">
-                <VeeField
-                    type="number"
-                    name="weight"
-                    min="0"
-                    max="4294967295"
-                    :label="t('common.weight')"
-                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                />
-            </div>
-            <label for="title" class="block font-medium text-sm mt-2">
-                {{ $t('common.template') }} {{ $t('common.title') }}
-            </label>
             <div>
-                <VeeField
-                    as="textarea"
-                    rows="1"
-                    name="title"
-                    :label="t('common.title')"
-                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                />
-                <VeeErrorMessage name="title" as="p" class="mt-2 text-sm text-error-400" />
+                <label for="content" class="block text-sm font-medium leading-6 text-gray-100">
+                    {{ $t('common.template', 2) }} {{ $t('common.weight') }}
+                </label>
+                <div class="mt-2">
+                    <VeeField
+                        type="number"
+                        name="weight"
+                        min="0"
+                        max="4294967295"
+                        :label="t('common.weight')"
+                        class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                    />
+                </div>
             </div>
-            <label for="description" class="block font-medium text-sm mt-2">
-                {{ $t('common.template') }} {{ $t('common.description') }}
-            </label>
             <div>
-                <VeeField
-                    as="textarea"
-                    rows="4"
-                    name="description"
-                    :label="t('common.description')"
-                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                />
-                <VeeErrorMessage name="description" as="p" class="mt-2 text-sm text-error-400" />
+                <label for="title" class="block font-medium text-sm mt-2">
+                    {{ $t('common.template') }} {{ $t('common.title') }}
+                </label>
+                <div>
+                    <VeeField
+                        as="textarea"
+                        rows="1"
+                        name="title"
+                        :label="t('common.title')"
+                        class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                    />
+                    <VeeErrorMessage name="title" as="p" class="mt-2 text-sm text-error-400" />
+                </div>
             </div>
-            <div class="my-3">
-                <h2 class="text-neutral">{{ $t('common.template') }} {{ $t('common.access') }}</h2>
-                <AccessEntry
-                    v-for="entry in access.values()"
-                    :key="entry.id?.toString()"
-                    :init="entry"
-                    :access-types="accessTypes"
-                    :access-roles="[ACCESS_LEVEL.VIEW, ACCESS_LEVEL.EDIT]"
-                    @typeChange="updateAccessEntryType($event)"
-                    @nameChange="updateAccessEntryName($event)"
-                    @rankChange="updateAccessEntryRank($event)"
-                    @accessChange="updateAccessEntryAccess($event)"
-                    @deleteRequest="removeAccessEntry($event)"
-                />
-                <button
-                    type="button"
-                    class="p-2 rounded-full bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
-                    data-te-toggle="tooltip"
-                    :title="$t('components.documents.document_editor.add_permission')"
-                    @click="addAccessEntry()"
-                >
-                    <PlusIcon class="w-5 h-5" aria-hidden="true" />
-                </button>
-            </div>
-            <label for="contentTitle" class="block font-medium text-sm mt-2">
-                {{ $t('common.content') }} {{ $t('common.title') }}
-            </label>
             <div>
-                <VeeField
-                    as="textarea"
-                    rows="2"
-                    name="contentTitle"
-                    :label="t('common.title')"
-                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                />
-                <VeeErrorMessage name="contentTitle" as="p" class="mt-2 text-sm text-error-400" />
-                <p class="text-neutral">
-                    <NuxtLink :external="true" target="_blank" to="https://pkg.go.dev/html/template">
-                        Golang {{ $t('common.template') }}
-                    </NuxtLink>
-                </p>
+                <label for="description" class="block font-medium text-sm mt-2">
+                    {{ $t('common.template') }} {{ $t('common.description') }}
+                </label>
+                <div>
+                    <VeeField
+                        as="textarea"
+                        rows="4"
+                        name="description"
+                        :label="t('common.description')"
+                        class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                    />
+                    <VeeErrorMessage name="description" as="p" class="mt-2 text-sm text-error-400" />
+                </div>
             </div>
-            <label for="contentCategory" class="block font-medium text-sm mt-2">
-                {{ $t('common.category') }}
-            </label>
             <div>
-                <Combobox as="div" v-model="selectedCategory" nullable>
-                    <div class="relative">
-                        <ComboboxButton as="div">
-                            <ComboboxInput
-                                class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                @change="queryCategory = $event.target.value"
-                                :display-value="(category: any) => category?.name"
-                            />
-                        </ComboboxButton>
+                <div class="my-3">
+                    <h2 class="text-neutral">{{ $t('common.template') }} {{ $t('common.access') }}</h2>
+                    <AccessEntry
+                        v-for="entry in access.values()"
+                        :key="entry.id?.toString()"
+                        :init="entry"
+                        :access-types="accessTypes"
+                        :access-roles="[ACCESS_LEVEL.VIEW, ACCESS_LEVEL.EDIT]"
+                        @typeChange="updateAccessEntryType($event)"
+                        @nameChange="updateAccessEntryName($event)"
+                        @rankChange="updateAccessEntryRank($event)"
+                        @accessChange="updateAccessEntryAccess($event)"
+                        @deleteRequest="removeAccessEntry($event)"
+                    />
+                    <button
+                        type="button"
+                        class="p-2 rounded-full bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
+                        data-te-toggle="tooltip"
+                        :title="$t('components.documents.document_editor.add_permission')"
+                        @click="addAccessEntry()"
+                    >
+                        <PlusIcon class="w-5 h-5" aria-hidden="true" />
+                    </button>
+                </div>
+            </div>
+            <div>
+                <label for="contentTitle" class="block font-medium text-sm mt-2">
+                    {{ $t('common.content') }} {{ $t('common.title') }}
+                </label>
+                <div>
+                    <VeeField
+                        as="textarea"
+                        rows="2"
+                        name="contentTitle"
+                        :label="t('common.title')"
+                        class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                    />
+                    <VeeErrorMessage name="contentTitle" as="p" class="mt-2 text-sm text-error-400" />
+                    <p class="text-neutral">
+                        <NuxtLink :external="true" target="_blank" to="https://pkg.go.dev/html/template">
+                            Golang {{ $t('common.template') }}
+                        </NuxtLink>
+                    </p>
+                </div>
+            </div>
+            <div>
+                <label for="contentCategory" class="block font-medium text-sm mt-2">
+                    {{ $t('common.category') }}
+                </label>
+                <div>
+                    <Combobox as="div" v-model="selectedCategory" nullable>
+                        <div class="relative">
+                            <ComboboxButton as="div">
+                                <ComboboxInput
+                                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                    @change="queryCategory = $event.target.value"
+                                    :display-value="(category: any) => category?.name"
+                                />
+                            </ComboboxButton>
 
-                        <ComboboxOptions
-                            v-if="entriesCategory.length > 0"
-                            class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-44 sm:text-sm"
-                        >
-                            <ComboboxOption
-                                v-for="category in entriesCategory"
-                                :key="category.id?.toString()"
-                                :value="category"
-                                as="category"
-                                v-slot="{ active, selected }"
+                            <ComboboxOptions
+                                v-if="entriesCategory.length > 0"
+                                class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-44 sm:text-sm"
                             >
-                                <li
-                                    :class="[
-                                        'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
-                                        active ? 'bg-primary-500' : '',
-                                    ]"
+                                <ComboboxOption
+                                    v-for="category in entriesCategory"
+                                    :key="category.id?.toString()"
+                                    :value="category"
+                                    as="category"
+                                    v-slot="{ active, selected }"
                                 >
-                                    <span :class="['block truncate', selected && 'font-semibold']">
-                                        {{ category.name }}
-                                    </span>
-
-                                    <span
-                                        v-if="selected"
+                                    <li
                                         :class="[
-                                            active ? 'text-neutral' : 'text-primary-500',
-                                            'absolute inset-y-0 left-0 flex items-center pl-1.5',
+                                            'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
+                                            active ? 'bg-primary-500' : '',
                                         ]"
                                     >
-                                        <CheckIcon class="w-5 h-5" aria-hidden="true" />
-                                    </span>
-                                </li>
-                            </ComboboxOption>
-                        </ComboboxOptions>
-                    </div>
-                </Combobox>
-            </div>
-            <label for="content" class="block font-medium text-sm mt-2">
-                {{ $t('common.content') }} {{ $t('common.template') }}
-            </label>
-            <div>
-                <VeeField
-                    as="textarea"
-                    rows="6"
-                    name="content"
-                    :label="t('common.template')"
-                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                />
-                <VeeErrorMessage name="content" as="p" class="mt-2 text-sm text-error-400" />
-                <p class="text-neutral">
-                    <NuxtLink :external="true" target="_blank" to="https://pkg.go.dev/html/template">
-                        Golang {{ $t('common.template') }}
-                    </NuxtLink>
-                </p>
+                                        <span :class="['block truncate', selected && 'font-semibold']">
+                                            {{ category.name }}
+                                        </span>
+
+                                        <span
+                                            v-if="selected"
+                                            :class="[
+                                                active ? 'text-neutral' : 'text-primary-500',
+                                                'absolute inset-y-0 left-0 flex items-center pl-1.5',
+                                            ]"
+                                        >
+                                            <CheckIcon class="w-5 h-5" aria-hidden="true" />
+                                        </span>
+                                    </li>
+                                </ComboboxOption>
+                            </ComboboxOptions>
+                        </div>
+                    </Combobox>
+                </div>
             </div>
             <div>
-                <SchemaEditor v-model="schema" class="mt-2" />
+                <label for="contentState" class="block font-medium text-sm mt-2">
+                    {{ $t('common.content') }} {{ $t('common.state') }}
+                </label>
+                <div>
+                    <VeeField
+                        as="textarea"
+                        rows="2"
+                        name="contentState"
+                        :label="t('common.state')"
+                        class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                    />
+                    <VeeErrorMessage name="contentState" as="p" class="mt-2 text-sm text-error-400" />
+                    <p class="text-neutral">
+                        <NuxtLink :external="true" target="_blank" to="https://pkg.go.dev/html/template">
+                            Golang {{ $t('common.template') }}
+                        </NuxtLink>
+                    </p>
+                </div>
             </div>
+            <div>
+                <label for="content" class="block font-medium text-sm mt-2">
+                    {{ $t('common.content') }} {{ $t('common.template') }}
+                </label>
+                <div>
+                    <VeeField
+                        as="textarea"
+                        rows="6"
+                        name="content"
+                        :label="t('common.template')"
+                        class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                    />
+                    <VeeErrorMessage name="content" as="p" class="mt-2 text-sm text-error-400" />
+                    <p class="text-neutral">
+                        <NuxtLink :external="true" target="_blank" to="https://pkg.go.dev/html/template">
+                            Golang {{ $t('common.template') }}
+                        </NuxtLink>
+                    </p>
+                </div>
+            </div>
+            <SchemaEditor v-model="schema" class="mt-2" />
             <div class="my-3">
                 <h2 class="text-neutral">{{ $t('common.content') }} {{ $t('common.access') }}</h2>
                 <AccessEntry
@@ -657,18 +692,20 @@ onMounted(async () => {
                     <PlusIcon class="w-5 h-5" aria-hidden="true" />
                 </button>
             </div>
-            <button
-                type="submit"
-                class="mt-4 flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                :disabled="!meta.valid"
-                :class="[
-                    !meta.valid
-                        ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
-                        : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
-                ]"
-            >
-                {{ templateId ? $t('common.save') : $t('common.create') }}
-            </button>
+            <div>
+                <button
+                    type="submit"
+                    class="mt-4 flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                    :disabled="!meta.valid"
+                    :class="[
+                        !meta.valid
+                            ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
+                            : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
+                    ]"
+                >
+                    {{ templateId ? $t('common.save') : $t('common.create') }}
+                </button>
+            </div>
         </form>
     </div>
 </template>

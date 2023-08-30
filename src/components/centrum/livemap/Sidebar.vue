@@ -31,7 +31,7 @@ defineEmits<{
 }>();
 
 const centrumStore = useCentrumStore();
-const { ownDispatches, ownUnit, pendingDispatches } = storeToRefs(centrumStore);
+const { settings, ownDispatches, ownUnit, pendingDispatches } = storeToRefs(centrumStore);
 const { startStream, stopStream } = centrumStore;
 
 const actionsDispatch: {
@@ -86,6 +86,7 @@ const canStream = can('CentrumService.Stream');
     <Livemap>
         <template v-slot:default v-if="canStream">
             <DispatchesLayer
+                :show-all-dispatches="!settings.enabled"
                 @selected="
                     selectedDispatch = $event;
                     openDispatchDetails = true;
@@ -147,11 +148,11 @@ const canStream = can('CentrumService.Stream');
                                             type="button"
                                             class="text-white bg-info-700 hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-2 text-xs my-0.5"
                                         >
-                                            <span v-if="!ownUnit" class="flex w-full flex-col items-center">
+                                            <template v-if="!ownUnit" class="flex w-full flex-col items-center">
                                                 <InformationOutlineIcon class="h-5 w-5" aria-hidden="true" />
                                                 <span class="mt-2 truncate">{{ $t('common.no_own_unit') }}</span>
-                                            </span>
-                                            <span v-else class="truncate">{{ $t('common.leave_unit') }}</span>
+                                            </template>
+                                            <template v-else class="truncate">{{ $t('common.leave_unit') }}</template>
                                         </button>
 
                                         <JoinUnit

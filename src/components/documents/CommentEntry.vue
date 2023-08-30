@@ -73,7 +73,7 @@ onConfirm(async (id) => deleteComment(id));
 
     <li class="py-2">
         <div v-if="!editing" class="flex space-x-3">
-            <div :class="[comment.deletedAt ? 'bg-warn-800' : 'bg-base-850', 'flex-1 space-y-1']">
+            <div :class="[comment.deletedAt ? 'bg-warn-800' : 'bg-base-800', 'flex-1 space-y-1']">
                 <div class="flex items-center justify-between">
                     <NuxtLink
                         :to="{ name: 'citizens-id', params: { id: comment.creatorId! } }"

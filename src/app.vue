@@ -19,11 +19,11 @@ const route = useRoute();
 
 useHead({
     htmlAttrs: {
-        class: 'h-full bg-base-900',
+        class: 'h-full',
         lang: 'en',
     },
     bodyAttrs: {
-        class: 'h-full overflow-hidden',
+        class: 'bg-body-color h-full overflow-hidden',
     },
     titleTemplate: (title?: string) => {
         if (title?.includes('.')) {

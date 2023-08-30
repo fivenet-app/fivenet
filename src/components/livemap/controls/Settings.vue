@@ -5,7 +5,6 @@ import SettingsModal from './SettingsModal.vue';
 const open = ref(false);
 </script>
 
-<!-- TODO settings popup and gear icon for livemap -->
 <template>
     <SettingsModal :open="open" @close="open = false" />
 

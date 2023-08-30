@@ -462,7 +462,7 @@ const appVersion = activeChar ? ' v' + __APP_VERSION__ + (import.meta.env.DEV ? 
         <!-- Content area -->
         <div class="flex flex-col flex-1 overflow-hidden">
             <header class="w-full">
-                <div class="relative z-10 flex flex-shrink-0 h-16 bg-base-850">
+                <div class="relative z-10 flex flex-shrink-0 h-16 bg-base-800">
                     <button
                         type="button"
                         class="px-4 text-neutral focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500 md:hidden"
@@ -520,7 +520,7 @@ const appVersion = activeChar ? ' v' + __APP_VERSION__ + (import.meta.env.DEV ? 
                             <Menu as="div" class="relative flex-shrink-0">
                                 <div>
                                     <MenuButton
-                                        class="flex text-sm rounded-full bg-base-850 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+                                        class="flex text-sm rounded-full bg-base-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
                                     >
                                         <span class="sr-only">
                                             {{ $t('components.partials.sidebar.open_usermenu') }}
@@ -539,7 +539,7 @@ const appVersion = activeChar ? ' v' + __APP_VERSION__ + (import.meta.env.DEV ? 
                                     leave-to-class="transform scale-95 opacity-0"
                                 >
                                     <MenuItems
-                                        class="absolute right-0 w-48 py-1 mt-2 origin-top-right rounded-md shadow-float bg-base-850 ring-1 ring-base-100 ring-opacity-5 focus:outline-none z-40"
+                                        class="absolute right-0 w-48 py-1 mt-2 origin-top-right rounded-md shadow-float bg-base-800 ring-1 ring-base-100 ring-opacity-5 focus:outline-none z-40"
                                     >
                                         <MenuItem
                                             v-for="item in userNavigation.filter(

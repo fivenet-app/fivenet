@@ -8,6 +8,3 @@
         - [ ] Generally better formatting of the information
         - [ ] Translate Activity Feed items
     - [ ] Add more errors and translate them
-- [ ] Document Editor - src/components/documents/templates/Editor.vue
-    - [ ] Use vee-validate where possible
-- [ ] Dispatch Liste: Dispatch nach akzeptieren der Status wurde nicht aktualisiert - Potentially fixed

@@ -72,7 +72,7 @@ async function getTemplate(): Promise<Template> {
                     >
                         <div>
                             <DialogPanel
-                                class="relative px-4 pt-5 pb-4 overflow-hidden text-left transition-all transform rounded-lg bg-base-850 text-neutral sm:my-8 sm:w-full sm:w-screen sm:min-w-min sm:p-6"
+                                class="relative px-4 pt-5 pb-4 overflow-hidden text-left transition-all transform rounded-lg bg-base-800 text-neutral sm:my-8 sm:w-full sm:w-screen sm:min-w-min sm:p-6"
                             >
                                 <div>
                                     <div class="mt-3 text-center sm:mt-5">

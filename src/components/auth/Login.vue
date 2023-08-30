@@ -32,7 +32,7 @@ watch(accessToken, async (): Promise<NavigationFailure | TypedRouteFromName<'aut
 
 <template>
     <div class="max-w-lg w-full sm:w-[32rem] mx-auto">
-        <div class="px-4 py-8 rounded-lg bg-base-850 sm:px-10">
+        <div class="px-4 py-8 rounded-lg bg-base-800 sm:px-10">
             <img class="h-auto mx-auto mb-2 w-36" src="/images/logo.png" alt="FiveNet Logo" />
 
             <div v-if="forms.create">
