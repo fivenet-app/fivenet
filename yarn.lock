@@ -6330,9 +6330,9 @@ nth-check@^2.0.1, nth-check@^2.1.1:
     boolbase "^1.0.0"
 
 nuxi@^3.7.0, nuxi@^3.7.2:
-  version "3.7.2"
-  resolved "https://registry.yarnpkg.com/nuxi/-/nuxi-3.7.2.tgz#c140eedd9d39185e53280297c226591152076f75"
-  integrity sha512-WNczi4X5ms8v63BTlCH+ZZDPzoFI0/V5KW8an4Zv6qOngtONHALw1u6qvtcAqG2tuMDu8gdJuzxMZL2845Dbig==
+  version "3.7.3"
+  resolved "https://registry.yarnpkg.com/nuxi/-/nuxi-3.7.3.tgz#e979601b763cd9c57bec400c265e3879ac907aa4"
+  integrity sha512-Cg+ygRmhonE6PwAtDeKvKU/0VRqEyzmSSoJYfr0MzwIxQYrBSnLvw0z3UgJl/8MgFKjiZ5Y4wBUEiRsUw8O6uw==
   optionalDependencies:
     fsevents "~2.3.3"
 
