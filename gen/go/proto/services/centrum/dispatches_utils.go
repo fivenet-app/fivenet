@@ -114,6 +114,11 @@ func (s *Server) addDispatchStatus(ctx context.Context, tx qrm.DB, status *dispa
 }
 
 func (s *Server) updateDispatchStatus(ctx context.Context, job string, dsp *dispatch.Dispatch, in *dispatch.DispatchStatus) error {
+	// If the dispatch already has the status that should be set, don't update the status again
+	if dsp.Status != nil && dsp.Status.Status == in.Status {
+		return nil
+	}
+
 	tDispatchStatus := table.FivenetCentrumDispatchesStatus
 	stmt := tDispatchStatus.
 		INSERT(

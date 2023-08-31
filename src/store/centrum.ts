@@ -94,8 +94,7 @@ export const useCentrumStore = defineStore('centrum', {
             this.updateOwnUnit(unit);
         },
         updateOwnUnit(unit: Unit): void {
-            if (this.ownUnit === undefined) return;
-            if (unit.id !== this.ownUnit.id) return;
+            if (unit.id !== this.ownUnit?.id) return;
 
             this.ownUnit.id = unit.id;
             this.ownUnit.createdAt = unit.createdAt;
@@ -199,6 +198,7 @@ export const useCentrumStore = defineStore('centrum', {
                     }
                 }
             }
+
             this.handleDispatchAssignment(dispatch);
         },
         removeDispatch(id: bigint): void {
@@ -241,7 +241,7 @@ export const useCentrumStore = defineStore('centrum', {
             }
         },
         handleDispatchAssignment(dispatch: Dispatch): void {
-            if (!this.ownUnit) return;
+            if (this.ownUnit === undefined) return;
 
             if (
                 dispatch.status?.status === DISPATCH_STATUS.UNIT_UNASSIGNED ||
@@ -255,7 +255,7 @@ export const useCentrumStore = defineStore('centrum', {
                 if (assignment === undefined) return;
 
                 // When dispatch has expiration, it is a "pending" dispatch
-                if (assignment?.expiresAt) {
+                if (assignment?.expiresAt !== undefined) {
                     this.addOrUpdatePendingDispatch(dispatch);
                 } else {
                     this.removePendingDispatch(dispatch.id);
@@ -347,6 +347,8 @@ export const useCentrumStore = defineStore('centrum', {
                         if (idx === -1) {
                             // User has been removed from the unit
                             this.ownUnit = undefined;
+                            this.ownDispatches.length = 0;
+                            this.pendingDispatches.length = 0;
 
                             notifications.dispatchNotification({
                                 title: { key: 'notifications.centrum.unitAssigned.removed.title', parameters: [] },
@@ -354,9 +356,11 @@ export const useCentrumStore = defineStore('centrum', {
                                 type: 'success',
                             });
                         } else if (this.ownUnit !== undefined) {
-                            // User has been added to unit
-                            this.ownUnit = resp.change.unitAssigned;
+                            this.updateOwnUnit(resp.change.unitAssigned);
 
+                            if (this.ownUnit.id === resp.change.unitAssigned.id) return;
+
+                            // User has been newly added to unit
                             notifications.dispatchNotification({
                                 title: { key: 'notifications.centrum.unitAssigned.joined.title', parameters: [] },
                                 content: { key: 'notifications.centrum.unitAssigned.joined.content', parameters: [] },

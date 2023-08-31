@@ -18,7 +18,7 @@ import {
 import { DefineComponent } from 'vue';
 import { default as DispatchDetails } from '~/components/centrum/dispatches/Details.vue';
 import { default as DispatchStatusUpdateModal } from '~/components/centrum/dispatches/StatusUpdateModal.vue';
-import { dispatchStatusToBGColor } from '~/components/centrum/helpers';
+import { dispatchStatusToBGColor, unitStatusToBGColor } from '~/components/centrum/helpers';
 import { default as UnitDetails } from '~/components/centrum/units/Details.vue';
 import { default as UnitStatusUpdateModal } from '~/components/centrum/units/StatusUpdateModal.vue';
 import { useCentrumStore } from '~/store/centrum';
@@ -41,20 +41,6 @@ const { startStream, stopStream } = centrumStore;
 
 const notifications = useNotificationsStore();
 
-const actionsDispatch: {
-    icon: DefineComponent;
-    name: string;
-    action?: Function;
-    class?: string;
-    status?: DISPATCH_STATUS;
-}[] = [
-    { icon: markRaw(CarBackIcon), name: 'En Route', class: 'bg-info-600', status: DISPATCH_STATUS.EN_ROUTE },
-    { icon: markRaw(MarkerCheckIcon), name: 'On Scene', class: 'bg-primary-600', status: DISPATCH_STATUS.ON_SCENE },
-    { icon: markRaw(HelpCircleIcon), name: 'Need Assistance', class: 'bg-warn-600', status: DISPATCH_STATUS.NEED_ASSISTANCE },
-    { icon: markRaw(CheckBoldIcon), name: 'Completed', class: 'bg-success-600', status: DISPATCH_STATUS.COMPLETED },
-    { icon: markRaw(ListStatusIcon), name: 'components.centrum.update_dispatch_status.title', class: 'bg-base-800' },
-];
-
 const actionsUnit: {
     icon: DefineComponent;
     name: string;
@@ -62,11 +48,25 @@ const actionsUnit: {
     class?: string;
     status?: UNIT_STATUS;
 }[] = [
-    { icon: markRaw(CarBackIcon), name: 'Unavailable', class: 'bg-error-600', status: UNIT_STATUS.UNAVAILABLE },
-    { icon: markRaw(CalendarCheckIcon), name: 'Available', class: 'bg-success-600', status: UNIT_STATUS.AVAILABLE },
-    { icon: markRaw(CoffeeIcon), name: 'On Break', class: 'bg-warn-600', status: UNIT_STATUS.ON_BREAK },
-    { icon: markRaw(CalendarRemoveIcon), name: 'Busy', class: 'bg-info-600', status: UNIT_STATUS.BUSY },
+    { icon: markRaw(CarBackIcon), name: 'Unavailable', status: UNIT_STATUS.UNAVAILABLE },
+    { icon: markRaw(CalendarCheckIcon), name: 'Available', status: UNIT_STATUS.AVAILABLE },
+    { icon: markRaw(CoffeeIcon), name: 'On Break', status: UNIT_STATUS.ON_BREAK },
+    { icon: markRaw(CalendarRemoveIcon), name: 'Busy', status: UNIT_STATUS.BUSY },
     { icon: markRaw(ListStatusIcon), name: 'components.centrum.update_unit_status.title', class: 'bg-base-800' },
+];
+
+const actionsDispatch: {
+    icon: DefineComponent;
+    name: string;
+    action?: Function;
+    class?: string;
+    status?: DISPATCH_STATUS;
+}[] = [
+    { icon: markRaw(CarBackIcon), name: 'En Route', status: DISPATCH_STATUS.EN_ROUTE },
+    { icon: markRaw(MarkerCheckIcon), name: 'On Scene', status: DISPATCH_STATUS.ON_SCENE },
+    { icon: markRaw(HelpCircleIcon), name: 'Need Assistance', status: DISPATCH_STATUS.NEED_ASSISTANCE },
+    { icon: markRaw(CheckBoldIcon), name: 'Completed', status: DISPATCH_STATUS.COMPLETED },
+    { icon: markRaw(ListStatusIcon), name: 'components.centrum.update_dispatch_status.title', class: 'bg-base-800' },
 ];
 
 onBeforeMount(async () => setTimeout(async () => startStream(), 250));
@@ -197,7 +197,8 @@ async function updateUtStatus(id: bigint, status?: UNIT_STATUS): Promise<void> {
                                             <button
                                                 @click="openUnitDetails = true"
                                                 type="button"
-                                                class="text-white bg-info-700 hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-2 text-xs my-0.5"
+                                                class="text-white hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-2 text-xs my-0.5"
+                                                :class="unitStatusToBGColor(ownUnit.status?.status)"
                                             >
                                                 <InformationOutlineIcon class="h-5 w-5" aria-hidden="true" />
                                                 <span class="mt-2 truncate">{{ ownUnit.initials }}: {{ ownUnit.name }}</span>
@@ -275,6 +276,7 @@ async function updateUtStatus(id: bigint, status?: UNIT_STATUS): Promise<void> {
                                                                 class="text-white bg-primary hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-2 text-xs my-0.5"
                                                                 :class="[
                                                                     idx >= actionsUnit.length - 1 ? 'col-span-2' : '',
+                                                                    unitStatusToBGColor(item.status),
                                                                     item.class,
                                                                 ]"
                                                                 @click="updateUtStatus(ownUnit.id, item.status)"

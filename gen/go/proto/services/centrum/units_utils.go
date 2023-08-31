@@ -113,6 +113,11 @@ func (s *Server) getUnitIDForUserID(userId int32) (uint64, bool) {
 }
 
 func (s *Server) updateUnitStatus(ctx context.Context, job string, unit *dispatch.Unit, in *dispatch.UnitStatus) error {
+	// If the unit already has the status that should be set, don't update the status again
+	if unit.Status != nil && unit.Status.Status == in.Status {
+		return nil
+	}
+
 	tUnitStatus := table.FivenetCentrumUnitsStatus
 	stmt := tUnitStatus.
 		INSERT(

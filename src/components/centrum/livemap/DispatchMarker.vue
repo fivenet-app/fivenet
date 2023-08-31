@@ -19,8 +19,6 @@ const emits = defineEmits<{
     (e: 'selected', dsp: Dispatch): void;
 }>();
 
-const status = computed(() => props.dispatch.status?.status ?? 0);
-
 const iconAnchor: L.PointExpression | undefined = undefined;
 const popupAnchor: L.PointExpression = [0, (props.size / 2) * -1];
 
@@ -39,13 +37,16 @@ function selected(_: bigint | string) {
                     DSP-{{ props.dispatch.id }}
                 </span>
                 <BellIcon
-                    class="w-full h-full animate-wiggle"
-                    :class="[dispatchStatusAnimate(status) ? 'animate-wiggle' : '', dispatchStatusToFillColor(status)]"
+                    class="w-full h-full"
+                    :class="[
+                        dispatchStatusAnimate(props.dispatch.status?.status ?? 0) ? 'animate-wiggle' : '',
+                        dispatchStatusToFillColor(dispatch.status?.status ?? 0),
+                    ]"
                 />
                 <span
                     class="text-center rounded-md bg-white text-black border-2 border-black/20 bg-clip-padding hover:bg-[#f4f4f4] focus:outline-none inset-0"
                 >
-                    {{ $t(`enums.centrum.DISPATCH_STATUS.${DISPATCH_STATUS[status]}`) }}
+                    {{ $t(`enums.centrum.DISPATCH_STATUS.${DISPATCH_STATUS[dispatch.status?.status ?? 0]}`) }}
                 </span>
             </div>
         </LIcon>

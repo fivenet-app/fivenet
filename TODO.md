@@ -5,6 +5,7 @@
         - [ ] Updating their own dispatch status (needs permission checks)
         - [ ] Based on the dispatch center mode, allow assigning dispatches themselves or not
     - [ ] Activity Feed
-        - [ ] Generally better formatting of the information
         - [ ] Translate Activity Feed items
     - [ ] Add more errors and translate them
+    - [ ] Unit List
+        - [ ] "Ihre Einsätze" ist leer nach joinen einer Einheit

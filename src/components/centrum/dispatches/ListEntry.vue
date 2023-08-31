@@ -14,8 +14,6 @@ defineEmits<{
     (e: 'assignUnit', dsp: Dispatch): void;
     (e: 'status', dsp: Dispatch): void;
 }>();
-
-const status = computed(() => props.dispatch.status?.status ?? 0);
 </script>
 
 <template>
@@ -53,9 +51,12 @@ const status = computed(() => props.dispatch.status?.status ?? 0);
         <td class="whitespace-nowrap px-1 py-1 text-sm text-gray-300">
             <Time :value="dispatch.createdAt" type="compact" />
         </td>
-        <td class="whitespace-nowrap px-1 py-1 text-sm text-gray-100" :class="dispatchStatusToBGColor(status)">
-            <span :class="dispatchStatusAnimate(status) ? 'animate-pulse' : ''">
-                {{ $t(`enums.centrum.DISPATCH_STATUS.${DISPATCH_STATUS[status]}`) }}
+        <td
+            class="whitespace-nowrap px-1 py-1 text-sm text-gray-100"
+            :class="dispatchStatusToBGColor(props.dispatch.status?.status ?? 0)"
+        >
+            <span :class="dispatchStatusAnimate(props.dispatch.status?.status ?? 0) ? 'animate-pulse' : ''">
+                {{ $t(`enums.centrum.DISPATCH_STATUS.${DISPATCH_STATUS[props.dispatch.status?.status ?? 0]}`) }}
             </span>
         </td>
         <td class="whitespace-nowrap px-1 py-1 text-sm text-gray-300">
@@ -65,7 +66,7 @@ const status = computed(() => props.dispatch.status?.status ?? 0);
             </span>
         </td>
         <td class="whitespace-nowrap px-1 py-1 text-sm text-gray-300">
-            <span v-if="!dispatch.anon && dispatch.user"> {{ dispatch.user.firstname }}, {{ dispatch.user.lastname }} </span>
+            <span v-if="!dispatch.anon && dispatch.user">{{ dispatch.user.firstname }}, {{ dispatch.user.lastname }}</span>
             <span v-else-if="dispatch.anon">
                 {{ $t('common.anon') }}
             </span>

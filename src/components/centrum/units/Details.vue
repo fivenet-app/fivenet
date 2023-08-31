@@ -193,7 +193,7 @@ const openStatus = ref(false);
                                                                     <button
                                                                         v-if="can('CentrumService.TakeControl')"
                                                                         type="button"
-                                                                        @click="$emit('assignUsers', unit)"
+                                                                        @click="openAssign = true"
                                                                         class="flex flex-row items-center rounded bg-white/10 px-2 py-1 text-xs font-semibold text-white shadow-sm hover:bg-white/20"
                                                                     >
                                                                         <PencilIcon class="h-6 w-6" />
