@@ -600,7 +600,9 @@
         "marker": "Marker | Markers",
         "radius": "Radius",
         "opacity": "Opacity",
-        "char": "Character | Characters"
+        "char": "Character | Characters",
+        "self_assign": "Self Assign",
+        "expires_in": "Expires in"
     },
     "notifications": {
         "clipboard": {
