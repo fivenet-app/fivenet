@@ -240,6 +240,7 @@ func (s *Server) loadDispatches(ctx context.Context, id uint64) error {
 		)
 	}
 
+	tUsers := tUsers.AS("user")
 	stmt := tDispatch.
 		SELECT(
 			tDispatch.ID,
@@ -264,6 +265,9 @@ func (s *Server) loadDispatches(ctx context.Context, id uint64) error {
 			tUsers.Identifier,
 			tUsers.Firstname,
 			tUsers.Lastname,
+			tUsers.Dateofbirth,
+			tUsers.Sex,
+			tUsers.PhoneNumber,
 		).
 		FROM(
 			tDispatch.
@@ -292,7 +296,7 @@ func (s *Server) loadDispatches(ctx context.Context, id uint64) error {
 			return err
 		}
 
-		if dispatches[i].UserId != nil {
+		if dispatches[i].UserId != nil && dispatches[i].User == nil {
 			dispatches[i].User, err = s.resolveUserById(ctx, *dispatches[i].UserId)
 			if err != nil {
 				return err

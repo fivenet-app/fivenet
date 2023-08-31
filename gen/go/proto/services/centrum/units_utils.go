@@ -70,14 +70,14 @@ func (s *Server) getUnitStatusFromDB(ctx context.Context, id uint64) (*dispatch.
 
 	if dest.UserId != nil {
 		var err error
-		dest.User, err = s.resolveUserById(ctx, *dest.UserId)
+		dest.User, err = s.resolveUserShortById(ctx, *dest.UserId)
 		if err != nil {
 			return nil, err
 		}
 	}
 	if dest.CreatorId != nil {
 		var err error
-		dest.Creator, err = s.resolveUserById(ctx, *dest.CreatorId)
+		dest.Creator, err = s.resolveUserShortById(ctx, *dest.CreatorId)
 		if err != nil {
 			return nil, err
 		}
@@ -96,7 +96,7 @@ func (s *Server) resolveUsersForUnit(ctx context.Context, u []*dispatch.UnitAssi
 		return nil, nil
 	}
 
-	us, err := s.resolveUsersByIds(ctx, userIds)
+	us, err := s.resolveUserShortsByIds(ctx, userIds)
 	if err != nil {
 		return nil, err
 	}
@@ -262,7 +262,7 @@ func (s *Server) updateUnitAssignments(ctx context.Context, userInfo *userinfo.U
 			}
 		}
 
-		users, err := s.resolveUsersByIds(ctx, found)
+		users, err := s.resolveUserShortsByIds(ctx, found)
 		if err != nil {
 			return err
 		}

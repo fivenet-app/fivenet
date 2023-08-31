@@ -2,8 +2,9 @@
 // @generated from protobuf file "resources/dispatch/dispatches.proto" (package "resources.dispatch", syntax proto3)
 // tslint:disable
 import { MessageType } from "@protobuf-ts/runtime";
-import { Unit } from "./units.js";
 import { UserShort } from "../users/users.js";
+import { Unit } from "./units.js";
+import { User } from "../users/users.js";
 import { Timestamp } from "../timestamp/timestamp.js";
 /**
  * @generated from protobuf message resources.dispatch.Dispatch
@@ -60,9 +61,9 @@ export interface Dispatch {
      */
     userId?: number;
     /**
-     * @generated from protobuf field: optional resources.users.UserShort user = 14;
+     * @generated from protobuf field: optional resources.users.User user = 14;
      */
-    user?: UserShort;
+    user?: User;
     /**
      * @generated from protobuf field: repeated resources.dispatch.DispatchAssignment units = 15;
      */
@@ -237,7 +238,7 @@ class Dispatch$Type extends MessageType<Dispatch> {
             { no: 11, name: "y", kind: "scalar", T: 1 /*ScalarType.DOUBLE*/ },
             { no: 12, name: "anon", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
             { no: 13, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
-            { no: 14, name: "user", kind: "message", T: () => UserShort },
+            { no: 14, name: "user", kind: "message", T: () => User },
             { no: 15, name: "units", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => DispatchAssignment }
         ]);
     }

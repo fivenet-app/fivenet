@@ -66,9 +66,11 @@ defineEmits<{
             </span>
         </td>
         <td class="whitespace-nowrap px-1 py-1 text-sm text-gray-300">
-            <span v-if="!dispatch.anon && dispatch.user">{{ dispatch.user.firstname }}, {{ dispatch.user.lastname }}</span>
-            <span v-else-if="dispatch.anon">
+            <span v-if="dispatch.anon">
                 {{ $t('common.anon') }}
+            </span>
+            <span v-else-if="dispatch.user">
+                {{ dispatch.user.firstname }}, {{ dispatch.user.lastname }} ({{ dispatch.user.phoneNumber ?? 'N/A' }})
             </span>
             <span v-else>
                 {{ $t('common.unknown') }}

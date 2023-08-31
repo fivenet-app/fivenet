@@ -162,7 +162,7 @@ func (s *Server) watchForUserChanges() {
 				}
 
 				for _, userId := range event.Removed {
-					user, err := s.resolveUserById(ctx, userId)
+					user, err := s.resolveUserShortById(ctx, userId)
 					if err != nil {
 						s.logger.Error("failed to get user info from db", zap.Error(err))
 						continue

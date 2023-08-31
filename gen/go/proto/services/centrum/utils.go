@@ -17,8 +17,34 @@ var (
 	tCentrumSettings = table.FivenetCentrumSettings
 )
 
-func (s *Server) resolveUserById(ctx context.Context, u int32) (*users.UserShort, error) {
-	us, err := s.resolveUsersByIds(ctx, []int32{u})
+func (s *Server) resolveUserById(ctx context.Context, u int32) (*users.User, error) {
+	tUsers := tUsers.AS("user")
+	stmt := tUsers.
+		SELECT(
+			tUsers.ID,
+			tUsers.Identifier,
+			tUsers.Firstname,
+			tUsers.Lastname,
+			tUsers.Dateofbirth,
+			tUsers.Sex,
+			tUsers.PhoneNumber,
+		).
+		FROM(tUsers).
+		WHERE(
+			tUsers.ID.EQ(jet.Int32(u)),
+		).
+		LIMIT(1)
+
+	dest := users.User{}
+	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
+		return nil, err
+	}
+
+	return &dest, nil
+}
+
+func (s *Server) resolveUserShortById(ctx context.Context, u int32) (*users.UserShort, error) {
+	us, err := s.resolveUserShortsByIds(ctx, []int32{u})
 	if err != nil {
 		return nil, err
 	}
@@ -26,7 +52,7 @@ func (s *Server) resolveUserById(ctx context.Context, u int32) (*users.UserShort
 	return us[0], nil
 }
 
-func (s *Server) resolveUsersByIds(ctx context.Context, u []int32) ([]*users.UserShort, error) {
+func (s *Server) resolveUserShortsByIds(ctx context.Context, u []int32) ([]*users.UserShort, error) {
 	if len(u) == 0 {
 		return nil, nil
 	}

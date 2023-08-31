@@ -98,6 +98,51 @@ const openStatus = ref(false);
                                                     <dl class="border-b border-white/10 divide-y divide-white/10">
                                                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                                                             <dt class="text-sm font-medium leading-6 text-white">
+                                                                {{ $t('common.sent_by') }}
+                                                            </dt>
+                                                            <dd
+                                                                class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
+                                                            >
+                                                                <span v-if="dispatch.anon">
+                                                                    {{ $t('common.anon') }}
+                                                                </span>
+                                                                <NuxtLink
+                                                                    v-else-if="dispatch.user"
+                                                                    :to="{
+                                                                        name: 'citizens-id',
+                                                                        params: { id: dispatch.user?.userId ?? 0 },
+                                                                    }"
+                                                                    class="underline hover:text-neutral hover:transition-all"
+                                                                >
+                                                                    {{ dispatch.user?.firstname }}
+                                                                    {{ dispatch.user?.lastname }} ({{ $t('common.phone') }}:
+                                                                    {{ dispatch.user?.phoneNumber ?? 'N/A' }})
+                                                                </NuxtLink>
+                                                                <span v-else>
+                                                                    {{ $t('common.unknown') }}
+                                                                </span>
+                                                            </dd>
+                                                        </div>
+                                                        <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                                                            <dt class="text-sm font-medium leading-6 text-white">
+                                                                {{ $t('common.location') }}
+                                                            </dt>
+                                                            <dd
+                                                                class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
+                                                            >
+                                                                <button
+                                                                    v-if="dispatch.x && dispatch.y"
+                                                                    type="button"
+                                                                    class="text-primary-400 hover:text-primary-600"
+                                                                    @click="$emit('goto', { x: dispatch.x, y: dispatch.y })"
+                                                                >
+                                                                    {{ $t('common.go_to_location') }}
+                                                                </button>
+                                                                <span v-else>{{ $t('common.no_location') }}</span>
+                                                            </dd>
+                                                        </div>
+                                                        <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                                                            <dt class="text-sm font-medium leading-6 text-white">
                                                                 {{ $t('common.last_update') }}
                                                             </dt>
                                                             <dd
@@ -157,43 +202,6 @@ const openStatus = ref(false);
                                                                 class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
                                                             >
                                                                 {{ dispatch.status?.reason ?? 'N/A' }}
-                                                            </dd>
-                                                        </div>
-                                                        <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                                            <dt class="text-sm font-medium leading-6 text-white">
-                                                                {{ $t('common.location') }}
-                                                            </dt>
-                                                            <dd
-                                                                class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
-                                                            >
-                                                                <button
-                                                                    v-if="dispatch.x && dispatch.y"
-                                                                    type="button"
-                                                                    class="text-primary-400 hover:text-primary-600"
-                                                                    @click="$emit('goto', { x: dispatch.x, y: dispatch.y })"
-                                                                >
-                                                                    {{ $t('common.go_to_location') }}
-                                                                </button>
-                                                                <span v-else>{{ $t('common.no_location') }}</span>
-                                                            </dd>
-                                                        </div>
-                                                        <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                                            <dt class="text-sm font-medium leading-6 text-white">
-                                                                {{ $t('common.sent_by') }}
-                                                            </dt>
-                                                            <dd
-                                                                class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
-                                                            >
-                                                                <NuxtLink
-                                                                    :to="{
-                                                                        name: 'citizens-id',
-                                                                        params: { id: dispatch.status?.user?.userId ?? 0 },
-                                                                    }"
-                                                                    class="underline hover:text-neutral hover:transition-all"
-                                                                >
-                                                                    {{ dispatch.status?.user?.firstname }}
-                                                                    {{ dispatch.status?.user?.lastname }}
-                                                                </NuxtLink>
                                                             </dd>
                                                         </div>
                                                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">

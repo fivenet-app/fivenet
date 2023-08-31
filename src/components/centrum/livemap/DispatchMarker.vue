@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { LIcon, LMarker, LPopup } from '@vue-leaflet/vue-leaflet';
 import { BellIcon } from 'mdi-vue3';
-import { dispatchStatusAnimate, dispatchStatusToFillColor } from '~/components/centrum/helpers';
+import { dispatchStatusAnimate, dispatchStatusToBGColor, dispatchStatusToFillColor } from '~/components/centrum/helpers';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import { DISPATCH_STATUS, Dispatch } from '~~/gen/ts/resources/dispatch/dispatches';
 
@@ -43,16 +43,17 @@ function selected(_: bigint | string) {
                         dispatchStatusToFillColor(dispatch.status?.status ?? 0),
                     ]"
                 />
-                <span
-                    class="text-center rounded-md bg-white text-black border-2 border-black/20 bg-clip-padding hover:bg-[#f4f4f4] focus:outline-none inset-0"
-                >
-                    {{ $t(`enums.centrum.DISPATCH_STATUS.${DISPATCH_STATUS[dispatch.status?.status ?? 0]}`) }}
-                </span>
             </div>
         </LIcon>
         <LPopup :options="{ closeButton: true }">
             <IDCopyBadge class="mb-1" prefix="DSP" :id="dispatch.id" :action="selected" />
             <ul>
+                <li>
+                    {{ $t('common.status') }}:
+                    <span :class="dispatchStatusToBGColor(dispatch.status?.status ?? 0)">
+                        {{ $t(`enums.centrum.DISPATCH_STATUS.${DISPATCH_STATUS[dispatch.status?.status ?? 0]}`) }}
+                    </span>
+                </li>
                 <li>{{ $t('common.message') }}: {{ dispatch!.message }}</li>
                 <li>{{ $t('common.description') }}: {{ dispatch!.description ?? 'N/A' }}</li>
                 <li>{{ $t('common.sent_at') }}: {{ useLocaleTimeAgo(toDate(dispatch!.createdAt)!).value }}</li>
