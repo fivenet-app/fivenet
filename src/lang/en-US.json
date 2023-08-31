@@ -889,8 +889,8 @@
             },
             "UNIT_STATUS": {
                 "UNKNOWN": "Unknown",
-                "USER_ADDED": "User added",
-                "USER_REMOVED": "User removed",
+                "USER_ADDED": "Member added",
+                "USER_REMOVED": "Member removed",
                 "UNAVAILABLE": "Unavailable",
                 "AVAILABLE": "Available",
                 "ON_BREAK": "On Break",

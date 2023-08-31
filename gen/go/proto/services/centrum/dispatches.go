@@ -354,6 +354,8 @@ func (s *Server) TakeDispatch(ctx context.Context, req *TakeDispatchRequest) (*T
 				Unit:       unit,
 				CreatedAt:  timestamp.Now(),
 			})
+
+			// TODO set unit status to be busy if accepted a dispatch
 		}
 
 		if err := s.updateDispatchStatus(ctx, userInfo.Job, dsp, &dispatch.DispatchStatus{

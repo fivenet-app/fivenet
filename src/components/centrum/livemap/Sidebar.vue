@@ -20,6 +20,7 @@ import { default as DispatchDetails } from '~/components/centrum/dispatches/Deta
 import { default as DispatchStatusUpdateModal } from '~/components/centrum/dispatches/StatusUpdateModal.vue';
 import { dispatchStatusToBGColor } from '~/components/centrum/helpers';
 import { default as UnitDetails } from '~/components/centrum/units/Details.vue';
+import { default as UnitStatusUpdateModal } from '~/components/centrum/units/StatusUpdateModal.vue';
 import { useCentrumStore } from '~/store/centrum';
 import { useNotificationsStore } from '~/store/notifications';
 import { DISPATCH_STATUS, Dispatch } from '~~/gen/ts/resources/dispatch/dispatches';
@@ -79,7 +80,6 @@ const openDispatchDetails = ref(false);
 const openDispatchStatus = ref(false);
 const openTakeDispatch = ref(false);
 
-const unitStatusSelected = ref<UNIT_STATUS | undefined>();
 const openUnitDetails = ref(false);
 const openUnitStatus = ref(false);
 
@@ -118,6 +118,37 @@ async function updateDspStatus(dispatchId?: bigint, status?: DISPATCH_STATUS): P
     }
 
     updateDispatchStatus(dispatchId, status);
+    notifications.dispatchNotification({
+        title: { key: 'notifications.centrum.sidebar.dispatch_status_updated.title', parameters: [] },
+        content: { key: 'notifications.centrum.sidebar.dispatch_status_updated.content', parameters: [] },
+        type: 'success',
+    });
+}
+
+async function updateUnitStatus(id: bigint, status: UNIT_STATUS): Promise<void> {
+    return new Promise(async (res, rej) => {
+        try {
+            const call = $grpc.getCentrumClient().updateUnitStatus({
+                unitId: id,
+                status: status,
+            });
+            await call;
+
+            return res();
+        } catch (e) {
+            $grpc.handleError(e as RpcError);
+            return rej(e as RpcError);
+        }
+    });
+}
+
+async function updateUtStatus(id: bigint, status?: UNIT_STATUS): Promise<void> {
+    if (status === undefined) {
+        openUnitStatus.value = true;
+        return;
+    }
+
+    updateUnitStatus(id, status);
     notifications.dispatchNotification({
         title: { key: 'notifications.centrum.sidebar.dispatch_status_updated.title', parameters: [] },
         content: { key: 'notifications.centrum.sidebar.dispatch_status_updated.content', parameters: [] },
@@ -180,6 +211,7 @@ async function updateDspStatus(dispatchId?: bigint, status?: DISPATCH_STATUS): P
                                                     }}
                                                 </span>
                                             </button>
+
                                             <UnitDetails
                                                 :unit="ownUnit"
                                                 :ownUnit="ownUnit"
@@ -230,6 +262,12 @@ async function updateDspStatus(dispatchId?: bigint, status?: DISPATCH_STATUS): P
                                                 <DisclosurePanel>
                                                     <div class="flex flex-row gap-2">
                                                         <div class="w-full grid grid-cols-2 gap-0.5">
+                                                            <UnitStatusUpdateModal
+                                                                :unit="ownUnit"
+                                                                :open="openUnitStatus"
+                                                                @close="openUnitStatus = false"
+                                                            />
+
                                                             <button
                                                                 v-for="(item, idx) in actionsUnit"
                                                                 :key="item.name"
@@ -239,10 +277,7 @@ async function updateDspStatus(dispatchId?: bigint, status?: DISPATCH_STATUS): P
                                                                     idx >= actionsUnit.length - 1 ? 'col-span-2' : '',
                                                                     item.class,
                                                                 ]"
-                                                                @click="
-                                                                    unitStatusSelected = item.status;
-                                                                    openUnitStatus = true;
-                                                                "
+                                                                @click="updateUtStatus(ownUnit.id, item.status)"
                                                             >
                                                                 <component
                                                                     :is="item.icon ?? HoopHouseIcon"

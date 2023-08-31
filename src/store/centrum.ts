@@ -2,7 +2,7 @@ import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { StoreDefinition, defineStore } from 'pinia';
 import { DISPATCH_STATUS, Dispatch, DispatchStatus } from '~~/gen/ts/resources/dispatch/dispatches';
 import { CENTRUM_MODE, Settings } from '~~/gen/ts/resources/dispatch/settings';
-import { Unit, UnitStatus } from '~~/gen/ts/resources/dispatch/units';
+import { UNIT_STATUS, Unit, UnitStatus } from '~~/gen/ts/resources/dispatch/units';
 import { UserShort } from '~~/gen/ts/resources/users/users';
 import { useAuthStore } from './auth';
 import { useNotificationsStore } from './notifications';
@@ -47,6 +47,13 @@ export const useCentrumStore = defineStore('centrum', {
         addOrUpdateUnit(unit: Unit): void {
             const idx = this.units.findIndex((d) => d.id === unit.id) ?? -1;
             if (idx === -1) {
+                if (unit.status === undefined) {
+                    unit.status = {
+                        unitId: unit.id,
+                        id: 0n,
+                        status: UNIT_STATUS.UNKNOWN,
+                    };
+                }
                 this.units.push(unit);
             } else {
                 this.units[idx].job = unit.job;
@@ -56,8 +63,74 @@ export const useCentrumStore = defineStore('centrum', {
                 this.units[idx].initials = unit.initials;
                 this.units[idx].color = unit.color;
                 this.units[idx].description = unit.description;
-                this.units[idx].status = unit.status;
                 this.units[idx].users = unit.users;
+
+                if (unit.users.length == 0) {
+                    this.units[idx].users.length = 0;
+                } else {
+                    this.units[idx].users = unit.users;
+                }
+
+                if (unit.status !== undefined) {
+                    if (this.units[idx].status === undefined) {
+                        this.units[idx].status = unit.status;
+                    } else {
+                        this.units[idx].status!.id = unit.status.id;
+                        this.units[idx].status!.createdAt = unit.status.createdAt;
+                        this.units[idx].status!.unitId = unit.status.unitId;
+                        this.units[idx].status!.status = unit.status.status;
+                        this.units[idx].status!.reason = unit.status.reason;
+                        this.units[idx].status!.code = unit.status.code;
+                        this.units[idx].status!.userId = unit.status.userId;
+                        this.units[idx].status!.user = unit.status.user;
+                        this.units[idx].status!.x = unit.status.x;
+                        this.units[idx].status!.y = unit.status.y;
+                        this.units[idx].status!.creator = unit.status.creator;
+                        this.units[idx].status!.creatorId = unit.status.creatorId;
+                    }
+                }
+            }
+
+            this.updateOwnUnit(unit);
+        },
+        updateOwnUnit(unit: Unit): void {
+            if (this.ownUnit === undefined) return;
+            if (unit.id !== this.ownUnit.id) return;
+
+            this.ownUnit.id = unit.id;
+            this.ownUnit.createdAt = unit.createdAt;
+            this.ownUnit.updatedAt = unit.updatedAt;
+            this.ownUnit.job = unit.job;
+            this.ownUnit.name = unit.name;
+            this.ownUnit.initials = unit.initials;
+            this.ownUnit.color = unit.color;
+            this.ownUnit.description = unit.description;
+            this.ownUnit.status = unit.status;
+            this.ownUnit.users = unit.users;
+
+            if (unit.users.length == 0) {
+                this.ownUnit.users.length = 0;
+            } else {
+                this.ownUnit.users = unit.users;
+            }
+
+            if (unit.status !== undefined) {
+                if (this.ownUnit.status === undefined) {
+                    this.ownUnit.status = unit.status;
+                } else {
+                    this.ownUnit.status!.id = unit.status.id;
+                    this.ownUnit.status!.createdAt = unit.status.createdAt;
+                    this.ownUnit.status!.unitId = unit.status.unitId;
+                    this.ownUnit.status!.status = unit.status.status;
+                    this.ownUnit.status!.reason = unit.status.reason;
+                    this.ownUnit.status!.code = unit.status.code;
+                    this.ownUnit.status!.userId = unit.status.userId;
+                    this.ownUnit.status!.user = unit.status.user;
+                    this.ownUnit.status!.x = unit.status.x;
+                    this.ownUnit.status!.y = unit.status.y;
+                    this.ownUnit.status!.creator = unit.status.creator;
+                    this.ownUnit.status!.creatorId = unit.status.creatorId;
+                }
             }
         },
         removeUnit(unit: Unit): void {
@@ -100,6 +173,7 @@ export const useCentrumStore = defineStore('centrum', {
                 this.dispatches[idx].anon = dispatch.anon;
                 this.dispatches[idx].userId = dispatch.userId;
                 this.dispatches[idx].user = dispatch.user;
+
                 if (dispatch.units.length == 0) {
                     this.dispatches[idx].units.length = 0;
                 } else {
@@ -109,7 +183,7 @@ export const useCentrumStore = defineStore('centrum', {
                 if (dispatch.status !== undefined) {
                     if (this.dispatches[idx].status === undefined) {
                         this.dispatches[idx].status = dispatch.status;
-                    } else if (dispatch.status !== undefined) {
+                    } else {
                         this.dispatches[idx].status!.id = dispatch.status.id;
                         this.dispatches[idx].status!.createdAt = dispatch.status.createdAt;
                         this.dispatches[idx].status!.dispatchId = dispatch.status.dispatchId;
@@ -214,7 +288,7 @@ export const useCentrumStore = defineStore('centrum', {
             if (this.abort !== undefined) return;
             this.restarting = false;
             if (this.cleanupIntervalId !== undefined) clearInterval(this.cleanupIntervalId);
-            this.cleanupIntervalId = setInterval(() => this.cleanup(), 10000);
+            this.cleanupIntervalId = setInterval(() => this.cleanup(), 30000);
 
             console.debug('Centrum: Starting Data Stream');
 

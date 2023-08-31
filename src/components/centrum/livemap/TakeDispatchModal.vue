@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
-import { watchDebounced } from '@vueuse/core';
+import { useDebounceFn } from '@vueuse/core';
 import { useSound } from '@vueuse/sound';
 import { CarEmergencyIcon, CloseIcon } from 'mdi-vue3';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
@@ -59,16 +59,14 @@ const newDispatchSound = useSound('/sounds/centrum/message-incoming.mp3', {
     volume: 0.15,
 });
 
-watchDebounced(
-    pendingDispatches.value,
-    (newD, oldD) => {
-        if (newD.length > oldD.length) newDispatchSound.play();
-    },
-    {
-        debounce: 100,
-        maxWait: 750,
-    },
-);
+const debouncedPlay = useDebounceFn(() => newDispatchSound.play(), 850);
+
+const previousLength = ref(0);
+watch(pendingDispatches.value, () => {
+    if (previousLength.value <= pendingDispatches.value.length) debouncedPlay();
+
+    previousLength.value = pendingDispatches.value.length;
+});
 </script>
 
 <template>

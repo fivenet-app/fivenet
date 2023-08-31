@@ -33,11 +33,11 @@ statuses.value.forEach((s) => {
     }
 });
 
-async function updateUnitStatus(values: FormData): Promise<void> {
+async function updateUnitStatus(id: bigint, values: FormData): Promise<void> {
     return new Promise(async (res, rej) => {
         try {
             const call = $grpc.getCentrumClient().updateUnitStatus({
-                unitId: props.unit.id,
+                unitId: id,
                 status: values.status,
                 code: values.code,
                 reason: values.reason,
@@ -76,7 +76,7 @@ const { handleSubmit, setFieldValue } = useForm<FormData>({
     validateOnMount: true,
 });
 
-const onSubmit = handleSubmit(async (values): Promise<void> => await updateUnitStatus(values));
+const onSubmit = handleSubmit(async (values): Promise<void> => await updateUnitStatus(props.unit.id, values));
 
 watch(props, () => {
     if (props.status) {

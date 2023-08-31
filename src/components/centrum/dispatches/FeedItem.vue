@@ -50,7 +50,7 @@ defineProps<{
                 <AccountAlertIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
-                Dispatch unassigned
+                No units assigned
                 <span class="font-medium text-gray-400 pl-1" v-if="item.unit">
                     {{ item.unit?.initials }}
                 </span>
@@ -67,7 +67,7 @@ defineProps<{
                 <AccountPlusIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
-                Dispatch assigned
+                Unit assigned to Dispatch
                 <span class="font-medium text-gray-400 pl-1" v-if="item.unit">
                     {{ item.unit?.initials }}
                 </span>
@@ -84,7 +84,7 @@ defineProps<{
                 <AccountRemoveIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
-                Dispatch unassigned
+                Unit unassigned from Dispatch
                 <span class="font-medium text-gray-400 pl-1" v-if="item.unit">
                     {{ item.unit?.initials }}
                 </span>
@@ -118,7 +118,7 @@ defineProps<{
                 <MapMarkerIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
-                Arrived on scene at Dispatch
+                Arrived on scene
                 <span class="font-medium text-gray-400 pl-1" v-if="item.unit">
                     {{ item.unit?.initials }}
                 </span>
