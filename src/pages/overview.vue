@@ -48,8 +48,8 @@ const features = [
         href: { name: 'jobs' },
         permission: 'Jobs.View',
         icon: markRaw(BriefcaseIcon),
-        iconForeground: 'text-yellow-900',
-        iconBackground: 'bg-yellow-100',
+        iconForeground: 'text-warn-900',
+        iconBackground: 'bg-warn-100',
     },
     {
         title: t('common.livemap'),
@@ -66,8 +66,8 @@ const features = [
         href: { name: 'centrum' },
         permission: 'CentrumService.TakeControl',
         icon: markRaw(CarEmergencyIcon),
-        iconForeground: 'text-red-900',
-        iconBackground: 'bg-red-100',
+        iconForeground: 'text-error-900',
+        iconBackground: 'bg-error-100',
     },
 ] as CardElements;
 </script>

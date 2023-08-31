@@ -23,8 +23,8 @@ const features = [
         href: { name: 'rector-props' },
         permission: 'RectorService.GetJobProps',
         icon: markRaw(TuneIcon),
-        iconForeground: 'text-yellow-900',
-        iconBackground: 'bg-yellow-100',
+        iconForeground: 'text-warn-900',
+        iconBackground: 'bg-warn-100',
     },
     {
         title: t('common.role', 2),

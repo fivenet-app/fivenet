@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
+import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import {
     CalendarCheckIcon,
     CalendarRemoveIcon,
@@ -16,23 +17,28 @@ import {
 } from 'mdi-vue3';
 import { DefineComponent } from 'vue';
 import { default as DispatchDetails } from '~/components/centrum/dispatches/Details.vue';
+import { default as DispatchStatusUpdateModal } from '~/components/centrum/dispatches/StatusUpdateModal.vue';
 import { dispatchStatusToBGColor } from '~/components/centrum/helpers';
 import { default as UnitDetails } from '~/components/centrum/units/Details.vue';
 import { useCentrumStore } from '~/store/centrum';
+import { useNotificationsStore } from '~/store/notifications';
 import { DISPATCH_STATUS, Dispatch } from '~~/gen/ts/resources/dispatch/dispatches';
 import { UNIT_STATUS } from '~~/gen/ts/resources/dispatch/units';
 import DispatchesLayer from './DispatchesLayer.vue';
-import DispatchEntry from './sidebar/DispatchEntry.vue';
-import JoinUnit from './sidebar/JoinUnitModal.vue';
-import TakeDispatch from './sidebar/TakeDispatchModal.vue';
+import JoinUnit from './JoinUnitModal.vue';
+import TakeDispatchModal from './TakeDispatchModal.vue';
 
 defineEmits<{
     (e: 'goto', loc: Coordinate): void;
 }>();
 
+const { $grpc } = useNuxtApp();
+
 const centrumStore = useCentrumStore();
 const { settings, ownDispatches, ownUnit, pendingDispatches } = storeToRefs(centrumStore);
 const { startStream, stopStream } = centrumStore;
+
+const notifications = useNotificationsStore();
 
 const actionsDispatch: {
     icon: DefineComponent;
@@ -45,7 +51,7 @@ const actionsDispatch: {
     { icon: markRaw(MarkerCheckIcon), name: 'On Scene', class: 'bg-primary-600', status: DISPATCH_STATUS.ON_SCENE },
     { icon: markRaw(HelpCircleIcon), name: 'Need Assistance', class: 'bg-warn-600', status: DISPATCH_STATUS.NEED_ASSISTANCE },
     { icon: markRaw(CheckBoldIcon), name: 'Completed', class: 'bg-success-600', status: DISPATCH_STATUS.COMPLETED },
-    { icon: markRaw(ListStatusIcon), name: 'Update Status', class: 'bg-base-800' },
+    { icon: markRaw(ListStatusIcon), name: 'components.centrum.update_dispatch_status.title', class: 'bg-base-800' },
 ];
 
 const actionsUnit: {
@@ -59,7 +65,7 @@ const actionsUnit: {
     { icon: markRaw(CalendarCheckIcon), name: 'Available', class: 'bg-success-600', status: UNIT_STATUS.AVAILABLE },
     { icon: markRaw(CoffeeIcon), name: 'On Break', class: 'bg-warn-600', status: UNIT_STATUS.ON_BREAK },
     { icon: markRaw(CalendarRemoveIcon), name: 'Busy', class: 'bg-info-600', status: UNIT_STATUS.BUSY },
-    { icon: markRaw(ListStatusIcon), name: 'Update Status', class: 'bg-base-800' },
+    { icon: markRaw(ListStatusIcon), name: 'components.centrum.update_unit_status.title', class: 'bg-base-800' },
 ];
 
 onBeforeMount(async () => setTimeout(async () => startStream(), 250));
@@ -68,11 +74,9 @@ onBeforeUnmount(async () => stopStream());
 
 const selectUnitOpen = ref(false);
 
-const dispatchStatusSelected = ref<DISPATCH_STATUS | undefined>();
-
-// TODO add function to set the active dispatch (last clicked and manually selected)
 const selectedDispatch = ref<Dispatch | undefined>();
 const openDispatchDetails = ref(false);
+const openDispatchStatus = ref(false);
 const openTakeDispatch = ref(false);
 
 const unitStatusSelected = ref<UNIT_STATUS | undefined>();
@@ -80,6 +84,46 @@ const openUnitDetails = ref(false);
 const openUnitStatus = ref(false);
 
 const canStream = can('CentrumService.Stream');
+
+async function updateDispatchStatus(dispatchId: bigint, status: DISPATCH_STATUS): Promise<void> {
+    return new Promise(async (res, rej) => {
+        try {
+            const call = $grpc.getCentrumClient().updateDispatchStatus({
+                dispatchId: dispatchId,
+                status: status,
+            });
+            await call;
+
+            return res();
+        } catch (e) {
+            $grpc.handleError(e as RpcError);
+            return rej(e as RpcError);
+        }
+    });
+}
+
+async function updateDspStatus(dispatchId?: bigint, status?: DISPATCH_STATUS): Promise<void> {
+    if (!dispatchId) {
+        notifications.dispatchNotification({
+            title: { key: 'notifications.centrum.sidebar.no_dispatch_selected.title', parameters: [] },
+            content: { key: 'notifications.centrum.sidebar.no_dispatch_selected.content', parameters: [] },
+            type: 'error',
+        });
+        return;
+    }
+
+    if (status === undefined) {
+        openDispatchStatus.value = true;
+        return;
+    }
+
+    updateDispatchStatus(dispatchId, status);
+    notifications.dispatchNotification({
+        title: { key: 'notifications.centrum.sidebar.dispatch_status_updated.title', parameters: [] },
+        content: { key: 'notifications.centrum.sidebar.dispatch_status_updated.content', parameters: [] },
+        type: 'success',
+    });
+}
 </script>
 
 <template>
@@ -90,7 +134,7 @@ const canStream = can('CentrumService.Stream');
         <template v-slot:afterMap v-if="canStream">
             <div class="lg:inset-y-0 lg:flex lg:w-50 lg:flex-col">
                 <!-- Dispatch -->
-                <TakeDispatch
+                <TakeDispatchModal
                     v-if="ownUnit"
                     :open="openTakeDispatch"
                     @close="openTakeDispatch = false"
@@ -103,6 +147,12 @@ const canStream = can('CentrumService.Stream');
                         :open="openDispatchDetails"
                         @close="openDispatchDetails = false"
                         @goto="$emit('goto', $event)"
+                    />
+
+                    <DispatchStatusUpdateModal
+                        :dispatch="selectedDispatch"
+                        :open="openDispatchStatus"
+                        @close="openDispatchStatus = false"
                     />
                 </template>
 
@@ -199,7 +249,17 @@ const canStream = can('CentrumService.Stream');
                                                                     class="text-base-200 group-hover:text-white h-5 w-5 shrink-0"
                                                                     aria-hidden="true"
                                                                 />
-                                                                <span class="mt-1">{{ item.name }}</span>
+                                                                <span class="mt-1">
+                                                                    {{
+                                                                        item.status
+                                                                            ? $t(
+                                                                                  `enums.centrum.UNIT_STATUS.${
+                                                                                      UNIT_STATUS[item.status ?? (0 as number)]
+                                                                                  }`,
+                                                                              )
+                                                                            : $t(item.name)
+                                                                    }}
+                                                                </span>
                                                             </button>
                                                         </div>
                                                     </div>
@@ -211,7 +271,7 @@ const canStream = can('CentrumService.Stream');
                                 <li>
                                     <ul role="list" class="-mx-2 space-y-1">
                                         <div class="text-xs font-semibold leading-6 text-base-200">
-                                            {{ $t('common.dispatch', 2) }}
+                                            {{ $t('common.dispatch') }} {{ $t('common.status') }}
                                         </div>
                                         <li>
                                             <div class="grid grid-cols-2 gap-0.5">
@@ -225,17 +285,24 @@ const canStream = can('CentrumService.Stream');
                                                         item.class,
                                                         dispatchStatusToBGColor(item.status),
                                                     ]"
-                                                    @click="
-                                                        dispatchStatusSelected = item.status;
-                                                        openUnitStatus = true;
-                                                    "
+                                                    @click="updateDspStatus(selectedDispatch?.id, item.status)"
                                                 >
                                                     <component
                                                         :is="item.icon ?? HoopHouseIcon"
                                                         class="text-base-200 group-hover:text-white h-5 w-5 shrink-0"
                                                         aria-hidden="true"
                                                     />
-                                                    <span class="mt-1">{{ item.name }}</span>
+                                                    <span class="mt-1">
+                                                        {{
+                                                            item.status
+                                                                ? $t(
+                                                                      `enums.centrum.DISPATCH_STATUS.${
+                                                                          DISPATCH_STATUS[item.status ?? (0 as number)]
+                                                                      }`,
+                                                                  )
+                                                                : $t(item.name)
+                                                        }}
+                                                    </span>
                                                 </button>
                                             </div>
                                         </li>
@@ -256,15 +323,36 @@ const canStream = can('CentrumService.Stream');
                                             </button>
                                         </li>
                                         <template v-else>
-                                            <DispatchEntry
-                                                v-for="dispatch in ownDispatches"
-                                                :dispatch="dispatch"
-                                                @goto="$emit('goto', $event)"
-                                                @details="
-                                                    selectedDispatch = $event;
-                                                    openDispatchDetails = true;
-                                                "
-                                            />
+                                            <li class="flex flex-row items-center" v-for="dispatch in ownDispatches">
+                                                <div class="mr-1">
+                                                    <input
+                                                        name="active"
+                                                        type="radio"
+                                                        class="h-4 w-4 border-gray-300 text-primary-600 focus:ring-primary-600"
+                                                        v-model="selectedDispatch"
+                                                        v-bind:value="dispatch"
+                                                    />
+                                                </div>
+                                                <button
+                                                    type="button"
+                                                    class="text-white bg-error-700 hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-2 text-xs my-0.5"
+                                                    @click="
+                                                        selectedDispatch = dispatch;
+                                                        openDispatchDetails = true;
+                                                    "
+                                                >
+                                                    <span class="font-bold truncate">DSP-{{ dispatch.id }}</span>
+                                                    <span class="mt-2 truncate">
+                                                        {{
+                                                            $t(
+                                                                `enums.centrum.DISPATCH_STATUS.${
+                                                                    DISPATCH_STATUS[dispatch.status?.status ?? (0 as number)]
+                                                                }`,
+                                                            )
+                                                        }}
+                                                    </span>
+                                                </button>
+                                            </li>
                                         </template>
                                     </ul>
                                 </li>

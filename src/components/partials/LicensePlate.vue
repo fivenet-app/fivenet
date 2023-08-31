@@ -25,11 +25,11 @@ const year = props.year ?? '201' + props.plate.charAt(props.plate.length - 1);
         class="flex flex-col items-center justify-center border-2 rounded-lg bg-[blue] max-w-[12rem]"
         :style="{ backgroundColor }"
     >
-        <div class="w-full grid grid-cols-2 bg-red-600 justify-items-center rounded-t-lg">
-            <div class="select-none text-xs text-yellow-400">{{ state }}</div>
+        <div class="w-full grid grid-cols-2 bg-error-600 justify-items-center rounded-t-lg">
+            <div class="select-none text-xs text-warn-400">{{ state }}</div>
             <div class="select-none text-xs">{{ year }}</div>
         </div>
-        <div class="text-xl text-yellow-400" :style="{ color: textColor }">
+        <div class="text-xl text-warn-400" :style="{ color: textColor }">
             {{ plate }}
         </div>
     </div>

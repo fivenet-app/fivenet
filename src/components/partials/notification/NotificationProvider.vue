@@ -2,8 +2,8 @@
 import { useNotificationsStore } from '~/store/notifications';
 import NotificationItem from './NotificationItem.vue';
 
-const notificationsStore = useNotificationsStore();
-const { getNotifications } = storeToRefs(notificationsStore);
+const notifications = useNotificationsStore();
+const { getNotifications } = storeToRefs(notifications);
 </script>
 
 <template>

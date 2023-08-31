@@ -99,7 +99,7 @@ const trafficPointsModal = ref(false);
                                 </dt>
                                 <dd
                                     class="mt-1 text-sm text-base-300 sm:col-span-2 sm:mt-0 sm:ml-6"
-                                    :class="(user?.props?.trafficInfractionPoints ?? 0n) >= 10 ? 'text-red-500' : ''"
+                                    :class="(user?.props?.trafficInfractionPoints ?? 0n) >= 10 ? 'text-error-500' : ''"
                                 >
                                     {{ $t('common.point', parseInt((user?.props?.trafficInfractionPoints ?? 0n).toString())) }}
                                 </dd>
@@ -115,7 +115,7 @@ const trafficPointsModal = ref(false);
                                     <span v-if="(user.props?.openFines ?? 0n) <= 0n">
                                         {{ $t('common.no_open_fine') }}
                                     </span>
-                                    <span v-else class="text-red-500">
+                                    <span v-else class="text-error-500">
                                         {{ $n(parseInt((user?.props?.openFines ?? 0n).toString()), 'currency') }}
                                     </span>
                                 </dd>

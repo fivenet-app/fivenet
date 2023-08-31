@@ -261,7 +261,7 @@ const openStatus = ref(false);
                                                                 <template v-if="dispatch.attributes?.list.length === 0">
                                                                     <span
                                                                         v-for="attribute in dispatch.attributes?.list"
-                                                                        class="inline-flex items-center rounded-md bg-red-400/10 px-2 py-1 text-xs font-medium text-red-400 ring-1 ring-inset ring-red-400/20"
+                                                                        class="inline-flex items-center rounded-md bg-error-400/10 px-2 py-1 text-xs font-medium text-error-400 ring-1 ring-inset ring-error-400/20"
                                                                     >
                                                                         {{ attribute }}
                                                                     </span>

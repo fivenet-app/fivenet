@@ -63,9 +63,9 @@ defineEmits<{
                             </div>
                             <div class="sm:flex sm:items-start">
                                 <div
-                                    class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10"
+                                    class="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-error-100 sm:mx-0 sm:h-10 sm:w-10"
                                 >
-                                    <component :is="icon" class="h-6 w-6 text-red-600" aria-hidden="true" />
+                                    <component :is="icon" class="h-6 w-6 text-error-600" aria-hidden="true" />
                                 </div>
                                 <div class="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
                                     <DialogTitle as="h3" class="text-base font-semibold leading-6 text-gray-100">
@@ -81,7 +81,7 @@ defineEmits<{
                             <div class="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
                                 <button
                                     type="button"
-                                    class="inline-flex w-full justify-center rounded-md bg-red-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-red-500 sm:ml-3 sm:w-auto"
+                                    class="inline-flex w-full justify-center rounded-md bg-error-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-error-500 sm:ml-3 sm:w-auto"
                                     @click="
                                         confirm();
                                         $emit('close');

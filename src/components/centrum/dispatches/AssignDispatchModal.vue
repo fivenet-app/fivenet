@@ -117,11 +117,11 @@ function selectUnit(item: Unit): void {
                                                                     class="text-white hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-2 text-xs my-0.5"
                                                                     :class="[
                                                                         item.users.length === 0
-                                                                            ? 'disabled bg-red-600'
+                                                                            ? 'disabled bg-error-600'
                                                                             : selectedUnits?.findIndex(
                                                                                   (u) => u && u === item.id,
                                                                               ) > -1
-                                                                            ? 'bg-green-600'
+                                                                            ? 'bg-success-600'
                                                                             : 'bg-info-600',
                                                                     ]"
                                                                     @click="selectUnit(item)"

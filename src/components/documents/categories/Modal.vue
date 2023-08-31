@@ -202,7 +202,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await updateCateg
                                         <button
                                             v-if="can('DocStoreService.DeleteCategory')"
                                             type="button"
-                                            class="flex-1 rounded-md bg-red-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-red-400"
+                                            class="flex-1 rounded-md bg-error-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-error-400"
                                             @click="deleteCategory()"
                                         >
                                             {{ $t('common.delete') }}

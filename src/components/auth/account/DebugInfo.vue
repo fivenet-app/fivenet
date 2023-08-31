@@ -79,7 +79,7 @@ async function resetLocalStorage(): Promise<void> {
                             <NuxtLink
                                 :external="true"
                                 to="/api/clear-site-data"
-                                class="rounded-md bg-red-800 text-center py-2.5 px-3.5 ml-2 text-sm font-semibold text-neutral hover:bg-red-600"
+                                class="rounded-md bg-error-800 text-center py-2.5 px-3.5 ml-2 text-sm font-semibold text-neutral hover:bg-error-600"
                             >
                                 {{ $t('components.debug_info.factory_reset') }}
                             </NuxtLink>

@@ -10,7 +10,7 @@ defineProps<{
 </script>
 
 <template>
-    <div class="p-4 rounded-md bg-red-50 max-w-md mx-auto">
+    <div class="p-4 rounded-md bg-error-100 max-w-md mx-auto">
         <div class="flex">
             <div class="flex-shrink-0">
                 <CloseCircleIcon class="h-5 w-5 text-error-400" aria-hidden="true" />
@@ -28,7 +28,7 @@ defineProps<{
                     <div class="-mx-2 -my-1.5 flex">
                         <button
                             type="button"
-                            class="rounded-md bg-red-50 px-2 py-1.5 text-sm font-medium text-error-800 hover:bg-red-100 focus:outline-none focus:ring-2 focus:ring-red-600 focus:ring-offset-2 focus:ring-offset-red-50"
+                            class="rounded-md bg-error-50 px-2 py-1.5 text-sm font-medium text-error-800 hover:bg-error-100 focus:outline-none focus:ring-2 focus:ring-error-600 focus:ring-offset-2 focus:ring-offset-error-50"
                             @click="retry!()"
                         >
                             {{ retryMessage ?? $t('common.retry') }}

@@ -827,6 +827,16 @@
                     "title": "Left Unit",
                     "content": "You have left your unit."
                 }
+            },
+            "sidebar": {
+                "no_dispatch_selected": {
+                    "title": "No Dispatch selected!",
+                    "content": "Please check the box of the dispatch you want to update."
+                },
+                "dispatch_status_updated": {
+                    "title": "Dispatch Status aktualisiert",
+                    "content": "Status aktualisiert"
+                }
             }
         }
     },

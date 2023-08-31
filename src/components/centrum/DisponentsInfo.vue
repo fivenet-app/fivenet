@@ -101,7 +101,7 @@ const disponentsNames = computed(() => {
                                     class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset"
                                     :class="
                                         disponents.length === 0
-                                            ? 'bg-yellow-400/10 text-yellow-500 ring-yellow-400/20'
+                                            ? 'bg-warn-400/10 text-warn-500 ring-warn-400/20'
                                             : 'bg-green-500/10 text-green-400 ring-green-500/20'
                                     "
                                     :title="disponentsNames"
