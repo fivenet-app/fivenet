@@ -109,7 +109,7 @@
         },
         "rector": {
             "features": {
-                "properties": "Stelle deine Job Eigenschaften ein (e.g., Livemap Marker Farbe).",
+                "properties": "Stelle deine Job Eigenschaften ein (e.g., Livemap Mitarbeiter Farbe).",
                 "jobs": "Richten Sie die Rollen, Job Ränge und Berechtigungen für Ihre Fraktion ein.",
                 "audit_log": "Eine Überprüfung der Schritte, die von Ihren Kollegen unternommen wurden.",
                 "limiter": "Begrenzen was Fraktionen sehen können.",
@@ -331,12 +331,12 @@
                 "marker_size": "Größe der Kartenmarkierung"
             },
             "create_marker": {
-                "title": "Marker erstellen",
-                "sub_title": ".Neuen Marker erstellen"
+                "title": "Markierung erstellen",
+                "sub_title": "Neue Markierung erstellen."
             },
             "update_marker": {
-                "title": "Marker aktualisieren",
-                "sub_title": "Existierenden Marker aktualisieren."
+                "title": "Markierung aktualisieren",
+                "sub_title": "Existierende Markierung aktualisieren."
             }
         },
         "rector": {
@@ -597,7 +597,7 @@
         "disponent": "Keine Disponenten | {n} Disponent | {n} Disponenten",
         "confirm": "Bestätigen | Bestätigt",
         "word": "Wort | Wörter",
-        "marker": "Marker | Markierungen",
+        "marker": "Markierung | Markierungen",
         "radius": "Radius",
         "opacity": "Deckkraft",
         "char": "Charakter | Charaktere"
@@ -827,6 +827,16 @@
                     "title": "Einheit verlassen",
                     "content": "Sie haben die Einheit verlassen."
                 }
+            },
+            "sidebar": {
+                "no_dispatch_selected": {
+                    "title": "Kein Einsatz ausgewählt!",
+                    "content": "Bitte wähle einen Einsatz aus, damit du den Status schnell aktualisieren kannst."
+                },
+                "dispatch_status_updated": {
+                    "title": "Einsatz Status aktualisiert",
+                    "content": "Status wurde aktualisiert."
+                }
             }
         }
     },
@@ -1052,11 +1062,11 @@
             },
             "CreateOrUpdateMarker": {
                 "key": "Erstellen und Aktualisieren von Markierungen",
-                "description": "Being able to create and update markers on the Livemap."
+                "description": "Markierungen auf der Livemap erstellen und aktualisieren können."
             },
             "DeleteMarker": {
-                "key": "Marker Löschen",
-                "description": "Being able to delete markers on the Livemap."
+                "key": "Markierung Löschen",
+                "description": "Markierungen auf der Livemap löschen können."
             }
         },
         "RectorService": {
@@ -1144,7 +1154,7 @@
         "LivemapperService": {
             "Stream": {
                 "Players": "Spieler Positionen",
-                "Markers": "Marker"
+                "Markers": "Markierungen"
             },
             "CreateOrUpdateMarker": {
                 "Access": "Zugriff"
@@ -1221,11 +1231,11 @@
             "ErrPermissionDenied": "Du hast keine Berechtigung das zu tun!",
             "ErrClosedDoc": "Dokument ist geschloßen und kann nicht editiert werden!",
             "ErrDocAccessEditDenied": "Sie haben keine Rechte den Dokumenten Zugriff zu verwalten!",
-            "ErrDocAccessViewDenied": "You don't have permission to view this document's access!"
+            "ErrDocAccessViewDenied": "Sie haben keine Rechte die Zugangsinfo des Dokumentes zu sehen!"
         },
         "LivemapperService": {
             "ErrStreamFailed": "Livemap Datenstrom fehlgeschlagen!",
-            "ErrMarkerFailed": "Fehler beim erstellen/aktualisieren/löschen des Markers!"
+            "ErrMarkerFailed": "Fehler beim erstellen/aktualisieren/löschen der Markierung!"
         },
         "NotificatorService": {
             "ErrFailedRequest": "Laden von Benachrichtigungs-Daten fehlgeschlagen!",
@@ -1246,7 +1256,7 @@
             "ErrAlreadyInUnit": "Sie sind bereits in einer Einheit! Sie müssen diese verlassen bevor sie einer anderen Einheit beitreten können.",
             "ErrNotPartOfDispatch": "Sie sind nicht Teil dieses Einsatzes!",
             "ErrNotOnDuty": "Sie sind nicht im Dienst!",
-            "ErrModeForbidsAction": "Dispatch center forbides this interaction. Please contact the dispatch center!"
+            "ErrModeForbidsAction": "Die Leitstelle verbietet diese Änderung/Interaktion. Bitte kontaktiere die Leitstelle direkt!"
         }
     },
     "commandpalette": {
