@@ -839,6 +839,12 @@
                     "title": "Einsatz Status aktualisiert",
                     "content": "Status wurde aktualisiert."
                 }
+            },
+            "store": {
+                "assigned_dispatch": {
+                    "title": "Neuer Einsatz zugewiesen",
+                    "content": "Nutze die Einsatz-Liste um den Einsatz anzunehmen."
+                }
             }
         }
     },
