@@ -834,8 +834,8 @@
                     "content": "Please check the box of the dispatch you want to update."
                 },
                 "dispatch_status_updated": {
-                    "title": "Dispatch Status aktualisiert",
-                    "content": "Status aktualisiert"
+                    "title": "Dispatch Status updated",
+                    "content": "Status has been updated."
                 }
             }
         }
