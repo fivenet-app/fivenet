@@ -7,10 +7,14 @@ import { UserShort } from '~~/gen/ts/resources/users/users';
 import { useAuthStore } from './auth';
 import { useNotificationsStore } from './notifications';
 
+const FIVE_MINUTES = 5 * 60 * 1000;
+
 export interface CentrumState {
     error: RpcError | undefined;
     abort: AbortController | undefined;
+    cleanupIntervalId: NodeJS.Timeout | undefined;
     restarting: boolean;
+
     settings: Settings;
     isDisponent: boolean;
     disponents: UserShort[];
@@ -175,6 +179,7 @@ export const useCentrumStore = defineStore('centrum', {
             } else {
                 const assignment = dispatch.units.find((u) => u.unitId === this.ownUnit?.id);
                 if (assignment === undefined) return;
+
                 // When dispatch has expiration, it is a "pending" dispatch
                 if (assignment?.expiresAt) {
                     this.addOrUpdatePendingDispatch(dispatch);
@@ -208,6 +213,8 @@ export const useCentrumStore = defineStore('centrum', {
         async startStream(): Promise<void> {
             if (this.abort !== undefined) return;
             this.restarting = false;
+            if (this.cleanupIntervalId !== undefined) clearInterval(this.cleanupIntervalId);
+            this.cleanupIntervalId = setInterval(() => this.cleanup(), 10000);
 
             console.debug('Centrum: Starting Data Stream');
 
@@ -341,6 +348,8 @@ export const useCentrumStore = defineStore('centrum', {
         async stopStream(): Promise<void> {
             if (this.abort !== undefined) this.abort.abort();
             this.abort = undefined;
+            if (this.cleanupIntervalId) clearInterval(this.cleanupIntervalId);
+            this.cleanupIntervalId = undefined;
             console.debug('Centrum: Stopping Data Stream');
         },
         async restartStream(): Promise<void> {
@@ -379,7 +388,28 @@ export const useCentrumStore = defineStore('centrum', {
             }
         },
         async cleanup(): Promise<void> {
-            // TODO remove completed, cancelled dispatches
+            console.debug('Centrum: Running cleanup tasks');
+            const now = new Date().getTime();
+
+            // Cleanup pending dispatches
+            this.pendingDispatches.forEach((pd) => {
+                pd.units.forEach((ua) => {
+                    const expiresAt = toDate(ua.expiresAt);
+                    if (now - expiresAt.getTime() > FIVE_MINUTES) this.removePendingDispatch(pd.id);
+                });
+            });
+
+            // Remove completed, cancelled and archived dispatches after the status is 5 minutes or older
+            this.dispatches.forEach((d) => {
+                if (
+                    d.status?.status !== DISPATCH_STATUS.COMPLETED &&
+                    d.status?.status !== DISPATCH_STATUS.CANCELLED &&
+                    d.status?.status !== DISPATCH_STATUS.ARCHIVED
+                )
+                    return;
+
+                if (now - toDate(d.status?.createdAt).getTime() > FIVE_MINUTES) this.removeDispatch(d.id);
+            });
         },
     },
 });
