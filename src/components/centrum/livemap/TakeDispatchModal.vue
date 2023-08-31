@@ -1,16 +1,16 @@
 <script lang="ts" setup>
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
+import { watchDebounced } from '@vueuse/core';
+import { useSound } from '@vueuse/sound';
 import { CarEmergencyIcon, CloseIcon } from 'mdi-vue3';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import { useCentrumStore } from '~/store/centrum';
-import { Dispatch } from '~~/gen/ts/resources/dispatch/dispatches';
 import { TAKE_DISPATCH_RESP } from '~~/gen/ts/services/centrum/centrum';
 import TakeDispatchEntry from './TakeDispatchEntry.vue';
 
 defineProps<{
     open: boolean;
-    dispatch?: Dispatch;
 }>();
 
 const emits = defineEmits<{
@@ -54,6 +54,21 @@ function selectDispatch(id: bigint): void {
         unselectedDispatches.value.push(id);
     }
 }
+
+const newDispatchSound = useSound('/sounds/centrum/message-incoming.mp3', {
+    volume: 0.15,
+});
+
+watchDebounced(
+    pendingDispatches.value,
+    (newD, oldD) => {
+        if (newD.length > oldD.length) newDispatchSound.play();
+    },
+    {
+        debounce: 100,
+        maxWait: 750,
+    },
+);
 </script>
 
 <template>
@@ -103,24 +118,16 @@ function selectDispatch(id: bigint): void {
                                                 <div class="mt-1">
                                                     <dl class="border-b border-white/10 divide-y divide-white/10">
                                                         <DataNoDataBlock
-                                                            v-if="pendingDispatches.length === 0 && dispatch === undefined"
+                                                            v-if="pendingDispatches.length === 0"
                                                             :icon="CarEmergencyIcon"
                                                             :type="$t('common.dispatch', 2)"
                                                         />
                                                         <TakeDispatchEntry
-                                                            v-if="dispatch"
+                                                            v-for="dispatch in pendingDispatches"
                                                             :dispatch="dispatch"
                                                             @selected="selectDispatch(dispatch.id)"
                                                             @goto="$emit('goto', $event)"
                                                         />
-                                                        <template v-else>
-                                                            <TakeDispatchEntry
-                                                                v-for="dispatch in pendingDispatches"
-                                                                :dispatch="dispatch"
-                                                                @selected="selectDispatch(dispatch.id)"
-                                                                @goto="$emit('goto', $event)"
-                                                            />
-                                                        </template>
                                                     </dl>
                                                 </div>
                                             </div>

@@ -131,7 +131,7 @@ watch(props, () => {
                                             <div class="divide-y divide-gray-200 px-4 sm:px-6">
                                                 <div class="mt-1">
                                                     <dl class="border-b border-white/10 divide-y divide-white/10">
-                                                        <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                                                        <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                                                             <dt class="text-sm font-medium leading-6 text-white">
                                                                 <label
                                                                     for="status"
@@ -178,7 +178,7 @@ watch(props, () => {
                                                                 />
                                                             </dd>
                                                         </div>
-                                                        <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                                                        <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                                                             <dt class="text-sm font-medium leading-6 text-white">
                                                                 <label
                                                                     for="code"
@@ -204,7 +204,7 @@ watch(props, () => {
                                                                 />
                                                             </dd>
                                                         </div>
-                                                        <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                                                        <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                                                             <dt class="text-sm font-medium leading-6 text-white">
                                                                 <label
                                                                     for="reason"

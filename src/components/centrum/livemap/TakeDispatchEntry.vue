@@ -2,6 +2,7 @@
 import { AccountIcon } from 'mdi-vue3';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import { Dispatch } from '~~/gen/ts/resources/dispatch/dispatches';
+import Details from '../dispatches/Details.vue';
 
 const props = defineProps<{
     dispatch: Dispatch;
@@ -13,10 +14,14 @@ defineEmits<{
 }>();
 
 const expiresAt = props.dispatch.units.find((u) => u.expiresAt !== undefined)?.expiresAt;
+
+const open = ref(false);
 </script>
 
 <template>
-    <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+    <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+        <Details :open="open" @close="open = false" @goto="$emit('goto', $event)" :dispatch="dispatch" />
+
         <dt class="text-sm font-medium leading-6 text-white">
             <div class="flex h-6 items-center">
                 <input
@@ -26,10 +31,11 @@ const expiresAt = props.dispatch.units.find((u) => u.expiresAt !== undefined)?.e
                     class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600 h-6 w-6"
                     @change="$emit('selected')"
                 />
-                <IDCopyBadge class="ml-2" prefix="DSP" :id="dispatch.id" />
+                <IDCopyBadge class="ml-2" prefix="DSP" :id="dispatch.id" :action="() => (open = true)" />
             </div>
             <div v-if="expiresAt" class="mt-1 text-white text-sm">
-                Expires in {{ useLocaleTimeAgo(toDate(expiresAt), { showSecond: true, updateInterval: 1000 }).value }}
+                {{ $t('common.expires_in') }}
+                {{ useLocaleTimeAgo(toDate(expiresAt), { showSecond: true, updateInterval: 1000 }).value }}
             </div>
         </dt>
         <dd class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0">

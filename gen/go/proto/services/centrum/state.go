@@ -255,6 +255,7 @@ func (s *Server) handleDispatchAssignmentExpiration(ctx context.Context) error {
 				),
 		).
 		WHERE(jet.AND(
+			tDispatchUnit.ExpiresAt.IS_NOT_NULL(),
 			tDispatchUnit.ExpiresAt.LT(jet.NOW()),
 		))
 

@@ -45,6 +45,7 @@ async function assignDispatch(): Promise<void> {
             });
             await call;
 
+            selectedUnits.value.length = 0;
             emits('close');
 
             return res();

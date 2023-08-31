@@ -123,7 +123,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await createDispa
                                             <div class="divide-y divide-gray-200 px-4 sm:px-6">
                                                 <div class="mt-1">
                                                     <dl class="border-b border-white/10 divide-y divide-white/10">
-                                                        <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                                                        <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                                                             <dt class="text-sm font-medium leading-6 text-white">
                                                                 <label
                                                                     for="message"
@@ -149,7 +149,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await createDispa
                                                                 />
                                                             </dd>
                                                         </div>
-                                                        <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                                                        <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                                                             <dt class="text-sm font-medium leading-6 text-white">
                                                                 <label
                                                                     for="description"
@@ -175,7 +175,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await createDispa
                                                                 />
                                                             </dd>
                                                         </div>
-                                                        <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                                                        <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                                                             <dt class="text-sm font-medium leading-6 text-white">
                                                                 <label
                                                                     for="anon"

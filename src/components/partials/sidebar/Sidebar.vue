@@ -510,7 +510,7 @@ const appVersion = activeChar ? ' v' + __APP_VERSION__ + (import.meta.env.DEV ? 
                             <div v-if="can('SuperUser')">
                                 <JobSwitcher v-if="activeChar" />
                             </div>
-                            <div v-if="activeChar" class="text-sm font-medium text-base-400">
+                            <div v-if="activeChar" class="text-sm font-medium text-base-200">
                                 {{ activeChar.firstname }}, {{ activeChar.lastname }} ({{ activeChar.jobLabel }})
                             </div>
                             <Notifications v-if="activeChar" />
@@ -520,7 +520,7 @@ const appVersion = activeChar ? ' v' + __APP_VERSION__ + (import.meta.env.DEV ? 
                             <Menu as="div" class="relative flex-shrink-0">
                                 <div>
                                     <MenuButton
-                                        class="flex text-sm rounded-full bg-base-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+                                        class="flex text-sm rounded-full bg-base-800 ring-2 ring-base-600 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
                                     >
                                         <span class="sr-only">
                                             {{ $t('components.partials.sidebar.open_usermenu') }}

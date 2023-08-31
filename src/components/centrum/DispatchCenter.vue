@@ -68,13 +68,7 @@ const openUnitStatus = ref(false);
                 <div class="basis-11/12">
                     <Livemap>
                         <template v-slot:default>
-                            <DispatchesLayer
-                                @selected="
-                                    selectedDispatch = $event;
-                                    openDispatchDetails = true;
-                                "
-                                :show-all-dispatches="true"
-                            />
+                            <DispatchesLayer :show-all-dispatches="true" @goto="goto($event)" />
                         </template>
                     </Livemap>
                 </div>

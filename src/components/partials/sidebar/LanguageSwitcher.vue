@@ -40,7 +40,7 @@ async function switchLanguage(lang: { name: string; iso: string }): Promise<void
     <Menu as="div" class="relative flex-shrink-0">
         <div>
             <MenuButton
-                class="flex text-sm rounded-full bg-base-800 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+                class="flex text-sm rounded-full bg-base-800 ring-2 ring-base-600 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
             >
                 <span class="sr-only">{{ $t('components.partials.sidebar_language_switcher.open_switcher') }}</span>
                 <TranslateIcon

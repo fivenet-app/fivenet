@@ -163,6 +163,8 @@ export const useCentrumStore = defineStore('centrum', {
             }
         },
         handleDispatchAssignment(dispatch: Dispatch): void {
+            if (!this.ownUnit) return;
+
             if (
                 dispatch.status?.status === DISPATCH_STATUS.UNIT_UNASSIGNED ||
                 dispatch.status?.status === DISPATCH_STATUS.UNASSIGNED
@@ -187,6 +189,12 @@ export const useCentrumStore = defineStore('centrum', {
             const idx = this.pendingDispatches?.findIndex((d) => d.id === dispatch.id) ?? -1;
             if (idx === -1) {
                 this.pendingDispatches.push(dispatch);
+
+                useNotificationsStore().dispatchNotification({
+                    title: { key: 'notifications.centrum.store.assigned_dispatch.title', parameters: [] },
+                    content: { key: 'notifications.centrum.store.assigned_dispatch.content', parameters: [] },
+                    type: 'info',
+                });
             }
         },
 
@@ -371,7 +379,7 @@ export const useCentrumStore = defineStore('centrum', {
             }
         },
         async cleanup(): Promise<void> {
-            // TODO remove old dispatches
+            // TODO remove completed, cancelled dispatches
         },
     },
 });

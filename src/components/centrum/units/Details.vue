@@ -69,7 +69,7 @@ const openStatus = ref(false);
                                             <div class="divide-y divide-gray-200 px-4 sm:px-6">
                                                 <div class="mt-1">
                                                     <dl class="border-b border-white/10 divide-y divide-white/10">
-                                                        <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                                                        <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                                                             <dt class="text-sm font-medium leading-6 text-white">
                                                                 {{ $t('common.last_update') }}
                                                             </dt>
@@ -79,7 +79,7 @@ const openStatus = ref(false);
                                                                 <Time :value="unit.status?.createdAt" />
                                                             </dd>
                                                         </div>
-                                                        <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                                                        <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                                                             <dt class="text-sm font-medium leading-6 text-white">
                                                                 {{ $t('common.status') }}
                                                             </dt>
@@ -110,7 +110,7 @@ const openStatus = ref(false);
                                                                 </button>
                                                             </dd>
                                                         </div>
-                                                        <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                                                        <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                                                             <dt class="text-sm font-medium leading-6 text-white">
                                                                 {{ $t('common.code') }}
                                                             </dt>
@@ -120,7 +120,7 @@ const openStatus = ref(false);
                                                                 {{ unit.status?.code ?? 'N/A' }}
                                                             </dd>
                                                         </div>
-                                                        <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                                                        <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                                                             <dt class="text-sm font-medium leading-6 text-white">
                                                                 {{ $t('common.reason') }}
                                                             </dt>
@@ -130,7 +130,7 @@ const openStatus = ref(false);
                                                                 {{ unit.status?.reason ?? 'N/A' }}
                                                             </dd>
                                                         </div>
-                                                        <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                                                        <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                                                             <dt class="text-sm font-medium leading-6 text-white">
                                                                 {{ $t('common.location') }}
                                                             </dt>
@@ -150,7 +150,7 @@ const openStatus = ref(false);
                                                                 <span v-else>{{ $t('common.no_location') }}</span>
                                                             </dd>
                                                         </div>
-                                                        <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                                                        <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                                                             <dt class="text-sm font-medium leading-6 text-white">
                                                                 {{ $t('common.members') }}
                                                             </dt>
@@ -189,14 +189,19 @@ const openStatus = ref(false);
                                                                     @close="openAssign = false"
                                                                 />
 
-                                                                <button
-                                                                    v-if="can('CentrumService.TakeControl')"
-                                                                    type="button"
-                                                                    @click="$emit('assignUsers', unit)"
-                                                                    class="ml-2 rounded bg-white/10 px-2 py-1 text-xs font-semibold text-white shadow-sm hover:bg-white/20"
-                                                                >
-                                                                    <PencilIcon class="h-6 w-6" />
-                                                                </button>
+                                                                <span class="mt-2 isolate inline-flex rounded-md shadow-sm">
+                                                                    <button
+                                                                        v-if="can('CentrumService.TakeControl')"
+                                                                        type="button"
+                                                                        @click="$emit('assignUsers', unit)"
+                                                                        class="flex flex-row items-center rounded bg-white/10 px-2 py-1 text-xs font-semibold text-white shadow-sm hover:bg-white/20"
+                                                                    >
+                                                                        <PencilIcon class="h-6 w-6" />
+                                                                        <span class="truncate ml-0.5">
+                                                                            {{ $t('common.assign') }}
+                                                                        </span>
+                                                                    </button>
+                                                                </span>
                                                             </dd>
                                                         </div>
                                                     </dl>

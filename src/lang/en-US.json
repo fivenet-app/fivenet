@@ -600,7 +600,9 @@
         "marker": "Marker | Markers",
         "radius": "Radius",
         "opacity": "Opacity",
-        "char": "Character | Characters"
+        "char": "Character | Characters",
+        "self_assign": "Self Assign",
+        "expires_in": "Expires in"
     },
     "notifications": {
         "clipboard": {
@@ -836,6 +838,12 @@
                 "dispatch_status_updated": {
                     "title": "Dispatch Status updated",
                     "content": "Status has been updated."
+                }
+            },
+            "store": {
+                "assigned_dispatch": {
+                    "title": "New Dispatch assigned",
+                    "content": "Check the Dispatches list to accept the dispatch."
                 }
             }
         }

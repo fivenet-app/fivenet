@@ -146,7 +146,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await createMarke
                                             <div class="divide-y divide-gray-200 px-4 sm:px-6">
                                                 <div class="mt-1">
                                                     <dl class="border-b border-white/10 divide-y divide-white/10">
-                                                        <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                                                        <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                                                             <dt class="text-sm font-medium leading-6 text-white">
                                                                 <label
                                                                     for="name"
@@ -172,7 +172,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await createMarke
                                                                 />
                                                             </dd>
                                                         </div>
-                                                        <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                                                        <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                                                             <dt class="text-sm font-medium leading-6 text-white">
                                                                 <label
                                                                     for="description"
@@ -198,7 +198,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await createMarke
                                                                 />
                                                             </dd>
                                                         </div>
-                                                        <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                                                        <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                                                             <dt class="text-sm font-medium leading-6 text-white">
                                                                 <label
                                                                     for="color"
@@ -224,7 +224,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await createMarke
                                                                 />
                                                             </dd>
                                                         </div>
-                                                        <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                                                        <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                                                             <dt class="text-sm font-medium leading-6 text-white">
                                                                 <label
                                                                     for="markerType"
@@ -273,7 +273,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await createMarke
                                                             </dd>
                                                         </div>
                                                         <template v-if="values.markerType === MARKER_TYPE.CIRCLE">
-                                                            <div class="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                                                            <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                                                                 <dt class="text-sm font-medium leading-6 text-white">
                                                                     <label
                                                                         for="circleRadius"

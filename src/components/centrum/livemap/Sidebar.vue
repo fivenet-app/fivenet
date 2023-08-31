@@ -324,7 +324,7 @@ async function updateDspStatus(dispatchId?: bigint, status?: DISPATCH_STATUS): P
                                         </li>
                                         <template v-else>
                                             <li class="flex flex-row items-center" v-for="dispatch in ownDispatches">
-                                                <div class="mr-1">
+                                                <div class="mr-1.5">
                                                     <input
                                                         name="active"
                                                         type="radio"
@@ -341,7 +341,9 @@ async function updateDspStatus(dispatchId?: bigint, status?: DISPATCH_STATUS): P
                                                         openDispatchDetails = true;
                                                     "
                                                 >
-                                                    <span class="font-bold truncate">DSP-{{ dispatch.id }}</span>
+                                                    <span class="font-bold truncate inline-flex items-center">
+                                                        <CarEmergencyIcon class="h-4 w-4 mr-0.5" /> DSP-{{ dispatch.id }}</span
+                                                    >
                                                     <span class="mt-2 truncate">
                                                         {{
                                                             $t(
