@@ -7,7 +7,8 @@ import { UserShort } from '~~/gen/ts/resources/users/users';
 import { useAuthStore } from './auth';
 import { useNotificationsStore } from './notifications';
 
-const FIVE_MINUTES = 5 * 60 * 1000;
+const SEVEN_MINUTES = 7 * 60 * 1000;
+const TWO_MINUTES = 2 * 60 * 1000;
 
 export interface CentrumState {
     error: RpcError | undefined;
@@ -292,7 +293,7 @@ export const useCentrumStore = defineStore('centrum', {
             if (this.abort !== undefined) return;
             this.restarting = false;
             if (this.cleanupIntervalId !== undefined) clearInterval(this.cleanupIntervalId);
-            this.cleanupIntervalId = setInterval(() => this.cleanup(), 30000);
+            this.cleanupIntervalId = setInterval(() => this.cleanup(), TWO_MINUTES);
 
             console.debug('Centrum: Starting Data Stream');
 
@@ -477,7 +478,7 @@ export const useCentrumStore = defineStore('centrum', {
             this.pendingDispatches.forEach((pd) => {
                 pd.units.forEach((ua) => {
                     const expiresAt = toDate(ua.expiresAt);
-                    if (now - expiresAt.getTime() > FIVE_MINUTES) this.removePendingDispatch(pd.id);
+                    if (now - expiresAt.getTime() > SEVEN_MINUTES) this.removePendingDispatch(pd.id);
                 });
             });
 
@@ -490,7 +491,7 @@ export const useCentrumStore = defineStore('centrum', {
                 )
                     return;
 
-                if (now - toDate(d.status?.createdAt).getTime() > FIVE_MINUTES) this.removeDispatch(d.id);
+                if (now - toDate(d.status?.createdAt).getTime() > SEVEN_MINUTES) this.removeDispatch(d.id);
             });
         },
     },
