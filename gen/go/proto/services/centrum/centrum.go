@@ -333,6 +333,8 @@ func (s *Server) Stream(req *StreamRequest, srv CentrumService_StreamServer) err
 	}
 }
 
+const pingTickerTime = 90 * time.Second
+
 func (s *Server) stream(srv CentrumService_StreamServer, isDisponent bool, job string, userId int32, unitId uint64) (bool, error) {
 	msgCh := make(chan *nats.Msg, 32)
 	sub, err := s.events.JS.ChanSubscribe(fmt.Sprintf("%s.%s.>", BaseSubject, job), msgCh, nats.DeliverNew())
@@ -342,7 +344,8 @@ func (s *Server) stream(srv CentrumService_StreamServer, isDisponent bool, job s
 	defer sub.Unsubscribe()
 
 	// Ping ticker to ensure better stream quality
-	ticker := time.NewTicker(20 * time.Second)
+	ticker := time.NewTicker(pingTickerTime * 2)
+	defer ticker.Stop()
 
 	resp := &StreamResponse{}
 	// Watch for events from message queue
@@ -498,5 +501,8 @@ func (s *Server) stream(srv CentrumService_StreamServer, isDisponent bool, job s
 		if resp.Restart != nil && *resp.Restart {
 			return false, nil
 		}
+
+		// Reset ping ticker after every (successful) response
+		ticker.Reset(pingTickerTime)
 	}
 }
