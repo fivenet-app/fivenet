@@ -917,7 +917,7 @@
             "category": "Citizens",
             "ListCitizens": {
                 "key": "ListCitizens",
-                "description": "List and search through citizens",
+                "description": "List and search through citizens.",
                 "attrs": {
                     "PhoneNumber": "Phone Number",
                     "Licenses": "Licenses",
@@ -937,7 +937,7 @@
             },
             "SetUserProps": {
                 "key": "SetUserProps",
-                "description": "Set Citizen Props (e.g., wanted status)",
+                "description": "Set Citizen Props (e.g., wanted status, suspected job).",
                 "attrs": {
                     "Wanted": "Wanted Status",
                     "Job": "Job",
@@ -975,35 +975,35 @@
             "category": "Documents",
             "AddDocumentReference": {
                 "key": "AddDocumentReference",
-                "description": "Add/ Remove document references"
+                "description": "Add/ Remove document references."
             },
             "AddDocumentRelation": {
                 "key": "AddDocumentRelation",
-                "description": "Add/ Remove citizen relation"
+                "description": "Add/ Remove citizen relation."
             },
             "CreateDocument": {
                 "key": "CreateDocument",
-                "description": "Create a new document"
+                "description": "Create new documents."
             },
             "ListDocuments": {
                 "key": "ListDocuments",
-                "description": "List/ Search documents"
+                "description": "List and search documents."
             },
             "GetDocument": {
                 "key": "GetDocument",
-                "description": "View a document"
+                "description": "View accessible documents."
             },
             "ListUserDocuments": {
                 "key": "ListUserDocuments",
-                "description": "View the documents linked to a citizen"
+                "description": "View the documents linked to a citizen."
             },
             "ListTemplates": {
                 "key": "List Templates",
-                "description": "List available templates"
+                "description": "List available document templates."
             },
             "UpdateDocument": {
                 "key": "UpdateDocument",
-                "description": "Edit/ Update an existing document",
+                "description": "Edit/ Update an existing document.",
                 "attrs": {
                     "Own": "Own",
                     "Lower_Rank": "Lower Rank",
@@ -1012,15 +1012,15 @@
             },
             "CreateTemplate": {
                 "key": "Create Template",
-                "description": "Create document templates"
+                "description": "Create document templates."
             },
             "DeleteTemplate": {
                 "key": "DeleteTemplate",
-                "description": "Delete document templates"
+                "description": "Delete document templates."
             },
             "DeleteDocument": {
                 "key": "DeleteDocument",
-                "description": "Delete a document",
+                "description": "Delete documents.",
                 "attrs": {
                     "Own": "Own",
                     "Lower_Rank": "Lower Rank",
@@ -1038,7 +1038,7 @@
             },
             "DeleteComment": {
                 "key": "DeleteComment",
-                "description": "Delete own document comment",
+                "description": "Delete document comments.",
                 "attrs": {
                     "Own": "Own",
                     "Lower_Rank": "Lower Rank",
@@ -1047,19 +1047,19 @@
             },
             "PostComment": {
                 "key": "PostComment",
-                "description": "Post document comments"
+                "description": "Post document comments."
             },
             "CreateCategory": {
                 "key": "CreateCategory",
-                "description": "Create/ Update document categories"
+                "description": "Create/ Update document categories."
             },
             "DeleteCategory": {
                 "key": "DeleteCategory",
-                "description": "Delete document categories"
+                "description": "Delete document categories."
             },
             "ListCategories": {
                 "key": "ListCategories",
-                "description": "List document categories"
+                "description": "View and List document categories."
             }
         },
         "LivemapperService": {
@@ -1081,31 +1081,31 @@
             "category": "Control Panel",
             "GetJobProps": {
                 "key": "View Job Properties",
-                "description": "View your job's properties"
+                "description": "View your job's properties."
             },
             "SetJobProps": {
                 "key": "Set Job Properties",
-                "description": "Set your job's properties"
+                "description": "Set your job's properties."
             },
             "GetRoles": {
                 "key": "View Roles",
-                "description": "Get/List FiveNet job roles"
+                "description": "Get/List FiveNet job roles."
             },
             "CreateRole": {
                 "key": "Create Role",
-                "description": "Create FiveNet job roles"
+                "description": "Create FiveNet job roles."
             },
             "DeleteRole": {
                 "key": "Delete Role",
-                "description": "Delete FiveNet job roles"
+                "description": "Delete FiveNet job roles."
             },
             "ViewAuditLog": {
                 "key": "Audit Log",
-                "description": "View audit log"
+                "description": "View audit log of FiveNet actions."
             },
             "UpdateRolePerms": {
                 "key": "Manage Role Permissions",
-                "description": "Add/ Delete permissions to FiveNet job roles"
+                "description": "Add/ Delete permissions to FiveNet job roles."
             }
         },
         "CentrumService": {
@@ -1201,7 +1201,7 @@
             "internal_error": "Internal server error"
         },
         "pkg-auth": {
-            "ErrNoToken": "Authorization string must not be empty",
+            "ErrNoToken": "\"Authorization\" header must not be empty! Please login again.",
             "ErrInvalidToken": "Token invalid/ expired!",
             "ErrCheckToken": "Token check failed!",
             "ErrUserNoPerms": "No permissions associated with your user!",
@@ -1211,7 +1211,7 @@
         "AuthService": {
             "ErrGenericAccount": "Failed to get/update your account, please try again.",
             "ErrAccountCreateFailed": "Please check the token you have typed in!",
-            "ErrInvalidLogin": "Wrong username or password.",
+            "ErrInvalidLogin": "Wrong username or password!",
             "ErrNoAccount": "You need to use your registration token to create an account first.",
             "ErrNoCharFound": "No character(s) found for your account.",
             "ErrGenericLogin": "Failed to login you in, please try again.",
@@ -1223,7 +1223,7 @@
             "ErrSignupDisabled": "Account signup is disabled!"
         },
         "CitizenStoreService": {
-            "ErrFailedQuery": "Failed to list/get citizen(s) data!",
+            "ErrFailedQuery": "Failed to list/get citizens data!",
             "ErrJobGradeNoPermission": "No permission to access this citizen (based on the citizen's job)"
         },
         "CompletorService": {
