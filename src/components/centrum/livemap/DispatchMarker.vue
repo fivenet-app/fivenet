@@ -49,16 +49,27 @@ function selected(_: bigint | string) {
             <IDCopyBadge class="mb-1" prefix="DSP" :id="dispatch.id" :action="selected" />
             <ul>
                 <li>
-                    {{ $t('common.status') }}:
+                    <span class="font-semibold">{{ $t('common.status') }}</span
+                    >:
                     <span :class="dispatchStatusToBGColor(dispatch.status?.status ?? 0)">
                         {{ $t(`enums.centrum.DISPATCH_STATUS.${DISPATCH_STATUS[dispatch.status?.status ?? 0]}`) }}
                     </span>
                 </li>
-                <li>{{ $t('common.message') }}: {{ dispatch!.message }}</li>
-                <li>{{ $t('common.description') }}: {{ dispatch!.description ?? 'N/A' }}</li>
-                <li>{{ $t('common.sent_at') }}: {{ useLocaleTimeAgo(toDate(dispatch!.createdAt)!).value }}</li>
+                <li>
+                    <span class="font-semibold">{{ $t('common.message') }}</span
+                    >: {{ dispatch!.message }}
+                </li>
+                <li>
+                    <span class="font-semibold">{{ $t('common.description') }}</span
+                    >: {{ dispatch!.description ?? 'N/A' }}
+                </li>
+                <li>
+                    <span class="font-semibold">{{ $t('common.sent_at') }}</span
+                    >: {{ useLocaleTimeAgo(toDate(dispatch!.createdAt)!).value }}
+                </li>
                 <li class="italic">
-                    {{ $t('common.sent_by') }}:
+                    <span class="font-semibold">{{ $t('common.sent_by') }}</span
+                    >:
                     <span v-if="dispatch.anon">
                         {{ $t('common.anon') }}
                     </span>

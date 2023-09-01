@@ -8,7 +8,7 @@ export function dispatchStatusToFillColor(status: DISPATCH_STATUS | undefined): 
         case DISPATCH_STATUS.UNASSIGNED:
             return 'fill-error-600';
         case DISPATCH_STATUS.EN_ROUTE:
-            return 'fill-info-400';
+            return 'fill-info-500';
         case DISPATCH_STATUS.ON_SCENE:
             return 'fill-primary-600';
         case DISPATCH_STATUS.NEED_ASSISTANCE:
@@ -20,7 +20,7 @@ export function dispatchStatusToFillColor(status: DISPATCH_STATUS | undefined): 
         case DISPATCH_STATUS.ARCHIVED:
             return 'fill-base-600';
         default:
-            return 'fill-info-400';
+            return 'fill-info-500';
     }
 }
 
@@ -31,7 +31,7 @@ export function dispatchStatusToBGColor(status: DISPATCH_STATUS | undefined): st
         case DISPATCH_STATUS.UNASSIGNED:
             return 'bg-error-600';
         case DISPATCH_STATUS.EN_ROUTE:
-            return 'bg-info-400';
+            return 'bg-info-500';
         case DISPATCH_STATUS.ON_SCENE:
             return 'bg-primary-600';
         case DISPATCH_STATUS.NEED_ASSISTANCE:
@@ -43,7 +43,7 @@ export function dispatchStatusToBGColor(status: DISPATCH_STATUS | undefined): st
         case DISPATCH_STATUS.ARCHIVED:
             return 'bg-base-600';
         default:
-            return 'bg-info-400';
+            return 'bg-info-500';
     }
 }
 
@@ -58,9 +58,9 @@ export function unitStatusToBGColor(status: UNIT_STATUS | undefined): string {
         case UNIT_STATUS.ON_BREAK:
             return 'bg-warn-600';
         case UNIT_STATUS.BUSY:
-            return 'bg-info-400';
+            return 'bg-info-500';
         default:
-            return 'bg-info-400';
+            return 'bg-info-500';
     }
 }
 

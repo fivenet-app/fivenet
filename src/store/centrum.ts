@@ -252,7 +252,11 @@ export const useCentrumStore = defineStore('centrum', {
                 this.removeOwnDispatch(dispatch.id);
             } else {
                 const assignment = dispatch.units.find((u) => u.unitId === this.ownUnit?.id);
-                if (assignment === undefined) return;
+                if (assignment === undefined) {
+                    this.removePendingDispatch(dispatch.id);
+                    this.removeOwnDispatch(dispatch.id);
+                    return;
+                }
 
                 // When dispatch has expiration, it is a "pending" dispatch
                 if (assignment?.expiresAt !== undefined) {

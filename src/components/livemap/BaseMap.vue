@@ -175,7 +175,11 @@ onBeforeUnmount(() => {
 });
 </script>
 
-<style>
+<style lang="scss">
+.leaflet-container {
+    font-family: var(--font-sans);
+}
+
 .leaflet-div-icon {
     background: none;
     border: none;
@@ -241,7 +245,9 @@ onBeforeUnmount(() => {
             <LControlLayers />
 
             <LControl position="bottomleft" class="leaflet-control-attribution mouseposition text-xs">
-                {{ $t('common.longitude') }}: {{ mouseLat }} | {{ $t('common.latitude') }}: {{ mouseLong }}
+                <span class="font-semibold">{{ $t('common.longitude') }}</span
+                >: {{ mouseLat }} | <span class="font-semibold">{{ $t('common.latitude') }}</span
+                >: {{ mouseLong }}
             </LControl>
 
             <slot />

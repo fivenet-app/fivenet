@@ -248,8 +248,8 @@ async function updateUtStatus(id: bigint, status?: UNIT_STATUS): Promise<void> {
                                                 <DisclosureButton
                                                     class="flex w-full items-start justify-between text-left text-white"
                                                 >
-                                                    <span class="text-base-200 leading-7">
-                                                        <div class="text-xs font-semibold leading-6 text-base-200">
+                                                    <span class="text-base-100 leading-7">
+                                                        <div class="text-xs font-semibold leading-6 text-base-100">
                                                             {{ $t('common.unit') }}
                                                         </div>
                                                     </span>
@@ -276,14 +276,14 @@ async function updateUtStatus(id: bigint, status?: UNIT_STATUS): Promise<void> {
                                                                 class="text-white bg-primary hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-2 text-xs my-0.5"
                                                                 :class="[
                                                                     idx >= actionsUnit.length - 1 ? 'col-span-2' : '',
-                                                                    unitStatusToBGColor(item.status),
+                                                                    item.status ? unitStatusToBGColor(item.status) : item.class,
                                                                     item.class,
                                                                 ]"
                                                                 @click="updateUtStatus(ownUnit.id, item.status)"
                                                             >
                                                                 <component
                                                                     :is="item.icon ?? HoopHouseIcon"
-                                                                    class="text-base-200 group-hover:text-white h-5 w-5 shrink-0"
+                                                                    class="text-base-100 group-hover:text-white h-5 w-5 shrink-0"
                                                                     aria-hidden="true"
                                                                 />
                                                                 <span class="mt-1">
@@ -307,7 +307,7 @@ async function updateUtStatus(id: bigint, status?: UNIT_STATUS): Promise<void> {
                                 </li>
                                 <li>
                                     <ul role="list" class="-mx-2 space-y-1">
-                                        <div class="text-xs font-semibold leading-6 text-base-200">
+                                        <div class="text-xs font-semibold leading-6 text-base-100">
                                             {{ $t('common.dispatch') }} {{ $t('common.status') }}
                                         </div>
                                         <li>
@@ -319,14 +319,14 @@ async function updateUtStatus(id: bigint, status?: UNIT_STATUS): Promise<void> {
                                                     class="text-white bg-primary hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-2 text-xs my-0.5"
                                                     :class="[
                                                         idx >= actionsDispatch.length - 1 ? 'col-span-2' : '',
+                                                        item.status ? dispatchStatusToBGColor(item.status) : item.class,
                                                         item.class,
-                                                        dispatchStatusToBGColor(item.status),
                                                     ]"
                                                     @click="updateDspStatus(selectedDispatch?.id, item.status)"
                                                 >
                                                     <component
                                                         :is="item.icon ?? HoopHouseIcon"
-                                                        class="text-base-200 group-hover:text-white h-5 w-5 shrink-0"
+                                                        class="text-base-100 group-hover:text-white h-5 w-5 shrink-0"
                                                         aria-hidden="true"
                                                     />
                                                     <span class="mt-1">
@@ -346,7 +346,7 @@ async function updateUtStatus(id: bigint, status?: UNIT_STATUS): Promise<void> {
                                     </ul>
                                 </li>
                                 <li>
-                                    <div class="text-xs font-semibold leading-6 text-base-200">
+                                    <div class="text-xs font-semibold leading-6 text-base-100">
                                         {{ $t('common.your_dispatches') }}
                                     </div>
                                     <ul role="list" class="-mx-2 mt-2 space-y-1">

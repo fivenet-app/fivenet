@@ -7,5 +7,3 @@
     - [ ] Activity Feed
         - [ ] Translate Activity Feed items
     - [ ] Add more errors and translate them
-    - [ ] Unit List
-        - [ ] "Ihre Einsätze" ist leer nach joinen einer Einheit

@@ -273,6 +273,8 @@ func (s *Server) sendLatestState(srv CentrumService_StreamServer, job string, us
 	dispatches, err := s.ListDispatches(srv.Context(), &ListDispatchesRequest{
 		NotStatus: []dispatch.DISPATCH_STATUS{
 			dispatch.DISPATCH_STATUS_ARCHIVED,
+			dispatch.DISPATCH_STATUS_CANCELLED,
+			dispatch.DISPATCH_STATUS_COMPLETED,
 		},
 	})
 	if err != nil {
