@@ -79,5 +79,10 @@ switch (userSettings.locale.split('-', 1)[0]) {
             }"
         />
     </NuxtLayout>
-    <CookieControl :locale="cookieLocale" v-if="route.meta.showCookieOptions !== undefined && route.meta.showCookieOptions" />
+    <CookieControl
+        v-if="
+            !configStore.clientConfig.NUIEnabled && route.meta.showCookieOptions !== undefined && route.meta.showCookieOptions
+        "
+        :locale="cookieLocale"
+    />
 </template>

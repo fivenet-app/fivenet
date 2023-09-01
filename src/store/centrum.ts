@@ -219,7 +219,6 @@ export const useCentrumStore = defineStore('centrum', {
                 this.ownDispatches[idx].createdAt = dispatch.createdAt;
                 this.ownDispatches[idx].updatedAt = dispatch.updatedAt;
                 this.ownDispatches[idx].job = dispatch.job;
-                this.ownDispatches[idx].status = dispatch.status;
                 this.ownDispatches[idx].message = dispatch.message;
                 this.ownDispatches[idx].description = dispatch.description;
                 this.ownDispatches[idx].attributes = dispatch.attributes;
@@ -228,10 +227,30 @@ export const useCentrumStore = defineStore('centrum', {
                 this.ownDispatches[idx].anon = dispatch.anon;
                 this.ownDispatches[idx].userId = dispatch.userId;
                 this.ownDispatches[idx].user = dispatch.user;
+
                 if (dispatch.units.length == 0) {
                     this.ownDispatches[idx].units.length = 0;
                 } else {
                     this.ownDispatches[idx].units = dispatch.units;
+                }
+
+                if (dispatch.status !== undefined) {
+                    if (this.ownDispatches[idx].status === undefined) {
+                        this.ownDispatches[idx].status = dispatch.status;
+                    } else {
+                        this.ownDispatches[idx].status!.id = dispatch.status.id;
+                        this.ownDispatches[idx].status!.createdAt = dispatch.status.createdAt;
+                        this.ownDispatches[idx].status!.dispatchId = dispatch.status.dispatchId;
+                        this.ownDispatches[idx].status!.unitId = dispatch.status.unitId;
+                        this.ownDispatches[idx].status!.unit = dispatch.status.unit;
+                        this.ownDispatches[idx].status!.status = dispatch.status.status;
+                        this.ownDispatches[idx].status!.reason = dispatch.status.reason;
+                        this.ownDispatches[idx].status!.code = dispatch.status.code;
+                        this.ownDispatches[idx].status!.userId = dispatch.status.userId;
+                        this.ownDispatches[idx].status!.user = dispatch.status.user;
+                        this.ownDispatches[idx].status!.x = dispatch.status.x;
+                        this.ownDispatches[idx].status!.y = dispatch.status.y;
+                    }
                 }
             }
         },
@@ -279,6 +298,43 @@ export const useCentrumStore = defineStore('centrum', {
                     content: { key: 'notifications.centrum.store.assigned_dispatch.content', parameters: [] },
                     type: 'info',
                 });
+            } else {
+                this.pendingDispatches[idx].createdAt = dispatch.createdAt;
+                this.pendingDispatches[idx].updatedAt = dispatch.updatedAt;
+                this.pendingDispatches[idx].job = dispatch.job;
+                this.pendingDispatches[idx].message = dispatch.message;
+                this.pendingDispatches[idx].description = dispatch.description;
+                this.pendingDispatches[idx].attributes = dispatch.attributes;
+                this.pendingDispatches[idx].x = dispatch.x;
+                this.pendingDispatches[idx].y = dispatch.y;
+                this.pendingDispatches[idx].anon = dispatch.anon;
+                this.pendingDispatches[idx].userId = dispatch.userId;
+                this.pendingDispatches[idx].user = dispatch.user;
+
+                if (dispatch.units.length == 0) {
+                    this.pendingDispatches[idx].units.length = 0;
+                } else {
+                    this.pendingDispatches[idx].units = dispatch.units;
+                }
+
+                if (dispatch.status !== undefined) {
+                    if (this.pendingDispatches[idx].status === undefined) {
+                        this.pendingDispatches[idx].status = dispatch.status;
+                    } else {
+                        this.pendingDispatches[idx].status!.id = dispatch.status.id;
+                        this.pendingDispatches[idx].status!.createdAt = dispatch.status.createdAt;
+                        this.pendingDispatches[idx].status!.dispatchId = dispatch.status.dispatchId;
+                        this.pendingDispatches[idx].status!.unitId = dispatch.status.unitId;
+                        this.pendingDispatches[idx].status!.unit = dispatch.status.unit;
+                        this.pendingDispatches[idx].status!.status = dispatch.status.status;
+                        this.pendingDispatches[idx].status!.reason = dispatch.status.reason;
+                        this.pendingDispatches[idx].status!.code = dispatch.status.code;
+                        this.pendingDispatches[idx].status!.userId = dispatch.status.userId;
+                        this.pendingDispatches[idx].status!.user = dispatch.status.user;
+                        this.pendingDispatches[idx].status!.x = dispatch.status.x;
+                        this.pendingDispatches[idx].status!.y = dispatch.status.y;
+                    }
+                }
             }
         },
 
