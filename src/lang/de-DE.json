@@ -23,7 +23,7 @@
         "about": {
             "sub_title": "Über FiveNet und seine Ersteller.",
             "introduction": {
-                "pre_title": "Mehr Zeit für GTA V Roleplay",
+                "pre_title": "Mehr Zeit für GTA V Roleplay.",
                 "title": "Ein besserer Arbeitsablauf",
                 "content": "Einfaches Suchen nach Bürgern und Fahrzeugen. Mit dem Dokumentzugriffssystem ist es einfach, Dokumente zu erstellen und sicher mit Ihren Kollegen zu teilen. Eine Livemap, die die letzten Einsätze und die Standorte Ihrer Kollegen anzeigt.",
                 "feature_one": {
@@ -75,7 +75,7 @@
                 "documents": "Suche und erstelle Dokumente, entweder mit Vorlagen oder von Grund auf neu.",
                 "jobs": "Infos über deinen Job und Mitarbeitermanagement. Kommt bald",
                 "livemap": "Live-Positionen von Einsätzen und Kollegen.",
-                "centrum": "Leitstelle, für das zuweisen von Einsätze."
+                "centrum": "Leitstelle, für das Zuweisen von Einsätze."
             }
         },
         "documents": {
@@ -148,7 +148,7 @@
         },
         "error": {
             "title": "Fehler aufgetreten",
-            "subtitle": "Ein fataler Fehler ist aufgetreten, bitte versuchen sie es erneut.",
+            "subtitle": "Ein fataler Fehler ist aufgetreten, bitte versuche es erneut.",
             "error_message": "Fehlermeldung:",
             "copy_error": "Fehlerbericht kopieren"
         },
@@ -199,7 +199,7 @@
                 "registration_token": "Registrierungstoken",
                 "submit_button": "Neues Passwort festlegen",
                 "back_to_login_button": "Zurück zur Anmeldung",
-                "create_error": "Es ist ein Fehler aufgetreten beim Festlegen Ihres neuen Passworts. Bitte versuchen Sie es erneut!"
+                "create_error": "Es ist ein Fehler beim Festlegen Ihres neuen Passworts aufgetreten, bitte versuchen Sie es erneut!"
             }
         },
         "citizens": {
@@ -268,7 +268,7 @@
         },
         "clipboard": {
             "clipboard_button": {
-                "add": "Zum Zwischenspeicher hinzufügen"
+                "add": "Zur Zwischenablage hinzufügen"
             },
             "clipboard_modal": {
                 "clear": "Zwischenablage leeren",
@@ -356,11 +356,11 @@
             "title": "Debug-Informationen",
             "subtitle": "Wichtige Informationen bei der Meldung von Problemen mit FiveM.",
             "perms": "Aktuelle Berechtigungen",
-            "active_char_id": "ID des aktiven Characters",
+            "active_char_id": "ID des aktiven Charakters",
             "access_token_expiration": "Ablauf des Zugangstokens",
-            "reset_clipboard": "Clipboard zurücksetzen",
+            "reset_clipboard": "Zwischenablage zurücksetzen",
             "debug_functions": "Debug-Funktionen",
-            "reset_local_storage": "Lokalen Browser Storage zurücksetzen",
+            "reset_local_storage": "Lokalen Browser-Speicher zurücksetzen",
             "factory_reset": "FiveNet App auf Standard zurücksetzen"
         },
         "penaltycalculator": {
@@ -390,7 +390,7 @@
             "dispatch_center": {
                 "starting_datastream": "Start Leitstellen Datenstrom...",
                 "failed_datastream": "Leistellen Datenstrom fehlgeschlagen!",
-                "join_center": "Trete der Leitstelle bei in dem du hier klickst."
+                "join_center": "Trete der Leitstelle bei, indem du hier klickst."
             },
             "livemap": {
                 "mark_on_gps": "Auf GPS markieren"
@@ -566,7 +566,7 @@
         "color": "Farbe",
         "initials": "Initialen",
         "updated": "Aktualisiert",
-        "members": "Keine Mitglieder | {n} Mitglied | {n} Mitglieder",
+        "members": "Mitglieder",
         "anon": "Anonym",
         "setting": "Einstellung | Einstellungen",
         "cancel": "Abbrechen",
@@ -636,7 +636,7 @@
             },
             "vehicle_removed": {
                 "title": "Zwischenablage: Fahrzeug entfernt",
-                "content": "Ausgewählte Fahrzeuge wurden aus der Zwischenablage entfernt"
+                "content": "Ausgewähltes Fahrzeug wurde aus der Zwischenablage entfernt"
             },
             "vehicles_removed": {
                 "title": "Zwischenablage: Fahrzeuge entfernt",
@@ -910,14 +910,14 @@
             "category": "Authentifizierung",
             "ChooseCharacter": {
                 "key": "Character Auswählen",
-                "description": "Berechtigung zum Charakterauswahl, um den Zugriff auf FiveNet zu erlauben oder zu verweigern."
+                "description": "Berechtigung zur Charakterauswahl, um den Zugriff auf FiveNet zu erlauben oder zu verweigern."
             }
         },
         "CitizenStoreService": {
             "category": "Bürger",
             "ListCitizens": {
                 "key": "Bürger auflisten",
-                "description": "Bürger auflisten und suchen",
+                "description": "Bürger auflisten und suchen.",
                 "attrs": {
                     "PhoneNumber": "Telefonnummer",
                     "Licenses": "Lizenzen",
@@ -937,9 +937,9 @@
             },
             "SetUserProps": {
                 "key": "Nutzereigenschaften festlegen",
-                "description": "Bürger-Eigenschaften festlegen (z.B. Fahndungsstatus)",
+                "description": "Bürger-Eigenschaften festlegen (z.B. Fahndungsstatus).",
                 "attrs": {
-                    "Wanted": "Gesuchten Status",
+                    "Wanted": "Gesuchter Status",
                     "Job": "Job",
                     "TrafficInfractionPoints": "Verkehrspunkte"
                 }
@@ -979,23 +979,23 @@
             },
             "AddDocumentRelation": {
                 "key": "Dokumenten-Bürger-Beziehungen hinzufügen",
-                "description": "Bürgerbeziehung hinzufügen/entfernen"
+                "description": "Bürgerbeziehung hinzufügen/entfernen."
             },
             "CreateDocument": {
                 "key": "Dokument Erstellen",
-                "description": "Ein neues Dokument erstellen"
+                "description": "Ein neues Dokument erstellen."
             },
             "ListDocuments": {
-                "key": "Dokumenten Suchen und Auflisten",
-                "description": "Dokumente auflisten/suchen"
+                "key": "Dokumente suchen und auflisten",
+                "description": "Dokumente auflisten/suchen."
             },
             "GetDocument": {
                 "key": "Dokumente Anzeigen können",
-                "description": "Ein Dokument anzeigen"
+                "description": "Ein Dokument anzeigen."
             },
             "ListUserDocuments": {
                 "key": "Bürger-Dokumente Sehen",
-                "description": "Die mit einem Bürger verknüpften Dokumente anzeigen"
+                "description": "Die mit einem Bürger verknüpften Dokumente anzeigen."
             },
             "ListTemplates": {
                 "key": "Vorlagen auflisten",
@@ -1003,7 +1003,7 @@
             },
             "UpdateDocument": {
                 "key": "Dokument aktualisieren",
-                "description": "Ein vorhandenes Dokument bearbeiten/aktualisieren",
+                "description": "Ein vorhandenes Dokument bearbeiten/aktualisieren.",
                 "attrs": {
                     "Own": "Eigene",
                     "Lower_Rank": "Niedrigerer Rang",
@@ -1012,15 +1012,15 @@
             },
             "CreateTemplate": {
                 "key": "Vorlage erstellen",
-                "description": "Erstellen von Dokumentenvorlagen"
+                "description": "Erstellen von Dokumentenvorlagen."
             },
             "DeleteTemplate": {
                 "key": "Vorlage löschen",
-                "description": "Dokumentenvorlagen löschen"
+                "description": "Dokumentenvorlagen löschen."
             },
             "DeleteDocument": {
                 "key": "Dokumenten Löschung",
-                "description": "Ein Dokument löschen",
+                "description": "Dokumente löschen.",
                 "attrs": {
                     "Own": "Eigene",
                     "Lower_Rank": "Niedrigerer Rang",
@@ -1038,7 +1038,7 @@
             },
             "DeleteComment": {
                 "key": "Dokumenten Kommentare löschen",
-                "description": "Eigenen Dokumentenkommentar löschen",
+                "description": "Eigenen Dokumentenkommentar löschen.",
                 "attrs": {
                     "Own": "Eigene",
                     "Lower_Rank": "Niedrigerer Rang",
@@ -1047,19 +1047,19 @@
             },
             "PostComment": {
                 "key": "Kommentar zum Dokument posten",
-                "description": "Dokumentkommentare posten"
+                "description": "Dokumentkommentare posten."
             },
             "CreateCategory": {
                 "key": "Dokumentenkategorie erstellen",
-                "description": "Dokumentenkategorien erstellen/aktualisieren"
+                "description": "Dokumentenkategorien erstellen/aktualisieren."
             },
             "DeleteCategory": {
                 "key": "Dokumentenkategorie löschen",
-                "description": "Dokumentenkategorien löschen"
+                "description": "Dokumentenkategorien löschen."
             },
             "ListCategories": {
                 "key": "Auflisten der Dokumentenkategorien",
-                "description": "Liste der Dokumentkategorien"
+                "description": "Liste der Dokumentkategorien."
             }
         },
         "LivemapperService": {
@@ -1081,31 +1081,31 @@
             "category": "Kontrollzentrum",
             "GetJobProps": {
                 "key": "Job Eigenschaften ansehen",
-                "description": "Die Eigenschaften deines Jobs anzeigen"
+                "description": "Die Eigenschaften deines Jobs anzeigen."
             },
             "SetJobProps": {
                 "key": "Job Eigenschaften ändern",
                 "description": "Setze Eigenschaften deines Jobs."
             },
             "GetRoles": {
-                "key": "Rolen ansehen",
-                "description": "FiveNet-Jobrollen abrufen/auflisten"
+                "key": "Rollen ansehen",
+                "description": "FiveNet-Jobrollen abrufen/auflisten."
             },
             "CreateRole": {
                 "key": "Rollen erstellen",
-                "description": "FiveNet-Jobrollen erstellen"
+                "description": "FiveNet-Jobrollen erstellen."
             },
             "DeleteRole": {
                 "key": "Rollen löschen",
-                "description": "FiveNet-Jobrollen löschen"
+                "description": "FiveNet-Jobrollen löschen."
             },
             "ViewAuditLog": {
                 "key": "Zugriff auf Audit Log",
-                "description": "Audit-Protokoll anzeigen"
+                "description": "Audit-Protokoll anzeigen."
             },
             "UpdateRolePerms": {
                 "key": "Berechtigungen für Rollen verwalten",
-                "description": "Hinzufügen/Löschen von Berechtigungen für FiveNet-Jobrollen"
+                "description": "Hinzufügen/Löschen von Berechtigungen für FiveNet-Jobrollen."
             }
         },
         "CentrumService": {
@@ -1201,7 +1201,7 @@
             "internal_error": "Interner Server Fehler"
         },
         "pkg-auth": {
-            "ErrNoToken": "\"Authorization\" Header darf nicht leer sein",
+            "ErrNoToken": "Anfrage Header \"Authorization\" darf nicht leer sein! Bitte erneut anmelden.",
             "ErrInvalidToken": "Token ungültig/ ausgelaufen!",
             "ErrCheckToken": "Token Überprüfung fehlgeschlagen!",
             "ErrUserNoPerms": "Ihr Nutzeraccount hat keine Berechtigungen!",
@@ -1215,25 +1215,25 @@
             "ErrNoAccount": "Sie müssen zuerst einen Account mit ihrem Registrierungstoken erstellen.",
             "ErrNoCharFound": "Keine(n) Character für deinen Account gefunden.",
             "ErrGenericLogin": "Fehler bei der Anmeldung, bitte versuche es erneut.",
-            "ErrUnableToChooseChar": "Sie haben nicht genug Berechtigungen um den Character auszuwählen!",
-            "ErrUpdateAccount": "Fehler beim aktualisieren ihres Benutzers!",
-            "ErrChangePassword": "Fehler beim ändern ihres Passworts!",
+            "ErrUnableToChooseChar": "Sie haben nicht genug Berechtigungen um den Charakter auszuwählen!",
+            "ErrUpdateAccount": "Fehler beim Aktualisieren Ihres Benutzers!",
+            "ErrChangePassword": "Fehler beim Ändern Ihres Passworts!",
             "ErrForgotPassword": "Fehler beim zurücksetzen ihres Passworts!",
             "ErrAccountExistsFailed": "Bitte nutzen sie die Passwort vergessen Funktion!",
             "ErrSignupDisabled": "Konto-Erstellung ist deaktiviert!"
         },
         "CitizenStoreService": {
-            "ErrFailedQuery": "Fehler beim laden von Bürger Daten!",
-            "ErrJobGradeNoPermission": "Keine Berechtigung auf diesen Bürger zuzugreifen (basierend auf dem Job des Bürgers)"
+            "ErrFailedQuery": "Fehler beim Laden von Bürger Daten!",
+            "ErrJobGradeNoPermission": "Keine Berechtigung um auf diesen Bürger zuzugreifen (basierend auf dem Job des Bürgers)"
         },
         "CompletorService": {
             "ErrFailedSearch": "Fehler beim Laden der Autovervollständigung!"
         },
         "DMVService": {
-            "ErrFailedQuery": "Fehler beim laden von Fahrzeug Daten!"
+            "ErrFailedQuery": "Fehler beim Laden von Fahrzeug Daten!"
         },
         "DocStoreService": {
-            "ErrFailedQuery": "Fehlen beim anzeigen/erstellen/aktualisieren von Dokumenten!",
+            "ErrFailedQuery": "Fehlen beim Anzeigen/Erstellen/Aktualisieren von Dokumenten!",
             "ErrNotFoundOrNoPerms": "Kein Dokument gefunden oder keine Berechtigungen auf das Dokument zuzugreifen!",
             "ErrTemplateNoPerms": "Keine Berechtigungen Vorlagen anzuzeigen/aktualisieren/zu löschen!",
             "ErrPermissionDenied": "Du hast keine Berechtigung das zu tun!",
@@ -1255,12 +1255,12 @@
             "ErrNoPermission": "Keine Berechtigung um Rollen zu erstellen/ändern/löschen!",
             "ErrRoleAlreadyExists": "Rolle existiert bereits!",
             "ErrOwnRoleDeletion": "Eigene Rolle kann nicht gelöscht werden!",
-            "ErrInvalidPerms": "Fehler beim aktualisieren der Rollen Berechtigungen!",
-            "ErrInvalidAttrs": "Fehler beim aktualisieren der Rollen Attributen!",
+            "ErrInvalidPerms": "Fehler beim Aktualisieren der Rollen Berechtigungen!",
+            "ErrInvalidAttrs": "Fehler beim Aktualisieren der Rollen Attributen!",
             "ErrInvalidJPQuickButton": "Fehlerhafter Schnellzugriff-Knopf!"
         },
         "CentrumService": {
-            "ErrFailedQuery": "Fehler beim anzeigen/aktualisieren von Leitstellen Daten!",
+            "ErrFailedQuery": "Fehler beim Anzeigen/Aktualisieren von Leitstellen Daten!",
             "ErrAlreadyInUnit": "Sie sind bereits in einer Einheit! Sie müssen diese verlassen bevor sie einer anderen Einheit beitreten können.",
             "ErrNotPartOfDispatch": "Sie sind nicht Teil dieses Einsatzes!",
             "ErrNotOnDuty": "Sie sind nicht im Dienst!",
