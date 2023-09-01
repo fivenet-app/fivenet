@@ -43,7 +43,10 @@ const playerMarkersFiltered = computed(() =>
 
 onBeforeMount(async () => startStream());
 
-onBeforeUnmount(async () => stopStream());
+onBeforeUnmount(async () => {
+    stopStream();
+    livemapStore.$reset();
+});
 </script>
 
 <template>

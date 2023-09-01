@@ -28,7 +28,10 @@ const { location } = storeToRefs(livemapStore);
 
 onBeforeMount(async () => setTimeout(async () => startStream(), 250));
 
-onBeforeUnmount(async () => stopStream());
+onBeforeUnmount(async () => {
+    stopStream();
+    centrumStore.$reset();
+});
 
 function goto(e: Coordinate) {
     location.value = { x: e.x, y: e.y };

@@ -745,6 +745,7 @@ const { handleSubmit, values, setFieldValue, meta } = useForm<FormData>({
     initialValues: {
         public: false,
     },
+    validateOnMount: true,
 });
 
 const onSubmit = handleSubmit(async (values): Promise<void> => {
@@ -1015,7 +1016,6 @@ const onSubmit = handleSubmit(async (values): Promise<void> => {
         </div>
         <div class="flex pb-14">
             <button
-                v-if="!props.id?.toString()"
                 type="submit"
                 :disabled="!meta.valid || !canEdit"
                 class="rounded-md py-2.5 px-3.5 text-sm font-semibold text-neutral"

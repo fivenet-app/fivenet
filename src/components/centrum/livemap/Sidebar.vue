@@ -71,7 +71,10 @@ const actionsDispatch: {
 
 onBeforeMount(async () => setTimeout(async () => startStream(), 250));
 
-onBeforeUnmount(async () => stopStream());
+onBeforeUnmount(async () => {
+    stopStream();
+    centrumStore.$reset();
+});
 
 const selectUnitOpen = ref(false);
 
