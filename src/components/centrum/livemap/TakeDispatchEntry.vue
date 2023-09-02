@@ -34,8 +34,10 @@ const open = ref(false);
                 <IDCopyBadge class="ml-2" prefix="DSP" :id="dispatch.id" :action="() => (open = true)" />
             </div>
             <div v-if="expiresAt" class="mt-1 text-white text-sm">
-                {{ $t('common.expires_in') }}
-                {{ useLocaleTimeAgo(toDate(expiresAt), { showSecond: true, updateInterval: 1000 }).value }}
+                <span>
+                    {{ $t('common.expires_in') }}:
+                    {{ useLocaleTimeAgo(toDate(expiresAt), { showSecond: true, updateInterval: 1000 }).value }}
+                </span>
             </div>
         </dt>
         <dd class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0">

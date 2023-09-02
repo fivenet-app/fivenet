@@ -105,8 +105,6 @@ export const useCentrumStore = defineStore('centrum', {
             this.ownUnit.initials = unit.initials;
             this.ownUnit.color = unit.color;
             this.ownUnit.description = unit.description;
-            this.ownUnit.status = unit.status;
-            this.ownUnit.users = unit.users;
 
             if (unit.users.length == 0) {
                 this.ownUnit.users.length = 0;

@@ -15,6 +15,8 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
+const DispatchExpirationTime = 31 * time.Second
+
 func (s *Server) getDispatch(job string, id uint64) (*dispatch.Dispatch, bool) {
 	dispatches, ok := s.dispatches.Load(job)
 	if !ok {
@@ -219,7 +221,7 @@ func (s *Server) updateDispatchAssignments(ctx context.Context, job string, user
 	}
 
 	if len(toAdd) > 0 {
-		expiresAt := time.Now().Add(16 * time.Second)
+		expiresAt := time.Now().Add(DispatchExpirationTime)
 		expiresAtTS := timestamp.New(expiresAt)
 		for k := 0; k < len(toAdd); k++ {
 			found := false
@@ -239,7 +241,7 @@ func (s *Server) updateDispatchAssignments(ctx context.Context, job string, user
 				continue
 			}
 
-			expiresAt := time.Now().Add(16 * time.Second)
+			expiresAt := time.Now().Add(DispatchExpirationTime)
 			stmt := tDispatchUnit.
 				INSERT(
 					tDispatchUnit.DispatchID,

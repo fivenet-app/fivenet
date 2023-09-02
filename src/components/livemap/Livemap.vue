@@ -49,7 +49,7 @@ if (can('CentrumService.CreateDispatch')) {
         },
     });
 }
-if (can('CentrumService.CreateOrUpdateMarker')) {
+if (can('LivemapperService.CreateOrUpdateMarker')) {
     mapOptions.contextmenuItems.push({
         text: t('components.livemap.create_marker.title'),
         callback: (e: LeafletMouseEvent) => {
@@ -88,7 +88,7 @@ async function applySelectedMarkerCentering(): Promise<void> {
             @close="openCreateDispatch = false"
         />
         <CreateOrUpdateMarkerModal
-            v-if="can('CentrumService.CreateOrUpdateMarker')"
+            v-if="can('LivemapperService.CreateOrUpdateMarker')"
             :open="openCreateMarker"
             @close="openCreateMarker = false"
         />
