@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { RGB, colourToTextColour, hexToRgb, stringToColour } from '~/utils/colour';
+import { RGB, hexToRgb, isColourBright, stringToColour } from '~/utils/colour';
 
 const props = withDefaults(
     defineProps<{
@@ -16,7 +16,6 @@ const props = withDefaults(
 const backgroundColor = stringToColour(props.plate);
 
 const inverseColor = hexToRgb(backgroundColor) ?? ({ r: 0, g: 0, b: 0 } as RGB);
-const textColor = colourToTextColour(inverseColor);
 const year = props.year ?? '201' + props.plate.charAt(props.plate.length - 1);
 </script>
 
@@ -29,7 +28,7 @@ const year = props.year ?? '201' + props.plate.charAt(props.plate.length - 1);
             <div class="select-none text-xs text-warn-400">{{ state }}</div>
             <div class="select-none text-xs">{{ year }}</div>
         </div>
-        <div class="text-xl text-warn-400" :style="{ color: textColor }">
+        <div class="text-xl" :class="isColourBright(inverseColor) ? 'text-warn-300' : 'text-white'">
             {{ plate }}
         </div>
     </div>

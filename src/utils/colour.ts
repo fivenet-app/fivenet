@@ -26,9 +26,8 @@ export function hexToRgb(hex: string): RGB | undefined {
         : undefined;
 }
 
-export function colourToTextColour(rgb: RGB): string {
+export function isColourBright(rgb: RGB): boolean {
     // http://www.w3.org/TR/AERT#color-contrast
     const brightness = Math.round((rgb.r * 299 + rgb.g * 587 + rgb.b * 114) / 1000);
-    const textColour = brightness > 125 ? 'black' : 'yellow';
-    return textColour;
+    return brightness > 125;
 }

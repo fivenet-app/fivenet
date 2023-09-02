@@ -1,8 +1,9 @@
 <script lang="ts" setup>
 import { unitStatusToBGColor } from '~/components/centrum/helpers';
+import { RGB } from '~/utils/colour';
 import { UNIT_STATUS, Unit } from '~~/gen/ts/resources/dispatch/units';
 
-defineProps<{
+const props = defineProps<{
     unit: Unit;
 }>();
 
@@ -10,13 +11,16 @@ defineEmits<{
     (e: 'goto', loc: Coordinate): void;
     (e: 'details', unit: Unit): void;
 }>();
+
+const unitColorHex = hexToRgb('#' + props.unit.color ?? '000000') ?? ({ r: 0, g: 0, b: 0 } as RGB);
 </script>
 
 <template>
     <li class="col-span-1 flex rounded-md shadow-sm" @click="$emit('details', unit)">
         <div
-            class="flex w-12 flex-shrink-0 items-center justify-center rounded-l-md text-sm font-medium text-white border-l border-t border-b"
-            :style="'background-color: #' + unit.color ?? '00000'"
+            class="flex flex-shrink-0 items-center justify-center rounded-l-md text-sm font-medium border-l border-t border-b w-12"
+            :class="isColourBright(unitColorHex) ? 'text-black' : 'text-white'"
+            :style="'background-color: #' + unit.color ?? '000000'"
         >
             {{ unit.initials }}
         </div>

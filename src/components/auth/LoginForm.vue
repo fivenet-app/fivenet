@@ -13,7 +13,7 @@ const { loginError } = storeToRefs(authStore);
 const { loginStart, loginStop, setActiveChar, setPermissions, setAccessToken } = authStore;
 
 const configStore = useConfigStore();
-const { appConfig } = storeToRefs(configStore);
+const { appConfig, clientConfig } = storeToRefs(configStore);
 
 const { cookiesEnabledIds } = useCookieControl();
 
@@ -65,7 +65,9 @@ const { handleSubmit, meta } = useForm<FormData>({
 const onSubmit = handleSubmit(async (values): Promise<void> => await login(values));
 
 const socialLoginEnabled = ref(false);
-if (cookiesEnabledIds.value?.includes('social_login')) {
+if (clientConfig.value.NUIEnabled) {
+    socialLoginEnabled.value = true;
+} else if (cookiesEnabledIds.value?.includes('social_login')) {
     socialLoginEnabled.value = true;
 }
 
