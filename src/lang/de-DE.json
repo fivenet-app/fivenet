@@ -17,7 +17,7 @@
             },
             "login": {
                 "title": "Anmeldung",
-                "social_login_disabled": "Um den Third-Party Login zu nutzen müssen Cookies akzeptiert werden."
+                "social_login_disabled": "Um den Social Login Login zu nutzen müssen Cookies akzeptiert werden."
             }
         },
         "about": {
@@ -112,7 +112,7 @@
                 "properties": "Stelle deine Job Eigenschaften ein (e.g., Livemap Mitarbeiter Farbe).",
                 "jobs": "Richten Sie die Rollen, Job Ränge und Berechtigungen für Ihre Fraktion ein.",
                 "audit_log": "Eine Überprüfung der Schritte, die von Ihren Kollegen unternommen wurden.",
-                "limiter": "Begrenzen was Fraktionen sehen können.",
+                "limiter": "Begrenzen was Fraktionen sehen können (Mitarbeiter Standorte, Einsätze...).",
                 "laws": "Erstelle und aktualisiere die Gesetzbücher des Staates.",
                 "units": "Anzeigen, Erstellen und Aktualisieren von Einheiten für die Leitstelle."
             },
@@ -190,8 +190,8 @@
                 "new_password": "Neues Passwort"
             },
             "oauth2_connections": {
-                "title": "Third-Party Login",
-                "subtitle": "Ihr Third-Party Login, für schnelleres Anmelden und coole zusätzliche Funktionen."
+                "title": "Social Login Login",
+                "subtitle": "Ihr Social Login Login, für schnelleres Anmelden und coole zusätzliche Funktionen."
             },
             "forgot_password": {
                 "title": "Passwort vergessen",
@@ -747,11 +747,11 @@
             "oauth2_login": {
                 "success": {
                     "title": "Erfolgreich angemeldet",
-                    "content": "Third-Party Anmeldung erfolgreich."
+                    "content": "Social Login Anmeldung erfolgreich."
                 },
                 "failed": {
                     "title": "Anmeldung fehlgeschlagen",
-                    "content": "Third-Party Anmeldung fehlgeschlagen ({0}), bitte erneut versuchen."
+                    "content": "Social Login Anmeldung fehlgeschlagen ({0}), bitte erneut versuchen."
                 }
             },
             "no_permission": {
@@ -833,7 +833,7 @@
             "sidebar": {
                 "no_dispatch_selected": {
                     "title": "Kein Einsatz ausgewählt!",
-                    "content": "Bitte wähle einen Einsatz aus, damit du den Status schnell aktualisieren kannst."
+                    "content": "Bitte wähle den Einsatz aus, den du aktualisieren willst."
                 },
                 "dispatch_status_updated": {
                     "title": "Einsatz Status aktualisiert",
@@ -889,8 +889,8 @@
             },
             "UNIT_STATUS": {
                 "UNKNOWN": "Unbekannt",
-                "USER_ADDED": "User hinzugefügt",
-                "USER_REMOVED": "User entfernt",
+                "USER_ADDED": "Mitglied hinzugefügt",
+                "USER_REMOVED": "Mitglied entfernt",
                 "UNAVAILABLE": "Nicht verfügbar",
                 "AVAILABLE": "Verfügbar",
                 "ON_BREAK": "Pause",
@@ -975,11 +975,11 @@
             "category": "Dokumenten-System",
             "AddDocumentReference": {
                 "key": "Dokument-Referenzen erstellen",
-                "description": "Hinzufügen von Dokument-Referenzen an Dokumente."
+                "description": "Hinzufügen von Dokument-Referenzen."
             },
             "AddDocumentRelation": {
                 "key": "Dokumenten-Bürger-Beziehungen hinzufügen",
-                "description": "Bürgerbeziehung hinzufügen/entfernen."
+                "description": "Bürgerbeziehung hinzufügen/ entfernen."
             },
             "CreateDocument": {
                 "key": "Dokument Erstellen",
@@ -987,7 +987,7 @@
             },
             "ListDocuments": {
                 "key": "Dokumente suchen und auflisten",
-                "description": "Dokumente auflisten/suchen."
+                "description": "Dokumente auflisten/ suchen."
             },
             "GetDocument": {
                 "key": "Dokumente Anzeigen können",
@@ -1003,7 +1003,7 @@
             },
             "UpdateDocument": {
                 "key": "Dokument aktualisieren",
-                "description": "Ein vorhandenes Dokument bearbeiten/aktualisieren.",
+                "description": "Ein vorhandenes Dokument bearbeiten/ aktualisieren.",
                 "attrs": {
                     "Own": "Eigene",
                     "Lower_Rank": "Niedrigerer Rang",
@@ -1028,8 +1028,8 @@
                 }
             },
             "ToggleDocument": {
-                "key": "Dokument per Knopf öffnen/schließen",
-                "description": "Dokument per Knopf öffnen/schließen.",
+                "key": "Dokument per Knopf öffnen/ schließen",
+                "description": "Dokument per Knopf öffnen/ schließen.",
                 "attrs": {
                     "Own": "Eigene",
                     "Lower_Rank": "Niedrigerer Rang",
@@ -1051,7 +1051,7 @@
             },
             "CreateCategory": {
                 "key": "Dokumentenkategorie erstellen",
-                "description": "Dokumentenkategorien erstellen/aktualisieren."
+                "description": "Dokumentenkategorien erstellen/ aktualisieren."
             },
             "DeleteCategory": {
                 "key": "Dokumentenkategorie löschen",
@@ -1089,7 +1089,7 @@
             },
             "GetRoles": {
                 "key": "Rollen ansehen",
-                "description": "FiveNet-Jobrollen abrufen/auflisten."
+                "description": "FiveNet-Jobrollen abrufen/ auflisten."
             },
             "CreateRole": {
                 "key": "Rollen erstellen",
@@ -1105,7 +1105,7 @@
             },
             "UpdateRolePerms": {
                 "key": "Berechtigungen für Rollen verwalten",
-                "description": "Hinzufügen/Löschen von Berechtigungen für FiveNet-Jobrollen."
+                "description": "Hinzufügen/ Löschen von Berechtigungen für FiveNet-Jobrollen."
             }
         },
         "CentrumService": {
@@ -1124,10 +1124,10 @@
             },
             "CreateOrUpdateUnit": {
                 "key": "Erstellen und Aktualisieren von Einheiten",
-                "description": "Erlaubt das erstellen und aktualisieren von Einheiten via Kontrollzentrum."
+                "description": "Erlaubt das Erstellen und Aktualisieren von Einheiten via Kontrollzentrum."
             },
             "DeleteUnit": {
-                "key": "Einheiten Löschen",
+                "key": "Einheiten löschen",
                 "description": "Erstellen von Einheiten per Kontrollzentrum."
             },
             "TakeDispatch": {
@@ -1209,7 +1209,7 @@
             "ErrPermissionDenied": "Du hast keine Berechtigung das zu tun!"
         },
         "AuthService": {
-            "ErrGenericAccount": "Fehler beim anzeigen/aktualisieren ihres Accounts.",
+            "ErrGenericAccount": "Fehler beim Anzeigen/ Aktualisieren ihres Accounts.",
             "ErrAccountCreateFailed": "Bitte überprüfen sie ihren Registrierungstoken!",
             "ErrInvalidLogin": "Falscher Username oder Passwort!",
             "ErrNoAccount": "Sie müssen zuerst einen Account mit ihrem Registrierungstoken erstellen.",
@@ -1233,9 +1233,9 @@
             "ErrFailedQuery": "Fehler beim Laden von Fahrzeug Daten!"
         },
         "DocStoreService": {
-            "ErrFailedQuery": "Fehlen beim Anzeigen/Erstellen/Aktualisieren von Dokumenten!",
+            "ErrFailedQuery": "Fehlen beim Anzeigen/ Erstellen/ Aktualisieren von Dokumenten!",
             "ErrNotFoundOrNoPerms": "Kein Dokument gefunden oder keine Berechtigungen auf das Dokument zuzugreifen!",
-            "ErrTemplateNoPerms": "Keine Berechtigungen Vorlagen anzuzeigen/aktualisieren/zu löschen!",
+            "ErrTemplateNoPerms": "Keine Berechtigungen Vorlagen anzuzeigen/ aktualisieren/ zu löschen!",
             "ErrPermissionDenied": "Du hast keine Berechtigung das zu tun!",
             "ErrClosedDoc": "Dokument ist geschloßen und kann nicht editiert werden!",
             "ErrDocAccessEditDenied": "Sie haben keine Rechte den Dokumenten Zugriff zu verwalten!",
@@ -1243,7 +1243,7 @@
         },
         "LivemapperService": {
             "ErrStreamFailed": "Livemap Datenstrom fehlgeschlagen!",
-            "ErrMarkerFailed": "Fehler beim erstellen/aktualisieren/löschen der Markierung!"
+            "ErrMarkerFailed": "Fehler beim Erstellen/ Aktualisieren/ Löschen der Markierung!"
         },
         "NotificatorService": {
             "ErrFailedRequest": "Laden von Benachrichtigungs-Daten fehlgeschlagen!",
@@ -1252,7 +1252,7 @@
         "RectorService": {
             "ErrFailedQuery": "Fehler beim Zugriff auf das Kontrollzentrum!",
             "ErrInvalidRequest": "Ungültige Rollen Anfrage!",
-            "ErrNoPermission": "Keine Berechtigung um Rollen zu erstellen/ändern/löschen!",
+            "ErrNoPermission": "Keine Berechtigung um Rollen zu erstellen/ ändern/ löschen!",
             "ErrRoleAlreadyExists": "Rolle existiert bereits!",
             "ErrOwnRoleDeletion": "Eigene Rolle kann nicht gelöscht werden!",
             "ErrInvalidPerms": "Fehler beim Aktualisieren der Rollen Berechtigungen!",
@@ -1260,11 +1260,11 @@
             "ErrInvalidJPQuickButton": "Fehlerhafter Schnellzugriff-Knopf!"
         },
         "CentrumService": {
-            "ErrFailedQuery": "Fehler beim Anzeigen/Aktualisieren von Leitstellen Daten!",
+            "ErrFailedQuery": "Fehler beim Anzeigen/ Aktualisieren von Leitstellen Daten!",
             "ErrAlreadyInUnit": "Sie sind bereits in einer Einheit! Sie müssen diese verlassen bevor sie einer anderen Einheit beitreten können.",
             "ErrNotPartOfDispatch": "Sie sind nicht Teil dieses Einsatzes!",
             "ErrNotOnDuty": "Sie sind nicht im Dienst!",
-            "ErrModeForbidsAction": "Die Leitstelle verbietet diese Änderung/Interaktion. Bitte kontaktiere die Leitstelle direkt!"
+            "ErrModeForbidsAction": "Die Leitstelle verbietet diese Änderung/ Interaktion. Bitte kontaktiere die Leitstelle direkt!"
         }
     },
     "commandpalette": {
