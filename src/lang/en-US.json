@@ -345,7 +345,7 @@
                 "your_job_properties": "Your job's FiveNet properties.",
                 "livemap_marker_color": "Livemap Marker Color",
                 "quick_buttons": "Quick Access Buttons",
-                "discord_guild_id": "Discord Guild/Server ID",
+                "discord_guild_id": "Discord Guild/ Server ID",
                 "invite_bot": "Invite Bot"
             },
             "role_view": {
@@ -1028,7 +1028,7 @@
                 }
             },
             "ToggleDocument": {
-                "key": "Toggle Document Open/Closed Status",
+                "key": "Toggle Document Open/ Closed Status",
                 "description": "Toggle a document open/ closed.",
                 "attrs": {
                     "Own": "Own",
@@ -1089,7 +1089,7 @@
             },
             "GetRoles": {
                 "key": "View Roles",
-                "description": "Get/List FiveNet job roles."
+                "description": "Get/ List FiveNet job roles."
             },
             "CreateRole": {
                 "key": "Create Role",
@@ -1209,7 +1209,7 @@
             "ErrPermissionDenied": "You don't have permission to do that!"
         },
         "AuthService": {
-            "ErrGenericAccount": "Failed to get/update your account, please try again.",
+            "ErrGenericAccount": "Failed to get/ update your account, please try again.",
             "ErrAccountCreateFailed": "Please check the token you have typed in!",
             "ErrInvalidLogin": "Wrong username or password!",
             "ErrNoAccount": "You need to use your registration token to create an account first.",
@@ -1223,7 +1223,7 @@
             "ErrSignupDisabled": "Account signup is disabled!"
         },
         "CitizenStoreService": {
-            "ErrFailedQuery": "Failed to list/get citizens data!",
+            "ErrFailedQuery": "Failed to list/ get citizens data!",
             "ErrJobGradeNoPermission": "No permission to access this citizen (based on the citizen's job)"
         },
         "CompletorService": {
@@ -1233,9 +1233,9 @@
             "ErrFailedQuery": "Failed to search vehicles data!"
         },
         "DocStoreService": {
-            "ErrFailedQuery": "Failed to get/create/update documents!",
+            "ErrFailedQuery": "Failed to get/ create/ update documents!",
             "ErrNotFoundOrNoPerms": "No document found or no permissions to access document!",
-            "ErrTemplateNoPerms": "You don't have permission to view/update/delete this template!",
+            "ErrTemplateNoPerms": "You don't have permission to view/ update/ delete this template!",
             "ErrPermissionDenied": "You don't have permission to do this!",
             "ErrClosedDoc": "Document is closed and can't be edited!",
             "ErrDocAccessEditDenied": "You don't have permission to edit the document's access!",
@@ -1243,16 +1243,16 @@
         },
         "LivemapperService": {
             "ErrStreamFailed": "Failed to stream livemap data!",
-            "ErrMarkerFailed": "Failed to create/update/delete marker!"
+            "ErrMarkerFailed": "Failed to create/  update/ delete marker!"
         },
         "NotificatorService": {
             "ErrFailedRequest": "Failed to load notifications data!",
             "ErrFailedStream": "Failed to stream notifications!"
         },
         "RectorService": {
-            "ErrFailedQuery": "Failed to get/update control panel data!",
+            "ErrFailedQuery": "Failed to get/ update control panel data!",
             "ErrInvalidRequest": "Invalid role action requested!",
-            "ErrNoPermission": "No permission to create/change/delete role!",
+            "ErrNoPermission": "No permission to create/ change/ delete role!",
             "ErrRoleAlreadyExists": "Role already exists!",
             "ErrOwnRoleDeletion": "Can't delete your own role!",
             "ErrInvalidPerms": "Failed to update role permissions!",
