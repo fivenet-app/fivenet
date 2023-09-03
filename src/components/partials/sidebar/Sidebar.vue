@@ -120,7 +120,7 @@ const sidebarNavigation = ref<
     },
 ]);
 const userNavigation = ref<{ name: string; href: RoutesNamedLocations; permission?: string }[]>([
-    { name: 'common.login', href: { name: 'auth-login' } },
+    { name: 'pages.auth.login.menu_item', href: { name: 'auth-login' } },
 ]);
 const breadcrumbs = ref<{ name: string; href: string; current: boolean }[]>([]);
 const mobileMenuOpen = ref(false);
@@ -149,7 +149,7 @@ function updateUserNav(): void {
         );
     }
     if (userNavigation.value.length === 0) {
-        userNavigation.value = [{ name: 'common.login', href: { name: 'auth-login' } }];
+        userNavigation.value = [{ name: 'pages.auth.login.menu_item', href: { name: 'auth-login' } }];
     }
 }
 
@@ -258,7 +258,7 @@ const appVersion = activeChar ? ' v' + __APP_VERSION__ + (import.meta.env.DEV ? 
                             aria-current-value="page"
                         >
                             <LoginIcon class="h-6 w-6" aria-hidden="true" />
-                            <span class="mt-2">{{ $t('common.login') }}</span>
+                            <span class="mt-2">{{ $t('pages.auth.login.menu_item') }}</span>
                         </NuxtLink>
                     </span>
                     <span v-if="accessToken && !activeChar">

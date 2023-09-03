@@ -33,14 +33,7 @@ const openSettings = ref(false);
 </script>
 
 <template>
-    <CreateOrUpdateUnitModal
-        :open="open"
-        @close="
-            open = false;
-            refresh();
-        "
-        @refresh="refresh"
-    />
+    <CreateOrUpdateUnitModal :open="open" @close="open = false" @refresh="refresh()" />
     <SettingsModal :open="openSettings" @close="openSettings = false" />
 
     <div class="py-2">

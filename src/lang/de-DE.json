@@ -17,7 +17,8 @@
             },
             "login": {
                 "title": "Anmeldung",
-                "social_login_disabled": "Um den Social Login Login zu nutzen müssen Cookies akzeptiert werden."
+                "social_login_disabled": "Um den Social Login Login zu nutzen müssen Cookies akzeptiert werden.",
+                "menu_item": "Anmelden oder Registrieren"
             }
         },
         "about": {

@@ -38,9 +38,9 @@ const { accessToken } = storeToRefs(authStore);
                         <NuxtLink
                             v-else
                             :to="{ name: 'auth-login' }"
-                            class="rounded-md w-24 bg-primary-500 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
+                            class="w-48 max-w-96 rounded-md bg-primary-500 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
                         >
-                            {{ $t('common.login') }}
+                            {{ $t('pages.auth.login.menu_item') }}
                         </NuxtLink>
                     </div>
                 </div>
