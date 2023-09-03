@@ -1072,11 +1072,21 @@
             },
             "CreateOrUpdateMarker": {
                 "key": "Create and Update Markers",
-                "description": "Being able to create and update markers on the Livemap."
+                "description": "Being able to create and update markers on the Livemap.",
+                "attrs": {
+                    "Own": "Own",
+                    "Lower_Rank": "Lower Rank",
+                    "Same_Rank": "Same Rank"
+                }
             },
             "DeleteMarker": {
                 "key": "Delete Marker",
-                "description": "Being able to delete markers on the Livemap."
+                "description": "Being able to delete markers on the Livemap.",
+                "attrs": {
+                    "Own": "Own",
+                    "Lower_Rank": "Lower Rank",
+                    "Same_Rank": "Same Rank"
+                }
             }
         },
         "RectorService": {
@@ -1143,6 +1153,10 @@
             "UpdateSettings": {
                 "key": "Update Dispatch Center Settings",
                 "description": "Allows to update the dispatch center settings via the control panel."
+            },
+            "DeleteDispatch": {
+                "key": "Delete Dispatches",
+                "description": "Allows to delete dispatches."
             }
         }
     },
