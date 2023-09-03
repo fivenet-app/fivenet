@@ -113,8 +113,13 @@ func (s *Server) getUnitIDForUserID(userId int32) (uint64, bool) {
 }
 
 func (s *Server) updateUnitStatus(ctx context.Context, job string, unit *dispatch.Unit, in *dispatch.UnitStatus) error {
-	// If the unit already has the status that should be set, don't update the status again
-	if unit.Status != nil && unit.Status.Status == in.Status {
+	// If the unit status is the same and is a status that shouldn't be duplicated, don't update the status again
+	if unit.Status != nil &&
+		unit.Status.Status == in.Status &&
+		(in.Status == dispatch.UNIT_STATUS_ON_BREAK ||
+			in.Status == dispatch.UNIT_STATUS_BUSY ||
+			in.Status == dispatch.UNIT_STATUS_UNAVAILABLE ||
+			in.Status == dispatch.UNIT_STATUS_AVAILABLE) {
 		return nil
 	}
 

@@ -66,10 +66,11 @@ export const useCentrumStore = defineStore('centrum', {
                 this.units[idx].description = unit.description;
                 this.units[idx].users = unit.users;
 
-                if (unit.users.length == 0) {
+                if (unit.users.length === 0) {
                     this.units[idx].users.length = 0;
                 } else {
-                    this.units[idx].users = unit.users;
+                    this.units[idx].users.length = 0;
+                    this.units[idx].users.concat(unit.users);
                 }
 
                 if (unit.status !== undefined) {
@@ -106,10 +107,11 @@ export const useCentrumStore = defineStore('centrum', {
             this.ownUnit.color = unit.color;
             this.ownUnit.description = unit.description;
 
-            if (unit.users.length == 0) {
+            if (unit.users.length === 0) {
                 this.ownUnit.users.length = 0;
             } else {
-                this.ownUnit.users = unit.users;
+                this.ownUnit.users.length = 0;
+                this.ownUnit.users.concat(unit.users);
             }
 
             if (unit.status !== undefined) {
@@ -172,10 +174,11 @@ export const useCentrumStore = defineStore('centrum', {
                 this.dispatches[idx].userId = dispatch.userId;
                 this.dispatches[idx].user = dispatch.user;
 
-                if (dispatch.units.length == 0) {
+                if (dispatch.units.length === 0) {
                     this.dispatches[idx].units.length = 0;
                 } else {
-                    this.dispatches[idx].units = dispatch.units;
+                    this.dispatches[idx].units.length = 0;
+                    this.dispatches[idx].units.concat(dispatch.units);
                 }
 
                 if (dispatch.status !== undefined) {
@@ -226,10 +229,11 @@ export const useCentrumStore = defineStore('centrum', {
                 this.ownDispatches[idx].userId = dispatch.userId;
                 this.ownDispatches[idx].user = dispatch.user;
 
-                if (dispatch.units.length == 0) {
+                if (dispatch.units.length === 0) {
                     this.ownDispatches[idx].units.length = 0;
                 } else {
-                    this.ownDispatches[idx].units = dispatch.units;
+                    this.dispatches[idx].units.length = 0;
+                    this.dispatches[idx].units.concat(dispatch.units);
                 }
 
                 if (dispatch.status !== undefined) {
@@ -309,10 +313,11 @@ export const useCentrumStore = defineStore('centrum', {
                 this.pendingDispatches[idx].userId = dispatch.userId;
                 this.pendingDispatches[idx].user = dispatch.user;
 
-                if (dispatch.units.length == 0) {
+                if (dispatch.units.length === 0) {
                     this.pendingDispatches[idx].units.length = 0;
                 } else {
-                    this.pendingDispatches[idx].units = dispatch.units;
+                    this.pendingDispatches[idx].units.length = 0;
+                    this.pendingDispatches[idx].units.concat(dispatch.units);
                 }
 
                 if (dispatch.status !== undefined) {
@@ -393,9 +398,7 @@ export const useCentrumStore = defineStore('centrum', {
                         const idx = this.disponents.findIndex((d) => d.userId === authStore.activeChar?.userId);
                         if (idx === -1) {
                             this.isDisponent = false;
-
-                            this.restartStream();
-                            break;
+                            if (resp.restart !== undefined && !resp.restart) resp.restart = true;
                         }
                     } else if (resp.change.oneofKind === 'unitAssigned') {
                         if (this.ownUnit !== undefined && resp.change.unitAssigned.id !== this.ownUnit?.id) {
@@ -439,6 +442,10 @@ export const useCentrumStore = defineStore('centrum', {
                         }
                     } else if (resp.change.oneofKind === 'dispatchCreated') {
                         this.addOrUpdateDispatch(resp.change.dispatchCreated);
+
+                        if (resp.change.dispatchCreated.status !== undefined) {
+                            this.feed.unshift(resp.change.dispatchCreated.status);
+                        }
                     } else if (resp.change.oneofKind === 'dispatchDeleted') {
                         this.removeDispatch(resp.change.dispatchDeleted);
                     } else if (resp.change.oneofKind === 'dispatchUpdated') {

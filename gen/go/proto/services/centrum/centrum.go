@@ -281,9 +281,10 @@ func (s *Server) stream(srv CentrumService_StreamServer, isDisponent bool, job s
 	ticker := time.NewTicker(pingTickerTime * 2)
 	defer ticker.Stop()
 
-	resp := &StreamResponse{}
 	// Watch for events from message queue
 	for {
+		resp := &StreamResponse{}
+
 		select {
 		case <-srv.Context().Done():
 			return true, nil
@@ -310,7 +311,10 @@ func (s *Server) stream(srv CentrumService_StreamServer, isDisponent bool, job s
 						Disponents: &dest,
 					}
 
-					if isDisponent && !s.checkIfUserIsDisponent(job, userId) {
+					found := s.checkIfUserIsDisponent(job, userId)
+					// Either user is a disponent currently and not anymore now,
+					// or the user is not a disponent and joined as a disponent now
+					if (isDisponent && !found) || (!isDisponent && found) {
 						restart := true
 						resp.Restart = &restart
 					}
