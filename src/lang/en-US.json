@@ -398,8 +398,8 @@
             },
             "units": {
                 "create_unit": "Create Unit",
-                "update_unit": "Update Unit",
-                "update_settings": "Update Settings"
+                "update_settings": "Update Settings",
+                "update_unit": "Update Unit"
             }
         }
     },
