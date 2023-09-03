@@ -884,9 +884,9 @@ const onSubmit = handleSubmit(async (values): Promise<void> => {
                                 :disabled="!canEdit"
                                 class="block pl-3 text-left w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                             >
-                                <span class="block truncate">{{
-                                    openclose.find((e) => e.closed === doc.closed.closed)?.label
-                                }}</span>
+                                <span class="block truncate">
+                                    {{ openclose.find((e) => e.closed === doc.closed.closed)?.label }}</span
+                                >
                                 <span class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
                                     <ChevronDownIcon class="w-5 h-5 text-gray-400" aria-hidden="true" />
                                 </span>
@@ -904,7 +904,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => {
                                         as="template"
                                         v-for="st in openclose"
                                         :key="st.closed?.toString()"
-                                        :value="st.closed"
+                                        :value="st"
                                         v-slot="{ active, selected }"
                                     >
                                         <li
