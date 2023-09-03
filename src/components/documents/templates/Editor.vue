@@ -54,6 +54,9 @@ const { handleSubmit, setValues, meta, validate } = useForm<FormData>({
         contentState: { required: false, min: 0, max: 2048 },
     },
     validateOnMount: true,
+    initialValues: {
+        contentState: '',
+    },
 });
 
 const onSubmit = handleSubmit(async (values): Promise<void> => await createOrUpdateTemplate(values, props.templateId));
@@ -308,11 +311,9 @@ async function createOrUpdateTemplate(values: FormData, templateId?: bigint): Pr
                 },
                 contentAccess: reqAccess,
                 jobAccess: jobAccesses,
+                category: selectedCategory.value,
             },
         };
-        if (selectedCategory.value) {
-            req.template!.category = selectedCategory.value;
-        }
 
         try {
             if (templateId === undefined) {
@@ -398,6 +399,7 @@ onMounted(async () => {
                 description: tpl.description,
                 contentTitle: tpl.contentTitle,
                 content: tpl.content,
+                contentState: tpl.state,
             });
             if (tpl.category) {
                 selectedCategory.value = tpl.category;
