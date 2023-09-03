@@ -26,7 +26,7 @@ const { t } = useI18n();
 const settingsStore = useSettingsStore();
 const { livemap } = storeToRefs(settingsStore);
 const livemapStore = useLivemapStore();
-const { error, abort, location } = storeToRefs(livemapStore);
+const { error, abort, restarting, location } = storeToRefs(livemapStore);
 const { startStream } = livemapStore;
 
 interface ContextmenuItem {
@@ -94,7 +94,7 @@ async function applySelectedMarkerCentering(): Promise<void> {
         />
 
         <div
-            v-if="error || (!error && abort === undefined)"
+            v-if="(error || abort === undefined) && !restarting"
             class="absolute inset-0 flex justify-center items-center z-20 bg-gray-600/70"
         >
             <DataErrorBlock v-if="error" :title="$t('components.livemap.failed_datastream')" :retry="startStream" />

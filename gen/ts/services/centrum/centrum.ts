@@ -457,9 +457,9 @@ export interface StreamResponse {
     } | {
         oneofKind: "dispatchDeleted";
         /**
-         * @generated from protobuf field: resources.dispatch.Dispatch dispatch_deleted = 8;
+         * @generated from protobuf field: uint64 dispatch_deleted = 8;
          */
-        dispatchDeleted: Dispatch;
+        dispatchDeleted: bigint;
     } | {
         oneofKind: "dispatchCreated";
         /**
@@ -789,7 +789,7 @@ export const UpdateDispatchResponse = new UpdateDispatchResponse$Type();
 class DeleteDispatchRequest$Type extends MessageType<DeleteDispatchRequest> {
     constructor() {
         super("services.centrum.DeleteDispatchRequest", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/, options: { "validate.rules": { uint64: { gt: "0" } } } }
         ]);
     }
 }
@@ -956,7 +956,7 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
             { no: 5, name: "unit_deleted", kind: "message", oneof: "change", T: () => Unit },
             { no: 6, name: "unit_updated", kind: "message", oneof: "change", T: () => Unit },
             { no: 7, name: "unit_status", kind: "message", oneof: "change", T: () => Unit },
-            { no: 8, name: "dispatch_deleted", kind: "message", oneof: "change", T: () => Dispatch },
+            { no: 8, name: "dispatch_deleted", kind: "scalar", oneof: "change", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
             { no: 9, name: "dispatch_created", kind: "message", oneof: "change", T: () => Dispatch },
             { no: 10, name: "dispatch_updated", kind: "message", oneof: "change", T: () => Dispatch },
             { no: 11, name: "dispatch_status", kind: "message", oneof: "change", T: () => Dispatch },

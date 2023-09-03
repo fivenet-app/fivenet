@@ -2947,7 +2947,16 @@ func (m *DeleteDispatchRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Id
+	if m.GetId() <= 0 {
+		err := DeleteDispatchRequestValidationError{
+			field:  "Id",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if len(errors) > 0 {
 		return DeleteDispatchRequestMultiError(errors)
@@ -4888,36 +4897,7 @@ func (m *StreamResponse) validate(all bool) error {
 			}
 			errors = append(errors, err)
 		}
-
-		if all {
-			switch v := interface{}(m.GetDispatchDeleted()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, StreamResponseValidationError{
-						field:  "DispatchDeleted",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, StreamResponseValidationError{
-						field:  "DispatchDeleted",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetDispatchDeleted()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return StreamResponseValidationError{
-					field:  "DispatchDeleted",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
+		// no validation rules for DispatchDeleted
 	case *StreamResponse_DispatchCreated:
 		if v == nil {
 			err := StreamResponseValidationError{

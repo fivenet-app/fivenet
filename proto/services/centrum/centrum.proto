@@ -110,7 +110,7 @@ message UpdateDispatchRequest {
 message UpdateDispatchResponse {}
 
 message DeleteDispatchRequest {
-  uint64 id = 1;
+  uint64 id = 1 [(validate.rules).uint64.gt = 0];
 }
 
 message DeleteDispatchResponse {}
@@ -183,7 +183,7 @@ message StreamResponse {
     resources.dispatch.Unit unit_updated = 6;
     resources.dispatch.Unit unit_status = 7;
 
-    resources.dispatch.Dispatch dispatch_deleted = 8;
+    uint64 dispatch_deleted = 8;
     resources.dispatch.Dispatch dispatch_created = 9;
     resources.dispatch.Dispatch dispatch_updated = 10;
     resources.dispatch.Dispatch dispatch_status = 11;

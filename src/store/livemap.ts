@@ -42,10 +42,10 @@ export const useLivemapStore = defineStore('livemap', {
             this.restarting = false;
 
             console.debug('Livemap: Starting Data Stream');
-            try {
-                this.abort = new AbortController();
+            this.abort = new AbortController();
+            const { $grpc } = useNuxtApp();
 
-                const { $grpc } = useNuxtApp();
+            try {
                 const call = new LivemapperServiceClient($grpc.getTransport()).stream(
                     {},
                     {

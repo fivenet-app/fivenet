@@ -345,7 +345,6 @@ export const useCentrumStore = defineStore('centrum', {
 
         async startStream(): Promise<void> {
             if (this.abort !== undefined) return;
-            this.restarting = false;
             if (this.cleanupIntervalId !== undefined) clearInterval(this.cleanupIntervalId);
             this.cleanupIntervalId = setInterval(() => this.cleanup(), TWO_MINUTES);
 
@@ -353,11 +352,12 @@ export const useCentrumStore = defineStore('centrum', {
 
             const authStore = useAuthStore();
             const notifications = useNotificationsStore();
+            const { $grpc } = useNuxtApp();
+
+            this.abort = new AbortController();
+            this.restarting = false;
 
             try {
-                this.abort = new AbortController();
-
-                const { $grpc } = useNuxtApp();
                 const call = $grpc.getCentrumClient().stream(
                     {},
                     {
@@ -439,7 +439,7 @@ export const useCentrumStore = defineStore('centrum', {
                     } else if (resp.change.oneofKind === 'dispatchCreated') {
                         this.addOrUpdateDispatch(resp.change.dispatchCreated);
                     } else if (resp.change.oneofKind === 'dispatchDeleted') {
-                        this.removeDispatch(resp.change.dispatchDeleted.id);
+                        this.removeDispatch(resp.change.dispatchDeleted);
                     } else if (resp.change.oneofKind === 'dispatchUpdated') {
                         this.addOrUpdateDispatch(resp.change.dispatchUpdated);
                     } else if (resp.change.oneofKind === 'dispatchStatus') {

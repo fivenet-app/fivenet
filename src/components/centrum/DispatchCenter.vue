@@ -20,7 +20,7 @@ import AssignUnitModal from './units/AssignUnitModal.vue';
 import { default as UnitStatusUpdateModal } from './units/StatusUpdateModal.vue';
 
 const centrumStore = useCentrumStore();
-const { error, abort, isDisponent, disponents, settings, feed } = storeToRefs(centrumStore);
+const { error, abort, restarting, isDisponent, disponents, settings, feed } = storeToRefs(centrumStore);
 const { startStream, stopStream } = centrumStore;
 
 const livemapStore = useLivemapStore();
@@ -53,7 +53,10 @@ const openUnitStatus = ref(false);
 
 <template>
     <div class="flex-col h-full relative">
-        <div v-if="error || abort === undefined" class="absolute inset-0 flex justify-center items-center z-20 bg-gray-600/70">
+        <div
+            v-if="(error || abort === undefined) && !restarting"
+            class="absolute inset-0 flex justify-center items-center z-20 bg-gray-600/70"
+        >
             <DataErrorBlock
                 v-if="error"
                 :title="$t('components.centrum.dispatch_center.failed_datastream')"

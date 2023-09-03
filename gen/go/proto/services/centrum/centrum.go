@@ -345,7 +345,7 @@ func (s *Server) stream(srv CentrumService_StreamServer, isDisponent bool, job s
 					}
 
 					resp.Change = &StreamResponse_DispatchDeleted{
-						DispatchDeleted: &dest,
+						DispatchDeleted: dest.Id,
 					}
 
 				case TypeDispatchUpdated:
