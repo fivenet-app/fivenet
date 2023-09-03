@@ -202,60 +202,6 @@ func (s *Server) TakeControl(ctx context.Context, req *TakeControlRequest) (*Tak
 	return &TakeControlResponse{}, nil
 }
 
-func (s *Server) waitForUserToBeAssignedUnit(srv CentrumService_StreamServer, job string, userId int32) (uint64, error) {
-	assignedMSGCh := make(chan *nats.Msg, 8)
-	sub, err := s.events.JS.ChanSubscribe(fmt.Sprintf("%s.%s.%s.%s.%d", BaseSubject, job, TopicUnit, TypeUnitUserAssigned, 0), assignedMSGCh, nats.DeliverNew())
-	if err != nil {
-		return 0, err
-	}
-	defer sub.Unsubscribe()
-
-	disponentsMSGCh := make(chan *nats.Msg, 8)
-	disponentsSub, err := s.events.JS.ChanSubscribe(fmt.Sprintf("%s.%s.%s.%s.%d", BaseSubject, job, TopicGeneral, TypeGeneralDisponents, 0), disponentsMSGCh, nats.DeliverNew())
-	if err != nil {
-		return 0, err
-	}
-	defer disponentsSub.Unsubscribe()
-
-	for {
-		select {
-		case <-srv.Context().Done():
-			return 0, nil
-
-		case msg := <-assignedMSGCh:
-			msg.Ack()
-
-			var dest dispatch.Unit
-			if err := proto.Unmarshal(msg.Data, &dest); err != nil {
-				return 0, err
-			}
-
-			if !utils.InSliceFunc(dest.Users, func(a *dispatch.UnitAssignment) bool {
-				return userId == a.UserId
-			}) {
-				continue
-			}
-
-			resp := &StreamResponse{
-				Change: &StreamResponse_UnitAssigned{
-					UnitAssigned: &dest,
-				},
-			}
-
-			if err := srv.Send(resp); err != nil {
-				return 0, err
-			}
-
-			return dest.Id, nil
-
-		case <-disponentsMSGCh:
-			if s.checkIfUserIsDisponent(job, userId) {
-				return 0, nil
-			}
-		}
-	}
-}
-
 func (s *Server) sendLatestState(srv CentrumService_StreamServer, job string, userId int32) (uint64, bool, error) {
 	settings := s.getSettings(job)
 	disponents := s.getDisponents(job)
@@ -310,18 +256,6 @@ func (s *Server) Stream(req *StreamRequest, srv CentrumService_StreamServer) err
 			return err
 		}
 
-		// If user is not in unit and not a controller, wait for user to be assigned/join an unit
-		if unitId <= 0 && !isDisponent {
-			if _, err := s.waitForUserToBeAssignedUnit(srv, userInfo.Job, userInfo.UserId); err != nil {
-				return err
-			}
-
-			unitId, isDisponent, err = s.sendLatestState(srv, userInfo.Job, userInfo.UserId)
-			if err != nil {
-				return err
-			}
-		}
-
 		end, err := s.stream(srv, isDisponent, userInfo.Job, userInfo.UserId, unitId)
 		if end {
 			return err
@@ -336,7 +270,7 @@ func (s *Server) Stream(req *StreamRequest, srv CentrumService_StreamServer) err
 const pingTickerTime = 90 * time.Second
 
 func (s *Server) stream(srv CentrumService_StreamServer, isDisponent bool, job string, userId int32, unitId uint64) (bool, error) {
-	msgCh := make(chan *nats.Msg, 32)
+	msgCh := make(chan *nats.Msg, 48)
 	sub, err := s.events.JS.ChanSubscribe(fmt.Sprintf("%s.%s.>", BaseSubject, job), msgCh, nats.DeliverNew())
 	if err != nil {
 		return true, err
@@ -444,21 +378,23 @@ func (s *Server) stream(srv CentrumService_StreamServer, isDisponent bool, job s
 						return true, err
 					}
 
-					// If not user's unit, skip
-					if unitId != dest.Id {
-						continue
-					}
-
 					resp.Change = &StreamResponse_UnitAssigned{
 						UnitAssigned: &dest,
 					}
 
-					if utils.InSliceFunc(dest.Users, func(a *dispatch.UnitAssignment) bool {
-						return userId == a.UserId
-					}) {
-					} else {
-						restart := true
-						resp.Restart = &restart
+					// Either user is in the unit this update is about or they are not (yet) in an unit
+					if dest.Id == unitId || unitId == 0 {
+						// Restart user's stream if they got removed from their assigned unit
+						inUnit := utils.InSliceFunc(dest.Users, func(a *dispatch.UnitAssignment) bool {
+							return userId == a.UserId
+						})
+						if dest.Id == unitId && !inUnit {
+							restart := true
+							resp.Restart = &restart
+						} else if inUnit {
+							// Seems that they got assigned to this unit, update the user's unitId here
+							unitId = dest.Id
+						}
 					}
 
 				case TypeUnitDeleted:

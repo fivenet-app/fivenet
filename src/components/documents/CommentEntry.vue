@@ -83,14 +83,14 @@ onConfirm(async (id) => deleteComment(id));
                         {{ comment.creator?.lastname }}
                     </NuxtLink>
                     <div v-if="comment.deletedAt" class="flex flex-row items-center justify-center flex-1 text-base-100">
-                        <TrashCanIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400" aria-hidden="true" />
+                        <TrashCanIcon type="button" class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400" aria-hidden="true" />
                         {{ $t('common.deleted') }}
                     </div>
                     <div v-if="comment.creatorId === activeChar?.userId || permissions.includes('superuser')">
                         <button v-if="can('DocStoreService.PostComment')" @click="editing = true">
                             <PencilIcon class="w-5 h-auto ml-auto mr-2.5" />
                         </button>
-                        <button v-if="can('DocStoreService.DeleteComment')" @click="reveal()">
+                        <button v-if="can('DocStoreService.DeleteComment')" type="button" @click="reveal()">
                             <TrashCanIcon class="w-5 h-auto ml-auto mr-2.5" />
                         </button>
                     </div>

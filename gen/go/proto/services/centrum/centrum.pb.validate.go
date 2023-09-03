@@ -2925,6 +2925,212 @@ var _ interface {
 	ErrorName() string
 } = UpdateDispatchResponseValidationError{}
 
+// Validate checks the field values on DeleteDispatchRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DeleteDispatchRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DeleteDispatchRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DeleteDispatchRequestMultiError, or nil if none found.
+func (m *DeleteDispatchRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DeleteDispatchRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	if len(errors) > 0 {
+		return DeleteDispatchRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// DeleteDispatchRequestMultiError is an error wrapping multiple validation
+// errors returned by DeleteDispatchRequest.ValidateAll() if the designated
+// constraints aren't met.
+type DeleteDispatchRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DeleteDispatchRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DeleteDispatchRequestMultiError) AllErrors() []error { return m }
+
+// DeleteDispatchRequestValidationError is the validation error returned by
+// DeleteDispatchRequest.Validate if the designated constraints aren't met.
+type DeleteDispatchRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DeleteDispatchRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DeleteDispatchRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DeleteDispatchRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DeleteDispatchRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DeleteDispatchRequestValidationError) ErrorName() string {
+	return "DeleteDispatchRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DeleteDispatchRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDeleteDispatchRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DeleteDispatchRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DeleteDispatchRequestValidationError{}
+
+// Validate checks the field values on DeleteDispatchResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DeleteDispatchResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DeleteDispatchResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DeleteDispatchResponseMultiError, or nil if none found.
+func (m *DeleteDispatchResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DeleteDispatchResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return DeleteDispatchResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// DeleteDispatchResponseMultiError is an error wrapping multiple validation
+// errors returned by DeleteDispatchResponse.ValidateAll() if the designated
+// constraints aren't met.
+type DeleteDispatchResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DeleteDispatchResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DeleteDispatchResponseMultiError) AllErrors() []error { return m }
+
+// DeleteDispatchResponseValidationError is the validation error returned by
+// DeleteDispatchResponse.Validate if the designated constraints aren't met.
+type DeleteDispatchResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DeleteDispatchResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DeleteDispatchResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DeleteDispatchResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DeleteDispatchResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DeleteDispatchResponseValidationError) ErrorName() string {
+	return "DeleteDispatchResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DeleteDispatchResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDeleteDispatchResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DeleteDispatchResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DeleteDispatchResponseValidationError{}
+
 // Validate checks the field values on UpdateDispatchStatusRequest with the
 // rules defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.

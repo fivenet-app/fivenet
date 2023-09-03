@@ -23,6 +23,7 @@ const (
 	CentrumService_UpdateSettings_FullMethodName       = "/services.centrum.CentrumService/UpdateSettings"
 	CentrumService_CreateDispatch_FullMethodName       = "/services.centrum.CentrumService/CreateDispatch"
 	CentrumService_UpdateDispatch_FullMethodName       = "/services.centrum.CentrumService/UpdateDispatch"
+	CentrumService_DeleteDispatch_FullMethodName       = "/services.centrum.CentrumService/DeleteDispatch"
 	CentrumService_TakeControl_FullMethodName          = "/services.centrum.CentrumService/TakeControl"
 	CentrumService_AssignDispatch_FullMethodName       = "/services.centrum.CentrumService/AssignDispatch"
 	CentrumService_AssignUnit_FullMethodName           = "/services.centrum.CentrumService/AssignUnit"
@@ -50,6 +51,8 @@ type CentrumServiceClient interface {
 	CreateDispatch(ctx context.Context, in *CreateDispatchRequest, opts ...grpc.CallOption) (*CreateDispatchResponse, error)
 	// @perm
 	UpdateDispatch(ctx context.Context, in *UpdateDispatchRequest, opts ...grpc.CallOption) (*UpdateDispatchResponse, error)
+	// @perm
+	DeleteDispatch(ctx context.Context, in *DeleteDispatchRequest, opts ...grpc.CallOption) (*DeleteDispatchResponse, error)
 	// @perm
 	TakeControl(ctx context.Context, in *TakeControlRequest, opts ...grpc.CallOption) (*TakeControlResponse, error)
 	// @perm: Name=TakeControl
@@ -111,6 +114,15 @@ func (c *centrumServiceClient) CreateDispatch(ctx context.Context, in *CreateDis
 func (c *centrumServiceClient) UpdateDispatch(ctx context.Context, in *UpdateDispatchRequest, opts ...grpc.CallOption) (*UpdateDispatchResponse, error) {
 	out := new(UpdateDispatchResponse)
 	err := c.cc.Invoke(ctx, CentrumService_UpdateDispatch_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *centrumServiceClient) DeleteDispatch(ctx context.Context, in *DeleteDispatchRequest, opts ...grpc.CallOption) (*DeleteDispatchResponse, error) {
+	out := new(DeleteDispatchResponse)
+	err := c.cc.Invoke(ctx, CentrumService_DeleteDispatch_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -286,6 +298,8 @@ type CentrumServiceServer interface {
 	// @perm
 	UpdateDispatch(context.Context, *UpdateDispatchRequest) (*UpdateDispatchResponse, error)
 	// @perm
+	DeleteDispatch(context.Context, *DeleteDispatchRequest) (*DeleteDispatchResponse, error)
+	// @perm
 	TakeControl(context.Context, *TakeControlRequest) (*TakeControlResponse, error)
 	// @perm: Name=TakeControl
 	AssignDispatch(context.Context, *AssignDispatchRequest) (*AssignDispatchResponse, error)
@@ -330,6 +344,9 @@ func (UnimplementedCentrumServiceServer) CreateDispatch(context.Context, *Create
 }
 func (UnimplementedCentrumServiceServer) UpdateDispatch(context.Context, *UpdateDispatchRequest) (*UpdateDispatchResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateDispatch not implemented")
+}
+func (UnimplementedCentrumServiceServer) DeleteDispatch(context.Context, *DeleteDispatchRequest) (*DeleteDispatchResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteDispatch not implemented")
 }
 func (UnimplementedCentrumServiceServer) TakeControl(context.Context, *TakeControlRequest) (*TakeControlResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method TakeControl not implemented")
@@ -439,6 +456,24 @@ func _CentrumService_UpdateDispatch_Handler(srv interface{}, ctx context.Context
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(CentrumServiceServer).UpdateDispatch(ctx, req.(*UpdateDispatchRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CentrumService_DeleteDispatch_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteDispatchRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CentrumServiceServer).DeleteDispatch(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CentrumService_DeleteDispatch_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CentrumServiceServer).DeleteDispatch(ctx, req.(*DeleteDispatchRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -734,6 +769,10 @@ var CentrumService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateDispatch",
 			Handler:    _CentrumService_UpdateDispatch_Handler,
+		},
+		{
+			MethodName: "DeleteDispatch",
+			Handler:    _CentrumService_DeleteDispatch_Handler,
 		},
 		{
 			MethodName: "TakeControl",

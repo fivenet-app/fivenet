@@ -6,7 +6,7 @@ import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
 import { Unit } from '~~/gen/ts/resources/dispatch/units';
 import CreateOrUpdateUnitModal from './CreateOrUpdateUnitModal.vue';
 
-const props = defineProps<{
+defineProps<{
     unit: Unit;
 }>();
 
@@ -64,7 +64,8 @@ const open = ref(false);
                 </button>
                 <button
                     v-if="can('CentrumService.DeleteUnit')"
-                    @click="reveal(props.unit.id)"
+                    type="button"
+                    @click="reveal(unit.id)"
                     class="flex-initial text-primary-500 hover:text-primary-400"
                 >
                     <TrashCanIcon class="h-6 w-6 text-primary-500" aria-hidden="true" />

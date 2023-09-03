@@ -109,6 +109,12 @@ message UpdateDispatchRequest {
 
 message UpdateDispatchResponse {}
 
+message DeleteDispatchRequest {
+  uint64 id = 1;
+}
+
+message DeleteDispatchResponse {}
+
 message UpdateDispatchStatusRequest {
   uint64 dispatch_id = 1;
   resources.dispatch.DISPATCH_STATUS status = 2 [(validate.rules).enum.defined_only = true];
@@ -195,6 +201,8 @@ service CentrumService {
   rpc CreateDispatch(CreateDispatchRequest) returns (CreateDispatchResponse);
   // @perm
   rpc UpdateDispatch(UpdateDispatchRequest) returns (UpdateDispatchResponse);
+  // @perm
+  rpc DeleteDispatch(DeleteDispatchRequest) returns (DeleteDispatchResponse);
 
   // @perm
   rpc TakeControl(TakeControlRequest) returns (TakeControlResponse);

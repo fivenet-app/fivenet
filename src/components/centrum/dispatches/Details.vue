@@ -1,7 +1,9 @@
 <script lang="ts" setup>
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
-import { AccountIcon, CloseIcon, PencilIcon, PlusIcon } from 'mdi-vue3';
+import { useConfirmDialog } from '@vueuse/core';
+import { AccountIcon, CloseIcon, PencilIcon, PlusIcon, TrashCanIcon } from 'mdi-vue3';
+import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import Time from '~/components/partials/elements/Time.vue';
 import { useCentrumStore } from '~/store/centrum';
@@ -44,11 +46,33 @@ async function selfAssign(dispatch: Dispatch): Promise<void> {
     });
 }
 
+async function deleteDispatch(id: bigint): Promise<void> {
+    return new Promise(async (res, rej) => {
+        try {
+            const call = $grpc.getCentrumClient().deleteDispatch({
+                id: id,
+            });
+            await call;
+
+            return res();
+        } catch (e) {
+            $grpc.handleError(e as RpcError);
+            return rej(e as RpcError);
+        }
+    });
+}
+
+const { isRevealed, reveal, confirm, cancel, onConfirm } = useConfirmDialog();
+
+onConfirm(async (id) => deleteDispatch(id));
+
 const openAssign = ref(false);
 const openStatus = ref(false);
 </script>
 
 <template>
+    <ConfirmDialog :open="isRevealed" :cancel="cancel" :confirm="() => confirm(dispatch.id)" />
+
     <TransitionRoot as="template" :show="open">
         <Dialog as="div" class="relative z-10" @close="$emit('close')">
             <div class="fixed inset-0" />
@@ -70,10 +94,21 @@ const openStatus = ref(false);
                                     <div class="h-0 flex-1 overflow-y-auto">
                                         <div class="bg-primary-700 px-4 py-6 sm:px-6">
                                             <div class="flex items-center justify-between">
-                                                <DialogTitle class="inline-flex text-base font-semibold leading-6 text-white">
+                                                <DialogTitle
+                                                    class="inline-flex items-center text-base font-semibold leading-6 text-white"
+                                                >
                                                     {{ $t('common.dispatch') }}:
                                                     <IDCopyBadge class="ml-2 mr-2" :id="dispatch.id" prefix="DSP" />
                                                     {{ dispatch.message }}
+                                                    <button
+                                                        v-if="can('CentrumService.DeleteDispatch')"
+                                                        type="button"
+                                                        @click="reveal()"
+                                                        class="flex-initial text-white hover:text-gray-300 ml-1"
+                                                        :title="$t('common.delete')"
+                                                    >
+                                                        <TrashCanIcon class="h-6 w-6" aria-hidden="true" />
+                                                    </button>
                                                 </DialogTitle>
                                                 <div class="ml-3 flex h-7 items-center">
                                                     <button
@@ -211,7 +246,7 @@ const openStatus = ref(false);
                                                             <dd
                                                                 class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
                                                             >
-                                                                <span v-if="dispatch.units.length === 0">
+                                                                <span v-if="dispatch.units.length === 0" class="block">
                                                                     {{ $t('common.unit', 0) }}
                                                                 </span>
                                                                 <ul

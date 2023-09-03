@@ -515,3 +515,43 @@ func (s *Server) ListDispatchActivity(ctx context.Context, req *ListDispatchActi
 
 	return resp, nil
 }
+
+func (s *Server) DeleteDispatch(ctx context.Context, req *DeleteDispatchRequest) (*DeleteDispatchResponse, error) {
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	auditEntry := &model.FivenetAuditLog{
+		Service: CentrumService_ServiceDesc.ServiceName,
+		Method:  "DeleteDispatch",
+		UserID:  userInfo.UserId,
+		UserJob: userInfo.Job,
+		State:   int16(rector.EVENT_TYPE_ERRORED),
+	}
+	defer s.auditer.Log(auditEntry, req)
+
+	dsp, ok := s.getDispatch(userInfo.Job, req.Id)
+	if !ok {
+		return nil, ErrFailedQuery
+	}
+
+	stmt := tDispatch.
+		DELETE().
+		WHERE(jet.AND(
+			tDispatch.Job.EQ(jet.String(userInfo.Job)),
+			tDispatch.ID.EQ(jet.Uint64(dsp.Id)),
+		)).
+		LIMIT(1)
+
+	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+		return nil, ErrFailedQuery
+	}
+
+	data, err := proto.Marshal(dsp)
+	if err != nil {
+		return nil, err
+	}
+	s.events.JS.Publish(s.buildSubject(TopicDispatch, TypeDispatchDeleted, dsp.Job, 0), data)
+
+	auditEntry.State = int16(rector.EVENT_TYPE_DELETED)
+
+	return &DeleteDispatchResponse{}, nil
+}

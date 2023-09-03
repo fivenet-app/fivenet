@@ -116,8 +116,14 @@ func (s *Server) addDispatchStatus(ctx context.Context, tx qrm.DB, status *dispa
 }
 
 func (s *Server) updateDispatchStatus(ctx context.Context, job string, dsp *dispatch.Dispatch, in *dispatch.DispatchStatus) error {
-	// If the dispatch already has the status that should be set, don't update the status again
-	if dsp.Status != nil && dsp.Status.Status == in.Status {
+	// If the dispatch status is the same and is a status that shouldn't be duplicated, don't update the status again
+	if dsp.Status != nil &&
+		dsp.Status.Status == in.Status &&
+		(in.Status == dispatch.DISPATCH_STATUS_NEW ||
+			in.Status == dispatch.DISPATCH_STATUS_UNASSIGNED ||
+			in.Status == dispatch.DISPATCH_STATUS_COMPLETED ||
+			in.Status == dispatch.DISPATCH_STATUS_CANCELLED ||
+			in.Status == dispatch.DISPATCH_STATUS_ARCHIVED) {
 		return nil
 	}
 

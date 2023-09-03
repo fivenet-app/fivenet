@@ -59,7 +59,11 @@ defineProps<{
                     <div class="flex flex-row items-center justify-start flex-1">
                         <IDCopyBadge :id="doc.id" prefix="DOC" />
                     </div>
-                    <div v-if="doc.deletedAt" class="flex flex-row items-center justify-center flex-1 text-base-100 font-bold">
+                    <div
+                        v-if="doc.deletedAt"
+                        type="button"
+                        class="flex flex-row items-center justify-center flex-1 text-base-100 font-bold"
+                    >
                         <TrashCanIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400" aria-hidden="true" />
                         {{ $t('common.deleted') }}
                     </div>

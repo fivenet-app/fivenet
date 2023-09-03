@@ -12,6 +12,7 @@ const (
 
 	CentrumServiceCreateDispatchPerm     perms.Name = "CreateDispatch"
 	CentrumServiceCreateOrUpdateUnitPerm perms.Name = "CreateOrUpdateUnit"
+	CentrumServiceDeleteDispatchPerm     perms.Name = "DeleteDispatch"
 	CentrumServiceDeleteUnitPerm         perms.Name = "DeleteUnit"
 	CentrumServiceStreamPerm             perms.Name = "Stream"
 	CentrumServiceTakeControlPerm        perms.Name = "TakeControl"
@@ -50,6 +51,11 @@ func init() {
 		{
 			Category: CentrumServicePerm,
 			Name:     CentrumServiceCreateOrUpdateUnitPerm,
+			Attrs:    []perms.Attr{},
+		},
+		{
+			Category: CentrumServicePerm,
+			Name:     CentrumServiceDeleteDispatchPerm,
 			Attrs:    []perms.Attr{},
 		},
 		{

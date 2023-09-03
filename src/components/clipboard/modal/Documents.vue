@@ -117,7 +117,7 @@ watch(props, async (newVal) => {
                 </th>
                 <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-0">
                     <span class="sr-only">{{ $t('common.action', 2) }}</span>
-                    <button v-if="selected.length > 0" @click="removeAll()">
+                    <button v-if="selected.length > 0" type="button" @click="removeAll()">
                         <TrashCanIcon class="w-6 h-6 mx-auto text-neutral" />
                     </button>
                 </th>
@@ -158,7 +158,7 @@ watch(props, async (newVal) => {
                     {{ item.creator.firstname }}, {{ item.creator.lastname }}
                 </td>
                 <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
-                    <button @click="remove(item, true)">
+                    <button type="button" @click="remove(item, true)">
                         <TrashCanIcon class="w-6 h-6 mx-auto text-neutral" />
                     </button>
                 </td>

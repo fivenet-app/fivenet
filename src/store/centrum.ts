@@ -7,7 +7,7 @@ import { UserShort } from '~~/gen/ts/resources/users/users';
 import { useAuthStore } from './auth';
 import { useNotificationsStore } from './notifications';
 
-const SEVEN_MINUTES = 7 * 60 * 1000;
+const FIVE_MINUTES = 7 * 60 * 1000;
 const TWO_MINUTES = 2 * 60 * 1000;
 
 export interface CentrumState {
@@ -532,7 +532,7 @@ export const useCentrumStore = defineStore('centrum', {
             this.pendingDispatches.forEach((pd) => {
                 pd.units.forEach((ua) => {
                     const expiresAt = toDate(ua.expiresAt);
-                    if (now - expiresAt.getTime() > SEVEN_MINUTES) this.removePendingDispatch(pd.id);
+                    if (now - expiresAt.getTime() > FIVE_MINUTES) this.removePendingDispatch(pd.id);
                 });
             });
 
@@ -545,7 +545,7 @@ export const useCentrumStore = defineStore('centrum', {
                 )
                     return;
 
-                if (now - toDate(d.status?.createdAt).getTime() > SEVEN_MINUTES) this.removeDispatch(d.id);
+                if (now - toDate(d.status?.createdAt).getTime() > FIVE_MINUTES) this.removeDispatch(d.id);
             });
         },
     },

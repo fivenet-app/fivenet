@@ -251,6 +251,20 @@ export interface UpdateDispatchRequest {
 export interface UpdateDispatchResponse {
 }
 /**
+ * @generated from protobuf message services.centrum.DeleteDispatchRequest
+ */
+export interface DeleteDispatchRequest {
+    /**
+     * @generated from protobuf field: uint64 id = 1;
+     */
+    id: bigint;
+}
+/**
+ * @generated from protobuf message services.centrum.DeleteDispatchResponse
+ */
+export interface DeleteDispatchResponse {
+}
+/**
  * @generated from protobuf message services.centrum.UpdateDispatchStatusRequest
  */
 export interface UpdateDispatchStatusRequest {
@@ -772,6 +786,28 @@ class UpdateDispatchResponse$Type extends MessageType<UpdateDispatchResponse> {
  */
 export const UpdateDispatchResponse = new UpdateDispatchResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class DeleteDispatchRequest$Type extends MessageType<DeleteDispatchRequest> {
+    constructor() {
+        super("services.centrum.DeleteDispatchRequest", [
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.centrum.DeleteDispatchRequest
+ */
+export const DeleteDispatchRequest = new DeleteDispatchRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class DeleteDispatchResponse$Type extends MessageType<DeleteDispatchResponse> {
+    constructor() {
+        super("services.centrum.DeleteDispatchResponse", []);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.centrum.DeleteDispatchResponse
+ */
+export const DeleteDispatchResponse = new DeleteDispatchResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class UpdateDispatchStatusRequest$Type extends MessageType<UpdateDispatchStatusRequest> {
     constructor() {
         super("services.centrum.UpdateDispatchStatusRequest", [
@@ -940,6 +976,7 @@ export const CentrumService = new ServiceType("services.centrum.CentrumService",
     { name: "UpdateSettings", options: {}, I: Settings, O: Settings },
     { name: "CreateDispatch", options: {}, I: CreateDispatchRequest, O: CreateDispatchResponse },
     { name: "UpdateDispatch", options: {}, I: UpdateDispatchRequest, O: UpdateDispatchResponse },
+    { name: "DeleteDispatch", options: {}, I: DeleteDispatchRequest, O: DeleteDispatchResponse },
     { name: "TakeControl", options: {}, I: TakeControlRequest, O: TakeControlResponse },
     { name: "AssignDispatch", options: {}, I: AssignDispatchRequest, O: AssignDispatchResponse },
     { name: "AssignUnit", options: {}, I: AssignUnitRequest, O: AssignUnitResponse },

@@ -226,7 +226,7 @@ onConfirm(async (id) => deleteRole(id));
             <div v-if="role">
                 <h2 class="text-3xl text-white">
                     {{ role?.jobLabel! }} - {{ role?.jobGradeLabel }} ({{ role.grade }})
-                    <button v-if="can('RectorService.DeleteRole')" @click="reveal()">
+                    <button v-if="can('RectorService.DeleteRole')" type="button" @click="reveal()">
                         <TrashCanIcon class="w-6 h-6 mx-auto text-neutral" />
                     </button>
                 </h2>

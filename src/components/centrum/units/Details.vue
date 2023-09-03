@@ -157,7 +157,7 @@ const openStatus = ref(false);
                                                             <dd
                                                                 class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
                                                             >
-                                                                <span v-if="unit.users.length === 0">
+                                                                <span v-if="unit.users.length === 0" class="block">
                                                                     {{ $t('common.member', 0) }}
                                                                 </span>
                                                                 <ul
