@@ -398,7 +398,8 @@
             },
             "units": {
                 "create_unit": "Einheit erstellen",
-                "update_settings": "Einstellungen ändern"
+                "update_settings": "Einstellungen ändern",
+                "update_unit": "Einheit aktualisieren"
             }
         }
     },
