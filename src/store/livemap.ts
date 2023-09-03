@@ -39,10 +39,12 @@ export const useLivemapStore = defineStore('livemap', {
     actions: {
         async startStream(): Promise<void> {
             if (this.abort !== undefined) return;
-            this.restarting = false;
 
             console.debug('Livemap: Starting Data Stream');
+
             this.abort = new AbortController();
+            this.error = undefined;
+            this.restarting = false;
             const { $grpc } = useNuxtApp();
 
             try {

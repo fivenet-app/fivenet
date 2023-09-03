@@ -355,6 +355,7 @@ export const useCentrumStore = defineStore('centrum', {
             const { $grpc } = useNuxtApp();
 
             this.abort = new AbortController();
+            this.error = undefined;
             this.restarting = false;
 
             try {

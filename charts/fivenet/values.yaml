@@ -45,7 +45,7 @@ ingress:
     # kubernetes.io/tls-acme: "true"
     #nginx.ingress.kubernetes.io/ssl-redirect: "true"
     #nginx.ingress.kubernetes.io/server-snippet: |
-    #  client_body_timeout 3600s;
+    #  client_body_timeout 1800s;
   hosts:
     - host: chart-example.local
       paths:
@@ -185,7 +185,7 @@ fivenet:
         token: "your_discord_bot_token"
 
 envoy:
-  replicaCount: 1
+  replicaCount: 2
   image:
     repository: docker.io/envoyproxy/envoy
     pullPolicy: IfNotPresent
@@ -224,9 +224,9 @@ envoy:
               resource_limits:
                 listener:
                   example_listener_name:
-                    connection_limit: 10000
+                    connection_limit: 5000
             overload:
-              global_downstream_max_connections: 50000
+              global_downstream_max_connections: 25000
     static_resources:
       listeners:
         - name: listener_0
@@ -242,7 +242,7 @@ envoy:
                   # Should be set when behind an proxy/Ingress
                   use_remote_address: true
                   common_http_protocol_options:
-                    idle_timeout: 3600s  # 1 hour
+                    idle_timeout: 1800s  # 30 minutes
                     headers_with_underscores_action: REJECT_REQUEST
                   http2_protocol_options:
                     max_concurrent_streams: 200
