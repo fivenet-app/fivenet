@@ -1072,11 +1072,21 @@
             },
             "CreateOrUpdateMarker": {
                 "key": "Erstellen und Aktualisieren von Markierungen",
-                "description": "Markierungen auf der Livemap erstellen und aktualisieren können."
+                "description": "Markierungen auf der Livemap erstellen und aktualisieren können.",
+                "attrs": {
+                    "Own": "Eigene",
+                    "Lower_Rank": "Niedrigerer Rang",
+                    "Same_Rank": "Gleicher Rang"
+                }
             },
             "DeleteMarker": {
                 "key": "Markierung Löschen",
-                "description": "Markierungen auf der Livemap löschen können."
+                "description": "Markierungen auf der Livemap löschen können.",
+                "attrs": {
+                    "Own": "Eigene",
+                    "Lower_Rank": "Niedrigerer Rang",
+                    "Same_Rank": "Gleicher Rang"
+                }
             }
         },
         "RectorService": {
@@ -1143,6 +1153,10 @@
             "UpdateSettings": {
                 "key": "Aktualisieren der Leitstellen Einstellungen",
                 "description": "Erlaubt es die Einstellungen der Leitstelle zu aktualisieren."
+            },
+            "DeleteDispatch": {
+                "key": "Einsätze löschen",
+                "description": "Erlaubt es Einsätze zu löschen."
             }
         }
     },
