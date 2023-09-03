@@ -58,14 +58,14 @@ async function chooseCharacter(): Promise<void> {
 </script>
 
 <template>
-    <div :key="char.userId" class="divide-y rounded-lg bg-base-800 shadow-float">
+    <div :key="char.userId" class="divide-y rounded-lg bg-base-800 shadow-float flex flex-col content-end">
         <div class="flex flex-col flex-1 p-8">
             <div class="flex flex-row items-center gap-3 mx-auto">
                 <h2 class="text-2xl font-medium text-center text-neutral">{{ char.firstname }}, {{ char.lastname }}</h2>
                 <CharSexBadge :sex="char.sex!" />
                 <div v-if="lastCharID === char.userId">
                     <span
-                        class="inline-flex items-center rounded-full bg-success-100 px-3 py-0.5 text-sm font-medium text-success-800"
+                        class="inline-flex items-center text-center rounded-full bg-success-100 px-3 py-0.5 text-sm font-medium text-success-800"
                     >
                         {{ $t('common.last_used') }}
                     </span>
