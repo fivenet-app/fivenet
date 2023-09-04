@@ -290,3 +290,16 @@ func (c *Cache) GetLawBooks() []*laws.LawBook {
 
 	return lawBooks
 }
+
+func (c *Cache) GetHighestJobGrade(job string) *users.JobGrade {
+	j, ok := c.jobs.Get(job)
+	if !ok {
+		return nil
+	}
+
+	if len(j.Grades) == 0 {
+		return nil
+	}
+
+	return j.Grades[len(j.Grades)-1]
+}

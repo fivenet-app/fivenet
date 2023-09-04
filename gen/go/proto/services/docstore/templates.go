@@ -39,6 +39,7 @@ func (s *Server) ListTemplates(ctx context.Context, req *ListTemplatesRequest) (
 			tDTemplates.Description,
 			tDTemplates.Schema,
 			tDTemplates.CreatorID,
+			tDTemplates.CreatorJob,
 		).
 		FROM(
 			tDTemplates.
@@ -77,10 +78,40 @@ func (s *Server) GetTemplate(ctx context.Context, req *GetTemplateRequest) (*Get
 	if err != nil {
 		return nil, ErrFailedQuery
 	}
-	if !check {
+	if !check && !userInfo.SuperUser {
 		return nil, ErrTemplateNoPerms
 	}
 
+	resp := &GetTemplateResponse{}
+	resp.Template, err = s.getTemplate(ctx, req.TemplateId)
+	if err != nil {
+		return nil, ErrFailedQuery
+	}
+
+	if req.Render == nil || !*req.Render {
+		resp.Template.JobAccess, err = s.getTemplateJobAccess(ctx, req.TemplateId)
+		if err != nil {
+			return nil, ErrFailedQuery
+		}
+	} else if req.Render != nil && *req.Render && req.Data != nil {
+		// Parse data as json for the templating process
+		var data map[string]interface{}
+		if err := json.UnmarshalFromString(*req.Data, &data); err != nil {
+			return nil, err
+		}
+
+		resp.Template.ContentTitle, resp.Template.State, resp.Template.Content, err = s.renderTemplate(resp.Template, data)
+		if err != nil {
+			return nil, err
+		}
+
+		resp.Rendered = true
+	}
+
+	return resp, nil
+}
+
+func (s *Server) getTemplate(ctx context.Context, templateId uint64) (*documents.Template, error) {
 	tDTemplates := tDTemplates.AS("template")
 	stmt := tDTemplates.
 		SELECT(
@@ -109,36 +140,16 @@ func (s *Server) GetTemplate(ctx context.Context, req *GetTemplateRequest) (*Get
 				),
 		).
 		WHERE(
-			tDTemplates.ID.EQ(jet.Uint64(req.TemplateId)),
+			tDTemplates.ID.EQ(jet.Uint64(templateId)),
 		).
 		LIMIT(1)
 
-	resp := &GetTemplateResponse{}
-	if err := stmt.QueryContext(ctx, s.db, resp); err != nil {
-		return nil, ErrFailedQuery
+	var dest documents.Template
+	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
+		return nil, err
 	}
 
-	if req.Render == nil || !*req.Render {
-		resp.Template.JobAccess, err = s.getTemplateJobAccess(ctx, req.TemplateId)
-		if err != nil {
-			return nil, ErrFailedQuery
-		}
-	} else if req.Render != nil && *req.Render && req.Data != nil {
-		// Parse data as json for the templating process
-		var data map[string]interface{}
-		if err := json.UnmarshalFromString(*req.Data, &data); err != nil {
-			return nil, err
-		}
-
-		resp.Template.ContentTitle, resp.Template.State, resp.Template.Content, err = s.renderTemplate(resp.Template, data)
-		if err != nil {
-			return nil, err
-		}
-
-		resp.Rendered = true
-	}
-
-	return resp, nil
+	return &dest, nil
 }
 
 func (s *Server) renderTemplate(docTmpl *documents.Template, data map[string]interface{}) (outTile string, outState string, out string, err error) {
@@ -202,7 +213,7 @@ func (s *Server) CreateTemplate(ctx context.Context, req *CreateTemplateRequest)
 		UserJob: userInfo.Job,
 		State:   int16(rector.EVENT_TYPE_ERRORED),
 	}
-	defer s.a.Log(auditEntry, req)
+	defer s.auditer.Log(auditEntry, req)
 
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
@@ -211,8 +222,6 @@ func (s *Server) CreateTemplate(ctx context.Context, req *CreateTemplateRequest)
 	}
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
-
-	req.Template.Job = &userInfo.Job
 
 	categoryId := jet.NULL
 	if req.Template.Category != nil {
@@ -290,13 +299,13 @@ func (s *Server) UpdateTemplate(ctx context.Context, req *UpdateTemplateRequest)
 		UserJob: userInfo.Job,
 		State:   int16(rector.EVENT_TYPE_ERRORED),
 	}
-	defer s.a.Log(auditEntry, req)
+	defer s.auditer.Log(auditEntry, req)
 
 	check, err := s.checkIfUserHasAccessToTemplate(ctx, req.Template.Id, userInfo, false, documents.ACCESS_LEVEL_EDIT)
 	if err != nil {
 		return nil, ErrFailedQuery
 	}
-	if !check {
+	if !check && !userInfo.SuperUser {
 		return nil, ErrTemplateNoPerms
 	}
 
@@ -377,14 +386,28 @@ func (s *Server) DeleteTemplate(ctx context.Context, req *DeleteTemplateRequest)
 		UserJob: userInfo.Job,
 		State:   int16(rector.EVENT_TYPE_ERRORED),
 	}
-	defer s.a.Log(auditEntry, req)
+	defer s.auditer.Log(auditEntry, req)
 
 	check, err := s.checkIfUserHasAccessToTemplate(ctx, req.Id, userInfo, false, documents.ACCESS_LEVEL_EDIT)
 	if err != nil {
 		return nil, ErrFailedQuery
 	}
-	if !check {
-		return nil, ErrTemplateNoPerms
+
+	dTmpl, err := s.getTemplate(ctx, req.Id)
+	if err != nil {
+		return nil, ErrFailedQuery
+	}
+
+	if !check && !userInfo.SuperUser {
+		if dTmpl.CreatorJob == nil {
+			return nil, ErrTemplateNoPerms
+		}
+
+		// Make sure the highest job grade can delete the template
+		grade := s.cache.GetHighestJobGrade(userInfo.Job)
+		if grade == nil || (userInfo.Job == *dTmpl.CreatorJob && grade.Grade != userInfo.JobGrade) {
+			return nil, ErrTemplateNoPerms
+		}
 	}
 
 	tDTemplates := table.FivenetDocumentsTemplates

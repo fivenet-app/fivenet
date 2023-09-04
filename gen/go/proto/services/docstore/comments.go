@@ -116,7 +116,7 @@ func (s *Server) GetComments(ctx context.Context, req *GetCommentsRequest) (*Get
 
 	for i := 0; i < len(resp.Comments); i++ {
 		if resp.Comments[i].Creator != nil {
-			s.c.EnrichJobInfo(resp.Comments[i].Creator)
+			s.enricher.EnrichJobInfo(resp.Comments[i].Creator)
 		}
 	}
 
@@ -133,13 +133,13 @@ func (s *Server) PostComment(ctx context.Context, req *PostCommentRequest) (*Pos
 		UserJob: userInfo.Job,
 		State:   int16(rector.EVENT_TYPE_ERRORED),
 	}
-	defer s.a.Log(auditEntry, req)
+	defer s.auditer.Log(auditEntry, req)
 
 	check, err := s.checkIfUserHasAccessToDoc(ctx, req.Comment.DocumentId, userInfo, documents.ACCESS_LEVEL_COMMENT)
 	if err != nil {
 		return nil, err
 	}
-	if !check {
+	if !check && !userInfo.SuperUser {
 		return nil, status.Error(codes.PermissionDenied, "You don't have permission to post a comment on this document!")
 	}
 
@@ -185,13 +185,13 @@ func (s *Server) EditComment(ctx context.Context, req *EditCommentRequest) (*Edi
 		UserJob: userInfo.Job,
 		State:   int16(rector.EVENT_TYPE_ERRORED),
 	}
-	defer s.a.Log(auditEntry, req)
+	defer s.auditer.Log(auditEntry, req)
 
 	check, err := s.checkIfUserHasAccessToDoc(ctx, req.Comment.DocumentId, userInfo, documents.ACCESS_LEVEL_COMMENT)
 	if err != nil {
 		return nil, err
 	}
-	if !check {
+	if !check && !userInfo.SuperUser {
 		return nil, status.Error(codes.PermissionDenied, "You don't have permission to edit this comment!")
 	}
 
@@ -267,7 +267,7 @@ func (s *Server) DeleteComment(ctx context.Context, req *DeleteCommentRequest) (
 		UserJob: userInfo.Job,
 		State:   int16(rector.EVENT_TYPE_ERRORED),
 	}
-	defer s.a.Log(auditEntry, req)
+	defer s.auditer.Log(auditEntry, req)
 
 	comment, err := s.getComment(ctx, req.CommentId)
 	if err != nil {
@@ -278,12 +278,12 @@ func (s *Server) DeleteComment(ctx context.Context, req *DeleteCommentRequest) (
 	if err != nil {
 		return nil, err
 	}
-	if !check {
+	if !check && !userInfo.SuperUser {
 		return nil, status.Error(codes.PermissionDenied, "You can't delete document comments!")
 	}
 
 	// Field Permission Check
-	fieldsAttr, err := s.p.Attr(userInfo, DocStoreServicePerm, DocStoreServiceDeleteCommentPerm, DocStoreServiceDeleteCommentAccessPermField)
+	fieldsAttr, err := s.ps.Attr(userInfo, DocStoreServicePerm, DocStoreServiceDeleteCommentPerm, DocStoreServiceDeleteCommentAccessPermField)
 	if err != nil {
 		return nil, ErrFailedQuery
 	}

@@ -180,11 +180,13 @@ func (s *Server) GetRoles(ctx context.Context, req *GetRolesRequest) (*GetRolesR
 }
 
 func (s *Server) GetRole(ctx context.Context, req *GetRoleRequest) (*GetRoleResponse, error) {
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
 	role, check, err := s.ensureUserCanAccessRole(ctx, req.Id)
 	if err != nil {
 		return nil, ErrInvalidRequest
 	}
-	if !check {
+	if !check && !userInfo.SuperUser {
 		return nil, ErrNoPermission
 	}
 
@@ -280,7 +282,7 @@ func (s *Server) DeleteRole(ctx context.Context, req *DeleteRoleRequest) (*Delet
 	if err != nil {
 		return nil, ErrInvalidRequest
 	}
-	if !check {
+	if !check && !userInfo.SuperUser {
 		return nil, ErrNoPermission
 	}
 
@@ -324,7 +326,7 @@ func (s *Server) UpdateRolePerms(ctx context.Context, req *UpdateRolePermsReques
 	if err != nil {
 		return nil, ErrInvalidRequest
 	}
-	if !check {
+	if !check && !userInfo.SuperUser {
 		return nil, ErrNoPermission
 	}
 

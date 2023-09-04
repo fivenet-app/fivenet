@@ -67,9 +67,9 @@ export interface Template {
      */
     creator?: UserShort;
     /**
-     * @generated from protobuf field: optional string job = 14;
+     * @generated from protobuf field: optional string creator_job = 14;
      */
-    job?: string; // @gotags: alias:"job"
+    creatorJob?: string;
     /**
      * @generated from protobuf field: repeated resources.documents.TemplateJobAccess job_access = 15;
      */
@@ -250,7 +250,7 @@ class Template$Type extends MessageType<Template> {
             { no: 11, name: "schema", kind: "message", T: () => TemplateSchema },
             { no: 12, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
             { no: 13, name: "creator", kind: "message", T: () => UserShort },
-            { no: 14, name: "job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
+            { no: 14, name: "creator_job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 15, name: "job_access", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => TemplateJobAccess },
             { no: 16, name: "content_access", kind: "message", T: () => DocumentAccess }
         ]);

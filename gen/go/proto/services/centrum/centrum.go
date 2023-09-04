@@ -156,8 +156,6 @@ func NewServer(p Params) (*Server, error) {
 
 		s.wg.Wait()
 
-		<-s.events.JS.PublishAsyncComplete()
-
 		return nil
 	}))
 

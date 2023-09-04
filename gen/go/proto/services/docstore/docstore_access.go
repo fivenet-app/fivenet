@@ -38,12 +38,12 @@ func (s *Server) GetDocumentAccess(ctx context.Context, req *GetDocumentAccessRe
 	}
 
 	for i := 0; i < len(access.Jobs); i++ {
-		s.c.EnrichJobInfo(access.Jobs[i])
+		s.enricher.EnrichJobInfo(access.Jobs[i])
 	}
 
 	for i := 0; i < len(access.Users); i++ {
 		if access.Users[i].User != nil {
-			s.c.EnrichJobInfo(access.Users[i].User)
+			s.enricher.EnrichJobInfo(access.Users[i].User)
 		}
 	}
 
@@ -64,7 +64,7 @@ func (s *Server) SetDocumentAccess(ctx context.Context, req *SetDocumentAccessRe
 		UserJob: userInfo.Job,
 		State:   int16(rector.EVENT_TYPE_ERRORED),
 	}
-	defer s.a.Log(auditEntry, req)
+	defer s.auditer.Log(auditEntry, req)
 
 	ok, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.ACCESS_LEVEL_ACCESS)
 	if err != nil {

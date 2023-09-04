@@ -11,14 +11,14 @@ import (
 )
 
 type Searcher struct {
-	c *Cache
+	cache *Cache
 
 	jobs bleve.Index
 }
 
-func NewSearcher(c *Cache) (*Searcher, error) {
+func NewSearcher(cache *Cache) (*Searcher, error) {
 	s := &Searcher{
-		c: c,
+		cache: cache,
 	}
 
 	jobs, err := s.newJobsIndex()
@@ -43,8 +43,8 @@ func (s *Searcher) newJobsIndex() (bleve.Index, error) {
 
 func (s *Searcher) addDataToIndex() {
 	// Fill jobs search from cache
-	for _, k := range s.c.jobs.Keys() {
-		job, ok := s.c.jobs.Get(k)
+	for _, k := range s.cache.jobs.Keys() {
+		job, ok := s.cache.jobs.Get(k)
 		if !ok {
 			continue
 		}
@@ -81,7 +81,7 @@ func (s *Searcher) SearchJobs(ctx context.Context, search string, exactMatch boo
 
 	jobs := make([]*users.Job, len(searchResult.Hits))
 	for i, result := range searchResult.Hits {
-		job, ok := s.c.jobs.Get(result.ID)
+		job, ok := s.cache.jobs.Get(result.ID)
 		if !ok {
 			return nil, fmt.Errorf("no job found for search result id %s", result.ID)
 		}

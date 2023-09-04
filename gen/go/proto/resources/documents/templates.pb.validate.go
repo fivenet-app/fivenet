@@ -362,11 +362,11 @@ func (m *Template) validate(all bool) error {
 
 	}
 
-	if m.Job != nil {
+	if m.CreatorJob != nil {
 
-		if utf8.RuneCountInString(m.GetJob()) > 20 {
+		if utf8.RuneCountInString(m.GetCreatorJob()) > 20 {
 			err := TemplateValidationError{
-				field:  "Job",
+				field:  "CreatorJob",
 				reason: "value length must be at most 20 runes",
 			}
 			if !all {

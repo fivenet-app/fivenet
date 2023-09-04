@@ -234,12 +234,12 @@ func (s *Server) deleteTemplateJobAccess(ctx context.Context, tx *sql.Tx, templa
 	return nil
 }
 
-func (s *Server) checkIfUserHasAccessToTemplate(ctx context.Context, templateId uint64, userInfo *userinfo.UserInfo, publicOk bool, access documents.ACCESS_LEVEL) (bool, error) {
-	out, err := s.checkIfUserHasAccessToTemplateIDs(ctx, userInfo, publicOk, access, templateId)
+func (s *Server) checkIfUserHasAccessToTemplate(ctx context.Context, templateId uint64, userInfo *userinfo.UserInfo, highestRankOk bool, access documents.ACCESS_LEVEL) (bool, error) {
+	out, err := s.checkIfUserHasAccessToTemplateIDs(ctx, userInfo, highestRankOk, access, templateId)
 	return len(out) > 0, err
 }
 
-func (s *Server) checkIfUserHasAccessToTemplateIDs(ctx context.Context, userInfo *userinfo.UserInfo, publicOk bool, access documents.ACCESS_LEVEL, templateIds ...uint64) ([]uint64, error) {
+func (s *Server) checkIfUserHasAccessToTemplateIDs(ctx context.Context, userInfo *userinfo.UserInfo, highestRankOk bool, access documents.ACCESS_LEVEL, templateIds ...uint64) ([]uint64, error) {
 	if len(templateIds) == 0 {
 		return templateIds, nil
 	}
@@ -268,7 +268,7 @@ func (s *Server) checkIfUserHasAccessToTemplateIDs(ctx context.Context, userInfo
 
 	stmt := tDTemplates.
 		SELECT(
-			tDTemplates.ID,
+			tDTemplates.ID.AS("id"),
 		).
 		FROM(
 			tDTemplates.
@@ -282,14 +282,12 @@ func (s *Server) checkIfUserHasAccessToTemplateIDs(ctx context.Context, userInfo
 		GROUP_BY(tDTemplates.ID).
 		ORDER_BY(tDTemplates.ID.DESC(), tDTemplatesJobAccess.MinimumGrade)
 
-	var dest struct {
-		IDs []uint64 `alias:"document.id"`
-	}
-	if err := stmt.QueryContext(ctx, s.db, &dest.IDs); err != nil {
+	var dest []uint64
+	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		if !errors.Is(qrm.ErrNoRows, err) {
 			return nil, err
 		}
 	}
 
-	return dest.IDs, nil
+	return dest, nil
 }

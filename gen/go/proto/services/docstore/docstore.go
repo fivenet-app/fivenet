@@ -48,22 +48,24 @@ var (
 type Server struct {
 	DocStoreServiceServer
 
-	db *sql.DB
-	p  perms.Permissions
-	c  *mstlystcdata.Enricher
-	a  audit.IAuditer
-	ui userinfo.UserInfoRetriever
-	n  notifi.INotifi
+	db       *sql.DB
+	ps       perms.Permissions
+	cache    *mstlystcdata.Cache
+	enricher *mstlystcdata.Enricher
+	auditer  audit.IAuditer
+	ui       userinfo.UserInfoRetriever
+	notif    notifi.INotifi
 }
 
-func NewServer(db *sql.DB, p perms.Permissions, c *mstlystcdata.Enricher, aud audit.IAuditer, ui userinfo.UserInfoRetriever, n notifi.INotifi) *Server {
+func NewServer(db *sql.DB, ps perms.Permissions, cache *mstlystcdata.Cache, enricher *mstlystcdata.Enricher, auditer audit.IAuditer, ui userinfo.UserInfoRetriever, notif notifi.INotifi) *Server {
 	return &Server{
-		db: db,
-		p:  p,
-		c:  c,
-		a:  aud,
-		ui: ui,
-		n:  n,
+		db:       db,
+		ps:       ps,
+		cache:    cache,
+		enricher: enricher,
+		auditer:  auditer,
+		ui:       ui,
+		notif:    notif,
 	}
 }
 
@@ -143,7 +145,7 @@ func (s *Server) ListDocuments(ctx context.Context, req *ListDocumentsRequest) (
 
 	for i := 0; i < len(resp.Documents); i++ {
 		if resp.Documents[i].Creator != nil {
-			s.c.EnrichJobInfo(resp.Documents[i].Creator)
+			s.enricher.EnrichJobInfo(resp.Documents[i].Creator)
 		}
 	}
 
@@ -162,13 +164,13 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 		UserJob: userInfo.Job,
 		State:   int16(rector.EVENT_TYPE_ERRORED),
 	}
-	defer s.a.Log(auditEntry, req)
+	defer s.auditer.Log(auditEntry, req)
 
 	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.ACCESS_LEVEL_VIEW)
 	if err != nil {
 		return nil, ErrNotFoundOrNoPerms
 	}
-	if !check {
+	if !check && !userInfo.SuperUser {
 		return nil, status.Error(codes.PermissionDenied, "You don't have permission to view this document!")
 	}
 
@@ -218,7 +220,7 @@ func (s *Server) getDocument(ctx context.Context, condition jet.BoolExpression, 
 	}
 
 	if doc.Creator != nil {
-		s.c.EnrichJobInfo(doc.Creator)
+		s.enricher.EnrichJobInfo(doc.Creator)
 	}
 
 	return &doc, nil
@@ -234,7 +236,7 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 		UserJob: userInfo.Job,
 		State:   int16(rector.EVENT_TYPE_ERRORED),
 	}
-	defer s.a.Log(auditEntry, req)
+	defer s.auditer.Log(auditEntry, req)
 
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
@@ -311,7 +313,7 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 		UserJob: userInfo.Job,
 		State:   int16(rector.EVENT_TYPE_ERRORED),
 	}
-	defer s.a.Log(auditEntry, req)
+	defer s.auditer.Log(auditEntry, req)
 
 	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.ACCESS_LEVEL_EDIT)
 	if err != nil {
@@ -334,7 +336,7 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 	}
 
 	// Field Permission Check
-	fieldsAttr, err := s.p.Attr(userInfo, DocStoreServicePerm, DocStoreServiceUpdateDocumentPerm, DocStoreServiceUpdateDocumentAccessPermField)
+	fieldsAttr, err := s.ps.Attr(userInfo, DocStoreServicePerm, DocStoreServiceUpdateDocumentPerm, DocStoreServiceUpdateDocumentAccessPermField)
 	if err != nil {
 		return nil, ErrFailedQuery
 	}
@@ -410,13 +412,13 @@ func (s *Server) DeleteDocument(ctx context.Context, req *DeleteDocumentRequest)
 		UserJob: userInfo.Job,
 		State:   int16(rector.EVENT_TYPE_ERRORED),
 	}
-	defer s.a.Log(auditEntry, req)
+	defer s.auditer.Log(auditEntry, req)
 
 	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.ACCESS_LEVEL_EDIT)
 	if err != nil {
 		return nil, ErrNotFoundOrNoPerms
 	}
-	if !check {
+	if !check && !userInfo.SuperUser {
 		if !userInfo.SuperUser {
 			return nil, status.Error(codes.PermissionDenied, "You don't have permission to delete this document!")
 		}
@@ -428,7 +430,7 @@ func (s *Server) DeleteDocument(ctx context.Context, req *DeleteDocumentRequest)
 	}
 
 	// Field Permission Check
-	fieldsAttr, err := s.p.Attr(userInfo, DocStoreServicePerm, DocStoreServiceDeleteDocumentPerm, DocStoreServiceDeleteDocumentAccessPermField)
+	fieldsAttr, err := s.ps.Attr(userInfo, DocStoreServicePerm, DocStoreServiceDeleteDocumentPerm, DocStoreServiceDeleteDocumentAccessPermField)
 	if err != nil {
 		return nil, ErrFailedQuery
 	}
@@ -470,13 +472,13 @@ func (s *Server) ToggleDocument(ctx context.Context, req *ToggleDocumentRequest)
 		UserJob: userInfo.Job,
 		State:   int16(rector.EVENT_TYPE_ERRORED),
 	}
-	defer s.a.Log(auditEntry, req)
+	defer s.auditer.Log(auditEntry, req)
 
 	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.ACCESS_LEVEL_EDIT)
 	if err != nil {
 		return nil, ErrNotFoundOrNoPerms
 	}
-	if !check {
+	if !check && !userInfo.SuperUser {
 		if !userInfo.SuperUser {
 			return nil, status.Error(codes.PermissionDenied, "You don't have permission to close/open this document!")
 		}
@@ -488,7 +490,7 @@ func (s *Server) ToggleDocument(ctx context.Context, req *ToggleDocumentRequest)
 	}
 
 	// Field Permission Check
-	fieldsAttr, err := s.p.Attr(userInfo, DocStoreServicePerm, DocStoreServiceToggleDocumentPerm, DocStoreServiceToggleDocumentAccessPermField)
+	fieldsAttr, err := s.ps.Attr(userInfo, DocStoreServicePerm, DocStoreServiceToggleDocumentPerm, DocStoreServiceToggleDocumentAccessPermField)
 	if err != nil {
 		return nil, ErrFailedQuery
 	}

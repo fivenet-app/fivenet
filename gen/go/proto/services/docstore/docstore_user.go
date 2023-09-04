@@ -194,10 +194,10 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *ListUserDocumentsRe
 
 	for i := 0; i < len(resp.Relations); i++ {
 		if resp.Relations[i].SourceUser != nil {
-			s.c.EnrichJobInfo(resp.Relations[i].SourceUser)
+			s.enricher.EnrichJobInfo(resp.Relations[i].SourceUser)
 		}
 		if resp.Relations[i].Document != nil && resp.Relations[i].Document.Creator != nil {
-			s.c.EnrichJobInfo(resp.Relations[i].Document.Creator)
+			s.enricher.EnrichJobInfo(resp.Relations[i].Document.Creator)
 		}
 	}
 

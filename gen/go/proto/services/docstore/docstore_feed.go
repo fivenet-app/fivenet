@@ -32,7 +32,7 @@ func (s *Server) GetDocumentReferences(ctx context.Context, req *GetDocumentRefe
 	if err != nil {
 		return nil, err
 	}
-	if !check {
+	if !check && !userInfo.SuperUser {
 		return nil, status.Error(codes.PermissionDenied, "You don't have permission to view this document's references!")
 	}
 
@@ -173,15 +173,15 @@ func (s *Server) GetDocumentReferences(ctx context.Context, req *GetDocumentRefe
 
 	for i := 0; i < len(dest); i++ {
 		if dest[i].Creator != nil {
-			s.c.EnrichJobInfo(dest[i].Creator)
+			s.enricher.EnrichJobInfo(dest[i].Creator)
 		}
 
-		s.c.EnrichCategory(dest[i].SourceDocument)
+		s.enricher.EnrichCategory(dest[i].SourceDocument)
 		if dest[i].SourceDocument.Creator != nil {
-			s.c.EnrichJobInfo(dest[i].SourceDocument.Creator)
+			s.enricher.EnrichJobInfo(dest[i].SourceDocument.Creator)
 		}
 
-		s.c.EnrichCategory(dest[i].TargetDocument)
+		s.enricher.EnrichCategory(dest[i].TargetDocument)
 	}
 
 	resp.References = dest
@@ -195,7 +195,7 @@ func (s *Server) GetDocumentRelations(ctx context.Context, req *GetDocumentRelat
 	if err != nil {
 		return nil, err
 	}
-	if !check {
+	if !check && !userInfo.SuperUser {
 		return nil, status.Error(codes.PermissionDenied, "You don't have permission to view this document!")
 	}
 
@@ -219,7 +219,7 @@ func (s *Server) AddDocumentReference(ctx context.Context, req *AddDocumentRefer
 		UserJob: userInfo.Job,
 		State:   int16(rector.EVENT_TYPE_ERRORED),
 	}
-	defer s.a.Log(auditEntry, req)
+	defer s.auditer.Log(auditEntry, req)
 
 	if req.Reference.SourceDocumentId == req.Reference.TargetDocumentId {
 		return nil, status.Error(codes.InvalidArgument, "You can't reference a document with itself!")
@@ -231,7 +231,7 @@ func (s *Server) AddDocumentReference(ctx context.Context, req *AddDocumentRefer
 	if err != nil {
 		return nil, err
 	}
-	if !check {
+	if !check && !userInfo.SuperUser {
 		return nil, status.Error(codes.PermissionDenied, "You don't have permission to add references from/to this document!")
 	}
 
@@ -292,7 +292,7 @@ func (s *Server) RemoveDocumentReference(ctx context.Context, req *RemoveDocumen
 		UserJob: userInfo.Job,
 		State:   int16(rector.EVENT_TYPE_ERRORED),
 	}
-	defer s.a.Log(auditEntry, req)
+	defer s.auditer.Log(auditEntry, req)
 
 	var docIDs struct {
 		Source uint64
@@ -317,7 +317,7 @@ func (s *Server) RemoveDocumentReference(ctx context.Context, req *RemoveDocumen
 	if err != nil {
 		return nil, err
 	}
-	if !check {
+	if !check && !userInfo.SuperUser {
 		return nil, status.Error(codes.PermissionDenied, "You don't have permission to remove references from this document!")
 	}
 
@@ -351,13 +351,13 @@ func (s *Server) AddDocumentRelation(ctx context.Context, req *AddDocumentRelati
 		UserJob: userInfo.Job,
 		State:   int16(rector.EVENT_TYPE_ERRORED),
 	}
-	defer s.a.Log(auditEntry, req)
+	defer s.auditer.Log(auditEntry, req)
 
 	check, err := s.checkIfUserHasAccessToDoc(ctx, req.Relation.DocumentId, userInfo, documents.ACCESS_LEVEL_EDIT)
 	if err != nil {
 		return nil, err
 	}
-	if !check {
+	if !check && !userInfo.SuperUser {
 		return nil, status.Error(codes.PermissionDenied, "You don't have permission to add relation from/to this document!")
 	}
 
@@ -428,7 +428,7 @@ func (s *Server) RemoveDocumentRelation(ctx context.Context, req *RemoveDocument
 		UserJob: userInfo.Job,
 		State:   int16(rector.EVENT_TYPE_ERRORED),
 	}
-	defer s.a.Log(auditEntry, req)
+	defer s.auditer.Log(auditEntry, req)
 
 	var docID struct {
 		ID uint64
@@ -451,7 +451,7 @@ func (s *Server) RemoveDocumentRelation(ctx context.Context, req *RemoveDocument
 	if err != nil {
 		return nil, err
 	}
-	if !check {
+	if !check && !userInfo.SuperUser {
 		return nil, status.Error(codes.PermissionDenied, "You don't have permission to remove references from this document!")
 	}
 
@@ -597,10 +597,10 @@ func (s *Server) getDocumentRelations(ctx context.Context, documentId uint64) ([
 
 	for i := 0; i < len(dest); i++ {
 		if dest[i].SourceUser != nil {
-			s.c.EnrichJobInfo(dest[i].SourceUser)
+			s.enricher.EnrichJobInfo(dest[i].SourceUser)
 		}
 		if dest[i].TargetUser != nil {
-			s.c.EnrichJobInfo(dest[i].TargetUser)
+			s.enricher.EnrichJobInfo(dest[i].TargetUser)
 		}
 	}
 
@@ -643,5 +643,5 @@ func (s *Server) notifyUser(ctx context.Context, documentId uint64, sourceUserId
 			},
 		},
 	}
-	s.n.NotifyUser(ctx, not)
+	s.notif.NotifyUser(ctx, not)
 }

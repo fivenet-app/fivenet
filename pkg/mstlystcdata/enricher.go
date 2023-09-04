@@ -13,17 +13,17 @@ const (
 )
 
 type Enricher struct {
-	c *Cache
+	cache *Cache
 }
 
-func NewEnricher(c *Cache) *Enricher {
+func NewEnricher(cache *Cache) *Enricher {
 	return &Enricher{
-		c: c,
+		cache: cache,
 	}
 }
 
 func (e *Enricher) EnrichJobInfo(usr common.IJobInfo) {
-	job, ok := e.c.jobs.Get(usr.GetJob())
+	job, ok := e.cache.jobs.Get(usr.GetJob())
 	if ok {
 		usr.SetJobLabel(job.Label)
 
@@ -45,7 +45,7 @@ func (e *Enricher) EnrichJobInfo(usr common.IJobInfo) {
 }
 
 func (e *Enricher) EnrichJobName(usr common.IJobName) {
-	job, ok := e.c.jobs.Get(usr.GetJob())
+	job, ok := e.cache.jobs.Get(usr.GetJob())
 	if ok {
 		usr.SetJobLabel(job.Label)
 	} else {
@@ -61,7 +61,7 @@ func (e *Enricher) EnrichCategory(doc common.ICategory) {
 		return
 	}
 
-	dc, ok := e.c.docCategories.Get(cId)
+	dc, ok := e.cache.docCategories.Get(cId)
 	if !ok {
 		job := NotAvailablePlaceholder
 		doc.SetCategory(&documents.Category{
@@ -75,7 +75,7 @@ func (e *Enricher) EnrichCategory(doc common.ICategory) {
 }
 
 func (e *Enricher) GetJobByName(job string) *users.Job {
-	j, ok := e.c.jobs.Get(job)
+	j, ok := e.cache.jobs.Get(job)
 	if !ok {
 		return nil
 	}
