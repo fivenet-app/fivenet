@@ -166,7 +166,7 @@ func (s *Server) updateUnitStatus(ctx context.Context, job string, unit *dispatc
 	if err != nil {
 		return err
 	}
-	s.events.JS.Publish(s.buildSubject(TopicUnit, TypeUnitStatus, job, status.UnitId), data)
+	s.events.JS.PublishAsync(s.buildSubject(TopicUnit, TypeUnitStatus, job, status.UnitId), data)
 
 	return nil
 }
@@ -302,14 +302,14 @@ func (s *Server) updateUnitAssignments(ctx context.Context, userInfo *userinfo.U
 		return err
 	}
 
-	s.events.JS.Publish(s.buildSubject(TopicUnit, TypeUnitUpdated, userInfo.Job, unit.Id), data)
+	s.events.JS.PublishAsync(s.buildSubject(TopicUnit, TypeUnitUpdated, userInfo.Job, unit.Id), data)
 
 	// Send unit user assigned message when needed
 	if len(toAdd) > 0 {
-		s.events.JS.Publish(s.buildSubject(TopicUnit, TypeUnitUserAssigned, userInfo.Job, 0), data)
+		s.events.JS.PublishAsync(s.buildSubject(TopicUnit, TypeUnitUserAssigned, userInfo.Job, 0), data)
 	}
 	if len(toRemove) > 0 {
-		s.events.JS.Publish(s.buildSubject(TopicUnit, TypeUnitUserAssigned, userInfo.Job, unit.Id), data)
+		s.events.JS.PublishAsync(s.buildSubject(TopicUnit, TypeUnitUserAssigned, userInfo.Job, unit.Id), data)
 	}
 
 	// Unit is empty, set unit status to be unavailable automatically

@@ -73,7 +73,7 @@ func (n *Notifi) NotifyUser(ctx context.Context, not *notifications.Notification
 		return
 	}
 
-	n.events.JS.Publish(fmt.Sprintf("%s.%s.%d", BaseSubject, UserNotification, not.UserId), data)
+	n.events.JS.PublishAsync(fmt.Sprintf("%s.%s.%d", BaseSubject, UserNotification, not.UserId), data)
 }
 
 func (n *Notifi) insertNotification(ctx context.Context, not *notifications.Notification) (int64, error) {

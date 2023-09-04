@@ -75,7 +75,7 @@ func (s *Server) buildSubject(topic events.Topic, tType events.Type, job string,
 func (s *Server) broadcastToAllUnits(topic events.Topic, tType events.Type, job string, data []byte) {
 	units := s.getUnitsMap(job)
 
-	s.events.JS.Publish(s.buildSubject(topic, tType, job, 0), data)
+	s.events.JS.PublishAsync(s.buildSubject(topic, tType, job, 0), data)
 
 	units.Range(func(key uint64, unit *dispatch.Unit) bool {
 		// Skip empty units
@@ -83,7 +83,7 @@ func (s *Server) broadcastToAllUnits(topic events.Topic, tType events.Type, job 
 			return true
 		}
 
-		s.events.JS.Publish(s.buildSubject(topic, tType, job, unit.Id), data)
+		s.events.JS.PublishAsync(s.buildSubject(topic, tType, job, unit.Id), data)
 		return true
 	})
 }

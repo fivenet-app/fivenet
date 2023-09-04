@@ -169,10 +169,10 @@ func (s *Server) updateDispatchStatus(ctx context.Context, job string, dsp *disp
 	}
 
 	if len(dsp.Units) == 0 {
-		s.events.JS.Publish(s.buildSubject(TopicDispatch, TypeDispatchStatus, job, 0), data)
+		s.events.JS.PublishAsync(s.buildSubject(TopicDispatch, TypeDispatchStatus, job, 0), data)
 	} else {
 		for _, u := range dsp.Units {
-			s.events.JS.Publish(s.buildSubject(TopicDispatch, TypeDispatchStatus, job, u.UnitId), data)
+			s.events.JS.PublishAsync(s.buildSubject(TopicDispatch, TypeDispatchStatus, job, u.UnitId), data)
 		}
 	}
 
@@ -301,10 +301,10 @@ func (s *Server) updateDispatchAssignments(ctx context.Context, job string, user
 	}
 
 	for i := 0; i < len(toRemove); i++ {
-		s.events.JS.Publish(s.buildSubject(TopicDispatch, TypeDispatchUpdated, job, toRemove[i]), data)
+		s.events.JS.PublishAsync(s.buildSubject(TopicDispatch, TypeDispatchUpdated, job, toRemove[i]), data)
 	}
 	for i := 0; i < len(toAdd); i++ {
-		s.events.JS.Publish(s.buildSubject(TopicDispatch, TypeDispatchUpdated, job, toAdd[i]), data)
+		s.events.JS.PublishAsync(s.buildSubject(TopicDispatch, TypeDispatchUpdated, job, toAdd[i]), data)
 	}
 
 	// Unit is empty, set unit status to be unavailable automatically

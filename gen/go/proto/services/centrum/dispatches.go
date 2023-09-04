@@ -206,7 +206,7 @@ func (s *Server) createDispatch(ctx context.Context, d *dispatch.Dispatch) (*dis
 	if err != nil {
 		return nil, err
 	}
-	s.events.JS.Publish(s.buildSubject(TopicDispatch, TypeDispatchCreated, d.Job, 0), data)
+	s.events.JS.PublishAsync(s.buildSubject(TopicDispatch, TypeDispatchCreated, d.Job, 0), data)
 
 	return dsp, nil
 }
@@ -267,9 +267,9 @@ func (s *Server) UpdateDispatch(ctx context.Context, req *UpdateDispatchRequest)
 	if err != nil {
 		return nil, err
 	}
-	s.events.JS.Publish(s.buildSubject(TopicDispatch, TypeDispatchUpdated, userInfo.Job, 0), data)
+	s.events.JS.PublishAsync(s.buildSubject(TopicDispatch, TypeDispatchUpdated, userInfo.Job, 0), data)
 	for _, unit := range dsp.Units {
-		s.events.JS.Publish(s.buildSubject(TopicDispatch, TypeDispatchUpdated, userInfo.Job, unit.UnitId), data)
+		s.events.JS.PublishAsync(s.buildSubject(TopicDispatch, TypeDispatchUpdated, userInfo.Job, unit.UnitId), data)
 	}
 
 	auditEntry.State = int16(rector.EVENT_TYPE_UPDATED)
@@ -549,7 +549,7 @@ func (s *Server) DeleteDispatch(ctx context.Context, req *DeleteDispatchRequest)
 	if err != nil {
 		return nil, err
 	}
-	s.events.JS.Publish(s.buildSubject(TopicDispatch, TypeDispatchDeleted, dsp.Job, 0), data)
+	s.events.JS.PublishAsync(s.buildSubject(TopicDispatch, TypeDispatchDeleted, dsp.Job, 0), data)
 
 	auditEntry.State = int16(rector.EVENT_TYPE_DELETED)
 
