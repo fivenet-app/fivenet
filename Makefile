@@ -103,6 +103,8 @@ gen-proto: protoc-gen-validate protoc-gen-customizer
 		--validate_out="lang=go:./gen/go/proto" \
 		--customizer_opt=paths=source_relative \
 		--customizer_out=./gen/go/proto \
+		--doc_opt=html,grpc-api.html \
+		--doc_out=./docs \
 		$(shell find proto/ -iname "*.proto")
 
 	# Inject Go field tags into generated fields

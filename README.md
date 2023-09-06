@@ -102,7 +102,8 @@
 * `protoc-gen-js`: Run `yarn`, without any args, in the root of the repository to install this and other dependencies.
 * `protoc-gen-grpc-web`: Download and install the latest release from https://github.com/grpc/grpc-web/releases
 * `protoc-gen-validate`: Download and install the latest release from https://github.com/bufbuild/protoc-gen-validate/releases
-* `protoc-go-inject-tag`: Run `go install github.com/favadi/protoc-go-inject-tag@latest`
+* `protoc-go-inject-tag`: Run `go install github.com/favadi/protoc-go-inject-tag@latest`.
+* `protoc-gen-doc`: run `go install github.com/pseudomuto/protoc-gen-doc/cmd/protoc-gen-doc@latest`.
 
 ### Codium/ VSCode Users
 
