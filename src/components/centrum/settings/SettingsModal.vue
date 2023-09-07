@@ -34,6 +34,7 @@ async function getCentrumSettings(): Promise<Settings> {
 
 const modes = ref<{ mode: CENTRUM_MODE; selected?: boolean }[]>([
     { mode: CENTRUM_MODE.MANUAL },
+    { mode: CENTRUM_MODE.SIMPLIFIED },
     { mode: CENTRUM_MODE.CENTRAL_COMMAND },
     { mode: CENTRUM_MODE.AUTO_ROUND_ROBIN },
 ]);

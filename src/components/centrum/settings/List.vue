@@ -50,7 +50,7 @@ const openSettings = ref(false);
                                 {{ $t('components.centrum.units.create_unit') }}
                             </button>
                             <button
-                                v-if="can('CentrumService.GetSettings')"
+                                v-if="can('CentrumService.Stream')"
                                 @click="openSettings = true"
                                 class="inline-flex px-3 py-2 text-sm font-semibold rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
                             >

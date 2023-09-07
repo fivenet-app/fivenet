@@ -10,6 +10,7 @@ enum CENTRUM_MODE {
   MANUAL = 0;
   CENTRAL_COMMAND = 1;
   AUTO_ROUND_ROBIN = 2;
+  SIMPLIFIED = 3;
 }
 
 message Settings {

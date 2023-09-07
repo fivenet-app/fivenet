@@ -24,6 +24,7 @@ import { default as UnitStatusUpdateModal } from '~/components/centrum/units/Sta
 import { useCentrumStore } from '~/store/centrum';
 import { useNotificationsStore } from '~/store/notifications';
 import { DISPATCH_STATUS, Dispatch } from '~~/gen/ts/resources/dispatch/dispatches';
+import { CENTRUM_MODE } from '~~/gen/ts/resources/dispatch/settings';
 import { UNIT_STATUS } from '~~/gen/ts/resources/dispatch/units';
 import DispatchesLayer from './DispatchesLayer.vue';
 import JoinUnit from './JoinUnitModal.vue';
@@ -163,7 +164,7 @@ async function updateUtStatus(id: bigint, status?: UNIT_STATUS): Promise<void> {
 <template>
     <Livemap>
         <template v-slot:default v-if="canStream">
-            <DispatchesLayer :show-all-dispatches="!settings.enabled" @goto="$emit('goto', $event)" />
+            <DispatchesLayer :show-all-dispatches="settings.mode === CENTRUM_MODE.SIMPLIFIED" @goto="$emit('goto', $event)" />
         </template>
         <template v-slot:afterMap v-if="canStream">
             <div class="lg:inset-y-0 lg:flex lg:w-50 lg:flex-col">

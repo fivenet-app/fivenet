@@ -51,9 +51,9 @@
         "vue-template-compiler": "^2.7.14"
     },
     "devDependencies": {
-        "@dargmuesli/nuxt-cookie-control": "^6.4.1",
-        "@nuxt/devtools": "^0.8.2",
-        "@nuxtjs/i18n": "^8.0.0-rc.4",
+        "@dargmuesli/nuxt-cookie-control": "^6.4.2",
+        "@nuxt/devtools": "^0.8.3",
+        "@nuxtjs/i18n": "8.0.0-rc.2",
         "@nuxtjs/tailwindcss": "^6.8.0",
         "@pinia-plugin-persistedstate/nuxt": "^1.1.1",
         "@tailwindcss/forms": "^0.5.6",
@@ -62,7 +62,7 @@
         "@types/google-protobuf": "^3.15.6",
         "@types/node": "^20.5.9",
         "@types/zxcvbn": "^4.4.2",
-        "@unhead/vue": "^1.5.2",
+        "@unhead/vue": "^1.5.4",
         "@vitejs/plugin-vue": "^4.3.4",
         "@volar/vue-typescript": "^1.6.5",
         "@vueuse/sound": "^2.0.1",
@@ -70,7 +70,7 @@
         "cssnano": "^6.0.1",
         "eslint": "^8.48.0",
         "eslint-plugin-vue": "^9.17.0",
-        "nuxi": "^3.7.3",
+        "nuxi": "^3.8.0",
         "nuxt": "^3.7.1",
         "nuxt-typed-router": "^3.3.1",
         "postcss": "^8.4.29",
@@ -84,6 +84,6 @@
         "typescript": "^5.2.2",
         "vite": "^4.4.9",
         "vite-plugin-mkcert": "^1.16.0",
-        "vue-tsc": "^1.8.8"
+        "vue-tsc": "^1.8.10"
     }
 }

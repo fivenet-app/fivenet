@@ -38,7 +38,11 @@ export enum CENTRUM_MODE {
     /**
      * @generated from protobuf enum value: AUTO_ROUND_ROBIN = 2;
      */
-    AUTO_ROUND_ROBIN = 2
+    AUTO_ROUND_ROBIN = 2,
+    /**
+     * @generated from protobuf enum value: SIMPLIFIED = 3;
+     */
+    SIMPLIFIED = 3
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Settings$Type extends MessageType<Settings> {
