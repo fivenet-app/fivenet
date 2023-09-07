@@ -25,7 +25,7 @@ onMounted(async () => {
 
 async function switchLanguage(lang: { name: string; iso: string }): Promise<void> {
     settings.setLocale(lang.iso);
-    setLocale(lang.iso);
+    await setLocale(lang.iso);
     veeValidateSetLocale(lang.iso);
 
     notifications.dispatchNotification({

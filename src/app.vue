@@ -10,7 +10,7 @@ import { useDocumentEditorStore } from '~/store/documenteditor';
 import { useNotificationsStore } from '~/store/notifications';
 import { useSettingsStore } from '~/store/settings';
 
-const { t, setLocale } = useI18n();
+const { t, setLocale, finalizePendingLocaleChange } = useI18n();
 
 const configStore = useConfigStore();
 const { loadConfig } = configStore;
@@ -48,7 +48,7 @@ if (__APP_VERSION__ != userSettings.getVersion) {
 }
 
 // Set user setting locale on load of app
-setLocale(userSettings.locale);
+await setLocale(userSettings.locale);
 
 configure({
     generateMessage: localize({
@@ -68,6 +68,10 @@ switch (userSettings.locale.split('-', 1)[0]) {
         cookieLocale.value = 'en';
         break;
 }
+
+async function onBeforeEnter(): Promise<void> {
+    await finalizePendingLocaleChange();
+}
 </script>
 
 <template>
@@ -76,6 +80,7 @@ switch (userSettings.locale.split('-', 1)[0]) {
             :transition="{
                 name: 'page',
                 mode: 'out-in',
+                onBeforeEnter,
             }"
         />
     </NuxtLayout>

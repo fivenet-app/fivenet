@@ -68,9 +68,7 @@ const config = defineNuxtConfig({
     i18n: {
         vueI18n: './i18n.config.ts',
         strategy: STRATEGIES.NO_PREFIX,
-        detectBrowserLanguage: {
-            useCookie: false,
-        },
+        detectBrowserLanguage: false,
         locales: [
             {
                 name: 'English',
@@ -85,17 +83,19 @@ const config = defineNuxtConfig({
                 file: 'de-DE.json',
             },
         ],
-        lazy: false,
+        debug: true,
+        lazy: true,
         langDir: './lang',
         defaultLocale: 'en',
-        defaultLocaleRouteNameSuffix: '',
         defaultDirection: 'ltr',
         baseUrl: '',
         trailingSlash: false,
         types: 'composition',
         compilation: {
             strictMessage: false,
+            jit: true,
         },
+        skipSettingLocaleOnNavigate: false,
     },
     veeValidate: {
         // disable or enable auto imports
