@@ -63,7 +63,7 @@ const config = defineNuxtConfig({
     },
     piniaPersistedstate: {
         storage: 'localStorage',
-        debug: true,
+        debug: false,
     },
     i18n: {
         vueI18n: './i18n.config.ts',
@@ -83,7 +83,7 @@ const config = defineNuxtConfig({
                 file: 'de-DE.json',
             },
         ],
-        debug: true,
+        debug: false,
         lazy: true,
         langDir: './lang',
         defaultLocale: 'en',
