@@ -83,10 +83,10 @@ const config = defineNuxtConfig({
                 file: 'de-DE.json',
             },
         ],
-        debug: false,
+        debug: true,
         lazy: true,
         langDir: './lang',
-        defaultLocale: 'en',
+        defaultLocale: 'de',
         defaultDirection: 'ltr',
         baseUrl: '',
         trailingSlash: false,
@@ -96,6 +96,7 @@ const config = defineNuxtConfig({
             jit: true,
         },
         skipSettingLocaleOnNavigate: false,
+        parallelPlugin: true,
     },
     veeValidate: {
         // disable or enable auto imports
