@@ -347,9 +347,9 @@ func (p *Perms) loadRolePermissions(ctx context.Context, roleId uint64) error {
 		return err
 	}
 
-	for _, rPerms := range dest {
-		perms, _ := p.permsRoleMap.LoadOrStore(rPerms.RoleID, &syncx.Map[uint64, bool]{})
-		perms.Store(rPerms.ID, rPerms.Val)
+	for _, rolePerms := range dest {
+		perms, _ := p.permsRoleMap.LoadOrStore(rolePerms.RoleID, &syncx.Map[uint64, bool]{})
+		perms.Store(rolePerms.ID, rolePerms.Val)
 	}
 
 	return nil

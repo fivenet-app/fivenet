@@ -46,6 +46,7 @@ func (p *Perms) getRolePermissionsFromCache(roleIds []uint64) []*cachePerm {
 		}
 
 		permsRoleMap.Range(func(key uint64, value bool) bool {
+			// If value is false (not allowed), skip
 			if !value {
 				return true
 			}
@@ -121,9 +122,7 @@ func (p *Perms) checkRoleJob(job string, grade int32, permId uint64) bool {
 		if !ok {
 			continue
 		}
-		if val {
-			return true
-		}
+		return val
 	}
 
 	return false

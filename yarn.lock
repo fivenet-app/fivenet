@@ -1215,7 +1215,7 @@
     vite-plugin-checker "^0.6.2"
     vue-bundle-renderer "^2.0.0"
 
-"@nuxtjs/i18n@8.0.0-rc.4":
+"@nuxtjs/i18n@^8.0.0-rc.4":
   version "8.0.0-rc.4"
   resolved "https://registry.yarnpkg.com/@nuxtjs/i18n/-/i18n-8.0.0-rc.4.tgz#977ca847cbb93cdc9b5349a015e3d2a02d2d9b04"
   integrity sha512-cxeptuvpUi4nA3PvaR8HTqRqnywx0djr/6Pc+47Eh2ut06hiO2ufHOUl4nUFElBd+gOTenKxGnzga3XQkojj0A==

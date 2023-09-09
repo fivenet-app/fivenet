@@ -356,13 +356,13 @@ func (p *Perms) RemovePermissionsFromRole(ctx context.Context, roleId uint64, pe
 		return err
 	}
 
-	roleCache, ok := p.permsRoleMap.Load(roleId)
+	permsRoleMap, ok := p.permsRoleMap.Load(roleId)
 	if !ok {
 		return nil
 	}
 
 	for _, permId := range perms {
-		roleCache.Delete(permId)
+		permsRoleMap.Delete(permId)
 	}
 
 	if err := p.publishMessage(RolePermUpdateSubject, RolePermUpdateEvent{
