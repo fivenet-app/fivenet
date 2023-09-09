@@ -10,12 +10,16 @@ const { locales, setLocale } = useI18n();
 const settings = useSettingsStore();
 const notifications = useNotificationsStore();
 
-const languages: { name: string; iso: string }[] = [];
+type Language = { name: string; iso: string };
+const languages: Language[] = [];
 
 onMounted(async () => {
     locales.value.forEach((lang) => {
-        lang = lang as LocaleObject;
+        if (typeof lang === 'string') {
+            return;
+        }
 
+        lang = lang as LocaleObject;
         languages.push({
             name: lang.name!,
             iso: lang.iso!,
@@ -23,7 +27,9 @@ onMounted(async () => {
     });
 });
 
-async function switchLanguage(lang: { name: string; iso: string }): Promise<void> {
+async function switchLanguage(lang: Language): Promise<void> {
+    console.debug('Switching language to:', lang);
+
     settings.setLocale(lang.iso);
     await setLocale(lang.iso);
     veeValidateSetLocale(lang.iso);
