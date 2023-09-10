@@ -11,6 +11,7 @@ definePageMeta({
     showQuickButtons: false,
 });
 </script>
+
 <template>
     <AttrRolesList :all="true" />
 </template>

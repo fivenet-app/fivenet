@@ -52,26 +52,26 @@ var (
 type Server struct {
 	AuthServiceServer
 
-	db   *sql.DB
-	auth *auth.GRPCAuth
-	tm   *auth.TokenMgr
-	p    perms.Permissions
-	c    *mstlystcdata.Enricher
-	a    audit.IAuditer
-	ui   userinfo.UserInfoRetriever
+	db       *sql.DB
+	auth     *auth.GRPCAuth
+	tm       *auth.TokenMgr
+	p        perms.Permissions
+	enricher *mstlystcdata.Enricher
+	a        audit.IAuditer
+	ui       userinfo.UserInfoRetriever
 
 	signupEnabled   bool
 	superuserGroups []string
 	oauth2Providers []*config.OAuth2Provider
 }
 
-func NewServer(db *sql.DB, auth *auth.GRPCAuth, tm *auth.TokenMgr, p perms.Permissions, c *mstlystcdata.Enricher, aud audit.IAuditer, ui userinfo.UserInfoRetriever, cfg *config.Config) *Server {
+func NewServer(db *sql.DB, auth *auth.GRPCAuth, tm *auth.TokenMgr, p perms.Permissions, enricher *mstlystcdata.Enricher, aud audit.IAuditer, ui userinfo.UserInfoRetriever, cfg *config.Config) *Server {
 	return &Server{
 		db:              db,
 		auth:            auth,
 		tm:              tm,
 		p:               p,
-		c:               c,
+		enricher:        enricher,
 		a:               aud,
 		ui:              ui,
 		signupEnabled:   cfg.Game.SignupEnabled,
@@ -580,7 +580,7 @@ func (s *Server) SetJob(ctx context.Context, req *SetJobRequest) (*SetJobRespons
 
 	char.Job = job.Name
 	char.JobGrade = jobGrade
-	s.c.EnrichJobInfo(char)
+	s.enricher.EnrichJobInfo(char)
 
 	if err := s.ui.SetUserInfo(ctx, claims.AccID, char.Job, char.JobGrade); err != nil {
 		return nil, ErrGenericLogin

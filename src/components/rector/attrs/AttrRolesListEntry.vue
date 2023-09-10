@@ -5,6 +5,10 @@ import { Role } from '~~/gen/ts/resources/permissions/permissions';
 defineProps<{
     role: Role;
 }>();
+
+defineEmits<{
+    (e: 'selected', role: Role): void;
+}>();
 </script>
 
 <template>
@@ -14,12 +18,13 @@ defineProps<{
         </td>
         <td class="whitespace-nowrap py-2 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
             <div class="flex flex-row justify-end">
-                <NuxtLink
-                    :to="{ name: 'rector-limiter-id', params: { id: role.id.toString() } }"
+                <button
+                    type="button"
+                    @click="$emit('selected', role)"
                     class="flex-initial text-primary-500 hover:text-primary-400"
                 >
                     <EyeIcon class="h-6 w-6 text-primary-500" aria-hidden="true" />
-                </NuxtLink>
+                </button>
             </div>
         </td>
     </tr>

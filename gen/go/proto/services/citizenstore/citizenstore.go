@@ -94,6 +94,15 @@ func (s *Server) ListCitizens(ctx context.Context, req *ListCitizensRequest) (*L
 		fields = fieldsAttr.([]string)
 	}
 
+	// Only list current job if requested
+	if req.CurrentJob != nil && *req.CurrentJob {
+		condition = condition.AND(tUser.Job.EQ(jet.String(userInfo.Job)))
+
+		if !utils.InSlice(fields, "UserProps.Job") {
+			fields = append(fields, "UserProps.Job")
+		}
+	}
+
 	for _, field := range fields {
 		switch field {
 		case "PhoneNumber":
@@ -200,20 +209,21 @@ func (s *Server) ListCitizens(ctx context.Context, req *ListCitizensRequest) (*L
 		if utils.InSlice(s.publicJobs, resp.Users[i].Job) {
 			// Make sure user has permission to see that grade, otherwise "hide" the user's job grade
 			grade, ok := jobGrades[resp.Users[i].Job]
-			if !userInfo.SuperUser && (!ok || grade > resp.Users[i].JobGrade) {
+			if !userInfo.SuperUser && (!ok || resp.Users[i].JobGrade <= grade) {
 				resp.Users[i].JobGrade = 0
 			}
 		} else {
 			resp.Users[i].Job = s.unemployedJob
 			resp.Users[i].JobGrade = s.unemployedJobGrade
-		}
 
-		if resp.Users[i].Props != nil && resp.Users[i].Props.JobName != nil {
-			resp.Users[i].Job = *resp.Users[i].Props.JobName
-			if resp.Users[i].Props.JobGradeNumber != nil {
-				resp.Users[i].JobGrade = *resp.Users[i].Props.JobGradeNumber
-			} else {
-				resp.Users[i].JobGrade = 0
+			// Only set the user's job from the user props when it isn't a public job
+			if resp.Users[i].Props != nil && resp.Users[i].Props.JobName != nil {
+				resp.Users[i].Job = *resp.Users[i].Props.JobName
+				if resp.Users[i].Props.JobGradeNumber != nil {
+					resp.Users[i].JobGrade = *resp.Users[i].Props.JobGradeNumber
+				} else {
+					resp.Users[i].JobGrade = 0
+				}
 			}
 		}
 

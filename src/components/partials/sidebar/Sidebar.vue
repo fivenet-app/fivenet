@@ -79,7 +79,7 @@ const sidebarNavigation = ref<
     },
     {
         name: 'common.job',
-        href: { name: 'jobs' },
+        href: { name: 'jobs-index-overview' },
         permission: 'Jobs.View',
         icon: markRaw(BriefcaseIcon),
         position: 'top',
@@ -122,7 +122,7 @@ const sidebarNavigation = ref<
 const userNavigation = ref<{ name: string; href: RoutesNamedLocations; permission?: string }[]>([
     { name: 'pages.auth.login.menu_item', href: { name: 'auth-login' } },
 ]);
-const breadcrumbs = ref<{ name: string; href: string; current: boolean }[]>([]);
+const breadcrumbs = ref<{ key: string; name: string; href: string; current: boolean }[]>([]);
 const mobileMenuOpen = ref(false);
 
 onMounted(() => {
@@ -155,9 +155,13 @@ function updateUserNav(): void {
 
 function updateActiveItem(): void {
     const route = router.currentRoute.value;
-    if (route.name) {
+    if (route.path) {
         sidebarNavigation.value.forEach((e) => {
-            if (route.name.toLowerCase().includes(e.href.name.toLowerCase())) {
+            const itemRoute = useRouter().resolve(e.href);
+            if (
+                route.path.toLowerCase().startsWith(itemRoute.path.toLowerCase()) ||
+                (itemRoute.meta.alias && route.path.toLowerCase().startsWith(itemRoute.meta.alias as string))
+            ) {
                 e.current = true;
             } else {
                 e.current = false;
@@ -193,6 +197,7 @@ function updateBreadcrumbs(): void {
             title = t(title);
         }
         breadcrumbs.value.push({
+            key: route.name?.toString() + route.path,
             name: title,
             href: route.path,
             current: false,
@@ -209,6 +214,7 @@ function updateBreadcrumbs(): void {
                 title = t(title);
             }
             breadcrumbs.value.push({
+                key: currentRoute.name?.toString() + currentRoute.path,
                 name: title,
                 href: '#',
                 current: true,
@@ -488,7 +494,7 @@ const appVersion = activeChar ? ' v' + __APP_VERSION__ + (import.meta.env.DEV ? 
                                             </NuxtLink>
                                         </div>
                                     </li>
-                                    <li v-for="page in breadcrumbs" :key="page.name">
+                                    <li v-for="page in breadcrumbs" :key="page.key">
                                         <div class="flex items-center">
                                             <ChevronRightIcon class="flex-shrink-0 w-5 h-5 text-base-400" aria-hidden="true" />
                                             <NuxtLink

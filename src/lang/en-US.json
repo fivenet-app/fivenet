@@ -105,8 +105,22 @@
             }
         },
         "jobs": {
-            "employee_info_and_management_system": "EMPLOYEE INFO AND MANAGEMENT SYSTEM",
-            "title": "Jobs"
+            "title": "Job Overview",
+            "colleagues": {
+                "title": "Colleagues"
+            },
+            "conduct": {
+                "title": "Conduct Register"
+            },
+            "requests": {
+                "title": "Requests"
+            },
+            "timeclock": {
+                "title": "Time Clock"
+            },
+            "trainings": {
+                "title": "Trainings"
+            }
         },
         "rector": {
             "features": {

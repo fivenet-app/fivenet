@@ -45,7 +45,7 @@ const features = [
     {
         title: t('common.job', 2),
         description: t('pages.overview.features.jobs'),
-        href: { name: 'jobs' },
+        href: { name: 'jobs-index-overview' },
         permission: 'Jobs.View',
         icon: markRaw(BriefcaseIcon),
         iconForeground: 'text-warn-900',

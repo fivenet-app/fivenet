@@ -166,6 +166,21 @@ func (m *UserShort) validate(all bool) error {
 
 	}
 
+	if m.PhoneNumber != nil {
+
+		if utf8.RuneCountInString(m.GetPhoneNumber()) > 20 {
+			err := UserShortValidationError{
+				field:  "PhoneNumber",
+				reason: "value length must be at most 20 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
 	if len(errors) > 0 {
 		return UserShortMultiError(errors)
 	}

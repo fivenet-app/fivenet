@@ -16,6 +16,10 @@ const props = defineProps<{
     roleId: bigint;
 }>();
 
+const emits = defineEmits<{
+    (e: 'deleted'): void;
+}>();
+
 const { $grpc } = useNuxtApp();
 
 const notifications = useNotificationsStore();
@@ -24,7 +28,14 @@ const completorStore = useCompletorStore();
 const { jobs } = storeToRefs(completorStore);
 const { listJobs } = completorStore;
 
-const role = ref<Role>();
+const {
+    data: role,
+    pending,
+    refresh,
+    error,
+} = useLazyAsyncData(`rector-roles-${props.roleId.toString()}`, () => getRole(props.roleId));
+
+const changed = ref(false);
 
 const permList = ref<Permission[]>([]);
 const permCategories = ref<Set<string>>(new Set());
@@ -33,22 +44,22 @@ const permStates = ref<Map<bigint, boolean | undefined>>(new Map());
 const attrList = ref<RoleAttribute[]>([]);
 const attrStates = ref<Map<bigint, AttributeValues | undefined>>(new Map());
 
-async function getRole(): Promise<void> {
+async function getRole(id: bigint): Promise<Role> {
     return new Promise(async (res, rej) => {
         try {
             const call = $grpc.getRectorClient().getRole({
-                id: props.roleId,
+                id: id,
             });
             const { response } = await call;
 
-            role.value = response.role;
+            if (response.role === undefined) return rej();
 
             attrStates.value.clear();
-            role.value?.attributes.forEach((attr) => {
+            response.role?.attributes.forEach((attr) => {
                 attrStates.value.set(attr.attrId, attr.value);
             });
 
-            return res();
+            return res(response.role!);
         } catch (e) {
             $grpc.handleError(e as RpcError);
             return rej(e as RpcError);
@@ -69,7 +80,7 @@ async function deleteRole(id: bigint): Promise<void> {
                 type: 'success',
             });
 
-            await navigateTo({ name: 'rector-roles' });
+            emits('deleted');
             return res();
         } catch (e) {
             $grpc.handleError(e as RpcError);
@@ -78,11 +89,11 @@ async function deleteRole(id: bigint): Promise<void> {
     });
 }
 
-async function getPermissions(): Promise<void> {
+async function getPermissions(roleId: bigint): Promise<void> {
     return new Promise(async (res, rej) => {
         try {
             const call = $grpc.getRectorClient().getPermissions({
-                roleId: props.roleId,
+                roleId: roleId,
             });
             const { response } = await call;
 
@@ -116,6 +127,7 @@ async function propogatePermissionStates(): Promise<void> {
 }
 
 async function updatePermissionState(perm: bigint, state: boolean | undefined): Promise<void> {
+    changed.value = true;
     permStates.value.set(perm, state);
 }
 
@@ -178,8 +190,10 @@ async function updatePermissions(): Promise<void> {
             perms.toRemove.length === 0 &&
             attrs.toUpdate.length === 0 &&
             attrs.toRemove.length === 0
-        )
+        ) {
+            changed.value = false;
             return res();
+        }
 
         try {
             await $grpc.getRectorClient().updateRolePerms({
@@ -194,7 +208,8 @@ async function updatePermissions(): Promise<void> {
                 type: 'success',
             });
 
-            initializeRoleView();
+            changed.value = false;
+            refresh();
 
             return res();
         } catch (e) {
@@ -204,14 +219,26 @@ async function updatePermissions(): Promise<void> {
     });
 }
 
+function clearState(): void {
+    changed.value = false;
+    permList.value.length = 0;
+    permCategories.value.clear();
+    permStates.value.clear();
+    attrList.value.length = 0;
+    attrStates.value.clear();
+}
+
 async function initializeRoleView(): Promise<void> {
-    await Promise.allSettled([getRole(), getPermissions(), listJobs()]);
+    clearState();
+    await Promise.allSettled([getPermissions(props.roleId), listJobs()]);
     await propogatePermissionStates();
 }
 
-onMounted(async () => {
+watch(role, async () => {
     initializeRoleView();
 });
+
+watch(props, () => refresh());
 
 const { isRevealed, reveal, confirm, cancel, onConfirm } = useConfirmDialog();
 
@@ -221,7 +248,7 @@ onConfirm(async (id) => deleteRole(id));
 <template>
     <ConfirmDialog :open="isRevealed" :cancel="cancel" :confirm="() => confirm(role!.id)" />
 
-    <div class="py-4 max-w-7xl mx-auto">
+    <div class="py-4 w-full">
         <div class="px-1 sm:px-2 lg:px-4">
             <div v-if="role">
                 <h2 class="text-3xl text-white">
@@ -232,6 +259,20 @@ onConfirm(async (id) => deleteRole(id));
                 </h2>
                 <Divider label="Permissions" />
                 <div class="py-2 flex flex-col gap-4">
+                    <button
+                        type="button"
+                        @click="updatePermissions()"
+                        :disabled="!changed"
+                        class="inline-flex px-3 py-2 text-center justify-center transition-colors font-semibold rounded-md text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                        :class="
+                            !changed
+                                ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
+                                : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500'
+                        "
+                    >
+                        {{ $t('common.save', 1) }}
+                    </button>
+
                     <Disclosure
                         as="div"
                         class="text-neutral hover:border-neutral/70 border-neutral/20"
@@ -258,7 +299,7 @@ onConfirm(async (id) => deleteRole(id));
                         <DisclosurePanel
                             class="px-4 pb-2 border-2 border-t-0 rounded-b-lg transition-colors border-inherit -mt-2"
                         >
-                            <div class="flex flex-col gap-2 max-w-4xl mx-auto my-2">
+                            <div class="flex flex-col gap-2 mx-auto my-2">
                                 <div
                                     v-for="(perm, idx) in permList.filter((p) => p.category === category)"
                                     :key="perm.id?.toString()"
@@ -266,10 +307,10 @@ onConfirm(async (id) => deleteRole(id));
                                 >
                                     <div class="flex flex-row gap-4">
                                         <div class="flex flex-1 flex-col my-auto">
-                                            <span class="truncate lg:max-w-full max-w-xs">
+                                            <span class="truncate">
                                                 {{ $t(`perms.${perm.category}.${perm.name}.key`) }}
                                             </span>
-                                            <span class="text-base-500 truncate lg:max-w-full max-w-xs">
+                                            <span class="text-base-500 truncate">
                                                 {{ $t(`perms.${perm.category}.${perm.name}.description`) }}
                                             </span>
                                         </div>
@@ -306,6 +347,7 @@ onConfirm(async (id) => deleteRole(id));
                                         :attribute="attr"
                                         :permission="perm"
                                         v-model:states="attrStates"
+                                        @update:states="changed = true"
                                         :disabled="permStates.get(perm.id) !== true"
                                         :jobs="jobs"
                                     />
@@ -317,13 +359,6 @@ onConfirm(async (id) => deleteRole(id));
                             </div>
                         </DisclosurePanel>
                     </Disclosure>
-                    <button
-                        type="button"
-                        @click="updatePermissions()"
-                        class="inline-flex px-3 py-2 text-center justify-center transition-colors font-semibold rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-success-600"
-                    >
-                        {{ $t('common.save', 1) }}
-                    </button>
                 </div>
             </div>
         </div>

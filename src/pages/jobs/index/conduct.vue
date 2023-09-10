@@ -10,5 +10,5 @@ definePageMeta({
 </script>
 
 <template>
-    <!-- TODO -->
+    <h1 class="text-xl text-white">Conduct</h1>
 </template>

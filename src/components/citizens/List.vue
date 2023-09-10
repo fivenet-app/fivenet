@@ -15,6 +15,10 @@ import CitizenListEntry from './ListEntry.vue';
 
 const { $grpc } = useNuxtApp();
 
+const props = defineProps<{
+    currentJob?: boolean;
+}>();
+
 const query = ref<{ name: string; phoneNumber?: string; wanted?: boolean; trafficPoints?: number; dateofbirth?: string }>({
     name: '',
 });
@@ -27,10 +31,10 @@ const {
     refresh,
     error,
 } = useLazyAsyncData(`citizens-${offset.value}-${query.value.name}-${query.value.wanted}-${query.value.phoneNumber}`, () =>
-    listCitizens(),
+    listCitizens(props.currentJob),
 );
 
-async function listCitizens(): Promise<User[]> {
+async function listCitizens(currentJob?: boolean): Promise<User[]> {
     return new Promise(async (res, rej) => {
         try {
             const req: ListCitizensRequest = {
@@ -38,6 +42,7 @@ async function listCitizens(): Promise<User[]> {
                     offset: offset.value,
                 },
                 searchName: query.value.name,
+                currentJob: currentJob,
             };
             if (query.value.wanted) {
                 req.wanted = query.value.wanted;

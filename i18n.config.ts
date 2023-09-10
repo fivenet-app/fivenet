@@ -2,8 +2,8 @@ import { defineI18nConfig } from '#i18n';
 
 export default defineI18nConfig(() => ({
     legacy: false,
-    locale: 'en',
-    fallbackLocale: 'de',
+    locale: 'de',
+    fallbackLocale: 'en',
     escapeParameterHtml: true,
     warnHtmlInMessage: false,
     numberFormats: {

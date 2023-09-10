@@ -32,27 +32,30 @@ var (
 type Server struct {
 	CompletorServiceServer
 
-	db      *sql.DB
-	p       perms.Permissions
-	data    *mstlystcdata.Cache
-	tracker *tracker.Tracker
+	db       *sql.DB
+	p        perms.Permissions
+	data     *mstlystcdata.Cache
+	tracker  *tracker.Tracker
+	enricher *mstlystcdata.Enricher
 }
 
 type Params struct {
 	fx.In
 
-	DB      *sql.DB
-	Perms   perms.Permissions
-	Data    *mstlystcdata.Cache
-	Tracker *tracker.Tracker
+	DB       *sql.DB
+	Perms    perms.Permissions
+	Data     *mstlystcdata.Cache
+	Tracker  *tracker.Tracker
+	Enricher *mstlystcdata.Enricher
 }
 
 func NewServer(p Params) *Server {
 	s := &Server{
-		db:      p.DB,
-		p:       p.Perms,
-		data:    p.Data,
-		tracker: p.Tracker,
+		db:       p.DB,
+		p:        p.Perms,
+		data:     p.Data,
+		tracker:  p.Tracker,
+		enricher: p.Enricher,
 	}
 
 	return s
@@ -63,7 +66,18 @@ func (s *Server) CompleteCitizens(ctx context.Context, req *CompleteCitizensRequ
 
 	condition := jet.Bool(true)
 
+	currentJob := false
+	if req.CurrentJob != nil && *req.CurrentJob {
+		currentJob = true
+	}
+
 	if req.UserId == nil {
+		if currentJob {
+			condition = condition.AND(
+				tUsers.Job.EQ(jet.String(userInfo.Job)),
+			)
+		}
+
 		req.Search = strings.TrimSpace(req.Search)
 		req.Search = strings.ReplaceAll(req.Search, "%", "")
 		req.Search = strings.ReplaceAll(req.Search, " ", "%")
@@ -73,21 +87,19 @@ func (s *Server) CompleteCitizens(ctx context.Context, req *CompleteCitizensRequ
 			condition = jet.CONCAT(tUsers.Firstname, jet.String(" "), tUsers.Lastname).
 				LIKE(jet.String(req.Search))
 		}
-		if req.CurrentJob != nil && *req.CurrentJob {
-			condition = condition.AND(
-				tUsers.Job.EQ(jet.String(userInfo.Job)),
-			)
-		}
 	} else {
 		condition = condition.AND(tUsers.ID.EQ(jet.Int32(*req.UserId)))
 	}
 
+	columns := []jet.Projection{tUsers.ID, tUsers.Identifier, tUsers.Firstname, tUsers.Lastname, tUsers.Dateofbirth}
+	if currentJob {
+		columns = append(columns, tUsers.Job, tUsers.JobGrade)
+	}
+
 	stmt := tUsers.
 		SELECT(
-			tUsers.ID,
-			tUsers.Identifier,
-			tUsers.Firstname,
-			tUsers.Lastname,
+			columns[0],
+			columns[1:]...,
 		).
 		OPTIMIZER_HINTS(jet.OptimizerHint("idx_users_firstname_lastname_fulltext")).
 		FROM(tUsers).
@@ -112,13 +124,18 @@ func (s *Server) CompleteCitizens(ctx context.Context, req *CompleteCitizensRequ
 		}
 	}
 
+	if currentJob {
+		for i := 0; i < len(dest); i++ {
+			s.enricher.EnrichJobInfo(dest[i])
+		}
+	}
+
 	return &CompleteCitizensRespoonse{
 		Users: dest,
 	}, nil
 }
 
 func (s *Server) CompleteJobs(ctx context.Context, req *CompleteJobsRequest) (*CompleteJobsResponse, error) {
-
 	var search string
 	if req.Search != nil {
 		search = *req.Search

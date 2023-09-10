@@ -107,7 +107,10 @@ const items = [
     {
         id: 9,
         name: t('common.overview'),
-        href: { name: 'overview' },
+        action: () => {
+            navigateTo({ name: 'overview' });
+            open.value = false;
+        },
         icon: markRaw(HomeIcon),
         category: 'pages',
     },
@@ -148,7 +151,7 @@ const items = [
         id: 13,
         name: t('common.job'),
         action: () => {
-            navigateTo({ name: 'jobs' });
+            navigateTo({ name: 'jobs-index-overview' });
             open.value = false;
         },
         permission: 'Jobs.View',
