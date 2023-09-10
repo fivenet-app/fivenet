@@ -104,24 +104,6 @@
                 "title": "Document Categories"
             }
         },
-        "jobs": {
-            "title": "Job Overview",
-            "colleagues": {
-                "title": "Colleagues"
-            },
-            "conduct": {
-                "title": "Conduct Register"
-            },
-            "requests": {
-                "title": "Requests"
-            },
-            "timeclock": {
-                "title": "Time Clock"
-            },
-            "trainings": {
-                "title": "Trainings"
-            }
-        },
         "rector": {
             "features": {
                 "properties": "Set your job properties (e.g., livemap color).",
@@ -156,6 +138,24 @@
             "title": "Citizens",
             "id": {
                 "title": "Citizen File"
+            }
+        },
+        "jobs": {
+            "title": "Jobs",
+            "colleagues": {
+                "title": "Colleagues"
+            },
+            "conduct": {
+                "title": "Conduct Register"
+            },
+            "requests": {
+                "title": "Requests"
+            },
+            "timeclock": {
+                "title": "Time Clock"
+            },
+            "trainings": {
+                "title": "Trainings"
             }
         },
         "vehicles": {
