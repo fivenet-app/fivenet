@@ -5,7 +5,7 @@ useHead({
 definePageMeta({
     title: 'pages.jobs.trainings.title',
     requiresAuth: true,
-    permission: 'Jobs.View',
+    permission: 'Jobs.TrainingsList',
 });
 </script>
 

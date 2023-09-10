@@ -11,13 +11,9 @@ import TablePagination from '~/components/partials/elements/TablePagination.vue'
 import { PaginationResponse } from '~~/gen/ts/resources/common/database/database';
 import { User } from '~~/gen/ts/resources/users/users';
 import { ListCitizensRequest } from '~~/gen/ts/services/citizenstore/citizenstore';
-import CitizenListEntry from './ListEntry.vue';
+import ListEntry from './ListEntry.vue';
 
 const { $grpc } = useNuxtApp();
-
-const props = defineProps<{
-    currentJob?: boolean;
-}>();
 
 const query = ref<{ name: string; phoneNumber?: string; wanted?: boolean; trafficPoints?: number; dateofbirth?: string }>({
     name: '',
@@ -31,10 +27,10 @@ const {
     refresh,
     error,
 } = useLazyAsyncData(`citizens-${offset.value}-${query.value.name}-${query.value.wanted}-${query.value.phoneNumber}`, () =>
-    listCitizens(props.currentJob),
+    listCitizens(),
 );
 
-async function listCitizens(currentJob?: boolean): Promise<User[]> {
+async function listCitizens(): Promise<User[]> {
     return new Promise(async (res, rej) => {
         try {
             const req: ListCitizensRequest = {
@@ -42,7 +38,6 @@ async function listCitizens(currentJob?: boolean): Promise<User[]> {
                     offset: offset.value,
                 },
                 searchName: query.value.name,
-                currentJob: currentJob,
             };
             if (query.value.wanted) {
                 req.wanted = query.value.wanted;
@@ -262,7 +257,7 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-base-800">
-                                    <CitizenListEntry
+                                    <ListEntry
                                         v-for="user in users"
                                         :key="user.userId"
                                         :user="user"

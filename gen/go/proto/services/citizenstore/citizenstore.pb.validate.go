@@ -150,10 +150,6 @@ func (m *ListCitizensRequest) validate(all bool) error {
 		// no validation rules for OpenFines
 	}
 
-	if m.CurrentJob != nil {
-		// no validation rules for CurrentJob
-	}
-
 	if len(errors) > 0 {
 		return ListCitizensRequestMultiError(errors)
 	}

@@ -141,7 +141,7 @@
             }
         },
         "jobs": {
-            "title": "Job Overview",
+            "title": "Job",
             "colleagues": {
                 "title": "Colleagues"
             },
@@ -619,7 +619,9 @@
         "opacity": "Opacity",
         "char": "Character | Characters",
         "self_assign": "Self Assign",
-        "expires_in": "Expires in"
+        "expires_in": "Expires in",
+        "colleague": "Colleague | Colleagues",
+        "colleagues": "No colleagues | {n} colleague | {n} colleagues"
     },
     "notifications": {
         "clipboard": {

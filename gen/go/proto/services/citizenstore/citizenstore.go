@@ -44,22 +44,22 @@ var ZeroTrafficInfractionPoints uint64 = 0
 type Server struct {
 	CitizenStoreServiceServer
 
-	db *sql.DB
-	p  perms.Permissions
-	c  *mstlystcdata.Enricher
-	a  audit.IAuditer
+	db       *sql.DB
+	p        perms.Permissions
+	enricher *mstlystcdata.Enricher
+	aud      audit.IAuditer
 
 	publicJobs         []string
 	unemployedJob      string
 	unemployedJobGrade int32
 }
 
-func NewServer(db *sql.DB, p perms.Permissions, c *mstlystcdata.Enricher, aud audit.IAuditer, cfg *config.Config) *Server {
+func NewServer(db *sql.DB, p perms.Permissions, enricher *mstlystcdata.Enricher, aud audit.IAuditer, cfg *config.Config) *Server {
 	return &Server{
 		db:                 db,
 		p:                  p,
-		c:                  c,
-		a:                  aud,
+		enricher:           enricher,
+		aud:                aud,
 		publicJobs:         cfg.Game.PublicJobs,
 		unemployedJob:      cfg.Game.UnemployedJob.Name,
 		unemployedJobGrade: cfg.Game.UnemployedJob.Grade,
@@ -92,15 +92,6 @@ func (s *Server) ListCitizens(ctx context.Context, req *ListCitizensRequest) (*L
 	var fields perms.StringList
 	if fieldsAttr != nil {
 		fields = fieldsAttr.([]string)
-	}
-
-	// Only list current job if requested
-	if req.CurrentJob != nil && *req.CurrentJob {
-		condition = condition.AND(tUser.Job.EQ(jet.String(userInfo.Job)))
-
-		if !utils.InSlice(fields, "UserProps.Job") {
-			fields = append(fields, "UserProps.Job")
-		}
 	}
 
 	for _, field := range fields {
@@ -227,7 +218,7 @@ func (s *Server) ListCitizens(ctx context.Context, req *ListCitizensRequest) (*L
 			}
 		}
 
-		s.c.EnrichJobInfo(resp.Users[i])
+		s.enricher.EnrichJobInfo(resp.Users[i])
 	}
 
 	return resp, nil
@@ -244,7 +235,7 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 		TargetUserID: &req.UserId,
 		State:        int16(rector.EVENT_TYPE_ERRORED),
 	}
-	defer s.a.Log(auditEntry, req)
+	defer s.aud.Log(auditEntry, req)
 
 	selectors := jet.ProjectionList{
 		tUser.ID,
@@ -348,7 +339,7 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 		}
 	}
 
-	s.c.EnrichJobInfo(resp.User)
+	s.enricher.EnrichJobInfo(resp.User)
 
 	// Check if user can see licenses and fetch them
 	if utils.InSlice(fields, "Licenses") {
@@ -474,10 +465,10 @@ func (s *Server) ListUserActivity(ctx context.Context, req *ListUserActivityRequ
 
 	for i := 0; i < len(resp.Activity); i++ {
 		if resp.Activity[i].SourceUser != nil {
-			s.c.EnrichJobInfo(resp.Activity[i].SourceUser)
+			s.enricher.EnrichJobInfo(resp.Activity[i].SourceUser)
 		}
 		if resp.Activity[i].TargetUser != nil {
-			s.c.EnrichJobInfo(resp.Activity[i].TargetUser)
+			s.enricher.EnrichJobInfo(resp.Activity[i].TargetUser)
 		}
 	}
 
@@ -497,7 +488,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 		TargetUserID: &req.Props.UserId,
 		State:        int16(rector.EVENT_TYPE_ERRORED),
 	}
-	defer s.a.Log(auditEntry, req)
+	defer s.aud.Log(auditEntry, req)
 
 	if req.Reason == "" {
 		return nil, status.Error(codes.InvalidArgument, "Must give a reason!")
@@ -522,10 +513,10 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 		props.TrafficInfractionPoints = &ZeroTrafficInfractionPoints
 	}
 
-	props.Job, props.JobGrade = s.c.GetJobGrade(*props.JobName, *props.JobGradeNumber)
+	props.Job, props.JobGrade = s.enricher.GetJobGrade(*props.JobName, *props.JobGradeNumber)
 	// Make sure a job is set
 	if props.Job == nil {
-		props.Job, props.JobGrade = s.c.GetJobGrade(s.unemployedJob, s.unemployedJobGrade)
+		props.Job, props.JobGrade = s.enricher.GetJobGrade(s.unemployedJob, s.unemployedJobGrade)
 	}
 
 	resp := &SetUserPropsResponse{
@@ -561,7 +552,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 			return nil, status.Error(codes.InvalidArgument, "You can't set a state job!")
 		}
 
-		req.Props.Job, req.Props.JobGrade = s.c.GetJobGrade(*req.Props.JobName, *req.Props.JobGradeNumber)
+		req.Props.Job, req.Props.JobGrade = s.enricher.GetJobGrade(*req.Props.JobName, *req.Props.JobGradeNumber)
 		if req.Props.Job == nil || req.Props.JobGrade == nil {
 			return nil, status.Error(codes.PermissionDenied, "Invalid job or job rank set!")
 		}
@@ -646,7 +637,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 
 	// Set Job info
 	resp.Props = req.Props
-	resp.Props.Job, resp.Props.JobGrade = s.c.GetJobGrade(*resp.Props.JobName, *resp.Props.JobGradeNumber)
+	resp.Props.Job, resp.Props.JobGrade = s.enricher.GetJobGrade(*resp.Props.JobName, *resp.Props.JobGradeNumber)
 
 	auditEntry.State = int16(rector.EVENT_TYPE_UPDATED)
 

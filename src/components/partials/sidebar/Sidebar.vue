@@ -80,7 +80,7 @@ const sidebarNavigation = ref<
     {
         name: 'common.job',
         href: { name: 'jobs-index-overview' },
-        permission: 'Jobs.View',
+        permission: 'Jobs.ColleaguesList',
         icon: markRaw(BriefcaseIcon),
         position: 'top',
         current: false,
@@ -202,6 +202,7 @@ function updateBreadcrumbs(): void {
             href: route.path,
             current: false,
         });
+        console.log('BREAD:', breadcrumbs.value);
     });
 
     const breadcrumbIdx = breadcrumbs.value.findIndex((b) => {
@@ -477,10 +478,10 @@ const appVersion = activeChar ? ' v' + __APP_VERSION__ + (import.meta.env.DEV ? 
                         <span class="sr-only">{{ $t('components.partials.sidebar.open_sidebar') }}</span>
                         <MenuIcon class="w-6 h-6" aria-hidden="true" />
                     </button>
-                    <div class="flex justify-between flex-1 px-4 sm:px-6">
+                    <div class="flex justify-between flex-1 px-2 sm:px-6">
                         <div class="flex flex-1">
                             <nav class="flex" aria-label="Breadcrumb">
-                                <ol role="list" class="flex items-center space-x-4">
+                                <ol role="list" class="flex items-center space-x-2 sm:space-x-4">
                                     <li>
                                         <div>
                                             <NuxtLink
@@ -501,7 +502,7 @@ const appVersion = activeChar ? ' v' + __APP_VERSION__ + (import.meta.env.DEV ? 
                                                 :to="{ path: page.href }"
                                                 :class="[
                                                     page.current ? 'font-bold text-base-200' : 'font-medium text-base-400',
-                                                    'ml-4 text-sm hover:text-neutral hover:transition-colors',
+                                                    'ml-2 sm:ml-4 text-sm hover:text-neutral hover:transition-colors truncate max-w-[5rem] sm:max-w-full',
                                                 ]"
                                                 :aria-current="page.current ? 'page' : undefined"
                                             >
@@ -512,9 +513,9 @@ const appVersion = activeChar ? ' v' + __APP_VERSION__ + (import.meta.env.DEV ? 
                                 </ol>
                             </nav>
                         </div>
-                        <div class="flex items-center ml-2 space-x-4 sm:ml-6 sm:space-x-6">
+                        <div class="flex items-center ml-2 space-x-3 sm:ml-2 sm:space-x-4">
                             <JobSwitcher v-if="can('SuperUser') && activeChar" />
-                            <div v-if="activeChar" class="text-sm font-medium text-base-200 truncate">
+                            <div v-if="activeChar" class="hidden sm:block text-sm font-medium text-base-200">
                                 {{ activeChar.firstname }}, {{ activeChar.lastname }} ({{ activeChar.jobLabel }})
                             </div>
                             <Notifications v-if="activeChar" />

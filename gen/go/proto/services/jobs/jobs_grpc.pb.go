@@ -7,7 +7,10 @@
 package jobs
 
 import (
+	context "context"
 	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -15,12 +18,28 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-const ()
+const (
+	JobsService_ColleaguesList_FullMethodName     = "/services.jobs.JobsService/ColleaguesList"
+	JobsService_ConductListEntries_FullMethodName = "/services.jobs.JobsService/ConductListEntries"
+	JobsService_ConductCreateEntry_FullMethodName = "/services.jobs.JobsService/ConductCreateEntry"
+	JobsService_ConductUpdateEntry_FullMethodName = "/services.jobs.JobsService/ConductUpdateEntry"
+	JobsService_ConductDeleteEntry_FullMethodName = "/services.jobs.JobsService/ConductDeleteEntry"
+)
 
 // JobsServiceClient is the client API for JobsService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type JobsServiceClient interface {
+	// @perm
+	ColleaguesList(ctx context.Context, in *ColleaguesListRequest, opts ...grpc.CallOption) (*ColleaguesListResponse, error)
+	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
+	ConductListEntries(ctx context.Context, in *ConductListEntriesRequest, opts ...grpc.CallOption) (*ConductListEntriesResponse, error)
+	// @perm
+	ConductCreateEntry(ctx context.Context, in *ConductCreateEntryRequest, opts ...grpc.CallOption) (*ConductCreateEntryResponse, error)
+	// @perm
+	ConductUpdateEntry(ctx context.Context, in *ConductUpdateEntryRequest, opts ...grpc.CallOption) (*ConductUpdateEntryResponse, error)
+	// @perm
+	ConductDeleteEntry(ctx context.Context, in *ConductDeleteEntryRequest, opts ...grpc.CallOption) (*ConductDeleteEntryResponse, error)
 }
 
 type jobsServiceClient struct {
@@ -31,10 +50,65 @@ func NewJobsServiceClient(cc grpc.ClientConnInterface) JobsServiceClient {
 	return &jobsServiceClient{cc}
 }
 
+func (c *jobsServiceClient) ColleaguesList(ctx context.Context, in *ColleaguesListRequest, opts ...grpc.CallOption) (*ColleaguesListResponse, error) {
+	out := new(ColleaguesListResponse)
+	err := c.cc.Invoke(ctx, JobsService_ColleaguesList_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *jobsServiceClient) ConductListEntries(ctx context.Context, in *ConductListEntriesRequest, opts ...grpc.CallOption) (*ConductListEntriesResponse, error) {
+	out := new(ConductListEntriesResponse)
+	err := c.cc.Invoke(ctx, JobsService_ConductListEntries_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *jobsServiceClient) ConductCreateEntry(ctx context.Context, in *ConductCreateEntryRequest, opts ...grpc.CallOption) (*ConductCreateEntryResponse, error) {
+	out := new(ConductCreateEntryResponse)
+	err := c.cc.Invoke(ctx, JobsService_ConductCreateEntry_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *jobsServiceClient) ConductUpdateEntry(ctx context.Context, in *ConductUpdateEntryRequest, opts ...grpc.CallOption) (*ConductUpdateEntryResponse, error) {
+	out := new(ConductUpdateEntryResponse)
+	err := c.cc.Invoke(ctx, JobsService_ConductUpdateEntry_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *jobsServiceClient) ConductDeleteEntry(ctx context.Context, in *ConductDeleteEntryRequest, opts ...grpc.CallOption) (*ConductDeleteEntryResponse, error) {
+	out := new(ConductDeleteEntryResponse)
+	err := c.cc.Invoke(ctx, JobsService_ConductDeleteEntry_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // JobsServiceServer is the server API for JobsService service.
 // All implementations must embed UnimplementedJobsServiceServer
 // for forward compatibility
 type JobsServiceServer interface {
+	// @perm
+	ColleaguesList(context.Context, *ColleaguesListRequest) (*ColleaguesListResponse, error)
+	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
+	ConductListEntries(context.Context, *ConductListEntriesRequest) (*ConductListEntriesResponse, error)
+	// @perm
+	ConductCreateEntry(context.Context, *ConductCreateEntryRequest) (*ConductCreateEntryResponse, error)
+	// @perm
+	ConductUpdateEntry(context.Context, *ConductUpdateEntryRequest) (*ConductUpdateEntryResponse, error)
+	// @perm
+	ConductDeleteEntry(context.Context, *ConductDeleteEntryRequest) (*ConductDeleteEntryResponse, error)
 	mustEmbedUnimplementedJobsServiceServer()
 }
 
@@ -42,6 +116,21 @@ type JobsServiceServer interface {
 type UnimplementedJobsServiceServer struct {
 }
 
+func (UnimplementedJobsServiceServer) ColleaguesList(context.Context, *ColleaguesListRequest) (*ColleaguesListResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ColleaguesList not implemented")
+}
+func (UnimplementedJobsServiceServer) ConductListEntries(context.Context, *ConductListEntriesRequest) (*ConductListEntriesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ConductListEntries not implemented")
+}
+func (UnimplementedJobsServiceServer) ConductCreateEntry(context.Context, *ConductCreateEntryRequest) (*ConductCreateEntryResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ConductCreateEntry not implemented")
+}
+func (UnimplementedJobsServiceServer) ConductUpdateEntry(context.Context, *ConductUpdateEntryRequest) (*ConductUpdateEntryResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ConductUpdateEntry not implemented")
+}
+func (UnimplementedJobsServiceServer) ConductDeleteEntry(context.Context, *ConductDeleteEntryRequest) (*ConductDeleteEntryResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ConductDeleteEntry not implemented")
+}
 func (UnimplementedJobsServiceServer) mustEmbedUnimplementedJobsServiceServer() {}
 
 // UnsafeJobsServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -55,13 +144,124 @@ func RegisterJobsServiceServer(s grpc.ServiceRegistrar, srv JobsServiceServer) {
 	s.RegisterService(&JobsService_ServiceDesc, srv)
 }
 
+func _JobsService_ColleaguesList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ColleaguesListRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(JobsServiceServer).ColleaguesList(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: JobsService_ColleaguesList_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(JobsServiceServer).ColleaguesList(ctx, req.(*ColleaguesListRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _JobsService_ConductListEntries_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ConductListEntriesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(JobsServiceServer).ConductListEntries(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: JobsService_ConductListEntries_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(JobsServiceServer).ConductListEntries(ctx, req.(*ConductListEntriesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _JobsService_ConductCreateEntry_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ConductCreateEntryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(JobsServiceServer).ConductCreateEntry(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: JobsService_ConductCreateEntry_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(JobsServiceServer).ConductCreateEntry(ctx, req.(*ConductCreateEntryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _JobsService_ConductUpdateEntry_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ConductUpdateEntryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(JobsServiceServer).ConductUpdateEntry(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: JobsService_ConductUpdateEntry_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(JobsServiceServer).ConductUpdateEntry(ctx, req.(*ConductUpdateEntryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _JobsService_ConductDeleteEntry_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ConductDeleteEntryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(JobsServiceServer).ConductDeleteEntry(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: JobsService_ConductDeleteEntry_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(JobsServiceServer).ConductDeleteEntry(ctx, req.(*ConductDeleteEntryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // JobsService_ServiceDesc is the grpc.ServiceDesc for JobsService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var JobsService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "services.jobs.JobsService",
 	HandlerType: (*JobsServiceServer)(nil),
-	Methods:     []grpc.MethodDesc{},
-	Streams:     []grpc.StreamDesc{},
-	Metadata:    "services/jobs/jobs.proto",
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "ColleaguesList",
+			Handler:    _JobsService_ColleaguesList_Handler,
+		},
+		{
+			MethodName: "ConductListEntries",
+			Handler:    _JobsService_ConductListEntries_Handler,
+		},
+		{
+			MethodName: "ConductCreateEntry",
+			Handler:    _JobsService_ConductCreateEntry_Handler,
+		},
+		{
+			MethodName: "ConductUpdateEntry",
+			Handler:    _JobsService_ConductUpdateEntry_Handler,
+		},
+		{
+			MethodName: "ConductDeleteEntry",
+			Handler:    _JobsService_ConductDeleteEntry_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "services/jobs/jobs.proto",
 }

@@ -30,8 +30,8 @@ onMounted(async () => {
 async function switchLanguage(lang: Language): Promise<void> {
     console.debug('Switching language to:', lang);
 
-    settings.setLocale(lang.iso);
     await setLocale(lang.iso);
+    settings.setLocale(lang.iso);
     veeValidateSetLocale(lang.iso);
 
     notifications.dispatchNotification({

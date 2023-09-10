@@ -1,14 +1,18 @@
 <script lang="ts" setup>
+import List from '~/components/jobs/colleagues/List.vue';
+
 useHead({
     title: 'pages.jobs.colleagues.title',
 });
 definePageMeta({
     title: 'pages.jobs.colleagues.title',
     requiresAuth: true,
-    permission: 'Jobs.View',
+    permission: 'Jobs.ColleaguesList',
 });
 </script>
 
 <template>
-    <h1 class="text-xl text-white">Colleagues</h1>
+    <div>
+        <List :current-job="true" />
+    </div>
 </template>

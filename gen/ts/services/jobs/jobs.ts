@@ -2,7 +2,195 @@
 // @generated from protobuf file "services/jobs/jobs.proto" (package "services.jobs", syntax proto3)
 // tslint:disable
 import { ServiceType } from "@protobuf-ts/runtime-rpc";
+import { MessageType } from "@protobuf-ts/runtime";
+import { User } from "../../resources/users/users.js";
+import { PaginationResponse } from "../../resources/common/database/database.js";
+import { PaginationRequest } from "../../resources/common/database/database.js";
+// Colleagues
+
+/**
+ * @generated from protobuf message services.jobs.ColleaguesListRequest
+ */
+export interface ColleaguesListRequest {
+    /**
+     * @generated from protobuf field: resources.common.database.PaginationRequest pagination = 1;
+     */
+    pagination?: PaginationRequest;
+    /**
+     * Search params
+     *
+     * @generated from protobuf field: string search_name = 2;
+     */
+    searchName: string;
+}
+/**
+ * @generated from protobuf message services.jobs.ColleaguesListResponse
+ */
+export interface ColleaguesListResponse {
+    /**
+     * @generated from protobuf field: resources.common.database.PaginationResponse pagination = 1;
+     */
+    pagination?: PaginationResponse;
+    /**
+     * @generated from protobuf field: repeated resources.users.User users = 2;
+     */
+    users: User[];
+}
+// Conduct Register
+
+/**
+ * @generated from protobuf message services.jobs.ConductListEntriesRequest
+ */
+export interface ConductListEntriesRequest {
+}
+/**
+ * @generated from protobuf message services.jobs.ConductListEntriesResponse
+ */
+export interface ConductListEntriesResponse {
+}
+/**
+ * @generated from protobuf message services.jobs.ConductCreateEntryRequest
+ */
+export interface ConductCreateEntryRequest {
+}
+/**
+ * @generated from protobuf message services.jobs.ConductCreateEntryResponse
+ */
+export interface ConductCreateEntryResponse {
+}
+/**
+ * @generated from protobuf message services.jobs.ConductUpdateEntryRequest
+ */
+export interface ConductUpdateEntryRequest {
+}
+/**
+ * @generated from protobuf message services.jobs.ConductUpdateEntryResponse
+ */
+export interface ConductUpdateEntryResponse {
+}
+/**
+ * @generated from protobuf message services.jobs.ConductDeleteEntryRequest
+ */
+export interface ConductDeleteEntryRequest {
+}
+/**
+ * @generated from protobuf message services.jobs.ConductDeleteEntryResponse
+ */
+export interface ConductDeleteEntryResponse {
+}
+// @generated message type with reflection information, may provide speed optimized methods
+class ColleaguesListRequest$Type extends MessageType<ColleaguesListRequest> {
+    constructor() {
+        super("services.jobs.ColleaguesListRequest", [
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
+            { no: 2, name: "search_name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.ColleaguesListRequest
+ */
+export const ColleaguesListRequest = new ColleaguesListRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ColleaguesListResponse$Type extends MessageType<ColleaguesListResponse> {
+    constructor() {
+        super("services.jobs.ColleaguesListResponse", [
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse },
+            { no: 2, name: "users", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => User }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.ColleaguesListResponse
+ */
+export const ColleaguesListResponse = new ColleaguesListResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ConductListEntriesRequest$Type extends MessageType<ConductListEntriesRequest> {
+    constructor() {
+        super("services.jobs.ConductListEntriesRequest", []);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.ConductListEntriesRequest
+ */
+export const ConductListEntriesRequest = new ConductListEntriesRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ConductListEntriesResponse$Type extends MessageType<ConductListEntriesResponse> {
+    constructor() {
+        super("services.jobs.ConductListEntriesResponse", []);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.ConductListEntriesResponse
+ */
+export const ConductListEntriesResponse = new ConductListEntriesResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ConductCreateEntryRequest$Type extends MessageType<ConductCreateEntryRequest> {
+    constructor() {
+        super("services.jobs.ConductCreateEntryRequest", []);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.ConductCreateEntryRequest
+ */
+export const ConductCreateEntryRequest = new ConductCreateEntryRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ConductCreateEntryResponse$Type extends MessageType<ConductCreateEntryResponse> {
+    constructor() {
+        super("services.jobs.ConductCreateEntryResponse", []);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.ConductCreateEntryResponse
+ */
+export const ConductCreateEntryResponse = new ConductCreateEntryResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ConductUpdateEntryRequest$Type extends MessageType<ConductUpdateEntryRequest> {
+    constructor() {
+        super("services.jobs.ConductUpdateEntryRequest", []);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.ConductUpdateEntryRequest
+ */
+export const ConductUpdateEntryRequest = new ConductUpdateEntryRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ConductUpdateEntryResponse$Type extends MessageType<ConductUpdateEntryResponse> {
+    constructor() {
+        super("services.jobs.ConductUpdateEntryResponse", []);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.ConductUpdateEntryResponse
+ */
+export const ConductUpdateEntryResponse = new ConductUpdateEntryResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ConductDeleteEntryRequest$Type extends MessageType<ConductDeleteEntryRequest> {
+    constructor() {
+        super("services.jobs.ConductDeleteEntryRequest", []);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.ConductDeleteEntryRequest
+ */
+export const ConductDeleteEntryRequest = new ConductDeleteEntryRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ConductDeleteEntryResponse$Type extends MessageType<ConductDeleteEntryResponse> {
+    constructor() {
+        super("services.jobs.ConductDeleteEntryResponse", []);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.ConductDeleteEntryResponse
+ */
+export const ConductDeleteEntryResponse = new ConductDeleteEntryResponse$Type();
 /**
  * @generated ServiceType for protobuf service services.jobs.JobsService
  */
-export const JobsService = new ServiceType("services.jobs.JobsService", []);
+export const JobsService = new ServiceType("services.jobs.JobsService", [
+    { name: "ColleaguesList", options: {}, I: ColleaguesListRequest, O: ColleaguesListResponse },
+    { name: "ConductListEntries", options: {}, I: ConductListEntriesRequest, O: ConductListEntriesResponse },
+    { name: "ConductCreateEntry", options: {}, I: ConductCreateEntryRequest, O: ConductCreateEntryResponse },
+    { name: "ConductUpdateEntry", options: {}, I: ConductUpdateEntryRequest, O: ConductUpdateEntryResponse },
+    { name: "ConductDeleteEntry", options: {}, I: ConductDeleteEntryRequest, O: ConductDeleteEntryResponse }
+]);

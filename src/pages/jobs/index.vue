@@ -4,12 +4,12 @@ import { CloseIcon, MenuIcon } from 'mdi-vue3';
 import { RoutesNamedLocations } from '~~/.nuxt/typed-router/__routes';
 
 const navigation: { name: string; to: RoutesNamedLocations; permission?: string }[] = [
-    { name: 'Überblick', to: { name: 'jobs-index-overview' } },
-    { name: 'Kollegen', to: { name: 'jobs-index-colleagues' } },
-    { name: 'Anfragen', to: { name: 'jobs-index-requests' } },
-    { name: 'Trainings', to: { name: 'jobs-index-trainings' } },
-    { name: 'Stempeluhr', to: { name: 'jobs-index-timeclock' } },
-    { name: 'Führungsregister', to: { name: 'jobs-index-conduct' }, permission: 'Jobs.ConductListEntries' },
+    { name: 'common.overview', to: { name: 'jobs-index-overview' } },
+    { name: 'pages.jobs.colleagues.title', to: { name: 'jobs-index-colleagues' } },
+    { name: 'pages.jobs.requests.title', to: { name: 'jobs-index-requests' } },
+    { name: 'pages.jobs.trainings.title', to: { name: 'jobs-index-trainings' } },
+    //{ name: 'pages.jobs.timeclock.title', to: { name: 'jobs-index-timeclock' } },
+    { name: 'pages.jobs.conduct.title', to: { name: 'jobs-index-conduct' }, permission: 'Jobs.ConductListEntries' },
 ];
 
 useHead({
@@ -18,7 +18,7 @@ useHead({
 definePageMeta({
     title: 'pages.jobs.title',
     requiresAuth: true,
-    permission: 'Jobs.View',
+    permission: 'Jobs.ColleaguesList',
 });
 
 const route = useRoute();
@@ -36,7 +36,7 @@ const route = useRoute();
                                 class="relative inline-flex items-center justify-center rounded-md bg-primary-600 p-2 text-primary-200 hover:bg-primary-500 hover:bg-opacity-75 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary-600"
                             >
                                 <span class="absolute -inset-0.5" />
-                                <span class="sr-only">{{ $t('components.partials.sidebar.open_menu') }}</span>
+                                <span class="sr-only">{{ $t('components.partials.sidebar.open_navigation') }}</span>
                                 <MenuIcon v-if="!open" class="block h-6 w-6" aria-hidden="true" />
                                 <CloseIcon v-else class="block h-6 w-6" aria-hidden="true" />
                             </DisclosureButton>
@@ -51,7 +51,7 @@ const route = useRoute();
                                         active-class="bg-primary-700 text-white"
                                         aria-current-value="page"
                                     >
-                                        {{ item.name }}
+                                        {{ $t(item.name) }}
                                     </NuxtLink>
                                 </template>
                             </div>
@@ -71,7 +71,7 @@ const route = useRoute();
                             active-class="bg-primary-700 text-white"
                             aria-current-value="page"
                         >
-                            {{ item.name }}
+                            {{ $t(item.name) }}
                         </DisclosureButton>
                     </template>
                 </div>

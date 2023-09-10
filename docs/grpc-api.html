@@ -1399,6 +1399,46 @@
             <a href="#services%2fjobs%2fjobs.proto">services/jobs/jobs.proto</a>
             <ul>
               
+                <li>
+                  <a href="#services.jobs.ColleaguesListRequest"><span class="badge">M</span>ColleaguesListRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#services.jobs.ColleaguesListResponse"><span class="badge">M</span>ColleaguesListResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#services.jobs.ConductCreateEntryRequest"><span class="badge">M</span>ConductCreateEntryRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#services.jobs.ConductCreateEntryResponse"><span class="badge">M</span>ConductCreateEntryResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#services.jobs.ConductDeleteEntryRequest"><span class="badge">M</span>ConductDeleteEntryRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#services.jobs.ConductDeleteEntryResponse"><span class="badge">M</span>ConductDeleteEntryResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#services.jobs.ConductListEntriesRequest"><span class="badge">M</span>ConductListEntriesRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#services.jobs.ConductListEntriesResponse"><span class="badge">M</span>ConductListEntriesResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#services.jobs.ConductUpdateEntryRequest"><span class="badge">M</span>ConductUpdateEntryRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#services.jobs.ConductUpdateEntryResponse"><span class="badge">M</span>ConductUpdateEntryResponse</a>
+                </li>
+              
               
               
               
@@ -11402,13 +11442,6 @@
                   <td><p> </p></td>
                 </tr>
               
-                <tr>
-                  <td>current_job</td>
-                  <td><a href="#bool">bool</a></td>
-                  <td>optional</td>
-                  <td><p> </p></td>
-                </tr>
-              
             </tbody>
           </table>
 
@@ -14445,6 +14478,162 @@
       <p></p>
 
       
+        <h3 id="services.jobs.ColleaguesListRequest">ColleaguesListRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>pagination</td>
+                  <td><a href="#resources.common.database.PaginationRequest">resources.common.database.PaginationRequest</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>search_name</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>Search params </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+            
+            
+            <h4>Validated Fields</h4>
+            <table>
+              <thead>
+                <tr>
+                  <td>Field</td>
+                  <td>Validations</td>
+                </tr>
+              </thead>
+              <tbody>
+              
+                <tr>
+                  <td>pagination</td>
+                  <td>
+                    <ul>
+                    
+                      <li>message.required: true</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>search_name</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.max_len: 50</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+              </tbody>
+            </table>
+            
+          
+
+        
+      
+        <h3 id="services.jobs.ColleaguesListResponse">ColleaguesListResponse</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>pagination</td>
+                  <td><a href="#resources.common.database.PaginationResponse">resources.common.database.PaginationResponse</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>users</td>
+                  <td><a href="#resources.users.User">resources.users.User</a></td>
+                  <td>repeated</td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="services.jobs.ConductCreateEntryRequest">ConductCreateEntryRequest</h3>
+        <p></p>
+
+        
+
+        
+      
+        <h3 id="services.jobs.ConductCreateEntryResponse">ConductCreateEntryResponse</h3>
+        <p></p>
+
+        
+
+        
+      
+        <h3 id="services.jobs.ConductDeleteEntryRequest">ConductDeleteEntryRequest</h3>
+        <p></p>
+
+        
+
+        
+      
+        <h3 id="services.jobs.ConductDeleteEntryResponse">ConductDeleteEntryResponse</h3>
+        <p></p>
+
+        
+
+        
+      
+        <h3 id="services.jobs.ConductListEntriesRequest">ConductListEntriesRequest</h3>
+        <p></p>
+
+        
+
+        
+      
+        <h3 id="services.jobs.ConductListEntriesResponse">ConductListEntriesResponse</h3>
+        <p></p>
+
+        
+
+        
+      
+        <h3 id="services.jobs.ConductUpdateEntryRequest">ConductUpdateEntryRequest</h3>
+        <p></p>
+
+        
+
+        
+      
+        <h3 id="services.jobs.ConductUpdateEntryResponse">ConductUpdateEntryResponse</h3>
+        <p></p>
+
+        
+
+        
+      
 
       
 
@@ -14458,6 +14647,41 @@
             <tr><td>Method Name</td><td>Request Type</td><td>Response Type</td><td>Description</td></tr>
           </thead>
           <tbody>
+            
+              <tr>
+                <td>ColleaguesList</td>
+                <td><a href="#services.jobs.ColleaguesListRequest">ColleaguesListRequest</a></td>
+                <td><a href="#services.jobs.ColleaguesListResponse">ColleaguesListResponse</a></td>
+                <td><p>@perm</p></td>
+              </tr>
+            
+              <tr>
+                <td>ConductListEntries</td>
+                <td><a href="#services.jobs.ConductListEntriesRequest">ConductListEntriesRequest</a></td>
+                <td><a href="#services.jobs.ConductListEntriesResponse">ConductListEntriesResponse</a></td>
+                <td><p>@perm: Attrs=Access/StringList:[]string{&#34;Own&#34;, &#34;Lower_Rank&#34;, &#34;Same_Rank&#34;}§[]string{&#34;Own&#34;}</p></td>
+              </tr>
+            
+              <tr>
+                <td>ConductCreateEntry</td>
+                <td><a href="#services.jobs.ConductCreateEntryRequest">ConductCreateEntryRequest</a></td>
+                <td><a href="#services.jobs.ConductCreateEntryResponse">ConductCreateEntryResponse</a></td>
+                <td><p>@perm</p></td>
+              </tr>
+            
+              <tr>
+                <td>ConductUpdateEntry</td>
+                <td><a href="#services.jobs.ConductUpdateEntryRequest">ConductUpdateEntryRequest</a></td>
+                <td><a href="#services.jobs.ConductUpdateEntryResponse">ConductUpdateEntryResponse</a></td>
+                <td><p>@perm</p></td>
+              </tr>
+            
+              <tr>
+                <td>ConductDeleteEntry</td>
+                <td><a href="#services.jobs.ConductDeleteEntryRequest">ConductDeleteEntryRequest</a></td>
+                <td><a href="#services.jobs.ConductDeleteEntryResponse">ConductDeleteEntryResponse</a></td>
+                <td><p>@perm</p></td>
+              </tr>
             
           </tbody>
         </table>

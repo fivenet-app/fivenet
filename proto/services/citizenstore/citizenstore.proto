@@ -17,7 +17,6 @@ message ListCitizensRequest {
   optional uint64 traffic_points = 5;
   optional string dateofbirth = 6 [(validate.rules).string.max_len = 10];
   optional uint64 open_fines = 7;
-  optional bool current_job = 8;
 }
 
 message ListCitizensResponse {

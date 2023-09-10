@@ -4,10 +4,53 @@
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
 import { JobsService } from "./jobs.js";
+import type { ConductDeleteEntryResponse } from "./jobs.js";
+import type { ConductDeleteEntryRequest } from "./jobs.js";
+import type { ConductUpdateEntryResponse } from "./jobs.js";
+import type { ConductUpdateEntryRequest } from "./jobs.js";
+import type { ConductCreateEntryResponse } from "./jobs.js";
+import type { ConductCreateEntryRequest } from "./jobs.js";
+import type { ConductListEntriesResponse } from "./jobs.js";
+import type { ConductListEntriesRequest } from "./jobs.js";
+import { stackIntercept } from "@protobuf-ts/runtime-rpc";
+import type { ColleaguesListResponse } from "./jobs.js";
+import type { ColleaguesListRequest } from "./jobs.js";
+import type { UnaryCall } from "@protobuf-ts/runtime-rpc";
+import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
 /**
  * @generated from protobuf service services.jobs.JobsService
  */
 export interface IJobsServiceClient {
+    /**
+     * @perm
+     *
+     * @generated from protobuf rpc: ColleaguesList(services.jobs.ColleaguesListRequest) returns (services.jobs.ColleaguesListResponse);
+     */
+    colleaguesList(input: ColleaguesListRequest, options?: RpcOptions): UnaryCall<ColleaguesListRequest, ColleaguesListResponse>;
+    /**
+     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
+     *
+     * @generated from protobuf rpc: ConductListEntries(services.jobs.ConductListEntriesRequest) returns (services.jobs.ConductListEntriesResponse);
+     */
+    conductListEntries(input: ConductListEntriesRequest, options?: RpcOptions): UnaryCall<ConductListEntriesRequest, ConductListEntriesResponse>;
+    /**
+     * @perm
+     *
+     * @generated from protobuf rpc: ConductCreateEntry(services.jobs.ConductCreateEntryRequest) returns (services.jobs.ConductCreateEntryResponse);
+     */
+    conductCreateEntry(input: ConductCreateEntryRequest, options?: RpcOptions): UnaryCall<ConductCreateEntryRequest, ConductCreateEntryResponse>;
+    /**
+     * @perm
+     *
+     * @generated from protobuf rpc: ConductUpdateEntry(services.jobs.ConductUpdateEntryRequest) returns (services.jobs.ConductUpdateEntryResponse);
+     */
+    conductUpdateEntry(input: ConductUpdateEntryRequest, options?: RpcOptions): UnaryCall<ConductUpdateEntryRequest, ConductUpdateEntryResponse>;
+    /**
+     * @perm
+     *
+     * @generated from protobuf rpc: ConductDeleteEntry(services.jobs.ConductDeleteEntryRequest) returns (services.jobs.ConductDeleteEntryResponse);
+     */
+    conductDeleteEntry(input: ConductDeleteEntryRequest, options?: RpcOptions): UnaryCall<ConductDeleteEntryRequest, ConductDeleteEntryResponse>;
 }
 /**
  * @generated from protobuf service services.jobs.JobsService
@@ -17,5 +60,50 @@ export class JobsServiceClient implements IJobsServiceClient, ServiceInfo {
     methods = JobsService.methods;
     options = JobsService.options;
     constructor(private readonly _transport: RpcTransport) {
+    }
+    /**
+     * @perm
+     *
+     * @generated from protobuf rpc: ColleaguesList(services.jobs.ColleaguesListRequest) returns (services.jobs.ColleaguesListResponse);
+     */
+    colleaguesList(input: ColleaguesListRequest, options?: RpcOptions): UnaryCall<ColleaguesListRequest, ColleaguesListResponse> {
+        const method = this.methods[0], opt = this._transport.mergeOptions(options);
+        return stackIntercept<ColleaguesListRequest, ColleaguesListResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
+     *
+     * @generated from protobuf rpc: ConductListEntries(services.jobs.ConductListEntriesRequest) returns (services.jobs.ConductListEntriesResponse);
+     */
+    conductListEntries(input: ConductListEntriesRequest, options?: RpcOptions): UnaryCall<ConductListEntriesRequest, ConductListEntriesResponse> {
+        const method = this.methods[1], opt = this._transport.mergeOptions(options);
+        return stackIntercept<ConductListEntriesRequest, ConductListEntriesResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @perm
+     *
+     * @generated from protobuf rpc: ConductCreateEntry(services.jobs.ConductCreateEntryRequest) returns (services.jobs.ConductCreateEntryResponse);
+     */
+    conductCreateEntry(input: ConductCreateEntryRequest, options?: RpcOptions): UnaryCall<ConductCreateEntryRequest, ConductCreateEntryResponse> {
+        const method = this.methods[2], opt = this._transport.mergeOptions(options);
+        return stackIntercept<ConductCreateEntryRequest, ConductCreateEntryResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @perm
+     *
+     * @generated from protobuf rpc: ConductUpdateEntry(services.jobs.ConductUpdateEntryRequest) returns (services.jobs.ConductUpdateEntryResponse);
+     */
+    conductUpdateEntry(input: ConductUpdateEntryRequest, options?: RpcOptions): UnaryCall<ConductUpdateEntryRequest, ConductUpdateEntryResponse> {
+        const method = this.methods[3], opt = this._transport.mergeOptions(options);
+        return stackIntercept<ConductUpdateEntryRequest, ConductUpdateEntryResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @perm
+     *
+     * @generated from protobuf rpc: ConductDeleteEntry(services.jobs.ConductDeleteEntryRequest) returns (services.jobs.ConductDeleteEntryResponse);
+     */
+    conductDeleteEntry(input: ConductDeleteEntryRequest, options?: RpcOptions): UnaryCall<ConductDeleteEntryRequest, ConductDeleteEntryResponse> {
+        const method = this.methods[4], opt = this._transport.mergeOptions(options);
+        return stackIntercept<ConductDeleteEntryRequest, ConductDeleteEntryResponse>("unary", this._transport, method, opt, input);
     }
 }

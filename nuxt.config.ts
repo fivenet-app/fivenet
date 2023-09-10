@@ -83,7 +83,7 @@ const config = defineNuxtConfig({
                 file: 'de-DE.json',
             },
         ],
-        debug: false,
+        debug: true,
         lazy: true,
         langDir: './lang',
         defaultLocale: 'de',

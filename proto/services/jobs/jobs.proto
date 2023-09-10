@@ -2,7 +2,26 @@ syntax = "proto3";
 
 package services.jobs;
 
+import "resources/common/database/database.proto";
+import "resources/users/users.proto";
+import "validate/validate.proto";
+
 option go_package = "github.com/galexrt/fivenet/gen/go/proto/services/jobs;jobs";
+
+// Colleagues
+
+message ColleaguesListRequest {
+  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
+  // Search params
+  string search_name = 2 [(validate.rules).string.max_len = 50];
+}
+
+message ColleaguesListResponse {
+  resources.common.database.PaginationResponse pagination = 1;
+  repeated resources.users.User users = 2;
+}
+
+// Conduct Register
 
 message ConductListEntriesRequest {
 
@@ -37,8 +56,15 @@ message ConductDeleteEntryResponse {
 }
 
 service JobsService {
+  // @perm
+  rpc ColleaguesList(ColleaguesListRequest) returns (ColleaguesListResponse);
+
+  // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
   rpc ConductListEntries(ConductListEntriesRequest) returns (ConductListEntriesResponse);
+  // @perm
   rpc ConductCreateEntry(ConductCreateEntryRequest) returns (ConductCreateEntryResponse);
+  // @perm
   rpc ConductUpdateEntry(ConductUpdateEntryRequest) returns (ConductUpdateEntryResponse);
+  // @perm
   rpc ConductDeleteEntry(ConductDeleteEntryRequest) returns (ConductDeleteEntryResponse);
 }
