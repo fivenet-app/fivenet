@@ -1,11 +1,11 @@
 <script lang="ts" setup>
 useHead({
-    title: 'pages.jobs.title',
+    title: 'pages.jobs.conduct.title',
 });
 definePageMeta({
-    title: 'pages.jobs.title',
+    title: 'pages.jobs.conduct.title',
     requiresAuth: true,
-    permission: 'Jobs.View',
+    permission: 'Jobs.ConductListEntries',
 });
 </script>
 

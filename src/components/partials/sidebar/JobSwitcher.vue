@@ -75,7 +75,7 @@ watch(selectedJob, () => setJob());
             <ComboboxButton as="div">
                 <ComboboxInput
                     @click="listJobs"
-                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                    class="hidden md:block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                     @change="queryJob = $event.target.value"
                     :display-value="(job: any) => (job ? job?.label : '')"
                     :placeholder="`${$t('common.select')} ${$t('common.job')}`"

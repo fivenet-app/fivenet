@@ -263,7 +263,8 @@
                 "account_info": "Konto-Informationen",
                 "open_sidebar": "Seitenleiste öffnen",
                 "close_sidebar": "Seitenleiste schließen",
-                "open_usermenu": "Konto Menü öffnen"
+                "open_usermenu": "Konto Menü öffnen",
+                "open_navigation": "Navigation öffnen"
             },
             "table_pagination": {
                 "showing_results": "Zeige <span class=\"font-medium text-neutral\">{0}</span> bis <span class=\"font-medium text-neutral\">{1}</span> von insgesamt <span class=\"font-medium text-neutral\">{2}</span> Ergebnissen"

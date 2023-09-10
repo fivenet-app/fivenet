@@ -4,4 +4,41 @@ package services.jobs;
 
 option go_package = "github.com/galexrt/fivenet/gen/go/proto/services/jobs;jobs";
 
-service JobsService {}
+message ConductListEntriesRequest {
+
+}
+
+message ConductListEntriesResponse {
+
+}
+
+message ConductCreateEntryRequest {
+
+}
+
+message ConductCreateEntryResponse {
+
+}
+
+message ConductUpdateEntryRequest {
+
+}
+
+message ConductUpdateEntryResponse {
+
+}
+
+message ConductDeleteEntryRequest {
+
+}
+
+message ConductDeleteEntryResponse {
+
+}
+
+service JobsService {
+  rpc ConductListEntries(ConductListEntriesRequest) returns (ConductListEntriesResponse);
+  rpc ConductCreateEntry(ConductCreateEntryRequest) returns (ConductCreateEntryResponse);
+  rpc ConductUpdateEntry(ConductUpdateEntryRequest) returns (ConductUpdateEntryResponse);
+  rpc ConductDeleteEntry(ConductDeleteEntryRequest) returns (ConductDeleteEntryResponse);
+}

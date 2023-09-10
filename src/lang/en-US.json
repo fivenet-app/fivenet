@@ -263,7 +263,8 @@
                 "account_info": "Account Info",
                 "open_sidebar": "Open Sidebar",
                 "close_sidebar": "Close Sidebar",
-                "open_usermenu": "Open User menu"
+                "open_usermenu": "Open user menu",
+                "open_navigation": "Open navigation"
             },
             "table_pagination": {
                 "showing_results": "Showing <span class=\"font-medium text-neutral\">{0}</span> to <span class=\"font-medium text-neutral\">{1}</span> of <span class=\"font-medium text-neutral\">{2}</span> results"

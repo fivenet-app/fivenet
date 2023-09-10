@@ -513,10 +513,8 @@ const appVersion = activeChar ? ' v' + __APP_VERSION__ + (import.meta.env.DEV ? 
                             </nav>
                         </div>
                         <div class="flex items-center ml-2 space-x-4 sm:ml-6 sm:space-x-6">
-                            <div v-if="can('SuperUser')">
-                                <JobSwitcher v-if="activeChar" />
-                            </div>
-                            <div v-if="activeChar" class="text-sm font-medium text-base-200">
+                            <JobSwitcher v-if="can('SuperUser') && activeChar" />
+                            <div v-if="activeChar" class="text-sm font-medium text-base-200 truncate">
                                 {{ activeChar.firstname }}, {{ activeChar.lastname }} ({{ activeChar.jobLabel }})
                             </div>
                             <Notifications v-if="activeChar" />
