@@ -104,10 +104,6 @@
                 "title": "Dokumentkategorien"
             }
         },
-        "jobs": {
-            "employee_info_and_management_system": "EMPLOYEE INFO AND MANAGEMENT SYSTEM",
-            "title": "Jobs"
-        },
         "rector": {
             "features": {
                 "properties": "Stelle deine Job Eigenschaften ein (e.g., Livemap Mitarbeiter Farbe).",
@@ -142,6 +138,24 @@
             "title": "Bürger",
             "id": {
                 "title": "Bürger Akte"
+            }
+        },
+        "jobs": {
+            "title": "Jobs",
+            "colleagues": {
+                "title": "Kollegen"
+            },
+            "conduct": {
+                "title": "Führungsregister"
+            },
+            "requests": {
+                "title": "Anfragen"
+            },
+            "timeclock": {
+                "title": "Stempeluhr"
+            },
+            "trainings": {
+                "title": "Trainings"
             }
         },
         "vehicles": {
