@@ -8583,10 +8583,18 @@ vary@^1.1.2:
   resolved "https://registry.yarnpkg.com/vary/-/vary-1.1.2.tgz#2299f02c6ded30d4a5961b0b9f74524a18f634fc"
   integrity sha512-BNGbWLfd0eUPabhkXUVm0j8uuvREyTh5ovRa/dyow/BqAbZJyC+5fU+IzQOzmAKzYqYRAISoRhdQr3eIZ/PXqg==
 
-vee-validate@4.11.4, vee-validate@^4.11.4:
+vee-validate@4.11.4:
   version "4.11.4"
   resolved "https://registry.yarnpkg.com/vee-validate/-/vee-validate-4.11.4.tgz#4db6add766ec198e0d268477b2ed4e7ebd3ad754"
   integrity sha512-N9mbxxRomXOLUVMz++1i2AnqTjU11f6cSYyv/4CK6vfA7mublmVqTVkeCtk+QtMu6yAr9tOOcJEFrnHC7/E4lg==
+  dependencies:
+    "@vue/devtools-api" "^6.5.0"
+    type-fest "^4.2.0"
+
+vee-validate@^4.11.4:
+  version "4.11.6"
+  resolved "https://registry.yarnpkg.com/vee-validate/-/vee-validate-4.11.6.tgz#4494a6898d25f93369bfbd93895958915c4f5bc3"
+  integrity sha512-DwmNRqYVwX/CrH2ai8RRE1Y0ETmMFkS6X+8JxzC9rmE5cMqBxMiHRiqRABRvtJAbgHFG7LeSzVkPcr/mG5BiSQ==
   dependencies:
     "@vue/devtools-api" "^6.5.0"
     type-fest "^4.2.0"
