@@ -10,5 +10,7 @@ definePageMeta({
 </script>
 
 <template>
-    <h1 class="text-xl text-white">Requests</h1>
+    <div>
+        <h1 class="text-xl text-white">Requests</h1>
+    </div>
 </template>

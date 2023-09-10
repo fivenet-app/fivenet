@@ -26,7 +26,7 @@ const { startStream, stopStream } = centrumStore;
 const livemapStore = useLivemapStore();
 const { location } = storeToRefs(livemapStore);
 
-onBeforeMount(async () => setTimeout(async () => startStream(), 250));
+onBeforeMount(async () => setTimeout(async () => startStream(true), 250));
 
 onBeforeUnmount(async () => {
     stopStream();

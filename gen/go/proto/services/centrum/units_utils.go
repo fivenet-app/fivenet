@@ -212,8 +212,6 @@ func (s *Server) updateUnitAssignments(ctx context.Context, userInfo *userinfo.U
 
 					unit.Users = utils.RemoveFromSlice(unit.Users, i)
 					s.userIDToUnitID.Delete(toRemove[k])
-
-					break
 				}
 			}
 		}

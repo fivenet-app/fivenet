@@ -202,7 +202,6 @@ function updateBreadcrumbs(): void {
             href: route.path,
             current: false,
         });
-        console.log('BREAD:', breadcrumbs.value);
     });
 
     const breadcrumbIdx = breadcrumbs.value.findIndex((b) => {

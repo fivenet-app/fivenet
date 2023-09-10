@@ -154,12 +154,4 @@ CREATE TABLE
         CONSTRAINT `fk_fivenet_centrum_markers_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
 
--- Table: fivenet_centrum_dispatches_attrs
-
--- TODO
-
--- Table: fivenet_centrum_codes
-
--- TODO
-
 COMMIT;

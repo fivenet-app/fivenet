@@ -4,6 +4,7 @@ import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { CloseIcon } from 'mdi-vue3';
 import { useCentrumStore } from '~/store/centrum';
 import { UNIT_STATUS, Unit } from '~~/gen/ts/resources/dispatch/units';
+import { unitStatusToBGColor } from '../helpers';
 
 defineProps<{
     open: boolean;
@@ -94,7 +95,8 @@ async function joinUnit(unit?: Unit | undefined): Promise<void> {
                                                                     v-for="item in units"
                                                                     :key="item.name"
                                                                     type="button"
-                                                                    class="text-white hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-2 text-xs my-0.5 bg-info-600"
+                                                                    class="text-white hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-2 text-xs my-0.5"
+                                                                    :class="unitStatusToBGColor(item.status?.status ?? 0)"
                                                                     @click="joinUnit(item)"
                                                                 >
                                                                     <span class="mt-1"

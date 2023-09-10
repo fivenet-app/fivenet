@@ -59,7 +59,7 @@ const open = ref(false);
                 <li class="flex items-center justify-between py-3 pl-3 pr-4 text-sm">
                     <div class="flex items-center flex-1">
                         <AccountIcon class="flex-shrink-0 w-5 h-5 text-base-400" aria-hidden="true" />
-                        {{ $t('common.member', 2) }}:
+                        {{ $t('common.members') }}:
                         <span v-if="dispatch.units.length === 0">{{ $t('common.member', 0) }}</span>
                         <span v-else class="flex-1 ml-2 truncate">
                             <span v-for="unit in dispatch.units">

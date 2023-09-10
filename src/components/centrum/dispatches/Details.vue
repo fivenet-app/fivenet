@@ -246,16 +246,16 @@ const openStatus = ref(false);
                                                             <dd
                                                                 class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
                                                             >
-                                                                <span v-if="dispatch.units.length === 0" class="block">
-                                                                    {{ $t('common.unit', 0) }}
+                                                                <span class="block">
+                                                                    {{ $t('common.unit', dispatch.units.length) }}
                                                                 </span>
                                                                 <ul
-                                                                    v-else
                                                                     role="list"
                                                                     class="border divide-y rounded-md divide-base-200 border-base-200"
                                                                 >
                                                                     <li
                                                                         v-for="unit in dispatch.units"
+                                                                        :key="unit.unitId.toString()"
                                                                         class="flex items-center justify-between py-3 pl-3 pr-4 text-sm"
                                                                     >
                                                                         <div class="flex items-center flex-1">

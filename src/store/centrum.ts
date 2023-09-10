@@ -64,7 +64,6 @@ export const useCentrumStore = defineStore('centrum', {
                 this.units[idx].initials = unit.initials;
                 this.units[idx].color = unit.color;
                 this.units[idx].description = unit.description;
-                this.units[idx].users = unit.users;
 
                 if (unit.users.length === 0) {
                     this.units[idx].users.length = 0;
@@ -93,10 +92,21 @@ export const useCentrumStore = defineStore('centrum', {
                 }
             }
 
-            this.updateOwnUnit(unit);
+            if (this.ownUnit !== undefined && this.ownUnit.id === unit.id) {
+                this.setOrUpdateOwnUnit(unit);
+            }
         },
-        updateOwnUnit(unit: Unit): void {
-            if (unit.id !== this.ownUnit?.id) return;
+        setOrUpdateOwnUnit(unit: Unit | undefined): void {
+            if (unit === undefined) {
+                this.ownUnit = undefined;
+                return;
+            }
+            if (this.ownUnit === undefined) {
+                this.ownUnit = unit;
+                return;
+            } else if (this.ownUnit?.id !== unit.id) {
+                return;
+            }
 
             this.ownUnit.id = unit.id;
             this.ownUnit.createdAt = unit.createdAt;
@@ -141,7 +151,7 @@ export const useCentrumStore = defineStore('centrum', {
 
             // User's unit has been deleted, reset it
             if (this.ownUnit !== undefined && this.ownUnit.id === unit.id) {
-                this.ownUnit = undefined;
+                this.setOrUpdateOwnUnit(undefined);
             }
         },
 
@@ -348,7 +358,7 @@ export const useCentrumStore = defineStore('centrum', {
             }
         },
 
-        async startStream(): Promise<void> {
+        async startStream(isCenter?: boolean): Promise<void> {
             if (this.abort !== undefined) return;
             if (this.cleanupIntervalId !== undefined) clearInterval(this.cleanupIntervalId);
             this.cleanupIntervalId = setInterval(() => this.cleanup(), TWO_MINUTES);
@@ -386,7 +396,7 @@ export const useCentrumStore = defineStore('centrum', {
                         }
                         this.disponents = resp.change.latestState.disponents;
                         this.isDisponent = resp.change.latestState.isDisponent;
-                        this.ownUnit = resp.change.latestState.ownUnit;
+                        this.setOrUpdateOwnUnit(resp.change.latestState.ownUnit);
 
                         resp.change.latestState.units.forEach((u) => this.addOrUpdateUnit(u));
                         resp.change.latestState.dispatches.forEach((d) => this.addOrUpdateDispatch(d));
@@ -401,33 +411,37 @@ export const useCentrumStore = defineStore('centrum', {
                             if (resp.restart !== undefined && !resp.restart) resp.restart = true;
                         }
                     } else if (resp.change.oneofKind === 'unitAssigned') {
-                        if (this.ownUnit !== undefined && resp.change.unitAssigned.id !== this.ownUnit?.id) {
-                            console.warn('Received unit user assigned event for other unit'), resp.change.unitAssigned;
+                        if (this.ownUnit !== undefined && this.ownUnit.id !== resp.change.unitAssigned.id) {
+                            console.warn('Received unit user assigned event for other unit', resp.change.unitAssigned);
                             continue;
                         }
 
+                        // User added/in this unit
                         const idx = resp.change.unitAssigned.users.findIndex((u) => u.userId === authStore.activeChar?.userId);
-                        if (idx === -1) {
-                            // User has been removed from the unit
-                            this.ownUnit = undefined;
-                            this.ownDispatches.length = 0;
-                            this.pendingDispatches.length = 0;
+                        if (idx > -1) {
+                            this.addOrUpdateUnit(resp.change.unitAssigned);
+                            if (this.ownUnit?.id === resp.change.unitAssigned.id) continue;
 
-                            notifications.dispatchNotification({
-                                title: { key: 'notifications.centrum.unitAssigned.removed.title', parameters: [] },
-                                content: { key: 'notifications.centrum.unitAssigned.removed.content', parameters: [] },
-                                type: 'success',
-                            });
-                        } else if (this.ownUnit !== undefined) {
-                            this.updateOwnUnit(resp.change.unitAssigned);
-
-                            if (this.ownUnit.id === resp.change.unitAssigned.id) return;
+                            if (isCenter === true) continue;
 
                             // User has been newly added to unit
                             notifications.dispatchNotification({
                                 title: { key: 'notifications.centrum.unitAssigned.joined.title', parameters: [] },
                                 content: { key: 'notifications.centrum.unitAssigned.joined.content', parameters: [] },
                                 type: 'success',
+                            });
+                        } else {
+                            if (isCenter === true) continue;
+
+                            // User has been removed from the unit
+                            this.setOrUpdateOwnUnit(undefined);
+                            this.ownDispatches.length = 0;
+                            this.pendingDispatches.length = 0;
+
+                            notifications.dispatchNotification({
+                                title: { key: 'notifications.centrum.unitAssigned.removed.title', parameters: [] },
+                                content: { key: 'notifications.centrum.unitAssigned.removed.content', parameters: [] },
+                                type: 'warning',
                             });
                         }
                     } else if (resp.change.oneofKind === 'unitDeleted') {
@@ -470,7 +484,7 @@ export const useCentrumStore = defineStore('centrum', {
                     }
 
                     if (resp.restart !== undefined && resp.restart) {
-                        this.restartStream();
+                        this.restartStream(isCenter);
                         break;
                     }
                 }
@@ -482,7 +496,7 @@ export const useCentrumStore = defineStore('centrum', {
                         console.error('Centrum: Data Stream Failed', this.error.code, this.error.message, this.error.cause);
 
                         if (this.abort !== undefined && !this.abort?.signal.aborted) {
-                            this.restartStream();
+                            this.restartStream(isCenter);
                         }
                     }
                 }
@@ -497,12 +511,12 @@ export const useCentrumStore = defineStore('centrum', {
             this.cleanupIntervalId = undefined;
             console.debug('Centrum: Stopping Data Stream');
         },
-        async restartStream(): Promise<void> {
+        async restartStream(isCenter?: boolean): Promise<void> {
             this.restarting = true;
             console.debug('Centrum: Restarting Data Stream');
             await this.stopStream();
 
-            setTimeout(async () => this.startStream(), 1000);
+            setTimeout(async () => this.startStream(isCenter), 1000);
         },
         // Central "can user do that" method as we will take the dispatch center mode into account further
         canDo(action: canDoAction, dispatch?: Dispatch): boolean {
