@@ -8,7 +8,7 @@ const navigation: { name: string; to: RoutesNamedLocations; permission?: string 
     { name: 'pages.jobs.requests.title', to: { name: 'jobs-index-requests' } },
     { name: 'pages.jobs.trainings.title', to: { name: 'jobs-index-trainings' } },
     //{ name: 'pages.jobs.timeclock.title', to: { name: 'jobs-index-timeclock' } },
-    { name: 'pages.jobs.conduct.title', to: { name: 'jobs-index-conduct' }, permission: 'Jobs.ConductListEntries' },
+    { name: 'pages.jobs.conduct.title', to: { name: 'jobs-index-conduct' }, permission: 'JobsService.ConductListEntries' },
 ];
 
 useHead({
@@ -17,7 +17,7 @@ useHead({
 definePageMeta({
     title: 'pages.jobs.title',
     requiresAuth: true,
-    permission: 'Jobs.ColleaguesList',
+    permission: 'JobsService.ColleaguesList',
 });
 
 const route = useRoute();
