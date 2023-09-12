@@ -416,6 +416,14 @@
                 "update_settings": "Einstellungen ändern",
                 "update_unit": "Einheit aktualisieren"
             }
+        },
+        "jobs": {
+            "conduct": {
+                "List": {
+                    "show_expired": "Zeige Abgelaufene",
+                    "no_expiration": "Kein Verfallsdatum."
+                }
+            }
         }
     },
     "common": {
@@ -621,7 +629,10 @@
         "self_assign": "Selbst zuweisen",
         "expires_in": "Läuft ab in",
         "colleague": "Kollege | Kollegen",
-        "colleagues": "Keine Kollegen | {n} Kollege | {n} Kollegen"
+        "colleagues": "Keine Kollegen | {n} Kollege | {n} Kollegen",
+        "expires_at": "Läuft ab am",
+        "expired": "Abgelaufen",
+        "conduct_register": "Führungsregister"
     },
     "notifications": {
         "clipboard": {
@@ -922,6 +933,15 @@
                 "CIRCLE": "Kreis",
                 "POLYGON": "Polygon"
             }
+        },
+        "jobs": {
+            "CONDUCT_TYPE": {
+                "NEUTRAL": "Neutral",
+                "POSITIVE": "Positiv",
+                "NEGATIVE": "Negativ",
+                "WARNING": "Verwarnung",
+                "SUSPENSION": "Suspendierung"
+            }
         }
     },
     "perms": {
@@ -1175,6 +1195,34 @@
                 "key": "Einsätze löschen",
                 "description": "Erlaubt es Einsätze zu löschen."
             }
+        },
+        "JobsService": {
+            "category": "Beruf",
+            "ColleaguesList": {
+                "key": "Kollegen anzeigen",
+                "description": "Liste der Kollegen (vom eigenen Beruf) sehen können."
+            },
+            "ConductCreateEntry": {
+                "key": "Führungsregister: Einträge erstellen",
+                "description": "TODO"
+            },
+            "ConductDeleteEntry": {
+                "key": "Führungsregister: Einträge löschen",
+                "description": "TODO"
+            },
+            "ConductListEntries": {
+                "key": "Führungsregister: Einträge anzeigen",
+                "description": "TODO",
+                "attrs": {
+                    "Own": "Eigene",
+                    "Lower_Rank": "Niedrigerer Rang",
+                    "Same_Rank": "Gleicher Rang"
+                }
+            },
+            "ConductUpdateEntry": {
+                "key": "Führungsregister: Einträge bearbeiten",
+                "description": "TODO"
+            }
         }
     },
     "attrs": {
@@ -1226,6 +1274,11 @@
         "CompletorService": {
             "CompleteDocumentCategories": {
                 "Jobs": "Fraktionen"
+            }
+        },
+        "JobsService": {
+            "ConductListEntries": {
+                "Access": "Zugriff"
             }
         }
     },
