@@ -25,10 +25,14 @@ export interface Unit {
      */
     job: string;
     /**
+     * @sanitize
+     *
      * @generated from protobuf field: string name = 5;
      */
     name: string;
     /**
+     * @sanitize
+     *
      * @generated from protobuf field: string initials = 6;
      */
     initials: string;
@@ -37,6 +41,8 @@ export interface Unit {
      */
     color?: string;
     /**
+     * @sanitize
+     *
      * @generated from protobuf field: optional string description = 8;
      */
     description?: string;
@@ -45,8 +51,6 @@ export interface Unit {
      */
     status?: UnitStatus;
     /**
-     * repeated UnitStatus statuses = 10;
-     *
      * @generated from protobuf field: repeated resources.dispatch.UnitAssignment users = 11;
      */
     users: UnitAssignment[];
@@ -106,10 +110,14 @@ export interface UnitStatus {
      */
     status: UNIT_STATUS;
     /**
+     * @sanitize
+     *
      * @generated from protobuf field: optional string reason = 5;
      */
     reason?: string;
     /**
+     * @sanitize
+     *
      * @generated from protobuf field: optional string code = 6;
      */
     code?: string;
@@ -130,6 +138,8 @@ export interface UnitStatus {
      */
     y?: number;
     /**
+     * @sanitize
+     *
      * @generated from protobuf field: optional string postal = 11;
      */
     postal?: string;
@@ -185,7 +195,7 @@ class Unit$Type extends MessageType<Unit> {
             { no: 4, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 5, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "24" } } } },
             { no: 6, name: "initials", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "2", maxLen: "4" } } } },
-            { no: 7, name: "color", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "6" } } } },
+            { no: 7, name: "color", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { len: "6", pattern: "^[A-Fa-f0-9]{6}$" } } } },
             { no: 8, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
             { no: 9, name: "status", kind: "message", T: () => UnitStatus },
             { no: 11, name: "users", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UnitAssignment }

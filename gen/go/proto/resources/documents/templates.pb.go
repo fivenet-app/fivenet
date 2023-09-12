@@ -29,12 +29,14 @@ type Template struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id            uint64               `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id"` // @gotags: alias:"id"
-	CreatedAt     *timestamp.Timestamp `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
-	UpdatedAt     *timestamp.Timestamp `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
-	Category      *Category            `protobuf:"bytes,4,opt,name=category,proto3" json:"category,omitempty" alias:"category"`                             // @gotags: alias:"category"
-	Weight        uint32               `protobuf:"varint,5,opt,name=weight,proto3" json:"weight,omitempty" alias:"weight"`                                // @gotags: alias:"weight"
-	Title         string               `protobuf:"bytes,6,opt,name=title,proto3" json:"title,omitempty" alias:"title"`                                   // @gotags: alias:"title"
+	Id        uint64               `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id"` // @gotags: alias:"id"
+	CreatedAt *timestamp.Timestamp `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
+	UpdatedAt *timestamp.Timestamp `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
+	Category  *Category            `protobuf:"bytes,4,opt,name=category,proto3" json:"category,omitempty" alias:"category"` // @gotags: alias:"category"
+	Weight    uint32               `protobuf:"varint,5,opt,name=weight,proto3" json:"weight,omitempty" alias:"weight"`    // @gotags: alias:"weight"
+	// @sanitize
+	Title string `protobuf:"bytes,6,opt,name=title,proto3" json:"title,omitempty" alias:"title"` // @gotags: alias:"title"
+	// @sanitize
 	Description   string               `protobuf:"bytes,7,opt,name=description,proto3" json:"description,omitempty" alias:"description"`                       // @gotags: alias:"description"
 	ContentTitle  string               `protobuf:"bytes,8,opt,name=content_title,json=contentTitle,proto3" json:"content_title,omitempty" alias:"content_title"` // @gotags: alias:"content_title"
 	Content       string               `protobuf:"bytes,9,opt,name=content,proto3" json:"content,omitempty" alias:"content"`                               // @gotags: alias:"content"
@@ -196,17 +198,19 @@ type TemplateShort struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id          uint64               `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id"` // @gotags: alias:"id"
-	CreatedAt   *timestamp.Timestamp `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
-	UpdatedAt   *timestamp.Timestamp `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
-	Weight      uint32               `protobuf:"varint,4,opt,name=weight,proto3" json:"weight,omitempty" alias:"weight"`                              // @gotags: alias:"weight"
-	Category    *Category            `protobuf:"bytes,5,opt,name=category,proto3" json:"category,omitempty" alias:"category"`                           // @gotags: alias:"category"
-	Title       string               `protobuf:"bytes,6,opt,name=title,proto3" json:"title,omitempty" alias:"title"`                                 // @gotags: alias:"title"
-	Description string               `protobuf:"bytes,7,opt,name=description,proto3" json:"description,omitempty" alias:"description"`                     // @gotags: alias:"description"
-	Schema      *TemplateSchema      `protobuf:"bytes,8,opt,name=schema,proto3" json:"schema,omitempty" alias:"schema"`                               // @gotags: alias:"schema"
-	CreatorId   *int32               `protobuf:"varint,9,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty" alias:"creator_id"` // @gotags: alias:"creator_id"
-	Creator     *users.UserShort     `protobuf:"bytes,10,opt,name=creator,proto3,oneof" json:"creator,omitempty"`
-	Job         string               `protobuf:"bytes,11,opt,name=job,proto3" json:"job,omitempty" alias:"job"` // @gotags: alias:"job"
+	Id        uint64               `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id"` // @gotags: alias:"id"
+	CreatedAt *timestamp.Timestamp `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
+	UpdatedAt *timestamp.Timestamp `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
+	Weight    uint32               `protobuf:"varint,4,opt,name=weight,proto3" json:"weight,omitempty" alias:"weight"`    // @gotags: alias:"weight"
+	Category  *Category            `protobuf:"bytes,5,opt,name=category,proto3" json:"category,omitempty" alias:"category"` // @gotags: alias:"category"
+	// @sanitize
+	Title string `protobuf:"bytes,6,opt,name=title,proto3" json:"title,omitempty" alias:"title"` // @gotags: alias:"title"
+	// @sanitize
+	Description string           `protobuf:"bytes,7,opt,name=description,proto3" json:"description,omitempty" alias:"description"`                     // @gotags: alias:"description"
+	Schema      *TemplateSchema  `protobuf:"bytes,8,opt,name=schema,proto3" json:"schema,omitempty" alias:"schema"`                               // @gotags: alias:"schema"
+	CreatorId   *int32           `protobuf:"varint,9,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty" alias:"creator_id"` // @gotags: alias:"creator_id"
+	Creator     *users.UserShort `protobuf:"bytes,10,opt,name=creator,proto3,oneof" json:"creator,omitempty"`
+	Job         string           `protobuf:"bytes,11,opt,name=job,proto3" json:"job,omitempty" alias:"job"` // @gotags: alias:"job"
 }
 
 func (x *TemplateShort) Reset() {

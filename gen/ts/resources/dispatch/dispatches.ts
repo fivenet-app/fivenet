@@ -31,12 +31,14 @@ export interface Dispatch {
      */
     status?: DispatchStatus;
     /**
-     * repeated DispatchStatus statuses = 6;
+     * @sanitize
      *
      * @generated from protobuf field: string message = 7;
      */
     message: string;
     /**
+     * @sanitize
+     *
      * @generated from protobuf field: optional string description = 8;
      */
     description?: string;
@@ -53,6 +55,8 @@ export interface Dispatch {
      */
     y: number;
     /**
+     * @sanitize
+     *
      * @generated from protobuf field: optional string postal = 12;
      */
     postal?: string;
@@ -153,10 +157,14 @@ export interface DispatchStatus {
      */
     status: DISPATCH_STATUS;
     /**
+     * @sanitize
+     *
      * @generated from protobuf field: optional string reason = 7;
      */
     reason?: string;
     /**
+     * @sanitize
+     *
      * @generated from protobuf field: optional string code = 8;
      */
     code?: string;
@@ -177,6 +185,8 @@ export interface DispatchStatus {
      */
     y?: number;
     /**
+     * @sanitize
+     *
      * @generated from protobuf field: optional string postal = 13;
      */
     postal?: string;

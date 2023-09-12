@@ -25,6 +25,8 @@ export interface Comment {
      */
     documentId: bigint;
     /**
+     * @sanitize: method=StripTags
+     *
      * @generated from protobuf field: string comment = 5;
      */
     comment: string;

@@ -20,12 +20,18 @@ message MarkerInfo {
   optional resources.timestamp.Timestamp created_at = 2;
   optional resources.timestamp.Timestamp updated_at = 3;
   string job = 4;
+  // @sanitize
   string name = 5;
+  // @sanitize
   optional string description = 6;
   double x = 7;
   double y = 8;
+  // @sanitize
   optional string postal = 9  [(validate.rules).string.max_len = 48];
-  optional string color = 10;
+  optional string color = 10  [(validate.rules).string = {
+    len: 6,
+    pattern: "^[A-Fa-f0-9]{6}$",
+  }];
   optional string icon = 11;
 }
 

@@ -56,7 +56,7 @@ message DeleteTemplateResponse {}
 message ListDocumentsRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
   repeated resources.common.database.OrderBy orderBy = 2 [(validate.rules).repeated.max_items = 3];
-  // Search param
+  // Search params
   optional string search = 3;
   repeated uint64 category_ids = 4;
   repeated int32 creator_ids = 5;
@@ -156,10 +156,12 @@ message DeleteCommentResponse {}
 
 message CreateDocumentRequest {
   optional uint64 category_id = 1; // @gotags: alias:"category_id"
+  // @sanitize
   string title = 2 [(validate.rules).string = {
     min_len: 3,
     max_bytes: 21845
   }]; // @gotags: alias:"title"
+  // @sanitize
   string content = 3 [(validate.rules).string = {
     min_len: 20,
     max_bytes: 1000000
@@ -180,16 +182,19 @@ message CreateDocumentResponse {
 message UpdateDocumentRequest {
   uint64 document_id = 1; // @gotags: alias:"id"
   optional uint64 category_id = 2; // @gotags: alias:"category_id"
+  // @sanitize
   string title = 3 [(validate.rules).string = {
     min_len: 3,
     max_bytes: 21845
   }]; // @gotags: alias:"title"
+  // @sanitize
   string content = 4 [(validate.rules).string = {
     min_len: 20,
     max_bytes: 1000000
   }]; // @gotags: alias:"content"
   resources.documents.DOC_CONTENT_TYPE content_type = 5 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"content_type"
   optional string data = 6; // @gotags: alias:"data"
+  // @sanitize
   string state = 7 [(validate.rules).string.max_len = 24]; // @gotags: alias:"state"
   bool closed = 8; // @gotags: alias:"closed"
   bool public = 9; // @gotags: alias:"public"

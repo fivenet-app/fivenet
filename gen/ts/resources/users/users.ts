@@ -194,6 +194,8 @@ export interface UserActivity {
      */
     targetUser?: UserShort; // @gotags: alias:"target_user"
     /**
+     * @sanitize
+     *
      * @generated from protobuf field: string key = 6;
      */
     key: string; // @gotags: alias:"fivenet_user_activity.key"
@@ -206,6 +208,8 @@ export interface UserActivity {
      */
     newValue: string; // @gotags: alias:"fivenet_user_activity.new_value"
     /**
+     * @sanitize
+     *
      * @generated from protobuf field: string reason = 9;
      */
     reason: string; // @gotags: alias:"fivenet_user_activity.reason"

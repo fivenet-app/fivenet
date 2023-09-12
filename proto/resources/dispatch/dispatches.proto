@@ -15,12 +15,14 @@ message Dispatch {
   optional resources.timestamp.Timestamp updated_at = 3;
   string job = 4 [(validate.rules).string.max_len = 20];
   optional DispatchStatus status = 5;
-  //repeated DispatchStatus statuses = 6;
+  // @sanitize
   string message = 7 [(validate.rules).string.max_len = 255];
+  // @sanitize
   optional string description = 8 [(validate.rules).string.max_len = 1024];
   optional Attributes attributes = 9;
   double x = 10;
   double y = 11;
+  // @sanitize
   optional string postal = 12  [(validate.rules).string.max_len = 48];
   optional bool anon = 13;
   optional int32 user_id = 14 [(validate.rules).int32.gt = 0];
@@ -67,11 +69,14 @@ message DispatchStatus {
   optional uint64 unit_id = 4;
   optional resources.dispatch.Unit unit = 5;
   DISPATCH_STATUS status = 6 [(validate.rules).enum.defined_only = true];
+  // @sanitize
   optional string reason = 7 [(validate.rules).string.max_len = 255];
+  // @sanitize
   optional string code = 8 [(validate.rules).string.max_len = 20];
   optional int32 user_id = 9 [(validate.rules).int32.gt = 0];
   optional resources.users.UserShort user = 10;
   optional double x = 11;
   optional double y = 12;
+  // @sanitize
   optional string postal = 13  [(validate.rules).string.max_len = 48];
 }

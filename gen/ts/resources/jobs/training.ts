@@ -32,10 +32,14 @@ export interface TrainingModule {
      */
     minimumGrade: number;
     /**
+     * @sanitize
+     *
      * @generated from protobuf field: string title = 7;
      */
     title: string;
     /**
+     * @sanitize
+     *
      * @generated from protobuf field: string description = 8;
      */
     description: string;

@@ -29,6 +29,8 @@ export interface RequestEntry {
      */
     type: REQUEST_TYPE;
     /**
+     * @sanitize
+     *
      * @generated from protobuf field: string message = 6;
      */
     message: string;

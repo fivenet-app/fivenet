@@ -509,8 +509,10 @@ type UpdateUnitStatusRequest struct {
 
 	UnitId uint64               `protobuf:"varint,1,opt,name=unit_id,json=unitId,proto3" json:"unit_id,omitempty"`
 	Status dispatch.UNIT_STATUS `protobuf:"varint,2,opt,name=status,proto3,enum=resources.dispatch.UNIT_STATUS" json:"status,omitempty"`
-	Reason *string              `protobuf:"bytes,3,opt,name=reason,proto3,oneof" json:"reason,omitempty"`
-	Code   *string              `protobuf:"bytes,4,opt,name=code,proto3,oneof" json:"code,omitempty"`
+	// @sanitize
+	Reason *string `protobuf:"bytes,3,opt,name=reason,proto3,oneof" json:"reason,omitempty"`
+	// @sanitize
+	Code *string `protobuf:"bytes,4,opt,name=code,proto3,oneof" json:"code,omitempty"`
 }
 
 func (x *UpdateUnitStatusRequest) Reset() {
@@ -1288,8 +1290,10 @@ type UpdateDispatchStatusRequest struct {
 
 	DispatchId uint64                   `protobuf:"varint,1,opt,name=dispatch_id,json=dispatchId,proto3" json:"dispatch_id,omitempty"`
 	Status     dispatch.DISPATCH_STATUS `protobuf:"varint,2,opt,name=status,proto3,enum=resources.dispatch.DISPATCH_STATUS" json:"status,omitempty"`
-	Reason     *string                  `protobuf:"bytes,3,opt,name=reason,proto3,oneof" json:"reason,omitempty"`
-	Code       *string                  `protobuf:"bytes,4,opt,name=code,proto3,oneof" json:"code,omitempty"`
+	// @sanitize
+	Reason *string `protobuf:"bytes,3,opt,name=reason,proto3,oneof" json:"reason,omitempty"`
+	// @sanitize
+	Code *string `protobuf:"bytes,4,opt,name=code,proto3,oneof" json:"code,omitempty"`
 }
 
 func (x *UpdateDispatchStatusRequest) Reset() {
@@ -1655,7 +1659,8 @@ type TakeDispatchRequest struct {
 
 	DispatchIds []uint64           `protobuf:"varint,1,rep,packed,name=dispatch_ids,json=dispatchIds,proto3" json:"dispatch_ids,omitempty"`
 	Resp        TAKE_DISPATCH_RESP `protobuf:"varint,2,opt,name=resp,proto3,enum=services.centrum.TAKE_DISPATCH_RESP" json:"resp,omitempty"`
-	Reason      *string            `protobuf:"bytes,3,opt,name=reason,proto3,oneof" json:"reason,omitempty"`
+	// @sanitize
+	Reason *string `protobuf:"bytes,3,opt,name=reason,proto3,oneof" json:"reason,omitempty"`
 }
 
 func (x *TakeDispatchRequest) Reset() {

@@ -21,18 +21,22 @@ message Document {
   resources.timestamp.Timestamp updated_at = 3;
   optional uint64 category_id = 4; // @gotags: alias:"category_id"
   optional resources.documents.Category category = 5; // @gotags: alias:"category"
+  // @sanitize
   string title = 6 [(validate.rules).string = {
     min_len: 3,
     max_bytes: 21845
   }]; // @gotags: alias:"title"
   DOC_CONTENT_TYPE content_type = 7 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"content_type"
+  // @sanitize
   string content = 8 [(validate.rules).string = {
     min_len: 20,
     max_bytes: 1000000
   }]; // @gotags: alias:"content"
+  // @sanitize
   string data = 9; // @gotags: alias:"data"
   optional int32 creator_id = 10; // @gotags: alias:"creator_id"
   optional resources.users.UserShort creator = 11; // @gotags: alias:"creator"
+  // @sanitize
   string state = 12 [(validate.rules).string.max_len = 24]; // @gotags: alias:"state"
   bool closed = 13; // @gotags: alias:"closed"
   bool public = 14; // @gotags: alias:"public"
@@ -45,11 +49,14 @@ message DocumentShort {
   resources.timestamp.Timestamp updated_at = 3;
   optional uint64 category_id = 4; // @gotags: alias:"category_id"
   optional resources.documents.Category category = 5; // @gotags: alias:"category"
+  // @sanitize
   string title = 6 [(validate.rules).string.min_len = 3]; // @gotags: alias:"title"
   DOC_CONTENT_TYPE content_type = 7 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"content_type"
+  // @sanitize
   string content = 8 [(validate.rules).string = {max_bytes: 1024}]; // @gotags: alias:"content"
   optional int32 creator_id = 9; // @gotags: alias:"creator_id"
   optional resources.users.UserShort creator = 10; // @gotags: alias:"creator"
+  // @sanitize
   string state = 11 [(validate.rules).string.max_len = 24]; // @gotags: alias:"state"
   bool closed = 12; // @gotags: alias:"closed"
   bool public = 13; // @gotags: alias:"public"

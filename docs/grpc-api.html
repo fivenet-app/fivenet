@@ -2167,14 +2167,14 @@
                   <td>name</td>
                   <td><a href="#string">string</a></td>
                   <td></td>
-                  <td><p> </p></td>
+                  <td><p>@sanitize </p></td>
                 </tr>
               
                 <tr>
                   <td>initials</td>
                   <td><a href="#string">string</a></td>
                   <td></td>
-                  <td><p> </p></td>
+                  <td><p>@sanitize </p></td>
                 </tr>
               
                 <tr>
@@ -2188,7 +2188,7 @@
                   <td>description</td>
                   <td><a href="#string">string</a></td>
                   <td>optional</td>
-                  <td><p> </p></td>
+                  <td><p>@sanitize </p></td>
                 </tr>
               
                 <tr>
@@ -2202,7 +2202,7 @@
                   <td>users</td>
                   <td><a href="#resources.dispatch.UnitAssignment">UnitAssignment</a></td>
                   <td>repeated</td>
-                  <td><p>repeated UnitStatus statuses = 10; </p></td>
+                  <td><p> </p></td>
                 </tr>
               
             </tbody>
@@ -2263,7 +2263,9 @@
                   <td>
                     <ul>
                     
-                      <li>string.max_len: 6</li>
+                      <li>string.len: 6</li>
+                    
+                      <li>string.pattern: ^[A-Fa-f0-9]{6}$</li>
                     
                     </ul>
                   </td>
@@ -2432,14 +2434,14 @@
                   <td>reason</td>
                   <td><a href="#string">string</a></td>
                   <td>optional</td>
-                  <td><p> </p></td>
+                  <td><p>@sanitize </p></td>
                 </tr>
               
                 <tr>
                   <td>code</td>
                   <td><a href="#string">string</a></td>
                   <td>optional</td>
-                  <td><p> </p></td>
+                  <td><p>@sanitize </p></td>
                 </tr>
               
                 <tr>
@@ -2474,7 +2476,7 @@
                   <td>postal</td>
                   <td><a href="#string">string</a></td>
                   <td>optional</td>
-                  <td><p> </p></td>
+                  <td><p>@sanitize </p></td>
                 </tr>
               
                 <tr>
@@ -2720,14 +2722,14 @@
                   <td>message</td>
                   <td><a href="#string">string</a></td>
                   <td></td>
-                  <td><p>repeated DispatchStatus statuses = 6; </p></td>
+                  <td><p>@sanitize </p></td>
                 </tr>
               
                 <tr>
                   <td>description</td>
                   <td><a href="#string">string</a></td>
                   <td>optional</td>
-                  <td><p> </p></td>
+                  <td><p>@sanitize </p></td>
                 </tr>
               
                 <tr>
@@ -2755,7 +2757,7 @@
                   <td>postal</td>
                   <td><a href="#string">string</a></td>
                   <td>optional</td>
-                  <td><p> </p></td>
+                  <td><p>@sanitize </p></td>
                 </tr>
               
                 <tr>
@@ -3037,14 +3039,14 @@
                   <td>reason</td>
                   <td><a href="#string">string</a></td>
                   <td>optional</td>
-                  <td><p> </p></td>
+                  <td><p>@sanitize </p></td>
                 </tr>
               
                 <tr>
                   <td>code</td>
                   <td><a href="#string">string</a></td>
                   <td>optional</td>
-                  <td><p> </p></td>
+                  <td><p>@sanitize </p></td>
                 </tr>
               
                 <tr>
@@ -3079,7 +3081,7 @@
                   <td>postal</td>
                   <td><a href="#string">string</a></td>
                   <td>optional</td>
-                  <td><p> </p></td>
+                  <td><p>@sanitize </p></td>
                 </tr>
               
             </tbody>
@@ -3470,14 +3472,14 @@
                   <td>name</td>
                   <td><a href="#string">string</a></td>
                   <td></td>
-                  <td><p> </p></td>
+                  <td><p>@sanitize </p></td>
                 </tr>
               
                 <tr>
                   <td>description</td>
                   <td><a href="#string">string</a></td>
                   <td>optional</td>
-                  <td><p> </p></td>
+                  <td><p>@sanitize </p></td>
                 </tr>
               
                 <tr>
@@ -3601,7 +3603,7 @@
                   <td>comment</td>
                   <td><a href="#string">string</a></td>
                   <td></td>
-                  <td><p> </p></td>
+                  <td><p>@sanitize: method=StripTags </p></td>
                 </tr>
               
                 <tr>
@@ -3724,7 +3726,9 @@
                   <td>title</td>
                   <td><a href="#string">string</a></td>
                   <td></td>
-                  <td><p>@gotags: alias:&#34;title&#34; </p></td>
+                  <td><p>@sanitize
+
+@gotags: alias:&#34;title&#34; </p></td>
                 </tr>
               
                 <tr>
@@ -3738,14 +3742,18 @@
                   <td>content</td>
                   <td><a href="#string">string</a></td>
                   <td></td>
-                  <td><p>@gotags: alias:&#34;content&#34; </p></td>
+                  <td><p>@sanitize
+
+@gotags: alias:&#34;content&#34; </p></td>
                 </tr>
               
                 <tr>
                   <td>data</td>
                   <td><a href="#string">string</a></td>
                   <td></td>
-                  <td><p>@gotags: alias:&#34;data&#34; </p></td>
+                  <td><p>@sanitize
+
+@gotags: alias:&#34;data&#34; </p></td>
                 </tr>
               
                 <tr>
@@ -3766,7 +3774,9 @@
                   <td>state</td>
                   <td><a href="#string">string</a></td>
                   <td></td>
-                  <td><p>@gotags: alias:&#34;state&#34; </p></td>
+                  <td><p>@sanitize
+
+@gotags: alias:&#34;state&#34; </p></td>
                 </tr>
               
                 <tr>
@@ -4328,7 +4338,9 @@
                   <td>title</td>
                   <td><a href="#string">string</a></td>
                   <td></td>
-                  <td><p>@gotags: alias:&#34;title&#34; </p></td>
+                  <td><p>@sanitize
+
+@gotags: alias:&#34;title&#34; </p></td>
                 </tr>
               
                 <tr>
@@ -4342,7 +4354,9 @@
                   <td>content</td>
                   <td><a href="#string">string</a></td>
                   <td></td>
-                  <td><p>@gotags: alias:&#34;content&#34; </p></td>
+                  <td><p>@sanitize
+
+@gotags: alias:&#34;content&#34; </p></td>
                 </tr>
               
                 <tr>
@@ -4363,7 +4377,9 @@
                   <td>state</td>
                   <td><a href="#string">string</a></td>
                   <td></td>
-                  <td><p>@gotags: alias:&#34;state&#34; </p></td>
+                  <td><p>@sanitize
+
+@gotags: alias:&#34;state&#34; </p></td>
                 </tr>
               
                 <tr>
@@ -4746,14 +4762,18 @@
                   <td>title</td>
                   <td><a href="#string">string</a></td>
                   <td></td>
-                  <td><p>@gotags: alias:&#34;title&#34; </p></td>
+                  <td><p>@sanitize
+
+@gotags: alias:&#34;title&#34; </p></td>
                 </tr>
               
                 <tr>
                   <td>description</td>
                   <td><a href="#string">string</a></td>
                   <td></td>
-                  <td><p>@gotags: alias:&#34;description&#34; </p></td>
+                  <td><p>@sanitize
+
+@gotags: alias:&#34;description&#34; </p></td>
                 </tr>
               
                 <tr>
@@ -5268,14 +5288,18 @@
                   <td>title</td>
                   <td><a href="#string">string</a></td>
                   <td></td>
-                  <td><p>@gotags: alias:&#34;title&#34; </p></td>
+                  <td><p>@sanitize
+
+@gotags: alias:&#34;title&#34; </p></td>
                 </tr>
               
                 <tr>
                   <td>description</td>
                   <td><a href="#string">string</a></td>
                   <td></td>
-                  <td><p>@gotags: alias:&#34;description&#34; </p></td>
+                  <td><p>@sanitize
+
+@gotags: alias:&#34;description&#34; </p></td>
                 </tr>
               
                 <tr>
@@ -5425,7 +5449,7 @@
                   <td>message</td>
                   <td><a href="#string">string</a></td>
                   <td></td>
-                  <td><p> </p></td>
+                  <td><p>@sanitize </p></td>
                 </tr>
               
                 <tr>
@@ -5647,7 +5671,7 @@
                   <td>message</td>
                   <td><a href="#string">string</a></td>
                   <td></td>
-                  <td><p> </p></td>
+                  <td><p>@sanitize </p></td>
                 </tr>
               
                 <tr>
@@ -5955,14 +5979,14 @@
                   <td>title</td>
                   <td><a href="#string">string</a></td>
                   <td></td>
-                  <td><p> </p></td>
+                  <td><p>@sanitize </p></td>
                 </tr>
               
                 <tr>
                   <td>description</td>
                   <td><a href="#string">string</a></td>
                   <td></td>
-                  <td><p> </p></td>
+                  <td><p>@sanitize </p></td>
                 </tr>
               
             </tbody>
@@ -6451,14 +6475,14 @@
                   <td>name</td>
                   <td><a href="#string">string</a></td>
                   <td></td>
-                  <td><p> </p></td>
+                  <td><p>@sanitize </p></td>
                 </tr>
               
                 <tr>
                   <td>description</td>
                   <td><a href="#string">string</a></td>
                   <td>optional</td>
-                  <td><p> </p></td>
+                  <td><p>@sanitize </p></td>
                 </tr>
               
                 <tr>
@@ -6479,7 +6503,7 @@
                   <td>postal</td>
                   <td><a href="#string">string</a></td>
                   <td>optional</td>
-                  <td><p> </p></td>
+                  <td><p>@sanitize </p></td>
                 </tr>
               
                 <tr>
@@ -6518,6 +6542,19 @@
                     <ul>
                     
                       <li>string.max_len: 48</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>color</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.len: 6</li>
+                    
+                      <li>string.pattern: ^[A-Fa-f0-9]{6}$</li>
                     
                     </ul>
                   </td>
@@ -8012,7 +8049,7 @@
                   <td>quick_buttons</td>
                   <td><a href="#string">string</a></td>
                   <td></td>
-                  <td><p> </p></td>
+                  <td><p>@sanitize: method=StripTags </p></td>
                 </tr>
               
                 <tr>
@@ -8065,7 +8102,9 @@
                   <td>
                     <ul>
                     
-                      <li>string.max_len: 6</li>
+                      <li>string.len: 6</li>
+                    
+                      <li>string.pattern: ^[A-Fa-f0-9]{6}$</li>
                     
                     </ul>
                   </td>
@@ -8495,7 +8534,9 @@
                   <td>key</td>
                   <td><a href="#string">string</a></td>
                   <td></td>
-                  <td><p>@gotags: alias:&#34;fivenet_user_activity.key&#34; </p></td>
+                  <td><p>@sanitize
+
+@gotags: alias:&#34;fivenet_user_activity.key&#34; </p></td>
                 </tr>
               
                 <tr>
@@ -8516,7 +8557,9 @@
                   <td>reason</td>
                   <td><a href="#string">string</a></td>
                   <td></td>
-                  <td><p>@gotags: alias:&#34;fivenet_user_activity.reason&#34; </p></td>
+                  <td><p>@sanitize
+
+@gotags: alias:&#34;fivenet_user_activity.reason&#34; </p></td>
                 </tr>
               
             </tbody>
@@ -10978,7 +11021,7 @@
                   <td>reason</td>
                   <td><a href="#string">string</a></td>
                   <td>optional</td>
-                  <td><p> </p></td>
+                  <td><p>@sanitize </p></td>
                 </tr>
               
             </tbody>
@@ -11130,14 +11173,14 @@
                   <td>reason</td>
                   <td><a href="#string">string</a></td>
                   <td>optional</td>
-                  <td><p> </p></td>
+                  <td><p>@sanitize </p></td>
                 </tr>
               
                 <tr>
                   <td>code</td>
                   <td><a href="#string">string</a></td>
                   <td>optional</td>
-                  <td><p> </p></td>
+                  <td><p>@sanitize </p></td>
                 </tr>
               
             </tbody>
@@ -11209,14 +11252,14 @@
                   <td>reason</td>
                   <td><a href="#string">string</a></td>
                   <td>optional</td>
-                  <td><p> </p></td>
+                  <td><p>@sanitize </p></td>
                 </tr>
               
                 <tr>
                   <td>code</td>
                   <td><a href="#string">string</a></td>
                   <td>optional</td>
-                  <td><p> </p></td>
+                  <td><p>@sanitize </p></td>
                 </tr>
               
             </tbody>
@@ -11823,7 +11866,7 @@
                   <td>reason</td>
                   <td><a href="#string">string</a></td>
                   <td></td>
-                  <td><p> </p></td>
+                  <td><p>@sanitize </p></td>
                 </tr>
               
             </tbody>
@@ -12707,14 +12750,18 @@
                   <td>title</td>
                   <td><a href="#string">string</a></td>
                   <td></td>
-                  <td><p>@gotags: alias:&#34;title&#34; </p></td>
+                  <td><p>@sanitize
+
+@gotags: alias:&#34;title&#34; </p></td>
                 </tr>
               
                 <tr>
                   <td>content</td>
                   <td><a href="#string">string</a></td>
                   <td></td>
-                  <td><p>@gotags: alias:&#34;content&#34; </p></td>
+                  <td><p>@sanitize
+
+@gotags: alias:&#34;content&#34; </p></td>
                 </tr>
               
                 <tr>
@@ -13554,7 +13601,7 @@
                   <td>search</td>
                   <td><a href="#string">string</a></td>
                   <td>optional</td>
-                  <td><p>Search param </p></td>
+                  <td><p>Search params </p></td>
                 </tr>
               
                 <tr>
@@ -14161,14 +14208,18 @@
                   <td>title</td>
                   <td><a href="#string">string</a></td>
                   <td></td>
-                  <td><p>@gotags: alias:&#34;title&#34; </p></td>
+                  <td><p>@sanitize
+
+@gotags: alias:&#34;title&#34; </p></td>
                 </tr>
               
                 <tr>
                   <td>content</td>
                   <td><a href="#string">string</a></td>
                   <td></td>
-                  <td><p>@gotags: alias:&#34;content&#34; </p></td>
+                  <td><p>@sanitize
+
+@gotags: alias:&#34;content&#34; </p></td>
                 </tr>
               
                 <tr>
@@ -14189,7 +14240,9 @@
                   <td>state</td>
                   <td><a href="#string">string</a></td>
                   <td></td>
-                  <td><p>@gotags: alias:&#34;state&#34; </p></td>
+                  <td><p>@sanitize
+
+@gotags: alias:&#34;state&#34; </p></td>
                 </tr>
               
                 <tr>
@@ -16314,6 +16367,39 @@
                     <ul>
                     
                       <li>message.required: true</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>service</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.max_len: 64</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>method</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.max_len: 64</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>search</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.max_len: 128</li>
                     
                     </ul>
                   </td>

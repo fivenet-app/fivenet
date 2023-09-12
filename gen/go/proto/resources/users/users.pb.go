@@ -525,10 +525,12 @@ type UserActivity struct {
 	CreatedAt  *timestamp.Timestamp `protobuf:"bytes,3,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty" alias:"fivenet_user_activity.created_at"`               // @gotags: alias:"fivenet_user_activity.created_at"
 	SourceUser *UserShort           `protobuf:"bytes,4,opt,name=source_user,json=sourceUser,proto3" json:"source_user,omitempty" alias:"source_user"`            // @gotags: alias:"source_user"
 	TargetUser *UserShort           `protobuf:"bytes,5,opt,name=target_user,json=targetUser,proto3" json:"target_user,omitempty" alias:"target_user"`            // @gotags: alias:"target_user"
-	Key        string               `protobuf:"bytes,6,opt,name=key,proto3" json:"key,omitempty" alias:"fivenet_user_activity.key"`                                            // @gotags: alias:"fivenet_user_activity.key"
-	OldValue   string               `protobuf:"bytes,7,opt,name=old_value,json=oldValue,proto3" json:"old_value,omitempty" alias:"fivenet_user_activity.old_value"`                  // @gotags: alias:"fivenet_user_activity.old_value"
-	NewValue   string               `protobuf:"bytes,8,opt,name=new_value,json=newValue,proto3" json:"new_value,omitempty" alias:"fivenet_user_activity.new_value"`                  // @gotags: alias:"fivenet_user_activity.new_value"
-	Reason     string               `protobuf:"bytes,9,opt,name=reason,proto3" json:"reason,omitempty" alias:"fivenet_user_activity.reason"`                                      // @gotags: alias:"fivenet_user_activity.reason"
+	// @sanitize
+	Key      string `protobuf:"bytes,6,opt,name=key,proto3" json:"key,omitempty" alias:"fivenet_user_activity.key"`                           // @gotags: alias:"fivenet_user_activity.key"
+	OldValue string `protobuf:"bytes,7,opt,name=old_value,json=oldValue,proto3" json:"old_value,omitempty" alias:"fivenet_user_activity.old_value"` // @gotags: alias:"fivenet_user_activity.old_value"
+	NewValue string `protobuf:"bytes,8,opt,name=new_value,json=newValue,proto3" json:"new_value,omitempty" alias:"fivenet_user_activity.new_value"` // @gotags: alias:"fivenet_user_activity.new_value"
+	// @sanitize
+	Reason string `protobuf:"bytes,9,opt,name=reason,proto3" json:"reason,omitempty" alias:"fivenet_user_activity.reason"` // @gotags: alias:"fivenet_user_activity.reason"
 }
 
 func (x *UserActivity) Reset() {

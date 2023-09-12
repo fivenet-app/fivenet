@@ -12,6 +12,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	grpc_auth "github.com/galexrt/fivenet/pkg/grpc/interceptors/auth"
 	grpc_permission "github.com/galexrt/fivenet/pkg/grpc/interceptors/permission"
+	grpc_sanitizer "github.com/galexrt/fivenet/pkg/grpc/interceptors/sanitizer"
 	"github.com/galexrt/fivenet/pkg/perms"
 	"github.com/getsentry/sentry-go"
 	grpcprom "github.com/grpc-ecosystem/go-grpc-middleware/providers/prometheus"
@@ -124,6 +125,7 @@ func NewServer(p ServerParams) (ServerResult, error) {
 			grpc_auth.UnaryServerInterceptor(grpcAuth.GRPCAuthFunc),
 			validator.UnaryServerInterceptor(),
 			grpc_permission.UnaryServerInterceptor(grpcPerm.GRPCPermissionUnaryFunc),
+			grpc_sanitizer.UnaryServerInterceptor(),
 			recovery.UnaryServerInterceptor(
 				recovery.WithRecoveryHandler(grpcPanicRecoveryHandler),
 			),

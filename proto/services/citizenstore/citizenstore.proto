@@ -44,6 +44,7 @@ message ListUserActivityResponse {
 
 message SetUserPropsRequest {
   resources.users.UserProps props = 1 [(validate.rules).message.required = true];
+  // @sanitize
   string reason = 2 [(validate.rules).string = {
     ignore_empty: true,
     min_len: 3,

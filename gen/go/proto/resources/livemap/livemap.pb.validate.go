@@ -153,7 +153,30 @@ func (m *MarkerInfo) validate(all bool) error {
 	}
 
 	if m.Color != nil {
-		// no validation rules for Color
+
+		if utf8.RuneCountInString(m.GetColor()) != 6 {
+			err := MarkerInfoValidationError{
+				field:  "Color",
+				reason: "value length must be 6 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+
+		}
+
+		if !_MarkerInfo_Color_Pattern.MatchString(m.GetColor()) {
+			err := MarkerInfoValidationError{
+				field:  "Color",
+				reason: "value does not match regex pattern \"^[A-Fa-f0-9]{6}$\"",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
 	}
 
 	if m.Icon != nil {
@@ -236,6 +259,8 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = MarkerInfoValidationError{}
+
+var _MarkerInfo_Color_Pattern = regexp.MustCompile("^[A-Fa-f0-9]{6}$")
 
 // Validate checks the field values on UserMarker with the rules defined in the
 // proto definition for this message. If any rules are violated, the first

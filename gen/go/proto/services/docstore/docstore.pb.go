@@ -561,7 +561,7 @@ type ListDocumentsRequest struct {
 
 	Pagination *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	OrderBy    []*database.OrderBy         `protobuf:"bytes,2,rep,name=orderBy,proto3" json:"orderBy,omitempty"`
-	// Search param
+	// Search params
 	Search      *string              `protobuf:"bytes,3,opt,name=search,proto3,oneof" json:"search,omitempty"`
 	CategoryIds []uint64             `protobuf:"varint,4,rep,packed,name=category_ids,json=categoryIds,proto3" json:"category_ids,omitempty"`
 	CreatorIds  []int32              `protobuf:"varint,5,rep,packed,name=creator_ids,json=creatorIds,proto3" json:"creator_ids,omitempty"`
@@ -1741,8 +1741,10 @@ type CreateDocumentRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	CategoryId  *uint64                    `protobuf:"varint,1,opt,name=category_id,json=categoryId,proto3,oneof" json:"category_id,omitempty" alias:"category_id"`                                        // @gotags: alias:"category_id"
-	Title       string                     `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty" alias:"title"`                                                                           // @gotags: alias:"title"
+	CategoryId *uint64 `protobuf:"varint,1,opt,name=category_id,json=categoryId,proto3,oneof" json:"category_id,omitempty" alias:"category_id"` // @gotags: alias:"category_id"
+	// @sanitize
+	Title string `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty" alias:"title"` // @gotags: alias:"title"
+	// @sanitize
 	Content     string                     `protobuf:"bytes,3,opt,name=content,proto3" json:"content,omitempty" alias:"content"`                                                                       // @gotags: alias:"content"
 	ContentType documents.DOC_CONTENT_TYPE `protobuf:"varint,4,opt,name=content_type,json=contentType,proto3,enum=resources.documents.DOC_CONTENT_TYPE" json:"content_type,omitempty" alias:"content_type"` // @gotags: alias:"content_type"
 	Data        *string                    `protobuf:"bytes,5,opt,name=data,proto3,oneof" json:"data,omitempty" alias:"data"`                                                                       // @gotags: alias:"data"
@@ -1899,16 +1901,19 @@ type UpdateDocumentRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	DocumentId  uint64                     `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty" alias:"id"`                                              // @gotags: alias:"id"
-	CategoryId  *uint64                    `protobuf:"varint,2,opt,name=category_id,json=categoryId,proto3,oneof" json:"category_id,omitempty" alias:"category_id"`                                        // @gotags: alias:"category_id"
-	Title       string                     `protobuf:"bytes,3,opt,name=title,proto3" json:"title,omitempty" alias:"title"`                                                                           // @gotags: alias:"title"
+	DocumentId uint64  `protobuf:"varint,1,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty" alias:"id"`       // @gotags: alias:"id"
+	CategoryId *uint64 `protobuf:"varint,2,opt,name=category_id,json=categoryId,proto3,oneof" json:"category_id,omitempty" alias:"category_id"` // @gotags: alias:"category_id"
+	// @sanitize
+	Title string `protobuf:"bytes,3,opt,name=title,proto3" json:"title,omitempty" alias:"title"` // @gotags: alias:"title"
+	// @sanitize
 	Content     string                     `protobuf:"bytes,4,opt,name=content,proto3" json:"content,omitempty" alias:"content"`                                                                       // @gotags: alias:"content"
 	ContentType documents.DOC_CONTENT_TYPE `protobuf:"varint,5,opt,name=content_type,json=contentType,proto3,enum=resources.documents.DOC_CONTENT_TYPE" json:"content_type,omitempty" alias:"content_type"` // @gotags: alias:"content_type"
 	Data        *string                    `protobuf:"bytes,6,opt,name=data,proto3,oneof" json:"data,omitempty" alias:"data"`                                                                       // @gotags: alias:"data"
-	State       string                     `protobuf:"bytes,7,opt,name=state,proto3" json:"state,omitempty" alias:"state"`                                                                           // @gotags: alias:"state"
-	Closed      bool                       `protobuf:"varint,8,opt,name=closed,proto3" json:"closed,omitempty" alias:"closed"`                                                                        // @gotags: alias:"closed"
-	Public      bool                       `protobuf:"varint,9,opt,name=public,proto3" json:"public,omitempty" alias:"public"`                                                                        // @gotags: alias:"public"
-	Access      *documents.DocumentAccess  `protobuf:"bytes,10,opt,name=access,proto3,oneof" json:"access,omitempty"`
+	// @sanitize
+	State  string                    `protobuf:"bytes,7,opt,name=state,proto3" json:"state,omitempty" alias:"state"`    // @gotags: alias:"state"
+	Closed bool                      `protobuf:"varint,8,opt,name=closed,proto3" json:"closed,omitempty" alias:"closed"` // @gotags: alias:"closed"
+	Public bool                      `protobuf:"varint,9,opt,name=public,proto3" json:"public,omitempty" alias:"public"` // @gotags: alias:"public"
+	Access *documents.DocumentAccess `protobuf:"bytes,10,opt,name=access,proto3,oneof" json:"access,omitempty"`
 }
 
 func (x *UpdateDocumentRequest) Reset() {

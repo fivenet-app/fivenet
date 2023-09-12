@@ -87,11 +87,13 @@ message UserActivity {
   resources.timestamp.Timestamp created_at = 3; // @gotags: alias:"fivenet_user_activity.created_at"
   UserShort source_user = 4; // @gotags: alias:"source_user"
   UserShort target_user = 5; // @gotags: alias:"target_user"
+  // @sanitize
   string key = 6 [(validate.rules).string = {
     min_len: 1,
     max_len: 64
   }]; // @gotags: alias:"fivenet_user_activity.key"
   string old_value = 7 [(validate.rules).string.max_len = 256]; // @gotags: alias:"fivenet_user_activity.old_value"
   string new_value = 8 [(validate.rules).string.max_len = 256]; // @gotags: alias:"fivenet_user_activity.new_value"
+  // @sanitize
   string reason = 9; // @gotags: alias:"fivenet_user_activity.reason"
 }

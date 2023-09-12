@@ -177,10 +177,10 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await conductCrea
                                             <div class="flex items-center justify-between">
                                                 <DialogTitle class="text-base font-semibold leading-6 text-white">
                                                     <template v-if="entry === undefined">
-                                                        {{ $t('components.jobs.CreateOrUpdateModal.create_title') }}
+                                                        {{ $t('components.jobs.conduct.CreateOrUpdateModal.create_title') }}
                                                     </template>
                                                     <template v-else>
-                                                        {{ $t('components.jobs.CreateOrUpdateModal.update_title') }}
+                                                        {{ $t('components.jobs.conduct.CreateOrUpdateModal.update_title') }}
                                                     </template>
                                                 </DialogTitle>
                                                 <div class="ml-3 flex h-7 items-center">

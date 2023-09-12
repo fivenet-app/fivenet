@@ -369,10 +369,22 @@ func (m *JobProps) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if utf8.RuneCountInString(m.GetLivemapMarkerColor()) > 6 {
+	if utf8.RuneCountInString(m.GetLivemapMarkerColor()) != 6 {
 		err := JobPropsValidationError{
 			field:  "LivemapMarkerColor",
-			reason: "value length must be at most 6 runes",
+			reason: "value length must be 6 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+
+	}
+
+	if !_JobProps_LivemapMarkerColor_Pattern.MatchString(m.GetLivemapMarkerColor()) {
+		err := JobPropsValidationError{
+			field:  "LivemapMarkerColor",
+			reason: "value does not match regex pattern \"^[A-Fa-f0-9]{6}$\"",
 		}
 		if !all {
 			return err
@@ -462,3 +474,5 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = JobPropsValidationError{}
+
+var _JobProps_LivemapMarkerColor_Pattern = regexp.MustCompile("^[A-Fa-f0-9]{6}$")

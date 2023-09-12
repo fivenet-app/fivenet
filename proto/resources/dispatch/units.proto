@@ -13,18 +13,23 @@ message Unit {
   optional resources.timestamp.Timestamp created_at = 2;
   optional resources.timestamp.Timestamp updated_at = 3;
   string job = 4 [(validate.rules).string.max_len = 20];
+  // @sanitize
   string name = 5 [(validate.rules).string = {
     min_len: 3,
     max_len: 24
   }];
+  // @sanitize
   string initials = 6 [(validate.rules).string = {
     min_len: 2,
     max_len: 4
   }];
-  optional string color = 7 [(validate.rules).string.max_len = 6];
+  optional string color = 7 [(validate.rules).string = {
+    len: 6,
+    pattern: "^[A-Fa-f0-9]{6}$",
+  }];
+  // @sanitize
   optional string description = 8 [(validate.rules).string.max_len = 255];
   optional UnitStatus status = 9;
-  //repeated UnitStatus statuses = 10;
   repeated UnitAssignment users = 11;
 }
 
@@ -55,12 +60,15 @@ message UnitStatus {
   optional resources.timestamp.Timestamp created_at = 2;
   uint64 unit_id = 3;
   UNIT_STATUS status = 4 [(validate.rules).enum.defined_only = true];
+  // @sanitize
   optional string reason = 5 [(validate.rules).string.max_len = 255];
+  // @sanitize
   optional string code = 6 [(validate.rules).string.max_len = 20];
   optional int32 user_id = 7 [(validate.rules).int32.gt = 0];
   optional resources.users.UserShort user = 8;
   optional double x = 9;
   optional double y = 10;
+  // @sanitize
   optional string postal = 11  [(validate.rules).string.max_len = 48];
   optional int32 creator_id = 12 [(validate.rules).int32.gt = 0];
   optional resources.users.UserShort creator = 13;

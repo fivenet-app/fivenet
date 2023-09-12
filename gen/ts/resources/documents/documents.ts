@@ -31,6 +31,8 @@ export interface Document {
      */
     category?: Category; // @gotags: alias:"category"
     /**
+     * @sanitize
+     *
      * @generated from protobuf field: string title = 6;
      */
     title: string; // @gotags: alias:"title"
@@ -39,10 +41,14 @@ export interface Document {
      */
     contentType: DOC_CONTENT_TYPE; // @gotags: alias:"content_type"
     /**
+     * @sanitize
+     *
      * @generated from protobuf field: string content = 8;
      */
     content: string; // @gotags: alias:"content"
     /**
+     * @sanitize
+     *
      * @generated from protobuf field: string data = 9;
      */
     data: string; // @gotags: alias:"data"
@@ -55,6 +61,8 @@ export interface Document {
      */
     creator?: UserShort; // @gotags: alias:"creator"
     /**
+     * @sanitize
+     *
      * @generated from protobuf field: string state = 12;
      */
     state: string; // @gotags: alias:"state"
@@ -96,6 +104,8 @@ export interface DocumentShort {
      */
     category?: Category; // @gotags: alias:"category"
     /**
+     * @sanitize
+     *
      * @generated from protobuf field: string title = 6;
      */
     title: string; // @gotags: alias:"title"
@@ -104,6 +114,8 @@ export interface DocumentShort {
      */
     contentType: DOC_CONTENT_TYPE; // @gotags: alias:"content_type"
     /**
+     * @sanitize
+     *
      * @generated from protobuf field: string content = 8;
      */
     content: string; // @gotags: alias:"content"
@@ -116,6 +128,8 @@ export interface DocumentShort {
      */
     creator?: UserShort; // @gotags: alias:"creator"
     /**
+     * @sanitize
+     *
      * @generated from protobuf field: string state = 11;
      */
     state: string; // @gotags: alias:"state"

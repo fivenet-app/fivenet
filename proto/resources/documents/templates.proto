@@ -18,7 +18,9 @@ message Template {
   optional resources.timestamp.Timestamp updated_at = 3;
   resources.documents.Category category = 4; // @gotags: alias:"category"
   uint32 weight = 5; // @gotags: alias:"weight"
+  // @sanitize
   string title = 6 [(validate.rules).string.min_len = 3]; // @gotags: alias:"title"
+  // @sanitize
   string description = 7 [(validate.rules).string.max_len = 255]; // @gotags: alias:"description"
   string content_title = 8 [(validate.rules).string = {
     min_len: 3,
@@ -43,7 +45,9 @@ message TemplateShort {
   optional resources.timestamp.Timestamp updated_at = 3;
   uint32 weight = 4; // @gotags: alias:"weight"
   resources.documents.Category category = 5; // @gotags: alias:"category"
+  // @sanitize
   string title = 6 [(validate.rules).string.min_len = 3]; // @gotags: alias:"title"
+  // @sanitize
   string description = 7 [(validate.rules).string.max_len = 255]; // @gotags: alias:"description"
   resources.documents.TemplateSchema schema = 8; // @gotags: alias:"schema"
   optional int32 creator_id = 9; // @gotags: alias:"creator_id"

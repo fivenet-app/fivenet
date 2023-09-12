@@ -11,10 +11,14 @@ export interface Category {
      */
     id: bigint;
     /**
+     * @sanitize
+     *
      * @generated from protobuf field: string name = 2;
      */
     name: string;
     /**
+     * @sanitize
+     *
      * @generated from protobuf field: optional string description = 3;
      */
     description?: string;

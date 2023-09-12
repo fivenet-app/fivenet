@@ -383,8 +383,9 @@ type SetUserPropsRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Props  *users.UserProps `protobuf:"bytes,1,opt,name=props,proto3" json:"props,omitempty"`
-	Reason string           `protobuf:"bytes,2,opt,name=reason,proto3" json:"reason,omitempty"`
+	Props *users.UserProps `protobuf:"bytes,1,opt,name=props,proto3" json:"props,omitempty"`
+	// @sanitize
+	Reason string `protobuf:"bytes,2,opt,name=reason,proto3" json:"reason,omitempty"`
 }
 
 func (x *SetUserPropsRequest) Reset() {

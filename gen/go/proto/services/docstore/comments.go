@@ -7,7 +7,6 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/documents"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
-	"github.com/galexrt/fivenet/pkg/htmlsanitizer"
 	"github.com/galexrt/fivenet/pkg/perms"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
@@ -143,9 +142,6 @@ func (s *Server) PostComment(ctx context.Context, req *PostCommentRequest) (*Pos
 		return nil, status.Error(codes.PermissionDenied, "You don't have permission to post a comment on this document!")
 	}
 
-	// Clean comment from
-	req.Comment.Comment = htmlsanitizer.StripTags(req.Comment.Comment)
-
 	stmt := tDComments.
 		INSERT(
 			tDComments.DocumentID,
@@ -202,9 +198,6 @@ func (s *Server) EditComment(ctx context.Context, req *EditCommentRequest) (*Edi
 	if !userInfo.SuperUser && *comment.CreatorId != userInfo.UserId {
 		return nil, status.Error(codes.PermissionDenied, "You can't edit others document comments!")
 	}
-
-	// Clean comment from
-	req.Comment.Comment = htmlsanitizer.StripTags(req.Comment.Comment)
 
 	stmt := tDComments.
 		UPDATE(

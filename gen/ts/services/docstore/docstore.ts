@@ -129,7 +129,7 @@ export interface ListDocumentsRequest {
      */
     orderBy: OrderBy[];
     /**
-     * Search param
+     * Search params
      *
      * @generated from protobuf field: optional string search = 3;
      */
@@ -373,10 +373,14 @@ export interface CreateDocumentRequest {
      */
     categoryId?: bigint; // @gotags: alias:"category_id"
     /**
+     * @sanitize
+     *
      * @generated from protobuf field: string title = 2;
      */
     title: string; // @gotags: alias:"title"
     /**
+     * @sanitize
+     *
      * @generated from protobuf field: string content = 3;
      */
     content: string; // @gotags: alias:"content"
@@ -427,10 +431,14 @@ export interface UpdateDocumentRequest {
      */
     categoryId?: bigint; // @gotags: alias:"category_id"
     /**
+     * @sanitize
+     *
      * @generated from protobuf field: string title = 3;
      */
     title: string; // @gotags: alias:"title"
     /**
+     * @sanitize
+     *
      * @generated from protobuf field: string content = 4;
      */
     content: string; // @gotags: alias:"content"
@@ -443,6 +451,8 @@ export interface UpdateDocumentRequest {
      */
     data?: string; // @gotags: alias:"data"
     /**
+     * @sanitize
+     *
      * @generated from protobuf field: string state = 7;
      */
     state: string; // @gotags: alias:"state"

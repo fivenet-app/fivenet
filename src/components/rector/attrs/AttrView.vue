@@ -236,6 +236,7 @@ onMounted(async () => {
                                         :attribute="attr"
                                         :permission="perm"
                                         v-model:states="attrStates"
+                                        @update:states="changed = true"
                                     />
                                     <div
                                         v-if="idx !== permList.filter((p) => p.category === category).length - 1"

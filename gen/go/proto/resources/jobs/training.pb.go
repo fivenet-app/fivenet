@@ -33,8 +33,10 @@ type TrainingModule struct {
 	Job          string               `protobuf:"bytes,4,opt,name=job,proto3" json:"job,omitempty"`
 	Open         bool                 `protobuf:"varint,5,opt,name=open,proto3" json:"open,omitempty"`
 	MinimumGrade int32                `protobuf:"varint,6,opt,name=minimum_grade,json=minimumGrade,proto3" json:"minimum_grade,omitempty"`
-	Title        string               `protobuf:"bytes,7,opt,name=title,proto3" json:"title,omitempty"`
-	Description  string               `protobuf:"bytes,8,opt,name=description,proto3" json:"description,omitempty"`
+	// @sanitize
+	Title string `protobuf:"bytes,7,opt,name=title,proto3" json:"title,omitempty"`
+	// @sanitize
+	Description string `protobuf:"bytes,8,opt,name=description,proto3" json:"description,omitempty"`
 }
 
 func (x *TrainingModule) Reset() {

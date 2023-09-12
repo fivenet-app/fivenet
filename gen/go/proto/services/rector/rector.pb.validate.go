@@ -2509,15 +2509,48 @@ func (m *ViewAuditLogRequest) validate(all bool) error {
 	}
 
 	if m.Service != nil {
-		// no validation rules for Service
+
+		if utf8.RuneCountInString(m.GetService()) > 64 {
+			err := ViewAuditLogRequestValidationError{
+				field:  "Service",
+				reason: "value length must be at most 64 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
 	}
 
 	if m.Method != nil {
-		// no validation rules for Method
+
+		if utf8.RuneCountInString(m.GetMethod()) > 64 {
+			err := ViewAuditLogRequestValidationError{
+				field:  "Method",
+				reason: "value length must be at most 64 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
 	}
 
 	if m.Search != nil {
-		// no validation rules for Search
+
+		if utf8.RuneCountInString(m.GetSearch()) > 128 {
+			err := ViewAuditLogRequestValidationError{
+				field:  "Search",
+				reason: "value length must be at most 128 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
 	}
 
 	if len(errors) > 0 {

@@ -71,11 +71,12 @@ type RequestEntry struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id             uint64               `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" sql:"primary_key" alias:"id"` // @gotags: sql:"primary_key" alias:"id"
-	CreatedAt      *timestamp.Timestamp `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
-	UpdatedAt      *timestamp.Timestamp `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
-	Job            string               `protobuf:"bytes,4,opt,name=job,proto3" json:"job,omitempty"`
-	Type           REQUEST_TYPE         `protobuf:"varint,5,opt,name=type,proto3,enum=resources.jobs.REQUEST_TYPE" json:"type,omitempty"`
+	Id        uint64               `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" sql:"primary_key" alias:"id"` // @gotags: sql:"primary_key" alias:"id"
+	CreatedAt *timestamp.Timestamp `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
+	UpdatedAt *timestamp.Timestamp `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
+	Job       string               `protobuf:"bytes,4,opt,name=job,proto3" json:"job,omitempty"`
+	Type      REQUEST_TYPE         `protobuf:"varint,5,opt,name=type,proto3,enum=resources.jobs.REQUEST_TYPE" json:"type,omitempty"`
+	// @sanitize
 	Message        string               `protobuf:"bytes,6,opt,name=message,proto3" json:"message,omitempty"`
 	BeginsAt       *timestamp.Timestamp `protobuf:"bytes,7,opt,name=begins_at,json=beginsAt,proto3,oneof" json:"begins_at,omitempty"`
 	EndsAt         *timestamp.Timestamp `protobuf:"bytes,8,opt,name=ends_at,json=endsAt,proto3,oneof" json:"ends_at,omitempty"`

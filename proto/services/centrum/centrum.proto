@@ -53,7 +53,9 @@ message DeleteUnitResponse {}
 message UpdateUnitStatusRequest {
   uint64 unit_id = 1;
   resources.dispatch.UNIT_STATUS status = 2 [(validate.rules).enum.defined_only = true];
+  // @sanitize
   optional string reason = 3 [(validate.rules).string.max_len = 255];
+  // @sanitize
   optional string code = 4 [(validate.rules).string.max_len = 20];
 }
 
@@ -118,7 +120,9 @@ message DeleteDispatchResponse {}
 message UpdateDispatchStatusRequest {
   uint64 dispatch_id = 1;
   resources.dispatch.DISPATCH_STATUS status = 2 [(validate.rules).enum.defined_only = true];
+  // @sanitize
   optional string reason = 3;
+  // @sanitize
   optional string code = 4;
 }
 
@@ -155,6 +159,7 @@ enum TAKE_DISPATCH_RESP {
 message TakeDispatchRequest {
   repeated uint64 dispatch_ids = 1 [(validate.rules).repeated.min_items = 1];
   TAKE_DISPATCH_RESP resp = 2 [(validate.rules).enum.defined_only = true];
+  // @sanitize
   optional string reason = 3 [(validate.rules).string.max_len = 255];
 }
 

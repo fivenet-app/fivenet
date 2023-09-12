@@ -35,10 +35,14 @@ export interface Template {
      */
     weight: number; // @gotags: alias:"weight"
     /**
+     * @sanitize
+     *
      * @generated from protobuf field: string title = 6;
      */
     title: string; // @gotags: alias:"title"
     /**
+     * @sanitize
+     *
      * @generated from protobuf field: string description = 7;
      */
     description: string; // @gotags: alias:"description"
@@ -104,10 +108,14 @@ export interface TemplateShort {
      */
     category?: Category; // @gotags: alias:"category"
     /**
+     * @sanitize
+     *
      * @generated from protobuf field: string title = 6;
      */
     title: string; // @gotags: alias:"title"
     /**
+     * @sanitize
+     *
      * @generated from protobuf field: string description = 7;
      */
     description: string; // @gotags: alias:"description"

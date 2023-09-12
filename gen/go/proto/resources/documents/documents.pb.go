@@ -175,21 +175,25 @@ type Document struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id          uint64               `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id"` // @gotags: alias:"id"
-	CreatedAt   *timestamp.Timestamp `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	UpdatedAt   *timestamp.Timestamp `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
-	CategoryId  *uint64              `protobuf:"varint,4,opt,name=category_id,json=categoryId,proto3,oneof" json:"category_id,omitempty" alias:"category_id"`                                        // @gotags: alias:"category_id"
-	Category    *Category            `protobuf:"bytes,5,opt,name=category,proto3,oneof" json:"category,omitempty" alias:"category"`                                                               // @gotags: alias:"category"
-	Title       string               `protobuf:"bytes,6,opt,name=title,proto3" json:"title,omitempty" alias:"title"`                                                                           // @gotags: alias:"title"
-	ContentType DOC_CONTENT_TYPE     `protobuf:"varint,7,opt,name=content_type,json=contentType,proto3,enum=resources.documents.DOC_CONTENT_TYPE" json:"content_type,omitempty" alias:"content_type"` // @gotags: alias:"content_type"
-	Content     string               `protobuf:"bytes,8,opt,name=content,proto3" json:"content,omitempty" alias:"content"`                                                                       // @gotags: alias:"content"
-	Data        string               `protobuf:"bytes,9,opt,name=data,proto3" json:"data,omitempty" alias:"data"`                                                                             // @gotags: alias:"data"
-	CreatorId   *int32               `protobuf:"varint,10,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty" alias:"creator_id"`                                          // @gotags: alias:"creator_id"
-	Creator     *users.UserShort     `protobuf:"bytes,11,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"creator"`                                                                // @gotags: alias:"creator"
-	State       string               `protobuf:"bytes,12,opt,name=state,proto3" json:"state,omitempty" alias:"state"`                                                                          // @gotags: alias:"state"
-	Closed      bool                 `protobuf:"varint,13,opt,name=closed,proto3" json:"closed,omitempty" alias:"closed"`                                                                       // @gotags: alias:"closed"
-	Public      bool                 `protobuf:"varint,14,opt,name=public,proto3" json:"public,omitempty" alias:"public"`                                                                       // @gotags: alias:"public"
-	DeletedAt   *timestamp.Timestamp `protobuf:"bytes,15,opt,name=deleted_at,json=deletedAt,proto3" json:"deleted_at,omitempty"`
+	Id         uint64               `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id"` // @gotags: alias:"id"
+	CreatedAt  *timestamp.Timestamp `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt  *timestamp.Timestamp `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	CategoryId *uint64              `protobuf:"varint,4,opt,name=category_id,json=categoryId,proto3,oneof" json:"category_id,omitempty" alias:"category_id"` // @gotags: alias:"category_id"
+	Category   *Category            `protobuf:"bytes,5,opt,name=category,proto3,oneof" json:"category,omitempty" alias:"category"`                        // @gotags: alias:"category"
+	// @sanitize
+	Title       string           `protobuf:"bytes,6,opt,name=title,proto3" json:"title,omitempty" alias:"title"`                                                                           // @gotags: alias:"title"
+	ContentType DOC_CONTENT_TYPE `protobuf:"varint,7,opt,name=content_type,json=contentType,proto3,enum=resources.documents.DOC_CONTENT_TYPE" json:"content_type,omitempty" alias:"content_type"` // @gotags: alias:"content_type"
+	// @sanitize
+	Content string `protobuf:"bytes,8,opt,name=content,proto3" json:"content,omitempty" alias:"content"` // @gotags: alias:"content"
+	// @sanitize
+	Data      string           `protobuf:"bytes,9,opt,name=data,proto3" json:"data,omitempty" alias:"data"`                                    // @gotags: alias:"data"
+	CreatorId *int32           `protobuf:"varint,10,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty" alias:"creator_id"` // @gotags: alias:"creator_id"
+	Creator   *users.UserShort `protobuf:"bytes,11,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"creator"`                       // @gotags: alias:"creator"
+	// @sanitize
+	State     string               `protobuf:"bytes,12,opt,name=state,proto3" json:"state,omitempty" alias:"state"`    // @gotags: alias:"state"
+	Closed    bool                 `protobuf:"varint,13,opt,name=closed,proto3" json:"closed,omitempty" alias:"closed"` // @gotags: alias:"closed"
+	Public    bool                 `protobuf:"varint,14,opt,name=public,proto3" json:"public,omitempty" alias:"public"` // @gotags: alias:"public"
+	DeletedAt *timestamp.Timestamp `protobuf:"bytes,15,opt,name=deleted_at,json=deletedAt,proto3" json:"deleted_at,omitempty"`
 }
 
 func (x *Document) Reset() {
@@ -334,20 +338,23 @@ type DocumentShort struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id          uint64               `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id"` // @gotags: alias:"id"
-	CreatedAt   *timestamp.Timestamp `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
-	UpdatedAt   *timestamp.Timestamp `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
-	CategoryId  *uint64              `protobuf:"varint,4,opt,name=category_id,json=categoryId,proto3,oneof" json:"category_id,omitempty" alias:"category_id"`                                        // @gotags: alias:"category_id"
-	Category    *Category            `protobuf:"bytes,5,opt,name=category,proto3,oneof" json:"category,omitempty" alias:"category"`                                                               // @gotags: alias:"category"
-	Title       string               `protobuf:"bytes,6,opt,name=title,proto3" json:"title,omitempty" alias:"title"`                                                                           // @gotags: alias:"title"
-	ContentType DOC_CONTENT_TYPE     `protobuf:"varint,7,opt,name=content_type,json=contentType,proto3,enum=resources.documents.DOC_CONTENT_TYPE" json:"content_type,omitempty" alias:"content_type"` // @gotags: alias:"content_type"
-	Content     string               `protobuf:"bytes,8,opt,name=content,proto3" json:"content,omitempty" alias:"content"`                                                                       // @gotags: alias:"content"
-	CreatorId   *int32               `protobuf:"varint,9,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty" alias:"creator_id"`                                           // @gotags: alias:"creator_id"
-	Creator     *users.UserShort     `protobuf:"bytes,10,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"creator"`                                                                // @gotags: alias:"creator"
-	State       string               `protobuf:"bytes,11,opt,name=state,proto3" json:"state,omitempty" alias:"state"`                                                                          // @gotags: alias:"state"
-	Closed      bool                 `protobuf:"varint,12,opt,name=closed,proto3" json:"closed,omitempty" alias:"closed"`                                                                       // @gotags: alias:"closed"
-	Public      bool                 `protobuf:"varint,13,opt,name=public,proto3" json:"public,omitempty" alias:"public"`                                                                       // @gotags: alias:"public"
-	DeletedAt   *timestamp.Timestamp `protobuf:"bytes,14,opt,name=deleted_at,json=deletedAt,proto3" json:"deleted_at,omitempty"`
+	Id         uint64               `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id"` // @gotags: alias:"id"
+	CreatedAt  *timestamp.Timestamp `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt  *timestamp.Timestamp `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3" json:"updated_at,omitempty"`
+	CategoryId *uint64              `protobuf:"varint,4,opt,name=category_id,json=categoryId,proto3,oneof" json:"category_id,omitempty" alias:"category_id"` // @gotags: alias:"category_id"
+	Category   *Category            `protobuf:"bytes,5,opt,name=category,proto3,oneof" json:"category,omitempty" alias:"category"`                        // @gotags: alias:"category"
+	// @sanitize
+	Title       string           `protobuf:"bytes,6,opt,name=title,proto3" json:"title,omitempty" alias:"title"`                                                                           // @gotags: alias:"title"
+	ContentType DOC_CONTENT_TYPE `protobuf:"varint,7,opt,name=content_type,json=contentType,proto3,enum=resources.documents.DOC_CONTENT_TYPE" json:"content_type,omitempty" alias:"content_type"` // @gotags: alias:"content_type"
+	// @sanitize
+	Content   string           `protobuf:"bytes,8,opt,name=content,proto3" json:"content,omitempty" alias:"content"`                             // @gotags: alias:"content"
+	CreatorId *int32           `protobuf:"varint,9,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty" alias:"creator_id"` // @gotags: alias:"creator_id"
+	Creator   *users.UserShort `protobuf:"bytes,10,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"creator"`                      // @gotags: alias:"creator"
+	// @sanitize
+	State     string               `protobuf:"bytes,11,opt,name=state,proto3" json:"state,omitempty" alias:"state"`    // @gotags: alias:"state"
+	Closed    bool                 `protobuf:"varint,12,opt,name=closed,proto3" json:"closed,omitempty" alias:"closed"` // @gotags: alias:"closed"
+	Public    bool                 `protobuf:"varint,13,opt,name=public,proto3" json:"public,omitempty" alias:"public"` // @gotags: alias:"public"
+	DeletedAt *timestamp.Timestamp `protobuf:"bytes,14,opt,name=deleted_at,json=deletedAt,proto3" json:"deleted_at,omitempty"`
 }
 
 func (x *DocumentShort) Reset() {

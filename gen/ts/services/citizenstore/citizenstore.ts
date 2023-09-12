@@ -109,6 +109,8 @@ export interface SetUserPropsRequest {
      */
     props?: UserProps;
     /**
+     * @sanitize
+     *
      * @generated from protobuf field: string reason = 2;
      */
     reason: string;

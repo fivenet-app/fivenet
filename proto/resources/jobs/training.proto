@@ -14,7 +14,9 @@ message TrainingModule {
   string job = 4 [(validate.rules).string.max_len = 20];
   bool open = 5;
   int32 minimum_grade = 6 [(validate.rules).int32.gt = 0];
+  // @sanitize
   string title = 7;
+  // @sanitize
   string description = 8;
 }
 

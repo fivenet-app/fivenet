@@ -106,17 +106,19 @@ type Dispatch struct {
 	UpdatedAt *timestamp.Timestamp `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
 	Job       string               `protobuf:"bytes,4,opt,name=job,proto3" json:"job,omitempty"`
 	Status    *DispatchStatus      `protobuf:"bytes,5,opt,name=status,proto3,oneof" json:"status,omitempty"`
-	// repeated DispatchStatus statuses = 6;
-	Message     string                `protobuf:"bytes,7,opt,name=message,proto3" json:"message,omitempty"`
-	Description *string               `protobuf:"bytes,8,opt,name=description,proto3,oneof" json:"description,omitempty"`
-	Attributes  *Attributes           `protobuf:"bytes,9,opt,name=attributes,proto3,oneof" json:"attributes,omitempty"`
-	X           float64               `protobuf:"fixed64,10,opt,name=x,proto3" json:"x,omitempty"`
-	Y           float64               `protobuf:"fixed64,11,opt,name=y,proto3" json:"y,omitempty"`
-	Postal      *string               `protobuf:"bytes,12,opt,name=postal,proto3,oneof" json:"postal,omitempty"`
-	Anon        *bool                 `protobuf:"varint,13,opt,name=anon,proto3,oneof" json:"anon,omitempty"`
-	UserId      *int32                `protobuf:"varint,14,opt,name=user_id,json=userId,proto3,oneof" json:"user_id,omitempty"`
-	User        *users.User           `protobuf:"bytes,15,opt,name=user,proto3,oneof" json:"user,omitempty"`
-	Units       []*DispatchAssignment `protobuf:"bytes,16,rep,name=units,proto3" json:"units,omitempty"`
+	// @sanitize
+	Message string `protobuf:"bytes,7,opt,name=message,proto3" json:"message,omitempty"`
+	// @sanitize
+	Description *string     `protobuf:"bytes,8,opt,name=description,proto3,oneof" json:"description,omitempty"`
+	Attributes  *Attributes `protobuf:"bytes,9,opt,name=attributes,proto3,oneof" json:"attributes,omitempty"`
+	X           float64     `protobuf:"fixed64,10,opt,name=x,proto3" json:"x,omitempty"`
+	Y           float64     `protobuf:"fixed64,11,opt,name=y,proto3" json:"y,omitempty"`
+	// @sanitize
+	Postal *string               `protobuf:"bytes,12,opt,name=postal,proto3,oneof" json:"postal,omitempty"`
+	Anon   *bool                 `protobuf:"varint,13,opt,name=anon,proto3,oneof" json:"anon,omitempty"`
+	UserId *int32                `protobuf:"varint,14,opt,name=user_id,json=userId,proto3,oneof" json:"user_id,omitempty"`
+	User   *users.User           `protobuf:"bytes,15,opt,name=user,proto3,oneof" json:"user,omitempty"`
+	Units  []*DispatchAssignment `protobuf:"bytes,16,rep,name=units,proto3" json:"units,omitempty"`
 }
 
 func (x *Dispatch) Reset() {
@@ -456,13 +458,16 @@ type DispatchStatus struct {
 	UnitId     *uint64              `protobuf:"varint,4,opt,name=unit_id,json=unitId,proto3,oneof" json:"unit_id,omitempty"`
 	Unit       *Unit                `protobuf:"bytes,5,opt,name=unit,proto3,oneof" json:"unit,omitempty"`
 	Status     DISPATCH_STATUS      `protobuf:"varint,6,opt,name=status,proto3,enum=resources.dispatch.DISPATCH_STATUS" json:"status,omitempty"`
-	Reason     *string              `protobuf:"bytes,7,opt,name=reason,proto3,oneof" json:"reason,omitempty"`
-	Code       *string              `protobuf:"bytes,8,opt,name=code,proto3,oneof" json:"code,omitempty"`
-	UserId     *int32               `protobuf:"varint,9,opt,name=user_id,json=userId,proto3,oneof" json:"user_id,omitempty"`
-	User       *users.UserShort     `protobuf:"bytes,10,opt,name=user,proto3,oneof" json:"user,omitempty"`
-	X          *float64             `protobuf:"fixed64,11,opt,name=x,proto3,oneof" json:"x,omitempty"`
-	Y          *float64             `protobuf:"fixed64,12,opt,name=y,proto3,oneof" json:"y,omitempty"`
-	Postal     *string              `protobuf:"bytes,13,opt,name=postal,proto3,oneof" json:"postal,omitempty"`
+	// @sanitize
+	Reason *string `protobuf:"bytes,7,opt,name=reason,proto3,oneof" json:"reason,omitempty"`
+	// @sanitize
+	Code   *string          `protobuf:"bytes,8,opt,name=code,proto3,oneof" json:"code,omitempty"`
+	UserId *int32           `protobuf:"varint,9,opt,name=user_id,json=userId,proto3,oneof" json:"user_id,omitempty"`
+	User   *users.UserShort `protobuf:"bytes,10,opt,name=user,proto3,oneof" json:"user,omitempty"`
+	X      *float64         `protobuf:"fixed64,11,opt,name=x,proto3,oneof" json:"x,omitempty"`
+	Y      *float64         `protobuf:"fixed64,12,opt,name=y,proto3,oneof" json:"y,omitempty"`
+	// @sanitize
+	Postal *string `protobuf:"bytes,13,opt,name=postal,proto3,oneof" json:"postal,omitempty"`
 }
 
 func (x *DispatchStatus) Reset() {

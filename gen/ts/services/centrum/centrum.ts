@@ -115,10 +115,14 @@ export interface UpdateUnitStatusRequest {
      */
     status: UNIT_STATUS;
     /**
+     * @sanitize
+     *
      * @generated from protobuf field: optional string reason = 3;
      */
     reason?: string;
     /**
+     * @sanitize
+     *
      * @generated from protobuf field: optional string code = 4;
      */
     code?: string;
@@ -277,10 +281,14 @@ export interface UpdateDispatchStatusRequest {
      */
     status: DISPATCH_STATUS;
     /**
+     * @sanitize
+     *
      * @generated from protobuf field: optional string reason = 3;
      */
     reason?: string;
     /**
+     * @sanitize
+     *
      * @generated from protobuf field: optional string code = 4;
      */
     code?: string;
@@ -360,6 +368,8 @@ export interface TakeDispatchRequest {
      */
     resp: TAKE_DISPATCH_RESP;
     /**
+     * @sanitize
+     *
      * @generated from protobuf field: optional string reason = 3;
      */
     reason?: string;
