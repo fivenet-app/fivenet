@@ -21,5 +21,6 @@ type FivenetCentrumUnitsStatus struct {
 	UserID    *int32     `json:"user_id"`
 	X         *float64   `json:"x"`
 	Y         *float64   `json:"y"`
+	Postal    *int32     `json:"postal"`
 	CreatorID *int32     `json:"creator_id"`
 }

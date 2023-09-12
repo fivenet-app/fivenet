@@ -55,6 +55,7 @@ func (s *Server) getUnitStatusFromDB(ctx context.Context, id uint64) (*dispatch.
 			tUnitStatus.UserID,
 			tUnitStatus.X,
 			tUnitStatus.Y,
+			tUnitStatus.Postal,
 			tUnitStatus.CreatorID,
 		).
 		FROM(tUnitStatus).
@@ -133,6 +134,7 @@ func (s *Server) updateUnitStatus(ctx context.Context, job string, unit *dispatc
 			tUnitStatus.UserID,
 			tUnitStatus.X,
 			tUnitStatus.Y,
+			tUnitStatus.Postal,
 			tUnitStatus.CreatorID,
 		).
 		VALUES(
@@ -143,6 +145,7 @@ func (s *Server) updateUnitStatus(ctx context.Context, job string, unit *dispatc
 			in.UserId,
 			in.X,
 			in.Y,
+			in.Postal,
 			in.CreatorId,
 		)
 
@@ -172,6 +175,15 @@ func (s *Server) updateUnitStatus(ctx context.Context, job string, unit *dispatc
 }
 
 func (s *Server) updateUnitAssignments(ctx context.Context, userInfo *userinfo.UserInfo, unit *dispatch.Unit, toAdd []int32, toRemove []int32) error {
+	var x, y *float64
+	var postal *int64
+	marker, ok := s.tracker.GetUserById(userInfo.UserId)
+	if ok {
+		x = &marker.Info.X
+		y = &marker.Info.Y
+		postal = marker.Info.Postal
+	}
+
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -206,6 +218,9 @@ func (s *Server) updateUnitAssignments(ctx context.Context, userInfo *userinfo.U
 						Status:    dispatch.UNIT_STATUS_USER_REMOVED,
 						UserId:    &toRemove[k],
 						CreatorId: &userInfo.UserId,
+						X:         x,
+						Y:         y,
+						Postal:    postal,
 					}); err != nil {
 						return err
 					}
@@ -282,6 +297,9 @@ func (s *Server) updateUnitAssignments(ctx context.Context, userInfo *userinfo.U
 				Status:    dispatch.UNIT_STATUS_USER_ADDED,
 				UserId:    &user.UserId,
 				CreatorId: &userInfo.UserId,
+				X:         x,
+				Y:         y,
+				Postal:    postal,
 			}); err != nil {
 				return err
 			}
@@ -317,6 +335,9 @@ func (s *Server) updateUnitAssignments(ctx context.Context, userInfo *userinfo.U
 			Status:    dispatch.UNIT_STATUS_UNAVAILABLE,
 			UserId:    &userInfo.UserId,
 			CreatorId: &userInfo.UserId,
+			X:         x,
+			Y:         y,
+			Postal:    postal,
 		}); err != nil {
 			return err
 		}

@@ -11,16 +11,18 @@ defineProps<{
 
 <template>
     <tr>
-        <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">
+        <td class="whitespace-nowrap py-2 pl-4 pr-3 text-base font-medium text-neutral sm:pl-0">
             <Time :value="conduct.createdAt" />
         </td>
-        <td class="whitespace-nowrap px-1 py-1 text-left text-base-200">
-            <Time v-if="conduct.expiresAt" :value="conduct.expiresAt" />
-            <span v-else> No Expiration. </span>
+        <td class="whitespace-nowrap px-1 py-1 text-left text-base font-medium text-base-200">
+            <Time v-if="conduct.expiresAt" class="font-semibold" :value="conduct.expiresAt" />
+            <span v-else>
+                {{ $t('components.jobs.conduct.List.no_expiration') }}
+            </span>
         </td>
         <td class="whitespace-nowrap px-1 py-1 text-left text-base-200">
             <div
-                class="rounded-md py-1 px-2 text-sm font-medium ring-1 ring-inset"
+                class="rounded-md py-1 px-2 text-base font-medium ring-1 ring-inset"
                 :class="[
                     conductTypesToBGColor(conduct.type),
                     conductTypesToRingColor(conduct.type),
@@ -30,7 +32,7 @@ defineProps<{
                 {{ $t(`enums.jobs.CONDUCT_TYPE.${CONDUCT_TYPE[conduct.type ?? (0 as number)]}`) }}
             </div>
         </td>
-        <td class="whitespace-nowrap px-1 py-1 text-left text-base-200">
+        <td class="whitespace-wrap px-1 py-1 text-left text-base-200">
             {{ conduct.message }}
         </td>
         <td class="whitespace-nowrap px-1 py-1 text-left text-base-200">
@@ -39,7 +41,7 @@ defineProps<{
         <td class="whitespace-nowrap px-1 py-1 text-left text-base-200">
             {{ conduct.creator?.firstname }}, {{ conduct.creator?.lastname }}
         </td>
-        <td class="whitespace-nowrap py-2 pl-3 pr-4 text-sm font-medium sm:pr-0">
+        <td class="whitespace-nowrap py-2 pl-3 pr-4 text-base font-medium sm:pr-0">
             <div class="flex flex-row justify-end">
                 <NuxtLink
                     :to="{

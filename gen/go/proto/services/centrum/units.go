@@ -166,6 +166,15 @@ func (s *Server) CreateOrUpdateUnit(ctx context.Context, req *CreateOrUpdateUnit
 		return nil, ErrFailedQuery
 	}
 
+	var x, y *float64
+	var postal *int64
+	marker, ok := s.tracker.GetUserById(userInfo.UserId)
+	if ok {
+		x = &marker.Info.X
+		y = &marker.Info.Y
+		postal = marker.Info.Postal
+	}
+
 	// A new unit shouldn't have a status, so we make sure it has one
 	if unit.Status == nil {
 		if err := s.updateUnitStatus(ctx, userInfo.Job, unit, &dispatch.UnitStatus{
@@ -173,6 +182,9 @@ func (s *Server) CreateOrUpdateUnit(ctx context.Context, req *CreateOrUpdateUnit
 			Status:    dispatch.UNIT_STATUS_UNKNOWN,
 			UserId:    &userInfo.UserId,
 			CreatorId: &userInfo.UserId,
+			X:         x,
+			Y:         y,
+			Postal:    postal,
 		}); err != nil {
 			return nil, err
 		}
@@ -264,10 +276,12 @@ func (s *Server) UpdateUnitStatus(ctx context.Context, req *UpdateUnitStatusRequ
 	}
 
 	var x, y *float64
+	var postal *int64
 	marker, ok := s.tracker.GetUserById(userInfo.UserId)
 	if ok {
 		x = &marker.Info.X
 		y = &marker.Info.Y
+		postal = marker.Info.Postal
 	}
 
 	if err := s.updateUnitStatus(ctx, userInfo.Job, unit, &dispatch.UnitStatus{
@@ -278,6 +292,7 @@ func (s *Server) UpdateUnitStatus(ctx context.Context, req *UpdateUnitStatusRequ
 		UserId:    &userInfo.UserId,
 		X:         x,
 		Y:         y,
+		Postal:    postal,
 		CreatorId: &userInfo.UserId,
 	}); err != nil {
 		return nil, ErrFailedQuery
@@ -395,6 +410,7 @@ func (s *Server) ListUnitActivity(ctx context.Context, req *ListUnitActivityRequ
 			tUnitStatus.UserID,
 			tUnitStatus.X,
 			tUnitStatus.Y,
+			tUnitStatus.Postal,
 			tUsers.Firstname,
 			tUsers.Lastname,
 			tUsers.Dateofbirth,

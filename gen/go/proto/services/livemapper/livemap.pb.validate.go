@@ -371,6 +371,281 @@ var _ interface {
 	ErrorName() string
 } = StreamResponseValidationError{}
 
+// Validate checks the field values on CreateOrUpdateMarkerRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *CreateOrUpdateMarkerRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CreateOrUpdateMarkerRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CreateOrUpdateMarkerRequestMultiError, or nil if none found.
+func (m *CreateOrUpdateMarkerRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CreateOrUpdateMarkerRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.GetMarker() == nil {
+		err := CreateOrUpdateMarkerRequestValidationError{
+			field:  "Marker",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if all {
+		switch v := interface{}(m.GetMarker()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, CreateOrUpdateMarkerRequestValidationError{
+					field:  "Marker",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, CreateOrUpdateMarkerRequestValidationError{
+					field:  "Marker",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetMarker()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return CreateOrUpdateMarkerRequestValidationError{
+				field:  "Marker",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return CreateOrUpdateMarkerRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// CreateOrUpdateMarkerRequestMultiError is an error wrapping multiple
+// validation errors returned by CreateOrUpdateMarkerRequest.ValidateAll() if
+// the designated constraints aren't met.
+type CreateOrUpdateMarkerRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CreateOrUpdateMarkerRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CreateOrUpdateMarkerRequestMultiError) AllErrors() []error { return m }
+
+// CreateOrUpdateMarkerRequestValidationError is the validation error returned
+// by CreateOrUpdateMarkerRequest.Validate if the designated constraints
+// aren't met.
+type CreateOrUpdateMarkerRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CreateOrUpdateMarkerRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CreateOrUpdateMarkerRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CreateOrUpdateMarkerRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CreateOrUpdateMarkerRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CreateOrUpdateMarkerRequestValidationError) ErrorName() string {
+	return "CreateOrUpdateMarkerRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e CreateOrUpdateMarkerRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCreateOrUpdateMarkerRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CreateOrUpdateMarkerRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CreateOrUpdateMarkerRequestValidationError{}
+
+// Validate checks the field values on CreateOrUpdateMarkerResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *CreateOrUpdateMarkerResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CreateOrUpdateMarkerResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CreateOrUpdateMarkerResponseMultiError, or nil if none found.
+func (m *CreateOrUpdateMarkerResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CreateOrUpdateMarkerResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetMarker()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, CreateOrUpdateMarkerResponseValidationError{
+					field:  "Marker",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, CreateOrUpdateMarkerResponseValidationError{
+					field:  "Marker",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetMarker()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return CreateOrUpdateMarkerResponseValidationError{
+				field:  "Marker",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return CreateOrUpdateMarkerResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// CreateOrUpdateMarkerResponseMultiError is an error wrapping multiple
+// validation errors returned by CreateOrUpdateMarkerResponse.ValidateAll() if
+// the designated constraints aren't met.
+type CreateOrUpdateMarkerResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CreateOrUpdateMarkerResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CreateOrUpdateMarkerResponseMultiError) AllErrors() []error { return m }
+
+// CreateOrUpdateMarkerResponseValidationError is the validation error returned
+// by CreateOrUpdateMarkerResponse.Validate if the designated constraints
+// aren't met.
+type CreateOrUpdateMarkerResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CreateOrUpdateMarkerResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CreateOrUpdateMarkerResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CreateOrUpdateMarkerResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CreateOrUpdateMarkerResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CreateOrUpdateMarkerResponseValidationError) ErrorName() string {
+	return "CreateOrUpdateMarkerResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e CreateOrUpdateMarkerResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCreateOrUpdateMarkerResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CreateOrUpdateMarkerResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CreateOrUpdateMarkerResponseValidationError{}
+
 // Validate checks the field values on DeleteMarkerRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.

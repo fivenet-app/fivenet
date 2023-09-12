@@ -266,6 +266,10 @@ func (m *Dispatch) validate(all bool) error {
 
 	}
 
+	if m.Postal != nil {
+		// no validation rules for Postal
+	}
+
 	if m.Anon != nil {
 		// no validation rules for Anon
 	}
@@ -1039,6 +1043,10 @@ func (m *DispatchStatus) validate(all bool) error {
 
 	if m.Y != nil {
 		// no validation rules for Y
+	}
+
+	if m.Postal != nil {
+		// no validation rules for Postal
 	}
 
 	if len(errors) > 0 {

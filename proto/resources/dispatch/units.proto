@@ -61,6 +61,7 @@ message UnitStatus {
   optional resources.users.UserShort user = 8;
   optional double x = 9;
   optional double y = 10;
-  optional int32 creator_id = 11 [(validate.rules).int32.gt = 0];
-  optional resources.users.UserShort creator = 12;
+  optional int64 postal = 11;
+  optional int32 creator_id = 12 [(validate.rules).int32.gt = 0];
+  optional resources.users.UserShort creator = 13;
 }

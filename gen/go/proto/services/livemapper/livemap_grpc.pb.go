@@ -8,7 +8,6 @@ package livemapper
 
 import (
 	context "context"
-	livemap "github.com/galexrt/fivenet/gen/go/proto/resources/livemap"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -32,7 +31,7 @@ type LivemapperServiceClient interface {
 	// @perm: Attrs=Markers/JobList:"config.Game.Livemap.Jobs"|Players/JobGradeList
 	Stream(ctx context.Context, in *StreamRequest, opts ...grpc.CallOption) (LivemapperService_StreamClient, error)
 	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
-	CreateOrUpdateMarker(ctx context.Context, in *livemap.Marker, opts ...grpc.CallOption) (*livemap.Marker, error)
+	CreateOrUpdateMarker(ctx context.Context, in *CreateOrUpdateMarkerRequest, opts ...grpc.CallOption) (*CreateOrUpdateMarkerResponse, error)
 	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
 	DeleteMarker(ctx context.Context, in *DeleteMarkerRequest, opts ...grpc.CallOption) (*DeleteMarkerResponse, error)
 }
@@ -77,8 +76,8 @@ func (x *livemapperServiceStreamClient) Recv() (*StreamResponse, error) {
 	return m, nil
 }
 
-func (c *livemapperServiceClient) CreateOrUpdateMarker(ctx context.Context, in *livemap.Marker, opts ...grpc.CallOption) (*livemap.Marker, error) {
-	out := new(livemap.Marker)
+func (c *livemapperServiceClient) CreateOrUpdateMarker(ctx context.Context, in *CreateOrUpdateMarkerRequest, opts ...grpc.CallOption) (*CreateOrUpdateMarkerResponse, error) {
+	out := new(CreateOrUpdateMarkerResponse)
 	err := c.cc.Invoke(ctx, LivemapperService_CreateOrUpdateMarker_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -102,7 +101,7 @@ type LivemapperServiceServer interface {
 	// @perm: Attrs=Markers/JobList:"config.Game.Livemap.Jobs"|Players/JobGradeList
 	Stream(*StreamRequest, LivemapperService_StreamServer) error
 	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
-	CreateOrUpdateMarker(context.Context, *livemap.Marker) (*livemap.Marker, error)
+	CreateOrUpdateMarker(context.Context, *CreateOrUpdateMarkerRequest) (*CreateOrUpdateMarkerResponse, error)
 	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
 	DeleteMarker(context.Context, *DeleteMarkerRequest) (*DeleteMarkerResponse, error)
 	mustEmbedUnimplementedLivemapperServiceServer()
@@ -115,7 +114,7 @@ type UnimplementedLivemapperServiceServer struct {
 func (UnimplementedLivemapperServiceServer) Stream(*StreamRequest, LivemapperService_StreamServer) error {
 	return status.Errorf(codes.Unimplemented, "method Stream not implemented")
 }
-func (UnimplementedLivemapperServiceServer) CreateOrUpdateMarker(context.Context, *livemap.Marker) (*livemap.Marker, error) {
+func (UnimplementedLivemapperServiceServer) CreateOrUpdateMarker(context.Context, *CreateOrUpdateMarkerRequest) (*CreateOrUpdateMarkerResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateOrUpdateMarker not implemented")
 }
 func (UnimplementedLivemapperServiceServer) DeleteMarker(context.Context, *DeleteMarkerRequest) (*DeleteMarkerResponse, error) {
@@ -156,7 +155,7 @@ func (x *livemapperServiceStreamServer) Send(m *StreamResponse) error {
 }
 
 func _LivemapperService_CreateOrUpdateMarker_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(livemap.Marker)
+	in := new(CreateOrUpdateMarkerRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -168,7 +167,7 @@ func _LivemapperService_CreateOrUpdateMarker_Handler(srv interface{}, ctx contex
 		FullMethod: LivemapperService_CreateOrUpdateMarker_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(LivemapperServiceServer).CreateOrUpdateMarker(ctx, req.(*livemap.Marker))
+		return srv.(LivemapperServiceServer).CreateOrUpdateMarker(ctx, req.(*CreateOrUpdateMarkerRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

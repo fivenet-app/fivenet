@@ -146,6 +146,7 @@ func (s *Server) createDispatch(ctx context.Context, d *dispatch.Dispatch) (*dis
 			tDispatch.Attributes,
 			tDispatch.X,
 			tDispatch.Y,
+			tDispatch.Postal,
 			tDispatch.Anon,
 			tDispatch.UserID,
 		).
@@ -156,6 +157,7 @@ func (s *Server) createDispatch(ctx context.Context, d *dispatch.Dispatch) (*dis
 			d.Attributes,
 			d.X,
 			d.Y,
+			d.Postal,
 			d.Anon,
 			d.UserId,
 		)
@@ -171,10 +173,12 @@ func (s *Server) createDispatch(ctx context.Context, d *dispatch.Dispatch) (*dis
 	}
 
 	var x, y *float64
+	var postal *int64
 	marker, ok := s.tracker.GetUserById(*d.UserId)
 	if ok {
 		x = &marker.Info.X
 		y = &marker.Info.Y
+		postal = marker.Info.Postal
 	}
 
 	if err := s.addDispatchStatus(ctx, tx, &dispatch.DispatchStatus{
@@ -183,6 +187,7 @@ func (s *Server) createDispatch(ctx context.Context, d *dispatch.Dispatch) (*dis
 		Status:     dispatch.DISPATCH_STATUS_NEW,
 		X:          x,
 		Y:          y,
+		Postal:     postal,
 	}); err != nil {
 		return nil, err
 	}
@@ -231,6 +236,7 @@ func (s *Server) UpdateDispatch(ctx context.Context, req *UpdateDispatchRequest)
 			tDispatch.Attributes,
 			tDispatch.X,
 			tDispatch.Y,
+			tDispatch.Postal,
 			tDispatch.Anon,
 			tDispatch.UserID,
 		).
@@ -241,6 +247,7 @@ func (s *Server) UpdateDispatch(ctx context.Context, req *UpdateDispatchRequest)
 			req.Dispatch.Attributes,
 			req.Dispatch.X,
 			req.Dispatch.Y,
+			req.Dispatch.Postal,
 			req.Dispatch.Anon,
 			userInfo.UserId,
 		).
@@ -358,11 +365,23 @@ func (s *Server) TakeDispatch(ctx context.Context, req *TakeDispatchRequest) (*T
 			// TODO set unit status to be busy if accepted a dispatch
 		}
 
+		var x, y *float64
+		var postal *int64
+		marker, ok := s.tracker.GetUserById(userInfo.UserId)
+		if ok {
+			x = &marker.Info.X
+			y = &marker.Info.Y
+			postal = marker.Info.Postal
+		}
+
 		if err := s.updateDispatchStatus(ctx, userInfo.Job, dsp, &dispatch.DispatchStatus{
 			DispatchId: dispatchId,
 			Status:     dispatch.DISPATCH_STATUS_UNIT_ASSIGNED,
 			UnitId:     &unitId,
 			UserId:     &userInfo.UserId,
+			X:          x,
+			Y:          y,
+			Postal:     postal,
 		}); err != nil {
 			return nil, err
 		}
@@ -404,6 +423,15 @@ func (s *Server) UpdateDispatchStatus(ctx context.Context, req *UpdateDispatchSt
 		statusUnitId = &unitId
 	}
 
+	var x, y *float64
+	var postal *int64
+	marker, ok := s.tracker.GetUserById(userInfo.UserId)
+	if ok {
+		x = &marker.Info.X
+		y = &marker.Info.Y
+		postal = marker.Info.Postal
+	}
+
 	if err := s.updateDispatchStatus(ctx, userInfo.Job, dsp, &dispatch.DispatchStatus{
 		DispatchId: dsp.Id,
 		UnitId:     statusUnitId,
@@ -411,6 +439,9 @@ func (s *Server) UpdateDispatchStatus(ctx context.Context, req *UpdateDispatchSt
 		Code:       req.Code,
 		Reason:     req.Reason,
 		UserId:     &userInfo.UserId,
+		X:          x,
+		Y:          y,
+		Postal:     postal,
 	}); err != nil {
 		return nil, err
 	}
@@ -484,6 +515,9 @@ func (s *Server) ListDispatchActivity(ctx context.Context, req *ListDispatchActi
 			tDispatchStatus.Reason,
 			tDispatchStatus.Code,
 			tDispatchStatus.UserID,
+			tDispatchStatus.X,
+			tDispatchStatus.Y,
+			tDispatchStatus.Postal,
 			tUsers.Firstname,
 			tUsers.Lastname,
 			tUsers.Dateofbirth,

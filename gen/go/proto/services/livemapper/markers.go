@@ -59,7 +59,7 @@ func (s *Server) checkIfHasAccessToMarker(levels []string, marker *livemap.Marke
 	return false
 }
 
-func (s *Server) CreateOrUpdateMarker(ctx context.Context, req *livemap.Marker) (*livemap.Marker, error) {
+func (s *Server) CreateOrUpdateMarker(ctx context.Context, req *CreateOrUpdateMarkerRequest) (*CreateOrUpdateMarkerResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
@@ -72,27 +72,29 @@ func (s *Server) CreateOrUpdateMarker(ctx context.Context, req *livemap.Marker) 
 	defer s.auditer.Log(auditEntry, req)
 
 	// No marker id set
-	if req.Info.Id <= 0 {
+	if req.Marker.Info.Id <= 0 {
 		stmt := tMarkers.INSERT(
 			tMarkers.Job,
 			tMarkers.Name,
 			tMarkers.Description,
 			tMarkers.X,
 			tMarkers.Y,
+			tMarkers.Postal,
 			tMarkers.Color,
 			tMarkers.Icon,
 			tMarkers.MarkerType,
 			tMarkers.MarkerData,
 		).VALUES(
 			userInfo.Job,
-			req.Info.Name,
-			req.Info.Description,
-			req.Info.X,
-			req.Info.Y,
-			req.Info.Color,
-			req.Info.Icon,
-			req.Type,
-			req.Data,
+			req.Marker.Info.Name,
+			req.Marker.Info.Description,
+			req.Marker.Info.X,
+			req.Marker.Info.Y,
+			req.Marker.Info.Postal,
+			req.Marker.Info.Color,
+			req.Marker.Info.Icon,
+			req.Marker.Type,
+			req.Marker.Data,
 		)
 
 		res, err := stmt.ExecContext(ctx, s.db)
@@ -105,7 +107,7 @@ func (s *Server) CreateOrUpdateMarker(ctx context.Context, req *livemap.Marker) 
 			return nil, err
 		}
 
-		req.Info.Id = uint64(lastId)
+		req.Marker.Info.Id = uint64(lastId)
 
 		auditEntry.State = int16(rector.EVENT_TYPE_CREATED)
 	} else {
@@ -118,7 +120,7 @@ func (s *Server) CreateOrUpdateMarker(ctx context.Context, req *livemap.Marker) 
 			fields = fieldsAttr.([]string)
 		}
 
-		marker, err := s.getMarker(ctx, req.Info.Id)
+		marker, err := s.getMarker(ctx, req.Marker.Info.Id)
 		if err != nil {
 			return nil, ErrMarkerFailed
 		}
@@ -134,6 +136,7 @@ func (s *Server) CreateOrUpdateMarker(ctx context.Context, req *livemap.Marker) 
 				tMarkers.Description,
 				tMarkers.X,
 				tMarkers.Y,
+				tMarkers.Postal,
 				tMarkers.Color,
 				tMarkers.Icon,
 				tMarkers.MarkerType,
@@ -141,18 +144,19 @@ func (s *Server) CreateOrUpdateMarker(ctx context.Context, req *livemap.Marker) 
 			).
 			SET(
 				userInfo.Job,
-				req.Info.Name,
-				req.Info.Description,
-				req.Info.X,
-				req.Info.Y,
-				req.Info.Color,
-				req.Info.Icon,
-				req.Type,
-				req.Data,
+				req.Marker.Info.Name,
+				req.Marker.Info.Description,
+				req.Marker.Info.X,
+				req.Marker.Info.Y,
+				req.Marker.Info.Postal,
+				req.Marker.Info.Color,
+				req.Marker.Info.Icon,
+				req.Marker.Type,
+				req.Marker.Data,
 			).
 			WHERE(jet.AND(
 				tMarkers.Job.EQ(jet.String(userInfo.Job)),
-				tMarkers.ID.EQ(jet.Uint64(req.Info.Id)),
+				tMarkers.ID.EQ(jet.Uint64(req.Marker.Info.Id)),
 			))
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -162,12 +166,14 @@ func (s *Server) CreateOrUpdateMarker(ctx context.Context, req *livemap.Marker) 
 		auditEntry.State = int16(rector.EVENT_TYPE_UPDATED)
 	}
 
-	marker, err := s.getMarker(ctx, req.Info.Id)
+	marker, err := s.getMarker(ctx, req.Marker.Info.Id)
 	if err != nil {
 		return nil, ErrMarkerFailed
 	}
 
-	return marker, nil
+	return &CreateOrUpdateMarkerResponse{
+		Marker: marker,
+	}, nil
 }
 
 func (s *Server) DeleteMarker(ctx context.Context, req *DeleteMarkerRequest) (*DeleteMarkerResponse, error) {
@@ -225,6 +231,7 @@ func (s *Server) getMarker(ctx context.Context, id uint64) (*livemap.Marker, err
 			tMarkers.Description.AS("markerinfo.description"),
 			tMarkers.X.AS("markerinfo.x"),
 			tMarkers.Y.AS("markerinfo.y"),
+			tMarkers.Postal.AS("markerinfo.postal"),
 			tMarkers.MarkerType,
 			tMarkers.MarkerData,
 			tMarkers.CreatorID,

@@ -130,11 +130,15 @@ export interface UnitStatus {
      */
     y?: number;
     /**
-     * @generated from protobuf field: optional int32 creator_id = 11;
+     * @generated from protobuf field: optional int64 postal = 11;
+     */
+    postal?: bigint;
+    /**
+     * @generated from protobuf field: optional int32 creator_id = 12;
      */
     creatorId?: number;
     /**
-     * @generated from protobuf field: optional resources.users.UserShort creator = 12;
+     * @generated from protobuf field: optional resources.users.UserShort creator = 13;
      */
     creator?: UserShort;
 }
@@ -234,8 +238,9 @@ class UnitStatus$Type extends MessageType<UnitStatus> {
             { no: 8, name: "user", kind: "message", T: () => UserShort },
             { no: 9, name: "x", kind: "scalar", opt: true, T: 1 /*ScalarType.DOUBLE*/ },
             { no: 10, name: "y", kind: "scalar", opt: true, T: 1 /*ScalarType.DOUBLE*/ },
-            { no: 11, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
-            { no: 12, name: "creator", kind: "message", T: () => UserShort }
+            { no: 11, name: "postal", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 12, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
+            { no: 13, name: "creator", kind: "message", T: () => UserShort }
         ]);
     }
 }

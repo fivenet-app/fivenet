@@ -771,6 +771,10 @@ func (m *UnitStatus) validate(all bool) error {
 		// no validation rules for Y
 	}
 
+	if m.Postal != nil {
+		// no validation rules for Postal
+	}
+
 	if m.CreatorId != nil {
 
 		if m.GetCreatorId() <= 0 {

@@ -4,6 +4,7 @@ package services.livemapper;
 
 import "resources/livemap/livemap.proto";
 import "resources/users/jobs.proto";
+import "validate/validate.proto";
 
 option go_package = "github.com/galexrt/fivenet/gen/go/proto/services/livemapper;livemapper";
 
@@ -14,6 +15,14 @@ message StreamResponse {
   repeated resources.livemap.UserMarker users = 2;
   repeated resources.users.Job jobs_markers = 3;
   repeated resources.livemap.Marker markers = 4;
+}
+
+message CreateOrUpdateMarkerRequest {
+  resources.livemap.Marker marker = 1 [(validate.rules).message.required = true];
+}
+
+message CreateOrUpdateMarkerResponse {
+  resources.livemap.Marker marker = 1;
 }
 
 message DeleteMarkerRequest {
@@ -27,7 +36,7 @@ service LivemapperService {
   rpc Stream(StreamRequest) returns (stream StreamResponse);
 
   // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
-  rpc CreateOrUpdateMarker(resources.livemap.Marker) returns (resources.livemap.Marker);
+  rpc CreateOrUpdateMarker(CreateOrUpdateMarkerRequest) returns (CreateOrUpdateMarkerResponse);
   // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
   rpc DeleteMarker(DeleteMarkerRequest) returns (DeleteMarkerResponse);
 }

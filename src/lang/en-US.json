@@ -420,7 +420,8 @@
         "jobs": {
             "conduct": {
                 "List": {
-                    "show_expired": "Show Expired"
+                    "show_expired": "Show Expired",
+                    "no_expiration": "No Expiration."
                 }
             }
         }

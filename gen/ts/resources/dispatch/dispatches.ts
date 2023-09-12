@@ -53,19 +53,23 @@ export interface Dispatch {
      */
     y: number;
     /**
-     * @generated from protobuf field: optional bool anon = 12;
+     * @generated from protobuf field: optional int64 postal = 12;
+     */
+    postal?: bigint;
+    /**
+     * @generated from protobuf field: optional bool anon = 13;
      */
     anon?: boolean;
     /**
-     * @generated from protobuf field: optional int32 user_id = 13;
+     * @generated from protobuf field: optional int32 user_id = 14;
      */
     userId?: number;
     /**
-     * @generated from protobuf field: optional resources.users.User user = 14;
+     * @generated from protobuf field: optional resources.users.User user = 15;
      */
     user?: User;
     /**
-     * @generated from protobuf field: repeated resources.dispatch.DispatchAssignment units = 15;
+     * @generated from protobuf field: repeated resources.dispatch.DispatchAssignment units = 16;
      */
     units: DispatchAssignment[];
 }
@@ -172,6 +176,10 @@ export interface DispatchStatus {
      * @generated from protobuf field: optional double y = 12;
      */
     y?: number;
+    /**
+     * @generated from protobuf field: optional int64 postal = 13;
+     */
+    postal?: bigint;
 }
 /**
  * @generated from protobuf enum resources.dispatch.DISPATCH_STATUS
@@ -236,10 +244,11 @@ class Dispatch$Type extends MessageType<Dispatch> {
             { no: 9, name: "attributes", kind: "message", T: () => Attributes },
             { no: 10, name: "x", kind: "scalar", T: 1 /*ScalarType.DOUBLE*/ },
             { no: 11, name: "y", kind: "scalar", T: 1 /*ScalarType.DOUBLE*/ },
-            { no: 12, name: "anon", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
-            { no: 13, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
-            { no: 14, name: "user", kind: "message", T: () => User },
-            { no: 15, name: "units", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => DispatchAssignment }
+            { no: 12, name: "postal", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 13, name: "anon", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 14, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
+            { no: 15, name: "user", kind: "message", T: () => User },
+            { no: 16, name: "units", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => DispatchAssignment }
         ]);
     }
 }
@@ -304,7 +313,8 @@ class DispatchStatus$Type extends MessageType<DispatchStatus> {
             { no: 9, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
             { no: 10, name: "user", kind: "message", T: () => UserShort },
             { no: 11, name: "x", kind: "scalar", opt: true, T: 1 /*ScalarType.DOUBLE*/ },
-            { no: 12, name: "y", kind: "scalar", opt: true, T: 1 /*ScalarType.DOUBLE*/ }
+            { no: 12, name: "y", kind: "scalar", opt: true, T: 1 /*ScalarType.DOUBLE*/ },
+            { no: 13, name: "postal", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 0 /*LongType.BIGINT*/ }
         ]);
     }
 }

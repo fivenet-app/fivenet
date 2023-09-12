@@ -137,6 +137,10 @@ func (m *MarkerInfo) validate(all bool) error {
 		// no validation rules for Description
 	}
 
+	if m.Postal != nil {
+		// no validation rules for Postal
+	}
+
 	if m.Color != nil {
 		// no validation rules for Color
 	}

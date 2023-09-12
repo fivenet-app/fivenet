@@ -136,6 +136,9 @@ func (s *Server) updateDispatchStatus(ctx context.Context, job string, dsp *disp
 			tDispatchStatus.Reason,
 			tDispatchStatus.Code,
 			tDispatchStatus.UserID,
+			tDispatchStatus.X,
+			tDispatchStatus.Y,
+			tDispatchStatus.Postal,
 		).
 		VALUES(
 			in.DispatchId,
@@ -144,6 +147,9 @@ func (s *Server) updateDispatchStatus(ctx context.Context, job string, dsp *disp
 			in.Reason,
 			in.Code,
 			in.UserId,
+			in.X,
+			in.Y,
+			in.Postal,
 		)
 
 	res, err := stmt.ExecContext(ctx, s.db)
@@ -180,6 +186,17 @@ func (s *Server) updateDispatchStatus(ctx context.Context, job string, dsp *disp
 }
 
 func (s *Server) updateDispatchAssignments(ctx context.Context, job string, userId *int32, dsp *dispatch.Dispatch, toAdd []uint64, toRemove []uint64) error {
+	var x, y *float64
+	var postal *int64
+	if userId != nil {
+		marker, ok := s.tracker.GetUserById(*userId)
+		if ok {
+			x = &marker.Info.X
+			y = &marker.Info.Y
+			postal = marker.Info.Postal
+		}
+	}
+
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -214,6 +231,9 @@ func (s *Server) updateDispatchAssignments(ctx context.Context, job string, user
 						UnitId:     &toRemove[k],
 						UserId:     userId,
 						Status:     dispatch.DISPATCH_STATUS_UNIT_UNASSIGNED,
+						X:          x,
+						Y:          y,
+						Postal:     postal,
 					}); err != nil {
 						return ErrFailedQuery
 					}
@@ -283,6 +303,9 @@ func (s *Server) updateDispatchAssignments(ctx context.Context, job string, user
 					UnitId:     &unit.Id,
 					UserId:     userId,
 					Status:     dispatch.DISPATCH_STATUS_UNIT_ASSIGNED,
+					X:          x,
+					Y:          y,
+					Postal:     postal,
 				}); err != nil {
 					return ErrFailedQuery
 				}
@@ -313,6 +336,9 @@ func (s *Server) updateDispatchAssignments(ctx context.Context, job string, user
 			DispatchId: dsp.Id,
 			Status:     dispatch.DISPATCH_STATUS_UNASSIGNED,
 			UserId:     userId,
+			X:          x,
+			Y:          y,
+			Postal:     postal,
 		}); err != nil {
 			return err
 		}

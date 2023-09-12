@@ -24,8 +24,9 @@ message MarkerInfo {
   optional string description = 6;
   double x = 7;
   double y = 8;
-  optional string color = 9;
-  optional string icon = 10;
+  optional int64 postal = 9;
+  optional string color = 10;
+  optional string icon = 11;
 }
 
 message UserMarker {

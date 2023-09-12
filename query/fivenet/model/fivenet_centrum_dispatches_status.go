@@ -21,5 +21,6 @@ type FivenetCentrumDispatchesStatus struct {
 	Code       *string    `json:"code"`
 	X          *float64   `json:"x"`
 	Y          *float64   `json:"y"`
+	Postal     *int32     `json:"postal"`
 	UserID     *int32     `json:"user_id"`
 }

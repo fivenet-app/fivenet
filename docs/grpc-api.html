@@ -1459,6 +1459,14 @@
             <ul>
               
                 <li>
+                  <a href="#services.livemapper.CreateOrUpdateMarkerRequest"><span class="badge">M</span>CreateOrUpdateMarkerRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#services.livemapper.CreateOrUpdateMarkerResponse"><span class="badge">M</span>CreateOrUpdateMarkerResponse</a>
+                </li>
+              
+                <li>
                   <a href="#services.livemapper.DeleteMarkerRequest"><span class="badge">M</span>DeleteMarkerRequest</a>
                 </li>
               
@@ -2463,6 +2471,13 @@
                 </tr>
               
                 <tr>
+                  <td>postal</td>
+                  <td><a href="#int64">int64</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
                   <td>creator_id</td>
                   <td><a href="#int32">int32</a></td>
                   <td>optional</td>
@@ -2722,6 +2737,13 @@
                   <td>y</td>
                   <td><a href="#double">double</a></td>
                   <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>postal</td>
+                  <td><a href="#int64">int64</a></td>
+                  <td>optional</td>
                   <td><p> </p></td>
                 </tr>
               
@@ -3027,6 +3049,13 @@
                 <tr>
                   <td>y</td>
                   <td><a href="#double">double</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>postal</td>
+                  <td><a href="#int64">int64</a></td>
                   <td>optional</td>
                   <td><p> </p></td>
                 </tr>
@@ -6410,6 +6439,13 @@
                   <td>y</td>
                   <td><a href="#double">double</a></td>
                   <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>postal</td>
+                  <td><a href="#int64">int64</a></td>
+                  <td>optional</td>
                   <td><p> </p></td>
                 </tr>
               
@@ -15016,6 +15052,81 @@
       <p></p>
 
       
+        <h3 id="services.livemapper.CreateOrUpdateMarkerRequest">CreateOrUpdateMarkerRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>marker</td>
+                  <td><a href="#resources.livemap.Marker">resources.livemap.Marker</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+            
+            
+            <h4>Validated Fields</h4>
+            <table>
+              <thead>
+                <tr>
+                  <td>Field</td>
+                  <td>Validations</td>
+                </tr>
+              </thead>
+              <tbody>
+              
+                <tr>
+                  <td>marker</td>
+                  <td>
+                    <ul>
+                    
+                      <li>message.required: true</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+              </tbody>
+            </table>
+            
+          
+
+        
+      
+        <h3 id="services.livemapper.CreateOrUpdateMarkerResponse">CreateOrUpdateMarkerResponse</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>marker</td>
+                  <td><a href="#resources.livemap.Marker">resources.livemap.Marker</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
         <h3 id="services.livemapper.DeleteMarkerRequest">DeleteMarkerRequest</h3>
         <p></p>
 
@@ -15122,8 +15233,8 @@
             
               <tr>
                 <td>CreateOrUpdateMarker</td>
-                <td><a href="#resources.livemap.Marker">.resources.livemap.Marker</a></td>
-                <td><a href="#resources.livemap.Marker">.resources.livemap.Marker</a></td>
+                <td><a href="#services.livemapper.CreateOrUpdateMarkerRequest">CreateOrUpdateMarkerRequest</a></td>
+                <td><a href="#services.livemapper.CreateOrUpdateMarkerResponse">CreateOrUpdateMarkerResponse</a></td>
                 <td><p>@perm: Attrs=Access/StringList:[]string{&#34;Own&#34;, &#34;Lower_Rank&#34;, &#34;Same_Rank&#34;}§[]string{&#34;Own&#34;}</p></td>
               </tr>
             

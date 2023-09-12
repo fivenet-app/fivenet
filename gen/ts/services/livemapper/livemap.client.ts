@@ -6,7 +6,8 @@ import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
 import { LivemapperService } from "./livemap.js";
 import type { DeleteMarkerResponse } from "./livemap.js";
 import type { DeleteMarkerRequest } from "./livemap.js";
-import type { Marker } from "../../resources/livemap/livemap.js";
+import type { CreateOrUpdateMarkerResponse } from "./livemap.js";
+import type { CreateOrUpdateMarkerRequest } from "./livemap.js";
 import type { UnaryCall } from "@protobuf-ts/runtime-rpc";
 import { stackIntercept } from "@protobuf-ts/runtime-rpc";
 import type { StreamResponse } from "./livemap.js";
@@ -26,9 +27,9 @@ export interface ILivemapperServiceClient {
     /**
      * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
      *
-     * @generated from protobuf rpc: CreateOrUpdateMarker(resources.livemap.Marker) returns (resources.livemap.Marker);
+     * @generated from protobuf rpc: CreateOrUpdateMarker(services.livemapper.CreateOrUpdateMarkerRequest) returns (services.livemapper.CreateOrUpdateMarkerResponse);
      */
-    createOrUpdateMarker(input: Marker, options?: RpcOptions): UnaryCall<Marker, Marker>;
+    createOrUpdateMarker(input: CreateOrUpdateMarkerRequest, options?: RpcOptions): UnaryCall<CreateOrUpdateMarkerRequest, CreateOrUpdateMarkerResponse>;
     /**
      * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
      *
@@ -57,11 +58,11 @@ export class LivemapperServiceClient implements ILivemapperServiceClient, Servic
     /**
      * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
      *
-     * @generated from protobuf rpc: CreateOrUpdateMarker(resources.livemap.Marker) returns (resources.livemap.Marker);
+     * @generated from protobuf rpc: CreateOrUpdateMarker(services.livemapper.CreateOrUpdateMarkerRequest) returns (services.livemapper.CreateOrUpdateMarkerResponse);
      */
-    createOrUpdateMarker(input: Marker, options?: RpcOptions): UnaryCall<Marker, Marker> {
+    createOrUpdateMarker(input: CreateOrUpdateMarkerRequest, options?: RpcOptions): UnaryCall<CreateOrUpdateMarkerRequest, CreateOrUpdateMarkerResponse> {
         const method = this.methods[1], opt = this._transport.mergeOptions(options);
-        return stackIntercept<Marker, Marker>("unary", this._transport, method, opt, input);
+        return stackIntercept<CreateOrUpdateMarkerRequest, CreateOrUpdateMarkerResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}

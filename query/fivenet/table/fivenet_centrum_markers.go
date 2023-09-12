@@ -24,6 +24,7 @@ type fivenetCentrumMarkersTable struct {
 	Description mysql.ColumnString
 	X           mysql.ColumnFloat
 	Y           mysql.ColumnFloat
+	Postal      mysql.ColumnInteger
 	Color       mysql.ColumnString
 	Icon        mysql.ColumnString
 	MarkerType  mysql.ColumnInteger
@@ -76,13 +77,14 @@ func newFivenetCentrumMarkersTableImpl(schemaName, tableName, alias string) five
 		DescriptionColumn = mysql.StringColumn("description")
 		XColumn           = mysql.FloatColumn("x")
 		YColumn           = mysql.FloatColumn("y")
+		PostalColumn      = mysql.IntegerColumn("postal")
 		ColorColumn       = mysql.StringColumn("color")
 		IconColumn        = mysql.StringColumn("icon")
 		MarkerTypeColumn  = mysql.IntegerColumn("marker_type")
 		MarkerDataColumn  = mysql.StringColumn("marker_data")
 		CreatorIDColumn   = mysql.IntegerColumn("creator_id")
-		allColumns        = mysql.ColumnList{IDColumn, CreatedAtColumn, JobColumn, NameColumn, DescriptionColumn, XColumn, YColumn, ColorColumn, IconColumn, MarkerTypeColumn, MarkerDataColumn, CreatorIDColumn}
-		mutableColumns    = mysql.ColumnList{CreatedAtColumn, JobColumn, NameColumn, DescriptionColumn, XColumn, YColumn, ColorColumn, IconColumn, MarkerTypeColumn, MarkerDataColumn, CreatorIDColumn}
+		allColumns        = mysql.ColumnList{IDColumn, CreatedAtColumn, JobColumn, NameColumn, DescriptionColumn, XColumn, YColumn, PostalColumn, ColorColumn, IconColumn, MarkerTypeColumn, MarkerDataColumn, CreatorIDColumn}
+		mutableColumns    = mysql.ColumnList{CreatedAtColumn, JobColumn, NameColumn, DescriptionColumn, XColumn, YColumn, PostalColumn, ColorColumn, IconColumn, MarkerTypeColumn, MarkerDataColumn, CreatorIDColumn}
 	)
 
 	return fivenetCentrumMarkersTable{
@@ -96,6 +98,7 @@ func newFivenetCentrumMarkersTableImpl(schemaName, tableName, alias string) five
 		Description: DescriptionColumn,
 		X:           XColumn,
 		Y:           YColumn,
+		Postal:      PostalColumn,
 		Color:       ColorColumn,
 		Icon:        IconColumn,
 		MarkerType:  MarkerTypeColumn,

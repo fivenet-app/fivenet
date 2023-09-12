@@ -350,6 +350,7 @@ func (s *Server) refreshMarkers(ctx context.Context) error {
 			tMarkers.Description.AS("markerinfo.description"),
 			tMarkers.X.AS("markerinfo.x"),
 			tMarkers.Y.AS("markerinfo.y"),
+			tMarkers.Postal.AS("markerinfo.postal"),
 			tMarkers.Color.AS("markerinfo.color"),
 			tMarkers.Icon.AS("markerinfo.icon"),
 			tMarkers.MarkerType,

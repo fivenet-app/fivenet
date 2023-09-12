@@ -48,7 +48,9 @@ async function createMarker(values: FormData): Promise<void> {
                 };
             }
 
-            const call = $grpc.getLivemapperClient().createOrUpdateMarker(marker);
+            const call = $grpc.getLivemapperClient().createOrUpdateMarker({
+                marker: marker,
+            });
             await call;
 
             emits('close');

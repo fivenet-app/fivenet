@@ -33,6 +33,24 @@ export interface StreamResponse {
     markers: Marker[];
 }
 /**
+ * @generated from protobuf message services.livemapper.CreateOrUpdateMarkerRequest
+ */
+export interface CreateOrUpdateMarkerRequest {
+    /**
+     * @generated from protobuf field: resources.livemap.Marker marker = 1;
+     */
+    marker?: Marker;
+}
+/**
+ * @generated from protobuf message services.livemapper.CreateOrUpdateMarkerResponse
+ */
+export interface CreateOrUpdateMarkerResponse {
+    /**
+     * @generated from protobuf field: resources.livemap.Marker marker = 1;
+     */
+    marker?: Marker;
+}
+/**
  * @generated from protobuf message services.livemapper.DeleteMarkerRequest
  */
 export interface DeleteMarkerRequest {
@@ -72,6 +90,30 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
  */
 export const StreamResponse = new StreamResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class CreateOrUpdateMarkerRequest$Type extends MessageType<CreateOrUpdateMarkerRequest> {
+    constructor() {
+        super("services.livemapper.CreateOrUpdateMarkerRequest", [
+            { no: 1, name: "marker", kind: "message", T: () => Marker, options: { "validate.rules": { message: { required: true } } } }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.livemapper.CreateOrUpdateMarkerRequest
+ */
+export const CreateOrUpdateMarkerRequest = new CreateOrUpdateMarkerRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class CreateOrUpdateMarkerResponse$Type extends MessageType<CreateOrUpdateMarkerResponse> {
+    constructor() {
+        super("services.livemapper.CreateOrUpdateMarkerResponse", [
+            { no: 1, name: "marker", kind: "message", T: () => Marker }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.livemapper.CreateOrUpdateMarkerResponse
+ */
+export const CreateOrUpdateMarkerResponse = new CreateOrUpdateMarkerResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class DeleteMarkerRequest$Type extends MessageType<DeleteMarkerRequest> {
     constructor() {
         super("services.livemapper.DeleteMarkerRequest", [
@@ -98,6 +140,6 @@ export const DeleteMarkerResponse = new DeleteMarkerResponse$Type();
  */
 export const LivemapperService = new ServiceType("services.livemapper.LivemapperService", [
     { name: "Stream", serverStreaming: true, options: {}, I: StreamRequest, O: StreamResponse },
-    { name: "CreateOrUpdateMarker", options: {}, I: Marker, O: Marker },
+    { name: "CreateOrUpdateMarker", options: {}, I: CreateOrUpdateMarkerRequest, O: CreateOrUpdateMarkerResponse },
     { name: "DeleteMarker", options: {}, I: DeleteMarkerRequest, O: DeleteMarkerResponse }
 ]);

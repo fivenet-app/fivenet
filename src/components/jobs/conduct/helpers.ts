@@ -37,16 +37,16 @@ export function conductTypesToRingColor(status: CONDUCT_TYPE | undefined): strin
 export function conductTypesToTextColor(status: CONDUCT_TYPE | undefined): string {
     switch (status) {
         case CONDUCT_TYPE.NEUTRAL:
-            return 'text-base-600';
+            return 'text-base-400';
         case CONDUCT_TYPE.POSITIVE:
-            return 'text-success-600';
+            return 'text-success-400';
         case CONDUCT_TYPE.NEGATIVE:
-            return 'text-error-600';
+            return 'text-error-400';
         case CONDUCT_TYPE.WARNING:
-            return 'text-warn-600';
+            return 'text-warn-400';
         case CONDUCT_TYPE.SUSPENSION:
-            return 'text-info-500';
+            return 'text-info-400';
         default:
-            return 'text-base-500';
+            return 'text-base-400';
     }
 }
