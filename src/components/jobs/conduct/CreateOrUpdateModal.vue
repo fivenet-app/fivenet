@@ -35,6 +35,7 @@ async function conductCreateEntry(values: FormData): Promise<void> {
     return new Promise(async (res, rej) => {
         try {
             const expiresAt = values.expiresAt ? toTimestamp(new Date(values.expiresAt)) : undefined;
+            console.log(expiresAt);
 
             const call = $grpc.getJobsClient().conductCreateEntry({
                 entry: {
@@ -49,6 +50,7 @@ async function conductCreateEntry(values: FormData): Promise<void> {
             });
             const { response } = await call;
 
+            resetForm();
             emits('created', response.entry!);
             emits('close');
 
@@ -118,7 +120,7 @@ interface FormData {
     expiresAt?: string;
 }
 
-const { handleSubmit, setValues, setFieldValue } = useForm<FormData>({
+const { handleSubmit, setValues, setFieldValue, resetForm } = useForm<FormData>({
     validationSchema: {
         targetUser: { required: true },
         type: { required: true },

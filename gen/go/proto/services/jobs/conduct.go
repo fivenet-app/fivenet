@@ -116,6 +116,7 @@ func (s *Server) ConductListEntries(ctx context.Context, req *ConductListEntries
 				),
 		).
 		WHERE(condition).
+		ORDER_BY(tConduct.CreatedAt.DESC(), tConduct.ID.DESC()).
 		LIMIT(limit)
 
 	resp := &ConductListEntriesResponse{
@@ -133,8 +134,6 @@ func (s *Server) ConductListEntries(ctx context.Context, req *ConductListEntries
 	return resp, nil
 }
 
-// TODO employee warns/notes management
-
 func (s *Server) ConductCreateEntry(ctx context.Context, req *ConductCreateEntryRequest) (*ConductCreateEntryResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -146,6 +145,11 @@ func (s *Server) ConductCreateEntry(ctx context.Context, req *ConductCreateEntry
 		State:   int16(rector.EVENT_TYPE_ERRORED),
 	}
 	defer s.auditer.Log(auditEntry, req)
+
+	expiresAt := jet.NULL
+	if req.Entry.ExpiresAt != nil {
+		expiresAt = jet.TimestampT(req.Entry.ExpiresAt.AsTime())
+	}
 
 	tConduct := table.FivenetJobsConduct
 	stmt := tConduct.
@@ -161,7 +165,7 @@ func (s *Server) ConductCreateEntry(ctx context.Context, req *ConductCreateEntry
 			userInfo.Job,
 			req.Entry.Type,
 			req.Entry.Message,
-			req.Entry.ExpiresAt.AsTime(),
+			expiresAt,
 			req.Entry.TargetUserId,
 			userInfo.UserId,
 		)
