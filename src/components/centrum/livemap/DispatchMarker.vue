@@ -3,7 +3,7 @@ import { LIcon, LMarker, LPopup } from '@vue-leaflet/vue-leaflet';
 import { BellIcon } from 'mdi-vue3';
 import { dispatchStatusAnimate, dispatchStatusToBGColor, dispatchStatusToFillColor } from '~/components/centrum/helpers';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
-import PhoneNumber from '~/components/partials/users/PhoneNumber.vue';
+import PhoneNumber from '~/components/partials/citizens/PhoneNumber.vue';
 import { DISPATCH_STATUS, Dispatch } from '~~/gen/ts/resources/dispatch/dispatches';
 
 const props = withDefaults(

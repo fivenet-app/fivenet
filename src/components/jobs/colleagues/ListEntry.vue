@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import PhoneNumber from '~/components/partials/users/PhoneNumber.vue';
+import PhoneNumber from '~/components/partials/citizens/PhoneNumber.vue';
 import { useClipboardStore } from '~/store/clipboard';
 import { useNotificationsStore } from '~/store/notifications';
 import { User } from '~~/gen/ts/resources/users/users';

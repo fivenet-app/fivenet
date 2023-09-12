@@ -6,7 +6,7 @@ import CharSexBadge from '~/components/citizens/CharSexBadge.vue';
 import JobModal from '~/components/citizens/info/JobModal.vue';
 import TemplatesModal from '~/components/documents/templates/TemplatesModal.vue';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
-import PhoneNumber from '~/components/partials/users/PhoneNumber.vue';
+import PhoneNumber from '~/components/partials/citizens/PhoneNumber.vue';
 import { useClipboardStore } from '~/store/clipboard';
 import { User } from '~~/gen/ts/resources/users/users';
 import TrafficPointsModal from './TrafficPointsModal.vue';
