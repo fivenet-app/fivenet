@@ -636,7 +636,9 @@
         "colleagues": "Keine Kollegen | {n} Kollege | {n} Kollegen",
         "expires_at": "Läuft ab am",
         "expired": "Abgelaufen",
-        "conduct_register": "Führungsregister"
+        "conduct_register": "Führungsregister",
+        "call": "Anruf",
+        "phone_number": "Telefonnummer"
     },
     "notifications": {
         "clipboard": {
@@ -878,6 +880,18 @@
                 "assigned_dispatch": {
                     "title": "Neuer Einsatz zugewiesen",
                     "content": "Nutze die Einsatz-Liste um den Einsatz anzunehmen."
+                }
+            }
+        },
+        "components": {
+            "partials": {
+                "users": {
+                    "PhoneNumber": {
+                        "copied": {
+                            "title": "Telefonnummer kopiert",
+                            "content": "Telefonnummer in die Zwischenablage kopiert."
+                        }
+                    }
                 }
             }
         }
