@@ -1215,8 +1215,7 @@
                 "description": "TODO",
                 "attrs": {
                     "Own": "Eigene",
-                    "Lower_Rank": "Niedrigerer Rang",
-                    "Same_Rank": "Gleicher Rang"
+                    "All": "All"
                 }
             },
             "ConductUpdateEntry": {
