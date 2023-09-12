@@ -55,7 +55,10 @@ defineEmits<{
                                 <button
                                     type="button"
                                     class="rounded-md bg-gray-100 text-gray-500 hover:text-gray-400 focus:outline-none focus:ring-2 focus:ring-white"
-                                    @click="$emit('close')"
+                                    @click="
+                                        cancel();
+                                        $emit('close');
+                                    "
                                 >
                                     <span class="sr-only">{{ $t('common.close') }}</span>
                                     <CloseIcon class="h-6 w-6" aria-hidden="true" />

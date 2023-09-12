@@ -1,11 +1,16 @@
 <script lang="ts" setup>
-import { EyeIcon } from 'mdi-vue3';
+import { PencilIcon, TrashCanIcon } from 'mdi-vue3';
 import Time from '~/components/partials/elements/Time.vue';
 import { CONDUCT_TYPE, ConductEntry } from '~~/gen/ts/resources/jobs/conduct';
 import { conductTypesToBGColor, conductTypesToRingColor, conductTypesToTextColor } from './helpers';
 
 defineProps<{
     conduct: ConductEntry;
+}>();
+
+defineEmits<{
+    (e: 'selected'): void;
+    (e: 'delete'): void;
 }>();
 </script>
 
@@ -43,15 +48,23 @@ defineProps<{
         </td>
         <td class="whitespace-nowrap py-2 pl-3 pr-4 text-base font-medium sm:pr-0">
             <div class="flex flex-row justify-end">
-                <NuxtLink
-                    :to="{
-                        name: 'citizens-id',
-                        params: { id: conduct.id.toString() ?? 0 },
-                    }"
+                <button
+                    v-if="can('JobsService.ConductUpdateEntry')"
+                    type="button"
                     class="flex-initial text-primary-500 hover:text-primary-400"
+                    @click="$emit('selected')"
                 >
-                    <EyeIcon class="w-6 h-auto ml-auto mr-2.5" />
-                </NuxtLink>
+                    <PencilIcon class="w-6 h-auto ml-auto mr-2.5" />
+                </button>
+
+                <button
+                    v-if="can('JobsService.ConductDeleteEntry')"
+                    type="button"
+                    class="flex-initial text-primary-500 hover:text-primary-400"
+                    @click="$emit('delete')"
+                >
+                    <TrashCanIcon class="w-6 h-auto ml-auto mr-2.5" />
+                </button>
             </div>
         </td>
     </tr>

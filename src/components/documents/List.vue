@@ -199,6 +199,7 @@ onMounted(async () => {
                             </div>
                             <div class="flex-initial form-control" v-if="can('DocStoreService.CreateDocument')">
                                 <button
+                                    type="button"
                                     @click="templatesOpen = true"
                                     class="inline-flex px-3 py-2 text-sm font-semibold rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
                                 >

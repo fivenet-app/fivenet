@@ -422,6 +422,10 @@
                 "List": {
                     "show_expired": "Show Expired",
                     "no_expiration": "No Expiration."
+                },
+                "CreateOrUpdateModal": {
+                    "create_title": "Create Conduct Entry",
+                    "update_title": "Update Conduct Entry"
                 }
             }
         }

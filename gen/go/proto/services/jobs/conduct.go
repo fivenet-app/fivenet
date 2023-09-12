@@ -155,6 +155,7 @@ func (s *Server) ConductCreateEntry(ctx context.Context, req *ConductCreateEntry
 			tConduct.Message,
 			tConduct.ExpiresAt,
 			tConduct.TargetUserID,
+			tConduct.CreatorID,
 		).
 		VALUES(
 			userInfo.Job,
@@ -162,6 +163,7 @@ func (s *Server) ConductCreateEntry(ctx context.Context, req *ConductCreateEntry
 			req.Entry.Message,
 			req.Entry.ExpiresAt.AsTime(),
 			req.Entry.TargetUserId,
+			userInfo.UserId,
 		)
 
 	res, err := stmt.ExecContext(ctx, s.db)

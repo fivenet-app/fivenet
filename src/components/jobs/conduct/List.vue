@@ -1,20 +1,22 @@
 <script lang="ts" setup>
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions, Switch } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
-import { watchDebounced } from '@vueuse/core';
+import { useConfirmDialog, watchDebounced } from '@vueuse/core';
 import { CheckIcon } from 'mdi-vue3';
+import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import TablePagination from '~/components/partials/elements/TablePagination.vue';
 import { PaginationResponse } from '~~/gen/ts/resources/common/database/database';
 import { CONDUCT_TYPE, ConductEntry } from '~~/gen/ts/resources/jobs/conduct';
-import { User, UserShort } from '~~/gen/ts/resources/users/users';
+import { User } from '~~/gen/ts/resources/users/users';
+import CreateOrUpdateModal from './CreateOrUpdateModal.vue';
 import ListEntry from './ListEntry.vue';
 
 const { $grpc } = useNuxtApp();
 
-const query = ref<{ types: CONDUCT_TYPE[]; showExpired?: boolean; user_ids?: UserShort[] }>({
+const query = ref<{ types: CONDUCT_TYPE[]; showExpired?: boolean; user_ids?: User[] }>({
     types: [],
     user_ids: [],
     showExpired: false,
@@ -47,9 +49,27 @@ async function listConductEntries(): Promise<ConductEntry[]> {
     });
 }
 
+async function deleteConductEntry(id: bigint): Promise<void> {
+    return new Promise(async (res, rej) => {
+        try {
+            const call = $grpc.getJobsClient().conductDeleteEntry({
+                id: id,
+            });
+            await call;
+
+            refresh();
+
+            return res();
+        } catch (e) {
+            $grpc.handleError(e as RpcError);
+            return rej(e as RpcError);
+        }
+    });
+}
+
 const queryTypes = ref('');
 
-const entriesChars = ref<UserShort[]>([]);
+const entriesChars = ref<User[]>([]);
 const queryTargets = ref<string>('');
 
 const searchNameInput = ref<HTMLInputElement | null>(null);
@@ -83,7 +103,7 @@ async function listColleagues(): Promise<User[]> {
     });
 }
 
-function charsGetDisplayValue(chars: UserShort[]): string {
+function charsGetDisplayValue(chars: User[]): string {
     const cs: string[] = [];
     chars.forEach((c) => cs.push(`${c?.firstname} ${c?.lastname}`));
 
@@ -98,14 +118,30 @@ watchDebounced(queryTargets, async () => (entriesChars.value = await listColleag
 onMounted(async () => {
     entriesChars.value = await listColleagues();
 });
+
+const open = ref(false);
+const selectedEntry = ref<ConductEntry | undefined>();
+
+const { isRevealed, reveal, confirm, cancel, onConfirm } = useConfirmDialog();
+
+onConfirm(async (id) => deleteConductEntry(id));
 </script>
 
 <template>
     <div class="py-2 pb-14">
+        <ConfirmDialog
+            v-if="selectedEntry !== undefined"
+            :open="isRevealed"
+            :cancel="cancel"
+            :confirm="() => confirm(selectedEntry!.id)"
+        />
+
+        <CreateOrUpdateModal :open="open" @close="open = false" :entry="selectedEntry" @created="entries?.unshift($event)" />
+
         <div class="px-1 sm:px-2 lg:px-4">
             <div class="sm:flex sm:items-center">
                 <div class="sm:flex-auto">
-                    <form @submit.prevent="refresh()">
+                    <form @submit.prevent="">
                         <div class="flex flex-row gap-4 mx-auto">
                             <div class="flex-1 form-control">
                                 <label for="searchName" class="block text-sm font-medium leading-6 text-neutral">
@@ -244,6 +280,25 @@ onMounted(async () => {
                                     </Switch>
                                 </div>
                             </div>
+                            <div class="flex-initial form-control">
+                                <label for="create" class="block text-sm font-medium leading-6 text-neutral">
+                                    {{ $t('common.create') }}
+                                </label>
+                                <div class="relative flex items-center mt-3">
+                                    <div class="flex-initial form-control" v-if="can('JobsService.ConductCreateEntry')">
+                                        <button
+                                            type="button"
+                                            @click="
+                                                selectedEntry = undefined;
+                                                open = true;
+                                            "
+                                            class="inline-flex px-3 py-2 text-sm font-semibold rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
+                                        >
+                                            {{ $t('common.create') }}
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </form>
                 </div>
@@ -279,7 +334,7 @@ onMounted(async () => {
                                             {{ $t('common.type') }}
                                         </th>
                                         <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
-                                            {{ $t('common.message') }}
+                                            {{ $t('common.description') }}
                                         </th>
                                         <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.target') }}
@@ -301,6 +356,14 @@ onMounted(async () => {
                                         :key="conduct.id.toString()"
                                         :conduct="conduct"
                                         class="transition-colors hover:bg-neutral/5"
+                                        @selected="
+                                            selectedEntry = conduct;
+                                            open = true;
+                                        "
+                                        @delete="
+                                            selectedEntry = conduct;
+                                            reveal();
+                                        "
                                     />
                                 </tbody>
                                 <thead>
@@ -318,7 +381,7 @@ onMounted(async () => {
                                             {{ $t('common.type') }}
                                         </th>
                                         <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
-                                            {{ $t('common.message') }}
+                                            {{ $t('common.description') }}
                                         </th>
                                         <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.target') }}
