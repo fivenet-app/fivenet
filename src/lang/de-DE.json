@@ -422,6 +422,10 @@
                 "List": {
                     "show_expired": "Zeige Abgelaufene",
                     "no_expiration": "Kein Verfallsdatum."
+                },
+                "CreateOrUpdateModal": {
+                    "create_title": "Erstelle neuen Führungsregister Eintrag",
+                    "update_title": "Aktualisiere Führungsregister Eintrag"
                 }
             }
         }
@@ -1215,7 +1219,7 @@
                 "description": "TODO",
                 "attrs": {
                     "Own": "Eigene",
-                    "All": "All"
+                    "All": "Alle"
                 }
             },
             "ConductUpdateEntry": {
