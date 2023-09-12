@@ -527,6 +527,10 @@
                   <a href="#resources.jobs.TrainingModule"><span class="badge">M</span>TrainingModule</a>
                 </li>
               
+                <li>
+                  <a href="#resources.jobs.TrainingResult"><span class="badge">M</span>TrainingResult</a>
+                </li>
+              
               
               
               
@@ -5356,7 +5360,7 @@
                 </tr>
               
                 <tr>
-                  <td>description</td>
+                  <td>message</td>
                   <td><a href="#string">string</a></td>
                   <td></td>
                   <td><p> </p></td>
@@ -5380,7 +5384,7 @@
                   <td>target_user</td>
                   <td><a href="#resources.users.UserShort">resources.users.UserShort</a></td>
                   <td>optional</td>
-                  <td><p> </p></td>
+                  <td><p>@gotags: alias:&#34;target_user&#34; </p></td>
                 </tr>
               
                 <tr>
@@ -5394,7 +5398,7 @@
                   <td>creator</td>
                   <td><a href="#resources.users.UserShort">resources.users.UserShort</a></td>
                   <td>optional</td>
-                  <td><p> </p></td>
+                  <td><p>@gotags: alias:&#34;creator&#34; </p></td>
                 </tr>
               
             </tbody>
@@ -5436,13 +5440,13 @@
                 </tr>
               
                 <tr>
-                  <td>description</td>
+                  <td>message</td>
                   <td>
                     <ul>
                     
                       <li>string.min_len: 3</li>
                     
-                      <li>string.max_len: 1024</li>
+                      <li>string.max_len: 2048</li>
                     
                     </ul>
                   </td>
@@ -5506,7 +5510,7 @@
               </tr>
             
               <tr>
-                <td>WARN</td>
+                <td>WARNING</td>
                 <td>3</td>
                 <td><p></p></td>
               </tr>
@@ -5578,8 +5582,29 @@
                 </tr>
               
                 <tr>
-                  <td>expires_at</td>
+                  <td>message</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>begins_at</td>
                   <td><a href="#resources.timestamp.Timestamp">resources.timestamp.Timestamp</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>ends_at</td>
+                  <td><a href="#resources.timestamp.Timestamp">resources.timestamp.Timestamp</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>status</td>
+                  <td><a href="#string">string</a></td>
                   <td>optional</td>
                   <td><p> </p></td>
                 </tr>
@@ -5588,14 +5613,35 @@
                   <td>creator_id</td>
                   <td><a href="#int32">int32</a></td>
                   <td></td>
-                  <td><p>TODO what info do we need for requests? begin and end time? </p></td>
+                  <td><p> </p></td>
                 </tr>
               
                 <tr>
                   <td>creator</td>
                   <td><a href="#resources.users.UserShort">resources.users.UserShort</a></td>
                   <td>optional</td>
+                  <td><p>@gotags: alias:&#34;creator&#34; </p></td>
+                </tr>
+              
+                <tr>
+                  <td>approved</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td>optional</td>
                   <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>approver_user_id</td>
+                  <td><a href="#int32">int32</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>approver_user</td>
+                  <td><a href="#resources.users.UserShort">resources.users.UserShort</a></td>
+                  <td>optional</td>
+                  <td><p>@gotags: alias:&#34;approver&#34; </p></td>
                 </tr>
               
             </tbody>
@@ -5631,6 +5677,19 @@
                     <ul>
                     
                       <li>enum.defined_only: true</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>message</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.min_len: 3</li>
+                    
+                      <li>string.max_len: 2048</li>
                     
                     </ul>
                   </td>
@@ -5886,6 +5945,13 @@
             </table>
             
           
+
+        
+      
+        <h3 id="resources.jobs.TrainingResult">TrainingResult</h3>
+        <p>TODO</p>
+
+        
 
         
       
@@ -14582,6 +14648,50 @@
         <p></p>
 
         
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>entry</td>
+                  <td><a href="#resources.jobs.ConductEntry">resources.jobs.ConductEntry</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+            
+            
+            <h4>Validated Fields</h4>
+            <table>
+              <thead>
+                <tr>
+                  <td>Field</td>
+                  <td>Validations</td>
+                </tr>
+              </thead>
+              <tbody>
+              
+                <tr>
+                  <td>entry</td>
+                  <td>
+                    <ul>
+                    
+                      <li>message.required: true</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+              </tbody>
+            </table>
+            
+          
 
         
       
@@ -14589,6 +14699,23 @@
         <p></p>
 
         
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>entry</td>
+                  <td><a href="#resources.jobs.ConductEntry">resources.jobs.ConductEntry</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
 
         
       
@@ -14596,6 +14723,23 @@
         <p></p>
 
         
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>id</td>
+                  <td><a href="#uint64">uint64</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
 
         
       
@@ -14610,6 +14754,71 @@
         <p></p>
 
         
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>pagination</td>
+                  <td><a href="#resources.common.database.PaginationRequest">resources.common.database.PaginationRequest</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>types</td>
+                  <td><a href="#resources.jobs.CONDUCT_TYPE">resources.jobs.CONDUCT_TYPE</a></td>
+                  <td>repeated</td>
+                  <td><p>Search params </p></td>
+                </tr>
+              
+                <tr>
+                  <td>show_expired</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>user_ids</td>
+                  <td><a href="#int32">int32</a></td>
+                  <td>repeated</td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+            
+            
+            <h4>Validated Fields</h4>
+            <table>
+              <thead>
+                <tr>
+                  <td>Field</td>
+                  <td>Validations</td>
+                </tr>
+              </thead>
+              <tbody>
+              
+                <tr>
+                  <td>pagination</td>
+                  <td>
+                    <ul>
+                    
+                      <li>message.required: true</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+              </tbody>
+            </table>
+            
+          
 
         
       
@@ -14617,6 +14826,30 @@
         <p></p>
 
         
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>pagination</td>
+                  <td><a href="#resources.common.database.PaginationResponse">resources.common.database.PaginationResponse</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>entries</td>
+                  <td><a href="#resources.jobs.ConductEntry">resources.jobs.ConductEntry</a></td>
+                  <td>repeated</td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
 
         
       
@@ -14624,6 +14857,50 @@
         <p></p>
 
         
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>entry</td>
+                  <td><a href="#resources.jobs.ConductEntry">resources.jobs.ConductEntry</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+            
+            
+            <h4>Validated Fields</h4>
+            <table>
+              <thead>
+                <tr>
+                  <td>Field</td>
+                  <td>Validations</td>
+                </tr>
+              </thead>
+              <tbody>
+              
+                <tr>
+                  <td>entry</td>
+                  <td>
+                    <ul>
+                    
+                      <li>message.required: true</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+              </tbody>
+            </table>
+            
+          
 
         
       
@@ -14631,6 +14908,50 @@
         <p></p>
 
         
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>entry</td>
+                  <td><a href="#resources.jobs.ConductEntry">resources.jobs.ConductEntry</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+            
+            
+            <h4>Validated Fields</h4>
+            <table>
+              <thead>
+                <tr>
+                  <td>Field</td>
+                  <td>Validations</td>
+                </tr>
+              </thead>
+              <tbody>
+              
+                <tr>
+                  <td>entry</td>
+                  <td>
+                    <ul>
+                    
+                      <li>message.required: true</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+              </tbody>
+            </table>
+            
+          
 
         
       

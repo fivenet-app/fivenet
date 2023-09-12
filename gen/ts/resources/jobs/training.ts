@@ -40,6 +40,13 @@ export interface TrainingModule {
      */
     description: string;
 }
+/**
+ * TODO
+ *
+ * @generated from protobuf message resources.jobs.TrainingResult
+ */
+export interface TrainingResult {
+}
 // @generated message type with reflection information, may provide speed optimized methods
 class TrainingModule$Type extends MessageType<TrainingModule> {
     constructor() {
@@ -59,3 +66,13 @@ class TrainingModule$Type extends MessageType<TrainingModule> {
  * @generated MessageType for protobuf message resources.jobs.TrainingModule
  */
 export const TrainingModule = new TrainingModule$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class TrainingResult$Type extends MessageType<TrainingResult> {
+    constructor() {
+        super("resources.jobs.TrainingResult", []);
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.jobs.TrainingResult
+ */
+export const TrainingResult = new TrainingResult$Type();

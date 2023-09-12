@@ -8,7 +8,7 @@ export function conductTypesToBGColor(status: CONDUCT_TYPE | undefined): string 
             return 'bg-success-600/10';
         case CONDUCT_TYPE.NEGATIVE:
             return 'bg-error-600/10';
-        case CONDUCT_TYPE.WARN:
+        case CONDUCT_TYPE.WARNING:
             return 'bg-warn-600/10';
         case CONDUCT_TYPE.SUSPENSION:
             return 'bg-info-500/10';
@@ -25,7 +25,7 @@ export function conductTypesToRingColor(status: CONDUCT_TYPE | undefined): strin
             return 'ring-success-600/20';
         case CONDUCT_TYPE.NEGATIVE:
             return 'ring-error-600/20';
-        case CONDUCT_TYPE.WARN:
+        case CONDUCT_TYPE.WARNING:
             return 'ring-warn-600/20';
         case CONDUCT_TYPE.SUSPENSION:
             return 'ring-info-500/20';
@@ -42,7 +42,7 @@ export function conductTypesToTextColor(status: CONDUCT_TYPE | undefined): strin
             return 'text-success-600';
         case CONDUCT_TYPE.NEGATIVE:
             return 'text-error-600';
-        case CONDUCT_TYPE.WARN:
+        case CONDUCT_TYPE.WARNING:
             return 'text-warn-600';
         case CONDUCT_TYPE.SUSPENSION:
             return 'text-info-500';

@@ -3,6 +3,8 @@
 // tslint:disable
 import { ServiceType } from "@protobuf-ts/runtime-rpc";
 import { MessageType } from "@protobuf-ts/runtime";
+import { ConductEntry } from "../../resources/jobs/conduct.js";
+import { CONDUCT_TYPE } from "../../resources/jobs/conduct.js";
 import { User } from "../../resources/users/users.js";
 import { PaginationResponse } from "../../resources/common/database/database.js";
 import { PaginationRequest } from "../../resources/common/database/database.js";
@@ -42,36 +44,82 @@ export interface ColleaguesListResponse {
  * @generated from protobuf message services.jobs.ConductListEntriesRequest
  */
 export interface ConductListEntriesRequest {
+    /**
+     * @generated from protobuf field: resources.common.database.PaginationRequest pagination = 1;
+     */
+    pagination?: PaginationRequest;
+    /**
+     * Search params
+     *
+     * @generated from protobuf field: repeated resources.jobs.CONDUCT_TYPE types = 2;
+     */
+    types: CONDUCT_TYPE[];
+    /**
+     * @generated from protobuf field: optional bool show_expired = 3;
+     */
+    showExpired?: boolean;
+    /**
+     * @generated from protobuf field: repeated int32 user_ids = 4;
+     */
+    userIds: number[];
 }
 /**
  * @generated from protobuf message services.jobs.ConductListEntriesResponse
  */
 export interface ConductListEntriesResponse {
+    /**
+     * @generated from protobuf field: resources.common.database.PaginationResponse pagination = 1;
+     */
+    pagination?: PaginationResponse;
+    /**
+     * @generated from protobuf field: repeated resources.jobs.ConductEntry entries = 2;
+     */
+    entries: ConductEntry[];
 }
 /**
  * @generated from protobuf message services.jobs.ConductCreateEntryRequest
  */
 export interface ConductCreateEntryRequest {
+    /**
+     * @generated from protobuf field: resources.jobs.ConductEntry entry = 1;
+     */
+    entry?: ConductEntry;
 }
 /**
  * @generated from protobuf message services.jobs.ConductCreateEntryResponse
  */
 export interface ConductCreateEntryResponse {
+    /**
+     * @generated from protobuf field: resources.jobs.ConductEntry entry = 1;
+     */
+    entry?: ConductEntry;
 }
 /**
  * @generated from protobuf message services.jobs.ConductUpdateEntryRequest
  */
 export interface ConductUpdateEntryRequest {
+    /**
+     * @generated from protobuf field: resources.jobs.ConductEntry entry = 1;
+     */
+    entry?: ConductEntry;
 }
 /**
  * @generated from protobuf message services.jobs.ConductUpdateEntryResponse
  */
 export interface ConductUpdateEntryResponse {
+    /**
+     * @generated from protobuf field: resources.jobs.ConductEntry entry = 1;
+     */
+    entry?: ConductEntry;
 }
 /**
  * @generated from protobuf message services.jobs.ConductDeleteEntryRequest
  */
 export interface ConductDeleteEntryRequest {
+    /**
+     * @generated from protobuf field: uint64 id = 1;
+     */
+    id: bigint;
 }
 /**
  * @generated from protobuf message services.jobs.ConductDeleteEntryResponse
@@ -107,7 +155,12 @@ export const ColleaguesListResponse = new ColleaguesListResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class ConductListEntriesRequest$Type extends MessageType<ConductListEntriesRequest> {
     constructor() {
-        super("services.jobs.ConductListEntriesRequest", []);
+        super("services.jobs.ConductListEntriesRequest", [
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
+            { no: 2, name: "types", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.jobs.CONDUCT_TYPE", CONDUCT_TYPE] },
+            { no: 3, name: "show_expired", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 4, name: "user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ }
+        ]);
     }
 }
 /**
@@ -117,7 +170,10 @@ export const ConductListEntriesRequest = new ConductListEntriesRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class ConductListEntriesResponse$Type extends MessageType<ConductListEntriesResponse> {
     constructor() {
-        super("services.jobs.ConductListEntriesResponse", []);
+        super("services.jobs.ConductListEntriesResponse", [
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse },
+            { no: 2, name: "entries", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => ConductEntry }
+        ]);
     }
 }
 /**
@@ -127,7 +183,9 @@ export const ConductListEntriesResponse = new ConductListEntriesResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class ConductCreateEntryRequest$Type extends MessageType<ConductCreateEntryRequest> {
     constructor() {
-        super("services.jobs.ConductCreateEntryRequest", []);
+        super("services.jobs.ConductCreateEntryRequest", [
+            { no: 1, name: "entry", kind: "message", T: () => ConductEntry, options: { "validate.rules": { message: { required: true } } } }
+        ]);
     }
 }
 /**
@@ -137,7 +195,9 @@ export const ConductCreateEntryRequest = new ConductCreateEntryRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class ConductCreateEntryResponse$Type extends MessageType<ConductCreateEntryResponse> {
     constructor() {
-        super("services.jobs.ConductCreateEntryResponse", []);
+        super("services.jobs.ConductCreateEntryResponse", [
+            { no: 1, name: "entry", kind: "message", T: () => ConductEntry }
+        ]);
     }
 }
 /**
@@ -147,7 +207,9 @@ export const ConductCreateEntryResponse = new ConductCreateEntryResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class ConductUpdateEntryRequest$Type extends MessageType<ConductUpdateEntryRequest> {
     constructor() {
-        super("services.jobs.ConductUpdateEntryRequest", []);
+        super("services.jobs.ConductUpdateEntryRequest", [
+            { no: 1, name: "entry", kind: "message", T: () => ConductEntry, options: { "validate.rules": { message: { required: true } } } }
+        ]);
     }
 }
 /**
@@ -157,7 +219,9 @@ export const ConductUpdateEntryRequest = new ConductUpdateEntryRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class ConductUpdateEntryResponse$Type extends MessageType<ConductUpdateEntryResponse> {
     constructor() {
-        super("services.jobs.ConductUpdateEntryResponse", []);
+        super("services.jobs.ConductUpdateEntryResponse", [
+            { no: 1, name: "entry", kind: "message", T: () => ConductEntry, options: { "validate.rules": { message: { required: true } } } }
+        ]);
     }
 }
 /**
@@ -167,7 +231,9 @@ export const ConductUpdateEntryResponse = new ConductUpdateEntryResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class ConductDeleteEntryRequest$Type extends MessageType<ConductDeleteEntryRequest> {
     constructor() {
-        super("services.jobs.ConductDeleteEntryRequest", []);
+        super("services.jobs.ConductDeleteEntryRequest", [
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+        ]);
     }
 }
 /**

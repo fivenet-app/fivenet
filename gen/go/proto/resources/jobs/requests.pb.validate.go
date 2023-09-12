@@ -81,6 +81,17 @@ func (m *RequestEntry) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	if l := utf8.RuneCountInString(m.GetMessage()); l < 3 || l > 2048 {
+		err := RequestEntryValidationError{
+			field:  "Message",
+			reason: "value length must be between 3 and 2048 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if m.GetCreatorId() <= 0 {
 		err := RequestEntryValidationError{
 			field:  "CreatorId",
@@ -158,14 +169,14 @@ func (m *RequestEntry) validate(all bool) error {
 
 	}
 
-	if m.ExpiresAt != nil {
+	if m.BeginsAt != nil {
 
 		if all {
-			switch v := interface{}(m.GetExpiresAt()).(type) {
+			switch v := interface{}(m.GetBeginsAt()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
 					errors = append(errors, RequestEntryValidationError{
-						field:  "ExpiresAt",
+						field:  "BeginsAt",
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -173,22 +184,59 @@ func (m *RequestEntry) validate(all bool) error {
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
 					errors = append(errors, RequestEntryValidationError{
-						field:  "ExpiresAt",
+						field:  "BeginsAt",
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
 				}
 			}
-		} else if v, ok := interface{}(m.GetExpiresAt()).(interface{ Validate() error }); ok {
+		} else if v, ok := interface{}(m.GetBeginsAt()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
 				return RequestEntryValidationError{
-					field:  "ExpiresAt",
+					field:  "BeginsAt",
 					reason: "embedded message failed validation",
 					cause:  err,
 				}
 			}
 		}
 
+	}
+
+	if m.EndsAt != nil {
+
+		if all {
+			switch v := interface{}(m.GetEndsAt()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, RequestEntryValidationError{
+						field:  "EndsAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, RequestEntryValidationError{
+						field:  "EndsAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetEndsAt()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return RequestEntryValidationError{
+					field:  "EndsAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.Status != nil {
+		// no validation rules for Status
 	}
 
 	if m.Creator != nil {
@@ -216,6 +264,47 @@ func (m *RequestEntry) validate(all bool) error {
 			if err := v.Validate(); err != nil {
 				return RequestEntryValidationError{
 					field:  "Creator",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.Approved != nil {
+		// no validation rules for Approved
+	}
+
+	if m.ApproverUserId != nil {
+		// no validation rules for ApproverUserId
+	}
+
+	if m.ApproverUser != nil {
+
+		if all {
+			switch v := interface{}(m.GetApproverUser()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, RequestEntryValidationError{
+						field:  "ApproverUser",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, RequestEntryValidationError{
+						field:  "ApproverUser",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetApproverUser()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return RequestEntryValidationError{
+					field:  "ApproverUser",
 					reason: "embedded message failed validation",
 					cause:  err,
 				}

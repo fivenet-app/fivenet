@@ -416,6 +416,13 @@
                 "update_settings": "Update Settings",
                 "update_unit": "Update Unit"
             }
+        },
+        "jobs": {
+            "conduct": {
+                "List": {
+                    "show_expired": "Show Expired"
+                }
+            }
         }
     },
     "common": {
@@ -621,7 +628,10 @@
         "self_assign": "Self Assign",
         "expires_in": "Expires in",
         "colleague": "Colleague | Colleagues",
-        "colleagues": "No colleagues | {n} colleague | {n} colleagues"
+        "colleagues": "No colleagues | {n} colleague | {n} colleagues",
+        "expires_at": "Expires at",
+        "expired": "Expired",
+        "conduct_register": "Conduct Register"
     },
     "notifications": {
         "clipboard": {
@@ -922,6 +932,15 @@
                 "CIRCLE": "Circle",
                 "POLYGON": "Polygon"
             }
+        },
+        "jobs": {
+            "CONDUCT_TYPE": {
+                "NEUTRAL": "Neutral",
+                "POSITIVE": "Positive",
+                "NEGATIVE": "Negative",
+                "WARNING": "Warning",
+                "SUSPENSION": "Suspension"
+            }
         }
     },
     "perms": {
@@ -1175,6 +1194,34 @@
                 "key": "Delete Dispatches",
                 "description": "Allows to delete dispatches."
             }
+        },
+        "JobsService": {
+            "category": "Job",
+            "ColleaguesList": {
+                "key": "List colleagues",
+                "description": "List your colleagues (of your own job)."
+            },
+            "ConductCreateEntry": {
+                "key": "Conduct Entries: Create",
+                "description": "TODO"
+            },
+            "ConductDeleteEntry": {
+                "key": "Conduct Entries: Delete",
+                "description": "TODO"
+            },
+            "ConductListEntries": {
+                "key": "Conduct Entries: List",
+                "description": "TODO",
+                "attrs": {
+                    "Own": "Own",
+                    "Lower_Rank": "Lower Rank",
+                    "Same_Rank": "Same Rank"
+                }
+            },
+            "ConductUpdateEntry": {
+                "key": "Conduct Entries: Update",
+                "description": "TODO"
+            }
         }
     },
     "attrs": {
@@ -1226,6 +1273,11 @@
         "CompletorService": {
             "CompleteDocumentCategories": {
                 "Jobs": "Factions"
+            }
+        },
+        "JobsService": {
+            "ConductListEntries": {
+                "Access": "Access"
             }
         }
     },

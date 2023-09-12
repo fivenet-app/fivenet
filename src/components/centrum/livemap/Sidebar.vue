@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
+import { LControl } from '@vue-leaflet/vue-leaflet';
+import { watchOnce } from '@vueuse/core';
 import {
     CalendarCheckIcon,
     CalendarRemoveIcon,
@@ -14,6 +16,8 @@ import {
     InformationOutlineIcon,
     ListStatusIcon,
     MarkerCheckIcon,
+    ToggleSwitchIcon,
+    ToggleSwitchOffIcon,
 } from 'mdi-vue3';
 import { DefineComponent } from 'vue';
 import { default as DispatchDetails } from '~/components/centrum/dispatches/Details.vue';
@@ -159,12 +163,32 @@ async function updateUtStatus(id: bigint, status?: UNIT_STATUS): Promise<void> {
         type: 'success',
     });
 }
+
+// Show unit sidebar when ownUnit is set/updated, otherwise it will be hidden (automagically)
+watchOnce(ownUnit, () => {
+    if (ownUnit !== undefined) {
+        open.value = true;
+    } else {
+        open.value = false;
+    }
+});
+const open = ref(false);
 </script>
 
 <template>
     <Livemap>
         <template v-slot:default v-if="canStream">
             <DispatchesLayer :show-all-dispatches="settings.mode === CENTRUM_MODE.SIMPLIFIED" @goto="$emit('goto', $event)" />
+            <LControl position="topright">
+                <button
+                    type="button"
+                    class="w-30 h-30 rounded-md bg-white text-black border-2 border-black/20 bg-clip-padding hover:bg-[#f4f4f4] focus:outline-none inset-0"
+                    @click="open = !open"
+                >
+                    <ToggleSwitchIcon v-if="open" class="h-6 w-6" aria-hidden="true" />
+                    <ToggleSwitchOffIcon v-else class="h-6 w-6" aria-hidden="true" />
+                </button>
+            </LControl>
         </template>
         <template v-slot:afterMap v-if="canStream">
             <div class="lg:inset-y-0 lg:flex lg:w-50 lg:flex-col">
@@ -192,7 +216,7 @@ async function updateUtStatus(id: bigint, status?: UNIT_STATUS): Promise<void> {
                 </template>
 
                 <div class="h-full flex grow gap-y-5 overflow-y-auto bg-base-600 px-4 py-0.5">
-                    <nav class="flex flex-1 flex-col">
+                    <nav v-if="open" class="flex flex-1 flex-col">
                         <ul role="list" class="flex flex-1 flex-col gap-y-2 divide-y divide-base-400">
                             <li>
                                 <ul role="list" class="-mx-2 mt-2 space-y-1">

@@ -42,7 +42,6 @@ func NewServer(db *sql.DB, p perms.Permissions, enricher *mstlystcdata.Enricher,
 	}
 }
 
-// TODO employee warns/notes management
 // TODO time clock
 
 func (s *Server) ColleaguesList(ctx context.Context, req *ColleaguesListRequest) (*ColleaguesListResponse, error) {
@@ -77,6 +76,7 @@ func (s *Server) ColleaguesList(ctx context.Context, req *ColleaguesListRequest)
 		SELECT(
 			jet.COUNT(tUser.ID).AS("datacount.totalcount"),
 		).
+		OPTIMIZER_HINTS(jet.OptimizerHint("idx_users_firstname_lastname_fulltext")).
 		FROM(tUser).
 		WHERE(condition)
 

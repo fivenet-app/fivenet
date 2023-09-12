@@ -81,10 +81,10 @@ func (m *ConductEntry) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if l := utf8.RuneCountInString(m.GetDescription()); l < 3 || l > 1024 {
+	if l := utf8.RuneCountInString(m.GetMessage()); l < 3 || l > 2048 {
 		err := ConductEntryValidationError{
-			field:  "Description",
-			reason: "value length must be between 3 and 1024 runes, inclusive",
+			field:  "Message",
+			reason: "value length must be between 3 and 2048 runes, inclusive",
 		}
 		if !all {
 			return err

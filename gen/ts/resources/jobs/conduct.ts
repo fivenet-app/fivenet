@@ -29,9 +29,9 @@ export interface ConductEntry {
      */
     type: CONDUCT_TYPE;
     /**
-     * @generated from protobuf field: string description = 6;
+     * @generated from protobuf field: string message = 6;
      */
-    description: string;
+    message: string;
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp expires_at = 7;
      */
@@ -43,7 +43,7 @@ export interface ConductEntry {
     /**
      * @generated from protobuf field: optional resources.users.UserShort target_user = 9;
      */
-    targetUser?: UserShort;
+    targetUser?: UserShort; // @gotags: alias:"target_user"
     /**
      * @generated from protobuf field: int32 creator_id = 10;
      */
@@ -51,7 +51,7 @@ export interface ConductEntry {
     /**
      * @generated from protobuf field: optional resources.users.UserShort creator = 11;
      */
-    creator?: UserShort;
+    creator?: UserShort; // @gotags: alias:"creator"
 }
 /**
  * @generated from protobuf enum resources.jobs.CONDUCT_TYPE
@@ -70,9 +70,9 @@ export enum CONDUCT_TYPE {
      */
     NEGATIVE = 2,
     /**
-     * @generated from protobuf enum value: WARN = 3;
+     * @generated from protobuf enum value: WARNING = 3;
      */
-    WARN = 3,
+    WARNING = 3,
     /**
      * @generated from protobuf enum value: SUSPENSION = 4;
      */
@@ -87,7 +87,7 @@ class ConductEntry$Type extends MessageType<ConductEntry> {
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 5, name: "type", kind: "enum", T: () => ["resources.jobs.CONDUCT_TYPE", CONDUCT_TYPE], options: { "validate.rules": { enum: { definedOnly: true } } } },
-            { no: 6, name: "description", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "1024" } } } },
+            { no: 6, name: "message", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "2048" } } } },
             { no: 7, name: "expires_at", kind: "message", T: () => Timestamp },
             { no: 8, name: "target_user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
             { no: 9, name: "target_user", kind: "message", T: () => UserShort },

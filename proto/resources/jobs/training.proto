@@ -17,3 +17,7 @@ message TrainingModule {
   string title = 7;
   string description = 8;
 }
+
+message TrainingResult {
+  // TODO
+}

@@ -159,10 +159,12 @@ const templatesOpen = ref(false);
 
 watch(offset, async () => refresh());
 watchDebounced(search.value, async () => refresh(), { debounce: 600, maxWait: 1400 });
+
 watchDebounced(queryCategories, async () => findCategories(), {
     debounce: 600,
     maxWait: 1400,
 });
+
 watchDebounced(queryChars, async () => findChars(), {
     debounce: 600,
     maxWait: 1400,

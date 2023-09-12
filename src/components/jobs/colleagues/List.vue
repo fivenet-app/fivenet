@@ -7,7 +7,6 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import TablePagination from '~/components/partials/elements/TablePagination.vue';
 import { PaginationResponse } from '~~/gen/ts/resources/common/database/database';
 import { User } from '~~/gen/ts/resources/users/users';
-import { ListCitizensRequest } from '~~/gen/ts/services/citizenstore/citizenstore';
 import ListEntry from './ListEntry.vue';
 
 const { $grpc } = useNuxtApp();
@@ -28,7 +27,7 @@ const {
 async function listColleagues(): Promise<User[]> {
     return new Promise(async (res, rej) => {
         try {
-            const req: ListCitizensRequest = {
+            const req = {
                 pagination: {
                     offset: offset.value,
                 },

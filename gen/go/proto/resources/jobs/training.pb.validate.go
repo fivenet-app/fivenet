@@ -230,3 +230,103 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = TrainingModuleValidationError{}
+
+// Validate checks the field values on TrainingResult with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *TrainingResult) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on TrainingResult with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in TrainingResultMultiError,
+// or nil if none found.
+func (m *TrainingResult) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *TrainingResult) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return TrainingResultMultiError(errors)
+	}
+
+	return nil
+}
+
+// TrainingResultMultiError is an error wrapping multiple validation errors
+// returned by TrainingResult.ValidateAll() if the designated constraints
+// aren't met.
+type TrainingResultMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m TrainingResultMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m TrainingResultMultiError) AllErrors() []error { return m }
+
+// TrainingResultValidationError is the validation error returned by
+// TrainingResult.Validate if the designated constraints aren't met.
+type TrainingResultValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e TrainingResultValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e TrainingResultValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e TrainingResultValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e TrainingResultValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e TrainingResultValidationError) ErrorName() string { return "TrainingResultValidationError" }
+
+// Error satisfies the builtin error interface
+func (e TrainingResultValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sTrainingResult.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = TrainingResultValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = TrainingResultValidationError{}

@@ -29,19 +29,41 @@ export interface RequestEntry {
      */
     type: REQUEST_TYPE;
     /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp expires_at = 6;
+     * @generated from protobuf field: string message = 6;
      */
-    expiresAt?: Timestamp;
+    message: string;
     /**
-     * TODO what info do we need for requests? begin and end time?
-     *
-     * @generated from protobuf field: int32 creator_id = 9;
+     * @generated from protobuf field: optional resources.timestamp.Timestamp begins_at = 7;
+     */
+    beginsAt?: Timestamp;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp ends_at = 8;
+     */
+    endsAt?: Timestamp;
+    /**
+     * @generated from protobuf field: optional string status = 9;
+     */
+    status?: string;
+    /**
+     * @generated from protobuf field: int32 creator_id = 10;
      */
     creatorId: number;
     /**
-     * @generated from protobuf field: optional resources.users.UserShort creator = 10;
+     * @generated from protobuf field: optional resources.users.UserShort creator = 11;
      */
-    creator?: UserShort;
+    creator?: UserShort; // @gotags: alias:"creator"
+    /**
+     * @generated from protobuf field: optional bool approved = 12;
+     */
+    approved?: boolean;
+    /**
+     * @generated from protobuf field: optional int32 approver_user_id = 13;
+     */
+    approverUserId?: number;
+    /**
+     * @generated from protobuf field: optional resources.users.UserShort approver_user = 14;
+     */
+    approverUser?: UserShort; // @gotags: alias:"approver"
 }
 /**
  * @generated from protobuf enum resources.jobs.REQUEST_TYPE
@@ -61,9 +83,15 @@ class RequestEntry$Type extends MessageType<RequestEntry> {
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 5, name: "type", kind: "enum", T: () => ["resources.jobs.REQUEST_TYPE", REQUEST_TYPE], options: { "validate.rules": { enum: { definedOnly: true } } } },
-            { no: 6, name: "expires_at", kind: "message", T: () => Timestamp },
-            { no: 9, name: "creator_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
-            { no: 10, name: "creator", kind: "message", T: () => UserShort }
+            { no: 6, name: "message", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "2048" } } } },
+            { no: 7, name: "begins_at", kind: "message", T: () => Timestamp },
+            { no: 8, name: "ends_at", kind: "message", T: () => Timestamp },
+            { no: 9, name: "status", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 10, name: "creator_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
+            { no: 11, name: "creator", kind: "message", T: () => UserShort },
+            { no: 12, name: "approved", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 13, name: "approver_user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 14, name: "approver_user", kind: "message", T: () => UserShort }
         ]);
     }
 }

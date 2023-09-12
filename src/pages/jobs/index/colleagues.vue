@@ -13,6 +13,6 @@ definePageMeta({
 
 <template>
     <div>
-        <List :current-job="true" />
+        <List />
     </div>
 </template>

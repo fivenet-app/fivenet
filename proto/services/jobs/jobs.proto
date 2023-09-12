@@ -4,6 +4,7 @@ package services.jobs;
 
 import "resources/common/database/database.proto";
 import "resources/users/users.proto";
+import "resources/jobs/conduct.proto";
 import "validate/validate.proto";
 
 option go_package = "github.com/galexrt/fivenet/gen/go/proto/services/jobs;jobs";
@@ -24,36 +25,39 @@ message ColleaguesListResponse {
 // Conduct Register
 
 message ConductListEntriesRequest {
-
+  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
+  // Search params
+  repeated resources.jobs.CONDUCT_TYPE types = 2;
+  optional bool show_expired = 3;
+  repeated int32 user_ids = 4;
 }
 
 message ConductListEntriesResponse {
-
+  resources.common.database.PaginationResponse pagination = 1;
+  repeated resources.jobs.ConductEntry entries = 2;
 }
 
 message ConductCreateEntryRequest {
-
+  resources.jobs.ConductEntry entry = 1 [(validate.rules).message.required = true];
 }
 
 message ConductCreateEntryResponse {
-
+  resources.jobs.ConductEntry entry = 1;
 }
 
 message ConductUpdateEntryRequest {
-
+  resources.jobs.ConductEntry entry = 1 [(validate.rules).message.required = true];
 }
 
 message ConductUpdateEntryResponse {
-
+  resources.jobs.ConductEntry entry = 1 [(validate.rules).message.required = true];
 }
 
 message ConductDeleteEntryRequest {
-
+  uint64 id = 1;
 }
 
-message ConductDeleteEntryResponse {
-
-}
+message ConductDeleteEntryResponse {}
 
 service JobsService {
   // @perm
