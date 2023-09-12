@@ -112,8 +112,7 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                             {{ $t('common.rank', 1) }}
                                         </th>
                                         <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
-                                            {{ $t('common.phone') }}
-                                            {{ $t('common.number') }}
+                                            {{ $t('common.phone_number') }}
                                         </th>
                                         <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.date_of_birth') }}
@@ -140,8 +139,7 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                             {{ $t('common.rank', 1) }}
                                         </th>
                                         <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
-                                            {{ $t('common.phone') }}
-                                            {{ $t('common.number') }}
+                                            {{ $t('common.phone_number') }}
                                         </th>
                                         <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.date_of_birth') }}

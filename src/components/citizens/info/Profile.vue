@@ -6,6 +6,7 @@ import CharSexBadge from '~/components/citizens/CharSexBadge.vue';
 import JobModal from '~/components/citizens/info/JobModal.vue';
 import TemplatesModal from '~/components/documents/templates/TemplatesModal.vue';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
+import PhoneNumber from '~/components/partials/users/PhoneNumber.vue';
 import { useClipboardStore } from '~/store/clipboard';
 import { User } from '~~/gen/ts/resources/users/users';
 import TrafficPointsModal from './TrafficPointsModal.vue';
@@ -73,13 +74,10 @@ const trafficPointsModal = ref(false);
                                 class="sm:flex sm:px-6 sm:py-5"
                             >
                                 <dt class="text-sm font-medium text-neutral sm:w-40 sm:flex-shrink-0 lg:w-48">
-                                    {{ $t('common.phone') }}
-                                    {{ $t('common.number') }}
+                                    {{ $t('common.phone_number') }}
                                 </dt>
                                 <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:mt-0 sm:ml-6">
-                                    <span v-for="part in (user?.phoneNumber ?? '').match(/.{1,3}/g)" class="mr-1">{{
-                                        part
-                                    }}</span>
+                                    <PhoneNumber :number="user.phoneNumber" />
                                 </dd>
                             </div>
                             <div class="sm:flex sm:px-6 sm:py-5">

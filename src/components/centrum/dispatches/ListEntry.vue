@@ -73,7 +73,9 @@ defineEmits<{
                 {{ $t('common.anon') }}
             </span>
             <span v-else-if="dispatch.user">
-                {{ dispatch.user.firstname }}, {{ dispatch.user.lastname }} ({{ dispatch.user.phoneNumber ?? 'N/A' }})
+                {{ dispatch.user.firstname }}, {{ dispatch.user.lastname }} (<PhoneNumber
+                    :number="dispatch.user.phoneNumber"
+                />)
             </span>
             <span v-else>
                 {{ $t('common.unknown') }}

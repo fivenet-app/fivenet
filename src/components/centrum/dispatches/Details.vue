@@ -6,6 +6,7 @@ import { AccountIcon, CloseIcon, PencilIcon, PlusIcon, TrashCanIcon } from 'mdi-
 import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import Time from '~/components/partials/elements/Time.vue';
+import PhoneNumber from '~/components/partials/users/PhoneNumber.vue';
 import { useCentrumStore } from '~/store/centrum';
 import { DISPATCH_STATUS, Dispatch } from '~~/gen/ts/resources/dispatch/dispatches';
 import { Settings } from '~~/gen/ts/resources/dispatch/settings';
@@ -150,8 +151,9 @@ const openStatus = ref(false);
                                                                     class="underline hover:text-neutral hover:transition-all"
                                                                 >
                                                                     {{ dispatch.user?.firstname }}
-                                                                    {{ dispatch.user?.lastname }} ({{ $t('common.phone') }}:
-                                                                    {{ dispatch.user?.phoneNumber ?? 'N/A' }})
+                                                                    {{ dispatch.user?.lastname }} ({{
+                                                                        $t('common.phone_number')
+                                                                    }}: <PhoneNumber :number="dispatch.user.phoneNumber" />)
                                                                 </NuxtLink>
                                                                 <span v-else>
                                                                     {{ $t('common.unknown') }}

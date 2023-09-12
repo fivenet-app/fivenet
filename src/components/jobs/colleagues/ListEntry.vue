@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import PhoneNumber from '~/components/partials/users/PhoneNumber.vue';
 import { useClipboardStore } from '~/store/clipboard';
 import { useNotificationsStore } from '~/store/notifications';
 import { User } from '~~/gen/ts/resources/users/users';
@@ -29,7 +30,7 @@ function addToClipboard(): void {
         </td>
         <td class="whitespace-nowrap px-1 py-1 text-left text-base-200">{{ user.jobGradeLabel }} ({{ user.jobGrade }})</td>
         <td class="whitespace-nowrap px-1 py-1 text-left text-base-200">
-            <span v-for="part in (user?.phoneNumber ?? '').match(/.{1,3}/g)" class="mr-1">{{ part }}</span>
+            <PhoneNumber :number="user.phoneNumber" />
         </td>
         <td class="whitespace-nowrap px-1 py-1 text-left text-base-200">
             {{ user.dateofbirth }}

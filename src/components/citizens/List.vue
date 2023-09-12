@@ -162,14 +162,14 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                     >
                                         <label for="searchPhone" class="block text-sm font-medium leading-6 text-neutral">
                                             {{ $t('common.search') }}
-                                            {{ $t('common.phone') }}
+                                            {{ $t('common.phone_number') }}
                                         </label>
                                         <div class="relative flex items-center mt-2">
                                             <input
                                                 v-model="query.phoneNumber"
                                                 type="tel"
                                                 name="searchPhone"
-                                                :placeholder="`${$t('common.phone')} ${$t('common.number')}`"
+                                                :placeholder="$t('common.phone_number')"
                                                 class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                             />
                                         </div>
@@ -230,8 +230,7 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                             scope="col"
                                             class="py-3.5 px-2 text-left text-sm font-semibold text-neutral"
                                         >
-                                            {{ $t('common.phone') }}
-                                            {{ $t('common.number') }}
+                                            {{ $t('common.phone_number') }}
                                         </th>
                                         <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.date_of_birth') }}
@@ -283,8 +282,7 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                             scope="col"
                                             class="py-3.5 px-2 text-left text-sm font-semibold text-neutral"
                                         >
-                                            {{ $t('common.phone') }}
-                                            {{ $t('common.number') }}
+                                            {{ $t('common.phone_number') }}
                                         </th>
                                         <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.date_of_birth') }}

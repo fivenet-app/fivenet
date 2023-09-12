@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { default as CentrumSidebar } from '~/components/centrum/livemap/Sidebar.vue';
-import { setWaypoint } from '~/components/centrum/nui';
+import { setWaypoint } from '~/components/nui';
 import { useLivemapStore } from '~/store/livemap';
 
 const livemapStore = useLivemapStore();

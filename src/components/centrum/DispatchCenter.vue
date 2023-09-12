@@ -4,6 +4,7 @@ import { default as DispatchesList } from '~/components/centrum/dispatches/List.
 import { default as UnitDetails } from '~/components/centrum/units/Details.vue';
 import { default as UnitsList } from '~/components/centrum/units/List.vue';
 import Livemap from '~/components/livemap/Livemap.vue';
+import { setWaypoint } from '~/components/nui';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { useCentrumStore } from '~/store/centrum';
@@ -15,7 +16,6 @@ import Feed from './Feed.vue';
 import AssignDispatchModal from './dispatches/AssignDispatchModal.vue';
 import { default as DispatchStatusUpdateModal } from './dispatches/StatusUpdateModal.vue';
 import DispatchesLayer from './livemap/DispatchesLayer.vue';
-import { setWaypoint } from './nui';
 import AssignUnitModal from './units/AssignUnitModal.vue';
 import { default as UnitStatusUpdateModal } from './units/StatusUpdateModal.vue';
 

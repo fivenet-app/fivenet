@@ -636,7 +636,9 @@
         "colleagues": "No colleagues | {n} colleague | {n} colleagues",
         "expires_at": "Expires at",
         "expired": "Expired",
-        "conduct_register": "Conduct Register"
+        "conduct_register": "Conduct Register",
+        "call": "Call",
+        "phone_number": "Phone Number"
     },
     "notifications": {
         "clipboard": {
@@ -878,6 +880,18 @@
                 "assigned_dispatch": {
                     "title": "New Dispatch assigned",
                     "content": "Check the Dispatches list to accept the dispatch."
+                }
+            }
+        },
+        "components": {
+            "partials": {
+                "users": {
+                    "PhoneNumber": {
+                        "copied": {
+                            "title": "Phone Number copied",
+                            "content": "Phone Number has been copied to your clipboard."
+                        }
+                    }
                 }
             }
         }

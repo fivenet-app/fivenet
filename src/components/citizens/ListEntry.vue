@@ -3,6 +3,7 @@ import { ClipboardPlusIcon, EyeIcon } from 'mdi-vue3';
 import { useClipboardStore } from '~/store/clipboard';
 import { useNotificationsStore } from '~/store/notifications';
 import { User } from '~~/gen/ts/resources/users/users';
+import PhoneNumber from '../partials/users/PhoneNumber.vue';
 
 const clipboardStore = useClipboardStore();
 const notifications = useNotificationsStore();
@@ -44,7 +45,7 @@ function addToClipboard(): void {
             v-if="can('CitizenStoreService.ListCitizens.Fields.PhoneNumber')"
             class="whitespace-nowrap px-1 py-1 text-left text-base-200"
         >
-            <span v-for="part in (user?.phoneNumber ?? '').match(/.{1,3}/g)" class="mr-1">{{ part }}</span>
+            <PhoneNumber :number="user.phoneNumber" />
         </td>
         <td class="whitespace-nowrap px-1 py-1 text-left text-base-200">
             {{ user.dateofbirth }}

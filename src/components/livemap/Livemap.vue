@@ -5,7 +5,7 @@ import 'leaflet-contextmenu';
 import 'leaflet-contextmenu/dist/leaflet.contextmenu.min.css';
 import 'leaflet/dist/leaflet.css';
 import CreateOrUpdateModal from '~/components/centrum/dispatches/CreateOrUpdateModal.vue';
-import { checkForNUI, setWaypoint } from '~/components/centrum/nui';
+import { isNUIAvailable, setWaypoint } from '~/components/nui';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { useLivemapStore } from '~/store/livemap';
@@ -58,7 +58,7 @@ if (can('LivemapperService.CreateOrUpdateMarker')) {
         },
     });
 }
-if (checkForNUI()) {
+if (isNUIAvailable()) {
     mapOptions.contextmenuItems.push({
         text: t('components.centrum.livemap.mark_on_gps'),
         callback: (e: LeafletMouseEvent) => setWaypoint(e.latlng.lng, e.latlng.lat),

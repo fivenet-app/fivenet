@@ -1,7 +1,7 @@
 import { useConfigStore } from '~/store/config';
 
 // Checking for `GetParentResourceName` existance doesn't work (anymore) in FiveM NUI iframes
-export function checkForNUI(): boolean {
+export function isNUIAvailable(): boolean {
     //return typeof window.GetParentResourceName !== 'undefined';
     return useConfigStore().clientConfig.NUIEnabled;
 }
@@ -9,12 +9,6 @@ export function checkForNUI(): boolean {
 function getParentResourceName(): string {
     //return (window as any).GetParentResourceName();
     return useConfigStore().clientConfig.NUIResourceName ?? 'fivenet';
-}
-
-export async function setWaypoint(x: number, y: number): Promise<void> {
-    if (!checkForNUI()) return;
-
-    return await fetchNui('setWaypoint', { x: x, y: y });
 }
 
 export async function fetchNui<T = any, V = any>(event: string, data: T): Promise<V> {
@@ -29,4 +23,16 @@ export async function fetchNui<T = any, V = any>(event: string, data: T): Promis
 
     const parsed = resp.json();
     return parsed as V;
+}
+
+export async function setWaypoint(x: number, y: number): Promise<void> {
+    if (!isNUIAvailable()) return;
+
+    return await fetchNui('setWaypoint', { x: x, y: y });
+}
+
+export async function phoneCallNumber(phoneNumber: string): Promise<void> {
+    if (!isNUIAvailable()) return;
+
+    return await fetchNui('phoneCallNumber', { phoneNumber: phoneNumber });
 }

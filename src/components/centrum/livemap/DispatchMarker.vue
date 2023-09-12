@@ -3,6 +3,7 @@ import { LIcon, LMarker, LPopup } from '@vue-leaflet/vue-leaflet';
 import { BellIcon } from 'mdi-vue3';
 import { dispatchStatusAnimate, dispatchStatusToBGColor, dispatchStatusToFillColor } from '~/components/centrum/helpers';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
+import PhoneNumber from '~/components/partials/users/PhoneNumber.vue';
 import { DISPATCH_STATUS, Dispatch } from '~~/gen/ts/resources/dispatch/dispatches';
 
 const props = withDefaults(
@@ -74,9 +75,9 @@ function selected(_: bigint | string) {
                         {{ $t('common.anon') }}
                     </span>
                     <span v-else-if="dispatch.user">
-                        {{ dispatch.user?.firstname }}, {{ dispatch.user?.lastname }} ({{
-                            dispatch.user?.phoneNumber ?? 'N/A'
-                        }})
+                        {{ dispatch.user?.firstname }}, {{ dispatch.user?.lastname }} (<PhoneNumber
+                            :number="dispatch.user.phoneNumber"
+                        />)
                     </span>
                     <span v-else>
                         {{ $t('common.unknown') }}
