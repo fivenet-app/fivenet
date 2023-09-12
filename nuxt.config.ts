@@ -1,7 +1,5 @@
 import fs from 'fs';
 import { defineNuxtConfig } from 'nuxt/config';
-import path from 'path';
-import mkcert from 'vite-plugin-mkcert';
 import { STRATEGIES } from 'vue-i18n-routing';
 
 type PackageJson = {
@@ -121,9 +119,9 @@ const config = defineNuxtConfig({
         },
         server: {
             hmr: {
-                protocol: 'wss',
+                protocol: 'ws',
             },
-            https: true,
+            https: false,
             proxy: {
                 '/api': 'http://localhost:8080',
                 '/grpc': {
@@ -134,7 +132,7 @@ const config = defineNuxtConfig({
                 },
             },
         },
-        plugins: [mkcert()],
+        //plugins: [mkcert()],
         optimizeDeps: {
             exclude: ['vue-demi'],
         },
@@ -170,11 +168,6 @@ const config = defineNuxtConfig({
     },
     devServer: {
         port: 3000,
-        https: {
-            // Use vite-mkcert-plugin's cert + key for localhost
-            key: path.resolve(process.env.HOME!, '.vite-plugin-mkcert', 'dev.pem'),
-            cert: path.resolve(process.env.HOME!, '.vite-plugin-mkcert', 'cert.pem'),
-        },
     },
     app: {
         head: {

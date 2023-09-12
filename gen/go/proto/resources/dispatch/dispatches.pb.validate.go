@@ -267,7 +267,18 @@ func (m *Dispatch) validate(all bool) error {
 	}
 
 	if m.Postal != nil {
-		// no validation rules for Postal
+
+		if utf8.RuneCountInString(m.GetPostal()) > 48 {
+			err := DispatchValidationError{
+				field:  "Postal",
+				reason: "value length must be at most 48 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
 	}
 
 	if m.Anon != nil {
@@ -1046,7 +1057,18 @@ func (m *DispatchStatus) validate(all bool) error {
 	}
 
 	if m.Postal != nil {
-		// no validation rules for Postal
+
+		if utf8.RuneCountInString(m.GetPostal()) > 48 {
+			err := DispatchStatusValidationError{
+				field:  "Postal",
+				reason: "value length must be at most 48 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
 	}
 
 	if len(errors) > 0 {

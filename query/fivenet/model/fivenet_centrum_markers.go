@@ -19,7 +19,7 @@ type FivenetCentrumMarkers struct {
 	Description *string    `json:"description"`
 	X           *float64   `json:"x"`
 	Y           *float64   `json:"y"`
-	Postal      *int32     `json:"postal"`
+	Postal      *string    `json:"postal"`
 	Color       *string    `json:"color"`
 	Icon        *string    `json:"icon"`
 	MarkerType  int16      `json:"marker_type"`

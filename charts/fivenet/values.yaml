@@ -164,6 +164,7 @@ fivenet:
           - doj
           - fib
           - police
+        #postalsFile: ".output/public/data/postals.json"
       defaultPermissions:
         - category: AuthService
           name: ChooseCharacter

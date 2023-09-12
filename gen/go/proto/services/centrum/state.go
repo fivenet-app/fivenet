@@ -15,7 +15,7 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-func (s *Server) watchForEvents() error {
+func (s *Server) watchStateEvents() error {
 	msgCh := make(chan *nats.Msg, 256)
 
 	sub, err := s.events.JS.ChanSubscribe(fmt.Sprintf("%s.>", BaseSubject), msgCh, nats.DeliverLastPerSubject())
@@ -134,7 +134,7 @@ func (s *Server) watchForEvents() error {
 	}
 }
 
-func (s *Server) watchForUserChanges() {
+func (s *Server) watchUserChanges() {
 	userCh := s.tracker.Subscribe()
 
 	for {

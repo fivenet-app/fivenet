@@ -165,6 +165,9 @@ const openStatus = ref(false);
                                                             <dd
                                                                 class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
                                                             >
+                                                                <span class="block">
+                                                                    {{ dispatch.postal ?? 'N/A' }}
+                                                                </span>
                                                                 <button
                                                                     v-if="dispatch.x && dispatch.y"
                                                                     type="button"

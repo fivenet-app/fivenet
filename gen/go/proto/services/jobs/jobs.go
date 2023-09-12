@@ -30,7 +30,7 @@ type Server struct {
 	db       *sql.DB
 	p        perms.Permissions
 	enricher *mstlystcdata.Enricher
-	aud      audit.IAuditer
+	auditer  audit.IAuditer
 }
 
 func NewServer(db *sql.DB, p perms.Permissions, enricher *mstlystcdata.Enricher, aud audit.IAuditer) *Server {
@@ -38,11 +38,9 @@ func NewServer(db *sql.DB, p perms.Permissions, enricher *mstlystcdata.Enricher,
 		db:       db,
 		p:        p,
 		enricher: enricher,
-		aud:      aud,
+		auditer:  aud,
 	}
 }
-
-// TODO time clock
 
 func (s *Server) ColleaguesList(ctx context.Context, req *ColleaguesListRequest) (*ColleaguesListResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)

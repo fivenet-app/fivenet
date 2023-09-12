@@ -27,6 +27,7 @@ require (
 	github.com/microcosm-cc/bluemonday v1.0.25
 	github.com/nats-io/nats.go v1.28.0
 	github.com/ory/dockertest/v3 v3.10.0
+	github.com/paulmach/orb v0.10.0
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.16.0
 	github.com/puzpuzpuz/xsync/v2 v2.5.0

@@ -167,7 +167,7 @@ func (s *Server) CreateOrUpdateUnit(ctx context.Context, req *CreateOrUpdateUnit
 	}
 
 	var x, y *float64
-	var postal *int64
+	var postal *string
 	marker, ok := s.tracker.GetUserById(userInfo.UserId)
 	if ok {
 		x = &marker.Info.X
@@ -276,7 +276,7 @@ func (s *Server) UpdateUnitStatus(ctx context.Context, req *UpdateUnitStatusRequ
 	}
 
 	var x, y *float64
-	var postal *int64
+	var postal *string
 	marker, ok := s.tracker.GetUserById(userInfo.UserId)
 	if ok {
 		x = &marker.Info.X

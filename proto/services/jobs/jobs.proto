@@ -63,7 +63,7 @@ service JobsService {
   // @perm
   rpc ColleaguesList(ColleaguesListRequest) returns (ColleaguesListResponse);
 
-  // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
+  // @perm: Attrs=Access/StringList:[]string{"Own", "All"}§[]string{"Own"}
   rpc ConductListEntries(ConductListEntriesRequest) returns (ConductListEntriesResponse);
   // @perm
   rpc ConductCreateEntry(ConductCreateEntryRequest) returns (ConductCreateEntryResponse);

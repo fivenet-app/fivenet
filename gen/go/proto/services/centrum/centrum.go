@@ -17,6 +17,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/perms"
 	"github.com/galexrt/fivenet/pkg/server/audit"
 	"github.com/galexrt/fivenet/pkg/tracker"
+	"github.com/galexrt/fivenet/pkg/tracker/postals"
 	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/pkg/utils/maps"
 	"github.com/galexrt/fivenet/query/fivenet/model"
@@ -57,6 +58,7 @@ type Server struct {
 	events   *events.Eventus
 	enricher *mstlystcdata.Enricher
 	tracker  *tracker.Tracker
+	postals  *postals.Postals
 
 	visibleJobs []string
 	convertJobs []string
@@ -82,6 +84,7 @@ type Params struct {
 	Events   *events.Eventus
 	Enricher *mstlystcdata.Enricher
 	Tracker  *tracker.Tracker
+	Postals  *postals.Postals
 	Config   *config.Config
 }
 
@@ -101,6 +104,7 @@ func NewServer(p Params) (*Server, error) {
 		events:   p.Events,
 		enricher: p.Enricher,
 		tracker:  p.Tracker,
+		postals:  p.Postals,
 
 		visibleJobs: p.Config.Game.Livemap.Jobs,
 		convertJobs: p.Config.Game.DispatchCenter.ConvertJobs,
@@ -125,7 +129,7 @@ func NewServer(p Params) (*Server, error) {
 		s.wg.Add(1)
 		go func() {
 			defer s.wg.Done()
-			s.start()
+			s.loadDataLoop()
 		}()
 		s.wg.Add(1)
 		go func() {
@@ -135,12 +139,12 @@ func NewServer(p Params) (*Server, error) {
 		s.wg.Add(1)
 		go func() {
 			defer s.wg.Done()
-			s.watchForEvents()
+			s.watchStateEvents()
 		}()
 		s.wg.Add(1)
 		go func() {
 			defer s.wg.Done()
-			s.watchForUserChanges()
+			s.watchUserChanges()
 		}()
 		s.wg.Add(1)
 		go func() {
@@ -162,7 +166,7 @@ func NewServer(p Params) (*Server, error) {
 	return s, nil
 }
 
-func (s *Server) start() {
+func (s *Server) loadDataLoop() {
 	for {
 		if err := s.loadData(); err != nil {
 			s.logger.Error("failed to refresh centrum data", zap.Error(err))

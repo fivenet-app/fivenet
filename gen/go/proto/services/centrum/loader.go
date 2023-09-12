@@ -306,8 +306,6 @@ func (s *Server) loadDispatches(ctx context.Context, id uint64) error {
 			if err != nil {
 				return err
 			}
-		} else {
-			dispatches[i].User = nil
 		}
 
 		s.getDispatchesMap(dispatches[i].Job).Store(dispatches[i].Id, dispatches[i])

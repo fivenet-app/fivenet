@@ -24,7 +24,7 @@ type fivenetCentrumMarkersTable struct {
 	Description mysql.ColumnString
 	X           mysql.ColumnFloat
 	Y           mysql.ColumnFloat
-	Postal      mysql.ColumnInteger
+	Postal      mysql.ColumnString
 	Color       mysql.ColumnString
 	Icon        mysql.ColumnString
 	MarkerType  mysql.ColumnInteger
@@ -77,7 +77,7 @@ func newFivenetCentrumMarkersTableImpl(schemaName, tableName, alias string) five
 		DescriptionColumn = mysql.StringColumn("description")
 		XColumn           = mysql.FloatColumn("x")
 		YColumn           = mysql.FloatColumn("y")
-		PostalColumn      = mysql.IntegerColumn("postal")
+		PostalColumn      = mysql.StringColumn("postal")
 		ColorColumn       = mysql.StringColumn("color")
 		IconColumn        = mysql.StringColumn("icon")
 		MarkerTypeColumn  = mysql.IntegerColumn("marker_type")

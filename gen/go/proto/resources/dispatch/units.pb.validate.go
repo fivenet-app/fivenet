@@ -772,7 +772,18 @@ func (m *UnitStatus) validate(all bool) error {
 	}
 
 	if m.Postal != nil {
-		// no validation rules for Postal
+
+		if utf8.RuneCountInString(m.GetPostal()) > 48 {
+			err := UnitStatusValidationError{
+				field:  "Postal",
+				reason: "value length must be at most 48 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
 	}
 
 	if m.CreatorId != nil {

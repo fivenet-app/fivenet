@@ -28,7 +28,7 @@ export interface IJobsServiceClient {
      */
     colleaguesList(input: ColleaguesListRequest, options?: RpcOptions): UnaryCall<ColleaguesListRequest, ColleaguesListResponse>;
     /**
-     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
+     * @perm: Attrs=Access/StringList:[]string{"Own", "All"}§[]string{"Own"}
      *
      * @generated from protobuf rpc: ConductListEntries(services.jobs.ConductListEntriesRequest) returns (services.jobs.ConductListEntriesResponse);
      */
@@ -71,7 +71,7 @@ export class JobsServiceClient implements IJobsServiceClient, ServiceInfo {
         return stackIntercept<ColleaguesListRequest, ColleaguesListResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
+     * @perm: Attrs=Access/StringList:[]string{"Own", "All"}§[]string{"Own"}
      *
      * @generated from protobuf rpc: ConductListEntries(services.jobs.ConductListEntriesRequest) returns (services.jobs.ConductListEntriesResponse);
      */

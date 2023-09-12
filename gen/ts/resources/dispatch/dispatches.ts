@@ -53,9 +53,9 @@ export interface Dispatch {
      */
     y: number;
     /**
-     * @generated from protobuf field: optional int64 postal = 12;
+     * @generated from protobuf field: optional string postal = 12;
      */
-    postal?: bigint;
+    postal?: string;
     /**
      * @generated from protobuf field: optional bool anon = 13;
      */
@@ -177,9 +177,9 @@ export interface DispatchStatus {
      */
     y?: number;
     /**
-     * @generated from protobuf field: optional int64 postal = 13;
+     * @generated from protobuf field: optional string postal = 13;
      */
-    postal?: bigint;
+    postal?: string;
 }
 /**
  * @generated from protobuf enum resources.dispatch.DISPATCH_STATUS
@@ -244,7 +244,7 @@ class Dispatch$Type extends MessageType<Dispatch> {
             { no: 9, name: "attributes", kind: "message", T: () => Attributes },
             { no: 10, name: "x", kind: "scalar", T: 1 /*ScalarType.DOUBLE*/ },
             { no: 11, name: "y", kind: "scalar", T: 1 /*ScalarType.DOUBLE*/ },
-            { no: 12, name: "postal", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 12, name: "postal", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "48" } } } },
             { no: 13, name: "anon", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
             { no: 14, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
             { no: 15, name: "user", kind: "message", T: () => User },
@@ -314,7 +314,7 @@ class DispatchStatus$Type extends MessageType<DispatchStatus> {
             { no: 10, name: "user", kind: "message", T: () => UserShort },
             { no: 11, name: "x", kind: "scalar", opt: true, T: 1 /*ScalarType.DOUBLE*/ },
             { no: 12, name: "y", kind: "scalar", opt: true, T: 1 /*ScalarType.DOUBLE*/ },
-            { no: 13, name: "postal", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 0 /*LongType.BIGINT*/ }
+            { no: 13, name: "postal", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "48" } } } }
         ]);
     }
 }

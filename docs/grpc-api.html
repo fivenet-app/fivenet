@@ -2472,7 +2472,7 @@
               
                 <tr>
                   <td>postal</td>
-                  <td><a href="#int64">int64</a></td>
+                  <td><a href="#string">string</a></td>
                   <td>optional</td>
                   <td><p> </p></td>
                 </tr>
@@ -2546,6 +2546,17 @@
                     <ul>
                     
                       <li>int32.gt: 0</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>postal</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.max_len: 48</li>
                     
                     </ul>
                   </td>
@@ -2742,7 +2753,7 @@
               
                 <tr>
                   <td>postal</td>
-                  <td><a href="#int64">int64</a></td>
+                  <td><a href="#string">string</a></td>
                   <td>optional</td>
                   <td><p> </p></td>
                 </tr>
@@ -2819,6 +2830,17 @@
                     <ul>
                     
                       <li>string.max_len: 1024</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>postal</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.max_len: 48</li>
                     
                     </ul>
                   </td>
@@ -3055,7 +3077,7 @@
               
                 <tr>
                   <td>postal</td>
-                  <td><a href="#int64">int64</a></td>
+                  <td><a href="#string">string</a></td>
                   <td>optional</td>
                   <td><p> </p></td>
                 </tr>
@@ -3115,6 +3137,17 @@
                     <ul>
                     
                       <li>int32.gt: 0</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>postal</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.max_len: 48</li>
                     
                     </ul>
                   </td>
@@ -6444,7 +6477,7 @@
               
                 <tr>
                   <td>postal</td>
-                  <td><a href="#int64">int64</a></td>
+                  <td><a href="#string">string</a></td>
                   <td>optional</td>
                   <td><p> </p></td>
                 </tr>
@@ -6466,6 +6499,33 @@
             </tbody>
           </table>
 
+          
+            
+            
+            <h4>Validated Fields</h4>
+            <table>
+              <thead>
+                <tr>
+                  <td>Field</td>
+                  <td>Validations</td>
+                </tr>
+              </thead>
+              <tbody>
+              
+                <tr>
+                  <td>postal</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.max_len: 48</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+              </tbody>
+            </table>
+            
           
 
         
@@ -15016,7 +15076,7 @@
                 <td>ConductListEntries</td>
                 <td><a href="#services.jobs.ConductListEntriesRequest">ConductListEntriesRequest</a></td>
                 <td><a href="#services.jobs.ConductListEntriesResponse">ConductListEntriesResponse</a></td>
-                <td><p>@perm: Attrs=Access/StringList:[]string{&#34;Own&#34;, &#34;Lower_Rank&#34;, &#34;Same_Rank&#34;}§[]string{&#34;Own&#34;}</p></td>
+                <td><p>@perm: Attrs=Access/StringList:[]string{&#34;Own&#34;, &#34;All&#34;}§[]string{&#34;Own&#34;}</p></td>
               </tr>
             
               <tr>

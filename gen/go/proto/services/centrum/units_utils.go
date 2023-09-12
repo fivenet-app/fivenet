@@ -176,7 +176,7 @@ func (s *Server) updateUnitStatus(ctx context.Context, job string, unit *dispatc
 
 func (s *Server) updateUnitAssignments(ctx context.Context, userInfo *userinfo.UserInfo, unit *dispatch.Unit, toAdd []int32, toRemove []int32) error {
 	var x, y *float64
-	var postal *int64
+	var postal *string
 	marker, ok := s.tracker.GetUserById(userInfo.UserId)
 	if ok {
 		x = &marker.Info.X

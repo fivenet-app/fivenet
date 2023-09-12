@@ -44,7 +44,7 @@ func init() {
 				{
 					Key:           JobsServiceConductListEntriesAccessPermField,
 					Type:          permissions.StringListAttributeType,
-					ValidValues:   []string{"Own", "Lower_Rank", "Same_Rank"},
+					ValidValues:   []string{"Own", "All"},
 					DefaultValues: []string{"Own"},
 				},
 			},

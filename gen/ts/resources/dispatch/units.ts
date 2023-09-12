@@ -130,9 +130,9 @@ export interface UnitStatus {
      */
     y?: number;
     /**
-     * @generated from protobuf field: optional int64 postal = 11;
+     * @generated from protobuf field: optional string postal = 11;
      */
-    postal?: bigint;
+    postal?: string;
     /**
      * @generated from protobuf field: optional int32 creator_id = 12;
      */
@@ -238,7 +238,7 @@ class UnitStatus$Type extends MessageType<UnitStatus> {
             { no: 8, name: "user", kind: "message", T: () => UserShort },
             { no: 9, name: "x", kind: "scalar", opt: true, T: 1 /*ScalarType.DOUBLE*/ },
             { no: 10, name: "y", kind: "scalar", opt: true, T: 1 /*ScalarType.DOUBLE*/ },
-            { no: 11, name: "postal", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 11, name: "postal", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "48" } } } },
             { no: 12, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
             { no: 13, name: "creator", kind: "message", T: () => UserShort }
         ]);

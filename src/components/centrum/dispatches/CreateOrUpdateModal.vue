@@ -61,7 +61,7 @@ interface FormData {
     anon: boolean;
 }
 
-const { handleSubmit } = useForm<FormData>({
+const { handleSubmit, setValues } = useForm<FormData>({
     validationSchema: {
         message: { required: true, min: 3, max: 255 },
         description: { required: false, min: 6, max: 512 },
@@ -69,6 +69,9 @@ const { handleSubmit } = useForm<FormData>({
     initialValues: {
         anon: false,
     },
+});
+setValues({
+    anon: false,
 });
 
 const onSubmit = handleSubmit(async (values): Promise<void> => await createDispatch(values));

@@ -6,8 +6,11 @@ import (
 
 	database "github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
 	jobs "github.com/galexrt/fivenet/gen/go/proto/resources/jobs"
+	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/perms"
+	"github.com/galexrt/fivenet/pkg/utils"
+	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -16,8 +19,6 @@ import (
 var (
 	tConduct = table.FivenetJobsConduct.AS("conduct_entry")
 )
-
-// TODO employee warns/notes management
 
 func (s *Server) ConductListEntries(ctx context.Context, req *ConductListEntriesRequest) (*ConductListEntriesResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
@@ -33,8 +34,12 @@ func (s *Server) ConductListEntries(ctx context.Context, req *ConductListEntries
 	if fieldsAttr != nil {
 		fields = fieldsAttr.([]string)
 	}
-	// TODO add filter based on access list
-	_ = fields
+
+	if len(fields) == 0 {
+		return nil, ErrFailedQuery
+	} else if utils.InSlice(fields, "Own") {
+		condition = condition.AND(tConduct.CreatorID.EQ(jet.Int32(userInfo.UserId)))
+	}
 
 	if len(req.Types) > 0 {
 		ts := make([]jet.Expression, len(req.Types))
@@ -127,18 +132,138 @@ func (s *Server) ConductListEntries(ctx context.Context, req *ConductListEntries
 
 	return resp, nil
 }
+
+// TODO employee warns/notes management
+
 func (s *Server) ConductCreateEntry(ctx context.Context, req *ConductCreateEntryRequest) (*ConductCreateEntryResponse, error) {
-	resp := &ConductCreateEntryResponse{}
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	return resp, nil
+	auditEntry := &model.FivenetAuditLog{
+		Service: JobsService_ServiceDesc.ServiceName,
+		Method:  "ConductCreateEntry",
+		UserID:  userInfo.UserId,
+		UserJob: userInfo.Job,
+		State:   int16(rector.EVENT_TYPE_ERRORED),
+	}
+	defer s.auditer.Log(auditEntry, req)
+
+	tConduct := table.FivenetJobsConduct
+	stmt := tConduct.
+		INSERT(
+			tConduct.Job,
+			tConduct.Type,
+			tConduct.Message,
+			tConduct.ExpiresAt,
+			tConduct.TargetUserID,
+		).
+		VALUES(
+			userInfo.Job,
+			req.Entry.Type,
+			req.Entry.Message,
+			req.Entry.ExpiresAt.AsTime(),
+			req.Entry.TargetUserId,
+		)
+
+	res, err := stmt.ExecContext(ctx, s.db)
+	if err != nil {
+		return nil, err
+	}
+
+	lastId, err := res.LastInsertId()
+	if err != nil {
+		return nil, err
+	}
+
+	entry, err := s.getConductEntry(ctx, uint64(lastId))
+	if err != nil {
+		return nil, err
+	}
+
+	auditEntry.State = int16(rector.EVENT_TYPE_CREATED)
+
+	return &ConductCreateEntryResponse{
+		Entry: entry,
+	}, nil
 }
+
 func (s *Server) ConductUpdateEntry(ctx context.Context, req *ConductUpdateEntryRequest) (*ConductUpdateEntryResponse, error) {
-	resp := &ConductUpdateEntryResponse{}
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	return resp, nil
+	auditEntry := &model.FivenetAuditLog{
+		Service: JobsService_ServiceDesc.ServiceName,
+		Method:  "ConductUpdateEntry",
+		UserID:  userInfo.UserId,
+		UserJob: userInfo.Job,
+		State:   int16(rector.EVENT_TYPE_ERRORED),
+	}
+	defer s.auditer.Log(auditEntry, req)
+
+	tConduct := table.FivenetJobsConduct
+	stmt := tConduct.
+		UPDATE(
+			tConduct.Job,
+			tConduct.Type,
+			tConduct.Message,
+			tConduct.ExpiresAt,
+			tConduct.TargetUserID,
+		).
+		SET(
+			tConduct.Type.SET(jet.Int16(int16(req.Entry.Type))),
+			tConduct.Message.SET(jet.String(req.Entry.Message)),
+			tConduct.ExpiresAt.SET(jet.TimestampT(req.Entry.ExpiresAt.AsTime())),
+			tConduct.TargetUserID.SET(jet.Int32(req.Entry.TargetUserId)),
+		).
+		WHERE(jet.AND(
+			tConduct.Job.EQ(jet.String(userInfo.Job)),
+			tConduct.ID.EQ(jet.Uint64(req.Entry.Id)),
+		))
+
+	res, err := stmt.ExecContext(ctx, s.db)
+	if err != nil {
+		return nil, err
+	}
+
+	lastId, err := res.LastInsertId()
+	if err != nil {
+		return nil, err
+	}
+
+	entry, err := s.getConductEntry(ctx, uint64(lastId))
+	if err != nil {
+		return nil, err
+	}
+
+	auditEntry.State = int16(rector.EVENT_TYPE_UPDATED)
+
+	return &ConductUpdateEntryResponse{
+		Entry: entry,
+	}, nil
 }
-func (s *Server) ConductDeleteEntry(ctx context.Context, req *ConductDeleteEntryRequest) (*ConductDeleteEntryResponse, error) {
-	resp := &ConductDeleteEntryResponse{}
 
-	return resp, nil
+func (s *Server) ConductDeleteEntry(ctx context.Context, req *ConductDeleteEntryRequest) (*ConductDeleteEntryResponse, error) {
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	auditEntry := &model.FivenetAuditLog{
+		Service: JobsService_ServiceDesc.ServiceName,
+		Method:  "ConductDeleteEntry",
+		UserID:  userInfo.UserId,
+		UserJob: userInfo.Job,
+		State:   int16(rector.EVENT_TYPE_ERRORED),
+	}
+	defer s.auditer.Log(auditEntry, req)
+
+	stmt := tConduct.
+		DELETE().
+		WHERE(jet.AND(
+			tConduct.Job.EQ(jet.String(userInfo.Job)),
+			tConduct.ID.EQ(jet.Uint64(req.Id)),
+		))
+
+	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+		return nil, err
+	}
+
+	auditEntry.State = int16(rector.EVENT_TYPE_DELETED)
+
+	return &ConductDeleteEntryResponse{}, nil
 }

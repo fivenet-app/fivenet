@@ -32,7 +32,7 @@ const (
 type JobsServiceClient interface {
 	// @perm
 	ColleaguesList(ctx context.Context, in *ColleaguesListRequest, opts ...grpc.CallOption) (*ColleaguesListResponse, error)
-	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
+	// @perm: Attrs=Access/StringList:[]string{"Own", "All"}§[]string{"Own"}
 	ConductListEntries(ctx context.Context, in *ConductListEntriesRequest, opts ...grpc.CallOption) (*ConductListEntriesResponse, error)
 	// @perm
 	ConductCreateEntry(ctx context.Context, in *ConductCreateEntryRequest, opts ...grpc.CallOption) (*ConductCreateEntryResponse, error)
@@ -101,7 +101,7 @@ func (c *jobsServiceClient) ConductDeleteEntry(ctx context.Context, in *ConductD
 type JobsServiceServer interface {
 	// @perm
 	ColleaguesList(context.Context, *ColleaguesListRequest) (*ColleaguesListResponse, error)
-	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
+	// @perm: Attrs=Access/StringList:[]string{"Own", "All"}§[]string{"Own"}
 	ConductListEntries(context.Context, *ConductListEntriesRequest) (*ConductListEntriesResponse, error)
 	// @perm
 	ConductCreateEntry(context.Context, *ConductCreateEntryRequest) (*ConductCreateEntryResponse, error)

@@ -42,9 +42,9 @@ export interface MarkerInfo {
      */
     y: number;
     /**
-     * @generated from protobuf field: optional int64 postal = 9;
+     * @generated from protobuf field: optional string postal = 9;
      */
-    postal?: bigint;
+    postal?: string;
     /**
      * @generated from protobuf field: optional string color = 10;
      */
@@ -191,7 +191,7 @@ class MarkerInfo$Type extends MessageType<MarkerInfo> {
             { no: 6, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
             { no: 7, name: "x", kind: "scalar", T: 1 /*ScalarType.DOUBLE*/ },
             { no: 8, name: "y", kind: "scalar", T: 1 /*ScalarType.DOUBLE*/ },
-            { no: 9, name: "postal", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 9, name: "postal", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "48" } } } },
             { no: 10, name: "color", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
             { no: 11, name: "icon", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
         ]);

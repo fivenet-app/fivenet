@@ -9,6 +9,7 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/users"
 	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
+	"github.com/galexrt/fivenet/pkg/tracker/postals"
 	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/pkg/utils/maps"
 	"github.com/galexrt/fivenet/query/fivenet/table"
@@ -42,11 +43,12 @@ type userInfo struct {
 }
 
 type Tracker struct {
-	ctx    context.Context
-	logger *zap.Logger
-	tracer trace.Tracer
-	db     *sql.DB
-	c      *mstlystcdata.Enricher
+	ctx      context.Context
+	logger   *zap.Logger
+	tracer   trace.Tracer
+	db       *sql.DB
+	enricher *mstlystcdata.Enricher
+	postals  *postals.Postals
 
 	usersCache *xsync.MapOf[string, *xsync.MapOf[int32, *livemap.UserMarker]]
 	usersIDs   *xsync.MapOf[int32, userInfo]
@@ -66,6 +68,7 @@ type Params struct {
 	TP       *tracesdk.TracerProvider
 	DB       *sql.DB
 	Enricher *mstlystcdata.Enricher
+	Postals  *postals.Postals
 	Config   *config.Config
 }
 
@@ -75,11 +78,12 @@ func New(p Params) *Tracker {
 	broker := utils.NewBroker[*Event](ctx)
 
 	t := &Tracker{
-		ctx:    ctx,
-		logger: p.Logger,
-		tracer: p.TP.Tracer("tracker-cache"),
-		db:     p.DB,
-		c:      p.Enricher,
+		ctx:      ctx,
+		logger:   p.Logger,
+		tracer:   p.TP.Tracer("tracker-cache"),
+		db:       p.DB,
+		enricher: p.Enricher,
+		postals:  p.Postals,
 
 		usersCache: xsync.NewTypedMapOf[string, *xsync.MapOf[int32, *livemap.UserMarker]](maps.HashString),
 		usersIDs:   xsync.NewIntegerMapOf[int32, userInfo](),
@@ -195,7 +199,7 @@ func (s *Tracker) refreshUserLocations(ctx context.Context) error {
 	expiration := time.Now().Add(2 * s.refreshTime)
 	markers := map[string]*xsync.MapOf[int32, *livemap.UserMarker]{}
 	for i := 0; i < len(dest); i++ {
-		s.c.EnrichJobInfo(dest[i].User)
+		s.enricher.EnrichJobInfo(dest[i].User)
 
 		job := dest[i].User.Job
 		if _, ok := markers[job]; !ok {
@@ -204,6 +208,10 @@ func (s *Tracker) refreshUserLocations(ctx context.Context) error {
 		if dest[i].Info.Color == nil {
 			defaultColor := users.DefaultLivemapMarkerColor
 			dest[i].Info.Color = &defaultColor
+		}
+		postal := s.postals.Closest(dest[i].Info.X, dest[i].Info.Y)
+		if postal != nil {
+			dest[i].Info.Postal = postal.Code
 		}
 
 		userId := dest[i].User.UserId

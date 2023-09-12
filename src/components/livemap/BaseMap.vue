@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { LControl, LControlLayers, LMap, LTileLayer } from '@vue-leaflet/vue-leaflet';
 import { useResizeObserver, watchDebounced } from '@vueuse/core';
-import L from 'leaflet';
+import L, { latLngBounds } from 'leaflet';
 import 'leaflet-contextmenu';
 import 'leaflet-contextmenu/dist/leaflet.contextmenu.min.css';
 import 'leaflet/dist/leaflet.css';
@@ -35,6 +35,9 @@ const centerX = 117.3;
 const centerY = 172.8;
 const scaleX = 0.02072;
 const scaleY = 0.0205;
+
+const bounds = latLngBounds([-4_000, -4_000], [8_000, 6_000]);
+const maxBounds = latLngBounds([-8_000, -8_000], [16_000, 12_000]);
 
 const customCRS = L.extend({}, L.CRS.Simple, {
     projection: L.Projection.LonLat,
@@ -210,6 +213,8 @@ onBeforeUnmount(() => {
 <template>
     <div ref="mapContainer" class="h-full flex flex-row" :style="{ backgroundColor }">
         <LMap
+            :bounds="bounds"
+            :max-bounds="maxBounds"
             class="z-0"
             v-model:zoom="zoom"
             v-model:center="center"

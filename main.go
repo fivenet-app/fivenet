@@ -17,6 +17,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/server"
 	"github.com/galexrt/fivenet/pkg/server/audit"
 	"github.com/galexrt/fivenet/pkg/tracker"
+	"github.com/galexrt/fivenet/pkg/tracker/postals"
 	"github.com/galexrt/fivenet/query"
 	"go.uber.org/fx"
 	"go.uber.org/fx/fxevent"
@@ -63,6 +64,7 @@ func main() {
 			notifi.New,
 			tracker.New,
 			userinfo.NewUIRetriever,
+			postals.New,
 		),
 
 		// GRPC Services

@@ -96,6 +96,7 @@ func (s *Server) addDispatchStatus(ctx context.Context, tx qrm.DB, status *dispa
 			tDispatchStatus.UserID,
 			tDispatchStatus.X,
 			tDispatchStatus.Y,
+			tDispatchStatus.Postal,
 		).
 		VALUES(
 			status.DispatchId,
@@ -106,6 +107,7 @@ func (s *Server) addDispatchStatus(ctx context.Context, tx qrm.DB, status *dispa
 			status.UserId,
 			status.X,
 			status.Y,
+			status.Postal,
 		)
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -187,7 +189,7 @@ func (s *Server) updateDispatchStatus(ctx context.Context, job string, dsp *disp
 
 func (s *Server) updateDispatchAssignments(ctx context.Context, job string, userId *int32, dsp *dispatch.Dispatch, toAdd []uint64, toRemove []uint64) error {
 	var x, y *float64
-	var postal *int64
+	var postal *string
 	if userId != nil {
 		marker, ok := s.tracker.GetUserById(*userId)
 		if ok {

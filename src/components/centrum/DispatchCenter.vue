@@ -90,7 +90,7 @@ const openUnitStatus = ref(false);
 
             <!-- Right column -->
             <div class="flex flex-col basis-2/3 divide-y divide-base-400">
-                <div class="basis-3/5 max-h-[60%]">
+                <div class="basis-7/12">
                     <DispatchesList
                         @goto="goto($event)"
                         @details="
@@ -126,10 +126,8 @@ const openUnitStatus = ref(false);
                         />
                     </template>
                 </div>
-                <div class="basis-1/5 max-h-[20%]">
-                    <Feed :items="feed" />
-                </div>
-                <div class="basis-1/5 max-h-[20%]">
+
+                <div class="basis-4/12">
                     <UnitsList
                         @goto="goto($event)"
                         @details="
@@ -148,6 +146,10 @@ const openUnitStatus = ref(false);
                         <AssignUnitModal :open="openUnitAssign" :unit="selectedUnit" @close="openUnitAssign = false" />
                         <UnitStatusUpdateModal :open="openUnitStatus" :unit="selectedUnit" @close="openUnitStatus = false" />
                     </template>
+                </div>
+
+                <div class="basis-1/12">
+                    <Feed :items="feed" />
                 </div>
             </div>
         </div>

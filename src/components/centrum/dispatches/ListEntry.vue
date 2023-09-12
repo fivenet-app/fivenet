@@ -60,6 +60,9 @@ defineEmits<{
             </span>
         </td>
         <td class="whitespace-nowrap px-1 py-1 text-sm text-gray-300">
+            {{ dispatch.postal ?? 'N/A' }}
+        </td>
+        <td class="whitespace-nowrap px-1 py-1 text-sm text-gray-300">
             <span v-if="dispatch.units.length === 0" class="italic">{{ $t('enums.centrum.DISPATCH_STATUS.UNASSIGNED') }}</span>
             <span v-else class="mr-1">
                 {{ dispatch.units.map((unit) => unit.unit?.initials ?? 'N/A').join(', ') }}

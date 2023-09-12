@@ -26,7 +26,7 @@ type fivenetCentrumDispatchesTable struct {
 	Attributes  mysql.ColumnString
 	X           mysql.ColumnFloat
 	Y           mysql.ColumnFloat
-	Postal      mysql.ColumnInteger
+	Postal      mysql.ColumnString
 	Anon        mysql.ColumnBool
 	UserID      mysql.ColumnInteger
 
@@ -78,7 +78,7 @@ func newFivenetCentrumDispatchesTableImpl(schemaName, tableName, alias string) f
 		AttributesColumn  = mysql.StringColumn("attributes")
 		XColumn           = mysql.FloatColumn("x")
 		YColumn           = mysql.FloatColumn("y")
-		PostalColumn      = mysql.IntegerColumn("postal")
+		PostalColumn      = mysql.StringColumn("postal")
 		AnonColumn        = mysql.BoolColumn("anon")
 		UserIDColumn      = mysql.IntegerColumn("user_id")
 		allColumns        = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, JobColumn, MessageColumn, DescriptionColumn, AttributesColumn, XColumn, YColumn, PostalColumn, AnonColumn, UserIDColumn}

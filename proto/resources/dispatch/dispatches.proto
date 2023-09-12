@@ -21,7 +21,7 @@ message Dispatch {
   optional Attributes attributes = 9;
   double x = 10;
   double y = 11;
-  optional int64 postal = 12;
+  optional string postal = 12  [(validate.rules).string.max_len = 48];
   optional bool anon = 13;
   optional int32 user_id = 14 [(validate.rules).int32.gt = 0];
   optional resources.users.User user = 15;
@@ -73,5 +73,5 @@ message DispatchStatus {
   optional resources.users.UserShort user = 10;
   optional double x = 11;
   optional double y = 12;
-  optional int64 postal = 13;
+  optional string postal = 13  [(validate.rules).string.max_len = 48];
 }

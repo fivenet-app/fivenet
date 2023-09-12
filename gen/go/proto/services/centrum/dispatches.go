@@ -129,6 +129,11 @@ func (s *Server) CreateDispatch(ctx context.Context, req *CreateDispatchRequest)
 }
 
 func (s *Server) createDispatch(ctx context.Context, d *dispatch.Dispatch) (*dispatch.Dispatch, error) {
+	postal := s.postals.Closest(d.X, d.Y)
+	if postal != nil {
+		d.Postal = postal.Code
+	}
+
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -172,22 +177,13 @@ func (s *Server) createDispatch(ctx context.Context, d *dispatch.Dispatch) (*dis
 		return nil, err
 	}
 
-	var x, y *float64
-	var postal *int64
-	marker, ok := s.tracker.GetUserById(*d.UserId)
-	if ok {
-		x = &marker.Info.X
-		y = &marker.Info.Y
-		postal = marker.Info.Postal
-	}
-
 	if err := s.addDispatchStatus(ctx, tx, &dispatch.DispatchStatus{
 		DispatchId: uint64(lastId),
 		UserId:     d.UserId,
 		Status:     dispatch.DISPATCH_STATUS_NEW,
-		X:          x,
-		Y:          y,
-		Postal:     postal,
+		X:          &d.X,
+		Y:          &d.Y,
+		Postal:     d.Postal,
 	}); err != nil {
 		return nil, err
 	}
@@ -205,6 +201,11 @@ func (s *Server) createDispatch(ctx context.Context, d *dispatch.Dispatch) (*dis
 	dsp, ok := s.getDispatch(d.Job, uint64(lastId))
 	if !ok {
 		return nil, ErrFailedQuery
+	}
+	// Hide user info when dispatch is anonymous
+	if dsp.Anon != nil && *dsp.Anon {
+		dsp.User = nil
+		dsp.UserId = nil
 	}
 
 	data, err := proto.Marshal(dsp)
@@ -366,7 +367,7 @@ func (s *Server) TakeDispatch(ctx context.Context, req *TakeDispatchRequest) (*T
 		}
 
 		var x, y *float64
-		var postal *int64
+		var postal *string
 		marker, ok := s.tracker.GetUserById(userInfo.UserId)
 		if ok {
 			x = &marker.Info.X
@@ -424,7 +425,7 @@ func (s *Server) UpdateDispatchStatus(ctx context.Context, req *UpdateDispatchSt
 	}
 
 	var x, y *float64
-	var postal *int64
+	var postal *string
 	marker, ok := s.tracker.GetUserById(userInfo.UserId)
 	if ok {
 		x = &marker.Info.X

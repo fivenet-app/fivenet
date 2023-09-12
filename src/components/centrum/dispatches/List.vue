@@ -55,6 +55,12 @@ const { dispatches } = storeToRefs(centrumStore);
                                     scope="col"
                                     class="whitespace-nowrap px-1 py-1 text-left text-sm font-semibold text-gray-100"
                                 >
+                                    {{ $t('common.postal') }}
+                                </th>
+                                <th
+                                    scope="col"
+                                    class="whitespace-nowrap px-1 py-1 text-left text-sm font-semibold text-gray-100"
+                                >
                                     {{ $t('common.units') }}
                                 </th>
                                 <th
