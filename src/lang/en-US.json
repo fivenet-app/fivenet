@@ -1223,15 +1223,15 @@
             },
             "ConductCreateEntry": {
                 "key": "Conduct Entries: Create",
-                "description": "TODO"
+                "description": "Create Conduct Register entries."
             },
             "ConductDeleteEntry": {
                 "key": "Conduct Entries: Delete",
-                "description": "TODO"
+                "description": "Delete Conduct Register entries."
             },
             "ConductListEntries": {
                 "key": "Conduct Entries: List",
-                "description": "TODO",
+                "description": "List Conduct Register entries.",
                 "attrs": {
                     "Own": "Own",
                     "All": "All"
@@ -1239,7 +1239,7 @@
             },
             "ConductUpdateEntry": {
                 "key": "Conduct Entries: Update",
-                "description": "TODO"
+                "description": "Update Conduct Register entries."
             }
         }
     },
