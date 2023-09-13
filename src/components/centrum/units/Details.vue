@@ -167,7 +167,6 @@ const openStatus = ref(false);
                                                                 >
                                                                     <li
                                                                         v-for="user in unit.users"
-                                                                        :key="user.userId"
                                                                         class="flex items-center justify-between py-3 pl-3 pr-4 text-sm"
                                                                     >
                                                                         <div class="flex items-center flex-1">
