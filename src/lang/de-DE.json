@@ -638,7 +638,8 @@
         "expired": "Abgelaufen",
         "conduct_register": "Führungsregister",
         "call": "Anruf",
-        "phone_number": "Telefonnummer"
+        "phone_number": "Telefonnummer",
+        "back": "Zurück"
     },
     "notifications": {
         "clipboard": {
@@ -1222,15 +1223,15 @@
             },
             "ConductCreateEntry": {
                 "key": "Führungsregister: Einträge erstellen",
-                "description": "TODO"
+                "description": "Erstellen von Führungsregister Einträgen."
             },
             "ConductDeleteEntry": {
                 "key": "Führungsregister: Einträge löschen",
-                "description": "TODO"
+                "description": "Löschen von Führungsregister Einträgen."
             },
             "ConductListEntries": {
                 "key": "Führungsregister: Einträge anzeigen",
-                "description": "TODO",
+                "description": "Anzeigen von Führungsregister Einträgen.",
                 "attrs": {
                     "Own": "Eigene",
                     "All": "Alle"
@@ -1238,7 +1239,7 @@
             },
             "ConductUpdateEntry": {
                 "key": "Führungsregister: Einträge bearbeiten",
-                "description": "TODO"
+                "description": "Aktualisieren von Führungsregister Einträgen."
             }
         }
     },
