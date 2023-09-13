@@ -8,6 +8,7 @@ import PhoneNumber from './PhoneNumber.vue';
 defineProps<{
     user: User | UserShort | undefined;
     noPopover?: boolean;
+    textClass?: unknown;
 }>();
 </script>
 
@@ -35,7 +36,7 @@ defineProps<{
         <Float portal auto-placement :offset="16">
             <PopoverButton class="inline-flex items-center">
                 <slot name="before" />
-                {{ user.firstname }} {{ user.lastname }}
+                <span :class="textClass"> {{ user.firstname }} {{ user.lastname }} </span>
                 <slot name="after" />
             </PopoverButton>
 

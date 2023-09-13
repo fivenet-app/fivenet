@@ -1018,7 +1018,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => {
             <button
                 type="submit"
                 :disabled="!meta.valid || !canEdit"
-                class="rounded-md py-2.5 px-3.5 text-sm font-semibold text-neutral"
+                class="rounded-md py-2.5 px-3.5 text-sm font-semibold text-neutral w-full"
                 :class="[
                     !canEdit || !meta.valid
                         ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'

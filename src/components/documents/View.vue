@@ -142,6 +142,9 @@ onConfirm(async (id: bigint) => deleteDocument(id));
 #editor .ql-toolbar {
     display: none;
 }
+.ql-hidden {
+    display: none;
+}
 </style>
 
 <template>
@@ -174,10 +177,9 @@ onConfirm(async (id: bigint) => deleteDocument(id));
                                 </h1>
                                 <p class="text-sm text-base-300 inline-flex">
                                     {{ $t('common.created_by') }}
-                                    &nbsp;
                                     <CitizenInfoPopover
                                         :user="doc.creator"
-                                        class="font-medium text-primary-400 hover:text-primary-300"
+                                        class="ml-1 font-medium text-primary-400 hover:text-primary-300"
                                     />
                                 </p>
                             </div>
@@ -292,9 +294,10 @@ onConfirm(async (id: bigint) => deleteDocument(id));
                             <h2 class="sr-only">
                                 {{ $t('common.content') }}
                             </h2>
-                            <div class="p-2 mt-4 rounded-lg text-neutral bg-base-800 break-words">
+                            <div class="mt-4 mb-2 rounded-lg text-neutral bg-base-800 break-words">
                                 <div id="editor">
                                     <QuillEditor
+                                        class="bg-base-900 rounded-md"
                                         content-type="html"
                                         :content="doc?.content"
                                         :toolbar="[]"
@@ -312,8 +315,8 @@ onConfirm(async (id: bigint) => deleteDocument(id));
                                             :class="[
                                                 selected
                                                     ? 'border-primary-500 text-primary-500'
-                                                    : 'border-transparent text-base-300 hover:border-base-300 hover:text-base-200',
-                                                'group inline-flex items-center border-b-2 py-4 px-1 text-m font-medium w-full justify-center transition-colors',
+                                                    : 'border-base-600 text-base-300 hover:border-base-300 hover:text-base-200',
+                                                'border rounded-t-md group inline-flex items-center border-b-2 py-4 px-1 text-m font-medium w-full justify-center transition-colors',
                                             ]"
                                             :aria-current="selected ? 'page' : undefined"
                                         >

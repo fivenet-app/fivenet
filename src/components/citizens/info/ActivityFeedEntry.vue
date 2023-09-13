@@ -169,8 +169,7 @@ switch (props.activity.key) {
             </div>
             <p class="text-sm text-gray-300 inline-flex">
                 {{ $t('common.created_by') }}
-                &nbsp;
-                <CitizenInfoPopover :user="activity.sourceUser" />
+                <CitizenInfoPopover class="ml-1" text-class="underline" :user="activity.sourceUser" />
             </p>
         </div>
     </div>

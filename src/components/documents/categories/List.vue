@@ -99,7 +99,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await createCateg
                                     <label for="name" class="block text-sm font-medium leading-6 text-neutral">
                                         {{ $t('common.category', 1) }}
                                     </label>
-                                    <div class="relative flex items-center mt-2">
+                                    <div class="relative flex items-center flex-col mt-2">
                                         <VeeField
                                             type="text"
                                             name="name"
@@ -114,7 +114,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await createCateg
                                     <label for="description" class="block text-sm font-medium leading-6 text-neutral">
                                         {{ $t('common.description') }}
                                     </label>
-                                    <div class="relative flex items-center mt-2">
+                                    <div class="relative flex items-center flex-col mt-2">
                                         <VeeField
                                             type="text"
                                             name="description"

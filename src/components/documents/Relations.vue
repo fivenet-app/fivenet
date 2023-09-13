@@ -102,7 +102,7 @@ async function getDocumentRelations(): Promise<DocumentRelation[]> {
                 <div>
                     <div class="flex flex-col mt-2">
                         <div class="min-w-full overflow-hidden overflow-x-auto align-middle sm:rounded-lg">
-                            <table class="min-w-full bg-base-700 text-neutral">
+                            <table class="min-w-full bg-base-600 text-neutral divide-y divide-base-600">
                                 <thead>
                                     <tr>
                                         <th v-if="showDocument" class="px-6 py-3 text-sm font-semibold text-left" scope="col">
@@ -126,7 +126,7 @@ async function getDocumentRelations(): Promise<DocumentRelation[]> {
                                         </th>
                                     </tr>
                                 </thead>
-                                <tbody class="divide-y divide-gray-600 bg-base-800 text-neutral">
+                                <tbody class="divide-y divide-y divide-gray-600 bg-base-700 text-neutral">
                                     <tr v-for="relation in relations" :key="relation.id?.toString()">
                                         <td v-if="showDocument" class="px-6 py-4 text-sm">
                                             <NuxtLink
