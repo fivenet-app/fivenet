@@ -4,6 +4,7 @@ import { AccountMultipleIcon, ArrowCollapseIcon, ChevronRightIcon } from 'mdi-vu
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import Time from '~/components/partials/elements/Time.vue';
 import { DOC_RELATION, DocumentRelation } from '~~/gen/ts/resources/documents/documents';
+import CitizenInfoPopover from '../partials/citizens/CitizenInfoPopover.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -50,150 +51,124 @@ async function getDocumentRelations(): Promise<DocumentRelation[]> {
             :type="`${$t('common.document', 1)} ${$t('common.relation', 2)}`"
             :icon="AccountMultipleIcon"
         />
-        <!-- Relations list (smallest breakpoint only) -->
-        <div v-if="relations && relations.length > 0" class="sm:hidden text-neutral">
-            <ul role="list" class="mt-2 overflow-hidden divide-y divide-gray-600 rounded-lg sm:hidden">
-                <li v-for="relation in relations" :key="relation.id?.toString()">
-                    <a href="#" class="block px-4 py-4 bg-base-800 hover:bg-base-700">
-                        <span class="flex items-center space-x-4">
-                            <span class="flex flex-1 space-x-2 truncate">
-                                <ArrowCollapseIcon class="flex-shrink-0 w-5 h-5 text-gray-400" aria-hidden="true" />
-                                <span class="flex flex-col text-sm truncate">
-                                    <span v-if="showDocument">
-                                        <NuxtLink
-                                            :to="{
-                                                name: 'documents-id',
-                                                params: {
-                                                    id: relation.documentId.toString(),
-                                                },
-                                            }"
-                                        >
-                                            {{ relation.document?.title
-                                            }}<span v-if="relation.document?.category">
-                                                (Category:
-                                                {{ relation.document?.category?.name }})
-                                            </span>
-                                        </NuxtLink>
-                                    </span>
-                                    <span>
-                                        <NuxtLink
-                                            :to="{
-                                                name: 'citizens-id',
-                                                params: {
-                                                    id: relation.targetUserId,
-                                                },
-                                            }"
-                                            class="inline-flex space-x-2 text-sm truncate group"
-                                        >
-                                            {{ relation.targetUser?.firstname + ', ' + relation.targetUser?.lastname }}
-                                        </NuxtLink>
-                                    </span>
-                                    <span class="font-medium">
-                                        {{ $t(`enums.docstore.DOC_RELATION.${DOC_RELATION[relation.relation]}`) }}
-                                    </span>
-                                    <span v-if="showSource" class="truncate"
-                                        >{{ relation.sourceUser?.firstname + ', ' + relation.sourceUser?.lastname }}
-                                    </span>
-                                    <Time :value="relation.createdAt" />
-                                </span>
-                            </span>
-                            <ChevronRightIcon class="flex-shrink-0 w-5 h-5 text-base-200" aria-hidden="true" />
-                        </span>
-                    </a>
-                </li>
-            </ul>
-        </div>
 
-        <!-- Relations table (small breakpoint and up) -->
-        <div v-if="relations && relations.length > 0" class="hidden sm:block">
-            <div>
-                <div class="flex flex-col mt-2">
-                    <div class="min-w-full overflow-hidden overflow-x-auto align-middle sm:rounded-lg">
-                        <table class="min-w-full bg-base-700 text-neutral">
-                            <thead>
-                                <tr>
-                                    <th v-if="showDocument" class="px-6 py-3 text-sm font-semibold text-left" scope="col">
-                                        {{ $t('common.document', 1) }}
-                                    </th>
-                                    <th class="px-6 py-3 text-sm font-semibold text-left" scope="col">
-                                        {{ $t('common.target') }}
-                                    </th>
-                                    <th class="px-6 py-3 text-sm font-semibold text-right" scope="col">
-                                        {{ $t('common.relation', 1) }}
-                                    </th>
-                                    <th
-                                        v-if="showSource"
-                                        class="hidden px-6 py-3 text-sm font-semibold text-left md:block"
-                                        scope="col"
-                                    >
-                                        {{ $t('common.creator') }}
-                                    </th>
-                                    <th class="px-6 py-3 text-sm font-semibold text-right" scope="col">
-                                        {{ $t('common.date') }}
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-gray-600 bg-base-800 text-neutral">
-                                <tr v-for="relation in relations" :key="relation.id?.toString()">
-                                    <td v-if="showDocument" class="px-6 py-4 text-sm">
-                                        <NuxtLink
-                                            :to="{
-                                                name: 'documents-id',
-                                                params: {
-                                                    id: relation.documentId.toString(),
-                                                },
-                                            }"
-                                        >
-                                            {{ relation.document?.title
-                                            }}<span v-if="relation.document?.category">
-                                                ({{ $t('common.category', 1) }}: {{ relation.document?.category?.name }})</span
-                                            >
-                                        </NuxtLink>
-                                    </td>
-                                    <td class="px-6 py-4 text-sm">
-                                        <div class="flex">
+        <template v-if="relations && relations.length > 0">
+            <!-- Relations list (smallest breakpoint only) -->
+            <div class="sm:hidden text-neutral">
+                <ul role="list" class="mt-2 overflow-hidden divide-y divide-gray-600 rounded-lg sm:hidden">
+                    <li v-for="relation in relations" :key="relation.id?.toString()">
+                        <a href="#" class="block px-4 py-4 bg-base-800 hover:bg-base-700">
+                            <span class="flex items-center space-x-4">
+                                <span class="flex flex-1 space-x-2 truncate">
+                                    <ArrowCollapseIcon class="flex-shrink-0 w-5 h-5 text-gray-400" aria-hidden="true" />
+                                    <span class="flex flex-col text-sm truncate">
+                                        <span v-if="showDocument">
                                             <NuxtLink
                                                 :to="{
-                                                    name: 'citizens-id',
+                                                    name: 'documents-id',
                                                     params: {
-                                                        id: relation.targetUserId,
+                                                        id: relation.documentId.toString(),
                                                     },
                                                 }"
-                                                class="inline-flex space-x-2 text-sm truncate group"
                                             >
-                                                {{ relation.targetUser?.firstname + ', ' + relation.targetUser?.lastname }}
+                                                {{ relation.document?.title
+                                                }}<span v-if="relation.document?.category">
+                                                    (Category:
+                                                    {{ relation.document?.category?.name }})
+                                                </span>
                                             </NuxtLink>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4 text-sm text-right whitespace-nowrap">
+                                        </span>
+                                        <span>
+                                            <CitizenInfoPopover :user="relation.targetUser" />
+                                        </span>
                                         <span class="font-medium">
                                             {{ $t(`enums.docstore.DOC_RELATION.${DOC_RELATION[relation.relation]}`) }}
                                         </span>
-                                    </td>
-                                    <td v-if="showSource" class="hidden px-6 py-4 text-sm whitespace-nowrap md:block">
-                                        <div class="flex">
+                                        <span v-if="showSource" class="truncate">
+                                            <CitizenInfoPopover :user="relation.sourceUser" />
+                                        </span>
+                                        <Time :value="relation.createdAt" />
+                                    </span>
+                                </span>
+                                <ChevronRightIcon class="flex-shrink-0 w-5 h-5 text-base-200" aria-hidden="true" />
+                            </span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+            <!-- Relations table (small breakpoint and up) -->
+            <div class="hidden sm:block">
+                <div>
+                    <div class="flex flex-col mt-2">
+                        <div class="min-w-full overflow-hidden overflow-x-auto align-middle sm:rounded-lg">
+                            <table class="min-w-full bg-base-700 text-neutral">
+                                <thead>
+                                    <tr>
+                                        <th v-if="showDocument" class="px-6 py-3 text-sm font-semibold text-left" scope="col">
+                                            {{ $t('common.document', 1) }}
+                                        </th>
+                                        <th class="px-6 py-3 text-sm font-semibold text-left" scope="col">
+                                            {{ $t('common.target') }}
+                                        </th>
+                                        <th class="px-6 py-3 text-sm font-semibold text-right" scope="col">
+                                            {{ $t('common.relation', 1) }}
+                                        </th>
+                                        <th
+                                            v-if="showSource"
+                                            class="hidden px-6 py-3 text-sm font-semibold text-left md:block"
+                                            scope="col"
+                                        >
+                                            {{ $t('common.creator') }}
+                                        </th>
+                                        <th class="px-6 py-3 text-sm font-semibold text-right" scope="col">
+                                            {{ $t('common.date') }}
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-600 bg-base-800 text-neutral">
+                                    <tr v-for="relation in relations" :key="relation.id?.toString()">
+                                        <td v-if="showDocument" class="px-6 py-4 text-sm">
                                             <NuxtLink
                                                 :to="{
-                                                    name: 'citizens-id',
+                                                    name: 'documents-id',
                                                     params: {
-                                                        id: relation.sourceUserId,
+                                                        id: relation.documentId.toString(),
                                                     },
                                                 }"
-                                                class="inline-flex space-x-2 text-sm truncate group"
                                             >
-                                                {{ relation.sourceUser?.firstname + ', ' + relation.sourceUser?.lastname }}
+                                                {{ relation.document?.title
+                                                }}<span v-if="relation.document?.category">
+                                                    ({{ $t('common.category', 1) }}:
+                                                    {{ relation.document?.category?.name }})</span
+                                                >
                                             </NuxtLink>
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4 text-sm text-right whitespace-nowrap">
-                                        <Time :value="relation.createdAt" />
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                                        </td>
+                                        <td class="px-6 py-4 text-sm">
+                                            <div class="flex">
+                                                <CitizenInfoPopover :user="relation.targetUser" />
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 text-sm text-right whitespace-nowrap">
+                                            <span class="font-medium">
+                                                {{ $t(`enums.docstore.DOC_RELATION.${DOC_RELATION[relation.relation]}`) }}
+                                            </span>
+                                        </td>
+                                        <td v-if="showSource" class="hidden px-6 py-4 text-sm whitespace-nowrap md:block">
+                                            <div class="flex">
+                                                <CitizenInfoPopover :user="relation.sourceUser" />
+                                            </div>
+                                        </td>
+                                        <td class="px-6 py-4 text-sm text-right whitespace-nowrap">
+                                            <Time :value="relation.createdAt" />
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </template>
     </div>
 </template>

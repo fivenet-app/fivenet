@@ -145,9 +145,9 @@ onConfirm(async (id: bigint) => deleteDocument(id));
 </style>
 
 <template>
-    <ConfirmDialog :open="isRevealed" :cancel="cancel" :confirm="() => confirm(documentId)" />
-
     <div class="mt-2">
+        <ConfirmDialog :open="isRevealed" :cancel="cancel" :confirm="() => confirm(documentId)" />
+
         <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.document', 2)])" />
         <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.document', 2)])" :retry="refresh" />
         <DataNoDataBlock

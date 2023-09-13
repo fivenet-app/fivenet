@@ -15,6 +15,7 @@ import {
     TrafficConeIcon,
 } from 'mdi-vue3';
 import { DefineComponent } from 'vue';
+import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import Time from '~/components/partials/elements/Time.vue';
 import { RoutesNamedLocations } from '~~/.nuxt/typed-router/__routes';
 import { UserActivity } from '~~/gen/ts/resources/users/users';
@@ -166,15 +167,10 @@ switch (props.activity.key) {
                     <Time :value="activity.createdAt" type="long" />
                 </p>
             </div>
-            <p class="text-sm text-gray-300">
-                {{ $t('common.created_by') + ' ' }}
-                <NuxtLink
-                    :to="{ name: 'citizens-id', params: { id: activity.sourceUser?.userId! } }"
-                    class="underline decoration-solid"
-                >
-                    {{ activity.sourceUser?.firstname }}
-                    {{ activity.sourceUser?.lastname }}
-                </NuxtLink>
+            <p class="text-sm text-gray-300 inline-flex">
+                {{ $t('common.created_by') }}
+                &nbsp;
+                <CitizenInfoPopover :user="activity.sourceUser" />
             </p>
         </div>
     </div>

@@ -146,7 +146,6 @@ const openStatus = ref(false);
                                                                 <CitizenInfoPopover
                                                                     v-else-if="dispatch.user"
                                                                     :user="dispatch.user"
-                                                                    :no-popover="true"
                                                                 />
                                                                 <span v-else>
                                                                     {{ $t('common.unknown') }}

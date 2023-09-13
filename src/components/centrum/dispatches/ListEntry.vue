@@ -81,7 +81,7 @@ const openAssign = ref(false);
                 {{ $t('common.anon') }}
             </span>
             <span v-else-if="dispatch.user">
-                <CitizenInfoPopover :user="dispatch.user" :no-popover="true" />
+                <CitizenInfoPopover :user="dispatch.user" />
             </span>
             <span v-else>
                 {{ $t('common.unknown') }}

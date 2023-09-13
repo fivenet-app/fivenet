@@ -103,7 +103,8 @@
 * `protoc-gen-grpc-web`: Download and install the latest release from https://github.com/grpc/grpc-web/releases
 * `protoc-gen-validate`: Download and install the latest release from https://github.com/bufbuild/protoc-gen-validate/releases
 * `protoc-go-inject-tag`: Run `go install github.com/favadi/protoc-go-inject-tag@latest`.
-* `protoc-gen-doc`: run `go install github.com/pseudomuto/protoc-gen-doc/cmd/protoc-gen-doc@latest`.
+* `protoc-gen-doc`: Run `go install github.com/pseudomuto/protoc-gen-doc/cmd/protoc-gen-doc@latest`.
+* `go-licenses`: Run `go install github.com/google/go-licenses@latest`.
 
 ### Codium/ VSCode Users
 
@@ -123,8 +124,10 @@ You must use this forked version: [Github jrapoport/grpc-web-devtools](https://g
 
 ## Credits
 
-Based upon [NelsonMinar's Map Viewer Gist](https://gist.github.com/NelsonMinar/6600524) and VPC's CopNet/ MedicNet livemap code.
+* Leaflet Livemap Code: Based upon [NelsonMinar's Map Viewer Gist](https://gist.github.com/NelsonMinar/6600524) and VPC's CopNet/ MedicNet livemap code, and a lot of Leaflet CRS related Stackoverflow posts.
 
 ## License
 
 Code licensed under Apache 2.0 license, see [LICENSE](/LICENSE).
+
+Licenses of used libraries, code and media can be found in the [`src/public/licenses/` folder](/src/public/licenses/).
