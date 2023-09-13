@@ -5,6 +5,7 @@ import { useClipboardStore } from '~/store/clipboard';
 import { useNotificationsStore } from '~/store/notifications';
 import { toTitleCase } from '~/utils/strings';
 import { Vehicle } from '~~/gen/ts/resources/vehicles/vehicles';
+import CitizenInfoPopover from '../partials/citizens/CitizenInfoPopover.vue';
 
 const clipboardStore = useClipboardStore();
 const notifications = useNotificationsStore();
@@ -40,7 +41,7 @@ function addToClipboard(): void {
             {{ toTitleCase(vehicle.type) }}
         </td>
         <td v-if="!hideOwner" class="whitespace-nowrap px-1 py-1 text-left text-base-200">
-            {{ vehicle.owner?.firstname }}, {{ vehicle.owner?.lastname }}
+            <CitizenInfoPopover :user="vehicle.owner" />
         </td>
         <td
             v-if="!hideCitizenLink && !hideCopy"

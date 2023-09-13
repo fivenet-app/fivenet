@@ -25,8 +25,10 @@ func (s *Server) resolveUserById(ctx context.Context, u int32) (*users.User, err
 			tUsers.Identifier,
 			tUsers.Firstname,
 			tUsers.Lastname,
-			tUsers.Dateofbirth,
 			tUsers.Sex,
+			tUsers.Job,
+			tUsers.JobGrade,
+			tUsers.Dateofbirth,
 			tUsers.PhoneNumber,
 		).
 		FROM(tUsers).
@@ -68,8 +70,11 @@ func (s *Server) resolveUserShortsByIds(ctx context.Context, u []int32) ([]*user
 			tUsers.Identifier,
 			tUsers.Firstname,
 			tUsers.Lastname,
-			tUsers.Dateofbirth,
+			tUsers.Sex,
 			tUsers.Job,
+			tUsers.JobGrade,
+			tUsers.Dateofbirth,
+			tUsers.PhoneNumber,
 		).
 		FROM(tUsers).
 		WHERE(

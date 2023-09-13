@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { AccountMultiplePlusIcon, DotsVerticalIcon, MapMarkerIcon } from 'mdi-vue3';
+import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import Time from '~/components/partials/elements/Time.vue';
 import { DISPATCH_STATUS, Dispatch } from '~~/gen/ts/resources/dispatch/dispatches';
 import { dispatchStatusAnimate, dispatchStatusToBGColor } from '../helpers';
@@ -73,9 +74,7 @@ defineEmits<{
                 {{ $t('common.anon') }}
             </span>
             <span v-else-if="dispatch.user">
-                {{ dispatch.user.firstname }}, {{ dispatch.user.lastname }} (<PhoneNumber
-                    :number="dispatch.user.phoneNumber"
-                />)
+                <CitizenInfoPopover :user="dispatch.user" :no-popover="true" />
             </span>
             <span v-else>
                 {{ $t('common.unknown') }}

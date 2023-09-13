@@ -413,8 +413,10 @@ func (s *Server) ListUnitActivity(ctx context.Context, req *ListUnitActivityRequ
 			tUnitStatus.Postal,
 			tUsers.Firstname,
 			tUsers.Lastname,
-			tUsers.Dateofbirth,
 			tUsers.Job,
+			tUsers.JobGrade,
+			tUsers.Dateofbirth,
+			tUsers.PhoneNumber,
 		).
 		FROM(
 			tUnitStatus.

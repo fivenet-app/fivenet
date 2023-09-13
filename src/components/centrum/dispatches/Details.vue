@@ -5,7 +5,7 @@ import { useConfirmDialog } from '@vueuse/core';
 import { AccountIcon, CloseIcon, PencilIcon, PlusIcon, TrashCanIcon } from 'mdi-vue3';
 import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
-import PhoneNumber from '~/components/partials/citizens/PhoneNumber.vue';
+import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import Time from '~/components/partials/elements/Time.vue';
 import { useCentrumStore } from '~/store/centrum';
 import { DISPATCH_STATUS, Dispatch } from '~~/gen/ts/resources/dispatch/dispatches';
@@ -142,19 +142,11 @@ const openStatus = ref(false);
                                                                 <span v-if="dispatch.anon">
                                                                     {{ $t('common.anon') }}
                                                                 </span>
-                                                                <NuxtLink
+                                                                <CitizenInfoPopover
                                                                     v-else-if="dispatch.user"
-                                                                    :to="{
-                                                                        name: 'citizens-id',
-                                                                        params: { id: dispatch.user?.userId ?? 0 },
-                                                                    }"
-                                                                    class="underline hover:text-neutral hover:transition-all"
-                                                                >
-                                                                    {{ dispatch.user?.firstname }}
-                                                                    {{ dispatch.user?.lastname }} ({{
-                                                                        $t('common.phone_number')
-                                                                    }}: <PhoneNumber :number="dispatch.user.phoneNumber" />)
-                                                                </NuxtLink>
+                                                                    :user="dispatch.user"
+                                                                    :no-popover="true"
+                                                                />
                                                                 <span v-else>
                                                                     {{ $t('common.unknown') }}
                                                                 </span>

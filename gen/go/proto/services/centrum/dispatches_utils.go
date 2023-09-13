@@ -63,6 +63,8 @@ func (s *Server) getDispatchStatusFromDB(ctx context.Context, id uint64) (*dispa
 			tUsers.Lastname,
 			tUsers.Job,
 			tUsers.JobGrade,
+			tUsers.Dateofbirth,
+			tUsers.PhoneNumber,
 		).
 		FROM(
 			tDispatchStatus.

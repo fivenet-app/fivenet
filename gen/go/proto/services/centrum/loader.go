@@ -74,6 +74,7 @@ func (s *Server) loadDisponents(ctx context.Context, job string) error {
 			tUsers.Lastname,
 			tUsers.Job,
 			tUsers.Dateofbirth,
+			tUsers.PhoneNumber,
 		).
 		FROM(
 			tCentrumUsers.
@@ -270,8 +271,8 @@ func (s *Server) loadDispatches(ctx context.Context, id uint64) error {
 			tUsers.Identifier,
 			tUsers.Firstname,
 			tUsers.Lastname,
-			tUsers.Dateofbirth,
 			tUsers.Sex,
+			tUsers.Dateofbirth,
 			tUsers.PhoneNumber,
 		).
 		FROM(
@@ -306,6 +307,10 @@ func (s *Server) loadDispatches(ctx context.Context, id uint64) error {
 			if err != nil {
 				return err
 			}
+
+			// Alawys clear dispatch creator's job info
+			dispatches[i].User.Job = ""
+			dispatches[i].User.JobGrade = 0
 		}
 
 		s.getDispatchesMap(dispatches[i].Job).Store(dispatches[i].Id, dispatches[i])

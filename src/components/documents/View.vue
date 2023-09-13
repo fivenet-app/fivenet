@@ -27,6 +27,7 @@ import { useClipboardStore } from '~/store/clipboard';
 import { useNotificationsStore } from '~/store/notifications';
 import { ACCESS_LEVEL } from '~~/gen/ts/resources/documents/access';
 import { Document, DocumentAccess } from '~~/gen/ts/resources/documents/documents';
+import CitizenInfoPopover from '../partials/citizens/CitizenInfoPopover.vue';
 import Comments from './Comments.vue';
 import References from './References.vue';
 import Relations from './Relations.vue';
@@ -49,7 +50,7 @@ const props = defineProps<{
 }>();
 
 const {
-    data: document,
+    data: doc,
     pending,
     refresh,
     error,
@@ -104,7 +105,7 @@ async function toggleDocument(id: bigint, closed: boolean): Promise<void> {
                 closed: closed,
             });
 
-            document.value!.closed = closed;
+            doc.value!.closed = closed;
 
             notifications.dispatchNotification({
                 title: { key: `notifications.document_toggled.${!closed ? 'open' : 'closed'}.title`, parameters: [] },
@@ -121,8 +122,8 @@ async function toggleDocument(id: bigint, closed: boolean): Promise<void> {
 }
 
 function addToClipboard(): void {
-    if (document.value) {
-        clipboardStore.addDocument(document.value);
+    if (doc.value) {
+        clipboardStore.addDocument(doc.value);
     }
 
     notifications.dispatchNotification({
@@ -150,7 +151,7 @@ onConfirm(async (id: bigint) => deleteDocument(id));
         <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.document', 2)])" />
         <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.document', 2)])" :retry="refresh" />
         <DataNoDataBlock
-            v-else-if="!document"
+            v-else-if="!doc"
             :icon="FileSearchIcon"
             :message="$t('common.not_found', [$t('common.document', 2)])"
         />
@@ -164,38 +165,30 @@ onConfirm(async (id: bigint) => deleteDocument(id));
                                     class="py-2 pl-4 pr-3 text-2xl font-bold text-neutral sm:pl-0 truncate max-w-5xl break-all flex items-center"
                                 >
                                     <span
-                                        v-if="document.category"
+                                        v-if="doc.category"
                                         class="inline-flex items-center rounded-md bg-primary-400/10 px-2 py-1 text-xs font-medium text-primary-400 ring-1 ring-inset ring-primary-400/30 mr-2"
                                     >
-                                        {{ document.category.name }}
+                                        {{ doc.category.name }}
                                     </span>
-                                    {{ document?.title }}
+                                    {{ doc?.title }}
                                 </h1>
-                                <p class="text-sm text-base-300">
+                                <p class="text-sm text-base-300 inline-flex">
                                     {{ $t('common.created_by') }}
-                                    {{ ' ' }}
-                                    <NuxtLink
-                                        :to="{
-                                            name: 'citizens-id',
-                                            params: {
-                                                id: document?.creator?.userId ?? 0,
-                                            },
-                                        }"
+                                    &nbsp;
+                                    <CitizenInfoPopover
+                                        :user="doc.creator"
                                         class="font-medium text-primary-400 hover:text-primary-300"
-                                    >
-                                        {{ document?.creator?.firstname }}
-                                        {{ document?.creator?.lastname }}
-                                    </NuxtLink>
+                                    />
                                 </p>
                             </div>
                             <div class="flex mt-4 space-x-3 md:mt-0">
                                 <div v-if="can('DocStoreService.ToggleDocument')">
                                     <button
                                         type="button"
-                                        @click="toggleDocument(documentId, !document?.closed)"
+                                        @click="toggleDocument(documentId, !doc?.closed)"
                                         class="inline-flex justify-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
                                     >
-                                        <template v-if="document?.closed">
+                                        <template v-if="doc?.closed">
                                             <LockOpenVariantIcon class="w-5 h-5 text-green-500" aria-hidden="true" />
                                             {{ $t('common.open', 2) }}
                                         </template>
@@ -209,7 +202,7 @@ onConfirm(async (id: bigint) => deleteDocument(id));
                                     v-if="can('DocStoreService.UpdateDocument')"
                                     :to="{
                                         name: 'documents-edit-id',
-                                        params: { id: document?.id.toString() ?? 0 },
+                                        params: { id: doc?.id.toString() ?? 0 },
                                     }"
                                     type="button"
                                     class="inline-flex justify-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
@@ -230,7 +223,7 @@ onConfirm(async (id: bigint) => deleteDocument(id));
                         </div>
                         <div class="flex flex-row gap-2">
                             <IDCopyBadge
-                                :id="document.id"
+                                :id="doc.id"
                                 prefix="DOC"
                                 :title="{ key: 'notifications.document_view.copy_document_id.title', parameters: [] }"
                                 :content="{ key: 'notifications.document_view.copy_document_id.content', parameters: [] }"
@@ -238,11 +231,11 @@ onConfirm(async (id: bigint) => deleteDocument(id));
                             <div class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-base-100 text-base-500">
                                 <CalendarIcon class="w-5 h-auto" aria-hidden="true" />
                                 <span class="text-sm font-medium text-base-700">
-                                    <Time :value="document.createdAt" type="long" />
+                                    <Time :value="doc.createdAt" type="long" />
                                 </span>
                             </div>
                             <div
-                                v-if="document?.closed"
+                                v-if="doc?.closed"
                                 class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-error-100"
                             >
                                 <LockIcon class="w-5 h-5 text-error-400" aria-hidden="true" />
@@ -303,7 +296,7 @@ onConfirm(async (id: bigint) => deleteDocument(id));
                                 <div id="editor">
                                     <QuillEditor
                                         content-type="html"
-                                        :content="document?.content"
+                                        :content="doc?.content"
                                         :toolbar="[]"
                                         theme="snow"
                                         :read-only="true"
@@ -350,7 +343,7 @@ onConfirm(async (id: bigint) => deleteDocument(id));
                             <h2 class="text-lg font-semibold text-neutral">
                                 {{ $t('common.comment', 2) }}
                             </h2>
-                            <Comments :document-id="documentId" :closed="document?.closed" @counted="commentCount = $event" />
+                            <Comments :document-id="documentId" :closed="doc?.closed" @counted="commentCount = $event" />
                         </div>
                     </div>
                 </div>

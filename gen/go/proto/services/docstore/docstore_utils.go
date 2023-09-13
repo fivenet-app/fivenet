@@ -6,7 +6,9 @@ import (
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/documents"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/users"
+	"github.com/galexrt/fivenet/gen/go/proto/services/citizenstore"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
+	"github.com/galexrt/fivenet/pkg/perms"
 	"github.com/galexrt/fivenet/pkg/utils"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -79,6 +81,17 @@ func (s *Server) listDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pr
 
 		if userInfo.SuperUser {
 			columns = append(columns, tDocs.DeletedAt)
+		}
+
+		// Field Permission Check
+		fieldsAttr, _ := s.ps.Attr(userInfo, citizenstore.CitizenStoreServicePerm, citizenstore.CitizenStoreServiceListCitizensPerm, citizenstore.CitizenStoreServiceListCitizensFieldsPermField)
+		var fields perms.StringList
+		if fieldsAttr != nil {
+			fields = fieldsAttr.([]string)
+		}
+
+		if utils.InSlice(fields, "PhoneNumber") {
+			columns = append(columns, tCreator.PhoneNumber)
 		}
 
 		q = tDocs.SELECT(columns[0], columns[1:])
@@ -191,6 +204,17 @@ func (s *Server) getDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pro
 
 		if userInfo.SuperUser {
 			columns = append(columns, tDocs.DeletedAt)
+		}
+
+		// Field Permission Check
+		fieldsAttr, _ := s.ps.Attr(userInfo, citizenstore.CitizenStoreServicePerm, citizenstore.CitizenStoreServiceListCitizensPerm, citizenstore.CitizenStoreServiceListCitizensFieldsPermField)
+		var fields perms.StringList
+		if fieldsAttr != nil {
+			fields = fieldsAttr.([]string)
+		}
+
+		if utils.InSlice(fields, "PhoneNumber") {
+			columns = append(columns, tCreator.PhoneNumber)
 		}
 
 		q = tDocs.SELECT(columns[0], columns[1:])

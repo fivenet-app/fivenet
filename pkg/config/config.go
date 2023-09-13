@@ -161,6 +161,7 @@ type Cache struct {
 
 type Game struct {
 	SignupEnabled      bool           `default:"true" yaml:"signupEnabled"`
+	AuditRetentionDays *int           `default:"90" yaml:"auditRetentionDays"`
 	SuperuserGroups    []string       `yaml:"superuserGroups"`
 	UnemployedJob      UnemployedJob  `yaml:"unemployedJob"`
 	PublicJobs         []string       `yaml:"publicJobs"`
@@ -189,14 +190,14 @@ type Perm struct {
 }
 
 type Discord struct {
+	Bot DiscordBot `yaml:"bot"`
+}
+
+type DiscordBot struct {
 	Enabled       bool          `default:"false" yaml:"enabled"`
 	SyncInterval  time.Duration `default:"15m" yaml:"syncInterval"`
 	RoleFormat    string        `default:"[%02d] %s" yaml:"roleFormat"`
 	NicknameRegex string        `yaml:"nicknameRegex"`
-	Bot           DiscordBot    `yaml:"bot"`
-}
-
-type DiscordBot struct {
-	InviteURL string `yaml:"inviteURL"`
-	Token     string `yaml:"token"`
+	InviteURL     string        `yaml:"inviteURL"`
+	Token         string        `yaml:"token"`
 }

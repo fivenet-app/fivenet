@@ -67,11 +67,11 @@ type Bot struct {
 }
 
 func NewBot(p BotParams) (*Bot, error) {
-	if !p.Config.Discord.Enabled {
+	if !p.Config.Discord.Bot.Enabled {
 		return nil, nil
 	}
 
-	nicknameRegex, err := regexp.Compile(p.Config.Discord.NicknameRegex)
+	nicknameRegex, err := regexp.Compile(p.Config.Discord.Bot.NicknameRegex)
 	if err != nil {
 		return nil, err
 	}
@@ -84,8 +84,8 @@ func NewBot(p BotParams) (*Bot, error) {
 		enricher: p.Enricher,
 		token:    p.Config.Discord.Bot.Token,
 
-		syncInterval:  p.Config.Discord.SyncInterval,
-		roleFormat:    p.Config.Discord.RoleFormat,
+		syncInterval:  p.Config.Discord.Bot.SyncInterval,
+		roleFormat:    p.Config.Discord.Bot.RoleFormat,
 		nicknameRegex: nicknameRegex,
 	}
 

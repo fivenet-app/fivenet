@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { AccountIcon, CloseIcon, PencilIcon } from 'mdi-vue3';
+import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import Time from '~/components/partials/elements/Time.vue';
 import { UNIT_STATUS, Unit } from '~~/gen/ts/resources/dispatch/units';
 import AssignUnitModal from './AssignUnitModal.vue';
@@ -170,14 +171,14 @@ const openStatus = ref(false);
                                                                         class="flex items-center justify-between py-3 pl-3 pr-4 text-sm"
                                                                     >
                                                                         <div class="flex items-center flex-1">
-                                                                            <AccountIcon
-                                                                                class="flex-shrink-0 w-5 h-5 text-base-400"
-                                                                                aria-hidden="true"
-                                                                            />
-                                                                            <span class="flex-1 ml-2 truncate">
-                                                                                {{ user.user?.firstname }}
-                                                                                {{ user.user?.lastname }}
-                                                                            </span>
+                                                                            <CitizenInfoPopover :user="user.user">
+                                                                                <template v-slot:before>
+                                                                                    <AccountIcon
+                                                                                        class="flex-shrink-0 w-5 h-5 text-base-400"
+                                                                                        aria-hidden="true"
+                                                                                    />
+                                                                                </template>
+                                                                            </CitizenInfoPopover>
                                                                         </div>
                                                                     </li>
                                                                 </ul>

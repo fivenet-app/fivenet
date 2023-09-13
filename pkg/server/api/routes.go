@@ -44,7 +44,7 @@ func New(logger *zap.Logger, cfg *config.Config) *Routes {
 		Discord: &Discord{},
 	}
 
-	if cfg.Discord.Enabled {
+	if cfg.Discord.Bot.Enabled {
 		clientCfg.Discord.BotInviteURL = cfg.Discord.Bot.InviteURL
 	}
 

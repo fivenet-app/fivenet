@@ -3,6 +3,7 @@ import { useClipboard } from '@vueuse/core';
 import { ClipboardPlusIcon } from 'mdi-vue3';
 import VueJsonPretty from 'vue-json-pretty';
 import 'vue-json-pretty/lib/styles.css';
+import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import Time from '~/components/partials/elements/Time.vue';
 import { useNotificationsStore } from '~/store/notifications';
 import { AuditEntry, EVENT_TYPE } from '~~/gen/ts/resources/rector/audit';
@@ -59,9 +60,7 @@ ${JSON.stringify(JSON.parse(props.log.data!), null, 2)}
             <Time :value="log.createdAt" type="long" />
         </td>
         <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">
-            <NuxtLink :to="{ name: 'citizens-id', params: { id: log.userId.toString() } }">
-                {{ log.user ? log.user?.firstname + ' ' + log.user?.lastname : 'N/A' }}
-            </NuxtLink>
+            <CitizenInfoPopover :user="log.user" />
         </td>
         <td class="break-all py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">{{ log.service }}/{{ log.method }}</td>
         <td class="py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">

@@ -7,3 +7,4 @@
     - [ ] Activity Feed
         - [ ] Translate Activity Feed items
     - [ ] Add more errors and translate them
+- [ ] Citizenstore: add functions to generate what extra fields of a user (e.g., phone number) can be listed by the user via their attrs

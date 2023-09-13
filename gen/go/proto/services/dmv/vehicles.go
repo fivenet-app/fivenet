@@ -7,10 +7,12 @@ import (
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
+	"github.com/galexrt/fivenet/gen/go/proto/services/citizenstore"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/perms"
 	"github.com/galexrt/fivenet/pkg/server/audit"
+	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -31,7 +33,7 @@ type Server struct {
 	DMVServiceServer
 
 	db *sql.DB
-	p  perms.Permissions
+	ps perms.Permissions
 	c  *mstlystcdata.Enricher
 	a  audit.IAuditer
 }
@@ -39,13 +41,15 @@ type Server struct {
 func NewServer(db *sql.DB, p perms.Permissions, c *mstlystcdata.Enricher, aud audit.IAuditer) *Server {
 	return &Server{
 		db: db,
-		p:  p,
+		ps: p,
 		c:  c,
 		a:  aud,
 	}
 }
 
 func (s *Server) ListVehicles(ctx context.Context, req *ListVehiclesRequest) (*ListVehiclesResponse, error) {
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
 	condition := jet.Bool(true)
 	userCondition := tUsers.Identifier.EQ(tVehicles.Owner)
 	if req.Search != nil && *req.Search != "" {
@@ -67,8 +71,6 @@ func (s *Server) ListVehicles(ctx context.Context, req *ListVehiclesRequest) (*L
 	}
 
 	if req.Pagination.Offset <= 0 {
-		userInfo := auth.MustGetUserInfoFromContext(ctx)
-
 		s.a.Log(&model.FivenetAuditLog{
 			Service: DMVService_ServiceDesc.ServiceName,
 			Method:  "ListVehicles",
@@ -130,15 +132,34 @@ func (s *Server) ListVehicles(ctx context.Context, req *ListVehiclesRequest) (*L
 		)
 	}
 
+	columns := []jet.Projection{
+		tVehicles.Plate,
+		tVehicles.Model,
+		jet.REPLACE(tVehicles.Type, jet.String("_"), jet.String(" ")).AS("vehicle.type"),
+		tUsers.ID,
+		tUsers.Identifier,
+		tUsers.Firstname,
+		tUsers.Lastname,
+	}
+
+	// Field Permission Check
+	fieldsAttr, err := s.ps.Attr(userInfo, citizenstore.CitizenStoreServicePerm, citizenstore.CitizenStoreServiceListCitizensPerm, citizenstore.CitizenStoreServiceListCitizensFieldsPermField)
+	if err != nil {
+		return nil, ErrFailedQuery
+	}
+	var fields perms.StringList
+	if fieldsAttr != nil {
+		fields = fieldsAttr.([]string)
+	}
+
+	if utils.InSlice(fields, "PhoneNumber") {
+		columns = append(columns, tUsers.PhoneNumber)
+	}
+
 	stmt := tVehicles.
 		SELECT(
-			tVehicles.Plate,
-			tVehicles.Model,
-			jet.REPLACE(tVehicles.Type, jet.String("_"), jet.String(" ")).AS("vehicle.type"),
-			tUsers.ID,
-			tUsers.Identifier,
-			tUsers.Firstname,
-			tUsers.Lastname,
+			columns[0],
+			columns[1:]...,
 		).
 		FROM(
 			tVehicles.

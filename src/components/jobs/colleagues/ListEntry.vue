@@ -1,26 +1,10 @@
 <script lang="ts" setup>
 import PhoneNumber from '~/components/partials/citizens/PhoneNumber.vue';
-import { useClipboardStore } from '~/store/clipboard';
-import { useNotificationsStore } from '~/store/notifications';
 import { User } from '~~/gen/ts/resources/users/users';
 
-const clipboardStore = useClipboardStore();
-const notifications = useNotificationsStore();
-
-const props = defineProps<{
+defineProps<{
     user: User;
 }>();
-
-function addToClipboard(): void {
-    clipboardStore.addUser(props.user);
-
-    notifications.dispatchNotification({
-        title: { key: 'notifications.clipboard.citizen_add.title', parameters: [] },
-        content: { key: 'notifications.clipboard.citizen_add.content', parameters: [] },
-        duration: 3500,
-        type: 'info',
-    });
-}
 </script>
 
 <template>

@@ -638,7 +638,8 @@
         "expired": "Expired",
         "conduct_register": "Conduct Register",
         "call": "Call",
-        "phone_number": "Phone Number"
+        "phone_number": "Phone Number",
+        "back": "Back"
     },
     "notifications": {
         "clipboard": {

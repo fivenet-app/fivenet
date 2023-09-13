@@ -521,8 +521,10 @@ func (s *Server) ListDispatchActivity(ctx context.Context, req *ListDispatchActi
 			tDispatchStatus.Postal,
 			tUsers.Firstname,
 			tUsers.Lastname,
-			tUsers.Dateofbirth,
 			tUsers.Job,
+			tUsers.JobGrade,
+			tUsers.Dateofbirth,
+			tUsers.PhoneNumber,
 		).
 		FROM(
 			tDispatchStatus.

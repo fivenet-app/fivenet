@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { PencilIcon, TrashCanIcon } from 'mdi-vue3';
+import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import Time from '~/components/partials/elements/Time.vue';
 import { CONDUCT_TYPE, ConductEntry } from '~~/gen/ts/resources/jobs/conduct';
 import { conductTypesToBGColor, conductTypesToRingColor, conductTypesToTextColor } from './helpers';
@@ -41,10 +42,10 @@ defineEmits<{
             {{ conduct.message }}
         </td>
         <td class="whitespace-nowrap px-1 py-1 text-left text-base-200">
-            {{ conduct.targetUser?.firstname }}, {{ conduct.targetUser?.lastname }}
+            <CitizenInfoPopover :user="conduct.targetUser" />
         </td>
         <td class="whitespace-nowrap px-1 py-1 text-left text-base-200">
-            {{ conduct.creator?.firstname }}, {{ conduct.creator?.lastname }}
+            <CitizenInfoPopover :user="conduct.creator" />
         </td>
         <td class="whitespace-nowrap py-2 pl-3 pr-4 text-base font-medium sm:pr-0">
             <div class="flex flex-row justify-end">

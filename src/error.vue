@@ -17,11 +17,12 @@ const props = defineProps<{
 
 const buttonDisabled = ref(true);
 
-function handleError(): void {
+function handleError(url?: string): void {
     $loading.start();
 
     startButtonTimer();
-    clearError({ redirect: '/' });
+    if (url === undefined) url = '/';
+    clearError({ redirect: url });
 }
 
 function copyError(): void {
@@ -39,8 +40,10 @@ function startButtonTimer(): void {
     setTimeout(() => $loading.errored(), 350);
 }
 
-$loading.start();
-startButtonTimer();
+onBeforeMount(async () => {
+    $loading.start();
+    startButtonTimer();
+});
 </script>
 
 <template>
@@ -72,7 +75,7 @@ startButtonTimer();
 
                 <div class="flex justify-center">
                     <button
-                        @click="handleError"
+                        @click="handleError()"
                         :disabled="buttonDisabled"
                         class="rounded-md w-60 px-3.5 py-2.5 text-sm font-semibold text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                         :class="[
@@ -82,6 +85,19 @@ startButtonTimer();
                         ]"
                     >
                         {{ $t('common.home') }}
+                    </button>
+
+                    <button
+                        @click="handleError(useRoute().fullPath)"
+                        :disabled="buttonDisabled"
+                        class="rounded-md w-60 px-3.5 py-2.5 sm:ml-4 text-sm font-semibold text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                        :class="[
+                            buttonDisabled
+                                ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
+                                : 'bg-secondary-500 hover:bg-secondary-400 focus-visible:outline-secondary-500',
+                        ]"
+                    >
+                        {{ $t('common.retry') }}
                     </button>
 
                     <button
