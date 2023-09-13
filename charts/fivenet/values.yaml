@@ -237,7 +237,8 @@ envoy:
       listeners:
         - name: listener_0
           address:
-            socket_address: { address: 0.0.0.0, port_value: 8181, ipv4_compat: true }
+            # If you encounter issues, add `, ipv4_compat: true` to the `socket_address` structure
+            socket_address: { address: 0.0.0.0, port_value: 8181 }
           filter_chains:
             - filters:
               - name: envoy.filters.network.http_connection_manager
