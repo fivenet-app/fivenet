@@ -28,13 +28,14 @@ defineEmits<{
 
 const { $grpc } = useNuxtApp();
 
-const { canDo } = useCentrumStore();
+const centrumStore = useCentrumStore();
+const { canDo } = centrumStore;
 
-async function selfAssign(dispatch: Dispatch): Promise<void> {
+async function selfAssign(id: bigint): Promise<void> {
     return new Promise(async (res, rej) => {
         try {
             const call = $grpc.getCentrumClient().takeDispatch({
-                dispatchIds: [dispatch.id],
+                dispatchIds: [id],
                 resp: TAKE_DISPATCH_RESP.ACCEPTED,
             });
             await call;
@@ -302,7 +303,7 @@ const openStatus = ref(false);
                                                                     <button
                                                                         v-if="canDo('TakeDispatch')"
                                                                         type="button"
-                                                                        @click="selfAssign(dispatch)"
+                                                                        @click="selfAssign(dispatch.id)"
                                                                         class="flex flex-row items-center ml-2 rounded bg-white/10 px-2 py-1 text-xs font-semibold text-white shadow-sm hover:bg-white/20"
                                                                     >
                                                                         <PlusIcon class="h-6 w-6" />

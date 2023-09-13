@@ -19,14 +19,14 @@ const emits = defineEmits<{
 const { $grpc } = useNuxtApp();
 
 const centrumStore = useCentrumStore();
-const { ownUnit, units } = storeToRefs(centrumStore);
+const { ownUnitId, units } = storeToRefs(centrumStore);
 
 async function joinUnit(unit?: Unit | undefined): Promise<void> {
     return new Promise(async (res, rej) => {
         try {
             const call = $grpc.getCentrumClient().joinUnit({
-                unitId: unit?.id ?? ownUnit.value?.id ?? 0n,
-                leave: ownUnit.value !== undefined,
+                unitId: unit?.id ?? ownUnitId.value ?? 0n,
+                leave: ownUnitId.value !== undefined,
             });
             const { response } = await call;
 
@@ -45,6 +45,15 @@ async function joinUnit(unit?: Unit | undefined): Promise<void> {
         }
     });
 }
+
+const inUnit = ref(false);
+watch(ownUnitId, () => {
+    if (ownUnitId.value !== undefined && ownUnitId.value > 0) {
+        inUnit.value = true;
+    } else {
+        inUnit.value = false;
+    }
+});
 </script>
 
 <template>
@@ -70,7 +79,7 @@ async function joinUnit(unit?: Unit | undefined): Promise<void> {
                                         <div class="bg-primary-700 px-4 py-6 sm:px-6">
                                             <div class="flex items-center justify-between">
                                                 <DialogTitle class="text-base font-semibold leading-6 text-white">
-                                                    <span v-if="ownUnit"> {{ $t('common.leave_unit') }} </span>
+                                                    <span v-if="inUnit"> {{ $t('common.leave_unit') }} </span>
                                                     <span v-else> {{ $t('common.join_unit') }} </span>
                                                 </DialogTitle>
                                                 <div class="ml-3 flex h-7 items-center">
@@ -85,14 +94,14 @@ async function joinUnit(unit?: Unit | undefined): Promise<void> {
                                                 </div>
                                             </div>
                                         </div>
-                                        <div v-if="!ownUnit" class="flex flex-1 flex-col justify-between">
+                                        <div v-if="!inUnit" class="flex flex-1 flex-col justify-between">
                                             <div class="divide-y divide-gray-200 px-4 sm:px-6">
                                                 <div class="mt-1">
                                                     <div class="my-2 space-y-24">
                                                         <div class="flex-1 form-control">
                                                             <div class="grid grid-cols-3 gap-4">
                                                                 <button
-                                                                    v-for="item in units"
+                                                                    v-for="[_, item] in units"
                                                                     :key="item.name"
                                                                     type="button"
                                                                     class="text-white hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-2 text-xs my-0.5"
@@ -124,7 +133,7 @@ async function joinUnit(unit?: Unit | undefined): Promise<void> {
                                     <div class="flex flex-shrink-0 justify-end px-4 py-4">
                                         <span class="isolate inline-flex rounded-md shadow-sm pr-4 w-full">
                                             <button
-                                                v-if="ownUnit"
+                                                v-if="inUnit"
                                                 type="button"
                                                 class="w-full relative inline-flex items-center rounded-l-md bg-error-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-primary-400"
                                                 @click="joinUnit(undefined)"
@@ -134,7 +143,7 @@ async function joinUnit(unit?: Unit | undefined): Promise<void> {
                                             <button
                                                 type="button"
                                                 class="w-full relative inline-flex items-center bg-white px-3 py-2 text-sm font-semibold text-gray-900 hover:text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-10"
-                                                :class="ownUnit ? '-ml-px rounded-r-md' : 'rounded-md'"
+                                                :class="inUnit ? '-ml-px rounded-r-md' : 'rounded-md'"
                                                 @click="$emit('close')"
                                             >
                                                 {{ $t('common.close', 1) }}

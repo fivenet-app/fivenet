@@ -35,7 +35,6 @@ async function conductCreateEntry(values: FormData): Promise<void> {
     return new Promise(async (res, rej) => {
         try {
             const expiresAt = values.expiresAt ? toTimestamp(new Date(values.expiresAt)) : undefined;
-            console.log(expiresAt);
 
             const call = $grpc.getJobsClient().conductCreateEntry({
                 entry: {

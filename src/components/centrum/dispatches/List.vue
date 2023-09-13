@@ -79,8 +79,8 @@ const { dispatches } = storeToRefs(centrumStore);
                         </thead>
                         <tbody class="divide-y divide-base-800">
                             <ListEntry
-                                v-for="dispatch in dispatches"
-                                :key="dispatch.id.toString()"
+                                v-for="[id, dispatch] in dispatches"
+                                :key="id.toString()"
                                 :dispatch="dispatch"
                                 @goto="$emit('goto', $event)"
                                 @details="$emit('details', $event)"

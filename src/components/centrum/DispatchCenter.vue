@@ -1,7 +1,5 @@
 <script lang="ts" setup>
-import { default as DispatchDetails } from '~/components/centrum/dispatches/Details.vue';
 import { default as DispatchesList } from '~/components/centrum/dispatches/List.vue';
-import { default as UnitDetails } from '~/components/centrum/units/Details.vue';
 import { default as UnitsList } from '~/components/centrum/units/List.vue';
 import Livemap from '~/components/livemap/Livemap.vue';
 import { setWaypoint } from '~/components/nui';
@@ -9,15 +7,9 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { useCentrumStore } from '~/store/centrum';
 import { useLivemapStore } from '~/store/livemap';
-import { Dispatch } from '~~/gen/ts/resources/dispatch/dispatches';
-import { Unit } from '~~/gen/ts/resources/dispatch/units';
 import DisponentsInfo from './DisponentsInfo.vue';
 import Feed from './Feed.vue';
-import AssignDispatchModal from './dispatches/AssignDispatchModal.vue';
-import { default as DispatchStatusUpdateModal } from './dispatches/StatusUpdateModal.vue';
 import DispatchesLayer from './livemap/DispatchesLayer.vue';
-import AssignUnitModal from './units/AssignUnitModal.vue';
-import { default as UnitStatusUpdateModal } from './units/StatusUpdateModal.vue';
 
 const centrumStore = useCentrumStore();
 const { error, abort, restarting, isDisponent, disponents, settings, feed } = storeToRefs(centrumStore);
@@ -39,16 +31,6 @@ function goto(e: Coordinate) {
     // Set in-game waypoint via NUI
     setWaypoint(e.x, e.y);
 }
-
-const selectedDispatch = ref<Dispatch | undefined>();
-const openDispatchDetails = ref(false);
-const openDispatchAssign = ref(false);
-const openDispatchStatus = ref(false);
-
-const selectedUnit = ref<Unit | undefined>();
-const openUnitDetails = ref(false);
-const openUnitAssign = ref(false);
-const openUnitStatus = ref(false);
 </script>
 
 <template>
@@ -90,65 +72,15 @@ const openUnitStatus = ref(false);
 
             <!-- Right column -->
             <div class="flex flex-col basis-2/3 divide-y divide-base-400">
-                <div class="basis-7/12">
-                    <DispatchesList
-                        @goto="goto($event)"
-                        @details="
-                            selectedDispatch = $event;
-                            openDispatchDetails = true;
-                        "
-                        @assign-unit="
-                            selectedDispatch = $event;
-                            openDispatchAssign = true;
-                        "
-                        @status="
-                            selectedDispatch = $event;
-                            openDispatchStatus = true;
-                        "
-                    />
-
-                    <template v-if="selectedDispatch">
-                        <DispatchDetails
-                            :dispatch="selectedDispatch"
-                            :open="openDispatchDetails"
-                            @close="openDispatchDetails = false"
-                            @goto="goto($event)"
-                        />
-                        <AssignDispatchModal
-                            :open="openDispatchAssign"
-                            :dispatch="selectedDispatch"
-                            @close="openDispatchAssign = false"
-                        />
-                        <DispatchStatusUpdateModal
-                            :open="openDispatchStatus"
-                            :dispatch="selectedDispatch"
-                            @close="openDispatchStatus = false"
-                        />
-                    </template>
+                <div class="basis-7/12 max-h-[58.333333%]">
+                    <DispatchesList @goto="goto($event)" />
                 </div>
 
-                <div class="basis-4/12">
-                    <UnitsList
-                        @goto="goto($event)"
-                        @details="
-                            selectedUnit = $event;
-                            openUnitDetails = true;
-                        "
-                    />
-
-                    <template v-if="selectedUnit">
-                        <UnitDetails
-                            :unit="selectedUnit"
-                            :open="openUnitDetails"
-                            @close="openUnitDetails = false"
-                            @goto="goto($event)"
-                        />
-                        <AssignUnitModal :open="openUnitAssign" :unit="selectedUnit" @close="openUnitAssign = false" />
-                        <UnitStatusUpdateModal :open="openUnitStatus" :unit="selectedUnit" @close="openUnitStatus = false" />
-                    </template>
+                <div class="basis-4/12 max-h-[33.333333%]">
+                    <UnitsList @goto="goto($event)" />
                 </div>
 
-                <div class="basis-1/12">
+                <div class="basis-1/12 max-h-[8.333333%]">
                     <Feed :items="feed" />
                 </div>
             </div>

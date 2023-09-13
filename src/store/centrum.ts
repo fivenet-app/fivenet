@@ -20,11 +20,11 @@ export interface CentrumState {
     isDisponent: boolean;
     disponents: UserShort[];
     feed: (DispatchStatus | UnitStatus)[];
-    units: Unit[];
-    dispatches: Dispatch[];
-    ownUnit: Unit | undefined;
-    ownDispatches: Dispatch[];
-    pendingDispatches: Dispatch[];
+    units: Map<bigint, Unit>;
+    dispatches: Map<bigint, Dispatch>;
+    ownUnitId: bigint | undefined;
+    ownDispatches: bigint[];
+    pendingDispatches: bigint[];
 }
 
 export const useCentrumStore = defineStore('centrum', {
@@ -37,17 +37,17 @@ export const useCentrumStore = defineStore('centrum', {
             isDisponent: false,
             disponents: [] as UserShort[],
             feed: [] as (DispatchStatus | UnitStatus)[],
-            units: [] as Unit[],
-            dispatches: [] as Dispatch[],
-            ownUnit: undefined,
-            ownDispatches: [] as Dispatch[],
-            pendingDispatches: [] as Dispatch[],
+            units: new Map<bigint, Unit>(),
+            dispatches: new Map<bigint, Dispatch>(),
+            ownUnitId: undefined,
+            ownDispatches: [] as bigint[],
+            pendingDispatches: [] as bigint[],
         }) as CentrumState,
     persist: false,
     actions: {
         addOrUpdateUnit(unit: Unit): void {
-            const idx = this.units.findIndex((d) => d.id === unit.id) ?? -1;
-            if (idx === -1) {
+            const u = this.units.get(unit.id);
+            if (u === undefined) {
                 if (unit.status === undefined) {
                     unit.status = {
                         unitId: unit.id,
@@ -55,114 +55,67 @@ export const useCentrumStore = defineStore('centrum', {
                         status: UNIT_STATUS.UNKNOWN,
                     };
                 }
-                this.units.push(unit);
+                this.units.set(unit.id, unit);
             } else {
-                this.units[idx].job = unit.job;
-                this.units[idx].createdAt = unit.createdAt;
-                this.units[idx].updatedAt = unit.updatedAt;
-                this.units[idx].name = unit.name;
-                this.units[idx].initials = unit.initials;
-                this.units[idx].color = unit.color;
-                this.units[idx].description = unit.description;
+                u.job = unit.job;
+                u.createdAt = unit.createdAt;
+                u.updatedAt = unit.updatedAt;
+                u.name = unit.name;
+                u.initials = unit.initials;
+                u.color = unit.color;
+                u.description = unit.description;
 
                 if (unit.users.length === 0) {
-                    this.units[idx].users.length = 0;
+                    u.users.length = 0;
                 } else {
-                    this.units[idx].users.length = 0;
-                    this.units[idx].users.concat(unit.users);
+                    u.users.length = 0;
+                    u.users.push(...unit.users);
                 }
 
                 if (unit.status !== undefined) {
-                    if (this.units[idx].status === undefined) {
-                        this.units[idx].status = unit.status;
+                    if (u.status === undefined) {
+                        u.status = unit.status;
                     } else {
-                        this.units[idx].status!.id = unit.status.id;
-                        this.units[idx].status!.createdAt = unit.status.createdAt;
-                        this.units[idx].status!.unitId = unit.status.unitId;
-                        this.units[idx].status!.status = unit.status.status;
-                        this.units[idx].status!.reason = unit.status.reason;
-                        this.units[idx].status!.code = unit.status.code;
-                        this.units[idx].status!.userId = unit.status.userId;
-                        this.units[idx].status!.user = unit.status.user;
-                        this.units[idx].status!.x = unit.status.x;
-                        this.units[idx].status!.y = unit.status.y;
-                        this.units[idx].status!.creator = unit.status.creator;
-                        this.units[idx].status!.creatorId = unit.status.creatorId;
+                        u.status!.id = unit.status.id;
+                        u.status!.createdAt = unit.status.createdAt;
+                        u.status!.unitId = unit.status.unitId;
+                        u.status!.status = unit.status.status;
+                        u.status!.reason = unit.status.reason;
+                        u.status!.code = unit.status.code;
+                        u.status!.userId = unit.status.userId;
+                        u.status!.user = unit.status.user;
+                        u.status!.x = unit.status.x;
+                        u.status!.y = unit.status.y;
+                        u.status!.postal = unit.status.postal;
+                        u.status!.creator = unit.status.creator;
+                        u.status!.creatorId = unit.status.creatorId;
                     }
                 }
             }
-
-            if (this.ownUnit !== undefined && this.ownUnit.id === unit.id) {
-                this.setOrUpdateOwnUnit(unit);
-            }
         },
-        setOrUpdateOwnUnit(unit: Unit | undefined): void {
-            if (unit === undefined) {
-                this.ownUnit = undefined;
-                return;
-            }
-            if (this.ownUnit === undefined) {
-                this.ownUnit = unit;
-                return;
-            } else if (this.ownUnit?.id !== unit.id) {
-                return;
-            }
-
-            this.ownUnit.id = unit.id;
-            this.ownUnit.createdAt = unit.createdAt;
-            this.ownUnit.updatedAt = unit.updatedAt;
-            this.ownUnit.job = unit.job;
-            this.ownUnit.name = unit.name;
-            this.ownUnit.initials = unit.initials;
-            this.ownUnit.color = unit.color;
-            this.ownUnit.description = unit.description;
-
-            if (unit.users.length === 0) {
-                this.ownUnit.users.length = 0;
+        setOwnUnit(id: bigint | undefined): void {
+            if (id === undefined) {
+                this.ownUnitId = undefined;
             } else {
-                this.ownUnit.users.length = 0;
-                this.ownUnit.users.concat(unit.users);
-            }
-
-            if (unit.status !== undefined) {
-                if (this.ownUnit.status === undefined) {
-                    this.ownUnit.status = unit.status;
-                } else {
-                    this.ownUnit.status!.id = unit.status.id;
-                    this.ownUnit.status!.createdAt = unit.status.createdAt;
-                    this.ownUnit.status!.unitId = unit.status.unitId;
-                    this.ownUnit.status!.status = unit.status.status;
-                    this.ownUnit.status!.reason = unit.status.reason;
-                    this.ownUnit.status!.code = unit.status.code;
-                    this.ownUnit.status!.userId = unit.status.userId;
-                    this.ownUnit.status!.user = unit.status.user;
-                    this.ownUnit.status!.x = unit.status.x;
-                    this.ownUnit.status!.y = unit.status.y;
-                    this.ownUnit.status!.creator = unit.status.creator;
-                    this.ownUnit.status!.creatorId = unit.status.creatorId;
-                }
+                this.ownUnitId = id;
             }
         },
         removeUnit(unit: Unit): void {
-            const idx = this.units?.findIndex((d) => d.id === unit.id) ?? -1;
-            if (idx > -1) {
-                this.units?.splice(idx, 1);
-            }
+            this.units.delete(unit.id);
 
             // User's unit has been deleted, reset it
-            if (this.ownUnit !== undefined && this.ownUnit.id === unit.id) {
-                this.setOrUpdateOwnUnit(undefined);
+            if (this.ownUnitId !== undefined && this.ownUnitId === unit.id) {
+                this.setOwnUnit(undefined);
             }
         },
 
-        checkIfUnitAssignedToDispatch(dsp: Dispatch, unit?: Unit): boolean {
+        checkIfUnitAssignedToDispatch(dsp: Dispatch, unit: bigint | undefined): boolean {
             if (unit === undefined) return false;
 
-            return dsp.units.findIndex((d) => d.unitId === unit.id) > -1;
+            return dsp.units.findIndex((d) => d.unitId === unit) > -1;
         },
         addOrUpdateDispatch(dispatch: Dispatch): void {
-            const idx = this.dispatches?.findIndex((d) => d.id === dispatch.id) ?? -1;
-            if (idx === -1) {
+            if (!this.dispatches.has(dispatch.id)) {
                 if (dispatch.status === undefined) {
                     dispatch.status = {
                         dispatchId: dispatch.id,
@@ -170,43 +123,45 @@ export const useCentrumStore = defineStore('centrum', {
                         status: DISPATCH_STATUS.NEW,
                     };
                 }
-                this.dispatches.push(dispatch);
+                this.dispatches.set(dispatch.id, dispatch);
             } else {
-                this.dispatches[idx].createdAt = dispatch.createdAt;
-                this.dispatches[idx].updatedAt = dispatch.updatedAt;
-                this.dispatches[idx].job = dispatch.job;
-                this.dispatches[idx].message = dispatch.message;
-                this.dispatches[idx].description = dispatch.description;
-                this.dispatches[idx].attributes = dispatch.attributes;
-                this.dispatches[idx].x = dispatch.x;
-                this.dispatches[idx].y = dispatch.y;
-                this.dispatches[idx].anon = dispatch.anon;
-                this.dispatches[idx].userId = dispatch.userId;
-                this.dispatches[idx].user = dispatch.user;
+                const d = this.dispatches.get(dispatch.id);
+                d!.createdAt = dispatch.createdAt;
+                d!.updatedAt = dispatch.updatedAt;
+                d!.job = dispatch.job;
+                d!.message = dispatch.message;
+                d!.description = dispatch.description;
+                d!.attributes = dispatch.attributes;
+                d!.x = dispatch.x;
+                d!.y = dispatch.y;
+                d!.anon = dispatch.anon;
+                d!.userId = dispatch.userId;
+                d!.user = dispatch.user;
 
                 if (dispatch.units.length === 0) {
-                    this.dispatches[idx].units.length = 0;
+                    d!.units.length = 0;
                 } else {
-                    this.dispatches[idx].units.length = 0;
-                    this.dispatches[idx].units.concat(dispatch.units);
+                    d!.units.length = 0;
+                    d!.units.concat(dispatch.units);
                 }
 
                 if (dispatch.status !== undefined) {
-                    if (this.dispatches[idx].status === undefined) {
-                        this.dispatches[idx].status = dispatch.status;
+                    if (d!.status === undefined) {
+                        d!.status = dispatch.status;
                     } else {
-                        this.dispatches[idx].status!.id = dispatch.status.id;
-                        this.dispatches[idx].status!.createdAt = dispatch.status.createdAt;
-                        this.dispatches[idx].status!.dispatchId = dispatch.status.dispatchId;
-                        this.dispatches[idx].status!.unitId = dispatch.status.unitId;
-                        this.dispatches[idx].status!.unit = dispatch.status.unit;
-                        this.dispatches[idx].status!.status = dispatch.status.status;
-                        this.dispatches[idx].status!.reason = dispatch.status.reason;
-                        this.dispatches[idx].status!.code = dispatch.status.code;
-                        this.dispatches[idx].status!.userId = dispatch.status.userId;
-                        this.dispatches[idx].status!.user = dispatch.status.user;
-                        this.dispatches[idx].status!.x = dispatch.status.x;
-                        this.dispatches[idx].status!.y = dispatch.status.y;
+                        d!.status!.id = dispatch.status.id;
+                        d!.status!.createdAt = dispatch.status.createdAt;
+                        d!.status!.dispatchId = dispatch.status.dispatchId;
+                        d!.status!.unitId = dispatch.status.unitId;
+                        d!.status!.unit = dispatch.status.unit;
+                        d!.status!.status = dispatch.status.status;
+                        d!.status!.reason = dispatch.status.reason;
+                        d!.status!.code = dispatch.status.code;
+                        d!.status!.userId = dispatch.status.userId;
+                        d!.status!.user = dispatch.status.user;
+                        d!.status!.x = dispatch.status.x;
+                        d!.status!.y = dispatch.status.y;
+                        d!.status!.postal = dispatch.status.postal;
                     }
                 }
             }
@@ -214,66 +169,25 @@ export const useCentrumStore = defineStore('centrum', {
             this.handleDispatchAssignment(dispatch);
         },
         removeDispatch(id: bigint): void {
-            const idx = this.dispatches?.findIndex((d) => d.id === id) ?? -1;
-            if (idx > -1) {
-                this.dispatches?.splice(idx, 1);
-            }
-
             this.removePendingDispatch(id);
             this.removeOwnDispatch(id);
+
+            this.dispatches.delete(id);
         },
-        addOrUpdateOwnDispatch(dispatch: Dispatch): void {
-            const idx = this.ownDispatches?.findIndex((d) => d.id === dispatch.id) ?? -1;
+        addOrUpdateOwnDispatch(id: bigint): void {
+            const idx = this.ownDispatches?.findIndex((d) => d === id) ?? -1;
             if (idx === -1) {
-                this.ownDispatches.push(dispatch);
-            } else {
-                this.ownDispatches[idx].createdAt = dispatch.createdAt;
-                this.ownDispatches[idx].updatedAt = dispatch.updatedAt;
-                this.ownDispatches[idx].job = dispatch.job;
-                this.ownDispatches[idx].message = dispatch.message;
-                this.ownDispatches[idx].description = dispatch.description;
-                this.ownDispatches[idx].attributes = dispatch.attributes;
-                this.ownDispatches[idx].x = dispatch.x;
-                this.ownDispatches[idx].y = dispatch.y;
-                this.ownDispatches[idx].anon = dispatch.anon;
-                this.ownDispatches[idx].userId = dispatch.userId;
-                this.ownDispatches[idx].user = dispatch.user;
-
-                if (dispatch.units.length === 0) {
-                    this.ownDispatches[idx].units.length = 0;
-                } else {
-                    this.dispatches[idx].units.length = 0;
-                    this.dispatches[idx].units.concat(dispatch.units);
-                }
-
-                if (dispatch.status !== undefined) {
-                    if (this.ownDispatches[idx].status === undefined) {
-                        this.ownDispatches[idx].status = dispatch.status;
-                    } else {
-                        this.ownDispatches[idx].status!.id = dispatch.status.id;
-                        this.ownDispatches[idx].status!.createdAt = dispatch.status.createdAt;
-                        this.ownDispatches[idx].status!.dispatchId = dispatch.status.dispatchId;
-                        this.ownDispatches[idx].status!.unitId = dispatch.status.unitId;
-                        this.ownDispatches[idx].status!.unit = dispatch.status.unit;
-                        this.ownDispatches[idx].status!.status = dispatch.status.status;
-                        this.ownDispatches[idx].status!.reason = dispatch.status.reason;
-                        this.ownDispatches[idx].status!.code = dispatch.status.code;
-                        this.ownDispatches[idx].status!.userId = dispatch.status.userId;
-                        this.ownDispatches[idx].status!.user = dispatch.status.user;
-                        this.ownDispatches[idx].status!.x = dispatch.status.x;
-                        this.ownDispatches[idx].status!.y = dispatch.status.y;
-                    }
-                }
+                this.ownDispatches.push(id);
             }
         },
         removeOwnDispatch(id: bigint): void {
-            const idx = this.ownDispatches?.findIndex((d) => d.id === id) ?? -1;
+            const idx = this.ownDispatches?.findIndex((d) => d === id) ?? -1;
             if (idx > -1) {
                 this.ownDispatches?.splice(idx, 1);
             }
         },
         handleDispatchAssignment(dispatch: Dispatch): void {
-            if (this.ownUnit === undefined) return;
+            if (this.ownUnitId === undefined) return;
 
             if (
                 dispatch.status?.status === DISPATCH_STATUS.UNIT_UNASSIGNED ||
@@ -283,7 +197,7 @@ export const useCentrumStore = defineStore('centrum', {
                 this.removePendingDispatch(dispatch.id);
                 this.removeOwnDispatch(dispatch.id);
             } else {
-                const assignment = dispatch.units.find((u) => u.unitId === this.ownUnit?.id);
+                const assignment = dispatch.units.find((u) => u.unitId === this.ownUnitId);
                 if (assignment === undefined) {
                     this.removePendingDispatch(dispatch.id);
                     this.removeOwnDispatch(dispatch.id);
@@ -292,67 +206,29 @@ export const useCentrumStore = defineStore('centrum', {
 
                 // When dispatch has expiration, it is a "pending" dispatch
                 if (assignment?.expiresAt !== undefined) {
-                    this.addOrUpdatePendingDispatch(dispatch);
+                    this.addOrUpdatePendingDispatch(dispatch.id);
                 } else {
                     this.removePendingDispatch(dispatch.id);
-                    this.addOrUpdateOwnDispatch(dispatch);
+                    this.addOrUpdateOwnDispatch(dispatch.id);
                 }
             }
         },
 
-        addOrUpdatePendingDispatch(dispatch: Dispatch): void {
-            const idx = this.pendingDispatches?.findIndex((d) => d.id === dispatch.id) ?? -1;
+        addOrUpdatePendingDispatch(id: bigint): void {
+            const idx = this.pendingDispatches?.findIndex((d) => d === id) ?? -1;
             if (idx === -1) {
-                this.pendingDispatches.push(dispatch);
+                this.pendingDispatches.push(id);
 
                 useNotificationsStore().dispatchNotification({
                     title: { key: 'notifications.centrum.store.assigned_dispatch.title', parameters: [] },
                     content: { key: 'notifications.centrum.store.assigned_dispatch.content', parameters: [] },
                     type: 'info',
                 });
-            } else {
-                this.pendingDispatches[idx].createdAt = dispatch.createdAt;
-                this.pendingDispatches[idx].updatedAt = dispatch.updatedAt;
-                this.pendingDispatches[idx].job = dispatch.job;
-                this.pendingDispatches[idx].message = dispatch.message;
-                this.pendingDispatches[idx].description = dispatch.description;
-                this.pendingDispatches[idx].attributes = dispatch.attributes;
-                this.pendingDispatches[idx].x = dispatch.x;
-                this.pendingDispatches[idx].y = dispatch.y;
-                this.pendingDispatches[idx].anon = dispatch.anon;
-                this.pendingDispatches[idx].userId = dispatch.userId;
-                this.pendingDispatches[idx].user = dispatch.user;
-
-                if (dispatch.units.length === 0) {
-                    this.pendingDispatches[idx].units.length = 0;
-                } else {
-                    this.pendingDispatches[idx].units.length = 0;
-                    this.pendingDispatches[idx].units.concat(dispatch.units);
-                }
-
-                if (dispatch.status !== undefined) {
-                    if (this.pendingDispatches[idx].status === undefined) {
-                        this.pendingDispatches[idx].status = dispatch.status;
-                    } else {
-                        this.pendingDispatches[idx].status!.id = dispatch.status.id;
-                        this.pendingDispatches[idx].status!.createdAt = dispatch.status.createdAt;
-                        this.pendingDispatches[idx].status!.dispatchId = dispatch.status.dispatchId;
-                        this.pendingDispatches[idx].status!.unitId = dispatch.status.unitId;
-                        this.pendingDispatches[idx].status!.unit = dispatch.status.unit;
-                        this.pendingDispatches[idx].status!.status = dispatch.status.status;
-                        this.pendingDispatches[idx].status!.reason = dispatch.status.reason;
-                        this.pendingDispatches[idx].status!.code = dispatch.status.code;
-                        this.pendingDispatches[idx].status!.userId = dispatch.status.userId;
-                        this.pendingDispatches[idx].status!.user = dispatch.status.user;
-                        this.pendingDispatches[idx].status!.x = dispatch.status.x;
-                        this.pendingDispatches[idx].status!.y = dispatch.status.y;
-                    }
-                }
             }
         },
 
         removePendingDispatch(id: bigint): void {
-            const tDIdx = this.pendingDispatches.findIndex((d) => d.id === id);
+            const tDIdx = this.pendingDispatches.findIndex((d) => d === id);
             if (tDIdx > -1) {
                 this.pendingDispatches.splice(tDIdx, 1);
             }
@@ -396,7 +272,7 @@ export const useCentrumStore = defineStore('centrum', {
                         }
                         this.disponents = resp.change.latestState.disponents;
                         this.isDisponent = resp.change.latestState.isDisponent;
-                        this.setOrUpdateOwnUnit(resp.change.latestState.ownUnit);
+                        this.setOwnUnit(resp.change.latestState.ownUnit?.id);
 
                         resp.change.latestState.units.forEach((u) => this.addOrUpdateUnit(u));
                         resp.change.latestState.dispatches.forEach((d) => this.addOrUpdateDispatch(d));
@@ -411,18 +287,21 @@ export const useCentrumStore = defineStore('centrum', {
                             if (resp.restart !== undefined && !resp.restart) resp.restart = true;
                         }
                     } else if (resp.change.oneofKind === 'unitAssigned') {
-                        if (this.ownUnit !== undefined && this.ownUnit.id !== resp.change.unitAssigned.id) {
-                            console.warn('Received unit user assigned event for other unit', resp.change.unitAssigned);
+                        this.addOrUpdateUnit(resp.change.unitAssigned);
+                        if (isCenter) continue;
+
+                        // Ignore unit assignments for other units
+                        if (this.ownUnitId !== undefined && this.ownUnitId !== resp.change.unitAssigned.id) {
                             continue;
                         }
 
                         // User added/in this unit
                         const idx = resp.change.unitAssigned.users.findIndex((u) => u.userId === authStore.activeChar?.userId);
                         if (idx > -1) {
-                            this.addOrUpdateUnit(resp.change.unitAssigned);
-                            if (this.ownUnit?.id === resp.change.unitAssigned.id) continue;
+                            // User already in unit
+                            if (this.ownUnitId === resp.change.unitAssigned.id) continue;
 
-                            if (isCenter === true) continue;
+                            this.setOwnUnit(resp.change.unitAssigned.id);
 
                             // User has been newly added to unit
                             notifications.dispatchNotification({
@@ -431,10 +310,8 @@ export const useCentrumStore = defineStore('centrum', {
                                 type: 'success',
                             });
                         } else {
-                            if (isCenter === true) continue;
-
                             // User has been removed from the unit
-                            this.setOrUpdateOwnUnit(undefined);
+                            this.setOwnUnit(undefined);
                             this.ownDispatches.length = 0;
                             this.pendingDispatches.length = 0;
 
@@ -507,7 +384,7 @@ export const useCentrumStore = defineStore('centrum', {
         async stopStream(): Promise<void> {
             if (this.abort !== undefined) this.abort.abort();
             this.abort = undefined;
-            if (this.cleanupIntervalId) clearInterval(this.cleanupIntervalId);
+            if (this.cleanupIntervalId !== undefined) clearInterval(this.cleanupIntervalId);
             this.cleanupIntervalId = undefined;
             console.debug('Centrum: Stopping Data Stream');
         },
@@ -536,7 +413,7 @@ export const useCentrumStore = defineStore('centrum', {
                     return (
                         can('CentrumService.TakeDispatch') &&
                         dispatch !== undefined &&
-                        this.checkIfUnitAssignedToDispatch(dispatch, this.ownUnit)
+                        this.checkIfUnitAssignedToDispatch(dispatch, this.ownUnitId)
                     );
 
                 case 'UpdateUnitStatus':
@@ -551,11 +428,15 @@ export const useCentrumStore = defineStore('centrum', {
             const now = new Date().getTime();
 
             // Cleanup pending dispatches
-            this.pendingDispatches.forEach((pd) => {
-                pd.units.forEach((ua) => {
-                    const expiresAt = toDate(ua.expiresAt);
-                    if (now - expiresAt.getTime() > FIVE_MINUTES) this.removePendingDispatch(pd.id);
-                });
+            this.pendingDispatches.forEach((pd, index) => {
+                if (!this.dispatches.has(pd)) {
+                    this.pendingDispatches.splice(index, 1);
+                } else {
+                    this.dispatches.get(pd)?.units.forEach((ua) => {
+                        const expiresAt = toDate(ua.expiresAt);
+                        if (now - expiresAt.getTime() > FIVE_MINUTES) this.removePendingDispatch(pd);
+                    });
+                }
             });
 
             // Remove completed, cancelled and archived dispatches after the status is 5 minutes or older

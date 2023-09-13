@@ -4,6 +4,8 @@ import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopove
 import Time from '~/components/partials/elements/Time.vue';
 import { DISPATCH_STATUS, Dispatch } from '~~/gen/ts/resources/dispatch/dispatches';
 import { dispatchStatusAnimate, dispatchStatusToBGColor } from '../helpers';
+import AssignDispatchModal from './AssignDispatchModal.vue';
+import Details from './Details.vue';
 
 const props = defineProps<{
     dispatch: Dispatch;
@@ -13,12 +15,17 @@ defineEmits<{
     (e: 'goto', loc: Coordinate): void;
     (e: 'details', dsp: Dispatch): void;
     (e: 'assignUnit', dsp: Dispatch): void;
-    (e: 'status', dsp: Dispatch): void;
 }>();
+
+const openDetails = ref(false);
+const openAssign = ref(false);
 </script>
 
 <template>
     <tr>
+        <Details :dispatch="dispatch" :open="openDetails" @close="openDetails = false" @goto="$emit('goto', $event)" />
+        <AssignDispatchModal :open="openAssign" :dispatch="dispatch" @close="openAssign = false" />
+
         <td
             class="relative whitespace-nowrap pl-0 py-1 pr-0 text-left text-sm font-medium sm:pr-0.5 flex flex-row justify-start"
         >
@@ -26,7 +33,7 @@ defineEmits<{
                 type="button"
                 class="text-primary-400 hover:text-primary-600"
                 :title="$t('common.assign')"
-                @click="$emit('assignUnit', dispatch)"
+                @click="openAssign = true"
             >
                 <AccountMultiplePlusIcon class="w-6 h-auto ml-auto mr-1.5" aria-hidden="true" />
             </button>
@@ -41,7 +48,7 @@ defineEmits<{
                 type="button"
                 class="text-primary-400 hover:text-primary-600"
                 :title="$t('common.detail', 2)"
-                @click="$emit('details', dispatch)"
+                @click="openDetails = true"
             >
                 <DotsVerticalIcon class="w-6 h-auto ml-auto mr-1.5" />
             </button>

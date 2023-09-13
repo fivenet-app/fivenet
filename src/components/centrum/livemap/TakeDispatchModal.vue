@@ -31,7 +31,7 @@ async function takeDispatches(resp: TAKE_DISPATCH_RESP): Promise<void> {
             if (pendingDispatches.value.length === 0) return;
 
             const call = $grpc.getCentrumClient().takeDispatch({
-                dispatchIds: pendingDispatches.value.filter((d) => !unselectedDispatches.value.includes(d.id)).map((d) => d.id),
+                dispatchIds: pendingDispatches.value.filter((d) => !unselectedDispatches.value.includes(d)),
                 resp: resp,
             });
             await call;
@@ -121,9 +121,9 @@ watch(pendingDispatches.value, () => {
                                                             :type="$t('common.dispatch', 2)"
                                                         />
                                                         <TakeDispatchEntry
-                                                            v-for="dispatch in pendingDispatches"
-                                                            :dispatch="dispatch"
-                                                            @selected="selectDispatch(dispatch.id)"
+                                                            v-for="pd in pendingDispatches"
+                                                            :dispatch="getDispatchByID(pd)"
+                                                            @selected="selectDispatch(pd)"
                                                             @goto="$emit('goto', $event)"
                                                         />
                                                     </dl>

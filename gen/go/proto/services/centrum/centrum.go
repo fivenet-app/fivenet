@@ -397,6 +397,7 @@ func (s *Server) stream(srv CentrumService_StreamServer, isDisponent bool, job s
 						inUnit := utils.InSliceFunc(dest.Users, func(a *dispatch.UnitAssignment) bool {
 							return userId == a.UserId
 						})
+
 						if dest.Id == unitId && !inUnit {
 							restart := true
 							resp.Restart = &restart

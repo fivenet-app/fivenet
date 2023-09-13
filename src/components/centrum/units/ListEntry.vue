@@ -2,6 +2,7 @@
 import { unitStatusToBGColor } from '~/components/centrum/helpers';
 import { RGB } from '~/utils/colour';
 import { UNIT_STATUS, Unit } from '~~/gen/ts/resources/dispatch/units';
+import Details from './Details.vue';
 
 const props = defineProps<{
     unit: Unit;
@@ -9,14 +10,24 @@ const props = defineProps<{
 
 defineEmits<{
     (e: 'goto', loc: Coordinate): void;
-    (e: 'details', unit: Unit): void;
 }>();
 
 const unitColorHex = hexToRgb('#' + props.unit.color ?? '000000') ?? ({ r: 0, g: 0, b: 0 } as RGB);
+
+watch(
+    () => props.unit,
+    () => {
+        console.log('LIST ENTRY UNIT:', UNIT_STATUS[props.unit.status?.status ?? 0], props.unit.users);
+    },
+);
+
+const open = ref(false);
 </script>
 
 <template>
-    <li class="col-span-1 flex rounded-md shadow-sm" @click="$emit('details', unit)">
+    <li class="col-span-1 flex rounded-md shadow-sm" @click="open = true">
+        <Details :open="open" @close="open = false" :unit="unit" @goto="$emit('goto', $event)" />
+
         <div
             class="flex flex-shrink-0 items-center justify-center rounded-l-md text-sm font-medium border-l border-t border-b w-12"
             :class="isColourBright(unitColorHex) ? 'text-black' : 'text-white'"

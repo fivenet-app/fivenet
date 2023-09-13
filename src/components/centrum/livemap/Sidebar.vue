@@ -2,7 +2,6 @@
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { LControl } from '@vue-leaflet/vue-leaflet';
-import { watchOnce } from '@vueuse/core';
 import {
     CalendarCheckIcon,
     CalendarRemoveIcon,
@@ -20,16 +19,15 @@ import {
     ToggleSwitchOffIcon,
 } from 'mdi-vue3';
 import { DefineComponent } from 'vue';
-import { default as DispatchDetails } from '~/components/centrum/dispatches/Details.vue';
-import { default as DispatchStatusUpdateModal } from '~/components/centrum/dispatches/StatusUpdateModal.vue';
 import { dispatchStatusToBGColor, unitStatusToBGColor } from '~/components/centrum/helpers';
 import { default as UnitDetails } from '~/components/centrum/units/Details.vue';
 import { default as UnitStatusUpdateModal } from '~/components/centrum/units/StatusUpdateModal.vue';
 import { useCentrumStore } from '~/store/centrum';
 import { useNotificationsStore } from '~/store/notifications';
-import { DISPATCH_STATUS, Dispatch } from '~~/gen/ts/resources/dispatch/dispatches';
+import { DISPATCH_STATUS } from '~~/gen/ts/resources/dispatch/dispatches';
 import { CENTRUM_MODE } from '~~/gen/ts/resources/dispatch/settings';
-import { UNIT_STATUS } from '~~/gen/ts/resources/dispatch/units';
+import { UNIT_STATUS, Unit } from '~~/gen/ts/resources/dispatch/units';
+import DispatchEntry from './DispatchEntry.vue';
 import DispatchesLayer from './DispatchesLayer.vue';
 import JoinUnit from './JoinUnitModal.vue';
 import TakeDispatchModal from './TakeDispatchModal.vue';
@@ -41,7 +39,7 @@ defineEmits<{
 const { $grpc } = useNuxtApp();
 
 const centrumStore = useCentrumStore();
-const { settings, ownDispatches, ownUnit, pendingDispatches } = storeToRefs(centrumStore);
+const { settings, units, dispatches, ownDispatches, ownUnitId, pendingDispatches } = storeToRefs(centrumStore);
 const { startStream, stopStream } = centrumStore;
 
 const notifications = useNotificationsStore();
@@ -83,8 +81,7 @@ onBeforeUnmount(async () => {
 
 const selectUnitOpen = ref(false);
 
-const selectedDispatch = ref<Dispatch | undefined>();
-const openDispatchDetails = ref(false);
+const selectedDispatch = ref<bigint | undefined>();
 const openDispatchStatus = ref(false);
 const openTakeDispatch = ref(false);
 
@@ -165,10 +162,13 @@ async function updateUtStatus(id: bigint, status?: UNIT_STATUS): Promise<void> {
 }
 
 // Show unit sidebar when ownUnit is set/updated, otherwise it will be hidden (automagically)
-watchOnce(ownUnit, () => {
-    if (ownUnit !== undefined) {
+const ownUnit = ref<Unit | undefined>();
+watch(ownUnitId, () => {
+    if (ownUnitId.value !== undefined) {
+        ownUnit.value = units.value.get(ownUnitId.value);
         open.value = true;
     } else {
+        ownUnit.value = undefined;
         open.value = false;
     }
 });
@@ -194,26 +194,11 @@ const open = ref(false);
             <div class="lg:inset-y-0 lg:flex lg:w-50 lg:flex-col">
                 <!-- Dispatch -->
                 <TakeDispatchModal
-                    v-if="ownUnit"
+                    v-if="ownUnit !== undefined"
                     :open="openTakeDispatch"
                     @close="openTakeDispatch = false"
                     @goto="$emit('goto', $event)"
                 />
-
-                <template v-if="selectedDispatch">
-                    <DispatchDetails
-                        :dispatch="selectedDispatch"
-                        :open="openDispatchDetails"
-                        @close="openDispatchDetails = false"
-                        @goto="$emit('goto', $event)"
-                    />
-
-                    <DispatchStatusUpdateModal
-                        :dispatch="selectedDispatch"
-                        :open="openDispatchStatus"
-                        @close="openDispatchStatus = false"
-                    />
-                </template>
 
                 <div class="h-full flex grow gap-y-5 overflow-y-auto bg-base-600 px-4 py-0.5">
                     <nav v-if="open" class="flex flex-1 flex-col">
@@ -221,7 +206,7 @@ const open = ref(false);
                             <li>
                                 <ul role="list" class="-mx-2 mt-2 space-y-1">
                                     <li>
-                                        <template v-if="ownUnit">
+                                        <template v-if="ownUnit !== undefined">
                                             <button
                                                 @click="openUnitDetails = true"
                                                 type="button"
@@ -243,7 +228,6 @@ const open = ref(false);
 
                                             <UnitDetails
                                                 :unit="ownUnit"
-                                                :ownUnit="ownUnit"
                                                 :open="openUnitDetails"
                                                 @close="openUnitDetails = false"
                                             />
@@ -260,15 +244,11 @@ const open = ref(false);
                                             <template v-else class="truncate">{{ $t('common.leave_unit') }}</template>
                                         </button>
 
-                                        <JoinUnit
-                                            :open="selectUnitOpen"
-                                            @close="selectUnitOpen = false"
-                                            @joined="ownUnit = $event"
-                                        />
+                                        <JoinUnit :open="selectUnitOpen" @close="selectUnitOpen = false" />
                                     </li>
                                 </ul>
                             </li>
-                            <template v-if="ownUnit">
+                            <template v-if="ownUnit !== undefined">
                                 <li>
                                     <ul role="list" class="-mx-2 space-y-1">
                                         <li>
@@ -350,7 +330,7 @@ const open = ref(false);
                                                         item.status ? dispatchStatusToBGColor(item.status) : item.class,
                                                         item.class,
                                                     ]"
-                                                    @click="updateDspStatus(selectedDispatch?.id, item.status)"
+                                                    @click="updateDspStatus(selectedDispatch, item.status)"
                                                 >
                                                     <component
                                                         :is="item.icon ?? HoopHouseIcon"
@@ -388,38 +368,7 @@ const open = ref(false);
                                             </button>
                                         </li>
                                         <template v-else>
-                                            <li class="flex flex-row items-center" v-for="dispatch in ownDispatches">
-                                                <div class="mr-1.5">
-                                                    <input
-                                                        name="active"
-                                                        type="radio"
-                                                        class="h-4 w-4 border-gray-300 text-primary-600 focus:ring-primary-600"
-                                                        v-model="selectedDispatch"
-                                                        v-bind:value="dispatch"
-                                                    />
-                                                </div>
-                                                <button
-                                                    type="button"
-                                                    class="text-white bg-error-700 hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-2 text-xs my-0.5"
-                                                    @click="
-                                                        selectedDispatch = dispatch;
-                                                        openDispatchDetails = true;
-                                                    "
-                                                >
-                                                    <span class="font-bold truncate inline-flex items-center">
-                                                        <CarEmergencyIcon class="h-4 w-4 mr-0.5" /> DSP-{{ dispatch.id }}</span
-                                                    >
-                                                    <span class="mt-2 truncate">
-                                                        {{
-                                                            $t(
-                                                                `enums.centrum.DISPATCH_STATUS.${
-                                                                    DISPATCH_STATUS[dispatch.status?.status ?? (0 as number)]
-                                                                }`,
-                                                            )
-                                                        }}
-                                                    </span>
-                                                </button>
-                                            </li>
+                                            <DispatchEntry v-for="id in ownDispatches" :dispatch="dispatches.get(id)!" />
                                         </template>
                                     </ul>
                                 </li>
@@ -429,7 +378,7 @@ const open = ref(false);
                 </div>
 
                 <!-- "Take Dispatches" Button -->
-                <span v-if="ownUnit" class="fixed inline-flex z-90 bottom-2 right-1/2">
+                <span v-if="ownUnit !== undefined" class="fixed inline-flex z-90 bottom-2 right-1/2">
                     <span class="flex absolute h-3 w-3 top-0 right-0 -mt-1 -mr-1" v-if="pendingDispatches.length > 0">
                         <span
                             class="animate-ping absolute inline-flex h-full w-full rounded-full bg-error-400 opacity-75"
