@@ -175,15 +175,11 @@
         
           
           <li>
-            <a href="#resources%2faccounts%2foauth2.proto">resources/accounts/oauth2.proto</a>
+            <a href="#resources%2faccounts%2faccounts.proto">resources/accounts/accounts.proto</a>
             <ul>
               
                 <li>
-                  <a href="#resources.accounts.OAuth2Account"><span class="badge">M</span>OAuth2Account</a>
-                </li>
-              
-                <li>
-                  <a href="#resources.accounts.OAuth2Provider"><span class="badge">M</span>OAuth2Provider</a>
+                  <a href="#resources.accounts.Account"><span class="badge">M</span>Account</a>
                 </li>
               
               
@@ -194,11 +190,15 @@
         
           
           <li>
-            <a href="#resources%2faccounts%2faccounts.proto">resources/accounts/accounts.proto</a>
+            <a href="#resources%2faccounts%2foauth2.proto">resources/accounts/oauth2.proto</a>
             <ul>
               
                 <li>
-                  <a href="#resources.accounts.Account"><span class="badge">M</span>Account</a>
+                  <a href="#resources.accounts.OAuth2Account"><span class="badge">M</span>OAuth2Account</a>
+                </li>
+              
+                <li>
+                  <a href="#resources.accounts.OAuth2Provider"><span class="badge">M</span>OAuth2Provider</a>
                 </li>
               
               
@@ -247,25 +247,6 @@
         
           
           <li>
-            <a href="#resources%2fdispatch%2fsettings.proto">resources/dispatch/settings.proto</a>
-            <ul>
-              
-                <li>
-                  <a href="#resources.dispatch.Settings"><span class="badge">M</span>Settings</a>
-                </li>
-              
-              
-                <li>
-                  <a href="#resources.dispatch.CENTRUM_MODE"><span class="badge">E</span>CENTRUM_MODE</a>
-                </li>
-              
-              
-              
-            </ul>
-          </li>
-        
-          
-          <li>
             <a href="#resources%2fdispatch%2fdispatches.proto">resources/dispatch/dispatches.proto</a>
             <ul>
               
@@ -292,6 +273,25 @@
               
                 <li>
                   <a href="#resources.dispatch.DISPATCH_STATUS"><span class="badge">E</span>DISPATCH_STATUS</a>
+                </li>
+              
+              
+              
+            </ul>
+          </li>
+        
+          
+          <li>
+            <a href="#resources%2fdispatch%2fsettings.proto">resources/dispatch/settings.proto</a>
+            <ul>
+              
+                <li>
+                  <a href="#resources.dispatch.Settings"><span class="badge">M</span>Settings</a>
+                </li>
+              
+              
+                <li>
+                  <a href="#resources.dispatch.CENTRUM_MODE"><span class="badge">E</span>CENTRUM_MODE</a>
                 </li>
               
               
@@ -706,21 +706,6 @@
         
           
           <li>
-            <a href="#resources%2fjobs%2ftimeclock.proto">resources/jobs/timeclock.proto</a>
-            <ul>
-              
-                <li>
-                  <a href="#resources.jobs.PlayerTime"><span class="badge">M</span>PlayerTime</a>
-                </li>
-              
-              
-              
-              
-            </ul>
-          </li>
-        
-          
-          <li>
             <a href="#resources%2fjobs%2fconduct.proto">resources/jobs/conduct.proto</a>
             <ul>
               
@@ -751,6 +736,21 @@
                 <li>
                   <a href="#resources.jobs.REQUEST_TYPE"><span class="badge">E</span>REQUEST_TYPE</a>
                 </li>
+              
+              
+              
+            </ul>
+          </li>
+        
+          
+          <li>
+            <a href="#resources%2fjobs%2ftimeclock.proto">resources/jobs/timeclock.proto</a>
+            <ul>
+              
+                <li>
+                  <a href="#resources.jobs.PlayerTime"><span class="badge">M</span>PlayerTime</a>
+                </li>
+              
               
               
               
@@ -1665,6 +1665,110 @@
     
       
       <div class="file-heading">
+        <h2 id="resources/accounts/accounts.proto">resources/accounts/accounts.proto</h2><a href="#title">Top</a>
+      </div>
+      <p></p>
+
+      
+        <h3 id="resources.accounts.Account">Account</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>id</td>
+                  <td><a href="#uint64">uint64</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>created_at</td>
+                  <td><a href="#resources.timestamp.Timestamp">resources.timestamp.Timestamp</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>updated_at</td>
+                  <td><a href="#resources.timestamp.Timestamp">resources.timestamp.Timestamp</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>username</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>license</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+            
+            
+            <h4>Validated Fields</h4>
+            <table>
+              <thead>
+                <tr>
+                  <td>Field</td>
+                  <td>Validations</td>
+                </tr>
+              </thead>
+              <tbody>
+              
+                <tr>
+                  <td>username</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.max_len: 24</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>license</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.max_len: 64</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+              </tbody>
+            </table>
+            
+          
+
+        
+      
+
+      
+
+      
+
+      
+    
+      
+      <div class="file-heading">
         <h2 id="resources/accounts/oauth2.proto">resources/accounts/oauth2.proto</h2><a href="#title">Top</a>
       </div>
       <p></p>
@@ -1770,110 +1874,6 @@
             </tbody>
           </table>
 
-          
-
-        
-      
-
-      
-
-      
-
-      
-    
-      
-      <div class="file-heading">
-        <h2 id="resources/accounts/accounts.proto">resources/accounts/accounts.proto</h2><a href="#title">Top</a>
-      </div>
-      <p></p>
-
-      
-        <h3 id="resources.accounts.Account">Account</h3>
-        <p></p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>id</td>
-                  <td><a href="#uint64">uint64</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>created_at</td>
-                  <td><a href="#resources.timestamp.Timestamp">resources.timestamp.Timestamp</a></td>
-                  <td>optional</td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>updated_at</td>
-                  <td><a href="#resources.timestamp.Timestamp">resources.timestamp.Timestamp</a></td>
-                  <td>optional</td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>username</td>
-                  <td><a href="#string">string</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>license</td>
-                  <td><a href="#string">string</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-            
-            
-            <h4>Validated Fields</h4>
-            <table>
-              <thead>
-                <tr>
-                  <td>Field</td>
-                  <td>Validations</td>
-                </tr>
-              </thead>
-              <tbody>
-              
-                <tr>
-                  <td>username</td>
-                  <td>
-                    <ul>
-                    
-                      <li>string.max_len: 24</li>
-                    
-                    </ul>
-                  </td>
-                </tr>
-              
-                <tr>
-                  <td>license</td>
-                  <td>
-                    <ul>
-                    
-                      <li>string.max_len: 64</li>
-                    
-                    </ul>
-                  </td>
-                </tr>
-              
-              </tbody>
-            </table>
-            
           
 
         
@@ -2112,149 +2112,6 @@
         
       
 
-      
-
-      
-
-      
-    
-      
-      <div class="file-heading">
-        <h2 id="resources/dispatch/settings.proto">resources/dispatch/settings.proto</h2><a href="#title">Top</a>
-      </div>
-      <p></p>
-
-      
-        <h3 id="resources.dispatch.Settings">Settings</h3>
-        <p></p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>job</td>
-                  <td><a href="#string">string</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>enabled</td>
-                  <td><a href="#bool">bool</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>mode</td>
-                  <td><a href="#resources.dispatch.CENTRUM_MODE">CENTRUM_MODE</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>fallback_mode</td>
-                  <td><a href="#resources.dispatch.CENTRUM_MODE">CENTRUM_MODE</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-            
-            
-            <h4>Validated Fields</h4>
-            <table>
-              <thead>
-                <tr>
-                  <td>Field</td>
-                  <td>Validations</td>
-                </tr>
-              </thead>
-              <tbody>
-              
-                <tr>
-                  <td>job</td>
-                  <td>
-                    <ul>
-                    
-                      <li>string.max_len: 20</li>
-                    
-                    </ul>
-                  </td>
-                </tr>
-              
-                <tr>
-                  <td>mode</td>
-                  <td>
-                    <ul>
-                    
-                      <li>enum.defined_only: true</li>
-                    
-                    </ul>
-                  </td>
-                </tr>
-              
-                <tr>
-                  <td>fallback_mode</td>
-                  <td>
-                    <ul>
-                    
-                      <li>enum.defined_only: true</li>
-                    
-                    </ul>
-                  </td>
-                </tr>
-              
-              </tbody>
-            </table>
-            
-          
-
-        
-      
-
-      
-        <h3 id="resources.dispatch.CENTRUM_MODE">CENTRUM_MODE</h3>
-        <p></p>
-        <table class="enum-table">
-          <thead>
-            <tr><td>Name</td><td>Number</td><td>Description</td></tr>
-          </thead>
-          <tbody>
-            
-              <tr>
-                <td>MANUAL</td>
-                <td>0</td>
-                <td><p></p></td>
-              </tr>
-            
-              <tr>
-                <td>CENTRAL_COMMAND</td>
-                <td>1</td>
-                <td><p></p></td>
-              </tr>
-            
-              <tr>
-                <td>AUTO_ROUND_ROBIN</td>
-                <td>2</td>
-                <td><p></p></td>
-              </tr>
-            
-              <tr>
-                <td>SIMPLIFIED</td>
-                <td>3</td>
-                <td><p></p></td>
-              </tr>
-            
-          </tbody>
-        </table>
       
 
       
@@ -2854,6 +2711,149 @@
               <tr>
                 <td>ARCHIVED</td>
                 <td>10</td>
+                <td><p></p></td>
+              </tr>
+            
+          </tbody>
+        </table>
+      
+
+      
+
+      
+    
+      
+      <div class="file-heading">
+        <h2 id="resources/dispatch/settings.proto">resources/dispatch/settings.proto</h2><a href="#title">Top</a>
+      </div>
+      <p></p>
+
+      
+        <h3 id="resources.dispatch.Settings">Settings</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>job</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>enabled</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>mode</td>
+                  <td><a href="#resources.dispatch.CENTRUM_MODE">CENTRUM_MODE</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>fallback_mode</td>
+                  <td><a href="#resources.dispatch.CENTRUM_MODE">CENTRUM_MODE</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+            
+            
+            <h4>Validated Fields</h4>
+            <table>
+              <thead>
+                <tr>
+                  <td>Field</td>
+                  <td>Validations</td>
+                </tr>
+              </thead>
+              <tbody>
+              
+                <tr>
+                  <td>job</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.max_len: 20</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>mode</td>
+                  <td>
+                    <ul>
+                    
+                      <li>enum.defined_only: true</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>fallback_mode</td>
+                  <td>
+                    <ul>
+                    
+                      <li>enum.defined_only: true</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+              </tbody>
+            </table>
+            
+          
+
+        
+      
+
+      
+        <h3 id="resources.dispatch.CENTRUM_MODE">CENTRUM_MODE</h3>
+        <p></p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Name</td><td>Number</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>MANUAL</td>
+                <td>0</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>CENTRAL_COMMAND</td>
+                <td>1</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>AUTO_ROUND_ROBIN</td>
+                <td>2</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>SIMPLIFIED</td>
+                <td>3</td>
                 <td><p></p></td>
               </tr>
             
@@ -8390,99 +8390,6 @@
     
       
       <div class="file-heading">
-        <h2 id="resources/jobs/timeclock.proto">resources/jobs/timeclock.proto</h2><a href="#title">Top</a>
-      </div>
-      <p></p>
-
-      
-        <h3 id="resources.jobs.PlayerTime">PlayerTime</h3>
-        <p></p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>job</td>
-                  <td><a href="#string">string</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>date</td>
-                  <td><a href="#resources.timestamp.Timestamp">resources.timestamp.Timestamp</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>user_id</td>
-                  <td><a href="#int32">int32</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>user</td>
-                  <td><a href="#resources.users.UserShort">resources.users.UserShort</a></td>
-                  <td>optional</td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>minutes</td>
-                  <td><a href="#uint64">uint64</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-            
-            
-            <h4>Validated Fields</h4>
-            <table>
-              <thead>
-                <tr>
-                  <td>Field</td>
-                  <td>Validations</td>
-                </tr>
-              </thead>
-              <tbody>
-              
-                <tr>
-                  <td>job</td>
-                  <td>
-                    <ul>
-                    
-                      <li>string.max_len: 20</li>
-                    
-                    </ul>
-                  </td>
-                </tr>
-              
-              </tbody>
-            </table>
-            
-          
-
-        
-      
-
-      
-
-      
-
-      
-    
-      
-      <div class="file-heading">
         <h2 id="resources/jobs/conduct.proto">resources/jobs/conduct.proto</h2><a href="#title">Top</a>
       </div>
       <p></p>
@@ -8913,6 +8820,99 @@
     
       
       <div class="file-heading">
+        <h2 id="resources/jobs/timeclock.proto">resources/jobs/timeclock.proto</h2><a href="#title">Top</a>
+      </div>
+      <p></p>
+
+      
+        <h3 id="resources.jobs.PlayerTime">PlayerTime</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>job</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>date</td>
+                  <td><a href="#resources.timestamp.Timestamp">resources.timestamp.Timestamp</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>user_id</td>
+                  <td><a href="#int32">int32</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>user</td>
+                  <td><a href="#resources.users.UserShort">resources.users.UserShort</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>minutes</td>
+                  <td><a href="#uint64">uint64</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+            
+            
+            <h4>Validated Fields</h4>
+            <table>
+              <thead>
+                <tr>
+                  <td>Field</td>
+                  <td>Validations</td>
+                </tr>
+              </thead>
+              <tbody>
+              
+                <tr>
+                  <td>job</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.max_len: 20</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+              </tbody>
+            </table>
+            
+          
+
+        
+      
+
+      
+
+      
+
+      
+    
+      
+      <div class="file-heading">
         <h2 id="resources/jobs/training.proto">resources/jobs/training.proto</h2><a href="#title">Top</a>
       </div>
       <p></p>
@@ -9326,7 +9326,7 @@
                     
                       <li>string.max_len: 24</li>
                     
-                      <li>string.pattern: ^[a-zA-Z0-9-_]&#43;$</li>
+                      <li>string.pattern: ^[0-9A-Za-zÄÖÜß_-]*$</li>
                     
                     </ul>
                   </td>
@@ -9656,7 +9656,7 @@
                     
                       <li>string.max_len: 24</li>
                     
-                      <li>string.pattern: ^[a-zA-Z0-9-_]&#43;$</li>
+                      <li>string.pattern: ^[0-9A-Za-zÄÖÜß_-]*$</li>
                     
                     </ul>
                   </td>

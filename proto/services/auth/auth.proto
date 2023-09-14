@@ -19,7 +19,7 @@ message CreateAccountRequest {
   string username = 2 [(validate.rules).string = {
     min_len: 3,
     max_len: 24,
-    pattern: "^[0-9A-ZÄÖÜß_-]*$",
+    pattern: "^[0-9A-Za-zÄÖÜß_-]*$",
   }];
   string password = 3 [(validate.rules).string = {
     min_len: 6,
@@ -35,7 +35,7 @@ message LoginRequest {
   string username = 1 [(validate.rules).string = {
     min_len: 3,
     max_len: 24,
-    pattern: "^[0-9A-ZÄÖÜß_-]*$",
+    pattern: "^[0-9A-Za-zÄÖÜß_-]*$",
   }];
   string password = 2 [(validate.rules).string = {
     min_len: 6,
