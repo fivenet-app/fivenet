@@ -24,7 +24,7 @@ const props = defineProps<{
     entry?: ConductEntry;
 }>();
 
-const emits = defineEmits<{
+const emit = defineEmits<{
     (e: 'close'): void;
     (e: 'created', entry: ConductEntry): void;
 }>();
@@ -50,8 +50,8 @@ async function conductCreateEntry(values: FormData): Promise<void> {
             const { response } = await call;
 
             resetForm();
-            emits('created', response.entry!);
-            emits('close');
+            emit('created', response.entry!);
+            emit('close');
 
             return res();
         } catch (e) {

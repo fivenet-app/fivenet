@@ -11,7 +11,7 @@ const props = defineProps<{
     location?: Coordinate;
 }>();
 
-const emits = defineEmits<{
+const emit = defineEmits<{
     (e: 'close'): void;
 }>();
 
@@ -40,7 +40,7 @@ async function createDispatch(values: FormData): Promise<void> {
             });
             await call;
 
-            emits('close');
+            emit('close');
 
             return res();
         } catch (e) {

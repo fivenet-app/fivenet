@@ -15,7 +15,7 @@ const props = defineProps<{
     dispatch: Dispatch;
 }>();
 
-const emits = defineEmits<{
+const emit = defineEmits<{
     (e: 'close'): void;
 }>();
 
@@ -46,7 +46,7 @@ async function assignDispatch(): Promise<void> {
             await call;
 
             selectedUnits.value.length = 0;
-            emits('close');
+            emit('close');
 
             return res();
         } catch (e) {
@@ -111,31 +111,31 @@ function selectUnit(item: Unit): void {
                                                         <div class="flex-1 form-control">
                                                             <div class="grid grid-cols-3 gap-4">
                                                                 <button
-                                                                    v-for="item in units"
-                                                                    :key="item.name"
+                                                                    v-for="[_, unit] in units"
+                                                                    :key="unit.name"
                                                                     type="button"
-                                                                    :disabled="item.users.length === 0"
+                                                                    :disabled="unit.users.length === 0"
                                                                     class="text-white hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-2 text-xs my-0.5"
                                                                     :class="[
-                                                                        item.users.length === 0
+                                                                        unit.users.length === 0
                                                                             ? 'disabled bg-error-600'
                                                                             : selectedUnits?.findIndex(
-                                                                                  (u) => u && u === item.id,
+                                                                                  (u) => u && u === unit.id,
                                                                               ) > -1
                                                                             ? 'bg-success-600'
                                                                             : 'bg-info-600',
                                                                     ]"
-                                                                    @click="selectUnit(item)"
+                                                                    @click="selectUnit(unit)"
                                                                 >
                                                                     <span class="mt-1"
-                                                                        >{{ item.initials }}: {{ item.name }}</span
+                                                                        >{{ unit.initials }}: {{ unit.name }}</span
                                                                     >
                                                                     <span class="mt-1">
                                                                         {{
                                                                             $t(
                                                                                 `enums.centrum.UNIT_STATUS.${
                                                                                     UNIT_STATUS[
-                                                                                        item.status?.status ?? (0 as number)
+                                                                                        unit.status?.status ?? (0 as number)
                                                                                     ]
                                                                                 }`,
                                                                             )

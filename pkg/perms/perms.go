@@ -371,6 +371,10 @@ func (p *Perms) loadRoleAttributes(ctx context.Context, roleId uint64) error {
 				INNER_JOIN(tAttrs,
 					tAttrs.ID.EQ(tRoleAttrs.AttrID),
 				),
+		).
+		ORDER_BY(
+			tRoles.Job.ASC(),
+			tRoles.Grade.ASC(),
 		)
 
 	if roleId != 0 {
@@ -402,7 +406,7 @@ func (p *Perms) loadRoleAttributes(ctx context.Context, roleId uint64) error {
 		}
 
 		if err := p.addOrUpdateRoleAttributeInMap(ra.RoleID, ra.PermissionID, ra.AttrID, ra.Key, ra.Type, ra.Value, ra.MaxValues); err != nil {
-			// Reset the attribute value to null/ empty
+			// Reset the attribute value to null/ empty because we encountered an error
 			if err := p.addOrUpdateAttributesToRole(p.ctx, ra.RoleID, &permissions.RoleAttribute{
 				RoleId: ra.RoleID,
 				AttrId: ra.AttrID,
@@ -436,15 +440,24 @@ func (p *Perms) addOrUpdateRoleAttributeInMap(roleId uint64, permId uint64, attr
 }
 
 func (p *Perms) updateRoleAttributeInMap(roleId uint64, permId uint64, attrId uint64, key Key, aType permissions.AttributeTypes, value *permissions.AttributeValues, max *permissions.AttributeValues) {
-	attrMap, _ := p.attrsRoleMap.LoadOrStore(roleId, &syncx.Map[uint64, *cacheRoleAttr]{})
-	attrMap.Store(attrId, &cacheRoleAttr{
-		AttrID:       attrId,
-		PermissionID: permId,
-		Key:          key,
-		Type:         aType,
-		Value:        value,
-		Max:          max,
-	})
+	attrRoleMap, _ := p.attrsRoleMap.LoadOrStore(roleId, &syncx.Map[uint64, *cacheRoleAttr]{})
+	v, ok := attrRoleMap.Load(attrId)
+	if !ok {
+		attrRoleMap.Store(attrId, &cacheRoleAttr{
+			AttrID:       attrId,
+			PermissionID: permId,
+			Key:          key,
+			Type:         aType,
+			Value:        value,
+			Max:          max,
+		})
+	} else {
+		v.PermissionID = permId
+		v.Key = key
+		v.Type = aType
+		v.Value = value
+		v.Max = max
+	}
 }
 
 func (p *Perms) removeRoleAttributeFromMap(roleId uint64, attrId uint64) {

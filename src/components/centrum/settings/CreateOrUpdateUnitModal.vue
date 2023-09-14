@@ -11,7 +11,7 @@ const props = defineProps<{
     unit?: Unit;
 }>();
 
-const emits = defineEmits<{
+const emit = defineEmits<{
     (e: 'close'): void;
     (e: 'refresh'): void;
 }>();
@@ -34,8 +34,8 @@ async function createOrUpdateUnit(values: FormData): Promise<void> {
             });
             await call;
 
-            emits('refresh');
-            emits('close');
+            emit('refresh');
+            emit('close');
 
             return res();
         } catch (e) {

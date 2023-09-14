@@ -11,7 +11,7 @@ defineProps<{
     open: boolean;
 }>();
 
-const emits = defineEmits<{
+const emit = defineEmits<{
     (e: 'close'): void;
 }>();
 
@@ -53,7 +53,7 @@ async function createMarker(values: FormData): Promise<void> {
             });
             await call;
 
-            emits('close');
+            emit('close');
 
             return res();
         } catch (e) {

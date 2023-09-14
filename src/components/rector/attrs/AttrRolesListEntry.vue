@@ -13,10 +13,10 @@ defineEmits<{
 
 <template>
     <tr :key="role.id?.toString()">
-        <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">
+        <td class="whitespace-nowrap py-2 pl-2 pr-3 text-sm font-medium text-neutral">
             {{ role.jobLabel }}
         </td>
-        <td class="whitespace-nowrap py-2 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
+        <td class="whitespace-nowrap py-2 pl-3 pr-2 text-right text-sm font-medium">
             <div class="flex flex-row justify-end">
                 <button
                     type="button"

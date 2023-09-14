@@ -22,7 +22,7 @@ const props = defineProps<{
     unit: Unit;
 }>();
 
-const emits = defineEmits<{
+const emit = defineEmits<{
     (e: 'close'): void;
 }>();
 
@@ -54,7 +54,7 @@ async function assignUnit(): Promise<void> {
             });
             await call;
 
-            emits('close');
+            emit('close');
 
             return res();
         } catch (e) {

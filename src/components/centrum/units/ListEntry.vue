@@ -14,13 +14,6 @@ defineEmits<{
 
 const unitColorHex = hexToRgb('#' + props.unit.color ?? '000000') ?? ({ r: 0, g: 0, b: 0 } as RGB);
 
-watch(
-    () => props.unit,
-    () => {
-        console.log('LIST ENTRY UNIT:', UNIT_STATUS[props.unit.status?.status ?? 0], props.unit.users);
-    },
-);
-
 const open = ref(false);
 </script>
 

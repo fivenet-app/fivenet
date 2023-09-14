@@ -10,7 +10,7 @@ defineProps<{
     open: boolean;
 }>();
 
-const emits = defineEmits<{
+const emit = defineEmits<{
     (e: 'joined', unit: Unit): void;
     (e: 'left'): void;
     (e: 'close'): void;
@@ -31,12 +31,12 @@ async function joinUnit(unit?: Unit | undefined): Promise<void> {
             const { response } = await call;
 
             if (response.unit) {
-                emits('joined', response.unit);
+                emit('joined', response.unit);
             } else {
-                emits('left');
+                emit('left');
             }
 
-            emits('close');
+            emit('close');
 
             return res();
         } catch (e) {

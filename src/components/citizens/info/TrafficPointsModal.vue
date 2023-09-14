@@ -14,7 +14,7 @@ const props = defineProps<{
     user: User;
 }>();
 
-const emits = defineEmits<{
+const emit = defineEmits<{
     (e: 'close'): void;
 }>();
 
@@ -52,7 +52,7 @@ async function setTrafficPoints(values: FormData): Promise<void> {
                 type: 'success',
             });
 
-            emits('close');
+            emit('close');
             return res();
         } catch (e) {
             $grpc.handleError(e as RpcError);

@@ -5,6 +5,9 @@ import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { useConfirmDialog } from '@vueuse/core';
 import { CheckIcon, ChevronDownIcon, CloseIcon, MinusIcon, TrashCanIcon } from 'mdi-vue3';
 import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
+import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
+import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
+import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import Divider from '~/components/partials/elements/Divider.vue';
 import RoleViewAttr from '~/components/rector/roles/RoleViewAttr.vue';
 import { useCompletorStore } from '~/store/completor';
@@ -16,7 +19,7 @@ const props = defineProps<{
     roleId: bigint;
 }>();
 
-const emits = defineEmits<{
+const emit = defineEmits<{
     (e: 'deleted'): void;
 }>();
 
@@ -54,11 +57,6 @@ async function getRole(id: bigint): Promise<Role> {
 
             if (response.role === undefined) return rej();
 
-            attrStates.value.clear();
-            response.role?.attributes.forEach((attr) => {
-                attrStates.value.set(attr.attrId, attr.value);
-            });
-
             return res(response.role!);
         } catch (e) {
             $grpc.handleError(e as RpcError);
@@ -80,7 +78,7 @@ async function deleteRole(id: bigint): Promise<void> {
                 type: 'success',
             });
 
-            emits('deleted');
+            emit('deleted');
             return res();
         } catch (e) {
             $grpc.handleError(e as RpcError);
@@ -230,15 +228,24 @@ function clearState(): void {
 
 async function initializeRoleView(): Promise<void> {
     clearState();
+
     await Promise.allSettled([getPermissions(props.roleId), listJobs()]);
     await propogatePermissionStates();
+
+    role.value?.attributes.forEach((attr) => {
+        attrStates.value.set(attr.attrId, attr.value);
+    });
 }
 
 watch(role, async () => {
     initializeRoleView();
 });
 
-watch(props, () => refresh());
+watch(props, () => {
+    if (role.value === null || role.value.id !== props.roleId) {
+        refresh();
+    }
+});
 
 const { isRevealed, reveal, confirm, cancel, onConfirm } = useConfirmDialog();
 
@@ -250,7 +257,10 @@ onConfirm(async (id) => deleteRole(id));
 
     <div class="py-4 w-full">
         <div class="px-1 sm:px-2 lg:px-4">
-            <div v-if="role">
+            <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.role', 2)])" />
+            <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.role', 2)])" :retry="refresh" />
+            <DataNoDataBlock v-else-if="!role" :type="$t('common.role', 2)" />
+            <div v-else>
                 <h2 class="text-3xl text-white">
                     {{ role?.jobLabel! }} - {{ role?.jobGradeLabel }} ({{ role.grade }})
                     <button v-if="can('RectorService.DeleteRole')" type="button" @click="reveal()">
@@ -347,7 +357,7 @@ onConfirm(async (id) => deleteRole(id));
                                         :attribute="attr"
                                         :permission="perm"
                                         v-model:states="attrStates"
-                                        @update:states="changed = true"
+                                        @changed="changed = true"
                                         :disabled="permStates.get(perm.id) !== true"
                                         :jobs="jobs"
                                     />

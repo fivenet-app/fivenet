@@ -13,7 +13,7 @@ const props = defineProps<{
     status?: DISPATCH_STATUS;
 }>();
 
-const emits = defineEmits<{
+const emit = defineEmits<{
     (e: 'close'): void;
 }>();
 
@@ -45,7 +45,7 @@ async function updateDispatchStatus(dispatchId: bigint, values: FormData): Promi
             });
             await call;
 
-            emits('close');
+            emit('close');
 
             return res();
         } catch (e) {

@@ -13,7 +13,7 @@ const props = defineProps<{
     location?: Coordinate;
 }>();
 
-const emits = defineEmits<{
+const emit = defineEmits<{
     (e: 'close'): void;
 }>();
 
@@ -44,7 +44,7 @@ async function updateUnitStatus(id: bigint, values: FormData): Promise<void> {
             });
             await call;
 
-            emits('close');
+            emit('close');
 
             return res();
         } catch (e) {

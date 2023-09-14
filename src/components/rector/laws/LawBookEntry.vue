@@ -13,7 +13,7 @@ const props = defineProps<{
     startInEdit?: boolean;
 }>();
 
-const emits = defineEmits<{
+const emit = defineEmits<{
     (e: 'deleted', id: bigint): void;
 }>();
 
@@ -22,7 +22,7 @@ const { $grpc } = useNuxtApp();
 async function deleteLawBook(id: bigint): Promise<void> {
     return new Promise(async (res, rej) => {
         if (id < 0) {
-            emits('deleted', id);
+            emit('deleted', id);
             return;
         }
 
@@ -32,7 +32,7 @@ async function deleteLawBook(id: bigint): Promise<void> {
             });
             await call;
 
-            emits('deleted', id);
+            emit('deleted', id);
 
             return res();
         } catch (e) {

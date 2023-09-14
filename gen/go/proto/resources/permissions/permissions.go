@@ -88,6 +88,7 @@ func (x *AttributeValues) Check(aType AttributeTypes, validVals *AttributeValues
 		}
 
 		return ValidateStringList(x.GetStringList(), valid, max)
+
 	case JobListAttributeType:
 		var valid []string
 		if validVals != nil && validVals.GetJobList() != nil && validVals.GetJobList().Strings != nil {
@@ -99,6 +100,7 @@ func (x *AttributeValues) Check(aType AttributeTypes, validVals *AttributeValues
 		}
 
 		return ValidateJobList(x.GetJobList(), valid, max)
+
 	case JobGradeListAttributeType:
 		var valid map[string]int32
 

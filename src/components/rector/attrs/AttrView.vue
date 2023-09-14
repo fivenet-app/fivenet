@@ -2,6 +2,9 @@
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { ChevronDownIcon } from 'mdi-vue3';
+import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
+import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
+import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import Divider from '~/components/partials/elements/Divider.vue';
 import { useNotificationsStore } from '~/store/notifications';
 import { AttributeValues, Permission, Role, RoleAttribute } from '~~/gen/ts/resources/permissions/permissions';
@@ -41,11 +44,6 @@ async function getRole(id: bigint): Promise<Role> {
 
             if (response.role === undefined) return rej();
 
-            attrStates.value.clear();
-            response.role?.attributes.forEach((attr) => {
-                attrStates.value.set(attr.attrId, attr.value);
-            });
-
             return res(response.role!);
         } catch (e) {
             $grpc.handleError(e as RpcError);
@@ -54,11 +52,11 @@ async function getRole(id: bigint): Promise<Role> {
     });
 }
 
-async function getPermissions(): Promise<void> {
+async function getPermissions(roleId: bigint): Promise<void> {
     return new Promise(async (res, rej) => {
         try {
             const call = $grpc.getRectorClient().getPermissions({
-                roleId: props.roleId,
+                roleId: roleId,
             });
             const { response } = await call;
 
@@ -150,14 +148,20 @@ async function updateAttrs(): Promise<void> {
 }
 
 async function initializeRoleView(): Promise<void> {
-    await getPermissions();
+    await getPermissions(props.roleId);
+
+    role.value?.attributes.forEach((attr) => {
+        attrStates.value.set(attr.attrId, attr.value);
+    });
 }
 
-watch(role, async () => {
-    initializeRoleView();
-});
+watch(role, async () => initializeRoleView());
 
-watch(props, () => refresh());
+watch(props, () => {
+    if (role.value === null || role.value.id !== props.roleId) {
+        refresh();
+    }
+});
 
 onMounted(async () => {
     initializeRoleView();
@@ -167,7 +171,14 @@ onMounted(async () => {
 <template>
     <div class="py-4 w-full">
         <div class="px-1 sm:px-2 lg:px-4">
-            <div v-if="role">
+            <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.attributes', 2)])" />
+            <DataErrorBlock
+                v-else-if="error"
+                :title="$t('common.unable_to_load', [$t('common.attributes', 2)])"
+                :retry="refresh"
+            />
+            <DataNoDataBlock v-else-if="!role" :type="$t('common.attributes', 2)" />
+            <div v-else>
                 <h2 class="text-3xl text-white">{{ role?.jobLabel! }}</h2>
                 <Divider label="Permissions" />
                 <div class="py-2 flex flex-col gap-4">
@@ -236,7 +247,7 @@ onMounted(async () => {
                                         :attribute="attr"
                                         :permission="perm"
                                         v-model:states="attrStates"
-                                        @update:states="changed = true"
+                                        @changed="changed = true"
                                     />
                                     <div
                                         v-if="idx !== permList.filter((p) => p.category === category).length - 1"

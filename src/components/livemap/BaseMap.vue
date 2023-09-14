@@ -15,7 +15,7 @@ defineProps<{
     mapOptions?: Record<string, any>;
 }>();
 
-const emits = defineEmits<{
+const emit = defineEmits<{
     (e: 'mapReady', map: L.Map): void;
 }>();
 
@@ -166,7 +166,7 @@ async function onMapReady($event: any): Promise<void> {
         $loading.finish();
     }, 500);
 
-    emits('mapReady', map);
+    emit('mapReady', map);
 }
 
 onBeforeMount(() => {

@@ -10,7 +10,7 @@ defineProps<{
     open: boolean;
 }>();
 
-const emits = defineEmits<{
+const emit = defineEmits<{
     (e: 'close'): void;
 }>();
 
@@ -52,7 +52,7 @@ async function createOrUpdateUnit(values: FormData): Promise<void> {
 
             refresh();
 
-            emits('close');
+            emit('close');
 
             return res();
         } catch (e) {

@@ -13,7 +13,7 @@ defineProps<{
     open: boolean;
 }>();
 
-const emits = defineEmits<{
+const emit = defineEmits<{
     (e: 'close'): void;
     (e: 'goto', loc: Coordinate): void;
 }>();
@@ -21,7 +21,7 @@ const emits = defineEmits<{
 const { $grpc } = useNuxtApp();
 
 const centrumStore = useCentrumStore();
-const { pendingDispatches } = storeToRefs(centrumStore);
+const { pendingDispatches, dispatches } = storeToRefs(centrumStore);
 
 const unselectedDispatches = ref<bigint[]>([]);
 
@@ -36,7 +36,7 @@ async function takeDispatches(resp: TAKE_DISPATCH_RESP): Promise<void> {
             });
             await call;
 
-            emits('close');
+            emit('close');
 
             return res();
         } catch (e) {
@@ -122,7 +122,7 @@ watch(pendingDispatches.value, () => {
                                                         />
                                                         <TakeDispatchEntry
                                                             v-for="pd in pendingDispatches"
-                                                            :dispatch="getDispatchByID(pd)"
+                                                            :dispatch="dispatches.get(pd)!"
                                                             @selected="selectDispatch(pd)"
                                                             @goto="$emit('goto', $event)"
                                                         />
