@@ -3,12 +3,16 @@ import { CloseIcon, MenuIcon } from 'mdi-vue3';
 import { RoutesNamedLocations } from '~~/.nuxt/typed-router/__routes';
 
 const navigation: { name: string; to: RoutesNamedLocations; permission?: string }[] = [
-    { name: 'common.overview', to: { name: 'jobs-index-overview' } },
-    { name: 'pages.jobs.colleagues.title', to: { name: 'jobs-index-colleagues' } },
-    { name: 'pages.jobs.requests.title', to: { name: 'jobs-index-requests' } },
-    { name: 'pages.jobs.trainings.title', to: { name: 'jobs-index-trainings' } },
-    //{ name: 'pages.jobs.timeclock.title', to: { name: 'jobs-index-timeclock' } },
-    { name: 'pages.jobs.conduct.title', to: { name: 'jobs-index-conduct' }, permission: 'JobsService.ConductListEntries' },
+    { name: 'common.overview', to: { name: 'jobs-feature-overview' }, permission: 'JobsService.ConductListEntries' },
+    { name: 'pages.jobs.colleagues.title', to: { name: 'jobs-feature-colleagues' }, permission: 'JobsService.ColleaguesList' },
+    { name: 'pages.jobs.requests.title', to: { name: 'jobs-feature-requests' }, permission: 'JobsService.RequestsListEntries' },
+    {
+        name: 'pages.jobs.trainings.title',
+        to: { name: 'jobs-feature-trainings' },
+        permission: 'JobsService.TrainingsListEntries',
+    },
+    //{ name: 'pages.jobs.timeclock.title', to: { name: 'jobs-feature-timeclock', permission: 'JobsService.TimeclockListEntries' } },
+    { name: 'pages.jobs.conduct.title', to: { name: 'jobs-feature-conduct' }, permission: 'JobsService.ConductListEntries' },
 ];
 
 useHead({
@@ -88,7 +92,9 @@ const open = ref(false);
         </header>
         <main>
             <div class="mx-auto max-w-8xl py-6 sm:px-6 lg:px-8">
-                <NuxtPage />
+                <NuxtLayout name="blank">
+                    <NuxtPage />
+                </NuxtLayout>
             </div>
         </main>
     </div>

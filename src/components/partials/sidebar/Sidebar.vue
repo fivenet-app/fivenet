@@ -79,7 +79,7 @@ const sidebarNavigation = ref<
     },
     {
         name: 'common.job',
-        href: { name: 'jobs-index-overview' },
+        href: { name: 'jobs-feature-overview' },
         permission: 'JobsService.ColleaguesList',
         icon: markRaw(BriefcaseIcon),
         position: 'top',
