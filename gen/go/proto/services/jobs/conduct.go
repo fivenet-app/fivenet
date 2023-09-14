@@ -37,6 +37,7 @@ func (s *Server) ConductListEntries(ctx context.Context, req *ConductListEntries
 
 	if len(fields) == 0 {
 		return nil, ErrFailedQuery
+	} else if utils.InSlice(fields, "All") {
 	} else if utils.InSlice(fields, "Own") {
 		condition = condition.AND(tConduct.CreatorID.EQ(jet.Int32(userInfo.UserId)))
 	}
