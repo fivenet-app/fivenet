@@ -371,10 +371,6 @@ func (p *Perms) loadRoleAttributes(ctx context.Context, roleId uint64) error {
 				INNER_JOIN(tAttrs,
 					tAttrs.ID.EQ(tRoleAttrs.AttrID),
 				),
-		).
-		ORDER_BY(
-			tRoles.Job.ASC(),
-			tRoles.Grade.ASC(),
 		)
 
 	if roleId != 0 {
