@@ -3,16 +3,16 @@ import { CloseIcon, MenuIcon } from 'mdi-vue3';
 import { RoutesNamedLocations } from '~~/.nuxt/typed-router/__routes';
 
 const navigation: { name: string; to: RoutesNamedLocations; permission?: string }[] = [
-    { name: 'common.overview', to: { name: 'jobs-feature-overview' }, permission: 'JobsService.ConductListEntries' },
-    { name: 'pages.jobs.colleagues.title', to: { name: 'jobs-feature-colleagues' }, permission: 'JobsService.ColleaguesList' },
-    { name: 'pages.jobs.requests.title', to: { name: 'jobs-feature-requests' }, permission: 'JobsService.RequestsListEntries' },
+    { name: 'common.overview', to: { name: 'jobs-overview' }, permission: 'JobsService.ConductListEntries' },
+    { name: 'pages.jobs.colleagues.title', to: { name: 'jobs-colleagues' }, permission: 'JobsService.ColleaguesList' },
+    { name: 'pages.jobs.requests.title', to: { name: 'jobs-requests' }, permission: 'JobsService.RequestsListEntries' },
     {
         name: 'pages.jobs.trainings.title',
-        to: { name: 'jobs-feature-trainings' },
+        to: { name: 'jobs-trainings' },
         permission: 'JobsService.TrainingsListEntries',
     },
-    //{ name: 'pages.jobs.timeclock.title', to: { name: 'jobs-feature-timeclock', permission: 'JobsService.TimeclockListEntries' } },
-    { name: 'pages.jobs.conduct.title', to: { name: 'jobs-feature-conduct' }, permission: 'JobsService.ConductListEntries' },
+    //{ name: 'pages.jobs.timeclock.title', to: { name: 'jobs-timeclock', permission: 'JobsService.TimeclockListEntries' } },
+    { name: 'pages.jobs.conduct.title', to: { name: 'jobs-conduct' }, permission: 'JobsService.ConductListEntries' },
 ];
 
 useHead({

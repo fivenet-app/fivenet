@@ -151,7 +151,7 @@ const items = [
         id: 13,
         name: t('common.job'),
         action: () => {
-            navigateTo({ name: 'jobs-feature-overview' });
+            navigateTo({ name: 'jobs-overview' });
             open.value = false;
         },
         permission: 'JobsService.ColleaguesList',
