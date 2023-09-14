@@ -41,8 +41,8 @@ var (
 	ErrFailedQuery       = status.Error(codes.Internal, "errors.DocStoreService.ErrFailedQuery")
 	ErrNotFoundOrNoPerms = status.Error(codes.NotFound, "errors.DocStoreService.ErrNotFoundOrNoPerms")
 	ErrTemplateNoPerms   = status.Error(codes.PermissionDenied, "errors.DocStoreService.ErrTemplateNoPerms")
-	ErrPermissionDenied  = status.Error(codes.PermissionDenied, "You don't have permission to do this!")
-	ErrClosedDoc         = status.Error(codes.Canceled, "Document is closed and can't be edited!")
+	ErrPermissionDenied  = status.Error(codes.PermissionDenied, "errors.DocStoreService.ErrPermissionDenied")
+	ErrClosedDoc         = status.Error(codes.Canceled, "errors.DocStoreService.ErrClosedDoc")
 )
 
 type Server struct {

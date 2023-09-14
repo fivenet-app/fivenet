@@ -1343,7 +1343,8 @@
             "ErrPermissionDenied": "You don't have permission to do this!",
             "ErrClosedDoc": "Document is closed and can't be edited!",
             "ErrDocAccessEditDenied": "You don't have permission to edit the document's access!",
-            "ErrDocAccessViewDenied": "You don't have permission to view this document's access!"
+            "ErrDocAccessViewDenied": "You don't have permission to view this document's access!",
+            "ErrTemplateFailed": "Failed to render document template! Please talk with your faction leader."
         },
         "LivemapperService": {
             "ErrStreamFailed": "Failed to stream livemap data!",

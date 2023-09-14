@@ -50,6 +50,7 @@ build_dir:
 
 .PHONY: clean
 clean:
+	@npx nuxi cleanup
 	rm -rf ./.nuxt/dist/ ./src/public/images/livemap/tiles/*/
 	rm -rf gdal2tiles-leaflet
 

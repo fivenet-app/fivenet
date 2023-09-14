@@ -15,11 +15,17 @@ import (
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	jsoniter "github.com/json-iterator/go"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 var (
 	tDTemplates          = table.FivenetDocumentsTemplates.AS("templateshort")
 	tDTemplatesJobAccess = table.FivenetDocumentsTemplatesJobAccess.AS("templatejobaccess")
+)
+
+var (
+	ErrTemplateFailed = status.Error(codes.InvalidArgument, "errors.DocStoreService.ErrTemplateFailed")
 )
 
 var json = jsoniter.ConfigCompatibleWithStandardLibrary
@@ -97,12 +103,12 @@ func (s *Server) GetTemplate(ctx context.Context, req *GetTemplateRequest) (*Get
 		// Parse data as json for the templating process
 		var data map[string]interface{}
 		if err := json.UnmarshalFromString(*req.Data, &data); err != nil {
-			return nil, err
+			return nil, ErrTemplateFailed
 		}
 
 		resp.Template.ContentTitle, resp.Template.State, resp.Template.Content, err = s.renderTemplate(resp.Template, data)
 		if err != nil {
-			return nil, err
+			return nil, ErrTemplateFailed
 		}
 
 		resp.Rendered = true
