@@ -254,7 +254,7 @@ class CreateAccountRequest$Type extends MessageType<CreateAccountRequest> {
     constructor() {
         super("services.auth.CreateAccountRequest", [
             { no: 1, name: "reg_token", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { len: "6", pattern: "^[0-9]{6}$" } } } },
-            { no: 2, name: "username", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "24", pattern: "^[0-9A-Za-z\u00C4\u00D6\u00DC\u00DF_-]*$" } } } },
+            { no: 2, name: "username", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "24", pattern: "(?i)^[0-9A-Z\u00C4\u00D6\u00DC\u00DF_-]{3,24}$" } } } },
             { no: 3, name: "password", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "6", maxBytes: "70" } } } }
         ]);
     }
@@ -279,7 +279,7 @@ export const CreateAccountResponse = new CreateAccountResponse$Type();
 class LoginRequest$Type extends MessageType<LoginRequest> {
     constructor() {
         super("services.auth.LoginRequest", [
-            { no: 1, name: "username", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "24", pattern: "^[0-9A-Za-z\u00C4\u00D6\u00DC\u00DF_-]*$" } } } },
+            { no: 1, name: "username", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "24", pattern: "(?i)^[0-9A-Z\u00C4\u00D6\u00DC\u00DF_-]{3,24}$" } } } },
             { no: 2, name: "password", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "6", maxBytes: "70" } } } }
         ]);
     }
