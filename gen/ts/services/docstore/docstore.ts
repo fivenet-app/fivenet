@@ -373,7 +373,7 @@ export interface CreateDocumentRequest {
      */
     categoryId?: bigint; // @gotags: alias:"category_id"
     /**
-     * @sanitize
+     * @sanitize: method=StripTags
      *
      * @generated from protobuf field: string title = 2;
      */
@@ -393,6 +393,8 @@ export interface CreateDocumentRequest {
      */
     data?: string; // @gotags: alias:"data"
     /**
+     * @sanitize
+     *
      * @generated from protobuf field: string state = 6;
      */
     state: string; // @gotags: alias:"state"
@@ -431,7 +433,7 @@ export interface UpdateDocumentRequest {
      */
     categoryId?: bigint; // @gotags: alias:"category_id"
     /**
-     * @sanitize
+     * @sanitize: method=StripTags
      *
      * @generated from protobuf field: string title = 3;
      */

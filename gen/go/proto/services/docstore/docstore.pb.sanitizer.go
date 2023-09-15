@@ -11,7 +11,9 @@ func (m *CreateDocumentRequest) Sanitize() error {
 
 	m.Content = htmlsanitizer.Sanitize(m.Content)
 
-	m.Title = htmlsanitizer.Sanitize(m.Title)
+	m.State = htmlsanitizer.Sanitize(m.State)
+
+	m.Title = htmlsanitizer.StripTags(m.Title)
 
 	return nil
 }
@@ -22,7 +24,7 @@ func (m *UpdateDocumentRequest) Sanitize() error {
 
 	m.State = htmlsanitizer.Sanitize(m.State)
 
-	m.Title = htmlsanitizer.Sanitize(m.Title)
+	m.Title = htmlsanitizer.StripTags(m.Title)
 
 	return nil
 }

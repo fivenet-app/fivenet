@@ -238,14 +238,19 @@ export interface ExtensionRangeOptions {
      */
     uninterpretedOption: UninterpretedOption[];
     /**
-     * go/protobuf-stripping-extension-declarations
-     * Like Metadata, but we use a repeated field to hold all extension
-     * declarations. This should avoid the size increases of transforming a large
-     * extension range into small ranges in generated binaries.
+     * For external users: DO NOT USE. We are in the process of open sourcing
+     * extension declaration and executing internal cleanups before it can be
+     * used externally.
      *
      * @generated from protobuf field: repeated google.protobuf.ExtensionRangeOptions.Declaration declaration = 2;
      */
     declaration: ExtensionRangeOptions_Declaration[];
+    /**
+     * Any features defined in the specific edition.
+     *
+     * @generated from protobuf field: optional google.protobuf.FeatureSet features = 50;
+     */
+    features?: FeatureSet;
     /**
      * The verification state of the range.
      * TODO(b/278783756): flip the default to DECLARATION once all empty ranges
@@ -280,13 +285,6 @@ export interface ExtensionRangeOptions_Declaration {
      * @generated from protobuf field: optional string type = 3;
      */
     type?: string;
-    /**
-     * Deprecated. Please use "repeated".
-     *
-     * @deprecated
-     * @generated from protobuf field: optional bool is_repeated = 4 [deprecated = true];
-     */
-    isRepeated?: boolean;
     /**
      * If true, indicates that the number is reserved in the extension range,
      * and any extension field with the number will fail to compile. Set this
@@ -884,6 +882,12 @@ export interface FileOptions {
      */
     rubyPackage?: string;
     /**
+     * Any features defined in the specific edition.
+     *
+     * @generated from protobuf field: optional google.protobuf.FeatureSet features = 50;
+     */
+    features?: FeatureSet;
+    /**
      * The parser stores options it doesn't recognize here.
      * See the documentation for the "Options" section above.
      *
@@ -1009,6 +1013,12 @@ export interface MessageOptions {
      */
     deprecatedLegacyJsonFieldConflicts?: boolean;
     /**
+     * Any features defined in the specific edition.
+     *
+     * @generated from protobuf field: optional google.protobuf.FeatureSet features = 12;
+     */
+    features?: FeatureSet;
+    /**
      * The parser stores options it doesn't recognize here. See above.
      *
      * @generated from protobuf field: repeated google.protobuf.UninterpretedOption uninterpreted_option = 999;
@@ -1126,20 +1136,38 @@ export interface FieldOptions {
      */
     retention?: FieldOptions_OptionRetention;
     /**
-     * @deprecated
-     * @generated from protobuf field: optional google.protobuf.FieldOptions.OptionTargetType target = 18 [deprecated = true];
-     */
-    target?: FieldOptions_OptionTargetType;
-    /**
      * @generated from protobuf field: repeated google.protobuf.FieldOptions.OptionTargetType targets = 19;
      */
     targets: FieldOptions_OptionTargetType[];
+    /**
+     * @generated from protobuf field: repeated google.protobuf.FieldOptions.EditionDefault edition_defaults = 20;
+     */
+    editionDefaults: FieldOptions_EditionDefault[];
+    /**
+     * Any features defined in the specific edition.
+     *
+     * @generated from protobuf field: optional google.protobuf.FeatureSet features = 21;
+     */
+    features?: FeatureSet;
     /**
      * The parser stores options it doesn't recognize here. See above.
      *
      * @generated from protobuf field: repeated google.protobuf.UninterpretedOption uninterpreted_option = 999;
      */
     uninterpretedOption: UninterpretedOption[];
+}
+/**
+ * @generated from protobuf message google.protobuf.FieldOptions.EditionDefault
+ */
+export interface FieldOptions_EditionDefault {
+    /**
+     * @generated from protobuf field: optional string edition = 1;
+     */
+    edition?: string;
+    /**
+     * @generated from protobuf field: optional string value = 2;
+     */
+    value?: string; // Textproto value.
 }
 /**
  * @generated from protobuf enum google.protobuf.FieldOptions.CType
@@ -1266,6 +1294,12 @@ export enum FieldOptions_OptionTargetType {
  */
 export interface OneofOptions {
     /**
+     * Any features defined in the specific edition.
+     *
+     * @generated from protobuf field: optional google.protobuf.FeatureSet features = 1;
+     */
+    features?: FeatureSet;
+    /**
      * The parser stores options it doesn't recognize here. See above.
      *
      * @generated from protobuf field: repeated google.protobuf.UninterpretedOption uninterpreted_option = 999;
@@ -1305,6 +1339,12 @@ export interface EnumOptions {
      */
     deprecatedLegacyJsonFieldConflicts?: boolean;
     /**
+     * Any features defined in the specific edition.
+     *
+     * @generated from protobuf field: optional google.protobuf.FeatureSet features = 7;
+     */
+    features?: FeatureSet;
+    /**
      * The parser stores options it doesn't recognize here. See above.
      *
      * @generated from protobuf field: repeated google.protobuf.UninterpretedOption uninterpreted_option = 999;
@@ -1325,6 +1365,20 @@ export interface EnumValueOptions {
      */
     deprecated?: boolean;
     /**
+     * Any features defined in the specific edition.
+     *
+     * @generated from protobuf field: optional google.protobuf.FeatureSet features = 2;
+     */
+    features?: FeatureSet;
+    /**
+     * Indicate that fields annotated with this enum value should not be printed
+     * out when using debug formats, e.g. when the field contains sensitive
+     * credentials.
+     *
+     * @generated from protobuf field: optional bool debug_redact = 3;
+     */
+    debugRedact?: boolean;
+    /**
      * The parser stores options it doesn't recognize here. See above.
      *
      * @generated from protobuf field: repeated google.protobuf.UninterpretedOption uninterpreted_option = 999;
@@ -1335,6 +1389,12 @@ export interface EnumValueOptions {
  * @generated from protobuf message google.protobuf.ServiceOptions
  */
 export interface ServiceOptions {
+    /**
+     * Any features defined in the specific edition.
+     *
+     * @generated from protobuf field: optional google.protobuf.FeatureSet features = 34;
+     */
+    features?: FeatureSet;
     // Note:  Field numbers 1 through 32 are reserved for Google's internal RPC
     //   framework.  We apologize for hoarding these numbers to ourselves, but
     //   we were already using them long before we decided to release Protocol
@@ -1378,6 +1438,12 @@ export interface MethodOptions {
      * @generated from protobuf field: optional google.protobuf.MethodOptions.IdempotencyLevel idempotency_level = 34;
      */
     idempotencyLevel?: MethodOptions_IdempotencyLevel;
+    /**
+     * Any features defined in the specific edition.
+     *
+     * @generated from protobuf field: optional google.protobuf.FeatureSet features = 35;
+     */
+    features?: FeatureSet;
     /**
      * The parser stores options it doesn't recognize here. See above.
      *
@@ -1471,6 +1537,159 @@ export interface UninterpretedOption_NamePart {
      * @generated from protobuf field: bool is_extension = 2;
      */
     isExtension: boolean;
+}
+// ===================================================================
+// Features
+
+/**
+ * TODO(b/274655146) Enums in C++ gencode (and potentially other languages) are
+ * not well scoped.  This means that each of the feature enums below can clash
+ * with each other.  The short names we've chosen maximize call-site
+ * readability, but leave us very open to this scenario.  A future feature will
+ * be designed and implemented to handle this, hopefully before we ever hit a
+ * conflict here.
+ *
+ * @generated from protobuf message google.protobuf.FeatureSet
+ */
+export interface FeatureSet {
+    /**
+     * @generated from protobuf field: optional google.protobuf.FeatureSet.FieldPresence field_presence = 1;
+     */
+    fieldPresence?: FeatureSet_FieldPresence;
+    /**
+     * @generated from protobuf field: optional google.protobuf.FeatureSet.EnumType enum_type = 2;
+     */
+    enumType?: FeatureSet_EnumType;
+    /**
+     * @generated from protobuf field: optional google.protobuf.FeatureSet.RepeatedFieldEncoding repeated_field_encoding = 3;
+     */
+    repeatedFieldEncoding?: FeatureSet_RepeatedFieldEncoding;
+    /**
+     * @generated from protobuf field: optional google.protobuf.FeatureSet.StringFieldValidation string_field_validation = 4;
+     */
+    stringFieldValidation?: FeatureSet_StringFieldValidation;
+    /**
+     * @generated from protobuf field: optional google.protobuf.FeatureSet.MessageEncoding message_encoding = 5;
+     */
+    messageEncoding?: FeatureSet_MessageEncoding;
+    /**
+     * @generated from protobuf field: optional google.protobuf.FeatureSet.JsonFormat json_format = 6;
+     */
+    jsonFormat?: FeatureSet_JsonFormat;
+    /**
+     * @generated from protobuf field: optional google.protobuf.FeatureSet raw_features = 999;
+     */
+    rawFeatures?: FeatureSet;
+}
+/**
+ * @generated from protobuf enum google.protobuf.FeatureSet.FieldPresence
+ */
+export enum FeatureSet_FieldPresence {
+    /**
+     * @generated from protobuf enum value: FIELD_PRESENCE_UNKNOWN = 0;
+     */
+    FIELD_PRESENCE_UNKNOWN = 0,
+    /**
+     * @generated from protobuf enum value: EXPLICIT = 1;
+     */
+    EXPLICIT = 1,
+    /**
+     * @generated from protobuf enum value: IMPLICIT = 2;
+     */
+    IMPLICIT = 2,
+    /**
+     * @generated from protobuf enum value: LEGACY_REQUIRED = 3;
+     */
+    LEGACY_REQUIRED = 3
+}
+/**
+ * @generated from protobuf enum google.protobuf.FeatureSet.EnumType
+ */
+export enum FeatureSet_EnumType {
+    /**
+     * @generated from protobuf enum value: ENUM_TYPE_UNKNOWN = 0;
+     */
+    ENUM_TYPE_UNKNOWN = 0,
+    /**
+     * @generated from protobuf enum value: OPEN = 1;
+     */
+    OPEN = 1,
+    /**
+     * @generated from protobuf enum value: CLOSED = 2;
+     */
+    CLOSED = 2
+}
+/**
+ * @generated from protobuf enum google.protobuf.FeatureSet.RepeatedFieldEncoding
+ */
+export enum FeatureSet_RepeatedFieldEncoding {
+    /**
+     * @generated from protobuf enum value: REPEATED_FIELD_ENCODING_UNKNOWN = 0;
+     */
+    REPEATED_FIELD_ENCODING_UNKNOWN = 0,
+    /**
+     * @generated from protobuf enum value: PACKED = 1;
+     */
+    PACKED = 1,
+    /**
+     * @generated from protobuf enum value: EXPANDED = 2;
+     */
+    EXPANDED = 2
+}
+/**
+ * @generated from protobuf enum google.protobuf.FeatureSet.StringFieldValidation
+ */
+export enum FeatureSet_StringFieldValidation {
+    /**
+     * @generated from protobuf enum value: STRING_FIELD_VALIDATION_UNKNOWN = 0;
+     */
+    STRING_FIELD_VALIDATION_UNKNOWN = 0,
+    /**
+     * @generated from protobuf enum value: MANDATORY = 1;
+     */
+    MANDATORY = 1,
+    /**
+     * @generated from protobuf enum value: HINT = 2;
+     */
+    HINT = 2,
+    /**
+     * @generated from protobuf enum value: NONE = 3;
+     */
+    NONE = 3
+}
+/**
+ * @generated from protobuf enum google.protobuf.FeatureSet.MessageEncoding
+ */
+export enum FeatureSet_MessageEncoding {
+    /**
+     * @generated from protobuf enum value: MESSAGE_ENCODING_UNKNOWN = 0;
+     */
+    MESSAGE_ENCODING_UNKNOWN = 0,
+    /**
+     * @generated from protobuf enum value: LENGTH_PREFIXED = 1;
+     */
+    LENGTH_PREFIXED = 1,
+    /**
+     * @generated from protobuf enum value: DELIMITED = 2;
+     */
+    DELIMITED = 2
+}
+/**
+ * @generated from protobuf enum google.protobuf.FeatureSet.JsonFormat
+ */
+export enum FeatureSet_JsonFormat {
+    /**
+     * @generated from protobuf enum value: JSON_FORMAT_UNKNOWN = 0;
+     */
+    JSON_FORMAT_UNKNOWN = 0,
+    /**
+     * @generated from protobuf enum value: ALLOW = 1;
+     */
+    ALLOW = 1,
+    /**
+     * @generated from protobuf enum value: LEGACY_BEST_EFFORT = 2;
+     */
+    LEGACY_BEST_EFFORT = 2
 }
 // ===================================================================
 // Optional source code info
@@ -2130,6 +2349,7 @@ class ExtensionRangeOptions$Type extends MessageType<ExtensionRangeOptions> {
         super("google.protobuf.ExtensionRangeOptions", [
             { no: 999, name: "uninterpreted_option", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => UninterpretedOption },
             { no: 2, name: "declaration", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => ExtensionRangeOptions_Declaration },
+            { no: 50, name: "features", kind: "message", T: () => FeatureSet },
             { no: 3, name: "verification", kind: "enum", opt: true, T: () => ["google.protobuf.ExtensionRangeOptions.VerificationState", ExtensionRangeOptions_VerificationState] }
         ]);
     }
@@ -2150,6 +2370,9 @@ class ExtensionRangeOptions$Type extends MessageType<ExtensionRangeOptions> {
                     break;
                 case /* repeated google.protobuf.ExtensionRangeOptions.Declaration declaration */ 2:
                     message.declaration.push(ExtensionRangeOptions_Declaration.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                case /* optional google.protobuf.FeatureSet features */ 50:
+                    message.features = FeatureSet.internalBinaryRead(reader, reader.uint32(), options, message.features);
                     break;
                 case /* optional google.protobuf.ExtensionRangeOptions.VerificationState verification */ 3:
                     message.verification = reader.int32();
@@ -2172,6 +2395,9 @@ class ExtensionRangeOptions$Type extends MessageType<ExtensionRangeOptions> {
         /* repeated google.protobuf.ExtensionRangeOptions.Declaration declaration = 2; */
         for (let i = 0; i < message.declaration.length; i++)
             ExtensionRangeOptions_Declaration.internalBinaryWrite(message.declaration[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* optional google.protobuf.FeatureSet features = 50; */
+        if (message.features)
+            FeatureSet.internalBinaryWrite(message.features, writer.tag(50, WireType.LengthDelimited).fork(), options).join();
         /* optional google.protobuf.ExtensionRangeOptions.VerificationState verification = 3; */
         if (message.verification !== undefined)
             writer.tag(3, WireType.Varint).int32(message.verification);
@@ -2192,7 +2418,6 @@ class ExtensionRangeOptions_Declaration$Type extends MessageType<ExtensionRangeO
             { no: 1, name: "number", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
             { no: 2, name: "full_name", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
             { no: 3, name: "type", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
-            { no: 4, name: "is_repeated", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
             { no: 5, name: "reserved", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
             { no: 6, name: "repeated", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
@@ -2217,9 +2442,6 @@ class ExtensionRangeOptions_Declaration$Type extends MessageType<ExtensionRangeO
                     break;
                 case /* optional string type */ 3:
                     message.type = reader.string();
-                    break;
-                case /* optional bool is_repeated = 4 [deprecated = true];*/ 4:
-                    message.isRepeated = reader.bool();
                     break;
                 case /* optional bool reserved */ 5:
                     message.reserved = reader.bool();
@@ -2248,9 +2470,6 @@ class ExtensionRangeOptions_Declaration$Type extends MessageType<ExtensionRangeO
         /* optional string type = 3; */
         if (message.type !== undefined)
             writer.tag(3, WireType.LengthDelimited).string(message.type);
-        /* optional bool is_repeated = 4 [deprecated = true]; */
-        if (message.isRepeated !== undefined)
-            writer.tag(4, WireType.Varint).bool(message.isRepeated);
         /* optional bool reserved = 5; */
         if (message.reserved !== undefined)
             writer.tag(5, WireType.Varint).bool(message.reserved);
@@ -2795,6 +3014,7 @@ class FileOptions$Type extends MessageType<FileOptions> {
             { no: 41, name: "php_namespace", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
             { no: 44, name: "php_metadata_namespace", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
             { no: 45, name: "ruby_package", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 50, name: "features", kind: "message", T: () => FeatureSet },
             { no: 999, name: "uninterpreted_option", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => UninterpretedOption }
         ]);
     }
@@ -2869,6 +3089,9 @@ class FileOptions$Type extends MessageType<FileOptions> {
                     break;
                 case /* optional string ruby_package */ 45:
                     message.rubyPackage = reader.string();
+                    break;
+                case /* optional google.protobuf.FeatureSet features */ 50:
+                    message.features = FeatureSet.internalBinaryRead(reader, reader.uint32(), options, message.features);
                     break;
                 case /* repeated google.protobuf.UninterpretedOption uninterpreted_option */ 999:
                     message.uninterpretedOption.push(UninterpretedOption.internalBinaryRead(reader, reader.uint32(), options));
@@ -2945,6 +3168,9 @@ class FileOptions$Type extends MessageType<FileOptions> {
         /* optional string ruby_package = 45; */
         if (message.rubyPackage !== undefined)
             writer.tag(45, WireType.LengthDelimited).string(message.rubyPackage);
+        /* optional google.protobuf.FeatureSet features = 50; */
+        if (message.features)
+            FeatureSet.internalBinaryWrite(message.features, writer.tag(50, WireType.LengthDelimited).fork(), options).join();
         /* repeated google.protobuf.UninterpretedOption uninterpreted_option = 999; */
         for (let i = 0; i < message.uninterpretedOption.length; i++)
             UninterpretedOption.internalBinaryWrite(message.uninterpretedOption[i], writer.tag(999, WireType.LengthDelimited).fork(), options).join();
@@ -2967,6 +3193,7 @@ class MessageOptions$Type extends MessageType<MessageOptions> {
             { no: 3, name: "deprecated", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
             { no: 7, name: "map_entry", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
             { no: 11, name: "deprecated_legacy_json_field_conflicts", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 12, name: "features", kind: "message", T: () => FeatureSet },
             { no: 999, name: "uninterpreted_option", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => UninterpretedOption }
         ]);
     }
@@ -2996,6 +3223,9 @@ class MessageOptions$Type extends MessageType<MessageOptions> {
                     break;
                 case /* optional bool deprecated_legacy_json_field_conflicts = 11 [deprecated = true];*/ 11:
                     message.deprecatedLegacyJsonFieldConflicts = reader.bool();
+                    break;
+                case /* optional google.protobuf.FeatureSet features */ 12:
+                    message.features = FeatureSet.internalBinaryRead(reader, reader.uint32(), options, message.features);
                     break;
                 case /* repeated google.protobuf.UninterpretedOption uninterpreted_option */ 999:
                     message.uninterpretedOption.push(UninterpretedOption.internalBinaryRead(reader, reader.uint32(), options));
@@ -3027,6 +3257,9 @@ class MessageOptions$Type extends MessageType<MessageOptions> {
         /* optional bool deprecated_legacy_json_field_conflicts = 11 [deprecated = true]; */
         if (message.deprecatedLegacyJsonFieldConflicts !== undefined)
             writer.tag(11, WireType.Varint).bool(message.deprecatedLegacyJsonFieldConflicts);
+        /* optional google.protobuf.FeatureSet features = 12; */
+        if (message.features)
+            FeatureSet.internalBinaryWrite(message.features, writer.tag(12, WireType.LengthDelimited).fork(), options).join();
         /* repeated google.protobuf.UninterpretedOption uninterpreted_option = 999; */
         for (let i = 0; i < message.uninterpretedOption.length; i++)
             UninterpretedOption.internalBinaryWrite(message.uninterpretedOption[i], writer.tag(999, WireType.LengthDelimited).fork(), options).join();
@@ -3053,13 +3286,14 @@ class FieldOptions$Type extends MessageType<FieldOptions> {
             { no: 10, name: "weak", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
             { no: 16, name: "debug_redact", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
             { no: 17, name: "retention", kind: "enum", opt: true, T: () => ["google.protobuf.FieldOptions.OptionRetention", FieldOptions_OptionRetention] },
-            { no: 18, name: "target", kind: "enum", opt: true, T: () => ["google.protobuf.FieldOptions.OptionTargetType", FieldOptions_OptionTargetType] },
             { no: 19, name: "targets", kind: "enum", repeat: 2 /*RepeatType.UNPACKED*/, T: () => ["google.protobuf.FieldOptions.OptionTargetType", FieldOptions_OptionTargetType] },
+            { no: 20, name: "edition_defaults", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => FieldOptions_EditionDefault },
+            { no: 21, name: "features", kind: "message", T: () => FeatureSet },
             { no: 999, name: "uninterpreted_option", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => UninterpretedOption }
         ]);
     }
     create(value?: PartialMessage<FieldOptions>): FieldOptions {
-        const message = { targets: [], uninterpretedOption: [] };
+        const message = { targets: [], editionDefaults: [], uninterpretedOption: [] };
         globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
         if (value !== undefined)
             reflectionMergePartial<FieldOptions>(this, message, value);
@@ -3097,15 +3331,18 @@ class FieldOptions$Type extends MessageType<FieldOptions> {
                 case /* optional google.protobuf.FieldOptions.OptionRetention retention */ 17:
                     message.retention = reader.int32();
                     break;
-                case /* optional google.protobuf.FieldOptions.OptionTargetType target = 18 [deprecated = true];*/ 18:
-                    message.target = reader.int32();
-                    break;
                 case /* repeated google.protobuf.FieldOptions.OptionTargetType targets */ 19:
                     if (wireType === WireType.LengthDelimited)
                         for (let e = reader.int32() + reader.pos; reader.pos < e;)
                             message.targets.push(reader.int32());
                     else
                         message.targets.push(reader.int32());
+                    break;
+                case /* repeated google.protobuf.FieldOptions.EditionDefault edition_defaults */ 20:
+                    message.editionDefaults.push(FieldOptions_EditionDefault.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                case /* optional google.protobuf.FeatureSet features */ 21:
+                    message.features = FeatureSet.internalBinaryRead(reader, reader.uint32(), options, message.features);
                     break;
                 case /* repeated google.protobuf.UninterpretedOption uninterpreted_option */ 999:
                     message.uninterpretedOption.push(UninterpretedOption.internalBinaryRead(reader, reader.uint32(), options));
@@ -3149,12 +3386,15 @@ class FieldOptions$Type extends MessageType<FieldOptions> {
         /* optional google.protobuf.FieldOptions.OptionRetention retention = 17; */
         if (message.retention !== undefined)
             writer.tag(17, WireType.Varint).int32(message.retention);
-        /* optional google.protobuf.FieldOptions.OptionTargetType target = 18 [deprecated = true]; */
-        if (message.target !== undefined)
-            writer.tag(18, WireType.Varint).int32(message.target);
         /* repeated google.protobuf.FieldOptions.OptionTargetType targets = 19; */
         for (let i = 0; i < message.targets.length; i++)
             writer.tag(19, WireType.Varint).int32(message.targets[i]);
+        /* repeated google.protobuf.FieldOptions.EditionDefault edition_defaults = 20; */
+        for (let i = 0; i < message.editionDefaults.length; i++)
+            FieldOptions_EditionDefault.internalBinaryWrite(message.editionDefaults[i], writer.tag(20, WireType.LengthDelimited).fork(), options).join();
+        /* optional google.protobuf.FeatureSet features = 21; */
+        if (message.features)
+            FeatureSet.internalBinaryWrite(message.features, writer.tag(21, WireType.LengthDelimited).fork(), options).join();
         /* repeated google.protobuf.UninterpretedOption uninterpreted_option = 999; */
         for (let i = 0; i < message.uninterpretedOption.length; i++)
             UninterpretedOption.internalBinaryWrite(message.uninterpretedOption[i], writer.tag(999, WireType.LengthDelimited).fork(), options).join();
@@ -3169,9 +3409,64 @@ class FieldOptions$Type extends MessageType<FieldOptions> {
  */
 export const FieldOptions = new FieldOptions$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class FieldOptions_EditionDefault$Type extends MessageType<FieldOptions_EditionDefault> {
+    constructor() {
+        super("google.protobuf.FieldOptions.EditionDefault", [
+            { no: 1, name: "edition", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "value", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<FieldOptions_EditionDefault>): FieldOptions_EditionDefault {
+        const message = {};
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<FieldOptions_EditionDefault>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: FieldOptions_EditionDefault): FieldOptions_EditionDefault {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* optional string edition */ 1:
+                    message.edition = reader.string();
+                    break;
+                case /* optional string value */ 2:
+                    message.value = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: FieldOptions_EditionDefault, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* optional string edition = 1; */
+        if (message.edition !== undefined)
+            writer.tag(1, WireType.LengthDelimited).string(message.edition);
+        /* optional string value = 2; */
+        if (message.value !== undefined)
+            writer.tag(2, WireType.LengthDelimited).string(message.value);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message google.protobuf.FieldOptions.EditionDefault
+ */
+export const FieldOptions_EditionDefault = new FieldOptions_EditionDefault$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class OneofOptions$Type extends MessageType<OneofOptions> {
     constructor() {
         super("google.protobuf.OneofOptions", [
+            { no: 1, name: "features", kind: "message", T: () => FeatureSet },
             { no: 999, name: "uninterpreted_option", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => UninterpretedOption }
         ]);
     }
@@ -3187,6 +3482,9 @@ class OneofOptions$Type extends MessageType<OneofOptions> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
+                case /* optional google.protobuf.FeatureSet features */ 1:
+                    message.features = FeatureSet.internalBinaryRead(reader, reader.uint32(), options, message.features);
+                    break;
                 case /* repeated google.protobuf.UninterpretedOption uninterpreted_option */ 999:
                     message.uninterpretedOption.push(UninterpretedOption.internalBinaryRead(reader, reader.uint32(), options));
                     break;
@@ -3202,6 +3500,9 @@ class OneofOptions$Type extends MessageType<OneofOptions> {
         return message;
     }
     internalBinaryWrite(message: OneofOptions, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* optional google.protobuf.FeatureSet features = 1; */
+        if (message.features)
+            FeatureSet.internalBinaryWrite(message.features, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         /* repeated google.protobuf.UninterpretedOption uninterpreted_option = 999; */
         for (let i = 0; i < message.uninterpretedOption.length; i++)
             UninterpretedOption.internalBinaryWrite(message.uninterpretedOption[i], writer.tag(999, WireType.LengthDelimited).fork(), options).join();
@@ -3222,6 +3523,7 @@ class EnumOptions$Type extends MessageType<EnumOptions> {
             { no: 2, name: "allow_alias", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
             { no: 3, name: "deprecated", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
             { no: 6, name: "deprecated_legacy_json_field_conflicts", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 7, name: "features", kind: "message", T: () => FeatureSet },
             { no: 999, name: "uninterpreted_option", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => UninterpretedOption }
         ]);
     }
@@ -3245,6 +3547,9 @@ class EnumOptions$Type extends MessageType<EnumOptions> {
                     break;
                 case /* optional bool deprecated_legacy_json_field_conflicts = 6 [deprecated = true];*/ 6:
                     message.deprecatedLegacyJsonFieldConflicts = reader.bool();
+                    break;
+                case /* optional google.protobuf.FeatureSet features */ 7:
+                    message.features = FeatureSet.internalBinaryRead(reader, reader.uint32(), options, message.features);
                     break;
                 case /* repeated google.protobuf.UninterpretedOption uninterpreted_option */ 999:
                     message.uninterpretedOption.push(UninterpretedOption.internalBinaryRead(reader, reader.uint32(), options));
@@ -3270,6 +3575,9 @@ class EnumOptions$Type extends MessageType<EnumOptions> {
         /* optional bool deprecated_legacy_json_field_conflicts = 6 [deprecated = true]; */
         if (message.deprecatedLegacyJsonFieldConflicts !== undefined)
             writer.tag(6, WireType.Varint).bool(message.deprecatedLegacyJsonFieldConflicts);
+        /* optional google.protobuf.FeatureSet features = 7; */
+        if (message.features)
+            FeatureSet.internalBinaryWrite(message.features, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
         /* repeated google.protobuf.UninterpretedOption uninterpreted_option = 999; */
         for (let i = 0; i < message.uninterpretedOption.length; i++)
             UninterpretedOption.internalBinaryWrite(message.uninterpretedOption[i], writer.tag(999, WireType.LengthDelimited).fork(), options).join();
@@ -3288,6 +3596,8 @@ class EnumValueOptions$Type extends MessageType<EnumValueOptions> {
     constructor() {
         super("google.protobuf.EnumValueOptions", [
             { no: 1, name: "deprecated", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 2, name: "features", kind: "message", T: () => FeatureSet },
+            { no: 3, name: "debug_redact", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
             { no: 999, name: "uninterpreted_option", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => UninterpretedOption }
         ]);
     }
@@ -3305,6 +3615,12 @@ class EnumValueOptions$Type extends MessageType<EnumValueOptions> {
             switch (fieldNo) {
                 case /* optional bool deprecated */ 1:
                     message.deprecated = reader.bool();
+                    break;
+                case /* optional google.protobuf.FeatureSet features */ 2:
+                    message.features = FeatureSet.internalBinaryRead(reader, reader.uint32(), options, message.features);
+                    break;
+                case /* optional bool debug_redact */ 3:
+                    message.debugRedact = reader.bool();
                     break;
                 case /* repeated google.protobuf.UninterpretedOption uninterpreted_option */ 999:
                     message.uninterpretedOption.push(UninterpretedOption.internalBinaryRead(reader, reader.uint32(), options));
@@ -3324,6 +3640,12 @@ class EnumValueOptions$Type extends MessageType<EnumValueOptions> {
         /* optional bool deprecated = 1; */
         if (message.deprecated !== undefined)
             writer.tag(1, WireType.Varint).bool(message.deprecated);
+        /* optional google.protobuf.FeatureSet features = 2; */
+        if (message.features)
+            FeatureSet.internalBinaryWrite(message.features, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* optional bool debug_redact = 3; */
+        if (message.debugRedact !== undefined)
+            writer.tag(3, WireType.Varint).bool(message.debugRedact);
         /* repeated google.protobuf.UninterpretedOption uninterpreted_option = 999; */
         for (let i = 0; i < message.uninterpretedOption.length; i++)
             UninterpretedOption.internalBinaryWrite(message.uninterpretedOption[i], writer.tag(999, WireType.LengthDelimited).fork(), options).join();
@@ -3341,6 +3663,7 @@ export const EnumValueOptions = new EnumValueOptions$Type();
 class ServiceOptions$Type extends MessageType<ServiceOptions> {
     constructor() {
         super("google.protobuf.ServiceOptions", [
+            { no: 34, name: "features", kind: "message", T: () => FeatureSet },
             { no: 33, name: "deprecated", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
             { no: 999, name: "uninterpreted_option", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => UninterpretedOption }
         ]);
@@ -3357,6 +3680,9 @@ class ServiceOptions$Type extends MessageType<ServiceOptions> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
+                case /* optional google.protobuf.FeatureSet features */ 34:
+                    message.features = FeatureSet.internalBinaryRead(reader, reader.uint32(), options, message.features);
+                    break;
                 case /* optional bool deprecated */ 33:
                     message.deprecated = reader.bool();
                     break;
@@ -3375,6 +3701,9 @@ class ServiceOptions$Type extends MessageType<ServiceOptions> {
         return message;
     }
     internalBinaryWrite(message: ServiceOptions, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* optional google.protobuf.FeatureSet features = 34; */
+        if (message.features)
+            FeatureSet.internalBinaryWrite(message.features, writer.tag(34, WireType.LengthDelimited).fork(), options).join();
         /* optional bool deprecated = 33; */
         if (message.deprecated !== undefined)
             writer.tag(33, WireType.Varint).bool(message.deprecated);
@@ -3397,6 +3726,7 @@ class MethodOptions$Type extends MessageType<MethodOptions> {
         super("google.protobuf.MethodOptions", [
             { no: 33, name: "deprecated", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
             { no: 34, name: "idempotency_level", kind: "enum", opt: true, T: () => ["google.protobuf.MethodOptions.IdempotencyLevel", MethodOptions_IdempotencyLevel] },
+            { no: 35, name: "features", kind: "message", T: () => FeatureSet },
             { no: 999, name: "uninterpreted_option", kind: "message", repeat: 2 /*RepeatType.UNPACKED*/, T: () => UninterpretedOption }
         ]);
     }
@@ -3417,6 +3747,9 @@ class MethodOptions$Type extends MessageType<MethodOptions> {
                     break;
                 case /* optional google.protobuf.MethodOptions.IdempotencyLevel idempotency_level */ 34:
                     message.idempotencyLevel = reader.int32();
+                    break;
+                case /* optional google.protobuf.FeatureSet features */ 35:
+                    message.features = FeatureSet.internalBinaryRead(reader, reader.uint32(), options, message.features);
                     break;
                 case /* repeated google.protobuf.UninterpretedOption uninterpreted_option */ 999:
                     message.uninterpretedOption.push(UninterpretedOption.internalBinaryRead(reader, reader.uint32(), options));
@@ -3439,6 +3772,9 @@ class MethodOptions$Type extends MessageType<MethodOptions> {
         /* optional google.protobuf.MethodOptions.IdempotencyLevel idempotency_level = 34; */
         if (message.idempotencyLevel !== undefined)
             writer.tag(34, WireType.Varint).int32(message.idempotencyLevel);
+        /* optional google.protobuf.FeatureSet features = 35; */
+        if (message.features)
+            FeatureSet.internalBinaryWrite(message.features, writer.tag(35, WireType.LengthDelimited).fork(), options).join();
         /* repeated google.protobuf.UninterpretedOption uninterpreted_option = 999; */
         for (let i = 0; i < message.uninterpretedOption.length; i++)
             UninterpretedOption.internalBinaryWrite(message.uninterpretedOption[i], writer.tag(999, WireType.LengthDelimited).fork(), options).join();
@@ -3595,6 +3931,95 @@ class UninterpretedOption_NamePart$Type extends MessageType<UninterpretedOption_
  * @generated MessageType for protobuf message google.protobuf.UninterpretedOption.NamePart
  */
 export const UninterpretedOption_NamePart = new UninterpretedOption_NamePart$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class FeatureSet$Type extends MessageType<FeatureSet> {
+    constructor() {
+        super("google.protobuf.FeatureSet", [
+            { no: 1, name: "field_presence", kind: "enum", opt: true, T: () => ["google.protobuf.FeatureSet.FieldPresence", FeatureSet_FieldPresence] },
+            { no: 2, name: "enum_type", kind: "enum", opt: true, T: () => ["google.protobuf.FeatureSet.EnumType", FeatureSet_EnumType] },
+            { no: 3, name: "repeated_field_encoding", kind: "enum", opt: true, T: () => ["google.protobuf.FeatureSet.RepeatedFieldEncoding", FeatureSet_RepeatedFieldEncoding] },
+            { no: 4, name: "string_field_validation", kind: "enum", opt: true, T: () => ["google.protobuf.FeatureSet.StringFieldValidation", FeatureSet_StringFieldValidation] },
+            { no: 5, name: "message_encoding", kind: "enum", opt: true, T: () => ["google.protobuf.FeatureSet.MessageEncoding", FeatureSet_MessageEncoding] },
+            { no: 6, name: "json_format", kind: "enum", opt: true, T: () => ["google.protobuf.FeatureSet.JsonFormat", FeatureSet_JsonFormat] },
+            { no: 999, name: "raw_features", kind: "message", T: () => FeatureSet }
+        ]);
+    }
+    create(value?: PartialMessage<FeatureSet>): FeatureSet {
+        const message = {};
+        globalThis.Object.defineProperty(message, MESSAGE_TYPE, { enumerable: false, value: this });
+        if (value !== undefined)
+            reflectionMergePartial<FeatureSet>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: FeatureSet): FeatureSet {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* optional google.protobuf.FeatureSet.FieldPresence field_presence */ 1:
+                    message.fieldPresence = reader.int32();
+                    break;
+                case /* optional google.protobuf.FeatureSet.EnumType enum_type */ 2:
+                    message.enumType = reader.int32();
+                    break;
+                case /* optional google.protobuf.FeatureSet.RepeatedFieldEncoding repeated_field_encoding */ 3:
+                    message.repeatedFieldEncoding = reader.int32();
+                    break;
+                case /* optional google.protobuf.FeatureSet.StringFieldValidation string_field_validation */ 4:
+                    message.stringFieldValidation = reader.int32();
+                    break;
+                case /* optional google.protobuf.FeatureSet.MessageEncoding message_encoding */ 5:
+                    message.messageEncoding = reader.int32();
+                    break;
+                case /* optional google.protobuf.FeatureSet.JsonFormat json_format */ 6:
+                    message.jsonFormat = reader.int32();
+                    break;
+                case /* optional google.protobuf.FeatureSet raw_features */ 999:
+                    message.rawFeatures = FeatureSet.internalBinaryRead(reader, reader.uint32(), options, message.rawFeatures);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: FeatureSet, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* optional google.protobuf.FeatureSet.FieldPresence field_presence = 1; */
+        if (message.fieldPresence !== undefined)
+            writer.tag(1, WireType.Varint).int32(message.fieldPresence);
+        /* optional google.protobuf.FeatureSet.EnumType enum_type = 2; */
+        if (message.enumType !== undefined)
+            writer.tag(2, WireType.Varint).int32(message.enumType);
+        /* optional google.protobuf.FeatureSet.RepeatedFieldEncoding repeated_field_encoding = 3; */
+        if (message.repeatedFieldEncoding !== undefined)
+            writer.tag(3, WireType.Varint).int32(message.repeatedFieldEncoding);
+        /* optional google.protobuf.FeatureSet.StringFieldValidation string_field_validation = 4; */
+        if (message.stringFieldValidation !== undefined)
+            writer.tag(4, WireType.Varint).int32(message.stringFieldValidation);
+        /* optional google.protobuf.FeatureSet.MessageEncoding message_encoding = 5; */
+        if (message.messageEncoding !== undefined)
+            writer.tag(5, WireType.Varint).int32(message.messageEncoding);
+        /* optional google.protobuf.FeatureSet.JsonFormat json_format = 6; */
+        if (message.jsonFormat !== undefined)
+            writer.tag(6, WireType.Varint).int32(message.jsonFormat);
+        /* optional google.protobuf.FeatureSet raw_features = 999; */
+        if (message.rawFeatures)
+            FeatureSet.internalBinaryWrite(message.rawFeatures, writer.tag(999, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message google.protobuf.FeatureSet
+ */
+export const FeatureSet = new FeatureSet$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class SourceCodeInfo$Type extends MessageType<SourceCodeInfo> {
     constructor() {

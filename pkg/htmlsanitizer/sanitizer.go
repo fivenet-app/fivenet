@@ -1,6 +1,7 @@
 package htmlsanitizer
 
 import (
+	"html"
 	"regexp"
 	"strings"
 
@@ -8,8 +9,8 @@ import (
 )
 
 var (
-	p               *bluemonday.Policy
-	policyStripTags *bluemonday.Policy
+	p         *bluemonday.Policy
+	stripTags *bluemonday.Policy
 )
 
 var (
@@ -60,7 +61,7 @@ func init() {
 	p.AllowAttrs("href").OnElements("a", "area")
 	p.AllowAttrs("src").OnElements("img")
 
-	policyStripTags = bluemonday.StripTagsPolicy()
+	stripTags = bluemonday.StrictPolicy()
 }
 
 func Sanitize(in string) string {
@@ -69,5 +70,5 @@ func Sanitize(in string) string {
 }
 
 func StripTags(in string) string {
-	return policyStripTags.Sanitize(in)
+	return html.UnescapeString(stripTags.Sanitize(in))
 }

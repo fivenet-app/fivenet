@@ -246,8 +246,6 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
-	sanitizedContent := htmlsanitizer.Sanitize(req.Content)
-
 	tDocs := table.FivenetDocuments
 	stmt := tDocs.
 		INSERT(
@@ -266,8 +264,8 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 		VALUES(
 			req.CategoryId,
 			req.Title,
-			utils.StringFirstN(htmlsanitizer.StripTags(sanitizedContent), DocShortContentLength),
-			sanitizedContent,
+			utils.StringFirstN(htmlsanitizer.StripTags(req.Content), DocShortContentLength),
+			req.Content,
 			documents.DOC_CONTENT_TYPE_HTML,
 			req.Data,
 			userInfo.UserId,
@@ -354,8 +352,6 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 		return nil, ErrFailedQuery
 	}
 
-	sanitizedContent := htmlsanitizer.Sanitize(req.Content)
-
 	tDocs := table.FivenetDocuments
 	stmt := tDocs.
 		UPDATE(
@@ -371,8 +367,8 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 		SET(
 			req.CategoryId,
 			req.Title,
-			utils.StringFirstN(htmlsanitizer.StripTags(sanitizedContent), DocShortContentLength),
-			sanitizedContent,
+			utils.StringFirstN(htmlsanitizer.StripTags(req.Content), DocShortContentLength),
+			req.Content,
 			tDocs.Data,
 			req.State,
 			req.Closed,

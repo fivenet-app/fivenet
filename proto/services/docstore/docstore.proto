@@ -156,7 +156,7 @@ message DeleteCommentResponse {}
 
 message CreateDocumentRequest {
   optional uint64 category_id = 1; // @gotags: alias:"category_id"
-  // @sanitize
+  // @sanitize: method=StripTags
   string title = 2 [(validate.rules).string = {
     min_len: 3,
     max_bytes: 21845
@@ -168,6 +168,7 @@ message CreateDocumentRequest {
   }]; // @gotags: alias:"content"
   resources.documents.DOC_CONTENT_TYPE content_type = 4 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"content_type"
   optional string data = 5; // @gotags: alias:"data"
+  // @sanitize
   string state = 6 [(validate.rules).string.max_len = 24]; // @gotags: alias:"state"
   bool closed = 7; // @gotags: alias:"closed"
   bool public = 8; // @gotags: alias:"public"
@@ -182,7 +183,7 @@ message CreateDocumentResponse {
 message UpdateDocumentRequest {
   uint64 document_id = 1; // @gotags: alias:"id"
   optional uint64 category_id = 2; // @gotags: alias:"category_id"
-  // @sanitize
+  // @sanitize: method=StripTags
   string title = 3 [(validate.rules).string = {
     min_len: 3,
     max_bytes: 21845
