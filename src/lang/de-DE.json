@@ -377,7 +377,8 @@
             "reset_clipboard": "Zwischenablage zurücksetzen",
             "debug_functions": "Debug-Funktionen",
             "reset_local_storage": "Lokalen Browser-Speicher zurücksetzen",
-            "factory_reset": "FiveNet App auf Standard zurücksetzen"
+            "factory_reset": "FiveNet App auf Standard zurücksetzen",
+            "version": "Version"
         },
         "penaltycalculator": {
             "title": "Strafenrechner"
@@ -1344,7 +1345,7 @@
             "ErrClosedDoc": "Dokument ist geschloßen und kann nicht editiert werden!",
             "ErrDocAccessEditDenied": "Sie haben keine Rechte den Dokumenten Zugriff zu verwalten!",
             "ErrDocAccessViewDenied": "Sie haben keine Rechte die Zugangsinfo des Dokumentes zu sehen!",
-            "ErrTemplateFailed": "Fehler beim ausführen der Dokumenten Vorlange! Bitte spreche deine Fraktionsführung darauf an."
+            "ErrTemplateFailed": "Fehler beim Ausführen der Dokumenten Vorlange! Bitte spreche deine Fraktionsführung darauf an."
         },
         "LivemapperService": {
             "ErrStreamFailed": "Livemap Datenstrom fehlgeschlagen!",
