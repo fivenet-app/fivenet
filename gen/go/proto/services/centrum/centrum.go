@@ -272,7 +272,7 @@ func (s *Server) Stream(req *StreamRequest, srv CentrumService_StreamServer) err
 	}
 }
 
-const pingTickerTime = 90 * time.Second
+const pingTickerTime = 40 * time.Second
 
 func (s *Server) stream(srv CentrumService_StreamServer, isDisponent bool, job string, userId int32, unitId uint64) (bool, error) {
 	msgCh := make(chan *nats.Msg, 48)
