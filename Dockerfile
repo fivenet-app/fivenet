@@ -9,7 +9,8 @@ RUN rm -rf ./.nuxt/ && \
 FROM docker.io/library/golang:1.21 AS gobuilder
 WORKDIR /go/src/github.com/galexrt/fivenet/
 COPY . ./
-RUN apk --no-cache add git && \
+RUN apt-get update && \
+    apt-get install -y git && \
     make build-go
 
 FROM docker.io/library/alpine:3.18.3
