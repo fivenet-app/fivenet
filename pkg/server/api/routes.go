@@ -1,7 +1,6 @@
 package api
 
 import (
-	"fmt"
 	"net/http"
 	"runtime/debug"
 
@@ -41,7 +40,8 @@ func New(logger *zap.Logger, cfg *config.Config) *Routes {
 			}
 		}
 
-		version = fmt.Sprintf("%s-%s", buildInfo.Main.Version, commit)
+		// TODO use a version number that is the same accross go and js code
+		version = commit
 	}
 
 	clientCfg := &ClientConfig{
