@@ -6,7 +6,14 @@ export default defineNuxtPlugin(() => {
 
     $update.on('update', (version) => {
         const settings = useSettingsStore();
-        console.info('Update Check detected a new version', version, __APP_VERSION__, settings.getVersion);
+        console.info(
+            'Update Check: Detected new version',
+            version,
+            'app version',
+            __APP_VERSION__,
+            'settings store version',
+            settings.getVersion,
+        );
         const config = useConfigStore();
         config.updateAvailable = version;
     });
