@@ -85,6 +85,8 @@ func (m *Dispatch) validate(all bool) error {
 
 	// no validation rules for Y
 
+	// no validation rules for Anon
+
 	for idx, item := range m.GetUnits() {
 		_, _ = idx, item
 
@@ -279,10 +281,6 @@ func (m *Dispatch) validate(all bool) error {
 			errors = append(errors, err)
 		}
 
-	}
-
-	if m.Anon != nil {
-		// no validation rules for Anon
 	}
 
 	if m.UserId != nil {

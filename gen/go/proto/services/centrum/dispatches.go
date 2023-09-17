@@ -54,7 +54,7 @@ func (s *Server) ListDispatches(ctx context.Context, req *ListDispatchesRequest)
 	ownOnly := req.OwnOnly != nil && *req.OwnOnly
 	for i := 0; i < len(dispatches); i++ {
 		// Hide user info when dispatch is anonymous
-		if dispatches[i].Anon != nil && *dispatches[i].Anon {
+		if dispatches[i].Anon {
 			dispatches[i].User = nil
 			dispatches[i].UserId = nil
 		}
@@ -203,7 +203,7 @@ func (s *Server) createDispatch(ctx context.Context, d *dispatch.Dispatch) (*dis
 		return nil, ErrFailedQuery
 	}
 	// Hide user info when dispatch is anonymous
-	if dsp.Anon != nil && *dsp.Anon {
+	if dsp.Anon {
 		dsp.User = nil
 		dsp.UserId = nil
 	}

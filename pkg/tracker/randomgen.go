@@ -136,7 +136,7 @@ func (s *Tracker) GenerateRandomDispatchMarker() {
 				Description: &description,
 				X:           &x,
 				Y:           &y,
-				Anon:        &anon,
+				Anon:        anon,
 				UserID:      userIdentifiers[i],
 			}
 		}

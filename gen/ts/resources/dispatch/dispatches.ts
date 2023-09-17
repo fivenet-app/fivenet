@@ -61,9 +61,9 @@ export interface Dispatch {
      */
     postal?: string;
     /**
-     * @generated from protobuf field: optional bool anon = 13;
+     * @generated from protobuf field: bool anon = 13;
      */
-    anon?: boolean;
+    anon: boolean;
     /**
      * @generated from protobuf field: optional int32 user_id = 14;
      */
@@ -255,7 +255,7 @@ class Dispatch$Type extends MessageType<Dispatch> {
             { no: 10, name: "x", kind: "scalar", T: 1 /*ScalarType.DOUBLE*/ },
             { no: 11, name: "y", kind: "scalar", T: 1 /*ScalarType.DOUBLE*/ },
             { no: 12, name: "postal", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "48" } } } },
-            { no: 13, name: "anon", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 13, name: "anon", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 14, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
             { no: 15, name: "user", kind: "message", T: () => User },
             { no: 16, name: "units", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => DispatchAssignment }

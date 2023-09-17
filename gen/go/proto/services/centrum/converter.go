@@ -79,7 +79,8 @@ func (s *Server) convertPhoneJobMsgToDispatch() error {
 		if err != nil {
 			continue
 		}
-		var anon bool
+
+		anon := false
 		if msg.Anon != nil && *msg.Anon == "1" {
 			anon = true
 		}
@@ -89,7 +90,7 @@ func (s *Server) convertPhoneJobMsgToDispatch() error {
 			Message: *msg.Message,
 			X:       x,
 			Y:       y,
-			Anon:    &anon,
+			Anon:    anon,
 			UserId:  &msg.UserId,
 		}
 

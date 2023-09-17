@@ -23,13 +23,15 @@ const { location } = storeToRefs(livemapStore);
 async function createDispatch(values: FormData): Promise<void> {
     return new Promise(async (res, rej) => {
         try {
+            console.log(values.anon);
+
             const call = $grpc.getCentrumClient().createDispatch({
                 dispatch: {
                     id: 0n,
                     job: '',
                     message: values.message,
                     description: values.description,
-                    anon: values.anon as boolean,
+                    anon: values.anon,
                     attributes: {
                         list: [],
                     },
@@ -41,6 +43,8 @@ async function createDispatch(values: FormData): Promise<void> {
             await call;
 
             emit('close');
+
+            resetForm();
 
             return res();
         } catch (e) {
@@ -57,21 +61,16 @@ defineRule('max', max);
 
 interface FormData {
     message: string;
-    description: string;
+    description?: string;
     anon: boolean;
 }
 
-const { handleSubmit, setValues } = useForm<FormData>({
+const { handleSubmit, resetForm } = useForm<FormData>({
     validationSchema: {
         message: { required: true, min: 3, max: 255 },
         description: { required: false, min: 6, max: 512 },
+        anon: { required: false },
     },
-    initialValues: {
-        anon: false,
-    },
-});
-setValues({
-    anon: false,
 });
 
 const onSubmit = handleSubmit(async (values): Promise<void> => await createDispatch(values));
@@ -197,6 +196,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await createDispa
                                                                         class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600 h-6 w-6"
                                                                         :placeholder="$t('common.anon')"
                                                                         :label="$t('common.anon')"
+                                                                        :value="true"
                                                                     />
                                                                 </div>
                                                                 <VeeErrorMessage

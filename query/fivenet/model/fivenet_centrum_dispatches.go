@@ -22,6 +22,6 @@ type FivenetCentrumDispatches struct {
 	X           *float64   `json:"x"`
 	Y           *float64   `json:"y"`
 	Postal      *string    `json:"postal"`
-	Anon        *bool      `json:"anon"`
+	Anon        bool       `json:"anon"`
 	UserID      int32      `json:"user_id"`
 }

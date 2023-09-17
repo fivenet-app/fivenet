@@ -92,7 +92,7 @@ CREATE TABLE
         `x` decimal(24, 14) DEFAULT NULL,
         `y` decimal(24, 14) DEFAULT NULL,
         `postal` varchar(48) DEFAULT NULL,
-        `anon` tinyint(1) DEFAULT 0,
+        `anon` tinyint(1) NOT NULL DEFAULT 0,
         `user_id` int(11) NOT NULL,
         PRIMARY KEY (`id`),
         KEY `idx_fivenet_centrum_dispatches_job` (`job`)
