@@ -1391,5 +1391,11 @@
                 "label": "Pages"
             }
         }
+    },
+    "system": {
+        "update_available": {
+            "title": "New FiveNet version {0} available.",
+            "content": "To continue using FiveNet, you need to reload the page if you currently can."
+        }
     }
 }

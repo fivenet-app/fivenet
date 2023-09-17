@@ -3,17 +3,20 @@ import { Locale } from '@dargmuesli/nuxt-cookie-control/dist/runtime/types';
 import { localize, setLocale as veeValidateSetLocale } from '@vee-validate/i18n';
 import de from '@vee-validate/i18n/dist/locale/de.json';
 import en from '@vee-validate/i18n/dist/locale/en.json';
+import { UpdateIcon } from 'mdi-vue3';
 import { configure } from 'vee-validate';
 import { useClipboardStore } from '~/store/clipboard';
 import { useConfigStore } from '~/store/config';
 import { useDocumentEditorStore } from '~/store/documenteditor';
 import { useNotificationsStore } from '~/store/notifications';
 import { useSettingsStore } from '~/store/settings';
+import ConfirmDialog from './components/partials/ConfirmDialog.vue';
 
 const { t, setLocale, finalizePendingLocaleChange } = useI18n();
 
 const configStore = useConfigStore();
 const { loadConfig } = configStore;
+const { clientConfig, updateAvailable } = storeToRefs(configStore);
 
 const route = useRoute();
 
@@ -38,6 +41,9 @@ useSeoMeta({
 
 await loadConfig();
 
+// Reset update available status
+if (updateAvailable?.value !== undefined) updateAvailable.value = undefined;
+
 const userSettings = useSettingsStore();
 if (__APP_VERSION__ != userSettings.getVersion) {
     console.info('Resetting app data because new version has been detected', userSettings.getVersion, __APP_VERSION__);
@@ -45,9 +51,6 @@ if (__APP_VERSION__ != userSettings.getVersion) {
     useDocumentEditorStore().$reset();
     useNotificationsStore().$reset();
     userSettings.setVersion(__APP_VERSION__);
-
-    // Reload page
-    location.reload();
 }
 
 // Set user setting locale on load of app
@@ -75,6 +78,15 @@ switch (userSettings.locale.split('-', 1)[0]) {
 async function onBeforeEnter(): Promise<void> {
     await finalizePendingLocaleChange();
 }
+
+const open = ref(false);
+
+function triggerUpdate(): void {
+    if (updateAvailable === undefined) return;
+    updateAvailable.value = undefined;
+
+    location.reload();
+}
 </script>
 
 <template>
@@ -88,9 +100,18 @@ async function onBeforeEnter(): Promise<void> {
         />
     </NuxtLayout>
     <CookieControl
-        v-if="
-            !configStore.clientConfig.NUIEnabled && route.meta.showCookieOptions !== undefined && route.meta.showCookieOptions
-        "
+        v-if="!clientConfig.NUIEnabled && route.meta.showCookieOptions !== undefined && route.meta.showCookieOptions"
         :locale="cookieLocale"
+    />
+
+    <ConfirmDialog
+        v-if="updateAvailable !== undefined"
+        :open="open"
+        @close="open = false"
+        :cancel="() => (open = false)"
+        :confirm="triggerUpdate"
+        :title="$t('system.update_available.title')"
+        :description="$t('system.update_available.content')"
+        :icon="UpdateIcon"
     />
 </template>
