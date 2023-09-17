@@ -180,7 +180,7 @@ const open = ref(false);
     <Livemap>
         <template v-slot:default v-if="canStream">
             <DispatchesLayer :show-all-dispatches="settings.mode === CENTRUM_MODE.SIMPLIFIED" @goto="$emit('goto', $event)" />
-            <LControl position="topright">
+            <LControl position="bottomright">
                 <button
                     type="button"
                     class="w-30 h-30 rounded-md bg-white text-black border-2 border-black/20 bg-clip-padding hover:bg-[#f4f4f4] focus:outline-none inset-0"
@@ -369,7 +369,12 @@ const open = ref(false);
                                             </button>
                                         </li>
                                         <template v-else>
-                                            <DispatchEntry v-for="id in ownDispatches" :dispatch="dispatches.get(id)!" />
+                                            <DispatchEntry
+                                                v-for="id in ownDispatches"
+                                                :dispatch="dispatches.get(id)!"
+                                                @goto="$emit('goto', $event)"
+                                                v-model:selected-dispatch="selectedDispatch"
+                                            />
                                         </template>
                                     </ul>
                                 </li>

@@ -1,30 +1,32 @@
 <script lang="ts" setup>
 import { CarEmergencyIcon } from 'mdi-vue3';
 import { default as DispatchDetails } from '~/components/centrum/dispatches/Details.vue';
-import { default as DispatchStatusUpdateModal } from '~/components/centrum/dispatches/StatusUpdateModal.vue';
 import { DISPATCH_STATUS, Dispatch } from '~~/gen/ts/resources/dispatch/dispatches';
 
 defineProps<{
     dispatch: Dispatch;
+    selectedDispatch: bigint | undefined;
+}>();
+
+defineEmits<{
+    (e: 'goto', loc: Coordinate): void;
+    (e: 'update:selectedDispatch', dsp: bigint | undefined): void;
 }>();
 
 const openDetails = ref(false);
-const openStatus = ref(false);
-const selectedDispatch = ref();
 </script>
 
 <template>
     <li class="flex flex-row items-center">
         <DispatchDetails :dispatch="dispatch" :open="openDetails" @close="openDetails = false" @goto="$emit('goto', $event)" />
-        <DispatchStatusUpdateModal :dispatch="dispatch" :open="openStatus" @close="openStatus = false" />
 
         <div class="mr-1.5">
             <input
                 name="active"
                 type="radio"
                 class="h-4 w-4 border-gray-300 text-primary-600 focus:ring-primary-600"
-                v-model="selectedDispatch"
                 v-bind:value="dispatch.id"
+                @change="$emit('update:selectedDispatch', dispatch.id)"
             />
         </div>
         <button

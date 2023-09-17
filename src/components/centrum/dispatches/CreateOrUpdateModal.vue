@@ -31,7 +31,7 @@ async function createDispatch(values: FormData): Promise<void> {
                     job: '',
                     message: values.message,
                     description: values.description,
-                    anon: values.anon,
+                    anon: values.anon ?? false,
                     attributes: {
                         list: [],
                     },
