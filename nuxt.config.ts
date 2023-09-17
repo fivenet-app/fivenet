@@ -100,7 +100,7 @@ const config = defineNuxtConfig({
     },
     vite: {
         define: {
-            __APP_VERSION__: `"${version}-${commit}"`,
+            __APP_VERSION__: `"${commit}"`,
         },
         build: {
             commonjsOptions: {

@@ -3,9 +3,12 @@ import { KeyIcon } from 'mdi-vue3';
 import Time from '~/components/partials/elements/Time.vue';
 import { useAuthStore } from '~/store/auth';
 import { useClipboardStore } from '~/store/clipboard';
+import { useSettingsStore } from '~/store/settings';
 
 const authStore = useAuthStore();
 const clipboardStore = useClipboardStore();
+
+const settings = useSettingsStore();
 
 const { activeChar, permissions, getAccessTokenExpiration } = storeToRefs(authStore);
 const { clearAuthInfo } = authStore;
@@ -31,6 +34,14 @@ async function resetLocalStorage(): Promise<void> {
         </div>
         <div class="border-t border-base-400 px-4 py-5 sm:p-0">
             <dl class="sm:divide-y sm:divide-base-400">
+                <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
+                    <dt class="text-sm font-medium">
+                        {{ $t('components.debug_info.version') }}
+                    </dt>
+                    <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
+                        {{ settings.getVersion }}
+                    </dd>
+                </div>
                 <div v-if="activeChar" class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
                     <dt class="text-sm font-medium">
                         {{ $t('components.debug_info.active_char_id') }}
