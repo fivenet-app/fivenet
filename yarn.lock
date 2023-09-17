@@ -1125,7 +1125,7 @@
     unimport "^3.3.0"
     untyped "^1.4.0"
 
-"@nuxt/kit@3.7.3", "@nuxt/kit@^3.0.0", "@nuxt/kit@^3.2.3", "@nuxt/kit@^3.5.0", "@nuxt/kit@^3.5.3", "@nuxt/kit@^3.6.5", "@nuxt/kit@^3.7.0", "@nuxt/kit@^3.7.1":
+"@nuxt/kit@3.7.3", "@nuxt/kit@^3.0.0", "@nuxt/kit@^3.1.0", "@nuxt/kit@^3.2.3", "@nuxt/kit@^3.5.0", "@nuxt/kit@^3.5.3", "@nuxt/kit@^3.6.5", "@nuxt/kit@^3.7.0", "@nuxt/kit@^3.7.1":
   version "3.7.3"
   resolved "https://registry.yarnpkg.com/@nuxt/kit/-/kit-3.7.3.tgz#24a32bdf2eaa3f8f6c81079fb2a3543980b55d26"
   integrity sha512-bhP02i6CNti15Z4ix3LpR3fd1ANtTcpfS3CDSaCja24hDt3UxIasyp52mqD9LRC+OxrUVHJziB18EwUtS6RLDQ==
@@ -3486,7 +3486,7 @@ defu@^3.2.2:
   resolved "https://registry.yarnpkg.com/defu/-/defu-3.2.2.tgz#be20f4cc49b9805d54ee6b610658d53894942e97"
   integrity sha512-8UWj5lNv7HD+kB0e9w77Z7TdQlbUYDVWqITLHNqFIn6khrNHv5WQo38Dcm1f6HeNyZf0U7UbPf6WeZDSdCzGDQ==
 
-defu@^6.0.0, defu@^6.1.2:
+defu@^6, defu@^6.0.0, defu@^6.1.2:
   version "6.1.2"
   resolved "https://registry.yarnpkg.com/defu/-/defu-6.1.2.tgz#1217cba167410a1765ba93893c6dbac9ed9d9e5c"
   integrity sha512-+uO4+qr7msjNNWKYPHqN/3+Dx3NFkmIzayk2L1MyZQlvgZb/J1A0fo410dpKrN2SnqFjt8n4JL8fDJE0wIgjFQ==
@@ -6006,6 +6006,11 @@ minizlib@^2.1.1, minizlib@^2.1.2:
     minipass "^3.0.0"
     yallist "^4.0.0"
 
+mitt@^3.0.0:
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/mitt/-/mitt-3.0.1.tgz#ea36cf0cc30403601ae074c8f77b7092cdab36d1"
+  integrity sha512-vKivATfr97l2/QBCYAkXYDbrIWPM2IIKEl7YPhjCvKlG3kE2gm+uBo6nEXK3M5/Ffh/FLpKExzOQ3JJoJGFKBw==
+
 mkdirp@^0.5.6:
   version "0.5.6"
   resolved "https://registry.yarnpkg.com/mkdirp/-/mkdirp-0.5.6.tgz#7def03d2432dcae4ba1d611445c48396062255f6"
@@ -6409,6 +6414,15 @@ nuxt-typed-router@^3.3.1:
     mkdirp "^3.0.1"
     nanoid "^4.0.2"
     pathe "1.1.1"
+
+nuxt-update@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/nuxt-update/-/nuxt-update-1.0.0.tgz#10cde6e065fc67166fcf4ccfce4df17f92e7ac03"
+  integrity sha512-MZqBOJAWSGFhJCanXqPjMf6YHdv/EuKPs5FYzjo8QQ/HXJ37+1Eko4NQ+abiWejaQAZMpRZI6A85oEaHzKQddQ==
+  dependencies:
+    "@nuxt/kit" "^3.1.0"
+    defu "^6"
+    mitt "^3.0.0"
 
 nuxt@^3.7.3:
   version "3.7.3"

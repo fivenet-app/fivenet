@@ -8,17 +8,7 @@ type PackageJson = {
 
 const packageJson = fs.readFileSync('./package.json');
 const version: string = (JSON.parse(packageJson.toString()) as PackageJson).version || '0.0.0';
-
-const project = {
-    name: 'FiveNet',
-    shortName: 'FiveNet',
-    description:
-        "From searching the state's citizen and vehicles database, filling documents for investigations, court, and a livemap of your colleagues and dispatches. All that and more is (mostly) ready in this net, the FiveNet.",
-    colors: {
-        background: '#16171a',
-        themeColor: '#1f236e',
-    },
-};
+const commit: string = process.env.COMMIT_REF || 'COMMIT_REF';
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 const config = defineNuxtConfig({
@@ -27,6 +17,7 @@ const config = defineNuxtConfig({
     ssr: false,
     modules: [
         '@nuxt/devtools',
+        'nuxt-update',
         '@pinia/nuxt',
         '@pinia-plugin-persistedstate/nuxt',
         'nuxt-typed-router',
@@ -109,7 +100,7 @@ const config = defineNuxtConfig({
     },
     vite: {
         define: {
-            __APP_VERSION__: '"' + version + '"',
+            __APP_VERSION__: `"${version}-${commit}"`,
         },
         build: {
             commonjsOptions: {
@@ -209,6 +200,11 @@ const config = defineNuxtConfig({
                 },
             ],
         },
+    },
+    update: {
+        version: `"${version}-${commit}"`,
+        checkInterval: 120,
+        path: '/api/version',
     },
 });
 

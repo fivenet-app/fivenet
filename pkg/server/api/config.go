@@ -20,3 +20,7 @@ type ProviderConfig struct {
 type Discord struct {
 	BotInviteURL string `json:"botInviteURL"`
 }
+
+type Version struct {
+	Version string `json:"version"`
+}

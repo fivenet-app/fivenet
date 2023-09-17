@@ -31,7 +31,7 @@ func New(logger *zap.Logger, cfg *config.Config) *Routes {
 	if !ok {
 		version = "UNKNOWN"
 	} else {
-		version = buildInfo.Main.Version
+		version = buildInfo.Main.Version + buildInfo.Main.Sum
 	}
 
 	clientCfg := &ClientConfig{
@@ -72,6 +72,12 @@ func (r *Routes) Register(e *gin.Engine, oa2 *oauth2.OAuth2) {
 		g.GET("/clear-site-data", func(c *gin.Context) {
 			c.Header("Clear-Site-Data", "\"cache\", \"cookies\", \"storage\"")
 			c.String(http.StatusOK, "Your local site data should be cleared now, please go back to the FiveNet homepage yourself.")
+		})
+
+		g.GET("/version", func(c *gin.Context) {
+			c.JSON(http.StatusOK, Version{
+				Version: r.clientCfg.Version,
+			})
 		})
 	}
 
