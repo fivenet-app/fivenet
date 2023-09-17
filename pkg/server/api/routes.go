@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"net/http"
 	"runtime/debug"
 
@@ -31,7 +32,16 @@ func New(logger *zap.Logger, cfg *config.Config) *Routes {
 	if !ok {
 		version = "UNKNOWN"
 	} else {
-		version = buildInfo.Main.Version + buildInfo.Main.Sum
+		var commit string
+
+		for _, setting := range buildInfo.Settings {
+			if setting.Key == "vcs.revision" {
+				commit = setting.Value
+				break
+			}
+		}
+
+		version = fmt.Sprintf("%s-%s", buildInfo.Main.Version, commit)
 	}
 
 	clientCfg := &ClientConfig{
