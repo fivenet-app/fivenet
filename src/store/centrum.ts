@@ -310,6 +310,8 @@ export const useCentrumStore = defineStore('centrum', {
                                 type: 'success',
                             });
                         } else {
+                            if (this.ownUnitId === undefined) return;
+
                             // User has been removed from the unit
                             this.setOwnUnit(undefined);
                             this.ownDispatches.length = 0;
