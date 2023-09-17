@@ -56,7 +56,11 @@ function goto(e: Coordinate) {
                 <div class="basis-11/12">
                     <Livemap>
                         <template v-slot:default>
-                            <DispatchesLayer :show-all-dispatches="true" @goto="goto($event)" />
+                            <DispatchesLayer
+                                v-if="can('CentrumService.Stream')"
+                                :show-all-dispatches="true"
+                                @goto="goto($event)"
+                            />
                         </template>
                     </Livemap>
                 </div>

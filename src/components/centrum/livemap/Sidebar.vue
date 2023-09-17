@@ -72,12 +72,7 @@ const actionsDispatch: {
     { icon: markRaw(ListStatusIcon), name: 'components.centrum.update_dispatch_status.title', class: 'bg-base-800' },
 ];
 
-onBeforeMount(async () => setTimeout(async () => startStream(), 250));
-
-onBeforeUnmount(async () => {
-    stopStream();
-    centrumStore.$reset();
-});
+const canStream = can('CentrumService.Stream');
 
 const selectUnitOpen = ref(false);
 
@@ -87,8 +82,6 @@ const openTakeDispatch = ref(false);
 
 const openUnitDetails = ref(false);
 const openUnitStatus = ref(false);
-
-const canStream = can('CentrumService.Stream');
 
 async function updateDispatchStatus(dispatchId: bigint, status: DISPATCH_STATUS): Promise<void> {
     return new Promise(async (res, rej) => {
@@ -172,6 +165,14 @@ watch(ownUnitId, () => {
         open.value = false;
     }
 });
+
+onBeforeMount(async () => setTimeout(async () => canStream && startStream(), 250));
+
+onBeforeUnmount(async () => {
+    stopStream();
+    centrumStore.$reset();
+});
+
 const open = ref(false);
 </script>
 

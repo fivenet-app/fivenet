@@ -108,7 +108,10 @@ async function applySelectedMarkerCentering(): Promise<void> {
                     </div>
                 </LControl>
 
-                <PlayerAndMarkersLayer @user-selected="selectedUserMarker = $event.info" />
+                <PlayerAndMarkersLayer
+                    v-if="can('LivemapperService.Stream')"
+                    @user-selected="selectedUserMarker = $event.info"
+                />
 
                 <slot />
 
