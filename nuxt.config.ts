@@ -206,6 +206,9 @@ const config = defineNuxtConfig({
         checkInterval: 120,
         path: '/api/version',
     },
+    experimental: {
+        emitRouteChunkError: 'automatic',
+    },
 });
 
 export default config;
