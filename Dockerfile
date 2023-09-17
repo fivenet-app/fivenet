@@ -3,12 +3,14 @@ FROM docker.io/library/node:19.9.0-alpine3.17 AS nodebuilder
 WORKDIR /app
 COPY . ./
 RUN rm -rf ./.nuxt/ && \
+    apk add --no-cache git && \
     yarn && yarn generate
 
 FROM docker.io/library/golang:1.21 AS gobuilder
 WORKDIR /go/src/github.com/galexrt/fivenet/
 COPY . ./
-RUN make build-go
+RUN apk --no-cache add git && \
+    make build-go
 
 FROM docker.io/library/alpine:3.18.3
 WORKDIR /app

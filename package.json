@@ -4,11 +4,11 @@
     "version": "0.8.1",
     "type": "module",
     "scripts": {
-        "build": "COMMIT_REF=$(git rev-parse --short HEAD) yarn nuxi build",
-        "dev": "COMMIT_REF=$(git rev-parse --short HEAD) yarn nuxi dev",
-        "generate": "COMMIT_REF=$(git rev-parse --short HEAD) yarn nuxi generate",
-        "preview": "COMMIT_REF=$(git rev-parse --short HEAD) yarn nuxi preview",
-        "postinstall": "COMMIT_REF=$(git rev-parse --short HEAD) yarn nuxi prepare",
+        "build": "COMMIT_REF=$(git rev-parse HEAD) yarn nuxi build",
+        "dev": "COMMIT_REF=$(git rev-parse HEAD) yarn nuxi dev",
+        "generate": "COMMIT_REF=$(git rev-parse HEAD) yarn nuxi generate",
+        "preview": "COMMIT_REF=$(git rev-parse HEAD) yarn nuxi preview",
+        "postinstall": "COMMIT_REF=$(git rev-parse HEAD) yarn nuxi prepare",
         "pretty": "yarn prettier --write ./src/",
         "analyze": "yarn nuxi analyze"
     },
