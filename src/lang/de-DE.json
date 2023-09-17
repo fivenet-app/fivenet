@@ -1391,5 +1391,11 @@
                 "label": "Seiten"
             }
         }
+    },
+    "system": {
+        "update_available": {
+            "title": "Neue FiveNet Version verfügbar ({0})!",
+            "content": "Um das FiveNet weiter nutzen zu können, müssen Sie die Seite neu laden, wenn Sie dazu gerade in der Lage sind."
+        }
     }
 }
