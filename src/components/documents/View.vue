@@ -142,8 +142,8 @@ onConfirm(async (id: bigint) => deleteDocument(id));
 #editor .ql-toolbar {
     display: none;
 }
-.ql-hidden {
-    display: none;
+#editor .ql-editor {
+    min-height: 100% !important;
 }
 </style>
 

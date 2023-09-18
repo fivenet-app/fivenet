@@ -303,7 +303,7 @@ function removeRelation(id: bigint): void {
                                                     <div class="inline-block min-w-full py-2 align-middle">
                                                         <DataNoDataBlock
                                                             v-if="clipboardStore.$state.users.length === 0"
-                                                            :type="t('common.citizen', 2)"
+                                                            :type="$t('common.citizen', 2)"
                                                             :icon="AccountMultipleIcon"
                                                         />
                                                         <table v-else class="min-w-full divide-y divide-base-200">

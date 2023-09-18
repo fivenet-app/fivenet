@@ -2,6 +2,7 @@
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { max, min, required } from '@vee-validate/rules';
+import { useThrottleFn } from '@vueuse/core';
 import { KeyIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import PasswordStrengthMeter from '~/components/auth/PasswordStrengthMeter.vue';
@@ -66,7 +67,15 @@ const { handleSubmit, meta } = useForm<FormData>({
     },
 });
 
-const onSubmit = handleSubmit(async (values): Promise<void> => await changePassword(values));
+const canSubmit = ref(true);
+const onSubmit = handleSubmit(
+    async (values): Promise<void> =>
+        await changePassword(values).finally(() => setTimeout(() => (canSubmit.value = true), 350)),
+);
+const onSubmitThrottle = useThrottleFn((e) => {
+    canSubmit.value = false;
+    onSubmit(e);
+}, 1000);
 </script>
 
 <template>
@@ -107,7 +116,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await changePassw
                                         Change Password
                                     </DialogTitle>
                                     <div class="mt-2">
-                                        <form @submit="onSubmit" class="my-2 space-y-6">
+                                        <form @submit.prevent="onSubmitThrottle" class="my-2 space-y-6">
                                             <div>
                                                 <label for="currentPassword" class="sr-only">Password</label>
                                                 <div>
@@ -153,9 +162,9 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await changePassw
                                                 <button
                                                     type="submit"
                                                     class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                                                    :disabled="!meta.valid"
+                                                    :disabled="!meta.valid || !canSubmit"
                                                     :class="[
-                                                        !meta.valid
+                                                        !meta.valid || !canSubmit
                                                             ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
                                                             : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
                                                     ]"

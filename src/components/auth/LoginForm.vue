@@ -1,48 +1,19 @@
 <script lang="ts" setup>
-import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { alpha_dash, max, min, required } from '@vee-validate/rules';
+import { useThrottleFn } from '@vueuse/core';
 import { defineRule } from 'vee-validate';
 import Alert from '~/components/partials/elements/Alert.vue';
 import { useAuthStore } from '~/store/auth';
 import { useConfigStore } from '~/store/config';
 
-const { $grpc } = useNuxtApp();
-
 const authStore = useAuthStore();
 const { loginError } = storeToRefs(authStore);
-const { loginStart, loginStop, setActiveChar, setPermissions, setAccessToken } = authStore;
+const { doLogin } = authStore;
 
 const configStore = useConfigStore();
 const { appConfig, clientConfig } = storeToRefs(configStore);
 
 const { cookiesEnabledIds } = useCookieControl();
-
-async function login(values: FormData): Promise<void> {
-    return new Promise(async (res, rej) => {
-        // Start login
-        loginStart();
-        setActiveChar(null);
-        setPermissions([]);
-
-        try {
-            const call = $grpc.getUnAuthClient().login({
-                username: values.username,
-                password: values.password,
-            });
-            const { response } = await call;
-
-            loginStop(null);
-            setAccessToken(response.token, toDate(response.expires) as null | Date);
-
-            return res();
-        } catch (e) {
-            loginStop((e as RpcError).message);
-            setAccessToken(null, null);
-            $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
-        }
-    });
-}
 
 defineRule('required', required);
 defineRule('min', min);
@@ -50,7 +21,6 @@ defineRule('max', max);
 defineRule('alpha_dash', alpha_dash);
 
 interface FormData {
-    registrationToken: number;
     username: string;
     password: string;
 }
@@ -62,7 +32,15 @@ const { handleSubmit, meta } = useForm<FormData>({
     },
 });
 
-const onSubmit = handleSubmit(async (values): Promise<void> => await login(values));
+const canSubmit = ref(true);
+const onSubmit = handleSubmit(
+    async (values): Promise<void> =>
+        await doLogin(values.username, values.password).finally(() => setTimeout(() => (canSubmit.value = true), 350)),
+);
+const onSubmitThrottle = useThrottleFn((e) => {
+    canSubmit.value = false;
+    onSubmit(e);
+}, 1000);
 
 const socialLoginEnabled = ref(false);
 if (clientConfig.value.NUIEnabled) {
@@ -89,7 +67,7 @@ watch(
         {{ $t('components.auth.login.title') }}
     </h2>
 
-    <form @submit="onSubmit" class="my-2 space-y-6">
+    <form @submit.prevent="onSubmitThrottle" class="my-2 space-y-6">
         <div>
             <label for="username" class="sr-only">
                 {{ $t('common.username') }}
@@ -127,9 +105,9 @@ watch(
             <button
                 type="submit"
                 class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                :disabled="!meta.valid"
+                :disabled="!meta.valid || !canSubmit"
                 :class="[
-                    !meta.valid
+                    !meta.valid || !canSubmit
                         ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
                         : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
                 ]"

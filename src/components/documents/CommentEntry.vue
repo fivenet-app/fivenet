@@ -1,7 +1,9 @@
 <script lang="ts" setup>
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
-import { useConfirmDialog } from '@vueuse/core';
+import { max, min, required } from '@vee-validate/rules';
+import { useConfirmDialog, useThrottleFn } from '@vueuse/core';
 import { PencilIcon, TrashCanIcon } from 'mdi-vue3';
+import { defineRule } from 'vee-validate';
 import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
 import { useAuthStore } from '~/store/auth';
 import { Comment } from '~~/gen/ts/resources/documents/comment';
@@ -21,14 +23,13 @@ const props = defineProps<{
 }>();
 
 const editing = ref(false);
-const message = ref(props.comment.comment);
 
-async function editComment(): Promise<void> {
+async function editComment(documentId: bigint, commentId: bigint, values: FormData): Promise<void> {
     return new Promise(async (res, rej) => {
         const comment: Comment = {
-            id: props.comment.id,
-            documentId: props.comment.documentId,
-            comment: message.value,
+            id: commentId,
+            documentId: documentId,
+            comment: values.comment,
         };
 
         try {
@@ -37,7 +38,9 @@ async function editComment(): Promise<void> {
             });
 
             editing.value = false;
-            props.comment.comment = message.value;
+            props.comment.comment = values.comment;
+
+            resetForm();
 
             return res();
         } catch (e) {
@@ -67,6 +70,32 @@ async function deleteComment(id: bigint): Promise<void> {
 const { isRevealed, reveal, confirm, cancel, onConfirm } = useConfirmDialog();
 
 onConfirm(async (id) => deleteComment(id));
+
+defineRule('required', required);
+defineRule('min', min);
+defineRule('max', max);
+
+interface FormData {
+    comment: string;
+}
+
+const { handleSubmit, meta, resetForm } = useForm<FormData>({
+    validationSchema: {
+        comment: { required: true, min: 3, max: 1536 },
+    },
+});
+
+const canSubmit = ref(true);
+const onSubmit = handleSubmit(
+    async (values): Promise<void> =>
+        await editComment(props.comment.documentId, props.comment.id, values).finally(() =>
+            setTimeout(() => (canSubmit.value = true), 350),
+        ),
+);
+const onSubmitThrottle = useThrottleFn((e) => {
+    canSubmit.value = false;
+    onSubmit(e);
+}, 1000);
 </script>
 
 <template>
@@ -100,19 +129,21 @@ onConfirm(async (id) => deleteComment(id));
         </div>
         <div v-else v-if="can('DocStoreService.PostComment')" class="flex items-start space-x-4">
             <div class="min-w-0 flex-1">
-                <form @submit.prevent="editComment" class="relative">
+                <form @submit.prevent="onSubmitThrottle" class="relative">
                     <div
                         class="overflow-hidden rounded-lg shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-primary-600"
                     >
                         <label for="comment" class="sr-only">
                             {{ $t('components.documents.document_comment_entry.edit_comment') }}
                         </label>
-                        <textarea
+                        <VeeField
+                            as="textarea"
                             rows="3"
                             name="comment"
-                            class="block w-full resize-none border-0 bg-transparent text-gray-50 placeholder:text-gray-400 focus:ring-0 sm:py-1.5 sm:text-sm sm:leading-6"
-                            v-model="message"
+                            :label="$t('common.comment')"
                             :placeholder="$t('components.documents.document_comment_entry.edit_comment')"
+                            class="block w-full resize-none border-0 bg-transparent text-gray-50 placeholder:text-gray-400 focus:ring-0 sm:py-1.5 sm:text-sm sm:leading-6"
+                            ref="commentInput"
                         />
 
                         <!-- Spacer element to match the height of the toolbar -->
@@ -120,6 +151,9 @@ onConfirm(async (id) => deleteComment(id));
                             <!-- Matches height of button in toolbar (1px border + 36px content height) -->
                             <div class="py-px">
                                 <div class="h-9" />
+                                <div class="ml-2">
+                                    <VeeErrorMessage name="comment" as="p" class="mt-2 text-sm text-error-400" />
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -129,7 +163,13 @@ onConfirm(async (id) => deleteComment(id));
                         <div class="flex-shrink-0">
                             <button
                                 type="submit"
-                                class="inline-flex items-center rounded-md bg-primary-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+                                class="inline-flex items-center rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                                :disabled="!meta.valid || !canSubmit"
+                                :class="[
+                                    !meta.valid || !canSubmit
+                                        ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
+                                        : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
+                                ]"
                             >
                                 {{ $t('common.edit') }}
                             </button>

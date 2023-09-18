@@ -1,6 +1,8 @@
+import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { StoreDefinition, defineStore } from 'pinia';
 import { JobProps } from '~~/gen/ts/resources/users/jobs';
 import { User } from '~~/gen/ts/resources/users/users';
+import { useNotificationsStore } from './notifications';
 
 export type JobPropsState = {
     quickButtons: String[];
@@ -71,6 +73,57 @@ export const useAuthStore = defineStore('auth', {
             this.setActiveChar(null);
             this.setPermissions([]);
             this.setJobProps(null);
+        },
+
+        // GRPC Calls
+        async doLogin(username: string, password: string): Promise<void> {
+            return new Promise(async (res, rej) => {
+                // Start login
+                this.loginStart();
+                this.setActiveChar(null);
+                this.setPermissions([]);
+
+                const { $grpc } = useNuxtApp();
+                try {
+                    const call = $grpc.getUnAuthClient().login({
+                        username: username,
+                        password: password,
+                    });
+                    const { response } = await call;
+
+                    this.loginStop(null);
+                    this.setAccessToken(response.token, toDate(response.expires) as null | Date);
+
+                    return res();
+                } catch (e) {
+                    this.loginStop((e as RpcError).message);
+                    this.setAccessToken(null, null);
+                    $grpc.handleError(e as RpcError);
+                    return rej(e as RpcError);
+                }
+            });
+        },
+        async doLogout(): Promise<void> {
+            return new Promise(async (res, rej) => {
+                const { $grpc } = useNuxtApp();
+                try {
+                    await $grpc.getAuthClient().logout({});
+                    this.clearAuthInfo();
+
+                    return res();
+                } catch (e) {
+                    $grpc.handleError(e as RpcError);
+
+                    useNotificationsStore().dispatchNotification({
+                        title: { key: 'notifications.auth.error_logout.title', parameters: [] },
+                        content: { key: 'notifications.auth.error_logout.content', parameters: [(e as RpcError).message] },
+                        type: 'error',
+                    });
+                    this.clearAuthInfo();
+
+                    return rej(e as RpcError);
+                }
+            });
         },
     },
     getters: {

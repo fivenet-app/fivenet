@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { alpha_dash, digits, max, min, required } from '@vee-validate/rules';
+import { useThrottleFn } from '@vueuse/core';
 import { defineRule } from 'vee-validate';
 import PasswordStrengthMeter from '~/components/auth/PasswordStrengthMeter.vue';
 import Alert from '~/components/partials/elements/Alert.vue';
@@ -61,7 +62,14 @@ const { handleSubmit, meta } = useForm<FormData>({
     },
 });
 
-const onSubmit = handleSubmit(async (values): Promise<void> => await createAccount(values));
+const canSubmit = ref(true);
+const onSubmit = handleSubmit(
+    async (values): Promise<void> => await createAccount(values).finally(() => setTimeout(() => (canSubmit.value = true), 350)),
+);
+const onSubmitThrottle = useThrottleFn((e) => {
+    canSubmit.value = false;
+    onSubmit(e);
+}, 1000);
 </script>
 
 <template>
@@ -73,7 +81,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await createAccou
         {{ $t('components.auth.create_account.subtitle') }}
     </p>
 
-    <form @submit="onSubmit" class="my-2 space-y-6">
+    <form @submit.prevent="onSubmitThrottle" class="my-2 space-y-6">
         <div>
             <label for="registrationToken" class="sr-only">
                 {{ $t('components.auth.create_account.registration_token') }}
@@ -132,9 +140,9 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await createAccou
             <button
                 type="submit"
                 class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                :disabled="!meta.valid"
+                :disabled="!meta.valid || !canSubmit"
                 :class="[
-                    !meta.valid
+                    !meta.valid || !canSubmit
                         ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
                         : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
                 ]"

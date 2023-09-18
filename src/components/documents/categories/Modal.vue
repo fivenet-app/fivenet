@@ -2,6 +2,7 @@
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { max, min, required } from '@vee-validate/rules';
+import { useThrottleFn } from '@vueuse/core';
 import { defineRule } from 'vee-validate';
 import { useNotificationsStore } from '~/store/notifications';
 import { Category } from '~~/gen/ts/resources/documents/category';
@@ -83,7 +84,15 @@ const { handleSubmit, meta } = useForm<FormData>({
     },
 });
 
-const onSubmit = handleSubmit(async (values): Promise<void> => await updateCategory(values));
+const canSubmit = ref(true);
+const onSubmit = handleSubmit(
+    async (values): Promise<void> =>
+        await updateCategory(values).finally(() => setTimeout(() => (canSubmit.value = true), 350)),
+);
+const onSubmitThrottle = useThrottleFn((e) => {
+    canSubmit.value = false;
+    onSubmit(e);
+}, 1000);
 </script>
 
 <template>
@@ -130,7 +139,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await updateCateg
                                             </DialogTitle>
                                             <div class="mt-2">
                                                 <div class="sm:flex-auto">
-                                                    <form @submit="onSubmit">
+                                                    <form @submit.prevent="onSubmitThrottle">
                                                         <div class="flex flex-row gap-4 mx-auto">
                                                             <div class="flex-1 form-control">
                                                                 <label
@@ -181,7 +190,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await updateCateg
                                                                     <button
                                                                         type="submit"
                                                                         class="block w-full rounded-md border-0 py-1.5 pr-14 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                                        :disabled="!meta.valid"
+                                                                        :disabled="!meta.valid || !canSubmit"
                                                                         :class="[
                                                                             !meta.valid
                                                                                 ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'

@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
+import { max, min, required } from '@vee-validate/rules';
+import { useThrottleFn } from '@vueuse/core';
 import { CommentTextMultipleIcon } from 'mdi-vue3';
+import { defineRule } from 'vee-validate';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import TablePagination from '~/components/partials/elements/TablePagination.vue';
 import { useAuthStore } from '~/store/auth';
@@ -62,9 +65,7 @@ async function getComments(): Promise<Comment[]> {
     });
 }
 
-const message = ref('');
-
-async function addComment(): Promise<void> {
+async function addComment(documentId: bigint, values: FormData): Promise<void> {
     return new Promise(async (res, rej) => {
         if (!comments.value) {
             return res();
@@ -72,8 +73,8 @@ async function addComment(): Promise<void> {
 
         const comment: Comment = {
             id: 0n,
-            documentId: props.documentId,
-            comment: message.value,
+            documentId: documentId,
+            comment: values.comment,
         };
 
         try {
@@ -86,6 +87,8 @@ async function addComment(): Promise<void> {
             comment.creator = activeChar.value!;
 
             comments.value.unshift(comment);
+
+            resetForm();
 
             return res();
         } catch (e) {
@@ -126,6 +129,30 @@ function focusComment(): void {
 }
 
 watch(offset, async () => refresh());
+
+defineRule('required', required);
+defineRule('min', min);
+defineRule('max', max);
+
+interface FormData {
+    comment: string;
+}
+
+const { handleSubmit, meta, resetForm } = useForm<FormData>({
+    validationSchema: {
+        comment: { required: true, min: 3, max: 1536 },
+    },
+});
+
+const canSubmit = ref(true);
+const onSubmit = handleSubmit(
+    async (values): Promise<void> =>
+        await addComment(props.documentId, values).finally(() => setTimeout(() => (canSubmit.value = true), 350)),
+);
+const onSubmitThrottle = useThrottleFn((e) => {
+    canSubmit.value = false;
+    onSubmit(e);
+}, 1000);
 </script>
 
 <template>
@@ -133,20 +160,21 @@ watch(offset, async () => refresh());
         <div v-if="can('DocStoreService.PostComment')">
             <div v-if="!closed" class="flex items-start space-x-4">
                 <div class="min-w-0 flex-1">
-                    <form @submit.prevent="addComment()" class="relative">
+                    <form @submit.prevent="onSubmitThrottle" class="relative">
                         <div
                             class="overflow-hidden rounded-lg shadow-sm ring-1 ring-inset ring-gray-500 focus-within:ring-2 focus-within:ring-primary-600"
                         >
                             <label for="comment" class="sr-only">
                                 {{ $t('components.documents.document_comments.add_comment') }}
                             </label>
-                            <textarea
+                            <VeeField
+                                as="textarea"
                                 rows="3"
                                 name="comment"
+                                :label="$t('common.comment')"
+                                :placeholder="$t('components.documents.document_comments.add_comment')"
                                 class="block w-full resize-none border-0 bg-transparent text-gray-50 placeholder:text-gray-400 focus:ring-0 sm:py-1.5 sm:text-sm sm:leading-6"
                                 ref="commentInput"
-                                v-model="message"
-                                :placeholder="$t('components.documents.document_comments.add_comment')"
                             />
 
                             <!-- Spacer element to match the height of the toolbar -->
@@ -154,6 +182,9 @@ watch(offset, async () => refresh());
                                 <!-- Matches height of button in toolbar (1px border + 36px content height) -->
                                 <div class="py-px">
                                     <div class="h-9" />
+                                    <div class="ml-2">
+                                        <VeeErrorMessage name="comment" as="p" class="mt-2 text-sm text-error-400" />
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -163,7 +194,13 @@ watch(offset, async () => refresh());
                             <div class="flex-shrink-0">
                                 <button
                                     type="submit"
-                                    class="inline-flex items-center rounded-md bg-primary-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+                                    class="inline-flex items-center rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                                    :disabled="!meta.valid || !canSubmit"
+                                    :class="[
+                                        !meta.valid || !canSubmit
+                                            ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
+                                            : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
+                                    ]"
                                 >
                                     {{ $t('common.post') }}
                                 </button>

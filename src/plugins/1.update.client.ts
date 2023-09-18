@@ -12,7 +12,7 @@ export default defineNuxtPlugin(() => {
             'app version',
             __APP_VERSION__,
             'settings store version',
-            settings.getVersion,
+            settings.version,
         );
         const config = useConfigStore();
         config.updateAvailable = version;

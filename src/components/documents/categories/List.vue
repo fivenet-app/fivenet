@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { max, min, required } from '@vee-validate/rules';
+import { useThrottleFn } from '@vueuse/core';
 import { defineRule } from 'vee-validate';
 import Cards from '~/components/partials/Cards.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
@@ -83,7 +84,15 @@ const { handleSubmit, meta } = useForm<FormData>({
     },
 });
 
-const onSubmit = handleSubmit(async (values): Promise<void> => await createCategory(values));
+const canSubmit = ref(true);
+const onSubmit = handleSubmit(
+    async (values): Promise<void> =>
+        await createCategory(values).finally(() => setTimeout(() => (canSubmit.value = true), 350)),
+);
+const onSubmitThrottle = useThrottleFn((e) => {
+    canSubmit.value = false;
+    onSubmit(e);
+}, 1000);
 </script>
 
 <template>
@@ -93,7 +102,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await createCateg
             <div class="px-1 sm:px-2 lg:px-4">
                 <div v-if="can('DocStoreService.CreateCategory')" class="sm:flex sm:items-center">
                     <div class="sm:flex-auto">
-                        <form @submit="onSubmit">
+                        <form @submit.prevent="onSubmitThrottle">
                             <div class="flex flex-row gap-4 mx-auto">
                                 <div class="flex-1 form-control">
                                     <label for="name" class="block text-sm font-medium leading-6 text-neutral">

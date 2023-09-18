@@ -39,7 +39,7 @@ async function resetLocalStorage(): Promise<void> {
                         {{ $t('components.debug_info.version') }}
                     </dt>
                     <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
-                        {{ settings.getVersion }}
+                        {{ settings.version }}
                     </dd>
                 </div>
                 <div v-if="activeChar" class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">

@@ -39,12 +39,10 @@ export class GRPCClients {
     constructor() {
         this.authInterceptor = new AuthInterceptor();
 
-        const { $loading } = useNuxtApp();
-
         this.transport = new GrpcWebFetchTransport({
             baseUrl: '/grpc',
             format: 'text',
-            interceptors: [this.authInterceptor, $loading],
+            interceptors: [this.authInterceptor],
         });
     }
 
@@ -57,6 +55,7 @@ export class GRPCClients {
         const notifications = useNotificationsStore();
 
         const { $loading } = useNuxtApp();
+        $loading.errored();
 
         const notification = {
             id: '',
@@ -127,7 +126,6 @@ export class GRPCClients {
             content: notification.content,
         });
 
-        $loading.errored();
         return true;
     }
 

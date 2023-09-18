@@ -39,32 +39,34 @@ async function streamNotifications(): Promise<void> {
         for await (let resp of call.responses) {
             if (resp.lastId > getLastId.value) setLastId(resp.lastId);
 
-            console.debug('Notifications:', resp.notifications);
-            resp.notifications.forEach((n) => {
-                let nType: NotificationType = (n.type as NotificationType) ?? 'info';
+            if (resp.notifications.length > 0) {
+                console.debug('Notifications:', resp.notifications);
+                resp.notifications.forEach((n) => {
+                    let nType: NotificationType = (n.type as NotificationType) ?? 'info';
 
-                switch (n.category) {
-                    case NOTIFICATION_CATEGORY.GENERAL:
-                        notifications.dispatchNotification({
-                            title: n.title!,
-                            content: n.content!,
-                            type: nType,
-                            category: n.category,
-                            data: n.data,
-                        });
-                        break;
+                    switch (n.category) {
+                        case NOTIFICATION_CATEGORY.GENERAL:
+                            notifications.dispatchNotification({
+                                title: n.title!,
+                                content: n.content!,
+                                type: nType,
+                                category: n.category,
+                                data: n.data,
+                            });
+                            break;
 
-                    default:
-                        notifications.dispatchNotification({
-                            title: n.title!,
-                            content: n.content!,
-                            type: nType,
-                            category: n.category,
-                            data: n.data,
-                        });
-                        break;
-                }
-            });
+                        default:
+                            notifications.dispatchNotification({
+                                title: n.title!,
+                                content: n.content!,
+                                type: nType,
+                                category: n.category,
+                                data: n.data,
+                            });
+                            break;
+                    }
+                });
+            }
 
             // If the response contains an (updated) token
             if (resp.token) {
@@ -105,12 +107,11 @@ async function streamNotifications(): Promise<void> {
 
         console.debug('Notificator: Stream ended');
     } catch (e) {
-        const err = e as RpcError;
-        if (err.code == 'CANCELLED') {
+        if ((e as RpcError).code == 'CANCELLED') {
             return;
         }
 
-        console.debug('Notificator: Stream errored', err);
+        console.debug('Notificator: Stream errored', e as RpcError);
         restartStream();
     }
 }

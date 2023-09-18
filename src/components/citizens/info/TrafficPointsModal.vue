@@ -2,6 +2,7 @@
 import { Dialog, DialogPanel, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { max, min, numeric, required } from '@vee-validate/rules';
+import { useThrottleFn } from '@vueuse/core';
 import { defineRule } from 'vee-validate';
 import { useNotificationsStore } from '~/store/notifications';
 import { User, UserProps } from '~~/gen/ts/resources/users/users';
@@ -80,7 +81,15 @@ const { handleSubmit, meta, setFieldValue } = useForm<FormData>({
     validateOnMount: true,
 });
 
-const onSubmit = handleSubmit(async (values): Promise<void> => await setTrafficPoints(values));
+const canSubmit = ref(true);
+const onSubmit = handleSubmit(
+    async (values): Promise<void> =>
+        await setTrafficPoints(values).finally(() => setTimeout(() => (canSubmit.value = true), 350)),
+);
+const onSubmitThrottle = useThrottleFn((e) => {
+    canSubmit.value = false;
+    onSubmit(e);
+}, 1000);
 </script>
 
 <template>
@@ -112,7 +121,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await setTrafficP
                         <DialogPanel
                             class="relative px-4 pt-5 pb-4 overflow-hidden text-left transition-all transform rounded-lg bg-base-800 text-neutral sm:my-8 sm:w-full sm:max-w-2xl sm:p-6 h-96"
                         >
-                            <form @submit="onSubmit">
+                            <form @submit.prevent="onSubmitThrottle">
                                 <div class="my-2 space-y-24">
                                     <div class="flex-1 form-control">
                                         <label for="reason" class="block text-sm font-medium leading-6 text-neutral">
@@ -156,7 +165,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await setTrafficP
                                     <button
                                         @click="
                                             setFieldValue('reset', true);
-                                            onSubmit();
+                                            onSubmitThrottle();
                                         "
                                         type="button"
                                         class="flex-1 rounded-bd py-2.5 px-3.5 text-sm font-semibold text-neutral"
@@ -172,7 +181,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await setTrafficP
                                     <button
                                         @click="
                                             setFieldValue('reset', false);
-                                            onSubmit();
+                                            onSubmitThrottle();
                                         "
                                         type="button"
                                         class="flex-1 rounded-bd py-2.5 px-3.5 text-sm font-semibold text-neutral"

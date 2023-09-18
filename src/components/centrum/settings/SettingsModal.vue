@@ -1,7 +1,8 @@
 <script lang="ts" setup>
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
-import { max_value, min_value, numeric, required } from '@vee-validate/rules';
+import { required } from '@vee-validate/rules';
+import { useThrottleFn } from '@vueuse/core';
 import { GroupIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import { CENTRUM_MODE, Settings } from '~~/gen/ts/resources/dispatch/settings';
@@ -39,6 +40,20 @@ const modes = ref<{ mode: CENTRUM_MODE; selected?: boolean }[]>([
     { mode: CENTRUM_MODE.AUTO_ROUND_ROBIN },
 ]);
 
+function setSettingsValues(): void {
+    if (!settings.value) return;
+
+    setValues({
+        enabled: settings.value.enabled,
+        mode: settings.value.mode,
+        fallbackMode: settings.value.fallbackMode,
+    });
+}
+
+watch(settings, () => {
+    setSettingsValues();
+});
+
 async function createOrUpdateUnit(values: FormData): Promise<void> {
     return new Promise(async (res, rej) => {
         try {
@@ -63,9 +78,6 @@ async function createOrUpdateUnit(values: FormData): Promise<void> {
 }
 
 defineRule('required', required);
-defineRule('min_value', min_value);
-defineRule('max_value', max_value);
-defineRule('numeric', numeric);
 
 interface FormData {
     enabled: boolean;
@@ -73,29 +85,23 @@ interface FormData {
     fallbackMode: CENTRUM_MODE;
 }
 
-const { handleSubmit, setValues } = useForm<FormData>({
+const { handleSubmit, meta, setValues } = useForm<FormData>({
     validationSchema: {
-        enabled: {},
+        enabled: { required: false },
         mode: { required: true },
         fallbackMode: { required: true },
     },
 });
 
-const onSubmit = handleSubmit(async (values): Promise<void> => await createOrUpdateUnit(values));
-
-function setSettingsValues(): void {
-    if (!settings.value) return;
-
-    setValues({
-        enabled: settings.value.enabled,
-        mode: settings.value.mode,
-        fallbackMode: settings.value.fallbackMode,
-    });
-}
-
-watch(settings, () => {
-    setSettingsValues();
-});
+const canSubmit = ref(true);
+const onSubmit = handleSubmit(
+    async (values): Promise<void> =>
+        await createOrUpdateUnit(values).finally(() => setTimeout(() => (canSubmit.value = true), 350)),
+);
+const onSubmitThrottle = useThrottleFn((e) => {
+    canSubmit.value = false;
+    onSubmit(e);
+}, 1000);
 </script>
 
 <template>
@@ -127,7 +133,7 @@ watch(settings, () => {
                         <DialogPanel
                             class="relative transform overflow-hidden rounded-lg bg-base-800 px-4 pb-4 pt-5 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6"
                         >
-                            <form @submit="onSubmit">
+                            <form @submit.prevent="onSubmitThrottle">
                                 <div>
                                     <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
                                         <GroupIcon class="h-6 w-6 text-green-600" aria-hidden="true" />
@@ -229,7 +235,13 @@ watch(settings, () => {
                                     <button
                                         v-if="can('CentrumService.UpdateSettings')"
                                         type="submit"
-                                        class="inline-flex w-full justify-center rounded-md bg-primary-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 sm:col-start-2"
+                                        class="inline-flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:col-start-2"
+                                        :disabled="!meta.valid || !canSubmit"
+                                        :class="[
+                                            !meta.valid || !canSubmit
+                                                ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
+                                                : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
+                                        ]"
                                     >
                                         {{ $t('common.update') }}
                                     </button>

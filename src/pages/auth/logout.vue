@@ -1,11 +1,8 @@
 <script lang="ts" setup>
-import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import ContentCenterWrapper from '~/components/partials/ContentCenterWrapper.vue';
 import Footer from '~/components/partials/Footer.vue';
 import HeroFull from '~/components/partials/HeroFull.vue';
 import { useAuthStore } from '~/store/auth';
-import { useNotificationsStore } from '~/store/notifications';
-import { TranslateItem } from '~~/gen/ts/resources/common/i18n';
 
 useHead({
     title: 'common.logout',
@@ -17,12 +14,8 @@ definePageMeta({
     showCookieOptions: true,
 });
 
-const { $grpc } = useNuxtApp();
 const authStore = useAuthStore();
-const notifications = useNotificationsStore();
-
-const { accessToken } = storeToRefs(authStore);
-const { clearAuthInfo } = authStore;
+const { doLogout } = authStore;
 
 function redirect(): void {
     setTimeout(async () => {
@@ -33,27 +26,12 @@ function redirect(): void {
     }, 1500);
 }
 
-onBeforeMount(async () => {
-    clearAuthInfo();
-    if (accessToken.value === null) {
-        redirect();
-        return;
-    }
-
+onMounted(async () => {
     try {
-        await $grpc.getAuthClient().logout({});
-    } catch (e) {
-        const err = e as RpcError;
-        $grpc.handleError(err);
-
-        notifications.dispatchNotification({
-            title: { key: 'notifications.auth.error_logout.title', parameters: [] },
-            content: { key: 'notifications.auth.error_logout.content', parameters: [err.message] } as TranslateItem,
-            type: 'error',
-        });
+        await doLogout();
+    } finally {
+        redirect();
     }
-
-    redirect();
 });
 </script>
 

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { max, min, required } from '@vee-validate/rules';
-import { useConfirmDialog } from '@vueuse/core';
+import { useConfirmDialog, useThrottleFn } from '@vueuse/core';
 import { CancelIcon, ContentSaveIcon, PencilIcon, TrashCanIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
@@ -87,7 +87,15 @@ setValues({
     description: props.book.description,
 });
 
-const onSubmit = handleSubmit(async (values): Promise<LawBook> => await saveLawBook(props.book.id, values));
+const canSubmit = ref(true);
+const onSubmit = handleSubmit(
+    async (values): Promise<LawBook> =>
+        await saveLawBook(props.book.id, values).finally(() => setTimeout(() => (canSubmit.value = true), 350)),
+);
+const onSubmitThrottle = useThrottleFn((e) => {
+    canSubmit.value = false;
+    onSubmit(e);
+}, 1000);
 
 function deletedLaw(id: bigint): void {
     const idx = props.book.laws.findIndex((b) => b.id === id);
@@ -140,7 +148,7 @@ const editing = ref(props.startInEdit);
                 </div>
             </div>
         </div>
-        <form v-else @submit="onSubmit" class="w-full flex flex-row gap-x-4 text-white items-start">
+        <form v-else @submit.prevent="onSubmitThrottle" class="w-full flex flex-row gap-x-4 text-white items-start">
             <button type="submit" :title="$t('common.save')">
                 <ContentSaveIcon class="w-6 h-6" />
             </button>

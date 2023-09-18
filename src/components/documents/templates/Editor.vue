@@ -2,7 +2,7 @@
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { max, min, numeric, required } from '@vee-validate/rules';
-import { watchDebounced } from '@vueuse/core';
+import { useThrottleFn, watchDebounced } from '@vueuse/core';
 import { CheckIcon, PlusIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import AccessEntry from '~/components/documents/AccessEntry.vue';
@@ -61,7 +61,15 @@ const { handleSubmit, setValues, meta } = useForm<FormData>({
     },
 });
 
-const onSubmit = handleSubmit(async (values): Promise<void> => await createOrUpdateTemplate(values, props.templateId));
+const canSubmit = ref(true);
+const onSubmit = handleSubmit(
+    async (values): Promise<void> =>
+        await createOrUpdateTemplate(values, props.templateId).finally(() => setTimeout(() => (canSubmit.value = true), 350)),
+);
+const onSubmitThrottle = useThrottleFn((e) => {
+    canSubmit.value = false;
+    onSubmit(e);
+}, 1000);
 
 const schema = ref<SchemaEditorValue>({
     users: {
@@ -469,7 +477,7 @@ onMounted(async () => {
 
 <template>
     <div class="text-neutral">
-        <form @submit="onSubmit">
+        <form @submit.prevent="onSubmitThrottle">
             <div>
                 <label for="content" class="block text-sm font-medium leading-6 text-gray-100">
                     {{ $t('common.template', 2) }} {{ $t('common.weight') }}
@@ -480,7 +488,7 @@ onMounted(async () => {
                         name="weight"
                         min="0"
                         max="4294967295"
-                        :label="t('common.weight')"
+                        :label="$t('common.weight')"
                         class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                     />
                 </div>
@@ -494,7 +502,7 @@ onMounted(async () => {
                         as="textarea"
                         rows="1"
                         name="title"
-                        :label="t('common.title')"
+                        :label="$t('common.title')"
                         class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                     />
                     <VeeErrorMessage name="title" as="p" class="mt-2 text-sm text-error-400" />
@@ -509,7 +517,7 @@ onMounted(async () => {
                         as="textarea"
                         rows="4"
                         name="description"
-                        :label="t('common.description')"
+                        :label="$t('common.description')"
                         class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                     />
                     <VeeErrorMessage name="description" as="p" class="mt-2 text-sm text-error-400" />
@@ -550,7 +558,7 @@ onMounted(async () => {
                         as="textarea"
                         rows="2"
                         name="contentTitle"
-                        :label="t('common.title')"
+                        :label="$t('common.title')"
                         class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                     />
                     <VeeErrorMessage name="contentTitle" as="p" class="mt-2 text-sm text-error-400" />
@@ -622,7 +630,7 @@ onMounted(async () => {
                         as="textarea"
                         rows="2"
                         name="contentState"
-                        :label="t('common.state')"
+                        :label="$t('common.state')"
                         class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                     />
                     <VeeErrorMessage name="contentState" as="p" class="mt-2 text-sm text-error-400" />
@@ -642,7 +650,7 @@ onMounted(async () => {
                         as="textarea"
                         rows="6"
                         name="content"
-                        :label="t('common.template')"
+                        :label="$t('common.template')"
                         class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                     />
                     <VeeErrorMessage name="content" as="p" class="mt-2 text-sm text-error-400" />
@@ -681,9 +689,9 @@ onMounted(async () => {
                 <button
                     type="submit"
                     class="mt-4 flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                    :disabled="!meta.valid"
+                    :disabled="!meta.valid || !canSubmit"
                     :class="[
-                        !meta.valid
+                        !meta.valid || !canSubmit
                             ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
                             : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
                     ]"

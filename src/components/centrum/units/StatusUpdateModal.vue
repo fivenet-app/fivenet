@@ -2,6 +2,7 @@
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { max, min, required } from '@vee-validate/rules';
+import { useThrottleFn } from '@vueuse/core';
 import { CloseIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import { UNIT_STATUS, Unit } from '~~/gen/ts/resources/dispatch/units';
@@ -64,7 +65,7 @@ interface FormData {
     reason?: string;
 }
 
-const { handleSubmit, setFieldValue } = useForm<FormData>({
+const { handleSubmit, meta, setFieldValue } = useForm<FormData>({
     validationSchema: {
         status: { required: true },
         code: { required: false },
@@ -76,7 +77,15 @@ const { handleSubmit, setFieldValue } = useForm<FormData>({
     validateOnMount: true,
 });
 
-const onSubmit = handleSubmit(async (values): Promise<void> => await updateUnitStatus(props.unit.id, values));
+const canSubmit = ref(true);
+const onSubmit = handleSubmit(
+    async (values): Promise<void> =>
+        await updateUnitStatus(props.unit.id, values).finally(() => setTimeout(() => (canSubmit.value = true), 350)),
+);
+const onSubmitThrottle = useThrottleFn((e) => {
+    canSubmit.value = false;
+    onSubmit(e);
+}, 1000);
 
 watch(props, () => {
     if (props.status) {

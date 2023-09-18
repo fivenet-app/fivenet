@@ -1,5 +1,3 @@
-import { MethodInfo, NextUnaryFn, RpcInterceptor, RpcOptions, UnaryCall } from '@protobuf-ts/runtime-rpc/build/types';
-
 export default defineNuxtPlugin((nuxtApp) => {
     const lm = new LoadingManager();
 
@@ -16,40 +14,32 @@ export default defineNuxtPlugin((nuxtApp) => {
     };
 });
 
-export class LoadingManager implements RpcInterceptor {
-    private counted: number;
+export class LoadingManager {
+    public counted: Ref<number>;
 
     constructor() {
-        this.counted = 1;
+        this.counted = ref(0);
     }
 
     async start(): Promise<void> {
-        this.counted++;
-        if (this.counted === 1) {
+        this.counted.value++;
+        if (this.counted.value === 1) {
             //@ts-ignore TODO we are currently unable to add custom event types to the typings
             useNuxtApp().callHook('data:loading:start');
         }
     }
 
     async finish(): Promise<void> {
-        if (this.counted > 0) {
-            this.counted--;
+        if (this.counted.value > 0) {
+            this.counted.value--;
             //@ts-ignore TODO we are currently unable to add custom event types to the typings
             useNuxtApp().callHook('data:loading:finish');
         }
     }
 
     async errored(): Promise<void> {
-        this.counted = 0;
+        this.counted.value = 0;
         //@ts-ignore TODO we are currently unable to add custom event types to the typings
         useNuxtApp().callHook('data:loading:finish_error');
-    }
-
-    // GRPC unary interceptor
-    interceptUnary(next: NextUnaryFn, method: MethodInfo, input: object, options: RpcOptions): UnaryCall {
-        this.start();
-        const ret = next(method, input, options);
-        this.finish();
-        return ret;
     }
 }

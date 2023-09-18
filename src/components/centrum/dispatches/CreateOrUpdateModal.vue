@@ -2,6 +2,7 @@
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { digits, max, min, required } from '@vee-validate/rules';
+import { useThrottleFn } from '@vueuse/core';
 import { CloseIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import { useLivemapStore } from '~/store/livemap';
@@ -65,7 +66,7 @@ interface FormData {
     anon: boolean;
 }
 
-const { handleSubmit, resetForm } = useForm<FormData>({
+const { handleSubmit, meta, resetForm } = useForm<FormData>({
     validationSchema: {
         message: { required: true, min: 3, max: 255 },
         description: { required: false, min: 6, max: 512 },
@@ -73,7 +74,15 @@ const { handleSubmit, resetForm } = useForm<FormData>({
     },
 });
 
-const onSubmit = handleSubmit(async (values): Promise<void> => await createDispatch(values));
+const canSubmit = ref(true);
+const onSubmit = handleSubmit(
+    async (values): Promise<void> =>
+        await createDispatch(values).finally(() => setTimeout(() => (canSubmit.value = true), 350)),
+);
+const onSubmitThrottle = useThrottleFn((e) => {
+    canSubmit.value = false;
+    onSubmit(e);
+}, 1000);
 </script>
 
 <template>
@@ -95,7 +104,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await createDispa
                         >
                             <DialogPanel class="pointer-events-auto w-screen max-w-3xl">
                                 <form
-                                    @submit="onSubmit"
+                                    @submit.prevent="onSubmitThrottle"
                                     class="flex h-full flex-col divide-y divide-gray-200 bg-gray-900 shadow-xl"
                                 >
                                     <div class="h-0 flex-1 overflow-y-auto">
@@ -215,7 +224,13 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await createDispa
                                         <span class="isolate inline-flex rounded-md shadow-sm pr-4 w-full">
                                             <button
                                                 type="submit"
-                                                class="w-full relative inline-flex items-center rounded-l-md bg-primary-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-primary-400"
+                                                class="w-full relative inline-flex items-center rounded-l-md py-2.5 px-3.5 text-sm font-semibold text-neutral"
+                                                :disabled="!meta.valid || !canSubmit"
+                                                :class="[
+                                                    !meta.valid || !canSubmit
+                                                        ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
+                                                        : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
+                                                ]"
                                             >
                                                 {{ $t('common.create') }}
                                             </button>

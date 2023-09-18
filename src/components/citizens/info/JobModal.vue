@@ -12,7 +12,7 @@ import {
 } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { max, min, required } from '@vee-validate/rules';
-import { watchDebounced } from '@vueuse/core';
+import { useThrottleFn, watchDebounced } from '@vueuse/core';
 import { CheckIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import { useCompletorStore } from '~/store/completor';
@@ -102,7 +102,14 @@ const { handleSubmit, meta } = useForm<FormData>({
     validateOnMount: true,
 });
 
-const onSubmit = handleSubmit(async (values): Promise<void> => await setJobProp(values));
+const canSubmit = ref(true);
+const onSubmit = handleSubmit(
+    async (values): Promise<void> => await setJobProp(values).finally(() => setTimeout(() => (canSubmit.value = true), 350)),
+);
+const onSubmitThrottle = useThrottleFn((e) => {
+    canSubmit.value = false;
+    onSubmit(e);
+}, 1000);
 </script>
 
 <template>
@@ -134,7 +141,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await setJobProp(
                         <DialogPanel
                             class="relative px-4 pt-5 pb-4 overflow-hidden text-left transition-all transform rounded-lg bg-base-800 text-neutral sm:my-8 sm:w-full sm:max-w-2xl sm:p-6 h-96"
                         >
-                            <form @submit="onSubmit">
+                            <form @submit.prevent="onSubmitThrottle">
                                 <div class="my-2 space-y-24">
                                     <div class="flex-1 form-control">
                                         <label for="reason" class="block text-sm font-medium leading-6 text-neutral">
@@ -265,9 +272,9 @@ const onSubmit = handleSubmit(async (values): Promise<void> => await setJobProp(
                                     <button
                                         type="submit"
                                         class="flex-1 rounded-bd py-2.5 px-3.5 text-sm font-semibold text-neutral"
-                                        :disabled="!meta.valid"
+                                        :disabled="!meta.valid || !canSubmit"
                                         :class="[
-                                            !meta.valid
+                                            !meta.valid || !canSubmit
                                                 ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
                                                 : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
                                         ]"

@@ -45,8 +45,8 @@ await loadConfig();
 if (updateAvailable?.value !== undefined) updateAvailable.value = undefined;
 
 const userSettings = useSettingsStore();
-if (__APP_VERSION__ != userSettings.getVersion) {
-    console.info('Resetting app data because new version has been detected', userSettings.getVersion, __APP_VERSION__);
+if (__APP_VERSION__ != userSettings.version) {
+    console.info('Resetting app data because new version has been detected', userSettings.version, __APP_VERSION__);
     useClipboardStore().$reset();
     useDocumentEditorStore().$reset();
     useNotificationsStore().$reset();

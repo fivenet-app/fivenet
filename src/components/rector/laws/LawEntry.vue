@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { max, max_value, min, min_value, required } from '@vee-validate/rules';
-import { useConfirmDialog } from '@vueuse/core';
+import { useConfirmDialog, useThrottleFn } from '@vueuse/core';
 import { CancelIcon, ContentSaveIcon, PencilIcon, TrashCanIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
@@ -100,7 +100,15 @@ setValues({
     stvoPoints: props.law.stvoPoints,
 });
 
-const onSubmit = handleSubmit(async (values): Promise<void> => await saveLaw(props.law.lawbookId, props.law.id, values));
+const canSubmit = ref(true);
+const onSubmit = handleSubmit(
+    async (values): Promise<void> =>
+        await saveLaw(props.law.lawbookId, props.law.id, values).finally(() => setTimeout(() => (canSubmit.value = true), 350)),
+);
+const onSubmitThrottle = useThrottleFn((e) => {
+    canSubmit.value = false;
+    onSubmit(e);
+}, 1000);
 
 const { isRevealed, reveal, confirm, cancel, onConfirm } = useConfirmDialog();
 
@@ -143,7 +151,7 @@ const editing = ref(props.startInEdit);
     </tr>
     <tr v-else>
         <td class="py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">
-            <button type="button" @click="onSubmit" :title="$t('common.save')">
+            <button type="button" @click="onSubmitThrottle" :title="$t('common.save')">
                 <ContentSaveIcon class="w-6 h-6" />
             </button>
             <button

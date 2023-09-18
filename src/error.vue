@@ -3,6 +3,7 @@ import { useClipboard } from '@vueuse/core';
 import ContentCenterWrapper from '~/components/partials/ContentCenterWrapper.vue';
 import HeroFull from '~/components/partials/HeroFull.vue';
 import LoadingBar from '~/components/partials/LoadingBar.vue';
+import FiveNetLogo from './components/partials/logos/FiveNetLogo.vue';
 
 useHead({
     title: 'Error occured - FiveNet',
@@ -51,7 +52,7 @@ onBeforeMount(async () => {
         <LoadingBar />
         <HeroFull>
             <ContentCenterWrapper class="max-w-3xl mx-auto text-center">
-                <img class="h-auto mx-auto mb-2 w-36" src="/images/logo.png" alt="FiveNet Logo" />
+                <FiveNetLogo class="h-auto mx-auto mb-2 w-36" />
 
                 <h1 class="text-5xl font-bold text-neutral">
                     {{ $t('pages.error.title') }}

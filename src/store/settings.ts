@@ -28,9 +28,6 @@ export const useSettingsStore = defineStore('settings', {
             this.locale = locale;
         },
     },
-    getters: {
-        getVersion: (state) => state.version,
-    },
 });
 
 if (import.meta.hot) {

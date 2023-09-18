@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { NavigationFailure } from 'vue-router';
+import FiveNetLogo from '~/components/partials/logos/FiveNetLogo.vue';
 import { useAuthStore } from '~/store/auth';
 import { useConfigStore } from '~/store/config';
 import { TypedRouteFromName } from '~~/.nuxt/typed-router/__router';
@@ -31,9 +32,9 @@ watch(accessToken, async (): Promise<NavigationFailure | TypedRouteFromName<'aut
 </script>
 
 <template>
-    <div class="max-w-lg w-full sm:w-[32rem] mx-auto">
+    <div class="max-w-lg mx-auto">
         <div class="px-4 py-8 rounded-lg bg-base-800 sm:px-10">
-            <img class="h-auto mx-auto mb-2 w-36" src="/images/logo.png" alt="FiveNet Logo" />
+            <FiveNetLogo class="h-auto mx-auto mb-2 w-36" />
 
             <div v-if="forms.create">
                 <RegistrationForm @back="forms.create = false" />

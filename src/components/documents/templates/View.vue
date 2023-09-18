@@ -67,13 +67,6 @@ async function deleteTemplate(id: bigint): Promise<void> {
     });
 }
 
-async function editTemplate(): Promise<void> {
-    await navigateTo({
-        name: 'documents-templates-edit-id',
-        params: { id: props.templateId.toString() },
-    });
-}
-
 const openPreview = ref(false);
 
 const { isRevealed, reveal, confirm, cancel, onConfirm } = useConfirmDialog();
@@ -90,14 +83,13 @@ onConfirm(async (id) => deleteTemplate(id));
         <div class="px-1 sm:px-2 lg:px-4">
             <div class="sm:flex sm:items-center">
                 <div class="sm:flex-auto inline-flex">
-                    <button
+                    <NuxtLink
                         v-if="can('DocStoreService.CreateTemplate')"
-                        type="submit"
-                        @click="editTemplate()"
+                        :to="{ name: 'documents-templates-edit-id', params: { id: templateId.toString() } }"
                         class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300"
                     >
                         {{ $t('common.edit') }}
-                    </button>
+                    </NuxtLink>
                     <button
                         v-if="can('DocStoreService.CreateTemplate')"
                         type="button"
