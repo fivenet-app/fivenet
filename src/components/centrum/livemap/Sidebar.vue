@@ -157,7 +157,7 @@ async function updateUtStatus(id: bigint, status?: UNIT_STATUS): Promise<void> {
 // Show unit sidebar when ownUnit is set/updated, otherwise it will be hidden (automagically)
 const ownUnit = ref<Unit | undefined>();
 watch(ownUnitId, () => {
-    if (ownUnitId.value !== undefined) {
+    if (ownUnitId.value !== undefined && ownUnitId.value > 0) {
         ownUnit.value = units.value.get(ownUnitId.value);
         open.value = true;
     } else {

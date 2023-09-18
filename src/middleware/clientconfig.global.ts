@@ -8,6 +8,7 @@ export default defineNuxtRouteMiddleware(
             const nuiQuery = route.query?.nui as string;
             const configStore = useConfigStore();
             const { clientConfig } = storeToRefs(configStore);
+
             if (nuiQuery.toLowerCase() !== 'false') {
                 clientConfig.value.NUIEnabled = true;
                 clientConfig.value.NUIResourceName = nuiQuery;

@@ -1,29 +1,14 @@
 <script lang="ts" setup>
-import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { GavelIcon } from 'mdi-vue3';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import { LawBook } from '~~/gen/ts/resources/laws/laws';
+import { useCompletorStore } from '~/store/completor';
 import LawBookEntry from './LawBookEntry.vue';
 
-const { $grpc } = useNuxtApp();
+const completorStore = useCompletorStore();
 
-const { data: lawBooks, pending, refresh, error } = useLazyAsyncData(`rector-lawbooks`, () => listLawBooks());
-
-async function listLawBooks(): Promise<LawBook[]> {
-    return new Promise(async (res, rej) => {
-        try {
-            const call = $grpc.getCompletorClient().listLawBooks({});
-            const { response } = await call;
-
-            return res(response.books);
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
-        }
-    });
-}
+const { data: lawBooks, pending, refresh, error } = useLazyAsyncData(`lawbooks`, () => completorStore.listLawBooks());
 
 function deletedLawBook(id: bigint): void {
     if (!lawBooks.value) return;

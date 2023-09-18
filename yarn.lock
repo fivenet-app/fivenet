@@ -1125,7 +1125,7 @@
     unimport "^3.3.0"
     untyped "^1.4.0"
 
-"@nuxt/kit@3.7.3", "@nuxt/kit@^3.0.0", "@nuxt/kit@^3.1.0", "@nuxt/kit@^3.2.3", "@nuxt/kit@^3.5.0", "@nuxt/kit@^3.5.3", "@nuxt/kit@^3.6.5", "@nuxt/kit@^3.7.0", "@nuxt/kit@^3.7.1":
+"@nuxt/kit@3.7.3", "@nuxt/kit@^3.0.0", "@nuxt/kit@^3.1.0", "@nuxt/kit@^3.5.0", "@nuxt/kit@^3.5.3", "@nuxt/kit@^3.6.5", "@nuxt/kit@^3.7.0", "@nuxt/kit@^3.7.1", "@nuxt/kit@^3.7.3":
   version "3.7.3"
   resolved "https://registry.yarnpkg.com/@nuxt/kit/-/kit-3.7.3.tgz#24a32bdf2eaa3f8f6c81079fb2a3543980b55d26"
   integrity sha512-bhP02i6CNti15Z4ix3LpR3fd1ANtTcpfS3CDSaCja24hDt3UxIasyp52mqD9LRC+OxrUVHJziB18EwUtS6RLDQ==
@@ -1539,14 +1539,14 @@
     "@parcel/watcher-win32-ia32" "2.3.0"
     "@parcel/watcher-win32-x64" "2.3.0"
 
-"@pinia-plugin-persistedstate/nuxt@^1.1.1":
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/@pinia-plugin-persistedstate/nuxt/-/nuxt-1.1.1.tgz#53d1f26fa405aa20803da6d710c6777ab50445f2"
-  integrity sha512-b6ZNP3Re8COmfZEpj4KQmbp2TuDKrLggDFLZa8FiJF68xE/oCsPXIuXUvAt8E4ht/5sq4Z/grlA+iGXaI2aeKQ==
+"@pinia-plugin-persistedstate/nuxt@^1.1.2":
+  version "1.1.2"
+  resolved "https://registry.yarnpkg.com/@pinia-plugin-persistedstate/nuxt/-/nuxt-1.1.2.tgz#26a34fd0367516c3c7c17b8fbd237789ce99b393"
+  integrity sha512-3deRNiIlFoFGO/K8Sz+yc53ayMzElR8ack7RnGka80zBgp6Fs9GWjoLJiy+ToIc7qVa6wrQcoLDsxcnvzX4T0g==
   dependencies:
-    "@nuxt/kit" "^3.2.3"
+    "@nuxt/kit" "^3.7.3"
     defu "^6.1.2"
-    pinia-plugin-persistedstate ">=3.1.0"
+    pinia-plugin-persistedstate ">=3.2.0"
 
 "@pinia/nuxt@^0.4.11":
   version "0.4.11"
@@ -2284,10 +2284,10 @@
   dependencies:
     core-js "^3.0"
 
-"@zxcvbn-ts/core@^3.0.3":
-  version "3.0.3"
-  resolved "https://registry.yarnpkg.com/@zxcvbn-ts/core/-/core-3.0.3.tgz#2cc1aab6e8b204dee5be0de4ddc6d9202fab1201"
-  integrity sha512-GQo19iG/hQzs5uVxLCbNiaNTmTwGcfYZtge6L8CZiAULk0zieqZd0eThDQstljgjQWu4oO5olnPA3jnsV5sjaA==
+"@zxcvbn-ts/core@^3.0.4":
+  version "3.0.4"
+  resolved "https://registry.yarnpkg.com/@zxcvbn-ts/core/-/core-3.0.4.tgz#c5bde72235eb6c273cec78b672bb47c0d7045cad"
+  integrity sha512-aQeiT0F09FuJaAqNrxynlAwZ2mW/1MdXakKWNmGM1Qp/VaY6CnB/GfnMS2T8gB2231Esp1/maCWd8vTG4OuShw==
   dependencies:
     fastest-levenshtein "1.0.16"
 
@@ -6838,7 +6838,7 @@ pify@^4.0.1:
   resolved "https://registry.yarnpkg.com/pify/-/pify-4.0.1.tgz#4b2cd25c50d598735c50292224fd8c6df41e3231"
   integrity sha512-uB80kBFb/tfd68bVleG9T5GGsGPjJrLAUpR5PZIrhBnIaRTQRjqdJSsIKkOP6OAIFbj7GOrcudc5pNjZ+geV2g==
 
-pinia-plugin-persistedstate@>=3.1.0:
+pinia-plugin-persistedstate@>=3.2.0:
   version "3.2.0"
   resolved "https://registry.yarnpkg.com/pinia-plugin-persistedstate/-/pinia-plugin-persistedstate-3.2.0.tgz#9932ca2ae88aa6c0d6763bebc6447d7bd1f097d0"
   integrity sha512-tZbNGf2vjAQcIm7alK40sE51Qu/m9oWr+rEgNm/2AWr1huFxj72CjvpQcIQzMknDBJEkQznCLAGtJTIcLKrKdw==

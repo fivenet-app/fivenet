@@ -1,8 +1,10 @@
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { StoreDefinition, defineStore } from 'pinia';
+import { Category } from '~~/gen/ts/resources/documents/category';
+import { LawBook } from '~~/gen/ts/resources/laws/laws';
 import { Job } from '~~/gen/ts/resources/users/jobs';
+import { UserShort } from '~~/gen/ts/resources/users/users';
 import { CompleteCitizensRequest, CompleteJobsRequest } from '~~/gen/ts/services/completor/completor';
-import { UserShort } from '../../gen/ts/resources/users/users';
 
 export interface CompletorState {
     jobs: Job[];
@@ -29,16 +31,6 @@ export const useCompletorStore = defineStore('completor', {
             this.jobs = await this.completeJobs({});
             return this.jobs;
         },
-
-        // Citizens
-        async findCitizen(userId: number): Promise<UserShort | undefined> {
-            return this.completeCitizens({
-                search: '',
-                userId: userId,
-            }).then((users) => (users.length === 0 ? undefined : users[0]));
-        },
-
-        // GRPC calls
         async completeJobs(req: CompleteJobsRequest): Promise<Job[]> {
             return new Promise(async (res, rej) => {
                 const { $grpc } = useNuxtApp();
@@ -53,6 +45,14 @@ export const useCompletorStore = defineStore('completor', {
                 }
             });
         },
+
+        // Citizens
+        async findCitizen(userId: number): Promise<UserShort | undefined> {
+            return this.completeCitizens({
+                search: '',
+                userId: userId,
+            }).then((users) => (users.length === 0 ? undefined : users[0]));
+        },
         async completeCitizens(req: CompleteCitizensRequest): Promise<UserShort[]> {
             return new Promise(async (res, rej) => {
                 const { $grpc } = useNuxtApp();
@@ -61,6 +61,44 @@ export const useCompletorStore = defineStore('completor', {
                     const { response } = await call;
 
                     return res(response.users);
+                } catch (e) {
+                    $grpc.handleError(e as RpcError);
+                    return rej(e as RpcError);
+                }
+            });
+        },
+
+        // Document Categories
+        async completeDocumentCategories(search: string): Promise<Category[]> {
+            return new Promise(async (res, rej) => {
+                if (!can('CompletorService.CompleteDocumentCategories')) {
+                    return res([]);
+                }
+
+                const { $grpc } = useNuxtApp();
+                try {
+                    const call = $grpc.getCompletorClient().completeDocumentCategories({
+                        search: search,
+                    });
+                    const { response } = await call;
+
+                    return res(response.categories);
+                } catch (e) {
+                    $grpc.handleError(e as RpcError);
+                    return rej(e as RpcError);
+                }
+            });
+        },
+
+        // Laws
+        async listLawBooks(): Promise<LawBook[]> {
+            return new Promise(async (res, rej) => {
+                const { $grpc } = useNuxtApp();
+                try {
+                    const call = $grpc.getCompletorClient().listLawBooks({});
+                    const { response } = await call;
+
+                    return res(response.books);
                 } catch (e) {
                     $grpc.handleError(e as RpcError);
                     return rej(e as RpcError);

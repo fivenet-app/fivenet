@@ -14,6 +14,7 @@ import {
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { watchDebounced } from '@vueuse/core';
 import { CheckIcon, CloseIcon } from 'mdi-vue3';
+import { useCompletorStore } from '~/store/completor';
 import { Unit } from '~~/gen/ts/resources/dispatch/units';
 import { UserShort } from '~~/gen/ts/resources/users/users';
 
@@ -28,20 +29,22 @@ const emit = defineEmits<{
 
 const { $grpc } = useNuxtApp();
 
-const entriesUsers = ref<UserShort[]>([]);
-const selectedUsers = ref<UserShort[]>(props.unit.users.filter((u) => u !== undefined).map((u) => u.user!));
-const queryUser = ref('');
+const completorStore = useCompletorStore();
+
+const entriesCitizens = ref<UserShort[]>([]);
+const selectedCitizens = ref<UserShort[]>(props.unit.users.filter((u) => u !== undefined).map((u) => u.user!));
+const queryCitizens = ref('');
 
 async function assignUnit(): Promise<void> {
     return new Promise(async (res, rej) => {
         try {
             const toAdd: number[] = [];
             const toRemove: number[] = [];
-            selectedUsers.value?.forEach((u) => {
+            selectedCitizens.value?.forEach((u) => {
                 toAdd.push(u.userId);
             });
             props.unit.users?.forEach((u) => {
-                const idx = selectedUsers.value.findIndex((su) => su.userId === u.userId);
+                const idx = selectedCitizens.value.findIndex((su) => su.userId === u.userId);
                 if (idx === -1) {
                     toRemove.push(u.userId);
                 }
@@ -64,16 +67,13 @@ async function assignUnit(): Promise<void> {
     });
 }
 
-async function findChars(): Promise<void> {
-    const call = $grpc.getCompletorClient().completeCitizens({
-        search: queryUser.value,
+async function findCitizens(): Promise<void> {
+    entriesCitizens.value = await completorStore.completeCitizens({
+        search: queryCitizens.value,
         currentJob: true,
         onDuty: true,
     });
-    const { response } = await call;
-
-    entriesUsers.value = response.users;
-    entriesUsers.value.push(...selectedUsers.value);
+    entriesCitizens.value.push(...selectedCitizens.value);
 }
 
 function charsGetDisplayValue(chars: UserShort[]): string {
@@ -83,13 +83,13 @@ function charsGetDisplayValue(chars: UserShort[]): string {
     return cs.join(', ');
 }
 
-watchDebounced(queryUser, async () => await findChars(), {
+watchDebounced(queryCitizens, async () => await findCitizens(), {
     debounce: 500,
     maxWait: 1250,
 });
 
 onMounted(async () => {
-    findChars();
+    findCitizens();
 });
 </script>
 
@@ -137,12 +137,12 @@ onMounted(async () => {
                                                 <div class="mt-1">
                                                     <div class="my-2 space-y-24">
                                                         <div class="flex-1 form-control">
-                                                            <Combobox as="div" v-model="selectedUsers" multiple nullable>
+                                                            <Combobox as="div" v-model="selectedCitizens" multiple nullable>
                                                                 <div class="relative">
                                                                     <ComboboxButton as="div">
                                                                         <ComboboxInput
                                                                             class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                                            @change="queryUser = $event.target.value"
+                                                                            @change="queryCitizens = $event.target.value"
                                                                             :display-value="
                                                                                 (chars: any) =>
                                                                                     chars ? charsGetDisplayValue(chars) : 'N/A'
@@ -152,11 +152,11 @@ onMounted(async () => {
                                                                     </ComboboxButton>
 
                                                                     <ComboboxOptions
-                                                                        v-if="entriesUsers.length > 0"
+                                                                        v-if="entriesCitizens.length > 0"
                                                                         class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-44 sm:text-sm"
                                                                     >
                                                                         <ComboboxOption
-                                                                            v-for="user in entriesUsers"
+                                                                            v-for="user in entriesCitizens"
                                                                             :key="user?.userId"
                                                                             :value="user"
                                                                             as="char"
@@ -201,7 +201,7 @@ onMounted(async () => {
                                                                 <ul
                                                                     class="text-sm font-medium max-w-md space-y-1 text-gray-100 list-disc list-inside dark:text-gray-300"
                                                                 >
-                                                                    <li v-for="user in selectedUsers">
+                                                                    <li v-for="user in selectedCitizens">
                                                                         {{ user?.firstname }}
                                                                         {{ user?.lastname }}
                                                                     </li>

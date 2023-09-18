@@ -64,16 +64,16 @@ const tabs = ref<{ name: string; icon: DefineComponent }[]>([
     },
 ]);
 
-const queryChar = ref('');
+const queryCitizens = ref('');
 
 const {
-    data: users,
+    data: citizens,
     pending,
     refresh,
     error,
-} = useLazyAsyncData(`document-${props.document}-relations-citzens-${queryChar}`, () => listCitizens());
+} = useLazyAsyncData(`document-${props.document}-relations-citzens-${queryCitizens}`, () => listCitizens());
 
-watchDebounced(queryChar, async () => await refresh(), {
+watchDebounced(queryCitizens, async () => await refresh(), {
     debounce: 600,
     maxWait: 1750,
 });
@@ -85,7 +85,7 @@ async function listCitizens(): Promise<User[]> {
                 pagination: {
                     offset: 0n,
                 },
-                searchName: queryChar.value,
+                searchName: queryCitizens.value,
             });
             const { response } = await call;
 
@@ -414,7 +414,7 @@ function removeRelation(id: bigint): void {
                                                     name="name"
                                                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                     :placeholder="`${$t('common.citizen', 1)} ${$t('common.name')}`"
-                                                    v-model="queryChar"
+                                                    v-model="queryCitizens"
                                                 />
                                             </div>
                                             <div class="flow-root mt-2">
@@ -447,8 +447,8 @@ function removeRelation(id: bigint): void {
                                                                     </th>
                                                                 </tr>
                                                             </thead>
-                                                            <tbody v-if="users" class="divide-y divide-base-500">
-                                                                <tr v-for="user in users.slice(0, 8)" :key="user.userId">
+                                                            <tbody v-if="citizens" class="divide-y divide-base-500">
+                                                                <tr v-for="user in citizens.slice(0, 8)" :key="user.userId">
                                                                     <td
                                                                         class="py-4 pl-4 pr-3 text-sm font-medium truncate whitespace-nowrap sm:pl-6 lg:pl-8"
                                                                     >

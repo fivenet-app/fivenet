@@ -24,6 +24,7 @@ import MagicUrl from 'quill-magic-url';
 import { defineRule } from 'vee-validate';
 import { useAuthStore } from '~/store/auth';
 import { getDocument, getUser, useClipboardStore } from '~/store/clipboard';
+import { useCompletorStore } from '~/store/completor';
 import { useDocumentEditorStore } from '~/store/documenteditor';
 import { useNotificationsStore } from '~/store/notifications';
 import { TranslateItem } from '~~/gen/ts/resources/common/i18n';
@@ -44,19 +45,21 @@ import AccessEntry from './AccessEntry.vue';
 import ReferenceManager from './ReferenceManager.vue';
 import RelationManager from './RelationManager.vue';
 
+const props = defineProps<{
+    id?: bigint;
+}>();
+
 const { $grpc } = useNuxtApp();
+
 const authStore = useAuthStore();
 const clipboardStore = useClipboardStore();
 const documentStore = useDocumentEditorStore();
 const notifications = useNotificationsStore();
+const completorStore = useCompletorStore();
 
 const { t } = useI18n();
 
 const route = useRoute();
-
-const props = defineProps<{
-    id?: bigint;
-}>();
 
 const { activeChar } = storeToRefs(authStore);
 
@@ -104,8 +107,8 @@ const referenceManagerData = ref<Map<bigint, DocumentReference>>(new Map());
 const currentReferences = ref<Readonly<DocumentReference>[]>([]);
 watch(currentReferences, () => currentReferences.value.forEach((e) => referenceManagerData.value.set(e.id!, e)));
 
-const entriesCategory = ref<Category[]>([]);
-const queryCategory = ref('');
+const entriesCategories = ref<Category[]>([]);
+const queryCategories = ref('');
 const selectedCategory = ref<Category | undefined>(undefined);
 
 // Quill Editor modules and options
@@ -208,8 +211,6 @@ const options = {
 };
 
 onMounted(async () => {
-    await findCategories();
-
     if (route.query.templateId) {
         const data = clipboardStore.getTemplateData();
         data.activeChar = activeChar.value!;
@@ -367,6 +368,8 @@ onMounted(async () => {
     });
 
     canEdit.value = true;
+
+    findCategories();
 });
 
 const saving = ref(false);
@@ -388,35 +391,18 @@ async function saveToStore(values: FormData): Promise<void> {
     }, 1250);
 }
 
+async function findCategories(): Promise<void> {
+    entriesCategories.value = await completorStore.completeDocumentCategories(queryCategories.value);
+    if (selectedCategory.value && entriesCategories.value.findIndex((c) => c.id === selectedCategory.value?.id) !== 0)
+        entriesCategories.value.push(selectedCategory.value);
+}
+
 watchDebounced(doc.value, async () => saveToStore(values), {
     debounce: 1350,
     maxWait: 3500,
 });
 
-async function findCategories(): Promise<void> {
-    return new Promise(async (res, rej) => {
-        if (!can('CompletorService.CompleteDocumentCategories')) {
-            return res();
-        }
-
-        try {
-            const call = $grpc.getCompletorClient().completeDocumentCategories({
-                search: queryCategory.value,
-            });
-            const { response } = await call;
-
-            entriesCategory.value = response.categories;
-            if (selectedCategory.value) entriesCategory.value.push(selectedCategory.value);
-
-            return res();
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
-        }
-    });
-}
-
-watchDebounced(queryCategory, () => findCategories(), {
+watchDebounced(queryCategories, async () => findCategories(), {
     debounce: 600,
     maxWait: 1400,
 });
@@ -821,17 +807,17 @@ const onSubmit = handleSubmit(async (values): Promise<void> => {
                             <ComboboxButton as="div">
                                 <ComboboxInput
                                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                    @change="queryCategory = $event.target.value"
+                                    @change="queryCategories = $event.target.value"
                                     :display-value="(category: any) => category?.name"
                                 />
                             </ComboboxButton>
 
                             <ComboboxOptions
-                                v-if="entriesCategory.length > 0"
+                                v-if="entriesCategories.length > 0"
                                 class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-44 sm:text-sm"
                             >
                                 <ComboboxOption
-                                    v-for="category in entriesCategory"
+                                    v-for="category in entriesCategories"
                                     :key="category.id?.toString()"
                                     :value="category"
                                     as="category"

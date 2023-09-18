@@ -7,6 +7,7 @@ import { CheckIcon, PlusIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import AccessEntry from '~/components/documents/AccessEntry.vue';
 import { useAuthStore } from '~/store/auth';
+import { useCompletorStore } from '~/store/completor';
 import { useNotificationsStore } from '~/store/notifications';
 import { ACCESS_LEVEL } from '~~/gen/ts/resources/documents/access';
 import { Category } from '~~/gen/ts/resources/documents/category';
@@ -16,17 +17,18 @@ import { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
 import { CreateTemplateRequest, UpdateTemplateRequest } from '~~/gen/ts/services/docstore/docstore';
 import SchemaEditor, { ObjectSpecsValue, SchemaEditorValue } from './SchemaEditor.vue';
 
-const { $grpc } = useNuxtApp();
-const { t } = useI18n();
-const authStore = useAuthStore();
-
-const notifications = useNotificationsStore();
-
 const props = defineProps<{
     templateId?: bigint;
 }>();
 
+const { $grpc } = useNuxtApp();
+const authStore = useAuthStore();
+const notifications = useNotificationsStore();
+const completorStore = useCompletorStore();
+
 const { activeChar } = storeToRefs(authStore);
+
+const { t } = useI18n();
 
 const maxAccessEntries = 8;
 
@@ -44,7 +46,7 @@ interface FormData {
     contentState: string;
 }
 
-const { handleSubmit, setValues, meta, validate } = useForm<FormData>({
+const { handleSubmit, setValues, meta } = useForm<FormData>({
     validationSchema: {
         weight: { required: true, numeric: { min: 0, max: 4294967295 } },
         title: { required: true, min: 3, max: 255 },
@@ -349,39 +351,20 @@ async function createOrUpdateTemplate(values: FormData, templateId?: bigint): Pr
     });
 }
 
-let entriesCategory = [] as Category[];
-const queryCategory = ref('');
+const entriesCategories = ref<Category[]>([]);
+const queryCategories = ref('');
 const selectedCategory = ref<Category | undefined>(undefined);
 
-watchDebounced(queryCategory, () => findCategories(), {
+watchDebounced(queryCategories, () => findCategories(), {
     debounce: 600,
     maxWait: 1400,
 });
 
 async function findCategories(): Promise<void> {
-    return new Promise(async (res, rej) => {
-        if (!can('CompletorService.CompleteDocumentCategories')) {
-            return res();
-        }
-
-        try {
-            const call = $grpc.getCompletorClient().completeDocumentCategories({
-                search: queryCategory.value,
-            });
-            const { response } = await call;
-            entriesCategory = response.categories;
-
-            return res();
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
-        }
-    });
+    entriesCategories.value = await completorStore.completeDocumentCategories(queryCategories.value);
 }
 
 onMounted(async () => {
-    await findCategories();
-
     if (props.templateId) {
         try {
             const call = $grpc.getDocStoreClient().getTemplate({
@@ -480,7 +463,7 @@ onMounted(async () => {
         });
     }
 
-    validate();
+    findCategories();
 });
 </script>
 
@@ -588,17 +571,17 @@ onMounted(async () => {
                             <ComboboxButton as="div">
                                 <ComboboxInput
                                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                    @change="queryCategory = $event.target.value"
+                                    @change="queryCategories = $event.target.value"
                                     :display-value="(category: any) => category?.name"
                                 />
                             </ComboboxButton>
 
                             <ComboboxOptions
-                                v-if="entriesCategory.length > 0"
+                                v-if="entriesCategories.length > 0"
                                 class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-44 sm:text-sm"
                             >
                                 <ComboboxOption
-                                    v-for="category in entriesCategory"
+                                    v-for="category in entriesCategories"
                                     :key="category.id?.toString()"
                                     :value="category"
                                     as="category"

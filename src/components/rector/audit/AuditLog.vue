@@ -16,6 +16,8 @@ import AuditLogEntry from './AuditLogEntry.vue';
 
 const { $grpc } = useNuxtApp();
 
+const completorStore = useCompletorStore();
+
 const query = ref<{
     from: string;
     to: string;
@@ -41,7 +43,7 @@ async function getAuditLog(): Promise<AuditEntry[]> {
             userIds: [],
         };
         const users: number[] = [];
-        selectedChars.value?.forEach((v) => users.push(v.userId));
+        selectedCitizens.value?.forEach((v) => users.push(v.userId));
         req.userIds = users;
 
         if (query.value.from !== '') {
@@ -81,22 +83,19 @@ async function getAuditLog(): Promise<AuditEntry[]> {
 
 const { data: logs, pending, refresh, error } = useLazyAsyncData(`rector-audit-${offset}`, () => getAuditLog());
 
-const entriesChars = ref<UserShort[]>([]);
-const queryChar = ref('');
-const selectedChars = ref<UserShort[]>([]);
+const entriesCitizens = ref<UserShort[]>([]);
+const queryCitizens = ref('');
+const selectedCitizens = ref<UserShort[]>([]);
 
 async function findChars(): Promise<void> {
-    if (queryChar.value === '') {
+    if (queryCitizens.value === '') {
         return;
     }
 
-    const call = $grpc.getCompletorClient().completeCitizens({
-        search: queryChar.value,
+    entriesCitizens.value = await completorStore.completeCitizens({
+        search: queryCitizens.value,
     });
-    const { response } = await call;
-
-    entriesChars.value = response.users;
-    entriesChars.value.push(...selectedChars.value);
+    entriesCitizens.value.push(...selectedCitizens.value);
 }
 
 const searchInput = ref<HTMLInputElement | null>(null);
@@ -118,7 +117,7 @@ watchDebounced(query.value, async () => refresh(), {
     debounce: 600,
     maxWait: 1400,
 });
-watchDebounced(queryChar, async () => await findChars(), {
+watchDebounced(queryCitizens, async () => await findChars(), {
     debounce: 600,
     maxWait: 1400,
 });
@@ -164,12 +163,12 @@ watchDebounced(queryChar, async () => await findChars(), {
                                     {{ $t('common.user', 2) }}
                                 </label>
                                 <div class="relative items-center mt-2">
-                                    <Combobox as="div" v-model="selectedChars" multiple nullable>
+                                    <Combobox as="div" v-model="selectedCitizens" multiple nullable>
                                         <div class="relative">
                                             <ComboboxButton as="div">
                                                 <ComboboxInput
                                                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                    @change="queryChar = $event.target.value"
+                                                    @change="queryCitizens = $event.target.value"
                                                     :display-value="
                                                         (chars: any) => (chars ? charsGetDisplayValue(chars) : 'N/A')
                                                     "
@@ -178,11 +177,11 @@ watchDebounced(queryChar, async () => await findChars(), {
                                             </ComboboxButton>
 
                                             <ComboboxOptions
-                                                v-if="entriesChars.length > 0"
+                                                v-if="entriesCitizens.length > 0"
                                                 class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-44 sm:text-sm"
                                             >
                                                 <ComboboxOption
-                                                    v-for="char in entriesChars"
+                                                    v-for="char in entriesCitizens"
                                                     :key="char?.userId"
                                                     :value="char"
                                                     as="char"

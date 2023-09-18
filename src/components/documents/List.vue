@@ -21,6 +21,7 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import TablePagination from '~/components/partials/elements/TablePagination.vue';
+import { useCompletorStore } from '~/store/completor';
 import * as google_protobuf_timestamp_pb from '~~/gen/ts/google/protobuf/timestamp';
 import { PaginationResponse } from '~~/gen/ts/resources/common/database/database';
 import { Category } from '~~/gen/ts/resources/documents/category';
@@ -31,6 +32,8 @@ import ListEntry from './ListEntry.vue';
 import TemplatesModal from './templates/TemplatesModal.vue';
 
 const { $grpc } = useNuxtApp();
+
+const completorStore = useCompletorStore();
 
 const { t } = useI18n();
 
@@ -57,8 +60,8 @@ const offset = ref(0n);
 
 const entriesCategories = ref<Category[]>([]);
 const queryCategories = ref<string>('');
-const entriesChars = ref<UserShort[]>([]);
-const queryChars = ref<string>('');
+const entriesCitizens = ref<UserShort[]>([]);
+const queryCitizens = ref<string>('');
 
 const { data: documents, pending, refresh, error } = useLazyAsyncData(`documents-${offset.value}`, () => listDocuments());
 
@@ -104,50 +107,6 @@ async function listDocuments(): Promise<DocumentShort[]> {
     });
 }
 
-async function findCategories(): Promise<void> {
-    return new Promise(async (res, rej) => {
-        if (!can('CompletorService.CompleteDocumentCategories')) {
-            return res();
-        }
-
-        try {
-            const call = $grpc.getCompletorClient().completeDocumentCategories({
-                search: queryCategories.value,
-            });
-            const { response } = await call;
-
-            entriesCategories.value = response.categories;
-
-            return res();
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
-        }
-    });
-}
-
-async function findChars(): Promise<void> {
-    return new Promise(async (res, rej) => {
-        if (!can('CompletorService.CompleteCitizens')) {
-            return res();
-        }
-
-        try {
-            const call = $grpc.getCompletorClient().completeCitizens({
-                search: queryChars.value,
-            });
-            const { response } = await call;
-
-            entriesChars.value = response.users;
-
-            return res();
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
-        }
-    });
-}
-
 const searchInput = ref<HTMLInputElement | null>(null);
 function focusSearch(): void {
     if (searchInput.value) {
@@ -155,25 +114,31 @@ function focusSearch(): void {
     }
 }
 
-const templatesOpen = ref(false);
-
 watch(offset, async () => refresh());
 watchDebounced(search.value, async () => refresh(), { debounce: 600, maxWait: 1400 });
+
+async function findCategories(): Promise<void> {
+    entriesCategories.value = await completorStore.completeDocumentCategories(queryCategories.value);
+}
 
 watchDebounced(queryCategories, async () => findCategories(), {
     debounce: 600,
     maxWait: 1400,
 });
 
-watchDebounced(queryChars, async () => findChars(), {
-    debounce: 600,
-    maxWait: 1400,
-});
+watchDebounced(
+    queryCitizens,
+    async () =>
+        (entriesCitizens.value = await completorStore.completeCitizens({
+            search: queryCitizens.value,
+        })),
+    {
+        debounce: 600,
+        maxWait: 1400,
+    },
+);
 
-onMounted(async () => {
-    findCategories();
-    findChars();
-});
+const templatesOpen = ref(false);
 </script>
 
 <template>
@@ -295,18 +260,18 @@ onMounted(async () => {
                                                 <ComboboxButton as="div">
                                                     <ComboboxInput
                                                         class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                        @change="queryChars = $event.target.value"
+                                                        @change="queryCitizens = $event.target.value"
                                                         :display-value="(char: any) => `${char?.firstname} ${char?.lastname}`"
                                                         :placeholder="$t('common.creator')"
                                                     />
                                                 </ComboboxButton>
 
                                                 <ComboboxOptions
-                                                    v-if="entriesChars.length > 0"
+                                                    v-if="entriesCitizens.length > 0"
                                                     class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-44 sm:text-sm"
                                                 >
                                                     <ComboboxOption
-                                                        v-for="char in entriesChars"
+                                                        v-for="char in entriesCitizens"
                                                         :key="char.identifier"
                                                         :value="char"
                                                         as="char"

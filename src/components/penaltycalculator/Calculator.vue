@@ -1,7 +1,5 @@
 <script lang="ts" setup>
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
-
-import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { useClipboard } from '@vueuse/core';
 import { ChevronDownIcon, GavelIcon } from 'mdi-vue3';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
@@ -9,18 +7,18 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import ListEntry from '~/components/penaltycalculator/ListEntry.vue';
 import Stats from '~/components/penaltycalculator/Stats.vue';
+import { useCompletorStore } from '~/store/completor';
 import { useNotificationsStore } from '~/store/notifications';
-import { Law, LawBook } from '~~/gen/ts/resources/laws/laws';
+import { Law } from '~~/gen/ts/resources/laws/laws';
 import SummaryTable from './SummaryTable.vue';
 
-const { $grpc } = useNuxtApp();
-
-const { t, d } = useI18n();
-
+const completorStore = useCompletorStore();
 const clipboard = useClipboard();
 const notifications = useNotificationsStore();
 
-const { data: lawBooks, pending, refresh, error } = useLazyAsyncData(`lawbooks`, () => listLawBooks());
+const { t, d } = useI18n();
+
+const { data: lawBooks, pending, refresh, error } = useLazyAsyncData(`lawbooks`, () => completorStore.listLawBooks());
 
 export type SelectedPenalty = {
     law: Law;
@@ -33,20 +31,6 @@ export type PenaltiesSummary = {
     stvoPoints: bigint;
     count: bigint;
 };
-
-async function listLawBooks(): Promise<LawBook[]> {
-    return new Promise(async (res, rej) => {
-        try {
-            const call = $grpc.getCompletorClient().listLawBooks({});
-            const { response } = await call;
-
-            return res(response.books);
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
-        }
-    });
-}
 
 const rawQuery = ref('');
 const query = computed(() => rawQuery.value.toLowerCase());

@@ -40,6 +40,7 @@ export function fromSecondsToFormattedDuration(seconds: number): string {
     if (seconds > 0) {
         parts.push(`${seconds} ${t(`common.time_ago.second`, seconds)}`);
     }
+
     return parts.join(', ');
 }
 
@@ -47,6 +48,7 @@ export function toDate(ts: resources_timestamp_timestamp.Timestamp | undefined):
     if (ts === undefined || ts?.timestamp === undefined) {
         return new Date();
     }
+
     return google_protobuf_timestamp.Timestamp.toDate(ts?.timestamp!);
 }
 
@@ -58,6 +60,7 @@ export function toDateLocaleString(ts: resources_timestamp_timestamp.Timestamp |
     if (d) {
         return d(google_protobuf_timestamp.Timestamp.toDate(ts?.timestamp!), 'short');
     }
+
     return google_protobuf_timestamp.Timestamp.toDate(ts?.timestamp!).toLocaleDateString();
 }
 
