@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/vue';
-
 import { AccountIcon, BulletinBoardIcon, CarIcon, FileDocumentMultipleIcon } from 'mdi-vue3';
 import AddToButton from '~/components/clipboard/AddToButton.vue';
 import { useClipboardStore } from '~/store/clipboard';

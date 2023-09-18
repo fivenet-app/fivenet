@@ -32,15 +32,19 @@ const props = withDefaults(
 );
 
 const completorStore = useCompletorStore();
-const { completeCitizens } = completorStore;
 
 const queryChar = ref('');
 const selectedChar = ref<undefined | UserShort>(undefined);
 
-const { data: chars, refresh: charsRefresh } = useLazyAsyncData(`chars-${queryChar.value}`, () =>
-    completeCitizens({
-        search: queryChar.value,
-    }),
+const { data: chars, refresh: charsRefresh } = useLazyAsyncData(
+    `chars-${queryChar.value}`,
+    () =>
+        completorStore.completeCitizens({
+            search: queryChar.value,
+        }),
+    {
+        immediate: false,
+    },
 );
 
 const search = ref<{ plate: string; model: string; user_id: number }>({

@@ -13,7 +13,6 @@ import {
     ListboxOption,
     ListboxOptions,
 } from '@headlessui/vue';
-
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { watchDebounced } from '@vueuse/shared';
 import { CheckIcon, ChevronDownIcon } from 'mdi-vue3';
@@ -138,11 +137,14 @@ watchDebounced(
     },
 );
 
+onMounted(async () => findCategories());
+
 const templatesOpen = ref(false);
 </script>
 
 <template>
     <TemplatesModal :open="templatesOpen" @close="templatesOpen = false" />
+
     <div class="py-2 pb-14">
         <div class="px-1 sm:px-2 lg:px-4">
             <div class="sm:flex sm:items-center">

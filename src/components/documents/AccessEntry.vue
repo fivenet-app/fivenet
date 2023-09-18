@@ -10,7 +10,6 @@ import {
     ListboxOption,
     ListboxOptions,
 } from '@headlessui/vue';
-
 import { listEnumValues } from '@protobuf-ts/runtime';
 import { watchDebounced } from '@vueuse/core';
 import { CheckIcon, ChevronDownIcon, CloseIcon } from 'mdi-vue3';
@@ -51,7 +50,6 @@ const emit = defineEmits<{
 }>();
 
 const completorStore = useCompletorStore();
-const { getJobByName, completeCitizens } = completorStore;
 const { jobs } = storeToRefs(completorStore);
 
 const { t } = useI18n();
@@ -105,7 +103,7 @@ const selectedAccessRole = ref<ArrayElement<typeof entriesAccessRoles>>();
 async function findChars(userId?: number): Promise<UserShort[]> {
     if (queryChar.value === '' && userId === undefined) return [];
 
-    return completeCitizens({
+    return completorStore.completeCitizens({
         search: queryChar.value,
         userId: userId,
     });
@@ -124,7 +122,7 @@ onMounted(async () => {
         props.init.values.minimumGrade !== undefined &&
         props.init.values.accessRole !== undefined
     ) {
-        selectedJob.value = await getJobByName(props.init.values.job);
+        selectedJob.value = await completorStore.getJobByName(props.init.values.job);
         if (selectedJob.value) entriesMinimumRank = selectedJob.value.grades;
         selectedMinimumRank.value = entriesMinimumRank.find((rank) => rank.grade === props.init.values.minimumGrade);
     }

@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { Dialog, DialogPanel, Menu, MenuButton, MenuItem, MenuItems, TransitionChild, TransitionRoot } from '@headlessui/vue';
-
 import {
     AccountIcon,
     AccountMultipleIcon,

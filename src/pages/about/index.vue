@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
-
 import { ChevronDownIcon, LicenseIcon, LockIcon, MagnifyIcon, MapIcon } from 'mdi-vue3';
 import '~/assets/css/herofull-pattern.css';
 import Footer from '~/components/partials/Footer.vue';

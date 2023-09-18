@@ -8,7 +8,6 @@ import {
     ListboxOption,
     ListboxOptions,
 } from '@headlessui/vue';
-
 import { CheckIcon, ChevronDownIcon } from 'mdi-vue3';
 import { useCompletorStore } from '~/store/completor';
 import { AttributeValues, Permission, RoleAttribute } from '~~/gen/ts/resources/permissions/permissions';
