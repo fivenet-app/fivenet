@@ -60,11 +60,11 @@ watch:
 
 .PHONY: build-container
 build-container:
-	docker build -t galexrt/fivenet:latest .
+	docker build -t docker.io/galexrt/fivenet:latest .
 
 .PHONY: release
 release:
-	docker tag galexrt/fivenet:latest galexrt/fivenet:$(VERSION)
+	docker tag docker.io/galexrt/fivenet:latest docker.io/galexrt/fivenet:$(VERSION)
 
 .PHONY: build-go
 build-go:
@@ -125,6 +125,7 @@ gen-proto: protoc-gen-validate protoc-gen-customizer
 	# Remove validate_pb imports from JS files
 	find ./gen -type f \( -iname '*.js' -o -iname '*.ts' \) -exec sed -i '/validate_pb/d' {} +
 
+.PHONY: fmt
 fmt:
 	$(MAKE) fmt-proto gen-proto
 	$(MAKE) fmt-js
@@ -156,6 +157,7 @@ tiles:
 	$(MAKE) gen-tiles
 	$(MAKE) optimize-tiles
 
+.PHONY: helm-docs
 helm-docs: bin-$(HELM_DOCS) ## Use helm-docs to generate documentation from helm charts
 	$(HELM_DOCS) -c charts/fivenet \
 		-o README.md \

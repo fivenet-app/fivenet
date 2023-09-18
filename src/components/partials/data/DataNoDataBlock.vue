@@ -2,8 +2,6 @@
 import { MagnifyIcon } from 'mdi-vue3';
 import { DefineComponent } from 'vue';
 
-const { t } = useI18n();
-
 const props = withDefaults(
     defineProps<{
         message?: string;
@@ -35,7 +33,7 @@ function click() {
                 {{ message }}
             </span>
             <span v-else>
-                {{ $t('common.not_found', [type ?? t('common.data')]) }}
+                {{ $t('common.not_found', [type ?? $t('common.data')]) }}
             </span>
         </span>
     </button>
