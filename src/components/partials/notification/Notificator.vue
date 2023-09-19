@@ -93,6 +93,8 @@ async function streamNotifications(): Promise<void> {
                             break;
                     }
                 });
+            } else {
+                console.warn('Notificator: Unknown data received - Kind: ', resp.data.oneofKind, resp.data);
             }
 
             if (resp.restart) {
