@@ -239,9 +239,13 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 	}
 	defer sub.Unsubscribe()
 
-	// Ping ticker to ensure better stream quality
-	ticker := time.NewTicker(pingTickerTime * 2)
-	defer ticker.Stop()
+	// Ping pingTicker to ensure better stream quality
+	pingTicker := time.NewTicker(pingTickerTime * 2)
+	defer pingTicker.Stop()
+
+	// Update Ticker
+	updateTicker := time.NewTicker(40 * time.Second)
+	defer updateTicker.Stop()
 
 	// Check if user has any (unsent/unread) notifications
 	if err := s.checkNotifications(srv, req, &currentUserInfo); err != nil {
@@ -257,31 +261,12 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 		case <-srv.Context().Done():
 			return nil
 
-		case t := <-ticker.C:
+		case t := <-pingTicker.C:
 			resp.Data = &StreamResponse_Ping{
 				Ping: t.String(),
 			}
 
-		case msg := <-msgCh:
-			// Publish notifications sent directly to user via the message queue
-			msg.Ack()
-
-			var dest notifications.Notification
-			if err := proto.Unmarshal(msg.Data, &dest); err != nil {
-				return err
-			}
-
-			resp.Data = &StreamResponse_Notifications{
-				Notifications: &StreamNotifications{
-					Notifications: []*notifications.Notification{&dest},
-				},
-			}
-
-			if err := srv.Send(resp); err != nil {
-				return ErrFailedStream
-			}
-
-		case <-time.After(45 * time.Second):
+		case <-updateTicker.C:
 			// Check for new user notifications
 			if err := s.checkNotifications(srv, req, &currentUserInfo); err != nil {
 				return err
@@ -301,6 +286,25 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 				}); err != nil {
 					return ErrFailedStream
 				}
+			}
+
+		case msg := <-msgCh:
+			// Publish notifications sent directly to user via the message queue
+			msg.Ack()
+
+			var dest notifications.Notification
+			if err := proto.Unmarshal(msg.Data, &dest); err != nil {
+				return err
+			}
+
+			resp.Data = &StreamResponse_Notifications{
+				Notifications: &StreamNotifications{
+					Notifications: []*notifications.Notification{&dest},
+				},
+			}
+
+			if err := srv.Send(resp); err != nil {
+				return ErrFailedStream
 			}
 		}
 	}
