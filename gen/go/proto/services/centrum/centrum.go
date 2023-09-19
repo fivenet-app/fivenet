@@ -33,6 +33,8 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
+const pingTickerTime = 35 * time.Second
+
 var (
 	ErrFailedQuery       = status.Error(codes.Internal, "errors.CentrumService.ErrFailedQuery")
 	ErrAlreadyInUnit     = status.Error(codes.InvalidArgument, "errors.CentrumService.ErrAlreadyInUnit")
@@ -271,8 +273,6 @@ func (s *Server) Stream(req *StreamRequest, srv CentrumService_StreamServer) err
 		time.Sleep(150 * time.Millisecond)
 	}
 }
-
-const pingTickerTime = 40 * time.Second
 
 func (s *Server) stream(srv CentrumService_StreamServer, isDisponent bool, job string, userId int32, unitId uint64) (bool, error) {
 	msgCh := make(chan *nats.Msg, 48)

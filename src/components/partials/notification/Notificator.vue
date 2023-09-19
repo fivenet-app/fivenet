@@ -39,9 +39,36 @@ async function streamNotifications(): Promise<void> {
         for await (let resp of call.responses) {
             if (resp.lastId > getLastId.value) setLastId(resp.lastId);
 
-            if (resp.notifications.length > 0) {
-                console.debug('Notifications:', resp.notifications);
-                resp.notifications.forEach((n) => {
+            if (resp.data.oneofKind === 'ping') {
+            } else if (resp.data.oneofKind === 'token') {
+                const tokenUpdate = resp.data.token;
+
+                // Update active char when updated user info is received
+                if (tokenUpdate.userInfo) {
+                    console.debug('Notificator: Updated UserInfo received');
+
+                    setActiveChar(tokenUpdate.userInfo);
+                    setPermissions(tokenUpdate.permissions);
+                    if (tokenUpdate.jobProps) {
+                        setJobProps(tokenUpdate.jobProps!);
+                    } else {
+                        setJobProps(null);
+                    }
+                }
+
+                if (tokenUpdate.newToken && tokenUpdate.expires) {
+                    console.debug('Notificator: New Token received');
+
+                    setAccessToken(tokenUpdate.newToken, toDate(tokenUpdate.expires) as null | Date);
+
+                    notifications.dispatchNotification({
+                        title: { key: 'notifications.renewed_token.title', parameters: [] },
+                        content: { key: 'notifications.renewed_token.content', parameters: [] },
+                        type: 'info',
+                    });
+                }
+            } else if (resp.data.oneofKind === 'notifications') {
+                resp.data.notifications.notifications.forEach((n) => {
                     let nType: NotificationType = (n.type as NotificationType) ?? 'info';
 
                     switch (n.category) {
@@ -68,52 +95,22 @@ async function streamNotifications(): Promise<void> {
                 });
             }
 
-            // If the response contains an (updated) token
-            if (resp.token) {
-                const tokenUpdate = resp.token;
-
-                // Update active char when updated user info is received
-                if (tokenUpdate.userInfo) {
-                    console.debug('Notificator: Updated UserInfo received');
-
-                    setActiveChar(tokenUpdate.userInfo);
-                    setPermissions(tokenUpdate.permissions);
-                    if (tokenUpdate.jobProps) {
-                        setJobProps(tokenUpdate.jobProps!);
-                    } else {
-                        setJobProps(null);
-                    }
-                }
-
-                if (tokenUpdate.newToken && tokenUpdate.expires) {
-                    console.debug('Notificator: New Token received');
-
-                    setAccessToken(tokenUpdate.newToken, toDate(tokenUpdate.expires) as null | Date);
-
-                    notifications.dispatchNotification({
-                        title: { key: 'notifications.renewed_token.title', parameters: [] },
-                        content: { key: 'notifications.renewed_token.content', parameters: [] },
-                        type: 'info',
-                    });
-                }
-            }
-
-            if (resp.restartStream) {
+            if (resp.restart) {
                 console.debug('Notificator: Server requested stream to be restarted');
                 restartBackoffTime = 0;
                 restartStream();
+                break;
             }
         }
-
-        console.debug('Notificator: Stream ended');
     } catch (e) {
-        if ((e as RpcError).code == 'CANCELLED') {
-            return;
+        const error = e as RpcError;
+        if (error.code != 'CANCELLED') {
+            console.debug('Notificator: Stream failed', error.code, error.message, error.cause);
+            restartStream();
         }
-
-        console.debug('Notificator: Stream errored', e as RpcError);
-        restartStream();
     }
+
+    console.debug('Notificator: Stream ended');
 }
 
 async function cancelStream(): Promise<void> {

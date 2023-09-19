@@ -41,7 +41,7 @@ var (
 	ErrFailedStream  = status.Error(codes.InvalidArgument, "errors.NotificatorService.ErrFailedStream")
 )
 
-const MinWaitTicks = 4
+const pingTickerTime = 35 * time.Second
 
 type Server struct {
 	NotificatorServiceServer
@@ -239,19 +239,31 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 	}
 	defer sub.Unsubscribe()
 
-	waitTicks := MinWaitTicks
+	// Ping ticker to ensure better stream quality
+	ticker := time.NewTicker(pingTickerTime * 2)
+	defer ticker.Stop()
 
-	if err := s.checkNotificationsAndUser(srv, req, &currentUserInfo, &waitTicks); err != nil {
+	// Check if user has any (unsent/unread) notifications
+	if err := s.checkNotifications(srv, req, &currentUserInfo); err != nil {
 		return err
 	}
 
 	for {
+		resp := &StreamResponse{
+			LastId: req.LastId,
+		}
+
 		select {
 		case <-srv.Context().Done():
 			return nil
 
+		case t := <-ticker.C:
+			resp.Data = &StreamResponse_Ping{
+				Ping: t.String(),
+			}
+
 		case msg := <-msgCh:
-			// Publish notifications sent directly to user
+			// Publish notifications sent directly to user via the message queue
 			msg.Ack()
 
 			var dest notifications.Notification
@@ -259,29 +271,33 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 				return err
 			}
 
-			resp := &StreamResponse{
-				LastId: req.LastId,
-				Token:  &TokenUpdate{},
+			resp.Data = &StreamResponse_Notifications{
+				Notifications: &StreamNotifications{
+					Notifications: []*notifications.Notification{&dest},
+				},
 			}
-			resp.Notifications = append(resp.Notifications, &dest)
 
 			if err := srv.Send(resp); err != nil {
 				return ErrFailedStream
 			}
 
-		case <-time.After(30 * time.Second):
-			// Regular notifications and user + token check
-			waitTicks--
+		case <-time.After(45 * time.Second):
+			// Check for new user notifications
+			if err := s.checkNotifications(srv, req, &currentUserInfo); err != nil {
+				return err
+			}
 
-			if err := s.checkNotificationsAndUser(srv, req, &currentUserInfo, &waitTicks); err != nil {
+			// Check user token validity
+			if err := s.checkUser(srv, req, &currentUserInfo); err != nil {
 				return err
 			}
 
 			// Make sure message queue subscription is still valid, otherwise restart stream
 			if !sub.IsValid() {
+				restart := true
 				if err := srv.Send(&StreamResponse{
-					LastId:        req.LastId,
-					RestartStream: true,
+					LastId:  req.LastId,
+					Restart: &restart,
 				}); err != nil {
 					return ErrFailedStream
 				}
@@ -290,39 +306,55 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 	}
 }
 
-func (s *Server) checkNotificationsAndUser(srv NotificatorService_StreamServer, req *StreamRequest, userInfo *userinfo.UserInfo, waitTicks *int) error {
+func (s *Server) checkNotifications(srv NotificatorService_StreamServer, req *StreamRequest, userInfo *userinfo.UserInfo) error {
 	resp := &StreamResponse{
 		LastId: req.LastId,
-		Token:  &TokenUpdate{},
 	}
 
-	var err error
-	resp.Notifications, err = s.getNotifications(srv.Context(), userInfo.UserId, req.LastId)
+	notifications, err := s.getNotifications(srv.Context(), userInfo.UserId, req.LastId)
 	if err != nil {
 		return ErrFailedStream
 	}
+	// Update last notification id of the user and send notifications
+	if len(notifications) > 0 {
+		req.LastId = notifications[0].Id
+		resp.LastId = notifications[0].Id
 
-	// Update last notification id of the user
-	if len(resp.Notifications) > 0 {
-		req.LastId = resp.Notifications[0].Id
-		resp.LastId = resp.Notifications[0].Id
+		resp.Data = &StreamResponse_Notifications{
+			Notifications: &StreamNotifications{
+				Notifications: notifications,
+			},
+		}
+
+		if err := srv.Send(resp); err != nil {
+			return err
+		}
 	}
 
-	claims, restart, err := s.checkAndUpdateToken(srv.Context(), resp.Token)
+	return nil
+}
+
+func (s *Server) checkUser(srv NotificatorService_StreamServer, req *StreamRequest, userInfo *userinfo.UserInfo) error {
+	resp := &StreamResponse{
+		LastId: req.LastId,
+	}
+
+	claims, restart, tu, err := s.checkAndUpdateToken(srv.Context())
 	if err != nil {
 		return ErrFailedStream
 	}
 	if restart {
-		resp.RestartStream = true
+		resp.Restart = &restart
 	}
 
-	if *waitTicks <= 0 {
-		if claims.CharID > 0 {
-			if err := s.checkAndUpdateUserInfo(srv.Context(), resp.Token, userInfo); err != nil {
-				return ErrFailedStream
-			}
+	if tu != nil && claims.CharID > 0 {
+		if err := s.checkAndUpdateUserInfo(srv.Context(), tu, userInfo); err != nil {
+			return ErrFailedStream
 		}
-		*waitTicks = MinWaitTicks
+
+		resp.Data = &StreamResponse_Token{
+			Token: tu,
+		}
 	}
 
 	if err := srv.Send(resp); err != nil {
@@ -332,20 +364,20 @@ func (s *Server) checkNotificationsAndUser(srv NotificatorService_StreamServer, 
 	return nil
 }
 
-func (s *Server) checkAndUpdateToken(ctx context.Context, tu *TokenUpdate) (*auth.CitizenInfoClaims, bool, error) {
+func (s *Server) checkAndUpdateToken(ctx context.Context) (*auth.CitizenInfoClaims, bool, *TokenUpdate, error) {
 	token, err := auth.GetTokenFromGRPCContext(ctx)
 	if err != nil {
-		return nil, true, auth.ErrInvalidToken
+		return nil, true, nil, auth.ErrInvalidToken
 	}
 
 	claims, err := s.tm.ParseWithClaims(token)
 	if err != nil {
-		return nil, true, auth.ErrInvalidToken
+		return nil, true, nil, auth.ErrInvalidToken
 	}
 
 	if time.Until(claims.ExpiresAt.Time) <= auth.TokenRenewalTime {
 		if claims.RenewedCount >= auth.TokenMaxRenews {
-			return nil, true, auth.ErrInvalidToken
+			return nil, true, nil, auth.ErrInvalidToken
 		}
 
 		// Increase re-newed count
@@ -354,16 +386,17 @@ func (s *Server) checkAndUpdateToken(ctx context.Context, tu *TokenUpdate) (*aut
 		auth.SetTokenClaimsTimes(claims)
 		newToken, err := s.tm.NewWithClaims(claims)
 		if err != nil {
-			return nil, true, auth.ErrCheckToken
+			return nil, true, nil, auth.ErrCheckToken
 		}
 
-		tu.NewToken = &newToken
-		tu.Expires = timestamp.New(claims.ExpiresAt.Time)
-
-		return claims, true, nil
+		tu := &TokenUpdate{
+			NewToken: &newToken,
+			Expires:  timestamp.New(claims.ExpiresAt.Time),
+		}
+		return claims, true, tu, nil
 	}
 
-	return claims, false, nil
+	return claims, false, nil, nil
 }
 
 func (s *Server) checkAndUpdateUserInfo(ctx context.Context, tu *TokenUpdate, currentUserInfo *userinfo.UserInfo) error {
@@ -373,40 +406,42 @@ func (s *Server) checkAndUpdateUserInfo(ctx context.Context, tu *TokenUpdate, cu
 	}
 
 	// If the user is logged into a character, update user info and load permissions of user
-	if !currentUserInfo.Equal(userInfo) {
-		char, jobProps, group, err := s.getCharacter(ctx, userInfo.UserId)
-		if err != nil {
-			return err
-		}
-		tu.UserInfo = char
-		tu.JobProps = jobProps
-
-		// Update current user info with new data from database
-		currentUserInfo.UserId = char.UserId
-		currentUserInfo.Job = char.Job
-		currentUserInfo.JobGrade = char.JobGrade
-		currentUserInfo.Group = group
-
-		ps, err := s.p.GetPermissionsOfUser(&userinfo.UserInfo{
-			UserId:   userInfo.UserId,
-			Job:      userInfo.Job,
-			JobGrade: userInfo.JobGrade,
-		})
-		if err != nil {
-			return auth.ErrUserNoPerms
-		}
-		tu.Permissions = ps.GuardNames()
-
-		if userInfo.SuperUser {
-			tu.Permissions = append(tu.Permissions, common.SuperuserPermission)
-		}
-
-		attrs, err := s.p.FlattenRoleAttributes(userInfo.Job, userInfo.JobGrade)
-		if err != nil {
-			return auth.ErrUserNoPerms
-		}
-		tu.Permissions = append(tu.Permissions, attrs...)
+	if currentUserInfo.Equal(userInfo) {
+		return nil
 	}
+
+	char, jobProps, group, err := s.getCharacter(ctx, userInfo.UserId)
+	if err != nil {
+		return err
+	}
+	tu.UserInfo = char
+	tu.JobProps = jobProps
+
+	// Update current user info with new data from database
+	currentUserInfo.UserId = char.UserId
+	currentUserInfo.Job = char.Job
+	currentUserInfo.JobGrade = char.JobGrade
+	currentUserInfo.Group = group
+
+	ps, err := s.p.GetPermissionsOfUser(&userinfo.UserInfo{
+		UserId:   userInfo.UserId,
+		Job:      userInfo.Job,
+		JobGrade: userInfo.JobGrade,
+	})
+	if err != nil {
+		return auth.ErrUserNoPerms
+	}
+	tu.Permissions = ps.GuardNames()
+
+	if userInfo.SuperUser {
+		tu.Permissions = append(tu.Permissions, common.SuperuserPermission)
+	}
+
+	attrs, err := s.p.FlattenRoleAttributes(userInfo.Job, userInfo.JobGrade)
+	if err != nil {
+		return auth.ErrUserNoPerms
+	}
+	tu.Permissions = append(tu.Permissions, attrs...)
 
 	return nil
 }

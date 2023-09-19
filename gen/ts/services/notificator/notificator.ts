@@ -75,17 +75,42 @@ export interface StreamResponse {
      */
     lastId: bigint;
     /**
-     * @generated from protobuf field: bool restart_stream = 2;
+     * @generated from protobuf oneof: data
      */
-    restartStream: boolean;
+    data: {
+        oneofKind: "notifications";
+        /**
+         * @generated from protobuf field: services.notificator.StreamNotifications notifications = 2;
+         */
+        notifications: StreamNotifications;
+    } | {
+        oneofKind: "token";
+        /**
+         * @generated from protobuf field: services.notificator.TokenUpdate token = 3;
+         */
+        token: TokenUpdate;
+    } | {
+        oneofKind: "ping";
+        /**
+         * @generated from protobuf field: string ping = 4;
+         */
+        ping: string;
+    } | {
+        oneofKind: undefined;
+    };
     /**
-     * @generated from protobuf field: repeated resources.notifications.Notification notifications = 3;
+     * @generated from protobuf field: optional bool restart = 5;
+     */
+    restart?: boolean;
+}
+/**
+ * @generated from protobuf message services.notificator.StreamNotifications
+ */
+export interface StreamNotifications {
+    /**
+     * @generated from protobuf field: repeated resources.notifications.Notification notifications = 1;
      */
     notifications: Notification[];
-    /**
-     * @generated from protobuf field: optional services.notificator.TokenUpdate token = 4;
-     */
-    token?: TokenUpdate;
 }
 /**
  * @generated from protobuf message services.notificator.TokenUpdate
@@ -180,9 +205,10 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
     constructor() {
         super("services.notificator.StreamResponse", [
             { no: 1, name: "last_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 2, name: "restart_stream", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 3, name: "notifications", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Notification },
-            { no: 4, name: "token", kind: "message", T: () => TokenUpdate }
+            { no: 2, name: "notifications", kind: "message", oneof: "data", T: () => StreamNotifications },
+            { no: 3, name: "token", kind: "message", oneof: "data", T: () => TokenUpdate },
+            { no: 4, name: "ping", kind: "scalar", oneof: "data", T: 9 /*ScalarType.STRING*/ },
+            { no: 5, name: "restart", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
 }
@@ -190,6 +216,18 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
  * @generated MessageType for protobuf message services.notificator.StreamResponse
  */
 export const StreamResponse = new StreamResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class StreamNotifications$Type extends MessageType<StreamNotifications> {
+    constructor() {
+        super("services.notificator.StreamNotifications", [
+            { no: 1, name: "notifications", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Notification }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.notificator.StreamNotifications
+ */
+export const StreamNotifications = new StreamNotifications$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class TokenUpdate$Type extends MessageType<TokenUpdate> {
     constructor() {

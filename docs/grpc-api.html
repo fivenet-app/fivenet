@@ -1518,6 +1518,10 @@
                 </li>
               
                 <li>
+                  <a href="#services.notificator.StreamNotifications"><span class="badge">M</span>StreamNotifications</a>
+                </li>
+              
+                <li>
                   <a href="#services.notificator.StreamRequest"><span class="badge">M</span>StreamRequest</a>
                 </li>
               
@@ -15580,6 +15584,30 @@
 
         
       
+        <h3 id="services.notificator.StreamNotifications">StreamNotifications</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>notifications</td>
+                  <td><a href="#resources.notifications.Notification">resources.notifications.Notification</a></td>
+                  <td>repeated</td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
         <h3 id="services.notificator.StreamRequest">StreamRequest</h3>
         <p></p>
 
@@ -15622,22 +15650,29 @@
                 </tr>
               
                 <tr>
-                  <td>restart_stream</td>
-                  <td><a href="#bool">bool</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
                   <td>notifications</td>
-                  <td><a href="#resources.notifications.Notification">resources.notifications.Notification</a></td>
-                  <td>repeated</td>
+                  <td><a href="#services.notificator.StreamNotifications">StreamNotifications</a></td>
+                  <td></td>
                   <td><p> </p></td>
                 </tr>
               
                 <tr>
                   <td>token</td>
                   <td><a href="#services.notificator.TokenUpdate">TokenUpdate</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>ping</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>restart</td>
+                  <td><a href="#bool">bool</a></td>
                   <td>optional</td>
                   <td><p> </p></td>
                 </tr>

@@ -40,9 +40,16 @@ message StreamRequest {
 
 message StreamResponse {
   uint64 last_id = 1;
-  bool restart_stream = 2;
-  repeated resources.notifications.Notification notifications = 3;
-  optional TokenUpdate token = 4;
+  oneof data {
+    StreamNotifications notifications = 2;
+    TokenUpdate token = 3;
+    string ping = 4;
+  }
+  optional bool restart = 5;
+}
+
+message StreamNotifications {
+  repeated resources.notifications.Notification notifications = 1;
 }
 
 message TokenUpdate {
