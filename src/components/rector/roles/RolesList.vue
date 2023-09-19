@@ -8,7 +8,7 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { useAuthStore } from '~/store/auth';
 import { useCompletorStore } from '~/store/completor';
-import { useNotificationsStore } from '~/store/notifications';
+import { useNotificatorStore } from '~/store/notificator';
 import { Role } from '~~/gen/ts/resources/permissions/permissions';
 import { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
 import RoleView from './RoleView.vue';
@@ -16,7 +16,7 @@ import RolesListEntry from './RolesListEntry.vue';
 
 const { $grpc } = useNuxtApp();
 
-const notifications = useNotificationsStore();
+const notifications = useNotificatorStore();
 
 const authStore = useAuthStore();
 const { activeChar } = storeToRefs(authStore);

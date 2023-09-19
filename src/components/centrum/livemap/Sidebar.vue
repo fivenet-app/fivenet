@@ -23,7 +23,7 @@ import { dispatchStatusToBGColor, unitStatusToBGColor } from '~/components/centr
 import { default as UnitDetails } from '~/components/centrum/units/Details.vue';
 import { default as UnitStatusUpdateModal } from '~/components/centrum/units/StatusUpdateModal.vue';
 import { useCentrumStore } from '~/store/centrum';
-import { useNotificationsStore } from '~/store/notifications';
+import { useNotificatorStore } from '~/store/notificator';
 import { DISPATCH_STATUS } from '~~/gen/ts/resources/dispatch/dispatches';
 import { CENTRUM_MODE } from '~~/gen/ts/resources/dispatch/settings';
 import { UNIT_STATUS, Unit } from '~~/gen/ts/resources/dispatch/units';
@@ -42,7 +42,7 @@ const centrumStore = useCentrumStore();
 const { settings, units, dispatches, ownDispatches, ownUnitId, pendingDispatches } = storeToRefs(centrumStore);
 const { startStream, stopStream } = centrumStore;
 
-const notifications = useNotificationsStore();
+const notifications = useNotificatorStore();
 
 const actionsUnit: {
     icon: DefineComponent;

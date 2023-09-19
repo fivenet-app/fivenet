@@ -8,7 +8,7 @@ import { defineRule } from 'vee-validate';
 import AccessEntry from '~/components/documents/AccessEntry.vue';
 import { useAuthStore } from '~/store/auth';
 import { useCompletorStore } from '~/store/completor';
-import { useNotificationsStore } from '~/store/notifications';
+import { useNotificatorStore } from '~/store/notificator';
 import { ACCESS_LEVEL } from '~~/gen/ts/resources/documents/access';
 import { Category } from '~~/gen/ts/resources/documents/category';
 import { DocumentAccess } from '~~/gen/ts/resources/documents/documents';
@@ -23,7 +23,7 @@ const props = defineProps<{
 
 const { $grpc } = useNuxtApp();
 const authStore = useAuthStore();
-const notifications = useNotificationsStore();
+const notifications = useNotificatorStore();
 const completorStore = useCompletorStore();
 
 const { activeChar } = storeToRefs(authStore);
@@ -66,9 +66,9 @@ const onSubmit = handleSubmit(
     async (values): Promise<void> =>
         await createOrUpdateTemplate(values, props.templateId).finally(() => setTimeout(() => (canSubmit.value = true), 350)),
 );
-const onSubmitThrottle = useThrottleFn((e) => {
+const onSubmitThrottle = useThrottleFn(async (e) => {
     canSubmit.value = false;
-    onSubmit(e);
+    await onSubmit(e);
 }, 1000);
 
 const schema = ref<SchemaEditorValue>({

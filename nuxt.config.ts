@@ -72,8 +72,8 @@ const config = defineNuxtConfig({
                 file: 'de-DE.json',
             },
         ],
-        debug: true,
-        lazy: true,
+        debug: false,
+        lazy: false, // https://github.com/nuxt-modules/i18n/issues/2044#issuecomment-1539546880
         langDir: './lang',
         defaultLocale: 'de',
         defaultDirection: 'ltr',

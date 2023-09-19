@@ -4,11 +4,11 @@ import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { max, min, required } from '@vee-validate/rules';
 import { useThrottleFn } from '@vueuse/core';
 import { defineRule } from 'vee-validate';
-import { useNotificationsStore } from '~/store/notifications';
+import { useNotificatorStore } from '~/store/notificator';
 import { Category } from '~~/gen/ts/resources/documents/category';
 
 const { $grpc } = useNuxtApp();
-const notifications = useNotificationsStore();
+const notifications = useNotificatorStore();
 
 const emit = defineEmits<{
     (e: 'deleted'): void;
@@ -89,9 +89,9 @@ const onSubmit = handleSubmit(
     async (values): Promise<void> =>
         await updateCategory(values).finally(() => setTimeout(() => (canSubmit.value = true), 350)),
 );
-const onSubmitThrottle = useThrottleFn((e) => {
+const onSubmitThrottle = useThrottleFn(async (e) => {
     canSubmit.value = false;
-    onSubmit(e);
+    await onSubmit(e);
 }, 1000);
 </script>
 

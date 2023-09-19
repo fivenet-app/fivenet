@@ -2,9 +2,9 @@
 import { Combobox, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
 import { watchDebounced } from '@vueuse/core';
 import { useLivemapStore } from '~/store/livemap';
-import { useNotificationsStore } from '~/store/notifications';
+import { useNotificatorStore } from '~/store/notificator';
 
-const notifications = useNotificationsStore();
+const notifications = useNotificatorStore();
 
 const livemapStore = useLivemapStore();
 const { location } = storeToRefs(livemapStore);

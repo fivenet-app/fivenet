@@ -3,12 +3,12 @@ import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue';
 import { setLocale as veeValidateSetLocale } from '@vee-validate/i18n';
 import { TranslateIcon } from 'mdi-vue3';
 import { LocaleObject } from 'vue-i18n-routing';
-import { useNotificationsStore } from '~/store/notifications';
+import { useNotificatorStore } from '~/store/notificator';
 import { useSettingsStore } from '~/store/settings';
 
 const { locales, setLocale } = useI18n();
 const settings = useSettingsStore();
-const notifications = useNotificationsStore();
+const notifications = useNotificatorStore();
 
 type Language = { name: string; iso: string };
 const languages: Language[] = [];

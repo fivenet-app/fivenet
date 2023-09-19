@@ -4,7 +4,7 @@ import ContentCenterWrapper from '~/components/partials/ContentCenterWrapper.vue
 import Footer from '~/components/partials/Footer.vue';
 import HeroFull from '~/components/partials/HeroFull.vue';
 import { useAuthStore } from '~/store/auth';
-import { useNotificationsStore } from '~/store/notifications';
+import { useNotificatorStore } from '~/store/notificator';
 
 useHead({
     title: 'pages.auth.login.title',
@@ -16,10 +16,9 @@ definePageMeta({
 });
 
 const authStore = useAuthStore();
-const notifications = useNotificationsStore();
-const route = useRoute();
-
 const { setAccessToken } = authStore;
+const notifications = useNotificatorStore();
+const route = useRoute();
 
 const query = route.query;
 // `t` and `exp` set, means social login was successful

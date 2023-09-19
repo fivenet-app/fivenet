@@ -10,7 +10,7 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import Divider from '~/components/partials/elements/Divider.vue';
 import RoleViewAttr from '~/components/rector/roles/RoleViewAttr.vue';
 import { useCompletorStore } from '~/store/completor';
-import { useNotificationsStore } from '~/store/notifications';
+import { useNotificatorStore } from '~/store/notificator';
 import { AttributeValues, Permission, Role, RoleAttribute } from '~~/gen/ts/resources/permissions/permissions';
 import { AttrsUpdate, PermItem, PermsUpdate } from '~~/gen/ts/services/rector/rector';
 
@@ -24,7 +24,7 @@ const emit = defineEmits<{
 
 const { $grpc } = useNuxtApp();
 
-const notifications = useNotificationsStore();
+const notifications = useNotificatorStore();
 
 const completorStore = useCompletorStore();
 const { jobs } = storeToRefs(completorStore);

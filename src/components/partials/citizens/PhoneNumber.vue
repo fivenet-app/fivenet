@@ -2,7 +2,7 @@
 import { useClipboard } from '@vueuse/core';
 import { PhoneIcon } from 'mdi-vue3';
 import { isNUIAvailable, phoneCallNumber } from '~/components/nui';
-import { useNotificationsStore } from '~/store/notifications';
+import { useNotificatorStore } from '~/store/notificator';
 
 const props = withDefaults(
     defineProps<{
@@ -18,7 +18,7 @@ const props = withDefaults(
 
 const clipboard = useClipboard();
 
-const notifications = useNotificationsStore();
+const notifications = useNotificatorStore();
 
 function doCall(): void {
     if (props.number === undefined) return;

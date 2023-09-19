@@ -8,7 +8,6 @@ import { configure } from 'vee-validate';
 import { useClipboardStore } from '~/store/clipboard';
 import { useConfigStore } from '~/store/config';
 import { useDocumentEditorStore } from '~/store/documenteditor';
-import { useNotificationsStore } from '~/store/notifications';
 import { useSettingsStore } from '~/store/settings';
 import ConfirmDialog from './components/partials/ConfirmDialog.vue';
 
@@ -46,7 +45,6 @@ if (__APP_VERSION__ != userSettings.version) {
     console.info('Resetting app data because new version has been detected', userSettings.version, __APP_VERSION__);
     useClipboardStore().$reset();
     useDocumentEditorStore().$reset();
-    useNotificationsStore().$reset();
     userSettings.setVersion(__APP_VERSION__);
 }
 

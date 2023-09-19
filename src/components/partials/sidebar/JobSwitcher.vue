@@ -4,13 +4,13 @@ import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { CheckIcon } from 'mdi-vue3';
 import { useAuthStore } from '~/store/auth';
 import { useCompletorStore } from '~/store/completor';
-import { useNotificationsStore } from '~/store/notifications';
+import { useNotificatorStore } from '~/store/notificator';
 import { Job } from '~~/gen/ts/resources/users/jobs';
 
 const { $grpc } = useNuxtApp();
 
 const authStore = useAuthStore();
-const notifications = useNotificationsStore();
+const notifications = useNotificatorStore();
 
 const { activeChar } = storeToRefs(authStore);
 const { setAccessToken, setActiveChar, setJobProps } = authStore;

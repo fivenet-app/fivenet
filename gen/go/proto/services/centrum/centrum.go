@@ -71,6 +71,8 @@ type Server struct {
 	dispatches *xsync.MapOf[string, *xsync.MapOf[uint64, *dispatch.Dispatch]]
 
 	userIDToUnitID *xsync.MapOf[int32, uint64]
+
+	botManager *BotManager
 }
 
 type Params struct {
@@ -117,6 +119,8 @@ func NewServer(p Params) (*Server, error) {
 		dispatches: xsync.NewTypedMapOf[string, *xsync.MapOf[uint64, *dispatch.Dispatch]](maps.HashString),
 
 		userIDToUnitID: xsync.NewIntegerMapOf[int32, uint64](),
+
+		botManager: NewBotManager(),
 	}
 
 	p.LC.Append(fx.StartHook(func(_ context.Context) error {

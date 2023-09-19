@@ -26,7 +26,7 @@ import { useAuthStore } from '~/store/auth';
 import { getDocument, getUser, useClipboardStore } from '~/store/clipboard';
 import { useCompletorStore } from '~/store/completor';
 import { useDocumentEditorStore } from '~/store/documenteditor';
-import { useNotificationsStore } from '~/store/notifications';
+import { useNotificatorStore } from '~/store/notificator';
 import { TranslateItem } from '~~/gen/ts/resources/common/i18n';
 import { ACCESS_LEVEL } from '~~/gen/ts/resources/documents/access';
 import { Category } from '~~/gen/ts/resources/documents/category';
@@ -54,7 +54,7 @@ const { $grpc } = useNuxtApp();
 const authStore = useAuthStore();
 const clipboardStore = useClipboardStore();
 const documentStore = useDocumentEditorStore();
-const notifications = useNotificationsStore();
+const notifications = useNotificatorStore();
 const completorStore = useCompletorStore();
 
 const { t } = useI18n();
@@ -745,9 +745,9 @@ const onSubmit = handleSubmit(async (values): Promise<void> => {
 
     await prom.finally(() => setTimeout(() => (canSubmit.value = true), 350));
 });
-const onSubmitThrottle = useThrottleFn((e) => {
+const onSubmitThrottle = useThrottleFn(async (e) => {
     canSubmit.value = false;
-    onSubmit(e);
+    await onSubmit(e);
 }, 1000);
 </script>
 

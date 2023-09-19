@@ -16,7 +16,7 @@ import { useThrottleFn, watchDebounced } from '@vueuse/core';
 import { CheckIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import { useCompletorStore } from '~/store/completor';
-import { useNotificationsStore } from '~/store/notifications';
+import { useNotificatorStore } from '~/store/notificator';
 import { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
 import { User, UserProps } from '~~/gen/ts/resources/users/users';
 
@@ -30,7 +30,7 @@ const emit = defineEmits<{
 }>();
 
 const { $grpc } = useNuxtApp();
-const notifications = useNotificationsStore();
+const notifications = useNotificatorStore();
 
 const completorStore = useCompletorStore();
 const { jobs } = storeToRefs(completorStore);
@@ -106,9 +106,9 @@ const canSubmit = ref(true);
 const onSubmit = handleSubmit(
     async (values): Promise<void> => await setJobProp(values).finally(() => setTimeout(() => (canSubmit.value = true), 350)),
 );
-const onSubmitThrottle = useThrottleFn((e) => {
+const onSubmitThrottle = useThrottleFn(async (e) => {
     canSubmit.value = false;
-    onSubmit(e);
+    await onSubmit(e);
 }, 1000);
 </script>
 

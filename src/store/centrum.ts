@@ -5,7 +5,7 @@ import { CENTRUM_MODE, Settings } from '~~/gen/ts/resources/dispatch/settings';
 import { UNIT_STATUS, Unit, UnitStatus } from '~~/gen/ts/resources/dispatch/units';
 import { UserShort } from '~~/gen/ts/resources/users/users';
 import { useAuthStore } from './auth';
-import { useNotificationsStore } from './notifications';
+import { useNotificatorStore } from './notifications';
 
 const FIVE_MINUTES = 7 * 60 * 1000;
 const TWO_MINUTES = 2 * 60 * 1000;
@@ -219,7 +219,7 @@ export const useCentrumStore = defineStore('centrum', {
             if (idx === -1) {
                 this.pendingDispatches.push(id);
 
-                useNotificationsStore().dispatchNotification({
+                useNotificatorStore().dispatchNotification({
                     title: { key: 'notifications.centrum.store.assigned_dispatch.title', parameters: [] },
                     content: { key: 'notifications.centrum.store.assigned_dispatch.content', parameters: [] },
                     type: 'info',
@@ -242,7 +242,7 @@ export const useCentrumStore = defineStore('centrum', {
             console.debug('Centrum: Starting Data Stream');
 
             const authStore = useAuthStore();
-            const notifications = useNotificationsStore();
+            const notifications = useNotificatorStore();
             const { $grpc } = useNuxtApp();
 
             this.abort = new AbortController();
@@ -388,6 +388,7 @@ export const useCentrumStore = defineStore('centrum', {
             this.abort = undefined;
             if (this.cleanupIntervalId !== undefined) clearInterval(this.cleanupIntervalId);
             this.cleanupIntervalId = undefined;
+
             console.debug('Centrum: Stopping Data Stream');
         },
         async restartStream(isCenter?: boolean): Promise<void> {

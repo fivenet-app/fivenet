@@ -92,9 +92,9 @@ const onSubmit = handleSubmit(
     async (values): Promise<LawBook> =>
         await saveLawBook(props.book.id, values).finally(() => setTimeout(() => (canSubmit.value = true), 350)),
 );
-const onSubmitThrottle = useThrottleFn((e) => {
+const onSubmitThrottle = useThrottleFn(async (e) => {
     canSubmit.value = false;
-    onSubmit(e);
+    await onSubmit(e);
 }, 1000);
 
 function deletedLaw(id: bigint): void {

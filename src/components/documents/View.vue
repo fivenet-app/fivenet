@@ -23,7 +23,7 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import Time from '~/components/partials/elements/Time.vue';
 import { useClipboardStore } from '~/store/clipboard';
-import { useNotificationsStore } from '~/store/notifications';
+import { useNotificatorStore } from '~/store/notificator';
 import { ACCESS_LEVEL } from '~~/gen/ts/resources/documents/access';
 import { Document, DocumentAccess } from '~~/gen/ts/resources/documents/documents';
 import CitizenInfoPopover from '../partials/citizens/CitizenInfoPopover.vue';
@@ -33,7 +33,7 @@ import Relations from './Relations.vue';
 
 const { $grpc } = useNuxtApp();
 const clipboardStore = useClipboardStore();
-const notifications = useNotificationsStore();
+const notifications = useNotificatorStore();
 
 const { t } = useI18n();
 

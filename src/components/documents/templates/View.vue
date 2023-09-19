@@ -2,14 +2,14 @@
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { useConfirmDialog } from '@vueuse/core';
 import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
-import { useNotificationsStore } from '~/store/notifications';
+import { useNotificatorStore } from '~/store/notificator';
 import { Template, TemplateRequirements } from '~~/gen/ts/resources/documents/templates';
 import PreviewModal from './PreviewModal.vue';
 import RequirementsList from './RequirementsList.vue';
 
 const { $grpc } = useNuxtApp();
 
-const notifications = useNotificationsStore();
+const notifications = useNotificatorStore();
 
 const props = defineProps<{
     templateId: bigint;

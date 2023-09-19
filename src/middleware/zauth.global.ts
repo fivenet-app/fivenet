@@ -1,6 +1,6 @@
 import { RouteLocationNormalized } from 'vue-router';
 import { useAuthStore } from '~/store/auth';
-import { useNotificationsStore } from '~/store/notifications';
+import { useNotificatorStore } from '~/store/notificator';
 import { toDate } from '~/utils/time';
 
 export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, _: RouteLocationNormalized) => {
@@ -46,7 +46,7 @@ export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, _: 
             // User has permission
             return true;
         } else {
-            useNotificationsStore().dispatchNotification({
+            useNotificatorStore().dispatchNotification({
                 title: { key: 'notifications.auth.no_permission.title', parameters: [] },
                 content: {
                     key: 'notifications.auth.no_permission.content',

@@ -8,13 +8,13 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import ListEntry from '~/components/penaltycalculator/ListEntry.vue';
 import Stats from '~/components/penaltycalculator/Stats.vue';
 import { useCompletorStore } from '~/store/completor';
-import { useNotificationsStore } from '~/store/notifications';
+import { useNotificatorStore } from '~/store/notificator';
 import { Law } from '~~/gen/ts/resources/laws/laws';
 import SummaryTable from './SummaryTable.vue';
 
 const completorStore = useCompletorStore();
 const clipboard = useClipboard();
-const notifications = useNotificationsStore();
+const notifications = useNotificatorStore();
 
 const { t, d } = useI18n();
 

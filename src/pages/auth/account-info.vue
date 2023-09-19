@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import AccountInfo from '~/components/auth/account/AccountInfo.vue';
 import ContentWrapper from '~/components/partials/ContentWrapper.vue';
-import { useNotificationsStore } from '~/store/notifications';
+import { useNotificatorStore } from '~/store/notificator';
 
 useHead({
     title: 'pages.auth.account_info.title',
@@ -14,7 +14,7 @@ definePageMeta({
     showCookieOptions: true,
 });
 
-const notifications = useNotificationsStore();
+const notifications = useNotificatorStore();
 const route = useRoute();
 
 // `oauth2Connect` can be `failed` (with `reason`) or `success`

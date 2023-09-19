@@ -5,11 +5,11 @@ import { useThrottleFn } from '@vueuse/core';
 import { defineRule } from 'vee-validate';
 import PasswordStrengthMeter from '~/components/auth/PasswordStrengthMeter.vue';
 import Alert from '~/components/partials/elements/Alert.vue';
-import { useNotificationsStore } from '~/store/notifications';
+import { useNotificatorStore } from '~/store/notificator';
 
 const { $grpc } = useNuxtApp();
 
-const notifications = useNotificationsStore();
+const notifications = useNotificatorStore();
 
 defineEmits<{
     (e: 'back'): void;
@@ -64,9 +64,9 @@ const onSubmit = handleSubmit(
     async (values): Promise<void> =>
         await forgotPassword(values).finally(() => setTimeout(() => (canSubmit.value = true), 350)),
 );
-const onSubmitThrottle = useThrottleFn((e) => {
+const onSubmitThrottle = useThrottleFn(async (e) => {
     canSubmit.value = false;
-    onSubmit(e);
+    await onSubmit(e);
 }, 1000);
 </script>
 

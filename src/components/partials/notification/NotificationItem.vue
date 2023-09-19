@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import { AlertCircleIcon, AlertIcon, CheckCircleIcon, CloseIcon, InformationIcon } from 'mdi-vue3';
 import { Notification } from '~/composables/notification/interfaces/Notification.interface';
-import { useNotificationsStore } from '~/store/notifications';
+import { useNotificatorStore } from '~/store/notificator';
 
-const notifications = useNotificationsStore();
+const notifications = useNotificatorStore();
 const { removeNotification } = notifications;
 
 const { t } = useI18n();

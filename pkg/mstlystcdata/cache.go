@@ -271,10 +271,8 @@ func (c *Cache) RefreshLaws(ctx context.Context, lawBookId uint64) error {
 
 func (c *Cache) GetLawBooks() []*laws.LawBook {
 	lawBooks := []*laws.LawBook{}
-	k := 0
 	c.lawBooks.Range(func(key uint64, value *laws.LawBook) bool {
-		lawBooks[k] = value
-		k++
+		lawBooks = append(lawBooks, value)
 		return true
 	})
 

@@ -171,7 +171,6 @@ func (s *Server) updateDispatchStatus(ctx context.Context, job string, dsp *disp
 		return err
 	}
 	dsp.Status = status
-	//dsp.Statuses = append(dsp.Statuses, status)
 
 	data, err := proto.Marshal(dsp)
 	if err != nil {

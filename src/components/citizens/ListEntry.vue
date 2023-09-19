@@ -1,12 +1,12 @@
 <script lang="ts" setup>
 import { ClipboardPlusIcon, EyeIcon } from 'mdi-vue3';
 import { useClipboardStore } from '~/store/clipboard';
-import { useNotificationsStore } from '~/store/notifications';
+import { useNotificatorStore } from '~/store/notificator';
 import { User } from '~~/gen/ts/resources/users/users';
 import PhoneNumber from '../partials/citizens/PhoneNumber.vue';
 
 const clipboardStore = useClipboardStore();
-const notifications = useNotificationsStore();
+const notifications = useNotificatorStore();
 
 const props = defineProps<{
     user: User;

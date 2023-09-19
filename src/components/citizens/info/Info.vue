@@ -3,7 +3,7 @@ import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/vue';
 import { AccountIcon, BulletinBoardIcon, CarIcon, FileDocumentMultipleIcon } from 'mdi-vue3';
 import AddToButton from '~/components/clipboard/AddToButton.vue';
 import { useClipboardStore } from '~/store/clipboard';
-import { useNotificationsStore } from '~/store/notifications';
+import { useNotificatorStore } from '~/store/notificator';
 import { User } from '~~/gen/ts/resources/users/users';
 import ActivityFeed from './ActivityFeed.vue';
 import Documents from './Documents.vue';
@@ -11,7 +11,7 @@ import Profile from './Profile.vue';
 import Vehicles from './Vehicles.vue';
 
 const clipboardStore = useClipboardStore();
-const notifications = useNotificationsStore();
+const notifications = useNotificatorStore();
 
 const { t } = useI18n();
 

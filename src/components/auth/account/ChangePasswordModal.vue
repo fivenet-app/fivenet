@@ -7,11 +7,11 @@ import { KeyIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import PasswordStrengthMeter from '~/components/auth/PasswordStrengthMeter.vue';
 import { useAuthStore } from '~/store/auth';
-import { useNotificationsStore } from '~/store/notifications';
+import { useNotificatorStore } from '~/store/notificator';
 
 const { $grpc } = useNuxtApp();
 const authStore = useAuthStore();
-const notifications = useNotificationsStore();
+const notifications = useNotificatorStore();
 
 const { setAccessToken } = authStore;
 
@@ -72,9 +72,9 @@ const onSubmit = handleSubmit(
     async (values): Promise<void> =>
         await changePassword(values).finally(() => setTimeout(() => (canSubmit.value = true), 350)),
 );
-const onSubmitThrottle = useThrottleFn((e) => {
+const onSubmitThrottle = useThrottleFn(async (e) => {
     canSubmit.value = false;
-    onSubmit(e);
+    await onSubmit(e);
 }, 1000);
 </script>
 

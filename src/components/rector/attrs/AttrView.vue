@@ -6,7 +6,7 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import Divider from '~/components/partials/elements/Divider.vue';
-import { useNotificationsStore } from '~/store/notifications';
+import { useNotificatorStore } from '~/store/notificator';
 import { AttributeValues, Permission, Role, RoleAttribute } from '~~/gen/ts/resources/permissions/permissions';
 import { AttrsUpdate } from '~~/gen/ts/services/rector/rector';
 import AttrViewAttr from './AttrViewAttr.vue';
@@ -17,7 +17,7 @@ const props = defineProps<{
 
 const { $grpc } = useNuxtApp();
 
-const notifications = useNotificationsStore();
+const notifications = useNotificatorStore();
 
 const {
     data: role,

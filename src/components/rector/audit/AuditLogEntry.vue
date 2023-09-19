@@ -5,7 +5,7 @@ import VueJsonPretty from 'vue-json-pretty';
 import 'vue-json-pretty/lib/styles.css';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import Time from '~/components/partials/elements/Time.vue';
-import { useNotificationsStore } from '~/store/notifications';
+import { useNotificatorStore } from '~/store/notificator';
 import { AuditEntry, EVENT_TYPE } from '~~/gen/ts/resources/rector/audit';
 
 const clipboard = useClipboard();
@@ -16,7 +16,7 @@ const props = defineProps<{
     log: AuditEntry;
 }>();
 
-const notifications = useNotificationsStore();
+const notifications = useNotificatorStore();
 
 async function addToClipboard(): Promise<void> {
     const user = props.log.user;

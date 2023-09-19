@@ -1,11 +1,11 @@
 <script lang="ts" setup>
 import { useClipboard } from '@vueuse/core';
 import { FingerprintIcon } from 'mdi-vue3';
-import { useNotificationsStore } from '~/store/notifications';
+import { useNotificatorStore } from '~/store/notificator';
 import { TranslateItem } from '~~/gen/ts/resources/common/i18n';
 
 const clipboard = useClipboard();
-const notifications = useNotificationsStore();
+const notifications = useNotificatorStore();
 
 const props = defineProps<{
     id: bigint | string;

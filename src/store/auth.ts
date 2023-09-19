@@ -2,7 +2,7 @@ import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { StoreDefinition, defineStore } from 'pinia';
 import { JobProps } from '~~/gen/ts/resources/users/jobs';
 import { User } from '~~/gen/ts/resources/users/users';
-import { useNotificationsStore } from './notifications';
+import { useNotificatorStore } from './notifications';
 
 export type JobPropsState = {
     quickButtons: String[];
@@ -114,7 +114,7 @@ export const useAuthStore = defineStore('auth', {
                 } catch (e) {
                     $grpc.handleError(e as RpcError);
 
-                    useNotificationsStore().dispatchNotification({
+                    useNotificatorStore().dispatchNotification({
                         title: { key: 'notifications.auth.error_logout.title', parameters: [] },
                         content: { key: 'notifications.auth.error_logout.content', parameters: [(e as RpcError).message] },
                         type: 'error',

@@ -27,7 +27,7 @@ func (s *Server) watchStateEvents() error {
 	// Watch for events from message queue
 	for {
 		func() error {
-			ctx, span := s.tracer.Start(s.ctx, "centrum-initial-cache")
+			ctx, span := s.tracer.Start(s.ctx, "centrum-watch-events")
 			defer span.End()
 
 			select {
@@ -47,6 +47,8 @@ func (s *Server) watchStateEvents() error {
 						}
 
 						s.disponents.Store(job, dest.Disponents)
+
+						// TODO
 
 					case TypeGeneralSettings:
 						var dest dispatch.Settings
@@ -117,8 +119,6 @@ func (s *Server) watchStateEvents() error {
 						unit, ok := s.getUnitsMap(job).Load(dest.Status.UnitId)
 						if ok {
 							unit.Status = dest.Status
-							//unit.Statuses = append(unit.Statuses, &dest)
-
 						} else {
 							// "Cache/State miss" load from database
 							if err := s.loadUnits(ctx, dest.Status.UnitId); err != nil {

@@ -2,11 +2,11 @@
 import { CarIcon, TrashCanIcon } from 'mdi-vue3';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import { ClipboardVehicle, useClipboardStore } from '~/store/clipboard';
-import { useNotificationsStore } from '~/store/notifications';
+import { useNotificatorStore } from '~/store/notificator';
 import { ObjectSpecs } from '~~/gen/ts/resources/documents/templates';
 
 const clipboardStore = useClipboardStore();
-const notifications = useNotificationsStore();
+const notifications = useNotificatorStore();
 
 const { vehicles } = storeToRefs(clipboardStore);
 

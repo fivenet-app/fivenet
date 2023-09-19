@@ -83,9 +83,9 @@ const onSubmit = handleSubmit(
     async (values): Promise<void> =>
         await updateDispatchStatus(props.dispatch.id, values).finally(() => setTimeout(() => (canSubmit.value = true), 350)),
 );
-const onSubmitThrottle = useThrottleFn((e) => {
+const onSubmitThrottle = useThrottleFn(async (e) => {
     canSubmit.value = false;
-    onSubmit(e);
+    await onSubmit(e);
 }, 1000);
 
 watch(props, () => {

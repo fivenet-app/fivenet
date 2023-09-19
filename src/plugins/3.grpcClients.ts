@@ -12,7 +12,7 @@ import {
 } from '@protobuf-ts/runtime-rpc/build/types';
 import { Notification } from '~/composables/notification/interfaces/Notification.interface';
 import { useAuthStore } from '~/store/auth';
-import { useNotificationsStore } from '~/store/notifications';
+import { useNotificatorStore } from '~/store/notificator';
 import { AuthServiceClient } from '~~/gen/ts/services/auth/auth.client';
 import { CentrumServiceClient } from '~~/gen/ts/services/centrum/centrum.client';
 import { CitizenStoreServiceClient } from '~~/gen/ts/services/citizenstore/citizenstore.client';
@@ -52,7 +52,7 @@ export class GRPCClients {
 
     // Handle GRPC errors
     async handleError(err: RpcError): Promise<boolean> {
-        const notifications = useNotificationsStore();
+        const notifications = useNotificatorStore();
 
         const { $loading } = useNuxtApp();
         $loading.errored();
