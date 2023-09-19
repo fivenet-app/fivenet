@@ -33,9 +33,6 @@ func (p *Perms) GetPermissionsOfUser(userInfo *userinfo.UserInfo) (collections.P
 			Name:      string(ps[i].Name),
 			GuardName: ps[i].GuardName,
 		}
-		if ps[i].ID == 68 {
-			fmt.Println("YOLO")
-		}
 	}
 
 	return perms, nil
