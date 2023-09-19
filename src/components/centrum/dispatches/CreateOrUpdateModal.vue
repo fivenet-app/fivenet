@@ -24,8 +24,6 @@ const { location } = storeToRefs(livemapStore);
 async function createDispatch(values: FormData): Promise<void> {
     return new Promise(async (res, rej) => {
         try {
-            console.log(values.anon);
-
             const call = $grpc.getCentrumClient().createDispatch({
                 dispatch: {
                     id: 0n,
