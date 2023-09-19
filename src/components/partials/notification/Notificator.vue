@@ -39,62 +39,65 @@ async function streamNotifications(): Promise<void> {
         for await (let resp of call.responses) {
             if (resp.lastId > getLastId.value) setLastId(resp.lastId);
 
-            if (resp.data.oneofKind === 'ping') {
-            } else if (resp.data.oneofKind === 'token') {
-                const tokenUpdate = resp.data.token;
+            if (resp.data.oneofKind !== undefined) {
+                if (resp.data.oneofKind === 'ping') {
+                } else if (resp.data.oneofKind === 'token') {
+                    const tokenUpdate = resp.data.token;
 
-                // Update active char when updated user info is received
-                if (tokenUpdate.userInfo) {
-                    console.debug('Notificator: Updated UserInfo received');
+                    // Update active char when updated user info is received
+                    if (tokenUpdate.userInfo) {
+                        console.debug('Notificator: Updated UserInfo received');
 
-                    setActiveChar(tokenUpdate.userInfo);
-                    setPermissions(tokenUpdate.permissions);
-                    if (tokenUpdate.jobProps) {
-                        setJobProps(tokenUpdate.jobProps!);
-                    } else {
-                        setJobProps(null);
+                        setActiveChar(tokenUpdate.userInfo);
+                        setPermissions(tokenUpdate.permissions);
+                        if (tokenUpdate.jobProps) {
+                            setJobProps(tokenUpdate.jobProps!);
+                        } else {
+                            setJobProps(null);
+                        }
                     }
-                }
 
-                if (tokenUpdate.newToken && tokenUpdate.expires) {
-                    console.debug('Notificator: New Token received');
+                    if (tokenUpdate.newToken && tokenUpdate.expires) {
+                        console.debug('Notificator: New Token received');
 
-                    setAccessToken(tokenUpdate.newToken, toDate(tokenUpdate.expires) as null | Date);
+                        setAccessToken(tokenUpdate.newToken, toDate(tokenUpdate.expires) as null | Date);
 
-                    notifications.dispatchNotification({
-                        title: { key: 'notifications.renewed_token.title', parameters: [] },
-                        content: { key: 'notifications.renewed_token.content', parameters: [] },
-                        type: 'info',
+                        notifications.dispatchNotification({
+                            title: { key: 'notifications.renewed_token.title', parameters: [] },
+                            content: { key: 'notifications.renewed_token.content', parameters: [] },
+                            type: 'info',
+                        });
+                    }
+                } else if (resp.data.oneofKind === 'notifications') {
+                    resp.data.notifications.notifications.forEach((n) => {
+                        let nType: NotificationType = (n.type as NotificationType) ?? 'info';
+
+                        switch (n.category) {
+                            case NOTIFICATION_CATEGORY.GENERAL:
+                                notifications.dispatchNotification({
+                                    title: n.title!,
+                                    content: n.content!,
+                                    type: nType,
+                                    category: n.category,
+                                    data: n.data,
+                                });
+                                break;
+
+                            default:
+                                notifications.dispatchNotification({
+                                    title: n.title!,
+                                    content: n.content!,
+                                    type: nType,
+                                    category: n.category,
+                                    data: n.data,
+                                });
+                                break;
+                        }
                     });
+                } else {
+                    // @ts-ignore this is a catch all "unknown", so okay if it is technically "never" reached till it is
+                    console.warn('Notificator: Unknown data received - Kind: ', resp.data.oneofKind, resp.data);
                 }
-            } else if (resp.data.oneofKind === 'notifications') {
-                resp.data.notifications.notifications.forEach((n) => {
-                    let nType: NotificationType = (n.type as NotificationType) ?? 'info';
-
-                    switch (n.category) {
-                        case NOTIFICATION_CATEGORY.GENERAL:
-                            notifications.dispatchNotification({
-                                title: n.title!,
-                                content: n.content!,
-                                type: nType,
-                                category: n.category,
-                                data: n.data,
-                            });
-                            break;
-
-                        default:
-                            notifications.dispatchNotification({
-                                title: n.title!,
-                                content: n.content!,
-                                type: nType,
-                                category: n.category,
-                                data: n.data,
-                            });
-                            break;
-                    }
-                });
-            } else {
-                console.warn('Notificator: Unknown data received - Kind: ', resp.data.oneofKind, resp.data);
             }
 
             if (resp.restart) {
