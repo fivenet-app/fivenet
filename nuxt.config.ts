@@ -17,7 +17,6 @@ const config = defineNuxtConfig({
     ssr: false,
     modules: [
         '@nuxt/devtools',
-        'nuxt-update',
         '@pinia/nuxt',
         '@pinia-plugin-persistedstate/nuxt',
         'nuxt-typed-router',
@@ -26,6 +25,7 @@ const config = defineNuxtConfig({
         '@nuxtjs/tailwindcss',
         '@vee-validate/nuxt',
         '@dargmuesli/nuxt-cookie-control',
+        'nuxt-update',
     ],
     devtools: {
         enabled: true,
@@ -34,11 +34,13 @@ const config = defineNuxtConfig({
             enabled: true,
         },
     },
+    sourcemap: {
+        client: true,
+    },
     pinia: {
         autoImports: [
             // automatically imports `defineStore`
             'defineStore', // import { defineStore } from 'pinia'
-            ['defineStore', 'definePiniaStore'], // import { defineStore as definePiniaStore } from 'pinia'
             'acceptHMRUpdate', // import { acceptHMRUpdate } from 'pinia'
             'storeToRefs',
         ],
@@ -58,6 +60,7 @@ const config = defineNuxtConfig({
         vueI18n: './i18n.config.ts',
         strategy: STRATEGIES.NO_PREFIX,
         detectBrowserLanguage: false,
+        skipSettingLocaleOnNavigate: true,
         locales: [
             {
                 name: 'English',
@@ -73,7 +76,7 @@ const config = defineNuxtConfig({
             },
         ],
         debug: false,
-        lazy: false, // https://github.com/nuxt-modules/i18n/issues/2044#issuecomment-1539546880
+        lazy: true,
         langDir: './lang',
         defaultLocale: 'de',
         defaultDirection: 'ltr',

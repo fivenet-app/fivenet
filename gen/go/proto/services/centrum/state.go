@@ -35,6 +35,7 @@ func (s *Server) watchStateEvents() error {
 				return nil
 			case msg := <-msgCh:
 				msg.Ack()
+
 				job, topic, tType := s.splitSubject(msg.Subject)
 
 				switch topic {
@@ -48,7 +49,7 @@ func (s *Server) watchStateEvents() error {
 
 						s.disponents.Store(job, dest.Disponents)
 
-						// TODO
+						// TODO trigger bot manager to setup bot if needed
 
 					case TypeGeneralSettings:
 						var dest dispatch.Settings

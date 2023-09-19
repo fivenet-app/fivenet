@@ -305,6 +305,7 @@ func (s *Server) stream(srv CentrumService_StreamServer, isDisponent bool, job s
 
 		case msg := <-msgCh:
 			msg.Ack()
+
 			topic, tType := s.getEventTypeFromSubject(msg.Subject)
 
 			switch topic {

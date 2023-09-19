@@ -1,17 +1,14 @@
 <script setup lang="ts">
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue';
-import { setLocale as veeValidateSetLocale } from '@vee-validate/i18n';
 import { TranslateIcon } from 'mdi-vue3';
 import { LocaleObject } from 'vue-i18n-routing';
 import { useNotificatorStore } from '~/store/notificator';
-import { useSettingsStore } from '~/store/settings';
 
-const { locales, setLocale } = useI18n();
-const settings = useSettingsStore();
+const { locale, locales } = useI18n();
 const notifications = useNotificatorStore();
 
 type Language = { name: string; iso: string };
-const languages: Language[] = [];
+const languages = ref<Language[]>([]);
 
 onMounted(async () => {
     locales.value.forEach((lang) => {
@@ -20,7 +17,7 @@ onMounted(async () => {
         }
 
         lang = lang as LocaleObject;
-        languages.push({
+        languages.value.push({
             name: lang.name!,
             iso: lang.iso!,
         });
@@ -30,9 +27,7 @@ onMounted(async () => {
 async function switchLanguage(lang: Language): Promise<void> {
     console.debug('Switching language to:', lang);
 
-    await setLocale(lang.iso);
-    settings.setLocale(lang.iso);
-    veeValidateSetLocale(lang.iso);
+    locale.value = lang.iso;
 
     notifications.dispatchNotification({
         title: { key: 'notifications.language_switched.title', parameters: [] },

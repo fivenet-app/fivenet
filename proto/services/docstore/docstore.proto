@@ -164,7 +164,7 @@ message CreateDocumentRequest {
   // @sanitize
   string content = 3 [(validate.rules).string = {
     min_len: 20,
-    max_bytes: 1000000
+    max_bytes: 1750000 // 1.75 Megabytes
   }]; // @gotags: alias:"content"
   resources.documents.DOC_CONTENT_TYPE content_type = 4 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"content_type"
   optional string data = 5; // @gotags: alias:"data"
@@ -172,7 +172,6 @@ message CreateDocumentRequest {
   string state = 6 [(validate.rules).string.max_len = 24]; // @gotags: alias:"state"
   bool closed = 7; // @gotags: alias:"closed"
   bool public = 8; // @gotags: alias:"public"
-
   optional resources.documents.DocumentAccess access = 9;
 }
 
@@ -191,7 +190,7 @@ message UpdateDocumentRequest {
   // @sanitize
   string content = 4 [(validate.rules).string = {
     min_len: 20,
-    max_bytes: 1000000
+    max_bytes: 1750000 // 1.75 Megabytes
   }]; // @gotags: alias:"content"
   resources.documents.DOC_CONTENT_TYPE content_type = 5 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"content_type"
   optional string data = 6; // @gotags: alias:"data"
@@ -199,7 +198,6 @@ message UpdateDocumentRequest {
   string state = 7 [(validate.rules).string.max_len = 24]; // @gotags: alias:"state"
   bool closed = 8; // @gotags: alias:"closed"
   bool public = 9; // @gotags: alias:"public"
-
   optional resources.documents.DocumentAccess access = 10;
 }
 

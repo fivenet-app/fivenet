@@ -1083,7 +1083,7 @@ class CreateDocumentRequest$Type extends MessageType<CreateDocumentRequest> {
         super("services.docstore.CreateDocumentRequest", [
             { no: 1, name: "category_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
             { no: 2, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxBytes: "21845" } } } },
-            { no: 3, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "20", maxBytes: "1000000" } } } },
+            { no: 3, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "20", maxBytes: "1750000" } } } },
             { no: 4, name: "content_type", kind: "enum", T: () => ["resources.documents.DOC_CONTENT_TYPE", DOC_CONTENT_TYPE], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 5, name: "data", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
             { no: 6, name: "state", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "24" } } } },
@@ -1116,7 +1116,7 @@ class UpdateDocumentRequest$Type extends MessageType<UpdateDocumentRequest> {
             { no: 1, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
             { no: 2, name: "category_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
             { no: 3, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxBytes: "21845" } } } },
-            { no: 4, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "20", maxBytes: "1000000" } } } },
+            { no: 4, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "20", maxBytes: "1750000" } } } },
             { no: 5, name: "content_type", kind: "enum", T: () => ["resources.documents.DOC_CONTENT_TYPE", DOC_CONTENT_TYPE], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 6, name: "data", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
             { no: 7, name: "state", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "24" } } } },

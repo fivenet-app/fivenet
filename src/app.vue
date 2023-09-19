@@ -11,11 +11,13 @@ import { useDocumentEditorStore } from '~/store/documenteditor';
 import { useSettingsStore } from '~/store/settings';
 import ConfirmDialog from './components/partials/ConfirmDialog.vue';
 
-const { t, setLocale } = useI18n();
+const { t, locale, setLocale, finalizePendingLocaleChange } = useI18n();
 
 const configStore = useConfigStore();
 const { loadConfig } = configStore;
 const { clientConfig, updateAvailable } = storeToRefs(configStore);
+
+const settings = useSettingsStore();
 
 const route = useRoute();
 
@@ -48,35 +50,43 @@ if (__APP_VERSION__ != userSettings.version) {
     userSettings.setVersion(__APP_VERSION__);
 }
 
-// Set user setting locale on load of app
-setLocale(userSettings.locale);
-
-configure({
-    generateMessage: localize({
-        en,
-        de,
-    }),
-});
-veeValidateSetLocale(userSettings.locale);
-
-// Cookie Banner Locale handling
 const cookieLocale = ref<Locale>('en');
-switch (userSettings.locale.split('-', 1)[0]) {
-    case 'de':
-        cookieLocale.value = 'de';
-        break;
-    default:
-        cookieLocale.value = 'en';
-        break;
+
+watch(locale, () => setLocaleGlobally(locale.value));
+
+// Set user setting locale on load of app
+locale.value = userSettings.locale;
+
+async function setLocaleGlobally(locale: string): Promise<void> {
+    setLocale(locale);
+
+    settings.setLocale(locale);
+
+    configure({
+        generateMessage: localize({
+            en,
+            de,
+        }),
+    });
+    veeValidateSetLocale(locale);
+
+    // Cookie Banner Locale handling
+    switch (locale.split('-', 1)[0]) {
+        case 'de':
+            cookieLocale.value = 'de';
+            break;
+        default:
+            cookieLocale.value = 'en';
+            break;
+    }
 }
 
-const open = ref(false);
-
-function triggerUpdate(): void {
-    location.reload();
+async function onBeforeEnter(): Promise<void> {
+    await finalizePendingLocaleChange();
 }
 
 // Open update available confirm dialog
+const open = ref(false);
 watch(updateAvailable, () => (open.value = true));
 </script>
 
@@ -86,6 +96,7 @@ watch(updateAvailable, () => (open.value = true));
             :transition="{
                 name: 'page',
                 mode: 'out-in',
+                onBeforeEnter,
             }"
         />
     </NuxtLayout>
@@ -99,7 +110,7 @@ watch(updateAvailable, () => (open.value = true));
         :open="open"
         @close="open = false"
         :cancel="() => (open = false)"
-        :confirm="() => triggerUpdate()"
+        :confirm="() => reloadNuxtApp({ persistState: false, force: true })"
         :title="$t('system.update_available.title', [updateAvailable])"
         :description="$t('system.update_available.content')"
         :icon="UpdateIcon"

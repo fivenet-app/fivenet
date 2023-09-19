@@ -377,7 +377,7 @@ class Document$Type extends MessageType<Document> {
             { no: 5, name: "category", kind: "message", T: () => Category },
             { no: 6, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxBytes: "21845" } } } },
             { no: 7, name: "content_type", kind: "enum", T: () => ["resources.documents.DOC_CONTENT_TYPE", DOC_CONTENT_TYPE], options: { "validate.rules": { enum: { definedOnly: true } } } },
-            { no: 8, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "20", maxBytes: "1000000" } } } },
+            { no: 8, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "20", maxBytes: "1750000" } } } },
             { no: 9, name: "data", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 10, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
             { no: 11, name: "creator", kind: "message", T: () => UserShort },

@@ -37,18 +37,18 @@ defineEmits<{
                 </div>
                 <div class="mt-4" @click="$emit('selected', itemIdx)">
                     <h3 class="text-base font-semibold leading-6 text-neutral">
-                        <span v-if="item.href">
+                        <template v-if="item.href">
                             <NuxtLink :to="item.href" class="focus:outline-none">
                                 <!-- Extend touch target to entire panel -->
                                 <span class="absolute inset-0" aria-hidden="true" />
                                 {{ item.title }}
                             </NuxtLink>
-                        </span>
-                        <span v-else>
+                        </template>
+                        <template v-else>
                             <!-- Extend touch target to entire panel -->
                             <span class="absolute inset-0" aria-hidden="true" />
                             {{ item.title }}
-                        </span>
+                        </template>
                     </h3>
                     <p class="mt-2 text-sm text-base-200">
                         {{ item.description }}

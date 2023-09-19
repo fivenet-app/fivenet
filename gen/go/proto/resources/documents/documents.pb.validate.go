@@ -161,10 +161,10 @@ func (m *Document) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if len(m.GetContent()) > 1000000 {
+	if len(m.GetContent()) > 1750000 {
 		err := DocumentValidationError{
 			field:  "Content",
-			reason: "value length must be at most 1000000 bytes",
+			reason: "value length must be at most 1750000 bytes",
 		}
 		if !all {
 			return err
