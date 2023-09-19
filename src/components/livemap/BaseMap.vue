@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { LControl, LControlLayers, LMap, LTileLayer } from '@vue-leaflet/vue-leaflet';
-import { useResizeObserver, watchDebounced } from '@vueuse/core';
+import { useDebounceFn, useResizeObserver, watchDebounced } from '@vueuse/core';
 import L, { latLngBounds } from 'leaflet';
 import 'leaflet-contextmenu';
 import 'leaflet-contextmenu/dist/leaflet.contextmenu.min.css';
@@ -25,11 +25,14 @@ const { location, zoom } = storeToRefs(livemapStore);
 let map: L.Map | undefined = undefined;
 
 const mapContainer = ref<HTMLDivElement | null>(null);
-useResizeObserver(mapContainer, (_) => {
+
+function mapResize(): void {
     if (map === undefined) return;
 
     map.invalidateSize();
-});
+}
+const mapResizeDebounced = useDebounceFn(mapResize, 250);
+useResizeObserver(mapContainer, (_) => mapResizeDebounced());
 
 const centerX = 117.3;
 const centerY = 172.8;
@@ -37,7 +40,7 @@ const scaleX = 0.02072;
 const scaleY = 0.0205;
 
 const bounds = latLngBounds([-4_000, -4_000], [8_000, 6_000]);
-const maxBounds = latLngBounds([-8_000, -8_000], [16_000, 12_000]);
+const maxBounds = latLngBounds([-9_000, -8_000], [11_500, 14_000]);
 
 const customCRS = L.extend({}, L.CRS.Simple, {
     projection: L.Projection.LonLat,
