@@ -2,7 +2,7 @@ import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { StoreDefinition, defineStore } from 'pinia';
 import { JobProps } from '~~/gen/ts/resources/users/jobs';
 import { User } from '~~/gen/ts/resources/users/users';
-import { useNotificatorStore } from './notifications';
+import { useNotificatorStore } from './notificator';
 
 export type JobPropsState = {
     quickButtons: String[];

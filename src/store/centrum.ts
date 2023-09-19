@@ -5,7 +5,7 @@ import { CENTRUM_MODE, Settings } from '~~/gen/ts/resources/dispatch/settings';
 import { UNIT_STATUS, Unit, UnitStatus } from '~~/gen/ts/resources/dispatch/units';
 import { UserShort } from '~~/gen/ts/resources/users/users';
 import { useAuthStore } from './auth';
-import { useNotificatorStore } from './notifications';
+import { useNotificatorStore } from './notificator';
 
 const FIVE_MINUTES = 7 * 60 * 1000;
 const TWO_MINUTES = 2 * 60 * 1000;
