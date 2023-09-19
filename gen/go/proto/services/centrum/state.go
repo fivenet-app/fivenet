@@ -345,13 +345,12 @@ func (s *Server) removeDispatchesFromEmptyUnits(ctx context.Context) error {
 		value.Range(func(id uint64, dsp *dispatch.Dispatch) bool {
 			for i := len(dsp.Units) - 1; i >= 0; i-- {
 				unit, _ := s.getUnit(job, dsp.Units[i].UnitId)
-
 				// If unit isn't empty, continue with the loop
-				if len(unit.Users) > 0 {
+				if unit != nil && len(unit.Users) > 0 {
 					continue
 				}
 
-				if err := s.updateDispatchAssignments(ctx, job, nil, dsp, nil, []uint64{unit.Id}); err != nil {
+				if err := s.updateDispatchAssignments(ctx, job, nil, dsp, nil, []uint64{dsp.Units[i].UnitId}); err != nil {
 					s.logger.Error("failed to remove empty unit from dispatch", zap.Error(err))
 					continue
 				}

@@ -179,7 +179,7 @@ onMounted(async () => {
             />
             <DataNoDataBlock v-else-if="!role" :type="$t('common.attributes', 2)" />
             <div v-else>
-                <h2 class="text-3xl text-white">{{ role?.jobLabel! }}</h2>
+                <h2 class="text-3xl text-white" :title="`ID: ${role.id}`">{{ role?.jobLabel! }}</h2>
                 <Divider label="Permissions" />
                 <div class="py-2 flex flex-col gap-4">
                     <button

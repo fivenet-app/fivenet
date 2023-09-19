@@ -29,6 +29,8 @@ async function getRoles(): Promise<Role[]> {
 }
 
 const selectedRole = ref<Role | undefined>();
+
+const sortedRoles = computed(() => roles.value?.sort((a, b) => (a.jobLabel ?? '').localeCompare(b.jobLabel ?? '')));
 </script>
 
 <template>
@@ -62,7 +64,7 @@ const selectedRole = ref<Role | undefined>();
                                     </thead>
                                     <tbody class="divide-y divide-base-800">
                                         <AttrRolesListEntry
-                                            v-for="role in roles"
+                                            v-for="role in sortedRoles"
                                             :role="role"
                                             @selected="selectedRole = role"
                                             :class="selectedRole?.id === role.id ? 'bg-base-800' : ''"

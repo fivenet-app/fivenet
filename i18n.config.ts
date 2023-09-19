@@ -4,8 +4,9 @@ export default defineI18nConfig(() => ({
     legacy: false,
     locale: 'de',
     fallbackLocale: 'en',
+    inheritLocale: 'en',
     escapeParameterHtml: true,
-    warnHtmlInMessage: false,
+    warnHtmlInMessage: 'off',
     numberFormats: {
         en: {
             currency: {

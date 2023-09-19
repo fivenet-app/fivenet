@@ -14,11 +14,11 @@ import (
 	"github.com/galexrt/fivenet/pkg/events"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/galexrt/fivenet/pkg/perms/collections"
-	"github.com/galexrt/fivenet/pkg/utils/syncx"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/nats-io/nats.go"
+	"github.com/puzpuzpuz/xsync/v2"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
@@ -82,20 +82,20 @@ type Perms struct {
 	events   *events.Eventus
 	eventSub *nats.Subscription
 
-	permsMap syncx.Map[uint64, *cachePerm]
+	permsMap *xsync.MapOf[uint64, *cachePerm]
 	// Guard name to permission ID
-	permsGuardToIDMap syncx.Map[string, uint64]
+	permsGuardToIDMap *xsync.MapOf[string, uint64]
 	// Job name to map of grade numbers to role ID
-	permsJobsRoleMap syncx.Map[string, *syncx.Map[int32, uint64]]
+	permsJobsRoleMap *xsync.MapOf[string, *xsync.MapOf[int32, uint64]]
 	// Role ID to map of permissions ID and result
-	permsRoleMap syncx.Map[uint64, *syncx.Map[uint64, bool]]
+	permsRoleMap *xsync.MapOf[uint64, *xsync.MapOf[uint64, bool]]
 
 	// Attribute map (key: ID of attribute)
-	attrsMap syncx.Map[uint64, *cacheAttr]
+	attrsMap *xsync.MapOf[uint64, *cacheAttr]
 	// Role ID to map of role attributes
-	attrsRoleMap syncx.Map[uint64, *syncx.Map[uint64, *cacheRoleAttr]]
+	attrsRoleMap *xsync.MapOf[uint64, *xsync.MapOf[uint64, *cacheRoleAttr]]
 	// Perm ID to map Key -> cached attribute
-	attrsPermsMap syncx.Map[uint64, *syncx.Map[Key, uint64]]
+	attrsPermsMap *xsync.MapOf[uint64, *xsync.MapOf[string, uint64]]
 
 	userCanCacheTTL time.Duration
 	userCanCache    *cache.Cache[userCacheKey, bool]
@@ -131,14 +131,14 @@ func New(p Params) (Permissions, error) {
 
 		events: p.Events,
 
-		permsMap:          syncx.Map[uint64, *cachePerm]{},
-		permsGuardToIDMap: syncx.Map[string, uint64]{},
-		permsJobsRoleMap:  syncx.Map[string, *syncx.Map[int32, uint64]]{},
-		permsRoleMap:      syncx.Map[uint64, *syncx.Map[uint64, bool]]{},
+		permsMap:          xsync.NewIntegerMapOf[uint64, *cachePerm](),
+		permsGuardToIDMap: xsync.NewMapOf[uint64](),
+		permsJobsRoleMap:  xsync.NewMapOf[*xsync.MapOf[int32, uint64]](),
+		permsRoleMap:      xsync.NewIntegerMapOf[uint64, *xsync.MapOf[uint64, bool]](),
 
-		attrsMap:      syncx.Map[uint64, *cacheAttr]{},
-		attrsRoleMap:  syncx.Map[uint64, *syncx.Map[uint64, *cacheRoleAttr]]{},
-		attrsPermsMap: syncx.Map[uint64, *syncx.Map[Key, uint64]]{},
+		attrsMap:      xsync.NewIntegerMapOf[uint64, *cacheAttr](),
+		attrsRoleMap:  xsync.NewIntegerMapOf[uint64, *xsync.MapOf[uint64, *cacheRoleAttr]](),
+		attrsPermsMap: xsync.NewIntegerMapOf[uint64, *xsync.MapOf[string, uint64]](),
 
 		userCanCacheTTL: 30 * time.Second,
 		userCanCache:    userCanCache,
@@ -309,7 +309,7 @@ func (p *Perms) loadRoleIDs(ctx context.Context) error {
 	}
 
 	for _, role := range dest {
-		grades, _ := p.permsJobsRoleMap.LoadOrStore(role.Job, &syncx.Map[int32, uint64]{})
+		grades, _ := p.permsJobsRoleMap.LoadOrCompute(role.Job, xsync.NewIntegerMapOf[int32, uint64])
 		grades.Store(role.Grade, role.ID)
 	}
 
@@ -348,7 +348,7 @@ func (p *Perms) loadRolePermissions(ctx context.Context, roleId uint64) error {
 	}
 
 	for _, rolePerms := range dest {
-		perms, _ := p.permsRoleMap.LoadOrStore(rolePerms.RoleID, &syncx.Map[uint64, bool]{})
+		perms, _ := p.permsRoleMap.LoadOrCompute(rolePerms.RoleID, xsync.NewIntegerMapOf[uint64, bool])
 		perms.Store(rolePerms.ID, rolePerms.Val)
 	}
 
@@ -436,7 +436,7 @@ func (p *Perms) addOrUpdateRoleAttributeInMap(roleId uint64, permId uint64, attr
 }
 
 func (p *Perms) updateRoleAttributeInMap(roleId uint64, permId uint64, attrId uint64, key Key, aType permissions.AttributeTypes, value *permissions.AttributeValues, max *permissions.AttributeValues) {
-	attrRoleMap, _ := p.attrsRoleMap.LoadOrStore(roleId, &syncx.Map[uint64, *cacheRoleAttr]{})
+	attrRoleMap, _ := p.attrsRoleMap.LoadOrCompute(roleId, xsync.NewIntegerMapOf[uint64, *cacheRoleAttr])
 	v, ok := attrRoleMap.Load(attrId)
 	if !ok {
 		attrRoleMap.Store(attrId, &cacheRoleAttr{

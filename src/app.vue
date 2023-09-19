@@ -12,7 +12,7 @@ import { useNotificationsStore } from '~/store/notifications';
 import { useSettingsStore } from '~/store/settings';
 import ConfirmDialog from './components/partials/ConfirmDialog.vue';
 
-const { t, setLocale, finalizePendingLocaleChange } = useI18n();
+const { t, setLocale } = useI18n();
 
 const configStore = useConfigStore();
 const { loadConfig } = configStore;
@@ -41,9 +41,6 @@ useSeoMeta({
 
 await loadConfig();
 
-// Reset update available status
-if (updateAvailable?.value !== undefined) updateAvailable.value = undefined;
-
 const userSettings = useSettingsStore();
 if (__APP_VERSION__ != userSettings.version) {
     console.info('Resetting app data because new version has been detected', userSettings.version, __APP_VERSION__);
@@ -54,7 +51,7 @@ if (__APP_VERSION__ != userSettings.version) {
 }
 
 // Set user setting locale on load of app
-await setLocale(userSettings.locale);
+setLocale(userSettings.locale);
 
 configure({
     generateMessage: localize({
@@ -75,18 +72,14 @@ switch (userSettings.locale.split('-', 1)[0]) {
         break;
 }
 
-async function onBeforeEnter(): Promise<void> {
-    await finalizePendingLocaleChange();
-}
-
 const open = ref(false);
 
 function triggerUpdate(): void {
-    if (updateAvailable === undefined) return;
-    updateAvailable.value = undefined;
-
     location.reload();
 }
+
+// Open update available confirm dialog
+watch(updateAvailable, () => (open.value = true));
 </script>
 
 <template>
@@ -95,7 +88,6 @@ function triggerUpdate(): void {
             :transition="{
                 name: 'page',
                 mode: 'out-in',
-                onBeforeEnter,
             }"
         />
     </NuxtLayout>
@@ -105,12 +97,12 @@ function triggerUpdate(): void {
     />
 
     <ConfirmDialog
-        v-if="updateAvailable !== undefined"
+        v-if="updateAvailable !== false"
         :open="open"
         @close="open = false"
         :cancel="() => (open = false)"
-        :confirm="triggerUpdate"
-        :title="$t('system.update_available.title')"
+        :confirm="() => triggerUpdate()"
+        :title="$t('system.update_available.title', [updateAvailable])"
         :description="$t('system.update_available.content')"
         :icon="UpdateIcon"
     />

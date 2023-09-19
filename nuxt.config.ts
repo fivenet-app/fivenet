@@ -84,7 +84,6 @@ const config = defineNuxtConfig({
             strictMessage: false,
             jit: true,
         },
-        skipSettingLocaleOnNavigate: true,
         parallelPlugin: true,
     },
     veeValidate: {

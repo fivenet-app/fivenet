@@ -12,6 +12,7 @@ import (
 func (p *Perms) GetPermissionsOfUser(userInfo *userinfo.UserInfo) (collections.Permissions, error) {
 	roleIds, ok := p.lookupRoleIDsForJobUpToGrade(userInfo.Job, userInfo.JobGrade)
 	if !ok {
+		// Fallback to default role
 		roleId, ok := p.lookupRoleIDForJobAndGrade(DefaultRoleJob, DefaultRoleJobGrade)
 		if !ok {
 			return nil, fmt.Errorf("failed to fallback to default role")
@@ -32,13 +33,16 @@ func (p *Perms) GetPermissionsOfUser(userInfo *userinfo.UserInfo) (collections.P
 			Name:      string(ps[i].Name),
 			GuardName: ps[i].GuardName,
 		}
+		if ps[i].ID == 68 {
+			fmt.Println("YOLO")
+		}
 	}
 
 	return perms, nil
 }
 
 func (p *Perms) getRolePermissionsFromCache(roleIds []uint64) []*cachePerm {
-	perms := map[uint64]interface{}{}
+	perms := map[uint64]bool{}
 	for i := len(roleIds) - 1; i >= 0; i-- {
 		permsRoleMap, ok := p.permsRoleMap.Load(roleIds[i])
 		if !ok {
@@ -46,13 +50,9 @@ func (p *Perms) getRolePermissionsFromCache(roleIds []uint64) []*cachePerm {
 		}
 
 		permsRoleMap.Range(func(key uint64, value bool) bool {
-			// If value is false (not allowed), skip
-			if !value {
-				return true
-			}
-
+			// Only allow the perm "value" to be set once (because role perms inheritance works like that)
 			if _, ok := perms[key]; !ok {
-				perms[key] = nil
+				perms[key] = value
 			}
 
 			return true
@@ -60,7 +60,11 @@ func (p *Perms) getRolePermissionsFromCache(roleIds []uint64) []*cachePerm {
 	}
 
 	ps := []*cachePerm{}
-	for k := range perms {
+	for k, v := range perms {
+		if !v {
+			continue
+		}
+
 		p, ok := p.lookupPermByID(k)
 		if !ok {
 			continue

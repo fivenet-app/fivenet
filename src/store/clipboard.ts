@@ -1,10 +1,8 @@
 import { StoreDefinition, defineStore } from 'pinia';
 import { fromString } from '~/utils/time';
-import * as google_protobuf_timestamp from '~~/gen/ts/google/protobuf/timestamp';
 import { Category } from '~~/gen/ts/resources/documents/category';
 import { DOC_CONTENT_TYPE, Document, DocumentShort } from '~~/gen/ts/resources/documents/documents';
 import { ObjectSpecs, TemplateData } from '~~/gen/ts/resources/documents/templates';
-import { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 import { User, UserShort } from '~~/gen/ts/resources/users/users';
 import { Vehicle } from '~~/gen/ts/resources/vehicles/vehicles';
 
@@ -216,7 +214,7 @@ export class ClipboardDocument {
 
     constructor(d: Document) {
         this.id = d.id;
-        this.createdAt = google_protobuf_timestamp.Timestamp.toDate(d.createdAt?.timestamp!).toLocaleDateString();
+        this.createdAt = toDate(d.createdAt).toLocaleDateString();
         this.category = d.category;
         this.title = d.title;
         this.state = d.state;
@@ -227,20 +225,11 @@ export class ClipboardDocument {
 }
 
 export function getDocument(obj: ClipboardDocument): DocumentShort {
-    const ts: Timestamp = {
-        timestamp: google_protobuf_timestamp.Timestamp.fromDate(fromString(obj.createdAt)!),
-    };
-
     const user = getUser(obj.creator);
 
     return {
         id: BigInt(obj.id),
-        createdAt: {
-            timestamp: {
-                nanos: ts.timestamp?.nanos!,
-                seconds: ts.timestamp?.seconds!,
-            },
-        },
+        createdAt: toTimestamp(fromString(obj.createdAt)!),
         categoryId: obj.category && obj.category.id ? obj.category.id : 0n,
         category: obj.category,
         title: obj.title,

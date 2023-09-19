@@ -14,7 +14,7 @@ func (p *Perms) lookupAttributeByPermID(id uint64, key Key) (*cacheAttr, bool) {
 		return nil, false
 	}
 
-	aId, ok := as.Load(key)
+	aId, ok := as.Load(string(key))
 	if !ok {
 		return nil, false
 	}

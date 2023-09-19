@@ -43,7 +43,7 @@ async function getRoles(): Promise<Role[]> {
 const job = ref<Job | undefined>();
 watchOnce(roles, async () => (job.value = await getJobByName(activeChar.value!.job)));
 
-const selectedJobGrade = ref<JobGrade>();
+const selectedJobGrade = ref<JobGrade | null>(null);
 const queryJobGradeRaw = ref('');
 const queryJobGrade = computed(() => queryJobGradeRaw.value.toLowerCase());
 const availableJobGrades = computed(
@@ -52,7 +52,7 @@ const availableJobGrades = computed(
 
 async function createRole(): Promise<void> {
     return new Promise(async (res, rej) => {
-        if (!selectedJobGrade.value) {
+        if (selectedJobGrade.value === null || selectedJobGrade.value.grade <= 0) {
             return res();
         }
 
@@ -67,20 +67,15 @@ async function createRole(): Promise<void> {
                 return res();
             }
 
-            roles.value?.unshift(response.role!);
-
             notifications.dispatchNotification({
                 title: { key: 'notifications.rector.role_created.title', parameters: [] },
                 content: { key: 'notifications.rector.role_created.content', parameters: [] },
                 type: 'success',
             });
 
-            await navigateTo({
-                name: 'rector-roles-id',
-                params: {
-                    id: response.role?.id?.toString(),
-                },
-            });
+            roles.value?.push(response.role!);
+
+            selectedRole.value = response.role;
 
             return res();
         } catch (e) {
@@ -89,6 +84,8 @@ async function createRole(): Promise<void> {
         }
     });
 }
+
+const sortedRoles = computed(() => roles.value?.sort((a, b) => a.grade - b.grade));
 
 const selectedRole = ref<Role | undefined>();
 </script>
@@ -117,7 +114,9 @@ const selectedRole = ref<Role | undefined>();
                                                     <ComboboxInput
                                                         class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                         @change="queryJobGradeRaw = $event.target.value"
-                                                        :display-value="(grade: any) => `${grade?.label} (${grade?.grade})`"
+                                                        :display-value="
+                                                            (grade: any) => (grade ? `${grade?.label} (${grade?.grade})` : '')
+                                                        "
                                                     />
                                                 </ComboboxButton>
 
@@ -140,7 +139,7 @@ const selectedRole = ref<Role | undefined>();
                                                             ]"
                                                         >
                                                             <span :class="['block truncate', selected && 'font-semibold']">
-                                                                {{ grade.label }}
+                                                                {{ grade.label }} ({{ grade.grade }})
                                                             </span>
 
                                                             <span
@@ -162,9 +161,9 @@ const selectedRole = ref<Role | undefined>();
                                         <button
                                             type="submit"
                                             class="inline-flex px-3 py-2 text-sm font-semibold rounded-md text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                                            :disabled="selectedJobGrade === undefined || selectedJobGrade.grade <= 0"
+                                            :disabled="selectedJobGrade === null || selectedJobGrade!.grade <= 0"
                                             :class="[
-                                                selectedJobGrade === undefined || selectedJobGrade.grade <= 0
+                                                selectedJobGrade === null || selectedJobGrade!.grade <= 0
                                                     ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
                                                     : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
                                             ]"
@@ -202,7 +201,7 @@ const selectedRole = ref<Role | undefined>();
                                     </thead>
                                     <tbody class="divide-y divide-base-800">
                                         <RolesListEntry
-                                            v-for="role in roles"
+                                            v-for="role in sortedRoles"
                                             :role="role"
                                             @selected="selectedRole = role"
                                             :class="selectedRole?.id === role.id ? 'bg-base-800' : ''"
@@ -228,7 +227,13 @@ const selectedRole = ref<Role | undefined>();
                 </div>
                 <div class="flex basis-2/3 w-full ml-2">
                     <template v-if="selectedRole">
-                        <RoleView :role-id="selectedRole.id" @deleted="refresh()" />
+                        <RoleView
+                            :role-id="selectedRole.id"
+                            @deleted="
+                                selectedRole = undefined;
+                                refresh();
+                            "
+                        />
                     </template>
                     <template v-else>
                         <DataNoDataBlock :icon="SelectIcon" :message="$t('common.none_selected', [$t('common.role')])" />

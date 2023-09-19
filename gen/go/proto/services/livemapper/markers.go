@@ -241,6 +241,8 @@ func (s *Server) getMarker(ctx context.Context, id uint64) (*livemap.Marker, err
 			tUsers.JobGrade,
 			tUsers.Firstname,
 			tUsers.Lastname,
+			tUsers.Sex,
+			tUsers.PhoneNumber,
 		).
 		FROM(
 			tMarkers.

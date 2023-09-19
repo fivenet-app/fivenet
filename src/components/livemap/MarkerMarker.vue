@@ -6,6 +6,7 @@ import L from 'leaflet';
 import { TrashCanIcon } from 'mdi-vue3';
 import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
 import { Marker } from '~~/gen/ts/resources/livemap/livemap';
+import PhoneNumber from '../partials/citizens/PhoneNumber.vue';
 
 const props = withDefaults(
     defineProps<{
@@ -94,7 +95,19 @@ onConfirm(async (id) => deleteMarker(id));
         <LPopup :options="{ closeButton: true }">
             <ul>
                 <li>{{ marker.info?.name }}</li>
-                <li>{{ $t('common.description') }}: {{ marker.info?.description }}</li>
+                <li v-if="marker.info?.description">{{ $t('common.description') }}: {{ marker.info?.description }}</li>
+                <li class="italic">
+                    <span class="font-semibold">{{ $t('common.sent_by') }}</span
+                    >:
+                    <span v-if="marker.creator">
+                        {{ marker.creator?.firstname }}, {{ marker.creator?.lastname }} (<PhoneNumber
+                            :number="marker.creator.phoneNumber"
+                        />)
+                    </span>
+                    <span v-else>
+                        {{ $t('common.unknown') }}
+                    </span>
+                </li>
             </ul>
         </LPopup>
     </LMarker>

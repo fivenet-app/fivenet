@@ -5,7 +5,7 @@ export interface ConfigState {
     fetched: boolean;
     appConfig: AppConfig;
     clientConfig: ClientConfig;
-    updateAvailable?: undefined | string;
+    updateAvailable: false | string;
 }
 
 type AppConfig = {
@@ -50,7 +50,7 @@ export const useConfigStore = defineStore('config', {
             clientConfig: {
                 NUIEnabled: false,
             } as ClientConfig,
-            updateAvailable: undefined,
+            updateAvailable: false,
         }) as ConfigState,
     persist: {
         paths: ['clientConfig'],

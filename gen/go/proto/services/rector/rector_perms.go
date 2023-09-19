@@ -260,9 +260,12 @@ func (s *Server) CreateRole(ctx context.Context, req *CreateRoleRequest) (*Creat
 		return nil, ErrInvalidRequest
 	}
 
+	r := permissions.ConvertFromRole(cr)
+	s.enricher.EnrichJobInfo(r)
+
 	auditEntry.State = int16(rector.EVENT_TYPE_CREATED)
 	return &CreateRoleResponse{
-		Role: permissions.ConvertFromRole(cr),
+		Role: r,
 	}, nil
 }
 

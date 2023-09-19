@@ -260,7 +260,7 @@ onConfirm(async (id) => deleteRole(id));
             <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.role', 2)])" :retry="refresh" />
             <DataNoDataBlock v-else-if="!role" :type="$t('common.role', 2)" />
             <div v-else>
-                <h2 class="text-3xl text-white">
+                <h2 class="text-3xl text-white" :title="`ID: ${role.id}`">
                     {{ role?.jobLabel! }} - {{ role?.jobGradeLabel }} ({{ role.grade }})
                     <button v-if="can('RectorService.DeleteRole')" type="button" @click="reveal()">
                         <TrashCanIcon class="w-6 h-6 mx-auto text-neutral" />

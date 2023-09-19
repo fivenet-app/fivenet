@@ -354,15 +354,15 @@
   resolved "https://registry.yarnpkg.com/@csstools/selector-specificity/-/selector-specificity-3.0.0.tgz#798622546b63847e82389e473fd67f2707d82247"
   integrity sha512-hBI9tfBtuPIi885ZsZ32IMEU/5nlZH/KOVYJCOh7gyMxaVLGmLedYqFN6Ui1LXkI8JlC8IsuC0rF0btcRZKd5g==
 
-"@dargmuesli/nuxt-cookie-control@^6.4.2":
-  version "6.4.2"
-  resolved "https://registry.yarnpkg.com/@dargmuesli/nuxt-cookie-control/-/nuxt-cookie-control-6.4.2.tgz#2e906f92265331238517193cb4cba7ce65d92dc7"
-  integrity sha512-/eJls32qXMu51NeXdPhL8TqE8F0mLvVcOSEWK22vgoIXCZj+Yp8WqKSrHWd7rqwYwPQZByWHtowUamzmlW7f4w==
+"@dargmuesli/nuxt-cookie-control@^6.4.3":
+  version "6.4.3"
+  resolved "https://registry.yarnpkg.com/@dargmuesli/nuxt-cookie-control/-/nuxt-cookie-control-6.4.3.tgz#86f01c057cfa789f70f9beb9cc1de9606f0a3d14"
+  integrity sha512-OCAo3LbuBRWDrlHqPUFFg9kZrw8+JfkF6Urhn7HsIJ+nR08EJAbRw0HlgSd3RZgt8GNaQiZAALOV2Q68Zt34LA==
   dependencies:
-    "@nuxt/kit" "3.7.1"
-    "@sindresorhus/slugify" "2.2.1"
-    css-vars-ponyfill "2.4.8"
-    string-replace-loader "3.1.0"
+    "@nuxt/kit" "^3.7.3"
+    "@sindresorhus/slugify" "^2.2.1"
+    css-vars-ponyfill "^2.4.8"
+    string-replace-loader "^3.1.0"
 
 "@esbuild-kit/cjs-loader@^2.4.2":
   version "2.4.3"
@@ -1101,30 +1101,6 @@
     which "^3.0.1"
     ws "^8.13.0"
 
-"@nuxt/kit@3.7.1":
-  version "3.7.1"
-  resolved "https://registry.yarnpkg.com/@nuxt/kit/-/kit-3.7.1.tgz#d93ac970e5b4c4e11ea2a1bb42a415075ef78817"
-  integrity sha512-8k4q+92qLz5z7RdSOKrEJIjM63xXBg0z/WhTtZgXv1R5ULZ77usdTMjQYhQ+Kgd1NMkpIXeKaAO6903xrSt53Q==
-  dependencies:
-    "@nuxt/schema" "3.7.1"
-    c12 "^1.4.2"
-    consola "^3.2.3"
-    defu "^6.1.2"
-    globby "^13.2.2"
-    hash-sum "^2.0.0"
-    ignore "^5.2.4"
-    jiti "^1.19.3"
-    knitwork "^1.0.0"
-    mlly "^1.4.2"
-    pathe "^1.1.1"
-    pkg-types "^1.0.3"
-    scule "^1.0.0"
-    semver "^7.5.4"
-    ufo "^1.3.0"
-    unctx "^2.3.1"
-    unimport "^3.3.0"
-    untyped "^1.4.0"
-
 "@nuxt/kit@3.7.3", "@nuxt/kit@^3.0.0", "@nuxt/kit@^3.1.0", "@nuxt/kit@^3.5.0", "@nuxt/kit@^3.5.3", "@nuxt/kit@^3.6.5", "@nuxt/kit@^3.7.0", "@nuxt/kit@^3.7.1", "@nuxt/kit@^3.7.3":
   version "3.7.3"
   resolved "https://registry.yarnpkg.com/@nuxt/kit/-/kit-3.7.3.tgz#24a32bdf2eaa3f8f6c81079fb2a3543980b55d26"
@@ -1162,22 +1138,6 @@
     postcss-loader "^4.1.0"
     postcss-url "^10.1.1"
     semver "^7.3.4"
-
-"@nuxt/schema@3.7.1":
-  version "3.7.1"
-  resolved "https://registry.yarnpkg.com/@nuxt/schema/-/schema-3.7.1.tgz#48e3ed5629d6f320c11bae94b0266d79f0add888"
-  integrity sha512-+0W/oos7Ktm3eTwQ/78PrcAObR0+yQzHIUzbQ7HgUnEEntRGVxp4hnfng5dmhvVjJqQvpuGZHa3yIS/g41vE6A==
-  dependencies:
-    "@nuxt/ui-templates" "^1.3.1"
-    defu "^6.1.2"
-    hookable "^5.5.3"
-    pathe "^1.1.1"
-    pkg-types "^1.0.3"
-    postcss-import-resolver "^2.0.0"
-    std-env "^3.4.3"
-    ufo "^1.3.0"
-    unimport "^3.3.0"
-    untyped "^1.4.0"
 
 "@nuxt/schema@3.7.3", "@nuxt/schema@^3.7.1":
   version "3.7.3"
@@ -1747,7 +1707,7 @@
   resolved "https://registry.yarnpkg.com/@sindresorhus/is/-/is-0.7.0.tgz#9a06f4f137ee84d7df0460c1fdb1135ffa6c50fd"
   integrity sha512-ONhaKPIufzzrlNbqtWFFd+jlnemX6lJAgq9ZeiZtS7I1PIf/la7CW4m83rTXRnVnsMbW2k56pGYu7AUFJD9Pow==
 
-"@sindresorhus/slugify@2.2.1":
+"@sindresorhus/slugify@^2.2.1":
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/@sindresorhus/slugify/-/slugify-2.2.1.tgz#fa2e2e25d6e1e74a2eeb5e2c37f5ccc516ed2c4b"
   integrity sha512-MkngSCRZ8JdSOCHRaYd+D01XhvU3Hjy6MGl06zhOk614hp9EOAp5gIkBeQg7wtmxpitU6eAL4kdiRMcJa2dlrw==
@@ -3229,7 +3189,7 @@ css-tree@~2.2.0:
     mdn-data "2.0.28"
     source-map-js "^1.0.1"
 
-css-vars-ponyfill@2.4.8:
+css-vars-ponyfill@^2.4.8:
   version "2.4.8"
   resolved "https://registry.yarnpkg.com/css-vars-ponyfill/-/css-vars-ponyfill-2.4.8.tgz#5e34912730b9ea272197e44f33cd8679907dc72c"
   integrity sha512-4/j4AX4htytYHWyHVZ2BFQ+NoCGZEcOH2h4/2mmgE4SkrFg4Xq6tGYR77DtvvUIDsaXuJN+sj41bbgauA0Gfmg==
@@ -5313,7 +5273,7 @@ jackspeak@^2.0.3:
   optionalDependencies:
     "@pkgjs/parseargs" "^0.11.0"
 
-jiti@^1.18.2, jiti@^1.19.1, jiti@^1.19.3, jiti@^1.20.0:
+jiti@^1.18.2, jiti@^1.19.1, jiti@^1.20.0:
   version "1.20.0"
   resolved "https://registry.yarnpkg.com/jiti/-/jiti-1.20.0.tgz#2d823b5852ee8963585c8dd8b7992ffc1ae83b42"
   integrity sha512-3TV69ZbrvV6U5DfQimop50jE9Dl6J8O1ja1dvBbMba/sZ3YBEQqJ2VZRoQPVnhlzjNtU1vaXRZVrVjU4qtm8yA==
@@ -6912,10 +6872,20 @@ postcss-convert-values@^6.0.0:
     browserslist "^4.21.4"
     postcss-value-parser "^4.2.0"
 
-postcss-custom-properties@^13.2.0, postcss-custom-properties@^13.3.0:
+postcss-custom-properties@^13.2.0:
   version "13.3.0"
   resolved "https://registry.yarnpkg.com/postcss-custom-properties/-/postcss-custom-properties-13.3.0.tgz#53361280a9ec57c2ac448c0877ba25c4978241ee"
   integrity sha512-q4VgtIKSy5+KcUvQ0WxTjDy9DZjQ5VCXAZ9+tT9+aPMbA0z6s2t1nMw0QHszru1ib5ElkXl9JUpYYU37VVUs7g==
+  dependencies:
+    "@csstools/cascade-layer-name-parser" "^1.0.4"
+    "@csstools/css-parser-algorithms" "^2.3.1"
+    "@csstools/css-tokenizer" "^2.2.0"
+    postcss-value-parser "^4.2.0"
+
+postcss-custom-properties@^13.3.1:
+  version "13.3.1"
+  resolved "https://registry.yarnpkg.com/postcss-custom-properties/-/postcss-custom-properties-13.3.1.tgz#d3058f0d773b8fdcb9a7b6d2b8dd1c28ff441b86"
+  integrity sha512-TAWyOLz95GGMqDK3KJfi+IvY0MDCR72yBtJBAwxSw2iJ8WbBvIo42p7Luie1yRht3ctQlMBG+wDcFqSBtSpGWw==
   dependencies:
     "@csstools/cascade-layer-name-parser" "^1.0.4"
     "@csstools/css-parser-algorithms" "^2.3.1"
@@ -7229,6 +7199,15 @@ postcss@^8.1.10, postcss@^8.2.15, postcss@^8.4.23, postcss@^8.4.24, postcss@^8.4
   version "8.4.29"
   resolved "https://registry.yarnpkg.com/postcss/-/postcss-8.4.29.tgz#33bc121cf3b3688d4ddef50be869b2a54185a1dd"
   integrity sha512-cbI+jaqIeu/VGqXEarWkRCCffhjgXc0qjBtXpqJhTBohMUjUQnbBr0xqX3vEKudc4iviTewcJo5ajcec5+wdJw==
+  dependencies:
+    nanoid "^3.3.6"
+    picocolors "^1.0.0"
+    source-map-js "^1.0.2"
+
+postcss@^8.4.30:
+  version "8.4.30"
+  resolved "https://registry.yarnpkg.com/postcss/-/postcss-8.4.30.tgz#0e0648d551a606ef2192a26da4cabafcc09c1aa7"
+  integrity sha512-7ZEao1g4kd68l97aWG/etQKPKq07us0ieSZ2TnFDk11i0ZfDW2AwKHYU8qv4MZKqN2fdBfg+7q0ES06UA73C1g==
   dependencies:
     nanoid "^3.3.6"
     picocolors "^1.0.0"
@@ -7975,7 +7954,7 @@ strict-uri-encode@^1.0.0:
   resolved "https://registry.yarnpkg.com/strict-uri-encode/-/strict-uri-encode-1.1.0.tgz#279b225df1d582b1f54e65addd4352e18faa0713"
   integrity sha512-R3f198pcvnB+5IpnBlRkphuE9n46WyVl8I39W/ZUTZLz4nqSP/oLYUrcnJrw462Ds8he4YKMov2efsTIw1BDGQ==
 
-string-replace-loader@3.1.0:
+string-replace-loader@^3.1.0:
   version "3.1.0"
   resolved "https://registry.yarnpkg.com/string-replace-loader/-/string-replace-loader-3.1.0.tgz#11ac6ee76bab80316a86af358ab773193dd57a4f"
   integrity sha512-5AOMUZeX5HE/ylKDnEa/KKBqvlnFmRZudSOjVJHxhoJg9QYTwl1rECx7SLR8BBH7tfxb4Rp7EM2XVfQFxIhsbQ==

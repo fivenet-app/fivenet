@@ -8,11 +8,11 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/permissions"
 	"github.com/galexrt/fivenet/pkg/perms/collections"
 	"github.com/galexrt/fivenet/pkg/utils/dbutils"
-	"github.com/galexrt/fivenet/pkg/utils/syncx"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
+	"github.com/puzpuzpuz/xsync/v2"
 )
 
 const (
@@ -198,12 +198,20 @@ func (p *Perms) CreateRole(ctx context.Context, job string, grade int32) (*model
 		}
 	}
 
-	p.permsRoleMap.Store(role.ID, &syncx.Map[uint64, bool]{})
+	p.permsRoleMap.Store(role.ID, xsync.NewIntegerMapOf[uint64, bool]())
+
+	grades, _ := p.permsJobsRoleMap.LoadOrCompute(role.Job, xsync.NewIntegerMapOf[int32, uint64])
+	grades.Store(role.Grade, role.ID)
 
 	return role, nil
 }
 
 func (p *Perms) DeleteRole(ctx context.Context, id uint64) error {
+	role, err := p.GetRole(ctx, id)
+	if err != nil {
+		return err
+	}
+
 	stmt := tRoles.
 		DELETE().
 		WHERE(
@@ -215,6 +223,9 @@ func (p *Perms) DeleteRole(ctx context.Context, id uint64) error {
 	}
 
 	p.permsRoleMap.Delete(id)
+
+	grades, _ := p.permsJobsRoleMap.LoadOrCompute(role.Job, xsync.NewIntegerMapOf[int32, uint64])
+	grades.Delete(role.Grade)
 
 	return nil
 }
@@ -319,11 +330,7 @@ func (p *Perms) UpdateRolePermissions(ctx context.Context, roleId uint64, perms 
 		}
 	}
 
-	roleCache, ok := p.permsRoleMap.Load(roleId)
-	if !ok {
-		return nil
-	}
-
+	roleCache, _ := p.permsRoleMap.LoadOrCompute(roleId, xsync.NewIntegerMapOf[uint64, bool])
 	for _, v := range rolePerms {
 		roleCache.Store(v.PermissionID, v.Val)
 	}
@@ -356,13 +363,10 @@ func (p *Perms) RemovePermissionsFromRole(ctx context.Context, roleId uint64, pe
 		return err
 	}
 
-	permsRoleMap, ok := p.permsRoleMap.Load(roleId)
-	if !ok {
-		return nil
-	}
-
-	for _, permId := range perms {
-		permsRoleMap.Delete(permId)
+	if permsRoleMap, ok := p.permsRoleMap.Load(roleId); ok {
+		for _, permId := range perms {
+			permsRoleMap.Delete(permId)
+		}
 	}
 
 	if err := p.publishMessage(RolePermUpdateSubject, RolePermUpdateEvent{

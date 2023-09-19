@@ -13,9 +13,9 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/users"
 	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/utils"
-	"github.com/galexrt/fivenet/pkg/utils/syncx"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/puzpuzpuz/xsync/v2"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
@@ -41,7 +41,7 @@ type Cache struct {
 	jobs               *cache.Cache[string, *users.Job]
 	docCategories      *cache.Cache[uint64, *documents.Category]
 	docCategoriesByJob *cache.Cache[string, []*documents.Category]
-	lawBooks           *syncx.Map[uint64, *laws.LawBook]
+	lawBooks           *xsync.MapOf[uint64, *laws.LawBook]
 
 	searcher *Searcher
 }
@@ -60,11 +60,6 @@ type Params struct {
 func NewCache(p Params) (*Cache, error) {
 	ctx, cancel := context.WithCancel(context.Background())
 
-	jobsCache := cache.NewContext[string, *users.Job](ctx)
-	docCategoriesCache := cache.NewContext[uint64, *documents.Category](ctx)
-	docCategoriesByJobCache := cache.NewContext[string, []*documents.Category](ctx)
-	lawBooks := &syncx.Map[uint64, *laws.LawBook]{}
-
 	c := &Cache{
 		logger: p.Logger,
 		db:     p.DB,
@@ -73,10 +68,10 @@ func NewCache(p Params) (*Cache, error) {
 
 		tracer:             p.TP.Tracer("mstlystcdata-cache"),
 		ctx:                ctx,
-		jobs:               jobsCache,
-		docCategories:      docCategoriesCache,
-		docCategoriesByJob: docCategoriesByJobCache,
-		lawBooks:           lawBooks,
+		jobs:               cache.NewContext[string, *users.Job](ctx),
+		docCategories:      cache.NewContext[uint64, *documents.Category](ctx),
+		docCategoriesByJob: cache.NewContext[string, []*documents.Category](ctx),
+		lawBooks:           xsync.NewIntegerMapOf[uint64, *laws.LawBook](),
 	}
 
 	var err error
@@ -275,12 +270,11 @@ func (c *Cache) RefreshLaws(ctx context.Context, lawBookId uint64) error {
 }
 
 func (c *Cache) GetLawBooks() []*laws.LawBook {
-	lawBooks := make([]*laws.LawBook, len(c.lawBooks.Keys()))
-
-	i := 0
+	lawBooks := []*laws.LawBook{}
+	k := 0
 	c.lawBooks.Range(func(key uint64, value *laws.LawBook) bool {
-		lawBooks[i] = value
-		i++
+		lawBooks[k] = value
+		k++
 		return true
 	})
 

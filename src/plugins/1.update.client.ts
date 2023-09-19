@@ -14,7 +14,7 @@ export default defineNuxtPlugin(() => {
             'settings store version',
             settings.version,
         );
-        const config = useConfigStore();
-        config.updateAvailable = version;
+
+        if (__APP_VERSION__ !== version) useConfigStore().updateAvailable = version;
     });
 });

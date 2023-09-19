@@ -7,7 +7,7 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import TablePagination from '~/components/partials/elements/TablePagination.vue';
-import * as google_protobuf_timestamp_pb from '~~/gen/ts/google/protobuf/timestamp';
+import { useCompletorStore } from '~/store/completor';
 import { PaginationResponse } from '~~/gen/ts/resources/common/database/database';
 import { AuditEntry } from '~~/gen/ts/resources/rector/audit';
 import { UserShort } from '~~/gen/ts/resources/users/users';
@@ -47,14 +47,10 @@ async function getAuditLog(): Promise<AuditEntry[]> {
         req.userIds = users;
 
         if (query.value.from !== '') {
-            req.from = {
-                timestamp: google_protobuf_timestamp_pb.Timestamp.fromDate(fromString(query.value.from)!),
-            };
+            req.from = toTimestamp(fromString(query.value.from)!);
         }
         if (query.value.from !== '') {
-            req.to = {
-                timestamp: google_protobuf_timestamp_pb.Timestamp.fromDate(fromString(query.value.to)!),
-            };
+            req.to = toTimestamp(fromString(query.value.to)!);
         }
 
         if (query.value.method !== '') {

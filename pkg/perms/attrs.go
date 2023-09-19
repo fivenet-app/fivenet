@@ -7,12 +7,13 @@ import (
 	"strings"
 
 	"github.com/pkg/errors"
+	"github.com/puzpuzpuz/xsync/v2"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/permissions"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/galexrt/fivenet/pkg/perms/helpers"
 	"github.com/galexrt/fivenet/pkg/utils/dbutils"
-	"github.com/galexrt/fivenet/pkg/utils/syncx"
+	"github.com/galexrt/fivenet/pkg/utils/maps"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -272,8 +273,10 @@ func (p *Perms) updateAttributeInMap(permId uint64, attrId uint64, key Key, aTyp
 
 	p.attrsMap.Store(attrId, attr)
 
-	pAttrMap, _ := p.attrsPermsMap.LoadOrStore(permId, &syncx.Map[Key, uint64]{})
-	pAttrMap.Store(key, attrId)
+	pAttrMap, _ := p.attrsPermsMap.LoadOrCompute(permId, func() *xsync.MapOf[string, uint64] {
+		return xsync.NewTypedMapOf[string, uint64](maps.HashString)
+	})
+	pAttrMap.Store(string(key), attrId)
 
 	return nil
 }
@@ -344,7 +347,7 @@ func (p *Perms) getClosestRoleAttr(job string, grade int32, permId uint64, key K
 	if !ok {
 		return nil
 	}
-	attrId, ok := pAttrs.Load(key)
+	attrId, ok := pAttrs.Load(string(key))
 	if !ok {
 		return nil
 	}
@@ -371,7 +374,7 @@ func (p *Perms) GetClosestRoleAttrMaxVals(job string, grade int32, permId uint64
 	if !ok {
 		return nil, 0
 	}
-	attrId, ok := pAttrs.Load(key)
+	attrId, ok := pAttrs.Load(string(key))
 	if !ok {
 		return nil, 0
 	}
@@ -583,21 +586,24 @@ func (p *Perms) GetRoleAttributes(job string, grade int32) ([]*permissions.RoleA
 		return []*permissions.RoleAttribute{}, nil
 	}
 
+	var err error
 	dest := []*permissions.RoleAttribute{}
-	for _, attrId := range ars.Keys() {
-		attr, ok := p.LookupAttributeByID(attrId)
+	ars.Range(func(key uint64, value *cacheRoleAttr) bool {
+		attr, ok := p.LookupAttributeByID(key)
 		if !ok {
-			return nil, fmt.Errorf("no attribute found by id for role")
+			err = fmt.Errorf("no attribute found by id for role")
+			return false
 		}
 
 		v, ok := ars.Load(attr.ID)
 		if !ok {
-			return nil, fmt.Errorf("no role attribute found by id for role")
+			err = fmt.Errorf("no role attribute found by id for role")
+			return false
 		}
 
 		dest = append(dest, &permissions.RoleAttribute{
 			RoleId:       roleId,
-			AttrId:       attrId,
+			AttrId:       attr.ID,
 			PermissionId: attr.PermissionID,
 			Category:     string(attr.Category),
 			Name:         string(attr.Name),
@@ -607,6 +613,11 @@ func (p *Perms) GetRoleAttributes(job string, grade int32) ([]*permissions.RoleA
 			ValidValues:  attr.ValidValues,
 			MaxValues:    v.Max,
 		})
+
+		return true
+	})
+	if err != nil {
+		return nil, err
 	}
 
 	return dest, nil

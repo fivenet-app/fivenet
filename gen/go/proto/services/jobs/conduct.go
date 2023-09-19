@@ -100,12 +100,14 @@ func (s *Server) ConductListEntries(ctx context.Context, req *ConductListEntries
 			tUser.Firstname,
 			tUser.Lastname,
 			tUser.Dateofbirth,
+			tUser.PhoneNumber,
 			tConduct.CreatorID,
 			tCreator.ID,
 			tCreator.Identifier,
 			tCreator.Firstname,
 			tCreator.Lastname,
 			tCreator.Dateofbirth,
+			tCreator.PhoneNumber,
 		).
 		FROM(
 			tConduct.
