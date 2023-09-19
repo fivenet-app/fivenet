@@ -101,12 +101,12 @@ export const useCentrumStore = defineStore('centrum', {
             }
         },
         removeUnit(unit: Unit): void {
-            this.units.delete(unit.id);
-
             // User's unit has been deleted, reset it
             if (this.ownUnitId !== undefined && this.ownUnitId === unit.id) {
                 this.setOwnUnit(undefined);
             }
+
+            this.units.delete(unit.id);
         },
 
         checkIfUnitAssignedToDispatch(dsp: Dispatch, unit: bigint | undefined): boolean {
