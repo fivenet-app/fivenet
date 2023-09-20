@@ -6324,9 +6324,9 @@ nuxi@^3.8.3:
     fsevents "~2.3.3"
 
 nuxi@^3.8.4:
-  version "3.8.4"
-  resolved "https://registry.yarnpkg.com/nuxi/-/nuxi-3.8.4.tgz#2dd7ba18b41d0eab9c7ca28c7c70f2f5b80034bf"
-  integrity sha512-YQAH2msfL1PeaDuk880jQAJdtF1hpuYaTQ7j8Ombl+SyyamcB9VTx0gbkNyZj7wmJQYxfiV6a42nlGQ7cJDO+g==
+  version "3.9.0"
+  resolved "https://registry.yarnpkg.com/nuxi/-/nuxi-3.9.0.tgz#1f463977eeacaeb7195100286dcef432ed1ef71b"
+  integrity sha512-roCfCnQsp/oaHm6PL3HFvvGrwm1d2y1n7G9KzIx+i91eiO4P7fBuaVKibB2e8uqEJBgTwN52KxFha6MJnDykJQ==
   optionalDependencies:
     fsevents "~2.3.3"
 
