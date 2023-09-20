@@ -135,8 +135,8 @@ watch(props, (newVal) => {
                             class="inline-flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:col-start-2"
                             :class="
                                 selected.includes(item)
-                                    ? 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500'
-                                    : 'bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
+                                    ? 'bg-accent-500 hover:bg-accent-400 focus-visible:outline-accent-500'
+                                    : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500'
                             "
                         >
                             {{
