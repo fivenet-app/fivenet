@@ -370,7 +370,7 @@ async function onSelect(item: any): Promise<any> {
                                             <li
                                                 :class="[
                                                     'flex cursor-default select-none items-center px-4 py-2',
-                                                    active && 'bg-primary-600 text-white',
+                                                    active && 'bg-primary-500 text-white',
                                                 ]"
                                             >
                                                 <span class="ml-3 flex-auto truncate">

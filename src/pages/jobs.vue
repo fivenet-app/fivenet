@@ -30,7 +30,7 @@ const open = ref(false);
 
 <template>
     <div class="min-h-full">
-        <nav class="bg-primary-600">
+        <nav class="bg-primary-500">
             <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 <div class="flex h-16 items-center justify-between">
                     <div class="flex items-center">
@@ -38,7 +38,7 @@ const open = ref(false);
                             <!-- Mobile menu button -->
                             <button
                                 type="button"
-                                class="relative inline-flex items-center justify-center rounded-md bg-primary-600 p-2 text-primary-200 hover:bg-primary-500 hover:bg-opacity-75 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary-600"
+                                class="relative inline-flex items-center justify-center rounded-md bg-primary-500 p-2 text-primary-200 hover:bg-primary-400 hover:bg-opacity-75 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary-600"
                                 @click="open = !open"
                             >
                                 <span class="absolute -inset-0.5" />
@@ -53,7 +53,7 @@ const open = ref(false);
                                     <NuxtLink
                                         v-if="item.permission === undefined || can(item.permission)"
                                         :to="item.to"
-                                        class="text-white hover:bg-primary-500 hover:bg-opacity-75 rounded-md px-3 py-2 text-sm font-medium"
+                                        class="text-white hover:bg-primary-400 hover:bg-opacity-75 rounded-md px-3 py-2 text-sm font-medium"
                                         active-class="bg-primary-700 text-white"
                                         aria-current-value="page"
                                     >
@@ -72,7 +72,7 @@ const open = ref(false);
                         <NuxtLink
                             v-if="item.permission === undefined || can(item.permission)"
                             :to="item.to"
-                            class="text-white hover:bg-primary-500 hover:bg-opacity-75 block rounded-md px-3 py-2 text-base font-medium"
+                            class="text-white hover:bg-primary-400 hover:bg-opacity-75 block rounded-md px-3 py-2 text-base font-medium"
                             active-class="bg-primary-700 text-white"
                             aria-current-value="page"
                         >

@@ -71,7 +71,7 @@ defineEmits<{
                                 </button>
                                 <button
                                     type="button"
-                                    class="flex-1 rounded-md bg-primary-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-primary-400"
+                                    class="flex-1 rounded-md bg-error-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-error-400"
                                     @click="clipboardStore.clear()"
                                 >
                                     {{ $t('components.clipboard.clipboard_modal.clear') }}

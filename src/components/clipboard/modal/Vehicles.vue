@@ -132,14 +132,18 @@ watch(props, (newVal) => {
                     <div v-if="specs && specs.max && specs.max === 1n">
                         <button
                             @click="select(item)"
-                            class="inline-flex w-full justify-center rounded-md bg-primary-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 sm:col-start-2"
+                            class="inline-flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:col-start-2"
+                            :class="
+                                selected.includes(item)
+                                    ? 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500'
+                                    : 'bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
+                            "
                         >
-                            <span v-if="!selected.includes(item)">
-                                {{ $t('common.select', 1).toUpperCase() }}
-                            </span>
-                            <span v-else>
-                                {{ $t('common.select', 2).toUpperCase() }}
-                            </span>
+                            {{
+                                !selected.includes(item)
+                                    ? $t('common.select', 1).toUpperCase()
+                                    : $t('common.select', 2).toUpperCase()
+                            }}
                         </button>
                     </div>
                     <div v-else>
