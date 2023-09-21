@@ -32,7 +32,8 @@
             "configurations": [
                 "Launch Frontend",
                 "Launch Backend"
-            ]
+            ],
+            "stopAll": true
         }
     ]
 }
