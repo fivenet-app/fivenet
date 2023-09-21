@@ -898,72 +898,6 @@
             }
         }
     },
-    "enums": {
-        "docstore": {
-            "AccessLevel": {
-                "BLOCKED": "Blockiert",
-                "VIEW": "Ansehen",
-                "COMMENT": "Kommentieren",
-                "ACCESS": "Zugriffsmanagement",
-                "EDIT": "Editieren"
-            },
-            "DocReference": {
-                "LINKED": "verlinkt",
-                "SOLVES": "löst",
-                "CLOSES": "schließt",
-                "DEPRECATES": "veraltet"
-            },
-            "DocRelation": {
-                "MENTIONED": "erwähnt",
-                "TARGETS": "zielt auf",
-                "CAUSED": "verursacht"
-            }
-        },
-        "centrum": {
-            "CentrumMode": {
-                "MANUAL": "Manuell",
-                "CENTRAL_COMMAND": "Zentrale Stelle",
-                "AUTO_ROUND_ROBIN": "Automatisch: Round Robin"
-            },
-            "StatusDispatch": {
-                "NEW": "Neu",
-                "UNASSIGNED": "Nicht zugewiesen",
-                "UPDATED": "Aktualisiert",
-                "UNIT_ASSIGNED": "Einheit zugewiesen",
-                "UNIT_UNASSIGNED": "Einheit entfernt",
-                "EN_ROUTE": "Auf dem Weg",
-                "ON_SCENE": "Vor Ort",
-                "NEED_ASSISTANCE": "Verstärkung Benötigt",
-                "COMPLETED": "Abgeschlossen",
-                "CANCELLED": "Abgebrochen"
-            },
-            "StatusUnit": {
-                "UNKNOWN": "Unbekannt",
-                "USER_ADDED": "Mitglied hinzugefügt",
-                "USER_REMOVED": "Mitglied entfernt",
-                "UNAVAILABLE": "Nicht verfügbar",
-                "AVAILABLE": "Verfügbar",
-                "ON_BREAK": "Pause",
-                "BUSY": "Beschäftigt"
-            }
-        },
-        "livemap": {
-            "MarkerType": {
-                "DOT": "Punkt",
-                "CIRCLE": "Kreis",
-                "POLYGON": "Polygon"
-            }
-        },
-        "jobs": {
-            "ConductType": {
-                "NEUTRAL": "Neutral",
-                "POSITIVE": "Positiv",
-                "NEGATIVE": "Negativ",
-                "WARNING": "Verwarnung",
-                "SUSPENSION": "Suspendierung"
-            }
-        }
-    },
     "perms": {
         "AuthService": {
             "category": "Authentifizierung",
@@ -1396,6 +1330,81 @@
         "update_available": {
             "title": "Neue FiveNet Version verfügbar ({0})!",
             "content": "Um das FiveNet weiter nutzen zu können, müssen Sie die Seite neu laden, wenn Sie dazu gerade in der Lage sind."
+        }
+    },
+    "enums": {
+        "docstore": {
+            "AccessLevel": {
+                "UNSPECIFIED": "Unbestimmt",
+                "BLOCKED": "Blockiert",
+                "VIEW": "Ansehen",
+                "COMMENT": "Kommentieren",
+                "ACCESS": "Zugriffsmanagement",
+                "EDIT": "Editieren"
+            },
+            "DocReference": {
+                "UNSPECIFIED": "Unbestimmt",
+                "LINKED": "verlinkt",
+                "SOLVES": "löst",
+                "CLOSES": "schließt",
+                "DEPRECATES": "veraltet"
+            },
+            "DocRelation": {
+                "UNSPECIFIED": "Unbestimmt",
+                "MENTIONED": "erwähnt",
+                "TARGETS": "zielt auf",
+                "CAUSED": "verursacht"
+            }
+        },
+        "centrum": {
+            "CentrumMode": {
+                "UNSPECIFIED": "Unbestimmt",
+                "MANUAL": "Manuell",
+                "CENTRAL_COMMAND": "Zentrale Stelle",
+                "AUTO_ROUND_ROBIN": "Automatisch: Round Robin",
+                "SIMPLIFIED": "Unbestimmt"
+            },
+            "StatusDispatch": {
+                "UNSPECIFIED": "Unbestimmt",
+                "NEW": "Neu",
+                "UNASSIGNED": "Nicht zugewiesen",
+                "UPDATED": "Aktualisiert",
+                "UNIT_ASSIGNED": "Einheit zugewiesen",
+                "UNIT_UNASSIGNED": "Einheit entfernt",
+                "EN_ROUTE": "Auf dem Weg",
+                "ON_SCENE": "Vor Ort",
+                "NEED_ASSISTANCE": "Verstärkung Benötigt",
+                "COMPLETED": "Abgeschlossen",
+                "CANCELLED": "Abgebrochen"
+            },
+            "StatusUnit": {
+                "UNSPECIFIED": "Unbestimmt",
+                "USER_ADDED": "Mitglied hinzugefügt",
+                "USER_REMOVED": "Mitglied entfernt",
+                "UNAVAILABLE": "Nicht verfügbar",
+                "AVAILABLE": "Verfügbar",
+                "ON_BREAK": "Pause",
+                "BUSY": "Beschäftigt",
+                "UNKNOWN": "Unbekannt"
+            }
+        },
+        "livemap": {
+            "MarkerType": {
+                "UNSPECIFIED": "Unbestimmt",
+                "DOT": "Punkt",
+                "CIRCLE": "Kreis",
+                "POLYGON": "Polygon"
+            }
+        },
+        "jobs": {
+            "ConductType": {
+                "UNSPECIFIED": "Unbestimmt",
+                "NEUTRAL": "Neutral",
+                "POSITIVE": "Positiv",
+                "NEGATIVE": "Negativ",
+                "WARNING": "Verwarnung",
+                "SUSPENSION": "Suspendierung"
+            }
         }
     }
 }
