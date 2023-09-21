@@ -337,38 +337,46 @@ export enum DocContentType {
  */
 export enum DocReference {
     /**
-     * @generated from protobuf enum value: DOC_REFERENCE_LINKED = 0;
+     * @generated from protobuf enum value: DOC_REFERENCE_UNSPECIFIED = 0;
      */
-    LINKED = 0,
+    UNSPECIFIED = 0,
     /**
-     * @generated from protobuf enum value: DOC_REFERENCE_SOLVES = 1;
+     * @generated from protobuf enum value: DOC_REFERENCE_LINKED = 1;
      */
-    SOLVES = 1,
+    LINKED = 1,
     /**
-     * @generated from protobuf enum value: DOC_REFERENCE_CLOSES = 2;
+     * @generated from protobuf enum value: DOC_REFERENCE_SOLVES = 2;
      */
-    CLOSES = 2,
+    SOLVES = 2,
     /**
-     * @generated from protobuf enum value: DOC_REFERENCE_DEPRECATES = 3;
+     * @generated from protobuf enum value: DOC_REFERENCE_CLOSES = 3;
      */
-    DEPRECATES = 3
+    CLOSES = 3,
+    /**
+     * @generated from protobuf enum value: DOC_REFERENCE_DEPRECATES = 4;
+     */
+    DEPRECATES = 4
 }
 /**
  * @generated from protobuf enum resources.documents.DocRelation
  */
 export enum DocRelation {
     /**
-     * @generated from protobuf enum value: DOC_RELATION_MENTIONED = 0;
+     * @generated from protobuf enum value: DOC_RELATION_UNSPECIFIED = 0;
      */
-    MENTIONED = 0,
+    UNSPECIFIED = 0,
     /**
-     * @generated from protobuf enum value: DOC_RELATION_TARGETS = 1;
+     * @generated from protobuf enum value: DOC_RELATION_MENTIONED = 1;
      */
-    TARGETS = 1,
+    MENTIONED = 1,
     /**
-     * @generated from protobuf enum value: DOC_RELATION_CAUSED = 2;
+     * @generated from protobuf enum value: DOC_RELATION_TARGETS = 2;
      */
-    CAUSED = 2
+    TARGETS = 2,
+    /**
+     * @generated from protobuf enum value: DOC_RELATION_CAUSED = 3;
+     */
+    CAUSED = 3
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Document$Type extends MessageType<Document> {

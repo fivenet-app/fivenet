@@ -901,6 +901,7 @@
     "enums": {
         "docstore": {
             "AccessLevel": {
+                "UNSPECIFIED": "Unspecified",
                 "BLOCKED": "Blocked",
                 "VIEW": "View",
                 "COMMENT": "Comment",
@@ -908,12 +909,14 @@
                 "EDIT": "Edit"
             },
             "DocReference": {
+                "UNSPECIFIED": "Unspecified",
                 "LINKED": "links",
                 "SOLVES": "solves",
                 "CLOSES": "closes",
                 "DEPRECATES": "deprecates"
             },
             "DocRelation": {
+                "UNSPECIFIED": "Unspecified",
                 "MENTIONED": "mentioned",
                 "TARGETS": "targets",
                 "CAUSED": "caused"

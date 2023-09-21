@@ -674,7 +674,7 @@ func (x *TemplateJobAccess) GetAccess() AccessLevel {
 	if x != nil {
 		return x.Access
 	}
-	return AccessLevel_ACCESS_LEVEL_BLOCKED
+	return AccessLevel_ACCESS_LEVEL_UNSPECIFIED
 }
 
 var File_resources_documents_templates_proto protoreflect.FileDescriptor
