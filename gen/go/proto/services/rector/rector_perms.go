@@ -229,7 +229,7 @@ func (s *Server) CreateRole(ctx context.Context, req *CreateRoleRequest) (*Creat
 		Method:  "CreateRole",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EVENT_TYPE_ERRORED),
+		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
 	defer s.aud.Log(auditEntry, req)
 
@@ -263,7 +263,7 @@ func (s *Server) CreateRole(ctx context.Context, req *CreateRoleRequest) (*Creat
 	r := permissions.ConvertFromRole(cr)
 	s.enricher.EnrichJobInfo(r)
 
-	auditEntry.State = int16(rector.EVENT_TYPE_CREATED)
+	auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
 	return &CreateRoleResponse{
 		Role: r,
 	}, nil
@@ -277,7 +277,7 @@ func (s *Server) DeleteRole(ctx context.Context, req *DeleteRoleRequest) (*Delet
 		Method:  "DeleteRole",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EVENT_TYPE_ERRORED),
+		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
 	defer s.aud.Log(auditEntry, req)
 
@@ -308,7 +308,7 @@ func (s *Server) DeleteRole(ctx context.Context, req *DeleteRoleRequest) (*Delet
 		return nil, ErrInvalidRequest
 	}
 
-	auditEntry.State = int16(rector.EVENT_TYPE_DELETED)
+	auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)
 
 	return &DeleteRoleResponse{}, nil
 }
@@ -321,7 +321,7 @@ func (s *Server) UpdateRolePerms(ctx context.Context, req *UpdateRolePermsReques
 		Method:  "UpdateRolePerms",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EVENT_TYPE_ERRORED),
+		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
 	defer s.aud.Log(auditEntry, req)
 
@@ -344,7 +344,7 @@ func (s *Server) UpdateRolePerms(ctx context.Context, req *UpdateRolePermsReques
 		}
 	}
 
-	auditEntry.State = int16(rector.EVENT_TYPE_UPDATED)
+	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 
 	return &UpdateRolePermsResponse{}, nil
 }

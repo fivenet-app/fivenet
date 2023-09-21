@@ -14,4 +14,4 @@ type Bot struct {
 	job string
 }
 
-// TODO write automatic bot code
+// TODO write automatic mode bot code

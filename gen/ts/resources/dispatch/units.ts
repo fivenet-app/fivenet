@@ -106,9 +106,9 @@ export interface UnitStatus {
      */
     unitId: bigint;
     /**
-     * @generated from protobuf field: resources.dispatch.UNIT_STATUS status = 4;
+     * @generated from protobuf field: resources.dispatch.StatusUnit status = 4;
      */
-    status: UNIT_STATUS;
+    status: StatusUnit;
     /**
      * @sanitize
      *
@@ -153,37 +153,41 @@ export interface UnitStatus {
     creator?: UserShort;
 }
 /**
- * @generated from protobuf enum resources.dispatch.UNIT_STATUS
+ * @generated from protobuf enum resources.dispatch.StatusUnit
  */
-export enum UNIT_STATUS {
+export enum StatusUnit {
     /**
-     * @generated from protobuf enum value: UNKNOWN = 0;
+     * @generated from protobuf enum value: STATUS_UNIT_UNSPECIFIED = 0;
      */
-    UNKNOWN = 0,
+    UNSPECIFIED = 0,
     /**
-     * @generated from protobuf enum value: USER_ADDED = 1;
+     * @generated from protobuf enum value: STATUS_UNIT_UNKNOWN = 1;
      */
-    USER_ADDED = 1,
+    UNKNOWN = 1,
     /**
-     * @generated from protobuf enum value: USER_REMOVED = 2;
+     * @generated from protobuf enum value: STATUS_UNIT_USER_ADDED = 2;
      */
-    USER_REMOVED = 2,
+    USER_ADDED = 2,
     /**
-     * @generated from protobuf enum value: UNAVAILABLE = 3;
+     * @generated from protobuf enum value: STATUS_UNIT_USER_REMOVED = 3;
      */
-    UNAVAILABLE = 3,
+    USER_REMOVED = 3,
     /**
-     * @generated from protobuf enum value: AVAILABLE = 4;
+     * @generated from protobuf enum value: STATUS_UNIT_UNAVAILABLE = 4;
      */
-    AVAILABLE = 4,
+    UNAVAILABLE = 4,
     /**
-     * @generated from protobuf enum value: ON_BREAK = 5;
+     * @generated from protobuf enum value: STATUS_UNIT_AVAILABLE = 5;
      */
-    ON_BREAK = 5,
+    AVAILABLE = 5,
     /**
-     * @generated from protobuf enum value: BUSY = 6;
+     * @generated from protobuf enum value: STATUS_UNIT_ON_BREAK = 6;
      */
-    BUSY = 6
+    ON_BREAK = 6,
+    /**
+     * @generated from protobuf enum value: STATUS_UNIT_BUSY = 7;
+     */
+    BUSY = 7
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Unit$Type extends MessageType<Unit> {
@@ -241,7 +245,7 @@ class UnitStatus$Type extends MessageType<UnitStatus> {
             { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "unit_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 4, name: "status", kind: "enum", T: () => ["resources.dispatch.UNIT_STATUS", UNIT_STATUS], options: { "validate.rules": { enum: { definedOnly: true } } } },
+            { no: 4, name: "status", kind: "enum", T: () => ["resources.dispatch.StatusUnit", StatusUnit, "STATUS_UNIT_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 5, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
             { no: 6, name: "code", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 7, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },

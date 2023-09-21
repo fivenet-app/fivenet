@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { AccountPlusIcon, AccountRemoveIcon, BriefcaseIcon, CoffeeIcon, HelpIcon, PlayIcon, StopIcon } from 'mdi-vue3';
 import Time from '~/components/partials/elements/Time.vue';
-import { UNIT_STATUS, UnitStatus } from '~~/gen/ts/resources/dispatch/units';
+import { StatusUnit, UnitStatus } from '~~/gen/ts/resources/dispatch/units';
 
 defineProps<{
     activityLength: number;
@@ -20,7 +20,7 @@ defineProps<{
         >
             <div class="w-px bg-gray-200" />
         </div>
-        <template v-if="item.status === UNIT_STATUS.UNKNOWN">
+        <template v-if="item.status === StatusUnit.UNKNOWN">
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
                 <HelpIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
@@ -29,7 +29,7 @@ defineProps<{
                 <Time :value="item.createdAt" :type="'compact'" />
             </span>
         </template>
-        <template v-else-if="item.status === UNIT_STATUS.USER_ADDED">
+        <template v-else-if="item.status === StatusUnit.USER_ADDED">
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
                 <AccountPlusIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
@@ -44,7 +44,7 @@ defineProps<{
                 <Time :value="item.createdAt" :type="'compact'" />
             </span>
         </template>
-        <template v-else-if="item.status === UNIT_STATUS.USER_REMOVED">
+        <template v-else-if="item.status === StatusUnit.USER_REMOVED">
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
                 <AccountRemoveIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
@@ -58,7 +58,7 @@ defineProps<{
                 <Time :value="item.createdAt" :type="'compact'" />
             </span>
         </template>
-        <template v-else-if="item.status === UNIT_STATUS.UNAVAILABLE">
+        <template v-else-if="item.status === StatusUnit.UNAVAILABLE">
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
                 <StopIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
@@ -72,7 +72,7 @@ defineProps<{
                 <Time :value="item.createdAt" :type="'compact'" />
             </span>
         </template>
-        <template v-else-if="item.status === UNIT_STATUS.AVAILABLE">
+        <template v-else-if="item.status === StatusUnit.AVAILABLE">
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
                 <PlayIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
@@ -87,7 +87,7 @@ defineProps<{
                 <Time :value="item.createdAt" :type="'compact'" />
             </span>
         </template>
-        <template v-else-if="item.status === UNIT_STATUS.ON_BREAK">
+        <template v-else-if="item.status === StatusUnit.ON_BREAK">
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
                 <CoffeeIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
@@ -102,7 +102,7 @@ defineProps<{
                 <Time :value="item.createdAt" :type="'compact'" />
             </span>
         </template>
-        <template v-else-if="item.status === UNIT_STATUS.BUSY">
+        <template v-else-if="item.status === StatusUnit.BUSY">
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
                 <BriefcaseIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>

@@ -25,9 +25,9 @@ export interface ConductEntry {
      */
     job: string;
     /**
-     * @generated from protobuf field: resources.jobs.CONDUCT_TYPE type = 5;
+     * @generated from protobuf field: resources.jobs.ConductType type = 5;
      */
-    type: CONDUCT_TYPE;
+    type: ConductType;
     /**
      * @sanitize
      *
@@ -56,29 +56,33 @@ export interface ConductEntry {
     creator?: UserShort; // @gotags: alias:"creator"
 }
 /**
- * @generated from protobuf enum resources.jobs.CONDUCT_TYPE
+ * @generated from protobuf enum resources.jobs.ConductType
  */
-export enum CONDUCT_TYPE {
+export enum ConductType {
     /**
-     * @generated from protobuf enum value: NEUTRAL = 0;
+     * @generated from protobuf enum value: CONDUCT_TYPE_UNSPECIFIED = 0;
      */
-    NEUTRAL = 0,
+    UNSPECIFIED = 0,
     /**
-     * @generated from protobuf enum value: POSITIVE = 1;
+     * @generated from protobuf enum value: CONDUCT_TYPE_NEUTRAL = 1;
      */
-    POSITIVE = 1,
+    NEUTRAL = 1,
     /**
-     * @generated from protobuf enum value: NEGATIVE = 2;
+     * @generated from protobuf enum value: CONDUCT_TYPE_POSITIVE = 2;
      */
-    NEGATIVE = 2,
+    POSITIVE = 2,
     /**
-     * @generated from protobuf enum value: WARNING = 3;
+     * @generated from protobuf enum value: CONDUCT_TYPE_NEGATIVE = 3;
      */
-    WARNING = 3,
+    NEGATIVE = 3,
     /**
-     * @generated from protobuf enum value: SUSPENSION = 4;
+     * @generated from protobuf enum value: CONDUCT_TYPE_WARNING = 4;
      */
-    SUSPENSION = 4
+    WARNING = 4,
+    /**
+     * @generated from protobuf enum value: CONDUCT_TYPE_SUSPENSION = 5;
+     */
+    SUSPENSION = 5
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class ConductEntry$Type extends MessageType<ConductEntry> {
@@ -88,7 +92,7 @@ class ConductEntry$Type extends MessageType<ConductEntry> {
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
-            { no: 5, name: "type", kind: "enum", T: () => ["resources.jobs.CONDUCT_TYPE", CONDUCT_TYPE], options: { "validate.rules": { enum: { definedOnly: true } } } },
+            { no: 5, name: "type", kind: "enum", T: () => ["resources.jobs.ConductType", ConductType, "CONDUCT_TYPE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 6, name: "message", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "2048" } } } },
             { no: 7, name: "expires_at", kind: "message", T: () => Timestamp },
             { no: 8, name: "target_user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },

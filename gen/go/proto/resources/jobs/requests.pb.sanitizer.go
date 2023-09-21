@@ -11,5 +11,9 @@ func (m *RequestEntry) Sanitize() error {
 
 	m.Message = htmlsanitizer.Sanitize(m.Message)
 
+	if m.Status != nil {
+		*m.Status = htmlsanitizer.Sanitize(*m.Status)
+	}
+
 	return nil
 }

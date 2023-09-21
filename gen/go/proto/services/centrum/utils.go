@@ -207,8 +207,8 @@ func (s *Server) getSettings(job string) *dispatch.Settings {
 		return &dispatch.Settings{
 			Job:          job,
 			Enabled:      false,
-			Mode:         dispatch.CENTRUM_MODE_MANUAL,
-			FallbackMode: dispatch.CENTRUM_MODE_MANUAL,
+			Mode:         dispatch.CentrumMode_CENTRUM_MODE_MANUAL,
+			FallbackMode: dispatch.CentrumMode_CENTRUM_MODE_MANUAL,
 		}
 	}
 

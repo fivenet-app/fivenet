@@ -8,12 +8,13 @@ import "validate/validate.proto";
 
 option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/jobs;jobs";
 
-enum CONDUCT_TYPE {
-  NEUTRAL = 0;
-  POSITIVE = 1;
-  NEGATIVE = 2;
-  WARNING = 3;
-  SUSPENSION = 4;
+enum ConductType {
+  CONDUCT_TYPE_UNSPECIFIED = 0;
+  CONDUCT_TYPE_NEUTRAL = 1;
+  CONDUCT_TYPE_POSITIVE = 2;
+  CONDUCT_TYPE_NEGATIVE = 3;
+  CONDUCT_TYPE_WARNING = 4;
+  CONDUCT_TYPE_SUSPENSION = 5;
 }
 
 message ConductEntry {
@@ -21,7 +22,7 @@ message ConductEntry {
   optional resources.timestamp.Timestamp created_at = 2;
   optional resources.timestamp.Timestamp updated_at = 3;
   string job = 4 [(validate.rules).string.max_len = 20];
-  CONDUCT_TYPE type = 5 [(validate.rules).enum.defined_only = true];
+  ConductType type = 5 [(validate.rules).enum.defined_only = true];
   // @sanitize
   string message = 6 [(validate.rules).string = {min_len: 3, max_len: 2048}];
   optional resources.timestamp.Timestamp expires_at = 7;

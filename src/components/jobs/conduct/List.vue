@@ -9,14 +9,14 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import TablePagination from '~/components/partials/elements/TablePagination.vue';
 import { PaginationResponse } from '~~/gen/ts/resources/common/database/database';
-import { CONDUCT_TYPE, ConductEntry } from '~~/gen/ts/resources/jobs/conduct';
+import { ConductEntry, ConductType } from '~~/gen/ts/resources/jobs/conduct';
 import { User } from '~~/gen/ts/resources/users/users';
 import CreateOrUpdateModal from './CreateOrUpdateModal.vue';
 import ListEntry from './ListEntry.vue';
 
 const { $grpc } = useNuxtApp();
 
-const query = ref<{ types: CONDUCT_TYPE[]; showExpired?: boolean; user_ids?: User[] }>({
+const query = ref<{ types: ConductType[]; showExpired?: boolean; user_ids?: User[] }>({
     types: [],
     user_ids: [],
     showExpired: false,
@@ -212,8 +212,7 @@ onConfirm(async (id) => deleteConductEntry(id));
                                                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                     @change="queryTypes = $event.target.value"
                                                     :display-value="
-                                                        (cTypes: any) =>
-                                                            cTypes ? (cTypes as CONDUCT_TYPE[]).join(', ') : 'N/A'
+                                                        (cTypes: any) => (cTypes ? (cTypes as ConductType[]).join(', ') : 'N/A')
                                                     "
                                                     :placeholder="$t('common.type')"
                                                 />
@@ -223,7 +222,7 @@ onConfirm(async (id) => deleteConductEntry(id));
                                                 class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-44 sm:text-sm"
                                             >
                                                 <ComboboxOption
-                                                    v-for="cType in CONDUCT_TYPE"
+                                                    v-for="cType in ConductType"
                                                     :key="cType.valueOf()"
                                                     :value="cType"
                                                     as="char"

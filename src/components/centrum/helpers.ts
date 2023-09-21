@@ -1,76 +1,71 @@
-import { DISPATCH_STATUS } from '~~/gen/ts/resources/dispatch/dispatches';
-import { UNIT_STATUS } from '~~/gen/ts/resources/dispatch/units';
+import { StatusDispatch } from '~~/gen/ts/resources/dispatch/dispatches';
+import { StatusUnit } from '~~/gen/ts/resources/dispatch/units';
 
-export function dispatchStatusToFillColor(status: DISPATCH_STATUS | undefined): string {
+export function dispatchStatusToFillColor(status: StatusDispatch | undefined): string {
     switch (status) {
-        case DISPATCH_STATUS.NEW:
+        case StatusDispatch.UNSPECIFIED:
+        case StatusDispatch.NEW:
+        case StatusDispatch.UNASSIGNED:
             return 'fill-error-600';
-        case DISPATCH_STATUS.UNASSIGNED:
-            return 'fill-error-600';
-        case DISPATCH_STATUS.EN_ROUTE:
-            return 'fill-info-500';
-        case DISPATCH_STATUS.ON_SCENE:
+        case StatusDispatch.ON_SCENE:
             return 'fill-primary-600';
-        case DISPATCH_STATUS.NEED_ASSISTANCE:
+        case StatusDispatch.NEED_ASSISTANCE:
             return 'fill-warn-600';
-        case DISPATCH_STATUS.COMPLETED:
+        case StatusDispatch.COMPLETED:
+        case StatusDispatch.CANCELLED:
             return 'fill-success-600';
-        case DISPATCH_STATUS.CANCELLED:
-            return 'fill-success-600';
-        case DISPATCH_STATUS.ARCHIVED:
+        case StatusDispatch.ARCHIVED:
             return 'fill-base-600';
+        case StatusDispatch.EN_ROUTE:
         default:
             return 'fill-info-500';
     }
 }
 
-export function dispatchStatusToBGColor(status: DISPATCH_STATUS | undefined): string {
+export function dispatchStatusToBGColor(status: StatusDispatch | undefined): string {
     switch (status) {
-        case DISPATCH_STATUS.NEW:
+        case StatusDispatch.UNSPECIFIED:
+        case StatusDispatch.NEW:
+        case StatusDispatch.UNASSIGNED:
             return 'bg-error-600';
-        case DISPATCH_STATUS.UNASSIGNED:
-            return 'bg-error-600';
-        case DISPATCH_STATUS.EN_ROUTE:
-            return 'bg-info-500';
-        case DISPATCH_STATUS.ON_SCENE:
+        case StatusDispatch.ON_SCENE:
             return 'bg-primary-600';
-        case DISPATCH_STATUS.NEED_ASSISTANCE:
+        case StatusDispatch.NEED_ASSISTANCE:
             return 'bg-warn-600';
-        case DISPATCH_STATUS.COMPLETED:
+        case StatusDispatch.COMPLETED:
+        case StatusDispatch.CANCELLED:
             return 'bg-success-600';
-        case DISPATCH_STATUS.CANCELLED:
-            return 'bg-success-600';
-        case DISPATCH_STATUS.ARCHIVED:
+        case StatusDispatch.ARCHIVED:
             return 'bg-base-600';
+        case StatusDispatch.EN_ROUTE:
         default:
             return 'bg-info-500';
     }
 }
 
-export function unitStatusToBGColor(status: UNIT_STATUS | undefined): string {
+export function unitStatusToBGColor(status: StatusUnit | undefined): string {
     switch (status) {
-        case UNIT_STATUS.UNKNOWN:
+        case StatusUnit.UNSPECIFIED:
+        case StatusUnit.UNKNOWN:
+        case StatusUnit.UNAVAILABLE:
             return 'bg-error-600';
-        case UNIT_STATUS.UNAVAILABLE:
-            return 'bg-error-600';
-        case UNIT_STATUS.AVAILABLE:
+        case StatusUnit.AVAILABLE:
             return 'bg-success-600';
-        case UNIT_STATUS.ON_BREAK:
+        case StatusUnit.ON_BREAK:
             return 'bg-warn-600';
-        case UNIT_STATUS.BUSY:
-            return 'bg-info-500';
+        case StatusUnit.BUSY:
         default:
             return 'bg-info-500';
     }
 }
 
 export const animateStates = [
-    DISPATCH_STATUS.NEW.valueOf(),
-    DISPATCH_STATUS.UNIT_UNASSIGNED.valueOf(),
-    DISPATCH_STATUS.UNASSIGNED.valueOf(),
-    DISPATCH_STATUS.NEED_ASSISTANCE.valueOf(),
+    StatusDispatch.NEW.valueOf(),
+    StatusDispatch.UNIT_UNASSIGNED.valueOf(),
+    StatusDispatch.UNASSIGNED.valueOf(),
+    StatusDispatch.NEED_ASSISTANCE.valueOf(),
 ];
 
-export function dispatchStatusAnimate(status: DISPATCH_STATUS | undefined): boolean {
-    return animateStates.includes((status ?? DISPATCH_STATUS.NEW).valueOf());
+export function dispatchStatusAnimate(status: StatusDispatch | undefined): boolean {
+    return animateStates.includes((status ?? StatusDispatch.NEW).valueOf());
 }

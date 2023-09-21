@@ -177,7 +177,7 @@ func (m *Notification) validate(all bool) error {
 		}
 	}
 
-	if _, ok := NOTIFICATION_CATEGORY_name[int32(m.GetCategory())]; !ok {
+	if _, ok := NotificationCategory_name[int32(m.GetCategory())]; !ok {
 		err := NotificationValidationError{
 			field:  "Category",
 			reason: "value must be one of the defined enum values",

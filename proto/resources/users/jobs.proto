@@ -28,4 +28,11 @@ message JobProps {
   // @sanitize: method=StripTags
   string quick_buttons = 4;
   optional uint64 discord_guild_id = 5;
+  optional DiscordBotMode discord_mode = 6;
+}
+
+enum DiscordBotMode {
+  DISCORD_BOT_MODE_UNSPECIFIED = 0;
+  DISCORD_BOT_MODE_ADDITIVE = 1;
+  DISCORD_BOT_MODE_SUBSTRACTIVE = 2;
 }

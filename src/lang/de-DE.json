@@ -898,72 +898,6 @@
             }
         }
     },
-    "enums": {
-        "docstore": {
-            "ACCESS_LEVEL": {
-                "BLOCKED": "Blockiert",
-                "VIEW": "Ansehen",
-                "COMMENT": "Kommentieren",
-                "ACCESS": "Zugriffsmanagement",
-                "EDIT": "Editieren"
-            },
-            "DOC_REFERENCE": {
-                "LINKED": "verlinkt",
-                "SOLVES": "löst",
-                "CLOSES": "schließt",
-                "DEPRECATES": "veraltet"
-            },
-            "DOC_RELATION": {
-                "MENTIONED": "erwähnt",
-                "TARGETS": "zielt auf",
-                "CAUSED": "verursacht"
-            }
-        },
-        "centrum": {
-            "CENTRUM_MODE": {
-                "MANUAL": "Manuell",
-                "CENTRAL_COMMAND": "Zentrale Stelle",
-                "AUTO_ROUND_ROBIN": "Automatisch: Round Robin"
-            },
-            "DISPATCH_STATUS": {
-                "NEW": "Neu",
-                "UNASSIGNED": "Nicht zugewiesen",
-                "UPDATED": "Aktualisiert",
-                "UNIT_ASSIGNED": "Einheit zugewiesen",
-                "UNIT_UNASSIGNED": "Einheit entfernt",
-                "EN_ROUTE": "Auf dem Weg",
-                "ON_SCENE": "Vor Ort",
-                "NEED_ASSISTANCE": "Verstärkung Benötigt",
-                "COMPLETED": "Abgeschlossen",
-                "CANCELLED": "Abgebrochen"
-            },
-            "UNIT_STATUS": {
-                "UNKNOWN": "Unbekannt",
-                "USER_ADDED": "Mitglied hinzugefügt",
-                "USER_REMOVED": "Mitglied entfernt",
-                "UNAVAILABLE": "Nicht verfügbar",
-                "AVAILABLE": "Verfügbar",
-                "ON_BREAK": "Pause",
-                "BUSY": "Beschäftigt"
-            }
-        },
-        "livemap": {
-            "MARKER_TYPE": {
-                "DOT": "Punkt",
-                "CIRCLE": "Kreis",
-                "POLYGON": "Polygon"
-            }
-        },
-        "jobs": {
-            "CONDUCT_TYPE": {
-                "NEUTRAL": "Neutral",
-                "POSITIVE": "Positiv",
-                "NEGATIVE": "Negativ",
-                "WARNING": "Verwarnung",
-                "SUSPENSION": "Suspendierung"
-            }
-        }
-    },
     "perms": {
         "AuthService": {
             "category": "Authentifizierung",
@@ -1307,7 +1241,7 @@
         },
         "pkg-auth": {
             "ErrNoToken": "Anfrage Header \"Authorization\" darf nicht leer sein! Bitte erneut anmelden.",
-            "ErrInvalidToken": "Token ungültig/ ausgelaufen!",
+            "ErrInvalidToken": "Token ungültig/ abgelaufen!",
             "ErrCheckToken": "Token Überprüfung fehlgeschlagen!",
             "ErrUserNoPerms": "Ihr Nutzeraccount hat keine Berechtigungen!",
             "ErrNoUserInfo": "Ein Fehler ist aufgetrete, bitte ausloggen und erneut einloggen!",
@@ -1339,13 +1273,13 @@
         },
         "DocStoreService": {
             "ErrFailedQuery": "Fehlen beim Anzeigen/ Erstellen/ Aktualisieren von Dokumenten!",
-            "ErrNotFoundOrNoPerms": "Kein Dokument gefunden oder keine Berechtigungen auf das Dokument zuzugreifen!",
+            "ErrNotFoundOrNoPerms": "Kein Dokument gefunden oder keine Berechtigungen um auf das Dokument zuzugreifen!",
             "ErrTemplateNoPerms": "Keine Berechtigungen Vorlagen anzuzeigen/ aktualisieren/ zu löschen!",
             "ErrPermissionDenied": "Du hast keine Berechtigung das zu tun!",
-            "ErrClosedDoc": "Dokument ist geschloßen und kann nicht editiert werden!",
+            "ErrClosedDoc": "Dokument ist geschlossen und kann nicht editiert werden!",
             "ErrDocAccessEditDenied": "Sie haben keine Rechte den Dokumenten Zugriff zu verwalten!",
             "ErrDocAccessViewDenied": "Sie haben keine Rechte die Zugangsinfo des Dokumentes zu sehen!",
-            "ErrTemplateFailed": "Fehler beim Ausführen der Dokumenten Vorlange! Bitte spreche deine Fraktionsführung darauf an."
+            "ErrTemplateFailed": "Fehler beim Laden der Dokumenten Vorlage! Bitte spreche deine Fraktionsführung darauf an."
         },
         "LivemapperService": {
             "ErrStreamFailed": "Livemap Datenstrom fehlgeschlagen!",
@@ -1396,6 +1330,81 @@
         "update_available": {
             "title": "Neue FiveNet Version verfügbar ({0})!",
             "content": "Um das FiveNet weiter nutzen zu können, müssen Sie die Seite neu laden, wenn Sie dazu gerade in der Lage sind."
+        }
+    },
+    "enums": {
+        "docstore": {
+            "AccessLevel": {
+                "UNSPECIFIED": "Unbestimmt",
+                "BLOCKED": "Blockiert",
+                "VIEW": "Ansehen",
+                "COMMENT": "Kommentieren",
+                "ACCESS": "Zugriffsmanagement",
+                "EDIT": "Editieren"
+            },
+            "DocReference": {
+                "UNSPECIFIED": "Unbestimmt",
+                "LINKED": "verlinkt",
+                "SOLVES": "löst",
+                "CLOSES": "schließt",
+                "DEPRECATES": "veraltet"
+            },
+            "DocRelation": {
+                "UNSPECIFIED": "Unbestimmt",
+                "MENTIONED": "erwähnt",
+                "TARGETS": "zielt auf",
+                "CAUSED": "verursacht"
+            }
+        },
+        "centrum": {
+            "CentrumMode": {
+                "UNSPECIFIED": "Unbestimmt",
+                "MANUAL": "Manuell",
+                "CENTRAL_COMMAND": "Zentrale Stelle",
+                "AUTO_ROUND_ROBIN": "Automatisch: Round Robin",
+                "SIMPLIFIED": "Unbestimmt"
+            },
+            "StatusDispatch": {
+                "UNSPECIFIED": "Unbestimmt",
+                "NEW": "Neu",
+                "UNASSIGNED": "Nicht zugewiesen",
+                "UPDATED": "Aktualisiert",
+                "UNIT_ASSIGNED": "Einheit zugewiesen",
+                "UNIT_UNASSIGNED": "Einheit entfernt",
+                "EN_ROUTE": "Auf dem Weg",
+                "ON_SCENE": "Vor Ort",
+                "NEED_ASSISTANCE": "Verstärkung Benötigt",
+                "COMPLETED": "Abgeschlossen",
+                "CANCELLED": "Abgebrochen"
+            },
+            "StatusUnit": {
+                "UNSPECIFIED": "Unbestimmt",
+                "USER_ADDED": "Mitglied hinzugefügt",
+                "USER_REMOVED": "Mitglied entfernt",
+                "UNAVAILABLE": "Nicht verfügbar",
+                "AVAILABLE": "Verfügbar",
+                "ON_BREAK": "Pause",
+                "BUSY": "Beschäftigt",
+                "UNKNOWN": "Unbekannt"
+            }
+        },
+        "livemap": {
+            "MarkerType": {
+                "UNSPECIFIED": "Unbestimmt",
+                "DOT": "Punkt",
+                "CIRCLE": "Kreis",
+                "POLYGON": "Polygon"
+            }
+        },
+        "jobs": {
+            "ConductType": {
+                "UNSPECIFIED": "Unbestimmt",
+                "NEUTRAL": "Neutral",
+                "POSITIVE": "Positiv",
+                "NEGATIVE": "Negativ",
+                "WARNING": "Verwarnung",
+                "SUSPENSION": "Suspendierung"
+            }
         }
     }
 }

@@ -151,7 +151,7 @@ const trafficPointsModal = ref(false);
             <div class="flex-initial" v-if="can('CitizenStoreService.SetUserProps.Fields.Wanted')">
                 <button
                     type="button"
-                    class="inline-flex items-center justify-center flex-shrink-0 w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-error-500 text-neutral hover:bg-error-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 sm:flex-1"
+                    class="inline-flex items-center justify-center flex-shrink-0 w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-error-500 text-neutral hover:bg-error-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500 sm:flex-1"
                     @click="setWantedModal = true"
                 >
                     {{
@@ -165,7 +165,7 @@ const trafficPointsModal = ref(false);
                 <button
                     v-if="can('CitizenStoreService.SetUserProps.Fields.Job')"
                     type="button"
-                    class="inline-flex items-center justify-center flex-shrink-0 w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 sm:flex-1"
+                    class="inline-flex items-center justify-center flex-shrink-0 w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500 sm:flex-1"
                     @click="setJobModal = true"
                 >
                     {{ $t('components.citizens.citizen_info_profile.set_job') }}
@@ -174,7 +174,7 @@ const trafficPointsModal = ref(false);
             <div class="flex-initial" v-if="can('CitizenStoreService.SetUserProps.Fields.TrafficInfractionPoints')">
                 <button
                     type="button"
-                    class="inline-flex items-center justify-center flex-shrink-0 w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-secondary-500 text-neutral hover:bg-secondary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 sm:flex-1"
+                    class="inline-flex items-center justify-center flex-shrink-0 w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-secondary-500 text-neutral hover:bg-secondary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500 sm:flex-1"
                     @click="trafficPointsModal = true"
                 >
                     {{ $t('components.citizens.citizen_info_profile.set_traffic_points') }}
@@ -183,7 +183,7 @@ const trafficPointsModal = ref(false);
             <div class="flex-initial" v-if="can('DocStoreService.CreateDocument')">
                 <button
                     type="button"
-                    class="inline-flex items-center justify-center flex-shrink-0 w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-base-700 text-neutral hover:bg-base-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 sm:flex-1"
+                    class="inline-flex items-center justify-center flex-shrink-0 w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-base-700 text-neutral hover:bg-base-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500 sm:flex-1"
                     @click="openTemplates()"
                 >
                     {{ $t('components.citizens.citizen_info_profile.create_new_document') }}
@@ -192,7 +192,7 @@ const trafficPointsModal = ref(false);
             <div class="flex-initial">
                 <button
                     type="button"
-                    class="inline-flex items-center justify-center flex-shrink-0 w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-base-700 text-neutral hover:bg-base-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600 sm:flex-1"
+                    class="inline-flex items-center justify-center flex-shrink-0 w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-base-700 text-neutral hover:bg-base-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500 sm:flex-1"
                     @click="clipboard.copy(w.location.href)"
                 >
                     {{ $t('components.citizens.citizen_info_profile.copy_profile_link') }}

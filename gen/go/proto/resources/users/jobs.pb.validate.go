@@ -398,6 +398,10 @@ func (m *JobProps) validate(all bool) error {
 		// no validation rules for DiscordGuildId
 	}
 
+	if m.DiscordMode != nil {
+		// no validation rules for DiscordMode
+	}
+
 	if len(errors) > 0 {
 		return JobPropsMultiError(errors)
 	}

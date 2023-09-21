@@ -3,7 +3,7 @@ import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { ArrowCollapseIcon, ChevronRightIcon, FileDocumentMultipleIcon } from 'mdi-vue3';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import Time from '~/components/partials/elements/Time.vue';
-import { DOC_REFERENCE, DocumentReference } from '~~/gen/ts/resources/documents/documents';
+import { DocReference, DocumentReference } from '~~/gen/ts/resources/documents/documents';
 import CitizenInfoPopover from '../partials/citizens/CitizenInfoPopover.vue';
 
 const { $grpc } = useNuxtApp();
@@ -74,7 +74,7 @@ async function getDocumentReferences(): Promise<DocumentReference[]> {
                                             >
                                         </span>
                                         <span class="font-medium">
-                                            {{ DOC_REFERENCE[reference.reference] }}
+                                            {{ DocReference[reference.reference] }}
                                         </span>
                                         <span v-if="showSource" class="truncate">
                                             {{ reference.sourceDocument?.title
@@ -148,7 +148,7 @@ async function getDocumentReferences(): Promise<DocumentReference[]> {
                                         </td>
                                         <td class="px-6 py-4 text-sm text-right whitespace-nowrap">
                                             <span class="font-medium">
-                                                {{ $t(`enums.docstore.DOC_REFERENCE.${DOC_REFERENCE[reference.reference]}`) }}
+                                                {{ $t(`enums.docstore.DocReference.${DocReference[reference.reference]}`) }}
                                             </span>
                                         </td>
                                         <td v-if="showSource" class="hidden px-6 py-4 text-sm whitespace-nowrap md:block">

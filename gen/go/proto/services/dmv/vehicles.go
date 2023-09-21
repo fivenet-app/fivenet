@@ -76,7 +76,7 @@ func (s *Server) ListVehicles(ctx context.Context, req *ListVehiclesRequest) (*L
 			Method:  "ListVehicles",
 			UserID:  userInfo.UserId,
 			UserJob: userInfo.Job,
-			State:   int16(rector.EVENT_TYPE_VIEWED),
+			State:   int16(rector.EventType_EVENT_TYPE_VIEWED),
 		}, req)
 	}
 

@@ -87,5 +87,5 @@ message TemplateJobAccess {
   optional string job_label = 6 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job_label"
   int32 minimum_grade = 7 [(validate.rules).int32.gt = 0]; // @gotags: alias:"minimum_grade"
   optional string job_grade_label = 8 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job_grade_label"
-  resources.documents.ACCESS_LEVEL access = 9 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"access"
+  resources.documents.AccessLevel access = 9 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"access"
 }

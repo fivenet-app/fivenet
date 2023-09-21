@@ -1,7 +1,7 @@
 import { StoreDefinition, defineStore } from 'pinia';
 import { fromString } from '~/utils/time';
 import { Category } from '~~/gen/ts/resources/documents/category';
-import { DOC_CONTENT_TYPE, Document, DocumentShort } from '~~/gen/ts/resources/documents/documents';
+import { DocContentType, Document, DocumentShort } from '~~/gen/ts/resources/documents/documents';
 import { ObjectSpecs, TemplateData } from '~~/gen/ts/resources/documents/templates';
 import { User, UserShort } from '~~/gen/ts/resources/users/users';
 import { Vehicle } from '~~/gen/ts/resources/vehicles/vehicles';
@@ -233,7 +233,7 @@ export function getDocument(obj: ClipboardDocument): DocumentShort {
         categoryId: obj.category && obj.category.id ? obj.category.id : 0n,
         category: obj.category,
         title: obj.title,
-        contentType: DOC_CONTENT_TYPE.PLAIN,
+        contentType: DocContentType.HTML,
         content: '',
         creatorId: user.userId,
         creator: user,

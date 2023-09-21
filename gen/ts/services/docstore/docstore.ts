@@ -4,8 +4,8 @@
 import { ServiceType } from "@protobuf-ts/runtime-rpc";
 import { MessageType } from "@protobuf-ts/runtime";
 import { Category } from "../../resources/documents/category.js";
-import { DOC_RELATION } from "../../resources/documents/documents.js";
-import { DOC_CONTENT_TYPE } from "../../resources/documents/documents.js";
+import { DocRelation } from "../../resources/documents/documents.js";
+import { DocContentType } from "../../resources/documents/documents.js";
 import { Comment } from "../../resources/documents/comment.js";
 import { DocumentRelation } from "../../resources/documents/documents.js";
 import { DocumentReference } from "../../resources/documents/documents.js";
@@ -385,9 +385,9 @@ export interface CreateDocumentRequest {
      */
     content: string; // @gotags: alias:"content"
     /**
-     * @generated from protobuf field: resources.documents.DOC_CONTENT_TYPE content_type = 4;
+     * @generated from protobuf field: resources.documents.DocContentType content_type = 4;
      */
-    contentType: DOC_CONTENT_TYPE; // @gotags: alias:"content_type"
+    contentType: DocContentType; // @gotags: alias:"content_type"
     /**
      * @generated from protobuf field: optional string data = 5;
      */
@@ -445,9 +445,9 @@ export interface UpdateDocumentRequest {
      */
     content: string; // @gotags: alias:"content"
     /**
-     * @generated from protobuf field: resources.documents.DOC_CONTENT_TYPE content_type = 5;
+     * @generated from protobuf field: resources.documents.DocContentType content_type = 5;
      */
-    contentType: DOC_CONTENT_TYPE; // @gotags: alias:"content_type"
+    contentType: DocContentType; // @gotags: alias:"content_type"
     /**
      * @generated from protobuf field: optional string data = 6;
      */
@@ -541,9 +541,9 @@ export interface SetDocumentAccessRequest {
      */
     documentId: bigint;
     /**
-     * @generated from protobuf field: services.docstore.ACCESS_LEVEL_UPDATE_MODE mode = 2;
+     * @generated from protobuf field: services.docstore.AccessLevelUpdateMode mode = 2;
      */
-    mode: ACCESS_LEVEL_UPDATE_MODE;
+    mode: AccessLevelUpdateMode;
     /**
      * @generated from protobuf field: resources.documents.DocumentAccess access = 3;
      */
@@ -567,9 +567,9 @@ export interface ListUserDocumentsRequest {
      */
     userId: number;
     /**
-     * @generated from protobuf field: repeated resources.documents.DOC_RELATION relations = 3;
+     * @generated from protobuf field: repeated resources.documents.DocRelation relations = 3;
      */
-    relations: DOC_RELATION[];
+    relations: DocRelation[];
 }
 /**
  * @generated from protobuf message services.docstore.ListUserDocumentsResponse
@@ -647,23 +647,23 @@ export interface DeleteCategoryRequest {
 export interface DeleteCategoryResponse {
 }
 /**
- * @generated from protobuf enum services.docstore.ACCESS_LEVEL_UPDATE_MODE
+ * @generated from protobuf enum services.docstore.AccessLevelUpdateMode
  */
-export enum ACCESS_LEVEL_UPDATE_MODE {
+export enum AccessLevelUpdateMode {
     /**
-     * @generated from protobuf enum value: UNSPECIFIED = 0;
+     * @generated from protobuf enum value: ACCESS_LEVEL_UPDATE_MODE_UNSPECIFIED = 0;
      */
     UNSPECIFIED = 0,
     /**
-     * @generated from protobuf enum value: UPDATE = 1;
+     * @generated from protobuf enum value: ACCESS_LEVEL_UPDATE_MODE_UPDATE = 1;
      */
     UPDATE = 1,
     /**
-     * @generated from protobuf enum value: DELETE = 2;
+     * @generated from protobuf enum value: ACCESS_LEVEL_UPDATE_MODE_DELETE = 2;
      */
     DELETE = 2,
     /**
-     * @generated from protobuf enum value: CLEAR = 3;
+     * @generated from protobuf enum value: ACCESS_LEVEL_UPDATE_MODE_CLEAR = 3;
      */
     CLEAR = 3
 }
@@ -1084,7 +1084,7 @@ class CreateDocumentRequest$Type extends MessageType<CreateDocumentRequest> {
             { no: 1, name: "category_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
             { no: 2, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxBytes: "21845" } } } },
             { no: 3, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "20", maxBytes: "1750000" } } } },
-            { no: 4, name: "content_type", kind: "enum", T: () => ["resources.documents.DOC_CONTENT_TYPE", DOC_CONTENT_TYPE], options: { "validate.rules": { enum: { definedOnly: true } } } },
+            { no: 4, name: "content_type", kind: "enum", T: () => ["resources.documents.DocContentType", DocContentType, "DOC_CONTENT_TYPE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 5, name: "data", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
             { no: 6, name: "state", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "24" } } } },
             { no: 7, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
@@ -1117,7 +1117,7 @@ class UpdateDocumentRequest$Type extends MessageType<UpdateDocumentRequest> {
             { no: 2, name: "category_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
             { no: 3, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxBytes: "21845" } } } },
             { no: 4, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "20", maxBytes: "1750000" } } } },
-            { no: 5, name: "content_type", kind: "enum", T: () => ["resources.documents.DOC_CONTENT_TYPE", DOC_CONTENT_TYPE], options: { "validate.rules": { enum: { definedOnly: true } } } },
+            { no: 5, name: "content_type", kind: "enum", T: () => ["resources.documents.DocContentType", DocContentType, "DOC_CONTENT_TYPE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 6, name: "data", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
             { no: 7, name: "state", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "24" } } } },
             { no: 8, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
@@ -1216,7 +1216,7 @@ class SetDocumentAccessRequest$Type extends MessageType<SetDocumentAccessRequest
     constructor() {
         super("services.docstore.SetDocumentAccessRequest", [
             { no: 1, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 2, name: "mode", kind: "enum", T: () => ["services.docstore.ACCESS_LEVEL_UPDATE_MODE", ACCESS_LEVEL_UPDATE_MODE], options: { "validate.rules": { enum: { definedOnly: true } } } },
+            { no: 2, name: "mode", kind: "enum", T: () => ["services.docstore.AccessLevelUpdateMode", AccessLevelUpdateMode, "ACCESS_LEVEL_UPDATE_MODE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 3, name: "access", kind: "message", T: () => DocumentAccess, options: { "validate.rules": { message: { required: true } } } }
         ]);
     }
@@ -1241,7 +1241,7 @@ class ListUserDocumentsRequest$Type extends MessageType<ListUserDocumentsRequest
         super("services.docstore.ListUserDocumentsRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
             { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
-            { no: 3, name: "relations", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.documents.DOC_RELATION", DOC_RELATION], options: { "validate.rules": { repeated: { maxItems: "3" } } } }
+            { no: 3, name: "relations", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.documents.DocRelation", DocRelation, "DOC_RELATION_"], options: { "validate.rules": { repeated: { maxItems: "3" } } } }
         ]);
     }
 }

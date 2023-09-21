@@ -123,11 +123,11 @@ func (s *Server) updateDispatchStatus(ctx context.Context, job string, dsp *disp
 	// If the dispatch status is the same and is a status that shouldn't be duplicated, don't update the status again
 	if dsp.Status != nil &&
 		dsp.Status.Status == in.Status &&
-		(in.Status == dispatch.DISPATCH_STATUS_NEW ||
-			in.Status == dispatch.DISPATCH_STATUS_UNASSIGNED ||
-			in.Status == dispatch.DISPATCH_STATUS_COMPLETED ||
-			in.Status == dispatch.DISPATCH_STATUS_CANCELLED ||
-			in.Status == dispatch.DISPATCH_STATUS_ARCHIVED) {
+		(in.Status == dispatch.StatusDispatch_STATUS_DISPATCH_NEW ||
+			in.Status == dispatch.StatusDispatch_STATUS_DISPATCH_UNASSIGNED ||
+			in.Status == dispatch.StatusDispatch_STATUS_DISPATCH_COMPLETED ||
+			in.Status == dispatch.StatusDispatch_STATUS_DISPATCH_CANCELLED ||
+			in.Status == dispatch.StatusDispatch_STATUS_DISPATCH_ARCHIVED) {
 		return nil
 	}
 
@@ -233,7 +233,7 @@ func (s *Server) updateDispatchAssignments(ctx context.Context, job string, user
 						DispatchId: dsp.Id,
 						UnitId:     &toRemove[k],
 						UserId:     userId,
-						Status:     dispatch.DISPATCH_STATUS_UNIT_UNASSIGNED,
+						Status:     dispatch.StatusDispatch_STATUS_DISPATCH_UNIT_UNASSIGNED,
 						X:          x,
 						Y:          y,
 						Postal:     postal,
@@ -305,7 +305,7 @@ func (s *Server) updateDispatchAssignments(ctx context.Context, job string, user
 					DispatchId: dsp.Id,
 					UnitId:     &unit.Id,
 					UserId:     userId,
-					Status:     dispatch.DISPATCH_STATUS_UNIT_ASSIGNED,
+					Status:     dispatch.StatusDispatch_STATUS_DISPATCH_UNIT_ASSIGNED,
 					X:          x,
 					Y:          y,
 					Postal:     postal,
@@ -333,17 +333,22 @@ func (s *Server) updateDispatchAssignments(ctx context.Context, job string, user
 		s.events.JS.PublishAsync(s.buildSubject(TopicDispatch, TypeDispatchUpdated, job, toAdd[i]), data)
 	}
 
-	// Unit is empty, set unit status to be unavailable automatically
+	// Dispatch has not units assigned anymore
 	if len(dsp.Units) <= 0 {
-		if err := s.updateDispatchStatus(ctx, job, dsp, &dispatch.DispatchStatus{
-			DispatchId: dsp.Id,
-			Status:     dispatch.DISPATCH_STATUS_UNASSIGNED,
-			UserId:     userId,
-			X:          x,
-			Y:          y,
-			Postal:     postal,
-		}); err != nil {
-			return err
+		// Check dispatch status to not be completed/archived, etc.
+		if dsp.Status != nil && (dsp.Status.Status != dispatch.StatusDispatch_STATUS_DISPATCH_ARCHIVED &&
+			dsp.Status.Status != dispatch.StatusDispatch_STATUS_DISPATCH_CANCELLED &&
+			dsp.Status.Status != dispatch.StatusDispatch_STATUS_DISPATCH_COMPLETED) {
+			if err := s.updateDispatchStatus(ctx, job, dsp, &dispatch.DispatchStatus{
+				DispatchId: dsp.Id,
+				Status:     dispatch.StatusDispatch_STATUS_DISPATCH_UNASSIGNED,
+				UserId:     userId,
+				X:          x,
+				Y:          y,
+				Postal:     postal,
+			}); err != nil {
+				return err
+			}
 		}
 	}
 

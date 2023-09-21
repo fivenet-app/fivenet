@@ -543,7 +543,7 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 		Method:  "ChooseCharacter",
 		UserID:  char.UserId,
 		UserJob: char.Job,
-		State:   int16(rector.EVENT_TYPE_VIEWED),
+		State:   int16(rector.EventType_EVENT_TYPE_VIEWED),
 	}, char.UserShort())
 
 	return &ChooseCharacterResponse{

@@ -28,7 +28,7 @@ func (s *Server) ViewAuditLog(ctx context.Context, req *ViewAuditLogRequest) (*V
 			Method:  "ViewAuditLog",
 			UserID:  userInfo.UserId,
 			UserJob: userInfo.Job,
-			State:   int16(rector.EVENT_TYPE_VIEWED),
+			State:   int16(rector.EventType_EVENT_TYPE_VIEWED),
 		}, req)
 	}
 

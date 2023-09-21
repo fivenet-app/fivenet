@@ -29,12 +29,12 @@ func (s *Server) listDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pr
 					jet.OR(
 						jet.AND(
 							tDUserAccess.Access.IS_NOT_NULL(),
-							tDUserAccess.Access.NOT_EQ(jet.Int32(int32(documents.ACCESS_LEVEL_BLOCKED))),
+							tDUserAccess.Access.NOT_EQ(jet.Int32(int32(documents.AccessLevel_ACCESS_LEVEL_BLOCKED))),
 						),
 						jet.AND(
 							tDUserAccess.Access.IS_NULL(),
 							tDJobAccess.Access.IS_NOT_NULL(),
-							tDJobAccess.Access.NOT_EQ(jet.Int32(int32(documents.ACCESS_LEVEL_BLOCKED))),
+							tDJobAccess.Access.NOT_EQ(jet.Int32(int32(documents.AccessLevel_ACCESS_LEVEL_BLOCKED))),
 						),
 					),
 				),
@@ -151,12 +151,12 @@ func (s *Server) getDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pro
 					jet.OR(
 						jet.AND(
 							tDUserAccess.Access.IS_NOT_NULL(),
-							tDUserAccess.Access.NOT_EQ(jet.Int32(int32(documents.ACCESS_LEVEL_BLOCKED))),
+							tDUserAccess.Access.NOT_EQ(jet.Int32(int32(documents.AccessLevel_ACCESS_LEVEL_BLOCKED))),
 						),
 						jet.AND(
 							tDUserAccess.Access.IS_NULL(),
 							tDJobAccess.Access.IS_NOT_NULL(),
-							tDJobAccess.Access.NOT_EQ(jet.Int32(int32(documents.ACCESS_LEVEL_BLOCKED))),
+							tDJobAccess.Access.NOT_EQ(jet.Int32(int32(documents.AccessLevel_ACCESS_LEVEL_BLOCKED))),
 						),
 					),
 				),
@@ -258,17 +258,17 @@ func (s *Server) getDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pro
 		)
 }
 
-func (s *Server) checkIfUserHasAccessToDoc(ctx context.Context, documentId uint64, userInfo *userinfo.UserInfo, access documents.ACCESS_LEVEL) (bool, error) {
+func (s *Server) checkIfUserHasAccessToDoc(ctx context.Context, documentId uint64, userInfo *userinfo.UserInfo, access documents.AccessLevel) (bool, error) {
 	out, err := s.checkIfUserHasAccessToDocIDs(ctx, userInfo, access, documentId)
 	return len(out) > 0, err
 }
 
-func (s *Server) checkIfUserHasAccessToDocs(ctx context.Context, userInfo *userinfo.UserInfo, access documents.ACCESS_LEVEL, documentIds ...uint64) (bool, error) {
+func (s *Server) checkIfUserHasAccessToDocs(ctx context.Context, userInfo *userinfo.UserInfo, access documents.AccessLevel, documentIds ...uint64) (bool, error) {
 	out, err := s.checkIfUserHasAccessToDocIDs(ctx, userInfo, access, documentIds...)
 	return len(out) == len(documentIds), err
 }
 
-func (s *Server) checkIfUserHasAccessToDocIDs(ctx context.Context, userInfo *userinfo.UserInfo, access documents.ACCESS_LEVEL, documentIds ...uint64) ([]uint64, error) {
+func (s *Server) checkIfUserHasAccessToDocIDs(ctx context.Context, userInfo *userinfo.UserInfo, access documents.AccessLevel, documentIds ...uint64) ([]uint64, error) {
 	if len(documentIds) == 0 {
 		return documentIds, nil
 	}

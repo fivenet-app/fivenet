@@ -24,7 +24,7 @@ var (
 
 func (s *Server) GetDocumentAccess(ctx context.Context, req *GetDocumentAccessRequest) (*GetDocumentAccessResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-	ok, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.ACCESS_LEVEL_VIEW)
+	ok, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
 	if err != nil {
 		return nil, err
 	}
@@ -62,11 +62,11 @@ func (s *Server) SetDocumentAccess(ctx context.Context, req *SetDocumentAccessRe
 		Method:  "SetDocumentAccess",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EVENT_TYPE_ERRORED),
+		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
 	defer s.auditer.Log(auditEntry, req)
 
-	ok, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.ACCESS_LEVEL_ACCESS)
+	ok, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_ACCESS)
 	if err != nil {
 		return nil, err
 	}
@@ -91,12 +91,12 @@ func (s *Server) SetDocumentAccess(ctx context.Context, req *SetDocumentAccessRe
 		return nil, err
 	}
 
-	auditEntry.State = int16(rector.EVENT_TYPE_UPDATED)
+	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 
 	return &SetDocumentAccessResponse{}, nil
 }
 
-func (s *Server) handleDocumentAccessChanges(ctx context.Context, tx *sql.Tx, mode ACCESS_LEVEL_UPDATE_MODE, documentId uint64, access *documents.DocumentAccess) error {
+func (s *Server) handleDocumentAccessChanges(ctx context.Context, tx *sql.Tx, mode AccessLevelUpdateMode, documentId uint64, access *documents.DocumentAccess) error {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	// Get existing job and user accesses from database
@@ -106,9 +106,9 @@ func (s *Server) handleDocumentAccessChanges(ctx context.Context, tx *sql.Tx, mo
 	}
 
 	switch mode {
-	case ACCESS_LEVEL_UPDATE_MODE_UNSPECIFIED:
+	case AccessLevelUpdateMode_ACCESS_LEVEL_UPDATE_MODE_UNSPECIFIED:
 		fallthrough
-	case ACCESS_LEVEL_UPDATE_MODE_UPDATE:
+	case AccessLevelUpdateMode_ACCESS_LEVEL_UPDATE_MODE_UPDATE:
 		toCreate, toUpdate, toDelete := s.compareDocumentAccess(tx, current, access)
 
 		if err := s.createDocumentAccess(ctx, tx, documentId, userInfo.UserId, toCreate); err != nil {
@@ -123,12 +123,12 @@ func (s *Server) handleDocumentAccessChanges(ctx context.Context, tx *sql.Tx, mo
 			return err
 		}
 
-	case ACCESS_LEVEL_UPDATE_MODE_DELETE:
+	case AccessLevelUpdateMode_ACCESS_LEVEL_UPDATE_MODE_DELETE:
 		if err := s.deleteDocumentAccess(ctx, tx, documentId, access); err != nil {
 			return err
 		}
 
-	case ACCESS_LEVEL_UPDATE_MODE_CLEAR:
+	case AccessLevelUpdateMode_ACCESS_LEVEL_UPDATE_MODE_CLEAR:
 		if err := s.clearDocumentAccess(ctx, tx, documentId); err != nil {
 			return err
 		}

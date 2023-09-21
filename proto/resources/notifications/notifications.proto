@@ -14,16 +14,19 @@ message Notification {
   resources.timestamp.Timestamp created_at = 2;
   resources.timestamp.Timestamp read_at = 3;
   int32 user_id = 4;
+  // @sanitize
   resources.common.TranslateItem title = 5;
   optional string type = 6 [(validate.rules).string.max_len = 128];
+  // @sanitize
   resources.common.TranslateItem content = 7;
-  NOTIFICATION_CATEGORY category = 8 [(validate.rules).enum.defined_only = true];
+  NotificationCategory category = 8 [(validate.rules).enum.defined_only = true];
   optional Data data = 9;
 }
 
-enum NOTIFICATION_CATEGORY {
-  GENERAL = 0;
-  DOCUMENT = 1;
+enum NotificationCategory {
+  NOTIFICATION_CATEGORY_UNSPECIFIED = 0;
+  NOTIFICATION_CATEGORY_GENERAL = 1;
+  NOTIFICATION_CATEGORY_DOCUMENT = 2;
 }
 
 message Data {

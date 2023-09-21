@@ -166,7 +166,7 @@ message CreateDocumentRequest {
     min_len: 20,
     max_bytes: 1750000 // 1.75 Megabytes
   }]; // @gotags: alias:"content"
-  resources.documents.DOC_CONTENT_TYPE content_type = 4 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"content_type"
+  resources.documents.DocContentType content_type = 4 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"content_type"
   optional string data = 5; // @gotags: alias:"data"
   // @sanitize
   string state = 6 [(validate.rules).string.max_len = 24]; // @gotags: alias:"state"
@@ -192,7 +192,7 @@ message UpdateDocumentRequest {
     min_len: 20,
     max_bytes: 1750000 // 1.75 Megabytes
   }]; // @gotags: alias:"content"
-  resources.documents.DOC_CONTENT_TYPE content_type = 5 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"content_type"
+  resources.documents.DocContentType content_type = 5 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"content_type"
   optional string data = 6; // @gotags: alias:"data"
   // @sanitize
   string state = 7 [(validate.rules).string.max_len = 24]; // @gotags: alias:"state"
@@ -227,16 +227,16 @@ message GetDocumentAccessResponse {
   resources.documents.DocumentAccess access = 1 [(validate.rules).message.required = true];
 }
 
-enum ACCESS_LEVEL_UPDATE_MODE {
-  UNSPECIFIED = 0;
-  UPDATE = 1;
-  DELETE = 2;
-  CLEAR = 3;
+enum AccessLevelUpdateMode {
+  ACCESS_LEVEL_UPDATE_MODE_UNSPECIFIED = 0;
+  ACCESS_LEVEL_UPDATE_MODE_UPDATE = 1;
+  ACCESS_LEVEL_UPDATE_MODE_DELETE = 2;
+  ACCESS_LEVEL_UPDATE_MODE_CLEAR = 3;
 }
 
 message SetDocumentAccessRequest {
   uint64 document_id = 1;
-  ACCESS_LEVEL_UPDATE_MODE mode = 2 [(validate.rules).enum.defined_only = true];
+  AccessLevelUpdateMode mode = 2 [(validate.rules).enum.defined_only = true];
   resources.documents.DocumentAccess access = 3 [(validate.rules).message.required = true];
 }
 
@@ -245,7 +245,7 @@ message SetDocumentAccessResponse {}
 message ListUserDocumentsRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
   int32 user_id = 2 [(validate.rules).int32.gt = 0];
-  repeated resources.documents.DOC_RELATION relations = 3 [(validate.rules).repeated.max_items = 3];
+  repeated resources.documents.DocRelation relations = 3 [(validate.rules).repeated.max_items = 3];
 }
 
 message ListUserDocumentsResponse {

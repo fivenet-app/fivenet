@@ -234,12 +234,12 @@ func (s *Server) deleteTemplateJobAccess(ctx context.Context, tx *sql.Tx, templa
 	return nil
 }
 
-func (s *Server) checkIfUserHasAccessToTemplate(ctx context.Context, templateId uint64, userInfo *userinfo.UserInfo, highestRankOk bool, access documents.ACCESS_LEVEL) (bool, error) {
+func (s *Server) checkIfUserHasAccessToTemplate(ctx context.Context, templateId uint64, userInfo *userinfo.UserInfo, highestRankOk bool, access documents.AccessLevel) (bool, error) {
 	out, err := s.checkIfUserHasAccessToTemplateIDs(ctx, userInfo, highestRankOk, access, templateId)
 	return len(out) > 0, err
 }
 
-func (s *Server) checkIfUserHasAccessToTemplateIDs(ctx context.Context, userInfo *userinfo.UserInfo, highestRankOk bool, access documents.ACCESS_LEVEL, templateIds ...uint64) ([]uint64, error) {
+func (s *Server) checkIfUserHasAccessToTemplateIDs(ctx context.Context, userInfo *userinfo.UserInfo, highestRankOk bool, access documents.AccessLevel, templateIds ...uint64) ([]uint64, error) {
 	if len(templateIds) == 0 {
 		return templateIds, nil
 	}

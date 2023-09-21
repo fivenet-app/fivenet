@@ -26,7 +26,7 @@ defineProps<{
         >
             <div class="mx-2 mt-1 mb-4">
                 <div class="flex flex-row">
-                    <p class="py-2 pl-4 pr-3 text-lg font-medium text-neutral sm:pl-0 truncate max-w-5xl">
+                    <p class="py-2 pl-4 pr-3 text-lg font-medium text-neutral sm:pl-0">
                         <span
                             v-if="doc.category"
                             class="inline-flex items-center rounded-md bg-primary-400/10 px-2 py-1 text-xs font-medium text-primary-400 ring-1 ring-inset ring-primary-400/30"

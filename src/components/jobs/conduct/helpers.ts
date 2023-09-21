@@ -1,50 +1,50 @@
-import { CONDUCT_TYPE } from '~~/gen/ts/resources/jobs/conduct';
+import { ConductType } from '~~/gen/ts/resources/jobs/conduct';
 
-export function conductTypesToBGColor(status: CONDUCT_TYPE | undefined): string {
+export function conductTypesToBGColor(status: ConductType | undefined): string {
     switch (status) {
-        case CONDUCT_TYPE.NEUTRAL:
+        case ConductType.NEUTRAL:
             return 'bg-base-600/10';
-        case CONDUCT_TYPE.POSITIVE:
+        case ConductType.POSITIVE:
             return 'bg-success-600/10';
-        case CONDUCT_TYPE.NEGATIVE:
+        case ConductType.NEGATIVE:
             return 'bg-error-600/10';
-        case CONDUCT_TYPE.WARNING:
+        case ConductType.WARNING:
             return 'bg-warn-600/10';
-        case CONDUCT_TYPE.SUSPENSION:
+        case ConductType.SUSPENSION:
             return 'bg-info-500/10';
         default:
             return 'bg-base-600/10';
     }
 }
 
-export function conductTypesToRingColor(status: CONDUCT_TYPE | undefined): string {
+export function conductTypesToRingColor(status: ConductType | undefined): string {
     switch (status) {
-        case CONDUCT_TYPE.NEUTRAL:
+        case ConductType.NEUTRAL:
             return 'ring-base-600/20';
-        case CONDUCT_TYPE.POSITIVE:
+        case ConductType.POSITIVE:
             return 'ring-success-600/20';
-        case CONDUCT_TYPE.NEGATIVE:
+        case ConductType.NEGATIVE:
             return 'ring-error-600/20';
-        case CONDUCT_TYPE.WARNING:
+        case ConductType.WARNING:
             return 'ring-warn-600/20';
-        case CONDUCT_TYPE.SUSPENSION:
+        case ConductType.SUSPENSION:
             return 'ring-info-500/20';
         default:
             return 'ring-base-500/20';
     }
 }
 
-export function conductTypesToTextColor(status: CONDUCT_TYPE | undefined): string {
+export function conductTypesToTextColor(status: ConductType | undefined): string {
     switch (status) {
-        case CONDUCT_TYPE.NEUTRAL:
+        case ConductType.NEUTRAL:
             return 'text-base-400';
-        case CONDUCT_TYPE.POSITIVE:
+        case ConductType.POSITIVE:
             return 'text-success-400';
-        case CONDUCT_TYPE.NEGATIVE:
+        case ConductType.NEGATIVE:
             return 'text-error-400';
-        case CONDUCT_TYPE.WARNING:
+        case ConductType.WARNING:
             return 'text-warn-400';
-        case CONDUCT_TYPE.SUSPENSION:
+        case ConductType.SUSPENSION:
             return 'text-info-400';
         default:
             return 'text-base-400';

@@ -6,7 +6,7 @@ import { useSound } from '@vueuse/sound';
 import { CarEmergencyIcon, CloseIcon } from 'mdi-vue3';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import { useCentrumStore } from '~/store/centrum';
-import { TAKE_DISPATCH_RESP } from '~~/gen/ts/services/centrum/centrum';
+import { TakeDispatchResp } from '~~/gen/ts/services/centrum/centrum';
 import TakeDispatchEntry from './TakeDispatchEntry.vue';
 
 defineProps<{
@@ -25,7 +25,7 @@ const { pendingDispatches, dispatches } = storeToRefs(centrumStore);
 
 const unselectedDispatches = ref<bigint[]>([]);
 
-async function takeDispatches(resp: TAKE_DISPATCH_RESP): Promise<void> {
+async function takeDispatches(resp: TakeDispatchResp): Promise<void> {
     return new Promise(async (res, rej) => {
         try {
             if (pendingDispatches.value.length === 0) return;
@@ -138,7 +138,7 @@ watch(pendingDispatches.value, () => {
                                                 type="button"
                                                 class="w-full relative inline-flex items-center rounded-l-md bg-success-500 px-3 py-2 text-sm font-semibold text-white hover:text-white ring-1 ring-inset ring-success-300 hover:bg-success-100 focus:z-10"
                                                 :class="pendingDispatches.length === 0 ? 'disabled' : ''"
-                                                @click="takeDispatches(TAKE_DISPATCH_RESP.ACCEPTED)"
+                                                @click="takeDispatches(TakeDispatchResp.ACCEPTED)"
                                             >
                                                 {{ $t('common.accept') }}
                                             </button>
@@ -147,7 +147,7 @@ watch(pendingDispatches.value, () => {
                                                 type="button"
                                                 class="w-full relative -ml-px inline-flex items-center bg-error-500 px-3 py-2 text-sm font-semibold text-white ring-1 ring-inset ring-error-300 hover:bg-error-100 focus:z-10"
                                                 :class="pendingDispatches.length === 0 ? 'disabled' : ''"
-                                                @click="takeDispatches(TAKE_DISPATCH_RESP.DECLINED)"
+                                                @click="takeDispatches(TakeDispatchResp.DECLINED)"
                                             >
                                                 {{ $t('common.decline') }}
                                             </button>

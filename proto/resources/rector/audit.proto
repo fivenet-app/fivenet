@@ -8,13 +8,13 @@ import "validate/validate.proto";
 
 option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/rector;rector";
 
-enum EVENT_TYPE {
-  UNSPECIFIED = 0;
-  ERRORED = 1;
-  VIEWED = 2;
-  CREATED = 3;
-  UPDATED = 4;
-  DELETED = 5;
+enum EventType {
+  EVENT_TYPE_UNSPECIFIED = 0;
+  EVENT_TYPE_ERRORED = 1;
+  EVENT_TYPE_VIEWED = 2;
+  EVENT_TYPE_CREATED = 3;
+  EVENT_TYPE_UPDATED = 4;
+  EVENT_TYPE_DELETED = 5;
 }
 
 message AuditEntry {
@@ -27,6 +27,6 @@ message AuditEntry {
   optional resources.users.UserShort target_user = 7;
   string service = 8; // @gotags: alias:"service"
   string method = 9; // @gotags: alias:"method"
-  EVENT_TYPE state = 10 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"state"
+  EventType state = 10 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"state"
   optional string data = 11; // @gotags: alias:"data"
 }

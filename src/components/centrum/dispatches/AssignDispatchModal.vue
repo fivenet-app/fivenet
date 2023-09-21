@@ -5,7 +5,7 @@ import { CloseIcon } from 'mdi-vue3';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import { useCentrumStore } from '~/store/centrum';
 import { Dispatch } from '~~/gen/ts/resources/dispatch/dispatches';
-import { UNIT_STATUS, Unit } from '~~/gen/ts/resources/dispatch/units';
+import { StatusUnit, Unit } from '~~/gen/ts/resources/dispatch/units';
 
 const centrumStore = useCentrumStore();
 const { units } = storeToRefs(centrumStore);
@@ -133,8 +133,8 @@ function selectUnit(item: Unit): void {
                                                                     <span class="mt-1">
                                                                         {{
                                                                             $t(
-                                                                                `enums.centrum.UNIT_STATUS.${
-                                                                                    UNIT_STATUS[
+                                                                                `enums.centrum.StatusUnit.${
+                                                                                    StatusUnit[
                                                                                         unit.status?.status ?? (0 as number)
                                                                                     ]
                                                                                 }`,

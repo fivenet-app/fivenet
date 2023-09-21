@@ -5,7 +5,7 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Launch Server",
+            "name": "Launch Backend",
             "type": "go",
             "request": "launch",
             "mode": "auto",
@@ -15,6 +15,25 @@
             "env": {
                 "CGO_ENABLED": "0"
             }
+        },
+        {
+            "name": "Launch Frontend",
+            "type": "node",
+            "request": "launch",
+            "runtimeExecutable": "yarn",
+            "cwd": "${workspaceFolder}",
+            "runtimeArgs": ["dev"],
+            "outputCapture": "std"
+        }
+    ],
+    "compounds": [
+        {
+            "name": "ALL",
+            "configurations": [
+                "Launch Frontend",
+                "Launch Backend"
+            ],
+            "stopAll": true
         }
     ]
 }

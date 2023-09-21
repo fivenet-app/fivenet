@@ -162,11 +162,11 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 		Method:  "GetDocument",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EVENT_TYPE_ERRORED),
+		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
 	defer s.auditer.Log(auditEntry, req)
 
-	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.ACCESS_LEVEL_VIEW)
+	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
 	if err != nil {
 		return nil, ErrNotFoundOrNoPerms
 	}
@@ -202,7 +202,7 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 		resp.Access = docAccess.Access
 	}
 
-	auditEntry.State = int16(rector.EVENT_TYPE_VIEWED)
+	auditEntry.State = int16(rector.EventType_EVENT_TYPE_VIEWED)
 
 	return resp, nil
 }
@@ -234,7 +234,7 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 		Method:  "CreateDocument",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EVENT_TYPE_ERRORED),
+		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
 	defer s.auditer.Log(auditEntry, req)
 
@@ -266,7 +266,7 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 			req.Title,
 			utils.StringFirstN(htmlsanitizer.StripTags(req.Content), DocShortContentLength),
 			req.Content,
-			documents.DOC_CONTENT_TYPE_HTML,
+			documents.DocContentType_DOC_CONTENT_TYPE_HTML,
 			req.Data,
 			userInfo.UserId,
 			userInfo.Job,
@@ -285,7 +285,7 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 		return nil, ErrFailedQuery
 	}
 
-	if err := s.handleDocumentAccessChanges(ctx, tx, ACCESS_LEVEL_UPDATE_MODE_UPDATE, uint64(lastId), req.Access); err != nil {
+	if err := s.handleDocumentAccessChanges(ctx, tx, AccessLevelUpdateMode_ACCESS_LEVEL_UPDATE_MODE_UPDATE, uint64(lastId), req.Access); err != nil {
 		return nil, ErrFailedQuery
 	}
 
@@ -294,7 +294,7 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 		return nil, ErrFailedQuery
 	}
 
-	auditEntry.State = int16(rector.EVENT_TYPE_CREATED)
+	auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
 
 	return &CreateDocumentResponse{
 		DocumentId: uint64(lastId),
@@ -309,11 +309,11 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 		Method:  "UpdateDocument",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EVENT_TYPE_ERRORED),
+		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
 	defer s.auditer.Log(auditEntry, req)
 
-	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.ACCESS_LEVEL_EDIT)
+	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_EDIT)
 	if err != nil {
 		return nil, ErrNotFoundOrNoPerms
 	}
@@ -382,7 +382,7 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 		return nil, ErrFailedQuery
 	}
 
-	if err := s.handleDocumentAccessChanges(ctx, tx, ACCESS_LEVEL_UPDATE_MODE_UPDATE, req.DocumentId, req.Access); err != nil {
+	if err := s.handleDocumentAccessChanges(ctx, tx, AccessLevelUpdateMode_ACCESS_LEVEL_UPDATE_MODE_UPDATE, req.DocumentId, req.Access); err != nil {
 		return nil, ErrFailedQuery
 	}
 
@@ -391,7 +391,7 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 		return nil, ErrFailedQuery
 	}
 
-	auditEntry.State = int16(rector.EVENT_TYPE_UPDATED)
+	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 
 	return &UpdateDocumentResponse{
 		DocumentId: req.DocumentId,
@@ -406,11 +406,11 @@ func (s *Server) DeleteDocument(ctx context.Context, req *DeleteDocumentRequest)
 		Method:  "DeleteDocument",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EVENT_TYPE_ERRORED),
+		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
 	defer s.auditer.Log(auditEntry, req)
 
-	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.ACCESS_LEVEL_EDIT)
+	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_EDIT)
 	if err != nil {
 		return nil, ErrNotFoundOrNoPerms
 	}
@@ -453,7 +453,7 @@ func (s *Server) DeleteDocument(ctx context.Context, req *DeleteDocumentRequest)
 		return nil, ErrFailedQuery
 	}
 
-	auditEntry.State = int16(rector.EVENT_TYPE_DELETED)
+	auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)
 
 	return &DeleteDocumentResponse{}, nil
 }
@@ -466,11 +466,11 @@ func (s *Server) ToggleDocument(ctx context.Context, req *ToggleDocumentRequest)
 		Method:  "ToggleDocument",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EVENT_TYPE_ERRORED),
+		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
 	defer s.auditer.Log(auditEntry, req)
 
-	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.ACCESS_LEVEL_EDIT)
+	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_EDIT)
 	if err != nil {
 		return nil, ErrNotFoundOrNoPerms
 	}
@@ -513,7 +513,7 @@ func (s *Server) ToggleDocument(ctx context.Context, req *ToggleDocumentRequest)
 		return nil, ErrFailedQuery
 	}
 
-	auditEntry.State = int16(rector.EVENT_TYPE_UPDATED)
+	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 
 	return &ToggleDocumentResponse{}, nil
 }

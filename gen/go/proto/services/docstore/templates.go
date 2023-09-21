@@ -80,7 +80,7 @@ func (s *Server) ListTemplates(ctx context.Context, req *ListTemplatesRequest) (
 func (s *Server) GetTemplate(ctx context.Context, req *GetTemplateRequest) (*GetTemplateResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	check, err := s.checkIfUserHasAccessToTemplate(ctx, req.TemplateId, userInfo, false, documents.ACCESS_LEVEL_VIEW)
+	check, err := s.checkIfUserHasAccessToTemplate(ctx, req.TemplateId, userInfo, false, documents.AccessLevel_ACCESS_LEVEL_VIEW)
 	if err != nil {
 		return nil, ErrFailedQuery
 	}
@@ -217,7 +217,7 @@ func (s *Server) CreateTemplate(ctx context.Context, req *CreateTemplateRequest)
 		Method:  "CreateTemplate",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EVENT_TYPE_ERRORED),
+		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
 	defer s.auditer.Log(auditEntry, req)
 
@@ -288,7 +288,7 @@ func (s *Server) CreateTemplate(ctx context.Context, req *CreateTemplateRequest)
 		return nil, ErrFailedQuery
 	}
 
-	auditEntry.State = int16(rector.EVENT_TYPE_CREATED)
+	auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
 
 	return &CreateTemplateResponse{
 		Id: uint64(lastId),
@@ -303,11 +303,11 @@ func (s *Server) UpdateTemplate(ctx context.Context, req *UpdateTemplateRequest)
 		Method:  "UpdateTemplate",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EVENT_TYPE_ERRORED),
+		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
 	defer s.auditer.Log(auditEntry, req)
 
-	check, err := s.checkIfUserHasAccessToTemplate(ctx, req.Template.Id, userInfo, false, documents.ACCESS_LEVEL_EDIT)
+	check, err := s.checkIfUserHasAccessToTemplate(ctx, req.Template.Id, userInfo, false, documents.AccessLevel_ACCESS_LEVEL_EDIT)
 	if err != nil {
 		return nil, ErrFailedQuery
 	}
@@ -375,7 +375,7 @@ func (s *Server) UpdateTemplate(ctx context.Context, req *UpdateTemplateRequest)
 		return nil, ErrFailedQuery
 	}
 
-	auditEntry.State = int16(rector.EVENT_TYPE_UPDATED)
+	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 
 	return &UpdateTemplateResponse{
 		Id: req.Template.Id,
@@ -390,11 +390,11 @@ func (s *Server) DeleteTemplate(ctx context.Context, req *DeleteTemplateRequest)
 		Method:  "DeleteTemplate",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EVENT_TYPE_ERRORED),
+		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
 	defer s.auditer.Log(auditEntry, req)
 
-	check, err := s.checkIfUserHasAccessToTemplate(ctx, req.Id, userInfo, false, documents.ACCESS_LEVEL_EDIT)
+	check, err := s.checkIfUserHasAccessToTemplate(ctx, req.Id, userInfo, false, documents.AccessLevel_ACCESS_LEVEL_EDIT)
 	if err != nil {
 		return nil, ErrFailedQuery
 	}
@@ -428,7 +428,7 @@ func (s *Server) DeleteTemplate(ctx context.Context, req *DeleteTemplateRequest)
 		return nil, err
 	}
 
-	auditEntry.State = int16(rector.EVENT_TYPE_DELETED)
+	auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)
 
 	return &DeleteTemplateResponse{}, nil
 }

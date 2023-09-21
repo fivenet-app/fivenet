@@ -28,7 +28,7 @@ var (
 
 func (s *Server) GetDocumentReferences(ctx context.Context, req *GetDocumentReferencesRequest) (*GetDocumentReferencesResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.ACCESS_LEVEL_VIEW)
+	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
 	if err != nil {
 		return nil, err
 	}
@@ -80,7 +80,7 @@ func (s *Server) GetDocumentReferences(ctx context.Context, req *GetDocumentRefe
 		}
 	}
 
-	ids, err := s.checkIfUserHasAccessToDocIDs(ctx, userInfo, documents.ACCESS_LEVEL_VIEW, docIds...)
+	ids, err := s.checkIfUserHasAccessToDocIDs(ctx, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW, docIds...)
 	if err != nil {
 		return nil, err
 	}
@@ -191,7 +191,7 @@ func (s *Server) GetDocumentReferences(ctx context.Context, req *GetDocumentRefe
 
 func (s *Server) GetDocumentRelations(ctx context.Context, req *GetDocumentRelationsRequest) (*GetDocumentRelationsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.ACCESS_LEVEL_VIEW)
+	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
 	if err != nil {
 		return nil, err
 	}
@@ -217,7 +217,7 @@ func (s *Server) AddDocumentReference(ctx context.Context, req *AddDocumentRefer
 		Method:  "AddDocumentReference",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EVENT_TYPE_ERRORED),
+		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
 	defer s.auditer.Log(auditEntry, req)
 
@@ -226,7 +226,7 @@ func (s *Server) AddDocumentReference(ctx context.Context, req *AddDocumentRefer
 	}
 
 	// Check if user has access to both documents
-	check, err := s.checkIfUserHasAccessToDocs(ctx, userInfo, documents.ACCESS_LEVEL_EDIT,
+	check, err := s.checkIfUserHasAccessToDocs(ctx, userInfo, documents.AccessLevel_ACCESS_LEVEL_EDIT,
 		req.Reference.SourceDocumentId, req.Reference.TargetDocumentId)
 	if err != nil {
 		return nil, err
@@ -275,7 +275,7 @@ func (s *Server) AddDocumentReference(ctx context.Context, req *AddDocumentRefer
 		return nil, ErrFailedQuery
 	}
 
-	auditEntry.State = int16(rector.EVENT_TYPE_CREATED)
+	auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
 
 	return &AddDocumentReferenceResponse{
 		Id: uint64(lastId),
@@ -290,7 +290,7 @@ func (s *Server) RemoveDocumentReference(ctx context.Context, req *RemoveDocumen
 		Method:  "RemoveDocumentReference",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EVENT_TYPE_ERRORED),
+		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
 	defer s.auditer.Log(auditEntry, req)
 
@@ -313,7 +313,7 @@ func (s *Server) RemoveDocumentReference(ctx context.Context, req *RemoveDocumen
 		return nil, err
 	}
 
-	check, err := s.checkIfUserHasAccessToDocs(ctx, userInfo, documents.ACCESS_LEVEL_EDIT, docIDs.Source, docIDs.Target)
+	check, err := s.checkIfUserHasAccessToDocs(ctx, userInfo, documents.AccessLevel_ACCESS_LEVEL_EDIT, docIDs.Source, docIDs.Target)
 	if err != nil {
 		return nil, err
 	}
@@ -336,7 +336,7 @@ func (s *Server) RemoveDocumentReference(ctx context.Context, req *RemoveDocumen
 		return nil, err
 	}
 
-	auditEntry.State = int16(rector.EVENT_TYPE_DELETED)
+	auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)
 
 	return &RemoveDocumentReferenceResponse{}, nil
 }
@@ -349,11 +349,11 @@ func (s *Server) AddDocumentRelation(ctx context.Context, req *AddDocumentRelati
 		Method:  "AddDocumentRelation",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EVENT_TYPE_ERRORED),
+		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
 	defer s.auditer.Log(auditEntry, req)
 
-	check, err := s.checkIfUserHasAccessToDoc(ctx, req.Relation.DocumentId, userInfo, documents.ACCESS_LEVEL_EDIT)
+	check, err := s.checkIfUserHasAccessToDoc(ctx, req.Relation.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_EDIT)
 	if err != nil {
 		return nil, err
 	}
@@ -397,7 +397,7 @@ func (s *Server) AddDocumentRelation(ctx context.Context, req *AddDocumentRelati
 	}
 
 	if err := s.addUserActivity(ctx, tx,
-		userInfo.UserId, req.Relation.TargetUserId, users.USER_ACTIVITY_TYPE_MENTIONED, "DocStore.Relation", "",
+		userInfo.UserId, req.Relation.TargetUserId, users.UserActivityType_USER_ACTIVITY_TYPE_MENTIONED, "DocStore.Relation", "",
 		strconv.Itoa(int(lastId)), req.Relation.Relation.String()); err != nil {
 		return nil, ErrFailedQuery
 	}
@@ -407,9 +407,9 @@ func (s *Server) AddDocumentRelation(ctx context.Context, req *AddDocumentRelati
 		return nil, ErrFailedQuery
 	}
 
-	auditEntry.State = int16(rector.EVENT_TYPE_CREATED)
+	auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
 
-	if req.Relation.Relation == documents.DOC_RELATION_MENTIONED {
+	if req.Relation.Relation == documents.DocRelation_DOC_RELATION_MENTIONED {
 		s.notifyUser(ctx, uint64(lastId), userInfo.UserId, req.Relation.TargetUserId)
 	}
 
@@ -426,7 +426,7 @@ func (s *Server) RemoveDocumentRelation(ctx context.Context, req *RemoveDocument
 		Method:  "RemoveDocumentRelation",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EVENT_TYPE_ERRORED),
+		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
 	defer s.auditer.Log(auditEntry, req)
 
@@ -447,7 +447,7 @@ func (s *Server) RemoveDocumentRelation(ctx context.Context, req *RemoveDocument
 		return nil, err
 	}
 
-	check, err := s.checkIfUserHasAccessToDoc(ctx, docID.ID, userInfo, documents.ACCESS_LEVEL_EDIT)
+	check, err := s.checkIfUserHasAccessToDoc(ctx, docID.ID, userInfo, documents.AccessLevel_ACCESS_LEVEL_EDIT)
 	if err != nil {
 		return nil, err
 	}
@@ -484,7 +484,7 @@ func (s *Server) RemoveDocumentRelation(ctx context.Context, req *RemoveDocument
 	}
 
 	if err := s.addUserActivity(ctx, tx,
-		userInfo.UserId, rel.TargetUserId, users.USER_ACTIVITY_TYPE_MENTIONED, "DocStore.Relation",
+		userInfo.UserId, rel.TargetUserId, users.UserActivityType_USER_ACTIVITY_TYPE_MENTIONED, "DocStore.Relation",
 		strconv.Itoa(int(docID.ID)), "", rel.Relation.String()); err != nil {
 		return nil, ErrFailedQuery
 	}
@@ -494,7 +494,7 @@ func (s *Server) RemoveDocumentRelation(ctx context.Context, req *RemoveDocument
 		return nil, ErrFailedQuery
 	}
 
-	auditEntry.State = int16(rector.EVENT_TYPE_DELETED)
+	auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)
 
 	return &RemoveDocumentRelationResponse{}, nil
 }
@@ -633,7 +633,7 @@ func (s *Server) notifyUser(ctx context.Context, documentId uint64, sourceUserId
 			Parameters: []string{doc.Title},
 		},
 		Type:     &nType,
-		Category: notifications.NOTIFICATION_CATEGORY_DOCUMENT,
+		Category: notifications.NotificationCategory_NOTIFICATION_CATEGORY_DOCUMENT,
 		Data: &notifications.Data{
 			Link: &notifications.Link{
 				To: fmt.Sprintf("/documents/%d", documentId),

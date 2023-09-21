@@ -70,7 +70,7 @@ func (m *Settings) validate(all bool) error {
 
 	// no validation rules for Enabled
 
-	if _, ok := CENTRUM_MODE_name[int32(m.GetMode())]; !ok {
+	if _, ok := CentrumMode_name[int32(m.GetMode())]; !ok {
 		err := SettingsValidationError{
 			field:  "Mode",
 			reason: "value must be one of the defined enum values",
@@ -81,7 +81,7 @@ func (m *Settings) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if _, ok := CENTRUM_MODE_name[int32(m.GetFallbackMode())]; !ok {
+	if _, ok := CentrumMode_name[int32(m.GetFallbackMode())]; !ok {
 		err := SettingsValidationError{
 			field:  "FallbackMode",
 			reason: "value must be one of the defined enum values",

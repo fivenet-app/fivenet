@@ -2,7 +2,7 @@
 // @generated from protobuf file "resources/documents/documents.proto" (package "resources.documents", syntax proto3)
 // tslint:disable
 import { MessageType } from "@protobuf-ts/runtime";
-import { ACCESS_LEVEL } from "./access.js";
+import { AccessLevel } from "./access.js";
 import { UserShort } from "../users/users.js";
 import { Category } from "./category.js";
 import { Timestamp } from "../timestamp/timestamp.js";
@@ -37,9 +37,9 @@ export interface Document {
      */
     title: string; // @gotags: alias:"title"
     /**
-     * @generated from protobuf field: resources.documents.DOC_CONTENT_TYPE content_type = 7;
+     * @generated from protobuf field: resources.documents.DocContentType content_type = 7;
      */
-    contentType: DOC_CONTENT_TYPE; // @gotags: alias:"content_type"
+    contentType: DocContentType; // @gotags: alias:"content_type"
     /**
      * @sanitize
      *
@@ -110,9 +110,9 @@ export interface DocumentShort {
      */
     title: string; // @gotags: alias:"title"
     /**
-     * @generated from protobuf field: resources.documents.DOC_CONTENT_TYPE content_type = 7;
+     * @generated from protobuf field: resources.documents.DocContentType content_type = 7;
      */
-    contentType: DOC_CONTENT_TYPE; // @gotags: alias:"content_type"
+    contentType: DocContentType; // @gotags: alias:"content_type"
     /**
      * @sanitize
      *
@@ -196,9 +196,9 @@ export interface DocumentJobAccess {
      */
     jobGradeLabel?: string; // @gotags: alias:"job_grade_label"
     /**
-     * @generated from protobuf field: resources.documents.ACCESS_LEVEL access = 9;
+     * @generated from protobuf field: resources.documents.AccessLevel access = 9;
      */
-    access: ACCESS_LEVEL; // @gotags: alias:"access"
+    access: AccessLevel; // @gotags: alias:"access"
 }
 /**
  * @generated from protobuf message resources.documents.DocumentUserAccess
@@ -229,9 +229,9 @@ export interface DocumentUserAccess {
      */
     user?: UserShort;
     /**
-     * @generated from protobuf field: resources.documents.ACCESS_LEVEL access = 7;
+     * @generated from protobuf field: resources.documents.AccessLevel access = 7;
      */
-    access: ACCESS_LEVEL; // @gotags: alias:"access"
+    access: AccessLevel; // @gotags: alias:"access"
 }
 /**
  * @generated from protobuf message resources.documents.DocumentReference
@@ -254,9 +254,9 @@ export interface DocumentReference {
      */
     sourceDocument?: DocumentShort; // @gotags: alias:"source_document"
     /**
-     * @generated from protobuf field: resources.documents.DOC_REFERENCE reference = 5;
+     * @generated from protobuf field: resources.documents.DocReference reference = 5;
      */
-    reference: DOC_REFERENCE; // @gotags: alias:"reference"
+    reference: DocReference; // @gotags: alias:"reference"
     /**
      * @generated from protobuf field: uint64 target_document_id = 6;
      */
@@ -303,9 +303,9 @@ export interface DocumentRelation {
      */
     sourceUser?: UserShort; // @gotags: alias:"source_user"
     /**
-     * @generated from protobuf field: resources.documents.DOC_RELATION relation = 7;
+     * @generated from protobuf field: resources.documents.DocRelation relation = 7;
      */
-    relation: DOC_RELATION; // @gotags: alias:"relation"
+    relation: DocRelation; // @gotags: alias:"relation"
     /**
      * @generated from protobuf field: int32 target_user_id = 8;
      */
@@ -316,55 +316,67 @@ export interface DocumentRelation {
     targetUser?: UserShort; // @gotags: alias:"target_user"
 }
 /**
- * @generated from protobuf enum resources.documents.DOC_CONTENT_TYPE
+ * @generated from protobuf enum resources.documents.DocContentType
  */
-export enum DOC_CONTENT_TYPE {
+export enum DocContentType {
     /**
-     * @generated from protobuf enum value: HTML = 0;
+     * @generated from protobuf enum value: DOC_CONTENT_TYPE_UNSPECIFIED = 0;
      */
-    HTML = 0,
+    UNSPECIFIED = 0,
     /**
-     * @generated from protobuf enum value: PLAIN = 1;
+     * @generated from protobuf enum value: DOC_CONTENT_TYPE_HTML = 1;
      */
-    PLAIN = 1
+    HTML = 1,
+    /**
+     * @generated from protobuf enum value: DOC_CONTENT_TYPE_PLAIN = 2;
+     */
+    PLAIN = 2
 }
 /**
- * @generated from protobuf enum resources.documents.DOC_REFERENCE
+ * @generated from protobuf enum resources.documents.DocReference
  */
-export enum DOC_REFERENCE {
+export enum DocReference {
     /**
-     * @generated from protobuf enum value: LINKED = 0;
+     * @generated from protobuf enum value: DOC_REFERENCE_UNSPECIFIED = 0;
      */
-    LINKED = 0,
+    UNSPECIFIED = 0,
     /**
-     * @generated from protobuf enum value: SOLVES = 1;
+     * @generated from protobuf enum value: DOC_REFERENCE_LINKED = 1;
      */
-    SOLVES = 1,
+    LINKED = 1,
     /**
-     * @generated from protobuf enum value: CLOSES = 2;
+     * @generated from protobuf enum value: DOC_REFERENCE_SOLVES = 2;
      */
-    CLOSES = 2,
+    SOLVES = 2,
     /**
-     * @generated from protobuf enum value: DEPRECATES = 3;
+     * @generated from protobuf enum value: DOC_REFERENCE_CLOSES = 3;
      */
-    DEPRECATES = 3
+    CLOSES = 3,
+    /**
+     * @generated from protobuf enum value: DOC_REFERENCE_DEPRECATES = 4;
+     */
+    DEPRECATES = 4
 }
 /**
- * @generated from protobuf enum resources.documents.DOC_RELATION
+ * @generated from protobuf enum resources.documents.DocRelation
  */
-export enum DOC_RELATION {
+export enum DocRelation {
     /**
-     * @generated from protobuf enum value: MENTIONED = 0;
+     * @generated from protobuf enum value: DOC_RELATION_UNSPECIFIED = 0;
      */
-    MENTIONED = 0,
+    UNSPECIFIED = 0,
     /**
-     * @generated from protobuf enum value: TARGETS = 1;
+     * @generated from protobuf enum value: DOC_RELATION_MENTIONED = 1;
      */
-    TARGETS = 1,
+    MENTIONED = 1,
     /**
-     * @generated from protobuf enum value: CAUSED = 2;
+     * @generated from protobuf enum value: DOC_RELATION_TARGETS = 2;
      */
-    CAUSED = 2
+    TARGETS = 2,
+    /**
+     * @generated from protobuf enum value: DOC_RELATION_CAUSED = 3;
+     */
+    CAUSED = 3
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Document$Type extends MessageType<Document> {
@@ -376,7 +388,7 @@ class Document$Type extends MessageType<Document> {
             { no: 4, name: "category_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
             { no: 5, name: "category", kind: "message", T: () => Category },
             { no: 6, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxBytes: "21845" } } } },
-            { no: 7, name: "content_type", kind: "enum", T: () => ["resources.documents.DOC_CONTENT_TYPE", DOC_CONTENT_TYPE], options: { "validate.rules": { enum: { definedOnly: true } } } },
+            { no: 7, name: "content_type", kind: "enum", T: () => ["resources.documents.DocContentType", DocContentType, "DOC_CONTENT_TYPE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 8, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "20", maxBytes: "1750000" } } } },
             { no: 9, name: "data", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 10, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
@@ -402,7 +414,7 @@ class DocumentShort$Type extends MessageType<DocumentShort> {
             { no: 4, name: "category_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
             { no: 5, name: "category", kind: "message", T: () => Category },
             { no: 6, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3" } } } },
-            { no: 7, name: "content_type", kind: "enum", T: () => ["resources.documents.DOC_CONTENT_TYPE", DOC_CONTENT_TYPE], options: { "validate.rules": { enum: { definedOnly: true } } } },
+            { no: 7, name: "content_type", kind: "enum", T: () => ["resources.documents.DocContentType", DocContentType, "DOC_CONTENT_TYPE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 8, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "1024" } } } },
             { no: 9, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
             { no: 10, name: "creator", kind: "message", T: () => UserShort },
@@ -442,7 +454,7 @@ class DocumentJobAccess$Type extends MessageType<DocumentJobAccess> {
             { no: 6, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
             { no: 7, name: "minimum_grade", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
             { no: 8, name: "job_grade_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
-            { no: 9, name: "access", kind: "enum", T: () => ["resources.documents.ACCESS_LEVEL", ACCESS_LEVEL], options: { "validate.rules": { enum: { definedOnly: true } } } }
+            { no: 9, name: "access", kind: "enum", T: () => ["resources.documents.AccessLevel", AccessLevel, "ACCESS_LEVEL_"], options: { "validate.rules": { enum: { definedOnly: true } } } }
         ]);
     }
 }
@@ -460,7 +472,7 @@ class DocumentUserAccess$Type extends MessageType<DocumentUserAccess> {
             { no: 4, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
             { no: 5, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
             { no: 6, name: "user", kind: "message", T: () => UserShort },
-            { no: 7, name: "access", kind: "enum", T: () => ["resources.documents.ACCESS_LEVEL", ACCESS_LEVEL], options: { "validate.rules": { enum: { definedOnly: true } } } }
+            { no: 7, name: "access", kind: "enum", T: () => ["resources.documents.AccessLevel", AccessLevel, "ACCESS_LEVEL_"], options: { "validate.rules": { enum: { definedOnly: true } } } }
         ]);
     }
 }
@@ -476,7 +488,7 @@ class DocumentReference$Type extends MessageType<DocumentReference> {
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "source_document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
             { no: 4, name: "source_document", kind: "message", T: () => DocumentShort },
-            { no: 5, name: "reference", kind: "enum", T: () => ["resources.documents.DOC_REFERENCE", DOC_REFERENCE], options: { "validate.rules": { enum: { definedOnly: true } } } },
+            { no: 5, name: "reference", kind: "enum", T: () => ["resources.documents.DocReference", DocReference, "DOC_REFERENCE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 6, name: "target_document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
             { no: 7, name: "target_document", kind: "message", T: () => DocumentShort },
             { no: 8, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
@@ -498,7 +510,7 @@ class DocumentRelation$Type extends MessageType<DocumentRelation> {
             { no: 4, name: "document", kind: "message", T: () => DocumentShort },
             { no: 5, name: "source_user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
             { no: 6, name: "source_user", kind: "message", T: () => UserShort },
-            { no: 7, name: "relation", kind: "enum", T: () => ["resources.documents.DOC_RELATION", DOC_RELATION], options: { "validate.rules": { enum: { definedOnly: true } } } },
+            { no: 7, name: "relation", kind: "enum", T: () => ["resources.documents.DocRelation", DocRelation, "DOC_RELATION_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 8, name: "target_user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
             { no: 9, name: "target_user", kind: "message", T: () => UserShort }
         ]);

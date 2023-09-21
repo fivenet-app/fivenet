@@ -5,12 +5,12 @@ import { max, min, required } from '@vee-validate/rules';
 import { useThrottleFn } from '@vueuse/core';
 import { CloseIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
-import { UNIT_STATUS, Unit } from '~~/gen/ts/resources/dispatch/units';
+import { StatusUnit, Unit } from '~~/gen/ts/resources/dispatch/units';
 
 const props = defineProps<{
     open: boolean;
     unit: Unit;
-    status?: UNIT_STATUS;
+    status?: StatusUnit;
     location?: Coordinate;
 }>();
 
@@ -20,13 +20,13 @@ const emit = defineEmits<{
 
 const { $grpc } = useNuxtApp();
 
-const status: number = props.status ?? props.unit?.status?.status ?? UNIT_STATUS.UNKNOWN;
+const status: number = props.status ?? props.unit?.status?.status ?? StatusUnit.UNKNOWN;
 
-const statuses = ref<{ status: UNIT_STATUS; selected?: boolean }[]>([
-    { status: UNIT_STATUS.AVAILABLE },
-    { status: UNIT_STATUS.BUSY },
-    { status: UNIT_STATUS.ON_BREAK },
-    { status: UNIT_STATUS.UNAVAILABLE },
+const statuses = ref<{ status: StatusUnit; selected?: boolean }[]>([
+    { status: StatusUnit.AVAILABLE },
+    { status: StatusUnit.BUSY },
+    { status: StatusUnit.ON_BREAK },
+    { status: StatusUnit.UNAVAILABLE },
 ]);
 statuses.value.forEach((s) => {
     if (s.status.valueOf() === status) {
@@ -170,8 +170,8 @@ watch(props, () => {
                                                                         >
                                                                             {{
                                                                                 $t(
-                                                                                    `enums.centrum.UNIT_STATUS.${
-                                                                                        UNIT_STATUS[
+                                                                                    `enums.centrum.StatusUnit.${
+                                                                                        StatusUnit[
                                                                                             status.status ?? (0 as number)
                                                                                         ]
                                                                                     }`,

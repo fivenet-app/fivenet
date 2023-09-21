@@ -37,7 +37,7 @@ export function useLocaleTimeAgo(date: Date, options?: UseTimeAgoOptions<false, 
         hour: (n) => `${n} ${t('common.time_ago.hour', n)}`,
         minute: (n) => `${n} ${t('common.time_ago.minute', n)}`,
         second: (n) => `${n} ${t(`common.time_ago.second`, n)}`,
-        invalid: '',
+        invalid: t('common.unknown'),
     };
 
     if (options === undefined) {

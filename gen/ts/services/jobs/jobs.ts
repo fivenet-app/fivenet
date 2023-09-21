@@ -4,7 +4,7 @@
 import { ServiceType } from "@protobuf-ts/runtime-rpc";
 import { MessageType } from "@protobuf-ts/runtime";
 import { ConductEntry } from "../../resources/jobs/conduct.js";
-import { CONDUCT_TYPE } from "../../resources/jobs/conduct.js";
+import { ConductType } from "../../resources/jobs/conduct.js";
 import { User } from "../../resources/users/users.js";
 import { PaginationResponse } from "../../resources/common/database/database.js";
 import { PaginationRequest } from "../../resources/common/database/database.js";
@@ -51,9 +51,9 @@ export interface ConductListEntriesRequest {
     /**
      * Search params
      *
-     * @generated from protobuf field: repeated resources.jobs.CONDUCT_TYPE types = 2;
+     * @generated from protobuf field: repeated resources.jobs.ConductType types = 2;
      */
-    types: CONDUCT_TYPE[];
+    types: ConductType[];
     /**
      * @generated from protobuf field: optional bool show_expired = 3;
      */
@@ -157,7 +157,7 @@ class ConductListEntriesRequest$Type extends MessageType<ConductListEntriesReque
     constructor() {
         super("services.jobs.ConductListEntriesRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
-            { no: 2, name: "types", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.jobs.CONDUCT_TYPE", CONDUCT_TYPE] },
+            { no: 2, name: "types", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.jobs.ConductType", ConductType, "CONDUCT_TYPE_"] },
             { no: 3, name: "show_expired", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
             { no: 4, name: "user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ }
         ]);

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { CarEmergencyIcon } from 'mdi-vue3';
 import { default as DispatchDetails } from '~/components/centrum/dispatches/Details.vue';
-import { DISPATCH_STATUS, Dispatch } from '~~/gen/ts/resources/dispatch/dispatches';
+import { Dispatch, StatusDispatch } from '~~/gen/ts/resources/dispatch/dispatches';
 
 defineProps<{
     dispatch: Dispatch;
@@ -38,7 +38,7 @@ const openDetails = ref(false);
                 <CarEmergencyIcon class="h-4 w-4 mr-0.5" /> DSP-{{ dispatch.id }}</span
             >
             <span class="mt-2 truncate">
-                {{ $t(`enums.centrum.DISPATCH_STATUS.${DISPATCH_STATUS[dispatch.status?.status ?? (0 as number)]}`) }}
+                {{ $t(`enums.centrum.StatusDispatch.${StatusDispatch[dispatch.status?.status ?? (0 as number)]}`) }}
             </span>
         </button>
     </li>

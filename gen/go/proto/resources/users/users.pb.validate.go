@@ -923,7 +923,7 @@ func (m *UserActivity) validate(all bool) error {
 
 	// no validation rules for Id
 
-	if _, ok := USER_ACTIVITY_TYPE_name[int32(m.GetType())]; !ok {
+	if _, ok := UserActivityType_name[int32(m.GetType())]; !ok {
 		err := UserActivityValidationError{
 			field:  "Type",
 			reason: "value must be one of the defined enum values",

@@ -36,7 +36,7 @@ var (
 	_ = anypb.Any{}
 	_ = sort.Sort
 
-	_ = documents.DOC_CONTENT_TYPE(0)
+	_ = documents.DocContentType(0)
 )
 
 // Validate checks the field values on ListTemplatesRequest with the rules
@@ -4376,7 +4376,7 @@ func (m *CreateDocumentRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if _, ok := documents.DOC_CONTENT_TYPE_name[int32(m.GetContentType())]; !ok {
+	if _, ok := documents.DocContentType_name[int32(m.GetContentType())]; !ok {
 		err := CreateDocumentRequestValidationError{
 			field:  "ContentType",
 			reason: "value must be one of the defined enum values",
@@ -4695,7 +4695,7 @@ func (m *UpdateDocumentRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if _, ok := documents.DOC_CONTENT_TYPE_name[int32(m.GetContentType())]; !ok {
+	if _, ok := documents.DocContentType_name[int32(m.GetContentType())]; !ok {
 		err := UpdateDocumentRequestValidationError{
 			field:  "ContentType",
 			reason: "value must be one of the defined enum values",
@@ -5630,7 +5630,7 @@ func (m *SetDocumentAccessRequest) validate(all bool) error {
 
 	// no validation rules for DocumentId
 
-	if _, ok := ACCESS_LEVEL_UPDATE_MODE_name[int32(m.GetMode())]; !ok {
+	if _, ok := AccessLevelUpdateMode_name[int32(m.GetMode())]; !ok {
 		err := SetDocumentAccessRequestValidationError{
 			field:  "Mode",
 			reason: "value must be one of the defined enum values",

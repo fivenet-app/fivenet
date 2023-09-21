@@ -2,7 +2,7 @@
 // @generated from protobuf file "resources/documents/templates.proto" (package "resources.documents", syntax proto3)
 // tslint:disable
 import { MessageType } from "@protobuf-ts/runtime";
-import { ACCESS_LEVEL } from "./access.js";
+import { AccessLevel } from "./access.js";
 import { Vehicle } from "../vehicles/vehicles.js";
 import { DocumentShort } from "./documents.js";
 import { User } from "../users/users.js";
@@ -237,9 +237,9 @@ export interface TemplateJobAccess {
      */
     jobGradeLabel?: string; // @gotags: alias:"job_grade_label"
     /**
-     * @generated from protobuf field: resources.documents.ACCESS_LEVEL access = 9;
+     * @generated from protobuf field: resources.documents.AccessLevel access = 9;
      */
-    access: ACCESS_LEVEL; // @gotags: alias:"access"
+    access: AccessLevel; // @gotags: alias:"access"
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Template$Type extends MessageType<Template> {
@@ -357,7 +357,7 @@ class TemplateJobAccess$Type extends MessageType<TemplateJobAccess> {
             { no: 6, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
             { no: 7, name: "minimum_grade", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
             { no: 8, name: "job_grade_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
-            { no: 9, name: "access", kind: "enum", T: () => ["resources.documents.ACCESS_LEVEL", ACCESS_LEVEL], options: { "validate.rules": { enum: { definedOnly: true } } } }
+            { no: 9, name: "access", kind: "enum", T: () => ["resources.documents.AccessLevel", AccessLevel, "ACCESS_LEVEL_"], options: { "validate.rules": { enum: { definedOnly: true } } } }
         ]);
     }
 }

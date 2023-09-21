@@ -1,8 +1,8 @@
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { StoreDefinition, defineStore } from 'pinia';
-import { DISPATCH_STATUS, Dispatch, DispatchStatus } from '~~/gen/ts/resources/dispatch/dispatches';
-import { CENTRUM_MODE, Settings } from '~~/gen/ts/resources/dispatch/settings';
-import { UNIT_STATUS, Unit, UnitStatus } from '~~/gen/ts/resources/dispatch/units';
+import { Dispatch, DispatchStatus, StatusDispatch } from '~~/gen/ts/resources/dispatch/dispatches';
+import { CentrumMode, Settings } from '~~/gen/ts/resources/dispatch/settings';
+import { StatusUnit, Unit, UnitStatus } from '~~/gen/ts/resources/dispatch/units';
 import { UserShort } from '~~/gen/ts/resources/users/users';
 import { useAuthStore } from './auth';
 import { useNotificatorStore } from './notificator';
@@ -52,7 +52,7 @@ export const useCentrumStore = defineStore('centrum', {
                     unit.status = {
                         unitId: unit.id,
                         id: 0n,
-                        status: UNIT_STATUS.UNKNOWN,
+                        status: StatusUnit.UNKNOWN,
                     };
                 }
                 this.units.set(unit.id, unit);
@@ -120,7 +120,7 @@ export const useCentrumStore = defineStore('centrum', {
                     dispatch.status = {
                         dispatchId: dispatch.id,
                         id: 0n,
-                        status: DISPATCH_STATUS.NEW,
+                        status: StatusDispatch.NEW,
                     };
                 }
                 this.dispatches.set(dispatch.id, dispatch);
@@ -190,8 +190,8 @@ export const useCentrumStore = defineStore('centrum', {
             if (this.ownUnitId === undefined) return;
 
             if (
-                dispatch.status?.status === DISPATCH_STATUS.UNIT_UNASSIGNED ||
-                dispatch.status?.status === DISPATCH_STATUS.UNASSIGNED
+                dispatch.status?.status === StatusDispatch.UNIT_UNASSIGNED ||
+                dispatch.status?.status === StatusDispatch.UNASSIGNED
             ) {
                 // Handle unassigment of dispatches
                 this.removePendingDispatch(dispatch.id);
@@ -350,7 +350,7 @@ export const useCentrumStore = defineStore('centrum', {
                             this.feed.unshift(resp.change.dispatchStatus.status);
                         }
 
-                        if (resp.change.dispatchStatus.status?.status === DISPATCH_STATUS.ARCHIVED) {
+                        if (resp.change.dispatchStatus.status?.status === StatusDispatch.ARCHIVED) {
                             // If dispatch has been archived, remove from the main list
                             this.removeDispatch(id);
                         } else {
@@ -407,7 +407,7 @@ export const useCentrumStore = defineStore('centrum', {
                     return can('CentrumService.TakeControl');
 
                 case 'TakeDispatch':
-                    return can('CentrumService.TakeDispatch') && this.settings.mode !== CENTRUM_MODE.CENTRAL_COMMAND;
+                    return can('CentrumService.TakeDispatch') && this.settings.mode !== CentrumMode.CENTRAL_COMMAND;
 
                 case 'AssignDispatch':
                     return can('CentrumService.AssignDispatch');
@@ -445,9 +445,9 @@ export const useCentrumStore = defineStore('centrum', {
             // Remove completed, cancelled and archived dispatches after the status is 5 minutes or older
             this.dispatches.forEach((d) => {
                 if (
-                    d.status?.status !== DISPATCH_STATUS.COMPLETED &&
-                    d.status?.status !== DISPATCH_STATUS.CANCELLED &&
-                    d.status?.status !== DISPATCH_STATUS.ARCHIVED
+                    d.status?.status !== StatusDispatch.COMPLETED &&
+                    d.status?.status !== StatusDispatch.CANCELLED &&
+                    d.status?.status !== StatusDispatch.ARCHIVED
                 )
                     return;
 

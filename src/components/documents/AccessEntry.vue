@@ -15,7 +15,7 @@ import { watchDebounced } from '@vueuse/core';
 import { CheckIcon, ChevronDownIcon, CloseIcon } from 'mdi-vue3';
 import { useCompletorStore } from '~/store/completor';
 import { ArrayElement } from '~/utils/types';
-import { ACCESS_LEVEL } from '~~/gen/ts/resources/documents/access';
+import { AccessLevel } from '~~/gen/ts/resources/documents/access';
 import { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
 import { UserShort } from '~~/gen/ts/resources/users/users';
 
@@ -26,12 +26,12 @@ const props = defineProps<{
         values: {
             job?: string;
             char?: number;
-            accessRole?: ACCESS_LEVEL;
+            accessRole?: AccessLevel;
             minimumGrade?: number;
         };
     };
     accessTypes: { id: number; name: string }[];
-    accessRoles?: ACCESS_LEVEL[];
+    accessRoles?: AccessLevel[];
 }>();
 
 const emit = defineEmits<{
@@ -45,7 +45,7 @@ const emit = defineEmits<{
         },
     ): void;
     (e: 'rankChange', payload: { id: bigint; rank: JobGrade }): void;
-    (e: 'accessChange', payload: { id: bigint; access: ACCESS_LEVEL }): void;
+    (e: 'accessChange', payload: { id: bigint; access: AccessLevel }): void;
     (e: 'deleteRequest', payload: { id: bigint }): void;
 }>();
 
@@ -75,16 +75,16 @@ const queryMinimumRank = ref('');
 const selectedMinimumRank = ref<JobGrade | undefined>(undefined);
 
 let entriesAccessRoles: {
-    id: ACCESS_LEVEL;
+    id: AccessLevel;
     label: string;
     value: string;
 }[] = [];
 if (!props.accessRoles || props.accessRoles.length === 0) {
-    const enumVals = listEnumValues(ACCESS_LEVEL);
+    const enumVals = listEnumValues(AccessLevel);
     entriesAccessRoles = enumVals.map((e, k) => {
         return {
             id: k,
-            label: t(`enums.docstore.ACCESS_LEVEL.${e.name}`),
+            label: t(`enums.docstore.AccessLevel.${e.name}`),
             value: e.name,
         };
     });
@@ -92,8 +92,8 @@ if (!props.accessRoles || props.accessRoles.length === 0) {
     props.accessRoles.forEach((e) => {
         entriesAccessRoles.push({
             id: e,
-            label: t(`enums.docstore.ACCESS_LEVEL.${ACCESS_LEVEL[e]}`),
-            value: ACCESS_LEVEL[e],
+            label: t(`enums.docstore.AccessLevel.${AccessLevel[e]}`),
+            value: AccessLevel[e],
         });
     });
 }
@@ -443,7 +443,7 @@ watch(selectedAccessRole, () => {
         <div class="flex-initial">
             <button
                 type="button"
-                class="rounded-full bg-primary-500 p-1.5 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+                class="rounded-full bg-primary-500 p-1.5 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
             >
                 <CloseIcon class="w-6 h-6" @click="$emit('deleteRequest', { id: props.init.id })" aria-hidden="true" />
             </button>

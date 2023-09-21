@@ -178,9 +178,9 @@ export interface UserActivity {
      */
     id: bigint; // @gotags: alias:"fivenet_user_activity.id"
     /**
-     * @generated from protobuf field: resources.users.USER_ACTIVITY_TYPE type = 2;
+     * @generated from protobuf field: resources.users.UserActivityType type = 2;
      */
-    type: USER_ACTIVITY_TYPE; // @gotags: alias:"fivenet_user_activity.type"
+    type: UserActivityType; // @gotags: alias:"fivenet_user_activity.type"
     /**
      * @generated from protobuf field: resources.timestamp.Timestamp created_at = 3;
      */
@@ -215,21 +215,25 @@ export interface UserActivity {
     reason: string; // @gotags: alias:"fivenet_user_activity.reason"
 }
 /**
- * @generated from protobuf enum resources.users.USER_ACTIVITY_TYPE
+ * @generated from protobuf enum resources.users.UserActivityType
  */
-export enum USER_ACTIVITY_TYPE {
+export enum UserActivityType {
     /**
-     * @generated from protobuf enum value: CHANGED = 0;
+     * @generated from protobuf enum value: USER_ACTIVITY_TYPE_UNSPECIFIED = 0;
      */
-    CHANGED = 0,
+    UNSPECIFIED = 0,
     /**
-     * @generated from protobuf enum value: MENTIONED = 1;
+     * @generated from protobuf enum value: USER_ACTIVITY_TYPE_CHANGED = 1;
      */
-    MENTIONED = 1,
+    CHANGED = 1,
     /**
-     * @generated from protobuf enum value: CREATED = 2;
+     * @generated from protobuf enum value: USER_ACTIVITY_TYPE_MENTIONED = 2;
      */
-    CREATED = 2
+    MENTIONED = 2,
+    /**
+     * @generated from protobuf enum value: USER_ACTIVITY_TYPE_CREATED = 3;
+     */
+    CREATED = 3
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class UserShort$Type extends MessageType<UserShort> {
@@ -316,7 +320,7 @@ class UserActivity$Type extends MessageType<UserActivity> {
     constructor() {
         super("resources.users.UserActivity", [
             { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 2, name: "type", kind: "enum", T: () => ["resources.users.USER_ACTIVITY_TYPE", USER_ACTIVITY_TYPE], options: { "validate.rules": { enum: { definedOnly: true } } } },
+            { no: 2, name: "type", kind: "enum", T: () => ["resources.users.UserActivityType", UserActivityType, "USER_ACTIVITY_TYPE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 3, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "source_user", kind: "message", T: () => UserShort },
             { no: 5, name: "target_user", kind: "message", T: () => UserShort },

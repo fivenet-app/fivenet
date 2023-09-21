@@ -41,7 +41,7 @@ switch (props.activity.key) {
         icon = markRaw(AtIcon);
         actionLink.value = { name: 'documents-id', params: { id: 0 } };
         actionLinkText.value = t('common.document', 1);
-        actionReason.value = t(`enums.docstore.DOC_RELATION.${props.activity.reason}`);
+        actionReason.value = t(`enums.docstore.DocRelation.${props.activity.reason}`);
 
         if (props.activity.newValue !== '') {
             iconColor.value = 'text-info-600';

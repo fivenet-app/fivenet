@@ -3,7 +3,7 @@ import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { AccountMultipleIcon, ArrowCollapseIcon, ChevronRightIcon } from 'mdi-vue3';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import Time from '~/components/partials/elements/Time.vue';
-import { DOC_RELATION, DocumentRelation } from '~~/gen/ts/resources/documents/documents';
+import { DocRelation, DocumentRelation } from '~~/gen/ts/resources/documents/documents';
 import CitizenInfoPopover from '../partials/citizens/CitizenInfoPopover.vue';
 
 const { $grpc } = useNuxtApp();
@@ -82,7 +82,7 @@ async function getDocumentRelations(): Promise<DocumentRelation[]> {
                                             <CitizenInfoPopover :user="relation.targetUser" />
                                         </span>
                                         <span class="font-medium">
-                                            {{ $t(`enums.docstore.DOC_RELATION.${DOC_RELATION[relation.relation]}`) }}
+                                            {{ $t(`enums.docstore.DocRelation.${DocRelation[relation.relation]}`) }}
                                         </span>
                                         <span v-if="showSource" class="truncate">
                                             <CitizenInfoPopover :user="relation.sourceUser" />
@@ -151,7 +151,7 @@ async function getDocumentRelations(): Promise<DocumentRelation[]> {
                                         </td>
                                         <td class="px-6 py-4 text-sm text-right whitespace-nowrap">
                                             <span class="font-medium">
-                                                {{ $t(`enums.docstore.DOC_RELATION.${DOC_RELATION[relation.relation]}`) }}
+                                                {{ $t(`enums.docstore.DocRelation.${DocRelation[relation.relation]}`) }}
                                             </span>
                                         </td>
                                         <td v-if="showSource" class="hidden px-6 py-4 text-sm whitespace-nowrap md:block">

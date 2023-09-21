@@ -27,7 +27,7 @@ message ColleaguesListResponse {
 message ConductListEntriesRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
   // Search params
-  repeated resources.jobs.CONDUCT_TYPE types = 2;
+  repeated resources.jobs.ConductType types = 2;
   optional bool show_expired = 3;
   repeated int32 user_ids = 4;
 }

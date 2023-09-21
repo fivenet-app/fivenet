@@ -62,6 +62,27 @@ export interface JobProps {
      * @generated from protobuf field: optional uint64 discord_guild_id = 5;
      */
     discordGuildId?: bigint;
+    /**
+     * @generated from protobuf field: optional resources.users.DiscordBotMode discord_mode = 6;
+     */
+    discordMode?: DiscordBotMode;
+}
+/**
+ * @generated from protobuf enum resources.users.DiscordBotMode
+ */
+export enum DiscordBotMode {
+    /**
+     * @generated from protobuf enum value: DISCORD_BOT_MODE_UNSPECIFIED = 0;
+     */
+    UNSPECIFIED = 0,
+    /**
+     * @generated from protobuf enum value: DISCORD_BOT_MODE_ADDITIVE = 1;
+     */
+    ADDITIVE = 1,
+    /**
+     * @generated from protobuf enum value: DISCORD_BOT_MODE_SUBSTRACTIVE = 2;
+     */
+    SUBSTRACTIVE = 2
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Job$Type extends MessageType<Job> {
@@ -99,7 +120,8 @@ class JobProps$Type extends MessageType<JobProps> {
             { no: 2, name: "theme", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 3, name: "livemap_marker_color", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { len: "6", pattern: "^[A-Fa-f0-9]{6}$" } } } },
             { no: 4, name: "quick_buttons", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 5, name: "discord_guild_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+            { no: 5, name: "discord_guild_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 6, name: "discord_mode", kind: "enum", opt: true, T: () => ["resources.users.DiscordBotMode", DiscordBotMode, "DISCORD_BOT_MODE_"] }
         ]);
     }
 }

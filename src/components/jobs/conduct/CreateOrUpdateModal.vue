@@ -16,7 +16,7 @@ import { digits, max, min, required } from '@vee-validate/rules';
 import { useThrottleFn, watchDebounced } from '@vueuse/core';
 import { CheckIcon, CloseIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
-import { CONDUCT_TYPE, ConductEntry } from '~~/gen/ts/resources/jobs/conduct';
+import { ConductEntry, ConductType } from '~~/gen/ts/resources/jobs/conduct';
 import { User, UserShort } from '~~/gen/ts/resources/users/users';
 
 const props = defineProps<{
@@ -90,12 +90,12 @@ watchDebounced(queryTargets, async () => (entriesChars.value = await listColleag
     maxWait: 1400,
 });
 
-const cTypes = ref<{ status: CONDUCT_TYPE; selected?: boolean }[]>([
-    { status: CONDUCT_TYPE.NEUTRAL },
-    { status: CONDUCT_TYPE.POSITIVE },
-    { status: CONDUCT_TYPE.NEGATIVE },
-    { status: CONDUCT_TYPE.WARNING },
-    { status: CONDUCT_TYPE.SUSPENSION },
+const cTypes = ref<{ status: ConductType; selected?: boolean }[]>([
+    { status: ConductType.NEUTRAL },
+    { status: ConductType.POSITIVE },
+    { status: ConductType.NEGATIVE },
+    { status: ConductType.WARNING },
+    { status: ConductType.SUSPENSION },
 ]);
 
 const targetUser = ref<UserShort | undefined>();
@@ -114,7 +114,7 @@ defineRule('max', max);
 
 interface FormData {
     targetUser?: number;
-    type: CONDUCT_TYPE;
+    type: ConductType;
     message: string;
     expiresAt?: string;
 }
@@ -127,7 +127,7 @@ const { handleSubmit, meta, setValues, setFieldValue, resetForm } = useForm<Form
         expiresAt: { required: false },
     },
     initialValues: {
-        type: CONDUCT_TYPE.NEUTRAL,
+        type: ConductType.NEUTRAL,
     },
 });
 
@@ -136,7 +136,7 @@ watch(props, () => {
 
     setValues({
         targetUser: props.entry?.targetUserId,
-        type: props.entry?.type ?? CONDUCT_TYPE.NEUTRAL,
+        type: props.entry?.type ?? ConductType.NEUTRAL,
         message: props.entry?.message,
         expiresAt: props.entry?.expiresAt ? toDatetimeLocal(toDate(props.entry?.expiresAt)) : undefined,
     });
@@ -241,8 +241,8 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                         >
                                                                             {{
                                                                                 $t(
-                                                                                    `enums.jobs.CONDUCT_TYPE.${
-                                                                                        CONDUCT_TYPE[
+                                                                                    `enums.jobs.ConductType.${
+                                                                                        ConductType[
                                                                                             mtype.status ?? (0 as number)
                                                                                         ]
                                                                                     }`,

@@ -145,7 +145,7 @@ func (s *Server) ConductCreateEntry(ctx context.Context, req *ConductCreateEntry
 		Method:  "ConductCreateEntry",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EVENT_TYPE_ERRORED),
+		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
 	defer s.auditer.Log(auditEntry, req)
 
@@ -188,7 +188,7 @@ func (s *Server) ConductCreateEntry(ctx context.Context, req *ConductCreateEntry
 		return nil, err
 	}
 
-	auditEntry.State = int16(rector.EVENT_TYPE_CREATED)
+	auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
 
 	return &ConductCreateEntryResponse{
 		Entry: entry,
@@ -203,7 +203,7 @@ func (s *Server) ConductUpdateEntry(ctx context.Context, req *ConductUpdateEntry
 		Method:  "ConductUpdateEntry",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EVENT_TYPE_ERRORED),
+		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
 	defer s.auditer.Log(auditEntry, req)
 
@@ -242,7 +242,7 @@ func (s *Server) ConductUpdateEntry(ctx context.Context, req *ConductUpdateEntry
 		return nil, err
 	}
 
-	auditEntry.State = int16(rector.EVENT_TYPE_UPDATED)
+	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 
 	return &ConductUpdateEntryResponse{
 		Entry: entry,
@@ -257,7 +257,7 @@ func (s *Server) ConductDeleteEntry(ctx context.Context, req *ConductDeleteEntry
 		Method:  "ConductDeleteEntry",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EVENT_TYPE_ERRORED),
+		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
 	defer s.auditer.Log(auditEntry, req)
 
@@ -272,7 +272,7 @@ func (s *Server) ConductDeleteEntry(ctx context.Context, req *ConductDeleteEntry
 		return nil, err
 	}
 
-	auditEntry.State = int16(rector.EVENT_TYPE_DELETED)
+	auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)
 
 	return &ConductDeleteEntryResponse{}, nil
 }

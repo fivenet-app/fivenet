@@ -887,7 +887,7 @@ func (m *DispatchStatus) validate(all bool) error {
 
 	// no validation rules for DispatchId
 
-	if _, ok := DISPATCH_STATUS_name[int32(m.GetStatus())]; !ok {
+	if _, ok := StatusDispatch_name[int32(m.GetStatus())]; !ok {
 		err := DispatchStatusValidationError{
 			field:  "Status",
 			reason: "value must be one of the defined enum values",

@@ -1504,7 +1504,7 @@ func (m *TemplateJobAccess) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if _, ok := ACCESS_LEVEL_name[int32(m.GetAccess())]; !ok {
+	if _, ok := AccessLevel_name[int32(m.GetAccess())]; !ok {
 		err := TemplateJobAccessValidationError{
 			field:  "Access",
 			reason: "value must be one of the defined enum values",

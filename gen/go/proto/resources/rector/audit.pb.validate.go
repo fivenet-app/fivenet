@@ -96,7 +96,7 @@ func (m *AuditEntry) validate(all bool) error {
 
 	// no validation rules for Method
 
-	if _, ok := EVENT_TYPE_name[int32(m.GetState())]; !ok {
+	if _, ok := EventType_name[int32(m.GetState())]; !ok {
 		err := AuditEntryValidationError{
 			field:  "State",
 			reason: "value must be one of the defined enum values",

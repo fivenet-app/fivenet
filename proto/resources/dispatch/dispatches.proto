@@ -48,18 +48,19 @@ message DispatchAssignment {
   optional resources.timestamp.Timestamp expires_at = 5;
 }
 
-enum DISPATCH_STATUS {
-  NEW = 0;
-  UNASSIGNED = 1;
-  UPDATED = 2;
-  UNIT_ASSIGNED = 3;
-  UNIT_UNASSIGNED = 4;
-  EN_ROUTE = 5;
-  ON_SCENE = 6;
-  NEED_ASSISTANCE = 7;
-  COMPLETED = 8;
-  CANCELLED = 9;
-  ARCHIVED = 10;
+enum StatusDispatch {
+  STATUS_DISPATCH_UNSPECIFIED = 0;
+  STATUS_DISPATCH_NEW = 1;
+  STATUS_DISPATCH_UNASSIGNED = 2;
+  STATUS_DISPATCH_UPDATED = 3;
+  STATUS_DISPATCH_UNIT_ASSIGNED = 4;
+  STATUS_DISPATCH_UNIT_UNASSIGNED = 5;
+  STATUS_DISPATCH_EN_ROUTE = 6;
+  STATUS_DISPATCH_ON_SCENE = 7;
+  STATUS_DISPATCH_NEED_ASSISTANCE = 8;
+  STATUS_DISPATCH_COMPLETED = 9;
+  STATUS_DISPATCH_CANCELLED = 10;
+  STATUS_DISPATCH_ARCHIVED = 11;
 }
 
 message DispatchStatus {
@@ -68,7 +69,7 @@ message DispatchStatus {
   uint64 dispatch_id = 3;
   optional uint64 unit_id = 4;
   optional resources.dispatch.Unit unit = 5;
-  DISPATCH_STATUS status = 6 [(validate.rules).enum.defined_only = true];
+  StatusDispatch status = 6 [(validate.rules).enum.defined_only = true];
   // @sanitize
   optional string reason = 7 [(validate.rules).string.max_len = 255];
   // @sanitize

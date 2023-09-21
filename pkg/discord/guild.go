@@ -134,6 +134,7 @@ func (g *Guild) setUserNickName(member *discordgo.Member, firstname string, last
 		return nil
 	}
 
+	// Last space on the name is lost due to the space trimming combined with the regex capture
 	fullName = g.bot.nicknameRegex.ReplaceAllString(member.Nick, "${prefix}"+fullName+" ${suffix}")
 	fullName = strings.TrimSpace(fullName)
 
