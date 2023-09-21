@@ -333,17 +333,22 @@ func (s *Server) updateDispatchAssignments(ctx context.Context, job string, user
 		s.events.JS.PublishAsync(s.buildSubject(TopicDispatch, TypeDispatchUpdated, job, toAdd[i]), data)
 	}
 
-	// Unit is empty, set unit status to be unavailable automatically
+	// Dispatch has not units assigned anymore
 	if len(dsp.Units) <= 0 {
-		if err := s.updateDispatchStatus(ctx, job, dsp, &dispatch.DispatchStatus{
-			DispatchId: dsp.Id,
-			Status:     dispatch.DISPATCH_STATUS_UNASSIGNED,
-			UserId:     userId,
-			X:          x,
-			Y:          y,
-			Postal:     postal,
-		}); err != nil {
-			return err
+		// Check dispatch status to not be completed/archived, etc.
+		if dsp.Status != nil && (dsp.Status.Status != dispatch.DISPATCH_STATUS_ARCHIVED &&
+			dsp.Status.Status != dispatch.DISPATCH_STATUS_CANCELLED &&
+			dsp.Status.Status != dispatch.DISPATCH_STATUS_COMPLETED) {
+			if err := s.updateDispatchStatus(ctx, job, dsp, &dispatch.DispatchStatus{
+				DispatchId: dsp.Id,
+				Status:     dispatch.DISPATCH_STATUS_UNASSIGNED,
+				UserId:     userId,
+				X:          x,
+				Y:          y,
+				Postal:     postal,
+			}); err != nil {
+				return err
+			}
 		}
 	}
 
