@@ -1307,7 +1307,7 @@
         },
         "pkg-auth": {
             "ErrNoToken": "Anfrage Header \"Authorization\" darf nicht leer sein! Bitte erneut anmelden.",
-            "ErrInvalidToken": "Token ungültig/ ausgelaufen!",
+            "ErrInvalidToken": "Token ungültig/ abgelaufen!",
             "ErrCheckToken": "Token Überprüfung fehlgeschlagen!",
             "ErrUserNoPerms": "Ihr Nutzeraccount hat keine Berechtigungen!",
             "ErrNoUserInfo": "Ein Fehler ist aufgetrete, bitte ausloggen und erneut einloggen!",
@@ -1339,13 +1339,13 @@
         },
         "DocStoreService": {
             "ErrFailedQuery": "Fehlen beim Anzeigen/ Erstellen/ Aktualisieren von Dokumenten!",
-            "ErrNotFoundOrNoPerms": "Kein Dokument gefunden oder keine Berechtigungen auf das Dokument zuzugreifen!",
+            "ErrNotFoundOrNoPerms": "Kein Dokument gefunden oder keine Berechtigungen um auf das Dokument zuzugreifen!",
             "ErrTemplateNoPerms": "Keine Berechtigungen Vorlagen anzuzeigen/ aktualisieren/ zu löschen!",
             "ErrPermissionDenied": "Du hast keine Berechtigung das zu tun!",
-            "ErrClosedDoc": "Dokument ist geschloßen und kann nicht editiert werden!",
+            "ErrClosedDoc": "Dokument ist geschlossen und kann nicht editiert werden!",
             "ErrDocAccessEditDenied": "Sie haben keine Rechte den Dokumenten Zugriff zu verwalten!",
             "ErrDocAccessViewDenied": "Sie haben keine Rechte die Zugangsinfo des Dokumentes zu sehen!",
-            "ErrTemplateFailed": "Fehler beim Ausführen der Dokumenten Vorlange! Bitte spreche deine Fraktionsführung darauf an."
+            "ErrTemplateFailed": "Fehler beim Laden der Dokumenten Vorlage! Bitte spreche deine Fraktionsführung darauf an."
         },
         "LivemapperService": {
             "ErrStreamFailed": "Livemap Datenstrom fehlgeschlagen!",
