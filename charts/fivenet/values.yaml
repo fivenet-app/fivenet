@@ -313,7 +313,7 @@ nats:
   container:
     image:
       repository: docker.io/library/nats
-      tag: 2.10.0-alpine
+      tag: 2.10.1-alpine
   config:
     cluster:
       enabled: true
