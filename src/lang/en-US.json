@@ -898,80 +898,6 @@
             }
         }
     },
-    "enums": {
-        "docstore": {
-            "AccessLevel": {
-                "UNSPECIFIED": "Unspecified",
-                "BLOCKED": "Blocked",
-                "VIEW": "View",
-                "COMMENT": "Comment",
-                "ACCESS": "Access",
-                "EDIT": "Edit"
-            },
-            "DocReference": {
-                "UNSPECIFIED": "Unspecified",
-                "LINKED": "links",
-                "SOLVES": "solves",
-                "CLOSES": "closes",
-                "DEPRECATES": "deprecates"
-            },
-            "DocRelation": {
-                "UNSPECIFIED": "Unspecified",
-                "MENTIONED": "mentioned",
-                "TARGETS": "targets",
-                "CAUSED": "caused"
-            }
-        },
-        "centrum": {
-            "CentrumMode": {
-                "UNSPECIFIED": "Unspecified Mode",
-                "MANUAL": "Manual Mode",
-                "CENTRAL_COMMAND": "Central Command Mode",
-                "AUTO_ROUND_ROBIN": "Automatic Mode: Round Robin",
-                "SIMPLIFIED": "Simplified Mode"
-            },
-            "StatusDispatch": {
-                "UNSPECIFIED": "Unspecified",
-                "NEW": "New",
-                "UNASSIGNED": "Unassigned",
-                "UPDATED": "Updated",
-                "UNIT_ASSIGNED": "Unit assigned",
-                "UNIT_UNASSIGNED": "Unit unassigned",
-                "EN_ROUTE": "En Route",
-                "ON_SCENE": "On Scene",
-                "NEED_ASSISTANCE": "Need Assistance",
-                "COMPLETED": "Abgeschlossen",
-                "CANCELLED": "Abgebrochen"
-            },
-            "StatusUnit": {
-                "UNSPECIFIED": "Unspecified",
-                "USER_ADDED": "Member added",
-                "USER_REMOVED": "Member removed",
-                "UNAVAILABLE": "Unavailable",
-                "AVAILABLE": "Available",
-                "ON_BREAK": "On Break",
-                "BUSY": "Busy"
-            }
-        },
-        "livemap": {
-            "MarkerType": {
-                "UNSPECIFIED": "Unspecified",
-                "DOT": "Dot",
-                "CIRCLE": "Circle",
-                "POLYGON": "Polygon"
-            }
-        },
-        "jobs": {
-            "ConductType": {
-                "UNSPECIFIED": "Unspecified",
-                "NEUTRAL": "Neutral",
-                "POSITIVE": "Positive",
-                "NEGATIVE": "Negative",
-                "WARNING": "Warning",
-                "SUSPENSION": "Suspension"
-            }
-        }
-    },
     "perms": {
         "AuthService": {
             "category": "Authentication",
@@ -1404,6 +1330,81 @@
         "update_available": {
             "title": "New FiveNet version available ({0})!",
             "content": "To continue using FiveNet, you need to reload the page if you currently can."
+        }
+    },
+    "enums": {
+        "docstore": {
+            "AccessLevel": {
+                "UNSPECIFIED": "Unspecified",
+                "BLOCKED": "Blocked",
+                "VIEW": "View",
+                "COMMENT": "Comment",
+                "ACCESS": "Access",
+                "EDIT": "Edit"
+            },
+            "DocReference": {
+                "UNSPECIFIED": "Unspecified",
+                "LINKED": "links",
+                "SOLVES": "solves",
+                "CLOSES": "closes",
+                "DEPRECATES": "deprecates"
+            },
+            "DocRelation": {
+                "UNSPECIFIED": "Unspecified",
+                "MENTIONED": "mentioned",
+                "TARGETS": "targets",
+                "CAUSED": "caused"
+            }
+        },
+        "centrum": {
+            "CentrumMode": {
+                "UNSPECIFIED": "Unspecified Mode",
+                "MANUAL": "Manual Mode",
+                "CENTRAL_COMMAND": "Central Command Mode",
+                "AUTO_ROUND_ROBIN": "Automatic Mode: Round Robin",
+                "SIMPLIFIED": "Simplified Mode"
+            },
+            "StatusDispatch": {
+                "UNSPECIFIED": "Unspecified",
+                "NEW": "New",
+                "UNASSIGNED": "Unassigned",
+                "UPDATED": "Updated",
+                "UNIT_ASSIGNED": "Unit assigned",
+                "UNIT_UNASSIGNED": "Unit unassigned",
+                "EN_ROUTE": "En Route",
+                "ON_SCENE": "On Scene",
+                "NEED_ASSISTANCE": "Need Assistance",
+                "COMPLETED": "Abgeschlossen",
+                "CANCELLED": "Abgebrochen"
+            },
+            "StatusUnit": {
+                "UNSPECIFIED": "Unspecified",
+                "USER_ADDED": "Member added",
+                "USER_REMOVED": "Member removed",
+                "UNAVAILABLE": "Unavailable",
+                "AVAILABLE": "Available",
+                "ON_BREAK": "On Break",
+                "BUSY": "Busy",
+                "UNKNOWN": "Unknown"
+            }
+        },
+        "livemap": {
+            "MarkerType": {
+                "UNSPECIFIED": "Unspecified",
+                "DOT": "Dot",
+                "CIRCLE": "Circle",
+                "POLYGON": "Polygon"
+            }
+        },
+        "jobs": {
+            "ConductType": {
+                "UNSPECIFIED": "Unspecified",
+                "NEUTRAL": "Neutral",
+                "POSITIVE": "Positive",
+                "NEGATIVE": "Negative",
+                "WARNING": "Warning",
+                "SUSPENSION": "Suspension"
+            }
         }
     }
 }
