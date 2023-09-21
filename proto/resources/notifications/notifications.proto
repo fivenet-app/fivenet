@@ -14,8 +14,10 @@ message Notification {
   resources.timestamp.Timestamp created_at = 2;
   resources.timestamp.Timestamp read_at = 3;
   int32 user_id = 4;
+  // @sanitize
   resources.common.TranslateItem title = 5;
   optional string type = 6 [(validate.rules).string.max_len = 128];
+  // @sanitize
   resources.common.TranslateItem content = 7;
   NotificationCategory category = 8 [(validate.rules).enum.defined_only = true];
   optional Data data = 9;

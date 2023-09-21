@@ -43,6 +43,8 @@ export interface RequestEntry {
      */
     endsAt?: Timestamp;
     /**
+     * @sanitize
+     *
      * @generated from protobuf field: optional string status = 9;
      */
     status?: string;

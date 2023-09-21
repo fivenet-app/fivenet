@@ -20,10 +20,14 @@ export interface LawBook {
      */
     updatedAt?: Timestamp;
     /**
+     * @sanitize
+     *
      * @generated from protobuf field: string name = 4;
      */
     name: string;
     /**
+     * @sanitize
+     *
      * @generated from protobuf field: optional string description = 5;
      */
     description?: string;
@@ -53,10 +57,14 @@ export interface Law {
      */
     lawbookId: bigint;
     /**
+     * @sanitize
+     *
      * @generated from protobuf field: string name = 5;
      */
     name: string;
     /**
+     * @sanitize
+     *
      * @generated from protobuf field: optional string description = 6;
      */
     description?: string;

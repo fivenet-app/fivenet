@@ -80,15 +80,16 @@ type RequestEntry struct {
 	Job       string               `protobuf:"bytes,4,opt,name=job,proto3" json:"job,omitempty"`
 	Type      RequestType          `protobuf:"varint,5,opt,name=type,proto3,enum=resources.jobs.RequestType" json:"type,omitempty"`
 	// @sanitize
-	Message        string               `protobuf:"bytes,6,opt,name=message,proto3" json:"message,omitempty"`
-	BeginsAt       *timestamp.Timestamp `protobuf:"bytes,7,opt,name=begins_at,json=beginsAt,proto3,oneof" json:"begins_at,omitempty"`
-	EndsAt         *timestamp.Timestamp `protobuf:"bytes,8,opt,name=ends_at,json=endsAt,proto3,oneof" json:"ends_at,omitempty"`
-	Status         *string              `protobuf:"bytes,9,opt,name=status,proto3,oneof" json:"status,omitempty"`
-	CreatorId      int32                `protobuf:"varint,10,opt,name=creator_id,json=creatorId,proto3" json:"creator_id,omitempty"`
-	Creator        *users.UserShort     `protobuf:"bytes,11,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"creator"` // @gotags: alias:"creator"
-	Approved       *bool                `protobuf:"varint,12,opt,name=approved,proto3,oneof" json:"approved,omitempty"`
-	ApproverUserId *int32               `protobuf:"varint,13,opt,name=approver_user_id,json=approverUserId,proto3,oneof" json:"approver_user_id,omitempty"`
-	ApproverUser   *users.UserShort     `protobuf:"bytes,14,opt,name=approver_user,json=approverUser,proto3,oneof" json:"approver_user,omitempty" alias:"approver"` // @gotags: alias:"approver"
+	Message  string               `protobuf:"bytes,6,opt,name=message,proto3" json:"message,omitempty"`
+	BeginsAt *timestamp.Timestamp `protobuf:"bytes,7,opt,name=begins_at,json=beginsAt,proto3,oneof" json:"begins_at,omitempty"`
+	EndsAt   *timestamp.Timestamp `protobuf:"bytes,8,opt,name=ends_at,json=endsAt,proto3,oneof" json:"ends_at,omitempty"`
+	// @sanitize
+	Status         *string          `protobuf:"bytes,9,opt,name=status,proto3,oneof" json:"status,omitempty"`
+	CreatorId      int32            `protobuf:"varint,10,opt,name=creator_id,json=creatorId,proto3" json:"creator_id,omitempty"`
+	Creator        *users.UserShort `protobuf:"bytes,11,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"creator"` // @gotags: alias:"creator"
+	Approved       *bool            `protobuf:"varint,12,opt,name=approved,proto3,oneof" json:"approved,omitempty"`
+	ApproverUserId *int32           `protobuf:"varint,13,opt,name=approver_user_id,json=approverUserId,proto3,oneof" json:"approver_user_id,omitempty"`
+	ApproverUser   *users.UserShort `protobuf:"bytes,14,opt,name=approver_user,json=approverUser,proto3,oneof" json:"approver_user,omitempty" alias:"approver"` // @gotags: alias:"approver"
 }
 
 func (x *RequestEntry) Reset() {

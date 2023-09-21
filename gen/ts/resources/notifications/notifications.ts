@@ -26,6 +26,8 @@ export interface Notification {
      */
     userId: number;
     /**
+     * @sanitize
+     *
      * @generated from protobuf field: resources.common.TranslateItem title = 5;
      */
     title?: TranslateItem;
@@ -34,6 +36,8 @@ export interface Notification {
      */
     type?: string;
     /**
+     * @sanitize
+     *
      * @generated from protobuf field: resources.common.TranslateItem content = 7;
      */
     content?: TranslateItem;

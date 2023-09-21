@@ -11,7 +11,9 @@ message LawBook {
   uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
   optional resources.timestamp.Timestamp created_at = 2;
   optional resources.timestamp.Timestamp updated_at = 3;
+  // @sanitize
   string name = 4 [(validate.rules).string = {min_len: 3, max_len: 128}];
+  // @sanitize
   optional string description = 5 [(validate.rules).string.max_len = 255];
   repeated Law laws = 6;
 }
@@ -21,7 +23,9 @@ message Law {
   optional resources.timestamp.Timestamp created_at = 2;
   optional resources.timestamp.Timestamp updated_at = 3;
   uint64 lawbook_id = 4;
+  // @sanitize
   string name = 5 [(validate.rules).string = {min_len: 3, max_len: 128}];
+  // @sanitize
   optional string description = 6 [(validate.rules).string.max_len = 511];
   optional uint64 fine = 7;
   optional uint64 detention_time = 8;
