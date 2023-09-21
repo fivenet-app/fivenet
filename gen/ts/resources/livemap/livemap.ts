@@ -94,9 +94,9 @@ export interface Marker {
      */
     info?: MarkerInfo;
     /**
-     * @generated from protobuf field: resources.livemap.MARKER_TYPE type = 2;
+     * @generated from protobuf field: resources.livemap.MarkerType type = 2;
      */
-    type: MARKER_TYPE; // @gotags: alias:"markerType"
+    type: MarkerType; // @gotags: alias:"markerType"
     /**
      * @generated from protobuf field: optional resources.livemap.MarkerData data = 3;
      */
@@ -169,21 +169,25 @@ export interface PolygonMarker {
     coords: Coords[];
 }
 /**
- * @generated from protobuf enum resources.livemap.MARKER_TYPE
+ * @generated from protobuf enum resources.livemap.MarkerType
  */
-export enum MARKER_TYPE {
+export enum MarkerType {
     /**
-     * @generated from protobuf enum value: DOT = 0;
+     * @generated from protobuf enum value: MARKER_TYPE_UNSPECIFIED = 0;
      */
-    DOT = 0,
+    UNSPECIFIED = 0,
     /**
-     * @generated from protobuf enum value: CIRCLE = 1;
+     * @generated from protobuf enum value: MARKER_TYPE_DOT = 1;
      */
-    CIRCLE = 1,
+    DOT = 1,
     /**
-     * @generated from protobuf enum value: POLYGON = 2;
+     * @generated from protobuf enum value: MARKER_TYPE_CIRCLE = 2;
      */
-    POLYGON = 2
+    CIRCLE = 2,
+    /**
+     * @generated from protobuf enum value: MARKER_TYPE_POLYGON = 3;
+     */
+    POLYGON = 3
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class MarkerInfo$Type extends MessageType<MarkerInfo> {
@@ -228,7 +232,7 @@ class Marker$Type extends MessageType<Marker> {
     constructor() {
         super("resources.livemap.Marker", [
             { no: 1, name: "info", kind: "message", T: () => MarkerInfo },
-            { no: 2, name: "type", kind: "enum", T: () => ["resources.livemap.MARKER_TYPE", MARKER_TYPE] },
+            { no: 2, name: "type", kind: "enum", T: () => ["resources.livemap.MarkerType", MarkerType, "MARKER_TYPE_"] },
             { no: 3, name: "data", kind: "message", T: () => MarkerData },
             { no: 4, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
             { no: 5, name: "creator", kind: "message", T: () => UserShort }

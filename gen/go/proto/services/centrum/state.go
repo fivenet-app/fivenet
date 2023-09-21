@@ -111,9 +111,9 @@ func (s *Server) watchStateEvents() error {
 							return err
 						}
 
-						if dest.Status.Status == dispatch.UNIT_STATUS_USER_ADDED {
+						if dest.Status.Status == dispatch.StatusUnit_STATUS_UNIT_USER_ADDED {
 							s.userIDToUnitID.Store(*dest.Status.UserId, dest.Status.UnitId)
-						} else if dest.Status.Status == dispatch.UNIT_STATUS_USER_REMOVED {
+						} else if dest.Status.Status == dispatch.StatusUnit_STATUS_UNIT_USER_REMOVED {
 							s.userIDToUnitID.Delete(*dest.Status.UserId)
 						}
 
@@ -301,8 +301,8 @@ func (s *Server) archiveDispatches(ctx context.Context) error {
 				jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(15, jet.MINUTE)),
 			),
 			tDispatchStatus.Status.IN(
-				jet.Int16(int16(dispatch.DISPATCH_STATUS_COMPLETED)),
-				jet.Int16(int16(dispatch.DISPATCH_STATUS_CANCELLED)),
+				jet.Int16(int16(dispatch.StatusDispatch_STATUS_DISPATCH_COMPLETED)),
+				jet.Int16(int16(dispatch.StatusDispatch_STATUS_DISPATCH_CANCELLED)),
 			),
 			tDispatchStatus.ID.IS_NULL().OR(
 				tDispatchStatus.ID.EQ(
@@ -327,7 +327,7 @@ func (s *Server) archiveDispatches(ctx context.Context) error {
 
 		if err := s.updateDispatchStatus(ctx, ds.Job, dsp, &dispatch.DispatchStatus{
 			DispatchId: dsp.Id,
-			Status:     dispatch.DISPATCH_STATUS_ARCHIVED,
+			Status:     dispatch.StatusDispatch_STATUS_DISPATCH_ARCHIVED,
 			UserId:     dsp.Status.UserId,
 		}); err != nil {
 			return err

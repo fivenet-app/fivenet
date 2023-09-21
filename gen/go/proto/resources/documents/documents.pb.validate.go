@@ -139,7 +139,7 @@ func (m *Document) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if _, ok := DOC_CONTENT_TYPE_name[int32(m.GetContentType())]; !ok {
+	if _, ok := DocContentType_name[int32(m.GetContentType())]; !ok {
 		err := DocumentValidationError{
 			field:  "ContentType",
 			reason: "value must be one of the defined enum values",
@@ -462,7 +462,7 @@ func (m *DocumentShort) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if _, ok := DOC_CONTENT_TYPE_name[int32(m.GetContentType())]; !ok {
+	if _, ok := DocContentType_name[int32(m.GetContentType())]; !ok {
 		err := DocumentShortValidationError{
 			field:  "ContentType",
 			reason: "value must be one of the defined enum values",
@@ -896,7 +896,7 @@ func (m *DocumentJobAccess) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if _, ok := ACCESS_LEVEL_name[int32(m.GetAccess())]; !ok {
+	if _, ok := AccessLevel_name[int32(m.GetAccess())]; !ok {
 		err := DocumentJobAccessValidationError{
 			field:  "Access",
 			reason: "value must be one of the defined enum values",
@@ -1120,7 +1120,7 @@ func (m *DocumentUserAccess) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if _, ok := ACCESS_LEVEL_name[int32(m.GetAccess())]; !ok {
+	if _, ok := AccessLevel_name[int32(m.GetAccess())]; !ok {
 		err := DocumentUserAccessValidationError{
 			field:  "Access",
 			reason: "value must be one of the defined enum values",
@@ -1334,7 +1334,7 @@ func (m *DocumentReference) validate(all bool) error {
 
 	// no validation rules for SourceDocumentId
 
-	if _, ok := DOC_REFERENCE_name[int32(m.GetReference())]; !ok {
+	if _, ok := DocReference_name[int32(m.GetReference())]; !ok {
 		err := DocumentReferenceValidationError{
 			field:  "Reference",
 			reason: "value must be one of the defined enum values",
@@ -1602,7 +1602,7 @@ func (m *DocumentRelation) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if _, ok := DOC_RELATION_name[int32(m.GetRelation())]; !ok {
+	if _, ok := DocRelation_name[int32(m.GetRelation())]; !ok {
 		err := DocumentRelationValidationError{
 			field:  "Relation",
 			reason: "value must be one of the defined enum values",

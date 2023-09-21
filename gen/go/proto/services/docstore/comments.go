@@ -25,7 +25,7 @@ var (
 
 func (s *Server) GetComments(ctx context.Context, req *GetCommentsRequest) (*GetCommentsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-	ok, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.ACCESS_LEVEL_VIEW)
+	ok, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
 	if err != nil {
 		return nil, err
 	}
@@ -130,11 +130,11 @@ func (s *Server) PostComment(ctx context.Context, req *PostCommentRequest) (*Pos
 		Method:  "PostComment",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EVENT_TYPE_ERRORED),
+		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
 	defer s.auditer.Log(auditEntry, req)
 
-	check, err := s.checkIfUserHasAccessToDoc(ctx, req.Comment.DocumentId, userInfo, documents.ACCESS_LEVEL_COMMENT)
+	check, err := s.checkIfUserHasAccessToDoc(ctx, req.Comment.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_COMMENT)
 	if err != nil {
 		return nil, err
 	}
@@ -164,7 +164,7 @@ func (s *Server) PostComment(ctx context.Context, req *PostCommentRequest) (*Pos
 		return nil, err
 	}
 
-	auditEntry.State = int16(rector.EVENT_TYPE_CREATED)
+	auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
 
 	return &PostCommentResponse{
 		Id: uint64(lastId),
@@ -179,11 +179,11 @@ func (s *Server) EditComment(ctx context.Context, req *EditCommentRequest) (*Edi
 		Method:  "EditComment",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EVENT_TYPE_ERRORED),
+		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
 	defer s.auditer.Log(auditEntry, req)
 
-	check, err := s.checkIfUserHasAccessToDoc(ctx, req.Comment.DocumentId, userInfo, documents.ACCESS_LEVEL_COMMENT)
+	check, err := s.checkIfUserHasAccessToDoc(ctx, req.Comment.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_COMMENT)
 	if err != nil {
 		return nil, err
 	}
@@ -218,7 +218,7 @@ func (s *Server) EditComment(ctx context.Context, req *EditCommentRequest) (*Edi
 		return nil, err
 	}
 
-	auditEntry.State = int16(rector.EVENT_TYPE_UPDATED)
+	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 
 	return resp, nil
 }
@@ -258,7 +258,7 @@ func (s *Server) DeleteComment(ctx context.Context, req *DeleteCommentRequest) (
 		Method:  "DeleteComment",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EVENT_TYPE_ERRORED),
+		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
 	defer s.auditer.Log(auditEntry, req)
 
@@ -267,7 +267,7 @@ func (s *Server) DeleteComment(ctx context.Context, req *DeleteCommentRequest) (
 		return nil, err
 	}
 
-	check, err := s.checkIfUserHasAccessToDoc(ctx, comment.DocumentId, userInfo, documents.ACCESS_LEVEL_COMMENT)
+	check, err := s.checkIfUserHasAccessToDoc(ctx, comment.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_COMMENT)
 	if err != nil {
 		return nil, err
 	}
@@ -306,7 +306,7 @@ func (s *Server) DeleteComment(ctx context.Context, req *DeleteCommentRequest) (
 		return nil, err
 	}
 
-	auditEntry.State = int16(rector.EVENT_TYPE_DELETED)
+	auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)
 
 	return &DeleteCommentResponse{}, nil
 }

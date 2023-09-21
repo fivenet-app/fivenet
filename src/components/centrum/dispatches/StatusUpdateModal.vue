@@ -6,12 +6,12 @@ import { useThrottleFn } from '@vueuse/core';
 import { CloseIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
-import { DISPATCH_STATUS, Dispatch } from '~~/gen/ts/resources/dispatch/dispatches';
+import { Dispatch, StatusDispatch } from '~~/gen/ts/resources/dispatch/dispatches';
 
 const props = defineProps<{
     open: boolean;
     dispatch: Dispatch;
-    status?: DISPATCH_STATUS;
+    status?: StatusDispatch;
 }>();
 
 const emit = defineEmits<{
@@ -20,14 +20,14 @@ const emit = defineEmits<{
 
 const { $grpc } = useNuxtApp();
 
-const status: number = props.status ?? props.dispatch?.status?.status ?? DISPATCH_STATUS.NEW;
+const status: number = props.status ?? props.dispatch?.status?.status ?? StatusDispatch.NEW;
 
-const statuses = ref<{ status: DISPATCH_STATUS; selected?: boolean }[]>([
-    { status: DISPATCH_STATUS.EN_ROUTE },
-    { status: DISPATCH_STATUS.ON_SCENE },
-    { status: DISPATCH_STATUS.NEED_ASSISTANCE },
-    { status: DISPATCH_STATUS.COMPLETED },
-    { status: DISPATCH_STATUS.CANCELLED },
+const statuses = ref<{ status: StatusDispatch; selected?: boolean }[]>([
+    { status: StatusDispatch.EN_ROUTE },
+    { status: StatusDispatch.ON_SCENE },
+    { status: StatusDispatch.NEED_ASSISTANCE },
+    { status: StatusDispatch.COMPLETED },
+    { status: StatusDispatch.CANCELLED },
 ]);
 statuses.value.forEach((s) => {
     if (s.status.valueOf() === status) {
@@ -170,8 +170,8 @@ watch(props, () => {
                                                                         >
                                                                             {{
                                                                                 $t(
-                                                                                    `enums.centrum.DISPATCH_STATUS.${
-                                                                                        DISPATCH_STATUS[
+                                                                                    `enums.centrum.StatusDispatch.${
+                                                                                        StatusDispatch[
                                                                                             status.status ?? (0 as number)
                                                                                         ]
                                                                                     }`,

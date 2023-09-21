@@ -153,9 +153,9 @@ export interface DispatchStatus {
      */
     unit?: Unit;
     /**
-     * @generated from protobuf field: resources.dispatch.DISPATCH_STATUS status = 6;
+     * @generated from protobuf field: resources.dispatch.StatusDispatch status = 6;
      */
-    status: DISPATCH_STATUS;
+    status: StatusDispatch;
     /**
      * @sanitize
      *
@@ -192,53 +192,57 @@ export interface DispatchStatus {
     postal?: string;
 }
 /**
- * @generated from protobuf enum resources.dispatch.DISPATCH_STATUS
+ * @generated from protobuf enum resources.dispatch.StatusDispatch
  */
-export enum DISPATCH_STATUS {
+export enum StatusDispatch {
     /**
-     * @generated from protobuf enum value: NEW = 0;
+     * @generated from protobuf enum value: STATUS_DISPATCH_UNSPECIFIED = 0;
      */
-    NEW = 0,
+    UNSPECIFIED = 0,
     /**
-     * @generated from protobuf enum value: UNASSIGNED = 1;
+     * @generated from protobuf enum value: STATUS_DISPATCH_NEW = 1;
      */
-    UNASSIGNED = 1,
+    NEW = 1,
     /**
-     * @generated from protobuf enum value: UPDATED = 2;
+     * @generated from protobuf enum value: STATUS_DISPATCH_UNASSIGNED = 2;
      */
-    UPDATED = 2,
+    UNASSIGNED = 2,
     /**
-     * @generated from protobuf enum value: UNIT_ASSIGNED = 3;
+     * @generated from protobuf enum value: STATUS_DISPATCH_UPDATED = 3;
      */
-    UNIT_ASSIGNED = 3,
+    UPDATED = 3,
     /**
-     * @generated from protobuf enum value: UNIT_UNASSIGNED = 4;
+     * @generated from protobuf enum value: STATUS_DISPATCH_UNIT_ASSIGNED = 4;
      */
-    UNIT_UNASSIGNED = 4,
+    UNIT_ASSIGNED = 4,
     /**
-     * @generated from protobuf enum value: EN_ROUTE = 5;
+     * @generated from protobuf enum value: STATUS_DISPATCH_UNIT_UNASSIGNED = 5;
      */
-    EN_ROUTE = 5,
+    UNIT_UNASSIGNED = 5,
     /**
-     * @generated from protobuf enum value: ON_SCENE = 6;
+     * @generated from protobuf enum value: STATUS_DISPATCH_EN_ROUTE = 6;
      */
-    ON_SCENE = 6,
+    EN_ROUTE = 6,
     /**
-     * @generated from protobuf enum value: NEED_ASSISTANCE = 7;
+     * @generated from protobuf enum value: STATUS_DISPATCH_ON_SCENE = 7;
      */
-    NEED_ASSISTANCE = 7,
+    ON_SCENE = 7,
     /**
-     * @generated from protobuf enum value: COMPLETED = 8;
+     * @generated from protobuf enum value: STATUS_DISPATCH_NEED_ASSISTANCE = 8;
      */
-    COMPLETED = 8,
+    NEED_ASSISTANCE = 8,
     /**
-     * @generated from protobuf enum value: CANCELLED = 9;
+     * @generated from protobuf enum value: STATUS_DISPATCH_COMPLETED = 9;
      */
-    CANCELLED = 9,
+    COMPLETED = 9,
     /**
-     * @generated from protobuf enum value: ARCHIVED = 10;
+     * @generated from protobuf enum value: STATUS_DISPATCH_CANCELLED = 10;
      */
-    ARCHIVED = 10
+    CANCELLED = 10,
+    /**
+     * @generated from protobuf enum value: STATUS_DISPATCH_ARCHIVED = 11;
+     */
+    ARCHIVED = 11
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Dispatch$Type extends MessageType<Dispatch> {
@@ -317,7 +321,7 @@ class DispatchStatus$Type extends MessageType<DispatchStatus> {
             { no: 3, name: "dispatch_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
             { no: 4, name: "unit_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
             { no: 5, name: "unit", kind: "message", T: () => Unit },
-            { no: 6, name: "status", kind: "enum", T: () => ["resources.dispatch.DISPATCH_STATUS", DISPATCH_STATUS], options: { "validate.rules": { enum: { definedOnly: true } } } },
+            { no: 6, name: "status", kind: "enum", T: () => ["resources.dispatch.StatusDispatch", StatusDispatch, "STATUS_DISPATCH_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 7, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
             { no: 8, name: "code", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 9, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },

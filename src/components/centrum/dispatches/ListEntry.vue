@@ -2,7 +2,7 @@
 import { AccountMultiplePlusIcon, DotsVerticalIcon, MapMarkerIcon } from 'mdi-vue3';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import Time from '~/components/partials/elements/Time.vue';
-import { DISPATCH_STATUS, Dispatch } from '~~/gen/ts/resources/dispatch/dispatches';
+import { Dispatch, StatusDispatch } from '~~/gen/ts/resources/dispatch/dispatches';
 import { dispatchStatusAnimate, dispatchStatusToBGColor } from '../helpers';
 import AssignDispatchModal from './AssignDispatchModal.vue';
 import Details from './Details.vue';
@@ -64,14 +64,14 @@ const openAssign = ref(false);
             :class="dispatchStatusToBGColor(props.dispatch.status?.status ?? 0)"
         >
             <span :class="dispatchStatusAnimate(props.dispatch.status?.status ?? 0) ? 'animate-pulse' : ''">
-                {{ $t(`enums.centrum.DISPATCH_STATUS.${DISPATCH_STATUS[props.dispatch.status?.status ?? 0]}`) }}
+                {{ $t(`enums.centrum.StatusDispatch.${StatusDispatch[props.dispatch.status?.status ?? 0]}`) }}
             </span>
         </td>
         <td class="whitespace-nowrap px-1 py-1 text-sm text-gray-300">
             {{ dispatch.postal ?? 'N/A' }}
         </td>
         <td class="whitespace-nowrap px-1 py-1 text-sm text-gray-300">
-            <span v-if="dispatch.units.length === 0" class="italic">{{ $t('enums.centrum.DISPATCH_STATUS.UNASSIGNED') }}</span>
+            <span v-if="dispatch.units.length === 0" class="italic">{{ $t('enums.centrum.StatusDispatch.UNASSIGNED') }}</span>
             <span v-else class="mr-1">
                 {{ dispatch.units.map((unit) => unit.unit?.initials ?? 'N/A').join(', ') }}
             </span>

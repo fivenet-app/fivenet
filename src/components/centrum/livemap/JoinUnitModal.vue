@@ -3,7 +3,7 @@ import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } fro
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { CloseIcon } from 'mdi-vue3';
 import { useCentrumStore } from '~/store/centrum';
-import { UNIT_STATUS, Unit } from '~~/gen/ts/resources/dispatch/units';
+import { StatusUnit, Unit } from '~~/gen/ts/resources/dispatch/units';
 import { unitStatusToBGColor } from '../helpers';
 
 defineProps<{
@@ -114,8 +114,8 @@ watch(ownUnitId, () => {
                                                                     <span class="mt-1">
                                                                         {{
                                                                             $t(
-                                                                                `enums.centrum.UNIT_STATUS.${
-                                                                                    UNIT_STATUS[
+                                                                                `enums.centrum.StatusUnit.${
+                                                                                    StatusUnit[
                                                                                         item.status?.status ?? (0 as number)
                                                                                     ]
                                                                                 }`,

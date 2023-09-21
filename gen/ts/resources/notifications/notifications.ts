@@ -38,9 +38,9 @@ export interface Notification {
      */
     content?: TranslateItem;
     /**
-     * @generated from protobuf field: resources.notifications.NOTIFICATION_CATEGORY category = 8;
+     * @generated from protobuf field: resources.notifications.NotificationCategory category = 8;
      */
-    category: NOTIFICATION_CATEGORY;
+    category: NotificationCategory;
     /**
      * @generated from protobuf field: optional resources.notifications.Data data = 9;
      */
@@ -77,17 +77,21 @@ export interface Link {
     external?: boolean;
 }
 /**
- * @generated from protobuf enum resources.notifications.NOTIFICATION_CATEGORY
+ * @generated from protobuf enum resources.notifications.NotificationCategory
  */
-export enum NOTIFICATION_CATEGORY {
+export enum NotificationCategory {
     /**
-     * @generated from protobuf enum value: GENERAL = 0;
+     * @generated from protobuf enum value: NOTIFICATION_CATEGORY_UNSPECIFIED = 0;
      */
-    GENERAL = 0,
+    UNSPECIFIED = 0,
     /**
-     * @generated from protobuf enum value: DOCUMENT = 1;
+     * @generated from protobuf enum value: NOTIFICATION_CATEGORY_GENERAL = 1;
      */
-    DOCUMENT = 1
+    GENERAL = 1,
+    /**
+     * @generated from protobuf enum value: NOTIFICATION_CATEGORY_DOCUMENT = 2;
+     */
+    DOCUMENT = 2
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Notification$Type extends MessageType<Notification> {
@@ -100,7 +104,7 @@ class Notification$Type extends MessageType<Notification> {
             { no: 5, name: "title", kind: "message", T: () => TranslateItem },
             { no: 6, name: "type", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "128" } } } },
             { no: 7, name: "content", kind: "message", T: () => TranslateItem },
-            { no: 8, name: "category", kind: "enum", T: () => ["resources.notifications.NOTIFICATION_CATEGORY", NOTIFICATION_CATEGORY], options: { "validate.rules": { enum: { definedOnly: true } } } },
+            { no: 8, name: "category", kind: "enum", T: () => ["resources.notifications.NotificationCategory", NotificationCategory, "NOTIFICATION_CATEGORY_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 9, name: "data", kind: "message", T: () => Data }
         ]);
     }

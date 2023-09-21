@@ -70,7 +70,7 @@ func (m *RequestEntry) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if _, ok := REQUEST_TYPE_name[int32(m.GetType())]; !ok {
+	if _, ok := RequestType_name[int32(m.GetType())]; !ok {
 		err := RequestEntryValidationError{
 			field:  "Type",
 			reason: "value must be one of the defined enum values",

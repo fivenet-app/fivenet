@@ -9,7 +9,7 @@ import AccessEntry from '~/components/documents/AccessEntry.vue';
 import { useAuthStore } from '~/store/auth';
 import { useCompletorStore } from '~/store/completor';
 import { useNotificatorStore } from '~/store/notificator';
-import { ACCESS_LEVEL } from '~~/gen/ts/resources/documents/access';
+import { AccessLevel } from '~~/gen/ts/resources/documents/access';
 import { Category } from '~~/gen/ts/resources/documents/category';
 import { DocumentAccess } from '~~/gen/ts/resources/documents/documents';
 import { ObjectSpecs, TemplateJobAccess, TemplateRequirements } from '~~/gen/ts/resources/documents/templates';
@@ -98,7 +98,7 @@ const access = ref<
             type: number;
             values: {
                 job?: string;
-                accessRole?: ACCESS_LEVEL;
+                accessRole?: AccessLevel;
                 minimumGrade?: number;
             };
         }
@@ -156,7 +156,7 @@ function updateAccessEntryRank(event: { id: bigint; rank: JobGrade }): void {
     access.value.set(event.id, accessEntry);
 }
 
-function updateAccessEntryAccess(event: { id: bigint; access: ACCESS_LEVEL }): void {
+function updateAccessEntryAccess(event: { id: bigint; access: AccessLevel }): void {
     const accessEntry = access.value.get(event.id);
     if (!accessEntry) return;
 
@@ -173,7 +173,7 @@ const contentAccess = ref<
             values: {
                 job?: string;
                 char?: number;
-                accessRole?: ACCESS_LEVEL;
+                accessRole?: AccessLevel;
                 minimumGrade?: number;
             };
         }
@@ -234,7 +234,7 @@ function updateContentAccessEntryRank(event: { id: bigint; rank: JobGrade }): vo
     contentAccess.value.set(event.id, accessEntry);
 }
 
-function updateContentAccessEntryAccess(event: { id: bigint; access: ACCESS_LEVEL }): void {
+function updateContentAccessEntryAccess(event: { id: bigint; access: AccessLevel }): void {
     const accessEntry = contentAccess.value.get(event.id);
     if (!accessEntry) return;
 
@@ -466,7 +466,7 @@ onMounted(async () => {
             values: {
                 job: activeChar.value?.job,
                 minimumGrade: 1,
-                accessRole: ACCESS_LEVEL.VIEW,
+                accessRole: AccessLevel.VIEW,
             },
         });
     }
@@ -531,7 +531,7 @@ onMounted(async () => {
                         :key="entry.id?.toString()"
                         :init="entry"
                         :access-types="accessTypes"
-                        :access-roles="[ACCESS_LEVEL.VIEW, ACCESS_LEVEL.EDIT]"
+                        :access-roles="[AccessLevel.VIEW, AccessLevel.EDIT]"
                         @typeChange="updateAccessEntryType($event)"
                         @nameChange="updateAccessEntryName($event)"
                         @rankChange="updateAccessEntryRank($event)"

@@ -5,7 +5,7 @@ import { required } from '@vee-validate/rules';
 import { useThrottleFn } from '@vueuse/core';
 import { GroupIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
-import { CENTRUM_MODE, Settings } from '~~/gen/ts/resources/dispatch/settings';
+import { CentrumMode, Settings } from '~~/gen/ts/resources/dispatch/settings';
 
 defineProps<{
     open: boolean;
@@ -33,11 +33,11 @@ async function getCentrumSettings(): Promise<Settings> {
     });
 }
 
-const modes = ref<{ mode: CENTRUM_MODE; selected?: boolean }[]>([
-    { mode: CENTRUM_MODE.MANUAL },
-    { mode: CENTRUM_MODE.SIMPLIFIED },
-    { mode: CENTRUM_MODE.CENTRAL_COMMAND },
-    { mode: CENTRUM_MODE.AUTO_ROUND_ROBIN },
+const modes = ref<{ mode: CentrumMode; selected?: boolean }[]>([
+    { mode: CentrumMode.MANUAL },
+    { mode: CentrumMode.SIMPLIFIED },
+    { mode: CentrumMode.CENTRAL_COMMAND },
+    { mode: CentrumMode.AUTO_ROUND_ROBIN },
 ]);
 
 function setSettingsValues(): void {
@@ -81,8 +81,8 @@ defineRule('required', required);
 
 interface FormData {
     enabled: boolean;
-    mode: CENTRUM_MODE;
-    fallbackMode: CENTRUM_MODE;
+    mode: CentrumMode;
+    fallbackMode: CentrumMode;
 }
 
 const { handleSubmit, meta, setValues } = useForm<FormData>({
@@ -186,7 +186,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                 :selected="settings !== null && mode.mode === settings.mode"
                                                                 :value="mode.mode"
                                                             >
-                                                                {{ CENTRUM_MODE[mode.mode] }}
+                                                                {{ CentrumMode[mode.mode] }}
                                                             </option>
                                                         </select>
                                                     </VeeField>
@@ -217,7 +217,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                 "
                                                                 :value="mode.mode"
                                                             >
-                                                                {{ CENTRUM_MODE[mode.mode] }}
+                                                                {{ CentrumMode[mode.mode] }}
                                                             </option>
                                                         </select>
                                                     </VeeField>

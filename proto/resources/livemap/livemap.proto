@@ -9,10 +9,11 @@ import "validate/validate.proto";
 
 option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/livemap;livemap";
 
-enum MARKER_TYPE {
-  DOT = 0;
-  CIRCLE = 1;
-  POLYGON = 2;
+enum MarkerType {
+  MARKER_TYPE_UNSPECIFIED = 0;
+  MARKER_TYPE_DOT = 1;
+  MARKER_TYPE_CIRCLE = 2;
+  MARKER_TYPE_POLYGON = 3;
 }
 
 message MarkerInfo {
@@ -46,7 +47,7 @@ message UserMarker {
 
 message Marker {
   MarkerInfo info = 1;
-  MARKER_TYPE type = 2; // @gotags: alias:"markerType"
+  MarkerType type = 2; // @gotags: alias:"markerType"
   optional MarkerData data = 3; // @gotags: alias:"markerData"
   optional int32 creator_id = 4;
   optional resources.users.UserShort creator = 5;

@@ -3,7 +3,7 @@ import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } fro
 import { AccountIcon, CloseIcon, PencilIcon } from 'mdi-vue3';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import Time from '~/components/partials/elements/Time.vue';
-import { UNIT_STATUS, Unit } from '~~/gen/ts/resources/dispatch/units';
+import { StatusUnit, Unit } from '~~/gen/ts/resources/dispatch/units';
 import AssignUnitModal from './AssignUnitModal.vue';
 import Feed from './Feed.vue';
 import StatusUpdateModal from './StatusUpdateModal.vue';
@@ -11,7 +11,7 @@ import StatusUpdateModal from './StatusUpdateModal.vue';
 defineProps<{
     open: boolean;
     unit: Unit;
-    statusSelected?: UNIT_STATUS;
+    statusSelected?: StatusUnit;
 }>();
 
 defineEmits<{
@@ -101,10 +101,8 @@ const openStatus = ref(false);
                                                                 >
                                                                     {{
                                                                         $t(
-                                                                            `enums.centrum.UNIT_STATUS.${
-                                                                                UNIT_STATUS[
-                                                                                    unit.status?.status ?? (0 as number)
-                                                                                ]
+                                                                            `enums.centrum.StatusUnit.${
+                                                                                StatusUnit[unit.status?.status ?? (0 as number)]
                                                                             }`,
                                                                         )
                                                                     }}

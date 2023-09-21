@@ -6,12 +6,12 @@ import { MessageType } from "@protobuf-ts/runtime";
 import { Settings } from "../../resources/dispatch/settings.js";
 import { DispatchStatus } from "../../resources/dispatch/dispatches.js";
 import { Dispatch } from "../../resources/dispatch/dispatches.js";
-import { DISPATCH_STATUS } from "../../resources/dispatch/dispatches.js";
+import { StatusDispatch } from "../../resources/dispatch/dispatches.js";
 import { UserShort } from "../../resources/users/users.js";
 import { UnitStatus } from "../../resources/dispatch/units.js";
 import { PaginationResponse } from "../../resources/common/database/database.js";
 import { Unit } from "../../resources/dispatch/units.js";
-import { UNIT_STATUS } from "../../resources/dispatch/units.js";
+import { StatusUnit } from "../../resources/dispatch/units.js";
 import { PaginationRequest } from "../../resources/common/database/database.js";
 // Common
 
@@ -53,9 +53,9 @@ export interface GetSettingsRequest {
  */
 export interface ListUnitsRequest {
     /**
-     * @generated from protobuf field: repeated resources.dispatch.UNIT_STATUS status = 1;
+     * @generated from protobuf field: repeated resources.dispatch.StatusUnit status = 1;
      */
-    status: UNIT_STATUS[];
+    status: StatusUnit[];
     /**
      * @generated from protobuf field: optional bool own_only = 2;
      */
@@ -111,9 +111,9 @@ export interface UpdateUnitStatusRequest {
      */
     unitId: bigint;
     /**
-     * @generated from protobuf field: resources.dispatch.UNIT_STATUS status = 2;
+     * @generated from protobuf field: resources.dispatch.StatusUnit status = 2;
      */
-    status: UNIT_STATUS;
+    status: StatusUnit;
     /**
      * @sanitize
      *
@@ -201,13 +201,13 @@ export interface DisponentsChange {
  */
 export interface ListDispatchesRequest {
     /**
-     * @generated from protobuf field: repeated resources.dispatch.DISPATCH_STATUS status = 1;
+     * @generated from protobuf field: repeated resources.dispatch.StatusDispatch status = 1;
      */
-    status: DISPATCH_STATUS[];
+    status: StatusDispatch[];
     /**
-     * @generated from protobuf field: repeated resources.dispatch.DISPATCH_STATUS not_status = 2;
+     * @generated from protobuf field: repeated resources.dispatch.StatusDispatch not_status = 2;
      */
-    notStatus: DISPATCH_STATUS[];
+    notStatus: StatusDispatch[];
     /**
      * @generated from protobuf field: optional bool own_only = 3;
      */
@@ -277,9 +277,9 @@ export interface UpdateDispatchStatusRequest {
      */
     dispatchId: bigint;
     /**
-     * @generated from protobuf field: resources.dispatch.DISPATCH_STATUS status = 2;
+     * @generated from protobuf field: resources.dispatch.StatusDispatch status = 2;
      */
-    status: DISPATCH_STATUS;
+    status: StatusDispatch;
     /**
      * @sanitize
      *
@@ -364,9 +364,9 @@ export interface TakeDispatchRequest {
      */
     dispatchIds: bigint[];
     /**
-     * @generated from protobuf field: services.centrum.TAKE_DISPATCH_RESP resp = 2;
+     * @generated from protobuf field: services.centrum.TakeDispatchResp resp = 2;
      */
-    resp: TAKE_DISPATCH_RESP;
+    resp: TakeDispatchResp;
     /**
      * @sanitize
      *
@@ -503,21 +503,25 @@ export interface StreamResponse {
     restart?: boolean;
 }
 /**
- * @generated from protobuf enum services.centrum.TAKE_DISPATCH_RESP
+ * @generated from protobuf enum services.centrum.TakeDispatchResp
  */
-export enum TAKE_DISPATCH_RESP {
+export enum TakeDispatchResp {
     /**
-     * @generated from protobuf enum value: TIMEOUT = 0;
+     * @generated from protobuf enum value: TAKE_DISPATCH_RESP_UNSPECIFIED = 0;
      */
-    TIMEOUT = 0,
+    UNSPECIFIED = 0,
     /**
-     * @generated from protobuf enum value: ACCEPTED = 1;
+     * @generated from protobuf enum value: TAKE_DISPATCH_RESP_TIMEOUT = 1;
      */
-    ACCEPTED = 1,
+    TIMEOUT = 1,
     /**
-     * @generated from protobuf enum value: DECLINED = 2;
+     * @generated from protobuf enum value: TAKE_DISPATCH_RESP_ACCEPTED = 2;
      */
-    DECLINED = 2
+    ACCEPTED = 2,
+    /**
+     * @generated from protobuf enum value: TAKE_DISPATCH_RESP_DECLINED = 3;
+     */
+    DECLINED = 3
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class ListDispatchActivityRequest$Type extends MessageType<ListDispatchActivityRequest> {
@@ -559,7 +563,7 @@ export const GetSettingsRequest = new GetSettingsRequest$Type();
 class ListUnitsRequest$Type extends MessageType<ListUnitsRequest> {
     constructor() {
         super("services.centrum.ListUnitsRequest", [
-            { no: 1, name: "status", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.dispatch.UNIT_STATUS", UNIT_STATUS], options: { "validate.rules": { repeated: { items: { enum: { definedOnly: true } } } } } },
+            { no: 1, name: "status", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.dispatch.StatusUnit", StatusUnit, "STATUS_UNIT_"], options: { "validate.rules": { repeated: { items: { enum: { definedOnly: true } } } } } },
             { no: 2, name: "own_only", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
@@ -631,7 +635,7 @@ class UpdateUnitStatusRequest$Type extends MessageType<UpdateUnitStatusRequest> 
     constructor() {
         super("services.centrum.UpdateUnitStatusRequest", [
             { no: 1, name: "unit_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 2, name: "status", kind: "enum", T: () => ["resources.dispatch.UNIT_STATUS", UNIT_STATUS], options: { "validate.rules": { enum: { definedOnly: true } } } },
+            { no: 2, name: "status", kind: "enum", T: () => ["resources.dispatch.StatusUnit", StatusUnit, "STATUS_UNIT_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 3, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
             { no: 4, name: "code", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } }
         ]);
@@ -727,8 +731,8 @@ export const DisponentsChange = new DisponentsChange$Type();
 class ListDispatchesRequest$Type extends MessageType<ListDispatchesRequest> {
     constructor() {
         super("services.centrum.ListDispatchesRequest", [
-            { no: 1, name: "status", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.dispatch.DISPATCH_STATUS", DISPATCH_STATUS], options: { "validate.rules": { repeated: { items: { enum: { definedOnly: true } } } } } },
-            { no: 2, name: "not_status", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.dispatch.DISPATCH_STATUS", DISPATCH_STATUS], options: { "validate.rules": { repeated: { items: { enum: { definedOnly: true } } } } } },
+            { no: 1, name: "status", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.dispatch.StatusDispatch", StatusDispatch, "STATUS_DISPATCH_"], options: { "validate.rules": { repeated: { items: { enum: { definedOnly: true } } } } } },
+            { no: 2, name: "not_status", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.dispatch.StatusDispatch", StatusDispatch, "STATUS_DISPATCH_"], options: { "validate.rules": { repeated: { items: { enum: { definedOnly: true } } } } } },
             { no: 3, name: "own_only", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
@@ -822,7 +826,7 @@ class UpdateDispatchStatusRequest$Type extends MessageType<UpdateDispatchStatusR
     constructor() {
         super("services.centrum.UpdateDispatchStatusRequest", [
             { no: 1, name: "dispatch_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 2, name: "status", kind: "enum", T: () => ["resources.dispatch.DISPATCH_STATUS", DISPATCH_STATUS], options: { "validate.rules": { enum: { definedOnly: true } } } },
+            { no: 2, name: "status", kind: "enum", T: () => ["resources.dispatch.StatusDispatch", StatusDispatch, "STATUS_DISPATCH_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 3, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
             { no: 4, name: "code", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
         ]);
@@ -909,7 +913,7 @@ class TakeDispatchRequest$Type extends MessageType<TakeDispatchRequest> {
     constructor() {
         super("services.centrum.TakeDispatchRequest", [
             { no: 1, name: "dispatch_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/, options: { "validate.rules": { repeated: { minItems: "1" } } } },
-            { no: 2, name: "resp", kind: "enum", T: () => ["services.centrum.TAKE_DISPATCH_RESP", TAKE_DISPATCH_RESP], options: { "validate.rules": { enum: { definedOnly: true } } } },
+            { no: 2, name: "resp", kind: "enum", T: () => ["services.centrum.TakeDispatchResp", TakeDispatchResp, "TAKE_DISPATCH_RESP_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 3, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } }
         ]);
     }

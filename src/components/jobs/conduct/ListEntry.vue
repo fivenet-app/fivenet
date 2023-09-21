@@ -2,7 +2,7 @@
 import { PencilIcon, TrashCanIcon } from 'mdi-vue3';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import Time from '~/components/partials/elements/Time.vue';
-import { CONDUCT_TYPE, ConductEntry } from '~~/gen/ts/resources/jobs/conduct';
+import { ConductEntry, ConductType } from '~~/gen/ts/resources/jobs/conduct';
 import { conductTypesToBGColor, conductTypesToRingColor, conductTypesToTextColor } from './helpers';
 
 defineProps<{
@@ -35,7 +35,7 @@ defineEmits<{
                     conductTypesToTextColor(conduct.type),
                 ]"
             >
-                {{ $t(`enums.jobs.CONDUCT_TYPE.${CONDUCT_TYPE[conduct.type ?? (0 as number)]}`) }}
+                {{ $t(`enums.jobs.ConductType.${ConductType[conduct.type ?? (0 as number)]}`) }}
             </div>
         </td>
         <td class="whitespace-wrap px-1 py-1 text-left text-base-200">

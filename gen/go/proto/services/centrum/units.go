@@ -28,7 +28,7 @@ func (s *Server) ListUnits(ctx context.Context, req *ListUnitsRequest) (*ListUni
 		Method:  "ListUnits",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EVENT_TYPE_ERRORED),
+		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
 	defer s.auditer.Log(auditEntry, req)
 
@@ -67,7 +67,7 @@ func (s *Server) ListUnits(ctx context.Context, req *ListUnitsRequest) (*ListUni
 		}
 	}
 
-	auditEntry.State = int16(rector.EVENT_TYPE_VIEWED)
+	auditEntry.State = int16(rector.EventType_EVENT_TYPE_VIEWED)
 
 	return resp, nil
 }
@@ -80,7 +80,7 @@ func (s *Server) CreateOrUpdateUnit(ctx context.Context, req *CreateOrUpdateUnit
 		Method:  "CreateOrUpdateUnit",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EVENT_TYPE_ERRORED),
+		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
 	defer s.auditer.Log(auditEntry, req)
 
@@ -123,7 +123,7 @@ func (s *Server) CreateOrUpdateUnit(ctx context.Context, req *CreateOrUpdateUnit
 
 		req.Unit.Id = uint64(lastId)
 
-		auditEntry.State = int16(rector.EVENT_TYPE_CREATED)
+		auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
 	} else {
 		stmt := tUnits.
 			UPDATE(
@@ -147,12 +147,12 @@ func (s *Server) CreateOrUpdateUnit(ctx context.Context, req *CreateOrUpdateUnit
 			return nil, err
 		}
 
-		auditEntry.State = int16(rector.EVENT_TYPE_UPDATED)
+		auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 	}
 
 	// Commit the transaction
 	if err := tx.Commit(); err != nil {
-		auditEntry.State = int16(rector.EVENT_TYPE_ERRORED)
+		auditEntry.State = int16(rector.EventType_EVENT_TYPE_ERRORED)
 		return nil, ErrFailedQuery
 	}
 
@@ -179,7 +179,7 @@ func (s *Server) CreateOrUpdateUnit(ctx context.Context, req *CreateOrUpdateUnit
 	if unit.Status == nil {
 		if err := s.updateUnitStatus(ctx, userInfo.Job, unit, &dispatch.UnitStatus{
 			UnitId:    unit.Id,
-			Status:    dispatch.UNIT_STATUS_UNKNOWN,
+			Status:    dispatch.StatusUnit_STATUS_UNIT_UNKNOWN,
 			UserId:    &userInfo.UserId,
 			CreatorId: &userInfo.UserId,
 			X:         x,
@@ -213,7 +213,7 @@ func (s *Server) DeleteUnit(ctx context.Context, req *DeleteUnitRequest) (*Delet
 		Method:  "DeleteUnit",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EVENT_TYPE_ERRORED),
+		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
 	defer s.auditer.Log(auditEntry, req)
 
@@ -242,7 +242,7 @@ func (s *Server) DeleteUnit(ctx context.Context, req *DeleteUnitRequest) (*Delet
 	}
 	s.events.JS.PublishAsync(s.buildSubject(TopicUnit, TypeUnitDeleted, userInfo.Job, req.UnitId), data)
 
-	auditEntry.State = int16(rector.EVENT_TYPE_DELETED)
+	auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)
 
 	units, ok := s.units.Load(userInfo.Job)
 	if ok {
@@ -260,7 +260,7 @@ func (s *Server) UpdateUnitStatus(ctx context.Context, req *UpdateUnitStatusRequ
 		Method:  "UpdateUnitStatus",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EVENT_TYPE_ERRORED),
+		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
 	defer s.auditer.Log(auditEntry, req)
 
@@ -298,7 +298,7 @@ func (s *Server) UpdateUnitStatus(ctx context.Context, req *UpdateUnitStatusRequ
 		return nil, ErrFailedQuery
 	}
 
-	auditEntry.State = int16(rector.EVENT_TYPE_CREATED)
+	auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
 
 	return &UpdateUnitStatusResponse{}, nil
 }
@@ -311,7 +311,7 @@ func (s *Server) AssignUnit(ctx context.Context, req *AssignUnitRequest) (*Assig
 		Method:  "AssignUnit",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EVENT_TYPE_ERRORED),
+		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
 	defer s.auditer.Log(auditEntry, req)
 
@@ -327,7 +327,7 @@ func (s *Server) AssignUnit(ctx context.Context, req *AssignUnitRequest) (*Assig
 		return nil, err
 	}
 
-	auditEntry.State = int16(rector.EVENT_TYPE_UPDATED)
+	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 
 	return &AssignUnitResponse{}, nil
 }

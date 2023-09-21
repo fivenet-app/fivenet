@@ -85,7 +85,7 @@ func (s *Server) CreateCategory(ctx context.Context, req *CreateCategoryRequest)
 		Method:  "CreateCategory",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EVENT_TYPE_ERRORED),
+		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
 	defer s.auditer.Log(auditEntry, req)
 
@@ -112,7 +112,7 @@ func (s *Server) CreateCategory(ctx context.Context, req *CreateCategoryRequest)
 		return nil, err
 	}
 
-	auditEntry.State = int16(rector.EVENT_TYPE_CREATED)
+	auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
 
 	return &CreateCategoryResponse{
 		Id: uint64(lastId),
@@ -127,7 +127,7 @@ func (s *Server) UpdateCategory(ctx context.Context, req *UpdateCategoryRequest)
 		Method:  "UpdateCategory",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EVENT_TYPE_ERRORED),
+		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
 	defer s.auditer.Log(auditEntry, req)
 
@@ -152,7 +152,7 @@ func (s *Server) UpdateCategory(ctx context.Context, req *UpdateCategoryRequest)
 		return nil, err
 	}
 
-	auditEntry.State = int16(rector.EVENT_TYPE_UPDATED)
+	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 
 	return &UpdateCategoryResponse{}, nil
 }
@@ -165,7 +165,7 @@ func (s *Server) DeleteCategory(ctx context.Context, req *DeleteCategoryRequest)
 		Method:  "DeleteCategory",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EVENT_TYPE_ERRORED),
+		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
 	defer s.auditer.Log(auditEntry, req)
 
@@ -188,7 +188,7 @@ func (s *Server) DeleteCategory(ctx context.Context, req *DeleteCategoryRequest)
 		return nil, err
 	}
 
-	auditEntry.State = int16(rector.EVENT_TYPE_DELETED)
+	auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)
 
 	return &DeleteCategoryResponse{}, nil
 }

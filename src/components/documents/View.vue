@@ -24,7 +24,7 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import Time from '~/components/partials/elements/Time.vue';
 import { useClipboardStore } from '~/store/clipboard';
 import { useNotificatorStore } from '~/store/notificator';
-import { ACCESS_LEVEL } from '~~/gen/ts/resources/documents/access';
+import { AccessLevel } from '~~/gen/ts/resources/documents/access';
 import { Document, DocumentAccess } from '~~/gen/ts/resources/documents/documents';
 import CitizenInfoPopover from '../partials/citizens/CitizenInfoPopover.vue';
 import Comments from './Comments.vue';
@@ -273,7 +273,7 @@ onConfirm(async (id: bigint) => deleteDocument(id));
                                         ({{ entry.jobGradeLabel }})</span
                                     >
                                     -
-                                    {{ $t(`enums.docstore.ACCESS_LEVEL.${ACCESS_LEVEL[entry.access]}`) }}
+                                    {{ $t(`enums.docstore.AccessLevel.${AccessLevel[entry.access]}`) }}
                                 </span>
                             </div>
                             <div
@@ -285,7 +285,7 @@ onConfirm(async (id: bigint) => deleteDocument(id));
                                 <span class="text-sm font-medium text-secondary-700">
                                     {{ entry.user?.firstname }}
                                     {{ entry.user?.lastname }} -
-                                    {{ $t(`enums.docstore.ACCESS_LEVEL.${ACCESS_LEVEL[entry.access]}`) }}
+                                    {{ $t(`enums.docstore.AccessLevel.${AccessLevel[entry.access]}`) }}
                                 </span>
                             </div>
                         </div>

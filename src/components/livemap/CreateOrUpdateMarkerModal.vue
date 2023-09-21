@@ -6,7 +6,7 @@ import { useThrottleFn } from '@vueuse/core';
 import { CloseIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import { useLivemapStore } from '~/store/livemap';
-import { MARKER_TYPE, Marker } from '~~/gen/ts/resources/livemap/livemap';
+import { Marker, MarkerType } from '~~/gen/ts/resources/livemap/livemap';
 
 defineProps<{
     open: boolean;
@@ -37,7 +37,7 @@ async function createMarker(values: FormData): Promise<void> {
                 type: values.markerType,
             };
 
-            if (values.markerType === MARKER_TYPE.CIRCLE) {
+            if (values.markerType === MarkerType.CIRCLE) {
                 marker.data = {
                     data: {
                         oneofKind: 'circle',
@@ -64,7 +64,7 @@ async function createMarker(values: FormData): Promise<void> {
     });
 }
 
-const markerTypes = ref<{ status: MARKER_TYPE; selected?: boolean }[]>([{ status: MARKER_TYPE.CIRCLE }]);
+const markerTypes = ref<{ status: MarkerType; selected?: boolean }[]>([{ status: MarkerType.CIRCLE }]);
 
 defineRule('required', required);
 defineRule('digits', digits);
@@ -76,7 +76,7 @@ defineRule('max_value', max_value);
 interface FormData {
     name: string;
     description: string;
-    markerType: MARKER_TYPE.CIRCLE;
+    markerType: MarkerType.CIRCLE;
     color: string;
     circleRadius: number;
     circleOpacity: number;
@@ -96,7 +96,7 @@ const { handleSubmit, meta, values, setValues } = useForm<FormData>({
     },
 });
 setValues({
-    markerType: MARKER_TYPE.CIRCLE,
+    markerType: MarkerType.CIRCLE,
     circleRadius: 50,
     circleOpacity: 5,
 });
@@ -269,8 +269,8 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                         >
                                                                             {{
                                                                                 $t(
-                                                                                    `enums.livemap.MARKER_TYPE.${
-                                                                                        MARKER_TYPE[
+                                                                                    `enums.livemap.MarkerType.${
+                                                                                        MarkerType[
                                                                                             mtype.status ?? (0 as number)
                                                                                         ]
                                                                                     }`,
@@ -286,7 +286,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                 />
                                                             </dd>
                                                         </div>
-                                                        <template v-if="values.markerType === MARKER_TYPE.CIRCLE">
+                                                        <template v-if="values.markerType === MarkerType.CIRCLE">
                                                             <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                                                                 <dt class="text-sm font-medium leading-6 text-white">
                                                                     <label

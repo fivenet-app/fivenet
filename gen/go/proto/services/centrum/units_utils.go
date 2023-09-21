@@ -117,10 +117,10 @@ func (s *Server) updateUnitStatus(ctx context.Context, job string, unit *dispatc
 	// If the unit status is the same and is a status that shouldn't be duplicated, don't update the status again
 	if unit.Status != nil &&
 		unit.Status.Status == in.Status &&
-		(in.Status == dispatch.UNIT_STATUS_ON_BREAK ||
-			in.Status == dispatch.UNIT_STATUS_BUSY ||
-			in.Status == dispatch.UNIT_STATUS_UNAVAILABLE ||
-			in.Status == dispatch.UNIT_STATUS_AVAILABLE) {
+		(in.Status == dispatch.StatusUnit_STATUS_UNIT_ON_BREAK ||
+			in.Status == dispatch.StatusUnit_STATUS_UNIT_BUSY ||
+			in.Status == dispatch.StatusUnit_STATUS_UNIT_UNAVAILABLE ||
+			in.Status == dispatch.StatusUnit_STATUS_UNIT_AVAILABLE) {
 		return nil
 	}
 
@@ -215,7 +215,7 @@ func (s *Server) updateUnitAssignments(ctx context.Context, userInfo *userinfo.U
 				if unit.Users[i].UserId == toRemove[k] {
 					if err := s.updateUnitStatus(ctx, userInfo.Job, unit, &dispatch.UnitStatus{
 						UnitId:    unit.Id,
-						Status:    dispatch.UNIT_STATUS_USER_REMOVED,
+						Status:    dispatch.StatusUnit_STATUS_UNIT_USER_REMOVED,
 						UserId:    &toRemove[k],
 						CreatorId: &userInfo.UserId,
 						X:         x,
@@ -294,7 +294,7 @@ func (s *Server) updateUnitAssignments(ctx context.Context, userInfo *userinfo.U
 
 			if err := s.updateUnitStatus(ctx, userInfo.Job, unit, &dispatch.UnitStatus{
 				UnitId:    unit.Id,
-				Status:    dispatch.UNIT_STATUS_USER_ADDED,
+				Status:    dispatch.StatusUnit_STATUS_UNIT_USER_ADDED,
 				UserId:    &user.UserId,
 				CreatorId: &userInfo.UserId,
 				X:         x,
@@ -332,7 +332,7 @@ func (s *Server) updateUnitAssignments(ctx context.Context, userInfo *userinfo.U
 	if len(unit.Users) == 0 {
 		if err := s.updateUnitStatus(ctx, userInfo.Job, unit, &dispatch.UnitStatus{
 			UnitId:    unit.Id,
-			Status:    dispatch.UNIT_STATUS_UNAVAILABLE,
+			Status:    dispatch.StatusUnit_STATUS_UNIT_UNAVAILABLE,
 			UserId:    &userInfo.UserId,
 			CreatorId: &userInfo.UserId,
 			X:         x,

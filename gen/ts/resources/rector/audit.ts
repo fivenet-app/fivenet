@@ -45,40 +45,40 @@ export interface AuditEntry {
      */
     method: string; // @gotags: alias:"method"
     /**
-     * @generated from protobuf field: resources.rector.EVENT_TYPE state = 10;
+     * @generated from protobuf field: resources.rector.EventType state = 10;
      */
-    state: EVENT_TYPE; // @gotags: alias:"state"
+    state: EventType; // @gotags: alias:"state"
     /**
      * @generated from protobuf field: optional string data = 11;
      */
     data?: string; // @gotags: alias:"data"
 }
 /**
- * @generated from protobuf enum resources.rector.EVENT_TYPE
+ * @generated from protobuf enum resources.rector.EventType
  */
-export enum EVENT_TYPE {
+export enum EventType {
     /**
-     * @generated from protobuf enum value: UNSPECIFIED = 0;
+     * @generated from protobuf enum value: EVENT_TYPE_UNSPECIFIED = 0;
      */
     UNSPECIFIED = 0,
     /**
-     * @generated from protobuf enum value: ERRORED = 1;
+     * @generated from protobuf enum value: EVENT_TYPE_ERRORED = 1;
      */
     ERRORED = 1,
     /**
-     * @generated from protobuf enum value: VIEWED = 2;
+     * @generated from protobuf enum value: EVENT_TYPE_VIEWED = 2;
      */
     VIEWED = 2,
     /**
-     * @generated from protobuf enum value: CREATED = 3;
+     * @generated from protobuf enum value: EVENT_TYPE_CREATED = 3;
      */
     CREATED = 3,
     /**
-     * @generated from protobuf enum value: UPDATED = 4;
+     * @generated from protobuf enum value: EVENT_TYPE_UPDATED = 4;
      */
     UPDATED = 4,
     /**
-     * @generated from protobuf enum value: DELETED = 5;
+     * @generated from protobuf enum value: EVENT_TYPE_DELETED = 5;
      */
     DELETED = 5
 }
@@ -95,7 +95,7 @@ class AuditEntry$Type extends MessageType<AuditEntry> {
             { no: 7, name: "target_user", kind: "message", T: () => UserShort },
             { no: 8, name: "service", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 9, name: "method", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 10, name: "state", kind: "enum", T: () => ["resources.rector.EVENT_TYPE", EVENT_TYPE], options: { "validate.rules": { enum: { definedOnly: true } } } },
+            { no: 10, name: "state", kind: "enum", T: () => ["resources.rector.EventType", EventType, "EVENT_TYPE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 11, name: "data", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
         ]);
     }

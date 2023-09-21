@@ -15,34 +15,38 @@ export interface Settings {
      */
     enabled: boolean;
     /**
-     * @generated from protobuf field: resources.dispatch.CENTRUM_MODE mode = 3;
+     * @generated from protobuf field: resources.dispatch.CentrumMode mode = 3;
      */
-    mode: CENTRUM_MODE;
+    mode: CentrumMode;
     /**
-     * @generated from protobuf field: resources.dispatch.CENTRUM_MODE fallback_mode = 4;
+     * @generated from protobuf field: resources.dispatch.CentrumMode fallback_mode = 4;
      */
-    fallbackMode: CENTRUM_MODE;
+    fallbackMode: CentrumMode;
 }
 /**
- * @generated from protobuf enum resources.dispatch.CENTRUM_MODE
+ * @generated from protobuf enum resources.dispatch.CentrumMode
  */
-export enum CENTRUM_MODE {
+export enum CentrumMode {
     /**
-     * @generated from protobuf enum value: MANUAL = 0;
+     * @generated from protobuf enum value: CENTRUM_MODE_UNSPECIFIED = 0;
      */
-    MANUAL = 0,
+    UNSPECIFIED = 0,
     /**
-     * @generated from protobuf enum value: CENTRAL_COMMAND = 1;
+     * @generated from protobuf enum value: CENTRUM_MODE_MANUAL = 1;
      */
-    CENTRAL_COMMAND = 1,
+    MANUAL = 1,
     /**
-     * @generated from protobuf enum value: AUTO_ROUND_ROBIN = 2;
+     * @generated from protobuf enum value: CENTRUM_MODE_CENTRAL_COMMAND = 2;
      */
-    AUTO_ROUND_ROBIN = 2,
+    CENTRAL_COMMAND = 2,
     /**
-     * @generated from protobuf enum value: SIMPLIFIED = 3;
+     * @generated from protobuf enum value: CENTRUM_MODE_AUTO_ROUND_ROBIN = 3;
      */
-    SIMPLIFIED = 3
+    AUTO_ROUND_ROBIN = 3,
+    /**
+     * @generated from protobuf enum value: CENTRUM_MODE_SIMPLIFIED = 4;
+     */
+    SIMPLIFIED = 4
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Settings$Type extends MessageType<Settings> {
@@ -50,8 +54,8 @@ class Settings$Type extends MessageType<Settings> {
         super("resources.dispatch.Settings", [
             { no: 1, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 2, name: "enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 3, name: "mode", kind: "enum", T: () => ["resources.dispatch.CENTRUM_MODE", CENTRUM_MODE], options: { "validate.rules": { enum: { definedOnly: true } } } },
-            { no: 4, name: "fallback_mode", kind: "enum", T: () => ["resources.dispatch.CENTRUM_MODE", CENTRUM_MODE], options: { "validate.rules": { enum: { definedOnly: true } } } }
+            { no: 3, name: "mode", kind: "enum", T: () => ["resources.dispatch.CentrumMode", CentrumMode, "CENTRUM_MODE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
+            { no: 4, name: "fallback_mode", kind: "enum", T: () => ["resources.dispatch.CentrumMode", CentrumMode, "CENTRUM_MODE_"], options: { "validate.rules": { enum: { definedOnly: true } } } }
         ]);
     }
 }

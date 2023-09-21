@@ -64,7 +64,7 @@ func (s *Server) SetJobProps(ctx context.Context, req *SetJobPropsRequest) (*Set
 		Method:  "SetJobProps",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EVENT_TYPE_ERRORED),
+		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
 	defer s.aud.Log(auditEntry, req)
 
@@ -103,7 +103,7 @@ func (s *Server) SetJobProps(ctx context.Context, req *SetJobPropsRequest) (*Set
 		return nil, ErrFailedQuery
 	}
 
-	auditEntry.State = int16(rector.EVENT_TYPE_UPDATED)
+	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 
 	return &SetJobPropsResponse{}, nil
 }

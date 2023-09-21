@@ -6,7 +6,7 @@ import 'vue-json-pretty/lib/styles.css';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import Time from '~/components/partials/elements/Time.vue';
 import { useNotificatorStore } from '~/store/notificator';
-import { AuditEntry, EVENT_TYPE } from '~~/gen/ts/resources/rector/audit';
+import { AuditEntry, EventType } from '~~/gen/ts/resources/rector/audit';
 
 const clipboard = useClipboard();
 
@@ -28,7 +28,7 @@ async function addToClipboard(): Promise<void> {
 `;
     }
     text += `Action: \`${props.log.service}/${props.log.method}\`
-Event: \`${EVENT_TYPE[props.log.state]}\`
+Event: \`${EventType[props.log.state]}\`
 `;
     if (props.log.data) {
         text += `Data:
@@ -64,7 +64,7 @@ ${JSON.stringify(JSON.parse(props.log.data!), null, 2)}
         </td>
         <td class="break-all py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">{{ log.service }}/{{ log.method }}</td>
         <td class="py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">
-            {{ EVENT_TYPE[log.state] }}
+            {{ EventType[log.state] }}
         </td>
         <td class="py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0 max-w-3xl">
             <span v-if="!log.data">N/A</span>

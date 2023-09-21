@@ -36,12 +36,12 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *ListUserDocumentsRe
 			jet.OR(
 				jet.AND(
 					tDUserAccess.Access.IS_NOT_NULL(),
-					tDUserAccess.Access.GT_EQ(jet.Int32(int32(documents.ACCESS_LEVEL_VIEW))),
+					tDUserAccess.Access.GT_EQ(jet.Int32(int32(documents.AccessLevel_ACCESS_LEVEL_VIEW))),
 				),
 				jet.AND(
 					tDUserAccess.Access.IS_NULL(),
 					tDJobAccess.Access.IS_NOT_NULL(),
-					tDJobAccess.Access.GT_EQ(jet.Int32(int32(documents.ACCESS_LEVEL_VIEW))),
+					tDJobAccess.Access.GT_EQ(jet.Int32(int32(documents.AccessLevel_ACCESS_LEVEL_VIEW))),
 				),
 			),
 		),
@@ -206,7 +206,7 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *ListUserDocumentsRe
 	return resp, nil
 }
 
-func (s *Server) addUserActivity(ctx context.Context, tx *sql.Tx, userId int32, targetUserId int32, activityType users.USER_ACTIVITY_TYPE, key string, oldValue string, newValue string, reason string) error {
+func (s *Server) addUserActivity(ctx context.Context, tx *sql.Tx, userId int32, targetUserId int32, activityType users.UserActivityType, key string, oldValue string, newValue string, reason string) error {
 	reasonField := jet.NULL
 	if reason != "" {
 		reasonField = jet.String(reason)

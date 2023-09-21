@@ -28,12 +28,12 @@ import { useCompletorStore } from '~/store/completor';
 import { useDocumentEditorStore } from '~/store/documenteditor';
 import { useNotificatorStore } from '~/store/notificator';
 import { TranslateItem } from '~~/gen/ts/resources/common/i18n';
-import { ACCESS_LEVEL } from '~~/gen/ts/resources/documents/access';
+import { AccessLevel } from '~~/gen/ts/resources/documents/access';
 import { Category } from '~~/gen/ts/resources/documents/category';
 import {
-    DOC_CONTENT_TYPE,
-    DOC_REFERENCE,
-    DOC_RELATION,
+    DocContentType,
+    DocReference,
+    DocRelation,
     DocumentAccess,
     DocumentReference,
     DocumentRelation,
@@ -90,7 +90,7 @@ const access = ref<
             values: {
                 job?: string;
                 char?: number;
-                accessRole?: ACCESS_LEVEL;
+                accessRole?: AccessLevel;
                 minimumGrade?: number;
             };
         }
@@ -337,7 +337,7 @@ onMounted(async () => {
             values: {
                 job: activeChar.value?.job,
                 minimumGrade: 1,
-                accessRole: ACCESS_LEVEL.EDIT,
+                accessRole: AccessLevel.EDIT,
             },
         });
     }
@@ -351,7 +351,7 @@ onMounted(async () => {
             targetDocument: getDocument(doc),
             creatorId: activeChar.value!.userId,
             creator: activeChar.value!,
-            reference: DOC_REFERENCE.SOLVES,
+            reference: DocReference.SOLVES,
         });
     });
     clipboardStore.activeStack.users.forEach((user, i) => {
@@ -363,7 +363,7 @@ onMounted(async () => {
             targetUser: getUser(user),
             sourceUserId: activeChar.value!.userId,
             sourceUser: activeChar.value!,
-            relation: DOC_RELATION.CAUSED,
+            relation: DocRelation.CAUSED,
         });
     });
 
@@ -468,7 +468,7 @@ function updateAccessEntryRank(event: { id: bigint; rank: JobGrade }): void {
     access.value.set(event.id, accessEntry);
 }
 
-function updateAccessEntryAccess(event: { id: bigint; access: ACCESS_LEVEL }): void {
+function updateAccessEntryAccess(event: { id: bigint; access: AccessLevel }): void {
     const accessEntry = access.value.get(event.id);
     if (!accessEntry) return;
 
@@ -482,7 +482,7 @@ async function createDocument(values: FormData, content: string, closed: boolean
         const req: CreateDocumentRequest = {
             title: values.title,
             content: content,
-            contentType: DOC_CONTENT_TYPE.HTML,
+            contentType: DocContentType.HTML,
             closed: closed,
             state: values.state,
             public: doc.value.public,
@@ -571,7 +571,7 @@ async function updateDocument(id: bigint, values: FormData, content: string, clo
             documentId: id,
             title: values.title,
             content: content,
-            contentType: DOC_CONTENT_TYPE.HTML,
+            contentType: DocContentType.HTML,
             closed: closed,
             state: values.state,
             public: doc.value.public,

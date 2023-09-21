@@ -8,9 +8,9 @@ import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import Time from '~/components/partials/elements/Time.vue';
 import { useCentrumStore } from '~/store/centrum';
-import { DISPATCH_STATUS, Dispatch } from '~~/gen/ts/resources/dispatch/dispatches';
+import { Dispatch, StatusDispatch } from '~~/gen/ts/resources/dispatch/dispatches';
 import { Settings } from '~~/gen/ts/resources/dispatch/settings';
-import { TAKE_DISPATCH_RESP } from '~~/gen/ts/services/centrum/centrum';
+import { TakeDispatchResp } from '~~/gen/ts/services/centrum/centrum';
 import AssignDispatchModal from './AssignDispatchModal.vue';
 import Feed from './Feed.vue';
 import StatusUpdateModal from './StatusUpdateModal.vue';
@@ -36,7 +36,7 @@ async function selfAssign(id: bigint): Promise<void> {
         try {
             const call = $grpc.getCentrumClient().takeDispatch({
                 dispatchIds: [id],
-                resp: TAKE_DISPATCH_RESP.ACCEPTED,
+                resp: TakeDispatchResp.ACCEPTED,
             });
             await call;
 
@@ -203,8 +203,8 @@ const openStatus = ref(false);
                                                                 >
                                                                     {{
                                                                         $t(
-                                                                            `enums.centrum.DISPATCH_STATUS.${
-                                                                                DISPATCH_STATUS[
+                                                                            `enums.centrum.StatusDispatch.${
+                                                                                StatusDispatch[
                                                                                     dispatch.status?.status ?? (0 as number)
                                                                                 ]
                                                                             }`,

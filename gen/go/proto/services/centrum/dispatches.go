@@ -36,7 +36,7 @@ func (s *Server) ListDispatches(ctx context.Context, req *ListDispatchesRequest)
 		Method:  "ListDispatches",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EVENT_TYPE_ERRORED),
+		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
 	defer s.auditer.Log(auditEntry, req)
 
@@ -96,7 +96,7 @@ func (s *Server) ListDispatches(ctx context.Context, req *ListDispatchesRequest)
 		}
 	}
 
-	auditEntry.State = int16(rector.EVENT_TYPE_VIEWED)
+	auditEntry.State = int16(rector.EventType_EVENT_TYPE_VIEWED)
 
 	return resp, nil
 }
@@ -109,7 +109,7 @@ func (s *Server) CreateDispatch(ctx context.Context, req *CreateDispatchRequest)
 		Method:  "CreateDispatch",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EVENT_TYPE_ERRORED),
+		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
 	defer s.auditer.Log(auditEntry, req)
 
@@ -121,7 +121,7 @@ func (s *Server) CreateDispatch(ctx context.Context, req *CreateDispatchRequest)
 		return nil, err
 	}
 
-	auditEntry.State = int16(rector.EVENT_TYPE_CREATED)
+	auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
 
 	return &CreateDispatchResponse{
 		Dispatch: dsp,
@@ -180,7 +180,7 @@ func (s *Server) createDispatch(ctx context.Context, d *dispatch.Dispatch) (*dis
 	if err := s.addDispatchStatus(ctx, tx, &dispatch.DispatchStatus{
 		DispatchId: uint64(lastId),
 		UserId:     d.UserId,
-		Status:     dispatch.DISPATCH_STATUS_NEW,
+		Status:     dispatch.StatusDispatch_STATUS_DISPATCH_NEW,
 		X:          &d.X,
 		Y:          &d.Y,
 		Postal:     d.Postal,
@@ -225,7 +225,7 @@ func (s *Server) UpdateDispatch(ctx context.Context, req *UpdateDispatchRequest)
 		Method:  "UpdateDispatch",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EVENT_TYPE_ERRORED),
+		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
 	defer s.auditer.Log(auditEntry, req)
 
@@ -280,7 +280,7 @@ func (s *Server) UpdateDispatch(ctx context.Context, req *UpdateDispatchRequest)
 		s.events.JS.PublishAsync(s.buildSubject(TopicDispatch, TypeDispatchUpdated, userInfo.Job, unit.UnitId), data)
 	}
 
-	auditEntry.State = int16(rector.EVENT_TYPE_UPDATED)
+	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 
 	return &UpdateDispatchResponse{}, nil
 }
@@ -293,7 +293,7 @@ func (s *Server) TakeDispatch(ctx context.Context, req *TakeDispatchRequest) (*T
 		Method:  "TakeDispatch",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EVENT_TYPE_ERRORED),
+		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
 	defer s.auditer.Log(auditEntry, req)
 
@@ -315,7 +315,7 @@ func (s *Server) TakeDispatch(ctx context.Context, req *TakeDispatchRequest) (*T
 		}
 
 		// If the dispatch center is in central command mode, units can't self assign dispatches
-		if settings.Mode == dispatch.CENTRUM_MODE_CENTRAL_COMMAND {
+		if settings.Mode == dispatch.CentrumMode_CENTRUM_MODE_CENTRAL_COMMAND {
 			if !utils.InSliceFunc(dsp.Units, func(in *dispatch.DispatchAssignment) bool {
 				return in.UnitId == unitId
 			}) {
@@ -377,7 +377,7 @@ func (s *Server) TakeDispatch(ctx context.Context, req *TakeDispatchRequest) (*T
 
 		if err := s.updateDispatchStatus(ctx, userInfo.Job, dsp, &dispatch.DispatchStatus{
 			DispatchId: dispatchId,
-			Status:     dispatch.DISPATCH_STATUS_UNIT_ASSIGNED,
+			Status:     dispatch.StatusDispatch_STATUS_DISPATCH_UNIT_ASSIGNED,
 			UnitId:     &unitId,
 			UserId:     &userInfo.UserId,
 			X:          x,
@@ -388,7 +388,7 @@ func (s *Server) TakeDispatch(ctx context.Context, req *TakeDispatchRequest) (*T
 		}
 	}
 
-	auditEntry.State = int16(rector.EVENT_TYPE_UPDATED)
+	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 
 	return &TakeDispatchResponse{}, nil
 }
@@ -401,7 +401,7 @@ func (s *Server) UpdateDispatchStatus(ctx context.Context, req *UpdateDispatchSt
 		Method:  "UpdateDispatchStatus",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EVENT_TYPE_ERRORED),
+		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
 	defer s.auditer.Log(auditEntry, req)
 
@@ -447,7 +447,7 @@ func (s *Server) UpdateDispatchStatus(ctx context.Context, req *UpdateDispatchSt
 		return nil, err
 	}
 
-	auditEntry.State = int16(rector.EVENT_TYPE_UPDATED)
+	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 
 	return &UpdateDispatchStatusResponse{}, nil
 }
@@ -460,7 +460,7 @@ func (s *Server) AssignDispatch(ctx context.Context, req *AssignDispatchRequest)
 		Method:  "AssignDispatch",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EVENT_TYPE_ERRORED),
+		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
 	defer s.auditer.Log(auditEntry, req)
 
@@ -477,7 +477,7 @@ func (s *Server) AssignDispatch(ctx context.Context, req *AssignDispatchRequest)
 		return nil, err
 	}
 
-	auditEntry.State = int16(rector.EVENT_TYPE_UPDATED)
+	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 
 	return &AssignDispatchResponse{}, nil
 }
@@ -561,7 +561,7 @@ func (s *Server) DeleteDispatch(ctx context.Context, req *DeleteDispatchRequest)
 		Method:  "DeleteDispatch",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EVENT_TYPE_ERRORED),
+		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
 	defer s.auditer.Log(auditEntry, req)
 
@@ -588,7 +588,7 @@ func (s *Server) DeleteDispatch(ctx context.Context, req *DeleteDispatchRequest)
 	}
 	s.events.JS.PublishAsync(s.buildSubject(TopicDispatch, TypeDispatchDeleted, dsp.Job, 0), data)
 
-	auditEntry.State = int16(rector.EVENT_TYPE_DELETED)
+	auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)
 
 	return &DeleteDispatchResponse{}, nil
 }

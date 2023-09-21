@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { GroupIcon, LocationEnterIcon, LocationExitIcon } from 'mdi-vue3';
-import { CENTRUM_MODE, Settings } from '~~/gen/ts/resources/dispatch/settings';
+import { CentrumMode, Settings } from '~~/gen/ts/resources/dispatch/settings';
 import { UserShort } from '~~/gen/ts/resources/users/users';
 
 const props = defineProps<{
@@ -115,7 +115,7 @@ const disponentsNames = computed(() => {
                                 <span
                                     class="inline-flex items-center rounded-md bg-gray-400/10 px-2 py-1 text-xs font-medium text-gray-400 ring-1 ring-inset ring-gray-400/20"
                                 >
-                                    {{ CENTRUM_MODE[settings.mode ?? 0] }}
+                                    {{ CentrumMode[settings.mode ?? 0] }}
                                 </span>
                             </p>
                         </div>

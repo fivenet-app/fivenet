@@ -29,7 +29,7 @@ import { DefineComponent } from 'vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import { useAuthStore } from '~/store/auth';
 import { getUser, useClipboardStore } from '~/store/clipboard';
-import { DOC_RELATION, DocumentRelation } from '~~/gen/ts/resources/documents/documents';
+import { DocRelation, DocumentRelation } from '~~/gen/ts/resources/documents/documents';
 import { User } from '~~/gen/ts/resources/users/users';
 
 const { $grpc } = useNuxtApp();
@@ -242,8 +242,8 @@ function removeRelation(id: bigint): void {
                                                                     <td class="px-3 py-4 text-sm whitespace-nowrap">
                                                                         {{
                                                                             $t(
-                                                                                `enums.docstore.DOC_RELATION.${
-                                                                                    DOC_RELATION[rel.relation]
+                                                                                `enums.docstore.DocRelation.${
+                                                                                    DocRelation[rel.relation]
                                                                                 }`,
                                                                             )
                                                                         }}

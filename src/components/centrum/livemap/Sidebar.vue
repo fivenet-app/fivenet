@@ -24,9 +24,9 @@ import { default as UnitDetails } from '~/components/centrum/units/Details.vue';
 import { default as UnitStatusUpdateModal } from '~/components/centrum/units/StatusUpdateModal.vue';
 import { useCentrumStore } from '~/store/centrum';
 import { useNotificatorStore } from '~/store/notificator';
-import { DISPATCH_STATUS } from '~~/gen/ts/resources/dispatch/dispatches';
-import { CENTRUM_MODE } from '~~/gen/ts/resources/dispatch/settings';
-import { UNIT_STATUS, Unit } from '~~/gen/ts/resources/dispatch/units';
+import { StatusDispatch } from '~~/gen/ts/resources/dispatch/dispatches';
+import { CentrumMode } from '~~/gen/ts/resources/dispatch/settings';
+import { StatusUnit, Unit } from '~~/gen/ts/resources/dispatch/units';
 import DispatchEntry from './DispatchEntry.vue';
 import DispatchesLayer from './DispatchesLayer.vue';
 import JoinUnit from './JoinUnitModal.vue';
@@ -49,12 +49,12 @@ const actionsUnit: {
     name: string;
     action?: Function;
     class?: string;
-    status?: UNIT_STATUS;
+    status?: StatusUnit;
 }[] = [
-    { icon: markRaw(CarBackIcon), name: 'Unavailable', status: UNIT_STATUS.UNAVAILABLE },
-    { icon: markRaw(CalendarCheckIcon), name: 'Available', status: UNIT_STATUS.AVAILABLE },
-    { icon: markRaw(CoffeeIcon), name: 'On Break', status: UNIT_STATUS.ON_BREAK },
-    { icon: markRaw(CalendarRemoveIcon), name: 'Busy', status: UNIT_STATUS.BUSY },
+    { icon: markRaw(CarBackIcon), name: 'Unavailable', status: StatusUnit.UNAVAILABLE },
+    { icon: markRaw(CalendarCheckIcon), name: 'Available', status: StatusUnit.AVAILABLE },
+    { icon: markRaw(CoffeeIcon), name: 'On Break', status: StatusUnit.ON_BREAK },
+    { icon: markRaw(CalendarRemoveIcon), name: 'Busy', status: StatusUnit.BUSY },
     { icon: markRaw(ListStatusIcon), name: 'components.centrum.update_unit_status.title', class: 'bg-base-800' },
 ];
 
@@ -63,12 +63,12 @@ const actionsDispatch: {
     name: string;
     action?: Function;
     class?: string;
-    status?: DISPATCH_STATUS;
+    status?: StatusDispatch;
 }[] = [
-    { icon: markRaw(CarBackIcon), name: 'En Route', status: DISPATCH_STATUS.EN_ROUTE },
-    { icon: markRaw(MarkerCheckIcon), name: 'On Scene', status: DISPATCH_STATUS.ON_SCENE },
-    { icon: markRaw(HelpCircleIcon), name: 'Need Assistance', status: DISPATCH_STATUS.NEED_ASSISTANCE },
-    { icon: markRaw(CheckBoldIcon), name: 'Completed', status: DISPATCH_STATUS.COMPLETED },
+    { icon: markRaw(CarBackIcon), name: 'En Route', status: StatusDispatch.EN_ROUTE },
+    { icon: markRaw(MarkerCheckIcon), name: 'On Scene', status: StatusDispatch.ON_SCENE },
+    { icon: markRaw(HelpCircleIcon), name: 'Need Assistance', status: StatusDispatch.NEED_ASSISTANCE },
+    { icon: markRaw(CheckBoldIcon), name: 'Completed', status: StatusDispatch.COMPLETED },
     { icon: markRaw(ListStatusIcon), name: 'components.centrum.update_dispatch_status.title', class: 'bg-base-800' },
 ];
 
@@ -83,7 +83,7 @@ const openTakeDispatch = ref(false);
 const openUnitDetails = ref(false);
 const openUnitStatus = ref(false);
 
-async function updateDispatchStatus(dispatchId: bigint, status: DISPATCH_STATUS): Promise<void> {
+async function updateDispatchStatus(dispatchId: bigint, status: StatusDispatch): Promise<void> {
     return new Promise(async (res, rej) => {
         try {
             const call = $grpc.getCentrumClient().updateDispatchStatus({
@@ -100,7 +100,7 @@ async function updateDispatchStatus(dispatchId: bigint, status: DISPATCH_STATUS)
     });
 }
 
-async function updateDspStatus(dispatchId?: bigint, status?: DISPATCH_STATUS): Promise<void> {
+async function updateDspStatus(dispatchId?: bigint, status?: StatusDispatch): Promise<void> {
     if (!dispatchId) {
         notifications.dispatchNotification({
             title: { key: 'notifications.centrum.sidebar.no_dispatch_selected.title', parameters: [] },
@@ -123,7 +123,7 @@ async function updateDspStatus(dispatchId?: bigint, status?: DISPATCH_STATUS): P
     });
 }
 
-async function updateUnitStatus(id: bigint, status: UNIT_STATUS): Promise<void> {
+async function updateUnitStatus(id: bigint, status: StatusUnit): Promise<void> {
     return new Promise(async (res, rej) => {
         try {
             const call = $grpc.getCentrumClient().updateUnitStatus({
@@ -140,7 +140,7 @@ async function updateUnitStatus(id: bigint, status: UNIT_STATUS): Promise<void> 
     });
 }
 
-async function updateUtStatus(id: bigint, status?: UNIT_STATUS): Promise<void> {
+async function updateUtStatus(id: bigint, status?: StatusUnit): Promise<void> {
     if (status === undefined) {
         openUnitStatus.value = true;
         return;
@@ -179,7 +179,7 @@ const open = ref(false);
 <template>
     <Livemap>
         <template v-slot:default v-if="canStream">
-            <DispatchesLayer :show-all-dispatches="settings.mode === CENTRUM_MODE.SIMPLIFIED" @goto="$emit('goto', $event)" />
+            <DispatchesLayer :show-all-dispatches="settings.mode === CentrumMode.SIMPLIFIED" @goto="$emit('goto', $event)" />
             <LControl position="bottomright">
                 <button
                     type="button"
@@ -219,8 +219,8 @@ const open = ref(false);
                                                 <span class="mt-2 truncate">
                                                     {{
                                                         $t(
-                                                            `enums.centrum.UNIT_STATUS.${
-                                                                UNIT_STATUS[ownUnit.status?.status ?? (0 as number)]
+                                                            `enums.centrum.StatusUnit.${
+                                                                StatusUnit[ownUnit.status?.status ?? (0 as number)]
                                                             }`,
                                                         )
                                                     }}
@@ -299,8 +299,8 @@ const open = ref(false);
                                                                     {{
                                                                         item.status
                                                                             ? $t(
-                                                                                  `enums.centrum.UNIT_STATUS.${
-                                                                                      UNIT_STATUS[item.status ?? (0 as number)]
+                                                                                  `enums.centrum.StatusUnit.${
+                                                                                      StatusUnit[item.status ?? (0 as number)]
                                                                                   }`,
                                                                               )
                                                                             : $t(item.name)
@@ -342,8 +342,8 @@ const open = ref(false);
                                                         {{
                                                             item.status
                                                                 ? $t(
-                                                                      `enums.centrum.DISPATCH_STATUS.${
-                                                                          DISPATCH_STATUS[item.status ?? (0 as number)]
+                                                                      `enums.centrum.StatusDispatch.${
+                                                                          StatusDispatch[item.status ?? (0 as number)]
                                                                       }`,
                                                                   )
                                                                 : $t(item.name)

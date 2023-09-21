@@ -10,9 +10,10 @@ import "validate/validate.proto";
 
 option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/documents;documents";
 
-enum DOC_CONTENT_TYPE {
-  HTML = 0;
-  PLAIN = 1;
+enum DocContentType {
+  DOC_CONTENT_TYPE_UNSPECIFIED = 0;
+  DOC_CONTENT_TYPE_HTML = 1;
+  DOC_CONTENT_TYPE_PLAIN = 2;
 }
 
 message Document {
@@ -26,7 +27,7 @@ message Document {
     min_len: 3,
     max_bytes: 21845
   }]; // @gotags: alias:"title"
-  DOC_CONTENT_TYPE content_type = 7 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"content_type"
+  DocContentType content_type = 7 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"content_type"
   // @sanitize
   string content = 8 [(validate.rules).string = {
     min_len: 20,
@@ -51,7 +52,7 @@ message DocumentShort {
   optional resources.documents.Category category = 5; // @gotags: alias:"category"
   // @sanitize
   string title = 6 [(validate.rules).string.min_len = 3]; // @gotags: alias:"title"
-  DOC_CONTENT_TYPE content_type = 7 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"content_type"
+  DocContentType content_type = 7 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"content_type"
   // @sanitize
   string content = 8 [(validate.rules).string = {max_bytes: 1024}]; // @gotags: alias:"content"
   optional int32 creator_id = 9; // @gotags: alias:"creator_id"
@@ -77,7 +78,7 @@ message DocumentJobAccess {
   optional string job_label = 6 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job_label"
   int32 minimum_grade = 7 [(validate.rules).int32.gt = 0]; // @gotags: alias:"minimum_grade"
   optional string job_grade_label = 8 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job_grade_label"
-  resources.documents.ACCESS_LEVEL access = 9 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"access"
+  resources.documents.AccessLevel access = 9 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"access"
 }
 
 message DocumentUserAccess {
@@ -87,14 +88,14 @@ message DocumentUserAccess {
   uint64 document_id = 4; // @gotags: alias:"document_id"
   int32 user_id = 5 [(validate.rules).int32.gt = 0];
   optional resources.users.UserShort user = 6;
-  resources.documents.ACCESS_LEVEL access = 7 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"access"
+  resources.documents.AccessLevel access = 7 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"access"
 }
 
-enum DOC_REFERENCE {
-  LINKED = 0;
-  SOLVES = 1;
-  CLOSES = 2;
-  DEPRECATES = 3;
+enum DocReference {
+  DOC_REFERENCE_LINKED = 0;
+  DOC_REFERENCE_SOLVES = 1;
+  DOC_REFERENCE_CLOSES = 2;
+  DOC_REFERENCE_DEPRECATES = 3;
 }
 
 message DocumentReference {
@@ -102,17 +103,17 @@ message DocumentReference {
   optional resources.timestamp.Timestamp created_at = 2;
   uint64 source_document_id = 3; // @gotags: alias:"source_document_id"
   optional resources.documents.DocumentShort source_document = 4; // @gotags: alias:"source_document"
-  DOC_REFERENCE reference = 5 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"reference"
+  DocReference reference = 5 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"reference"
   uint64 target_document_id = 6; // @gotags: alias:"target_document_id"
   optional resources.documents.DocumentShort target_document = 7; // @gotags: alias:"target_document"
   optional int32 creator_id = 8; // @gotags: alias:"creator_id"
   optional resources.users.UserShort creator = 9; // @gotags: alias:"ref_creator"
 }
 
-enum DOC_RELATION {
-  MENTIONED = 0;
-  TARGETS = 1;
-  CAUSED = 2;
+enum DocRelation {
+  DOC_RELATION_MENTIONED = 0;
+  DOC_RELATION_TARGETS = 1;
+  DOC_RELATION_CAUSED = 2;
 }
 
 message DocumentRelation {
@@ -122,7 +123,7 @@ message DocumentRelation {
   optional resources.documents.DocumentShort document = 4; // @gotags: alias:"document"
   int32 source_user_id = 5 [(validate.rules).int32.gt = 0]; // @gotags: alias:"source_user_id"
   optional resources.users.UserShort source_user = 6; // @gotags: alias:"source_user"
-  DOC_RELATION relation = 7 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"relation"
+  DocRelation relation = 7 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"relation"
   int32 target_user_id = 8 [(validate.rules).int32.gt = 0]; // @gotags: alias:"target_user_id"
   optional resources.users.UserShort target_user = 9; // @gotags: alias:"target_user"
 }

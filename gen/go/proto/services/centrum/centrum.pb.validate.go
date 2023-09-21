@@ -36,7 +36,7 @@ var (
 	_ = anypb.Any{}
 	_ = sort.Sort
 
-	_ = dispatch.UNIT_STATUS(0)
+	_ = dispatch.StatusUnit(0)
 )
 
 // Validate checks the field values on ListDispatchActivityRequest with the
@@ -455,7 +455,7 @@ func (m *ListUnitsRequest) validate(all bool) error {
 	for idx, item := range m.GetStatus() {
 		_, _ = idx, item
 
-		if _, ok := dispatch.UNIT_STATUS_name[int32(item)]; !ok {
+		if _, ok := dispatch.StatusUnit_name[int32(item)]; !ok {
 			err := ListUnitsRequestValidationError{
 				field:  fmt.Sprintf("Status[%v]", idx),
 				reason: "value must be one of the defined enum values",
@@ -1189,7 +1189,7 @@ func (m *UpdateUnitStatusRequest) validate(all bool) error {
 
 	// no validation rules for UnitId
 
-	if _, ok := dispatch.UNIT_STATUS_name[int32(m.GetStatus())]; !ok {
+	if _, ok := dispatch.StatusUnit_name[int32(m.GetStatus())]; !ok {
 		err := UpdateUnitStatusRequestValidationError{
 			field:  "Status",
 			reason: "value must be one of the defined enum values",
@@ -2159,7 +2159,7 @@ func (m *ListDispatchesRequest) validate(all bool) error {
 	for idx, item := range m.GetStatus() {
 		_, _ = idx, item
 
-		if _, ok := dispatch.DISPATCH_STATUS_name[int32(item)]; !ok {
+		if _, ok := dispatch.StatusDispatch_name[int32(item)]; !ok {
 			err := ListDispatchesRequestValidationError{
 				field:  fmt.Sprintf("Status[%v]", idx),
 				reason: "value must be one of the defined enum values",
@@ -2175,7 +2175,7 @@ func (m *ListDispatchesRequest) validate(all bool) error {
 	for idx, item := range m.GetNotStatus() {
 		_, _ = idx, item
 
-		if _, ok := dispatch.DISPATCH_STATUS_name[int32(item)]; !ok {
+		if _, ok := dispatch.StatusDispatch_name[int32(item)]; !ok {
 			err := ListDispatchesRequestValidationError{
 				field:  fmt.Sprintf("NotStatus[%v]", idx),
 				reason: "value must be one of the defined enum values",
@@ -3164,7 +3164,7 @@ func (m *UpdateDispatchStatusRequest) validate(all bool) error {
 
 	// no validation rules for DispatchId
 
-	if _, ok := dispatch.DISPATCH_STATUS_name[int32(m.GetStatus())]; !ok {
+	if _, ok := dispatch.StatusDispatch_name[int32(m.GetStatus())]; !ok {
 		err := UpdateDispatchStatusRequestValidationError{
 			field:  "Status",
 			reason: "value must be one of the defined enum values",
@@ -4007,7 +4007,7 @@ func (m *TakeDispatchRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if _, ok := TAKE_DISPATCH_RESP_name[int32(m.GetResp())]; !ok {
+	if _, ok := TakeDispatchResp_name[int32(m.GetResp())]; !ok {
 		err := TakeDispatchRequestValidationError{
 			field:  "Resp",
 			reason: "value must be one of the defined enum values",

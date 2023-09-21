@@ -233,7 +233,7 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 		UserID:       userInfo.UserId,
 		UserJob:      userInfo.Job,
 		TargetUserID: &req.UserId,
-		State:        int16(rector.EVENT_TYPE_ERRORED),
+		State:        int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
 	defer s.aud.Log(auditEntry, req)
 
@@ -366,7 +366,7 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 		}
 	}
 
-	auditEntry.State = int16(rector.EVENT_TYPE_VIEWED)
+	auditEntry.State = int16(rector.EventType_EVENT_TYPE_VIEWED)
 
 	return resp, nil
 }
@@ -486,7 +486,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 		UserID:       userInfo.UserId,
 		UserJob:      userInfo.Job,
 		TargetUserID: &req.Props.UserId,
-		State:        int16(rector.EVENT_TYPE_ERRORED),
+		State:        int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
 	defer s.aud.Log(auditEntry, req)
 
@@ -610,21 +610,21 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 	// Create user activity entries
 	if *req.Props.Wanted != *props.Wanted {
 		if err := s.addUserActivity(ctx, tx,
-			userInfo.UserId, req.Props.UserId, users.USER_ACTIVITY_TYPE_CHANGED, "UserProps.Wanted",
+			userInfo.UserId, req.Props.UserId, users.UserActivityType_USER_ACTIVITY_TYPE_CHANGED, "UserProps.Wanted",
 			strconv.FormatBool(*props.Wanted), strconv.FormatBool(*req.Props.Wanted), req.Reason); err != nil {
 			return nil, ErrFailedQuery
 		}
 	}
 	if *req.Props.JobName != *props.JobName || *req.Props.JobGradeNumber != *props.JobGradeNumber {
 		if err := s.addUserActivity(ctx, tx,
-			userInfo.UserId, req.Props.UserId, users.USER_ACTIVITY_TYPE_CHANGED, "UserProps.Job",
+			userInfo.UserId, req.Props.UserId, users.UserActivityType_USER_ACTIVITY_TYPE_CHANGED, "UserProps.Job",
 			fmt.Sprintf("%s|%s", props.Job.Label, props.JobGrade.Label), fmt.Sprintf("%s|%s", req.Props.Job.Label, req.Props.JobGrade.Label), req.Reason); err != nil {
 			return nil, ErrFailedQuery
 		}
 	}
 	if *req.Props.TrafficInfractionPoints != *props.TrafficInfractionPoints {
 		if err := s.addUserActivity(ctx, tx,
-			userInfo.UserId, req.Props.UserId, users.USER_ACTIVITY_TYPE_CHANGED, "UserProps.TrafficInfractionPoints",
+			userInfo.UserId, req.Props.UserId, users.UserActivityType_USER_ACTIVITY_TYPE_CHANGED, "UserProps.TrafficInfractionPoints",
 			strconv.Itoa(int(*props.TrafficInfractionPoints)), strconv.Itoa(int(*req.Props.TrafficInfractionPoints)), req.Reason); err != nil {
 			return nil, ErrFailedQuery
 		}
@@ -639,7 +639,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 	resp.Props = req.Props
 	resp.Props.Job, resp.Props.JobGrade = s.enricher.GetJobGrade(*resp.Props.JobName, *resp.Props.JobGradeNumber)
 
-	auditEntry.State = int16(rector.EVENT_TYPE_UPDATED)
+	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 
 	return resp, nil
 }
@@ -671,7 +671,7 @@ func (s *Server) getUserProps(ctx context.Context, userId int32) (*users.UserPro
 	return &dest, nil
 }
 
-func (s *Server) addUserActivity(ctx context.Context, tx *sql.Tx, userId int32, targetUserId int32, activityType users.USER_ACTIVITY_TYPE, key string, oldValue string, newValue string, reason string) error {
+func (s *Server) addUserActivity(ctx context.Context, tx *sql.Tx, userId int32, targetUserId int32, activityType users.UserActivityType, key string, oldValue string, newValue string, reason string) error {
 	stmt := tUserActivity.
 		INSERT(
 			tUserActivity.SourceUserID,

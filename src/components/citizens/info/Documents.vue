@@ -8,7 +8,7 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import TablePagination from '~/components/partials/elements/TablePagination.vue';
 import Time from '~/components/partials/elements/Time.vue';
 import { PaginationResponse } from '~~/gen/ts/resources/common/database/database';
-import { DOC_RELATION, DocumentRelation } from '~~/gen/ts/resources/documents/documents';
+import { DocRelation, DocumentRelation } from '~~/gen/ts/resources/documents/documents';
 
 const { $grpc } = useNuxtApp();
 
@@ -126,7 +126,7 @@ watch(offset, async () => refresh());
                                             </NuxtLink>
                                         </span>
                                         <span class="font-medium">
-                                            {{ $t(`enums.docstore.DOC_RELATION.${DOC_RELATION[relation.relation]}`) }}
+                                            {{ $t(`enums.docstore.DocRelation.${DocRelation[relation.relation]}`) }}
                                         </span>
                                         <span class="truncate">
                                             {{ relation.sourceUser?.firstname }},
@@ -211,7 +211,7 @@ watch(offset, async () => refresh());
                                         </td>
                                         <td class="px-6 py-4 text-sm text-right whitespace-nowrap">
                                             <span class="font-medium">
-                                                {{ $t(`enums.docstore.DOC_RELATION.${DOC_RELATION[relation.relation]}`) }}
+                                                {{ $t(`enums.docstore.DocRelation.${DocRelation[relation.relation]}`) }}
                                             </span>
                                         </td>
                                         <td class="px-6 py-4 text-sm text-right whitespace-nowrap">

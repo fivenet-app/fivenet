@@ -194,7 +194,7 @@ func (s *Server) TakeControl(ctx context.Context, req *TakeControlRequest) (*Tak
 		Method:  "TakeControl",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EVENT_TYPE_ERRORED),
+		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
 	defer s.auditer.Log(auditEntry, req)
 
@@ -203,12 +203,12 @@ func (s *Server) TakeControl(ctx context.Context, req *TakeControlRequest) (*Tak
 	}
 
 	if req.Signon {
-		auditEntry.State = int16(rector.EVENT_TYPE_CREATED)
+		auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
 	} else {
-		auditEntry.State = int16(rector.EVENT_TYPE_DELETED)
+		auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)
 	}
 
-	auditEntry.State = int16(rector.EVENT_TYPE_UPDATED)
+	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 
 	return &TakeControlResponse{}, nil
 }
@@ -228,10 +228,10 @@ func (s *Server) sendLatestState(srv CentrumService_StreamServer, job string, us
 	ownUnit, _ := s.getUnit(job, unitId)
 
 	dispatches, err := s.ListDispatches(srv.Context(), &ListDispatchesRequest{
-		NotStatus: []dispatch.DISPATCH_STATUS{
-			dispatch.DISPATCH_STATUS_ARCHIVED,
-			dispatch.DISPATCH_STATUS_CANCELLED,
-			dispatch.DISPATCH_STATUS_COMPLETED,
+		NotStatus: []dispatch.StatusDispatch{
+			dispatch.StatusDispatch_STATUS_DISPATCH_ARCHIVED,
+			dispatch.StatusDispatch_STATUS_DISPATCH_CANCELLED,
+			dispatch.StatusDispatch_STATUS_DISPATCH_COMPLETED,
 		},
 	})
 	if err != nil {

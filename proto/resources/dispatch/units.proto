@@ -45,21 +45,22 @@ message UnitAssignment {
   optional resources.users.UserShort user = 3;
 }
 
-enum UNIT_STATUS {
-  UNKNOWN = 0;
-  USER_ADDED = 1;
-  USER_REMOVED = 2;
-  UNAVAILABLE = 3;
-  AVAILABLE = 4;
-  ON_BREAK = 5;
-  BUSY = 6;
+enum StatusUnit {
+  STATUS_UNIT_UNSPECIFIED = 0;
+  STATUS_UNIT_UNKNOWN = 1;
+  STATUS_UNIT_USER_ADDED = 2;
+  STATUS_UNIT_USER_REMOVED = 3;
+  STATUS_UNIT_UNAVAILABLE = 4;
+  STATUS_UNIT_AVAILABLE = 5;
+  STATUS_UNIT_ON_BREAK = 6;
+  STATUS_UNIT_BUSY = 7;
 }
 
 message UnitStatus {
   uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
   optional resources.timestamp.Timestamp created_at = 2;
   uint64 unit_id = 3;
-  UNIT_STATUS status = 4 [(validate.rules).enum.defined_only = true];
+  StatusUnit status = 4 [(validate.rules).enum.defined_only = true];
   // @sanitize
   optional string reason = 5 [(validate.rules).string.max_len = 255];
   // @sanitize

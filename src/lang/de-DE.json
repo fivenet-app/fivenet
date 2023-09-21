@@ -900,32 +900,32 @@
     },
     "enums": {
         "docstore": {
-            "ACCESS_LEVEL": {
+            "AccessLevel": {
                 "BLOCKED": "Blockiert",
                 "VIEW": "Ansehen",
                 "COMMENT": "Kommentieren",
                 "ACCESS": "Zugriffsmanagement",
                 "EDIT": "Editieren"
             },
-            "DOC_REFERENCE": {
+            "DocReference": {
                 "LINKED": "verlinkt",
                 "SOLVES": "löst",
                 "CLOSES": "schließt",
                 "DEPRECATES": "veraltet"
             },
-            "DOC_RELATION": {
+            "DocRelation": {
                 "MENTIONED": "erwähnt",
                 "TARGETS": "zielt auf",
                 "CAUSED": "verursacht"
             }
         },
         "centrum": {
-            "CENTRUM_MODE": {
+            "CentrumMode": {
                 "MANUAL": "Manuell",
                 "CENTRAL_COMMAND": "Zentrale Stelle",
                 "AUTO_ROUND_ROBIN": "Automatisch: Round Robin"
             },
-            "DISPATCH_STATUS": {
+            "StatusDispatch": {
                 "NEW": "Neu",
                 "UNASSIGNED": "Nicht zugewiesen",
                 "UPDATED": "Aktualisiert",
@@ -937,7 +937,7 @@
                 "COMPLETED": "Abgeschlossen",
                 "CANCELLED": "Abgebrochen"
             },
-            "UNIT_STATUS": {
+            "StatusUnit": {
                 "UNKNOWN": "Unbekannt",
                 "USER_ADDED": "Mitglied hinzugefügt",
                 "USER_REMOVED": "Mitglied entfernt",
@@ -948,14 +948,14 @@
             }
         },
         "livemap": {
-            "MARKER_TYPE": {
+            "MarkerType": {
                 "DOT": "Punkt",
                 "CIRCLE": "Kreis",
                 "POLYGON": "Polygon"
             }
         },
         "jobs": {
-            "CONDUCT_TYPE": {
+            "ConductType": {
                 "NEUTRAL": "Neutral",
                 "POSITIVE": "Positiv",
                 "NEGATIVE": "Negativ",

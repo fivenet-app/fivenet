@@ -67,7 +67,7 @@ func (s *Server) CreateOrUpdateMarker(ctx context.Context, req *CreateOrUpdateMa
 		Method:  "CreateOrUpdateMarker",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EVENT_TYPE_ERRORED),
+		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
 	defer s.auditer.Log(auditEntry, req)
 
@@ -109,7 +109,7 @@ func (s *Server) CreateOrUpdateMarker(ctx context.Context, req *CreateOrUpdateMa
 
 		req.Marker.Info.Id = uint64(lastId)
 
-		auditEntry.State = int16(rector.EVENT_TYPE_CREATED)
+		auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
 	} else {
 		fieldsAttr, err := s.ps.Attr(userInfo, LivemapperServicePerm, LivemapperServiceCreateOrUpdateMarkerPerm, LivemapperServiceCreateOrUpdateMarkerAccessPermField)
 		if err != nil {
@@ -163,7 +163,7 @@ func (s *Server) CreateOrUpdateMarker(ctx context.Context, req *CreateOrUpdateMa
 			return nil, err
 		}
 
-		auditEntry.State = int16(rector.EVENT_TYPE_UPDATED)
+		auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 	}
 
 	marker, err := s.getMarker(ctx, req.Marker.Info.Id)
@@ -184,7 +184,7 @@ func (s *Server) DeleteMarker(ctx context.Context, req *DeleteMarkerRequest) (*D
 		Method:  "DeleteMarker",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EVENT_TYPE_ERRORED),
+		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
 	defer s.auditer.Log(auditEntry, req)
 

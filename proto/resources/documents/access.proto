@@ -4,10 +4,10 @@ package resources.documents;
 
 option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/documents;documents";
 
-enum ACCESS_LEVEL {
-  BLOCKED = 0;
-  VIEW = 1;
-  COMMENT = 2;
-  ACCESS = 3;
-  EDIT = 4;
+enum AccessLevel {
+  ACCESS_LEVEL_BLOCKED = 0;
+  ACCESS_LEVEL_VIEW = 1;
+  ACCESS_LEVEL_COMMENT = 2;
+  ACCESS_LEVEL_ACCESS = 3;
+  ACCESS_LEVEL_EDIT = 4;
 }

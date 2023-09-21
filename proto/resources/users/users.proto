@@ -75,15 +75,16 @@ message UserProps {
   optional int64 open_fines = 8;
 }
 
-enum USER_ACTIVITY_TYPE {
-  CHANGED = 0;
-  MENTIONED = 1;
-  CREATED = 2;
+enum UserActivityType {
+  USER_ACTIVITY_TYPE_UNSPECIFIED = 0;
+  USER_ACTIVITY_TYPE_CHANGED = 1;
+  USER_ACTIVITY_TYPE_MENTIONED = 2;
+  USER_ACTIVITY_TYPE_CREATED = 3;
 }
 
 message UserActivity {
   uint64 id = 1; // @gotags: alias:"fivenet_user_activity.id"
-  USER_ACTIVITY_TYPE type = 2 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"fivenet_user_activity.type"
+  UserActivityType type = 2 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"fivenet_user_activity.type"
   resources.timestamp.Timestamp created_at = 3; // @gotags: alias:"fivenet_user_activity.created_at"
   UserShort source_user = 4; // @gotags: alias:"source_user"
   UserShort target_user = 5; // @gotags: alias:"target_user"

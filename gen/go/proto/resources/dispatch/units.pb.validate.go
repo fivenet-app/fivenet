@@ -655,7 +655,7 @@ func (m *UnitStatus) validate(all bool) error {
 
 	// no validation rules for UnitId
 
-	if _, ok := UNIT_STATUS_name[int32(m.GetStatus())]; !ok {
+	if _, ok := StatusUnit_name[int32(m.GetStatus())]; !ok {
 		err := UnitStatusValidationError{
 			field:  "Status",
 			reason: "value must be one of the defined enum values",

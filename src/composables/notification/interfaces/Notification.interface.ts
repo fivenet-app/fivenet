@@ -1,5 +1,5 @@
 import { TranslateItem } from '~~/gen/ts/resources/common/i18n';
-import { Data, NOTIFICATION_CATEGORY } from '~~/gen/ts/resources/notifications/notifications';
+import { Data, NotificationCategory } from '~~/gen/ts/resources/notifications/notifications';
 
 export type NotificationType = 'success' | 'info' | 'warning' | 'error';
 
@@ -8,6 +8,6 @@ export interface Notification {
     title: TranslateItem;
     content: TranslateItem;
     type?: NotificationType;
-    category?: NOTIFICATION_CATEGORY;
+    category?: NotificationCategory;
     data?: Data;
 }

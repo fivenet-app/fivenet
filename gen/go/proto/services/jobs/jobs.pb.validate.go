@@ -36,7 +36,7 @@ var (
 	_ = anypb.Any{}
 	_ = sort.Sort
 
-	_ = jobs.CONDUCT_TYPE(0)
+	_ = jobs.ConductType(0)
 )
 
 // Validate checks the field values on ColleaguesListRequest with the rules

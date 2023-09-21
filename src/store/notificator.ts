@@ -3,7 +3,7 @@ import { StoreDefinition, defineStore } from 'pinia';
 import { v4 as uuidv4 } from 'uuid';
 import { Notification, NotificationType } from '~/composables/notification/interfaces/Notification.interface';
 import { NotificationConfig } from '~/composables/notification/interfaces/NotificationConfig.interface';
-import { NOTIFICATION_CATEGORY } from '~~/gen/ts/resources/notifications/notifications';
+import { NotificationCategory } from '~~/gen/ts/resources/notifications/notifications';
 import { useAuthStore } from './auth';
 
 // In seconds
@@ -42,7 +42,7 @@ export const useNotificatorStore = defineStore('notifications', {
             type,
             autoClose = true,
             duration = 6000,
-            category = NOTIFICATION_CATEGORY.GENERAL,
+            category = NotificationCategory.GENERAL,
             data = undefined,
         }: NotificationConfig) {
             const id = uuidv4();
@@ -122,7 +122,7 @@ export const useNotificatorStore = defineStore('notifications', {
                                 let nType: NotificationType = (n.type as NotificationType) ?? 'info';
 
                                 switch (n.category) {
-                                    case NOTIFICATION_CATEGORY.GENERAL:
+                                    case NotificationCategory.GENERAL:
                                         this.dispatchNotification({
                                             title: n.title!,
                                             content: n.content!,

@@ -25,9 +25,9 @@ export interface RequestEntry {
      */
     job: string;
     /**
-     * @generated from protobuf field: resources.jobs.REQUEST_TYPE type = 5;
+     * @generated from protobuf field: resources.jobs.RequestType type = 5;
      */
-    type: REQUEST_TYPE;
+    type: RequestType;
     /**
      * @sanitize
      *
@@ -68,13 +68,17 @@ export interface RequestEntry {
     approverUser?: UserShort; // @gotags: alias:"approver"
 }
 /**
- * @generated from protobuf enum resources.jobs.REQUEST_TYPE
+ * @generated from protobuf enum resources.jobs.RequestType
  */
-export enum REQUEST_TYPE {
+export enum RequestType {
     /**
-     * @generated from protobuf enum value: ABSENCE = 0;
+     * @generated from protobuf enum value: REQUEST_TYPE_UNSPECIFIED = 0;
      */
-    ABSENCE = 0
+    UNSPECIFIED = 0,
+    /**
+     * @generated from protobuf enum value: REQUEST_TYPE_ABSENCE = 1;
+     */
+    ABSENCE = 1
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class RequestEntry$Type extends MessageType<RequestEntry> {
@@ -84,7 +88,7 @@ class RequestEntry$Type extends MessageType<RequestEntry> {
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
-            { no: 5, name: "type", kind: "enum", T: () => ["resources.jobs.REQUEST_TYPE", REQUEST_TYPE], options: { "validate.rules": { enum: { definedOnly: true } } } },
+            { no: 5, name: "type", kind: "enum", T: () => ["resources.jobs.RequestType", RequestType, "REQUEST_TYPE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 6, name: "message", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "2048" } } } },
             { no: 7, name: "begins_at", kind: "message", T: () => Timestamp },
             { no: 8, name: "ends_at", kind: "message", T: () => Timestamp },

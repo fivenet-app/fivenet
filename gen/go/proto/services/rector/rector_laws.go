@@ -24,7 +24,7 @@ func (s *Server) CreateOrUpdateLawBook(ctx context.Context, req *laws.LawBook) (
 		Method:  "CreateOrUpdateLawBook",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EVENT_TYPE_ERRORED),
+		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
 	defer s.aud.Log(auditEntry, req)
 
@@ -51,7 +51,7 @@ func (s *Server) CreateOrUpdateLawBook(ctx context.Context, req *laws.LawBook) (
 
 		req.Id = uint64(lastId)
 
-		auditEntry.State = int16(rector.EVENT_TYPE_CREATED)
+		auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
 	} else {
 		stmt := tLawBooks.
 			UPDATE(
@@ -70,7 +70,7 @@ func (s *Server) CreateOrUpdateLawBook(ctx context.Context, req *laws.LawBook) (
 			return nil, err
 		}
 
-		auditEntry.State = int16(rector.EVENT_TYPE_UPDATED)
+		auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 	}
 
 	lawBook, err := s.getLawBook(ctx, req.Id)
@@ -91,7 +91,7 @@ func (s *Server) DeleteLawBook(ctx context.Context, req *DeleteLawBookRequest) (
 		Method:  "DeleteLawBook",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EVENT_TYPE_ERRORED),
+		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
 	defer s.aud.Log(auditEntry, req)
 
@@ -147,7 +147,7 @@ func (s *Server) CreateOrUpdateLaw(ctx context.Context, req *laws.Law) (*laws.La
 		Method:  "CreateOrUpdateLaw",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EVENT_TYPE_ERRORED),
+		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
 	defer s.aud.Log(auditEntry, req)
 
@@ -182,7 +182,7 @@ func (s *Server) CreateOrUpdateLaw(ctx context.Context, req *laws.Law) (*laws.La
 
 		req.Id = uint64(lastId)
 
-		auditEntry.State = int16(rector.EVENT_TYPE_CREATED)
+		auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
 	} else {
 		stmt := tLaws.
 			UPDATE(
@@ -209,7 +209,7 @@ func (s *Server) CreateOrUpdateLaw(ctx context.Context, req *laws.Law) (*laws.La
 			return nil, err
 		}
 
-		auditEntry.State = int16(rector.EVENT_TYPE_UPDATED)
+		auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 	}
 
 	law, err := s.getLaw(ctx, req.Id)
@@ -230,7 +230,7 @@ func (s *Server) DeleteLaw(ctx context.Context, req *DeleteLawRequest) (*DeleteL
 		Method:  "DeleteLaw",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
-		State:   int16(rector.EVENT_TYPE_ERRORED),
+		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
 	defer s.aud.Log(auditEntry, req)
 

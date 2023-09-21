@@ -900,32 +900,35 @@
     },
     "enums": {
         "docstore": {
-            "ACCESS_LEVEL": {
+            "AccessLevel": {
                 "BLOCKED": "Blocked",
                 "VIEW": "View",
                 "COMMENT": "Comment",
                 "ACCESS": "Access",
                 "EDIT": "Edit"
             },
-            "DOC_REFERENCE": {
+            "DocReference": {
                 "LINKED": "links",
                 "SOLVES": "solves",
                 "CLOSES": "closes",
                 "DEPRECATES": "deprecates"
             },
-            "DOC_RELATION": {
+            "DocRelation": {
                 "MENTIONED": "mentioned",
                 "TARGETS": "targets",
                 "CAUSED": "caused"
             }
         },
         "centrum": {
-            "CENTRUM_MODE": {
-                "MANUAL": "Manual",
-                "CENTRAL_COMMAND": "Central Command",
-                "AUTO_ROUND_ROBIN": "Automatic: Round Robin"
+            "CentrumMode": {
+                "UNSPECIFIED": "Unspecified Mode",
+                "MANUAL": "Manual Mode",
+                "CENTRAL_COMMAND": "Central Command Mode",
+                "AUTO_ROUND_ROBIN": "Automatic Mode: Round Robin",
+                "SIMPLIFIED": "Simplified Mode"
             },
-            "DISPATCH_STATUS": {
+            "StatusDispatch": {
+                "UNSPECIFIED": "Unspecified",
                 "NEW": "New",
                 "UNASSIGNED": "Unassigned",
                 "UPDATED": "Updated",
@@ -937,8 +940,8 @@
                 "COMPLETED": "Abgeschlossen",
                 "CANCELLED": "Abgebrochen"
             },
-            "UNIT_STATUS": {
-                "UNKNOWN": "Unknown",
+            "StatusUnit": {
+                "UNSPECIFIED": "Unspecified",
                 "USER_ADDED": "Member added",
                 "USER_REMOVED": "Member removed",
                 "UNAVAILABLE": "Unavailable",
@@ -948,14 +951,16 @@
             }
         },
         "livemap": {
-            "MARKER_TYPE": {
+            "MarkerType": {
+                "UNSPECIFIED": "Unspecified",
                 "DOT": "Dot",
                 "CIRCLE": "Circle",
                 "POLYGON": "Polygon"
             }
         },
         "jobs": {
-            "CONDUCT_TYPE": {
+            "ConductType": {
+                "UNSPECIFIED": "Unspecified",
                 "NEUTRAL": "Neutral",
                 "POSITIVE": "Positive",
                 "NEGATIVE": "Negative",

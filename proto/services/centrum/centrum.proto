@@ -28,7 +28,7 @@ message GetSettingsRequest {}
 // Unit Management
 
 message ListUnitsRequest {
-  repeated resources.dispatch.UNIT_STATUS status = 1 [(validate.rules).repeated.items.enum.defined_only = true];
+  repeated resources.dispatch.StatusUnit status = 1 [(validate.rules).repeated.items.enum.defined_only = true];
   optional bool own_only = 2;
 }
 
@@ -52,7 +52,7 @@ message DeleteUnitResponse {}
 
 message UpdateUnitStatusRequest {
   uint64 unit_id = 1;
-  resources.dispatch.UNIT_STATUS status = 2 [(validate.rules).enum.defined_only = true];
+  resources.dispatch.StatusUnit status = 2 [(validate.rules).enum.defined_only = true];
   // @sanitize
   optional string reason = 3 [(validate.rules).string.max_len = 255];
   // @sanitize
@@ -88,8 +88,8 @@ message DisponentsChange {
 }
 
 message ListDispatchesRequest {
-  repeated resources.dispatch.DISPATCH_STATUS status = 1 [(validate.rules).repeated.items.enum.defined_only = true];
-  repeated resources.dispatch.DISPATCH_STATUS not_status = 2 [(validate.rules).repeated.items.enum.defined_only = true];
+  repeated resources.dispatch.StatusDispatch status = 1 [(validate.rules).repeated.items.enum.defined_only = true];
+  repeated resources.dispatch.StatusDispatch not_status = 2 [(validate.rules).repeated.items.enum.defined_only = true];
   optional bool own_only = 3;
 }
 
@@ -119,7 +119,7 @@ message DeleteDispatchResponse {}
 
 message UpdateDispatchStatusRequest {
   uint64 dispatch_id = 1;
-  resources.dispatch.DISPATCH_STATUS status = 2 [(validate.rules).enum.defined_only = true];
+  resources.dispatch.StatusDispatch status = 2 [(validate.rules).enum.defined_only = true];
   // @sanitize
   optional string reason = 3;
   // @sanitize
@@ -150,15 +150,16 @@ message JoinUnitResponse {
   resources.dispatch.Unit unit = 1;
 }
 
-enum TAKE_DISPATCH_RESP {
-  TIMEOUT = 0;
-  ACCEPTED = 1;
-  DECLINED = 2;
+enum TakeDispatchResp {
+  TAKE_DISPATCH_RESP_UNSPECIFIED = 0;
+  TAKE_DISPATCH_RESP_TIMEOUT = 1;
+  TAKE_DISPATCH_RESP_ACCEPTED = 2;
+  TAKE_DISPATCH_RESP_DECLINED = 3;
 }
 
 message TakeDispatchRequest {
   repeated uint64 dispatch_ids = 1 [(validate.rules).repeated.min_items = 1];
-  TAKE_DISPATCH_RESP resp = 2 [(validate.rules).enum.defined_only = true];
+  TakeDispatchResp resp = 2 [(validate.rules).enum.defined_only = true];
   // @sanitize
   optional string reason = 3 [(validate.rules).string.max_len = 255];
 }
