@@ -148,7 +148,7 @@ onConfirm(async (id: bigint) => deleteDocument(id));
 </style>
 
 <template>
-    <div class="mt-2 mb-2">
+    <div class="mt-2 mb-2 lg:m-2">
         <ConfirmDialog :open="isRevealed" :cancel="cancel" :confirm="() => confirm(documentId)" />
 
         <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.document', 2)])" />
@@ -165,15 +165,17 @@ onConfirm(async (id: bigint) => deleteDocument(id));
                         <div class="pb-2 md:flex md:items-center md:justify-between md:space-x-4">
                             <div>
                                 <h1
-                                    class="py-2 pl-4 pr-3 text-2xl font-bold text-neutral sm:pl-0 truncate max-w-5xl break-all flex items-center"
+                                    class="py-1 pl-0.5 pr-0.5 text-2xl font-bold text-neutral sm:pl-0 max-w-5xl flex items-center"
                                 >
                                     <span
                                         v-if="doc.category"
-                                        class="inline-flex items-center rounded-md bg-primary-400/10 px-2 py-1 text-xs font-medium text-primary-400 ring-1 ring-inset ring-primary-400/30 mr-2"
+                                        class="mr-2 inline-flex items-center rounded-md bg-primary-400/10 px-2 py-1 text-xs font-medium text-primary-400 ring-1 ring-inset ring-primary-400/30 break-keep"
                                     >
                                         {{ doc.category.name }}
                                     </span>
-                                    {{ doc?.title }}
+                                    <span class="break-all">
+                                        {{ doc?.title }}
+                                    </span>
                                 </h1>
                                 <p class="text-sm text-base-300 inline-flex">
                                     {{ $t('common.created_by') }}
@@ -183,7 +185,7 @@ onConfirm(async (id: bigint) => deleteDocument(id));
                                     />
                                 </p>
                             </div>
-                            <div class="flex mt-4 space-x-3 md:mt-0">
+                            <div class="flex mt-1 space-x-3 md:mt-0">
                                 <div v-if="can('DocStoreService.ToggleDocument')">
                                     <button
                                         type="button"
@@ -223,7 +225,7 @@ onConfirm(async (id: bigint) => deleteDocument(id));
                                 </button>
                             </div>
                         </div>
-                        <div class="flex flex-row gap-2">
+                        <div class="flex flex-row flex-wrap gap-2 pb-3 overflow-x-auto snap-x sm:pb-0">
                             <IDCopyBadge
                                 :id="doc.id"
                                 prefix="DOC"
@@ -272,7 +274,10 @@ onConfirm(async (id: bigint) => deleteDocument(id));
                                 </span>
                             </div>
                         </div>
-                        <div class="flex flex-row flex-wrap gap-2 pb-3 mt-2 overflow-x-auto snap-x sm:pb-0">
+                        <div
+                            v-if="access && access?.jobs.length > 0 && access?.users.length > 0"
+                            class="flex flex-row flex-wrap gap-2 pb-3 mt-1 overflow-x-auto snap-x sm:pb-0"
+                        >
                             <div
                                 v-for="entry in access?.jobs"
                                 :key="entry.id?.toString()"
