@@ -137,7 +137,6 @@ func (s *Server) watchStateEvents() error {
 
 func (s *Server) watchUserChanges() {
 	userCh := s.tracker.Subscribe()
-	defer s.tracker.Unsubscribe(userCh)
 
 	for {
 		select {

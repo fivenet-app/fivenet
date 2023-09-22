@@ -2,6 +2,7 @@ package jobs
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	database "github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
@@ -10,6 +11,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/zap"
 )
 
@@ -110,7 +112,9 @@ func (s *Server) TimeclockListEntries(ctx context.Context, req *TimeclockListEnt
 		LIMIT(limit)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Entries); err != nil {
-		return nil, ErrFailedQuery
+		if !errors.Is(qrm.ErrNoRows, err) {
+			return nil, ErrFailedQuery
+		}
 	}
 
 	for i := 0; i < len(resp.Entries); i++ {
@@ -126,7 +130,6 @@ func (s *Server) TimeclockListEntries(ctx context.Context, req *TimeclockListEnt
 
 func (s *Server) timeclock() {
 	userCh := s.tracker.Subscribe()
-	defer s.tracker.Unsubscribe(userCh)
 
 	for {
 		select {

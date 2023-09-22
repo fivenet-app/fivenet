@@ -2,10 +2,12 @@ package jobs
 
 import (
 	"context"
+	"errors"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/jobs"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/qrm"
 )
 
 func (s *Server) addTimeclockEntry(ctx context.Context, userId int32) error {
@@ -23,7 +25,9 @@ func (s *Server) addTimeclockEntry(ctx context.Context, userId int32) error {
 
 	var dest jobs.TimeclockEntry
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
-		return err
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return err
+		}
 	}
 
 	// If start time is not null, the entry is active, keep using it
@@ -39,7 +43,7 @@ func (s *Server) addTimeclockEntry(ctx context.Context, userId int32) error {
 			tTimeClock.Date,
 		).
 		VALUES(
-			"ambulance",
+			tUser.SELECT(tUser.Job).FROM(tUser).WHERE(tUser.ID.EQ(jet.Int32(userId))),
 			userId,
 			jet.CURRENT_DATE(),
 		).
