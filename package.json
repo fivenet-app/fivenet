@@ -45,6 +45,7 @@
         "quill-html-edit-button": "^2.2.12",
         "quill-image-compress": "^1.2.30",
         "quill-magic-url": "^4.2.0",
+        "quill-paste-smart": "^1.4.12",
         "slugify": "^1.6.6",
         "uuid": "^9.0.1",
         "vee-validate": "^4.11.6",

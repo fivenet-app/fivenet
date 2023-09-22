@@ -21,6 +21,8 @@ import { AccountMultipleIcon, CheckIcon, ChevronDownIcon, ContentSaveIcon, FileD
 import htmlEditButton from 'quill-html-edit-button';
 import ImageCompress from 'quill-image-compress';
 import MagicUrl from 'quill-magic-url';
+// @ts-expect-error
+import QuillPasteSmart from 'quill-paste-smart';
 import { defineRule } from 'vee-validate';
 import { useAuthStore } from '~/store/auth';
 import { getDocument, getUser, useClipboardStore } from '~/store/clipboard';
@@ -113,6 +115,19 @@ const selectedCategory = ref<Category | undefined>(undefined);
 
 // Quill Editor modules and options
 const modules = [
+    {
+        name: 'clipboard',
+        module: QuillPasteSmart,
+        options: {
+            allowed: {
+                tags: ['a', 'b', 'strong', 'u', 's', 'i', 'p', 'br', 'ul', 'ol', 'li', 'span'],
+                attributes: ['href', 'rel', 'target', 'class'],
+            },
+            keepSelection: true,
+            substituteBlockElements: true,
+            magicPasteLinks: false,
+        },
+    },
     {
         name: 'imageFormats',
         module: ImageFormats,
