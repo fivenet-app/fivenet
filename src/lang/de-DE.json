@@ -1177,6 +1177,14 @@
             "ConductUpdateEntry": {
                 "key": "Führungsregister: Einträge bearbeiten",
                 "description": "Aktualisieren von Führungsregister Einträgen."
+            },
+            "TimeclockListEntries": {
+                "key": "Stempeluhr Einträge: Anzeigen",
+                "description": "Stempeluhr Einträge anzeigen lassen.",
+                "attrs": {
+                    "Own": "Eigene",
+                    "All": "Alle"
+                }
             }
         }
     },
