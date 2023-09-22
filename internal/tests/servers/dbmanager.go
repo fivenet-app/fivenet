@@ -108,7 +108,7 @@ func (m *dbServer) prepareDBForFirstUse() {
 	m.loadSQLFile(filepath.Join(tests.TestDataSQLPath, "initial_esx.sql"))
 
 	// Use DB migrations to handle the rest
-	if err := query.MigrateDB(zap.NewNop(), m.getDSN()); err != nil {
+	if err := query.MigrateDB(zap.NewNop(), m.getDSN()+"&multiStatements=true"); err != nil {
 		log.Fatalf("Failed to migrate test database: %q", err)
 	}
 }

@@ -27,9 +27,10 @@ const spentTime = parseFloat(((Math.round(props.entry.spentTime * 100) / 100) * 
             {{ entry.spentTime > 0 ? fromSecondsToFormattedDuration(spentTime) : '' }}
             <template v-if="entry.startTime !== undefined">
                 <span
-                    class="inline-flex items-center rounded-md bg-accent-500/10 px-2 py-1 text-xs font-medium text-accent-400 ring-1 ring-inset ring-accent-500/20"
-                    >{{ $t('common.ongoing') }}</span
+                    class="inline-flex items-center rounded-md bg-success-500/10 px-2 py-1 text-xs font-medium text-success-400 ring-1 ring-inset ring-success-500/20"
                 >
+                    {{ $t('common."active"') }}
+                </span>
             </template>
         </td>
     </tr>

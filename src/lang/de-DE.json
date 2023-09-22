@@ -642,7 +642,7 @@
         "phone_number": "Telefonnummer",
         "back": "Zurück",
         "timeclock": "Stempeluhr",
-        "ongoing": "Fortlaufend"
+        "active": "Aktiv"
     },
     "notifications": {
         "clipboard": {

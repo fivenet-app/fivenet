@@ -194,7 +194,10 @@ func (s *Tracker) refreshUserLocations(ctx context.Context) error {
 		).
 		WHERE(jet.AND(
 			tLocs.Hidden.IS_FALSE(),
-			tLocs.UpdatedAt.GT_EQ(jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(60, jet.MINUTE))),
+			jet.OR(
+				tLocs.UpdatedAt.IS_NULL(),
+				tLocs.UpdatedAt.GT_EQ(jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(60, jet.MINUTE))),
+			),
 		))
 
 	var dest []*livemap.UserMarker

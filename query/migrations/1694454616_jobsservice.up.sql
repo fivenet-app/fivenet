@@ -36,6 +36,7 @@ CREATE TABLE
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
 
 DROP TRIGGER IF EXISTS `fivenet_jobs_timeclock_spent_time_calc`;
+
 DELIMITER //
 CREATE TRIGGER `fivenet_jobs_timeclock_spent_time_calc` BEFORE UPDATE ON `fivenet_jobs_timeclock`
     FOR EACH ROW BEGIN
