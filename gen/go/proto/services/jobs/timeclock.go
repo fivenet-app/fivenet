@@ -108,6 +108,7 @@ func (s *Server) TimeclockListEntries(ctx context.Context, req *TimeclockListEnt
 		OFFSET(req.Pagination.Offset).
 		ORDER_BY(
 			tTimeClock.Date.DESC(),
+			tTimeClock.SpentTime.DESC(),
 		).
 		LIMIT(limit)
 
