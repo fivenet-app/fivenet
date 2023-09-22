@@ -47,8 +47,8 @@ func (m *dbServer) Setup() {
 	// pulls an image, creates a container based on it and runs it
 	m.resource, err = m.pool.RunWithOptions(
 		&dockertest.RunOptions{
-			Repository: "docker.io/library/mariadb",
-			Tag:        "10.11.3-jammy",
+			Repository: "docker.io/library/mysql",
+			Tag:        "8.1.0",
 			Env: []string{
 				"MYSQL_ROOT_PASSWORD=secret",
 				"MYSQL_USER=fivenet",
@@ -56,9 +56,10 @@ func (m *dbServer) Setup() {
 				"MYSQL_DATABASE=fivenettest",
 			},
 			Cmd: []string{
-				"mariadbd",
+				"mysqld",
 				"--innodb-ft-min-token-size=2",
 				"--innodb-ft-max-token-size=50",
+				"--default-time-zone=Europe/Berlin",
 			},
 		},
 		func(config *docker.HostConfig) {
