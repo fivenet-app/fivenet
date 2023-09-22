@@ -7,6 +7,7 @@ import (
 	"github.com/bwmarrin/discordgo"
 	"github.com/galexrt/fivenet/pkg/utils"
 	jet "github.com/go-jet/jet/v2/mysql"
+	"go.uber.org/zap"
 )
 
 const DefaultNicknameRegex = `^(?P<prefix>\[\S+][ ]*)?(?P<name>[^\[]+)(?P<suffix>[ ]*\[\S+])?`
@@ -121,15 +122,29 @@ func (g *Guild) setUserNickName(member *discordgo.Member, firstname string, last
 
 	fullName := firstname + " " + lastname
 
-	match := g.bot.nicknameRegex.FindStringSubmatch(member.Nick)
-	result := make(map[string]string)
-	for i, name := range g.bot.nicknameRegex.SubexpNames() {
-		if i != 0 && name != "" {
-			result[name] = match[i]
+	var nickname string
+	if member.Nick != "" {
+		match := g.bot.nicknameRegex.FindStringSubmatch(member.Nick)
+		result := make(map[string]string)
+		for i, name := range g.bot.nicknameRegex.SubexpNames() {
+			if i != 0 && name != "" {
+				if len(match) >= i {
+					result[name] = match[i]
+				}
+			}
 		}
+
+		var ok bool
+		nickname, ok = result["name"]
+		if !ok {
+			g.bot.logger.Warn("failed to extract name from discord nickname", zap.String("dc_nick", member.Nick))
+			nickname = member.Nick
+		}
+	} else {
+		nickname = member.User.Username
 	}
 
-	extractedName := strings.TrimSpace(result["name"])
+	extractedName := strings.TrimSpace(nickname)
 	if extractedName == fullName {
 		return nil
 	}
