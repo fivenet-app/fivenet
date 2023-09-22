@@ -73,7 +73,7 @@ func (s *Server) TimeclockListEntries(ctx context.Context, req *TimeclockListEnt
 		return nil, ErrFailedQuery
 	}
 
-	pag, limit := req.Pagination.GetResponse()
+	pag, limit := req.Pagination.GetResponseWithPageSize(25)
 	resp := &TimeclockListEntriesResponse{
 		Pagination: pag,
 	}

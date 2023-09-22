@@ -30,9 +30,9 @@ function calculateOffset(): bigint {
                 class="text-sm text-gray-300"
                 v-html="
                     $t('components.partials.table_pagination.showing_results', [
-                        total === 0n ? offset : offset + 1n,
-                        end,
-                        total,
+                        (total === 0n ? offset : offset + 1n).toString(),
+                        end.toString(),
+                        total.toString(),
                     ])
                 "
             />
