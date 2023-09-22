@@ -43,7 +43,7 @@ const openclose: OpenClose[] = [
     { id: 2, label: t('common.close', 2), closed: true },
 ];
 
-const search = ref<{
+const query = ref<{
     title: string;
     category?: Category;
     character?: UserShort;
@@ -71,25 +71,25 @@ async function listDocuments(): Promise<DocumentShort[]> {
                 offset: offset.value,
             },
             orderBy: [],
-            search: search.value.title,
+            search: query.value.title,
             categoryIds: [],
             creatorIds: [],
         };
-        if (search.value.category) req.categoryIds.push(search.value.category.id);
-        if (search.value.character) req.creatorIds.push(search.value.character.userId);
-        if (search.value.from) {
+        if (query.value.category) req.categoryIds.push(query.value.category.id);
+        if (query.value.character) req.creatorIds.push(query.value.character.userId);
+        if (query.value.from) {
             req.from = {
-                timestamp: google_protobuf_timestamp_pb.Timestamp.fromDate(fromString(search.value.from)!),
+                timestamp: google_protobuf_timestamp_pb.Timestamp.fromDate(fromString(query.value.from)!),
             };
         }
-        if (search.value.to) {
+        if (query.value.to) {
             req.to = {
-                timestamp: google_protobuf_timestamp_pb.Timestamp.fromDate(fromString(search.value.to)!),
+                timestamp: google_protobuf_timestamp_pb.Timestamp.fromDate(fromString(query.value.to)!),
             };
         }
-        if (search.value.closed) {
-            if (search.value.closed !== undefined) {
-                req.closed = search.value.closed.closed;
+        if (query.value.closed) {
+            if (query.value.closed !== undefined) {
+                req.closed = query.value.closed.closed;
             }
         }
 
@@ -114,7 +114,7 @@ function focusSearch(): void {
 }
 
 watch(offset, async () => refresh());
-watchDebounced(search.value, async () => refresh(), { debounce: 600, maxWait: 1400 });
+watchDebounced(query.value, async () => refresh(), { debounce: 600, maxWait: 1400 });
 
 async function findCategories(): Promise<void> {
     entriesCategories.value = await completorStore.completeDocumentCategories(queryCategories.value);
@@ -156,7 +156,7 @@ const templatesOpen = ref(false);
                         <div class="flex flex-row items-center gap-2 sm:mx-auto">
                             <div class="flex-1 form-control">
                                 <input
-                                    v-model="search.title"
+                                    v-model="query.title"
                                     ref="searchInput"
                                     type="text"
                                     name="search"
@@ -206,7 +206,7 @@ const templatesOpen = ref(false);
                                         <label for="search" class="block text-sm font-medium leading-6 text-neutral">
                                             {{ $t('common.category', 1) }}
                                         </label>
-                                        <Combobox as="div" v-model="search.category" class="mt-2" nullable>
+                                        <Combobox as="div" v-model="query.category" class="mt-2" nullable>
                                             <div class="relative">
                                                 <ComboboxButton as="div">
                                                     <ComboboxInput
@@ -257,7 +257,7 @@ const templatesOpen = ref(false);
                                         <label for="search" class="block text-sm font-medium leading-6 text-neutral">
                                             {{ $t('common.creator') }}
                                         </label>
-                                        <Combobox as="div" v-model="search.character" class="mt-2" nullable>
+                                        <Combobox as="div" v-model="query.character" class="mt-2" nullable>
                                             <div class="relative">
                                                 <ComboboxButton as="div">
                                                     <ComboboxInput
@@ -310,7 +310,7 @@ const templatesOpen = ref(false);
                                         </label>
                                         <div class="relative flex items-center mt-2">
                                             <input
-                                                v-model="search.from"
+                                                v-model="query.from"
                                                 type="datetime-local"
                                                 name="search"
                                                 :placeholder="`${$t('common.time_range')} ${$t('common.from')}`"
@@ -325,7 +325,7 @@ const templatesOpen = ref(false);
                                         </label>
                                         <div class="relative flex items-center mt-2">
                                             <input
-                                                v-model="search.from"
+                                                v-model="query.to"
                                                 type="datetime-local"
                                                 name="search"
                                                 :placeholder="`${$t('common.time_range')} ${$t('common.to')}`"
@@ -337,13 +337,13 @@ const templatesOpen = ref(false);
                                         <label for="search" class="block text-sm font-medium leading-6 text-neutral">
                                             {{ $t('common.close', 2) }}?
                                         </label>
-                                        <Listbox as="div" class="mt-2" v-model="search.closed">
+                                        <Listbox as="div" class="mt-2" v-model="query.closed">
                                             <div class="relative">
                                                 <ListboxButton
                                                     class="block pl-3 text-left w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                 >
                                                     <span class="block truncate">
-                                                        {{ search.closed?.label }}
+                                                        {{ query.closed?.label }}
                                                     </span>
                                                     <span
                                                         class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none"

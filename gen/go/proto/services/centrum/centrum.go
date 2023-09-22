@@ -97,7 +97,7 @@ func NewServer(p Params) (*Server, error) {
 
 	s := &Server{
 		ctx:    ctx,
-		logger: p.Logger,
+		logger: p.Logger.Named("centrum"),
 		wg:     sync.WaitGroup{},
 
 		tracer: p.TP.Tracer("centrum-cache"),

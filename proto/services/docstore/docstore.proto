@@ -167,7 +167,9 @@ message CreateDocumentRequest {
     max_bytes: 1750000 // 1.75 Megabytes
   }]; // @gotags: alias:"content"
   resources.documents.DocContentType content_type = 4 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"content_type"
-  optional string data = 5; // @gotags: alias:"data"
+  optional string data = 5 [(validate.rules).string = {
+    max_bytes: 1000000 // 1 Megabyte
+  }]; // @gotags: alias:"data"
   // @sanitize
   string state = 6 [(validate.rules).string.max_len = 24]; // @gotags: alias:"state"
   bool closed = 7; // @gotags: alias:"closed"
@@ -193,7 +195,9 @@ message UpdateDocumentRequest {
     max_bytes: 1750000 // 1.75 Megabytes
   }]; // @gotags: alias:"content"
   resources.documents.DocContentType content_type = 5 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"content_type"
-  optional string data = 6; // @gotags: alias:"data"
+  optional string data = 6 [(validate.rules).string = {
+    max_bytes: 1000000 // 1 Megabyte
+  }]; // @gotags: alias:"data"
   // @sanitize
   string state = 7 [(validate.rules).string.max_len = 24]; // @gotags: alias:"state"
   bool closed = 8; // @gotags: alias:"closed"

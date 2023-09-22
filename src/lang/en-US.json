@@ -640,7 +640,9 @@
         "conduct_register": "Conduct Register",
         "call": "Call",
         "phone_number": "Phone Number",
-        "back": "Back"
+        "back": "Back",
+        "timeclock": "Time Clock",
+        "ongoing": "Ongoing"
     },
     "notifications": {
         "clipboard": {
@@ -1175,6 +1177,14 @@
             "ConductUpdateEntry": {
                 "key": "Conduct Entries: Update",
                 "description": "Update Conduct Register entries."
+            },
+            "TimeclockListEntries": {
+                "key": "Timeclock Entries: List",
+                "description": "List Timeclock entries.",
+                "attrs": {
+                    "Own": "Own",
+                    "All": "All"
+                }
             }
         }
     },

@@ -5,65 +5,49 @@ import { MessageType } from "@protobuf-ts/runtime";
 import { UserShort } from "../users/users.js";
 import { Timestamp } from "../timestamp/timestamp.js";
 /**
- * @generated from protobuf message resources.jobs.PlayerTime
- */
-export interface PlayerTime {
-    /**
-     * @generated from protobuf field: uint64 id = 1;
-     */
-    id: bigint;
-    /**
-     * @generated from protobuf field: string job = 2;
-     */
-    job: string;
-    /**
-     * @generated from protobuf field: resources.timestamp.Timestamp date = 3;
-     */
-    date?: Timestamp;
-    /**
-     * @generated from protobuf field: int32 user_id = 4;
-     */
-    userId: number;
-    /**
-     * @generated from protobuf field: optional resources.users.UserShort user = 5;
-     */
-    user?: UserShort;
-    /**
-     * @generated from protobuf field: uint64 minutes = 6;
-     */
-    minutes: bigint;
-}
-/**
  * @generated from protobuf message resources.jobs.TimeclockEntry
  */
 export interface TimeclockEntry {
     /**
-     * @generated from protobuf field: uint64 id = 1;
+     * @generated from protobuf field: string job = 1;
      */
-    id: bigint;
+    job: string;
+    /**
+     * @generated from protobuf field: resources.timestamp.Timestamp date = 2;
+     */
+    date?: Timestamp;
+    /**
+     * @generated from protobuf field: int32 user_id = 3;
+     */
+    userId: number;
+    /**
+     * @generated from protobuf field: optional resources.users.UserShort user = 4;
+     */
+    user?: UserShort;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp start_time = 5;
+     */
+    startTime?: Timestamp;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp end_time = 6;
+     */
+    endTime?: Timestamp;
+    /**
+     * @generated from protobuf field: float spent_time = 7;
+     */
+    spentTime: number;
 }
-// @generated message type with reflection information, may provide speed optimized methods
-class PlayerTime$Type extends MessageType<PlayerTime> {
-    constructor() {
-        super("resources.jobs.PlayerTime", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 2, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
-            { no: 3, name: "date", kind: "message", T: () => Timestamp },
-            { no: 4, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 5, name: "user", kind: "message", T: () => UserShort },
-            { no: 6, name: "minutes", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
-        ]);
-    }
-}
-/**
- * @generated MessageType for protobuf message resources.jobs.PlayerTime
- */
-export const PlayerTime = new PlayerTime$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class TimeclockEntry$Type extends MessageType<TimeclockEntry> {
     constructor() {
         super("resources.jobs.TimeclockEntry", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+            { no: 1, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
+            { no: 2, name: "date", kind: "message", T: () => Timestamp },
+            { no: 3, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 4, name: "user", kind: "message", T: () => UserShort },
+            { no: 5, name: "start_time", kind: "message", T: () => Timestamp },
+            { no: 6, name: "end_time", kind: "message", T: () => Timestamp },
+            { no: 7, name: "spent_time", kind: "scalar", T: 2 /*ScalarType.FLOAT*/ }
         ]);
     }
 }

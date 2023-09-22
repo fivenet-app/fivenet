@@ -3,6 +3,8 @@
 // tslint:disable
 import { ServiceType } from "@protobuf-ts/runtime-rpc";
 import { MessageType } from "@protobuf-ts/runtime";
+import { TimeclockEntry } from "../../resources/jobs/timeclock.js";
+import { Timestamp } from "../../resources/timestamp/timestamp.js";
 import { ConductEntry } from "../../resources/jobs/conduct.js";
 import { ConductType } from "../../resources/jobs/conduct.js";
 import { User } from "../../resources/users/users.js";
@@ -125,6 +127,44 @@ export interface ConductDeleteEntryRequest {
  * @generated from protobuf message services.jobs.ConductDeleteEntryResponse
  */
 export interface ConductDeleteEntryResponse {
+}
+// Time Clock
+
+/**
+ * @generated from protobuf message services.jobs.TimeclockListEntriesRequest
+ */
+export interface TimeclockListEntriesRequest {
+    /**
+     * @generated from protobuf field: resources.common.database.PaginationRequest pagination = 1;
+     */
+    pagination?: PaginationRequest;
+    /**
+     * Search
+     *
+     * @generated from protobuf field: repeated int32 user_ids = 2;
+     */
+    userIds: number[];
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp from = 3;
+     */
+    from?: Timestamp;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp to = 4;
+     */
+    to?: Timestamp;
+}
+/**
+ * @generated from protobuf message services.jobs.TimeclockListEntriesResponse
+ */
+export interface TimeclockListEntriesResponse {
+    /**
+     * @generated from protobuf field: resources.common.database.PaginationResponse pagination = 1;
+     */
+    pagination?: PaginationResponse;
+    /**
+     * @generated from protobuf field: repeated resources.jobs.TimeclockEntry entries = 2;
+     */
+    entries: TimeclockEntry[];
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class ColleaguesListRequest$Type extends MessageType<ColleaguesListRequest> {
@@ -250,6 +290,34 @@ class ConductDeleteEntryResponse$Type extends MessageType<ConductDeleteEntryResp
  * @generated MessageType for protobuf message services.jobs.ConductDeleteEntryResponse
  */
 export const ConductDeleteEntryResponse = new ConductDeleteEntryResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class TimeclockListEntriesRequest$Type extends MessageType<TimeclockListEntriesRequest> {
+    constructor() {
+        super("services.jobs.TimeclockListEntriesRequest", [
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
+            { no: 2, name: "user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ },
+            { no: 3, name: "from", kind: "message", T: () => Timestamp },
+            { no: 4, name: "to", kind: "message", T: () => Timestamp }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.TimeclockListEntriesRequest
+ */
+export const TimeclockListEntriesRequest = new TimeclockListEntriesRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class TimeclockListEntriesResponse$Type extends MessageType<TimeclockListEntriesResponse> {
+    constructor() {
+        super("services.jobs.TimeclockListEntriesResponse", [
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse },
+            { no: 2, name: "entries", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => TimeclockEntry }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.TimeclockListEntriesResponse
+ */
+export const TimeclockListEntriesResponse = new TimeclockListEntriesResponse$Type();
 /**
  * @generated ServiceType for protobuf service services.jobs.JobsService
  */
@@ -258,5 +326,6 @@ export const JobsService = new ServiceType("services.jobs.JobsService", [
     { name: "ConductListEntries", options: {}, I: ConductListEntriesRequest, O: ConductListEntriesResponse },
     { name: "ConductCreateEntry", options: {}, I: ConductCreateEntryRequest, O: ConductCreateEntryResponse },
     { name: "ConductUpdateEntry", options: {}, I: ConductUpdateEntryRequest, O: ConductUpdateEntryResponse },
-    { name: "ConductDeleteEntry", options: {}, I: ConductDeleteEntryRequest, O: ConductDeleteEntryResponse }
+    { name: "ConductDeleteEntry", options: {}, I: ConductDeleteEntryRequest, O: ConductDeleteEntryResponse },
+    { name: "TimeclockListEntries", options: {}, I: TimeclockListEntriesRequest, O: TimeclockListEntriesResponse }
 ]);

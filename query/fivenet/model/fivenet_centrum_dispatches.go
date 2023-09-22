@@ -15,7 +15,7 @@ type FivenetCentrumDispatches struct {
 	ID          uint64     `sql:"primary_key" json:"id"`
 	CreatedAt   *time.Time `json:"created_at"`
 	UpdatedAt   *time.Time `json:"updated_at"`
-	Job         *string    `json:"job"`
+	Job         string     `json:"job"`
 	Message     string     `json:"message"`
 	Description *string    `json:"description"`
 	Attributes  *string    `json:"attributes"`

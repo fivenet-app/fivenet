@@ -35,7 +35,7 @@ func (s *Tracker) GenerateRandomUserMarker() {
 			hidden := false
 			markers[i] = &model.FivenetUserLocations{
 				Identifier: userIdentifiers[i],
-				Job:        &job,
+				Job:        job,
 				Hidden:     &hidden,
 
 				X: &x,
@@ -131,7 +131,7 @@ func (s *Tracker) GenerateRandomDispatchMarker() {
 
 			anon := false
 			markers[i] = &model.FivenetCentrumDispatches{
-				Job:         &job,
+				Job:         job,
 				Message:     message,
 				Description: &description,
 				X:           &x,

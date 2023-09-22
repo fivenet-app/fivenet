@@ -21,27 +21,27 @@ export interface Comment {
      */
     updatedAt?: Timestamp;
     /**
-     * @generated from protobuf field: uint64 document_id = 4;
+     * @generated from protobuf field: optional resources.timestamp.Timestamp deleted_at = 4;
+     */
+    deletedAt?: Timestamp;
+    /**
+     * @generated from protobuf field: uint64 document_id = 5;
      */
     documentId: bigint;
     /**
      * @sanitize: method=StripTags
      *
-     * @generated from protobuf field: string comment = 5;
+     * @generated from protobuf field: string comment = 6;
      */
     comment: string;
     /**
-     * @generated from protobuf field: optional int32 creator_id = 6;
+     * @generated from protobuf field: optional int32 creator_id = 7;
      */
     creatorId?: number;
     /**
-     * @generated from protobuf field: optional resources.users.UserShort creator = 7;
+     * @generated from protobuf field: optional resources.users.UserShort creator = 8;
      */
     creator?: UserShort; // @gotags: alias:"creator"
-    /**
-     * @generated from protobuf field: resources.timestamp.Timestamp deleted_at = 8;
-     */
-    deletedAt?: Timestamp;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Comment$Type extends MessageType<Comment> {
@@ -50,11 +50,11 @@ class Comment$Type extends MessageType<Comment> {
             { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
-            { no: 4, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 5, name: "comment", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxBytes: "2048" } } } },
-            { no: 6, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
-            { no: 7, name: "creator", kind: "message", T: () => UserShort },
-            { no: 8, name: "deleted_at", kind: "message", T: () => Timestamp }
+            { no: 4, name: "deleted_at", kind: "message", T: () => Timestamp },
+            { no: 5, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 6, name: "comment", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxBytes: "2048" } } } },
+            { no: 7, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 8, name: "creator", kind: "message", T: () => UserShort }
         ]);
     }
 }

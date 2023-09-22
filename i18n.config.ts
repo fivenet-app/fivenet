@@ -43,6 +43,12 @@ export default defineI18nConfig(() => ({
     },
     datetimeFormats: {
         en: {
+            date: {
+                year: 'numeric',
+                month: '2-digit',
+                day: '2-digit',
+                weekday: 'short',
+            },
             short: {
                 year: 'numeric',
                 month: 'short',
@@ -66,6 +72,11 @@ export default defineI18nConfig(() => ({
             },
         },
         de: {
+            date: {
+                year: 'numeric',
+                month: 'short',
+                day: '2-digit',
+            },
             short: {
                 year: 'numeric',
                 month: 'short',

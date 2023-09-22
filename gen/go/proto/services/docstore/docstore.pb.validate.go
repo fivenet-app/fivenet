@@ -4407,7 +4407,18 @@ func (m *CreateDocumentRequest) validate(all bool) error {
 	}
 
 	if m.Data != nil {
-		// no validation rules for Data
+
+		if len(m.GetData()) > 1000000 {
+			err := CreateDocumentRequestValidationError{
+				field:  "Data",
+				reason: "value length must be at most 1000000 bytes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
 	}
 
 	if m.Access != nil {
@@ -4726,7 +4737,18 @@ func (m *UpdateDocumentRequest) validate(all bool) error {
 	}
 
 	if m.Data != nil {
-		// no validation rules for Data
+
+		if len(m.GetData()) > 1000000 {
+			err := UpdateDocumentRequestValidationError{
+				field:  "Data",
+				reason: "value length must be at most 1000000 bytes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
 	}
 
 	if m.Access != nil {

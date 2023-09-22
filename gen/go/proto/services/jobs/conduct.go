@@ -5,7 +5,6 @@ import (
 	"errors"
 
 	database "github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
-	jobs "github.com/galexrt/fivenet/gen/go/proto/resources/jobs"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/perms"
@@ -82,6 +81,12 @@ func (s *Server) ConductListEntries(ctx context.Context, req *ConductListEntries
 	}
 
 	pag, limit := req.Pagination.GetResponse()
+	resp := &ConductListEntriesResponse{
+		Pagination: pag,
+	}
+	if count.TotalCount <= 0 {
+		return resp, nil
+	}
 
 	tUser := tUser.AS("target_user")
 	tCreator := tUser.AS("creator")
@@ -104,6 +109,8 @@ func (s *Server) ConductListEntries(ctx context.Context, req *ConductListEntries
 			tConduct.CreatorID,
 			tCreator.ID,
 			tCreator.Identifier,
+			tCreator.Job,
+			tCreator.JobGrade,
 			tCreator.Firstname,
 			tCreator.Lastname,
 			tCreator.Dateofbirth,
@@ -119,16 +126,22 @@ func (s *Server) ConductListEntries(ctx context.Context, req *ConductListEntries
 				),
 		).
 		WHERE(condition).
+		OFFSET(req.Pagination.Offset).
 		ORDER_BY(tConduct.CreatedAt.DESC(), tConduct.ID.DESC()).
 		LIMIT(limit)
 
-	resp := &ConductListEntriesResponse{
-		Pagination: pag,
-		Entries:    []*jobs.ConductEntry{},
-	}
 	if err := stmt.QueryContext(ctx, s.db, &resp.Entries); err != nil {
 		if !errors.Is(qrm.ErrNoRows, err) {
 			return nil, ErrFailedQuery
+		}
+	}
+
+	for i := 0; i < len(resp.Entries); i++ {
+		if resp.Entries[i].TargetUser != nil {
+			s.enricher.EnrichJobInfo(resp.Entries[i].TargetUser)
+		}
+		if resp.Entries[i].Creator != nil {
+			s.enricher.EnrichJobInfo(resp.Entries[i].Creator)
 		}
 	}
 

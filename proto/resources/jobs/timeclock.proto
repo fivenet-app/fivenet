@@ -8,15 +8,12 @@ import "validate/validate.proto";
 
 option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/jobs;jobs";
 
-message PlayerTime {
-  uint64 id = 1;
-  string job = 2 [(validate.rules).string.max_len = 20];
-  resources.timestamp.Timestamp date = 3;
-  int32 user_id = 4;
-  optional resources.users.UserShort user = 5;
-  uint64 minutes = 6;
-}
-
 message TimeclockEntry {
-  uint64 id = 1;
+  string job = 1 [(validate.rules).string.max_len = 20];
+  resources.timestamp.Timestamp date = 2;
+  int32 user_id = 3;
+  optional resources.users.UserShort user = 4;
+  optional resources.timestamp.Timestamp start_time = 5;
+  optional resources.timestamp.Timestamp end_time = 6;
+  float spent_time = 7;
 }

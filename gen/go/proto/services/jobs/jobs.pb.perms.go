@@ -11,12 +11,14 @@ import (
 const (
 	JobsServicePerm perms.Category = "JobsService"
 
-	JobsServiceColleaguesListPerm                perms.Name = "ColleaguesList"
-	JobsServiceConductCreateEntryPerm            perms.Name = "ConductCreateEntry"
-	JobsServiceConductDeleteEntryPerm            perms.Name = "ConductDeleteEntry"
-	JobsServiceConductListEntriesPerm            perms.Name = "ConductListEntries"
-	JobsServiceConductListEntriesAccessPermField perms.Key  = "Access"
-	JobsServiceConductUpdateEntryPerm            perms.Name = "ConductUpdateEntry"
+	JobsServiceColleaguesListPerm                  perms.Name = "ColleaguesList"
+	JobsServiceConductCreateEntryPerm              perms.Name = "ConductCreateEntry"
+	JobsServiceConductDeleteEntryPerm              perms.Name = "ConductDeleteEntry"
+	JobsServiceConductListEntriesPerm              perms.Name = "ConductListEntries"
+	JobsServiceConductListEntriesAccessPermField   perms.Key  = "Access"
+	JobsServiceConductUpdateEntryPerm              perms.Name = "ConductUpdateEntry"
+	JobsServiceTimeclockListEntriesPerm            perms.Name = "TimeclockListEntries"
+	JobsServiceTimeclockListEntriesAccessPermField perms.Key  = "Access"
 )
 
 func init() {
@@ -53,6 +55,18 @@ func init() {
 			Category: JobsServicePerm,
 			Name:     JobsServiceConductUpdateEntryPerm,
 			Attrs:    []perms.Attr{},
+		},
+		{
+			Category: JobsServicePerm,
+			Name:     JobsServiceTimeclockListEntriesPerm,
+			Attrs: []perms.Attr{
+				{
+					Key:           JobsServiceTimeclockListEntriesAccessPermField,
+					Type:          permissions.StringListAttributeType,
+					ValidValues:   []string{"Own", "All"},
+					DefaultValues: []string{"Own"},
+				},
+			},
 		},
 	})
 }

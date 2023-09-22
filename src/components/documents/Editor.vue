@@ -590,19 +590,19 @@ async function updateDocument(id: bigint, values: FormData, content: string, clo
 
                 reqAccess.users.push({
                     id: 0n,
-                    documentId: 0n,
-                    access: entry.values.accessRole,
+                    documentId: id,
                     userId: entry.values.char,
+                    access: entry.values.accessRole,
                 });
             } else if (entry.type === 1) {
                 if (!entry.values.job) return;
 
                 reqAccess.jobs.push({
                     id: 0n,
-                    documentId: 0n,
-                    access: entry.values.accessRole,
+                    documentId: id,
                     job: entry.values.job,
                     minimumGrade: entry.values.minimumGrade ? entry.values.minimumGrade : 0,
+                    access: entry.values.accessRole,
                 });
             }
         });

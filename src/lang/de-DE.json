@@ -640,7 +640,9 @@
         "conduct_register": "Führungsregister",
         "call": "Anruf",
         "phone_number": "Telefonnummer",
-        "back": "Zurück"
+        "back": "Zurück",
+        "timeclock": "Stempeluhr",
+        "ongoing": "Fortlaufend"
     },
     "notifications": {
         "clipboard": {

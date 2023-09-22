@@ -47,7 +47,7 @@ const { data: chars, refresh: charsRefresh } = useLazyAsyncData(
     },
 );
 
-const search = ref<{ plate: string; model: string; user_id: number }>({
+const query = ref<{ plate: string; model: string; user_id: number }>({
     plate: '',
     model: '',
     user_id: 0,
@@ -64,9 +64,9 @@ async function listVehicles(): Promise<Vehicle[]> {
                 offset: offset.value,
             },
             orderBy: [],
-            userId: props.userId && props.userId > 0 ? props.userId : search.value.user_id,
-            search: search.value.plate,
-            model: search.value.model,
+            userId: props.userId && props.userId > 0 ? props.userId : query.value.user_id,
+            search: query.value.plate,
+            model: query.value.model,
         };
 
         try {
@@ -91,7 +91,7 @@ function focusSearch(): void {
 }
 
 watch(offset, async () => refresh());
-watchDebounced(search.value, async () => refresh(), {
+watchDebounced(query.value, async () => refresh(), {
     debounce: 600,
     maxWait: 1400,
 });
@@ -101,9 +101,9 @@ watchDebounced(queryChar, async () => charsRefresh(), {
 });
 watch(selectedChar, () => {
     if (selectedChar && selectedChar.value?.userId) {
-        search.value.user_id = selectedChar.value?.userId;
+        query.value.user_id = selectedChar.value?.userId;
     } else {
-        search.value.user_id = 0;
+        query.value.user_id = 0;
     }
 });
 </script>
@@ -121,7 +121,7 @@ watch(selectedChar, () => {
                                 </label>
                                 <div class="relative flex items-center mt-2">
                                     <input
-                                        v-model="search.plate"
+                                        v-model="query.plate"
                                         ref="searchInput"
                                         type="text"
                                         :placeholder="$t('common.license_plate')"
@@ -135,7 +135,7 @@ watch(selectedChar, () => {
                                 </label>
                                 <div class="relative flex items-center mt-2">
                                     <input
-                                        v-model="search.model"
+                                        v-model="query.model"
                                         type="text"
                                         name="model"
                                         :placeholder="$t('common.model')"

@@ -11,7 +11,9 @@ func (m *Document) Sanitize() error {
 
 	m.Content = htmlsanitizer.Sanitize(m.Content)
 
-	m.Data = htmlsanitizer.Sanitize(m.Data)
+	if m.Data != nil {
+		*m.Data = htmlsanitizer.Sanitize(*m.Data)
+	}
 
 	m.State = htmlsanitizer.Sanitize(m.State)
 

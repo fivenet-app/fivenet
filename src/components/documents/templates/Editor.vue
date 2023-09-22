@@ -269,9 +269,9 @@ async function createOrUpdateTemplate(values: FormData, templateId?: bigint): Pr
                 jobAccesses.push({
                     id: 0n,
                     templateId: templateId ?? 0n,
-                    access: entry.values.accessRole,
                     job: entry.values.job,
                     minimumGrade: entry.values.minimumGrade ? entry.values.minimumGrade : 0,
+                    access: entry.values.accessRole,
                 });
             }
         });

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { useClipboard } from '@vueuse/core';
 import { PhoneIcon } from 'mdi-vue3';
-import { isNUIAvailable, phoneCallNumber } from '~/components/nui';
+import { isNUIAvailable, phoneCallNumber } from '~/composables/nui';
 import { useNotificatorStore } from '~/store/notificator';
 
 const props = withDefaults(

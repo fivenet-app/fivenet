@@ -15,7 +15,7 @@ type FivenetJobsConduct struct {
 	ID           uint64     `sql:"primary_key" json:"id"`
 	CreatedAt    *time.Time `json:"created_at"`
 	UpdatedAt    *time.Time `json:"updated_at"`
-	Job          *string    `json:"job"`
+	Job          string     `json:"job"`
 	Type         int16      `json:"type"`
 	Message      *string    `json:"message"`
 	ExpiresAt    *time.Time `json:"expires_at"`

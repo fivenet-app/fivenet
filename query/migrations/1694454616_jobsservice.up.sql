@@ -7,7 +7,7 @@ CREATE TABLE
         `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
         `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP(3),
         `updated_at` datetime(3) DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP(3),
-        `job` varchar(20) DEFAULT NULL,
+        `job` varchar(20) NOT NULL,
         `type` smallint(2) NOT NULL,
         `message` longtext,
         `expires_at` datetime(3) DEFAULT NULL,
@@ -20,5 +20,37 @@ CREATE TABLE
         CONSTRAINT `fk_fivenet_jobs_conduct_target_user_id` FOREIGN KEY (`target_user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
         CONSTRAINT `fk_fivenet_jobs_conduct_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+
+-- Table: fivenet_jobs_timeclock
+
+CREATE TABLE
+    IF NOT EXISTS `fivenet_jobs_timeclock` (
+        `job` varchar(20) NOT NULL,
+        `user_id` int(11) NOT NULL,
+        `date` datetime(3) DEFAULT CURRENT_TIMESTAMP(3) NOT NULL,
+        `start_time` datetime(3) DEFAULT CURRENT_TIMESTAMP(3),
+        `end_time` datetime(3) DEFAULT NULL,
+        `spent_time` decimal(10,2) DEFAULT 0.0,
+        PRIMARY KEY (`job`, `user_id`, `date`),
+        CONSTRAINT `fk_fivenet_jobs_timeclock_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+    ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
+
+DROP TRIGGER IF EXISTS `fivenet_jobs_timeclock_spent_time_calc`;
+DELIMITER //
+CREATE TRIGGER `fivenet_jobs_timeclock_spent_time_calc` BEFORE UPDATE ON `fivenet_jobs_timeclock`
+    FOR EACH ROW BEGIN
+        DECLARE `duration` DECIMAL(10,2);
+
+      IF (NEW.`start_time` IS NOT NULL AND NEW.`end_time` IS NOT NULL) THEN
+          SELECT CAST((TIMESTAMPDIFF(SECOND, NEW.`start_time`, NEW.`end_time`) / 3600) AS DECIMAL(10,2))
+              INTO `duration`;
+
+        SET NEW.`spent_time` = (OLD.`spent_time` + `duration`);
+        SET NEW.`start_time` = NULL;
+        SET NEW.`end_time` = NULL;
+    END IF;
+
+END //
+DELIMITER ;
 
 COMMIT;

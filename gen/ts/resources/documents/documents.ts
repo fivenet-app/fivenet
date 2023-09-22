@@ -19,39 +19,110 @@ export interface Document {
      */
     createdAt?: Timestamp;
     /**
-     * @generated from protobuf field: resources.timestamp.Timestamp updated_at = 3;
+     * @generated from protobuf field: optional resources.timestamp.Timestamp updated_at = 3;
      */
     updatedAt?: Timestamp;
     /**
-     * @generated from protobuf field: optional uint64 category_id = 4;
+     * @generated from protobuf field: optional resources.timestamp.Timestamp deleted_at = 4;
+     */
+    deletedAt?: Timestamp;
+    /**
+     * @generated from protobuf field: optional uint64 category_id = 5;
      */
     categoryId?: bigint; // @gotags: alias:"category_id"
     /**
-     * @generated from protobuf field: optional resources.documents.Category category = 5;
+     * @generated from protobuf field: optional resources.documents.Category category = 6;
      */
     category?: Category; // @gotags: alias:"category"
     /**
      * @sanitize
      *
-     * @generated from protobuf field: string title = 6;
+     * @generated from protobuf field: string title = 7;
      */
     title: string; // @gotags: alias:"title"
     /**
-     * @generated from protobuf field: resources.documents.DocContentType content_type = 7;
+     * @generated from protobuf field: resources.documents.DocContentType content_type = 8;
      */
     contentType: DocContentType; // @gotags: alias:"content_type"
     /**
      * @sanitize
      *
-     * @generated from protobuf field: string content = 8;
+     * @generated from protobuf field: string content = 9;
      */
     content: string; // @gotags: alias:"content"
     /**
      * @sanitize
      *
-     * @generated from protobuf field: string data = 9;
+     * @generated from protobuf field: optional string data = 10;
      */
-    data: string; // @gotags: alias:"data"
+    data?: string; // @gotags: alias:"data"
+    /**
+     * @generated from protobuf field: optional int32 creator_id = 11;
+     */
+    creatorId?: number; // @gotags: alias:"creator_id"
+    /**
+     * @generated from protobuf field: optional resources.users.UserShort creator = 12;
+     */
+    creator?: UserShort; // @gotags: alias:"creator"
+    /**
+     * @sanitize
+     *
+     * @generated from protobuf field: string state = 13;
+     */
+    state: string; // @gotags: alias:"state"
+    /**
+     * @generated from protobuf field: bool closed = 14;
+     */
+    closed: boolean; // @gotags: alias:"closed"
+    /**
+     * @generated from protobuf field: bool public = 15;
+     */
+    public: boolean; // @gotags: alias:"public"
+}
+/**
+ * @generated from protobuf message resources.documents.DocumentShort
+ */
+export interface DocumentShort {
+    /**
+     * @generated from protobuf field: uint64 id = 1;
+     */
+    id: bigint; // @gotags: alias:"id"
+    /**
+     * @generated from protobuf field: resources.timestamp.Timestamp created_at = 2;
+     */
+    createdAt?: Timestamp;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp updated_at = 3;
+     */
+    updatedAt?: Timestamp;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp deleted_at = 4;
+     */
+    deletedAt?: Timestamp;
+    /**
+     * @generated from protobuf field: optional uint64 category_id = 5;
+     */
+    categoryId?: bigint; // @gotags: alias:"category_id"
+    /**
+     * @generated from protobuf field: optional resources.documents.Category category = 6;
+     */
+    category?: Category; // @gotags: alias:"category"
+    /**
+     * @sanitize
+     *
+     * @generated from protobuf field: string title = 7;
+     */
+    title: string; // @gotags: alias:"title"
+    /**
+     * @generated from protobuf field: resources.documents.DocContentType content_type = 8;
+     */
+    contentType: DocContentType; // @gotags: alias:"content_type"
+    /**
+     * @sanitize
+     *
+     * @generated from protobuf field: string content = 9;
+     */
+    content: string; // @gotags: alias:"content"
     /**
      * @generated from protobuf field: optional int32 creator_id = 10;
      */
@@ -74,77 +145,6 @@ export interface Document {
      * @generated from protobuf field: bool public = 14;
      */
     public: boolean; // @gotags: alias:"public"
-    /**
-     * @generated from protobuf field: resources.timestamp.Timestamp deleted_at = 15;
-     */
-    deletedAt?: Timestamp;
-}
-/**
- * @generated from protobuf message resources.documents.DocumentShort
- */
-export interface DocumentShort {
-    /**
-     * @generated from protobuf field: uint64 id = 1;
-     */
-    id: bigint; // @gotags: alias:"id"
-    /**
-     * @generated from protobuf field: resources.timestamp.Timestamp created_at = 2;
-     */
-    createdAt?: Timestamp;
-    /**
-     * @generated from protobuf field: resources.timestamp.Timestamp updated_at = 3;
-     */
-    updatedAt?: Timestamp;
-    /**
-     * @generated from protobuf field: optional uint64 category_id = 4;
-     */
-    categoryId?: bigint; // @gotags: alias:"category_id"
-    /**
-     * @generated from protobuf field: optional resources.documents.Category category = 5;
-     */
-    category?: Category; // @gotags: alias:"category"
-    /**
-     * @sanitize
-     *
-     * @generated from protobuf field: string title = 6;
-     */
-    title: string; // @gotags: alias:"title"
-    /**
-     * @generated from protobuf field: resources.documents.DocContentType content_type = 7;
-     */
-    contentType: DocContentType; // @gotags: alias:"content_type"
-    /**
-     * @sanitize
-     *
-     * @generated from protobuf field: string content = 8;
-     */
-    content: string; // @gotags: alias:"content"
-    /**
-     * @generated from protobuf field: optional int32 creator_id = 9;
-     */
-    creatorId?: number; // @gotags: alias:"creator_id"
-    /**
-     * @generated from protobuf field: optional resources.users.UserShort creator = 10;
-     */
-    creator?: UserShort; // @gotags: alias:"creator"
-    /**
-     * @sanitize
-     *
-     * @generated from protobuf field: string state = 11;
-     */
-    state: string; // @gotags: alias:"state"
-    /**
-     * @generated from protobuf field: bool closed = 12;
-     */
-    closed: boolean; // @gotags: alias:"closed"
-    /**
-     * @generated from protobuf field: bool public = 13;
-     */
-    public: boolean; // @gotags: alias:"public"
-    /**
-     * @generated from protobuf field: resources.timestamp.Timestamp deleted_at = 14;
-     */
-    deletedAt?: Timestamp;
 }
 /**
  * @generated from protobuf message resources.documents.DocumentAccess
@@ -385,18 +385,18 @@ class Document$Type extends MessageType<Document> {
             { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
-            { no: 4, name: "category_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 5, name: "category", kind: "message", T: () => Category },
-            { no: 6, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxBytes: "21845" } } } },
-            { no: 7, name: "content_type", kind: "enum", T: () => ["resources.documents.DocContentType", DocContentType, "DOC_CONTENT_TYPE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
-            { no: 8, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "20", maxBytes: "1750000" } } } },
-            { no: 9, name: "data", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 10, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
-            { no: 11, name: "creator", kind: "message", T: () => UserShort },
-            { no: 12, name: "state", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "24" } } } },
-            { no: 13, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 14, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 15, name: "deleted_at", kind: "message", T: () => Timestamp }
+            { no: 4, name: "deleted_at", kind: "message", T: () => Timestamp },
+            { no: 5, name: "category_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 6, name: "category", kind: "message", T: () => Category },
+            { no: 7, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxBytes: "21845" } } } },
+            { no: 8, name: "content_type", kind: "enum", T: () => ["resources.documents.DocContentType", DocContentType, "DOC_CONTENT_TYPE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
+            { no: 9, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "20", maxBytes: "1750000" } } } },
+            { no: 10, name: "data", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "1000000" } } } },
+            { no: 11, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 12, name: "creator", kind: "message", T: () => UserShort },
+            { no: 13, name: "state", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "24" } } } },
+            { no: 14, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 15, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
 }
@@ -411,17 +411,17 @@ class DocumentShort$Type extends MessageType<DocumentShort> {
             { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
-            { no: 4, name: "category_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 5, name: "category", kind: "message", T: () => Category },
-            { no: 6, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3" } } } },
-            { no: 7, name: "content_type", kind: "enum", T: () => ["resources.documents.DocContentType", DocContentType, "DOC_CONTENT_TYPE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
-            { no: 8, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "1024" } } } },
-            { no: 9, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
-            { no: 10, name: "creator", kind: "message", T: () => UserShort },
-            { no: 11, name: "state", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "24" } } } },
-            { no: 12, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 13, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 14, name: "deleted_at", kind: "message", T: () => Timestamp }
+            { no: 4, name: "deleted_at", kind: "message", T: () => Timestamp },
+            { no: 5, name: "category_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 6, name: "category", kind: "message", T: () => Category },
+            { no: 7, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3" } } } },
+            { no: 8, name: "content_type", kind: "enum", T: () => ["resources.documents.DocContentType", DocContentType, "DOC_CONTENT_TYPE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
+            { no: 9, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "1024" } } } },
+            { no: 10, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 11, name: "creator", kind: "message", T: () => UserShort },
+            { no: 12, name: "state", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "24" } } } },
+            { no: 13, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 14, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
 }

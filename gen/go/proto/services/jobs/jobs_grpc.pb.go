@@ -19,11 +19,12 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	JobsService_ColleaguesList_FullMethodName     = "/services.jobs.JobsService/ColleaguesList"
-	JobsService_ConductListEntries_FullMethodName = "/services.jobs.JobsService/ConductListEntries"
-	JobsService_ConductCreateEntry_FullMethodName = "/services.jobs.JobsService/ConductCreateEntry"
-	JobsService_ConductUpdateEntry_FullMethodName = "/services.jobs.JobsService/ConductUpdateEntry"
-	JobsService_ConductDeleteEntry_FullMethodName = "/services.jobs.JobsService/ConductDeleteEntry"
+	JobsService_ColleaguesList_FullMethodName       = "/services.jobs.JobsService/ColleaguesList"
+	JobsService_ConductListEntries_FullMethodName   = "/services.jobs.JobsService/ConductListEntries"
+	JobsService_ConductCreateEntry_FullMethodName   = "/services.jobs.JobsService/ConductCreateEntry"
+	JobsService_ConductUpdateEntry_FullMethodName   = "/services.jobs.JobsService/ConductUpdateEntry"
+	JobsService_ConductDeleteEntry_FullMethodName   = "/services.jobs.JobsService/ConductDeleteEntry"
+	JobsService_TimeclockListEntries_FullMethodName = "/services.jobs.JobsService/TimeclockListEntries"
 )
 
 // JobsServiceClient is the client API for JobsService service.
@@ -40,6 +41,8 @@ type JobsServiceClient interface {
 	ConductUpdateEntry(ctx context.Context, in *ConductUpdateEntryRequest, opts ...grpc.CallOption) (*ConductUpdateEntryResponse, error)
 	// @perm
 	ConductDeleteEntry(ctx context.Context, in *ConductDeleteEntryRequest, opts ...grpc.CallOption) (*ConductDeleteEntryResponse, error)
+	// @perm: Attrs=Access/StringList:[]string{"Own", "All"}§[]string{"Own"}
+	TimeclockListEntries(ctx context.Context, in *TimeclockListEntriesRequest, opts ...grpc.CallOption) (*TimeclockListEntriesResponse, error)
 }
 
 type jobsServiceClient struct {
@@ -95,6 +98,15 @@ func (c *jobsServiceClient) ConductDeleteEntry(ctx context.Context, in *ConductD
 	return out, nil
 }
 
+func (c *jobsServiceClient) TimeclockListEntries(ctx context.Context, in *TimeclockListEntriesRequest, opts ...grpc.CallOption) (*TimeclockListEntriesResponse, error) {
+	out := new(TimeclockListEntriesResponse)
+	err := c.cc.Invoke(ctx, JobsService_TimeclockListEntries_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // JobsServiceServer is the server API for JobsService service.
 // All implementations must embed UnimplementedJobsServiceServer
 // for forward compatibility
@@ -109,6 +121,8 @@ type JobsServiceServer interface {
 	ConductUpdateEntry(context.Context, *ConductUpdateEntryRequest) (*ConductUpdateEntryResponse, error)
 	// @perm
 	ConductDeleteEntry(context.Context, *ConductDeleteEntryRequest) (*ConductDeleteEntryResponse, error)
+	// @perm: Attrs=Access/StringList:[]string{"Own", "All"}§[]string{"Own"}
+	TimeclockListEntries(context.Context, *TimeclockListEntriesRequest) (*TimeclockListEntriesResponse, error)
 	mustEmbedUnimplementedJobsServiceServer()
 }
 
@@ -130,6 +144,9 @@ func (UnimplementedJobsServiceServer) ConductUpdateEntry(context.Context, *Condu
 }
 func (UnimplementedJobsServiceServer) ConductDeleteEntry(context.Context, *ConductDeleteEntryRequest) (*ConductDeleteEntryResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ConductDeleteEntry not implemented")
+}
+func (UnimplementedJobsServiceServer) TimeclockListEntries(context.Context, *TimeclockListEntriesRequest) (*TimeclockListEntriesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method TimeclockListEntries not implemented")
 }
 func (UnimplementedJobsServiceServer) mustEmbedUnimplementedJobsServiceServer() {}
 
@@ -234,6 +251,24 @@ func _JobsService_ConductDeleteEntry_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _JobsService_TimeclockListEntries_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TimeclockListEntriesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(JobsServiceServer).TimeclockListEntries(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: JobsService_TimeclockListEntries_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(JobsServiceServer).TimeclockListEntries(ctx, req.(*TimeclockListEntriesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // JobsService_ServiceDesc is the grpc.ServiceDesc for JobsService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -260,6 +295,10 @@ var JobsService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ConductDeleteEntry",
 			Handler:    _JobsService_ConductDeleteEntry_Handler,
+		},
+		{
+			MethodName: "TimeclockListEntries",
+			Handler:    _JobsService_TimeclockListEntries_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -117,6 +117,8 @@ func New(p Params) *Tracker {
 }
 
 func (s *Tracker) start() {
+	time.Sleep(2 * time.Second)
+
 	for {
 		s.refreshCache()
 
@@ -148,6 +150,11 @@ func (s *Tracker) cleanupUserIDs() error {
 		if now.After(info.Time) {
 			event.Removed = append(event.Removed, key)
 			s.usersIDs.Delete(key)
+
+			jobUsers, ok := s.usersCache.Load(info.Job)
+			if ok {
+				jobUsers.Delete(key)
+			}
 		}
 
 		return true
@@ -234,7 +241,9 @@ func (s *Tracker) refreshUserLocations(ctx context.Context) error {
 		s.usersCache.Store(job, marker)
 	}
 
-	s.broker.Publish(event)
+	if len(event.Added) > 0 || len(event.Removed) > 0 {
+		s.broker.Publish(event)
+	}
 
 	return nil
 }

@@ -4,6 +4,8 @@
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
 import { JobsService } from "./jobs.js";
+import type { TimeclockListEntriesResponse } from "./jobs.js";
+import type { TimeclockListEntriesRequest } from "./jobs.js";
 import type { ConductDeleteEntryResponse } from "./jobs.js";
 import type { ConductDeleteEntryRequest } from "./jobs.js";
 import type { ConductUpdateEntryResponse } from "./jobs.js";
@@ -51,6 +53,12 @@ export interface IJobsServiceClient {
      * @generated from protobuf rpc: ConductDeleteEntry(services.jobs.ConductDeleteEntryRequest) returns (services.jobs.ConductDeleteEntryResponse);
      */
     conductDeleteEntry(input: ConductDeleteEntryRequest, options?: RpcOptions): UnaryCall<ConductDeleteEntryRequest, ConductDeleteEntryResponse>;
+    /**
+     * @perm: Attrs=Access/StringList:[]string{"Own", "All"}§[]string{"Own"}
+     *
+     * @generated from protobuf rpc: TimeclockListEntries(services.jobs.TimeclockListEntriesRequest) returns (services.jobs.TimeclockListEntriesResponse);
+     */
+    timeclockListEntries(input: TimeclockListEntriesRequest, options?: RpcOptions): UnaryCall<TimeclockListEntriesRequest, TimeclockListEntriesResponse>;
 }
 /**
  * @generated from protobuf service services.jobs.JobsService
@@ -105,5 +113,14 @@ export class JobsServiceClient implements IJobsServiceClient, ServiceInfo {
     conductDeleteEntry(input: ConductDeleteEntryRequest, options?: RpcOptions): UnaryCall<ConductDeleteEntryRequest, ConductDeleteEntryResponse> {
         const method = this.methods[4], opt = this._transport.mergeOptions(options);
         return stackIntercept<ConductDeleteEntryRequest, ConductDeleteEntryResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @perm: Attrs=Access/StringList:[]string{"Own", "All"}§[]string{"Own"}
+     *
+     * @generated from protobuf rpc: TimeclockListEntries(services.jobs.TimeclockListEntriesRequest) returns (services.jobs.TimeclockListEntriesResponse);
+     */
+    timeclockListEntries(input: TimeclockListEntriesRequest, options?: RpcOptions): UnaryCall<TimeclockListEntriesRequest, TimeclockListEntriesResponse> {
+        const method = this.methods[5], opt = this._transport.mergeOptions(options);
+        return stackIntercept<TimeclockListEntriesRequest, TimeclockListEntriesResponse>("unary", this._transport, method, opt, input);
     }
 }

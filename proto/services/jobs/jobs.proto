@@ -5,6 +5,8 @@ package services.jobs;
 import "resources/common/database/database.proto";
 import "resources/users/users.proto";
 import "resources/jobs/conduct.proto";
+import "resources/jobs/timeclock.proto";
+import "resources/timestamp/timestamp.proto";
 import "validate/validate.proto";
 
 option go_package = "github.com/galexrt/fivenet/gen/go/proto/services/jobs;jobs";
@@ -59,6 +61,21 @@ message ConductDeleteEntryRequest {
 
 message ConductDeleteEntryResponse {}
 
+// Time Clock
+
+message TimeclockListEntriesRequest {
+  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
+  // Search
+  repeated int32 user_ids = 2;
+  optional resources.timestamp.Timestamp from = 3;
+  optional resources.timestamp.Timestamp to = 4;
+}
+
+message TimeclockListEntriesResponse {
+  resources.common.database.PaginationResponse pagination = 1;
+  repeated resources.jobs.TimeclockEntry entries = 2;
+}
+
 service JobsService {
   // @perm
   rpc ColleaguesList(ColleaguesListRequest) returns (ColleaguesListResponse);
@@ -71,4 +88,7 @@ service JobsService {
   rpc ConductUpdateEntry(ConductUpdateEntryRequest) returns (ConductUpdateEntryResponse);
   // @perm
   rpc ConductDeleteEntry(ConductDeleteEntryRequest) returns (ConductDeleteEntryResponse);
+
+  // @perm: Attrs=Access/StringList:[]string{"Own", "All"}§[]string{"Own"}
+  rpc TimeclockListEntries(TimeclockListEntriesRequest) returns (TimeclockListEntriesResponse);
 }

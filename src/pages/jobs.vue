@@ -11,7 +11,7 @@ const navigation: { name: string; to: RoutesNamedLocations; permission?: string 
         to: { name: 'jobs-trainings' },
         permission: 'JobsService.TrainingsListEntries',
     },
-    //{ name: 'pages.jobs.timeclock.title', to: { name: 'jobs-timeclock', permission: 'JobsService.TimeclockListEntries' } },
+    { name: 'pages.jobs.timeclock.title', to: { name: 'jobs-timeclock' }, permission: 'JobsService.TimeclockListEntries' },
     { name: 'pages.jobs.conduct.title', to: { name: 'jobs-conduct' }, permission: 'JobsService.ConductListEntries' },
 ];
 

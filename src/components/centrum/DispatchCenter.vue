@@ -2,9 +2,9 @@
 import { default as DispatchesList } from '~/components/centrum/dispatches/List.vue';
 import { default as UnitsList } from '~/components/centrum/units/List.vue';
 import Livemap from '~/components/livemap/Livemap.vue';
-import { setWaypoint } from '~/components/nui';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
+import { setWaypoint } from '~/composables/nui';
 import { useCentrumStore } from '~/store/centrum';
 import { useLivemapStore } from '~/store/livemap';
 import DisponentsInfo from './DisponentsInfo.vue';

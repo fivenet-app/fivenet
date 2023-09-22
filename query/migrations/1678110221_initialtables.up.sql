@@ -193,7 +193,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_user_activity` (
 -- Table: fivenet_user_locations
 CREATE TABLE IF NOT EXISTS `fivenet_user_locations` (
   `identifier` varchar(64) NOT NULL,
-  `job` varchar(20) DEFAULT NULL,
+  `job` varchar(20) NOT NULL,
   `x` decimal(24,14) DEFAULT NULL,
   `y` decimal(24,14) DEFAULT NULL,
   `hidden` tinyint(1) DEFAULT NULL,
