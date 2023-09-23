@@ -1252,6 +1252,9 @@
         "JobsService": {
             "ConductListEntries": {
                 "Access": "Zugriff"
+            },
+            "TimeclockListEntries": {
+                "Access": "Zugriff"
             }
         }
     },
