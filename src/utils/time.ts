@@ -7,7 +7,7 @@ const seconds_per_day = seconds_per_hour * 24;
 const seconds_per_week = seconds_per_day * 7;
 const seconds_per_year = seconds_per_week * 52;
 
-export function fromSecondsToFormattedDuration(seconds: number): string {
+export function fromSecondsToFormattedDuration(seconds: number, options?: { seconds?: boolean }): string {
     const { t } = useI18n();
 
     const years = Math.floor(seconds / seconds_per_year);
@@ -37,7 +37,7 @@ export function fromSecondsToFormattedDuration(seconds: number): string {
     if (minutes > 0) {
         parts.push(`${minutes} ${t(`common.time_ago.minute`, minutes)}`);
     }
-    if (seconds > 0) {
+    if ((!options || options.seconds) && seconds > 0) {
         parts.push(`${seconds} ${t(`common.time_ago.second`, seconds)}`);
     }
 

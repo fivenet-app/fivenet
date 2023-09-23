@@ -78,3 +78,27 @@ func (s *Server) endTimeclockEntry(ctx context.Context, userId int32) error {
 
 	return nil
 }
+
+func (s *Server) getTimeclockstats(ctx context.Context, condition jet.BoolExpression) (*jobs.TimeclockStats, error) {
+	stmt := tTimeClock.
+		SELECT(
+			tTimeClock.Job.AS("timeclock_stats.job"),
+			jet.SUM(tTimeClock.SpentTime).AS("timeclock_stats.spent_time_sum"),
+			jet.AVG(tTimeClock.SpentTime).AS("timeclock_stats.spent_time_avg"),
+			jet.MAX(tTimeClock.SpentTime).AS("timeclock_stats.spent_time_max"),
+		).
+		FROM(tTimeClock).
+		WHERE(
+			condition.
+				AND(
+					tTimeClock.Date.BETWEEN(jet.CURRENT_DATE().SUB(jet.INTERVAL(7, jet.DAY)), jet.CURRENT_TIMESTAMP()),
+				),
+		)
+
+	var dest jobs.TimeclockStats
+	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
+		return nil, err
+	}
+
+	return &dest, nil
+}

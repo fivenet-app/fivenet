@@ -124,6 +124,11 @@ func (s *Server) TimeclockListEntries(ctx context.Context, req *TimeclockListEnt
 		}
 	}
 
+	resp.Stats, err = s.getTimeclockstats(ctx, condition)
+	if err != nil {
+		return nil, ErrFailedQuery
+	}
+
 	resp.Pagination.Update(count.TotalCount, len(resp.Entries))
 
 	return resp, nil

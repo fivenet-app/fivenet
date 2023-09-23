@@ -37,6 +37,27 @@ export interface TimeclockEntry {
      */
     spentTime: number;
 }
+/**
+ * @generated from protobuf message resources.jobs.TimeclockStats
+ */
+export interface TimeclockStats {
+    /**
+     * @generated from protobuf field: string job = 1;
+     */
+    job: string; // @gotags: alias:"spent_time_sum"
+    /**
+     * @generated from protobuf field: float spent_time_sum = 2;
+     */
+    spentTimeSum: number; // @gotags: alias:"spent_time_sum"
+    /**
+     * @generated from protobuf field: float spent_time_avg = 3;
+     */
+    spentTimeAvg: number; // @gotags: alias:"spent_time_avg"
+    /**
+     * @generated from protobuf field: float spent_time_max = 4;
+     */
+    spentTimeMax: number; // @gotags: alias:"spent_time_max"
+}
 // @generated message type with reflection information, may provide speed optimized methods
 class TimeclockEntry$Type extends MessageType<TimeclockEntry> {
     constructor() {
@@ -55,3 +76,18 @@ class TimeclockEntry$Type extends MessageType<TimeclockEntry> {
  * @generated MessageType for protobuf message resources.jobs.TimeclockEntry
  */
 export const TimeclockEntry = new TimeclockEntry$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class TimeclockStats$Type extends MessageType<TimeclockStats> {
+    constructor() {
+        super("resources.jobs.TimeclockStats", [
+            { no: 1, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
+            { no: 2, name: "spent_time_sum", kind: "scalar", T: 2 /*ScalarType.FLOAT*/ },
+            { no: 3, name: "spent_time_avg", kind: "scalar", T: 2 /*ScalarType.FLOAT*/ },
+            { no: 4, name: "spent_time_max", kind: "scalar", T: 2 /*ScalarType.FLOAT*/ }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.jobs.TimeclockStats
+ */
+export const TimeclockStats = new TimeclockStats$Type();

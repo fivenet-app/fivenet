@@ -6,13 +6,15 @@ import { CheckIcon } from 'mdi-vue3';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
+import Divider from '~/components/partials/elements/Divider.vue';
 import TablePagination from '~/components/partials/elements/TablePagination.vue';
 import * as google_protobuf_timestamp_pb from '~~/gen/ts/google/protobuf/timestamp';
 import { PaginationResponse } from '~~/gen/ts/resources/common/database/database';
-import { TimeclockEntry } from '~~/gen/ts/resources/jobs/timeclock';
+import { TimeclockEntry, TimeclockStats } from '~~/gen/ts/resources/jobs/timeclock';
 import { User } from '~~/gen/ts/resources/users/users';
 import { TimeclockListEntriesRequest } from '~~/gen/ts/services/jobs/jobs';
 import ListEntry from './ListEntry.vue';
+import Stats from './Stats.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -24,14 +26,9 @@ const query = ref<{
 const pagination = ref<PaginationResponse>();
 const offset = ref(0n);
 
-const {
-    data: entries,
-    pending,
-    refresh,
-    error,
-} = useLazyAsyncData(`jobs-timeclock-${offset.value}`, () => listTimeclockEntries());
+const { data, pending, refresh, error } = useLazyAsyncData(`jobs-timeclock-${offset.value}`, () => listTimeclockEntries());
 
-async function listTimeclockEntries(): Promise<TimeclockEntry[]> {
+async function listTimeclockEntries(): Promise<{ entries: TimeclockEntry[]; stats?: TimeclockStats }> {
     return new Promise(async (res, rej) => {
         try {
             const req: TimeclockListEntriesRequest = {
@@ -56,7 +53,7 @@ async function listTimeclockEntries(): Promise<TimeclockEntry[]> {
 
             pagination.value = response.pagination;
 
-            return res(response.entries);
+            return res(response);
         } catch (e) {
             $grpc.handleError(e as RpcError);
             return rej(e as RpcError);
@@ -67,7 +64,7 @@ async function listTimeclockEntries(): Promise<TimeclockEntry[]> {
 type GroupedTimeClockEntries = { date: Date; key: string; entries: TimeclockEntry[] }[];
 const grouped = computed(() => {
     const groups: GroupedTimeClockEntries = [];
-    entries.value?.map((e) => {
+    data.value?.entries.map((e) => {
         const date = toDate(e.date);
         const idx = groups.findIndex((g) => g.key === date.toString());
         if (idx === -1) {
@@ -125,16 +122,22 @@ function charsGetDisplayValue(chars: User[]): string {
     return cs.join(', ');
 }
 
-if (can('JobsService.TimeclockListEntries.Access.All')) {
-    watchDebounced(queryTargets, async () => (entriesChars.value = await listColleagues()), {
+watchDebounced(
+    queryTargets,
+    async () => {
+        if (can('JobsService.TimeclockListEntries.Access.All')) entriesChars.value = await listColleagues();
+    },
+    {
         debounce: 600,
         maxWait: 1400,
-    });
+    },
+);
 
-    onMounted(async () => {
+onMounted(async () => {
+    if (can('JobsService.TimeclockListEntries.Access.All')) {
         entriesChars.value = await listColleagues();
-    });
-}
+    }
+});
 </script>
 
 <template>
@@ -243,7 +246,7 @@ if (can('JobsService.TimeclockListEntries.Access.All')) {
                             :retry="refresh"
                         />
                         <DataNoDataBlock
-                            v-else-if="entries && entries.length === 0"
+                            v-else-if="data && data.entries && data.entries.length === 0"
                             :focus="focusSearch"
                             :message="$t('components.citizens.citizens_list.no_citizens')"
                         />
@@ -296,6 +299,14 @@ if (can('JobsService.TimeclockListEntries.Access.All')) {
 
                             <TablePagination :pagination="pagination" @offset-change="offset = $event" />
                         </div>
+                    </div>
+                </div>
+            </div>
+            <div v-if="data && data.stats" class="flow-root mb-4">
+                <div class="sm:flex sm:items-center">
+                    <div class="sm:flex-auto">
+                        <Divider :label="$t('components.jobs.timeclock.Stats.title')" />
+                        <Stats :stats="data.stats" />
                     </div>
                 </div>
             </div>

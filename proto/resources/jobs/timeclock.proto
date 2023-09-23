@@ -17,3 +17,10 @@ message TimeclockEntry {
   optional resources.timestamp.Timestamp end_time = 6;
   float spent_time = 7;
 }
+
+message TimeclockStats {
+  string job = 1 [(validate.rules).string.max_len = 20]; // @gotags: alias:"spent_time_sum"
+  float spent_time_sum = 2; // @gotags: alias:"spent_time_sum"
+  float spent_time_avg = 3; // @gotags: alias:"spent_time_avg"
+  float spent_time_max = 4; // @gotags: alias:"spent_time_max"
+}

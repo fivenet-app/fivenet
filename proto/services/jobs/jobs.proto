@@ -74,6 +74,7 @@ message TimeclockListEntriesRequest {
 message TimeclockListEntriesResponse {
   resources.common.database.PaginationResponse pagination = 1;
   repeated resources.jobs.TimeclockEntry entries = 2;
+  resources.jobs.TimeclockStats stats = 3;
 }
 
 service JobsService {

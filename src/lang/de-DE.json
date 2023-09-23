@@ -428,6 +428,14 @@
                     "create_title": "Erstelle neuen Führungsregister Eintrag",
                     "update_title": "Aktualisiere Führungsregister Eintrag"
                 }
+            },
+            "timeclock": {
+                "Stats": {
+                    "title": "Statistik: Letzten 7 Tage",
+                    "sum": "Gesamte Dienstzeit",
+                    "avg": "Durschnittliche Dienstzeit",
+                    "max": "Längste Dienstzeit"
+                }
             }
         }
     },
@@ -642,7 +650,9 @@
         "phone_number": "Telefonnummer",
         "back": "Zurück",
         "timeclock": "Stempeluhr",
-        "active": "Aktiv"
+        "active": "Aktiv",
+        "sum": "Summe",
+        "avg": "Durchschnitt"
     },
     "notifications": {
         "clipboard": {

@@ -3,6 +3,7 @@
 // tslint:disable
 import { ServiceType } from "@protobuf-ts/runtime-rpc";
 import { MessageType } from "@protobuf-ts/runtime";
+import { TimeclockStats } from "../../resources/jobs/timeclock.js";
 import { TimeclockEntry } from "../../resources/jobs/timeclock.js";
 import { Timestamp } from "../../resources/timestamp/timestamp.js";
 import { ConductEntry } from "../../resources/jobs/conduct.js";
@@ -165,6 +166,10 @@ export interface TimeclockListEntriesResponse {
      * @generated from protobuf field: repeated resources.jobs.TimeclockEntry entries = 2;
      */
     entries: TimeclockEntry[];
+    /**
+     * @generated from protobuf field: resources.jobs.TimeclockStats stats = 3;
+     */
+    stats?: TimeclockStats;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class ColleaguesListRequest$Type extends MessageType<ColleaguesListRequest> {
@@ -310,7 +315,8 @@ class TimeclockListEntriesResponse$Type extends MessageType<TimeclockListEntries
     constructor() {
         super("services.jobs.TimeclockListEntriesResponse", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse },
-            { no: 2, name: "entries", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => TimeclockEntry }
+            { no: 2, name: "entries", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => TimeclockEntry },
+            { no: 3, name: "stats", kind: "message", T: () => TimeclockStats }
         ]);
     }
 }

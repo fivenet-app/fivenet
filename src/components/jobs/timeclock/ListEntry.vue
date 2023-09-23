@@ -24,12 +24,12 @@ const spentTime = parseFloat(((Math.round(props.entry.spentTime * 100) / 100) * 
             <CitizenInfoPopover :user="entry.user" />
         </td>
         <td class="whitespace-nowrap px-1 py-1 text-left text-base-200">
-            {{ entry.spentTime > 0 ? fromSecondsToFormattedDuration(spentTime) : '' }}
+            {{ entry.spentTime > 0 ? fromSecondsToFormattedDuration(spentTime, { seconds: false }) : '' }}
             <template v-if="entry.startTime !== undefined">
                 <span
                     class="inline-flex items-center rounded-md bg-success-500/10 px-2 py-1 text-xs font-medium text-success-400 ring-1 ring-inset ring-success-500/20"
                 >
-                    {{ $t('common."active"') }}
+                    {{ $t('common.active') }}
                 </span>
             </template>
         </td>

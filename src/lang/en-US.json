@@ -428,6 +428,14 @@
                     "create_title": "Create Conduct Entry",
                     "update_title": "Update Conduct Entry"
                 }
+            },
+            "timeclock": {
+                "Stats": {
+                    "title": "Stats: Last 7 days",
+                    "sum": "Total on duty time",
+                    "avg": "Average on duty time",
+                    "max": "Longest on duty time"
+                }
             }
         }
     },
@@ -642,7 +650,9 @@
         "phone_number": "Phone Number",
         "back": "Back",
         "timeclock": "Time Clock",
-        "active": "Active"
+        "active": "Active",
+        "sum": "Total Sum",
+        "avg": "Average"
     },
     "notifications": {
         "clipboard": {
@@ -1241,6 +1251,9 @@
         },
         "JobsService": {
             "ConductListEntries": {
+                "Access": "Access"
+            },
+            "TimeclockListEntries": {
                 "Access": "Access"
             }
         }
