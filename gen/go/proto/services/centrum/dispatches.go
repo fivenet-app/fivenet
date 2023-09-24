@@ -297,8 +297,6 @@ func (s *Server) TakeDispatch(ctx context.Context, req *TakeDispatchRequest) (*T
 	}
 	defer s.auditer.Log(auditEntry, req)
 
-	settings := s.getSettings(userInfo.Job)
-
 	unitId, ok := s.getUnitIDForUserID(userInfo.UserId)
 	if !ok {
 		return nil, ErrFailedQuery
@@ -308,6 +306,7 @@ func (s *Server) TakeDispatch(ctx context.Context, req *TakeDispatchRequest) (*T
 		return nil, ErrFailedQuery
 	}
 
+	settings := s.getSettings(userInfo.Job)
 	for _, dispatchId := range req.DispatchIds {
 		dsp, ok := s.getDispatch(userInfo.Job, dispatchId)
 		if !ok {
@@ -323,47 +322,79 @@ func (s *Server) TakeDispatch(ctx context.Context, req *TakeDispatchRequest) (*T
 			}
 		}
 
+		status := dispatch.StatusDispatch_STATUS_DISPATCH_UNSPECIFIED
+
 		tDispatchUnit := table.FivenetCentrumDispatchesAsgmts
-		stmt := tDispatchUnit.
-			INSERT(
-				tDispatchUnit.DispatchID,
-				tDispatchUnit.UnitID,
-				tDispatchUnit.ExpiresAt,
-			).
-			VALUES(
-				dsp.Id,
-				unit.Id,
-				jet.NULL,
-			).
-			ON_DUPLICATE_KEY_UPDATE(
-				tDispatchUnit.ExpiresAt.SET(jet.TimestampExp(jet.NULL)),
-			)
+		// Dispatch accepted
+		if req.Resp == TakeDispatchResp_TAKE_DISPATCH_RESP_ACCEPTED {
+			status = dispatch.StatusDispatch_STATUS_DISPATCH_UNIT_ASSIGNED
 
-		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-			if !dbutils.IsDuplicateError(err) {
-				return nil, err
+			stmt := tDispatchUnit.
+				INSERT(
+					tDispatchUnit.DispatchID,
+					tDispatchUnit.UnitID,
+					tDispatchUnit.ExpiresAt,
+				).
+				VALUES(
+					dsp.Id,
+					unit.Id,
+					jet.NULL,
+				).
+				ON_DUPLICATE_KEY_UPDATE(
+					tDispatchUnit.ExpiresAt.SET(jet.TimestampExp(jet.NULL)),
+				)
+
+			if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+				if !dbutils.IsDuplicateError(err) {
+					return nil, err
+				}
 			}
-		}
 
-		found := false
-		// Set unit expires at to nil
-		for _, u := range dsp.Units {
-			if u.UnitId == unit.Id {
-				u.ExpiresAt = nil
-				found = true
-				break
+			found := false
+			// Set unit expires at to nil
+			for _, u := range dsp.Units {
+				if u.UnitId == unit.Id {
+					u.ExpiresAt = nil
+					found = true
+					break
+				}
 			}
-		}
 
-		if !found {
-			dsp.Units = append(dsp.Units, &dispatch.DispatchAssignment{
-				DispatchId: dsp.Id,
-				UnitId:     unit.Id,
-				Unit:       unit,
-				CreatedAt:  timestamp.Now(),
-			})
+			if !found {
+				dsp.Units = append(dsp.Units, &dispatch.DispatchAssignment{
+					DispatchId: dsp.Id,
+					UnitId:     unit.Id,
+					Unit:       unit,
+					CreatedAt:  timestamp.Now(),
+				})
 
-			// TODO set unit status to be busy if accepted a dispatch
+				// TODO set unit status to be busy if accepted a dispatch
+			}
+		} else {
+			// Dispatch declined
+			status = dispatch.StatusDispatch_STATUS_DISPATCH_UNIT_UNASSIGNED
+
+			stmt := tDispatchUnit.
+				DELETE().
+				WHERE(jet.AND(
+					tDispatchUnit.DispatchID.EQ(jet.Uint64(dsp.Id)),
+					tDispatchUnit.UnitID.EQ(jet.Uint64(unit.Id)),
+				)).
+				LIMIT(1)
+
+			if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+				if !dbutils.IsDuplicateError(err) {
+					return nil, err
+				}
+			}
+
+			// Remove the unit's assignment
+			for k, u := range dsp.Units {
+				if u.UnitId == unit.Id {
+					dsp.Units = utils.RemoveFromSlice(dsp.Units, k)
+					break
+				}
+			}
 		}
 
 		var x, y *float64
@@ -377,7 +408,7 @@ func (s *Server) TakeDispatch(ctx context.Context, req *TakeDispatchRequest) (*T
 
 		if err := s.updateDispatchStatus(ctx, userInfo.Job, dsp, &dispatch.DispatchStatus{
 			DispatchId: dispatchId,
-			Status:     dispatch.StatusDispatch_STATUS_DISPATCH_UNIT_ASSIGNED,
+			Status:     status,
 			UnitId:     &unitId,
 			UserId:     &userInfo.UserId,
 			X:          x,

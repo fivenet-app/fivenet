@@ -120,7 +120,9 @@ watch(pendingDispatches.value, () => {
                                                             :icon="CarEmergencyIcon"
                                                             :type="$t('common.dispatch', 2)"
                                                         />
+
                                                         <TakeDispatchEntry
+                                                            v-else
                                                             v-for="pd in pendingDispatches"
                                                             :dispatch="dispatches.get(pd)!"
                                                             :own-unit-id="ownUnitId"
