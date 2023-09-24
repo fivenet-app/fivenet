@@ -45,15 +45,6 @@ async function joinUnit(unit?: Unit | undefined): Promise<void> {
         }
     });
 }
-
-const inUnit = ref(false);
-watch(ownUnitId, () => {
-    if (ownUnitId.value !== undefined && ownUnitId.value > 0) {
-        inUnit.value = true;
-    } else {
-        inUnit.value = false;
-    }
-});
 </script>
 
 <template>
@@ -79,7 +70,7 @@ watch(ownUnitId, () => {
                                         <div class="bg-primary-700 px-4 py-6 sm:px-6">
                                             <div class="flex items-center justify-between">
                                                 <DialogTitle class="text-base font-semibold leading-6 text-white">
-                                                    <span v-if="inUnit"> {{ $t('common.leave_unit') }} </span>
+                                                    <span v-if="ownUnitId"> {{ $t('common.leave_unit') }} </span>
                                                     <span v-else> {{ $t('common.join_unit') }} </span>
                                                 </DialogTitle>
                                                 <div class="ml-3 flex h-7 items-center">
@@ -94,7 +85,7 @@ watch(ownUnitId, () => {
                                                 </div>
                                             </div>
                                         </div>
-                                        <div v-if="!inUnit" class="flex flex-1 flex-col justify-between">
+                                        <div v-if="!ownUnitId" class="flex flex-1 flex-col justify-between">
                                             <div class="divide-y divide-gray-200 px-4 sm:px-6">
                                                 <div class="mt-1">
                                                     <div class="my-2 space-y-24">
@@ -133,7 +124,7 @@ watch(ownUnitId, () => {
                                     <div class="flex flex-shrink-0 justify-end px-4 py-4">
                                         <span class="isolate inline-flex rounded-md shadow-sm pr-4 w-full">
                                             <button
-                                                v-if="inUnit"
+                                                v-if="ownUnitId"
                                                 type="button"
                                                 class="w-full relative inline-flex items-center rounded-l-md bg-error-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-primary-400"
                                                 @click="joinUnit(undefined)"
@@ -143,7 +134,7 @@ watch(ownUnitId, () => {
                                             <button
                                                 type="button"
                                                 class="w-full relative inline-flex items-center bg-white px-3 py-2 text-sm font-semibold text-gray-900 hover:text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-10"
-                                                :class="inUnit ? '-ml-px rounded-r-md' : 'rounded-md'"
+                                                :class="ownUnitId ? '-ml-px rounded-r-md' : 'rounded-md'"
                                                 @click="$emit('close')"
                                             >
                                                 {{ $t('common.close', 1) }}

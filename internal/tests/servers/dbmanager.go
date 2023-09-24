@@ -100,7 +100,8 @@ func (m *dbServer) DB() *sql.DB {
 }
 
 func (m *dbServer) getDSN() string {
-	return fmt.Sprintf("fivenet:changeme@(localhost:%s)/fivenettest?collation=utf8mb4_unicode_ci&parseTime=True&loc=Local", m.resource.GetPort("3306/tcp"))
+	// Using `root` isn't cool, but a workaround for now to create triggers in the database
+	return fmt.Sprintf("root:secret@(localhost:%s)/fivenettest?collation=utf8mb4_unicode_ci&parseTime=True&loc=Local", m.resource.GetPort("3306/tcp"))
 }
 
 func (m *dbServer) prepareDBForFirstUse() {
@@ -108,7 +109,7 @@ func (m *dbServer) prepareDBForFirstUse() {
 	m.loadSQLFile(filepath.Join(tests.TestDataSQLPath, "initial_esx.sql"))
 
 	// Use DB migrations to handle the rest
-	if err := query.MigrateDB(zap.NewNop(), m.getDSN()+"&multiStatements=true"); err != nil {
+	if err := query.MigrateDB(zap.NewNop(), m.getDSN()); err != nil {
 		log.Fatalf("Failed to migrate test database: %q", err)
 	}
 }

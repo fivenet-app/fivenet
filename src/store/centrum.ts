@@ -142,7 +142,7 @@ export const useCentrumStore = defineStore('centrum', {
                     d!.units.length = 0;
                 } else {
                     d!.units.length = 0;
-                    d!.units.concat(dispatch.units);
+                    d!.units.push(...dispatch.units);
                 }
 
                 if (dispatch.status !== undefined) {
@@ -312,16 +312,16 @@ export const useCentrumStore = defineStore('centrum', {
                         } else {
                             if (this.ownUnitId === undefined) return;
 
-                            // User has been removed from the unit
-                            this.setOwnUnit(undefined);
-                            this.ownDispatches.length = 0;
-                            this.pendingDispatches.length = 0;
-
                             notifications.dispatchNotification({
                                 title: { key: 'notifications.centrum.unitAssigned.removed.title', parameters: [] },
                                 content: { key: 'notifications.centrum.unitAssigned.removed.content', parameters: [] },
                                 type: 'warning',
                             });
+
+                            // User has been removed from the unit
+                            this.setOwnUnit(undefined);
+                            this.ownDispatches.length = 0;
+                            this.pendingDispatches.length = 0;
                         }
                     } else if (resp.change.oneofKind === 'unitDeleted') {
                         this.removeUnit(resp.change.unitDeleted);

@@ -90,7 +90,17 @@ discord:
   bot:
     enabled: true
     syncInterval: 15m
-    roleFormat: "[%02d] %s"
-    nicknameRegex: "^(?P<prefix>\\[\\S+][ ]*)?(?P<name>[^\\[]+)(?P<suffix>[ ]*\\[\\S+])?"
     inviteURL: "your_discord_bot_invite_url"
     token: "your_discord_bot_token"
+    userInfoSync:
+      roleFormat: "[%02d] %s"
+      nicknameRegex: "^(?P<prefix>\\[\\S+][ ]*)?(?P<name>[^\\[]+)(?P<suffix>[ ]*\\[\\S+])?"
+    groupSync:
+      enabled: false
+      mapping:
+        fraktionsverwaltung:
+          roleName: "Fraktionsverwaltung"
+          #permissions: 0
+        teamleitung:
+          roleName: "Teamleitung"
+          #permissions: 0

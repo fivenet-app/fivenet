@@ -267,7 +267,7 @@
                 "open_navigation": "Open navigation"
             },
             "table_pagination": {
-                "showing_results": "Showing <span class=\"font-medium text-neutral\">{0}</span> to <span class=\"font-medium text-neutral\">{1}</span> of <span class=\"font-medium text-neutral\">{2}</span> results"
+                "showing_results": "Showing {start} to {end} of {total} results"
             },
             "data_error_block": {
                 "default_title": "Unable to load your data!",

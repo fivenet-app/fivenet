@@ -267,7 +267,7 @@
                 "open_navigation": "Navigation öffnen"
             },
             "table_pagination": {
-                "showing_results": "Zeige <span class=\"font-medium text-neutral\">{0}</span> bis <span class=\"font-medium text-neutral\">{1}</span> von insgesamt <span class=\"font-medium text-neutral\">{2}</span> Ergebnissen"
+                "showing_results": "Zeige {start} bis {end} von insgesamt {total} Ergebnissen"
             },
             "data_error_block": {
                 "default_title": "Ihre Daten konnten nicht geladen werden!",
@@ -474,7 +474,7 @@
         "license": "Lizenz | Lizenzen",
         "not": "Nicht",
         "close": "Schließen | Geschlossen",
-        "open": "Offen",
+        "open": "Öffnen | Offen",
         "last_used": "Zuletzt Genutzt",
         "rank": "Rang",
         "playtime": "Spielzeit",

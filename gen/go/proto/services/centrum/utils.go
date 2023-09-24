@@ -239,3 +239,9 @@ func (s *Server) getUnitsMap(job string) *xsync.MapOf[uint64, *dispatch.Unit] {
 
 	return store
 }
+
+func (s *Server) isStatusDispatchComplete(in dispatch.StatusDispatch) bool {
+	return in == dispatch.StatusDispatch_STATUS_DISPATCH_ARCHIVED ||
+		in == dispatch.StatusDispatch_STATUS_DISPATCH_CANCELLED ||
+		in == dispatch.StatusDispatch_STATUS_DISPATCH_COMPLETED
+}

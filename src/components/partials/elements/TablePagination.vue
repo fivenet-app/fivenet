@@ -11,6 +11,7 @@ defineEmits<{
 
 const offset = computed(() => props.pagination?.offset ?? 0n);
 const total = computed(() => props.pagination?.totalCount ?? 0n);
+const start = computed(() => (total.value === 0n ? offset.value : offset.value + 1n));
 const pageSize = computed(() => props.pagination?.pageSize ?? 0n);
 const end = computed(() => props.pagination?.end ?? 0n);
 
@@ -26,16 +27,23 @@ function calculateOffset(): bigint {
 <template>
     <nav class="flex items-center justify-between px-4 py-3 border-t sm:px-6" aria-label="Pagination">
         <div class="hidden sm:block">
-            <p
-                class="text-sm text-gray-300"
-                v-html="
-                    $t('components.partials.table_pagination.showing_results', [
-                        (total === 0n ? offset : offset + 1n).toString(),
-                        end.toString(),
-                        total.toString(),
-                    ])
-                "
-            />
+            <I18nT keypath="components.partials.table_pagination.showing_results" tag="p" class="text-sm text-gray-300">
+                <template v-slot:start>
+                    <span class="font-medium text-neutral">
+                        {{ start.toString() }}
+                    </span>
+                </template>
+                <template v-slot:end>
+                    <span class="font-medium text-neutral">
+                        {{ end.toString() }}
+                    </span>
+                </template>
+                <template v-slot:total>
+                    <span class="font-medium text-neutral">
+                        {{ total.toString() }}
+                    </span>
+                </template>
+            </I18nT>
         </div>
         <div class="flex justify-between flex-1 sm:justify-end">
             <button

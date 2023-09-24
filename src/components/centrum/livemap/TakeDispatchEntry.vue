@@ -6,6 +6,7 @@ import Details from '../dispatches/Details.vue';
 
 const props = defineProps<{
     dispatch: Dispatch;
+    ownUnitId?: bigint;
 }>();
 
 defineEmits<{
@@ -13,7 +14,7 @@ defineEmits<{
     (e: 'goto', loc: Coordinate): void;
 }>();
 
-const expiresAt = props.dispatch.units.find((u) => u.expiresAt !== undefined)?.expiresAt;
+const expiresAt = props.dispatch.units.find((u) => u.unitId === props.ownUnitId)?.expiresAt;
 
 const open = ref(false);
 </script>

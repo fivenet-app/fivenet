@@ -194,10 +194,25 @@ type Discord struct {
 }
 
 type DiscordBot struct {
-	Enabled       bool          `default:"false" yaml:"enabled"`
-	SyncInterval  time.Duration `default:"15m" yaml:"syncInterval"`
-	RoleFormat    string        `default:"[%02d] %s" yaml:"roleFormat"`
-	NicknameRegex string        `yaml:"nicknameRegex"`
-	InviteURL     string        `yaml:"inviteURL"`
-	Token         string        `yaml:"token"`
+	Enabled      bool                `default:"false" yaml:"enabled"`
+	SyncInterval time.Duration       `default:"15m" yaml:"syncInterval"`
+	InviteURL    string              `yaml:"inviteURL"`
+	Token        string              `yaml:"token"`
+	UserInfoSync DiscordUserInfoSync `yaml:"userInfoSync"`
+	GroupSync    DiscordGroupSync    `yaml:"groupSync"`
+}
+
+type DiscordUserInfoSync struct {
+	RoleFormat    string `default:"[%02d] %s" yaml:"roleFormat"`
+	NicknameRegex string `yaml:"nicknameRegex"`
+}
+
+type DiscordGroupSync struct {
+	Enabled bool                        `default:"false" yaml:"enabled"`
+	Mapping map[string]DiscordGroupRole `yaml:"omitempty,mapping"`
+}
+
+type DiscordGroupRole struct {
+	Name        string `yaml:"roleName"`
+	Permissions *int64 `yaml:"omitempty,permissions"`
 }

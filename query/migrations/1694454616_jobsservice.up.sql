@@ -37,7 +37,8 @@ CREATE TABLE
 
 DROP TRIGGER IF EXISTS `fivenet_jobs_timeclock_spent_time_calc`;
 
-DELIMITER //
+-- Trigger: fivenet_jobs_timeclock_spent_time_calc
+-- Requires `SUPER` privilege to be created...
 CREATE TRIGGER `fivenet_jobs_timeclock_spent_time_calc` BEFORE UPDATE ON `fivenet_jobs_timeclock`
     FOR EACH ROW BEGIN
         DECLARE `duration` DECIMAL(10,2);
@@ -50,8 +51,6 @@ CREATE TRIGGER `fivenet_jobs_timeclock_spent_time_calc` BEFORE UPDATE ON `fivene
         SET NEW.`start_time` = NULL;
         SET NEW.`end_time` = NULL;
     END IF;
-
-END //
-DELIMITER ;
+END;
 
 COMMIT;

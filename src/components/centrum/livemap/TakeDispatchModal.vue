@@ -21,7 +21,7 @@ const emit = defineEmits<{
 const { $grpc } = useNuxtApp();
 
 const centrumStore = useCentrumStore();
-const { pendingDispatches, dispatches } = storeToRefs(centrumStore);
+const { pendingDispatches, dispatches, ownUnitId } = storeToRefs(centrumStore);
 
 const unselectedDispatches = ref<bigint[]>([]);
 
@@ -123,6 +123,7 @@ watch(pendingDispatches.value, () => {
                                                         <TakeDispatchEntry
                                                             v-for="pd in pendingDispatches"
                                                             :dispatch="dispatches.get(pd)!"
+                                                            :own-unit-id="ownUnitId"
                                                             @selected="selectDispatch(pd)"
                                                             @goto="$emit('goto', $event)"
                                                         />

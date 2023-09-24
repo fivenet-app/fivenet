@@ -247,6 +247,14 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 	updateTicker := time.NewTicker(40 * time.Second)
 	defer updateTicker.Stop()
 
+	// Check user token validity
+	if stop, err := s.checkUser(srv, req, &currentUserInfo); err != nil {
+		return err
+	} else if stop {
+		// End stream if we should "stop"
+		return nil
+	}
+
 	// Check if user has any (unsent/unread) notifications
 	if err := s.checkNotifications(srv, req, &currentUserInfo); err != nil {
 		return err
@@ -273,8 +281,11 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 			}
 
 			// Check user token validity
-			if err := s.checkUser(srv, req, &currentUserInfo); err != nil {
+			if stop, err := s.checkUser(srv, req, &currentUserInfo); err != nil {
 				return err
+			} else if stop {
+				// End stream if we should "stop"
+				return nil
 			}
 
 			// Make sure message queue subscription is still valid, otherwise restart stream
@@ -338,22 +349,18 @@ func (s *Server) checkNotifications(srv NotificatorService_StreamServer, req *St
 	return nil
 }
 
-func (s *Server) checkUser(srv NotificatorService_StreamServer, req *StreamRequest, userInfo *userinfo.UserInfo) error {
+func (s *Server) checkUser(srv NotificatorService_StreamServer, req *StreamRequest, userInfo *userinfo.UserInfo) (bool, error) {
+	claims, restart, tu, err := s.checkAndUpdateToken(srv.Context())
+	if err != nil {
+		return false, ErrFailedStream
+	}
+
 	resp := &StreamResponse{
 		LastId: req.LastId,
 	}
-
-	claims, restart, tu, err := s.checkAndUpdateToken(srv.Context())
-	if err != nil {
-		return ErrFailedStream
-	}
-	if restart {
-		resp.Restart = &restart
-	}
-
 	if tu != nil && claims.CharID > 0 {
 		if err := s.checkAndUpdateUserInfo(srv.Context(), tu, userInfo); err != nil {
-			return ErrFailedStream
+			return false, ErrFailedStream
 		}
 
 		resp.Data = &StreamResponse_Token{
@@ -361,11 +368,15 @@ func (s *Server) checkUser(srv NotificatorService_StreamServer, req *StreamReque
 		}
 	}
 
-	if err := srv.Send(resp); err != nil {
-		return ErrFailedStream
+	if restart {
+		resp.Restart = &restart
+
+		if err := srv.Send(resp); err != nil {
+			return false, ErrFailedStream
+		}
 	}
 
-	return nil
+	return false, nil
 }
 
 func (s *Server) checkAndUpdateToken(ctx context.Context) (*auth.CitizenInfoClaims, bool, *TokenUpdate, error) {

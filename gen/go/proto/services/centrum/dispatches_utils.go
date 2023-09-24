@@ -125,9 +125,14 @@ func (s *Server) updateDispatchStatus(ctx context.Context, job string, dsp *disp
 		dsp.Status.Status == in.Status &&
 		(in.Status == dispatch.StatusDispatch_STATUS_DISPATCH_NEW ||
 			in.Status == dispatch.StatusDispatch_STATUS_DISPATCH_UNASSIGNED ||
-			in.Status == dispatch.StatusDispatch_STATUS_DISPATCH_COMPLETED ||
-			in.Status == dispatch.StatusDispatch_STATUS_DISPATCH_CANCELLED ||
-			in.Status == dispatch.StatusDispatch_STATUS_DISPATCH_ARCHIVED) {
+			s.isStatusDispatchComplete(in.Status)) {
+		return nil
+	}
+
+	// If the dispatch is complete, we ignore any unit unassignments
+	if dsp.Status != nil && s.isStatusDispatchComplete(dsp.Status.Status) &&
+		(in.Status == dispatch.StatusDispatch_STATUS_DISPATCH_UNIT_UNASSIGNED ||
+			in.Status == dispatch.StatusDispatch_STATUS_DISPATCH_UNASSIGNED) {
 		return nil
 	}
 
@@ -336,9 +341,7 @@ func (s *Server) updateDispatchAssignments(ctx context.Context, job string, user
 	// Dispatch has not units assigned anymore
 	if len(dsp.Units) <= 0 {
 		// Check dispatch status to not be completed/archived, etc.
-		if dsp.Status != nil && (dsp.Status.Status != dispatch.StatusDispatch_STATUS_DISPATCH_ARCHIVED &&
-			dsp.Status.Status != dispatch.StatusDispatch_STATUS_DISPATCH_CANCELLED &&
-			dsp.Status.Status != dispatch.StatusDispatch_STATUS_DISPATCH_COMPLETED) {
+		if dsp.Status != nil && !s.isStatusDispatchComplete(dsp.Status.Status) {
 			if err := s.updateDispatchStatus(ctx, job, dsp, &dispatch.DispatchStatus{
 				DispatchId: dsp.Id,
 				Status:     dispatch.StatusDispatch_STATUS_DISPATCH_UNASSIGNED,

@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"regexp"
 	"sync"
 	"time"
 
@@ -18,13 +17,8 @@ import (
 )
 
 var (
-	tJobProps   = table.FivenetJobProps
-	tOauth2Accs = table.FivenetOauth2Accounts
-	tAccs       = table.FivenetAccounts
-	tUsers      = table.Users.AS("users")
+	tJobProps = table.FivenetJobProps
 )
-
-const RoleFormat = "[%02d] %s"
 
 func wrapLogger(log *zap.Logger) *zap.Logger {
 	return log.Named("discord_bot")
@@ -54,6 +48,7 @@ type Bot struct {
 	db       *sql.DB
 	enricher *mstlystcdata.Enricher
 	token    string
+	cfg      *config.DiscordBot
 
 	id      string
 	discord *discordgo.Session
@@ -61,19 +56,12 @@ type Bot struct {
 	guildsMutex  sync.Mutex
 	joinedGuilds []*discordgo.Guild
 
-	syncInterval  time.Duration
-	roleFormat    string
-	nicknameRegex *regexp.Regexp
+	syncInterval time.Duration
 }
 
 func NewBot(p BotParams) (*Bot, error) {
 	if !p.Config.Discord.Bot.Enabled {
 		return nil, nil
-	}
-
-	nicknameRegex, err := regexp.Compile(p.Config.Discord.Bot.NicknameRegex)
-	if err != nil {
-		return nil, err
 	}
 
 	ctx, cancel := context.WithCancel(context.Background())
@@ -83,10 +71,9 @@ func NewBot(p BotParams) (*Bot, error) {
 		db:       p.DB,
 		enricher: p.Enricher,
 		token:    p.Config.Discord.Bot.Token,
+		cfg:      &p.Config.Discord.Bot,
 
-		syncInterval:  p.Config.Discord.Bot.SyncInterval,
-		roleFormat:    p.Config.Discord.Bot.RoleFormat,
-		nicknameRegex: nicknameRegex,
+		syncInterval: p.Config.Discord.Bot.SyncInterval,
 	}
 
 	p.LC.Append(fx.StartHook(func(ctx context.Context) error {
@@ -94,7 +81,7 @@ func NewBot(p BotParams) (*Bot, error) {
 			return err
 		}
 
-		go b.SyncRoles()
+		go b.Sync()
 
 		return nil
 	}))
@@ -120,7 +107,9 @@ func (b *Bot) start(token string) error {
 		return err
 	}
 
-	discord.AddHandler(func(discord *discordgo.Session, ready *discordgo.Ready) {
+	b.discord.Identify.Intents = discordgo.IntentsAllWithoutPrivileged | discordgo.IntentsGuilds | discordgo.IntentsGuildMembers | discordgo.IntentsGuildPresences
+
+	b.discord.AddHandler(func(discord *discordgo.Session, ready *discordgo.Ready) {
 		b.guildsMutex.Lock()
 		defer b.guildsMutex.Unlock()
 
@@ -128,7 +117,7 @@ func (b *Bot) start(token string) error {
 		b.logger.Info(fmt.Sprintf("Ready with %d guilds", len(b.joinedGuilds)))
 	})
 
-	if err := discord.Open(); err != nil {
+	if err := b.discord.Open(); err != nil {
 		return fmt.Errorf("error opening connection: %w", err)
 	}
 
@@ -145,14 +134,14 @@ func (b *Bot) refreshBotGuilds() error {
 	return nil
 }
 
-func (b *Bot) SyncRoles() error {
+func (b *Bot) Sync() error {
 	for {
 		select {
 		case <-b.ctx.Done():
 			return nil
 
 		case <-time.After(b.syncInterval):
-			if err := b.syncRoles(); err != nil {
+			if err := b.runSync(); err != nil {
 				b.logger.Error("failed to sync roles", zap.Error(err))
 			}
 		}
@@ -164,33 +153,38 @@ func (b *Bot) getGuilds() ([]*Guild, error) {
 		return nil, err
 	}
 
-	guilds, err := b.getGuildsFromDB()
+	guildsDB, err := b.getGuildsFromDB()
 	if err != nil {
 		return nil, err
 	}
 
-	for i := len(guilds) - 1; i >= 0; i-- {
+	activeGuilds := []*Guild{}
+	for job, guildID := range guildsDB {
 		var found *discordgo.Guild
 		if !utils.InSliceFunc(b.joinedGuilds, func(in *discordgo.Guild) bool {
-			if in.ID == guilds[i].ID {
+			if in.ID == guildID {
 				found = in
 				return true
 			}
 			return false
 		}) {
-			guilds = utils.RemoveFromSlice(guilds, i)
-		} else {
-			if found == nil {
-				return nil, fmt.Errorf("didn't find bot being in guild %s", guilds[i].ID)
-			}
-			guilds[i].init(b, found)
+			continue
 		}
+		if found == nil {
+			return nil, fmt.Errorf("didn't find bot being in guild %s (job: %s)", guildID, job)
+		}
+
+		g, err := NewGuild(b, found, job)
+		if err != nil {
+			return nil, err
+		}
+		activeGuilds = append(activeGuilds, g)
 	}
 
-	return guilds, nil
+	return activeGuilds, nil
 }
 
-func (b *Bot) getGuildsFromDB() ([]*Guild, error) {
+func (b *Bot) getGuildsFromDB() (map[string]string, error) {
 	stmt := tJobProps.
 		SELECT(
 			tJobProps.Job.AS("guild.job"),
@@ -206,10 +200,15 @@ func (b *Bot) getGuildsFromDB() ([]*Guild, error) {
 		return nil, err
 	}
 
-	return dest, nil
+	guilds := map[string]string{}
+	for _, g := range dest {
+		guilds[g.Job] = g.ID
+	}
+
+	return guilds, nil
 }
 
-func (b *Bot) syncRoles() error {
+func (b *Bot) runSync() error {
 	guilds, err := b.getGuilds()
 	if err != nil {
 		return err
@@ -217,11 +216,7 @@ func (b *Bot) syncRoles() error {
 
 	// Each guild is effectively associated with a Job via the JobProps
 	for _, g := range guilds {
-		if err := g.createJobRoles(); err != nil {
-			return err
-		}
-
-		if err := g.syncUserInfo(); err != nil {
+		if err := g.Run(); err != nil {
 			return err
 		}
 	}
