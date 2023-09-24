@@ -374,7 +374,7 @@ function removeReference(id: bigint): void {
                                                                             <div class="flex">
                                                                                 <button
                                                                                     role="button"
-                                                                                    @click="addReferenceClipboard(document, 0)"
+                                                                                    @click="addReferenceClipboard(document, 1)"
                                                                                     data-te-toggle="tooltip"
                                                                                     :title="
                                                                                         $t(
@@ -388,7 +388,7 @@ function removeReference(id: bigint): void {
                                                                                 </button>
                                                                                 <button
                                                                                     role="button"
-                                                                                    @click="addReferenceClipboard(document, 1)"
+                                                                                    @click="addReferenceClipboard(document, 2)"
                                                                                     data-te-toggle="tooltip"
                                                                                     :title="
                                                                                         $t(
@@ -402,7 +402,7 @@ function removeReference(id: bigint): void {
                                                                                 </button>
                                                                                 <button
                                                                                     role="button"
-                                                                                    @click="addReferenceClipboard(document, 2)"
+                                                                                    @click="addReferenceClipboard(document, 3)"
                                                                                     data-te-toggle="tooltip"
                                                                                     :title="
                                                                                         $t(
@@ -416,7 +416,7 @@ function removeReference(id: bigint): void {
                                                                                 </button>
                                                                                 <button
                                                                                     role="button"
-                                                                                    @click="addReferenceClipboard(document, 3)"
+                                                                                    @click="addReferenceClipboard(document, 4)"
                                                                                     data-te-toggle="tooltip"
                                                                                     :title="
                                                                                         $t(
@@ -517,7 +517,7 @@ function removeReference(id: bigint): void {
                                                                                 <div class="flex">
                                                                                     <button
                                                                                         role="button"
-                                                                                        @click="addReference(document, 0)"
+                                                                                        @click="addReference(document, 1)"
                                                                                         data-te-toggle="tooltip"
                                                                                         :title="
                                                                                             $t(
@@ -531,7 +531,7 @@ function removeReference(id: bigint): void {
                                                                                     </button>
                                                                                     <button
                                                                                         role="button"
-                                                                                        @click="addReference(document, 1)"
+                                                                                        @click="addReference(document, 2)"
                                                                                         data-te-toggle="tooltip"
                                                                                         :title="
                                                                                             $t(
@@ -545,7 +545,7 @@ function removeReference(id: bigint): void {
                                                                                     </button>
                                                                                     <button
                                                                                         role="button"
-                                                                                        @click="addReference(document, 2)"
+                                                                                        @click="addReference(document, 3)"
                                                                                         data-te-toggle="tooltip"
                                                                                         :title="
                                                                                             $t(
@@ -559,7 +559,7 @@ function removeReference(id: bigint): void {
                                                                                     </button>
                                                                                     <button
                                                                                         role="button"
-                                                                                        @click="addReference(document, 3)"
+                                                                                        @click="addReference(document, 4)"
                                                                                         data-te-toggle="tooltip"
                                                                                         :title="
                                                                                             $t(

@@ -718,6 +718,10 @@
                 </li>
               
                 <li>
+                  <a href="#resources.jobs.TrainingRequest"><span class="badge">M</span>TrainingRequest</a>
+                </li>
+              
+                <li>
                   <a href="#resources.jobs.TrainingResult"><span class="badge">M</span>TrainingResult</a>
                 </li>
               
@@ -8568,6 +8572,13 @@
                 </tr>
               
                 <tr>
+                  <td>require_requirements</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
                   <td>minimum_grade</td>
                   <td><a href="#int32">int32</a></td>
                   <td></td>
@@ -8633,10 +8644,55 @@
 
         
       
-        <h3 id="resources.jobs.TrainingResult">TrainingResult</h3>
+        <h3 id="resources.jobs.TrainingRequest">TrainingRequest</h3>
         <p>TODO</p>
 
         
+
+        
+      
+        <h3 id="resources.jobs.TrainingResult">TrainingResult</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>training_id</td>
+                  <td><a href="#uint64">uint64</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>created_at</td>
+                  <td><a href="#resources.timestamp.Timestamp">resources.timestamp.Timestamp</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>user_id</td>
+                  <td><a href="#int32">int32</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>user</td>
+                  <td><a href="#resources.users.UserShort">resources.users.UserShort</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
 
         
       
@@ -9076,8 +9132,14 @@
               </tr>
             
               <tr>
-                <td>REQUEST_TYPE_ABSENCE</td>
+                <td>REQUEST_TYPE_GENERAL</td>
                 <td>1</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>REQUEST_TYPE_ABSENCE</td>
+                <td>2</td>
                 <td><p></p></td>
               </tr>
             

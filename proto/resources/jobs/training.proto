@@ -3,6 +3,7 @@ syntax = "proto3";
 package resources.jobs;
 
 import "resources/timestamp/timestamp.proto";
+import "resources/users/users.proto";
 import "validate/validate.proto";
 
 option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/jobs;jobs";
@@ -13,13 +14,21 @@ message TrainingModule {
   optional resources.timestamp.Timestamp updated_at = 3;
   string job = 4 [(validate.rules).string.max_len = 20];
   bool open = 5;
-  int32 minimum_grade = 6 [(validate.rules).int32.gt = 0];
+  bool require_requirements = 6;
+  int32 minimum_grade = 7 [(validate.rules).int32.gt = 0];
   // @sanitize
-  string title = 7;
+  string title = 8;
   // @sanitize
-  string description = 8;
+  string description = 9;
+}
+
+message TrainingRequest {
+  // TODO
 }
 
 message TrainingResult {
-  // TODO
+  uint64 training_id = 1;
+  optional resources.timestamp.Timestamp created_at = 2;
+  int32 user_id = 3;
+  resources.users.UserShort user = 4;
 }

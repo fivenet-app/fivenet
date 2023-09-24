@@ -78,9 +78,13 @@ export enum RequestType {
      */
     UNSPECIFIED = 0,
     /**
-     * @generated from protobuf enum value: REQUEST_TYPE_ABSENCE = 1;
+     * @generated from protobuf enum value: REQUEST_TYPE_GENERAL = 1;
      */
-    ABSENCE = 1
+    GENERAL = 1,
+    /**
+     * @generated from protobuf enum value: REQUEST_TYPE_ABSENCE = 2;
+     */
+    ABSENCE = 2
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class RequestEntry$Type extends MessageType<RequestEntry> {

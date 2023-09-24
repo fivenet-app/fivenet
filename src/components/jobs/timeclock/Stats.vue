@@ -11,15 +11,15 @@ function updateStats(): void {
     entries.value.length = 0;
     entries.value.push({
         name: 'components.jobs.timeclock.Stats.sum',
-        value: props.stats.spentTimeSum * 60 * 60,
+        value: parseFloat(((Math.round(props.stats.spentTimeSum * 100) / 100) * 60 * 60).toPrecision(2)),
     });
     entries.value.push({
         name: 'components.jobs.timeclock.Stats.avg',
-        value: props.stats.spentTimeAvg * 60 * 60,
+        value: parseFloat(((Math.round(props.stats.spentTimeAvg * 100) / 100) * 60 * 60).toPrecision(2)),
     });
     entries.value.push({
         name: 'components.jobs.timeclock.Stats.max',
-        value: props.stats.spentTimeMax * 60 * 60,
+        value: parseFloat(((Math.round(props.stats.spentTimeMax * 100) / 100) * 60 * 60).toPrecision(2)),
     });
 }
 

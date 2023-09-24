@@ -10,7 +10,8 @@ option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/jobs;jobs
 
 enum RequestType {
   REQUEST_TYPE_UNSPECIFIED = 0;
-  REQUEST_TYPE_ABSENCE = 1;
+  REQUEST_TYPE_GENERAL = 1;
+  REQUEST_TYPE_ABSENCE = 2;
 }
 
 message RequestEntry {

@@ -2,6 +2,7 @@
 // @generated from protobuf file "resources/jobs/training.proto" (package "resources.jobs", syntax proto3)
 // tslint:disable
 import { MessageType } from "@protobuf-ts/runtime";
+import { UserShort } from "../users/users.js";
 import { Timestamp } from "../timestamp/timestamp.js";
 /**
  * @generated from protobuf message resources.jobs.TrainingModule
@@ -28,28 +29,53 @@ export interface TrainingModule {
      */
     open: boolean;
     /**
-     * @generated from protobuf field: int32 minimum_grade = 6;
+     * @generated from protobuf field: bool require_requirements = 6;
+     */
+    requireRequirements: boolean;
+    /**
+     * @generated from protobuf field: int32 minimum_grade = 7;
      */
     minimumGrade: number;
     /**
      * @sanitize
      *
-     * @generated from protobuf field: string title = 7;
+     * @generated from protobuf field: string title = 8;
      */
     title: string;
     /**
      * @sanitize
      *
-     * @generated from protobuf field: string description = 8;
+     * @generated from protobuf field: string description = 9;
      */
     description: string;
 }
 /**
  * TODO
  *
+ * @generated from protobuf message resources.jobs.TrainingRequest
+ */
+export interface TrainingRequest {
+}
+/**
  * @generated from protobuf message resources.jobs.TrainingResult
  */
 export interface TrainingResult {
+    /**
+     * @generated from protobuf field: uint64 training_id = 1;
+     */
+    trainingId: bigint;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
+     */
+    createdAt?: Timestamp;
+    /**
+     * @generated from protobuf field: int32 user_id = 3;
+     */
+    userId: number;
+    /**
+     * @generated from protobuf field: resources.users.UserShort user = 4;
+     */
+    user?: UserShort;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class TrainingModule$Type extends MessageType<TrainingModule> {
@@ -60,9 +86,10 @@ class TrainingModule$Type extends MessageType<TrainingModule> {
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 5, name: "open", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 6, name: "minimum_grade", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
-            { no: 7, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 8, name: "description", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+            { no: 6, name: "require_requirements", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 7, name: "minimum_grade", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
+            { no: 8, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 9, name: "description", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
         ]);
     }
 }
@@ -71,9 +98,24 @@ class TrainingModule$Type extends MessageType<TrainingModule> {
  */
 export const TrainingModule = new TrainingModule$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class TrainingRequest$Type extends MessageType<TrainingRequest> {
+    constructor() {
+        super("resources.jobs.TrainingRequest", []);
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.jobs.TrainingRequest
+ */
+export const TrainingRequest = new TrainingRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class TrainingResult$Type extends MessageType<TrainingResult> {
     constructor() {
-        super("resources.jobs.TrainingResult", []);
+        super("resources.jobs.TrainingResult", [
+            { no: 1, name: "training_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
+            { no: 3, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 4, name: "user", kind: "message", T: () => UserShort }
+        ]);
     }
 }
 /**

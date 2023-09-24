@@ -351,7 +351,7 @@ function removeRelation(id: bigint): void {
                                                                             <div class="flex">
                                                                                 <button
                                                                                     role="button"
-                                                                                    @click="addRelation(getUser(user), 0)"
+                                                                                    @click="addRelation(getUser(user), 1)"
                                                                                     data-te-toggle="tooltip"
                                                                                     :title="
                                                                                         $t(
@@ -367,7 +367,7 @@ function removeRelation(id: bigint): void {
                                                                             <div class="flex">
                                                                                 <button
                                                                                     role="button"
-                                                                                    @click="addRelation(getUser(user), 1)"
+                                                                                    @click="addRelation(getUser(user), 2)"
                                                                                     data-te-toggle="tooltip"
                                                                                     :title="
                                                                                         $t(
@@ -383,7 +383,7 @@ function removeRelation(id: bigint): void {
                                                                             <div class="flex">
                                                                                 <button
                                                                                     role="button"
-                                                                                    @click="addRelation(getUser(user), 2)"
+                                                                                    @click="addRelation(getUser(user), 3)"
                                                                                     data-te-toggle="tooltip"
                                                                                     :title="
                                                                                         $t(
@@ -462,7 +462,7 @@ function removeRelation(id: bigint): void {
                                                                             <div class="flex">
                                                                                 <button
                                                                                     role="button"
-                                                                                    @click="addRelation(user, 0)"
+                                                                                    @click="addRelation(user, 1)"
                                                                                     data-te-toggle="tooltip"
                                                                                     :title="
                                                                                         $t(
@@ -478,7 +478,7 @@ function removeRelation(id: bigint): void {
                                                                             <div class="flex">
                                                                                 <button
                                                                                     role="button"
-                                                                                    @click="addRelation(user, 1)"
+                                                                                    @click="addRelation(user, 2)"
                                                                                     data-te-toggle="tooltip"
                                                                                     :title="
                                                                                         $t(
@@ -494,7 +494,7 @@ function removeRelation(id: bigint): void {
                                                                             <div class="flex">
                                                                                 <button
                                                                                     role="button"
-                                                                                    @click="addRelation(user, 2)"
+                                                                                    @click="addRelation(user, 3)"
                                                                                     data-te-toggle="tooltip"
                                                                                     :title="
                                                                                         $t(
