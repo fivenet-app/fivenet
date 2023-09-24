@@ -298,7 +298,7 @@ func (s *Server) archiveDispatches(ctx context.Context) error {
 		).
 		WHERE(jet.AND(
 			tDispatchStatus.CreatedAt.LT_EQ(
-				jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(15, jet.MINUTE)),
+				jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(5, jet.MINUTE)),
 			),
 			tDispatchStatus.Status.IN(
 				jet.Int16(int16(dispatch.StatusDispatch_STATUS_DISPATCH_COMPLETED)),

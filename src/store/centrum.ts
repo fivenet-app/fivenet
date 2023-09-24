@@ -437,7 +437,7 @@ export const useCentrumStore = defineStore('centrum', {
                 } else {
                     this.dispatches.get(pd)?.units.forEach((ua) => {
                         const expiresAt = toDate(ua.expiresAt);
-                        if (now - expiresAt.getTime() > FIVE_MINUTES) this.removePendingDispatch(pd);
+                        if (now - expiresAt.getTime() >= TWO_MINUTES) this.removePendingDispatch(pd);
                     });
                 }
             });
@@ -451,7 +451,7 @@ export const useCentrumStore = defineStore('centrum', {
                 )
                     return;
 
-                if (now - toDate(d.status?.createdAt).getTime() > FIVE_MINUTES) this.removeDispatch(d.id);
+                if (now - toDate(d.status?.createdAt).getTime() >= FIVE_MINUTES) this.removeDispatch(d.id);
             });
         },
     },
