@@ -81,13 +81,15 @@ let entriesAccessRoles: {
 }[] = [];
 if (!props.accessRoles || props.accessRoles.length === 0) {
     const enumVals = listEnumValues(AccessLevel);
-    entriesAccessRoles = enumVals.map((e, k) => {
-        return {
-            id: k,
-            label: t(`enums.docstore.AccessLevel.${e.name}`),
-            value: e.name,
-        };
-    });
+    entriesAccessRoles = enumVals
+        .map((e, k) => {
+            return {
+                id: k,
+                label: t(`enums.docstore.AccessLevel.${e.name}`),
+                value: e.name,
+            };
+        })
+        .filter((e) => e.id !== 0);
 } else {
     props.accessRoles.forEach((e) => {
         entriesAccessRoles.push({
