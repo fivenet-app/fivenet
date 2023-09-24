@@ -24,7 +24,7 @@ const openAssign = ref(false);
 <template>
     <tr>
         <Details :dispatch="dispatch" :open="openDetails" @close="openDetails = false" @goto="$emit('goto', $event)" />
-        <AssignDispatchModal :open="openAssign" :dispatch="dispatch" @close="openAssign = false" />
+        <AssignDispatchModal v-if="openAssign" :open="openAssign" :dispatch="dispatch" @close="openAssign = false" />
 
         <td
             class="relative whitespace-nowrap pl-0 py-1 pr-0 text-left text-sm font-medium sm:pr-0.5 flex flex-row justify-start"

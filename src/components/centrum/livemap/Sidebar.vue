@@ -166,7 +166,24 @@ watch(ownUnitId, () => {
     }
 });
 
-onBeforeMount(async () => setTimeout(async () => canStream && startStream(), 250));
+function ensureDispatchSelected(): void {
+    if (selectedDispatch.value !== undefined) {
+        return;
+    }
+
+    if (ownDispatches.value.length > 0) {
+        selectedDispatch.value = ownDispatches.value[0];
+    } else {
+        selectedDispatch.value = undefined;
+    }
+}
+
+watch(ownDispatches.value, () => ensureDispatchSelected());
+
+onBeforeMount(async () => {
+    setTimeout(async () => canStream && startStream(), 250);
+    ensureDispatchSelected();
+});
 
 onBeforeUnmount(async () => {
     stopStream();

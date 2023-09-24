@@ -26,6 +26,7 @@ const openDetails = ref(false);
                 type="radio"
                 class="h-4 w-4 border-gray-300 text-primary-600 focus:ring-primary-600"
                 v-bind:value="dispatch.id"
+                :checked="selectedDispatch === dispatch.id"
                 @change="$emit('update:selectedDispatch', dispatch.id)"
             />
         </div>
