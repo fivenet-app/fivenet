@@ -11,7 +11,7 @@ import { useDocumentEditorStore } from '~/store/documenteditor';
 import { useSettingsStore } from '~/store/settings';
 import ConfirmDialog from './components/partials/ConfirmDialog.vue';
 
-const { t, locale, setLocale, finalizePendingLocaleChange } = useI18n();
+const { t, locale, finalizePendingLocaleChange } = useI18n();
 
 const configStore = useConfigStore();
 const { loadConfig } = configStore;
@@ -52,21 +52,19 @@ if (__APP_VERSION__ != userSettings.version) {
 
 const cookieLocale = ref<Locale>('en');
 
+configure({
+    generateMessage: localize({
+        en,
+        de,
+    }),
+});
+
 // Set user setting locale on load of app
 locale.value = userSettings.locale;
 setLocaleGlobally(locale.value);
 
 async function setLocaleGlobally(locale: string): Promise<void> {
-    setLocale(locale);
-
     settings.setLocale(locale);
-
-    configure({
-        generateMessage: localize({
-            en,
-            de,
-        }),
-    });
     veeValidateSetLocale(locale);
 
     // Cookie Banner Locale handling

@@ -113,9 +113,9 @@ export interface Access {
      */
     jobAccess: JobAccess[];
     /**
-     * @generated from protobuf field: repeated resources.jobs.RequireqQualificationAccess required_qualification_access = 2;
+     * @generated from protobuf field: repeated resources.jobs.RequiredQualificationAccess required_qualification_access = 2;
      */
-    requiredQualificationAccess: RequireqQualificationAccess[];
+    requiredQualificationAccess: RequiredQualificationAccess[];
 }
 /**
  * @generated from protobuf message resources.jobs.JobAccess
@@ -155,13 +155,21 @@ export interface JobAccess {
     access: AccessLevel; // @gotags: alias:"access"
 }
 /**
- * @generated from protobuf message resources.jobs.RequireqQualificationAccess
+ * @generated from protobuf message resources.jobs.RequiredQualificationAccess
  */
-export interface RequireqQualificationAccess {
+export interface RequiredQualificationAccess {
     /**
      * @generated from protobuf field: uint64 id = 1;
      */
     id: bigint; // @gotags: alias:"id"
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
+     */
+    createdAt?: Timestamp;
+    /**
+     * @generated from protobuf field: uint64 training_id = 3;
+     */
+    trainingId: bigint;
 }
 /**
  * @generated from protobuf enum resources.jobs.AccessLevel
@@ -228,7 +236,7 @@ class Access$Type extends MessageType<Access> {
     constructor() {
         super("resources.jobs.Access", [
             { no: 1, name: "job_access", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => JobAccess },
-            { no: 2, name: "required_qualification_access", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => RequireqQualificationAccess }
+            { no: 2, name: "required_qualification_access", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => RequiredQualificationAccess }
         ]);
     }
 }
@@ -256,14 +264,16 @@ class JobAccess$Type extends MessageType<JobAccess> {
  */
 export const JobAccess = new JobAccess$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class RequireqQualificationAccess$Type extends MessageType<RequireqQualificationAccess> {
+class RequiredQualificationAccess$Type extends MessageType<RequiredQualificationAccess> {
     constructor() {
-        super("resources.jobs.RequireqQualificationAccess", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+        super("resources.jobs.RequiredQualificationAccess", [
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
+            { no: 3, name: "training_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
         ]);
     }
 }
 /**
- * @generated MessageType for protobuf message resources.jobs.RequireqQualificationAccess
+ * @generated MessageType for protobuf message resources.jobs.RequiredQualificationAccess
  */
-export const RequireqQualificationAccess = new RequireqQualificationAccess$Type();
+export const RequiredQualificationAccess = new RequiredQualificationAccess$Type();
