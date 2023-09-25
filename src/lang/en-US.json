@@ -293,17 +293,6 @@
             }
         },
         "documents": {
-            "categories": {
-                "modal": {
-                    "create_category": "Create Category",
-                    "update_category": "Update Category"
-                }
-            },
-            "templates": {
-                "modal": {
-                    "no_template": "Without Template"
-                }
-            },
             "document_comment_entry": {
                 "edit_comment": "Edit your comment"
             },
@@ -337,6 +326,17 @@
             },
             "document_list": {
                 "no_documents_hint": "Either update your search query or create the first document using the above \"Create\"-button."
+            },
+            "categories": {
+                "modal": {
+                    "create_category": "Create Category",
+                    "update_category": "Update Category"
+                }
+            },
+            "templates": {
+                "modal": {
+                    "no_template": "Without Template"
+                }
             }
         },
         "livemap": {
@@ -706,10 +706,6 @@
             "title": "Category updated!",
             "content": "The Category was successfully updated"
         },
-        "category_created": {
-            "title": "Category created!",
-            "content": "The Category was successfully created"
-        },
         "max_access_entry": {
             "title": "Maximum amount of Access entries exceeded",
             "content": "There can only be a maximum of {0} access entries on a Document"
@@ -913,6 +909,10 @@
                     }
                 }
             }
+        },
+        "category_created": {
+            "title": "Category created!",
+            "content": "The Category was successfully created"
         }
     },
     "perms": {
