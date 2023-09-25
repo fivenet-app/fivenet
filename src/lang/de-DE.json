@@ -336,6 +336,12 @@
             "templates": {
                 "modal": {
                     "no_template": "Ohne Vorlage"
+                },
+                "templates_modal": {
+                    "no_template": "Ohne Vorlage"
+                },
+                "partials": {
+                    "template_hint": "Sie können Golang HTML Templating im oberen Feld. Klicken Sie hier, um mehr zu erfahren."
                 }
             }
         },
