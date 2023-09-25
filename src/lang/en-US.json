@@ -334,6 +334,9 @@
                 }
             },
             "templates": {
+                "modal": {
+                    "no_template": "Without Template"
+                },
                 "templates_modal": {
                     "no_template": "Without Template"
                 },
