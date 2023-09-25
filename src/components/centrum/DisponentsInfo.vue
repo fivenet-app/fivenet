@@ -80,7 +80,7 @@ const disponentsNames = computed(() => {
                                 v-if="!isDisponent"
                                 type="button"
                                 @click="takeControl(true)"
-                                class="flex items-center justify-center rounded-full bg-green-500 text-neutral hover:bg-green-400"
+                                class="flex items-center justify-center rounded-full bg-success-500 text-neutral hover:bg-success-400"
                             >
                                 <LocationEnterIcon class="w-8 h-8" />
                                 <span class="px-1">{{ $t('common.join') }}</span>
@@ -102,7 +102,7 @@ const disponentsNames = computed(() => {
                                     :class="
                                         disponents.length === 0
                                             ? 'bg-warn-400/10 text-warn-500 ring-warn-400/20'
-                                            : 'bg-green-500/10 text-green-400 ring-green-500/20'
+                                            : 'bg-success-500/10 text-success-400 ring-success-500/20'
                                     "
                                     :title="disponentsNames"
                                 >

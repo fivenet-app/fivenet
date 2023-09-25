@@ -2,7 +2,7 @@
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { max, min, required } from '@vee-validate/rules';
 import { useThrottleFn } from '@vueuse/core';
-import { CommentTextMultipleIcon } from 'mdi-vue3';
+import { CommentTextMultipleIcon, LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import TablePagination from '~/components/partials/elements/TablePagination.vue';
@@ -194,7 +194,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                             <div class="flex-shrink-0">
                                 <button
                                     type="submit"
-                                    class="inline-flex items-center rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                                    class="flex justify-center rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                                     :disabled="!meta.valid || !canSubmit"
                                     :class="[
                                         !meta.valid || !canSubmit
@@ -202,6 +202,9 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                             : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
                                     ]"
                                 >
+                                    <template v-if="!canSubmit">
+                                        <LoadingIcon class="animate-spin h-5 w-5 mr-2" />
+                                    </template>
                                     {{ $t('common.post') }}
                                 </button>
                             </div>

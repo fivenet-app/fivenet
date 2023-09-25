@@ -47,7 +47,7 @@ defineEmits<{
                             class="relative px-4 pt-5 pb-4 overflow-hidden text-left transition-all transform rounded-lg bg-base-800 text-neutral sm:my-8 sm:w-full sm:max-w-6xl sm:p-6"
                         >
                             <div>
-                                <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-base-800">
+                                <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-base-700">
                                     <ClipboardListIcon class="h-6 w-6 text-primary-500" aria-hidden="true" />
                                 </div>
                                 <div class="mt-3 text-center sm:mt-5">
@@ -62,20 +62,22 @@ defineEmits<{
                                 </div>
                             </div>
                             <div class="gap-2 mt-5 sm:mt-4 sm:flex">
-                                <button
-                                    type="button"
-                                    class="flex-1 rounded-md bg-base-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-base-400"
-                                    @click="$emit('close')"
-                                >
-                                    {{ $t('common.close', 1) }}
-                                </button>
-                                <button
-                                    type="button"
-                                    class="flex-1 rounded-md bg-error-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-error-400"
-                                    @click="clipboardStore.clear()"
-                                >
-                                    {{ $t('components.clipboard.clipboard_modal.clear') }}
-                                </button>
+                                <span class="isolate inline-flex rounded-md shadow-sm pr-4 w-full">
+                                    <button
+                                        type="button"
+                                        class="relative inline-flex items-center w-full rounded-l-md bg-base-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-base-400"
+                                        @click="$emit('close')"
+                                    >
+                                        {{ $t('common.close', 1) }}
+                                    </button>
+                                    <button
+                                        type="button"
+                                        class="relative -ml-px inline-flex items-center w-full rounded-r-md bg-error-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-error-400"
+                                        @click="clipboardStore.clear()"
+                                    >
+                                        {{ $t('components.clipboard.clipboard_modal.clear') }}
+                                    </button>
+                                </span>
                             </div>
                         </DialogPanel>
                     </TransitionChild>

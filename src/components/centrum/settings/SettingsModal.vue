@@ -3,7 +3,7 @@ import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } fro
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { required } from '@vee-validate/rules';
 import { useThrottleFn } from '@vueuse/core';
-import { GroupIcon } from 'mdi-vue3';
+import { GroupIcon, LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import { CentrumMode, Settings } from '~~/gen/ts/resources/dispatch/settings';
 
@@ -135,8 +135,8 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                         >
                             <form @submit.prevent="onSubmitThrottle">
                                 <div>
-                                    <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
-                                        <GroupIcon class="h-6 w-6 text-green-600" aria-hidden="true" />
+                                    <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-success-100">
+                                        <GroupIcon class="h-6 w-6 text-success-600" aria-hidden="true" />
                                     </div>
                                     <div class="mt-3 text-center sm:mt-5">
                                         <DialogTitle as="h3" class="text-base font-semibold leading-6 text-white">
@@ -235,7 +235,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                     <button
                                         v-if="can('CentrumService.UpdateSettings')"
                                         type="submit"
-                                        class="inline-flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:col-start-2"
+                                        class="flex justify-center w-full rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:col-start-2"
                                         :disabled="!meta.valid || !canSubmit"
                                         :class="[
                                             !meta.valid || !canSubmit
@@ -243,6 +243,9 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                 : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
                                         ]"
                                     >
+                                        <template v-if="!canSubmit">
+                                            <LoadingIcon class="animate-spin h-5 w-5 mr-2" />
+                                        </template>
                                         {{ $t('common.update') }}
                                     </button>
                                     <button

@@ -2,6 +2,7 @@
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { digits, max, min, required } from '@vee-validate/rules';
 import { useThrottleFn } from '@vueuse/core';
+import { LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import PasswordStrengthMeter from '~/components/auth/PasswordStrengthMeter.vue';
 import Alert from '~/components/partials/elements/Alert.vue';
@@ -129,6 +130,9 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                         : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
                 ]"
             >
+                <template v-if="!canSubmit">
+                    <LoadingIcon class="animate-spin h-5 w-5 mr-2" />
+                </template>
                 {{ $t('components.auth.forgot_password.submit_button') }}
             </button>
         </div>

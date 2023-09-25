@@ -158,7 +158,7 @@ onConfirm(async (id: bigint) => deleteDocument(id));
             :icon="FileSearchIcon"
             :message="$t('common.not_found', [$t('common.document', 2)])"
         />
-        <div v-else class="rounded-lg bg-base-800">
+        <div v-else class="rounded-lg bg-base-700">
             <div class="h-full px-4 py-6 sm:px-6 lg:px-8">
                 <div>
                     <div>
@@ -193,7 +193,7 @@ onConfirm(async (id: bigint) => deleteDocument(id));
                                         class="inline-flex justify-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
                                     >
                                         <template v-if="doc?.closed">
-                                            <LockOpenVariantIcon class="w-5 h-5 text-green-500" aria-hidden="true" />
+                                            <LockOpenVariantIcon class="w-5 h-5 text-success-500" aria-hidden="true" />
                                             {{ $t('common.open', 2) }}
                                         </template>
                                         <template v-else>
@@ -259,8 +259,8 @@ onConfirm(async (id: bigint) => deleteDocument(id));
                                 </span>
                             </div>
                             <div v-else class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-success-100">
-                                <LockOpenVariantIcon class="w-5 h-5 text-green-500" aria-hidden="true" />
-                                <span class="text-sm font-medium text-green-700">
+                                <LockOpenVariantIcon class="w-5 h-5 text-success-500" aria-hidden="true" />
+                                <span class="text-sm font-medium text-success-700">
                                     {{ $t('common.open') }}
                                 </span>
                             </div>

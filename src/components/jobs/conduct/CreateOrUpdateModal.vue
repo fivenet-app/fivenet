@@ -14,7 +14,7 @@ import {
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { digits, max, min, required } from '@vee-validate/rules';
 import { useThrottleFn, watchDebounced } from '@vueuse/core';
-import { CheckIcon, CloseIcon } from 'mdi-vue3';
+import { CheckIcon, CloseIcon, LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import { ConductEntry, ConductType } from '~~/gen/ts/resources/jobs/conduct';
 import { User, UserShort } from '~~/gen/ts/resources/users/users';
@@ -407,7 +407,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                         <span class="isolate inline-flex rounded-md shadow-sm pr-4 w-full">
                                             <button
                                                 type="submit"
-                                                class="w-full relative inline-flex items-center rounded-l-md py-2.5 px-3.5 text-sm font-semibold text-neutral"
+                                                class="flex justify-center w-full relative rounded-l-md py-2.5 px-3.5 text-sm font-semibold text-neutral"
                                                 :disabled="!meta.valid || !canSubmit"
                                                 :class="[
                                                     !meta.valid || !canSubmit
@@ -415,6 +415,9 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                         : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
                                                 ]"
                                             >
+                                                <template v-if="!canSubmit">
+                                                    <LoadingIcon class="animate-spin h-5 w-5 mr-2" />
+                                                </template>
                                                 {{ $t('common.create') }}
                                             </button>
                                             <button

@@ -7,9 +7,9 @@ const navigation: { name: string; to: RoutesNamedLocations; permission?: string 
     { name: 'pages.jobs.colleagues.title', to: { name: 'jobs-colleagues' }, permission: 'JobsService.ColleaguesList' },
     { name: 'pages.jobs.requests.title', to: { name: 'jobs-requests' }, permission: 'JobsService.RequestsListEntries' },
     {
-        name: 'pages.jobs.trainings.title',
-        to: { name: 'jobs-trainings' },
-        permission: 'JobsService.TrainingsListEntries',
+        name: 'pages.jobs.qualifications.title',
+        to: { name: 'jobs-qualifications' },
+        permission: 'JobsService.QualificationsListEntries',
     },
     { name: 'pages.jobs.timeclock.title', to: { name: 'jobs-timeclock' }, permission: 'JobsService.TimeclockListEntries' },
     { name: 'pages.jobs.conduct.title', to: { name: 'jobs-conduct' }, permission: 'JobsService.ConductListEntries' },

@@ -106,8 +106,8 @@ watch(offset, async () => refresh());
                                                 v-else
                                                 class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-success-100"
                                             >
-                                                <LockOpenVariantIcon class="w-5 h-5 text-green-500" aria-hidden="true" />
-                                                <span class="text-sm font-medium text-green-700">
+                                                <LockOpenVariantIcon class="w-5 h-5 text-success-500" aria-hidden="true" />
+                                                <span class="text-sm font-medium text-success-700">
                                                     {{ $t('common.open') }}
                                                 </span>
                                             </div>
@@ -203,8 +203,8 @@ watch(offset, async () => refresh());
                                                 v-else
                                                 class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-success-100"
                                             >
-                                                <LockOpenVariantIcon class="w-5 h-5 text-green-500" aria-hidden="true" />
-                                                <span class="text-sm font-medium text-green-700">
+                                                <LockOpenVariantIcon class="w-5 h-5 text-success-500" aria-hidden="true" />
+                                                <span class="text-sm font-medium text-success-700">
                                                     {{ $t('common.open') }}
                                                 </span>
                                             </div>

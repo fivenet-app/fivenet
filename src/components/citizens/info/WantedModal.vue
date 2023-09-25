@@ -3,6 +3,7 @@ import { Dialog, DialogPanel, TransitionChild, TransitionRoot } from '@headlessu
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { max, min, required } from '@vee-validate/rules';
 import { useThrottleFn } from '@vueuse/core';
+import { LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import { useNotificatorStore } from '~/store/notificator';
 import { User, UserProps } from '~~/gen/ts/resources/users/users';
@@ -134,7 +135,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                     </button>
                                     <button
                                         type="submit"
-                                        class="flex-1 rounded-bd py-2.5 px-3.5 text-sm font-semibold text-neutral"
+                                        class="flex-1 flex justify-center rounded-bd py-2.5 px-3.5 text-sm font-semibold text-neutral"
                                         :disabled="!meta.valid || !canSubmit"
                                         :class="[
                                             !meta.valid || !canSubmit
@@ -142,6 +143,9 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                 : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
                                         ]"
                                     >
+                                        <template v-if="!canSubmit">
+                                            <LoadingIcon class="animate-spin h-5 w-5 mr-2" />
+                                        </template>
                                         {{ $t('common.save') }}
                                     </button>
                                 </div>

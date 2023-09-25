@@ -154,8 +154,8 @@
             "timeclock": {
                 "title": "Time Clock"
             },
-            "trainings": {
-                "title": "Trainings"
+            "qualifications": {
+                "title": "Qualifications"
             }
         },
         "vehicles": {
@@ -294,12 +294,13 @@
         },
         "documents": {
             "categories": {
-                "categories_list": {
-                    "categories_for_your_job": "{0} for your {1} and {2}"
+                "modal": {
+                    "create_category": "Create Category",
+                    "update_category": "Update Category"
                 }
             },
             "templates": {
-                "templates_modal": {
+                "modal": {
                     "no_template": "Without Template"
                 }
             },
@@ -704,6 +705,10 @@
         "category_updated": {
             "title": "Category updated!",
             "content": "The Category was successfully updated"
+        },
+        "category_created": {
+            "title": "Category created!",
+            "content": "The Category was successfully created"
         },
         "max_access_entry": {
             "title": "Maximum amount of Access entries exceeded",

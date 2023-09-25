@@ -119,8 +119,8 @@ onMounted(() => {
                         >
                             <form @submit.prevent="onSubmitThrottle">
                                 <div>
-                                    <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
-                                        <GroupIcon class="h-6 w-6 text-green-600" aria-hidden="true" />
+                                    <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-success-100">
+                                        <GroupIcon class="h-6 w-6 text-success-600" aria-hidden="true" />
                                     </div>
                                     <div class="mt-3 text-center sm:mt-5">
                                         <DialogTitle as="h3" class="text-base font-semibold leading-6 text-white">

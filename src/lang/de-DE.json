@@ -154,8 +154,8 @@
             "timeclock": {
                 "title": "Stempeluhr"
             },
-            "trainings": {
-                "title": "Trainings"
+            "qualifications": {
+                "title": "Qualifikationen"
             }
         },
         "vehicles": {
@@ -299,7 +299,7 @@
                 }
             },
             "templates": {
-                "templates_modal": {
+                "modal": {
                     "no_template": "Ohne Vorlage"
                 }
             },
@@ -704,6 +704,10 @@
         "category_updated": {
             "title": "Kategorie aktualisiert!",
             "content": "Kategorie wurde erfolgreich aktualisiert"
+        },
+        "category_created": {
+            "title": "Kategorie erstellt!",
+            "content": "Kategorie wurde erfolgreich erstellt"
         },
         "max_access_entry": {
             "title": "Maximale Anzahl an Zugriffseinträgen überschritten",

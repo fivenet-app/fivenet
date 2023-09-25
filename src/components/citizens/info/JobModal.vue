@@ -13,7 +13,7 @@ import {
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { max, min, required } from '@vee-validate/rules';
 import { useThrottleFn, watchDebounced } from '@vueuse/core';
-import { CheckIcon } from 'mdi-vue3';
+import { CheckIcon, LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import { useCompletorStore } from '~/store/completor';
 import { useNotificatorStore } from '~/store/notificator';
@@ -271,7 +271,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                     </button>
                                     <button
                                         type="submit"
-                                        class="flex-1 rounded-bd py-2.5 px-3.5 text-sm font-semibold text-neutral"
+                                        class="flex justify-center flex-1 rounded-bd py-2.5 px-3.5 text-sm font-semibold text-neutral"
                                         :disabled="!meta.valid || !canSubmit"
                                         :class="[
                                             !meta.valid || !canSubmit
@@ -279,6 +279,9 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                 : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
                                         ]"
                                     >
+                                        <template v-if="!canSubmit">
+                                            <LoadingIcon class="animate-spin h-5 w-5 mr-2" />
+                                        </template>
                                         {{ $t('common.save') }}
                                     </button>
                                 </div>

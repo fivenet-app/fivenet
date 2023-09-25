@@ -3,7 +3,7 @@ import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } fro
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { max, min, required } from '@vee-validate/rules';
 import { useThrottleFn } from '@vueuse/core';
-import { KeyIcon } from 'mdi-vue3';
+import { KeyIcon, LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import PasswordStrengthMeter from '~/components/auth/PasswordStrengthMeter.vue';
 import { useAuthStore } from '~/store/auth';
@@ -108,7 +108,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                             class="relative px-4 pt-5 pb-4 overflow-hidden text-left transition-all transform rounded-lg bg-base-800 text-neutral sm:my-8 sm:w-full sm:max-w-lg sm:p-6"
                         >
                             <div>
-                                <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-base-800">
+                                <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-base-700">
                                     <KeyIcon class="h-6 w-6 text-primary-500" aria-hidden="true" />
                                 </div>
                                 <div class="mt-3 text-center sm:mt-5">
@@ -169,6 +169,9 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                             : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
                                                     ]"
                                                 >
+                                                    <template v-if="!canSubmit">
+                                                        <LoadingIcon class="animate-spin h-5 w-5 mr-2" />
+                                                    </template>
                                                     {{ $t('components.auth.change_password_modal.change_password') }}
                                                 </button>
                                             </div>

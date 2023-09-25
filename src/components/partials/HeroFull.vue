@@ -3,8 +3,8 @@ import '~/assets/css/herofull-pattern.css';
 </script>
 
 <template>
-    <div class="isolate bg-base-900 hero h-full">
-        <div class="hero-overlay h-full">
+    <div class="isolate h-full hero bg-base-900">
+        <div class="h-full hero-overlay">
             <slot />
         </div>
     </div>

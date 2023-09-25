@@ -205,7 +205,7 @@ async function saveJobProps(): Promise<void> {
                                 <button
                                     type="button"
                                     @click="saveJobProps()"
-                                    class="rounded-md bg-green-600 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-green-400"
+                                    class="rounded-md bg-success-600 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-success-400"
                                 >
                                     {{ $t('common.save', 1) }}
                                 </button>

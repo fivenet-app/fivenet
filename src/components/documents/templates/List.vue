@@ -48,7 +48,8 @@ function selected(idx: number): TemplateShort {
         <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.template', 2)])" />
         <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.template', 2)])" :retry="refresh" />
         <DataNoDataBlock v-else-if="templates && templates.length === 0" :type="$t('common.template', 2)" />
-        <div v-else>
+
+        <div v-else class="flex justify-center">
             <Cards :items="items" :show-icon="false" @selected="$emit('selected', selected($event))" />
         </div>
     </div>

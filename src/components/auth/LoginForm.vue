@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { alpha_dash, max, min, required } from '@vee-validate/rules';
 import { useThrottleFn } from '@vueuse/core';
+import { LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import Alert from '~/components/partials/elements/Alert.vue';
 import { useAuthStore } from '~/store/auth';
@@ -112,6 +113,9 @@ watch(
                         : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
                 ]"
             >
+                <template v-if="!canSubmit">
+                    <LoadingIcon class="animate-spin h-5 w-5 mr-2" />
+                </template>
                 {{ $t('common.login') }}
             </button>
         </div>

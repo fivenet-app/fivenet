@@ -165,7 +165,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                     <button
                                         @click="
                                             setFieldValue('reset', true);
-                                            onSubmitThrottle();
+                                            onSubmitThrottle($event);
                                         "
                                         type="button"
                                         class="flex-1 rounded-bd py-2.5 px-3.5 text-sm font-semibold text-neutral"
@@ -181,7 +181,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                     <button
                                         @click="
                                             setFieldValue('reset', false);
-                                            onSubmitThrottle();
+                                            onSubmitThrottle($event);
                                         "
                                         type="button"
                                         class="flex-1 rounded-bd py-2.5 px-3.5 text-sm font-semibold text-neutral"

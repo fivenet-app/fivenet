@@ -177,8 +177,8 @@ watchDebounced(includeRead, async () => refresh(), { debounce: 500, maxWait: 150
                                                 <Time :value="not.createdAt" :ago="true" />
                                             </p>
                                             <div v-if="!not.readAt" class="mt-1 flex items-center gap-x-1.5">
-                                                <div class="flex-none rounded-full bg-green-500/20 p-1">
-                                                    <div class="h-1.5 w-1.5 rounded-full bg-green-500" />
+                                                <div class="flex-none rounded-full bg-success-500/20 p-1">
+                                                    <div class="h-1.5 w-1.5 rounded-full bg-success-500" />
                                                 </div>
                                                 <p class="text-xs leading-5 text-gray-500">
                                                     {{ $t('pages.notifications.unread') }}

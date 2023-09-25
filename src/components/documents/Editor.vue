@@ -17,7 +17,15 @@ import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import { useDebounceFn, useThrottleFn, watchDebounced, watchOnce } from '@vueuse/core';
 import { ImageActions } from '@xeger/quill-image-actions';
 import { ImageFormats } from '@xeger/quill-image-formats';
-import { AccountMultipleIcon, CheckIcon, ChevronDownIcon, ContentSaveIcon, FileDocumentIcon, PlusIcon } from 'mdi-vue3';
+import {
+    AccountMultipleIcon,
+    CheckIcon,
+    ChevronDownIcon,
+    ContentSaveIcon,
+    FileDocumentIcon,
+    LoadingIcon,
+    PlusIcon,
+} from 'mdi-vue3';
 import htmlEditButton from 'quill-html-edit-button';
 import ImageCompress from 'quill-image-compress';
 import MagicUrl from 'quill-magic-url';
@@ -1032,19 +1040,22 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                 <button
                     type="submit"
                     :disabled="!meta.valid || !canEdit || !canSubmit"
-                    class="rounded-md py-2.5 px-3.5 text-sm font-semibold text-neutral w-full"
+                    class="flex justify-center rounded-md py-2.5 px-3.5 text-sm font-semibold text-neutral w-full"
                     :class="[
                         !canEdit || !meta.valid || !canSubmit
                             ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
                             : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
                     ]"
                 >
-                    <span v-if="!props.id">
+                    <template v-if="!canSubmit">
+                        <LoadingIcon class="animate-spin h-5 w-5 mr-2" />
+                    </template>
+                    <template v-if="!props.id">
                         {{ t('common.create') }}
-                    </span>
-                    <span v-else>
+                    </template>
+                    <template v-else>
                         {{ $t('common.save') }}
-                    </span>
+                    </template>
                 </button>
             </div>
         </form>

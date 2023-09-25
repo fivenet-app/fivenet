@@ -122,7 +122,7 @@ switch (props.activity.key) {
             icon = ReceiptTextCheckIcon;
             actionText.value = t('components.citizens.citizen_info_activity_feed_entry.plugin_billing_fines.paid');
             actionValue.value = n(parseInt(props.activity.oldValue), 'currency');
-            iconColor.value = 'text-green-400';
+            iconColor.value = 'text-success-400';
         } else if (props.activity.newValue === props.activity.oldValue) {
             icon = ReceiptTextRemoveIcon;
             actionText.value = t('components.citizens.citizen_info_activity_feed_entry.plugin_billing_fines.removed');

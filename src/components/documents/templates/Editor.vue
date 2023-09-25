@@ -3,7 +3,7 @@ import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOption
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { max, min, numeric, required } from '@vee-validate/rules';
 import { useThrottleFn, watchDebounced } from '@vueuse/core';
-import { CheckIcon, PlusIcon } from 'mdi-vue3';
+import { CheckIcon, LoadingIcon, PlusIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import AccessEntry from '~/components/documents/AccessEntry.vue';
 import { useAuthStore } from '~/store/auth';
@@ -688,7 +688,7 @@ onMounted(async () => {
             <div>
                 <button
                     type="submit"
-                    class="mt-4 flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                    class="flex justify-center w-full mt-4 px-3 py-2 text-sm font-semibold transition-colors rounded-md text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                     :disabled="!meta.valid || !canSubmit"
                     :class="[
                         !meta.valid || !canSubmit
@@ -696,6 +696,9 @@ onMounted(async () => {
                             : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
                     ]"
                 >
+                    <template v-if="!canSubmit">
+                        <LoadingIcon class="animate-spin h-5 w-5 mr-2" />
+                    </template>
                     {{ templateId ? $t('common.save') : $t('common.create') }}
                 </button>
             </div>
