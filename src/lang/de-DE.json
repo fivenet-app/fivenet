@@ -293,16 +293,6 @@
             }
         },
         "documents": {
-            "categories": {
-                "categories_list": {
-                    "categories_for_your_job": "{0} für deinen {1} und {2}"
-                }
-            },
-            "templates": {
-                "modal": {
-                    "no_template": "Ohne Vorlage"
-                }
-            },
             "document_comment_entry": {
                 "edit_comment": "Bearbeite deinen Kommentar"
             },
@@ -336,6 +326,17 @@
             },
             "document_list": {
                 "no_documents_hint": "Entweder aktualisieren Sie Ihre Suchanfrage oder erstellen Sie das erste Dokument mit der oben stehenden Schaltfläche \"Erstellen\"."
+            },
+            "categories": {
+                "modal": {
+                    "create_category": "Kategorie Erstellen",
+                    "update_category": "Kategorie Aktualisieren"
+                }
+            },
+            "templates": {
+                "modal": {
+                    "no_template": "Ohne Vorlage"
+                }
             }
         },
         "livemap": {
@@ -433,7 +434,7 @@
                 "Stats": {
                     "title": "Statistik: Letzten 7 Tage",
                     "sum": "Gesamte Dienstzeit",
-                    "avg": "Durschnittliche Dienstzeit",
+                    "avg": "Durchschnittliche Dienstzeit",
                     "max": "Längste Dienstzeit"
                 }
             }
@@ -705,10 +706,6 @@
             "title": "Kategorie aktualisiert!",
             "content": "Kategorie wurde erfolgreich aktualisiert"
         },
-        "category_created": {
-            "title": "Kategorie erstellt!",
-            "content": "Kategorie wurde erfolgreich erstellt"
-        },
         "max_access_entry": {
             "title": "Maximale Anzahl an Zugriffseinträgen überschritten",
             "content": "Es können maximal {0} Zugriffseinträge auf einem Dokument vorhanden sein"
@@ -912,6 +909,10 @@
                     }
                 }
             }
+        },
+        "category_created": {
+            "title": "Kategorie erstellt!",
+            "content": "Kategorie wurde erfolgreich erstellt"
         }
     },
     "perms": {
@@ -1389,7 +1390,7 @@
                 "MANUAL": "Manuell",
                 "CENTRAL_COMMAND": "Zentrale Stelle",
                 "AUTO_ROUND_ROBIN": "Automatisch: Round Robin",
-                "SIMPLIFIED": "Unbestimmt"
+                "SIMPLIFIED": "Vereinfachter Modus"
             },
             "StatusDispatch": {
                 "UNSPECIFIED": "Unbestimmt",
