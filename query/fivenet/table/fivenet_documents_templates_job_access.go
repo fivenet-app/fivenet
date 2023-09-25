@@ -20,7 +20,6 @@ type fivenetDocumentsTemplatesJobAccessTable struct {
 	ID           mysql.ColumnInteger
 	CreatedAt    mysql.ColumnTimestamp
 	UpdatedAt    mysql.ColumnTimestamp
-	DeletedAt    mysql.ColumnTimestamp
 	TemplateID   mysql.ColumnInteger
 	Job          mysql.ColumnString
 	MinimumGrade mysql.ColumnInteger
@@ -68,13 +67,12 @@ func newFivenetDocumentsTemplatesJobAccessTableImpl(schemaName, tableName, alias
 		IDColumn           = mysql.IntegerColumn("id")
 		CreatedAtColumn    = mysql.TimestampColumn("created_at")
 		UpdatedAtColumn    = mysql.TimestampColumn("updated_at")
-		DeletedAtColumn    = mysql.TimestampColumn("deleted_at")
 		TemplateIDColumn   = mysql.IntegerColumn("template_id")
 		JobColumn          = mysql.StringColumn("job")
 		MinimumGradeColumn = mysql.IntegerColumn("minimum_grade")
 		AccessColumn       = mysql.IntegerColumn("access")
-		allColumns         = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, TemplateIDColumn, JobColumn, MinimumGradeColumn, AccessColumn}
-		mutableColumns     = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, TemplateIDColumn, JobColumn, MinimumGradeColumn, AccessColumn}
+		allColumns         = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, TemplateIDColumn, JobColumn, MinimumGradeColumn, AccessColumn}
+		mutableColumns     = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, TemplateIDColumn, JobColumn, MinimumGradeColumn, AccessColumn}
 	)
 
 	return fivenetDocumentsTemplatesJobAccessTable{
@@ -84,7 +82,6 @@ func newFivenetDocumentsTemplatesJobAccessTableImpl(schemaName, tableName, alias
 		ID:           IDColumn,
 		CreatedAt:    CreatedAtColumn,
 		UpdatedAt:    UpdatedAtColumn,
-		DeletedAt:    DeletedAtColumn,
 		TemplateID:   TemplateIDColumn,
 		Job:          JobColumn,
 		MinimumGrade: MinimumGradeColumn,

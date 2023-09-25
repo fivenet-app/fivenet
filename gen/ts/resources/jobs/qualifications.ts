@@ -5,9 +5,9 @@ import { MessageType } from "@protobuf-ts/runtime";
 import { UserShort } from "../users/users.js";
 import { Timestamp } from "../timestamp/timestamp.js";
 /**
- * @generated from protobuf message resources.jobs.QualificationModule
+ * @generated from protobuf message resources.jobs.Qualification
  */
-export interface QualificationModule {
+export interface Qualification {
     /**
      * @generated from protobuf field: uint64 id = 1;
      */
@@ -21,21 +21,21 @@ export interface QualificationModule {
      */
     updatedAt?: Timestamp;
     /**
-     * @generated from protobuf field: string job = 4;
+     * @generated from protobuf field: optional resources.timestamp.Timestamp deleted_at = 4;
+     */
+    deletedAt?: Timestamp;
+    /**
+     * @generated from protobuf field: string job = 5;
      */
     job: string;
     /**
-     * @generated from protobuf field: bool open = 5;
+     * @generated from protobuf field: uint32 weight = 6;
+     */
+    weight: number;
+    /**
+     * @generated from protobuf field: bool open = 7;
      */
     open: boolean;
-    /**
-     * @generated from protobuf field: bool require_requirements = 6;
-     */
-    requireRequirements: boolean;
-    /**
-     * @generated from protobuf field: int32 minimum_grade = 7;
-     */
-    minimumGrade: number;
     /**
      * @sanitize
      *
@@ -43,11 +43,21 @@ export interface QualificationModule {
      */
     title: string;
     /**
+     * @sanitize: method=StripTags
+     *
+     * @generated from protobuf field: string abbreviation = 9;
+     */
+    abbreviation: string;
+    /**
      * @sanitize
      *
-     * @generated from protobuf field: string description = 9;
+     * @generated from protobuf field: string description = 10;
      */
     description: string;
+    /**
+     * @generated from protobuf field: repeated resources.jobs.JobAccess job_access = 11;
+     */
+    jobAccess: JobAccess[];
 }
 /**
  * @generated from protobuf message resources.jobs.QualificationResult
@@ -62,67 +72,150 @@ export interface QualificationResult {
      */
     createdAt?: Timestamp;
     /**
-     * @generated from protobuf field: uint64 training_id = 3;
+     * @generated from protobuf field: optional resources.timestamp.Timestamp deleted_at = 3;
+     */
+    deletedAt?: Timestamp;
+    /**
+     * @generated from protobuf field: uint64 training_id = 4;
      */
     trainingId: bigint;
     /**
-     * @generated from protobuf field: int32 user_id = 4;
+     * @generated from protobuf field: int32 user_id = 5;
      */
     userId: number;
     /**
-     * @generated from protobuf field: resources.users.UserShort user = 5;
+     * @generated from protobuf field: resources.users.UserShort user = 6;
      */
     user?: UserShort;
     /**
-     * @generated from protobuf field: uint32 rating = 6;
+     * @generated from protobuf field: uint32 rating = 7;
      */
     rating: number;
     /**
-     * @generated from protobuf field: string description = 7;
+     * @generated from protobuf field: string description = 8;
      */
     description: string;
     /**
-     * @generated from protobuf field: int32 creator_id = 8;
+     * @generated from protobuf field: int32 creator_id = 9;
      */
     creatorId: number;
     /**
-     * @generated from protobuf field: resources.users.UserShort creator = 9;
+     * @generated from protobuf field: resources.users.UserShort creator = 10;
      */
     creator?: UserShort;
 }
+/**
+ * @generated from protobuf message resources.jobs.Access
+ */
+export interface Access {
+    /**
+     * @generated from protobuf field: repeated resources.jobs.JobAccess job_access = 1;
+     */
+    jobAccess: JobAccess[];
+    /**
+     * @generated from protobuf field: repeated resources.jobs.RequireqQualificationAccess required_qualification_access = 2;
+     */
+    requiredQualificationAccess: RequireqQualificationAccess[];
+}
+/**
+ * @generated from protobuf message resources.jobs.JobAccess
+ */
+export interface JobAccess {
+    /**
+     * @generated from protobuf field: uint64 id = 1;
+     */
+    id: bigint; // @gotags: alias:"id"
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
+     */
+    createdAt?: Timestamp;
+    /**
+     * @generated from protobuf field: uint64 template_id = 4;
+     */
+    templateId: bigint; // @gotags: alias:"template_id"
+    /**
+     * @generated from protobuf field: string job = 5;
+     */
+    job: string; // @gotags: alias:"job"
+    /**
+     * @generated from protobuf field: optional string job_label = 6;
+     */
+    jobLabel?: string; // @gotags: alias:"job_label"
+    /**
+     * @generated from protobuf field: int32 minimum_grade = 7;
+     */
+    minimumGrade: number; // @gotags: alias:"minimum_grade"
+    /**
+     * @generated from protobuf field: optional string job_grade_label = 8;
+     */
+    jobGradeLabel?: string; // @gotags: alias:"job_grade_label"
+    /**
+     * @generated from protobuf field: resources.jobs.AccessLevel access = 9;
+     */
+    access: AccessLevel; // @gotags: alias:"access"
+}
+/**
+ * @generated from protobuf message resources.jobs.RequireqQualificationAccess
+ */
+export interface RequireqQualificationAccess {
+    /**
+     * @generated from protobuf field: uint64 id = 1;
+     */
+    id: bigint; // @gotags: alias:"id"
+}
+/**
+ * @generated from protobuf enum resources.jobs.AccessLevel
+ */
+export enum AccessLevel {
+    /**
+     * @generated from protobuf enum value: ACCESS_LEVEL_UNSPECIFIED = 0;
+     */
+    UNSPECIFIED = 0,
+    /**
+     * @generated from protobuf enum value: ACCESS_LEVEL_VIEW = 1;
+     */
+    VIEW = 1,
+    /**
+     * @generated from protobuf enum value: ACCESS_LEVEL_ATTEND = 2;
+     */
+    ATTEND = 2
+}
 // @generated message type with reflection information, may provide speed optimized methods
-class QualificationModule$Type extends MessageType<QualificationModule> {
+class Qualification$Type extends MessageType<Qualification> {
     constructor() {
-        super("resources.jobs.QualificationModule", [
+        super("resources.jobs.Qualification", [
             { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
-            { no: 4, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
-            { no: 5, name: "open", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 6, name: "require_requirements", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 7, name: "minimum_grade", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
+            { no: 4, name: "deleted_at", kind: "message", T: () => Timestamp },
+            { no: 5, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
+            { no: 6, name: "weight", kind: "scalar", T: 13 /*ScalarType.UINT32*/ },
+            { no: 7, name: "open", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 8, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 9, name: "description", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+            { no: 9, name: "abbreviation", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 10, name: "description", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 11, name: "job_access", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => JobAccess }
         ]);
     }
 }
 /**
- * @generated MessageType for protobuf message resources.jobs.QualificationModule
+ * @generated MessageType for protobuf message resources.jobs.Qualification
  */
-export const QualificationModule = new QualificationModule$Type();
+export const Qualification = new Qualification$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class QualificationResult$Type extends MessageType<QualificationResult> {
     constructor() {
         super("resources.jobs.QualificationResult", [
             { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
-            { no: 3, name: "training_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 4, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 5, name: "user", kind: "message", T: () => UserShort },
-            { no: 6, name: "rating", kind: "scalar", T: 13 /*ScalarType.UINT32*/ },
-            { no: 7, name: "description", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "512" } } } },
-            { no: 8, name: "creator_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 9, name: "creator", kind: "message", T: () => UserShort }
+            { no: 3, name: "deleted_at", kind: "message", T: () => Timestamp },
+            { no: 4, name: "training_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 5, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 6, name: "user", kind: "message", T: () => UserShort },
+            { no: 7, name: "rating", kind: "scalar", T: 13 /*ScalarType.UINT32*/ },
+            { no: 8, name: "description", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "512" } } } },
+            { no: 9, name: "creator_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 10, name: "creator", kind: "message", T: () => UserShort }
         ]);
     }
 }
@@ -130,3 +223,47 @@ class QualificationResult$Type extends MessageType<QualificationResult> {
  * @generated MessageType for protobuf message resources.jobs.QualificationResult
  */
 export const QualificationResult = new QualificationResult$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class Access$Type extends MessageType<Access> {
+    constructor() {
+        super("resources.jobs.Access", [
+            { no: 1, name: "job_access", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => JobAccess },
+            { no: 2, name: "required_qualification_access", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => RequireqQualificationAccess }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.jobs.Access
+ */
+export const Access = new Access$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class JobAccess$Type extends MessageType<JobAccess> {
+    constructor() {
+        super("resources.jobs.JobAccess", [
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
+            { no: 4, name: "template_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 5, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
+            { no: 6, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
+            { no: 7, name: "minimum_grade", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
+            { no: 8, name: "job_grade_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
+            { no: 9, name: "access", kind: "enum", T: () => ["resources.jobs.AccessLevel", AccessLevel, "ACCESS_LEVEL_"], options: { "validate.rules": { enum: { definedOnly: true } } } }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.jobs.JobAccess
+ */
+export const JobAccess = new JobAccess$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class RequireqQualificationAccess$Type extends MessageType<RequireqQualificationAccess> {
+    constructor() {
+        super("resources.jobs.RequireqQualificationAccess", [
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.jobs.RequireqQualificationAccess
+ */
+export const RequireqQualificationAccess = new RequireqQualificationAccess$Type();

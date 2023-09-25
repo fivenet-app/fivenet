@@ -19,7 +19,6 @@ type fivenetDocumentsUserAccessTable struct {
 	// Columns
 	ID         mysql.ColumnInteger
 	CreatedAt  mysql.ColumnTimestamp
-	DeletedAt  mysql.ColumnTimestamp
 	DocumentID mysql.ColumnInteger
 	UserID     mysql.ColumnInteger
 	Access     mysql.ColumnInteger
@@ -65,12 +64,11 @@ func newFivenetDocumentsUserAccessTableImpl(schemaName, tableName, alias string)
 	var (
 		IDColumn         = mysql.IntegerColumn("id")
 		CreatedAtColumn  = mysql.TimestampColumn("created_at")
-		DeletedAtColumn  = mysql.TimestampColumn("deleted_at")
 		DocumentIDColumn = mysql.IntegerColumn("document_id")
 		UserIDColumn     = mysql.IntegerColumn("user_id")
 		AccessColumn     = mysql.IntegerColumn("access")
-		allColumns       = mysql.ColumnList{IDColumn, CreatedAtColumn, DeletedAtColumn, DocumentIDColumn, UserIDColumn, AccessColumn}
-		mutableColumns   = mysql.ColumnList{CreatedAtColumn, DeletedAtColumn, DocumentIDColumn, UserIDColumn, AccessColumn}
+		allColumns       = mysql.ColumnList{IDColumn, CreatedAtColumn, DocumentIDColumn, UserIDColumn, AccessColumn}
+		mutableColumns   = mysql.ColumnList{CreatedAtColumn, DocumentIDColumn, UserIDColumn, AccessColumn}
 	)
 
 	return fivenetDocumentsUserAccessTable{
@@ -79,7 +77,6 @@ func newFivenetDocumentsUserAccessTableImpl(schemaName, tableName, alias string)
 		//Columns
 		ID:         IDColumn,
 		CreatedAt:  CreatedAtColumn,
-		DeletedAt:  DeletedAtColumn,
 		DocumentID: DocumentIDColumn,
 		UserID:     UserIDColumn,
 		Access:     AccessColumn,

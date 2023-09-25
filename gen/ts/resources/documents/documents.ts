@@ -13,7 +13,7 @@ export interface Document {
     /**
      * @generated from protobuf field: uint64 id = 1;
      */
-    id: bigint; // @gotags: alias:"id"
+    id: bigint;
     /**
      * @generated from protobuf field: resources.timestamp.Timestamp created_at = 2;
      */
@@ -86,7 +86,7 @@ export interface DocumentShort {
     /**
      * @generated from protobuf field: uint64 id = 1;
      */
-    id: bigint; // @gotags: alias:"id"
+    id: bigint;
     /**
      * @generated from protobuf field: resources.timestamp.Timestamp created_at = 2;
      */
@@ -166,37 +166,33 @@ export interface DocumentJobAccess {
     /**
      * @generated from protobuf field: uint64 id = 1;
      */
-    id: bigint; // @gotags: alias:"id"
+    id: bigint;
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
      */
     createdAt?: Timestamp;
     /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp updated_at = 3;
+     * @generated from protobuf field: uint64 document_id = 3;
      */
-    updatedAt?: Timestamp;
+    documentId: bigint;
     /**
-     * @generated from protobuf field: uint64 document_id = 4;
-     */
-    documentId: bigint; // @gotags: alias:"document_id"
-    /**
-     * @generated from protobuf field: string job = 5;
+     * @generated from protobuf field: string job = 4;
      */
     job: string; // @gotags: alias:"job"
     /**
-     * @generated from protobuf field: optional string job_label = 6;
+     * @generated from protobuf field: optional string job_label = 5;
      */
     jobLabel?: string; // @gotags: alias:"job_label"
     /**
-     * @generated from protobuf field: int32 minimum_grade = 7;
+     * @generated from protobuf field: int32 minimum_grade = 6;
      */
     minimumGrade: number; // @gotags: alias:"minimum_grade"
     /**
-     * @generated from protobuf field: optional string job_grade_label = 8;
+     * @generated from protobuf field: optional string job_grade_label = 7;
      */
     jobGradeLabel?: string; // @gotags: alias:"job_grade_label"
     /**
-     * @generated from protobuf field: resources.documents.AccessLevel access = 9;
+     * @generated from protobuf field: resources.documents.AccessLevel access = 8;
      */
     access: AccessLevel; // @gotags: alias:"access"
 }
@@ -207,29 +203,25 @@ export interface DocumentUserAccess {
     /**
      * @generated from protobuf field: uint64 id = 1;
      */
-    id: bigint; // @gotags: alias:"id"
+    id: bigint;
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
      */
     createdAt?: Timestamp;
     /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp updated_at = 3;
+     * @generated from protobuf field: uint64 document_id = 3;
      */
-    updatedAt?: Timestamp;
+    documentId: bigint;
     /**
-     * @generated from protobuf field: uint64 document_id = 4;
-     */
-    documentId: bigint; // @gotags: alias:"document_id"
-    /**
-     * @generated from protobuf field: int32 user_id = 5;
+     * @generated from protobuf field: int32 user_id = 4;
      */
     userId: number;
     /**
-     * @generated from protobuf field: optional resources.users.UserShort user = 6;
+     * @generated from protobuf field: optional resources.users.UserShort user = 5;
      */
     user?: UserShort;
     /**
-     * @generated from protobuf field: resources.documents.AccessLevel access = 7;
+     * @generated from protobuf field: resources.documents.AccessLevel access = 6;
      */
     access: AccessLevel; // @gotags: alias:"access"
 }
@@ -240,7 +232,7 @@ export interface DocumentReference {
     /**
      * @generated from protobuf field: optional uint64 id = 1;
      */
-    id?: bigint; // @gotags: alias:"id"
+    id?: bigint;
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
      */
@@ -281,7 +273,7 @@ export interface DocumentRelation {
     /**
      * @generated from protobuf field: optional uint64 id = 1;
      */
-    id?: bigint; // @gotags: alias:"id"
+    id?: bigint;
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
      */
@@ -289,7 +281,7 @@ export interface DocumentRelation {
     /**
      * @generated from protobuf field: uint64 document_id = 3;
      */
-    documentId: bigint; // @gotags: alias:"document_id"
+    documentId: bigint;
     /**
      * @generated from protobuf field: optional resources.documents.DocumentShort document = 4;
      */
@@ -448,13 +440,12 @@ class DocumentJobAccess$Type extends MessageType<DocumentJobAccess> {
         super("resources.documents.DocumentJobAccess", [
             { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
-            { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
-            { no: 4, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 5, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
-            { no: 6, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
-            { no: 7, name: "minimum_grade", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
-            { no: 8, name: "job_grade_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
-            { no: 9, name: "access", kind: "enum", T: () => ["resources.documents.AccessLevel", AccessLevel, "ACCESS_LEVEL_"], options: { "validate.rules": { enum: { definedOnly: true } } } }
+            { no: 3, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 4, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
+            { no: 5, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
+            { no: 6, name: "minimum_grade", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
+            { no: 7, name: "job_grade_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
+            { no: 8, name: "access", kind: "enum", T: () => ["resources.documents.AccessLevel", AccessLevel, "ACCESS_LEVEL_"], options: { "validate.rules": { enum: { definedOnly: true } } } }
         ]);
     }
 }
@@ -468,11 +459,10 @@ class DocumentUserAccess$Type extends MessageType<DocumentUserAccess> {
         super("resources.documents.DocumentUserAccess", [
             { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
-            { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
-            { no: 4, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 5, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
-            { no: 6, name: "user", kind: "message", T: () => UserShort },
-            { no: 7, name: "access", kind: "enum", T: () => ["resources.documents.AccessLevel", AccessLevel, "ACCESS_LEVEL_"], options: { "validate.rules": { enum: { definedOnly: true } } } }
+            { no: 3, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 4, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
+            { no: 5, name: "user", kind: "message", T: () => UserShort },
+            { no: 6, name: "access", kind: "enum", T: () => ["resources.documents.AccessLevel", AccessLevel, "ACCESS_LEVEL_"], options: { "validate.rules": { enum: { definedOnly: true } } } }
         ]);
     }
 }

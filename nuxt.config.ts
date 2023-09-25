@@ -198,7 +198,7 @@ const config = defineNuxtConfig({
                     name: 'Social Login Cookies',
                     description: 'Cookies used for FiveNet Social Login functionality.',
                     id: 'social_login',
-                    targetCookieIds: ['fivenet_oauth2_state', 'fivenet_token'],
+                    targetCookieIds: ['fivenet_oauth2_state'],
                 },
             ],
         },

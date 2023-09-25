@@ -83,6 +83,16 @@ func New(logger *zap.Logger, db *sql.DB, tm *auth.TokenMgr, oAuth2Providers []*c
 	return o
 }
 
+func (o *OAuth2) Register(e *gin.Engine) {
+	oauth := e.Group("/api/oauth2")
+	{
+		oauth.GET("/login/:provider", o.Login)
+		oauth.POST("/login/:provider", o.Login)
+		oauth.GET("/callback/:provider", o.Callback)
+		oauth.POST("/callback/:provider", o.Callback)
+	}
+}
+
 func (o *OAuth2) GetProvider(c *gin.Context) (providers.IProvider, error) {
 	param, ok := c.Params.Get("provider")
 	if !ok {

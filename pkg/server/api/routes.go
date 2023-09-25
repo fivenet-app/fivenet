@@ -5,7 +5,6 @@ import (
 	"runtime/debug"
 
 	"github.com/galexrt/fivenet/pkg/config"
-	"github.com/galexrt/fivenet/pkg/server/oauth2"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )
@@ -64,7 +63,7 @@ func New(logger *zap.Logger, cfg *config.Config) *Routes {
 	}
 }
 
-func (r *Routes) Register(e *gin.Engine, oa2 *oauth2.OAuth2) {
+func (r *Routes) Register(e *gin.Engine) {
 	e.GET("/readiness", func(c *gin.Context) {
 		c.String(http.StatusOK, "OK")
 	})
@@ -89,14 +88,5 @@ func (r *Routes) Register(e *gin.Engine, oa2 *oauth2.OAuth2) {
 				Version: r.clientCfg.Version,
 			})
 		})
-	}
-
-	// OAuth2
-	oauth := g.Group("/oauth2")
-	{
-		oauth.GET("/login/:provider", oa2.Login)
-		oauth.POST("/login/:provider", oa2.Login)
-		oauth.GET("/callback/:provider", oa2.Callback)
-		oauth.POST("/callback/:provider", oa2.Callback)
 	}
 }

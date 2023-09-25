@@ -33,19 +33,19 @@ export interface Template {
     /**
      * @generated from protobuf field: uint32 weight = 5;
      */
-    weight: number; // @gotags: alias:"weight"
+    weight: number;
     /**
      * @sanitize
      *
      * @generated from protobuf field: string title = 6;
      */
-    title: string; // @gotags: alias:"title"
+    title: string;
     /**
      * @sanitize
      *
      * @generated from protobuf field: string description = 7;
      */
-    description: string; // @gotags: alias:"description"
+    description: string;
     /**
      * @generated from protobuf field: string content_title = 8;
      */
@@ -102,7 +102,7 @@ export interface TemplateShort {
     /**
      * @generated from protobuf field: uint32 weight = 4;
      */
-    weight: number; // @gotags: alias:"weight"
+    weight: number;
     /**
      * @generated from protobuf field: resources.documents.Category category = 5;
      */
@@ -112,13 +112,13 @@ export interface TemplateShort {
      *
      * @generated from protobuf field: string title = 6;
      */
-    title: string; // @gotags: alias:"title"
+    title: string;
     /**
      * @sanitize
      *
      * @generated from protobuf field: string description = 7;
      */
-    description: string; // @gotags: alias:"description"
+    description: string;
     /**
      * @generated from protobuf field: resources.documents.TemplateSchema schema = 8;
      */
@@ -213,31 +213,27 @@ export interface TemplateJobAccess {
      */
     createdAt?: Timestamp;
     /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp updated_at = 3;
-     */
-    updatedAt?: Timestamp;
-    /**
-     * @generated from protobuf field: uint64 template_id = 4;
+     * @generated from protobuf field: uint64 template_id = 3;
      */
     templateId: bigint; // @gotags: alias:"template_id"
     /**
-     * @generated from protobuf field: string job = 5;
+     * @generated from protobuf field: string job = 4;
      */
     job: string; // @gotags: alias:"job"
     /**
-     * @generated from protobuf field: optional string job_label = 6;
+     * @generated from protobuf field: optional string job_label = 5;
      */
     jobLabel?: string; // @gotags: alias:"job_label"
     /**
-     * @generated from protobuf field: int32 minimum_grade = 7;
+     * @generated from protobuf field: int32 minimum_grade = 6;
      */
     minimumGrade: number; // @gotags: alias:"minimum_grade"
     /**
-     * @generated from protobuf field: optional string job_grade_label = 8;
+     * @generated from protobuf field: optional string job_grade_label = 7;
      */
     jobGradeLabel?: string; // @gotags: alias:"job_grade_label"
     /**
-     * @generated from protobuf field: resources.documents.AccessLevel access = 9;
+     * @generated from protobuf field: resources.documents.AccessLevel access = 8;
      */
     access: AccessLevel; // @gotags: alias:"access"
 }
@@ -351,13 +347,12 @@ class TemplateJobAccess$Type extends MessageType<TemplateJobAccess> {
         super("resources.documents.TemplateJobAccess", [
             { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
-            { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
-            { no: 4, name: "template_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 5, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
-            { no: 6, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
-            { no: 7, name: "minimum_grade", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
-            { no: 8, name: "job_grade_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
-            { no: 9, name: "access", kind: "enum", T: () => ["resources.documents.AccessLevel", AccessLevel, "ACCESS_LEVEL_"], options: { "validate.rules": { enum: { definedOnly: true } } } }
+            { no: 3, name: "template_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 4, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
+            { no: 5, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
+            { no: 6, name: "minimum_grade", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
+            { no: 7, name: "job_grade_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
+            { no: 8, name: "access", kind: "enum", T: () => ["resources.documents.AccessLevel", AccessLevel, "ACCESS_LEVEL_"], options: { "validate.rules": { enum: { definedOnly: true } } } }
         ]);
     }
 }

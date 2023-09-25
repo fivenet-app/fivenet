@@ -19,7 +19,6 @@ type fivenetDocumentsJobAccessTable struct {
 	// Columns
 	ID           mysql.ColumnInteger
 	CreatedAt    mysql.ColumnTimestamp
-	DeletedAt    mysql.ColumnTimestamp
 	DocumentID   mysql.ColumnInteger
 	Job          mysql.ColumnString
 	MinimumGrade mysql.ColumnInteger
@@ -66,13 +65,12 @@ func newFivenetDocumentsJobAccessTableImpl(schemaName, tableName, alias string) 
 	var (
 		IDColumn           = mysql.IntegerColumn("id")
 		CreatedAtColumn    = mysql.TimestampColumn("created_at")
-		DeletedAtColumn    = mysql.TimestampColumn("deleted_at")
 		DocumentIDColumn   = mysql.IntegerColumn("document_id")
 		JobColumn          = mysql.StringColumn("job")
 		MinimumGradeColumn = mysql.IntegerColumn("minimum_grade")
 		AccessColumn       = mysql.IntegerColumn("access")
-		allColumns         = mysql.ColumnList{IDColumn, CreatedAtColumn, DeletedAtColumn, DocumentIDColumn, JobColumn, MinimumGradeColumn, AccessColumn}
-		mutableColumns     = mysql.ColumnList{CreatedAtColumn, DeletedAtColumn, DocumentIDColumn, JobColumn, MinimumGradeColumn, AccessColumn}
+		allColumns         = mysql.ColumnList{IDColumn, CreatedAtColumn, DocumentIDColumn, JobColumn, MinimumGradeColumn, AccessColumn}
+		mutableColumns     = mysql.ColumnList{CreatedAtColumn, DocumentIDColumn, JobColumn, MinimumGradeColumn, AccessColumn}
 	)
 
 	return fivenetDocumentsJobAccessTable{
@@ -81,7 +79,6 @@ func newFivenetDocumentsJobAccessTableImpl(schemaName, tableName, alias string) 
 		//Columns
 		ID:           IDColumn,
 		CreatedAt:    CreatedAtColumn,
-		DeletedAt:    DeletedAtColumn,
 		DocumentID:   DocumentIDColumn,
 		Job:          JobColumn,
 		MinimumGrade: MinimumGradeColumn,

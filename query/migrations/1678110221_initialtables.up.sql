@@ -103,14 +103,12 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents_comments` (
 CREATE TABLE IF NOT EXISTS `fivenet_documents_job_access` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP(3),
-  `deleted_at` datetime(3) DEFAULT NULL,
   `document_id` bigint(20) unsigned NOT NULL,
   `job` varchar(40) NOT NULL,
   `minimum_grade` int(11) NOT NULL DEFAULT 1,
   `access` smallint(2) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `idx_fivenet_documents_job_access` (`document_id`, `job`, `minimum_grade`),
-  KEY `idx_fivenet_documents_job_access_deleted_at` (`deleted_at`),
   KEY `idx_fivenet_documents_job_access_document_id` (`document_id`),
   CONSTRAINT `fk_fivenet_documents_job_access_document_id` FOREIGN KEY (`document_id`) REFERENCES `fivenet_documents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -159,13 +157,11 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents_relations` (
 CREATE TABLE IF NOT EXISTS `fivenet_documents_user_access` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP(3),
-  `deleted_at` datetime(3) DEFAULT NULL,
   `document_id` bigint(20) unsigned DEFAULT NULL,
   `user_id` int(11) NOT NULL,
   `access` smallint(2) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `idx_fivenet_documents_user_access` (`document_id`, `user_id`),
-  KEY `idx_fivenet_documents_users_access_deleted_at` (`deleted_at`),
   KEY `idx_fivenet_documents_user_access_document_id` (`document_id`),
   KEY `idx_fivenet_documents_user_access_user_id` (`user_id`),
   CONSTRAINT `fk_fivenet_documents_user_access_document_id` FOREIGN KEY (`document_id`) REFERENCES `fivenet_documents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,

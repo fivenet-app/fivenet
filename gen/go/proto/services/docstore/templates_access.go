@@ -46,8 +46,6 @@ func (s *Server) getTemplateJobAccess(ctx context.Context, templateId uint64) ([
 		SELECT(
 			tDTemplatesJobAccess.ID,
 			tDTemplatesJobAccess.CreatedAt,
-			tDTemplatesJobAccess.UpdatedAt,
-			tDTemplatesJobAccess.DeletedAt,
 			tDTemplatesJobAccess.TemplateID,
 			tDTemplatesJobAccess.Job,
 			tDTemplatesJobAccess.MinimumGrade,

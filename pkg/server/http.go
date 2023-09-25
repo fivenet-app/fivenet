@@ -98,7 +98,7 @@ func setupHTTPServer(p ServerParams) *gin.Engine {
 		HttpOnly: true,
 		Secure:   true,
 	})
-	e.Use(sessions.SessionsMany([]string{"fivenet_oauth2_state", "fivenet_token"}, sessStore))
+	e.Use(sessions.SessionsMany([]string{"fivenet_oauth2_state"}, sessStore))
 
 	// GZIP
 	e.Use(gzip.Gzip(gzip.DefaultCompression))
@@ -114,12 +114,16 @@ func setupHTTPServer(p ServerParams) *gin.Engine {
 	// Tracing
 	e.Use(otelgin.Middleware("fivenet", otelgin.WithTracerProvider(p.TP)))
 
-	oauth := oauth2.New(p.Logger.Named("oauth"), p.DB, p.TokenMgr, p.Config.OAuth2.Providers)
-
-	// Register app routes
+	// Register HTTP API routes
 	rs := api.New(p.Logger, p.Config)
-	rs.Register(e, oauth)
+	rs.Register(e)
 
+	if len(p.Config.OAuth2.Providers) > 0 {
+		oauth := oauth2.New(p.Logger.Named("oauth"), p.DB, p.TokenMgr, p.Config.OAuth2.Providers)
+		oauth.Register(e)
+	}
+
+	// Setup nuxt generated files serving
 	fs := static.LocalFile(".output/public/", false)
 	fileserver := http.FileServer(fs)
 	fileserver = http.StripPrefix("/", fileserver)

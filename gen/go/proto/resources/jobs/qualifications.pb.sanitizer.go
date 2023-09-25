@@ -7,7 +7,9 @@ import (
 	"github.com/galexrt/fivenet/pkg/htmlsanitizer"
 )
 
-func (m *QualificationModule) Sanitize() error {
+func (m *Qualification) Sanitize() error {
+
+	m.Abbreviation = htmlsanitizer.StripTags(m.Abbreviation)
 
 	m.Description = htmlsanitizer.Sanitize(m.Description)
 
