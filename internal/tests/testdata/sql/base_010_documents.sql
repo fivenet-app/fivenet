@@ -61,7 +61,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `fivenet_documents_job_access` WRITE;
 /*!40000 ALTER TABLE `fivenet_documents_job_access` DISABLE KEYS */;
-INSERT INTO `fivenet_documents_job_access` (`id`, `created_at`, `deleted_at`, `document_id`, `job`, `minimum_grade`, `access`) VALUES (1,'2023-03-17 19:16:34.383',NULL,3,'ambulance',0,3),
+INSERT INTO `fivenet_documents_job_access` (`id`, `created_at`, `document_id`, `job`, `minimum_grade`, `access`) VALUES (1,'2023-03-17 19:16:34.383',3,'ambulance',0,3),
 (2,'2023-03-17 19:16:51.213',NULL,4,'ambulance',0,3),
 (3,'2023-03-17 19:18:18.375',NULL,4,'doj',0,3),
 (4,'2023-03-17 19:18:18.384',NULL,5,'ambulance',0,3),
@@ -112,7 +112,7 @@ UNLOCK TABLES;
 
 LOCK TABLES `fivenet_documents_user_access` WRITE;
 /*!40000 ALTER TABLE `fivenet_documents_user_access` DISABLE KEYS */;
-INSERT INTO `fivenet_documents_user_access` (`id`, `created_at`, `deleted_at`, `document_id`, `user_id`, `access`) VALUES (1,'2023-03-17 19:29:36.055',NULL,4,5,1);
+INSERT INTO `fivenet_documents_user_access` (`id`, `created_at`, `document_id`, `user_id`, `access`) VALUES (1,'2023-03-17 19:29:36.055',4,5,1);
 /*!40000 ALTER TABLE `fivenet_documents_user_access` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;

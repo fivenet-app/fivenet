@@ -103,6 +103,7 @@ watch(updateAvailable, () => (open.value = true));
             }"
         />
     </NuxtLayout>
+
     <CookieControl
         v-if="!clientConfig.NUIEnabled && route.meta.showCookieOptions !== undefined && route.meta.showCookieOptions"
         :locale="cookieLocale"
