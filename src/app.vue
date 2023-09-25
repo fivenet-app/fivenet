@@ -52,10 +52,9 @@ if (__APP_VERSION__ != userSettings.version) {
 
 const cookieLocale = ref<Locale>('en');
 
-watch(locale, () => setLocaleGlobally(locale.value));
-
 // Set user setting locale on load of app
 locale.value = userSettings.locale;
+setLocaleGlobally(locale.value);
 
 async function setLocaleGlobally(locale: string): Promise<void> {
     setLocale(locale);
@@ -69,6 +68,7 @@ async function setLocaleGlobally(locale: string): Promise<void> {
         }),
     });
     veeValidateSetLocale(locale);
+    console.log(locale);
 
     // Cookie Banner Locale handling
     switch (locale.split('-', 1)[0]) {
@@ -85,8 +85,11 @@ async function onBeforeEnter(): Promise<void> {
     await finalizePendingLocaleChange();
 }
 
+watch(locale, () => setLocaleGlobally(locale.value));
+
 // Open update available confirm dialog
 const open = ref(false);
+
 watch(updateAvailable, () => (open.value = true));
 </script>
 
