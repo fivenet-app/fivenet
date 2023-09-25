@@ -831,7 +831,7 @@
         },
         "language_switched": {
             "title": "Language switched",
-            "content": "Language will be switched to {0}."
+            "content": "The language will be switched."
         },
         "penaltycalculator": {
             "title": "Penalty Calculator: Copied to clipboard",
