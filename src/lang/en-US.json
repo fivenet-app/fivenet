@@ -334,8 +334,11 @@
                 }
             },
             "templates": {
-                "modal": {
+                "templates_modal": {
                     "no_template": "Without Template"
+                },
+                "partials": {
+                    "template_hint": "You can use Golang HTML templating in the above field. Click here to learn more."
                 }
             }
         },

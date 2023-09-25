@@ -19,20 +19,28 @@ import { AccessLevel } from '~~/gen/ts/resources/documents/access';
 import { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
 import { UserShort } from '~~/gen/ts/resources/users/users';
 
-const props = defineProps<{
-    init: {
-        id: bigint;
-        type: number;
-        values: {
-            job?: string;
-            char?: number;
-            accessRole?: AccessLevel;
-            minimumGrade?: number;
+type AccessType = { id: number; name: string };
+
+const props = withDefaults(
+    defineProps<{
+        readOnly?: boolean;
+        init: {
+            id: bigint;
+            type: number;
+            values: {
+                job?: string;
+                char?: number;
+                accessRole?: AccessLevel;
+                minimumGrade?: number;
+            };
         };
-    };
-    accessTypes: { id: number; name: string }[];
-    accessRoles?: AccessLevel[];
-}>();
+        accessTypes: AccessType[];
+        accessRoles?: AccessLevel[];
+    }>(),
+    {
+        readOnly: false,
+    },
+);
 
 const emit = defineEmits<{
     (e: 'typeChange', payload: { id: bigint; type: number }): void;
@@ -54,7 +62,7 @@ const { jobs } = storeToRefs(completorStore);
 
 const { t } = useI18n();
 
-const selectedAccessType = ref<{ id: number; name: string }>({
+const selectedAccessType = ref<AccessType>({
     id: -1,
     name: '',
 });
@@ -198,7 +206,7 @@ watch(selectedAccessRole, () => {
                 :value="accessTypes[0].name"
                 class="block pl-3 text-left w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
             />
-            <Listbox v-else as="div" v-model="selectedAccessType">
+            <Listbox v-else as="div" v-model="selectedAccessType" :disabled="readOnly">
                 <div class="relative">
                     <ListboxButton
                         class="block pl-3 text-left w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
@@ -252,7 +260,7 @@ watch(selectedAccessRole, () => {
         </div>
         <div v-if="selectedAccessType?.id === 0" class="flex flex-grow">
             <div class="flex-1 mr-2">
-                <Combobox as="div" v-model="selectedChar">
+                <Combobox as="div" v-model="selectedChar" :disabled="readOnly">
                     <div class="relative">
                         <ComboboxButton as="div">
                             <ComboboxInput
@@ -301,7 +309,7 @@ watch(selectedAccessRole, () => {
         </div>
         <div v-else class="flex flex-grow">
             <div class="flex-1 mr-2">
-                <Combobox as="div" v-model="selectedJob">
+                <Combobox as="div" v-model="selectedJob" :disabled="readOnly">
                     <div class="relative">
                         <ComboboxButton as="div">
                             <ComboboxInput
@@ -348,7 +356,7 @@ watch(selectedAccessRole, () => {
                 </Combobox>
             </div>
             <div class="flex-1 mr-2">
-                <Combobox as="div" v-model="selectedMinimumRank">
+                <Combobox as="div" v-model="selectedMinimumRank" :disabled="readOnly || selectedJob === undefined">
                     <div class="relative">
                         <ComboboxButton as="div">
                             <ComboboxInput
@@ -396,7 +404,7 @@ watch(selectedAccessRole, () => {
             </div>
         </div>
         <div class="mr-2 flex-inital w-60">
-            <Combobox as="div" v-model="selectedAccessRole">
+            <Combobox as="div" v-model="selectedAccessRole" :disabled="readOnly">
                 <div class="relative">
                     <ComboboxButton as="div">
                         <ComboboxInput
@@ -442,7 +450,7 @@ watch(selectedAccessRole, () => {
                 </div>
             </Combobox>
         </div>
-        <div class="flex-initial">
+        <div class="flex-initial" v-if="!readOnly">
             <button
                 type="button"
                 class="rounded-full bg-primary-500 p-1.5 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"

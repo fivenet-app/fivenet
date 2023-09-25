@@ -16,6 +16,7 @@ import { ObjectSpecs, TemplateJobAccess, TemplateRequirements } from '~~/gen/ts/
 import { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
 import { CreateTemplateRequest, UpdateTemplateRequest } from '~~/gen/ts/services/docstore/docstore';
 import SchemaEditor, { ObjectSpecsValue, SchemaEditorValue } from './SchemaEditor.vue';
+import TemplateHint from './partials/TemplateHint.vue';
 
 const props = defineProps<{
     templateId?: bigint;
@@ -562,11 +563,7 @@ onMounted(async () => {
                         class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                     />
                     <VeeErrorMessage name="contentTitle" as="p" class="mt-2 text-sm text-error-400" />
-                    <p class="text-neutral">
-                        <NuxtLink :external="true" target="_blank" to="https://pkg.go.dev/html/template">
-                            Golang {{ $t('common.template') }}
-                        </NuxtLink>
-                    </p>
+                    <TemplateHint />
                 </div>
             </div>
             <div>
@@ -634,11 +631,7 @@ onMounted(async () => {
                         class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                     />
                     <VeeErrorMessage name="contentState" as="p" class="mt-2 text-sm text-error-400" />
-                    <p class="text-neutral">
-                        <NuxtLink :external="true" target="_blank" to="https://pkg.go.dev/html/template">
-                            Golang {{ $t('common.template') }}
-                        </NuxtLink>
-                    </p>
+                    <TemplateHint />
                 </div>
             </div>
             <div>
@@ -654,11 +647,7 @@ onMounted(async () => {
                         class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                     />
                     <VeeErrorMessage name="content" as="p" class="mt-2 text-sm text-error-400" />
-                    <p class="text-neutral">
-                        <NuxtLink :external="true" target="_blank" to="https://pkg.go.dev/html/template">
-                            Golang {{ $t('common.template') }}
-                        </NuxtLink>
-                    </p>
+                    <TemplateHint />
                 </div>
             </div>
             <SchemaEditor v-model="schema" class="mt-2" />

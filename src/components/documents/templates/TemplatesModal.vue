@@ -176,7 +176,7 @@ async function clipboardDialog(): Promise<void> {
                                                     type="button"
                                                     class="w-full rounded-md bg-base-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-base-400"
                                                 >
-                                                    {{ $t('components.documents.templates.modal.no_template') }}
+                                                    {{ $t('components.documents.templates.templates_modal.no_template') }}
                                                 </NuxtLink>
                                                 <div class="pt-4">
                                                     <List @selected="(t: TemplateShort) => templateSelected(t)" />
