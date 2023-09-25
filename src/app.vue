@@ -68,7 +68,6 @@ async function setLocaleGlobally(locale: string): Promise<void> {
         }),
     });
     veeValidateSetLocale(locale);
-    console.log(locale);
 
     // Cookie Banner Locale handling
     switch (locale.split('-', 1)[0]) {

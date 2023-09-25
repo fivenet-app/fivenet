@@ -156,6 +156,9 @@
             },
             "qualifications": {
                 "title": "Qualifications"
+            },
+            "overview": {
+                "title": "Job Overview"
             }
         },
         "vehicles": {

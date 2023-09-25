@@ -320,10 +320,6 @@ envoy:
 # -- NATS server config values: https://artifacthub.io/packages/helm/nats/nats#values
 nats:
   enabled: true
-  container:
-    image:
-      repository: docker.io/library/nats
-      tag: 2.10.1-alpine
   config:
     cluster:
       enabled: true

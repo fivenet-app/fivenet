@@ -1,12 +1,11 @@
 <script lang="ts" setup>
 useHead({
-    title: 'common.overview',
+    title: 'pages.jobs.overview.title',
 });
 definePageMeta({
-    title: 'pages.jobs.title',
+    title: 'common.overview',
     requiresAuth: true,
     permission: 'JobsService.ColleaguesList',
-    alias: '/jobs',
 });
 </script>
 

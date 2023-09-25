@@ -22,15 +22,15 @@ definePageMeta({
     title: 'pages.jobs.title',
     requiresAuth: true,
     permission: 'JobsService.ColleaguesList',
+    redirect: { name: 'jobs-overview' },
 });
 
-const route = useRoute();
 const open = ref(false);
 </script>
 
 <template>
     <div class="min-h-full">
-        <nav class="bg-primary-500">
+        <nav class="bg-base-700">
             <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                 <div class="flex h-16 items-center justify-between">
                     <div class="flex items-center">
@@ -38,7 +38,7 @@ const open = ref(false);
                             <!-- Mobile menu button -->
                             <button
                                 type="button"
-                                class="relative inline-flex items-center justify-center rounded-md bg-primary-500 p-2 text-primary-200 hover:bg-primary-400 hover:bg-opacity-75 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-primary-600"
+                                class="relative inline-flex items-center justify-center rounded-md bg-base-500 p-2 text-base-200 hover:bg-base-400 hover:bg-opacity-75 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-base-600"
                                 @click="open = !open"
                             >
                                 <span class="absolute -inset-0.5" />
@@ -48,13 +48,14 @@ const open = ref(false);
                             </button>
                         </div>
                         <div class="hidden md:block">
-                            <div class="flex items-baseline space-x-4">
+                            <div class="flex items-baseline space-x-2">
                                 <template v-for="item in navigation" :key="item.name">
                                     <NuxtLink
                                         v-if="item.permission === undefined || can(item.permission)"
                                         :to="item.to"
-                                        class="text-white hover:bg-primary-400 hover:bg-opacity-75 rounded-md px-3 py-2 text-sm font-medium"
-                                        active-class="bg-primary-700 text-white"
+                                        class="text-accent-100 hover:bg-accent-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-3 text-sm"
+                                        active-class="bg-accent-100/20 text-neutral font-bold"
+                                        exact-active-class="text-neutral"
                                         aria-current-value="page"
                                     >
                                         {{ $t(item.name) }}
@@ -72,8 +73,9 @@ const open = ref(false);
                         <NuxtLink
                             v-if="item.permission === undefined || can(item.permission)"
                             :to="item.to"
-                            class="text-white hover:bg-primary-400 hover:bg-opacity-75 block rounded-md px-3 py-2 text-base font-medium"
-                            active-class="bg-primary-700 text-white"
+                            class="text-accent-100 hover:bg-accent-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md text-sm p-2"
+                            active-class="bg-accent-100/20 text-neutral font-bold"
+                            exact-active-class="text-neutral"
                             aria-current-value="page"
                         >
                             {{ $t(item.name) }}
@@ -82,14 +84,6 @@ const open = ref(false);
                 </div>
             </div>
         </nav>
-
-        <header class="bg-base-700 shadow">
-            <div class="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-                <h1 class="text-3xl font-bold leading-tight tracking-tight text-white">
-                    {{ $t(route.meta.title ?? 'pages.jobs.title') }}
-                </h1>
-            </div>
-        </header>
         <main>
             <div class="mx-auto max-w-8xl py-6 sm:px-6 lg:px-8">
                 <NuxtLayout name="blank">
