@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { max, min, required } from '@vee-validate/rules';
-import { useThrottleFn } from '@vueuse/core';
+import { useElementVisibility, useThrottleFn, watchOnce } from '@vueuse/core';
 import { CommentTextMultipleIcon, LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
@@ -38,7 +38,9 @@ const {
     pending,
     refresh,
     error,
-} = useLazyAsyncData(`document-${props.documentId}-comments-${offset}`, () => getComments());
+} = useLazyAsyncData(`document-${props.documentId}-comments-${offset}`, () => getComments(), {
+    immediate: false,
+});
 
 async function getComments(): Promise<Comment[]> {
     return new Promise(async (res, rej) => {
@@ -120,6 +122,10 @@ async function removeComment(comment: Comment): Promise<void> {
     });
 }
 
+const commentsEl = ref<HTMLDivElement | null>(null);
+const isVisible = useElementVisibility(commentsEl);
+watchOnce(isVisible, () => refresh());
+
 const commentInput = ref<HTMLInputElement | null>(null);
 
 function focusComment(): void {
@@ -156,7 +162,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
 </script>
 
 <template>
-    <div class="pb-2">
+    <div ref="commentsEl" class="pb-2">
         <div v-if="can('DocStoreService.PostComment')">
             <div v-if="!closed" class="flex items-start space-x-4">
                 <div class="min-w-0 flex-1">
