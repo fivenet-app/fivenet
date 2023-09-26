@@ -967,7 +967,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                     :options="options"
                 />
                 <div class="grid grid-cols-2 text-base text-gray-600 h-7 mx-2">
-                    <div class="self-end flex flex-items items-center">
+                    <div class="flex flex-items items-center">
                         <template v-if="saving">
                             <ContentSaveIcon class="w-6 h-auto mr-2 animate-spin" />
                             {{ $t('common.save', 2) }}...

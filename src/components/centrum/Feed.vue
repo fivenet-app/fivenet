@@ -12,8 +12,10 @@ defineProps<{
 <template>
     <div class="px-4 sm:px-6 lg:px-8 h-full overflow-y-auto">
         <div class="sm:flex sm:items-center">
-            <div class="sm:flex-auto">
-                <h2 class="text-base font-semibold leading-6 text-gray-100">{{ $t('common.activity', 2) }}</h2>
+            <div class="sm:flex-auto inline-flex items-center">
+                <h2 class="text-base font-semibold leading-6 text-gray-100">
+                    {{ $t('common.activity', 2) }}
+                </h2>
             </div>
         </div>
         <div class="mt-0.5 flow-root">

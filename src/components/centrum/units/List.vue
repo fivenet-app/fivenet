@@ -14,7 +14,7 @@ defineEmits<{
 <template>
     <div class="px-4 sm:px-6 lg:px-8 h-full overflow-y-auto">
         <div class="sm:flex sm:items-center">
-            <div class="sm:flex-auto">
+            <div class="sm:flex-auto inline-flex items-center">
                 <h2 class="text-base font-semibold leading-6 text-gray-100 inline-flex">
                     {{ $t('common.units') }}
                     <NuxtLink :to="{ name: 'centrum-units' }" :title="$t('common.units')" class="ml-2">

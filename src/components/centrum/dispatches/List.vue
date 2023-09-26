@@ -1,13 +1,9 @@
 <script lang="ts" setup>
 import { useCentrumStore } from '~/store/centrum';
-import { Dispatch } from '~~/gen/ts/resources/dispatch/dispatches';
 import ListEntry from './ListEntry.vue';
 
 defineEmits<{
     (e: 'goto', loc: Coordinate): void;
-    (e: 'details', dsp: Dispatch): void;
-    (e: 'assignUnit', dsp: Dispatch): void;
-    (e: 'status', dsp: Dispatch): void;
 }>();
 
 const centrumStore = useCentrumStore();
@@ -17,7 +13,7 @@ const { dispatches } = storeToRefs(centrumStore);
 <template>
     <div class="px-4 sm:px-6 lg:px-8 h-full overflow-y-auto">
         <div class="sm:flex sm:items-center">
-            <div class="sm:flex-auto">
+            <div class="sm:flex-auto inline-flex items-center">
                 <h2 class="text-base font-semibold leading-6 text-gray-100">{{ $t('common.dispatch', 2) }}</h2>
             </div>
         </div>
@@ -83,9 +79,6 @@ const { dispatches } = storeToRefs(centrumStore);
                                 :key="id.toString()"
                                 :dispatch="dispatch"
                                 @goto="$emit('goto', $event)"
-                                @details="$emit('details', $event)"
-                                @assign-unit="$emit('assignUnit', $event)"
-                                @status="$emit('status', $event)"
                             />
                         </tbody>
                     </table>

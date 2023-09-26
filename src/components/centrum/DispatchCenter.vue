@@ -76,15 +76,15 @@ function goto(e: Coordinate) {
 
             <!-- Right column -->
             <div class="flex flex-col basis-2/3 divide-y divide-base-400">
-                <div class="basis-7/12 max-h-[58.333333%]">
+                <div class="basis-[55%] max-h-[55%]">
                     <DispatchesList @goto="goto($event)" />
                 </div>
 
-                <div class="basis-4/12 max-h-[33.333333%]">
+                <div class="basis-[35%] max-h-[35%]">
                     <UnitsList @goto="goto($event)" />
                 </div>
 
-                <div class="basis-1/12 max-h-[8.333333%]">
+                <div class="basis-[10%] max-h-[10%]">
                     <Feed :items="feed" />
                 </div>
             </div>

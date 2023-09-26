@@ -13,8 +13,6 @@ const props = defineProps<{
 
 defineEmits<{
     (e: 'goto', loc: Coordinate): void;
-    (e: 'details', dsp: Dispatch): void;
-    (e: 'assignUnit', dsp: Dispatch): void;
 }>();
 
 const openDetails = ref(false);
