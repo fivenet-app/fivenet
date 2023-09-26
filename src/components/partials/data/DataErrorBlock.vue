@@ -1,12 +1,29 @@
 <script lang="ts" setup>
-import { CloseCircleIcon } from 'mdi-vue3';
+import { CancelIcon, CloseCircleIcon, RefreshIcon } from 'mdi-vue3';
 
 defineProps<{
     title?: string;
     message?: string;
-    retry?: Function;
+    retry?: () => Promise<any>;
     retryMessage?: string;
 }>();
+
+const disabled = ref(true);
+
+const timeout = ref<NodeJS.Timeout | undefined>();
+onMounted(
+    () =>
+        (timeout.value = setTimeout(() => {
+            timeout.value = undefined;
+            disabled.value = false;
+        }, 1250)),
+);
+onBeforeUnmount(() => {
+    if (timeout.value) {
+        clearTimeout(timeout.value);
+        timeout.value = undefined;
+    }
+});
 </script>
 
 <template>
@@ -28,10 +45,18 @@ defineProps<{
                     <div class="-mx-2 -my-1.5 flex">
                         <button
                             type="button"
-                            class="rounded-md bg-error-50 px-2 py-1.5 text-sm font-medium text-error-800 hover:bg-error-100 focus:outline-none focus:ring-2 focus:ring-error-600 focus:ring-offset-2 focus:ring-offset-error-50"
-                            @click="retry!()"
+                            class="flex justify-center focus-visible:outline-error-500 rounded-md px-2 py-1.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-error-600 focus:ring-offset-2"
+                            :disabled="disabled"
+                            :class="[
+                                disabled
+                                    ? 'disabled text-gray-200 bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
+                                    : 'text-error-800 bg-error-200 hover:bg-primary-400 hover:bg-error-300',
+                            ]"
+                            @click="retry()"
                         >
                             {{ retryMessage ?? $t('common.retry') }}
+                            <RefreshIcon v-if="timeout === undefined" class="h-5 w-5 ml-2" />
+                            <CancelIcon v-else class="h-5 w-5 ml-2" />
                         </button>
                     </div>
                 </div>

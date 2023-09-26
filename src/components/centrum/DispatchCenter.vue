@@ -80,11 +80,11 @@ function goto(e: Coordinate) {
                     <DispatchesList @goto="goto($event)" />
                 </div>
 
-                <div class="basis-[35%] max-h-[35%]">
+                <div class="basis-[32%] max-h-[32%]">
                     <UnitsList @goto="goto($event)" />
                 </div>
 
-                <div class="basis-[10%] max-h-[10%]">
+                <div class="basis-[13%] max-h-[13%]">
                     <Feed :items="feed" />
                 </div>
             </div>
