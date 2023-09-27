@@ -15,7 +15,6 @@ import (
 	"github.com/galexrt/fivenet/pkg/server/audit"
 	"github.com/galexrt/fivenet/pkg/tracker"
 	"github.com/galexrt/fivenet/pkg/utils"
-	"github.com/galexrt/fivenet/pkg/utils/maps"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/puzpuzpuz/xsync/v2"
@@ -92,8 +91,8 @@ func NewServer(p Params) *Server {
 		tracker:  p.Tracker,
 		auditer:  p.Audit,
 
-		markersCache: xsync.NewTypedMapOf[string, []*livemap.Marker](maps.HashString),
-		usersCache:   xsync.NewTypedMapOf[string, []*livemap.UserMarker](maps.HashString),
+		markersCache: xsync.NewMapOf[[]*livemap.Marker](),
+		usersCache:   xsync.NewMapOf[[]*livemap.UserMarker](),
 
 		broker: broker,
 

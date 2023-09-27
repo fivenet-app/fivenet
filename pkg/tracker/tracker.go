@@ -11,7 +11,6 @@ import (
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/tracker/postals"
 	"github.com/galexrt/fivenet/pkg/utils"
-	"github.com/galexrt/fivenet/pkg/utils/maps"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	"github.com/gin-gonic/gin"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -85,7 +84,7 @@ func New(p Params) *Tracker {
 		enricher: p.Enricher,
 		postals:  p.Postals,
 
-		usersCache: xsync.NewTypedMapOf[string, *xsync.MapOf[int32, *livemap.UserMarker]](maps.HashString),
+		usersCache: xsync.NewMapOf[*xsync.MapOf[int32, *livemap.UserMarker]](),
 		usersIDs:   xsync.NewIntegerMapOf[int32, userInfo](),
 
 		broker: broker,

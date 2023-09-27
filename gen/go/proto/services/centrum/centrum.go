@@ -19,7 +19,6 @@ import (
 	"github.com/galexrt/fivenet/pkg/tracker"
 	"github.com/galexrt/fivenet/pkg/tracker/postals"
 	"github.com/galexrt/fivenet/pkg/utils"
-	"github.com/galexrt/fivenet/pkg/utils/maps"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	"github.com/nats-io/nats.go"
@@ -113,10 +112,10 @@ func NewServer(p Params) (*Server, error) {
 		visibleJobs: p.Config.Game.Livemap.Jobs,
 		convertJobs: p.Config.Game.DispatchCenter.ConvertJobs,
 
-		settings:   xsync.NewTypedMapOf[string, *dispatch.Settings](maps.HashString),
-		disponents: xsync.NewTypedMapOf[string, []*users.UserShort](maps.HashString),
-		units:      xsync.NewTypedMapOf[string, *xsync.MapOf[uint64, *dispatch.Unit]](maps.HashString),
-		dispatches: xsync.NewTypedMapOf[string, *xsync.MapOf[uint64, *dispatch.Dispatch]](maps.HashString),
+		settings:   xsync.NewMapOf[*dispatch.Settings](),
+		disponents: xsync.NewMapOf[[]*users.UserShort](),
+		units:      xsync.NewMapOf[*xsync.MapOf[uint64, *dispatch.Unit]](),
+		dispatches: xsync.NewMapOf[*xsync.MapOf[uint64, *dispatch.Dispatch]](),
 
 		userIDToUnitID: xsync.NewIntegerMapOf[int32, uint64](),
 

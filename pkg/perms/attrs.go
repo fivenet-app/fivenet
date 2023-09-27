@@ -13,7 +13,6 @@ import (
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/galexrt/fivenet/pkg/perms/helpers"
 	"github.com/galexrt/fivenet/pkg/utils/dbutils"
-	"github.com/galexrt/fivenet/pkg/utils/maps"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -274,7 +273,7 @@ func (p *Perms) updateAttributeInMap(permId uint64, attrId uint64, key Key, aTyp
 	p.attrsMap.Store(attrId, attr)
 
 	pAttrMap, _ := p.attrsPermsMap.LoadOrCompute(permId, func() *xsync.MapOf[string, uint64] {
-		return xsync.NewTypedMapOf[string, uint64](maps.HashString)
+		return xsync.NewMapOf[uint64]()
 	})
 	pAttrMap.Store(string(key), attrId)
 

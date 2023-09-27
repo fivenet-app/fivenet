@@ -803,7 +803,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
 </style>
 
 <template>
-    <div class="mt-2">
+    <div class="m-2">
         <form @submit.prevent="onSubmitThrottle">
             <RelationManager
                 v-model="relationManagerData"
