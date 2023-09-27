@@ -1,3 +1,9 @@
 package version
 
-const Version = "UNKNOWN"
+var Version string
+
+func init() {
+	if Version == "" {
+		Version = "UNKNOWN"
+	}
+}
