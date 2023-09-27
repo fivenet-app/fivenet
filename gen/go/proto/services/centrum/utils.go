@@ -91,7 +91,7 @@ func (s *Server) resolveUserShortsByIds(ctx context.Context, u []int32) ([]*user
 }
 
 func (s *Server) checkIfUserIsDisponent(job string, userId int32) bool {
-	ds, ok := s.disponents.Load(job)
+	ds, ok := s.state.Disponents.Load(job)
 	if !ok {
 		return false
 	}
@@ -201,7 +201,7 @@ func (s *Server) dispatchCenterSignOn(ctx context.Context, job string, userId in
 }
 
 func (s *Server) getSettings(job string) *dispatch.Settings {
-	settings, ok := s.settings.Load(job)
+	settings, ok := s.state.Settings.Load(job)
 	if !ok {
 		// Return default settings
 		return &dispatch.Settings{
@@ -216,7 +216,7 @@ func (s *Server) getSettings(job string) *dispatch.Settings {
 }
 
 func (s *Server) getDisponents(job string) []*users.UserShort {
-	disponents, ok := s.disponents.Load(job)
+	disponents, ok := s.state.Disponents.Load(job)
 	if !ok {
 		return nil
 	}
@@ -225,7 +225,7 @@ func (s *Server) getDisponents(job string) []*users.UserShort {
 }
 
 func (s *Server) getDispatchesMap(job string) *xsync.MapOf[uint64, *dispatch.Dispatch] {
-	store, _ := s.dispatches.LoadOrCompute(job, func() *xsync.MapOf[uint64, *dispatch.Dispatch] {
+	store, _ := s.state.Dispatches.LoadOrCompute(job, func() *xsync.MapOf[uint64, *dispatch.Dispatch] {
 		return xsync.NewIntegerMapOf[uint64, *dispatch.Dispatch]()
 	})
 
@@ -233,7 +233,7 @@ func (s *Server) getDispatchesMap(job string) *xsync.MapOf[uint64, *dispatch.Dis
 }
 
 func (s *Server) getUnitsMap(job string) *xsync.MapOf[uint64, *dispatch.Unit] {
-	store, _ := s.units.LoadOrCompute(job, func() *xsync.MapOf[uint64, *dispatch.Unit] {
+	store, _ := s.state.Units.LoadOrCompute(job, func() *xsync.MapOf[uint64, *dispatch.Unit] {
 		return xsync.NewIntegerMapOf[uint64, *dispatch.Unit]()
 	})
 
@@ -244,4 +244,21 @@ func (s *Server) isStatusDispatchComplete(in dispatch.StatusDispatch) bool {
 	return in == dispatch.StatusDispatch_STATUS_DISPATCH_ARCHIVED ||
 		in == dispatch.StatusDispatch_STATUS_DISPATCH_CANCELLED ||
 		in == dispatch.StatusDispatch_STATUS_DISPATCH_COMPLETED
+}
+
+func (s *Server) checkIfBotNeeded(job string) bool {
+	settings := s.getSettings(job)
+
+	if settings.Mode == dispatch.CentrumMode_CENTRUM_MODE_AUTO_ROUND_ROBIN {
+		return true
+	}
+
+	disponents := s.getDisponents(job)
+	if len(disponents) == 0 {
+		if settings.FallbackMode == dispatch.CentrumMode_CENTRUM_MODE_AUTO_ROUND_ROBIN {
+			return true
+		}
+	}
+
+	return false
 }

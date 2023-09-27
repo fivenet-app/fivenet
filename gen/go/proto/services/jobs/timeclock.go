@@ -147,15 +147,15 @@ func (s *Server) timeclock() {
 				ctx, span := s.tracer.Start(s.ctx, "jobs-timeclock")
 				defer span.End()
 
-				for _, userId := range event.Added {
-					if err := s.addTimeclockEntry(ctx, userId); err != nil {
+				for _, userInfo := range event.Added {
+					if err := s.addTimeclockEntry(ctx, userInfo.UserID); err != nil {
 						s.logger.Error("failed to add timeclock entry", zap.Error(err))
 						continue
 					}
 				}
 
-				for _, userId := range event.Removed {
-					if err := s.endTimeclockEntry(ctx, userId); err != nil {
+				for _, userInfo := range event.Removed {
+					if err := s.endTimeclockEntry(ctx, userInfo.UserID); err != nil {
 						s.logger.Error("failed to end timeclock entry", zap.Error(err))
 						continue
 					}

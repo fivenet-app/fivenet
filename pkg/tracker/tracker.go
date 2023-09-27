@@ -31,14 +31,15 @@ var (
 	tJobProps = table.FivenetJobProps
 )
 
-type Event struct {
-	Added   []int32
-	Removed []int32
+type UserInfo struct {
+	Job    string
+	UserID int32
+	Time   time.Time
 }
 
-type userInfo struct {
-	Time time.Time
-	Job  string
+type Event struct {
+	Added   []*UserInfo
+	Removed []*UserInfo
 }
 
 type Tracker struct {
@@ -50,7 +51,7 @@ type Tracker struct {
 	postals  *postals.Postals
 
 	usersCache *xsync.MapOf[string, *xsync.MapOf[int32, *livemap.UserMarker]]
-	usersIDs   *xsync.MapOf[int32, userInfo]
+	usersIDs   *xsync.MapOf[int32, *UserInfo]
 
 	broker *utils.Broker[*Event]
 
@@ -85,7 +86,7 @@ func New(p Params) *Tracker {
 		postals:  p.Postals,
 
 		usersCache: xsync.NewMapOf[*xsync.MapOf[int32, *livemap.UserMarker]](),
-		usersIDs:   xsync.NewIntegerMapOf[int32, userInfo](),
+		usersIDs:   xsync.NewIntegerMapOf[int32, *UserInfo](),
 
 		broker: broker,
 
@@ -145,9 +146,9 @@ func (s *Tracker) cleanupUserIDs() error {
 	event := &Event{}
 
 	now := time.Now()
-	s.usersIDs.Range(func(key int32, info userInfo) bool {
+	s.usersIDs.Range(func(key int32, info *UserInfo) bool {
 		if now.After(info.Time) {
-			event.Removed = append(event.Removed, key)
+			event.Removed = append(event.Removed, info)
 			s.usersIDs.Delete(key)
 
 			jobUsers, ok := s.usersCache.Load(info.Job)
@@ -195,7 +196,7 @@ func (s *Tracker) refreshUserLocations(ctx context.Context) error {
 			tLocs.Hidden.IS_FALSE(),
 			jet.OR(
 				tLocs.UpdatedAt.IS_NULL(),
-				tLocs.UpdatedAt.GT_EQ(jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(60, jet.MINUTE))),
+				tLocs.UpdatedAt.GT_EQ(jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(4, jet.HOUR))),
 			),
 		))
 
@@ -226,17 +227,19 @@ func (s *Tracker) refreshUserLocations(ctx context.Context) error {
 		userId := dest[i].User.UserId
 		markers[job].Store(userId, dest[i])
 
+		userInfo := &UserInfo{
+			Job:    dest[i].User.Job,
+			UserID: userId,
+			Time:   expiration,
+		}
 		if _, ok := s.usersIDs.Load(userId); !ok {
 			// User wasn't in the list, so they must be new so add the user to event for keeping track of users
 			if _, ok := s.GetUserByJobAndID(job, userId); !ok {
-				event.Added = append(event.Added, userId)
+				event.Added = append(event.Added, userInfo)
 			}
 		}
 
-		s.usersIDs.Store(userId, userInfo{
-			Time: expiration,
-			Job:  dest[i].User.Job,
-		})
+		s.usersIDs.Store(userId, userInfo)
 	}
 
 	for job, marker := range markers {

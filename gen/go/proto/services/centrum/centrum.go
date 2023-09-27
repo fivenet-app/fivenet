@@ -64,14 +64,9 @@ type Server struct {
 	visibleJobs []string
 	convertJobs []string
 
-	settings   *xsync.MapOf[string, *dispatch.Settings]
-	disponents *xsync.MapOf[string, []*users.UserShort]
-	units      *xsync.MapOf[string, *xsync.MapOf[uint64, *dispatch.Unit]]
-	dispatches *xsync.MapOf[string, *xsync.MapOf[uint64, *dispatch.Dispatch]]
+	state *state
 
-	userIDToUnitID *xsync.MapOf[int32, uint64]
-
-	botManager *BotManager
+	botManager *Bot
 }
 
 type Params struct {
@@ -94,6 +89,15 @@ type Params struct {
 func NewServer(p Params) (*Server, error) {
 	ctx, cancel := context.WithCancel(context.Background())
 
+	state := &state{
+		Settings:   xsync.NewMapOf[*dispatch.Settings](),
+		Disponents: xsync.NewMapOf[[]*users.UserShort](),
+		Units:      xsync.NewMapOf[*xsync.MapOf[uint64, *dispatch.Unit]](),
+		Dispatches: xsync.NewMapOf[*xsync.MapOf[uint64, *dispatch.Dispatch]](),
+
+		UserIDToUnitID: xsync.NewIntegerMapOf[int32, uint64](),
+	}
+
 	s := &Server{
 		ctx:    ctx,
 		logger: p.Logger.Named("centrum"),
@@ -112,14 +116,9 @@ func NewServer(p Params) (*Server, error) {
 		visibleJobs: p.Config.Game.Livemap.Jobs,
 		convertJobs: p.Config.Game.DispatchCenter.ConvertJobs,
 
-		settings:   xsync.NewMapOf[*dispatch.Settings](),
-		disponents: xsync.NewMapOf[[]*users.UserShort](),
-		units:      xsync.NewMapOf[*xsync.MapOf[uint64, *dispatch.Unit]](),
-		dispatches: xsync.NewMapOf[*xsync.MapOf[uint64, *dispatch.Dispatch]](),
+		state: state,
 
-		userIDToUnitID: xsync.NewIntegerMapOf[int32, uint64](),
-
-		botManager: NewBotManager(),
+		botManager: NewBotManager(ctx, state, p.Events),
 	}
 
 	p.LC.Append(fx.StartHook(func(_ context.Context) error {
@@ -305,7 +304,7 @@ func (s *Server) stream(srv CentrumService_StreamServer, isDisponent bool, job s
 		case msg := <-msgCh:
 			msg.Ack()
 
-			topic, tType := s.getEventTypeFromSubject(msg.Subject)
+			topic, tType := getEventTypeFromSubject(msg.Subject)
 
 			switch topic {
 			case TopicGeneral:

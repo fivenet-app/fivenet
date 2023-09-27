@@ -18,7 +18,7 @@ import (
 const DispatchExpirationTime = 31 * time.Second
 
 func (s *Server) getDispatch(job string, id uint64) (*dispatch.Dispatch, bool) {
-	dispatches, ok := s.dispatches.Load(job)
+	dispatches, ok := s.state.Dispatches.Load(job)
 	if !ok {
 		return nil, false
 	}
@@ -29,7 +29,7 @@ func (s *Server) getDispatch(job string, id uint64) (*dispatch.Dispatch, bool) {
 func (s *Server) listDispatches(job string) ([]*dispatch.Dispatch, error) {
 	ds := []*dispatch.Dispatch{}
 
-	dispatches, ok := s.dispatches.Load(job)
+	dispatches, ok := s.state.Dispatches.Load(job)
 	if !ok {
 		return nil, nil
 	}
@@ -183,10 +183,10 @@ func (s *Server) updateDispatchStatus(ctx context.Context, job string, dsp *disp
 	}
 
 	if len(dsp.Units) == 0 {
-		s.events.JS.PublishAsync(s.buildSubject(TopicDispatch, TypeDispatchStatus, job, 0), data)
+		s.events.JS.PublishAsync(buildSubject(TopicDispatch, TypeDispatchStatus, job, 0), data)
 	} else {
 		for _, u := range dsp.Units {
-			s.events.JS.PublishAsync(s.buildSubject(TopicDispatch, TypeDispatchStatus, job, u.UnitId), data)
+			s.events.JS.PublishAsync(buildSubject(TopicDispatch, TypeDispatchStatus, job, u.UnitId), data)
 		}
 	}
 
@@ -332,10 +332,10 @@ func (s *Server) updateDispatchAssignments(ctx context.Context, job string, user
 	}
 
 	for i := 0; i < len(toRemove); i++ {
-		s.events.JS.PublishAsync(s.buildSubject(TopicDispatch, TypeDispatchUpdated, job, toRemove[i]), data)
+		s.events.JS.PublishAsync(buildSubject(TopicDispatch, TypeDispatchUpdated, job, toRemove[i]), data)
 	}
 	for i := 0; i < len(toAdd); i++ {
-		s.events.JS.PublishAsync(s.buildSubject(TopicDispatch, TypeDispatchUpdated, job, toAdd[i]), data)
+		s.events.JS.PublishAsync(buildSubject(TopicDispatch, TypeDispatchUpdated, job, toAdd[i]), data)
 	}
 
 	// Dispatch has not units assigned anymore

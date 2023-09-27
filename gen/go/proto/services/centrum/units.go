@@ -194,7 +194,7 @@ func (s *Server) CreateOrUpdateUnit(ctx context.Context, req *CreateOrUpdateUnit
 	if err != nil {
 		return nil, err
 	}
-	s.events.JS.PublishAsync(s.buildSubject(TopicUnit, TypeUnitUpdated, userInfo.Job, unit.Id), data)
+	s.events.JS.PublishAsync(buildSubject(TopicUnit, TypeUnitUpdated, userInfo.Job, unit.Id), data)
 
 	if err := s.loadUnits(ctx, unit.Id); err != nil {
 		return nil, err
@@ -240,11 +240,11 @@ func (s *Server) DeleteUnit(ctx context.Context, req *DeleteUnitRequest) (*Delet
 	if err != nil {
 		return nil, err
 	}
-	s.events.JS.PublishAsync(s.buildSubject(TopicUnit, TypeUnitDeleted, userInfo.Job, req.UnitId), data)
+	s.events.JS.PublishAsync(buildSubject(TopicUnit, TypeUnitDeleted, userInfo.Job, req.UnitId), data)
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)
 
-	units, ok := s.units.Load(userInfo.Job)
+	units, ok := s.state.Units.Load(userInfo.Job)
 	if ok {
 		units.Delete(req.UnitId)
 	}

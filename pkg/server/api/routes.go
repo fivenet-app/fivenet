@@ -2,9 +2,9 @@ package api
 
 import (
 	"net/http"
-	"runtime/debug"
 
 	"github.com/galexrt/fivenet/pkg/config"
+	"github.com/galexrt/fivenet/pkg/version"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 )
@@ -25,26 +25,8 @@ func New(logger *zap.Logger, cfg *config.Config) *Routes {
 		}
 	}
 
-	var version string
-	buildInfo, ok := debug.ReadBuildInfo()
-	if !ok {
-		version = "UNKNOWN"
-	} else {
-		var commit string
-
-		for _, setting := range buildInfo.Settings {
-			if setting.Key == "vcs.revision" {
-				commit = setting.Value
-				break
-			}
-		}
-
-		// TODO use a version number that is the same accross go and js code
-		version = commit
-	}
-
 	clientCfg := &ClientConfig{
-		Version:   version,
+		Version:   version.Version,
 		SentryDSN: cfg.Sentry.ClientDSN,
 		Login: LoginConfig{
 			SignupEnabled: cfg.Game.SignupEnabled,

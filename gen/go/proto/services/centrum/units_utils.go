@@ -15,7 +15,7 @@ import (
 )
 
 func (s *Server) getUnit(job string, id uint64) (*dispatch.Unit, bool) {
-	units, ok := s.units.Load(job)
+	units, ok := s.state.Units.Load(job)
 	if !ok {
 		return nil, false
 	}
@@ -26,7 +26,7 @@ func (s *Server) getUnit(job string, id uint64) (*dispatch.Unit, bool) {
 func (s *Server) listUnits(job string) ([]*dispatch.Unit, error) {
 	us := []*dispatch.Unit{}
 
-	units, ok := s.units.Load(job)
+	units, ok := s.state.Units.Load(job)
 	if !ok {
 		return nil, nil
 	}
@@ -110,7 +110,7 @@ func (s *Server) resolveUsersForUnit(ctx context.Context, u []*dispatch.UnitAssi
 }
 
 func (s *Server) getUnitIDForUserID(userId int32) (uint64, bool) {
-	return s.userIDToUnitID.Load(userId)
+	return s.state.UserIDToUnitID.Load(userId)
 }
 
 func (s *Server) updateUnitStatus(ctx context.Context, job string, unit *dispatch.Unit, in *dispatch.UnitStatus) error {
@@ -169,7 +169,7 @@ func (s *Server) updateUnitStatus(ctx context.Context, job string, unit *dispatc
 	if err != nil {
 		return err
 	}
-	s.events.JS.PublishAsync(s.buildSubject(TopicUnit, TypeUnitStatus, job, status.UnitId), data)
+	s.events.JS.PublishAsync(buildSubject(TopicUnit, TypeUnitStatus, job, status.UnitId), data)
 
 	return nil
 }
@@ -226,7 +226,7 @@ func (s *Server) updateUnitAssignments(ctx context.Context, userInfo *userinfo.U
 					}
 
 					unit.Users = utils.RemoveFromSlice(unit.Users, i)
-					s.userIDToUnitID.Delete(toRemove[k])
+					s.state.UserIDToUnitID.Delete(toRemove[k])
 				}
 			}
 		}
@@ -304,7 +304,7 @@ func (s *Server) updateUnitAssignments(ctx context.Context, userInfo *userinfo.U
 				return err
 			}
 
-			s.userIDToUnitID.Store(user.UserId, unit.Id)
+			s.state.UserIDToUnitID.Store(user.UserId, unit.Id)
 		}
 	}
 
@@ -318,14 +318,14 @@ func (s *Server) updateUnitAssignments(ctx context.Context, userInfo *userinfo.U
 		return err
 	}
 
-	s.events.JS.PublishAsync(s.buildSubject(TopicUnit, TypeUnitUpdated, userInfo.Job, unit.Id), data)
+	s.events.JS.PublishAsync(buildSubject(TopicUnit, TypeUnitUpdated, userInfo.Job, unit.Id), data)
 
 	// Send unit user assigned message when needed
 	if len(toAdd) > 0 {
-		s.events.JS.PublishAsync(s.buildSubject(TopicUnit, TypeUnitUserAssigned, userInfo.Job, 0), data)
+		s.events.JS.PublishAsync(buildSubject(TopicUnit, TypeUnitUserAssigned, userInfo.Job, 0), data)
 	}
 	if len(toRemove) > 0 {
-		s.events.JS.PublishAsync(s.buildSubject(TopicUnit, TypeUnitUserAssigned, userInfo.Job, unit.Id), data)
+		s.events.JS.PublishAsync(buildSubject(TopicUnit, TypeUnitUserAssigned, userInfo.Job, unit.Id), data)
 	}
 
 	// Unit is empty, set unit status to be unavailable automatically

@@ -15,6 +15,15 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
+type state struct {
+	Settings   *xsync.MapOf[string, *dispatch.Settings]
+	Disponents *xsync.MapOf[string, []*users.UserShort]
+	Units      *xsync.MapOf[string, *xsync.MapOf[uint64, *dispatch.Unit]]
+	Dispatches *xsync.MapOf[string, *xsync.MapOf[uint64, *dispatch.Dispatch]]
+
+	UserIDToUnitID *xsync.MapOf[int32, uint64]
+}
+
 func (s *Server) watchStateEvents() error {
 	msgCh := make(chan *nats.Msg, 256)
 
@@ -33,10 +42,11 @@ func (s *Server) watchStateEvents() error {
 			select {
 			case <-s.ctx.Done():
 				return nil
+
 			case msg := <-msgCh:
 				msg.Ack()
 
-				job, topic, tType := s.splitSubject(msg.Subject)
+				job, topic, tType := splitSubject(msg.Subject)
 
 				switch topic {
 				case TopicGeneral:
@@ -47,9 +57,7 @@ func (s *Server) watchStateEvents() error {
 							return err
 						}
 
-						s.disponents.Store(job, dest.Disponents)
-
-						// TODO trigger bot manager to setup bot if needed
+						s.state.Disponents.Store(job, dest.Disponents)
 
 					case TypeGeneralSettings:
 						var dest dispatch.Settings
@@ -57,7 +65,7 @@ func (s *Server) watchStateEvents() error {
 							return err
 						}
 
-						s.settings.Store(job, &dest)
+						s.state.Settings.Store(job, &dest)
 					}
 
 				case TopicDispatch:
@@ -92,7 +100,7 @@ func (s *Server) watchStateEvents() error {
 							return err
 						}
 
-						units, ok := s.units.Load(dest.Job)
+						units, ok := s.state.Units.Load(dest.Job)
 						if ok {
 							units.Delete(dest.Id)
 						}
@@ -112,9 +120,9 @@ func (s *Server) watchStateEvents() error {
 						}
 
 						if dest.Status.Status == dispatch.StatusUnit_STATUS_UNIT_USER_ADDED {
-							s.userIDToUnitID.Store(*dest.Status.UserId, dest.Status.UnitId)
+							s.state.UserIDToUnitID.Store(*dest.Status.UserId, dest.Status.UnitId)
 						} else if dest.Status.Status == dispatch.StatusUnit_STATUS_UNIT_USER_REMOVED {
-							s.userIDToUnitID.Delete(*dest.Status.UserId)
+							s.state.UserIDToUnitID.Delete(*dest.Status.UserId)
 						}
 
 						unit, ok := s.getUnitsMap(job).Load(dest.Status.UnitId)
@@ -148,32 +156,28 @@ func (s *Server) watchUserChanges() {
 				ctx, span := s.tracer.Start(s.ctx, "centrum-watch-users")
 				defer span.End()
 
-				for _, userId := range event.Added {
-					unitId, err := s.loadUnitIDForUserID(ctx, userId)
+				for _, userInfo := range event.Added {
+					unitId, err := s.loadUnitIDForUserID(ctx, userInfo.UserID)
 					if err != nil {
 						s.logger.Error("failed to load user unit id", zap.Error(err))
 						continue
 					}
-
 					if unitId == 0 {
 						continue
 					}
 
-					s.userIDToUnitID.Store(userId, unitId)
+					s.state.UserIDToUnitID.Store(userInfo.UserID, unitId)
 				}
 
-				for _, userId := range event.Removed {
-					user, err := s.resolveUserShortById(ctx, userId)
+				for _, userInfo := range event.Removed {
+					user, err := s.resolveUserShortById(ctx, userInfo.UserID)
 					if err != nil {
 						s.logger.Error("failed to get user info from db", zap.Error(err))
 						continue
 					}
 
 					s.handleRemovedUserFromDisponents(ctx, user)
-
-					if s.handleRemovedUserFromUnit(ctx, user) {
-						continue
-					}
+					s.handleRemovedUserFromUnit(ctx, user)
 				}
 			}()
 		}
@@ -190,7 +194,7 @@ func (s *Server) handleRemovedUserFromDisponents(ctx context.Context, user *user
 }
 
 func (s *Server) handleRemovedUserFromUnit(ctx context.Context, user *users.UserShort) bool {
-	unitId, ok := s.userIDToUnitID.Load(user.UserId)
+	unitId, ok := s.state.UserIDToUnitID.Load(user.UserId)
 	if !ok {
 		// Nothing to do
 		return false
@@ -209,7 +213,7 @@ func (s *Server) handleRemovedUserFromUnit(ctx context.Context, user *users.User
 		return false
 	}
 
-	s.userIDToUnitID.Delete(user.UserId)
+	s.state.UserIDToUnitID.Delete(user.UserId)
 
 	return true
 }
@@ -234,6 +238,10 @@ func (s *Server) housekeeper() {
 				}
 
 				if err := s.removeDispatchesFromEmptyUnits(ctx); err != nil {
+					s.logger.Error("failed to clean empty units from dispatches", zap.Error(err))
+				}
+
+				if err := s.checkIfBotsAreNeeded(ctx); err != nil {
 					s.logger.Error("failed to clean empty units from dispatches", zap.Error(err))
 				}
 			}()
@@ -342,7 +350,7 @@ func (s *Server) archiveDispatches(ctx context.Context) error {
 // Remove empty units from dispatches (if no other unit is assigned to dispatch update status to UNASSIGNED) by
 // iterating over the dispatches and making sure the assigned units aren't empty
 func (s *Server) removeDispatchesFromEmptyUnits(ctx context.Context) error {
-	s.dispatches.Range(func(job string, value *xsync.MapOf[uint64, *dispatch.Dispatch]) bool {
+	s.state.Dispatches.Range(func(job string, value *xsync.MapOf[uint64, *dispatch.Dispatch]) bool {
 		value.Range(func(id uint64, dsp *dispatch.Dispatch) bool {
 			for i := len(dsp.Units) - 1; i >= 0; i-- {
 				unit, _ := s.getUnit(job, dsp.Units[i].UnitId)
@@ -362,6 +370,24 @@ func (s *Server) removeDispatchesFromEmptyUnits(ctx context.Context) error {
 
 		return true
 	})
+
+	return nil
+}
+
+func (s *Server) checkIfBotsAreNeeded(ctx context.Context) error {
+	/*s.state.Settings.Range(func(job string, value *dispatch.Settings) bool {
+		if s.checkIfBotNeeded(job) {
+			if err := s.botManager.Start(job); err != nil {
+				s.logger.Error("failed to start dispatch center bot for job", zap.String("job", job))
+			}
+		} else {
+			if err := s.botManager.Stop(job); err != nil {
+				s.logger.Error("failed to stop dispatch center bot for job", zap.String("job", job))
+			}
+		}
+
+		return true
+	})*/
 
 	return nil
 }

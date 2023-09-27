@@ -57,7 +57,7 @@ func (s *Server) loadSettings(ctx context.Context, job string) error {
 	}
 
 	for _, settings := range dest {
-		s.settings.Store(settings.Job, settings)
+		s.state.Settings.Store(settings.Job, settings)
 	}
 
 	return nil
@@ -113,17 +113,17 @@ func (s *Server) loadDisponents(ctx context.Context, job string) error {
 
 	if len(perJob) == 0 {
 		if job != "" {
-			s.disponents.Delete(job)
+			s.state.Disponents.Delete(job)
 		} else {
 			// No disponents for any jobs found, clear lists
-			s.disponents.Clear()
+			s.state.Disponents.Clear()
 		}
 	} else {
 		for job, us := range perJob {
 			if len(us) == 0 {
-				s.disponents.Delete(job)
+				s.state.Disponents.Delete(job)
 			} else {
-				s.disponents.Store(job, us)
+				s.state.Disponents.Store(job, us)
 			}
 		}
 	}
@@ -197,7 +197,7 @@ func (s *Server) loadUnits(ctx context.Context, id uint64) error {
 		s.getUnitsMap(units[i].Job).Store(units[i].Id, units[i])
 
 		for _, user := range units[i].Users {
-			s.userIDToUnitID.Store(user.UserId, units[i].Id)
+			s.state.UserIDToUnitID.Store(user.UserId, units[i].Id)
 		}
 	}
 

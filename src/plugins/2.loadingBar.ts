@@ -24,7 +24,7 @@ export class LoadingManager {
     async start(): Promise<void> {
         this.counted.value++;
         if (this.counted.value === 1) {
-            //@ts-ignore TODO we are currently unable to add custom event types to the typings
+            //@ts-ignore we are currently unable to add custom event types to the typings
             useNuxtApp().callHook('data:loading:start');
         }
     }
@@ -32,14 +32,14 @@ export class LoadingManager {
     async finish(): Promise<void> {
         if (this.counted.value > 0) {
             this.counted.value--;
-            //@ts-ignore TODO we are currently unable to add custom event types to the typings
+            //@ts-ignore we are currently unable to add custom event types to the typings
             useNuxtApp().callHook('data:loading:finish');
         }
     }
 
     async errored(): Promise<void> {
         this.counted.value = 0;
-        //@ts-ignore TODO we are currently unable to add custom event types to the typings
+        //@ts-ignore we are currently unable to add custom event types to the typings
         useNuxtApp().callHook('data:loading:finish_error');
     }
 }

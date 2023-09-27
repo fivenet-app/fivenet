@@ -294,7 +294,7 @@ func (s *Server) refreshUserLocations(ctx context.Context) error {
 		).
 		WHERE(jet.AND(
 			tLocs.Hidden.IS_FALSE(),
-			tLocs.UpdatedAt.GT_EQ(jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(60, jet.MINUTE))),
+			tLocs.UpdatedAt.GT_EQ(jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(4, jet.HOUR))),
 		))
 
 	var dest []*livemap.UserMarker

@@ -212,7 +212,7 @@ func (s *Server) createDispatch(ctx context.Context, d *dispatch.Dispatch) (*dis
 	if err != nil {
 		return nil, err
 	}
-	s.events.JS.PublishAsync(s.buildSubject(TopicDispatch, TypeDispatchCreated, d.Job, 0), data)
+	s.events.JS.PublishAsync(buildSubject(TopicDispatch, TypeDispatchCreated, d.Job, 0), data)
 
 	return dsp, nil
 }
@@ -275,9 +275,9 @@ func (s *Server) UpdateDispatch(ctx context.Context, req *UpdateDispatchRequest)
 	if err != nil {
 		return nil, err
 	}
-	s.events.JS.PublishAsync(s.buildSubject(TopicDispatch, TypeDispatchUpdated, userInfo.Job, 0), data)
+	s.events.JS.PublishAsync(buildSubject(TopicDispatch, TypeDispatchUpdated, userInfo.Job, 0), data)
 	for _, unit := range dsp.Units {
-		s.events.JS.PublishAsync(s.buildSubject(TopicDispatch, TypeDispatchUpdated, userInfo.Job, unit.UnitId), data)
+		s.events.JS.PublishAsync(buildSubject(TopicDispatch, TypeDispatchUpdated, userInfo.Job, unit.UnitId), data)
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
@@ -320,6 +320,15 @@ func (s *Server) TakeDispatch(ctx context.Context, req *TakeDispatchRequest) (*T
 			}) {
 				return nil, ErrModeForbidsAction
 			}
+		}
+
+		var x, y *float64
+		var postal *string
+		marker, ok := s.tracker.GetUserById(userInfo.UserId)
+		if ok {
+			x = &marker.Info.X
+			y = &marker.Info.Y
+			postal = marker.Info.Postal
 		}
 
 		status := dispatch.StatusDispatch_STATUS_DISPATCH_UNSPECIFIED
@@ -368,7 +377,20 @@ func (s *Server) TakeDispatch(ctx context.Context, req *TakeDispatchRequest) (*T
 					CreatedAt:  timestamp.Now(),
 				})
 
-				// TODO set unit status to be busy if accepted a dispatch
+				// Set unit to busy when unit accepts a dispatch
+				if unit.Status == nil || unit.Status.Status != dispatch.StatusUnit_STATUS_UNIT_BUSY {
+					if err := s.updateUnitStatus(ctx, userInfo.Job, unit, &dispatch.UnitStatus{
+						UnitId:    unit.Id,
+						Status:    dispatch.StatusUnit_STATUS_UNIT_BUSY,
+						UserId:    &userInfo.UserId,
+						CreatorId: &userInfo.UserId,
+						X:         x,
+						Y:         y,
+						Postal:    postal,
+					}); err != nil {
+						return nil, err
+					}
+				}
 			}
 		} else {
 			// Dispatch declined
@@ -395,15 +417,6 @@ func (s *Server) TakeDispatch(ctx context.Context, req *TakeDispatchRequest) (*T
 					break
 				}
 			}
-		}
-
-		var x, y *float64
-		var postal *string
-		marker, ok := s.tracker.GetUserById(userInfo.UserId)
-		if ok {
-			x = &marker.Info.X
-			y = &marker.Info.Y
-			postal = marker.Info.Postal
 		}
 
 		if err := s.updateDispatchStatus(ctx, userInfo.Job, dsp, &dispatch.DispatchStatus{
@@ -617,7 +630,7 @@ func (s *Server) DeleteDispatch(ctx context.Context, req *DeleteDispatchRequest)
 	if err != nil {
 		return nil, err
 	}
-	s.events.JS.PublishAsync(s.buildSubject(TopicDispatch, TypeDispatchDeleted, dsp.Job, 0), data)
+	s.events.JS.PublishAsync(buildSubject(TopicDispatch, TypeDispatchDeleted, dsp.Job, 0), data)
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)
 

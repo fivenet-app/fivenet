@@ -68,7 +68,12 @@ release:
 
 .PHONY: build-go
 build-go:
-	CGO_ENABLED=0 go build -a -installsuffix cgo -o fivenet .
+	CGO_ENABLED=0 go \
+		build \
+		-a \
+		-installsuffix cgo \
+		-ldflags "-X 'github.com/galexrt/fivenet/pkg/version.Version=$(shell git describe --tags --exclude='fivenet-*')'" \
+		-o fivenet .
 
 .PHONY: build-yarn
 build-yarn:
