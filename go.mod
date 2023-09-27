@@ -25,7 +25,7 @@ require (
 	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.0.1
 	github.com/json-iterator/go v1.1.12
 	github.com/microcosm-cc/bluemonday v1.0.25
-	github.com/nats-io/nats.go v1.30.1
+	github.com/nats-io/nats.go v1.30.2
 	github.com/ory/dockertest/v3 v3.10.0
 	github.com/paulmach/orb v0.10.0
 	github.com/pkg/errors v0.9.1
