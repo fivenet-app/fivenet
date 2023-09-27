@@ -1340,8 +1340,14 @@
             "ErrFailedQuery": "Fehler beim Anzeigen/ Aktualisieren von Leitstellen Daten!",
             "ErrAlreadyInUnit": "Sie sind bereits in einer Einheit! Sie müssen diese verlassen bevor sie einer anderen Einheit beitreten können.",
             "ErrNotPartOfDispatch": "Sie sind nicht Teil dieses Einsatzes!",
-            "ErrNotOnDuty": "Sie sind nicht im Dienst!",
-            "ErrModeForbidsAction": "Die Leitstelle verbietet diese Änderung/ Interaktion. Bitte kontaktiere die Leitstelle direkt!"
+            "ErrNotOnDuty": {
+                "title": "Sie sind nicht im Dienst!",
+                "content": "Stellen sie sicher dass sie im Dienst sind."
+            },
+            "ErrModeForbidsAction": {
+                "title": "Leitstelle verbietet diese Aktion!",
+                "content": "Kontaktiere die Leitstelle."
+            }
         }
     },
     "commandpalette": {
