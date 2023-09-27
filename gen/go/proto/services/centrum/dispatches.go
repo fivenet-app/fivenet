@@ -25,7 +25,7 @@ var (
 )
 
 var (
-	ErrModeForbidsAction = status.Error(codes.InvalidArgument, "Dispatch center forbides this interaction")
+	ErrModeForbidsAction = status.Error(codes.InvalidArgument, "errors.CentrumService.ErrModeForbidsAction.title;errors.CentrumService.ErrModeForbidsAction.content")
 )
 
 func (s *Server) ListDispatches(ctx context.Context, req *ListDispatchesRequest) (*ListDispatchesResponse, error) {

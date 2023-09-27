@@ -38,7 +38,7 @@ var (
 	ErrFailedQuery       = status.Error(codes.Internal, "errors.CentrumService.ErrFailedQuery")
 	ErrAlreadyInUnit     = status.Error(codes.InvalidArgument, "errors.CentrumService.ErrAlreadyInUnit")
 	ErrNotPartOfDispatch = status.Error(codes.InvalidArgument, "errors.CentrumService.ErrNotPartOfDispatch")
-	ErrNotOnDuty         = status.Error(codes.InvalidArgument, "errors.CentrumService.ErrNotOnDuty")
+	ErrNotOnDuty         = status.Error(codes.InvalidArgument, "errors.CentrumService.ErrNotOnDuty.title;errors.CentrumService.ErrNotOnDuty.content")
 )
 
 var (

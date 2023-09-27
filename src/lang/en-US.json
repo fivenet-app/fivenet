@@ -1320,7 +1320,7 @@
         },
         "LivemapperService": {
             "ErrStreamFailed": "Failed to stream livemap data!",
-            "ErrMarkerFailed": "Failed to create/  update/ delete marker!"
+            "ErrMarkerFailed": "Failed to create/ update/ delete marker!"
         },
         "NotificatorService": {
             "ErrFailedRequest": "Failed to load notifications data!",
@@ -1340,8 +1340,14 @@
             "ErrFailedQuery": "Failed to get/update dispatch center data!",
             "ErrAlreadyInUnit": "You are already in an unit! You must leave your currrent unit first.",
             "ErrNotPartOfDispatch": "You are not part of this dispatch!",
-            "ErrNotOnDuty": "You are not on duty!",
-            "ErrModeForbidsAction": "Dispatch center forbides this interaction. Please contact the dispatch center!"
+            "ErrNotOnDuty": {
+                "title": "You are not on duty!",
+                "content": "Make sure you are on duty."
+            },
+            "ErrModeForbidsAction": {
+                "title": "Dispatch center forbids this!",
+                "content": "Please contact the dispatch center."
+            }
         }
     },
     "commandpalette": {

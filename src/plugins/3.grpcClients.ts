@@ -113,8 +113,8 @@ export class GRPCClients {
         if (err.message.startsWith('errors.')) {
             const errSplits = err.message.split(';');
             if (errSplits.length > 1) {
-                notification.content = { key: errSplits[0], parameters: [] };
-                notification.title = { key: errSplits[1], parameters: [] };
+                notification.title = { key: errSplits[0], parameters: [] };
+                notification.content = { key: errSplits[1], parameters: [] };
             } else {
                 notification.content = { key: err.message, parameters: [] };
             }

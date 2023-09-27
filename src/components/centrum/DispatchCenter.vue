@@ -36,7 +36,7 @@ function goto(e: Coordinate) {
 <template>
     <div class="flex-col h-full relative">
         <div
-            v-if="(error || abort === undefined) && !restarting"
+            v-if="error !== undefined || (abort === undefined && !restarting)"
             class="absolute inset-0 flex justify-center items-center z-20 bg-gray-600/70"
         >
             <DataErrorBlock
@@ -45,7 +45,7 @@ function goto(e: Coordinate) {
                 :retry="startStream"
             />
             <DataPendingBlock
-                v-else-if="abort === undefined"
+                v-else-if="abort === undefined && !restarting"
                 :message="$t('components.centrum.dispatch_center.starting_datastream')"
             />
         </div>

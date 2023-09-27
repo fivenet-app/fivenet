@@ -1,60 +1,25 @@
 <script lang="ts" setup>
-import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
-import { parseQuery } from 'vue-router';
+import { useThrottleFn } from '@vueuse/core';
+import { LoadingIcon } from 'mdi-vue3';
 import CharSexBadge from '~/components/citizens/CharSexBadge.vue';
 import { useAuthStore } from '~/store/auth';
-import { useClipboardStore } from '~/store/clipboard';
 import { fromSecondsToFormattedDuration } from '~/utils/time';
 import { User } from '~~/gen/ts/resources/users/users';
 
-const { $grpc } = useNuxtApp();
 const authStore = useAuthStore();
-const clipboardStore = useClipboardStore();
-const route = useRoute();
 
 const { lastCharID } = storeToRefs(authStore);
-const { setAccessToken, setActiveChar, setPermissions, setJobProps } = authStore;
+const { chooseCharacter } = authStore;
 
 const props = defineProps<{
     char: User;
 }>();
 
-async function chooseCharacter(): Promise<void> {
-    return new Promise(async (res, rej) => {
-        try {
-            if (authStore.lastCharID !== props.char.userId) {
-                clipboardStore.clear();
-            }
-
-            const call = $grpc.getAuthClient().chooseCharacter({
-                charId: props.char.userId,
-            });
-            const { response } = await call;
-
-            setAccessToken(response.token, toDate(response.expires) as null | Date);
-            setActiveChar(props.char);
-            setPermissions(response.permissions);
-            if (response.jobProps) {
-                setJobProps(response.jobProps!);
-            } else {
-                setJobProps(null);
-            }
-
-            const path = route.query.redirect?.toString() || '/overview';
-            const url = new URL('https://example.com' + path);
-            await navigateTo({
-                path: url.pathname,
-                query: parseQuery(url.search),
-                hash: url.hash,
-            });
-
-            return res();
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
-        }
-    });
-}
+const canSubmit = ref(true);
+const onSubmitThrottle = useThrottleFn(async (_) => {
+    canSubmit.value = false;
+    await chooseCharacter(props.char.userId).finally(() => setTimeout(() => (canSubmit.value = true), 350));
+}, 1000);
 </script>
 
 <template>
@@ -98,9 +63,14 @@ async function chooseCharacter(): Promise<void> {
             <div class="flex -mt-px">
                 <div class="flex flex-1 w-0">
                     <button
-                        @click="chooseCharacter"
+                        type="button"
+                        @click="onSubmitThrottle(char.userId)"
                         class="relative inline-flex items-center justify-center flex-1 w-0 py-4 text-sm font-semibold transition-colors border border-transparent rounded-b-lg gap-x-3 text-neutral bg-base-700 hover:bg-base-600"
+                        :disabled="!canSubmit"
                     >
+                        <template v-if="!canSubmit">
+                            <LoadingIcon class="animate-spin h-5 w-5 mr-2" />
+                        </template>
                         {{ $t('common.choose') }}
                     </button>
                 </div>

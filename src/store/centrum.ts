@@ -371,12 +371,14 @@ export const useCentrumStore = defineStore('centrum', {
                 this.error = e as RpcError;
                 if (this.error) {
                     // Only restart when not cancelled and abort is still valid
-                    if (this.error.code != 'CANCELLED') {
+                    if (this.error.code != 'CANCELLED' && this.error.code != 'ABORTED') {
                         console.error('Centrum: Data Stream Failed', this.error.code, this.error.message, this.error.cause);
 
                         if (this.abort !== undefined && !this.abort?.signal.aborted) {
                             this.restartStream(isCenter);
                         }
+                    } else {
+                        this.error = undefined;
                     }
                 }
             }

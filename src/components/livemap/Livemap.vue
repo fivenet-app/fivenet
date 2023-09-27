@@ -94,11 +94,14 @@ async function applySelectedMarkerCentering(): Promise<void> {
         />
 
         <div
-            v-if="(error || abort === undefined) && !restarting"
+            v-if="error !== undefined || (abort === undefined && !restarting)"
             class="absolute inset-0 flex justify-center items-center z-20 bg-gray-600/70"
         >
             <DataErrorBlock v-if="error" :title="$t('components.livemap.failed_datastream')" :retry="startStream" />
-            <DataPendingBlock v-else-if="abort === undefined" :message="$t('components.livemap.starting_datastream')" />
+            <DataPendingBlock
+                v-else-if="abort === undefined && !restarting"
+                :message="$t('components.livemap.starting_datastream')"
+            />
         </div>
         <BaseMap :map-options="mapOptions">
             <template v-slot:default>

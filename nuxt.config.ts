@@ -159,9 +159,6 @@ const config = defineNuxtConfig({
             },
         },
     },
-    devServer: {
-        port: 3000,
-    },
     app: {
         head: {
             charset: 'utf-8',

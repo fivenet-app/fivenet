@@ -1,7 +1,9 @@
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { StoreDefinition, defineStore } from 'pinia';
+import { parseQuery } from 'vue-router';
 import { JobProps } from '~~/gen/ts/resources/users/jobs';
 import { User } from '~~/gen/ts/resources/users/users';
+import { useClipboardStore } from './clipboard';
 import { useNotificatorStore } from './notificator';
 
 export type JobPropsState = {
@@ -121,6 +123,44 @@ export const useAuthStore = defineStore('auth', {
                     });
                     this.clearAuthInfo();
 
+                    return rej(e as RpcError);
+                }
+            });
+        },
+        async chooseCharacter(charId: number): Promise<void> {
+            return new Promise(async (res, rej) => {
+                const { $grpc } = useNuxtApp();
+                try {
+                    if (this.lastCharID !== charId) {
+                        useClipboardStore().clear();
+                    }
+
+                    const call = $grpc.getAuthClient().chooseCharacter({
+                        charId: charId,
+                    });
+                    const { response } = await call;
+                    if (!response.char) return rej();
+
+                    this.setAccessToken(response.token, toDate(response.expires) as null | Date);
+                    this.setActiveChar(response.char);
+                    this.setPermissions(response.permissions);
+                    if (response.jobProps) {
+                        this.setJobProps(response.jobProps!);
+                    } else {
+                        this.setJobProps(null);
+                    }
+
+                    const path = useRoute().query.redirect?.toString() || '/overview';
+                    const url = new URL('https://example.com' + path);
+                    await navigateTo({
+                        path: url.pathname,
+                        query: parseQuery(url.search),
+                        hash: url.hash,
+                    });
+
+                    return res();
+                } catch (e) {
+                    $grpc.handleError(e as RpcError);
                     return rej(e as RpcError);
                 }
             });
