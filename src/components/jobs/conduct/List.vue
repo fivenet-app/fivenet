@@ -136,7 +136,13 @@ onConfirm(async (id) => deleteConductEntry(id));
             :confirm="() => confirm(selectedEntry!.id)"
         />
 
-        <CreateOrUpdateModal :open="open" @close="open = false" :entry="selectedEntry" @created="entries?.unshift($event)" />
+        <CreateOrUpdateModal
+            :open="open"
+            @close="open = false"
+            :entry="selectedEntry"
+            @created="entries?.unshift($event)"
+            @updated="refresh()"
+        />
 
         <div class="px-1 sm:px-2 lg:px-4">
             <div class="sm:flex sm:items-center">

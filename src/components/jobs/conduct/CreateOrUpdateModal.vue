@@ -27,6 +27,7 @@ const props = defineProps<{
 const emit = defineEmits<{
     (e: 'close'): void;
     (e: 'created', entry: ConductEntry): void;
+    (e: 'updated', entry: ConductEntry): void;
 }>();
 
 const { $grpc } = useNuxtApp();
@@ -36,7 +37,7 @@ async function conductCreateOrUpdateEntry(values: FormData, id?: bigint): Promis
         try {
             const expiresAt = values.expiresAt ? toTimestamp(new Date(values.expiresAt)) : undefined;
 
-            const call = $grpc.getJobsClient().conductCreateEntry({
+            const req = {
                 entry: {
                     id: id ?? 0n,
                     job: '',
@@ -46,11 +47,21 @@ async function conductCreateOrUpdateEntry(values: FormData, id?: bigint): Promis
                     targetUserId: values.targetUser!,
                     expiresAt: expiresAt,
                 },
-            });
-            const { response } = await call;
+            };
+
+            if (id === undefined) {
+                const call = $grpc.getJobsClient().conductCreateEntry(req);
+                const { response } = await call;
+
+                emit('created', response.entry!);
+            } else {
+                const call = $grpc.getJobsClient().conductUpdateEntry(req);
+                const { response } = await call;
+
+                emit('updated', response.entry!);
+            }
 
             resetForm();
-            emit('created', response.entry!);
             emit('close');
 
             return res();
