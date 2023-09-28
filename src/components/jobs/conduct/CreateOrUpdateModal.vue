@@ -31,15 +31,15 @@ const emit = defineEmits<{
 
 const { $grpc } = useNuxtApp();
 
-async function conductCreateEntry(values: FormData): Promise<void> {
+async function conductCreateOrUpdateEntry(values: FormData, id?: bigint): Promise<void> {
     return new Promise(async (res, rej) => {
         try {
             const expiresAt = values.expiresAt ? toTimestamp(new Date(values.expiresAt)) : undefined;
 
             const call = $grpc.getJobsClient().conductCreateEntry({
                 entry: {
-                    id: props.entry?.id ?? 0n,
-                    job: props.entry?.job ?? '',
+                    id: id ?? 0n,
+                    job: '',
                     type: values.type,
                     message: values.message,
                     creatorId: 1,
@@ -149,7 +149,9 @@ onMounted(async () => {
 const canSubmit = ref(true);
 const onSubmit = handleSubmit(
     async (values): Promise<void> =>
-        await conductCreateEntry(values).finally(() => setTimeout(() => (canSubmit.value = true), 350)),
+        await conductCreateOrUpdateEntry(values, props.entry?.id).finally(() =>
+            setTimeout(() => (canSubmit.value = true), 350),
+        ),
 );
 const onSubmitThrottle = useThrottleFn(async (e) => {
     canSubmit.value = false;
