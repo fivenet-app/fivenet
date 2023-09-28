@@ -136,7 +136,7 @@ func (g *UserInfo) setUserNickName(member *discordgo.Member, firstname string, l
 	fullName = strings.TrimSpace(fullName)
 
 	if err := g.discord.GuildMemberNickname(g.guild.ID, member.User.ID, fullName); err != nil {
-		return err
+		return fmt.Errorf("failed to update user %s (%s) nickname: %w", fullName, member.User.ID, err)
 	}
 
 	return nil
@@ -172,8 +172,9 @@ func (g *UserInfo) createJobRoles() error {
 			Name: name,
 		})
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to create role %s (Grade: %s): %w", name, grade, err)
 		}
+
 		g.jobRoles[grade.Grade] = role
 	}
 
@@ -183,11 +184,11 @@ func (g *UserInfo) createJobRoles() error {
 func (g *UserInfo) setUserJobRole(member *discordgo.Member, grade int32) error {
 	r, ok := g.jobRoles[grade]
 	if !ok {
-		return fmt.Errorf("no role for user's job and grade found")
+		return fmt.Errorf("no role for user's job and grade %d found", grade)
 	}
 
 	found := false
-	removeRoles := []string{}
+	removeRoles := []*discordgo.Role{}
 	for _, mr := range member.Roles {
 		role, ok := g.findGradeRoleByID(mr)
 		if ok {
@@ -195,15 +196,15 @@ func (g *UserInfo) setUserJobRole(member *discordgo.Member, grade int32) error {
 				found = true
 				continue
 			} else {
-				removeRoles = append(removeRoles, role.ID)
+				removeRoles = append(removeRoles, role)
 			}
 		}
 	}
 
 	if false {
-		for _, r := range removeRoles {
-			if err := g.discord.GuildMemberRoleRemove(g.guild.ID, member.User.ID, r); err != nil {
-				return err
+		for _, role := range removeRoles {
+			if err := g.discord.GuildMemberRoleRemove(g.guild.ID, member.User.ID, role.ID); err != nil {
+				return fmt.Errorf("failed to remove role %s (%s) member %s: %w", role.Name, role.ID, member.User.ID, err)
 			}
 		}
 	}
@@ -211,7 +212,7 @@ func (g *UserInfo) setUserJobRole(member *discordgo.Member, grade int32) error {
 	// Only add user to the rank role if user isn't in it already
 	if !found {
 		if err := g.discord.GuildMemberRoleAdd(g.guild.ID, member.User.ID, r.ID); err != nil {
-			return err
+			return fmt.Errorf("failed to add role %s (%s) member %s: %w", r.Name, r.ID, member.User.ID, err)
 		}
 	}
 

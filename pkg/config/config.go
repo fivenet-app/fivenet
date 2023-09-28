@@ -176,7 +176,7 @@ type UnemployedJob struct {
 }
 
 type Livemap struct {
-	RefreshTime time.Duration `default:"3s850ms" yaml:"refreshTime"`
+	RefreshTime time.Duration `default:"3s350ms" yaml:"refreshTime"`
 	Jobs        []string      `yaml:"jobs"`
 	PostalsFile string        `default:".output/public/data/postals.json" yaml:"postalsFile"`
 }
@@ -216,7 +216,7 @@ type DiscordGroupSync struct {
 }
 
 type DiscordGroupRole struct {
-	Name        string `yaml:"roleName"`
+	RoleName    string `yaml:"roleName"`
 	Permissions *int64 `yaml:"omitempty,permissions"`
 }
 

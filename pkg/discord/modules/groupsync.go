@@ -3,6 +3,7 @@ package modules
 import (
 	"fmt"
 	"net/http"
+	"strings"
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/galexrt/fivenet/pkg/config"
@@ -81,7 +82,7 @@ func (g *GroupSync) syncGroups() error {
 					continue
 				}
 			}
-			return err
+			return fmt.Errorf("failed to get external guild member %s: %w", user.ExternalID, err)
 		}
 
 		if err := g.setUserGroups(member, user.Group); err != nil {
@@ -95,44 +96,49 @@ func (g *GroupSync) syncGroups() error {
 func (g *GroupSync) createGroupRoles() error {
 	dcRoles := map[string]config.DiscordGroupRole{}
 	for _, dcRole := range g.groupsToSync {
-		if _, ok := dcRoles[dcRole.Name]; !ok {
-			dcRoles[dcRole.Name] = dcRole
+		if _, ok := dcRoles[dcRole.RoleName]; !ok {
+			dcRoles[dcRole.RoleName] = dcRole
 		}
 	}
 
 	for _, dcRole := range dcRoles {
 		if utils.InSliceFunc(g.guild.Roles, func(in *discordgo.Role) bool {
-			if in.Name == dcRole.Name {
-				g.roles[dcRole.Name] = in
+			if strings.EqualFold(in.Name, dcRole.RoleName) {
+				g.roles[dcRole.RoleName] = in
 				return true
 			}
 			return false
 		}) {
 			// Role permissions are the same no need to edit/update
-			if dcRole.Permissions != nil && *dcRole.Permissions == g.roles[dcRole.Name].Permissions {
+			if dcRole.Permissions != nil && *dcRole.Permissions == g.roles[dcRole.RoleName].Permissions {
 				continue
 			}
 
-			role, err := g.discord.GuildRoleEdit(g.guild.ID, g.roles[dcRole.Name].ID, &discordgo.RoleParams{
-				Name:        dcRole.Name,
+			role, err := g.discord.GuildRoleEdit(g.guild.ID, g.roles[dcRole.RoleName].ID, &discordgo.RoleParams{
+				Name:        dcRole.RoleName,
 				Permissions: dcRole.Permissions,
 			})
 			if err != nil {
-				return err
+				return fmt.Errorf("failed to edit role %s permissions: %w", g.roles[dcRole.RoleName].ID, err)
 			}
 
-			g.roles[dcRole.Name] = role
+			g.roles[dcRole.RoleName] = role
+			continue
+		}
+
+		if _, ok := g.roles[dcRole.RoleName]; ok {
+			continue
 		}
 
 		role, err := g.discord.GuildRoleCreate(g.guild.ID, &discordgo.RoleParams{
-			Name:        dcRole.Name,
+			Name:        dcRole.RoleName,
 			Permissions: dcRole.Permissions,
 		})
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to create role %s (%s): %w", dcRole.RoleName, dcRole.RoleName, err)
 		}
 
-		g.roles[dcRole.Name] = role
+		g.roles[dcRole.RoleName] = role
 	}
 
 	return nil
@@ -144,14 +150,14 @@ func (g *GroupSync) setUserGroups(member *discordgo.Member, group string) error 
 		return fmt.Errorf("no discord role mapping found for server group %s", group)
 	}
 
-	role, ok := g.roles[dcRole.Name]
+	role, ok := g.roles[dcRole.RoleName]
 	if !ok {
 		return fmt.Errorf("no discord role found for server group %s", group)
 	}
 
 	if !utils.InSlice(member.Roles, role.ID) {
 		if err := g.discord.GuildMemberRoleAdd(g.guild.ID, member.User.ID, role.ID); err != nil {
-			return err
+			return fmt.Errorf("failed to add member to %s (%s) role: %w", role.Name, role.ID, err)
 		}
 	}
 
@@ -172,14 +178,15 @@ func (g *GroupSync) cleanupUserGroupMembers(users []*GroupSyncUser) error {
 			}
 
 			// If user is in the servergroup, all is okay, otherwise remove user from role
+			user := guild.Members[i].User
 			if utils.InSliceFunc(users, func(in *GroupSyncUser) bool {
-				return in.ExternalID == guild.Members[i].User.ID && g.groupsToSync[in.Group].Name == role.Name
+				return in.ExternalID == user.ID && g.groupsToSync[in.Group].RoleName == role.Name
 			}) {
 				continue
 			}
 
-			if err := g.discord.GuildMemberRoleRemove(g.guild.ID, guild.Members[i].User.ID, role.ID); err != nil {
-				return err
+			if err := g.discord.GuildMemberRoleRemove(g.guild.ID, user.ID, role.ID); err != nil {
+				return fmt.Errorf("failed to remove member from role %s (%s): %w", role.Name, role.ID, err)
 			}
 		}
 	}

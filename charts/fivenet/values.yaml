@@ -160,7 +160,7 @@ fivenet:
         - fib
         - police
       livemap:
-        refreshTime: 3s850ms
+        refreshTime: 3s350ms
         jobs:
           - ambulance
           - doj
@@ -191,14 +191,14 @@ fivenet:
           roleFormat: "[%02d] %s"
           nicknameRegex: "^(?P<prefix>\\[\\S+][ ]*)?(?P<name>[^\\[]+)(?P<suffix>[ ]*\\[\\S+])?"
         groupSync:
-          enabled: true
-          mapping:
-            fraktionsverwaltung:
-              roleName: "Fraktionsverwaltung"
-              #permissions: 0
-            teamleitung:
-              roleName: "Teamleitung"
-              #permissions: 0
+          enabled: false
+          mapping: {}
+            #fraktionsverwaltung:
+            #  roleName: "Fraktionsverwaltung"
+            #  permissions: 414690258631
+            #teamleitung:
+            #  roleName: "Teamleitung"
+            #  permissions: 416032435935
         commands:
           enabled: true
 
