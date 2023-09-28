@@ -16,6 +16,7 @@ http:
   sessions:
     cookieSecret: "your_generated_cookie_secret"
     domain: "localhost"
+  publicURL: "http://localhost:3000"
 grpc:
   listen: ":9090"
 database:
@@ -93,6 +94,7 @@ discord:
     inviteURL: "your_discord_bot_invite_url"
     token: "your_discord_bot_token"
     userInfoSync:
+      enabled: false
       roleFormat: "[%02d] %s"
       nicknameRegex: "^(?P<prefix>\\[\\S+][ ]*)?(?P<name>[^\\[]+)(?P<suffix>[ ]*\\[\\S+])?"
     groupSync:
@@ -104,3 +106,5 @@ discord:
         teamleitung:
           roleName: "Teamleitung"
           #permissions: 0
+    commands:
+      enabled: true

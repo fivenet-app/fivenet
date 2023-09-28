@@ -22,7 +22,7 @@ type UserInfo struct {
 }
 
 func init() {
-	//Modules["userinfo"] = NewUserInfo
+	Modules["userinfo"] = NewUserInfo
 }
 
 func NewUserInfo(base *BaseModule) (Module, error) {

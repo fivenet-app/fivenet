@@ -199,6 +199,8 @@ fivenet:
             teamleitung:
               roleName: "Teamleitung"
               #permissions: 0
+        commands:
+          enabled: true
 
 envoy:
   replicaCount: 2

@@ -85,8 +85,9 @@ type Tracing struct {
 }
 
 type HTTP struct {
-	Listen   string   `default:":8080" yaml:"listen"`
-	Sessions Sessions `yaml:"sessions"`
+	Listen    string   `default:":8080" yaml:"listen"`
+	Sessions  Sessions `yaml:"sessions"`
+	PublicURL string   `yaml:"publicURL"`
 }
 
 type Sessions struct {
@@ -200,9 +201,11 @@ type DiscordBot struct {
 	Token        string              `yaml:"token"`
 	UserInfoSync DiscordUserInfoSync `yaml:"userInfoSync"`
 	GroupSync    DiscordGroupSync    `yaml:"groupSync"`
+	Commands     DiscordCommands     `yaml:"commands"`
 }
 
 type DiscordUserInfoSync struct {
+	Enabled       bool   `default:"false" yaml:"enabled"`
 	RoleFormat    string `default:"[%02d] %s" yaml:"roleFormat"`
 	NicknameRegex string `yaml:"nicknameRegex"`
 }
@@ -215,4 +218,8 @@ type DiscordGroupSync struct {
 type DiscordGroupRole struct {
 	Name        string `yaml:"roleName"`
 	Permissions *int64 `yaml:"omitempty,permissions"`
+}
+
+type DiscordCommands struct {
+	Enabled bool `default:"false" yaml:"enabled"`
 }

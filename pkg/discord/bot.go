@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"sync"
 	"time"
 
 	"github.com/bwmarrin/discordgo"
@@ -12,6 +11,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/query/fivenet/table"
+	"github.com/puzpuzpuz/xsync/v2"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 )
@@ -47,16 +47,13 @@ type Bot struct {
 	logger   *zap.Logger
 	db       *sql.DB
 	enricher *mstlystcdata.Enricher
-	token    string
 	cfg      *config.DiscordBot
 
-	id      string
-	discord *discordgo.Session
-
-	guildsMutex  sync.Mutex
-	joinedGuilds []*discordgo.Guild
-
 	syncInterval time.Duration
+
+	id           string
+	discord      *discordgo.Session
+	activeGuilds *xsync.MapOf[string, *Guild]
 }
 
 func NewBot(p BotParams) (*Bot, error) {
@@ -64,20 +61,33 @@ func NewBot(p BotParams) (*Bot, error) {
 		return nil, nil
 	}
 
+	// Create a new Discord session using the provided login information.
+	discord, err := discordgo.New("Bot " + p.Config.Discord.Bot.Token)
+	if err != nil {
+		return nil, fmt.Errorf("error creating Discord session: %w", err)
+	}
+	discord.Identify.Intents = discordgo.IntentsAllWithoutPrivileged | discordgo.IntentsGuilds | discordgo.IntentsGuildMembers | discordgo.IntentsGuildPresences
+
 	ctx, cancel := context.WithCancel(context.Background())
 	b := &Bot{
 		ctx:      ctx,
 		logger:   p.Logger,
 		db:       p.DB,
 		enricher: p.Enricher,
-		token:    p.Config.Discord.Bot.Token,
 		cfg:      &p.Config.Discord.Bot,
+
+		discord:      discord,
+		activeGuilds: xsync.NewMapOf[*Guild](),
 
 		syncInterval: p.Config.Discord.Bot.SyncInterval,
 	}
 
 	p.LC.Append(fx.StartHook(func(ctx context.Context) error {
-		if err := b.start(p.Config.Discord.Bot.Token); err != nil {
+		if err := b.start(ctx); err != nil {
+			return err
+		}
+
+		if err := b.setupSync(); err != nil {
 			return err
 		}
 
@@ -89,39 +99,34 @@ func NewBot(p BotParams) (*Bot, error) {
 	p.LC.Append(fx.StopHook(func(ctx context.Context) error {
 		cancel()
 
-		return b.discord.Close()
+		// Stop all guilds and discord session
+		return b.stop()
 	}))
 
 	return b, nil
 }
 
-func (b *Bot) start(token string) error {
-	// Create a new Discord session using the provided login information.
-	discord, err := discordgo.New("Bot " + token)
-	if err != nil {
-		return fmt.Errorf("error creating Discord session: %w", err)
-	}
-	b.discord = discord
-
-	if err := b.refreshBotGuilds(); err != nil {
-		return err
-	}
-
-	b.discord.Identify.Intents = discordgo.IntentsAllWithoutPrivileged | discordgo.IntentsGuilds | discordgo.IntentsGuildMembers | discordgo.IntentsGuildPresences
-
+func (b *Bot) start(ctx context.Context) error {
 	b.discord.AddHandler(func(discord *discordgo.Session, ready *discordgo.Ready) {
-		b.guildsMutex.Lock()
-		defer b.guildsMutex.Unlock()
-
-		b.joinedGuilds = discord.State.Guilds
-		b.logger.Info(fmt.Sprintf("Ready with %d guilds", len(b.joinedGuilds)))
+		b.logger.Info(fmt.Sprintf("Ready with %d guilds", len(discord.State.Guilds)))
 	})
 
 	if err := b.discord.Open(); err != nil {
 		return fmt.Errorf("error opening connection: %w", err)
 	}
 
-	return nil
+	for {
+		if b.discord.State.Ready.Version > 0 {
+			return nil
+		}
+
+		select {
+		case <-ctx.Done():
+			return fmt.Errorf("discord client failed to get ready, version %d", b.discord.State.Version)
+
+		case <-time.After(750 * time.Millisecond):
+		}
+	}
 }
 
 func (b *Bot) refreshBotGuilds() error {
@@ -148,40 +153,54 @@ func (b *Bot) Sync() error {
 	}
 }
 
-func (b *Bot) getGuilds() ([]*Guild, error) {
+// getGuilds Each guild is effectively associated with a Job via the JobProps
+func (b *Bot) getGuilds() error {
 	if err := b.refreshBotGuilds(); err != nil {
-		return nil, err
+		return err
 	}
 
 	guildsDB, err := b.getGuildsFromDB()
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	activeGuilds := []*Guild{}
 	for job, guildID := range guildsDB {
 		var found *discordgo.Guild
-		if !utils.InSliceFunc(b.joinedGuilds, func(in *discordgo.Guild) bool {
+		if !utils.InSliceFunc(b.discord.State.Guilds, func(in *discordgo.Guild) bool {
 			if in.ID == guildID {
 				found = in
 				return true
 			}
 			return false
 		}) {
+			// Make sure to stop any active stuff with the previously active guild
+			g, ok := b.activeGuilds.Load(guildID)
+			if ok {
+				err := g.Stop()
+				b.activeGuilds.Delete(guildID)
+				if err != nil {
+					return err
+				}
+			}
+
 			continue
 		}
 		if found == nil {
-			return nil, fmt.Errorf("didn't find bot being in guild %s (job: %s)", guildID, job)
+			return fmt.Errorf("didn't find bot being in guild %s (job: %s)", guildID, job)
+		}
+
+		if _, ok := b.activeGuilds.Load(guildID); ok {
+			continue
 		}
 
 		g, err := NewGuild(b, found, job)
 		if err != nil {
-			return nil, err
+			return err
 		}
-		activeGuilds = append(activeGuilds, g)
+		b.activeGuilds.Store(g.ID, g)
 	}
 
-	return activeGuilds, nil
+	return nil
 }
 
 func (b *Bot) getGuildsFromDB() (map[string]string, error) {
@@ -208,18 +227,58 @@ func (b *Bot) getGuildsFromDB() (map[string]string, error) {
 	return guilds, nil
 }
 
-func (b *Bot) runSync() error {
-	guilds, err := b.getGuilds()
-	if err != nil {
+func (b *Bot) setupSync() error {
+	if err := b.getGuilds(); err != nil {
 		return err
 	}
 
-	// Each guild is effectively associated with a Job via the JobProps
-	for _, g := range guilds {
-		if err := g.Run(); err != nil {
-			return err
+	var e error
+	b.activeGuilds.Range(func(key string, guild *Guild) bool {
+		if err := guild.Setup(); err != nil {
+			e = err
+			return false
 		}
+
+		return true
+	})
+
+	return e
+}
+
+func (b *Bot) runSync() error {
+	if err := b.getGuilds(); err != nil {
+		return err
 	}
 
-	return nil
+	var e error
+	b.activeGuilds.Range(func(key string, guild *Guild) bool {
+		if err := guild.Run(); err != nil {
+			e = err
+			return false
+		}
+
+		return true
+	})
+
+	return e
+}
+
+func (b *Bot) stop() error {
+	var e error
+	b.activeGuilds.Range(func(key string, guild *Guild) bool {
+		if err := guild.Stop(); err != nil {
+			e = err
+			return false
+		}
+
+		return true
+	})
+
+	b.activeGuilds.Clear()
+
+	if e != nil {
+		return e
+	}
+
+	return b.discord.Close()
 }
