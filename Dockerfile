@@ -13,7 +13,7 @@ RUN apt-get update && \
     apt-get install -y git && \
     make build-go
 
-FROM docker.io/library/alpine:3.18.3
+FROM docker.io/library/alpine:3.18.4
 WORKDIR /app
 RUN apk --no-cache add ca-certificates tzdata && \
     mkdir -p ./.output/public
