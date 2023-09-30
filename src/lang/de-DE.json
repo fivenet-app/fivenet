@@ -425,7 +425,35 @@
             "units": {
                 "create_unit": "Einheit erstellen",
                 "update_settings": "Einstellungen ändern",
-                "update_unit": "Einheit aktualisieren"
+                "update_unit": "Einheit aktualisieren",
+                "feed": {
+                    "item": {
+                        "UNKNOWN": "Unbekannter Einheiten-Status",
+                        "USER_ADDED": "Mitglied zu Einheit hinzugefügt",
+                        "USER_REMOVED": "Mitglied von Einheit entfernt",
+                        "UNAVAILABLE": "Einheit nicht verfügbar",
+                        "AVAILABLE": "Einheit verfügbar",
+                        "ON_BREAK": "Einheit auf Pause",
+                        "BUSY": "Einheit beschäftigt"
+                    }
+                }
+            },
+            "dispatches": {
+                "feed": {
+                    "item": {
+                        "UNSPECIFIED": "Unbekannter Einsatz-Status",
+                        "NEW": "Einsatz erstellt",
+                        "UNASSIGNED": "Keine Einheiten an Einsatz zugewiesen",
+                        "UNIT_ASSIGNED": "Einheit an Einsatz zugewiesen",
+                        "UNIT_UNASSIGNED": "Einheit von Einsatz abgezogen",
+                        "EN_ROUTE": "Auf dem Weg zum Einsatz",
+                        "ON_SCENE": "Vor Ort zum Einsatz",
+                        "NEED_ASSISTANCE": "Einheit benötigt Verstärkung",
+                        "COMPLETED": "Einsatz abgeschlossen",
+                        "CANCELLED": "Einsatz abgebrochen",
+                        "ARCHIVED": "Einsatz archiviert"
+                    }
+                }
             }
         },
         "jobs": {
