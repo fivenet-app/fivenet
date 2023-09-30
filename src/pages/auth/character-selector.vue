@@ -19,10 +19,12 @@ const documentEditorStore = useDocumentEditorStore();
 
 const { setActiveChar, setPermissions, setJobProps } = authStore;
 
-setActiveChar(null);
-setPermissions([]);
-setJobProps(null);
-documentEditorStore.clear();
+onMounted(async () => {
+    setActiveChar(null);
+    setPermissions([]);
+    setJobProps(null);
+    documentEditorStore.clear();
+});
 </script>
 
 <template>
