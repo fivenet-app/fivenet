@@ -662,7 +662,9 @@
         "timeclock": "Stempeluhr",
         "active": "Aktiv",
         "sum": "Summe",
-        "avg": "Durchschnitt"
+        "avg": "Durchschnitt",
+        "read_more": "Mehr Lesen",
+        "read_less": "Weniger Lesen"
     },
     "notifications": {
         "clipboard": {
