@@ -168,6 +168,10 @@ func (g *UserInfo) createJobRoles() error {
 			continue
 		}
 
+		if _, ok := g.jobRoles[grade.Grade]; ok {
+			continue
+		}
+
 		role, err := g.discord.GuildRoleCreate(guild.ID, &discordgo.RoleParams{
 			Name: name,
 		})

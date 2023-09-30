@@ -20,21 +20,12 @@ defineProps<{
         >
             <div class="w-px bg-gray-200" />
         </div>
-        <template v-if="item.status === StatusUnit.UNKNOWN">
-            <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
-                <HelpIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
-            </div>
-            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">Unit created</p>
-            <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
-                <Time :value="item.createdAt" :type="'compact'" />
-            </span>
-        </template>
-        <template v-else-if="item.status === StatusUnit.USER_ADDED">
+        <template v-if="item.status === StatusUnit.USER_ADDED">
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
                 <AccountPlusIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
-                Member added to Unit
+                {{ $t('components.centrum.units.feed.item.USER_ADDED') }}
 
                 <span class="font-medium text-gray-400 pl-1" v-if="item.user">
                     {{ item.user?.firstname }}, {{ item.user?.lastname }}
@@ -49,7 +40,8 @@ defineProps<{
                 <AccountRemoveIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
-                Member removed from Unit
+                {{ $t('components.centrum.units.feed.item.USER_REMOVED') }}
+
                 <span class="font-medium text-gray-400 pl-1" v-if="item.user">
                     {{ item.user?.firstname }}, {{ item.user?.lastname }}
                 </span>
@@ -63,7 +55,8 @@ defineProps<{
                 <StopIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
-                Unit unavailable
+                {{ $t('components.centrum.units.feed.item.UNAVAILABLE') }}
+
                 <span class="font-medium text-gray-400 pl-1" v-if="item.user">
                     {{ item.user?.firstname }}, {{ item.user?.lastname }}
                 </span>
@@ -77,7 +70,7 @@ defineProps<{
                 <PlayIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
-                Unit available
+                {{ $t('components.centrum.units.feed.item.AVAILABLE') }}
 
                 <span class="font-medium text-gray-400 pl-1" v-if="item.user">
                     {{ item.user?.firstname }}, {{ item.user?.lastname }}
@@ -92,7 +85,7 @@ defineProps<{
                 <CoffeeIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
-                Unit on break
+                {{ $t('components.centrum.units.feed.item.ON_BREAK') }}
 
                 <span class="font-medium text-gray-400 pl-1" v-if="item.user">
                     {{ item.user?.firstname }}, {{ item.user?.lastname }}
@@ -107,11 +100,22 @@ defineProps<{
                 <BriefcaseIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
-                Unit busy
+                {{ $t('components.centrum.units.feed.item.BUSY') }}
 
                 <span class="font-medium text-gray-400 pl-1" v-if="item.user">
                     {{ item.user?.firstname }}, {{ item.user?.lastname }}
                 </span>
+            </p>
+            <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
+                <Time :value="item.createdAt" :type="'compact'" />
+            </span>
+        </template>
+        <template v-else>
+            <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
+                <HelpIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
+            </div>
+            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
+                {{ $t('components.centrum.units.feed.item.UNKNOWN') }}
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
                 <Time :value="item.createdAt" :type="'compact'" />

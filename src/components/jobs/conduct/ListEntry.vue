@@ -13,6 +13,8 @@ defineEmits<{
     (e: 'selected'): void;
     (e: 'delete'): void;
 }>();
+
+const openMessage = ref(false);
 </script>
 
 <template>
@@ -39,7 +41,17 @@ defineEmits<{
             </div>
         </td>
         <td class="whitespace-wrap px-1 py-1 text-left text-base-200">
-            {{ conduct.message }}
+            <p :class="openMessage ? '' : 'max-h-24 max-w-sm truncate'">
+                {{ conduct.message }}
+            </p>
+            <button
+                v-if="conduct.message.length > 50"
+                type="button"
+                @click="openMessage = !openMessage"
+                class="flex justify-center px-1 py-1 text-sm font-semibold transition-colors rounded-md text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 bg-accent-500 hover:bg-accent-400 focus-visible:outline-accent-500"
+            >
+                {{ openMessage ? $t('common.read_less') : $t('common.read_more') }}
+            </button>
         </td>
         <td class="whitespace-nowrap px-1 py-1 text-left text-base-200">
             <CitizenInfoPopover :user="conduct.targetUser" />

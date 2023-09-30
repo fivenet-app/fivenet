@@ -36,7 +36,8 @@ defineProps<{
                 <NewBoxIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
-                Dispatch created
+                {{ $t('components.centrum.dispatches.feed.item.NEW') }}
+
                 <span class="font-medium text-gray-400 pl-1" v-if="item.user">
                     {{ item.user?.firstname }}, {{ item.user?.lastname }}
                 </span>
@@ -50,7 +51,8 @@ defineProps<{
                 <AccountAlertIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
-                No units assigned
+                {{ $t('components.centrum.dispatches.feed.item.UNASSIGNED') }}
+
                 <span class="font-medium text-gray-400 pl-1" v-if="item.unit">
                     {{ item.unit?.initials }}
                 </span>
@@ -67,7 +69,8 @@ defineProps<{
                 <AccountPlusIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
-                Unit assigned to Dispatch
+                {{ $t('components.centrum.dispatches.feed.item.UNIT_ASSIGNED') }}
+
                 <span class="font-medium text-gray-400 pl-1" v-if="item.unit">
                     {{ item.unit?.initials }}
                 </span>
@@ -84,7 +87,8 @@ defineProps<{
                 <AccountRemoveIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
-                Unit unassigned from Dispatch
+                {{ $t('components.centrum.dispatches.feed.item.EN_ROUTE') }}
+
                 <span class="font-medium text-gray-400 pl-1" v-if="item.unit">
                     {{ item.unit?.initials }}
                 </span>
@@ -101,7 +105,8 @@ defineProps<{
                 <CarIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
-                En Route to Dispatch
+                {{ $t('components.centrum.dispatches.feed.item.EN_ROUTE') }}
+
                 <span class="font-medium text-gray-400 pl-1" v-if="item.unit">
                     {{ item.unit?.initials }}
                 </span>
@@ -118,7 +123,8 @@ defineProps<{
                 <MapMarkerIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
-                Arrived on scene
+                {{ $t('components.centrum.dispatches.feed.item.ON_SCENE') }}
+
                 <span class="font-medium text-gray-400 pl-1" v-if="item.unit">
                     {{ item.unit?.initials }}
                 </span>
@@ -135,7 +141,8 @@ defineProps<{
                 <HelpIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
-                Need Assistance
+                {{ $t('components.centrum.dispatches.feed.item.NEED_ASSISTANCE') }}
+
                 <span class="font-medium text-gray-400 pl-1" v-if="item.unit">
                     {{ item.unit?.initials }}
                 </span>
@@ -152,7 +159,8 @@ defineProps<{
                 <CheckIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
-                Dispatch completed
+                {{ $t('components.centrum.dispatches.feed.item.COMPLETED') }}
+
                 <span class="font-medium text-gray-400 pl-1" v-if="item.unit">
                     {{ item.unit?.initials }}
                 </span>
@@ -169,7 +177,8 @@ defineProps<{
                 <AccountCancelIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
-                Dispatch cancelled
+                {{ $t('components.centrum.dispatches.feed.item.CANCELLED') }}
+
                 <span class="font-medium text-gray-400 pl-1" v-if="item.unit">
                     {{ item.unit?.initials }}
                 </span>
@@ -186,10 +195,26 @@ defineProps<{
                 <ArchiveIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
-                Dispatch archived
+                {{ $t('components.centrum.dispatches.feed.item.ARCHIVED') }}
+
                 <span class="font-medium text-gray-400 pl-1" v-if="item.unit">
                     {{ item.unit?.initials }}
                 </span>
+                <span class="font-medium text-gray-400 pl-1" v-if="item.user">
+                    {{ item.user?.firstname }}, {{ item.user?.lastname }}
+                </span>
+            </p>
+            <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
+                <Time :value="item.createdAt" :type="'compact'" />
+            </span>
+        </template>
+        <template v-else>
+            <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
+                <NewBoxIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
+            </div>
+            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
+                Unknown Dispatch status
+
                 <span class="font-medium text-gray-400 pl-1" v-if="item.user">
                     {{ item.user?.firstname }}, {{ item.user?.lastname }}
                 </span>

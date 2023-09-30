@@ -39,6 +39,57 @@ func (g *GroupSync) Run() error {
 	return g.syncGroups()
 }
 
+func (g *GroupSync) createGroupRoles() error {
+	dcRoles := map[string]config.DiscordGroupRole{}
+	for _, dcRole := range g.groupsToSync {
+		if _, ok := dcRoles[dcRole.RoleName]; !ok {
+			dcRoles[dcRole.RoleName] = dcRole
+		}
+	}
+
+	for _, dcRole := range dcRoles {
+		if utils.InSliceFunc(g.guild.Roles, func(in *discordgo.Role) bool {
+			if strings.EqualFold(in.Name, dcRole.RoleName) {
+				g.roles[dcRole.RoleName] = in
+				return true
+			}
+			return false
+		}) {
+			// Role permissions are the same no need to edit/update
+			if dcRole.Permissions != nil && *dcRole.Permissions == g.roles[dcRole.RoleName].Permissions {
+				continue
+			}
+
+			role, err := g.discord.GuildRoleEdit(g.guild.ID, g.roles[dcRole.RoleName].ID, &discordgo.RoleParams{
+				Name:        dcRole.RoleName,
+				Permissions: dcRole.Permissions,
+			})
+			if err != nil {
+				return fmt.Errorf("failed to edit role %s permissions: %w", g.roles[dcRole.RoleName].ID, err)
+			}
+
+			g.roles[dcRole.RoleName] = role
+			continue
+		}
+
+		if _, ok := g.roles[dcRole.RoleName]; ok {
+			continue
+		}
+
+		role, err := g.discord.GuildRoleCreate(g.guild.ID, &discordgo.RoleParams{
+			Name:        dcRole.RoleName,
+			Permissions: dcRole.Permissions,
+		})
+		if err != nil {
+			return fmt.Errorf("failed to create role %s (%s): %w", dcRole.RoleName, dcRole.RoleName, err)
+		}
+
+		g.roles[dcRole.RoleName] = role
+	}
+
+	return nil
+}
+
 type GroupSyncUser struct {
 	ExternalID string `alias:"external_id"`
 	Group      string `alias:"group"`
@@ -91,57 +142,6 @@ func (g *GroupSync) syncGroups() error {
 	}
 
 	return g.cleanupUserGroupMembers(dest)
-}
-
-func (g *GroupSync) createGroupRoles() error {
-	dcRoles := map[string]config.DiscordGroupRole{}
-	for _, dcRole := range g.groupsToSync {
-		if _, ok := dcRoles[dcRole.RoleName]; !ok {
-			dcRoles[dcRole.RoleName] = dcRole
-		}
-	}
-
-	for _, dcRole := range dcRoles {
-		if utils.InSliceFunc(g.guild.Roles, func(in *discordgo.Role) bool {
-			if strings.EqualFold(in.Name, dcRole.RoleName) {
-				g.roles[dcRole.RoleName] = in
-				return true
-			}
-			return false
-		}) {
-			// Role permissions are the same no need to edit/update
-			if dcRole.Permissions != nil && *dcRole.Permissions == g.roles[dcRole.RoleName].Permissions {
-				continue
-			}
-
-			role, err := g.discord.GuildRoleEdit(g.guild.ID, g.roles[dcRole.RoleName].ID, &discordgo.RoleParams{
-				Name:        dcRole.RoleName,
-				Permissions: dcRole.Permissions,
-			})
-			if err != nil {
-				return fmt.Errorf("failed to edit role %s permissions: %w", g.roles[dcRole.RoleName].ID, err)
-			}
-
-			g.roles[dcRole.RoleName] = role
-			continue
-		}
-
-		if _, ok := g.roles[dcRole.RoleName]; ok {
-			continue
-		}
-
-		role, err := g.discord.GuildRoleCreate(g.guild.ID, &discordgo.RoleParams{
-			Name:        dcRole.RoleName,
-			Permissions: dcRole.Permissions,
-		})
-		if err != nil {
-			return fmt.Errorf("failed to create role %s (%s): %w", dcRole.RoleName, dcRole.RoleName, err)
-		}
-
-		g.roles[dcRole.RoleName] = role
-	}
-
-	return nil
 }
 
 func (g *GroupSync) setUserGroups(member *discordgo.Member, group string) error {

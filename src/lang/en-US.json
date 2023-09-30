@@ -422,10 +422,38 @@
             "livemap": {
                 "mark_on_gps": "Mark on GPS"
             },
+            "dispatches": {
+                "feed": {
+                    "item": {
+                        "UNSPECIFIED": "Unknown Dispatch Status",
+                        "NEW": "Dispatch created",
+                        "UNASSIGNED": "No units assigned",
+                        "UNIT_ASSIGNED": "Unit assigned to Dispatch",
+                        "UNIT_UNASSIGNED": "Unit unassigned from Dispatch",
+                        "EN_ROUTE": "En Route to Dispatch",
+                        "ON_SCENE": "Arrived on scene",
+                        "NEED_ASSISTANCE": "Unit needs Assistance",
+                        "COMPLETED": "Dispatch completed",
+                        "CANCELLED": "Dispatch cancelled",
+                        "ARCHIVED": "Dispatch archived"
+                    }
+                }
+            },
             "units": {
                 "create_unit": "Create Unit",
                 "update_settings": "Update Settings",
-                "update_unit": "Update Unit"
+                "update_unit": "Update Unit",
+                "feed": {
+                    "item": {
+                        "UNKNOWN": "Unknown Unit Status",
+                        "USER_ADDED": "Member added to Unit",
+                        "USER_REMOVED": "Member removed from Unit",
+                        "UNAVAILABLE": "Unit unavailable",
+                        "AVAILABLE": "Unit available",
+                        "ON_BREAK": "Unit on break",
+                        "BUSY": "Unit busy"
+                    }
+                }
             }
         },
         "jobs": {
@@ -662,7 +690,9 @@
         "timeclock": "Time Clock",
         "active": "Active",
         "sum": "Total Sum",
-        "avg": "Average"
+        "avg": "Average",
+        "read_more": "Read More",
+        "read_less": "Read Less"
     },
     "notifications": {
         "clipboard": {
