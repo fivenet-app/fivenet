@@ -3033,6 +3033,281 @@ var _ interface {
 	ErrorName() string
 } = UpdateRoleLimitsResponseValidationError{}
 
+// Validate checks the field values on CreateOrUpdateLawBookRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *CreateOrUpdateLawBookRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CreateOrUpdateLawBookRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CreateOrUpdateLawBookRequestMultiError, or nil if none found.
+func (m *CreateOrUpdateLawBookRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CreateOrUpdateLawBookRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.GetLawBook() == nil {
+		err := CreateOrUpdateLawBookRequestValidationError{
+			field:  "LawBook",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if all {
+		switch v := interface{}(m.GetLawBook()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, CreateOrUpdateLawBookRequestValidationError{
+					field:  "LawBook",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, CreateOrUpdateLawBookRequestValidationError{
+					field:  "LawBook",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetLawBook()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return CreateOrUpdateLawBookRequestValidationError{
+				field:  "LawBook",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return CreateOrUpdateLawBookRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// CreateOrUpdateLawBookRequestMultiError is an error wrapping multiple
+// validation errors returned by CreateOrUpdateLawBookRequest.ValidateAll() if
+// the designated constraints aren't met.
+type CreateOrUpdateLawBookRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CreateOrUpdateLawBookRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CreateOrUpdateLawBookRequestMultiError) AllErrors() []error { return m }
+
+// CreateOrUpdateLawBookRequestValidationError is the validation error returned
+// by CreateOrUpdateLawBookRequest.Validate if the designated constraints
+// aren't met.
+type CreateOrUpdateLawBookRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CreateOrUpdateLawBookRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CreateOrUpdateLawBookRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CreateOrUpdateLawBookRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CreateOrUpdateLawBookRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CreateOrUpdateLawBookRequestValidationError) ErrorName() string {
+	return "CreateOrUpdateLawBookRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e CreateOrUpdateLawBookRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCreateOrUpdateLawBookRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CreateOrUpdateLawBookRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CreateOrUpdateLawBookRequestValidationError{}
+
+// Validate checks the field values on CreateOrUpdateLawBookResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *CreateOrUpdateLawBookResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CreateOrUpdateLawBookResponse with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// CreateOrUpdateLawBookResponseMultiError, or nil if none found.
+func (m *CreateOrUpdateLawBookResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CreateOrUpdateLawBookResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetLawBook()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, CreateOrUpdateLawBookResponseValidationError{
+					field:  "LawBook",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, CreateOrUpdateLawBookResponseValidationError{
+					field:  "LawBook",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetLawBook()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return CreateOrUpdateLawBookResponseValidationError{
+				field:  "LawBook",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return CreateOrUpdateLawBookResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// CreateOrUpdateLawBookResponseMultiError is an error wrapping multiple
+// validation errors returned by CreateOrUpdateLawBookResponse.ValidateAll()
+// if the designated constraints aren't met.
+type CreateOrUpdateLawBookResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CreateOrUpdateLawBookResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CreateOrUpdateLawBookResponseMultiError) AllErrors() []error { return m }
+
+// CreateOrUpdateLawBookResponseValidationError is the validation error
+// returned by CreateOrUpdateLawBookResponse.Validate if the designated
+// constraints aren't met.
+type CreateOrUpdateLawBookResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CreateOrUpdateLawBookResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CreateOrUpdateLawBookResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CreateOrUpdateLawBookResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CreateOrUpdateLawBookResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CreateOrUpdateLawBookResponseValidationError) ErrorName() string {
+	return "CreateOrUpdateLawBookResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e CreateOrUpdateLawBookResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCreateOrUpdateLawBookResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CreateOrUpdateLawBookResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CreateOrUpdateLawBookResponseValidationError{}
+
 // Validate checks the field values on DeleteLawBookRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
@@ -3238,6 +3513,279 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = DeleteLawBookResponseValidationError{}
+
+// Validate checks the field values on CreateOrUpdateLawRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *CreateOrUpdateLawRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CreateOrUpdateLawRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CreateOrUpdateLawRequestMultiError, or nil if none found.
+func (m *CreateOrUpdateLawRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CreateOrUpdateLawRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.GetLaw() == nil {
+		err := CreateOrUpdateLawRequestValidationError{
+			field:  "Law",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if all {
+		switch v := interface{}(m.GetLaw()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, CreateOrUpdateLawRequestValidationError{
+					field:  "Law",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, CreateOrUpdateLawRequestValidationError{
+					field:  "Law",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetLaw()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return CreateOrUpdateLawRequestValidationError{
+				field:  "Law",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return CreateOrUpdateLawRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// CreateOrUpdateLawRequestMultiError is an error wrapping multiple validation
+// errors returned by CreateOrUpdateLawRequest.ValidateAll() if the designated
+// constraints aren't met.
+type CreateOrUpdateLawRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CreateOrUpdateLawRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CreateOrUpdateLawRequestMultiError) AllErrors() []error { return m }
+
+// CreateOrUpdateLawRequestValidationError is the validation error returned by
+// CreateOrUpdateLawRequest.Validate if the designated constraints aren't met.
+type CreateOrUpdateLawRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CreateOrUpdateLawRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CreateOrUpdateLawRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CreateOrUpdateLawRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CreateOrUpdateLawRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CreateOrUpdateLawRequestValidationError) ErrorName() string {
+	return "CreateOrUpdateLawRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e CreateOrUpdateLawRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCreateOrUpdateLawRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CreateOrUpdateLawRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CreateOrUpdateLawRequestValidationError{}
+
+// Validate checks the field values on CreateOrUpdateLawResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *CreateOrUpdateLawResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CreateOrUpdateLawResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CreateOrUpdateLawResponseMultiError, or nil if none found.
+func (m *CreateOrUpdateLawResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CreateOrUpdateLawResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetLaw()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, CreateOrUpdateLawResponseValidationError{
+					field:  "Law",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, CreateOrUpdateLawResponseValidationError{
+					field:  "Law",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetLaw()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return CreateOrUpdateLawResponseValidationError{
+				field:  "Law",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return CreateOrUpdateLawResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// CreateOrUpdateLawResponseMultiError is an error wrapping multiple validation
+// errors returned by CreateOrUpdateLawResponse.ValidateAll() if the
+// designated constraints aren't met.
+type CreateOrUpdateLawResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CreateOrUpdateLawResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CreateOrUpdateLawResponseMultiError) AllErrors() []error { return m }
+
+// CreateOrUpdateLawResponseValidationError is the validation error returned by
+// CreateOrUpdateLawResponse.Validate if the designated constraints aren't met.
+type CreateOrUpdateLawResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CreateOrUpdateLawResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CreateOrUpdateLawResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CreateOrUpdateLawResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CreateOrUpdateLawResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CreateOrUpdateLawResponseValidationError) ErrorName() string {
+	return "CreateOrUpdateLawResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e CreateOrUpdateLawResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCreateOrUpdateLawResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CreateOrUpdateLawResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CreateOrUpdateLawResponseValidationError{}
 
 // Validate checks the field values on DeleteLawRequest with the rules defined
 // in the proto definition for this message. If any rules are violated, the

@@ -16,7 +16,7 @@ var (
 	tLaws     = table.FivenetLawbooksLaws
 )
 
-func (s *Server) CreateOrUpdateLawBook(ctx context.Context, req *laws.LawBook) (*laws.LawBook, error) {
+func (s *Server) CreateOrUpdateLawBook(ctx context.Context, req *CreateOrUpdateLawBookRequest) (*CreateOrUpdateLawBookResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
@@ -28,15 +28,15 @@ func (s *Server) CreateOrUpdateLawBook(ctx context.Context, req *laws.LawBook) (
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	if req.Id <= 0 {
+	if req.LawBook.Id <= 0 {
 		stmt := tLawBooks.
 			INSERT(
 				tLawBooks.Name,
 				tLawBooks.Description,
 			).
 			VALUES(
-				req.Name,
-				req.Description,
+				req.LawBook.Name,
+				req.LawBook.Description,
 			)
 
 		result, err := stmt.ExecContext(ctx, s.db)
@@ -49,7 +49,7 @@ func (s *Server) CreateOrUpdateLawBook(ctx context.Context, req *laws.LawBook) (
 			return nil, err
 		}
 
-		req.Id = uint64(lastId)
+		req.LawBook.Id = uint64(lastId)
 
 		auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
 	} else {
@@ -59,11 +59,11 @@ func (s *Server) CreateOrUpdateLawBook(ctx context.Context, req *laws.LawBook) (
 				tLawBooks.Description,
 			).
 			SET(
-				req.Name,
-				req.Description,
+				req.LawBook.Name,
+				req.LawBook.Description,
 			).
 			WHERE(jet.AND(
-				tLawBooks.ID.EQ(jet.Uint64(req.Id)),
+				tLawBooks.ID.EQ(jet.Uint64(req.LawBook.Id)),
 			))
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -73,14 +73,16 @@ func (s *Server) CreateOrUpdateLawBook(ctx context.Context, req *laws.LawBook) (
 		auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 	}
 
-	lawBook, err := s.getLawBook(ctx, req.Id)
+	lawBook, err := s.getLawBook(ctx, req.LawBook.Id)
 	if err != nil {
 		return nil, err
 	}
 
 	s.cache.RefreshLaws(ctx, lawBook.Id)
 
-	return lawBook, nil
+	return &CreateOrUpdateLawBookResponse{
+		LawBook: lawBook,
+	}, nil
 }
 
 func (s *Server) DeleteLawBook(ctx context.Context, req *DeleteLawBookRequest) (*DeleteLawBookResponse, error) {
@@ -111,12 +113,15 @@ func (s *Server) DeleteLawBook(ctx context.Context, req *DeleteLawBookRequest) (
 		return nil, err
 	}
 
-	s.cache.RefreshLaws(ctx, lawBook.Id)
+	if err := s.cache.RefreshLaws(ctx, lawBook.Id); err != nil {
+		return nil, ErrFailedQuery
+	}
 
 	return &DeleteLawBookResponse{}, nil
 }
 
 func (s *Server) getLawBook(ctx context.Context, lawbookId uint64) (*laws.LawBook, error) {
+	tLawBooks := tLawBooks.AS("law_book")
 	stmt := tLawBooks.
 		SELECT(
 			tLawBooks.ID,
@@ -139,7 +144,7 @@ func (s *Server) getLawBook(ctx context.Context, lawbookId uint64) (*laws.LawBoo
 	return &dest, nil
 }
 
-func (s *Server) CreateOrUpdateLaw(ctx context.Context, req *laws.Law) (*laws.Law, error) {
+func (s *Server) CreateOrUpdateLaw(ctx context.Context, req *CreateOrUpdateLawRequest) (*CreateOrUpdateLawResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
@@ -151,7 +156,7 @@ func (s *Server) CreateOrUpdateLaw(ctx context.Context, req *laws.Law) (*laws.La
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	if req.Id <= 0 {
+	if req.Law.Id <= 0 {
 		stmt := tLaws.
 			INSERT(
 				tLaws.LawbookID,
@@ -162,12 +167,12 @@ func (s *Server) CreateOrUpdateLaw(ctx context.Context, req *laws.Law) (*laws.La
 				tLaws.StvoPoints,
 			).
 			VALUES(
-				req.LawbookId,
-				req.Name,
-				req.Description,
-				req.Fine,
-				req.DetentionTime,
-				req.StvoPoints,
+				req.Law.LawbookId,
+				req.Law.Name,
+				req.Law.Description,
+				req.Law.Fine,
+				req.Law.DetentionTime,
+				req.Law.StvoPoints,
 			)
 
 		result, err := stmt.ExecContext(ctx, s.db)
@@ -180,7 +185,7 @@ func (s *Server) CreateOrUpdateLaw(ctx context.Context, req *laws.Law) (*laws.La
 			return nil, err
 		}
 
-		req.Id = uint64(lastId)
+		req.Law.Id = uint64(lastId)
 
 		auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
 	} else {
@@ -194,15 +199,15 @@ func (s *Server) CreateOrUpdateLaw(ctx context.Context, req *laws.Law) (*laws.La
 				tLaws.StvoPoints,
 			).
 			SET(
-				req.LawbookId,
-				req.Name,
-				req.Description,
-				req.Fine,
-				req.DetentionTime,
-				req.StvoPoints,
+				req.Law.LawbookId,
+				req.Law.Name,
+				req.Law.Description,
+				req.Law.Fine,
+				req.Law.DetentionTime,
+				req.Law.StvoPoints,
 			).
 			WHERE(jet.AND(
-				tLaws.ID.EQ(jet.Uint64(req.Id)),
+				tLaws.ID.EQ(jet.Uint64(req.Law.Id)),
 			))
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -212,14 +217,18 @@ func (s *Server) CreateOrUpdateLaw(ctx context.Context, req *laws.Law) (*laws.La
 		auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 	}
 
-	law, err := s.getLaw(ctx, req.Id)
+	law, err := s.getLaw(ctx, req.Law.Id)
 	if err != nil {
 		return nil, err
 	}
 
-	s.cache.RefreshLaws(ctx, req.LawbookId)
+	if err := s.cache.RefreshLaws(ctx, req.Law.LawbookId); err != nil {
+		return nil, ErrFailedQuery
+	}
 
-	return law, nil
+	return &CreateOrUpdateLawResponse{
+		Law: law,
+	}, nil
 }
 
 func (s *Server) DeleteLaw(ctx context.Context, req *DeleteLawRequest) (*DeleteLawResponse, error) {
@@ -256,6 +265,7 @@ func (s *Server) DeleteLaw(ctx context.Context, req *DeleteLawRequest) (*DeleteL
 }
 
 func (s *Server) getLaw(ctx context.Context, lawId uint64) (*laws.Law, error) {
+	tLaws := tLaws.AS("law")
 	stmt := tLaws.
 		SELECT(
 			tLaws.ID,

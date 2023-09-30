@@ -56,6 +56,10 @@ async function saveLawBook(id: bigint, values: FormData): Promise<LawBook> {
             props.book.id = response.id;
             props.book.createdAt = response.createdAt;
             props.book.updatedAt = response.updatedAt;
+            props.book.name = response.name;
+            props.book.description = response.description;
+
+            editing.value = false;
 
             return res(response);
         } catch (e) {

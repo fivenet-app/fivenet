@@ -6,10 +6,12 @@ import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
 import { RectorService } from "./rector.js";
 import type { DeleteLawResponse } from "./rector.js";
 import type { DeleteLawRequest } from "./rector.js";
-import type { Law } from "../../resources/laws/laws.js";
+import type { CreateOrUpdateLawResponse } from "./rector.js";
+import type { CreateOrUpdateLawRequest } from "./rector.js";
 import type { DeleteLawBookResponse } from "./rector.js";
 import type { DeleteLawBookRequest } from "./rector.js";
-import type { LawBook } from "../../resources/laws/laws.js";
+import type { CreateOrUpdateLawBookResponse } from "./rector.js";
+import type { CreateOrUpdateLawBookRequest } from "./rector.js";
 import type { UpdateRoleLimitsResponse } from "./rector.js";
 import type { UpdateRoleLimitsRequest } from "./rector.js";
 import type { ViewAuditLogResponse } from "./rector.js";
@@ -100,9 +102,9 @@ export interface IRectorServiceClient {
     /**
      * @perm: Name=SuperUser
      *
-     * @generated from protobuf rpc: CreateOrUpdateLawBook(resources.laws.LawBook) returns (resources.laws.LawBook);
+     * @generated from protobuf rpc: CreateOrUpdateLawBook(services.rector.CreateOrUpdateLawBookRequest) returns (services.rector.CreateOrUpdateLawBookResponse);
      */
-    createOrUpdateLawBook(input: LawBook, options?: RpcOptions): UnaryCall<LawBook, LawBook>;
+    createOrUpdateLawBook(input: CreateOrUpdateLawBookRequest, options?: RpcOptions): UnaryCall<CreateOrUpdateLawBookRequest, CreateOrUpdateLawBookResponse>;
     /**
      * @perm: Name=SuperUser
      *
@@ -112,9 +114,9 @@ export interface IRectorServiceClient {
     /**
      * @perm: Name=SuperUser
      *
-     * @generated from protobuf rpc: CreateOrUpdateLaw(resources.laws.Law) returns (resources.laws.Law);
+     * @generated from protobuf rpc: CreateOrUpdateLaw(services.rector.CreateOrUpdateLawRequest) returns (services.rector.CreateOrUpdateLawResponse);
      */
-    createOrUpdateLaw(input: Law, options?: RpcOptions): UnaryCall<Law, Law>;
+    createOrUpdateLaw(input: CreateOrUpdateLawRequest, options?: RpcOptions): UnaryCall<CreateOrUpdateLawRequest, CreateOrUpdateLawResponse>;
     /**
      * @perm: Name=SuperUser
      *
@@ -224,11 +226,11 @@ export class RectorServiceClient implements IRectorServiceClient, ServiceInfo {
     /**
      * @perm: Name=SuperUser
      *
-     * @generated from protobuf rpc: CreateOrUpdateLawBook(resources.laws.LawBook) returns (resources.laws.LawBook);
+     * @generated from protobuf rpc: CreateOrUpdateLawBook(services.rector.CreateOrUpdateLawBookRequest) returns (services.rector.CreateOrUpdateLawBookResponse);
      */
-    createOrUpdateLawBook(input: LawBook, options?: RpcOptions): UnaryCall<LawBook, LawBook> {
+    createOrUpdateLawBook(input: CreateOrUpdateLawBookRequest, options?: RpcOptions): UnaryCall<CreateOrUpdateLawBookRequest, CreateOrUpdateLawBookResponse> {
         const method = this.methods[10], opt = this._transport.mergeOptions(options);
-        return stackIntercept<LawBook, LawBook>("unary", this._transport, method, opt, input);
+        return stackIntercept<CreateOrUpdateLawBookRequest, CreateOrUpdateLawBookResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @perm: Name=SuperUser
@@ -242,11 +244,11 @@ export class RectorServiceClient implements IRectorServiceClient, ServiceInfo {
     /**
      * @perm: Name=SuperUser
      *
-     * @generated from protobuf rpc: CreateOrUpdateLaw(resources.laws.Law) returns (resources.laws.Law);
+     * @generated from protobuf rpc: CreateOrUpdateLaw(services.rector.CreateOrUpdateLawRequest) returns (services.rector.CreateOrUpdateLawResponse);
      */
-    createOrUpdateLaw(input: Law, options?: RpcOptions): UnaryCall<Law, Law> {
+    createOrUpdateLaw(input: CreateOrUpdateLawRequest, options?: RpcOptions): UnaryCall<CreateOrUpdateLawRequest, CreateOrUpdateLawResponse> {
         const method = this.methods[12], opt = this._transport.mergeOptions(options);
-        return stackIntercept<Law, Law>("unary", this._transport, method, opt, input);
+        return stackIntercept<CreateOrUpdateLawRequest, CreateOrUpdateLawResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @perm: Name=SuperUser

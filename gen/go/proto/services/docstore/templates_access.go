@@ -63,7 +63,7 @@ func (s *Server) getTemplateJobAccess(ctx context.Context, templateId uint64) ([
 
 	var jobAccess []*documents.TemplateJobAccess
 	if err := jobStmt.QueryContext(ctx, s.db, &jobAccess); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
+		if !errors.Is(qrm.ErrNoRows, err) {
 			return nil, err
 		}
 	}

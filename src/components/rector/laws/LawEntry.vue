@@ -58,6 +58,13 @@ async function saveLaw(lawBookId: bigint, id: bigint, values: FormData): Promise
             props.law.id = response.id;
             props.law.createdAt = response.createdAt;
             props.law.updatedAt = response.updatedAt;
+            props.law.name = response.name;
+            props.law.description = response.description;
+            props.law.fine = response.fine;
+            props.law.detentionTime = response.detentionTime;
+            props.law.stvoPoints = response.stvoPoints;
+
+            editing.value = false;
 
             return res();
         } catch (e) {

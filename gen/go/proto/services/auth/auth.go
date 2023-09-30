@@ -189,7 +189,7 @@ func (s *Server) CreateAccount(ctx context.Context, req *CreateAccountRequest) (
 		tAccounts.RegToken.EQ(jet.String(req.RegToken)),
 	))
 	if err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
+		if !errors.Is(qrm.ErrNoRows, err) {
 			return nil, ErrAccountCreateFailed
 		}
 

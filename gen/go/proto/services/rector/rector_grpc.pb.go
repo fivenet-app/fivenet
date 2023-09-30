@@ -8,7 +8,6 @@ package rector
 
 import (
 	context "context"
-	laws "github.com/galexrt/fivenet/gen/go/proto/resources/laws"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -61,11 +60,11 @@ type RectorServiceClient interface {
 	// @perm: Name=SuperUser
 	UpdateRoleLimits(ctx context.Context, in *UpdateRoleLimitsRequest, opts ...grpc.CallOption) (*UpdateRoleLimitsResponse, error)
 	// @perm: Name=SuperUser
-	CreateOrUpdateLawBook(ctx context.Context, in *laws.LawBook, opts ...grpc.CallOption) (*laws.LawBook, error)
+	CreateOrUpdateLawBook(ctx context.Context, in *CreateOrUpdateLawBookRequest, opts ...grpc.CallOption) (*CreateOrUpdateLawBookResponse, error)
 	// @perm: Name=SuperUser
 	DeleteLawBook(ctx context.Context, in *DeleteLawBookRequest, opts ...grpc.CallOption) (*DeleteLawBookResponse, error)
 	// @perm: Name=SuperUser
-	CreateOrUpdateLaw(ctx context.Context, in *laws.Law, opts ...grpc.CallOption) (*laws.Law, error)
+	CreateOrUpdateLaw(ctx context.Context, in *CreateOrUpdateLawRequest, opts ...grpc.CallOption) (*CreateOrUpdateLawResponse, error)
 	// @perm: Name=SuperUser
 	DeleteLaw(ctx context.Context, in *DeleteLawRequest, opts ...grpc.CallOption) (*DeleteLawResponse, error)
 }
@@ -168,8 +167,8 @@ func (c *rectorServiceClient) UpdateRoleLimits(ctx context.Context, in *UpdateRo
 	return out, nil
 }
 
-func (c *rectorServiceClient) CreateOrUpdateLawBook(ctx context.Context, in *laws.LawBook, opts ...grpc.CallOption) (*laws.LawBook, error) {
-	out := new(laws.LawBook)
+func (c *rectorServiceClient) CreateOrUpdateLawBook(ctx context.Context, in *CreateOrUpdateLawBookRequest, opts ...grpc.CallOption) (*CreateOrUpdateLawBookResponse, error) {
+	out := new(CreateOrUpdateLawBookResponse)
 	err := c.cc.Invoke(ctx, RectorService_CreateOrUpdateLawBook_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -186,8 +185,8 @@ func (c *rectorServiceClient) DeleteLawBook(ctx context.Context, in *DeleteLawBo
 	return out, nil
 }
 
-func (c *rectorServiceClient) CreateOrUpdateLaw(ctx context.Context, in *laws.Law, opts ...grpc.CallOption) (*laws.Law, error) {
-	out := new(laws.Law)
+func (c *rectorServiceClient) CreateOrUpdateLaw(ctx context.Context, in *CreateOrUpdateLawRequest, opts ...grpc.CallOption) (*CreateOrUpdateLawResponse, error) {
+	out := new(CreateOrUpdateLawResponse)
 	err := c.cc.Invoke(ctx, RectorService_CreateOrUpdateLaw_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -229,11 +228,11 @@ type RectorServiceServer interface {
 	// @perm: Name=SuperUser
 	UpdateRoleLimits(context.Context, *UpdateRoleLimitsRequest) (*UpdateRoleLimitsResponse, error)
 	// @perm: Name=SuperUser
-	CreateOrUpdateLawBook(context.Context, *laws.LawBook) (*laws.LawBook, error)
+	CreateOrUpdateLawBook(context.Context, *CreateOrUpdateLawBookRequest) (*CreateOrUpdateLawBookResponse, error)
 	// @perm: Name=SuperUser
 	DeleteLawBook(context.Context, *DeleteLawBookRequest) (*DeleteLawBookResponse, error)
 	// @perm: Name=SuperUser
-	CreateOrUpdateLaw(context.Context, *laws.Law) (*laws.Law, error)
+	CreateOrUpdateLaw(context.Context, *CreateOrUpdateLawRequest) (*CreateOrUpdateLawResponse, error)
 	// @perm: Name=SuperUser
 	DeleteLaw(context.Context, *DeleteLawRequest) (*DeleteLawResponse, error)
 	mustEmbedUnimplementedRectorServiceServer()
@@ -273,13 +272,13 @@ func (UnimplementedRectorServiceServer) ViewAuditLog(context.Context, *ViewAudit
 func (UnimplementedRectorServiceServer) UpdateRoleLimits(context.Context, *UpdateRoleLimitsRequest) (*UpdateRoleLimitsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateRoleLimits not implemented")
 }
-func (UnimplementedRectorServiceServer) CreateOrUpdateLawBook(context.Context, *laws.LawBook) (*laws.LawBook, error) {
+func (UnimplementedRectorServiceServer) CreateOrUpdateLawBook(context.Context, *CreateOrUpdateLawBookRequest) (*CreateOrUpdateLawBookResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateOrUpdateLawBook not implemented")
 }
 func (UnimplementedRectorServiceServer) DeleteLawBook(context.Context, *DeleteLawBookRequest) (*DeleteLawBookResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteLawBook not implemented")
 }
-func (UnimplementedRectorServiceServer) CreateOrUpdateLaw(context.Context, *laws.Law) (*laws.Law, error) {
+func (UnimplementedRectorServiceServer) CreateOrUpdateLaw(context.Context, *CreateOrUpdateLawRequest) (*CreateOrUpdateLawResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateOrUpdateLaw not implemented")
 }
 func (UnimplementedRectorServiceServer) DeleteLaw(context.Context, *DeleteLawRequest) (*DeleteLawResponse, error) {
@@ -479,7 +478,7 @@ func _RectorService_UpdateRoleLimits_Handler(srv interface{}, ctx context.Contex
 }
 
 func _RectorService_CreateOrUpdateLawBook_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(laws.LawBook)
+	in := new(CreateOrUpdateLawBookRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -491,7 +490,7 @@ func _RectorService_CreateOrUpdateLawBook_Handler(srv interface{}, ctx context.C
 		FullMethod: RectorService_CreateOrUpdateLawBook_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RectorServiceServer).CreateOrUpdateLawBook(ctx, req.(*laws.LawBook))
+		return srv.(RectorServiceServer).CreateOrUpdateLawBook(ctx, req.(*CreateOrUpdateLawBookRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -515,7 +514,7 @@ func _RectorService_DeleteLawBook_Handler(srv interface{}, ctx context.Context, 
 }
 
 func _RectorService_CreateOrUpdateLaw_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(laws.Law)
+	in := new(CreateOrUpdateLawRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -527,7 +526,7 @@ func _RectorService_CreateOrUpdateLaw_Handler(srv interface{}, ctx context.Conte
 		FullMethod: RectorService_CreateOrUpdateLaw_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(RectorServiceServer).CreateOrUpdateLaw(ctx, req.(*laws.Law))
+		return srv.(RectorServiceServer).CreateOrUpdateLaw(ctx, req.(*CreateOrUpdateLawRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

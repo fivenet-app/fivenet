@@ -3,6 +3,7 @@ package mstlystcdata
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"sort"
 	"strings"
 	"time"
@@ -15,6 +16,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/qrm"
 	"github.com/puzpuzpuz/xsync/v2"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
@@ -233,7 +235,7 @@ func (c *Cache) RefreshLaws(ctx context.Context, lawBookId uint64) error {
 			tLaws.Name.ASC(),
 		)
 
-	if lawBookId != 0 {
+	if lawBookId > 0 {
 		stmt = stmt.WHERE(
 			tLawBooks.ID.EQ(jet.Uint64(lawBookId)),
 		)
@@ -241,12 +243,16 @@ func (c *Cache) RefreshLaws(ctx context.Context, lawBookId uint64) error {
 
 	var dest []*laws.LawBook
 	if err := stmt.QueryContext(ctx, c.db, &dest); err != nil {
-		return err
+		if !errors.Is(qrm.ErrNoRows, err) {
+			return err
+		}
 	}
 
-	// Lawbook not found, need to remove it
-	if lawBookId != 0 && len(dest) == 0 {
+	// Single lawbook update or lawbook deleted => not found, need to remove it
+	if len(dest) == 0 {
 		c.lawBooks.Delete(lawBookId)
+	} else if lawBookId > 0 {
+		c.lawBooks.Store(lawBookId, dest[0])
 	} else {
 		// Update cache
 		found := []uint64{}
@@ -277,7 +283,7 @@ func (c *Cache) GetLawBooks() []*laws.LawBook {
 	})
 
 	sort.Slice(lawBooks, func(i, j int) bool {
-		return lawBooks[i].Name < lawBooks[j].Name
+		return strings.EqualFold(lawBooks[i].Name, lawBooks[j].Name)
 	})
 
 	return lawBooks

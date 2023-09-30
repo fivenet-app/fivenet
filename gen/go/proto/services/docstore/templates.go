@@ -69,7 +69,7 @@ func (s *Server) ListTemplates(ctx context.Context, req *ListTemplatesRequest) (
 
 	resp := &ListTemplatesResponse{}
 	if err := stmt.QueryContext(ctx, s.db, &resp.Templates); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
+		if !errors.Is(qrm.ErrNoRows, err) {
 			return nil, err
 		}
 	}

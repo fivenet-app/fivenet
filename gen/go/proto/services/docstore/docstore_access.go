@@ -266,7 +266,7 @@ func (s *Server) getDocumentAccess(ctx context.Context, documentId uint64) (*doc
 
 	var jobAccess []*documents.DocumentJobAccess
 	if err := jobStmt.QueryContext(ctx, s.db, &jobAccess); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
+		if !errors.Is(qrm.ErrNoRows, err) {
 			return nil, err
 		}
 	}
@@ -301,7 +301,7 @@ func (s *Server) getDocumentAccess(ctx context.Context, documentId uint64) (*doc
 
 	var userAccess []*documents.DocumentUserAccess
 	if err := userStmt.QueryContext(ctx, s.db, &userAccess); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
+		if !errors.Is(qrm.ErrNoRows, err) {
 			return nil, err
 		}
 	}
