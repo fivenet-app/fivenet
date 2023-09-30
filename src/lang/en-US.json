@@ -422,6 +422,22 @@
             "livemap": {
                 "mark_on_gps": "Mark on GPS"
             },
+            "units": {
+                "create_unit": "Create Unit",
+                "update_settings": "Update Settings",
+                "update_unit": "Update Unit",
+                "feed": {
+                    "item": {
+                        "UNKNOWN": "Unknown Unit Status",
+                        "USER_ADDED": "Member added to Unit",
+                        "USER_REMOVED": "Member removed from Unit",
+                        "UNAVAILABLE": "Unit unavailable",
+                        "AVAILABLE": "Unit available",
+                        "ON_BREAK": "Unit on break",
+                        "BUSY": "Unit busy"
+                    }
+                }
+            },
             "dispatches": {
                 "feed": {
                     "item": {
@@ -436,22 +452,6 @@
                         "COMPLETED": "Dispatch completed",
                         "CANCELLED": "Dispatch cancelled",
                         "ARCHIVED": "Dispatch archived"
-                    }
-                }
-            },
-            "units": {
-                "create_unit": "Create Unit",
-                "update_settings": "Update Settings",
-                "update_unit": "Update Unit",
-                "feed": {
-                    "item": {
-                        "UNKNOWN": "Unknown Unit Status",
-                        "USER_ADDED": "Member added to Unit",
-                        "USER_REMOVED": "Member removed from Unit",
-                        "UNAVAILABLE": "Unit unavailable",
-                        "AVAILABLE": "Unit available",
-                        "ON_BREAK": "Unit on break",
-                        "BUSY": "Unit busy"
                     }
                 }
             }
