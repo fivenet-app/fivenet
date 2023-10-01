@@ -834,7 +834,7 @@
             },
             "error_logout": {
                 "title": "Abmeldung: Ein Fehler ist aufgetreten",
-                "content": "{0}"
+                "content": "Fehlermeldung: {0}"
             },
             "oauth2_login": {
                 "success": {
