@@ -50,9 +50,6 @@ func (s *Server) ListDispatches(ctx context.Context, req *ListDispatchesRequest)
 		return nil, err
 	}
 
-	unitId, _ := s.getUnitIDForUserID(userInfo.UserId)
-
-	ownOnly := req.OwnOnly != nil && *req.OwnOnly
 	for i := 0; i < len(dispatches); i++ {
 		// Hide user info when dispatch is anonymous
 		if dispatches[i].Anon {
@@ -60,36 +57,19 @@ func (s *Server) ListDispatches(ctx context.Context, req *ListDispatchesRequest)
 			dispatches[i].CreatorId = nil
 		}
 
-		include := false
+		include := true
 
-		// Always include own dispatches
-		if ownOnly {
-			for _, unit := range dispatches[i].Units {
-				if unit.UnitId == unitId {
-					include = true
-					break
-				}
-			}
-		}
-
-		// Which statuses to ignore
-		for _, status := range req.NotStatus {
-			if dispatches[i].Status != nil && dispatches[i].Status.Status == status {
-				include = false
-				break
-			}
-		}
-
-		// Which statuses to only include
-		if len(req.Status) > 0 {
-			for _, status := range req.Status {
+		// Include statuses that should be listed
+		if len(req.Status) > 0 && !utils.InSlice(req.Status, dispatches[i].Status.Status) {
+			include = false
+		} else if len(req.NotStatus) > 0 {
+			// Which statuses to ignore
+			for _, status := range req.NotStatus {
 				if dispatches[i].Status != nil && dispatches[i].Status.Status == status {
-					include = true
+					include = false
 					break
 				}
 			}
-		} else if !ownOnly {
-			include = true
 		}
 
 		if include {

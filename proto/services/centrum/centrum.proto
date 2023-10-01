@@ -29,7 +29,6 @@ message GetSettingsRequest {}
 
 message ListUnitsRequest {
   repeated resources.dispatch.StatusUnit status = 1 [(validate.rules).repeated.items.enum.defined_only = true];
-  optional bool own_only = 2;
 }
 
 message ListUnitsResponse {
@@ -90,7 +89,6 @@ message DisponentsChange {
 message ListDispatchesRequest {
   repeated resources.dispatch.StatusDispatch status = 1 [(validate.rules).repeated.items.enum.defined_only = true];
   repeated resources.dispatch.StatusDispatch not_status = 2 [(validate.rules).repeated.items.enum.defined_only = true];
-  optional bool own_only = 3;
 }
 
 message ListDispatchesResponse {

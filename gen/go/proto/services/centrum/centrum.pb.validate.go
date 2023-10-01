@@ -468,10 +468,6 @@ func (m *ListUnitsRequest) validate(all bool) error {
 
 	}
 
-	if m.OwnOnly != nil {
-		// no validation rules for OwnOnly
-	}
-
 	if len(errors) > 0 {
 		return ListUnitsRequestMultiError(errors)
 	}
@@ -2186,10 +2182,6 @@ func (m *ListDispatchesRequest) validate(all bool) error {
 			errors = append(errors, err)
 		}
 
-	}
-
-	if m.OwnOnly != nil {
-		// no validation rules for OwnOnly
 	}
 
 	if len(errors) > 0 {

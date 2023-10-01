@@ -36,34 +36,20 @@ func (s *Server) ListUnits(ctx context.Context, req *ListUnitsRequest) (*ListUni
 		Units: []*dispatch.Unit{},
 	}
 
-	if req.OwnOnly != nil && *req.OwnOnly {
-		unitId, ok := s.getUnitIDForUserID(userInfo.UserId)
-		if !ok {
-			return nil, ErrFailedQuery
-		}
+	units, err := s.listUnits(userInfo.Job)
+	if err != nil {
+		return nil, err
+	}
 
-		unit, ok := s.getUnit(userInfo.Job, unitId)
-		if !ok {
-			return nil, ErrFailedQuery
-		}
-
-		resp.Units = append(resp.Units, unit)
-	} else {
-		units, err := s.listUnits(userInfo.Job)
-		if err != nil {
-			return nil, err
-		}
-
-		for i := 0; i < len(units); i++ {
-			if len(req.Status) > 0 {
-				for _, status := range req.Status {
-					if units[i].Status != nil && units[i].Status.Status == status {
-						resp.Units = append(resp.Units, units[i])
-					}
+	for i := 0; i < len(units); i++ {
+		if len(req.Status) > 0 {
+			for _, status := range req.Status {
+				if units[i].Status != nil && units[i].Status.Status == status {
+					resp.Units = append(resp.Units, units[i])
 				}
-			} else {
-				resp.Units = append(resp.Units, units[i])
 			}
+		} else {
+			resp.Units = append(resp.Units, units[i])
 		}
 	}
 

@@ -56,10 +56,6 @@ export interface ListUnitsRequest {
      * @generated from protobuf field: repeated resources.dispatch.StatusUnit status = 1;
      */
     status: StatusUnit[];
-    /**
-     * @generated from protobuf field: optional bool own_only = 2;
-     */
-    ownOnly?: boolean;
 }
 /**
  * @generated from protobuf message services.centrum.ListUnitsResponse
@@ -208,10 +204,6 @@ export interface ListDispatchesRequest {
      * @generated from protobuf field: repeated resources.dispatch.StatusDispatch not_status = 2;
      */
     notStatus: StatusDispatch[];
-    /**
-     * @generated from protobuf field: optional bool own_only = 3;
-     */
-    ownOnly?: boolean;
 }
 /**
  * @generated from protobuf message services.centrum.ListDispatchesResponse
@@ -563,8 +555,7 @@ export const GetSettingsRequest = new GetSettingsRequest$Type();
 class ListUnitsRequest$Type extends MessageType<ListUnitsRequest> {
     constructor() {
         super("services.centrum.ListUnitsRequest", [
-            { no: 1, name: "status", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.dispatch.StatusUnit", StatusUnit, "STATUS_UNIT_"], options: { "validate.rules": { repeated: { items: { enum: { definedOnly: true } } } } } },
-            { no: 2, name: "own_only", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
+            { no: 1, name: "status", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.dispatch.StatusUnit", StatusUnit, "STATUS_UNIT_"], options: { "validate.rules": { repeated: { items: { enum: { definedOnly: true } } } } } }
         ]);
     }
 }
@@ -732,8 +723,7 @@ class ListDispatchesRequest$Type extends MessageType<ListDispatchesRequest> {
     constructor() {
         super("services.centrum.ListDispatchesRequest", [
             { no: 1, name: "status", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.dispatch.StatusDispatch", StatusDispatch, "STATUS_DISPATCH_"], options: { "validate.rules": { repeated: { items: { enum: { definedOnly: true } } } } } },
-            { no: 2, name: "not_status", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.dispatch.StatusDispatch", StatusDispatch, "STATUS_DISPATCH_"], options: { "validate.rules": { repeated: { items: { enum: { definedOnly: true } } } } } },
-            { no: 3, name: "own_only", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
+            { no: 2, name: "not_status", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.dispatch.StatusDispatch", StatusDispatch, "STATUS_DISPATCH_"], options: { "validate.rules": { repeated: { items: { enum: { definedOnly: true } } } } } }
         ]);
     }
 }
