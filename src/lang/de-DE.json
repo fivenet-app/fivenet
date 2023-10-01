@@ -780,7 +780,7 @@
             },
             "default": {
                 "title": "Unbekannter Fehler ist aufgetreten",
-                "content": "{0} (Code: {1})"
+                "content": "{msg} (Code: {code})"
             },
             "not_found": {
                 "title": "Nicht gefunden",
@@ -1398,7 +1398,7 @@
         "groups": {
             "shortcuts": {
                 "label": "Abkürzungen",
-                "goto": "Gehe zu {0}: {1}"
+                "goto": "Gehe zu {key}: {prefix}"
             },
             "pages": {
                 "label": "Seiten"
