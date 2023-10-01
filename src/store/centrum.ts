@@ -270,7 +270,8 @@ export const useCentrumStore = defineStore('centrum', {
                         if (resp.change.latestState.settings !== undefined) {
                             this.settings = resp.change.latestState.settings;
                         }
-                        this.disponents = resp.change.latestState.disponents;
+                        this.disponents.length = 0;
+                        this.disponents.push(...resp.change.latestState.disponents);
                         this.isDisponent = resp.change.latestState.isDisponent;
                         this.setOwnUnit(resp.change.latestState.ownUnit?.id);
 
@@ -279,7 +280,9 @@ export const useCentrumStore = defineStore('centrum', {
                     } else if (resp.change.oneofKind === 'settings') {
                         this.settings = resp.change.settings;
                     } else if (resp.change.oneofKind === 'disponents') {
-                        this.disponents = resp.change.disponents.disponents;
+                        this.disponents.length = 0;
+                        this.disponents.push(...resp.change.disponents.disponents);
+
                         // If user is not part of disponents list anymore
                         const idx = this.disponents.findIndex((d) => d.userId === authStore.activeChar?.userId);
                         if (idx === -1) {
