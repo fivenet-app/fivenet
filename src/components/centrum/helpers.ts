@@ -61,7 +61,6 @@ export function unitStatusToBGColor(status: StatusUnit | undefined): string {
 
 export const animateStates = [
     StatusDispatch.NEW.valueOf(),
-    StatusDispatch.UNIT_UNASSIGNED.valueOf(),
     StatusDispatch.UNASSIGNED.valueOf(),
     StatusDispatch.NEED_ASSISTANCE.valueOf(),
 ];

@@ -15,6 +15,9 @@ defineEmits<{
     (e: 'goto', loc: Coordinate): void;
 }>();
 
+const dispatchBackground = computed(() => dispatchStatusToBGColor(props.dispatch.status?.status ?? 0));
+const dispatchAnimated = computed(() => (dispatchStatusAnimate(props.dispatch.status?.status ?? 0) ? 'animate-pulse' : ''));
+
 const openDetails = ref(false);
 const openAssign = ref(false);
 </script>
@@ -57,11 +60,8 @@ const openAssign = ref(false);
         <td class="whitespace-nowrap px-1 py-1 text-sm text-gray-300">
             <Time :value="dispatch.createdAt" type="compact" />
         </td>
-        <td
-            class="whitespace-nowrap px-1 py-1 text-sm text-gray-100"
-            :class="dispatchStatusToBGColor(props.dispatch.status?.status ?? 0)"
-        >
-            <span :class="dispatchStatusAnimate(props.dispatch.status?.status ?? 0) ? 'animate-pulse' : ''">
+        <td class="whitespace-nowrap px-1 py-1 text-sm text-gray-100" :class="dispatchBackground">
+            <span :class="dispatchAnimated">
                 {{ $t(`enums.centrum.StatusDispatch.${StatusDispatch[props.dispatch.status?.status ?? 0]}`) }}
             </span>
         </td>
@@ -78,8 +78,8 @@ const openAssign = ref(false);
             <span v-if="dispatch.anon">
                 {{ $t('common.anon') }}
             </span>
-            <span v-else-if="dispatch.user">
-                <CitizenInfoPopover :user="dispatch.user" />
+            <span v-else-if="dispatch.creator">
+                <CitizenInfoPopover :user="dispatch.creator" />
             </span>
             <span v-else>
                 {{ $t('common.unknown') }}
