@@ -40,7 +40,7 @@ const dispatchStatusColors = computed(() => {
         <LIcon :icon-anchor="iconAnchor" :popup-anchor="popupAnchor" :icon-size="[size, size]">
             <div class="uppercase flex flex-col items-center dsp-status-error">
                 <span
-                    class="rounded-md bg-white text-black border-2 border-black/20 bg-clip-padding hover:bg-[#f4f4f4] focus:outline-none inset-0"
+                    class="rounded-md bg-white text-black border-2 border-black/20 bg-clip-padding hover:bg-[#f4f4f4] focus:outline-none inset-0 break-keep"
                 >
                     DSP-{{ dispatch.id }}
                 </span>
@@ -75,9 +75,9 @@ const dispatchStatusColors = computed(() => {
                     <span v-if="dispatch.anon">
                         {{ $t('common.anon') }}
                     </span>
-                    <span v-else-if="dispatch.user">
-                        {{ dispatch.user?.firstname }}, {{ dispatch.user?.lastname }} (<PhoneNumber
-                            :number="dispatch.user.phoneNumber"
+                    <span v-else-if="dispatch.creator">
+                        {{ dispatch.creator?.firstname }}, {{ dispatch.creator?.lastname }} (<PhoneNumber
+                            :number="dispatch.creator.phoneNumber"
                         />)
                     </span>
                     <span v-else>
