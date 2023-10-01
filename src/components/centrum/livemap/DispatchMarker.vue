@@ -40,7 +40,7 @@ const dispatchStatusColors = computed(() => {
         <LIcon :icon-anchor="iconAnchor" :popup-anchor="popupAnchor" :icon-size="[size, size]">
             <div class="uppercase flex flex-col items-center dsp-status-error">
                 <span
-                    class="rounded-md bg-white text-black border-2 border-black/20 bg-clip-padding hover:bg-[#f4f4f4] focus:outline-none inset-0 break-keep"
+                    class="rounded-md bg-white text-black border-2 border-black/20 bg-clip-padding hover:bg-[#f4f4f4] focus:outline-none inset-0 whitespace-nowrap"
                 >
                     DSP-{{ dispatch.id }}
                 </span>
