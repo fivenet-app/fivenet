@@ -2,7 +2,6 @@
 import { useClipboard } from '@vueuse/core';
 import { FingerprintIcon } from 'mdi-vue3';
 import { useNotificatorStore } from '~/store/notificator';
-import { TranslateItem } from '~~/gen/ts/resources/common/i18n';
 
 const clipboard = useClipboard();
 const notifications = useNotificatorStore();

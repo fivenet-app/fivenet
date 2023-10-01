@@ -1,4 +1,3 @@
-import { TranslateItem } from '~~/gen/ts/resources/common/i18n';
 import { Data, NotificationCategory } from '~~/gen/ts/resources/notifications/notifications';
 import type { NotificationType } from './Notification.interface';
 

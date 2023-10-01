@@ -59,7 +59,7 @@ const newDispatchSound = useSound('/sounds/centrum/message-incoming.mp3', {
     volume: 0.15,
 });
 
-const debouncedPlay = useDebounceFn(() => newDispatchSound.play(), 850);
+const debouncedPlay = useDebounceFn(() => newDispatchSound.play(), 950);
 
 const previousLength = ref(0);
 watch(pendingDispatches.value, () => {

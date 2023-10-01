@@ -74,7 +74,7 @@ type Item = {
 const items = [
     {
         id: 1,
-        name: t('commandpalette.groups.shortcuts.goto', [t('common.citizen', 1), 'CIT-...']),
+        name: t('commandpalette.groups.shortcuts.goto', { key: t('common.citizen', 1), prefix: 'CIT-...' }),
         icon: markRaw(AccountIcon),
         category: 'shortcuts',
         permission: 'CitizenStoreService.GetCitizen',
@@ -89,7 +89,7 @@ const items = [
     },
     {
         id: 2,
-        name: t('commandpalette.groups.shortcuts.goto', [t('common.document', 1), 'DOC-...']),
+        name: t('commandpalette.groups.shortcuts.goto', { key: t('common.document', 1), prefix: 'DOC-...' }),
         icon: markRaw(FileDocumentIcon),
         category: 'shortcuts',
         permission: 'DocStoreService.GetDocument',

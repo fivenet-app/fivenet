@@ -104,7 +104,7 @@ export class GRPCClients {
                     notification.title = { key: 'notifications.grpc_errors.default.title', parameters: [] };
                     notification.content = {
                         key: 'notifications.grpc_errors.default.content',
-                        parameters: [err.message, err.code.valueOf()],
+                        parameters: { msg: err.message, code: err.code.valueOf() },
                     };
                     break;
             }

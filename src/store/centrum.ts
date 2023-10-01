@@ -1,4 +1,5 @@
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
+import { useSound } from '@vueuse/sound';
 import { StoreDefinition, defineStore } from 'pinia';
 import { Dispatch, DispatchStatus, StatusDispatch } from '~~/gen/ts/resources/dispatch/dispatches';
 import { CentrumMode, Settings } from '~~/gen/ts/resources/dispatch/settings';
@@ -354,6 +355,15 @@ export const useCentrumStore = defineStore('centrum', {
                             this.removeDispatch(id);
                         } else {
                             this.addOrUpdateDispatch(resp.change.dispatchStatus);
+                        }
+
+                        // If is dispatch center and a dispatch needs assistance
+                        if (isCenter && resp.change.dispatchStatus.status?.status === StatusDispatch.NEED_ASSISTANCE) {
+                            const newDispatchSound = useSound('/sounds/centrum/message-incoming.mp3', {
+                                volume: 0.15,
+                            });
+
+                            newDispatchSound.play();
                         }
                     } else if (resp.change.oneofKind === 'ping') {
                         console.debug('Centrum: Ping received');
