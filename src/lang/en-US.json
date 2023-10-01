@@ -446,6 +446,8 @@
                         "UNASSIGNED": "No units assigned",
                         "UNIT_ASSIGNED": "Unit assigned to Dispatch",
                         "UNIT_UNASSIGNED": "Unit unassigned from Dispatch",
+                        "UNIT_ACCEPTED": "Unit accepted Dispatch",
+                        "UNIT_DECLINED": "Unit declined/didn't respond to Dispatch",
                         "EN_ROUTE": "En Route to Dispatch",
                         "ON_SCENE": "Arrived on scene",
                         "NEED_ASSISTANCE": "Unit needs Assistance",
@@ -1377,6 +1379,10 @@
             "ErrModeForbidsAction": {
                 "title": "Dispatch center forbids this!",
                 "content": "Please contact the dispatch center."
+            },
+            "ErrDispatchAlreadyCompleted": {
+                "title": "Dispatch already in completed state!",
+                "content": "You can't accept/decline completed dispatches.."
             }
         }
     },

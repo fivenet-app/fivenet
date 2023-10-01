@@ -26,6 +26,13 @@ const popupAnchor: L.PointExpression = [0, (props.size / 2) * -1];
 function selected(_: bigint | string) {
     emit('selected', props.dispatch);
 }
+
+const dispatchStatusColors = computed(() => {
+    return [
+        dispatchStatusAnimate(props.dispatch.status?.status ?? 0) ? 'animate-wiggle' : '',
+        dispatchStatusToFillColor(props.dispatch.status?.status ?? 0),
+    ];
+});
 </script>
 
 <template>
@@ -35,15 +42,9 @@ function selected(_: bigint | string) {
                 <span
                     class="rounded-md bg-white text-black border-2 border-black/20 bg-clip-padding hover:bg-[#f4f4f4] focus:outline-none inset-0"
                 >
-                    DSP-{{ props.dispatch.id }}
+                    DSP-{{ dispatch.id }}
                 </span>
-                <BellIcon
-                    class="w-full h-full"
-                    :class="[
-                        dispatchStatusAnimate(props.dispatch.status?.status ?? 0) ? 'animate-wiggle' : '',
-                        dispatchStatusToFillColor(dispatch.status?.status ?? 0),
-                    ]"
-                />
+                <BellIcon class="w-full h-full" :class="dispatchStatusColors" />
             </div>
         </LIcon>
         <LPopup :options="{ closeButton: true }">

@@ -124,7 +124,7 @@ async function joinUnit(unit?: Unit | undefined): Promise<void> {
                                     <div class="flex flex-shrink-0 justify-end px-4 py-4">
                                         <span class="isolate inline-flex rounded-md shadow-sm pr-4 w-full">
                                             <button
-                                                v-if="ownUnitId"
+                                                v-if="ownUnitId !== undefined"
                                                 type="button"
                                                 class="w-full relative inline-flex items-center rounded-l-md bg-error-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-primary-400"
                                                 @click="joinUnit(undefined)"
@@ -134,7 +134,7 @@ async function joinUnit(unit?: Unit | undefined): Promise<void> {
                                             <button
                                                 type="button"
                                                 class="w-full relative inline-flex items-center bg-white px-3 py-2 text-sm font-semibold text-gray-900 hover:text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-10"
-                                                :class="ownUnitId ? '-ml-px rounded-r-md' : 'rounded-md'"
+                                                :class="ownUnitId !== undefined ? '-ml-px rounded-r-md' : 'rounded-md'"
                                                 @click="$emit('close')"
                                             >
                                                 {{ $t('common.close', 1) }}

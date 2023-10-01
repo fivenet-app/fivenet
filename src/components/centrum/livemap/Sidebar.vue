@@ -156,7 +156,7 @@ async function updateUtStatus(id: bigint, status?: StatusUnit): Promise<void> {
 
 // Show unit sidebar when ownUnit is set/updated, otherwise it will be hidden (automagically)
 const ownUnit = ref<Unit | undefined>();
-watch(ownUnitId, () => {
+watch(ownUnitId, async () => {
     if (ownUnitId.value) {
         ownUnit.value = units.value.get(ownUnitId.value);
         open.value = true;
@@ -189,6 +189,8 @@ onBeforeUnmount(async () => {
     stopStream();
     centrumStore.$reset();
 });
+
+const ownUnitStatus = computed(() => unitStatusToBGColor(ownUnit.value?.status?.status));
 
 const open = ref(false);
 </script>
@@ -229,7 +231,7 @@ const open = ref(false);
                                                 @click="openUnitDetails = true"
                                                 type="button"
                                                 class="text-white hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-2 text-xs my-0.5"
-                                                :class="unitStatusToBGColor(ownUnit.status?.status)"
+                                                :class="ownUnitStatus"
                                             >
                                                 <InformationOutlineIcon class="h-5 w-5" aria-hidden="true" />
                                                 <span class="mt-2 truncate">{{ ownUnit.initials }}: {{ ownUnit.name }}</span>

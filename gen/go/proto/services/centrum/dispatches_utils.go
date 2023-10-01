@@ -129,10 +129,12 @@ func (s *Server) updateDispatchStatus(ctx context.Context, job string, dsp *disp
 		return nil
 	}
 
-	// If the dispatch is complete, we ignore any unit unassignments
+	// If the dispatch is complete, we ignore any unit unassignments/accepts/declines
 	if dsp.Status != nil && s.isStatusDispatchComplete(dsp.Status.Status) &&
-		(in.Status == dispatch.StatusDispatch_STATUS_DISPATCH_UNIT_UNASSIGNED ||
-			in.Status == dispatch.StatusDispatch_STATUS_DISPATCH_UNASSIGNED) {
+		(in.Status == dispatch.StatusDispatch_STATUS_DISPATCH_UNASSIGNED ||
+			in.Status == dispatch.StatusDispatch_STATUS_DISPATCH_UNIT_UNASSIGNED ||
+			in.Status == dispatch.StatusDispatch_STATUS_DISPATCH_UNIT_ACCEPTED ||
+			in.Status == dispatch.StatusDispatch_STATUS_DISPATCH_UNIT_DECLINED) {
 		return nil
 	}
 
@@ -275,30 +277,30 @@ func (s *Server) updateDispatchAssignments(ctx context.Context, job string, user
 				continue
 			}
 
-			expiresAt := time.Now().Add(DispatchExpirationTime)
-			stmt := tDispatchUnit.
-				INSERT(
-					tDispatchUnit.DispatchID,
-					tDispatchUnit.UnitID,
-					tDispatchUnit.ExpiresAt,
-				).
-				VALUES(
-					dsp.Id,
-					unit.Id,
-					expiresAt,
-				).
-				ON_DUPLICATE_KEY_UPDATE(
-					tDispatchUnit.ExpiresAt.SET(jet.RawTimestamp("VALUES(`expires_at`)")),
-				)
-
-			if _, err := stmt.ExecContext(ctx, tx); err != nil {
-				if !dbutils.IsDuplicateError(err) {
-					return err
-				}
-			}
-
 			// Only add unit to dispatch if not already assigned
 			if !found {
+				expiresAt := time.Now().Add(DispatchExpirationTime)
+				stmt := tDispatchUnit.
+					INSERT(
+						tDispatchUnit.DispatchID,
+						tDispatchUnit.UnitID,
+						tDispatchUnit.ExpiresAt,
+					).
+					VALUES(
+						dsp.Id,
+						unit.Id,
+						expiresAt,
+					).
+					ON_DUPLICATE_KEY_UPDATE(
+						tDispatchUnit.ExpiresAt.SET(jet.RawTimestamp("VALUES(`expires_at`)")),
+					)
+
+				if _, err := stmt.ExecContext(ctx, tx); err != nil {
+					if !dbutils.IsDuplicateError(err) {
+						return err
+					}
+				}
+
 				dsp.Units = append(dsp.Units, &dispatch.DispatchAssignment{
 					UnitId:     unit.Id,
 					DispatchId: dsp.Id,

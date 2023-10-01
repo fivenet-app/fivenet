@@ -242,8 +242,7 @@ func (s *Server) loadDispatches(ctx context.Context, id uint64) error {
 		)
 	}
 
-	tUsers := tUsers.AS("user")
-	tCreator := tUsers.AS("creator")
+	tUsers := tUsers.AS("user_short")
 	stmt := tDispatch.
 		SELECT(
 			tDispatch.ID,
@@ -275,21 +274,11 @@ func (s *Server) loadDispatches(ctx context.Context, id uint64) error {
 			tUsers.Sex,
 			tUsers.Dateofbirth,
 			tUsers.PhoneNumber,
-			tCreator.ID,
-			tCreator.Identifier,
-			tCreator.Firstname,
-			tCreator.Lastname,
-			tCreator.Sex,
-			tCreator.Dateofbirth,
-			tCreator.PhoneNumber,
 		).
 		FROM(
 			tDispatch.
 				LEFT_JOIN(tDispatchStatus,
 					tDispatchStatus.DispatchID.EQ(tDispatch.ID),
-				).
-				LEFT_JOIN(tCreator,
-					tCreator.ID.EQ(tDispatch.CreatorID),
 				).
 				LEFT_JOIN(tUsers,
 					tUsers.ID.EQ(tDispatchStatus.UserID),
@@ -313,7 +302,7 @@ func (s *Server) loadDispatches(ctx context.Context, id uint64) error {
 			return err
 		}
 
-		if dispatches[i].CreatorId != nil && dispatches[i].Creator == nil {
+		if dispatches[i].CreatorId != nil {
 			dispatches[i].Creator, err = s.resolveUserById(ctx, *dispatches[i].CreatorId)
 			if err != nil {
 				return err

@@ -220,29 +220,37 @@ export enum StatusDispatch {
      */
     UNIT_UNASSIGNED = 5,
     /**
-     * @generated from protobuf enum value: STATUS_DISPATCH_EN_ROUTE = 6;
+     * @generated from protobuf enum value: STATUS_DISPATCH_UNIT_ACCEPTED = 6;
      */
-    EN_ROUTE = 6,
+    UNIT_ACCEPTED = 6,
     /**
-     * @generated from protobuf enum value: STATUS_DISPATCH_ON_SCENE = 7;
+     * @generated from protobuf enum value: STATUS_DISPATCH_UNIT_DECLINED = 7;
      */
-    ON_SCENE = 7,
+    UNIT_DECLINED = 7,
     /**
-     * @generated from protobuf enum value: STATUS_DISPATCH_NEED_ASSISTANCE = 8;
+     * @generated from protobuf enum value: STATUS_DISPATCH_EN_ROUTE = 8;
      */
-    NEED_ASSISTANCE = 8,
+    EN_ROUTE = 8,
     /**
-     * @generated from protobuf enum value: STATUS_DISPATCH_COMPLETED = 9;
+     * @generated from protobuf enum value: STATUS_DISPATCH_ON_SCENE = 9;
      */
-    COMPLETED = 9,
+    ON_SCENE = 9,
     /**
-     * @generated from protobuf enum value: STATUS_DISPATCH_CANCELLED = 10;
+     * @generated from protobuf enum value: STATUS_DISPATCH_NEED_ASSISTANCE = 10;
      */
-    CANCELLED = 10,
+    NEED_ASSISTANCE = 10,
     /**
-     * @generated from protobuf enum value: STATUS_DISPATCH_ARCHIVED = 11;
+     * @generated from protobuf enum value: STATUS_DISPATCH_COMPLETED = 11;
      */
-    ARCHIVED = 11
+    COMPLETED = 11,
+    /**
+     * @generated from protobuf enum value: STATUS_DISPATCH_CANCELLED = 12;
+     */
+    CANCELLED = 12,
+    /**
+     * @generated from protobuf enum value: STATUS_DISPATCH_ARCHIVED = 13;
+     */
+    ARCHIVED = 13
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Dispatch$Type extends MessageType<Dispatch> {

@@ -45,17 +45,17 @@ export function dispatchStatusToBGColor(status: StatusDispatch | undefined): str
 
 export function unitStatusToBGColor(status: StatusUnit | undefined): string {
     switch (status) {
+        case StatusUnit.ON_BREAK:
+            return 'bg-info-500';
+        case StatusUnit.AVAILABLE:
+            return 'bg-success-600';
+        case StatusUnit.BUSY:
+            return 'bg-warn-600';
         case StatusUnit.UNSPECIFIED:
         case StatusUnit.UNKNOWN:
         case StatusUnit.UNAVAILABLE:
-            return 'bg-error-600';
-        case StatusUnit.AVAILABLE:
-            return 'bg-success-600';
-        case StatusUnit.ON_BREAK:
-            return 'bg-warn-600';
-        case StatusUnit.BUSY:
         default:
-            return 'bg-info-500';
+            return 'bg-error-600';
     }
 }
 

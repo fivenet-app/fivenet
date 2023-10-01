@@ -189,27 +189,26 @@ export const useCentrumStore = defineStore('centrum', {
         handleDispatchAssignment(dispatch: Dispatch): void {
             if (this.ownUnitId === undefined) return;
 
-            if (
-                dispatch.status?.status === StatusDispatch.UNIT_UNASSIGNED ||
-                dispatch.status?.status === StatusDispatch.UNASSIGNED
-            ) {
+            const assignment = dispatch.units.find((u) => u.unitId === this.ownUnitId);
+            if (assignment === undefined) {
+                // If we don't have such a dispatch in our lists, probably not for us
+                if (
+                    this.pendingDispatches.find((d) => d === dispatch.id) === undefined &&
+                    this.ownDispatches.find((d) => d === dispatch.id) === undefined
+                ) {
+                    return;
+                }
+
                 // Handle unassigment of dispatches
                 this.removePendingDispatch(dispatch.id);
                 this.removeOwnDispatch(dispatch.id);
             } else {
-                const assignment = dispatch.units.find((u) => u.unitId === this.ownUnitId);
-                if (assignment === undefined) {
-                    this.removePendingDispatch(dispatch.id);
-                    this.removeOwnDispatch(dispatch.id);
-                    return;
-                }
-
-                // When dispatch has expiration, it is a "pending" dispatch
-                if (assignment?.expiresAt !== undefined) {
-                    this.addOrUpdatePendingDispatch(dispatch.id);
-                } else {
+                // When dispatch has no expiration, it's an accepted/assigned dispatch
+                if (assignment.expiresAt === undefined) {
                     this.removePendingDispatch(dispatch.id);
                     this.addOrUpdateOwnDispatch(dispatch.id);
+                } else {
+                    this.addOrUpdatePendingDispatch(dispatch.id);
                 }
             }
         },

@@ -25,7 +25,8 @@ var (
 )
 
 var (
-	ErrModeForbidsAction = status.Error(codes.InvalidArgument, "errors.CentrumService.ErrModeForbidsAction.title;errors.CentrumService.ErrModeForbidsAction.content")
+	ErrModeForbidsAction        = status.Error(codes.InvalidArgument, "errors.CentrumService.ErrModeForbidsAction.title;errors.CentrumService.ErrModeForbidsAction.content")
+	ErrDispatchAlreadyCompleted = status.Error(codes.InvalidArgument, "errors.CentrumService.ErrDispatchAlreadyCompleted.title;errors.CentrumService.ErrDispatchAlreadyCompleted.content")
 )
 
 func (s *Server) ListDispatches(ctx context.Context, req *ListDispatchesRequest) (*ListDispatchesResponse, error) {
@@ -322,6 +323,11 @@ func (s *Server) TakeDispatch(ctx context.Context, req *TakeDispatchRequest) (*T
 			}
 		}
 
+		// If dispatch is completed, disallow to accept the dispatch
+		if dsp.Status != nil && s.isStatusDispatchComplete(dsp.Status.Status) {
+			return nil, ErrDispatchAlreadyCompleted
+		}
+
 		var x, y *float64
 		var postal *string
 		marker, ok := s.tracker.GetUserById(userInfo.UserId)
@@ -336,7 +342,7 @@ func (s *Server) TakeDispatch(ctx context.Context, req *TakeDispatchRequest) (*T
 		tDispatchUnit := table.FivenetCentrumDispatchesAsgmts
 		// Dispatch accepted
 		if req.Resp == TakeDispatchResp_TAKE_DISPATCH_RESP_ACCEPTED {
-			status = dispatch.StatusDispatch_STATUS_DISPATCH_UNIT_ASSIGNED
+			status = dispatch.StatusDispatch_STATUS_DISPATCH_UNIT_ACCEPTED
 
 			stmt := tDispatchUnit.
 				INSERT(
@@ -361,9 +367,9 @@ func (s *Server) TakeDispatch(ctx context.Context, req *TakeDispatchRequest) (*T
 
 			found := false
 			// Set unit expires at to nil
-			for _, u := range dsp.Units {
-				if u.UnitId == unit.Id {
-					u.ExpiresAt = nil
+			for _, ua := range dsp.Units {
+				if ua.UnitId == unit.Id {
+					ua.ExpiresAt = nil
 					found = true
 					break
 				}
@@ -394,7 +400,7 @@ func (s *Server) TakeDispatch(ctx context.Context, req *TakeDispatchRequest) (*T
 			}
 		} else {
 			// Dispatch declined
-			status = dispatch.StatusDispatch_STATUS_DISPATCH_UNIT_UNASSIGNED
+			status = dispatch.StatusDispatch_STATUS_DISPATCH_UNIT_DECLINED
 
 			stmt := tDispatchUnit.
 				DELETE().

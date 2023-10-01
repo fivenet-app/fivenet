@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { AlertCircleIcon, AlertIcon, CheckCircleIcon, CloseIcon, InformationIcon } from 'mdi-vue3';
+import { AlertCircleIcon, CheckCircleIcon, CloseCircleIcon, CloseIcon, InformationIcon } from 'mdi-vue3';
 import { Notification } from '~/composables/notification/interfaces/Notification.interface';
 import { useNotificatorStore } from '~/store/notificator';
 
@@ -36,8 +36,8 @@ props.notification.content.parameters.forEach((e, i, a) => {
                     <div class="flex-shrink-0 w-8 my-auto" v-if="notification.type">
                         <CheckCircleIcon v-if="notification.type === 'success'" class="text-success-400" aria-hidden="true" />
                         <InformationIcon v-else-if="notification.type === 'info'" class="text-info-400" aria-hidden="true" />
-                        <AlertIcon v-else-if="notification.type === 'warning'" class="text-warn-400" aria-hidden="true" />
-                        <AlertCircleIcon v-else-if="notification.type === 'error'" class="text-error-400" aria-hidden="true" />
+                        <AlertCircleIcon v-else-if="notification.type === 'warning'" class="text-warn-400" aria-hidden="true" />
+                        <CloseCircleIcon v-else-if="notification.type === 'error'" class="text-error-400" aria-hidden="true" />
                     </div>
                     <div class="ml-3 w-0 flex-1 pt-0.5">
                         <p class="text-sm font-semibold">
