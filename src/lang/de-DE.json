@@ -451,7 +451,9 @@
                         "NEED_ASSISTANCE": "Einheit benötigt Verstärkung",
                         "COMPLETED": "Einsatz abgeschlossen",
                         "CANCELLED": "Einsatz abgebrochen",
-                        "ARCHIVED": "Einsatz archiviert"
+                        "ARCHIVED": "Einsatz archiviert",
+                        "UNIT_ACCEPTED": "Einsatz von Einheit akzeptiert",
+                        "UNIT_DECLINED": "Einsatz von Einheit abgelehnt"
                     }
                 }
             }
@@ -1377,6 +1379,10 @@
             "ErrModeForbidsAction": {
                 "title": "Leitstelle verbietet diese Aktion!",
                 "content": "Kontaktiere die Leitstelle."
+            },
+            "ErrDispatchAlreadyCompleted": {
+                "title": "Einsatz ist bereits abgeschlossen!",
+                "content": "Abgeschlossene Einsätze können nicht akzeptiert/abgelehnt werden!"
             }
         }
     },
@@ -1449,7 +1455,9 @@
                 "NEED_ASSISTANCE": "Verstärkung Benötigt",
                 "COMPLETED": "Abgeschlossen",
                 "CANCELLED": "Abgebrochen",
-                "ARCHIVED": "Archiviert"
+                "ARCHIVED": "Archiviert",
+                "UNIT_ACCEPTED": "Einsatz von Einheit akzeptiert",
+                "UNIT_DECLINED": "Einsatz von Einheit abgelehnt"
             },
             "StatusUnit": {
                 "UNSPECIFIED": "Unbestimmt",
