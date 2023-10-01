@@ -25,8 +25,8 @@ message Dispatch {
   // @sanitize
   optional string postal = 12  [(validate.rules).string.max_len = 48];
   bool anon = 13;
-  optional int32 user_id = 14 [(validate.rules).int32.gt = 0];
-  optional resources.users.User user = 15;
+  optional int32 creator_id = 14 [(validate.rules).int32.gt = 0];
+  optional resources.users.User creator = 15;
   repeated DispatchAssignment units = 16;
 }
 

@@ -93,7 +93,7 @@ CREATE TABLE
         `y` decimal(24, 14) DEFAULT NULL,
         `postal` varchar(48) DEFAULT NULL,
         `anon` tinyint(1) NOT NULL DEFAULT 0,
-        `user_id` int(11) NOT NULL,
+        `creator_id` int(11) NOT NULL,
         PRIMARY KEY (`id`),
         KEY `idx_fivenet_centrum_dispatches_job` (`job`)
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;

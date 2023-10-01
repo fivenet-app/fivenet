@@ -86,12 +86,12 @@ func (s *Server) convertPhoneJobMsgToDispatch() error {
 		}
 
 		dsp := &dispatch.Dispatch{
-			Job:     job,
-			Message: *msg.Message,
-			X:       x,
-			Y:       y,
-			Anon:    anon,
-			UserId:  &msg.UserId,
+			Job:       job,
+			Message:   *msg.Message,
+			X:         x,
+			Y:         y,
+			Anon:      anon,
+			CreatorId: &msg.UserId,
 		}
 
 		if _, err := s.createDispatch(s.ctx, dsp); err != nil {

@@ -283,11 +283,11 @@ func (m *Dispatch) validate(all bool) error {
 
 	}
 
-	if m.UserId != nil {
+	if m.CreatorId != nil {
 
-		if m.GetUserId() <= 0 {
+		if m.GetCreatorId() <= 0 {
 			err := DispatchValidationError{
-				field:  "UserId",
+				field:  "CreatorId",
 				reason: "value must be greater than 0",
 			}
 			if !all {
@@ -298,14 +298,14 @@ func (m *Dispatch) validate(all bool) error {
 
 	}
 
-	if m.User != nil {
+	if m.Creator != nil {
 
 		if all {
-			switch v := interface{}(m.GetUser()).(type) {
+			switch v := interface{}(m.GetCreator()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
 					errors = append(errors, DispatchValidationError{
-						field:  "User",
+						field:  "Creator",
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -313,16 +313,16 @@ func (m *Dispatch) validate(all bool) error {
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
 					errors = append(errors, DispatchValidationError{
-						field:  "User",
+						field:  "Creator",
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
 				}
 			}
-		} else if v, ok := interface{}(m.GetUser()).(interface{ Validate() error }); ok {
+		} else if v, ok := interface{}(m.GetCreator()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
 				return DispatchValidationError{
-					field:  "User",
+					field:  "Creator",
 					reason: "embedded message failed validation",
 					cause:  err,
 				}

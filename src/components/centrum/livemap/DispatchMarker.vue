@@ -58,15 +58,15 @@ function selected(_: bigint | string) {
                 </li>
                 <li>
                     <span class="font-semibold">{{ $t('common.message') }}</span
-                    >: {{ dispatch!.message }}
+                    >: {{ dispatch.message }}
                 </li>
                 <li>
                     <span class="font-semibold">{{ $t('common.description') }}</span
-                    >: {{ dispatch!.description ?? 'N/A' }}
+                    >: {{ dispatch.description ?? 'N/A' }}
                 </li>
                 <li>
                     <span class="font-semibold">{{ $t('common.sent_at') }}</span
-                    >: {{ useLocaleTimeAgo(toDate(dispatch!.createdAt)!).value }}
+                    >: {{ $d(toDate(dispatch.createdAt), 'short') }}
                 </li>
                 <li class="italic">
                     <span class="font-semibold">{{ $t('common.sent_by') }}</span

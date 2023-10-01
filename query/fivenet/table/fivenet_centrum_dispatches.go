@@ -28,7 +28,7 @@ type fivenetCentrumDispatchesTable struct {
 	Y           mysql.ColumnFloat
 	Postal      mysql.ColumnString
 	Anon        mysql.ColumnBool
-	UserID      mysql.ColumnInteger
+	CreatorID   mysql.ColumnInteger
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -80,9 +80,9 @@ func newFivenetCentrumDispatchesTableImpl(schemaName, tableName, alias string) f
 		YColumn           = mysql.FloatColumn("y")
 		PostalColumn      = mysql.StringColumn("postal")
 		AnonColumn        = mysql.BoolColumn("anon")
-		UserIDColumn      = mysql.IntegerColumn("user_id")
-		allColumns        = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, JobColumn, MessageColumn, DescriptionColumn, AttributesColumn, XColumn, YColumn, PostalColumn, AnonColumn, UserIDColumn}
-		mutableColumns    = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, JobColumn, MessageColumn, DescriptionColumn, AttributesColumn, XColumn, YColumn, PostalColumn, AnonColumn, UserIDColumn}
+		CreatorIDColumn   = mysql.IntegerColumn("creator_id")
+		allColumns        = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, JobColumn, MessageColumn, DescriptionColumn, AttributesColumn, XColumn, YColumn, PostalColumn, AnonColumn, CreatorIDColumn}
+		mutableColumns    = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, JobColumn, MessageColumn, DescriptionColumn, AttributesColumn, XColumn, YColumn, PostalColumn, AnonColumn, CreatorIDColumn}
 	)
 
 	return fivenetCentrumDispatchesTable{
@@ -100,7 +100,7 @@ func newFivenetCentrumDispatchesTableImpl(schemaName, tableName, alias string) f
 		Y:           YColumn,
 		Postal:      PostalColumn,
 		Anon:        AnonColumn,
-		UserID:      UserIDColumn,
+		CreatorID:   CreatorIDColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

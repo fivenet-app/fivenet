@@ -65,13 +65,13 @@ export interface Dispatch {
      */
     anon: boolean;
     /**
-     * @generated from protobuf field: optional int32 user_id = 14;
+     * @generated from protobuf field: optional int32 creator_id = 14;
      */
-    userId?: number;
+    creatorId?: number;
     /**
-     * @generated from protobuf field: optional resources.users.User user = 15;
+     * @generated from protobuf field: optional resources.users.User creator = 15;
      */
-    user?: User;
+    creator?: User;
     /**
      * @generated from protobuf field: repeated resources.dispatch.DispatchAssignment units = 16;
      */
@@ -260,8 +260,8 @@ class Dispatch$Type extends MessageType<Dispatch> {
             { no: 11, name: "y", kind: "scalar", T: 1 /*ScalarType.DOUBLE*/ },
             { no: 12, name: "postal", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "48" } } } },
             { no: 13, name: "anon", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 14, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
-            { no: 15, name: "user", kind: "message", T: () => User },
+            { no: 14, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
+            { no: 15, name: "creator", kind: "message", T: () => User },
             { no: 16, name: "units", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => DispatchAssignment }
         ]);
     }

@@ -1448,7 +1448,8 @@
                 "ON_SCENE": "On Scene",
                 "NEED_ASSISTANCE": "Need Assistance",
                 "COMPLETED": "Abgeschlossen",
-                "CANCELLED": "Abgebrochen"
+                "CANCELLED": "Abgebrochen",
+                "ARCHIVED": "Archived"
             },
             "StatusUnit": {
                 "UNSPECIFIED": "Unspecified",

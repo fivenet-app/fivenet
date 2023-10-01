@@ -1448,7 +1448,8 @@
                 "ON_SCENE": "Vor Ort",
                 "NEED_ASSISTANCE": "Verstärkung Benötigt",
                 "COMPLETED": "Abgeschlossen",
-                "CANCELLED": "Abgebrochen"
+                "CANCELLED": "Abgebrochen",
+                "ARCHIVED": "Archiviert"
             },
             "StatusUnit": {
                 "UNSPECIFIED": "Unbestimmt",

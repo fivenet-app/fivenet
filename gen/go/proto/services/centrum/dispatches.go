@@ -55,8 +55,8 @@ func (s *Server) ListDispatches(ctx context.Context, req *ListDispatchesRequest)
 	for i := 0; i < len(dispatches); i++ {
 		// Hide user info when dispatch is anonymous
 		if dispatches[i].Anon {
-			dispatches[i].User = nil
-			dispatches[i].UserId = nil
+			dispatches[i].Creator = nil
+			dispatches[i].CreatorId = nil
 		}
 
 		include := false
@@ -114,7 +114,7 @@ func (s *Server) CreateDispatch(ctx context.Context, req *CreateDispatchRequest)
 	defer s.auditer.Log(auditEntry, req)
 
 	req.Dispatch.Job = userInfo.Job
-	req.Dispatch.UserId = &userInfo.UserId
+	req.Dispatch.CreatorId = &userInfo.UserId
 
 	dsp, err := s.createDispatch(ctx, req.Dispatch)
 	if err != nil {
@@ -153,7 +153,7 @@ func (s *Server) createDispatch(ctx context.Context, d *dispatch.Dispatch) (*dis
 			tDispatch.Y,
 			tDispatch.Postal,
 			tDispatch.Anon,
-			tDispatch.UserID,
+			tDispatch.CreatorID,
 		).
 		VALUES(
 			d.Job,
@@ -164,7 +164,7 @@ func (s *Server) createDispatch(ctx context.Context, d *dispatch.Dispatch) (*dis
 			d.Y,
 			d.Postal,
 			d.Anon,
-			d.UserId,
+			d.CreatorId,
 		)
 
 	result, err := stmt.ExecContext(ctx, tx)
@@ -179,7 +179,7 @@ func (s *Server) createDispatch(ctx context.Context, d *dispatch.Dispatch) (*dis
 
 	if err := s.addDispatchStatus(ctx, tx, &dispatch.DispatchStatus{
 		DispatchId: uint64(lastId),
-		UserId:     d.UserId,
+		UserId:     d.CreatorId,
 		Status:     dispatch.StatusDispatch_STATUS_DISPATCH_NEW,
 		X:          &d.X,
 		Y:          &d.Y,
@@ -204,8 +204,8 @@ func (s *Server) createDispatch(ctx context.Context, d *dispatch.Dispatch) (*dis
 	}
 	// Hide user info when dispatch is anonymous
 	if dsp.Anon {
-		dsp.User = nil
-		dsp.UserId = nil
+		dsp.Creator = nil
+		dsp.CreatorId = nil
 	}
 
 	data, err := proto.Marshal(dsp)
@@ -239,7 +239,7 @@ func (s *Server) UpdateDispatch(ctx context.Context, req *UpdateDispatchRequest)
 			tDispatch.Y,
 			tDispatch.Postal,
 			tDispatch.Anon,
-			tDispatch.UserID,
+			tDispatch.CreatorID,
 		).
 		SET(
 			userInfo.Job,

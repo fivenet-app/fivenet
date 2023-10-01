@@ -243,6 +243,7 @@ func (s *Server) loadDispatches(ctx context.Context, id uint64) error {
 	}
 
 	tUsers := tUsers.AS("user")
+	tCreator := tUsers.AS("creator")
 	stmt := tDispatch.
 		SELECT(
 			tDispatch.ID,
@@ -256,7 +257,7 @@ func (s *Server) loadDispatches(ctx context.Context, id uint64) error {
 			tDispatch.Y,
 			tDispatch.Postal,
 			tDispatch.Anon,
-			tDispatch.UserID,
+			tDispatch.CreatorID,
 			tDispatchStatus.ID,
 			tDispatchStatus.CreatedAt,
 			tDispatchStatus.UnitID,
@@ -274,11 +275,21 @@ func (s *Server) loadDispatches(ctx context.Context, id uint64) error {
 			tUsers.Sex,
 			tUsers.Dateofbirth,
 			tUsers.PhoneNumber,
+			tCreator.ID,
+			tCreator.Identifier,
+			tCreator.Firstname,
+			tCreator.Lastname,
+			tCreator.Sex,
+			tCreator.Dateofbirth,
+			tCreator.PhoneNumber,
 		).
 		FROM(
 			tDispatch.
 				LEFT_JOIN(tDispatchStatus,
 					tDispatchStatus.DispatchID.EQ(tDispatch.ID),
+				).
+				LEFT_JOIN(tCreator,
+					tCreator.ID.EQ(tDispatch.CreatorID),
 				).
 				LEFT_JOIN(tUsers,
 					tUsers.ID.EQ(tDispatchStatus.UserID),
@@ -302,15 +313,15 @@ func (s *Server) loadDispatches(ctx context.Context, id uint64) error {
 			return err
 		}
 
-		if dispatches[i].UserId != nil && dispatches[i].User == nil {
-			dispatches[i].User, err = s.resolveUserById(ctx, *dispatches[i].UserId)
+		if dispatches[i].CreatorId != nil && dispatches[i].Creator == nil {
+			dispatches[i].Creator, err = s.resolveUserById(ctx, *dispatches[i].CreatorId)
 			if err != nil {
 				return err
 			}
 
 			// Alawys clear dispatch creator's job info
-			dispatches[i].User.Job = ""
-			dispatches[i].User.JobGrade = 0
+			dispatches[i].Creator.Job = ""
+			dispatches[i].Creator.JobGrade = 0
 		}
 
 		s.getDispatchesMap(dispatches[i].Job).Store(dispatches[i].Id, dispatches[i])

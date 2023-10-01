@@ -17,4 +17,5 @@ type OwnedVehicles struct {
 	Carseller *int32  `json:"carseller"`
 	Owners    *string `json:"owners"`
 	Trunk     *string `json:"trunk"`
+	Glovebox  *string `json:"glovebox"`
 }

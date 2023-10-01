@@ -26,6 +26,7 @@ type ownedVehiclesTable struct {
 	Carseller mysql.ColumnInteger
 	Owners    mysql.ColumnString
 	Trunk     mysql.ColumnString
+	Glovebox  mysql.ColumnString
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -75,8 +76,9 @@ func newOwnedVehiclesTableImpl(schemaName, tableName, alias string) ownedVehicle
 		CarsellerColumn = mysql.IntegerColumn("carseller")
 		OwnersColumn    = mysql.StringColumn("owners")
 		TrunkColumn     = mysql.StringColumn("trunk")
-		allColumns      = mysql.ColumnList{OwnerColumn, PlateColumn, ModelColumn, VehicleColumn, TypeColumn, StoredColumn, CarsellerColumn, OwnersColumn, TrunkColumn}
-		mutableColumns  = mysql.ColumnList{OwnerColumn, ModelColumn, VehicleColumn, TypeColumn, StoredColumn, CarsellerColumn, OwnersColumn, TrunkColumn}
+		GloveboxColumn  = mysql.StringColumn("glovebox")
+		allColumns      = mysql.ColumnList{OwnerColumn, PlateColumn, ModelColumn, VehicleColumn, TypeColumn, StoredColumn, CarsellerColumn, OwnersColumn, TrunkColumn, GloveboxColumn}
+		mutableColumns  = mysql.ColumnList{OwnerColumn, ModelColumn, VehicleColumn, TypeColumn, StoredColumn, CarsellerColumn, OwnersColumn, TrunkColumn, GloveboxColumn}
 	)
 
 	return ownedVehiclesTable{
@@ -92,6 +94,7 @@ func newOwnedVehiclesTableImpl(schemaName, tableName, alias string) ownedVehicle
 		Carseller: CarsellerColumn,
 		Owners:    OwnersColumn,
 		Trunk:     TrunkColumn,
+		Glovebox:  GloveboxColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
