@@ -1450,6 +1450,8 @@
                 "UPDATED": "Updated",
                 "UNIT_ASSIGNED": "Unit assigned",
                 "UNIT_UNASSIGNED": "Unit unassigned",
+                "UNIT_ACCEPTED": "Unit accepted Dispatch",
+                "UNIT_DECLINED": "Unit declined Dispatch",
                 "EN_ROUTE": "En Route",
                 "ON_SCENE": "On Scene",
                 "NEED_ASSISTANCE": "Need Assistance",
