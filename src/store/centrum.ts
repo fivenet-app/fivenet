@@ -135,8 +135,8 @@ export const useCentrumStore = defineStore('centrum', {
                 d!.x = dispatch.x;
                 d!.y = dispatch.y;
                 d!.anon = dispatch.anon;
-                d!.userId = dispatch.userId;
-                d!.user = dispatch.user;
+                d!.creatorId = dispatch.creatorId;
+                d!.creator = dispatch.creator;
 
                 if (dispatch.units.length === 0) {
                     d!.units.length = 0;

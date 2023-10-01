@@ -95,6 +95,9 @@ export const useConfigStore = defineStore('config', {
                 }
             });
         },
+        setUpdateAvailable(version: string): void {
+            this.updateAvailable = version;
+        },
     },
 });
 

@@ -87,7 +87,10 @@ watch(locale, () => setLocaleGlobally(locale.value));
 // Open update available confirm dialog
 const open = ref(false);
 
-watch(updateAvailable, () => (open.value = true));
+watch(updateAvailable, async () => {
+    open.value = true;
+    console.log('updateAvailable', updateAvailable.value);
+});
 </script>
 
 <template>
@@ -106,14 +109,15 @@ watch(updateAvailable, () => (open.value = true));
         :locale="cookieLocale"
     />
 
-    <ConfirmDialog
-        v-if="updateAvailable !== false"
-        :open="open"
-        @close="open = false"
-        :cancel="() => (open = false)"
-        :confirm="() => reloadNuxtApp({ persistState: false, force: true })"
-        :title="$t('system.update_available.title', [updateAvailable])"
-        :description="$t('system.update_available.content')"
-        :icon="UpdateIcon"
-    />
+    <template v-if="updateAvailable !== false">
+        <ConfirmDialog
+            :open="open"
+            @close="open = false"
+            :cancel="() => (open = false)"
+            :confirm="() => reloadNuxtApp({ persistState: false, force: true })"
+            :title="$t('system.update_available.title', { version: updateAvailable })"
+            :description="$t('system.update_available.content')"
+            :icon="UpdateIcon"
+        />
+    </template>
 </template>

@@ -1407,7 +1407,7 @@
     },
     "system": {
         "update_available": {
-            "title": "New FiveNet version available ({0})!",
+            "title": "New FiveNet version available ({version})!",
             "content": "To continue using FiveNet, you need to reload the page if you currently can."
         }
     },

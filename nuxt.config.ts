@@ -201,8 +201,8 @@ const config = defineNuxtConfig({
         },
     },
     update: {
-        version: `${version}-${commit}`,
-        checkInterval: 120,
+        version: commit,
+        checkInterval: 90,
         path: '/api/version',
     },
     experimental: {
