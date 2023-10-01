@@ -44,7 +44,7 @@ func main() {
 		fx.WithLogger(func(log *zap.Logger) fxevent.Logger {
 			return &fxevent.ZapLogger{Logger: log}
 		}),
-		fx.StartTimeout(40*time.Second),
+		fx.StartTimeout(60*time.Second),
 
 		LoggerModule,
 		config.Module,
@@ -84,8 +84,8 @@ func main() {
 
 		discord.BotModule,
 
-		fx.Invoke(func(*http.Server) {}),
 		fx.Invoke(func(*grpcserver.Server) {}),
+		fx.Invoke(func(*http.Server) {}),
 		fx.Invoke(func(*discord.Bot) {}),
 	).Run()
 }

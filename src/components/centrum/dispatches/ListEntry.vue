@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import { useDebounceFn } from '@vueuse/core';
+import { useSound } from '@vueuse/sound';
 import { AccountMultiplePlusIcon, DotsVerticalIcon, MapMarkerIcon } from 'mdi-vue3';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import Time from '~/components/partials/elements/Time.vue';
@@ -17,6 +19,17 @@ defineEmits<{
 
 const dispatchBackground = computed(() => dispatchStatusToBGColor(props.dispatch.status?.status ?? 0));
 const dispatchAnimated = computed(() => (dispatchStatusAnimate(props.dispatch.status?.status ?? 0) ? 'animate-pulse' : ''));
+
+const dispatchAssistanceSound = useSound('/sounds/centrum/message-incoming.mp3', {
+    volume: 0.15,
+});
+const debouncedPlay = useDebounceFn(() => dispatchAssistanceSound.play(), 950);
+
+watch(props, () => {
+    if (props.dispatch.status?.status === StatusDispatch.NEED_ASSISTANCE) {
+        debouncedPlay();
+    }
+});
 
 const openDetails = ref(false);
 const openAssign = ref(false);

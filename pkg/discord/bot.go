@@ -87,11 +87,14 @@ func NewBot(p BotParams) (*Bot, error) {
 			return err
 		}
 
-		if err := b.setupSync(); err != nil {
-			return err
-		}
+		go func() {
+			if err := b.setupSync(); err != nil {
+				b.logger.Error("failed to set up sync for guilds")
+				return
+			}
 
-		go b.Sync()
+			b.Sync()
+		}()
 
 		return nil
 	}))
