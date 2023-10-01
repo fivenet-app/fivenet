@@ -446,14 +446,14 @@
                         "UNASSIGNED": "No units assigned",
                         "UNIT_ASSIGNED": "Unit assigned to Dispatch",
                         "UNIT_UNASSIGNED": "Unit unassigned from Dispatch",
-                        "UNIT_ACCEPTED": "Unit accepted Dispatch",
-                        "UNIT_DECLINED": "Unit declined/didn't respond to Dispatch",
                         "EN_ROUTE": "En Route to Dispatch",
                         "ON_SCENE": "Arrived on scene",
                         "NEED_ASSISTANCE": "Unit needs Assistance",
                         "COMPLETED": "Dispatch completed",
                         "CANCELLED": "Dispatch cancelled",
-                        "ARCHIVED": "Dispatch archived"
+                        "ARCHIVED": "Dispatch archived",
+                        "UNIT_ACCEPTED": "Unit accepted Dispatch",
+                        "UNIT_DECLINED": "Unit declined/didn't respond to Dispatch"
                     }
                 }
             }
@@ -1382,7 +1382,7 @@
             },
             "ErrDispatchAlreadyCompleted": {
                 "title": "Dispatch already in completed state!",
-                "content": "You can't accept/decline completed dispatches.."
+                "content": "You can't accept/decline completed dispatches."
             }
         }
     },
@@ -1450,14 +1450,14 @@
                 "UPDATED": "Updated",
                 "UNIT_ASSIGNED": "Unit assigned",
                 "UNIT_UNASSIGNED": "Unit unassigned",
-                "UNIT_ACCEPTED": "Unit accepted Dispatch",
-                "UNIT_DECLINED": "Unit declined Dispatch",
                 "EN_ROUTE": "En Route",
                 "ON_SCENE": "On Scene",
                 "NEED_ASSISTANCE": "Need Assistance",
                 "COMPLETED": "Abgeschlossen",
                 "CANCELLED": "Abgebrochen",
-                "ARCHIVED": "Archived"
+                "ARCHIVED": "Archived",
+                "UNIT_ACCEPTED": "Unit accepted Dispatch",
+                "UNIT_DECLINED": "Unit declined Dispatch"
             },
             "StatusUnit": {
                 "UNSPECIFIED": "Unspecified",
