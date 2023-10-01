@@ -368,14 +368,17 @@ export const useCentrumStore = defineStore('centrum', {
                     }
                 }
             } catch (e) {
-                this.error = e as RpcError;
-                if (this.error) {
+                const error = e as RpcError;
+                if (error) {
                     // Only restart when not cancelled and abort is still valid
-                    if (this.error.code != 'CANCELLED' && this.error.code != 'ABORTED') {
-                        console.error('Centrum: Data Stream Failed', this.error.code, this.error.message, this.error.cause);
+                    if (error.code != 'CANCELLED' && error.code != 'ABORTED') {
+                        console.error('Centrum: Data Stream Failed', error.code, error.message, error.cause);
 
+                        // Only set error if we don't need to restart
                         if (this.abort !== undefined && !this.abort?.signal.aborted) {
                             this.restartStream(isCenter);
+                        } else {
+                            this.error = error;
                         }
                     } else {
                         this.error = undefined;

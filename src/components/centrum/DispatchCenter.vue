@@ -26,7 +26,7 @@ onBeforeUnmount(async () => {
 });
 
 function goto(e: Coordinate) {
-    location.value = { x: e.x, y: e.y };
+    location.value = e;
 
     // Set in-game waypoint via NUI
     setWaypoint(e.x, e.y);
