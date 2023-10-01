@@ -780,7 +780,7 @@
             },
             "default": {
                 "title": "Unknown error occured",
-                "content": "{0} (Code: {1})"
+                "content": "{msg} (Code: {code})"
             },
             "not_found": {
                 "title": "Not found",
@@ -834,7 +834,7 @@
             },
             "error_logout": {
                 "title": "Logout: Encountered an error",
-                "content": "{0}"
+                "content": "Error message: {0}"
             },
             "oauth2_login": {
                 "success": {
@@ -1398,7 +1398,7 @@
         "groups": {
             "shortcuts": {
                 "label": "Shortcuts",
-                "goto": "Go to {0}: {1}"
+                "goto": "Go to {key}: {prefix}"
             },
             "pages": {
                 "label": "Pages"
