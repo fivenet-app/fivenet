@@ -134,9 +134,7 @@ function selectUnit(item: Unit): void {
                                                                         {{
                                                                             $t(
                                                                                 `enums.centrum.StatusUnit.${
-                                                                                    StatusUnit[
-                                                                                        unit.status?.status ?? (0 as number)
-                                                                                    ]
+                                                                                    StatusUnit[unit.status?.status ?? 0]
                                                                                 }`,
                                                                             )
                                                                         }}

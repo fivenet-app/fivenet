@@ -171,9 +171,7 @@ watch(props, () => {
                                                                             {{
                                                                                 $t(
                                                                                     `enums.centrum.StatusDispatch.${
-                                                                                        StatusDispatch[
-                                                                                            status.status ?? (0 as number)
-                                                                                        ]
+                                                                                        StatusDispatch[status.status ?? 0]
                                                                                     }`,
                                                                                 )
                                                                             }}

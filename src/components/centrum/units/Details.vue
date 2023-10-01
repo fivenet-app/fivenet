@@ -102,7 +102,7 @@ const openStatus = ref(false);
                                                                     {{
                                                                         $t(
                                                                             `enums.centrum.StatusUnit.${
-                                                                                StatusUnit[unit.status?.status ?? (0 as number)]
+                                                                                StatusUnit[unit.status?.status ?? 0]
                                                                             }`,
                                                                         )
                                                                     }}

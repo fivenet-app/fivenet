@@ -39,7 +39,7 @@ const openDetails = ref(false);
                 <CarEmergencyIcon class="h-4 w-4 mr-0.5" /> DSP-{{ dispatch.id }}</span
             >
             <span class="mt-2 truncate">
-                {{ $t(`enums.centrum.StatusDispatch.${StatusDispatch[dispatch.status?.status ?? (0 as number)]}`) }}
+                {{ $t(`enums.centrum.StatusDispatch.${StatusDispatch[dispatch.status?.status ?? 0]}`) }}
             </span>
         </button>
     </li>

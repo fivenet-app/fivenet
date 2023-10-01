@@ -171,9 +171,7 @@ watch(props, () => {
                                                                             {{
                                                                                 $t(
                                                                                     `enums.centrum.StatusUnit.${
-                                                                                        StatusUnit[
-                                                                                            status.status ?? (0 as number)
-                                                                                        ]
+                                                                                        StatusUnit[status.status ?? 0]
                                                                                     }`,
                                                                                 )
                                                                             }}

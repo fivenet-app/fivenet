@@ -144,8 +144,8 @@ const openStatus = ref(false);
                                                                     {{ $t('common.anon') }}
                                                                 </span>
                                                                 <CitizenInfoPopover
-                                                                    v-else-if="dispatch.user"
-                                                                    :user="dispatch.user"
+                                                                    v-else-if="dispatch.creator"
+                                                                    :user="dispatch.creator"
                                                                 />
                                                                 <span v-else>
                                                                     {{ $t('common.unknown') }}
@@ -204,9 +204,7 @@ const openStatus = ref(false);
                                                                     {{
                                                                         $t(
                                                                             `enums.centrum.StatusDispatch.${
-                                                                                StatusDispatch[
-                                                                                    dispatch.status?.status ?? (0 as number)
-                                                                                ]
+                                                                                StatusDispatch[dispatch.status?.status ?? 0]
                                                                             }`,
                                                                         )
                                                                     }}

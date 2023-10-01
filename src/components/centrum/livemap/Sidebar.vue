@@ -239,7 +239,7 @@ const open = ref(false);
                                                     {{
                                                         $t(
                                                             `enums.centrum.StatusUnit.${
-                                                                StatusUnit[ownUnit.status?.status ?? (0 as number)]
+                                                                StatusUnit[ownUnit.status?.status ?? 0]
                                                             }`,
                                                         )
                                                     }}
@@ -319,7 +319,7 @@ const open = ref(false);
                                                                         item.status
                                                                             ? $t(
                                                                                   `enums.centrum.StatusUnit.${
-                                                                                      StatusUnit[item.status ?? (0 as number)]
+                                                                                      StatusUnit[item.status ?? 0]
                                                                                   }`,
                                                                               )
                                                                             : $t(item.name)
@@ -362,7 +362,7 @@ const open = ref(false);
                                                             item.status
                                                                 ? $t(
                                                                       `enums.centrum.StatusDispatch.${
-                                                                          StatusDispatch[item.status ?? (0 as number)]
+                                                                          StatusDispatch[item.status ?? 0]
                                                                       }`,
                                                                   )
                                                                 : $t(item.name)

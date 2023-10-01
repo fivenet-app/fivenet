@@ -106,9 +106,7 @@ async function joinUnit(unit?: Unit | undefined): Promise<void> {
                                                                         {{
                                                                             $t(
                                                                                 `enums.centrum.StatusUnit.${
-                                                                                    StatusUnit[
-                                                                                        item.status?.status ?? (0 as number)
-                                                                                    ]
+                                                                                    StatusUnit[item.status?.status ?? 0]
                                                                                 }`,
                                                                             )
                                                                         }}
