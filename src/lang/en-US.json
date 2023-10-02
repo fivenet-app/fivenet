@@ -923,7 +923,7 @@
                 },
                 "not_in_unit": {
                     "title": "You are not in an Unit!",
-                    "content": "You need to be in an unit to do that.."
+                    "content": "You need to be in an unit to do that."
                 }
             },
             "sidebar": {
