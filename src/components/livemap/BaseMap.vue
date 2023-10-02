@@ -39,8 +39,8 @@ const centerY = 172.8;
 const scaleX = 0.02072;
 const scaleY = 0.0205;
 
-const bounds = latLngBounds([-4_000, -4_000], [8_000, 6_000]);
-const maxBounds = latLngBounds([-9_000, -8_000], [11_500, 14_000]);
+const bounds = latLngBounds([-4_000, -4_000], [8_000, 8_000]);
+const maxBounds = latLngBounds([-9_000, -9_000], [11_000, 11_000]);
 
 const customCRS = L.extend({}, L.CRS.Simple, {
     projection: L.Projection.LonLat,
