@@ -1426,9 +1426,9 @@
                 "BLOCKED": "Blocked",
                 "VIEW": "View",
                 "COMMENT": "Comment",
-                "STATUS": "Status",
                 "ACCESS": "Access",
-                "EDIT": "Edit"
+                "EDIT": "Edit",
+                "STATUS": "Status"
             },
             "DocReference": {
                 "UNSPECIFIED": "Unspecified",
