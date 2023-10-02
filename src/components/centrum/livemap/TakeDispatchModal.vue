@@ -6,6 +6,8 @@ import { useSound } from '@vueuse/sound';
 import { CarEmergencyIcon, CloseIcon } from 'mdi-vue3';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import { useCentrumStore } from '~/store/centrum';
+import { Dispatch, StatusDispatch } from '~~/gen/ts/resources/dispatch/dispatches';
+import { CentrumMode } from '~~/gen/ts/resources/dispatch/settings';
 import { TakeDispatchResp } from '~~/gen/ts/services/centrum/centrum';
 import TakeDispatchEntry from './TakeDispatchEntry.vue';
 
@@ -21,20 +23,23 @@ const emit = defineEmits<{
 const { $grpc } = useNuxtApp();
 
 const centrumStore = useCentrumStore();
-const { pendingDispatches, dispatches, ownUnitId } = storeToRefs(centrumStore);
+const { dispatches, ownUnitId, pendingDispatches, getCurrentMode } = storeToRefs(centrumStore);
 
-const unselectedDispatches = ref<bigint[]>([]);
+const selectedDispatches = ref<bigint[]>([]);
+const queryDispatches = ref('');
 
 async function takeDispatches(resp: TakeDispatchResp): Promise<void> {
     return new Promise(async (res, rej) => {
         try {
-            if (pendingDispatches.value.length === 0) return;
+            if (!canTakeDispatch) return;
 
             const call = $grpc.getCentrumClient().takeDispatch({
-                dispatchIds: pendingDispatches.value.filter((d) => !unselectedDispatches.value.includes(d)),
+                dispatchIds: selectedDispatches.value,
                 resp: resp,
             });
             await call;
+
+            selectedDispatches.value.length = 0;
 
             emit('close');
 
@@ -47,11 +52,12 @@ async function takeDispatches(resp: TakeDispatchResp): Promise<void> {
 }
 
 function selectDispatch(id: bigint): void {
-    const idx = unselectedDispatches.value.findIndex((did) => did === id);
+    console.log('selectDispatch', selectedDispatches.value);
+    const idx = selectedDispatches.value.findIndex((did) => did === id);
     if (idx > -1) {
-        unselectedDispatches.value.splice(idx, 1);
+        selectedDispatches.value.splice(idx, 1);
     } else {
-        unselectedDispatches.value.push(id);
+        selectedDispatches.value.push(id);
     }
 }
 
@@ -63,9 +69,27 @@ const debouncedPlay = useDebounceFn(() => newDispatchSound.play(), 950);
 
 const previousLength = ref(0);
 watch(pendingDispatches.value, () => {
-    if (previousLength.value <= pendingDispatches.value.length) debouncedPlay();
+    if (getCurrentMode.value !== CentrumMode.SIMPLIFIED) {
+        if (previousLength.value <= pendingDispatches.value.length) debouncedPlay();
+    }
 
     previousLength.value = pendingDispatches.value.length;
+});
+
+const canTakeDispatch = computed(() => {
+    return (
+        pendingDispatches.value.length === 0 || (getCurrentMode.value === CentrumMode.SIMPLIFIED && dispatches.value.size === 0)
+    );
+});
+
+const filteredDispatches = computed(() => {
+    const filtered: Dispatch[] = [];
+    dispatches.value.forEach((d) => {
+        if (d.id.toString().includes(queryDispatches.value) || d.message.includes(queryDispatches.value)) {
+            if (d.status === undefined || d.status.status < StatusDispatch.COMPLETED) filtered.push(d);
+        }
+    });
+    return filtered.sort((a, b) => (a.status?.status ?? 0) - (b.status?.status ?? 0)).map((d) => d.id);
 });
 </script>
 
@@ -116,10 +140,40 @@ watch(pendingDispatches.value, () => {
                                                 <div class="mt-1">
                                                     <dl class="border-b border-white/10 divide-y divide-white/10">
                                                         <DataNoDataBlock
-                                                            v-if="pendingDispatches.length === 0"
+                                                            v-if="pendingDispatches.length === 0 && dispatches.size === 0"
                                                             :icon="CarEmergencyIcon"
                                                             :type="$t('common.dispatch', 2)"
                                                         />
+
+                                                        <template v-else-if="getCurrentMode === CentrumMode.SIMPLIFIED">
+                                                            <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                                                                <dt class="text-sm font-medium leading-6 text-white">
+                                                                    <div class="flex h-6 items-center">Search</div>
+                                                                </dt>
+                                                                <dd
+                                                                    class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
+                                                                >
+                                                                    <div class="relative flex items-center">
+                                                                        <input
+                                                                            v-model="queryDispatches"
+                                                                            type="text"
+                                                                            name="search"
+                                                                            :placeholder="$t('common.search')"
+                                                                            class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                                        />
+                                                                    </div>
+                                                                </dd>
+                                                            </div>
+
+                                                            <TakeDispatchEntry
+                                                                v-for="pd in filteredDispatches"
+                                                                :dispatch="dispatches.get(pd)!"
+                                                                :own-unit-id="ownUnitId"
+                                                                :preselected="false"
+                                                                @selected="selectDispatch(pd)"
+                                                                @goto="$emit('goto', $event)"
+                                                            />
+                                                        </template>
 
                                                         <TakeDispatchEntry
                                                             v-else
@@ -137,19 +191,19 @@ watch(pendingDispatches.value, () => {
                                     <div class="flex flex-shrink-0 justify-end px-4 py-4">
                                         <span class="isolate inline-flex rounded-md shadow-sm pr-4 w-full">
                                             <button
-                                                :disabled="pendingDispatches.length === 0"
+                                                :disabled="!canTakeDispatch"
                                                 type="button"
                                                 class="w-full relative inline-flex items-center rounded-l-md bg-success-500 px-3 py-2 text-sm font-semibold text-white hover:text-white ring-1 ring-inset ring-success-300 hover:bg-success-100 focus:z-10"
-                                                :class="pendingDispatches.length === 0 ? 'disabled' : ''"
+                                                :class="!canTakeDispatch ? 'disabled' : ''"
                                                 @click="takeDispatches(TakeDispatchResp.ACCEPTED)"
                                             >
                                                 {{ $t('common.accept') }}
                                             </button>
                                             <button
-                                                :disabled="pendingDispatches.length === 0"
+                                                :disabled="!canTakeDispatch"
                                                 type="button"
                                                 class="w-full relative -ml-px inline-flex items-center bg-error-500 px-3 py-2 text-sm font-semibold text-white ring-1 ring-inset ring-error-300 hover:bg-error-100 focus:z-10"
-                                                :class="pendingDispatches.length === 0 ? 'disabled' : ''"
+                                                :class="!canTakeDispatch ? 'disabled' : ''"
                                                 @click="takeDispatches(TakeDispatchResp.DECLINED)"
                                             >
                                                 {{ $t('common.decline') }}

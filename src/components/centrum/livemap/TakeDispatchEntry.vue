@@ -1,13 +1,20 @@
 <script lang="ts" setup>
-import { AccountIcon } from 'mdi-vue3';
+import { AccountIcon, MapMarkerIcon } from 'mdi-vue3';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
-import { Dispatch } from '~~/gen/ts/resources/dispatch/dispatches';
+import { Dispatch, StatusDispatch } from '~~/gen/ts/resources/dispatch/dispatches';
 import Details from '../dispatches/Details.vue';
+import { dispatchStatusToBGColor } from '../helpers';
 
-const props = defineProps<{
-    dispatch: Dispatch;
-    ownUnitId?: bigint;
-}>();
+const props = withDefaults(
+    defineProps<{
+        dispatch: Dispatch;
+        ownUnitId?: bigint;
+        preselected?: boolean;
+    }>(),
+    {
+        preselected: true,
+    },
+);
 
 defineEmits<{
     (e: 'selected', id: bigint): void;
@@ -15,6 +22,7 @@ defineEmits<{
 }>();
 
 const expiresAt = props.dispatch.units.find((u) => u.unitId === props.ownUnitId)?.expiresAt;
+const dispatchBackground = computed(() => dispatchStatusToBGColor(props.dispatch.status?.status ?? 0));
 
 const open = ref(false);
 </script>
@@ -28,39 +36,50 @@ const open = ref(false);
                 <input
                     type="checkbox"
                     name="selected"
-                    checked
+                    :checked="preselected"
                     class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600 h-6 w-6"
-                    @change="$emit('selected')"
+                    @change="$emit('selected', dispatch.id)"
                 />
                 <IDCopyBadge class="ml-2" prefix="DSP" :id="dispatch.id" :action="() => (open = true)" />
             </div>
             <div v-if="expiresAt" class="mt-1 text-white text-sm">
-                <span>
-                    {{ $t('common.expires_in') }}:
-                    {{ useLocaleTimeAgo(toDate(expiresAt), { showSecond: true, updateInterval: 1000 }).value }}
-                </span>
+                {{ $t('common.expires_in') }}:
+                {{ useLocaleTimeAgo(toDate(expiresAt), { showSecond: true, updateInterval: 1000 }).value }}
             </div>
         </dt>
         <dd class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0">
             <ul role="list" class="border divide-y rounded-md divide-base-200 border-base-200">
-                <li class="flex items-center justify-between py-3 pl-3 pr-4 text-sm">
-                    {{ $t('common.message') }}: {{ dispatch.message }}
+                <li class="flex items-center py-3 pl-3 pr-4 text-sm">
+                    <span class="font-medium">{{ $t('common.message') }}</span
+                    >: {{ dispatch.message }}
                 </li>
-                <li class="flex items-center justify-between py-3 pl-3 pr-4 text-sm">
+                <li class="flex items-center py-3 pl-3 pr-4 text-sm">
+                    <span class="font-medium">{{ $t('common.status') }}</span
+                    >:
+                    <span class="ml-1 text-white" :class="dispatchBackground">{{
+                        $t(`enums.centrum.StatusDispatch.${StatusDispatch[dispatch.status?.status ?? 0]}`)
+                    }}</span>
+                </li>
+                <li class="py-3 pl-3 pr-4 text-sm">
+                    <span class="block">
+                        {{ $t('common.postal') }}:
+                        {{ dispatch.postal ?? 'N/A' }}
+                    </span>
                     <button
                         v-if="dispatch.x && dispatch.y"
                         type="button"
-                        class="text-primary-400 hover:text-primary-600"
+                        class="inline-flex items-center text-primary-400 hover:text-primary-600"
                         @click="$emit('goto', { x: dispatch.x, y: dispatch.y })"
                     >
+                        <MapMarkerIcon class="w-5 h-5 mr-1" aria-hidden="true" />
                         {{ $t('common.go_to_location') }}
                     </button>
                     <span v-else>{{ $t('common.no_location') }}</span>
                 </li>
                 <li class="flex items-center justify-between py-3 pl-3 pr-4 text-sm">
                     <div class="flex items-center flex-1">
-                        <AccountIcon class="flex-shrink-0 w-5 h-5 text-base-400" aria-hidden="true" />
-                        {{ $t('common.members') }}:
+                        <AccountIcon class="flex-shrink-0 w-5 h-5 text-base-400 mr-1" aria-hidden="true" />
+                        <span class="font-medium mr-1">{{ $t('common.members') }}:</span>
                         <span v-if="dispatch.units.length === 0">{{ $t('common.member', 0) }}</span>
                         <span v-else class="flex-1 ml-2 truncate">
                             <span v-for="unit in dispatch.units">

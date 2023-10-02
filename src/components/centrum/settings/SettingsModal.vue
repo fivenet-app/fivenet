@@ -186,7 +186,13 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                 :selected="settings !== null && mode.mode === settings.mode"
                                                                 :value="mode.mode"
                                                             >
-                                                                {{ CentrumMode[mode.mode] }}
+                                                                {{
+                                                                    $t(
+                                                                        `enums.centrum.CentrumMode.${
+                                                                            CentrumMode[mode.mode ?? 0]
+                                                                        }`,
+                                                                    )
+                                                                }}
                                                             </option>
                                                         </select>
                                                     </VeeField>
@@ -217,7 +223,13 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                 "
                                                                 :value="mode.mode"
                                                             >
-                                                                {{ CentrumMode[mode.mode] }}
+                                                                {{
+                                                                    $t(
+                                                                        `enums.centrum.CentrumMode.${
+                                                                            CentrumMode[mode.mode ?? 0]
+                                                                        }`,
+                                                                    )
+                                                                }}
                                                             </option>
                                                         </select>
                                                     </VeeField>

@@ -20,7 +20,7 @@ defineEmits<{
 const dispatchBackground = computed(() => dispatchStatusToBGColor(props.dispatch.status?.status ?? 0));
 const dispatchAnimated = computed(() => (dispatchStatusAnimate(props.dispatch.status?.status ?? 0) ? 'animate-pulse' : ''));
 
-const dispatchAssistanceSound = useSound('/sounds/centrum/message-incoming.mp3', {
+const dispatchAssistanceSound = useSound('/sounds/centrum/morse-sos.mp3', {
     volume: 0.15,
 });
 const debouncedPlay = useDebounceFn(() => dispatchAssistanceSound.play(), 950);

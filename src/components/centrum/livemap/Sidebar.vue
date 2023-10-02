@@ -39,7 +39,7 @@ defineEmits<{
 const { $grpc } = useNuxtApp();
 
 const centrumStore = useCentrumStore();
-const { settings, units, dispatches, ownDispatches, ownUnitId, pendingDispatches } = storeToRefs(centrumStore);
+const { getCurrentMode, units, dispatches, ownDispatches, ownUnitId, pendingDispatches } = storeToRefs(centrumStore);
 const { startStream, stopStream } = centrumStore;
 
 const notifications = useNotificatorStore();
@@ -198,7 +198,7 @@ const open = ref(false);
 <template>
     <Livemap>
         <template v-slot:default v-if="canStream">
-            <DispatchesLayer :show-all-dispatches="settings.mode === CentrumMode.SIMPLIFIED" @goto="$emit('goto', $event)" />
+            <DispatchesLayer :show-all-dispatches="getCurrentMode === CentrumMode.SIMPLIFIED" @goto="$emit('goto', $event)" />
             <LControl position="bottomright">
                 <button
                     type="button"

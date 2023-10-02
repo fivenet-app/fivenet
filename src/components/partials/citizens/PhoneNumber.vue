@@ -10,9 +10,11 @@ const props = withDefaults(
         showIcon?: boolean;
         hideNumber?: boolean;
         showLabel?: boolean;
+        width?: string;
     }>(),
     {
         showIcon: undefined,
+        width: 'w-6',
     },
 );
 
@@ -57,7 +59,7 @@ function doCall(): void {
                 class="ml-1 flex-initial inline-flex items-center text-primary-500 hover:text-primary-400"
                 @click="doCall"
             >
-                <PhoneIcon class="w-6 h-auto" aria-hidden="true" />
+                <PhoneIcon class="h-auto" :class="width" aria-hidden="true" />
                 <span v-if="showLabel" class="ml-1">{{ $t('common.call') }}</span>
             </button>
         </template>

@@ -43,9 +43,21 @@ export function dispatchStatusToBGColor(status: StatusDispatch | undefined): str
     }
 }
 
+export const animateStates = [
+    StatusDispatch.NEW.valueOf(),
+    StatusDispatch.UNASSIGNED.valueOf(),
+    StatusDispatch.NEED_ASSISTANCE.valueOf(),
+];
+
+export function dispatchStatusAnimate(status: StatusDispatch | undefined): boolean {
+    return animateStates.includes((status ?? StatusDispatch.NEW).valueOf());
+}
+
 export function unitStatusToBGColor(status: StatusUnit | undefined): string {
     switch (status) {
         case StatusUnit.ON_BREAK:
+        case StatusUnit.USER_ADDED:
+        case StatusUnit.USER_REMOVED:
             return 'bg-info-500';
         case StatusUnit.AVAILABLE:
             return 'bg-success-600';
@@ -57,14 +69,4 @@ export function unitStatusToBGColor(status: StatusUnit | undefined): string {
         default:
             return 'bg-error-600';
     }
-}
-
-export const animateStates = [
-    StatusDispatch.NEW.valueOf(),
-    StatusDispatch.UNASSIGNED.valueOf(),
-    StatusDispatch.NEED_ASSISTANCE.valueOf(),
-];
-
-export function dispatchStatusAnimate(status: StatusDispatch | undefined): boolean {
-    return animateStates.includes((status ?? StatusDispatch.NEW).valueOf());
 }

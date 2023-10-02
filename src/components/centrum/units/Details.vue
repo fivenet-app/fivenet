@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
-import { AccountIcon, CloseIcon, PencilIcon } from 'mdi-vue3';
+import { AccountIcon, CloseIcon, MapMarkerIcon, PencilIcon } from 'mdi-vue3';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import Time from '~/components/partials/elements/Time.vue';
 import { StatusUnit, Unit } from '~~/gen/ts/resources/dispatch/units';
@@ -136,14 +136,19 @@ const openStatus = ref(false);
                                                             <dd
                                                                 class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
                                                             >
+                                                                <span class="block">
+                                                                    {{ $t('common.postal') }}:
+                                                                    {{ unit.status?.postal ?? 'N/A' }}
+                                                                </span>
                                                                 <button
                                                                     v-if="unit.status?.x && unit.status?.y"
                                                                     type="button"
-                                                                    class="text-primary-400 hover:text-primary-600"
+                                                                    class="inline-flex items-center text-primary-400 hover:text-primary-600"
                                                                     @click="
                                                                         $emit('goto', { x: unit.status?.x, y: unit.status?.y })
                                                                     "
                                                                 >
+                                                                    <MapMarkerIcon class="w-5 h-5 mr-1" aria-hidden="true" />
                                                                     {{ $t('common.go_to_location') }}
                                                                 </button>
                                                                 <span v-else>{{ $t('common.no_location') }}</span>

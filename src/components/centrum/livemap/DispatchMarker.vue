@@ -3,7 +3,7 @@ import { LIcon, LMarker, LPopup } from '@vue-leaflet/vue-leaflet';
 import { BellIcon } from 'mdi-vue3';
 import { dispatchStatusAnimate, dispatchStatusToBGColor, dispatchStatusToFillColor } from '~/components/centrum/helpers';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
-import PhoneNumber from '~/components/partials/citizens/PhoneNumber.vue';
+import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import { Dispatch, StatusDispatch } from '~~/gen/ts/resources/dispatch/dispatches';
 
 const props = withDefaults(
@@ -49,7 +49,7 @@ const dispatchStatusColors = computed(() => {
         </LIcon>
         <LPopup :options="{ closeButton: true }">
             <IDCopyBadge class="mb-1" prefix="DSP" :id="dispatch.id" :action="selected" />
-            <ul>
+            <ul class="flex flex-col">
                 <li>
                     <span class="font-semibold">{{ $t('common.status') }}</span
                     >:
@@ -75,11 +75,7 @@ const dispatchStatusColors = computed(() => {
                     <span v-if="dispatch.anon">
                         {{ $t('common.anon') }}
                     </span>
-                    <span v-else-if="dispatch.creator">
-                        {{ dispatch.creator?.firstname }}, {{ dispatch.creator?.lastname }} (<PhoneNumber
-                            :number="dispatch.creator.phoneNumber"
-                        />)
-                    </span>
+                    <CitizenInfoPopover v-else-if="dispatch.creator" :user="dispatch.creator" />
                     <span v-else>
                         {{ $t('common.unknown') }}
                     </span>

@@ -1,16 +1,13 @@
 <script lang="ts" setup>
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { GroupIcon, LocationEnterIcon, LocationExitIcon } from 'mdi-vue3';
-import { CentrumMode, Settings } from '~~/gen/ts/resources/dispatch/settings';
-import { UserShort } from '~~/gen/ts/resources/users/users';
-
-const props = defineProps<{
-    disponents: UserShort[];
-    settings: Settings;
-    isDisponent?: boolean;
-}>();
+import { useCentrumStore } from '~/store/centrum';
+import { CentrumMode } from '~~/gen/ts/resources/dispatch/settings';
 
 const { $grpc } = useNuxtApp();
+
+const centrumStore = useCentrumStore();
+const { getCurrentMode, disponents, isDisponent } = storeToRefs(centrumStore);
 
 async function takeControl(signon: boolean): Promise<void> {
     return new Promise(async (res, rej) => {
@@ -31,7 +28,7 @@ async function takeControl(signon: boolean): Promise<void> {
 const disponentsNames = computed(() => {
     const names: string[] = [];
 
-    props.disponents.forEach((u) => {
+    disponents.value.forEach((u) => {
         names.push(`${u.firstname} ${u.lastname}`);
     });
 
@@ -115,7 +112,7 @@ const disponentsNames = computed(() => {
                                 <span
                                     class="inline-flex items-center rounded-md bg-gray-400/10 px-2 py-1 text-xs font-medium text-gray-400 ring-1 ring-inset ring-gray-400/20"
                                 >
-                                    {{ CentrumMode[settings.mode ?? 0] }}
+                                    {{ $t(`enums.centrum.CentrumMode.${CentrumMode[getCurrentMode ?? 0]}`) }}
                                 </span>
                             </p>
                         </div>

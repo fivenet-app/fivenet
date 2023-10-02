@@ -44,6 +44,11 @@ export const useCentrumStore = defineStore('centrum', {
             pendingDispatches: [] as bigint[],
         }) as CentrumState,
     persist: false,
+    getters: {
+        getCurrentMode(state: CentrumState) {
+            return state.disponents.length > 0 ? state.settings.mode : state.settings.fallbackMode;
+        },
+    },
     actions: {
         addOrUpdateUnit(unit: Unit): void {
             const u = this.units.get(unit.id);

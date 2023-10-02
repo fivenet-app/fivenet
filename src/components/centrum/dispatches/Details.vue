@@ -2,7 +2,7 @@
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { useConfirmDialog } from '@vueuse/core';
-import { AccountIcon, CloseIcon, PencilIcon, PlusIcon, TrashCanIcon } from 'mdi-vue3';
+import { AccountIcon, CloseIcon, MapMarkerIcon, PencilIcon, PlusIcon, TrashCanIcon } from 'mdi-vue3';
 import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
@@ -12,11 +12,12 @@ import { useNotificatorStore } from '~/store/notificator';
 import { Dispatch, StatusDispatch } from '~~/gen/ts/resources/dispatch/dispatches';
 import { Settings } from '~~/gen/ts/resources/dispatch/settings';
 import { TakeDispatchResp } from '~~/gen/ts/services/centrum/centrum';
+import { dispatchStatusToBGColor } from '../helpers';
 import AssignDispatchModal from './AssignDispatchModal.vue';
 import Feed from './Feed.vue';
 import StatusUpdateModal from './StatusUpdateModal.vue';
 
-defineProps<{
+const props = defineProps<{
     open: boolean;
     dispatch: Dispatch;
     settings?: Settings;
@@ -81,6 +82,8 @@ async function deleteDispatch(id: bigint): Promise<void> {
 const { isRevealed, reveal, confirm, cancel, onConfirm } = useConfirmDialog();
 
 onConfirm(async (id) => deleteDispatch(id));
+
+const dispatchStatusColors = computed(() => dispatchStatusToBGColor(props.dispatch.status?.status ?? 0));
 
 const openAssign = ref(false);
 const openStatus = ref(false);
@@ -174,14 +177,15 @@ const openStatus = ref(false);
                                                                 class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
                                                             >
                                                                 <span class="block">
-                                                                    {{ dispatch.postal ?? 'N/A' }}
+                                                                    {{ $t('common.postal') }}: {{ dispatch.postal ?? 'N/A' }}
                                                                 </span>
                                                                 <button
                                                                     v-if="dispatch.x && dispatch.y"
                                                                     type="button"
-                                                                    class="text-primary-400 hover:text-primary-600"
+                                                                    class="inline-flex items-center text-primary-400 hover:text-primary-600"
                                                                     @click="$emit('goto', { x: dispatch.x, y: dispatch.y })"
                                                                 >
+                                                                    <MapMarkerIcon class="w-5 h-5 mr-1" aria-hidden="true" />
                                                                     {{ $t('common.go_to_location') }}
                                                                 </button>
                                                                 <span v-else>{{ $t('common.no_location') }}</span>
@@ -210,10 +214,12 @@ const openStatus = ref(false);
                                                                     :dispatch="dispatch"
                                                                     @close="openStatus = false"
                                                                 />
+
                                                                 <button
                                                                     type="button"
                                                                     @click="openStatus = true"
-                                                                    class="rounded bg-white/10 px-2 py-1 text-xs font-semibold text-white shadow-sm hover:bg-white/20"
+                                                                    class="rounded px-2 py-1 text-xs font-semibold text-white shadow-sm hover:bg-white/20"
+                                                                    :class="dispatchStatusColors"
                                                                 >
                                                                     {{
                                                                         $t(

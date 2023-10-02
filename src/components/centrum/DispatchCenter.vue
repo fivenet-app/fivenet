@@ -65,12 +65,7 @@ function goto(e: Coordinate) {
                     </Livemap>
                 </div>
                 <div class="basis-1/12">
-                    <DisponentsInfo
-                        :disponents="disponents"
-                        :settings="settings"
-                        :is-disponent="isDisponent"
-                        :class="!isDisponent ? 'z-50' : ''"
-                    />
+                    <DisponentsInfo :class="!isDisponent ? 'z-50' : ''" />
                 </div>
             </div>
 
