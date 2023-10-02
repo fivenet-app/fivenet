@@ -187,7 +187,10 @@
                 "license": "Identifier/ Lizenz",
                 "change_password": "Passwort ändern",
                 "change_password_button": "Konto Passwort ändern",
-                "set_startpage": "Setze Startseite nach Charakterauswahl"
+                "set_startpage": {
+                    "title": "Startseite nach Characterauswahl",
+                    "no_char_selected": "Um eine Startseite auszuwählen, müssen sie zuerst einen Character auswählen."
+                }
             },
             "login": {
                 "register_account": "Konto mit Token registrieren",
@@ -1423,9 +1426,9 @@
                 "BLOCKED": "Blockiert",
                 "VIEW": "Ansehen",
                 "COMMENT": "Kommentieren",
-                "STATUS": "Status",
                 "ACCESS": "Zugriffsmanagement",
-                "EDIT": "Editieren"
+                "EDIT": "Editieren",
+                "STATUS": "Status"
             },
             "DocReference": {
                 "UNSPECIFIED": "Unbestimmt",
