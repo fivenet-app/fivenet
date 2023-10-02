@@ -276,7 +276,7 @@ onConfirm(async (id: bigint) => deleteDocument(id));
                         </div>
                         <div
                             v-if="access && (access?.jobs.length > 0 || access?.users.length > 0)"
-                            class="flex flex-row flex-wrap gap-2 pb-3 mt-1 overflow-x-auto snap-x sm:pb-0"
+                            class="flex flex-row flex-wrap gap-2 pb-3 mt-2 overflow-x-auto snap-x sm:pb-0"
                         >
                             <div
                                 v-for="entry in access?.jobs"
@@ -286,7 +286,10 @@ onConfirm(async (id: bigint) => deleteDocument(id));
                                 <span class="w-2 h-2 rounded-full bg-info-500" aria-hidden="true" />
                                 <span class="text-sm font-medium text-info-800"
                                     >{{ entry.jobLabel
-                                    }}<span :title="`$t('common.rank') {{ entry.minimumGrade }}`" v-if="entry.minimumGrade > 0">
+                                    }}<span
+                                        :title="`${entry.jobLabel} - ${$t('common.rank')} ${entry.minimumGrade}`"
+                                        v-if="entry.minimumGrade > 0"
+                                    >
                                         ({{ entry.jobGradeLabel }})</span
                                     >
                                     -
@@ -299,7 +302,10 @@ onConfirm(async (id: bigint) => deleteDocument(id));
                                 class="flex flex-row items-center flex-initial gap-1 px-2 py-1 rounded-full bg-secondary-100 whitespace-nowrap snap-start"
                             >
                                 <span class="w-2 h-2 rounded-full bg-secondary-400" aria-hidden="true" />
-                                <span class="text-sm font-medium text-secondary-700">
+                                <span
+                                    class="text-sm font-medium text-secondary-700"
+                                    :title="`${$t('common.id')} ${entry.userId}`"
+                                >
                                     {{ entry.user?.firstname }}
                                     {{ entry.user?.lastname }} -
                                     {{ $t(`enums.docstore.AccessLevel.${AccessLevel[entry.access]}`) }}
