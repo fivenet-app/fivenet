@@ -36,43 +36,60 @@ const id = ref<bigint>(props.attribute.attrId);
 
 if (!states.value.has(id.value) || states.value.get(id.value) === undefined) {
     switch (lowercaseFirstLetter(props.attribute.type)) {
-        case 'stringList':
+        case 'stringList': {
+            let def: string[] = [];
+            if (props.attribute.defaultValues?.validValues.oneofKind === 'stringList') {
+                def = props.attribute.defaultValues?.validValues.stringList.strings;
+            }
+
             states.value.set(id.value, {
                 validValues: {
                     oneofKind: 'stringList',
                     stringList: {
-                        strings: [],
+                        strings: def,
                     },
                 },
             });
             break;
+        }
 
-        case 'jobList':
+        case 'jobList': {
+            let def: string[] = [];
+            if (props.attribute.defaultValues?.validValues.oneofKind === 'jobList') {
+                def = props.attribute.defaultValues?.validValues.jobList.strings;
+            }
+
             states.value.set(id.value, {
                 validValues: {
                     oneofKind: 'jobList',
                     jobList: {
-                        strings: [],
+                        strings: def,
                     },
                 },
             });
             break;
+        }
 
-        case 'jobGradeList':
+        case 'jobGradeList': {
+            let def = {};
+            if (props.attribute.defaultValues?.validValues.oneofKind === 'jobGradeList') {
+                def = props.attribute.defaultValues?.validValues.jobGradeList.jobs;
+            }
+
             states.value.set(id.value, {
                 validValues: {
                     oneofKind: 'jobGradeList',
                     jobGradeList: {
-                        jobs: {},
+                        jobs: def,
                     },
                 },
             });
             break;
+        }
     }
 }
 
 const currentValue: AttributeValues = states.value.get(id.value)!;
-if (props.attribute.attrId === 1n) console.log('ATTR VIEW ATTR', id.value, currentValue.validValues);
 const validValues = ref<AttributeValues | undefined>(props.attribute.validValues);
 
 async function toggleStringListValue(value: string): Promise<void> {
@@ -161,11 +178,6 @@ onBeforeMount(async () => {
 
         jobGrades.value.set(job.name, job.grades[(currentValue.validValues?.jobGradeList.jobs[job.name] ?? 1) - 1]);
     });
-
-    if (validValues.value && validValues.value.validValues.oneofKind === 'jobGradeList')
-        console.log('validValues', props.attribute.attrId, validValues.value.validValues.jobGradeList.jobs);
-    if (currentValue.validValues.oneofKind === 'jobGradeList')
-        console.log('currentValue', props.attribute.attrId, currentValue.validValues.jobGradeList.jobs);
 });
 </script>
 

@@ -304,17 +304,31 @@ func (s *Server) archiveDispatches(ctx context.Context) error {
 					tDispatch.ID.EQ(tDispatchStatus.DispatchID),
 				),
 		).
-		WHERE(jet.AND(
-			tDispatchStatus.CreatedAt.LT_EQ(
-				jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(5, jet.MINUTE)),
+		WHERE(jet.OR(
+			// Either the dispatch is at least 5 minutes old, completed/cancelled or has no status set
+			jet.AND(
+				tDispatchStatus.CreatedAt.LT_EQ(
+					jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(5, jet.MINUTE)),
+				),
+				tDispatchStatus.ID.IS_NULL().OR(
+					tDispatchStatus.ID.EQ(
+						jet.RawInt("SELECT MAX(`dispatchstatus`.`id`) FROM `fivenet_centrum_dispatches_status` AS `dispatchstatus` WHERE `dispatchstatus`.`dispatch_id` = `dispatch`.`id`"),
+					),
+				),
+				tDispatchStatus.Status.IN(
+					jet.Int16(int16(dispatch.StatusDispatch_STATUS_DISPATCH_COMPLETED)),
+					jet.Int16(int16(dispatch.StatusDispatch_STATUS_DISPATCH_CANCELLED)),
+				),
 			),
-			tDispatchStatus.Status.IN(
-				jet.Int16(int16(dispatch.StatusDispatch_STATUS_DISPATCH_COMPLETED)),
-				jet.Int16(int16(dispatch.StatusDispatch_STATUS_DISPATCH_CANCELLED)),
-			),
-			tDispatchStatus.ID.IS_NULL().OR(
-				tDispatchStatus.ID.EQ(
-					jet.RawInt("SELECT MAX(`dispatchstatus`.`id`) FROM `fivenet_centrum_dispatches_status` AS `dispatchstatus` WHERE `dispatchstatus`.`dispatch_id` = `dispatch`.`id`"),
+			// Or the last dispatch status is older than 2 hours and not completed/cancelled/archived status
+			jet.AND(
+				tDispatchStatus.CreatedAt.LT_EQ(
+					jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(2, jet.HOUR)),
+				),
+				tDispatchStatus.Status.NOT_IN(
+					jet.Int16(int16(dispatch.StatusDispatch_STATUS_DISPATCH_COMPLETED)),
+					jet.Int16(int16(dispatch.StatusDispatch_STATUS_DISPATCH_CANCELLED)),
+					jet.Int16(int16(dispatch.StatusDispatch_STATUS_DISPATCH_ARCHIVED)),
 				),
 			),
 		))
