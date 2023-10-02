@@ -186,7 +186,8 @@
                 "subtitle": "Deine FiveNet Konto Informationen.",
                 "license": "Identifier/ Lizenz",
                 "change_password": "Passwort ändern",
-                "change_password_button": "Konto Passwort ändern"
+                "change_password_button": "Konto Passwort ändern",
+                "set_startpage": "Setze Startseite nach Charakterauswahl"
             },
             "login": {
                 "register_account": "Konto mit Token registrieren",

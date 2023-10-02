@@ -3,7 +3,7 @@ import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
 import { toDate } from '~/utils/time';
 
-export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, _: RouteLocationNormalized) => {
+export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, from: RouteLocationNormalized) => {
     const authStore = useAuthStore();
     const { activeChar, accessToken, lastCharID } = storeToRefs(authStore);
 
@@ -50,7 +50,7 @@ export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, _: 
                 title: { key: 'notifications.auth.no_permission.title', parameters: [] },
                 content: {
                     key: 'notifications.auth.no_permission.content',
-                    parameters: [to.name ? to.name?.toString() : to.path],
+                    parameters: [to.name ? toTitleCase(to.name?.toString()) : to.path],
                 },
                 type: 'warning',
             });

@@ -4,6 +4,7 @@ import Footer from '~/components/partials/Footer.vue';
 import HeroFull from '~/components/partials/HeroFull.vue';
 import FiveNetLogo from '~/components/partials/logos/FiveNetLogo.vue';
 import { useAuthStore } from '~/store/auth';
+import { useSettingsStore } from '~/store/settings';
 
 useHead({
     title: 'common.home',
@@ -16,6 +17,13 @@ definePageMeta({
 
 const authStore = useAuthStore();
 const { accessToken } = storeToRefs(authStore);
+
+onBeforeMount(async () => {
+    if (accessToken.value) {
+        const target = useRouter().resolve(useSettingsStore().startpage);
+        return navigateTo(target);
+    }
+});
 </script>
 
 <template>
@@ -32,14 +40,6 @@ const { accessToken } = storeToRefs(authStore);
                     <p v-t="'pages.index.subtext'" class="mt-6 text-lg leading-8 text-neutral"></p>
                     <div class="flex items-center justify-center mt-4 gap-x-6">
                         <NuxtLink
-                            v-if="accessToken"
-                            :to="{ name: 'overview' }"
-                            class="rounded-md w-32 bg-primary-500 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
-                        >
-                            {{ $t('common.overview') }}
-                        </NuxtLink>
-                        <NuxtLink
-                            v-else
                             :to="{ name: 'auth-login' }"
                             class="w-48 max-w-96 rounded-md bg-primary-500 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
                         >

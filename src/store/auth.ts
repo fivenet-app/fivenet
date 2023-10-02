@@ -5,6 +5,7 @@ import { JobProps } from '~~/gen/ts/resources/users/jobs';
 import { User } from '~~/gen/ts/resources/users/users';
 import { useClipboardStore } from './clipboard';
 import { useNotificatorStore } from './notificator';
+import { useSettingsStore } from './settings';
 
 export type JobPropsState = {
     quickButtons: String[];
@@ -150,13 +151,18 @@ export const useAuthStore = defineStore('auth', {
                         this.setJobProps(null);
                     }
 
-                    const path = useRoute().query.redirect?.toString() || '/overview';
-                    const url = new URL('https://example.com' + path);
-                    await navigateTo({
-                        path: url.pathname,
-                        query: parseQuery(url.search),
-                        hash: url.hash,
-                    });
+                    if (useRoute().query.redirect !== undefined) {
+                        const path = useRoute().query.redirect?.toString() || '/overview';
+                        const url = new URL('https://example.com' + path);
+                        await navigateTo({
+                            path: url.pathname,
+                            query: parseQuery(url.search),
+                            hash: url.hash,
+                        });
+                    } else {
+                        const target = useRouter().resolve(useSettingsStore().startpage);
+                        await navigateTo(target);
+                    }
 
                     return res();
                 } catch (e) {

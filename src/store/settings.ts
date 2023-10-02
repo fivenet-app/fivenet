@@ -7,6 +7,7 @@ export interface SettingsState {
         markerSize: number;
         centerSelectedMarker: boolean;
     };
+    startpage: string;
 }
 
 export const useSettingsStore = defineStore('settings', {
@@ -18,6 +19,7 @@ export const useSettingsStore = defineStore('settings', {
                 markerSize: 22,
                 centerSelectedMarker: false,
             },
+            startpage: '/overview',
         }) as SettingsState,
     persist: true,
     actions: {

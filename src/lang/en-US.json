@@ -186,7 +186,11 @@
                 "subtitle": "Your FiveNet account details.",
                 "license": "Identifier/ License",
                 "change_password": "Change Password",
-                "change_password_button": "Change Account Password"
+                "change_password_button": "Change Account Password",
+                "set_startpage": {
+                    "title": "Start Page after character selector",
+                    "no_char_selected": "To select a start page you must select a character first."
+                }
             },
             "login": {
                 "register_account": "Register Account using Token",

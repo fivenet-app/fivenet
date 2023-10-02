@@ -5,11 +5,11 @@ import { useAuthStore } from '~/store/auth';
 import { useClipboardStore } from '~/store/clipboard';
 import { useSettingsStore } from '~/store/settings';
 
-const authStore = useAuthStore();
 const clipboardStore = useClipboardStore();
 
 const settings = useSettingsStore();
 
+const authStore = useAuthStore();
 const { activeChar, permissions, getAccessTokenExpiration } = storeToRefs(authStore);
 const { clearAuthInfo } = authStore;
 

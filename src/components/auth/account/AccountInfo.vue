@@ -4,12 +4,20 @@ import { AccountIcon } from 'mdi-vue3';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
+import { useAuthStore } from '~/store/auth';
+import { useSettingsStore } from '~/store/settings';
 import { GetAccountInfoResponse } from '~~/gen/ts/services/auth/auth';
 import ChangePasswordModal from './ChangePasswordModal.vue';
 import DebugInfo from './DebugInfo.vue';
 import OAuth2Connections from './OAuth2Connections.vue';
 
 const { $grpc } = useNuxtApp();
+
+const authStore = useAuthStore();
+const { activeChar } = storeToRefs(authStore);
+
+const settings = useSettingsStore();
+const { startpage } = storeToRefs(settings);
 
 const { data: account, pending, refresh, error } = useLazyAsyncData(`accountinfo`, () => getAccountInfo());
 
@@ -36,6 +44,23 @@ async function removeOAuth2Connection(provider: string): Promise<void> {
         await refresh();
     }
 }
+
+const homepages: { name: string; path: string; permission?: string }[] = [
+    { name: 'common.home', path: '/overview' },
+    { name: 'pages.citizens.title', path: '/citizens', permission: 'CitizenStoreService.ListCitizens' },
+    { name: 'pages.vehicles.title', path: '/vehicles', permission: 'DMVService.ListVehicles' },
+    { name: 'pages.documents.title', path: '/documents', permission: 'DocStoreService.ListDocuments' },
+    { name: 'pages.jobs.overview.title', path: '/jobs/overview', permission: 'JobsService.ColleaguesList' },
+    { name: 'common.livemap', path: '/livemap', permission: 'LivemapperService.Stream' },
+    { name: 'common.dispatch_center', path: '/centrum', permission: 'CentrumService.TakeControl' },
+];
+
+const selectedHomepage = ref<(typeof homepages)[0]>();
+watch(selectedHomepage, () => (startpage.value = selectedHomepage.value?.path ?? '/overview'));
+
+onBeforeMount(async () => {
+    selectedHomepage.value = homepages.find((h) => h.path === startpage.value);
+});
 </script>
 
 <template>
@@ -88,6 +113,30 @@ async function removeOAuth2Connection(provider: string): Promise<void> {
                                 >
                                     {{ $t('components.auth.account_info.change_password_button') }}
                                 </button>
+                            </dd>
+                        </div>
+                        <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
+                            <dt class="text-sm font-medium">
+                                {{ $t('components.auth.account_info.set_startpage.title') }}
+                            </dt>
+                            <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
+                                <select
+                                    v-if="activeChar"
+                                    v-model="selectedHomepage"
+                                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                >
+                                    <template v-for="page in homepages">
+                                        <option
+                                            :value="page"
+                                            :disabled="!(page.permission !== undefined && can(page.permission))"
+                                        >
+                                            {{ $t(page.name ?? 'common.page') }}
+                                        </option>
+                                    </template>
+                                </select>
+                                <p v-else class="text-white">
+                                    {{ $t('components.auth.account_info.set_startpage.no_char_selected') }}
+                                </p>
                             </dd>
                         </div>
                     </dl>
