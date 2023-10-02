@@ -1269,10 +1269,10 @@
                 "Markers": "Markierungen"
             },
             "CreateOrUpdateMarker": {
-                "Access": "Zugriff"
+                "Access": "Zugriff auf fraktionseigene Markierungen"
             },
             "DeleteMarker": {
-                "Access": "Zugriff"
+                "Access": "Zugriff auf fraktionseigene Dokumente"
             }
         },
         "RectorService": {
@@ -1282,16 +1282,16 @@
         },
         "DocStoreService": {
             "UpdateDocument": {
-                "Access": "Zugriff"
+                "Access": "Zugriff auf fraktionseigene Dokumente"
             },
             "DeleteDocument": {
-                "Access": "Zugriff"
+                "Access": "Zugriff auf fraktionseigene Dokumente"
             },
             "ToggleDocument": {
-                "Access": "Zugriff"
+                "Access": "Zugriff auf fraktionseigene Dokumente"
             },
             "DeleteComment": {
-                "Access": "Zugriff"
+                "Access": "Zugriff auf fraktionseigene Dokumente"
             }
         },
         "CompletorService": {
@@ -1301,10 +1301,10 @@
         },
         "JobsService": {
             "ConductListEntries": {
-                "Access": "Zugriff"
+                "Access": "Zugriff auf Führungsregister-Einträge"
             },
             "TimeclockListEntries": {
-                "Access": "Zugriff"
+                "Access": "Zugriff auf Stempeluhr-Einträge"
             }
         }
     },
