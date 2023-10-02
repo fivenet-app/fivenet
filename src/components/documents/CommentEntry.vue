@@ -83,6 +83,7 @@ const { handleSubmit, meta, resetForm } = useForm<FormData>({
     validationSchema: {
         comment: { required: true, min: 3, max: 1536 },
     },
+    validateOnMount: true,
 });
 
 const canSubmit = ref(true);

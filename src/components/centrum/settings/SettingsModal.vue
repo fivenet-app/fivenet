@@ -91,6 +91,7 @@ const { handleSubmit, meta, setValues } = useForm<FormData>({
         mode: { required: true },
         fallbackMode: { required: true },
     },
+    validateOnMount: true,
 });
 
 const canSubmit = ref(true);

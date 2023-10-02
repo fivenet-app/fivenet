@@ -65,6 +65,7 @@ const { handleSubmit, meta } = useForm<FormData>({
         password: { required: true, min: 6, max: 70 },
         newPassword: { required: true, min: 6, max: 70 },
     },
+    validateOnMount: true,
 });
 
 const canSubmit = ref(true);

@@ -94,6 +94,7 @@ const { handleSubmit, meta, values, setValues } = useForm<FormData>({
         circleRadius: 50,
         circleOpacity: 5,
     },
+    validateOnMount: true,
 });
 setValues({
     markerType: MarkerType.CIRCLE,

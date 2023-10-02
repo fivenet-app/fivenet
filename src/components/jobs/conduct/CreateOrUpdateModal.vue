@@ -140,6 +140,7 @@ const { handleSubmit, meta, setValues, setFieldValue, resetForm } = useForm<Form
     initialValues: {
         type: ConductType.NEUTRAL,
     },
+    validateOnMount: true,
 });
 
 watch(props, () => {

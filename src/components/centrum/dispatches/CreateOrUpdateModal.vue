@@ -70,6 +70,7 @@ const { handleSubmit, meta, resetForm } = useForm<FormData>({
         description: { required: false, min: 6, max: 512 },
         anon: { required: false },
     },
+    validateOnMount: true,
 });
 
 const canSubmit = ref(true);

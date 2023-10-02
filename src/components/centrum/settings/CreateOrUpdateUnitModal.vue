@@ -3,7 +3,7 @@ import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } fro
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { max, min, required } from '@vee-validate/rules';
 import { useThrottleFn } from '@vueuse/core';
-import { GroupIcon } from 'mdi-vue3';
+import { GroupIcon, LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import { Unit } from '~~/gen/ts/resources/dispatch/units';
 
@@ -64,6 +64,10 @@ const { handleSubmit, meta, setValues } = useForm<FormData>({
         description: { required: false, max: 255 },
         color: { required: true, max: 7 },
     },
+    initialValues: {
+        color: '#000000',
+    },
+    validateOnMount: true,
 });
 
 const canSubmit = ref(true);
@@ -82,7 +86,7 @@ onMounted(() => {
             name: props.unit.name,
             initials: props.unit.initials,
             description: props.unit.description,
-            color: `#${props.unit.color}`,
+            color: `#${props.unit.color ?? '000000'}`,
         });
     }
 });
@@ -206,13 +210,16 @@ onMounted(() => {
                                     <button
                                         type="submit"
                                         class="inline-flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:col-start-2"
-                                        :disabled="!meta.valid"
+                                        :disabled="!meta.valid || !canSubmit"
                                         :class="[
-                                            !meta.valid
+                                            !meta.valid || !canSubmit
                                                 ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
                                                 : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
                                         ]"
                                     >
+                                        <template v-if="!canSubmit">
+                                            <LoadingIcon class="animate-spin h-5 w-5 mr-2" />
+                                        </template>
                                         <span v-if="unit && unit?.id">
                                             {{ $t('components.centrum.units.update_unit') }}
                                         </span>
