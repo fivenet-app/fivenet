@@ -10,11 +10,15 @@ import { useNotificatorStore } from './notificator';
 const FIVE_MINUTES = 7 * 60 * 1000;
 const TWO_MINUTES = 2 * 60 * 1000;
 
+// In seconds
+const initialBackoffTime = 1;
+
 export interface CentrumState {
     error: RpcError | undefined;
     abort: AbortController | undefined;
     cleanupIntervalId: NodeJS.Timeout | undefined;
     restarting: boolean;
+    restartBackoffTime: number;
 
     settings: Settings;
     isDisponent: boolean;
@@ -33,6 +37,8 @@ export const useCentrumStore = defineStore('centrum', {
             error: undefined,
             abort: undefined,
             restarting: false,
+            restartBackoffTime: 0,
+
             settings: {},
             isDisponent: false,
             disponents: [] as UserShort[],
@@ -45,9 +51,8 @@ export const useCentrumStore = defineStore('centrum', {
         }) as CentrumState,
     persist: false,
     getters: {
-        getCurrentMode(state: CentrumState) {
-            return state.disponents.length > 0 ? state.settings.mode : state.settings.fallbackMode;
-        },
+        getCurrentMode: (state: CentrumState) =>
+            state.disponents.length > 0 ? state.settings.mode : state.settings.fallbackMode,
     },
     actions: {
         addOrUpdateUnit(unit: Unit): void {
@@ -370,6 +375,7 @@ export const useCentrumStore = defineStore('centrum', {
                     }
 
                     if (resp.restart !== undefined && resp.restart) {
+                        this.restartBackoffTime = 0;
                         this.restartStream(isCenter);
                         break;
                     }
@@ -378,7 +384,7 @@ export const useCentrumStore = defineStore('centrum', {
                 const error = e as RpcError;
                 if (error) {
                     // Only restart when not cancelled and abort is still valid
-                    if (error.code != 'CANCELLED' && error.code != 'ABORTED') {
+                    if (error.code !== 'CANCELLED' && error.code !== 'ABORTED') {
                         console.error('Centrum: Data Stream Failed', error.code, error.message, error.cause);
 
                         // Only set error if we don't need to restart
@@ -405,10 +411,20 @@ export const useCentrumStore = defineStore('centrum', {
         },
         async restartStream(isCenter?: boolean): Promise<void> {
             this.restarting = true;
+
+            // Reset back off time when over 10 seconds
+            if (this.restartBackoffTime > 10) {
+                this.restartBackoffTime = initialBackoffTime;
+            } else {
+                this.restartBackoffTime += initialBackoffTime;
+            }
+
             console.debug('Centrum: Restarting Data Stream');
             await this.stopStream();
 
-            setTimeout(async () => this.startStream(isCenter), 1000);
+            setTimeout(async () => {
+                if (this.restarting) this.startStream(isCenter);
+            }, this.restartBackoffTime * 1000);
         },
         // Central "can user do that" method as we will take the dispatch center mode into account further
         canDo(action: canDoAction, dispatch?: Dispatch): boolean {

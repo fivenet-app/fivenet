@@ -42,12 +42,11 @@ useSeoMeta({
 
 await loadConfig();
 
-const userSettings = useSettingsStore();
-if (__APP_VERSION__ != userSettings.version) {
-    console.info('Resetting app data because new version has been detected', userSettings.version, __APP_VERSION__);
+if (__APP_VERSION__ !== settings.version) {
+    console.info('Resetting app data because new version has been detected', settings.version, __APP_VERSION__);
     useClipboardStore().$reset();
     useDocumentEditorStore().$reset();
-    userSettings.setVersion(__APP_VERSION__);
+    settings.setVersion(__APP_VERSION__);
 }
 
 const cookieLocale = ref<Locale>('en');
@@ -60,7 +59,7 @@ configure({
 });
 
 // Set user setting locale on load of app
-locale.value = userSettings.locale;
+locale.value = settings.locale;
 setLocaleGlobally(locale.value);
 
 async function setLocaleGlobally(locale: string): Promise<void> {

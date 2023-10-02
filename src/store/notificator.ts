@@ -158,7 +158,7 @@ export const useNotificatorStore = defineStore('notifications', {
                 }
             } catch (e) {
                 const error = e as RpcError;
-                if (error.code != 'CANCELLED') {
+                if (error.code !== 'CANCELLED' && error.code !== 'ABORTED') {
                     console.debug('Notificator: Stream failed', error.code, error.message, error.cause);
                     this.restartStream();
                 }
@@ -185,7 +185,9 @@ export const useNotificatorStore = defineStore('notifications', {
             console.debug('Notificator: Restart back off time in', this.restartBackoffTime, 'seconds');
             await this.stopStream();
 
-            setTimeout(async () => this.startStream(), this.restartBackoffTime * 1000);
+            setTimeout(async () => {
+                if (this.restarting) this.startStream();
+            }, this.restartBackoffTime * 1000);
         },
     },
     getters: {

@@ -275,7 +275,7 @@ onConfirm(async (id: bigint) => deleteDocument(id));
                             </div>
                         </div>
                         <div
-                            v-if="access && access?.jobs.length > 0 && access?.users.length > 0"
+                            v-if="access && (access?.jobs.length > 0 || access?.users.length > 0)"
                             class="flex flex-row flex-wrap gap-2 pb-3 mt-1 overflow-x-auto snap-x sm:pb-0"
                         >
                             <div

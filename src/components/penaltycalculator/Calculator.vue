@@ -77,7 +77,7 @@ function calculate(e: SelectedPenalty): void {
     if (idx > -1) {
         const existing = selectedPenalties.value.at(idx)!;
         selectedPenalties.value[idx] = e;
-        if (existing.count != e.count) {
+        if (existing.count !== e.count) {
             count = e.count - existing.count;
         }
         // If the selected penalty count is 0, remove it from the list
