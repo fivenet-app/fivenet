@@ -22,11 +22,15 @@ export enum AccessLevel {
      */
     COMMENT = 3,
     /**
-     * @generated from protobuf enum value: ACCESS_LEVEL_ACCESS = 4;
+     * @generated from protobuf enum value: ACCESS_LEVEL_STATUS = 4;
      */
-    ACCESS = 4,
+    STATUS = 4,
     /**
-     * @generated from protobuf enum value: ACCESS_LEVEL_EDIT = 5;
+     * @generated from protobuf enum value: ACCESS_LEVEL_ACCESS = 5;
      */
-    EDIT = 5
+    ACCESS = 5,
+    /**
+     * @generated from protobuf enum value: ACCESS_LEVEL_EDIT = 6;
+     */
+    EDIT = 6
 }

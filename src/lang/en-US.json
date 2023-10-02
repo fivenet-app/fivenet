@@ -1422,6 +1422,7 @@
                 "BLOCKED": "Blocked",
                 "VIEW": "View",
                 "COMMENT": "Comment",
+                "STATUS": "Status",
                 "ACCESS": "Access",
                 "EDIT": "Edit"
             },

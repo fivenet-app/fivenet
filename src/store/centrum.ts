@@ -419,7 +419,7 @@ export const useCentrumStore = defineStore('centrum', {
                 this.restartBackoffTime += initialBackoffTime;
             }
 
-            console.debug('Centrum: Restarting Data Stream');
+            console.debug('Centrum: Restart back off time in', this.restartBackoffTime, 'seconds');
             await this.stopStream();
 
             setTimeout(async () => {

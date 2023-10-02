@@ -1422,6 +1422,7 @@
                 "BLOCKED": "Blockiert",
                 "VIEW": "Ansehen",
                 "COMMENT": "Kommentieren",
+                "STATUS": "Status",
                 "ACCESS": "Zugriffsmanagement",
                 "EDIT": "Editieren"
             },
