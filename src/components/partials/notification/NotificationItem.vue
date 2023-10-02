@@ -16,8 +16,8 @@ async function closeNotification(id: string): Promise<void> {
     removeNotification(id);
 }
 
-props.notification.content.parameters.forEach((e, i, a) => {
-    if (e.startsWith('errors.')) a[i] = t(e);
+props.notification.content.parameters?.forEach((e: string, i: number, a: string[]) => {
+    if (e.startsWith('errors.')) props.notification.content.parameters[i] = t(e);
 });
 </script>
 
@@ -41,10 +41,10 @@ props.notification.content.parameters.forEach((e, i, a) => {
                     </div>
                     <div class="ml-3 w-0 flex-1 pt-0.5">
                         <p class="text-sm font-semibold">
-                            {{ $t(notification.title.key, notification.title.parameters) }}
+                            {{ $t(notification.title.key, notification.title.parameters ?? []) }}
                         </p>
                         <p class="mt-1 text-sm leading-5`">
-                            {{ $t(notification.content.key, notification.content.parameters) }}
+                            {{ $t(notification.content.key, notification.content.parameters ?? []) }}
                         </p>
                     </div>
                     <div class="flex flex-shrink-0 ml-4">

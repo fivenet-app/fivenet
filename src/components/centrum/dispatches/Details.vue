@@ -8,6 +8,7 @@ import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import Time from '~/components/partials/elements/Time.vue';
 import { useCentrumStore } from '~/store/centrum';
+import { useNotificatorStore } from '~/store/notificator';
 import { Dispatch, StatusDispatch } from '~~/gen/ts/resources/dispatch/dispatches';
 import { Settings } from '~~/gen/ts/resources/dispatch/settings';
 import { TakeDispatchResp } from '~~/gen/ts/services/centrum/centrum';
@@ -29,10 +30,23 @@ defineEmits<{
 const { $grpc } = useNuxtApp();
 
 const centrumStore = useCentrumStore();
+const { ownUnitId } = storeToRefs(centrumStore);
 const { canDo } = centrumStore;
+
+const notificationsStore = useNotificatorStore();
 
 async function selfAssign(id: bigint): Promise<void> {
     return new Promise(async (res, rej) => {
+        if (ownUnitId.value === undefined) {
+            notificationsStore.dispatchNotification({
+                title: { key: 'notifications.centrum.unitAssigned.not_in_unit.title' },
+                content: { key: 'notifications.centrum.unitAssigned.not_in_unit.content' },
+                type: 'error',
+            });
+
+            return res();
+        }
+
         try {
             const call = $grpc.getCentrumClient().takeDispatch({
                 dispatchIds: [id],
