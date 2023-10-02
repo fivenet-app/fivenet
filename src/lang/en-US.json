@@ -1269,10 +1269,10 @@
                 "Markers": "Markers"
             },
             "CreateOrUpdateMarker": {
-                "Access": "Access"
+                "Access": "Access to factions-own markers"
             },
             "DeleteMarker": {
-                "Access": "Access"
+                "Access": "Access to factions-own markers"
             }
         },
         "RectorService": {
@@ -1282,16 +1282,16 @@
         },
         "DocStoreService": {
             "UpdateDocument": {
-                "Access": "Access"
+                "Access": "Access to factions-own documents"
             },
             "DeleteDocument": {
-                "Access": "Access"
+                "Access": "Access to factions-own documents"
             },
             "ToggleDocument": {
-                "Access": "Access"
+                "Access": "Access to factions-own documents"
             },
             "DeleteComment": {
-                "Access": "Access"
+                "Access": "Access to factions-own documents"
             }
         },
         "CompletorService": {
@@ -1301,10 +1301,10 @@
         },
         "JobsService": {
             "ConductListEntries": {
-                "Access": "Access"
+                "Access": "Access to conduct register entries"
             },
             "TimeclockListEntries": {
-                "Access": "Access"
+                "Access": "Access to time clock entries"
             }
         }
     },
