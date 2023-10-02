@@ -920,6 +920,10 @@
                 "removed": {
                     "title": "Einheit verlassen",
                     "content": "Sie haben die Einheit verlassen."
+                },
+                "not_in_unit": {
+                    "title": "Sie sind in keiner Einheit!",
+                    "content": "Sie müssen in einer Einheit sein, um das zu tun."
                 }
             },
             "sidebar": {
