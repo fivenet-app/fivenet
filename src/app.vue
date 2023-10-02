@@ -87,10 +87,7 @@ watch(locale, () => setLocaleGlobally(locale.value));
 // Open update available confirm dialog
 const open = ref(false);
 
-watch(updateAvailable, async () => {
-    open.value = true;
-    console.log('updateAvailable', updateAvailable.value);
-});
+watch(updateAvailable, async () => (open.value = true));
 </script>
 
 <template>

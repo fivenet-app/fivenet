@@ -219,7 +219,7 @@ onBeforeMount(async () => {
                 :class="[
                     open ? 'rounded-t-lg border-b-0' : 'rounded-lg',
                     disabled ? 'cursor-not-allowed' : '',
-                    ' flex w-full items-start justify-between text-left border-2 p-2 border-inherit transition-colors',
+                    'flex w-full items-start justify-between text-left border-2 p-2 border-inherit transition-colors',
                 ]"
             >
                 <span class="text-base leading-7 transition-colors">

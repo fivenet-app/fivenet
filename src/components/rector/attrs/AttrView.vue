@@ -65,11 +65,6 @@ async function getPermissions(roleId: bigint): Promise<void> {
 
             genPermissionCategories();
 
-            attrStates.value.clear();
-            attrList.value.forEach((attr) => {
-                attrStates.value.set(attr.attrId, attr.maxValues);
-            });
-
             return res();
         } catch (e) {
             $grpc.handleError(e as RpcError);
@@ -150,8 +145,13 @@ async function updateAttrs(): Promise<void> {
 async function initializeRoleView(): Promise<void> {
     await getPermissions(props.roleId);
 
+    attrStates.value.clear();
+    attrList.value.forEach((attr) => {
+        attrStates.value.set(attr.attrId, attr.maxValues);
+    });
+
     role.value?.attributes.forEach((attr) => {
-        attrStates.value.set(attr.attrId, attr.value);
+        attrStates.value.set(attr.attrId, attr.maxValues);
     });
 }
 
@@ -161,10 +161,6 @@ watch(props, () => {
     if (role.value === null || role.value.id !== props.roleId) {
         refresh();
     }
-});
-
-onMounted(async () => {
-    initializeRoleView();
 });
 </script>
 

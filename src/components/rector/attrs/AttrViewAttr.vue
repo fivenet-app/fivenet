@@ -72,6 +72,7 @@ if (!states.value.has(id.value) || states.value.get(id.value) === undefined) {
 }
 
 const currentValue: AttributeValues = states.value.get(id.value)!;
+if (props.attribute.attrId === 1n) console.log('ATTR VIEW ATTR', id.value, currentValue.validValues);
 const validValues = ref<AttributeValues | undefined>(props.attribute.validValues);
 
 async function toggleStringListValue(value: string): Promise<void> {
@@ -160,6 +161,11 @@ onBeforeMount(async () => {
 
         jobGrades.value.set(job.name, job.grades[(currentValue.validValues?.jobGradeList.jobs[job.name] ?? 1) - 1]);
     });
+
+    if (validValues.value && validValues.value.validValues.oneofKind === 'jobGradeList')
+        console.log('validValues', props.attribute.attrId, validValues.value.validValues.jobGradeList.jobs);
+    if (currentValue.validValues.oneofKind === 'jobGradeList')
+        console.log('currentValue', props.attribute.attrId, currentValue.validValues.jobGradeList.jobs);
 });
 </script>
 
@@ -177,7 +183,7 @@ onBeforeMount(async () => {
                 :class="[
                     open ? 'rounded-t-lg border-b-0' : 'rounded-lg',
                     $props.disabled ? 'cursor-not-allowed' : '',
-                    ' flex w-full items-start justify-between text-left border-2 p-2 border-inherit transition-colors',
+                    'flex w-full items-start justify-between text-left border-2 p-2 border-inherit transition-colors',
                 ]"
             >
                 <span class="text-base leading-7 transition-colors">
@@ -254,6 +260,7 @@ onBeforeMount(async () => {
                                 class="h-4 w-4 my-auto rounded border-base-300 text-primary-500 focus:ring-primary-500"
                             />
                             <span class="flex-1 my-auto">{{ job.label }}</span>
+
                             <Listbox
                                 as="div"
                                 class="flex-1"
