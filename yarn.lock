@@ -694,9 +694,9 @@
     vue-demi "^0.13.11"
 
 "@fontsource/inter@^5.0.8":
-  version "5.0.8"
-  resolved "https://registry.yarnpkg.com/@fontsource/inter/-/inter-5.0.8.tgz#61b50cb0eb72b14ae1938d47c4a9a91546d2a50c"
-  integrity sha512-28knWH1BfOiRalfLs90U4sge5mpQ8ZH6FS0PTT+IZMKrZ7wNHDHRuKa1kQJg+uHcc6axBppnxll+HXM4c7zo/Q==
+  version "5.0.12"
+  resolved "https://registry.yarnpkg.com/@fontsource/inter/-/inter-5.0.12.tgz#70a97308174d079d8fec92df81138bd8a3c0d374"
+  integrity sha512-9MCQLyzhMqQW9Ky5k/tcE+t88EyLX6z9VrU54AadHoF6s0dGiqbNVmusMe0/vrLmDxPV1ZDl3DdVyNhR49qbPg==
 
 "@hapi/hoek@^9.0.0":
   version "9.3.0"
