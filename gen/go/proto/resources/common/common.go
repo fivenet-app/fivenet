@@ -8,8 +8,10 @@ const (
 
 type IJobInfo interface {
 	GetJob() string
-	GetJobGrade() int32
+	SetJob(string)
 	SetJobLabel(label string)
+	GetJobGrade() int32
+	SetJobGrade(int32)
 	SetJobGradeLabel(label string)
 }
 

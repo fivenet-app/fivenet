@@ -79,8 +79,9 @@ func (s *Server) ColleaguesList(ctx context.Context, req *ColleaguesListRequest)
 
 	resp.Pagination.Update(count.TotalCount, len(resp.Users))
 
+	jobInfoFn := s.enricher.EnrichJobInfoFunc(userInfo)
 	for i := 0; i < len(resp.Users); i++ {
-		s.enricher.EnrichJobInfo(resp.Users[i])
+		jobInfoFn(resp.Users[i])
 	}
 
 	return resp, nil

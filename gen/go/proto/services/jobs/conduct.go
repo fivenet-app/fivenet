@@ -136,12 +136,13 @@ func (s *Server) ConductListEntries(ctx context.Context, req *ConductListEntries
 		}
 	}
 
+	jobInfoFn := s.enricher.EnrichJobInfoFunc(userInfo)
 	for i := 0; i < len(resp.Entries); i++ {
 		if resp.Entries[i].TargetUser != nil {
-			s.enricher.EnrichJobInfo(resp.Entries[i].TargetUser)
+			jobInfoFn(resp.Entries[i].TargetUser)
 		}
 		if resp.Entries[i].Creator != nil {
-			s.enricher.EnrichJobInfo(resp.Entries[i].Creator)
+			jobInfoFn(resp.Entries[i].Creator)
 		}
 	}
 

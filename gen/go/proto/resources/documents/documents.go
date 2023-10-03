@@ -12,12 +12,20 @@ func (x *Document) SetCategory(cat *Category) {
 	x.Category = cat
 }
 
-func (x *DocumentJobAccess) GetJobGrade() int32 {
-	return x.MinimumGrade
+func (x *DocumentJobAccess) SetJob(job string) {
+	x.Job = job
 }
 
 func (x *DocumentJobAccess) SetJobLabel(label string) {
 	x.JobLabel = &label
+}
+
+func (x *DocumentJobAccess) GetJobGrade() int32 {
+	return x.MinimumGrade
+}
+
+func (x *DocumentJobAccess) SetJobGrade(grade int32) {
+	x.MinimumGrade = grade
 }
 
 func (x *DocumentJobAccess) SetJobGradeLabel(label string) {

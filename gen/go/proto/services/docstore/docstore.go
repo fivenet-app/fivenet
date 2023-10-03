@@ -143,9 +143,10 @@ func (s *Server) ListDocuments(ctx context.Context, req *ListDocumentsRequest) (
 		return nil, ErrFailedQuery
 	}
 
+	jobInfoFn := s.enricher.EnrichJobInfoFunc(userInfo)
 	for i := 0; i < len(resp.Documents); i++ {
 		if resp.Documents[i].Creator != nil {
-			s.enricher.EnrichJobInfo(resp.Documents[i].Creator)
+			jobInfoFn(resp.Documents[i].Creator)
 		}
 	}
 
@@ -220,7 +221,7 @@ func (s *Server) getDocument(ctx context.Context, condition jet.BoolExpression, 
 	}
 
 	if doc.Creator != nil {
-		s.enricher.EnrichJobInfo(doc.Creator)
+		s.enricher.EnrichJobInfoSafe(userInfo, doc.Creator)
 	}
 
 	return &doc, nil

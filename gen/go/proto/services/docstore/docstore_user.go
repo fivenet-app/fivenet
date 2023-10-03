@@ -192,12 +192,13 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *ListUserDocumentsRe
 		}
 	}
 
+	jobInfoFn := s.enricher.EnrichJobInfoFunc(userInfo)
 	for i := 0; i < len(resp.Relations); i++ {
 		if resp.Relations[i].SourceUser != nil {
-			s.enricher.EnrichJobInfo(resp.Relations[i].SourceUser)
+			jobInfoFn(resp.Relations[i].SourceUser)
 		}
 		if resp.Relations[i].Document != nil && resp.Relations[i].Document.Creator != nil {
-			s.enricher.EnrichJobInfo(resp.Relations[i].Document.Creator)
+			jobInfoFn(resp.Relations[i].Document.Creator)
 		}
 	}
 

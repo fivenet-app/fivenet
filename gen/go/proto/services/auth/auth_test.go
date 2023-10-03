@@ -83,7 +83,7 @@ func TestFullAuthFlow(t *testing.T) {
 		Config: cfg,
 	})
 	assert.NoError(t, err)
-	enricher := mstlystcdata.NewEnricher(c)
+	enricher := mstlystcdata.NewEnricher(c, p, cfg)
 	srv := NewServer(db, auth.NewGRPCAuth(ui, tm), tm, p, enricher, aud, ui, &config.Config{})
 
 	fxLC.RequireStart()

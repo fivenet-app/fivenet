@@ -56,10 +56,11 @@ type Server struct {
 
 func NewServer(db *sql.DB, p perms.Permissions, enricher *mstlystcdata.Enricher, aud audit.IAuditer, cfg *config.Config) *Server {
 	return &Server{
-		db:                 db,
-		p:                  p,
-		enricher:           enricher,
-		aud:                aud,
+		db:       db,
+		p:        p,
+		enricher: enricher,
+		aud:      aud,
+
 		publicJobs:         cfg.Game.PublicJobs,
 		unemployedJob:      cfg.Game.UnemployedJob.Name,
 		unemployedJobGrade: cfg.Game.UnemployedJob.Grade,
@@ -187,26 +188,11 @@ func (s *Server) ListCitizens(ctx context.Context, req *ListCitizensRequest) (*L
 
 	resp.Pagination.Update(count.TotalCount, len(resp.Users))
 
-	jobGradesAttr, err := s.p.Attr(userInfo, CitizenStoreServicePerm, CitizenStoreServiceGetUserPerm, CitizenStoreServiceGetUserJobsPermField)
-	if err != nil {
-		return nil, ErrFailedQuery
-	}
-	var jobGrades perms.JobGradeList
-	if jobGradesAttr != nil {
-		jobGrades = jobGradesAttr.(map[string]int32)
-	}
-
+	jobInfoFn := s.enricher.EnrichJobInfoFunc(userInfo)
 	for i := 0; i < len(resp.Users); i++ {
-		if utils.InSlice(s.publicJobs, resp.Users[i].Job) {
-			// Make sure user has permission to see that grade, otherwise "hide" the user's job grade
-			grade, ok := jobGrades[resp.Users[i].Job]
-			if !userInfo.SuperUser && (!ok || resp.Users[i].JobGrade <= grade) {
-				resp.Users[i].JobGrade = 0
-			}
-		} else {
-			resp.Users[i].Job = s.unemployedJob
-			resp.Users[i].JobGrade = s.unemployedJobGrade
+		jobInfoFn(resp.Users[i])
 
+		if resp.Users[i].Job == s.unemployedJob {
 			// Only set the user's job from the user props when it isn't a public job
 			if resp.Users[i].Props != nil && resp.Users[i].Props.JobName != nil {
 				resp.Users[i].Job = *resp.Users[i].Props.JobName
@@ -217,8 +203,6 @@ func (s *Server) ListCitizens(ctx context.Context, req *ListCitizensRequest) (*L
 				}
 			}
 		}
-
-		s.enricher.EnrichJobInfo(resp.Users[i])
 	}
 
 	return resp, nil
@@ -339,7 +323,7 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 		}
 	}
 
-	s.enricher.EnrichJobInfo(resp.User)
+	s.enricher.EnrichJobInfoSafe(userInfo, resp.User)
 
 	// Check if user can see licenses and fetch them
 	if utils.InSlice(fields, "Licenses") {
@@ -463,12 +447,13 @@ func (s *Server) ListUserActivity(ctx context.Context, req *ListUserActivityRequ
 		}
 	}
 
+	jobInfoFn := s.enricher.EnrichJobInfoFunc(userInfo)
 	for i := 0; i < len(resp.Activity); i++ {
 		if resp.Activity[i].SourceUser != nil {
-			s.enricher.EnrichJobInfo(resp.Activity[i].SourceUser)
+			jobInfoFn(resp.Activity[i].SourceUser)
 		}
 		if resp.Activity[i].TargetUser != nil {
-			s.enricher.EnrichJobInfo(resp.Activity[i].TargetUser)
+			jobInfoFn(resp.Activity[i].TargetUser)
 		}
 	}
 

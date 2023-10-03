@@ -12,6 +12,7 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/users"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
+	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/galexrt/fivenet/pkg/notifi"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
@@ -171,14 +172,15 @@ func (s *Server) GetDocumentReferences(ctx context.Context, req *GetDocumentRefe
 		}
 	}
 
+	jobInfoFn := s.enricher.EnrichJobInfoFunc(userInfo)
 	for i := 0; i < len(dest); i++ {
 		if dest[i].Creator != nil {
-			s.enricher.EnrichJobInfo(dest[i].Creator)
+			jobInfoFn(dest[i].Creator)
 		}
 
 		s.enricher.EnrichCategory(dest[i].SourceDocument)
 		if dest[i].SourceDocument.Creator != nil {
-			s.enricher.EnrichJobInfo(dest[i].SourceDocument.Creator)
+			jobInfoFn(dest[i].SourceDocument.Creator)
 		}
 
 		s.enricher.EnrichCategory(dest[i].TargetDocument)
@@ -199,7 +201,7 @@ func (s *Server) GetDocumentRelations(ctx context.Context, req *GetDocumentRelat
 		return nil, status.Error(codes.PermissionDenied, "You don't have permission to view this document!")
 	}
 
-	relations, err := s.getDocumentRelations(ctx, req.DocumentId)
+	relations, err := s.getDocumentRelations(ctx, userInfo, req.DocumentId)
 	if err != nil {
 		return nil, err
 	}
@@ -527,7 +529,7 @@ func (s *Server) getDocumentRelation(ctx context.Context, id uint64) (*documents
 	return &dest, nil
 }
 
-func (s *Server) getDocumentRelations(ctx context.Context, documentId uint64) ([]*documents.DocumentRelation, error) {
+func (s *Server) getDocumentRelations(ctx context.Context, userInfo *userinfo.UserInfo, documentId uint64) ([]*documents.DocumentRelation, error) {
 	uSource := tUsers.AS("source_user")
 	uTarget := tUsers.AS("target_user")
 	stmt := tDocRel.
@@ -595,12 +597,13 @@ func (s *Server) getDocumentRelations(ctx context.Context, documentId uint64) ([
 		}
 	}
 
+	jobInfoFn := s.enricher.EnrichJobInfoFunc(userInfo)
 	for i := 0; i < len(dest); i++ {
 		if dest[i].SourceUser != nil {
-			s.enricher.EnrichJobInfo(dest[i].SourceUser)
+			jobInfoFn(dest[i].SourceUser)
 		}
 		if dest[i].TargetUser != nil {
-			s.enricher.EnrichJobInfo(dest[i].TargetUser)
+			jobInfoFn(dest[i].TargetUser)
 		}
 	}
 

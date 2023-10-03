@@ -6,6 +6,10 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/common"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/documents"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/users"
+	"github.com/galexrt/fivenet/pkg/config"
+	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
+	"github.com/galexrt/fivenet/pkg/perms"
+	"github.com/galexrt/fivenet/pkg/utils"
 )
 
 const (
@@ -14,11 +18,21 @@ const (
 
 type Enricher struct {
 	cache *Cache
+	ps    perms.Permissions
+
+	publicJobs         []string
+	unemployedJob      string
+	unemployedJobGrade int32
 }
 
-func NewEnricher(cache *Cache) *Enricher {
+func NewEnricher(cache *Cache, ps perms.Permissions, cfg *config.Config) *Enricher {
 	return &Enricher{
 		cache: cache,
+		ps:    ps,
+
+		publicJobs:         cfg.Game.PublicJobs,
+		unemployedJob:      cfg.Game.UnemployedJob.Name,
+		unemployedJobGrade: cfg.Game.UnemployedJob.Grade,
 	}
 }
 
@@ -96,4 +110,55 @@ func (e *Enricher) GetJobGrade(job string, grade int32) (*users.Job, *users.JobG
 	}
 
 	return nil, nil
+}
+
+func (e *Enricher) EnrichJobInfoSafe(userInfo *userinfo.UserInfo, usrs ...common.IJobInfo) {
+	// TODO use citizenstore const instead of manual copies due to import cycles
+	jobGradesAttr, err := e.ps.Attr(userInfo, "CitizenStoreService", "GetUser", "Jobs")
+	if err != nil {
+		return
+	}
+	var jobGrades perms.JobGradeList
+	if jobGradesAttr != nil {
+		jobGrades = jobGradesAttr.(map[string]int32)
+	}
+
+	for _, usr := range usrs {
+		if utils.InSlice(e.publicJobs, usr.GetJob()) {
+			// Make sure user has permission to see that grade, otherwise "hide" the user's job grade
+			grade, ok := jobGrades[usr.GetJob()]
+			if !userInfo.SuperUser && (!ok || usr.GetJobGrade() <= grade) {
+				usr.SetJobGrade(0)
+			}
+		} else {
+			usr.SetJob(e.unemployedJob)
+			usr.SetJobGrade(e.unemployedJobGrade)
+		}
+
+		e.EnrichJobInfo(usr)
+	}
+}
+
+func (e *Enricher) EnrichJobInfoFunc(userInfo *userinfo.UserInfo) func(usr common.IJobInfo) {
+	// TODO use citizenstore const instead of manual copies due to import cycles
+	jobGradesAttr, _ := e.ps.Attr(userInfo, "CitizenStoreService", "GetUser", "Jobs")
+	var jobGrades perms.JobGradeList
+	if jobGradesAttr != nil {
+		jobGrades = jobGradesAttr.(map[string]int32)
+	}
+
+	return func(usr common.IJobInfo) {
+		if utils.InSlice(e.publicJobs, usr.GetJob()) {
+			// Make sure user has permission to see that grade, otherwise "hide" the user's job grade
+			grade, ok := jobGrades[usr.GetJob()]
+			if !userInfo.SuperUser && (!ok || usr.GetJobGrade() <= grade) {
+				usr.SetJobGrade(0)
+			}
+		} else {
+			usr.SetJob(e.unemployedJob)
+			usr.SetJobGrade(e.unemployedJobGrade)
+		}
+
+		e.EnrichJobInfo(usr)
+	}
 }

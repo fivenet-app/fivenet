@@ -125,8 +125,9 @@ func (s *Server) CompleteCitizens(ctx context.Context, req *CompleteCitizensRequ
 	}
 
 	if currentJob {
+		jobInfoFn := s.enricher.EnrichJobInfoFunc(userInfo)
 		for i := 0; i < len(dest); i++ {
-			s.enricher.EnrichJobInfo(dest[i])
+			jobInfoFn(dest[i])
 		}
 	}
 
