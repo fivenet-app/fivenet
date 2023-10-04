@@ -1313,9 +1313,6 @@
         }
     },
     "errors": {
-        "general": {
-            "internal_error": "Interner Server Fehler"
-        },
         "pkg-auth": {
             "ErrNoToken": "Anfrage Header \"Authorization\" darf nicht leer sein! Bitte erneut anmelden.",
             "ErrInvalidToken": "Token ungültig/ abgelaufen!",
@@ -1340,7 +1337,13 @@
         },
         "CitizenStoreService": {
             "ErrFailedQuery": "Fehler beim Laden von Bürger Daten!",
-            "ErrJobGradeNoPermission": "Keine Berechtigung um auf diesen Bürger zuzugreifen (basierend auf dem Job des Bürgers)"
+            "ErrJobGradeNoPermission": "Keine Berechtigung um auf diesen Bürger zuzugreifen (basierend auf dem Job des Bürgers)",
+            "ErrReasonRequired": "Ein Grund muss gegeben sein!",
+            "ErrPropsWantedDenied": "You are not allowed to set a user wanted status!",
+            "ErrPropsJobDenied": "You are not allowed to set a user job!",
+            "ErrPropsJobPublic": "You can't set a state job!",
+            "ErrPropsJobInvalid": "Invalid job or job rank set!",
+            "ErrPropsTrafficPointsDenied": "You are not allowed to set a user's traffic infraction points!"
         },
         "CompletorService": {
             "ErrFailedSearch": "Fehler beim Laden der Autovervollständigung!"
@@ -1356,7 +1359,22 @@
             "ErrClosedDoc": "Dokument ist geschlossen und kann nicht editiert werden!",
             "ErrDocAccessEditDenied": "Sie haben keine Rechte den Dokumenten Zugriff zu verwalten!",
             "ErrDocAccessViewDenied": "Sie haben keine Rechte die Zugangsinfo des Dokumentes zu sehen!",
-            "ErrTemplateFailed": "Fehler beim Laden der Dokumenten Vorlage! Bitte spreche deine Fraktionsführung darauf an."
+            "ErrTemplateFailed": "Fehler beim Laden der Dokumenten Vorlage! Bitte spreche deine Fraktionsführung darauf an.",
+            "ErrDocViewDenied": "You don't have permission to view this document!",
+            "ErrDocUpdateDenied": "You don't have permission to edit this document!",
+            "ErrDocDeleteDenied": "You don't have permission to delete this document!",
+            "ErrDocToggleDenied": "You don't have permission to close/open this document!",
+            "ErrCommentViewDenied": "You don't have permission to view document comments!",
+            "ErrCommentPostDenied": "You don't have permission to post a comment on this document!",
+            "ErrCommentEditDenied": "You don't have permission to edit this comment!",
+            "ErrCommentDeleteDenied": "You can't delete this comment!",
+            "ErrFeedRefsViewDenied": "You don't have permission to view this document's references!",
+            "ErrFeedRelsViewDenied": "You don't have permission to view this document's relations!",
+            "ErrFeedRefSelf": "You can't reference a document with itself!",
+            "ErrFeedRefAddDenied": "You don't have permission to add references from/to this document!",
+            "ErrFeedRefRemoveDenied": "You don't have permission to remove references from this document!",
+            "ErrFeedRelAddDenied": "You don't have permission to add relation from/to this document!",
+            "ErrFeedRelRemoveDenied": "You don't have permission to remove references from this document!"
         },
         "LivemapperService": {
             "ErrStreamFailed": "Livemap Datenstrom fehlgeschlagen!",
@@ -1391,6 +1409,12 @@
             "ErrDispatchAlreadyCompleted": {
                 "title": "Einsatz ist bereits abgeschlossen!",
                 "content": "Abgeschlossene Einsätze können nicht akzeptiert/abgelehnt werden!"
+            }
+        },
+        "general": {
+            "internal_error": {
+                "title": "Interner Serverfehler",
+                "content": "Ein interner Serverfehler ist aufgetreten. Bitte versuchen sie es erneut."
             }
         }
     },
