@@ -19,10 +19,12 @@ const { dispatches, ownDispatches } = storeToRefs(centrumStore);
 const settingsStore = useSettingsStore();
 const { livemap } = storeToRefs(settingsStore);
 
-const query = ref<string>('');
+const dispatchQuery = ref<string>('');
 const dispatchesFiltered = computed(() =>
     [...dispatches.value.values()].filter(
-        (m) => !ownDispatches.value.includes(m.id) && (m.user?.firstname + ' ' + m.user?.lastname).includes(query.value),
+        (m) =>
+            !ownDispatches.value.includes(m.id) &&
+            (m.creator?.firstname + ' ' + m.creator?.lastname).toLowerCase().includes(dispatchQuery.value.toLowerCase()),
     ),
 );
 
@@ -64,7 +66,7 @@ const open = ref(false);
         <div class="form-control flex flex-col gap-2">
             <div>
                 <input
-                    v-model="query"
+                    v-model="dispatchQuery"
                     class="w-full p-0.5 px-1 bg-clip-padding rounded-md border-2 border-black/20"
                     type="text"
                     name="searchPlayer"
