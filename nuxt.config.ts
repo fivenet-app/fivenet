@@ -1,13 +1,6 @@
-import fs from 'fs';
 import { defineNuxtConfig } from 'nuxt/config';
 import { STRATEGIES } from 'vue-i18n-routing';
 
-type PackageJson = {
-    version: string;
-};
-
-const packageJson = fs.readFileSync('./package.json');
-const version: string = (JSON.parse(packageJson.toString()) as PackageJson).version || '0.0.0';
 const commit: string = process.env.COMMIT_REF || 'COMMIT_REF';
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
