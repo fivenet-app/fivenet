@@ -12,7 +12,7 @@ const { $grpc } = useNuxtApp();
 const notifications = useNotificatorStore();
 
 const emit = defineEmits<{
-    (e: 'updated'): void;
+    (e: 'update'): void;
     (e: 'close'): void;
 }>();
 
@@ -87,7 +87,7 @@ async function deleteCategory(): Promise<void> {
                 type: 'success',
             });
             emit('close');
-            emit('updated');
+            emit('update');
 
             return res();
         } catch (e) {

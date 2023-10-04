@@ -27,7 +27,7 @@ const props = defineProps<{
 const emit = defineEmits<{
     (e: 'close'): void;
     (e: 'created', entry: ConductEntry): void;
-    (e: 'updated', entry: ConductEntry): void;
+    (e: 'update', entry: ConductEntry): void;
 }>();
 
 const { $grpc } = useNuxtApp();
@@ -58,7 +58,7 @@ async function conductCreateOrUpdateEntry(values: FormData, id?: bigint): Promis
                 const call = $grpc.getJobsClient().conductUpdateEntry(req);
                 const { response } = await call;
 
-                emit('updated', response.entry!);
+                emit('update', response.entry!);
             }
 
             resetForm();
@@ -432,7 +432,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                 <template v-if="!canSubmit">
                                                     <LoadingIcon class="animate-spin h-5 w-5 mr-2" />
                                                 </template>
-                                                {{ $t('common.create') }}
+                                                {{ entry?.id === undefined ? $t('common.create') : $t('common.update') }}
                                             </button>
                                             <button
                                                 type="button"

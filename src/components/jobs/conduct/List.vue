@@ -110,6 +110,18 @@ function charsGetDisplayValue(chars: User[]): string {
     return cs.join(', ');
 }
 
+function updateEntryInPlace(entry: ConductEntry): void {
+    if (entries.value === null) {
+        refresh();
+        return;
+    }
+
+    const idx = entries.value?.findIndex((e) => e.id === entry.id);
+    if (idx !== undefined && idx > -1) {
+        entries.value[idx] = entry;
+    }
+}
+
 watchDebounced(queryTargets, async () => (entriesChars.value = await listColleagues()), {
     debounce: 600,
     maxWait: 1400,
@@ -141,7 +153,7 @@ onConfirm(async (id) => deleteConductEntry(id));
             @close="open = false"
             :entry="selectedEntry"
             @created="entries?.unshift($event)"
-            @updated="refresh()"
+            @update="updateEntryInPlace($event)"
         />
 
         <div class="px-1 sm:px-2 lg:px-4">
