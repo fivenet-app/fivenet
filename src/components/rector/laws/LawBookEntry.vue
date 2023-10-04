@@ -46,22 +46,26 @@ async function saveLawBook(id: bigint, values: FormData): Promise<LawBook> {
     return new Promise(async (res, rej) => {
         try {
             const call = $grpc.getRectorClient().createOrUpdateLawBook({
-                id: BigInt(id < 0 ? 0 : id),
-                name: values.name,
-                description: values.description,
-                laws: [],
+                lawBook: {
+                    id: BigInt(id < 0 ? 0 : id),
+                    name: values.name,
+                    description: values.description,
+                    laws: [],
+                },
             });
             const { response } = await call;
+            const lawBook = response.lawBook;
+            if (lawBook === undefined) return rej();
 
-            props.book.id = response.id;
-            props.book.createdAt = response.createdAt;
-            props.book.updatedAt = response.updatedAt;
-            props.book.name = response.name;
-            props.book.description = response.description;
+            props.book.id = lawBook.id;
+            props.book.createdAt = lawBook.createdAt;
+            props.book.updatedAt = lawBook.updatedAt;
+            props.book.name = lawBook.name;
+            props.book.description = lawBook.description;
 
             editing.value = false;
 
-            return res(response);
+            return res(lawBook);
         } catch (e) {
             $grpc.handleError(e as RpcError);
             return rej(e as RpcError);

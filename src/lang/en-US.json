@@ -1314,7 +1314,10 @@
     },
     "errors": {
         "general": {
-            "internal_error": "Internal server error"
+            "internal_error": {
+                "title": "Internal server error",
+                "content": "An internal server error has occured. Please try again."
+            }
         },
         "pkg-auth": {
             "ErrNoToken": "\"Authorization\" header must not be empty! Please login again.",
@@ -1340,7 +1343,13 @@
         },
         "CitizenStoreService": {
             "ErrFailedQuery": "Failed to list/ get citizens data!",
-            "ErrJobGradeNoPermission": "No permission to access this citizen (based on the citizen's job)"
+            "ErrJobGradeNoPermission": "No permission to access this citizen (based on the citizen's job)",
+            "ErrReasonRequired": "A reason must be provided!",
+            "ErrPropsWantedDenied": "You are not allowed to set a user wanted status!",
+            "ErrPropsJobDenied": "You are not allowed to set a user job!",
+            "ErrPropsJobPublic": "You can't set a state job!",
+            "ErrPropsJobInvalid": "Invalid job or job rank set!",
+            "ErrPropsTrafficPointsDenied": "You are not allowed to set a user's traffic infraction points!"
         },
         "CompletorService": {
             "ErrFailedSearch": "Failed to search the data!"
@@ -1356,7 +1365,22 @@
             "ErrClosedDoc": "Document is closed and can't be edited!",
             "ErrDocAccessEditDenied": "You don't have permission to edit the document's access!",
             "ErrDocAccessViewDenied": "You don't have permission to view this document's access!",
-            "ErrTemplateFailed": "Failed to render document template! Please talk with your faction leader."
+            "ErrTemplateFailed": "Failed to render document template! Please talk with your faction leader.",
+            "ErrDocViewDenied": "You don't have permission to view this document!",
+            "ErrDocUpdateDenied": "You don't have permission to edit this document!",
+            "ErrDocDeleteDenied": "You don't have permission to delete this document!",
+            "ErrDocToggleDenied": "You don't have permission to close/open this document!",
+            "ErrCommentViewDenied": "You don't have permission to view document comments!",
+            "ErrCommentPostDenied": "You don't have permission to post a comment on this document!",
+            "ErrCommentEditDenied": "You don't have permission to edit this comment!",
+            "ErrCommentDeleteDenied": "You can't delete this comment!",
+            "ErrFeedRefsViewDenied": "You don't have permission to view this document's references!",
+            "ErrFeedRelsViewDenied": "You don't have permission to view this document's relations!",
+            "ErrFeedRefSelf": "You can't reference a document with itself!",
+            "ErrFeedRefAddDenied": "You don't have permission to add references from/to this document!",
+            "ErrFeedRefRemoveDenied": "You don't have permission to remove references from this document!",
+            "ErrFeedRelAddDenied": "You don't have permission to add relation from/to this document!",
+            "ErrFeedRelRemoveDenied": "You don't have permission to remove references from this document!"
         },
         "LivemapperService": {
             "ErrStreamFailed": "Failed to stream livemap data!",

@@ -26,12 +26,12 @@ func (s *Server) getDispatch(job string, id uint64) (*dispatch.Dispatch, bool) {
 	return dispatches.Load(id)
 }
 
-func (s *Server) listDispatches(job string) ([]*dispatch.Dispatch, error) {
+func (s *Server) listDispatches(job string) []*dispatch.Dispatch {
 	ds := []*dispatch.Dispatch{}
 
 	dispatches, ok := s.state.Dispatches.Load(job)
 	if !ok {
-		return nil, nil
+		return nil
 	}
 
 	dispatches.Range(func(id uint64, dispatch *dispatch.Dispatch) bool {
@@ -43,7 +43,7 @@ func (s *Server) listDispatches(job string) ([]*dispatch.Dispatch, error) {
 		return int(b.Id - a.Id)
 	})
 
-	return ds, nil
+	return ds
 }
 
 func (s *Server) getDispatchStatusFromDB(ctx context.Context, id uint64) (*dispatch.DispatchStatus, error) {

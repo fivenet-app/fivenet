@@ -65,8 +65,21 @@ onBeforeMount(async () => {
                         {{ $t('pages.error.error_message') }}
                     </p>
                     <span v-if="error">
-                        <pre v-if="error.statusMessage">{{ error.statusMessage }}</pre>
-                        <pre v-else-if="error.message">{{ error.message }}</pre>
+                        <!-- @vue-expect-error -->
+                        <pre v-if="error.statusMessage">
+                            <!-- @vue-expect-error -->
+                            {{ error.statusMessage }}
+                        </pre>
+                        <!-- @vue-expect-error -->
+                        <pre
+                            v-else-if="
+                                //@ts-ignore
+                                error.message
+                            "
+                        >
+                            <!-- @vue-expect-error -->
+                            {{ error.message }}
+                        </pre>
                         <pre v-else>Unable to get error message</pre>
                     </span>
                     <span v-else>
@@ -101,6 +114,7 @@ onBeforeMount(async () => {
                         {{ $t('common.retry') }}
                     </button>
 
+                    <!-- @vue-expect-error -->
                     <button
                         @click="copyError"
                         v-if="error && (error.statusMessage || error.message)"

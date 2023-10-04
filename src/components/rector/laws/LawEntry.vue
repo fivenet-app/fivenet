@@ -45,24 +45,28 @@ async function saveLaw(lawBookId: bigint, id: bigint, values: FormData): Promise
     return new Promise(async (res, rej) => {
         try {
             const call = $grpc.getRectorClient().createOrUpdateLaw({
-                id: BigInt(id < 0 ? 0 : id),
-                lawbookId: lawBookId,
-                name: values.name,
-                description: values.description,
-                fine: BigInt(values.fine),
-                detentionTime: BigInt(values.detentionTime),
-                stvoPoints: BigInt(values.stvoPoints),
+                law: {
+                    id: BigInt(id < 0 ? 0 : id),
+                    lawbookId: lawBookId,
+                    name: values.name,
+                    description: values.description,
+                    fine: BigInt(values.fine),
+                    detentionTime: BigInt(values.detentionTime),
+                    stvoPoints: BigInt(values.stvoPoints),
+                },
             });
             const { response } = await call;
+            const law = response.law;
+            if (law === undefined) return rej();
 
-            props.law.id = response.id;
-            props.law.createdAt = response.createdAt;
-            props.law.updatedAt = response.updatedAt;
-            props.law.name = response.name;
-            props.law.description = response.description;
-            props.law.fine = response.fine;
-            props.law.detentionTime = response.detentionTime;
-            props.law.stvoPoints = response.stvoPoints;
+            props.law.id = law.id;
+            props.law.createdAt = law.createdAt;
+            props.law.updatedAt = law.updatedAt;
+            props.law.name = law.name;
+            props.law.description = law.description;
+            props.law.fine = law.fine;
+            props.law.detentionTime = law.detentionTime;
+            props.law.stvoPoints = law.stvoPoints;
 
             editing.value = false;
 

@@ -5,13 +5,13 @@ import { MessageType } from "@protobuf-ts/runtime";
 import { UserShort } from "../users/users.js";
 import { Timestamp } from "../timestamp/timestamp.js";
 /**
- * @generated from protobuf message resources.jobs.RequestEntry
+ * @generated from protobuf message resources.jobs.RequestType
  */
-export interface RequestEntry {
+export interface RequestType {
     /**
      * @generated from protobuf field: uint64 id = 1;
      */
-    id: bigint; // @gotags: sql:"primary_key" alias:"id"
+    id: bigint;
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
      */
@@ -21,93 +21,190 @@ export interface RequestEntry {
      */
     updatedAt?: Timestamp;
     /**
-     * @generated from protobuf field: string job = 4;
+     * @generated from protobuf field: optional resources.timestamp.Timestamp deleted_at = 4;
+     */
+    deletedAt?: Timestamp;
+    /**
+     * @generated from protobuf field: string job = 5;
      */
     job: string;
     /**
-     * @generated from protobuf field: resources.jobs.RequestType type = 5;
+     * @generated from protobuf field: string name = 6;
      */
-    type: RequestType;
+    name: string;
+    /**
+     * @generated from protobuf field: optional string description = 7;
+     */
+    description?: string;
+}
+/**
+ * @generated from protobuf message resources.jobs.Request
+ */
+export interface Request {
+    /**
+     * @generated from protobuf field: uint64 id = 1;
+     */
+    id: bigint; // @gotags: sql:"primary_key"
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
+     */
+    createdAt?: Timestamp;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp updated_at = 3;
+     */
+    updatedAt?: Timestamp;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp deleted_at = 4;
+     */
+    deletedAt?: Timestamp;
+    /**
+     * @generated from protobuf field: string job = 5;
+     */
+    job: string;
+    /**
+     * @generated from protobuf field: optional uint64 type_id = 6;
+     */
+    typeId?: bigint;
     /**
      * @sanitize
      *
-     * @generated from protobuf field: string message = 6;
+     * @generated from protobuf field: string message = 7;
      */
     message: string;
     /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp begins_at = 7;
+     * @generated from protobuf field: optional resources.timestamp.Timestamp begins_at = 8;
      */
     beginsAt?: Timestamp;
     /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp ends_at = 8;
+     * @generated from protobuf field: optional resources.timestamp.Timestamp ends_at = 9;
      */
     endsAt?: Timestamp;
     /**
      * @sanitize
      *
-     * @generated from protobuf field: optional string status = 9;
+     * @generated from protobuf field: optional string status = 10;
      */
     status?: string;
     /**
-     * @generated from protobuf field: int32 creator_id = 10;
+     * @generated from protobuf field: int32 creator_id = 11;
      */
     creatorId: number;
     /**
-     * @generated from protobuf field: optional resources.users.UserShort creator = 11;
+     * @generated from protobuf field: optional resources.users.UserShort creator = 12;
      */
-    creator?: UserShort; // @gotags: alias:"creator"
+    creator?: UserShort;
     /**
-     * @generated from protobuf field: optional bool approved = 12;
+     * @generated from protobuf field: optional bool approved = 13;
      */
     approved?: boolean;
     /**
-     * @generated from protobuf field: optional int32 approver_user_id = 13;
+     * @generated from protobuf field: optional int32 approver_user_id = 14;
      */
     approverUserId?: number;
     /**
-     * @generated from protobuf field: optional resources.users.UserShort approver_user = 14;
+     * @generated from protobuf field: optional resources.users.UserShort approver_user = 15;
      */
     approverUser?: UserShort; // @gotags: alias:"approver"
 }
 /**
- * @generated from protobuf enum resources.jobs.RequestType
+ * @generated from protobuf message resources.jobs.RequestComment
  */
-export enum RequestType {
+export interface RequestComment {
     /**
-     * @generated from protobuf enum value: REQUEST_TYPE_UNSPECIFIED = 0;
+     * @generated from protobuf field: uint64 id = 1;
      */
-    UNSPECIFIED = 0,
+    id: bigint;
     /**
-     * @generated from protobuf enum value: REQUEST_TYPE_GENERAL = 1;
+     * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
      */
-    GENERAL = 1,
+    createdAt?: Timestamp;
     /**
-     * @generated from protobuf enum value: REQUEST_TYPE_ABSENCE = 2;
+     * @generated from protobuf field: optional resources.timestamp.Timestamp updated_at = 3;
      */
-    ABSENCE = 2
+    updatedAt?: Timestamp;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp deleted_at = 4;
+     */
+    deletedAt?: Timestamp;
+    /**
+     * @generated from protobuf field: uint64 request_id = 5;
+     */
+    requestId: bigint;
+    /**
+     * @sanitize: method=StripTags
+     *
+     * @generated from protobuf field: string comment = 6;
+     */
+    comment: string;
+    /**
+     * @generated from protobuf field: optional int32 creator_id = 7;
+     */
+    creatorId?: number;
+    /**
+     * @generated from protobuf field: optional resources.users.UserShort creator = 8;
+     */
+    creator?: UserShort;
 }
 // @generated message type with reflection information, may provide speed optimized methods
-class RequestEntry$Type extends MessageType<RequestEntry> {
+class RequestType$Type extends MessageType<RequestType> {
     constructor() {
-        super("resources.jobs.RequestEntry", [
+        super("resources.jobs.RequestType", [
             { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
-            { no: 4, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
-            { no: 5, name: "type", kind: "enum", T: () => ["resources.jobs.RequestType", RequestType, "REQUEST_TYPE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
-            { no: 6, name: "message", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "2048" } } } },
-            { no: 7, name: "begins_at", kind: "message", T: () => Timestamp },
-            { no: 8, name: "ends_at", kind: "message", T: () => Timestamp },
-            { no: 9, name: "status", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
-            { no: 10, name: "creator_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
-            { no: 11, name: "creator", kind: "message", T: () => UserShort },
-            { no: 12, name: "approved", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
-            { no: 13, name: "approver_user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
-            { no: 14, name: "approver_user", kind: "message", T: () => UserShort }
+            { no: 4, name: "deleted_at", kind: "message", T: () => Timestamp },
+            { no: 5, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
+            { no: 6, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "32" } } } },
+            { no: 7, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "255" } } } }
         ]);
     }
 }
 /**
- * @generated MessageType for protobuf message resources.jobs.RequestEntry
+ * @generated MessageType for protobuf message resources.jobs.RequestType
  */
-export const RequestEntry = new RequestEntry$Type();
+export const RequestType = new RequestType$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class Request$Type extends MessageType<Request> {
+    constructor() {
+        super("resources.jobs.Request", [
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
+            { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
+            { no: 4, name: "deleted_at", kind: "message", T: () => Timestamp },
+            { no: 5, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
+            { no: 6, name: "type_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 7, name: "message", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "4096" } } } },
+            { no: 8, name: "begins_at", kind: "message", T: () => Timestamp },
+            { no: 9, name: "ends_at", kind: "message", T: () => Timestamp },
+            { no: 10, name: "status", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 11, name: "creator_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
+            { no: 12, name: "creator", kind: "message", T: () => UserShort },
+            { no: 13, name: "approved", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 14, name: "approver_user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 15, name: "approver_user", kind: "message", T: () => UserShort }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.jobs.Request
+ */
+export const Request = new Request$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class RequestComment$Type extends MessageType<RequestComment> {
+    constructor() {
+        super("resources.jobs.RequestComment", [
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
+            { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
+            { no: 4, name: "deleted_at", kind: "message", T: () => Timestamp },
+            { no: 5, name: "request_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 6, name: "comment", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxBytes: "2048" } } } },
+            { no: 7, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 8, name: "creator", kind: "message", T: () => UserShort }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.jobs.RequestComment
+ */
+export const RequestComment = new RequestComment$Type();

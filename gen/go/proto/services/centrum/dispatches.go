@@ -45,11 +45,7 @@ func (s *Server) ListDispatches(ctx context.Context, req *ListDispatchesRequest)
 		Dispatches: []*dispatch.Dispatch{},
 	}
 
-	dispatches, err := s.listDispatches(userInfo.Job)
-	if err != nil {
-		return nil, err
-	}
-
+	dispatches := s.listDispatches(userInfo.Job)
 	for i := 0; i < len(dispatches); i++ {
 		// Hide user info when dispatch is anonymous
 		if dispatches[i].Anon {

@@ -34,7 +34,7 @@ import (
 )
 
 var (
-	ErrInternalServer = status.Error(codes.Internal, "errors.general.internal_error")
+	ErrInternalServer = status.Error(codes.Internal, "errors.general.internal_error.title;errors.general.internal_error.content")
 )
 
 func wrapLogger(log *zap.Logger) *zap.Logger {

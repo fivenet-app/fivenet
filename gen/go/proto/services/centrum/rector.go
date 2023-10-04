@@ -52,19 +52,19 @@ func (s *Server) UpdateSettings(ctx context.Context, req *dispatch.Settings) (*d
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return nil, err
+		return nil, ErrFailedQuery
 	}
 
 	// Load settings from database so they are updated in the "cache"
 	if err := s.loadSettings(ctx, userInfo.Job); err != nil {
-		return nil, err
+		return nil, ErrFailedQuery
 	}
 
 	settings := s.getSettings(userInfo.Job)
 
 	data, err := proto.Marshal(settings)
 	if err != nil {
-		return nil, err
+		return nil, ErrFailedQuery
 	}
 	s.broadcastToAllUnits(TopicGeneral, TypeGeneralSettings, userInfo.Job, data)
 

@@ -35,22 +35,22 @@ var (
 	_ = sort.Sort
 )
 
-// Validate checks the field values on RequestEntry with the rules defined in
+// Validate checks the field values on RequestType with the rules defined in
 // the proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
-func (m *RequestEntry) Validate() error {
+func (m *RequestType) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on RequestEntry with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in RequestEntryMultiError, or
+// ValidateAll checks the field values on RequestType with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in RequestTypeMultiError, or
 // nil if none found.
-func (m *RequestEntry) ValidateAll() error {
+func (m *RequestType) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *RequestEntry) validate(all bool) error {
+func (m *RequestType) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -60,7 +60,7 @@ func (m *RequestEntry) validate(all bool) error {
 	// no validation rules for Id
 
 	if utf8.RuneCountInString(m.GetJob()) > 20 {
-		err := RequestEntryValidationError{
+		err := RequestTypeValidationError{
 			field:  "Job",
 			reason: "value length must be at most 20 runes",
 		}
@@ -70,32 +70,10 @@ func (m *RequestEntry) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if _, ok := RequestType_name[int32(m.GetType())]; !ok {
-		err := RequestEntryValidationError{
-			field:  "Type",
-			reason: "value must be one of the defined enum values",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	if l := utf8.RuneCountInString(m.GetMessage()); l < 3 || l > 2048 {
-		err := RequestEntryValidationError{
-			field:  "Message",
-			reason: "value length must be between 3 and 2048 runes, inclusive",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	if m.GetCreatorId() <= 0 {
-		err := RequestEntryValidationError{
-			field:  "CreatorId",
-			reason: "value must be greater than 0",
+	if l := utf8.RuneCountInString(m.GetName()); l < 3 || l > 32 {
+		err := RequestTypeValidationError{
+			field:  "Name",
+			reason: "value length must be between 3 and 32 runes, inclusive",
 		}
 		if !all {
 			return err
@@ -109,7 +87,7 @@ func (m *RequestEntry) validate(all bool) error {
 			switch v := interface{}(m.GetCreatedAt()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, RequestEntryValidationError{
+					errors = append(errors, RequestTypeValidationError{
 						field:  "CreatedAt",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -117,7 +95,7 @@ func (m *RequestEntry) validate(all bool) error {
 				}
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
-					errors = append(errors, RequestEntryValidationError{
+					errors = append(errors, RequestTypeValidationError{
 						field:  "CreatedAt",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -126,7 +104,7 @@ func (m *RequestEntry) validate(all bool) error {
 			}
 		} else if v, ok := interface{}(m.GetCreatedAt()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				return RequestEntryValidationError{
+				return RequestTypeValidationError{
 					field:  "CreatedAt",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -142,7 +120,7 @@ func (m *RequestEntry) validate(all bool) error {
 			switch v := interface{}(m.GetUpdatedAt()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, RequestEntryValidationError{
+					errors = append(errors, RequestTypeValidationError{
 						field:  "UpdatedAt",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -150,7 +128,7 @@ func (m *RequestEntry) validate(all bool) error {
 				}
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
-					errors = append(errors, RequestEntryValidationError{
+					errors = append(errors, RequestTypeValidationError{
 						field:  "UpdatedAt",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -159,7 +137,7 @@ func (m *RequestEntry) validate(all bool) error {
 			}
 		} else if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				return RequestEntryValidationError{
+				return RequestTypeValidationError{
 					field:  "UpdatedAt",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -169,13 +147,297 @@ func (m *RequestEntry) validate(all bool) error {
 
 	}
 
+	if m.DeletedAt != nil {
+
+		if all {
+			switch v := interface{}(m.GetDeletedAt()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, RequestTypeValidationError{
+						field:  "DeletedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, RequestTypeValidationError{
+						field:  "DeletedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetDeletedAt()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return RequestTypeValidationError{
+					field:  "DeletedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.Description != nil {
+
+		if l := utf8.RuneCountInString(m.GetDescription()); l < 3 || l > 255 {
+			err := RequestTypeValidationError{
+				field:  "Description",
+				reason: "value length must be between 3 and 255 runes, inclusive",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return RequestTypeMultiError(errors)
+	}
+
+	return nil
+}
+
+// RequestTypeMultiError is an error wrapping multiple validation errors
+// returned by RequestType.ValidateAll() if the designated constraints aren't met.
+type RequestTypeMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m RequestTypeMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m RequestTypeMultiError) AllErrors() []error { return m }
+
+// RequestTypeValidationError is the validation error returned by
+// RequestType.Validate if the designated constraints aren't met.
+type RequestTypeValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e RequestTypeValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e RequestTypeValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e RequestTypeValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e RequestTypeValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e RequestTypeValidationError) ErrorName() string { return "RequestTypeValidationError" }
+
+// Error satisfies the builtin error interface
+func (e RequestTypeValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sRequestType.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = RequestTypeValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = RequestTypeValidationError{}
+
+// Validate checks the field values on Request with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *Request) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on Request with the rules defined in the
+// proto definition for this message. If any rules are violated, the result is
+// a list of violation errors wrapped in RequestMultiError, or nil if none found.
+func (m *Request) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *Request) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	if utf8.RuneCountInString(m.GetJob()) > 20 {
+		err := RequestValidationError{
+			field:  "Job",
+			reason: "value length must be at most 20 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if l := utf8.RuneCountInString(m.GetMessage()); l < 3 || l > 4096 {
+		err := RequestValidationError{
+			field:  "Message",
+			reason: "value length must be between 3 and 4096 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.GetCreatorId() <= 0 {
+		err := RequestValidationError{
+			field:  "CreatorId",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.CreatedAt != nil {
+
+		if all {
+			switch v := interface{}(m.GetCreatedAt()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, RequestValidationError{
+						field:  "CreatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, RequestValidationError{
+						field:  "CreatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetCreatedAt()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return RequestValidationError{
+					field:  "CreatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.UpdatedAt != nil {
+
+		if all {
+			switch v := interface{}(m.GetUpdatedAt()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, RequestValidationError{
+						field:  "UpdatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, RequestValidationError{
+						field:  "UpdatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return RequestValidationError{
+					field:  "UpdatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.DeletedAt != nil {
+
+		if all {
+			switch v := interface{}(m.GetDeletedAt()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, RequestValidationError{
+						field:  "DeletedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, RequestValidationError{
+						field:  "DeletedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetDeletedAt()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return RequestValidationError{
+					field:  "DeletedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.TypeId != nil {
+		// no validation rules for TypeId
+	}
+
 	if m.BeginsAt != nil {
 
 		if all {
 			switch v := interface{}(m.GetBeginsAt()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, RequestEntryValidationError{
+					errors = append(errors, RequestValidationError{
 						field:  "BeginsAt",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -183,7 +445,7 @@ func (m *RequestEntry) validate(all bool) error {
 				}
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
-					errors = append(errors, RequestEntryValidationError{
+					errors = append(errors, RequestValidationError{
 						field:  "BeginsAt",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -192,7 +454,7 @@ func (m *RequestEntry) validate(all bool) error {
 			}
 		} else if v, ok := interface{}(m.GetBeginsAt()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				return RequestEntryValidationError{
+				return RequestValidationError{
 					field:  "BeginsAt",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -208,7 +470,7 @@ func (m *RequestEntry) validate(all bool) error {
 			switch v := interface{}(m.GetEndsAt()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, RequestEntryValidationError{
+					errors = append(errors, RequestValidationError{
 						field:  "EndsAt",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -216,7 +478,7 @@ func (m *RequestEntry) validate(all bool) error {
 				}
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
-					errors = append(errors, RequestEntryValidationError{
+					errors = append(errors, RequestValidationError{
 						field:  "EndsAt",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -225,7 +487,7 @@ func (m *RequestEntry) validate(all bool) error {
 			}
 		} else if v, ok := interface{}(m.GetEndsAt()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				return RequestEntryValidationError{
+				return RequestValidationError{
 					field:  "EndsAt",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -245,7 +507,7 @@ func (m *RequestEntry) validate(all bool) error {
 			switch v := interface{}(m.GetCreator()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, RequestEntryValidationError{
+					errors = append(errors, RequestValidationError{
 						field:  "Creator",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -253,7 +515,7 @@ func (m *RequestEntry) validate(all bool) error {
 				}
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
-					errors = append(errors, RequestEntryValidationError{
+					errors = append(errors, RequestValidationError{
 						field:  "Creator",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -262,7 +524,7 @@ func (m *RequestEntry) validate(all bool) error {
 			}
 		} else if v, ok := interface{}(m.GetCreator()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				return RequestEntryValidationError{
+				return RequestValidationError{
 					field:  "Creator",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -286,7 +548,7 @@ func (m *RequestEntry) validate(all bool) error {
 			switch v := interface{}(m.GetApproverUser()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, RequestEntryValidationError{
+					errors = append(errors, RequestValidationError{
 						field:  "ApproverUser",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -294,7 +556,7 @@ func (m *RequestEntry) validate(all bool) error {
 				}
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
-					errors = append(errors, RequestEntryValidationError{
+					errors = append(errors, RequestValidationError{
 						field:  "ApproverUser",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -303,7 +565,7 @@ func (m *RequestEntry) validate(all bool) error {
 			}
 		} else if v, ok := interface{}(m.GetApproverUser()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				return RequestEntryValidationError{
+				return RequestValidationError{
 					field:  "ApproverUser",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -314,18 +576,18 @@ func (m *RequestEntry) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return RequestEntryMultiError(errors)
+		return RequestMultiError(errors)
 	}
 
 	return nil
 }
 
-// RequestEntryMultiError is an error wrapping multiple validation errors
-// returned by RequestEntry.ValidateAll() if the designated constraints aren't met.
-type RequestEntryMultiError []error
+// RequestMultiError is an error wrapping multiple validation errors returned
+// by Request.ValidateAll() if the designated constraints aren't met.
+type RequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m RequestEntryMultiError) Error() string {
+func (m RequestMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -334,11 +596,11 @@ func (m RequestEntryMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m RequestEntryMultiError) AllErrors() []error { return m }
+func (m RequestMultiError) AllErrors() []error { return m }
 
-// RequestEntryValidationError is the validation error returned by
-// RequestEntry.Validate if the designated constraints aren't met.
-type RequestEntryValidationError struct {
+// RequestValidationError is the validation error returned by Request.Validate
+// if the designated constraints aren't met.
+type RequestValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -346,22 +608,22 @@ type RequestEntryValidationError struct {
 }
 
 // Field function returns field value.
-func (e RequestEntryValidationError) Field() string { return e.field }
+func (e RequestValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e RequestEntryValidationError) Reason() string { return e.reason }
+func (e RequestValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e RequestEntryValidationError) Cause() error { return e.cause }
+func (e RequestValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e RequestEntryValidationError) Key() bool { return e.key }
+func (e RequestValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e RequestEntryValidationError) ErrorName() string { return "RequestEntryValidationError" }
+func (e RequestValidationError) ErrorName() string { return "RequestValidationError" }
 
 // Error satisfies the builtin error interface
-func (e RequestEntryValidationError) Error() string {
+func (e RequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -373,14 +635,14 @@ func (e RequestEntryValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sRequestEntry.%s: %s%s",
+		"invalid %sRequest.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = RequestEntryValidationError{}
+var _ error = RequestValidationError{}
 
 var _ interface {
 	Field() string
@@ -388,4 +650,266 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = RequestEntryValidationError{}
+} = RequestValidationError{}
+
+// Validate checks the field values on RequestComment with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *RequestComment) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on RequestComment with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in RequestCommentMultiError,
+// or nil if none found.
+func (m *RequestComment) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *RequestComment) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	// no validation rules for RequestId
+
+	if utf8.RuneCountInString(m.GetComment()) < 3 {
+		err := RequestCommentValidationError{
+			field:  "Comment",
+			reason: "value length must be at least 3 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(m.GetComment()) > 2048 {
+		err := RequestCommentValidationError{
+			field:  "Comment",
+			reason: "value length must be at most 2048 bytes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.CreatedAt != nil {
+
+		if all {
+			switch v := interface{}(m.GetCreatedAt()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, RequestCommentValidationError{
+						field:  "CreatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, RequestCommentValidationError{
+						field:  "CreatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetCreatedAt()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return RequestCommentValidationError{
+					field:  "CreatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.UpdatedAt != nil {
+
+		if all {
+			switch v := interface{}(m.GetUpdatedAt()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, RequestCommentValidationError{
+						field:  "UpdatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, RequestCommentValidationError{
+						field:  "UpdatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return RequestCommentValidationError{
+					field:  "UpdatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.DeletedAt != nil {
+
+		if all {
+			switch v := interface{}(m.GetDeletedAt()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, RequestCommentValidationError{
+						field:  "DeletedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, RequestCommentValidationError{
+						field:  "DeletedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetDeletedAt()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return RequestCommentValidationError{
+					field:  "DeletedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.CreatorId != nil {
+		// no validation rules for CreatorId
+	}
+
+	if m.Creator != nil {
+
+		if all {
+			switch v := interface{}(m.GetCreator()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, RequestCommentValidationError{
+						field:  "Creator",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, RequestCommentValidationError{
+						field:  "Creator",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetCreator()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return RequestCommentValidationError{
+					field:  "Creator",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return RequestCommentMultiError(errors)
+	}
+
+	return nil
+}
+
+// RequestCommentMultiError is an error wrapping multiple validation errors
+// returned by RequestComment.ValidateAll() if the designated constraints
+// aren't met.
+type RequestCommentMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m RequestCommentMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m RequestCommentMultiError) AllErrors() []error { return m }
+
+// RequestCommentValidationError is the validation error returned by
+// RequestComment.Validate if the designated constraints aren't met.
+type RequestCommentValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e RequestCommentValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e RequestCommentValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e RequestCommentValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e RequestCommentValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e RequestCommentValidationError) ErrorName() string { return "RequestCommentValidationError" }
+
+// Error satisfies the builtin error interface
+func (e RequestCommentValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sRequestComment.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = RequestCommentValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = RequestCommentValidationError{}

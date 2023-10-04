@@ -27,14 +27,24 @@ var (
 	tDocRel = table.FivenetDocumentsRelations.AS("documentrelation")
 )
 
+var (
+	ErrFeedRefsViewDenied  = status.Error(codes.PermissionDenied, "You don't have permission to view this document's references!")
+	ErrFeedRelsViewDenied  = status.Error(codes.PermissionDenied, "You don't have permission to view this document's relations!")
+	ErrFeedRefSelf         = status.Error(codes.InvalidArgument, "You can't reference a document with itself!")
+	ErrFeedRefAddDenied    = status.Error(codes.PermissionDenied, "You don't have permission to add references from/to this document!")
+	ErrFeedRefRemoveDenied = status.Error(codes.PermissionDenied, "You don't have permission to remove references from this document!")
+	ErrFeedRelAddDenied    = status.Error(codes.PermissionDenied, "You don't have permission to add relation from/to this document!")
+	ErrFeedRelRemoveDenied = status.Error(codes.PermissionDenied, "You don't have permission to remove references from this document!")
+)
+
 func (s *Server) GetDocumentReferences(ctx context.Context, req *GetDocumentReferencesRequest) (*GetDocumentReferencesResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 	check, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
 	if err != nil {
-		return nil, err
+		return nil, ErrFailedQuery
 	}
 	if !check && !userInfo.SuperUser {
-		return nil, status.Error(codes.PermissionDenied, "You don't have permission to view this document's references!")
+		return nil, ErrFeedRefsViewDenied
 	}
 
 	resp := &GetDocumentReferencesResponse{}
@@ -83,7 +93,7 @@ func (s *Server) GetDocumentReferences(ctx context.Context, req *GetDocumentRefe
 
 	ids, err := s.checkIfUserHasAccessToDocIDs(ctx, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW, docIds...)
 	if err != nil {
-		return nil, err
+		return nil, ErrFailedQuery
 	}
 
 	if len(ids) == 0 {
@@ -198,12 +208,12 @@ func (s *Server) GetDocumentRelations(ctx context.Context, req *GetDocumentRelat
 		return nil, err
 	}
 	if !check && !userInfo.SuperUser {
-		return nil, status.Error(codes.PermissionDenied, "You don't have permission to view this document!")
+		return nil, ErrFeedRelsViewDenied
 	}
 
 	relations, err := s.getDocumentRelations(ctx, userInfo, req.DocumentId)
 	if err != nil {
-		return nil, err
+		return nil, ErrFailedQuery
 	}
 
 	return &GetDocumentRelationsResponse{
@@ -224,7 +234,7 @@ func (s *Server) AddDocumentReference(ctx context.Context, req *AddDocumentRefer
 	defer s.auditer.Log(auditEntry, req)
 
 	if req.Reference.SourceDocumentId == req.Reference.TargetDocumentId {
-		return nil, status.Error(codes.InvalidArgument, "You can't reference a document with itself!")
+		return nil, ErrFeedRefSelf
 	}
 
 	// Check if user has access to both documents
@@ -234,7 +244,7 @@ func (s *Server) AddDocumentReference(ctx context.Context, req *AddDocumentRefer
 		return nil, err
 	}
 	if !check && !userInfo.SuperUser {
-		return nil, status.Error(codes.PermissionDenied, "You don't have permission to add references from/to this document!")
+		return nil, ErrFeedRefAddDenied
 	}
 
 	req.Reference.CreatorId = &userInfo.UserId
@@ -320,7 +330,7 @@ func (s *Server) RemoveDocumentReference(ctx context.Context, req *RemoveDocumen
 		return nil, err
 	}
 	if !check && !userInfo.SuperUser {
-		return nil, status.Error(codes.PermissionDenied, "You don't have permission to remove references from this document!")
+		return nil, ErrFeedRefRemoveDenied
 	}
 
 	stmt := tDocRef.
@@ -360,7 +370,7 @@ func (s *Server) AddDocumentRelation(ctx context.Context, req *AddDocumentRelati
 		return nil, err
 	}
 	if !check && !userInfo.SuperUser {
-		return nil, status.Error(codes.PermissionDenied, "You don't have permission to add relation from/to this document!")
+		return nil, ErrFeedRelAddDenied
 	}
 
 	req.Relation.SourceUserId = userInfo.UserId
@@ -446,15 +456,15 @@ func (s *Server) RemoveDocumentRelation(ctx context.Context, req *RemoveDocument
 		LIMIT(1)
 
 	if err := docsStmt.QueryContext(ctx, s.db, &docID); err != nil {
-		return nil, err
+		return nil, ErrFailedQuery
 	}
 
 	check, err := s.checkIfUserHasAccessToDoc(ctx, docID.ID, userInfo, documents.AccessLevel_ACCESS_LEVEL_EDIT)
 	if err != nil {
-		return nil, err
+		return nil, ErrFailedQuery
 	}
 	if !check && !userInfo.SuperUser {
-		return nil, status.Error(codes.PermissionDenied, "You don't have permission to remove references from this document!")
+		return nil, ErrFeedRelRemoveDenied
 	}
 
 	// Begin transaction

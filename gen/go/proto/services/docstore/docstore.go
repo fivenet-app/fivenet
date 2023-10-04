@@ -43,6 +43,10 @@ var (
 	ErrTemplateNoPerms   = status.Error(codes.PermissionDenied, "errors.DocStoreService.ErrTemplateNoPerms")
 	ErrPermissionDenied  = status.Error(codes.PermissionDenied, "errors.DocStoreService.ErrPermissionDenied")
 	ErrClosedDoc         = status.Error(codes.Canceled, "errors.DocStoreService.ErrClosedDoc")
+	ErrDocViewDenied     = status.Error(codes.PermissionDenied, "errors.DocStoreService.ErrDocViewDenied")
+	ErrDocUpdateDenied   = status.Error(codes.PermissionDenied, "errors.DocStoreService.ErrDocUpdateDenied")
+	ErrDocDeleteDenied   = status.Error(codes.PermissionDenied, "errors.DocStoreService.ErrDocDeleteDenied")
+	ErrDocToggleDenied   = status.Error(codes.PermissionDenied, "errors.DocStoreService.ErrDocToggleDenied")
 )
 
 type Server struct {
@@ -172,7 +176,7 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 		return nil, ErrNotFoundOrNoPerms
 	}
 	if !check && !userInfo.SuperUser {
-		return nil, status.Error(codes.PermissionDenied, "You don't have permission to view this document!")
+		return nil, ErrDocViewDenied
 	}
 
 	resp := &GetDocumentResponse{}
@@ -344,7 +348,7 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 		fields = fieldsAttr.([]string)
 	}
 	if !s.checkIfHasAccess(fields, userInfo, doc.Creator) {
-		return nil, status.Error(codes.PermissionDenied, "You don't have permission to edit other's document!")
+		return nil, ErrDocUpdateDenied
 	}
 
 	// Begin transaction
@@ -417,7 +421,7 @@ func (s *Server) DeleteDocument(ctx context.Context, req *DeleteDocumentRequest)
 	}
 	if !check && !userInfo.SuperUser {
 		if !userInfo.SuperUser {
-			return nil, status.Error(codes.PermissionDenied, "You don't have permission to delete this document!")
+			return nil, ErrDocDeleteDenied
 		}
 	}
 
@@ -436,7 +440,7 @@ func (s *Server) DeleteDocument(ctx context.Context, req *DeleteDocumentRequest)
 		fields = fieldsAttr.([]string)
 	}
 	if !s.checkIfHasAccess(fields, userInfo, doc.Creator) {
-		return nil, status.Error(codes.PermissionDenied, "You don't have permission to delete other's document!")
+		return nil, ErrDocDeleteDenied
 	}
 
 	stmt := tDocs.
@@ -477,7 +481,7 @@ func (s *Server) ToggleDocument(ctx context.Context, req *ToggleDocumentRequest)
 	}
 	if !check && !userInfo.SuperUser {
 		if !userInfo.SuperUser {
-			return nil, status.Error(codes.PermissionDenied, "You don't have permission to close/open this document!")
+			return nil, ErrDocToggleDenied
 		}
 	}
 
@@ -496,7 +500,7 @@ func (s *Server) ToggleDocument(ctx context.Context, req *ToggleDocumentRequest)
 		fields = fieldsAttr.([]string)
 	}
 	if !s.checkIfHasAccess(fields, userInfo, doc.Creator) {
-		return nil, status.Error(codes.PermissionDenied, "You don't have permission to close/open other's document!")
+		return nil, ErrDocToggleDenied
 	}
 
 	stmt := tDocs.

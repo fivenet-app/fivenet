@@ -7,13 +7,20 @@ import (
 	"github.com/galexrt/fivenet/pkg/htmlsanitizer"
 )
 
-func (m *RequestEntry) Sanitize() error {
+func (m *Request) Sanitize() error {
 
 	m.Message = htmlsanitizer.Sanitize(m.Message)
 
 	if m.Status != nil {
 		*m.Status = htmlsanitizer.Sanitize(*m.Status)
 	}
+
+	return nil
+}
+
+func (m *RequestComment) Sanitize() error {
+
+	m.Comment = htmlsanitizer.StripTags(m.Comment)
 
 	return nil
 }

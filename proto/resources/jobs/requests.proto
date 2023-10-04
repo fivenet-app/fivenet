@@ -8,27 +8,47 @@ import "validate/validate.proto";
 
 option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/jobs;jobs";
 
-enum RequestType {
-  REQUEST_TYPE_UNSPECIFIED = 0;
-  REQUEST_TYPE_GENERAL = 1;
-  REQUEST_TYPE_ABSENCE = 2;
-}
-
-message RequestEntry {
-  uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
+message RequestType {
+  uint64 id = 1;
   optional resources.timestamp.Timestamp created_at = 2;
   optional resources.timestamp.Timestamp updated_at = 3;
-  string job = 4 [(validate.rules).string.max_len = 20];
-  RequestType type = 5 [(validate.rules).enum.defined_only = true];
+  optional resources.timestamp.Timestamp deleted_at = 4;
+  string job = 5 [(validate.rules).string.max_len = 20];
+  string name = 6 [(validate.rules).string = {min_len: 3, max_len: 32}];
+  optional string description = 7 [(validate.rules).string = {min_len: 3, max_len: 255}];
+}
+
+message Request {
+  uint64 id = 1; // @gotags: sql:"primary_key"
+  optional resources.timestamp.Timestamp created_at = 2;
+  optional resources.timestamp.Timestamp updated_at = 3;
+  optional resources.timestamp.Timestamp deleted_at = 4;
+  string job = 5 [(validate.rules).string.max_len = 20];
+  optional uint64 type_id = 6;
   // @sanitize
-  string message = 6 [(validate.rules).string = {min_len: 3, max_len: 2048}];
-  optional resources.timestamp.Timestamp begins_at = 7;
-  optional resources.timestamp.Timestamp ends_at = 8;
+  string message = 7 [(validate.rules).string = {min_len: 3, max_len: 4096}];
+  optional resources.timestamp.Timestamp begins_at = 8;
+  optional resources.timestamp.Timestamp ends_at = 9;
   // @sanitize
-  optional string status = 9;
-  int32 creator_id = 10 [(validate.rules).int32.gt = 0];
-  optional resources.users.UserShort creator = 11; // @gotags: alias:"creator"
-  optional bool approved = 12;
-  optional int32 approver_user_id = 13;
-  optional resources.users.UserShort approver_user = 14; // @gotags: alias:"approver"
+  optional string status = 10;
+  int32 creator_id = 11 [(validate.rules).int32.gt = 0];
+  optional resources.users.UserShort creator = 12;
+  optional bool approved = 13;
+  optional int32 approver_user_id = 14;
+  optional resources.users.UserShort approver_user = 15; // @gotags: alias:"approver"
+}
+
+message RequestComment {
+  uint64 id = 1;
+  optional resources.timestamp.Timestamp created_at = 2;
+  optional resources.timestamp.Timestamp updated_at = 3;
+  optional resources.timestamp.Timestamp deleted_at = 4;
+  uint64 request_id = 5;
+  // @sanitize: method=StripTags
+  string comment = 6 [(validate.rules).string = {
+    min_len: 3,
+    max_bytes: 2048
+  }];
+  optional int32 creator_id = 7;
+  optional resources.users.UserShort creator = 8;
 }

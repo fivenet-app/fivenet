@@ -1,21 +1,23 @@
 <script lang="ts" setup>
-import { TrainingModule } from '~~/gen/ts/resources/jobs/training';
+import { Qualification } from '~~/gen/ts/resources/jobs/qualifications';
 import ListEntry from './ListEntry.vue';
 
-const trainings = ref<TrainingModule[]>([
+const trainings = ref<Qualification[]>([
     {
         id: 0n,
         job: 'ambulance',
         title: 'Test Training Title',
         description: 'Test training module',
-        minimumGrade: 0,
         open: true,
+        abbreviation: 'TR1',
+        jobAccess: [],
+        weight: 0,
     },
 ]);
 </script>
 
 <template>
     <ul role="list" class="divide-y divide-gray-100">
-        <ListEntry v-for="training in trainings" :training="training" />
+        <ListEntry v-for="training in trainings" :qualification="training" />
     </ul>
 </template>

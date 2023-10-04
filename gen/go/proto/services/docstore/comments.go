@@ -23,14 +23,21 @@ var (
 	tDComments = table.FivenetDocumentsComments
 )
 
+var (
+	ErrCommentViewDenied   = status.Error(codes.PermissionDenied, "errors.DocStoreService.ErrCommentViewDenied")
+	ErrCommentPostDenied   = status.Error(codes.PermissionDenied, "errors.DocStoreService.ErrCommentPostDenied")
+	ErrCommentEditDenied   = status.Error(codes.PermissionDenied, "errors.DocStoreService.ErrCommentEditDenied")
+	ErrCommentDeleteDenied = status.Error(codes.PermissionDenied, "errors.DocStoreService.ErrCommentDeleteDenied")
+)
+
 func (s *Server) GetComments(ctx context.Context, req *GetCommentsRequest) (*GetCommentsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 	ok, err := s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_VIEW)
 	if err != nil {
-		return nil, err
+		return nil, ErrFailedQuery
 	}
 	if !ok {
-		return nil, status.Error(codes.PermissionDenied, "You don't have permission to view document comments!")
+		return nil, ErrCommentViewDenied
 	}
 
 	tDComments := tDComments.AS("comment")
@@ -140,7 +147,7 @@ func (s *Server) PostComment(ctx context.Context, req *PostCommentRequest) (*Pos
 		return nil, err
 	}
 	if !check && !userInfo.SuperUser {
-		return nil, status.Error(codes.PermissionDenied, "You don't have permission to post a comment on this document!")
+		return nil, ErrCommentPostDenied
 	}
 
 	stmt := tDComments.
@@ -189,7 +196,7 @@ func (s *Server) EditComment(ctx context.Context, req *EditCommentRequest) (*Edi
 		return nil, err
 	}
 	if !check && !userInfo.SuperUser {
-		return nil, status.Error(codes.PermissionDenied, "You don't have permission to edit this comment!")
+		return nil, ErrCommentEditDenied
 	}
 
 	comment, err := s.getComment(ctx, req.Comment.Id)
@@ -197,7 +204,7 @@ func (s *Server) EditComment(ctx context.Context, req *EditCommentRequest) (*Edi
 		return nil, err
 	}
 	if !userInfo.SuperUser && *comment.CreatorId != userInfo.UserId {
-		return nil, status.Error(codes.PermissionDenied, "You can't edit others document comments!")
+		return nil, ErrCommentEditDenied
 	}
 
 	stmt := tDComments.
@@ -273,7 +280,7 @@ func (s *Server) DeleteComment(ctx context.Context, req *DeleteCommentRequest) (
 		return nil, err
 	}
 	if !check && !userInfo.SuperUser {
-		return nil, status.Error(codes.PermissionDenied, "You can't delete document comments!")
+		return nil, ErrCommentDeleteDenied
 	}
 
 	// Field Permission Check
@@ -286,7 +293,7 @@ func (s *Server) DeleteComment(ctx context.Context, req *DeleteCommentRequest) (
 		fields = fieldsAttr.([]string)
 	}
 	if !s.checkIfHasAccess(fields, userInfo, comment.Creator) {
-		return nil, status.Error(codes.PermissionDenied, "You can't delete others document comments!")
+		return nil, ErrCommentDeleteDenied
 	}
 
 	stmt := tDComments.

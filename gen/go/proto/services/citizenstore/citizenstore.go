@@ -35,8 +35,14 @@ var (
 )
 
 var (
-	ErrFailedQuery          = status.Error(codes.Internal, "errors.CitizenStoreService.ErrFailedQuery")
-	ErrJobGradeNoPermission = status.Error(codes.NotFound, "errors.CitizenStoreService.ErrJobGradeNoPermission")
+	ErrFailedQuery              = status.Error(codes.Internal, "errors.CitizenStoreService.ErrFailedQuery")
+	ErrJobGradeNoPermission     = status.Error(codes.NotFound, "errors.CitizenStoreService.ErrJobGradeNoPermission")
+	ErrReasonRequired           = status.Error(codes.InvalidArgument, "errors.CitizenStoreService.ErrReasonRequired")
+	ErrPropsWantedDenied        = status.Error(codes.PermissionDenied, "errors.CitizenStoreService.ErrUserPropsWantedDenied")
+	ErrPropsJobDenied           = status.Error(codes.PermissionDenied, "errors.CitizenStoreService.ErrPropsJobDenied")
+	ErrPropsJobPublic           = status.Error(codes.InvalidArgument, "errors.CitizenStoreService.ErrPropsJobPublic")
+	ErrPropsJobInvalid          = status.Error(codes.InvalidArgument, "errors.CitizenStoreService.ErrPropsJobInvalid")
+	ErrPropsTrafficPointsDenied = status.Error(codes.PermissionDenied, "errors.CitizenStoreService.ErrPropsTrafficPointsDenied")
 )
 
 var ZeroTrafficInfractionPoints uint64 = 0
@@ -476,7 +482,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 	defer s.aud.Log(auditEntry, req)
 
 	if req.Reason == "" {
-		return nil, status.Error(codes.InvalidArgument, "Must give a reason!")
+		return nil, ErrReasonRequired
 	}
 
 	// Get current user props to be able to compare
@@ -521,7 +527,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 	updateSets := []jet.ColumnAssigment{}
 	if req.Props.Wanted != nil {
 		if !utils.InSlice(fields, "Wanted") {
-			return nil, status.Error(codes.PermissionDenied, "You are not allowed to set a user wanted status!")
+			return nil, ErrPropsWantedDenied
 		}
 
 		updateSets = append(updateSets, tUserProps.Wanted.SET(jet.Bool(*req.Props.Wanted)))
@@ -530,16 +536,16 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 	}
 	if req.Props.JobName != nil {
 		if !utils.InSlice(fields, "Job") {
-			return nil, status.Error(codes.PermissionDenied, "You are not allowed to set a user job!")
+			return nil, ErrPropsJobDenied
 		}
 
 		if utils.InSlice(s.publicJobs, *req.Props.JobName) {
-			return nil, status.Error(codes.InvalidArgument, "You can't set a state job!")
+			return nil, ErrPropsJobPublic
 		}
 
 		req.Props.Job, req.Props.JobGrade = s.enricher.GetJobGrade(*req.Props.JobName, *req.Props.JobGradeNumber)
 		if req.Props.Job == nil || req.Props.JobGrade == nil {
-			return nil, status.Error(codes.PermissionDenied, "Invalid job or job rank set!")
+			return nil, ErrPropsJobInvalid
 		}
 
 		updateSets = append(updateSets, tUserProps.Job.SET(jet.String(*req.Props.JobName)))
@@ -553,7 +559,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 	if req.Props.TrafficInfractionPoints != nil {
 		// Only update when it has actually changed
 		if !utils.InSlice(fields, "TrafficInfractionPoints") {
-			return nil, status.Error(codes.PermissionDenied, "You are not allowed to set a user's traffic infraction points!")
+			return nil, ErrPropsTrafficPointsDenied
 		}
 
 		updateSets = append(updateSets, tUserProps.TrafficInfractionPoints.SET(jet.Uint64(*req.Props.TrafficInfractionPoints)))

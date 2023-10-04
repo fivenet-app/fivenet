@@ -197,7 +197,7 @@ func (s *Server) TakeControl(ctx context.Context, req *TakeControlRequest) (*Tak
 	defer s.auditer.Log(auditEntry, req)
 
 	if err := s.dispatchCenterSignOn(ctx, userInfo.Job, userInfo.UserId, req.Signon); err != nil {
-		return nil, err
+		return nil, ErrFailedQuery
 	}
 
 	if req.Signon {
