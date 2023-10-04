@@ -2,12 +2,14 @@
 import { TimeclockStats } from '~~/gen/ts/resources/jobs/timeclock';
 
 const props = defineProps<{
-    stats: TimeclockStats;
+    stats?: TimeclockStats;
 }>();
 
 const entries = ref<{ name: string; value: number }[]>([]);
 
 function updateStats(): void {
+    if (!props.stats) return;
+
     entries.value.length = 0;
     entries.value.push({
         name: 'components.jobs.timeclock.Stats.sum',

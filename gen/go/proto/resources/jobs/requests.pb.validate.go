@@ -306,6 +306,17 @@ func (m *Request) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	if l := utf8.RuneCountInString(m.GetTitle()); l < 3 || l > 255 {
+		err := RequestValidationError{
+			field:  "Title",
+			reason: "value length must be between 3 and 255 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if l := utf8.RuneCountInString(m.GetMessage()); l < 3 || l > 4096 {
 		err := RequestValidationError{
 			field:  "Message",
@@ -431,74 +442,19 @@ func (m *Request) validate(all bool) error {
 		// no validation rules for TypeId
 	}
 
-	if m.BeginsAt != nil {
-
-		if all {
-			switch v := interface{}(m.GetBeginsAt()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, RequestValidationError{
-						field:  "BeginsAt",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, RequestValidationError{
-						field:  "BeginsAt",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetBeginsAt()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return RequestValidationError{
-					field:  "BeginsAt",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	}
-
-	if m.EndsAt != nil {
-
-		if all {
-			switch v := interface{}(m.GetEndsAt()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, RequestValidationError{
-						field:  "EndsAt",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, RequestValidationError{
-						field:  "EndsAt",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetEndsAt()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return RequestValidationError{
-					field:  "EndsAt",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	}
-
 	if m.Status != nil {
-		// no validation rules for Status
+
+		if utf8.RuneCountInString(m.GetStatus()) > 24 {
+			err := RequestValidationError{
+				field:  "Status",
+				reason: "value length must be at most 24 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
 	}
 
 	if m.Creator != nil {
@@ -567,6 +523,72 @@ func (m *Request) validate(all bool) error {
 			if err := v.Validate(); err != nil {
 				return RequestValidationError{
 					field:  "ApproverUser",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.BeginsAt != nil {
+
+		if all {
+			switch v := interface{}(m.GetBeginsAt()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, RequestValidationError{
+						field:  "BeginsAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, RequestValidationError{
+						field:  "BeginsAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetBeginsAt()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return RequestValidationError{
+					field:  "BeginsAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.EndsAt != nil {
+
+		if all {
+			switch v := interface{}(m.GetEndsAt()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, RequestValidationError{
+						field:  "EndsAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, RequestValidationError{
+						field:  "EndsAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetEndsAt()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return RequestValidationError{
+					field:  "EndsAt",
 					reason: "embedded message failed validation",
 					cause:  err,
 				}

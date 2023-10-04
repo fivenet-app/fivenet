@@ -88,7 +88,16 @@ func (m *Template) validate(all bool) error {
 		}
 	}
 
-	// no validation rules for Weight
+	if m.GetWeight() >= 4294967295 {
+		err := TemplateValidationError{
+			field:  "Weight",
+			reason: "value must be less than 4294967295",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if utf8.RuneCountInString(m.GetTitle()) < 3 {
 		err := TemplateValidationError{

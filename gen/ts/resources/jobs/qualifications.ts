@@ -92,9 +92,9 @@ export interface QualificationResult {
      */
     rating: number;
     /**
-     * @generated from protobuf field: string description = 8;
+     * @generated from protobuf field: string summary = 8;
      */
-    description: string;
+    summary: string;
     /**
      * @generated from protobuf field: int32 creator_id = 9;
      */
@@ -109,13 +109,13 @@ export interface QualificationResult {
  */
 export interface Access {
     /**
-     * @generated from protobuf field: repeated resources.jobs.JobAccess job_access = 1;
+     * @generated from protobuf field: repeated resources.jobs.JobAccess job = 1;
      */
-    jobAccess: JobAccess[];
+    job: JobAccess[];
     /**
-     * @generated from protobuf field: repeated resources.jobs.RequiredQualificationAccess required_qualification_access = 2;
+     * @generated from protobuf field: repeated resources.jobs.RequiredQualificationAccess required_qualification = 2;
      */
-    requiredQualificationAccess: RequiredQualificationAccess[];
+    requiredQualification: RequiredQualificationAccess[];
 }
 /**
  * @generated from protobuf message resources.jobs.JobAccess
@@ -184,9 +184,13 @@ export enum AccessLevel {
      */
     VIEW = 1,
     /**
-     * @generated from protobuf enum value: ACCESS_LEVEL_ATTEND = 2;
+     * @generated from protobuf enum value: ACCESS_LEVEL_REGISTER = 2;
      */
-    ATTEND = 2
+    REGISTER = 2,
+    /**
+     * @generated from protobuf enum value: ACCESS_LEVEL_ATTEND = 3;
+     */
+    ATTEND = 3
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Qualification$Type extends MessageType<Qualification> {
@@ -197,7 +201,7 @@ class Qualification$Type extends MessageType<Qualification> {
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "deleted_at", kind: "message", T: () => Timestamp },
             { no: 5, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
-            { no: 6, name: "weight", kind: "scalar", T: 13 /*ScalarType.UINT32*/ },
+            { no: 6, name: "weight", kind: "scalar", T: 13 /*ScalarType.UINT32*/, options: { "validate.rules": { uint32: { lt: 4294967295 } } } },
             { no: 7, name: "open", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 8, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 9, name: "abbreviation", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
@@ -220,8 +224,8 @@ class QualificationResult$Type extends MessageType<QualificationResult> {
             { no: 4, name: "training_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
             { no: 5, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 6, name: "user", kind: "message", T: () => UserShort },
-            { no: 7, name: "rating", kind: "scalar", T: 13 /*ScalarType.UINT32*/ },
-            { no: 8, name: "description", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "512" } } } },
+            { no: 7, name: "rating", kind: "scalar", T: 13 /*ScalarType.UINT32*/, options: { "validate.rules": { uint32: { lt: 100 } } } },
+            { no: 8, name: "summary", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "512" } } } },
             { no: 9, name: "creator_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 10, name: "creator", kind: "message", T: () => UserShort }
         ]);
@@ -235,8 +239,8 @@ export const QualificationResult = new QualificationResult$Type();
 class Access$Type extends MessageType<Access> {
     constructor() {
         super("resources.jobs.Access", [
-            { no: 1, name: "job_access", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => JobAccess },
-            { no: 2, name: "required_qualification_access", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => RequiredQualificationAccess }
+            { no: 1, name: "job", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => JobAccess },
+            { no: 2, name: "required_qualification", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => RequiredQualificationAccess }
         ]);
     }
 }

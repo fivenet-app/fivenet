@@ -1472,11 +1472,75 @@
                 </li>
               
                 <li>
+                  <a href="#services.jobs.RequestsCreateEntryRequest"><span class="badge">M</span>RequestsCreateEntryRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#services.jobs.RequestsCreateEntryResponse"><span class="badge">M</span>RequestsCreateEntryResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#services.jobs.RequestsCreateOrUpdateTypeRequest"><span class="badge">M</span>RequestsCreateOrUpdateTypeRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#services.jobs.RequestsCreateOrUpdateTypeResponse"><span class="badge">M</span>RequestsCreateOrUpdateTypeResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#services.jobs.RequestsDeleteEntryRequest"><span class="badge">M</span>RequestsDeleteEntryRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#services.jobs.RequestsDeleteEntryResponse"><span class="badge">M</span>RequestsDeleteEntryResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#services.jobs.RequestsDeleteTypeRequest"><span class="badge">M</span>RequestsDeleteTypeRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#services.jobs.RequestsDeleteTypeResponse"><span class="badge">M</span>RequestsDeleteTypeResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#services.jobs.RequestsListEntriesRequest"><span class="badge">M</span>RequestsListEntriesRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#services.jobs.RequestsListEntriesResponse"><span class="badge">M</span>RequestsListEntriesResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#services.jobs.RequestsListTypesRequest"><span class="badge">M</span>RequestsListTypesRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#services.jobs.RequestsListTypesResponse"><span class="badge">M</span>RequestsListTypesResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#services.jobs.RequestsUpdateEntryRequest"><span class="badge">M</span>RequestsUpdateEntryRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#services.jobs.RequestsUpdateEntryResponse"><span class="badge">M</span>RequestsUpdateEntryResponse</a>
+                </li>
+              
+                <li>
                   <a href="#services.jobs.TimeclockListEntriesRequest"><span class="badge">M</span>TimeclockListEntriesRequest</a>
                 </li>
               
                 <li>
                   <a href="#services.jobs.TimeclockListEntriesResponse"><span class="badge">M</span>TimeclockListEntriesResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#services.jobs.TimeclockStatsRequest"><span class="badge">M</span>TimeclockStatsRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#services.jobs.TimeclockStatsResponse"><span class="badge">M</span>TimeclockStatsResponse</a>
                 </li>
               
               
@@ -4963,6 +5027,17 @@
                 </tr>
               </thead>
               <tbody>
+              
+                <tr>
+                  <td>weight</td>
+                  <td>
+                    <ul>
+                    
+                      <li>uint32.lt: 4294967295</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
               
                 <tr>
                   <td>title</td>
@@ -8965,14 +9040,14 @@
             <tbody>
               
                 <tr>
-                  <td>job_access</td>
+                  <td>job</td>
                   <td><a href="#resources.jobs.JobAccess">JobAccess</a></td>
                   <td>repeated</td>
                   <td><p> </p></td>
                 </tr>
               
                 <tr>
-                  <td>required_qualification_access</td>
+                  <td>required_qualification</td>
                   <td><a href="#resources.jobs.RequiredQualificationAccess">RequiredQualificationAccess</a></td>
                   <td>repeated</td>
                   <td><p> </p></td>
@@ -9243,6 +9318,17 @@
                   </td>
                 </tr>
               
+                <tr>
+                  <td>weight</td>
+                  <td>
+                    <ul>
+                    
+                      <li>uint32.lt: 4294967295</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
               </tbody>
             </table>
             
@@ -9310,7 +9396,7 @@
                 </tr>
               
                 <tr>
-                  <td>description</td>
+                  <td>summary</td>
                   <td><a href="#string">string</a></td>
                   <td></td>
                   <td><p> </p></td>
@@ -9347,7 +9433,18 @@
               <tbody>
               
                 <tr>
-                  <td>description</td>
+                  <td>rating</td>
+                  <td>
+                    <ul>
+                    
+                      <li>uint32.lt: 100</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>summary</td>
                   <td>
                     <ul>
                     
@@ -9427,8 +9524,14 @@
               </tr>
             
               <tr>
-                <td>ACCESS_LEVEL_ATTEND</td>
+                <td>ACCESS_LEVEL_REGISTER</td>
                 <td>2</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>ACCESS_LEVEL_ATTEND</td>
+                <td>3</td>
                 <td><p></p></td>
               </tr>
             
@@ -9500,24 +9603,17 @@
                 </tr>
               
                 <tr>
-                  <td>message</td>
+                  <td>title</td>
                   <td><a href="#string">string</a></td>
                   <td></td>
                   <td><p>@sanitize </p></td>
                 </tr>
               
                 <tr>
-                  <td>begins_at</td>
-                  <td><a href="#resources.timestamp.Timestamp">resources.timestamp.Timestamp</a></td>
-                  <td>optional</td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>ends_at</td>
-                  <td><a href="#resources.timestamp.Timestamp">resources.timestamp.Timestamp</a></td>
-                  <td>optional</td>
-                  <td><p> </p></td>
+                  <td>message</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p>@sanitize </p></td>
                 </tr>
               
                 <tr>
@@ -9562,6 +9658,20 @@
                   <td><p>@gotags: alias:&#34;approver&#34; </p></td>
                 </tr>
               
+                <tr>
+                  <td>begins_at</td>
+                  <td><a href="#resources.timestamp.Timestamp">resources.timestamp.Timestamp</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>ends_at</td>
+                  <td><a href="#resources.timestamp.Timestamp">resources.timestamp.Timestamp</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
             </tbody>
           </table>
 
@@ -9590,6 +9700,19 @@
                 </tr>
               
                 <tr>
+                  <td>title</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.min_len: 3</li>
+                    
+                      <li>string.max_len: 255</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
                   <td>message</td>
                   <td>
                     <ul>
@@ -9597,6 +9720,17 @@
                       <li>string.min_len: 3</li>
                     
                       <li>string.max_len: 4096</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>status</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.max_len: 24</li>
                     
                     </ul>
                   </td>
@@ -15925,6 +16059,380 @@
 
         
       
+        <h3 id="services.jobs.RequestsCreateEntryRequest">RequestsCreateEntryRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>entry</td>
+                  <td><a href="#resources.jobs.Request">resources.jobs.Request</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+            
+            
+            <h4>Validated Fields</h4>
+            <table>
+              <thead>
+                <tr>
+                  <td>Field</td>
+                  <td>Validations</td>
+                </tr>
+              </thead>
+              <tbody>
+              
+                <tr>
+                  <td>entry</td>
+                  <td>
+                    <ul>
+                    
+                      <li>message.required: true</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+              </tbody>
+            </table>
+            
+          
+
+        
+      
+        <h3 id="services.jobs.RequestsCreateEntryResponse">RequestsCreateEntryResponse</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>entry</td>
+                  <td><a href="#resources.jobs.Request">resources.jobs.Request</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="services.jobs.RequestsCreateOrUpdateTypeRequest">RequestsCreateOrUpdateTypeRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>request_type</td>
+                  <td><a href="#resources.jobs.RequestType">resources.jobs.RequestType</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="services.jobs.RequestsCreateOrUpdateTypeResponse">RequestsCreateOrUpdateTypeResponse</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>request_type</td>
+                  <td><a href="#resources.jobs.RequestType">resources.jobs.RequestType</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="services.jobs.RequestsDeleteEntryRequest">RequestsDeleteEntryRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>id</td>
+                  <td><a href="#uint64">uint64</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="services.jobs.RequestsDeleteEntryResponse">RequestsDeleteEntryResponse</h3>
+        <p></p>
+
+        
+
+        
+      
+        <h3 id="services.jobs.RequestsDeleteTypeRequest">RequestsDeleteTypeRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>id</td>
+                  <td><a href="#uint64">uint64</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="services.jobs.RequestsDeleteTypeResponse">RequestsDeleteTypeResponse</h3>
+        <p></p>
+
+        
+
+        
+      
+        <h3 id="services.jobs.RequestsListEntriesRequest">RequestsListEntriesRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>pagination</td>
+                  <td><a href="#resources.common.database.PaginationRequest">resources.common.database.PaginationRequest</a></td>
+                  <td></td>
+                  <td><p>Search
+TODO </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+            
+            
+            <h4>Validated Fields</h4>
+            <table>
+              <thead>
+                <tr>
+                  <td>Field</td>
+                  <td>Validations</td>
+                </tr>
+              </thead>
+              <tbody>
+              
+                <tr>
+                  <td>pagination</td>
+                  <td>
+                    <ul>
+                    
+                      <li>message.required: true</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+              </tbody>
+            </table>
+            
+          
+
+        
+      
+        <h3 id="services.jobs.RequestsListEntriesResponse">RequestsListEntriesResponse</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>pagination</td>
+                  <td><a href="#resources.common.database.PaginationResponse">resources.common.database.PaginationResponse</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>entry</td>
+                  <td><a href="#resources.jobs.Request">resources.jobs.Request</a></td>
+                  <td>repeated</td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="services.jobs.RequestsListTypesRequest">RequestsListTypesRequest</h3>
+        <p></p>
+
+        
+
+        
+      
+        <h3 id="services.jobs.RequestsListTypesResponse">RequestsListTypesResponse</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>types</td>
+                  <td><a href="#resources.jobs.RequestType">resources.jobs.RequestType</a></td>
+                  <td>repeated</td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="services.jobs.RequestsUpdateEntryRequest">RequestsUpdateEntryRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>entry</td>
+                  <td><a href="#resources.jobs.Request">resources.jobs.Request</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+            
+            
+            <h4>Validated Fields</h4>
+            <table>
+              <thead>
+                <tr>
+                  <td>Field</td>
+                  <td>Validations</td>
+                </tr>
+              </thead>
+              <tbody>
+              
+                <tr>
+                  <td>entry</td>
+                  <td>
+                    <ul>
+                    
+                      <li>message.required: true</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+              </tbody>
+            </table>
+            
+          
+
+        
+      
+        <h3 id="services.jobs.RequestsUpdateEntryResponse">RequestsUpdateEntryResponse</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>entry</td>
+                  <td><a href="#resources.jobs.Request">resources.jobs.Request</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
         <h3 id="services.jobs.TimeclockListEntriesRequest">TimeclockListEntriesRequest</h3>
         <p></p>
 
@@ -16035,6 +16543,37 @@
 
         
       
+        <h3 id="services.jobs.TimeclockStatsRequest">TimeclockStatsRequest</h3>
+        <p></p>
+
+        
+
+        
+      
+        <h3 id="services.jobs.TimeclockStatsResponse">TimeclockStatsResponse</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>stats</td>
+                  <td><a href="#resources.jobs.TimeclockStats">resources.jobs.TimeclockStats</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
 
       
 
@@ -16064,6 +16603,13 @@
               </tr>
             
               <tr>
+                <td>TimeclockStats</td>
+                <td><a href="#services.jobs.TimeclockStatsRequest">TimeclockStatsRequest</a></td>
+                <td><a href="#services.jobs.TimeclockStatsResponse">TimeclockStatsResponse</a></td>
+                <td><p>@perm: Name=ConductListEntries</p></td>
+              </tr>
+            
+              <tr>
                 <td>ConductCreateEntry</td>
                 <td><a href="#services.jobs.ConductCreateEntryRequest">ConductCreateEntryRequest</a></td>
                 <td><a href="#services.jobs.ConductCreateEntryResponse">ConductCreateEntryResponse</a></td>
@@ -16089,6 +16635,55 @@
                 <td><a href="#services.jobs.TimeclockListEntriesRequest">TimeclockListEntriesRequest</a></td>
                 <td><a href="#services.jobs.TimeclockListEntriesResponse">TimeclockListEntriesResponse</a></td>
                 <td><p>@perm: Attrs=Access/StringList:[]string{&#34;Own&#34;, &#34;All&#34;}§[]string{&#34;Own&#34;}</p></td>
+              </tr>
+            
+              <tr>
+                <td>RequestsListEntries</td>
+                <td><a href="#services.jobs.RequestsListEntriesRequest">RequestsListEntriesRequest</a></td>
+                <td><a href="#services.jobs.RequestsListEntriesResponse">RequestsListEntriesResponse</a></td>
+                <td><p>@perm: Attrs=Access/StringList:[]string{&#34;Own&#34;, &#34;All&#34;}§[]string{&#34;Own&#34;}</p></td>
+              </tr>
+            
+              <tr>
+                <td>RequestsCreateEntry</td>
+                <td><a href="#services.jobs.RequestsCreateEntryRequest">RequestsCreateEntryRequest</a></td>
+                <td><a href="#services.jobs.RequestsCreateEntryResponse">RequestsCreateEntryResponse</a></td>
+                <td><p>@perm</p></td>
+              </tr>
+            
+              <tr>
+                <td>RequestsUpdateEntry</td>
+                <td><a href="#services.jobs.RequestsUpdateEntryRequest">RequestsUpdateEntryRequest</a></td>
+                <td><a href="#services.jobs.RequestsUpdateEntryResponse">RequestsUpdateEntryResponse</a></td>
+                <td><p>@perm</p></td>
+              </tr>
+            
+              <tr>
+                <td>RequestsDeleteEntry</td>
+                <td><a href="#services.jobs.RequestsDeleteEntryRequest">RequestsDeleteEntryRequest</a></td>
+                <td><a href="#services.jobs.RequestsDeleteEntryResponse">RequestsDeleteEntryResponse</a></td>
+                <td><p>@perm</p></td>
+              </tr>
+            
+              <tr>
+                <td>RequestsListTypes</td>
+                <td><a href="#services.jobs.RequestsListTypesRequest">RequestsListTypesRequest</a></td>
+                <td><a href="#services.jobs.RequestsListTypesResponse">RequestsListTypesResponse</a></td>
+                <td><p>@perm: Name=RequestsListEntries</p></td>
+              </tr>
+            
+              <tr>
+                <td>RequestsCreateOrUpdateType</td>
+                <td><a href="#services.jobs.RequestsCreateOrUpdateTypeRequest">RequestsCreateOrUpdateTypeRequest</a></td>
+                <td><a href="#services.jobs.RequestsCreateOrUpdateTypeResponse">RequestsCreateOrUpdateTypeResponse</a></td>
+                <td><p>@perm</p></td>
+              </tr>
+            
+              <tr>
+                <td>RequestsDeleteType</td>
+                <td><a href="#services.jobs.RequestsDeleteTypeRequest">RequestsDeleteTypeRequest</a></td>
+                <td><a href="#services.jobs.RequestsDeleteTypeResponse">RequestsDeleteTypeResponse</a></td>
+                <td><p>@perm</p></td>
               </tr>
             
           </tbody>

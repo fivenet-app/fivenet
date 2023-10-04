@@ -15,6 +15,8 @@ func (m *Request) Sanitize() error {
 		*m.Status = htmlsanitizer.Sanitize(*m.Status)
 	}
 
+	m.Title = htmlsanitizer.Sanitize(m.Title)
+
 	return nil
 }
 

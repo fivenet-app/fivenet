@@ -33,8 +33,8 @@ ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 -- Table: fivenet_documents_templates
 CREATE TABLE IF NOT EXISTS `fivenet_documents_templates` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `created_at` datetime(3) DEFAULT current_timestamp(3),
-  `updated_at` datetime(3) DEFAULT NULL ON UPDATE current_timestamp(3),
+  `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP(3),
+  `updated_at` datetime(3) DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP(3),
   `deleted_at` datetime(3) DEFAULT NULL,
   `weight` int(11) unsigned DEFAULT 0,
   `category_id` bigint(20) unsigned DEFAULT NULL,
@@ -86,7 +86,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents` (
 -- Table:fivenet_documents_comments
 CREATE TABLE IF NOT EXISTS `fivenet_documents_comments` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `created_at` datetime(3) DEFAULT current_timestamp(3),
+  `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP(3),
   `updated_at` datetime(3) DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP(3),
   `deleted_at` datetime(3) DEFAULT NULL,
   `document_id` bigint(20) unsigned NOT NULL,
@@ -116,7 +116,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents_job_access` (
 -- Table: fivenet_documents_references
 CREATE TABLE IF NOT EXISTS `fivenet_documents_references` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-  `created_at` datetime(3) DEFAULT current_timestamp(3),
+  `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP(3),
   `deleted_at` datetime(3) DEFAULT NULL,
   `source_document_id` bigint(20) unsigned NOT NULL,
   `reference` smallint(2) NOT NULL,

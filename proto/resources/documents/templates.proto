@@ -17,7 +17,7 @@ message Template {
   optional resources.timestamp.Timestamp created_at = 2;
   optional resources.timestamp.Timestamp updated_at = 3;
   resources.documents.Category category = 4; // @gotags: alias:"category"
-  uint32 weight = 5;
+  uint32 weight = 5 [(validate.rules).uint32.lt = 4294967295];
   // @sanitize
   string title = 6 [(validate.rules).string.min_len = 3];
   // @sanitize

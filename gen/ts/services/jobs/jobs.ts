@@ -3,6 +3,8 @@
 // tslint:disable
 import { ServiceType } from "@protobuf-ts/runtime-rpc";
 import { MessageType } from "@protobuf-ts/runtime";
+import { RequestType } from "../../resources/jobs/requests.js";
+import { Request } from "../../resources/jobs/requests.js";
 import { TimeclockStats } from "../../resources/jobs/timeclock.js";
 import { TimeclockEntry } from "../../resources/jobs/timeclock.js";
 import { Timestamp } from "../../resources/timestamp/timestamp.js";
@@ -171,6 +173,141 @@ export interface TimeclockListEntriesResponse {
      */
     stats?: TimeclockStats;
 }
+/**
+ * @generated from protobuf message services.jobs.TimeclockStatsRequest
+ */
+export interface TimeclockStatsRequest {
+}
+/**
+ * @generated from protobuf message services.jobs.TimeclockStatsResponse
+ */
+export interface TimeclockStatsResponse {
+    /**
+     * @generated from protobuf field: resources.jobs.TimeclockStats stats = 1;
+     */
+    stats?: TimeclockStats;
+}
+// Requests
+
+/**
+ * @generated from protobuf message services.jobs.RequestsListEntriesRequest
+ */
+export interface RequestsListEntriesRequest {
+    /**
+     * @generated from protobuf field: resources.common.database.PaginationRequest pagination = 1;
+     */
+    pagination?: PaginationRequest; // Search
+    // TODO
+}
+/**
+ * @generated from protobuf message services.jobs.RequestsListEntriesResponse
+ */
+export interface RequestsListEntriesResponse {
+    /**
+     * @generated from protobuf field: resources.common.database.PaginationResponse pagination = 1;
+     */
+    pagination?: PaginationResponse;
+    /**
+     * @generated from protobuf field: repeated resources.jobs.Request entry = 2;
+     */
+    entry: Request[];
+}
+/**
+ * @generated from protobuf message services.jobs.RequestsCreateEntryRequest
+ */
+export interface RequestsCreateEntryRequest {
+    /**
+     * @generated from protobuf field: resources.jobs.Request entry = 1;
+     */
+    entry?: Request;
+}
+/**
+ * @generated from protobuf message services.jobs.RequestsCreateEntryResponse
+ */
+export interface RequestsCreateEntryResponse {
+    /**
+     * @generated from protobuf field: resources.jobs.Request entry = 1;
+     */
+    entry?: Request;
+}
+/**
+ * @generated from protobuf message services.jobs.RequestsUpdateEntryRequest
+ */
+export interface RequestsUpdateEntryRequest {
+    /**
+     * @generated from protobuf field: resources.jobs.Request entry = 1;
+     */
+    entry?: Request;
+}
+/**
+ * @generated from protobuf message services.jobs.RequestsUpdateEntryResponse
+ */
+export interface RequestsUpdateEntryResponse {
+    /**
+     * @generated from protobuf field: resources.jobs.Request entry = 1;
+     */
+    entry?: Request;
+}
+/**
+ * @generated from protobuf message services.jobs.RequestsDeleteEntryRequest
+ */
+export interface RequestsDeleteEntryRequest {
+    /**
+     * @generated from protobuf field: uint64 id = 1;
+     */
+    id: bigint;
+}
+/**
+ * @generated from protobuf message services.jobs.RequestsDeleteEntryResponse
+ */
+export interface RequestsDeleteEntryResponse {
+}
+/**
+ * @generated from protobuf message services.jobs.RequestsListTypesRequest
+ */
+export interface RequestsListTypesRequest {
+}
+/**
+ * @generated from protobuf message services.jobs.RequestsListTypesResponse
+ */
+export interface RequestsListTypesResponse {
+    /**
+     * @generated from protobuf field: repeated resources.jobs.RequestType types = 1;
+     */
+    types: RequestType[];
+}
+/**
+ * @generated from protobuf message services.jobs.RequestsCreateOrUpdateTypeRequest
+ */
+export interface RequestsCreateOrUpdateTypeRequest {
+    /**
+     * @generated from protobuf field: resources.jobs.RequestType request_type = 1;
+     */
+    requestType?: RequestType;
+}
+/**
+ * @generated from protobuf message services.jobs.RequestsCreateOrUpdateTypeResponse
+ */
+export interface RequestsCreateOrUpdateTypeResponse {
+    /**
+     * @generated from protobuf field: resources.jobs.RequestType request_type = 1;
+     */
+    requestType?: RequestType;
+}
+/**
+ * @generated from protobuf message services.jobs.RequestsDeleteTypeRequest
+ */
+export interface RequestsDeleteTypeRequest {
+    /**
+     * @generated from protobuf field: uint64 id = 1;
+     */
+    id: bigint;
+}
+/**
+ * @generated from protobuf message services.jobs.RequestsDeleteTypeResponse
+ */
+export interface RequestsDeleteTypeResponse {
+}
 // @generated message type with reflection information, may provide speed optimized methods
 class ColleaguesListRequest$Type extends MessageType<ColleaguesListRequest> {
     constructor() {
@@ -324,14 +461,207 @@ class TimeclockListEntriesResponse$Type extends MessageType<TimeclockListEntries
  * @generated MessageType for protobuf message services.jobs.TimeclockListEntriesResponse
  */
 export const TimeclockListEntriesResponse = new TimeclockListEntriesResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class TimeclockStatsRequest$Type extends MessageType<TimeclockStatsRequest> {
+    constructor() {
+        super("services.jobs.TimeclockStatsRequest", []);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.TimeclockStatsRequest
+ */
+export const TimeclockStatsRequest = new TimeclockStatsRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class TimeclockStatsResponse$Type extends MessageType<TimeclockStatsResponse> {
+    constructor() {
+        super("services.jobs.TimeclockStatsResponse", [
+            { no: 1, name: "stats", kind: "message", T: () => TimeclockStats }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.TimeclockStatsResponse
+ */
+export const TimeclockStatsResponse = new TimeclockStatsResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class RequestsListEntriesRequest$Type extends MessageType<RequestsListEntriesRequest> {
+    constructor() {
+        super("services.jobs.RequestsListEntriesRequest", [
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.RequestsListEntriesRequest
+ */
+export const RequestsListEntriesRequest = new RequestsListEntriesRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class RequestsListEntriesResponse$Type extends MessageType<RequestsListEntriesResponse> {
+    constructor() {
+        super("services.jobs.RequestsListEntriesResponse", [
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse },
+            { no: 2, name: "entry", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Request }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.RequestsListEntriesResponse
+ */
+export const RequestsListEntriesResponse = new RequestsListEntriesResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class RequestsCreateEntryRequest$Type extends MessageType<RequestsCreateEntryRequest> {
+    constructor() {
+        super("services.jobs.RequestsCreateEntryRequest", [
+            { no: 1, name: "entry", kind: "message", T: () => Request, options: { "validate.rules": { message: { required: true } } } }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.RequestsCreateEntryRequest
+ */
+export const RequestsCreateEntryRequest = new RequestsCreateEntryRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class RequestsCreateEntryResponse$Type extends MessageType<RequestsCreateEntryResponse> {
+    constructor() {
+        super("services.jobs.RequestsCreateEntryResponse", [
+            { no: 1, name: "entry", kind: "message", T: () => Request }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.RequestsCreateEntryResponse
+ */
+export const RequestsCreateEntryResponse = new RequestsCreateEntryResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class RequestsUpdateEntryRequest$Type extends MessageType<RequestsUpdateEntryRequest> {
+    constructor() {
+        super("services.jobs.RequestsUpdateEntryRequest", [
+            { no: 1, name: "entry", kind: "message", T: () => Request, options: { "validate.rules": { message: { required: true } } } }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.RequestsUpdateEntryRequest
+ */
+export const RequestsUpdateEntryRequest = new RequestsUpdateEntryRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class RequestsUpdateEntryResponse$Type extends MessageType<RequestsUpdateEntryResponse> {
+    constructor() {
+        super("services.jobs.RequestsUpdateEntryResponse", [
+            { no: 1, name: "entry", kind: "message", T: () => Request }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.RequestsUpdateEntryResponse
+ */
+export const RequestsUpdateEntryResponse = new RequestsUpdateEntryResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class RequestsDeleteEntryRequest$Type extends MessageType<RequestsDeleteEntryRequest> {
+    constructor() {
+        super("services.jobs.RequestsDeleteEntryRequest", [
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.RequestsDeleteEntryRequest
+ */
+export const RequestsDeleteEntryRequest = new RequestsDeleteEntryRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class RequestsDeleteEntryResponse$Type extends MessageType<RequestsDeleteEntryResponse> {
+    constructor() {
+        super("services.jobs.RequestsDeleteEntryResponse", []);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.RequestsDeleteEntryResponse
+ */
+export const RequestsDeleteEntryResponse = new RequestsDeleteEntryResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class RequestsListTypesRequest$Type extends MessageType<RequestsListTypesRequest> {
+    constructor() {
+        super("services.jobs.RequestsListTypesRequest", []);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.RequestsListTypesRequest
+ */
+export const RequestsListTypesRequest = new RequestsListTypesRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class RequestsListTypesResponse$Type extends MessageType<RequestsListTypesResponse> {
+    constructor() {
+        super("services.jobs.RequestsListTypesResponse", [
+            { no: 1, name: "types", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => RequestType }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.RequestsListTypesResponse
+ */
+export const RequestsListTypesResponse = new RequestsListTypesResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class RequestsCreateOrUpdateTypeRequest$Type extends MessageType<RequestsCreateOrUpdateTypeRequest> {
+    constructor() {
+        super("services.jobs.RequestsCreateOrUpdateTypeRequest", [
+            { no: 1, name: "request_type", kind: "message", T: () => RequestType }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.RequestsCreateOrUpdateTypeRequest
+ */
+export const RequestsCreateOrUpdateTypeRequest = new RequestsCreateOrUpdateTypeRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class RequestsCreateOrUpdateTypeResponse$Type extends MessageType<RequestsCreateOrUpdateTypeResponse> {
+    constructor() {
+        super("services.jobs.RequestsCreateOrUpdateTypeResponse", [
+            { no: 1, name: "request_type", kind: "message", T: () => RequestType }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.RequestsCreateOrUpdateTypeResponse
+ */
+export const RequestsCreateOrUpdateTypeResponse = new RequestsCreateOrUpdateTypeResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class RequestsDeleteTypeRequest$Type extends MessageType<RequestsDeleteTypeRequest> {
+    constructor() {
+        super("services.jobs.RequestsDeleteTypeRequest", [
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.RequestsDeleteTypeRequest
+ */
+export const RequestsDeleteTypeRequest = new RequestsDeleteTypeRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class RequestsDeleteTypeResponse$Type extends MessageType<RequestsDeleteTypeResponse> {
+    constructor() {
+        super("services.jobs.RequestsDeleteTypeResponse", []);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.RequestsDeleteTypeResponse
+ */
+export const RequestsDeleteTypeResponse = new RequestsDeleteTypeResponse$Type();
 /**
  * @generated ServiceType for protobuf service services.jobs.JobsService
  */
 export const JobsService = new ServiceType("services.jobs.JobsService", [
     { name: "ColleaguesList", options: {}, I: ColleaguesListRequest, O: ColleaguesListResponse },
     { name: "ConductListEntries", options: {}, I: ConductListEntriesRequest, O: ConductListEntriesResponse },
+    { name: "TimeclockStats", options: {}, I: TimeclockStatsRequest, O: TimeclockStatsResponse },
     { name: "ConductCreateEntry", options: {}, I: ConductCreateEntryRequest, O: ConductCreateEntryResponse },
     { name: "ConductUpdateEntry", options: {}, I: ConductUpdateEntryRequest, O: ConductUpdateEntryResponse },
     { name: "ConductDeleteEntry", options: {}, I: ConductDeleteEntryRequest, O: ConductDeleteEntryResponse },
-    { name: "TimeclockListEntries", options: {}, I: TimeclockListEntriesRequest, O: TimeclockListEntriesResponse }
+    { name: "TimeclockListEntries", options: {}, I: TimeclockListEntriesRequest, O: TimeclockListEntriesResponse },
+    { name: "RequestsListEntries", options: {}, I: RequestsListEntriesRequest, O: RequestsListEntriesResponse },
+    { name: "RequestsCreateEntry", options: {}, I: RequestsCreateEntryRequest, O: RequestsCreateEntryResponse },
+    { name: "RequestsUpdateEntry", options: {}, I: RequestsUpdateEntryRequest, O: RequestsUpdateEntryResponse },
+    { name: "RequestsDeleteEntry", options: {}, I: RequestsDeleteEntryRequest, O: RequestsDeleteEntryResponse },
+    { name: "RequestsListTypes", options: {}, I: RequestsListTypesRequest, O: RequestsListTypesResponse },
+    { name: "RequestsCreateOrUpdateType", options: {}, I: RequestsCreateOrUpdateTypeRequest, O: RequestsCreateOrUpdateTypeResponse },
+    { name: "RequestsDeleteType", options: {}, I: RequestsDeleteTypeRequest, O: RequestsDeleteTypeResponse }
 ]);

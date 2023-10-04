@@ -19,12 +19,20 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	JobsService_ColleaguesList_FullMethodName       = "/services.jobs.JobsService/ColleaguesList"
-	JobsService_ConductListEntries_FullMethodName   = "/services.jobs.JobsService/ConductListEntries"
-	JobsService_ConductCreateEntry_FullMethodName   = "/services.jobs.JobsService/ConductCreateEntry"
-	JobsService_ConductUpdateEntry_FullMethodName   = "/services.jobs.JobsService/ConductUpdateEntry"
-	JobsService_ConductDeleteEntry_FullMethodName   = "/services.jobs.JobsService/ConductDeleteEntry"
-	JobsService_TimeclockListEntries_FullMethodName = "/services.jobs.JobsService/TimeclockListEntries"
+	JobsService_ColleaguesList_FullMethodName             = "/services.jobs.JobsService/ColleaguesList"
+	JobsService_ConductListEntries_FullMethodName         = "/services.jobs.JobsService/ConductListEntries"
+	JobsService_TimeclockStats_FullMethodName             = "/services.jobs.JobsService/TimeclockStats"
+	JobsService_ConductCreateEntry_FullMethodName         = "/services.jobs.JobsService/ConductCreateEntry"
+	JobsService_ConductUpdateEntry_FullMethodName         = "/services.jobs.JobsService/ConductUpdateEntry"
+	JobsService_ConductDeleteEntry_FullMethodName         = "/services.jobs.JobsService/ConductDeleteEntry"
+	JobsService_TimeclockListEntries_FullMethodName       = "/services.jobs.JobsService/TimeclockListEntries"
+	JobsService_RequestsListEntries_FullMethodName        = "/services.jobs.JobsService/RequestsListEntries"
+	JobsService_RequestsCreateEntry_FullMethodName        = "/services.jobs.JobsService/RequestsCreateEntry"
+	JobsService_RequestsUpdateEntry_FullMethodName        = "/services.jobs.JobsService/RequestsUpdateEntry"
+	JobsService_RequestsDeleteEntry_FullMethodName        = "/services.jobs.JobsService/RequestsDeleteEntry"
+	JobsService_RequestsListTypes_FullMethodName          = "/services.jobs.JobsService/RequestsListTypes"
+	JobsService_RequestsCreateOrUpdateType_FullMethodName = "/services.jobs.JobsService/RequestsCreateOrUpdateType"
+	JobsService_RequestsDeleteType_FullMethodName         = "/services.jobs.JobsService/RequestsDeleteType"
 )
 
 // JobsServiceClient is the client API for JobsService service.
@@ -35,6 +43,8 @@ type JobsServiceClient interface {
 	ColleaguesList(ctx context.Context, in *ColleaguesListRequest, opts ...grpc.CallOption) (*ColleaguesListResponse, error)
 	// @perm: Attrs=Access/StringList:[]string{"Own", "All"}§[]string{"Own"}
 	ConductListEntries(ctx context.Context, in *ConductListEntriesRequest, opts ...grpc.CallOption) (*ConductListEntriesResponse, error)
+	// @perm: Name=ConductListEntries
+	TimeclockStats(ctx context.Context, in *TimeclockStatsRequest, opts ...grpc.CallOption) (*TimeclockStatsResponse, error)
 	// @perm
 	ConductCreateEntry(ctx context.Context, in *ConductCreateEntryRequest, opts ...grpc.CallOption) (*ConductCreateEntryResponse, error)
 	// @perm
@@ -43,6 +53,20 @@ type JobsServiceClient interface {
 	ConductDeleteEntry(ctx context.Context, in *ConductDeleteEntryRequest, opts ...grpc.CallOption) (*ConductDeleteEntryResponse, error)
 	// @perm: Attrs=Access/StringList:[]string{"Own", "All"}§[]string{"Own"}
 	TimeclockListEntries(ctx context.Context, in *TimeclockListEntriesRequest, opts ...grpc.CallOption) (*TimeclockListEntriesResponse, error)
+	// @perm: Attrs=Access/StringList:[]string{"Own", "All"}§[]string{"Own"}
+	RequestsListEntries(ctx context.Context, in *RequestsListEntriesRequest, opts ...grpc.CallOption) (*RequestsListEntriesResponse, error)
+	// @perm
+	RequestsCreateEntry(ctx context.Context, in *RequestsCreateEntryRequest, opts ...grpc.CallOption) (*RequestsCreateEntryResponse, error)
+	// @perm
+	RequestsUpdateEntry(ctx context.Context, in *RequestsUpdateEntryRequest, opts ...grpc.CallOption) (*RequestsUpdateEntryResponse, error)
+	// @perm
+	RequestsDeleteEntry(ctx context.Context, in *RequestsDeleteEntryRequest, opts ...grpc.CallOption) (*RequestsDeleteEntryResponse, error)
+	// @perm: Name=RequestsListEntries
+	RequestsListTypes(ctx context.Context, in *RequestsListTypesRequest, opts ...grpc.CallOption) (*RequestsListTypesResponse, error)
+	// @perm
+	RequestsCreateOrUpdateType(ctx context.Context, in *RequestsCreateOrUpdateTypeRequest, opts ...grpc.CallOption) (*RequestsCreateOrUpdateTypeResponse, error)
+	// @perm
+	RequestsDeleteType(ctx context.Context, in *RequestsDeleteTypeRequest, opts ...grpc.CallOption) (*RequestsDeleteTypeResponse, error)
 }
 
 type jobsServiceClient struct {
@@ -65,6 +89,15 @@ func (c *jobsServiceClient) ColleaguesList(ctx context.Context, in *ColleaguesLi
 func (c *jobsServiceClient) ConductListEntries(ctx context.Context, in *ConductListEntriesRequest, opts ...grpc.CallOption) (*ConductListEntriesResponse, error) {
 	out := new(ConductListEntriesResponse)
 	err := c.cc.Invoke(ctx, JobsService_ConductListEntries_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *jobsServiceClient) TimeclockStats(ctx context.Context, in *TimeclockStatsRequest, opts ...grpc.CallOption) (*TimeclockStatsResponse, error) {
+	out := new(TimeclockStatsResponse)
+	err := c.cc.Invoke(ctx, JobsService_TimeclockStats_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -107,6 +140,69 @@ func (c *jobsServiceClient) TimeclockListEntries(ctx context.Context, in *Timecl
 	return out, nil
 }
 
+func (c *jobsServiceClient) RequestsListEntries(ctx context.Context, in *RequestsListEntriesRequest, opts ...grpc.CallOption) (*RequestsListEntriesResponse, error) {
+	out := new(RequestsListEntriesResponse)
+	err := c.cc.Invoke(ctx, JobsService_RequestsListEntries_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *jobsServiceClient) RequestsCreateEntry(ctx context.Context, in *RequestsCreateEntryRequest, opts ...grpc.CallOption) (*RequestsCreateEntryResponse, error) {
+	out := new(RequestsCreateEntryResponse)
+	err := c.cc.Invoke(ctx, JobsService_RequestsCreateEntry_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *jobsServiceClient) RequestsUpdateEntry(ctx context.Context, in *RequestsUpdateEntryRequest, opts ...grpc.CallOption) (*RequestsUpdateEntryResponse, error) {
+	out := new(RequestsUpdateEntryResponse)
+	err := c.cc.Invoke(ctx, JobsService_RequestsUpdateEntry_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *jobsServiceClient) RequestsDeleteEntry(ctx context.Context, in *RequestsDeleteEntryRequest, opts ...grpc.CallOption) (*RequestsDeleteEntryResponse, error) {
+	out := new(RequestsDeleteEntryResponse)
+	err := c.cc.Invoke(ctx, JobsService_RequestsDeleteEntry_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *jobsServiceClient) RequestsListTypes(ctx context.Context, in *RequestsListTypesRequest, opts ...grpc.CallOption) (*RequestsListTypesResponse, error) {
+	out := new(RequestsListTypesResponse)
+	err := c.cc.Invoke(ctx, JobsService_RequestsListTypes_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *jobsServiceClient) RequestsCreateOrUpdateType(ctx context.Context, in *RequestsCreateOrUpdateTypeRequest, opts ...grpc.CallOption) (*RequestsCreateOrUpdateTypeResponse, error) {
+	out := new(RequestsCreateOrUpdateTypeResponse)
+	err := c.cc.Invoke(ctx, JobsService_RequestsCreateOrUpdateType_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *jobsServiceClient) RequestsDeleteType(ctx context.Context, in *RequestsDeleteTypeRequest, opts ...grpc.CallOption) (*RequestsDeleteTypeResponse, error) {
+	out := new(RequestsDeleteTypeResponse)
+	err := c.cc.Invoke(ctx, JobsService_RequestsDeleteType_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // JobsServiceServer is the server API for JobsService service.
 // All implementations must embed UnimplementedJobsServiceServer
 // for forward compatibility
@@ -115,6 +211,8 @@ type JobsServiceServer interface {
 	ColleaguesList(context.Context, *ColleaguesListRequest) (*ColleaguesListResponse, error)
 	// @perm: Attrs=Access/StringList:[]string{"Own", "All"}§[]string{"Own"}
 	ConductListEntries(context.Context, *ConductListEntriesRequest) (*ConductListEntriesResponse, error)
+	// @perm: Name=ConductListEntries
+	TimeclockStats(context.Context, *TimeclockStatsRequest) (*TimeclockStatsResponse, error)
 	// @perm
 	ConductCreateEntry(context.Context, *ConductCreateEntryRequest) (*ConductCreateEntryResponse, error)
 	// @perm
@@ -123,6 +221,20 @@ type JobsServiceServer interface {
 	ConductDeleteEntry(context.Context, *ConductDeleteEntryRequest) (*ConductDeleteEntryResponse, error)
 	// @perm: Attrs=Access/StringList:[]string{"Own", "All"}§[]string{"Own"}
 	TimeclockListEntries(context.Context, *TimeclockListEntriesRequest) (*TimeclockListEntriesResponse, error)
+	// @perm: Attrs=Access/StringList:[]string{"Own", "All"}§[]string{"Own"}
+	RequestsListEntries(context.Context, *RequestsListEntriesRequest) (*RequestsListEntriesResponse, error)
+	// @perm
+	RequestsCreateEntry(context.Context, *RequestsCreateEntryRequest) (*RequestsCreateEntryResponse, error)
+	// @perm
+	RequestsUpdateEntry(context.Context, *RequestsUpdateEntryRequest) (*RequestsUpdateEntryResponse, error)
+	// @perm
+	RequestsDeleteEntry(context.Context, *RequestsDeleteEntryRequest) (*RequestsDeleteEntryResponse, error)
+	// @perm: Name=RequestsListEntries
+	RequestsListTypes(context.Context, *RequestsListTypesRequest) (*RequestsListTypesResponse, error)
+	// @perm
+	RequestsCreateOrUpdateType(context.Context, *RequestsCreateOrUpdateTypeRequest) (*RequestsCreateOrUpdateTypeResponse, error)
+	// @perm
+	RequestsDeleteType(context.Context, *RequestsDeleteTypeRequest) (*RequestsDeleteTypeResponse, error)
 	mustEmbedUnimplementedJobsServiceServer()
 }
 
@@ -136,6 +248,9 @@ func (UnimplementedJobsServiceServer) ColleaguesList(context.Context, *Colleague
 func (UnimplementedJobsServiceServer) ConductListEntries(context.Context, *ConductListEntriesRequest) (*ConductListEntriesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ConductListEntries not implemented")
 }
+func (UnimplementedJobsServiceServer) TimeclockStats(context.Context, *TimeclockStatsRequest) (*TimeclockStatsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method TimeclockStats not implemented")
+}
 func (UnimplementedJobsServiceServer) ConductCreateEntry(context.Context, *ConductCreateEntryRequest) (*ConductCreateEntryResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ConductCreateEntry not implemented")
 }
@@ -147,6 +262,27 @@ func (UnimplementedJobsServiceServer) ConductDeleteEntry(context.Context, *Condu
 }
 func (UnimplementedJobsServiceServer) TimeclockListEntries(context.Context, *TimeclockListEntriesRequest) (*TimeclockListEntriesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method TimeclockListEntries not implemented")
+}
+func (UnimplementedJobsServiceServer) RequestsListEntries(context.Context, *RequestsListEntriesRequest) (*RequestsListEntriesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RequestsListEntries not implemented")
+}
+func (UnimplementedJobsServiceServer) RequestsCreateEntry(context.Context, *RequestsCreateEntryRequest) (*RequestsCreateEntryResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RequestsCreateEntry not implemented")
+}
+func (UnimplementedJobsServiceServer) RequestsUpdateEntry(context.Context, *RequestsUpdateEntryRequest) (*RequestsUpdateEntryResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RequestsUpdateEntry not implemented")
+}
+func (UnimplementedJobsServiceServer) RequestsDeleteEntry(context.Context, *RequestsDeleteEntryRequest) (*RequestsDeleteEntryResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RequestsDeleteEntry not implemented")
+}
+func (UnimplementedJobsServiceServer) RequestsListTypes(context.Context, *RequestsListTypesRequest) (*RequestsListTypesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RequestsListTypes not implemented")
+}
+func (UnimplementedJobsServiceServer) RequestsCreateOrUpdateType(context.Context, *RequestsCreateOrUpdateTypeRequest) (*RequestsCreateOrUpdateTypeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RequestsCreateOrUpdateType not implemented")
+}
+func (UnimplementedJobsServiceServer) RequestsDeleteType(context.Context, *RequestsDeleteTypeRequest) (*RequestsDeleteTypeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RequestsDeleteType not implemented")
 }
 func (UnimplementedJobsServiceServer) mustEmbedUnimplementedJobsServiceServer() {}
 
@@ -193,6 +329,24 @@ func _JobsService_ConductListEntries_Handler(srv interface{}, ctx context.Contex
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(JobsServiceServer).ConductListEntries(ctx, req.(*ConductListEntriesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _JobsService_TimeclockStats_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TimeclockStatsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(JobsServiceServer).TimeclockStats(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: JobsService_TimeclockStats_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(JobsServiceServer).TimeclockStats(ctx, req.(*TimeclockStatsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -269,6 +423,132 @@ func _JobsService_TimeclockListEntries_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _JobsService_RequestsListEntries_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RequestsListEntriesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(JobsServiceServer).RequestsListEntries(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: JobsService_RequestsListEntries_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(JobsServiceServer).RequestsListEntries(ctx, req.(*RequestsListEntriesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _JobsService_RequestsCreateEntry_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RequestsCreateEntryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(JobsServiceServer).RequestsCreateEntry(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: JobsService_RequestsCreateEntry_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(JobsServiceServer).RequestsCreateEntry(ctx, req.(*RequestsCreateEntryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _JobsService_RequestsUpdateEntry_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RequestsUpdateEntryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(JobsServiceServer).RequestsUpdateEntry(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: JobsService_RequestsUpdateEntry_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(JobsServiceServer).RequestsUpdateEntry(ctx, req.(*RequestsUpdateEntryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _JobsService_RequestsDeleteEntry_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RequestsDeleteEntryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(JobsServiceServer).RequestsDeleteEntry(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: JobsService_RequestsDeleteEntry_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(JobsServiceServer).RequestsDeleteEntry(ctx, req.(*RequestsDeleteEntryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _JobsService_RequestsListTypes_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RequestsListTypesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(JobsServiceServer).RequestsListTypes(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: JobsService_RequestsListTypes_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(JobsServiceServer).RequestsListTypes(ctx, req.(*RequestsListTypesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _JobsService_RequestsCreateOrUpdateType_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RequestsCreateOrUpdateTypeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(JobsServiceServer).RequestsCreateOrUpdateType(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: JobsService_RequestsCreateOrUpdateType_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(JobsServiceServer).RequestsCreateOrUpdateType(ctx, req.(*RequestsCreateOrUpdateTypeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _JobsService_RequestsDeleteType_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RequestsDeleteTypeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(JobsServiceServer).RequestsDeleteType(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: JobsService_RequestsDeleteType_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(JobsServiceServer).RequestsDeleteType(ctx, req.(*RequestsDeleteTypeRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // JobsService_ServiceDesc is the grpc.ServiceDesc for JobsService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -285,6 +565,10 @@ var JobsService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _JobsService_ConductListEntries_Handler,
 		},
 		{
+			MethodName: "TimeclockStats",
+			Handler:    _JobsService_TimeclockStats_Handler,
+		},
+		{
 			MethodName: "ConductCreateEntry",
 			Handler:    _JobsService_ConductCreateEntry_Handler,
 		},
@@ -299,6 +583,34 @@ var JobsService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "TimeclockListEntries",
 			Handler:    _JobsService_TimeclockListEntries_Handler,
+		},
+		{
+			MethodName: "RequestsListEntries",
+			Handler:    _JobsService_RequestsListEntries_Handler,
+		},
+		{
+			MethodName: "RequestsCreateEntry",
+			Handler:    _JobsService_RequestsCreateEntry_Handler,
+		},
+		{
+			MethodName: "RequestsUpdateEntry",
+			Handler:    _JobsService_RequestsUpdateEntry_Handler,
+		},
+		{
+			MethodName: "RequestsDeleteEntry",
+			Handler:    _JobsService_RequestsDeleteEntry_Handler,
+		},
+		{
+			MethodName: "RequestsListTypes",
+			Handler:    _JobsService_RequestsListTypes_Handler,
+		},
+		{
+			MethodName: "RequestsCreateOrUpdateType",
+			Handler:    _JobsService_RequestsCreateOrUpdateType_Handler,
+		},
+		{
+			MethodName: "RequestsDeleteType",
+			Handler:    _JobsService_RequestsDeleteType_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

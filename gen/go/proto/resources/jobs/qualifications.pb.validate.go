@@ -70,7 +70,16 @@ func (m *Qualification) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	// no validation rules for Weight
+	if m.GetWeight() >= 4294967295 {
+		err := QualificationValidationError{
+			field:  "Weight",
+			reason: "value must be less than 4294967295",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	// no validation rules for Open
 
@@ -348,11 +357,20 @@ func (m *QualificationResult) validate(all bool) error {
 		}
 	}
 
-	// no validation rules for Rating
-
-	if l := utf8.RuneCountInString(m.GetDescription()); l < 3 || l > 512 {
+	if m.GetRating() >= 100 {
 		err := QualificationResultValidationError{
-			field:  "Description",
+			field:  "Rating",
+			reason: "value must be less than 100",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if l := utf8.RuneCountInString(m.GetSummary()); l < 3 || l > 512 {
+		err := QualificationResultValidationError{
+			field:  "Summary",
 			reason: "value length must be between 3 and 512 runes, inclusive",
 		}
 		if !all {
@@ -559,7 +577,7 @@ func (m *Access) validate(all bool) error {
 
 	var errors []error
 
-	for idx, item := range m.GetJobAccess() {
+	for idx, item := range m.GetJob() {
 		_, _ = idx, item
 
 		if all {
@@ -567,7 +585,7 @@ func (m *Access) validate(all bool) error {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
 					errors = append(errors, AccessValidationError{
-						field:  fmt.Sprintf("JobAccess[%v]", idx),
+						field:  fmt.Sprintf("Job[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -575,7 +593,7 @@ func (m *Access) validate(all bool) error {
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
 					errors = append(errors, AccessValidationError{
-						field:  fmt.Sprintf("JobAccess[%v]", idx),
+						field:  fmt.Sprintf("Job[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -584,7 +602,7 @@ func (m *Access) validate(all bool) error {
 		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
 				return AccessValidationError{
-					field:  fmt.Sprintf("JobAccess[%v]", idx),
+					field:  fmt.Sprintf("Job[%v]", idx),
 					reason: "embedded message failed validation",
 					cause:  err,
 				}
@@ -593,7 +611,7 @@ func (m *Access) validate(all bool) error {
 
 	}
 
-	for idx, item := range m.GetRequiredQualificationAccess() {
+	for idx, item := range m.GetRequiredQualification() {
 		_, _ = idx, item
 
 		if all {
@@ -601,7 +619,7 @@ func (m *Access) validate(all bool) error {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
 					errors = append(errors, AccessValidationError{
-						field:  fmt.Sprintf("RequiredQualificationAccess[%v]", idx),
+						field:  fmt.Sprintf("RequiredQualification[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -609,7 +627,7 @@ func (m *Access) validate(all bool) error {
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
 					errors = append(errors, AccessValidationError{
-						field:  fmt.Sprintf("RequiredQualificationAccess[%v]", idx),
+						field:  fmt.Sprintf("RequiredQualification[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -618,7 +636,7 @@ func (m *Access) validate(all bool) error {
 		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
 				return AccessValidationError{
-					field:  fmt.Sprintf("RequiredQualificationAccess[%v]", idx),
+					field:  fmt.Sprintf("RequiredQualification[%v]", idx),
 					reason: "embedded message failed validation",
 					cause:  err,
 				}

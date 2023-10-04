@@ -1,7 +1,6 @@
 BEGIN;
 
 -- Table: fivenet_jobs_conduct
-
 CREATE TABLE
     IF NOT EXISTS `fivenet_jobs_conduct` (
         `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
@@ -22,7 +21,6 @@ CREATE TABLE
     ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_unicode_ci;
 
 -- Table: fivenet_jobs_timeclock
-
 CREATE TABLE
     IF NOT EXISTS `fivenet_jobs_timeclock` (
         `job` varchar(20) NOT NULL,
@@ -52,5 +50,74 @@ CREATE TRIGGER `fivenet_jobs_timeclock_spent_time_calc` BEFORE UPDATE ON `fivene
         SET NEW.`end_time` = NULL;
     END IF;
 END;
+
+-- Table: fivenet_jobs_requests_types
+CREATE TABLE IF NOT EXISTS `fivenet_jobs_requests_types` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP(3),
+  `updated_at` datetime(3) DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP(3),
+  `deleted_at` datetime(3) DEFAULT NULL,
+  `job` varchar(50) NOT NULL,
+  `name` varchar(32) NOT NULL,
+  `description` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_fivenet_jobs_requests_job` (`job`),
+  KEY `idx_fivenet_jobs_requests_types_deleted_at` (`deleted_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Table: fivenet_jobs_requests
+CREATE TABLE IF NOT EXISTS `fivenet_jobs_requests` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP(3),
+  `updated_at` datetime(3) DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP(3),
+  `deleted_at` datetime(3) DEFAULT NULL,
+  `job` varchar(50) NOT NULL,
+  `type_id` bigint(20) unsigned DEFAULT NULL,
+  `title` varchar(255) NOT NULL,
+  `message` longtext NOT NULL,
+  `status` varchar(24) DEFAULT NULL,
+  `creator_id` int(11) DEFAULT NULL,
+  `approved` tinyint(1) DEFAULT NULL,
+  `approver_id` int(11) DEFAULT NULL,
+  `begins_at` datetime(3) DEFAULT NULL,
+  `ends_at` datetime(3) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_fivenet_jobs_requests_created_at` (`created_at`),
+  KEY `idx_fivenet_jobs_requests_deleted_at` (`deleted_at`),
+  KEY `idx_fivenet_jobs_requests_type_id` (`type_id`),
+  KEY `idx_fivenet_jobs_requests_creator_id` (`creator_id`),
+  FULLTEXT KEY `idx_fivenet_jobs_requests_title` (`title`),
+  FULLTEXT KEY `idx_fivenet_jobs_requests_message` (`message`),
+  CONSTRAINT `fk_fivenet_jobs_requests_types` FOREIGN KEY (`type_id`) REFERENCES `fivenet_jobs_requests_types` (`id`) ON DELETE SET NULL ON UPDATE SET NULL,
+  CONSTRAINT `fk_fivenet_jobs_requests_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Table: fivenet_jobs_requests_comments
+CREATE TABLE IF NOT EXISTS `fivenet_jobs_requests_comments` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP(3),
+  `updated_at` datetime(3) DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP(3),
+  `deleted_at` datetime(3) DEFAULT NULL,
+  `request_id` bigint(20) unsigned NOT NULL,
+  `comment` longtext,
+  `creator_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `idx_fivenet_jobs_requests_comments_request_id` (`request_id`),
+  KEY `idx_fivenet_jobs_requests_comments_creator_id` (`creator_id`),
+  CONSTRAINT `fk_fivenet_jobs_requests_comments_request_id` FOREIGN KEY (`request_id`) REFERENCES `fivenet_jobs_requests` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_fivenet_jobs_requests_comments_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- Table: fivenet_jobs_qualifications
+-- TODO
+
+-- Table: fivenet_jobs_qualifications_results
+-- TODO
+
+-- Table: fivenet_jobs_qualifications_job_access
+-- TODO
+
+-- Table: fivenet_jobs_qualifications_reqs_access
+-- TODO
 
 COMMIT;

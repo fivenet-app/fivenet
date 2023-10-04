@@ -68,43 +68,49 @@ export interface Request {
     /**
      * @sanitize
      *
-     * @generated from protobuf field: string message = 7;
+     * @generated from protobuf field: string title = 7;
      */
-    message: string;
-    /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp begins_at = 8;
-     */
-    beginsAt?: Timestamp;
-    /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp ends_at = 9;
-     */
-    endsAt?: Timestamp;
+    title: string;
     /**
      * @sanitize
      *
-     * @generated from protobuf field: optional string status = 10;
+     * @generated from protobuf field: string message = 8;
+     */
+    message: string;
+    /**
+     * @sanitize
+     *
+     * @generated from protobuf field: optional string status = 9;
      */
     status?: string;
     /**
-     * @generated from protobuf field: int32 creator_id = 11;
+     * @generated from protobuf field: int32 creator_id = 10;
      */
     creatorId: number;
     /**
-     * @generated from protobuf field: optional resources.users.UserShort creator = 12;
+     * @generated from protobuf field: optional resources.users.UserShort creator = 11;
      */
     creator?: UserShort;
     /**
-     * @generated from protobuf field: optional bool approved = 13;
+     * @generated from protobuf field: optional bool approved = 12;
      */
     approved?: boolean;
     /**
-     * @generated from protobuf field: optional int32 approver_user_id = 14;
+     * @generated from protobuf field: optional int32 approver_user_id = 13;
      */
     approverUserId?: number;
     /**
-     * @generated from protobuf field: optional resources.users.UserShort approver_user = 15;
+     * @generated from protobuf field: optional resources.users.UserShort approver_user = 14;
      */
     approverUser?: UserShort; // @gotags: alias:"approver"
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp begins_at = 15;
+     */
+    beginsAt?: Timestamp;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp ends_at = 16;
+     */
+    endsAt?: Timestamp;
 }
 /**
  * @generated from protobuf message resources.jobs.RequestComment
@@ -173,15 +179,16 @@ class Request$Type extends MessageType<Request> {
             { no: 4, name: "deleted_at", kind: "message", T: () => Timestamp },
             { no: 5, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 6, name: "type_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 7, name: "message", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "4096" } } } },
-            { no: 8, name: "begins_at", kind: "message", T: () => Timestamp },
-            { no: 9, name: "ends_at", kind: "message", T: () => Timestamp },
-            { no: 10, name: "status", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
-            { no: 11, name: "creator_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
-            { no: 12, name: "creator", kind: "message", T: () => UserShort },
-            { no: 13, name: "approved", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
-            { no: 14, name: "approver_user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
-            { no: 15, name: "approver_user", kind: "message", T: () => UserShort }
+            { no: 7, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "255" } } } },
+            { no: 8, name: "message", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "4096" } } } },
+            { no: 9, name: "status", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "24" } } } },
+            { no: 10, name: "creator_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
+            { no: 11, name: "creator", kind: "message", T: () => UserShort },
+            { no: 12, name: "approved", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 13, name: "approver_user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 14, name: "approver_user", kind: "message", T: () => UserShort },
+            { no: 15, name: "begins_at", kind: "message", T: () => Timestamp },
+            { no: 16, name: "ends_at", kind: "message", T: () => Timestamp }
         ]);
     }
 }

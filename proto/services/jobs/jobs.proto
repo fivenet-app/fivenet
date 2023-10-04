@@ -5,6 +5,7 @@ package services.jobs;
 import "resources/common/database/database.proto";
 import "resources/users/users.proto";
 import "resources/jobs/conduct.proto";
+import "resources/jobs/requests.proto";
 import "resources/jobs/timeclock.proto";
 import "resources/timestamp/timestamp.proto";
 import "validate/validate.proto";
@@ -77,12 +78,75 @@ message TimeclockListEntriesResponse {
   resources.jobs.TimeclockStats stats = 3;
 }
 
+message TimeclockStatsRequest {}
+
+message TimeclockStatsResponse {
+  resources.jobs.TimeclockStats stats = 1;
+}
+
+// Requests
+
+message RequestsListEntriesRequest {
+  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
+  // Search
+  // TODO
+}
+
+message RequestsListEntriesResponse {
+  resources.common.database.PaginationResponse pagination = 1;
+  repeated resources.jobs.Request entry = 2;
+}
+
+message RequestsCreateEntryRequest {
+  resources.jobs.Request entry = 1 [(validate.rules).message.required = true];
+}
+
+message RequestsCreateEntryResponse {
+  resources.jobs.Request entry = 1;
+}
+
+message RequestsUpdateEntryRequest {
+  resources.jobs.Request entry = 1 [(validate.rules).message.required = true];
+}
+
+message RequestsUpdateEntryResponse {
+  resources.jobs.Request entry = 1;
+}
+
+message RequestsDeleteEntryRequest {
+  uint64 id = 1;
+}
+
+message RequestsDeleteEntryResponse {}
+
+message RequestsListTypesRequest {}
+
+message RequestsListTypesResponse {
+  repeated resources.jobs.RequestType types = 1;
+}
+
+message RequestsCreateOrUpdateTypeRequest {
+  resources.jobs.RequestType request_type = 1;
+}
+
+message RequestsCreateOrUpdateTypeResponse {
+  resources.jobs.RequestType request_type = 1;
+}
+
+message RequestsDeleteTypeRequest {
+  uint64 id = 1;
+}
+
+message RequestsDeleteTypeResponse {}
+
 service JobsService {
   // @perm
   rpc ColleaguesList(ColleaguesListRequest) returns (ColleaguesListResponse);
 
   // @perm: Attrs=Access/StringList:[]string{"Own", "All"}§[]string{"Own"}
   rpc ConductListEntries(ConductListEntriesRequest) returns (ConductListEntriesResponse);
+  // @perm: Name=ConductListEntries
+  rpc TimeclockStats(TimeclockStatsRequest) returns (TimeclockStatsResponse);
   // @perm
   rpc ConductCreateEntry(ConductCreateEntryRequest) returns (ConductCreateEntryResponse);
   // @perm
@@ -92,4 +156,20 @@ service JobsService {
 
   // @perm: Attrs=Access/StringList:[]string{"Own", "All"}§[]string{"Own"}
   rpc TimeclockListEntries(TimeclockListEntriesRequest) returns (TimeclockListEntriesResponse);
+
+  // @perm: Attrs=Access/StringList:[]string{"Own", "All"}§[]string{"Own"}
+  rpc RequestsListEntries(RequestsListEntriesRequest) returns (RequestsListEntriesResponse);
+  // @perm
+  rpc RequestsCreateEntry(RequestsCreateEntryRequest) returns (RequestsCreateEntryResponse);
+  // @perm
+  rpc RequestsUpdateEntry(RequestsUpdateEntryRequest) returns (RequestsUpdateEntryResponse);
+  // @perm
+  rpc RequestsDeleteEntry(RequestsDeleteEntryRequest) returns (RequestsDeleteEntryResponse);
+
+  // @perm: Name=RequestsListEntries
+  rpc RequestsListTypes(RequestsListTypesRequest) returns (RequestsListTypesResponse);
+  // @perm
+  rpc RequestsCreateOrUpdateType(RequestsCreateOrUpdateTypeRequest) returns (RequestsCreateOrUpdateTypeResponse);
+  // @perm
+  rpc RequestsDeleteType(RequestsDeleteTypeRequest) returns (RequestsDeleteTypeResponse);
 }

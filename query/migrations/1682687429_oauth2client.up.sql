@@ -3,7 +3,7 @@ BEGIN;
 -- Table: fivenet_oauth2_accounts
 CREATE TABLE IF NOT EXISTS `fivenet_oauth2_accounts` (
   `account_id` bigint(20) unsigned NOT NULL,
-  `created_at` datetime(3) DEFAULT current_timestamp(3),
+  `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP(3),
   `provider` varchar(255) NOT NULL,
   `external_id` bigint(20) unsigned NOT NULL,
   `username` varchar(255) NOT NULL,
