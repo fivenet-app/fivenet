@@ -1313,12 +1313,6 @@
         }
     },
     "errors": {
-        "general": {
-            "internal_error": {
-                "title": "Internal server error",
-                "content": "An internal server error has occured. Please try again."
-            }
-        },
         "pkg-auth": {
             "ErrNoToken": "\"Authorization\" header must not be empty! Please login again.",
             "ErrInvalidToken": "Token invalid/ expired!",
@@ -1415,6 +1409,12 @@
             "ErrDispatchAlreadyCompleted": {
                 "title": "Dispatch already in completed state!",
                 "content": "You can't accept/decline completed dispatches."
+            }
+        },
+        "general": {
+            "internal_error": {
+                "title": "Internal server error",
+                "content": "An internal server error has occured. Please try again."
             }
         }
     },
