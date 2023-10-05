@@ -590,9 +590,9 @@ func (s *Server) ListDispatchActivity(ctx context.Context, req *ListDispatchActi
 	if err := stmt.QueryContext(ctx, s.db, &resp.Activity); err != nil {
 		return nil, err
 	}
-	for _, activity := range resp.Activity {
-		if activity.UnitId != nil && *activity.UnitId > 0 {
-			activity.Unit, _ = s.getUnit(userInfo.Job, *activity.UnitId)
+	for i := 0; i < len(resp.Activity); i++ {
+		if resp.Activity[i].UnitId != nil && *resp.Activity[i].UnitId > 0 {
+			resp.Activity[i].Unit, _ = s.getUnit(userInfo.Job, *resp.Activity[i].UnitId)
 		}
 	}
 

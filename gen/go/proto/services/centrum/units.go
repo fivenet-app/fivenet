@@ -421,6 +421,12 @@ func (s *Server) ListUnitActivity(ctx context.Context, req *ListUnitActivityRequ
 		return nil, err
 	}
 
+	for i := 0; i < len(resp.Activity); i++ {
+		if resp.Activity[i].UnitId > 0 && resp.Activity[i].User != nil {
+			resp.Activity[i].Unit, _ = s.getUnit(resp.Activity[i].User.Job, resp.Activity[i].UnitId)
+		}
+	}
+
 	resp.Pagination.Update(count.TotalCount, len(resp.Activity))
 
 	return resp, nil
