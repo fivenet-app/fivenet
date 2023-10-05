@@ -52,7 +52,6 @@ async function takeDispatches(resp: TakeDispatchResp): Promise<void> {
 }
 
 function selectDispatch(id: bigint): void {
-    console.log('selectDispatch', selectedDispatches.value);
     const idx = selectedDispatches.value.findIndex((did) => did === id);
     if (idx > -1) {
         selectedDispatches.value.splice(idx, 1);
@@ -82,7 +81,17 @@ const canTakeDispatch = computed(
         pendingDispatches.value.length > 0 ||
         (getCurrentMode.value === CentrumMode.SIMPLIFIED && dispatches.value.size > 0),
 );
-console.log(canTakeDispatch.value);
+
+watch(pendingDispatches.value, () => {
+    console.log('WATCH PENDING DISPATCHES', pendingDispatches.value);
+    pendingDispatches.value.forEach((pd) => {
+        const idx = selectedDispatches.value.findIndex((did) => did === pd);
+        if (idx === -1) {
+            selectedDispatches.value.push(pd);
+        }
+    });
+    console.log('WATCH', selectedDispatches.value);
+});
 
 const filteredDispatches = computed(() => {
     const filtered: Dispatch[] = [];
