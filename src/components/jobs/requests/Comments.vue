@@ -219,7 +219,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
             />
             <div
                 v-else
-                class="flow-root rounded-lg bg-base-800 text-neutral rounded-lg shadow-sm shadow-sm focus-within:ring-2 focus-within:ring-primary-600"
+                class="flow-root rounded-lg bg-base-800 text-neutral rounded-lg ring-1 ring-inset ring-gray-500 shadow-sm shadow-sm focus-within:ring-2 focus-within:ring-primary-600"
             >
                 <ul role="list" class="divide-y divide-gray-200 px-4">
                     <CommentEntry

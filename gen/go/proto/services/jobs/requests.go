@@ -15,6 +15,8 @@ import (
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
 
 var (
@@ -212,6 +214,15 @@ func (s *Server) RequestsUpdateEntry(ctx context.Context, req *RequestsUpdateEnt
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
 	defer s.auditer.Log(auditEntry, req)
+
+	entry, err := s.getRequest(ctx, userInfo.Job, req.Entry.Id)
+	if err != nil {
+		return nil, ErrFailedQuery
+	}
+
+	if entry.CreatorId != userInfo.UserId {
+		return nil, status.Error(codes.PermissionDenied, "Can't update this request")
+	}
 
 	// TODO
 

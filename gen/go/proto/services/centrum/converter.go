@@ -98,10 +98,8 @@ func (s *Server) convertPhoneJobMsgToDispatch() error {
 			return err
 		}
 
-		if false {
-			if err := s.closePhoneJobMsg(s.ctx, msg.ID); err != nil {
-				return err
-			}
+		if err := s.closePhoneJobMsg(s.ctx, msg.ID); err != nil {
+			return err
 		}
 	}
 

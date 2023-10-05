@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import {
     AccountIcon,
+    AsteriskIcon,
     CalendarIcon,
     CancelIcon,
     CheckIcon,
@@ -118,10 +119,16 @@ const open = ref(false);
                 </div>
             </div>
             <div class="mt-2 flex flex-row gap-2 text-base-200">
-                <div class="flex flex-row items-center justify-start flex-1">
+                <div class="flex flex-row items-center justify-start flex-1 gap-2">
                     <CitizenInfoPopover :user="request.creator">
                         <template v-slot:before>
                             <AccountIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400" aria-hidden="true" />
+                        </template>
+                    </CitizenInfoPopover>
+
+                    <CitizenInfoPopover v-if="request.approverUser" :user="request.approverUser">
+                        <template v-slot:before>
+                            <AsteriskIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400" aria-hidden="true" />
                         </template>
                     </CitizenInfoPopover>
                 </div>
@@ -155,12 +162,12 @@ const open = ref(false);
                     v-if="request.approved !== undefined"
                 >
                     <template v-if="request.approved">
-                        <CheckIcon class="w-5 h-5 text-success-500" aria-hidden="true" />
-                        {{ $t('common.approve', 1) }}
-                    </template>
-                    <template v-else>
                         <CancelIcon class="w-5 h-5 text-error-400" aria-hidden="true" />
                         {{ $t('common.decline', 1) }}
+                    </template>
+                    <template v-else>
+                        <CheckIcon class="w-5 h-5 text-success-500" aria-hidden="true" />
+                        {{ $t('common.approve', 1) }}
                     </template>
                 </button>
                 <span v-else class="isolate inline-flex rounded-md shadow-sm">
