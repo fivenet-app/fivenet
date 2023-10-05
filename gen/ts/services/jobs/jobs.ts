@@ -804,11 +804,11 @@ export const RequestsDeleteCommentResponse = new RequestsDeleteCommentResponse$T
 export const JobsService = new ServiceType("services.jobs.JobsService", [
     { name: "ColleaguesList", options: {}, I: ColleaguesListRequest, O: ColleaguesListResponse },
     { name: "ConductListEntries", options: {}, I: ConductListEntriesRequest, O: ConductListEntriesResponse },
-    { name: "TimeclockStats", options: {}, I: TimeclockStatsRequest, O: TimeclockStatsResponse },
     { name: "ConductCreateEntry", options: {}, I: ConductCreateEntryRequest, O: ConductCreateEntryResponse },
     { name: "ConductUpdateEntry", options: {}, I: ConductUpdateEntryRequest, O: ConductUpdateEntryResponse },
     { name: "ConductDeleteEntry", options: {}, I: ConductDeleteEntryRequest, O: ConductDeleteEntryResponse },
     { name: "TimeclockListEntries", options: {}, I: TimeclockListEntriesRequest, O: TimeclockListEntriesResponse },
+    { name: "TimeclockStats", options: {}, I: TimeclockStatsRequest, O: TimeclockStatsResponse },
     { name: "RequestsListEntries", options: {}, I: RequestsListEntriesRequest, O: RequestsListEntriesResponse },
     { name: "RequestsCreateEntry", options: {}, I: RequestsCreateEntryRequest, O: RequestsCreateEntryResponse },
     { name: "RequestsUpdateEntry", options: {}, I: RequestsUpdateEntryRequest, O: RequestsUpdateEntryResponse },

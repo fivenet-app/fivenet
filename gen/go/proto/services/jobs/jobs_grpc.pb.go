@@ -21,11 +21,11 @@ const _ = grpc.SupportPackageIsVersion7
 const (
 	JobsService_ColleaguesList_FullMethodName             = "/services.jobs.JobsService/ColleaguesList"
 	JobsService_ConductListEntries_FullMethodName         = "/services.jobs.JobsService/ConductListEntries"
-	JobsService_TimeclockStats_FullMethodName             = "/services.jobs.JobsService/TimeclockStats"
 	JobsService_ConductCreateEntry_FullMethodName         = "/services.jobs.JobsService/ConductCreateEntry"
 	JobsService_ConductUpdateEntry_FullMethodName         = "/services.jobs.JobsService/ConductUpdateEntry"
 	JobsService_ConductDeleteEntry_FullMethodName         = "/services.jobs.JobsService/ConductDeleteEntry"
 	JobsService_TimeclockListEntries_FullMethodName       = "/services.jobs.JobsService/TimeclockListEntries"
+	JobsService_TimeclockStats_FullMethodName             = "/services.jobs.JobsService/TimeclockStats"
 	JobsService_RequestsListEntries_FullMethodName        = "/services.jobs.JobsService/RequestsListEntries"
 	JobsService_RequestsCreateEntry_FullMethodName        = "/services.jobs.JobsService/RequestsCreateEntry"
 	JobsService_RequestsUpdateEntry_FullMethodName        = "/services.jobs.JobsService/RequestsUpdateEntry"
@@ -46,8 +46,6 @@ type JobsServiceClient interface {
 	ColleaguesList(ctx context.Context, in *ColleaguesListRequest, opts ...grpc.CallOption) (*ColleaguesListResponse, error)
 	// @perm: Attrs=Access/StringList:[]string{"Own", "All"}§[]string{"Own"}
 	ConductListEntries(ctx context.Context, in *ConductListEntriesRequest, opts ...grpc.CallOption) (*ConductListEntriesResponse, error)
-	// @perm: Name=ConductListEntries
-	TimeclockStats(ctx context.Context, in *TimeclockStatsRequest, opts ...grpc.CallOption) (*TimeclockStatsResponse, error)
 	// @perm
 	ConductCreateEntry(ctx context.Context, in *ConductCreateEntryRequest, opts ...grpc.CallOption) (*ConductCreateEntryResponse, error)
 	// @perm
@@ -56,6 +54,8 @@ type JobsServiceClient interface {
 	ConductDeleteEntry(ctx context.Context, in *ConductDeleteEntryRequest, opts ...grpc.CallOption) (*ConductDeleteEntryResponse, error)
 	// @perm: Attrs=Access/StringList:[]string{"Own", "All"}§[]string{"Own"}
 	TimeclockListEntries(ctx context.Context, in *TimeclockListEntriesRequest, opts ...grpc.CallOption) (*TimeclockListEntriesResponse, error)
+	// @perm: Name=TimeclockListEntries
+	TimeclockStats(ctx context.Context, in *TimeclockStatsRequest, opts ...grpc.CallOption) (*TimeclockStatsResponse, error)
 	// @perm: Attrs=Access/StringList:[]string{"Own", "All"}§[]string{"Own"}
 	RequestsListEntries(ctx context.Context, in *RequestsListEntriesRequest, opts ...grpc.CallOption) (*RequestsListEntriesResponse, error)
 	// @perm
@@ -104,15 +104,6 @@ func (c *jobsServiceClient) ConductListEntries(ctx context.Context, in *ConductL
 	return out, nil
 }
 
-func (c *jobsServiceClient) TimeclockStats(ctx context.Context, in *TimeclockStatsRequest, opts ...grpc.CallOption) (*TimeclockStatsResponse, error) {
-	out := new(TimeclockStatsResponse)
-	err := c.cc.Invoke(ctx, JobsService_TimeclockStats_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *jobsServiceClient) ConductCreateEntry(ctx context.Context, in *ConductCreateEntryRequest, opts ...grpc.CallOption) (*ConductCreateEntryResponse, error) {
 	out := new(ConductCreateEntryResponse)
 	err := c.cc.Invoke(ctx, JobsService_ConductCreateEntry_FullMethodName, in, out, opts...)
@@ -143,6 +134,15 @@ func (c *jobsServiceClient) ConductDeleteEntry(ctx context.Context, in *ConductD
 func (c *jobsServiceClient) TimeclockListEntries(ctx context.Context, in *TimeclockListEntriesRequest, opts ...grpc.CallOption) (*TimeclockListEntriesResponse, error) {
 	out := new(TimeclockListEntriesResponse)
 	err := c.cc.Invoke(ctx, JobsService_TimeclockListEntries_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *jobsServiceClient) TimeclockStats(ctx context.Context, in *TimeclockStatsRequest, opts ...grpc.CallOption) (*TimeclockStatsResponse, error) {
+	out := new(TimeclockStatsResponse)
+	err := c.cc.Invoke(ctx, JobsService_TimeclockStats_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -247,8 +247,6 @@ type JobsServiceServer interface {
 	ColleaguesList(context.Context, *ColleaguesListRequest) (*ColleaguesListResponse, error)
 	// @perm: Attrs=Access/StringList:[]string{"Own", "All"}§[]string{"Own"}
 	ConductListEntries(context.Context, *ConductListEntriesRequest) (*ConductListEntriesResponse, error)
-	// @perm: Name=ConductListEntries
-	TimeclockStats(context.Context, *TimeclockStatsRequest) (*TimeclockStatsResponse, error)
 	// @perm
 	ConductCreateEntry(context.Context, *ConductCreateEntryRequest) (*ConductCreateEntryResponse, error)
 	// @perm
@@ -257,6 +255,8 @@ type JobsServiceServer interface {
 	ConductDeleteEntry(context.Context, *ConductDeleteEntryRequest) (*ConductDeleteEntryResponse, error)
 	// @perm: Attrs=Access/StringList:[]string{"Own", "All"}§[]string{"Own"}
 	TimeclockListEntries(context.Context, *TimeclockListEntriesRequest) (*TimeclockListEntriesResponse, error)
+	// @perm: Name=TimeclockListEntries
+	TimeclockStats(context.Context, *TimeclockStatsRequest) (*TimeclockStatsResponse, error)
 	// @perm: Attrs=Access/StringList:[]string{"Own", "All"}§[]string{"Own"}
 	RequestsListEntries(context.Context, *RequestsListEntriesRequest) (*RequestsListEntriesResponse, error)
 	// @perm
@@ -290,9 +290,6 @@ func (UnimplementedJobsServiceServer) ColleaguesList(context.Context, *Colleague
 func (UnimplementedJobsServiceServer) ConductListEntries(context.Context, *ConductListEntriesRequest) (*ConductListEntriesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ConductListEntries not implemented")
 }
-func (UnimplementedJobsServiceServer) TimeclockStats(context.Context, *TimeclockStatsRequest) (*TimeclockStatsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method TimeclockStats not implemented")
-}
 func (UnimplementedJobsServiceServer) ConductCreateEntry(context.Context, *ConductCreateEntryRequest) (*ConductCreateEntryResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ConductCreateEntry not implemented")
 }
@@ -304,6 +301,9 @@ func (UnimplementedJobsServiceServer) ConductDeleteEntry(context.Context, *Condu
 }
 func (UnimplementedJobsServiceServer) TimeclockListEntries(context.Context, *TimeclockListEntriesRequest) (*TimeclockListEntriesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method TimeclockListEntries not implemented")
+}
+func (UnimplementedJobsServiceServer) TimeclockStats(context.Context, *TimeclockStatsRequest) (*TimeclockStatsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method TimeclockStats not implemented")
 }
 func (UnimplementedJobsServiceServer) RequestsListEntries(context.Context, *RequestsListEntriesRequest) (*RequestsListEntriesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RequestsListEntries not implemented")
@@ -384,24 +384,6 @@ func _JobsService_ConductListEntries_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
-func _JobsService_TimeclockStats_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(TimeclockStatsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(JobsServiceServer).TimeclockStats(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: JobsService_TimeclockStats_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(JobsServiceServer).TimeclockStats(ctx, req.(*TimeclockStatsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _JobsService_ConductCreateEntry_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(ConductCreateEntryRequest)
 	if err := dec(in); err != nil {
@@ -470,6 +452,24 @@ func _JobsService_TimeclockListEntries_Handler(srv interface{}, ctx context.Cont
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(JobsServiceServer).TimeclockListEntries(ctx, req.(*TimeclockListEntriesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _JobsService_TimeclockStats_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(TimeclockStatsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(JobsServiceServer).TimeclockStats(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: JobsService_TimeclockStats_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(JobsServiceServer).TimeclockStats(ctx, req.(*TimeclockStatsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -670,10 +670,6 @@ var JobsService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _JobsService_ConductListEntries_Handler,
 		},
 		{
-			MethodName: "TimeclockStats",
-			Handler:    _JobsService_TimeclockStats_Handler,
-		},
-		{
 			MethodName: "ConductCreateEntry",
 			Handler:    _JobsService_ConductCreateEntry_Handler,
 		},
@@ -688,6 +684,10 @@ var JobsService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "TimeclockListEntries",
 			Handler:    _JobsService_TimeclockListEntries_Handler,
+		},
+		{
+			MethodName: "TimeclockStats",
+			Handler:    _JobsService_TimeclockStats_Handler,
 		},
 		{
 			MethodName: "RequestsListEntries",

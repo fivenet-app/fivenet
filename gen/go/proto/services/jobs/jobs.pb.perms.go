@@ -35,7 +35,7 @@ var PermsRemap = map[string]string{
 	"JobsService/RequestsListComments": "JobsService/RequestsListEntries",
 	"JobsService/RequestsListTypes":    "JobsService/RequestsListEntries",
 	"JobsService/RequestsPostComment":  "JobsService/RequestsCreateEntry",
-	"JobsService/TimeclockStats":       "JobsService/ConductListEntries",
+	"JobsService/TimeclockStats":       "JobsService/TimeclockListEntries",
 }
 
 func (s *Server) GetPermsRemap() map[string]string {
