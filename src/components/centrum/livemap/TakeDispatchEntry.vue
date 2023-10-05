@@ -16,13 +16,19 @@ const props = withDefaults(
     },
 );
 
-defineEmits<{
+const emits = defineEmits<{
     (e: 'selected', id: bigint): void;
     (e: 'goto', loc: Coordinate): void;
 }>();
 
 const expiresAt = props.dispatch.units.find((u) => u.unitId === props.ownUnitId)?.expiresAt;
 const dispatchBackground = computed(() => dispatchStatusToBGColor(props.dispatch.status?.status ?? 0));
+
+onBeforeMount(() => {
+    if (props.preselected === true) {
+        emits('selected', props.dispatch.id);
+    }
+});
 
 const open = ref(false);
 </script>

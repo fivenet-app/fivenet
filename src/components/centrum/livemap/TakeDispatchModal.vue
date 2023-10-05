@@ -82,15 +82,6 @@ const canTakeDispatch = computed(
         (getCurrentMode.value === CentrumMode.SIMPLIFIED && dispatches.value.size > 0),
 );
 
-watch(pendingDispatches.value, () => {
-    pendingDispatches.value.forEach((pd) => {
-        const idx = selectedDispatches.value.findIndex((did) => did === pd);
-        if (idx === -1) {
-            selectedDispatches.value.push(pd);
-        }
-    });
-});
-
 const filteredDispatches = computed(() => {
     const filtered: Dispatch[] = [];
     dispatches.value.forEach((d) => {
