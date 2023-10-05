@@ -83,14 +83,12 @@ const canTakeDispatch = computed(
 );
 
 watch(pendingDispatches.value, () => {
-    console.log('WATCH PENDING DISPATCHES', pendingDispatches.value);
     pendingDispatches.value.forEach((pd) => {
         const idx = selectedDispatches.value.findIndex((did) => did === pd);
         if (idx === -1) {
             selectedDispatches.value.push(pd);
         }
     });
-    console.log('WATCH', selectedDispatches.value);
 });
 
 const filteredDispatches = computed(() => {
