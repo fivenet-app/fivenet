@@ -423,7 +423,11 @@ func (s *Server) ListUnitActivity(ctx context.Context, req *ListUnitActivityRequ
 
 	for i := 0; i < len(resp.Activity); i++ {
 		if resp.Activity[i].UnitId > 0 && resp.Activity[i].User != nil {
-			resp.Activity[i].Unit, _ = s.getUnit(resp.Activity[i].User.Job, resp.Activity[i].UnitId)
+			unit, ok := s.getUnit(resp.Activity[i].User.Job, resp.Activity[i].UnitId)
+			if ok && unit != nil {
+				newUnit := proto.Clone(unit)
+				resp.Activity[i].Unit = newUnit.(*dispatch.Unit)
+			}
 		}
 	}
 

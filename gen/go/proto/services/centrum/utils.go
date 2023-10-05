@@ -164,7 +164,7 @@ func (s *Server) dispatchCenterSignOn(ctx context.Context, job string, userId in
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 			if !dbutils.IsDuplicateError(err) {
-				return err
+				return ErrFailedQuery
 			}
 		}
 	} else {
@@ -177,13 +177,13 @@ func (s *Server) dispatchCenterSignOn(ctx context.Context, job string, userId in
 			LIMIT(1)
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-			return err
+			return ErrFailedQuery
 		}
 	}
 
 	// Load updated disponents into state
 	if err := s.loadDisponents(ctx, job); err != nil {
-		return err
+		return ErrFailedQuery
 	}
 
 	disponents := s.getDisponents(job)
@@ -193,7 +193,7 @@ func (s *Server) dispatchCenterSignOn(ctx context.Context, job string, userId in
 	}
 	data, err := proto.Marshal(change)
 	if err != nil {
-		return err
+		return ErrFailedQuery
 	}
 	s.broadcastToAllUnits(TopicGeneral, TypeGeneralDisponents, job, data)
 

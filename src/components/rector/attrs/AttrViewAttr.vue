@@ -37,16 +37,11 @@ const id = ref<bigint>(props.attribute.attrId);
 if (!states.value.has(id.value) || states.value.get(id.value) === undefined) {
     switch (lowercaseFirstLetter(props.attribute.type)) {
         case 'stringList': {
-            let def: string[] = [];
-            if (props.attribute.defaultValues?.validValues.oneofKind === 'stringList') {
-                def = props.attribute.defaultValues?.validValues.stringList.strings;
-            }
-
             states.value.set(id.value, {
                 validValues: {
                     oneofKind: 'stringList',
                     stringList: {
-                        strings: def,
+                        strings: [],
                     },
                 },
             });
@@ -54,16 +49,11 @@ if (!states.value.has(id.value) || states.value.get(id.value) === undefined) {
         }
 
         case 'jobList': {
-            let def: string[] = [];
-            if (props.attribute.defaultValues?.validValues.oneofKind === 'jobList') {
-                def = props.attribute.defaultValues?.validValues.jobList.strings;
-            }
-
             states.value.set(id.value, {
                 validValues: {
                     oneofKind: 'jobList',
                     jobList: {
-                        strings: def,
+                        strings: [],
                     },
                 },
             });
@@ -71,16 +61,11 @@ if (!states.value.has(id.value) || states.value.get(id.value) === undefined) {
         }
 
         case 'jobGradeList': {
-            let def = {};
-            if (props.attribute.defaultValues?.validValues.oneofKind === 'jobGradeList') {
-                def = props.attribute.defaultValues?.validValues.jobGradeList.jobs;
-            }
-
             states.value.set(id.value, {
                 validValues: {
                     oneofKind: 'jobGradeList',
                     jobGradeList: {
-                        jobs: def,
+                        jobs: {},
                     },
                 },
             });
