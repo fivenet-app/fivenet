@@ -106,49 +106,53 @@ export interface UnitStatus {
      */
     unitId: bigint;
     /**
-     * @generated from protobuf field: resources.dispatch.StatusUnit status = 4;
+     * @generated from protobuf field: optional resources.dispatch.Unit unit = 4;
+     */
+    unit?: Unit;
+    /**
+     * @generated from protobuf field: resources.dispatch.StatusUnit status = 5;
      */
     status: StatusUnit;
     /**
      * @sanitize
      *
-     * @generated from protobuf field: optional string reason = 5;
+     * @generated from protobuf field: optional string reason = 6;
      */
     reason?: string;
     /**
      * @sanitize
      *
-     * @generated from protobuf field: optional string code = 6;
+     * @generated from protobuf field: optional string code = 7;
      */
     code?: string;
     /**
-     * @generated from protobuf field: optional int32 user_id = 7;
+     * @generated from protobuf field: optional int32 user_id = 8;
      */
     userId?: number;
     /**
-     * @generated from protobuf field: optional resources.users.UserShort user = 8;
+     * @generated from protobuf field: optional resources.users.UserShort user = 9;
      */
     user?: UserShort;
     /**
-     * @generated from protobuf field: optional double x = 9;
+     * @generated from protobuf field: optional double x = 10;
      */
     x?: number;
     /**
-     * @generated from protobuf field: optional double y = 10;
+     * @generated from protobuf field: optional double y = 11;
      */
     y?: number;
     /**
      * @sanitize
      *
-     * @generated from protobuf field: optional string postal = 11;
+     * @generated from protobuf field: optional string postal = 12;
      */
     postal?: string;
     /**
-     * @generated from protobuf field: optional int32 creator_id = 12;
+     * @generated from protobuf field: optional int32 creator_id = 13;
      */
     creatorId?: number;
     /**
-     * @generated from protobuf field: optional resources.users.UserShort creator = 13;
+     * @generated from protobuf field: optional resources.users.UserShort creator = 14;
      */
     creator?: UserShort;
 }
@@ -245,16 +249,17 @@ class UnitStatus$Type extends MessageType<UnitStatus> {
             { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "unit_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 4, name: "status", kind: "enum", T: () => ["resources.dispatch.StatusUnit", StatusUnit, "STATUS_UNIT_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
-            { no: 5, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
-            { no: 6, name: "code", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
-            { no: 7, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
-            { no: 8, name: "user", kind: "message", T: () => UserShort },
-            { no: 9, name: "x", kind: "scalar", opt: true, T: 1 /*ScalarType.DOUBLE*/ },
-            { no: 10, name: "y", kind: "scalar", opt: true, T: 1 /*ScalarType.DOUBLE*/ },
-            { no: 11, name: "postal", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "48" } } } },
-            { no: 12, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
-            { no: 13, name: "creator", kind: "message", T: () => UserShort }
+            { no: 4, name: "unit", kind: "message", T: () => Unit },
+            { no: 5, name: "status", kind: "enum", T: () => ["resources.dispatch.StatusUnit", StatusUnit, "STATUS_UNIT_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
+            { no: 6, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
+            { no: 7, name: "code", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
+            { no: 8, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
+            { no: 9, name: "user", kind: "message", T: () => UserShort },
+            { no: 10, name: "x", kind: "scalar", opt: true, T: 1 /*ScalarType.DOUBLE*/ },
+            { no: 11, name: "y", kind: "scalar", opt: true, T: 1 /*ScalarType.DOUBLE*/ },
+            { no: 12, name: "postal", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "48" } } } },
+            { no: 13, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
+            { no: 14, name: "creator", kind: "message", T: () => UserShort }
         ]);
     }
 }

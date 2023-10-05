@@ -27,6 +27,9 @@ defineProps<{
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
                 {{ $t('components.centrum.units.feed.item.USER_ADDED') }}
 
+                <span class="font-medium text-gray-400 pl-1" v-if="item.unit">
+                    {{ item.unit?.initials }}
+                </span>
                 <span class="font-medium text-gray-400 pl-1" v-if="item.user">
                     {{ item.user?.firstname }}, {{ item.user?.lastname }}
                 </span>
@@ -42,6 +45,9 @@ defineProps<{
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
                 {{ $t('components.centrum.units.feed.item.USER_REMOVED') }}
 
+                <span class="font-medium text-gray-400 pl-1" v-if="item.unit">
+                    {{ item.unit?.initials }}
+                </span>
                 <span class="font-medium text-gray-400 pl-1" v-if="item.user">
                     {{ item.user?.firstname }}, {{ item.user?.lastname }}
                 </span>
@@ -57,6 +63,9 @@ defineProps<{
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
                 {{ $t('components.centrum.units.feed.item.UNAVAILABLE') }}
 
+                <span class="font-medium text-gray-400 pl-1" v-if="item.unit">
+                    {{ item.unit?.initials }}
+                </span>
                 <span class="font-medium text-gray-400 pl-1" v-if="item.user">
                     {{ item.user?.firstname }}, {{ item.user?.lastname }}
                 </span>
@@ -72,6 +81,9 @@ defineProps<{
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
                 {{ $t('components.centrum.units.feed.item.AVAILABLE') }}
 
+                <span class="font-medium text-gray-400 pl-1" v-if="item.unit">
+                    {{ item.unit?.initials }}
+                </span>
                 <span class="font-medium text-gray-400 pl-1" v-if="item.user">
                     {{ item.user?.firstname }}, {{ item.user?.lastname }}
                 </span>
@@ -87,6 +99,9 @@ defineProps<{
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
                 {{ $t('components.centrum.units.feed.item.ON_BREAK') }}
 
+                <span class="font-medium text-gray-400 pl-1" v-if="item.unit">
+                    {{ item.unit?.initials }}
+                </span>
                 <span class="font-medium text-gray-400 pl-1" v-if="item.user">
                     {{ item.user?.firstname }}, {{ item.user?.lastname }}
                 </span>
@@ -102,6 +117,9 @@ defineProps<{
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
                 {{ $t('components.centrum.units.feed.item.BUSY') }}
 
+                <span class="font-medium text-gray-400 pl-1" v-if="item.unit">
+                    {{ item.unit?.initials }}
+                </span>
                 <span class="font-medium text-gray-400 pl-1" v-if="item.user">
                     {{ item.user?.firstname }}, {{ item.user?.lastname }}
                 </span>
@@ -116,6 +134,10 @@ defineProps<{
             </div>
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
                 {{ $t('components.centrum.units.feed.item.UNKNOWN') }}
+
+                <span class="font-medium text-gray-400 pl-1" v-if="item.unit">
+                    {{ item.unit?.initials }}
+                </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
                 <Time :value="item.createdAt" :type="'compact'" />

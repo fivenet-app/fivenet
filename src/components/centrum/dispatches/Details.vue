@@ -118,7 +118,9 @@ const openStatus = ref(false);
                                                 >
                                                     {{ $t('common.dispatch') }}:
                                                     <IDCopyBadge class="ml-2 mr-2" :id="dispatch.id" prefix="DSP" />
-                                                    {{ dispatch.message }}
+                                                    <p class="truncate max-w-[20rem]" :title="dispatch.message">
+                                                        {{ dispatch.message }}
+                                                    </p>
                                                     <button
                                                         v-if="can('CentrumService.DeleteDispatch')"
                                                         type="button"

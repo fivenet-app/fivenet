@@ -43,7 +43,7 @@ func (s *Server) listUnits(job string) ([]*dispatch.Unit, error) {
 	return us, nil
 }
 
-func (s *Server) getUnitStatusFromDB(ctx context.Context, id uint64) (*dispatch.UnitStatus, error) {
+func (s *Server) getUnitStatusFromDB(ctx context.Context, job string, id uint64) (*dispatch.UnitStatus, error) {
 	stmt := tUnitStatus.
 		SELECT(
 			tUnitStatus.ID,
@@ -82,6 +82,10 @@ func (s *Server) getUnitStatusFromDB(ctx context.Context, id uint64) (*dispatch.
 		if err != nil {
 			return nil, err
 		}
+	}
+
+	if dest.UnitId > 0 {
+		dest.Unit, _ = s.getUnit(job, dest.UnitId)
 	}
 
 	return &dest, nil
@@ -159,7 +163,7 @@ func (s *Server) updateUnitStatus(ctx context.Context, job string, unit *dispatc
 		return err
 	}
 
-	status, err := s.getUnitStatusFromDB(ctx, uint64(lastId))
+	status, err := s.getUnitStatusFromDB(ctx, job, uint64(lastId))
 	if err != nil {
 		return err
 	}

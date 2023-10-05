@@ -60,17 +60,18 @@ message UnitStatus {
   uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
   optional resources.timestamp.Timestamp created_at = 2;
   uint64 unit_id = 3;
-  StatusUnit status = 4 [(validate.rules).enum.defined_only = true];
+  optional resources.dispatch.Unit unit = 4;
+  StatusUnit status = 5 [(validate.rules).enum.defined_only = true];
   // @sanitize
-  optional string reason = 5 [(validate.rules).string.max_len = 255];
+  optional string reason = 6 [(validate.rules).string.max_len = 255];
   // @sanitize
-  optional string code = 6 [(validate.rules).string.max_len = 20];
-  optional int32 user_id = 7 [(validate.rules).int32.gt = 0];
-  optional resources.users.UserShort user = 8;
-  optional double x = 9;
-  optional double y = 10;
+  optional string code = 7 [(validate.rules).string.max_len = 20];
+  optional int32 user_id = 8 [(validate.rules).int32.gt = 0];
+  optional resources.users.UserShort user = 9;
+  optional double x = 10;
+  optional double y = 11;
   // @sanitize
-  optional string postal = 11  [(validate.rules).string.max_len = 48];
-  optional int32 creator_id = 12 [(validate.rules).int32.gt = 0];
-  optional resources.users.UserShort creator = 13;
+  optional string postal = 12  [(validate.rules).string.max_len = 48];
+  optional int32 creator_id = 13 [(validate.rules).int32.gt = 0];
+  optional resources.users.UserShort creator = 14;
 }

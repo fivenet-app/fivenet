@@ -250,8 +250,11 @@ defineProps<{
                 <NewBoxIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
-                Unknown Dispatch status
+                {{ $t('components.centrum.dispatches.feed.item.UNKNOWN') }}
 
+                <span class="font-medium text-gray-400 pl-1" v-if="item.unit">
+                    {{ item.unit?.initials }}
+                </span>
                 <span class="font-medium text-gray-400 pl-1" v-if="item.user">
                     {{ item.user?.firstname }}, {{ item.user?.lastname }}
                 </span>

@@ -445,7 +445,7 @@
             "dispatches": {
                 "feed": {
                     "item": {
-                        "UNSPECIFIED": "Unknown Dispatch Status",
+                        "UNKNOWN": "Unknown Dispatch Status",
                         "NEW": "Dispatch created",
                         "UNASSIGNED": "No units assigned",
                         "UNIT_ASSIGNED": "Unit assigned to Dispatch",

@@ -4,11 +4,12 @@ import { AccountIcon, CloseIcon, MapMarkerIcon, PencilIcon } from 'mdi-vue3';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import Time from '~/components/partials/elements/Time.vue';
 import { StatusUnit, Unit } from '~~/gen/ts/resources/dispatch/units';
+import { unitStatusToBGColor } from '../helpers';
 import AssignUnitModal from './AssignUnitModal.vue';
 import Feed from './Feed.vue';
 import StatusUpdateModal from './StatusUpdateModal.vue';
 
-defineProps<{
+const props = defineProps<{
     open: boolean;
     unit: Unit;
     statusSelected?: StatusUnit;
@@ -18,6 +19,8 @@ defineEmits<{
     (e: 'close'): void;
     (e: 'goto', loc: Coordinate): void;
 }>();
+
+const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.status ?? 0));
 
 const openAssign = ref(false);
 const openStatus = ref(false);
@@ -98,6 +101,7 @@ const openStatus = ref(false);
                                                                     type="button"
                                                                     @click="openStatus = true"
                                                                     class="rounded bg-white/10 px-2 py-1 text-xs font-semibold text-white shadow-sm hover:bg-white/20"
+                                                                    :class="unitStatusColors"
                                                                 >
                                                                     {{
                                                                         $t(
