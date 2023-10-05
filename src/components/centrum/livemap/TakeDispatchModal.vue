@@ -76,11 +76,13 @@ watch(pendingDispatches.value, () => {
     previousLength.value = pendingDispatches.value.length;
 });
 
-const canTakeDispatch = computed(() => {
-    return (
-        pendingDispatches.value.length === 0 || (getCurrentMode.value === CentrumMode.SIMPLIFIED && dispatches.value.size === 0)
-    );
-});
+const canTakeDispatch = computed(
+    () =>
+        selectedDispatches.value.length > 0 ||
+        pendingDispatches.value.length > 0 ||
+        (getCurrentMode.value === CentrumMode.SIMPLIFIED && dispatches.value.size > 0),
+);
+console.log(canTakeDispatch.value);
 
 const filteredDispatches = computed(() => {
     const filtered: Dispatch[] = [];

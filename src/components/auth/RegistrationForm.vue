@@ -29,8 +29,8 @@ async function createAccount(values: FormData): Promise<void> {
             });
 
             notifications.dispatchNotification({
-                title: { key: 'notifications.auth.account_created.title', parameters: [] },
-                content: { key: 'notifications.auth.account_created.content', parameters: [] },
+                title: { key: 'notifications.auth.account_created.title', parameters: {} },
+                content: { key: 'notifications.auth.account_created.content', parameters: {} },
                 type: 'success',
             });
 

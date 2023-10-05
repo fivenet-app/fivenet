@@ -32,11 +32,11 @@ function doCall(): void {
             type: 'info',
             title: {
                 key: 'notifications.components.partials.users.PhoneNumber.copied.title',
-                parameters: [],
+                parameters: {},
             },
             content: {
                 key: 'notifications.components.partials.users.PhoneNumber.copied.content',
-                parameters: [],
+                parameters: {},
             },
         });
 

@@ -112,8 +112,8 @@ export const useNotificatorStore = defineStore('notifications', {
                                 authStore.setAccessToken(tokenUpdate.newToken, toDate(tokenUpdate.expires) as null | Date);
 
                                 this.dispatchNotification({
-                                    title: { key: 'notifications.renewed_token.title', parameters: [] },
-                                    content: { key: 'notifications.renewed_token.content', parameters: [] },
+                                    title: { key: 'notifications.renewed_token.title', parameters: {} },
+                                    content: { key: 'notifications.renewed_token.content', parameters: {} },
                                     type: 'info',
                                 });
                             }

@@ -82,8 +82,8 @@ async function deleteDocument(id: bigint): Promise<void> {
             });
 
             notifications.dispatchNotification({
-                title: { key: 'notifications.document_deleted.title', parameters: [] },
-                content: { key: 'notifications.document_deleted.content', parameters: [] },
+                title: { key: 'notifications.document_deleted.title', parameters: {} },
+                content: { key: 'notifications.document_deleted.content', parameters: {} },
                 type: 'success',
             });
 
@@ -108,8 +108,8 @@ async function toggleDocument(id: bigint, closed: boolean): Promise<void> {
             doc.value!.closed = closed;
 
             notifications.dispatchNotification({
-                title: { key: `notifications.document_toggled.${!closed ? 'open' : 'closed'}.title`, parameters: [] },
-                content: { key: `notifications.document_toggled.${!closed ? 'open' : 'closed'}.content`, parameters: [] },
+                title: { key: `notifications.document_toggled.${!closed ? 'open' : 'closed'}.title`, parameters: {} },
+                content: { key: `notifications.document_toggled.${!closed ? 'open' : 'closed'}.content`, parameters: {} },
                 type: 'success',
             });
 
@@ -127,8 +127,8 @@ function addToClipboard(): void {
     }
 
     notifications.dispatchNotification({
-        title: { key: 'notifications.clipboard.document_added.title', parameters: [] },
-        content: { key: 'notifications.clipboard.document_added.content', parameters: [] },
+        title: { key: 'notifications.clipboard.document_added.title', parameters: {} },
+        content: { key: 'notifications.clipboard.document_added.content', parameters: {} },
         duration: 3500,
         type: 'info',
     });
@@ -229,8 +229,8 @@ onConfirm(async (id: bigint) => deleteDocument(id));
                             <IDCopyBadge
                                 :id="doc.id"
                                 prefix="DOC"
-                                :title="{ key: 'notifications.document_view.copy_document_id.title', parameters: [] }"
-                                :content="{ key: 'notifications.document_view.copy_document_id.content', parameters: [] }"
+                                :title="{ key: 'notifications.document_view.copy_document_id.title', parameters: {} }"
+                                :content="{ key: 'notifications.document_view.copy_document_id.content', parameters: {} }"
                             />
                             <div class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-base-100 text-base-500">
                                 <CalendarIcon class="w-5 h-auto" aria-hidden="true" />

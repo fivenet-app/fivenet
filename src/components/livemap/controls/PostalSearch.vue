@@ -32,8 +32,8 @@ async function loadPostals(): Promise<void> {
         postals.value.push(...((await response.json()) as Postal[]));
     } catch (_) {
         notifications.dispatchNotification({
-            title: { key: 'notifications.failed_loading_postals.title', parameters: [] },
-            content: { key: 'notifications.failed_loading_postals.content', parameters: [] },
+            title: { key: 'notifications.failed_loading_postals.title', parameters: {} },
+            content: { key: 'notifications.failed_loading_postals.content', parameters: {} },
             type: 'error',
         });
         postalsLoaded = false;

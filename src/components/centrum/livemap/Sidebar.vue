@@ -103,8 +103,8 @@ async function updateDispatchStatus(dispatchId: bigint, status: StatusDispatch):
 async function updateDspStatus(dispatchId?: bigint, status?: StatusDispatch): Promise<void> {
     if (!dispatchId) {
         notifications.dispatchNotification({
-            title: { key: 'notifications.centrum.sidebar.no_dispatch_selected.title', parameters: [] },
-            content: { key: 'notifications.centrum.sidebar.no_dispatch_selected.content', parameters: [] },
+            title: { key: 'notifications.centrum.sidebar.no_dispatch_selected.title', parameters: {} },
+            content: { key: 'notifications.centrum.sidebar.no_dispatch_selected.content', parameters: {} },
             type: 'error',
         });
         return;
@@ -117,8 +117,8 @@ async function updateDspStatus(dispatchId?: bigint, status?: StatusDispatch): Pr
 
     updateDispatchStatus(dispatchId, status);
     notifications.dispatchNotification({
-        title: { key: 'notifications.centrum.sidebar.dispatch_status_updated.title', parameters: [] },
-        content: { key: 'notifications.centrum.sidebar.dispatch_status_updated.content', parameters: [] },
+        title: { key: 'notifications.centrum.sidebar.dispatch_status_updated.title', parameters: {} },
+        content: { key: 'notifications.centrum.sidebar.dispatch_status_updated.content', parameters: {} },
         type: 'success',
     });
 }
@@ -148,8 +148,8 @@ async function updateUtStatus(id: bigint, status?: StatusUnit): Promise<void> {
 
     updateUnitStatus(id, status);
     notifications.dispatchNotification({
-        title: { key: 'notifications.centrum.sidebar.dispatch_status_updated.title', parameters: [] },
-        content: { key: 'notifications.centrum.sidebar.dispatch_status_updated.content', parameters: [] },
+        title: { key: 'notifications.centrum.sidebar.dispatch_status_updated.title', parameters: {} },
+        content: { key: 'notifications.centrum.sidebar.dispatch_status_updated.content', parameters: {} },
         type: 'success',
     });
 }

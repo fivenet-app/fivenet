@@ -126,8 +126,8 @@ async function updateAttrs(): Promise<void> {
             });
 
             notifications.dispatchNotification({
-                title: { key: 'notifications.rector.role_updated.title', parameters: [] },
-                content: { key: 'notifications.rector.role_updated.content', parameters: [] },
+                title: { key: 'notifications.rector.role_updated.title', parameters: {} },
+                content: { key: 'notifications.rector.role_updated.content', parameters: {} },
                 type: 'success',
             });
 

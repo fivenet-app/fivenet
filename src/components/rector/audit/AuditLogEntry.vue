@@ -42,8 +42,8 @@ ${JSON.stringify(JSON.parse(props.log.data!), null, 2)}
     }
 
     notifications.dispatchNotification({
-        title: { key: 'notifications.rector.audit_log.title', parameters: [] },
-        content: { key: 'notifications.rector.audit_log.content', parameters: [] },
+        title: { key: 'notifications.rector.audit_log.title', parameters: {} },
+        content: { key: 'notifications.rector.audit_log.content', parameters: {} },
         type: 'info',
     });
 

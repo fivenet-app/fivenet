@@ -30,7 +30,7 @@ async function switchLanguage(lang: Language): Promise<void> {
     locale.value = lang.iso;
 
     notifications.dispatchNotification({
-        title: { key: 'notifications.language_switched.title', parameters: [] },
+        title: { key: 'notifications.language_switched.title', parameters: {} },
         content: { key: 'notifications.language_switched.content', parameters: [lang.name] },
         type: 'success',
     });

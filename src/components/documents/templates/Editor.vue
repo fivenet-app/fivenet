@@ -111,7 +111,7 @@ const accessTypes = [{ id: 1, name: t('common.job', 2) }];
 function addAccessEntry(): void {
     if (access.value.size > maxAccessEntries - 1) {
         notifications.dispatchNotification({
-            title: { key: 'notifications.max_access_entry.title', parameters: [] },
+            title: { key: 'notifications.max_access_entry.title', parameters: {} },
             content: { key: 'notifications.max_access_entry.content', parameters: [maxAccessEntries.toString()] },
             type: 'error',
         });
@@ -189,7 +189,7 @@ const contentAccessTypes = [
 function addContentAccessEntry(): void {
     if (contentAccess.value.size > maxAccessEntries - 1) {
         notifications.dispatchNotification({
-            title: { key: 'notifications.max_access_entry.title', parameters: [] },
+            title: { key: 'notifications.max_access_entry.title', parameters: {} },
             content: { key: 'notifications.max_access_entry.content', parameters: [maxAccessEntries.toString()] },
             type: 'error',
         });
@@ -332,8 +332,8 @@ async function createOrUpdateTemplate(values: FormData, templateId?: bigint): Pr
                 const { response } = await call;
 
                 notifications.dispatchNotification({
-                    title: { key: 'notifications.templates.created.title', parameters: [] },
-                    content: { key: 'notifications.templates.created.title', parameters: [] },
+                    title: { key: 'notifications.templates.created.title', parameters: {} },
+                    content: { key: 'notifications.templates.created.title', parameters: {} },
                     type: 'success',
                 });
 
@@ -346,8 +346,8 @@ async function createOrUpdateTemplate(values: FormData, templateId?: bigint): Pr
                 await call;
 
                 notifications.dispatchNotification({
-                    title: { key: 'notifications.templates.updated.title', parameters: [] },
-                    content: { key: 'notifications.templates.updated.content', parameters: [] },
+                    title: { key: 'notifications.templates.updated.title', parameters: {} },
+                    content: { key: 'notifications.templates.updated.content', parameters: {} },
                     type: 'success',
                 });
             }

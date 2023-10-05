@@ -60,8 +60,8 @@ export class GRPCClients {
         const notification = {
             id: '',
             type: 'error',
-            title: { key: 'notifications.grpc_errors.internal.title', parameters: [] },
-            content: { key: err.message ?? 'Unknown error', parameters: [] },
+            title: { key: 'notifications.grpc_errors.internal.title', parameters: {} },
+            content: { key: err.message ?? 'Unknown error', parameters: {} },
         } as Notification;
 
         if (err.code !== undefined) {
@@ -70,16 +70,16 @@ export class GRPCClients {
                     break;
 
                 case 'unavailable':
-                    notification.title = { key: 'notifications.grpc_errors.unavailable.title', parameters: [] };
-                    notification.content = { key: 'notifications.grpc_errors.unavailable.content', parameters: [] };
+                    notification.title = { key: 'notifications.grpc_errors.unavailable.title', parameters: {} };
+                    notification.content = { key: 'notifications.grpc_errors.unavailable.content', parameters: {} };
                     break;
 
                 case 'unauthenticated':
                     useAuthStore().clearAuthInfo();
 
                     notification.type = 'warning';
-                    notification.title = { key: 'notifications.grpc_errors.unauthenticated.title', parameters: [] };
-                    notification.content = { key: 'notifications.grpc_errors.unauthenticated.content', parameters: [] };
+                    notification.title = { key: 'notifications.grpc_errors.unauthenticated.title', parameters: {} };
+                    notification.content = { key: 'notifications.grpc_errors.unauthenticated.content', parameters: {} };
 
                     // Only update the redirect query param if it isn't already set
                     const route = useRoute();
@@ -93,15 +93,15 @@ export class GRPCClients {
                     break;
 
                 case 'permission_denied':
-                    notification.title = { key: 'notifications.grpc_errors.permission_denied.title', parameters: [] };
+                    notification.title = { key: 'notifications.grpc_errors.permission_denied.title', parameters: {} };
                     break;
 
                 case 'not_found':
-                    notification.title = { key: 'notifications.grpc_errors.not_found.title', parameters: [] };
+                    notification.title = { key: 'notifications.grpc_errors.not_found.title', parameters: {} };
                     break;
 
                 default:
-                    notification.title = { key: 'notifications.grpc_errors.default.title', parameters: [] };
+                    notification.title = { key: 'notifications.grpc_errors.default.title', parameters: {} };
                     notification.content = {
                         key: 'notifications.grpc_errors.default.content',
                         parameters: { msg: err.message, code: err.code.valueOf() },
@@ -113,10 +113,10 @@ export class GRPCClients {
         if (err.message.startsWith('errors.')) {
             const errSplits = err.message.split(';');
             if (errSplits.length > 1) {
-                notification.title = { key: errSplits[0], parameters: [] };
-                notification.content = { key: errSplits[1], parameters: [] };
+                notification.title = { key: errSplits[0], parameters: {} };
+                notification.content = { key: errSplits[1], parameters: {} };
             } else {
-                notification.content = { key: err.message, parameters: [] };
+                notification.content = { key: err.message, parameters: {} };
             }
         }
 

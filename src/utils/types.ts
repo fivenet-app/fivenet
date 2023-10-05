@@ -18,8 +18,3 @@ export type CardElement = {
 };
 
 export type CardElements = CardElement[];
-
-export interface TranslateItem {
-    key: string;
-    parameters?: string[] | { [key: string]: string };
-}

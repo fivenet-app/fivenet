@@ -73,8 +73,8 @@ async function setJobProp(values: FormData): Promise<void> {
             props.user.jobGradeLabel = selectedJob.value?.label!;
 
             notifications.dispatchNotification({
-                title: { key: 'notifications.action_successfull.title', parameters: [] },
-                content: { key: 'notifications.action_successfull.content', parameters: [] },
+                title: { key: 'notifications.action_successfull.title', parameters: {} },
+                content: { key: 'notifications.action_successfull.content', parameters: {} },
                 type: 'success',
             });
 

@@ -28,8 +28,8 @@ onMounted(async () => {
         setAccessToken(query.t as string, BigInt(query.exp as string));
 
         notifications.dispatchNotification({
-            title: { key: 'notifications.auth.oauth2_login.success.title', parameters: [] },
-            content: { key: 'notifications.auth.oauth2_login.success.content', parameters: [] },
+            title: { key: 'notifications.auth.oauth2_login.success.title', parameters: {} },
+            content: { key: 'notifications.auth.oauth2_login.success.content', parameters: {} },
             type: 'info',
         });
 
@@ -39,7 +39,7 @@ onMounted(async () => {
         const reason = query.reason ?? 'N/A';
 
         notifications.dispatchNotification({
-            title: { key: 'notifications.auth.oauth2_login.failed.title', parameters: [] },
+            title: { key: 'notifications.auth.oauth2_login.failed.title', parameters: {} },
             content: { key: 'notifications.auth.oauth2_login.failed.content', parameters: [reason.toString()] },
             type: 'error',
         });

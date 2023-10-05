@@ -202,8 +202,8 @@ const trafficPointsModal = ref(false);
                 <IDCopyBadge
                     :id="user.userId.toString()"
                     prefix="CIT"
-                    :title="{ key: 'notifications.citizen_info.copy_citizen_id.title', parameters: [] }"
-                    :content="{ key: 'notifications.citizen_info.copy_citizen_id.content', parameters: [] }"
+                    :title="{ key: 'notifications.citizen_info.copy_citizen_id.title', parameters: {} }"
+                    :content="{ key: 'notifications.citizen_info.copy_citizen_id.content', parameters: {} }"
                 />
             </div>
         </div>

@@ -57,8 +57,8 @@ async function deleteTemplate(id: bigint): Promise<void> {
             });
 
             notifications.dispatchNotification({
-                title: { key: 'notifications.templates.deleted.title', parameters: [] },
-                content: { key: 'notifications.templates.deleted.content', parameters: [] },
+                title: { key: 'notifications.templates.deleted.title', parameters: {} },
+                content: { key: 'notifications.templates.deleted.content', parameters: {} },
                 type: 'success',
             });
 

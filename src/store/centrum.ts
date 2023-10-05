@@ -229,8 +229,8 @@ export const useCentrumStore = defineStore('centrum', {
                 this.pendingDispatches.push(id);
 
                 useNotificatorStore().dispatchNotification({
-                    title: { key: 'notifications.centrum.store.assigned_dispatch.title', parameters: [] },
-                    content: { key: 'notifications.centrum.store.assigned_dispatch.content', parameters: [] },
+                    title: { key: 'notifications.centrum.store.assigned_dispatch.title', parameters: {} },
+                    content: { key: 'notifications.centrum.store.assigned_dispatch.content', parameters: {} },
                     type: 'info',
                 });
             }
@@ -317,16 +317,16 @@ export const useCentrumStore = defineStore('centrum', {
 
                             // User has been newly added to unit
                             notifications.dispatchNotification({
-                                title: { key: 'notifications.centrum.unitAssigned.joined.title', parameters: [] },
-                                content: { key: 'notifications.centrum.unitAssigned.joined.content', parameters: [] },
+                                title: { key: 'notifications.centrum.unitAssigned.joined.title', parameters: {} },
+                                content: { key: 'notifications.centrum.unitAssigned.joined.content', parameters: {} },
                                 type: 'success',
                             });
                         } else {
                             if (this.ownUnitId === undefined) return;
 
                             notifications.dispatchNotification({
-                                title: { key: 'notifications.centrum.unitAssigned.removed.title', parameters: [] },
-                                content: { key: 'notifications.centrum.unitAssigned.removed.content', parameters: [] },
+                                title: { key: 'notifications.centrum.unitAssigned.removed.title', parameters: {} },
+                                content: { key: 'notifications.centrum.unitAssigned.removed.content', parameters: {} },
                                 type: 'warning',
                             });
 

@@ -49,8 +49,8 @@ async function setTrafficPoints(values: FormData): Promise<void> {
             }
 
             notifications.dispatchNotification({
-                title: { key: 'notifications.action_successfull.title', parameters: [] },
-                content: { key: 'notifications.action_successfull.content', parameters: [] },
+                title: { key: 'notifications.action_successfull.title', parameters: {} },
+                content: { key: 'notifications.action_successfull.content', parameters: {} },
                 type: 'success',
             });
 

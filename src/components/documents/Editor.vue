@@ -32,6 +32,7 @@ import MagicUrl from 'quill-magic-url';
 // @ts-expect-error
 import QuillPasteSmart from 'quill-paste-smart';
 import { defineRule } from 'vee-validate';
+import { TranslateItem } from '~/composables/i18n';
 import { useAuthStore } from '~/store/auth';
 import { getDocument, getUser, useClipboardStore } from '~/store/clipboard';
 import { useCompletorStore } from '~/store/completor';
@@ -437,7 +438,7 @@ const accessTypes = [
 function addAccessEntry(): void {
     if (access.value.size > maxAccessEntries - 1) {
         notifications.dispatchNotification({
-            title: { key: 'notifications.max_access_entry.title', parameters: [] },
+            title: { key: 'notifications.max_access_entry.title', parameters: {} },
             content: {
                 key: 'notifications.max_access_entry.content',
                 parameters: [maxAccessEntries.toString()],
@@ -567,8 +568,8 @@ async function createDocument(values: FormData, content: string, closed: boolean
             await Promise.all(promises);
 
             notifications.dispatchNotification({
-                title: { key: 'notifications.document_created.title', parameters: [] },
-                content: { key: 'notifications.document_created.content', parameters: [] },
+                title: { key: 'notifications.document_created.title', parameters: {} },
+                content: { key: 'notifications.document_created.content', parameters: {} },
                 type: 'success',
             });
             clipboardStore.clear();
@@ -673,8 +674,8 @@ async function updateDocument(id: bigint, values: FormData, content: string, clo
             });
 
             notifications.dispatchNotification({
-                title: { key: 'notifications.document_updated.title', parameters: [] },
-                content: { key: 'notifications.document_updated.content', parameters: [] },
+                title: { key: 'notifications.document_updated.title', parameters: {} },
+                content: { key: 'notifications.document_updated.content', parameters: {} },
                 type: 'success',
             });
             clipboardStore.clear();

@@ -33,8 +33,8 @@ async function createCategory(values: FormData): Promise<void> {
             });
 
             notifications.dispatchNotification({
-                title: { key: 'notifications.category_created.title', parameters: [] },
-                content: { key: 'notifications.category_created.content', parameters: [] },
+                title: { key: 'notifications.category_created.title', parameters: {} },
+                content: { key: 'notifications.category_created.content', parameters: {} },
                 type: 'success',
             });
 
@@ -59,8 +59,8 @@ async function updateCategory(values: FormData): Promise<void> {
             });
 
             notifications.dispatchNotification({
-                title: { key: 'notifications.category_updated.title', parameters: [] },
-                content: { key: 'notifications.category_updated.content', parameters: [] },
+                title: { key: 'notifications.category_updated.title', parameters: {} },
+                content: { key: 'notifications.category_updated.content', parameters: {} },
                 type: 'success',
             });
 
@@ -82,8 +82,8 @@ async function deleteCategory(): Promise<void> {
             });
 
             notifications.dispatchNotification({
-                title: { key: 'notifications.category_deleted.title', parameters: [] },
-                content: { key: 'notifications.category_deleted.content', parameters: [] },
+                title: { key: 'notifications.category_deleted.title', parameters: {} },
+                content: { key: 'notifications.category_deleted.content', parameters: {} },
                 type: 'success',
             });
             emit('close');

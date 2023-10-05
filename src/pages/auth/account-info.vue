@@ -22,15 +22,15 @@ const query = route.query;
 if (query.oauth2Connect) {
     if (query.oauth2Connect === 'success') {
         notifications.dispatchNotification({
-            title: { key: 'notifications.auth.oauth2_connect.success.title', parameters: [] },
-            content: { key: 'notifications.auth.oauth2_connect.success.content', parameters: [] },
+            title: { key: 'notifications.auth.oauth2_connect.success.title', parameters: {} },
+            content: { key: 'notifications.auth.oauth2_connect.success.content', parameters: {} },
             type: 'info',
         });
     } else if (query.oauth2Connect === 'failed') {
         const reason = query.reason ?? 'N/A';
 
         notifications.dispatchNotification({
-            title: { key: 'notifications.auth.oauth2_connect.failed.title', parameters: [] },
+            title: { key: 'notifications.auth.oauth2_connect.failed.title', parameters: {} },
             content: { key: 'notifications.auth.oauth2_connect.failed.content', parameters: [reason.toString()] },
             type: 'error',
         });
