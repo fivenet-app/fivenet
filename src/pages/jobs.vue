@@ -3,7 +3,7 @@ import { CloseIcon, MenuIcon } from 'mdi-vue3';
 import { RoutesNamedLocations } from '~~/.nuxt/typed-router/__routes';
 
 const navigation: { name: string; to: RoutesNamedLocations; permission?: string }[] = [
-    { name: 'common.overview', to: { name: 'jobs-overview' }, permission: 'JobsService.ConductListEntries' },
+    { name: 'common.overview', to: { name: 'jobs-overview' }, permission: 'JobsService.ColleaguesList' },
     { name: 'pages.jobs.colleagues.title', to: { name: 'jobs-colleagues' }, permission: 'JobsService.ColleaguesList' },
     { name: 'pages.jobs.requests.title', to: { name: 'jobs-requests' }, permission: 'JobsService.RequestsListEntries' },
     {

@@ -172,8 +172,6 @@ service JobsService {
 
   // @perm: Attrs=Access/StringList:[]string{"Own", "All"}§[]string{"Own"}
   rpc ConductListEntries(ConductListEntriesRequest) returns (ConductListEntriesResponse);
-  // @perm: Name=ConductListEntries
-  rpc TimeclockStats(TimeclockStatsRequest) returns (TimeclockStatsResponse);
   // @perm
   rpc ConductCreateEntry(ConductCreateEntryRequest) returns (ConductCreateEntryResponse);
   // @perm
@@ -183,6 +181,8 @@ service JobsService {
 
   // @perm: Attrs=Access/StringList:[]string{"Own", "All"}§[]string{"Own"}
   rpc TimeclockListEntries(TimeclockListEntriesRequest) returns (TimeclockListEntriesResponse);
+  // @perm: Name=TimeclockListEntries
+  rpc TimeclockStats(TimeclockStatsRequest) returns (TimeclockStatsResponse);
 
   // @perm: Attrs=Access/StringList:[]string{"Own", "All"}§[]string{"Own"}
   rpc RequestsListEntries(RequestsListEntriesRequest) returns (RequestsListEntriesResponse);

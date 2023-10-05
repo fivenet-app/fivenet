@@ -10,6 +10,7 @@ useHead({
 definePageMeta({
     title: 'common.overview',
     requiresAuth: true,
+    permission: 'JobsService.ColleaguesList',
 });
 
 const { t } = useI18n();

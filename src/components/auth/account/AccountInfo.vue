@@ -128,7 +128,7 @@ onBeforeMount(async () => {
                                     <template v-for="page in homepages">
                                         <option
                                             :value="page"
-                                            :disabled="!(page.permission !== undefined && can(page.permission))"
+                                            :disabled="!(page.permission === undefined || can(page.permission))"
                                         >
                                             {{ $t(page.name ?? 'common.page') }}
                                         </option>
