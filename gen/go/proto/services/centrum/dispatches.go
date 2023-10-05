@@ -473,6 +473,28 @@ func (s *Server) UpdateDispatchStatus(ctx context.Context, req *UpdateDispatchSt
 		return nil, err
 	}
 
+	if req.Status == dispatch.StatusDispatch_STATUS_DISPATCH_EN_ROUTE ||
+		req.Status == dispatch.StatusDispatch_STATUS_DISPATCH_ON_SCENE ||
+		req.Status == dispatch.StatusDispatch_STATUS_DISPATCH_NEED_ASSISTANCE {
+		unit, ok := s.getUnit(userInfo.Job, unitId)
+		if ok && unit != nil {
+			// Set unit to busy when unit accepts a dispatch
+			if unit.Status == nil || unit.Status.Status != dispatch.StatusUnit_STATUS_UNIT_BUSY {
+				if err := s.updateUnitStatus(ctx, userInfo.Job, unit, &dispatch.UnitStatus{
+					UnitId:    unit.Id,
+					Status:    dispatch.StatusUnit_STATUS_UNIT_BUSY,
+					UserId:    &userInfo.UserId,
+					CreatorId: &userInfo.UserId,
+					X:         x,
+					Y:         y,
+					Postal:    postal,
+				}); err != nil {
+					return nil, err
+				}
+			}
+		}
+	}
+
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 
 	return &UpdateDispatchStatusResponse{}, nil

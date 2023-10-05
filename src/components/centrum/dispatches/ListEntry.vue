@@ -33,6 +33,8 @@ watch(props, () => {
 
 const openDetails = ref(false);
 const openAssign = ref(false);
+
+const openMessage = ref(false);
 </script>
 
 <template>
@@ -41,7 +43,7 @@ const openAssign = ref(false);
         <AssignDispatchModal v-if="openAssign" :open="openAssign" :dispatch="dispatch" @close="openAssign = false" />
 
         <td
-            class="relative whitespace-nowrap pl-0 py-1 pr-0 text-left text-sm font-medium sm:pr-0.5 flex flex-row justify-start"
+            class="relative items-center whitespace-nowrap pl-0 py-1 pr-0 text-left text-sm font-medium sm:pr-0.5 justify-start"
         >
             <button
                 type="button"
@@ -98,6 +100,18 @@ const openAssign = ref(false);
                 {{ $t('common.unknown') }}
             </span>
         </td>
-        <td class="whitespace-nowrap px-1 py-1 text-sm text-gray-300 truncate">{{ dispatch.message }}</td>
+        <td class="px-1 py-1 text-sm text-gray-300">
+            <p class="break-all" :class="openMessage ? '' : 'max-h-24 max-w-sm'">
+                {{ openMessage ? dispatch.message : dispatch.message.substring(0, 40) + '...' }}
+            </p>
+            <button
+                v-if="dispatch.message.length > 50"
+                type="button"
+                @click="openMessage = !openMessage"
+                class="flex justify-center px-1 py-1 text-sm font-semibold transition-colors rounded-md text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 bg-accent-500 hover:bg-accent-400 focus-visible:outline-accent-500"
+            >
+                {{ openMessage ? $t('common.read_less') : $t('common.read_more') }}
+            </button>
+        </td>
     </tr>
 </template>
