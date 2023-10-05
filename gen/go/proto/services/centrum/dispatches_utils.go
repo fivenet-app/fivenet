@@ -46,7 +46,7 @@ func (s *Server) listDispatches(job string) []*dispatch.Dispatch {
 	return ds
 }
 
-func (s *Server) getDispatchStatusFromDB(ctx context.Context, id uint64) (*dispatch.DispatchStatus, error) {
+func (s *Server) getDispatchStatusFromDB(ctx context.Context, job string, id uint64) (*dispatch.DispatchStatus, error) {
 	stmt := tDispatchStatus.
 		SELECT(
 			tDispatchStatus.ID,
@@ -81,6 +81,10 @@ func (s *Server) getDispatchStatusFromDB(ctx context.Context, id uint64) (*dispa
 	var dest dispatch.DispatchStatus
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		return nil, err
+	}
+
+	if dest.UnitId != nil {
+		dest.Unit, _ = s.getUnit(job, *dest.UnitId)
 	}
 
 	return &dest, nil
@@ -173,7 +177,7 @@ func (s *Server) updateDispatchStatus(ctx context.Context, job string, dsp *disp
 		return err
 	}
 
-	status, err := s.getDispatchStatusFromDB(ctx, uint64(lastId))
+	status, err := s.getDispatchStatusFromDB(ctx, job, uint64(lastId))
 	if err != nil {
 		return err
 	}
