@@ -149,7 +149,11 @@ const filteredDispatches = computed(() => {
                                                 <div class="mt-1">
                                                     <dl class="border-b border-white/10 divide-y divide-white/10">
                                                         <DataNoDataBlock
-                                                            v-if="pendingDispatches.length === 0 && dispatches.size === 0"
+                                                            v-if="
+                                                                pendingDispatches.length === 0 ||
+                                                                (getCurrentMode === CentrumMode.SIMPLIFIED &&
+                                                                    dispatches.size === 0)
+                                                            "
                                                             :icon="CarEmergencyIcon"
                                                             :type="$t('common.dispatch', 2)"
                                                         />

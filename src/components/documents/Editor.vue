@@ -441,7 +441,7 @@ function addAccessEntry(): void {
             title: { key: 'notifications.max_access_entry.title', parameters: {} },
             content: {
                 key: 'notifications.max_access_entry.content',
-                parameters: [maxAccessEntries.toString()],
+                parameters: { max: maxAccessEntries.toString() },
             } as TranslateItem,
             type: 'error',
         });

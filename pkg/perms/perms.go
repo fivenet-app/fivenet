@@ -117,7 +117,7 @@ func New(p Params) (Permissions, error) {
 
 	userCanCache := cache.NewContext(
 		ctx,
-		cache.AsLRU[userCacheKey, bool](lru.WithCapacity(128)),
+		cache.AsLRU[userCacheKey, bool](lru.WithCapacity(1024)),
 		cache.WithJanitorInterval[userCacheKey, bool](15*time.Second),
 	)
 

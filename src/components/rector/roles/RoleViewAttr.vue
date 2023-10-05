@@ -73,60 +73,64 @@ if (maxValues === undefined) {
     }
 }
 
-if (!states.value.has(id.value) || states.value.get(id.value) === undefined) {
-    switch (lowercaseFirstLetter(props.attribute.type)) {
-        case 'stringList': {
-            let def: string[] = [];
-            if (props.attribute.defaultValues?.validValues.oneofKind === 'stringList') {
-                def = props.attribute.defaultValues?.validValues.stringList.strings;
+function ensureDefaultState(): void {
+    if (!states.value.has(id.value)) {
+        switch (lowercaseFirstLetter(props.attribute.type)) {
+            case 'stringList': {
+                let def: string[] = [];
+                if (props.attribute.defaultValues?.validValues.oneofKind === 'stringList') {
+                    def = props.attribute.defaultValues?.validValues.stringList.strings;
+                }
+
+                states.value.set(id.value, {
+                    validValues: {
+                        oneofKind: 'stringList',
+                        stringList: {
+                            strings: def,
+                        },
+                    },
+                });
+                break;
             }
 
-            states.value.set(id.value, {
-                validValues: {
-                    oneofKind: 'stringList',
-                    stringList: {
-                        strings: def,
-                    },
-                },
-            });
-            break;
-        }
+            case 'jobList': {
+                let def: string[] = [];
+                if (props.attribute.defaultValues?.validValues.oneofKind === 'jobList') {
+                    def = props.attribute.defaultValues?.validValues.jobList.strings;
+                }
 
-        case 'jobList': {
-            let def: string[] = [];
-            if (props.attribute.defaultValues?.validValues.oneofKind === 'jobList') {
-                def = props.attribute.defaultValues?.validValues.jobList.strings;
+                states.value.set(id.value, {
+                    validValues: {
+                        oneofKind: 'jobList',
+                        jobList: {
+                            strings: def,
+                        },
+                    },
+                });
+                break;
             }
 
-            states.value.set(id.value, {
-                validValues: {
-                    oneofKind: 'jobList',
-                    jobList: {
-                        strings: def,
-                    },
-                },
-            });
-            break;
-        }
+            case 'jobGradeList': {
+                let def = {};
+                if (props.attribute.defaultValues?.validValues.oneofKind === 'jobGradeList') {
+                    def = props.attribute.defaultValues?.validValues.jobGradeList.jobs;
+                }
 
-        case 'jobGradeList': {
-            let def = {};
-            if (props.attribute.defaultValues?.validValues.oneofKind === 'jobGradeList') {
-                def = props.attribute.defaultValues?.validValues.jobGradeList.jobs;
+                states.value.set(id.value, {
+                    validValues: {
+                        oneofKind: 'jobGradeList',
+                        jobGradeList: {
+                            jobs: def,
+                        },
+                    },
+                });
+                break;
             }
-
-            states.value.set(id.value, {
-                validValues: {
-                    oneofKind: 'jobGradeList',
-                    jobGradeList: {
-                        jobs: def,
-                    },
-                },
-            });
-            break;
         }
     }
 }
+
+ensureDefaultState();
 
 const currentValue = states.value.get(id.value)!;
 const validValues = ref<AttributeValues | undefined>(props.attribute.validValues);

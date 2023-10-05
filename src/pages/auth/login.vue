@@ -40,7 +40,7 @@ onMounted(async () => {
 
         notifications.dispatchNotification({
             title: { key: 'notifications.auth.oauth2_login.failed.title', parameters: {} },
-            content: { key: 'notifications.auth.oauth2_login.failed.content', parameters: [reason.toString()] },
+            content: { key: 'notifications.auth.oauth2_login.failed.content', parameters: { msg: reason.toString() } },
             type: 'error',
         });
     }

@@ -124,8 +124,8 @@ export const useNotificatorStore = defineStore('notifications', {
                                 switch (n.category) {
                                     case NotificationCategory.GENERAL:
                                         this.dispatchNotification({
-                                            title: n.title!,
-                                            content: n.content!,
+                                            title: { key: n.title?.key!, parameters: {} },
+                                            content: { key: n.content?.key!, parameters: {} },
                                             type: nType,
                                             category: n.category,
                                             data: n.data,
@@ -134,8 +134,8 @@ export const useNotificatorStore = defineStore('notifications', {
 
                                     default:
                                         this.dispatchNotification({
-                                            title: n.title!,
-                                            content: n.content!,
+                                            title: { key: n.title?.key!, parameters: {} },
+                                            content: { key: n.content?.key!, parameters: {} },
                                             type: nType,
                                             category: n.category,
                                             data: n.data,

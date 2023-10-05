@@ -60,7 +60,8 @@ export const useAuthStore = defineStore('auth', {
             this.lastCharID = char ? char.userId : this.lastCharID;
         },
         setPermissions(permissions: string[]): void {
-            this.permissions = permissions.sort();
+            this.permissions.length = 0;
+            this.permissions.push(...permissions.sort());
         },
         setJobProps(jp: null | JobProps): void {
             if (jp === null) {
@@ -119,7 +120,10 @@ export const useAuthStore = defineStore('auth', {
 
                     useNotificatorStore().dispatchNotification({
                         title: { key: 'notifications.auth.error_logout.title', parameters: {} },
-                        content: { key: 'notifications.auth.error_logout.content', parameters: [(e as RpcError).message] },
+                        content: {
+                            key: 'notifications.auth.error_logout.content',
+                            parameters: { msg: (e as RpcError).message },
+                        },
                         type: 'error',
                     });
                     this.clearAuthInfo();

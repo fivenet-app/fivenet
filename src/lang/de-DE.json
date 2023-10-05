@@ -759,7 +759,7 @@
         },
         "max_access_entry": {
             "title": "Maximale Anzahl an Zugriffseinträgen überschritten",
-            "content": "Es können maximal {0} Zugriffseinträge auf einem Dokument vorhanden sein"
+            "content": "Es können maximal {max} Zugriffseinträge auf einem Dokument vorhanden sein"
         },
         "document_created": {
             "title": "Dokument erstellt!",
@@ -800,7 +800,7 @@
         "job_switcher": {
             "setjob": {
                 "title": "Job gewechselt",
-                "content": "Dein Job ist nun {0}."
+                "content": "Dein Job ist nun {job}."
             }
         },
         "rector": {
@@ -853,12 +853,12 @@
                 },
                 "failed": {
                     "title": "Anmeldung fehlgeschlagen",
-                    "content": "Social Login Anmeldung fehlgeschlagen ({0}), bitte erneut versuchen."
+                    "content": "Social Login Anmeldung fehlgeschlagen ({msg}), bitte erneut versuchen."
                 }
             },
             "no_permission": {
                 "title": "Du hast keine Berechtigung dazu!",
-                "content": "Keine Berechtigung um zu {0} gehen."
+                "content": "Keine Berechtigung um zu {path} gehen."
             },
             "oauth2_connect": {
                 "success": {
@@ -873,7 +873,7 @@
         },
         "language_switched": {
             "title": "Sprache gewechselt",
-            "content": "Sprache wird zu {0} gewechselt."
+            "content": "Sprache wird zu {name} gewechselt."
         },
         "penaltycalculator": {
             "title": "Strafenrechner: Kopiert",

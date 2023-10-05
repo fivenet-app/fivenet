@@ -169,15 +169,15 @@ async function updateJobGradeValue(job: Job, grade: JobGrade): Promise<void> {
 onBeforeMount(async () => {
     if (currentValue.validValues.oneofKind === 'jobList' || currentValue.validValues.oneofKind === 'jobGradeList') {
         await listJobs();
+
+        jobs.value.forEach((job) => {
+            if (currentValue.validValues.oneofKind !== 'jobGradeList') {
+                return;
+            }
+
+            jobGrades.value.set(job.name, job.grades[(currentValue.validValues?.jobGradeList.jobs[job.name] ?? 1) - 1]);
+        });
     }
-
-    jobs.value.forEach((job) => {
-        if (currentValue.validValues.oneofKind !== 'jobGradeList') {
-            return;
-        }
-
-        jobGrades.value.set(job.name, job.grades[(currentValue.validValues?.jobGradeList.jobs[job.name] ?? 1) - 1]);
-    });
 });
 </script>
 

@@ -48,7 +48,7 @@ async function setJob(): Promise<void> {
 
             notifications.dispatchNotification({
                 title: { key: 'notifications.job_switcher.setjob.title', parameters: {} },
-                content: { key: 'notifications.job_switcher.setjob.title', parameters: [selectedJob.value?.label!] },
+                content: { key: 'notifications.job_switcher.setjob.title', parameters: { job: selectedJob.value?.label! } },
                 type: 'info',
             });
 

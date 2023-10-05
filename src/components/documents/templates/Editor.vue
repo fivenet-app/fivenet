@@ -112,7 +112,7 @@ function addAccessEntry(): void {
     if (access.value.size > maxAccessEntries - 1) {
         notifications.dispatchNotification({
             title: { key: 'notifications.max_access_entry.title', parameters: {} },
-            content: { key: 'notifications.max_access_entry.content', parameters: [maxAccessEntries.toString()] },
+            content: { key: 'notifications.max_access_entry.content', parameters: { max: maxAccessEntries.toString() } },
             type: 'error',
         });
         return;
@@ -190,7 +190,7 @@ function addContentAccessEntry(): void {
     if (contentAccess.value.size > maxAccessEntries - 1) {
         notifications.dispatchNotification({
             title: { key: 'notifications.max_access_entry.title', parameters: {} },
-            content: { key: 'notifications.max_access_entry.content', parameters: [maxAccessEntries.toString()] },
+            content: { key: 'notifications.max_access_entry.content', parameters: { max: maxAccessEntries.toString() } },
             type: 'error',
         });
         return;

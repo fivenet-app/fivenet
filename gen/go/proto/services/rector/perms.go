@@ -95,7 +95,7 @@ func (s *Server) filterPermissionIDs(ctx context.Context, ids []uint64) ([]uint6
 	return permIds, nil
 }
 
-func (s *Server) filterAttributes(ctx context.Context, userInfo *userinfo.UserInfo, attrs []*permissions.RoleAttribute) error {
+func (s *Server) filterAttributes(ctx context.Context, userInfo *userinfo.UserInfo, attrs []*permissions.RoleAttribute, nilOk bool) error {
 	if len(attrs) == 0 {
 		return nil
 	}
@@ -112,10 +112,19 @@ func (s *Server) filterAttributes(ctx context.Context, userInfo *userinfo.UserIn
 			}
 
 			attr = &permissions.RoleAttribute{
+				AttrId:       attrs[i].AttrId,
 				PermissionId: aAttr.PermissionID,
 				Key:          string(aAttr.Key),
 				Type:         string(aAttr.Type),
 				ValidValues:  aAttr.ValidValues,
+			}
+		}
+
+		if attrs[i].Value == nil {
+			if nilOk {
+				continue
+			} else {
+				return fmt.Errorf("failed to validate attribute %d value because it is nil", attrs[i].AttrId)
 			}
 		}
 
@@ -391,11 +400,11 @@ func (s *Server) handlPermissionsUpdate(ctx context.Context, role *model.Fivenet
 }
 
 func (s *Server) handleAttributeUpdate(ctx context.Context, userInfo *userinfo.UserInfo, role *model.FivenetRoles, attrUpdates *AttrsUpdate) error {
-	if err := s.filterAttributes(ctx, userInfo, attrUpdates.ToUpdate); err != nil {
+	if err := s.filterAttributes(ctx, userInfo, attrUpdates.ToUpdate, false); err != nil {
 		return err
 	}
 
-	if err := s.filterAttributes(ctx, userInfo, attrUpdates.ToRemove); err != nil {
+	if err := s.filterAttributes(ctx, userInfo, attrUpdates.ToRemove, true); err != nil {
 		return err
 	}
 

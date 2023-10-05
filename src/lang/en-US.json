@@ -759,7 +759,7 @@
         },
         "max_access_entry": {
             "title": "Maximum amount of Access entries exceeded",
-            "content": "There can only be a maximum of {0} access entries on a Document"
+            "content": "There can only be a maximum of {max} access entries on a Document"
         },
         "document_created": {
             "title": "Document created!",
@@ -800,7 +800,7 @@
         "job_switcher": {
             "setjob": {
                 "title": "Job switched",
-                "content": "Your job has been set to {0}."
+                "content": "Your job has been set to {job}."
             }
         },
         "rector": {
@@ -853,12 +853,12 @@
                 },
                 "failed": {
                     "title": "Failed to login using provider",
-                    "content": "Error during social login ({0}), please try again."
+                    "content": "Error during social login ({msg}), please try again."
                 }
             },
             "no_permission": {
                 "title": "You don't have permission!",
-                "content": "No permission to go to {0}."
+                "content": "No permission to go to {path}."
             },
             "oauth2_connect": {
                 "success": {
@@ -873,7 +873,7 @@
         },
         "language_switched": {
             "title": "Language switched",
-            "content": "The language will be switched."
+            "content": "The language will be switched to {name}."
         },
         "penaltycalculator": {
             "title": "Penalty Calculator: Copied to clipboard",

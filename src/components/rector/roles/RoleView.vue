@@ -158,21 +158,28 @@ async function updatePermissions(): Promise<void> {
             toUpdate: [],
         };
         attrStates.value.forEach((state, attr) => {
-            if (state !== undefined) {
-                attrs.toUpdate.push({
+            // Make sure the permission exists and is enabled, otherwise attr needs to be removed
+            const a = attrList.value.find((a) => a.attrId === attr);
+            if (a === undefined) {
+                return;
+            }
+            const perm = permStates.value.get(a.permissionId);
+
+            if (perm === undefined || state === undefined) {
+                attrs.toRemove.push({
                     roleId: role.value!.id,
                     attrId: attr,
-                    value: state,
                     category: '',
                     key: '',
                     name: '',
                     permissionId: 0n,
                     type: '',
                 });
-            } else if (state === undefined) {
-                attrs.toRemove.push({
+            } else if (state !== undefined) {
+                attrs.toUpdate.push({
                     roleId: role.value!.id,
                     attrId: attr,
+                    value: state,
                     category: '',
                     key: '',
                     name: '',

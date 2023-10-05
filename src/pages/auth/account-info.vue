@@ -31,7 +31,7 @@ if (query.oauth2Connect) {
 
         notifications.dispatchNotification({
             title: { key: 'notifications.auth.oauth2_connect.failed.title', parameters: {} },
-            content: { key: 'notifications.auth.oauth2_connect.failed.content', parameters: [reason.toString()] },
+            content: { key: 'notifications.auth.oauth2_connect.failed.content', parameters: { msg: reason.toString() } },
             type: 'error',
         });
     }
