@@ -8,7 +8,39 @@ import (
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
+	"go.uber.org/zap"
 )
+
+func (s *Server) runTimeclock() {
+	userCh := s.tracker.Subscribe()
+
+	for {
+		select {
+		case <-s.ctx.Done():
+			return
+
+		case event := <-userCh:
+			func() {
+				ctx, span := s.tracer.Start(s.ctx, "jobs-timeclock")
+				defer span.End()
+
+				for _, userInfo := range event.Added {
+					if err := s.addTimeclockEntry(ctx, userInfo.UserID); err != nil {
+						s.logger.Error("failed to add timeclock entry", zap.Error(err))
+						continue
+					}
+				}
+
+				for _, userInfo := range event.Removed {
+					if err := s.endTimeclockEntry(ctx, userInfo.UserID); err != nil {
+						s.logger.Error("failed to end timeclock entry", zap.Error(err))
+						continue
+					}
+				}
+			}()
+		}
+	}
+}
 
 func (s *Server) addTimeclockEntry(ctx context.Context, userId int32) error {
 	stmt := tTimeClock.

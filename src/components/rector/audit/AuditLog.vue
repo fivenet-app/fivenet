@@ -91,7 +91,7 @@ async function findChars(): Promise<void> {
     entriesCitizens.value = await completorStore.completeCitizens({
         search: queryCitizens.value,
     });
-    entriesCitizens.value.push(...selectedCitizens.value);
+    entriesCitizens.value.unshift(...selectedCitizens.value);
 }
 
 const searchInput = ref<HTMLInputElement | null>(null);

@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import List from '~/components/jobs/requests/List.vue';
+
 useHead({
     title: 'pages.jobs.requests.title',
 });
@@ -11,6 +13,6 @@ definePageMeta({
 
 <template>
     <div>
-        <h1 class="text-xl text-white">Requests</h1>
+        <List />
     </div>
 </template>

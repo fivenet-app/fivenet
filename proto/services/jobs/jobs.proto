@@ -139,6 +139,20 @@ message RequestsDeleteTypeRequest {
 
 message RequestsDeleteTypeResponse {}
 
+message RequestsPostCommentRequest {
+  resources.jobs.RequestComment comment = 1 [(validate.rules).message.required = true];
+}
+
+message RequestsPostCommentResponse {
+  resources.jobs.RequestComment comment = 1 [(validate.rules).message.required = true];
+}
+
+message RequestsDeleteCommentRequest {
+  uint64 id = 1;
+}
+
+message RequestsDeleteCommentResponse {}
+
 service JobsService {
   // @perm
   rpc ColleaguesList(ColleaguesListRequest) returns (ColleaguesListResponse);
@@ -165,11 +179,14 @@ service JobsService {
   rpc RequestsUpdateEntry(RequestsUpdateEntryRequest) returns (RequestsUpdateEntryResponse);
   // @perm
   rpc RequestsDeleteEntry(RequestsDeleteEntryRequest) returns (RequestsDeleteEntryResponse);
-
   // @perm: Name=RequestsListEntries
   rpc RequestsListTypes(RequestsListTypesRequest) returns (RequestsListTypesResponse);
   // @perm
   rpc RequestsCreateOrUpdateType(RequestsCreateOrUpdateTypeRequest) returns (RequestsCreateOrUpdateTypeResponse);
   // @perm
   rpc RequestsDeleteType(RequestsDeleteTypeRequest) returns (RequestsDeleteTypeResponse);
+  // @perm
+  rpc RequestsPostComment(RequestsPostCommentRequest) returns (RequestsPostCommentResponse);
+  // @perm
+  rpc RequestsDeleteComment(RequestsDeleteCommentRequest) returns (RequestsDeleteCommentResponse);
 }

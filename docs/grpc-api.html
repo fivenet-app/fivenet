@@ -1488,6 +1488,14 @@
                 </li>
               
                 <li>
+                  <a href="#services.jobs.RequestsDeleteCommentRequest"><span class="badge">M</span>RequestsDeleteCommentRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#services.jobs.RequestsDeleteCommentResponse"><span class="badge">M</span>RequestsDeleteCommentResponse</a>
+                </li>
+              
+                <li>
                   <a href="#services.jobs.RequestsDeleteEntryRequest"><span class="badge">M</span>RequestsDeleteEntryRequest</a>
                 </li>
               
@@ -1517,6 +1525,14 @@
               
                 <li>
                   <a href="#services.jobs.RequestsListTypesResponse"><span class="badge">M</span>RequestsListTypesResponse</a>
+                </li>
+              
+                <li>
+                  <a href="#services.jobs.RequestsPostCommentRequest"><span class="badge">M</span>RequestsPostCommentRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#services.jobs.RequestsPostCommentResponse"><span class="badge">M</span>RequestsPostCommentResponse</a>
                 </li>
               
                 <li>
@@ -5448,17 +5464,17 @@
                 </tr>
               
                 <tr>
-                  <td>weight</td>
-                  <td><a href="#uint32">uint32</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
                   <td>category</td>
                   <td><a href="#resources.documents.Category">Category</a></td>
                   <td></td>
                   <td><p>@gotags: alias:&#34;category&#34; </p></td>
+                </tr>
+              
+                <tr>
+                  <td>weight</td>
+                  <td><a href="#uint32">uint32</a></td>
+                  <td></td>
+                  <td><p> </p></td>
                 </tr>
               
                 <tr>
@@ -5518,6 +5534,17 @@
                 </tr>
               </thead>
               <tbody>
+              
+                <tr>
+                  <td>weight</td>
+                  <td>
+                    <ul>
+                    
+                      <li>uint32.lt: 4294967295</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
               
                 <tr>
                   <td>title</td>
@@ -9645,7 +9672,7 @@
                 </tr>
               
                 <tr>
-                  <td>approver_user_id</td>
+                  <td>approver_id</td>
                   <td><a href="#int32">int32</a></td>
                   <td>optional</td>
                   <td><p> </p></td>
@@ -9915,6 +9942,13 @@
                   <td><p> </p></td>
                 </tr>
               
+                <tr>
+                  <td>weight</td>
+                  <td><a href="#uint32">uint32</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
             </tbody>
           </table>
 
@@ -9963,6 +9997,17 @@
                       <li>string.min_len: 3</li>
                     
                       <li>string.max_len: 255</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>weight</td>
+                  <td>
+                    <ul>
+                    
+                      <li>uint32.lt: 4294967295</li>
                     
                     </ul>
                   </td>
@@ -16182,6 +16227,37 @@
 
         
       
+        <h3 id="services.jobs.RequestsDeleteCommentRequest">RequestsDeleteCommentRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>id</td>
+                  <td><a href="#uint64">uint64</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="services.jobs.RequestsDeleteCommentResponse">RequestsDeleteCommentResponse</h3>
+        <p></p>
+
+        
+
+        
+      
         <h3 id="services.jobs.RequestsDeleteEntryRequest">RequestsDeleteEntryRequest</h3>
         <p></p>
 
@@ -16354,6 +16430,108 @@ TODO </p></td>
             </tbody>
           </table>
 
+          
+
+        
+      
+        <h3 id="services.jobs.RequestsPostCommentRequest">RequestsPostCommentRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>comment</td>
+                  <td><a href="#resources.jobs.RequestComment">resources.jobs.RequestComment</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+            
+            
+            <h4>Validated Fields</h4>
+            <table>
+              <thead>
+                <tr>
+                  <td>Field</td>
+                  <td>Validations</td>
+                </tr>
+              </thead>
+              <tbody>
+              
+                <tr>
+                  <td>comment</td>
+                  <td>
+                    <ul>
+                    
+                      <li>message.required: true</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+              </tbody>
+            </table>
+            
+          
+
+        
+      
+        <h3 id="services.jobs.RequestsPostCommentResponse">RequestsPostCommentResponse</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>comment</td>
+                  <td><a href="#resources.jobs.RequestComment">resources.jobs.RequestComment</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+            
+            
+            <h4>Validated Fields</h4>
+            <table>
+              <thead>
+                <tr>
+                  <td>Field</td>
+                  <td>Validations</td>
+                </tr>
+              </thead>
+              <tbody>
+              
+                <tr>
+                  <td>comment</td>
+                  <td>
+                    <ul>
+                    
+                      <li>message.required: true</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+              </tbody>
+            </table>
+            
           
 
         
@@ -16683,6 +16861,20 @@ TODO </p></td>
                 <td>RequestsDeleteType</td>
                 <td><a href="#services.jobs.RequestsDeleteTypeRequest">RequestsDeleteTypeRequest</a></td>
                 <td><a href="#services.jobs.RequestsDeleteTypeResponse">RequestsDeleteTypeResponse</a></td>
+                <td><p>@perm</p></td>
+              </tr>
+            
+              <tr>
+                <td>RequestsPostComment</td>
+                <td><a href="#services.jobs.RequestsPostCommentRequest">RequestsPostCommentRequest</a></td>
+                <td><a href="#services.jobs.RequestsPostCommentResponse">RequestsPostCommentResponse</a></td>
+                <td><p>@perm</p></td>
+              </tr>
+            
+              <tr>
+                <td>RequestsDeleteComment</td>
+                <td><a href="#services.jobs.RequestsDeleteCommentRequest">RequestsDeleteCommentRequest</a></td>
+                <td><a href="#services.jobs.RequestsDeleteCommentResponse">RequestsDeleteCommentResponse</a></td>
                 <td><p>@perm</p></td>
               </tr>
             

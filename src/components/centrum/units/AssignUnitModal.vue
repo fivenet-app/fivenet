@@ -73,7 +73,7 @@ async function findCitizens(): Promise<void> {
         currentJob: true,
         onDuty: true,
     });
-    entriesCitizens.value.push(...selectedCitizens.value);
+    entriesCitizens.value.unshift(...selectedCitizens.value);
 }
 
 function charsGetDisplayValue(chars: UserShort[]): string {

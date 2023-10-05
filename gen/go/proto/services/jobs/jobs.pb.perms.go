@@ -19,10 +19,12 @@ const (
 	JobsServiceConductUpdateEntryPerm              perms.Name = "ConductUpdateEntry"
 	JobsServiceRequestsCreateEntryPerm             perms.Name = "RequestsCreateEntry"
 	JobsServiceRequestsCreateOrUpdateTypePerm      perms.Name = "RequestsCreateOrUpdateType"
+	JobsServiceRequestsDeleteCommentPerm           perms.Name = "RequestsDeleteComment"
 	JobsServiceRequestsDeleteEntryPerm             perms.Name = "RequestsDeleteEntry"
 	JobsServiceRequestsDeleteTypePerm              perms.Name = "RequestsDeleteType"
 	JobsServiceRequestsListEntriesPerm             perms.Name = "RequestsListEntries"
 	JobsServiceRequestsListEntriesAccessPermField  perms.Key  = "Access"
+	JobsServiceRequestsPostCommentPerm             perms.Name = "RequestsPostComment"
 	JobsServiceRequestsUpdateEntryPerm             perms.Name = "RequestsUpdateEntry"
 	JobsServiceTimeclockListEntriesPerm            perms.Name = "TimeclockListEntries"
 	JobsServiceTimeclockListEntriesAccessPermField perms.Key  = "Access"
@@ -86,6 +88,11 @@ func init() {
 		},
 		{
 			Category: JobsServicePerm,
+			Name:     JobsServiceRequestsDeleteCommentPerm,
+			Attrs:    []perms.Attr{},
+		},
+		{
+			Category: JobsServicePerm,
 			Name:     JobsServiceRequestsDeleteEntryPerm,
 			Attrs:    []perms.Attr{},
 		},
@@ -105,6 +112,11 @@ func init() {
 					DefaultValues: []string{"Own"},
 				},
 			},
+		},
+		{
+			Category: JobsServicePerm,
+			Name:     JobsServiceRequestsPostCommentPerm,
+			Attrs:    []perms.Attr{},
 		},
 		{
 			Category: JobsServicePerm,

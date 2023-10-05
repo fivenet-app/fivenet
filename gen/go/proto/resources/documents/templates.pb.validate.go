@@ -487,8 +487,6 @@ func (m *TemplateShort) validate(all bool) error {
 
 	// no validation rules for Id
 
-	// no validation rules for Weight
-
 	if all {
 		switch v := interface{}(m.GetCategory()).(type) {
 		case interface{ ValidateAll() error }:
@@ -516,6 +514,17 @@ func (m *TemplateShort) validate(all bool) error {
 				cause:  err,
 			}
 		}
+	}
+
+	if m.GetWeight() >= 4294967295 {
+		err := TemplateShortValidationError{
+			field:  "Weight",
+			reason: "value must be less than 4294967295",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
 	}
 
 	if utf8.RuneCountInString(m.GetTitle()) < 3 {

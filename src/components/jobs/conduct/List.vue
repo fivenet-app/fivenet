@@ -122,10 +122,17 @@ function updateEntryInPlace(entry: ConductEntry): void {
     }
 }
 
-watchDebounced(queryTargets, async () => (entriesChars.value = await listColleagues()), {
-    debounce: 600,
-    maxWait: 1400,
-});
+watchDebounced(
+    queryTargets,
+    async () => {
+        entriesChars.value = await listColleagues();
+        if (query.value.user_ids) entriesChars.value.unshift(...query.value.user_ids);
+    },
+    {
+        debounce: 600,
+        maxWait: 1400,
+    },
+);
 
 onMounted(async () => {
     entriesChars.value = await listColleagues();

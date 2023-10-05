@@ -81,6 +81,17 @@ func (m *RequestType) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	if m.GetWeight() >= 4294967295 {
+		err := RequestTypeValidationError{
+			field:  "Weight",
+			reason: "value must be less than 4294967295",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if m.CreatedAt != nil {
 
 		if all {
@@ -494,8 +505,8 @@ func (m *Request) validate(all bool) error {
 		// no validation rules for Approved
 	}
 
-	if m.ApproverUserId != nil {
-		// no validation rules for ApproverUserId
+	if m.ApproverId != nil {
+		// no validation rules for ApproverId
 	}
 
 	if m.ApproverUser != nil {

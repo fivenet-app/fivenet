@@ -60,8 +60,10 @@ CREATE TABLE IF NOT EXISTS `fivenet_jobs_requests_types` (
   `job` varchar(50) NOT NULL,
   `name` varchar(32) NOT NULL,
   `description` varchar(255) DEFAULT NULL,
+  `weight` int(11) unsigned DEFAULT 0,
   PRIMARY KEY (`id`),
   KEY `idx_fivenet_jobs_requests_job` (`job`),
+  KEY `idx_fivenet_jobs_requests_weight` (`weight`),
   KEY `idx_fivenet_jobs_requests_types_deleted_at` (`deleted_at`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 

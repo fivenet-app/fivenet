@@ -16,6 +16,7 @@ message RequestType {
   string job = 5 [(validate.rules).string.max_len = 20];
   string name = 6 [(validate.rules).string = {min_len: 3, max_len: 32}];
   optional string description = 7 [(validate.rules).string = {min_len: 3, max_len: 255}];
+  uint32 weight = 8 [(validate.rules).uint32.lt = 4294967295];
 }
 
 message Request {
@@ -34,7 +35,7 @@ message Request {
   int32 creator_id = 10 [(validate.rules).int32.gt = 0];
   optional resources.users.UserShort creator = 11;
   optional bool approved = 12;
-  optional int32 approver_user_id = 13;
+  optional int32 approver_id = 13;
   optional resources.users.UserShort approver_user = 14; // @gotags: alias:"approver"
   optional resources.timestamp.Timestamp begins_at = 15;
   optional resources.timestamp.Timestamp ends_at = 16;

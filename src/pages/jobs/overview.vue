@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { default as TimeclockStatsBlock } from '~/components/jobs/timeclock/Stats.vue';
+import Divider from '~/components/partials/elements/Divider.vue';
 import { TimeclockStats } from '~~/gen/ts/resources/jobs/timeclock';
 
 useHead({
@@ -35,7 +36,8 @@ async function getTimeclockStats(): Promise<TimeclockStats> {
 <template>
     <div>
         <div class="grid grid-col-2 gap-2">
-            <div>
+            <div class="sm:flex-auto">
+                <Divider :label="$t('components.jobs.timeclock.Stats.title')" />
                 <TimeclockStatsBlock :stats="timeclockStats ?? undefined" />
             </div>
         </div>

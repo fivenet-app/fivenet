@@ -100,13 +100,13 @@ export interface TemplateShort {
      */
     updatedAt?: Timestamp;
     /**
-     * @generated from protobuf field: uint32 weight = 4;
-     */
-    weight: number;
-    /**
-     * @generated from protobuf field: resources.documents.Category category = 5;
+     * @generated from protobuf field: resources.documents.Category category = 4;
      */
     category?: Category; // @gotags: alias:"category"
+    /**
+     * @generated from protobuf field: uint32 weight = 5;
+     */
+    weight: number;
     /**
      * @sanitize
      *
@@ -271,8 +271,8 @@ class TemplateShort$Type extends MessageType<TemplateShort> {
             { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
-            { no: 4, name: "weight", kind: "scalar", T: 13 /*ScalarType.UINT32*/ },
-            { no: 5, name: "category", kind: "message", T: () => Category },
+            { no: 4, name: "category", kind: "message", T: () => Category },
+            { no: 5, name: "weight", kind: "scalar", T: 13 /*ScalarType.UINT32*/, options: { "validate.rules": { uint32: { lt: 4294967295 } } } },
             { no: 6, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3" } } } },
             { no: 7, name: "description", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
             { no: 8, name: "schema", kind: "message", T: () => TemplateSchema },

@@ -3,6 +3,7 @@
 // tslint:disable
 import { ServiceType } from "@protobuf-ts/runtime-rpc";
 import { MessageType } from "@protobuf-ts/runtime";
+import { RequestComment } from "../../resources/jobs/requests.js";
 import { RequestType } from "../../resources/jobs/requests.js";
 import { Request } from "../../resources/jobs/requests.js";
 import { TimeclockStats } from "../../resources/jobs/timeclock.js";
@@ -307,6 +308,38 @@ export interface RequestsDeleteTypeRequest {
  * @generated from protobuf message services.jobs.RequestsDeleteTypeResponse
  */
 export interface RequestsDeleteTypeResponse {
+}
+/**
+ * @generated from protobuf message services.jobs.RequestsPostCommentRequest
+ */
+export interface RequestsPostCommentRequest {
+    /**
+     * @generated from protobuf field: resources.jobs.RequestComment comment = 1;
+     */
+    comment?: RequestComment;
+}
+/**
+ * @generated from protobuf message services.jobs.RequestsPostCommentResponse
+ */
+export interface RequestsPostCommentResponse {
+    /**
+     * @generated from protobuf field: resources.jobs.RequestComment comment = 1;
+     */
+    comment?: RequestComment;
+}
+/**
+ * @generated from protobuf message services.jobs.RequestsDeleteCommentRequest
+ */
+export interface RequestsDeleteCommentRequest {
+    /**
+     * @generated from protobuf field: uint64 id = 1;
+     */
+    id: bigint;
+}
+/**
+ * @generated from protobuf message services.jobs.RequestsDeleteCommentResponse
+ */
+export interface RequestsDeleteCommentResponse {
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class ColleaguesListRequest$Type extends MessageType<ColleaguesListRequest> {
@@ -646,6 +679,52 @@ class RequestsDeleteTypeResponse$Type extends MessageType<RequestsDeleteTypeResp
  * @generated MessageType for protobuf message services.jobs.RequestsDeleteTypeResponse
  */
 export const RequestsDeleteTypeResponse = new RequestsDeleteTypeResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class RequestsPostCommentRequest$Type extends MessageType<RequestsPostCommentRequest> {
+    constructor() {
+        super("services.jobs.RequestsPostCommentRequest", [
+            { no: 1, name: "comment", kind: "message", T: () => RequestComment, options: { "validate.rules": { message: { required: true } } } }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.RequestsPostCommentRequest
+ */
+export const RequestsPostCommentRequest = new RequestsPostCommentRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class RequestsPostCommentResponse$Type extends MessageType<RequestsPostCommentResponse> {
+    constructor() {
+        super("services.jobs.RequestsPostCommentResponse", [
+            { no: 1, name: "comment", kind: "message", T: () => RequestComment, options: { "validate.rules": { message: { required: true } } } }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.RequestsPostCommentResponse
+ */
+export const RequestsPostCommentResponse = new RequestsPostCommentResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class RequestsDeleteCommentRequest$Type extends MessageType<RequestsDeleteCommentRequest> {
+    constructor() {
+        super("services.jobs.RequestsDeleteCommentRequest", [
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.RequestsDeleteCommentRequest
+ */
+export const RequestsDeleteCommentRequest = new RequestsDeleteCommentRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class RequestsDeleteCommentResponse$Type extends MessageType<RequestsDeleteCommentResponse> {
+    constructor() {
+        super("services.jobs.RequestsDeleteCommentResponse", []);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.RequestsDeleteCommentResponse
+ */
+export const RequestsDeleteCommentResponse = new RequestsDeleteCommentResponse$Type();
 /**
  * @generated ServiceType for protobuf service services.jobs.JobsService
  */
@@ -663,5 +742,7 @@ export const JobsService = new ServiceType("services.jobs.JobsService", [
     { name: "RequestsDeleteEntry", options: {}, I: RequestsDeleteEntryRequest, O: RequestsDeleteEntryResponse },
     { name: "RequestsListTypes", options: {}, I: RequestsListTypesRequest, O: RequestsListTypesResponse },
     { name: "RequestsCreateOrUpdateType", options: {}, I: RequestsCreateOrUpdateTypeRequest, O: RequestsCreateOrUpdateTypeResponse },
-    { name: "RequestsDeleteType", options: {}, I: RequestsDeleteTypeRequest, O: RequestsDeleteTypeResponse }
+    { name: "RequestsDeleteType", options: {}, I: RequestsDeleteTypeRequest, O: RequestsDeleteTypeResponse },
+    { name: "RequestsPostComment", options: {}, I: RequestsPostCommentRequest, O: RequestsPostCommentResponse },
+    { name: "RequestsDeleteComment", options: {}, I: RequestsDeleteCommentRequest, O: RequestsDeleteCommentResponse }
 ]);

@@ -76,7 +76,7 @@ func NewServer(p Params) *Server {
 		s.wg.Add(1)
 		go func() {
 			defer s.wg.Done()
-			s.timeclock()
+			s.runTimeclock()
 		}()
 
 		return nil

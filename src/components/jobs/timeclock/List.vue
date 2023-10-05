@@ -125,7 +125,10 @@ function charsGetDisplayValue(chars: User[]): string {
 watchDebounced(
     queryTargets,
     async () => {
-        if (can('JobsService.TimeclockListEntries.Access.All')) entriesChars.value = await listColleagues();
+        if (can('JobsService.TimeclockListEntries.Access.All')) {
+            entriesChars.value = await listColleagues();
+            if (query.value.user_ids) entriesChars.value.unshift(...query.value.user_ids);
+        }
     },
     {
         debounce: 600,

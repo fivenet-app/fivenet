@@ -36,6 +36,10 @@ export interface RequestType {
      * @generated from protobuf field: optional string description = 7;
      */
     description?: string;
+    /**
+     * @generated from protobuf field: uint32 weight = 8;
+     */
+    weight: number;
 }
 /**
  * @generated from protobuf message resources.jobs.Request
@@ -96,9 +100,9 @@ export interface Request {
      */
     approved?: boolean;
     /**
-     * @generated from protobuf field: optional int32 approver_user_id = 13;
+     * @generated from protobuf field: optional int32 approver_id = 13;
      */
-    approverUserId?: number;
+    approverId?: number;
     /**
      * @generated from protobuf field: optional resources.users.UserShort approver_user = 14;
      */
@@ -161,7 +165,8 @@ class RequestType$Type extends MessageType<RequestType> {
             { no: 4, name: "deleted_at", kind: "message", T: () => Timestamp },
             { no: 5, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 6, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "32" } } } },
-            { no: 7, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "255" } } } }
+            { no: 7, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "255" } } } },
+            { no: 8, name: "weight", kind: "scalar", T: 13 /*ScalarType.UINT32*/, options: { "validate.rules": { uint32: { lt: 4294967295 } } } }
         ]);
     }
 }
@@ -185,7 +190,7 @@ class Request$Type extends MessageType<Request> {
             { no: 10, name: "creator_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
             { no: 11, name: "creator", kind: "message", T: () => UserShort },
             { no: 12, name: "approved", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
-            { no: 13, name: "approver_user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 13, name: "approver_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
             { no: 14, name: "approver_user", kind: "message", T: () => UserShort },
             { no: 15, name: "begins_at", kind: "message", T: () => Timestamp },
             { no: 16, name: "ends_at", kind: "message", T: () => Timestamp }
