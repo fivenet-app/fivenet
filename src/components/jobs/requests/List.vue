@@ -8,10 +8,9 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import TablePagination from '~/components/partials/elements/TablePagination.vue';
 import * as google_protobuf_timestamp_pb from '~~/gen/ts/google/protobuf/timestamp';
-import { PaginationResponse } from '~~/gen/ts/resources/common/database/database';
-import { Request } from '~~/gen/ts/resources/jobs/requests';
 import { User } from '~~/gen/ts/resources/users/users';
-import { TimeclockListEntriesRequest } from '~~/gen/ts/services/jobs/jobs';
+import { RequestsListEntriesRequest, RequestsListEntriesResponse } from '~~/gen/ts/services/jobs/jobs';
+import ListEntry from './ListEntry.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -20,15 +19,14 @@ const query = ref<{
     from?: string;
     to?: string;
 }>({});
-const pagination = ref<PaginationResponse>();
 const offset = ref(0n);
 
 const { data, pending, refresh, error } = useLazyAsyncData(`jobs-requests-${offset.value}`, () => listRequests());
 
-async function listRequests(): Promise<Request[]> {
+async function listRequests(): Promise<RequestsListEntriesResponse> {
     return new Promise(async (res, rej) => {
         try {
-            const req: TimeclockListEntriesRequest = {
+            const req: RequestsListEntriesRequest = {
                 pagination: {
                     offset: offset.value,
                 },
@@ -48,9 +46,7 @@ async function listRequests(): Promise<Request[]> {
             const call = $grpc.getJobsClient().requestsListEntries(req);
             const { response } = await call;
 
-            pagination.value = response.pagination;
-
-            return res(response.entry);
+            return res(response);
         } catch (e) {
             $grpc.handleError(e as RpcError);
             return rej(e as RpcError);
@@ -102,7 +98,7 @@ function charsGetDisplayValue(chars: User[]): string {
 watchDebounced(
     queryTargets,
     async () => {
-        if (can('JobsService.TimeclockListEntries.Access.All')) entriesChars.value = await listColleagues();
+        if (can('JobsService.RequestsListEntries.Access.All')) entriesChars.value = await listColleagues();
     },
     {
         debounce: 600,
@@ -111,7 +107,7 @@ watchDebounced(
 );
 
 onMounted(async () => {
-    if (can('JobsService.TimeclockListEntries.Access.All')) {
+    if (can('JobsService.RequestsListEntries.Access.All')) {
         entriesChars.value = await listColleagues();
     }
 });
@@ -124,7 +120,7 @@ onMounted(async () => {
                 <div class="sm:flex-auto">
                     <form @submit.prevent="refresh()">
                         <div class="flex flex-row gap-4 mx-auto">
-                            <div v-if="can('JobsService.TimeclockListEntries.Access.All')" class="flex-1 form-control">
+                            <div v-if="can('JobsService.RequestsListEntries.Access.All')" class="flex-1 form-control">
                                 <label for="searchName" class="block text-sm font-medium leading-6 text-neutral">
                                     {{ $t('common.search') }}
                                     {{ $t('common.colleague', 1) }}
@@ -216,57 +212,23 @@ onMounted(async () => {
             <div class="flow-root mt-2">
                 <div class="mx-0 -my-2 overflow-x-auto">
                     <div class="inline-block min-w-full py-2 align-middle px-1">
-                        <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.timeclock', 2)])" />
+                        <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.request', 2)])" />
                         <DataErrorBlock
                             v-else-if="error"
-                            :title="$t('common.unable_to_load', [$t('common.timeclock', 2)])"
+                            :title="$t('common.unable_to_load', [$t('common.request', 2)])"
                             :retry="refresh"
                         />
                         <DataNoDataBlock
-                            v-else-if="data && data.entries && data.entries.length === 0"
+                            v-else-if="data && data.entries?.length === 0"
                             :focus="focusSearch"
                             :message="$t('components.citizens.citizens_list.no_citizens')"
                         />
                         <div v-else>
-                            <table class="min-w-full divide-y divide-base-600">
-                                <thead>
-                                    <tr>
-                                        <th
-                                            scope="col"
-                                            class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-0"
-                                        >
-                                            {{ $t('common.date') }}
-                                        </th>
-                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
-                                            {{ $t('common.name') }}
-                                        </th>
-                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
-                                            {{ $t('common.time') }}
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-base-800">
-                                    <!-- TODO -->
-                                </tbody>
-                                <thead>
-                                    <tr>
-                                        <th
-                                            scope="col"
-                                            class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-0"
-                                        >
-                                            {{ $t('common.date') }}
-                                        </th>
-                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
-                                            {{ $t('common.name') }}
-                                        </th>
-                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
-                                            {{ $t('common.time') }}
-                                        </th>
-                                    </tr>
-                                </thead>
-                            </table>
+                            <ul role="list" class="flex flex-col">
+                                <ListEntry v-for="request in data?.entries" :request="request" />
+                            </ul>
 
-                            <TablePagination :pagination="pagination" @offset-change="offset = $event" />
+                            <TablePagination :pagination="data?.pagination" @offset-change="offset = $event" />
                         </div>
                     </div>
                 </div>

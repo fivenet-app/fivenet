@@ -29,6 +29,7 @@ type fivenetJobsRequestsTable struct {
 	CreatorID  mysql.ColumnInteger
 	Approved   mysql.ColumnBool
 	ApproverID mysql.ColumnInteger
+	Closed     mysql.ColumnBool
 	BeginsAt   mysql.ColumnTimestamp
 	EndsAt     mysql.ColumnTimestamp
 
@@ -83,10 +84,11 @@ func newFivenetJobsRequestsTableImpl(schemaName, tableName, alias string) fivene
 		CreatorIDColumn  = mysql.IntegerColumn("creator_id")
 		ApprovedColumn   = mysql.BoolColumn("approved")
 		ApproverIDColumn = mysql.IntegerColumn("approver_id")
+		ClosedColumn     = mysql.BoolColumn("closed")
 		BeginsAtColumn   = mysql.TimestampColumn("begins_at")
 		EndsAtColumn     = mysql.TimestampColumn("ends_at")
-		allColumns       = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, TypeIDColumn, TitleColumn, MessageColumn, StatusColumn, CreatorIDColumn, ApprovedColumn, ApproverIDColumn, BeginsAtColumn, EndsAtColumn}
-		mutableColumns   = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, TypeIDColumn, TitleColumn, MessageColumn, StatusColumn, CreatorIDColumn, ApprovedColumn, ApproverIDColumn, BeginsAtColumn, EndsAtColumn}
+		allColumns       = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, TypeIDColumn, TitleColumn, MessageColumn, StatusColumn, CreatorIDColumn, ApprovedColumn, ApproverIDColumn, ClosedColumn, BeginsAtColumn, EndsAtColumn}
+		mutableColumns   = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, TypeIDColumn, TitleColumn, MessageColumn, StatusColumn, CreatorIDColumn, ApprovedColumn, ApproverIDColumn, ClosedColumn, BeginsAtColumn, EndsAtColumn}
 	)
 
 	return fivenetJobsRequestsTable{
@@ -105,6 +107,7 @@ func newFivenetJobsRequestsTableImpl(schemaName, tableName, alias string) fivene
 		CreatorID:  CreatorIDColumn,
 		Approved:   ApprovedColumn,
 		ApproverID: ApproverIDColumn,
+		Closed:     ClosedColumn,
 		BeginsAt:   BeginsAtColumn,
 		EndsAt:     EndsAtColumn,
 

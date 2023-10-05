@@ -51,7 +51,7 @@ defineProps<{
                         <div v-else class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-success-100">
                             <LockOpenVariantIcon class="w-5 h-5 text-success-500" aria-hidden="true" />
                             <span class="text-sm font-medium text-success-700">
-                                {{ $t('common.open') }}
+                                {{ $t('common.open', 2) }}
                             </span>
                         </div>
                     </div>
@@ -68,7 +68,7 @@ defineProps<{
                         <TrashCanIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400" aria-hidden="true" />
                         {{ $t('common.deleted') }}
                     </div>
-                    <div v-if="doc.updatedAt" class="flex flex-row items-end justify-end flex-1">
+                    <div v-if="doc.updatedAt" class="flex flex-row items-center justify-end flex-1">
                         <UpdateIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400" aria-hidden="true" />
                         <p>
                             {{ $t('common.updated') }}

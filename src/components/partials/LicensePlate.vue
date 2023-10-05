@@ -4,11 +4,13 @@ import { RGB, hexToRgb, isColourBright, stringToColour } from '~/utils/colour';
 const props = withDefaults(
     defineProps<{
         state?: string;
+        stateShort?: string;
         plate: string;
         year?: string;
     }>(),
     {
         state: 'Los Santos',
+        stateShort: 'LS',
         plate: 'UNKNOWN',
     },
 );
@@ -21,11 +23,12 @@ const year = props.year ?? '201' + props.plate.charAt(props.plate.length - 1);
 
 <template>
     <div
-        class="flex flex-col items-center justify-center border-2 rounded-lg bg-[blue] max-w-[12rem]"
+        class="flex flex-col items-center justify-center border-2 rounded-lg bg-[blue] max-w-[12rem] min-w-fit min-w-[6.85rem]"
         :style="{ backgroundColor }"
     >
         <div class="w-full grid grid-cols-2 bg-error-600 justify-items-center rounded-t-lg">
-            <div class="select-none text-xs text-warn-400">{{ state }}</div>
+            <div class="select-none text-xs text-warn-400 hidden sm:block">{{ state }}</div>
+            <div class="select-none text-xs text-warn-400 sm:hidden">{{ stateShort }}</div>
             <div class="select-none text-xs">{{ year }}</div>
         </div>
         <div class="text-xl" :class="isColourBright(inverseColor) ? 'text-black' : 'text-white'">

@@ -81,6 +81,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_jobs_requests` (
   `creator_id` int(11) DEFAULT NULL,
   `approved` tinyint(1) DEFAULT NULL,
   `approver_id` int(11) DEFAULT NULL,
+  `closed` tinyint(1) DEFAULT 0,
   `begins_at` datetime(3) DEFAULT NULL,
   `ends_at` datetime(3) DEFAULT NULL,
   PRIMARY KEY (`id`),

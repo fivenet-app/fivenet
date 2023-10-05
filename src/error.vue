@@ -66,20 +66,24 @@ onBeforeMount(async () => {
                     </p>
                     <span v-if="error">
                         <!-- @vue-expect-error -->
-                        <pre v-if="error.statusMessage">
-                            <!-- @vue-expect-error -->
-                            {{ error.statusMessage }}
-                        </pre>
+                        <pre
+                            v-if="error.statusMessage"
+                            v-text="
+                                //@ts-ignore
+                                error.statusMessage
+                            "
+                        />
                         <!-- @vue-expect-error -->
                         <pre
                             v-else-if="
                                 //@ts-ignore
                                 error.message
                             "
-                        >
-                            <!-- @vue-expect-error -->
-                            {{ error.message }}
-                        </pre>
+                            v-text="
+                                //@ts-ignore
+                                error.message
+                            "
+                        />
                         <pre v-else>Unable to get error message</pre>
                     </span>
                     <span v-else>

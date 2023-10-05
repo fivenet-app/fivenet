@@ -197,8 +197,25 @@ export interface RequestsListEntriesRequest {
     /**
      * @generated from protobuf field: resources.common.database.PaginationRequest pagination = 1;
      */
-    pagination?: PaginationRequest; // Search
-    // TODO
+    pagination?: PaginationRequest;
+    /**
+     * Search
+     *
+     * @generated from protobuf field: repeated int32 user_ids = 2;
+     */
+    userIds: number[];
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp from = 3;
+     */
+    from?: Timestamp;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp to = 4;
+     */
+    to?: Timestamp;
+    /**
+     * @generated from protobuf field: optional string search = 5;
+     */
+    search?: string;
 }
 /**
  * @generated from protobuf message services.jobs.RequestsListEntriesResponse
@@ -209,9 +226,9 @@ export interface RequestsListEntriesResponse {
      */
     pagination?: PaginationResponse;
     /**
-     * @generated from protobuf field: repeated resources.jobs.Request entry = 2;
+     * @generated from protobuf field: repeated resources.jobs.Request entries = 2;
      */
-    entry: Request[];
+    entries: Request[];
 }
 /**
  * @generated from protobuf message services.jobs.RequestsCreateEntryRequest
@@ -308,6 +325,32 @@ export interface RequestsDeleteTypeRequest {
  * @generated from protobuf message services.jobs.RequestsDeleteTypeResponse
  */
 export interface RequestsDeleteTypeResponse {
+}
+/**
+ * @generated from protobuf message services.jobs.RequestsListCommentsRequest
+ */
+export interface RequestsListCommentsRequest {
+    /**
+     * @generated from protobuf field: resources.common.database.PaginationRequest pagination = 1;
+     */
+    pagination?: PaginationRequest;
+    /**
+     * @generated from protobuf field: uint64 request_id = 2;
+     */
+    requestId: bigint;
+}
+/**
+ * @generated from protobuf message services.jobs.RequestsListCommentsResponse
+ */
+export interface RequestsListCommentsResponse {
+    /**
+     * @generated from protobuf field: resources.common.database.PaginationResponse pagination = 1;
+     */
+    pagination?: PaginationResponse;
+    /**
+     * @generated from protobuf field: repeated resources.jobs.RequestComment comments = 2;
+     */
+    comments: RequestComment[];
 }
 /**
  * @generated from protobuf message services.jobs.RequestsPostCommentRequest
@@ -520,7 +563,11 @@ export const TimeclockStatsResponse = new TimeclockStatsResponse$Type();
 class RequestsListEntriesRequest$Type extends MessageType<RequestsListEntriesRequest> {
     constructor() {
         super("services.jobs.RequestsListEntriesRequest", [
-            { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } }
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
+            { no: 2, name: "user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ },
+            { no: 3, name: "from", kind: "message", T: () => Timestamp },
+            { no: 4, name: "to", kind: "message", T: () => Timestamp },
+            { no: 5, name: "search", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } }
         ]);
     }
 }
@@ -533,7 +580,7 @@ class RequestsListEntriesResponse$Type extends MessageType<RequestsListEntriesRe
     constructor() {
         super("services.jobs.RequestsListEntriesResponse", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse },
-            { no: 2, name: "entry", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Request }
+            { no: 2, name: "entries", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Request }
         ]);
     }
 }
@@ -680,6 +727,32 @@ class RequestsDeleteTypeResponse$Type extends MessageType<RequestsDeleteTypeResp
  */
 export const RequestsDeleteTypeResponse = new RequestsDeleteTypeResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class RequestsListCommentsRequest$Type extends MessageType<RequestsListCommentsRequest> {
+    constructor() {
+        super("services.jobs.RequestsListCommentsRequest", [
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
+            { no: 2, name: "request_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.RequestsListCommentsRequest
+ */
+export const RequestsListCommentsRequest = new RequestsListCommentsRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class RequestsListCommentsResponse$Type extends MessageType<RequestsListCommentsResponse> {
+    constructor() {
+        super("services.jobs.RequestsListCommentsResponse", [
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse },
+            { no: 2, name: "comments", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => RequestComment }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.RequestsListCommentsResponse
+ */
+export const RequestsListCommentsResponse = new RequestsListCommentsResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class RequestsPostCommentRequest$Type extends MessageType<RequestsPostCommentRequest> {
     constructor() {
         super("services.jobs.RequestsPostCommentRequest", [
@@ -743,6 +816,7 @@ export const JobsService = new ServiceType("services.jobs.JobsService", [
     { name: "RequestsListTypes", options: {}, I: RequestsListTypesRequest, O: RequestsListTypesResponse },
     { name: "RequestsCreateOrUpdateType", options: {}, I: RequestsCreateOrUpdateTypeRequest, O: RequestsCreateOrUpdateTypeResponse },
     { name: "RequestsDeleteType", options: {}, I: RequestsDeleteTypeRequest, O: RequestsDeleteTypeResponse },
+    { name: "RequestsListComments", options: {}, I: RequestsListCommentsRequest, O: RequestsListCommentsResponse },
     { name: "RequestsPostComment", options: {}, I: RequestsPostCommentRequest, O: RequestsPostCommentResponse },
     { name: "RequestsDeleteComment", options: {}, I: RequestsDeleteCommentRequest, O: RequestsDeleteCommentResponse }
 ]);

@@ -8,6 +8,8 @@ import type { RequestsDeleteCommentResponse } from "./jobs.js";
 import type { RequestsDeleteCommentRequest } from "./jobs.js";
 import type { RequestsPostCommentResponse } from "./jobs.js";
 import type { RequestsPostCommentRequest } from "./jobs.js";
+import type { RequestsListCommentsResponse } from "./jobs.js";
+import type { RequestsListCommentsRequest } from "./jobs.js";
 import type { RequestsDeleteTypeResponse } from "./jobs.js";
 import type { RequestsDeleteTypeRequest } from "./jobs.js";
 import type { RequestsCreateOrUpdateTypeResponse } from "./jobs.js";
@@ -128,7 +130,13 @@ export interface IJobsServiceClient {
      */
     requestsDeleteType(input: RequestsDeleteTypeRequest, options?: RpcOptions): UnaryCall<RequestsDeleteTypeRequest, RequestsDeleteTypeResponse>;
     /**
-     * @perm
+     * @perm: Name=RequestsListEntries
+     *
+     * @generated from protobuf rpc: RequestsListComments(services.jobs.RequestsListCommentsRequest) returns (services.jobs.RequestsListCommentsResponse);
+     */
+    requestsListComments(input: RequestsListCommentsRequest, options?: RpcOptions): UnaryCall<RequestsListCommentsRequest, RequestsListCommentsResponse>;
+    /**
+     * @perm: Name=RequestsCreateEntry
      *
      * @generated from protobuf rpc: RequestsPostComment(services.jobs.RequestsPostCommentRequest) returns (services.jobs.RequestsPostCommentResponse);
      */
@@ -276,12 +284,21 @@ export class JobsServiceClient implements IJobsServiceClient, ServiceInfo {
         return stackIntercept<RequestsDeleteTypeRequest, RequestsDeleteTypeResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm
+     * @perm: Name=RequestsListEntries
+     *
+     * @generated from protobuf rpc: RequestsListComments(services.jobs.RequestsListCommentsRequest) returns (services.jobs.RequestsListCommentsResponse);
+     */
+    requestsListComments(input: RequestsListCommentsRequest, options?: RpcOptions): UnaryCall<RequestsListCommentsRequest, RequestsListCommentsResponse> {
+        const method = this.methods[14], opt = this._transport.mergeOptions(options);
+        return stackIntercept<RequestsListCommentsRequest, RequestsListCommentsResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @perm: Name=RequestsCreateEntry
      *
      * @generated from protobuf rpc: RequestsPostComment(services.jobs.RequestsPostCommentRequest) returns (services.jobs.RequestsPostCommentResponse);
      */
     requestsPostComment(input: RequestsPostCommentRequest, options?: RpcOptions): UnaryCall<RequestsPostCommentRequest, RequestsPostCommentResponse> {
-        const method = this.methods[14], opt = this._transport.mergeOptions(options);
+        const method = this.methods[15], opt = this._transport.mergeOptions(options);
         return stackIntercept<RequestsPostCommentRequest, RequestsPostCommentResponse>("unary", this._transport, method, opt, input);
     }
     /**
@@ -290,7 +307,7 @@ export class JobsServiceClient implements IJobsServiceClient, ServiceInfo {
      * @generated from protobuf rpc: RequestsDeleteComment(services.jobs.RequestsDeleteCommentRequest) returns (services.jobs.RequestsDeleteCommentResponse);
      */
     requestsDeleteComment(input: RequestsDeleteCommentRequest, options?: RpcOptions): UnaryCall<RequestsDeleteCommentRequest, RequestsDeleteCommentResponse> {
-        const method = this.methods[15], opt = this._transport.mergeOptions(options);
+        const method = this.methods[16], opt = this._transport.mergeOptions(options);
         return stackIntercept<RequestsDeleteCommentRequest, RequestsDeleteCommentResponse>("unary", this._transport, method, opt, input);
     }
 }

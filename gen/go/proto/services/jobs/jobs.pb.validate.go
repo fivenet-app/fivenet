@@ -2130,6 +2130,87 @@ func (m *RequestsListEntriesRequest) validate(all bool) error {
 		}
 	}
 
+	if m.From != nil {
+
+		if all {
+			switch v := interface{}(m.GetFrom()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, RequestsListEntriesRequestValidationError{
+						field:  "From",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, RequestsListEntriesRequestValidationError{
+						field:  "From",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetFrom()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return RequestsListEntriesRequestValidationError{
+					field:  "From",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.To != nil {
+
+		if all {
+			switch v := interface{}(m.GetTo()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, RequestsListEntriesRequestValidationError{
+						field:  "To",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, RequestsListEntriesRequestValidationError{
+						field:  "To",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetTo()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return RequestsListEntriesRequestValidationError{
+					field:  "To",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.Search != nil {
+
+		if utf8.RuneCountInString(m.GetSearch()) > 50 {
+			err := RequestsListEntriesRequestValidationError{
+				field:  "Search",
+				reason: "value length must be at most 50 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
 	if len(errors) > 0 {
 		return RequestsListEntriesRequestMultiError(errors)
 	}
@@ -2261,7 +2342,7 @@ func (m *RequestsListEntriesResponse) validate(all bool) error {
 		}
 	}
 
-	for idx, item := range m.GetEntry() {
+	for idx, item := range m.GetEntries() {
 		_, _ = idx, item
 
 		if all {
@@ -2269,7 +2350,7 @@ func (m *RequestsListEntriesResponse) validate(all bool) error {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
 					errors = append(errors, RequestsListEntriesResponseValidationError{
-						field:  fmt.Sprintf("Entry[%v]", idx),
+						field:  fmt.Sprintf("Entries[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -2277,7 +2358,7 @@ func (m *RequestsListEntriesResponse) validate(all bool) error {
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
 					errors = append(errors, RequestsListEntriesResponseValidationError{
-						field:  fmt.Sprintf("Entry[%v]", idx),
+						field:  fmt.Sprintf("Entries[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -2286,7 +2367,7 @@ func (m *RequestsListEntriesResponse) validate(all bool) error {
 		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
 				return RequestsListEntriesResponseValidationError{
-					field:  fmt.Sprintf("Entry[%v]", idx),
+					field:  fmt.Sprintf("Entries[%v]", idx),
 					reason: "embedded message failed validation",
 					cause:  err,
 				}
@@ -3842,6 +3923,317 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = RequestsDeleteTypeResponseValidationError{}
+
+// Validate checks the field values on RequestsListCommentsRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *RequestsListCommentsRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on RequestsListCommentsRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// RequestsListCommentsRequestMultiError, or nil if none found.
+func (m *RequestsListCommentsRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *RequestsListCommentsRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.GetPagination() == nil {
+		err := RequestsListCommentsRequestValidationError{
+			field:  "Pagination",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if all {
+		switch v := interface{}(m.GetPagination()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, RequestsListCommentsRequestValidationError{
+					field:  "Pagination",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, RequestsListCommentsRequestValidationError{
+					field:  "Pagination",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetPagination()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return RequestsListCommentsRequestValidationError{
+				field:  "Pagination",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	// no validation rules for RequestId
+
+	if len(errors) > 0 {
+		return RequestsListCommentsRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// RequestsListCommentsRequestMultiError is an error wrapping multiple
+// validation errors returned by RequestsListCommentsRequest.ValidateAll() if
+// the designated constraints aren't met.
+type RequestsListCommentsRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m RequestsListCommentsRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m RequestsListCommentsRequestMultiError) AllErrors() []error { return m }
+
+// RequestsListCommentsRequestValidationError is the validation error returned
+// by RequestsListCommentsRequest.Validate if the designated constraints
+// aren't met.
+type RequestsListCommentsRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e RequestsListCommentsRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e RequestsListCommentsRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e RequestsListCommentsRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e RequestsListCommentsRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e RequestsListCommentsRequestValidationError) ErrorName() string {
+	return "RequestsListCommentsRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e RequestsListCommentsRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sRequestsListCommentsRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = RequestsListCommentsRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = RequestsListCommentsRequestValidationError{}
+
+// Validate checks the field values on RequestsListCommentsResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *RequestsListCommentsResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on RequestsListCommentsResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// RequestsListCommentsResponseMultiError, or nil if none found.
+func (m *RequestsListCommentsResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *RequestsListCommentsResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetPagination()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, RequestsListCommentsResponseValidationError{
+					field:  "Pagination",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, RequestsListCommentsResponseValidationError{
+					field:  "Pagination",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetPagination()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return RequestsListCommentsResponseValidationError{
+				field:  "Pagination",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	for idx, item := range m.GetComments() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, RequestsListCommentsResponseValidationError{
+						field:  fmt.Sprintf("Comments[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, RequestsListCommentsResponseValidationError{
+						field:  fmt.Sprintf("Comments[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return RequestsListCommentsResponseValidationError{
+					field:  fmt.Sprintf("Comments[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return RequestsListCommentsResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// RequestsListCommentsResponseMultiError is an error wrapping multiple
+// validation errors returned by RequestsListCommentsResponse.ValidateAll() if
+// the designated constraints aren't met.
+type RequestsListCommentsResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m RequestsListCommentsResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m RequestsListCommentsResponseMultiError) AllErrors() []error { return m }
+
+// RequestsListCommentsResponseValidationError is the validation error returned
+// by RequestsListCommentsResponse.Validate if the designated constraints
+// aren't met.
+type RequestsListCommentsResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e RequestsListCommentsResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e RequestsListCommentsResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e RequestsListCommentsResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e RequestsListCommentsResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e RequestsListCommentsResponseValidationError) ErrorName() string {
+	return "RequestsListCommentsResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e RequestsListCommentsResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sRequestsListCommentsResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = RequestsListCommentsResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = RequestsListCommentsResponseValidationError{}
 
 // Validate checks the field values on RequestsPostCommentRequest with the
 // rules defined in the proto definition for this message. If any rules are

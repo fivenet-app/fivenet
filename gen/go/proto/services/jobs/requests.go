@@ -3,11 +3,14 @@ package jobs
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	database "github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
 	jobs "github.com/galexrt/fivenet/gen/go/proto/resources/jobs"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
+	"github.com/galexrt/fivenet/pkg/perms"
+	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -17,13 +20,52 @@ import (
 var (
 	tRequests    = table.FivenetJobsRequests.AS("request")
 	tReqTypes    = table.FivenetJobsRequestsTypes.AS("request_type")
-	tReqComments = table.FivenetJobsRequestsComments.AS("request_")
+	tReqComments = table.FivenetJobsRequestsComments.AS("request_comment")
 )
 
 func (s *Server) RequestsListEntries(ctx context.Context, req *RequestsListEntriesRequest) (*RequestsListEntriesResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	condition := tRequests.Job.EQ(jet.String(userInfo.Job))
+
+	// Field Permission Check
+	fieldsAttr, err := s.p.Attr(userInfo, JobsServicePerm, JobsServiceTimeclockListEntriesPerm, JobsServiceTimeclockListEntriesAccessPermField)
+	if err != nil {
+		return nil, ErrFailedQuery
+	}
+	var fields perms.StringList
+	if fieldsAttr != nil {
+		fields = fieldsAttr.([]string)
+	}
+
+	if len(fields) == 0 {
+		return nil, ErrFailedQuery
+	} else if utils.InSlice(fields, "All") {
+	} else if utils.InSlice(fields, "Own") {
+		condition = condition.AND(tTimeClock.UserID.EQ(jet.Int32(userInfo.UserId)))
+	}
+
+	if len(req.UserIds) > 0 {
+		ids := make([]jet.Expression, len(req.UserIds))
+		for i := 0; i < len(req.UserIds); i++ {
+			ids[i] = jet.Int32(req.UserIds[i])
+		}
+
+		condition = condition.AND(
+			tTimeClock.UserID.IN(ids...),
+		)
+	}
+
+	if req.From != nil {
+		condition = condition.AND(tTimeClock.Date.GT_EQ(
+			jet.TimestampT(req.From.AsTime()),
+		))
+	}
+	if req.To != nil {
+		condition = condition.AND(tTimeClock.Date.LT_EQ(
+			jet.TimestampT(req.To.AsTime()),
+		))
+	}
 
 	countStmt := tRequests.
 		SELECT(jet.COUNT(tRequests.ID).AS("datacount.totalcount")).
@@ -35,7 +77,7 @@ func (s *Server) RequestsListEntries(ctx context.Context, req *RequestsListEntri
 		return nil, ErrFailedQuery
 	}
 
-	pag, limit := req.Pagination.GetResponseWithPageSize(10)
+	pag, limit := req.Pagination.GetResponseWithPageSize(7)
 	resp := &RequestsListEntriesResponse{
 		Pagination: pag,
 	}
@@ -53,17 +95,36 @@ func (s *Server) RequestsListEntries(ctx context.Context, req *RequestsListEntri
 			tRequests.DeletedAt,
 			tRequests.Job,
 			tRequests.TypeID,
+			tReqTypes.ID,
+			tReqTypes.Name,
+			tReqTypes.Description,
 			tRequests.Title,
 			tRequests.Message,
 			tRequests.Status,
 			tRequests.CreatorID,
 			tRequests.Approved,
 			tRequests.ApproverID,
+			tRequests.Closed,
 			tRequests.BeginsAt,
 			tRequests.EndsAt,
+			tCreator.ID,
+			tCreator.Identifier,
+			tCreator.Job,
+			tCreator.JobGrade,
+			tCreator.Firstname,
+			tCreator.Lastname,
+			tApprover.ID,
+			tApprover.Identifier,
+			tApprover.Job,
+			tApprover.JobGrade,
+			tApprover.Firstname,
+			tApprover.Lastname,
 		).
 		FROM(
 			tRequests.
+				LEFT_JOIN(tReqTypes,
+					tReqTypes.ID.EQ(tRequests.TypeID),
+				).
 				INNER_JOIN(tCreator,
 					tCreator.ID.EQ(tRequests.CreatorID),
 				).
@@ -78,12 +139,13 @@ func (s *Server) RequestsListEntries(ctx context.Context, req *RequestsListEntri
 		OFFSET(req.Pagination.Offset).
 		LIMIT(limit)
 
-	var dest jobs.Request
-	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
+	if err := stmt.QueryContext(ctx, s.db, &resp.Entries); err != nil {
 		if !errors.Is(qrm.ErrNoRows, err) {
 			return nil, ErrFailedQuery
 		}
 	}
+
+	resp.Pagination.Update(count.TotalCount, len(resp.Entries))
 
 	return resp, nil
 }
@@ -100,9 +162,43 @@ func (s *Server) RequestsCreateEntry(ctx context.Context, req *RequestsCreateEnt
 	}
 	defer s.auditer.Log(auditEntry, req)
 
-	// TODO
+	tRequests := table.FivenetJobsRequests
+	stmt := tRequests.
+		INSERT(
+			tRequests.Job,
+			tRequests.TypeID,
+			tRequests.Title,
+			tRequests.Message,
+			tRequests.CreatorID,
+		).
+		VALUES(
+			userInfo.Job,
+			req.Entry.TypeId,
+			req.Entry.Title,
+			req.Entry.Message,
+			userInfo.UserId,
+		)
 
-	return &RequestsCreateEntryResponse{}, nil
+	res, err := stmt.ExecContext(ctx, s.db)
+	if err != nil {
+		return nil, ErrFailedQuery
+	}
+
+	lastId, err := res.LastInsertId()
+	if err != nil {
+		return nil, ErrFailedQuery
+	}
+
+	request, err := s.getRequest(ctx, userInfo.Job, uint64(lastId))
+	if err != nil {
+		return nil, ErrFailedQuery
+	}
+
+	auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
+
+	return &RequestsCreateEntryResponse{
+		Entry: request,
+	}, nil
 }
 
 func (s *Server) RequestsUpdateEntry(ctx context.Context, req *RequestsUpdateEntryRequest) (*RequestsUpdateEntryResponse, error) {
@@ -118,6 +214,8 @@ func (s *Server) RequestsUpdateEntry(ctx context.Context, req *RequestsUpdateEnt
 	defer s.auditer.Log(auditEntry, req)
 
 	// TODO
+
+	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 
 	return &RequestsUpdateEntryResponse{}, nil
 }
@@ -205,7 +303,8 @@ func (s *Server) RequestsCreateOrUpdateType(ctx context.Context, req *RequestsCr
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
-	// No unit id set
+	tReqTypes := table.FivenetJobsRequestsTypes
+	// No request type id set
 	if req.RequestType.Id <= 0 {
 		stmt := tReqTypes.
 			INSERT(
@@ -303,6 +402,78 @@ func (s *Server) RequestsDeleteType(ctx context.Context, req *RequestsDeleteType
 	return &RequestsDeleteTypeResponse{}, nil
 }
 
+func (s *Server) RequestsListComments(ctx context.Context, req *RequestsListCommentsRequest) (*RequestsListCommentsResponse, error) {
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	condition := tRequests.ID.EQ(jet.Uint64(req.RequestId)).
+		AND(tReqComments.RequestID.EQ(tRequests.ID)).
+		AND(tRequests.Job.EQ(jet.String(userInfo.Job))).
+		AND(tReqComments.DeletedAt.IS_NULL())
+
+	countStmt := tReqComments.
+		SELECT(jet.COUNT(tReqComments.ID).AS("datacount.totalcount")).
+		FROM(
+			tReqComments.
+				INNER_JOIN(tRequests,
+					tRequests.ID.EQ(tReqComments.RequestID),
+				),
+		).
+		WHERE(condition)
+
+	var count database.DataCount
+	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
+		return nil, ErrFailedQuery
+	}
+
+	pag, limit := req.Pagination.GetResponseWithPageSize(7)
+	resp := &RequestsListCommentsResponse{
+		Pagination: pag,
+	}
+	if count.TotalCount <= 0 {
+		return resp, nil
+	}
+
+	tCreator := tUser.AS("creator")
+	stmt := tReqComments.
+		SELECT(
+			tReqComments.ID,
+			tReqComments.CreatedAt,
+			tReqComments.UpdatedAt,
+			tReqComments.DeletedAt,
+			tReqComments.RequestID,
+			tReqComments.Comment,
+			tReqComments.CreatorID,
+			tCreator.ID,
+			tCreator.Identifier,
+			tCreator.Job,
+			tCreator.JobGrade,
+			tCreator.Firstname,
+			tCreator.Lastname,
+		).
+		FROM(
+			tReqComments.
+				INNER_JOIN(tRequests,
+					tRequests.ID.EQ(tReqComments.RequestID),
+				).
+				LEFT_JOIN(tCreator,
+					tCreator.ID.EQ(tReqComments.CreatorID),
+				),
+		).
+		WHERE(condition).
+		OFFSET(req.Pagination.Offset).
+		LIMIT(limit)
+
+	if err := stmt.QueryContext(ctx, s.db, &resp.Comments); err != nil {
+		if !errors.Is(qrm.ErrNoRows, err) {
+			return nil, ErrFailedQuery
+		}
+	}
+
+	resp.Pagination.Update(count.TotalCount, len(resp.Comments))
+
+	return resp, nil
+}
+
 func (s *Server) RequestsPostComment(ctx context.Context, req *RequestsPostCommentRequest) (*RequestsPostCommentResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -314,6 +485,9 @@ func (s *Server) RequestsPostComment(ctx context.Context, req *RequestsPostComme
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
 	defer s.auditer.Log(auditEntry, req)
+
+	tReqComments := table.FivenetJobsRequestsComments
+	_ = tReqComments
 
 	// TODO
 
@@ -332,7 +506,22 @@ func (s *Server) RequestsDeleteComment(ctx context.Context, req *RequestsDeleteC
 	}
 	defer s.auditer.Log(auditEntry, req)
 
-	// TODO
+	stmt := tReqComments.
+		DELETE().
+		USING(tRequests).
+		WHERE(jet.AND(
+			tRequests.Job.EQ(jet.String(userInfo.Job)),
+			tReqComments.RequestID.EQ(tRequests.ID),
+			tReqComments.ID.EQ(jet.Uint64(req.Id)),
+		)).
+		LIMIT(1)
+	fmt.Println(stmt.DebugSql())
+
+	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+		return nil, ErrFailedQuery
+	}
+
+	auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)
 
 	return &RequestsDeleteCommentResponse{}, nil
 }

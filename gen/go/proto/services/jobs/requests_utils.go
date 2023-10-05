@@ -20,17 +20,36 @@ func (s *Server) getRequest(ctx context.Context, job string, id uint64) (*jobs.R
 			tRequests.DeletedAt,
 			tRequests.Job,
 			tRequests.TypeID,
+			tReqTypes.ID,
+			tReqTypes.Name,
+			tReqTypes.Description,
 			tRequests.Title,
 			tRequests.Message,
 			tRequests.Status,
 			tRequests.CreatorID,
 			tRequests.Approved,
 			tRequests.ApproverID,
+			tRequests.Closed,
 			tRequests.BeginsAt,
 			tRequests.EndsAt,
+			tCreator.ID,
+			tCreator.Identifier,
+			tCreator.Job,
+			tCreator.JobGrade,
+			tCreator.Firstname,
+			tCreator.Lastname,
+			tApprover.ID,
+			tApprover.Identifier,
+			tApprover.Job,
+			tApprover.JobGrade,
+			tApprover.Firstname,
+			tApprover.Lastname,
 		).
 		FROM(
 			tRequests.
+				LEFT_JOIN(tReqTypes,
+					tReqTypes.ID.EQ(tRequests.TypeID),
+				).
 				INNER_JOIN(tCreator,
 					tCreator.ID.EQ(tRequests.CreatorID),
 				).
@@ -42,7 +61,8 @@ func (s *Server) getRequest(ctx context.Context, job string, id uint64) (*jobs.R
 			tRequests.Job.EQ(jet.String(job)),
 			tRequests.ID.EQ(jet.Uint64(id)),
 			tRequests.DeletedAt.IS_NULL(),
-		))
+		)).
+		LIMIT(1)
 
 	var dest jobs.Request
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
@@ -73,7 +93,8 @@ func (s *Server) getRequestType(ctx context.Context, job string, id uint64) (*jo
 			tReqTypes.Job.EQ(jet.String(job)),
 			tReqTypes.ID.EQ(jet.Uint64(id)),
 			tReqTypes.DeletedAt.IS_NULL(),
-		))
+		)).
+		LIMIT(1)
 
 	var dest jobs.RequestType
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
@@ -83,4 +104,46 @@ func (s *Server) getRequestType(ctx context.Context, job string, id uint64) (*jo
 	}
 
 	return &dest, nil
+}
+
+func (s *Server) getRequestComment(ctx context.Context, job string, id uint64) (*jobs.RequestComment, error) {
+	tCreator := tUser.AS("creator")
+	stmt := tReqComments.
+		SELECT(
+			tReqComments.ID,
+			tReqComments.CreatedAt,
+			tReqComments.UpdatedAt,
+			tReqComments.DeletedAt,
+			tReqComments.RequestID,
+			tReqComments.Comment,
+			tReqComments.CreatorID,
+			tCreator.ID,
+			tCreator.Identifier,
+			tCreator.Job,
+			tCreator.JobGrade,
+			tCreator.Firstname,
+			tCreator.Lastname,
+		).
+		FROM(
+			tReqComments.
+				INNER_JOIN(tRequests,
+					tRequests.ID.EQ(tReqComments.RequestID),
+				),
+		).
+		WHERE(jet.AND(
+			tReqComments.ID.EQ(jet.Uint64(id)),
+			tReqComments.RequestID.EQ(tRequests.ID),
+			tRequests.Job.EQ(jet.String(job)),
+			tReqComments.DeletedAt.IS_NULL(),
+		)).
+		LIMIT(1)
+
+	var dest jobs.RequestType
+	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
+		if !errors.Is(qrm.ErrNoRows, err) {
+			return nil, ErrFailedQuery
+		}
+	}
+
+	return nil, nil
 }

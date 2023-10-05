@@ -89,12 +89,15 @@ message TimeclockStatsResponse {
 message RequestsListEntriesRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
   // Search
-  // TODO
+  repeated int32 user_ids = 2;
+  optional resources.timestamp.Timestamp from = 3;
+  optional resources.timestamp.Timestamp to = 4;
+  optional string search = 5 [(validate.rules).string.max_len = 50];
 }
 
 message RequestsListEntriesResponse {
   resources.common.database.PaginationResponse pagination = 1;
-  repeated resources.jobs.Request entry = 2;
+  repeated resources.jobs.Request entries = 2;
 }
 
 message RequestsCreateEntryRequest {
@@ -138,6 +141,16 @@ message RequestsDeleteTypeRequest {
 }
 
 message RequestsDeleteTypeResponse {}
+
+message RequestsListCommentsRequest {
+  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
+  uint64 request_id = 2;
+}
+
+message RequestsListCommentsResponse {
+  resources.common.database.PaginationResponse pagination = 1;
+  repeated resources.jobs.RequestComment comments = 2;
+}
 
 message RequestsPostCommentRequest {
   resources.jobs.RequestComment comment = 1 [(validate.rules).message.required = true];
@@ -185,7 +198,9 @@ service JobsService {
   rpc RequestsCreateOrUpdateType(RequestsCreateOrUpdateTypeRequest) returns (RequestsCreateOrUpdateTypeResponse);
   // @perm
   rpc RequestsDeleteType(RequestsDeleteTypeRequest) returns (RequestsDeleteTypeResponse);
-  // @perm
+  // @perm: Name=RequestsListEntries
+  rpc RequestsListComments(RequestsListCommentsRequest) returns (RequestsListCommentsResponse);
+  // @perm: Name=RequestsCreateEntry
   rpc RequestsPostComment(RequestsPostCommentRequest) returns (RequestsPostCommentResponse);
   // @perm
   rpc RequestsDeleteComment(RequestsDeleteCommentRequest) returns (RequestsDeleteCommentResponse);

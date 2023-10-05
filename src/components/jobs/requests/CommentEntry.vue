@@ -5,9 +5,9 @@ import { useConfirmDialog, useThrottleFn } from '@vueuse/core';
 import { LoadingIcon, PencilIcon, TrashCanIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
+import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import { useAuthStore } from '~/store/auth';
-import { Comment } from '~~/gen/ts/resources/documents/comment';
-import CitizenInfoPopover from '../partials/citizens/CitizenInfoPopover.vue';
+import { RequestComment } from '~~/gen/ts/resources/jobs/requests';
 
 const { $grpc } = useNuxtApp();
 const authStore = useAuthStore();
@@ -15,25 +15,25 @@ const authStore = useAuthStore();
 const { activeChar, permissions } = storeToRefs(authStore);
 
 const emit = defineEmits<{
-    (e: 'removed', comment: Comment): void;
+    (e: 'removed', comment: RequestComment): void;
 }>();
 
 const props = defineProps<{
-    comment: Comment;
+    comment: RequestComment;
 }>();
 
 const editing = ref(false);
 
-async function editComment(documentId: bigint, commentId: bigint, values: FormData): Promise<void> {
+async function editComment(requestId: bigint, commentId: bigint, values: FormData): Promise<void> {
     return new Promise(async (res, rej) => {
-        const comment: Comment = {
+        const comment: RequestComment = {
             id: commentId,
-            documentId: documentId,
+            requestId: requestId,
             comment: values.comment,
         };
 
         try {
-            await $grpc.getDocStoreClient().editComment({
+            await $grpc.getJobsClient().requestsPostComment({
                 comment: comment,
             });
 
@@ -53,8 +53,8 @@ async function editComment(documentId: bigint, commentId: bigint, values: FormDa
 async function deleteComment(id: bigint): Promise<void> {
     return new Promise(async (res, rej) => {
         try {
-            await $grpc.getDocStoreClient().deleteComment({
-                commentId: id,
+            await $grpc.getJobsClient().requestsDeleteComment({
+                id: id,
             });
 
             emit('removed', props.comment);
@@ -79,27 +79,17 @@ interface FormData {
     comment: string;
 }
 
-const { handleSubmit, meta, setValues } = useForm<FormData>({
+const { handleSubmit, meta, resetForm } = useForm<FormData>({
     validationSchema: {
         comment: { required: true, min: 3, max: 1536 },
     },
     validateOnMount: true,
 });
 
-function resetForm(): void {
-    setValues({
-        comment: props.comment.comment,
-    });
-}
-
-onMounted(() => resetForm());
-
-watch(props, () => resetForm());
-
 const canSubmit = ref(true);
 const onSubmit = handleSubmit(
     async (values): Promise<void> =>
-        await editComment(props.comment.documentId, props.comment.id, values).finally(() =>
+        await editComment(props.comment.requestId, props.comment.id, values).finally(() =>
             setTimeout(() => (canSubmit.value = true), 350),
         ),
 );
@@ -125,10 +115,10 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                         {{ $t('common.deleted') }}
                     </div>
                     <div v-if="comment.creatorId === activeChar?.userId || permissions.includes('superuser')">
-                        <button v-if="can('DocStoreService.PostComment')" @click="editing = true">
+                        <button v-if="can('JobsService.RequestsCreateEntry')" @click="editing = true">
                             <PencilIcon class="w-5 h-auto ml-auto mr-2.5" />
                         </button>
-                        <button v-if="can('DocStoreService.DeleteComment')" type="button" @click="reveal()">
+                        <button v-if="can('JobsService.RequestsDeleteComment')" type="button" @click="reveal()">
                             <TrashCanIcon class="w-5 h-auto ml-auto mr-2.5" />
                         </button>
                     </div>
@@ -138,7 +128,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                 </p>
             </div>
         </div>
-        <div v-else v-if="can('DocStoreService.PostComment')" class="flex items-start space-x-4">
+        <div v-else v-if="can('JobsService.RequestsCreateEntry')" class="flex items-start space-x-4">
             <div class="min-w-0 flex-1">
                 <form @submit.prevent="onSubmitThrottle" class="relative">
                     <div

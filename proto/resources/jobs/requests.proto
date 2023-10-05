@@ -26,20 +26,21 @@ message Request {
   optional resources.timestamp.Timestamp deleted_at = 4;
   string job = 5 [(validate.rules).string.max_len = 20];
   optional uint64 type_id = 6;
+  optional RequestType type = 7;
   // @sanitize
-  string title = 7 [(validate.rules).string = {min_len: 3, max_len: 255}];
+  string title = 8 [(validate.rules).string = {min_len: 3, max_len: 255}];
   // @sanitize
-  string message = 8 [(validate.rules).string = {min_len: 3, max_len: 4096}];
+  string message = 9 [(validate.rules).string = {min_len: 3, max_len: 4096}];
   // @sanitize
-  optional string status = 9 [(validate.rules).string.max_len = 24];
-  int32 creator_id = 10 [(validate.rules).int32.gt = 0];
-  optional resources.users.UserShort creator = 11;
-  optional bool approved = 12;
-  optional int32 approver_id = 13;
-  optional resources.users.UserShort approver_user = 14; // @gotags: alias:"approver"
-  optional resources.timestamp.Timestamp begins_at = 15;
-  optional resources.timestamp.Timestamp ends_at = 16;
-
+  optional string status = 10 [(validate.rules).string.max_len = 24];
+  int32 creator_id = 11 [(validate.rules).int32.gt = 0];
+  optional resources.users.UserShort creator = 12; // @gotags: alias:"creator"
+  optional bool approved = 13;
+  optional int32 approver_id = 14;
+  optional resources.users.UserShort approver_user = 15; // @gotags: alias:"approver"
+  bool closed = 16;
+  optional resources.timestamp.Timestamp begins_at = 17;
+  optional resources.timestamp.Timestamp ends_at = 18;
 }
 
 message RequestComment {
@@ -54,5 +55,5 @@ message RequestComment {
     max_bytes: 2048
   }];
   optional int32 creator_id = 7;
-  optional resources.users.UserShort creator = 8;
+  optional resources.users.UserShort creator = 8; // @gotags: alias:"creator"
 }

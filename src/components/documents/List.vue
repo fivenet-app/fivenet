@@ -418,7 +418,7 @@ const templatesOpen = ref(false);
                             :focus="focusSearch"
                         />
                         <div v-else>
-                            <ul class="flex flex-col">
+                            <ul role="list" class="flex flex-col">
                                 <ListEntry v-for="doc in documents" :doc="doc" />
                             </ul>
 

@@ -7,8 +7,8 @@ import { defineRule } from 'vee-validate';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import TablePagination from '~/components/partials/elements/TablePagination.vue';
 import { useAuthStore } from '~/store/auth';
-import { PaginationResponse } from '~~/gen/ts/resources/common/database/database';
-import { Comment } from '~~/gen/ts/resources/documents/comment';
+import { RequestComment } from '~~/gen/ts/resources/jobs/requests';
+import { RequestsListCommentsResponse } from '~~/gen/ts/services/jobs/jobs';
 import CommentEntry from './CommentEntry.vue';
 
 const { $grpc } = useNuxtApp();
@@ -16,21 +16,14 @@ const authStore = useAuthStore();
 
 const { activeChar } = storeToRefs(authStore);
 
-const props = withDefaults(
-    defineProps<{
-        documentId: bigint;
-        closed?: boolean;
-    }>(),
-    {
-        closed: false,
-    },
-);
+const props = defineProps<{
+    requestId: bigint;
+}>();
 
 const emit = defineEmits<{
     (e: 'counted', count: bigint): void;
 }>();
 
-const pagination = ref<PaginationResponse>();
 const offset = ref(0n);
 
 const {
@@ -38,28 +31,23 @@ const {
     pending,
     refresh,
     error,
-} = useLazyAsyncData(`document-${props.documentId}-comments-${offset}`, () => getComments(), {
+} = useLazyAsyncData(`jobs-requests-${props.requestId}-comments-${offset}`, () => getComments(), {
     immediate: false,
 });
 
-async function getComments(): Promise<Comment[]> {
+async function getComments(): Promise<RequestsListCommentsResponse> {
     return new Promise(async (res, rej) => {
         try {
-            const call = $grpc.getDocStoreClient().getComments({
+            const call = $grpc.getJobsClient().requestsListComments({
                 pagination: {
                     offset: offset.value,
                     pageSize: 5n,
                 },
-                documentId: props.documentId,
+                requestId: props.requestId,
             });
             const { response } = await call;
 
-            pagination.value = response.pagination;
-            if (pagination.value) {
-                emit('counted', pagination.value?.totalCount);
-            }
-
-            return res(response.comments);
+            return res(response);
         } catch (e) {
             $grpc.handleError(e as RpcError);
             return rej(e as RpcError);
@@ -73,22 +61,23 @@ async function addComment(documentId: bigint, values: FormData): Promise<void> {
             return res();
         }
 
-        const comment: Comment = {
+        const comment: RequestComment = {
             id: 0n,
-            documentId: documentId,
+            requestId: documentId,
             comment: values.comment,
         };
 
         try {
-            const call = $grpc.getDocStoreClient().postComment({
+            const call = $grpc.getJobsClient().requestsPostComment({
                 comment: comment,
             });
             const { response } = await call;
+            if (!response.comment) return res();
 
-            comment.id = response.id;
+            comment.id = response.comment.id;
             comment.creator = activeChar.value!;
 
-            comments.value.unshift(comment);
+            comments.value.comments.unshift(comment);
 
             resetForm();
 
@@ -100,7 +89,7 @@ async function addComment(documentId: bigint, values: FormData): Promise<void> {
     });
 }
 
-async function removeComment(comment: Comment): Promise<void> {
+async function removeComment(comment: RequestComment): Promise<void> {
     return new Promise(async (res, rej) => {
         if (!comments.value) {
             return res();
@@ -110,12 +99,12 @@ async function removeComment(comment: Comment): Promise<void> {
             return res();
         }
 
-        const idx = comments.value.findIndex((c) => {
+        const idx = comments.value.comments.findIndex((c) => {
             return c.id === comment.id;
         });
 
         if (idx > -1) {
-            comments.value.splice(idx, 1);
+            comments.value.comments.splice(idx, 1);
         }
 
         return res();
@@ -153,7 +142,7 @@ const { handleSubmit, meta, resetForm } = useForm<FormData>({
 const canSubmit = ref(true);
 const onSubmit = handleSubmit(
     async (values): Promise<void> =>
-        await addComment(props.documentId, values).finally(() => setTimeout(() => (canSubmit.value = true), 350)),
+        await addComment(props.requestId, values).finally(() => setTimeout(() => (canSubmit.value = true), 350)),
 );
 const onSubmitThrottle = useThrottleFn(async (e) => {
     canSubmit.value = false;
@@ -165,7 +154,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
     <div>
         <div ref="commentsEl" class="pb-2">
             <div v-if="can('DocStoreService.PostComment')">
-                <div v-if="!closed" class="flex items-start space-x-4">
+                <div class="flex items-start space-x-4">
                     <div class="min-w-0 flex-1">
                         <form @submit.prevent="onSubmitThrottle" class="relative">
                             <div
@@ -223,7 +212,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
         </div>
         <div>
             <DataNoDataBlock
-                v-if="!comments || comments.length === 0"
+                v-if="!comments || comments.comments.length === 0"
                 :message="$t('components.documents.document_comments.no_comments')"
                 :icon="CommentTextMultipleIcon"
                 :focus="focusComment"
@@ -234,17 +223,17 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
             >
                 <ul role="list" class="divide-y divide-gray-200 px-4">
                     <CommentEntry
-                        v-for="com in comments"
+                        v-for="com in comments.comments"
                         :key="com.id?.toString()"
                         :comment="com"
-                        @removed="(c: Comment) => removeComment(c)"
+                        @removed="(c: RequestComment) => removeComment(c)"
                     />
                 </ul>
             </div>
         </div>
         <TablePagination
-            v-if="comments && comments.length > 0"
-            :pagination="pagination"
+            v-if="comments && comments.comments.length > 0"
+            :pagination="comments.pagination"
             @offset-change="offset = $event"
             class="mt-2"
         />

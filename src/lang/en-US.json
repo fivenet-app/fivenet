@@ -698,7 +698,13 @@
         "sum": "Total Sum",
         "avg": "Average",
         "read_more": "Read More",
-        "read_less": "Read Less"
+        "read_less": "Read Less",
+        "request": "Request | Requests",
+        "requests": "No requests | {n} request | {n} requests",
+        "begins_at": "Begins at",
+        "ends_at": "Ends at",
+        "hide": "Hide",
+        "approve": "Approve | Approved"
     },
     "notifications": {
         "clipboard": {

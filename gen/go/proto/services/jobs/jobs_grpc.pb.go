@@ -33,6 +33,7 @@ const (
 	JobsService_RequestsListTypes_FullMethodName          = "/services.jobs.JobsService/RequestsListTypes"
 	JobsService_RequestsCreateOrUpdateType_FullMethodName = "/services.jobs.JobsService/RequestsCreateOrUpdateType"
 	JobsService_RequestsDeleteType_FullMethodName         = "/services.jobs.JobsService/RequestsDeleteType"
+	JobsService_RequestsListComments_FullMethodName       = "/services.jobs.JobsService/RequestsListComments"
 	JobsService_RequestsPostComment_FullMethodName        = "/services.jobs.JobsService/RequestsPostComment"
 	JobsService_RequestsDeleteComment_FullMethodName      = "/services.jobs.JobsService/RequestsDeleteComment"
 )
@@ -69,7 +70,9 @@ type JobsServiceClient interface {
 	RequestsCreateOrUpdateType(ctx context.Context, in *RequestsCreateOrUpdateTypeRequest, opts ...grpc.CallOption) (*RequestsCreateOrUpdateTypeResponse, error)
 	// @perm
 	RequestsDeleteType(ctx context.Context, in *RequestsDeleteTypeRequest, opts ...grpc.CallOption) (*RequestsDeleteTypeResponse, error)
-	// @perm
+	// @perm: Name=RequestsListEntries
+	RequestsListComments(ctx context.Context, in *RequestsListCommentsRequest, opts ...grpc.CallOption) (*RequestsListCommentsResponse, error)
+	// @perm: Name=RequestsCreateEntry
 	RequestsPostComment(ctx context.Context, in *RequestsPostCommentRequest, opts ...grpc.CallOption) (*RequestsPostCommentResponse, error)
 	// @perm
 	RequestsDeleteComment(ctx context.Context, in *RequestsDeleteCommentRequest, opts ...grpc.CallOption) (*RequestsDeleteCommentResponse, error)
@@ -209,6 +212,15 @@ func (c *jobsServiceClient) RequestsDeleteType(ctx context.Context, in *Requests
 	return out, nil
 }
 
+func (c *jobsServiceClient) RequestsListComments(ctx context.Context, in *RequestsListCommentsRequest, opts ...grpc.CallOption) (*RequestsListCommentsResponse, error) {
+	out := new(RequestsListCommentsResponse)
+	err := c.cc.Invoke(ctx, JobsService_RequestsListComments_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *jobsServiceClient) RequestsPostComment(ctx context.Context, in *RequestsPostCommentRequest, opts ...grpc.CallOption) (*RequestsPostCommentResponse, error) {
 	out := new(RequestsPostCommentResponse)
 	err := c.cc.Invoke(ctx, JobsService_RequestsPostComment_FullMethodName, in, out, opts...)
@@ -259,7 +271,9 @@ type JobsServiceServer interface {
 	RequestsCreateOrUpdateType(context.Context, *RequestsCreateOrUpdateTypeRequest) (*RequestsCreateOrUpdateTypeResponse, error)
 	// @perm
 	RequestsDeleteType(context.Context, *RequestsDeleteTypeRequest) (*RequestsDeleteTypeResponse, error)
-	// @perm
+	// @perm: Name=RequestsListEntries
+	RequestsListComments(context.Context, *RequestsListCommentsRequest) (*RequestsListCommentsResponse, error)
+	// @perm: Name=RequestsCreateEntry
 	RequestsPostComment(context.Context, *RequestsPostCommentRequest) (*RequestsPostCommentResponse, error)
 	// @perm
 	RequestsDeleteComment(context.Context, *RequestsDeleteCommentRequest) (*RequestsDeleteCommentResponse, error)
@@ -311,6 +325,9 @@ func (UnimplementedJobsServiceServer) RequestsCreateOrUpdateType(context.Context
 }
 func (UnimplementedJobsServiceServer) RequestsDeleteType(context.Context, *RequestsDeleteTypeRequest) (*RequestsDeleteTypeResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RequestsDeleteType not implemented")
+}
+func (UnimplementedJobsServiceServer) RequestsListComments(context.Context, *RequestsListCommentsRequest) (*RequestsListCommentsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RequestsListComments not implemented")
 }
 func (UnimplementedJobsServiceServer) RequestsPostComment(context.Context, *RequestsPostCommentRequest) (*RequestsPostCommentResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RequestsPostComment not implemented")
@@ -583,6 +600,24 @@ func _JobsService_RequestsDeleteType_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _JobsService_RequestsListComments_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RequestsListCommentsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(JobsServiceServer).RequestsListComments(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: JobsService_RequestsListComments_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(JobsServiceServer).RequestsListComments(ctx, req.(*RequestsListCommentsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _JobsService_RequestsPostComment_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(RequestsPostCommentRequest)
 	if err := dec(in); err != nil {
@@ -681,6 +716,10 @@ var JobsService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RequestsDeleteType",
 			Handler:    _JobsService_RequestsDeleteType_Handler,
+		},
+		{
+			MethodName: "RequestsListComments",
+			Handler:    _JobsService_RequestsListComments_Handler,
 		},
 		{
 			MethodName: "RequestsPostComment",

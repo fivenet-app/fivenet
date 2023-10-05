@@ -24,7 +24,6 @@ const (
 	JobsServiceRequestsDeleteTypePerm              perms.Name = "RequestsDeleteType"
 	JobsServiceRequestsListEntriesPerm             perms.Name = "RequestsListEntries"
 	JobsServiceRequestsListEntriesAccessPermField  perms.Key  = "Access"
-	JobsServiceRequestsPostCommentPerm             perms.Name = "RequestsPostComment"
 	JobsServiceRequestsUpdateEntryPerm             perms.Name = "RequestsUpdateEntry"
 	JobsServiceTimeclockListEntriesPerm            perms.Name = "TimeclockListEntries"
 	JobsServiceTimeclockListEntriesAccessPermField perms.Key  = "Access"
@@ -33,8 +32,10 @@ const (
 var PermsRemap = map[string]string{
 
 	// Service: JobsService
-	"JobsService/RequestsListTypes": "JobsService/RequestsListEntries",
-	"JobsService/TimeclockStats":    "JobsService/ConductListEntries",
+	"JobsService/RequestsListComments": "JobsService/RequestsListEntries",
+	"JobsService/RequestsListTypes":    "JobsService/RequestsListEntries",
+	"JobsService/RequestsPostComment":  "JobsService/RequestsCreateEntry",
+	"JobsService/TimeclockStats":       "JobsService/ConductListEntries",
 }
 
 func (s *Server) GetPermsRemap() map[string]string {
@@ -112,11 +113,6 @@ func init() {
 					DefaultValues: []string{"Own"},
 				},
 			},
-		},
-		{
-			Category: JobsServicePerm,
-			Name:     JobsServiceRequestsPostCommentPerm,
-			Attrs:    []perms.Attr{},
 		},
 		{
 			Category: JobsServicePerm,

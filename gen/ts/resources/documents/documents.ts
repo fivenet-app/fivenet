@@ -73,11 +73,11 @@ export interface Document {
     /**
      * @generated from protobuf field: bool closed = 14;
      */
-    closed: boolean; // @gotags: alias:"closed"
+    closed: boolean;
     /**
      * @generated from protobuf field: bool public = 15;
      */
-    public: boolean; // @gotags: alias:"public"
+    public: boolean;
 }
 /**
  * @generated from protobuf message resources.documents.DocumentShort
@@ -140,11 +140,11 @@ export interface DocumentShort {
     /**
      * @generated from protobuf field: bool closed = 13;
      */
-    closed: boolean; // @gotags: alias:"closed"
+    closed: boolean;
     /**
      * @generated from protobuf field: bool public = 14;
      */
-    public: boolean; // @gotags: alias:"public"
+    public: boolean;
 }
 /**
  * @generated from protobuf message resources.documents.DocumentAccess

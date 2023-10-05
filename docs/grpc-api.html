@@ -1512,6 +1512,14 @@
                 </li>
               
                 <li>
+                  <a href="#services.jobs.RequestsListCommentsRequest"><span class="badge">M</span>RequestsListCommentsRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#services.jobs.RequestsListCommentsResponse"><span class="badge">M</span>RequestsListCommentsResponse</a>
+                </li>
+              
+                <li>
                   <a href="#services.jobs.RequestsListEntriesRequest"><span class="badge">M</span>RequestsListEntriesRequest</a>
                 </li>
               
@@ -3968,14 +3976,14 @@
                   <td>closed</td>
                   <td><a href="#bool">bool</a></td>
                   <td></td>
-                  <td><p>@gotags: alias:&#34;closed&#34; </p></td>
+                  <td><p> </p></td>
                 </tr>
               
                 <tr>
                   <td>public</td>
                   <td><a href="#bool">bool</a></td>
                   <td></td>
-                  <td><p>@gotags: alias:&#34;public&#34; </p></td>
+                  <td><p> </p></td>
                 </tr>
               
             </tbody>
@@ -4575,14 +4583,14 @@
                   <td>closed</td>
                   <td><a href="#bool">bool</a></td>
                   <td></td>
-                  <td><p>@gotags: alias:&#34;closed&#34; </p></td>
+                  <td><p> </p></td>
                 </tr>
               
                 <tr>
                   <td>public</td>
                   <td><a href="#bool">bool</a></td>
                   <td></td>
-                  <td><p>@gotags: alias:&#34;public&#34; </p></td>
+                  <td><p> </p></td>
                 </tr>
               
             </tbody>
@@ -9630,6 +9638,13 @@
                 </tr>
               
                 <tr>
+                  <td>type</td>
+                  <td><a href="#resources.jobs.RequestType">RequestType</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
                   <td>title</td>
                   <td><a href="#string">string</a></td>
                   <td></td>
@@ -9661,7 +9676,7 @@
                   <td>creator</td>
                   <td><a href="#resources.users.UserShort">resources.users.UserShort</a></td>
                   <td>optional</td>
-                  <td><p> </p></td>
+                  <td><p>@gotags: alias:&#34;creator&#34; </p></td>
                 </tr>
               
                 <tr>
@@ -9683,6 +9698,13 @@
                   <td><a href="#resources.users.UserShort">resources.users.UserShort</a></td>
                   <td>optional</td>
                   <td><p>@gotags: alias:&#34;approver&#34; </p></td>
+                </tr>
+              
+                <tr>
+                  <td>closed</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p> </p></td>
                 </tr>
               
                 <tr>
@@ -9844,7 +9866,7 @@
                   <td>creator</td>
                   <td><a href="#resources.users.UserShort">resources.users.UserShort</a></td>
                   <td>optional</td>
-                  <td><p> </p></td>
+                  <td><p>@gotags: alias:&#34;creator&#34; </p></td>
                 </tr>
               
             </tbody>
@@ -16320,7 +16342,7 @@
 
         
       
-        <h3 id="services.jobs.RequestsListEntriesRequest">RequestsListEntriesRequest</h3>
+        <h3 id="services.jobs.RequestsListCommentsRequest">RequestsListCommentsRequest</h3>
         <p></p>
 
         
@@ -16334,8 +16356,14 @@
                   <td>pagination</td>
                   <td><a href="#resources.common.database.PaginationRequest">resources.common.database.PaginationRequest</a></td>
                   <td></td>
-                  <td><p>Search
-TODO </p></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>request_id</td>
+                  <td><a href="#uint64">uint64</a></td>
+                  <td></td>
+                  <td><p> </p></td>
                 </tr>
               
             </tbody>
@@ -16372,6 +16400,127 @@ TODO </p></td>
 
         
       
+        <h3 id="services.jobs.RequestsListCommentsResponse">RequestsListCommentsResponse</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>pagination</td>
+                  <td><a href="#resources.common.database.PaginationResponse">resources.common.database.PaginationResponse</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>comments</td>
+                  <td><a href="#resources.jobs.RequestComment">resources.jobs.RequestComment</a></td>
+                  <td>repeated</td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+        <h3 id="services.jobs.RequestsListEntriesRequest">RequestsListEntriesRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>pagination</td>
+                  <td><a href="#resources.common.database.PaginationRequest">resources.common.database.PaginationRequest</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>user_ids</td>
+                  <td><a href="#int32">int32</a></td>
+                  <td>repeated</td>
+                  <td><p>Search </p></td>
+                </tr>
+              
+                <tr>
+                  <td>from</td>
+                  <td><a href="#resources.timestamp.Timestamp">resources.timestamp.Timestamp</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>to</td>
+                  <td><a href="#resources.timestamp.Timestamp">resources.timestamp.Timestamp</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>search</td>
+                  <td><a href="#string">string</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+            
+            
+            <h4>Validated Fields</h4>
+            <table>
+              <thead>
+                <tr>
+                  <td>Field</td>
+                  <td>Validations</td>
+                </tr>
+              </thead>
+              <tbody>
+              
+                <tr>
+                  <td>pagination</td>
+                  <td>
+                    <ul>
+                    
+                      <li>message.required: true</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>search</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.max_len: 50</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+              </tbody>
+            </table>
+            
+          
+
+        
+      
         <h3 id="services.jobs.RequestsListEntriesResponse">RequestsListEntriesResponse</h3>
         <p></p>
 
@@ -16390,7 +16539,7 @@ TODO </p></td>
                 </tr>
               
                 <tr>
-                  <td>entry</td>
+                  <td>entries</td>
                   <td><a href="#resources.jobs.Request">resources.jobs.Request</a></td>
                   <td>repeated</td>
                   <td><p> </p></td>
@@ -16865,10 +17014,17 @@ TODO </p></td>
               </tr>
             
               <tr>
+                <td>RequestsListComments</td>
+                <td><a href="#services.jobs.RequestsListCommentsRequest">RequestsListCommentsRequest</a></td>
+                <td><a href="#services.jobs.RequestsListCommentsResponse">RequestsListCommentsResponse</a></td>
+                <td><p>@perm: Name=RequestsListEntries</p></td>
+              </tr>
+            
+              <tr>
                 <td>RequestsPostComment</td>
                 <td><a href="#services.jobs.RequestsPostCommentRequest">RequestsPostCommentRequest</a></td>
                 <td><a href="#services.jobs.RequestsPostCommentResponse">RequestsPostCommentResponse</a></td>
-                <td><p>@perm</p></td>
+                <td><p>@perm: Name=RequestsCreateEntry</p></td>
               </tr>
             
               <tr>

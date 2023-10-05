@@ -42,8 +42,8 @@ message Document {
   optional resources.users.UserShort creator = 12; // @gotags: alias:"creator"
   // @sanitize
   string state = 13 [(validate.rules).string.max_len = 24]; // @gotags: alias:"state"
-  bool closed = 14; // @gotags: alias:"closed"
-  bool public = 15; // @gotags: alias:"public"
+  bool closed = 14;
+  bool public = 15;
 }
 
 message DocumentShort {
@@ -62,8 +62,8 @@ message DocumentShort {
   optional resources.users.UserShort creator = 11; // @gotags: alias:"creator"
   // @sanitize
   string state = 12 [(validate.rules).string.max_len = 24]; // @gotags: alias:"state"
-  bool closed = 13; // @gotags: alias:"closed"
-  bool public = 14; // @gotags: alias:"public"
+  bool closed = 13;
+  bool public = 14;
 }
 
 message DocumentAccess {

@@ -200,9 +200,9 @@ type Document struct {
 	CreatorId *int32           `protobuf:"varint,11,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty" alias:"creator_id"` // @gotags: alias:"creator_id"
 	Creator   *users.UserShort `protobuf:"bytes,12,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"creator"`                       // @gotags: alias:"creator"
 	// @sanitize
-	State  string `protobuf:"bytes,13,opt,name=state,proto3" json:"state,omitempty" alias:"state"`    // @gotags: alias:"state"
-	Closed bool   `protobuf:"varint,14,opt,name=closed,proto3" json:"closed,omitempty" alias:"closed"` // @gotags: alias:"closed"
-	Public bool   `protobuf:"varint,15,opt,name=public,proto3" json:"public,omitempty" alias:"public"` // @gotags: alias:"public"
+	State  string `protobuf:"bytes,13,opt,name=state,proto3" json:"state,omitempty" alias:"state"` // @gotags: alias:"state"
+	Closed bool   `protobuf:"varint,14,opt,name=closed,proto3" json:"closed,omitempty"`
+	Public bool   `protobuf:"varint,15,opt,name=public,proto3" json:"public,omitempty"`
 }
 
 func (x *Document) Reset() {
@@ -361,9 +361,9 @@ type DocumentShort struct {
 	CreatorId *int32           `protobuf:"varint,10,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty" alias:"creator_id"` // @gotags: alias:"creator_id"
 	Creator   *users.UserShort `protobuf:"bytes,11,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"creator"`                       // @gotags: alias:"creator"
 	// @sanitize
-	State  string `protobuf:"bytes,12,opt,name=state,proto3" json:"state,omitempty" alias:"state"`    // @gotags: alias:"state"
-	Closed bool   `protobuf:"varint,13,opt,name=closed,proto3" json:"closed,omitempty" alias:"closed"` // @gotags: alias:"closed"
-	Public bool   `protobuf:"varint,14,opt,name=public,proto3" json:"public,omitempty" alias:"public"` // @gotags: alias:"public"
+	State  string `protobuf:"bytes,12,opt,name=state,proto3" json:"state,omitempty" alias:"state"` // @gotags: alias:"state"
+	Closed bool   `protobuf:"varint,13,opt,name=closed,proto3" json:"closed,omitempty"`
+	Public bool   `protobuf:"varint,14,opt,name=public,proto3" json:"public,omitempty"`
 }
 
 func (x *DocumentShort) Reset() {

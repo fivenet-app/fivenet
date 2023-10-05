@@ -190,7 +190,7 @@ onConfirm(async (id: bigint) => deleteDocument(id));
                                     <button
                                         type="button"
                                         @click="toggleDocument(documentId, !doc?.closed)"
-                                        class="inline-flex justify-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
+                                        class="inline-flex items-center justify-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
                                     >
                                         <template v-if="doc?.closed">
                                             <LockOpenVariantIcon class="w-5 h-5 text-success-500" aria-hidden="true" />

@@ -24,6 +24,7 @@ type FivenetJobsRequests struct {
 	CreatorID  *int32     `json:"creator_id"`
 	Approved   *bool      `json:"approved"`
 	ApproverID *int32     `json:"approver_id"`
+	Closed     *bool      `json:"closed"`
 	BeginsAt   *time.Time `json:"begins_at"`
 	EndsAt     *time.Time `json:"ends_at"`
 }
