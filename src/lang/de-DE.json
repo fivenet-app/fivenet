@@ -698,7 +698,13 @@
         "sum": "Summe",
         "avg": "Durchschnitt",
         "read_more": "Mehr Lesen",
-        "read_less": "Weniger Lesen"
+        "read_less": "Weniger Lesen",
+        "request": "Anfrage | Anfragen",
+        "requests": "Keine Anfragen | {n} Anfrage | {n} Anfragen",
+        "begins_at": "Beginnt am",
+        "ends_at": "Endet am",
+        "hide": "Verstecken",
+        "approve": "Genehmigen"
     },
     "notifications": {
         "clipboard": {
