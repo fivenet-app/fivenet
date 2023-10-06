@@ -197,7 +197,9 @@ export const useCentrumStore = defineStore('centrum', {
             }
         },
         handleDispatchAssignment(dispatch: Dispatch): void {
-            if (this.ownUnitId === undefined) return;
+            if (this.ownUnitId === undefined) {
+                return;
+            }
 
             const assignment = dispatch.units.find((u) => u.unitId === this.ownUnitId);
             if (assignment === undefined) {
@@ -335,6 +337,8 @@ export const useCentrumStore = defineStore('centrum', {
                             this.ownDispatches.length = 0;
                             this.pendingDispatches.length = 0;
                         }
+
+                        this.dispatches.forEach((d) => this.handleDispatchAssignment(d));
                     } else if (resp.change.oneofKind === 'unitDeleted') {
                         this.removeUnit(resp.change.unitDeleted);
                     } else if (resp.change.oneofKind === 'unitUpdated') {
