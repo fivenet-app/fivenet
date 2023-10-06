@@ -139,54 +139,58 @@ const filteredDispatches = computed(() => {
                                             <div class="divide-y divide-gray-200 px-4 sm:px-6">
                                                 <div class="mt-1">
                                                     <dl class="border-b border-white/10 divide-y divide-white/10">
-                                                        <DataNoDataBlock
-                                                            v-if="
-                                                                pendingDispatches.length === 0 &&
-                                                                getCurrentMode === CentrumMode.SIMPLIFIED &&
-                                                                dispatches.size === 0
-                                                            "
-                                                            :icon="CarEmergencyIcon"
-                                                            :type="$t('common.dispatch', 2)"
-                                                        />
+                                                        <template v-if="getCurrentMode === CentrumMode.SIMPLIFIED">
+                                                            <DataNoDataBlock
+                                                                v-if="dispatches.size === 0"
+                                                                :icon="CarEmergencyIcon"
+                                                                :type="$t('common.dispatch', 2)"
+                                                            />
+                                                            <template v-else>
+                                                                <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                                                                    <dt class="text-sm font-medium leading-6 text-white">
+                                                                        <div class="flex h-6 items-center">Search</div>
+                                                                    </dt>
+                                                                    <dd
+                                                                        class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
+                                                                    >
+                                                                        <div class="relative flex items-center">
+                                                                            <input
+                                                                                v-model="queryDispatches"
+                                                                                type="text"
+                                                                                name="search"
+                                                                                :placeholder="$t('common.search')"
+                                                                                class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                                            />
+                                                                        </div>
+                                                                    </dd>
+                                                                </div>
 
-                                                        <template v-else-if="getCurrentMode === CentrumMode.SIMPLIFIED">
-                                                            <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                                                <dt class="text-sm font-medium leading-6 text-white">
-                                                                    <div class="flex h-6 items-center">Search</div>
-                                                                </dt>
-                                                                <dd
-                                                                    class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
-                                                                >
-                                                                    <div class="relative flex items-center">
-                                                                        <input
-                                                                            v-model="queryDispatches"
-                                                                            type="text"
-                                                                            name="search"
-                                                                            :placeholder="$t('common.search')"
-                                                                            class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                                        />
-                                                                    </div>
-                                                                </dd>
-                                                            </div>
+                                                                <TakeDispatchEntry
+                                                                    v-for="pd in filteredDispatches"
+                                                                    :dispatch="dispatches.get(pd)!"
+                                                                    :own-unit-id="ownUnitId"
+                                                                    :preselected="false"
+                                                                    @selected="selectDispatch(pd)"
+                                                                    @goto="$emit('goto', $event)"
+                                                                />
+                                                            </template>
+                                                        </template>
 
+                                                        <template v-else>
+                                                            <DataNoDataBlock
+                                                                v-if="pendingDispatches.length === 0"
+                                                                :icon="CarEmergencyIcon"
+                                                                :type="$t('common.dispatch', 2)"
+                                                            />
                                                             <TakeDispatchEntry
-                                                                v-for="pd in filteredDispatches"
+                                                                v-else
+                                                                v-for="pd in pendingDispatches"
                                                                 :dispatch="dispatches.get(pd)!"
                                                                 :own-unit-id="ownUnitId"
-                                                                :preselected="false"
                                                                 @selected="selectDispatch(pd)"
                                                                 @goto="$emit('goto', $event)"
                                                             />
                                                         </template>
-
-                                                        <TakeDispatchEntry
-                                                            v-else
-                                                            v-for="pd in pendingDispatches"
-                                                            :dispatch="dispatches.get(pd)!"
-                                                            :own-unit-id="ownUnitId"
-                                                            @selected="selectDispatch(pd)"
-                                                            @goto="$emit('goto', $event)"
-                                                        />
                                                     </dl>
                                                 </div>
                                             </div>
