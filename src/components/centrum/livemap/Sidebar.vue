@@ -19,6 +19,7 @@ import {
     ToggleSwitchOffIcon,
 } from 'mdi-vue3';
 import { DefineComponent } from 'vue';
+import { default as DispatchStatusUpdateModal } from '~/components/centrum/dispatches/StatusUpdateModal.vue';
 import { dispatchStatusToBGColor, unitStatusToBGColor } from '~/components/centrum/helpers';
 import { default as UnitDetails } from '~/components/centrum/units/Details.vue';
 import { default as UnitStatusUpdateModal } from '~/components/centrum/units/StatusUpdateModal.vue';
@@ -218,6 +219,13 @@ const open = ref(false);
                     :open="openTakeDispatch"
                     @close="openTakeDispatch = false"
                     @goto="$emit('goto', $event)"
+                />
+
+                <DispatchStatusUpdateModal
+                    v-if="selectedDispatch"
+                    :open="openDispatchStatus"
+                    @close="openDispatchStatus = false"
+                    :dispatch-id="selectedDispatch"
                 />
 
                 <div class="h-full flex grow gap-y-5 overflow-y-auto bg-base-600 px-4 py-0.5">

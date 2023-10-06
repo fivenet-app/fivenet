@@ -6,11 +6,11 @@ import { useThrottleFn } from '@vueuse/core';
 import { CloseIcon, LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
-import { Dispatch, StatusDispatch } from '~~/gen/ts/resources/dispatch/dispatches';
+import { StatusDispatch } from '~~/gen/ts/resources/dispatch/dispatches';
 
 const props = defineProps<{
     open: boolean;
-    dispatch: Dispatch;
+    dispatchId: bigint;
     status?: StatusDispatch;
 }>();
 
@@ -20,7 +20,7 @@ const emit = defineEmits<{
 
 const { $grpc } = useNuxtApp();
 
-const status: number = props.status ?? props.dispatch?.status?.status ?? StatusDispatch.NEW;
+const status: number = props.status ?? StatusDispatch.NEW;
 
 const statuses = ref<{ status: StatusDispatch; selected?: boolean }[]>([
     { status: StatusDispatch.EN_ROUTE },
@@ -81,7 +81,7 @@ const { handleSubmit, meta, setFieldValue } = useForm<FormData>({
 const canSubmit = ref(true);
 const onSubmit = handleSubmit(
     async (values): Promise<void> =>
-        await updateDispatchStatus(props.dispatch.id, values).finally(() => setTimeout(() => (canSubmit.value = true), 350)),
+        await updateDispatchStatus(props.dispatchId, values).finally(() => setTimeout(() => (canSubmit.value = true), 350)),
 );
 const onSubmitThrottle = useThrottleFn(async (e) => {
     canSubmit.value = false;
@@ -122,7 +122,7 @@ watch(props, () => {
                                             <div class="flex items-center justify-between">
                                                 <DialogTitle class="inline-flex text-base font-semibold leading-6 text-white">
                                                     {{ $t('components.centrum.update_dispatch_status.title') }}:
-                                                    <IDCopyBadge class="ml-2" :id="dispatch.id" prefix="DSP" />
+                                                    <IDCopyBadge class="ml-2" :id="dispatchId" prefix="DSP" />
                                                 </DialogTitle>
                                                 <div class="ml-3 flex h-7 items-center">
                                                     <button
