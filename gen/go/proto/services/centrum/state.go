@@ -219,6 +219,12 @@ func (s *Server) handleRemovedUserFromUnit(ctx context.Context, user *users.User
 }
 
 func (s *Server) housekeeper() {
+	go s.runHandleDispatchAssignmentExpiration()
+
+	go s.runArchiveDispatches()
+
+	go s.runRemoveDispatchesFromEmptyUnits()
+
 	for {
 		select {
 		case <-s.ctx.Done():
@@ -229,19 +235,64 @@ func (s *Server) housekeeper() {
 				ctx, span := s.tracer.Start(s.ctx, "centrum-housekeeper")
 				defer span.End()
 
+				if err := s.checkIfBotsAreNeeded(ctx); err != nil {
+					s.logger.Error("failed to clean empty units from dispatches", zap.Error(err))
+				}
+			}()
+		}
+	}
+}
+
+func (s *Server) runHandleDispatchAssignmentExpiration() {
+	for {
+		select {
+		case <-s.ctx.Done():
+			return
+
+		case <-time.After(1 * time.Second):
+			func() {
+				ctx, span := s.tracer.Start(s.ctx, "centrum-dispatch-assignment-expiration")
+				defer span.End()
+
 				if err := s.handleDispatchAssignmentExpiration(ctx); err != nil {
 					s.logger.Error("failed to handle expired dispatch assignments", zap.Error(err))
 				}
+			}()
+		}
+	}
+}
+
+func (s *Server) runArchiveDispatches() {
+	for {
+		select {
+		case <-s.ctx.Done():
+			return
+
+		case <-time.After(5 * time.Second):
+			func() {
+				ctx, span := s.tracer.Start(s.ctx, "centrum-dispatch-archival")
+				defer span.End()
 
 				if err := s.archiveDispatches(ctx); err != nil {
 					s.logger.Error("failed to archive dispatches", zap.Error(err))
 				}
+			}()
+		}
+	}
+}
+
+func (s *Server) runRemoveDispatchesFromEmptyUnits() {
+	for {
+		select {
+		case <-s.ctx.Done():
+			return
+
+		case <-time.After(3 * time.Second):
+			func() {
+				ctx, span := s.tracer.Start(s.ctx, "centrum-units-empty")
+				defer span.End()
 
 				if err := s.removeDispatchesFromEmptyUnits(ctx); err != nil {
-					s.logger.Error("failed to clean empty units from dispatches", zap.Error(err))
-				}
-
-				if err := s.checkIfBotsAreNeeded(ctx); err != nil {
 					s.logger.Error("failed to clean empty units from dispatches", zap.Error(err))
 				}
 			}()
