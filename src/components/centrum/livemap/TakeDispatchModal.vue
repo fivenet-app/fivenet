@@ -31,7 +31,8 @@ const queryDispatches = ref('');
 async function takeDispatches(resp: TakeDispatchResp): Promise<void> {
     return new Promise(async (res, rej) => {
         try {
-            if (!canTakeDispatch) return;
+            if (selectedDispatches.value.length === 0) return;
+            if (!canTakeDispatch.value) return;
 
             const call = $grpc.getCentrumClient().takeDispatch({
                 dispatchIds: selectedDispatches.value,
@@ -77,9 +78,8 @@ watch(pendingDispatches.value, () => {
 
 const canTakeDispatch = computed(
     () =>
-        selectedDispatches.value.length > 0 ||
-        pendingDispatches.value.length > 0 ||
-        (getCurrentMode.value === CentrumMode.SIMPLIFIED && dispatches.value.size > 0),
+        selectedDispatches.value.length > 0 &&
+        (pendingDispatches.value.length > 0 || (getCurrentMode.value === CentrumMode.SIMPLIFIED && dispatches.value.size > 0)),
 );
 
 const filteredDispatches = computed(() => {
@@ -141,9 +141,9 @@ const filteredDispatches = computed(() => {
                                                     <dl class="border-b border-white/10 divide-y divide-white/10">
                                                         <DataNoDataBlock
                                                             v-if="
-                                                                pendingDispatches.length === 0 ||
-                                                                (getCurrentMode === CentrumMode.SIMPLIFIED &&
-                                                                    dispatches.size === 0)
+                                                                pendingDispatches.length === 0 &&
+                                                                getCurrentMode === CentrumMode.SIMPLIFIED &&
+                                                                dispatches.size === 0
                                                             "
                                                             :icon="CarEmergencyIcon"
                                                             :type="$t('common.dispatch', 2)"
