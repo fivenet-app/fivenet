@@ -345,8 +345,10 @@ func (s *Server) TakeDispatch(ctx context.Context, req *TakeDispatchRequest) (*T
 			// Set unit expires at to nil
 			for _, ua := range dsp.Units {
 				if ua.UnitId == unit.Id {
+					if ua.ExpiresAt != nil {
+						found = true
+					}
 					ua.ExpiresAt = nil
-					found = true
 					break
 				}
 			}

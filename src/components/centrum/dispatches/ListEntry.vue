@@ -102,10 +102,14 @@ const openMessage = ref(false);
         </td>
         <td class="px-1 py-1 text-sm text-gray-300">
             <p class="break-all" :class="openMessage ? '' : 'max-h-24 max-w-sm'">
-                {{ openMessage ? dispatch.message : dispatch.message.substring(0, 40) + '...' }}
+                {{
+                    openMessage
+                        ? dispatch.message
+                        : dispatch.message.substring(0, 40) + (dispatch.message.length > 40 ? '...' : '')
+                }}
             </p>
             <button
-                v-if="dispatch.message.length > 50"
+                v-if="dispatch.message.length > 40"
                 type="button"
                 @click="openMessage = !openMessage"
                 class="flex justify-center px-1 py-1 text-sm font-semibold transition-colors rounded-md text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 bg-accent-500 hover:bg-accent-400 focus-visible:outline-accent-500"

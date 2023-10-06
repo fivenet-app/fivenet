@@ -85,7 +85,11 @@ func (s *Server) getUnitStatusFromDB(ctx context.Context, job string, id uint64)
 	}
 
 	if dest.UnitId > 0 {
-		dest.Unit, _ = s.getUnit(job, dest.UnitId)
+		unit, ok := s.getUnit(job, dest.UnitId)
+		if ok && unit != nil {
+			newUnit := proto.Clone(unit)
+			dest.Unit = newUnit.(*dispatch.Unit)
+		}
 	}
 
 	return &dest, nil
