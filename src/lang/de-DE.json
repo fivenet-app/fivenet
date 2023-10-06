@@ -445,7 +445,6 @@
             "dispatches": {
                 "feed": {
                     "item": {
-                        "UNSPECIFIED": "Unbekannter Einsatz-Status",
                         "NEW": "Einsatz erstellt",
                         "UNASSIGNED": "Keine Einheiten an Einsatz zugewiesen",
                         "UNIT_ASSIGNED": "Einheit an Einsatz zugewiesen",
@@ -457,7 +456,8 @@
                         "CANCELLED": "Einsatz abgebrochen",
                         "ARCHIVED": "Einsatz archiviert",
                         "UNIT_ACCEPTED": "Einsatz von Einheit akzeptiert",
-                        "UNIT_DECLINED": "Einsatz von Einheit abgelehnt"
+                        "UNIT_DECLINED": "Einsatz von Einheit abgelehnt",
+                        "UNSPECIFIED": "Unbekannter Einsatz-Status"
                     }
                 }
             }
@@ -1348,7 +1348,7 @@
             "ErrPropsWantedDenied": "You are not allowed to set a user wanted status!",
             "ErrPropsJobDenied": "You are not allowed to set a user job!",
             "ErrPropsJobPublic": "You can't set a state job!",
-            "ErrPropsJobInvalid": "Invalid job or job rank set!",
+            "ErrPropsJobInvalid": "Ungültiger Beruf oder Rang gegeben!",
             "ErrPropsTrafficPointsDenied": "You are not allowed to set a user's traffic infraction points!"
         },
         "CompletorService": {
@@ -1366,14 +1366,14 @@
             "ErrDocAccessEditDenied": "Sie haben keine Rechte den Dokumenten Zugriff zu verwalten!",
             "ErrDocAccessViewDenied": "Sie haben keine Rechte die Zugangsinfo des Dokumentes zu sehen!",
             "ErrTemplateFailed": "Fehler beim Laden der Dokumenten Vorlage! Bitte spreche deine Fraktionsführung darauf an.",
-            "ErrDocViewDenied": "You don't have permission to view this document!",
-            "ErrDocUpdateDenied": "You don't have permission to edit this document!",
-            "ErrDocDeleteDenied": "You don't have permission to delete this document!",
-            "ErrDocToggleDenied": "You don't have permission to close/open this document!",
-            "ErrCommentViewDenied": "You don't have permission to view document comments!",
-            "ErrCommentPostDenied": "You don't have permission to post a comment on this document!",
-            "ErrCommentEditDenied": "You don't have permission to edit this comment!",
-            "ErrCommentDeleteDenied": "You can't delete this comment!",
+            "ErrDocViewDenied": "Sie haben keinen Zugriff auf das Dokument!",
+            "ErrDocUpdateDenied": "Sie dürfen das Dokument nicht bearbeiten!",
+            "ErrDocDeleteDenied": "Sie dürfen das Dokument nicht löschen!",
+            "ErrDocToggleDenied": "Sie dürfen das Dokument nicht schließen/öffnen!",
+            "ErrCommentViewDenied": "Sie haben keine Berechtigung Dokumenten Kommentare zu sehen!",
+            "ErrCommentPostDenied": "Sie haben keine Berechtigung Kommentare zu schreiben!",
+            "ErrCommentEditDenied": "Sie haben keine Berechtigung diesen Kommentar zu bearbeiten!",
+            "ErrCommentDeleteDenied": "Sie können den Kommentar nicht löschen!",
             "ErrFeedRefsViewDenied": "You don't have permission to view this document's references!",
             "ErrFeedRelsViewDenied": "You don't have permission to view this document's relations!",
             "ErrFeedRefSelf": "You can't reference a document with itself!",
@@ -1422,6 +1422,9 @@
                 "title": "Interner Serverfehler",
                 "content": "Ein interner Serverfehler ist aufgetreten. Bitte versuchen sie es erneut."
             }
+        },
+        "JobsService": {
+            "ErrFailedQuery": "Fehler beim laden der Berufsdaten!"
         }
     },
     "commandpalette": {
