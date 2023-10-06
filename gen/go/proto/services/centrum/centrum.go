@@ -179,7 +179,7 @@ func (s *Server) loadDataLoop() {
 		select {
 		case <-s.ctx.Done():
 			return
-		case <-time.After(12 * time.Second):
+		case <-time.After(10 * time.Second):
 		}
 	}
 }

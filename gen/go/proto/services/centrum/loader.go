@@ -58,7 +58,12 @@ func (s *Server) loadSettings(ctx context.Context, job string) error {
 	}
 
 	for _, settings := range dest {
-		s.state.Settings.Store(settings.Job, settings)
+		set, ok := s.state.Settings.LoadOrStore(settings.Job, settings)
+		if ok {
+			set.Enabled = settings.Enabled
+			set.Mode = settings.Mode
+			set.FallbackMode = settings.FallbackMode
+		}
 	}
 
 	return nil
