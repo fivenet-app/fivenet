@@ -1417,6 +1417,9 @@
                 "content": "You can't accept/decline completed dispatches."
             }
         },
+        "JobsService": {
+            "ErrFailedQuery": "Failed to get job data!"
+        },
         "general": {
             "internal_error": {
                 "title": "Internal server error",

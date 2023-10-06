@@ -13,8 +13,6 @@ defineProps<{
 async function closeNotification(id: string): Promise<void> {
     removeNotification(id);
 }
-
-// TODO handle parameters starting with `errors.`
 </script>
 
 <template>
