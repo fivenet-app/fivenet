@@ -445,7 +445,6 @@
             "dispatches": {
                 "feed": {
                     "item": {
-                        "UNKNOWN": "Unknown Dispatch Status",
                         "NEW": "Dispatch created",
                         "UNASSIGNED": "No units assigned",
                         "UNIT_ASSIGNED": "Unit assigned to Dispatch",
@@ -457,7 +456,8 @@
                         "CANCELLED": "Dispatch cancelled",
                         "ARCHIVED": "Dispatch archived",
                         "UNIT_ACCEPTED": "Unit accepted Dispatch",
-                        "UNIT_DECLINED": "Unit declined/didn't respond to Dispatch"
+                        "UNIT_DECLINED": "Unit declined/didn't respond to Dispatch",
+                        "UNSPECIFIED": "Unspecified"
                     }
                 }
             }
@@ -759,7 +759,7 @@
         },
         "max_access_entry": {
             "title": "Maximum amount of Access entries exceeded",
-            "content": "There can only be a maximum of {max} access entries on a Document"
+            "content": "There can only be a maximum of {0} access entries on a Document"
         },
         "document_created": {
             "title": "Document created!",
@@ -800,7 +800,7 @@
         "job_switcher": {
             "setjob": {
                 "title": "Job switched",
-                "content": "Your job has been set to {job}."
+                "content": "Your job has been set to {0}."
             }
         },
         "rector": {
@@ -853,12 +853,12 @@
                 },
                 "failed": {
                     "title": "Failed to login using provider",
-                    "content": "Error during social login ({msg}), please try again."
+                    "content": "Error during social login ({0}), please try again."
                 }
             },
             "no_permission": {
                 "title": "You don't have permission!",
-                "content": "No permission to go to {path}."
+                "content": "No permission to go to {0}."
             },
             "oauth2_connect": {
                 "success": {
@@ -873,7 +873,7 @@
         },
         "language_switched": {
             "title": "Language switched",
-            "content": "The language will be switched to {name}."
+            "content": "The language will be switched."
         },
         "penaltycalculator": {
             "title": "Penalty Calculator: Copied to clipboard",
@@ -1417,14 +1417,14 @@
                 "content": "You can't accept/decline completed dispatches."
             }
         },
-        "JobsService": {
-            "ErrFailedQuery": "Failed to get job data!"
-        },
         "general": {
             "internal_error": {
                 "title": "Internal server error",
                 "content": "An internal server error has occured. Please try again."
             }
+        },
+        "JobsService": {
+            "ErrFailedQuery": "Failed to get job data!"
         }
     },
     "commandpalette": {
