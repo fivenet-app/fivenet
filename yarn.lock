@@ -1926,26 +1926,26 @@
     hookable "^5.5.3"
     unhead "1.7.4"
 
-"@vee-validate/i18n@^4.11.7":
-  version "4.11.7"
-  resolved "https://registry.yarnpkg.com/@vee-validate/i18n/-/i18n-4.11.7.tgz#002d8da968392a59198610cb8fe6bc966c7f8ebe"
-  integrity sha512-m648JC3fQTbKAr896UOdNbsGzqlf+F5q+7B44xl7Dd9GO9sr/+ELng00cz9sk0RU1dODoEKq4Md1mkywsTxg5w==
+"@vee-validate/i18n@^4.11.8":
+  version "4.11.8"
+  resolved "https://registry.yarnpkg.com/@vee-validate/i18n/-/i18n-4.11.8.tgz#c7d92871a5e03beb136a5ff215abefc34ee9a3a1"
+  integrity sha512-CGc8vx15KGhQjSAn46AuEhy7cJdC530IfBqBLdw6sXh3PLkGBgry58ThVMLZv7AfYi5Cu9hd0eAlrC3/PNy4Zg==
 
-"@vee-validate/nuxt@^4.11.7":
-  version "4.11.7"
-  resolved "https://registry.yarnpkg.com/@vee-validate/nuxt/-/nuxt-4.11.7.tgz#dae525b60324959d239ef686e6a28a02632e7e80"
-  integrity sha512-dpc/2KAu6DU1B2O/s5JrnynvCyfbAdkb8ufLB+2IzcRp1sT3qcqfhJAkkDKhwtVHos25Sfx5k29EVoqn/EY7cQ==
+"@vee-validate/nuxt@^4.11.8":
+  version "4.11.8"
+  resolved "https://registry.yarnpkg.com/@vee-validate/nuxt/-/nuxt-4.11.8.tgz#85f331a82bb1b84da600539b74f6c073cb5ae939"
+  integrity sha512-5wcL2jC/urOA5OMLXDB81kWt3mxRqmtanI+KobIP3Avw/JdpZczV6FML4FL/feWeX7RqTPuv9r7xMR9Mff67lw==
   dependencies:
     "@nuxt/kit" "^3.7.3"
     local-pkg "^0.4.3"
-    vee-validate "4.11.7"
+    vee-validate "4.11.8"
 
-"@vee-validate/rules@^4.11.7":
-  version "4.11.7"
-  resolved "https://registry.yarnpkg.com/@vee-validate/rules/-/rules-4.11.7.tgz#8ebad53022b40a0aaa6c90db985f4ca6bbb4a30d"
-  integrity sha512-XPsh+5f7DZmJQAI2AhCvBeDATve+zZt0q0194p0Wwk2MeqAo+vmThduesmiiUwQw1MUebKOuZcTjtujPcfB8cg==
+"@vee-validate/rules@^4.11.8":
+  version "4.11.8"
+  resolved "https://registry.yarnpkg.com/@vee-validate/rules/-/rules-4.11.8.tgz#07220de864e6fc2c03686bbacfec718ca312ffc8"
+  integrity sha512-0qpYMCylja/bKe5VXBXLdCceJNz5PDcD1LN0ukh28MVWCDT/RE6d/laUE1LyXXwJwVTFLOvfz2ynoeatj+LLNg==
   dependencies:
-    vee-validate "4.11.7"
+    vee-validate "4.11.8"
 
 "@vercel/nft@^0.23.1":
   version "0.23.1"
@@ -7552,10 +7552,10 @@ safe-buffer@~5.1.0, safe-buffer@~5.1.1:
   resolved "https://registry.yarnpkg.com/safer-buffer/-/safer-buffer-2.1.2.tgz#44fa161b0187b9549dd84bb91802f9bd8385cd6a"
   integrity sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==
 
-sass@^1.68.0:
-  version "1.68.0"
-  resolved "https://registry.yarnpkg.com/sass/-/sass-1.68.0.tgz#0034b0cc9a50248b7d1702ac166fd25990023669"
-  integrity sha512-Lmj9lM/fef0nQswm1J2HJcEsBUba4wgNx2fea6yJHODREoMFnwRpZydBnX/RjyXw2REIwdkbqE4hrTo4qfDBUA==
+sass@^1.69.0:
+  version "1.69.0"
+  resolved "https://registry.yarnpkg.com/sass/-/sass-1.69.0.tgz#5195075371c239ed556280cf2f5944d234f42679"
+  integrity sha512-l3bbFpfTOGgQZCLU/gvm1lbsQ5mC/WnLz3djL2v4WCJBDrWm58PO+jgngcGRNnKUh6wSsdm50YaovTqskZ0xDQ==
   dependencies:
     chokidar ">=3.0.0 <4.0.0"
     immutable "^4.0.0"
@@ -8540,10 +8540,10 @@ vary@^1.1.2:
   resolved "https://registry.yarnpkg.com/vary/-/vary-1.1.2.tgz#2299f02c6ded30d4a5961b0b9f74524a18f634fc"
   integrity sha512-BNGbWLfd0eUPabhkXUVm0j8uuvREyTh5ovRa/dyow/BqAbZJyC+5fU+IzQOzmAKzYqYRAISoRhdQr3eIZ/PXqg==
 
-vee-validate@4.11.7, vee-validate@^4.11.7:
-  version "4.11.7"
-  resolved "https://registry.yarnpkg.com/vee-validate/-/vee-validate-4.11.7.tgz#eb928ddfc9cf97bbca94cba0fcab3d17babccbea"
-  integrity sha512-HWnZgOY02mPuAQheaVcKZwahC879YsGNRW4/kkjxeOJ3wu1oruEeomuk+ovCyxTPQoAl1WPHurVJKL1yPGd/WQ==
+vee-validate@4.11.8, vee-validate@^4.11.8:
+  version "4.11.8"
+  resolved "https://registry.yarnpkg.com/vee-validate/-/vee-validate-4.11.8.tgz#396b00c247af65714926a53a2e7e5e76725d1b92"
+  integrity sha512-ZuVpw0axWYBM3aVTD/bm94hcWHumqeUgNjptOqfBT0gyqyHaGYCrm0tSD/0bygEbWUDwEPJOQaEKaUGM82j8TQ==
   dependencies:
     "@vue/devtools-api" "^6.5.0"
     type-fest "^4.3.1"
