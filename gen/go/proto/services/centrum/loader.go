@@ -7,6 +7,7 @@ import (
 
 	dispatch "github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
 	users "github.com/galexrt/fivenet/gen/go/proto/resources/users"
+	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
@@ -311,6 +312,18 @@ func (s *Server) loadDispatches(ctx context.Context, id uint64) error {
 			// Alawys clear dispatch creator's job info
 			dispatches[i].Creator.Job = ""
 			dispatches[i].Creator.JobGrade = 0
+		}
+
+		if dispatches[i].Postal == nil {
+			postal := s.postals.Closest(dispatches[i].X, dispatches[i].Y)
+			dispatches[i].Postal = postal.Code
+
+			if err := s.updateDispatch(ctx, &userinfo.UserInfo{
+				UserId: *dispatches[i].CreatorId,
+				Job:    dispatches[i].Job,
+			}, dispatches[i]); err != nil {
+				return err
+			}
 		}
 
 		s.getDispatchesMap(dispatches[i].Job).Store(dispatches[i].Id, dispatches[i])

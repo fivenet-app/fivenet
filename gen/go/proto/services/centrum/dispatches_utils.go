@@ -6,6 +6,7 @@ import (
 
 	dispatch "github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/timestamp"
+	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/pkg/utils/dbutils"
 	"github.com/galexrt/fivenet/query/fivenet/table"
@@ -88,6 +89,42 @@ func (s *Server) getDispatchStatusFromDB(ctx context.Context, job string, id uin
 	}
 
 	return &dest, nil
+}
+
+func (s *Server) updateDispatch(ctx context.Context, userInfo *userinfo.UserInfo, dsp *dispatch.Dispatch) error {
+	stmt := tDispatch.
+		UPDATE(
+			tDispatch.Job,
+			tDispatch.Message,
+			tDispatch.Description,
+			tDispatch.Attributes,
+			tDispatch.X,
+			tDispatch.Y,
+			tDispatch.Postal,
+			tDispatch.Anon,
+			tDispatch.CreatorID,
+		).
+		SET(
+			userInfo.Job,
+			dsp.Message,
+			dsp.Description,
+			dsp.Attributes,
+			dsp.X,
+			dsp.Y,
+			dsp.Postal,
+			dsp.Anon,
+			userInfo.UserId,
+		).
+		WHERE(jet.AND(
+			tDispatch.Job.EQ(jet.String(userInfo.Job)),
+			tDispatch.ID.EQ(jet.Uint64(dsp.Id)),
+		))
+
+	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (s *Server) addDispatchStatus(ctx context.Context, tx qrm.DB, status *dispatch.DispatchStatus) error {

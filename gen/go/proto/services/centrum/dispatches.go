@@ -206,41 +206,13 @@ func (s *Server) UpdateDispatch(ctx context.Context, req *UpdateDispatchRequest)
 	}
 	defer s.auditer.Log(auditEntry, req)
 
-	stmt := tDispatch.
-		UPDATE(
-			tDispatch.Job,
-			tDispatch.Message,
-			tDispatch.Description,
-			tDispatch.Attributes,
-			tDispatch.X,
-			tDispatch.Y,
-			tDispatch.Postal,
-			tDispatch.Anon,
-			tDispatch.CreatorID,
-		).
-		SET(
-			userInfo.Job,
-			req.Dispatch.Message,
-			req.Dispatch.Description,
-			req.Dispatch.Attributes,
-			req.Dispatch.X,
-			req.Dispatch.Y,
-			req.Dispatch.Postal,
-			req.Dispatch.Anon,
-			userInfo.UserId,
-		).
-		WHERE(jet.AND(
-			tDispatch.Job.EQ(jet.String(userInfo.Job)),
-			tDispatch.ID.EQ(jet.Uint64(req.Dispatch.Id)),
-		))
-
-	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return nil, err
+	if err := s.updateDispatch(ctx, userInfo, req.Dispatch); err != nil {
+		return nil, ErrFailedQuery
 	}
 
 	// Load dispatch into cache
 	if err := s.loadDispatches(ctx, req.Dispatch.Id); err != nil {
-		return nil, err
+		return nil, ErrFailedQuery
 	}
 
 	dsp, ok := s.getDispatch(userInfo.Job, req.Dispatch.Id)
@@ -250,7 +222,7 @@ func (s *Server) UpdateDispatch(ctx context.Context, req *UpdateDispatchRequest)
 
 	data, err := proto.Marshal(dsp)
 	if err != nil {
-		return nil, err
+		return nil, ErrFailedQuery
 	}
 	s.events.JS.PublishAsync(buildSubject(TopicDispatch, TypeDispatchUpdated, userInfo.Job, 0), data)
 	for _, unit := range dsp.Units {
