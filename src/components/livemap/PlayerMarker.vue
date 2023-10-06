@@ -10,9 +10,11 @@ const props = withDefaults(
         marker: UserMarker;
         activeChar: null | User;
         size?: number;
+        showUnitNames?: boolean;
     }>(),
     {
         size: 20,
+        showUnitNames: false,
     },
 );
 
@@ -20,14 +22,21 @@ defineEmits<{
     (e: 'selected'): void;
 }>();
 
-if (props.activeChar !== null && props.marker.user?.userId === props.activeChar.userId) {
-    props.marker.info!.color = 'FCAB10';
+function updateMarkerColor(): void {
+    if (props.activeChar !== null && props.marker.user?.userId === props.activeChar.userId) {
+        props.marker.info!.color = 'FCAB10';
+    }
 }
+
+watch(props, () => updateMarkerColor());
+
+updateMarkerColor();
 
 const inverseColor = computed(() => hexToRgb(props.marker.unit?.color ?? '#000000') ?? ({ r: 0, g: 0, b: 0 } as RGB));
 
-const iconAnchor: L.PointExpression = [props.size / 2, props.size / 1];
-const popupAnchor: L.PointExpression = [0.5, (props.size / 2) * -1];
+const hasUnit = computed(() => props.showUnitNames && props.marker.unit !== undefined);
+const iconAnchor = computed<L.PointExpression | undefined>(() => [props.size / 2, props.size * (hasUnit.value ? 1.8 : 0.95)]);
+const popupAnchor: L.PointExpression = [0, -(props.size * 1.7)];
 </script>
 
 <template>
@@ -39,9 +48,9 @@ const popupAnchor: L.PointExpression = [0.5, (props.size / 2) * -1];
         :z-index-offset="activeChar && marker.user?.identifier === activeChar.identifier ? 25 : 20"
     >
         <LIcon :icon-anchor="iconAnchor" :popup-anchor="popupAnchor" :icon-size="[size, size]">
-            <div class="uppercase flex flex-col items-center dsp-status-error">
+            <div class="uppercase flex flex-col items-center">
                 <span
-                    v-if="marker.unit"
+                    v-if="showUnitNames && marker.unit"
                     class="rounded-md border-2 border-black/20 bg-clip-padding focus:outline-none inset-0 whitespace-nowrap"
                     :class="isColourBright(inverseColor) ? 'text-black' : 'text-white'"
                     :style="{ backgroundColor: '#' + props.marker.unit?.color ?? '000000' }"

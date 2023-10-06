@@ -14,10 +14,10 @@ withDefaults(
     defineProps<{
         centerSelectedMarker?: boolean;
         filterPlayers?: boolean;
+        showUnitNames?: boolean;
     }>(),
     {
         centerSelectedMarker: true,
-        filterPlayers: true,
     },
 );
 
@@ -66,6 +66,7 @@ onBeforeUnmount(async () => {
             :active-char="activeChar"
             @selected="$emit('userSelected', marker)"
             :size="livemap.markerSize"
+            :show-unit-names="showUnitNames || livemap.showUnitNames"
         />
     </LLayerGroup>
 

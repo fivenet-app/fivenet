@@ -6,6 +6,7 @@ export interface SettingsState {
     livemap: {
         markerSize: number;
         centerSelectedMarker: boolean;
+        showUnitNames: boolean;
     };
     startpage: string;
 }
@@ -18,6 +19,7 @@ export const useSettingsStore = defineStore('settings', {
             livemap: {
                 markerSize: 22,
                 centerSelectedMarker: false,
+                showUnitNames: false,
             },
             startpage: '/overview',
         }) as SettingsState,

@@ -20,8 +20,8 @@ const emit = defineEmits<{
     (e: 'selected', dsp: Dispatch): void;
 }>();
 
-const iconAnchor: L.PointExpression = [props.size / 1.5, props.size / 0.525];
-const popupAnchor: L.PointExpression = [-2.75, (props.size / 2) * -1.75];
+const iconAnchor: L.PointExpression = [props.size / 2, props.size * 1.65];
+const popupAnchor: L.PointExpression = [0, -(props.size * 1.7)];
 
 function selected(_: bigint | string) {
     emit('selected', props.dispatch);
@@ -38,7 +38,7 @@ const dispatchStatusColors = computed(() => {
 <template>
     <LMarker :key="dispatch.id?.toString()" :latLng="[dispatch.y, dispatch.x]" :name="dispatch.message" :z-index-offset="15">
         <LIcon :icon-anchor="iconAnchor" :popup-anchor="popupAnchor" :icon-size="[size, size]">
-            <div class="uppercase flex flex-col items-center dsp-status-error">
+            <div class="uppercase flex flex-col items-center">
                 <span
                     class="rounded-md bg-white text-black border-2 border-black/20 bg-clip-padding hover:bg-[#f4f4f4] focus:outline-none inset-0 whitespace-nowrap"
                 >

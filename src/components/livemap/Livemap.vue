@@ -19,6 +19,7 @@ import Settings from './controls/Settings.vue';
 
 defineProps<{
     mapOptions?: Record<string, any>;
+    showUnitNames?: boolean;
 }>();
 
 const { t } = useI18n();
@@ -114,6 +115,7 @@ async function applySelectedMarkerCentering(): Promise<void> {
                 <PlayerAndMarkersLayer
                     v-if="can('LivemapperService.Stream')"
                     @user-selected="selectedUserMarker = $event.info"
+                    :show-unit-names="showUnitNames"
                 />
 
                 <slot />

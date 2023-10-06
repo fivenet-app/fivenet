@@ -87,6 +87,20 @@ const { livemap } = storeToRefs(settingsStore);
                                                 />
                                                 <span class="text-sm mr-2 text-gray-300">{{ livemap.markerSize }}</span>
                                             </div>
+                                            <div class="flex-1 form-control">
+                                                <label
+                                                    for="showUnitNames"
+                                                    class="block text-sm font-medium leading-6 text-neutral"
+                                                >
+                                                    {{ $t('components.livemap.show_unit_names') }}
+                                                </label>
+                                                <input
+                                                    v-model="livemap.showUnitNames"
+                                                    class="my-auto"
+                                                    name="showUnitNames"
+                                                    type="checkbox"
+                                                />
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
