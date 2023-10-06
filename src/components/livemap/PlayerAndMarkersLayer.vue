@@ -18,6 +18,7 @@ withDefaults(
     }>(),
     {
         centerSelectedMarker: true,
+        filterPlayers: true,
     },
 );
 
