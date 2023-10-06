@@ -33,7 +33,7 @@ const openSettings = ref(false);
 </script>
 
 <template>
-    <CreateOrUpdateUnitModal v-if="open" :open="open" @close="open = false" @refresh="refresh()" />
+    <CreateOrUpdateUnitModal v-if="open" :open="open" @close="open = false" @update="refresh()" />
     <SettingsModal :open="openSettings" @close="openSettings = false" />
 
     <div class="py-2">
@@ -93,7 +93,12 @@ const openSettings = ref(false);
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-base-800">
-                                    <ListEntry v-for="unit in units" :unit="unit" :key="unit.id?.toString()" />
+                                    <ListEntry
+                                        v-for="unit in units"
+                                        :unit="unit"
+                                        :key="unit.id?.toString()"
+                                        @update="refresh()"
+                                    />
                                 </tbody>
                                 <thead>
                                     <tr>

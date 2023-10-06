@@ -14,7 +14,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
     (e: 'close'): void;
-    (e: 'refresh'): void;
+    (e: 'update'): void;
 }>();
 
 const { $grpc } = useNuxtApp();
@@ -42,7 +42,7 @@ async function createOrUpdateUnit(values: FormData): Promise<void> {
                 props.unit.description = values.description;
             }
 
-            emit('refresh');
+            emit('update');
             emit('close');
 
             return res();

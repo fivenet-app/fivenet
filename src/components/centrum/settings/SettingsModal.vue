@@ -17,7 +17,7 @@ const emit = defineEmits<{
 
 const { $grpc } = useNuxtApp();
 
-const { data: settings, pending, refresh, error } = useLazyAsyncData('rector-centrum-settings', () => getCentrumSettings());
+const { data: settings, refresh } = useLazyAsyncData('rector-centrum-settings', () => getCentrumSettings());
 
 async function getCentrumSettings(): Promise<Settings> {
     return new Promise(async (res, rej) => {
@@ -39,20 +39,6 @@ const modes = ref<{ mode: CentrumMode; selected?: boolean }[]>([
     { mode: CentrumMode.CENTRAL_COMMAND },
     { mode: CentrumMode.AUTO_ROUND_ROBIN },
 ]);
-
-function setSettingsValues(): void {
-    if (!settings.value) return;
-
-    setValues({
-        enabled: settings.value.enabled,
-        mode: settings.value.mode,
-        fallbackMode: settings.value.fallbackMode,
-    });
-}
-
-watch(settings, () => {
-    setSettingsValues();
-});
 
 async function createOrUpdateUnit(values: FormData): Promise<void> {
     return new Promise(async (res, rej) => {
@@ -93,6 +79,22 @@ const { handleSubmit, meta, setValues } = useForm<FormData>({
     },
     validateOnMount: true,
 });
+
+function setSettingsValues(): void {
+    if (!settings.value) return;
+
+    setValues({
+        enabled: settings.value.enabled,
+        mode: settings.value.mode,
+        fallbackMode: settings.value.fallbackMode,
+    });
+}
+
+watch(settings, () => {
+    setSettingsValues();
+});
+
+setSettingsValues();
 
 const canSubmit = ref(true);
 const onSubmit = handleSubmit(

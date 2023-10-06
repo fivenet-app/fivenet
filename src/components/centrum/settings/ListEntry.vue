@@ -10,6 +10,10 @@ defineProps<{
     unit: Unit;
 }>();
 
+const emits = defineEmits<{
+    (e: 'update'): void;
+}>();
+
 const { $grpc } = useNuxtApp();
 
 async function deleteUnit(id: bigint): Promise<void> {
@@ -19,6 +23,8 @@ async function deleteUnit(id: bigint): Promise<void> {
                 unitId: id,
             });
             await call;
+
+            emits('update');
 
             return res();
         } catch (e) {
