@@ -35,6 +35,13 @@ async function createOrUpdateUnit(values: FormData): Promise<void> {
             });
             await call;
 
+            if (props.unit) {
+                props.unit.name = values.name;
+                props.unit.initials = values.initials;
+                props.unit.color = values.color.replaceAll('#', '');
+                props.unit.description = values.description;
+            }
+
             emit('refresh');
             emit('close');
 

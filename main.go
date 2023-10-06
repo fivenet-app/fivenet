@@ -29,6 +29,7 @@ import (
 	// GRPC Services
 	pbauth "github.com/galexrt/fivenet/gen/go/proto/services/auth"
 	pbcentrum "github.com/galexrt/fivenet/gen/go/proto/services/centrum"
+	"github.com/galexrt/fivenet/gen/go/proto/services/centrum/state"
 	pbcitizenstore "github.com/galexrt/fivenet/gen/go/proto/services/citizenstore"
 	pbcompletor "github.com/galexrt/fivenet/gen/go/proto/services/completor"
 	pbdmv "github.com/galexrt/fivenet/gen/go/proto/services/dmv"
@@ -57,6 +58,7 @@ func main() {
 		perms.Module,
 		events.Module,
 		audit.Module,
+		state.StateModule,
 
 		fx.Provide(
 			mstlystcdata.NewCache,

@@ -7,6 +7,7 @@ import (
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/livemap"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/users"
+	"github.com/galexrt/fivenet/gen/go/proto/services/centrum/state"
 	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/tracker/postals"
@@ -49,6 +50,7 @@ type Tracker struct {
 	db       *sql.DB
 	enricher *mstlystcdata.Enricher
 	postals  *postals.Postals
+	state    *state.State
 
 	usersCache *xsync.MapOf[string, *xsync.MapOf[int32, *livemap.UserMarker]]
 	usersIDs   *xsync.MapOf[int32, *UserInfo]
@@ -70,6 +72,7 @@ type Params struct {
 	Enricher *mstlystcdata.Enricher
 	Postals  *postals.Postals
 	Config   *config.Config
+	State    *state.State
 }
 
 func New(p Params) *Tracker {
@@ -84,6 +87,7 @@ func New(p Params) *Tracker {
 		db:       p.DB,
 		enricher: p.Enricher,
 		postals:  p.Postals,
+		state:    p.State,
 
 		usersCache: xsync.NewMapOf[*xsync.MapOf[int32, *livemap.UserMarker]](),
 		usersIDs:   xsync.NewIntegerMapOf[int32, *UserInfo](),
@@ -174,6 +178,7 @@ func (s *Tracker) refreshUserLocations(ctx context.Context) error {
 			tLocs.X,
 			tLocs.Y,
 			tLocs.UpdatedAt,
+			tUsers.ID.AS("usermarker.userid"),
 			tUsers.ID.AS("user.id"),
 			tUsers.ID.AS("markerInfo.id"),
 			tUsers.Identifier,
@@ -215,16 +220,29 @@ func (s *Tracker) refreshUserLocations(ctx context.Context) error {
 		if _, ok := markers[job]; !ok {
 			markers[job] = xsync.NewIntegerMapOf[int32, *livemap.UserMarker]()
 		}
+
 		if dest[i].Info.Color == nil {
 			defaultColor := users.DefaultLivemapMarkerColor
 			dest[i].Info.Color = &defaultColor
 		}
+
 		postal := s.postals.Closest(dest[i].Info.X, dest[i].Info.Y)
 		if postal != nil {
 			dest[i].Info.Postal = postal.Code
 		}
 
 		userId := dest[i].User.UserId
+
+		unitId, ok := s.state.UserIDToUnitID.Load(userId)
+		if ok {
+			dest[i].UnitId = &unitId
+			if units, ok := s.state.Units.Load(job); ok {
+				if unit, ok := units.Load(unitId); ok {
+					dest[i].Unit = unit
+				}
+			}
+		}
+
 		markers[job].Store(userId, dest[i])
 
 		userInfo := &UserInfo{

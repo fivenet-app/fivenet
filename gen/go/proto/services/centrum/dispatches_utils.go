@@ -290,8 +290,7 @@ func (s *Server) updateDispatchAssignments(ctx context.Context, job string, user
 					}
 
 					dsp.Units = utils.RemoveFromSlice(dsp.Units, i)
-
-					break
+					continue
 				}
 			}
 		}

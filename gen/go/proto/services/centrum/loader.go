@@ -13,7 +13,7 @@ import (
 )
 
 func (s *Server) loadData() error {
-	ctx, span := s.tracer.Start(s.ctx, "centrum-initial-cache")
+	ctx, span := s.tracer.Start(s.ctx, "centrum-loaddata")
 	defer span.End()
 
 	if err := s.loadSettings(ctx, ""); err != nil {

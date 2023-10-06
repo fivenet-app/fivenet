@@ -40,7 +40,7 @@ const open = ref(false);
 
     <CreateOrUpdateUnitModal v-if="can('CentrumService.CreateOrUpdateUnit')" :unit="unit" :open="open" @close="open = false" />
 
-    <tr :key="unit.id?.toString()">
+    <tr>
         <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">
             {{ unit.name }}
         </td>

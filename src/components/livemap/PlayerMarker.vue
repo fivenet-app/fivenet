@@ -1,6 +1,7 @@
 <script lang="ts" setup>
-import { LMarker, LPopup } from '@vue-leaflet/vue-leaflet';
+import { LIcon, LMarker, LPopup } from '@vue-leaflet/vue-leaflet';
 import L from 'leaflet';
+import { MapMarkerIcon } from 'mdi-vue3';
 import { UserMarker } from '~~/gen/ts/resources/livemap/livemap';
 import { User } from '~~/gen/ts/resources/users/users';
 
@@ -23,20 +24,10 @@ if (props.activeChar !== null && props.marker.user?.userId === props.activeChar.
     props.marker.info!.color = 'FCAB10';
 }
 
-const iconAnchor: L.PointExpression = [props.size / 2, props.size];
-const popupAnchor: L.PointExpression = [0, (props.size / 2) * -1];
-const icon = new L.DivIcon({
-    html: `<div>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -0.8 16 17.6" fill="${
-            props.marker.info?.color ? '#' + props.marker.info?.color : 'currentColor'
-        }" class="w-full h-full">
-                <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/>
-            </svg>
-        </div>`,
-    iconSize: [props.size, props.size],
-    iconAnchor,
-    popupAnchor,
-}) as L.Icon;
+const inverseColor = computed(() => hexToRgb(props.marker.unit?.color ?? '#000000') ?? ({ r: 0, g: 0, b: 0 } as RGB));
+
+const iconAnchor: L.PointExpression = [props.size / 2, props.size / 1];
+const popupAnchor: L.PointExpression = [0.5, (props.size / 2) * -1];
 </script>
 
 <template>
@@ -44,16 +35,39 @@ const icon = new L.DivIcon({
         :key="marker.info!.id?.toString()"
         :latLng="[marker.info!.y, marker.info!.x]"
         :name="marker.info!.name"
-        :icon="icon"
         @click="$emit('selected')"
         :z-index-offset="activeChar && marker.user?.identifier === activeChar.identifier ? 25 : 20"
     >
+        <LIcon :icon-anchor="iconAnchor" :popup-anchor="popupAnchor" :icon-size="[size, size]">
+            <div class="uppercase flex flex-col items-center dsp-status-error">
+                <span
+                    v-if="marker.unit"
+                    class="rounded-md border-2 border-black/20 bg-clip-padding focus:outline-none inset-0 whitespace-nowrap"
+                    :class="isColourBright(inverseColor) ? 'text-black' : 'text-white'"
+                    :style="{ backgroundColor: '#' + props.marker.unit?.color ?? '000000' }"
+                >
+                    {{ marker.unit?.initials }}
+                </span>
+                <MapMarkerIcon class="w-full h-full" :style="{ color: '#' + props.marker.info?.color ?? '000000' }" />
+            </div>
+        </LIcon>
         <LPopup :options="{ closeButton: true }">
             <span class="font-semibold">{{ $t('common.employee', 2) }} {{ marker.user?.jobLabel }} </span>
-            <br />
-            <span class="italic">[{{ marker.user?.jobGrade }}] {{ marker.user?.jobGradeLabel }}</span>
-            <br />
-            {{ marker.user?.firstname }} {{ marker.user?.lastname }}
+            <ul role="list" class="flex flex-col">
+                <li>
+                    <span class="font-semibold"> {{ $t('common.name') }} </span>: {{ marker.user?.firstname }}
+                    {{ marker.user?.lastname }}
+                </li>
+                <li>
+                    <span class="font-semibold"> {{ $t('common.rank') }} </span>: {{ marker.user?.jobGradeLabel }} ({{
+                        marker.user?.jobGrade
+                    }})
+                </li>
+                <li v-if="marker.unit">
+                    <span class="font-semibold">{{ $t('common.unit') }}</span
+                    >: {{ marker.unit.name }} ({{ marker.unit.initials }})
+                </li>
+            </ul>
         </LPopup>
     </LMarker>
 </template>

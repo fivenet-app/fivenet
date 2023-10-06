@@ -15,15 +15,6 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-type state struct {
-	Settings   *xsync.MapOf[string, *dispatch.Settings]
-	Disponents *xsync.MapOf[string, []*users.UserShort]
-	Units      *xsync.MapOf[string, *xsync.MapOf[uint64, *dispatch.Unit]]
-	Dispatches *xsync.MapOf[string, *xsync.MapOf[uint64, *dispatch.Dispatch]]
-
-	UserIDToUnitID *xsync.MapOf[int32, uint64]
-}
-
 func (s *Server) watchStateEvents() error {
 	msgCh := make(chan *nats.Msg, 256)
 

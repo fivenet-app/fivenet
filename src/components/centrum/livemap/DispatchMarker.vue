@@ -20,8 +20,8 @@ const emit = defineEmits<{
     (e: 'selected', dsp: Dispatch): void;
 }>();
 
-const iconAnchor: L.PointExpression | undefined = undefined;
-const popupAnchor: L.PointExpression = [0, (props.size / 2) * -1];
+const iconAnchor: L.PointExpression = [props.size / 1.5, props.size / 0.525];
+const popupAnchor: L.PointExpression = [-2.75, (props.size / 2) * -1.75];
 
 function selected(_: bigint | string) {
     emit('selected', props.dispatch);
@@ -49,7 +49,7 @@ const dispatchStatusColors = computed(() => {
         </LIcon>
         <LPopup :options="{ closeButton: true }">
             <IDCopyBadge class="mb-1" prefix="DSP" :id="dispatch.id" :action="selected" />
-            <ul class="flex flex-col">
+            <ul role="list" class="flex flex-col">
                 <li>
                     <span class="font-semibold">{{ $t('common.status') }}</span
                     >:

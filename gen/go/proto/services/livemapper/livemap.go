@@ -35,9 +35,7 @@ var (
 )
 
 var (
-	tLocs     = table.FivenetUserLocations
-	tUsers    = table.Users.AS("user")
-	tJobProps = table.FivenetJobProps
+	tUsers = table.Users.AS("user")
 )
 
 type Server struct {
@@ -53,7 +51,6 @@ type Server struct {
 	auditer  audit.IAuditer
 
 	markersCache *xsync.MapOf[string, []*livemap.Marker]
-	usersCache   *xsync.MapOf[string, []*livemap.UserMarker]
 
 	broker *utils.Broker[interface{}]
 
@@ -92,7 +89,6 @@ func NewServer(p Params) *Server {
 		auditer:  p.Audit,
 
 		markersCache: xsync.NewMapOf[[]*livemap.Marker](),
-		usersCache:   xsync.NewMapOf[[]*livemap.UserMarker](),
 
 		broker: broker,
 
@@ -130,9 +126,6 @@ func (s *Server) refreshCache() {
 	ctx, span := s.tracer.Start(s.ctx, "livemap-refresh-cache")
 	defer span.End()
 
-	if err := s.refreshUserLocations(ctx); err != nil {
-		s.logger.Error("failed to refresh livemap users cache", zap.Error(err))
-	}
 	if err := s.refreshMarkers(ctx); err != nil {
 		s.logger.Error("failed to refresh livemap markers cache", zap.Error(err))
 	}
@@ -234,6 +227,7 @@ func (s *Server) getUserLocations(jobs map[string]int32, userInfo *userinfo.User
 	if userInfo.SuperUser {
 		found = true
 	}
+
 	for job, grade := range jobs {
 		markers, ok := s.tracker.GetUsers(job)
 		if !ok {
@@ -260,67 +254,6 @@ func (s *Server) getUserLocations(jobs map[string]int32, userInfo *userinfo.User
 	}
 
 	return nil, false, nil
-}
-
-func (s *Server) refreshUserLocations(ctx context.Context) error {
-	markers := map[string][]*livemap.UserMarker{}
-
-	tLocs := tLocs.AS("markerInfo")
-	stmt := tLocs.
-		SELECT(
-			tLocs.Identifier,
-			tLocs.Job,
-			tLocs.X,
-			tLocs.Y,
-			tLocs.UpdatedAt,
-			tUsers.ID.AS("markerInfo.id"),
-			tUsers.ID.AS("usermarker.user_id"),
-			tUsers.ID.AS("user.id"),
-			tUsers.Identifier,
-			tUsers.Job,
-			tUsers.JobGrade,
-			tUsers.Firstname,
-			tUsers.Lastname,
-			tJobProps.LivemapMarkerColor.AS("markerInfo.color"),
-		).
-		FROM(
-			tLocs.
-				INNER_JOIN(tUsers,
-					tLocs.Identifier.EQ(tUsers.Identifier),
-				).
-				LEFT_JOIN(tJobProps,
-					tJobProps.Job.EQ(tUsers.Job),
-				),
-		).
-		WHERE(jet.AND(
-			tLocs.Hidden.IS_FALSE(),
-			tLocs.UpdatedAt.GT_EQ(jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(4, jet.HOUR))),
-		))
-
-	var dest []*livemap.UserMarker
-	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
-		return err
-	}
-
-	for i := 0; i < len(dest); i++ {
-		s.enricher.EnrichJobInfo(dest[i].User)
-
-		job := dest[i].User.Job
-		if _, ok := markers[job]; !ok {
-			markers[job] = []*livemap.UserMarker{}
-		}
-		if dest[i].Info.Color == nil {
-			defaultColor := users.DefaultLivemapMarkerColor
-			dest[i].Info.Color = &defaultColor
-		}
-
-		markers[job] = append(markers[job], dest[i])
-	}
-	for job, v := range markers {
-		s.usersCache.Store(job, v)
-	}
-
-	return nil
 }
 
 func (s *Server) getMarkers(jobs []string) ([]*livemap.Marker, error) {

@@ -9,7 +9,7 @@ import (
 
 	dispatch "github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
-	users "github.com/galexrt/fivenet/gen/go/proto/resources/users"
+	"github.com/galexrt/fivenet/gen/go/proto/services/centrum/state"
 	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/events"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
@@ -22,7 +22,6 @@ import (
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	"github.com/nats-io/nats.go"
-	"github.com/puzpuzpuz/xsync/v2"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
@@ -64,7 +63,7 @@ type Server struct {
 	visibleJobs []string
 	convertJobs []string
 
-	state *state
+	state *state.State
 
 	botManager *Bot
 }
@@ -84,19 +83,11 @@ type Params struct {
 	Tracker  *tracker.Tracker
 	Postals  *postals.Postals
 	Config   *config.Config
+	State    *state.State
 }
 
 func NewServer(p Params) (*Server, error) {
 	ctx, cancel := context.WithCancel(context.Background())
-
-	state := &state{
-		Settings:   xsync.NewMapOf[*dispatch.Settings](),
-		Disponents: xsync.NewMapOf[[]*users.UserShort](),
-		Units:      xsync.NewMapOf[*xsync.MapOf[uint64, *dispatch.Unit]](),
-		Dispatches: xsync.NewMapOf[*xsync.MapOf[uint64, *dispatch.Dispatch]](),
-
-		UserIDToUnitID: xsync.NewIntegerMapOf[int32, uint64](),
-	}
 
 	s := &Server{
 		ctx:    ctx,
@@ -116,9 +107,9 @@ func NewServer(p Params) (*Server, error) {
 		visibleJobs: p.Config.Game.Livemap.Jobs,
 		convertJobs: p.Config.Game.DispatchCenter.ConvertJobs,
 
-		state: state,
+		state: p.State,
 
-		botManager: NewBotManager(ctx, state, p.Events),
+		botManager: NewBotManager(ctx, p.State, p.Events),
 	}
 
 	p.LC.Append(fx.StartHook(func(_ context.Context) error {

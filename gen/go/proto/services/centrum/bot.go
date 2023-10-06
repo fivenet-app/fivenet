@@ -4,6 +4,7 @@ import (
 	"context"
 	"sync"
 
+	"github.com/galexrt/fivenet/gen/go/proto/services/centrum/state"
 	"github.com/galexrt/fivenet/pkg/events"
 )
 
@@ -14,10 +15,10 @@ type Bot struct {
 	bots   map[string]context.CancelFunc
 	events *events.Eventus
 
-	state *state
+	state *state.State
 }
 
-func NewBotManager(ctx context.Context, state *state, eventus *events.Eventus) *Bot {
+func NewBotManager(ctx context.Context, state *state.State, eventus *events.Eventus) *Bot {
 	return &Bot{
 		ctx:    ctx,
 		mutex:  sync.RWMutex{},

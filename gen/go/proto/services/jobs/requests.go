@@ -3,7 +3,6 @@ package jobs
 import (
 	"context"
 	"errors"
-	"fmt"
 
 	database "github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
 	jobs "github.com/galexrt/fivenet/gen/go/proto/resources/jobs"
@@ -526,7 +525,6 @@ func (s *Server) RequestsDeleteComment(ctx context.Context, req *RequestsDeleteC
 			tReqComments.ID.EQ(jet.Uint64(req.Id)),
 		)).
 		LIMIT(1)
-	fmt.Println(stmt.DebugSql())
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 		return nil, ErrFailedQuery

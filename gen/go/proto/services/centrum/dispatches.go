@@ -314,11 +314,14 @@ func (s *Server) TakeDispatch(ctx context.Context, req *TakeDispatchRequest) (*T
 			}
 
 			found := false
+			accepted := true
 			// Set unit expires at to nil
 			for _, ua := range dsp.Units {
 				if ua.UnitId == unit.Id {
+					found = true
+					// If there's no expiration time the unit has been directly assigned
 					if ua.ExpiresAt == nil {
-						found = true
+						accepted = false
 					}
 					ua.ExpiresAt = nil
 					break
@@ -332,7 +335,9 @@ func (s *Server) TakeDispatch(ctx context.Context, req *TakeDispatchRequest) (*T
 					Unit:       unit,
 					CreatedAt:  timestamp.Now(),
 				})
+			}
 
+			if accepted {
 				// Set unit to busy when unit accepts a dispatch
 				if unit.Status == nil || unit.Status.Status != dispatch.StatusUnit_STATUS_UNIT_BUSY {
 					if err := s.updateUnitStatus(ctx, userInfo.Job, unit, &dispatch.UnitStatus{
