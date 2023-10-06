@@ -367,7 +367,8 @@
             "update_marker": {
                 "title": "Markierung aktualisieren",
                 "sub_title": "Existierende Markierung aktualisieren."
-            }
+            },
+            "show_unit_names": "Zeige Einheiten Namen (gilt nur für Livemap)"
         },
         "rector": {
             "job_props": {
