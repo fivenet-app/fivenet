@@ -29,7 +29,7 @@
         "@vee-validate/rules": "^4.11.8",
         "@vue-leaflet/vue-leaflet": "0.10.1",
         "@vueup/vue-quill": "^1.2.0",
-        "@vueuse/core": "^10.4.1",
+        "@vueuse/core": "^10.5.0",
         "@xeger/quill-image-actions": "^0.7.1",
         "@xeger/quill-image-formats": "^0.7.1",
         "@zxcvbn-ts/core": "^3.0.4",
