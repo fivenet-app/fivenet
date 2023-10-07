@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import { Pane, Splitpanes } from 'splitpanes';
+import 'splitpanes/dist/splitpanes.css';
 import { default as DispatchesList } from '~/components/centrum/dispatches/List.vue';
 import { default as UnitsList } from '~/components/centrum/units/List.vue';
 import Livemap from '~/components/livemap/Livemap.vue';
@@ -33,8 +35,20 @@ function goto(e: Coordinate) {
 }
 </script>
 
+<style>
+.splitpanes--vertical > .splitpanes__splitter {
+    min-width: 3px;
+    background-color: #898d9b;
+}
+
+.splitpanes--horizontal > .splitpanes__splitter {
+    min-height: 3px;
+    background-color: #898d9b;
+}
+</style>
+
 <template>
-    <div class="flex-col h-full relative">
+    <div class="h-full w-full">
         <div
             v-if="error !== undefined || (abort === undefined && !restarting)"
             class="absolute inset-0 flex justify-center items-center z-20 bg-gray-600/70"
@@ -49,40 +63,38 @@ function goto(e: Coordinate) {
                 :message="$t('components.centrum.dispatch_center.starting_datastream')"
             />
         </div>
-
-        <div class="relative w-full h-full z-0 flex">
-            <!-- Left column -->
-            <div class="flex flex-col basis-1/3 divide-x divide-x-reverse divide-base-400 divide-y divide-base-400">
-                <div class="basis-11/12">
-                    <Livemap :show-unit-names="true">
-                        <template v-slot:default>
-                            <DispatchesLayer
-                                v-if="can('CentrumService.Stream')"
-                                :show-all-dispatches="true"
-                                @goto="goto($event)"
-                            />
-                        </template>
-                    </Livemap>
-                </div>
-                <div class="basis-1/12">
-                    <DisponentsInfo :class="!isDisponent ? 'z-50' : ''" />
-                </div>
-            </div>
-
-            <!-- Right column -->
-            <div class="flex flex-col basis-2/3 divide-y divide-base-400">
-                <div class="basis-[55%] max-h-[55%]">
-                    <DispatchesList @goto="goto($event)" />
-                </div>
-
-                <div class="basis-[32%] max-h-[32%]">
-                    <UnitsList @goto="goto($event)" />
-                </div>
-
-                <div class="basis-[13%] max-h-[13%]">
-                    <Feed :items="feed" />
-                </div>
-            </div>
-        </div>
+        <Splitpanes v-else class="h-full w-full">
+            <Pane min-size="25">
+                <Splitpanes horizontal>
+                    <Pane min-size="80">
+                        <Livemap :show-unit-names="true">
+                            <template v-slot:default>
+                                <DispatchesLayer
+                                    v-if="can('CentrumService.Stream')"
+                                    :show-all-dispatches="true"
+                                    @goto="goto($event)"
+                                />
+                            </template>
+                        </Livemap>
+                    </Pane>
+                    <Pane size="10">
+                        <DisponentsInfo :class="!isDisponent ? 'z-50' : ''" />
+                    </Pane>
+                </Splitpanes>
+            </Pane>
+            <Pane>
+                <Splitpanes horizontal>
+                    <Pane size="55">
+                        <DispatchesList @goto="goto($event)" />
+                    </Pane>
+                    <Pane size="33">
+                        <UnitsList @goto="goto($event)" />
+                    </Pane>
+                    <Pane size="12">
+                        <Feed :items="feed" />
+                    </Pane>
+                </Splitpanes>
+            </Pane>
+        </Splitpanes>
     </div>
 </template>

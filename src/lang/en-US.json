@@ -1256,6 +1256,35 @@
                     "Own": "Own",
                     "All": "All"
                 }
+            },
+            "RequestsCreateEntry": {
+                "key": "Requests: Create Request",
+                "description": ""
+            },
+            "RequestsCreateOrUpdateType": {
+                "key": "Requests: Create and update Request Types",
+                "description": ""
+            },
+            "RequestsDeleteEntry": {
+                "key": "Requests: Delete Entry",
+                "description": ""
+            },
+            "RequestsDeleteType": {
+                "key": "Requests: Delete Request Types",
+                "description": ""
+            },
+            "RequestsListEntries": {
+                "key": "Requests: List Requests",
+                "description": "",
+                "attrs": {}
+            },
+            "RequestsUpdateEntry": {
+                "key": "Requests: Update Request",
+                "description": ""
+            },
+            "RequestsDeleteComment": {
+                "key": "Requests: Delete Comment",
+                "description": ""
             }
         }
     },

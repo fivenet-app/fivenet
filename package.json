@@ -22,7 +22,8 @@
         "@protobuf-ts/grpcweb-transport": "^2.9.1",
         "@protobuf-ts/plugin": "^2.9.1",
         "@types/leaflet": "^1.9.6",
-        "@types/uuid": "^9.0.4",
+        "@types/splitpanes": "^2.2.2",
+        "@types/uuid": "^9.0.5",
         "@vee-validate/i18n": "^4.11.8",
         "@vee-validate/nuxt": "^4.11.8",
         "@vee-validate/rules": "^4.11.8",
@@ -47,6 +48,7 @@
         "quill-magic-url": "^4.2.0",
         "quill-paste-smart": "^1.4.12",
         "slugify": "^1.6.6",
+        "splitpanes": "^3.1.5",
         "uuid": "^9.0.1",
         "vee-validate": "^4.11.8",
         "vue": "^3.3.4",
@@ -63,7 +65,7 @@
         "@tailwindcss/typography": "^0.5.10",
         "@total-typescript/ts-reset": "^0.5.1",
         "@types/google-protobuf": "^3.15.7",
-        "@types/node": "^20.8.2",
+        "@types/node": "^20.8.3",
         "@types/zxcvbn": "^4.4.2",
         "@unhead/vue": "^1.7.4",
         "@vitejs/plugin-vue": "^4.4.0",
@@ -71,7 +73,7 @@
         "@vueuse/sound": "^2.0.1",
         "autoprefixer": "^10.4.16",
         "cssnano": "^6.0.1",
-        "eslint": "^8.50.0",
+        "eslint": "^8.51.0",
         "eslint-plugin-vue": "^9.17.0",
         "nuxi": "^3.9.0",
         "nuxt": "^3.7.4",
@@ -87,6 +89,6 @@
         "typescript": "^5.2.2",
         "vite": "^4.4.11",
         "vite-plugin-mkcert": "^1.16.0",
-        "vue-tsc": "^1.8.15"
+        "vue-tsc": "^1.8.16"
     }
 }
