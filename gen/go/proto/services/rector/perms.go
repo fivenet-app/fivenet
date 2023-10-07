@@ -272,15 +272,17 @@ func (s *Server) CreateRole(ctx context.Context, req *CreateRoleRequest) (*Creat
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	// Make sure the user is from the job
-	if req.Job != userInfo.Job {
-		return nil, ErrInvalidRequest
-	}
-	if req.Grade > userInfo.JobGrade {
-		return nil, ErrInvalidRequest
+	// Make sure the user is from the job or is a super user
+	if !userInfo.SuperUser {
+		if req.Job != userInfo.Job {
+			return nil, ErrInvalidRequest
+		}
+		if req.Grade > userInfo.JobGrade {
+			return nil, ErrInvalidRequest
+		}
 	}
 
-	role, err := s.ps.GetRoleByJobAndGrade(ctx, userInfo.Job, req.Grade)
+	role, err := s.ps.GetRoleByJobAndGrade(ctx, req.Job, req.Grade)
 	if err != nil {
 		if !errors.Is(qrm.ErrNoRows, err) {
 			return nil, ErrFailedQuery
@@ -290,7 +292,7 @@ func (s *Server) CreateRole(ctx context.Context, req *CreateRoleRequest) (*Creat
 		return nil, ErrRoleAlreadyExists
 	}
 
-	cr, err := s.ps.CreateRole(ctx, userInfo.Job, req.Grade)
+	cr, err := s.ps.CreateRole(ctx, req.Job, req.Grade)
 	if err != nil {
 		return nil, ErrFailedQuery
 	}

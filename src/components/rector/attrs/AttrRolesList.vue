@@ -97,8 +97,8 @@ onBeforeMount(async () => await listJobs());
                             <form @submit.prevent="createRole()">
                                 <div class="flex flex-row gap-4 mx-auto">
                                     <div class="flex-1 form-control">
-                                        <label for="grade" class="block text-sm font-medium leading-6 text-neutral">
-                                            {{ $t('common.job_grade') }}
+                                        <label for="job" class="block text-sm font-medium leading-6 text-neutral">
+                                            {{ $t('common.job') }}
                                         </label>
                                         <Combobox
                                             as="div"
@@ -112,7 +112,7 @@ onBeforeMount(async () => await listJobs());
                                                         class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                         @change="queryJobRaw = $event.target.value"
                                                         :display-value="
-                                                            (grade: any) => (grade ? `${grade?.label} (${grade?.grade})` : '')
+                                                            (job: any) => (job ? `${job?.label} (${job?.name})` : '')
                                                         "
                                                     />
                                                 </ComboboxButton>
@@ -126,7 +126,7 @@ onBeforeMount(async () => await listJobs());
                                                         )"
                                                         :key="job.name"
                                                         :value="job"
-                                                        as="grade"
+                                                        as="job"
                                                         v-slot="{ active, selected }"
                                                     >
                                                         <li
