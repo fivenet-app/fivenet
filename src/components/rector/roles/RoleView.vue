@@ -9,7 +9,6 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import Divider from '~/components/partials/elements/Divider.vue';
 import RoleViewAttr from '~/components/rector/roles/RoleViewAttr.vue';
-import { useCompletorStore } from '~/store/completor';
 import { useNotificatorStore } from '~/store/notificator';
 import { AttributeValues, Permission, Role, RoleAttribute } from '~~/gen/ts/resources/permissions/permissions';
 import { AttrsUpdate, PermItem, PermsUpdate } from '~~/gen/ts/services/rector/rector';
@@ -25,10 +24,6 @@ const emit = defineEmits<{
 const { $grpc } = useNuxtApp();
 
 const notifications = useNotificatorStore();
-
-const completorStore = useCompletorStore();
-const { jobs } = storeToRefs(completorStore);
-const { listJobs } = completorStore;
 
 const {
     data: role,
@@ -51,6 +46,7 @@ async function getRole(id: bigint): Promise<Role> {
         try {
             const call = $grpc.getRectorClient().getRole({
                 id: id,
+                filtered: true,
             });
             const { response } = await call;
 
@@ -91,6 +87,7 @@ async function getPermissions(roleId: bigint): Promise<void> {
         try {
             const call = $grpc.getRectorClient().getPermissions({
                 roleId: roleId,
+                filtered: true,
             });
             const { response } = await call;
 
@@ -235,8 +232,13 @@ function clearState(): void {
 async function initializeRoleView(): Promise<void> {
     clearState();
 
-    await Promise.allSettled([getPermissions(props.roleId), listJobs()]);
+    await getPermissions(props.roleId);
     await propogatePermissionStates();
+
+    attrStates.value.clear();
+    attrList.value.forEach((attr) => {
+        attrStates.value.set(attr.attrId, attr.value);
+    });
 
     role.value?.attributes.forEach((attr) => {
         attrStates.value.set(attr.attrId, attr.value);
@@ -269,7 +271,7 @@ onConfirm(async (id) => deleteRole(id));
             <div v-else>
                 <h2 class="text-3xl text-white" :title="`ID: ${role.id}`">
                     {{ role?.jobLabel! }} - {{ role?.jobGradeLabel }} ({{ role.grade }})
-                    <button v-if="can('RectorService.DeleteRole')" type="button" @click="reveal()">
+                    <button v-if="can('RectorService.DeleteRole')" type="button" @click="reveal()" class="ml-1">
                         <TrashCanIcon class="w-6 h-6 mx-auto text-neutral" />
                     </button>
                 </h2>
@@ -323,7 +325,7 @@ onConfirm(async (id) => deleteRole(id));
                                 >
                                     <div class="flex flex-row gap-4">
                                         <div class="flex flex-1 flex-col my-auto">
-                                            <span class="truncate">
+                                            <span class="truncate" :title="`${$t('common.id')}: ${perm.id.toString()}`">
                                                 {{ $t(`perms.${perm.category}.${perm.name}.key`) }}
                                             </span>
                                             <span class="text-base-500 truncate">
@@ -365,7 +367,6 @@ onConfirm(async (id) => deleteRole(id));
                                         v-model:states="attrStates"
                                         @changed="changed = true"
                                         :disabled="permStates.get(perm.id) !== true"
-                                        :jobs="jobs"
                                     />
                                     <div
                                         v-if="idx !== permList.filter((p) => p.category === category).length - 1"

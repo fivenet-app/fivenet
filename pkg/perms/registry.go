@@ -9,8 +9,10 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/permissions"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/users"
 	"github.com/galexrt/fivenet/pkg/perms/helpers"
+	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
+	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"golang.org/x/exp/slices"
 )
@@ -200,7 +202,9 @@ func (p *Perms) cleanupRoles(ctx context.Context) error {
 
 	var dest []*users.Job
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
-		return err
+		if !errors.Is(qrm.ErrNoRows, err) {
+			return err
+		}
 	}
 	jobName := DefaultRoleJob
 	jobGrade := DefaultRoleJobGrade
@@ -243,6 +247,104 @@ func (p *Perms) cleanupRoles(ctx context.Context) error {
 	for i := 0; i < len(existingRoles); i++ {
 		if err := p.DeleteRole(ctx, existingRoles[i]); err != nil {
 			return err
+		}
+	}
+
+	return nil
+}
+
+func (p *Perms) getActiveJobs(ctx context.Context) ([]string, error) {
+	stmt := tRoles.
+		SELECT(
+			tRoles.Job,
+		).
+		FROM(tRoles).
+		WHERE(
+			tRoles.Job.NOT_EQ(jet.String(DefaultRoleJob)),
+		).
+		GROUP_BY(tRoles.Job)
+
+	var dest []string
+	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
+		if !errors.Is(qrm.ErrNoRows, err) {
+			return nil, err
+		}
+	}
+
+	return dest, nil
+}
+
+func (p *Perms) ApplyJobPermissions(ctx context.Context, job string) error {
+	jobs := []string{}
+	if job != "" {
+		jobs = append(jobs, job)
+	} else {
+		var err error
+		jobs, err = p.getActiveJobs(ctx)
+		if err != nil {
+			return err
+		}
+	}
+
+	for _, job := range jobs {
+		if err := p.applyJobPermissions(ctx, job); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (p *Perms) applyJobPermissions(ctx context.Context, job string) error {
+	roles, err := p.GetJobRoles(ctx, job)
+	if err != nil {
+		return err
+	}
+
+	if len(roles) == 0 {
+		return nil
+	}
+
+	jps, err := p.GetJobPermissions(ctx, job)
+	if err != nil {
+		return err
+	}
+
+	for _, role := range roles {
+		ps, err := p.GetRolePermissions(ctx, role.ID)
+		if err != nil {
+			return err
+		}
+
+		if len(ps) == 0 {
+			continue
+		}
+
+		if len(jps) == 0 {
+			pIds := []uint64{}
+			for _, p := range ps {
+				pIds = append(pIds, p.Id)
+			}
+
+			if err := p.RemovePermissionsFromRole(ctx, role.ID, pIds...); err != nil {
+				return err
+			}
+			continue
+		}
+
+		toRemove := []uint64{}
+		for _, p := range ps {
+			if !utils.InSliceFunc(jps, func(in *permissions.Permission) bool {
+				return in.Id == p.Id && in.Val
+			}) {
+				toRemove = append(toRemove, p.Id)
+			}
+		}
+
+		if len(toRemove) > 0 {
+			if p.RemovePermissionsFromRole(ctx, role.ID, toRemove...); err != nil {
+				return err
+			}
 		}
 	}
 

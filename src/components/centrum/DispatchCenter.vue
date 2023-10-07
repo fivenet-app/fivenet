@@ -48,7 +48,7 @@ function goto(e: Coordinate) {
 </style>
 
 <template>
-    <div class="h-full w-full">
+    <div class="relative h-full w-full">
         <div
             v-if="error !== undefined || (abort === undefined && !restarting)"
             class="absolute inset-0 flex justify-center items-center z-20 bg-gray-600/70"
@@ -77,20 +77,20 @@ function goto(e: Coordinate) {
                             </template>
                         </Livemap>
                     </Pane>
-                    <Pane size="10">
+                    <Pane min-size="8" size="8">
                         <DisponentsInfo :class="!isDisponent ? 'z-50' : ''" />
                     </Pane>
                 </Splitpanes>
             </Pane>
             <Pane>
                 <Splitpanes horizontal>
-                    <Pane size="55">
+                    <Pane size="55" min-size="2">
                         <DispatchesList @goto="goto($event)" />
                     </Pane>
-                    <Pane size="33">
+                    <Pane size="33" min-size="2">
                         <UnitsList @goto="goto($event)" />
                     </Pane>
-                    <Pane size="12">
+                    <Pane size="12" min-size="2">
                         <Feed :items="feed" />
                     </Pane>
                 </Splitpanes>

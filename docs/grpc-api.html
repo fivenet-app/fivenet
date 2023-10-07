@@ -247,6 +247,25 @@
         
           
           <li>
+            <a href="#resources%2fdispatch%2fsettings.proto">resources/dispatch/settings.proto</a>
+            <ul>
+              
+                <li>
+                  <a href="#resources.dispatch.Settings"><span class="badge">M</span>Settings</a>
+                </li>
+              
+              
+                <li>
+                  <a href="#resources.dispatch.CentrumMode"><span class="badge">E</span>CentrumMode</a>
+                </li>
+              
+              
+              
+            </ul>
+          </li>
+        
+          
+          <li>
             <a href="#resources%2fdispatch%2fdispatches.proto">resources/dispatch/dispatches.proto</a>
             <ul>
               
@@ -273,25 +292,6 @@
               
                 <li>
                   <a href="#resources.dispatch.StatusDispatch"><span class="badge">E</span>StatusDispatch</a>
-                </li>
-              
-              
-              
-            </ul>
-          </li>
-        
-          
-          <li>
-            <a href="#resources%2fdispatch%2fsettings.proto">resources/dispatch/settings.proto</a>
-            <ul>
-              
-                <li>
-                  <a href="#resources.dispatch.Settings"><span class="badge">M</span>Settings</a>
-                </li>
-              
-              
-                <li>
-                  <a href="#resources.dispatch.CentrumMode"><span class="badge">E</span>CentrumMode</a>
                 </li>
               
               
@@ -347,13 +347,13 @@
         
           
           <li>
-            <a href="#resources%2fdocuments%2faccess.proto">resources/documents/access.proto</a>
+            <a href="#resources%2fdocuments%2fcomment.proto">resources/documents/comment.proto</a>
             <ul>
               
-              
                 <li>
-                  <a href="#resources.documents.AccessLevel"><span class="badge">E</span>AccessLevel</a>
+                  <a href="#resources.documents.Comment"><span class="badge">M</span>Comment</a>
                 </li>
+              
               
               
               
@@ -362,13 +362,13 @@
         
           
           <li>
-            <a href="#resources%2fdocuments%2fcomment.proto">resources/documents/comment.proto</a>
+            <a href="#resources%2fdocuments%2faccess.proto">resources/documents/access.proto</a>
             <ul>
               
-                <li>
-                  <a href="#resources.documents.Comment"><span class="badge">M</span>Comment</a>
-                </li>
               
+                <li>
+                  <a href="#resources.documents.AccessLevel"><span class="badge">E</span>AccessLevel</a>
+                </li>
               
               
               
@@ -2264,6 +2264,155 @@
     
       
       <div class="file-heading">
+        <h2 id="resources/dispatch/settings.proto">resources/dispatch/settings.proto</h2><a href="#title">Top</a>
+      </div>
+      <p></p>
+
+      
+        <h3 id="resources.dispatch.Settings">Settings</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>job</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>enabled</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>mode</td>
+                  <td><a href="#resources.dispatch.CentrumMode">CentrumMode</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>fallback_mode</td>
+                  <td><a href="#resources.dispatch.CentrumMode">CentrumMode</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+            
+            
+            <h4>Validated Fields</h4>
+            <table>
+              <thead>
+                <tr>
+                  <td>Field</td>
+                  <td>Validations</td>
+                </tr>
+              </thead>
+              <tbody>
+              
+                <tr>
+                  <td>job</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.max_len: 20</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>mode</td>
+                  <td>
+                    <ul>
+                    
+                      <li>enum.defined_only: true</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>fallback_mode</td>
+                  <td>
+                    <ul>
+                    
+                      <li>enum.defined_only: true</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+              </tbody>
+            </table>
+            
+          
+
+        
+      
+
+      
+        <h3 id="resources.dispatch.CentrumMode">CentrumMode</h3>
+        <p></p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Name</td><td>Number</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>CENTRUM_MODE_UNSPECIFIED</td>
+                <td>0</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>CENTRUM_MODE_MANUAL</td>
+                <td>1</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>CENTRUM_MODE_CENTRAL_COMMAND</td>
+                <td>2</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>CENTRUM_MODE_AUTO_ROUND_ROBIN</td>
+                <td>3</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>CENTRUM_MODE_SIMPLIFIED</td>
+                <td>4</td>
+                <td><p></p></td>
+              </tr>
+            
+          </tbody>
+        </table>
+      
+
+      
+
+      
+    
+      
+      <div class="file-heading">
         <h2 id="resources/dispatch/dispatches.proto">resources/dispatch/dispatches.proto</h2><a href="#title">Top</a>
       </div>
       <p></p>
@@ -2873,155 +3022,6 @@
               <tr>
                 <td>STATUS_DISPATCH_ARCHIVED</td>
                 <td>13</td>
-                <td><p></p></td>
-              </tr>
-            
-          </tbody>
-        </table>
-      
-
-      
-
-      
-    
-      
-      <div class="file-heading">
-        <h2 id="resources/dispatch/settings.proto">resources/dispatch/settings.proto</h2><a href="#title">Top</a>
-      </div>
-      <p></p>
-
-      
-        <h3 id="resources.dispatch.Settings">Settings</h3>
-        <p></p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>job</td>
-                  <td><a href="#string">string</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>enabled</td>
-                  <td><a href="#bool">bool</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>mode</td>
-                  <td><a href="#resources.dispatch.CentrumMode">CentrumMode</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>fallback_mode</td>
-                  <td><a href="#resources.dispatch.CentrumMode">CentrumMode</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-            
-            
-            <h4>Validated Fields</h4>
-            <table>
-              <thead>
-                <tr>
-                  <td>Field</td>
-                  <td>Validations</td>
-                </tr>
-              </thead>
-              <tbody>
-              
-                <tr>
-                  <td>job</td>
-                  <td>
-                    <ul>
-                    
-                      <li>string.max_len: 20</li>
-                    
-                    </ul>
-                  </td>
-                </tr>
-              
-                <tr>
-                  <td>mode</td>
-                  <td>
-                    <ul>
-                    
-                      <li>enum.defined_only: true</li>
-                    
-                    </ul>
-                  </td>
-                </tr>
-              
-                <tr>
-                  <td>fallback_mode</td>
-                  <td>
-                    <ul>
-                    
-                      <li>enum.defined_only: true</li>
-                    
-                    </ul>
-                  </td>
-                </tr>
-              
-              </tbody>
-            </table>
-            
-          
-
-        
-      
-
-      
-        <h3 id="resources.dispatch.CentrumMode">CentrumMode</h3>
-        <p></p>
-        <table class="enum-table">
-          <thead>
-            <tr><td>Name</td><td>Number</td><td>Description</td></tr>
-          </thead>
-          <tbody>
-            
-              <tr>
-                <td>CENTRUM_MODE_UNSPECIFIED</td>
-                <td>0</td>
-                <td><p></p></td>
-              </tr>
-            
-              <tr>
-                <td>CENTRUM_MODE_MANUAL</td>
-                <td>1</td>
-                <td><p></p></td>
-              </tr>
-            
-              <tr>
-                <td>CENTRUM_MODE_CENTRAL_COMMAND</td>
-                <td>2</td>
-                <td><p></p></td>
-              </tr>
-            
-              <tr>
-                <td>CENTRUM_MODE_AUTO_ROUND_ROBIN</td>
-                <td>3</td>
-                <td><p></p></td>
-              </tr>
-            
-              <tr>
-                <td>CENTRUM_MODE_SIMPLIFIED</td>
-                <td>4</td>
                 <td><p></p></td>
               </tr>
             
@@ -3682,73 +3682,6 @@
     
       
       <div class="file-heading">
-        <h2 id="resources/documents/access.proto">resources/documents/access.proto</h2><a href="#title">Top</a>
-      </div>
-      <p></p>
-
-      
-
-      
-        <h3 id="resources.documents.AccessLevel">AccessLevel</h3>
-        <p></p>
-        <table class="enum-table">
-          <thead>
-            <tr><td>Name</td><td>Number</td><td>Description</td></tr>
-          </thead>
-          <tbody>
-            
-              <tr>
-                <td>ACCESS_LEVEL_UNSPECIFIED</td>
-                <td>0</td>
-                <td><p></p></td>
-              </tr>
-            
-              <tr>
-                <td>ACCESS_LEVEL_BLOCKED</td>
-                <td>1</td>
-                <td><p></p></td>
-              </tr>
-            
-              <tr>
-                <td>ACCESS_LEVEL_VIEW</td>
-                <td>2</td>
-                <td><p></p></td>
-              </tr>
-            
-              <tr>
-                <td>ACCESS_LEVEL_COMMENT</td>
-                <td>3</td>
-                <td><p></p></td>
-              </tr>
-            
-              <tr>
-                <td>ACCESS_LEVEL_STATUS</td>
-                <td>4</td>
-                <td><p></p></td>
-              </tr>
-            
-              <tr>
-                <td>ACCESS_LEVEL_ACCESS</td>
-                <td>5</td>
-                <td><p></p></td>
-              </tr>
-            
-              <tr>
-                <td>ACCESS_LEVEL_EDIT</td>
-                <td>6</td>
-                <td><p></p></td>
-              </tr>
-            
-          </tbody>
-        </table>
-      
-
-      
-
-      
-    
-      
-      <div class="file-heading">
         <h2 id="resources/documents/comment.proto">resources/documents/comment.proto</h2><a href="#title">Top</a>
       </div>
       <p></p>
@@ -3857,6 +3790,73 @@
         
       
 
+      
+
+      
+
+      
+    
+      
+      <div class="file-heading">
+        <h2 id="resources/documents/access.proto">resources/documents/access.proto</h2><a href="#title">Top</a>
+      </div>
+      <p></p>
+
+      
+
+      
+        <h3 id="resources.documents.AccessLevel">AccessLevel</h3>
+        <p></p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Name</td><td>Number</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>ACCESS_LEVEL_UNSPECIFIED</td>
+                <td>0</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>ACCESS_LEVEL_BLOCKED</td>
+                <td>1</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>ACCESS_LEVEL_VIEW</td>
+                <td>2</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>ACCESS_LEVEL_COMMENT</td>
+                <td>3</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>ACCESS_LEVEL_STATUS</td>
+                <td>4</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>ACCESS_LEVEL_ACCESS</td>
+                <td>5</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>ACCESS_LEVEL_EDIT</td>
+                <td>6</td>
+                <td><p></p></td>
+              </tr>
+            
+          </tbody>
+        </table>
       
 
       
@@ -18045,6 +18045,13 @@
                   <td><p> </p></td>
                 </tr>
               
+                <tr>
+                  <td>filtered</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
             </tbody>
           </table>
 
@@ -18097,6 +18104,13 @@
                   <td>id</td>
                   <td><a href="#uint64">uint64</a></td>
                   <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>filtered</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td>optional</td>
                   <td><p> </p></td>
                 </tr>
               
@@ -18290,9 +18304,16 @@
                 </tr>
               
                 <tr>
+                  <td>perms</td>
+                  <td><a href="#services.rector.PermsUpdate">PermsUpdate</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
                   <td>attrs</td>
                   <td><a href="#services.rector.AttrsUpdate">AttrsUpdate</a></td>
-                  <td></td>
+                  <td>optional</td>
                   <td><p> </p></td>
                 </tr>
               

@@ -1,18 +1,24 @@
 <script lang="ts" setup>
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
-import { ChevronDownIcon } from 'mdi-vue3';
+import { useConfirmDialog } from '@vueuse/core';
+import { CheckIcon, ChevronDownIcon, CloseIcon, TrashCanIcon } from 'mdi-vue3';
+import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import Divider from '~/components/partials/elements/Divider.vue';
 import { useNotificatorStore } from '~/store/notificator';
 import { AttributeValues, Permission, Role, RoleAttribute } from '~~/gen/ts/resources/permissions/permissions';
-import { AttrsUpdate } from '~~/gen/ts/services/rector/rector';
+import { AttrsUpdate, PermItem, PermsUpdate } from '~~/gen/ts/services/rector/rector';
 import AttrViewAttr from './AttrViewAttr.vue';
 
 const props = defineProps<{
     roleId: bigint;
+}>();
+
+const emit = defineEmits<{
+    (e: 'deleted'): void;
 }>();
 
 const { $grpc } = useNuxtApp();
@@ -24,12 +30,13 @@ const {
     pending,
     refresh,
     error,
-} = useLazyAsyncData(`rector-attrs-${props.roleId.toString()}`, () => getRole(props.roleId));
+} = useLazyAsyncData(`rector-roles-${props.roleId.toString()}`, () => getRole(props.roleId));
 
 const changed = ref(false);
 
 const permList = ref<Permission[]>([]);
 const permCategories = ref<Set<string>>(new Set());
+const permStates = ref<Map<bigint, boolean | undefined>>(new Map());
 
 const attrList = ref<RoleAttribute[]>([]);
 const attrStates = ref<Map<bigint, AttributeValues | undefined>>(new Map());
@@ -39,6 +46,7 @@ async function getRole(id: bigint): Promise<Role> {
         try {
             const call = $grpc.getRectorClient().getRole({
                 id: id,
+                filtered: false,
             });
             const { response } = await call;
 
@@ -52,11 +60,34 @@ async function getRole(id: bigint): Promise<Role> {
     });
 }
 
+async function deleteRole(id: bigint): Promise<void> {
+    return new Promise(async (res, rej) => {
+        try {
+            await $grpc.getRectorClient().deleteRole({
+                id: id,
+            });
+
+            notifications.dispatchNotification({
+                title: { key: 'notifications.rector.role_deleted.title', parameters: {} },
+                content: { key: 'notifications.rector.role_deleted.content', parameters: {} },
+                type: 'success',
+            });
+
+            emit('deleted');
+            return res();
+        } catch (e) {
+            $grpc.handleError(e as RpcError);
+            return rej(e as RpcError);
+        }
+    });
+}
+
 async function getPermissions(roleId: bigint): Promise<void> {
     return new Promise(async (res, rej) => {
         try {
             const call = $grpc.getRectorClient().getPermissions({
                 roleId: roleId,
+                filtered: false,
             });
             const { response } = await call;
 
@@ -77,31 +108,61 @@ async function genPermissionCategories(): Promise<void> {
     permCategories.value.clear();
 
     permList.value.forEach((perm) => {
-        if (attrList.value.filter((a) => a.permissionId === perm.id).length > 0) {
-            permCategories.value.add(perm.category);
-        }
+        permCategories.value.add(perm.category);
     });
 }
 
-async function updateAttrs(): Promise<void> {
+async function propogatePermissionStates(): Promise<void> {
+    permStates.value.clear();
+
+    role.value?.permissions.forEach((perm) => {
+        permStates.value.set(perm.id, Boolean(perm.val));
+    });
+}
+
+async function updatePermissionState(perm: bigint, state: boolean | undefined): Promise<void> {
+    changed.value = true;
+    permStates.value.set(perm, state);
+}
+
+async function updatePermissions(): Promise<void> {
     return new Promise(async (res, rej) => {
+        const currentPermissions = role.value?.permissions.map((p) => p.id) ?? [];
+
+        const perms: PermsUpdate = {
+            toRemove: [],
+            toUpdate: [],
+        };
+        permStates.value.forEach((state, perm) => {
+            if (state !== undefined) {
+                const p = role.value?.permissions.find((v) => v.id === perm);
+
+                if (p?.val !== state) {
+                    const item: PermItem = {
+                        id: perm,
+                        val: state,
+                    };
+
+                    perms.toUpdate.push(item);
+                }
+            } else if (state === undefined && currentPermissions.includes(perm)) {
+                perms.toRemove.push(perm);
+            }
+        });
+
         const attrs: AttrsUpdate = {
             toRemove: [],
             toUpdate: [],
         };
         attrStates.value.forEach((state, attr) => {
-            if (state !== undefined) {
-                attrs.toUpdate.push({
-                    roleId: role.value!.id,
-                    attrId: attr,
-                    category: '',
-                    key: '',
-                    name: '',
-                    permissionId: 0n,
-                    type: '',
-                    maxValues: state,
-                });
-            } else if (state === undefined) {
+            // Make sure the permission exists and is enabled, otherwise attr needs to be removed
+            const a = attrList.value.find((a) => a.attrId === attr);
+            if (a === undefined) {
+                return;
+            }
+            const perm = permStates.value.get(a.permissionId);
+
+            if (perm === undefined || state === undefined) {
                 attrs.toRemove.push({
                     roleId: role.value!.id,
                     attrId: attr,
@@ -111,10 +172,26 @@ async function updateAttrs(): Promise<void> {
                     permissionId: 0n,
                     type: '',
                 });
+            } else if (state !== undefined) {
+                attrs.toUpdate.push({
+                    roleId: role.value!.id,
+                    attrId: attr,
+                    value: state,
+                    category: '',
+                    key: '',
+                    name: '',
+                    permissionId: 0n,
+                    type: '',
+                });
             }
         });
 
-        if (attrs.toUpdate.length === 0 && attrs.toRemove.length === 0) {
+        if (
+            perms.toUpdate.length === 0 &&
+            perms.toRemove.length === 0 &&
+            attrs.toUpdate.length === 0 &&
+            attrs.toRemove.length === 0
+        ) {
             changed.value = false;
             return res();
         }
@@ -122,6 +199,7 @@ async function updateAttrs(): Promise<void> {
         try {
             await $grpc.getRectorClient().updateRoleLimits({
                 roleId: props.roleId,
+                perms: perms,
                 attrs: attrs,
             });
 
@@ -142,8 +220,20 @@ async function updateAttrs(): Promise<void> {
     });
 }
 
+function clearState(): void {
+    changed.value = false;
+    permList.value.length = 0;
+    permCategories.value.clear();
+    permStates.value.clear();
+    attrList.value.length = 0;
+    attrStates.value.clear();
+}
+
 async function initializeRoleView(): Promise<void> {
+    clearState();
+
     await getPermissions(props.roleId);
+    await propogatePermissionStates();
 
     attrStates.value.clear();
     attrList.value.forEach((attr) => {
@@ -151,36 +241,45 @@ async function initializeRoleView(): Promise<void> {
     });
 
     role.value?.attributes.forEach((attr) => {
-        attrStates.value.set(attr.attrId, attr.maxValues);
+        attrStates.value.set(attr.attrId, attr.value);
     });
 }
 
-watch(role, async () => initializeRoleView());
+watch(role, async () => {
+    initializeRoleView();
+});
 
 watch(props, () => {
     if (role.value === null || role.value.id !== props.roleId) {
         refresh();
     }
 });
+
+const { isRevealed, reveal, confirm, cancel, onConfirm } = useConfirmDialog();
+
+onConfirm(async (id) => deleteRole(id));
 </script>
 
 <template>
+    <ConfirmDialog :open="isRevealed" :cancel="cancel" :confirm="() => confirm(role!.id)" />
+
     <div class="py-4 w-full">
         <div class="px-1 sm:px-2 lg:px-4">
-            <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.attributes', 2)])" />
-            <DataErrorBlock
-                v-else-if="error"
-                :title="$t('common.unable_to_load', [$t('common.attributes', 2)])"
-                :retry="refresh"
-            />
-            <DataNoDataBlock v-else-if="!role" :type="$t('common.attributes', 2)" />
+            <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.role', 2)])" />
+            <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.role', 2)])" :retry="refresh" />
+            <DataNoDataBlock v-else-if="!role" :type="$t('common.role', 2)" />
             <div v-else>
-                <h2 class="text-3xl text-white" :title="`ID: ${role.id}`">{{ role?.jobLabel! }}</h2>
+                <h2 class="text-3xl text-white" :title="`ID: ${role.id}`">
+                    {{ role?.jobLabel! }}
+                    <button v-if="can('RectorService.DeleteRole')" type="button" @click="reveal()" class="ml-1">
+                        <TrashCanIcon class="w-6 h-6 mx-auto text-neutral" />
+                    </button>
+                </h2>
                 <Divider label="Permissions" />
                 <div class="py-2 flex flex-col gap-4">
                     <button
                         type="button"
-                        @click="updateAttrs()"
+                        @click="updatePermissions()"
                         :disabled="!changed"
                         class="inline-flex px-3 py-2 text-center justify-center transition-colors font-semibold rounded-md text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                         :class="
@@ -220,22 +319,34 @@ watch(props, () => {
                         >
                             <div class="flex flex-col gap-2 mx-auto my-2">
                                 <div
-                                    v-for="(perm, idx) in permList.filter(
-                                        (p) =>
-                                            p.category === category &&
-                                            attrList.filter((a) => a.permissionId === p.id).length > 0,
-                                    )"
+                                    v-for="(perm, idx) in permList.filter((p) => p.category === category)"
                                     :key="perm.id?.toString()"
                                     class="flex flex-col gap-2"
                                 >
                                     <div class="flex flex-row gap-4">
                                         <div class="flex flex-1 flex-col my-auto">
-                                            <span class="truncate">
+                                            <span class="truncate" :title="`${$t('common.id')}: ${perm.id.toString()}`">
                                                 {{ $t(`perms.${perm.category}.${perm.name}.key`) }}
                                             </span>
                                             <span class="text-base-500 truncate">
                                                 {{ $t(`perms.${perm.category}.${perm.name}.description`) }}
                                             </span>
+                                        </div>
+                                        <div class="flex flex-initial flex-row max-h-8 my-auto">
+                                            <button
+                                                :data-active="permStates.has(perm.id) ? permStates.get(perm.id) : false"
+                                                @click="updatePermissionState(perm.id, true)"
+                                                class="transition-colors rounded-l-lg p-1 bg-success-600/50 data-[active=true]:bg-success-600 text-base-300 data-[active=true]:text-neutral hover:bg-success-600/70"
+                                            >
+                                                <CheckIcon class="w-6 h-6" />
+                                            </button>
+                                            <button
+                                                :data-active="permStates.get(perm.id) === undefined || !permStates.get(perm.id)"
+                                                @click="updatePermissionState(perm.id, false)"
+                                                class="transition-colors rounded-r-lg p-1 bg-error-600/50 data-[active=true]:bg-error-600 text-base-300 data-[active=true]:text-neutral hover:bg-error-600/70"
+                                            >
+                                                <CloseIcon class="w-6 h-6" />
+                                            </button>
                                         </div>
                                     </div>
                                     <AttrViewAttr

@@ -34,6 +34,7 @@ message GetRolesResponse {
 
 message GetRoleRequest {
   uint64 id = 1;
+  optional bool filtered = 2;
 }
 
 message GetRoleResponse {
@@ -80,6 +81,7 @@ message UpdateRolePermsResponse {}
 
 message GetPermissionsRequest {
   uint64 role_id = 1;
+  optional bool filtered = 2;
 }
 
 message GetPermissionsResponse {
@@ -104,7 +106,8 @@ message ViewAuditLogResponse {
 
 message UpdateRoleLimitsRequest {
   uint64 role_id = 1;
-  AttrsUpdate attrs = 2;
+  optional PermsUpdate perms = 2;
+  optional AttrsUpdate attrs = 3;
 }
 
 message UpdateRoleLimitsResponse {}

@@ -16,7 +16,6 @@ import { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
 const props = defineProps<{
     attribute: RoleAttribute;
     states: Map<bigint, AttributeValues | undefined>;
-    jobs: Job[];
     disabled?: boolean;
     permission: Permission;
 }>();
@@ -297,7 +296,7 @@ onBeforeMount(async () => {
                         </span>
                         <template v-else>
                             <div
-                                v-for="job in props.jobs.filter(
+                                v-for="job in jobs.filter(
                                     (j) =>
                                         maxValues?.validValues.oneofKind === 'jobList' &&
                                         (!maxValues?.validValues.jobList?.strings.length ||
@@ -331,7 +330,7 @@ onBeforeMount(async () => {
                         </span>
                         <template v-else>
                             <div
-                                v-for="job in props.jobs.filter(
+                                v-for="job in jobs.filter(
                                     (j) =>
                                         maxValues &&
                                         maxValues.validValues.oneofKind === 'jobGradeList' &&

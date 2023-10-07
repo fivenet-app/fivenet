@@ -763,6 +763,10 @@ func (m *GetRoleRequest) validate(all bool) error {
 
 	// no validation rules for Id
 
+	if m.Filtered != nil {
+		// no validation rules for Filtered
+	}
+
 	if len(errors) > 0 {
 		return GetRoleRequestMultiError(errors)
 	}
@@ -2130,6 +2134,10 @@ func (m *GetPermissionsRequest) validate(all bool) error {
 
 	// no validation rules for RoleId
 
+	if m.Filtered != nil {
+		// no validation rules for Filtered
+	}
+
 	if len(errors) > 0 {
 		return GetPermissionsRequestMultiError(errors)
 	}
@@ -2822,33 +2830,70 @@ func (m *UpdateRoleLimitsRequest) validate(all bool) error {
 
 	// no validation rules for RoleId
 
-	if all {
-		switch v := interface{}(m.GetAttrs()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, UpdateRoleLimitsRequestValidationError{
-					field:  "Attrs",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
+	if m.Perms != nil {
+
+		if all {
+			switch v := interface{}(m.GetPerms()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, UpdateRoleLimitsRequestValidationError{
+						field:  "Perms",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, UpdateRoleLimitsRequestValidationError{
+						field:  "Perms",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
 			}
-		case interface{ Validate() error }:
+		} else if v, ok := interface{}(m.GetPerms()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				errors = append(errors, UpdateRoleLimitsRequestValidationError{
+				return UpdateRoleLimitsRequestValidationError{
+					field:  "Perms",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.Attrs != nil {
+
+		if all {
+			switch v := interface{}(m.GetAttrs()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, UpdateRoleLimitsRequestValidationError{
+						field:  "Attrs",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, UpdateRoleLimitsRequestValidationError{
+						field:  "Attrs",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetAttrs()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return UpdateRoleLimitsRequestValidationError{
 					field:  "Attrs",
 					reason: "embedded message failed validation",
 					cause:  err,
-				})
+				}
 			}
 		}
-	} else if v, ok := interface{}(m.GetAttrs()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return UpdateRoleLimitsRequestValidationError{
-				field:  "Attrs",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
+
 	}
 
 	if len(errors) > 0 {

@@ -67,6 +67,10 @@ export interface GetRoleRequest {
      * @generated from protobuf field: uint64 id = 1;
      */
     id: bigint;
+    /**
+     * @generated from protobuf field: optional bool filtered = 2;
+     */
+    filtered?: boolean;
 }
 /**
  * @generated from protobuf message services.rector.GetRoleResponse
@@ -182,6 +186,10 @@ export interface GetPermissionsRequest {
      * @generated from protobuf field: uint64 role_id = 1;
      */
     roleId: bigint;
+    /**
+     * @generated from protobuf field: optional bool filtered = 2;
+     */
+    filtered?: boolean;
 }
 /**
  * @generated from protobuf message services.rector.GetPermissionsResponse
@@ -251,7 +259,11 @@ export interface UpdateRoleLimitsRequest {
      */
     roleId: bigint;
     /**
-     * @generated from protobuf field: services.rector.AttrsUpdate attrs = 2;
+     * @generated from protobuf field: optional services.rector.PermsUpdate perms = 2;
+     */
+    perms?: PermsUpdate;
+    /**
+     * @generated from protobuf field: optional services.rector.AttrsUpdate attrs = 3;
      */
     attrs?: AttrsUpdate;
 }
@@ -398,7 +410,8 @@ export const GetRolesResponse = new GetRolesResponse$Type();
 class GetRoleRequest$Type extends MessageType<GetRoleRequest> {
     constructor() {
         super("services.rector.GetRoleRequest", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 2, name: "filtered", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
 }
@@ -532,7 +545,8 @@ export const UpdateRolePermsResponse = new UpdateRolePermsResponse$Type();
 class GetPermissionsRequest$Type extends MessageType<GetPermissionsRequest> {
     constructor() {
         super("services.rector.GetPermissionsRequest", [
-            { no: 1, name: "role_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+            { no: 1, name: "role_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 2, name: "filtered", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
 }
@@ -589,7 +603,8 @@ class UpdateRoleLimitsRequest$Type extends MessageType<UpdateRoleLimitsRequest> 
     constructor() {
         super("services.rector.UpdateRoleLimitsRequest", [
             { no: 1, name: "role_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 2, name: "attrs", kind: "message", T: () => AttrsUpdate }
+            { no: 2, name: "perms", kind: "message", T: () => PermsUpdate },
+            { no: 3, name: "attrs", kind: "message", T: () => AttrsUpdate }
         ]);
     }
 }

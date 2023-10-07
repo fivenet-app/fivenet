@@ -23,6 +23,7 @@ const (
 var (
 	tRoles     = table.FivenetRoles
 	tRolePerms = table.FivenetRolePermissions
+	tJobPerms  = table.FivenetJobPermissions
 )
 
 func (p *Perms) GetJobRoles(ctx context.Context, job string) (collections.Roles, error) {
@@ -373,6 +374,62 @@ func (p *Perms) RemovePermissionsFromRole(ctx context.Context, roleId uint64, pe
 		RoleID: roleId,
 	}); err != nil {
 		return err
+	}
+
+	return nil
+}
+
+func (p *Perms) GetJobPermissions(ctx context.Context, job string) ([]*permissions.Permission, error) {
+	tPerms := tPerms.AS("permission")
+	stmt := tJobPerms.
+		SELECT(
+			tJobPerms.PermissionID.AS("permission.id"),
+			tPerms.Category,
+			tPerms.Name,
+			tPerms.GuardName,
+			tJobPerms.Val.AS("permission.val"),
+		).
+		FROM(
+			tJobPerms.
+				INNER_JOIN(
+					tPerms,
+					tPerms.ID.EQ(tJobPerms.PermissionID),
+				),
+		).
+		WHERE(
+			tJobPerms.Job.EQ(jet.String(job)),
+		)
+
+	var dest []*permissions.Permission
+	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
+		if !errors.Is(qrm.ErrNoRows, err) {
+			return nil, err
+		}
+	}
+
+	return dest, nil
+}
+
+func (p *Perms) UpdateJobPermissions(ctx context.Context, job string, id uint64, val bool) error {
+	stmt := tJobPerms.
+		INSERT(
+			tJobPerms.Job,
+			tJobPerms.PermissionID,
+			tJobPerms.Val,
+		).
+		VALUES(
+			job,
+			id,
+			val,
+		).
+		ON_DUPLICATE_KEY_UPDATE(
+			tJobPerms.Val.SET(jet.RawBool("VALUES(`val`)")),
+		)
+
+	if _, err := stmt.ExecContext(ctx, p.db); err != nil {
+		if !dbutils.IsDuplicateError(err) {
+			return err
+		}
 	}
 
 	return nil

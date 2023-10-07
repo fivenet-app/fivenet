@@ -1,14 +1,24 @@
 <script lang="ts" setup>
+import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
-import { SelectIcon } from 'mdi-vue3';
+import { CheckIcon, SelectIcon } from 'mdi-vue3';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
+import { useCompletorStore } from '~/store/completor';
+import { useNotificatorStore } from '~/store/notificator';
 import { Role } from '~~/gen/ts/resources/permissions/permissions';
+import { Job } from '~~/gen/ts/resources/users/jobs';
 import AttrRolesListEntry from './AttrRolesListEntry.vue';
 import AttrView from './AttrView.vue';
 
 const { $grpc } = useNuxtApp();
+
+const notifications = useNotificatorStore();
+
+const completorStore = useCompletorStore();
+const { jobs } = storeToRefs(completorStore);
+const { listJobs } = completorStore;
 
 const { data: roles, pending, refresh, error } = useLazyAsyncData('rector-roles', () => getRoles());
 
@@ -28,9 +38,53 @@ async function getRoles(): Promise<Role[]> {
     });
 }
 
+const selectedJob = ref<Job | null>(null);
+const queryJobRaw = ref('');
+const queryJob = computed(() => queryJobRaw.value.toLowerCase());
+const availableJobs = computed(
+    () => jobs.value?.filter((j) => (roles.value?.findIndex((r) => r.job === j.name) ?? -1) === -1) ?? [],
+);
+
+async function createRole(): Promise<void> {
+    return new Promise(async (res, rej) => {
+        if (selectedJob.value === undefined || selectedJob.value?.name === undefined) {
+            return res();
+        }
+
+        try {
+            const call = $grpc.getRectorClient().createRole({
+                job: selectedJob.value?.name,
+                grade: 1,
+            });
+            const { response } = await call;
+
+            if (!response.role) {
+                return res();
+            }
+
+            notifications.dispatchNotification({
+                title: { key: 'notifications.rector.role_created.title', parameters: {} },
+                content: { key: 'notifications.rector.role_created.content', parameters: {} },
+                type: 'success',
+            });
+
+            roles.value?.push(response.role!);
+
+            selectedRole.value = response.role;
+
+            return res();
+        } catch (e) {
+            $grpc.handleError(e as RpcError);
+            return rej(e as RpcError);
+        }
+    });
+}
+
 const selectedRole = ref<Role | undefined>();
 
 const sortedRoles = computed(() => roles.value?.sort((a, b) => (a.jobLabel ?? '').localeCompare(b.jobLabel ?? '')));
+
+onBeforeMount(async () => await listJobs());
 </script>
 
 <template>
@@ -38,6 +92,86 @@ const sortedRoles = computed(() => roles.value?.sort((a, b) => (a.jobLabel ?? ''
         <div class="px-1 sm:px-2 lg:px-4">
             <div class="flex flex-col lg:flex-row">
                 <div class="flow-root mt-2 basis-1/3">
+                    <div v-if="can('RectorService.CreateRole')" class="sm:flex sm:items-center">
+                        <div class="sm:flex-auto">
+                            <form @submit.prevent="createRole()">
+                                <div class="flex flex-row gap-4 mx-auto">
+                                    <div class="flex-1 form-control">
+                                        <label for="grade" class="block text-sm font-medium leading-6 text-neutral">
+                                            {{ $t('common.job_grade') }}
+                                        </label>
+                                        <Combobox
+                                            as="div"
+                                            v-model="selectedJob"
+                                            class="relative flex items-center mt-2 w-full"
+                                            nullable
+                                        >
+                                            <div class="relative w-full">
+                                                <ComboboxButton as="div" class="w-full">
+                                                    <ComboboxInput
+                                                        class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                        @change="queryJobRaw = $event.target.value"
+                                                        :display-value="
+                                                            (grade: any) => (grade ? `${grade?.label} (${grade?.grade})` : '')
+                                                        "
+                                                    />
+                                                </ComboboxButton>
+
+                                                <ComboboxOptions
+                                                    class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-44 sm:text-sm"
+                                                >
+                                                    <ComboboxOption
+                                                        v-for="job in availableJobs.filter((g) =>
+                                                            g.label.toLowerCase().includes(queryJob),
+                                                        )"
+                                                        :key="job.name"
+                                                        :value="job"
+                                                        as="grade"
+                                                        v-slot="{ active, selected }"
+                                                    >
+                                                        <li
+                                                            :class="[
+                                                                'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
+                                                                active ? 'bg-primary-500' : '',
+                                                            ]"
+                                                        >
+                                                            <span :class="['block truncate', selected && 'font-semibold']">
+                                                                {{ job.label }} ({{ job.name }})
+                                                            </span>
+
+                                                            <span
+                                                                v-if="selected"
+                                                                :class="[
+                                                                    active ? 'text-neutral' : 'text-primary-500',
+                                                                    'absolute inset-y-0 left-0 flex items-center pl-1.5',
+                                                                ]"
+                                                            >
+                                                                <CheckIcon class="w-5 h-5" aria-hidden="true" />
+                                                            </span>
+                                                        </li>
+                                                    </ComboboxOption>
+                                                </ComboboxOptions>
+                                            </div>
+                                        </Combobox>
+                                    </div>
+                                    <div class="flex-initial form-control flex flex-col justify-end">
+                                        <button
+                                            type="submit"
+                                            class="inline-flex px-3 py-2 text-sm font-semibold rounded-md text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                                            :disabled="selectedJob === null"
+                                            :class="[
+                                                selectedJob === null
+                                                    ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
+                                                    : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
+                                            ]"
+                                        >
+                                            {{ $t('common.create') }}
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
                     <div class="mx-0 -my-2 overflow-x-auto">
                         <div class="inline-block min-w-full py-2 align-middle px-1">
                             <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.role', 2)])" />

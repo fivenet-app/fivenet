@@ -56,8 +56,13 @@ func (s *Server) ensureUserCanAccessRole(ctx context.Context, roleId uint64) (*m
 	return role, true, nil
 }
 
-func (s *Server) filterPermissions(ctx context.Context, ps []*permissions.Permission) ([]*permissions.Permission, error) {
+func (s *Server) filterPermissions(ctx context.Context, job string, fullFilter bool, ps []*permissions.Permission) ([]*permissions.Permission, error) {
 	filtered := []*permissions.Permission{}
+
+	filters, err := s.ps.GetJobPermissions(ctx, job)
+	if err != nil {
+		return nil, err
+	}
 
 outer:
 	for _, p := range ps {
@@ -67,13 +72,28 @@ outer:
 			}
 		}
 
+		if fullFilter {
+			found := false
+			for _, filter := range filters {
+				if p.Id == filter.Id {
+					if !filter.Val {
+						continue outer
+					}
+					found = true
+				}
+			}
+			if !found {
+				continue
+			}
+		}
+
 		filtered = append(filtered, p)
 	}
 
 	return filtered, nil
 }
 
-func (s *Server) filterPermissionIDs(ctx context.Context, ids []uint64) ([]uint64, error) {
+func (s *Server) filterPermissionIDs(ctx context.Context, job string, full bool, ids []uint64) ([]uint64, error) {
 	if len(ids) == 0 {
 		return ids, nil
 	}
@@ -83,7 +103,7 @@ func (s *Server) filterPermissionIDs(ctx context.Context, ids []uint64) ([]uint6
 		return nil, err
 	}
 
-	filtered, err := s.filterPermissions(ctx, perms)
+	filtered, err := s.filterPermissions(ctx, job, full, perms)
 	if err != nil {
 		return nil, err
 	}
@@ -145,7 +165,7 @@ func (s *Server) GetRoles(ctx context.Context, req *GetRolesRequest) (*GetRolesR
 	var roles collections.Roles
 	var err error
 
-	if userInfo.SuperUser && req.LowestRank != nil {
+	if userInfo.SuperUser && req.LowestRank != nil && *req.LowestRank {
 		roles, err = s.ps.GetRoles(ctx, true)
 		if err != nil {
 			return nil, ErrFailedQuery
@@ -199,22 +219,32 @@ func (s *Server) GetRole(ctx context.Context, req *GetRoleRequest) (*GetRoleResp
 		return nil, ErrNoPermission
 	}
 
-	perms, err := s.ps.GetRolePermissions(ctx, role.ID)
-	if err != nil {
-		return nil, ErrInvalidRequest
+	fullFilter := !(userInfo.SuperUser && req.Filtered != nil && !*req.Filtered)
+
+	var perms []*permissions.Permission
+	if fullFilter {
+		perms, err = s.ps.GetRolePermissions(ctx, role.ID)
+		if err != nil {
+			return nil, ErrInvalidRequest
+		}
+	} else {
+		perms, err = s.ps.GetJobPermissions(ctx, role.Job)
+		if err != nil {
+			return nil, ErrInvalidRequest
+		}
 	}
 
-	resp := &GetRoleResponse{}
-
-	resp.Role = &permissions.Role{
-		Id:        role.ID,
-		CreatedAt: timestamp.New(*role.CreatedAt),
-		Job:       role.Job,
-		Grade:     role.Grade,
+	resp := &GetRoleResponse{
+		Role: &permissions.Role{
+			Id:        role.ID,
+			CreatedAt: timestamp.New(*role.CreatedAt),
+			Job:       role.Job,
+			Grade:     role.Grade,
+		},
 	}
 	s.enricher.EnrichJobInfo(resp.Role)
 
-	fPerms, err := s.filterPermissions(ctx, perms)
+	fPerms, err := s.filterPermissions(ctx, role.Job, fullFilter, perms)
 	if err != nil {
 		return nil, ErrInvalidRequest
 	}
@@ -363,12 +393,12 @@ func (s *Server) handlPermissionsUpdate(ctx context.Context, role *model.Fivenet
 	for i := 0; i < len(permsUpdate.ToUpdate); i++ {
 		updatePermIds[i] = permsUpdate.ToUpdate[i].Id
 	}
-	toUpdate, err := s.filterPermissionIDs(ctx, updatePermIds)
+	toUpdate, err := s.filterPermissionIDs(ctx, role.Job, false, updatePermIds)
 	if err != nil {
 		return err
 	}
 
-	toDelete, err := s.filterPermissionIDs(ctx, permsUpdate.ToRemove)
+	toDelete, err := s.filterPermissionIDs(ctx, role.Job, false, permsUpdate.ToRemove)
 	if err != nil {
 		return err
 	}
@@ -430,7 +460,9 @@ func (s *Server) GetPermissions(ctx context.Context, req *GetPermissionsRequest)
 		return nil, ErrFailedQuery
 	}
 
-	filtered, err := s.filterPermissions(ctx, perms)
+	fullFilter := !(userInfo.SuperUser && req.Filtered != nil && !*req.Filtered)
+
+	filtered, err := s.filterPermissions(ctx, userInfo.Job, fullFilter, perms)
 	if err != nil {
 		return nil, ErrInvalidRequest
 	}
@@ -466,6 +498,22 @@ func (s *Server) UpdateRoleLimits(ctx context.Context, req *UpdateRoleLimitsRequ
 		if err := s.ps.UpdateRoleAttributeMaxValues(ctx, role.ID, attr.AttrId, attr.MaxValues); err != nil {
 			return nil, err
 		}
+	}
+
+	for _, ps := range req.Perms.ToUpdate {
+		if err := s.ps.UpdateJobPermissions(ctx, role.Job, ps.Id, ps.Val); err != nil {
+			return nil, err
+		}
+	}
+
+	for _, ps := range req.Perms.ToRemove {
+		if err := s.ps.UpdateJobPermissions(ctx, role.Job, ps, false); err != nil {
+			return nil, err
+		}
+	}
+
+	if err := s.ps.ApplyJobPermissions(ctx, role.Job); err != nil {
+		return nil, err
 	}
 
 	return &UpdateRoleLimitsResponse{}, nil

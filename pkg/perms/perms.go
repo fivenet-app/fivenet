@@ -46,6 +46,9 @@ type Permissions interface {
 	DeleteRole(ctx context.Context, id uint64) error
 	UpdateRolePermissions(ctx context.Context, id uint64, perms ...AddPerm) error
 	RemovePermissionsFromRole(ctx context.Context, id uint64, perms ...uint64) error
+	GetJobPermissions(ctx context.Context, job string) ([]*permissions.Permission, error)
+	UpdateJobPermissions(ctx context.Context, job string, id uint64, val bool) error
+	ApplyJobPermissions(ctx context.Context, job string) error
 
 	Can(userInfo *userinfo.UserInfo, category Category, name Name) bool
 
@@ -101,6 +104,11 @@ type Perms struct {
 	userCanCache    *cache.Cache[userCacheKey, bool]
 }
 
+type JobPermission struct {
+	PermissionID uint64
+	Val          bool
+}
+
 type Params struct {
 	fx.In
 
@@ -144,7 +152,14 @@ func New(p Params) (Permissions, error) {
 		userCanCache:    userCanCache,
 	}
 
-	p.LC.Append(fx.StartHook(func(_ context.Context) error {
+	p.LC.Append(fx.StartHook(func(ctx context.Context) error {
+		ctx, span := ps.tracer.Start(ctx, "perms-register")
+		defer span.End()
+
+		if err := ps.ApplyJobPermissions(ctx, ""); err != nil {
+			return err
+		}
+
 		if err := ps.load(); err != nil {
 			return err
 		}

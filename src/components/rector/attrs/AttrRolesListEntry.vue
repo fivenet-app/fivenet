@@ -14,7 +14,7 @@ defineEmits<{
 <template>
     <tr :key="role.id?.toString()">
         <td class="whitespace-nowrap py-2 pl-2 pr-3 text-sm font-medium text-neutral" :title="`ID: ${role.id}`">
-            {{ role.jobLabel }}
+            {{ role.jobLabel }} ({{ role.job }})
         </td>
         <td class="whitespace-nowrap py-2 pl-3 pr-2 text-right text-sm font-medium">
             <div class="flex flex-row justify-end">
