@@ -268,6 +268,7 @@ func (s *Server) loadDispatches(ctx context.Context, id uint64) error {
 			tDispatch.CreatorID,
 			tDispatchStatus.ID,
 			tDispatchStatus.CreatedAt,
+			tDispatchStatus.DispatchID,
 			tDispatchStatus.UnitID,
 			tDispatchStatus.Status,
 			tDispatchStatus.Reason,

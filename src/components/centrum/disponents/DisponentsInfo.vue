@@ -59,7 +59,7 @@ const open = ref(false);
                     <div class="grid grid-cols-3 items-center justify-items-center">
                         <div
                             v-if="!isDisponent"
-                            class="absolute inset-0 flex flex-col justify-center items-center z-0 bg-gray-600/70"
+                            class="absolute inset-0 flex flex-col justify-center items-center z-50 bg-gray-600/70"
                         >
                             <button
                                 @click="onSubmitThrottle(true)"

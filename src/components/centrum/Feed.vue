@@ -28,6 +28,7 @@ defineProps<{
                                     :activity-length="items?.length ?? 0"
                                     :item="activityItem"
                                     :activity-item-idx="activityItemIdx"
+                                    :show-id="true"
                                 />
                             </template>
                             <template v-else>
