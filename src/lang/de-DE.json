@@ -923,20 +923,6 @@
             }
         },
         "centrum": {
-            "unitUpdated": {
-                "joined": {
-                    "title": "Einheit beigetreten",
-                    "content": "Sie sind einer Einheit beigetreten."
-                },
-                "removed": {
-                    "title": "Einheit verlassen",
-                    "content": "Sie haben die Einheit verlassen."
-                },
-                "not_in_unit": {
-                    "title": "Sie sind in keiner Einheit!",
-                    "content": "Sie müssen in einer Einheit sein, um das zu tun."
-                }
-            },
             "sidebar": {
                 "no_dispatch_selected": {
                     "title": "Kein Einsatz ausgewählt!",
@@ -951,6 +937,20 @@
                 "assigned_dispatch": {
                     "title": "Neuer Einsatz zugewiesen",
                     "content": "Nutze die Einsatz-Liste um den Einsatz anzunehmen."
+                }
+            },
+            "unitUpdated": {
+                "joined": {
+                    "title": "Einheit beigetreten",
+                    "content": "Sie sind einer Einheit beigetreten."
+                },
+                "removed": {
+                    "title": "Einheit verlassen",
+                    "content": "Sie haben die Einheit verlassen."
+                },
+                "not_in_unit": {
+                    "title": "Sie sind in keiner Einheit!",
+                    "content": "Sie müssen in einer Einheit sein, um das zu tun."
                 }
             }
         },
@@ -1256,6 +1256,34 @@
                     "Own": "Eigene",
                     "All": "Alle"
                 }
+            },
+            "RequestsCreateEntry": {
+                "key": "Anfragen: Anfrage erstellen",
+                "description": "Anfragen erstellen."
+            },
+            "RequestsCreateOrUpdateType": {
+                "key": "Anfragen: Erstellen und Aktualisieren von Anfrage-Typen",
+                "description": "Erstellen und Aktualisieren von Anfrage-Typen."
+            },
+            "RequestsDeleteEntry": {
+                "key": "Anfragen: Anfrage löschen",
+                "description": "Löschen von Anfragen."
+            },
+            "RequestsDeleteType": {
+                "key": "Anfragen: Löschen von Anfrage-Typen",
+                "description": "Löschen von Anfragen-Typen."
+            },
+            "RequestsListEntries": {
+                "key": "Anfragen: Auflisten und Anzeigen",
+                "description": "Anfragen auflisten und anzeigen."
+            },
+            "RequestsUpdateEntry": {
+                "key": "Anfragen: Aktualisieren von Anfragen",
+                "description": "Aktualisieren von Anfragen."
+            },
+            "RequestsDeleteComment": {
+                "key": "Anfragen: Anfragen-Kommentare löschen",
+                "description": "Löschen von Anfragen-Kommentaren."
             }
         }
     },
