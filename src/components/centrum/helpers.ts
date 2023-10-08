@@ -6,6 +6,7 @@ export function dispatchStatusToFillColor(status: StatusDispatch | undefined): s
         case StatusDispatch.UNSPECIFIED:
         case StatusDispatch.NEW:
         case StatusDispatch.UNASSIGNED:
+        case StatusDispatch.UNIT_DECLINED:
             return 'fill-error-600';
         case StatusDispatch.ON_SCENE:
             return 'fill-primary-600';
@@ -27,6 +28,7 @@ export function dispatchStatusToBGColor(status: StatusDispatch | undefined): str
         case StatusDispatch.UNSPECIFIED:
         case StatusDispatch.NEW:
         case StatusDispatch.UNASSIGNED:
+        case StatusDispatch.UNIT_DECLINED:
             return 'bg-error-600';
         case StatusDispatch.ON_SCENE:
             return 'bg-primary-600';

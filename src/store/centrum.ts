@@ -9,6 +9,7 @@ import { useNotificatorStore } from './notificator';
 
 const FIVE_MINUTES = 5 * 60 * 1000;
 const ONE_MINUTE = 1 * 60 * 1000;
+const TWO_HOURS = 120 * 60 * 1000;
 
 // In seconds
 const initialBackoffTime = 2;
@@ -523,6 +524,8 @@ export const useCentrumStore = defineStore('centrum', {
 
             // Remove completed, cancelled and archived dispatches after the status is 5 minutes or older
             this.dispatches.forEach((d) => {
+                if (now - toDate(d.status?.createdAt).getTime() >= TWO_HOURS) this.removeDispatch(d.id);
+
                 if (
                     d.status?.status !== StatusDispatch.COMPLETED &&
                     d.status?.status !== StatusDispatch.CANCELLED &&
