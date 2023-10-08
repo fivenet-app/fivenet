@@ -1,11 +1,12 @@
 <script lang="ts" setup>
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
-import { CloseIcon } from 'mdi-vue3';
+import { CancelIcon, CheckIcon, CheckboxBlankOutlineIcon, CloseIcon } from 'mdi-vue3';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import { useCentrumStore } from '~/store/centrum';
 import { Dispatch } from '~~/gen/ts/resources/dispatch/dispatches';
 import { StatusUnit, Unit } from '~~/gen/ts/resources/dispatch/units';
+import { statusOrder, unitStatusToBGColor } from '../helpers';
 
 const centrumStore = useCentrumStore();
 const { units } = storeToRefs(centrumStore);
@@ -64,6 +65,19 @@ function selectUnit(item: Unit): void {
         selectedUnits.value.push(item.id);
     }
 }
+
+const sortedUnits = computed(() => {
+    const filtered: Unit[] = [];
+    units.value.forEach((d) => filtered.push(d));
+    return filtered
+        .sort(
+            (a, b) =>
+                statusOrder.indexOf(b.status?.status ?? 0) -
+                statusOrder.indexOf(a.status?.status ?? 0) +
+                b.name.localeCompare(a.name),
+        )
+        .reverse();
+});
 </script>
 
 <template>
@@ -111,34 +125,44 @@ function selectUnit(item: Unit): void {
                                                         <div class="flex-1 form-control">
                                                             <div class="grid grid-cols-3 gap-4">
                                                                 <button
-                                                                    v-for="[_, unit] in units"
+                                                                    v-for="unit in sortedUnits"
                                                                     :key="unit.name"
                                                                     type="button"
                                                                     :disabled="unit.users.length === 0"
-                                                                    class="text-white hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-2 text-xs my-0.5"
+                                                                    class="text-white hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-row items-center rounded-md p-2 text-xs my-0.5"
                                                                     :class="[
-                                                                        unit.users.length === 0
-                                                                            ? 'disabled bg-error-600'
-                                                                            : selectedUnits?.findIndex(
-                                                                                  (u) => u && u === unit.id,
-                                                                              ) > -1
-                                                                            ? 'bg-success-600'
-                                                                            : 'bg-info-600',
+                                                                        unitStatusToBGColor(unit.status?.status ?? 0),
+                                                                        unit.users.length === 0 ? 'disabled !bg-error-600' : '',
                                                                     ]"
                                                                     @click="selectUnit(unit)"
                                                                 >
-                                                                    <span class="mt-1"
-                                                                        >{{ unit.initials }}: {{ unit.name }}</span
-                                                                    >
-                                                                    <span class="mt-1">
-                                                                        {{
-                                                                            $t(
-                                                                                `enums.centrum.StatusUnit.${
-                                                                                    StatusUnit[unit.status?.status ?? 0]
-                                                                                }`,
-                                                                            )
-                                                                        }}
-                                                                    </span>
+                                                                    <CheckIcon
+                                                                        v-if="
+                                                                            selectedUnits?.findIndex(
+                                                                                (u) => u && u === unit.id,
+                                                                            ) > -1
+                                                                        "
+                                                                        class="w-6 h-6 mr-2"
+                                                                    />
+                                                                    <CheckboxBlankOutlineIcon
+                                                                        v-else-if="unit.users.length > 0"
+                                                                        class="w-6 h-6 mr-2"
+                                                                    />
+                                                                    <CancelIcon v-else class="w-6 h-6 mr-2" />
+                                                                    <div class="flex flex-col">
+                                                                        <span class="mt-1"
+                                                                            >{{ unit.initials }}: {{ unit.name }}</span
+                                                                        >
+                                                                        <span class="mt-1">
+                                                                            {{
+                                                                                $t(
+                                                                                    `enums.centrum.StatusUnit.${
+                                                                                        StatusUnit[unit.status?.status ?? 0]
+                                                                                    }`,
+                                                                                )
+                                                                            }}
+                                                                        </span>
+                                                                    </div>
                                                                 </button>
                                                             </div>
                                                         </div>

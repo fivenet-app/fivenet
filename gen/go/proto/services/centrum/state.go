@@ -311,7 +311,7 @@ func (s *Server) handleDispatchAssignmentExpiration(ctx context.Context) error {
 		).
 		WHERE(jet.AND(
 			tDispatchUnit.ExpiresAt.IS_NOT_NULL(),
-			tDispatchUnit.ExpiresAt.LT(jet.NOW()),
+			tDispatchUnit.ExpiresAt.LT_EQ(jet.NOW()),
 		))
 
 	var dest []*struct {
@@ -323,14 +323,28 @@ func (s *Server) handleDispatchAssignmentExpiration(ctx context.Context) error {
 		return err
 	}
 
+	assignments := map[string]map[uint64][]uint64{}
 	for _, ua := range dest {
-		dsp, ok := s.getDispatch(ua.Job, ua.DispatchID)
-		if !ok {
-			continue
+		if _, ok := assignments[ua.Job]; !ok {
+			assignments[ua.Job] = map[uint64][]uint64{}
+		}
+		if _, ok := assignments[ua.Job][ua.DispatchID]; !ok {
+			assignments[ua.Job][ua.DispatchID] = []uint64{}
 		}
 
-		if err := s.updateDispatchAssignments(ctx, ua.Job, nil, dsp, nil, []uint64{ua.UnitID}); err != nil {
-			return err
+		assignments[ua.Job][ua.DispatchID] = append(assignments[ua.Job][ua.DispatchID], ua.UnitID)
+	}
+
+	for job, dsps := range assignments {
+		for dispatchId, units := range dsps {
+			dsp, ok := s.getDispatch(job, dispatchId)
+			if !ok {
+				continue
+			}
+
+			if err := s.updateDispatchAssignments(ctx, job, nil, dsp, nil, units); err != nil {
+				return err
+			}
 		}
 	}
 

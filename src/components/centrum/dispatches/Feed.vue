@@ -13,14 +13,12 @@ const { $grpc } = useNuxtApp();
 const pagination = ref<PaginationResponse>();
 const offset = ref(0n);
 
-const {
-    data: activity,
-    pending,
-    refresh,
-    error,
-} = useLazyAsyncData(`centrum-dispatch-${(props.dispatchId ?? 0n).toString()}-activity-${offset.value}`, () =>
-    listDispatchActivity(),
+const { data: activity, refresh } = useLazyAsyncData(
+    `centrum-dispatch-${(props.dispatchId ?? 0n).toString()}-activity-${offset.value}`,
+    () => listDispatchActivity(),
 );
+
+const timer = setInterval(async () => refresh(), 3500);
 
 async function listDispatchActivity(): Promise<DispatchStatus[]> {
     return new Promise(async (res, rej) => {
@@ -43,6 +41,10 @@ async function listDispatchActivity(): Promise<DispatchStatus[]> {
         }
     });
 }
+
+onBeforeUnmount(() => {
+    if (timer) clearInterval(timer);
+});
 </script>
 
 <template>

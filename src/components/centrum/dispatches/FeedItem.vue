@@ -88,7 +88,7 @@ defineProps<{
                 <AccountRemoveIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
-                {{ $t('components.centrum.dispatches.feed.item.EN_ROUTE') }}
+                {{ $t('components.centrum.dispatches.feed.item.UNIT_UNASSIGNED') }}
 
                 <span class="font-medium text-gray-400 pl-1" v-if="item.unit">
                     {{ item.unit?.initials }}
@@ -250,7 +250,7 @@ defineProps<{
                 <NewBoxIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
-                {{ $t('components.centrum.dispatches.feed.item.UNKNOWN') }}
+                {{ $t('components.centrum.dispatches.feed.item.UNSPECIFIED') }}
 
                 <span class="font-medium text-gray-400 pl-1" v-if="item.unit">
                     {{ item.unit?.initials }}

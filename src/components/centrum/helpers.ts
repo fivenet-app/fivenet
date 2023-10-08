@@ -70,3 +70,14 @@ export function unitStatusToBGColor(status: StatusUnit | undefined): string {
             return 'bg-error-600';
     }
 }
+
+export const statusOrder = [
+    StatusUnit.AVAILABLE,
+    StatusUnit.USER_ADDED,
+    StatusUnit.USER_REMOVED,
+    StatusUnit.ON_BREAK,
+    StatusUnit.BUSY,
+    StatusUnit.UNAVAILABLE,
+    StatusUnit.UNKNOWN,
+    StatusUnit.UNSPECIFIED,
+];

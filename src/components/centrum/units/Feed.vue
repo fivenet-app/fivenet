@@ -13,12 +13,11 @@ const { $grpc } = useNuxtApp();
 const pagination = ref<PaginationResponse>();
 const offset = ref(0n);
 
-const {
-    data: activity,
-    pending,
-    refresh,
-    error,
-} = useLazyAsyncData(`centrum-unit-${props.unitId.toString()}-activity-${offset.value}`, () => listUnitActivity());
+const { data: activity, refresh } = useLazyAsyncData(`centrum-unit-${props.unitId.toString()}-activity-${offset.value}`, () =>
+    listUnitActivity(),
+);
+
+const timer = setInterval(async () => refresh(), 3500);
 
 async function listUnitActivity(): Promise<UnitStatus[]> {
     return new Promise(async (res, rej) => {
@@ -41,6 +40,10 @@ async function listUnitActivity(): Promise<UnitStatus[]> {
         }
     });
 }
+
+onBeforeUnmount(() => {
+    if (timer) clearInterval(timer);
+});
 </script>
 
 <template>

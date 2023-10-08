@@ -13,6 +13,7 @@ defineEmits<{
 }>();
 
 const unitColorHex = hexToRgb('#' + props.unit.color ?? '000000') ?? ({ r: 0, g: 0, b: 0 } as RGB);
+const isBright = computed(() => isColourBright(unitColorHex));
 
 const open = ref(false);
 </script>
@@ -23,7 +24,7 @@ const open = ref(false);
 
         <div
             class="flex flex-shrink-0 items-center justify-center rounded-l-md text-sm font-medium border-l border-t border-b w-12"
-            :class="isColourBright(unitColorHex) ? 'text-black' : 'text-white'"
+            :class="isBright ? 'text-black' : 'text-white'"
             :style="'background-color: #' + unit.color ?? '000000'"
         >
             {{ unit.initials }}

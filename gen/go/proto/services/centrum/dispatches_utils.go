@@ -450,18 +450,6 @@ func (s *Server) updateDispatchAssignments(ctx context.Context, job string, user
 		return ErrFailedQuery
 	}
 
-	data, err := proto.Marshal(dsp)
-	if err != nil {
-		return err
-	}
-
-	for i := 0; i < len(toRemove); i++ {
-		s.events.JS.PublishAsync(buildSubject(TopicDispatch, TypeDispatchUpdated, job, toRemove[i]), data)
-	}
-	for i := 0; i < len(toAdd); i++ {
-		s.events.JS.PublishAsync(buildSubject(TopicDispatch, TypeDispatchUpdated, job, toAdd[i]), data)
-	}
-
 	// Dispatch has not units assigned anymore
 	if len(dsp.Units) <= 0 {
 		// Check dispatch status to not be completed/archived, etc.

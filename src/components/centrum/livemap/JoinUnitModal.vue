@@ -4,7 +4,7 @@ import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { CloseIcon } from 'mdi-vue3';
 import { useCentrumStore } from '~/store/centrum';
 import { StatusUnit, Unit } from '~~/gen/ts/resources/dispatch/units';
-import { unitStatusToBGColor } from '../helpers';
+import { statusOrder, unitStatusToBGColor } from '../helpers';
 
 defineProps<{
     open: boolean;
@@ -45,6 +45,17 @@ async function joinOrLeaveUnit(unit?: Unit | undefined): Promise<void> {
         }
     });
 }
+
+const sortedUnits = computed(() => {
+    const filtered: Unit[] = [];
+    units.value.forEach((d) => filtered.push(d));
+    return filtered.sort(
+        (a, b) =>
+            statusOrder.indexOf(b.status?.status ?? 0) -
+            statusOrder.indexOf(a.status?.status ?? 0) +
+            a.name.localeCompare(b.name),
+    );
+});
 </script>
 
 <template>
@@ -92,7 +103,7 @@ async function joinOrLeaveUnit(unit?: Unit | undefined): Promise<void> {
                                                         <div class="flex-1 form-control">
                                                             <div class="grid grid-cols-3 gap-4">
                                                                 <button
-                                                                    v-for="[_, item] in units"
+                                                                    v-for="item in sortedUnits"
                                                                     :key="item.name"
                                                                     type="button"
                                                                     class="text-white hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-2 text-xs my-0.5"
