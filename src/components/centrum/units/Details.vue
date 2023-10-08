@@ -65,7 +65,7 @@ const openStatus = ref(false);
                                             </div>
                                             <div class="mt-1">
                                                 <p class="text-sm text-primary-300">
-                                                    {{ $t('common.description') }}: {{ unit.description ?? 'N/A' }}
+                                                    {{ $t('common.description') }}: {{ unit.description ?? $t('common.na') }}
                                                 </p>
                                             </div>
                                         </div>
@@ -120,7 +120,7 @@ const openStatus = ref(false);
                                                             <dd
                                                                 class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
                                                             >
-                                                                {{ unit.status?.code ?? 'N/A' }}
+                                                                {{ unit.status?.code ?? $t('common.na') }}
                                                             </dd>
                                                         </div>
                                                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
@@ -130,7 +130,7 @@ const openStatus = ref(false);
                                                             <dd
                                                                 class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
                                                             >
-                                                                {{ unit.status?.reason ?? 'N/A' }}
+                                                                {{ unit.status?.reason ?? $t('common.na') }}
                                                             </dd>
                                                         </div>
                                                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
@@ -142,7 +142,7 @@ const openStatus = ref(false);
                                                             >
                                                                 <span class="block">
                                                                     {{ $t('common.postal') }}:
-                                                                    {{ unit.status?.postal ?? 'N/A' }}
+                                                                    {{ unit.status?.postal ?? $t('common.na') }}
                                                                 </span>
                                                                 <button
                                                                     v-if="unit.status?.x && unit.status?.y"

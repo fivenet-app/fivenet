@@ -63,7 +63,7 @@ const dispatchStatusColors = computed(() => {
                 </li>
                 <li>
                     <span class="font-semibold">{{ $t('common.description') }}</span
-                    >: {{ dispatch.description ?? 'N/A' }}
+                    >: {{ dispatch.description ?? $t('common.na') }}
                 </li>
                 <li>
                     <span class="font-semibold">{{ $t('common.sent_at') }}</span

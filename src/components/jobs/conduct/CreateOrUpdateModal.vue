@@ -300,7 +300,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                                         (char: any) =>
                                                                                             char
                                                                                                 ? `${char.firstname} ${char.lastname}`
-                                                                                                : 'N/A'
+                                                                                                : $t('common.na')
                                                                                     "
                                                                                     :placeholder="$t('common.target')"
                                                                                     :label="$t('common.target')"

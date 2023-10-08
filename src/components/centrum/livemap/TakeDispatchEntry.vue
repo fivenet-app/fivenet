@@ -72,7 +72,7 @@ const open = ref(false);
                 <li class="py-3 pl-3 pr-4 text-sm">
                     <span class="block">
                         {{ $t('common.postal') }}:
-                        {{ dispatch.postal ?? 'N/A' }}
+                        {{ dispatch.postal ?? $t('common.na') }}
                     </span>
                     <button
                         v-if="dispatch.x && dispatch.y"

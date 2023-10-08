@@ -144,7 +144,8 @@ const openStatus = ref(false);
                                             </div>
                                             <div class="mt-1">
                                                 <p class="text-sm text-primary-300">
-                                                    {{ $t('common.description') }}: {{ dispatch.description ?? 'N/A' }}
+                                                    {{ $t('common.description') }}:
+                                                    {{ dispatch.description ?? $t('common.na') }}
                                                 </p>
                                             </div>
                                         </div>
@@ -179,7 +180,8 @@ const openStatus = ref(false);
                                                                 class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
                                                             >
                                                                 <span class="block">
-                                                                    {{ $t('common.postal') }}: {{ dispatch.postal ?? 'N/A' }}
+                                                                    {{ $t('common.postal') }}:
+                                                                    {{ dispatch.postal ?? $t('common.na') }}
                                                                 </span>
                                                                 <button
                                                                     v-if="dispatch.x && dispatch.y"
@@ -243,7 +245,7 @@ const openStatus = ref(false);
                                                             <dd
                                                                 class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
                                                             >
-                                                                {{ dispatch.status?.code ?? 'N/A' }}
+                                                                {{ dispatch.status?.code ?? $t('common.na') }}
                                                             </dd>
                                                         </div>
                                                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
@@ -253,7 +255,7 @@ const openStatus = ref(false);
                                                             <dd
                                                                 class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
                                                             >
-                                                                {{ dispatch.status?.reason ?? 'N/A' }}
+                                                                {{ dispatch.status?.reason ?? $t('common.na') }}
                                                             </dd>
                                                         </div>
                                                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">

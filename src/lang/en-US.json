@@ -705,7 +705,8 @@
         "begins_at": "Begins at",
         "ends_at": "Ends at",
         "hide": "Hide",
-        "approve": "Approve | Approved"
+        "approve": "Approve | Approved",
+        "na": "N/A"
     },
     "notifications": {
         "clipboard": {

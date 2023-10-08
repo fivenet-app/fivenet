@@ -705,7 +705,8 @@
         "begins_at": "Beginnt am",
         "ends_at": "Endet am",
         "hide": "Verstecken",
-        "approve": "Genehmigen | Genehmigt"
+        "approve": "Genehmigen | Genehmigt",
+        "na": "Nicht verfügbar"
     },
     "notifications": {
         "clipboard": {

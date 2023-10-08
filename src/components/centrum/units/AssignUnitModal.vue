@@ -145,7 +145,9 @@ onMounted(async () => {
                                                                             @change="queryCitizens = $event.target.value"
                                                                             :display-value="
                                                                                 (chars: any) =>
-                                                                                    chars ? charsGetDisplayValue(chars) : 'N/A'
+                                                                                    chars
+                                                                                        ? charsGetDisplayValue(chars)
+                                                                                        : $t('common.na')
                                                                             "
                                                                             :placeholder="$t('common.user', 2)"
                                                                         />

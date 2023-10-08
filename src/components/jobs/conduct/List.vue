@@ -181,7 +181,7 @@ onConfirm(async (id) => deleteConductEntry(id));
                                                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                     @change="queryTargets = $event.target.value"
                                                     :display-value="
-                                                        (chars: any) => (chars ? charsGetDisplayValue(chars) : 'N/A')
+                                                        (chars: any) => (chars ? charsGetDisplayValue(chars) : $t('common.na'))
                                                     "
                                                     :placeholder="$t('common.target')"
                                                 />
@@ -237,7 +237,8 @@ onConfirm(async (id) => deleteConductEntry(id));
                                                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                     @change="queryTypes = $event.target.value"
                                                     :display-value="
-                                                        (cTypes: any) => (cTypes ? (cTypes as ConductType[]).join(', ') : 'N/A')
+                                                        (cTypes: any) =>
+                                                            cTypes ? (cTypes as ConductType[]).join(', ') : $t('common.na')
                                                     "
                                                     :placeholder="$t('common.type')"
                                                 />

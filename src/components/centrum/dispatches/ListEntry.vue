@@ -81,12 +81,12 @@ const openMessage = ref(false);
             </span>
         </td>
         <td class="whitespace-nowrap px-1 py-1 text-sm text-gray-300">
-            {{ dispatch.postal ?? 'N/A' }}
+            {{ dispatch.postal ?? $t('common.na') }}
         </td>
         <td class="whitespace-nowrap px-1 py-1 text-sm text-gray-300">
             <span v-if="dispatch.units.length === 0" class="italic">{{ $t('enums.centrum.StatusDispatch.UNASSIGNED') }}</span>
             <span v-else class="mr-1">
-                {{ dispatch.units.map((unit) => unit.unit?.initials ?? 'N/A').join(', ') }}
+                {{ dispatch.units.map((unit) => unit.unit?.initials ?? $t('common.na')).join(', ') }}
             </span>
         </td>
         <td class="whitespace-nowrap px-1 py-1 text-sm text-gray-300">
