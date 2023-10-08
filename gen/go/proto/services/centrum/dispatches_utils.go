@@ -224,14 +224,7 @@ func (s *Server) updateDispatchStatus(ctx context.Context, job string, dsp *disp
 	if err != nil {
 		return err
 	}
-
-	if len(dsp.Units) == 0 {
-		s.events.JS.PublishAsync(buildSubject(TopicDispatch, TypeDispatchStatus, job, 0), data)
-	} else {
-		for _, u := range dsp.Units {
-			s.events.JS.PublishAsync(buildSubject(TopicDispatch, TypeDispatchStatus, job, u.UnitId), data)
-		}
-	}
+	s.events.JS.PublishAsync(buildSubject(TopicDispatch, TypeDispatchStatus, job, 0), data)
 
 	return nil
 }

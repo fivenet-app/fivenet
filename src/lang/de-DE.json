@@ -923,7 +923,7 @@
             }
         },
         "centrum": {
-            "unitAssigned": {
+            "unitUpdated": {
                 "joined": {
                     "title": "Einheit beigetreten",
                     "content": "Sie sind einer Einheit beigetreten."

@@ -36,9 +36,9 @@ func (s *Server) ListUnits(ctx context.Context, req *ListUnitsRequest) (*ListUni
 		Units: []*dispatch.Unit{},
 	}
 
-	units, err := s.listUnits(userInfo.Job)
-	if err != nil {
-		return nil, err
+	units, ok := s.listUnits(userInfo.Job)
+	if !ok {
+		return nil, ErrModeForbidsAction
 	}
 
 	for i := 0; i < len(units); i++ {

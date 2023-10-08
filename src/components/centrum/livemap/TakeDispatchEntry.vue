@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { AccountIcon, MapMarkerIcon } from 'mdi-vue3';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
+import { useCentrumStore } from '~/store/centrum';
 import { Dispatch, StatusDispatch } from '~~/gen/ts/resources/dispatch/dispatches';
 import Details from '../dispatches/Details.vue';
 import { dispatchStatusToBGColor } from '../helpers';
@@ -8,7 +9,6 @@ import { dispatchStatusToBGColor } from '../helpers';
 const props = withDefaults(
     defineProps<{
         dispatch: Dispatch;
-        ownUnitId?: bigint;
         preselected?: boolean;
     }>(),
     {
@@ -21,7 +21,10 @@ const emits = defineEmits<{
     (e: 'goto', loc: Coordinate): void;
 }>();
 
-const expiresAt = props.dispatch.units.find((u) => u.unitId === props.ownUnitId)?.expiresAt;
+const centrumStore = useCentrumStore();
+const { ownUnitId } = storeToRefs(centrumStore);
+
+const expiresAt = props.dispatch.units.find((u) => u.unitId === ownUnitId.value)?.expiresAt;
 const dispatchBackground = computed(() => dispatchStatusToBGColor(props.dispatch.status?.status ?? 0));
 
 onBeforeMount(() => {

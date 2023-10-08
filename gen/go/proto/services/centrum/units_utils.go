@@ -23,12 +23,12 @@ func (s *Server) getUnit(job string, id uint64) (*dispatch.Unit, bool) {
 	return units.Load(id)
 }
 
-func (s *Server) listUnits(job string) ([]*dispatch.Unit, error) {
+func (s *Server) listUnits(job string) ([]*dispatch.Unit, bool) {
 	us := []*dispatch.Unit{}
 
 	units, ok := s.state.Units.Load(job)
 	if !ok {
-		return nil, nil
+		return nil, false
 	}
 
 	units.Range(func(key uint64, unit *dispatch.Unit) bool {
@@ -40,7 +40,7 @@ func (s *Server) listUnits(job string) ([]*dispatch.Unit, error) {
 		return strings.Compare(a.Name, b.Name)
 	})
 
-	return us, nil
+	return us, true
 }
 
 func (s *Server) getUnitStatusFromDB(ctx context.Context, job string, id uint64) (*dispatch.UnitStatus, error) {
@@ -265,18 +265,10 @@ func (s *Server) updateUnitAssignments(ctx context.Context, userInfo *userinfo.U
 				INSERT(
 					tUnitUser.UnitID,
 					tUnitUser.UserID,
-					tUnitUser.Identifier,
 				).
 				VALUES(
 					unit.Id,
 					id,
-					tUsers.
-						SELECT(
-							tUsers.Identifier,
-						).
-						FROM(tUsers).
-						WHERE(tUsers.ID.EQ(id)).
-						LIMIT(1),
 				)
 
 			if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -327,14 +319,6 @@ func (s *Server) updateUnitAssignments(ctx context.Context, userInfo *userinfo.U
 	}
 
 	s.events.JS.PublishAsync(buildSubject(TopicUnit, TypeUnitUpdated, userInfo.Job, unit.Id), data)
-
-	// Send unit user assigned message when needed
-	if len(toAdd) > 0 {
-		s.events.JS.PublishAsync(buildSubject(TopicUnit, TypeUnitUserAssigned, userInfo.Job, 0), data)
-	}
-	if len(toRemove) > 0 {
-		s.events.JS.PublishAsync(buildSubject(TopicUnit, TypeUnitUserAssigned, userInfo.Job, unit.Id), data)
-	}
 
 	// Unit is empty, set unit status to be unavailable automatically
 	if len(unit.Users) == 0 {

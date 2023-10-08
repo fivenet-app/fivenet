@@ -170,7 +170,6 @@ func (s *Server) loadUnits(ctx context.Context, id uint64) error {
 			tUnitStatus.Postal,
 			tUnitUser.UnitID,
 			tUnitUser.UserID,
-			tUnitUser.Identifier,
 		).
 		FROM(
 			tUnits.

@@ -31,7 +31,7 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-const pingTickerTime = 35 * time.Second
+const pingTickerTime = 30 * time.Second
 
 var (
 	ErrFailedQuery       = status.Error(codes.Internal, "errors.CentrumService.ErrFailedQuery")
@@ -206,14 +206,8 @@ func (s *Server) sendLatestState(srv CentrumService_StreamServer, job string, us
 	settings := s.getSettings(job)
 	disponents := s.getDisponents(job)
 	isDisponent := s.checkIfUserIsDisponent(job, userId)
-
 	unitId, _ := s.getUnitIDForUserID(userId)
-
-	units, err := s.listUnits(job)
-	if err != nil {
-		return 0, isDisponent, err
-	}
-
+	units, _ := s.listUnits(job)
 	ownUnit, _ := s.getUnit(job, unitId)
 
 	dispatches, err := s.ListDispatches(srv.Context(), &ListDispatchesRequest{
@@ -375,32 +369,6 @@ func (s *Server) stream(srv CentrumService_StreamServer, isDisponent bool, job s
 
 			case TopicUnit:
 				switch tType {
-				case TypeUnitUserAssigned:
-					var dest dispatch.Unit
-					if err := proto.Unmarshal(msg.Data, &dest); err != nil {
-						return true, err
-					}
-
-					resp.Change = &StreamResponse_UnitAssigned{
-						UnitAssigned: &dest,
-					}
-
-					// Either user is in the unit this update is about or they are not (yet) in an unit
-					if dest.Id == unitId || unitId == 0 {
-						// Restart user's stream if they got removed from their assigned unit
-						inUnit := utils.InSliceFunc(dest.Users, func(a *dispatch.UnitAssignment) bool {
-							return userId == a.UserId
-						})
-
-						if dest.Id == unitId && !inUnit {
-							restart := true
-							resp.Restart = &restart
-						} else if inUnit {
-							// Seems that they got assigned to this unit, update the user's unitId here
-							unitId = dest.Id
-						}
-					}
-
 				case TypeUnitDeleted:
 					var dest dispatch.Unit
 					if err := proto.Unmarshal(msg.Data, &dest); err != nil {
@@ -419,6 +387,22 @@ func (s *Server) stream(srv CentrumService_StreamServer, isDisponent bool, job s
 
 					resp.Change = &StreamResponse_UnitUpdated{
 						UnitUpdated: &dest,
+					}
+
+					// Either user is in that unit this update is about or they are not (yet) in an unit
+					if dest.Id == unitId || unitId == 0 {
+						// Restart user's stream if they got removed from their assigned unit
+						inUnit := utils.InSliceFunc(dest.Users, func(a *dispatch.UnitAssignment) bool {
+							return userId == a.UserId
+						})
+
+						if unitId > 0 && !inUnit {
+							restart := true
+							resp.Restart = &restart
+						} else if inUnit {
+							// Seems that they got assigned to this unit, update the user's unitId here
+							unitId = dest.Id
+						}
 					}
 
 				case TypeUnitStatus:

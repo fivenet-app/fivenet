@@ -23,7 +23,7 @@ const emit = defineEmits<{
 const { $grpc } = useNuxtApp();
 
 const centrumStore = useCentrumStore();
-const { dispatches, ownUnitId, pendingDispatches, getCurrentMode } = storeToRefs(centrumStore);
+const { dispatches, pendingDispatches, getCurrentMode } = storeToRefs(centrumStore);
 
 const selectedDispatches = ref<bigint[]>([]);
 const queryDispatches = ref('');
@@ -168,7 +168,6 @@ const filteredDispatches = computed(() => {
                                                                 <TakeDispatchEntry
                                                                     v-for="pd in filteredDispatches"
                                                                     :dispatch="dispatches.get(pd)!"
-                                                                    :own-unit-id="ownUnitId"
                                                                     :preselected="false"
                                                                     @selected="selectDispatch(pd)"
                                                                     @goto="$emit('goto', $event)"
@@ -186,7 +185,6 @@ const filteredDispatches = computed(() => {
                                                                 v-else
                                                                 v-for="pd in pendingDispatches"
                                                                 :dispatch="dispatches.get(pd)!"
-                                                                :own-unit-id="ownUnitId"
                                                                 @selected="selectDispatch(pd)"
                                                                 @goto="$emit('goto', $event)"
                                                             />

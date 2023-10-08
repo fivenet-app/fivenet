@@ -923,7 +923,7 @@
             }
         },
         "centrum": {
-            "unitAssigned": {
+            "unitUpdated": {
                 "joined": {
                     "title": "Joined Unit",
                     "content": "You have joined an unit."

@@ -24,11 +24,10 @@ const (
 	TypeDispatchUpdated events.Type  = "updated"
 	TypeDispatchStatus  events.Type  = "status"
 
-	TopicUnit            events.Topic = "unit"
-	TypeUnitDeleted      events.Type  = "deleted"
-	TypeUnitUpdated      events.Type  = "updated"
-	TypeUnitStatus       events.Type  = "status"
-	TypeUnitUserAssigned events.Type  = "user_assigned"
+	TopicUnit       events.Topic = "unit"
+	TypeUnitDeleted events.Type  = "deleted"
+	TypeUnitUpdated events.Type  = "updated"
+	TypeUnitStatus  events.Type  = "status"
 )
 
 func (s *Server) registerEvents() error {

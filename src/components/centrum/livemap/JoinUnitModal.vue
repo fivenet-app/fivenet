@@ -21,7 +21,7 @@ const { $grpc } = useNuxtApp();
 const centrumStore = useCentrumStore();
 const { ownUnitId, units } = storeToRefs(centrumStore);
 
-async function joinUnit(unit?: Unit | undefined): Promise<void> {
+async function joinOrLeaveUnit(unit?: Unit | undefined): Promise<void> {
     return new Promise(async (res, rej) => {
         try {
             const call = $grpc.getCentrumClient().joinUnit({
@@ -97,7 +97,7 @@ async function joinUnit(unit?: Unit | undefined): Promise<void> {
                                                                     type="button"
                                                                     class="text-white hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-2 text-xs my-0.5"
                                                                     :class="unitStatusToBGColor(item.status?.status ?? 0)"
-                                                                    @click="joinUnit(item)"
+                                                                    @click="joinOrLeaveUnit(item)"
                                                                 >
                                                                     <span class="mt-1"
                                                                         >{{ item.initials }}: {{ item.name }}</span
@@ -125,7 +125,7 @@ async function joinUnit(unit?: Unit | undefined): Promise<void> {
                                                 v-if="ownUnitId !== undefined"
                                                 type="button"
                                                 class="w-full relative inline-flex items-center rounded-l-md bg-error-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-primary-400"
-                                                @click="joinUnit(undefined)"
+                                                @click="joinOrLeaveUnit(undefined)"
                                             >
                                                 {{ $t('common.leave') }}
                                             </button>

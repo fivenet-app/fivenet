@@ -7,11 +7,11 @@ import { UserShort } from '~~/gen/ts/resources/users/users';
 import { useAuthStore } from './auth';
 import { useNotificatorStore } from './notificator';
 
-const FIVE_MINUTES = 7 * 60 * 1000;
-const TWO_MINUTES = 2 * 60 * 1000;
+const FIVE_MINUTES = 5 * 60 * 1000;
+const ONE_MINUTE = 1 * 60 * 1000;
 
 // In seconds
-const initialBackoffTime = 1;
+const initialBackoffTime = 2;
 
 export interface CentrumState {
     error: RpcError | undefined;
@@ -20,7 +20,7 @@ export interface CentrumState {
     restarting: boolean;
     restartBackoffTime: number;
 
-    settings: Settings;
+    settings: Settings | undefined;
     isDisponent: boolean;
     disponents: UserShort[];
     feed: (DispatchStatus | UnitStatus)[];
@@ -39,7 +39,7 @@ export const useCentrumStore = defineStore('centrum', {
             restarting: false,
             restartBackoffTime: 0,
 
-            settings: {},
+            settings: undefined,
             isDisponent: false,
             disponents: [] as UserShort[],
             feed: [] as (DispatchStatus | UnitStatus)[],
@@ -52,11 +52,14 @@ export const useCentrumStore = defineStore('centrum', {
     persist: false,
     getters: {
         getCurrentMode: (state: CentrumState) =>
-            state.disponents.length > 0 ? state.settings.mode : state.settings.fallbackMode,
+            state.disponents.length > 0
+                ? state.settings?.mode ?? CentrumMode.UNSPECIFIED
+                : state.settings?.fallbackMode ?? CentrumMode.UNSPECIFIED,
     },
     actions: {
         addOrUpdateUnit(unit: Unit): void {
             const u = this.units.get(unit.id);
+
             if (u === undefined) {
                 if (unit.status === undefined) {
                     unit.status = {
@@ -82,25 +85,36 @@ export const useCentrumStore = defineStore('centrum', {
                     u.users.push(...unit.users);
                 }
 
-                if (unit.status !== undefined) {
-                    if (u.status === undefined) {
-                        u.status = unit.status;
-                    } else {
-                        u.status!.id = unit.status.id;
-                        u.status!.createdAt = unit.status.createdAt;
-                        u.status!.unitId = unit.status.unitId;
-                        u.status!.status = unit.status.status;
-                        u.status!.reason = unit.status.reason;
-                        u.status!.code = unit.status.code;
-                        u.status!.userId = unit.status.userId;
-                        u.status!.user = unit.status.user;
-                        u.status!.x = unit.status.x;
-                        u.status!.y = unit.status.y;
-                        u.status!.postal = unit.status.postal;
-                        u.status!.creator = unit.status.creator;
-                        u.status!.creatorId = unit.status.creatorId;
-                    }
-                }
+                this.updateUnitStatus(unit.status);
+            }
+        },
+        updateUnitStatus(status: UnitStatus | undefined): void {
+            if (status === undefined) {
+                return;
+            }
+
+            const u = this.units.get(status.unitId);
+            if (u === undefined) {
+                console.error('Centrum: Processed Unit Status for unknown Unit', status.unitId.toString());
+                return;
+            }
+
+            if (u.status === undefined) {
+                u.status = status;
+            } else {
+                u.status!.id = status.id;
+                u.status!.createdAt = status.createdAt;
+                u.status!.unitId = status.unitId;
+                u.status!.status = status.status;
+                u.status!.reason = status.reason;
+                u.status!.code = status.code;
+                u.status!.userId = status.userId;
+                u.status!.user = status.user;
+                u.status!.x = status.x;
+                u.status!.y = status.y;
+                u.status!.postal = status.postal;
+                u.status!.creator = status.creator;
+                u.status!.creatorId = status.creatorId;
             }
         },
         setOwnUnit(id: bigint | undefined): void {
@@ -125,7 +139,9 @@ export const useCentrumStore = defineStore('centrum', {
             return dsp.units.findIndex((d) => d.unitId === unit) > -1;
         },
         addOrUpdateDispatch(dispatch: Dispatch): void {
-            if (!this.dispatches.has(dispatch.id)) {
+            const d = this.dispatches.get(dispatch.id);
+
+            if (d === undefined) {
                 if (dispatch.status === undefined) {
                     dispatch.status = {
                         dispatchId: dispatch.id,
@@ -135,7 +151,6 @@ export const useCentrumStore = defineStore('centrum', {
                 }
                 this.dispatches.set(dispatch.id, dispatch);
             } else {
-                const d = this.dispatches.get(dispatch.id);
                 d!.createdAt = dispatch.createdAt;
                 d!.updatedAt = dispatch.updatedAt;
                 d!.job = dispatch.job;
@@ -155,28 +170,39 @@ export const useCentrumStore = defineStore('centrum', {
                     d!.units.push(...dispatch.units);
                 }
 
-                if (dispatch.status !== undefined) {
-                    if (d!.status === undefined) {
-                        d!.status = dispatch.status;
-                    } else {
-                        d!.status!.id = dispatch.status.id;
-                        d!.status!.createdAt = dispatch.status.createdAt;
-                        d!.status!.dispatchId = dispatch.status.dispatchId;
-                        d!.status!.unitId = dispatch.status.unitId;
-                        d!.status!.unit = dispatch.status.unit;
-                        d!.status!.status = dispatch.status.status;
-                        d!.status!.reason = dispatch.status.reason;
-                        d!.status!.code = dispatch.status.code;
-                        d!.status!.userId = dispatch.status.userId;
-                        d!.status!.user = dispatch.status.user;
-                        d!.status!.x = dispatch.status.x;
-                        d!.status!.y = dispatch.status.y;
-                        d!.status!.postal = dispatch.status.postal;
-                    }
-                }
+                this.updateDispatchStatus(dispatch.status);
             }
 
             this.handleDispatchAssignment(dispatch);
+        },
+        updateDispatchStatus(status: DispatchStatus | undefined): void {
+            if (status === undefined) {
+                return;
+            }
+
+            const d = this.dispatches.get(status.dispatchId);
+            if (d === undefined) {
+                console.error('Centrum: Processed Dispatch Status for unknown Dispatch', status.dispatchId.toString());
+                return;
+            }
+
+            if (d!.status === undefined) {
+                d!.status = status;
+            } else {
+                d!.status!.id = status.id;
+                d!.status!.createdAt = status.createdAt;
+                d!.status!.dispatchId = status.dispatchId;
+                d!.status!.unitId = status.unitId;
+                d!.status!.unit = status.unit;
+                d!.status!.status = status.status;
+                d!.status!.reason = status.reason;
+                d!.status!.code = status.code;
+                d!.status!.userId = status.userId;
+                d!.status!.user = status.user;
+                d!.status!.x = status.x;
+                d!.status!.y = status.y;
+                d!.status!.postal = status.postal;
+            }
         },
         removeDispatch(id: bigint): void {
             this.removePendingDispatch(id);
@@ -245,10 +271,21 @@ export const useCentrumStore = defineStore('centrum', {
             }
         },
 
+        updateSettings(settings: Settings): void {
+            if (this.settings !== undefined) {
+                this.settings.enabled = settings.enabled;
+                this.settings.job = settings.job;
+                this.settings.mode = settings.mode;
+                this.settings.fallbackMode = settings.fallbackMode;
+            } else {
+                this.settings = settings;
+            }
+        },
+
         async startStream(isCenter?: boolean): Promise<void> {
             if (this.abort !== undefined) return;
             if (this.cleanupIntervalId !== undefined) clearInterval(this.cleanupIntervalId);
-            this.cleanupIntervalId = setInterval(() => this.cleanup(), TWO_MINUTES);
+            this.cleanupIntervalId = setInterval(() => this.cleanup(), ONE_MINUTE);
 
             console.debug('Centrum: Starting Data Stream');
 
@@ -279,7 +316,7 @@ export const useCentrumStore = defineStore('centrum', {
 
                     if (resp.change.oneofKind === 'latestState') {
                         if (resp.change.latestState.settings !== undefined) {
-                            this.settings = resp.change.latestState.settings;
+                            this.updateSettings(resp.change.latestState.settings);
                         }
                         this.disponents.length = 0;
                         this.disponents.push(...resp.change.latestState.disponents);
@@ -289,7 +326,7 @@ export const useCentrumStore = defineStore('centrum', {
                         resp.change.latestState.units.forEach((u) => this.addOrUpdateUnit(u));
                         resp.change.latestState.dispatches.forEach((d) => this.addOrUpdateDispatch(d));
                     } else if (resp.change.oneofKind === 'settings') {
-                        this.settings = resp.change.settings;
+                        this.updateSettings(resp.change.settings);
                     } else if (resp.change.oneofKind === 'disponents') {
                         this.disponents.length = 0;
                         this.disponents.push(...resp.change.disponents.disponents);
@@ -298,37 +335,47 @@ export const useCentrumStore = defineStore('centrum', {
                         const idx = this.disponents.findIndex((d) => d.userId === authStore.activeChar?.userId);
                         if (idx === -1) {
                             this.isDisponent = false;
-                            if (resp.restart !== undefined && !resp.restart) resp.restart = true;
+                            if (resp.restart !== undefined && !resp.restart) {
+                                resp.restart = true;
+                            }
                         }
-                    } else if (resp.change.oneofKind === 'unitAssigned') {
-                        this.addOrUpdateUnit(resp.change.unitAssigned);
-                        if (isCenter) continue;
+                    } else if (resp.change.oneofKind === 'unitDeleted') {
+                        this.removeUnit(resp.change.unitDeleted);
+                    } else if (resp.change.oneofKind === 'unitUpdated') {
+                        this.addOrUpdateUnit(resp.change.unitUpdated);
+                        if (isCenter) {
+                            continue;
+                        }
 
                         // Ignore unit assignments for other units
-                        if (this.ownUnitId !== undefined && this.ownUnitId !== resp.change.unitAssigned.id) {
+                        if (this.ownUnitId !== undefined && this.ownUnitId !== resp.change.unitUpdated.id) {
                             continue;
                         }
 
                         // User added/in this unit
-                        const idx = resp.change.unitAssigned.users.findIndex((u) => u.userId === authStore.activeChar?.userId);
+                        const idx = resp.change.unitUpdated.users.findIndex((u) => u.userId === authStore.activeChar?.userId);
                         if (idx > -1) {
                             // User already in unit
-                            if (this.ownUnitId === resp.change.unitAssigned.id) continue;
+                            if (this.ownUnitId === resp.change.unitUpdated.id) {
+                                continue;
+                            }
 
-                            this.setOwnUnit(resp.change.unitAssigned.id);
+                            this.setOwnUnit(resp.change.unitUpdated.id);
 
                             // User has been newly added to unit
                             notifications.dispatchNotification({
-                                title: { key: 'notifications.centrum.unitAssigned.joined.title', parameters: {} },
-                                content: { key: 'notifications.centrum.unitAssigned.joined.content', parameters: {} },
+                                title: { key: 'notifications.centrum.unitUpdated.joined.title', parameters: {} },
+                                content: { key: 'notifications.centrum.unitUpdated.joined.content', parameters: {} },
                                 type: 'success',
                             });
                         } else {
-                            if (this.ownUnitId === undefined) return;
+                            if (this.ownUnitId === undefined) {
+                                return;
+                            }
 
                             notifications.dispatchNotification({
-                                title: { key: 'notifications.centrum.unitAssigned.removed.title', parameters: {} },
-                                content: { key: 'notifications.centrum.unitAssigned.removed.content', parameters: {} },
+                                title: { key: 'notifications.centrum.unitUpdated.removed.title', parameters: {} },
+                                content: { key: 'notifications.centrum.unitUpdated.removed.content', parameters: {} },
                                 type: 'warning',
                             });
 
@@ -339,10 +386,6 @@ export const useCentrumStore = defineStore('centrum', {
                         }
 
                         this.dispatches.forEach((d) => this.handleDispatchAssignment(d));
-                    } else if (resp.change.oneofKind === 'unitDeleted') {
-                        this.removeUnit(resp.change.unitDeleted);
-                    } else if (resp.change.oneofKind === 'unitUpdated') {
-                        this.addOrUpdateUnit(resp.change.unitUpdated);
                     } else if (resp.change.oneofKind === 'unitStatus') {
                         this.addOrUpdateUnit(resp.change.unitStatus);
 
@@ -360,15 +403,13 @@ export const useCentrumStore = defineStore('centrum', {
                     } else if (resp.change.oneofKind === 'dispatchUpdated') {
                         this.addOrUpdateDispatch(resp.change.dispatchUpdated);
                     } else if (resp.change.oneofKind === 'dispatchStatus') {
-                        const id = resp.change.dispatchStatus.id;
-
                         if (this.isDisponent && resp.change.dispatchStatus.status) {
                             this.feed.unshift(resp.change.dispatchStatus.status);
                         }
 
                         if (resp.change.dispatchStatus.status?.status === StatusDispatch.ARCHIVED) {
                             // If dispatch has been archived, remove from the main list
-                            this.removeDispatch(id);
+                            this.removeDispatch(resp.change.dispatchStatus.id);
                         } else {
                             this.addOrUpdateDispatch(resp.change.dispatchStatus);
                         }
@@ -406,9 +447,13 @@ export const useCentrumStore = defineStore('centrum', {
             console.debug('Centrum: Data Stream Ended');
         },
         async stopStream(): Promise<void> {
-            if (this.abort !== undefined) this.abort.abort();
+            if (this.abort !== undefined) {
+                this.abort.abort();
+            }
             this.abort = undefined;
-            if (this.cleanupIntervalId !== undefined) clearInterval(this.cleanupIntervalId);
+            if (this.cleanupIntervalId !== undefined) {
+                clearInterval(this.cleanupIntervalId);
+            }
             this.cleanupIntervalId = undefined;
 
             console.debug('Centrum: Stopping Data Stream');
@@ -427,7 +472,9 @@ export const useCentrumStore = defineStore('centrum', {
             await this.stopStream();
 
             setTimeout(async () => {
-                if (this.restarting) this.startStream(isCenter);
+                if (this.restarting) {
+                    this.startStream(isCenter);
+                }
             }, this.restartBackoffTime * 1000);
         },
         // Central "can user do that" method as we will take the dispatch center mode into account further
@@ -439,7 +486,7 @@ export const useCentrumStore = defineStore('centrum', {
                     return can('CentrumService.TakeControl');
 
                 case 'TakeDispatch':
-                    return can('CentrumService.TakeDispatch') && this.settings.mode !== CentrumMode.CENTRAL_COMMAND;
+                    return can('CentrumService.TakeDispatch') && this.getCurrentMode !== CentrumMode.CENTRAL_COMMAND;
 
                 case 'AssignDispatch':
                     return can('CentrumService.AssignDispatch');
@@ -469,7 +516,7 @@ export const useCentrumStore = defineStore('centrum', {
                 } else {
                     this.dispatches.get(pd)?.units.forEach((ua) => {
                         const expiresAt = toDate(ua.expiresAt);
-                        if (now - expiresAt.getTime() >= TWO_MINUTES) this.removePendingDispatch(pd);
+                        if (now - expiresAt.getTime() >= ONE_MINUTE) this.removePendingDispatch(pd);
                     });
                 }
             });

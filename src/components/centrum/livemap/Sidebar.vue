@@ -2,6 +2,7 @@
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { LControl } from '@vue-leaflet/vue-leaflet';
+import { watchDebounced } from '@vueuse/core';
 import {
     CalendarCheckIcon,
     CalendarRemoveIcon,
@@ -158,7 +159,11 @@ async function updateUtStatus(id: bigint, status?: StatusUnit): Promise<void> {
 // Show unit sidebar when ownUnit is set/updated, otherwise it will be hidden (automagically)
 const ownUnit = ref<Unit | undefined>();
 watch(ownUnitId, async () => {
-    if (ownUnitId.value) {
+    if (ownUnitId.value !== undefined) {
+        if (ownUnit.value !== undefined && ownUnit.value.id === ownUnitId.value) {
+            return;
+        }
+
         ownUnit.value = units.value.get(ownUnitId.value);
         open.value = true;
     } else {
@@ -167,7 +172,9 @@ watch(ownUnitId, async () => {
     }
 });
 
-function ensureDispatchSelected(): void {
+const ownUnitStatus = computed(() => unitStatusToBGColor(ownUnit.value?.status?.status));
+
+async function ensureDispatchSelected(): Promise<void> {
     if (selectedDispatch.value !== undefined) {
         return;
     }
@@ -179,7 +186,10 @@ function ensureDispatchSelected(): void {
     }
 }
 
-watch(ownDispatches.value, () => ensureDispatchSelected());
+watchDebounced(ownDispatches.value, async () => ensureDispatchSelected(), {
+    debounce: 150,
+    maxWait: 600,
+});
 
 onBeforeMount(async () => {
     setTimeout(async () => canStream && startStream(), 250);
@@ -190,8 +200,6 @@ onBeforeUnmount(async () => {
     stopStream();
     centrumStore.$reset();
 });
-
-const ownUnitStatus = computed(() => unitStatusToBGColor(ownUnit.value?.status?.status));
 
 const open = ref(false);
 </script>
