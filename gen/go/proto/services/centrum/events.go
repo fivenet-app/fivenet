@@ -6,7 +6,6 @@ import (
 	"strings"
 	"time"
 
-	dispatch "github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
 	"github.com/galexrt/fivenet/pkg/events"
 	"github.com/nats-io/nats.go"
 )
@@ -69,20 +68,4 @@ func splitSubject(subject string) (string, events.Topic, events.Type) {
 func buildSubject(topic events.Topic, tType events.Type, job string, id uint64) string {
 	format := "%s.%s." + string(topic) + "." + string(tType)
 	return fmt.Sprintf(format+".%d", BaseSubject, job, id)
-}
-
-func (s *Server) broadcastToAllUnits(topic events.Topic, tType events.Type, job string, data []byte) {
-	units := s.getUnitsMap(job)
-
-	s.events.JS.PublishAsync(buildSubject(topic, tType, job, 0), data)
-
-	units.Range(func(key uint64, unit *dispatch.Unit) bool {
-		// Skip empty units
-		if len(unit.Users) == 0 {
-			return true
-		}
-
-		s.events.JS.PublishAsync(buildSubject(topic, tType, job, unit.Id), data)
-		return true
-	})
 }

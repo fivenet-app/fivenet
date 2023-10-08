@@ -267,6 +267,10 @@ func (s *Server) runArchiveDispatches() {
 				if err := s.archiveDispatches(ctx); err != nil {
 					s.logger.Error("failed to archive dispatches", zap.Error(err))
 				}
+
+				if err := s.cleanupDispatches(ctx); err != nil {
+					s.logger.Error("failed to cleanup dispatches", zap.Error(err))
+				}
 			}()
 		}
 	}
@@ -333,7 +337,7 @@ func (s *Server) handleDispatchAssignmentExpiration(ctx context.Context) error {
 	return nil
 }
 
-// Set `COMPLETED`/`CANCELLED` dispatches to status `ARCHIVED` when the status is older than 20 minutes
+// Set `COMPLETED`/`CANCELLED` dispatches to status `ARCHIVED` when the status is older than 5 minutes
 func (s *Server) archiveDispatches(ctx context.Context) error {
 	stmt := tDispatchStatus.
 		SELECT(
@@ -346,31 +350,20 @@ func (s *Server) archiveDispatches(ctx context.Context) error {
 					tDispatch.ID.EQ(tDispatchStatus.DispatchID),
 				),
 		).
-		WHERE(jet.OR(
-			// Either the dispatch is at least 5 minutes old, completed/cancelled or has no status set
-			jet.AND(
-				tDispatchStatus.CreatedAt.LT_EQ(
-					jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(5, jet.MINUTE)),
-				),
-				tDispatchStatus.ID.IS_NULL().OR(
+		// Dispatches that are at 5 minutes or older, have completed/cancelled or no status set
+		WHERE(jet.AND(
+			tDispatchStatus.CreatedAt.LT_EQ(
+				jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(5, jet.MINUTE)),
+			),
+			tDispatchStatus.ID.IS_NULL().OR(
+				jet.AND(
 					tDispatchStatus.ID.EQ(
 						jet.RawInt("SELECT MAX(`dispatchstatus`.`id`) FROM `fivenet_centrum_dispatches_status` AS `dispatchstatus` WHERE `dispatchstatus`.`dispatch_id` = `dispatch`.`id`"),
 					),
-				),
-				tDispatchStatus.Status.IN(
-					jet.Int16(int16(dispatch.StatusDispatch_STATUS_DISPATCH_COMPLETED)),
-					jet.Int16(int16(dispatch.StatusDispatch_STATUS_DISPATCH_CANCELLED)),
-				),
-			),
-			// Or the last dispatch status is older than 2 hours and not completed/cancelled/archived status
-			jet.AND(
-				tDispatchStatus.CreatedAt.LT_EQ(
-					jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(2, jet.HOUR)),
-				),
-				tDispatchStatus.Status.NOT_IN(
-					jet.Int16(int16(dispatch.StatusDispatch_STATUS_DISPATCH_COMPLETED)),
-					jet.Int16(int16(dispatch.StatusDispatch_STATUS_DISPATCH_CANCELLED)),
-					jet.Int16(int16(dispatch.StatusDispatch_STATUS_DISPATCH_ARCHIVED)),
+					tDispatchStatus.Status.IN(
+						jet.Int16(int16(dispatch.StatusDispatch_STATUS_DISPATCH_COMPLETED)),
+						jet.Int16(int16(dispatch.StatusDispatch_STATUS_DISPATCH_CANCELLED)),
+					),
 				),
 			),
 		))
@@ -389,6 +382,11 @@ func (s *Server) archiveDispatches(ctx context.Context) error {
 			continue
 		}
 
+		// Ignore already archived dispatches
+		if dsp.Status != nil && dsp.Status.Status == dispatch.StatusDispatch_STATUS_DISPATCH_ARCHIVED {
+			continue
+		}
+
 		if err := s.updateDispatchStatus(ctx, ds.Job, dsp, &dispatch.DispatchStatus{
 			DispatchId: dsp.Id,
 			Status:     dispatch.StatusDispatch_STATUS_DISPATCH_ARCHIVED,
@@ -398,6 +396,48 @@ func (s *Server) archiveDispatches(ctx context.Context) error {
 		}
 
 		s.getDispatchesMap(ds.Job).Delete(ds.DispatchID)
+	}
+
+	return nil
+}
+
+func (s *Server) cleanupDispatches(ctx context.Context) error {
+	stmt := tDispatchStatus.
+		SELECT(
+			tDispatchStatus.DispatchID.AS("dispatch_id"),
+			tDispatch.Job.AS("job"),
+		).
+		FROM(
+			tDispatchStatus.
+				INNER_JOIN(tDispatch,
+					tDispatch.ID.EQ(tDispatchStatus.DispatchID),
+				),
+		).
+		WHERE(jet.AND(
+			tDispatchStatus.CreatedAt.LT_EQ(
+				jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(2, jet.HOUR)),
+			),
+		))
+
+	var dest []*struct {
+		DispatchID uint64
+		Job        string
+	}
+	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
+		return err
+	}
+
+	for _, ds := range dest {
+		dsp, ok := s.getDispatch(ds.Job, ds.DispatchID)
+		if !ok {
+			continue
+		}
+
+		s.getDispatchesMap(ds.Job).Delete(ds.DispatchID)
+
+		if err := s.deleteDispatch(ctx, dsp.Job, dsp.Id); err != nil {
+			return err
+		}
 	}
 
 	return nil

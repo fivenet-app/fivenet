@@ -91,6 +91,95 @@ func (s *Server) getDispatchStatusFromDB(ctx context.Context, job string, id uin
 	return &dest, nil
 }
 
+func (s *Server) createDispatch(ctx context.Context, d *dispatch.Dispatch) (*dispatch.Dispatch, error) {
+	postal := s.postals.Closest(d.X, d.Y)
+	if postal != nil {
+		d.Postal = postal.Code
+	}
+
+	// Begin transaction
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return nil, err
+	}
+	// Defer a rollback in case anything fails
+	defer tx.Rollback()
+
+	tDispatch := table.FivenetCentrumDispatches
+	stmt := tDispatch.
+		INSERT(
+			tDispatch.Job,
+			tDispatch.Message,
+			tDispatch.Description,
+			tDispatch.Attributes,
+			tDispatch.X,
+			tDispatch.Y,
+			tDispatch.Postal,
+			tDispatch.Anon,
+			tDispatch.CreatorID,
+		).
+		VALUES(
+			d.Job,
+			d.Message,
+			d.Description,
+			d.Attributes,
+			d.X,
+			d.Y,
+			d.Postal,
+			d.Anon,
+			d.CreatorId,
+		)
+
+	result, err := stmt.ExecContext(ctx, tx)
+	if err != nil {
+		return nil, err
+	}
+
+	lastId, err := result.LastInsertId()
+	if err != nil {
+		return nil, err
+	}
+
+	if err := s.addDispatchStatus(ctx, tx, &dispatch.DispatchStatus{
+		DispatchId: uint64(lastId),
+		UserId:     d.CreatorId,
+		Status:     dispatch.StatusDispatch_STATUS_DISPATCH_NEW,
+		X:          &d.X,
+		Y:          &d.Y,
+		Postal:     d.Postal,
+	}); err != nil {
+		return nil, err
+	}
+
+	// Commit the transaction
+	if err := tx.Commit(); err != nil {
+		return nil, err
+	}
+
+	// Load dispatch into cache
+	if err := s.loadDispatches(ctx, uint64(lastId)); err != nil {
+		return nil, err
+	}
+
+	dsp, ok := s.getDispatch(d.Job, uint64(lastId))
+	if !ok {
+		return nil, ErrFailedQuery
+	}
+	// Hide user info when dispatch is anonymous
+	if dsp.Anon {
+		dsp.Creator = nil
+		dsp.CreatorId = nil
+	}
+
+	data, err := proto.Marshal(dsp)
+	if err != nil {
+		return nil, err
+	}
+	s.events.JS.PublishAsync(buildSubject(TopicDispatch, TypeDispatchCreated, d.Job, 0), data)
+
+	return dsp, nil
+}
+
 func (s *Server) updateDispatch(ctx context.Context, userInfo *userinfo.UserInfo, dsp *dispatch.Dispatch) error {
 	stmt := tDispatch.
 		UPDATE(
@@ -389,6 +478,43 @@ func (s *Server) updateDispatchAssignments(ctx context.Context, job string, user
 			}
 		}
 	}
+
+	return nil
+}
+
+func (s *Server) deleteDispatch(ctx context.Context, job string, id uint64) error {
+	stmt := tDispatch.
+		DELETE().
+		WHERE(jet.AND(
+			tDispatch.Job.EQ(jet.String(job)),
+			tDispatch.ID.EQ(jet.Uint64(id)),
+		)).
+		LIMIT(1)
+
+	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+		return ErrFailedQuery
+	}
+
+	if err := s.publishDeleteDispatch(job, id); err != nil {
+		return ErrFailedQuery
+	}
+
+	return nil
+}
+
+func (s *Server) publishDeleteDispatch(job string, id uint64) error {
+	dsp, ok := s.getDispatch(job, id)
+	if !ok {
+		return ErrFailedQuery
+	}
+
+	data, err := proto.Marshal(dsp)
+	if err != nil {
+		return err
+	}
+	s.events.JS.PublishAsync(buildSubject(TopicDispatch, TypeDispatchDeleted, job, 0), data)
+
+	s.getDispatchesMap(job).Delete(id)
 
 	return nil
 }

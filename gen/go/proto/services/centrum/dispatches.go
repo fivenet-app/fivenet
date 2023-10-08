@@ -105,95 +105,6 @@ func (s *Server) CreateDispatch(ctx context.Context, req *CreateDispatchRequest)
 	}, nil
 }
 
-func (s *Server) createDispatch(ctx context.Context, d *dispatch.Dispatch) (*dispatch.Dispatch, error) {
-	postal := s.postals.Closest(d.X, d.Y)
-	if postal != nil {
-		d.Postal = postal.Code
-	}
-
-	// Begin transaction
-	tx, err := s.db.BeginTx(ctx, nil)
-	if err != nil {
-		return nil, err
-	}
-	// Defer a rollback in case anything fails
-	defer tx.Rollback()
-
-	tDispatch := table.FivenetCentrumDispatches
-	stmt := tDispatch.
-		INSERT(
-			tDispatch.Job,
-			tDispatch.Message,
-			tDispatch.Description,
-			tDispatch.Attributes,
-			tDispatch.X,
-			tDispatch.Y,
-			tDispatch.Postal,
-			tDispatch.Anon,
-			tDispatch.CreatorID,
-		).
-		VALUES(
-			d.Job,
-			d.Message,
-			d.Description,
-			d.Attributes,
-			d.X,
-			d.Y,
-			d.Postal,
-			d.Anon,
-			d.CreatorId,
-		)
-
-	result, err := stmt.ExecContext(ctx, tx)
-	if err != nil {
-		return nil, err
-	}
-
-	lastId, err := result.LastInsertId()
-	if err != nil {
-		return nil, err
-	}
-
-	if err := s.addDispatchStatus(ctx, tx, &dispatch.DispatchStatus{
-		DispatchId: uint64(lastId),
-		UserId:     d.CreatorId,
-		Status:     dispatch.StatusDispatch_STATUS_DISPATCH_NEW,
-		X:          &d.X,
-		Y:          &d.Y,
-		Postal:     d.Postal,
-	}); err != nil {
-		return nil, err
-	}
-
-	// Commit the transaction
-	if err := tx.Commit(); err != nil {
-		return nil, err
-	}
-
-	// Load dispatch into cache
-	if err := s.loadDispatches(ctx, uint64(lastId)); err != nil {
-		return nil, err
-	}
-
-	dsp, ok := s.getDispatch(d.Job, uint64(lastId))
-	if !ok {
-		return nil, ErrFailedQuery
-	}
-	// Hide user info when dispatch is anonymous
-	if dsp.Anon {
-		dsp.Creator = nil
-		dsp.CreatorId = nil
-	}
-
-	data, err := proto.Marshal(dsp)
-	if err != nil {
-		return nil, err
-	}
-	s.events.JS.PublishAsync(buildSubject(TopicDispatch, TypeDispatchCreated, d.Job, 0), data)
-
-	return dsp, nil
-}
-
 func (s *Server) UpdateDispatch(ctx context.Context, req *UpdateDispatchRequest) (*UpdateDispatchResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -225,9 +136,6 @@ func (s *Server) UpdateDispatch(ctx context.Context, req *UpdateDispatchRequest)
 		return nil, ErrFailedQuery
 	}
 	s.events.JS.PublishAsync(buildSubject(TopicDispatch, TypeDispatchUpdated, userInfo.Job, 0), data)
-	for _, unit := range dsp.Units {
-		s.events.JS.PublishAsync(buildSubject(TopicDispatch, TypeDispatchUpdated, userInfo.Job, unit.UnitId), data)
-	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 
@@ -592,28 +500,9 @@ func (s *Server) DeleteDispatch(ctx context.Context, req *DeleteDispatchRequest)
 	}
 	defer s.auditer.Log(auditEntry, req)
 
-	dsp, ok := s.getDispatch(userInfo.Job, req.Id)
-	if !ok {
+	if err := s.deleteDispatch(ctx, userInfo.Job, req.Id); err != nil {
 		return nil, ErrFailedQuery
 	}
-
-	stmt := tDispatch.
-		DELETE().
-		WHERE(jet.AND(
-			tDispatch.Job.EQ(jet.String(userInfo.Job)),
-			tDispatch.ID.EQ(jet.Uint64(dsp.Id)),
-		)).
-		LIMIT(1)
-
-	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return nil, ErrFailedQuery
-	}
-
-	data, err := proto.Marshal(dsp)
-	if err != nil {
-		return nil, err
-	}
-	s.events.JS.PublishAsync(buildSubject(TopicDispatch, TypeDispatchDeleted, dsp.Job, 0), data)
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)
 

@@ -315,7 +315,6 @@ func (s *Server) updateUnitAssignments(ctx context.Context, userInfo *userinfo.U
 	if err != nil {
 		return err
 	}
-
 	s.events.JS.PublishAsync(buildSubject(TopicUnit, TypeUnitUpdated, userInfo.Job, unit.Id), data)
 
 	// Unit is empty, set unit status to be unavailable automatically

@@ -66,7 +66,7 @@ func (s *Server) UpdateSettings(ctx context.Context, req *dispatch.Settings) (*d
 	if err != nil {
 		return nil, ErrFailedQuery
 	}
-	s.broadcastToAllUnits(TopicGeneral, TypeGeneralSettings, userInfo.Job, data)
+	s.events.JS.PublishAsync(buildSubject(TopicGeneral, TypeGeneralSettings, userInfo.Job, 0), data)
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 

@@ -195,7 +195,7 @@ func (s *Server) dispatchCenterSignOn(ctx context.Context, job string, userId in
 	if err != nil {
 		return ErrFailedQuery
 	}
-	s.broadcastToAllUnits(TopicGeneral, TypeGeneralDisponents, job, data)
+	s.events.JS.PublishAsync(buildSubject(TopicGeneral, TypeGeneralDisponents, job, 0), data)
 
 	return nil
 }

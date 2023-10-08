@@ -238,7 +238,11 @@ func (s *Server) loadDispatches(ctx context.Context, id uint64) error {
 	condition := tDispatchStatus.ID.IS_NULL().OR(
 		tDispatchStatus.ID.EQ(
 			jet.RawInt("SELECT MAX(`dispatchstatus`.`id`) FROM `fivenet_centrum_dispatches_status` AS `dispatchstatus` WHERE `dispatchstatus`.`dispatch_id` = `dispatch`.`id` AND `dispatchstatus`.`status` NOT IN (10)"),
-		),
+		).
+			// Don't load archived dispatches into cache
+			AND(tDispatchStatus.Status.NOT_IN(
+				jet.Int16(int16(dispatch.StatusDispatch_STATUS_DISPATCH_ARCHIVED)),
+			)),
 	)
 
 	if id > 0 {
@@ -331,6 +335,16 @@ func (s *Server) loadDispatches(ctx context.Context, id uint64) error {
 		}
 
 		s.getDispatchesMap(dispatches[i].Job).Store(dispatches[i].Id, dispatches[i])
+
+		// Ensure dispatch has status new if none
+		if dispatches[i].Status == nil {
+			if err := s.updateDispatchStatus(ctx, dispatches[i].Job, dispatches[i], &dispatch.DispatchStatus{
+				DispatchId: dispatches[i].Id,
+				Status:     dispatch.StatusDispatch_STATUS_DISPATCH_NEW,
+			}); err != nil {
+				return err
+			}
+		}
 	}
 
 	return nil
