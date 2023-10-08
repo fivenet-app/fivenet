@@ -35,16 +35,13 @@ async function setJob(): Promise<void> {
             });
             const { response } = await call;
 
-            const promises = [
-                setAccessToken(response.token, toDate(response.expires) as null | Date),
-                setActiveChar(response.char!),
-            ];
+            setAccessToken(response.token, toDate(response.expires) as null | Date);
+            setActiveChar(response.char!);
             if (response.jobProps) {
-                promises.push(setJobProps(response.jobProps!));
+                setJobProps(response.jobProps!);
             } else {
                 setJobProps(null);
             }
-            await Promise.all(promises);
 
             notifications.dispatchNotification({
                 title: { key: 'notifications.job_switcher.setjob.title', parameters: {} },
@@ -84,7 +81,7 @@ watch(selectedJob, () => setJob());
 
             <ComboboxOptions
                 v-if="filteredJobs.length > 0"
-                class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-44 sm:text-sm"
+                class="absolute z-50 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-44 sm:text-sm"
             >
                 <ComboboxOption v-for="job in filteredJobs" :key="job.name" :value="job" as="job" v-slot="{ active, selected }">
                     <li

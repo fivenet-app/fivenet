@@ -176,7 +176,7 @@ async function updatePermissions(): Promise<void> {
                 attrs.toUpdate.push({
                     roleId: role.value!.id,
                     attrId: attr,
-                    value: state,
+                    maxValues: state,
                     category: '',
                     key: '',
                     name: '',

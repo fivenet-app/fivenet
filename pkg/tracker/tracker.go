@@ -130,6 +130,7 @@ func (s *Tracker) start() {
 		case <-s.ctx.Done():
 			s.broker.Stop()
 			return
+
 		case <-time.After(s.refreshTime):
 		}
 	}
@@ -211,7 +212,7 @@ func (s *Tracker) refreshUserLocations(ctx context.Context) error {
 	}
 
 	event := &Event{}
-	expiration := time.Now().Add(2 * s.refreshTime)
+	expiration := time.Now().Add(3 * s.refreshTime)
 	markers := map[string]*xsync.MapOf[int32, *livemap.UserMarker]{}
 	for i := 0; i < len(dest); i++ {
 		s.enricher.EnrichJobInfo(dest[i].User)

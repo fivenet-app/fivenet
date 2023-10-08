@@ -411,7 +411,7 @@ const open = ref(false);
                 </div>
 
                 <!-- "Take Dispatches" Button -->
-                <span v-if="ownUnit !== undefined" class="fixed inline-flex z-90 bottom-2 right-1/2">
+                <span v-if="ownUnit !== undefined" class="fixed inline-flex z-100 bottom-2 right-1/2">
                     <span class="flex absolute h-3 w-3 top-0 right-0 -mt-1 -mr-1" v-if="pendingDispatches.length > 0">
                         <span
                             class="animate-ping absolute inline-flex h-full w-full rounded-full bg-error-400 opacity-75"
