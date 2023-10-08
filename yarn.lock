@@ -693,10 +693,10 @@
     "@floating-ui/dom" "^1.2.1"
     vue-demi "^0.13.11"
 
-"@fontsource/inter@^5.0.12":
-  version "5.0.12"
-  resolved "https://registry.yarnpkg.com/@fontsource/inter/-/inter-5.0.12.tgz#70a97308174d079d8fec92df81138bd8a3c0d374"
-  integrity sha512-9MCQLyzhMqQW9Ky5k/tcE+t88EyLX6z9VrU54AadHoF6s0dGiqbNVmusMe0/vrLmDxPV1ZDl3DdVyNhR49qbPg==
+"@fontsource/inter@^5.0.13":
+  version "5.0.13"
+  resolved "https://registry.yarnpkg.com/@fontsource/inter/-/inter-5.0.13.tgz#b106fdc43b8eea8d6f5c0ce55941b1ae577c49e5"
+  integrity sha512-FVIBhP9X/x02blF2VQl2Pji/c3jUjkWEQ9bom4vIrGwO1MlHRDXhXx9iA1hhjpcCIfH3oX68ihIBdYcFnOXhsg==
 
 "@hapi/hoek@^9.0.0":
   version "9.3.0"
@@ -5733,10 +5733,10 @@ maska@^2.1.10:
   resolved "https://registry.yarnpkg.com/maska/-/maska-2.1.10.tgz#dff9d96bf472280fe623ea2ecd1860c15886d355"
   integrity sha512-oQLLUCJ4qG1YFHSGQB9P6G0LKSmAwHFFBFhmkJ9pcSUXXDZew5NNTBbPACiixqFBaU7M7LydPlrL0DmI1p+ufQ==
 
-mdi-vue3@^7.2.96:
-  version "7.2.96"
-  resolved "https://registry.yarnpkg.com/mdi-vue3/-/mdi-vue3-7.2.96.tgz#fd5cabc35ecfa1c336cd24eec4428ad9140e9846"
-  integrity sha512-TtdrZzx2kDd2S+lBom5WlhZOuZlwB6N7BTGzK79Vvzk10A61IgRjtcByj7KV+nhEG+9ducV+VYMRu3lSq7Z4mQ==
+mdi-vue3@^7.3.67:
+  version "7.3.67"
+  resolved "https://registry.yarnpkg.com/mdi-vue3/-/mdi-vue3-7.3.67.tgz#06af6d78bd34bc8825a0d7d18576089bb5883b19"
+  integrity sha512-eldwdxyTC+gBaH2gjUMJnOxoR2Q0rxwlzmjNOYPpLwPtLuxV7AgbltQk8gQAzR2BE/JgQhUP2cC9UXcCh8HOgA==
 
 mdn-data@2.0.28:
   version "2.0.28"
