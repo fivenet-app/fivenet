@@ -213,7 +213,7 @@ const openStatus = ref(false);
                                                                 <StatusUpdateModal
                                                                     v-if="openStatus"
                                                                     :open="openStatus"
-                                                                    :dispatch="dispatch"
+                                                                    :dispatch-id="dispatch.id"
                                                                     @close="openStatus = false"
                                                                 />
 
