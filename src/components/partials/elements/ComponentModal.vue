@@ -1,8 +1,10 @@
 <script lang="ts" setup>
 import { Dialog, DialogPanel, TransitionChild, TransitionRoot } from '@headlessui/vue';
+import { CloseIcon } from 'mdi-vue3';
 
 defineProps<{
     open: boolean;
+    dialogClass?: unknown;
 }>();
 
 defineEmits<{
@@ -37,8 +39,19 @@ defineEmits<{
                         leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                     >
                         <DialogPanel
-                            class="relative px-4 pt-5 pb-4 overflow-hidden text-left transition-all transform rounded-lg bg-base-800 text-neutral sm:my-8 sm:w-full sm:max-w-8xl sm:p-6"
+                            class="relative px-4 pt-5 pb-4 overflow-hidden text-left transition-all transform rounded-lg bg-base-800 text-neutral sm:my-8 sm:w-full sm:max-w-6xl sm:p-6"
+                            :class="dialogClass"
                         >
+                            <div class="absolute right-0 top-0 hidden pr-4 pt-4 sm:block">
+                                <button
+                                    type="button"
+                                    class="rounded-md bg-white text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+                                    @click="$emit('close')"
+                                >
+                                    <span class="sr-only">{{ $t('common.close') }}</span>
+                                    <CloseIcon class="h-6 w-6" aria-hidden="true" />
+                                </button>
+                            </div>
                             <div>
                                 <div class="text-center">
                                     <slot />

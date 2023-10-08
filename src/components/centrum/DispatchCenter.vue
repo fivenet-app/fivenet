@@ -2,6 +2,7 @@
 import { Pane, Splitpanes } from 'splitpanes';
 import 'splitpanes/dist/splitpanes.css';
 import { default as DispatchesList } from '~/components/centrum/dispatches/List.vue';
+import DisponentsInfo from '~/components/centrum/disponents/DisponentsInfo.vue';
 import { default as UnitsList } from '~/components/centrum/units/List.vue';
 import Livemap from '~/components/livemap/Livemap.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
@@ -9,7 +10,6 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { setWaypoint } from '~/composables/nui';
 import { useCentrumStore } from '~/store/centrum';
 import { useLivemapStore } from '~/store/livemap';
-import DisponentsInfo from './DisponentsInfo.vue';
 import Feed from './Feed.vue';
 import DispatchesLayer from './livemap/DispatchesLayer.vue';
 

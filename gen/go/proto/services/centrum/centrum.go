@@ -307,9 +307,12 @@ func (s *Server) stream(srv CentrumService_StreamServer, isDisponent bool, job s
 					found := s.checkIfUserIsDisponent(job, userId)
 					// Either user is a disponent currently and not anymore now,
 					// or the user is not a disponent and joined as a disponent now
-					if (isDisponent && !found) || (!isDisponent && found) {
+					if !isDisponent && found {
 						restart := true
 						resp.Restart = &restart
+						isDisponent = true
+					} else if isDisponent && !found {
+						isDisponent = false
 					}
 
 				case TypeGeneralSettings:

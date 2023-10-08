@@ -16,11 +16,13 @@ import {
     InformationOutlineIcon,
     ListStatusIcon,
     MarkerCheckIcon,
+    MonitorIcon,
     ToggleSwitchIcon,
     ToggleSwitchOffIcon,
 } from 'mdi-vue3';
 import { DefineComponent } from 'vue';
 import { default as DispatchStatusUpdateModal } from '~/components/centrum/dispatches/StatusUpdateModal.vue';
+import { default as DisponentsModal } from '~/components/centrum/disponents/Modal.vue';
 import { dispatchStatusToBGColor, unitStatusToBGColor } from '~/components/centrum/helpers';
 import { default as UnitDetails } from '~/components/centrum/units/Details.vue';
 import { default as UnitStatusUpdateModal } from '~/components/centrum/units/StatusUpdateModal.vue';
@@ -41,7 +43,8 @@ defineEmits<{
 const { $grpc } = useNuxtApp();
 
 const centrumStore = useCentrumStore();
-const { getCurrentMode, units, dispatches, ownDispatches, ownUnitId, pendingDispatches } = storeToRefs(centrumStore);
+const { getCurrentMode, units, dispatches, ownDispatches, ownUnitId, pendingDispatches, disponents } =
+    storeToRefs(centrumStore);
 const { startStream, stopStream } = centrumStore;
 
 const notifications = useNotificatorStore();
@@ -84,6 +87,8 @@ const openTakeDispatch = ref(false);
 
 const openUnitDetails = ref(false);
 const openUnitStatus = ref(false);
+
+const openDisponents = ref(false);
 
 async function updateDispatchStatus(dispatchId: bigint, status: StatusDispatch): Promise<void> {
     return new Promise(async (res, rej) => {
@@ -239,19 +244,38 @@ const open = ref(false);
                 <div class="h-full flex grow gap-y-5 overflow-y-auto bg-base-600 px-4 py-0.5">
                     <nav v-if="open" class="flex flex-1 flex-col">
                         <ul role="list" class="flex flex-1 flex-col gap-y-2 divide-y divide-base-400">
+                            <li class="-mx-2 -mb-1">
+                                <DisponentsModal :open="openDisponents" @close="openDisponents = false" />
+
+                                <button
+                                    type="button"
+                                    class="text-white hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-row items-center justify-center rounded-md p-1 text-xs mt-0.5"
+                                    :class="
+                                        disponents.length === 0
+                                            ? 'bg-warn-400/10 text-warn-500 ring-warn-400/20'
+                                            : 'bg-success-500/10 text-success-400 ring-success-500/20'
+                                    "
+                                    @click="openDisponents = true"
+                                >
+                                    <MonitorIcon class="h-5 w-5 mr-1" aria-hidden="true" />
+                                    <span class="truncate">
+                                        {{ $t('common.disponent', disponents.length) }}
+                                    </span>
+                                </button>
+                            </li>
                             <li>
-                                <ul role="list" class="-mx-2 mt-2 space-y-1">
+                                <ul role="list" class="-mx-2 mt-1.5 space-y-1">
                                     <li>
                                         <template v-if="ownUnit !== undefined">
                                             <button
                                                 @click="openUnitDetails = true"
                                                 type="button"
-                                                class="text-white hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-2 text-xs my-0.5"
+                                                class="text-white hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-1.5 text-xs my-0.5"
                                                 :class="ownUnitStatus"
                                             >
                                                 <InformationOutlineIcon class="h-5 w-5" aria-hidden="true" />
-                                                <span class="mt-2 truncate">{{ ownUnit.initials }}: {{ ownUnit.name }}</span>
-                                                <span class="mt-2 truncate">
+                                                <span class="mt-1.5 truncate">{{ ownUnit.initials }}: {{ ownUnit.name }}</span>
+                                                <span class="mt-1.5 truncate">
                                                     {{
                                                         $t(
                                                             `enums.centrum.StatusUnit.${
@@ -271,11 +295,11 @@ const open = ref(false);
                                         <button
                                             @click="selectUnitOpen = true"
                                             type="button"
-                                            class="text-white bg-info-700 hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-2 text-xs my-0.5"
+                                            class="text-white bg-info-700 hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-1.5 text-xs my-0.5"
                                         >
                                             <template v-if="!ownUnit" class="flex w-full flex-col items-center">
                                                 <InformationOutlineIcon class="h-5 w-5" aria-hidden="true" />
-                                                <span class="mt-2 truncate">{{ $t('common.no_own_unit') }}</span>
+                                                <span class="mt-1.5 truncate">{{ $t('common.no_own_unit') }}</span>
                                             </template>
                                             <template v-else class="truncate">{{ $t('common.leave_unit') }}</template>
                                         </button>
@@ -317,7 +341,7 @@ const open = ref(false);
                                                                 v-for="(item, idx) in actionsUnit"
                                                                 :key="item.name"
                                                                 type="button"
-                                                                class="text-white bg-primary hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-2 text-xs my-0.5"
+                                                                class="text-white bg-primary hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-1.5 text-xs my-0.5"
                                                                 :class="[
                                                                     idx >= actionsUnit.length - 1 ? 'col-span-2' : '',
                                                                     item.status ? unitStatusToBGColor(item.status) : item.class,
@@ -360,7 +384,7 @@ const open = ref(false);
                                                     v-for="(item, idx) in actionsDispatch"
                                                     :key="item.name"
                                                     type="button"
-                                                    class="text-white bg-primary hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-2 text-xs my-0.5"
+                                                    class="text-white bg-primary hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-1.5 text-xs my-0.5"
                                                     :class="[
                                                         idx >= actionsDispatch.length - 1 ? 'col-span-2' : '',
                                                         item.status ? dispatchStatusToBGColor(item.status) : item.class,
@@ -393,14 +417,14 @@ const open = ref(false);
                                     <div class="text-xs font-semibold leading-6 text-base-100">
                                         {{ $t('common.your_dispatches') }}
                                     </div>
-                                    <ul role="list" class="-mx-2 mt-2 space-y-1">
+                                    <ul role="list" class="-mx-2 mt-1.5 space-y-1">
                                         <li v-if="ownDispatches.length === 0">
                                             <button
                                                 type="button"
-                                                class="text-white bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-2 text-xs my-0.5"
+                                                class="text-white bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-1.5 text-xs my-0.5"
                                             >
                                                 <CarEmergencyIcon class="h-5 w-5" aria-hidden="true" />
-                                                <span class="mt-2 truncate">{{ $t('common.no_assigned_dispatches') }}</span>
+                                                <span class="mt-1.5 truncate">{{ $t('common.no_assigned_dispatches') }}</span>
                                             </button>
                                         </li>
                                         <template v-else>

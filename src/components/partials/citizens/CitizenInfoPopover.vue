@@ -9,6 +9,7 @@ defineProps<{
     user: User | UserShort | undefined;
     noPopover?: boolean;
     textClass?: unknown;
+    buttonClass?: unknown;
 }>();
 </script>
 
@@ -34,7 +35,7 @@ defineProps<{
     </template>
     <Popover v-else class="relative">
         <Float portal auto-placement :offset="16">
-            <PopoverButton class="inline-flex items-center">
+            <PopoverButton class="inline-flex items-center" :class="buttonClass">
                 <slot name="before" />
                 <span :class="textClass"> {{ user.firstname }} {{ user.lastname }} </span>
                 <slot name="after" />

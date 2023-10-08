@@ -1,8 +1,10 @@
 <script lang="ts" setup>
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
-import { GroupIcon, LocationEnterIcon, LocationExitIcon } from 'mdi-vue3';
+import { useThrottleFn } from '@vueuse/core';
+import { GroupIcon, LoadingIcon, LocationEnterIcon, LocationExitIcon } from 'mdi-vue3';
 import { useCentrumStore } from '~/store/centrum';
 import { CentrumMode } from '~~/gen/ts/resources/dispatch/settings';
+import Modal from './Modal.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -25,6 +27,12 @@ async function takeControl(signon: boolean): Promise<void> {
     });
 }
 
+const canSubmit = ref(true);
+const onSubmitThrottle = useThrottleFn(async (e: boolean) => {
+    canSubmit.value = false;
+    await takeControl(e).finally(() => setTimeout(() => (canSubmit.value = true), 850));
+}, 1000);
+
 const disponentsNames = computed(() => {
     const names: string[] = [];
 
@@ -34,6 +42,8 @@ const disponentsNames = computed(() => {
 
     return names.join(', ');
 });
+
+const open = ref(false);
 </script>
 
 <template>
@@ -52,11 +62,15 @@ const disponentsNames = computed(() => {
                             class="absolute inset-0 flex flex-col justify-center items-center z-0 bg-gray-600/70"
                         >
                             <button
-                                @click="takeControl(true)"
+                                @click="onSubmitThrottle(true)"
                                 type="button"
                                 class="relative block w-full p-12 text-center border-2 border-dotted rounded-lg border-base-300 hover:border-base-400 focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2"
+                                :disabled="!canSubmit"
                             >
-                                <LocationEnterIcon class="w-12 h-12 mx-auto text-neutral" />
+                                <LocationEnterIcon v-if="canSubmit" class="w-12 h-12 mx-auto text-neutral" />
+                                <template v-else>
+                                    <LoadingIcon class="animate-spin w-12 h-12 mx-auto text-neutral" />
+                                </template>
                                 <span class="block mt-2 text-sm font-semibold text-gray-300">
                                     {{ $t('components.centrum.dispatch_center.join_center') }}
                                 </span>
@@ -76,25 +90,33 @@ const disponentsNames = computed(() => {
                             <button
                                 v-if="!isDisponent"
                                 type="button"
-                                @click="takeControl(true)"
+                                @click="onSubmitThrottle(true)"
                                 class="flex items-center justify-center rounded-full bg-success-500 text-neutral hover:bg-success-400"
                             >
-                                <LocationEnterIcon class="w-8 h-8" />
+                                <LocationEnterIcon v-if="canSubmit" class="w-7 h-7" />
+                                <template v-else>
+                                    <LoadingIcon class="animate-spin h-7 w-7 mr-2" />
+                                </template>
                                 <span class="px-1">{{ $t('common.join') }}</span>
                             </button>
                             <button
                                 v-else
                                 type="button"
-                                @click="takeControl(false)"
+                                @click="onSubmitThrottle(false)"
                                 class="flex items-center justify-center rounded-full bg-primary-500 text-neutral hover:bg-primary-400"
                             >
-                                <LocationExitIcon class="w-8 h-8" />
+                                <LocationExitIcon v-if="canSubmit" class="w-7 h-7" />
+                                <template v-else>
+                                    <LoadingIcon class="animate-spin h-7 w-7 mr-2" />
+                                </template>
                                 <span class="px-1">{{ $t('common.leave') }}</span>
                             </button>
                         </div>
                         <div class="flex-1">
+                            <Modal :open="open" @close="open = false" />
+
                             <p class="text-neutral text-sm">
-                                <span
+                                <button
                                     class="inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset"
                                     :class="
                                         disponents.length === 0
@@ -102,9 +124,10 @@ const disponentsNames = computed(() => {
                                             : 'bg-success-500/10 text-success-400 ring-success-500/20'
                                     "
                                     :title="disponentsNames"
+                                    @click="open = true"
                                 >
                                     {{ $t('common.disponent', disponents.length) }}
-                                </span>
+                                </button>
                             </p>
                         </div>
                         <div class="flex-1">
