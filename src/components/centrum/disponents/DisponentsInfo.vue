@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { useThrottleFn } from '@vueuse/core';
-import { GroupIcon, LoadingIcon, LocationEnterIcon, LocationExitIcon } from 'mdi-vue3';
+import { GroupIcon, LoadingIcon, LocationEnterIcon, LocationExitIcon, MonitorIcon } from 'mdi-vue3';
 import { useCentrumStore } from '~/store/centrum';
 import { CentrumMode } from '~~/gen/ts/resources/dispatch/settings';
 import Modal from './Modal.vue';
@@ -75,7 +75,7 @@ const open = ref(false);
                                     {{ $t('components.centrum.dispatch_center.join_center') }}
                                 </span>
                             </button>
-                            <div class="flex flex-row">
+                            <div class="flex flex-row gap-4">
                                 <NuxtLink
                                     :to="{ name: 'centrum-units' }"
                                     class="mt-4 px-2 py-1 flex items-center justify-center rounded-full bg-primary-500 text-neutral hover:bg-primary-400"
@@ -83,6 +83,14 @@ const open = ref(false);
                                     <GroupIcon class="w-8 h-8" />
                                     <span class="px-1">{{ $t('common.units') }}</span>
                                 </NuxtLink>
+                                <button
+                                    type="button"
+                                    class="mt-4 px-2 py-1 flex items-center justify-center rounded-full bg-primary-500 text-neutral hover:bg-primary-400"
+                                    @click="open = true"
+                                >
+                                    <MonitorIcon class="w-8 h-8" />
+                                    <span class="px-1">{{ $t('common.disponents', 2) }}</span>
+                                </button>
                             </div>
                         </div>
 
