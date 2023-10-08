@@ -241,7 +241,7 @@ func (s *Server) updateUnitAssignments(ctx context.Context, userInfo *userinfo.U
 	}
 
 	if len(toAdd) > 0 {
-		found := []int32{}
+		notFound := []int32{}
 		addIds := []jet.IntegerExpression{}
 		for i := 0; i < len(toAdd); i++ {
 			_, ok := s.tracker.GetUserById(toAdd[i])
@@ -257,7 +257,7 @@ func (s *Server) updateUnitAssignments(ctx context.Context, userInfo *userinfo.U
 			}
 
 			addIds = append(addIds, jet.Int32(toAdd[i]))
-			found = append(found, toAdd[i])
+			notFound = append(notFound, toAdd[i])
 		}
 
 		for _, id := range addIds {
@@ -272,15 +272,13 @@ func (s *Server) updateUnitAssignments(ctx context.Context, userInfo *userinfo.U
 				)
 
 			if _, err := stmt.ExecContext(ctx, tx); err != nil {
-				if dbutils.IsDuplicateError(err) {
-					return ErrAlreadyInUnit
-				} else {
+				if !dbutils.IsDuplicateError(err) {
 					return err
 				}
 			}
 		}
 
-		users, err := s.resolveUserShortsByIds(ctx, found)
+		users, err := s.resolveUserShortsByIds(ctx, notFound)
 		if err != nil {
 			return err
 		}

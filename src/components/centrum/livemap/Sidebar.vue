@@ -31,7 +31,7 @@ import { CentrumMode } from '~~/gen/ts/resources/dispatch/settings';
 import { StatusUnit, Unit } from '~~/gen/ts/resources/dispatch/units';
 import DispatchEntry from './DispatchEntry.vue';
 import DispatchesLayer from './DispatchesLayer.vue';
-import JoinUnit from './JoinUnitModal.vue';
+import JoinUnitModal from './JoinUnitModal.vue';
 import TakeDispatchModal from './TakeDispatchModal.vue';
 
 defineEmits<{
@@ -280,7 +280,7 @@ const open = ref(false);
                                             <template v-else class="truncate">{{ $t('common.leave_unit') }}</template>
                                         </button>
 
-                                        <JoinUnit :open="selectUnitOpen" @close="selectUnitOpen = false" />
+                                        <JoinUnitModal :open="selectUnitOpen" @close="selectUnitOpen = false" />
                                     </li>
                                 </ul>
                             </li>
