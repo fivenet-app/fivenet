@@ -7,7 +7,7 @@ const seconds_per_day = seconds_per_hour * 24;
 const seconds_per_week = seconds_per_day * 7;
 const seconds_per_year = seconds_per_week * 52;
 
-export function fromSecondsToFormattedDuration(seconds: number, options?: { seconds?: boolean }): string {
+export function fromSecondsToFormattedDuration(seconds: number, options?: { seconds?: boolean; emptyText?: string }): string {
     const { t } = useI18n();
 
     const years = Math.floor(seconds / seconds_per_year);
@@ -41,7 +41,8 @@ export function fromSecondsToFormattedDuration(seconds: number, options?: { seco
         parts.push(`${seconds} ${t(`common.time_ago.second`, seconds)}`);
     }
 
-    return parts.join(', ');
+    const text = parts.join(', ');
+    return text.length > 0 ? text : t(options?.emptyText ?? 'common.unknown');
 }
 
 export function toDate(ts: resources_timestamp_timestamp.Timestamp | undefined): Date {
