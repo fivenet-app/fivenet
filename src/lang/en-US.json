@@ -923,20 +923,6 @@
             }
         },
         "centrum": {
-            "unitUpdated": {
-                "joined": {
-                    "title": "Joined Unit",
-                    "content": "You have joined an unit."
-                },
-                "removed": {
-                    "title": "Left Unit",
-                    "content": "You have left your unit."
-                },
-                "not_in_unit": {
-                    "title": "You are not in an Unit!",
-                    "content": "You need to be in an unit to do that."
-                }
-            },
             "sidebar": {
                 "no_dispatch_selected": {
                     "title": "No Dispatch selected!",
@@ -951,6 +937,20 @@
                 "assigned_dispatch": {
                     "title": "New Dispatch assigned",
                     "content": "Check the Dispatches list to accept the dispatch."
+                }
+            },
+            "unitUpdated": {
+                "joined": {
+                    "title": "Joined Unit",
+                    "content": "You have joined an unit."
+                },
+                "removed": {
+                    "title": "Left Unit",
+                    "content": "You have left your unit."
+                },
+                "not_in_unit": {
+                    "title": "You are not in an Unit!",
+                    "content": "You need to be in an unit to do that."
                 }
             }
         },
@@ -1259,32 +1259,31 @@
             },
             "RequestsCreateEntry": {
                 "key": "Requests: Create Request",
-                "description": ""
+                "description": "Create Requests."
             },
             "RequestsCreateOrUpdateType": {
                 "key": "Requests: Create and update Request Types",
-                "description": ""
+                "description": "Create and update Request Types."
             },
             "RequestsDeleteEntry": {
                 "key": "Requests: Delete Entry",
-                "description": ""
+                "description": "Delete Requests."
             },
             "RequestsDeleteType": {
                 "key": "Requests: Delete Request Types",
-                "description": ""
+                "description": "Delete Request Types."
             },
             "RequestsListEntries": {
                 "key": "Requests: List Requests",
-                "description": "",
-                "attrs": {}
+                "description": "List and View Requests."
             },
             "RequestsUpdateEntry": {
                 "key": "Requests: Update Request",
-                "description": ""
+                "description": "Update Requests."
             },
             "RequestsDeleteComment": {
                 "key": "Requests: Delete Comment",
-                "description": ""
+                "description": "Delete Comments made on Requests."
             }
         }
     },
