@@ -63,11 +63,16 @@ func (m *natsServer) Setup() {
 
 	// exponential backoff-retry, because the application in the container might not be ready to accept connections yet
 	if err := m.pool.Retry(func() error {
-		_, err := nats.Connect(m.GetURL(), nats.Name("FiveNet natsmanager"),
-			nats.NoEcho())
+		client, err := nats.Connect(m.GetURL(), nats.Name("FiveNet natsmanager"))
 		if err != nil {
 			return err
 		}
+		defer client.Close()
+
+		if !client.IsConnected() {
+			return fmt.Errorf("NATS client not connected")
+		}
+
 		return nil
 	}); err != nil {
 		log.Fatalf("Could not connect to nats: %q", err)

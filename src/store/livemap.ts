@@ -4,10 +4,15 @@ import { Marker, UserMarker } from '~~/gen/ts/resources/livemap/livemap';
 import { Job } from '~~/gen/ts/resources/users/jobs';
 import { LivemapperServiceClient } from '~~/gen/ts/services/livemapper/livemap.client';
 
+// In seconds
+const initialBackoffTime = 2;
+
 export interface LivemapState {
     error: RpcError | undefined;
     abort: AbortController | undefined;
     restarting: boolean;
+    restartBackoffTime: number;
+
     location: Coordinate | undefined;
     zoom: number;
     jobs: {
@@ -26,6 +31,7 @@ export const useLivemapStore = defineStore('livemap', {
             error: undefined,
             abort: undefined,
             restarting: false,
+            restartBackoffTime: 0,
 
             location: { x: 0, y: 0 },
             zoom: 2,
@@ -96,10 +102,22 @@ export const useLivemapStore = defineStore('livemap', {
         },
         async restartStream(): Promise<void> {
             this.restarting = true;
-            console.debug('Centrum: Restarting Data Stream');
+
+            // Reset back off time when over 10 seconds
+            if (this.restartBackoffTime > 10) {
+                this.restartBackoffTime = initialBackoffTime;
+            } else {
+                this.restartBackoffTime += initialBackoffTime;
+            }
+
+            console.debug('Livemap: Restart back off time in', this.restartBackoffTime, 'seconds');
             await this.stopStream();
 
-            setTimeout(async () => this.startStream(), 1000);
+            setTimeout(async () => {
+                if (this.restarting) {
+                    this.startStream();
+                }
+            }, this.restartBackoffTime * 1000);
         },
     },
 });

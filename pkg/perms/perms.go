@@ -156,15 +156,15 @@ func New(p Params) (Permissions, error) {
 		ctx, span := ps.tracer.Start(ctx, "perms-register")
 		defer span.End()
 
-		if err := ps.ApplyJobPermissions(ctx, ""); err != nil {
-			return err
-		}
-
 		if err := ps.load(); err != nil {
 			return err
 		}
 
 		if err := ps.registerEvents(); err != nil {
+			return err
+		}
+
+		if err := ps.ApplyJobPermissions(ctx, ""); err != nil {
 			return err
 		}
 

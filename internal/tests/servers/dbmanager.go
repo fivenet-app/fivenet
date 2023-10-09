@@ -76,12 +76,11 @@ func (m *dbServer) Setup() {
 
 	// exponential backoff-retry, because the application in the container might not be ready to accept connections yet
 	if err := m.pool.Retry(func() error {
-		var err error
-		m.db, err = sql.Open("mysql", m.getDSN())
+		db, err := sql.Open("mysql", m.getDSN())
 		if err != nil {
 			return err
 		}
-		return m.db.Ping()
+		return db.Ping()
 	}); err != nil {
 		log.Fatalf("Could not connect to database: %q", err)
 	}
@@ -89,6 +88,11 @@ func (m *dbServer) Setup() {
 	m.prepareDBForFirstUse()
 
 	m.LoadBaseData()
+
+	m.db, err = sql.Open("mysql", m.getDSN())
+	if err != nil {
+		log.Fatalf("Could not connect to database after setup: %q", err)
+	}
 }
 
 func (m *dbServer) DB() *sql.DB {
@@ -101,7 +105,7 @@ func (m *dbServer) DB() *sql.DB {
 
 func (m *dbServer) getDSN() string {
 	// Using `root` isn't cool, but a workaround for now to create triggers in the database
-	return fmt.Sprintf("root:secret@(localhost:%s)/fivenettest?collation=utf8mb4_unicode_ci&parseTime=True&loc=Local", m.resource.GetPort("3306/tcp"))
+	return fmt.Sprintf("root:secret@(127.0.0.1:%s)/fivenettest?collation=utf8mb4_unicode_ci&parseTime=True&loc=Local", m.resource.GetPort("3306/tcp"))
 }
 
 func (m *dbServer) prepareDBForFirstUse() {
