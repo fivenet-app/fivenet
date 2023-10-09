@@ -5,33 +5,8 @@ package docstore
 
 import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/permissions"
+	permkeys "github.com/galexrt/fivenet/gen/go/proto/services/docstore/perms"
 	"github.com/galexrt/fivenet/pkg/perms"
-)
-
-const (
-	DocStoreServicePerm perms.Category = "DocStoreService"
-
-	DocStoreServiceAddDocumentReferencePerm      perms.Name = "AddDocumentReference"
-	DocStoreServiceAddDocumentRelationPerm       perms.Name = "AddDocumentRelation"
-	DocStoreServiceCreateCategoryPerm            perms.Name = "CreateCategory"
-	DocStoreServiceCreateDocumentPerm            perms.Name = "CreateDocument"
-	DocStoreServiceCreateTemplatePerm            perms.Name = "CreateTemplate"
-	DocStoreServiceDeleteCategoryPerm            perms.Name = "DeleteCategory"
-	DocStoreServiceDeleteCommentPerm             perms.Name = "DeleteComment"
-	DocStoreServiceDeleteCommentAccessPermField  perms.Key  = "Access"
-	DocStoreServiceDeleteDocumentPerm            perms.Name = "DeleteDocument"
-	DocStoreServiceDeleteDocumentAccessPermField perms.Key  = "Access"
-	DocStoreServiceDeleteTemplatePerm            perms.Name = "DeleteTemplate"
-	DocStoreServiceGetDocumentPerm               perms.Name = "GetDocument"
-	DocStoreServiceListCategoriesPerm            perms.Name = "ListCategories"
-	DocStoreServiceListDocumentsPerm             perms.Name = "ListDocuments"
-	DocStoreServiceListTemplatesPerm             perms.Name = "ListTemplates"
-	DocStoreServiceListUserDocumentsPerm         perms.Name = "ListUserDocuments"
-	DocStoreServicePostCommentPerm               perms.Name = "PostComment"
-	DocStoreServiceToggleDocumentPerm            perms.Name = "ToggleDocument"
-	DocStoreServiceToggleDocumentAccessPermField perms.Key  = "Access"
-	DocStoreServiceUpdateDocumentPerm            perms.Name = "UpdateDocument"
-	DocStoreServiceUpdateDocumentAccessPermField perms.Key  = "Access"
 )
 
 var PermsRemap = map[string]string{
@@ -58,41 +33,41 @@ func init() {
 	perms.AddPermsToList([]*perms.Perm{
 		// Service: DocStoreService
 		{
-			Category: DocStoreServicePerm,
-			Name:     DocStoreServiceAddDocumentReferencePerm,
+			Category: permkeys.DocStoreServicePerm,
+			Name:     permkeys.DocStoreServiceAddDocumentReferencePerm,
 			Attrs:    []perms.Attr{},
 		},
 		{
-			Category: DocStoreServicePerm,
-			Name:     DocStoreServiceAddDocumentRelationPerm,
+			Category: permkeys.DocStoreServicePerm,
+			Name:     permkeys.DocStoreServiceAddDocumentRelationPerm,
 			Attrs:    []perms.Attr{},
 		},
 		{
-			Category: DocStoreServicePerm,
-			Name:     DocStoreServiceCreateCategoryPerm,
+			Category: permkeys.DocStoreServicePerm,
+			Name:     permkeys.DocStoreServiceCreateCategoryPerm,
 			Attrs:    []perms.Attr{},
 		},
 		{
-			Category: DocStoreServicePerm,
-			Name:     DocStoreServiceCreateDocumentPerm,
+			Category: permkeys.DocStoreServicePerm,
+			Name:     permkeys.DocStoreServiceCreateDocumentPerm,
 			Attrs:    []perms.Attr{},
 		},
 		{
-			Category: DocStoreServicePerm,
-			Name:     DocStoreServiceCreateTemplatePerm,
+			Category: permkeys.DocStoreServicePerm,
+			Name:     permkeys.DocStoreServiceCreateTemplatePerm,
 			Attrs:    []perms.Attr{},
 		},
 		{
-			Category: DocStoreServicePerm,
-			Name:     DocStoreServiceDeleteCategoryPerm,
+			Category: permkeys.DocStoreServicePerm,
+			Name:     permkeys.DocStoreServiceDeleteCategoryPerm,
 			Attrs:    []perms.Attr{},
 		},
 		{
-			Category: DocStoreServicePerm,
-			Name:     DocStoreServiceDeleteCommentPerm,
+			Category: permkeys.DocStoreServicePerm,
+			Name:     permkeys.DocStoreServiceDeleteCommentPerm,
 			Attrs: []perms.Attr{
 				{
-					Key:           DocStoreServiceDeleteCommentAccessPermField,
+					Key:           permkeys.DocStoreServiceDeleteCommentAccessPermField,
 					Type:          permissions.StringListAttributeType,
 					ValidValues:   []string{"Own", "Lower_Rank", "Same_Rank"},
 					DefaultValues: []string{"Own"},
@@ -100,11 +75,11 @@ func init() {
 			},
 		},
 		{
-			Category: DocStoreServicePerm,
-			Name:     DocStoreServiceDeleteDocumentPerm,
+			Category: permkeys.DocStoreServicePerm,
+			Name:     permkeys.DocStoreServiceDeleteDocumentPerm,
 			Attrs: []perms.Attr{
 				{
-					Key:           DocStoreServiceDeleteDocumentAccessPermField,
+					Key:           permkeys.DocStoreServiceDeleteDocumentAccessPermField,
 					Type:          permissions.StringListAttributeType,
 					ValidValues:   []string{"Own", "Lower_Rank", "Same_Rank"},
 					DefaultValues: []string{"Own"},
@@ -112,46 +87,46 @@ func init() {
 			},
 		},
 		{
-			Category: DocStoreServicePerm,
-			Name:     DocStoreServiceDeleteTemplatePerm,
+			Category: permkeys.DocStoreServicePerm,
+			Name:     permkeys.DocStoreServiceDeleteTemplatePerm,
 			Attrs:    []perms.Attr{},
 		},
 		{
-			Category: DocStoreServicePerm,
-			Name:     DocStoreServiceGetDocumentPerm,
+			Category: permkeys.DocStoreServicePerm,
+			Name:     permkeys.DocStoreServiceGetDocumentPerm,
 			Attrs:    []perms.Attr{},
 		},
 		{
-			Category: DocStoreServicePerm,
-			Name:     DocStoreServiceListCategoriesPerm,
+			Category: permkeys.DocStoreServicePerm,
+			Name:     permkeys.DocStoreServiceListCategoriesPerm,
 			Attrs:    []perms.Attr{},
 		},
 		{
-			Category: DocStoreServicePerm,
-			Name:     DocStoreServiceListDocumentsPerm,
+			Category: permkeys.DocStoreServicePerm,
+			Name:     permkeys.DocStoreServiceListDocumentsPerm,
 			Attrs:    []perms.Attr{},
 		},
 		{
-			Category: DocStoreServicePerm,
-			Name:     DocStoreServiceListTemplatesPerm,
+			Category: permkeys.DocStoreServicePerm,
+			Name:     permkeys.DocStoreServiceListTemplatesPerm,
 			Attrs:    []perms.Attr{},
 		},
 		{
-			Category: DocStoreServicePerm,
-			Name:     DocStoreServiceListUserDocumentsPerm,
+			Category: permkeys.DocStoreServicePerm,
+			Name:     permkeys.DocStoreServiceListUserDocumentsPerm,
 			Attrs:    []perms.Attr{},
 		},
 		{
-			Category: DocStoreServicePerm,
-			Name:     DocStoreServicePostCommentPerm,
+			Category: permkeys.DocStoreServicePerm,
+			Name:     permkeys.DocStoreServicePostCommentPerm,
 			Attrs:    []perms.Attr{},
 		},
 		{
-			Category: DocStoreServicePerm,
-			Name:     DocStoreServiceToggleDocumentPerm,
+			Category: permkeys.DocStoreServicePerm,
+			Name:     permkeys.DocStoreServiceToggleDocumentPerm,
 			Attrs: []perms.Attr{
 				{
-					Key:           DocStoreServiceToggleDocumentAccessPermField,
+					Key:           permkeys.DocStoreServiceToggleDocumentAccessPermField,
 					Type:          permissions.StringListAttributeType,
 					ValidValues:   []string{"Own", "Lower_Rank", "Same_Rank"},
 					DefaultValues: []string{"Own"},
@@ -159,11 +134,11 @@ func init() {
 			},
 		},
 		{
-			Category: DocStoreServicePerm,
-			Name:     DocStoreServiceUpdateDocumentPerm,
+			Category: permkeys.DocStoreServicePerm,
+			Name:     permkeys.DocStoreServiceUpdateDocumentPerm,
 			Attrs: []perms.Attr{
 				{
-					Key:           DocStoreServiceUpdateDocumentAccessPermField,
+					Key:           permkeys.DocStoreServiceUpdateDocumentAccessPermField,
 					Type:          permissions.StringListAttributeType,
 					ValidValues:   []string{"Own", "Lower_Rank", "Same_Rank"},
 					DefaultValues: []string{"Own"},

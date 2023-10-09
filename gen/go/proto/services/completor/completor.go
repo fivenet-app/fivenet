@@ -7,6 +7,7 @@ import (
 	"strings"
 
 	users "github.com/galexrt/fivenet/gen/go/proto/resources/users"
+	permscompletor "github.com/galexrt/fivenet/gen/go/proto/services/completor/perms"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/perms"
@@ -163,7 +164,7 @@ func (s *Server) CompleteJobs(ctx context.Context, req *CompleteJobsRequest) (*C
 func (s *Server) CompleteDocumentCategories(ctx context.Context, req *CompleteDocumentCategoriesRequest) (*CompleteDocumentCategoriesResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	jobsAttr, err := s.p.Attr(userInfo, CompletorServicePerm, CompletorServiceCompleteDocumentCategoriesPerm, CompletorServiceCompleteDocumentCategoriesJobsPermField)
+	jobsAttr, err := s.p.Attr(userInfo, permscompletor.CompletorServicePerm, permscompletor.CompletorServiceCompleteDocumentCategoriesPerm, permscompletor.CompletorServiceCompleteDocumentCategoriesJobsPermField)
 	if err != nil {
 		return nil, ErrFailedSearch
 	}

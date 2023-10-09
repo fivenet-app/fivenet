@@ -4,21 +4,8 @@
 package centrum
 
 import (
+	permkeys "github.com/galexrt/fivenet/gen/go/proto/services/centrum/perms"
 	"github.com/galexrt/fivenet/pkg/perms"
-)
-
-const (
-	CentrumServicePerm perms.Category = "CentrumService"
-
-	CentrumServiceCreateDispatchPerm     perms.Name = "CreateDispatch"
-	CentrumServiceCreateOrUpdateUnitPerm perms.Name = "CreateOrUpdateUnit"
-	CentrumServiceDeleteDispatchPerm     perms.Name = "DeleteDispatch"
-	CentrumServiceDeleteUnitPerm         perms.Name = "DeleteUnit"
-	CentrumServiceStreamPerm             perms.Name = "Stream"
-	CentrumServiceTakeControlPerm        perms.Name = "TakeControl"
-	CentrumServiceTakeDispatchPerm       perms.Name = "TakeDispatch"
-	CentrumServiceUpdateDispatchPerm     perms.Name = "UpdateDispatch"
-	CentrumServiceUpdateSettingsPerm     perms.Name = "UpdateSettings"
 )
 
 var PermsRemap = map[string]string{
@@ -44,48 +31,48 @@ func init() {
 	perms.AddPermsToList([]*perms.Perm{
 		// Service: CentrumService
 		{
-			Category: CentrumServicePerm,
-			Name:     CentrumServiceCreateDispatchPerm,
+			Category: permkeys.CentrumServicePerm,
+			Name:     permkeys.CentrumServiceCreateDispatchPerm,
 			Attrs:    []perms.Attr{},
 		},
 		{
-			Category: CentrumServicePerm,
-			Name:     CentrumServiceCreateOrUpdateUnitPerm,
+			Category: permkeys.CentrumServicePerm,
+			Name:     permkeys.CentrumServiceCreateOrUpdateUnitPerm,
 			Attrs:    []perms.Attr{},
 		},
 		{
-			Category: CentrumServicePerm,
-			Name:     CentrumServiceDeleteDispatchPerm,
+			Category: permkeys.CentrumServicePerm,
+			Name:     permkeys.CentrumServiceDeleteDispatchPerm,
 			Attrs:    []perms.Attr{},
 		},
 		{
-			Category: CentrumServicePerm,
-			Name:     CentrumServiceDeleteUnitPerm,
+			Category: permkeys.CentrumServicePerm,
+			Name:     permkeys.CentrumServiceDeleteUnitPerm,
 			Attrs:    []perms.Attr{},
 		},
 		{
-			Category: CentrumServicePerm,
-			Name:     CentrumServiceStreamPerm,
+			Category: permkeys.CentrumServicePerm,
+			Name:     permkeys.CentrumServiceStreamPerm,
 			Attrs:    []perms.Attr{},
 		},
 		{
-			Category: CentrumServicePerm,
-			Name:     CentrumServiceTakeControlPerm,
+			Category: permkeys.CentrumServicePerm,
+			Name:     permkeys.CentrumServiceTakeControlPerm,
 			Attrs:    []perms.Attr{},
 		},
 		{
-			Category: CentrumServicePerm,
-			Name:     CentrumServiceTakeDispatchPerm,
+			Category: permkeys.CentrumServicePerm,
+			Name:     permkeys.CentrumServiceTakeDispatchPerm,
 			Attrs:    []perms.Attr{},
 		},
 		{
-			Category: CentrumServicePerm,
-			Name:     CentrumServiceUpdateDispatchPerm,
+			Category: permkeys.CentrumServicePerm,
+			Name:     permkeys.CentrumServiceUpdateDispatchPerm,
 			Attrs:    []perms.Attr{},
 		},
 		{
-			Category: CentrumServicePerm,
-			Name:     CentrumServiceUpdateSettingsPerm,
+			Category: permkeys.CentrumServicePerm,
+			Name:     permkeys.CentrumServiceUpdateSettingsPerm,
 			Attrs:    []perms.Attr{},
 		},
 	})

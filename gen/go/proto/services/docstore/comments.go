@@ -6,6 +6,7 @@ import (
 	database "github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/documents"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
+	permsdocstore "github.com/galexrt/fivenet/gen/go/proto/services/docstore/perms"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/perms"
 	"github.com/galexrt/fivenet/query/fivenet/model"
@@ -284,7 +285,7 @@ func (s *Server) DeleteComment(ctx context.Context, req *DeleteCommentRequest) (
 	}
 
 	// Field Permission Check
-	fieldsAttr, err := s.ps.Attr(userInfo, DocStoreServicePerm, DocStoreServiceDeleteCommentPerm, DocStoreServiceDeleteCommentAccessPermField)
+	fieldsAttr, err := s.ps.Attr(userInfo, permsdocstore.DocStoreServicePerm, permsdocstore.DocStoreServiceDeleteCommentPerm, permsdocstore.DocStoreServiceDeleteCommentAccessPermField)
 	if err != nil {
 		return nil, ErrFailedQuery
 	}

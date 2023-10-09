@@ -6,6 +6,7 @@ import (
 	"testing"
 	"time"
 
+	permsauth "github.com/galexrt/fivenet/gen/go/proto/services/auth/perms"
 	"github.com/galexrt/fivenet/internal/tests/proto"
 	"github.com/galexrt/fivenet/internal/tests/servers"
 	"github.com/galexrt/fivenet/pkg/config"
@@ -167,7 +168,7 @@ func TestFullAuthFlow(t *testing.T) {
 	assert.NoError(t, err)
 	assert.NotNil(t, role)
 
-	perm, err := p.GetPermission(ctx, AuthServicePerm, AuthServiceChooseCharacterPerm)
+	perm, err := p.GetPermission(ctx, permsauth.AuthServicePerm, permsauth.AuthServiceChooseCharacterPerm)
 	assert.NoError(t, err)
 	assert.NotNil(t, perm)
 

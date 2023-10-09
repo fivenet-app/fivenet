@@ -6,6 +6,7 @@ import (
 	"time"
 
 	database "github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
+	permsjobs "github.com/galexrt/fivenet/gen/go/proto/services/jobs/perms"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/perms"
 	"github.com/galexrt/fivenet/pkg/utils"
@@ -24,7 +25,7 @@ func (s *Server) TimeclockListEntries(ctx context.Context, req *TimeclockListEnt
 	condition := tTimeClock.Job.EQ(jet.String(userInfo.Job))
 
 	// Field Permission Check
-	fieldsAttr, err := s.p.Attr(userInfo, JobsServicePerm, JobsServiceTimeclockListEntriesPerm, JobsServiceTimeclockListEntriesAccessPermField)
+	fieldsAttr, err := s.p.Attr(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceTimeclockListEntriesPerm, permsjobs.JobsServiceTimeclockListEntriesAccessPermField)
 	if err != nil {
 		return nil, ErrFailedQuery
 	}

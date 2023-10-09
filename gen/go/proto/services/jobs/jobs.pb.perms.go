@@ -5,28 +5,8 @@ package jobs
 
 import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/permissions"
+	permkeys "github.com/galexrt/fivenet/gen/go/proto/services/jobs/perms"
 	"github.com/galexrt/fivenet/pkg/perms"
-)
-
-const (
-	JobsServicePerm perms.Category = "JobsService"
-
-	JobsServiceColleaguesListPerm                  perms.Name = "ColleaguesList"
-	JobsServiceConductCreateEntryPerm              perms.Name = "ConductCreateEntry"
-	JobsServiceConductDeleteEntryPerm              perms.Name = "ConductDeleteEntry"
-	JobsServiceConductListEntriesPerm              perms.Name = "ConductListEntries"
-	JobsServiceConductListEntriesAccessPermField   perms.Key  = "Access"
-	JobsServiceConductUpdateEntryPerm              perms.Name = "ConductUpdateEntry"
-	JobsServiceRequestsCreateEntryPerm             perms.Name = "RequestsCreateEntry"
-	JobsServiceRequestsCreateOrUpdateTypePerm      perms.Name = "RequestsCreateOrUpdateType"
-	JobsServiceRequestsDeleteCommentPerm           perms.Name = "RequestsDeleteComment"
-	JobsServiceRequestsDeleteEntryPerm             perms.Name = "RequestsDeleteEntry"
-	JobsServiceRequestsDeleteTypePerm              perms.Name = "RequestsDeleteType"
-	JobsServiceRequestsListEntriesPerm             perms.Name = "RequestsListEntries"
-	JobsServiceRequestsListEntriesAccessPermField  perms.Key  = "Access"
-	JobsServiceRequestsUpdateEntryPerm             perms.Name = "RequestsUpdateEntry"
-	JobsServiceTimeclockListEntriesPerm            perms.Name = "TimeclockListEntries"
-	JobsServiceTimeclockListEntriesAccessPermField perms.Key  = "Access"
 )
 
 var PermsRemap = map[string]string{
@@ -46,26 +26,26 @@ func init() {
 	perms.AddPermsToList([]*perms.Perm{
 		// Service: JobsService
 		{
-			Category: JobsServicePerm,
-			Name:     JobsServiceColleaguesListPerm,
+			Category: permkeys.JobsServicePerm,
+			Name:     permkeys.JobsServiceColleaguesListPerm,
 			Attrs:    []perms.Attr{},
 		},
 		{
-			Category: JobsServicePerm,
-			Name:     JobsServiceConductCreateEntryPerm,
+			Category: permkeys.JobsServicePerm,
+			Name:     permkeys.JobsServiceConductCreateEntryPerm,
 			Attrs:    []perms.Attr{},
 		},
 		{
-			Category: JobsServicePerm,
-			Name:     JobsServiceConductDeleteEntryPerm,
+			Category: permkeys.JobsServicePerm,
+			Name:     permkeys.JobsServiceConductDeleteEntryPerm,
 			Attrs:    []perms.Attr{},
 		},
 		{
-			Category: JobsServicePerm,
-			Name:     JobsServiceConductListEntriesPerm,
+			Category: permkeys.JobsServicePerm,
+			Name:     permkeys.JobsServiceConductListEntriesPerm,
 			Attrs: []perms.Attr{
 				{
-					Key:           JobsServiceConductListEntriesAccessPermField,
+					Key:           permkeys.JobsServiceConductListEntriesAccessPermField,
 					Type:          permissions.StringListAttributeType,
 					ValidValues:   []string{"Own", "All"},
 					DefaultValues: []string{"Own"},
@@ -73,41 +53,41 @@ func init() {
 			},
 		},
 		{
-			Category: JobsServicePerm,
-			Name:     JobsServiceConductUpdateEntryPerm,
+			Category: permkeys.JobsServicePerm,
+			Name:     permkeys.JobsServiceConductUpdateEntryPerm,
 			Attrs:    []perms.Attr{},
 		},
 		{
-			Category: JobsServicePerm,
-			Name:     JobsServiceRequestsCreateEntryPerm,
+			Category: permkeys.JobsServicePerm,
+			Name:     permkeys.JobsServiceRequestsCreateEntryPerm,
 			Attrs:    []perms.Attr{},
 		},
 		{
-			Category: JobsServicePerm,
-			Name:     JobsServiceRequestsCreateOrUpdateTypePerm,
+			Category: permkeys.JobsServicePerm,
+			Name:     permkeys.JobsServiceRequestsCreateOrUpdateTypePerm,
 			Attrs:    []perms.Attr{},
 		},
 		{
-			Category: JobsServicePerm,
-			Name:     JobsServiceRequestsDeleteCommentPerm,
+			Category: permkeys.JobsServicePerm,
+			Name:     permkeys.JobsServiceRequestsDeleteCommentPerm,
 			Attrs:    []perms.Attr{},
 		},
 		{
-			Category: JobsServicePerm,
-			Name:     JobsServiceRequestsDeleteEntryPerm,
+			Category: permkeys.JobsServicePerm,
+			Name:     permkeys.JobsServiceRequestsDeleteEntryPerm,
 			Attrs:    []perms.Attr{},
 		},
 		{
-			Category: JobsServicePerm,
-			Name:     JobsServiceRequestsDeleteTypePerm,
+			Category: permkeys.JobsServicePerm,
+			Name:     permkeys.JobsServiceRequestsDeleteTypePerm,
 			Attrs:    []perms.Attr{},
 		},
 		{
-			Category: JobsServicePerm,
-			Name:     JobsServiceRequestsListEntriesPerm,
+			Category: permkeys.JobsServicePerm,
+			Name:     permkeys.JobsServiceRequestsListEntriesPerm,
 			Attrs: []perms.Attr{
 				{
-					Key:           JobsServiceRequestsListEntriesAccessPermField,
+					Key:           permkeys.JobsServiceRequestsListEntriesAccessPermField,
 					Type:          permissions.StringListAttributeType,
 					ValidValues:   []string{"Own", "All"},
 					DefaultValues: []string{"Own"},
@@ -115,16 +95,16 @@ func init() {
 			},
 		},
 		{
-			Category: JobsServicePerm,
-			Name:     JobsServiceRequestsUpdateEntryPerm,
+			Category: permkeys.JobsServicePerm,
+			Name:     permkeys.JobsServiceRequestsUpdateEntryPerm,
 			Attrs:    []perms.Attr{},
 		},
 		{
-			Category: JobsServicePerm,
-			Name:     JobsServiceTimeclockListEntriesPerm,
+			Category: permkeys.JobsServicePerm,
+			Name:     permkeys.JobsServiceTimeclockListEntriesPerm,
 			Attrs: []perms.Attr{
 				{
-					Key:           JobsServiceTimeclockListEntriesAccessPermField,
+					Key:           permkeys.JobsServiceTimeclockListEntriesAccessPermField,
 					Type:          permissions.StringListAttributeType,
 					ValidValues:   []string{"Own", "All"},
 					DefaultValues: []string{"Own"},

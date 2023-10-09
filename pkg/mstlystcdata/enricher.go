@@ -6,6 +6,7 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/common"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/documents"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/users"
+	permscitizenstore "github.com/galexrt/fivenet/gen/go/proto/services/citizenstore/perms"
 	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/galexrt/fivenet/pkg/perms"
@@ -113,11 +114,7 @@ func (e *Enricher) GetJobGrade(job string, grade int32) (*users.Job, *users.JobG
 }
 
 func (e *Enricher) EnrichJobInfoSafe(userInfo *userinfo.UserInfo, usrs ...common.IJobInfo) {
-	// TODO use citizenstore const instead of manual copies due to import cycles
-	jobGradesAttr, err := e.ps.Attr(userInfo, "CitizenStoreService", "GetUser", "Jobs")
-	if err != nil {
-		return
-	}
+	jobGradesAttr, _ := e.ps.Attr(userInfo, permscitizenstore.CitizenStoreServicePerm, permscitizenstore.CitizenStoreServiceGetUserPerm, permscitizenstore.CitizenStoreServiceGetUserJobsPermField)
 	var jobGrades perms.JobGradeList
 	if jobGradesAttr != nil {
 		jobGrades = jobGradesAttr.(map[string]int32)
@@ -140,8 +137,7 @@ func (e *Enricher) EnrichJobInfoSafe(userInfo *userinfo.UserInfo, usrs ...common
 }
 
 func (e *Enricher) EnrichJobInfoFunc(userInfo *userinfo.UserInfo) func(usr common.IJobInfo) {
-	// TODO use citizenstore const instead of manual copies due to import cycles
-	jobGradesAttr, _ := e.ps.Attr(userInfo, "CitizenStoreService", "GetUser", "Jobs")
+	jobGradesAttr, _ := e.ps.Attr(userInfo, permscitizenstore.CitizenStoreServicePerm, permscitizenstore.CitizenStoreServiceGetUserPerm, permscitizenstore.CitizenStoreServiceGetUserJobsPermField)
 	var jobGrades perms.JobGradeList
 	if jobGradesAttr != nil {
 		jobGrades = jobGradesAttr.(map[string]int32)

@@ -4,21 +4,16 @@
 package dmv
 
 import (
+	permkeys "github.com/galexrt/fivenet/gen/go/proto/services/dmv/perms"
 	"github.com/galexrt/fivenet/pkg/perms"
-)
-
-const (
-	DMVServicePerm perms.Category = "DMVService"
-
-	DMVServiceListVehiclesPerm perms.Name = "ListVehicles"
 )
 
 func init() {
 	perms.AddPermsToList([]*perms.Perm{
 		// Service: DMVService
 		{
-			Category: DMVServicePerm,
-			Name:     DMVServiceListVehiclesPerm,
+			Category: permkeys.DMVServicePerm,
+			Name:     permkeys.DMVServiceListVehiclesPerm,
 			Attrs:    []perms.Attr{},
 		},
 	})

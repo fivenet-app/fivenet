@@ -5,6 +5,7 @@ import (
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/livemap"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
+	permslivemapper "github.com/galexrt/fivenet/gen/go/proto/services/livemapper/perms"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/galexrt/fivenet/pkg/perms"
@@ -111,7 +112,7 @@ func (s *Server) CreateOrUpdateMarker(ctx context.Context, req *CreateOrUpdateMa
 
 		auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
 	} else {
-		fieldsAttr, err := s.ps.Attr(userInfo, LivemapperServicePerm, LivemapperServiceCreateOrUpdateMarkerPerm, LivemapperServiceCreateOrUpdateMarkerAccessPermField)
+		fieldsAttr, err := s.ps.Attr(userInfo, permslivemapper.LivemapperServicePerm, permslivemapper.LivemapperServiceCreateOrUpdateMarkerPerm, permslivemapper.LivemapperServiceCreateOrUpdateMarkerAccessPermField)
 		if err != nil {
 			return nil, ErrMarkerFailed
 		}
@@ -188,7 +189,7 @@ func (s *Server) DeleteMarker(ctx context.Context, req *DeleteMarkerRequest) (*D
 	}
 	defer s.auditer.Log(auditEntry, req)
 
-	fieldsAttr, err := s.ps.Attr(userInfo, LivemapperServicePerm, LivemapperServiceCreateOrUpdateMarkerPerm, LivemapperServiceCreateOrUpdateMarkerAccessPermField)
+	fieldsAttr, err := s.ps.Attr(userInfo, permslivemapper.LivemapperServicePerm, permslivemapper.LivemapperServiceCreateOrUpdateMarkerPerm, permslivemapper.LivemapperServiceCreateOrUpdateMarkerAccessPermField)
 	if err != nil {
 		return nil, ErrMarkerFailed
 	}

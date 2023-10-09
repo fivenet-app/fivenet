@@ -7,7 +7,7 @@ import (
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
-	"github.com/galexrt/fivenet/gen/go/proto/services/citizenstore"
+	permscitizenstore "github.com/galexrt/fivenet/gen/go/proto/services/citizenstore/perms"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/perms"
@@ -143,7 +143,7 @@ func (s *Server) ListVehicles(ctx context.Context, req *ListVehiclesRequest) (*L
 	}
 
 	// Field Permission Check
-	fieldsAttr, err := s.ps.Attr(userInfo, citizenstore.CitizenStoreServicePerm, citizenstore.CitizenStoreServiceListCitizensPerm, citizenstore.CitizenStoreServiceListCitizensFieldsPermField)
+	fieldsAttr, err := s.ps.Attr(userInfo, permscitizenstore.CitizenStoreServicePerm, permscitizenstore.CitizenStoreServiceListCitizensPerm, permscitizenstore.CitizenStoreServiceListCitizensFieldsPermField)
 	if err != nil {
 		return nil, ErrFailedQuery
 	}

@@ -5,16 +5,8 @@ package completor
 
 import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/permissions"
+	permkeys "github.com/galexrt/fivenet/gen/go/proto/services/completor/perms"
 	"github.com/galexrt/fivenet/pkg/perms"
-)
-
-const (
-	CompletorServicePerm perms.Category = "CompletorService"
-
-	CompletorServiceCompleteCitizensPerm                    perms.Name = "CompleteCitizens"
-	CompletorServiceCompleteDocumentCategoriesPerm          perms.Name = "CompleteDocumentCategories"
-	CompletorServiceCompleteDocumentCategoriesJobsPermField perms.Key  = "Jobs"
-	CompletorServiceCompleteJobsPerm                        perms.Name = "CompleteJobs"
 )
 
 var PermsRemap = map[string]string{
@@ -31,23 +23,23 @@ func init() {
 	perms.AddPermsToList([]*perms.Perm{
 		// Service: CompletorService
 		{
-			Category: CompletorServicePerm,
-			Name:     CompletorServiceCompleteCitizensPerm,
+			Category: permkeys.CompletorServicePerm,
+			Name:     permkeys.CompletorServiceCompleteCitizensPerm,
 			Attrs:    []perms.Attr{},
 		},
 		{
-			Category: CompletorServicePerm,
-			Name:     CompletorServiceCompleteDocumentCategoriesPerm,
+			Category: permkeys.CompletorServicePerm,
+			Name:     permkeys.CompletorServiceCompleteDocumentCategoriesPerm,
 			Attrs: []perms.Attr{
 				{
-					Key:  CompletorServiceCompleteDocumentCategoriesJobsPermField,
+					Key:  permkeys.CompletorServiceCompleteDocumentCategoriesJobsPermField,
 					Type: permissions.JobListAttributeType,
 				},
 			},
 		},
 		{
-			Category: CompletorServicePerm,
-			Name:     CompletorServiceCompleteJobsPerm,
+			Category: permkeys.CompletorServicePerm,
+			Name:     permkeys.CompletorServiceCompleteJobsPerm,
 			Attrs:    []perms.Attr{},
 		},
 	})

@@ -8,6 +8,7 @@ import (
 	database "github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/documents"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
+	permsdocstore "github.com/galexrt/fivenet/gen/go/proto/services/docstore/perms"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/galexrt/fivenet/pkg/htmlsanitizer"
@@ -339,7 +340,7 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 	}
 
 	// Field Permission Check
-	fieldsAttr, err := s.ps.Attr(userInfo, DocStoreServicePerm, DocStoreServiceUpdateDocumentPerm, DocStoreServiceUpdateDocumentAccessPermField)
+	fieldsAttr, err := s.ps.Attr(userInfo, permsdocstore.DocStoreServicePerm, permsdocstore.DocStoreServiceUpdateDocumentPerm, permsdocstore.DocStoreServiceUpdateDocumentAccessPermField)
 	if err != nil {
 		return nil, ErrFailedQuery
 	}
@@ -431,7 +432,7 @@ func (s *Server) DeleteDocument(ctx context.Context, req *DeleteDocumentRequest)
 	}
 
 	// Field Permission Check
-	fieldsAttr, err := s.ps.Attr(userInfo, DocStoreServicePerm, DocStoreServiceDeleteDocumentPerm, DocStoreServiceDeleteDocumentAccessPermField)
+	fieldsAttr, err := s.ps.Attr(userInfo, permsdocstore.DocStoreServicePerm, permsdocstore.DocStoreServiceDeleteDocumentPerm, permsdocstore.DocStoreServiceDeleteDocumentAccessPermField)
 	if err != nil {
 		return nil, ErrFailedQuery
 	}
@@ -491,7 +492,7 @@ func (s *Server) ToggleDocument(ctx context.Context, req *ToggleDocumentRequest)
 	}
 
 	// Field Permission Check
-	fieldsAttr, err := s.ps.Attr(userInfo, DocStoreServicePerm, DocStoreServiceToggleDocumentPerm, DocStoreServiceToggleDocumentAccessPermField)
+	fieldsAttr, err := s.ps.Attr(userInfo, permsdocstore.DocStoreServicePerm, permsdocstore.DocStoreServiceToggleDocumentPerm, permsdocstore.DocStoreServiceToggleDocumentAccessPermField)
 	if err != nil {
 		return nil, ErrFailedQuery
 	}

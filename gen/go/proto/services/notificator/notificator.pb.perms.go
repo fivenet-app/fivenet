@@ -7,10 +7,6 @@ import (
 	"github.com/galexrt/fivenet/pkg/perms"
 )
 
-const (
-	NotificatorServicePerm perms.Category = "NotificatorService"
-)
-
 var PermsRemap = map[string]string{
 
 	// Service: NotificatorService

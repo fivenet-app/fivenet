@@ -7,6 +7,7 @@ import (
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/livemap"
 	users "github.com/galexrt/fivenet/gen/go/proto/resources/users"
+	permslivemapper "github.com/galexrt/fivenet/gen/go/proto/services/livemapper/perms"
 	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
@@ -136,11 +137,11 @@ func (s *Server) refreshCache() {
 func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) error {
 	userInfo := auth.MustGetUserInfoFromContext(srv.Context())
 
-	dispatchesAttr, err := s.ps.Attr(userInfo, LivemapperServicePerm, LivemapperServiceStreamPerm, LivemapperServiceStreamMarkersPermField)
+	dispatchesAttr, err := s.ps.Attr(userInfo, permslivemapper.LivemapperServicePerm, permslivemapper.LivemapperServiceStreamPerm, permslivemapper.LivemapperServiceStreamMarkersPermField)
 	if err != nil {
 		return ErrStreamFailed
 	}
-	playersAttr, err := s.ps.Attr(userInfo, LivemapperServicePerm, LivemapperServiceStreamPerm, LivemapperServiceStreamPlayersPermField)
+	playersAttr, err := s.ps.Attr(userInfo, permslivemapper.LivemapperServicePerm, permslivemapper.LivemapperServiceStreamPerm, permslivemapper.LivemapperServiceStreamPlayersPermField)
 	if err != nil {
 		return ErrStreamFailed
 	}

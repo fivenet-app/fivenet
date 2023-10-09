@@ -4,21 +4,16 @@
 package auth
 
 import (
+	permkeys "github.com/galexrt/fivenet/gen/go/proto/services/auth/perms"
 	"github.com/galexrt/fivenet/pkg/perms"
-)
-
-const (
-	AuthServicePerm perms.Category = "AuthService"
-
-	AuthServiceChooseCharacterPerm perms.Name = "ChooseCharacter"
 )
 
 func init() {
 	perms.AddPermsToList([]*perms.Perm{
 		// Service: AuthService
 		{
-			Category: AuthServicePerm,
-			Name:     AuthServiceChooseCharacterPerm,
+			Category: permkeys.AuthServicePerm,
+			Name:     permkeys.AuthServiceChooseCharacterPerm,
 			Attrs:    []perms.Attr{},
 		},
 	})

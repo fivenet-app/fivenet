@@ -6,7 +6,7 @@ import (
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/documents"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/users"
-	"github.com/galexrt/fivenet/gen/go/proto/services/citizenstore"
+	permscitizenstore "github.com/galexrt/fivenet/gen/go/proto/services/citizenstore/perms"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/galexrt/fivenet/pkg/perms"
 	"github.com/galexrt/fivenet/pkg/utils"
@@ -84,7 +84,7 @@ func (s *Server) listDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pr
 		}
 
 		// Field Permission Check
-		fieldsAttr, _ := s.ps.Attr(userInfo, citizenstore.CitizenStoreServicePerm, citizenstore.CitizenStoreServiceListCitizensPerm, citizenstore.CitizenStoreServiceListCitizensFieldsPermField)
+		fieldsAttr, _ := s.ps.Attr(userInfo, permscitizenstore.CitizenStoreServicePerm, permscitizenstore.CitizenStoreServiceListCitizensPerm, permscitizenstore.CitizenStoreServiceListCitizensFieldsPermField)
 		var fields perms.StringList
 		if fieldsAttr != nil {
 			fields = fieldsAttr.([]string)
@@ -207,7 +207,7 @@ func (s *Server) getDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pro
 		}
 
 		// Field Permission Check
-		fieldsAttr, _ := s.ps.Attr(userInfo, citizenstore.CitizenStoreServicePerm, citizenstore.CitizenStoreServiceListCitizensPerm, citizenstore.CitizenStoreServiceListCitizensFieldsPermField)
+		fieldsAttr, _ := s.ps.Attr(userInfo, permscitizenstore.CitizenStoreServicePerm, permscitizenstore.CitizenStoreServiceListCitizensPerm, permscitizenstore.CitizenStoreServiceListCitizensFieldsPermField)
 		var fields perms.StringList
 		if fieldsAttr != nil {
 			fields = fieldsAttr.([]string)

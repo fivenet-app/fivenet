@@ -4,19 +4,8 @@
 package rector
 
 import (
+	permkeys "github.com/galexrt/fivenet/gen/go/proto/services/rector/perms"
 	"github.com/galexrt/fivenet/pkg/perms"
-)
-
-const (
-	RectorServicePerm perms.Category = "RectorService"
-
-	RectorServiceCreateRolePerm      perms.Name = "CreateRole"
-	RectorServiceDeleteRolePerm      perms.Name = "DeleteRole"
-	RectorServiceGetJobPropsPerm     perms.Name = "GetJobProps"
-	RectorServiceGetRolesPerm        perms.Name = "GetRoles"
-	RectorServiceSetJobPropsPerm     perms.Name = "SetJobProps"
-	RectorServiceUpdateRolePermsPerm perms.Name = "UpdateRolePerms"
-	RectorServiceViewAuditLogPerm    perms.Name = "ViewAuditLog"
 )
 
 var PermsRemap = map[string]string{
@@ -39,38 +28,38 @@ func init() {
 	perms.AddPermsToList([]*perms.Perm{
 		// Service: RectorService
 		{
-			Category: RectorServicePerm,
-			Name:     RectorServiceCreateRolePerm,
+			Category: permkeys.RectorServicePerm,
+			Name:     permkeys.RectorServiceCreateRolePerm,
 			Attrs:    []perms.Attr{},
 		},
 		{
-			Category: RectorServicePerm,
-			Name:     RectorServiceDeleteRolePerm,
+			Category: permkeys.RectorServicePerm,
+			Name:     permkeys.RectorServiceDeleteRolePerm,
 			Attrs:    []perms.Attr{},
 		},
 		{
-			Category: RectorServicePerm,
-			Name:     RectorServiceGetJobPropsPerm,
+			Category: permkeys.RectorServicePerm,
+			Name:     permkeys.RectorServiceGetJobPropsPerm,
 			Attrs:    []perms.Attr{},
 		},
 		{
-			Category: RectorServicePerm,
-			Name:     RectorServiceGetRolesPerm,
+			Category: permkeys.RectorServicePerm,
+			Name:     permkeys.RectorServiceGetRolesPerm,
 			Attrs:    []perms.Attr{},
 		},
 		{
-			Category: RectorServicePerm,
-			Name:     RectorServiceSetJobPropsPerm,
+			Category: permkeys.RectorServicePerm,
+			Name:     permkeys.RectorServiceSetJobPropsPerm,
 			Attrs:    []perms.Attr{},
 		},
 		{
-			Category: RectorServicePerm,
-			Name:     RectorServiceUpdateRolePermsPerm,
+			Category: permkeys.RectorServicePerm,
+			Name:     permkeys.RectorServiceUpdateRolePermsPerm,
 			Attrs:    []perms.Attr{},
 		},
 		{
-			Category: RectorServicePerm,
-			Name:     RectorServiceViewAuditLogPerm,
+			Category: permkeys.RectorServicePerm,
+			Name:     permkeys.RectorServiceViewAuditLogPerm,
 			Attrs:    []perms.Attr{},
 		},
 	})

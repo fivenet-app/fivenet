@@ -7,6 +7,7 @@ import (
 	database "github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
 	jobs "github.com/galexrt/fivenet/gen/go/proto/resources/jobs"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
+	permsjobs "github.com/galexrt/fivenet/gen/go/proto/services/jobs/perms"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/perms"
 	"github.com/galexrt/fivenet/pkg/utils"
@@ -30,7 +31,7 @@ func (s *Server) RequestsListEntries(ctx context.Context, req *RequestsListEntri
 	condition := tRequests.Job.EQ(jet.String(userInfo.Job))
 
 	// Field Permission Check
-	fieldsAttr, err := s.p.Attr(userInfo, JobsServicePerm, JobsServiceTimeclockListEntriesPerm, JobsServiceTimeclockListEntriesAccessPermField)
+	fieldsAttr, err := s.p.Attr(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceRequestsListEntriesPerm, permsjobs.JobsServiceRequestsListEntriesAccessPermField)
 	if err != nil {
 		return nil, ErrFailedQuery
 	}

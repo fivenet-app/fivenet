@@ -11,6 +11,7 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
 	users "github.com/galexrt/fivenet/gen/go/proto/resources/users"
+	permscitizenstore "github.com/galexrt/fivenet/gen/go/proto/services/citizenstore/perms"
 	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
@@ -92,7 +93,7 @@ func (s *Server) ListCitizens(ctx context.Context, req *ListCitizensRequest) (*L
 
 	condition := jet.Bool(true)
 	// Field Permission Check
-	fieldsAttr, err := s.p.Attr(userInfo, CitizenStoreServicePerm, CitizenStoreServiceListCitizensPerm, CitizenStoreServiceListCitizensFieldsPermField)
+	fieldsAttr, err := s.p.Attr(userInfo, permscitizenstore.CitizenStoreServicePerm, permscitizenstore.CitizenStoreServiceListCitizensPerm, permscitizenstore.CitizenStoreServiceListCitizensFieldsPermField)
 	if err != nil {
 		return nil, ErrFailedQuery
 	}
@@ -242,7 +243,7 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 	}
 
 	// Field Permission Check
-	fieldsAttr, err := s.p.Attr(userInfo, CitizenStoreServicePerm, CitizenStoreServiceListCitizensPerm, CitizenStoreServiceListCitizensFieldsPermField)
+	fieldsAttr, err := s.p.Attr(userInfo, permscitizenstore.CitizenStoreServicePerm, permscitizenstore.CitizenStoreServiceListCitizensPerm, permscitizenstore.CitizenStoreServiceListCitizensFieldsPermField)
 	if err != nil {
 		return nil, ErrFailedQuery
 	}
@@ -293,7 +294,7 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 
 	if utils.InSlice(s.publicJobs, resp.User.Job) {
 		// Make sure user has permission to see that grade
-		jobGradesAttr, err := s.p.Attr(userInfo, CitizenStoreServicePerm, CitizenStoreServiceGetUserPerm, CitizenStoreServiceGetUserJobsPermField)
+		jobGradesAttr, err := s.p.Attr(userInfo, permscitizenstore.CitizenStoreServicePerm, permscitizenstore.CitizenStoreServiceGetUserPerm, permscitizenstore.CitizenStoreServiceGetUserJobsPermField)
 		if err != nil {
 			return nil, ErrFailedQuery
 		}
@@ -370,7 +371,7 @@ func (s *Server) ListUserActivity(ctx context.Context, req *ListUserActivityRequ
 		Activity:   []*users.UserActivity{},
 	}
 	// User can't see their own activities, unless they have "Own" perm attribute, or are a superuser
-	fieldsAttr, err := s.p.Attr(userInfo, CitizenStoreServicePerm, CitizenStoreServiceListUserActivityPerm, CitizenStoreServiceListUserActivityFieldsPermField)
+	fieldsAttr, err := s.p.Attr(userInfo, permscitizenstore.CitizenStoreServicePerm, permscitizenstore.CitizenStoreServiceListUserActivityPerm, permscitizenstore.CitizenStoreServiceListUserActivityFieldsPermField)
 	if err != nil {
 		return nil, ErrFailedQuery
 	}
@@ -515,7 +516,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 	}
 
 	// Field Permission Check
-	fieldsAttr, err := s.p.Attr(userInfo, CitizenStoreServicePerm, CitizenStoreServiceSetUserPropsPerm, CitizenStoreServiceSetUserPropsFieldsPermField)
+	fieldsAttr, err := s.p.Attr(userInfo, permscitizenstore.CitizenStoreServicePerm, permscitizenstore.CitizenStoreServiceSetUserPropsPerm, permscitizenstore.CitizenStoreServiceSetUserPropsFieldsPermField)
 	if err != nil {
 		return nil, ErrFailedQuery
 	}

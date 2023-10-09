@@ -5,30 +5,19 @@ package livemapper
 
 import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/permissions"
+	permkeys "github.com/galexrt/fivenet/gen/go/proto/services/livemapper/perms"
 	"github.com/galexrt/fivenet/pkg/perms"
-)
-
-const (
-	LivemapperServicePerm perms.Category = "LivemapperService"
-
-	LivemapperServiceCreateOrUpdateMarkerPerm            perms.Name = "CreateOrUpdateMarker"
-	LivemapperServiceCreateOrUpdateMarkerAccessPermField perms.Key  = "Access"
-	LivemapperServiceDeleteMarkerPerm                    perms.Name = "DeleteMarker"
-	LivemapperServiceDeleteMarkerAccessPermField         perms.Key  = "Access"
-	LivemapperServiceStreamPerm                          perms.Name = "Stream"
-	LivemapperServiceStreamMarkersPermField              perms.Key  = "Markers"
-	LivemapperServiceStreamPlayersPermField              perms.Key  = "Players"
 )
 
 func init() {
 	perms.AddPermsToList([]*perms.Perm{
 		// Service: LivemapperService
 		{
-			Category: LivemapperServicePerm,
-			Name:     LivemapperServiceCreateOrUpdateMarkerPerm,
+			Category: permkeys.LivemapperServicePerm,
+			Name:     permkeys.LivemapperServiceCreateOrUpdateMarkerPerm,
 			Attrs: []perms.Attr{
 				{
-					Key:           LivemapperServiceCreateOrUpdateMarkerAccessPermField,
+					Key:           permkeys.LivemapperServiceCreateOrUpdateMarkerAccessPermField,
 					Type:          permissions.StringListAttributeType,
 					ValidValues:   []string{"Own", "Lower_Rank", "Same_Rank"},
 					DefaultValues: []string{"Own"},
@@ -36,11 +25,11 @@ func init() {
 			},
 		},
 		{
-			Category: LivemapperServicePerm,
-			Name:     LivemapperServiceDeleteMarkerPerm,
+			Category: permkeys.LivemapperServicePerm,
+			Name:     permkeys.LivemapperServiceDeleteMarkerPerm,
 			Attrs: []perms.Attr{
 				{
-					Key:           LivemapperServiceDeleteMarkerAccessPermField,
+					Key:           permkeys.LivemapperServiceDeleteMarkerAccessPermField,
 					Type:          permissions.StringListAttributeType,
 					ValidValues:   []string{"Own", "Lower_Rank", "Same_Rank"},
 					DefaultValues: []string{"Own"},
@@ -48,16 +37,16 @@ func init() {
 			},
 		},
 		{
-			Category: LivemapperServicePerm,
-			Name:     LivemapperServiceStreamPerm,
+			Category: permkeys.LivemapperServicePerm,
+			Name:     permkeys.LivemapperServiceStreamPerm,
 			Attrs: []perms.Attr{
 				{
-					Key:         LivemapperServiceStreamMarkersPermField,
+					Key:         permkeys.LivemapperServiceStreamMarkersPermField,
 					Type:        permissions.JobListAttributeType,
 					ValidValues: "config.Game.Livemap.Jobs",
 				},
 				{
-					Key:  LivemapperServiceStreamPlayersPermField,
+					Key:  permkeys.LivemapperServiceStreamPlayersPermField,
 					Type: permissions.JobGradeListAttributeType,
 				},
 			},
