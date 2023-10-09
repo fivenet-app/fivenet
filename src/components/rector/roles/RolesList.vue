@@ -129,7 +129,6 @@ const selectedRole = ref<Role | undefined>();
                                                         )"
                                                         :key="grade.grade"
                                                         :value="grade"
-                                                        as="grade"
                                                         v-slot="{ active, selected }"
                                                     >
                                                         <li

@@ -466,7 +466,7 @@ watch(router.currentRoute, () => {
         <!-- Content area -->
         <div class="flex flex-col flex-1 overflow-hidden">
             <header class="w-full">
-                <div class="relative z-0 flex flex-shrink-0 h-16 bg-base-800">
+                <div class="relative z-10 flex flex-shrink-0 h-16 bg-base-800">
                     <button
                         type="button"
                         class="px-4 text-neutral focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500 md:hidden"
@@ -541,7 +541,7 @@ watch(router.currentRoute, () => {
                                     leave-to-class="transform scale-95 opacity-0"
                                 >
                                     <MenuItems
-                                        class="absolute right-0 w-48 py-1 mt-2 origin-top-right rounded-md shadow-float bg-base-800 ring-1 ring-base-100 ring-opacity-5 focus:outline-none z-100"
+                                        class="absolute right-0 w-48 py-1 mt-2 origin-top-right rounded-md shadow-float bg-base-800 ring-1 ring-base-100 ring-opacity-5 focus:outline-none z-10"
                                     >
                                         <MenuItem
                                             v-for="item in userNavigation.filter(

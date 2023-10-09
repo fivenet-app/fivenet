@@ -327,7 +327,6 @@ watch(selectedAccessRole, () => {
                                 v-for="job in filteredJobs"
                                 :key="job.name"
                                 :value="job"
-                                as="job"
                                 v-slot="{ active, selected }"
                             >
                                 <li

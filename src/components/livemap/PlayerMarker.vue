@@ -45,7 +45,7 @@ const popupAnchor: L.PointExpression = [0, -(props.size * 1.7)];
         :latLng="[marker.info!.y, marker.info!.x]"
         :name="marker.info!.name"
         @click="$emit('selected')"
-        :z-index-offset="activeChar && marker.user?.identifier === activeChar.identifier ? 25 : 20"
+        :z-index-offset="activeChar && marker.user?.identifier === activeChar.identifier ? 30 : 20"
     >
         <LIcon :icon-anchor="iconAnchor" :popup-anchor="popupAnchor" :icon-size="[size, size]">
             <div class="uppercase flex flex-col items-center">

@@ -126,7 +126,6 @@ onBeforeMount(async () => await listJobs());
                                                         )"
                                                         :key="job.name"
                                                         :value="job"
-                                                        as="job"
                                                         v-slot="{ active, selected }"
                                                     >
                                                         <li
