@@ -4,7 +4,7 @@ import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { CloseIcon } from 'mdi-vue3';
 import { useCentrumStore } from '~/store/centrum';
 import { StatusUnit, Unit } from '~~/gen/ts/resources/dispatch/units';
-import { statusOrder, unitStatusToBGColor } from '../helpers';
+import { unitStatusToBGColor } from '../helpers';
 
 defineProps<{
     open: boolean;
@@ -19,7 +19,7 @@ const emit = defineEmits<{
 const { $grpc } = useNuxtApp();
 
 const centrumStore = useCentrumStore();
-const { ownUnitId, units } = storeToRefs(centrumStore);
+const { ownUnitId, getSortedUnits } = storeToRefs(centrumStore);
 
 async function joinOrLeaveUnit(unit?: Unit | undefined): Promise<void> {
     return new Promise(async (res, rej) => {
@@ -46,16 +46,7 @@ async function joinOrLeaveUnit(unit?: Unit | undefined): Promise<void> {
     });
 }
 
-const sortedUnits = computed(() => {
-    const filtered: Unit[] = [];
-    units.value.forEach((d) => filtered.push(d));
-    return filtered.sort(
-        (a, b) =>
-            statusOrder.indexOf(b.status?.status ?? 0) -
-            statusOrder.indexOf(a.status?.status ?? 0) +
-            a.name.localeCompare(b.name),
-    );
-});
+const sortedUnits = computed(() => getSortedUnits.value);
 </script>
 
 <template>

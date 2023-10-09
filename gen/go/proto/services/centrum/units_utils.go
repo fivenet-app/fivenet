@@ -221,6 +221,9 @@ func (s *Server) updateUnitAssignments(ctx context.Context, userInfo *userinfo.U
 		for i := 0; i < len(unit.Users); i++ {
 			for k := len(toRemove) - 1; k >= 0; k-- {
 				if unit.Users[i].UserId == toRemove[k] {
+					unit.Users = utils.RemoveFromSlice(unit.Users, i)
+					s.state.UserIDToUnitID.Delete(toRemove[k])
+
 					if err := s.updateUnitStatus(ctx, userInfo.Job, unit, &dispatch.UnitStatus{
 						UnitId:    unit.Id,
 						Status:    dispatch.StatusUnit_STATUS_UNIT_USER_REMOVED,
@@ -232,9 +235,6 @@ func (s *Server) updateUnitAssignments(ctx context.Context, userInfo *userinfo.U
 					}); err != nil {
 						return err
 					}
-
-					unit.Users = utils.RemoveFromSlice(unit.Users, i)
-					s.state.UserIDToUnitID.Delete(toRemove[k])
 				}
 			}
 		}

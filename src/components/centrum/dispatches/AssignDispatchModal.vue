@@ -6,10 +6,10 @@ import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import { useCentrumStore } from '~/store/centrum';
 import { Dispatch } from '~~/gen/ts/resources/dispatch/dispatches';
 import { StatusUnit, Unit } from '~~/gen/ts/resources/dispatch/units';
-import { statusOrder, unitStatusToBGColor } from '../helpers';
+import { unitStatusToBGColor } from '../helpers';
 
 const centrumStore = useCentrumStore();
-const { units } = storeToRefs(centrumStore);
+const { getSortedUnits } = storeToRefs(centrumStore);
 
 const props = defineProps<{
     open: boolean;
@@ -66,18 +66,7 @@ function selectUnit(item: Unit): void {
     }
 }
 
-const sortedUnits = computed(() => {
-    const filtered: Unit[] = [];
-    units.value.forEach((d) => filtered.push(d));
-    return filtered
-        .sort(
-            (a, b) =>
-                statusOrder.indexOf(b.status?.status ?? 0) -
-                statusOrder.indexOf(a.status?.status ?? 0) +
-                b.name.localeCompare(a.name),
-        )
-        .reverse();
-});
+const sortedUnits = computed(() => getSortedUnits.value.reverse());
 </script>
 
 <template>

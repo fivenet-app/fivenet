@@ -1,5 +1,6 @@
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { StoreDefinition, defineStore } from 'pinia';
+import { statusOrder } from '~/components/centrum/helpers';
 import { Dispatch, DispatchStatus, StatusDispatch } from '~~/gen/ts/resources/dispatch/dispatches';
 import { CentrumMode, Settings } from '~~/gen/ts/resources/dispatch/settings';
 import { StatusUnit, Unit, UnitStatus } from '~~/gen/ts/resources/dispatch/units';
@@ -55,6 +56,17 @@ export const useCentrumStore = defineStore('centrum', {
             state.disponents.length > 0
                 ? state.settings?.mode ?? CentrumMode.UNSPECIFIED
                 : state.settings?.fallbackMode ?? CentrumMode.UNSPECIFIED,
+        getOwnUnit: (state: CentrumState) => (state.ownUnitId !== undefined ? state.units.get(state.ownUnitId) : undefined),
+        getSortedUnits: (state: CentrumState) => {
+            const filtered: Unit[] = [];
+            state.units.forEach((u) => filtered.push(u));
+            return filtered.sort(
+                (a, b) =>
+                    statusOrder.indexOf(b.status?.status ?? 0) -
+                    statusOrder.indexOf(a.status?.status ?? 0) +
+                    b.name.localeCompare(a.name),
+            );
+        },
     },
     actions: {
         addOrUpdateUnit(unit: Unit): void {

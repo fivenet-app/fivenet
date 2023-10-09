@@ -1,29 +1,16 @@
 <script lang="ts" setup>
 import { CogIcon } from 'mdi-vue3';
 import { useCentrumStore } from '~/store/centrum';
-import { Unit } from '~~/gen/ts/resources/dispatch/units';
-import { statusOrder } from '../helpers';
 import ListEntry from './ListEntry.vue';
 
 const centrumStore = useCentrumStore();
-const { units } = storeToRefs(centrumStore);
+const { getSortedUnits } = storeToRefs(centrumStore);
 
 defineEmits<{
     (e: 'goto', loc: Coordinate): void;
 }>();
 
-const sortedUnits = computed(() => {
-    const filtered: Unit[] = [];
-    units.value.forEach((d) => filtered.push(d));
-    return filtered
-        .sort(
-            (a, b) =>
-                statusOrder.indexOf(b.status?.status ?? 0) -
-                statusOrder.indexOf(a.status?.status ?? 0) +
-                b.name.localeCompare(a.name),
-        )
-        .reverse();
-});
+const sortedUnits = computed(() => getSortedUnits.value.reverse());
 </script>
 
 <template>

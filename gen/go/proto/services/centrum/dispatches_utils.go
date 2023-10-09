@@ -359,6 +359,8 @@ func (s *Server) updateDispatchAssignments(ctx context.Context, job string, user
 		for i := 0; i < len(dsp.Units); i++ {
 			for k := 0; k < len(toRemove); k++ {
 				if dsp.Units[i].UnitId == toRemove[k] {
+					dsp.Units = utils.RemoveFromSlice(dsp.Units, i)
+
 					if err := s.updateDispatchStatus(ctx, job, dsp, &dispatch.DispatchStatus{
 						DispatchId: dsp.Id,
 						UnitId:     &toRemove[k],
@@ -370,8 +372,6 @@ func (s *Server) updateDispatchAssignments(ctx context.Context, job string, user
 					}); err != nil {
 						return ErrFailedQuery
 					}
-
-					dsp.Units = utils.RemoveFromSlice(dsp.Units, i)
 					continue
 				}
 			}

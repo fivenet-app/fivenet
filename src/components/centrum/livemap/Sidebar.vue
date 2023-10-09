@@ -30,7 +30,7 @@ import { useCentrumStore } from '~/store/centrum';
 import { useNotificatorStore } from '~/store/notificator';
 import { StatusDispatch } from '~~/gen/ts/resources/dispatch/dispatches';
 import { CentrumMode } from '~~/gen/ts/resources/dispatch/settings';
-import { StatusUnit, Unit } from '~~/gen/ts/resources/dispatch/units';
+import { StatusUnit } from '~~/gen/ts/resources/dispatch/units';
 import DispatchEntry from './DispatchEntry.vue';
 import DispatchesLayer from './DispatchesLayer.vue';
 import JoinUnitModal from './JoinUnitModal.vue';
@@ -43,8 +43,7 @@ defineEmits<{
 const { $grpc } = useNuxtApp();
 
 const centrumStore = useCentrumStore();
-const { getCurrentMode, units, dispatches, ownDispatches, ownUnitId, pendingDispatches, disponents } =
-    storeToRefs(centrumStore);
+const { getCurrentMode, getOwnUnit, dispatches, ownDispatches, pendingDispatches, disponents } = storeToRefs(centrumStore);
 const { startStream, stopStream } = centrumStore;
 
 const notifications = useNotificatorStore();
@@ -162,22 +161,15 @@ async function updateUtStatus(id: bigint, status?: StatusUnit): Promise<void> {
 }
 
 // Show unit sidebar when ownUnit is set/updated, otherwise it will be hidden (automagically)
-const ownUnit = ref<Unit | undefined>();
-watch(ownUnitId, async () => {
-    if (ownUnitId.value !== undefined) {
-        if (ownUnit.value !== undefined && ownUnit.value.id === ownUnitId.value) {
-            return;
-        }
-
-        ownUnit.value = units.value.get(ownUnitId.value);
+watch(getOwnUnit, async () => {
+    if (getOwnUnit.value !== undefined) {
         open.value = true;
     } else {
-        ownUnit.value = undefined;
         open.value = false;
     }
 });
 
-const ownUnitStatus = computed(() => unitStatusToBGColor(ownUnit.value?.status?.status));
+const ownUnitStatus = computed(() => unitStatusToBGColor(getOwnUnit.value?.status?.status));
 
 async function ensureDispatchSelected(): Promise<void> {
     if (selectedDispatch.value !== undefined) {
@@ -228,7 +220,7 @@ const open = ref(false);
             <div class="lg:inset-y-0 lg:flex lg:w-50 lg:flex-col">
                 <!-- Dispatch -->
                 <TakeDispatchModal
-                    v-if="ownUnit !== undefined"
+                    v-if="getOwnUnit !== undefined"
                     :open="openTakeDispatch"
                     @close="openTakeDispatch = false"
                     @goto="$emit('goto', $event)"
@@ -266,7 +258,7 @@ const open = ref(false);
                             <li>
                                 <ul role="list" class="-mx-2 mt-1.5 space-y-1">
                                     <li>
-                                        <template v-if="ownUnit !== undefined">
+                                        <template v-if="getOwnUnit !== undefined">
                                             <button
                                                 @click="openUnitDetails = true"
                                                 type="button"
@@ -274,12 +266,14 @@ const open = ref(false);
                                                 :class="ownUnitStatus"
                                             >
                                                 <InformationOutlineIcon class="h-5 w-5" aria-hidden="true" />
-                                                <span class="mt-1.5 truncate">{{ ownUnit.initials }}: {{ ownUnit.name }}</span>
+                                                <span class="mt-1.5 truncate"
+                                                    >{{ getOwnUnit.initials }}: {{ getOwnUnit.name }}</span
+                                                >
                                                 <span class="mt-1.5 truncate">
                                                     {{
                                                         $t(
                                                             `enums.centrum.StatusUnit.${
-                                                                StatusUnit[ownUnit.status?.status ?? 0]
+                                                                StatusUnit[getOwnUnit.status?.status ?? 0]
                                                             }`,
                                                         )
                                                     }}
@@ -287,7 +281,7 @@ const open = ref(false);
                                             </button>
 
                                             <UnitDetails
-                                                :unit="ownUnit"
+                                                :unit="getOwnUnit"
                                                 :open="openUnitDetails"
                                                 @close="openUnitDetails = false"
                                             />
@@ -297,7 +291,7 @@ const open = ref(false);
                                             type="button"
                                             class="text-white bg-info-700 hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-1.5 text-xs my-0.5"
                                         >
-                                            <template v-if="!ownUnit" class="flex w-full flex-col items-center">
+                                            <template v-if="!getOwnUnit" class="flex w-full flex-col items-center">
                                                 <InformationOutlineIcon class="h-5 w-5" aria-hidden="true" />
                                                 <span class="mt-1.5 truncate">{{ $t('common.no_own_unit') }}</span>
                                             </template>
@@ -308,7 +302,7 @@ const open = ref(false);
                                     </li>
                                 </ul>
                             </li>
-                            <template v-if="ownUnit !== undefined">
+                            <template v-if="getOwnUnit !== undefined">
                                 <li>
                                     <ul role="list" class="-mx-2 space-y-1">
                                         <li>
@@ -332,7 +326,7 @@ const open = ref(false);
                                                     <div class="flex flex-row gap-2">
                                                         <div class="w-full grid grid-cols-2 gap-0.5">
                                                             <UnitStatusUpdateModal
-                                                                :unit="ownUnit"
+                                                                :unit="getOwnUnit"
                                                                 :open="openUnitStatus"
                                                                 @close="openUnitStatus = false"
                                                             />
@@ -347,7 +341,7 @@ const open = ref(false);
                                                                     item.status ? unitStatusToBGColor(item.status) : item.class,
                                                                     item.class,
                                                                 ]"
-                                                                @click="updateUtStatus(ownUnit.id, item.status)"
+                                                                @click="updateUtStatus(getOwnUnit.id, item.status)"
                                                             >
                                                                 <component
                                                                     :is="item.icon ?? HoopHouseIcon"
@@ -443,7 +437,7 @@ const open = ref(false);
                 </div>
 
                 <!-- "Take Dispatches" Button -->
-                <span v-if="ownUnit !== undefined" class="fixed inline-flex z-100 bottom-2 right-1/2">
+                <span v-if="getOwnUnit !== undefined" class="fixed inline-flex z-100 bottom-2 right-1/2">
                     <span class="flex absolute h-3 w-3 top-0 right-0 -mt-1 -mr-1" v-if="pendingDispatches.length > 0">
                         <span
                             class="animate-ping absolute inline-flex h-full w-full rounded-full bg-error-400 opacity-75"
