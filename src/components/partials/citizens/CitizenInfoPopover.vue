@@ -42,7 +42,7 @@ defineProps<{
             </PopoverButton>
 
             <PopoverPanel
-                class="absolute z-20 w-64 max-w-[18rem] min-w-fit text-sm text-gray-400 transition-opacity bg-gray-800 border border-gray-600 rounded-lg shadow-sm"
+                class="absolute z-5 w-64 max-w-[18rem] min-w-fit text-sm text-gray-400 transition-opacity bg-gray-800 border border-gray-600 rounded-lg shadow-sm"
             >
                 <div class="p-3">
                     <div class="flex items-center gap-2 mb-2">
