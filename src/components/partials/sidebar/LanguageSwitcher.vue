@@ -63,7 +63,7 @@ async function switchLanguage(lang: Language): Promise<void> {
                 <MenuItem v-for="item in languages" :key="item.iso" v-slot="{ active }">
                     <button
                         :class="[
-                            active ? 'bg-base-800' : '',
+                            active ? 'bg-primary-500' : '',
                             'px-4 py-2 text-sm text-neutral hover:transition-colors flex flex-row w-full',
                         ]"
                         @click="switchLanguage(item)"
