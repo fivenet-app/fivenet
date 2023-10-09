@@ -466,7 +466,7 @@ watch(router.currentRoute, () => {
         <!-- Content area -->
         <div class="flex flex-col flex-1 overflow-hidden">
             <header class="w-full">
-                <div class="relative z-40 flex flex-shrink-0 h-16 bg-base-800">
+                <div class="relative z-0 flex flex-shrink-0 h-16 bg-base-800">
                     <button
                         type="button"
                         class="px-4 text-neutral focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500 md:hidden"
