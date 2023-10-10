@@ -35,11 +35,12 @@ func (s *Server) ConductListEntries(ctx context.Context, req *ConductListEntries
 		fields = fieldsAttr.([]string)
 	}
 
-	if len(fields) == 0 {
-		return nil, ErrFailedQuery
-	} else if utils.InSlice(fields, "All") {
-	} else if utils.InSlice(fields, "Own") {
+	// "All" is a pass, but if no fields or "Own" is given, return user's created conduct entries
+	if utils.InSlice(fields, "All") {
+	} else if len(fields) == 0 || utils.InSlice(fields, "Own") {
 		condition = condition.AND(tConduct.CreatorID.EQ(jet.Int32(userInfo.UserId)))
+	} else {
+		return nil, ErrFailedQuery
 	}
 
 	if len(req.Types) > 0 {
