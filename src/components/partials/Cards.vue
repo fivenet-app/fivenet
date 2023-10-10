@@ -25,7 +25,7 @@ defineEmits<{
                     :class="[
                         itemIdx === 0 ? 'rounded-tl-lg rounded-tr-lg sm:rounded-tr-none' : '',
                         itemIdx === 1 ? 'sm:rounded-tr-lg' : '',
-                        itemIdx === items.length - 2 && items.length % 2 === 0 ? 'sm:rounded-bl-lg' : '',
+                        itemIdx === items.length - 2 && items.length % 2 === 0 ? 'sm:rounded-br-lg' : '',
                         itemIdx === items.length - 1 && items.length % 2 === 0 ? 'rounded-br-lg' : '',
                         itemIdx === items.length - 1 ? 'rounded-bl-lg sm:rounded-bl-none' : '',
                         'group relative bg-base-700 p-6 focus-within:ring-2 focus-within:ring-inset focus-within:ring-neutral',
