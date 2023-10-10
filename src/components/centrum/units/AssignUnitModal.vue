@@ -95,7 +95,7 @@ onMounted(async () => {
 
 <template>
     <TransitionRoot as="template" :show="open">
-        <Dialog as="div" class="relative z-10" @close="$emit('close')">
+        <Dialog as="div" class="relative z-20" @close="$emit('close')">
             <div class="fixed inset-0" />
 
             <div class="fixed inset-0 overflow-hidden">
@@ -155,7 +155,7 @@ onMounted(async () => {
 
                                                                     <ComboboxOptions
                                                                         v-if="entriesCitizens.length > 0"
-                                                                        class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-44 sm:text-sm"
+                                                                        class="absolute z-20 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-44 sm:text-sm"
                                                                     >
                                                                         <ComboboxOption
                                                                             v-for="user in entriesCitizens"
@@ -226,7 +226,7 @@ onMounted(async () => {
                                             </button>
                                             <button
                                                 type="button"
-                                                class="w-full relative -ml-px inline-flex items-center rounded-r-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 hover:text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-10"
+                                                class="w-full relative -ml-px inline-flex items-center rounded-r-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 hover:text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20"
                                                 @click="$emit('close')"
                                             >
                                                 {{ $t('common.close', 1) }}

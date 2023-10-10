@@ -1872,10 +1872,10 @@
   resolved "https://registry.yarnpkg.com/@types/resolve/-/resolve-1.20.2.tgz#97d26e00cd4a0423b4af620abecf3e6f442b7975"
   integrity sha512-60BCwRFOZCQhDncwQdxxeOEEkbc5dIMccYLwbxsS4TUNeVECQ/pBJ0j09mrHOl/JJvpRPGwO9SvE4nR2Nb/a4Q==
 
-"@types/splitpanes@^2.2.2":
-  version "2.2.2"
-  resolved "https://registry.yarnpkg.com/@types/splitpanes/-/splitpanes-2.2.2.tgz#5bf09f633b5917afc2bad2030e9bc9fff471a178"
-  integrity sha512-8GpVJQVwYC19l5kLQHqiYneaIV0P3+r1jQSiipHhR/DjVsbFq4ayOtYMVUm+AVnB2T/0Py0ruiVWpk5S1zXtaw==
+"@types/splitpanes@^2.2.3":
+  version "2.2.3"
+  resolved "https://registry.yarnpkg.com/@types/splitpanes/-/splitpanes-2.2.3.tgz#03f1fe5a824f8901889696bf64ebf57fe6826320"
+  integrity sha512-l1IQM0ExMvYcRmy2Lfp0n3VcU3lVajZ47lClMLuKOEKbQJ7E79V4EkZwyrR+EsScS2b19DrInxJvGwvqXgqrRw==
   dependencies:
     vue "^2.0.0"
 
@@ -7570,10 +7570,10 @@ safe-buffer@~5.1.0, safe-buffer@~5.1.1:
   resolved "https://registry.yarnpkg.com/safer-buffer/-/safer-buffer-2.1.2.tgz#44fa161b0187b9549dd84bb91802f9bd8385cd6a"
   integrity sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==
 
-sass@^1.69.1:
-  version "1.69.1"
-  resolved "https://registry.yarnpkg.com/sass/-/sass-1.69.1.tgz#659b3b04452245dcf82f731684831e990ddb0c89"
-  integrity sha512-nc969GvTVz38oqKgYYVHM/Iq7Yl33IILy5uqaH2CWSiSUmRCvw+UR7tA3845Sp4BD5ykCUimvrT3k1EjTwpVUA==
+sass@^1.69.2:
+  version "1.69.2"
+  resolved "https://registry.yarnpkg.com/sass/-/sass-1.69.2.tgz#8aeaeb6c1dcdbeaa26bbfeddece67c9fcd4b1d93"
+  integrity sha512-48lDtG/9OuSQZ9oNmJMUXI2QdCakAWrAGjpX/Fy6j4Og8dEAyE598x5GqCqnHkwV7+I5w8DJpqjm581q5HNh3w==
   dependencies:
     chokidar ">=3.0.0 <4.0.0"
     immutable "^4.0.0"

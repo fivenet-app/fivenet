@@ -6,7 +6,6 @@ import (
 	database "github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
-	permscentrum "github.com/galexrt/fivenet/gen/go/proto/services/centrum/perms"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
@@ -256,10 +255,8 @@ func (s *Server) UpdateUnitStatus(ctx context.Context, req *UpdateUnitStatusRequ
 		return nil, ErrFailedQuery
 	}
 
-	if !s.ps.Can(userInfo, permscentrum.CentrumServicePerm, permscentrum.CentrumServiceDeleteUnitPerm) {
-		if !s.checkIfUserPartOfUnit(userInfo.UserId, unit) {
-			return nil, ErrFailedQuery
-		}
+	if !s.checkIfUserPartOfUnit(userInfo.Job, userInfo.UserId, unit, true) {
+		return nil, ErrFailedQuery
 	}
 
 	var x, y *float64

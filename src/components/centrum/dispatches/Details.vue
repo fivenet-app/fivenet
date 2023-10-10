@@ -93,7 +93,7 @@ const openStatus = ref(false);
     <ConfirmDialog :open="isRevealed" :cancel="cancel" :confirm="() => confirm(dispatch.id)" />
 
     <TransitionRoot as="template" :show="open">
-        <Dialog as="div" class="relative z-10" @close="$emit('close')">
+        <Dialog as="div" class="relative z-20" @close="$emit('close')">
             <div class="fixed inset-0" />
 
             <div class="fixed inset-0 overflow-hidden">

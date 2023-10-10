@@ -334,7 +334,7 @@ watch(router.currentRoute, () => {
 
         <!-- Mobile Sidebar -->
         <TransitionRoot as="template" :show="mobileMenuOpen">
-            <Dialog as="div" class="relative z-auto md:hidden" @close="mobileMenuOpen = false">
+            <Dialog as="div" class="relative z-20 md:hidden" @close="mobileMenuOpen = false">
                 <TransitionChild
                     as="template"
                     enter="transition-opacity ease-linear duration-300"
@@ -347,7 +347,7 @@ watch(router.currentRoute, () => {
                     <div class="fixed inset-0 bg-opacity-75 bg-base-900/10" />
                 </TransitionChild>
 
-                <div class="fixed inset-0 z-auto flex">
+                <div class="fixed inset-0 z-20 flex">
                     <TransitionChild
                         as="template"
                         enter="transition ease-in-out duration-300 transform"

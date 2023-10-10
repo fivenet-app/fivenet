@@ -86,7 +86,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
 
 <template>
     <TransitionRoot as="template" :show="open">
-        <Dialog as="div" class="relative z-10" @close="$emit('close')">
+        <Dialog as="div" class="relative z-20" @close="$emit('close')">
             <div class="fixed inset-0" />
 
             <div class="fixed inset-0 overflow-hidden">
@@ -238,7 +238,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                             </button>
                                             <button
                                                 type="button"
-                                                class="w-full relative -ml-px inline-flex items-center rounded-r-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 hover:text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-10"
+                                                class="w-full relative -ml-px inline-flex items-center rounded-r-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 hover:text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20"
                                                 @click="$emit('close')"
                                             >
                                                 {{ $t('common.close', 1) }}

@@ -107,7 +107,7 @@ func (s *Server) checkIfUserIsDisponent(job string, userId int32) bool {
 
 func (s *Server) checkIfUserIsPartOfDispatch(userInfo *userinfo.UserInfo, dsp *dispatch.Dispatch, disponentOkay bool) bool {
 	// Check if user is a disponent
-	if s.checkIfUserIsDisponent(userInfo.Job, userInfo.UserId) {
+	if disponentOkay && s.checkIfUserIsDisponent(userInfo.Job, userInfo.UserId) {
 		return true
 	}
 
@@ -118,7 +118,7 @@ func (s *Server) checkIfUserIsPartOfDispatch(userInfo *userinfo.UserInfo, dsp *d
 			continue
 		}
 
-		if s.checkIfUserPartOfUnit(userInfo.UserId, unit) {
+		if s.checkIfUserPartOfUnit(userInfo.Job, userInfo.UserId, unit, disponentOkay) {
 			return true
 		}
 	}
@@ -126,7 +126,12 @@ func (s *Server) checkIfUserIsPartOfDispatch(userInfo *userinfo.UserInfo, dsp *d
 	return false
 }
 
-func (s *Server) checkIfUserPartOfUnit(userId int32, unit *dispatch.Unit) bool {
+func (s *Server) checkIfUserPartOfUnit(job string, userId int32, unit *dispatch.Unit, disponentOkay bool) bool {
+	// Check if user is a disponent
+	if disponentOkay && s.checkIfUserIsDisponent(job, userId) {
+		return true
+	}
+
 	for i := 0; i < len(unit.Users); i++ {
 		if unit.Users[i].UserId == userId {
 			return true
