@@ -37,7 +37,7 @@ services:
 
   nats:
     container_name: nats
-    image: docker.io/library/nats:2.10.1-alpine3.18
+    image: docker.io/library/nats:2.10.2-alpine3.18
     command:
       - --jetstream
     ports:
