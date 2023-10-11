@@ -73,11 +73,11 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
 </script>
 
 <template>
-    <h2 class="pb-4 text-3xl text-center text-white">
+    <h2 class="pb-4 text-3xl text-center text-neutral">
         {{ $t('components.auth.forgot_password.title') }}
     </h2>
 
-    <p class="pb-4 text-sm text-white">
+    <p class="pb-4 text-sm text-neutral">
         {{ $t('components.auth.forgot_password.subtitle') }}
     </p>
 

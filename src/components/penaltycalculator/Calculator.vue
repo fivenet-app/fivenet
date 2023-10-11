@@ -163,7 +163,7 @@ ${t('common.crime', selectedPenalties.value.length)}:
                         class="mt-5"
                     />
 
-                    <div v-else class="divide-y divide-white/10">
+                    <div v-else class="divide-y divide-neutral/10">
                         <div class="mt-5">
                             <input
                                 v-model="rawQuery"
@@ -173,7 +173,7 @@ ${t('common.crime', selectedPenalties.value.length)}:
                                 class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                             />
                         </div>
-                        <dl class="mt-5 space-y-2 divide-y divide-white/10">
+                        <dl class="mt-5 space-y-2 divide-y divide-neutral/10">
                             <Disclosure
                                 as="div"
                                 v-for="lawBook in filteredLawBooks"
@@ -183,7 +183,7 @@ ${t('common.crime', selectedPenalties.value.length)}:
                                 :default-open="query.length > 0"
                             >
                                 <dt>
-                                    <DisclosureButton class="flex w-full items-start justify-between text-left text-white">
+                                    <DisclosureButton class="flex w-full items-start justify-between text-left text-neutral">
                                         <span class="text-base font-semibold leading-7">
                                             {{ lawBook.name }}
                                             <span v-if="lawBook.description">
@@ -269,7 +269,7 @@ ${t('common.crime', selectedPenalties.value.length)}:
                     <div class="w-full border-t border-gray-300" />
                 </div>
                 <div class="relative flex justify-center">
-                    <span class="bg-white px-3 text-base font-semibold leading-6 text-gray-900">
+                    <span class="bg-neutral px-3 text-base font-semibold leading-6 text-gray-900">
                         {{ $t('common.result') }}
                     </span>
                 </div>

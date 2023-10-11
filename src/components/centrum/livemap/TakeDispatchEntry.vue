@@ -40,7 +40,7 @@ const open = ref(false);
     <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
         <Details :open="open" @close="open = false" @goto="$emit('goto', $event)" :dispatch="dispatch" />
 
-        <dt class="text-sm font-medium leading-6 text-white">
+        <dt class="text-sm font-medium leading-6 text-neutral">
             <div class="flex h-6 items-center">
                 <input
                     type="checkbox"
@@ -51,7 +51,7 @@ const open = ref(false);
                 />
                 <IDCopyBadge class="ml-2" prefix="DSP" :id="dispatch.id" :action="() => (open = true)" />
             </div>
-            <div v-if="expiresAt" class="mt-1 text-white text-sm">
+            <div v-if="expiresAt" class="mt-1 text-neutral text-sm">
                 {{ $t('common.expires_in') }}:
                 {{ useLocaleTimeAgo(toDate(expiresAt), { showSecond: true, updateInterval: 1000 }).value }}
             </div>
@@ -65,7 +65,7 @@ const open = ref(false);
                 <li class="flex items-center py-3 pl-3 pr-4 text-sm">
                     <span class="font-medium">{{ $t('common.status') }}</span
                     >:
-                    <span class="ml-1 text-white" :class="dispatchBackground">{{
+                    <span class="ml-1 text-neutral" :class="dispatchBackground">{{
                         $t(`enums.centrum.StatusDispatch.${StatusDispatch[dispatch.status?.status ?? 0]}`)
                     }}</span>
                 </li>

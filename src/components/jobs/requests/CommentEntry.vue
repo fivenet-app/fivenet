@@ -164,7 +164,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                         <div class="flex-shrink-0">
                             <button
                                 type="submit"
-                                class="flex justify-center rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                                class="flex justify-center rounded-md px-3 py-2 text-sm font-semibold text-neutral shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                                 :disabled="!meta.valid || !canSubmit"
                                 :class="[
                                     !meta.valid || !canSubmit

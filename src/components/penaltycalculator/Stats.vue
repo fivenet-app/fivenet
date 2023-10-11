@@ -14,7 +14,7 @@ const props = defineProps<{
                     {{ $t('common.fine') }}
                 </p>
                 <p class="mt-2 flex items-baseline gap-x-2">
-                    <span class="text-4xl font-semibold tracking-tight text-white">
+                    <span class="text-4xl font-semibold tracking-tight text-neutral">
                         {{ summary.fine.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ') }}
                     </span>
                     <span class="text-sm text-gray-400">$</span>
@@ -25,7 +25,7 @@ const props = defineProps<{
                     {{ $t('common.detention_time') }}
                 </p>
                 <p class="mt-2 flex items-baseline gap-x-2">
-                    <span class="text-4xl font-semibold tracking-tight text-white">
+                    <span class="text-4xl font-semibold tracking-tight text-neutral">
                         {{ summary.detentionTime }}
                     </span>
                     <span class="text-sm text-gray-400">
@@ -38,7 +38,7 @@ const props = defineProps<{
                     {{ $t('common.traffic_infraction_points', 2) }}
                 </p>
                 <p class="mt-2 flex items-baseline gap-x-2">
-                    <span class="text-4xl font-semibold tracking-tight text-white">
+                    <span class="text-4xl font-semibold tracking-tight text-neutral">
                         {{ summary.stvoPoints }}
                     </span>
                 </p>
@@ -48,7 +48,7 @@ const props = defineProps<{
                     {{ $t('common.total_count') }}
                 </p>
                 <p class="mt-2 flex items-baseline gap-x-2">
-                    <span class="text-4xl font-semibold tracking-tight text-white">
+                    <span class="text-4xl font-semibold tracking-tight text-neutral">
                         {{ summary.count }}
                     </span>
                 </p>

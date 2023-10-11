@@ -119,7 +119,7 @@ watch(props, () => {
                                     <div class="h-0 flex-1 overflow-y-auto">
                                         <div class="bg-primary-700 px-4 py-6 sm:px-6">
                                             <div class="flex items-center justify-between">
-                                                <DialogTitle class="text-base font-semibold leading-6 text-white">
+                                                <DialogTitle class="text-base font-semibold leading-6 text-neutral">
                                                     {{ $t('components.centrum.update_unit_status.title') }}: {{ unit.name }} ({{
                                                         unit.initials
                                                     }})
@@ -127,7 +127,7 @@ watch(props, () => {
                                                 <div class="ml-3 flex h-7 items-center">
                                                     <button
                                                         type="button"
-                                                        class="rounded-md bg-gray-100 text-gray-500 hover:text-gray-400 focus:outline-none focus:ring-2 focus:ring-white"
+                                                        class="rounded-md bg-gray-100 text-gray-500 hover:text-gray-400 focus:outline-none focus:ring-2 focus:ring-neutral"
                                                         @click="$emit('close')"
                                                     >
                                                         <span class="sr-only">{{ $t('common.close') }}</span>
@@ -139,9 +139,9 @@ watch(props, () => {
                                         <div class="flex flex-1 flex-col justify-between">
                                             <div class="divide-y divide-gray-200 px-4 sm:px-6">
                                                 <div class="mt-1">
-                                                    <dl class="border-b border-white/10 divide-y divide-white/10">
+                                                    <dl class="border-b border-neutral/10 divide-y divide-neutral/10">
                                                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                                            <dt class="text-sm font-medium leading-6 text-white">
+                                                            <dt class="text-sm font-medium leading-6 text-neutral">
                                                                 <label
                                                                     for="status"
                                                                     class="block text-sm font-medium leading-6 text-neutral"
@@ -186,7 +186,7 @@ watch(props, () => {
                                                             </dd>
                                                         </div>
                                                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                                            <dt class="text-sm font-medium leading-6 text-white">
+                                                            <dt class="text-sm font-medium leading-6 text-neutral">
                                                                 <label
                                                                     for="code"
                                                                     class="block text-sm font-medium leading-6 text-neutral"
@@ -212,7 +212,7 @@ watch(props, () => {
                                                             </dd>
                                                         </div>
                                                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                                            <dt class="text-sm font-medium leading-6 text-white">
+                                                            <dt class="text-sm font-medium leading-6 text-neutral">
                                                                 <label
                                                                     for="reason"
                                                                     class="block text-sm font-medium leading-6 text-neutral"
@@ -246,7 +246,7 @@ watch(props, () => {
                                         <span class="isolate inline-flex rounded-md shadow-sm pr-4 w-full">
                                             <button
                                                 type="submit"
-                                                class="inline-flex w-full justify-center rounded-l-md px-3 py-2 text-sm font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:col-start-2"
+                                                class="inline-flex w-full justify-center rounded-l-md px-3 py-2 text-sm font-semibold text-neutral shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:col-start-2"
                                                 :disabled="!meta.valid || !canSubmit"
                                                 :class="[
                                                     !meta.valid || !canSubmit
@@ -261,7 +261,7 @@ watch(props, () => {
                                             </button>
                                             <button
                                                 type="button"
-                                                class="mt-3 inline-flex w-full justify-center rounded-r-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:col-start-1 sm:mt-0"
+                                                class="mt-3 inline-flex w-full justify-center rounded-r-md bg-neutral px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:col-start-1 sm:mt-0"
                                                 @click="$emit('close')"
                                             >
                                                 {{ $t('common.close', 1) }}

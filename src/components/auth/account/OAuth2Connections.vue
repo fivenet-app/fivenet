@@ -60,7 +60,7 @@ async function disconnect(provider: OAuth2Provider): Promise<void> {
                             <img
                                 :src="getProviderConnection(prov.name)!.avatar"
                                 alt="Avatar"
-                                class="w-auto h-10 rounded-full ring-2 ring-white hover:transition-colors text-base-300 bg-base-800 fill-base-300 hover:text-base-100 hover:fill-base-100"
+                                class="w-auto h-10 rounded-full ring-2 ring-neutral hover:transition-colors text-base-300 bg-base-800 fill-base-300 hover:text-base-100 hover:fill-base-100"
                             />
                             <span class="text-left" :title="`ID: ${getProviderConnection(prov.name)?.externalId}`">
                                 {{ getProviderConnection(prov.name)?.username }}

@@ -208,7 +208,7 @@ const open = ref(false);
             <LControl position="bottomright">
                 <button
                     type="button"
-                    class="w-30 h-30 rounded-md bg-white text-black border-2 border-black/20 bg-clip-padding hover:bg-[#f4f4f4] focus:outline-none inset-0"
+                    class="w-30 h-30 rounded-md bg-neutral text-black border-2 border-black/20 bg-clip-padding hover:bg-[#f4f4f4] focus:outline-none inset-0"
                     @click="open = !open"
                 >
                     <ToggleSwitchIcon v-if="open" class="h-6 w-6" aria-hidden="true" />
@@ -241,7 +241,7 @@ const open = ref(false);
 
                                 <button
                                     type="button"
-                                    class="text-white hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-row items-center justify-center rounded-md p-1 text-xs mt-0.5"
+                                    class="text-neutral hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-row items-center justify-center rounded-md p-1 text-xs mt-0.5"
                                     :class="
                                         disponents.length === 0
                                             ? 'bg-warn-400/10 text-warn-500 ring-warn-400/20'
@@ -262,7 +262,7 @@ const open = ref(false);
                                             <button
                                                 @click="openUnitDetails = true"
                                                 type="button"
-                                                class="text-white hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-1.5 text-xs my-0.5"
+                                                class="text-neutral hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-1.5 text-xs my-0.5"
                                                 :class="ownUnitStatus"
                                             >
                                                 <InformationOutlineIcon class="h-5 w-5" aria-hidden="true" />
@@ -289,7 +289,7 @@ const open = ref(false);
                                         <button
                                             @click="selectUnitOpen = true"
                                             type="button"
-                                            class="text-white bg-info-700 hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-1.5 text-xs my-0.5"
+                                            class="text-neutral bg-info-700 hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-1.5 text-xs my-0.5"
                                         >
                                             <template v-if="!getOwnUnit" class="flex w-full flex-col items-center">
                                                 <InformationOutlineIcon class="h-5 w-5" aria-hidden="true" />
@@ -308,7 +308,7 @@ const open = ref(false);
                                         <li>
                                             <Disclosure as="div" v-slot="{ open }">
                                                 <DisclosureButton
-                                                    class="flex w-full items-start justify-between text-left text-white"
+                                                    class="flex w-full items-start justify-between text-left text-neutral"
                                                 >
                                                     <span class="text-base-100 leading-7">
                                                         <div class="text-xs font-semibold leading-6 text-base-100">
@@ -335,7 +335,7 @@ const open = ref(false);
                                                                 v-for="(item, idx) in actionsUnit"
                                                                 :key="item.name"
                                                                 type="button"
-                                                                class="text-white bg-primary hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-1.5 text-xs my-0.5"
+                                                                class="text-neutral bg-primary hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-1.5 text-xs my-0.5"
                                                                 :class="[
                                                                     idx >= actionsUnit.length - 1 ? 'col-span-2' : '',
                                                                     item.status ? unitStatusToBGColor(item.status) : item.class,
@@ -345,7 +345,7 @@ const open = ref(false);
                                                             >
                                                                 <component
                                                                     :is="item.icon ?? HoopHouseIcon"
-                                                                    class="text-base-100 group-hover:text-white h-5 w-5 shrink-0"
+                                                                    class="text-base-100 group-hover:text-neutral h-5 w-5 shrink-0"
                                                                     aria-hidden="true"
                                                                 />
                                                                 <span class="mt-1">
@@ -378,7 +378,7 @@ const open = ref(false);
                                                     v-for="(item, idx) in actionsDispatch"
                                                     :key="item.name"
                                                     type="button"
-                                                    class="text-white bg-primary hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-1.5 text-xs my-0.5"
+                                                    class="text-neutral bg-primary hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-1.5 text-xs my-0.5"
                                                     :class="[
                                                         idx >= actionsDispatch.length - 1 ? 'col-span-2' : '',
                                                         item.status ? dispatchStatusToBGColor(item.status) : item.class,
@@ -388,7 +388,7 @@ const open = ref(false);
                                                 >
                                                     <component
                                                         :is="item.icon ?? HoopHouseIcon"
-                                                        class="text-base-100 group-hover:text-white h-5 w-5 shrink-0"
+                                                        class="text-base-100 group-hover:text-neutral h-5 w-5 shrink-0"
                                                         aria-hidden="true"
                                                     />
                                                     <span class="mt-1">
@@ -415,7 +415,7 @@ const open = ref(false);
                                         <li v-if="ownDispatches.length === 0">
                                             <button
                                                 type="button"
-                                                class="text-white bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-1.5 text-xs my-0.5"
+                                                class="text-neutral bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-1.5 text-xs my-0.5"
                                             >
                                                 <CarEmergencyIcon class="h-5 w-5" aria-hidden="true" />
                                                 <span class="mt-1.5 truncate">{{ $t('common.no_assigned_dispatches') }}</span>

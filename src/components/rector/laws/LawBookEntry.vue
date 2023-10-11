@@ -135,7 +135,7 @@ const editing = ref(props.startInEdit);
     <ConfirmDialog :open="isRevealed" :cancel="cancel" :confirm="() => confirm(book.id)" />
 
     <div class="my-2">
-        <div v-if="!editing" class="flex text-white items-center gap-x-2">
+        <div v-if="!editing" class="flex text-neutral items-center gap-x-2">
             <button type="button" @click="editing = true" :title="$t('common.edit')">
                 <PencilIcon class="w-6 h-6" />
             </button>
@@ -156,7 +156,7 @@ const editing = ref(props.startInEdit);
                 </div>
             </div>
         </div>
-        <form v-else @submit.prevent="onSubmitThrottle" class="w-full flex flex-row gap-x-4 text-white items-start">
+        <form v-else @submit.prevent="onSubmitThrottle" class="w-full flex flex-row gap-x-4 text-neutral items-start">
             <button type="submit" :title="$t('common.save')">
                 <ContentSaveIcon class="w-6 h-6" />
             </button>

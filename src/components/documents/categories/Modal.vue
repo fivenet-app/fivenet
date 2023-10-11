@@ -162,7 +162,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                         <TagIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
                                     </div>
                                     <div class="mt-3 text-center sm:mt-5">
-                                        <DialogTitle as="h3" class="text-base font-semibold leading-6 text-white">
+                                        <DialogTitle as="h3" class="text-base font-semibold leading-6 text-neutral">
                                             <template v-if="category">
                                                 {{ $t('components.documents.categories.modal.update_category') }}:
                                                 {{ category?.name }}
@@ -217,7 +217,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                         v-if="can('DocStoreService.DeleteCategory')"
                                         type="button"
                                         @click="deleteCategory()"
-                                        class="flex justify-center w-full rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                                        class="flex justify-center w-full rounded-md px-3 py-2 text-sm font-semibold text-neutral shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                                         :disabled="!meta.valid || !canSubmit"
                                         :class="[
                                             !meta.valid || !canSubmit
@@ -232,7 +232,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                     </button>
                                     <button
                                         type="submit"
-                                        class="flex justify-center w-full rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                                        class="flex justify-center w-full rounded-md px-3 py-2 text-sm font-semibold text-neutral shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                                         :disabled="!meta.valid || !canSubmit"
                                         :class="[
                                             !meta.valid || !canSubmit
@@ -247,7 +247,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                     </button>
                                     <button
                                         type="button"
-                                        class="mt-3 inline-flex w-full justify-center rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0"
+                                        class="mt-3 inline-flex w-full justify-center rounded-md bg-neutral px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50 sm:mt-0"
                                         @click="$emit('close')"
                                     >
                                         {{ $t('common.close') }}

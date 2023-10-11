@@ -83,12 +83,12 @@ watchDebounced(postalQuery, () => findPostal(), {
             :display-value="(postal: any) => (postal ? postal?.code : '')"
             :placeholder="`${$t('common.postal')} ${$t('common.search')}`"
         />
-        <ComboboxOptions class="z-10 w-full py-1 mt-1 overflow-auto bg-white">
+        <ComboboxOptions class="z-10 w-full py-1 mt-1 overflow-auto bg-neutral">
             <ComboboxOption v-for="postal in filteredPostals" :key="postal.code" :value="postal" v-slot="{ active }">
                 <li
                     :class="[
                         'relative cursor-default select-none py-2 pl-8 pr-4',
-                        active ? 'bg-primary-500 text-white' : 'text-gray-600',
+                        active ? 'bg-primary-500 text-neutral' : 'text-gray-600',
                     ]"
                 >
                     {{ postal.code }}

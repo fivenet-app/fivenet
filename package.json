@@ -56,7 +56,7 @@
         "vue-template-compiler": "^2.7.14"
     },
     "devDependencies": {
-        "@dargmuesli/nuxt-cookie-control": "^6.4.4",
+        "@dargmuesli/nuxt-cookie-control": "^6.4.5",
         "@nuxt/devtools": "^0.8.5",
         "@nuxtjs/i18n": "^8.0.0-rc.5",
         "@nuxtjs/tailwindcss": "^6.8.0",
@@ -89,6 +89,6 @@
         "typescript": "^5.2.2",
         "vite": "^4.4.11",
         "vite-plugin-mkcert": "^1.16.0",
-        "vue-tsc": "^1.8.18"
+        "vue-tsc": "^1.8.19"
     }
 }

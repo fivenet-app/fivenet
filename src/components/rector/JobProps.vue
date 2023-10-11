@@ -162,7 +162,7 @@ async function saveJobProps(): Promise<void> {
                                                 />
                                             </div>
                                             <div class="ml-3 text-sm leading-6">
-                                                <label for="comments" class="font-medium text-white">
+                                                <label for="comments" class="font-medium text-neutral">
                                                     {{ $t('components.penaltycalculator.title') }}
                                                 </label>
                                             </div>

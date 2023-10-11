@@ -24,7 +24,7 @@ const open = ref(false);
 
         <div
             class="flex flex-shrink-0 items-center justify-center rounded-l-md text-sm font-medium border-l border-t border-b w-12"
-            :class="isBright ? 'text-black' : 'text-white'"
+            :class="isBright ? 'text-black' : 'text-neutral'"
             :style="'background-color: #' + unit.color ?? '000000'"
         >
             {{ unit.initials }}
@@ -36,7 +36,7 @@ const open = ref(false);
             </div>
         </div>
         <div
-            class="flex w-[5rem] flex-shrink-0 items-center justify-center rounded-r-md text-sm font-medium text-white border-r border-t border-b text-center"
+            class="flex w-[5rem] flex-shrink-0 items-center justify-center rounded-r-md text-sm font-medium text-neutral border-r border-t border-b text-center"
             :class="unitStatusToBGColor(unit.status?.status ?? 0)"
         >
             {{ $t(`enums.centrum.StatusUnit.${StatusUnit[unit.status?.status ?? 0]}`) }}

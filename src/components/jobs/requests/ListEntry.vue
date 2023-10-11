@@ -205,7 +205,7 @@ const open = ref(false);
 
             <div>
                 <p class="text-gray-400 text-base">{{ $t('common.message') }}</p>
-                <p class="text-white text-sm">
+                <p class="text-neutral text-sm">
                     {{ request.message }}
                 </p>
             </div>

@@ -200,10 +200,10 @@ onConfirm(async (id) => deleteTemplate(id));
             </div>
             <div class="sm:flex sm:items-center">
                 <div>
-                    <h2 class="text-white text-2xl">
+                    <h2 class="text-neutral text-2xl">
                         {{ template.title }}
                     </h2>
-                    <p class="text-white text-base">
+                    <p class="text-neutral text-base">
                         <span class="font-semibold">{{ $t('common.description') }}</span
                         >: {{ template.description }}
                     </p>

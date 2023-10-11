@@ -48,14 +48,14 @@ const openStatus = ref(false);
                                     <div class="h-0 flex-1 overflow-y-auto">
                                         <div class="bg-primary-700 px-4 py-6 sm:px-6">
                                             <div class="flex items-center justify-between">
-                                                <DialogTitle class="text-base font-semibold leading-6 text-white">
+                                                <DialogTitle class="text-base font-semibold leading-6 text-neutral">
                                                     {{ $t('common.unit') }}: {{ unit.initials }} -
                                                     {{ unit.name }}
                                                 </DialogTitle>
                                                 <div class="ml-3 flex h-7 items-center">
                                                     <button
                                                         type="button"
-                                                        class="rounded-md bg-gray-100 text-gray-500 hover:text-gray-400 focus:outline-none focus:ring-2 focus:ring-white"
+                                                        class="rounded-md bg-gray-100 text-gray-500 hover:text-gray-400 focus:outline-none focus:ring-2 focus:ring-neutral"
                                                         @click="$emit('close')"
                                                     >
                                                         <span class="sr-only">{{ $t('common.close') }}</span>
@@ -72,9 +72,9 @@ const openStatus = ref(false);
                                         <div class="flex flex-1 flex-col justify-between">
                                             <div class="divide-y divide-gray-200 px-4 sm:px-6">
                                                 <div class="mt-1">
-                                                    <dl class="border-b border-white/10 divide-y divide-white/10">
+                                                    <dl class="border-b border-neutral/10 divide-y divide-neutral/10">
                                                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                                            <dt class="text-sm font-medium leading-6 text-white">
+                                                            <dt class="text-sm font-medium leading-6 text-neutral">
                                                                 {{ $t('common.last_update') }}
                                                             </dt>
                                                             <dd
@@ -84,7 +84,7 @@ const openStatus = ref(false);
                                                             </dd>
                                                         </div>
                                                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                                            <dt class="text-sm font-medium leading-6 text-white">
+                                                            <dt class="text-sm font-medium leading-6 text-neutral">
                                                                 {{ $t('common.status') }}
                                                             </dt>
                                                             <dd
@@ -100,7 +100,7 @@ const openStatus = ref(false);
                                                                 <button
                                                                     type="button"
                                                                     @click="openStatus = true"
-                                                                    class="rounded bg-white/10 px-2 py-1 text-xs font-semibold text-white shadow-sm hover:bg-white/20"
+                                                                    class="rounded bg-neutral/10 px-2 py-1 text-xs font-semibold text-neutral shadow-sm hover:bg-neutral/20"
                                                                     :class="unitStatusColors"
                                                                 >
                                                                     {{
@@ -114,7 +114,7 @@ const openStatus = ref(false);
                                                             </dd>
                                                         </div>
                                                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                                            <dt class="text-sm font-medium leading-6 text-white">
+                                                            <dt class="text-sm font-medium leading-6 text-neutral">
                                                                 {{ $t('common.code') }}
                                                             </dt>
                                                             <dd
@@ -124,7 +124,7 @@ const openStatus = ref(false);
                                                             </dd>
                                                         </div>
                                                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                                            <dt class="text-sm font-medium leading-6 text-white">
+                                                            <dt class="text-sm font-medium leading-6 text-neutral">
                                                                 {{ $t('common.reason') }}
                                                             </dt>
                                                             <dd
@@ -134,7 +134,7 @@ const openStatus = ref(false);
                                                             </dd>
                                                         </div>
                                                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                                            <dt class="text-sm font-medium leading-6 text-white">
+                                                            <dt class="text-sm font-medium leading-6 text-neutral">
                                                                 {{ $t('common.location') }}
                                                             </dt>
                                                             <dd
@@ -159,7 +159,7 @@ const openStatus = ref(false);
                                                             </dd>
                                                         </div>
                                                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                                            <dt class="text-sm font-medium leading-6 text-white">
+                                                            <dt class="text-sm font-medium leading-6 text-neutral">
                                                                 {{ $t('common.members') }}
                                                             </dt>
                                                             <dd
@@ -200,7 +200,7 @@ const openStatus = ref(false);
                                                                         v-if="can('CentrumService.TakeControl')"
                                                                         type="button"
                                                                         @click="openAssign = true"
-                                                                        class="flex flex-row items-center rounded bg-white/10 px-2 py-1 text-xs font-semibold text-white shadow-sm hover:bg-white/20"
+                                                                        class="flex flex-row items-center rounded bg-neutral/10 px-2 py-1 text-xs font-semibold text-neutral shadow-sm hover:bg-neutral/20"
                                                                     >
                                                                         <PencilIcon class="h-6 w-6" />
                                                                         <span class="truncate ml-0.5">
@@ -220,7 +220,7 @@ const openStatus = ref(false);
                                     <div class="flex flex-shrink-0 justify-end px-4 py-4">
                                         <button
                                             type="button"
-                                            class="w-full rounded-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
+                                            class="w-full rounded-md bg-neutral px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
                                             @click="$emit('close')"
                                         >
                                             {{ $t('common.close') }}

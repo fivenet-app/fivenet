@@ -134,7 +134,7 @@ onBeforeMount(async () => {
                                         </option>
                                     </template>
                                 </select>
-                                <p v-else class="text-white">
+                                <p v-else class="text-neutral">
                                     {{ $t('components.auth.account_info.set_startpage.no_char_selected') }}
                                 </p>
                             </dd>

@@ -370,7 +370,7 @@ async function onSelect(item: any): Promise<any> {
                                             <li
                                                 :class="[
                                                     'flex cursor-default select-none items-center px-4 py-2',
-                                                    active && 'bg-primary-500 text-white',
+                                                    active && 'bg-primary-500 text-neutral',
                                                 ]"
                                             >
                                                 <span class="ml-3 flex-auto truncate">
@@ -393,7 +393,7 @@ async function onSelect(item: any): Promise<any> {
                                             <li
                                                 :class="[
                                                     'flex cursor-default select-none items-center px-4 py-2',
-                                                    active && 'bg-gray-800 text-white',
+                                                    active && 'bg-gray-800 text-neutral',
                                                 ]"
                                             >
                                                 <span class="ml-3 flex-auto truncate">{{ document.title }}</span>
@@ -416,13 +416,13 @@ async function onSelect(item: any): Promise<any> {
                                             <li
                                                 :class="[
                                                     'flex cursor-default select-none items-center rounded-md px-3 py-2',
-                                                    active && 'bg-gray-800 text-white',
+                                                    active && 'bg-gray-800 text-neutral',
                                                 ]"
                                             >
                                                 <component
                                                     v-if="item.icon"
                                                     :is="item.icon"
-                                                    :class="['h-6 w-6 flex-none', active ? 'text-white' : 'text-gray-500']"
+                                                    :class="['h-6 w-6 flex-none', active ? 'text-neutral' : 'text-gray-500']"
                                                     aria-hidden="true"
                                                 />
                                                 <span class="ml-3 flex-auto truncate">{{ item.name }}</span>
@@ -463,7 +463,7 @@ async function onSelect(item: any): Promise<any> {
                                 Type
                                 <kbd
                                     :class="[
-                                        'mx-1 flex h-5 w-5 items-center justify-center rounded border bg-white font-semibold sm:mx-2',
+                                        'mx-1 flex h-5 w-5 items-center justify-center rounded border bg-neutral font-semibold sm:mx-2',
                                         rawQuery.startsWith('@')
                                             ? 'border-primary-600 text-primary-600'
                                             : 'border-gray-400 text-gray-900',
@@ -474,7 +474,7 @@ async function onSelect(item: any): Promise<any> {
                                 <span class="hidden sm:inline">to search citizens,</span>
                                 <kbd
                                     :class="[
-                                        'mx-1 flex h-5 w-5 items-center justify-center rounded border bg-white font-semibold sm:mx-2',
+                                        'mx-1 flex h-5 w-5 items-center justify-center rounded border bg-neutral font-semibold sm:mx-2',
                                         rawQuery.startsWith('#')
                                             ? 'border-primary-600 text-primary-600'
                                             : 'border-gray-400 text-gray-900',
@@ -482,7 +482,7 @@ async function onSelect(item: any): Promise<any> {
                                     >#</kbd
                                 >
                                 for documents.
-                                <!-- <kbd :class="['mx-1 flex h-5 w-5 items-center justify-center rounded border bg-white font-semibold sm:mx-2', query === '?' ? 'border-primary-600 text-primary-600' : 'border-gray-400 text-gray-900']">?</kbd>
+                                <!-- <kbd :class="['mx-1 flex h-5 w-5 items-center justify-center rounded border bg-neutral font-semibold sm:mx-2', query === '?' ? 'border-primary-600 text-primary-600' : 'border-gray-400 text-gray-900']">?</kbd>
                                 for help.-->
                             </div>
                         </Combobox>

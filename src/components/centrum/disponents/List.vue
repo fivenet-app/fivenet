@@ -29,7 +29,7 @@ const { disponents } = storeToRefs(centrumStore);
                             v-for="disponent in disponents"
                             :key="disponent.userId"
                             type="button"
-                            textClass="text-white bg-primary-500 hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-2 text-xs my-0.5"
+                            textClass="text-neutral bg-primary-500 hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-2 text-xs my-0.5"
                             :user="disponent"
                         />
                     </div>

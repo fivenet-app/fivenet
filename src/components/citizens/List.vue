@@ -145,7 +145,7 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                             </div>
                         </div>
                         <Disclosure as="div" class="pt-2" v-slot="{ open }">
-                            <DisclosureButton class="flex w-full items-start justify-between text-left text-white">
+                            <DisclosureButton class="flex w-full items-start justify-between text-left text-neutral">
                                 <span class="text-base-200 leading-7">{{ $t('common.advanced_search') }}</span>
                                 <span class="ml-6 flex h-7 items-center">
                                     <ChevronDownIcon

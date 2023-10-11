@@ -52,7 +52,7 @@ const popupAnchor: L.PointExpression = [0, -(props.size * 1.7)];
                 <span
                     v-if="showUnitNames && marker.unit"
                     class="rounded-md border-2 border-black/20 bg-clip-padding focus:outline-none inset-0 whitespace-nowrap"
-                    :class="isColourBright(inverseColor) ? 'text-black' : 'text-white'"
+                    :class="isColourBright(inverseColor) ? 'text-black' : 'text-neutral'"
                     :style="{ backgroundColor: '#' + props.marker.unit?.color ?? '000000' }"
                 >
                     {{ marker.unit?.initials }}

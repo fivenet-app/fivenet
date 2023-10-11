@@ -91,14 +91,14 @@ const sortedUnits = computed(() => getSortedUnits.value);
                                     <div class="h-0 flex-1 overflow-y-auto">
                                         <div class="bg-primary-700 px-4 py-6 sm:px-6">
                                             <div class="flex items-center justify-between">
-                                                <DialogTitle class="inline-flex text-base font-semibold leading-6 text-white">
+                                                <DialogTitle class="inline-flex text-base font-semibold leading-6 text-neutral">
                                                     {{ $t('components.centrum.assign_dispatch.title') }}:
                                                     <IDCopyBadge class="ml-2" :id="dispatch.id" prefix="DSP" />
                                                 </DialogTitle>
                                                 <div class="ml-3 flex h-7 items-center">
                                                     <button
                                                         type="button"
-                                                        class="rounded-md bg-gray-100 text-gray-500 hover:text-gray-400 focus:outline-none focus:ring-2 focus:ring-white"
+                                                        class="rounded-md bg-gray-100 text-gray-500 hover:text-gray-400 focus:outline-none focus:ring-2 focus:ring-neutral"
                                                         @click="$emit('close')"
                                                     >
                                                         <span class="sr-only">{{ $t('common.close') }}</span>
@@ -118,7 +118,7 @@ const sortedUnits = computed(() => getSortedUnits.value);
                                                                     :key="unit.name"
                                                                     type="button"
                                                                     :disabled="unit.users.length === 0"
-                                                                    class="text-white hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-row items-center rounded-md p-2 text-xs my-0.5"
+                                                                    class="text-neutral hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-row items-center rounded-md p-2 text-xs my-0.5"
                                                                     :class="[
                                                                         unitStatusToBGColor(unit.status?.status ?? 0),
                                                                         unit.users.length === 0 ? 'disabled !bg-error-600' : '',
@@ -171,7 +171,7 @@ const sortedUnits = computed(() => getSortedUnits.value);
                                             </button>
                                             <button
                                                 type="button"
-                                                class="w-full relative -ml-px inline-flex items-center rounded-r-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 hover:text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20"
+                                                class="w-full relative -ml-px inline-flex items-center rounded-r-md bg-neutral px-3 py-2 text-sm font-semibold text-gray-900 hover:text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20"
                                                 @click="$emit('close')"
                                             >
                                                 {{ $t('common.close', 1) }}

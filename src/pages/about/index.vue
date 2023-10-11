@@ -45,7 +45,7 @@ const faqs = [
             <div class="relative isolate bg-gray-900 px-6 py-12 sm:py-16 lg:px-8 hero">
                 <div class="hero-overlay absolute z-[-1] h-full w-full top-0 left-0"></div>
                 <div class="mx-auto max-w-2xl text-center">
-                    <h2 class="text-4xl font-bold tracking-tight text-white sm:text-6xl">
+                    <h2 class="text-4xl font-bold tracking-tight text-neutral sm:text-6xl">
                         {{ $t('common.about') }}
                     </h2>
                     <p class="mt-6 text-lg leading-8 text-gray-300">
@@ -126,14 +126,14 @@ const faqs = [
             </div>
             <div class="bg-gray-900">
                 <div class="mx-auto max-w-7xl px-6 py-12 sm:py-16 lg:px-8 lg:py-10">
-                    <div class="mx-auto max-w-4xl divide-y divide-white/10">
-                        <h2 class="text-2xl font-bold leading-10 tracking-tight text-white">
+                    <div class="mx-auto max-w-4xl divide-y divide-neutral/10">
+                        <h2 class="text-2xl font-bold leading-10 tracking-tight text-neutral">
                             {{ $t('pages.about.faq.title') }}
                         </h2>
-                        <dl class="mt-10 space-y-6 divide-y divide-white/10">
+                        <dl class="mt-10 space-y-6 divide-y divide-neutral/10">
                             <Disclosure as="div" v-for="faq in faqs" :key="faq.question" class="pt-6" v-slot="{ open }">
                                 <dt>
-                                    <DisclosureButton class="flex w-full items-start justify-between text-left text-white">
+                                    <DisclosureButton class="flex w-full items-start justify-between text-left text-neutral">
                                         <span class="text-base font-semibold leading-7">{{ faq.question }}</span>
                                         <span class="ml-6 flex h-7 items-center">
                                             <ChevronDownIcon
@@ -154,7 +154,7 @@ const faqs = [
             <div class="relative bg-gray-900">
                 <div class="mx-auto max-w-7xl px-6 py-12 sm:py-16 lg:px-8 lg:py-10">
                     <div class="mx-auto max-w-4xl">
-                        <p class="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">
+                        <p class="mt-2 text-3xl font-bold tracking-tight text-neutral sm:text-4xl">
                             {{ $t('pages.about.questions_or_issues.title') }}
                         </p>
                         <p class="mt-6 text-base leading-7 text-gray-300">
@@ -163,7 +163,7 @@ const faqs = [
                         <div class="mt-8">
                             <a
                                 :href="discordLink"
-                                class="inline-flex items-center gap-x-2 rounded-md bg-white/10 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-secondary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-secondary-600"
+                                class="inline-flex items-center gap-x-2 rounded-md bg-neutral/10 px-3.5 py-2.5 text-sm font-semibold text-neutral shadow-sm hover:bg-secondary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-secondary-600"
                             >
                                 <DiscordLogo class="-ml-0.5 h-5 w-5" aria-hidden="true" />
                                 <span>
@@ -177,13 +177,13 @@ const faqs = [
             <div class="relative bg-gray-900">
                 <div class="mx-auto max-w-7xl px-6 py-12 sm:py-16 lg:px-8 lg:py-10">
                     <div class="mx-auto max-w-4xl">
-                        <p class="mt-2 text-3xl font-bold tracking-tight text-white sm:text-4xl">
+                        <p class="mt-2 text-3xl font-bold tracking-tight text-neutral sm:text-4xl">
                             {{ $t('common.licenses') }}
                         </p>
                         <div class="mt-8">
                             <NuxtLink
                                 :to="{ name: 'about-licenses' }"
-                                class="inline-flex items-center gap-x-2 rounded-md bg-white/10 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-secondary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-secondary-600"
+                                class="inline-flex items-center gap-x-2 rounded-md bg-neutral/10 px-3.5 py-2.5 text-sm font-semibold text-neutral shadow-sm hover:bg-secondary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-secondary-600"
                             >
                                 <LicenseIcon class="-ml-0.5 h-5 w-5" aria-hidden="true" />
                                 <span>

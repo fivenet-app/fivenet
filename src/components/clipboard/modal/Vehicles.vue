@@ -106,16 +106,16 @@ watch(props, (newVal) => {
     <table v-else class="min-w-full divide-y divide-gray-700">
         <thead>
             <tr>
-                <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-white sm:pl-0" v-if="showSelect">
+                <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-0" v-if="showSelect">
                     {{ $t('common.select') }}
                 </th>
-                <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-white sm:pl-0">
+                <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-0">
                     {{ $t('common.plate') }}
                 </th>
-                <th scope="col" class="py-3.5 px-3 text-left text-sm font-semibold text-white">
+                <th scope="col" class="py-3.5 px-3 text-left text-sm font-semibold text-neutral">
                     {{ $t('common.model') }}
                 </th>
-                <th scope="col" class="py-3.5 px-3 text-left text-sm font-semibold text-white">
+                <th scope="col" class="py-3.5 px-3 text-left text-sm font-semibold text-neutral">
                     {{ $t('common.owner') }}
                 </th>
                 <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-0">
@@ -128,11 +128,11 @@ watch(props, (newVal) => {
         </thead>
         <tbody class="divide-y divide-gray-800">
             <tr v-for="item in vehicles" :key="item.plate">
-                <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-white sm:pl-0" v-if="showSelect">
+                <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0" v-if="showSelect">
                     <div v-if="specs && specs.max && specs.max === 1n">
                         <button
                             @click="select(item)"
-                            class="inline-flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold text-white shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:col-start-2"
+                            class="inline-flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold text-neutral shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:col-start-2"
                             :class="
                                 selected.includes(item)
                                     ? 'bg-accent-500 hover:bg-accent-400 focus-visible:outline-accent-500'
@@ -158,7 +158,7 @@ watch(props, (newVal) => {
                         />
                     </div>
                 </td>
-                <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-white sm:pl-0">
+                <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">
                     {{ item.plate }}
                 </td>
                 <td class="whitespace-nowrap py-4 px-3 text-sm text-gray-300">

@@ -64,7 +64,7 @@ watch(
 </script>
 
 <template>
-    <h2 class="pb-4 text-3xl text-center text-white">
+    <h2 class="pb-4 text-3xl text-center text-neutral">
         {{ $t('components.auth.login.title') }}
     </h2>
 

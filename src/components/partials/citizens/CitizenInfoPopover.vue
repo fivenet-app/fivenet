@@ -60,7 +60,7 @@ defineProps<{
                             :show-label="true"
                         />
                     </div>
-                    <p class="text-base font-semibold leading-none text-gray-900 dark:text-white">
+                    <p class="text-base font-semibold leading-none text-gray-900 dark:text-neutral">
                         <NuxtLink :to="{ name: 'citizens-id', params: { id: user.userId } }">
                             {{ user.firstname }} {{ user.lastname }}
                         </NuxtLink>

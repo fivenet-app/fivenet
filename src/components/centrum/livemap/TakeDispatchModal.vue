@@ -115,13 +115,13 @@ const filteredDispatches = computed(() => {
                                     <div class="h-0 flex-1 overflow-y-auto">
                                         <div class="bg-primary-700 px-4 py-6 sm:px-6">
                                             <div class="flex items-center justify-between">
-                                                <DialogTitle class="text-base font-semibold leading-6 text-white">
+                                                <DialogTitle class="text-base font-semibold leading-6 text-neutral">
                                                     {{ $t('components.centrum.take_dispatch.title') }}
                                                 </DialogTitle>
                                                 <div class="ml-3 flex h-7 items-center">
                                                     <button
                                                         type="button"
-                                                        class="rounded-md bg-gray-100 text-gray-500 hover:text-gray-400 focus:outline-none focus:ring-2 focus:ring-white"
+                                                        class="rounded-md bg-gray-100 text-gray-500 hover:text-gray-400 focus:outline-none focus:ring-2 focus:ring-neutral"
                                                         @click="$emit('close')"
                                                     >
                                                         <span class="sr-only">{{ $t('common.close') }}</span>
@@ -138,7 +138,7 @@ const filteredDispatches = computed(() => {
                                         <div class="flex flex-1 flex-col justify-between">
                                             <div class="divide-y divide-gray-200 px-4 sm:px-6">
                                                 <div class="mt-1">
-                                                    <dl class="border-b border-white/10 divide-y divide-white/10">
+                                                    <dl class="border-b border-neutral/10 divide-y divide-neutral/10">
                                                         <template v-if="getCurrentMode === CentrumMode.SIMPLIFIED">
                                                             <DataNoDataBlock
                                                                 v-if="dispatches.size === 0"
@@ -147,7 +147,7 @@ const filteredDispatches = computed(() => {
                                                             />
                                                             <template v-else>
                                                                 <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                                                    <dt class="text-sm font-medium leading-6 text-white">
+                                                                    <dt class="text-sm font-medium leading-6 text-neutral">
                                                                         <div class="flex h-6 items-center">Search</div>
                                                                     </dt>
                                                                     <dd
@@ -199,7 +199,7 @@ const filteredDispatches = computed(() => {
                                             <button
                                                 :disabled="!canTakeDispatch"
                                                 type="button"
-                                                class="w-full relative inline-flex items-center rounded-l-md bg-success-500 px-3 py-2 text-sm font-semibold text-white hover:text-white ring-1 ring-inset ring-success-300 hover:bg-success-100 focus:z-20"
+                                                class="w-full relative inline-flex items-center rounded-l-md bg-success-500 px-3 py-2 text-sm font-semibold text-neutral hover:text-neutral ring-1 ring-inset ring-success-300 hover:bg-success-100 focus:z-20"
                                                 :class="!canTakeDispatch ? 'disabled' : ''"
                                                 @click="takeDispatches(TakeDispatchResp.ACCEPTED)"
                                             >
@@ -208,7 +208,7 @@ const filteredDispatches = computed(() => {
                                             <button
                                                 :disabled="!canTakeDispatch"
                                                 type="button"
-                                                class="w-full relative -ml-px inline-flex items-center bg-error-500 px-3 py-2 text-sm font-semibold text-white ring-1 ring-inset ring-error-300 hover:bg-error-100 focus:z-20"
+                                                class="w-full relative -ml-px inline-flex items-center bg-error-500 px-3 py-2 text-sm font-semibold text-neutral ring-1 ring-inset ring-error-300 hover:bg-error-100 focus:z-20"
                                                 :class="!canTakeDispatch ? 'disabled' : ''"
                                                 @click="takeDispatches(TakeDispatchResp.DECLINED)"
                                             >
@@ -216,7 +216,7 @@ const filteredDispatches = computed(() => {
                                             </button>
                                             <button
                                                 type="button"
-                                                class="w-full relative -ml-px inline-flex items-center rounded-r-md bg-white px-3 py-2 text-sm font-semibold text-gray-900 hover:text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20"
+                                                class="w-full relative -ml-px inline-flex items-center rounded-r-md bg-neutral px-3 py-2 text-sm font-semibold text-gray-900 hover:text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20"
                                                 @click="$emit('close')"
                                             >
                                                 {{ $t('common.close') }}

@@ -32,7 +32,7 @@ const openDetails = ref(false);
         </div>
         <button
             type="button"
-            class="text-white bg-error-700 hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-2 text-xs my-0.5"
+            class="text-neutral bg-error-700 hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-2 text-xs my-0.5"
             @click="openDetails = true"
         >
             <span class="font-bold truncate inline-flex items-center">
