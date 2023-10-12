@@ -5,8 +5,7 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import TablePagination from '~/components/partials/elements/TablePagination.vue';
-import { PaginationResponse } from '~~/gen/ts/resources/common/database/database';
-import { UserActivity } from '~~/gen/ts/resources/users/users';
+import { ListUserActivityResponse } from '~~/gen/ts/services/citizenstore/citizenstore';
 import ActivityFeedEntry from './ActivityFeedEntry.vue';
 
 const { $grpc } = useNuxtApp();
@@ -15,17 +14,13 @@ const props = defineProps<{
     userId: number;
 }>();
 
-const pagination = ref<PaginationResponse>();
 const offset = ref(0n);
 
-const {
-    data: activities,
-    pending,
-    refresh,
-    error,
-} = useLazyAsyncData(`citizeninfo-activity-${props.userId}-${offset.value}`, () => listUserActivity());
+const { data, pending, refresh, error } = useLazyAsyncData(`citizeninfo-activity-${props.userId}-${offset.value}`, () =>
+    listUserActivity(),
+);
 
-async function listUserActivity(): Promise<UserActivity[]> {
+async function listUserActivity(): Promise<ListUserActivityResponse> {
     return new Promise(async (res, rej) => {
         try {
             const call = $grpc.getCitizenStoreClient().listUserActivity({
@@ -36,8 +31,7 @@ async function listUserActivity(): Promise<UserActivity[]> {
             });
             const { response } = await call;
 
-            pagination.value = response.pagination;
-            return res(response.activity);
+            return res(response);
         } catch (e) {
             $grpc.handleError(e as RpcError);
             return rej(e as RpcError);
@@ -60,18 +54,18 @@ watch(offset, async () => refresh());
             :retry="refresh"
         />
         <DataNoDataBlock
-            v-else-if="activities && activities.length === 0"
+            v-else-if="data?.activity.length === 0"
             :icon="BulletinBoardIcon"
             :type="`${$t('common.citizen', 1)} ${$t('common.activity')}`"
         />
         <div v-else>
             <ul role="list" class="divide-y divide-gray-200">
-                <li v-for="activity in activities" :key="activity.id?.toString()" class="py-4">
+                <li v-for="activity in data?.activity" :key="activity.id?.toString()" class="py-4">
                     <ActivityFeedEntry :activity="activity" />
                 </li>
             </ul>
 
-            <TablePagination :pagination="pagination" @offset-change="offset = $event" />
+            <TablePagination :pagination="data?.pagination" @offset-change="offset = $event" />
         </div>
     </div>
 </template>

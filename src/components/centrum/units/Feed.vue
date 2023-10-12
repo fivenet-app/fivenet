@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
-import { PaginationResponse } from '~~/gen/ts/resources/common/database/database';
-import { UnitStatus } from '~~/gen/ts/resources/dispatch/units';
+import { ListUnitActivityResponse } from '~~/gen/ts/services/centrum/centrum';
 import FeedItem from './FeedItem.vue';
 
 const props = defineProps<{
@@ -10,16 +9,15 @@ const props = defineProps<{
 
 const { $grpc } = useNuxtApp();
 
-const pagination = ref<PaginationResponse>();
 const offset = ref(0n);
 
-const { data: activity, refresh } = useLazyAsyncData(`centrum-unit-${props.unitId.toString()}-activity-${offset.value}`, () =>
+const { data, refresh } = useLazyAsyncData(`centrum-unit-${props.unitId.toString()}-activity-${offset.value}`, () =>
     listUnitActivity(),
 );
 
 const timer = setInterval(async () => refresh(), 3500);
 
-async function listUnitActivity(): Promise<UnitStatus[]> {
+async function listUnitActivity(): Promise<ListUnitActivityResponse> {
     return new Promise(async (res, rej) => {
         try {
             const req = {
@@ -32,8 +30,7 @@ async function listUnitActivity(): Promise<UnitStatus[]> {
             const call = $grpc.getCentrumClient().listUnitActivity(req);
             const { response } = await call;
 
-            pagination.value = response.pagination;
-            return res(response.activity);
+            return res(response);
         } catch (e) {
             $grpc.handleError(e as RpcError);
             return rej(e as RpcError);
@@ -58,9 +55,9 @@ onBeforeUnmount(() => {
                 <div class="inline-block min-w-full py-2 align-middle sm:px-2 lg:px-2">
                     <ul role="list" class="space-y-2">
                         <FeedItem
-                            v-for="(activityItem, activityItemIdx) in activity"
+                            v-for="(activityItem, activityItemIdx) in data?.activity"
                             :key="activityItem.id.toString()"
-                            :activityLength="activity?.length ?? 0"
+                            :activityLength="data?.activity?.length ?? 0"
                             :item="activityItem"
                             :activityItemIdx="activityItemIdx"
                         />

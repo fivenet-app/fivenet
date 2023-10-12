@@ -8,10 +8,8 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import TablePagination from '~/components/partials/elements/TablePagination.vue';
 import { useCompletorStore } from '~/store/completor';
-import { PaginationResponse } from '~~/gen/ts/resources/common/database/database';
 import { UserShort } from '~~/gen/ts/resources/users/users';
-import { Vehicle } from '~~/gen/ts/resources/vehicles/vehicles';
-import { ListVehiclesRequest } from '~~/gen/ts/services/dmv/vehicles';
+import { ListVehiclesRequest, ListVehiclesResponse } from '~~/gen/ts/services/dmv/vehicles';
 import ListEntry from './ListEntry.vue';
 
 const { $grpc } = useNuxtApp();
@@ -52,12 +50,11 @@ const query = ref<{ plate: string; model: string; user_id: number }>({
     model: '',
     user_id: 0,
 });
-const pagination = ref<PaginationResponse>();
 const offset = ref(0n);
 
-const { data: vehicles, pending, refresh, error } = useLazyAsyncData(`vehicles-${offset.value}`, () => listVehicles());
+const { data, pending, refresh, error } = useLazyAsyncData(`vehicles-${offset.value}`, () => listVehicles());
 
-async function listVehicles(): Promise<Vehicle[]> {
+async function listVehicles(): Promise<ListVehiclesResponse> {
     return new Promise(async (res, rej) => {
         const req: ListVehiclesRequest = {
             pagination: {
@@ -73,9 +70,7 @@ async function listVehicles(): Promise<Vehicle[]> {
             const call = $grpc.getDMVClient().listVehicles(req);
             const { response } = await call;
 
-            pagination.value = response.pagination;
-
-            return res(response.vehicles);
+            return res(response);
         } catch (e) {
             $grpc.handleError(e as RpcError);
             return rej(e as RpcError);
@@ -213,7 +208,7 @@ watch(selectedChar, () => {
                             :retry="refresh"
                         />
                         <DataNoDataBlock
-                            v-else-if="vehicles && vehicles.length === 0"
+                            v-else-if="data?.vehicles.length === 0"
                             :icon="CarSearchIcon"
                             :focus="focusSearch"
                             :type="$t('common.vehicle', 2)"
@@ -252,7 +247,7 @@ watch(selectedChar, () => {
                                 </thead>
                                 <tbody class="divide-y divide-base-800">
                                     <ListEntry
-                                        v-for="vehicle in vehicles"
+                                        v-for="vehicle in data?.vehicles"
                                         :key="vehicle.plate"
                                         :vehicle="vehicle"
                                         :hide-owner="hideOwner"
@@ -293,7 +288,7 @@ watch(selectedChar, () => {
                                 </thead>
                             </table>
 
-                            <TablePagination :pagination="pagination" @offset-change="offset = $event" />
+                            <TablePagination :pagination="data?.pagination" @offset-change="offset = $event" />
                         </div>
                     </div>
                 </div>

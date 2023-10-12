@@ -5,8 +5,7 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import TablePagination from '~/components/partials/elements/TablePagination.vue';
-import { PaginationResponse } from '~~/gen/ts/resources/common/database/database';
-import { User } from '~~/gen/ts/resources/users/users';
+import { ColleaguesListResponse } from '~~/gen/ts/services/jobs/jobs';
 import ListEntry from './ListEntry.vue';
 
 const { $grpc } = useNuxtApp();
@@ -14,17 +13,13 @@ const { $grpc } = useNuxtApp();
 const query = ref<{ name: string }>({
     name: '',
 });
-const pagination = ref<PaginationResponse>();
 const offset = ref(0n);
 
-const {
-    data: users,
-    pending,
-    refresh,
-    error,
-} = useLazyAsyncData(`jobs-colleagues-${offset.value}-${query.value.name}`, () => listColleagues());
+const { data, pending, refresh, error } = useLazyAsyncData(`jobs-colleagues-${offset.value}-${query.value.name}`, () =>
+    listColleagues(),
+);
 
-async function listColleagues(): Promise<User[]> {
+async function listColleagues(): Promise<ColleaguesListResponse> {
     return new Promise(async (res, rej) => {
         try {
             const req = {
@@ -37,8 +32,7 @@ async function listColleagues(): Promise<User[]> {
             const call = $grpc.getJobsClient().colleaguesList(req);
             const { response } = await call;
 
-            pagination.value = response.pagination;
-            return res(response.users);
+            return res(response);
         } catch (e) {
             $grpc.handleError(e as RpcError);
             return rej(e as RpcError);
@@ -94,7 +88,7 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                             :retry="refresh"
                         />
                         <DataNoDataBlock
-                            v-else-if="users && users.length === 0"
+                            v-else-if="data?.users.length === 0"
                             :focus="focusSearch"
                             :message="$t('components.citizens.citizens_list.no_citizens')"
                         />
@@ -121,7 +115,7 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                 </thead>
                                 <tbody class="divide-y divide-base-800">
                                     <ListEntry
-                                        v-for="user in users"
+                                        v-for="user in data?.users"
                                         :key="user.userId"
                                         :user="user"
                                         class="transition-colors hover:bg-neutral/5"
@@ -148,7 +142,7 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                 </thead>
                             </table>
 
-                            <TablePagination :pagination="pagination" @offset-change="offset = $event" />
+                            <TablePagination :pagination="data?.pagination" @offset-change="offset = $event" />
                         </div>
                     </div>
                 </div>

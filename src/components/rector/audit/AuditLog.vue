@@ -8,10 +8,8 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import TablePagination from '~/components/partials/elements/TablePagination.vue';
 import { useCompletorStore } from '~/store/completor';
-import { PaginationResponse } from '~~/gen/ts/resources/common/database/database';
-import { AuditEntry } from '~~/gen/ts/resources/rector/audit';
 import { UserShort } from '~~/gen/ts/resources/users/users';
-import { ViewAuditLogRequest } from '~~/gen/ts/services/rector/rector';
+import { ViewAuditLogRequest, ViewAuditLogResponse } from '~~/gen/ts/services/rector/rector';
 import AuditLogEntry from './AuditLogEntry.vue';
 
 const { $grpc } = useNuxtApp();
@@ -31,10 +29,9 @@ const query = ref<{
     service: '',
     search: '',
 });
-const pagination = ref<PaginationResponse>();
 const offset = ref(0n);
 
-async function getAuditLog(): Promise<AuditEntry[]> {
+async function viewAuditLog(): Promise<ViewAuditLogResponse> {
     return new Promise(async (res, rej) => {
         const req: ViewAuditLogRequest = {
             pagination: {
@@ -68,8 +65,7 @@ async function getAuditLog(): Promise<AuditEntry[]> {
             const call = $grpc.getRectorClient().viewAuditLog(req);
             const { response } = await call;
 
-            pagination.value = response.pagination;
-            return res(response.logs);
+            return res(response);
         } catch (e) {
             $grpc.handleError(e as RpcError);
             return rej(e as RpcError);
@@ -77,7 +73,7 @@ async function getAuditLog(): Promise<AuditEntry[]> {
     });
 }
 
-const { data: logs, pending, refresh, error } = useLazyAsyncData(`rector-audit-${offset}`, () => getAuditLog());
+const { data, pending, refresh, error } = useLazyAsyncData(`rector-audit-${offset}`, () => viewAuditLog());
 
 const entriesCitizens = ref<UserShort[]>([]);
 const queryCitizens = ref('');
@@ -267,7 +263,7 @@ watchDebounced(queryCitizens, async () => await findChars(), {
                             :retry="refresh"
                         />
                         <DataNoDataBlock
-                            v-else-if="logs && logs.length === 0"
+                            v-else-if="data?.logs.length === 0"
                             :type="$t('common.audit_log', 2)"
                             :focus="focusSearch"
                         />
@@ -307,7 +303,7 @@ watchDebounced(queryCitizens, async () => await findChars(), {
                                 </thead>
                                 <tbody class="divide-y divide-base-800">
                                     <AuditLogEntry
-                                        v-for="log in logs"
+                                        v-for="log in data?.logs"
                                         :key="log.id?.toString()"
                                         :log="log"
                                         class="transition-colors hover:bg-neutral/5"
@@ -346,7 +342,7 @@ watchDebounced(queryCitizens, async () => await findChars(), {
                                 </thead>
                             </table>
 
-                            <TablePagination :pagination="pagination" @offset-change="offset = $event" />
+                            <TablePagination :pagination="data?.pagination" @offset-change="offset = $event" />
                         </div>
                     </div>
                 </div>

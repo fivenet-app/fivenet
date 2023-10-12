@@ -7,8 +7,8 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import TablePagination from '~/components/partials/elements/TablePagination.vue';
 import Time from '~/components/partials/elements/Time.vue';
-import { PaginationResponse } from '~~/gen/ts/resources/common/database/database';
-import { DocRelation, DocumentRelation } from '~~/gen/ts/resources/documents/documents';
+import { DocRelation } from '~~/gen/ts/resources/documents/documents';
+import { ListUserDocumentsResponse } from '~~/gen/ts/services/docstore/docstore';
 
 const { $grpc } = useNuxtApp();
 
@@ -16,17 +16,13 @@ const props = defineProps<{
     userId: number;
 }>();
 
-const pagination = ref<PaginationResponse>();
 const offset = ref(0n);
 
-const {
-    data: relations,
-    pending,
-    refresh,
-    error,
-} = useLazyAsyncData(`citizeninfo-documents-${props.userId}-${offset.value}`, () => listUserDocuments());
+const { data, pending, refresh, error } = useLazyAsyncData(`citizeninfo-documents-${props.userId}-${offset.value}`, () =>
+    listUserDocuments(),
+);
 
-async function listUserDocuments(): Promise<DocumentRelation[]> {
+async function listUserDocuments(): Promise<ListUserDocumentsResponse> {
     return new Promise(async (res, rej) => {
         try {
             const call = $grpc.getDocStoreClient().listUserDocuments({
@@ -38,8 +34,7 @@ async function listUserDocuments(): Promise<DocumentRelation[]> {
             });
             const { response } = await call;
 
-            pagination.value = response.pagination;
-            return res(response.relations);
+            return res(response);
         } catch (e) {
             $grpc.handleError(e as RpcError);
             return rej(e as RpcError);
@@ -62,15 +57,15 @@ watch(offset, async () => refresh());
             :retry="refresh"
         />
         <DataNoDataBlock
-            v-else-if="relations && relations.length === 0"
+            v-else-if="data?.relations.length === 0"
             :type="`${$t('common.document', 1)} ${$t('common.relation', 2)}`"
             :icon="FileDocumentMultipleIcon"
         />
-        <div v-else-if="relations">
+        <div v-else-if="data?.relations">
             <!-- Relations list (smallest breakpoint only) -->
-            <div v-if="relations.length > 0" class="sm:hidden text-neutral">
+            <div v-if="data?.relations.length > 0" class="sm:hidden text-neutral">
                 <ul role="list" class="mt-2 overflow-hidden divide-y divide-gray-600 rounded-lg sm:hidden">
-                    <li v-for="relation in relations" :key="relation.id?.toString()">
+                    <li v-for="relation in data?.relations" :key="relation.id?.toString()">
                         <a href="#" class="block px-4 py-4 bg-base-800 hover:bg-base-700">
                             <span class="flex items-center space-x-4">
                                 <span class="flex flex-1 space-x-2 truncate">
@@ -141,11 +136,11 @@ watch(offset, async () => refresh());
                     </li>
                 </ul>
 
-                <TablePagination :pagination="pagination" @offset-change="offset = $event" />
+                <TablePagination :pagination="data?.pagination" @offset-change="offset = $event" />
             </div>
 
             <!-- Relations table (small breakpoint and up) -->
-            <div v-if="relations.length > 0" class="hidden sm:block">
+            <div v-if="data?.relations.length > 0" class="hidden sm:block">
                 <div>
                     <div class="flex flex-col mt-2">
                         <div class="min-w-full overflow-hidden overflow-x-auto align-middle sm:rounded-lg">
@@ -170,7 +165,7 @@ watch(offset, async () => refresh());
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-gray-600 bg-base-800 text-neutral">
-                                    <tr v-for="relation in relations" :key="relation.id?.toString()">
+                                    <tr v-for="relation in data?.relations" :key="relation.id?.toString()">
                                         <td class="px-6 py-4 text-sm">
                                             <NuxtLink
                                                 :to="{
@@ -236,7 +231,7 @@ watch(offset, async () => refresh());
                                 </tbody>
                             </table>
 
-                            <TablePagination :pagination="pagination" @offset-change="offset = $event" />
+                            <TablePagination :pagination="data?.pagination" @offset-change="offset = $event" />
                         </div>
                     </div>
                 </div>

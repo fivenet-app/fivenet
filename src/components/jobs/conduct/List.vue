@@ -8,9 +8,9 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import TablePagination from '~/components/partials/elements/TablePagination.vue';
-import { PaginationResponse } from '~~/gen/ts/resources/common/database/database';
 import { ConductEntry, ConductType } from '~~/gen/ts/resources/jobs/conduct';
 import { User } from '~~/gen/ts/resources/users/users';
+import { ConductListEntriesResponse } from '~~/gen/ts/services/jobs/jobs';
 import CreateOrUpdateModal from './CreateOrUpdateModal.vue';
 import ListEntry from './ListEntry.vue';
 
@@ -21,12 +21,11 @@ const query = ref<{ types: ConductType[]; showExpired?: boolean; user_ids?: User
     user_ids: [],
     showExpired: false,
 });
-const pagination = ref<PaginationResponse>();
 const offset = ref(0n);
 
-const { data: entries, pending, refresh, error } = useLazyAsyncData(`jobs-conduct-${offset}`, () => listConductEntries());
+const { data, pending, refresh, error } = useLazyAsyncData(`jobs-conduct-${offset}`, () => listConductEntries());
 
-async function listConductEntries(): Promise<ConductEntry[]> {
+async function listConductEntries(): Promise<ConductListEntriesResponse> {
     return new Promise(async (res, rej) => {
         try {
             const call = $grpc.getJobsClient().conductListEntries({
@@ -39,9 +38,7 @@ async function listConductEntries(): Promise<ConductEntry[]> {
             });
             const { response } = await call;
 
-            pagination.value = response.pagination;
-
-            return res(response.entries);
+            return res(response);
         } catch (e) {
             $grpc.handleError(e as RpcError);
             return rej(e as RpcError);
@@ -111,14 +108,14 @@ function charsGetDisplayValue(chars: User[]): string {
 }
 
 function updateEntryInPlace(entry: ConductEntry): void {
-    if (entries.value === null) {
+    if (data.value === null) {
         refresh();
         return;
     }
 
-    const idx = entries.value?.findIndex((e) => e.id === entry.id);
+    const idx = data.value.entries.findIndex((e) => e.id === entry.id);
     if (idx !== undefined && idx > -1) {
-        entries.value[idx] = entry;
+        data.value.entries[idx] = entry;
     }
 }
 
@@ -159,7 +156,7 @@ onConfirm(async (id) => deleteConductEntry(id));
             :open="open"
             @close="open = false"
             :entry="selectedEntry"
-            @created="entries?.unshift($event)"
+            @created="data?.entries.unshift($event)"
             @update="updateEntryInPlace($event)"
         />
 
@@ -338,7 +335,7 @@ onConfirm(async (id) => deleteConductEntry(id));
                             :retry="refresh"
                         />
                         <DataNoDataBlock
-                            v-else-if="entries && entries.length === 0"
+                            v-else-if="data?.entries.length === 0"
                             :focus="focusSearch"
                             :message="$t('components.citizens.citizens_list.no_citizens')"
                         />
@@ -377,7 +374,7 @@ onConfirm(async (id) => deleteConductEntry(id));
                                 </thead>
                                 <tbody class="divide-y divide-base-800">
                                     <ListEntry
-                                        v-for="conduct in entries"
+                                        v-for="conduct in data?.entries"
                                         :key="conduct.id.toString()"
                                         :conduct="conduct"
                                         class="transition-colors hover:bg-neutral/5"
@@ -424,7 +421,7 @@ onConfirm(async (id) => deleteConductEntry(id));
                                 </thead>
                             </table>
 
-                            <TablePagination :pagination="pagination" @offset-change="offset = $event" />
+                            <TablePagination :pagination="data?.pagination" @offset-change="offset = $event" />
                         </div>
                     </div>
                 </div>

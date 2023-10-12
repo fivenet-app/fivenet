@@ -7,8 +7,8 @@ import { defineRule } from 'vee-validate';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import TablePagination from '~/components/partials/elements/TablePagination.vue';
 import { useAuthStore } from '~/store/auth';
-import { PaginationResponse } from '~~/gen/ts/resources/common/database/database';
 import { Comment } from '~~/gen/ts/resources/documents/comment';
+import { GetCommentsResponse } from '~~/gen/ts/services/docstore/docstore';
 import CommentEntry from './CommentEntry.vue';
 
 const { $grpc } = useNuxtApp();
@@ -30,19 +30,17 @@ const emit = defineEmits<{
     (e: 'counted', count: bigint): void;
 }>();
 
-const pagination = ref<PaginationResponse>();
 const offset = ref(0n);
 
-const {
-    data: comments,
-    pending,
-    refresh,
-    error,
-} = useLazyAsyncData(`document-${props.documentId}-comments-${offset}`, () => getComments(), {
-    immediate: false,
-});
+const { data, pending, refresh, error } = useLazyAsyncData(
+    `document-${props.documentId}-comments-${offset}`,
+    () => getComments(),
+    {
+        immediate: false,
+    },
+);
 
-async function getComments(): Promise<Comment[]> {
+async function getComments(): Promise<GetCommentsResponse> {
     return new Promise(async (res, rej) => {
         try {
             const call = $grpc.getDocStoreClient().getComments({
@@ -54,12 +52,11 @@ async function getComments(): Promise<Comment[]> {
             });
             const { response } = await call;
 
-            pagination.value = response.pagination;
-            if (pagination.value) {
-                emit('counted', pagination.value?.totalCount);
+            if (response.pagination) {
+                emit('counted', response.pagination.totalCount);
             }
 
-            return res(response.comments);
+            return res(response);
         } catch (e) {
             $grpc.handleError(e as RpcError);
             return rej(e as RpcError);
@@ -69,7 +66,7 @@ async function getComments(): Promise<Comment[]> {
 
 async function addComment(documentId: bigint, values: FormData): Promise<void> {
     return new Promise(async (res, rej) => {
-        if (!comments.value) {
+        if (data.value === null) {
             return res();
         }
 
@@ -88,7 +85,7 @@ async function addComment(documentId: bigint, values: FormData): Promise<void> {
             comment.id = response.id;
             comment.creator = activeChar.value!;
 
-            comments.value.unshift(comment);
+            data.value.comments.unshift(comment);
 
             resetForm();
 
@@ -101,8 +98,8 @@ async function addComment(documentId: bigint, values: FormData): Promise<void> {
 }
 
 async function removeComment(comment: Comment): Promise<void> {
-    return new Promise(async (res, rej) => {
-        if (!comments.value) {
+    return new Promise(async (res, _) => {
+        if (!data.value) {
             return res();
         }
 
@@ -110,12 +107,12 @@ async function removeComment(comment: Comment): Promise<void> {
             return res();
         }
 
-        const idx = comments.value.findIndex((c) => {
+        const idx = data.value.comments.findIndex((c) => {
             return c.id === comment.id;
         });
 
         if (idx > -1) {
-            comments.value.splice(idx, 1);
+            data.value.comments.splice(idx, 1);
         }
 
         return res();
@@ -223,7 +220,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
         </div>
         <div>
             <DataNoDataBlock
-                v-if="!comments || comments.length === 0"
+                v-if="data?.comments.length === 0"
                 :message="$t('components.documents.document_comments.no_comments')"
                 :icon="CommentTextMultipleIcon"
                 :focus="focusComment"
@@ -234,7 +231,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
             >
                 <ul role="list" class="divide-y divide-gray-200 px-4">
                     <CommentEntry
-                        v-for="com in comments"
+                        v-for="com in data?.comments"
                         :key="com.id?.toString()"
                         :comment="com"
                         @removed="(c: Comment) => removeComment(c)"
@@ -243,8 +240,8 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
             </div>
         </div>
         <TablePagination
-            v-if="comments && comments.length > 0"
-            :pagination="pagination"
+            v-if="data !== null && data?.comments.length > 0"
+            :pagination="data?.pagination"
             @offset-change="offset = $event"
             class="mt-2"
         />

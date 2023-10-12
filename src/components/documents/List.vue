@@ -22,11 +22,9 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import TablePagination from '~/components/partials/elements/TablePagination.vue';
 import { useCompletorStore } from '~/store/completor';
 import * as google_protobuf_timestamp_pb from '~~/gen/ts/google/protobuf/timestamp';
-import { PaginationResponse } from '~~/gen/ts/resources/common/database/database';
 import { Category } from '~~/gen/ts/resources/documents/category';
-import { DocumentShort } from '~~/gen/ts/resources/documents/documents';
 import { UserShort } from '~~/gen/ts/resources/users/users';
-import { ListDocumentsRequest } from '~~/gen/ts/services/docstore/docstore';
+import { ListDocumentsRequest, ListDocumentsResponse } from '~~/gen/ts/services/docstore/docstore';
 import ListEntry from './ListEntry.vue';
 import TemplatesModal from './templates/TemplatesModal.vue';
 
@@ -54,7 +52,6 @@ const query = ref<{
     title: '',
     closed: openclose[0],
 });
-const pagination = ref<PaginationResponse>();
 const offset = ref(0n);
 
 const entriesCategories = ref<Category[]>([]);
@@ -62,9 +59,9 @@ const queryCategories = ref<string>('');
 const entriesCitizens = ref<UserShort[]>([]);
 const queryCitizens = ref<string>('');
 
-const { data: documents, pending, refresh, error } = useLazyAsyncData(`documents-${offset.value}`, () => listDocuments());
+const { data, pending, refresh, error } = useLazyAsyncData(`documents-${offset.value}`, () => listDocuments());
 
-async function listDocuments(): Promise<DocumentShort[]> {
+async function listDocuments(): Promise<ListDocumentsResponse> {
     return new Promise(async (res, rej) => {
         const req: ListDocumentsRequest = {
             pagination: {
@@ -97,8 +94,7 @@ async function listDocuments(): Promise<DocumentShort[]> {
             const call = $grpc.getDocStoreClient().listDocuments(req);
             const { response } = await call;
 
-            pagination.value = response.pagination;
-            return res(response.documents);
+            return res(response);
         } catch (e) {
             $grpc.handleError(e as RpcError);
             return rej(e as RpcError);
@@ -413,16 +409,16 @@ const templatesOpen = ref(false);
                             :retry="refresh"
                         />
                         <DataNoDataBlock
-                            v-else-if="documents && documents.length === 0"
+                            v-else-if="data?.documents.length === 0"
                             :type="$t('common.document', 2)"
                             :focus="focusSearch"
                         />
                         <div v-else>
                             <ul role="list" class="flex flex-col">
-                                <ListEntry v-for="doc in documents" :doc="doc" />
+                                <ListEntry v-for="doc in data?.documents" :doc="doc" />
                             </ul>
 
-                            <TablePagination :pagination="pagination" @offset-change="offset = $event" class="mt-2" />
+                            <TablePagination :pagination="data?.pagination" @offset-change="offset = $event" class="mt-2" />
                         </div>
                     </div>
                 </div>

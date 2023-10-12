@@ -9,10 +9,9 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import Divider from '~/components/partials/elements/Divider.vue';
 import TablePagination from '~/components/partials/elements/TablePagination.vue';
 import * as google_protobuf_timestamp_pb from '~~/gen/ts/google/protobuf/timestamp';
-import { PaginationResponse } from '~~/gen/ts/resources/common/database/database';
-import { TimeclockEntry, TimeclockStats } from '~~/gen/ts/resources/jobs/timeclock';
+import { TimeclockEntry } from '~~/gen/ts/resources/jobs/timeclock';
 import { User } from '~~/gen/ts/resources/users/users';
-import { TimeclockListEntriesRequest } from '~~/gen/ts/services/jobs/jobs';
+import { TimeclockListEntriesRequest, TimeclockListEntriesResponse } from '~~/gen/ts/services/jobs/jobs';
 import ListEntry from './ListEntry.vue';
 import Stats from './Stats.vue';
 
@@ -22,13 +21,15 @@ const query = ref<{
     user_ids?: User[];
     from?: string;
     to?: string;
-}>({});
-const pagination = ref<PaginationResponse>();
+}>({
+    from: new Date().toString(),
+    to: new Date().toString(),
+});
 const offset = ref(0n);
 
 const { data, pending, refresh, error } = useLazyAsyncData(`jobs-timeclock-${offset.value}`, () => listTimeclockEntries());
 
-async function listTimeclockEntries(): Promise<{ entries: TimeclockEntry[]; stats?: TimeclockStats }> {
+async function listTimeclockEntries(): Promise<TimeclockListEntriesResponse> {
     return new Promise(async (res, rej) => {
         try {
             const req: TimeclockListEntriesRequest = {
@@ -50,8 +51,6 @@ async function listTimeclockEntries(): Promise<{ entries: TimeclockEntry[]; stat
 
             const call = $grpc.getJobsClient().timeclockListEntries(req);
             const { response } = await call;
-
-            pagination.value = response.pagination;
 
             return res(response);
         } catch (e) {
@@ -300,7 +299,7 @@ onMounted(async () => {
                                 </thead>
                             </table>
 
-                            <TablePagination :pagination="pagination" @offset-change="offset = $event" />
+                            <TablePagination :pagination="data?.pagination" @offset-change="offset = $event" />
                         </div>
                     </div>
                 </div>

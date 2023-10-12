@@ -8,24 +8,17 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import TablePagination from '~/components/partials/elements/TablePagination.vue';
 import Time from '~/components/partials/elements/Time.vue';
-import { PaginationResponse } from '~~/gen/ts/resources/common/database/database';
-import { Notification } from '~~/gen/ts/resources/notifications/notifications';
+import { GetNotificationsResponse } from '~~/gen/ts/services/notificator/notificator';
 
 const { $grpc } = useNuxtApp();
 
-const pagination = ref<PaginationResponse>();
 const offset = ref(0n);
 
 const includeRead = ref(false);
 
-const {
-    data: notifications,
-    pending,
-    refresh,
-    error,
-} = useLazyAsyncData(`notifications-${offset.value}`, () => getNotifications());
+const { data, pending, refresh, error } = useLazyAsyncData(`notifications-${offset.value}`, () => getNotifications());
 
-async function getNotifications(): Promise<Notification[]> {
+async function getNotifications(): Promise<GetNotificationsResponse> {
     return new Promise(async (res, rej) => {
         try {
             const call = $grpc.getNotificatorClient().getNotifications({
@@ -37,10 +30,7 @@ async function getNotifications(): Promise<Notification[]> {
 
             const { response } = await call;
 
-            offset.value = response.pagination?.offset!;
-            pagination.value = response.pagination;
-
-            return res(response.notifications);
+            return res(response);
         } catch (e) {
             $grpc.handleError(e as RpcError);
             return rej(e as RpcError);
@@ -59,7 +49,7 @@ async function markAllRead(): Promise<void> {
                 all: true,
             });
 
-            notifications.value?.forEach((v) => (v.readAt = now));
+            data.value?.notifications.forEach((v) => (v.readAt = now));
 
             return res();
         } catch (e) {
@@ -120,7 +110,7 @@ watchDebounced(includeRead, async () => refresh(), { debounce: 500, maxWait: 150
                             <div class="flex-initial">
                                 <button
                                     type="button"
-                                    :disabled="!notifications || notifications.length <= 0"
+                                    :disabled="data?.notifications !== undefined && data?.notifications.length > 0"
                                     @click="markAllRead"
                                     class="inline-flex px-3 py-2 text-sm font-semibold rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
                                 >
@@ -141,14 +131,14 @@ watchDebounced(includeRead, async () => refresh(), { debounce: 500, maxWait: 150
                             :retry="refresh"
                         />
                         <DataNoDataBlock
-                            v-else-if="notifications && notifications.length === 0"
+                            v-else-if="data?.notifications.length === 0"
                             :type="$t('common.notification', 2)"
                             :icon="BellIcon"
                         />
                         <div v-else>
                             <ul class="flex flex-col">
                                 <li
-                                    v-for="not in notifications"
+                                    v-for="not in data?.notifications"
                                     :key="not.id.toString()"
                                     class="relative flex justify-between my-1 gap-x-6 px-4 py-5 hover:bg-base-700 bg-base-800 sm:px-6 rounded-lg"
                                 >
@@ -195,7 +185,7 @@ watchDebounced(includeRead, async () => refresh(), { debounce: 500, maxWait: 150
                                 </li>
                             </ul>
 
-                            <TablePagination :pagination="pagination" @offset-change="offset = $event" class="mt-2" />
+                            <TablePagination :pagination="data?.pagination" @offset-change="offset = $event" class="mt-2" />
                         </div>
                     </div>
                 </div>
