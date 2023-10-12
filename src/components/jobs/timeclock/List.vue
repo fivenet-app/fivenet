@@ -21,10 +21,7 @@ const query = ref<{
     user_ids?: User[];
     from?: string;
     to?: string;
-}>({
-    from: new Date().toString(),
-    to: new Date().toString(),
-});
+}>({});
 const offset = ref(0n);
 
 const { data, pending, refresh, error } = useLazyAsyncData(`jobs-timeclock-${offset.value}`, () => listTimeclockEntries());
