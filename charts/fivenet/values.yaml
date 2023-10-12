@@ -127,8 +127,8 @@ fivenet:
         cookieSecret: "YOUR_COOKIE_SECRET"
         domain: "chart-example.local"
       links: {}
-      #  privacyPolicy: "https://example.com/your_privacy_policy/"
       #  imprint: "https://example.com/your_imprint/"
+      #  privacyPolicy: "https://example.com/your_privacy_policy/"
     grpc:
       listen: ":9090"
     database:
