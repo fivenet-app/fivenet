@@ -118,10 +118,9 @@ func (s *Server) TimeclockListEntries(ctx context.Context, req *TimeclockListEnt
 		}
 	}
 
-	jobInfoFn := s.enricher.EnrichJobInfoFunc(userInfo)
 	for i := 0; i < len(resp.Entries); i++ {
 		if resp.Entries[i].User != nil {
-			jobInfoFn(resp.Entries[i].User)
+			s.enricher.EnrichJobInfo(resp.Entries[i].User)
 		}
 	}
 
