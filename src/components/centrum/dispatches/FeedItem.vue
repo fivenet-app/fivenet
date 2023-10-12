@@ -6,6 +6,7 @@ import {
     AccountPlusIcon,
     AccountRemoveIcon,
     ArchiveIcon,
+    CancelIcon,
     CarIcon,
     CheckIcon,
     HelpIcon,
@@ -227,7 +228,7 @@ withDefaults(
         </template>
         <template v-else-if="item.status === StatusDispatch.CANCELLED">
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
-                <AccountCancelIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
+                <CancelIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
                 {{ $t('components.centrum.dispatches.feed.item.CANCELLED') }}
