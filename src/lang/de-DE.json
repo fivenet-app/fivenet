@@ -706,7 +706,9 @@
         "ends_at": "Endet am",
         "hide": "Verstecken",
         "approve": "Genehmigen | Genehmigt",
-        "na": "Nicht verfügbar"
+        "na": "Nicht verfügbar",
+        "privacy_policy": "Datenschutzerklärung",
+        "imprint": "Impressum"
     },
     "notifications": {
         "clipboard": {
