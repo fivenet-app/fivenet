@@ -23,11 +23,9 @@ import JobSwitcher from '~/components/partials/sidebar/JobSwitcher.vue';
 import LanguageSwitcher from '~/components/partials/sidebar/LanguageSwitcher.vue';
 import Notifications from '~/components/partials/sidebar/Notifications.vue';
 import { useAuthStore } from '~/store/auth';
-import { toTitleCase } from '~/utils/strings';
 import { RoutesNamedLocations } from '~~/.nuxt/typed-router/__routes';
 import FiveNetLogo from '../logos/FiveNetLogo.vue';
 
-const { t } = useI18n();
 const authStore = useAuthStore();
 const { accessToken, activeChar } = storeToRefs(authStore);
 const router = useRouter();
@@ -37,6 +35,7 @@ const sidebarNavigation = ref<
     {
         name: string;
         href: RoutesNamedLocations;
+        activePath?: string;
         permission: string;
         icon: DefineComponent;
         position: 'top' | 'bottom';
@@ -80,6 +79,7 @@ const sidebarNavigation = ref<
     {
         name: 'common.job',
         href: { name: 'jobs-overview' },
+        activePath: '/jobs',
         permission: 'JobsService.ColleaguesList',
         icon: markRaw(BriefcaseIcon),
         position: 'top',
@@ -122,13 +122,12 @@ const sidebarNavigation = ref<
 const userNavigation = ref<{ name: string; href: RoutesNamedLocations; permission?: string }[]>([
     { name: 'pages.auth.login.menu_item', href: { name: 'auth-login' } },
 ]);
-const breadcrumbs = ref<{ key: string; name: string; href: string; current: boolean }[]>([]);
+const breadcrumbs = useBreadcrumbs();
 const mobileMenuOpen = ref(false);
 
 onMounted(() => {
     updateUserNav();
     updateActiveItem();
-    updateBreadcrumbs();
 });
 
 function updateUserNav(): void {
@@ -160,7 +159,7 @@ function updateActiveItem(): void {
             const itemRoute = useRouter().resolve(e.href);
             if (
                 route.path.toLowerCase().startsWith(itemRoute.path.toLowerCase()) ||
-                (itemRoute.meta.alias && route.path.toLowerCase().startsWith(itemRoute.meta.alias as string))
+                (e.activePath && route.path.toLowerCase().startsWith(e.activePath))
             ) {
                 e.current = true;
             } else {
@@ -172,64 +171,10 @@ function updateActiveItem(): void {
     }
 }
 
-function updateBreadcrumbs(): void {
-    // Clear current breadcrumbs
-    breadcrumbs.value.length = 0;
-    const currentRoute = router.currentRoute.value;
-
-    const pathSplit = currentRoute.path.split('/').filter((e) => e !== '');
-    pathSplit.forEach((breadcrumb, idx) => {
-        breadcrumb = '/' + breadcrumb;
-        if (idx > 0) {
-            breadcrumb = '/' + pathSplit.slice(0, idx).join('/') + breadcrumb;
-        }
-        const route = router.getRoutes().find((r) => r.path.toLowerCase() === breadcrumb.toLowerCase());
-        if (route === undefined) {
-            return;
-        }
-
-        if (route.path.toLowerCase() === currentRoute.path.replace(/\/$/, '').toLowerCase()) {
-            return;
-        }
-
-        let title = route.meta.title ?? toTitleCase(breadcrumb);
-        if (title?.includes('.')) {
-            title = t(title);
-        }
-        breadcrumbs.value.push({
-            key: route.name?.toString() + route.path,
-            name: title,
-            href: route.path,
-            current: false,
-        });
-    });
-
-    const breadcrumbIdx = breadcrumbs.value.findIndex((b) => {
-        return b.href === currentRoute.path;
-    });
-    if (breadcrumbIdx === -1) {
-        if (currentRoute.name !== 'index' && currentRoute.name !== 'overview') {
-            let title = currentRoute.meta.title ?? toTitleCase(currentRoute.name);
-            if (title?.includes('.')) {
-                title = t(title);
-            }
-            breadcrumbs.value.push({
-                key: currentRoute.name?.toString() + currentRoute.path,
-                name: title,
-                href: '#',
-                current: true,
-            });
-        }
-    }
-}
-
 watch(accessToken, () => updateUserNav());
 watch(activeChar, () => updateUserNav());
 
-watch(router.currentRoute, () => {
-    updateActiveItem();
-    updateBreadcrumbs();
-});
+watch(router.currentRoute, () => updateActiveItem());
 </script>
 
 <template>
@@ -492,21 +437,28 @@ watch(router.currentRoute, () => {
                                             </NuxtLink>
                                         </div>
                                     </li>
-                                    <li v-for="page in breadcrumbs" :key="page.key">
-                                        <div class="flex items-center">
-                                            <ChevronRightIcon class="flex-shrink-0 w-5 h-5 text-base-400" aria-hidden="true" />
-                                            <NuxtLink
-                                                :to="{ path: page.href }"
-                                                :class="[
-                                                    page.current ? 'font-bold text-base-200' : 'font-medium text-base-400',
-                                                    'ml-2 sm:ml-4 text-sm hover:text-neutral hover:transition-colors truncate max-w-[5rem] sm:max-w-full',
-                                                ]"
-                                                :aria-current="page.current ? 'page' : undefined"
-                                            >
-                                                {{ page.name }}
-                                            </NuxtLink>
-                                        </div>
-                                    </li>
+                                    <template v-for="(item, key) in breadcrumbs" :key="key">
+                                        <li v-if="key !== 0">
+                                            <div class="flex items-center">
+                                                <ChevronRightIcon
+                                                    class="flex-shrink-0 w-5 h-5 text-base-400"
+                                                    aria-hidden="true"
+                                                />
+                                                <NuxtLink
+                                                    :to="item.to"
+                                                    :class="[
+                                                        key === breadcrumbs.length - 1
+                                                            ? 'font-bold text-base-200'
+                                                            : 'font-medium text-base-400',
+                                                        'ml-2 sm:ml-4 text-sm hover:text-neutral hover:transition-colors truncate max-w-[5rem] lg:max-w-full',
+                                                    ]"
+                                                    :aria-current="key === breadcrumbs.length - 1 ? 'page' : undefined"
+                                                >
+                                                    {{ $t(item.title as string) }}
+                                                </NuxtLink>
+                                            </div>
+                                        </li>
+                                    </template>
                                 </ol>
                             </nav>
                         </div>

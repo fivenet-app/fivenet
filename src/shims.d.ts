@@ -6,6 +6,7 @@ declare module '#app' {
         authOnlyToken?: boolean;
         showQuickButtons?: boolean;
         showCookieOptions?: boolean;
+        breadcrumbTitle?: string;
     }
 }
 

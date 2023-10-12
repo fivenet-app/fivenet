@@ -126,8 +126,7 @@ fivenet:
       sessions:
         cookieSecret: "YOUR_COOKIE_SECRET"
         domain: "chart-example.local"
-      #publicURL: "http://localhost:3000"
-      #links:
+      links: {}
       #  privacyPolicy: "https://example.com/your_privacy_policy/"
       #  imprint: "https://example.com/your_imprint/"
     grpc:

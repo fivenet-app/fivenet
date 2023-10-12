@@ -16,7 +16,6 @@ http:
   sessions:
     cookieSecret: "your_generated_cookie_secret"
     domain: "localhost"
-  publicURL: "http://localhost:3000"
   links:
     privacyPolicy: "https://example.com/your_privacy_policy/"
     imprint: "https://example.com/your_imprint/"
