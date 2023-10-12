@@ -78,14 +78,12 @@ const queryTargets = ref<string>('');
 async function listColleagues(): Promise<User[]> {
     return new Promise(async (res, rej) => {
         try {
-            const req = {
+            const call = $grpc.getJobsClient().colleaguesList({
                 pagination: {
                     offset: 0n,
                 },
                 searchName: queryTargets.value,
-            };
-
-            const call = $grpc.getJobsClient().colleaguesList(req);
+            });
             const { response } = await call;
 
             return res(response.users);

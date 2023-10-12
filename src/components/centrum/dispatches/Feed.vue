@@ -21,14 +21,12 @@ const timer = setInterval(async () => refresh(), 3500);
 async function listDispatchActivity(): Promise<ListDispatchActivityResponse> {
     return new Promise(async (res, rej) => {
         try {
-            const req = {
+            const call = $grpc.getCentrumClient().listDispatchActivity({
                 pagination: {
                     offset: offset.value,
                 },
                 id: props.dispatchId ?? 0n,
-            };
-
-            const call = $grpc.getCentrumClient().listDispatchActivity(req);
+            });
             const { response } = await call;
 
             return res(response);

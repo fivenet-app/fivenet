@@ -9,7 +9,7 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import TablePagination from '~/components/partials/elements/TablePagination.vue';
 import { useCompletorStore } from '~/store/completor';
 import { UserShort } from '~~/gen/ts/resources/users/users';
-import { ListVehiclesRequest, ListVehiclesResponse } from '~~/gen/ts/services/dmv/vehicles';
+import { ListVehiclesResponse } from '~~/gen/ts/services/dmv/vehicles';
 import ListEntry from './ListEntry.vue';
 
 const { $grpc } = useNuxtApp();
@@ -56,18 +56,16 @@ const { data, pending, refresh, error } = useLazyAsyncData(`vehicles-${offset.va
 
 async function listVehicles(): Promise<ListVehiclesResponse> {
     return new Promise(async (res, rej) => {
-        const req: ListVehiclesRequest = {
-            pagination: {
-                offset: offset.value,
-            },
-            orderBy: [],
-            userId: props.userId && props.userId > 0 ? props.userId : query.value.user_id,
-            search: query.value.plate,
-            model: query.value.model,
-        };
-
         try {
-            const call = $grpc.getDMVClient().listVehicles(req);
+            const call = $grpc.getDMVClient().listVehicles({
+                pagination: {
+                    offset: offset.value,
+                },
+                orderBy: [],
+                userId: props.userId && props.userId > 0 ? props.userId : query.value.user_id,
+                search: query.value.plate,
+                model: query.value.model,
+            });
             const { response } = await call;
 
             return res(response);

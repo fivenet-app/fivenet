@@ -29,7 +29,7 @@ import { DefineComponent } from 'vue';
 import '~/assets/css/command-palette.scss';
 import { DocumentShort } from '~~/gen/ts/resources/documents/documents';
 import { UserShort } from '~~/gen/ts/resources/users/users';
-import { ListDocumentsRequest } from '~~/gen/ts/services/docstore/docstore';
+import IDCopyBadge from './IDCopyBadge.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -196,24 +196,16 @@ const filteredItems = computed<Item[]>(() =>
 
 const citizens = ref<UserShort[]>([]);
 
-const filteredCitizens = computed(() =>
-    citizens.value.filter((citizen) =>
-        `${citizen.firstname} ${citizen.lastname}`.toLowerCase().includes(query.value.toLowerCase()),
-    ),
-);
-
 async function listCitizens(): Promise<void> {
     return new Promise(async (res, rej) => {
         try {
-            const req = {
+            const call = $grpc.getCitizenStoreClient().listCitizens({
                 pagination: {
                     offset: 0n,
                     pageSize: 7n,
                 },
                 searchName: query.value,
-            };
-
-            const call = $grpc.getCitizenStoreClient().listCitizens(req);
+            });
             const { response } = await call;
 
             citizens.value = response.users;
@@ -229,25 +221,19 @@ async function listCitizens(): Promise<void> {
 
 const documents = ref<DocumentShort[]>([]);
 
-const filteredDocuments = computed(() =>
-    documents.value.filter((document) => document.title.toLowerCase().includes(query.value.toLowerCase())),
-);
-
 async function listDocuments(): Promise<void> {
     return new Promise(async (res, rej) => {
-        const req: ListDocumentsRequest = {
-            pagination: {
-                offset: 0n,
-                pageSize: 7n,
-            },
-            orderBy: [],
-            search: query.value,
-            categoryIds: [],
-            creatorIds: [],
-        };
-
         try {
-            const call = $grpc.getDocStoreClient().listDocuments(req);
+            const call = $grpc.getDocStoreClient().listDocuments({
+                pagination: {
+                    offset: 0n,
+                    pageSize: 7n,
+                },
+                orderBy: [],
+                search: query.value,
+                categoryIds: [],
+                creatorIds: [],
+            });
             const { response } = await call;
 
             documents.value = response.documents;
@@ -261,23 +247,29 @@ async function listDocuments(): Promise<void> {
     });
 }
 
+function resetLists(): void {
+    citizens.value.length = 0;
+    documents.value.length = 0;
+    loading.value = false;
+}
+
 watch(query, async () => (loading.value = true));
 watchDebounced(
-    query,
+    rawQuery,
     async () => {
         if (query.value.length > 1) {
             if (rawQuery.value.startsWith('@')) {
+                if (documents.value.length > 0) documents.value.length = 0;
                 listCitizens();
             } else if (rawQuery.value.startsWith('#')) {
+                if (citizens.value.length > 0) citizens.value.length = 0;
                 listDocuments();
             }
         } else {
-            citizens.value.length = 0;
-            documents.value.length = 0;
-            loading.value = false;
+            resetLists();
         }
     },
-    { debounce: 500, maxWait: 1500 },
+    { debounce: 400, maxWait: 1250 },
 );
 
 type Groups = { [key: string]: Item[] };
@@ -357,11 +349,11 @@ async function onSelect(item: any): Promise<any> {
                             </div>
 
                             <ComboboxOptions static class="max-h-80 scroll-pb-2 scroll-pt-11 space-y-2 overflow-y-auto pb-2">
-                                <li v-if="filteredCitizens.length > 0" class="p-2">
+                                <li v-if="citizens.length > 0" class="p-2">
                                     <h2 class="text-xs font-semibold text-gray-900">{{ $t('common.citizen', 2) }}</h2>
                                     <ul class="-mx-2 mt-2 text-sm text-gray-400">
                                         <ComboboxOption
-                                            v-for="citizen in filteredCitizens"
+                                            v-for="citizen in citizens"
                                             :key="citizen.userId"
                                             :value="citizen"
                                             as="template"
@@ -376,15 +368,16 @@ async function onSelect(item: any): Promise<any> {
                                                 <span class="ml-3 flex-auto truncate">
                                                     {{ citizen.firstname }} {{ citizen.lastname }}
                                                 </span>
+                                                <IDCopyBadge :id="citizen.userId" prefix="CIT" class="self-end" />
                                             </li>
                                         </ComboboxOption>
                                     </ul>
                                 </li>
-                                <li v-else-if="filteredDocuments.length > 0" class="p-2">
+                                <li v-else-if="documents.length > 0" class="p-2">
                                     <h2 class="text-xs font-semibold text-gray-900">{{ $t('common.document', 2) }}</h2>
                                     <ul class="-mx-2 mt-2 text-sm text-gray-400">
                                         <ComboboxOption
-                                            v-for="document in filteredDocuments"
+                                            v-for="document in documents"
                                             :key="document.id.toString()"
                                             :value="document"
                                             as="template"
@@ -397,6 +390,7 @@ async function onSelect(item: any): Promise<any> {
                                                 ]"
                                             >
                                                 <span class="ml-3 flex-auto truncate">{{ document.title }}</span>
+                                                <IDCopyBadge :id="document.id" prefix="DOC" class="self-end" />
                                             </li>
                                         </ComboboxOption>
                                     </ul>
@@ -446,8 +440,8 @@ async function onSelect(item: any): Promise<any> {
                                 v-else-if="
                                     rawQuery !== '' &&
                                     filteredItems.length === 0 &&
-                                    filteredCitizens.length === 0 &&
-                                    filteredDocuments.length === 0
+                                    citizens.length === 0 &&
+                                    documents.length === 0
                                 "
                                 class="border-t border-gray-100 px-6 py-14 text-center text-sm sm:px-14"
                             >

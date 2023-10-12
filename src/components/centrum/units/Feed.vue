@@ -20,14 +20,12 @@ const timer = setInterval(async () => refresh(), 3500);
 async function listUnitActivity(): Promise<ListUnitActivityResponse> {
     return new Promise(async (res, rej) => {
         try {
-            const req = {
+            const call = $grpc.getCentrumClient().listUnitActivity({
                 pagination: {
                     offset: offset.value,
                 },
                 id: props.unitId,
-            };
-
-            const call = $grpc.getCentrumClient().listUnitActivity(req);
+            });
             const { response } = await call;
 
             return res(response);

@@ -82,14 +82,12 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
 async function listColleagues(): Promise<User[]> {
     return new Promise(async (res, rej) => {
         try {
-            const req = {
+            const call = $grpc.getJobsClient().colleaguesList({
                 pagination: {
                     offset: offset.value,
                 },
                 searchName: queryTargets.value,
-            };
-
-            const call = $grpc.getJobsClient().colleaguesList(req);
+            });
             const { response } = await call;
 
             return res(response.users);

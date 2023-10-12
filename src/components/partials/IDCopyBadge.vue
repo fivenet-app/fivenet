@@ -8,11 +8,11 @@ const clipboard = useClipboard();
 const notifications = useNotificatorStore();
 
 const props = defineProps<{
-    id: bigint | string;
+    id: bigint | number | string;
     prefix: string;
     title?: TranslateItem;
     content?: TranslateItem;
-    action?: (id: bigint | string) => void;
+    action?: (id: bigint | number | string) => void;
 }>();
 
 function copyDocumentIDToClipboard(): void {

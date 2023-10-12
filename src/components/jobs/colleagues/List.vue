@@ -22,14 +22,12 @@ const { data, pending, refresh, error } = useLazyAsyncData(`jobs-colleagues-${of
 async function listColleagues(): Promise<ColleaguesListResponse> {
     return new Promise(async (res, rej) => {
         try {
-            const req = {
+            const call = $grpc.getJobsClient().colleaguesList({
                 pagination: {
                     offset: offset.value,
                 },
                 searchName: query.value.name,
-            };
-
-            const call = $grpc.getJobsClient().colleaguesList(req);
+            });
             const { response } = await call;
 
             return res(response);
