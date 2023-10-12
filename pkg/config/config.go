@@ -88,11 +88,17 @@ type HTTP struct {
 	Listen    string   `default:":8080" yaml:"listen"`
 	Sessions  Sessions `yaml:"sessions"`
 	PublicURL string   `yaml:"publicURL"`
+	Links     Links    `yaml:"links"`
 }
 
 type Sessions struct {
 	CookieSecret string `yaml:"cookieSecret"`
 	Domain       string `default:"localhost" yaml:"domain"`
+}
+
+type Links struct {
+	PrivacyPolicy *string `json:"privacyPolicy"`
+	Imprint       *string `json:"imprint"`
 }
 
 type GRPC struct {

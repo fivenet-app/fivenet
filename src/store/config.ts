@@ -9,9 +9,11 @@ export interface ConfigState {
 }
 
 type AppConfig = {
+    version: string;
     sentryDSN?: string;
     login: LoginConfig;
     discord: DiscordConfig;
+    links: Links;
 };
 
 type LoginConfig = {
@@ -28,6 +30,11 @@ type DiscordConfig = {
     botInviteURL?: string;
 };
 
+type Links = {
+    imprint?: string;
+    privacyPolicy?: string;
+};
+
 type ClientConfig = {
     NUIEnabled: boolean;
     NUIResourceName?: string;
@@ -38,6 +45,7 @@ export const useConfigStore = defineStore('config', {
         ({
             fetched: false,
             appConfig: {
+                version: '',
                 sentryDSN: '',
                 login: {
                     signupEnabled: true,
@@ -46,6 +54,7 @@ export const useConfigStore = defineStore('config', {
                 discord: {
                     botInviteURL: '',
                 },
+                links: {},
             } as AppConfig,
             clientConfig: {
                 NUIEnabled: false,

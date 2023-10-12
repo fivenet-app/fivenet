@@ -706,7 +706,9 @@
         "ends_at": "Ends at",
         "hide": "Hide",
         "approve": "Approve | Approved",
-        "na": "N/A"
+        "na": "N/A",
+        "privacy_policy": "Privacy Policy",
+        "imprint": "Imprint"
     },
     "notifications": {
         "clipboard": {
