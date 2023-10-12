@@ -334,7 +334,7 @@ watch(router.currentRoute, () => {
 
         <!-- Mobile Sidebar -->
         <TransitionRoot as="template" :show="mobileMenuOpen">
-            <Dialog as="div" class="relative z-20 md:hidden" @close="mobileMenuOpen = false">
+            <Dialog as="div" class="relative z-30 md:hidden" @close="mobileMenuOpen = false">
                 <TransitionChild
                     as="template"
                     enter="transition-opacity ease-linear duration-300"
@@ -347,7 +347,7 @@ watch(router.currentRoute, () => {
                     <div class="fixed inset-0 bg-opacity-75 bg-base-900/10" />
                 </TransitionChild>
 
-                <div class="fixed inset-0 z-20 flex">
+                <div class="fixed inset-0 z-30 flex">
                     <TransitionChild
                         as="template"
                         enter="transition ease-in-out duration-300 transform"
@@ -466,7 +466,7 @@ watch(router.currentRoute, () => {
         <!-- Content area -->
         <div class="flex flex-col flex-1 overflow-hidden">
             <header class="w-full">
-                <div class="relative z-20 flex flex-shrink-0 h-16 bg-base-800">
+                <div class="relative z-30 flex flex-shrink-0 h-16 bg-base-800">
                     <button
                         type="button"
                         class="px-4 text-neutral focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500 md:hidden"
@@ -541,7 +541,7 @@ watch(router.currentRoute, () => {
                                     leave-to-class="transform scale-95 opacity-0"
                                 >
                                     <MenuItems
-                                        class="absolute z-20 right-0 w-48 py-1 mt-2 origin-top-right rounded-md shadow-float bg-base-800 ring-1 ring-base-100 ring-opacity-5 focus:outline-none"
+                                        class="absolute z-30 right-0 w-48 py-1 mt-2 origin-top-right rounded-md shadow-float bg-base-800 ring-1 ring-base-100 ring-opacity-5 focus:outline-none"
                                     >
                                         <MenuItem
                                             v-for="item in userNavigation.filter(

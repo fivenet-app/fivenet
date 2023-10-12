@@ -28,13 +28,12 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
             <div class="flex flex-row items-center gap-3 mx-auto">
                 <h2 class="text-2xl font-medium text-center text-neutral">{{ char.firstname }}, {{ char.lastname }}</h2>
                 <CharSexBadge :sex="char.sex!" />
-                <div v-if="lastCharID === char.userId">
-                    <span
-                        class="inline-flex items-center text-center rounded-full bg-success-100 px-3 py-0.5 text-sm font-medium text-success-800"
-                    >
-                        {{ $t('common.last_used') }}
-                    </span>
-                </div>
+                <span
+                    v-if="lastCharID === char.userId"
+                    class="inline-flex items-center text-center rounded-full bg-success-100 px-3 py-0.5 text-sm font-medium text-success-800"
+                >
+                    {{ $t('common.last_used') }}
+                </span>
             </div>
             <dl class="flex flex-col justify-between flex-grow mt-2 text-center">
                 <dd class="mt-2 mb-2">

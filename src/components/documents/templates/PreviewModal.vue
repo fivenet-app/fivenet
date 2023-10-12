@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
+import { CloseIcon } from 'mdi-vue3';
 import { useAuthStore } from '~/store/auth';
 import { useClipboardStore } from '~/store/clipboard';
 import { Template } from '~~/gen/ts/resources/documents/templates';
@@ -74,6 +75,16 @@ async function getTemplate(): Promise<Template> {
                             <DialogPanel
                                 class="relative px-4 pt-5 pb-4 overflow-hidden text-left transition-all transform rounded-lg bg-base-800 text-neutral sm:my-8 sm:w-full sm:w-screen sm:min-w-min sm:p-6"
                             >
+                                <div class="absolute right-0 top-0 pr-4 pt-4 block">
+                                    <button
+                                        type="button"
+                                        class="rounded-md bg-neutral text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+                                        @click="$emit('close')"
+                                    >
+                                        <span class="sr-only">{{ $t('common.close') }}</span>
+                                        <CloseIcon class="h-6 w-6" aria-hidden="true" />
+                                    </button>
+                                </div>
                                 <div>
                                     <div class="mt-3 text-center sm:mt-5">
                                         <DialogTitle as="h3" class="text-base font-semibold leading-6">

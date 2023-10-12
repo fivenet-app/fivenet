@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import { Dialog, DialogPanel, TransitionChild, TransitionRoot } from '@headlessui/vue';
+import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { max, min, numeric, required } from '@vee-validate/rules';
 import { useThrottleFn } from '@vueuse/core';
-import { LoadingIcon } from 'mdi-vue3';
+import { CloseIcon, LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import { useNotificatorStore } from '~/store/notificator';
 import { User, UserProps } from '~~/gen/ts/resources/users/users';
@@ -122,6 +122,19 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                         <DialogPanel
                             class="relative px-4 pt-5 pb-4 overflow-hidden text-left transition-all transform rounded-lg bg-base-800 text-neutral sm:my-8 sm:w-full sm:max-w-2xl sm:p-6 h-96"
                         >
+                            <div class="absolute right-0 top-0 pr-4 pt-4 block">
+                                <button
+                                    type="button"
+                                    class="rounded-md bg-neutral text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+                                    @click="$emit('close')"
+                                >
+                                    <span class="sr-only">{{ $t('common.close') }}</span>
+                                    <CloseIcon class="h-6 w-6" aria-hidden="true" />
+                                </button>
+                            </div>
+                            <DialogTitle as="h3" class="text-base font-semibold leading-6">
+                                {{ $t('components.citizens.citizen_info_profile.set_traffic_points') }}
+                            </DialogTitle>
                             <form @submit.prevent="onSubmitThrottle">
                                 <div class="my-2 space-y-24">
                                     <div class="flex-1 form-control">

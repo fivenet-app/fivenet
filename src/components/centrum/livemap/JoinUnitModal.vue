@@ -133,7 +133,7 @@ const sortedUnits = computed(() => getSortedUnits.value);
                                             </button>
                                             <button
                                                 type="button"
-                                                class="w-full relative inline-flex items-center bg-neutral px-3 py-2 text-sm font-semibold text-gray-900 hover:text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20"
+                                                class="w-full relative inline-flex items-center bg-neutral px-3 py-2 text-sm font-semibold text-gray-900 hover:text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
                                                 :class="ownUnitId !== undefined ? '-ml-px rounded-r-md' : 'rounded-md'"
                                                 @click="$emit('close')"
                                             >

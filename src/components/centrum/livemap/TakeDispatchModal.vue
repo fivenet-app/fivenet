@@ -199,7 +199,7 @@ const filteredDispatches = computed(() => {
                                             <button
                                                 :disabled="!canTakeDispatch"
                                                 type="button"
-                                                class="w-full relative inline-flex items-center rounded-l-md bg-success-500 px-3 py-2 text-sm font-semibold text-neutral hover:text-neutral ring-1 ring-inset ring-success-300 hover:bg-success-100 focus:z-20"
+                                                class="w-full relative inline-flex items-center rounded-l-md bg-success-500 px-3 py-2 text-sm font-semibold text-neutral hover:text-neutral ring-1 ring-inset ring-success-300 hover:bg-success-100"
                                                 :class="!canTakeDispatch ? 'disabled' : ''"
                                                 @click="takeDispatches(TakeDispatchResp.ACCEPTED)"
                                             >
@@ -208,7 +208,7 @@ const filteredDispatches = computed(() => {
                                             <button
                                                 :disabled="!canTakeDispatch"
                                                 type="button"
-                                                class="w-full relative -ml-px inline-flex items-center bg-error-500 px-3 py-2 text-sm font-semibold text-neutral ring-1 ring-inset ring-error-300 hover:bg-error-100 focus:z-20"
+                                                class="w-full relative -ml-px inline-flex items-center bg-error-500 px-3 py-2 text-sm font-semibold text-neutral ring-1 ring-inset ring-error-300 hover:bg-error-100"
                                                 :class="!canTakeDispatch ? 'disabled' : ''"
                                                 @click="takeDispatches(TakeDispatchResp.DECLINED)"
                                             >
@@ -216,7 +216,7 @@ const filteredDispatches = computed(() => {
                                             </button>
                                             <button
                                                 type="button"
-                                                class="w-full relative -ml-px inline-flex items-center rounded-r-md bg-neutral px-3 py-2 text-sm font-semibold text-gray-900 hover:text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20"
+                                                class="w-full relative -ml-px inline-flex items-center rounded-r-md bg-neutral px-3 py-2 text-sm font-semibold text-gray-900 hover:text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
                                                 @click="$emit('close')"
                                             >
                                                 {{ $t('common.close') }}

@@ -14,7 +14,7 @@ import Feed from './Feed.vue';
 import DispatchesLayer from './livemap/DispatchesLayer.vue';
 
 const centrumStore = useCentrumStore();
-const { error, abort, restarting, isDisponent, feed } = storeToRefs(centrumStore);
+const { error, abort, restarting, feed } = storeToRefs(centrumStore);
 const { startStream, stopStream } = centrumStore;
 
 const livemapStore = useLivemapStore();

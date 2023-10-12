@@ -3,7 +3,7 @@ import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } fro
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { max, min, required } from '@vee-validate/rules';
 import { useThrottleFn } from '@vueuse/core';
-import { KeyIcon, LoadingIcon } from 'mdi-vue3';
+import { CloseIcon, KeyIcon, LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import PasswordStrengthMeter from '~/components/auth/PasswordStrengthMeter.vue';
 import { useAuthStore } from '~/store/auth';
@@ -106,8 +106,18 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                         leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                     >
                         <DialogPanel
-                            class="relative px-4 pt-5 pb-4 overflow-hidden text-left transition-all transform rounded-lg bg-base-800 text-neutral sm:my-8 sm:w-full sm:max-w-lg sm:p-6"
+                            class="relative px-4 pt-5 pb-4 overflow-hidden text-left transition-all transform rounded-lg bg-base-800 text-neutral sm:my-8 w-full sm:max-w-lg sm:p-6"
                         >
+                            <div class="absolute right-0 top-0 pr-4 pt-4 block">
+                                <button
+                                    type="button"
+                                    class="rounded-md bg-neutral text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+                                    @click="$emit('close')"
+                                >
+                                    <span class="sr-only">{{ $t('common.close') }}</span>
+                                    <CloseIcon class="h-6 w-6" aria-hidden="true" />
+                                </button>
+                            </div>
                             <div>
                                 <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-base-700">
                                     <KeyIcon class="h-6 w-6 text-primary-500" aria-hidden="true" />

@@ -19,7 +19,12 @@ const sortedUnits = computed(() => getSortedUnits.value);
             <div class="sm:flex-auto inline-flex items-center">
                 <h2 class="text-base font-semibold leading-6 text-gray-100 inline-flex">
                     {{ $t('common.units') }}
-                    <NuxtLink :to="{ name: 'centrum-units' }" :title="$t('common.units')" class="ml-2">
+                    <NuxtLink
+                        v-if="can('CentrumService.CreateOrUpdateUnit')"
+                        :to="{ name: 'centrum-units' }"
+                        :title="$t('common.units')"
+                        class="ml-2"
+                    >
                         <CogIcon class="h-6 w-6" />
                     </NuxtLink>
                 </h2>
