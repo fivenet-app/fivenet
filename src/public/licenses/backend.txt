@@ -533,9 +533,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 -----
 
-The following software may be included in this product: github.com/XSAM/otelsql (Version: v0.25.0). This software contains the following license and notice below:
+The following software may be included in this product: github.com/XSAM/otelsql (Version: v0.26.0). This software contains the following license and notice below:
 
-Apache-2.0 License - License URL: https://github.com/XSAM/otelsql/blob/v0.25.0/LICENSE
+Apache-2.0 License - License URL: https://github.com/XSAM/otelsql/blob/v0.26.0/LICENSE
 
                                  Apache License
                            Version 2.0, January 2004
@@ -3751,9 +3751,9 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 -----
 
-The following software may be included in this product: github.com/davecgh/go-spew/spew (Version: v1.1.1). This software contains the following license and notice below:
+The following software may be included in this product: github.com/davecgh/go-spew/spew (Version: v1.1.2-0.20180830191138-d8f796af33cc). This software contains the following license and notice below:
 
-ISC License - License URL: https://github.com/davecgh/go-spew/blob/v1.1.1/LICENSE
+ISC License - License URL: https://github.com/davecgh/go-spew/blob/d8f796af33cc/LICENSE
 
 ISC License
 
@@ -4250,9 +4250,9 @@ Apache-2.0 License - License URL: https://github.com/galexrt/fivenet/blob/HEAD/L
 
 -----
 
-The following software may be included in this product: github.com/getsentry/sentry-go (Version: v0.24.1). This software contains the following license and notice below:
+The following software may be included in this product: github.com/getsentry/sentry-go (Version: v0.25.0). This software contains the following license and notice below:
 
-MIT License - License URL: https://github.com/getsentry/sentry-go/blob/v0.24.1/LICENSE
+MIT License - License URL: https://github.com/getsentry/sentry-go/blob/v0.25.0/LICENSE
 
 MIT License
 
@@ -5924,9 +5924,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 -----
 
-The following software may be included in this product: github.com/google/uuid (Version: v1.3.0). This software contains the following license and notice below:
+The following software may be included in this product: github.com/google/uuid (Version: v1.3.1). This software contains the following license and notice below:
 
-BSD-3-Clause License - License URL: https://github.com/google/uuid/blob/v1.3.0/LICENSE
+BSD-3-Clause License - License URL: https://github.com/google/uuid/blob/v1.3.1/LICENSE
 
 Copyright (c) 2009,2014 Google Inc. All rights reserved.
 
@@ -8895,9 +8895,9 @@ Apache-2.0 License - License URL: https://github.com/matttproud/golang_protobuf_
 
 -----
 
-The following software may be included in this product: github.com/microcosm-cc/bluemonday (Version: v1.0.25). This software contains the following license and notice below:
+The following software may be included in this product: github.com/microcosm-cc/bluemonday (Version: v1.0.26). This software contains the following license and notice below:
 
-BSD-3-Clause License - License URL: https://github.com/microcosm-cc/bluemonday/blob/v1.0.25/LICENSE.md
+BSD-3-Clause License - License URL: https://github.com/microcosm-cc/bluemonday/blob/v1.0.26/LICENSE.md
 
 SPDX short identifier: BSD-3-Clause
 https://opensource.org/licenses/BSD-3-Clause
@@ -10143,9 +10143,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 -----
 
-The following software may be included in this product: github.com/pmezard/go-difflib/difflib (Version: v1.0.0). This software contains the following license and notice below:
+The following software may be included in this product: github.com/pmezard/go-difflib/difflib (Version: v1.0.1-0.20181226105442-5d4384ee4fb2). This software contains the following license and notice below:
 
-BSD-3-Clause License - License URL: https://github.com/pmezard/go-difflib/blob/v1.0.0/LICENSE
+BSD-3-Clause License - License URL: https://github.com/pmezard/go-difflib/blob/5d4384ee4fb2/LICENSE
 
 Copyright (c) 2013, Patrick Mezard
 All rights reserved.
@@ -11111,6 +11111,40 @@ SOFTWARE.
 
 -----
 
+The following software may be included in this product: github.com/sagikazarmark/slog-shim (Version: v0.1.0). This software contains the following license and notice below:
+
+BSD-3-Clause License - License URL: https://github.com/sagikazarmark/slog-shim/blob/v0.1.0/LICENSE
+
+Copyright (c) 2009 The Go Authors. All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
+
+   * Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+   * Redistributions in binary form must reproduce the above
+copyright notice, this list of conditions and the following disclaimer
+in the documentation and/or other materials provided with the
+distribution.
+   * Neither the name of Google Inc. nor the names of its
+contributors may be used to endorse or promote products derived from
+this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+-----
+
 The following software may be included in this product: github.com/shopspring/decimal (Version: v1.3.1). This software contains the following license and notice below:
 
 MIT License - License URL: https://github.com/shopspring/decimal/blob/v1.3.1/LICENSE
@@ -11163,9 +11197,9 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 -----
 
-The following software may be included in this product: github.com/spf13/afero (Version: v1.9.5). This software contains the following license and notice below:
+The following software may be included in this product: github.com/spf13/afero (Version: v1.10.0). This software contains the following license and notice below:
 
-Apache-2.0 License - License URL: https://github.com/spf13/afero/blob/v1.9.5/LICENSE.txt
+Apache-2.0 License - License URL: https://github.com/spf13/afero/blob/v1.10.0/LICENSE.txt
 
                                 Apache License
                            Version 2.0, January 2004
@@ -11371,33 +11405,6 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 -----
 
-The following software may be included in this product: github.com/spf13/jwalterweatherman (Version: v1.1.0). This software contains the following license and notice below:
-
-MIT License - License URL: https://github.com/spf13/jwalterweatherman/blob/v1.1.0/LICENSE
-
-The MIT License (MIT)
-
-Copyright (c) 2014 Steve Francia
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
------
-
 The following software may be included in this product: github.com/spf13/pflag (Version: v1.0.5). This software contains the following license and notice below:
 
 BSD-3-Clause License - License URL: https://github.com/spf13/pflag/blob/v1.0.5/LICENSE
@@ -11433,9 +11440,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 -----
 
-The following software may be included in this product: github.com/spf13/viper (Version: v1.16.0). This software contains the following license and notice below:
+The following software may be included in this product: github.com/spf13/viper (Version: v1.17.0). This software contains the following license and notice below:
 
-MIT License - License URL: https://github.com/spf13/viper/blob/v1.16.0/LICENSE
+MIT License - License URL: https://github.com/spf13/viper/blob/v1.17.0/LICENSE
 
 The MIT License (MIT)
 
@@ -11488,9 +11495,9 @@ SOFTWARE.
 
 -----
 
-The following software may be included in this product: github.com/subosito/gotenv (Version: v1.4.2). This software contains the following license and notice below:
+The following software may be included in this product: github.com/subosito/gotenv (Version: v1.6.0). This software contains the following license and notice below:
 
-MIT License - License URL: https://github.com/subosito/gotenv/blob/v1.4.2/LICENSE
+MIT License - License URL: https://github.com/subosito/gotenv/blob/v1.6.0/LICENSE
 
 The MIT License (MIT)
 
@@ -13679,43 +13686,9 @@ THE SOFTWARE.
 
 -----
 
-The following software may be included in this product: golang.org/x/crypto (Version: v0.13.0). This software contains the following license and notice below:
+The following software may be included in this product: golang.org/x/crypto (Version: v0.14.0). This software contains the following license and notice below:
 
-BSD-3-Clause License - License URL: https://cs.opensource.google/go/x/crypto/+/v0.13.0:LICENSE
-
-Copyright (c) 2009 The Go Authors. All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are
-met:
-
-   * Redistributions of source code must retain the above copyright
-notice, this list of conditions and the following disclaimer.
-   * Redistributions in binary form must reproduce the above
-copyright notice, this list of conditions and the following disclaimer
-in the documentation and/or other materials provided with the
-distribution.
-   * Neither the name of Google Inc. nor the names of its
-contributors may be used to endorse or promote products derived from
-this software without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
------
-
-The following software may be included in this product: golang.org/x/exp (Version: v0.0.0-20230905200255-921286631fa9). This software contains the following license and notice below:
-
-BSD-3-Clause License - License URL: https://cs.opensource.google/go/x/exp/+/92128663:LICENSE
+BSD-3-Clause License - License URL: https://cs.opensource.google/go/x/crypto/+/v0.14.0:LICENSE
 
 Copyright (c) 2009 The Go Authors. All rights reserved.
 
@@ -13747,43 +13720,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 -----
 
-The following software may be included in this product: golang.org/x/net (Version: v0.15.0). This software contains the following license and notice below:
+The following software may be included in this product: golang.org/x/exp (Version: v0.0.0-20231006140011-7918f672742d). This software contains the following license and notice below:
 
-BSD-3-Clause License - License URL: https://cs.opensource.google/go/x/net/+/v0.15.0:LICENSE
-
-Copyright (c) 2009 The Go Authors. All rights reserved.
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted provided that the following conditions are
-met:
-
-   * Redistributions of source code must retain the above copyright
-notice, this list of conditions and the following disclaimer.
-   * Redistributions in binary form must reproduce the above
-copyright notice, this list of conditions and the following disclaimer
-in the documentation and/or other materials provided with the
-distribution.
-   * Neither the name of Google Inc. nor the names of its
-contributors may be used to endorse or promote products derived from
-this software without specific prior written permission.
-
-THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
------
-
-The following software may be included in this product: golang.org/x/oauth2 (Version: v0.12.0). This software contains the following license and notice below:
-
-BSD-3-Clause License - License URL: https://cs.opensource.google/go/x/oauth2/+/v0.12.0:LICENSE
+BSD-3-Clause License - License URL: https://cs.opensource.google/go/x/exp/+/7918f672:LICENSE
 
 Copyright (c) 2009 The Go Authors. All rights reserved.
 
@@ -13815,9 +13754,77 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 -----
 
-The following software may be included in this product: golang.org/x/sys (Version: v0.12.0). This software contains the following license and notice below:
+The following software may be included in this product: golang.org/x/net (Version: v0.17.0). This software contains the following license and notice below:
 
-BSD-3-Clause License - License URL: https://cs.opensource.google/go/x/sys/+/v0.12.0:LICENSE
+BSD-3-Clause License - License URL: https://cs.opensource.google/go/x/net/+/v0.17.0:LICENSE
+
+Copyright (c) 2009 The Go Authors. All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
+
+   * Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+   * Redistributions in binary form must reproduce the above
+copyright notice, this list of conditions and the following disclaimer
+in the documentation and/or other materials provided with the
+distribution.
+   * Neither the name of Google Inc. nor the names of its
+contributors may be used to endorse or promote products derived from
+this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+-----
+
+The following software may be included in this product: golang.org/x/oauth2 (Version: v0.13.0). This software contains the following license and notice below:
+
+BSD-3-Clause License - License URL: https://cs.opensource.google/go/x/oauth2/+/v0.13.0:LICENSE
+
+Copyright (c) 2009 The Go Authors. All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
+
+   * Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+   * Redistributions in binary form must reproduce the above
+copyright notice, this list of conditions and the following disclaimer
+in the documentation and/or other materials provided with the
+distribution.
+   * Neither the name of Google Inc. nor the names of its
+contributors may be used to endorse or promote products derived from
+this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+-----
+
+The following software may be included in this product: golang.org/x/sys (Version: v0.13.0). This software contains the following license and notice below:
+
+BSD-3-Clause License - License URL: https://cs.opensource.google/go/x/sys/+/v0.13.0:LICENSE
 
 Copyright (c) 2009 The Go Authors. All rights reserved.
 
@@ -13883,9 +13890,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 -----
 
-The following software may be included in this product: google.golang.org/genproto/googleapis/rpc/status (Version: v0.0.0-20230711160842-782d3b101e98). This software contains the following license and notice below:
+The following software may be included in this product: google.golang.org/genproto/googleapis/rpc/status (Version: v0.0.0-20230920204549-e6e6cdab5c13). This software contains the following license and notice below:
 
-Apache-2.0 License - License URL: https://github.com/googleapis/go-genproto/blob/782d3b101e98/googleapis/rpc/LICENSE
+Apache-2.0 License - License URL: https://github.com/googleapis/go-genproto/blob/e6e6cdab5c13/googleapis/rpc/LICENSE
 
 
                                  Apache License
@@ -14092,9 +14099,9 @@ Apache-2.0 License - License URL: https://github.com/googleapis/go-genproto/blob
 
 -----
 
-The following software may be included in this product: google.golang.org/grpc (Version: v1.58.2). This software contains the following license and notice below:
+The following software may be included in this product: google.golang.org/grpc (Version: v1.58.3). This software contains the following license and notice below:
 
-Apache-2.0 License - License URL: https://github.com/grpc/grpc-go/blob/v1.58.2/LICENSE
+Apache-2.0 License - License URL: https://github.com/grpc/grpc-go/blob/v1.58.3/LICENSE
 
 
                                  Apache License
