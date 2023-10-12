@@ -91,7 +91,7 @@
 
 ### Required Tools
 
-* Golang 1.20 or higher
+* Golang 1.21 or higher
     * The assumption is that your `PATH` contains `$GOPATH/bin`.
 * `yarn`
 * [`protoc`](https://grpc.io/docs/protoc-installation/)
