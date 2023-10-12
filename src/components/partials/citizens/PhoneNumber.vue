@@ -49,19 +49,19 @@ function doCall(): void {
     <div class="inline-flex items-center">
         <span v-if="number === undefined">N/A</span>
         <template v-else>
-            <template v-if="hideNumber === undefined || !hideNumber">
-                <span v-for="part in (number ?? '').match(/.{1,3}/g)" class="mr-1">{{ part }}</span>
-            </template>
-
             <button
                 v-if="showIcon === undefined || showIcon"
                 type="button"
-                class="ml-1 flex-initial inline-flex items-center text-primary-500 hover:text-primary-400"
+                class="mr-1 flex-initial inline-flex items-center text-primary-500 hover:text-primary-400"
                 @click="doCall"
             >
                 <PhoneIcon class="h-auto" :class="width" aria-hidden="true" />
                 <span v-if="showLabel" class="ml-1">{{ $t('common.call') }}</span>
             </button>
+
+            <template v-if="hideNumber === undefined || !hideNumber">
+                <span v-for="part in (number ?? '').match(/.{1,3}/g)" class="mr-1">{{ part }}</span>
+            </template>
         </template>
     </div>
 </template>

@@ -95,7 +95,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
 
 <template>
     <TransitionRoot as="template" :show="open">
-        <Dialog as="div" class="relative z-10" @close="$emit('close')">
+        <Dialog as="div" class="relative z-30" @close="$emit('close')">
             <TransitionChild
                 as="template"
                 enter="ease-out duration-300"
@@ -108,7 +108,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                 <div class="fixed inset-0 transition-opacity bg-opacity-75 bg-base-900" />
             </TransitionChild>
 
-            <div class="fixed inset-0 z-10 overflow-y-auto">
+            <div class="fixed inset-0 z-30 overflow-y-auto">
                 <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
                     <TransitionChild
                         as="template"
@@ -120,7 +120,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                         leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                     >
                         <DialogPanel
-                            class="relative px-4 pt-5 pb-4 overflow-hidden text-left transition-all transform rounded-lg bg-base-800 text-neutral sm:my-8 sm:w-full sm:max-w-2xl sm:p-6 h-96"
+                            class="relative px-4 pt-5 pb-4 overflow-hidden text-left transition-all transform rounded-lg bg-base-800 text-neutral sm:my-8 w-full sm:max-w-2xl sm:p-6 h-96"
                         >
                             <div class="absolute right-0 top-0 pr-4 pt-4 block">
                                 <button
@@ -168,7 +168,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                         <VeeErrorMessage name="trafficPoints" as="p" class="mt-2 text-sm text-error-400" />
                                     </div>
                                 </div>
-                                <div class="absolute bottom-0 w-full left-0 sm:flex">
+                                <div class="absolute bottom-0 w-full left-0 flex">
                                     <button
                                         type="button"
                                         class="flex-1 rounded-bd bg-base-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-base-400"

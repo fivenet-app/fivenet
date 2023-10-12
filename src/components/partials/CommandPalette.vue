@@ -304,7 +304,7 @@ async function onSelect(item: any): Promise<any> {
 
 <template>
     <TransitionRoot :show="open" as="template" @after-leave="rawQuery = ''" appear>
-        <Dialog as="div" class="relative z-10" @close="open = false">
+        <Dialog as="div" class="relative z-30" @close="open = false">
             <TransitionChild
                 as="template"
                 enter="ease-out duration-300"
@@ -317,7 +317,7 @@ async function onSelect(item: any): Promise<any> {
                 <div class="fixed inset-0 bg-gray-900 bg-opacity-25 transition-opacity" />
             </TransitionChild>
 
-            <div class="fixed inset-0 z-10 overflow-y-auto p-4 sm:p-6 md:p-20">
+            <div class="fixed inset-0 z-30 overflow-y-auto p-4 sm:p-6 md:p-20">
                 <TransitionChild
                     as="template"
                     enter="ease-out duration-300"

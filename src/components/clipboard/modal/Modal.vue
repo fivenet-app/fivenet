@@ -19,7 +19,7 @@ defineEmits<{
 
 <template>
     <TransitionRoot as="template" :show="open">
-        <Dialog as="div" class="relative z-10" @close="$emit('close')">
+        <Dialog as="div" class="relative z-30" @close="$emit('close')">
             <TransitionChild
                 as="template"
                 enter="ease-out duration-300"
@@ -32,7 +32,7 @@ defineEmits<{
                 <div class="fixed inset-0 transition-opacity bg-opacity-75 bg-base-900" />
             </TransitionChild>
 
-            <div class="fixed inset-0 z-10 overflow-y-auto">
+            <div class="fixed inset-0 z-30 overflow-y-auto">
                 <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
                     <TransitionChild
                         as="template"
@@ -44,7 +44,7 @@ defineEmits<{
                         leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
                     >
                         <DialogPanel
-                            class="relative px-4 pt-5 pb-4 overflow-hidden text-left transition-all transform rounded-lg bg-base-800 text-neutral sm:my-8 sm:w-full sm:max-w-6xl sm:p-6 my-auto"
+                            class="relative px-4 pt-5 pb-4 overflow-hidden text-left transition-all transform rounded-lg bg-base-800 text-neutral sm:my-8 w-full sm:max-w-6xl sm:p-6"
                         >
                             <div>
                                 <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-base-700">

@@ -129,7 +129,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
 
 <template>
     <TransitionRoot as="template" :show="open">
-        <Dialog as="div" class="relative z-10" @close="$emit('close')">
+        <Dialog as="div" class="relative z-30" @close="$emit('close')">
             <TransitionChild
                 as="template"
                 enter="ease-out duration-300"
@@ -142,7 +142,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                 <div class="fixed inset-0 transition-opacity bg-opacity-75 bg-base-900" />
             </TransitionChild>
 
-            <div class="fixed inset-0 z-10 overflow-y-auto">
+            <div class="fixed inset-0 z-30 overflow-y-auto">
                 <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
                     <TransitionChild
                         as="template"

@@ -17,7 +17,7 @@ const { livemap } = storeToRefs(settingsStore);
 
 <template>
     <TransitionRoot as="template" :show="open">
-        <Dialog as="div" class="relative z-10" @close="$emit('close')">
+        <Dialog as="div" class="relative z-30" @close="$emit('close')">
             <TransitionChild
                 as="template"
                 enter="ease-out duration-300"
@@ -30,7 +30,7 @@ const { livemap } = storeToRefs(settingsStore);
                 <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
             </TransitionChild>
 
-            <div class="fixed inset-0 z-10 overflow-y-auto">
+            <div class="fixed inset-0 z-30 overflow-y-auto">
                 <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
                     <TransitionChild
                         as="template"

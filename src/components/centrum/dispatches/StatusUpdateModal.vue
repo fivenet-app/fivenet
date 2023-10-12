@@ -97,7 +97,7 @@ watch(props, () => {
 
 <template>
     <TransitionRoot as="template" :show="open">
-        <Dialog as="div" class="relative z-20" @close="$emit('close')">
+        <Dialog as="div" class="relative z-30" @close="$emit('close')">
             <div class="fixed inset-0" />
 
             <div class="fixed inset-0 overflow-hidden">
