@@ -470,8 +470,12 @@
                     "no_expiration": "Kein Verfallsdatum."
                 },
                 "CreateOrUpdateModal": {
-                    "create_title": "Erstelle neuen Führungsregister Eintrag",
-                    "update_title": "Aktualisiere Führungsregister Eintrag"
+                    "create": {
+                        "title": "Erstelle neuen Führungsregister Eintrag"
+                    },
+                    "update": {
+                        "title": "Aktualisiere Führungsregister Eintrag"
+                    }
                 }
             },
             "timeclock": {

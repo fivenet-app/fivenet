@@ -195,12 +195,11 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                         <div class="bg-primary-700 px-4 py-6 sm:px-6">
                                             <div class="flex items-center justify-between">
                                                 <DialogTitle class="text-base font-semibold leading-6 text-neutral">
-                                                    <template v-if="entry === undefined">
-                                                        {{ $t('components.jobs.conduct.CreateOrUpdateModal.create_title') }}
-                                                    </template>
-                                                    <template v-else>
-                                                        {{ $t('components.jobs.conduct.CreateOrUpdateModal.update_title') }}
-                                                    </template>
+                                                    {{
+                                                        entry === undefined
+                                                            ? $t('components.jobs.conduct.CreateOrUpdateModal.create.title')
+                                                            : $t('components.jobs.conduct.CreateOrUpdateModal.update.title')
+                                                    }}
                                                 </DialogTitle>
                                                 <div class="ml-3 flex h-7 items-center">
                                                     <button
@@ -212,11 +211,6 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                         <CloseIcon class="h-6 w-6" aria-hidden="true" />
                                                     </button>
                                                 </div>
-                                            </div>
-                                            <div class="mt-1">
-                                                <p class="text-sm text-primary-300">
-                                                    {{ $t('components.centrum.create_dispatch.sub_title') }}
-                                                </p>
                                             </div>
                                         </div>
                                         <div class="flex flex-1 flex-col justify-between">

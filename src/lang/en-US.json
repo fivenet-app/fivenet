@@ -470,8 +470,13 @@
                     "no_expiration": "No Expiration."
                 },
                 "CreateOrUpdateModal": {
-                    "create_title": "Create Conduct Entry",
-                    "update_title": "Update Conduct Entry"
+                    "create": {
+                        "title": "Create Conduct Entry"
+                    },
+                    "update": {
+                        "title": "Update Conduct Entry"
+
+                    }
                 }
             },
             "timeclock": {
