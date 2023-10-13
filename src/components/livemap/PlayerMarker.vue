@@ -36,7 +36,7 @@ const inverseColor = computed(() => hexToRgb(props.marker.unit?.color ?? '#00000
 
 const hasUnit = computed(() => props.showUnitNames && props.marker.unit !== undefined);
 const iconAnchor = computed<L.PointExpression | undefined>(() => [props.size / 2, props.size * (hasUnit.value ? 1.8 : 0.95)]);
-const popupAnchor: L.PointExpression = [0, -(props.size * 1.7)];
+const popupAnchor = computed<L.PointExpression>(() => (hasUnit.value ? [0, -(props.size * 1.7)] : [0, -(props.size * 0.8)]));
 </script>
 
 <template>
