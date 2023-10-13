@@ -60,12 +60,14 @@ export const useCentrumStore = defineStore('centrum', {
         getSortedUnits: (state: CentrumState) => {
             const filtered: Unit[] = [];
             state.units.forEach((u) => filtered.push(u));
-            return filtered.sort(
-                (a, b) =>
-                    statusOrder.indexOf(b.status?.status ?? 0) -
-                    statusOrder.indexOf(a.status?.status ?? 0) +
-                    b.name.localeCompare(a.name),
-            );
+            return filtered
+                .sort(
+                    (a, b) =>
+                        statusOrder.indexOf(b.status?.status ?? 0) -
+                        statusOrder.indexOf(a.status?.status ?? 0) +
+                        b.name.localeCompare(a.name),
+                )
+                .reverse();
         },
     },
     actions: {
