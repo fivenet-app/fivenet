@@ -114,7 +114,7 @@ const sortedUnits = computed(() => getSortedUnits.value);
                                                         <div class="flex-1 form-control">
                                                             <div class="grid grid-cols-3 gap-4">
                                                                 <button
-                                                                    v-for="unit in sortedUnits.reverse()"
+                                                                    v-for="unit in sortedUnits"
                                                                     :key="unit.name"
                                                                     type="button"
                                                                     :disabled="unit.users.length === 0"
