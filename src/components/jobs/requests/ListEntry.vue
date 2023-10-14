@@ -149,7 +149,7 @@ const open = ref(false);
                 >
                     <template v-if="request.closed">
                         <LockOpenVariantIcon class="w-5 h-5 text-success-500" aria-hidden="true" />
-                        {{ $t('common.open', 2) }}
+                        {{ $t('common.open', 1) }}
                     </template>
                     <template v-else>
                         <LockIcon class="w-5 h-5 text-error-400" aria-hidden="true" />

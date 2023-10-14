@@ -569,6 +569,7 @@
         "source": "Quelle",
         "date": "Datum",
         "comment": "Kommentar | Kommentare",
+        "comments": "Keine Kommentare | {n} Kommentar | {n} Kommentare",
         "employee": "Mitarbeiter",
         "dispatch": "Einsatz | Einsätze",
         "latitude": "Breitengrad",

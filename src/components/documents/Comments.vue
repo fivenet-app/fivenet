@@ -28,6 +28,7 @@ const props = withDefaults(
 
 const emit = defineEmits<{
     (e: 'counted', count: bigint): void;
+    (e: 'newComment'): void;
 }>();
 
 const offset = ref(0n);
@@ -88,6 +89,8 @@ async function addComment(documentId: bigint, values: FormData): Promise<void> {
             data.value.comments.unshift(comment);
 
             resetForm();
+
+            emit('newComment');
 
             return res();
         } catch (e) {

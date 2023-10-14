@@ -47,7 +47,7 @@ func (p *Perms) getRolePermissionsFromCache(roleIds []uint64) []*cachePerm {
 		}
 
 		permsRoleMap.Range(func(key uint64, value bool) bool {
-			// Only allow the perm "value" to be set once (because role perms inheritance works like that)
+			// Only allow the perm "value" to be set once (because that's how role perms inheritance works)
 			if _, ok := perms[key]; !ok {
 				perms[key] = value
 			}

@@ -39,7 +39,7 @@ const notifications = useNotificatorStore();
 const { t } = useI18n();
 
 const access = ref<undefined | DocumentAccess>(undefined);
-const commentCount = ref(-1n);
+const commentCount = ref<bigint | undefined>();
 const tabs = ref<{ name: string; icon: DefineComponent }[]>([
     { name: t('common.relation', 2), icon: markRaw(AccountMultipleIcon) },
     { name: t('common.reference', 2), icon: markRaw(FileDocumentIcon) },
@@ -107,11 +107,19 @@ async function toggleDocument(id: bigint, closed: boolean): Promise<void> {
 
             doc.value!.closed = closed;
 
-            notifications.dispatchNotification({
-                title: { key: `notifications.document_toggled.${!closed ? 'open' : 'closed'}.title`, parameters: {} },
-                content: { key: `notifications.document_toggled.${!closed ? 'open' : 'closed'}.content`, parameters: {} },
-                type: 'success',
-            });
+            if (!closed) {
+                notifications.dispatchNotification({
+                    title: { key: `notifications.document_toggled.open.title`, parameters: {} },
+                    content: { key: `notifications.document_toggled.open.content`, parameters: {} },
+                    type: 'success',
+                });
+            } else {
+                notifications.dispatchNotification({
+                    title: { key: `notifications.document_toggled.closed.title`, parameters: {} },
+                    content: { key: `notifications.document_toggled.closed.content`, parameters: {} },
+                    type: 'success',
+                });
+            }
 
             return res();
         } catch (e) {
@@ -194,7 +202,7 @@ onConfirm(async (id: bigint) => deleteDocument(id));
                                     >
                                         <template v-if="doc?.closed">
                                             <LockOpenVariantIcon class="w-5 h-5 text-success-500" aria-hidden="true" />
-                                            {{ $t('common.open', 2) }}
+                                            {{ $t('common.open', 1) }}
                                         </template>
                                         <template v-else>
                                             <LockIcon class="w-5 h-5 text-error-400" aria-hidden="true" />
@@ -269,8 +277,11 @@ onConfirm(async (id: bigint) => deleteDocument(id));
                             >
                                 <CommentTextMultipleIcon class="w-5 h-auto" aria-hidden="true" />
                                 <span class="text-sm font-medium text-primary-700">
-                                    {{ commentCount >= 0 ? commentCount : '?' }}
-                                    {{ $t('common.comment', 2) }}
+                                    {{
+                                        commentCount
+                                            ? $t('common.comments', parseInt(commentCount?.toString()))
+                                            : '? ' + $t('common.comment', 2)
+                                    }}
                                 </span>
                             </div>
                         </div>
@@ -368,7 +379,12 @@ onConfirm(async (id: bigint) => deleteDocument(id));
                             <h2 class="text-lg font-semibold text-neutral">
                                 {{ $t('common.comment', 2) }}
                             </h2>
-                            <Comments :document-id="documentId" :closed="doc?.closed" @counted="commentCount = $event" />
+                            <Comments
+                                :document-id="documentId"
+                                :closed="doc?.closed"
+                                @counted="commentCount = $event"
+                                @new-comment="commentCount && commentCount++"
+                            />
                         </div>
                     </div>
                 </div>

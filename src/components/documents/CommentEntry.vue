@@ -133,7 +133,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                         </button>
                     </div>
                 </div>
-                <p class="text-sm break-words">
+                <p class="text-sm break-words whitespace-pre">
                     {{ comment.comment }}
                 </p>
             </div>

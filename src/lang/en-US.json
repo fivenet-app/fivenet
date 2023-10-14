@@ -570,6 +570,7 @@
         "source": "Source",
         "date": "Date",
         "comment": "Comment | Comments",
+        "comments": "No Comments | {n} Comment | {n} Comments",
         "employee": "Employee | Employees",
         "dispatch": "Dispatch | Dispatches",
         "latitude": "Latitude",
