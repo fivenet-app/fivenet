@@ -376,7 +376,7 @@ func (s *Server) updateDispatchAssignments(ctx context.Context, job string, user
 					}); err != nil {
 						return ErrFailedQuery
 					}
-					continue
+					break
 				}
 			}
 		}
