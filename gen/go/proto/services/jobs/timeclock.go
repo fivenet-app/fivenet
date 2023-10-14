@@ -139,13 +139,8 @@ const TimeclockStatsSpan = 7 * 24 * time.Hour
 func (s *Server) TimeclockStats(ctx context.Context, req *TimeclockStatsRequest) (*TimeclockStatsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	now := time.Now()
-
 	condition := tTimeClock.Job.EQ(jet.String(userInfo.Job)).
-		AND(tTimeClock.UserID.EQ(jet.Int32(userInfo.UserId))).
-		AND(tTimeClock.Date.GT_EQ(
-			jet.TimestampT(now.Add(-TimeclockStatsSpan)),
-		))
+		AND(tTimeClock.UserID.EQ(jet.Int32(userInfo.UserId)))
 
 	stats, err := s.getTimeclockstats(ctx, condition)
 	if err != nil {
