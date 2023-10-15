@@ -2,6 +2,7 @@
 import { Disclosure, DisclosureButton, DisclosurePanel, Switch } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { watchDebounced } from '@vueuse/core';
+import { useRouteHash } from '@vueuse/router';
 import { vMaska } from 'maska';
 import { ChevronDownIcon } from 'mdi-vue3';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
@@ -13,14 +14,22 @@ import ListEntry from './ListEntry.vue';
 
 const { $grpc } = useNuxtApp();
 
-const query = ref<{ name: string; phoneNumber?: string; wanted?: boolean; trafficPoints?: number; dateofbirth?: string }>({
+const query = ref<{ name?: string; phoneNumber?: string; wanted?: boolean; trafficPoints?: number; dateofbirth?: string }>({
     name: '',
 });
 const offset = ref(0n);
 
+const hash = useRouteHash();
+if (hash.value !== undefined && hash.value !== null) {
+    query.value = unmarshalHashToObject(hash.value as string);
+}
+
 const { data, pending, refresh, error } = useLazyAsyncData(
     `citizens-${offset.value}-${query.value.name}-${query.value.wanted}-${query.value.phoneNumber}`,
-    () => listCitizens(),
+    () => {
+        hash.value = marshalObjectToHash(query.value);
+        return listCitizens();
+    },
 );
 
 async function listCitizens(): Promise<ListCitizensResponse> {
@@ -30,7 +39,7 @@ async function listCitizens(): Promise<ListCitizensResponse> {
                 pagination: {
                     offset: offset.value,
                 },
-                searchName: query.value.name,
+                searchName: query.value.name ?? '',
             };
             if (query.value.wanted) {
                 req.wanted = query.value.wanted;

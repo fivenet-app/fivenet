@@ -2,6 +2,7 @@
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { watchDebounced } from '@vueuse/core';
+import { useRouteHash } from '@vueuse/router';
 import { CarSearchIcon, CheckIcon } from 'mdi-vue3';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
@@ -29,30 +30,24 @@ const props = withDefaults(
     },
 );
 
-const completorStore = useCompletorStore();
-
-const queryChar = ref('');
-const selectedChar = ref<undefined | UserShort>(undefined);
-
-const { data: chars, refresh: charsRefresh } = useLazyAsyncData(
-    `chars-${queryChar.value}`,
-    () =>
-        completorStore.completeCitizens({
-            search: queryChar.value,
-        }),
-    {
-        immediate: false,
-    },
-);
-
-const query = ref<{ plate: string; model: string; user_id: number }>({
+const query = ref<{ plate: string; model?: string; user_id?: number }>({
     plate: '',
-    model: '',
-    user_id: 0,
 });
 const offset = ref(0n);
 
-const { data, pending, refresh, error } = useLazyAsyncData(`vehicles-${offset.value}`, () => listVehicles());
+const hash = useRouteHash();
+if (!props.hideOwner) {
+    if (hash.value !== undefined && hash.value !== null) {
+        query.value = unmarshalHashToObject(hash.value as string);
+    }
+}
+
+const { data, pending, refresh, error } = useLazyAsyncData(`vehicles-${offset.value}`, () => {
+    if (!props.hideOwner) {
+        hash.value = marshalObjectToHash(query.value);
+    }
+    return listVehicles();
+});
 
 async function listVehicles(): Promise<ListVehiclesResponse> {
     return new Promise(async (res, rej) => {
@@ -82,6 +77,22 @@ function focusSearch(): void {
         searchInput.value.focus();
     }
 }
+
+const completorStore = useCompletorStore();
+
+const queryChar = ref('');
+const selectedChar = ref<undefined | UserShort>(undefined);
+
+const { data: chars, refresh: charsRefresh } = useLazyAsyncData(
+    `chars-${queryChar.value}`,
+    () =>
+        completorStore.completeCitizens({
+            search: queryChar.value,
+        }),
+    {
+        immediate: false,
+    },
+);
 
 watch(offset, async () => refresh());
 watchDebounced(query.value, async () => refresh(), {

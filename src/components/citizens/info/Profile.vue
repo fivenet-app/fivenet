@@ -39,6 +39,7 @@ const trafficPointsModal = ref(false);
     <WantedModal :open="setWantedModal" @close="setWantedModal = false" :user="user" />
     <JobModal :open="setJobModal" @close="setJobModal = false" :user="user" />
     <TrafficPointsModal :open="trafficPointsModal" @close="trafficPointsModal = false" :user="user" />
+
     <div class="w-full mx-auto max-w-7xl grow lg:flex xl:px-2">
         <div class="flex-1 xl:flex">
             <div class="px-2 py-3 xl:flex-1">

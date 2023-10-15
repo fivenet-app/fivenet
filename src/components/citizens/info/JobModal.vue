@@ -13,7 +13,7 @@ import {
 } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { max, min, required } from '@vee-validate/rules';
-import { useThrottleFn, watchDebounced } from '@vueuse/core';
+import { useThrottleFn } from '@vueuse/core';
 import { CheckIcon, CloseIcon, LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import { useCompletorStore } from '~/store/completor';
@@ -46,10 +46,15 @@ watch(jobs, () => {
     selectedJobGrade.value = selectedJob.value?.grades.find((g) => g.grade === props.user.jobGrade);
 });
 
-watchDebounced(queryJob, async () => await listJobs(), {
-    debounce: 600,
-    maxWait: 1750,
-});
+const filteredJobs = computed(() =>
+    jobs.value.filter(
+        (j) =>
+            j.name.toLowerCase().includes(queryJob.value.toLowerCase()) ||
+            j.label.toLowerCase().includes(queryJob.value.toLowerCase()),
+    ),
+);
+
+const queryJobGrade = ref<string>('');
 
 async function setJobProp(values: FormData): Promise<void> {
     return new Promise(async (res, rej) => {
@@ -190,11 +195,11 @@ onBeforeMount(async () => listJobs());
                                                 </ComboboxButton>
 
                                                 <ComboboxOptions
-                                                    v-if="jobs"
+                                                    v-if="filteredJobs"
                                                     class="absolute z-20 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-44 sm:text-sm"
                                                 >
                                                     <ComboboxOption
-                                                        v-for="job in jobs"
+                                                        v-for="job in filteredJobs"
                                                         :key="job.name"
                                                         :value="job"
                                                         as="char"
@@ -234,18 +239,20 @@ onBeforeMount(async () => listJobs());
                                                 <ComboboxButton as="div">
                                                     <ComboboxInput
                                                         class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                        @change="queryJob = $event.target.value"
+                                                        @change="queryJobGrade = $event.target.value"
                                                         :display-value="(grade: any) => grade.label"
                                                         autocomplete="off"
                                                     />
                                                 </ComboboxButton>
 
                                                 <ComboboxOptions
-                                                    v-if="jobs"
+                                                    v-if="selectedJob"
                                                     class="absolute z-20 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-44 sm:text-sm"
                                                 >
                                                     <ComboboxOption
-                                                        v-for="grade in selectedJob?.grades"
+                                                        v-for="grade in selectedJob?.grades.filter((g) =>
+                                                            g.label.toLowerCase().includes(queryJobGrade.toLowerCase()),
+                                                        )"
                                                         :key="grade.grade"
                                                         :value="grade"
                                                         as="char"

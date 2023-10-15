@@ -14,6 +14,7 @@ import {
     ListboxOptions,
 } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
+import { useRouteHash } from '@vueuse/router';
 import { watchDebounced } from '@vueuse/shared';
 import { CheckIcon, ChevronDownIcon } from 'mdi-vue3';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
@@ -43,23 +44,31 @@ const openclose: OpenClose[] = [
 
 const query = ref<{
     title: string;
-    category?: Category;
     character?: UserShort;
     from?: string;
     to?: string;
-    closed?: OpenClose;
+    closed?: boolean;
 }>({
     title: '',
-    closed: openclose[0],
 });
 const offset = ref(0n);
 
+const hash = useRouteHash();
+if (hash.value !== undefined && hash.value !== null) {
+    query.value = unmarshalHashToObject(hash.value as string);
+}
+
+const queryCategory = ref<Category | undefined>();
+const queryClosed = ref<OpenClose>(openclose[0]);
 const entriesCategories = ref<Category[]>([]);
 const queryCategories = ref<string>('');
 const entriesCitizens = ref<UserShort[]>([]);
 const queryCitizens = ref<string>('');
 
-const { data, pending, refresh, error } = useLazyAsyncData(`documents-${offset.value}`, () => listDocuments());
+const { data, pending, refresh, error } = useLazyAsyncData(`documents-${offset.value}`, () => {
+    hash.value = marshalObjectToHash(query.value);
+    return listDocuments();
+});
 
 async function listDocuments(): Promise<ListDocumentsResponse> {
     return new Promise(async (res, rej) => {
@@ -68,12 +77,16 @@ async function listDocuments(): Promise<ListDocumentsResponse> {
                 offset: offset.value,
             },
             orderBy: [],
-            search: query.value.title,
+            search: query.value.title ?? '',
             categoryIds: [],
             creatorIds: [],
         };
-        if (query.value.category) req.categoryIds.push(query.value.category.id);
-        if (query.value.character) req.creatorIds.push(query.value.character.userId);
+        if (queryCategory.value) {
+            req.categoryIds.push(queryCategory.value.id);
+        }
+        if (query.value.character) {
+            req.creatorIds.push(query.value.character.userId);
+        }
         if (query.value.from) {
             req.from = {
                 timestamp: google_protobuf_timestamp_pb.Timestamp.fromDate(fromString(query.value.from)!),
@@ -86,7 +99,7 @@ async function listDocuments(): Promise<ListDocumentsResponse> {
         }
         if (query.value.closed) {
             if (query.value.closed !== undefined) {
-                req.closed = query.value.closed.closed;
+                req.closed = query.value.closed;
             }
         }
 
@@ -132,6 +145,8 @@ watchDebounced(
         maxWait: 1400,
     },
 );
+
+watch(queryClosed, () => (query.value.closed = queryClosed.value.closed));
 
 onMounted(async () => findCategories());
 
@@ -202,7 +217,7 @@ const templatesOpen = ref(false);
                                         <label for="search" class="block text-sm font-medium leading-6 text-neutral">
                                             {{ $t('common.category', 1) }}
                                         </label>
-                                        <Combobox as="div" v-model="query.category" class="mt-2" nullable>
+                                        <Combobox as="div" v-model="queryCategory" class="mt-2" nullable>
                                             <div class="relative">
                                                 <ComboboxButton as="div">
                                                     <ComboboxInput
@@ -333,13 +348,13 @@ const templatesOpen = ref(false);
                                         <label for="search" class="block text-sm font-medium leading-6 text-neutral">
                                             {{ $t('common.close', 2) }}?
                                         </label>
-                                        <Listbox as="div" class="mt-2" v-model="query.closed">
+                                        <Listbox as="div" class="mt-2" v-model="queryClosed">
                                             <div class="relative">
                                                 <ListboxButton
                                                     class="block pl-3 text-left w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                 >
                                                     <span class="block truncate">
-                                                        {{ query.closed?.label }}
+                                                        {{ queryClosed?.label }}
                                                     </span>
                                                     <span
                                                         class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none"

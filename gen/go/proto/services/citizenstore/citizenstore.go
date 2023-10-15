@@ -197,18 +197,13 @@ func (s *Server) ListCitizens(ctx context.Context, req *ListCitizensRequest) (*L
 
 	jobInfoFn := s.enricher.EnrichJobInfoFunc(userInfo)
 	for i := 0; i < len(resp.Users); i++ {
-		jobInfoFn(resp.Users[i])
+		if resp.Users[i].Props != nil && resp.Users[i].Props.JobName != nil && resp.Users[i].Props.JobGradeNumber != nil {
+			resp.Users[i].Job = *resp.Users[i].Props.JobName
+			resp.Users[i].JobGrade = *resp.Users[i].Props.JobGradeNumber
 
-		if resp.Users[i].Job == s.unemployedJob {
-			// Only set the user's job from the user props when it isn't a public job
-			if resp.Users[i].Props != nil && resp.Users[i].Props.JobName != nil {
-				resp.Users[i].Job = *resp.Users[i].Props.JobName
-				if resp.Users[i].Props.JobGradeNumber != nil {
-					resp.Users[i].JobGrade = *resp.Users[i].Props.JobGradeNumber
-				} else {
-					resp.Users[i].JobGrade = 0
-				}
-			}
+			s.enricher.EnrichJobInfo(resp.Users[i])
+		} else {
+			jobInfoFn(resp.Users[i])
 		}
 	}
 
@@ -259,8 +254,7 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 		case "UserProps.Wanted":
 			selectors = append(selectors, tUserProps.Wanted)
 		case "UserProps.Job":
-			selectors = append(selectors, tUserProps.Job)
-			selectors = append(selectors, tUserProps.JobGrade)
+			selectors = append(selectors, tUserProps.Job, tUserProps.JobGrade)
 		case "UserProps.TrafficInfractionPoints":
 			selectors = append(selectors, tUserProps.TrafficInfractionPoints)
 		case "UserProps.OpenFines":
@@ -320,17 +314,14 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 		resp.User.JobGrade = s.unemployedJobGrade
 	}
 
-	if resp.User.Props != nil {
-		if resp.User.Props.JobName != nil {
-			resp.User.Job = *resp.User.Props.JobName
-		}
+	if resp.User.Props != nil && resp.User.Props.JobName != nil && resp.User.Props.JobGradeNumber != nil {
+		resp.User.Job = *resp.User.Props.JobName
+		resp.User.JobGrade = *resp.User.Props.JobGradeNumber
 
-		if resp.User.Props.JobGradeNumber != nil {
-			resp.User.JobGrade = *resp.User.Props.JobGradeNumber
-		}
+		s.enricher.EnrichJobInfo(resp.User)
+	} else {
+		s.enricher.EnrichJobInfoSafe(userInfo, resp.User)
 	}
-
-	s.enricher.EnrichJobInfoSafe(userInfo, resp.User)
 
 	// Check if user can see licenses and fetch them
 	if utils.InSlice(fields, "Licenses") {
