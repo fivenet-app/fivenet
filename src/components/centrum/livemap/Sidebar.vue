@@ -230,7 +230,11 @@ const open = ref(false);
                 >
                     <ToggleSwitchIcon v-if="open" class="h-6 w-6" aria-hidden="true" />
                     <span v-else class="inline-flex items-center justify-center">
-                        <ToggleSwitchOffIcon class="h-6 w-6 animate-pulse" aria-hidden="true" />
+                        <ToggleSwitchOffIcon
+                            class="h-6 w-6"
+                            :class="ownUnitId === undefined ? 'animate-pulse' : ''"
+                            aria-hidden="true"
+                        />
                         <span class="pr-0.5">
                             {{ $t('common.units') }}
                         </span>
