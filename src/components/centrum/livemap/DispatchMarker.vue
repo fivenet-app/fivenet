@@ -23,7 +23,7 @@ const emit = defineEmits<{
 const iconAnchor: L.PointExpression = [props.size / 2, props.size * 1.65];
 const popupAnchor: L.PointExpression = [0, -(props.size * 1.7)];
 
-function selected(_: bigint | string) {
+function selected(_: bigint | number | string) {
     emit('selected', props.dispatch);
 }
 

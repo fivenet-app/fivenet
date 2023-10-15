@@ -30,12 +30,12 @@ const config = defineNuxtConfig({
     sourcemap: {
         client: true,
     },
-    pinia: {
-        autoImports: [
-            // automatically imports `defineStore`
-            'defineStore', // import { defineStore } from 'pinia'
-            'acceptHMRUpdate', // import { acceptHMRUpdate } from 'pinia'
-            'storeToRefs',
+    imports: {
+        presets: [
+            {
+                from: 'pinia',
+                imports: ['defineStore', 'storeToRefs', 'acceptHMRUpdate'],
+            },
         ],
     },
     robots: {
