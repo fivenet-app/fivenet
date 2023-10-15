@@ -14,9 +14,7 @@ import ListEntry from './ListEntry.vue';
 
 const { $grpc } = useNuxtApp();
 
-const query = ref<{ name?: string; phoneNumber?: string; wanted?: boolean; trafficPoints?: number; dateofbirth?: string }>({
-    name: '',
-});
+const query = ref<{ name?: string; phoneNumber?: string; wanted?: boolean; trafficPoints?: number; dateofbirth?: string }>({});
 const offset = ref(0n);
 
 const hash = useRouteHash();
