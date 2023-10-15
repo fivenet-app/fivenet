@@ -177,10 +177,13 @@ const openStatus = ref(false);
                                                                         class="flex items-center justify-between py-3 pl-3 pr-4 text-sm"
                                                                     >
                                                                         <div class="flex items-center flex-1">
-                                                                            <CitizenInfoPopover :user="user.user">
+                                                                            <CitizenInfoPopover
+                                                                                :user="user.user"
+                                                                                class="flex items-center justify-center"
+                                                                            >
                                                                                 <template v-slot:before>
                                                                                     <AccountIcon
-                                                                                        class="flex-shrink-0 w-5 h-5 text-base-400"
+                                                                                        class="flex-shrink-0 w-5 h-5 text-base-400 mr-1"
                                                                                         aria-hidden="true"
                                                                                     />
                                                                                 </template>

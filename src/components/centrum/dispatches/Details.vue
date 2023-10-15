@@ -13,6 +13,7 @@ import { Dispatch, StatusDispatch } from '~~/gen/ts/resources/dispatch/dispatche
 import { Settings } from '~~/gen/ts/resources/dispatch/settings';
 import { TakeDispatchResp } from '~~/gen/ts/services/centrum/centrum';
 import { dispatchStatusToBGColor } from '../helpers';
+import UnitInfoPopover from '../units/UnitInfoPopover.vue';
 import AssignDispatchModal from './AssignDispatchModal.vue';
 import Feed from './Feed.vue';
 import StatusUpdateModal from './StatusUpdateModal.vue';
@@ -152,7 +153,17 @@ const openStatus = ref(false);
                                         <div class="flex flex-1 flex-col justify-between">
                                             <div class="divide-y divide-gray-200 px-4 sm:px-6">
                                                 <div class="mt-1">
-                                                    <dl class="border-b border-neutral/10 divide-y divide-neutral/10">
+                                                    <dl class="divide-y divide-neutral/10">
+                                                        <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                                                            <dt class="text-sm font-medium leading-6 text-neutral">
+                                                                {{ $t('common.created_at') }}
+                                                            </dt>
+                                                            <dd
+                                                                class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
+                                                            >
+                                                                <Time :value="dispatch.createdAt" />
+                                                            </dd>
+                                                        </div>
                                                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                                                             <dt class="text-sm font-medium leading-6 text-neutral">
                                                                 {{ $t('common.sent_by') }}
@@ -188,6 +199,155 @@ const openStatus = ref(false);
                                                                     type="button"
                                                                     class="inline-flex items-center text-primary-400 hover:text-primary-600"
                                                                     @click="$emit('goto', { x: dispatch.x, y: dispatch.y })"
+                                                                >
+                                                                    <MapMarkerIcon class="w-5 h-5 mr-1" aria-hidden="true" />
+                                                                    {{ $t('common.go_to_location') }}
+                                                                </button>
+                                                                <span v-else>{{ $t('common.no_location') }}</span>
+                                                            </dd>
+                                                        </div>
+                                                        <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                                                            <dt class="text-sm font-medium leading-6 text-neutral">
+                                                                {{ $t('common.attributes', 2) }}
+                                                            </dt>
+                                                            <dd class="mt-2 text-sm text-gray-400 sm:col-span-2 sm:mt-0">
+                                                                <template
+                                                                    v-if="
+                                                                        dispatch.attributes !== undefined &&
+                                                                        dispatch.attributes?.list.length > 0
+                                                                    "
+                                                                >
+                                                                    <span
+                                                                        v-for="attribute in dispatch.attributes?.list"
+                                                                        class="inline-flex items-center rounded-md bg-error-400/10 px-2 py-1 text-xs font-medium text-error-400 ring-1 ring-inset ring-error-400/20"
+                                                                    >
+                                                                        {{ attribute }}
+                                                                    </span>
+                                                                </template>
+                                                                <span v-else>
+                                                                    {{
+                                                                        $t('common.none_selected', [$t('common.attributes', 2)])
+                                                                    }}
+                                                                </span>
+                                                            </dd>
+                                                        </div>
+                                                        <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                                                            <dt class="text-sm font-medium leading-6 text-neutral">
+                                                                {{ $t('common.units') }}
+                                                            </dt>
+                                                            <dd
+                                                                class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
+                                                            >
+                                                                <span class="block">
+                                                                    {{ $t('common.unit', dispatch.units.length) }}
+                                                                </span>
+                                                                <ul
+                                                                    role="list"
+                                                                    class="border divide-y rounded-md divide-base-200 border-base-200"
+                                                                >
+                                                                    <li
+                                                                        v-for="unit in dispatch.units"
+                                                                        :key="unit.unitId.toString()"
+                                                                        class="flex items-center justify-between py-3 pl-3 pr-4 text-sm"
+                                                                    >
+                                                                        <div class="flex items-center flex-1">
+                                                                            <UnitInfoPopover
+                                                                                :unit="unit.unit"
+                                                                                class="flex items-center justify-center"
+                                                                            >
+                                                                                <template v-slot:before>
+                                                                                    <AccountIcon
+                                                                                        class="flex-shrink-0 w-5 h-5 text-base-400 mr-1"
+                                                                                        aria-hidden="true"
+                                                                                    />
+                                                                                </template>
+                                                                            </UnitInfoPopover>
+                                                                            <span class="flex-1 ml-2 truncate">
+                                                                                <span v-if="unit.expiresAt">
+                                                                                    -
+                                                                                    {{
+                                                                                        useLocaleTimeAgo(
+                                                                                            toDate(unit.expiresAt),
+                                                                                            {
+                                                                                                showSecond: true,
+                                                                                                updateInterval: 1000,
+                                                                                            },
+                                                                                        ).value
+                                                                                    }}
+                                                                                </span>
+                                                                            </span>
+                                                                        </div>
+                                                                    </li>
+                                                                </ul>
+
+                                                                <AssignDispatchModal
+                                                                    v-if="openAssign"
+                                                                    :open="openAssign"
+                                                                    :dispatch="dispatch"
+                                                                    @close="openAssign = false"
+                                                                />
+
+                                                                <span class="mt-2 isolate inline-flex rounded-md shadow-sm">
+                                                                    <button
+                                                                        v-if="canDo('TakeControl')"
+                                                                        type="button"
+                                                                        @click="openAssign = true"
+                                                                        class="flex flex-row items-center rounded bg-neutral/10 px-2 py-1 text-xs font-semibold text-neutral shadow-sm hover:bg-neutral/20"
+                                                                    >
+                                                                        <PencilIcon class="h-6 w-6" />
+                                                                        <span class="truncate ml-0.5">
+                                                                            {{ $t('common.assign') }}
+                                                                        </span>
+                                                                    </button>
+                                                                    <button
+                                                                        v-if="canDo('TakeDispatch')"
+                                                                        type="button"
+                                                                        @click="selfAssign(dispatch.id)"
+                                                                        class="flex flex-row items-center ml-2 rounded bg-neutral/10 px-2 py-1 text-xs font-semibold text-neutral shadow-sm hover:bg-neutral/20"
+                                                                    >
+                                                                        <PlusIcon class="h-6 w-6" />
+                                                                        <span class="truncate ml-0.5">{{
+                                                                            $t('common.self_assign')
+                                                                        }}</span>
+                                                                    </button>
+                                                                </span>
+                                                            </dd>
+                                                        </div>
+                                                    </dl>
+                                                </div>
+                                                <div class="mt-1">
+                                                    <dl class="divide-y divide-neutral/10">
+                                                        <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                                                            <dt class="text-sm font-medium leading-6 text-neutral">
+                                                                {{ $t('common.last_update') }}
+                                                            </dt>
+                                                            <dd
+                                                                class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
+                                                            >
+                                                                <Time :value="dispatch.status?.createdAt" />
+                                                            </dd>
+                                                        </div>
+                                                        <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                                                            <dt class="text-sm font-medium leading-6 text-neutral">
+                                                                {{ $t('common.location') }}
+                                                            </dt>
+                                                            <dd
+                                                                class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
+                                                            >
+                                                                <span class="block">
+                                                                    {{ $t('common.postal') }}:
+                                                                    {{ dispatch.status?.postal ?? $t('common.na') }}
+                                                                </span>
+                                                                <button
+                                                                    v-if="dispatch.status?.x && dispatch.status?.y"
+                                                                    type="button"
+                                                                    class="inline-flex items-center text-primary-400 hover:text-primary-600"
+                                                                    @click="
+                                                                        $emit('goto', {
+                                                                            x: dispatch.status?.x,
+                                                                            y: dispatch.status?.y,
+                                                                        })
+                                                                    "
                                                                 >
                                                                     <MapMarkerIcon class="w-5 h-5 mr-1" aria-hidden="true" />
                                                                     {{ $t('common.go_to_location') }}
@@ -256,103 +416,6 @@ const openStatus = ref(false);
                                                                 class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
                                                             >
                                                                 {{ dispatch.status?.reason ?? $t('common.na') }}
-                                                            </dd>
-                                                        </div>
-                                                        <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                                            <dt class="text-sm font-medium leading-6 text-neutral">
-                                                                {{ $t('common.units') }}
-                                                            </dt>
-                                                            <dd
-                                                                class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
-                                                            >
-                                                                <span class="block">
-                                                                    {{ $t('common.unit', dispatch.units.length) }}
-                                                                </span>
-                                                                <ul
-                                                                    role="list"
-                                                                    class="border divide-y rounded-md divide-base-200 border-base-200"
-                                                                >
-                                                                    <li
-                                                                        v-for="unit in dispatch.units"
-                                                                        :key="unit.unitId.toString()"
-                                                                        class="flex items-center justify-between py-3 pl-3 pr-4 text-sm"
-                                                                    >
-                                                                        <div class="flex items-center flex-1">
-                                                                            <AccountIcon
-                                                                                class="flex-shrink-0 w-5 h-5 text-base-400"
-                                                                                aria-hidden="true"
-                                                                            />
-                                                                            <span class="flex-1 ml-2 truncate">
-                                                                                {{ unit.unit?.name }}
-                                                                                ({{ unit.unit?.initials }})
-                                                                                <span v-if="unit.expiresAt">
-                                                                                    -
-                                                                                    {{
-                                                                                        useLocaleTimeAgo(
-                                                                                            toDate(unit.expiresAt),
-                                                                                            {
-                                                                                                showSecond: true,
-                                                                                                updateInterval: 1000,
-                                                                                            },
-                                                                                        ).value
-                                                                                    }}
-                                                                                </span>
-                                                                            </span>
-                                                                        </div>
-                                                                    </li>
-                                                                </ul>
-
-                                                                <AssignDispatchModal
-                                                                    v-if="openAssign"
-                                                                    :open="openAssign"
-                                                                    :dispatch="dispatch"
-                                                                    @close="openAssign = false"
-                                                                />
-
-                                                                <span class="mt-2 isolate inline-flex rounded-md shadow-sm">
-                                                                    <button
-                                                                        v-if="canDo('TakeControl')"
-                                                                        type="button"
-                                                                        @click="openAssign = true"
-                                                                        class="flex flex-row items-center rounded bg-neutral/10 px-2 py-1 text-xs font-semibold text-neutral shadow-sm hover:bg-neutral/20"
-                                                                    >
-                                                                        <PencilIcon class="h-6 w-6" />
-                                                                        <span class="truncate ml-0.5">
-                                                                            {{ $t('common.assign') }}
-                                                                        </span>
-                                                                    </button>
-                                                                    <button
-                                                                        v-if="canDo('TakeDispatch')"
-                                                                        type="button"
-                                                                        @click="selfAssign(dispatch.id)"
-                                                                        class="flex flex-row items-center ml-2 rounded bg-neutral/10 px-2 py-1 text-xs font-semibold text-neutral shadow-sm hover:bg-neutral/20"
-                                                                    >
-                                                                        <PlusIcon class="h-6 w-6" />
-                                                                        <span class="truncate ml-0.5">{{
-                                                                            $t('common.self_assign')
-                                                                        }}</span>
-                                                                    </button>
-                                                                </span>
-                                                            </dd>
-                                                        </div>
-                                                        <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                                            <dt class="text-sm font-medium leading-6 text-neutral">
-                                                                {{ $t('common.attributes', 2) }}
-                                                            </dt>
-                                                            <dd class="mt-2 text-sm text-gray-400 sm:col-span-2 sm:mt-0">
-                                                                <template v-if="dispatch.attributes?.list.length === 0">
-                                                                    <span
-                                                                        v-for="attribute in dispatch.attributes?.list"
-                                                                        class="inline-flex items-center rounded-md bg-error-400/10 px-2 py-1 text-xs font-medium text-error-400 ring-1 ring-inset ring-error-400/20"
-                                                                    >
-                                                                        {{ attribute }}
-                                                                    </span>
-                                                                </template>
-                                                                <span v-else>
-                                                                    {{
-                                                                        $t('common.none_selected', [$t('common.attributes', 2)])
-                                                                    }}
-                                                                </span>
                                                             </dd>
                                                         </div>
                                                     </dl>

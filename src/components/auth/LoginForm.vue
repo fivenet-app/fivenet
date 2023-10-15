@@ -122,28 +122,30 @@ watch(
     </form>
 
     <div class="my-4 space-y-2">
-        <p v-if="!socialLoginEnabled" class="mt-2 text-sm text-error-400">
-            {{ $t('pages.auth.login.social_login_disabled') }}
-        </p>
-        <div v-for="prov in appConfig.login.providers" class="">
-            <button
-                v-if="!socialLoginEnabled"
-                type="button"
-                class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300"
-                :class="!socialLoginEnabled ? 'disabled' : ''"
-            >
-                {{ prov.label }} {{ $t('common.login') }}
-            </button>
-            <NuxtLink
-                v-else
-                :external="true"
-                :to="`/api/oauth2/login/${prov.name}`"
-                class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300"
-                :class="!socialLoginEnabled ? 'disabled' : ''"
-            >
-                {{ prov.label }} {{ $t('common.login') }}
-            </NuxtLink>
-        </div>
+        <template v-if="!clientConfig.NUIEnabled">
+            <p v-if="!socialLoginEnabled" class="mt-2 text-sm text-error-400">
+                {{ $t('pages.auth.login.social_login_disabled') }}
+            </p>
+            <div v-for="prov in appConfig.login.providers" class="">
+                <button
+                    v-if="!socialLoginEnabled"
+                    type="button"
+                    class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300"
+                    :class="!socialLoginEnabled ? 'disabled' : ''"
+                >
+                    {{ prov.label }} {{ $t('common.login') }}
+                </button>
+                <NuxtLink
+                    v-else
+                    :external="true"
+                    :to="`/api/oauth2/login/${prov.name}`"
+                    class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300"
+                    :class="!socialLoginEnabled ? 'disabled' : ''"
+                >
+                    {{ prov.label }} {{ $t('common.login') }}
+                </NuxtLink>
+            </div>
+        </template>
     </div>
 
     <Alert

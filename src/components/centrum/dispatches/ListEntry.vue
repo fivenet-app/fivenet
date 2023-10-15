@@ -6,6 +6,7 @@ import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopove
 import Time from '~/components/partials/elements/Time.vue';
 import { Dispatch, StatusDispatch } from '~~/gen/ts/resources/dispatch/dispatches';
 import { dispatchStatusAnimate, dispatchStatusToBGColor } from '../helpers';
+import UnitInfoPopover from '../units/UnitInfoPopover.vue';
 import AssignDispatchModal from './AssignDispatchModal.vue';
 import Details from './Details.vue';
 
@@ -85,8 +86,8 @@ const openMessage = ref(false);
         </td>
         <td class="whitespace-nowrap px-1 py-1 text-sm text-gray-300">
             <span v-if="dispatch.units.length === 0" class="italic">{{ $t('enums.centrum.StatusDispatch.UNASSIGNED') }}</span>
-            <span v-else class="mr-1">
-                {{ dispatch.units.map((unit) => unit.unit?.initials ?? $t('common.na')).join(', ') }}
+            <span v-else class="mr-1 grid grid-cols-2 gap-1">
+                <UnitInfoPopover v-for="unit in dispatch.units" :unit="unit.unit" :initials-only="true" />
             </span>
         </td>
         <td class="whitespace-nowrap px-1 py-1 text-sm text-gray-300">
