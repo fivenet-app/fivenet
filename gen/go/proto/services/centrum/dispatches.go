@@ -323,7 +323,7 @@ func (s *Server) UpdateDispatchStatus(ctx context.Context, req *UpdateDispatchSt
 		return nil, ErrFailedQuery
 	}
 
-	if !s.checkIfUserIsPartOfDispatch(userInfo, dsp, false) && !userInfo.SuperUser {
+	if !s.checkIfUserIsPartOfDispatch(userInfo, dsp, true) && !userInfo.SuperUser {
 		return nil, ErrNotPartOfDispatch
 	}
 
