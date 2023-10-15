@@ -325,7 +325,6 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 		} else {
 			resp.User.JobGrade = 0
 		}
-		resp.User.JobGrade = *resp.User.Props.JobGradeNumber
 
 		s.enricher.EnrichJobInfo(resp.User)
 	} else {
