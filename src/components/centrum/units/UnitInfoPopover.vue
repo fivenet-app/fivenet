@@ -10,9 +10,11 @@ withDefaults(
         initialsOnly?: boolean;
         textClass?: unknown;
         buttonClass?: unknown;
+        badge?: boolean;
     }>(),
     {
         initialsOnly: false,
+        badge: false,
     },
 );
 </script>
@@ -30,9 +32,21 @@ withDefaults(
             <PopoverButton class="inline-flex items-center" :class="buttonClass">
                 <slot name="before" />
                 <span :class="textClass">
-                    <template v-if="!initialsOnly"> {{ unit.name }} ({{ unit.initials }}) </template>
+                    <template v-if="badge">
+                        <span
+                            class="inline-flex items-center rounded-md bg-gray-400/10 px-2 py-1 text-xs font-medium text-gray-400 ring-1 ring-inset ring-gray-400/20 justify-center"
+                        >
+                            <template v-if="!initialsOnly"> {{ unit.name }} ({{ unit.initials }}) </template>
+                            <template v-else>
+                                {{ unit.initials }}
+                            </template>
+                        </span>
+                    </template>
                     <template v-else>
-                        {{ unit.initials }}
+                        <template v-if="!initialsOnly"> {{ unit.name }} ({{ unit.initials }}) </template>
+                        <template v-else>
+                            {{ unit.initials }}
+                        </template>
                     </template>
                 </span>
                 <slot name="after" />

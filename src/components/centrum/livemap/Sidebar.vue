@@ -225,11 +225,16 @@ const open = ref(false);
             <LControl position="bottomright">
                 <button
                     type="button"
-                    class="w-30 h-30 rounded-md bg-neutral text-black border-2 border-black/20 bg-clip-padding hover:bg-[#f4f4f4] focus:outline-none inset-0"
+                    class="rounded-md bg-neutral text-black border-2 border-black/20 bg-clip-padding hover:bg-[#f4f4f4] focus:outline-none inset-0 inline-flex items-center justify-center"
                     @click="open = !open"
                 >
                     <ToggleSwitchIcon v-if="open" class="h-6 w-6" aria-hidden="true" />
-                    <ToggleSwitchOffIcon v-else class="h-6 w-6" aria-hidden="true" />
+                    <span v-else class="inline-flex items-center justify-center">
+                        <ToggleSwitchOffIcon class="h-6 w-6 animate-pulse" aria-hidden="true" />
+                        <span class="pr-0.5">
+                            {{ $t('common.units') }}
+                        </span>
+                    </span>
                 </button>
             </LControl>
         </template>

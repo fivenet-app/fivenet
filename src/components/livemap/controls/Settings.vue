@@ -10,11 +10,11 @@ const open = ref(false);
 
     <button
         type="button"
-        class="w-30 h-30 rounded-md bg-neutral text-black border-2 border-black/20 bg-clip-padding hover:bg-[#f4f4f4] focus:outline-none inset-0"
+        class="rounded-md bg-neutral text-black border-2 border-black/20 bg-clip-padding hover:bg-[#f4f4f4] focus:outline-none inset-0 inline-flex items-center justify-center"
         @click="open = true"
         :title="$t('common.setting', 2)"
     >
-        <span class="sr-only">{{ $t('common.setting', 2) }}</span>
         <CogIcon class="h-6 w-6" aria-hidden="true" />
+        <span class="pr-0.5">{{ $t('common.setting', 2) }}</span>
     </button>
 </template>
