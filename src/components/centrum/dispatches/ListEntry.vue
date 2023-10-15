@@ -88,7 +88,7 @@ const openMessage = ref(false);
             <span v-if="dispatch.units.length === 0" class="italic">{{ $t('enums.centrum.StatusDispatch.UNASSIGNED') }}</span>
             <span v-else class="mr-1 grid grid-cols-2 gap-1">
                 <template v-for="unit in dispatch.units">
-                    <UnitInfoPopover :unit="unit.unit" :initials-only="true" :badge="true" />
+                    <UnitInfoPopover :unit="unit.unit" :initials-only="true" :badge="true" :assignment="unit" />
                 </template>
             </span>
         </td>

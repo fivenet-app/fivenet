@@ -253,6 +253,7 @@ const openStatus = ref(false);
                                                                         <div class="flex items-center flex-1">
                                                                             <UnitInfoPopover
                                                                                 :unit="unit.unit"
+                                                                                :assignment="unit"
                                                                                 class="flex items-center justify-center"
                                                                             >
                                                                                 <template v-slot:before>
@@ -262,19 +263,17 @@ const openStatus = ref(false);
                                                                                     />
                                                                                 </template>
                                                                             </UnitInfoPopover>
-                                                                            <span class="flex-1 ml-2 truncate">
-                                                                                <span v-if="unit.expiresAt">
-                                                                                    -
-                                                                                    {{
-                                                                                        useLocaleTimeAgo(
-                                                                                            toDate(unit.expiresAt),
-                                                                                            {
-                                                                                                showSecond: true,
-                                                                                                updateInterval: 1000,
-                                                                                            },
-                                                                                        ).value
-                                                                                    }}
-                                                                                </span>
+                                                                            <span
+                                                                                class="flex-1 ml-2 truncate inline-flex items-center"
+                                                                                v-if="unit.expiresAt"
+                                                                            >
+                                                                                -
+                                                                                {{
+                                                                                    useLocaleTimeAgo(toDate(unit.expiresAt), {
+                                                                                        showSecond: true,
+                                                                                        updateInterval: 1000,
+                                                                                    }).value
+                                                                                }}
                                                                             </span>
                                                                         </div>
                                                                     </li>

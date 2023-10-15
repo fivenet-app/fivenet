@@ -1,7 +1,9 @@
 <script lang="ts" setup>
 import { Float } from '@headlessui-float/vue';
 import { Popover, PopoverButton, PopoverPanel } from '@headlessui/vue';
+import { TimerIcon } from 'mdi-vue3';
 import PhoneNumber from '~/components/partials/citizens/PhoneNumber.vue';
+import { DispatchAssignment } from '~~/gen/ts/resources/dispatch/dispatches';
 import { Unit } from '~~/gen/ts/resources/dispatch/units';
 
 withDefaults(
@@ -11,6 +13,7 @@ withDefaults(
         textClass?: unknown;
         buttonClass?: unknown;
         badge?: boolean;
+        assignment?: DispatchAssignment;
     }>(),
     {
         initialsOnly: false,
@@ -40,6 +43,9 @@ withDefaults(
                             <template v-else>
                                 {{ unit.initials }}
                             </template>
+                            <template v-if="assignment?.expiresAt">
+                                <TimerIcon class="ml-0.5 h-5 w-5" />
+                            </template>
                         </span>
                     </template>
                     <template v-else>
@@ -59,11 +65,24 @@ withDefaults(
                     <p class="text-base font-semibold leading-none text-gray-900 dark:text-neutral">
                         {{ unit.name }} ({{ unit.initials }})
                     </p>
-                    <p v-for="user in unit.users" class="text-sm font-normal inline-flex items-center justify-center">
-                        {{ user.user?.firstname }}
-                        {{ user.user?.lastname }}
-                        <PhoneNumber :number="user.user?.phoneNumber" :hide-number="true" />
+                    <p class="text-sm font-normal inline-flex items-center justify-center">
+                        {{
+                            useLocaleTimeAgo(toDate(assignment?.expiresAt), {
+                                showSecond: true,
+                                updateInterval: 1000,
+                            }).value
+                        }}
                     </p>
+                    <p class="text-base font-medium leading-none text-gray-800 dark:text-neutral">
+                        {{ $t('common.members') }}
+                    </p>
+                    <ul class="text-sm font-normal inline-flex items-center justify-center">
+                        <li v-for="user in unit.users">
+                            {{ user.user?.firstname }}
+                            {{ user.user?.lastname }}
+                            <PhoneNumber :number="user.user?.phoneNumber" :hide-number="true" />
+                        </li>
+                    </ul>
                 </div>
             </PopoverPanel>
         </Float>
