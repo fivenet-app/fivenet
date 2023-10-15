@@ -43,7 +43,8 @@ defineEmits<{
 const { $grpc } = useNuxtApp();
 
 const centrumStore = useCentrumStore();
-const { getCurrentMode, getOwnUnit, dispatches, ownDispatches, pendingDispatches, disponents } = storeToRefs(centrumStore);
+const { getCurrentMode, getOwnUnit, ownUnitId, dispatches, ownDispatches, pendingDispatches, disponents } =
+    storeToRefs(centrumStore);
 const { startStream, stopStream } = centrumStore;
 
 const notifications = useNotificatorStore();
@@ -161,8 +162,8 @@ async function updateUtStatus(id: bigint, status?: StatusUnit): Promise<void> {
 }
 
 // Show unit sidebar when ownUnit is set/updated, otherwise it will be hidden (automagically)
-watch(getOwnUnit, async () => {
-    if (getOwnUnit.value !== undefined) {
+watch(ownUnitId, async () => {
+    if (ownUnitId.value !== undefined) {
         open.value = true;
     } else {
         open.value = false;
