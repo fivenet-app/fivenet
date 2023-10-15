@@ -384,7 +384,7 @@ export const useCentrumStore = defineStore('centrum', {
                             });
                         } else {
                             if (this.ownUnitId === undefined) {
-                                return;
+                                continue;
                             }
 
                             notifications.dispatchNotification({
