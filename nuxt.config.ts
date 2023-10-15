@@ -34,7 +34,7 @@ const config = defineNuxtConfig({
         presets: [
             {
                 from: 'pinia',
-                imports: ['defineStore', 'storeToRefs', 'acceptHMRUpdate'],
+                imports: ['storeToRefs'],
             },
         ],
     },

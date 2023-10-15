@@ -183,6 +183,22 @@ async function ensureDispatchSelected(): Promise<void> {
     }
 }
 
+watchDebounced(
+    selectedDispatch,
+    () => {
+        if (selectedDispatch.value && isNUIAvailable()) {
+            const dispatch = dispatches.value.get(selectedDispatch.value);
+            if (dispatch) {
+                setWaypoint(dispatch.y, dispatch.x);
+            }
+        }
+    },
+    {
+        debounce: 125,
+        maxWait: 500,
+    },
+);
+
 watchDebounced(ownDispatches.value, async () => ensureDispatchSelected(), {
     debounce: 150,
     maxWait: 600,
