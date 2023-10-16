@@ -569,7 +569,6 @@
         "source": "Quelle",
         "date": "Datum",
         "comment": "Kommentar | Kommentare",
-        "comments": "Keine Kommentare | {n} Kommentar | {n} Kommentare",
         "employee": "Mitarbeiter",
         "dispatch": "Einsatz | Einsätze",
         "latitude": "Breitengrad",
@@ -713,7 +712,8 @@
         "approve": "Genehmigen | Genehmigt",
         "na": "Nicht verfügbar",
         "privacy_policy": "Datenschutzerklärung",
-        "imprint": "Impressum"
+        "imprint": "Impressum",
+        "comments": "Keine Kommentare | {n} Kommentar | {n} Kommentare"
     },
     "notifications": {
         "clipboard": {
