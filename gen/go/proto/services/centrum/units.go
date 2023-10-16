@@ -354,7 +354,7 @@ func (s *Server) JoinUnit(ctx context.Context, req *JoinUnitRequest) (*JoinUnitR
 	} else {
 		// User leaves unit
 		if err := s.state.UpdateUnitAssignments(ctx, userInfo, unit, nil, []int32{userInfo.UserId}); err != nil {
-			return nil, err
+			return nil, errorscentrum.ErrFailedQuery
 		}
 	}
 

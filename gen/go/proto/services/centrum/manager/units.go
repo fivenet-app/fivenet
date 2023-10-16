@@ -163,7 +163,7 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, userInfo *userinfo.
 		}
 
 		for i := len(unit.Users) - 1; i >= 0; i-- {
-			if len(unit.Users)-1 > i {
+			if i > len(unit.Users)-1 {
 				break
 			}
 

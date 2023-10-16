@@ -65,7 +65,7 @@ withDefaults(
                     <p class="text-base font-semibold leading-none text-gray-900 dark:text-neutral">
                         {{ unit.name }} ({{ unit.initials }})
                     </p>
-                    <p class="text-sm font-normal inline-flex items-center justify-center">
+                    <p v-if="assignment?.expiresAt" class="text-sm font-normal inline-flex items-center justify-center">
                         {{
                             useLocaleTimeAgo(toDate(assignment?.expiresAt), {
                                 showSecond: true,

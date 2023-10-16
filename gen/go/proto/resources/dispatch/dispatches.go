@@ -34,7 +34,8 @@ func (x *Dispatch) Update(in *Dispatch) {
 		return
 	}
 
-	if err := mergo.Merge(x, in); err != nil {
+	err := mergo.Merge(x, in)
+	if err != nil {
 		return
 	}
 }

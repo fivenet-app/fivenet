@@ -132,7 +132,7 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 		}
 
 		for i := len(dsp.Units) - 1; i >= 0; i-- {
-			if len(dsp.Units)-1 > i {
+			if i > len(dsp.Units)-1 {
 				break
 			}
 
