@@ -153,6 +153,9 @@ onConfirm(async (id: bigint) => deleteDocument(id));
 #editor .ql-editor {
     min-height: 100% !important;
 }
+#editor .ql-editor hr {
+    color: white;
+}
 </style>
 
 <template>

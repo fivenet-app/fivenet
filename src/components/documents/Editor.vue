@@ -183,9 +183,7 @@ const modules = [
     {
         name: 'divider',
         module: DividerToolbar,
-        options: {
-            cssText: 'border: none;border-bottom: 1px solid;',
-        },
+        options: {},
     },
 ];
 
@@ -820,6 +818,10 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
 .ql-editor embed,
 .ql-editor object {
     display: inline !important;
+}
+
+.ql-editor hr {
+    color: black;
 }
 </style>
 

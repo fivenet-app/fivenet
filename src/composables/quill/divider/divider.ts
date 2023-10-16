@@ -41,14 +41,14 @@ class Divider extends BlockEmbed {
                 options.text.childrenStyle
             }" contenteditable="true">${options.text.children || ''}</span>${lineRight}`;
         } else {
-            parentNode.innerHTML = `<hr style="${options.cssText}" class="${options.className || ''}" >`;
+            parentNode.setAttribute('class', options.className ?? '');
         }
         return parentNode;
     }
 }
 
 Divider.blotName = 'divider';
-Divider.tagName = 'div';
+Divider.tagName = 'hr';
 Divider.className = 'quill-hr';
 
 export default Divider;
