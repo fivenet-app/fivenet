@@ -30,14 +30,6 @@ const config = defineNuxtConfig({
     sourcemap: {
         client: true,
     },
-    imports: {
-        presets: [
-            {
-                from: 'pinia',
-                imports: ['storeToRefs'],
-            },
-        ],
-    },
     robots: {
         rules: {
             UserAgent: '*',
