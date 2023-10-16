@@ -160,7 +160,7 @@ func New(p Params) (Permissions, error) {
 			return err
 		}
 
-		if err := ps.registerEvents(); err != nil {
+		if err := ps.registerEvents(ctx); err != nil {
 			return err
 		}
 

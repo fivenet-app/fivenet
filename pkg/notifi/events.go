@@ -1,6 +1,8 @@
 package notifi
 
 import (
+	"context"
+	"errors"
 	"fmt"
 	"time"
 
@@ -14,7 +16,7 @@ const (
 	UserNotification events.Type = "user"
 )
 
-func (n *Notifi) registerEvents() error {
+func (n *Notifi) registerEvents(ctx context.Context) error {
 	cfg := &nats.StreamConfig{
 		Name:      "NOTIFI",
 		Retention: nats.InterestPolicy,
@@ -23,8 +25,14 @@ func (n *Notifi) registerEvents() error {
 		MaxAge:    30 * time.Minute,
 	}
 
-	if _, err := n.events.JS.CreateOrUpdateStream(cfg); err != nil {
-		return err
+	if _, err := n.events.JS.UpdateStream(cfg); err != nil {
+		if !errors.Is(nats.ErrStreamNotFound, err) {
+			return err
+		}
+
+		if _, err := n.events.JS.AddStream(cfg); err != nil {
+			return err
+		}
 	}
 
 	return nil

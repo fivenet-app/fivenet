@@ -1,6 +1,8 @@
 package centrum
 
 import (
+	"context"
+	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -28,7 +30,7 @@ const (
 	TypeUnitStatus  events.Type  = "status"
 )
 
-func (s *Server) registerEvents() error {
+func (s *Server) registerEvents(ctx context.Context) error {
 	cfg := &nats.StreamConfig{
 		Name:      "CENTRUM",
 		Retention: nats.InterestPolicy,
@@ -37,8 +39,14 @@ func (s *Server) registerEvents() error {
 		MaxAge:    30 * time.Second,
 	}
 
-	if _, err := s.events.JS.CreateOrUpdateStream(cfg); err != nil {
-		return err
+	if _, err := s.events.JS.UpdateStream(cfg); err != nil {
+		if !errors.Is(nats.ErrStreamNotFound, err) {
+			return err
+		}
+
+		if _, err := s.events.JS.AddStream(cfg); err != nil {
+			return err
+		}
 	}
 
 	return nil

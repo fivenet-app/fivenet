@@ -52,8 +52,8 @@ func New(p Params) INotifi {
 		events: p.Events,
 	}
 
-	p.LC.Append(fx.StartHook(func(_ context.Context) error {
-		return n.registerEvents()
+	p.LC.Append(fx.StartHook(func(ctx context.Context) error {
+		return n.registerEvents(ctx)
 	}))
 
 	return n

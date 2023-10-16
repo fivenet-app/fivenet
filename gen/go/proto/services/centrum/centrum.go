@@ -112,8 +112,8 @@ func NewServer(p Params) (*Server, error) {
 		botManager: NewBotManager(ctx, p.State, p.Events),
 	}
 
-	p.LC.Append(fx.StartHook(func(_ context.Context) error {
-		if err := s.registerEvents(); err != nil {
+	p.LC.Append(fx.StartHook(func(ctx context.Context) error {
+		if err := s.registerEvents(ctx); err != nil {
 			return fmt.Errorf("failed to register events: %w", err)
 		}
 

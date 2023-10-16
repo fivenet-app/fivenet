@@ -1,12 +1,14 @@
 package perms
 
 import (
+	"context"
 	"fmt"
 	"strings"
 	"time"
 
 	"github.com/galexrt/fivenet/pkg/events"
 	"github.com/nats-io/nats.go"
+	"github.com/pkg/errors"
 	"go.uber.org/zap"
 )
 
@@ -25,7 +27,7 @@ type RoleAttrUpdateEvent struct {
 	RoleID uint64
 }
 
-func (p *Perms) registerEvents() error {
+func (p *Perms) registerEvents(ctx context.Context) error {
 	cfg := &nats.StreamConfig{
 		Name:      "PERMS",
 		Retention: nats.InterestPolicy,
@@ -34,8 +36,14 @@ func (p *Perms) registerEvents() error {
 		MaxAge:    10 * time.Second,
 	}
 
-	if _, err := p.events.JS.CreateOrUpdateStream(cfg); err != nil {
-		return err
+	if _, err := p.events.JS.UpdateStream(cfg); err != nil {
+		if !errors.Is(nats.ErrStreamNotFound, err) {
+			return err
+		}
+
+		if _, err := p.events.JS.AddStream(cfg); err != nil {
+			return err
+		}
 	}
 
 	sub, err := p.events.JS.Subscribe(fmt.Sprintf("%s.>", BaseSubject), p.handleMessage, nats.DeliverNew())
