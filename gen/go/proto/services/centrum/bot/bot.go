@@ -2,7 +2,6 @@ package bot
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	dispatch "github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
@@ -14,7 +13,15 @@ type Bot struct {
 	job   string
 	state *manager.Manager
 
-	lastAssignedUnits []uint64
+	lastAssignedUnits map[uint64]time.Time
+}
+
+func NewBot(job string, state *manager.Manager) *Bot {
+	return &Bot{
+		job:               job,
+		state:             state,
+		lastAssignedUnits: map[uint64]time.Time{},
+	}
 }
 
 func (b *Bot) Run(ctx context.Context) error {
@@ -23,7 +30,7 @@ func (b *Bot) Run(ctx context.Context) error {
 		case <-ctx.Done():
 			return nil
 
-		case <-time.After(2 * time.Second):
+		case <-time.After(7 * time.Second):
 		}
 
 		dispatches := b.state.GetDispatchesMap(b.job)
@@ -32,7 +39,6 @@ func (b *Bot) Run(ctx context.Context) error {
 				return true
 			}
 
-			fmt.Println("DSP IS UNASSIGNED", dsp.Id)
 			unit, ok := b.getAvailableUnit(ctx)
 			if !ok {
 				// No unit available
@@ -47,7 +53,7 @@ func (b *Bot) Run(ctx context.Context) error {
 				return false
 			}
 
-			return true
+			return false
 		})
 	}
 }
@@ -69,7 +75,14 @@ func (b *Bot) getAvailableUnit(ctx context.Context) (*dispatch.Unit, bool) {
 		return nil, false
 	}
 
-	// TODO make sure units are not double assigned
+	t, ok := b.lastAssignedUnits[unit.Id]
+	if ok {
+		if !time.Now().After(t) {
+			return nil, false
+		}
+	}
+
+	b.lastAssignedUnits[unit.Id] = time.Now().Add(35 * time.Second)
 
 	return unit, true
 }

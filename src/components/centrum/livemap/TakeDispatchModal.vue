@@ -70,7 +70,9 @@ const debouncedPlay = useDebounceFn(() => newDispatchSound.play(), 950);
 const previousLength = ref(0);
 watch(pendingDispatches.value, () => {
     if (getCurrentMode.value !== CentrumMode.SIMPLIFIED) {
-        if (previousLength.value <= pendingDispatches.value.length) debouncedPlay();
+        if (previousLength.value <= pendingDispatches.value.length && pendingDispatches.value.length !== 0) {
+            debouncedPlay();
+        }
     }
 
     previousLength.value = pendingDispatches.value.length;

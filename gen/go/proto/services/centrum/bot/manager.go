@@ -108,10 +108,7 @@ func (b *Manager) Start(job string) error {
 		return nil
 	}
 
-	bot := &Bot{
-		state: b.state,
-		job:   job,
-	}
+	bot := NewBot(job, b.state)
 	ctx, cancel := context.WithCancel(b.ctx)
 	b.bots[job] = cancel
 	b.wg.Add(1)
