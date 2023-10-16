@@ -19,12 +19,12 @@ import {
 } from 'mdi-vue3';
 import { DefineComponent } from 'vue';
 import QuickButtons from '~/components/partials/QuickButtons.vue';
+import FiveNetLogo from '~/components/partials/logos/FiveNetLogo.vue';
 import JobSwitcher from '~/components/partials/sidebar/JobSwitcher.vue';
 import LanguageSwitcher from '~/components/partials/sidebar/LanguageSwitcher.vue';
 import Notifications from '~/components/partials/sidebar/Notifications.vue';
 import { useAuthStore } from '~/store/auth';
 import { RoutesNamedLocations } from '~~/.nuxt/typed-router/__routes';
-import FiveNetLogo from '../logos/FiveNetLogo.vue';
 
 const authStore = useAuthStore();
 const { accessToken, activeChar } = storeToRefs(authStore);

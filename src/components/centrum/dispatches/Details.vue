@@ -3,6 +3,7 @@ import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } fro
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { useConfirmDialog } from '@vueuse/core';
 import { AccountIcon, CloseIcon, MapMarkerIcon, PencilIcon, PlusIcon, TrashCanIcon } from 'mdi-vue3';
+import UnitInfoPopover from '~/components/centrum/units/UnitInfoPopover.vue';
 import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
@@ -13,7 +14,6 @@ import { Dispatch, StatusDispatch } from '~~/gen/ts/resources/dispatch/dispatche
 import { Settings } from '~~/gen/ts/resources/dispatch/settings';
 import { TakeDispatchResp } from '~~/gen/ts/services/centrum/centrum';
 import { dispatchStatusToBGColor } from '../helpers';
-import UnitInfoPopover from '../units/UnitInfoPopover.vue';
 import AssignDispatchModal from './AssignDispatchModal.vue';
 import Feed from './Feed.vue';
 import StatusUpdateModal from './StatusUpdateModal.vue';

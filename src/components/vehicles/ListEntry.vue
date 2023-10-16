@@ -1,11 +1,11 @@
 <script lang="ts" setup>
 import { AccountEyeIcon, ClipboardPlusIcon } from 'mdi-vue3';
 import LicensePlate from '~/components/partials/LicensePlate.vue';
+import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import { useClipboardStore } from '~/store/clipboard';
 import { useNotificatorStore } from '~/store/notificator';
 import { toTitleCase } from '~/utils/strings';
 import { Vehicle } from '~~/gen/ts/resources/vehicles/vehicles';
-import CitizenInfoPopover from '../partials/citizens/CitizenInfoPopover.vue';
 
 const clipboardStore = useClipboardStore();
 const notifications = useNotificatorStore();

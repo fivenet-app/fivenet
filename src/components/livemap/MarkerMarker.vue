@@ -5,8 +5,8 @@ import { useConfirmDialog } from '@vueuse/core';
 import L from 'leaflet';
 import { TrashCanIcon } from 'mdi-vue3';
 import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
+import PhoneNumber from '~/components/partials/citizens/PhoneNumber.vue';
 import { Marker } from '~~/gen/ts/resources/livemap/livemap';
-import PhoneNumber from '../partials/citizens/PhoneNumber.vue';
 
 const props = withDefaults(
     defineProps<{

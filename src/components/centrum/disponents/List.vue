@@ -3,9 +3,10 @@ import { MonitorIcon } from 'mdi-vue3';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import { useCentrumStore } from '~/store/centrum';
+import { CentrumMode } from '~~/gen/ts/resources/dispatch/settings';
 
 const centrumStore = useCentrumStore();
-const { disponents } = storeToRefs(centrumStore);
+const { disponents, getCurrentMode } = storeToRefs(centrumStore);
 </script>
 
 <template>
@@ -18,6 +19,14 @@ const { disponents } = storeToRefs(centrumStore);
             </div>
             <div class="sm:flex sm:items-center pt-4">
                 <div class="sm:flex-auto">
+                    <p class="text-neutral text-sm">
+                        <span
+                            class="inline-flex items-center rounded-md bg-gray-400/10 px-2 py-1 text-xs font-medium text-gray-400 ring-1 ring-inset ring-gray-400/20"
+                        >
+                            {{ $t('common.mode') }}: {{ $t(`enums.centrum.CentrumMode.${CentrumMode[getCurrentMode ?? 0]}`) }}
+                        </span>
+                    </p>
+
                     <DataNoDataBlock
                         v-if="disponents && disponents.length === 0"
                         :icon="MonitorIcon"

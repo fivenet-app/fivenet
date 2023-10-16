@@ -5,9 +5,9 @@ import { useConfirmDialog, useThrottleFn } from '@vueuse/core';
 import { LoadingIcon, PencilIcon, TrashCanIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
+import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import { useAuthStore } from '~/store/auth';
 import { Comment } from '~~/gen/ts/resources/documents/comment';
-import CitizenInfoPopover from '../partials/citizens/CitizenInfoPopover.vue';
 
 const { $grpc } = useNuxtApp();
 const authStore = useAuthStore();

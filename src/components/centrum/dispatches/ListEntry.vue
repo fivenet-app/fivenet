@@ -2,11 +2,11 @@
 import { useDebounceFn } from '@vueuse/core';
 import { useSound } from '@vueuse/sound';
 import { AccountMultiplePlusIcon, DotsVerticalIcon, MapMarkerIcon } from 'mdi-vue3';
+import UnitInfoPopover from '~/components/centrum/units/UnitInfoPopover.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import Time from '~/components/partials/elements/Time.vue';
 import { Dispatch, StatusDispatch } from '~~/gen/ts/resources/dispatch/dispatches';
 import { dispatchStatusAnimate, dispatchStatusToBGColor } from '../helpers';
-import UnitInfoPopover from '../units/UnitInfoPopover.vue';
 import AssignDispatchModal from './AssignDispatchModal.vue';
 import Details from './Details.vue';
 

@@ -1,10 +1,10 @@
 <script lang="ts" setup>
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { AccountMultipleIcon, ArrowCollapseIcon, ChevronRightIcon } from 'mdi-vue3';
+import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import Time from '~/components/partials/elements/Time.vue';
 import { DocRelation, DocumentRelation } from '~~/gen/ts/resources/documents/documents';
-import CitizenInfoPopover from '../partials/citizens/CitizenInfoPopover.vue';
 
 const { $grpc } = useNuxtApp();
 

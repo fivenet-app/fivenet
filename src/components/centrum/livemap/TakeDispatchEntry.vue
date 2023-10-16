@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { AccountIcon, MapMarkerIcon } from 'mdi-vue3';
+import UnitInfoPopover from '~/components/centrum/units/UnitInfoPopover.vue';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import { useCentrumStore } from '~/store/centrum';
 import { Dispatch, StatusDispatch } from '~~/gen/ts/resources/dispatch/dispatches';
@@ -90,11 +91,10 @@ const open = ref(false);
                         <AccountIcon class="flex-shrink-0 w-5 h-5 text-base-400 mr-1" aria-hidden="true" />
                         <span class="font-medium mr-1">{{ $t('common.members') }}:</span>
                         <span v-if="dispatch.units.length === 0">{{ $t('common.member', 0) }}</span>
-                        <span v-else class="flex-1 ml-2 truncate">
-                            <span v-for="unit in dispatch.units">
-                                {{ unit.unit?.name }}
-                                ({{ unit.unit?.initials }})
-                            </span>
+                        <span v-else class="flex-1 ml-2 truncate grid grid-cols-2 gap-1">
+                            <template v-for="unit in dispatch.units">
+                                <UnitInfoPopover :unit="unit.unit" :initials-only="true" :badge="true" :assignment="unit" />
+                            </template>
                         </span>
                     </div>
                 </li>

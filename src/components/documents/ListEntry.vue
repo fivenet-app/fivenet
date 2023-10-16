@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import { AccountIcon, BriefcaseIcon, CalendarIcon, LockIcon, LockOpenVariantIcon, TrashCanIcon, UpdateIcon } from 'mdi-vue3';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
+import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import Time from '~/components/partials/elements/Time.vue';
 import { DocumentShort } from '~~/gen/ts/resources/documents/documents';
-import CitizenInfoPopover from '../partials/citizens/CitizenInfoPopover.vue';
 
 defineProps<{
     doc: DocumentShort;

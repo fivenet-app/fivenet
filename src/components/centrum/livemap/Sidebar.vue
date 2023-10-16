@@ -17,6 +17,7 @@ import {
     ListStatusIcon,
     MarkerCheckIcon,
     MonitorIcon,
+    RobotIcon,
     ToggleSwitchIcon,
     ToggleSwitchOffIcon,
 } from 'mdi-vue3';
@@ -266,16 +267,26 @@ const open = ref(false);
                                     type="button"
                                     class="text-neutral hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-row items-center justify-center rounded-md p-1 text-xs mt-0.5"
                                     :class="
-                                        disponents.length === 0
+                                        getCurrentMode === CentrumMode.AUTO_ROUND_ROBIN
+                                            ? 'bg-info-400/10 text-info-500 ring-info-400/20'
+                                            : disponents.length === 0
                                             ? 'bg-warn-400/10 text-warn-500 ring-warn-400/20'
                                             : 'bg-success-500/10 text-success-400 ring-success-500/20'
                                     "
                                     @click="openDisponents = true"
                                 >
-                                    <MonitorIcon class="h-5 w-5 mr-1" aria-hidden="true" />
-                                    <span class="truncate">
-                                        {{ $t('common.disponent', disponents.length) }}
-                                    </span>
+                                    <template v-if="getCurrentMode !== CentrumMode.AUTO_ROUND_ROBIN">
+                                        <MonitorIcon class="h-5 w-5 mr-1" aria-hidden="true" />
+                                        <span class="truncate">
+                                            {{ $t('common.disponent', disponents.length) }}
+                                        </span>
+                                    </template>
+                                    <template v-else>
+                                        <RobotIcon class="h-5 w-5 mr-1" aria-hidden="true" />
+                                        <span class="truncate">
+                                            {{ $t('enums.centrum.CentrumMode.AUTO_ROUND_ROBIN') }}
+                                        </span>
+                                    </template>
                                 </button>
                             </li>
                             <li>

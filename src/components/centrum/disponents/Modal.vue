@@ -5,6 +5,7 @@ import List from './List.vue';
 defineProps<{
     open: boolean;
 }>();
+
 defineEmits<{
     (e: 'close'): void;
 }>();
