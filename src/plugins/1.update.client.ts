@@ -15,6 +15,10 @@ export default defineNuxtPlugin(() => {
             settings.version,
         );
 
+        if (version === 'UNKNOWN') {
+            return;
+        }
+
         if (__APP_VERSION__ !== version) {
             useConfigStore().setUpdateAvailable(version as string);
         }

@@ -1,4 +1,4 @@
-package centrum
+package eventscentrum
 
 import (
 	"context"
@@ -30,34 +30,12 @@ const (
 	TypeUnitStatus  events.Type  = "status"
 )
 
-func (s *Server) registerEvents(ctx context.Context) error {
-	cfg := &nats.StreamConfig{
-		Name:      "CENTRUM",
-		Retention: nats.InterestPolicy,
-		Subjects:  []string{fmt.Sprintf("%s.>", BaseSubject)},
-		Discard:   nats.DiscardOld,
-		MaxAge:    30 * time.Second,
-	}
-
-	if _, err := s.events.JS.UpdateStream(cfg); err != nil {
-		if !errors.Is(nats.ErrStreamNotFound, err) {
-			return err
-		}
-
-		if _, err := s.events.JS.AddStream(cfg); err != nil {
-			return err
-		}
-	}
-
-	return nil
-}
-
-func getEventTypeFromSubject(subject string) (events.Topic, events.Type) {
-	_, topic, eType := splitSubject(subject)
+func GetEventTypeFromSubject(subject string) (events.Topic, events.Type) {
+	_, topic, eType := SplitSubject(subject)
 	return topic, eType
 }
 
-func splitSubject(subject string) (string, events.Topic, events.Type) {
+func SplitSubject(subject string) (string, events.Topic, events.Type) {
 	split := strings.Split(subject, ".")
 	if len(split) < 3 {
 		return "", "", ""
@@ -66,7 +44,29 @@ func splitSubject(subject string) (string, events.Topic, events.Type) {
 	return split[1], events.Topic(split[2]), events.Type(split[3])
 }
 
-func buildSubject(topic events.Topic, tType events.Type, job string, id uint64) string {
+func BuildSubject(topic events.Topic, tType events.Type, job string, id uint64) string {
 	format := "%s.%s." + string(topic) + "." + string(tType)
 	return fmt.Sprintf(format+".%d", BaseSubject, job, id)
+}
+
+func RegisterEvents(ctx context.Context, ev *events.Eventus) error {
+	cfg := &nats.StreamConfig{
+		Name:      "CENTRUM",
+		Retention: nats.InterestPolicy,
+		Subjects:  []string{fmt.Sprintf("%s.>", BaseSubject)},
+		Discard:   nats.DiscardOld,
+		MaxAge:    30 * time.Second,
+	}
+
+	if _, err := ev.JS.UpdateStream(cfg); err != nil {
+		if !errors.Is(nats.ErrStreamNotFound, err) {
+			return err
+		}
+
+		if _, err := ev.JS.AddStream(cfg); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }

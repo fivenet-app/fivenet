@@ -3,6 +3,7 @@ package dispatch
 import (
 	"database/sql/driver"
 
+	"dario.cat/mergo"
 	jsoniter "github.com/json-iterator/go"
 )
 
@@ -26,4 +27,14 @@ func (x *Attributes) Value() (driver.Value, error) {
 
 	out, err := json.MarshalToString(x)
 	return out, err
+}
+
+func (x *Dispatch) Update(in *Dispatch) {
+	if x.Id != in.Id {
+		return
+	}
+
+	if err := mergo.Merge(x, in); err != nil {
+		return
+	}
 }

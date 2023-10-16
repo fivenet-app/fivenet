@@ -9,7 +9,9 @@ import (
 
 	dispatch "github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
-	"github.com/galexrt/fivenet/gen/go/proto/services/centrum/state"
+	"github.com/galexrt/fivenet/gen/go/proto/services/centrum/bot"
+	eventscentrum "github.com/galexrt/fivenet/gen/go/proto/services/centrum/events"
+	"github.com/galexrt/fivenet/gen/go/proto/services/centrum/manager"
 	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/events"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
@@ -20,29 +22,15 @@ import (
 	"github.com/galexrt/fivenet/pkg/tracker/postals"
 	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/query/fivenet/model"
-	"github.com/galexrt/fivenet/query/fivenet/table"
 	"github.com/nats-io/nats.go"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
-	codes "google.golang.org/grpc/codes"
-	status "google.golang.org/grpc/status"
 	"google.golang.org/protobuf/proto"
 )
 
 const pingTickerTime = 30 * time.Second
-
-var (
-	ErrFailedQuery       = status.Error(codes.Internal, "errors.CentrumService.ErrFailedQuery")
-	ErrAlreadyInUnit     = status.Error(codes.InvalidArgument, "errors.CentrumService.ErrAlreadyInUnit")
-	ErrNotPartOfDispatch = status.Error(codes.InvalidArgument, "errors.CentrumService.ErrNotPartOfDispatch")
-	ErrNotOnDuty         = status.Error(codes.InvalidArgument, "errors.CentrumService.ErrNotOnDuty.title;errors.CentrumService.ErrNotOnDuty.content")
-)
-
-var (
-	tCentrumUsers = table.FivenetCentrumUsers
-)
 
 type Server struct {
 	CentrumServiceServer
@@ -60,12 +48,9 @@ type Server struct {
 	tracker  *tracker.Tracker
 	postals  *postals.Postals
 
-	visibleJobs []string
 	convertJobs []string
 
-	state *state.State
-
-	botManager *Bot
+	state *manager.Manager
 }
 
 type Params struct {
@@ -73,17 +58,18 @@ type Params struct {
 
 	LC fx.Lifecycle
 
-	Logger   *zap.Logger
-	TP       *tracesdk.TracerProvider
-	DB       *sql.DB
-	Perms    perms.Permissions
-	Audit    audit.IAuditer
-	Events   *events.Eventus
-	Enricher *mstlystcdata.Enricher
-	Tracker  *tracker.Tracker
-	Postals  *postals.Postals
-	Config   *config.Config
-	State    *state.State
+	Logger     *zap.Logger
+	TP         *tracesdk.TracerProvider
+	DB         *sql.DB
+	Perms      perms.Permissions
+	Audit      audit.IAuditer
+	Events     *events.Eventus
+	Enricher   *mstlystcdata.Enricher
+	Tracker    *tracker.Tracker
+	Postals    *postals.Postals
+	Config     *config.Config
+	Manager    *manager.Manager
+	BotManager *bot.Manager
 }
 
 func NewServer(p Params) (*Server, error) {
@@ -104,47 +90,20 @@ func NewServer(p Params) (*Server, error) {
 		tracker:  p.Tracker,
 		postals:  p.Postals,
 
-		visibleJobs: p.Config.Game.Livemap.Jobs,
 		convertJobs: p.Config.Game.DispatchCenter.ConvertJobs,
 
-		state: p.State,
-
-		botManager: NewBotManager(ctx, p.State, p.Events),
+		state: p.Manager,
 	}
 
 	p.LC.Append(fx.StartHook(func(ctx context.Context) error {
-		if err := s.registerEvents(ctx); err != nil {
+		if err := eventscentrum.RegisterEvents(ctx, s.events); err != nil {
 			return fmt.Errorf("failed to register events: %w", err)
 		}
 
-		if err := s.loadData(); err != nil {
-			return err
-		}
-
-		s.wg.Add(1)
-		go func() {
-			defer s.wg.Done()
-			s.loadDataLoop()
-		}()
 		s.wg.Add(1)
 		go func() {
 			defer s.wg.Done()
 			s.ConvertPhoneJobMsgToDispatch()
-		}()
-		s.wg.Add(1)
-		go func() {
-			defer s.wg.Done()
-			s.watchStateEvents()
-		}()
-		s.wg.Add(1)
-		go func() {
-			defer s.wg.Done()
-			s.watchUserChanges()
-		}()
-		s.wg.Add(1)
-		go func() {
-			defer s.wg.Done()
-			s.housekeeper()
 		}()
 
 		return nil
@@ -161,20 +120,6 @@ func NewServer(p Params) (*Server, error) {
 	return s, nil
 }
 
-func (s *Server) loadDataLoop() {
-	for {
-		if err := s.loadData(); err != nil {
-			s.logger.Error("failed to refresh centrum data", zap.Error(err))
-		}
-
-		select {
-		case <-s.ctx.Done():
-			return
-		case <-time.After(10 * time.Second):
-		}
-	}
-}
-
 func (s *Server) TakeControl(ctx context.Context, req *TakeControlRequest) (*TakeControlResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -187,7 +132,7 @@ func (s *Server) TakeControl(ctx context.Context, req *TakeControlRequest) (*Tak
 	}
 	defer s.auditer.Log(auditEntry, req)
 
-	if err := s.dispatchCenterSignOn(ctx, userInfo.Job, userInfo.UserId, req.Signon); err != nil {
+	if err := s.state.DisponentSignOn(ctx, userInfo.Job, userInfo.UserId, req.Signon); err != nil {
 		return nil, err
 	}
 
@@ -203,12 +148,12 @@ func (s *Server) TakeControl(ctx context.Context, req *TakeControlRequest) (*Tak
 }
 
 func (s *Server) sendLatestState(srv CentrumService_StreamServer, job string, userId int32) (uint64, bool, error) {
-	settings := s.getSettings(job)
-	disponents := s.getDisponents(job)
-	isDisponent := s.checkIfUserIsDisponent(job, userId)
-	unitId, _ := s.getUnitIDForUserID(userId)
-	units, _ := s.listUnits(job)
-	ownUnit, _ := s.getUnit(job, unitId)
+	settings := s.state.GetSettings(job)
+	disponents := s.state.GetDisponents(job)
+	isDisponent := s.state.CheckIfUserIsDisponent(job, userId)
+	unitId, _ := s.state.GetUnitIDForUserID(userId)
+	units, _ := s.state.ListUnits(job)
+	ownUnit, _ := s.state.GetUnit(job, unitId)
 
 	dispatches, err := s.ListDispatches(srv.Context(), &ListDispatchesRequest{
 		NotStatus: []dispatch.StatusDispatch{
@@ -263,7 +208,7 @@ func (s *Server) Stream(req *StreamRequest, srv CentrumService_StreamServer) err
 
 func (s *Server) stream(srv CentrumService_StreamServer, isDisponent bool, job string, userId int32, unitId uint64) (bool, error) {
 	msgCh := make(chan *nats.Msg, 48)
-	sub, err := s.events.JS.ChanSubscribe(fmt.Sprintf("%s.%s.>", BaseSubject, job), msgCh, nats.DeliverNew())
+	sub, err := s.events.JS.ChanSubscribe(fmt.Sprintf("%s.%s.>", eventscentrum.BaseSubject, job), msgCh, nats.DeliverNew())
 	if err != nil {
 		return true, err
 	}
@@ -289,13 +234,13 @@ func (s *Server) stream(srv CentrumService_StreamServer, isDisponent bool, job s
 		case msg := <-msgCh:
 			msg.Ack()
 
-			topic, tType := getEventTypeFromSubject(msg.Subject)
+			topic, tType := eventscentrum.GetEventTypeFromSubject(msg.Subject)
 
 			switch topic {
-			case TopicGeneral:
+			case eventscentrum.TopicGeneral:
 				switch tType {
-				case TypeGeneralDisponents:
-					var dest DisponentsChange
+				case eventscentrum.TypeGeneralDisponents:
+					var dest dispatch.DisponentsChange
 					if err := proto.Unmarshal(msg.Data, &dest); err != nil {
 						return true, err
 					}
@@ -304,7 +249,7 @@ func (s *Server) stream(srv CentrumService_StreamServer, isDisponent bool, job s
 						Disponents: &dest,
 					}
 
-					found := s.checkIfUserIsDisponent(job, userId)
+					found := s.state.CheckIfUserIsDisponent(job, userId)
 					// Either user is a disponent currently and not anymore now,
 					// or the user is not a disponent and joined as a disponent now
 					if !isDisponent && found {
@@ -315,7 +260,7 @@ func (s *Server) stream(srv CentrumService_StreamServer, isDisponent bool, job s
 						isDisponent = false
 					}
 
-				case TypeGeneralSettings:
+				case eventscentrum.TypeGeneralSettings:
 					var dest dispatch.Settings
 					if err := proto.Unmarshal(msg.Data, &dest); err != nil {
 						return true, err
@@ -326,9 +271,9 @@ func (s *Server) stream(srv CentrumService_StreamServer, isDisponent bool, job s
 					}
 				}
 
-			case TopicDispatch:
+			case eventscentrum.TopicDispatch:
 				switch tType {
-				case TypeDispatchCreated:
+				case eventscentrum.TypeDispatchCreated:
 					var dest dispatch.Dispatch
 					if err := proto.Unmarshal(msg.Data, &dest); err != nil {
 						return true, err
@@ -338,7 +283,7 @@ func (s *Server) stream(srv CentrumService_StreamServer, isDisponent bool, job s
 						DispatchCreated: &dest,
 					}
 
-				case TypeDispatchDeleted:
+				case eventscentrum.TypeDispatchDeleted:
 					var dest dispatch.Dispatch
 					if err := proto.Unmarshal(msg.Data, &dest); err != nil {
 						return true, err
@@ -348,7 +293,7 @@ func (s *Server) stream(srv CentrumService_StreamServer, isDisponent bool, job s
 						DispatchDeleted: dest.Id,
 					}
 
-				case TypeDispatchUpdated:
+				case eventscentrum.TypeDispatchUpdated:
 					var dest dispatch.Dispatch
 					if err := proto.Unmarshal(msg.Data, &dest); err != nil {
 						return true, err
@@ -358,7 +303,7 @@ func (s *Server) stream(srv CentrumService_StreamServer, isDisponent bool, job s
 						DispatchUpdated: &dest,
 					}
 
-				case TypeDispatchStatus:
+				case eventscentrum.TypeDispatchStatus:
 					var dest dispatch.Dispatch
 					if err := proto.Unmarshal(msg.Data, &dest); err != nil {
 						return true, err
@@ -370,9 +315,9 @@ func (s *Server) stream(srv CentrumService_StreamServer, isDisponent bool, job s
 
 				}
 
-			case TopicUnit:
+			case eventscentrum.TopicUnit:
 				switch tType {
-				case TypeUnitDeleted:
+				case eventscentrum.TypeUnitDeleted:
 					var dest dispatch.Unit
 					if err := proto.Unmarshal(msg.Data, &dest); err != nil {
 						return true, err
@@ -382,7 +327,7 @@ func (s *Server) stream(srv CentrumService_StreamServer, isDisponent bool, job s
 						UnitDeleted: &dest,
 					}
 
-				case TypeUnitUpdated:
+				case eventscentrum.TypeUnitUpdated:
 					var dest dispatch.Unit
 					if err := proto.Unmarshal(msg.Data, &dest); err != nil {
 						return true, err
@@ -408,7 +353,7 @@ func (s *Server) stream(srv CentrumService_StreamServer, isDisponent bool, job s
 						}
 					}
 
-				case TypeUnitStatus:
+				case eventscentrum.TypeUnitStatus:
 					var dest dispatch.Unit
 					if err := proto.Unmarshal(msg.Data, &dest); err != nil {
 						return true, err

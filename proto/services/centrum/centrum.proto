@@ -81,11 +81,6 @@ message TakeControlRequest {
 
 message TakeControlResponse {}
 
-message DisponentsChange {
-  string job = 1 [(validate.rules).string.max_len = 20];
-  repeated resources.users.UserShort disponents = 2;
-}
-
 message ListDispatchesRequest {
   repeated resources.dispatch.StatusDispatch status = 1 [(validate.rules).repeated.items.enum.defined_only = true];
   repeated resources.dispatch.StatusDispatch not_status = 2 [(validate.rules).repeated.items.enum.defined_only = true];
@@ -130,6 +125,7 @@ message AssignDispatchRequest {
   uint64 dispatch_id = 1;
   repeated uint64 to_add = 2;
   repeated uint64 to_remove = 3;
+  optional bool forced = 4;
 }
 
 message AssignDispatchResponse {}
@@ -180,7 +176,7 @@ message StreamResponse {
   oneof change {
     LatestState latest_state = 1;
     resources.dispatch.Settings settings = 2;
-    DisponentsChange disponents = 3;
+    resources.dispatch.DisponentsChange disponents = 3;
 
     resources.dispatch.Unit unit_assigned = 4;
     resources.dispatch.Unit unit_deleted = 5;

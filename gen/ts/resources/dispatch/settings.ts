@@ -2,6 +2,7 @@
 // @generated from protobuf file "resources/dispatch/settings.proto" (package "resources.dispatch", syntax proto3)
 // tslint:disable
 import { MessageType } from "@protobuf-ts/runtime";
+import { UserShort } from "../users/users.js";
 /**
  * @generated from protobuf message resources.dispatch.Settings
  */
@@ -22,6 +23,19 @@ export interface Settings {
      * @generated from protobuf field: resources.dispatch.CentrumMode fallback_mode = 4;
      */
     fallbackMode: CentrumMode;
+}
+/**
+ * @generated from protobuf message resources.dispatch.DisponentsChange
+ */
+export interface DisponentsChange {
+    /**
+     * @generated from protobuf field: string job = 1;
+     */
+    job: string;
+    /**
+     * @generated from protobuf field: repeated resources.users.UserShort disponents = 2;
+     */
+    disponents: UserShort[];
 }
 /**
  * @generated from protobuf enum resources.dispatch.CentrumMode
@@ -63,3 +77,16 @@ class Settings$Type extends MessageType<Settings> {
  * @generated MessageType for protobuf message resources.dispatch.Settings
  */
 export const Settings = new Settings$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class DisponentsChange$Type extends MessageType<DisponentsChange> {
+    constructor() {
+        super("resources.dispatch.DisponentsChange", [
+            { no: 1, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
+            { no: 2, name: "disponents", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UserShort }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.dispatch.DisponentsChange
+ */
+export const DisponentsChange = new DisponentsChange$Type();

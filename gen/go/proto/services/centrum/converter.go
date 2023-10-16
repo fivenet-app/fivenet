@@ -94,7 +94,7 @@ func (s *Server) convertPhoneJobMsgToDispatch() error {
 			CreatorId: &msg.UserId,
 		}
 
-		if _, err := s.createDispatch(s.ctx, dsp); err != nil {
+		if _, err := s.state.CreateDispatch(s.ctx, dsp); err != nil {
 			return err
 		}
 

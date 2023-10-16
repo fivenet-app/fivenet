@@ -1,4 +1,4 @@
-package centrum
+package manager
 
 import (
 	"context"
@@ -10,32 +10,10 @@ import (
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
+	"google.golang.org/protobuf/proto"
 )
 
-func (s *Server) loadData() error {
-	ctx, span := s.tracer.Start(s.ctx, "centrum-loaddata")
-	defer span.End()
-
-	if err := s.loadSettings(ctx, ""); err != nil {
-		return fmt.Errorf("failed to load centrum settings: %w", err)
-	}
-
-	if err := s.loadDisponents(ctx, ""); err != nil {
-		return fmt.Errorf("failed to load centrum disponents: %w", err)
-	}
-
-	if err := s.loadUnits(ctx, 0); err != nil {
-		return fmt.Errorf("failed to load centrum units: %w", err)
-	}
-
-	if err := s.loadDispatches(ctx, 0); err != nil {
-		return fmt.Errorf("failed to load centrum dispatches: %w", err)
-	}
-
-	return nil
-}
-
-func (s *Server) loadSettings(ctx context.Context, job string) error {
+func (s *Manager) LoadSettings(ctx context.Context, job string) error {
 	tCentrumSettings := tCentrumSettings.AS("settings")
 	stmt := tCentrumSettings.
 		SELECT(
@@ -58,18 +36,16 @@ func (s *Server) loadSettings(ctx context.Context, job string) error {
 	}
 
 	for _, settings := range dest {
-		set, ok := s.state.Settings.LoadOrStore(settings.Job, settings)
+		set, ok := s.Settings.LoadOrStore(settings.Job, settings)
 		if ok {
-			set.Enabled = settings.Enabled
-			set.Mode = settings.Mode
-			set.FallbackMode = settings.FallbackMode
+			proto.Merge(set, settings)
 		}
 	}
 
 	return nil
 }
 
-func (s *Server) loadDisponents(ctx context.Context, job string) error {
+func (s *Manager) LoadDisponents(ctx context.Context, job string) error {
 	stmt := tCentrumUsers.
 		SELECT(
 			tCentrumUsers.Job,
@@ -119,17 +95,17 @@ func (s *Server) loadDisponents(ctx context.Context, job string) error {
 
 	if len(perJob) == 0 {
 		if job != "" {
-			s.state.Disponents.Delete(job)
+			s.Disponents.Delete(job)
 		} else {
 			// No disponents for any jobs found, clear lists
-			s.state.Disponents.Clear()
+			s.Disponents.Clear()
 		}
 	} else {
 		for job, us := range perJob {
 			if len(us) == 0 {
-				s.state.Disponents.Delete(job)
+				s.Disponents.Delete(job)
 			} else {
-				s.state.Disponents.Store(job, us)
+				s.Disponents.Store(job, us)
 			}
 		}
 	}
@@ -137,7 +113,7 @@ func (s *Server) loadDisponents(ctx context.Context, job string) error {
 	return nil
 }
 
-func (s *Server) loadUnits(ctx context.Context, id uint64) error {
+func (s *Manager) LoadUnits(ctx context.Context, id uint64) error {
 	condition := jet.AND(tUnitStatus.ID.IS_NULL().OR(
 		tUnitStatus.ID.EQ(
 			jet.RawInt("SELECT MAX(`unitstatus`.`id`) FROM `fivenet_centrum_units_status` AS `unitstatus` WHERE `unitstatus`.`unit_id` = `unit`.`id`"),
@@ -199,17 +175,20 @@ func (s *Server) loadUnits(ctx context.Context, id uint64) error {
 			return err
 		}
 
-		s.getUnitsMap(units[i].Job).Store(units[i].Id, units[i])
+		um := s.GetUnitsMap(units[i].Job)
+		if u, loaded := um.LoadOrStore(units[i].Id, units[i]); loaded {
+			u.Update(units[i])
+		}
 
 		for _, user := range units[i].Users {
-			s.state.UserIDToUnitID.Store(user.UserId, units[i].Id)
+			s.UserIDToUnitID.Store(user.UserId, units[i].Id)
 		}
 	}
 
 	return nil
 }
 
-func (s *Server) loadUnitIDForUserID(ctx context.Context, userId int32) (uint64, error) {
+func (s *Manager) LoadUnitIDForUserID(ctx context.Context, userId int32) (uint64, error) {
 	stmt := tUnitUser.
 		SELECT(
 			tUnitUser.UnitID.AS("unit_id"),
@@ -234,7 +213,7 @@ func (s *Server) loadUnitIDForUserID(ctx context.Context, userId int32) (uint64,
 	return dest.UnitID, nil
 }
 
-func (s *Server) loadDispatches(ctx context.Context, id uint64) error {
+func (s *Manager) LoadDispatches(ctx context.Context, id uint64) error {
 	condition := tDispatchStatus.ID.IS_NULL().OR(
 		tDispatchStatus.ID.EQ(
 			jet.RawInt("SELECT MAX(`dispatchstatus`.`id`) FROM `fivenet_centrum_dispatches_status` AS `dispatchstatus` WHERE `dispatchstatus`.`dispatch_id` = `dispatch`.`id` AND `dispatchstatus`.`status` NOT IN (10)"),
@@ -298,7 +277,7 @@ func (s *Server) loadDispatches(ctx context.Context, id uint64) error {
 		ORDER_BY(
 			tDispatch.ID.ASC(),
 		).
-		LIMIT(150)
+		LIMIT(200)
 
 	dispatches := []*dispatch.Dispatch{}
 	if err := stmt.QueryContext(ctx, s.db, &dispatches); err != nil {
@@ -327,7 +306,7 @@ func (s *Server) loadDispatches(ctx context.Context, id uint64) error {
 			postal := s.postals.Closest(dispatches[i].X, dispatches[i].Y)
 			dispatches[i].Postal = postal.Code
 
-			if err := s.updateDispatch(ctx, &userinfo.UserInfo{
+			if err := s.UpdateDispatch(ctx, &userinfo.UserInfo{
 				UserId: *dispatches[i].CreatorId,
 				Job:    dispatches[i].Job,
 			}, dispatches[i]); err != nil {
@@ -335,11 +314,14 @@ func (s *Server) loadDispatches(ctx context.Context, id uint64) error {
 			}
 		}
 
-		s.getDispatchesMap(dispatches[i].Job).Store(dispatches[i].Id, dispatches[i])
+		dm := s.GetDispatchesMap(dispatches[i].Job)
+		if d, loaded := dm.LoadOrStore(dispatches[i].Id, dispatches[i]); loaded {
+			d.Update(dispatches[i])
+		}
 
 		// Ensure dispatch has status new if none
 		if dispatches[i].Status == nil {
-			if err := s.updateDispatchStatus(ctx, dispatches[i].Job, dispatches[i], &dispatch.DispatchStatus{
+			if err := s.UpdateDispatchStatus(ctx, dispatches[i].Job, dispatches[i], &dispatch.DispatchStatus{
 				DispatchId: dispatches[i].Id,
 				Status:     dispatch.StatusDispatch_STATUS_DISPATCH_NEW,
 			}); err != nil {
@@ -351,7 +333,7 @@ func (s *Server) loadDispatches(ctx context.Context, id uint64) error {
 	return nil
 }
 
-func (s *Server) loadDispatchAssignments(ctx context.Context, job string, dispatchId uint64) ([]*dispatch.DispatchAssignment, error) {
+func (s *Manager) loadDispatchAssignments(ctx context.Context, job string, dispatchId uint64) ([]*dispatch.DispatchAssignment, error) {
 	stmt := tDispatch.
 		SELECT(
 			tDispatchUnit.DispatchID,
@@ -374,7 +356,7 @@ func (s *Server) loadDispatchAssignments(ctx context.Context, job string, dispat
 
 	// Resolve units based on the dispatch unit assignments
 	for i := 0; i < len(dest); i++ {
-		unit, ok := s.getUnit(job, dest[i].UnitId)
+		unit, ok := s.GetUnit(job, dest[i].UnitId)
 		if !ok {
 			return nil, fmt.Errorf("no unit found with id")
 		}

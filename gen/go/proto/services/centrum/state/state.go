@@ -8,7 +8,7 @@ import (
 )
 
 var StateModule = fx.Module("centrum_state", fx.Provide(
-	NewState,
+	New,
 ))
 
 type State struct {
@@ -20,7 +20,7 @@ type State struct {
 	UserIDToUnitID *xsync.MapOf[int32, uint64]
 }
 
-func NewState() *State {
+func New() *State {
 	return &State{
 		Settings:   xsync.NewMapOf[*dispatch.Settings](),
 		Disponents: xsync.NewMapOf[[]*users.UserShort](),

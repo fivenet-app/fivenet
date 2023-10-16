@@ -2,31 +2,26 @@ package centrum
 
 import (
 	"context"
+	"time"
 
 	database "github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
 	dispatch "github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/timestamp"
+	errorscentrum "github.com/galexrt/fivenet/gen/go/proto/services/centrum/errors"
+	eventscentrum "github.com/galexrt/fivenet/gen/go/proto/services/centrum/events"
+	centrumutils "github.com/galexrt/fivenet/gen/go/proto/services/centrum/utils"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/pkg/utils/dbutils"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/proto"
 )
 
 var (
-	tDispatch       = table.FivenetCentrumDispatches.AS("dispatch")
 	tDispatchStatus = table.FivenetCentrumDispatchesStatus.AS("dispatchstatus")
-	tDispatchUnit   = table.FivenetCentrumDispatchesAsgmts.AS("dispatchassignment")
-)
-
-var (
-	ErrModeForbidsAction        = status.Error(codes.InvalidArgument, "errors.CentrumService.ErrModeForbidsAction.title;errors.CentrumService.ErrModeForbidsAction.content")
-	ErrDispatchAlreadyCompleted = status.Error(codes.InvalidArgument, "errors.CentrumService.ErrDispatchAlreadyCompleted.title;errors.CentrumService.ErrDispatchAlreadyCompleted.content")
 )
 
 func (s *Server) ListDispatches(ctx context.Context, req *ListDispatchesRequest) (*ListDispatchesResponse, error) {
@@ -45,7 +40,7 @@ func (s *Server) ListDispatches(ctx context.Context, req *ListDispatchesRequest)
 		Dispatches: []*dispatch.Dispatch{},
 	}
 
-	dispatches := s.listDispatches(userInfo.Job)
+	dispatches := s.state.ListDispatches(userInfo.Job)
 	for i := 0; i < len(dispatches); i++ {
 		// Hide user info when dispatch is anonymous
 		if dispatches[i].Anon {
@@ -93,7 +88,7 @@ func (s *Server) CreateDispatch(ctx context.Context, req *CreateDispatchRequest)
 	req.Dispatch.Job = userInfo.Job
 	req.Dispatch.CreatorId = &userInfo.UserId
 
-	dsp, err := s.createDispatch(ctx, req.Dispatch)
+	dsp, err := s.state.CreateDispatch(ctx, req.Dispatch)
 	if err != nil {
 		return nil, err
 	}
@@ -117,25 +112,25 @@ func (s *Server) UpdateDispatch(ctx context.Context, req *UpdateDispatchRequest)
 	}
 	defer s.auditer.Log(auditEntry, req)
 
-	if err := s.updateDispatch(ctx, userInfo, req.Dispatch); err != nil {
-		return nil, ErrFailedQuery
+	if err := s.state.UpdateDispatch(ctx, userInfo, req.Dispatch); err != nil {
+		return nil, errorscentrum.ErrFailedQuery
 	}
 
 	// Load dispatch into cache
-	if err := s.loadDispatches(ctx, req.Dispatch.Id); err != nil {
-		return nil, ErrFailedQuery
+	if err := s.state.LoadDispatches(ctx, req.Dispatch.Id); err != nil {
+		return nil, errorscentrum.ErrFailedQuery
 	}
 
-	dsp, ok := s.getDispatch(userInfo.Job, req.Dispatch.Id)
+	dsp, ok := s.state.GetDispatch(userInfo.Job, req.Dispatch.Id)
 	if !ok {
-		return nil, ErrFailedQuery
+		return nil, errorscentrum.ErrFailedQuery
 	}
 
 	data, err := proto.Marshal(dsp)
 	if err != nil {
-		return nil, ErrFailedQuery
+		return nil, errorscentrum.ErrFailedQuery
 	}
-	s.events.JS.PublishAsync(buildSubject(TopicDispatch, TypeDispatchUpdated, userInfo.Job, 0), data)
+	s.events.JS.PublishAsync(eventscentrum.BuildSubject(eventscentrum.TopicDispatch, eventscentrum.TypeDispatchUpdated, userInfo.Job, 0), data)
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 
@@ -154,20 +149,20 @@ func (s *Server) TakeDispatch(ctx context.Context, req *TakeDispatchRequest) (*T
 	}
 	defer s.auditer.Log(auditEntry, req)
 
-	unitId, ok := s.getUnitIDForUserID(userInfo.UserId)
+	unitId, ok := s.state.GetUnitIDForUserID(userInfo.UserId)
 	if !ok {
-		return nil, ErrFailedQuery
+		return nil, errorscentrum.ErrFailedQuery
 	}
-	unit, ok := s.getUnit(userInfo.Job, unitId)
+	unit, ok := s.state.GetUnit(userInfo.Job, unitId)
 	if !ok {
-		return nil, ErrFailedQuery
+		return nil, errorscentrum.ErrFailedQuery
 	}
 
-	settings := s.getSettings(userInfo.Job)
+	settings := s.state.GetSettings(userInfo.Job)
 	for _, dispatchId := range req.DispatchIds {
-		dsp, ok := s.getDispatch(userInfo.Job, dispatchId)
+		dsp, ok := s.state.GetDispatch(userInfo.Job, dispatchId)
 		if !ok {
-			return nil, ErrFailedQuery
+			return nil, errorscentrum.ErrFailedQuery
 		}
 
 		// If the dispatch center is in central command mode, units can't self assign dispatches
@@ -175,13 +170,13 @@ func (s *Server) TakeDispatch(ctx context.Context, req *TakeDispatchRequest) (*T
 			if !utils.InSliceFunc(dsp.Units, func(in *dispatch.DispatchAssignment) bool {
 				return in.UnitId == unitId
 			}) {
-				return nil, ErrModeForbidsAction
+				return nil, errorscentrum.ErrModeForbidsAction
 			}
 		}
 
 		// If dispatch is completed, disallow to accept the dispatch
-		if dsp.Status != nil && s.isStatusDispatchComplete(dsp.Status.Status) {
-			return nil, ErrDispatchAlreadyCompleted
+		if dsp.Status != nil && centrumutils.IsStatusDispatchComplete(dsp.Status.Status) {
+			return nil, errorscentrum.ErrDispatchAlreadyCompleted
 		}
 
 		var x, y *float64
@@ -248,7 +243,7 @@ func (s *Server) TakeDispatch(ctx context.Context, req *TakeDispatchRequest) (*T
 			if accepted {
 				// Set unit to busy when unit accepts a dispatch
 				if unit.Status == nil || unit.Status.Status != dispatch.StatusUnit_STATUS_UNIT_BUSY {
-					if err := s.updateUnitStatus(ctx, userInfo.Job, unit, &dispatch.UnitStatus{
+					if err := s.state.UpdateUnitStatus(ctx, userInfo.Job, unit, &dispatch.UnitStatus{
 						UnitId:    unit.Id,
 						Status:    dispatch.StatusUnit_STATUS_UNIT_BUSY,
 						UserId:    &userInfo.UserId,
@@ -288,7 +283,7 @@ func (s *Server) TakeDispatch(ctx context.Context, req *TakeDispatchRequest) (*T
 			}
 		}
 
-		if err := s.updateDispatchStatus(ctx, userInfo.Job, dsp, &dispatch.DispatchStatus{
+		if err := s.state.UpdateDispatchStatus(ctx, userInfo.Job, dsp, &dispatch.DispatchStatus{
 			DispatchId: dispatchId,
 			Status:     status,
 			UnitId:     &unitId,
@@ -318,20 +313,20 @@ func (s *Server) UpdateDispatchStatus(ctx context.Context, req *UpdateDispatchSt
 	}
 	defer s.auditer.Log(auditEntry, req)
 
-	dsp, ok := s.getDispatch(userInfo.Job, req.DispatchId)
+	dsp, ok := s.state.GetDispatch(userInfo.Job, req.DispatchId)
 	if !ok {
-		return nil, ErrFailedQuery
+		return nil, errorscentrum.ErrFailedQuery
 	}
 
-	if !s.checkIfUserIsPartOfDispatch(userInfo, dsp, true) && !userInfo.SuperUser {
-		return nil, ErrNotPartOfDispatch
+	if !s.state.CheckIfUserIsPartOfDispatch(userInfo, dsp, true) && !userInfo.SuperUser {
+		return nil, errorscentrum.ErrNotPartOfDispatch
 	}
 
 	var statusUnitId *uint64
-	unitId, ok := s.getUnitIDForUserID(userInfo.UserId)
+	unitId, ok := s.state.GetUnitIDForUserID(userInfo.UserId)
 	if !ok {
-		if !s.checkIfUserIsDisponent(userInfo.Job, userInfo.UserId) {
-			return nil, ErrFailedQuery
+		if !s.state.CheckIfUserIsDisponent(userInfo.Job, userInfo.UserId) {
+			return nil, errorscentrum.ErrFailedQuery
 		}
 	} else {
 		statusUnitId = &unitId
@@ -346,7 +341,7 @@ func (s *Server) UpdateDispatchStatus(ctx context.Context, req *UpdateDispatchSt
 		postal = marker.Info.Postal
 	}
 
-	if err := s.updateDispatchStatus(ctx, userInfo.Job, dsp, &dispatch.DispatchStatus{
+	if err := s.state.UpdateDispatchStatus(ctx, userInfo.Job, dsp, &dispatch.DispatchStatus{
 		DispatchId: dsp.Id,
 		UnitId:     statusUnitId,
 		Status:     req.Status,
@@ -363,11 +358,11 @@ func (s *Server) UpdateDispatchStatus(ctx context.Context, req *UpdateDispatchSt
 	if req.Status == dispatch.StatusDispatch_STATUS_DISPATCH_EN_ROUTE ||
 		req.Status == dispatch.StatusDispatch_STATUS_DISPATCH_ON_SCENE ||
 		req.Status == dispatch.StatusDispatch_STATUS_DISPATCH_NEED_ASSISTANCE {
-		unit, ok := s.getUnit(userInfo.Job, unitId)
+		unit, ok := s.state.GetUnit(userInfo.Job, unitId)
 		if ok && unit != nil {
 			// Set unit to busy when unit accepts a dispatch
 			if unit.Status == nil || unit.Status.Status != dispatch.StatusUnit_STATUS_UNIT_BUSY {
-				if err := s.updateUnitStatus(ctx, userInfo.Job, unit, &dispatch.UnitStatus{
+				if err := s.state.UpdateUnitStatus(ctx, userInfo.Job, unit, &dispatch.UnitStatus{
 					UnitId:    unit.Id,
 					Status:    dispatch.StatusUnit_STATUS_UNIT_BUSY,
 					UserId:    &userInfo.UserId,
@@ -399,16 +394,21 @@ func (s *Server) AssignDispatch(ctx context.Context, req *AssignDispatchRequest)
 	}
 	defer s.auditer.Log(auditEntry, req)
 
-	dsp, ok := s.getDispatch(userInfo.Job, req.DispatchId)
+	dsp, ok := s.state.GetDispatch(userInfo.Job, req.DispatchId)
 	if !ok {
-		return nil, ErrFailedQuery
+		return nil, errorscentrum.ErrFailedQuery
 	}
 
 	if dsp.Job != userInfo.Job {
-		return nil, ErrFailedQuery
+		return nil, errorscentrum.ErrFailedQuery
 	}
 
-	if err := s.updateDispatchAssignments(ctx, userInfo.Job, &userInfo.UserId, dsp, req.ToAdd, req.ToRemove); err != nil {
+	expiresAt := time.Time{}
+	if req.Forced == nil || !*req.Forced {
+		expiresAt = s.state.DispatchAssignmentExpirationTime()
+	}
+
+	if err := s.state.UpdateDispatchAssignments(ctx, userInfo.Job, &userInfo.UserId, dsp, req.ToAdd, req.ToRemove, expiresAt); err != nil {
 		return nil, err
 	}
 
@@ -431,7 +431,7 @@ func (s *Server) ListDispatchActivity(ctx context.Context, req *ListDispatchActi
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
-		return nil, ErrFailedQuery
+		return nil, errorscentrum.ErrFailedQuery
 	}
 
 	pag, limit := req.Pagination.GetResponseWithPageSize(10)
@@ -479,7 +479,7 @@ func (s *Server) ListDispatchActivity(ctx context.Context, req *ListDispatchActi
 	}
 	for i := 0; i < len(resp.Activity); i++ {
 		if resp.Activity[i].UnitId != nil && *resp.Activity[i].UnitId > 0 {
-			resp.Activity[i].Unit, _ = s.getUnit(userInfo.Job, *resp.Activity[i].UnitId)
+			resp.Activity[i].Unit, _ = s.state.GetUnit(userInfo.Job, *resp.Activity[i].UnitId)
 		}
 	}
 
@@ -500,8 +500,8 @@ func (s *Server) DeleteDispatch(ctx context.Context, req *DeleteDispatchRequest)
 	}
 	defer s.auditer.Log(auditEntry, req)
 
-	if err := s.deleteDispatch(ctx, userInfo.Job, req.Id); err != nil {
-		return nil, ErrFailedQuery
+	if err := s.state.DeleteDispatch(ctx, userInfo.Job, req.Id); err != nil {
+		return nil, errorscentrum.ErrFailedQuery
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)

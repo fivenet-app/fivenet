@@ -5,6 +5,7 @@ go 1.21
 toolchain go1.21.1
 
 require (
+	dario.cat/mergo v1.0.0
 	github.com/Code-Hex/go-generics-cache v1.3.1
 	github.com/Masterminds/sprig/v3 v3.2.3
 	github.com/XSAM/otelsql v0.26.0

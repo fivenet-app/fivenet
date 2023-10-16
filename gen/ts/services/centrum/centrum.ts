@@ -3,11 +3,12 @@
 // tslint:disable
 import { ServiceType } from "@protobuf-ts/runtime-rpc";
 import { MessageType } from "@protobuf-ts/runtime";
+import { DisponentsChange } from "../../resources/dispatch/settings.js";
+import { UserShort } from "../../resources/users/users.js";
 import { Settings } from "../../resources/dispatch/settings.js";
 import { DispatchStatus } from "../../resources/dispatch/dispatches.js";
 import { Dispatch } from "../../resources/dispatch/dispatches.js";
 import { StatusDispatch } from "../../resources/dispatch/dispatches.js";
-import { UserShort } from "../../resources/users/users.js";
 import { UnitStatus } from "../../resources/dispatch/units.js";
 import { PaginationResponse } from "../../resources/common/database/database.js";
 import { Unit } from "../../resources/dispatch/units.js";
@@ -180,19 +181,6 @@ export interface TakeControlRequest {
 export interface TakeControlResponse {
 }
 /**
- * @generated from protobuf message services.centrum.DisponentsChange
- */
-export interface DisponentsChange {
-    /**
-     * @generated from protobuf field: string job = 1;
-     */
-    job: string;
-    /**
-     * @generated from protobuf field: repeated resources.users.UserShort disponents = 2;
-     */
-    disponents: UserShort[];
-}
-/**
  * @generated from protobuf message services.centrum.ListDispatchesRequest
  */
 export interface ListDispatchesRequest {
@@ -306,6 +294,10 @@ export interface AssignDispatchRequest {
      * @generated from protobuf field: repeated uint64 to_remove = 3;
      */
     toRemove: bigint[];
+    /**
+     * @generated from protobuf field: optional bool forced = 4;
+     */
+    forced?: boolean;
 }
 /**
  * @generated from protobuf message services.centrum.AssignDispatchResponse
@@ -429,7 +421,7 @@ export interface StreamResponse {
     } | {
         oneofKind: "disponents";
         /**
-         * @generated from protobuf field: services.centrum.DisponentsChange disponents = 3;
+         * @generated from protobuf field: resources.dispatch.DisponentsChange disponents = 3;
          */
         disponents: DisponentsChange;
     } | {
@@ -706,19 +698,6 @@ class TakeControlResponse$Type extends MessageType<TakeControlResponse> {
  */
 export const TakeControlResponse = new TakeControlResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class DisponentsChange$Type extends MessageType<DisponentsChange> {
-    constructor() {
-        super("services.centrum.DisponentsChange", [
-            { no: 1, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
-            { no: 2, name: "disponents", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UserShort }
-        ]);
-    }
-}
-/**
- * @generated MessageType for protobuf message services.centrum.DisponentsChange
- */
-export const DisponentsChange = new DisponentsChange$Type();
-// @generated message type with reflection information, may provide speed optimized methods
 class ListDispatchesRequest$Type extends MessageType<ListDispatchesRequest> {
     constructor() {
         super("services.centrum.ListDispatchesRequest", [
@@ -842,7 +821,8 @@ class AssignDispatchRequest$Type extends MessageType<AssignDispatchRequest> {
         super("services.centrum.AssignDispatchRequest", [
             { no: 1, name: "dispatch_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
             { no: 2, name: "to_add", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 3, name: "to_remove", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+            { no: 3, name: "to_remove", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 4, name: "forced", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
 }

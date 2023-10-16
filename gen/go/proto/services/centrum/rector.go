@@ -5,16 +5,21 @@ import (
 
 	dispatch "github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
+	errorscentrum "github.com/galexrt/fivenet/gen/go/proto/services/centrum/errors"
+	eventscentrum "github.com/galexrt/fivenet/gen/go/proto/services/centrum/events"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/query/fivenet/model"
+	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"google.golang.org/protobuf/proto"
 )
 
+var tCentrumSettings = table.FivenetCentrumSettings
+
 func (s *Server) GetSettings(ctx context.Context, req *GetSettingsRequest) (*dispatch.Settings, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	settings := s.getSettings(userInfo.Job)
+	settings := s.state.GetSettings(userInfo.Job)
 
 	return settings, nil
 }
@@ -52,21 +57,21 @@ func (s *Server) UpdateSettings(ctx context.Context, req *dispatch.Settings) (*d
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return nil, ErrFailedQuery
+		return nil, errorscentrum.ErrFailedQuery
 	}
 
 	// Load settings from database so they are updated in the "cache"
-	if err := s.loadSettings(ctx, userInfo.Job); err != nil {
-		return nil, ErrFailedQuery
+	if err := s.state.LoadSettings(ctx, userInfo.Job); err != nil {
+		return nil, errorscentrum.ErrFailedQuery
 	}
 
-	settings := s.getSettings(userInfo.Job)
+	settings := s.state.GetSettings(userInfo.Job)
 
 	data, err := proto.Marshal(settings)
 	if err != nil {
-		return nil, ErrFailedQuery
+		return nil, errorscentrum.ErrFailedQuery
 	}
-	s.events.JS.PublishAsync(buildSubject(TopicGeneral, TypeGeneralSettings, userInfo.Job, 0), data)
+	s.events.JS.PublishAsync(eventscentrum.BuildSubject(eventscentrum.TopicGeneral, eventscentrum.TypeGeneralSettings, userInfo.Job, 0), data)
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 

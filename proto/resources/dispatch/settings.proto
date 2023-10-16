@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package resources.dispatch;
 
+import "resources/users/users.proto";
 import "validate/validate.proto";
 
 option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/dispatch;dispatch";
@@ -19,4 +20,9 @@ message Settings {
   bool enabled = 2;
   CentrumMode mode = 3 [(validate.rules).enum.defined_only = true];
   CentrumMode fallback_mode = 4 [(validate.rules).enum.defined_only = true];
+}
+
+message DisponentsChange {
+  string job = 1 [(validate.rules).string.max_len = 20];
+  repeated resources.users.UserShort disponents = 2;
 }

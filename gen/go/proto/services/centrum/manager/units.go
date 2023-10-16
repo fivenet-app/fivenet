@@ -1,49 +1,19 @@
-package centrum
+package manager
 
 import (
 	"context"
-	"strings"
 
-	dispatch "github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
+	"github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
+	eventscentrum "github.com/galexrt/fivenet/gen/go/proto/services/centrum/events"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/pkg/utils/dbutils"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
-	"golang.org/x/exp/slices"
 	"google.golang.org/protobuf/proto"
 )
 
-func (s *Server) getUnit(job string, id uint64) (*dispatch.Unit, bool) {
-	units, ok := s.state.Units.Load(job)
-	if !ok {
-		return nil, false
-	}
-
-	return units.Load(id)
-}
-
-func (s *Server) listUnits(job string) ([]*dispatch.Unit, bool) {
-	us := []*dispatch.Unit{}
-
-	units, ok := s.state.Units.Load(job)
-	if !ok {
-		return nil, false
-	}
-
-	units.Range(func(key uint64, unit *dispatch.Unit) bool {
-		us = append(us, unit)
-		return true
-	})
-
-	slices.SortFunc(us, func(a, b *dispatch.Unit) int {
-		return strings.Compare(a.Name, b.Name)
-	})
-
-	return us, true
-}
-
-func (s *Server) getUnitStatusFromDB(ctx context.Context, job string, id uint64) (*dispatch.UnitStatus, error) {
+func (s *Manager) GetUnitStatusFromDB(ctx context.Context, job string, id uint64) (*dispatch.UnitStatus, error) {
 	stmt := tUnitStatus.
 		SELECT(
 			tUnitStatus.ID,
@@ -85,7 +55,7 @@ func (s *Server) getUnitStatusFromDB(ctx context.Context, job string, id uint64)
 	}
 
 	if dest.UnitId > 0 {
-		unit, ok := s.getUnit(job, dest.UnitId)
+		unit, ok := s.GetUnit(job, dest.UnitId)
 		if ok && unit != nil {
 			newUnit := proto.Clone(unit)
 			dest.Unit = newUnit.(*dispatch.Unit)
@@ -95,33 +65,7 @@ func (s *Server) getUnitStatusFromDB(ctx context.Context, job string, id uint64)
 	return &dest, nil
 }
 
-func (s *Server) resolveUsersForUnit(ctx context.Context, u []*dispatch.UnitAssignment) ([]*dispatch.UnitAssignment, error) {
-	userIds := make([]int32, len(u))
-	for i := 0; i < len(u); i++ {
-		userIds[i] = u[i].UserId
-	}
-
-	if len(userIds) == 0 {
-		return nil, nil
-	}
-
-	us, err := s.resolveUserShortsByIds(ctx, userIds)
-	if err != nil {
-		return nil, err
-	}
-
-	for i := 0; i < len(u); i++ {
-		u[i].User = us[i]
-	}
-
-	return u, nil
-}
-
-func (s *Server) getUnitIDForUserID(userId int32) (uint64, bool) {
-	return s.state.UserIDToUnitID.Load(userId)
-}
-
-func (s *Server) updateUnitStatus(ctx context.Context, job string, unit *dispatch.Unit, in *dispatch.UnitStatus) error {
+func (s *Manager) UpdateUnitStatus(ctx context.Context, job string, unit *dispatch.Unit, in *dispatch.UnitStatus) error {
 	// If the unit status is the same and is a status that shouldn't be duplicated, don't update the status again
 	if unit.Status != nil &&
 		unit.Status.Status == in.Status &&
@@ -167,7 +111,7 @@ func (s *Server) updateUnitStatus(ctx context.Context, job string, unit *dispatc
 		return err
 	}
 
-	status, err := s.getUnitStatusFromDB(ctx, job, uint64(lastId))
+	status, err := s.GetUnitStatusFromDB(ctx, job, uint64(lastId))
 	if err != nil {
 		return err
 	}
@@ -177,12 +121,12 @@ func (s *Server) updateUnitStatus(ctx context.Context, job string, unit *dispatc
 	if err != nil {
 		return err
 	}
-	s.events.JS.PublishAsync(buildSubject(TopicUnit, TypeUnitStatus, job, status.UnitId), data)
+	s.events.JS.PublishAsync(eventscentrum.BuildSubject(eventscentrum.TopicUnit, eventscentrum.TypeUnitStatus, job, status.UnitId), data)
 
 	return nil
 }
 
-func (s *Server) updateUnitAssignments(ctx context.Context, userInfo *userinfo.UserInfo, unit *dispatch.Unit, toAdd []int32, toRemove []int32) error {
+func (s *Manager) UpdateUnitAssignments(ctx context.Context, userInfo *userinfo.UserInfo, unit *dispatch.Unit, toAdd []int32, toRemove []int32) error {
 	var x, y *float64
 	var postal *string
 	marker, ok := s.tracker.GetUserById(userInfo.UserId)
@@ -195,7 +139,7 @@ func (s *Server) updateUnitAssignments(ctx context.Context, userInfo *userinfo.U
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
-		return ErrFailedQuery
+		return err
 	}
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
@@ -227,7 +171,7 @@ func (s *Server) updateUnitAssignments(ctx context.Context, userInfo *userinfo.U
 				if unit.Users[i].UserId == toRemove[k] {
 					unit.Users = utils.RemoveFromSlice(unit.Users, i)
 
-					if err := s.updateUnitStatus(ctx, userInfo.Job, unit, &dispatch.UnitStatus{
+					if err := s.UpdateUnitStatus(ctx, userInfo.Job, unit, &dispatch.UnitStatus{
 						UnitId:    unit.Id,
 						Status:    dispatch.StatusUnit_STATUS_UNIT_USER_REMOVED,
 						UserId:    &toRemove[k],
@@ -239,7 +183,7 @@ func (s *Server) updateUnitAssignments(ctx context.Context, userInfo *userinfo.U
 						return err
 					}
 
-					s.state.UserIDToUnitID.Delete(toRemove[k])
+					s.UserIDToUnitID.Delete(toRemove[k])
 					break
 				}
 			}
@@ -296,7 +240,7 @@ func (s *Server) updateUnitAssignments(ctx context.Context, userInfo *userinfo.U
 				User:   user,
 			})
 
-			if err := s.updateUnitStatus(ctx, userInfo.Job, unit, &dispatch.UnitStatus{
+			if err := s.UpdateUnitStatus(ctx, userInfo.Job, unit, &dispatch.UnitStatus{
 				UnitId:    unit.Id,
 				Status:    dispatch.StatusUnit_STATUS_UNIT_USER_ADDED,
 				UserId:    &user.UserId,
@@ -308,24 +252,24 @@ func (s *Server) updateUnitAssignments(ctx context.Context, userInfo *userinfo.U
 				return err
 			}
 
-			s.state.UserIDToUnitID.Store(user.UserId, unit.Id)
+			s.UserIDToUnitID.Store(user.UserId, unit.Id)
 		}
 	}
 
 	// Commit the transaction
 	if err := tx.Commit(); err != nil {
-		return ErrFailedQuery
+		return err
 	}
 
 	data, err := proto.Marshal(unit)
 	if err != nil {
 		return err
 	}
-	s.events.JS.PublishAsync(buildSubject(TopicUnit, TypeUnitUpdated, userInfo.Job, unit.Id), data)
+	s.events.JS.PublishAsync(eventscentrum.BuildSubject(eventscentrum.TopicUnit, eventscentrum.TypeUnitUpdated, userInfo.Job, unit.Id), data)
 
 	// Unit is empty, set unit status to be unavailable automatically
 	if len(unit.Users) == 0 {
-		if err := s.updateUnitStatus(ctx, userInfo.Job, unit, &dispatch.UnitStatus{
+		if err := s.UpdateUnitStatus(ctx, userInfo.Job, unit, &dispatch.UnitStatus{
 			UnitId:    unit.Id,
 			Status:    dispatch.StatusUnit_STATUS_UNIT_UNAVAILABLE,
 			UserId:    &userInfo.UserId,
