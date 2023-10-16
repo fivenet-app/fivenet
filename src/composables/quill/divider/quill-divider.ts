@@ -13,10 +13,12 @@ class DividerToolbar extends Module {
         this.quill = quill;
         this.toolbar = quill.getModule('toolbar');
         this.toolbar.addHandler('divider', this.dividerHandler.bind(this));
-        const divider = document.querySelector('.ql-divider');
-        if (divider) {
-            divider.innerHTML = this.options.icon;
-        }
+        setTimeout(() => {
+            const divider = document.querySelector('.ql-divider');
+            if (divider) {
+                divider.innerHTML = this.options.icon;
+            }
+        }, 75);
     }
 
     dividerHandler() {
@@ -40,7 +42,5 @@ class DividerToolbar extends Module {
         this.quill.setSelection(selection + 2, 0);
     }
 }
-
-Quill.register(divider);
 
 export default DividerToolbar;

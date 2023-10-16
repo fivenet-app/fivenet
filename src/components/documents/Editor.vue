@@ -12,7 +12,7 @@ import {
 } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { max, min, required } from '@vee-validate/rules';
-import { QuillEditor } from '@vueup/vue-quill';
+import { Quill, QuillEditor } from '@vueup/vue-quill';
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import { useDebounceFn, useThrottleFn, watchDebounced, watchOnce } from '@vueuse/core';
 import { ImageActions } from '@xeger/quill-image-actions';
@@ -33,7 +33,7 @@ import MagicUrl from 'quill-magic-url';
 import QuillPasteSmart from 'quill-paste-smart';
 import { defineRule } from 'vee-validate';
 import { TranslateItem } from '~/composables/i18n';
-import '~/composables/quill/divider/quill-divider';
+import Divider from '~/composables/quill/divider/divider';
 import DividerToolbar from '~/composables/quill/divider/quill-divider';
 import { useAuthStore } from '~/store/auth';
 import { getDocument, getUser, useClipboardStore } from '~/store/clipboard';
@@ -185,6 +185,8 @@ const modules = [
         options: {},
     },
 ];
+
+Quill.register(Divider);
 
 const formats = [
     'bold',

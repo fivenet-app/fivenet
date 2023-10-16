@@ -29,6 +29,7 @@ const props = withDefaults(
 const emit = defineEmits<{
     (e: 'counted', count: bigint): void;
     (e: 'newComment'): void;
+    (e: 'deletedComment'): void;
 }>();
 
 const offset = ref(0n);
@@ -117,6 +118,8 @@ async function removeComment(comment: Comment): Promise<void> {
         if (idx > -1) {
             data.value.comments.splice(idx, 1);
         }
+
+        emit('deletedComment');
 
         return res();
     });

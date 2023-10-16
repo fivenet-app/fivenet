@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
-import { QuillEditor } from '@vueup/vue-quill';
+import { Quill, QuillEditor } from '@vueup/vue-quill';
 import { useConfirmDialog } from '@vueuse/core';
 import {
     AccountMultipleIcon,
@@ -24,7 +24,7 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import Time from '~/components/partials/elements/Time.vue';
-import '~/composables/quill/divider/quill-divider';
+import Divider from '~/composables/quill/divider/divider';
 import { useClipboardStore } from '~/store/clipboard';
 import { useNotificatorStore } from '~/store/notificator';
 import { AccessLevel } from '~~/gen/ts/resources/documents/access';
@@ -142,6 +142,8 @@ function addToClipboard(): void {
         type: 'info',
     });
 }
+
+Quill.register(Divider);
 
 const { isRevealed, reveal, confirm, cancel, onConfirm } = useConfirmDialog();
 onConfirm(async (id: bigint) => deleteDocument(id));
@@ -282,7 +284,7 @@ onConfirm(async (id: bigint) => deleteDocument(id));
                                 <CommentTextMultipleIcon class="w-5 h-auto" aria-hidden="true" />
                                 <span class="text-sm font-medium text-primary-700">
                                     {{
-                                        commentCount
+                                        commentCount !== undefined
                                             ? $t('common.comments', parseInt(commentCount?.toString()))
                                             : '? ' + $t('common.comment', 2)
                                     }}
@@ -388,6 +390,7 @@ onConfirm(async (id: bigint) => deleteDocument(id));
                                 :closed="doc?.closed"
                                 @counted="commentCount = $event"
                                 @new-comment="commentCount && commentCount++"
+                                @deleted-comment="commentCount && commentCount > 0 && commentCount--"
                             />
                         </div>
                     </div>
