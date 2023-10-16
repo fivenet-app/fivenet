@@ -185,11 +185,6 @@ const modules = [
         module: DividerToolbar,
         options: {
             cssText: 'border: none;border-bottom: 1px solid;',
-            text: {
-                children: '',
-                orientation: 'center',
-                childrenStyle: 'padding: 0 24px;',
-            },
         },
     },
 ];

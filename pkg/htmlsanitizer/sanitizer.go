@@ -60,6 +60,7 @@ func init() {
 	p.AllowAttrs("cite").OnElements("blockquote", "q")
 	p.AllowAttrs("href").OnElements("a", "area")
 	p.AllowAttrs("src").OnElements("img")
+	p.AllowElements("hr")
 
 	stripTags = bluemonday.StrictPolicy()
 }
