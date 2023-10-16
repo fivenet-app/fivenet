@@ -33,6 +33,9 @@ import MagicUrl from 'quill-magic-url';
 import QuillPasteSmart from 'quill-paste-smart';
 import { defineRule } from 'vee-validate';
 import { TranslateItem } from '~/composables/i18n';
+import '~/composables/quill/divider/divider';
+import '~/composables/quill/divider/quill-divider';
+import DividerToolbar from '~/composables/quill/divider/quill-divider';
 import { useAuthStore } from '~/store/auth';
 import { getDocument, getUser, useClipboardStore } from '~/store/clipboard';
 import { useCompletorStore } from '~/store/completor';
@@ -177,6 +180,18 @@ const modules = [
             cancelText: t('common.cancel'),
         },
     },
+    {
+        name: 'divider',
+        module: DividerToolbar,
+        options: {
+            cssText: 'border: none;border-bottom: 1px solid;',
+            text: {
+                children: '',
+                orientation: 'center',
+                childrenStyle: 'padding: 0 24px;',
+            },
+        },
+    },
 ];
 
 const formats = [
@@ -203,6 +218,7 @@ const formats = [
     'image',
     'height',
     'width',
+    'divider',
 ];
 const toolbarOptions = [
     ['bold', 'italic', 'underline', 'strike'], // toggled buttons
@@ -219,7 +235,7 @@ const toolbarOptions = [
 
     [{ color: [] }, { background: [] }], // dropdown with defaults from theme
     [{ font: [] }],
-    [{ align: [] }],
+    [{ align: [] }, 'divider'],
 
     ['link', 'video', 'image'],
 
@@ -420,10 +436,19 @@ async function findCategories(): Promise<void> {
         entriesCategories.value.push(selectedCategory.value);
 }
 
-watchDebounced(doc.value, async () => saveToStore(values), {
-    debounce: 1350,
-    maxWait: 3500,
-});
+const changed = ref(false);
+watchDebounced(
+    doc.value,
+    async () => {
+        if (changed.value) {
+            saveToStore(values);
+        }
+    },
+    {
+        debounce: 1350,
+        maxWait: 4000,
+    },
+);
 
 watchDebounced(queryCategories, async () => findCategories(), {
     debounce: 600,
@@ -723,6 +748,7 @@ function calculate(content: string): Stats {
 const debounced = useDebounceFn(
     () => {
         if (quillEditorRef.value === null) return;
+        changed.value = true;
 
         stats.value = calculate(quillEditorRef.value.getQuill()?.getText());
     },
