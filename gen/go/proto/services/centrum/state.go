@@ -116,12 +116,12 @@ func (s *Server) watchStateEvents() error {
 							s.state.UserIDToUnitID.Delete(*dest.Status.UserId)
 						}
 
-						unit, ok := s.getUnitsMap(job).Load(dest.Status.UnitId)
+						unit, ok := s.getUnitsMap(job).Load(dest.Id)
 						if ok {
 							unit.Status = dest.Status
 						} else {
 							// "Cache/State miss" load from database
-							if err := s.loadUnits(ctx, dest.Status.UnitId); err != nil {
+							if err := s.loadUnits(ctx, dest.Id); err != nil {
 								s.logger.Error("failed to load unit", zap.Error(err))
 							}
 						}
@@ -191,6 +191,8 @@ func (s *Server) handleRemovedUserFromUnit(ctx context.Context, user *users.User
 		return false
 	}
 
+	s.state.UserIDToUnitID.Delete(user.UserId)
+
 	unit, ok := s.getUnit(user.Job, unitId)
 	if !ok {
 		return false
@@ -203,8 +205,6 @@ func (s *Server) handleRemovedUserFromUnit(ctx context.Context, user *users.User
 		s.logger.Error("failed to remove user from unit", zap.Error(err))
 		return false
 	}
-
-	s.state.UserIDToUnitID.Delete(user.UserId)
 
 	return true
 }
