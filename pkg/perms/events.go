@@ -7,7 +7,6 @@ import (
 
 	"github.com/galexrt/fivenet/pkg/events"
 	"github.com/nats-io/nats.go"
-	"github.com/pkg/errors"
 	"go.uber.org/zap"
 )
 
@@ -35,14 +34,8 @@ func (p *Perms) registerEvents() error {
 		MaxAge:    10 * time.Second,
 	}
 
-	if _, err := p.events.JS.AddStream(cfg); err != nil {
-		if !errors.Is(nats.ErrStreamNameAlreadyInUse, err) {
-			return err
-		}
-
-		if _, err := p.events.JS.UpdateStream(cfg); err != nil {
-			return err
-		}
+	if _, err := p.events.JS.CreateOrUpdateStream(cfg); err != nil {
+		return err
 	}
 
 	sub, err := p.events.JS.Subscribe(fmt.Sprintf("%s.>", BaseSubject), p.handleMessage, nats.DeliverNew())

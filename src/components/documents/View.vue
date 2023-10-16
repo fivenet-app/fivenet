@@ -269,7 +269,7 @@ onConfirm(async (id: bigint) => deleteDocument(id));
                             <div v-else class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-success-100">
                                 <LockOpenVariantIcon class="w-5 h-5 text-success-500" aria-hidden="true" />
                                 <span class="text-sm font-medium text-success-700">
-                                    {{ $t('common.open') }}
+                                    {{ $t('common.open', 2) }}
                                 </span>
                             </div>
                             <div

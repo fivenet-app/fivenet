@@ -78,7 +78,7 @@ const maxAccessEntries = 8;
 const canEdit = ref(false);
 
 const openclose = [
-    { id: 0, label: t('common.open'), closed: false },
+    { id: 0, label: t('common.open', 2), closed: false },
     { id: 1, label: t('common.close', 2), closed: true },
 ];
 

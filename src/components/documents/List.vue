@@ -38,7 +38,7 @@ const { t } = useI18n();
 type OpenClose = { id: number; label: string; closed?: boolean };
 const openclose: OpenClose[] = [
     { id: 0, label: t('common.not_selected') },
-    { id: 1, label: t('common.open'), closed: false },
+    { id: 1, label: t('common.open', 2), closed: false },
     { id: 2, label: t('common.close', 2), closed: true },
 ];
 
@@ -97,10 +97,8 @@ async function listDocuments(): Promise<ListDocumentsResponse> {
                 timestamp: google_protobuf_timestamp_pb.Timestamp.fromDate(fromString(query.value.to)!),
             };
         }
-        if (query.value.closed) {
-            if (query.value.closed !== undefined) {
-                req.closed = query.value.closed;
-            }
+        if (query.value.closed !== undefined) {
+            req.closed = query.value.closed;
         }
 
         try {

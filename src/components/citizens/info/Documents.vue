@@ -103,7 +103,7 @@ watch(offset, async () => refresh());
                                             >
                                                 <LockOpenVariantIcon class="w-5 h-5 text-success-500" aria-hidden="true" />
                                                 <span class="text-sm font-medium text-success-700">
-                                                    {{ $t('common.open') }}
+                                                    {{ $t('common.open', 2) }}
                                                 </span>
                                             </div>
                                         </span>
@@ -200,7 +200,7 @@ watch(offset, async () => refresh());
                                             >
                                                 <LockOpenVariantIcon class="w-5 h-5 text-success-500" aria-hidden="true" />
                                                 <span class="text-sm font-medium text-success-700">
-                                                    {{ $t('common.open') }}
+                                                    {{ $t('common.open', 2) }}
                                                 </span>
                                             </div>
                                         </td>

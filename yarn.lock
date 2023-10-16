@@ -2268,18 +2268,18 @@
     howler "^2.2.3"
     vue-demi latest
 
-"@xeger/quill-image-actions@^0.7.1":
-  version "0.7.1"
-  resolved "https://registry.yarnpkg.com/@xeger/quill-image-actions/-/quill-image-actions-0.7.1.tgz#90e1b1fcf7b49011b845551045b20a6958e30929"
-  integrity sha512-3Hi61NhvCzfj1QUpAGHJqfc5rLgljC/jum1qe8+ZjIVP4tICTLUxBwXu4jnTH53zT1ztiWZrfyscxrP2LsxMcg==
+"@xeger/quill-image-actions@^0.7.2":
+  version "0.7.2"
+  resolved "https://registry.yarnpkg.com/@xeger/quill-image-actions/-/quill-image-actions-0.7.2.tgz#4ce923de8514a59f7a6d151ee8313ccffa6c9eaa"
+  integrity sha512-OhaZnYCie9J1ZLx2+Nsznj+qkdHn9Yx7q3iOCCKFs6kAzcZUVBPv2fMjK+nzURySLyCVQOP3Ur2mZx1yYqgppw==
   dependencies:
     core-js "^3.0"
     deepmerge "^4.2"
 
-"@xeger/quill-image-formats@^0.7.1":
-  version "0.7.1"
-  resolved "https://registry.yarnpkg.com/@xeger/quill-image-formats/-/quill-image-formats-0.7.1.tgz#dbf2dd122e1dd0a485a1bd9eb15812494732fd44"
-  integrity sha512-YY3aHDHslByYrGqxR1emeL1G4VjmmosTIEOO2tvp8+z4c3TFcXZqy7t1vGQe8koksb9WurmmtSrHWLhDQTmKaA==
+"@xeger/quill-image-formats@^0.7.2":
+  version "0.7.2"
+  resolved "https://registry.yarnpkg.com/@xeger/quill-image-formats/-/quill-image-formats-0.7.2.tgz#70008c062c7b9497d2aa95869d3741309d9fb789"
+  integrity sha512-L9beiJKWzjHxBJEZB21I8YjFgOHYROsrfFMvIqP+kjc/u/MecHY1mXzR9VySLr+Qvj55t+vkKKuJ0ZPKvQSaPA==
   dependencies:
     core-js "^3.0"
 

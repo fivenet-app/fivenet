@@ -1,7 +1,6 @@
 package centrum
 
 import (
-	"errors"
 	"fmt"
 	"strings"
 	"time"
@@ -38,14 +37,8 @@ func (s *Server) registerEvents() error {
 		MaxAge:    30 * time.Second,
 	}
 
-	if _, err := s.events.JS.AddStream(cfg); err != nil {
-		if !errors.Is(nats.ErrStreamNameAlreadyInUse, err) {
-			return err
-		}
-
-		if _, err := s.events.JS.UpdateStream(cfg); err != nil {
-			return err
-		}
+	if _, err := s.events.JS.CreateOrUpdateStream(cfg); err != nil {
+		return err
 	}
 
 	return nil
