@@ -33,7 +33,6 @@ import MagicUrl from 'quill-magic-url';
 import QuillPasteSmart from 'quill-paste-smart';
 import { defineRule } from 'vee-validate';
 import { TranslateItem } from '~/composables/i18n';
-import '~/composables/quill/divider/divider';
 import '~/composables/quill/divider/quill-divider';
 import DividerToolbar from '~/composables/quill/divider/quill-divider';
 import { useAuthStore } from '~/store/auth';

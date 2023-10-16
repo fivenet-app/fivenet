@@ -24,6 +24,7 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import Time from '~/components/partials/elements/Time.vue';
+import '~/composables/quill/divider/quill-divider';
 import { useClipboardStore } from '~/store/clipboard';
 import { useNotificatorStore } from '~/store/notificator';
 import { AccessLevel } from '~~/gen/ts/resources/documents/access';
