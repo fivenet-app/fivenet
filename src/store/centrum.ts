@@ -8,7 +8,6 @@ import { UserShort } from '~~/gen/ts/resources/users/users';
 import { useAuthStore } from './auth';
 import { useNotificatorStore } from './notificator';
 
-const THREE_MINUTES = 3 * 60 * 1000;
 const ONE_MINUTE = 1 * 60 * 1000;
 
 // In seconds
@@ -534,9 +533,21 @@ export const useCentrumStore = defineStore('centrum', {
                 }
             });
 
-            // Remove completed, cancelled and archived dispatches after the status is 5 minutes or older
+            // Remove completed, cancelled and archived dispatches after the status is 1 minutes or older
             this.dispatches.forEach((d) => {
-                // Remove expired unit assignements
+                if (
+                    d.status?.status !== StatusDispatch.COMPLETED &&
+                    d.status?.status !== StatusDispatch.CANCELLED &&
+                    d.status?.status !== StatusDispatch.ARCHIVED
+                ) {
+                    return;
+                }
+
+                if (now - toDate(d.status?.createdAt).getTime() >= ONE_MINUTE) {
+                    this.removeDispatch(d.id);
+                }
+
+                // Remove stale expired unit assignements
                 d.units.forEach((ua, idx) => {
                     if (ua.expiresAt === undefined) {
                         return;
@@ -546,16 +557,6 @@ export const useCentrumStore = defineStore('centrum', {
                         d.units.splice(idx, 1);
                     }
                 });
-
-                if (
-                    d.status?.status !== StatusDispatch.COMPLETED &&
-                    d.status?.status !== StatusDispatch.CANCELLED &&
-                    d.status?.status !== StatusDispatch.ARCHIVED
-                ) {
-                    return;
-                }
-
-                if (now - toDate(d.status?.createdAt).getTime() >= THREE_MINUTES) this.removeDispatch(d.id);
             });
         },
     },

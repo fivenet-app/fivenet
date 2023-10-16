@@ -173,15 +173,12 @@ watch(ownUnitId, async () => {
 const ownUnitStatus = computed(() => unitStatusToBGColor(getOwnUnit.value?.status?.status));
 
 async function ensureDispatchSelected(): Promise<void> {
-    if (selectedDispatch.value !== undefined) {
+    if (ownDispatches.value.length === 0) {
+        selectedDispatch.value = undefined;
         return;
     }
 
-    if (ownDispatches.value.length > 0) {
-        selectedDispatch.value = ownDispatches.value[0];
-    } else {
-        selectedDispatch.value = undefined;
-    }
+    selectedDispatch.value = ownDispatches.value[ownDispatches.value.length - 1];
 }
 
 watchDebounced(
