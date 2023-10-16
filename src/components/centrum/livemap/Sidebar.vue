@@ -188,7 +188,7 @@ watchDebounced(
         if (selectedDispatch.value && isNUIAvailable()) {
             const dispatch = dispatches.value.get(selectedDispatch.value);
             if (dispatch) {
-                setWaypoint(dispatch.y, dispatch.x);
+                setWaypoint(dispatch.x, dispatch.y);
             }
         }
     },
