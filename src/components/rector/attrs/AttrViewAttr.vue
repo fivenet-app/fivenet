@@ -182,6 +182,7 @@ onBeforeMount(async () => {
                     $props.disabled ? 'cursor-not-allowed' : '',
                     'flex w-full items-start justify-between text-left border-2 p-2 border-inherit transition-colors',
                 ]"
+                :title="`${$t('common.id')}: ${attribute.attrId.toString()}`"
             >
                 <span class="text-base leading-7 transition-colors">
                     {{ $t(`attrs.${attribute.category}.${attribute.name}.${attribute.key}`) }}

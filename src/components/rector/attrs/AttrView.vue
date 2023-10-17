@@ -241,7 +241,7 @@ async function initializeRoleView(): Promise<void> {
     });
 
     role.value?.attributes.forEach((attr) => {
-        attrStates.value.set(attr.attrId, attr.value);
+        attrStates.value.set(attr.attrId, attr.maxValues);
     });
 }
 
