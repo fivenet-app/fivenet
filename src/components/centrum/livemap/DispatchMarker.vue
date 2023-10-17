@@ -28,10 +28,8 @@ function selected(_: bigint | number | string) {
 }
 
 const dispatchStatusColors = computed(() => {
-    return [
-        dispatchStatusAnimate(props.dispatch.status?.status ?? 0) ? 'animate-wiggle' : '',
-        dispatchStatusToFillColor(props.dispatch.status?.status ?? 0),
-    ];
+    const status = props.dispatch.status?.status ?? 0;
+    return [dispatchStatusAnimate(status) ? 'animate-wiggle' : '', dispatchStatusToFillColor(status)];
 });
 </script>
 

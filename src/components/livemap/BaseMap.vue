@@ -186,6 +186,13 @@ onBeforeUnmount(() => {
     font-family: var(--font-sans);
 }
 
+.leaflet-container a {
+    color: #7161ef; // text-primary-500
+}
+.leaflet-container a:hover {
+    color: #8d81f2; // text-primary-400
+}
+
 .leaflet-div-icon {
     background: none;
     border: none;

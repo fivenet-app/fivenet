@@ -1,9 +1,10 @@
 <script lang="ts" setup>
 import { LIcon, LMarker, LPopup } from '@vue-leaflet/vue-leaflet';
 import L from 'leaflet';
-import { MapMarkerIcon } from 'mdi-vue3';
+import { AccountIcon, MapMarkerIcon } from 'mdi-vue3';
 import { UserMarker } from '~~/gen/ts/resources/livemap/livemap';
 import { User } from '~~/gen/ts/resources/users/users';
+import PhoneNumber from '../partials/citizens/PhoneNumber.vue';
 
 const props = withDefaults(
     defineProps<{
@@ -61,6 +62,22 @@ const popupAnchor = computed<L.PointExpression>(() => (hasUnit.value ? [0, -(pro
             </div>
         </LIcon>
         <LPopup :options="{ closeButton: true }">
+            <div class="flex items-center gap-2 mb-1">
+                <NuxtLink
+                    :to="{ name: 'citizens-id', params: { id: marker.user?.userId ?? 0 } }"
+                    class="inline-flex items-center text-primary-500 hover:text-primary-400"
+                >
+                    <AccountIcon class="w-6 h-6" />
+                    <span class="ml-1">{{ $t('common.profile') }}</span>
+                </NuxtLink>
+                <PhoneNumber
+                    v-if="marker.user?.phoneNumber"
+                    :number="marker.user?.phoneNumber"
+                    :hide-number="true"
+                    :show-label="true"
+                    width="w-4"
+                />
+            </div>
             <span class="font-semibold">{{ $t('common.employee', 2) }} {{ marker.user?.jobLabel }} </span>
             <ul role="list" class="flex flex-col">
                 <li>
@@ -68,9 +85,8 @@ const popupAnchor = computed<L.PointExpression>(() => (hasUnit.value ? [0, -(pro
                     {{ marker.user?.lastname }}
                 </li>
                 <li>
-                    <span class="font-semibold"> {{ $t('common.rank') }} </span>: {{ marker.user?.jobGradeLabel }} ({{
-                        marker.user?.jobGrade
-                    }})
+                    <span class="font-semibold">{{ $t('common.rank') }}</span
+                    >: {{ marker.user?.jobGradeLabel }} ({{ marker.user?.jobGrade }})
                 </li>
                 <li v-if="marker.unit">
                     <span class="font-semibold">{{ $t('common.unit') }}</span

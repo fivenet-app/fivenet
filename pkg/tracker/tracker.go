@@ -187,6 +187,7 @@ func (s *Tracker) refreshUserLocations(ctx context.Context) error {
 			tUsers.JobGrade,
 			tUsers.Firstname,
 			tUsers.Lastname,
+			tUsers.PhoneNumber,
 			tJobProps.LivemapMarkerColor.AS("markerInfo.color"),
 		).
 		FROM(
