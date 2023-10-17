@@ -2,10 +2,15 @@
 import { ChevronRightIcon } from 'mdi-vue3';
 import { CardElement } from '~/utils/types';
 
-defineProps<{
-    items: CardElement[];
-    showIcon?: boolean;
-}>();
+withDefaults(
+    defineProps<{
+        items: CardElement[];
+        showIcon?: boolean;
+    }>(),
+    {
+        showIcon: true,
+    },
+);
 
 defineEmits<{
     (e: 'selected', idx: number): void;
@@ -15,17 +20,19 @@ defineEmits<{
 <template>
     <div class="sm:px-2">
         <div
-            class="w-full overflow-hidden divide-y-4 rounded-lg bg-base-900 shadow-float sm:grid sm:gap-1 divide-accent-900 sm:divide-y-0"
+            class="w-full overflow-hidden divide-y-4 rounded-lg bg-base-900 sm:grid sm:gap-1 divide-accent-900 sm:divide-y-0"
             :class="[items.length === 1 ? '' : 'sm:grid-cols-2 sm:max-w-6xl']"
         >
             <template v-for="(item, itemIdx) in items">
                 <div
                     v-if="can(item.permission ?? '')"
                     :key="item.title"
+                    class="shadow-2xl"
                     :class="[
                         itemIdx === 0 ? 'rounded-tl-lg rounded-tr-lg sm:rounded-tr-none' : '',
                         itemIdx === 1 ? 'sm:rounded-tr-lg' : '',
-                        itemIdx === items.length - 2 && items.length % 2 === 0 ? 'sm:rounded-br-lg' : '',
+                        itemIdx === items.length - 2 ? 'sm:rounded-br-lg' : '',
+                        itemIdx === items.length - 1 && items.length % 1 === 0 ? 'sm:rounded-br-lg' : '',
                         itemIdx === items.length - 1 && items.length % 2 === 0 ? 'rounded-br-lg' : '',
                         itemIdx === items.length - 1 ? 'rounded-bl-lg sm:rounded-bl-none' : '',
                         'group relative bg-base-700 p-6 focus-within:ring-2 focus-within:ring-inset focus-within:ring-neutral',

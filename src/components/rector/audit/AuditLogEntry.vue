@@ -71,8 +71,8 @@ ${JSON.stringify(JSON.parse(props.log.data!), null, 2)}
             <span v-else>
                 <VueJsonPretty
                     :data="JSON.parse(props.log.data!) as any"
-                    :showIcon="true"
-                    :showLength="true"
+                    :show-icon="true"
+                    :show-length="true"
                     :virtual="true"
                     :height="160"
                 />
