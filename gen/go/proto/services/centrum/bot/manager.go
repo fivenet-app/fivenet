@@ -135,6 +135,8 @@ func (b *Manager) Stop(job string) error {
 
 	cancel()
 
+	b.bots.Delete(job)
+
 	return nil
 }
 

@@ -37,7 +37,7 @@ func (b *Bot) Run(ctx context.Context) error {
 		case <-ctx.Done():
 			return nil
 
-		case <-time.After(7 * time.Second):
+		case <-time.After(6 * time.Second):
 		}
 
 		dispatches := b.state.GetDispatchesMap(b.job)
