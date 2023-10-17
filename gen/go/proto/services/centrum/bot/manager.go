@@ -8,6 +8,7 @@ import (
 	dispatch "github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
 	"github.com/galexrt/fivenet/gen/go/proto/services/centrum/manager"
 	"github.com/galexrt/fivenet/pkg/events"
+	"github.com/puzpuzpuz/xsync/v2"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
@@ -26,7 +27,7 @@ type Manager struct {
 
 	tracer trace.Tracer
 
-	bots   map[string]context.CancelFunc
+	bots   *xsync.MapOf[string, context.CancelFunc]
 	events *events.Eventus
 
 	state *manager.Manager
@@ -54,7 +55,7 @@ func NewManager(p Params) *Manager {
 
 		tracer: p.TP.Tracer("centrum-cache"),
 
-		bots:   map[string]context.CancelFunc{},
+		bots:   xsync.NewMapOf[context.CancelFunc](),
 		events: p.Eventus,
 		state:  p.State,
 	}
@@ -104,14 +105,14 @@ func (b *Manager) Start(job string) error {
 	defer b.mutex.Unlock()
 
 	// Already a bot active
-	if _, ok := b.bots[job]; ok {
+	if _, ok := b.bots.Load(job); ok {
 		return nil
 	}
 
 	b.logger.Info("Starting centrum dispatch bot", zap.String("job", job))
 	bot := NewBot(b.logger, job, b.state)
 	ctx, cancel := context.WithCancel(b.ctx)
-	b.bots[job] = cancel
+	b.bots.Store(job, cancel)
 	b.wg.Add(1)
 	go func() {
 		defer b.wg.Done()
@@ -125,7 +126,7 @@ func (b *Manager) Stop(job string) error {
 	b.mutex.Lock()
 	defer b.mutex.Unlock()
 
-	cancel, ok := b.bots[job]
+	cancel, ok := b.bots.Load(job)
 	if !ok {
 		return nil
 	}
