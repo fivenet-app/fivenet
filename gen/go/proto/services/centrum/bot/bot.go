@@ -8,19 +8,23 @@ import (
 	dispatch "github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
 	"github.com/galexrt/fivenet/gen/go/proto/services/centrum/manager"
 	centrumutils "github.com/galexrt/fivenet/gen/go/proto/services/centrum/utils"
+	"go.uber.org/zap"
 )
 
 const DelayBetweenDispatchAssignment = 45 * time.Second
 
 type Bot struct {
+	logger *zap.Logger
+
 	job   string
 	state *manager.Manager
 
 	lastAssignedUnits map[uint64]time.Time
 }
 
-func NewBot(job string, state *manager.Manager) *Bot {
+func NewBot(logger *zap.Logger, job string, state *manager.Manager) *Bot {
 	return &Bot{
+		logger:            logger.Named("centrum_bot").With(zap.String("job", job)),
 		job:               job,
 		state:             state,
 		lastAssignedUnits: map[uint64]time.Time{},
@@ -45,6 +49,7 @@ func (b *Bot) Run(ctx context.Context) error {
 			unit, ok := b.getAvailableUnit(ctx)
 			if !ok {
 				// No unit available
+				b.logger.Warn("No available units")
 				return false
 			}
 
@@ -53,6 +58,7 @@ func (b *Bot) Run(ctx context.Context) error {
 				[]uint64{unit.Id}, nil,
 				b.state.DispatchAssignmentExpirationTime(),
 			); err != nil {
+				b.logger.Warn("Failed to assgin unit to dispatch", zap.Uint64("dispatch_id", dsp.Id), zap.Uint64("unit_id", unit.Id))
 				return false
 			}
 

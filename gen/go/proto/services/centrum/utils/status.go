@@ -13,5 +13,12 @@ func IsDispatchUnassigned(in *dispatch.Dispatch) bool {
 		return false
 	}
 
+	if in.Status != nil &&
+		(in.Status.Status == dispatch.StatusDispatch_STATUS_DISPATCH_UNSPECIFIED ||
+			in.Status.Status == dispatch.StatusDispatch_STATUS_DISPATCH_NEW ||
+			in.Status.Status == dispatch.StatusDispatch_STATUS_DISPATCH_UNASSIGNED) {
+		return true
+	}
+
 	return len(in.Units) == 0
 }

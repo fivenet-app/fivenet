@@ -94,21 +94,27 @@ const sortedUnits = computed(() => getSortedUnits.value);
                                                         <div class="flex-1 form-control">
                                                             <div class="grid grid-cols-3 gap-4">
                                                                 <button
-                                                                    v-for="item in sortedUnits"
-                                                                    :key="item.name"
+                                                                    v-for="unit in sortedUnits"
+                                                                    :key="unit.name"
                                                                     type="button"
-                                                                    class="text-neutral hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-2 text-xs my-0.5"
-                                                                    :class="unitStatusToBGColor(item.status?.status ?? 0)"
-                                                                    @click="joinOrLeaveUnit(item)"
+                                                                    class="bg-primary-500 text-neutral hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-2 text-xs my-0.5"
+                                                                    @click="joinOrLeaveUnit(unit)"
                                                                 >
-                                                                    <span class="mt-1"
-                                                                        >{{ item.initials }}: {{ item.name }}</span
-                                                                    >
                                                                     <span class="mt-1">
+                                                                        {{ unit.initials }}: {{ unit.name }}
+                                                                    </span>
+                                                                    <span class="mt-1">
+                                                                        {{ $t('common.member', unit.users.length) }}
+                                                                    </span>
+                                                                    <span
+                                                                        class="mt-1"
+                                                                        :class="unitStatusToBGColor(unit.status?.status ?? 0)"
+                                                                    >
+                                                                        {{ $t('common.status') }}:
                                                                         {{
                                                                             $t(
                                                                                 `enums.centrum.StatusUnit.${
-                                                                                    StatusUnit[item.status?.status ?? 0]
+                                                                                    StatusUnit[unit.status?.status ?? 0]
                                                                                 }`,
                                                                             )
                                                                         }}

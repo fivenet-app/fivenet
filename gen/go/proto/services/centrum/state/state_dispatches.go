@@ -33,3 +33,9 @@ func (s *State) ListDispatches(job string) []*dispatch.Dispatch {
 
 	return ds
 }
+
+func (s *State) FilterDispatches(job string) []*dispatch.Dispatch {
+	// TODO
+
+	return nil
+}

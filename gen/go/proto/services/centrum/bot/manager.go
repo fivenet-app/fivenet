@@ -108,7 +108,8 @@ func (b *Manager) Start(job string) error {
 		return nil
 	}
 
-	bot := NewBot(job, b.state)
+	b.logger.Info("Starting centrum dispatch bot", zap.String("job", job))
+	bot := NewBot(b.logger, job, b.state)
 	ctx, cancel := context.WithCancel(b.ctx)
 	b.bots[job] = cancel
 	b.wg.Add(1)
@@ -124,6 +125,7 @@ func (b *Manager) Stop(job string) error {
 	b.mutex.Lock()
 	defer b.mutex.Unlock()
 
+	b.logger.Info("Stopping centrum dispatch bot", zap.String("job", job))
 	cancel, ok := b.bots[job]
 	if !ok {
 		return nil
