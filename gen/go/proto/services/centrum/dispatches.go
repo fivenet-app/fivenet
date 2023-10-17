@@ -37,35 +37,7 @@ func (s *Server) ListDispatches(ctx context.Context, req *ListDispatchesRequest)
 	defer s.auditer.Log(auditEntry, req)
 
 	resp := &ListDispatchesResponse{
-		Dispatches: []*dispatch.Dispatch{},
-	}
-
-	dispatches := s.state.ListDispatches(userInfo.Job)
-	for i := 0; i < len(dispatches); i++ {
-		// Hide user info when dispatch is anonymous
-		if dispatches[i].Anon {
-			dispatches[i].Creator = nil
-			dispatches[i].CreatorId = nil
-		}
-
-		include := true
-
-		// Include statuses that should be listed
-		if len(req.Status) > 0 && !utils.InSlice(req.Status, dispatches[i].Status.Status) {
-			include = false
-		} else if len(req.NotStatus) > 0 {
-			// Which statuses to ignore
-			for _, status := range req.NotStatus {
-				if dispatches[i].Status != nil && dispatches[i].Status.Status == status {
-					include = false
-					break
-				}
-			}
-		}
-
-		if include {
-			resp.Dispatches = append(resp.Dispatches, dispatches[i])
-		}
+		Dispatches: s.state.FilterDispatches(userInfo.Job, req.Status, req.NotStatus),
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_VIEWED)
@@ -90,7 +62,7 @@ func (s *Server) CreateDispatch(ctx context.Context, req *CreateDispatchRequest)
 
 	dsp, err := s.state.CreateDispatch(ctx, req.Dispatch)
 	if err != nil {
-		return nil, err
+		return nil, errorscentrum.ErrFailedQuery
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
@@ -212,7 +184,7 @@ func (s *Server) TakeDispatch(ctx context.Context, req *TakeDispatchRequest) (*T
 
 			if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 				if !dbutils.IsDuplicateError(err) {
-					return nil, err
+					return nil, errorscentrum.ErrFailedQuery
 				}
 			}
 
@@ -252,7 +224,7 @@ func (s *Server) TakeDispatch(ctx context.Context, req *TakeDispatchRequest) (*T
 						Y:         y,
 						Postal:    postal,
 					}); err != nil {
-						return nil, err
+						return nil, errorscentrum.ErrFailedQuery
 					}
 				}
 			}
@@ -270,7 +242,7 @@ func (s *Server) TakeDispatch(ctx context.Context, req *TakeDispatchRequest) (*T
 
 			if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 				if !dbutils.IsDuplicateError(err) {
-					return nil, err
+					return nil, errorscentrum.ErrFailedQuery
 				}
 			}
 
@@ -292,7 +264,7 @@ func (s *Server) TakeDispatch(ctx context.Context, req *TakeDispatchRequest) (*T
 			Y:          y,
 			Postal:     postal,
 		}); err != nil {
-			return nil, err
+			return nil, errorscentrum.ErrFailedQuery
 		}
 	}
 
@@ -352,7 +324,7 @@ func (s *Server) UpdateDispatchStatus(ctx context.Context, req *UpdateDispatchSt
 		Y:          y,
 		Postal:     postal,
 	}); err != nil {
-		return nil, err
+		return nil, errorscentrum.ErrFailedQuery
 	}
 
 	if req.Status == dispatch.StatusDispatch_STATUS_DISPATCH_EN_ROUTE ||
@@ -371,7 +343,7 @@ func (s *Server) UpdateDispatchStatus(ctx context.Context, req *UpdateDispatchSt
 					Y:         y,
 					Postal:    postal,
 				}); err != nil {
-					return nil, err
+					return nil, errorscentrum.ErrFailedQuery
 				}
 			}
 		}
@@ -409,7 +381,7 @@ func (s *Server) AssignDispatch(ctx context.Context, req *AssignDispatchRequest)
 	}
 
 	if err := s.state.UpdateDispatchAssignments(ctx, userInfo.Job, &userInfo.UserId, dsp, req.ToAdd, req.ToRemove, expiresAt); err != nil {
-		return nil, err
+		return nil, errorscentrum.ErrFailedQuery
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
@@ -475,7 +447,7 @@ func (s *Server) ListDispatchActivity(ctx context.Context, req *ListDispatchActi
 		LIMIT(limit)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Activity); err != nil {
-		return nil, err
+		return nil, errorscentrum.ErrFailedQuery
 	}
 	for i := 0; i < len(resp.Activity); i++ {
 		if resp.Activity[i].UnitId != nil && *resp.Activity[i].UnitId > 0 {
