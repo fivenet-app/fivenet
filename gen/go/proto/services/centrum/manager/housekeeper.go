@@ -84,6 +84,10 @@ func (s *Manager) runRemoveDispatchesFromEmptyUnits() {
 				if err := s.removeDispatchesFromEmptyUnits(ctx); err != nil {
 					s.logger.Error("failed to clean empty units from dispatches", zap.Error(err))
 				}
+
+				if err := s.cleanupUnitStatus(ctx); err != nil {
+					s.logger.Error("failed to clean up unit status", zap.Error(err))
+				}
 			}()
 		}
 	}
@@ -266,6 +270,34 @@ func (s *Manager) removeDispatchesFromEmptyUnits(ctx context.Context) error {
 				if err := s.UpdateDispatchAssignments(ctx, job, nil, dsp, nil, []uint64{dsp.Units[i].UnitId}, time.Time{}); err != nil {
 					s.logger.Error("failed to remove empty unit from dispatch", zap.Error(err))
 					continue
+				}
+			}
+
+			return true
+		})
+
+		return true
+	})
+
+	return nil
+}
+
+// Iterate over units to ensure that, e.g., an empty unit status is set to `unavailable`
+func (s *Manager) cleanupUnitStatus(ctx context.Context) error {
+	s.Units.Range(func(job string, value *xsync.MapOf[uint64, *dispatch.Unit]) bool {
+		value.Range(func(id uint64, unit *dispatch.Unit) bool {
+			if len(unit.Users) > 0 {
+				return true
+			}
+
+			if unit.Status == nil || unit.Status.Status != dispatch.StatusUnit_STATUS_UNIT_UNAVAILABLE {
+				if err := s.UpdateUnitStatus(ctx, job, unit, &dispatch.UnitStatus{
+					UnitId: unit.Id,
+					Status: dispatch.StatusUnit_STATUS_UNIT_UNAVAILABLE,
+					UserId: unit.Status.UserId,
+				}); err != nil {
+					s.logger.Error("failed to update empty unit status to unavailable", zap.Error(err))
+					return true
 				}
 			}
 
