@@ -2,12 +2,15 @@ package bot
 
 import (
 	"context"
+	"math/rand"
 	"time"
 
 	dispatch "github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
 	"github.com/galexrt/fivenet/gen/go/proto/services/centrum/manager"
 	centrumutils "github.com/galexrt/fivenet/gen/go/proto/services/centrum/utils"
 )
+
+const DelayBetweenDispatchAssignment = 45 * time.Second
 
 type Bot struct {
 	job   string
@@ -61,28 +64,34 @@ func (b *Bot) Run(ctx context.Context) error {
 func (b *Bot) getAvailableUnit(ctx context.Context) (*dispatch.Unit, bool) {
 	units := b.state.GetUnitsMap(b.job)
 
-	var unit *dispatch.Unit
-	units.Range(func(key uint64, value *dispatch.Unit) bool {
+	unitIds := []uint64{}
+	units.Range(func(unitId uint64, value *dispatch.Unit) bool {
 		if value.Status != nil && value.Status.Status == dispatch.StatusUnit_STATUS_UNIT_AVAILABLE {
-			unit = value
-			return false
+			unitIds = append(unitIds, unitId)
 		}
-
 		return true
 	})
+
+	// Randomize unit ids
+	for i := range unitIds {
+		j := rand.Intn(i + 1)
+		unitIds[i], unitIds[j] = unitIds[j], unitIds[i]
+	}
+
+	var unit *dispatch.Unit
+	for _, unitId := range unitIds {
+		t, ok := b.lastAssignedUnits[unitId]
+		if !ok || time.Now().After(t) {
+			unit, _ = units.Load(unitId)
+			break
+		}
+	}
 
 	if unit == nil {
 		return nil, false
 	}
 
-	t, ok := b.lastAssignedUnits[unit.Id]
-	if ok {
-		if !time.Now().After(t) {
-			return nil, false
-		}
-	}
-
-	b.lastAssignedUnits[unit.Id] = time.Now().Add(35 * time.Second)
+	b.lastAssignedUnits[unit.Id] = time.Now().Add(DelayBetweenDispatchAssignment)
 
 	return unit, true
 }

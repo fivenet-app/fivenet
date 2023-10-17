@@ -27,13 +27,11 @@ defineEmits<{
                 <div
                     v-if="can(item.permission ?? '')"
                     :key="item.title"
-                    class="shadow-2xl"
                     :class="[
                         itemIdx === 0 ? 'rounded-tl-lg rounded-tr-lg sm:rounded-tr-none' : '',
                         itemIdx === 1 ? 'sm:rounded-tr-lg' : '',
-                        itemIdx === items.length - 2 ? 'sm:rounded-br-lg' : '',
-                        itemIdx === items.length - 1 && items.length % 1 === 0 ? 'sm:rounded-br-lg' : '',
-                        itemIdx === items.length - 1 && items.length % 2 === 0 ? 'rounded-br-lg' : '',
+                        itemIdx === items.length - 2 && itemIdx % 2 === 1 ? 'sm:rounded-br-lg' : '',
+                        itemIdx === items.length - 1 && itemIdx % 2 === 0 ? 'rounded-br-lg' : '',
                         itemIdx === items.length - 1 ? 'rounded-bl-lg sm:rounded-bl-none' : '',
                         'group relative bg-base-700 p-6 focus-within:ring-2 focus-within:ring-inset focus-within:ring-neutral',
                     ]"
