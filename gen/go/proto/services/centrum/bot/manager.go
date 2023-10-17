@@ -125,11 +125,12 @@ func (b *Manager) Stop(job string) error {
 	b.mutex.Lock()
 	defer b.mutex.Unlock()
 
-	b.logger.Info("Stopping centrum dispatch bot", zap.String("job", job))
 	cancel, ok := b.bots[job]
 	if !ok {
 		return nil
 	}
+
+	b.logger.Info("Stopping centrum dispatch bot", zap.String("job", job))
 
 	cancel()
 
