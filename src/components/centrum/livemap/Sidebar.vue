@@ -220,6 +220,7 @@ const open = ref(false);
     <Livemap>
         <template v-slot:default v-if="canStream">
             <DispatchesLayer :show-all-dispatches="getCurrentMode === CentrumMode.SIMPLIFIED" @goto="$emit('goto', $event)" />
+
             <LControl position="bottomright">
                 <button
                     type="button"

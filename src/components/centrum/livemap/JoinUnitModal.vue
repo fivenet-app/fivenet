@@ -124,7 +124,7 @@ const filteredUnits = computed(() =>
                                                     </dl>
                                                     <div class="my-2 space-y-24">
                                                         <div class="flex-1 form-control">
-                                                            <div class="grid grid-cols-3 gap-4">
+                                                            <div class="grid grid-cols-2 gap-4">
                                                                 <button
                                                                     v-for="unit in filteredUnits"
                                                                     :key="unit.name"
@@ -138,6 +138,14 @@ const filteredUnits = computed(() =>
                                                                     </span>
                                                                     <span class="mt-1">
                                                                         {{ $t('common.member', unit.users.length) }}
+                                                                    </span>
+                                                                    <span
+                                                                        v-if="unit.description && unit.description.length > 0"
+                                                                    >
+                                                                        <span class="font-semibold">{{
+                                                                            $t('common.description')
+                                                                        }}</span
+                                                                        >: {{ unit.description }}
                                                                     </span>
                                                                 </button>
                                                             </div>

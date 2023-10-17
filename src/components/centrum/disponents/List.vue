@@ -19,7 +19,7 @@ const { disponents, getCurrentMode } = storeToRefs(centrumStore);
             </div>
             <div class="sm:flex sm:items-center pt-4">
                 <div class="sm:flex-auto">
-                    <p class="text-neutral text-sm">
+                    <p class="text-neutral text-sm" :class="disponents && disponents.length > 0 ? 'mb-4' : ''">
                         <span
                             class="inline-flex items-center rounded-md bg-gray-400/10 px-2 py-1 text-xs font-medium text-gray-400 ring-1 ring-inset ring-gray-400/20"
                         >
