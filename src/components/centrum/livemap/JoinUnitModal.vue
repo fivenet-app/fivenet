@@ -129,18 +129,19 @@ const filteredUnits = computed(() =>
                                                                     v-for="unit in filteredUnits"
                                                                     :key="unit.name"
                                                                     type="button"
-                                                                    class="bg-primary-500 text-neutral hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-2 text-xs my-0.5"
+                                                                    class="bg-primary-500 text-neutral hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-1 text-xs my-0.5"
                                                                     @click="joinOrLeaveUnit(unit)"
                                                                 >
-                                                                    <span class="mt-1">
+                                                                    <span class="mt-0.5 text-base">
                                                                         <span class="font-semibold">{{ unit.initials }}</span
                                                                         >: {{ unit.name }}
                                                                     </span>
-                                                                    <span class="mt-1">
+                                                                    <span class="mt-1 text-xs">
                                                                         {{ $t('common.member', unit.users.length) }}
                                                                     </span>
                                                                     <span
                                                                         v-if="unit.description && unit.description.length > 0"
+                                                                        class="text-xs"
                                                                     >
                                                                         <span class="font-semibold">{{
                                                                             $t('common.description')
