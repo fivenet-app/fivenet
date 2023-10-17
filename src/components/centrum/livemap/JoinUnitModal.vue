@@ -3,8 +3,7 @@ import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } fro
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { CloseIcon } from 'mdi-vue3';
 import { useCentrumStore } from '~/store/centrum';
-import { StatusUnit, Unit } from '~~/gen/ts/resources/dispatch/units';
-import { unitStatusToBGColor } from '../helpers';
+import { Unit } from '~~/gen/ts/resources/dispatch/units';
 
 defineProps<{
     open: boolean;
@@ -45,6 +44,8 @@ async function joinOrLeaveUnit(unit?: Unit | undefined): Promise<void> {
         }
     });
 }
+
+const queryUnit = ref('');
 
 const sortedUnits = computed(() => getSortedUnits.value);
 </script>
@@ -90,11 +91,41 @@ const sortedUnits = computed(() => getSortedUnits.value);
                                         <div v-if="!ownUnitId" class="flex flex-1 flex-col justify-between">
                                             <div class="divide-y divide-gray-200 px-4 sm:px-6">
                                                 <div class="mt-1">
+                                                    <dl class="">
+                                                        <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                                                            <dt class="text-sm font-medium leading-6 text-neutral">
+                                                                <div class="flex h-6 items-center">
+                                                                    {{ $t('common.search') }}
+                                                                </div>
+                                                            </dt>
+                                                            <dd
+                                                                class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
+                                                            >
+                                                                <div class="relative flex items-center">
+                                                                    <input
+                                                                        v-model="queryUnit"
+                                                                        type="text"
+                                                                        name="search"
+                                                                        :placeholder="$t('common.search')"
+                                                                        class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                                    />
+                                                                </div>
+                                                            </dd>
+                                                        </div>
+                                                    </dl>
                                                     <div class="my-2 space-y-24">
                                                         <div class="flex-1 form-control">
                                                             <div class="grid grid-cols-3 gap-4">
                                                                 <button
-                                                                    v-for="unit in sortedUnits"
+                                                                    v-for="unit in sortedUnits.filter(
+                                                                        (u) =>
+                                                                            u.name
+                                                                                .toLowerCase()
+                                                                                .includes(queryUnit.toLowerCase()) ||
+                                                                            u.initials
+                                                                                .toLowerCase()
+                                                                                .includes(queryUnit.toLowerCase()),
+                                                                    )"
                                                                     :key="unit.name"
                                                                     type="button"
                                                                     class="bg-primary-500 text-neutral hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-2 text-xs my-0.5"
@@ -105,19 +136,6 @@ const sortedUnits = computed(() => getSortedUnits.value);
                                                                     </span>
                                                                     <span class="mt-1">
                                                                         {{ $t('common.member', unit.users.length) }}
-                                                                    </span>
-                                                                    <span
-                                                                        class="mt-1"
-                                                                        :class="unitStatusToBGColor(unit.status?.status ?? 0)"
-                                                                    >
-                                                                        {{ $t('common.status') }}:
-                                                                        {{
-                                                                            $t(
-                                                                                `enums.centrum.StatusUnit.${
-                                                                                    StatusUnit[unit.status?.status ?? 0]
-                                                                                }`,
-                                                                            )
-                                                                        }}
                                                                     </span>
                                                                 </button>
                                                             </div>
