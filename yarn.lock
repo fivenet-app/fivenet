@@ -1873,9 +1873,9 @@
   integrity sha512-60BCwRFOZCQhDncwQdxxeOEEkbc5dIMccYLwbxsS4TUNeVECQ/pBJ0j09mrHOl/JJvpRPGwO9SvE4nR2Nb/a4Q==
 
 "@types/splitpanes@^2.2.3":
-  version "2.2.3"
-  resolved "https://registry.yarnpkg.com/@types/splitpanes/-/splitpanes-2.2.3.tgz#03f1fe5a824f8901889696bf64ebf57fe6826320"
-  integrity sha512-l1IQM0ExMvYcRmy2Lfp0n3VcU3lVajZ47lClMLuKOEKbQJ7E79V4EkZwyrR+EsScS2b19DrInxJvGwvqXgqrRw==
+  version "2.2.4"
+  resolved "https://registry.yarnpkg.com/@types/splitpanes/-/splitpanes-2.2.4.tgz#ec89e546ece83313bfae851eb66dfea881085262"
+  integrity sha512-k1bLppuHIRMEZSSLLZDtzK9Nq2/sCGmSzdNMZzrMNvbeSkYkV+KD2wpMb4pAdZ4XDvqenK6TMTGVK4hFyT//kA==
   dependencies:
     vue "^2.0.0"
 
