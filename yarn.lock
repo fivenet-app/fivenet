@@ -1852,14 +1852,14 @@
   integrity sha512-L7A0AINMXQpVwxHJ4jxD6/XjZ4NDufaRlUJHjNIFKYUFBH1SvOW+neaqb0VTRSLW5suSrSu19ObFEFnfNcr+qg==
 
 "@types/google-protobuf@^3.15.8":
-  version "3.15.8"
-  resolved "https://registry.yarnpkg.com/@types/google-protobuf/-/google-protobuf-3.15.8.tgz#1c1170622718a1797e0ce0b7a60af0dab8b378b6"
-  integrity sha512-gHOxlQ/oKePvn36Nt4FOcgYu+E9p9td2KS14Qzf00HK0NPMYLR5yxSg3q2hUChCNlxIvCbPNzplgDYUWt8x74Q==
+  version "3.15.9"
+  resolved "https://registry.yarnpkg.com/@types/google-protobuf/-/google-protobuf-3.15.9.tgz#a983fc4bc35acb2b84a824d2ec8107d084e8603f"
+  integrity sha512-l51aVJnCNNMBkmSUQddSStXinB2qSXqfrmY9zkdcE9sqPzDneQ3BGg/hu7LfeOCUeGHOu+Rly89YhuDhvbmmPw==
 
 "@types/http-proxy@^1.17.11":
-  version "1.17.12"
-  resolved "https://registry.yarnpkg.com/@types/http-proxy/-/http-proxy-1.17.12.tgz#86e849e9eeae0362548803c37a0a1afc616bd96b"
-  integrity sha512-kQtujO08dVtQ2wXAuSFfk9ASy3sug4+ogFR8Kd8UgP8PEuc1/G/8yjYRmp//PcDNJEUKOza/MrQu15bouEUCiw==
+  version "1.17.13"
+  resolved "https://registry.yarnpkg.com/@types/http-proxy/-/http-proxy-1.17.13.tgz#dd3a4da550580eb0557d4c7128a2ff1d1a38d465"
+  integrity sha512-GkhdWcMNiR5QSQRYnJ+/oXzu0+7JJEPC8vkWXK351BkhjraZF+1W13CUYARUvX9+NqIU2n6YHA4iwywsc/M6Sw==
   dependencies:
     "@types/node" "*"
 
