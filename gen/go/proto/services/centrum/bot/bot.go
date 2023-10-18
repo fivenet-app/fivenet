@@ -24,7 +24,7 @@ type Bot struct {
 
 func NewBot(logger *zap.Logger, job string, state *manager.Manager) *Bot {
 	return &Bot{
-		logger:            logger.Named("centrum_bot").With(zap.String("job", job)),
+		logger:            logger.Named("bot"),
 		job:               job,
 		state:             state,
 		lastAssignedUnits: map[uint64]time.Time{},

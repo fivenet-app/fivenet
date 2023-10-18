@@ -110,7 +110,7 @@ func (b *Manager) Start(job string) error {
 	}
 
 	b.logger.Info("Starting centrum dispatch bot", zap.String("job", job))
-	bot := NewBot(b.logger, job, b.state)
+	bot := NewBot(b.logger.With(zap.String("job", job)), job, b.state)
 	ctx, cancel := context.WithCancel(b.ctx)
 	b.bots.Store(job, cancel)
 	b.wg.Add(1)
