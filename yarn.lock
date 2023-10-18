@@ -1923,9 +1923,9 @@
   integrity sha512-v/ZHEj9xh82usl8LMR3GarzFY1IrbXJw5L4QfQhokjRV91q+SelFqxQWSep1ucXEZ22+dSTwLFkXeur25sPIbw==
 
 "@types/zxcvbn@^4.4.2":
-  version "4.4.2"
-  resolved "https://registry.yarnpkg.com/@types/zxcvbn/-/zxcvbn-4.4.2.tgz#7b16c35330a15471cd7b9d3576503a40b6bd2416"
-  integrity sha512-T7SEL8b/eN7AEhHQ8oFt7c6Y+l3p8OpH7KwJIe+5oBOPLMMioPeMsUTB3huNgEnXhiittV8Ohdw21Jg8E/f70Q==
+  version "4.4.3"
+  resolved "https://registry.yarnpkg.com/@types/zxcvbn/-/zxcvbn-4.4.3.tgz#c323d8bf07673a782ef07950d4b6a878e56181fe"
+  integrity sha512-AxZBi8J3V3lm+f2Vgg06D8y0womXpLf3ZEDYeLPGGK0ydR724sQH83T5tYgN+CN6VTRnAlevFKJkWTecCnk8ug==
 
 "@unhead/dom@1.7.4", "@unhead/dom@^1.7.4":
   version "1.7.4"
