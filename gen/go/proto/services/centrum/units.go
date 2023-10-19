@@ -257,7 +257,7 @@ func (s *Server) UpdateUnitStatus(ctx context.Context, req *UpdateUnitStatusRequ
 	}
 
 	if !s.state.CheckIfUserPartOfUnit(userInfo.Job, userInfo.UserId, unit, true) {
-		return nil, errorscentrum.ErrFailedQuery
+		return nil, errorscentrum.ErrNotPartOfUnit
 	}
 
 	var x, y *float64

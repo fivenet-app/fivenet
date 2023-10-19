@@ -3,6 +3,7 @@ package bot
 import (
 	"context"
 	"math/rand"
+	"sort"
 	"time"
 
 	dispatch "github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
@@ -40,17 +41,25 @@ func (b *Bot) Run(ctx context.Context) error {
 		case <-time.After(6 * time.Second):
 		}
 
-		dispatches := b.state.GetDispatchesMap(b.job)
-		dispatches.Range(func(key uint64, dsp *dispatch.Dispatch) bool {
+		dispatches := b.state.FilterDispatches(b.job, nil, []dispatch.StatusDispatch{
+			dispatch.StatusDispatch_STATUS_DISPATCH_CANCELLED,
+			dispatch.StatusDispatch_STATUS_DISPATCH_COMPLETED,
+			dispatch.StatusDispatch_STATUS_DISPATCH_ARCHIVED,
+		})
+		sort.Slice(dispatches, func(i, j int) bool {
+			return dispatches[i].Id < dispatches[j].Id
+		})
+
+		for _, dsp := range dispatches {
 			if !centrumutils.IsDispatchUnassigned(dsp) {
-				return true
+				continue
 			}
 
 			unit, ok := b.getAvailableUnit(ctx)
 			if !ok {
 				// No unit available
-				b.logger.Warn("No available units")
-				return false
+				b.logger.Warn("No available units for dispatch", zap.Uint64("dispatch_id", dsp.Id))
+				break
 			}
 
 			if err := b.state.UpdateDispatchAssignments(
@@ -59,11 +68,9 @@ func (b *Bot) Run(ctx context.Context) error {
 				b.state.DispatchAssignmentExpirationTime(),
 			); err != nil {
 				b.logger.Warn("Failed to assgin unit to dispatch", zap.Uint64("dispatch_id", dsp.Id), zap.Uint64("unit_id", unit.Id))
-				return false
+				break
 			}
-
-			return false
-		})
+		}
 	}
 }
 

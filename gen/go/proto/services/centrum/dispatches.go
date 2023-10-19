@@ -298,7 +298,7 @@ func (s *Server) UpdateDispatchStatus(ctx context.Context, req *UpdateDispatchSt
 	unitId, ok := s.state.GetUnitIDForUserID(userInfo.UserId)
 	if !ok {
 		if !s.state.CheckIfUserIsDisponent(userInfo.Job, userInfo.UserId) {
-			return nil, errorscentrum.ErrFailedQuery
+			return nil, errorscentrum.ErrNotPartOfDispatch
 		}
 	} else {
 		statusUnitId = &unitId

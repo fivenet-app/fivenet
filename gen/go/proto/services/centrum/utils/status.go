@@ -8,6 +8,12 @@ func IsStatusDispatchComplete(in dispatch.StatusDispatch) bool {
 		in == dispatch.StatusDispatch_STATUS_DISPATCH_COMPLETED
 }
 
+func IsStatusDispatchUnassigned(in dispatch.StatusDispatch) bool {
+	return in == dispatch.StatusDispatch_STATUS_DISPATCH_UNSPECIFIED ||
+		in == dispatch.StatusDispatch_STATUS_DISPATCH_NEW ||
+		in == dispatch.StatusDispatch_STATUS_DISPATCH_UNASSIGNED
+}
+
 func IsDispatchUnassigned(in *dispatch.Dispatch) bool {
 	if in == nil {
 		return false
@@ -24,9 +30,7 @@ func IsDispatchUnassigned(in *dispatch.Dispatch) bool {
 	}
 
 	// Dispatch is "new" or unassgined
-	if in.Status.Status == dispatch.StatusDispatch_STATUS_DISPATCH_UNSPECIFIED ||
-		in.Status.Status == dispatch.StatusDispatch_STATUS_DISPATCH_NEW ||
-		in.Status.Status == dispatch.StatusDispatch_STATUS_DISPATCH_UNASSIGNED {
+	if IsStatusDispatchUnassigned(in.Status.Status) {
 		return true
 	}
 
