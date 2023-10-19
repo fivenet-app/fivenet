@@ -75,3 +75,23 @@ Example access citizen info:
 ```
 
 To learn more about different date and time formats, check out [the Golang `time` package documentation here](https://pkg.go.dev/time#pkg-constants).
+
+## Examples
+
+### Create List of Vehicles
+
+```gotemplate
+{{ if not .vehicles }}
+<p>
+No Vehicles involved.
+</p>
+{{ else }}
+<ul>
+{{ range .vehicles }}
+<li>
+{{ .plate }} - {{ .owner.firstname }}, {{ .owner.lastname }}
+</li>
+{{ end }}
+</ul>
+{{ end }}
+```
