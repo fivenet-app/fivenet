@@ -79,7 +79,7 @@ To learn more about different date and time formats, check out [the Golang `time
 
 ## Examples
 
-### Create List of Vehicles
+### Show List of Vehicles
 
 ```gotemplate
 {{ if not .vehicles }}

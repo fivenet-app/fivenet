@@ -31,7 +31,7 @@ async function getTemplate(): Promise<Template> {
 
             const call = $grpc.getDocStoreClient().getTemplate({
                 templateId: props.id,
-                data: JSON.stringify(data),
+                data: jsonStringify(data),
                 render: true,
             });
             const { response } = await call;

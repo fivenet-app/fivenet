@@ -31,7 +31,7 @@ function copyError(): void {
         return;
     }
 
-    clipboard.copy(JSON.stringify(props.error));
+    clipboard.copy(jsonStringify(props.error));
 }
 
 function startButtonTimer(): void {

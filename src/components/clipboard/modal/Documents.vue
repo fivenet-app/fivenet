@@ -97,7 +97,7 @@ watch(props, async (newVal) => {
 </script>
 
 <template>
-    <h3 class="font-medium pt-1 pb-1">Documents</h3>
+    <h3 class="font-medium pt-1 pb-1">{{ $t('common.document', 2) }}</h3>
     <DataNoDataBlock
         v-if="documents?.length === 0"
         :icon="FileDocumentMultipleIcon"

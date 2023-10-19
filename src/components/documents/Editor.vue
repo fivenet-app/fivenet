@@ -247,12 +247,12 @@ onMounted(async () => {
     if (route.query.templateId) {
         const data = clipboardStore.getTemplateData();
         data.activeChar = activeChar.value!;
-        console.debug('Clipboard Template Data', data, JSON.stringify(data));
+        console.debug('Clipboard Template Data', data, jsonStringify(data));
 
         try {
             const call = $grpc.getDocStoreClient().getTemplate({
                 templateId: BigInt(route.query.templateId as string),
-                data: JSON.stringify(data),
+                data: jsonStringify(data),
                 render: true,
             });
             const { response } = await call;

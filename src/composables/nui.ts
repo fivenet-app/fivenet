@@ -18,7 +18,7 @@ export async function fetchNui<T = any, V = any>(event: string, data: T): Promis
         headers: {
             'Content-Type': 'application/json; charset=UTF-8',
         },
-        body: JSON.stringify(data),
+        body: jsonStringify(data),
     });
 
     const parsed = resp.json();

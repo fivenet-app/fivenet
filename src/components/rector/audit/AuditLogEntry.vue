@@ -33,7 +33,7 @@ Event: \`${EventType[props.log.state]}\`
     if (props.log.data) {
         text += `Data:
 \`\`\`json
-${JSON.stringify(JSON.parse(props.log.data!), null, 2)}
+${jsonStringify(jsonParse(props.log.data!), 2)}
 \`\`\`
 `;
     } else {
@@ -70,7 +70,7 @@ ${JSON.stringify(JSON.parse(props.log.data!), null, 2)}
             <span v-if="!log.data">N/A</span>
             <span v-else>
                 <VueJsonPretty
-                    :data="JSON.parse(props.log.data!) as any"
+                    :data="jsonParse(props.log.data!) as any"
                     :show-icon="true"
                     :show-length="true"
                     :virtual="true"

@@ -97,7 +97,7 @@ watch(props, (newVal) => {
 </script>
 
 <template>
-    <h3 class="font-medium pt-2 pb-1">Vehicles</h3>
+    <h3 class="font-medium pt-2 pb-1">{{ $t('common.vehicle', 2) }}</h3>
     <DataNoDataBlock
         v-if="vehicles?.length === 0"
         :icon="CarIcon"

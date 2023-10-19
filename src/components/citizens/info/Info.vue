@@ -118,5 +118,6 @@ function addToClipboard(): void {
             </TabPanels>
         </TabGroup>
     </div>
+
     <AddToButton :callback="addToClipboard" :title="$t('components.clipboard.clipboard_button.add')" />
 </template>
