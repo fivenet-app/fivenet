@@ -959,6 +959,10 @@
                 "not_in_unit": {
                     "title": "You are not in an Unit!",
                     "content": "You need to be in an unit to do that."
+                },
+                "checkup": {
+                    "title": "Status Check",
+                    "content": "Please make sure your unit's status is up-to-date."
                 }
             }
         },
