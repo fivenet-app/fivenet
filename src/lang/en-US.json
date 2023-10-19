@@ -1445,7 +1445,6 @@
             "ErrFailedQuery": "Failed to get/update dispatch center data!",
             "ErrAlreadyInUnit": "You are already in an unit! You must leave your currrent unit first.",
             "ErrNotPartOfDispatch": "You are not part of this dispatch!",
-            "ErrNotPartOfUnit": "You are not part of this unit!",
             "ErrNotOnDuty": {
                 "title": "You are not on duty!",
                 "content": "Make sure you are on duty."
@@ -1457,7 +1456,8 @@
             "ErrDispatchAlreadyCompleted": {
                 "title": "Dispatch already in completed state!",
                 "content": "You can't accept/decline completed dispatches."
-            }
+            },
+            "ErrNotPartOfUnit": "You are not part of this unit!"
         },
         "general": {
             "internal_error": {
