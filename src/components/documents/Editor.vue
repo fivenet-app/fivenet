@@ -418,6 +418,7 @@ async function saveToStore(values: FormData): Promise<void> {
         content: doc.value.content,
         state: values.state,
         closed: doc.value.closed,
+        category: selectedCategory.value,
     });
     setTimeout(() => {
         saving.value = false;

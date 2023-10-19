@@ -216,7 +216,7 @@ async function clipboardDialog(): Promise<void> {
                                         <div class="mt-2 text-neutral">
                                             <div v-if="reqs.users">
                                                 <p>
-                                                    <RequirementsList name="User" :specs="reqs.users!" />
+                                                    <RequirementsList :name="$t('common.citizen', 2)" :specs="reqs.users!" />
                                                 </p>
 
                                                 <Citizens
@@ -228,7 +228,7 @@ async function clipboardDialog(): Promise<void> {
                                             </div>
                                             <div v-if="reqs.vehicles">
                                                 <p>
-                                                    <RequirementsList name="Vehicle" :specs="reqs.vehicles!" />
+                                                    <RequirementsList :name="$t('common.vehicle', 2)" :specs="reqs.vehicles!" />
                                                 </p>
 
                                                 <Vehicles
@@ -240,7 +240,10 @@ async function clipboardDialog(): Promise<void> {
                                             </div>
                                             <div v-if="reqs.documents">
                                                 <p>
-                                                    <RequirementsList name="User" :specs="reqs.documents!" />
+                                                    <RequirementsList
+                                                        :name="$t('common.document', 2)"
+                                                        :specs="reqs.documents!"
+                                                    />
                                                 </p>
 
                                                 <Documents

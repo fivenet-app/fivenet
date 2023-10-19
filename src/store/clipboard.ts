@@ -30,7 +30,9 @@ export const useClipboardStore = defineStore('clipboard', {
                 vehicles: [],
             } as ClipboardData,
         }) as ClipboardState,
-    persist: true,
+    persist: {
+        serializer: jsonSerializer,
+    },
     actions: {
         getTemplateData(): TemplateData {
             const data: TemplateData = {

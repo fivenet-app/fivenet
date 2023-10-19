@@ -1,25 +1,39 @@
+import { StateTree } from 'pinia';
+
+class JSONSerializer {
+    serialize(value: StateTree): string {
+        return jsonStringify(value);
+    }
+
+    deserialize(value: string): StateTree {
+        return jsonParse(value) as StateTree;
+    }
+}
+
+export const jsonSerializer = new JSONSerializer();
+
+function jsonMarshal(key: string, value: any): any {
+    if (typeof value === 'bigint') {
+        return {
+            type: 'bigint',
+            value: value.toString(),
+        };
+    } else {
+        return value;
+    }
+}
+
 export function jsonStringify(obj: any, space?: string | number): string {
-    return JSON.stringify(
-        obj,
-        (_, value) => {
-            if (typeof value === 'bigint') {
-                return {
-                    type: 'bigint',
-                    value: value.toString(),
-                };
-            } else {
-                return value;
-            }
-        },
-        space,
-    );
+    return JSON.stringify(obj, jsonMarshal, space);
+}
+
+function jsonUnmarshal(key: string, value: any) {
+    if (value && value.type == 'bigint') {
+        return BigInt(value.value);
+    }
+    return value;
 }
 
 export function jsonParse(text: string): any {
-    JSON.parse(text, (_, value) => {
-        if (value && value.type == 'bigint') {
-            return BigInt(value.value);
-        }
-        return value;
-    });
+    return JSON.parse(text, jsonUnmarshal);
 }
