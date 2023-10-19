@@ -17,10 +17,12 @@ const { getNotifications } = storeToRefs(notifications);
         >
             <div class="flex w-full flex-col items-center space-y-4 sm:items-end">
                 <NotificationItem
-                    :key="notification.id?.toString()"
+                    v-for="(notification, idx) in getNotifications.filter(
+                        (n) => n.position === undefined || n.position === 'top-right',
+                    )"
+                    :key="notification.id"
                     :notification="notification"
-                    :class="idx > 0 ? 'mt-4' : ''"
-                    v-for="(notification, idx) in getNotifications"
+                    :class="idx > 0 ? 'mt-6' : ''"
                 />
             </div>
         </div>

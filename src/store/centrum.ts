@@ -9,6 +9,7 @@ import { useAuthStore } from './auth';
 import { useNotificatorStore } from './notificator';
 
 const ONE_MINUTE = 1 * 60 * 1000;
+const SEVENTEEN_MINUTES = 17 * 60 * 1000;
 
 // In seconds
 const initialBackoffTime = 2;
@@ -19,6 +20,7 @@ export interface CentrumState {
     cleanupIntervalId: NodeJS.Timeout | undefined;
     restarting: boolean;
     restartBackoffTime: number;
+    checkupIntervalId: NodeJS.Timeout | undefined;
 
     settings: Settings | undefined;
     isDisponent: boolean;
@@ -296,9 +298,18 @@ export const useCentrumStore = defineStore('centrum', {
         },
 
         async startStream(isCenter?: boolean): Promise<void> {
-            if (this.abort !== undefined) return;
-            if (this.cleanupIntervalId !== undefined) clearInterval(this.cleanupIntervalId);
-            this.cleanupIntervalId = setInterval(() => this.cleanup(), ONE_MINUTE);
+            if (this.abort !== undefined) {
+                return;
+            }
+
+            if (this.cleanupIntervalId === undefined) {
+                this.cleanupIntervalId = setInterval(() => this.cleanup(), ONE_MINUTE);
+            }
+
+            // Only clear checkup interval when we are not restarting
+            if (this.checkupIntervalId === undefined) {
+                this.checkupIntervalId = setInterval(() => this.checkup(), SEVENTEEN_MINUTES);
+            }
 
             console.debug('Centrum: Starting Data Stream');
 
@@ -462,12 +473,21 @@ export const useCentrumStore = defineStore('centrum', {
         async stopStream(): Promise<void> {
             if (this.abort !== undefined) {
                 this.abort.abort();
+                this.abort = undefined;
             }
-            this.abort = undefined;
-            if (this.cleanupIntervalId !== undefined) {
-                clearInterval(this.cleanupIntervalId);
+
+            if (!this.restarting) {
+                if (this.cleanupIntervalId !== undefined) {
+                    clearInterval(this.cleanupIntervalId);
+                    this.cleanupIntervalId = undefined;
+                }
+
+                // Only clear checkup interval when we are not restarting
+                if (this.checkupIntervalId !== undefined) {
+                    clearInterval(this.checkupIntervalId);
+                    this.checkupIntervalId = undefined;
+                }
             }
-            this.cleanupIntervalId = undefined;
 
             console.debug('Centrum: Stopping Data Stream');
         },
@@ -560,7 +580,24 @@ export const useCentrumStore = defineStore('centrum', {
             });
         },
         async checkup(): Promise<void> {
-            // TODO send notification if own unit status is older than 15-20 minutes
+            console.debug('Centrum: Running unit checkup');
+            const ownUnit = this.getOwnUnit;
+            if (ownUnit === undefined || ownUnit.status === undefined) {
+                return;
+            }
+
+            if (ownUnit.status.status !== StatusUnit.BUSY && ownUnit.status.status === StatusUnit.ON_BREAK) {
+                return;
+            }
+
+            const notifications = useNotificatorStore();
+
+            notifications.dispatchNotification({
+                title: { key: 'notifications.centrum.unitUpdated.checkup.title', parameters: {} },
+                content: { key: 'notifications.centrum.unitUpdated.checkup.content', parameters: {} },
+                type: 'info',
+                duration: 10000,
+            });
         },
     },
 });

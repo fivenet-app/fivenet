@@ -44,6 +44,7 @@ export const useNotificatorStore = defineStore('notifications', {
             duration = 6000,
             category = NotificationCategory.GENERAL,
             data = undefined,
+            position = 'top-right',
         }: NotificationConfig) {
             const id = uuidv4();
             this.notifications.unshift({
@@ -53,6 +54,7 @@ export const useNotificatorStore = defineStore('notifications', {
                 type,
                 category,
                 data,
+                position,
             });
 
             if (autoClose) {

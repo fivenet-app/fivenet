@@ -43,8 +43,8 @@ async function closeNotification(id: string): Promise<void> {
                     </div>
                     <div class="flex flex-shrink-0 ml-4">
                         <button
-                            @click="() => closeNotification(notification.id)"
                             type="button"
+                            @click="() => closeNotification(notification.id)"
                             class="inline-flex text-neutral hover:text-base-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
                         >
                             <span class="sr-only">{{ $t('common.close') }}</span>

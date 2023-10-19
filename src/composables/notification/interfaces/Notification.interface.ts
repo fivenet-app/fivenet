@@ -2,6 +2,7 @@ import { TranslateItem } from '~/composables/i18n';
 import { Data, NotificationCategory } from '~~/gen/ts/resources/notifications/notifications';
 
 export type NotificationType = 'success' | 'info' | 'warning' | 'error';
+export type NotificationPosition = 'top-right' | 'bottom-center';
 
 export interface Notification {
     id: string;
@@ -10,4 +11,5 @@ export interface Notification {
     type?: NotificationType;
     category?: NotificationCategory;
     data?: Data;
+    position?: NotificationPosition;
 }
