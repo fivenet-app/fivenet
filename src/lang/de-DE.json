@@ -1456,7 +1456,8 @@
             "ErrDispatchAlreadyCompleted": {
                 "title": "Einsatz ist bereits abgeschlossen!",
                 "content": "Abgeschlossene Einsätze können nicht akzeptiert/abgelehnt werden!"
-            }
+            },
+            "ErrNotPartOfUnit": "Sie sind nicht Teil der Einheit!"
         },
         "general": {
             "internal_error": {
