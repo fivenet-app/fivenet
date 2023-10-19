@@ -179,7 +179,7 @@ service JobsService {
   // @perm
   rpc ConductDeleteEntry(ConductDeleteEntryRequest) returns (ConductDeleteEntryResponse);
 
-  // @perm: Attrs=Access/StringList:[]string{"Own", "All"}§[]string{"Own"}
+  // @perm: Attrs=Access/StringList:[]string{"All"}§[]string{}
   rpc TimeclockListEntries(TimeclockListEntriesRequest) returns (TimeclockListEntriesResponse);
   // @perm: Name=TimeclockListEntries
   rpc TimeclockStats(TimeclockStatsRequest) returns (TimeclockStatsResponse);

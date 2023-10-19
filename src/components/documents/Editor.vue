@@ -247,7 +247,7 @@ onMounted(async () => {
     if (route.query.templateId) {
         const data = clipboardStore.getTemplateData();
         data.activeChar = activeChar.value!;
-        console.debug('Clipboard Template Data', data, jsonStringify(data));
+        console.debug('Documents: Editor - Clipboard Template Data', data, jsonStringify(data));
 
         try {
             const call = $grpc.getDocStoreClient().getTemplate({

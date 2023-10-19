@@ -34,10 +34,7 @@ func (s *Server) TimeclockListEntries(ctx context.Context, req *TimeclockListEnt
 		fields = fieldsAttr.([]string)
 	}
 
-	if len(fields) == 0 {
-		return nil, ErrFailedQuery
-	} else if utils.InSlice(fields, "All") {
-	} else if utils.InSlice(fields, "Own") {
+	if len(fields) == 0 || !utils.InSlice(fields, "All") {
 		condition = condition.AND(tTimeClock.UserID.EQ(jet.Int32(userInfo.UserId)))
 	}
 
