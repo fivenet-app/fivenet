@@ -348,7 +348,7 @@
                     "no_template": "Ohne Vorlage"
                 },
                 "partials": {
-                    "template_hint": "Sie können Golang HTML Templating im oberen Feld. Klicken Sie hier, um mehr zu erfahren."
+                    "template_hint": "Sie können Golang HTML Templating im oberen Feld benutzen. Klicken Sie hier, um mehr zu erfahren."
                 }
             }
         },
