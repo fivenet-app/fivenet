@@ -559,6 +559,9 @@ export const useCentrumStore = defineStore('centrum', {
                 });
             });
         },
+        async checkup(): Promise<void> {
+            // TODO send notification if own unit status is older than 15-20 minutes
+        },
     },
 });
 
