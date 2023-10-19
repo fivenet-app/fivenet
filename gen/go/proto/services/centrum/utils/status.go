@@ -13,10 +13,20 @@ func IsDispatchUnassigned(in *dispatch.Dispatch) bool {
 		return false
 	}
 
-	if in.Status != nil &&
-		(in.Status.Status == dispatch.StatusDispatch_STATUS_DISPATCH_UNSPECIFIED ||
-			in.Status.Status == dispatch.StatusDispatch_STATUS_DISPATCH_NEW ||
-			in.Status.Status == dispatch.StatusDispatch_STATUS_DISPATCH_UNASSIGNED) {
+	// Ignore dispatches with no status
+	if in.Status == nil {
+		return false
+	}
+
+	// Ignore completed dispatches
+	if IsStatusDispatchComplete(in.Status.Status) {
+		return false
+	}
+
+	// Dispatch is "new" or unassgined
+	if in.Status.Status == dispatch.StatusDispatch_STATUS_DISPATCH_UNSPECIFIED ||
+		in.Status.Status == dispatch.StatusDispatch_STATUS_DISPATCH_NEW ||
+		in.Status.Status == dispatch.StatusDispatch_STATUS_DISPATCH_UNASSIGNED {
 		return true
 	}
 
