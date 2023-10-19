@@ -21,7 +21,8 @@ Golang templating is used. In addition to base [Golang html/template functions](
     * `closed` - Boolean.
     * `categoryId`
     * `category`
-        *
+        * `name`
+        * `description`
 * `.users` - List of citizens/ users that are in the user's clipboard.
     * See [User Info Structure](#user-info-structure).
 * `.vehicles` - Vehicles that are in the user's clipboard.
@@ -87,11 +88,9 @@ No Vehicles involved.
 </p>
 {{ else }}
 <ul>
-{{ range .vehicles }}
-<li>
-{{ .plate }} - {{ .owner.firstname }}, {{ .owner.lastname }}
-</li>
-{{ end }}
+{{- range .vehicles -}}
+<li>{{ .plate }} - {{ .owner.firstname }}, {{ .owner.lastname }}</li>
+{{- end -}}
 </ul>
 {{ end }}
 ```

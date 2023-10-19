@@ -260,7 +260,7 @@ onMounted(async () => {
             const template = response.template;
             setFieldValue('title', template?.contentTitle!);
             setFieldValue('state', template?.state!);
-            doc.value.content = template?.content!;
+            doc.value.content = template?.content.replace(/\s+/g, ' ')!;
             selectedCategory.value = template?.category;
 
             if (template?.contentAccess) {

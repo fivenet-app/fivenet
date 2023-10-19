@@ -46,7 +46,7 @@ export const useClipboardStore = defineStore('clipboard', {
                 if (v !== undefined) data.users.push(getUser(v));
             });
             this.activeStack.vehicles.forEach((v: ClipboardVehicle) => {
-                if (v !== undefined) data.vehicles.push(v.getVehicle());
+                if (v !== undefined) data.vehicles.push(getVehicle(v));
             });
 
             return data;
@@ -255,13 +255,13 @@ export class ClipboardVehicle {
         this.type = v.type;
         this.owner = new ClipboardUser(v.owner!);
     }
+}
 
-    getVehicle(): Vehicle {
-        return {
-            plate: this.plate,
-            model: this.model,
-            type: this.type,
-            owner: getUser(this.owner),
-        };
-    }
+export function getVehicle(obj: ClipboardVehicle): Vehicle {
+    return {
+        plate: obj.plate,
+        model: obj.model,
+        type: obj.type,
+        owner: getUser(obj.owner),
+    };
 }
