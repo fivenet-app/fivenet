@@ -44,7 +44,7 @@ function addToClipboard(): void {
             <CitizenInfoPopover :user="vehicle.owner" />
         </td>
         <td
-            v-if="!hideCitizenLink && !hideCopy"
+            v-if="!hideCitizenLink || !hideCopy"
             class="whitespace-nowrap py-2 pl-3 pr-4 text-right text-sm font-medium sm:pr-0"
         >
             <div class="flex flex-row justify-end">
