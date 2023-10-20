@@ -1,5 +1,5 @@
 # syntax=docker/dockerfile:1
-FROM docker.io/library/node:19.9.0-alpine3.17 AS nodebuilder
+FROM docker.io/library/node:20.5.1-alpine3.17 AS nodebuilder
 WORKDIR /app
 COPY . ./
 RUN rm -rf ./.nuxt/ && \
