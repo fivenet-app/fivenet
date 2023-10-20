@@ -24,13 +24,13 @@ const { location, zoom } = storeToRefs(livemapStore);
 
 let map: L.Map | undefined = undefined;
 
-const mapContainer = ref<HTMLDivElement | null>(null);
-
 function mapResize(): void {
     if (map === undefined) return;
 
     map.invalidateSize();
 }
+
+const mapContainer = ref<HTMLElement | null>(null);
 const mapResizeDebounced = useDebounceFn(mapResize, 250);
 useResizeObserver(mapContainer, (_) => mapResizeDebounced());
 
@@ -230,7 +230,7 @@ onBeforeUnmount(() => {
             v-model:center="center"
             :crs="customCRS"
             :min-zoom="1"
-            :max-zoom="8"
+            :max-zoom="7"
             @click="selectedMarker = undefined"
             :inertia="false"
             :style="{ backgroundColor: 'rgba(0,0,0,0.0)' }"
