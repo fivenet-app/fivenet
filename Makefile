@@ -150,8 +150,17 @@ gen-licenses:
 
 .PHONY: gen-tiles
 gen-tiles: gdal2tiles-leaflet
-	$(BUILD_DIR)gdal2tiles-leaflet/gdal2tiles.py -l -p raster -z 1-7 -w none ./maps/GTAV_POSTAL_16000x16000.jpg ./src/public/images/livemap/tiles/postal
-	$(BUILD_DIR)gdal2tiles-leaflet/gdal2tiles.py -l -p raster -z 1-7 -w none ./maps/GTAV_SATELITE_16000x16000.jpg ./src/public/images/livemap/tiles/satelite
+	GDAL_ALLOW_LARGE_LIBJPEG_MEM_ALLOC=true \
+	JPEGMEM=2048M \
+		$(BUILD_DIR)gdal2tiles-leaflet/gdal2tiles.py \
+		-l -p raster -z 1-7 -w none \
+		./maps/GTAV_POSTAL_16384x16384.jpg ./src/public/images/livemap/tiles/postal
+
+	#GDAL_ALLOW_LARGE_LIBJPEG_MEM_ALLOC=true \
+	#JPEGMEM=2048M \
+	#	$(BUILD_DIR)gdal2tiles-leaflet/gdal2tiles.py \
+	#	-l -p raster -z 1-7 -w none \
+	#	./maps/GTAV_SATELITE_16384x16384.jpg ./src/public/images/livemap/tiles/satelite
 
 .PHONY: optimize-tiles
 optimize-tiles:

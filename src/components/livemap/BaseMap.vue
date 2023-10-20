@@ -247,7 +247,7 @@ onBeforeUnmount(() => {
                 :visible="true"
                 :attribution="attribution"
             />
-            <LTileLayer
+            <!-- <LTileLayer
                 url="/images/livemap/tiles/satelite/{z}/{x}/{y}.png"
                 layer-type="base"
                 name="Satelite"
@@ -255,7 +255,7 @@ onBeforeUnmount(() => {
                 :tms="true"
                 :visible="false"
                 :attribution="attribution"
-            />
+            /> -->
 
             <LControlLayers />
 
