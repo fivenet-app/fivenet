@@ -77,7 +77,7 @@
         "eslint-plugin-vue": "^9.17.0",
         "eslint": "^8.51.0",
         "nuxi": "^3.9.1",
-        "nuxt-typed-router": "^3.3.1",
+        "nuxt-typed-router": "^3.3.2",
         "nuxt": "^3.8.0",
         "postcss-custom-properties": "^13.3.2",
         "postcss-url": "^10.1.3",
