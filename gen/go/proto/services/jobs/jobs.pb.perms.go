@@ -106,8 +106,8 @@ func init() {
 				{
 					Key:           permkeys.JobsServiceTimeclockListEntriesAccessPermField,
 					Type:          permissions.StringListAttributeType,
-					ValidValues:   []string{"Own", "All"},
-					DefaultValues: []string{"Own"},
+					ValidValues:   []string{"All"},
+					DefaultValues: []string{},
 				},
 			},
 		},

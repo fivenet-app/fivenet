@@ -150,12 +150,12 @@ gen-licenses:
 
 .PHONY: gen-tiles
 gen-tiles: gdal2tiles-leaflet
-	$(BUILD_DIR)gdal2tiles-leaflet/gdal2tiles.py -l -p raster -z 0-7 -w none ./maps/GTAV_POSTAL_8192x8192.jpg ./src/public/images/livemap/tiles/postal
-	$(BUILD_DIR)gdal2tiles-leaflet/gdal2tiles.py -l -p raster -z 0-7 -w none ./maps/GTAV_SATELITE_8192x8192.jpg ./src/public/images/livemap/tiles/satelite
+	$(BUILD_DIR)gdal2tiles-leaflet/gdal2tiles.py -l -p raster -z 0-8 -w none ./maps/GTAV_POSTAL_16000x16000.jpg ./src/public/images/livemap/tiles/postal
+	$(BUILD_DIR)gdal2tiles-leaflet/gdal2tiles.py -l -p raster -z 0-8 -w none ./maps/GTAV_SATELITE_16000x16000.jpg ./src/public/images/livemap/tiles/satelite
 
 .PHONY: optimize-tiles
 optimize-tiles:
-	find ./src/public/tiles -iname '*.png' -print0 | xargs -n1 -P6 -0 optipng -strip all -clobber -fix -o9
+	find ./src/public/images/livemap/tiles/ -iname '*.png' -print0 | xargs -n1 -P16 -0 optipng -strip all -clobber -fix -o9
 
 .PHONY: tiles
 tiles:

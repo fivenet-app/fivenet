@@ -76,7 +76,7 @@ export interface IJobsServiceClient {
      */
     conductDeleteEntry(input: ConductDeleteEntryRequest, options?: RpcOptions): UnaryCall<ConductDeleteEntryRequest, ConductDeleteEntryResponse>;
     /**
-     * @perm: Attrs=Access/StringList:[]string{"Own", "All"}§[]string{"Own"}
+     * @perm: Attrs=Access/StringList:[]string{"All"}§[]string{}
      *
      * @generated from protobuf rpc: TimeclockListEntries(services.jobs.TimeclockListEntriesRequest) returns (services.jobs.TimeclockListEntriesResponse);
      */
@@ -203,7 +203,7 @@ export class JobsServiceClient implements IJobsServiceClient, ServiceInfo {
         return stackIntercept<ConductDeleteEntryRequest, ConductDeleteEntryResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Attrs=Access/StringList:[]string{"Own", "All"}§[]string{"Own"}
+     * @perm: Attrs=Access/StringList:[]string{"All"}§[]string{}
      *
      * @generated from protobuf rpc: TimeclockListEntries(services.jobs.TimeclockListEntriesRequest) returns (services.jobs.TimeclockListEntriesResponse);
      */

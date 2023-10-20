@@ -230,7 +230,7 @@ onBeforeUnmount(() => {
             v-model:center="center"
             :crs="customCRS"
             :min-zoom="1"
-            :max-zoom="6"
+            :max-zoom="8"
             @click="selectedMarker = undefined"
             :inertia="false"
             :style="{ backgroundColor: 'rgba(0,0,0,0.0)' }"
