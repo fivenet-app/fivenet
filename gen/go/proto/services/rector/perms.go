@@ -149,7 +149,8 @@ func (s *Server) filterAttributes(ctx context.Context, userInfo *userinfo.UserIn
 		}
 
 		maxVal, _ := s.ps.GetClosestRoleAttrMaxVals(userInfo.Job, userInfo.JobGrade, attr.PermissionId, perms.Key(attr.Key))
-		if !attrs[i].Value.Check(permissions.AttributeTypes(attr.Type), attr.ValidValues, maxVal) {
+		valid, _ := attrs[i].Value.Check(permissions.AttributeTypes(attr.Type), attr.ValidValues, maxVal)
+		if !valid {
 			return fmt.Errorf("failed to validate attribute %d values (%q)", attrs[i].AttrId, attr.Value)
 		}
 

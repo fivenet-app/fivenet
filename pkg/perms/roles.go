@@ -359,8 +359,7 @@ func (p *Perms) RemovePermissionsFromRole(ctx context.Context, roleId uint64, pe
 		)).
 		LIMIT(int64(len(ids)))
 
-	_, err := stmt.ExecContext(ctx, p.db)
-	if err != nil {
+	if _, err := stmt.ExecContext(ctx, p.db); err != nil {
 		return err
 	}
 

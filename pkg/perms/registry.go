@@ -348,5 +348,67 @@ func (p *Perms) applyJobPermissions(ctx context.Context, job string) error {
 		}
 	}
 
+	return p.applyJobPermissionsToAttrs(ctx, job)
+}
+
+func (p *Perms) applyJobPermissionsToAttrs(ctx context.Context, job string) error {
+	roles, err := p.GetJobRoles(ctx, job)
+	if err != nil {
+		return err
+	}
+
+	if len(roles) == 0 {
+		return nil
+	}
+
+	jps, err := p.GetJobPermissions(ctx, job)
+	if err != nil {
+		return err
+	}
+
+	for _, role := range roles {
+		attrs, err := p.GetRoleAttributes(role.Job, role.Grade)
+		if err != nil {
+			return err
+		}
+
+		if len(attrs) == 0 {
+			continue
+		}
+
+		if len(jps) == 0 {
+			if err := p.RemoveAttributesFromRole(ctx, role.ID, attrs...); err != nil {
+				return err
+			}
+			continue
+		}
+
+		toRemove := []*permissions.RoleAttribute{}
+		toUpdate := []*permissions.RoleAttribute{}
+		for _, attr := range attrs {
+			if utils.InSliceFunc(jps, func(in *permissions.Permission) bool {
+				return in.Id == attr.PermissionId
+			}) {
+				if _, changed := attr.Value.Check(permissions.AttributeTypes(attr.Type), attr.ValidValues, attr.MaxValues); changed {
+					toUpdate = append(toUpdate, attr)
+				}
+			} else {
+				toRemove = append(toRemove, attr)
+			}
+		}
+
+		if len(toRemove) > 0 {
+			if p.RemoveAttributesFromRole(ctx, role.ID, toRemove...); err != nil {
+				return err
+			}
+		}
+
+		if len(toUpdate) > 0 {
+			if p.AddOrUpdateAttributesToRole(ctx, role.Job, role.Grade, role.ID, toUpdate...); err != nil {
+				return err
+			}
+		}
+	}
+
 	return nil
 }

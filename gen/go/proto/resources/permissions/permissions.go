@@ -79,9 +79,9 @@ func (x *AttributeValues) Default(aType AttributeTypes) {
 	}
 }
 
-func (x *AttributeValues) Check(aType AttributeTypes, validVals *AttributeValues, maxVals *AttributeValues) bool {
+func (x *AttributeValues) Check(aType AttributeTypes, validVals *AttributeValues, maxVals *AttributeValues) (bool, bool) {
 	if validVals == nil && maxVals == nil {
-		return true
+		return true, false
 	}
 
 	switch AttributeTypes(aType) {
@@ -121,64 +121,74 @@ func (x *AttributeValues) Check(aType AttributeTypes, validVals *AttributeValues
 		}
 
 		return ValidateJobGradeList(x.GetJobGradeList(), valid, max)
-	}
 
-	return true
+	default:
+		return false, false
+	}
 }
 
-func ValidateStringList(in *StringList, validVals []string, maxVals []string) bool {
+func ValidateStringList(in *StringList, validVals []string, maxVals []string) (bool, bool) {
 	// If more values than valid/max values in the list, it can't be valid
 	if (validVals != nil && len(in.Strings) > len(validVals)) || len(in.Strings) > len(maxVals) {
 		in.Strings = []string{}
-		return true
+		return true, true
 	}
 
+	changed := false
 	for i := 0; i < len(in.Strings); i++ {
 		if !utils.InSlice(maxVals, in.Strings[i]) {
 			in.Strings = utils.RemoveFromSlice(in.Strings, i)
+			changed = true
 			continue
 		}
 
 		if validVals != nil && !utils.InSlice(validVals, in.Strings[i]) {
 			in.Strings = utils.RemoveFromSlice(in.Strings, i)
+			changed = true
 			continue
 		}
 	}
 
-	return true
+	return true, changed
 }
 
-func ValidateJobList(in *StringList, validVals []string, maxVals []string) bool {
+func ValidateJobList(in *StringList, validVals []string, maxVals []string) (bool, bool) {
 	// If more values than valid/max values in the list, it can't be valid
 	if len(in.Strings) > len(maxVals) || (validVals != nil && len(in.Strings) > len(validVals)) {
 		in.Strings = []string{}
-		return true
+		return true, true
 	}
 
+	changed := false
 	for i := 0; i < len(in.Strings); i++ {
 		if !utils.InSlice(maxVals, in.Strings[i]) {
 			in.Strings = utils.RemoveFromSlice(in.Strings, i)
+			changed = true
 			continue
 		}
 
 		if validVals != nil && !utils.InSlice(validVals, in.Strings[i]) {
 			// Remove invalid jobs from list
 			in.Strings = utils.RemoveFromSlice(in.Strings, i)
+			changed = true
 			continue
 		}
 	}
 
-	return true
+	return true, changed
 }
 
-func ValidateJobGradeList(in *JobGradeList, validVals map[string]int32, maxVals map[string]int32) bool {
+func ValidateJobGradeList(in *JobGradeList, validVals map[string]int32, maxVals map[string]int32) (bool, bool) {
+	changed := false
 	for job, grade := range in.Jobs {
 		if vg, ok := maxVals[job]; ok {
 			if grade > vg {
 				delete(in.Jobs, job)
+				changed = true
 			}
 		} else {
 			delete(in.Jobs, job)
+			changed = true
 		}
 
 		// If valid vals are empty/ nil, don't check them
@@ -186,12 +196,14 @@ func ValidateJobGradeList(in *JobGradeList, validVals map[string]int32, maxVals 
 			if vg, ok := validVals[job]; ok {
 				if grade > vg {
 					delete(in.Jobs, job)
+					changed = true
 				}
 			} else {
 				delete(in.Jobs, job)
+				changed = true
 			}
 		}
 	}
 
-	return true
+	return true, changed
 }

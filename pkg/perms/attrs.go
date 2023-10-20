@@ -692,7 +692,8 @@ func (p *Perms) AddOrUpdateAttributesToRole(ctx context.Context, job string, gra
 				attrs[i].MaxValues = nil
 			}
 
-			if !attrs[i].Value.Check(a.Type, a.ValidValues, max) {
+			valid, _ := attrs[i].Value.Check(a.Type, a.ValidValues, max)
+			if !valid {
 				return errors.Wrapf(ErrAttrInvalid, "attribute %s/%s failed validation", a.Key, a.Name)
 			}
 		}
@@ -712,7 +713,7 @@ func (p *Perms) addOrUpdateAttributesToRole(ctx context.Context, roleId uint64, 
 			return fmt.Errorf("unable to add role attribute, didn't find attribute by ID %d", attrs[i].AttrId)
 		}
 
-		value := jet.NULL
+		attrValue := jet.NULL
 		if attrs[i].Value == nil {
 			attrs[i].Value = a.DefaultValues
 		}
@@ -744,7 +745,7 @@ func (p *Perms) addOrUpdateAttributesToRole(ctx context.Context, roleId uint64, 
 			}
 
 			if out != "" && out != "null" {
-				value = jet.String(out)
+				attrValue = jet.String(out)
 			}
 		}
 
@@ -757,14 +758,14 @@ func (p *Perms) addOrUpdateAttributesToRole(ctx context.Context, roleId uint64, 
 			VALUES(
 				roleId,
 				a.ID,
-				value,
+				attrValue,
 			).
 			ON_DUPLICATE_KEY_UPDATE(
 				tRoleAttrs.Value.SET(jet.StringExp(jet.Raw("VALUES(`value`)"))),
 			)
 
 		if _, err := stmt.ExecContext(ctx, p.db); err != nil {
-			if err != nil && !dbutils.IsDuplicateError(err) {
+			if !dbutils.IsDuplicateError(err) {
 				return err
 			}
 		}
