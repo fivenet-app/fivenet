@@ -75,7 +75,7 @@
         "autoprefixer": "^10.4.16",
         "cssnano": "^6.0.1",
         "eslint-plugin-vue": "^9.17.0",
-        "eslint": "^8.51.0",
+        "eslint": "^8.52.0",
         "nuxi": "^3.9.1",
         "nuxt-typed-router": "^3.3.2",
         "nuxt": "^3.8.0",
