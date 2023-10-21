@@ -6,12 +6,16 @@ import { useNotificatorStore } from '~/store/notificator';
 const notifications = useNotificatorStore();
 const { removeNotification } = notifications;
 
-defineProps<{
+const props = defineProps<{
     notification: Notification;
 }>();
 
 async function closeNotification(id: string): Promise<void> {
     removeNotification(id);
+}
+
+if (props.notification.callback !== undefined) {
+    props.notification.callback();
 }
 </script>
 

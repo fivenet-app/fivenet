@@ -2,7 +2,8 @@
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { LControl } from '@vue-leaflet/vue-leaflet';
-import { watchDebounced } from '@vueuse/core';
+import { useDebounceFn, watchDebounced } from '@vueuse/core';
+import { useSound } from '@vueuse/sound';
 import {
     CalendarCheckIcon,
     CalendarRemoveIcon,
@@ -211,6 +212,46 @@ onBeforeMount(async () => {
 onBeforeUnmount(async () => {
     stopStream();
     centrumStore.$reset();
+});
+
+const SEVENTEEN_MINUTES = 21 * 60 * 1000;
+
+const attentionSound = useSound('/sounds/centrum/attention.mp3', {
+    volume: 0.15,
+    playbackRate: 1.25,
+});
+
+const debouncedPlay = useDebounceFn(() => attentionSound.play(), 950);
+
+const checkupIntervalId = ref<NodeJS.Timeout | undefined>();
+
+async function checkup(): Promise<void> {
+    console.debug('Centrum: Sidebar - Running unit status checkup');
+    const ownUnit = getOwnUnit.value;
+    if (ownUnit === undefined || ownUnit.status === undefined) {
+        return;
+    }
+
+    if (ownUnit.status.status === StatusUnit.AVAILABLE || ownUnit.status.status === StatusUnit.UNAVAILABLE) {
+        return;
+    }
+
+    const notifications = useNotificatorStore();
+
+    notifications.dispatchNotification({
+        title: { key: 'notifications.centrum.unitUpdated.checkup.title', parameters: {} },
+        content: { key: 'notifications.centrum.unitUpdated.checkup.content', parameters: {} },
+        type: 'info',
+        duration: 10000,
+        callback: () => debouncedPlay(),
+    });
+}
+
+onBeforeMount(() => (checkupIntervalId.value = setInterval(checkup, SEVENTEEN_MINUTES)));
+onBeforeUnmount(() => {
+    if (checkupIntervalId.value) {
+        clearInterval(checkupIntervalId.value);
+    }
 });
 
 const open = ref(false);

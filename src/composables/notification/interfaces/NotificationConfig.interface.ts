@@ -11,4 +11,5 @@ export interface NotificationConfig {
     category?: NotificationCategory;
     data?: Data;
     position?: NotificationPosition;
+    callback?: () => Promise<any>;
 }

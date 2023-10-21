@@ -7,7 +7,7 @@ Attributions per File (please note that these links might contain tracking param
 
 * `centrum/message-incoming.mp3` - UNIVERSFIELD (https://pixabay.com/users/universfield-28281460/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=132126) from Pixabay (https://pixabay.com/)
 * `centrum/morse-sos.mp3` - Pixabay (https://pixabay.com/users/pixabay-1/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=93449) from Pixabay (https://pixabay.com/)
-* `centrum/attention.mp3` - smithdevin936 (https://pixabay.com/users/smithdevin936-12307302/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=163366) from Pixabay (https://pixabay.com/)
+* `centrum/attention.mp3` - Pixabay (https://pixabay.com/?utm_source=link-attribution&utm_medium=referral&utm_campaign=music&utm_content=92089) from Pixabay (https://pixabay.com/)
 
 Note from @galexrt (not legal advice): As far as I understand, including the sound
     files in the GitHub project might not be allowed, but as I interpret

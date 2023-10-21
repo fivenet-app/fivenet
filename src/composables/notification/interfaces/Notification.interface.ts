@@ -12,4 +12,5 @@ export interface Notification {
     category?: NotificationCategory;
     data?: Data;
     position?: NotificationPosition;
+    callback?: () => Promise<any>;
 }
