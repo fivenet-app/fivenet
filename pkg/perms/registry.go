@@ -386,10 +386,11 @@ func (p *Perms) applyJobPermissionsToAttrs(ctx context.Context, job string) erro
 		toRemove := []*permissions.RoleAttribute{}
 		toUpdate := []*permissions.RoleAttribute{}
 		for _, attr := range attrs {
+			maxValues, _ := p.GetClosestRoleAttrMaxVals(role.Job, role.Grade, attr.PermissionId, Key(attr.Key))
 			if utils.InSliceFunc(jps, func(in *permissions.Permission) bool {
 				return in.Id == attr.PermissionId
 			}) {
-				if _, changed := attr.Value.Check(permissions.AttributeTypes(attr.Type), attr.ValidValues, attr.MaxValues); changed {
+				if _, changed := attr.Value.Check(permissions.AttributeTypes(attr.Type), attr.ValidValues, maxValues); changed {
 					toUpdate = append(toUpdate, attr)
 				}
 			} else {
