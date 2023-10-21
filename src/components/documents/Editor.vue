@@ -568,23 +568,27 @@ async function createDocument(values: FormData, content: string, closed: boolean
             const { response } = await call;
 
             const promises: Promise<any>[] = [];
-            referenceManagerData.value.forEach((ref) => {
-                ref.sourceDocumentId = response.documentId;
+            if (canDo.references) {
+                referenceManagerData.value.forEach((ref) => {
+                    ref.sourceDocumentId = response.documentId;
 
-                const prom = $grpc.getDocStoreClient().addDocumentReference({
-                    reference: ref,
+                    const prom = $grpc.getDocStoreClient().addDocumentReference({
+                        reference: ref,
+                    });
+                    promises.push(prom.response);
                 });
-                promises.push(prom.response);
-            });
+            }
 
-            relationManagerData.value.forEach((rel) => {
-                rel.documentId = response.documentId;
+            if (canDo.relations) {
+                relationManagerData.value.forEach((rel) => {
+                    rel.documentId = response.documentId;
 
-                const prom = $grpc.getDocStoreClient().addDocumentRelation({
-                    relation: rel,
+                    const prom = $grpc.getDocStoreClient().addDocumentRelation({
+                        relation: rel,
+                    });
+                    promises.push(prom.response);
                 });
-                promises.push(prom.response);
-            });
+            }
             await Promise.all(promises);
 
             notifications.dispatchNotification({
@@ -655,43 +659,45 @@ async function updateDocument(id: bigint, values: FormData, content: string, clo
             const call = $grpc.getDocStoreClient().updateDocument(req);
             const { response } = await call;
 
-            const referencesToRemove: bigint[] = [];
-            currentReferences.value.forEach((ref) => {
-                if (!referenceManagerData.value.has(ref.id!)) referencesToRemove.push(ref.id!);
-            });
-            referencesToRemove.forEach((id) => {
-                $grpc.getDocStoreClient().removeDocumentReference({
-                    id: id,
+            if (canDo.references) {
+                const referencesToRemove: bigint[] = [];
+                currentReferences.value.forEach((ref) => {
+                    if (!referenceManagerData.value.has(ref.id!)) referencesToRemove.push(ref.id!);
                 });
-            });
-
-            const relationsToRemove: bigint[] = [];
-            currentRelations.value.forEach((rel) => {
-                if (!relationManagerData.value.has(rel.id!)) relationsToRemove.push(rel.id!);
-            });
-            relationsToRemove.forEach((id) => {
-                $grpc.getDocStoreClient().removeDocumentRelation({
-                    id: id,
+                referencesToRemove.forEach((id) => {
+                    $grpc.getDocStoreClient().removeDocumentReference({
+                        id: id,
+                    });
                 });
-            });
+                referenceManagerData.value.forEach((ref) => {
+                    if (currentReferences.value.find((r) => r.id === ref.id!)) return;
+                    ref.sourceDocumentId = response.documentId;
 
-            referenceManagerData.value.forEach((ref) => {
-                if (currentReferences.value.find((r) => r.id === ref.id!)) return;
-                ref.sourceDocumentId = response.documentId;
-
-                $grpc.getDocStoreClient().addDocumentReference({
-                    reference: ref,
+                    $grpc.getDocStoreClient().addDocumentReference({
+                        reference: ref,
+                    });
                 });
-            });
+            }
 
-            relationManagerData.value.forEach((rel) => {
-                if (currentRelations.value.find((r) => r.id === rel.id!)) return;
-                rel.documentId = response.documentId;
-
-                $grpc.getDocStoreClient().addDocumentRelation({
-                    relation: rel,
+            if (canDo.relations) {
+                const relationsToRemove: bigint[] = [];
+                currentRelations.value.forEach((rel) => {
+                    if (!relationManagerData.value.has(rel.id!)) relationsToRemove.push(rel.id!);
                 });
-            });
+                relationsToRemove.forEach((id) => {
+                    $grpc.getDocStoreClient().removeDocumentRelation({
+                        id: id,
+                    });
+                });
+                relationManagerData.value.forEach((rel) => {
+                    if (currentRelations.value.find((r) => r.id === rel.id!)) return;
+                    rel.documentId = response.documentId;
+
+                    $grpc.getDocStoreClient().addDocumentRelation({
+                        relation: rel,
+                    });
+                });
+            }
 
             notifications.dispatchNotification({
                 title: { key: 'notifications.document_updated.title', parameters: {} },
@@ -756,6 +762,11 @@ watchOnce(quillEditorRef, () => {
 
     quillEditorRef.value.getQuill().on('text-change', debounced);
 });
+
+const canDo = {
+    references: can('DocStoreService.AddDocumentReference'),
+    relations: can('DocStoreService.AddDocumentRelation'),
+};
 
 defineRule('required', required);
 defineRule('max', max);
@@ -1006,9 +1017,11 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
             <div class="flex flex-row">
                 <div class="flex-1 inline-flex rounded-md shadow-sm" role="group">
                     <button
+                        v-if="canDo.relations"
                         type="button"
                         :disabled="!canEdit"
                         class="inline-flex justify-center rounded-bl-md bg-primary-500 py-2.5 px-3.5 w-full text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
+                        :class="canDo.references ? '' : 'rounded-br-md'"
                         @click="relationManagerShow = true"
                     >
                         <div class="flex justify-center">
@@ -1020,9 +1033,11 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                         </div>
                     </button>
                     <button
+                        v-if="canDo.references"
                         type="button"
                         :disabled="!canEdit"
                         class="inline-flex justify-center rounded-br-md bg-primary-500 py-2.5 px-3.5 w-full text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
+                        :class="canDo.relations ? '' : 'rounded-bl-md'"
                         @click="referenceManagerShow = true"
                     >
                         <div class="flex justify-center">
