@@ -575,6 +575,7 @@ onMounted(async () => {
                         <div class="relative">
                             <ComboboxButton as="div">
                                 <ComboboxInput
+                                    autocomplete="off"
                                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                     @change="queryCategories = $event.target.value"
                                     :display-value="(category: any) => category?.name"

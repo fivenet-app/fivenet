@@ -77,6 +77,7 @@ watchDebounced(postalQuery, () => findPostal(), {
 <template>
     <Combobox as="div" class="w-full" v-model="selectedPostal" nullable>
         <ComboboxInput
+            autocomplete="off"
             class="w-full p-0.5 px-1 bg-clip-padding rounded-md border-2 border-black/20"
             @change="postalQuery = $event.target.value"
             @click="loadPostals"

@@ -1,4 +1,0 @@
-- [ ] Dispatch Center
-    - [ ] Livemap - Show Panic buttons and Sperrzonen
-    - [ ] Based on the dispatch center mode, allow assigning dispatches themselves or not
-- [ ] Citizenstore: add functions to generate what extra fields of a user (e.g., phone number) can be listed by the user via their attrs

@@ -329,6 +329,7 @@ async function onSelect(item: any): Promise<any> {
                                     aria-hidden="true"
                                 />
                                 <ComboboxInput
+                                    autocomplete="off"
                                     class="h-12 w-full border-0 bg-transparent pl-11 pr-4 text-gray-200 placeholder:text-gray-400 focus:ring-0 sm:text-sm"
                                     placeholder="Search..."
                                     @change="rawQuery = $event.target.value"

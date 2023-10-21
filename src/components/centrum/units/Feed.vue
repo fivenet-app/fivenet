@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
+import { useIntervalFn } from '@vueuse/core';
 import { ListUnitActivityResponse } from '~~/gen/ts/services/centrum/centrum';
 import FeedItem from './FeedItem.vue';
 
@@ -14,8 +15,6 @@ const offset = ref(0n);
 const { data, refresh } = useLazyAsyncData(`centrum-unit-${props.unitId.toString()}-activity-${offset.value}`, () =>
     listUnitActivity(),
 );
-
-const timer = setInterval(async () => refresh(), 3500);
 
 async function listUnitActivity(): Promise<ListUnitActivityResponse> {
     return new Promise(async (res, rej) => {
@@ -36,9 +35,11 @@ async function listUnitActivity(): Promise<ListUnitActivityResponse> {
     });
 }
 
-onBeforeUnmount(() => {
-    if (timer) clearInterval(timer);
-});
+const { pause, resume } = useIntervalFn(async () => {
+    pause();
+    await refresh();
+    resume();
+}, 3500);
 </script>
 
 <template>
