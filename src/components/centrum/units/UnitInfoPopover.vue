@@ -77,10 +77,10 @@ withDefaults(
                         {{ $t('common.members') }}
                     </p>
                     <ul class="text-sm font-normal">
-                        <li v-for="user in unit.users">
+                        <li v-for="user in unit.users" class="inline-flex items-center">
                             {{ user.user?.firstname }}
                             {{ user.user?.lastname }}
-                            <PhoneNumber :number="user.user?.phoneNumber" :hide-number="true" />
+                            <PhoneNumber class="ml-0.5" :number="user.user?.phoneNumber" :hide-number="true" />
                         </li>
                     </ul>
                 </div>
