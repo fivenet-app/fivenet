@@ -1,7 +1,9 @@
 <script lang="ts" setup>
 import { AccountPlusIcon, AccountRemoveIcon, BriefcaseIcon, CoffeeIcon, HelpIcon, PlayIcon, StopIcon } from 'mdi-vue3';
+import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import Time from '~/components/partials/elements/Time.vue';
 import { StatusUnit, UnitStatus } from '~~/gen/ts/resources/dispatch/units';
+import UnitInfoPopover from './UnitInfoPopover.vue';
 
 defineProps<{
     activityLength: number;
@@ -27,12 +29,8 @@ defineProps<{
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
                 {{ $t('components.centrum.units.feed.item.USER_ADDED') }}
 
-                <span class="font-medium text-gray-400 pl-1" v-if="item.unit">
-                    {{ item.unit?.initials }}
-                </span>
-                <span class="font-medium text-gray-400 pl-1" v-if="item.user">
-                    {{ item.user?.firstname }}, {{ item.user?.lastname }}
-                </span>
+                <UnitInfoPopover v-if="item.unit" text-class="font-medium text-gray-400 pl-1" :unit="item.unit" />
+                <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
                 <Time :value="item.createdAt" :type="'compact'" />
@@ -45,12 +43,8 @@ defineProps<{
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
                 {{ $t('components.centrum.units.feed.item.USER_REMOVED') }}
 
-                <span class="font-medium text-gray-400 pl-1" v-if="item.unit">
-                    {{ item.unit?.initials }}
-                </span>
-                <span class="font-medium text-gray-400 pl-1" v-if="item.user">
-                    {{ item.user?.firstname }}, {{ item.user?.lastname }}
-                </span>
+                <UnitInfoPopover v-if="item.unit" text-class="font-medium text-gray-400 pl-1" :unit="item.unit" />
+                <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
                 <Time :value="item.createdAt" :type="'compact'" />
@@ -63,12 +57,8 @@ defineProps<{
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
                 {{ $t('components.centrum.units.feed.item.UNAVAILABLE') }}
 
-                <span class="font-medium text-gray-400 pl-1" v-if="item.unit">
-                    {{ item.unit?.initials }}
-                </span>
-                <span class="font-medium text-gray-400 pl-1" v-if="item.user">
-                    {{ item.user?.firstname }}, {{ item.user?.lastname }}
-                </span>
+                <UnitInfoPopover v-if="item.unit" text-class="font-medium text-gray-400 pl-1" :unit="item.unit" />
+                <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
                 <Time :value="item.createdAt" :type="'compact'" />
@@ -81,12 +71,8 @@ defineProps<{
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
                 {{ $t('components.centrum.units.feed.item.AVAILABLE') }}
 
-                <span class="font-medium text-gray-400 pl-1" v-if="item.unit">
-                    {{ item.unit?.initials }}
-                </span>
-                <span class="font-medium text-gray-400 pl-1" v-if="item.user">
-                    {{ item.user?.firstname }}, {{ item.user?.lastname }}
-                </span>
+                <UnitInfoPopover v-if="item.unit" text-class="font-medium text-gray-400 pl-1" :unit="item.unit" />
+                <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
                 <Time :value="item.createdAt" :type="'compact'" />
@@ -99,12 +85,8 @@ defineProps<{
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
                 {{ $t('components.centrum.units.feed.item.ON_BREAK') }}
 
-                <span class="font-medium text-gray-400 pl-1" v-if="item.unit">
-                    {{ item.unit?.initials }}
-                </span>
-                <span class="font-medium text-gray-400 pl-1" v-if="item.user">
-                    {{ item.user?.firstname }}, {{ item.user?.lastname }}
-                </span>
+                <UnitInfoPopover v-if="item.unit" text-class="font-medium text-gray-400 pl-1" :unit="item.unit" />
+                <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
                 <Time :value="item.createdAt" :type="'compact'" />
@@ -117,12 +99,8 @@ defineProps<{
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
                 {{ $t('components.centrum.units.feed.item.BUSY') }}
 
-                <span class="font-medium text-gray-400 pl-1" v-if="item.unit">
-                    {{ item.unit?.initials }}
-                </span>
-                <span class="font-medium text-gray-400 pl-1" v-if="item.user">
-                    {{ item.user?.firstname }}, {{ item.user?.lastname }}
-                </span>
+                <UnitInfoPopover v-if="item.unit" text-class="font-medium text-gray-400 pl-1" :unit="item.unit" />
+                <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
                 <Time :value="item.createdAt" :type="'compact'" />
@@ -135,9 +113,7 @@ defineProps<{
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
                 {{ $t('components.centrum.units.feed.item.UNKNOWN') }}
 
-                <span class="font-medium text-gray-400 pl-1" v-if="item.unit">
-                    {{ item.unit?.initials }}
-                </span>
+                <UnitInfoPopover v-if="item.unit" text-class="font-medium text-gray-400 pl-1" :unit="item.unit" />
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
                 <Time :value="item.createdAt" :type="'compact'" />
