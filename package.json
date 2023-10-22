@@ -13,7 +13,7 @@
         "analyze": "yarn nuxi analyze"
     },
     "dependencies": {
-        "@fontsource/inter": "^5.0.14",
+        "@fontsource/inter": "^5.0.15",
         "@headlessui-float/vue": "^0.11.4",
         "@headlessui/vue": "^1.7.16",
         "@nuxtjs/robots": "^3.0.0",
@@ -53,7 +53,7 @@
         "vue-template-compiler": "^2.7.14"
     },
     "devDependencies": {
-        "@dargmuesli/nuxt-cookie-control": "^6.4.6",
+        "@dargmuesli/nuxt-cookie-control": "^7.0.1",
         "@nuxt/devtools": "^1.0.0",
         "@nuxtjs/i18n": "^8.0.0-rc.5",
         "@nuxtjs/tailwindcss": "^6.8.0",

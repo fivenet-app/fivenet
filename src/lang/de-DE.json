@@ -425,7 +425,8 @@
                 "join_center": "Trete der Leitstelle bei, indem du hier klickst."
             },
             "livemap": {
-                "mark_on_gps": "Auf GPS markieren"
+                "mark_on_gps": "Auf GPS markieren",
+                "total_dispatches": "Gesamtanzahl Einsätze"
             },
             "units": {
                 "create_unit": "Einheit erstellen",

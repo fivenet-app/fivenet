@@ -507,6 +507,9 @@ const open = ref(false);
                                                 v-model:selected-dispatch="selectedDispatch"
                                             />
                                         </template>
+                                        <li class="text-center text-xs text-neutral">
+                                            {{ $t('components.centrum.livemap.total_dispatches') }}: {{ dispatches.size }}
+                                        </li>
                                     </ul>
                                 </li>
                             </template>

@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { CarEmergencyIcon } from 'mdi-vue3';
 import { default as DispatchDetails } from '~/components/centrum/dispatches/Details.vue';
+import Time from '~/components/partials/elements/Time.vue';
 import { Dispatch, StatusDispatch } from '~~/gen/ts/resources/dispatch/dispatches';
 
 defineProps<{
@@ -35,11 +36,37 @@ const openDetails = ref(false);
             class="text-neutral bg-error-700 hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-2 text-xs my-0.5"
             @click="openDetails = true"
         >
-            <span class="font-bold truncate inline-flex items-center">
-                <CarEmergencyIcon class="h-4 w-4 mr-0.5" /> DSP-{{ dispatch.id }}</span
-            >
-            <span class="mt-2 truncate">
+            <span class="inline-flex items-center w-full place-content-between mb-0.5">
+                <span class="font-bold truncate inline-flex items-center">
+                    <CarEmergencyIcon class="h-4 w-4 mr-0.5" /> DSP-{{ dispatch.id }}
+                </span>
+                <span>
+                    <span class="font-semibold">{{ $t('common.postal') }}</span
+                    >: {{ dispatch.postal }}
+                </span>
+            </span>
+            <span class="truncate">
+                <span class="font-semibold">{{ $t('common.status') }}</span
+                >:
                 {{ $t(`enums.centrum.StatusDispatch.${StatusDispatch[dispatch.status?.status ?? 0]}`) }}
+            </span>
+            <span class="mt-1 truncate">
+                <span class="font-semibold">{{ $t('common.sent_by') }}</span
+                >:
+                <span v-if="dispatch.anon">
+                    {{ $t('common.anon') }}
+                </span>
+                <template v-else-if="dispatch.creator">
+                    {{ dispatch.creator.firstname }}, {{ dispatch.creator.lastname }}
+                </template>
+                <span v-else>
+                    {{ $t('common.unknown') }}
+                </span>
+            </span>
+            <span class="">
+                <span class="font-semibold">{{ $t('common.sent_at') }}</span
+                >:
+                <Time :value="dispatch.createdAt" type="compact" />
             </span>
         </button>
     </li>

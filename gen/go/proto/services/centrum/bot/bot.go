@@ -12,7 +12,9 @@ import (
 	"go.uber.org/zap"
 )
 
-const DelayBetweenDispatchAssignment = 45 * time.Second
+const DelayBetweenDispatchAssignment = 40 * time.Second
+const PerUnitDelay = 7
+const MaxDelayCap = 2 * time.Minute
 
 type Bot struct {
 	logger *zap.Logger
@@ -104,7 +106,14 @@ func (b *Bot) getAvailableUnit(ctx context.Context) (*dispatch.Unit, bool) {
 		return nil, false
 	}
 
-	b.lastAssignedUnits[unit.Id] = time.Now().Add(DelayBetweenDispatchAssignment)
+	delay := 0 * time.Second
+	if len(unitIds) > 1 {
+		delay = time.Duration(len(unitIds)*PerUnitDelay) * time.Second
+		if delay >= 2*time.Minute {
+			delay = 2 * time.Minute
+		}
+	}
+	b.lastAssignedUnits[unit.Id] = time.Now().Add(DelayBetweenDispatchAssignment).Add(delay)
 
 	return unit, true
 }

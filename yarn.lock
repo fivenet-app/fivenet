@@ -458,10 +458,10 @@
   resolved "https://registry.yarnpkg.com/@csstools/selector-specificity/-/selector-specificity-3.0.0.tgz#798622546b63847e82389e473fd67f2707d82247"
   integrity sha512-hBI9tfBtuPIi885ZsZ32IMEU/5nlZH/KOVYJCOh7gyMxaVLGmLedYqFN6Ui1LXkI8JlC8IsuC0rF0btcRZKd5g==
 
-"@dargmuesli/nuxt-cookie-control@^6.4.6":
-  version "6.4.6"
-  resolved "https://registry.yarnpkg.com/@dargmuesli/nuxt-cookie-control/-/nuxt-cookie-control-6.4.6.tgz#f309c80d77addbf6365f8193ead48612e8c7d2b9"
-  integrity sha512-/3efKJZW1HK8zLtWVGXZ3QepHGQHu9cSE2I+JVxFjtSHRnx/7XQPUwhxOFStBF5mj021Pk8Yxqid5+FVFOCXPg==
+"@dargmuesli/nuxt-cookie-control@^7.0.1":
+  version "7.0.1"
+  resolved "https://registry.yarnpkg.com/@dargmuesli/nuxt-cookie-control/-/nuxt-cookie-control-7.0.1.tgz#fd5287acbd9dcaf53f18e48473ba3aeb239cce19"
+  integrity sha512-/JTOcpVjZZL0og0TcHvxjIpEaiCnhBKUtGN5pOh9nXvVczKLF687r1XZwZZM+oTUPxJSZpaq7zn1Y4Ug4mazsw==
   dependencies:
     "@nuxt/kit" "^3.8.0"
     "@sindresorhus/slugify" "^2.2.1"
@@ -863,10 +863,10 @@
     "@floating-ui/dom" "^1.2.1"
     vue-demi "^0.13.11"
 
-"@fontsource/inter@^5.0.14":
-  version "5.0.14"
-  resolved "https://registry.yarnpkg.com/@fontsource/inter/-/inter-5.0.14.tgz#7e5795b4ef685974945a57dc5a582cc6e4994abf"
-  integrity sha512-5H+rWUemTnUrtF5Dov2zDq+RWDIoXCmSrupNIfI5x7udZnoUTNhr+k9sYxtNS22mIngUQHZUPexTMj0/7P0Ucg==
+"@fontsource/inter@^5.0.15":
+  version "5.0.15"
+  resolved "https://registry.yarnpkg.com/@fontsource/inter/-/inter-5.0.15.tgz#c01d160cd02bde1a4ce09f2c38b2063b66caf870"
+  integrity sha512-/IoWYEXl8lqJEx50JqNPT+bI4VNwxb/bg2oOfvG8PiEsDsmHRFvWBVHlohBNn1+QdBf+KbAjU/gb4vlGOSsVWw==
 
 "@headlessui-float/vue@^0.11.4":
   version "0.11.4"

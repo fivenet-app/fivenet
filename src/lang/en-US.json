@@ -425,7 +425,8 @@
                 "join_center": "Join the dispatch center, by clicking here."
             },
             "livemap": {
-                "mark_on_gps": "Mark on GPS"
+                "mark_on_gps": "Mark on GPS",
+                "total_dispatches": "Total Dispatches"
             },
             "units": {
                 "create_unit": "Create Unit",
