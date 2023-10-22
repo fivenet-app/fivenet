@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { useDebounceFn } from '@vueuse/core';
 import { useSound } from '@vueuse/sound';
-import { AccountMultiplePlusIcon, DotsVerticalIcon, MapMarkerIcon } from 'mdi-vue3';
+import { AccountMultiplePlusIcon, CloseOctagonIcon, DotsVerticalIcon, MapMarkerIcon } from 'mdi-vue3';
 import UnitInfoPopover from '~/components/centrum/units/UnitInfoPopover.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import Time from '~/components/partials/elements/Time.vue';
@@ -9,6 +9,7 @@ import { Dispatch, StatusDispatch } from '~~/gen/ts/resources/dispatch/dispatche
 import { dispatchStatusAnimate, dispatchStatusToBGColor } from '../helpers';
 import AssignDispatchModal from './AssignDispatchModal.vue';
 import Details from './Details.vue';
+import StatusUpdateModal from './StatusUpdateModal.vue';
 
 const props = defineProps<{
     dispatch: Dispatch;
@@ -34,6 +35,7 @@ watch(props, () => {
 
 const openDetails = ref(false);
 const openAssign = ref(false);
+const openStatus = ref(false);
 
 const openMessage = ref(false);
 </script>
@@ -42,6 +44,7 @@ const openMessage = ref(false);
     <tr>
         <Details :dispatch="dispatch" :open="openDetails" @close="openDetails = false" @goto="$emit('goto', $event)" />
         <AssignDispatchModal v-if="openAssign" :open="openAssign" :dispatch="dispatch" @close="openAssign = false" />
+        <StatusUpdateModal v-if="openStatus" :open="openStatus" :dispatch-id="dispatch.id" @close="openStatus = false" />
 
         <td
             class="relative items-center whitespace-nowrap pl-0 py-1 pr-0 text-left text-sm font-medium sm:pr-0.5 justify-start"
@@ -57,9 +60,18 @@ const openMessage = ref(false);
             <button
                 type="button"
                 class="text-primary-400 hover:text-primary-600"
+                :title="$t('common.go_to_location')"
                 @click="$emit('goto', { x: dispatch.x, y: dispatch.y })"
             >
                 <MapMarkerIcon class="w-6 h-auto ml-auto mr-1.5" aria-hidden="true" />
+            </button>
+            <button
+                type="button"
+                class="text-primary-400 hover:text-primary-600"
+                :title="$t('common.status')"
+                @click="openStatus = true"
+            >
+                <CloseOctagonIcon class="w-6 h-auto ml-auto mr-1.5" aria-hidden="true" />
             </button>
             <button
                 type="button"
