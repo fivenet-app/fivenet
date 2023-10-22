@@ -23,7 +23,7 @@ message Unit {
     min_len: 2,
     max_len: 4
   }];
-  optional string color = 7 [(validate.rules).string = {
+  string color = 7 [(validate.rules).string = {
     len: 6,
     pattern: "^[A-Fa-f0-9]{6}$",
   }];

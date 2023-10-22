@@ -12,7 +12,7 @@ defineEmits<{
     (e: 'goto', loc: Coordinate): void;
 }>();
 
-const unitColorHex = computed(() => hexToRgb('#' + props.unit.color ?? '000000') ?? ({ r: 0, g: 0, b: 0 } as RGB));
+const unitColorHex = computed(() => hexToRgb('#' + props.unit.color) ?? ({ r: 0, g: 0, b: 0 } as RGB));
 const isBright = computed(() => isColourBright(unitColorHex.value));
 
 const open = ref(false);
@@ -25,7 +25,7 @@ const open = ref(false);
         <div
             class="flex flex-shrink-0 items-center justify-center rounded-l-md text-sm font-medium border-l border-t border-b w-12"
             :class="isBright ? 'text-black' : 'text-neutral'"
-            :style="'background-color: #' + unit.color ?? '000000'"
+            :style="'background-color: #' + unit.color"
         >
             {{ unit.initials }}
         </div>

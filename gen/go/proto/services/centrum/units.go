@@ -112,6 +112,11 @@ func (s *Server) CreateOrUpdateUnit(ctx context.Context, req *CreateOrUpdateUnit
 
 		auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
 	} else {
+		description := ""
+		if req.Unit.Description != nil {
+			description = *req.Unit.Description
+		}
+
 		stmt := tUnits.
 			UPDATE(
 				tUnits.Name,
@@ -120,10 +125,10 @@ func (s *Server) CreateOrUpdateUnit(ctx context.Context, req *CreateOrUpdateUnit
 				tUnits.Description,
 			).
 			SET(
-				req.Unit.Name,
-				req.Unit.Initials,
-				req.Unit.Color,
-				req.Unit.Description,
+				tUnits.Name.SET(jet.String(req.Unit.Name)),
+				tUnits.Initials.SET(jet.String(req.Unit.Initials)),
+				tUnits.Color.SET(jet.String(req.Unit.Color)),
+				tUnits.Description.SET(jet.String(description)),
 			).
 			WHERE(jet.AND(
 				tUnits.Job.EQ(jet.String(userInfo.Job)),

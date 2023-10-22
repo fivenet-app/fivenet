@@ -91,6 +91,29 @@ func (m *Unit) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	if utf8.RuneCountInString(m.GetColor()) != 6 {
+		err := UnitValidationError{
+			field:  "Color",
+			reason: "value length must be 6 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+
+	}
+
+	if !_Unit_Color_Pattern.MatchString(m.GetColor()) {
+		err := UnitValidationError{
+			field:  "Color",
+			reason: "value does not match regex pattern \"^[A-Fa-f0-9]{6}$\"",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	for idx, item := range m.GetUsers() {
 		_, _ = idx, item
 
@@ -187,33 +210,6 @@ func (m *Unit) validate(all bool) error {
 					cause:  err,
 				}
 			}
-		}
-
-	}
-
-	if m.Color != nil {
-
-		if utf8.RuneCountInString(m.GetColor()) != 6 {
-			err := UnitValidationError{
-				field:  "Color",
-				reason: "value length must be 6 runes",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-
-		}
-
-		if !_Unit_Color_Pattern.MatchString(m.GetColor()) {
-			err := UnitValidationError{
-				field:  "Color",
-				reason: "value does not match regex pattern \"^[A-Fa-f0-9]{6}$\"",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
 		}
 
 	}

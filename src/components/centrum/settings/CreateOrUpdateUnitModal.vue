@@ -93,7 +93,7 @@ onMounted(() => {
             name: props.unit.name,
             initials: props.unit.initials,
             description: props.unit.description,
-            color: `#${props.unit.color ?? '000000'}`,
+            color: `#${props.unit.color}`,
         });
     }
 });
