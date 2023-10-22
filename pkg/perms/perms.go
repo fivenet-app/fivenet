@@ -18,7 +18,7 @@ import (
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/nats-io/nats.go"
-	"github.com/puzpuzpuz/xsync/v2"
+	"github.com/puzpuzpuz/xsync/v3"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
@@ -139,14 +139,14 @@ func New(p Params) (Permissions, error) {
 
 		events: p.Events,
 
-		permsMap:          xsync.NewIntegerMapOf[uint64, *cachePerm](),
-		permsGuardToIDMap: xsync.NewMapOf[uint64](),
-		permsJobsRoleMap:  xsync.NewMapOf[*xsync.MapOf[int32, uint64]](),
-		permsRoleMap:      xsync.NewIntegerMapOf[uint64, *xsync.MapOf[uint64, bool]](),
+		permsMap:          xsync.NewMapOf[uint64, *cachePerm](),
+		permsGuardToIDMap: xsync.NewMapOf[string, uint64](),
+		permsJobsRoleMap:  xsync.NewMapOf[string, *xsync.MapOf[int32, uint64]](),
+		permsRoleMap:      xsync.NewMapOf[uint64, *xsync.MapOf[uint64, bool]](),
 
-		attrsMap:      xsync.NewIntegerMapOf[uint64, *cacheAttr](),
-		attrsRoleMap:  xsync.NewIntegerMapOf[uint64, *xsync.MapOf[uint64, *cacheRoleAttr]](),
-		attrsPermsMap: xsync.NewIntegerMapOf[uint64, *xsync.MapOf[string, uint64]](),
+		attrsMap:      xsync.NewMapOf[uint64, *cacheAttr](),
+		attrsRoleMap:  xsync.NewMapOf[uint64, *xsync.MapOf[uint64, *cacheRoleAttr]](),
+		attrsPermsMap: xsync.NewMapOf[uint64, *xsync.MapOf[string, uint64]](),
 
 		userCanCacheTTL: 30 * time.Second,
 		userCanCache:    userCanCache,
@@ -324,7 +324,7 @@ func (p *Perms) loadRoleIDs(ctx context.Context) error {
 	}
 
 	for _, role := range dest {
-		grades, _ := p.permsJobsRoleMap.LoadOrCompute(role.Job, xsync.NewIntegerMapOf[int32, uint64])
+		grades, _ := p.permsJobsRoleMap.LoadOrCompute(role.Job, xsync.NewMapOf[int32, uint64])
 		grades.Store(role.Grade, role.ID)
 	}
 
@@ -363,7 +363,7 @@ func (p *Perms) loadRolePermissions(ctx context.Context, roleId uint64) error {
 	}
 
 	for _, rolePerms := range dest {
-		perms, _ := p.permsRoleMap.LoadOrCompute(rolePerms.RoleID, xsync.NewIntegerMapOf[uint64, bool])
+		perms, _ := p.permsRoleMap.LoadOrCompute(rolePerms.RoleID, xsync.NewMapOf[uint64, bool])
 		perms.Store(rolePerms.ID, rolePerms.Val)
 	}
 
@@ -451,7 +451,7 @@ func (p *Perms) addOrUpdateRoleAttributeInMap(roleId uint64, permId uint64, attr
 }
 
 func (p *Perms) updateRoleAttributeInMap(roleId uint64, permId uint64, attrId uint64, key Key, aType permissions.AttributeTypes, value *permissions.AttributeValues, max *permissions.AttributeValues) {
-	attrRoleMap, _ := p.attrsRoleMap.LoadOrCompute(roleId, xsync.NewIntegerMapOf[uint64, *cacheRoleAttr])
+	attrRoleMap, _ := p.attrsRoleMap.LoadOrCompute(roleId, xsync.NewMapOf[uint64, *cacheRoleAttr])
 	v, ok := attrRoleMap.Load(attrId)
 	if !ok {
 		attrRoleMap.Store(attrId, &cacheRoleAttr{

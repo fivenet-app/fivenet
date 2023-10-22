@@ -8,7 +8,7 @@ import (
 	dispatch "github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
 	"github.com/galexrt/fivenet/gen/go/proto/services/centrum/manager"
 	"github.com/galexrt/fivenet/pkg/events"
-	"github.com/puzpuzpuz/xsync/v2"
+	"github.com/puzpuzpuz/xsync/v3"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
@@ -55,7 +55,7 @@ func NewManager(p Params) *Manager {
 
 		tracer: p.TP.Tracer("centrum-cache"),
 
-		bots:   xsync.NewMapOf[context.CancelFunc](),
+		bots:   xsync.NewMapOf[string, context.CancelFunc](),
 		events: p.Eventus,
 		state:  p.State,
 	}

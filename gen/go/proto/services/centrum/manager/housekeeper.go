@@ -6,7 +6,7 @@ import (
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
 	jet "github.com/go-jet/jet/v2/mysql"
-	"github.com/puzpuzpuz/xsync/v2"
+	"github.com/puzpuzpuz/xsync/v3"
 	"go.uber.org/zap"
 )
 

@@ -2,6 +2,7 @@ package modules
 
 import (
 	"fmt"
+	"net/http"
 	"regexp"
 	"strings"
 
@@ -82,6 +83,13 @@ func (g *UserInfo) syncUserInfo() error {
 	for _, user := range dest {
 		member, err := g.discord.GuildMember(g.guild.ID, user.ExternalID)
 		if err != nil {
+			if restErr, ok := err.(*discordgo.RESTError); ok {
+				if restErr.Response.StatusCode == http.StatusNotFound {
+					g.logger.Warn("user not found on job discord server",
+						zap.String("job", g.job), zap.String("user", fmt.Sprintf("%s, %s (%d)", user.Firstname, user.Lastname, user.JobGrade)))
+					continue
+				}
+			}
 			return err
 		}
 

@@ -17,7 +17,7 @@ import (
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
-	"github.com/puzpuzpuz/xsync/v2"
+	"github.com/puzpuzpuz/xsync/v3"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
@@ -73,7 +73,7 @@ func NewCache(p Params) (*Cache, error) {
 		jobs:               cache.NewContext[string, *users.Job](ctx),
 		docCategories:      cache.NewContext[uint64, *documents.Category](ctx),
 		docCategoriesByJob: cache.NewContext[string, []*documents.Category](ctx),
-		lawBooks:           xsync.NewIntegerMapOf[uint64, *laws.LawBook](),
+		lawBooks:           xsync.NewMapOf[uint64, *laws.LawBook](),
 	}
 
 	var err error

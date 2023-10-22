@@ -501,7 +501,7 @@ const open = ref(false);
                                         </li>
                                         <template v-else>
                                             <DispatchEntry
-                                                v-for="id in ownDispatches"
+                                                v-for="id in ownDispatches.slice().reverse()"
                                                 :dispatch="dispatches.get(id)!"
                                                 @goto="$emit('goto', $event)"
                                                 v-model:selected-dispatch="selectedDispatch"

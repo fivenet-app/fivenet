@@ -3,6 +3,7 @@ import { CarEmergencyIcon } from 'mdi-vue3';
 import { default as DispatchDetails } from '~/components/centrum/dispatches/Details.vue';
 import Time from '~/components/partials/elements/Time.vue';
 import { Dispatch, StatusDispatch } from '~~/gen/ts/resources/dispatch/dispatches';
+import { dispatchStatusToBGColor } from '../helpers';
 
 defineProps<{
     dispatch: Dispatch;
@@ -48,7 +49,9 @@ const openDetails = ref(false);
             <span class="truncate">
                 <span class="font-semibold">{{ $t('common.status') }}</span
                 >:
-                {{ $t(`enums.centrum.StatusDispatch.${StatusDispatch[dispatch.status?.status ?? 0]}`) }}
+                <span :class="dispatchStatusToBGColor(dispatch.status?.status)">{{
+                    $t(`enums.centrum.StatusDispatch.${StatusDispatch[dispatch.status?.status ?? 0]}`)
+                }}</span>
             </span>
             <span class="mt-1 truncate">
                 <span class="font-semibold">{{ $t('common.sent_by') }}</span

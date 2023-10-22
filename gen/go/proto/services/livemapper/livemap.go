@@ -18,7 +18,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
-	"github.com/puzpuzpuz/xsync/v2"
+	"github.com/puzpuzpuz/xsync/v3"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
@@ -89,7 +89,7 @@ func NewServer(p Params) *Server {
 		tracker:  p.Tracker,
 		auditer:  p.Audit,
 
-		markersCache: xsync.NewMapOf[[]*livemap.Marker](),
+		markersCache: xsync.NewMapOf[string, []*livemap.Marker](),
 
 		broker: broker,
 

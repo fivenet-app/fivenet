@@ -6,9 +6,6 @@ import (
 	"reflect"
 	"strings"
 
-	"github.com/pkg/errors"
-	"github.com/puzpuzpuz/xsync/v2"
-
 	"github.com/galexrt/fivenet/gen/go/proto/resources/permissions"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/galexrt/fivenet/pkg/perms/helpers"
@@ -18,6 +15,8 @@ import (
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	jsoniter "github.com/json-iterator/go"
+	"github.com/pkg/errors"
+	"github.com/puzpuzpuz/xsync/v3"
 )
 
 var (
@@ -273,7 +272,7 @@ func (p *Perms) updateAttributeInMap(permId uint64, attrId uint64, key Key, aTyp
 	p.attrsMap.Store(attrId, attr)
 
 	pAttrMap, _ := p.attrsPermsMap.LoadOrCompute(permId, func() *xsync.MapOf[string, uint64] {
-		return xsync.NewMapOf[uint64]()
+		return xsync.NewMapOf[string, uint64]()
 	})
 	pAttrMap.Store(string(key), attrId)
 

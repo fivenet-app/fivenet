@@ -11,7 +11,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/query/fivenet/table"
-	"github.com/puzpuzpuz/xsync/v2"
+	"github.com/puzpuzpuz/xsync/v3"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 )
@@ -77,7 +77,7 @@ func NewBot(p BotParams) (*Bot, error) {
 		cfg:      &p.Config.Discord.Bot,
 
 		discord:      discord,
-		activeGuilds: xsync.NewMapOf[*Guild](),
+		activeGuilds: xsync.NewMapOf[string, *Guild](),
 
 		syncInterval: p.Config.Discord.Bot.SyncInterval,
 	}

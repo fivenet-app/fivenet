@@ -3,7 +3,7 @@ package state
 import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/users"
-	"github.com/puzpuzpuz/xsync/v2"
+	"github.com/puzpuzpuz/xsync/v3"
 	"go.uber.org/fx"
 )
 
@@ -22,11 +22,11 @@ type State struct {
 
 func New() *State {
 	return &State{
-		Settings:   xsync.NewMapOf[*dispatch.Settings](),
-		Disponents: xsync.NewMapOf[[]*users.UserShort](),
-		Units:      xsync.NewMapOf[*xsync.MapOf[uint64, *dispatch.Unit]](),
-		Dispatches: xsync.NewMapOf[*xsync.MapOf[uint64, *dispatch.Dispatch]](),
+		Settings:   xsync.NewMapOf[string, *dispatch.Settings](),
+		Disponents: xsync.NewMapOf[string, []*users.UserShort](),
+		Units:      xsync.NewMapOf[string, *xsync.MapOf[uint64, *dispatch.Unit]](),
+		Dispatches: xsync.NewMapOf[string, *xsync.MapOf[uint64, *dispatch.Dispatch]](),
 
-		UserIDToUnitID: xsync.NewIntegerMapOf[int32, uint64](),
+		UserIDToUnitID: xsync.NewMapOf[int32, uint64](),
 	}
 }

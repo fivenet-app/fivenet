@@ -12,7 +12,7 @@ import (
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
-	"github.com/puzpuzpuz/xsync/v2"
+	"github.com/puzpuzpuz/xsync/v3"
 )
 
 const (
@@ -199,9 +199,9 @@ func (p *Perms) CreateRole(ctx context.Context, job string, grade int32) (*model
 		}
 	}
 
-	p.permsRoleMap.Store(role.ID, xsync.NewIntegerMapOf[uint64, bool]())
+	p.permsRoleMap.Store(role.ID, xsync.NewMapOf[uint64, bool]())
 
-	grades, _ := p.permsJobsRoleMap.LoadOrCompute(role.Job, xsync.NewIntegerMapOf[int32, uint64])
+	grades, _ := p.permsJobsRoleMap.LoadOrCompute(role.Job, xsync.NewMapOf[int32, uint64])
 	grades.Store(role.Grade, role.ID)
 
 	return role, nil
@@ -225,7 +225,7 @@ func (p *Perms) DeleteRole(ctx context.Context, id uint64) error {
 
 	p.permsRoleMap.Delete(id)
 
-	grades, _ := p.permsJobsRoleMap.LoadOrCompute(role.Job, xsync.NewIntegerMapOf[int32, uint64])
+	grades, _ := p.permsJobsRoleMap.LoadOrCompute(role.Job, xsync.NewMapOf[int32, uint64])
 	grades.Delete(role.Grade)
 
 	return nil
@@ -331,7 +331,7 @@ func (p *Perms) UpdateRolePermissions(ctx context.Context, roleId uint64, perms 
 		}
 	}
 
-	roleCache, _ := p.permsRoleMap.LoadOrCompute(roleId, xsync.NewIntegerMapOf[uint64, bool])
+	roleCache, _ := p.permsRoleMap.LoadOrCompute(roleId, xsync.NewMapOf[uint64, bool])
 	for _, v := range rolePerms {
 		roleCache.Store(v.PermissionID, v.Val)
 	}

@@ -15,7 +15,7 @@ import (
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	"github.com/gin-gonic/gin"
 	jet "github.com/go-jet/jet/v2/mysql"
-	"github.com/puzpuzpuz/xsync/v2"
+	"github.com/puzpuzpuz/xsync/v3"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
@@ -89,8 +89,8 @@ func New(p Params) *Tracker {
 		postals:  p.Postals,
 		state:    p.State,
 
-		usersCache: xsync.NewMapOf[*xsync.MapOf[int32, *livemap.UserMarker]](),
-		usersIDs:   xsync.NewIntegerMapOf[int32, *UserInfo](),
+		usersCache: xsync.NewMapOf[string, *xsync.MapOf[int32, *livemap.UserMarker]](),
+		usersIDs:   xsync.NewMapOf[int32, *UserInfo](),
 
 		broker: broker,
 
@@ -220,7 +220,7 @@ func (s *Tracker) refreshUserLocations(ctx context.Context) error {
 
 		job := dest[i].User.Job
 		if _, ok := markers[job]; !ok {
-			markers[job] = xsync.NewIntegerMapOf[int32, *livemap.UserMarker]()
+			markers[job] = xsync.NewMapOf[int32, *livemap.UserMarker]()
 		}
 
 		if dest[i].Info.Color == nil {
