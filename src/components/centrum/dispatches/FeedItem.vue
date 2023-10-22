@@ -45,10 +45,13 @@ withDefaults(
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
                 <NewBoxIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
-            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200 inline-flex flex-row">
-                {{ $t('components.centrum.dispatches.feed.item.NEW') }}
+            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200 inline-flex flex-row justify-between">
+                <span class="inline-flex items-center gap-1">
+                    {{ $t('components.centrum.dispatches.feed.item.NEW') }}
 
-                <span v-if="showId" class="font-medium text-gray-400 pl-1">(DSP-{{ item.dispatchId }})</span>
+                    <span v-if="showId" class="font-medium text-gray-400 pl-1">DSP-{{ item.dispatchId }}</span>
+                </span>
+
                 <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
@@ -59,11 +62,20 @@ withDefaults(
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
                 <AccountAlertIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
-            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200 inline-flex flex-row">
-                {{ $t('components.centrum.dispatches.feed.item.UNASSIGNED') }}
+            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200 inline-flex flex-row justify-between">
+                <span class="inline-flex items-center gap-1">
+                    {{ $t('components.centrum.dispatches.feed.item.UNASSIGNED') }}
 
-                <span v-if="showId" class="font-medium text-gray-400 pl-1">(DSP-{{ item.dispatchId }})</span>
-                <UnitInfoPopover v-if="item.unit" text-class="font-medium text-gray-400 pl-1" :unit="item.unit" />
+                    <span v-if="showId" class="font-medium text-gray-400 pl-1">DSP-{{ item.dispatchId }}</span>
+                    <UnitInfoPopover
+                        v-if="item.unit"
+                        text-class="font-medium text-gray-400 pl-1"
+                        :unit="item.unit"
+                        :initials-only="true"
+                        :badge="true"
+                    />
+                </span>
+
                 <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
@@ -74,11 +86,20 @@ withDefaults(
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
                 <AccountPlusIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
-            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200 inline-flex flex-row">
-                {{ $t('components.centrum.dispatches.feed.item.UNIT_ASSIGNED') }}
+            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200 inline-flex flex-row justify-between">
+                <span class="inline-flex items-center gap-1">
+                    {{ $t('components.centrum.dispatches.feed.item.UNIT_ASSIGNED') }}
 
-                <span v-if="showId" class="font-medium text-gray-400 pl-1">(DSP-{{ item.dispatchId }})</span>
-                <UnitInfoPopover v-if="item.unit" text-class="font-medium text-gray-400 pl-1" :unit="item.unit" />
+                    <span v-if="showId" class="font-medium text-gray-400 pl-1">DSP-{{ item.dispatchId }}</span>
+                    <UnitInfoPopover
+                        v-if="item.unit"
+                        text-class="font-medium text-gray-400 pl-1"
+                        :unit="item.unit"
+                        :initials-only="true"
+                        :badge="true"
+                    />
+                </span>
+
                 <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
@@ -89,11 +110,20 @@ withDefaults(
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
                 <AccountRemoveIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
-            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200 inline-flex flex-row">
-                {{ $t('components.centrum.dispatches.feed.item.UNIT_UNASSIGNED') }}
+            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200 inline-flex flex-row justify-between">
+                <span class="inline-flex items-center gap-1">
+                    {{ $t('components.centrum.dispatches.feed.item.UNIT_UNASSIGNED') }}
 
-                <span v-if="showId" class="font-medium text-gray-400 pl-1">(DSP-{{ item.dispatchId }})</span>
-                <UnitInfoPopover v-if="item.unit" text-class="font-medium text-gray-400 pl-1" :unit="item.unit" />
+                    <span v-if="showId" class="font-medium text-gray-400 pl-1">DSP-{{ item.dispatchId }}</span>
+                    <UnitInfoPopover
+                        v-if="item.unit"
+                        text-class="font-medium text-gray-400 pl-1"
+                        :unit="item.unit"
+                        :initials-only="true"
+                        :badge="true"
+                    />
+                </span>
+
                 <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
@@ -104,11 +134,20 @@ withDefaults(
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
                 <AccountCheckIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
-            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200 inline-flex flex-row">
-                {{ $t('components.centrum.dispatches.feed.item.UNIT_ACCEPTED') }}
+            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200 inline-flex flex-row justify-between">
+                <span class="inline-flex items-center gap-1">
+                    {{ $t('components.centrum.dispatches.feed.item.UNIT_ACCEPTED') }}
 
-                <span v-if="showId" class="font-medium text-gray-400 pl-1">(DSP-{{ item.dispatchId }})</span>
-                <UnitInfoPopover v-if="item.unit" text-class="font-medium text-gray-400 pl-1" :unit="item.unit" />
+                    <span v-if="showId" class="font-medium text-gray-400 pl-1">DSP-{{ item.dispatchId }}</span>
+                    <UnitInfoPopover
+                        v-if="item.unit"
+                        text-class="font-medium text-gray-400 pl-1"
+                        :unit="item.unit"
+                        :initials-only="true"
+                        :badge="true"
+                    />
+                </span>
+
                 <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
@@ -119,11 +158,20 @@ withDefaults(
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
                 <AccountCancelIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
-            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200 inline-flex flex-row">
-                {{ $t('components.centrum.dispatches.feed.item.UNIT_DECLINED') }}
+            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200 inline-flex flex-row justify-between">
+                <span class="inline-flex items-center gap-1">
+                    {{ $t('components.centrum.dispatches.feed.item.UNIT_DECLINED') }}
 
-                <span v-if="showId" class="font-medium text-gray-400 pl-1">(DSP-{{ item.dispatchId }})</span>
-                <UnitInfoPopover v-if="item.unit" text-class="font-medium text-gray-400 pl-1" :unit="item.unit" />
+                    <span v-if="showId" class="font-medium text-gray-400 pl-1">DSP-{{ item.dispatchId }}</span>
+                    <UnitInfoPopover
+                        v-if="item.unit"
+                        text-class="font-medium text-gray-400 pl-1"
+                        :unit="item.unit"
+                        :initials-only="true"
+                        :badge="true"
+                    />
+                </span>
+
                 <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
@@ -134,11 +182,20 @@ withDefaults(
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
                 <CarIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
-            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200 inline-flex flex-row">
-                {{ $t('components.centrum.dispatches.feed.item.EN_ROUTE') }}
+            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200 inline-flex flex-row justify-between">
+                <span class="inline-flex items-center gap-1">
+                    {{ $t('components.centrum.dispatches.feed.item.EN_ROUTE') }}
 
-                <span v-if="showId" class="font-medium text-gray-400 pl-1">(DSP-{{ item.dispatchId }})</span>
-                <UnitInfoPopover v-if="item.unit" text-class="font-medium text-gray-400 pl-1" :unit="item.unit" />
+                    <span v-if="showId" class="font-medium text-gray-400 pl-1">DSP-{{ item.dispatchId }}</span>
+                    <UnitInfoPopover
+                        v-if="item.unit"
+                        text-class="font-medium text-gray-400 pl-1"
+                        :unit="item.unit"
+                        :initials-only="true"
+                        :badge="true"
+                    />
+                </span>
+
                 <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
@@ -149,11 +206,19 @@ withDefaults(
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
                 <MapMarkerIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
-            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200 inline-flex flex-row">
-                {{ $t('components.centrum.dispatches.feed.item.ON_SCENE') }}
+            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200 inline-flex flex-row justify-between">
+                <span class="inline-flex items-center gap-1">
+                    {{ $t('components.centrum.dispatches.feed.item.ON_SCENE') }}
+                    <span v-if="showId" class="font-medium text-gray-400 pl-1">DSP-{{ item.dispatchId }}</span>
+                    <UnitInfoPopover
+                        v-if="item.unit"
+                        text-class="font-medium text-gray-400 pl-1"
+                        :unit="item.unit"
+                        :initials-only="true"
+                        :badge="true"
+                    />
+                </span>
 
-                <span v-if="showId" class="font-medium text-gray-400 pl-1">(DSP-{{ item.dispatchId }})</span>
-                <UnitInfoPopover v-if="item.unit" text-class="font-medium text-gray-400 pl-1" :unit="item.unit" />
                 <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
@@ -164,11 +229,20 @@ withDefaults(
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
                 <HelpIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
-            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200 inline-flex flex-row">
-                {{ $t('components.centrum.dispatches.feed.item.NEED_ASSISTANCE') }}
+            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200 inline-flex flex-row justify-between">
+                <span class="inline-flex items-center gap-1">
+                    {{ $t('components.centrum.dispatches.feed.item.NEED_ASSISTANCE') }}
 
-                <span v-if="showId" class="font-medium text-gray-400 pl-1">(DSP-{{ item.dispatchId }})</span>
-                <UnitInfoPopover v-if="item.unit" text-class="font-medium text-gray-400 pl-1" :unit="item.unit" />
+                    <span v-if="showId" class="font-medium text-gray-400 pl-1">DSP-{{ item.dispatchId }}</span>
+                    <UnitInfoPopover
+                        v-if="item.unit"
+                        text-class="font-medium text-gray-400 pl-1"
+                        :unit="item.unit"
+                        :initials-only="true"
+                        :badge="true"
+                    />
+                </span>
+
                 <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
@@ -179,11 +253,18 @@ withDefaults(
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
                 <CheckIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
-            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200 inline-flex flex-row">
-                {{ $t('components.centrum.dispatches.feed.item.COMPLETED') }}
+            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200 inline-flex flex-row justify-between">
+                <span class="inline-flex items-center gap-1">
+                    {{ $t('components.centrum.dispatches.feed.item.COMPLETED') }}
 
-                <span v-if="showId" class="font-medium text-gray-400 pl-1">(DSP-{{ item.dispatchId }})</span>
-                <UnitInfoPopover v-if="item.unit" text-class="font-medium text-gray-400 pl-1" :unit="item.unit" />
+                    <span v-if="showId" class="font-medium text-gray-400 pl-1">DSP-{{ item.dispatchId }}</span>
+                    <UnitInfoPopover
+                        v-if="item.unit"
+                        text-class="font-medium text-gray-400 pl-1"
+                        :unit="item.unit"
+                        :initials-only="true"
+                    />
+                </span>
                 <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
@@ -194,11 +275,20 @@ withDefaults(
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
                 <CancelIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
-            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200 inline-flex flex-row">
-                {{ $t('components.centrum.dispatches.feed.item.CANCELLED') }}
+            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200 inline-flex flex-row justify-between">
+                <span class="inline-flex items-center gap-1">
+                    {{ $t('components.centrum.dispatches.feed.item.CANCELLED') }}
 
-                <span v-if="showId" class="font-medium text-gray-400 pl-1">(DSP-{{ item.dispatchId }})</span>
-                <UnitInfoPopover v-if="item.unit" text-class="font-medium text-gray-400 pl-1" :unit="item.unit" />
+                    <span v-if="showId" class="font-medium text-gray-400 pl-1">DSP-{{ item.dispatchId }}</span>
+                    <UnitInfoPopover
+                        v-if="item.unit"
+                        text-class="font-medium text-gray-400 pl-1"
+                        :unit="item.unit"
+                        :initials-only="true"
+                        :badge="true"
+                    />
+                </span>
+
                 <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
@@ -209,11 +299,20 @@ withDefaults(
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
                 <ArchiveIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
-            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200 inline-flex flex-row">
-                {{ $t('components.centrum.dispatches.feed.item.ARCHIVED') }}
+            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200 inline-flex flex-row justify-between">
+                <span class="inline-flex items-center gap-1">
+                    {{ $t('components.centrum.dispatches.feed.item.ARCHIVED') }}
 
-                <span v-if="showId" class="font-medium text-gray-400 pl-1">(DSP-{{ item.dispatchId }})</span>
-                <UnitInfoPopover v-if="item.unit" text-class="font-medium text-gray-400 pl-1" :unit="item.unit" />
+                    <span v-if="showId" class="font-medium text-gray-400 pl-1">DSP-{{ item.dispatchId }}</span>
+                    <UnitInfoPopover
+                        v-if="item.unit"
+                        text-class="font-medium text-gray-400 pl-1"
+                        :unit="item.unit"
+                        :initials-only="true"
+                        :badge="true"
+                    />
+                </span>
+
                 <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
@@ -224,11 +323,20 @@ withDefaults(
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
                 <NewBoxIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
-            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200 inline-flex flex-row">
-                {{ $t('components.centrum.dispatches.feed.item.UNSPECIFIED') }}
+            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200 inline-flex flex-row justify-between">
+                <span class="inline-flex items-center gap-1">
+                    {{ $t('components.centrum.dispatches.feed.item.UNSPECIFIED') }}
 
-                <span v-if="showId" class="font-medium text-gray-400 pl-1">(DSP-{{ item.dispatchId }})</span>
-                <UnitInfoPopover v-if="item.unit" text-class="font-medium text-gray-400 pl-1" :unit="item.unit" />
+                    <span v-if="showId" class="font-medium text-gray-400 pl-1">DSP-{{ item.dispatchId }}</span>
+                    <UnitInfoPopover
+                        v-if="item.unit"
+                        text-class="font-medium text-gray-400 pl-1"
+                        :unit="item.unit"
+                        :initials-only="true"
+                        :badge="true"
+                    />
+                </span>
+
                 <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">

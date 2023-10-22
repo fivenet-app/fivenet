@@ -26,10 +26,18 @@ defineProps<{
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
                 <AccountPlusIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
-            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200 inline-flex flex-row">
-                {{ $t('components.centrum.units.feed.item.USER_ADDED') }}
+            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200 inline-flex flex-row justify-between">
+                <span class="inline-flex items-center gap-1">
+                    {{ $t('components.centrum.units.feed.item.USER_ADDED') }}
+                    <UnitInfoPopover
+                        v-if="item.unit"
+                        text-class="font-medium text-gray-400 pl-1"
+                        :unit="item.unit"
+                        :initials-only="true"
+                        :badge="true"
+                    />
+                </span>
 
-                <UnitInfoPopover v-if="item.unit" text-class="font-medium text-gray-400 pl-1" :unit="item.unit" />
                 <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
@@ -40,10 +48,18 @@ defineProps<{
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
                 <AccountRemoveIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
-            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200 inline-flex flex-row">
-                {{ $t('components.centrum.units.feed.item.USER_REMOVED') }}
+            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200 inline-flex flex-row justify-between">
+                <span class="inline-flex items-center gap-1">
+                    {{ $t('components.centrum.units.feed.item.USER_REMOVED') }}
+                    <UnitInfoPopover
+                        v-if="item.unit"
+                        text-class="font-medium text-gray-400 pl-1"
+                        :unit="item.unit"
+                        :initials-only="true"
+                        :badge="true"
+                    />
+                </span>
 
-                <UnitInfoPopover v-if="item.unit" text-class="font-medium text-gray-400 pl-1" :unit="item.unit" />
                 <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
@@ -54,10 +70,18 @@ defineProps<{
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
                 <StopIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
-            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200 inline-flex flex-row">
-                {{ $t('components.centrum.units.feed.item.UNAVAILABLE') }}
+            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200 inline-flex flex-row justify-between">
+                <span class="inline-flex items-center gap-1">
+                    {{ $t('components.centrum.units.feed.item.UNAVAILABLE') }}
+                    <UnitInfoPopover
+                        v-if="item.unit"
+                        text-class="font-medium text-gray-400 pl-1"
+                        :unit="item.unit"
+                        :initials-only="true"
+                        :badge="true"
+                    />
+                </span>
 
-                <UnitInfoPopover v-if="item.unit" text-class="font-medium text-gray-400 pl-1" :unit="item.unit" />
                 <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
@@ -68,10 +92,18 @@ defineProps<{
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
                 <PlayIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
-            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200 inline-flex flex-row">
-                {{ $t('components.centrum.units.feed.item.AVAILABLE') }}
+            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200 inline-flex flex-row justify-between">
+                <span class="inline-flex items-center gap-1">
+                    {{ $t('components.centrum.units.feed.item.AVAILABLE') }}
+                    <UnitInfoPopover
+                        v-if="item.unit"
+                        text-class="font-medium text-gray-400 pl-1"
+                        :unit="item.unit"
+                        :initials-only="true"
+                        :badge="true"
+                    />
+                </span>
 
-                <UnitInfoPopover v-if="item.unit" text-class="font-medium text-gray-400 pl-1" :unit="item.unit" />
                 <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
@@ -82,10 +114,18 @@ defineProps<{
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
                 <CoffeeIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
-            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200 inline-flex flex-row">
-                {{ $t('components.centrum.units.feed.item.ON_BREAK') }}
+            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200 inline-flex flex-row justify-between">
+                <span class="inline-flex items-center gap-1">
+                    {{ $t('components.centrum.units.feed.item.ON_BREAK') }}
+                    <UnitInfoPopover
+                        v-if="item.unit"
+                        text-class="font-medium text-gray-400 pl-1"
+                        :unit="item.unit"
+                        :initials-only="true"
+                        :badge="true"
+                    />
+                </span>
 
-                <UnitInfoPopover v-if="item.unit" text-class="font-medium text-gray-400 pl-1" :unit="item.unit" />
                 <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
@@ -96,10 +136,18 @@ defineProps<{
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
                 <BriefcaseIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
-            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200 inline-flex flex-row">
-                {{ $t('components.centrum.units.feed.item.BUSY') }}
+            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200 inline-flex flex-row justify-between">
+                <span class="inline-flex items-center gap-1">
+                    {{ $t('components.centrum.units.feed.item.BUSY') }}
+                    <UnitInfoPopover
+                        v-if="item.unit"
+                        text-class="font-medium text-gray-400 pl-1"
+                        :unit="item.unit"
+                        :initials-only="true"
+                        :badge="true"
+                    />
+                </span>
 
-                <UnitInfoPopover v-if="item.unit" text-class="font-medium text-gray-400 pl-1" :unit="item.unit" />
                 <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
@@ -110,10 +158,19 @@ defineProps<{
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
                 <HelpIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
-            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200 inline-flex flex-row">
-                {{ $t('components.centrum.units.feed.item.UNKNOWN') }}
+            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200 inline-flex flex-row justify-between">
+                <span class="inline-flex items-center gap-1">
+                    {{ $t('components.centrum.units.feed.item.UNKNOWN') }}
+                    <UnitInfoPopover
+                        v-if="item.unit"
+                        text-class="font-medium text-gray-400 pl-1"
+                        :unit="item.unit"
+                        :initials-only="true"
+                        :badge="true"
+                    />
+                </span>
 
-                <UnitInfoPopover v-if="item.unit" text-class="font-medium text-gray-400 pl-1" :unit="item.unit" />
+                <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
                 <Time :value="item.createdAt" :type="'compact'" />
