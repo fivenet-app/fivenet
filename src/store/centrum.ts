@@ -8,7 +8,7 @@ import { UserShort } from '~~/gen/ts/resources/users/users';
 import { useAuthStore } from './auth';
 import { useNotificatorStore } from './notificator';
 
-const ONE_MINUTE = 1 * 60 * 1000;
+const THREE_QUARTER_MINUTE = 1 * 45 * 1000;
 
 // In seconds
 const initialBackoffTime = 2;
@@ -301,7 +301,7 @@ export const useCentrumStore = defineStore('centrum', {
             }
 
             if (this.cleanupIntervalId === undefined) {
-                this.cleanupIntervalId = setInterval(() => this.cleanup(), ONE_MINUTE);
+                this.cleanupIntervalId = setInterval(() => this.cleanup(), THREE_QUARTER_MINUTE);
             }
 
             console.debug('Centrum: Starting Data Stream');
@@ -535,7 +535,7 @@ export const useCentrumStore = defineStore('centrum', {
                     this.pendingDispatches.splice(index, 1);
                 } else {
                     this.dispatches.get(pd)?.units.forEach((ua) => {
-                        if (now - toDate(ua.expiresAt).getTime() >= ONE_MINUTE) this.removePendingDispatch(pd);
+                        if (now - toDate(ua.expiresAt).getTime() >= THREE_QUARTER_MINUTE) this.removePendingDispatch(pd);
                     });
                 }
             });
@@ -550,7 +550,7 @@ export const useCentrumStore = defineStore('centrum', {
                     return;
                 }
 
-                if (now - toDate(d.status?.createdAt).getTime() >= ONE_MINUTE) {
+                if (now - toDate(d.status?.createdAt).getTime() >= THREE_QUARTER_MINUTE) {
                     this.removeDispatch(d.id);
                 }
 
@@ -560,7 +560,7 @@ export const useCentrumStore = defineStore('centrum', {
                         return;
                     }
 
-                    if (now - toDate(ua.expiresAt).getTime() >= ONE_MINUTE) {
+                    if (now - toDate(ua.expiresAt).getTime() >= THREE_QUARTER_MINUTE) {
                         d.units.splice(idx, 1);
                     }
                 });

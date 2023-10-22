@@ -76,7 +76,7 @@ withDefaults(
                     <p class="text-base font-medium leading-none text-gray-800 dark:text-neutral">
                         {{ $t('common.members') }}
                     </p>
-                    <ul class="text-sm font-normal inline-flex items-center justify-center">
+                    <ul class="text-sm font-normal">
                         <li v-for="user in unit.users">
                             {{ user.user?.firstname }}
                             {{ user.user?.lastname }}
