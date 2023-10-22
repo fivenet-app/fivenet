@@ -45,7 +45,7 @@ withDefaults(
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
                 <NewBoxIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
-            <p class="flex-auto flex items-center py-0.5 text-xs leading-5 text-gray-200">
+            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200 inline-flex flex-row">
                 {{ $t('components.centrum.dispatches.feed.item.NEW') }}
 
                 <span v-if="showId" class="font-medium text-gray-400 pl-1">(DSP-{{ item.dispatchId }})</span>
@@ -59,7 +59,7 @@ withDefaults(
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
                 <AccountAlertIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
-            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
+            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200 inline-flex flex-row">
                 {{ $t('components.centrum.dispatches.feed.item.UNASSIGNED') }}
 
                 <span v-if="showId" class="font-medium text-gray-400 pl-1">(DSP-{{ item.dispatchId }})</span>
@@ -74,7 +74,7 @@ withDefaults(
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
                 <AccountPlusIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
-            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
+            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200 inline-flex flex-row">
                 {{ $t('components.centrum.dispatches.feed.item.UNIT_ASSIGNED') }}
 
                 <span v-if="showId" class="font-medium text-gray-400 pl-1">(DSP-{{ item.dispatchId }})</span>
@@ -89,7 +89,7 @@ withDefaults(
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
                 <AccountRemoveIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
-            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
+            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200 inline-flex flex-row">
                 {{ $t('components.centrum.dispatches.feed.item.UNIT_UNASSIGNED') }}
 
                 <span v-if="showId" class="font-medium text-gray-400 pl-1">(DSP-{{ item.dispatchId }})</span>
@@ -104,7 +104,7 @@ withDefaults(
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
                 <AccountCheckIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
-            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
+            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200 inline-flex flex-row">
                 {{ $t('components.centrum.dispatches.feed.item.UNIT_ACCEPTED') }}
 
                 <span v-if="showId" class="font-medium text-gray-400 pl-1">(DSP-{{ item.dispatchId }})</span>
@@ -119,7 +119,7 @@ withDefaults(
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
                 <AccountCancelIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
-            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
+            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200 inline-flex flex-row">
                 {{ $t('components.centrum.dispatches.feed.item.UNIT_DECLINED') }}
 
                 <span v-if="showId" class="font-medium text-gray-400 pl-1">(DSP-{{ item.dispatchId }})</span>
@@ -134,7 +134,7 @@ withDefaults(
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
                 <CarIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
-            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
+            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200 inline-flex flex-row">
                 {{ $t('components.centrum.dispatches.feed.item.EN_ROUTE') }}
 
                 <span v-if="showId" class="font-medium text-gray-400 pl-1">(DSP-{{ item.dispatchId }})</span>
@@ -149,7 +149,7 @@ withDefaults(
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
                 <MapMarkerIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
-            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
+            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200 inline-flex flex-row">
                 {{ $t('components.centrum.dispatches.feed.item.ON_SCENE') }}
 
                 <span v-if="showId" class="font-medium text-gray-400 pl-1">(DSP-{{ item.dispatchId }})</span>
@@ -164,7 +164,7 @@ withDefaults(
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
                 <HelpIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
-            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
+            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200 inline-flex flex-row">
                 {{ $t('components.centrum.dispatches.feed.item.NEED_ASSISTANCE') }}
 
                 <span v-if="showId" class="font-medium text-gray-400 pl-1">(DSP-{{ item.dispatchId }})</span>
@@ -179,7 +179,7 @@ withDefaults(
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
                 <CheckIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
-            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
+            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200 inline-flex flex-row">
                 {{ $t('components.centrum.dispatches.feed.item.COMPLETED') }}
 
                 <span v-if="showId" class="font-medium text-gray-400 pl-1">(DSP-{{ item.dispatchId }})</span>
@@ -194,7 +194,7 @@ withDefaults(
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
                 <CancelIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
-            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
+            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200 inline-flex flex-row">
                 {{ $t('components.centrum.dispatches.feed.item.CANCELLED') }}
 
                 <span v-if="showId" class="font-medium text-gray-400 pl-1">(DSP-{{ item.dispatchId }})</span>
@@ -209,7 +209,7 @@ withDefaults(
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
                 <ArchiveIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
-            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
+            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200 inline-flex flex-row">
                 {{ $t('components.centrum.dispatches.feed.item.ARCHIVED') }}
 
                 <span v-if="showId" class="font-medium text-gray-400 pl-1">(DSP-{{ item.dispatchId }})</span>
@@ -224,7 +224,7 @@ withDefaults(
             <div class="relative flex h-6 w-6 flex-none items-center justify-center bg-gray-300 rounded-lg">
                 <NewBoxIcon class="h-6 w-6 text-primary-600" aria-hidden="true" />
             </div>
-            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200">
+            <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200 inline-flex flex-row">
                 {{ $t('components.centrum.dispatches.feed.item.UNSPECIFIED') }}
 
                 <span v-if="showId" class="font-medium text-gray-400 pl-1">(DSP-{{ item.dispatchId }})</span>
