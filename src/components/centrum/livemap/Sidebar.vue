@@ -332,7 +332,7 @@ const open = ref(false);
                                 </button>
                             </li>
                             <li>
-                                <ul role="list" class="-mx-2 mt-1.5 space-y-1">
+                                <ul role="list" class="-mx-2 mt-1 space-y-1">
                                     <li>
                                         <template v-if="getOwnUnit !== undefined">
                                             <button
@@ -342,10 +342,12 @@ const open = ref(false);
                                                 :class="ownUnitStatus"
                                             >
                                                 <InformationOutlineIcon class="h-5 w-5" aria-hidden="true" />
-                                                <span class="mt-1.5 truncate"
-                                                    >{{ getOwnUnit.initials }}: {{ getOwnUnit.name }}</span
+                                                <span class="mt-1 truncate">
+                                                    <span class="font-semibold">{{ getOwnUnit.initials }}</span
+                                                    >: {{ getOwnUnit.name }}</span
                                                 >
-                                                <span class="mt-1.5 truncate">
+                                                <span class="mt-1 truncate">
+                                                    <span class="font-semibold">{{ $t('common.status') }}:</span>
                                                     {{
                                                         $t(
                                                             `enums.centrum.StatusUnit.${
@@ -369,7 +371,7 @@ const open = ref(false);
                                         >
                                             <template v-if="!getOwnUnit" class="flex w-full flex-col items-center">
                                                 <InformationOutlineIcon class="h-5 w-5" aria-hidden="true" />
-                                                <span class="mt-1.5 truncate">{{ $t('common.no_own_unit') }}</span>
+                                                <span class="mt-1 truncate">{{ $t('common.no_own_unit') }}</span>
                                             </template>
                                             <template v-else class="truncate">{{ $t('common.leave_unit') }}</template>
                                         </button>
@@ -487,14 +489,14 @@ const open = ref(false);
                                     <div class="text-xs font-semibold leading-6 text-base-100">
                                         {{ $t('common.your_dispatches') }}
                                     </div>
-                                    <ul role="list" class="-mx-2 mt-1.5 space-y-1">
+                                    <ul role="list" class="-mx-2 mt-1 space-y-1">
                                         <li v-if="ownDispatches.length === 0">
                                             <button
                                                 type="button"
                                                 class="text-neutral bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-1.5 text-xs my-0.5"
                                             >
                                                 <CarEmergencyIcon class="h-5 w-5" aria-hidden="true" />
-                                                <span class="mt-1.5 truncate">{{ $t('common.no_assigned_dispatches') }}</span>
+                                                <span class="mt-1 truncate">{{ $t('common.no_assigned_dispatches') }}</span>
                                             </button>
                                         </li>
                                         <template v-else>
