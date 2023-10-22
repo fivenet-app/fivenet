@@ -18,7 +18,7 @@ const props = withDefaults(
 );
 
 const emits = defineEmits<{
-    (e: 'selected', id: bigint): void;
+    (e: 'selected', state: boolean): void;
     (e: 'goto', loc: Coordinate): void;
 }>();
 
@@ -28,9 +28,12 @@ const { ownUnitId } = storeToRefs(centrumStore);
 const expiresAt = props.dispatch.units.find((u) => u.unitId === ownUnitId.value)?.expiresAt;
 const dispatchBackground = computed(() => dispatchStatusToBGColor(props.dispatch.status?.status ?? 0));
 
+const checked = ref(false);
+
 onBeforeMount(() => {
     if (props.preselected === true) {
-        emits('selected', props.dispatch.id);
+        checked.value = props.preselected;
+        emits('selected', true);
     }
 });
 
@@ -46,9 +49,12 @@ const open = ref(false);
                 <input
                     type="checkbox"
                     name="selected"
-                    :checked="preselected"
+                    :checked="checked"
                     class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600 h-6 w-6"
-                    @change="$emit('selected', dispatch.id)"
+                    @change="
+                        checked = !checked;
+                        $emit('selected', checked);
+                    "
                 />
                 <IDCopyBadge class="ml-2" prefix="DSP" :id="dispatch.id" :action="() => (open = true)" />
             </div>

@@ -52,11 +52,11 @@ async function takeDispatches(resp: TakeDispatchResp): Promise<void> {
     });
 }
 
-function selectDispatch(id: bigint): void {
+function selectDispatch(id: bigint, state: boolean): void {
     const idx = selectedDispatches.value.findIndex((did) => did === id);
-    if (idx > -1) {
+    if (idx > -1 && !state) {
         selectedDispatches.value.splice(idx, 1);
-    } else {
+    } else if (idx === -1 && state) {
         selectedDispatches.value.push(id);
     }
 }
@@ -173,7 +173,7 @@ const filteredDispatches = computed(() => {
                                                                     v-for="pd in filteredDispatches"
                                                                     :dispatch="dispatches.get(pd)!"
                                                                     :preselected="false"
-                                                                    @selected="selectDispatch(pd)"
+                                                                    @selected="selectDispatch(pd, $event)"
                                                                     @goto="$emit('goto', $event)"
                                                                 />
                                                             </template>
@@ -189,7 +189,7 @@ const filteredDispatches = computed(() => {
                                                                 v-else
                                                                 v-for="pd in pendingDispatches"
                                                                 :dispatch="dispatches.get(pd)!"
-                                                                @selected="selectDispatch(pd)"
+                                                                @selected="selectDispatch(pd, $event)"
                                                                 @goto="$emit('goto', $event)"
                                                             />
                                                         </template>
