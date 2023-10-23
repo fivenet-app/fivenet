@@ -12,13 +12,15 @@ function getParentResourceName(): string {
 }
 
 export async function fetchNui<T = any, V = any>(event: string, data: T): Promise<V> {
+    const body = jsonStringify(data);
+    console.debug(`NUI: Fetch ${event}: ${body}`);
     // @ts-ignore FiveM NUI functions
     const resp = await fetch(`https://${getParentResourceName()}/${event}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json; charset=UTF-8',
         },
-        body: jsonStringify(data),
+        body: body,
     });
 
     const parsed = resp.json();

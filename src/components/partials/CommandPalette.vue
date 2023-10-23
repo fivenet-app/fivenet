@@ -55,8 +55,10 @@ const keys = useMagicKeys({
 const Escape = keys['Escape'];
 
 whenever(Escape, () => {
+    if (!open.value) {
+        closeTablet();
+    }
     open.value = false;
-    closeTablet();
 });
 
 onClickOutside(target, () => {
