@@ -23,21 +23,21 @@ defineProps<{
                 <div class="inline-block min-w-full py-2 align-middle sm:px-2 lg:px-2">
                     <ul role="list" class="space-y-2">
                         <template v-for="(activityItem, activityItemIdx) in items">
-                            <template v-if="'dispatchId' in activityItem">
-                                <DispatchFeedItem
-                                    :activity-length="items?.length ?? 0"
-                                    :item="activityItem"
-                                    :activity-item-idx="activityItemIdx"
-                                    :show-id="true"
-                                />
-                            </template>
-                            <template v-else>
-                                <UnitFeedItem
-                                    :activity-length="items?.length ?? 0"
-                                    :item="activityItem"
-                                    :activity-item-idx="activityItemIdx"
-                                />
-                            </template>
+                            <DispatchFeedItem
+                                v-if="'dispatchId' in activityItem"
+                                :key="'dsp-' + activityItem.id.toString()"
+                                :activity-length="items?.length ?? 0"
+                                :item="activityItem"
+                                :activity-item-idx="activityItemIdx"
+                                :show-id="true"
+                            />
+                            <UnitFeedItem
+                                v-else
+                                :key="'unit-' + activityItem.id.toString()"
+                                :activity-length="items?.length ?? 0"
+                                :item="activityItem"
+                                :activity-item-idx="activityItemIdx"
+                            />
                         </template>
                     </ul>
                 </div>

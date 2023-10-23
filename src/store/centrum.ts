@@ -70,6 +70,13 @@ export const useCentrumStore = defineStore('centrum', {
         },
     },
     actions: {
+        addFeedItem(item: DispatchStatus | UnitStatus): void {
+            const idx = this.feed.findIndex((fi) => fi.id === item.id);
+            if (idx === -1) {
+                console.log(idx, item.id, item);
+                this.feed.unshift(item);
+            }
+        },
         addOrUpdateUnit(unit: Unit): void {
             const u = this.units.get(unit.id);
 
@@ -411,13 +418,13 @@ export const useCentrumStore = defineStore('centrum', {
                         this.addOrUpdateUnit(resp.change.unitStatus);
 
                         if (this.isDisponent && resp.change.unitStatus.status) {
-                            this.feed.unshift(resp.change.unitStatus.status);
+                            this.addFeedItem(resp.change.unitStatus.status);
                         }
                     } else if (resp.change.oneofKind === 'dispatchCreated') {
                         this.addOrUpdateDispatch(resp.change.dispatchCreated);
 
                         if (resp.change.dispatchCreated.status !== undefined) {
-                            this.feed.unshift(resp.change.dispatchCreated.status);
+                            this.addFeedItem(resp.change.dispatchCreated.status);
                         }
                     } else if (resp.change.oneofKind === 'dispatchDeleted') {
                         this.removeDispatch(resp.change.dispatchDeleted);
@@ -425,7 +432,7 @@ export const useCentrumStore = defineStore('centrum', {
                         this.addOrUpdateDispatch(resp.change.dispatchUpdated);
                     } else if (resp.change.oneofKind === 'dispatchStatus') {
                         if (this.isDisponent && resp.change.dispatchStatus.status) {
-                            this.feed.unshift(resp.change.dispatchStatus.status);
+                            this.addFeedItem(resp.change.dispatchStatus.status);
                         }
 
                         if (resp.change.dispatchStatus.status?.status === StatusDispatch.ARCHIVED) {

@@ -69,7 +69,7 @@ withDefaults(
 
                     <DispatchStatusInfoPopover v-if="showId" text-class="font-medium text-gray-400 pl-1" :status="item" />
                     <UnitInfoPopover
-                        v-if="item.unit"
+                        v-if="item.unit && item.unitId"
                         text-class="font-medium text-gray-400 pl-1"
                         :unit="item.unit"
                         :initials-only="true"
@@ -93,7 +93,7 @@ withDefaults(
 
                     <DispatchStatusInfoPopover v-if="showId" text-class="font-medium text-gray-400 pl-1" :status="item" />
                     <UnitInfoPopover
-                        v-if="item.unit"
+                        v-if="item.unit && item.unitId"
                         text-class="font-medium text-gray-400 pl-1"
                         :unit="item.unit"
                         :initials-only="true"
@@ -117,7 +117,7 @@ withDefaults(
 
                     <DispatchStatusInfoPopover v-if="showId" text-class="font-medium text-gray-400 pl-1" :status="item" />
                     <UnitInfoPopover
-                        v-if="item.unit"
+                        v-if="item.unit && item.unitId"
                         text-class="font-medium text-gray-400 pl-1"
                         :unit="item.unit"
                         :initials-only="true"
@@ -141,7 +141,7 @@ withDefaults(
 
                     <DispatchStatusInfoPopover v-if="showId" text-class="font-medium text-gray-400 pl-1" :status="item" />
                     <UnitInfoPopover
-                        v-if="item.unit"
+                        v-if="item.unit && item.unitId"
                         text-class="font-medium text-gray-400 pl-1"
                         :unit="item.unit"
                         :initials-only="true"
@@ -165,7 +165,7 @@ withDefaults(
 
                     <DispatchStatusInfoPopover v-if="showId" text-class="font-medium text-gray-400 pl-1" :status="item" />
                     <UnitInfoPopover
-                        v-if="item.unit"
+                        v-if="item.unit && item.unitId"
                         text-class="font-medium text-gray-400 pl-1"
                         :unit="item.unit"
                         :initials-only="true"
@@ -189,7 +189,7 @@ withDefaults(
 
                     <DispatchStatusInfoPopover v-if="showId" text-class="font-medium text-gray-400 pl-1" :status="item" />
                     <UnitInfoPopover
-                        v-if="item.unit"
+                        v-if="item.unit && item.unitId"
                         text-class="font-medium text-gray-400 pl-1"
                         :unit="item.unit"
                         :initials-only="true"
@@ -212,7 +212,7 @@ withDefaults(
                     {{ $t('components.centrum.dispatches.feed.item.ON_SCENE') }}
                     <DispatchStatusInfoPopover v-if="showId" text-class="font-medium text-gray-400 pl-1" :status="item" />
                     <UnitInfoPopover
-                        v-if="item.unit"
+                        v-if="item.unit && item.unitId"
                         text-class="font-medium text-gray-400 pl-1"
                         :unit="item.unit"
                         :initials-only="true"
@@ -236,7 +236,7 @@ withDefaults(
 
                     <DispatchStatusInfoPopover v-if="showId" text-class="font-medium text-gray-400 pl-1" :status="item" />
                     <UnitInfoPopover
-                        v-if="item.unit"
+                        v-if="item.unit && item.unitId"
                         text-class="font-medium text-gray-400 pl-1"
                         :unit="item.unit"
                         :initials-only="true"
@@ -260,10 +260,11 @@ withDefaults(
 
                     <DispatchStatusInfoPopover v-if="showId" text-class="font-medium text-gray-400 pl-1" :status="item" />
                     <UnitInfoPopover
-                        v-if="item.unit"
+                        v-if="item.unit && item.unitId"
                         text-class="font-medium text-gray-400 pl-1"
                         :unit="item.unit"
                         :initials-only="true"
+                        :badge="true"
                     />
                 </span>
                 <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
@@ -282,7 +283,7 @@ withDefaults(
 
                     <DispatchStatusInfoPopover v-if="showId" text-class="font-medium text-gray-400 pl-1" :status="item" />
                     <UnitInfoPopover
-                        v-if="item.unit"
+                        v-if="item.unit && item.unitId"
                         text-class="font-medium text-gray-400 pl-1"
                         :unit="item.unit"
                         :initials-only="true"
@@ -306,7 +307,7 @@ withDefaults(
 
                     <DispatchStatusInfoPopover v-if="showId" text-class="font-medium text-gray-400 pl-1" :status="item" />
                     <UnitInfoPopover
-                        v-if="item.unit"
+                        v-if="item.unit && item.unitId"
                         text-class="font-medium text-gray-400 pl-1"
                         :unit="item.unit"
                         :initials-only="true"
@@ -330,7 +331,7 @@ withDefaults(
 
                     <DispatchStatusInfoPopover v-if="showId" text-class="font-medium text-gray-400 pl-1" :status="item" />
                     <UnitInfoPopover
-                        v-if="item.unit"
+                        v-if="item.unit && item.unitId"
                         text-class="font-medium text-gray-400 pl-1"
                         :unit="item.unit"
                         :initials-only="true"
