@@ -115,6 +115,10 @@ export const useCentrumStore = defineStore('centrum', {
             if (u.status === undefined) {
                 u.status = status;
             } else {
+                if (status.status === StatusUnit.USER_ADDED || status.status === StatusUnit.USER_REMOVED) {
+                    return;
+                }
+
                 u.status!.id = status.id;
                 u.status!.createdAt = status.createdAt;
                 u.status!.unitId = status.unitId;

@@ -88,8 +88,7 @@ const filteredUnits = computed(() =>
                                         <div class="bg-primary-700 px-4 py-6 sm:px-6">
                                             <div class="flex items-center justify-between">
                                                 <DialogTitle class="text-base font-semibold leading-6 text-neutral">
-                                                    <span v-if="ownUnitId"> {{ $t('common.leave_unit') }} </span>
-                                                    <span v-else> {{ $t('common.join_unit') }} </span>
+                                                    {{ $t('common.leave_unit') }}
                                                 </DialogTitle>
                                                 <div class="ml-3 flex h-7 items-center">
                                                     <button
@@ -141,6 +140,8 @@ const filteredUnits = computed(() =>
                                                                     :class="[
                                                                         !canSubmit
                                                                             ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
+                                                                            : ownUnitId !== undefined && ownUnitId === unit.id
+                                                                            ? 'bg-warn-500 hover:bg-warn-100/10'
                                                                             : 'bg-primary-500 hover:bg-primary-100/10',
                                                                     ]"
                                                                 >
