@@ -93,8 +93,10 @@ const openUnit = ref(false);
                     @click="openUnit = true"
                     class="inline-flex items-center text-primary-500 hover:text-primary-400"
                 >
-                    <GroupIcon class="w-6 h-6" />
-                    {{ $t('common.unit') }}
+                    <GroupIcon class="w-4 h-4" />
+                    <span class="ml-1">
+                        {{ $t('common.unit') }}
+                    </span>
                 </button>
             </div>
             <span class="font-semibold">{{ $t('common.employee', 2) }} {{ marker.user?.jobLabel }} </span>

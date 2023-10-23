@@ -2,6 +2,7 @@
 import { AccountIcon, MapMarkerIcon } from 'mdi-vue3';
 import UnitInfoPopover from '~/components/centrum/units/UnitInfoPopover.vue';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
+import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import { useCentrumStore } from '~/store/centrum';
 import { Dispatch, StatusDispatch } from '~~/gen/ts/resources/dispatch/dispatches';
 import Details from '../dispatches/Details.vue';
@@ -66,8 +67,37 @@ const open = ref(false);
         <dd class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0">
             <ul role="list" class="border divide-y rounded-md divide-base-200 border-base-200">
                 <li class="flex items-center py-3 pl-3 pr-4 text-sm">
+                    <span class="font-medium">{{ $t('common.sent_by') }}</span
+                    >:
+                    <span class="ml-1">
+                        <template v-if="dispatch.anon">
+                            {{ $t('common.anon') }}
+                        </template>
+                        <CitizenInfoPopover v-else-if="dispatch.creator" :user="dispatch.creator" />
+                        <template v-else>
+                            {{ $t('common.unknown') }}
+                        </template>
+                    </span>
+                </li>
+                <li class="flex items-center py-3 pl-3 pr-4 text-sm">
                     <span class="font-medium">{{ $t('common.message') }}</span
-                    >: {{ dispatch.message }}
+                    >: <span class="truncate">{{ dispatch.message }}</span>
+                </li>
+                <li class="py-3 pl-3 pr-4 text-sm">
+                    <span class="block">
+                        {{ $t('common.postal') }}:
+                        {{ dispatch.postal ?? $t('common.na') }}
+                    </span>
+                    <button
+                        type="button"
+                        class="inline-flex items-center text-primary-400 hover:text-primary-600"
+                        @click="$emit('goto', { x: dispatch.x, y: dispatch.y })"
+                    >
+                        <MapMarkerIcon class="w-5 h-5" aria-hidden="true" />
+                        <span class="ml-1">
+                            {{ $t('common.go_to_location') }}
+                        </span>
+                    </button>
                 </li>
                 <li class="flex items-center py-3 pl-3 pr-4 text-sm">
                     <span class="font-medium">{{ $t('common.status') }}</span
@@ -76,26 +106,10 @@ const open = ref(false);
                         $t(`enums.centrum.StatusDispatch.${StatusDispatch[dispatch.status?.status ?? 0]}`)
                     }}</span>
                 </li>
-                <li class="py-3 pl-3 pr-4 text-sm">
-                    <span class="block">
-                        {{ $t('common.postal') }}:
-                        {{ dispatch.postal ?? $t('common.na') }}
-                    </span>
-                    <button
-                        v-if="dispatch.x && dispatch.y"
-                        type="button"
-                        class="inline-flex items-center text-primary-400 hover:text-primary-600"
-                        @click="$emit('goto', { x: dispatch.x, y: dispatch.y })"
-                    >
-                        <MapMarkerIcon class="w-5 h-5 mr-1" aria-hidden="true" />
-                        {{ $t('common.go_to_location') }}
-                    </button>
-                    <span v-else>{{ $t('common.no_location') }}</span>
-                </li>
                 <li class="flex items-center justify-between py-3 pl-3 pr-4 text-sm">
                     <div class="flex items-center flex-1">
                         <AccountIcon class="flex-shrink-0 w-5 h-5 text-base-400 mr-1" aria-hidden="true" />
-                        <span class="font-medium mr-1">{{ $t('common.members') }}:</span>
+                        <span class="font-medium mr-1">{{ $t('common.units', 2) }}:</span>
                         <span v-if="dispatch.units.length === 0">{{ $t('common.member', 0) }}</span>
                         <span v-else class="flex-1 ml-2 truncate grid grid-cols-2 gap-1">
                             <template v-for="unit in dispatch.units">

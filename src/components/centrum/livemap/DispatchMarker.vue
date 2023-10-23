@@ -67,7 +67,7 @@ const dispatchStatusColors = computed(() => {
                     <span class="font-semibold">{{ $t('common.sent_at') }}</span
                     >: {{ $d(toDate(dispatch.createdAt), 'short') }}
                 </li>
-                <li class="italic inline-flex">
+                <li class="italic inline-flex gap-1">
                     <span class="flex-initial">
                         <span class="font-semibold">{{ $t('common.sent_by') }}</span
                         >:
