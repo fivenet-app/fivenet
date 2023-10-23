@@ -2,9 +2,9 @@ package manager
 
 import (
 	"context"
+	"sort"
 	"time"
 
-	"github.com/adrg/strutil"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
 	centrumutils "github.com/galexrt/fivenet/gen/go/proto/services/centrum/utils"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -265,31 +265,31 @@ func (s *Manager) cleanupDispatches(ctx context.Context) error {
 
 func (s *Manager) deduplicateDispatches(ctx context.Context) error {
 	s.Dispatches.Range(func(job string, _ *xsync.MapOf[uint64, *dispatch.Dispatch]) bool {
-		for _, dsp := range s.State.FilterDispatches(job, nil, []dispatch.StatusDispatch{
+		dsps := s.State.FilterDispatches(job, nil, []dispatch.StatusDispatch{
 			dispatch.StatusDispatch_STATUS_DISPATCH_ARCHIVED,
 			dispatch.StatusDispatch_STATUS_DISPATCH_CANCELLED,
 			dispatch.StatusDispatch_STATUS_DISPATCH_COMPLETED,
-		}) {
-			closestsDsp := s.State.DispatchLocations[dsp.Job].KNearest(orb.Point{dsp.X, dsp.Y}, 3, 12.0)
+		})
+		sort.Slice(dsps, func(i, j int) bool {
+			return dsps[i].Id < dsps[j].Id
+		})
+
+		for _, dsp := range dsps {
+			closestsDsp := s.State.DispatchLocations[dsp.Job].KNearest(orb.Point{dsp.X, dsp.Y}, 3, 40.0)
 			if len(closestsDsp) <= 1 {
-				return false
+				continue
 			}
 
 			for _, closeByDsp := range closestsDsp {
-				if closeByDsp.Id == dsp.Id {
+				if closeByDsp == nil || closeByDsp.Id == dsp.Id {
 					continue
 				}
 
-				if closeByDsp.CreatedAt != nil && time.Since(closeByDsp.CreatedAt.AsTime()) < 3*time.Minute {
+				if closeByDsp.Status != nil && centrumutils.IsStatusDispatchComplete(closeByDsp.Status.Status) {
 					continue
 				}
 
-				if closeByDsp.Status != nil && !centrumutils.IsStatusDispatchComplete(closeByDsp.Status.Status) {
-					continue
-				}
-
-				similarity := strutil.Similarity(dsp.Message, closeByDsp.Message, s.stringJW)
-				if similarity <= 0.5 {
+				if closeByDsp.CreatedAt != nil && time.Since(closeByDsp.CreatedAt.AsTime()) >= 3*time.Minute {
 					continue
 				}
 

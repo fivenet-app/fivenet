@@ -7,7 +7,6 @@ import (
 	"sync"
 	"time"
 
-	"github.com/adrg/strutil"
 	"github.com/adrg/strutil/metrics"
 	eventscentrum "github.com/galexrt/fivenet/gen/go/proto/services/centrum/events"
 	"github.com/galexrt/fivenet/gen/go/proto/services/centrum/state"
@@ -41,8 +40,6 @@ type Manager struct {
 	visibleJobs []string
 
 	*state.State
-
-	stringJW strutil.StringMetric
 }
 
 type Params struct {
@@ -82,8 +79,7 @@ func New(p Params) *Manager {
 
 		visibleJobs: p.Config.Game.Livemap.Jobs,
 
-		State:    p.State,
-		stringJW: jw,
+		State: p.State,
 	}
 
 	p.LC.Append(fx.StartHook(func(ctx context.Context) error {

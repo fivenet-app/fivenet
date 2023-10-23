@@ -413,6 +413,8 @@ func (s *Manager) CreateDispatch(ctx context.Context, d *dispatch.Dispatch) (*di
 	}
 	s.events.JS.PublishAsync(eventscentrum.BuildSubject(eventscentrum.TopicDispatch, eventscentrum.TypeDispatchCreated, d.Job, 0), data)
 
+	s.State.DispatchLocations[dsp.Job].Add(dsp.X, dsp.Y, dsp)
+
 	return dsp, nil
 }
 
