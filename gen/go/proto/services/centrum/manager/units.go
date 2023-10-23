@@ -115,9 +115,11 @@ func (s *Manager) UpdateUnitStatus(ctx context.Context, job string, unit *dispat
 	if err != nil {
 		return err
 	}
-	unit.Status = status
+	if unit.Status == nil || (unit.Status.Status != dispatch.StatusUnit_STATUS_UNIT_USER_ADDED && unit.Status.Status != dispatch.StatusUnit_STATUS_UNIT_USER_REMOVED) {
+		unit.Status = status
+	}
 
-	data, err := proto.Marshal(unit)
+	data, err := proto.Marshal(status)
 	if err != nil {
 		return err
 	}

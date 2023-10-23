@@ -240,13 +240,13 @@ func (s *Server) stream(srv CentrumService_StreamServer, isDisponent bool, job s
 			case eventscentrum.TopicGeneral:
 				switch tType {
 				case eventscentrum.TypeGeneralDisponents:
-					var dest dispatch.DisponentsChange
-					if err := proto.Unmarshal(msg.Data, &dest); err != nil {
+					dest := &dispatch.DisponentsChange{}
+					if err := proto.Unmarshal(msg.Data, dest); err != nil {
 						return true, err
 					}
 
 					resp.Change = &StreamResponse_Disponents{
-						Disponents: &dest,
+						Disponents: dest,
 					}
 
 					found := s.state.CheckIfUserIsDisponent(job, userId)
@@ -261,31 +261,31 @@ func (s *Server) stream(srv CentrumService_StreamServer, isDisponent bool, job s
 					}
 
 				case eventscentrum.TypeGeneralSettings:
-					var dest dispatch.Settings
-					if err := proto.Unmarshal(msg.Data, &dest); err != nil {
+					dest := &dispatch.Settings{}
+					if err := proto.Unmarshal(msg.Data, dest); err != nil {
 						return true, err
 					}
 
 					resp.Change = &StreamResponse_Settings{
-						Settings: &dest,
+						Settings: dest,
 					}
 				}
 
 			case eventscentrum.TopicDispatch:
 				switch tType {
 				case eventscentrum.TypeDispatchCreated:
-					var dest dispatch.Dispatch
-					if err := proto.Unmarshal(msg.Data, &dest); err != nil {
+					dest := &dispatch.Dispatch{}
+					if err := proto.Unmarshal(msg.Data, dest); err != nil {
 						return true, err
 					}
 
 					resp.Change = &StreamResponse_DispatchCreated{
-						DispatchCreated: &dest,
+						DispatchCreated: dest,
 					}
 
 				case eventscentrum.TypeDispatchDeleted:
-					var dest dispatch.Dispatch
-					if err := proto.Unmarshal(msg.Data, &dest); err != nil {
+					dest := &dispatch.Dispatch{}
+					if err := proto.Unmarshal(msg.Data, dest); err != nil {
 						return true, err
 					}
 
@@ -294,46 +294,46 @@ func (s *Server) stream(srv CentrumService_StreamServer, isDisponent bool, job s
 					}
 
 				case eventscentrum.TypeDispatchUpdated:
-					var dest dispatch.Dispatch
-					if err := proto.Unmarshal(msg.Data, &dest); err != nil {
+					dest := &dispatch.Dispatch{}
+					if err := proto.Unmarshal(msg.Data, dest); err != nil {
 						return true, err
 					}
 
 					resp.Change = &StreamResponse_DispatchUpdated{
-						DispatchUpdated: &dest,
+						DispatchUpdated: dest,
 					}
 
 				case eventscentrum.TypeDispatchStatus:
-					var dest dispatch.Dispatch
-					if err := proto.Unmarshal(msg.Data, &dest); err != nil {
+					dest := &dispatch.DispatchStatus{}
+					if err := proto.Unmarshal(msg.Data, dest); err != nil {
 						return true, err
 					}
 
 					resp.Change = &StreamResponse_DispatchStatus{
-						DispatchStatus: &dest,
+						DispatchStatus: dest,
 					}
 				}
 
 			case eventscentrum.TopicUnit:
 				switch tType {
 				case eventscentrum.TypeUnitDeleted:
-					var dest dispatch.Unit
-					if err := proto.Unmarshal(msg.Data, &dest); err != nil {
+					dest := &dispatch.Unit{}
+					if err := proto.Unmarshal(msg.Data, dest); err != nil {
 						return true, err
 					}
 
 					resp.Change = &StreamResponse_UnitDeleted{
-						UnitDeleted: &dest,
+						UnitDeleted: dest,
 					}
 
 				case eventscentrum.TypeUnitUpdated:
-					var dest dispatch.Unit
-					if err := proto.Unmarshal(msg.Data, &dest); err != nil {
+					dest := &dispatch.Unit{}
+					if err := proto.Unmarshal(msg.Data, dest); err != nil {
 						return true, err
 					}
 
 					resp.Change = &StreamResponse_UnitUpdated{
-						UnitUpdated: &dest,
+						UnitUpdated: dest,
 					}
 
 					// Either user is in that unit this update is about or they are not (yet) in an unit
@@ -347,13 +347,13 @@ func (s *Server) stream(srv CentrumService_StreamServer, isDisponent bool, job s
 					}
 
 				case eventscentrum.TypeUnitStatus:
-					var dest dispatch.Unit
-					if err := proto.Unmarshal(msg.Data, &dest); err != nil {
+					dest := &dispatch.UnitStatus{}
+					if err := proto.Unmarshal(msg.Data, dest); err != nil {
 						return true, err
 					}
 
 					resp.Change = &StreamResponse_UnitStatus{
-						UnitStatus: &dest,
+						UnitStatus: dest,
 					}
 				}
 			}

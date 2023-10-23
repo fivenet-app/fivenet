@@ -73,7 +73,6 @@ export const useCentrumStore = defineStore('centrum', {
         addFeedItem(item: DispatchStatus | UnitStatus): void {
             const idx = this.feed.findIndex((fi) => fi.id === item.id);
             if (idx === -1) {
-                console.log(idx, item.id, item);
                 this.feed.unshift(item);
             }
         },
@@ -415,10 +414,10 @@ export const useCentrumStore = defineStore('centrum', {
 
                         this.dispatches.forEach((d) => this.handleDispatchAssignment(d));
                     } else if (resp.change.oneofKind === 'unitStatus') {
-                        this.addOrUpdateUnit(resp.change.unitStatus);
+                        this.updateUnitStatus(resp.change.unitStatus);
 
                         if (this.isDisponent && resp.change.unitStatus.status) {
-                            this.addFeedItem(resp.change.unitStatus.status);
+                            this.addFeedItem(resp.change.unitStatus);
                         }
                     } else if (resp.change.oneofKind === 'dispatchCreated') {
                         this.addOrUpdateDispatch(resp.change.dispatchCreated);
@@ -432,14 +431,14 @@ export const useCentrumStore = defineStore('centrum', {
                         this.addOrUpdateDispatch(resp.change.dispatchUpdated);
                     } else if (resp.change.oneofKind === 'dispatchStatus') {
                         if (this.isDisponent && resp.change.dispatchStatus.status) {
-                            this.addFeedItem(resp.change.dispatchStatus.status);
+                            this.addFeedItem(resp.change.dispatchStatus);
                         }
 
-                        if (resp.change.dispatchStatus.status?.status === StatusDispatch.ARCHIVED) {
+                        if (resp.change.dispatchStatus.status === StatusDispatch.ARCHIVED) {
                             // If dispatch has been archived, remove from the main list
                             this.removeDispatch(resp.change.dispatchStatus.id);
                         } else {
-                            this.addOrUpdateDispatch(resp.change.dispatchStatus);
+                            this.updateDispatchStatus(resp.change.dispatchStatus);
                         }
                     } else if (resp.change.oneofKind === 'ping') {
                         console.debug('Centrum: Ping received');

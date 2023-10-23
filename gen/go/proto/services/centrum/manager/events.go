@@ -135,18 +135,24 @@ func (s *Manager) watchEvents() error {
 					case eventscentrum.TypeDispatchCreated:
 						fallthrough
 					case eventscentrum.TypeDispatchStatus:
-						fallthrough
-					case eventscentrum.TypeDispatchUpdated:
-						var dest dispatch.Dispatch
-						if err := proto.Unmarshal(msg.Data, &dest); err != nil {
+						dest := &dispatch.Dispatch{}
+						if err := proto.Unmarshal(msg.Data, dest); err != nil {
 							return err
 						}
 
-						s.GetDispatchesMap(job).Store(dest.Id, &dest)
+						s.GetDispatchesMap(job).Store(dest.Id, dest)
+
+					case eventscentrum.TypeDispatchUpdated:
+						dest := &dispatch.Dispatch{}
+						if err := proto.Unmarshal(msg.Data, dest); err != nil {
+							return err
+						}
+
+						s.GetDispatchesMap(job).Store(dest.Id, dest)
 
 					case eventscentrum.TypeDispatchDeleted:
-						var dest dispatch.Dispatch
-						if err := proto.Unmarshal(msg.Data, &dest); err != nil {
+						dest := &dispatch.Dispatch{}
+						if err := proto.Unmarshal(msg.Data, dest); err != nil {
 							return err
 						}
 
@@ -157,8 +163,8 @@ func (s *Manager) watchEvents() error {
 				case eventscentrum.TopicUnit:
 					switch tType {
 					case eventscentrum.TypeUnitDeleted:
-						var dest dispatch.Unit
-						if err := proto.Unmarshal(msg.Data, &dest); err != nil {
+						dest := &dispatch.Unit{}
+						if err := proto.Unmarshal(msg.Data, dest); err != nil {
 							return err
 						}
 
@@ -168,28 +174,30 @@ func (s *Manager) watchEvents() error {
 						}
 
 					case eventscentrum.TypeUnitUpdated:
-						var dest dispatch.Unit
-						if err := proto.Unmarshal(msg.Data, &dest); err != nil {
+						dest := &dispatch.Unit{}
+						if err := proto.Unmarshal(msg.Data, dest); err != nil {
 							return err
 						}
 
-						s.GetUnitsMap(job).Store(dest.Id, &dest)
+						s.GetUnitsMap(job).Store(dest.Id, dest)
 
 					case eventscentrum.TypeUnitStatus:
-						var dest dispatch.Unit
-						if err := proto.Unmarshal(msg.Data, &dest); err != nil {
+						dest := &dispatch.UnitStatus{}
+						if err := proto.Unmarshal(msg.Data, dest); err != nil {
 							return err
 						}
 
-						if dest.Status.Status == dispatch.StatusUnit_STATUS_UNIT_USER_ADDED {
-							s.UserIDToUnitID.Store(*dest.Status.UserId, dest.Status.UnitId)
-						} else if dest.Status.Status == dispatch.StatusUnit_STATUS_UNIT_USER_REMOVED {
-							s.UserIDToUnitID.Delete(*dest.Status.UserId)
+						if dest.Status == dispatch.StatusUnit_STATUS_UNIT_USER_ADDED {
+							s.UserIDToUnitID.Store(*dest.UserId, dest.UnitId)
+						} else if dest.Status == dispatch.StatusUnit_STATUS_UNIT_USER_REMOVED {
+							s.UserIDToUnitID.Delete(*dest.UserId)
 						}
 
 						unit, ok := s.GetUnitsMap(job).Load(dest.Id)
 						if ok {
-							unit.Status = dest.Status
+							if dest.Status != dispatch.StatusUnit_STATUS_UNIT_USER_ADDED && dest.Status != dispatch.StatusUnit_STATUS_UNIT_USER_REMOVED {
+								unit.Status = dest
+							}
 						} else {
 							// "Cache/State miss" load from database
 							if err := s.LoadUnits(ctx, dest.Id); err != nil {
