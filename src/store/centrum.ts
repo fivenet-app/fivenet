@@ -205,7 +205,7 @@ export const useCentrumStore = defineStore('centrum', {
 
             const d = this.dispatches.get(status.dispatchId);
             if (d === undefined) {
-                console.error('Centrum: Processed Dispatch Status for unknown Dispatch', status.dispatchId.toString());
+                console.error('Centrum: Processed Dispatch Status for unknown Dispatch', status.dispatchId.toString(), status);
                 return;
             }
 
