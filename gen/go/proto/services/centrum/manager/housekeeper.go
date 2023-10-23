@@ -294,16 +294,29 @@ func (s *Manager) deduplicateDispatches(ctx context.Context) error {
 			return dsps[i].Id < dsps[j].Id
 		})
 
+		dispatchIds := map[uint64]interface{}{}
 		for _, dsp := range dsps {
 			closestsDsp := s.State.DispatchLocations[dsp.Job].KNearest(orb.Point{dsp.X, dsp.Y}, 7, 50.0)
 			if len(closestsDsp) <= 1 {
 				continue
 			}
 
+			// Already took care of the dispatch
+			if _, ok := dispatchIds[dsp.Id]; ok {
+				continue
+			}
+			dispatchIds[dsp.Id] = nil
+
 			for _, closeByDsp := range closestsDsp {
 				if closeByDsp == nil || closeByDsp.Id == dsp.Id {
 					continue
 				}
+
+				// Already took care of the dispatch
+				if _, ok := dispatchIds[closeByDsp.Id]; ok {
+					continue
+				}
+				dispatchIds[closeByDsp.Id] = nil
 
 				if closeByDsp.Status != nil && centrumutils.IsStatusDispatchComplete(closeByDsp.Status.Status) {
 					continue
