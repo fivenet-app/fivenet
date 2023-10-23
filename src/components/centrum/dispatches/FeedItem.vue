@@ -17,6 +17,7 @@ import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopove
 import Time from '~/components/partials/elements/Time.vue';
 import { DispatchStatus, StatusDispatch } from '~~/gen/ts/resources/dispatch/dispatches';
 import UnitInfoPopover from '../units/UnitInfoPopover.vue';
+import DispatchStatusInfoPopover from './DispatchStatusInfoPopover.vue';
 
 withDefaults(
     defineProps<{
@@ -49,7 +50,7 @@ withDefaults(
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.NEW') }}
 
-                    <span v-if="showId" class="font-medium text-gray-400 pl-1">DSP-{{ item.dispatchId }}</span>
+                    <DispatchStatusInfoPopover v-if="showId" text-class="font-medium text-gray-400 pl-1" :status="item" />
                 </span>
 
                 <CitizenInfoPopover v-if="item.user" text-class="font-medium text-gray-400 pl-1" :user="item.user" />
@@ -66,7 +67,7 @@ withDefaults(
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.UNASSIGNED') }}
 
-                    <span v-if="showId" class="font-medium text-gray-400 pl-1">DSP-{{ item.dispatchId }}</span>
+                    <DispatchStatusInfoPopover v-if="showId" text-class="font-medium text-gray-400 pl-1" :status="item" />
                     <UnitInfoPopover
                         v-if="item.unit"
                         text-class="font-medium text-gray-400 pl-1"
@@ -90,7 +91,7 @@ withDefaults(
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.UNIT_ASSIGNED') }}
 
-                    <span v-if="showId" class="font-medium text-gray-400 pl-1">DSP-{{ item.dispatchId }}</span>
+                    <DispatchStatusInfoPopover v-if="showId" text-class="font-medium text-gray-400 pl-1" :status="item" />
                     <UnitInfoPopover
                         v-if="item.unit"
                         text-class="font-medium text-gray-400 pl-1"
@@ -114,7 +115,7 @@ withDefaults(
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.UNIT_UNASSIGNED') }}
 
-                    <span v-if="showId" class="font-medium text-gray-400 pl-1">DSP-{{ item.dispatchId }}</span>
+                    <DispatchStatusInfoPopover v-if="showId" text-class="font-medium text-gray-400 pl-1" :status="item" />
                     <UnitInfoPopover
                         v-if="item.unit"
                         text-class="font-medium text-gray-400 pl-1"
@@ -138,7 +139,7 @@ withDefaults(
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.UNIT_ACCEPTED') }}
 
-                    <span v-if="showId" class="font-medium text-gray-400 pl-1">DSP-{{ item.dispatchId }}</span>
+                    <DispatchStatusInfoPopover v-if="showId" text-class="font-medium text-gray-400 pl-1" :status="item" />
                     <UnitInfoPopover
                         v-if="item.unit"
                         text-class="font-medium text-gray-400 pl-1"
@@ -162,7 +163,7 @@ withDefaults(
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.UNIT_DECLINED') }}
 
-                    <span v-if="showId" class="font-medium text-gray-400 pl-1">DSP-{{ item.dispatchId }}</span>
+                    <DispatchStatusInfoPopover v-if="showId" text-class="font-medium text-gray-400 pl-1" :status="item" />
                     <UnitInfoPopover
                         v-if="item.unit"
                         text-class="font-medium text-gray-400 pl-1"
@@ -186,7 +187,7 @@ withDefaults(
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.EN_ROUTE') }}
 
-                    <span v-if="showId" class="font-medium text-gray-400 pl-1">DSP-{{ item.dispatchId }}</span>
+                    <DispatchStatusInfoPopover v-if="showId" text-class="font-medium text-gray-400 pl-1" :status="item" />
                     <UnitInfoPopover
                         v-if="item.unit"
                         text-class="font-medium text-gray-400 pl-1"
@@ -209,7 +210,7 @@ withDefaults(
             <p class="flex-auto py-0.5 text-xs leading-5 text-gray-200 inline-flex flex-row justify-between">
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.ON_SCENE') }}
-                    <span v-if="showId" class="font-medium text-gray-400 pl-1">DSP-{{ item.dispatchId }}</span>
+                    <DispatchStatusInfoPopover v-if="showId" text-class="font-medium text-gray-400 pl-1" :status="item" />
                     <UnitInfoPopover
                         v-if="item.unit"
                         text-class="font-medium text-gray-400 pl-1"
@@ -233,7 +234,7 @@ withDefaults(
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.NEED_ASSISTANCE') }}
 
-                    <span v-if="showId" class="font-medium text-gray-400 pl-1">DSP-{{ item.dispatchId }}</span>
+                    <DispatchStatusInfoPopover v-if="showId" text-class="font-medium text-gray-400 pl-1" :status="item" />
                     <UnitInfoPopover
                         v-if="item.unit"
                         text-class="font-medium text-gray-400 pl-1"
@@ -257,7 +258,7 @@ withDefaults(
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.COMPLETED') }}
 
-                    <span v-if="showId" class="font-medium text-gray-400 pl-1">DSP-{{ item.dispatchId }}</span>
+                    <DispatchStatusInfoPopover v-if="showId" text-class="font-medium text-gray-400 pl-1" :status="item" />
                     <UnitInfoPopover
                         v-if="item.unit"
                         text-class="font-medium text-gray-400 pl-1"
@@ -279,7 +280,7 @@ withDefaults(
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.CANCELLED') }}
 
-                    <span v-if="showId" class="font-medium text-gray-400 pl-1">DSP-{{ item.dispatchId }}</span>
+                    <DispatchStatusInfoPopover v-if="showId" text-class="font-medium text-gray-400 pl-1" :status="item" />
                     <UnitInfoPopover
                         v-if="item.unit"
                         text-class="font-medium text-gray-400 pl-1"
@@ -303,7 +304,7 @@ withDefaults(
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.ARCHIVED') }}
 
-                    <span v-if="showId" class="font-medium text-gray-400 pl-1">DSP-{{ item.dispatchId }}</span>
+                    <DispatchStatusInfoPopover v-if="showId" text-class="font-medium text-gray-400 pl-1" :status="item" />
                     <UnitInfoPopover
                         v-if="item.unit"
                         text-class="font-medium text-gray-400 pl-1"
@@ -327,7 +328,7 @@ withDefaults(
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.UNSPECIFIED') }}
 
-                    <span v-if="showId" class="font-medium text-gray-400 pl-1">DSP-{{ item.dispatchId }}</span>
+                    <DispatchStatusInfoPopover v-if="showId" text-class="font-medium text-gray-400 pl-1" :status="item" />
                     <UnitInfoPopover
                         v-if="item.unit"
                         text-class="font-medium text-gray-400 pl-1"

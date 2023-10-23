@@ -1,9 +1,10 @@
 <script lang="ts" setup>
 import { LIcon, LMarker, LPopup } from '@vue-leaflet/vue-leaflet';
 import L from 'leaflet';
-import { AccountIcon, MapMarkerIcon } from 'mdi-vue3';
+import { AccountIcon, GroupIcon, MapMarkerIcon } from 'mdi-vue3';
 import { UserMarker } from '~~/gen/ts/resources/livemap/livemap';
 import { User } from '~~/gen/ts/resources/users/users';
+import Details from '../centrum/units/Details.vue';
 import PhoneNumber from '../partials/citizens/PhoneNumber.vue';
 
 const props = withDefaults(
@@ -38,9 +39,18 @@ const inverseColor = computed(() => hexToRgb(props.marker.unit?.color ?? '#00000
 const hasUnit = computed(() => props.showUnitNames && props.marker.unit !== undefined);
 const iconAnchor = computed<L.PointExpression | undefined>(() => [props.size / 2, props.size * (hasUnit.value ? 1.8 : 0.95)]);
 const popupAnchor = computed<L.PointExpression>(() => (hasUnit.value ? [0, -(props.size * 1.7)] : [0, -(props.size * 0.8)]));
+
+const openUnit = ref(false);
 </script>
 
 <template>
+    <Details
+        v-if="hasUnit && props.marker.unit !== undefined"
+        :unit="props.marker.unit"
+        :open="openUnit"
+        @close="openUnit = false"
+    />
+
     <LMarker
         :key="marker.info!.id?.toString()"
         :latLng="[marker.info!.y, marker.info!.x]"
@@ -77,6 +87,15 @@ const popupAnchor = computed<L.PointExpression>(() => (hasUnit.value ? [0, -(pro
                     :show-label="true"
                     width="w-4"
                 />
+                <button
+                    v-if="hasUnit"
+                    type="button"
+                    @click="openUnit = true"
+                    class="inline-flex items-center text-primary-500 hover:text-primary-400"
+                >
+                    <GroupIcon class="w-6 h-6" />
+                    {{ $t('common.unit') }}
+                </button>
             </div>
             <span class="font-semibold">{{ $t('common.employee', 2) }} {{ marker.user?.jobLabel }} </span>
             <ul role="list" class="flex flex-col">

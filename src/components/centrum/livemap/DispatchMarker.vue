@@ -67,15 +67,19 @@ const dispatchStatusColors = computed(() => {
                     <span class="font-semibold">{{ $t('common.sent_at') }}</span
                     >: {{ $d(toDate(dispatch.createdAt), 'short') }}
                 </li>
-                <li class="italic">
-                    <span class="font-semibold">{{ $t('common.sent_by') }}</span
-                    >:
-                    <span v-if="dispatch.anon">
-                        {{ $t('common.anon') }}
+                <li class="italic inline-flex">
+                    <span class="flex-initial">
+                        <span class="font-semibold">{{ $t('common.sent_by') }}</span
+                        >:
                     </span>
-                    <CitizenInfoPopover v-else-if="dispatch.creator" :user="dispatch.creator" />
-                    <span v-else>
-                        {{ $t('common.unknown') }}
+                    <span class="flex-1">
+                        <template v-if="dispatch.anon">
+                            {{ $t('common.anon') }}
+                        </template>
+                        <CitizenInfoPopover v-else-if="dispatch.creator" :user="dispatch.creator" />
+                        <template v-else>
+                            {{ $t('common.unknown') }}
+                        </template>
                     </span>
                 </li>
             </ul>
