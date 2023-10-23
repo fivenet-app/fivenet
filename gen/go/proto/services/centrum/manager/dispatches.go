@@ -80,7 +80,7 @@ func (s *Manager) UpdateDispatchStatus(ctx context.Context, job string, dsp *dis
 	}
 	dsp.Status = status
 
-	data, err := proto.Marshal(status)
+	data, err := proto.Marshal(dsp)
 	if err != nil {
 		return errorscentrum.ErrFailedQuery
 	}

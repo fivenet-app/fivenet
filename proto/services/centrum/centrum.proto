@@ -180,12 +180,12 @@ message StreamResponse {
     resources.dispatch.Unit unit_assigned = 4;
     resources.dispatch.Unit unit_deleted = 5;
     resources.dispatch.Unit unit_updated = 6;
-    resources.dispatch.UnitStatus unit_status = 7;
+    resources.dispatch.Unit unit_status = 7;
 
     uint64 dispatch_deleted = 8;
     resources.dispatch.Dispatch dispatch_created = 9;
     resources.dispatch.Dispatch dispatch_updated = 10;
-    resources.dispatch.DispatchStatus dispatch_status = 11;
+    resources.dispatch.Dispatch dispatch_status = 11;
 
     string ping = 12;
   }

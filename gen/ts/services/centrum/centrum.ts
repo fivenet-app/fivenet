@@ -441,9 +441,9 @@ export interface StreamResponse {
     } | {
         oneofKind: "unitStatus";
         /**
-         * @generated from protobuf field: resources.dispatch.UnitStatus unit_status = 7;
+         * @generated from protobuf field: resources.dispatch.Unit unit_status = 7;
          */
-        unitStatus: UnitStatus;
+        unitStatus: Unit;
     } | {
         oneofKind: "dispatchDeleted";
         /**
@@ -465,9 +465,9 @@ export interface StreamResponse {
     } | {
         oneofKind: "dispatchStatus";
         /**
-         * @generated from protobuf field: resources.dispatch.DispatchStatus dispatch_status = 11;
+         * @generated from protobuf field: resources.dispatch.Dispatch dispatch_status = 11;
          */
-        dispatchStatus: DispatchStatus;
+        dispatchStatus: Dispatch;
     } | {
         oneofKind: "ping";
         /**
@@ -934,11 +934,11 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
             { no: 4, name: "unit_assigned", kind: "message", oneof: "change", T: () => Unit },
             { no: 5, name: "unit_deleted", kind: "message", oneof: "change", T: () => Unit },
             { no: 6, name: "unit_updated", kind: "message", oneof: "change", T: () => Unit },
-            { no: 7, name: "unit_status", kind: "message", oneof: "change", T: () => UnitStatus },
+            { no: 7, name: "unit_status", kind: "message", oneof: "change", T: () => Unit },
             { no: 8, name: "dispatch_deleted", kind: "scalar", oneof: "change", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
             { no: 9, name: "dispatch_created", kind: "message", oneof: "change", T: () => Dispatch },
             { no: 10, name: "dispatch_updated", kind: "message", oneof: "change", T: () => Dispatch },
-            { no: 11, name: "dispatch_status", kind: "message", oneof: "change", T: () => DispatchStatus },
+            { no: 11, name: "dispatch_status", kind: "message", oneof: "change", T: () => Dispatch },
             { no: 12, name: "ping", kind: "scalar", oneof: "change", T: 9 /*ScalarType.STRING*/ },
             { no: 13, name: "restart", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);

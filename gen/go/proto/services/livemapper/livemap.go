@@ -116,7 +116,6 @@ func (s *Server) start() {
 
 		select {
 		case <-s.ctx.Done():
-			s.broker.Stop()
 			return
 		case <-time.After(s.refreshTime):
 		}

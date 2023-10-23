@@ -304,7 +304,7 @@ func (s *Server) stream(srv CentrumService_StreamServer, isDisponent bool, job s
 					}
 
 				case eventscentrum.TypeDispatchStatus:
-					dest := &dispatch.DispatchStatus{}
+					dest := &dispatch.Dispatch{}
 					if err := proto.Unmarshal(msg.Data, dest); err != nil {
 						return true, err
 					}
@@ -347,7 +347,7 @@ func (s *Server) stream(srv CentrumService_StreamServer, isDisponent bool, job s
 					}
 
 				case eventscentrum.TypeUnitStatus:
-					dest := &dispatch.UnitStatus{}
+					dest := &dispatch.Unit{}
 					if err := proto.Unmarshal(msg.Data, dest); err != nil {
 						return true, err
 					}

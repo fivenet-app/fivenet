@@ -182,21 +182,21 @@ func (s *Manager) watchEvents() error {
 						s.GetUnitsMap(job).Store(dest.Id, dest)
 
 					case eventscentrum.TypeUnitStatus:
-						dest := &dispatch.UnitStatus{}
+						dest := &dispatch.Unit{}
 						if err := proto.Unmarshal(msg.Data, dest); err != nil {
 							return err
 						}
 
-						if dest.Status == dispatch.StatusUnit_STATUS_UNIT_USER_ADDED {
-							s.UserIDToUnitID.Store(*dest.UserId, dest.UnitId)
-						} else if dest.Status == dispatch.StatusUnit_STATUS_UNIT_USER_REMOVED {
-							s.UserIDToUnitID.Delete(*dest.UserId)
+						if dest.Status.Status == dispatch.StatusUnit_STATUS_UNIT_USER_ADDED {
+							s.UserIDToUnitID.Store(*dest.Status.UserId, dest.Status.UnitId)
+						} else if dest.Status.Status == dispatch.StatusUnit_STATUS_UNIT_USER_REMOVED {
+							s.UserIDToUnitID.Delete(*dest.Status.UserId)
 						}
 
 						unit, ok := s.GetUnitsMap(job).Load(dest.Id)
 						if ok {
-							if dest.Status != dispatch.StatusUnit_STATUS_UNIT_USER_ADDED && dest.Status != dispatch.StatusUnit_STATUS_UNIT_USER_REMOVED {
-								unit.Status = dest
+							if dest.Status.Status != dispatch.StatusUnit_STATUS_UNIT_USER_ADDED && dest.Status.Status != dispatch.StatusUnit_STATUS_UNIT_USER_REMOVED {
+								unit.Status = dest.Status
 							}
 						} else {
 							// "Cache/State miss" load from database

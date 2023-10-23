@@ -119,7 +119,7 @@ func (s *Manager) UpdateUnitStatus(ctx context.Context, job string, unit *dispat
 		unit.Status = status
 	}
 
-	data, err := proto.Marshal(status)
+	data, err := proto.Marshal(unit)
 	if err != nil {
 		return err
 	}
