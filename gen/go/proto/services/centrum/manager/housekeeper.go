@@ -275,7 +275,7 @@ func (s *Manager) deduplicateDispatches(ctx context.Context) error {
 		})
 
 		for _, dsp := range dsps {
-			closestsDsp := s.State.DispatchLocations[dsp.Job].KNearest(orb.Point{dsp.X, dsp.Y}, 3, 40.0)
+			closestsDsp := s.State.DispatchLocations[dsp.Job].KNearest(orb.Point{dsp.X, dsp.Y}, 7, 40.0)
 			if len(closestsDsp) <= 1 {
 				continue
 			}
