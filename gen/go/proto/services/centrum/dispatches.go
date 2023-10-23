@@ -84,6 +84,14 @@ func (s *Server) UpdateDispatch(ctx context.Context, req *UpdateDispatchRequest)
 	}
 	defer s.auditer.Log(auditEntry, req)
 
+	oldDsp, ok := s.state.GetDispatch(userInfo.Job, req.Dispatch.Id)
+	if !ok {
+		return nil, errorscentrum.ErrFailedQuery
+	}
+	if oldDsp.X != req.Dispatch.X || oldDsp.Y != req.Dispatch.Y {
+		s.state.DispatchLocations[oldDsp.Job].Remove(oldDsp.X, oldDsp.Y, nil)
+	}
+
 	if err := s.state.UpdateDispatch(ctx, userInfo, req.Dispatch); err != nil {
 		return nil, errorscentrum.ErrFailedQuery
 	}

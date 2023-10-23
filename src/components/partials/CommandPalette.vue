@@ -54,14 +54,14 @@ const keys = useMagicKeys({
 });
 const Escape = keys['Escape'];
 
-whenever(Escape, () => {
+whenever(Escape, async () => {
     if (!open.value) {
         closeTablet();
     }
     open.value = false;
 });
 
-onClickOutside(target, () => {
+onClickOutside(target, async () => {
     open.value = false;
 });
 

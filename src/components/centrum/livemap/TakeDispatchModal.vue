@@ -65,10 +65,10 @@ const newDispatchSound = useSound('/sounds/centrum/message-incoming.mp3', {
     volume: 0.15,
 });
 
-const debouncedPlay = useDebounceFn(() => newDispatchSound.play(), 1750, { maxWait: 6500 });
+const debouncedPlay = useDebounceFn(() => newDispatchSound.play(), 2000, { maxWait: 5000 });
 
 const previousLength = ref(0);
-watch(pendingDispatches, () => {
+watch(pendingDispatches.value, () => {
     if (getCurrentMode.value !== CentrumMode.SIMPLIFIED) {
         if (previousLength.value <= pendingDispatches.value.length && pendingDispatches.value.length !== 0) {
             debouncedPlay();

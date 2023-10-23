@@ -278,6 +278,7 @@ func (s *Manager) DeleteDispatch(ctx context.Context, job string, id uint64) err
 	s.events.JS.PublishAsync(eventscentrum.BuildSubject(eventscentrum.TopicDispatch, eventscentrum.TypeDispatchDeleted, job, 0), data)
 
 	s.GetDispatchesMap(job).Delete(id)
+	s.State.DispatchLocations[dsp.Job].Remove(dsp.X, dsp.Y, nil)
 
 	return nil
 }
@@ -447,6 +448,8 @@ func (s *Manager) UpdateDispatch(ctx context.Context, userInfo *userinfo.UserInf
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 		return errorscentrum.ErrFailedQuery
 	}
+
+	s.State.DispatchLocations[dsp.Job].Add(dsp.X, dsp.Y, dsp)
 
 	return nil
 }

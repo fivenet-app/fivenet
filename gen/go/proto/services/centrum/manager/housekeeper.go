@@ -4,8 +4,11 @@ import (
 	"context"
 	"time"
 
+	"github.com/adrg/strutil"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
+	centrumutils "github.com/galexrt/fivenet/gen/go/proto/services/centrum/utils"
 	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/paulmach/orb"
 	"github.com/puzpuzpuz/xsync/v3"
 	"go.uber.org/zap"
 )
@@ -53,7 +56,7 @@ func (s *Manager) runArchiveDispatches() {
 		case <-s.ctx.Done():
 			return
 
-		case <-time.After(5 * time.Second):
+		case <-time.After(4 * time.Second):
 			func() {
 				ctx, span := s.tracer.Start(s.ctx, "centrum-dispatch-archival")
 				defer span.End()
@@ -64,6 +67,10 @@ func (s *Manager) runArchiveDispatches() {
 
 				if err := s.cleanupDispatches(ctx); err != nil {
 					s.logger.Error("failed to cleanup dispatches", zap.Error(err))
+				}
+
+				if err := s.deduplicateDispatches(ctx); err != nil {
+					s.logger.Error("failed to deduplicate dispatches", zap.Error(err))
 				}
 			}()
 		}
@@ -208,6 +215,7 @@ func (s *Manager) archiveDispatches(ctx context.Context) error {
 		}
 
 		s.GetDispatchesMap(ds.Job).Delete(ds.DispatchID)
+		s.State.DispatchLocations[dsp.Job].Remove(dsp.X, dsp.Y, nil)
 	}
 
 	return nil
@@ -255,12 +263,65 @@ func (s *Manager) cleanupDispatches(ctx context.Context) error {
 	return nil
 }
 
+func (s *Manager) deduplicateDispatches(ctx context.Context) error {
+	s.Dispatches.Range(func(job string, _ *xsync.MapOf[uint64, *dispatch.Dispatch]) bool {
+		for _, dsp := range s.State.FilterDispatches(job, nil, []dispatch.StatusDispatch{
+			dispatch.StatusDispatch_STATUS_DISPATCH_ARCHIVED,
+			dispatch.StatusDispatch_STATUS_DISPATCH_CANCELLED,
+			dispatch.StatusDispatch_STATUS_DISPATCH_COMPLETED,
+		}) {
+			closestsDsp := s.State.DispatchLocations[dsp.Job].KNearest(orb.Point{dsp.X, dsp.Y}, 3, 12.0)
+			if len(closestsDsp) <= 1 {
+				return false
+			}
+
+			for _, closeByDsp := range closestsDsp {
+				if closeByDsp.Id == dsp.Id {
+					continue
+				}
+
+				if closeByDsp.CreatedAt != nil && time.Since(closeByDsp.CreatedAt.AsTime()) < 3*time.Minute {
+					continue
+				}
+
+				if closeByDsp.Status != nil && !centrumutils.IsStatusDispatchComplete(closeByDsp.Status.Status) {
+					continue
+				}
+
+				similarity := strutil.Similarity(dsp.Message, closeByDsp.Message, s.stringJW)
+				if similarity <= 0.5 {
+					continue
+				}
+
+				if err := s.UpdateDispatchStatus(ctx, closeByDsp.Job, closeByDsp, &dispatch.DispatchStatus{
+					DispatchId: closeByDsp.Id,
+					Status:     dispatch.StatusDispatch_STATUS_DISPATCH_CANCELLED,
+				}); err != nil {
+					s.logger.Error("failed to update duplicate dispatch status", zap.Error(err))
+					return false
+				}
+
+				s.State.DispatchLocations[closeByDsp.Job].Remove(closeByDsp.X, closeByDsp.Y, nil)
+				return false
+			}
+		}
+
+		return true
+	})
+
+	return nil
+}
+
 // Remove empty units from dispatches (if no other unit is assigned to dispatch update status to UNASSIGNED) by
 // iterating over the dispatches and making sure the assigned units aren't empty
 func (s *Manager) removeDispatchesFromEmptyUnits(ctx context.Context) error {
-	s.Dispatches.Range(func(job string, value *xsync.MapOf[uint64, *dispatch.Dispatch]) bool {
-		value.Range(func(id uint64, dsp *dispatch.Dispatch) bool {
+	s.Dispatches.Range(func(job string, dsps *xsync.MapOf[uint64, *dispatch.Dispatch]) bool {
+		dsps.Range(func(id uint64, dsp *dispatch.Dispatch) bool {
 			for i := len(dsp.Units) - 1; i >= 0; i-- {
+				if i > len(dsp.Units)-1 {
+					break
+				}
+
 				unit, _ := s.GetUnit(job, dsp.Units[i].UnitId)
 				// If unit isn't empty, continue with the loop
 				if unit != nil && len(unit.Users) > 0 {

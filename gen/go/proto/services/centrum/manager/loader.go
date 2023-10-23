@@ -315,11 +315,16 @@ func (s *Manager) LoadDispatches(ctx context.Context, id uint64) error {
 		}
 
 		dm := s.GetDispatchesMap(dispatches[i].Job)
-		if d, loaded := dm.LoadOrStore(dispatches[i].Id, dispatches[i]); loaded {
+		d, loaded := dm.LoadOrStore(dispatches[i].Id, dispatches[i])
+		if loaded {
+			if d.X != dispatches[i].X || d.Y != dispatches[i].Y {
+				s.State.DispatchLocations[d.Job].Remove(d.X, d.Y, nil)
+			}
+
 			d.Update(dispatches[i])
 		}
 
-		// Ensure dispatch has status new if none
+		// Ensure dispatch has status new if nil
 		if dispatches[i].Status == nil {
 			if err := s.UpdateDispatchStatus(ctx, dispatches[i].Job, dispatches[i], &dispatch.DispatchStatus{
 				DispatchId: dispatches[i].Id,
@@ -327,6 +332,10 @@ func (s *Manager) LoadDispatches(ctx context.Context, id uint64) error {
 			}); err != nil {
 				return err
 			}
+		}
+
+		if !s.State.DispatchLocations[dispatches[i].Job].Has(dispatches[i].X, dispatches[i].Y) {
+			s.State.DispatchLocations[dispatches[i].Job].Add(dispatches[i].X, dispatches[i].Y, dispatches[i])
 		}
 	}
 
