@@ -27,6 +27,11 @@ func (s *Manager) housekeeper() {
 	s.wg.Add(1)
 	go func() {
 		defer s.wg.Done()
+		s.runDispatchDeduplication()
+	}()
+	s.wg.Add(1)
+	go func() {
+		defer s.wg.Done()
 		s.runRemoveDispatchesFromEmptyUnits()
 	}()
 }
@@ -68,6 +73,21 @@ func (s *Manager) runArchiveDispatches() {
 				if err := s.cleanupDispatches(ctx); err != nil {
 					s.logger.Error("failed to cleanup dispatches", zap.Error(err))
 				}
+			}()
+		}
+	}
+}
+
+func (s *Manager) runDispatchDeduplication() {
+	for {
+		select {
+		case <-s.ctx.Done():
+			return
+
+		case <-time.After(2 * time.Second):
+			func() {
+				ctx, span := s.tracer.Start(s.ctx, "centrum-dispatch-deduplicatation")
+				defer span.End()
 
 				if err := s.deduplicateDispatches(ctx); err != nil {
 					s.logger.Error("failed to deduplicate dispatches", zap.Error(err))
