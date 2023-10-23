@@ -676,7 +676,7 @@
         "your_dispatches": "Ihre Einsätze",
         "no_assigned_dispatches": "Keine zugewiesenen Einsätze.",
         "join_unit": "Einheit beitreten",
-        "leave_unit": "Einheit verlassen",
+        "leave_unit": "Einheit wechseln/ verlassen",
         "no_own_unit": "In keiner Einheit.",
         "member": "Keine Mitglieder | {n} Mitglied | {n} Mitglieder",
         "attributes": "Attribut | Attribute",
