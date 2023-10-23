@@ -676,7 +676,7 @@
         "your_dispatches": "Your Dispatches",
         "no_assigned_dispatches": "No assigned dispatches.",
         "join_unit": "Join Unit",
-        "leave_unit": "Leave Unit",
+        "leave_unit": "Switch/ Leave Unit",
         "no_own_unit": "Not in any Unit.",
         "member": "No Members | {n} Member | {n} Members",
         "attributes": "Attribute | Attributes",
