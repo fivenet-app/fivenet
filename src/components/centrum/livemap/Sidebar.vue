@@ -2,7 +2,7 @@
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { LControl } from '@vue-leaflet/vue-leaflet';
-import { useDebounceFn, watchDebounced } from '@vueuse/core';
+import { useDebounceFn, useIntervalFn, watchDebounced } from '@vueuse/core';
 import { useSound } from '@vueuse/sound';
 import {
     CalendarCheckIcon,
@@ -81,7 +81,7 @@ const actionsDispatch: {
 
 const canStream = can('CentrumService.Stream');
 
-const selectUnitOpen = ref(false);
+const joinUnitOpen = ref(false);
 
 const selectedDispatch = ref<bigint | undefined>();
 const openDispatchStatus = ref(false);
@@ -169,6 +169,7 @@ watch(ownUnitId, async () => {
         open.value = true;
     } else {
         open.value = false;
+        joinUnitOpen.value = false;
     }
 });
 
@@ -223,7 +224,7 @@ const attentionSound = useSound('/sounds/centrum/attention.mp3', {
 
 const debouncedPlay = useDebounceFn(() => attentionSound.play(), 950);
 
-const checkupIntervalId = ref<NodeJS.Timeout | undefined>();
+useIntervalFn(checkup, SEVENTEEN_MINUTES);
 
 async function checkup(): Promise<void> {
     console.debug('Centrum: Sidebar - Running unit status checkup');
@@ -246,13 +247,6 @@ async function checkup(): Promise<void> {
         callback: () => debouncedPlay(),
     });
 }
-
-onBeforeMount(() => (checkupIntervalId.value = setInterval(checkup, SEVENTEEN_MINUTES)));
-onBeforeUnmount(() => {
-    if (checkupIntervalId.value) {
-        clearInterval(checkupIntervalId.value);
-    }
-});
 
 const open = ref(false);
 </script>
@@ -365,18 +359,18 @@ const open = ref(false);
                                             />
                                         </template>
                                         <button
-                                            @click="selectUnitOpen = true"
+                                            @click="joinUnitOpen = true"
                                             type="button"
                                             class="text-neutral bg-info-700 hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-1.5 text-xs my-0.5"
                                         >
-                                            <template v-if="!getOwnUnit" class="flex w-full flex-col items-center">
+                                            <template v-if="getOwnUnit === undefined" class="flex w-full flex-col items-center">
                                                 <InformationOutlineIcon class="h-5 w-5" aria-hidden="true" />
                                                 <span class="mt-1 truncate">{{ $t('common.no_own_unit') }}</span>
                                             </template>
                                             <template v-else class="truncate">{{ $t('common.leave_unit') }}</template>
                                         </button>
 
-                                        <JoinUnitModal :open="selectUnitOpen" @close="selectUnitOpen = false" />
+                                        <JoinUnitModal :open="joinUnitOpen" @close="joinUnitOpen = false" />
                                     </li>
                                 </ul>
                             </li>

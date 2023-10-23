@@ -192,9 +192,9 @@ export interface TemplateData {
      */
     documents: DocumentShort[];
     /**
-     * @generated from protobuf field: repeated resources.users.User users = 3;
+     * @generated from protobuf field: repeated resources.users.UserShort users = 3;
      */
-    users: User[];
+    users: UserShort[];
     /**
      * @generated from protobuf field: repeated resources.vehicles.Vehicle vehicles = 4;
      */
@@ -330,10 +330,10 @@ export const ObjectSpecs = new ObjectSpecs$Type();
 class TemplateData$Type extends MessageType<TemplateData> {
     constructor() {
         super("resources.documents.TemplateData", [
-            { no: 1, name: "activeChar", kind: "message", T: () => User },
-            { no: 2, name: "documents", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => DocumentShort, options: { "validate.rules": { repeated: { maxItems: "5" } } } },
-            { no: 3, name: "users", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => User, options: { "validate.rules": { repeated: { maxItems: "5" } } } },
-            { no: 4, name: "vehicles", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Vehicle, options: { "validate.rules": { repeated: { maxItems: "5" } } } }
+            { no: 1, name: "activeChar", kind: "message", T: () => User, options: { "validate.rules": { message: { required: true } } } },
+            { no: 2, name: "documents", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => DocumentShort, options: { "validate.rules": { repeated: { maxItems: "12" } } } },
+            { no: 3, name: "users", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UserShort, options: { "validate.rules": { repeated: { maxItems: "12" } } } },
+            { no: 4, name: "vehicles", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Vehicle, options: { "validate.rules": { repeated: { maxItems: "12" } } } }
         ]);
     }
 }

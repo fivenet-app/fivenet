@@ -3612,10 +3612,8 @@ func (m *JoinUnitRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for UnitId
-
-	if m.Leave != nil {
-		// no validation rules for Leave
+	if m.UnitId != nil {
+		// no validation rules for UnitId
 	}
 
 	if len(errors) > 0 {

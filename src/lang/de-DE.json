@@ -1444,7 +1444,6 @@
         },
         "CentrumService": {
             "ErrFailedQuery": "Fehler beim Anzeigen/ Aktualisieren von Leitstellen Daten!",
-            "ErrAlreadyInUnit": "Sie sind bereits in einer Einheit! Sie müssen diese verlassen bevor sie einer anderen Einheit beitreten können.",
             "ErrNotPartOfDispatch": "Sie sind nicht Teil dieses Einsatzes!",
             "ErrNotOnDuty": {
                 "title": "Sie sind nicht im Dienst!",

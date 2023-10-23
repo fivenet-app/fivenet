@@ -322,13 +322,9 @@ export interface ListDispatchActivityResponse {
  */
 export interface JoinUnitRequest {
     /**
-     * @generated from protobuf field: uint64 unit_id = 1;
+     * @generated from protobuf field: optional uint64 unit_id = 1;
      */
-    unitId: bigint;
-    /**
-     * @generated from protobuf field: optional bool leave = 2;
-     */
-    leave?: boolean;
+    unitId?: bigint;
 }
 /**
  * @generated from protobuf message services.centrum.JoinUnitResponse
@@ -857,8 +853,7 @@ export const ListDispatchActivityResponse = new ListDispatchActivityResponse$Typ
 class JoinUnitRequest$Type extends MessageType<JoinUnitRequest> {
     constructor() {
         super("services.centrum.JoinUnitRequest", [
-            { no: 1, name: "unit_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 2, name: "leave", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
+            { no: 1, name: "unit_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
         ]);
     }
 }

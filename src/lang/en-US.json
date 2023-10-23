@@ -1444,7 +1444,6 @@
         },
         "CentrumService": {
             "ErrFailedQuery": "Failed to get/update dispatch center data!",
-            "ErrAlreadyInUnit": "You are already in an unit! You must leave your currrent unit first.",
             "ErrNotPartOfDispatch": "You are not part of this dispatch!",
             "ErrNotOnDuty": {
                 "title": "You are not on duty!",

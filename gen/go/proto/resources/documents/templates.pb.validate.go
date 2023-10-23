@@ -1233,6 +1233,17 @@ func (m *TemplateData) validate(all bool) error {
 
 	var errors []error
 
+	if m.GetActiveChar() == nil {
+		err := TemplateDataValidationError{
+			field:  "ActiveChar",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if all {
 		switch v := interface{}(m.GetActiveChar()).(type) {
 		case interface{ ValidateAll() error }:
@@ -1262,10 +1273,10 @@ func (m *TemplateData) validate(all bool) error {
 		}
 	}
 
-	if len(m.GetDocuments()) > 5 {
+	if len(m.GetDocuments()) > 12 {
 		err := TemplateDataValidationError{
 			field:  "Documents",
-			reason: "value must contain no more than 5 item(s)",
+			reason: "value must contain no more than 12 item(s)",
 		}
 		if !all {
 			return err
@@ -1307,10 +1318,10 @@ func (m *TemplateData) validate(all bool) error {
 
 	}
 
-	if len(m.GetUsers()) > 5 {
+	if len(m.GetUsers()) > 12 {
 		err := TemplateDataValidationError{
 			field:  "Users",
-			reason: "value must contain no more than 5 item(s)",
+			reason: "value must contain no more than 12 item(s)",
 		}
 		if !all {
 			return err
@@ -1352,10 +1363,10 @@ func (m *TemplateData) validate(all bool) error {
 
 	}
 
-	if len(m.GetVehicles()) > 5 {
+	if len(m.GetVehicles()) > 12 {
 		err := TemplateDataValidationError{
 			field:  "Vehicles",
-			reason: "value must contain no more than 5 item(s)",
+			reason: "value must contain no more than 12 item(s)",
 		}
 		if !all {
 			return err

@@ -325,41 +325,46 @@ func (s *Server) AssignUnit(ctx context.Context, req *AssignUnitRequest) (*Assig
 func (s *Server) JoinUnit(ctx context.Context, req *JoinUnitRequest) (*JoinUnitResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	// Only check if the user is joining an unit
-	if req.Leave != nil && !*req.Leave {
-		_, ok := s.tracker.GetUserByJobAndID(userInfo.Job, userInfo.UserId)
-		if !ok {
-			return nil, errorscentrum.ErrNotOnDuty
-		}
-
-		unitId, _ := s.state.GetUnitIDForUserID(userInfo.UserId)
-		if unitId > 0 {
-			return nil, errorscentrum.ErrAlreadyInUnit
-		}
+	// Check if user is on duty
+	if _, ok := s.tracker.GetUserByJobAndID(userInfo.Job, userInfo.UserId); !ok {
+		return nil, errorscentrum.ErrNotOnDuty
 	}
 
-	unit, ok := s.state.GetUnit(userInfo.Job, req.UnitId)
-	if !ok {
-		return nil, errorscentrum.ErrFailedQuery
-	}
+	unitId, _ := s.state.GetUnitIDForUserID(userInfo.UserId)
 
 	resp := &JoinUnitResponse{}
+	// User tries to join his own unit
+	if req.UnitId != nil && *req.UnitId == unitId {
+		return resp, nil
+	}
+
+	currentUnit, _ := s.state.GetUnit(userInfo.Job, unitId)
+
 	// User joins unit
-	if req.Leave == nil || !*req.Leave {
-		if err := s.state.UpdateUnitAssignments(ctx, userInfo, unit, []int32{userInfo.UserId}, nil); err != nil {
-			return nil, err
+	if req.UnitId != nil && *req.UnitId > 0 {
+		// Remove user from his current unit
+		if unitId > 0 && currentUnit != nil {
+			if err := s.state.UpdateUnitAssignments(ctx, userInfo, currentUnit, nil, []int32{userInfo.UserId}); err != nil {
+				return nil, errorscentrum.ErrFailedQuery
+			}
 		}
 
-		unit, ok := s.state.GetUnit(userInfo.Job, req.UnitId)
+		newUnit, ok := s.state.GetUnit(userInfo.Job, *req.UnitId)
 		if !ok {
 			return nil, errorscentrum.ErrFailedQuery
 		}
 
-		resp.Unit = unit
-	} else {
-		// User leaves unit
-		if err := s.state.UpdateUnitAssignments(ctx, userInfo, unit, nil, []int32{userInfo.UserId}); err != nil {
+		if err := s.state.UpdateUnitAssignments(ctx, userInfo, newUnit, []int32{userInfo.UserId}, nil); err != nil {
 			return nil, errorscentrum.ErrFailedQuery
+		}
+
+		resp.Unit = newUnit
+	} else {
+		// User leaves his current unit (if he is in an unit)
+		if currentUnit != nil {
+			if err := s.state.UpdateUnitAssignments(ctx, userInfo, currentUnit, nil, []int32{userInfo.UserId}); err != nil {
+				return nil, errorscentrum.ErrFailedQuery
+			}
 		}
 	}
 

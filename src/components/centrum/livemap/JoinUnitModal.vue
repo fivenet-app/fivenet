@@ -1,7 +1,8 @@
 <script lang="ts" setup>
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
-import { CloseIcon } from 'mdi-vue3';
+import { useThrottleFn } from '@vueuse/core';
+import { CloseIcon, LoadingIcon } from 'mdi-vue3';
 import { useCentrumStore } from '~/store/centrum';
 import { Unit } from '~~/gen/ts/resources/dispatch/units';
 
@@ -20,22 +21,21 @@ const { $grpc } = useNuxtApp();
 const centrumStore = useCentrumStore();
 const { ownUnitId, getSortedUnits } = storeToRefs(centrumStore);
 
-async function joinOrLeaveUnit(unit?: Unit | undefined): Promise<void> {
+async function joinOrLeaveUnit(unitId?: bigint): Promise<void> {
     return new Promise(async (res, rej) => {
         try {
             const call = $grpc.getCentrumClient().joinUnit({
-                unitId: unit?.id ?? ownUnitId.value ?? 0n,
-                leave: ownUnitId.value !== undefined,
+                unitId: unitId,
             });
             const { response } = await call;
+
+            emit('close');
 
             if (response.unit) {
                 emit('joined', response.unit);
             } else {
                 emit('left');
             }
-
-            emit('close');
 
             return res();
         } catch (e) {
@@ -44,6 +44,12 @@ async function joinOrLeaveUnit(unit?: Unit | undefined): Promise<void> {
         }
     });
 }
+
+const canSubmit = ref(true);
+const onSubmitThrottle = useThrottleFn(async (unitID?: bigint) => {
+    canSubmit.value = false;
+    await joinOrLeaveUnit(unitID).finally(() => setTimeout(() => (canSubmit.value = true), 350));
+}, 1000);
 
 const queryUnit = ref('');
 
@@ -97,7 +103,7 @@ const filteredUnits = computed(() =>
                                                 </div>
                                             </div>
                                         </div>
-                                        <div v-if="!ownUnitId" class="flex flex-1 flex-col justify-between">
+                                        <div class="flex flex-1 flex-col justify-between">
                                             <div class="divide-y divide-gray-200 px-4 sm:px-6">
                                                 <div class="mt-1">
                                                     <dl class="">
@@ -129,8 +135,14 @@ const filteredUnits = computed(() =>
                                                                     v-for="unit in filteredUnits"
                                                                     :key="unit.name"
                                                                     type="button"
-                                                                    class="bg-primary-500 text-neutral hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-1 text-xs my-0.5"
-                                                                    @click="joinOrLeaveUnit(unit)"
+                                                                    @click="onSubmitThrottle(unit.id)"
+                                                                    :disabled="!canSubmit"
+                                                                    class="text-neutral hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-1 text-xs my-0.5"
+                                                                    :class="[
+                                                                        !canSubmit
+                                                                            ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
+                                                                            : 'bg-primary-500 hover:bg-primary-100/10',
+                                                                    ]"
                                                                 >
                                                                     <span class="mt-0.5 text-base">
                                                                         <span class="font-semibold">{{ unit.initials }}</span
@@ -161,9 +173,18 @@ const filteredUnits = computed(() =>
                                             <button
                                                 v-if="ownUnitId !== undefined"
                                                 type="button"
-                                                class="w-full relative inline-flex items-center rounded-l-md bg-error-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-primary-400"
-                                                @click="joinOrLeaveUnit(undefined)"
+                                                @click="onSubmitThrottle()"
+                                                :disabled="!canSubmit"
+                                                class="w-full relative inline-flex items-center rounded-l-md py-2.5 px-3.5 text-sm font-semibold text-neutral"
+                                                :class="[
+                                                    !canSubmit
+                                                        ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
+                                                        : 'bg-error-500 hover:bg-primary-400',
+                                                ]"
                                             >
+                                                <template v-if="!canSubmit">
+                                                    <LoadingIcon class="animate-spin h-5 w-5 mr-2" />
+                                                </template>
                                                 {{ $t('common.leave') }}
                                             </button>
                                             <button

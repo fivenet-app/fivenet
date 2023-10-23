@@ -339,15 +339,9 @@ func (s *Server) stream(srv CentrumService_StreamServer, isDisponent bool, job s
 
 					// Either user is in that unit this update is about or they are not (yet) in an unit
 					if dest.Id == unitId || unitId == 0 {
-						// Restart user's stream if they got removed from their assigned unit
-						inUnit := utils.InSliceFunc(dest.Users, func(a *dispatch.UnitAssignment) bool {
+						if utils.InSliceFunc(dest.Users, func(a *dispatch.UnitAssignment) bool {
 							return userId == a.UserId
-						})
-
-						if unitId > 0 && !inUnit {
-							restart := true
-							resp.Restart = &restart
-						} else if inUnit {
+						}) {
 							// Seems that they got assigned to this unit, update the user's unitId here
 							unitId = dest.Id
 						}
