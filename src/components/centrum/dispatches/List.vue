@@ -7,14 +7,19 @@ defineEmits<{
 }>();
 
 const centrumStore = useCentrumStore();
-const { dispatches } = storeToRefs(centrumStore);
+const { getSortedDispatches } = storeToRefs(centrumStore);
 </script>
 
 <template>
     <div class="px-4 sm:px-6 lg:px-8 h-full overflow-y-auto">
         <div class="sm:flex sm:items-center">
             <div class="sm:flex-auto inline-flex items-center">
-                <h2 class="text-base font-semibold leading-6 text-gray-100">{{ $t('common.dispatch', 2) }}</h2>
+                <h2 class="flex-1 text-base font-semibold leading-6 text-gray-100">
+                    {{ $t('common.dispatch', 2) }}
+                </h2>
+                <h2 class="text-base font-semibold text-gray-100">
+                    {{ $t('components.centrum.livemap.total_dispatches') }}: {{ getSortedDispatches.length }}
+                </h2>
             </div>
         </div>
         <div class="mt-0.5 flow-root">
@@ -75,8 +80,8 @@ const { dispatches } = storeToRefs(centrumStore);
                         </thead>
                         <tbody class="divide-y divide-base-800">
                             <ListEntry
-                                v-for="[id, dispatch] in dispatches"
-                                :key="id.toString()"
+                                v-for="dispatch in getSortedDispatches"
+                                :key="dispatch.id.toString()"
                                 :dispatch="dispatch"
                                 @goto="$emit('goto', $event)"
                             />

@@ -68,6 +68,9 @@ export const useCentrumStore = defineStore('centrum', {
                 )
                 .reverse();
         },
+        getSortedDispatches: (state: CentrumState) => {
+            return Array.from(state.dispatches, ([_, dsp]) => dsp).sort((a, b) => (a.id < b.id ? -1 : a.id > b.id ? 1 : 0));
+        },
     },
     actions: {
         addFeedItem(item: DispatchStatus | UnitStatus): void {
@@ -264,12 +267,20 @@ export const useCentrumStore = defineStore('centrum', {
                 this.removePendingDispatch(dispatch.id);
                 this.removeOwnDispatch(dispatch.id);
             } else {
-                // When dispatch has no expiration, it's an accepted/assigned dispatch
-                if (assignment.expiresAt === undefined) {
+                // If dispatch is cancelled/completed, we can go ahead and remove it
+                if (
+                    dispatch.status?.status === StatusDispatch.CANCELLED ||
+                    dispatch.status?.status === StatusDispatch.COMPLETED
+                ) {
                     this.removePendingDispatch(dispatch.id);
-                    this.addOrUpdateOwnDispatch(dispatch.id);
                 } else {
-                    this.addOrUpdatePendingDispatch(dispatch.id);
+                    // When dispatch has no expiration, it's an accepted/assigned dispatch
+                    if (assignment.expiresAt === undefined) {
+                        this.removePendingDispatch(dispatch.id);
+                        this.addOrUpdateOwnDispatch(dispatch.id);
+                    } else {
+                        this.addOrUpdatePendingDispatch(dispatch.id);
+                    }
                 }
             }
         },
@@ -288,9 +299,9 @@ export const useCentrumStore = defineStore('centrum', {
         },
 
         removePendingDispatch(id: bigint): void {
-            const tDIdx = this.pendingDispatches.findIndex((d) => d === id);
-            if (tDIdx > -1) {
-                this.pendingDispatches.splice(tDIdx, 1);
+            const idx = this.pendingDispatches.findIndex((d) => d === id);
+            if (idx > -1) {
+                this.pendingDispatches.splice(idx, 1);
             }
         },
 
@@ -350,6 +361,7 @@ export const useCentrumStore = defineStore('centrum', {
                         this.isDisponent = resp.change.latestState.isDisponent;
                         this.setOwnUnit(resp.change.latestState.ownUnit?.id);
 
+                        // TODO handle removed units and dispatches
                         resp.change.latestState.units.forEach((u) => this.addOrUpdateUnit(u));
                         resp.change.latestState.dispatches.forEach((d) => this.addOrUpdateDispatch(d));
                     } else if (resp.change.oneofKind === 'settings') {
@@ -540,9 +552,9 @@ export const useCentrumStore = defineStore('centrum', {
             const now = new Date().getTime();
 
             // Cleanup pending dispatches
-            this.pendingDispatches.forEach((pd, index) => {
+            this.pendingDispatches.forEach((pd) => {
                 if (!this.dispatches.has(pd)) {
-                    this.pendingDispatches.splice(index, 1);
+                    this.removePendingDispatch(pd);
                 } else {
                     this.dispatches.get(pd)?.units.forEach((ua) => {
                         if (now - toDate(ua.expiresAt).getTime() >= THREE_QUARTER_MINUTE) this.removePendingDispatch(pd);
@@ -562,6 +574,7 @@ export const useCentrumStore = defineStore('centrum', {
 
                 if (now - toDate(d.status?.createdAt).getTime() >= THREE_QUARTER_MINUTE) {
                     this.removeDispatch(d.id);
+                    return;
                 }
 
                 // Remove stale expired unit assignements

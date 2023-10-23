@@ -115,13 +115,20 @@ func (s *Manager) UpdateUnitStatus(ctx context.Context, job string, unit *dispat
 	if err != nil {
 		return err
 	}
-	if unit.Status == nil || (unit.Status.Status != dispatch.StatusUnit_STATUS_UNIT_USER_ADDED && unit.Status.Status != dispatch.StatusUnit_STATUS_UNIT_USER_REMOVED) {
+
+	var oldStatus *dispatch.UnitStatus
+	if unit.Status == nil {
+		unit.Status = status
+	} else if unit.Status.Status == dispatch.StatusUnit_STATUS_UNIT_USER_ADDED || unit.Status.Status == dispatch.StatusUnit_STATUS_UNIT_USER_REMOVED {
+		oldStatus = unit.Status
 		unit.Status = status
 	}
-
 	data, err := proto.Marshal(unit)
 	if err != nil {
 		return err
+	}
+	if oldStatus != nil {
+		unit.Status = oldStatus
 	}
 	s.events.JS.PublishAsync(eventscentrum.BuildSubject(eventscentrum.TopicUnit, eventscentrum.TypeUnitStatus, job, status.UnitId), data)
 
