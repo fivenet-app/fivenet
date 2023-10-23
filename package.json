@@ -50,7 +50,7 @@
         "vee-validate": "^4.11.8",
         "vue": "^3.3.6",
         "vue-json-pretty": "^2.2.4",
-        "vue-template-compiler": "^2.7.14"
+        "vue-template-compiler": "^2.7.15"
     },
     "devDependencies": {
         "@dargmuesli/nuxt-cookie-control": "^7.0.1",
