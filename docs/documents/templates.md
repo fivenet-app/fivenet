@@ -11,39 +11,40 @@ Golang templating is used. In addition to base [Golang html/template functions](
 
 ## Available Variables
 
-* `.documents` - Documents that are in the user's clipboard.
-    * `id`
-    * `createdAt`
-    * `title`
-    * `state`
-    * `creatorId`
-    * `creator` - See [User Info Structure](#user-info-structure).
-    * `closed` - Boolean.
-    * `categoryId`
-    * `category`
-        * `name`
-        * `description`
-* `.users` - List of citizens/ users that are in the user's clipboard.
+* `Documents` - Documents that are in the user's clipboard.
+    * `Id`
+    * `CreatedAt`
+    * `Title`
+    * `State`
+    * `CreatorId`
+    * `Creator` - See [User Info Structure](#user-info-structure).
+    * `Closed` - Boolean.
+    * `CategoryId`
+    * `Category`
+        * `Name`
+        * `Description`
+* `Users` - List of citizens/ users that are in the user's clipboard.
     * See [User Info Structure](#user-info-structure).
-* `.vehicles` - Vehicles that are in the user's clipboard.
-    * `plate`
-    * `model`
-    * `type`
-    * `owner` - See [User Info Structure](#user-info-structure).
-* `.activeChar` - Submitting user's info.
+* `Vehicles` - Vehicles that are in the user's clipboard.
+    * `Plate`
+    * `Model`
+    * `Type`
+    * `Owner` - See [User Info Structure](#user-info-structure).
+* `ActiveChar` - Submitting user's info.
     * See [User Info Structure](#user-info-structure).
 
 ### User Info Structure
 
-* `userId`
-* `identifier`
-* `job`* - Preferrably use `jobLabel`.
-* `jobLabel`*
-* `jobGrade`* - Preferrably use `jobGradeLabel`.
-* `jobGradeLabel`*
-* `firstname`
-* `lastname`
-* `dateofbirth` - In `DD.MM.YYYY` format.
+* `UserId`
+* `Identifier`
+* `Job`* - Preferrably use `jobLabel`.
+* `JobLabel`*
+* `JobGrade`* - Preferrably use `jobGradeLabel`.
+* `JobGradeLabel`*
+* `Firstname`
+* `Lastname`
+* `Dateofbirth` - In `DD.MM.YYYY` format.
+* `Phone_number` - Optional, might not always be included.
 
 (\*these fields are only available on the `.activeChar` variable)
 
@@ -52,7 +53,7 @@ Golang templating is used. In addition to base [Golang html/template functions](
 ### Access Creator Info
 
 ```gotemplate
-{{ .activeChar.firstname }}, {{ .activeChar.lastname }}
+{{ .ActiveChar.Firstname }}, {{ .ActiveChar.Lastname }}
 ```
 
 ### Get first Citizen
@@ -66,7 +67,7 @@ Get the first user in the list (first in the user's clipboard):
 Example access citizen info:
 
 ```gotemplate
-{{ $citizen.firstname }}, {{ $citizen.lastname }} ({{ $citizen.dateofbirth }})
+{{ $citizen.Firstname }}, {{ $citizen.Lastname }} ({{ $citizen.Dateofbirth }})
 ```
 
 ### Current Date and Time
@@ -82,14 +83,14 @@ To learn more about different date and time formats, check out [the Golang `time
 ### Show List of Vehicles
 
 ```gotemplate
-{{ if not .vehicles }}
+{{ if not .Vehicles }}
 <p>
 No Vehicles involved.
 </p>
 {{ else }}
 <ul>
-{{- range .vehicles -}}
-<li>{{ .plate }} - {{ .owner.firstname }}, {{ .owner.lastname }}</li>
+{{- range .Vehicles -}}
+<li>{{ .Plate }} - {{ .Owner.Firstname }}, {{ .Owner.Lastname }}</li>
 {{- end -}}
 </ul>
 {{ end }}

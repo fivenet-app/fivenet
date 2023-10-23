@@ -22,7 +22,7 @@ const props = withDefaults(
     }>(),
     {
         submit: false,
-        showSelect: false,
+        showSelect: true,
     },
 );
 
@@ -118,15 +118,15 @@ watch(props, async (newVal) => {
                 <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-0">
                     {{ $t('common.action', 2) }}
                     <button v-if="selected.length > 0" type="button" @click="removeAll()">
-                        <TrashCanIcon class="w-6 h-6 mx-auto text-neutral" />
+                        <TrashCanIcon class="w-5 h-5 mx-auto text-neutral" />
                     </button>
                 </th>
             </tr>
         </thead>
         <tbody class="divide-y divide-gray-800">
             <tr v-for="item in users" :key="item.userId?.toString()">
-                <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0" v-if="select">
-                    <div v-if="specs && specs.max === 1n">
+                <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0" v-if="showSelect">
+                    <template v-if="specs && specs.max === 1n">
                         <button
                             @click="select(item)"
                             class="inline-flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold text-neutral shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:col-start-2"
@@ -142,8 +142,8 @@ watch(props, async (newVal) => {
                                     : $t('common.select', 2).toUpperCase()
                             }}
                         </button>
-                    </div>
-                    <div v-else>
+                    </template>
+                    <template v-else>
                         <input
                             name="selected"
                             :key="item.userId?.toString()"
@@ -153,7 +153,7 @@ watch(props, async (newVal) => {
                             type="checkbox"
                             class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600"
                         />
-                    </div>
+                    </template>
                 </td>
                 <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">
                     {{ item.firstname }}, {{ item.lastname }}
@@ -163,7 +163,7 @@ watch(props, async (newVal) => {
                 </td>
                 <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
                     <button type="button" @click="remove(item, true)">
-                        <TrashCanIcon class="w-6 h-6 mx-auto text-neutral" />
+                        <TrashCanIcon class="w-5 h-5 mx-auto text-neutral" />
                     </button>
                 </td>
             </tr>

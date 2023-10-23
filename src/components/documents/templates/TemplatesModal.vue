@@ -221,7 +221,6 @@ async function clipboardDialog(): Promise<void> {
 
                                                 <Citizens
                                                     :submit.sync="submit"
-                                                    :showSelect="true"
                                                     :specs="reqs.users!"
                                                     @statisfied="(v: boolean) => (reqStatus.users = v)"
                                                 />
@@ -233,7 +232,6 @@ async function clipboardDialog(): Promise<void> {
 
                                                 <Vehicles
                                                     :submit.sync="submit"
-                                                    :showSelect="true"
                                                     :specs="reqs.vehicles!"
                                                     @statisfied="(v: boolean) => (reqStatus.vehicles = v)"
                                                 />
@@ -248,7 +246,6 @@ async function clipboardDialog(): Promise<void> {
 
                                                 <Documents
                                                     :submit.sync="submit"
-                                                    :showSelect="true"
                                                     :specs="reqs.documents!"
                                                     @statisfied="(v: boolean) => (reqStatus.documents = v)"
                                                 />

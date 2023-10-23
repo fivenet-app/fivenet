@@ -56,8 +56,8 @@ defineEmits<{
                                     </DialogTitle>
                                     <div class="mt-2">
                                         <Citizens />
-                                        <Documents />
                                         <Vehicles />
+                                        <Documents />
                                     </div>
                                 </div>
                             </div>

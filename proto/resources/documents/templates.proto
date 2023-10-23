@@ -72,10 +72,10 @@ message ObjectSpecs {
 }
 
 message TemplateData {
-  resources.users.User activeChar = 1;
-  repeated resources.documents.DocumentShort documents = 2 [(validate.rules).repeated.max_items = 5];
-  repeated resources.users.User users = 3 [(validate.rules).repeated.max_items = 5];
-  repeated resources.vehicles.Vehicle vehicles = 4 [(validate.rules).repeated.max_items = 5];
+  resources.users.User activeChar = 1 [(validate.rules).message.required = true];
+  repeated resources.documents.DocumentShort documents = 2 [(validate.rules).repeated.max_items = 12];
+  repeated resources.users.UserShort users = 3 [(validate.rules).repeated.max_items = 12];
+  repeated resources.vehicles.Vehicle vehicles = 4 [(validate.rules).repeated.max_items = 12];
 }
 
 message TemplateJobAccess {

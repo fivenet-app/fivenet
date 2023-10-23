@@ -14,7 +14,6 @@ import (
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
-	jsoniter "github.com/json-iterator/go"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 )
@@ -27,8 +26,6 @@ var (
 var (
 	ErrTemplateFailed = status.Error(codes.InvalidArgument, "errors.DocStoreService.ErrTemplateFailed")
 )
-
-var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 func (s *Server) ListTemplates(ctx context.Context, req *ListTemplatesRequest) (*ListTemplatesResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
@@ -100,13 +97,7 @@ func (s *Server) GetTemplate(ctx context.Context, req *GetTemplateRequest) (*Get
 			return nil, ErrFailedQuery
 		}
 	} else if req.Render != nil && *req.Render && req.Data != nil {
-		// Parse data as json for the templating process
-		var data map[string]interface{}
-		if err := json.UnmarshalFromString(*req.Data, &data); err != nil {
-			return nil, ErrTemplateFailed
-		}
-
-		resp.Template.ContentTitle, resp.Template.State, resp.Template.Content, err = s.renderTemplate(resp.Template, data)
+		resp.Template.ContentTitle, resp.Template.State, resp.Template.Content, err = s.renderTemplate(resp.Template, req.Data)
 		if err != nil {
 			return nil, ErrTemplateFailed
 		}
@@ -158,7 +149,7 @@ func (s *Server) getTemplate(ctx context.Context, templateId uint64) (*documents
 	return &dest, nil
 }
 
-func (s *Server) renderTemplate(docTmpl *documents.Template, data map[string]interface{}) (outTile string, outState string, out string, err error) {
+func (s *Server) renderTemplate(docTmpl *documents.Template, data *documents.TemplateData) (outTile string, outState string, out string, err error) {
 	// Render Title template
 	titleTpl, err := template.
 		New("title").

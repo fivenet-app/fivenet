@@ -17,6 +17,7 @@ import { Timestamp } from "../../resources/timestamp/timestamp.js";
 import { OrderBy } from "../../resources/common/database/database.js";
 import { PaginationRequest } from "../../resources/common/database/database.js";
 import { Template } from "../../resources/documents/templates.js";
+import { TemplateData } from "../../resources/documents/templates.js";
 import { TemplateShort } from "../../resources/documents/templates.js";
 /**
  * Templates ==================================================================
@@ -43,9 +44,9 @@ export interface GetTemplateRequest {
      */
     templateId: bigint;
     /**
-     * @generated from protobuf field: optional string data = 2;
+     * @generated from protobuf field: optional resources.documents.TemplateData data = 2;
      */
-    data?: string;
+    data?: TemplateData;
     /**
      * @generated from protobuf field: optional bool render = 3;
      */
@@ -694,7 +695,7 @@ class GetTemplateRequest$Type extends MessageType<GetTemplateRequest> {
     constructor() {
         super("services.docstore.GetTemplateRequest", [
             { no: 1, name: "template_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 2, name: "data", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "10240" } } } },
+            { no: 2, name: "data", kind: "message", T: () => TemplateData },
             { no: 3, name: "render", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
