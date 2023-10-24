@@ -27,7 +27,7 @@ import {
 } from 'mdi-vue3';
 import { DefineComponent } from 'vue';
 import '~/assets/css/command-palette.scss';
-import { closeTablet } from '~/composables/nui';
+import { toggleTablet } from '~/composables/nui';
 import { DocumentShort } from '~~/gen/ts/resources/documents/documents';
 import { UserShort } from '~~/gen/ts/resources/users/users';
 import IDCopyBadge from './IDCopyBadge.vue';
@@ -56,7 +56,7 @@ const Escape = keys['Escape'];
 
 whenever(Escape, async () => {
     if (!open.value) {
-        closeTablet();
+        toggleTablet(false);
     }
     open.value = false;
 });

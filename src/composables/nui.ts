@@ -27,10 +27,10 @@ export async function fetchNui<T = any, V = any>(event: string, data: T): Promis
     return parsed as V;
 }
 
-export async function closeTablet(): Promise<void> {
+export async function toggleTablet(state: boolean): Promise<void> {
     if (!isNUIAvailable()) return;
 
-    return await fetchNui('viewTablet', { ok: true });
+    return await fetchNui(state ? 'openTablet' : 'closeTablet', { ok: true });
 }
 
 export async function setWaypoint(x: number, y: number): Promise<void> {

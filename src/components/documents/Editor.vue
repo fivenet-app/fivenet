@@ -56,6 +56,7 @@ import { CreateDocumentRequest, UpdateDocumentRequest } from '~~/gen/ts/services
 import AccessEntry from './AccessEntry.vue';
 import ReferenceManager from './ReferenceManager.vue';
 import RelationManager from './RelationManager.vue';
+import { checkDocAccess } from './helpers';
 
 const props = defineProps<{
     id?: bigint;
@@ -108,6 +109,7 @@ const access = ref<
         }
     >
 >(new Map());
+const docAccess = ref<DocumentAccess>();
 
 const relationManagerShow = ref<boolean>(false);
 const relationManagerData = ref<Map<bigint, DocumentRelation>>(new Map());
@@ -301,7 +303,7 @@ onMounted(async () => {
             const call = $grpc.getDocStoreClient().getDocument(req);
             const { response } = await call;
             const document = response.document;
-            const docAccess = response.access;
+            docAccess.value = response.access;
 
             if (document) {
                 setFieldValue('title', document.title);
@@ -321,10 +323,10 @@ onMounted(async () => {
                 currentRelations.value = rels.response.relations;
             }
 
-            if (docAccess) {
+            if (response.access) {
                 let accessId = 0n;
 
-                docAccess.users.forEach((user) => {
+                response.access.users.forEach((user) => {
                     access.value.set(accessId, {
                         id: accessId,
                         type: 0,
@@ -333,7 +335,7 @@ onMounted(async () => {
                     accessId++;
                 });
 
-                docAccess.jobs.forEach((job) => {
+                response.access.jobs.forEach((job) => {
                     access.value.set(accessId, {
                         id: accessId,
                         type: 1,
@@ -764,6 +766,8 @@ watchOnce(quillEditorRef, () => {
 });
 
 const canDo = {
+    edit: checkDocAccess(docAccess.value, AccessLevel.EDIT),
+    access: checkDocAccess(docAccess.value, AccessLevel.ACCESS),
     references: can('DocStoreService.AddDocumentReference'),
     relations: can('DocStoreService.AddDocumentRelation'),
 };
@@ -1055,6 +1059,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                 <h2 class="text-neutral">
                     {{ $t('common.access') }}
                 </h2>
+                <!-- TODO utilize canDo.access to allow editing access -->
                 <AccessEntry
                     v-for="entry in access.values()"
                     :key="entry.id?.toString()"
