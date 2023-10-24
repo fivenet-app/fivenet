@@ -135,13 +135,15 @@ async function getDocumentReferences(): Promise<DocumentReference[]> {
                                                             id: ref.targetDocumentId.toString(),
                                                         },
                                                     }"
-                                                    class="inline-flex space-x-2 text-sm truncate group"
+                                                    class="inline-flex space-x-2 text-sm truncate group max-w-xl"
                                                 >
-                                                    {{ ref.targetDocument?.title
-                                                    }}<span v-if="ref.targetDocument?.category"
-                                                        >&nbsp;({{ $t('common.category', 1) }}:
-                                                        {{ ref.targetDocument?.category?.name }})</span
+                                                    <span
+                                                        v-if="ref.targetDocument?.category"
+                                                        class="inline-flex items-center rounded-md bg-primary-400/10 px-2 py-1 text-xs font-medium text-primary-400 ring-1 ring-inset ring-primary-400/30 mr-1"
                                                     >
+                                                        {{ ref.targetDocument?.category?.name }}
+                                                    </span>
+                                                    {{ ref.targetDocument?.title }}
                                                 </NuxtLink>
                                             </div>
                                         </td>
@@ -159,13 +161,15 @@ async function getDocumentReferences(): Promise<DocumentReference[]> {
                                                             id: ref.sourceDocumentId.toString(),
                                                         },
                                                     }"
-                                                    class="inline-flex space-x-1 text-sm truncate group"
+                                                    class="inline-flex space-x-1 text-sm truncate group max-w-xl"
                                                 >
-                                                    {{ ref.sourceDocument?.title
-                                                    }}<span v-if="ref.sourceDocument?.category"
-                                                        >&nbsp;({{ $t('common.category', 1) }}:
-                                                        {{ ref.sourceDocument?.category?.name }})</span
+                                                    <span
+                                                        v-if="ref.sourceDocument?.category"
+                                                        class="inline-flex items-center rounded-md bg-primary-400/10 px-2 py-1 text-xs font-medium text-primary-400 ring-1 ring-inset ring-primary-400/30 mr-1"
                                                     >
+                                                        {{ ref.sourceDocument?.category?.name }}
+                                                    </span>
+                                                    {{ ref.sourceDocument?.title }}
                                                 </NuxtLink>
                                             </div>
                                         </td>

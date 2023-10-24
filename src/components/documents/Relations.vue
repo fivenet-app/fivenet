@@ -71,11 +71,13 @@ async function getDocumentRelations(): Promise<DocumentRelation[]> {
                                                     },
                                                 }"
                                             >
-                                                {{ relation.document?.title
-                                                }}<span v-if="relation.document?.category">
-                                                    (Category:
-                                                    {{ relation.document?.category?.name }})
+                                                <span
+                                                    v-if="relation.document?.category"
+                                                    class="inline-flex items-center rounded-md bg-primary-400/10 px-2 py-1 text-xs font-medium text-primary-400 ring-1 ring-inset ring-primary-400/30 mr-1"
+                                                >
+                                                    {{ relation.document?.category?.name }}
                                                 </span>
+                                                {{ relation.document?.title }}
                                             </NuxtLink>
                                         </span>
                                         <span>
@@ -137,11 +139,13 @@ async function getDocumentRelations(): Promise<DocumentRelation[]> {
                                                     },
                                                 }"
                                             >
-                                                {{ relation.document?.title
-                                                }}<span v-if="relation.document?.category">
-                                                    ({{ $t('common.category', 1) }}:
-                                                    {{ relation.document?.category?.name }})</span
+                                                <span
+                                                    v-if="relation.document?.category"
+                                                    class="inline-flex items-center rounded-md bg-primary-400/10 px-2 py-1 text-xs font-medium text-primary-400 ring-1 ring-inset ring-primary-400/30 mr-1"
                                                 >
+                                                    {{ relation.document?.category?.name }}
+                                                </span>
+                                                {{ relation.document?.title }}
                                             </NuxtLink>
                                         </td>
                                         <td class="px-6 py-4 text-sm">

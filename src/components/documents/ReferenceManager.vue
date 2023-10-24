@@ -68,7 +68,7 @@ const {
     pending,
     refresh,
     error,
-} = useLazyAsyncData(`document-${props.document}-references-docs-${queryDoc}`, () => listDocuments());
+} = useLazyAsyncData(`document-${props.document?.toString()}-references-docs-${queryDoc}`, () => listDocuments());
 
 watchDebounced(queryDoc, async () => listDocuments(), {
     debounce: 600,
@@ -109,16 +109,14 @@ function addReference(doc: DocumentShort, reference: DocReference): void {
     const keys = Array.from(props.modelValue.keys());
     const key = !keys.length ? 1n : keys[keys.length - 1] + 1n;
 
-    const ref: DocumentReference = {
+    props.modelValue.set(key, {
         id: key,
-        sourceDocumentId: 0n,
+        sourceDocumentId: props.document ?? 0n,
         reference: reference,
         targetDocumentId: doc.id,
         targetDocument: doc,
-    };
-
-    props.modelValue.set(key, ref);
-    listDocuments();
+    });
+    refresh();
 }
 
 function addReferenceClipboard(doc: ClipboardDocument, reference: DocReference): void {

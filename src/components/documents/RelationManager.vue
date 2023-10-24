@@ -70,7 +70,7 @@ const {
     pending,
     refresh,
     error,
-} = useLazyAsyncData(`document-${props.document}-relations-citzens-${queryCitizens}`, () => listCitizens());
+} = useLazyAsyncData(`document-${props.document?.toString()}-relations-citzens-${queryCitizens}`, () => listCitizens());
 
 watchDebounced(queryCitizens, async () => await refresh(), {
     debounce: 600,
@@ -106,7 +106,7 @@ function addRelation(user: User, relation: DocRelation): void {
 
     props.modelValue.set(key, {
         id: key,
-        documentId: props.document!,
+        documentId: props.document ?? 0n,
         sourceUserId: activeChar.value!.userId,
         sourceUser: activeChar.value!,
         targetUserId: user.userId,
