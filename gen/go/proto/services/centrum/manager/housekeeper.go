@@ -242,20 +242,17 @@ func (s *Manager) archiveDispatches(ctx context.Context) error {
 }
 
 func (s *Manager) cleanupDispatches(ctx context.Context) error {
-	stmt := tDispatchStatus.
+	stmt := tDispatch.
 		SELECT(
-			tDispatchStatus.DispatchID.AS("dispatch_id"),
+			tDispatch.ID.AS("dispatch_id"),
 			tDispatch.Job.AS("job"),
 		).
 		FROM(
-			tDispatchStatus.
-				INNER_JOIN(tDispatch,
-					tDispatch.ID.EQ(tDispatchStatus.DispatchID),
-				),
+			tDispatch,
 		).
 		WHERE(jet.AND(
-			tDispatchStatus.CreatedAt.LT_EQ(
-				jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(2, jet.HOUR)),
+			tDispatch.CreatedAt.LT_EQ(
+				jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(90, jet.MINUTE)),
 			),
 		))
 
@@ -272,8 +269,6 @@ func (s *Manager) cleanupDispatches(ctx context.Context) error {
 		if !ok {
 			continue
 		}
-
-		s.GetDispatchesMap(ds.Job).Delete(ds.DispatchID)
 
 		if err := s.DeleteDispatch(ctx, dsp.Job, dsp.Id); err != nil {
 			return err
