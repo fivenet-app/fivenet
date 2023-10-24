@@ -70,7 +70,7 @@ const {
     error,
 } = useLazyAsyncData(`document-${props.document?.toString()}-references-docs-${queryDoc}`, () => listDocuments());
 
-watchDebounced(queryDoc, async () => listDocuments(), {
+watchDebounced(queryDoc, async () => await refresh(), {
     debounce: 600,
     maxWait: 1750,
 });

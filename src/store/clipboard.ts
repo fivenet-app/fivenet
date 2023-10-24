@@ -1,5 +1,4 @@
 import { StoreDefinition, defineStore } from 'pinia';
-import { fromString } from '~/utils/time';
 import { Category } from '~~/gen/ts/resources/documents/category';
 import { DocContentType, Document, DocumentShort } from '~~/gen/ts/resources/documents/documents';
 import { ObjectSpecs, TemplateData } from '~~/gen/ts/resources/documents/templates';
@@ -216,7 +215,7 @@ export class ClipboardDocument {
 
     constructor(d: Document) {
         this.id = d.id;
-        this.createdAt = d.createdAt ? toDate(d.createdAt).toLocaleDateString() : undefined;
+        this.createdAt = d.createdAt ? toDate(d.createdAt).toJSON() : undefined;
         this.category = d.category;
         this.title = d.title;
         this.state = d.state;
@@ -243,7 +242,7 @@ export function getDocument(obj: ClipboardDocument): DocumentShort {
         public: obj.public,
     };
     if (obj.createdAt !== undefined) {
-        doc.createdAt = toTimestamp(fromString(obj.createdAt)!);
+        doc.createdAt = toTimestamp(fromString(obj.createdAt));
     }
     return doc;
 }
