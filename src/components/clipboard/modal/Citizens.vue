@@ -62,7 +62,7 @@ async function remove(item: ClipboardUser, notify: boolean): Promise<void> {
         notifications.dispatchNotification({
             title: { key: 'notifications.clipboard.citizen_removed.title', parameters: {} },
             content: { key: 'notifications.clipboard.citizen_removed.content', parameters: {} },
-            duration: 3500,
+            duration: 3250,
             type: 'info',
         });
     }
@@ -79,7 +79,7 @@ async function removeAll(): Promise<void> {
     notifications.dispatchNotification({
         title: { key: 'notifications.clipboard.citizens_removed.title', parameters: {} },
         content: { key: 'notifications.clipboard.citizens_removed.content', parameters: {} },
-        duration: 3500,
+        duration: 3250,
         type: 'info',
     });
 }

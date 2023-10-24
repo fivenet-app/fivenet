@@ -18,7 +18,7 @@ function addToClipboard(): void {
     notifications.dispatchNotification({
         title: { key: 'notifications.clipboard.citizen_add.title', parameters: {} },
         content: { key: 'notifications.clipboard.citizen_add.content', parameters: {} },
-        duration: 3500,
+        duration: 3250,
         type: 'info',
     });
 }

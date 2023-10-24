@@ -23,7 +23,7 @@ function addToClipboard(): void {
     notifications.dispatchNotification({
         title: { key: 'notifications.clipboard.vehicle_added.title', parameters: {} },
         content: { key: 'notifications.clipboard.vehicle_added.content', parameters: {} },
-        duration: 3500,
+        duration: 3250,
         type: 'info',
     });
 }

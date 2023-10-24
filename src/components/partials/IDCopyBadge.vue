@@ -22,7 +22,7 @@ function copyDocumentIDToClipboard(): void {
         notifications.dispatchNotification({
             title: props.title,
             content: props.content,
-            duration: 3500,
+            duration: 3250,
             type: 'info',
         });
     }

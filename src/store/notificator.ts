@@ -41,7 +41,7 @@ export const useNotificatorStore = defineStore('notifications', {
             content,
             type,
             autoClose = true,
-            duration = 6000,
+            duration = 4500,
             category = NotificationCategory.GENERAL,
             data = undefined,
             position = 'top-right',
