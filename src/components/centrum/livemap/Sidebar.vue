@@ -293,7 +293,7 @@ const open = ref(false);
                     :dispatch-id="selectedDispatch"
                 />
 
-                <div class="h-full flex grow gap-y-5 overflow-y-auto bg-base-600 px-4 py-0.5">
+                <div class="h-full flex grow gap-y-5 overflow-y-auto overflow-x-hidden bg-base-600 px-4 py-0.5">
                     <nav v-if="open" class="flex flex-1 flex-col">
                         <ul role="list" class="flex flex-1 flex-col gap-y-2 divide-y divide-base-400">
                             <li class="-mx-2 -mb-1">
