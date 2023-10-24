@@ -139,6 +139,15 @@ func (s *Server) TakeDispatch(ctx context.Context, req *TakeDispatchRequest) (*T
 	}
 
 	settings := s.state.GetSettings(userInfo.Job)
+	var x, y *float64
+	var postal *string
+	marker, ok := s.tracker.GetUserById(userInfo.UserId)
+	if ok {
+		x = &marker.Info.X
+		y = &marker.Info.Y
+		postal = marker.Info.Postal
+	}
+
 	for _, dispatchId := range req.DispatchIds {
 		dsp, ok := s.state.GetDispatch(userInfo.Job, dispatchId)
 		if !ok {
@@ -157,15 +166,6 @@ func (s *Server) TakeDispatch(ctx context.Context, req *TakeDispatchRequest) (*T
 		// If dispatch is completed, disallow to accept the dispatch
 		if dsp.Status != nil && centrumutils.IsStatusDispatchComplete(dsp.Status.Status) {
 			return nil, errorscentrum.ErrDispatchAlreadyCompleted
-		}
-
-		var x, y *float64
-		var postal *string
-		marker, ok := s.tracker.GetUserById(userInfo.UserId)
-		if ok {
-			x = &marker.Info.X
-			y = &marker.Info.Y
-			postal = marker.Info.Postal
 		}
 
 		status := dispatch.StatusDispatch_STATUS_DISPATCH_UNSPECIFIED

@@ -56,7 +56,7 @@ const open = ref(false);
         <div class="mt-0.5 flow-root">
             <div class="-mx-2 -my-2 sm:-mx-6 lg:-mx-8">
                 <div class="inline-block min-w-full py-2 align-middle sm:px-2 lg:px-2">
-                    <div class="grid grid-cols-3 items-center justify-items-center">
+                    <div class="grid grid-cols-1 sm:grid-cols-3 items-center justify-items-center">
                         <div
                             v-if="!isDisponent"
                             class="absolute z-20 inset-0 flex flex-col justify-center items-center bg-gray-600/70"

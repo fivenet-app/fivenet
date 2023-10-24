@@ -41,8 +41,8 @@ async function selfAssign(id: bigint): Promise<void> {
     return new Promise(async (res, rej) => {
         if (ownUnitId.value === undefined) {
             notificationsStore.dispatchNotification({
-                title: { key: 'notifications.centrum.unitAssigned.not_in_unit.title' },
-                content: { key: 'notifications.centrum.unitAssigned.not_in_unit.content' },
+                title: { key: 'notifications.centrum.unitUpdated.not_in_unit.title' },
+                content: { key: 'notifications.centrum.unitUpdated.not_in_unit.content' },
                 type: 'error',
             });
 
