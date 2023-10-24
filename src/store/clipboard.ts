@@ -206,7 +206,7 @@ export function getUser(obj: ClipboardUser): User {
 
 export class ClipboardDocument {
     public id: bigint;
-    public createdAt: string;
+    public createdAt?: string;
     public title: string;
     public creator: ClipboardUser;
     public category: Category | undefined;
@@ -216,7 +216,7 @@ export class ClipboardDocument {
 
     constructor(d: Document) {
         this.id = d.id;
-        this.createdAt = toDate(d.createdAt).toLocaleDateString();
+        this.createdAt = d.createdAt ? toDate(d.createdAt).toLocaleDateString() : undefined;
         this.category = d.category;
         this.title = d.title;
         this.state = d.state;
@@ -229,9 +229,8 @@ export class ClipboardDocument {
 export function getDocument(obj: ClipboardDocument): DocumentShort {
     const user = getUser(obj.creator);
 
-    return {
+    const doc: DocumentShort = {
         id: BigInt(obj.id),
-        createdAt: toTimestamp(fromString(obj.createdAt)!),
         categoryId: obj.category && obj.category.id ? obj.category.id : 0n,
         category: obj.category,
         title: obj.title,
@@ -243,6 +242,10 @@ export function getDocument(obj: ClipboardDocument): DocumentShort {
         closed: obj.closed,
         public: obj.public,
     };
+    if (obj.createdAt !== undefined) {
+        doc.createdAt = toTimestamp(fromString(obj.createdAt)!);
+    }
+    return doc;
 }
 
 export class ClipboardVehicle {

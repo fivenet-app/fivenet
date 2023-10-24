@@ -292,6 +292,7 @@ onMounted(async () => {
             }
         } catch (e) {
             $grpc.handleError(e as RpcError);
+            console.log('Documents: Editor - Template Error', e);
 
             await navigateTo({ name: 'documents' });
 
