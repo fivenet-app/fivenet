@@ -32,7 +32,6 @@ import { Document, DocumentAccess } from '~~/gen/ts/resources/documents/document
 import Comments from './Comments.vue';
 import References from './References.vue';
 import Relations from './Relations.vue';
-import { checkDocAccess } from './helpers';
 
 const { $grpc } = useNuxtApp();
 const clipboardStore = useClipboardStore();
@@ -201,7 +200,7 @@ onConfirm(async (id: bigint) => deleteDocument(id));
                                 </p>
                             </div>
                             <div class="flex mt-1 space-x-3 md:mt-0">
-                                <div v-if="can('DocStoreService.ToggleDocument') && checkDocAccess(access, AccessLevel.STATUS)">
+                                <div v-if="can('DocStoreService.ToggleDocument')">
                                     <button
                                         type="button"
                                         @click="toggleDocument(documentId, !doc?.closed)"
@@ -218,7 +217,7 @@ onConfirm(async (id: bigint) => deleteDocument(id));
                                     </button>
                                 </div>
                                 <NuxtLink
-                                    v-if="can('DocStoreService.UpdateDocument') && checkDocAccess(access, AccessLevel.EDIT)"
+                                    v-if="can('DocStoreService.UpdateDocument')"
                                     :to="{
                                         name: 'documents-edit-id',
                                         params: { id: doc?.id.toString() ?? 0 },
@@ -230,7 +229,7 @@ onConfirm(async (id: bigint) => deleteDocument(id));
                                     {{ $t('common.edit') }}
                                 </NuxtLink>
                                 <button
-                                    v-if="can('DocStoreService.DeleteDocument') && checkDocAccess(access, AccessLevel.EDIT)"
+                                    v-if="can('DocStoreService.DeleteDocument')"
                                     type="button"
                                     @click="reveal(documentId)"
                                     class="inline-flex justify-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"

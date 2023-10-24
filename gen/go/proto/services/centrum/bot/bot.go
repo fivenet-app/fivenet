@@ -40,10 +40,17 @@ func (b *Bot) Run(ctx context.Context) error {
 		case <-ctx.Done():
 			return nil
 
-		case <-time.After(6 * time.Second):
+		case <-time.After(5 * time.Second):
 		}
 
 		dispatches := b.state.FilterDispatches(b.job, nil, []dispatch.StatusDispatch{
+			// Dispatch status that mean it is being worked on
+			dispatch.StatusDispatch_STATUS_DISPATCH_UNIT_ASSIGNED,
+			dispatch.StatusDispatch_STATUS_DISPATCH_UNIT_ACCEPTED,
+			dispatch.StatusDispatch_STATUS_DISPATCH_EN_ROUTE,
+			dispatch.StatusDispatch_STATUS_DISPATCH_ON_SCENE,
+			dispatch.StatusDispatch_STATUS_DISPATCH_NEED_ASSISTANCE,
+			// Completed states
 			dispatch.StatusDispatch_STATUS_DISPATCH_CANCELLED,
 			dispatch.StatusDispatch_STATUS_DISPATCH_COMPLETED,
 			dispatch.StatusDispatch_STATUS_DISPATCH_ARCHIVED,
