@@ -140,6 +140,7 @@ func (s *Server) ListVehicles(ctx context.Context, req *ListVehiclesRequest) (*L
 		tUsers.Identifier,
 		tUsers.Firstname,
 		tUsers.Lastname,
+		tUsers.Dateofbirth,
 	}
 
 	// Field Permission Check
