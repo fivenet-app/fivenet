@@ -159,7 +159,7 @@ message CreateDocumentRequest {
   // @sanitize: method=StripTags
   string title = 2 [(validate.rules).string = {
     min_len: 3,
-    max_bytes: 21845
+    max_len: 255
   }]; // @gotags: alias:"title"
   // @sanitize
   string content = 3 [(validate.rules).string = {
@@ -187,7 +187,7 @@ message UpdateDocumentRequest {
   // @sanitize: method=StripTags
   string title = 3 [(validate.rules).string = {
     min_len: 3,
-    max_bytes: 21845
+    max_len: 255
   }]; // @gotags: alias:"title"
   // @sanitize
   string content = 4 [(validate.rules).string = {

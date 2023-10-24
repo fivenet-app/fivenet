@@ -785,7 +785,7 @@ interface FormData {
 
 const { handleSubmit, values, setFieldValue, meta } = useForm<FormData>({
     validationSchema: {
-        title: { required: true, min: 3, max: 21845 },
+        title: { required: true, min: 3, max: 255 },
         state: { required: false, min: 2, max: 24 },
     },
     initialValues: {

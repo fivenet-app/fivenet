@@ -29,8 +29,9 @@ import {
 import { DefineComponent } from 'vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import Time from '~/components/partials/elements/Time.vue';
-import { ClipboardDocument, getDocument, useClipboardStore } from '~/store/clipboard';
+import { ClipboardDocument, getDocument, getUser, useClipboardStore } from '~/store/clipboard';
 import { DocReference, DocumentReference, DocumentShort } from '~~/gen/ts/resources/documents/documents';
+import CitizenInfoPopover from '../partials/citizens/CitizenInfoPopover.vue';
 
 const { $grpc } = useNuxtApp();
 const clipboardStore = useClipboardStore();
@@ -218,13 +219,13 @@ function removeReference(id: bigint): void {
                                                                         scope="col"
                                                                         class="px-3 py-3.5 text-left text-sm font-semibold"
                                                                     >
-                                                                        {{ $t('common.creator') }}
+                                                                        {{ $t('common.state') }}
                                                                     </th>
                                                                     <th
                                                                         scope="col"
                                                                         class="px-3 py-3.5 text-left text-sm font-semibold"
                                                                     >
-                                                                        {{ $t('common.state') }}
+                                                                        {{ $t('common.creator') }}
                                                                     </th>
                                                                     <th
                                                                         scope="col"
@@ -246,16 +247,17 @@ function removeReference(id: bigint): void {
                                                                     :key="key.toString()"
                                                                 >
                                                                     <td
-                                                                        class="py-4 pl-4 pr-3 text-sm font-medium truncate whitespace-nowrap sm:pl-6 lg:pl-8"
+                                                                        class="py-4 pl-4 pr-3 text-sm font-medium truncate whitespace-nowrap sm:pl-6 lg:pl-8 max-w-xl"
                                                                     >
                                                                         {{ ref.targetDocument?.title }}
                                                                     </td>
                                                                     <td class="px-3 py-4 text-sm whitespace-nowrap">
-                                                                        {{ ref.creator?.firstname }}
-                                                                        {{ ref.creator?.lastname }}
+                                                                        {{ ref.targetDocument?.state }}
                                                                     </td>
                                                                     <td class="px-3 py-4 text-sm whitespace-nowrap">
-                                                                        {{ ref.targetDocument?.state }}
+                                                                        <CitizenInfoPopover
+                                                                            :user="ref.targetDocument?.creator"
+                                                                        />
                                                                     </td>
                                                                     <td class="px-3 py-4 text-sm whitespace-nowrap">
                                                                         {{
@@ -336,13 +338,13 @@ function removeReference(id: bigint): void {
                                                                         scope="col"
                                                                         class="px-3 py-3.5 text-left text-sm font-semibold"
                                                                     >
-                                                                        {{ $t('common.creator') }}
+                                                                        {{ $t('common.state') }}
                                                                     </th>
                                                                     <th
                                                                         scope="col"
                                                                         class="px-3 py-3.5 text-left text-sm font-semibold"
                                                                     >
-                                                                        {{ $t('common.state') }}
+                                                                        {{ $t('common.creator') }}
                                                                     </th>
                                                                     <th
                                                                         scope="col"
@@ -368,16 +370,15 @@ function removeReference(id: bigint): void {
                                                                     :key="document.id?.toString()"
                                                                 >
                                                                     <td
-                                                                        class="py-4 pl-4 pr-3 text-sm font-medium truncate whitespace-nowrap sm:pl-6 lg:pl-8"
+                                                                        class="py-4 pl-4 pr-3 text-sm font-medium truncate whitespace-nowrap sm:pl-6 lg:pl-8 max-w-xl"
                                                                     >
                                                                         {{ document.title }}
                                                                     </td>
                                                                     <td class="px-3 py-4 text-sm whitespace-nowrap">
-                                                                        {{ document.creator?.firstname }}
-                                                                        {{ document.creator?.lastname }}
+                                                                        {{ document.state }}
                                                                     </td>
                                                                     <td class="px-3 py-4 text-sm whitespace-nowrap">
-                                                                        {{ document.state }}
+                                                                        <CitizenInfoPopover :user="getUser(document.creator)" />
                                                                     </td>
                                                                     <td class="px-3 py-4 text-sm whitespace-nowrap">
                                                                         {{ $t('common.created') }}
@@ -505,13 +506,13 @@ function removeReference(id: bigint): void {
                                                                         scope="col"
                                                                         class="px-3 py-3.5 text-left text-sm font-semibold"
                                                                     >
-                                                                        {{ $t('common.creator') }}
+                                                                        {{ $t('common.state') }}
                                                                     </th>
                                                                     <th
                                                                         scope="col"
                                                                         class="px-3 py-3.5 text-left text-sm font-semibold"
                                                                     >
-                                                                        {{ $t('common.state') }}
+                                                                        {{ $t('common.creator') }}
                                                                     </th>
                                                                     <th
                                                                         scope="col"
@@ -535,16 +536,15 @@ function removeReference(id: bigint): void {
                                                                         :key="document.id?.toString()"
                                                                     >
                                                                         <td
-                                                                            class="py-4 pl-4 pr-3 text-sm font-medium truncate whitespace-nowrap sm:pl-6 lg:pl-8"
+                                                                            class="py-4 pl-4 pr-3 text-sm font-medium truncate whitespace-nowrap sm:pl-6 lg:pl-8 max-w-xl"
                                                                         >
                                                                             {{ document.title }}
                                                                         </td>
                                                                         <td class="px-3 py-4 text-sm whitespace-nowrap">
-                                                                            {{ document.creator?.firstname }}
-                                                                            {{ document.creator?.lastname }}
+                                                                            {{ document.state }}
                                                                         </td>
                                                                         <td class="px-3 py-4 text-sm whitespace-nowrap">
-                                                                            {{ document.state }}
+                                                                            <CitizenInfoPopover :user="document.creator" />
                                                                         </td>
                                                                         <td class="px-3 py-4 text-sm whitespace-nowrap">
                                                                             {{ $t('common.created') }}

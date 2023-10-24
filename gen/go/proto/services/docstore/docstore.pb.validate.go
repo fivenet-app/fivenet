@@ -4350,21 +4350,10 @@ func (m *CreateDocumentRequest) validate(all bool) error {
 
 	var errors []error
 
-	if utf8.RuneCountInString(m.GetTitle()) < 3 {
+	if l := utf8.RuneCountInString(m.GetTitle()); l < 3 || l > 255 {
 		err := CreateDocumentRequestValidationError{
 			field:  "Title",
-			reason: "value length must be at least 3 runes",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	if len(m.GetTitle()) > 21845 {
-		err := CreateDocumentRequestValidationError{
-			field:  "Title",
-			reason: "value length must be at most 21845 bytes",
+			reason: "value length must be between 3 and 255 runes, inclusive",
 		}
 		if !all {
 			return err
@@ -4680,21 +4669,10 @@ func (m *UpdateDocumentRequest) validate(all bool) error {
 
 	// no validation rules for DocumentId
 
-	if utf8.RuneCountInString(m.GetTitle()) < 3 {
+	if l := utf8.RuneCountInString(m.GetTitle()); l < 3 || l > 255 {
 		err := UpdateDocumentRequestValidationError{
 			field:  "Title",
-			reason: "value length must be at least 3 runes",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	if len(m.GetTitle()) > 21845 {
-		err := UpdateDocumentRequestValidationError{
-			field:  "Title",
-			reason: "value length must be at most 21845 bytes",
+			reason: "value length must be between 3 and 255 runes, inclusive",
 		}
 		if !all {
 			return err
