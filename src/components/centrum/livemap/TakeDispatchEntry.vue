@@ -81,7 +81,7 @@ const open = ref(false);
                 </li>
                 <li class="flex items-center py-3 pl-3 pr-4 text-sm">
                     <span class="font-medium">{{ $t('common.message') }}</span
-                    >: <span class="truncate">{{ dispatch.message }}</span>
+                    >: <span class="ml-1 truncate">{{ dispatch.message }}</span>
                 </li>
                 <li class="py-3 pl-3 pr-4 text-sm">
                     <span class="block">
