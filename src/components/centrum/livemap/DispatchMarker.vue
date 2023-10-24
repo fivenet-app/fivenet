@@ -27,10 +27,8 @@ function selected(_: bigint | number | string) {
     emit('selected', props.dispatch);
 }
 
-const dispatchStatusColors = computed(() => {
-    const status = props.dispatch.status?.status ?? 0;
-    return [dispatchStatusAnimate(status) ? 'animate-wiggle' : '', dispatchStatusToFillColor(status)];
-});
+const dispatchBackground = computed(() => dispatchStatusToFillColor(props.dispatch.status?.status ?? 0));
+const dispatchAnimated = computed(() => (dispatchStatusAnimate(props.dispatch.status?.status ?? 0) ? 'animate-wiggle' : ''));
 </script>
 
 <template>
@@ -42,7 +40,7 @@ const dispatchStatusColors = computed(() => {
                 >
                     DSP-{{ dispatch.id }}
                 </span>
-                <BellIcon class="w-full h-full" :class="dispatchStatusColors" />
+                <BellIcon class="w-full h-full" :class="[dispatchBackground, dispatchAnimated]" />
             </div>
         </LIcon>
         <LPopup :options="{ closeButton: true }">
