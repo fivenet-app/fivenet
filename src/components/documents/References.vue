@@ -74,7 +74,7 @@ async function getDocumentReferences(): Promise<DocumentReference[]> {
                                             >
                                         </span>
                                         <span class="font-medium">
-                                            {{ DocReference[reference.reference] }}
+                                            {{ $t(`enums.docstore.DocReference.${DocReference[reference.reference]}`) }}
                                         </span>
                                         <span v-if="showSource" class="truncate">
                                             {{ reference.sourceDocument?.title

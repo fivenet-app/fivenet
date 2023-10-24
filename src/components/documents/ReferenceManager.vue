@@ -30,7 +30,7 @@ import { DefineComponent } from 'vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import Time from '~/components/partials/elements/Time.vue';
 import { ClipboardDocument, getDocument, useClipboardStore } from '~/store/clipboard';
-import { DocumentReference, DocumentShort } from '~~/gen/ts/resources/documents/documents';
+import { DocReference, DocumentReference, DocumentShort } from '~~/gen/ts/resources/documents/documents';
 
 const { $grpc } = useNuxtApp();
 const clipboardStore = useClipboardStore();
@@ -104,7 +104,7 @@ async function listDocuments(): Promise<DocumentShort[]> {
     });
 }
 
-function addReference(doc: DocumentShort, reference: number): void {
+function addReference(doc: DocumentShort, reference: DocReference): void {
     const keys = Array.from(props.modelValue.keys());
     const key = !keys.length ? 1n : keys[keys.length - 1] + 1n;
 
@@ -113,13 +113,14 @@ function addReference(doc: DocumentShort, reference: number): void {
         sourceDocumentId: 0n,
         reference: reference,
         targetDocumentId: doc.id,
+        targetDocument: doc,
     };
 
     props.modelValue.set(key, ref);
     listDocuments();
 }
 
-function addReferenceClipboard(doc: ClipboardDocument, reference: number): void {
+function addReferenceClipboard(doc: ClipboardDocument, reference: DocReference): void {
     addReference(getDocument(doc), reference);
 }
 
@@ -229,7 +230,13 @@ function removeReference(id: bigint): void {
                                                                         scope="col"
                                                                         class="px-3 py-3.5 text-left text-sm font-semibold"
                                                                     >
-                                                                        {{ $t('common.action', 2) }}
+                                                                        {{ $t('common.reference') }}
+                                                                    </th>
+                                                                    <th
+                                                                        scope="col"
+                                                                        class="px-3 py-3.5 text-left text-sm font-semibold"
+                                                                    >
+                                                                        {{ $t('common.reference') }}
                                                                     </th>
                                                                 </tr>
                                                             </thead>
@@ -249,6 +256,15 @@ function removeReference(id: bigint): void {
                                                                     </td>
                                                                     <td class="px-3 py-4 text-sm whitespace-nowrap">
                                                                         {{ ref.targetDocument?.state }}
+                                                                    </td>
+                                                                    <td class="px-3 py-4 text-sm whitespace-nowrap">
+                                                                        {{
+                                                                            $t(
+                                                                                `enums.docstore.DocReference.${
+                                                                                    DocReference[ref.reference]
+                                                                                }`,
+                                                                            )
+                                                                        }}
                                                                     </td>
                                                                     <td class="px-3 py-4 text-sm whitespace-nowrap">
                                                                         <div class="flex flex-row gap-2">
@@ -366,7 +382,9 @@ function removeReference(id: bigint): void {
                                                                     <td class="px-3 py-4 text-sm whitespace-nowrap">
                                                                         {{ $t('common.created') }}
                                                                         <Time
-                                                                            :value="new Date(Date.parse(document.createdAt))"
+                                                                            :value="
+                                                                                new Date(Date.parse(document.createdAt ?? ''))
+                                                                            "
                                                                         />
                                                                     </td>
                                                                     <td class="px-3 py-4 text-sm whitespace-nowrap">
@@ -374,7 +392,12 @@ function removeReference(id: bigint): void {
                                                                             <div class="flex">
                                                                                 <button
                                                                                     role="button"
-                                                                                    @click="addReferenceClipboard(document, 1)"
+                                                                                    @click="
+                                                                                        addReferenceClipboard(
+                                                                                            document,
+                                                                                            DocReference.LINKED,
+                                                                                        )
+                                                                                    "
                                                                                     data-te-toggle="tooltip"
                                                                                     :title="
                                                                                         $t(
@@ -388,7 +411,12 @@ function removeReference(id: bigint): void {
                                                                                 </button>
                                                                                 <button
                                                                                     role="button"
-                                                                                    @click="addReferenceClipboard(document, 2)"
+                                                                                    @click="
+                                                                                        addReferenceClipboard(
+                                                                                            document,
+                                                                                            DocReference.SOLVES,
+                                                                                        )
+                                                                                    "
                                                                                     data-te-toggle="tooltip"
                                                                                     :title="
                                                                                         $t(
@@ -402,7 +430,12 @@ function removeReference(id: bigint): void {
                                                                                 </button>
                                                                                 <button
                                                                                     role="button"
-                                                                                    @click="addReferenceClipboard(document, 3)"
+                                                                                    @click="
+                                                                                        addReferenceClipboard(
+                                                                                            document,
+                                                                                            DocReference.CLOSES,
+                                                                                        )
+                                                                                    "
                                                                                     data-te-toggle="tooltip"
                                                                                     :title="
                                                                                         $t(
@@ -416,7 +449,12 @@ function removeReference(id: bigint): void {
                                                                                 </button>
                                                                                 <button
                                                                                     role="button"
-                                                                                    @click="addReferenceClipboard(document, 4)"
+                                                                                    @click="
+                                                                                        addReferenceClipboard(
+                                                                                            document,
+                                                                                            DocReference.DEPRECATES,
+                                                                                        )
+                                                                                    "
                                                                                     data-te-toggle="tooltip"
                                                                                     :title="
                                                                                         $t(
@@ -517,7 +555,12 @@ function removeReference(id: bigint): void {
                                                                                 <div class="flex">
                                                                                     <button
                                                                                         role="button"
-                                                                                        @click="addReference(document, 1)"
+                                                                                        @click="
+                                                                                            addReference(
+                                                                                                document,
+                                                                                                DocReference.LINKED,
+                                                                                            )
+                                                                                        "
                                                                                         data-te-toggle="tooltip"
                                                                                         :title="
                                                                                             $t(
@@ -531,7 +574,12 @@ function removeReference(id: bigint): void {
                                                                                     </button>
                                                                                     <button
                                                                                         role="button"
-                                                                                        @click="addReference(document, 2)"
+                                                                                        @click="
+                                                                                            addReference(
+                                                                                                document,
+                                                                                                DocReference.SOLVES,
+                                                                                            )
+                                                                                        "
                                                                                         data-te-toggle="tooltip"
                                                                                         :title="
                                                                                             $t(
@@ -545,7 +593,12 @@ function removeReference(id: bigint): void {
                                                                                     </button>
                                                                                     <button
                                                                                         role="button"
-                                                                                        @click="addReference(document, 3)"
+                                                                                        @click="
+                                                                                            addReference(
+                                                                                                document,
+                                                                                                DocReference.CLOSES,
+                                                                                            )
+                                                                                        "
                                                                                         data-te-toggle="tooltip"
                                                                                         :title="
                                                                                             $t(
@@ -559,7 +612,12 @@ function removeReference(id: bigint): void {
                                                                                     </button>
                                                                                     <button
                                                                                         role="button"
-                                                                                        @click="addReference(document, 4)"
+                                                                                        @click="
+                                                                                            addReference(
+                                                                                                document,
+                                                                                                DocReference.DEPRECATES,
+                                                                                            )
+                                                                                        "
                                                                                         data-te-toggle="tooltip"
                                                                                         :title="
                                                                                             $t(

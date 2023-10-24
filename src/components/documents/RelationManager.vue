@@ -100,7 +100,7 @@ async function listCitizens(): Promise<User[]> {
     });
 }
 
-function addRelation(user: User, relation: number): void {
+function addRelation(user: User, relation: DocRelation): void {
     const keys = Array.from(props.modelValue.keys());
     const key = !keys.length ? 1n : keys[keys.length - 1] + 1n;
 
@@ -351,7 +351,12 @@ function removeRelation(id: bigint): void {
                                                                             <div class="flex">
                                                                                 <button
                                                                                     role="button"
-                                                                                    @click="addRelation(getUser(user), 1)"
+                                                                                    @click="
+                                                                                        addRelation(
+                                                                                            getUser(user),
+                                                                                            DocRelation.MENTIONED,
+                                                                                        )
+                                                                                    "
                                                                                     data-te-toggle="tooltip"
                                                                                     :title="
                                                                                         $t(
@@ -367,7 +372,12 @@ function removeRelation(id: bigint): void {
                                                                             <div class="flex">
                                                                                 <button
                                                                                     role="button"
-                                                                                    @click="addRelation(getUser(user), 2)"
+                                                                                    @click="
+                                                                                        addRelation(
+                                                                                            getUser(user),
+                                                                                            DocRelation.TARGETS,
+                                                                                        )
+                                                                                    "
                                                                                     data-te-toggle="tooltip"
                                                                                     :title="
                                                                                         $t(
@@ -383,7 +393,12 @@ function removeRelation(id: bigint): void {
                                                                             <div class="flex">
                                                                                 <button
                                                                                     role="button"
-                                                                                    @click="addRelation(getUser(user), 3)"
+                                                                                    @click="
+                                                                                        addRelation(
+                                                                                            getUser(user),
+                                                                                            DocRelation.CAUSED,
+                                                                                        )
+                                                                                    "
                                                                                     data-te-toggle="tooltip"
                                                                                     :title="
                                                                                         $t(
@@ -462,7 +477,9 @@ function removeRelation(id: bigint): void {
                                                                             <div class="flex">
                                                                                 <button
                                                                                     role="button"
-                                                                                    @click="addRelation(user, 1)"
+                                                                                    @click="
+                                                                                        addRelation(user, DocRelation.MENTIONED)
+                                                                                    "
                                                                                     data-te-toggle="tooltip"
                                                                                     :title="
                                                                                         $t(
@@ -478,7 +495,9 @@ function removeRelation(id: bigint): void {
                                                                             <div class="flex">
                                                                                 <button
                                                                                     role="button"
-                                                                                    @click="addRelation(user, 2)"
+                                                                                    @click="
+                                                                                        addRelation(user, DocRelation.TARGETS)
+                                                                                    "
                                                                                     data-te-toggle="tooltip"
                                                                                     :title="
                                                                                         $t(
@@ -494,7 +513,9 @@ function removeRelation(id: bigint): void {
                                                                             <div class="flex">
                                                                                 <button
                                                                                     role="button"
-                                                                                    @click="addRelation(user, 3)"
+                                                                                    @click="
+                                                                                        addRelation(user, DocRelation.CAUSED)
+                                                                                    "
                                                                                     data-te-toggle="tooltip"
                                                                                     :title="
                                                                                         $t(
