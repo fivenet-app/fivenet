@@ -241,27 +241,27 @@ function removeReference(id: bigint): void {
                                                             </thead>
                                                             <tbody class="divide-y divide-base-500">
                                                                 <tr
-                                                                    v-for="[key, ref] in $props.modelValue"
+                                                                    v-for="[key, reference] in $props.modelValue"
                                                                     :key="key.toString()"
                                                                 >
                                                                     <td
                                                                         class="py-4 pl-4 pr-3 text-sm font-medium truncate whitespace-nowrap sm:pl-6 lg:pl-8 max-w-xl"
                                                                     >
-                                                                        {{ ref.targetDocument?.title }}
+                                                                        {{ reference.targetDocument?.title }}
                                                                     </td>
                                                                     <td class="px-3 py-4 text-sm whitespace-nowrap">
-                                                                        {{ ref.targetDocument?.state }}
+                                                                        {{ reference.targetDocument?.state }}
                                                                     </td>
                                                                     <td class="px-3 py-4 text-sm whitespace-nowrap">
                                                                         <CitizenInfoPopover
-                                                                            :user="ref.targetDocument?.creator"
+                                                                            :user="reference.targetDocument?.creator"
                                                                         />
                                                                     </td>
                                                                     <td class="px-3 py-4 text-sm whitespace-nowrap">
                                                                         {{
                                                                             $t(
                                                                                 `enums.docstore.DocReference.${
-                                                                                    DocReference[ref.reference]
+                                                                                    DocReference[reference.reference]
                                                                                 }`,
                                                                             )
                                                                         }}
@@ -273,7 +273,7 @@ function removeReference(id: bigint): void {
                                                                                     :to="{
                                                                                         name: 'documents-id',
                                                                                         params: {
-                                                                                            id: ref.targetDocumentId.toString(),
+                                                                                            id: reference.targetDocumentId.toString(),
                                                                                         },
                                                                                     }"
                                                                                     target="_blank"
@@ -292,7 +292,7 @@ function removeReference(id: bigint): void {
                                                                             <div class="flex">
                                                                                 <button
                                                                                     role="button"
-                                                                                    @click="removeReference(ref.id!)"
+                                                                                    @click="removeReference(reference.id!)"
                                                                                     data-te-toggle="tooltip"
                                                                                     :title="
                                                                                         $t(

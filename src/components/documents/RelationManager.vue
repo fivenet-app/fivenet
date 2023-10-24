@@ -31,6 +31,7 @@ import { useAuthStore } from '~/store/auth';
 import { getUser, useClipboardStore } from '~/store/clipboard';
 import { DocRelation, DocumentRelation } from '~~/gen/ts/resources/documents/documents';
 import { User } from '~~/gen/ts/resources/users/users';
+import CitizenInfoPopover from '../partials/citizens/CitizenInfoPopover.vue';
 
 const { $grpc } = useNuxtApp();
 const authStore = useAuthStore();
@@ -226,24 +227,22 @@ function removeRelation(id: bigint): void {
                                                             </thead>
                                                             <tbody class="divide-y divide-base-500">
                                                                 <tr
-                                                                    v-for="[key, rel] in $props.modelValue"
+                                                                    v-for="[key, relation] in $props.modelValue"
                                                                     :key="key.toString()"
                                                                 >
                                                                     <td
                                                                         class="py-4 pl-4 pr-3 text-sm font-medium truncate whitespace-nowrap sm:pl-6 lg:pl-8"
                                                                     >
-                                                                        {{ rel.targetUser?.firstname }}
-                                                                        {{ rel.targetUser?.lastname }}
+                                                                        <CitizenInfoPopover :user="relation.targetUser" />
                                                                     </td>
                                                                     <td class="px-3 py-4 text-sm whitespace-nowrap">
-                                                                        {{ rel.sourceUser?.firstname }}
-                                                                        {{ rel.sourceUser?.lastname }}
+                                                                        <CitizenInfoPopover :user="relation.sourceUser" />
                                                                     </td>
                                                                     <td class="px-3 py-4 text-sm whitespace-nowrap">
                                                                         {{
                                                                             $t(
                                                                                 `enums.docstore.DocRelation.${
-                                                                                    DocRelation[rel.relation]
+                                                                                    DocRelation[relation.relation]
                                                                                 }`,
                                                                             )
                                                                         }}
@@ -255,7 +254,7 @@ function removeRelation(id: bigint): void {
                                                                                     :to="{
                                                                                         name: 'citizens-id',
                                                                                         params: {
-                                                                                            id: rel.targetUserId,
+                                                                                            id: relation.targetUserId,
                                                                                         },
                                                                                     }"
                                                                                     target="_blank"
@@ -274,7 +273,7 @@ function removeRelation(id: bigint): void {
                                                                             <div class="flex">
                                                                                 <button
                                                                                     role="button"
-                                                                                    @click="removeRelation(rel.id!)"
+                                                                                    @click="removeRelation(relation.id!)"
                                                                                     data-te-toggle="tooltip"
                                                                                     :title="
                                                                                         $t(
@@ -340,8 +339,7 @@ function removeRelation(id: bigint): void {
                                                                     <td
                                                                         class="py-4 pl-4 pr-3 text-sm font-medium truncate whitespace-nowrap sm:pl-6 lg:pl-8"
                                                                     >
-                                                                        {{ user.firstname }}
-                                                                        {{ user.lastname }}
+                                                                        <CitizenInfoPopover :user="getUser(user)" />
                                                                     </td>
                                                                     <td class="px-3 py-4 text-sm whitespace-nowrap">
                                                                         {{ user.jobLabel }}
@@ -466,8 +464,7 @@ function removeRelation(id: bigint): void {
                                                                     <td
                                                                         class="py-4 pl-4 pr-3 text-sm font-medium truncate whitespace-nowrap sm:pl-6 lg:pl-8"
                                                                     >
-                                                                        {{ user.firstname }}
-                                                                        {{ user.lastname }}
+                                                                        <CitizenInfoPopover :user="getUser(user)" />
                                                                     </td>
                                                                     <td class="px-3 py-4 text-sm whitespace-nowrap">
                                                                         {{ user.jobLabel }}
