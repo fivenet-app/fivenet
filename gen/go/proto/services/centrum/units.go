@@ -330,20 +330,20 @@ func (s *Server) JoinUnit(ctx context.Context, req *JoinUnitRequest) (*JoinUnitR
 		return nil, errorscentrum.ErrNotOnDuty
 	}
 
-	unitId, _ := s.state.GetUnitIDForUserID(userInfo.UserId)
+	currentUnitId, _ := s.state.GetUnitIDForUserID(userInfo.UserId)
 
 	resp := &JoinUnitResponse{}
 	// User tries to join his own unit
-	if req.UnitId != nil && *req.UnitId == unitId {
+	if req.UnitId != nil && *req.UnitId == currentUnitId {
 		return resp, nil
 	}
 
-	currentUnit, _ := s.state.GetUnit(userInfo.Job, unitId)
+	currentUnit, _ := s.state.GetUnit(userInfo.Job, currentUnitId)
 
 	// User joins unit
 	if req.UnitId != nil && *req.UnitId > 0 {
 		// Remove user from his current unit
-		if unitId > 0 && currentUnit != nil {
+		if currentUnit != nil {
 			if err := s.state.UpdateUnitAssignments(ctx, userInfo, currentUnit, nil, []int32{userInfo.UserId}); err != nil {
 				return nil, errorscentrum.ErrFailedQuery
 			}

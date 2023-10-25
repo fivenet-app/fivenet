@@ -459,7 +459,7 @@ export const useCentrumStore = defineStore('centrum', {
                     }
 
                     if (resp.restart !== undefined && resp.restart) {
-                        this.restartBackoffTime = 0;
+                        this.restartBackoffTime = 0 - initialBackoffTime;
                         this.restartStream(isCenter);
                         break;
                     }

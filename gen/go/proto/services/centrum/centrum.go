@@ -343,6 +343,10 @@ func (s *Server) stream(srv CentrumService_StreamServer, isDisponent bool, job s
 						}) {
 							// Seems that they got assigned to this unit, update the user's unitId here
 							unitId = dest.Id
+						} else {
+							unitId = 0
+							restart := true
+							resp.Restart = &restart
 						}
 					}
 
