@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { useClipboard } from '@vueuse/core';
 import { LicenseIcon } from 'mdi-vue3';
 import { ref } from 'vue';
 import CharSexBadge from '~/components/citizens/CharSexBadge.vue';
@@ -15,7 +14,6 @@ import WantedModal from './WantedModal.vue';
 const clipboardStore = useClipboardStore();
 
 const w = window;
-const clipboard = useClipboard();
 
 const props = defineProps<{
     user: User;
@@ -194,7 +192,7 @@ const trafficPointsModal = ref(false);
                 <button
                     type="button"
                     class="inline-flex items-center justify-center flex-shrink-0 w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-base-700 text-neutral hover:bg-base-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500 sm:flex-1"
-                    @click="clipboard.copy(w.location.href)"
+                    @click="copyToClipboardWrapper(w.location.href)"
                 >
                     {{ $t('components.citizens.citizen_info_profile.copy_profile_link') }}
                 </button>

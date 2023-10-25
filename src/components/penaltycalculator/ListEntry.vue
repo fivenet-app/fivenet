@@ -26,7 +26,7 @@ const count = ref(props.count);
         <td class="whitespace-nowrap px-1 py-1 text-left text-base-200">
             {{ law.stvoPoints }}
         </td>
-        <td class="px-1 py-1 text-left text-base-200">
+        <td class="text-sm px-1 py-1 text-left text-base-200">
             {{ law.description }}
         </td>
         <td class="w-20 min-w-20 px-1 py-1 text-left text-base-200">

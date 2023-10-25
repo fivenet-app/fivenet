@@ -1,10 +1,8 @@
 <script lang="ts" setup>
-import { useClipboard } from '@vueuse/core';
 import { FingerprintIcon } from 'mdi-vue3';
 import { TranslateItem } from '~/composables/i18n';
 import { useNotificatorStore } from '~/store/notificator';
 
-const clipboard = useClipboard();
 const notifications = useNotificatorStore();
 
 const props = defineProps<{
@@ -16,7 +14,7 @@ const props = defineProps<{
 }>();
 
 function copyDocumentIDToClipboard(): void {
-    clipboard.copy(props.prefix + '-' + props.id);
+    copyToClipboardWrapper(props.prefix + '-' + props.id);
 
     if (props.title && props.content) {
         notifications.dispatchNotification({

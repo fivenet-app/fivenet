@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
-import { useClipboard } from '@vueuse/core';
 import { ChevronDownIcon, GavelIcon } from 'mdi-vue3';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
@@ -13,7 +12,6 @@ import { Law } from '~~/gen/ts/resources/laws/laws';
 import SummaryTable from './SummaryTable.vue';
 
 const completorStore = useCompletorStore();
-const clipboard = useClipboard();
 const notifications = useNotificatorStore();
 
 const { t, d } = useI18n();
@@ -135,7 +133,7 @@ ${t('common.crime', selectedPenalties.value.length)}:
         type: 'info',
     });
 
-    return clipboard.copy(text);
+    return copyToClipboardWrapper(text);
 }
 </script>
 

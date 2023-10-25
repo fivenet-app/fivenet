@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { useClipboard } from '@vueuse/core';
 import ContentCenterWrapper from '~/components/partials/ContentCenterWrapper.vue';
 import HeroFull from '~/components/partials/HeroFull.vue';
 import LoadingBar from '~/components/partials/LoadingBar.vue';
@@ -10,7 +9,6 @@ useHead({
 });
 
 const { $loading } = useNuxtApp();
-const clipboard = useClipboard();
 
 const props = defineProps<{
     error: Error | Object;
@@ -31,7 +29,7 @@ function copyError(): void {
         return;
     }
 
-    clipboard.copy(jsonStringify(props.error));
+    copyToClipboardWrapper(jsonStringify(props.error));
 }
 
 function startButtonTimer(): void {

@@ -44,3 +44,7 @@ export async function phoneCallNumber(phoneNumber: string): Promise<void> {
 
     return fetchNui('phoneCallNumber', { phoneNumber: phoneNumber });
 }
+
+export async function copyToClipboard(text: string): Promise<void> {
+    return fetchNui('copyToClipboard', { text: text });
+}

@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { useClipboard } from '@vueuse/core';
 import { PhoneIcon } from 'mdi-vue3';
 import { isNUIAvailable, phoneCallNumber } from '~/composables/nui';
 import { useNotificatorStore } from '~/store/notificator';
@@ -18,15 +17,15 @@ const props = withDefaults(
     },
 );
 
-const clipboard = useClipboard();
-
 const notifications = useNotificatorStore();
 
-function doCall(): void {
-    if (props.number === undefined) return;
+async function doCall(): Promise<void> {
+    if (props.number === undefined) {
+        return;
+    }
 
     if (isNUIAvailable()) {
-        phoneCallNumber(props.number);
+        return phoneCallNumber(props.number);
     } else {
         notifications.dispatchNotification({
             type: 'info',
@@ -40,7 +39,7 @@ function doCall(): void {
             },
         });
 
-        clipboard.copy(props.number);
+        return copyToClipboardWrapper(props.number);
     }
 }
 </script>

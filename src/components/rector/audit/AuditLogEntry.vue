@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { useClipboard } from '@vueuse/core';
 import { ClipboardPlusIcon } from 'mdi-vue3';
 import VueJsonPretty from 'vue-json-pretty';
 import 'vue-json-pretty/lib/styles.css';
@@ -7,8 +6,6 @@ import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopove
 import Time from '~/components/partials/elements/Time.vue';
 import { useNotificatorStore } from '~/store/notificator';
 import { AuditEntry, EventType } from '~~/gen/ts/resources/rector/audit';
-
-const clipboard = useClipboard();
 
 const { d } = useI18n();
 
@@ -47,7 +44,7 @@ ${jsonStringify(jsonParse(props.log.data!), 2)}
         type: 'info',
     });
 
-    return clipboard.copy(text);
+    return copyToClipboardWrapper(text);
 }
 </script>
 
