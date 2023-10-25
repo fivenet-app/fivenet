@@ -177,6 +177,9 @@ export const useAuthStore = defineStore('auth', {
         },
     },
     getters: {
+        isSuperuser(state): boolean {
+            return state.permissions.includes('superuser');
+        },
         getAccessTokenExpiration(state): null | Date {
             if (typeof state.accessTokenExpiration === 'string')
                 state.accessTokenExpiration = new Date(Date.parse(state.accessTokenExpiration));

@@ -20,9 +20,11 @@ const props = withDefaults(
     defineProps<{
         documentId: bigint;
         closed?: boolean;
+        canComment?: boolean;
     }>(),
     {
         closed: false,
+        canComment: false,
     },
 );
 
@@ -168,7 +170,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
     <div>
         <div ref="commentsEl" class="pb-2">
             <div v-if="can('DocStoreService.PostComment')">
-                <div v-if="!closed" class="flex items-start space-x-4">
+                <div v-if="!closed && canComment" class="flex items-start space-x-4">
                     <div class="min-w-0 flex-1">
                         <form @submit.prevent="onSubmitThrottle" class="relative">
                             <div

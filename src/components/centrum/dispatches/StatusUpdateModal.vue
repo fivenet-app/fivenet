@@ -23,19 +23,6 @@ const { $grpc } = useNuxtApp();
 
 const status: number = props.status ?? StatusDispatch.NEW;
 
-const statuses = ref<{ status: StatusDispatch; selected?: boolean }[]>([
-    { status: StatusDispatch.EN_ROUTE },
-    { status: StatusDispatch.ON_SCENE },
-    { status: StatusDispatch.NEED_ASSISTANCE },
-    { status: StatusDispatch.COMPLETED },
-    { status: StatusDispatch.CANCELLED },
-]);
-statuses.value.forEach((s) => {
-    if (s.status.valueOf() === status) {
-        s.selected = true;
-    }
-});
-
 async function updateDispatchStatus(dispatchId: bigint, values: FormData): Promise<void> {
     return new Promise(async (res, rej) => {
         try {
@@ -167,6 +154,9 @@ watch(props, () => {
                                                                         type="button"
                                                                         class="text-neutral bg-primary hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-1.5 text-xs my-0.5"
                                                                         :class="[
+                                                                            idx >= dispatchStatuses.length - 1
+                                                                                ? 'col-span-2'
+                                                                                : '',
                                                                             item.class,
                                                                             field.value == item.status
                                                                                 ? 'disabled bg-base-500 hover:bg-base-400'

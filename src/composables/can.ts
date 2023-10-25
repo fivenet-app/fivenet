@@ -25,3 +25,7 @@ export function can(perm: string | string[]): boolean {
 
     return false;
 }
+
+export function attr(perm: string, name: string, val: string): boolean {
+    return can(perm + '.' + name + (val !== undefined ? '.' + val : ''));
+}

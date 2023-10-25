@@ -292,7 +292,7 @@ onMounted(async () => {
             }
         } catch (e) {
             $grpc.handleError(e as RpcError);
-            console.log('Documents: Editor - Template Error', e);
+            console.error('Documents: Editor - Template Error', e);
 
             await navigateTo({ name: 'documents' });
 
@@ -571,7 +571,7 @@ async function createDocument(values: FormData, content: string, closed: boolean
             const { response } = await call;
 
             const promises: Promise<any>[] = [];
-            if (canDo.references) {
+            if (canDo.value.references) {
                 referenceManagerData.value.forEach((ref) => {
                     ref.sourceDocumentId = response.documentId;
 
@@ -582,7 +582,7 @@ async function createDocument(values: FormData, content: string, closed: boolean
                 });
             }
 
-            if (canDo.relations) {
+            if (canDo.value.relations) {
                 relationManagerData.value.forEach((rel) => {
                     rel.documentId = response.documentId;
 
@@ -662,7 +662,7 @@ async function updateDocument(id: bigint, values: FormData, content: string, clo
             const call = $grpc.getDocStoreClient().updateDocument(req);
             const { response } = await call;
 
-            if (canDo.references) {
+            if (canDo.value.references) {
                 const referencesToRemove: bigint[] = [];
                 currentReferences.value.forEach((ref) => {
                     if (!referenceManagerData.value.has(ref.id!)) referencesToRemove.push(ref.id!);
@@ -682,7 +682,7 @@ async function updateDocument(id: bigint, values: FormData, content: string, clo
                 });
             }
 
-            if (canDo.relations) {
+            if (canDo.value.relations) {
                 const relationsToRemove: bigint[] = [];
                 currentRelations.value.forEach((rel) => {
                     if (!relationManagerData.value.has(rel.id!)) relationsToRemove.push(rel.id!);
@@ -766,12 +766,12 @@ watchOnce(quillEditorRef, () => {
     quillEditorRef.value.getQuill().on('text-change', debounced);
 });
 
-const canDo = {
-    edit: checkDocAccess(docAccess.value, AccessLevel.EDIT),
-    access: checkDocAccess(docAccess.value, AccessLevel.ACCESS),
+const canDo = computed(() => ({
+    edit: checkDocAccess(docAccess.value, undefined, AccessLevel.EDIT, 'DocStoreService.UpdateDocument'),
+    access: checkDocAccess(docAccess.value, undefined, AccessLevel.ACCESS, 'DocStoreService.UpdateDocument'),
     references: can('DocStoreService.AddDocumentReference'),
     relations: can('DocStoreService.AddDocumentRelation'),
-};
+}));
 
 defineRule('required', required);
 defineRule('max', max);
@@ -859,7 +859,10 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                 @close="referenceManagerShow = false"
             />
 
-            <div class="flex flex-col gap-2 px-3 py-4 rounded-t-lg bg-base-800 text-neutral">
+            <div
+                class="flex flex-col gap-2 px-3 py-4 rounded-t-lg bg-base-800 text-neutral"
+                :class="!(canDo.edit && canDo.relations && canDo.references) ? 'rounded-b-md' : ''"
+            >
                 <div>
                     <label for="title" class="block font-medium text-base">
                         {{ $t('common.title') }}
@@ -870,7 +873,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                         :placeholder="$t('common.title')"
                         :label="$t('common.title')"
                         class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-3xl sm:leading-6"
-                        :disabled="!canEdit"
+                        :disabled="!canEdit || !canDo.edit"
                     />
                     <VeeErrorMessage name="title" as="p" class="mt-2 text-sm text-error-400" />
                 </div>
@@ -879,7 +882,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                         <label for="category" class="block font-medium text-sm">
                             {{ $t('common.category') }}
                         </label>
-                        <Combobox as="div" v-model="selectedCategory" :disabled="!canEdit" nullable>
+                        <Combobox as="div" v-model="selectedCategory" nullable>
                             <div class="relative">
                                 <ComboboxButton as="div">
                                     <ComboboxInput
@@ -887,6 +890,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                         class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                         @change="queryCategories = $event.target.value"
                                         :display-value="(category: any) => category?.name"
+                                        :disabled="!canEdit || !canDo.edit"
                                     />
                                 </ComboboxButton>
 
@@ -936,7 +940,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                             class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                             :placeholder="`${$t('common.document', 1)} ${$t('common.state')}`"
                             :label="`${$t('common.document', 1)} ${$t('common.state')}`"
-                            :disabled="!canEdit"
+                            :disabled="!canEdit || !canDo.edit"
                         />
                         <VeeErrorMessage name="state" as="p" class="mt-2 text-sm text-error-400" />
                     </div>
@@ -945,7 +949,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                         <Listbox as="div" v-model="doc.closed">
                             <div class="relative">
                                 <ListboxButton
-                                    :disabled="!canEdit"
+                                    :disabled="!canEdit || !canDo.edit"
                                     class="block pl-3 text-left w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 >
                                     <span class="block truncate">
@@ -999,7 +1003,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                     </div>
                 </div>
             </div>
-            <div class="bg-neutral">
+            <div v-if="canDo.edit" class="bg-neutral">
                 <QuillEditor
                     ref="quillEditorRef"
                     v-model:content="doc.content"
@@ -1020,12 +1024,12 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                     </div>
                 </div>
             </div>
-            <div class="flex flex-row">
+            <div v-if="canDo.edit" class="flex flex-row">
                 <div class="flex-1 inline-flex rounded-md shadow-sm" role="group">
                     <button
                         v-if="canDo.relations"
                         type="button"
-                        :disabled="!canEdit"
+                        :disabled="!canEdit || !canDo.edit"
                         class="inline-flex justify-center rounded-bl-md bg-primary-500 py-2.5 px-3.5 w-full text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
                         :class="canDo.references ? '' : 'rounded-br-md'"
                         @click="relationManagerShow = true"
@@ -1041,7 +1045,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                     <button
                         v-if="canDo.references"
                         type="button"
-                        :disabled="!canEdit"
+                        :disabled="!canEdit || !canDo.edit"
                         class="inline-flex justify-center rounded-br-md bg-primary-500 py-2.5 px-3.5 w-full text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
                         :class="canDo.relations ? '' : 'rounded-bl-md'"
                         @click="referenceManagerShow = true"
@@ -1060,7 +1064,6 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                 <h2 class="text-neutral">
                     {{ $t('common.access') }}
                 </h2>
-                <!-- TODO utilize canDo.access to allow editing access -->
                 <AccessEntry
                     v-for="entry in access.values()"
                     :key="entry.id?.toString()"
@@ -1071,10 +1074,11 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                     @rankChange="updateAccessEntryRank($event)"
                     @accessChange="updateAccessEntryAccess($event)"
                     @deleteRequest="removeAccessEntry($event)"
+                    :read-only="!canDo.access"
                 />
                 <button
                     type="button"
-                    :disabled="!canEdit"
+                    :disabled="!canEdit || !canDo.access"
                     class="p-2 rounded-full bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
                     data-te-toggle="tooltip"
                     :title="$t('components.documents.document_editor.add_permission')"

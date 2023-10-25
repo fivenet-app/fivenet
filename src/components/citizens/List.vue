@@ -9,12 +9,20 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import TablePagination from '~/components/partials/elements/TablePagination.vue';
+import { attr } from '~/composables/can';
 import { ListCitizensRequest, ListCitizensResponse } from '~~/gen/ts/services/citizenstore/citizenstore';
 import ListEntry from './ListEntry.vue';
 
 const { $grpc } = useNuxtApp();
 
-const query = ref<{ name?: string; phoneNumber?: string; wanted?: boolean; trafficPoints?: number; dateofbirth?: string }>({});
+const query = ref<{
+    name?: string;
+    phoneNumber?: string;
+    wanted?: boolean;
+    trafficPoints?: number;
+    fines?: number;
+    dateofbirth?: string;
+}>({});
 const offset = ref(0n);
 
 const hash = useRouteHash();
@@ -47,6 +55,9 @@ async function listCitizens(): Promise<ListCitizensResponse> {
             }
             if (query.value.trafficPoints) {
                 req.trafficPoints = BigInt(query.value.trafficPoints?.toString() ?? '0');
+            }
+            if (query.value.fines) {
+                req.openFines = BigInt(query.value.fines?.toString() ?? '0');
             }
             if (query.value.dateofbirth) {
                 req.dateofbirth = query.value.dateofbirth;
@@ -116,7 +127,7 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                             </div>
                             <div
                                 class="flex-initial form-control"
-                                v-if="can('CitizenStoreService.ListCitizens.Fields.UserProps.Wanted')"
+                                v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'UserProps.Wanted')"
                             >
                                 <label for="search" class="block text-sm font-medium leading-6 text-neutral">
                                     {{ $t('components.citizens.citizens_list.only_wanted') }}
@@ -157,7 +168,7 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                 <div class="flex flex-row gap-2">
                                     <div
                                         class="flex-1 form-control"
-                                        v-if="can('CitizenStoreService.ListCitizens.Fields.PhoneNumber')"
+                                        v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'PhoneNumber')"
                                     >
                                         <label for="searchPhone" class="block text-sm font-medium leading-6 text-neutral">
                                             {{ $t('common.search') }}
@@ -184,6 +195,23 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                                 type="number"
                                                 name="trafficPoints"
                                                 :placeholder="`${$t('common.traffic_infraction_points')}`"
+                                                class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div
+                                        class="flex-initial form-control"
+                                        v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'UserProps.OpenFines')"
+                                    >
+                                        <label for="search" class="block text-sm font-medium leading-6 text-neutral">
+                                            {{ $t('components.citizens.citizens_list.open_fine') }}
+                                        </label>
+                                        <div class="relative flex items-center mt-2">
+                                            <input
+                                                v-model="query.fines"
+                                                type="number"
+                                                name="fine"
+                                                :placeholder="`${$t('common.fine')}`"
                                                 class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                             />
                                         </div>
@@ -225,7 +253,7 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                             {{ $t('common.sex') }}
                                         </th>
                                         <th
-                                            v-if="can('CitizenStoreService.ListCitizens.Fields.PhoneNumber')"
+                                            v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'PhoneNumber')"
                                             scope="col"
                                             class="py-3.5 px-2 text-left text-sm font-semibold text-neutral"
                                         >
@@ -236,12 +264,23 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                         </th>
                                         <th
                                             v-if="
-                                                can('CitizenStoreService.ListCitizens.Fields.UserProps.TrafficInfractionPoints')
+                                                attr(
+                                                    'CitizenStoreService.ListCitizens',
+                                                    'Fields',
+                                                    'UserProps.TrafficInfractionPoints',
+                                                )
                                             "
                                             scope="col"
                                             class="py-3.5 px-2 text-left text-sm font-semibold text-neutral"
                                         >
                                             {{ $t('common.traffic_infraction_points') }}
+                                        </th>
+                                        <th
+                                            v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'UserProps.OpenFines')"
+                                            scope="col"
+                                            class="py-3.5 px-2 text-left text-sm font-semibold text-neutral"
+                                        >
+                                            {{ $t('common.fine') }}
                                         </th>
                                         <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
                                             {{ $t('common.height') }}
@@ -277,7 +316,7 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                             {{ $t('common.sex') }}
                                         </th>
                                         <th
-                                            v-if="can('CitizenStoreService.ListCitizens.Fields.PhoneNumber')"
+                                            v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'PhoneNumber')"
                                             scope="col"
                                             class="py-3.5 px-2 text-left text-sm font-semibold text-neutral"
                                         >
@@ -288,7 +327,11 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                         </th>
                                         <th
                                             v-if="
-                                                can('CitizenStoreService.ListCitizens.Fields.UserProps.TrafficInfractionPoints')
+                                                attr(
+                                                    'CitizenStoreService.ListCitizens',
+                                                    'Fields',
+                                                    'UserProps.TrafficInfractionPoints',
+                                                )
                                             "
                                             scope="col"
                                             class="py-3.5 px-2 text-left text-sm font-semibold text-neutral"

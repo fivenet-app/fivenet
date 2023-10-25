@@ -31,7 +31,7 @@ const year = props.year ?? '201' + props.plate.charAt(props.plate.length - 1);
             <div class="select-none text-xs text-warn-400 sm:hidden">{{ stateShort }}</div>
             <div class="select-none text-xs">{{ year }}</div>
         </div>
-        <div class="text-xl" :class="isColourBright(inverseColor) ? 'text-black' : 'text-neutral'">
+        <div class="text-base" :class="isColourBright(inverseColor) ? 'text-black' : 'text-neutral'">
             {{ plate }}
         </div>
     </div>

@@ -6,6 +6,7 @@ import JobModal from '~/components/citizens/info/JobModal.vue';
 import TemplatesModal from '~/components/documents/templates/TemplatesModal.vue';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import PhoneNumber from '~/components/partials/citizens/PhoneNumber.vue';
+import { attr } from '~/composables/can';
 import { useClipboardStore } from '~/store/clipboard';
 import { User } from '~~/gen/ts/resources/users/users';
 import TrafficPointsModal from './TrafficPointsModal.vue';
@@ -69,7 +70,7 @@ const trafficPointsModal = ref(false);
                                 <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:mt-0 sm:ml-6">{{ user?.height }}cm</dd>
                             </div>
                             <div
-                                v-if="can('CitizenStoreService.ListCitizens.Fields.PhoneNumber')"
+                                v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'PhoneNumber')"
                                 class="sm:flex sm:px-6 sm:py-5"
                             >
                                 <dt class="text-sm font-medium text-neutral sm:w-40 sm:flex-shrink-0 lg:w-48">
@@ -88,7 +89,7 @@ const trafficPointsModal = ref(false);
                                 </dd>
                             </div>
                             <div
-                                v-if="can('CitizenStoreService.ListCitizens.Fields.UserProps.TrafficInfractionPoints')"
+                                v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'UserProps.TrafficInfractionPoints')"
                                 class="sm:flex sm:px-6 sm:py-5"
                             >
                                 <dt class="text-sm font-medium text-neutral sm:w-40 sm:flex-shrink-0 lg:w-48">
@@ -102,7 +103,7 @@ const trafficPointsModal = ref(false);
                                 </dd>
                             </div>
                             <div
-                                v-if="can('CitizenStoreService.ListCitizens.Fields.UserProps.OpenFines')"
+                                v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'UserProps.OpenFines')"
                                 class="sm:flex sm:px-6 sm:py-5"
                             >
                                 <dt class="text-sm font-medium text-neutral sm:w-40 sm:flex-shrink-0 lg:w-48">
@@ -117,7 +118,10 @@ const trafficPointsModal = ref(false);
                                     </span>
                                 </dd>
                             </div>
-                            <div v-if="can('CitizenStoreService.ListCitizens.Fields.Licenses')" class="sm:flex sm:px-6 sm:py-5">
+                            <div
+                                v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'Licenses')"
+                                class="sm:flex sm:px-6 sm:py-5"
+                            >
                                 <dt class="text-sm font-medium text-neutral sm:w-40 sm:flex-shrink-0 lg:w-48">
                                     {{ $t('common.license', 2) }}
                                 </dt>
@@ -147,7 +151,7 @@ const trafficPointsModal = ref(false);
         </div>
 
         <div class="flex flex-col gap-2 px-2 py-4 pr-2 shrink-0 lg:w-96">
-            <div class="flex-initial" v-if="can('CitizenStoreService.SetUserProps.Fields.Wanted')">
+            <div v-if="attr('CitizenStoreService.SetUserProps', 'Fields', 'Wanted')" class="flex-initial">
                 <button
                     type="button"
                     class="inline-flex items-center justify-center flex-shrink-0 w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-error-500 text-neutral hover:bg-error-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500 sm:flex-1"
@@ -160,9 +164,8 @@ const trafficPointsModal = ref(false);
                     }}
                 </button>
             </div>
-            <div class="flex-initial">
+            <div v-if="attr('CitizenStoreService.SetUserProps', 'Fields', 'Job')" class="flex-initial">
                 <button
-                    v-if="can('CitizenStoreService.SetUserProps.Fields.Job')"
                     type="button"
                     class="inline-flex items-center justify-center flex-shrink-0 w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500 sm:flex-1"
                     @click="setJobModal = true"
@@ -170,7 +173,7 @@ const trafficPointsModal = ref(false);
                     {{ $t('components.citizens.citizen_info_profile.set_job') }}
                 </button>
             </div>
-            <div class="flex-initial" v-if="can('CitizenStoreService.SetUserProps.Fields.TrafficInfractionPoints')">
+            <div v-if="attr('CitizenStoreService.SetUserProps', 'Fields', 'TrafficInfractionPoints')" class="flex-initial">
                 <button
                     type="button"
                     class="inline-flex items-center justify-center flex-shrink-0 w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-secondary-500 text-neutral hover:bg-secondary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500 sm:flex-1"
@@ -179,7 +182,7 @@ const trafficPointsModal = ref(false);
                     {{ $t('components.citizens.citizen_info_profile.set_traffic_points') }}
                 </button>
             </div>
-            <div class="flex-initial" v-if="can('DocStoreService.CreateDocument')">
+            <div v-if="can('DocStoreService.CreateDocument')" class="flex-initial">
                 <button
                     type="button"
                     class="inline-flex items-center justify-center flex-shrink-0 w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-base-700 text-neutral hover:bg-base-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500 sm:flex-1"

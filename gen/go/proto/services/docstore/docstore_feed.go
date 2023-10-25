@@ -634,6 +634,10 @@ func (s *Server) notifyUser(ctx context.Context, documentId uint64, sourceUserId
 		return
 	}
 
+	if doc.Creator != nil {
+		s.enricher.EnrichJobInfoSafe(userInfo, doc.Creator)
+	}
+
 	// TODO add source user as `CausedBy` to `Notification.Data``
 	nType := string(notifi.InfoType)
 	not := &notifications.Notification{

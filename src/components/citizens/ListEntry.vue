@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { ClipboardPlusIcon, EyeIcon } from 'mdi-vue3';
 import PhoneNumber from '~/components/partials/citizens/PhoneNumber.vue';
+import { attr } from '~/composables/can';
 import { useClipboardStore } from '~/store/clipboard';
 import { useNotificatorStore } from '~/store/notificator';
 import { User } from '~~/gen/ts/resources/users/users';
@@ -35,29 +36,37 @@ function addToClipboard(): void {
                 {{ $t('common.wanted').toUpperCase() }}
             </span>
         </td>
-        <td class="whitespace-nowrap px-1 py-1 text-left text-base-200">
+        <td class="whitespace-nowrap px-1 py-1 text-left text-base-200 text-sm">
             {{ user.jobLabel }}
         </td>
-        <td class="whitespace-nowrap px-1 py-1 text-left text-base-200">
+        <td class="whitespace-nowrap px-1 py-1 text-left text-base-200 text-sm">
             {{ user.sex!.toUpperCase() }}
         </td>
         <td
-            v-if="can('CitizenStoreService.ListCitizens.Fields.PhoneNumber')"
-            class="whitespace-nowrap px-1 py-1 text-left text-base-200"
+            v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'PhoneNumber')"
+            class="whitespace-nowrap px-1 py-1 text-left text-base-200 text-sm"
         >
             <PhoneNumber :number="user.phoneNumber" />
         </td>
-        <td class="whitespace-nowrap px-1 py-1 text-left text-base-200">
+        <td class="whitespace-nowrap px-1 py-1 text-left text-base-200 text-sm">
             {{ user.dateofbirth }}
         </td>
         <td
-            v-if="can('CitizenStoreService.ListCitizens.Fields.UserProps.TrafficInfractionPoints')"
-            class="whitespace-nowrap px-1 py-1 text-left text-base-200"
+            v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'UserProps.TrafficInfractionPoints')"
+            class="whitespace-nowrap px-1 py-1 text-left text-base-200 text-sm"
             :class="(user?.props?.trafficInfractionPoints ?? 0n) >= 10 ? 'text-error-500' : ''"
         >
             {{ user.props?.trafficInfractionPoints ?? 0n }}
         </td>
-        <td class="whitespace-nowrap px-1 py-1 text-left text-base-200">{{ user.height }}cm</td>
+        <td
+            v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'UserProps.OpenFines')"
+            class="whitespace-nowrap px-1 py-1 text-left text-error-500 text-sm"
+        >
+            <template v-if="(user.props?.openFines ?? 0n) > 0n">
+                {{ $n(parseInt((user?.props?.openFines ?? 0n).toString()), 'currency') }}
+            </template>
+        </td>
+        <td class="whitespace-nowrap px-1 py-1 text-left text-base-200 text-sm">{{ user.height }}cm</td>
         <td class="whitespace-nowrap py-2 pl-3 pr-4 text-sm font-medium sm:pr-0">
             <div v-if="can('CitizenStoreService.GetUser')" class="flex flex-row justify-end">
                 <button class="flex-initial text-primary-500 hover:text-primary-400" @click="addToClipboard">

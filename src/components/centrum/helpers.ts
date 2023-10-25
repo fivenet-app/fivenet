@@ -1,6 +1,7 @@
 import {
     CalendarCheckIcon,
     CalendarRemoveIcon,
+    CancelIcon,
     CarBackIcon,
     CheckBoldIcon,
     CoffeeIcon,
@@ -45,8 +46,9 @@ export function dispatchStatusToBGColor(status: StatusDispatch | undefined): str
         case StatusDispatch.NEED_ASSISTANCE:
             return 'bg-warn-600';
         case StatusDispatch.COMPLETED:
-        case StatusDispatch.CANCELLED:
             return 'bg-success-600';
+        case StatusDispatch.CANCELLED:
+            return 'bg-success-800';
         case StatusDispatch.ARCHIVED:
             return 'bg-base-600';
         case StatusDispatch.EN_ROUTE:
@@ -119,5 +121,6 @@ export const dispatchStatuses: {
     { icon: markRaw(MarkerCheckIcon), name: 'On Scene', status: StatusDispatch.ON_SCENE },
     { icon: markRaw(HelpCircleIcon), name: 'Need Assistance', status: StatusDispatch.NEED_ASSISTANCE },
     { icon: markRaw(CheckBoldIcon), name: 'Completed', status: StatusDispatch.COMPLETED },
+    { icon: markRaw(CancelIcon), name: 'Cancelled', status: StatusDispatch.CANCELLED },
     //{ icon: markRaw(ListStatusIcon), name: 'components.centrum.update_dispatch_status.title', class: 'bg-base-800' },
 ];

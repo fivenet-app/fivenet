@@ -170,8 +170,9 @@ watchDebounced(ownDispatches.value, async () => ensureDispatchSelected(), {
 });
 
 onBeforeMount(async () => {
-    setTimeout(async () => canStream && startStream(), 250);
-    ensureDispatchSelected();
+    if (canStream) {
+        setTimeout(async () => startStream(), 250);
+    }
 });
 
 onBeforeUnmount(async () => {
@@ -423,7 +424,9 @@ const open = ref(false);
                                         <li>
                                             <div class="grid grid-cols-2 gap-0.5">
                                                 <button
-                                                    v-for="(item, idx) in dispatchStatuses"
+                                                    v-for="item in dispatchStatuses.filter(
+                                                        (s) => s.status !== StatusDispatch.CANCELLED,
+                                                    )"
                                                     :key="item.name"
                                                     type="button"
                                                     class="text-neutral bg-primary hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-1.5 text-xs my-0.5"

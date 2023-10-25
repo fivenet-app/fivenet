@@ -191,6 +191,10 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 		return nil, ErrNotFoundOrNoPerms
 	}
 
+	if resp.Document.Creator != nil {
+		s.enricher.EnrichJobInfoSafe(userInfo, resp.Document.Creator)
+	}
+
 	docAccess, err := s.GetDocumentAccess(ctx, &GetDocumentAccessRequest{
 		DocumentId: resp.Document.Id,
 	})
@@ -226,7 +230,7 @@ func (s *Server) getDocument(ctx context.Context, condition jet.BoolExpression, 
 	}
 
 	if doc.Creator != nil {
-		s.enricher.EnrichJobInfoSafe(userInfo, doc.Creator)
+		s.enricher.EnrichJobInfo(doc.Creator)
 	}
 
 	return &doc, nil
@@ -323,8 +327,15 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 	if err != nil {
 		return nil, ErrNotFoundOrNoPerms
 	}
+	var onlyUpdateAccess bool
 	if !check && !userInfo.SuperUser {
-		return nil, ErrPermissionDenied
+		onlyUpdateAccess, err = s.checkIfUserHasAccessToDoc(ctx, req.DocumentId, userInfo, documents.AccessLevel_ACCESS_LEVEL_ACCESS)
+		if err != nil {
+			return nil, ErrPermissionDenied
+		}
+		if !onlyUpdateAccess {
+			return nil, ErrPermissionDenied
+		}
 	}
 
 	doc, err := s.getDocument(ctx,
@@ -358,34 +369,36 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 		return nil, ErrFailedQuery
 	}
 
-	tDocs := table.FivenetDocuments
-	stmt := tDocs.
-		UPDATE(
-			tDocs.CategoryID,
-			tDocs.Title,
-			tDocs.Summary,
-			tDocs.Content,
-			tDocs.Data,
-			tDocs.State,
-			tDocs.Closed,
-			tDocs.Public,
-		).
-		SET(
-			req.CategoryId,
-			req.Title,
-			utils.StringFirstN(htmlsanitizer.StripTags(req.Content), DocShortContentLength),
-			req.Content,
-			tDocs.Data,
-			req.State,
-			req.Closed,
-			req.Public,
-		).
-		WHERE(
-			tDocs.ID.EQ(jet.Uint64(req.DocumentId)),
-		)
+	if !onlyUpdateAccess {
+		tDocs := table.FivenetDocuments
+		stmt := tDocs.
+			UPDATE(
+				tDocs.CategoryID,
+				tDocs.Title,
+				tDocs.Summary,
+				tDocs.Content,
+				tDocs.Data,
+				tDocs.State,
+				tDocs.Closed,
+				tDocs.Public,
+			).
+			SET(
+				req.CategoryId,
+				req.Title,
+				utils.StringFirstN(htmlsanitizer.StripTags(req.Content), DocShortContentLength),
+				req.Content,
+				tDocs.Data,
+				req.State,
+				req.Closed,
+				req.Public,
+			).
+			WHERE(
+				tDocs.ID.EQ(jet.Uint64(req.DocumentId)),
+			)
 
-	if _, err := stmt.ExecContext(ctx, tx); err != nil {
-		return nil, ErrFailedQuery
+		if _, err := stmt.ExecContext(ctx, tx); err != nil {
+			return nil, ErrFailedQuery
+		}
 	}
 
 	if err := s.handleDocumentAccessChanges(ctx, tx, AccessLevelUpdateMode_ACCESS_LEVEL_UPDATE_MODE_UPDATE, req.DocumentId, req.Access); err != nil {

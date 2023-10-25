@@ -27,8 +27,8 @@ function selected(_: bigint | number | string) {
     emit('selected', props.dispatch);
 }
 
-const dispatchBackground = computed(() => dispatchStatusToFillColor(props.dispatch.status?.status ?? 0));
-const dispatchAnimated = computed(() => (dispatchStatusAnimate(props.dispatch.status?.status ?? 0) ? 'animate-wiggle' : ''));
+const dispatchBackground = computed(() => dispatchStatusToFillColor(props.dispatch.status?.status));
+const dispatchAnimated = computed(() => (dispatchStatusAnimate(props.dispatch.status?.status) ? 'animate-wiggle' : ''));
 </script>
 
 <template>
