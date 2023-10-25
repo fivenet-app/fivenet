@@ -62,7 +62,7 @@ function getNameForLawBookId(id: bigint): string | undefined {
                 <td class="whitespace-nowrap px-1 py-1 text-left text-base-200">
                     {{ p.law.stvoPoints ? p.law.stvoPoints * p.count : 0 }}
                 </td>
-                <td class="px-1 py-1 text-left text-base-200">
+                <td class="break-all text-sm px-1 py-1 text-left text-base-200">
                     {{ p.law.description }}
                 </td>
                 <td class="w-20 min-w-20 px-1 py-1 text-left text-base-200">
