@@ -227,8 +227,8 @@
         "citizens": {
             "citizens_list": {
                 "only_wanted": "Only Wanted",
-                "open_fine": "Open fines",
-                "no_citizens": "Use the search field above to search or update your query."
+                "no_citizens": "Use the search field above to search or update your query.",
+                "open_fine": "Open fines"
             },
             "citizen_info_profile": {
                 "create_new_document": "Create New Document",
