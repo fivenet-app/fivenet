@@ -7,6 +7,7 @@ import (
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
 	centrumutils "github.com/galexrt/fivenet/gen/go/proto/services/centrum/utils"
+	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/paulmach/orb"
 	"github.com/puzpuzpuz/xsync/v3"
@@ -103,7 +104,7 @@ func (s *Manager) runRemoveDispatchesFromEmptyUnits() {
 		case <-s.ctx.Done():
 			return
 
-		case <-time.After(3 * time.Second):
+		case <-time.After(5 * time.Second):
 			func() {
 				ctx, span := s.tracer.Start(s.ctx, "centrum-units-empty")
 				defer span.End()
@@ -114,6 +115,10 @@ func (s *Manager) runRemoveDispatchesFromEmptyUnits() {
 
 				if err := s.cleanupUnitStatus(ctx); err != nil {
 					s.logger.Error("failed to clean up unit status", zap.Error(err))
+				}
+
+				if err := s.checkUnitUsers(ctx); err != nil {
+					s.logger.Error("failed to check duty state of unit users", zap.Error(err))
 				}
 			}()
 		}
@@ -343,8 +348,14 @@ func (s *Manager) deduplicateDispatches(ctx context.Context) error {
 // Remove empty units from dispatches (if no other unit is assigned to dispatch update status to UNASSIGNED) by
 // iterating over the dispatches and making sure the assigned units aren't empty
 func (s *Manager) removeDispatchesFromEmptyUnits(ctx context.Context) error {
-	s.Dispatches.Range(func(job string, dsps *xsync.MapOf[uint64, *dispatch.Dispatch]) bool {
-		dsps.Range(func(id uint64, dsp *dispatch.Dispatch) bool {
+	s.Dispatches.Range(func(job string, _ *xsync.MapOf[uint64, *dispatch.Dispatch]) bool {
+		dsps := s.State.FilterDispatches(job, nil, []dispatch.StatusDispatch{
+			dispatch.StatusDispatch_STATUS_DISPATCH_ARCHIVED,
+			dispatch.StatusDispatch_STATUS_DISPATCH_CANCELLED,
+			dispatch.StatusDispatch_STATUS_DISPATCH_COMPLETED,
+		})
+
+		for _, dsp := range dsps {
 			for i := len(dsp.Units) - 1; i >= 0; i-- {
 				if i > len(dsp.Units)-1 {
 					break
@@ -363,7 +374,7 @@ func (s *Manager) removeDispatchesFromEmptyUnits(ctx context.Context) error {
 			}
 
 			return true
-		})
+		}
 
 		return true
 	})
@@ -387,6 +398,34 @@ func (s *Manager) cleanupUnitStatus(ctx context.Context) error {
 				}); err != nil {
 					s.logger.Error("failed to update empty unit status to unavailable", zap.Error(err))
 					return true
+				}
+			}
+
+			return true
+		})
+
+		return true
+	})
+
+	return nil
+}
+
+func (s *Manager) checkUnitUsers(ctx context.Context) error {
+	s.Units.Range(func(job string, value *xsync.MapOf[uint64, *dispatch.Unit]) bool {
+		value.Range(func(id uint64, unit *dispatch.Unit) bool {
+			for i := len(unit.Users) - 1; i >= 0; i-- {
+				if i > len(unit.Users)-1 {
+					break
+				}
+
+				if !s.tracker.IsUserOnDuty(job, unit.Users[i].UserId) {
+					if err := s.UpdateUnitAssignments(ctx, &userinfo.UserInfo{
+						UserId: unit.Users[i].UserId,
+						Job:    job,
+					}, unit, nil, []int32{unit.Users[i].UserId}); err != nil {
+						s.logger.Error("failed to remove off-duty users from unit", zap.Error(err))
+						return false
+					}
 				}
 			}
 

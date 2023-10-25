@@ -12,9 +12,10 @@ import (
 	"go.uber.org/zap"
 )
 
-const DelayBetweenDispatchAssignment = 40 * time.Second
-const PerUnitDelay = 7
-const MaxDelayCap = 2 * time.Minute
+const DelayBetweenDispatchAssignment = 37 * time.Second
+const DelayMinUnits = 2
+const PerUnitDelay = 6
+const MaxDelayCap = 90 * time.Second
 
 type Bot struct {
 	logger *zap.Logger
@@ -40,7 +41,7 @@ func (b *Bot) Run(ctx context.Context) error {
 		case <-ctx.Done():
 			return nil
 
-		case <-time.After(5 * time.Second):
+		case <-time.After(4 * time.Second):
 		}
 
 		dispatches := b.state.FilterDispatches(b.job, nil, []dispatch.StatusDispatch{
@@ -105,6 +106,12 @@ func (b *Bot) getAvailableUnit(ctx context.Context) (*dispatch.Unit, bool) {
 		t, ok := b.lastAssignedUnits[unitId]
 		if !ok || time.Now().After(t) {
 			unit, _ = units.Load(unitId)
+
+			// Double check if unit is still available
+			if unit.Status != nil && unit.Status.Status == dispatch.StatusUnit_STATUS_UNIT_AVAILABLE {
+				continue
+			}
+
 			break
 		}
 	}
@@ -114,10 +121,10 @@ func (b *Bot) getAvailableUnit(ctx context.Context) (*dispatch.Unit, bool) {
 	}
 
 	delay := 0 * time.Second
-	if len(unitIds) > 1 {
+	if len(unitIds) > DelayMinUnits {
 		delay = time.Duration(len(unitIds)*PerUnitDelay) * time.Second
-		if delay >= 2*time.Minute {
-			delay = 2 * time.Minute
+		if delay >= MaxDelayCap {
+			delay = MaxDelayCap
 		}
 	}
 	b.lastAssignedUnits[unit.Id] = time.Now().Add(DelayBetweenDispatchAssignment).Add(delay)
