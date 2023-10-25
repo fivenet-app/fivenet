@@ -15,11 +15,13 @@ RUN apt-get update && \
 
 FROM docker.io/library/alpine:3.18.4
 WORKDIR /app
-RUN apk --no-cache add ca-certificates tzdata && \
+RUN apk --no-cache add ca-certificates tini tzdata && \
     mkdir -p ./.output/public
 COPY --from=nodebuilder /app/.output/public ./.output/public
 COPY --from=gobuilder /go/src/github.com/galexrt/fivenet/fivenet /usr/local/bin
 
 EXPOSE 8080/tcp 9090/tcp
 
-CMD ["fivenet", "server"]
+ENTRYPOINT ["tini", "--", "fivenet"]
+
+CMD ["server"]

@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "fivenet.fullname" . }}-discordbot
+  labels:
+    {{- include "fivenet.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.discordBot.replicaCount }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/component: fivenet
+      {{- include "fivenet.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        checksum/fivenet-config: {{ include (print $.Template.BasePath "/secrets.yaml") $ | sha256sum }}
+      {{- with .Values.podAnnotations }}
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      labels:
+        app.kubernetes.io/component: fivenet
+        {{- include "fivenet.selectorLabels" . | nindent 8 }}
+    spec:
+      {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      serviceAccountName: {{ include "fivenet.serviceAccountName" . }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      volumes:
+        - name: fivenet-config
+          secret:
+            secretName: "{{ include "fivenet.fullname" . }}-fivenet-config"
+      containers:
+        - name: fivenet
+          args:
+            - discord
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.discordBot.image.repository }}:{{ .Values.discordBot.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.discordBot.image.pullPolicy }}
+          env:
+            {{- toYaml .Values.discordBot.additionalEnv | nindent 12 }}
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          livenessProbe:
+            {{- toYaml .Values.discordBot.livenessProbe | nindent 12 }}
+          readinessProbe:
+            {{- toYaml .Values.discordBot.readinessProbe | nindent 12 }}
+          volumeMounts:
+            - name: fivenet-config
+              mountPath: /config
+              readOnly: true
+          resources:
+            {{- toYaml .Values.discordBot.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

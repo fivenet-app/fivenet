@@ -205,6 +205,55 @@ fivenet:
         commands:
           enabled: true
 
+# -- FiveNet Discord Bot deployment config
+discordBot:
+  enabled: true
+  replicaCount: 1
+  image:
+    repository: docker.io/galexrt/fivenet
+    pullPolicy: IfNotPresent
+    # Overrides the image tag whose default is the chart appVersion.
+    tag: ""
+  resources: {}
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+  livenessProbe:
+    httpGet:
+      path: /readiness
+      port: http
+    initialDelaySeconds: 15
+    periodSeconds: 10
+  readinessProbe:
+    httpGet:
+      path: /readiness
+      port: http
+    initialDelaySeconds: 10
+    periodSeconds: 7
+  additionalEnv: []
+  serviceMonitor:
+    # -- Specifies whether a prometheus-operator ServiceMonitor should be created
+    enabled: false
+    # -- Additional Labels for the ServiceMonitor object
+    additionalLabels: {}
+    #namespace: "monitoring"
+    namespaceSelector:
+    # Default: scrape .Release.Namespace only
+    # To scrape all, use the following:
+    #  matchNames:
+    #    - monitoring
+    #   any: true
+    # -- (duration) Interval at which metrics should be scraped
+    scrapeInterval: 30s
+    # honorLabels: true
+
 envoy:
   replicaCount: 2
   image:

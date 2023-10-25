@@ -10,6 +10,7 @@ require (
 	github.com/Masterminds/sprig/v3 v3.2.3
 	github.com/XSAM/otelsql v0.26.0
 	github.com/adrg/strutil v0.3.1
+	github.com/alecthomas/kong v0.8.1
 	github.com/blevesearch/bleve/v2 v2.3.10
 	github.com/bwmarrin/discordgo v0.27.1
 	github.com/creasty/defaults v1.7.0

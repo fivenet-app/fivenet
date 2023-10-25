@@ -34,9 +34,7 @@ defineProps<{
                         DSP-{{ status.dispatchId }}
                     </p>
                     <p class="text-sm font-normal inline-flex items-center justify-center">
-                        <span class="font-semibold">
-                            {{ $t('common.status') }} </span
-                        >:
+                        <span class="font-semibold"> {{ $t('common.status') }} </span>:
                         {{ $t(`enums.centrum.StatusDispatch.${StatusDispatch[status.status ?? 0]}`) }}
                     </p>
                 </div>

@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"time"
 
+	"github.com/alecthomas/kong"
 	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/discord"
 	"github.com/galexrt/fivenet/pkg/events"
@@ -42,12 +43,21 @@ import (
 	pbrector "github.com/galexrt/fivenet/gen/go/proto/services/rector"
 )
 
+var CLI struct {
+	Server struct {
+	} `cmd:"" help:"Run FiveNet server."`
+	Discord struct {
+	} `cmd:"" help:"Run Discord bot."`
+}
+
 func main() {
-	fx.New(
+	ctx := kong.Parse(&CLI)
+
+	fxOpts := []fx.Option{
 		fx.WithLogger(func(log *zap.Logger) fxevent.Logger {
 			return &fxevent.ZapLogger{Logger: log}
 		}),
-		fx.StartTimeout(60*time.Second),
+		fx.StartTimeout(60 * time.Second),
 
 		LoggerModule,
 		config.Module,
@@ -89,11 +99,23 @@ func main() {
 		),
 
 		discord.BotModule,
+	}
 
-		fx.Invoke(func(*grpcserver.Server) {}),
-		fx.Invoke(func(*http.Server) {}),
-		fx.Invoke(func(*discord.Bot) {}),
-	).Run()
+	switch ctx.Command() {
+	case "server":
+		fxOpts = append(fxOpts,
+			fx.Invoke(func(*grpcserver.Server) {}),
+			fx.Invoke(func(*http.Server) {}),
+		)
+	case "discord":
+		fxOpts = append(fxOpts,
+			fx.Invoke(func(*discord.Bot) {}),
+		)
+	default:
+		panic(ctx.Error)
+	}
+
+	fx.New(fxOpts...).Run()
 }
 
 var LoggerModule = fx.Module("logger",
