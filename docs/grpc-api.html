@@ -282,6 +282,29 @@
         
           
           <li>
+            <a href="#resources%2fdispatch%2fsettings.proto">resources/dispatch/settings.proto</a>
+            <ul>
+              
+                <li>
+                  <a href="#resources.dispatch.DisponentsChange"><span class="badge">M</span>DisponentsChange</a>
+                </li>
+              
+                <li>
+                  <a href="#resources.dispatch.Settings"><span class="badge">M</span>Settings</a>
+                </li>
+              
+              
+                <li>
+                  <a href="#resources.dispatch.CentrumMode"><span class="badge">E</span>CentrumMode</a>
+                </li>
+              
+              
+              
+            </ul>
+          </li>
+        
+          
+          <li>
             <a href="#resources%2fdispatch%2funits.proto">resources/dispatch/units.proto</a>
             <ul>
               
@@ -304,29 +327,6 @@
               
                 <li>
                   <a href="#resources.dispatch.StatusUnit"><span class="badge">E</span>StatusUnit</a>
-                </li>
-              
-              
-              
-            </ul>
-          </li>
-        
-          
-          <li>
-            <a href="#resources%2fdispatch%2fsettings.proto">resources/dispatch/settings.proto</a>
-            <ul>
-              
-                <li>
-                  <a href="#resources.dispatch.DisponentsChange"><span class="badge">M</span>DisponentsChange</a>
-                </li>
-              
-                <li>
-                  <a href="#resources.dispatch.Settings"><span class="badge">M</span>Settings</a>
-                </li>
-              
-              
-                <li>
-                  <a href="#resources.dispatch.CentrumMode"><span class="badge">E</span>CentrumMode</a>
                 </li>
               
               
@@ -2886,6 +2886,213 @@
     
       
       <div class="file-heading">
+        <h2 id="resources/dispatch/settings.proto">resources/dispatch/settings.proto</h2><a href="#title">Top</a>
+      </div>
+      <p></p>
+
+      
+        <h3 id="resources.dispatch.DisponentsChange">DisponentsChange</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>job</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>disponents</td>
+                  <td><a href="#resources.users.UserShort">resources.users.UserShort</a></td>
+                  <td>repeated</td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+            
+            
+            <h4>Validated Fields</h4>
+            <table>
+              <thead>
+                <tr>
+                  <td>Field</td>
+                  <td>Validations</td>
+                </tr>
+              </thead>
+              <tbody>
+              
+                <tr>
+                  <td>job</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.max_len: 20</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+              </tbody>
+            </table>
+            
+          
+
+        
+      
+        <h3 id="resources.dispatch.Settings">Settings</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>job</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>enabled</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>mode</td>
+                  <td><a href="#resources.dispatch.CentrumMode">CentrumMode</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>fallback_mode</td>
+                  <td><a href="#resources.dispatch.CentrumMode">CentrumMode</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+            
+            
+            <h4>Validated Fields</h4>
+            <table>
+              <thead>
+                <tr>
+                  <td>Field</td>
+                  <td>Validations</td>
+                </tr>
+              </thead>
+              <tbody>
+              
+                <tr>
+                  <td>job</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.max_len: 20</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>mode</td>
+                  <td>
+                    <ul>
+                    
+                      <li>enum.defined_only: true</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>fallback_mode</td>
+                  <td>
+                    <ul>
+                    
+                      <li>enum.defined_only: true</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+              </tbody>
+            </table>
+            
+          
+
+        
+      
+
+      
+        <h3 id="resources.dispatch.CentrumMode">CentrumMode</h3>
+        <p></p>
+        <table class="enum-table">
+          <thead>
+            <tr><td>Name</td><td>Number</td><td>Description</td></tr>
+          </thead>
+          <tbody>
+            
+              <tr>
+                <td>CENTRUM_MODE_UNSPECIFIED</td>
+                <td>0</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>CENTRUM_MODE_MANUAL</td>
+                <td>1</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>CENTRUM_MODE_CENTRAL_COMMAND</td>
+                <td>2</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>CENTRUM_MODE_AUTO_ROUND_ROBIN</td>
+                <td>3</td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>CENTRUM_MODE_SIMPLIFIED</td>
+                <td>4</td>
+                <td><p></p></td>
+              </tr>
+            
+          </tbody>
+        </table>
+      
+
+      
+
+      
+    
+      
+      <div class="file-heading">
         <h2 id="resources/dispatch/units.proto">resources/dispatch/units.proto</h2><a href="#title">Top</a>
       </div>
       <p></p>
@@ -3410,213 +3617,6 @@
               <tr>
                 <td>STATUS_UNIT_BUSY</td>
                 <td>7</td>
-                <td><p></p></td>
-              </tr>
-            
-          </tbody>
-        </table>
-      
-
-      
-
-      
-    
-      
-      <div class="file-heading">
-        <h2 id="resources/dispatch/settings.proto">resources/dispatch/settings.proto</h2><a href="#title">Top</a>
-      </div>
-      <p></p>
-
-      
-        <h3 id="resources.dispatch.DisponentsChange">DisponentsChange</h3>
-        <p></p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>job</td>
-                  <td><a href="#string">string</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>disponents</td>
-                  <td><a href="#resources.users.UserShort">resources.users.UserShort</a></td>
-                  <td>repeated</td>
-                  <td><p> </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-            
-            
-            <h4>Validated Fields</h4>
-            <table>
-              <thead>
-                <tr>
-                  <td>Field</td>
-                  <td>Validations</td>
-                </tr>
-              </thead>
-              <tbody>
-              
-                <tr>
-                  <td>job</td>
-                  <td>
-                    <ul>
-                    
-                      <li>string.max_len: 20</li>
-                    
-                    </ul>
-                  </td>
-                </tr>
-              
-              </tbody>
-            </table>
-            
-          
-
-        
-      
-        <h3 id="resources.dispatch.Settings">Settings</h3>
-        <p></p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>job</td>
-                  <td><a href="#string">string</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>enabled</td>
-                  <td><a href="#bool">bool</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>mode</td>
-                  <td><a href="#resources.dispatch.CentrumMode">CentrumMode</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-                <tr>
-                  <td>fallback_mode</td>
-                  <td><a href="#resources.dispatch.CentrumMode">CentrumMode</a></td>
-                  <td></td>
-                  <td><p> </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-            
-            
-            <h4>Validated Fields</h4>
-            <table>
-              <thead>
-                <tr>
-                  <td>Field</td>
-                  <td>Validations</td>
-                </tr>
-              </thead>
-              <tbody>
-              
-                <tr>
-                  <td>job</td>
-                  <td>
-                    <ul>
-                    
-                      <li>string.max_len: 20</li>
-                    
-                    </ul>
-                  </td>
-                </tr>
-              
-                <tr>
-                  <td>mode</td>
-                  <td>
-                    <ul>
-                    
-                      <li>enum.defined_only: true</li>
-                    
-                    </ul>
-                  </td>
-                </tr>
-              
-                <tr>
-                  <td>fallback_mode</td>
-                  <td>
-                    <ul>
-                    
-                      <li>enum.defined_only: true</li>
-                    
-                    </ul>
-                  </td>
-                </tr>
-              
-              </tbody>
-            </table>
-            
-          
-
-        
-      
-
-      
-        <h3 id="resources.dispatch.CentrumMode">CentrumMode</h3>
-        <p></p>
-        <table class="enum-table">
-          <thead>
-            <tr><td>Name</td><td>Number</td><td>Description</td></tr>
-          </thead>
-          <tbody>
-            
-              <tr>
-                <td>CENTRUM_MODE_UNSPECIFIED</td>
-                <td>0</td>
-                <td><p></p></td>
-              </tr>
-            
-              <tr>
-                <td>CENTRUM_MODE_MANUAL</td>
-                <td>1</td>
-                <td><p></p></td>
-              </tr>
-            
-              <tr>
-                <td>CENTRUM_MODE_CENTRAL_COMMAND</td>
-                <td>2</td>
-                <td><p></p></td>
-              </tr>
-            
-              <tr>
-                <td>CENTRUM_MODE_AUTO_ROUND_ROBIN</td>
-                <td>3</td>
-                <td><p></p></td>
-              </tr>
-            
-              <tr>
-                <td>CENTRUM_MODE_SIMPLIFIED</td>
-                <td>4</td>
                 <td><p></p></td>
               </tr>
             
@@ -15558,21 +15558,21 @@
                 <td>UpdateDocument</td>
                 <td><a href="#services.docstore.UpdateDocumentRequest">UpdateDocumentRequest</a></td>
                 <td><a href="#services.docstore.UpdateDocumentResponse">UpdateDocumentResponse</a></td>
-                <td><p>@perm: Attrs=Access/StringList:[]string{&#34;Own&#34;, &#34;Lower_Rank&#34;, &#34;Same_Rank&#34;}§[]string{&#34;Own&#34;}</p></td>
+                <td><p>@perm: Attrs=Access/StringList:[]string{&#34;Own&#34;, &#34;Lower_Rank&#34;, &#34;Same_Rank&#34;, &#34;Any&#34;}§[]string{&#34;Own&#34;}</p></td>
               </tr>
             
               <tr>
                 <td>DeleteDocument</td>
                 <td><a href="#services.docstore.DeleteDocumentRequest">DeleteDocumentRequest</a></td>
                 <td><a href="#services.docstore.DeleteDocumentResponse">DeleteDocumentResponse</a></td>
-                <td><p>@perm: Attrs=Access/StringList:[]string{&#34;Own&#34;, &#34;Lower_Rank&#34;, &#34;Same_Rank&#34;}§[]string{&#34;Own&#34;}</p></td>
+                <td><p>@perm: Attrs=Access/StringList:[]string{&#34;Own&#34;, &#34;Lower_Rank&#34;, &#34;Same_Rank&#34;, &#34;Any&#34;}§[]string{&#34;Own&#34;}</p></td>
               </tr>
             
               <tr>
                 <td>ToggleDocument</td>
                 <td><a href="#services.docstore.ToggleDocumentRequest">ToggleDocumentRequest</a></td>
                 <td><a href="#services.docstore.ToggleDocumentResponse">ToggleDocumentResponse</a></td>
-                <td><p>@perm: Attrs=Access/StringList:[]string{&#34;Own&#34;, &#34;Lower_Rank&#34;, &#34;Same_Rank&#34;}§[]string{&#34;Own&#34;}</p></td>
+                <td><p>@perm: Attrs=Access/StringList:[]string{&#34;Own&#34;, &#34;Lower_Rank&#34;, &#34;Same_Rank&#34;, &#34;Any&#34;}§[]string{&#34;Own&#34;}</p></td>
               </tr>
             
               <tr>
@@ -15642,7 +15642,7 @@
                 <td>DeleteComment</td>
                 <td><a href="#services.docstore.DeleteCommentRequest">DeleteCommentRequest</a></td>
                 <td><a href="#services.docstore.DeleteCommentResponse">DeleteCommentResponse</a></td>
-                <td><p>@perm: Attrs=Access/StringList:[]string{&#34;Own&#34;, &#34;Lower_Rank&#34;, &#34;Same_Rank&#34;}§[]string{&#34;Own&#34;}</p></td>
+                <td><p>@perm: Attrs=Access/StringList:[]string{&#34;Own&#34;, &#34;Lower_Rank&#34;, &#34;Same_Rank&#34;, &#34;Any&#34;}§[]string{&#34;Own&#34;}</p></td>
               </tr>
             
               <tr>
@@ -17220,14 +17220,14 @@
                 <td>CreateOrUpdateMarker</td>
                 <td><a href="#services.livemapper.CreateOrUpdateMarkerRequest">CreateOrUpdateMarkerRequest</a></td>
                 <td><a href="#services.livemapper.CreateOrUpdateMarkerResponse">CreateOrUpdateMarkerResponse</a></td>
-                <td><p>@perm: Attrs=Access/StringList:[]string{&#34;Own&#34;, &#34;Lower_Rank&#34;, &#34;Same_Rank&#34;}§[]string{&#34;Own&#34;}</p></td>
+                <td><p>@perm: Attrs=Access/StringList:[]string{&#34;Own&#34;, &#34;Lower_Rank&#34;, &#34;Same_Rank&#34;, &#34;Any&#34;}§[]string{&#34;Own&#34;}</p></td>
               </tr>
             
               <tr>
                 <td>DeleteMarker</td>
                 <td><a href="#services.livemapper.DeleteMarkerRequest">DeleteMarkerRequest</a></td>
                 <td><a href="#services.livemapper.DeleteMarkerResponse">DeleteMarkerResponse</a></td>
-                <td><p>@perm: Attrs=Access/StringList:[]string{&#34;Own&#34;, &#34;Lower_Rank&#34;, &#34;Same_Rank&#34;}§[]string{&#34;Own&#34;}</p></td>
+                <td><p>@perm: Attrs=Access/StringList:[]string{&#34;Own&#34;, &#34;Lower_Rank&#34;, &#34;Same_Rank&#34;, &#34;Any&#34;}§[]string{&#34;Own&#34;}</p></td>
               </tr>
             
           </tbody>

@@ -1,8 +1,7 @@
-import { attr } from '~/composables/can';
 import { useAuthStore } from '~/store/auth';
 import { AccessLevel } from '~~/gen/ts/resources/documents/access';
 import { DocumentAccess } from '~~/gen/ts/resources/documents/documents';
-import { UserShort } from '~~/gen/ts/resources/users/users';
+import { User, UserShort } from '~~/gen/ts/resources/users/users';
 
 export function checkDocAccess(
     docAccess: DocumentAccess | undefined,
@@ -15,40 +14,80 @@ export function checkDocAccess(
         return true;
     }
 
-    if (docAccess === undefined) {
-        return false;
-    }
-
     const activeChar = authStore.activeChar;
     if (activeChar === null) {
         return false;
     }
-    if (activeChar.userId === creator?.userId) {
+
+    if (!checkBaseDocAccess(activeChar, docAccess, creator, level)) {
+        return false;
+    }
+
+    if (perm !== undefined && creator !== undefined && creator?.job === activeChar.job) {
+        return checkIfCanAccessOwnJobDocument(activeChar, creator, perm);
+    }
+
+    return true;
+}
+
+function checkBaseDocAccess(
+    activeChar: User,
+    docAccess: DocumentAccess | undefined,
+    creator: UserShort | undefined,
+    level: AccessLevel,
+): boolean {
+    if (docAccess === undefined) {
+        return false;
+    }
+
+    if (creator !== undefined && activeChar.userId === creator.userId) {
         return true;
     }
 
-    const ju = docAccess.users.find((ua) => ua.userId === activeChar.userId);
-    if (ju !== undefined && level <= ju.access) {
+    const ju = docAccess.users.find((ua) => ua.userId === activeChar.userId && level <= ua.access);
+    if (ju !== undefined) {
         return true;
     }
 
-    const ja = docAccess.jobs.find((ja) => ja.job === activeChar.job && ja.minimumGrade <= activeChar.jobGrade);
-    if (ja !== undefined && level <= ja.access) {
-        if (creator?.job === activeChar.job) {
-            if (perm === undefined) {
-                return false;
-            }
+    const ja = docAccess.jobs.find(
+        (ja) => ja.job === activeChar.job && ja.minimumGrade <= activeChar.jobGrade && level <= ja.access,
+    );
+    if (ja !== undefined) {
+        return true;
+    }
 
-            if (activeChar.jobGrade === creator?.jobGrade) {
-                return attr(perm, 'Access', 'Same_Rank');
-            } else if (activeChar.jobGrade > creator?.jobGrade) {
-                return attr(perm, 'Access', 'Lower_Rank');
-            } else {
-                return attr(perm, 'Access', 'Own');
-            }
+    return false;
+}
+
+function checkIfCanAccessOwnJobDocument(activeChar: User, creator: UserShort, perm: string): boolean {
+    const authStore = useAuthStore();
+    if (authStore.isSuperuser) {
+        return true;
+    }
+
+    const fields = attrList(perm, 'Access');
+    console.log('checkIfCanAccessOwnJobDocument', perm, fields);
+    if (fields.length === 0) {
+        return creator?.userId === activeChar.userId;
+    }
+
+    if (fields.includes('any')) {
+        return true;
+    }
+    if (fields.includes('lower_rank')) {
+        if (creator?.jobGrade < activeChar.jobGrade) {
+            return true;
         }
-
-        return true;
+    }
+    if (fields.includes('same_rank')) {
+        if (creator?.jobGrade <= activeChar.jobGrade) {
+            return true;
+        }
+    }
+    if (fields.includes('own')) {
+        if (creator?.userId === activeChar.userId) {
+            return true;
+        }
     }
 
     return false;

@@ -37,10 +37,17 @@ func (s *Server) checkIfHasAccessToMarker(levels []string, marker *livemap.Marke
 
 	creator := marker.Creator
 
+	if creator.Job != userInfo.Job {
+		return false
+	}
+
 	if len(levels) == 0 {
 		return creator.UserId == userInfo.UserId
 	}
 
+	if utils.InSlice(levels, "Any") {
+		return true
+	}
 	if utils.InSlice(levels, "Lower_Rank") {
 		if creator.JobGrade < userInfo.JobGrade {
 			return true

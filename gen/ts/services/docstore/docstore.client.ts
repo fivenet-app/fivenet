@@ -116,19 +116,19 @@ export interface IDocStoreServiceClient {
      */
     createDocument(input: CreateDocumentRequest, options?: RpcOptions): UnaryCall<CreateDocumentRequest, CreateDocumentResponse>;
     /**
-     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
+     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}§[]string{"Own"}
      *
      * @generated from protobuf rpc: UpdateDocument(services.docstore.UpdateDocumentRequest) returns (services.docstore.UpdateDocumentResponse);
      */
     updateDocument(input: UpdateDocumentRequest, options?: RpcOptions): UnaryCall<UpdateDocumentRequest, UpdateDocumentResponse>;
     /**
-     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
+     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}§[]string{"Own"}
      *
      * @generated from protobuf rpc: DeleteDocument(services.docstore.DeleteDocumentRequest) returns (services.docstore.DeleteDocumentResponse);
      */
     deleteDocument(input: DeleteDocumentRequest, options?: RpcOptions): UnaryCall<DeleteDocumentRequest, DeleteDocumentResponse>;
     /**
-     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
+     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}§[]string{"Own"}
      *
      * @generated from protobuf rpc: ToggleDocument(services.docstore.ToggleDocumentRequest) returns (services.docstore.ToggleDocumentResponse);
      */
@@ -188,7 +188,7 @@ export interface IDocStoreServiceClient {
      */
     editComment(input: EditCommentRequest, options?: RpcOptions): UnaryCall<EditCommentRequest, EditCommentResponse>;
     /**
-     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
+     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}§[]string{"Own"}
      *
      * @generated from protobuf rpc: DeleteComment(services.docstore.DeleteCommentRequest) returns (services.docstore.DeleteCommentResponse);
      */
@@ -318,7 +318,7 @@ export class DocStoreServiceClient implements IDocStoreServiceClient, ServiceInf
         return stackIntercept<CreateDocumentRequest, CreateDocumentResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
+     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}§[]string{"Own"}
      *
      * @generated from protobuf rpc: UpdateDocument(services.docstore.UpdateDocumentRequest) returns (services.docstore.UpdateDocumentResponse);
      */
@@ -327,7 +327,7 @@ export class DocStoreServiceClient implements IDocStoreServiceClient, ServiceInf
         return stackIntercept<UpdateDocumentRequest, UpdateDocumentResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
+     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}§[]string{"Own"}
      *
      * @generated from protobuf rpc: DeleteDocument(services.docstore.DeleteDocumentRequest) returns (services.docstore.DeleteDocumentResponse);
      */
@@ -336,7 +336,7 @@ export class DocStoreServiceClient implements IDocStoreServiceClient, ServiceInf
         return stackIntercept<DeleteDocumentRequest, DeleteDocumentResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
+     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}§[]string{"Own"}
      *
      * @generated from protobuf rpc: ToggleDocument(services.docstore.ToggleDocumentRequest) returns (services.docstore.ToggleDocumentResponse);
      */
@@ -426,7 +426,7 @@ export class DocStoreServiceClient implements IDocStoreServiceClient, ServiceInf
         return stackIntercept<EditCommentRequest, EditCommentResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
+     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}§[]string{"Own"}
      *
      * @generated from protobuf rpc: DeleteComment(services.docstore.DeleteCommentRequest) returns (services.docstore.DeleteCommentResponse);
      */

@@ -19,7 +19,7 @@ func init() {
 				{
 					Key:           permkeys.LivemapperServiceCreateOrUpdateMarkerAccessPermField,
 					Type:          permissions.StringListAttributeType,
-					ValidValues:   []string{"Own", "Lower_Rank", "Same_Rank"},
+					ValidValues:   []string{"Own", "Lower_Rank", "Same_Rank", "Any"},
 					DefaultValues: []string{"Own"},
 				},
 			},
@@ -31,7 +31,7 @@ func init() {
 				{
 					Key:           permkeys.LivemapperServiceDeleteMarkerAccessPermField,
 					Type:          permissions.StringListAttributeType,
-					ValidValues:   []string{"Own", "Lower_Rank", "Same_Rank"},
+					ValidValues:   []string{"Own", "Lower_Rank", "Same_Rank", "Any"},
 					DefaultValues: []string{"Own"},
 				},
 			},

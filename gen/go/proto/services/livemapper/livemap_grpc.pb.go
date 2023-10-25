@@ -30,9 +30,9 @@ const (
 type LivemapperServiceClient interface {
 	// @perm: Attrs=Markers/JobList:"config.Game.Livemap.Jobs"|Players/JobGradeList
 	Stream(ctx context.Context, in *StreamRequest, opts ...grpc.CallOption) (LivemapperService_StreamClient, error)
-	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
+	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}§[]string{"Own"}
 	CreateOrUpdateMarker(ctx context.Context, in *CreateOrUpdateMarkerRequest, opts ...grpc.CallOption) (*CreateOrUpdateMarkerResponse, error)
-	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
+	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}§[]string{"Own"}
 	DeleteMarker(ctx context.Context, in *DeleteMarkerRequest, opts ...grpc.CallOption) (*DeleteMarkerResponse, error)
 }
 
@@ -100,9 +100,9 @@ func (c *livemapperServiceClient) DeleteMarker(ctx context.Context, in *DeleteMa
 type LivemapperServiceServer interface {
 	// @perm: Attrs=Markers/JobList:"config.Game.Livemap.Jobs"|Players/JobGradeList
 	Stream(*StreamRequest, LivemapperService_StreamServer) error
-	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
+	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}§[]string{"Own"}
 	CreateOrUpdateMarker(context.Context, *CreateOrUpdateMarkerRequest) (*CreateOrUpdateMarkerResponse, error)
-	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank"}§[]string{"Own"}
+	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}§[]string{"Own"}
 	DeleteMarker(context.Context, *DeleteMarkerRequest) (*DeleteMarkerResponse, error)
 	mustEmbedUnimplementedLivemapperServiceServer()
 }

@@ -206,7 +206,7 @@ onConfirm(async (id: bigint) => deleteDocument(id));
                                         can('DocStoreService.ToggleDocument') &&
                                         checkDocAccess(
                                             access,
-                                            doc.creatorId,
+                                            doc.creator,
                                             AccessLevel.STATUS,
                                             'DocStoreService.ToggleDocument',
                                         )
@@ -232,7 +232,7 @@ onConfirm(async (id: bigint) => deleteDocument(id));
                                         can('DocStoreService.UpdateDocument') &&
                                         checkDocAccess(
                                             access,
-                                            doc.creatorId,
+                                            doc.creator,
                                             AccessLevel.ACCESS,
                                             'DocStoreService.UpdateDocument',
                                         )
@@ -250,12 +250,7 @@ onConfirm(async (id: bigint) => deleteDocument(id));
                                 <button
                                     v-if="
                                         can('DocStoreService.DeleteDocument') &&
-                                        checkDocAccess(
-                                            access,
-                                            doc.creatorId,
-                                            AccessLevel.EDIT,
-                                            'DocStoreService.DeleteDocument',
-                                        )
+                                        checkDocAccess(access, doc.creator, AccessLevel.EDIT, 'DocStoreService.DeleteDocument')
                                     "
                                     type="button"
                                     @click="reveal(documentId)"
@@ -415,7 +410,7 @@ onConfirm(async (id: bigint) => deleteDocument(id));
                             <Comments
                                 :document-id="documentId"
                                 :closed="doc?.closed"
-                                :can-comment="checkDocAccess(access, doc.creatorId, AccessLevel.COMMENT)"
+                                :can-comment="checkDocAccess(access, doc.creator, AccessLevel.COMMENT)"
                                 @counted="commentCount = $event"
                                 @new-comment="commentCount && commentCount++"
                                 @deleted-comment="commentCount && commentCount > 0 && commentCount--"

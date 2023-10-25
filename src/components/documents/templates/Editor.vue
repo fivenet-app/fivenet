@@ -31,7 +31,7 @@ const { activeChar } = storeToRefs(authStore);
 
 const { t } = useI18n();
 
-const maxAccessEntries = 8;
+const maxAccessEntries = 10;
 
 defineRule('required', required);
 defineRule('numeric', numeric);

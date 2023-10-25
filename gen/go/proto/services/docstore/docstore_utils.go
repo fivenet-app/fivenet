@@ -338,17 +338,20 @@ func (s *Server) checkIfHasAccess(levels []string, userInfo *userinfo.UserInfo, 
 		return true
 	}
 
-	// If no levels set, assume "Own" as default
-	if len(levels) == 0 {
-		return creator.UserId == userInfo.UserId
-	}
-
 	// If both have the same job, the rank checks are executed, otherwise it is "just another document"
 	// the user has access to
 	if creator.Job != userInfo.Job {
 		return true
 	}
 
+	// If no levels set, assume "Own" as default
+	if len(levels) == 0 {
+		return creator.UserId == userInfo.UserId
+	}
+
+	if utils.InSlice(levels, "Any") {
+		return true
+	}
 	if utils.InSlice(levels, "Lower_Rank") {
 		if creator.JobGrade < userInfo.JobGrade {
 			return true

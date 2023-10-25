@@ -76,7 +76,7 @@ const route = useRoute();
 
 const { activeChar } = storeToRefs(authStore);
 
-const maxAccessEntries = 8;
+const maxAccessEntries = 10;
 
 const canEdit = ref(false);
 
@@ -110,6 +110,7 @@ const access = ref<
     >
 >(new Map());
 const docAccess = ref<DocumentAccess>();
+const docCreator = ref<UserShort | undefined>();
 
 const relationManagerShow = ref<boolean>(false);
 const relationManagerData = ref<Map<bigint, DocumentRelation>>(new Map());
@@ -266,6 +267,9 @@ onMounted(async () => {
             selectedCategory.value = template?.category;
 
             if (template?.contentAccess) {
+                if (authStore.activeChar !== null) {
+                    docCreator.value = authStore.activeChar;
+                }
                 const docAccess = template?.contentAccess!;
                 let accessId = 0n;
                 docAccess.users.forEach((user) => {
@@ -305,6 +309,7 @@ onMounted(async () => {
             const { response } = await call;
             const document = response.document;
             docAccess.value = response.access;
+            docCreator.value = document?.creator;
 
             if (document) {
                 setFieldValue('title', document.title);
@@ -798,11 +803,11 @@ const canDo = computed(() => ({
     edit:
         props.id === undefined
             ? true
-            : checkDocAccess(docAccess.value, undefined, AccessLevel.EDIT, 'DocStoreService.UpdateDocument'),
+            : checkDocAccess(docAccess.value, docCreator.value, AccessLevel.EDIT, 'DocStoreService.UpdateDocument'),
     access:
         props.id === undefined
             ? true
-            : checkDocAccess(docAccess.value, undefined, AccessLevel.ACCESS, 'DocStoreService.UpdateDocument'),
+            : checkDocAccess(docAccess.value, docCreator.value, AccessLevel.ACCESS, 'DocStoreService.UpdateDocument'),
     references: can('DocStoreService.AddDocumentReference'),
     relations: can('DocStoreService.AddDocumentRelation'),
 }));
@@ -916,7 +921,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                         <label for="category" class="block font-medium text-sm">
                             {{ $t('common.category') }}
                         </label>
-                        <Combobox as="div" v-model="selectedCategory" nullable>
+                        <Combobox as="div" v-model="selectedCategory" :disabled="!canEdit || !canDo.edit" nullable>
                             <div class="relative">
                                 <ComboboxButton as="div">
                                     <ComboboxInput
@@ -924,7 +929,6 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                         class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                         @change="queryCategories = $event.target.value"
                                         :display-value="(category: any) => category?.name"
-                                        :disabled="!canEdit || !canDo.edit"
                                     />
                                 </ComboboxButton>
 
@@ -980,10 +984,9 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                     </div>
                     <div class="flex-1">
                         <label for="closed" class="block font-medium text-sm"> {{ $t('common.close', 2) }}? </label>
-                        <Listbox as="div" v-model="doc.closed">
+                        <Listbox as="div" v-model="doc.closed" :disabled="!canEdit || !canDo.edit">
                             <div class="relative">
                                 <ListboxButton
-                                    :disabled="!canEdit || !canDo.edit"
                                     class="block pl-3 text-left w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 >
                                     <span class="block truncate">

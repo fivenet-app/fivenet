@@ -124,7 +124,7 @@ func (e *Enricher) EnrichJobInfoSafe(userInfo *userinfo.UserInfo, usrs ...common
 		if utils.InSlice(e.publicJobs, usr.GetJob()) {
 			// Make sure user has permission to see that grade, otherwise "hide" the user's job grade
 			grade, ok := jobGrades[usr.GetJob()]
-			if !userInfo.SuperUser && (!ok || usr.GetJobGrade() <= grade) {
+			if !userInfo.SuperUser && (!ok || usr.GetJobGrade() < grade) {
 				usr.SetJobGrade(0)
 			}
 		} else {
@@ -147,7 +147,7 @@ func (e *Enricher) EnrichJobInfoFunc(userInfo *userinfo.UserInfo) func(usr commo
 		if utils.InSlice(e.publicJobs, usr.GetJob()) {
 			// Make sure user has permission to see that grade, otherwise "hide" the user's job grade
 			grade, ok := jobGrades[usr.GetJob()]
-			if !userInfo.SuperUser && (!ok || usr.GetJobGrade() <= grade) {
+			if !userInfo.SuperUser && (!ok || usr.GetJobGrade() < grade) {
 				usr.SetJobGrade(0)
 			}
 		} else {

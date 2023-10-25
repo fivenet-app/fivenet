@@ -29,3 +29,9 @@ export function can(perm: string | string[]): boolean {
 export function attr(perm: string, name: string, val: string): boolean {
     return can(perm + '.' + name + (val !== undefined ? '.' + val : ''));
 }
+
+export function attrList(perm: string, name: string): string[] {
+    const key = slug(perm + '.' + name + '.');
+    const permissions = useAuthStore().permissions;
+    return permissions.filter((p) => p.startsWith(key)).map((p) => p.substring(key.length + 1));
+}

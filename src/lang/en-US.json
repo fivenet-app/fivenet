@@ -1087,7 +1087,8 @@
                 "attrs": {
                     "Own": "Own",
                     "Lower_Rank": "Lower Rank",
-                    "Same_Rank": "Same Rank"
+                    "Same_Rank": "Same Rank",
+                    "Any": "Any"
                 }
             },
             "CreateTemplate": {
@@ -1104,7 +1105,8 @@
                 "attrs": {
                     "Own": "Own",
                     "Lower_Rank": "Lower Rank",
-                    "Same_Rank": "Same Rank"
+                    "Same_Rank": "Same Rank",
+                    "Any": "Any"
                 }
             },
             "ToggleDocument": {
@@ -1113,7 +1115,8 @@
                 "attrs": {
                     "Own": "Own",
                     "Lower_Rank": "Lower Rank",
-                    "Same_Rank": "Same Rank"
+                    "Same_Rank": "Same Rank",
+                    "Any": "Any"
                 }
             },
             "DeleteComment": {
@@ -1122,7 +1125,8 @@
                 "attrs": {
                     "Own": "Own",
                     "Lower_Rank": "Lower Rank",
-                    "Same_Rank": "Same Rank"
+                    "Same_Rank": "Same Rank",
+                    "Any": "Any"
                 }
             },
             "PostComment": {
@@ -1154,7 +1158,8 @@
                 "attrs": {
                     "Own": "Own",
                     "Lower_Rank": "Lower Rank",
-                    "Same_Rank": "Same Rank"
+                    "Same_Rank": "Same Rank",
+                    "Any": "Any"
                 }
             },
             "DeleteMarker": {
@@ -1163,7 +1168,8 @@
                 "attrs": {
                     "Own": "Own",
                     "Lower_Rank": "Lower Rank",
-                    "Same_Rank": "Same Rank"
+                    "Same_Rank": "Same Rank",
+                    "Any": "Any"
                 }
             }
         },
