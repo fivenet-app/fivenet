@@ -5,27 +5,19 @@ import { LControl } from '@vue-leaflet/vue-leaflet';
 import { useDebounceFn, useIntervalFn, watchDebounced } from '@vueuse/core';
 import { useSound } from '@vueuse/sound';
 import {
-    CalendarCheckIcon,
-    CalendarRemoveIcon,
-    CarBackIcon,
     CarEmergencyIcon,
-    CheckBoldIcon,
     ChevronDownIcon,
-    CoffeeIcon,
-    HelpCircleIcon,
     HoopHouseIcon,
     InformationOutlineIcon,
     ListStatusIcon,
-    MarkerCheckIcon,
     MonitorIcon,
     RobotIcon,
     ToggleSwitchIcon,
     ToggleSwitchOffIcon,
 } from 'mdi-vue3';
-import { DefineComponent } from 'vue';
 import { default as DispatchStatusUpdateModal } from '~/components/centrum/dispatches/StatusUpdateModal.vue';
 import { default as DisponentsModal } from '~/components/centrum/disponents/Modal.vue';
-import { dispatchStatusToBGColor, unitStatusToBGColor } from '~/components/centrum/helpers';
+import { dispatchStatusToBGColor, dispatchStatuses, unitStatusToBGColor, unitStatuses } from '~/components/centrum/helpers';
 import { default as UnitDetails } from '~/components/centrum/units/Details.vue';
 import { default as UnitStatusUpdateModal } from '~/components/centrum/units/StatusUpdateModal.vue';
 import { useCentrumStore } from '~/store/centrum';
@@ -50,34 +42,6 @@ const { getCurrentMode, getOwnUnit, ownUnitId, dispatches, ownDispatches, pendin
 const { startStream, stopStream } = centrumStore;
 
 const notifications = useNotificatorStore();
-
-const actionsUnit: {
-    icon: DefineComponent;
-    name: string;
-    action?: Function;
-    class?: string;
-    status?: StatusUnit;
-}[] = [
-    { icon: markRaw(CarBackIcon), name: 'Unavailable', status: StatusUnit.UNAVAILABLE },
-    { icon: markRaw(CalendarCheckIcon), name: 'Available', status: StatusUnit.AVAILABLE },
-    { icon: markRaw(CoffeeIcon), name: 'On Break', status: StatusUnit.ON_BREAK },
-    { icon: markRaw(CalendarRemoveIcon), name: 'Busy', status: StatusUnit.BUSY },
-    { icon: markRaw(ListStatusIcon), name: 'components.centrum.update_unit_status.title', class: 'bg-base-800' },
-];
-
-const actionsDispatch: {
-    icon: DefineComponent;
-    name: string;
-    action?: Function;
-    class?: string;
-    status?: StatusDispatch;
-}[] = [
-    { icon: markRaw(CarBackIcon), name: 'En Route', status: StatusDispatch.EN_ROUTE },
-    { icon: markRaw(MarkerCheckIcon), name: 'On Scene', status: StatusDispatch.ON_SCENE },
-    { icon: markRaw(HelpCircleIcon), name: 'Need Assistance', status: StatusDispatch.NEED_ASSISTANCE },
-    { icon: markRaw(CheckBoldIcon), name: 'Completed', status: StatusDispatch.COMPLETED },
-    { icon: markRaw(ListStatusIcon), name: 'components.centrum.update_dispatch_status.title', class: 'bg-base-800' },
-];
 
 const canStream = can('CentrumService.Stream');
 
@@ -332,7 +296,7 @@ const open = ref(false);
                                             <button
                                                 @click="openUnitDetails = true"
                                                 type="button"
-                                                class="text-neutral hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-1.5 text-xs my-0.5"
+                                                class="text-neutral hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-1.5 text-xs"
                                                 :class="ownUnitStatus"
                                             >
                                                 <InformationOutlineIcon class="h-5 w-5" aria-hidden="true" />
@@ -404,16 +368,15 @@ const open = ref(false);
                                                             />
 
                                                             <button
-                                                                v-for="(item, idx) in actionsUnit"
+                                                                v-for="(item, idx) in unitStatuses"
                                                                 :key="item.name"
                                                                 type="button"
                                                                 class="text-neutral bg-primary hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-1.5 text-xs my-0.5"
                                                                 :class="[
-                                                                    idx >= actionsUnit.length - 1 ? 'col-span-2' : '',
                                                                     item.status ? unitStatusToBGColor(item.status) : item.class,
                                                                     item.class,
                                                                 ]"
-                                                                @click="updateUtStatus(getOwnUnit.id, item.status)"
+                                                                @click="updateUtStatus(ownUnitId, item.status)"
                                                             >
                                                                 <component
                                                                     :is="item.icon ?? HoopHouseIcon"
@@ -432,6 +395,19 @@ const open = ref(false);
                                                                     }}
                                                                 </span>
                                                             </button>
+                                                            <button
+                                                                type="button"
+                                                                class="col-span-2 bg-base-800 text-neutral hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-1.5 text-xs my-0.5"
+                                                                @click="updateUtStatus(ownUnitId)"
+                                                            >
+                                                                <ListStatusIcon
+                                                                    class="text-base-100 group-hover:text-neutral h-5 w-5 shrink-0"
+                                                                    aria-hidden="true"
+                                                                />
+                                                                <span class="mt-1">
+                                                                    {{ $t('components.centrum.update_unit_status.title') }}
+                                                                </span>
+                                                            </button>
                                                         </div>
                                                     </div>
                                                 </DisclosurePanel>
@@ -447,12 +423,11 @@ const open = ref(false);
                                         <li>
                                             <div class="grid grid-cols-2 gap-0.5">
                                                 <button
-                                                    v-for="(item, idx) in actionsDispatch"
+                                                    v-for="(item, idx) in dispatchStatuses"
                                                     :key="item.name"
                                                     type="button"
                                                     class="text-neutral bg-primary hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-1.5 text-xs my-0.5"
                                                     :class="[
-                                                        idx >= actionsDispatch.length - 1 ? 'col-span-2' : '',
                                                         item.status ? dispatchStatusToBGColor(item.status) : item.class,
                                                         item.class,
                                                     ]"
@@ -473,6 +448,19 @@ const open = ref(false);
                                                                   )
                                                                 : $t(item.name)
                                                         }}
+                                                    </span>
+                                                </button>
+                                                <button
+                                                    type="button"
+                                                    class="col-span-2 bg-base-800 text-neutral hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-1.5 text-xs my-0.5"
+                                                    @click="updateDspStatus(selectedDispatch)"
+                                                >
+                                                    <ListStatusIcon
+                                                        class="text-base-100 group-hover:text-neutral h-5 w-5 shrink-0"
+                                                        aria-hidden="true"
+                                                    />
+                                                    <span class="mt-1">
+                                                        {{ $t('components.centrum.update_dispatch_status.title') }}
                                                     </span>
                                                 </button>
                                             </div>

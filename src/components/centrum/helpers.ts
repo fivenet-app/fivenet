@@ -1,3 +1,13 @@
+import {
+    CalendarCheckIcon,
+    CalendarRemoveIcon,
+    CarBackIcon,
+    CheckBoldIcon,
+    CoffeeIcon,
+    HelpCircleIcon,
+    MarkerCheckIcon,
+} from 'mdi-vue3';
+import { DefineComponent } from 'vue';
 import { StatusDispatch } from '~~/gen/ts/resources/dispatch/dispatches';
 import { StatusUnit } from '~~/gen/ts/resources/dispatch/units';
 
@@ -82,4 +92,32 @@ export const statusOrder = [
     StatusUnit.UNAVAILABLE,
     StatusUnit.UNKNOWN,
     StatusUnit.UNSPECIFIED,
+];
+
+export const unitStatuses: {
+    icon: DefineComponent;
+    name: string;
+    action?: Function;
+    class?: string;
+    status?: StatusUnit;
+}[] = [
+    { icon: markRaw(CarBackIcon), name: 'Unavailable', status: StatusUnit.UNAVAILABLE },
+    { icon: markRaw(CalendarCheckIcon), name: 'Available', status: StatusUnit.AVAILABLE },
+    { icon: markRaw(CoffeeIcon), name: 'On Break', status: StatusUnit.ON_BREAK },
+    { icon: markRaw(CalendarRemoveIcon), name: 'Busy', status: StatusUnit.BUSY },
+    //{ icon: markRaw(ListStatusIcon), name: 'components.centrum.update_unit_status.title', class: 'bg-base-800' },
+];
+
+export const dispatchStatuses: {
+    icon: DefineComponent;
+    name: string;
+    action?: Function;
+    class?: string;
+    status?: StatusDispatch;
+}[] = [
+    { icon: markRaw(CarBackIcon), name: 'En Route', status: StatusDispatch.EN_ROUTE },
+    { icon: markRaw(MarkerCheckIcon), name: 'On Scene', status: StatusDispatch.ON_SCENE },
+    { icon: markRaw(HelpCircleIcon), name: 'Need Assistance', status: StatusDispatch.NEED_ASSISTANCE },
+    { icon: markRaw(CheckBoldIcon), name: 'Completed', status: StatusDispatch.COMPLETED },
+    //{ icon: markRaw(ListStatusIcon), name: 'components.centrum.update_dispatch_status.title', class: 'bg-base-800' },
 ];

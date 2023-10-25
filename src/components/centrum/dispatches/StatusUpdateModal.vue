@@ -3,10 +3,11 @@ import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } fro
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { max, min, required } from '@vee-validate/rules';
 import { useThrottleFn } from '@vueuse/core';
-import { CloseIcon, LoadingIcon } from 'mdi-vue3';
+import { CloseIcon, HoopHouseIcon, LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import { StatusDispatch } from '~~/gen/ts/resources/dispatch/dispatches';
+import { dispatchStatusToBGColor, dispatchStatuses } from '../helpers';
 
 const props = defineProps<{
     open: boolean;
@@ -155,28 +156,47 @@ watch(props, () => {
                                                                 <VeeField
                                                                     name="status"
                                                                     as="div"
+                                                                    class="w-full grid grid-cols-2 gap-0.5"
                                                                     :placeholder="$t('common.status')"
                                                                     :label="$t('common.status')"
                                                                     v-slot="{ field }"
                                                                 >
-                                                                    <select
-                                                                        v-bind="field"
-                                                                        class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                                    <button
+                                                                        v-for="(item, idx) in dispatchStatuses"
+                                                                        :key="item.name"
+                                                                        type="button"
+                                                                        class="text-neutral bg-primary hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-1.5 text-xs my-0.5"
+                                                                        :class="[
+                                                                            item.class,
+                                                                            field.value == item.status
+                                                                                ? 'disabled bg-base-500 hover:bg-base-400'
+                                                                                : item.status
+                                                                                ? dispatchStatusToBGColor(item.status)
+                                                                                : item.class,
+                                                                            ,
+                                                                        ]"
+                                                                        :disabled="field.value == item.status"
+                                                                        @click="
+                                                                            setFieldValue('status', item.status?.valueOf() ?? 0)
+                                                                        "
                                                                     >
-                                                                        <option
-                                                                            v-for="status in statuses"
-                                                                            :selected="status.selected"
-                                                                            :value="status.status"
-                                                                        >
+                                                                        <component
+                                                                            :is="item.icon ?? HoopHouseIcon"
+                                                                            class="text-base-100 group-hover:text-neutral h-5 w-5 shrink-0"
+                                                                            aria-hidden="true"
+                                                                        />
+                                                                        <span class="mt-1">
                                                                             {{
-                                                                                $t(
-                                                                                    `enums.centrum.StatusDispatch.${
-                                                                                        StatusDispatch[status.status ?? 0]
-                                                                                    }`,
-                                                                                )
+                                                                                item.status
+                                                                                    ? $t(
+                                                                                          `enums.centrum.StatusDispatch.${
+                                                                                              StatusDispatch[item.status ?? 0]
+                                                                                          }`,
+                                                                                      )
+                                                                                    : $t(item.name)
                                                                             }}
-                                                                        </option>
-                                                                    </select>
+                                                                        </span>
+                                                                    </button>
                                                                 </VeeField>
                                                                 <VeeErrorMessage
                                                                     name="status"
