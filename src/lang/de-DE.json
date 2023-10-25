@@ -227,7 +227,8 @@
         "citizens": {
             "citizens_list": {
                 "only_wanted": "Nur Gesuchte",
-                "no_citizens": "Benutze das obige Suchfeld, um erneut zu suchen oder die Anfrage zu aktualisieren."
+                "no_citizens": "Benutze das obige Suchfeld, um erneut zu suchen oder die Anfrage zu aktualisieren.",
+                "open_fine": "Offene Geldstrafen"
             },
             "citizen_info_profile": {
                 "create_new_document": "Neues Dokument erstellen",
@@ -1086,7 +1087,8 @@
                 "attrs": {
                     "Own": "Eigene",
                     "Lower_Rank": "Niedrigerer Rang",
-                    "Same_Rank": "Gleicher Rang"
+                    "Same_Rank": "Gleicher Rang",
+                    "Any": "Egal"
                 }
             },
             "CreateTemplate": {
@@ -1103,7 +1105,8 @@
                 "attrs": {
                     "Own": "Eigene",
                     "Lower_Rank": "Niedrigerer Rang",
-                    "Same_Rank": "Gleicher Rang"
+                    "Same_Rank": "Gleicher Rang",
+                    "Any": "Egal"
                 }
             },
             "ToggleDocument": {
@@ -1112,7 +1115,8 @@
                 "attrs": {
                     "Own": "Eigene",
                     "Lower_Rank": "Niedrigerer Rang",
-                    "Same_Rank": "Gleicher Rang"
+                    "Same_Rank": "Gleicher Rang",
+                    "Any": "Egal"
                 }
             },
             "DeleteComment": {
@@ -1121,7 +1125,8 @@
                 "attrs": {
                     "Own": "Eigene",
                     "Lower_Rank": "Niedrigerer Rang",
-                    "Same_Rank": "Gleicher Rang"
+                    "Same_Rank": "Gleicher Rang",
+                    "Any": "Egal"
                 }
             },
             "PostComment": {
@@ -1153,7 +1158,8 @@
                 "attrs": {
                     "Own": "Eigene",
                     "Lower_Rank": "Niedrigerer Rang",
-                    "Same_Rank": "Gleicher Rang"
+                    "Same_Rank": "Gleicher Rang",
+                    "Any": "Egal"
                 }
             },
             "DeleteMarker": {
@@ -1162,7 +1168,8 @@
                 "attrs": {
                     "Own": "Eigene",
                     "Lower_Rank": "Niedrigerer Rang",
-                    "Same_Rank": "Gleicher Rang"
+                    "Same_Rank": "Gleicher Rang",
+                    "Any": "Egal"
                 }
             }
         },
