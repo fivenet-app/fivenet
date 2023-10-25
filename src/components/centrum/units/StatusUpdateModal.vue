@@ -36,6 +36,8 @@ async function updateUnitStatus(id: bigint, values: FormData): Promise<void> {
 
             emit('close');
 
+            setFieldValue('status', values.status.valueOf());
+
             return res();
         } catch (e) {
             $grpc.handleError(e as RpcError);

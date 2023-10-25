@@ -36,6 +36,8 @@ async function updateDispatchStatus(dispatchId: bigint, values: FormData): Promi
 
             emit('close');
 
+            setFieldValue('status', values.status.valueOf());
+
             return res();
         } catch (e) {
             $grpc.handleError(e as RpcError);
