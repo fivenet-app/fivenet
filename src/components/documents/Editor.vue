@@ -767,8 +767,14 @@ watchOnce(quillEditorRef, () => {
 });
 
 const canDo = computed(() => ({
-    edit: checkDocAccess(docAccess.value, undefined, AccessLevel.EDIT, 'DocStoreService.UpdateDocument'),
-    access: checkDocAccess(docAccess.value, undefined, AccessLevel.ACCESS, 'DocStoreService.UpdateDocument'),
+    edit:
+        props.id === undefined
+            ? true
+            : checkDocAccess(docAccess.value, undefined, AccessLevel.EDIT, 'DocStoreService.UpdateDocument'),
+    access:
+        props.id === undefined
+            ? true
+            : checkDocAccess(docAccess.value, undefined, AccessLevel.ACCESS, 'DocStoreService.UpdateDocument'),
     references: can('DocStoreService.AddDocumentReference'),
     relations: can('DocStoreService.AddDocumentRelation'),
 }));
