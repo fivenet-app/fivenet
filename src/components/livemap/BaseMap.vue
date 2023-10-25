@@ -25,7 +25,9 @@ const { location, zoom } = storeToRefs(livemapStore);
 let map: L.Map | undefined = undefined;
 
 function mapResize(): void {
-    if (map === undefined) return;
+    if (map === undefined) {
+        return;
+    }
 
     map.invalidateSize();
 }
@@ -71,8 +73,9 @@ const currentHash = ref<string>('');
 watch(currentHash, () => window.location.replace(currentHash.value));
 
 watch(location, () => {
-    if (location.value === undefined) return;
-    if (map === undefined) return;
+    if (location.value === undefined || map === undefined) {
+        return;
+    }
 
     map?.setZoom(5, {
         animate: false,
@@ -87,8 +90,10 @@ const isMoving = ref<boolean>(false);
 
 watchDebounced(
     isMoving,
-    () => {
-        if (!map || isMoving.value) return;
+    async () => {
+        if (!map || isMoving.value) {
+            return;
+        }
 
         const newHash = stringifyHash(map.getZoom(), map.getCenter().lat, map.getCenter().lng);
         if (currentHash.value !== newHash) currentHash.value = newHash;
@@ -124,13 +129,17 @@ function parseHash(hash: string): { latlng: L.LatLng; zoom: number } | undefined
     if (hash.indexOf('#') === 0) hash = hash.substring(1);
 
     const args = hash.split('/');
-    if (args.length !== 3) return;
+    if (args.length !== 3) {
+        return;
+    }
 
     const zoom = parseInt(args[0], 10);
     const lat = parseFloat(args[1]);
     const lng = parseFloat(args[2]);
 
-    if (isNaN(zoom) || isNaN(lat) || isNaN(lng)) return;
+    if (isNaN(zoom) || isNaN(lat) || isNaN(lng)) {
+        return;
+    }
 
     return {
         latlng: new L.LatLng(lat, lng),
@@ -152,7 +161,10 @@ async function onMapReady($event: any): Promise<void> {
     });
 
     map.addEventListener('mousemove', async (event: L.LeafletMouseEvent) => {
-        if (!event.latlng) return;
+        if (!event.latlng) {
+            return;
+        }
+
         mouseLat.value = (Math.round(event.latlng.lat * 100000) / 100000).toFixed(3);
         mouseLong.value = (Math.round(event.latlng.lng * 100000) / 100000).toFixed(3);
     });

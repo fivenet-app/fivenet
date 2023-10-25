@@ -74,8 +74,9 @@ const selectedUserMarker = ref<MarkerInfo | undefined>();
 watch(selectedUserMarker, () => applySelectedMarkerCentering());
 
 async function applySelectedMarkerCentering(): Promise<void> {
-    if (selectedUserMarker.value === undefined) return;
-    if (!livemap.value.centerSelectedMarker) return;
+    if (selectedUserMarker.value === undefined || !livemap.value.centerSelectedMarker) {
+        return;
+    }
 
     location.value = { x: selectedUserMarker.value.x, y: selectedUserMarker.value.y };
 }

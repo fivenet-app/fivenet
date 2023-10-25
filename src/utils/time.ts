@@ -70,7 +70,9 @@ export function fromString(time: string): Date {
 }
 
 export function toTimestamp(date?: Date): resources_timestamp_timestamp.Timestamp | undefined {
-    if (date === undefined) return;
+    if (date === undefined) {
+        return;
+    }
 
     return {
         timestamp: google_protobuf_timestamp.Timestamp.fromDate(date),

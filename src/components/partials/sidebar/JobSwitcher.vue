@@ -26,7 +26,9 @@ async function setJob(): Promise<void> {
     return new Promise(async (res, rej) => {
         try {
             const grades = selectedJob.value?.grades;
-            if (!grades) return;
+            if (!grades) {
+                return;
+            }
 
             const call = $grpc.getAuthClient().setJob({
                 charId: activeChar.value?.userId!,

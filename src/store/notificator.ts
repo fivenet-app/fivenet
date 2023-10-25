@@ -67,7 +67,9 @@ export const useNotificatorStore = defineStore('notifications', {
         },
 
         async startStream(): Promise<void> {
-            if (this.abort !== undefined) return;
+            if (this.abort !== undefined) {
+                return;
+            }
 
             console.debug('Notificator: Stream starting, starting at ID:', this.getLastId);
 

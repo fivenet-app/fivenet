@@ -22,7 +22,9 @@ const forms = ref<{ create: boolean; forgot: boolean }>({
 });
 
 watch(accessToken, async (): Promise<NavigationFailure | TypedRouteFromName<'auth-character-selector'> | void | undefined> => {
-    if (accessToken.value === null) return;
+    if (accessToken.value === null) {
+        return;
+    }
 
     return await navigateTo({
         name: 'auth-character-selector',

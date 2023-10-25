@@ -11,10 +11,14 @@ const completorStore = useCompletorStore();
 const { data: lawBooks, pending, refresh, error } = useLazyAsyncData(`lawbooks`, () => completorStore.listLawBooks());
 
 function deletedLawBook(id: bigint): void {
-    if (!lawBooks.value) return;
+    if (!lawBooks.value) {
+        return;
+    }
 
     const idx = lawBooks.value.findIndex((b) => b.id === id);
-    if (idx > -1) lawBooks.value.splice(idx, 1);
+    if (idx > -1) {
+        lawBooks.value.splice(idx, 1);
+    }
 }
 
 const lastNewId = ref<bigint>(BigInt(-1));

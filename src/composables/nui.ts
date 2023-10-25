@@ -28,19 +28,25 @@ export async function fetchNui<T = any, V = any>(event: string, data: T): Promis
 }
 
 export async function toggleTablet(state: boolean): Promise<void> {
-    if (!isNUIAvailable()) return;
+    if (!isNUIAvailable()) {
+        return;
+    }
 
     return await fetchNui(state ? 'openTablet' : 'closeTablet', { ok: true });
 }
 
 export async function setWaypoint(x: number, y: number): Promise<void> {
-    if (!isNUIAvailable()) return;
+    if (!isNUIAvailable()) {
+        return;
+    }
 
     return fetchNui('setWaypoint', { x: x, y: y });
 }
 
 export async function phoneCallNumber(phoneNumber: string): Promise<void> {
-    if (!isNUIAvailable()) return;
+    if (!isNUIAvailable()) {
+        return;
+    }
 
     return fetchNui('phoneCallNumber', { phoneNumber: phoneNumber });
 }

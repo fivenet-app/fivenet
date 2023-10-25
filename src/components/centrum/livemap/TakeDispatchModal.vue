@@ -31,8 +31,9 @@ const queryDispatches = ref('');
 async function takeDispatches(resp: TakeDispatchResp): Promise<void> {
     return new Promise(async (res, rej) => {
         try {
-            if (selectedDispatches.value.length === 0) return;
-            if (!canTakeDispatch.value) return;
+            if (selectedDispatches.value.length === 0 || !canTakeDispatch.value) {
+                return;
+            }
 
             const call = $grpc.getCentrumClient().takeDispatch({
                 dispatchIds: selectedDispatches.value,

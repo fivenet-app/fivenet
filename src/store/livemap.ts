@@ -45,7 +45,9 @@ export const useLivemapStore = defineStore('livemap', {
     persist: false,
     actions: {
         async startStream(): Promise<void> {
-            if (this.abort !== undefined) return;
+            if (this.abort !== undefined) {
+                return;
+            }
 
             console.debug('Livemap: Starting Data Stream');
 

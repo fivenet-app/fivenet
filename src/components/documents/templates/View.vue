@@ -109,7 +109,9 @@ const contentAccess = ref<
 >(new Map());
 
 watch(template, () => {
-    if (!template.value) return;
+    if (!template.value) {
+        return;
+    }
 
     const tplAccess = template.value.jobAccess;
     if (tplAccess) {

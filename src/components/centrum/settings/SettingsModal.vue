@@ -81,7 +81,9 @@ const { handleSubmit, meta, setValues } = useForm<FormData>({
 });
 
 function setSettingsValues(): void {
-    if (!settings.value) return;
+    if (!settings.value) {
+        return;
+    }
 
     setValues({
         enabled: settings.value.enabled,

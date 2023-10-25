@@ -74,7 +74,7 @@ const selectedChar = ref<undefined | UserShort>(undefined);
 const queryJobRaw = ref('');
 const queryJob = computed(() => queryJobRaw.value.toLowerCase());
 const filteredJobs = computed(() =>
-    jobs.value.filter((j) => j.name.toLowerCase().includes(queryJob.value) || j.label.includes(queryJob.value)),
+    jobs.value.filter((j) => j.name.toLowerCase().includes(queryJob.value) || j.label.toLowerCase().includes(queryJob.value)),
 );
 const selectedJob = ref<Job>();
 
@@ -163,7 +163,10 @@ watch(selectedAccessType, async () => {
 });
 
 watch(selectedJob, () => {
-    if (!selectedJob.value) return;
+    if (!selectedJob.value) {
+        return;
+    }
+
     emit('nameChange', {
         id: props.init.id,
         job: selectedJob.value,
@@ -174,7 +177,10 @@ watch(selectedJob, () => {
 });
 
 watch(selectedChar, () => {
-    if (!selectedChar.value) return;
+    if (!selectedChar.value) {
+        return;
+    }
+
     emit('nameChange', {
         id: props.init.id,
         job: undefined,
@@ -183,12 +189,18 @@ watch(selectedChar, () => {
 });
 
 watch(selectedMinimumRank, () => {
-    if (!selectedMinimumRank.value) return;
+    if (!selectedMinimumRank.value) {
+        return;
+    }
+
     emit('rankChange', { id: props.init.id, rank: selectedMinimumRank.value });
 });
 
 watch(selectedAccessRole, () => {
-    if (!selectedAccessRole.value) return;
+    if (!selectedAccessRole.value) {
+        return;
+    }
+
     emit('accessChange', {
         id: props.init.id,
         access: selectedAccessRole.value.id,

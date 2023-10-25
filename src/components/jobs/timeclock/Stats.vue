@@ -7,8 +7,10 @@ const props = defineProps<{
 
 const entries = ref<{ name: string; value: number }[]>([]);
 
-function updateStats(): void {
-    if (!props.stats) return;
+async function updateStats(): Promise<void> {
+    if (!props.stats) {
+        return;
+    }
 
     entries.value.length = 0;
     entries.value.push({
@@ -25,9 +27,9 @@ function updateStats(): void {
     });
 }
 
-watch(props, () => updateStats());
+watch(props, async () => updateStats());
 
-onBeforeMount(() => updateStats());
+onBeforeMount(async () => updateStats());
 </script>
 
 <template>

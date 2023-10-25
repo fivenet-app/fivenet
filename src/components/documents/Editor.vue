@@ -485,7 +485,9 @@ function removeAccessEntry(event: { id: bigint }): void {
 
 function updateAccessEntryType(event: { id: bigint; type: number }): void {
     const accessEntry = access.value.get(event.id);
-    if (!accessEntry) return;
+    if (!accessEntry) {
+        return;
+    }
 
     accessEntry.type = event.type;
     access.value.set(event.id, accessEntry);
@@ -493,7 +495,9 @@ function updateAccessEntryType(event: { id: bigint; type: number }): void {
 
 function updateAccessEntryName(event: { id: bigint; job?: Job; char?: UserShort }): void {
     const accessEntry = access.value.get(event.id);
-    if (!accessEntry) return;
+    if (!accessEntry) {
+        return;
+    }
 
     if (event.job) {
         accessEntry.values.job = event.job.name;
@@ -508,7 +512,9 @@ function updateAccessEntryName(event: { id: bigint; job?: Job; char?: UserShort 
 
 function updateAccessEntryRank(event: { id: bigint; rank: JobGrade }): void {
     const accessEntry = access.value.get(event.id);
-    if (!accessEntry) return;
+    if (!accessEntry) {
+        return;
+    }
 
     accessEntry.values.minimumGrade = event.rank.grade;
     access.value.set(event.id, accessEntry);
@@ -516,7 +522,9 @@ function updateAccessEntryRank(event: { id: bigint; rank: JobGrade }): void {
 
 function updateAccessEntryAccess(event: { id: bigint; access: AccessLevel }): void {
     const accessEntry = access.value.get(event.id);
-    if (!accessEntry) return;
+    if (!accessEntry) {
+        return;
+    }
 
     accessEntry.values.accessRole = event.access;
     access.value.set(event.id, accessEntry);
@@ -540,10 +548,14 @@ async function createDocument(values: FormData, content: string, closed: boolean
             users: [],
         };
         access.value.forEach((entry) => {
-            if (entry.values.accessRole === undefined) return;
+            if (entry.values.accessRole === undefined) {
+                return;
+            }
 
             if (entry.type === 0) {
-                if (!entry.values.char) return;
+                if (!entry.values.char) {
+                    return;
+                }
 
                 reqAccess.users.push({
                     id: 0n,
@@ -552,7 +564,9 @@ async function createDocument(values: FormData, content: string, closed: boolean
                     access: entry.values.accessRole,
                 });
             } else if (entry.type === 1) {
-                if (!entry.values.job) return;
+                if (!entry.values.job) {
+                    return;
+                }
 
                 reqAccess.jobs.push({
                     id: 0n,
@@ -633,10 +647,14 @@ async function updateDocument(id: bigint, values: FormData, content: string, clo
             users: [],
         };
         access.value.forEach((entry) => {
-            if (entry.values.accessRole === undefined) return;
+            if (entry.values.accessRole === undefined) {
+                return;
+            }
 
             if (entry.type === 0) {
-                if (!entry.values.char) return;
+                if (!entry.values.char) {
+                    return;
+                }
 
                 reqAccess.users.push({
                     id: 0n,
@@ -645,7 +663,9 @@ async function updateDocument(id: bigint, values: FormData, content: string, clo
                     access: entry.values.accessRole,
                 });
             } else if (entry.type === 1) {
-                if (!entry.values.job) return;
+                if (!entry.values.job) {
+                    return;
+                }
 
                 reqAccess.jobs.push({
                     id: 0n,
@@ -673,7 +693,9 @@ async function updateDocument(id: bigint, values: FormData, content: string, clo
                     });
                 });
                 referenceManagerData.value.forEach((ref) => {
-                    if (currentReferences.value.find((r) => r.id === ref.id!)) return;
+                    if (currentReferences.value.find((r) => r.id === ref.id!)) {
+                        return;
+                    }
                     ref.sourceDocumentId = response.documentId;
 
                     $grpc.getDocStoreClient().addDocumentReference({
@@ -693,7 +715,9 @@ async function updateDocument(id: bigint, values: FormData, content: string, clo
                     });
                 });
                 relationManagerData.value.forEach((rel) => {
-                    if (currentRelations.value.find((r) => r.id === rel.id!)) return;
+                    if (currentRelations.value.find((r) => r.id === rel.id!)) {
+                        return;
+                    }
                     rel.documentId = response.documentId;
 
                     $grpc.getDocStoreClient().addDocumentRelation({
@@ -735,7 +759,7 @@ const stats = ref<Stats>({
 
 const quillEditorRef = ref<null | InstanceType<typeof QuillEditor>>(null);
 
-function calculate(content: string): Stats {
+async function calculate(content: string): Promise<Stats> {
     const stats: Stats = {
         words: 0,
         chars: 0,
@@ -750,18 +774,22 @@ function calculate(content: string): Stats {
 }
 
 const debounced = useDebounceFn(
-    () => {
-        if (quillEditorRef.value === null) return;
-        changed.value = true;
+    async () => {
+        if (quillEditorRef.value === null) {
+            return;
+        }
 
-        stats.value = calculate(quillEditorRef.value.getQuill()?.getText());
+        changed.value = true;
+        stats.value = await calculate(quillEditorRef.value.getQuill()?.getText());
     },
     750,
     { maxWait: 1500 },
 );
 
 watchOnce(quillEditorRef, () => {
-    if (quillEditorRef.value === null) return;
+    if (quillEditorRef.value === null) {
+        return;
+    }
 
     quillEditorRef.value.getQuill().on('text-change', debounced);
 });

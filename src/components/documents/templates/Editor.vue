@@ -132,7 +132,9 @@ function removeAccessEntry(event: { id: bigint }): void {
 
 function updateAccessEntryType(event: { id: bigint; type: number }): void {
     const accessEntry = access.value.get(event.id);
-    if (!accessEntry) return;
+    if (!accessEntry) {
+        return;
+    }
 
     accessEntry.type = event.type;
     access.value.set(event.id, accessEntry);
@@ -140,7 +142,9 @@ function updateAccessEntryType(event: { id: bigint; type: number }): void {
 
 function updateAccessEntryName(event: { id: bigint; job?: Job }): void {
     const accessEntry = access.value.get(event.id);
-    if (!accessEntry) return;
+    if (!accessEntry) {
+        return;
+    }
 
     if (event.job) {
         accessEntry.values.job = event.job.name;
@@ -151,7 +155,9 @@ function updateAccessEntryName(event: { id: bigint; job?: Job }): void {
 
 function updateAccessEntryRank(event: { id: bigint; rank: JobGrade }): void {
     const accessEntry = access.value.get(event.id);
-    if (!accessEntry) return;
+    if (!accessEntry) {
+        return;
+    }
 
     accessEntry.values.minimumGrade = event.rank.grade;
     access.value.set(event.id, accessEntry);
@@ -159,7 +165,9 @@ function updateAccessEntryRank(event: { id: bigint; rank: JobGrade }): void {
 
 function updateAccessEntryAccess(event: { id: bigint; access: AccessLevel }): void {
     const accessEntry = access.value.get(event.id);
-    if (!accessEntry) return;
+    if (!accessEntry) {
+        return;
+    }
 
     accessEntry.values.accessRole = event.access;
     access.value.set(event.id, accessEntry);
@@ -210,7 +218,9 @@ function removeContentAccessEntry(event: { id: bigint }): void {
 
 function updateContentAccessEntryType(event: { id: bigint; type: number }): void {
     const accessEntry = contentAccess.value.get(event.id);
-    if (!accessEntry) return;
+    if (!accessEntry) {
+        return;
+    }
 
     accessEntry.type = event.type;
     contentAccess.value.set(event.id, accessEntry);
@@ -218,7 +228,9 @@ function updateContentAccessEntryType(event: { id: bigint; type: number }): void
 
 function updateContentAccessEntryName(event: { id: bigint; job?: Job }): void {
     const accessEntry = contentAccess.value.get(event.id);
-    if (!accessEntry) return;
+    if (!accessEntry) {
+        return;
+    }
 
     if (event.job) {
         accessEntry.values.job = event.job.name;
@@ -229,7 +241,9 @@ function updateContentAccessEntryName(event: { id: bigint; job?: Job }): void {
 
 function updateContentAccessEntryRank(event: { id: bigint; rank: JobGrade }): void {
     const accessEntry = contentAccess.value.get(event.id);
-    if (!accessEntry) return;
+    if (!accessEntry) {
+        return;
+    }
 
     accessEntry.values.minimumGrade = event.rank.grade;
     contentAccess.value.set(event.id, accessEntry);
@@ -237,7 +251,9 @@ function updateContentAccessEntryRank(event: { id: bigint; rank: JobGrade }): vo
 
 function updateContentAccessEntryAccess(event: { id: bigint; access: AccessLevel }): void {
     const accessEntry = contentAccess.value.get(event.id);
-    if (!accessEntry) return;
+    if (!accessEntry) {
+        return;
+    }
 
     accessEntry.values.accessRole = event.access;
     contentAccess.value.set(event.id, accessEntry);
@@ -262,10 +278,14 @@ async function createOrUpdateTemplate(values: FormData, templateId?: bigint): Pr
 
         const jobAccesses: TemplateJobAccess[] = [];
         access.value.forEach((entry) => {
-            if (entry.values.accessRole === undefined) return;
+            if (entry.values.accessRole === undefined) {
+                return;
+            }
 
             if (entry.type === 1) {
-                if (!entry.values.job) return;
+                if (!entry.values.job) {
+                    return;
+                }
 
                 jobAccesses.push({
                     id: 0n,
@@ -282,10 +302,14 @@ async function createOrUpdateTemplate(values: FormData, templateId?: bigint): Pr
             users: [],
         };
         contentAccess.value.forEach((entry) => {
-            if (entry.values.accessRole === undefined) return;
+            if (entry.values.accessRole === undefined) {
+                return;
+            }
 
             if (entry.type === 0) {
-                if (!entry.values.char) return;
+                if (!entry.values.char) {
+                    return;
+                }
 
                 reqAccess.users.push({
                     id: 0n,
@@ -294,7 +318,9 @@ async function createOrUpdateTemplate(values: FormData, templateId?: bigint): Pr
                     access: entry.values.accessRole,
                 });
             } else if (entry.type === 1) {
-                if (!entry.values.job) return;
+                if (!entry.values.job) {
+                    return;
+                }
 
                 reqAccess.jobs.push({
                     id: 0n,
@@ -383,7 +409,9 @@ onMounted(async () => {
             const { response } = await call;
 
             const tpl = response.template;
-            if (!tpl) return;
+            if (!tpl) {
+                return;
+            }
 
             setValues({
                 weight: tpl.weight,
