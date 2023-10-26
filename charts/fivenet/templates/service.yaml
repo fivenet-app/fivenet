@@ -3,7 +3,7 @@ kind: Service
 metadata:
   name: {{ include "fivenet.fullname" . }}
   labels:
-    app.kubernetes.io/component: fivenet
+    app.kubernetes.io/component: server
     {{- include "fivenet.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.service.type }}

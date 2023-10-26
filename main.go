@@ -47,6 +47,7 @@ import (
 var CLI struct {
 	Server struct {
 	} `cmd:"" help:"Run FiveNet server."`
+
 	Discord struct {
 	} `cmd:"" help:"Run Discord bot."`
 }

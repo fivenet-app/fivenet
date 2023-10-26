@@ -156,7 +156,7 @@ func NewServer(p ServerParams) (ServerResult, error) {
 			if err != nil {
 				return err
 			}
-			p.Logger.Info("grpc server listening", zap.String("address", p.Config.HTTP.Listen))
+			p.Logger.Info("grpc server listening", zap.String("address", p.Config.GRPC.Listen))
 			go func() {
 				if err := srv.Serve(ln); err != nil {
 					p.Logger.Error("failed to serve grpc server", zap.Error(err))
