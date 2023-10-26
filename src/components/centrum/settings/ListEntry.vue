@@ -2,11 +2,12 @@
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { useConfirmDialog } from '@vueuse/core';
 import { PencilIcon, TrashCanIcon } from 'mdi-vue3';
+import ColorInput from 'vue-color-input';
 import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
 import { Unit } from '~~/gen/ts/resources/dispatch/units';
 import CreateOrUpdateUnitModal from './CreateOrUpdateUnitModal.vue';
 
-defineProps<{
+const props = defineProps<{
     unit: Unit;
 }>();
 
@@ -34,6 +35,8 @@ async function deleteUnit(id: bigint): Promise<void> {
     });
 }
 
+const color = `#${props.unit.color ?? 'ffffff'}`;
+
 const { isRevealed, reveal, confirm, cancel, onConfirm } = useConfirmDialog();
 
 onConfirm(async (id) => deleteUnit(id));
@@ -43,7 +46,6 @@ const open = ref(false);
 
 <template>
     <ConfirmDialog :open="isRevealed" :cancel="cancel" :confirm="() => confirm(unit.id)" />
-
     <CreateOrUpdateUnitModal v-if="can('CentrumService.CreateOrUpdateUnit')" :unit="unit" :open="open" @close="open = false" />
 
     <tr>
@@ -57,7 +59,7 @@ const open = ref(false);
             {{ unit.description }}
         </td>
         <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">
-            <input type="color" disabled :value="`#${unit.color ?? 'ffffff'}`" class="h-6" />
+            <ColorInput v-model="color" disabled format="hex" class="h-6" />
         </td>
         <td class="whitespace-nowrap py-2 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
             <div class="flex flex-row justify-end">

@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
 import { TuneIcon } from 'mdi-vue3';
+import ColorInput from 'vue-color-input';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -141,7 +142,7 @@ async function saveJobProps(): Promise<void> {
                                 {{ $t('components.rector.job_props.livemap_marker_color') }}
                             </dt>
                             <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
-                                <input type="color" v-model="properties.livemapMarkerColor" />
+                                <ColorInput v-model="properties.livemapMarkerColor" disable-alpha format="hex" position="top" />
                             </dd>
                         </div>
                         <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">

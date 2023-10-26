@@ -5,6 +5,7 @@ import { digits, max, max_value, min, min_value, required } from '@vee-validate/
 import { useThrottleFn } from '@vueuse/core';
 import { CloseIcon, LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
+import ColorInput from 'vue-color-input';
 import { useLivemapStore } from '~/store/livemap';
 import { Marker, MarkerType } from '~~/gen/ts/resources/livemap/livemap';
 
@@ -226,12 +227,19 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                 class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
                                                             >
                                                                 <VeeField
-                                                                    type="color"
                                                                     name="color"
                                                                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                                     :placeholder="$t('common.color')"
                                                                     :label="$t('common.color')"
-                                                                />
+                                                                    v-slot="{ field }"
+                                                                >
+                                                                    <ColorInput
+                                                                        v-model="field.value"
+                                                                        disable-alpha
+                                                                        format="hex"
+                                                                        position="top"
+                                                                    />
+                                                                </VeeField>
                                                                 <VeeErrorMessage
                                                                     name="color"
                                                                     as="p"

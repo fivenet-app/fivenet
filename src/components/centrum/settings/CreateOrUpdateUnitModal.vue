@@ -5,6 +5,7 @@ import { max, min, required } from '@vee-validate/rules';
 import { useThrottleFn } from '@vueuse/core';
 import { CloseIcon, GroupIcon, LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
+import ColorInput from 'vue-color-input';
 import { Unit } from '~~/gen/ts/resources/dispatch/units';
 
 const props = defineProps<{
@@ -87,8 +88,8 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
     await onSubmit(e);
 }, 1000);
 
-onMounted(() => {
-    if (props.unit) {
+function updateUnitInForm(): void {
+    if (props.unit !== undefined) {
         setValues({
             name: props.unit.name,
             initials: props.unit.initials,
@@ -96,7 +97,9 @@ onMounted(() => {
             color: `#${props.unit.color}`,
         });
     }
-});
+}
+
+onBeforeMount(async () => updateUnitInForm());
 </script>
 
 <template>
@@ -213,10 +216,17 @@ onMounted(() => {
                                                     </label>
                                                     <VeeField
                                                         name="color"
-                                                        type="color"
                                                         class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                         :label="$t('common.color')"
-                                                    />
+                                                        v-slot="{ field }"
+                                                    >
+                                                        <ColorInput
+                                                            v-model="field.value"
+                                                            disable-alpha
+                                                            format="hex"
+                                                            position="top"
+                                                        />
+                                                    </VeeField>
                                                     <VeeErrorMessage name="color" as="p" class="mt-2 text-sm text-error-400" />
                                                 </div>
                                             </div>
