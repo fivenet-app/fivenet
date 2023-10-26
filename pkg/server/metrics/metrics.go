@@ -60,6 +60,10 @@ func NewServer(p Params) (Result, error) {
 		}),
 	)))
 
+	e.GET("/readiness", func(c *gin.Context) {
+		c.String(http.StatusOK, "OK")
+	})
+
 	// Create HTTP Server for graceful shutdown handling
 	srv := &http.Server{
 		Addr:    p.Config.HTTP.AdminListen,

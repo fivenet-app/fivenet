@@ -228,13 +228,13 @@ discordBot:
   livenessProbe:
     httpGet:
       path: /readiness
-      port: http
+      port: metrics
     initialDelaySeconds: 15
     periodSeconds: 10
   readinessProbe:
     httpGet:
       path: /readiness
-      port: http
+      port: metrics
     initialDelaySeconds: 10
     periodSeconds: 7
   additionalEnv: []
