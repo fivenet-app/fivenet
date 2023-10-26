@@ -88,7 +88,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
     await onSubmit(e);
 }, 1000);
 
-function updateUnitInForm(): void {
+async function updateUnitInForm(): Promise<void> {
     if (props.unit !== undefined) {
         setValues({
             name: props.unit.name,
@@ -98,6 +98,8 @@ function updateUnitInForm(): void {
         });
     }
 }
+
+watch(props, async () => updateUnitInForm());
 
 onBeforeMount(async () => updateUnitInForm());
 </script>
