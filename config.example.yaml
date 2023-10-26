@@ -96,6 +96,12 @@ discord:
     syncInterval: 15m
     inviteURL: "your_discord_bot_invite_url"
     token: "your_discord_bot_token"
+    presence:
+      gameStatus: "FiveNet"
+      #listeningStatus: ""
+      #streamingStatus: ""
+      #streamingStatusUrl: ""
+      #watchStatus: ""
     userInfoSync:
       enabled: false
       roleFormat: "[%02d] %s"

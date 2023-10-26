@@ -123,6 +123,7 @@ fivenet:
       environment: "live"
     http:
       listen: ":8080"
+      adminListen: ":7070"
       sessions:
         cookieSecret: "YOUR_COOKIE_SECRET"
         domain: "chart-example.local"
@@ -190,7 +191,14 @@ fivenet:
         syncInterval: 15m
         inviteURL: "your_discord_bot_invite_url"
         token: "your_discord_bot_token"
+        presence: {}
+          #gameStatus: ""
+          #listeningStatus: ""
+          #streamingStatus: ""
+          #streamingStatusUrl: ""
+          #watchStatus: ""
         userInfoSync:
+          enabled: false
           roleFormat: "[%02d] %s"
           nicknameRegex: "^(?P<prefix>\\[\\S+][ ]*)?(?P<name>[^\\[]+)(?P<suffix>[ ]*\\[\\S+])?"
         groupSync:

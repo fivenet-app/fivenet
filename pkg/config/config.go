@@ -205,9 +205,18 @@ type DiscordBot struct {
 	SyncInterval time.Duration       `default:"15m" yaml:"syncInterval"`
 	InviteURL    string              `yaml:"inviteURL"`
 	Token        string              `yaml:"token"`
+	Presence     DiscordPresence     `yaml:"presence,omitempty"`
 	UserInfoSync DiscordUserInfoSync `yaml:"userInfoSync"`
 	GroupSync    DiscordGroupSync    `yaml:"groupSync"`
 	Commands     DiscordCommands     `yaml:"commands"`
+}
+
+type DiscordPresence struct {
+	GameStatus         *string `yaml:"gameStatus"`
+	ListeningStatus    *string `yaml:"listeningStatus"`
+	StreamingStatus    *string `yaml:"streamingStatus"`
+	StreamingStatusUrl *string `yaml:"streamingStatusUrl"`
+	WatchStatus        *string `yaml:"watchStatus"`
 }
 
 type DiscordUserInfoSync struct {

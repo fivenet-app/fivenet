@@ -132,7 +132,7 @@ func (b *Bot) start(ctx context.Context) error {
 
 	for {
 		if b.discord.State.Ready.Version > 0 {
-			return nil
+			return b.setBotPresence()
 		}
 
 		select {
@@ -142,6 +142,33 @@ func (b *Bot) start(ctx context.Context) error {
 		case <-time.After(750 * time.Millisecond):
 		}
 	}
+
+}
+
+func (b *Bot) setBotPresence() error {
+	if b.cfg.Presence.GameStatus != nil {
+		if err := b.discord.UpdateGameStatus(1, *b.cfg.Presence.GameStatus); err != nil {
+			return err
+		}
+	} else if b.cfg.Presence.ListeningStatus != nil {
+		if err := b.discord.UpdateListeningStatus(*b.cfg.Presence.ListeningStatus); err != nil {
+			return err
+		}
+	} else if b.cfg.Presence.StreamingStatus != nil {
+		url := ""
+		if b.cfg.Presence.StreamingStatusUrl != nil {
+			url = *b.cfg.Presence.StreamingStatusUrl
+		}
+		if err := b.discord.UpdateStreamingStatus(1, *b.cfg.Presence.StreamingStatus, url); err != nil {
+			return err
+		}
+	} else if b.cfg.Presence.WatchStatus != nil {
+		if err := b.discord.UpdateWatchStatus(1, *b.cfg.Presence.WatchStatus); err != nil {
+			return err
+		}
+	}
+
+	return nil
 }
 
 func (b *Bot) refreshBotGuilds() error {
