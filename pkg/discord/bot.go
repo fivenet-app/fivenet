@@ -147,7 +147,7 @@ func (b *Bot) start(ctx context.Context) error {
 
 func (b *Bot) setBotPresence() error {
 	if b.cfg.Presence.GameStatus != nil {
-		if err := b.discord.UpdateGameStatus(1, *b.cfg.Presence.GameStatus); err != nil {
+		if err := b.discord.UpdateGameStatus(0, *b.cfg.Presence.GameStatus); err != nil {
 			return err
 		}
 	} else if b.cfg.Presence.ListeningStatus != nil {
@@ -159,14 +159,15 @@ func (b *Bot) setBotPresence() error {
 		if b.cfg.Presence.StreamingStatusUrl != nil {
 			url = *b.cfg.Presence.StreamingStatusUrl
 		}
-		if err := b.discord.UpdateStreamingStatus(1, *b.cfg.Presence.StreamingStatus, url); err != nil {
+		if err := b.discord.UpdateStreamingStatus(0, *b.cfg.Presence.StreamingStatus, url); err != nil {
 			return err
 		}
 	} else if b.cfg.Presence.WatchStatus != nil {
-		if err := b.discord.UpdateWatchStatus(1, *b.cfg.Presence.WatchStatus); err != nil {
+		if err := b.discord.UpdateWatchStatus(0, *b.cfg.Presence.WatchStatus); err != nil {
 			return err
 		}
 	}
+	b.logger.Info("Set bot presence")
 
 	return nil
 }
