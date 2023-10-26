@@ -18,8 +18,6 @@ import (
 	ginzap "github.com/gin-contrib/zap"
 	"github.com/gin-gonic/contrib/gzip"
 	"github.com/gin-gonic/gin"
-	"github.com/prometheus/client_golang/prometheus"
-	"github.com/prometheus/client_golang/prometheus/promhttp"
 	"go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.uber.org/fx"
@@ -33,7 +31,7 @@ var HTTPServerModule = fx.Module("httpserver",
 	fx.Decorate(wrapLogger),
 )
 
-type ServerParams struct {
+type Params struct {
 	fx.In
 
 	LC fx.Lifecycle
@@ -45,15 +43,19 @@ type ServerParams struct {
 	TokenMgr *auth.TokenMgr
 }
 
-type ServerResult struct {
+type Result struct {
 	fx.Out
 
 	Server *http.Server
 }
 
+func wrapLogger(log *zap.Logger) *zap.Logger {
+	return log.Named("http_server")
+}
+
 // NewHTTP builds an HTTP server that will begin serving requests
 // when the Fx application starts.
-func NewHTTP(p ServerParams) (ServerResult, error) {
+func NewHTTP(p Params) (Result, error) {
 	// Create HTTP Server for graceful shutdown handling
 	srv := &http.Server{
 		Addr:    p.Config.HTTP.Listen,
@@ -68,6 +70,7 @@ func NewHTTP(p ServerParams) (ServerResult, error) {
 			}
 			p.Logger.Info("http server listening", zap.String("address", p.Config.HTTP.Listen))
 			go srv.Serve(ln)
+
 			return nil
 		},
 		OnStop: func(ctx context.Context) error {
@@ -75,12 +78,12 @@ func NewHTTP(p ServerParams) (ServerResult, error) {
 		},
 	})
 
-	return ServerResult{
+	return Result{
 		Server: srv,
 	}, nil
 }
 
-func setupHTTPServer(p ServerParams) *gin.Engine {
+func setupHTTPServer(p Params) *gin.Engine {
 	// Gin HTTP Server
 	gin.SetMode(p.Config.Mode)
 	e := gin.New()
@@ -102,14 +105,6 @@ func setupHTTPServer(p ServerParams) *gin.Engine {
 
 	// GZIP
 	e.Use(gzip.Gzip(gzip.DefaultCompression))
-
-	// Prometheus Metrics endpoint
-	e.GET("/metrics", gin.WrapH(promhttp.InstrumentMetricHandler(
-		prometheus.DefaultRegisterer, promhttp.HandlerFor(prometheus.DefaultGatherer, promhttp.HandlerOpts{
-			// Opt into OpenMetrics e.g. to support exemplars
-			EnableOpenMetrics: true,
-		}),
-	)))
 
 	// Tracing
 	e.Use(otelgin.Middleware("fivenet", otelgin.WithTracerProvider(p.TP)))
@@ -148,8 +143,4 @@ func setupHTTPServer(p ServerParams) *gin.Engine {
 	e.Use(static.Serve("/", fs))
 
 	return e
-}
-
-func wrapLogger(log *zap.Logger) *zap.Logger {
-	return log.Named("http_server")
 }

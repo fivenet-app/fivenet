@@ -1,25 +1,17 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ include "fivenet.fullname" . }}
+  name: {{ include "fivenet.fullname" . }}-discordbot
   labels:
-    app.kubernetes.io/component: fivenet
+    app.kubernetes.io/component: discordbot
     {{- include "fivenet.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.service.type }}
   ports:
-    - name: http
-      port: 8080
-      protocol: TCP
-      targetPort: http
     - name: metrics
       port: 7070
       protocol: TCP
       targetPort: metrics
-    - name: grpc
-      port: 9090
-      protocol: TCP
-      targetPort: grpc
   selector:
-    app.kubernetes.io/component: server
+    app.kubernetes.io/component: discordbot
     {{- include "fivenet.selectorLabels" . | nindent 4 }}

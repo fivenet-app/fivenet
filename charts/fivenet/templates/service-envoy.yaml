@@ -12,6 +12,10 @@ spec:
       port: 8181
       protocol: TCP
       targetPort: grpc
+    - name: admin
+      port: 9901
+      protocol: TCP
+      targetPort: admin
   selector:
     app.kubernetes.io/component: envoy
     {{- include "fivenet.selectorLabels" . | nindent 4 }}

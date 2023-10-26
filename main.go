@@ -17,6 +17,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/perms"
 	"github.com/galexrt/fivenet/pkg/server"
 	"github.com/galexrt/fivenet/pkg/server/audit"
+	"github.com/galexrt/fivenet/pkg/server/metrics"
 	"github.com/galexrt/fivenet/pkg/tracker"
 	"github.com/galexrt/fivenet/pkg/tracker/postals"
 	"github.com/galexrt/fivenet/query"
@@ -61,6 +62,7 @@ func main() {
 
 		LoggerModule,
 		config.Module,
+		metrics.Module,
 		server.HTTPServerModule,
 		grpc.ServerModule,
 		server.TracerProviderModule,
@@ -73,6 +75,7 @@ func main() {
 		state.StateModule,
 		bot.Module,
 		manager.Module,
+		discord.BotModule,
 
 		fx.Provide(
 			mstlystcdata.NewCache,
@@ -98,7 +101,7 @@ func main() {
 			grpc.AsService(pbrector.NewServer),
 		),
 
-		discord.BotModule,
+		fx.Invoke(func(metrics.MetricsServer) {}),
 	}
 
 	switch ctx.Command() {

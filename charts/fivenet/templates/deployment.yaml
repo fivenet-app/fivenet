@@ -8,7 +8,7 @@ spec:
   replicas: {{ .Values.fivenet.replicaCount }}
   selector:
     matchLabels:
-      app.kubernetes.io/component: fivenet
+      app.kubernetes.io/component: server
       {{- include "fivenet.selectorLabels" . | nindent 6 }}
   template:
     metadata:
@@ -18,7 +18,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        app.kubernetes.io/component: fivenet
+        app.kubernetes.io/component: server
         {{- include "fivenet.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
@@ -46,6 +46,9 @@ spec:
               protocol: TCP
             - name: grpc
               containerPort: 9090
+              protocol: TCP
+            - name: metrics
+              containerPort: 7070
               protocol: TCP
           livenessProbe:
             {{- toYaml .Values.fivenet.livenessProbe | nindent 12 }}

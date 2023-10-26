@@ -85,9 +85,10 @@ type Tracing struct {
 }
 
 type HTTP struct {
-	Listen   string   `default:":8080" yaml:"listen"`
-	Sessions Sessions `yaml:"sessions"`
-	Links    Links    `yaml:"links"`
+	Listen      string   `default:":8080" yaml:"listen"`
+	AdminListen string   `default:":7070" yaml:"adminListen"`
+	Sessions    Sessions `yaml:"sessions"`
+	Links       Links    `yaml:"links"`
 }
 
 type Sessions struct {

@@ -8,7 +8,7 @@ spec:
   replicas: {{ .Values.discordBot.replicaCount }}
   selector:
     matchLabels:
-      app.kubernetes.io/component: fivenet-discordbot
+      app.kubernetes.io/component: discordbot
       {{- include "fivenet.selectorLabels" . | nindent 6 }}
   template:
     metadata:
@@ -18,7 +18,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        app.kubernetes.io/component: fivenet-discordbot
+        app.kubernetes.io/component: discordbot
         {{- include "fivenet.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
@@ -43,8 +43,8 @@ spec:
           env:
             {{- toYaml .Values.discordBot.additionalEnv | nindent 12 }}
           ports:
-            - name: http
-              containerPort: 8080
+            - name: metrics
+              containerPort: 7070
               protocol: TCP
           livenessProbe:
             {{- toYaml .Values.discordBot.livenessProbe | nindent 12 }}
