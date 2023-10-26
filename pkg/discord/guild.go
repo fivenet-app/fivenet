@@ -11,6 +11,7 @@ type Guild struct {
 	Job string `alias:"job"`
 	ID  string `alias:"id"`
 
+	logger   *zap.Logger
 	bot      *Bot
 	guild    *discordgo.Guild
 	modules  map[string]modules.Module
@@ -44,10 +45,12 @@ func NewGuild(b *Bot, guild *discordgo.Guild, job string) (*Guild, error) {
 	}
 
 	return &Guild{
+		Job: job,
+		ID:  guild.ID,
+
+		logger:   b.logger.Named("discord_guild").With(zap.String("job", job), zap.String("discord_guild_id", guild.ID)),
 		bot:      b,
 		guild:    guild,
-		ID:       guild.ID,
-		Job:      job,
 		modules:  ms,
 		commands: cmds,
 	}, nil
@@ -63,13 +66,13 @@ func (g *Guild) Setup() error {
 
 func (g *Guild) Run() error {
 	for key, module := range g.modules {
-		g.bot.logger.Debug("running discord guild module", zap.String("dc_module", key))
+		g.logger.Debug("running discord guild module", zap.String("dc_module", key))
 		if err := module.Run(); err != nil {
 			return err
 		}
 	}
 
-	g.bot.logger.Info("completed sync run", zap.String("job", g.Job), zap.String("discord_guild_id", g.ID))
+	g.logger.Info("completed sync run")
 
 	return nil
 }

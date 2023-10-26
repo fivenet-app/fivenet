@@ -303,7 +303,8 @@ func (b *Bot) runSync() error {
 
 	b.activeGuilds.Range(func(key string, guild *Guild) bool {
 		if err := guild.Run(); err != nil {
-			b.logger.Error("error during sync", zap.String("job", guild.Job), zap.String("discord_guild_id", guild.ID), zap.Error(err))
+			b.logger.Error("error during sync", zap.String("job", guild.Job), zap.String("discord_guild_id", guild.ID),
+				zap.Error(err))
 			lastSync.WithLabelValues(guild.Job, "failed").SetToCurrentTime()
 			return false
 		}

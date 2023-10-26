@@ -391,10 +391,15 @@ func (s *Manager) cleanupUnitStatus(ctx context.Context) error {
 			}
 
 			if unit.Status == nil || unit.Status.Status != dispatch.StatusUnit_STATUS_UNIT_UNAVAILABLE {
+				var userId *int32
+				if unit.Status != nil {
+					userId = unit.Status.UserId
+				}
+
 				if err := s.UpdateUnitStatus(ctx, job, unit, &dispatch.UnitStatus{
 					UnitId: unit.Id,
 					Status: dispatch.StatusUnit_STATUS_UNIT_UNAVAILABLE,
-					UserId: unit.Status.UserId,
+					UserId: userId,
 				}); err != nil {
 					s.logger.Error("failed to update empty unit status to unavailable", zap.Error(err))
 					return true
