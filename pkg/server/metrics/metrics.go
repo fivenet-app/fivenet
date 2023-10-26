@@ -80,7 +80,7 @@ func NewServer(p Params) (Result, error) {
 			if err != nil {
 				return err
 			}
-			p.Logger.Info("metrics server listening", zap.String("address", p.Config.HTTP.AdminListen))
+			p.Logger.Info("metrics server listening", zap.String("address", srv.Addr))
 			go srv.Serve(ln)
 
 			return nil

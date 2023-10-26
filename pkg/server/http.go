@@ -31,6 +31,8 @@ var HTTPServerModule = fx.Module("httpserver",
 	fx.Decorate(wrapLogger),
 )
 
+type HTTPServer *http.Server
+
 type Params struct {
 	fx.In
 
@@ -46,7 +48,7 @@ type Params struct {
 type Result struct {
 	fx.Out
 
-	Server *http.Server
+	Server HTTPServer
 }
 
 func wrapLogger(log *zap.Logger) *zap.Logger {
@@ -68,7 +70,7 @@ func NewHTTP(p Params) (Result, error) {
 			if err != nil {
 				return err
 			}
-			p.Logger.Info("http server listening", zap.String("address", p.Config.HTTP.Listen))
+			p.Logger.Info("http server listening", zap.String("address", srv.Addr))
 			go srv.Serve(ln)
 
 			return nil

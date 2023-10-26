@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"net/http"
 	"time"
 
 	"github.com/alecthomas/kong"
@@ -109,7 +108,7 @@ func main() {
 	case "server":
 		fxOpts = append(fxOpts,
 			fx.Invoke(func(*grpcserver.Server) {}),
-			fx.Invoke(func(*http.Server) {}),
+			fx.Invoke(func(server.HTTPServer) {}),
 		)
 	case "discord":
 		fxOpts = append(fxOpts,
