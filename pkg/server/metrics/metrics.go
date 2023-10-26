@@ -15,6 +15,10 @@ import (
 	"go.uber.org/zap"
 )
 
+const (
+	Namespace = "fivenet"
+)
+
 var Module = fx.Module("metricsserver",
 	fx.Provide(
 		NewServer,

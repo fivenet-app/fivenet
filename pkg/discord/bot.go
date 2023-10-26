@@ -9,8 +9,11 @@ import (
 	"github.com/bwmarrin/discordgo"
 	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
+	"github.com/galexrt/fivenet/pkg/server/metrics"
 	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/query/fivenet/table"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promauto"
 	"github.com/puzpuzpuz/xsync/v3"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
@@ -29,6 +32,15 @@ var BotModule = fx.Module("discord_bot",
 		NewBot,
 	),
 	fx.Decorate(wrapLogger),
+)
+
+var (
+	lastSync = promauto.NewGaugeVec(prometheus.GaugeOpts{
+		Namespace: metrics.Namespace,
+		Subsystem: "discord_bot",
+		Name:      "last_sync",
+		Help:      "Last time sync has completed.",
+	}, []string{"job", "status"})
 )
 
 type BotParams struct {
@@ -261,17 +273,18 @@ func (b *Bot) runSync() error {
 		return err
 	}
 
-	var e error
 	b.activeGuilds.Range(func(key string, guild *Guild) bool {
 		if err := guild.Run(); err != nil {
-			e = err
+			b.logger.Error("error during sync", zap.String("job", guild.Job), zap.String("discord_guild_id", guild.ID), zap.Error(err))
+			lastSync.WithLabelValues(guild.Job, "failed").SetToCurrentTime()
 			return false
 		}
 
+		lastSync.WithLabelValues(guild.Job, "success").SetToCurrentTime()
 		return true
 	})
 
-	return e
+	return nil
 }
 
 func (b *Bot) stop() error {

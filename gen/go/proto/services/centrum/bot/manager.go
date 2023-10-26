@@ -8,11 +8,23 @@ import (
 	dispatch "github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
 	"github.com/galexrt/fivenet/gen/go/proto/services/centrum/manager"
 	"github.com/galexrt/fivenet/pkg/events"
+	"github.com/galexrt/fivenet/pkg/server/metrics"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promauto"
 	"github.com/puzpuzpuz/xsync/v3"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
+)
+
+var (
+	botActive = promauto.NewGaugeVec(prometheus.GaugeOpts{
+		Namespace: metrics.Namespace,
+		Subsystem: "centrum_bot",
+		Name:      "active",
+		Help:      "If centrum bot is active or not.",
+	}, []string{"job"})
 )
 
 var Module = fx.Module("centrum_bot_manager", fx.Provide(
@@ -119,6 +131,8 @@ func (b *Manager) Start(job string) error {
 		bot.Run(ctx)
 	}()
 
+	botActive.WithLabelValues(job).Set(1)
+
 	return nil
 }
 
@@ -134,6 +148,8 @@ func (b *Manager) Stop(job string) error {
 	b.logger.Info("Stopping centrum dispatch bot", zap.String("job", job))
 
 	cancel()
+
+	botActive.WithLabelValues(job).Set(0)
 
 	b.bots.Delete(job)
 

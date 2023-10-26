@@ -69,6 +69,8 @@ func (g *Guild) Run() error {
 		}
 	}
 
+	g.bot.logger.Info("completed sync run", zap.String("job", g.Job), zap.String("discord_guild_id", g.ID))
+
 	return nil
 }
 
