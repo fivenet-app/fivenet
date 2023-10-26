@@ -66,7 +66,6 @@ function checkIfCanAccessOwnJobDocument(activeChar: User, creator: UserShort, pe
     }
 
     const fields = attrList(perm, 'Access');
-    console.log('checkIfCanAccessOwnJobDocument', perm, fields);
     if (fields.length === 0) {
         return creator?.userId === activeChar.userId;
     }
