@@ -73,19 +73,29 @@ async function templateSelected(t: TemplateShort): Promise<void> {
                     if (reqDocuments) {
                         clipboardStore.promoteToActiveStack('documents');
                     }
+                } else {
+                    reqDocuments = true;
                 }
                 if (reqs.value.users) {
                     reqUsers = clipboardStore.checkRequirements(reqs.value.users, 'users');
                     if (reqUsers) {
                         clipboardStore.promoteToActiveStack('users');
                     }
+                } else {
+                    reqUsers = true;
                 }
                 if (reqs.value.vehicles) {
                     reqVehicles = clipboardStore.checkRequirements(reqs.value.vehicles, 'vehicles');
                     if (reqVehicles) {
                         clipboardStore.promoteToActiveStack('vehicles');
                     }
+                } else {
+                    reqVehicles = true;
                 }
+            } else {
+                reqDocuments = true;
+                reqUsers = true;
+                reqVehicles = true;
             }
 
             reqStatus.value.documents = reqDocuments;
