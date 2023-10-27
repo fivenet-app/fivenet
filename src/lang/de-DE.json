@@ -378,7 +378,8 @@
                 "livemap_marker_color": "Livemap Marker Farbe",
                 "quick_buttons": "Schnellzugriff Knöpfe",
                 "discord_guild_id": "Discord Guild/Server ID",
-                "invite_bot": "Bot einladen"
+                "invite_bot": "Bot einladen",
+                "last_sync": "Letzte Synchronisation"
             },
             "role_view": {
                 "add_permission": "Berechtigung hinzufügen"

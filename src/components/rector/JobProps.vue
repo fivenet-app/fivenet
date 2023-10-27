@@ -202,8 +202,9 @@ async function saveJobProps(): Promise<void> {
                                 >
                                     {{ $t('components.rector.job_props.invite_bot') }}
                                 </NuxtLink>
-                                <p v-if="properties.discordLastSync" class="text-base text-sm">
-                                    Last Sync: <Time :value="properties.discordLastSync" />
+                                <p v-if="properties.discordLastSync" class="text-base text-xs">
+                                    {{ $t('components.rector.job_props.last_sync') }}:
+                                    <Time :value="properties.discordLastSync" />
                                 </p>
                             </dd>
                         </div>
