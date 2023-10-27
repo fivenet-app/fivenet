@@ -686,7 +686,7 @@ const config = {
     language: 'de',
     spellcheck: true,
     minHeight: 475,
-    editorClassName: 'prose',
+    editorClassName: 'prose' + documents.value.editorTheme === 'dark' ? ' dark:prose-invert' : '',
     theme: documents.value.editorTheme,
 
     readonly: false,
