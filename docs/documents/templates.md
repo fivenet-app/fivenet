@@ -11,40 +11,40 @@ Golang templating is used. In addition to base [Golang html/template functions](
 
 ## Available Variables
 
-* `Documents` - Documents that are in the user's clipboard.
-    * `Id`
-    * `CreatedAt`
-    * `Title`
-    * `State`
-    * `CreatorId`
-    * `Creator` - See [User Info Structure](#user-info-structure).
-    * `Closed` - Boolean.
-    * `CategoryId`
-    * `Category`
-        * `Name`
-        * `Description`
-* `Users` - List of citizens/ users that are in the user's clipboard.
+* `.Documents` - List of documents that are in the user's clipboard.
+    * `.Id`
+    * `.CreatedAt`
+    * `.Title`
+    * `.State`
+    * `.CreatorId`
+    * `.Creator` - See [User Info Structure](#user-info-structure).
+    * `.Closed` - Boolean.
+    * `.CategoryId`
+    * `.Category`
+        * `.Name`
+        * `.Description`
+* `.Users` - List of citizens/ users that are in the user's clipboard.
     * See [User Info Structure](#user-info-structure).
-* `Vehicles` - Vehicles that are in the user's clipboard.
+* `.Vehicles` - List of vehicles that are in the user's clipboard.
     * `Plate`
     * `Model`
     * `Type`
     * `Owner` - See [User Info Structure](#user-info-structure).
-* `ActiveChar` - Submitting user's info.
+* `.ActiveChar` - Author/Submitting user's info.
     * See [User Info Structure](#user-info-structure).
 
 ### User Info Structure
 
-* `UserId`
-* `Identifier`
-* `Job`* - Preferrably use `jobLabel`.
-* `JobLabel`*
-* `JobGrade`* - Preferrably use `jobGradeLabel`.
-* `JobGradeLabel`*
-* `Firstname`
-* `Lastname`
-* `Dateofbirth` - In `DD.MM.YYYY` format.
-* `Phone_number` - Optional, might not always be included.
+* `.UserId`
+* `.Identifier`
+* `.Job`* - Preferrably use `jobLabel`.
+* `.JobLabel`*
+* `.JobGrade`* - Preferrably use `jobGradeLabel`.
+* `.JobGradeLabel`*
+* `.Firstname`
+* `.Lastname`
+* `.Dateofbirth` - In `DD.MM.YYYY` format.
+* `.Phone_number` - Optional, might not always be included.
 
 (\*these fields are only available on the `.activeChar` variable)
 
@@ -77,6 +77,12 @@ Example access citizen info:
 ```
 
 To learn more about different date and time formats, check out [the Golang `time` package documentation here](https://pkg.go.dev/time#pkg-constants).
+
+### Showing a Timestamp (e.g., `CreatedAt`)
+
+```gotemplate
+{{ .CreatedAt | date "02.01.2006 15:04" }}
+```
 
 ## Examples
 
