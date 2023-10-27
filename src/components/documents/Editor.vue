@@ -12,11 +12,11 @@ import {
 } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { max, min, required } from '@vee-validate/rules';
-import { Quill, QuillEditor } from '@vueup/vue-quill';
-import '@vueup/vue-quill/dist/vue-quill.snow.css';
-import { useDebounceFn, useThrottleFn, watchDebounced, watchOnce } from '@vueuse/core';
-import { ImageActions } from '@xeger/quill-image-actions';
-import { ImageFormats } from '@xeger/quill-image-formats';
+import { useThrottleFn, watchDebounced, watchOnce } from '@vueuse/core';
+import 'jodit/build/jodit.min.css';
+// @ts-expect-error
+import { JoditEditor } from 'jodit-vue';
+import { Jodit } from 'jodit';
 import {
     AccountMultipleIcon,
     CheckIcon,
@@ -26,15 +26,8 @@ import {
     LoadingIcon,
     PlusIcon,
 } from 'mdi-vue3';
-import htmlEditButton from 'quill-html-edit-button';
-import ImageCompress from 'quill-image-compress';
-import MagicUrl from 'quill-magic-url';
-// @ts-expect-error
-import QuillPasteSmart from 'quill-paste-smart';
 import { defineRule } from 'vee-validate';
 import { type TranslateItem } from '~/composables/i18n';
-import Divider from '~/composables/quill/divider/divider';
-import DividerToolbar from '~/composables/quill/divider/quill-divider';
 import { useAuthStore } from '~/store/auth';
 import { getDocument, getUser, useClipboardStore } from '~/store/clipboard';
 import { useCompletorStore } from '~/store/completor';
@@ -125,126 +118,6 @@ watch(currentReferences, () => currentReferences.value.forEach((e) => referenceM
 const entriesCategories = ref<Category[]>([]);
 const queryCategories = ref('');
 const selectedCategory = ref<Category | undefined>(undefined);
-
-// Quill Editor modules and options
-const modules = [
-    {
-        name: 'clipboard',
-        module: QuillPasteSmart,
-        options: {
-            allowed: {
-                tags: ['a', 'b', 'strong', 'u', 's', 'i', 'p', 'br', 'ul', 'ol', 'li', 'span'],
-                attributes: ['href', 'rel', 'target', 'class'],
-            },
-            keepSelection: true,
-            substituteBlockElements: true,
-            magicPasteLinks: false,
-        },
-    },
-    {
-        name: 'imageFormats',
-        module: ImageFormats,
-    },
-    {
-        name: 'imageActions',
-        module: ImageActions,
-    },
-    {
-        name: 'imageCompress',
-        module: ImageCompress,
-        options: {
-            quality: 0.7,
-            maxWidth: 1250,
-            maxHeight: 1250,
-            imageType: 'image/png',
-            keepImageTypes: ['image/jpeg', 'image/png'],
-            debug: false,
-            suppressErrorLogging: false,
-            insertIntoEditor: undefined,
-        },
-    },
-    {
-        name: 'magicUrl',
-        module: MagicUrl,
-        options: {
-            normalizeUrlOptions: {
-                stripHash: true,
-            },
-        },
-    },
-    {
-        name: 'htmlEditButton',
-        module: htmlEditButton,
-        options: {
-            debug: false,
-            msg: t('components.documents.document_editor.quill.msg'),
-            okText: t('components.documents.document_editor.quill.okText'),
-            cancelText: t('common.cancel'),
-        },
-    },
-    {
-        name: 'divider',
-        module: DividerToolbar,
-        options: {},
-    },
-];
-
-Quill.register(Divider);
-
-const formats = [
-    'bold',
-    'italic',
-    'underline',
-    'strike',
-    'blockquote',
-    'code-block',
-    'code',
-    'header',
-    'list',
-    'script',
-    'indent',
-    'direction',
-    'size',
-    'color',
-    'background',
-    'font',
-    'align',
-    'float',
-    'link',
-    'video',
-    'image',
-    'height',
-    'width',
-    'divider',
-];
-const toolbarOptions = [
-    ['bold', 'italic', 'underline', 'strike'], // toggled buttons
-    ['blockquote', 'code-block'],
-
-    [{ header: 1 }, { header: 2 }], // custom button values
-    [{ list: 'ordered' }, { list: 'bullet' }],
-    [{ script: 'sub' }, { script: 'super' }], // superscript/subscript
-    [{ indent: '-1' }, { indent: '+1' }], // outdent/indent
-    [{ direction: 'rtl' }], // text direction
-
-    [{ size: ['small', false, 'large', 'huge'] }], // custom dropdown
-    [{ header: [1, 2, 3, 4, 5, 6, false] }],
-
-    [{ color: [] }, { background: [] }], // dropdown with defaults from theme
-    [{ font: [] }],
-    [{ align: [] }, 'divider'],
-
-    ['link', 'video', 'image'],
-
-    ['clean'], // remove formatting button
-];
-const options = {
-    readOnly: false,
-    contentType: 'html',
-    theme: 'snow',
-    formats: formats,
-    toolbar: toolbarOptions,
-};
 
 onMounted(async () => {
     if (route.query.templateId) {
@@ -438,6 +311,8 @@ async function findCategories(): Promise<void> {
     if (selectedCategory.value && entriesCategories.value.findIndex((c) => c.id === selectedCategory.value?.id) !== 0)
         entriesCategories.value.push(selectedCategory.value);
 }
+
+watchOnce(doc, () => (changed.value = true));
 
 const changed = ref(false);
 watchDebounced(
@@ -684,6 +559,7 @@ async function updateDocument(id: bigint, values: FormData, content: string, clo
         req.access = reqAccess;
 
         try {
+            console.log(doc.value.content);
             const call = $grpc.getDocStoreClient().updateDocument(req);
             const { response } = await call;
 
@@ -752,53 +628,6 @@ async function updateDocument(id: bigint, values: FormData, content: string, clo
     });
 }
 
-type Stats = {
-    words: number;
-    chars: number;
-};
-
-const stats = ref<Stats>({
-    words: 0,
-    chars: 0,
-});
-
-const quillEditorRef = ref<null | InstanceType<typeof QuillEditor>>(null);
-
-async function calculate(content: string): Promise<Stats> {
-    const stats: Stats = {
-        words: 0,
-        chars: 0,
-    };
-
-    if (content.length > 0) {
-        stats.words = content.split(/\s+/).length - 1;
-        stats.chars = content.split(/\S/).length - 1;
-    }
-
-    return stats;
-}
-
-const debounced = useDebounceFn(
-    async () => {
-        if (quillEditorRef.value === null) {
-            return;
-        }
-
-        changed.value = true;
-        stats.value = await calculate(quillEditorRef.value.getQuill()?.getText());
-    },
-    750,
-    { maxWait: 1500 },
-);
-
-watchOnce(quillEditorRef, () => {
-    if (quillEditorRef.value === null) {
-        return;
-    }
-
-    quillEditorRef.value.getQuill().on('text-change', debounced);
-});
-
 const canDo = computed(() => ({
     edit:
         props.id === undefined
@@ -848,37 +677,93 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
     canSubmit.value = false;
     await onSubmit(e);
 }, 1000);
+
+const config = {
+    language: 'de',
+    spellcheck: true,
+    minHeight: 475,
+    editorClassName: 'prose',
+
+    readonly: false,
+    defaultActionOnPaste: 'insert_clear_html',
+    plugins: [],
+    disablePlugins: ['about', 'print', 'classSpan', 'video', 'poweredByJodit'],
+    // Uploader Plugin
+    uploader: {
+        insertImageAsBase64URI: true,
+    },
+    // Clean HTML Plugin
+    cleanHTML: {
+        denyTags: 'script',
+    },
+    // Inline Plugin
+    toolbarInline: true,
+    toolbarInlineForSelection: true,
+    toolbarInlineDisableFor: [],
+    toolbarInlineDisabledButtons: ['source'],
+    popup: {
+        a: Jodit.atom(['link', 'unlink']),
+    },
+    // Link Plugin
+    link: {
+        /**
+         * Template for the link dialog form
+         */
+        formTemplate: (_: Jodit) => `<form><input ref="url_input"><button>Apply</button></form>`,
+        formClassName: 'some-class',
+        /**
+         * Follow link address after dblclick
+         */
+        followOnDblClick: true,
+        /**
+         * Replace inserted youtube/vimeo link to `iframe`
+         */
+        processVideoLink: true,
+        /**
+         * Wrap inserted link
+         */
+        processPastedLink: true,
+        /**
+         * Show `no follow` checkbox in link dialog.
+         */
+        noFollowCheckbox: true,
+        /**
+         * Show `Open in new tab` checkbox in link dialog.
+         */
+        openInNewTabCheckbox: true,
+        /**
+         * Use an input text to ask the classname or a select or not ask
+         */
+        modeClassName: 'input', // 'select'
+        /**
+         * Allow multiple choises (to use with modeClassName="select")
+         */
+        selectMultipleClassName: true,
+        /**
+         * The size of the select (to use with modeClassName="select")
+         */
+        selectSizeClassName: 10,
+        /**
+         * The list of the option for the select (to use with modeClassName="select")
+         */
+        selectOptionsClassName: [],
+    },
+};
 </script>
 
 <style>
-.ql-container {
-    border: none !important;
-    height: auto !important;
+.ql-size-large {
+    font-size: 36px;
+}
+.ql-align-center {
+    text-align: center;
+}
+.ql-align-justify {
+    text-align: justify;
 }
 
-.ql-editor {
-    height: 100%;
-    width: 100%;
-    min-height: 400px;
-}
-
-.ql-hidden {
-    display: none;
-}
-
-.ql-editor img,
-.ql-editor svg,
-.ql-editor video,
-.ql-editor canvas,
-.ql-editor audio,
-.ql-editor iframe,
-.ql-editor embed,
-.ql-editor object {
-    display: inline !important;
-}
-
-.ql-editor hr {
-    color: black;
+.jodit-wysiwyg {
+    min-width: 100%;
 }
 </style>
 
@@ -1041,25 +926,11 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                 </div>
             </div>
             <div v-if="canDo.edit" class="bg-neutral">
-                <QuillEditor
-                    ref="quillEditorRef"
-                    v-model:content="doc.content"
-                    content-type="html"
-                    :toolbar="toolbarOptions"
-                    :modules="modules"
-                    :options="options"
-                />
-                <div class="grid grid-cols-2 text-base text-gray-600 h-7 mx-2">
-                    <div class="flex flex-items items-center">
-                        <template v-if="saving">
-                            <ContentSaveIcon class="w-6 h-auto mr-2 animate-spin" />
-                            {{ $t('common.save', 2) }}...
-                        </template>
-                    </div>
-                    <div class="text-end">
-                        {{ $t('common.char', 2) }}: {{ stats.chars }}, {{ $t('common.word', 2) }}: {{ stats.words }}
-                    </div>
-                </div>
+                <JoditEditor v-model="doc.content" :config="config" />
+                <template v-if="saving">
+                    <ContentSaveIcon class="w-6 h-auto mr-2 animate-spin" />
+                    {{ $t('common.save', 2) }}...
+                </template>
             </div>
             <div v-if="canDo.edit" class="flex flex-row">
                 <div class="flex-1 inline-flex rounded-md shadow-sm" role="group">

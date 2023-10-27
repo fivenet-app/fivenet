@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc';
-import { Quill, QuillEditor } from '@vueup/vue-quill';
 import { useConfirmDialog } from '@vueuse/core';
 import {
     AccountMultipleIcon,
@@ -24,7 +23,6 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import Time from '~/components/partials/elements/Time.vue';
-import Divider from '~/composables/quill/divider/divider';
 import { useClipboardStore } from '~/store/clipboard';
 import { useNotificatorStore } from '~/store/notificator';
 import { AccessLevel } from '~~/gen/ts/resources/documents/access';
@@ -144,21 +142,16 @@ function addToClipboard(): void {
     });
 }
 
-Quill.register(Divider);
-
 const { isRevealed, reveal, confirm, cancel, onConfirm } = useConfirmDialog();
 onConfirm(async (id: bigint) => deleteDocument(id));
 </script>
 
 <style>
-#editor .ql-toolbar {
-    display: none;
-}
-#editor .ql-editor {
-    min-height: 100% !important;
-}
-#editor .ql-editor hr {
-    color: white;
+.prose {
+    * {
+        margin-top: 2px;
+        margin-bottom: 2px;
+    }
 }
 </style>
 
@@ -356,16 +349,10 @@ onConfirm(async (id: bigint) => deleteDocument(id));
                                 {{ $t('common.content') }}
                             </h2>
                             <div class="mt-4 mb-2 rounded-lg text-neutral bg-base-800 break-words">
-                                <div id="editor">
-                                    <QuillEditor
-                                        class="bg-base-900 rounded-md"
-                                        content-type="html"
-                                        :content="doc?.content"
-                                        :toolbar="[]"
-                                        theme="snow"
-                                        :read-only="true"
-                                    />
-                                </div>
+                                <div
+                                    v-html="doc.content"
+                                    class="min-w-full bg-base-900 rounded-md px-4 py-4 prose prose-invert"
+                                ></div>
                             </div>
                         </div>
                         <div>

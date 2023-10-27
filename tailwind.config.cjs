@@ -109,7 +109,7 @@ module.exports = {
                 },
             },
             fontFamily: {
-                sans: ['Inter var', ...defaultTheme.fontFamily.sans],
+                sans: ['Inter', ...defaultTheme.fontFamily.sans],
             },
             boxShadow: {
                 float: '0px 0px 22px 0px rgba(0,0,0,0.5)',
