@@ -2,6 +2,7 @@
 // @generated from protobuf file "resources/users/jobs.proto" (package "resources.users", syntax proto3)
 // tslint:disable
 import { MessageType } from "@protobuf-ts/runtime";
+import { Timestamp } from "../timestamp/timestamp.js";
 /**
  * @generated from protobuf message resources.users.Job
  */
@@ -66,6 +67,10 @@ export interface JobProps {
      * @generated from protobuf field: optional resources.users.DiscordBotMode discord_mode = 6;
      */
     discordMode?: DiscordBotMode;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp discord_last_sync = 7;
+     */
+    discordLastSync?: Timestamp;
 }
 /**
  * @generated from protobuf enum resources.users.DiscordBotMode
@@ -121,7 +126,8 @@ class JobProps$Type extends MessageType<JobProps> {
             { no: 3, name: "livemap_marker_color", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { len: "6", pattern: "^[A-Fa-f0-9]{6}$" } } } },
             { no: 4, name: "quick_buttons", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 5, name: "discord_guild_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 6, name: "discord_mode", kind: "enum", opt: true, T: () => ["resources.users.DiscordBotMode", DiscordBotMode, "DISCORD_BOT_MODE_"] }
+            { no: 6, name: "discord_mode", kind: "enum", opt: true, T: () => ["resources.users.DiscordBotMode", DiscordBotMode, "DISCORD_BOT_MODE_"] },
+            { no: 7, name: "discord_last_sync", kind: "message", T: () => Timestamp }
         ]);
     }
 }

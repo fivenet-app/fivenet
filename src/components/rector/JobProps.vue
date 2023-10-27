@@ -7,7 +7,9 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { useConfigStore } from '~/store/config';
 import { useNotificatorStore } from '~/store/notificator';
+import { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 import { JobProps } from '~~/gen/ts/resources/users/jobs';
+import Time from '../partials/elements/Time.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -23,6 +25,7 @@ const properties = ref<{
         PenaltyCalculator: boolean;
     };
     discordGuildId?: string;
+    discordLastSync?: Timestamp;
 }>({
     theme: 'default',
     livemapMarkerColor: '#5C7AFF',
@@ -38,6 +41,7 @@ async function getJobProps(): Promise<JobProps> {
             const { response } = await call;
 
             if (response.jobProps) {
+                properties.value.theme = response.jobProps?.theme ?? 'default';
                 properties.value.livemapMarkerColor = '#' + response.jobProps?.livemapMarkerColor;
 
                 const components = response.jobProps!.quickButtons.split(';').filter((v) => v !== '');
@@ -54,6 +58,9 @@ async function getJobProps(): Promise<JobProps> {
                 if (response.jobProps.discordGuildId && response.jobProps.discordGuildId > 0) {
                     properties.value.discordGuildId = response.jobProps.discordGuildId?.toString();
                 }
+
+                properties.value.discordLastSync = response.jobProps?.discordLastSync;
+                debugger;
             }
 
             return res(response.jobProps!);
@@ -195,6 +202,9 @@ async function saveJobProps(): Promise<void> {
                                 >
                                     {{ $t('components.rector.job_props.invite_bot') }}
                                 </NuxtLink>
+                                <p v-if="properties.discordLastSync" class="text-base text-sm">
+                                    Last Sync: <Time :value="properties.discordLastSync" />
+                                </p>
                             </dd>
                         </div>
                         <div

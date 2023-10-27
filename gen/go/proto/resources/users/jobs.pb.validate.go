@@ -402,6 +402,39 @@ func (m *JobProps) validate(all bool) error {
 		// no validation rules for DiscordMode
 	}
 
+	if m.DiscordLastSync != nil {
+
+		if all {
+			switch v := interface{}(m.GetDiscordLastSync()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, JobPropsValidationError{
+						field:  "DiscordLastSync",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, JobPropsValidationError{
+						field:  "DiscordLastSync",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetDiscordLastSync()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return JobPropsValidationError{
+					field:  "DiscordLastSync",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
 	if len(errors) > 0 {
 		return JobPropsMultiError(errors)
 	}

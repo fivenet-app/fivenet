@@ -10,6 +10,7 @@
             "request": "launch",
             "mode": "auto",
             "program": "${workspaceFolder}",
+            "cwd": "${workspaceFolder}",
             "args": ["server"],
             "buildFlags": "-a -installsuffix cgo",
             "env": {
@@ -22,6 +23,7 @@
             "request": "launch",
             "mode": "auto",
             "program": "${workspaceFolder}",
+            "cwd": "${workspaceFolder}",
             "args": ["discord"],
             "buildFlags": "-a -installsuffix cgo",
             "env": {

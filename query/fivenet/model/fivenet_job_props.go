@@ -18,4 +18,5 @@ type FivenetJobProps struct {
 	LivemapMarkerColor *string    `json:"livemap_marker_color"`
 	QuickButtons       *string    `json:"quick_buttons"`
 	DiscordGuildID     *uint64    `json:"discord_guild_id"`
+	DiscordLastSync    *time.Time `json:"discord_last_sync"`
 }

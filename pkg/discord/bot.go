@@ -12,9 +12,12 @@ import (
 	"github.com/galexrt/fivenet/pkg/server/metrics"
 	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/query/fivenet/table"
+	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
 	"github.com/puzpuzpuz/xsync/v3"
+	tracesdk "go.opentelemetry.io/otel/sdk/trace"
+	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 )
@@ -49,6 +52,7 @@ type BotParams struct {
 	LC fx.Lifecycle
 
 	Logger   *zap.Logger
+	TP       *tracesdk.TracerProvider
 	DB       *sql.DB
 	Enricher *mstlystcdata.Enricher
 	Config   *config.Config
@@ -57,6 +61,7 @@ type BotParams struct {
 type Bot struct {
 	ctx      context.Context
 	logger   *zap.Logger
+	tracer   trace.Tracer
 	db       *sql.DB
 	enricher *mstlystcdata.Enricher
 	cfg      *config.DiscordBot
@@ -84,6 +89,7 @@ func NewBot(p BotParams) (*Bot, error) {
 	b := &Bot{
 		ctx:      ctx,
 		logger:   p.Logger,
+		tracer:   p.TP.Tracer("discord_bot"),
 		db:       p.DB,
 		enricher: p.Enricher,
 		cfg:      &p.Config.Discord.Bot,
@@ -186,9 +192,14 @@ func (b *Bot) Sync() error {
 	b.logger.Info("sleeping 5 seconds before running first discord sync")
 	time.Sleep(5 * time.Second)
 
-	if err := b.runSync(); err != nil {
-		b.logger.Error("failed to sync roles", zap.Error(err))
-	}
+	func() {
+		ctx, span := b.tracer.Start(b.ctx, "discord_bot")
+		defer span.End()
+
+		if err := b.runSync(ctx); err != nil {
+			b.logger.Error("failed to sync roles", zap.Error(err))
+		}
+	}()
 
 	for {
 		select {
@@ -197,9 +208,13 @@ func (b *Bot) Sync() error {
 
 		case <-time.After(b.syncInterval):
 			b.logger.Info("running Discord Sync")
-			if err := b.runSync(); err != nil {
-				b.logger.Error("failed to sync roles", zap.Error(err))
-			}
+			func() {
+				ctx, span := b.tracer.Start(b.ctx, "discord_bot")
+				defer span.End()
+				if err := b.runSync(ctx); err != nil {
+					b.logger.Error("failed to sync roles", zap.Error(err))
+				}
+			}()
 		}
 	}
 }
@@ -296,20 +311,25 @@ func (b *Bot) setupSync() error {
 	return e
 }
 
-func (b *Bot) runSync() error {
+func (b *Bot) runSync(ctx context.Context) error {
 	if err := b.getGuilds(); err != nil {
 		return err
 	}
 
-	b.activeGuilds.Range(func(key string, guild *Guild) bool {
+	b.activeGuilds.Range(func(_ string, guild *Guild) bool {
+		logger := b.logger.With(zap.String("job", guild.Job), zap.String("discord_guild_id", guild.ID))
+
 		if err := guild.Run(); err != nil {
-			b.logger.Error("error during sync", zap.String("job", guild.Job), zap.String("discord_guild_id", guild.ID),
-				zap.Error(err))
+			logger.Error("error during sync", zap.Error(err))
 			lastSync.WithLabelValues(guild.Job, "failed").SetToCurrentTime()
-			return false
+		} else {
+			lastSync.WithLabelValues(guild.Job, "success").SetToCurrentTime()
 		}
 
-		lastSync.WithLabelValues(guild.Job, "success").SetToCurrentTime()
+		if err := b.setLastSyncTime(ctx, guild.Job); err != nil {
+			logger.Error("error setting job props last sync time", zap.Error(err))
+		}
+
 		return true
 	})
 
@@ -334,4 +354,23 @@ func (b *Bot) stop() error {
 	}
 
 	return b.discord.Close()
+}
+
+func (b *Bot) setLastSyncTime(ctx context.Context, job string) error {
+	stmt := tJobProps.
+		UPDATE(
+			tJobProps.DiscordLastSync,
+		).
+		SET(
+			tJobProps.DiscordLastSync.SET(jet.CURRENT_TIMESTAMP()),
+		).
+		WHERE(
+			tJobProps.Job.EQ(jet.String(job)),
+		)
+
+	if _, err := stmt.ExecContext(ctx, b.db); err != nil {
+		return err
+	}
+
+	return nil
 }

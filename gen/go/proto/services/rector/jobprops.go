@@ -17,7 +17,7 @@ import (
 )
 
 var (
-	jobProps = table.FivenetJobProps
+	tJobProps = table.FivenetJobProps
 )
 
 var (
@@ -36,6 +36,7 @@ func (s *Server) GetJobProps(ctx context.Context, req *GetJobPropsRequest) (*Get
 			jobProps.LivemapMarkerColor,
 			jobProps.QuickButtons,
 			jobProps.DiscordGuildID,
+			jobProps.DiscordLastSync,
 		).
 		FROM(jobProps).
 		WHERE(
@@ -77,13 +78,13 @@ func (s *Server) SetJobProps(ctx context.Context, req *SetJobPropsRequest) (*Set
 		return nil, ErrInvalidJPQuickButton
 	}
 
-	stmt := jobProps.
+	stmt := tJobProps.
 		INSERT(
-			jobProps.Job,
-			jobProps.Theme,
-			jobProps.LivemapMarkerColor,
-			jobProps.QuickButtons,
-			jobProps.DiscordGuildID,
+			tJobProps.Job,
+			tJobProps.Theme,
+			tJobProps.LivemapMarkerColor,
+			tJobProps.QuickButtons,
+			tJobProps.DiscordGuildID,
 		).
 		VALUES(
 			req.JobProps.Job,
@@ -93,10 +94,10 @@ func (s *Server) SetJobProps(ctx context.Context, req *SetJobPropsRequest) (*Set
 			req.JobProps.DiscordGuildId,
 		).
 		ON_DUPLICATE_KEY_UPDATE(
-			jobProps.Theme.SET(jet.String(req.JobProps.Theme)),
-			jobProps.LivemapMarkerColor.SET(jet.String(req.JobProps.LivemapMarkerColor)),
-			jobProps.QuickButtons.SET(jet.String(req.JobProps.QuickButtons)),
-			jobProps.DiscordGuildID.SET(jet.IntExp(jet.Raw("VALUES(`discord_guild_id`)"))),
+			tJobProps.Theme.SET(jet.String(req.JobProps.Theme)),
+			tJobProps.LivemapMarkerColor.SET(jet.String(req.JobProps.LivemapMarkerColor)),
+			tJobProps.QuickButtons.SET(jet.String(req.JobProps.QuickButtons)),
+			tJobProps.DiscordGuildID.SET(jet.IntExp(jet.Raw("VALUES(`discord_guild_id`)"))),
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {

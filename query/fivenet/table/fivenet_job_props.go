@@ -23,6 +23,7 @@ type fivenetJobPropsTable struct {
 	LivemapMarkerColor mysql.ColumnString
 	QuickButtons       mysql.ColumnString
 	DiscordGuildID     mysql.ColumnInteger
+	DiscordLastSync    mysql.ColumnTimestamp
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -69,8 +70,9 @@ func newFivenetJobPropsTableImpl(schemaName, tableName, alias string) fivenetJob
 		LivemapMarkerColorColumn = mysql.StringColumn("livemap_marker_color")
 		QuickButtonsColumn       = mysql.StringColumn("quick_buttons")
 		DiscordGuildIDColumn     = mysql.IntegerColumn("discord_guild_id")
-		allColumns               = mysql.ColumnList{JobColumn, UpdatedAtColumn, ThemeColumn, LivemapMarkerColorColumn, QuickButtonsColumn, DiscordGuildIDColumn}
-		mutableColumns           = mysql.ColumnList{JobColumn, UpdatedAtColumn, ThemeColumn, LivemapMarkerColorColumn, QuickButtonsColumn, DiscordGuildIDColumn}
+		DiscordLastSyncColumn    = mysql.TimestampColumn("discord_last_sync")
+		allColumns               = mysql.ColumnList{JobColumn, UpdatedAtColumn, ThemeColumn, LivemapMarkerColorColumn, QuickButtonsColumn, DiscordGuildIDColumn, DiscordLastSyncColumn}
+		mutableColumns           = mysql.ColumnList{JobColumn, UpdatedAtColumn, ThemeColumn, LivemapMarkerColorColumn, QuickButtonsColumn, DiscordGuildIDColumn, DiscordLastSyncColumn}
 	)
 
 	return fivenetJobPropsTable{
@@ -83,6 +85,7 @@ func newFivenetJobPropsTableImpl(schemaName, tableName, alias string) fivenetJob
 		LivemapMarkerColor: LivemapMarkerColorColumn,
 		QuickButtons:       QuickButtonsColumn,
 		DiscordGuildID:     DiscordGuildIDColumn,
+		DiscordLastSync:    DiscordLastSyncColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
