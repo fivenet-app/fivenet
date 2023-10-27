@@ -148,7 +148,7 @@ func (s *Server) ListDocuments(ctx context.Context, req *ListDocumentsRequest) (
 		return nil, ErrFailedQuery
 	}
 
-	jobInfoFn := s.enricher.EnrichJobInfoFunc(userInfo)
+	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
 	for i := 0; i < len(resp.Documents); i++ {
 		if resp.Documents[i].Creator != nil {
 			jobInfoFn(resp.Documents[i].Creator)

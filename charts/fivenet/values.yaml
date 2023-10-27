@@ -163,6 +163,8 @@ fivenet:
         - doj
         - fib
         - police
+      hiddenJobs:
+        - fib
       livemap:
         refreshTime: 3s350ms
         jobs:

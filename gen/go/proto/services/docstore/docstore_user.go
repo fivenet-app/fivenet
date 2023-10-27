@@ -192,7 +192,7 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *ListUserDocumentsRe
 		}
 	}
 
-	jobInfoFn := s.enricher.EnrichJobInfoFunc(userInfo)
+	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
 	for i := 0; i < len(resp.Relations); i++ {
 		if resp.Relations[i].SourceUser != nil {
 			jobInfoFn(resp.Relations[i].SourceUser)

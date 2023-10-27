@@ -121,22 +121,26 @@ func (e *Enricher) EnrichJobInfoSafe(userInfo *userinfo.UserInfo, usrs ...common
 	}
 
 	for _, usr := range usrs {
-		if utils.InSlice(e.publicJobs, usr.GetJob()) {
-			// Make sure user has permission to see that grade, otherwise "hide" the user's job grade
-			grade, ok := jobGrades[usr.GetJob()]
-			if !userInfo.SuperUser && (!ok || usr.GetJobGrade() < grade) {
+		// Make sure user has permission to see that grade, otherwise "hide" the user's job grade
+		grade, ok := jobGrades[usr.GetJob()]
+		if !ok {
+			if !utils.InSlice(e.publicJobs, usr.GetJob()) {
+				usr.SetJob(e.unemployedJob)
+				usr.SetJobGrade(e.unemployedJobGrade)
+			} else {
 				usr.SetJobGrade(0)
 			}
 		} else {
-			usr.SetJob(e.unemployedJob)
-			usr.SetJobGrade(e.unemployedJobGrade)
+			if usr.GetJobGrade() < grade && !userInfo.SuperUser {
+				usr.SetJobGrade(0)
+			}
 		}
 
 		e.EnrichJobInfo(usr)
 	}
 }
 
-func (e *Enricher) EnrichJobInfoFunc(userInfo *userinfo.UserInfo) func(usr common.IJobInfo) {
+func (e *Enricher) EnrichJobInfoSafeFunc(userInfo *userinfo.UserInfo) func(usr common.IJobInfo) {
 	jobGradesAttr, _ := e.ps.Attr(userInfo, permscitizenstore.CitizenStoreServicePerm, permscitizenstore.CitizenStoreServiceGetUserPerm, permscitizenstore.CitizenStoreServiceGetUserJobsPermField)
 	var jobGrades perms.JobGradeList
 	if jobGradesAttr != nil {
@@ -144,15 +148,19 @@ func (e *Enricher) EnrichJobInfoFunc(userInfo *userinfo.UserInfo) func(usr commo
 	}
 
 	return func(usr common.IJobInfo) {
-		if utils.InSlice(e.publicJobs, usr.GetJob()) {
-			// Make sure user has permission to see that grade, otherwise "hide" the user's job grade
-			grade, ok := jobGrades[usr.GetJob()]
-			if !userInfo.SuperUser && (!ok || usr.GetJobGrade() < grade) {
+		// Make sure user has permission to see that grade, otherwise "hide" the user's job grade
+		grade, ok := jobGrades[usr.GetJob()]
+		if !ok {
+			if !utils.InSlice(e.publicJobs, usr.GetJob()) {
+				usr.SetJob(e.unemployedJob)
+				usr.SetJobGrade(e.unemployedJobGrade)
+			} else {
 				usr.SetJobGrade(0)
 			}
 		} else {
-			usr.SetJob(e.unemployedJob)
-			usr.SetJobGrade(e.unemployedJobGrade)
+			if usr.GetJobGrade() < grade && !userInfo.SuperUser {
+				usr.SetJobGrade(0)
+			}
 		}
 
 		e.EnrichJobInfo(usr)

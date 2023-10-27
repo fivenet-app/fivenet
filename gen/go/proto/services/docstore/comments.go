@@ -121,7 +121,7 @@ func (s *Server) GetComments(ctx context.Context, req *GetCommentsRequest) (*Get
 
 	resp.Pagination.Update(count.TotalCount, len(resp.Comments))
 
-	jobInfoFn := s.enricher.EnrichJobInfoFunc(userInfo)
+	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
 	for i := 0; i < len(resp.Comments); i++ {
 		if resp.Comments[i].Creator != nil {
 			jobInfoFn(resp.Comments[i].Creator)

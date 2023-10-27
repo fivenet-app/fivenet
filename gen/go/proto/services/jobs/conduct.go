@@ -138,7 +138,7 @@ func (s *Server) ConductListEntries(ctx context.Context, req *ConductListEntries
 		}
 	}
 
-	jobInfoFn := s.enricher.EnrichJobInfoFunc(userInfo)
+	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
 	for i := 0; i < len(resp.Entries); i++ {
 		if resp.Entries[i].TargetUser != nil {
 			jobInfoFn(resp.Entries[i].TargetUser)

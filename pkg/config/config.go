@@ -172,6 +172,7 @@ type Game struct {
 	SuperuserGroups    []string       `yaml:"superuserGroups"`
 	UnemployedJob      UnemployedJob  `yaml:"unemployedJob"`
 	PublicJobs         []string       `yaml:"publicJobs"`
+	HiddenJobs         []string       `yaml:"hiddenJobs"`
 	Livemap            Livemap        `yaml:"livemap"`
 	DispatchCenter     DispatchCenter `yaml:"dispatchCenter"`
 	DefaultPermissions []Perm         `yaml:"defaultPermissions"`

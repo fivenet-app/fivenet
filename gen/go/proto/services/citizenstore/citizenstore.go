@@ -57,6 +57,7 @@ type Server struct {
 	aud      audit.IAuditer
 
 	publicJobs         []string
+	hiddenJobs         []string
 	unemployedJob      string
 	unemployedJobGrade int32
 }
@@ -69,6 +70,7 @@ func NewServer(db *sql.DB, p perms.Permissions, enricher *mstlystcdata.Enricher,
 		aud:      aud,
 
 		publicJobs:         cfg.Game.PublicJobs,
+		hiddenJobs:         cfg.Game.HiddenJobs,
 		unemployedJob:      cfg.Game.UnemployedJob.Name,
 		unemployedJobGrade: cfg.Game.UnemployedJob.Grade,
 	}
@@ -195,7 +197,7 @@ func (s *Server) ListCitizens(ctx context.Context, req *ListCitizensRequest) (*L
 
 	resp.Pagination.Update(count.TotalCount, len(resp.Users))
 
-	jobInfoFn := s.enricher.EnrichJobInfoFunc(userInfo)
+	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
 	for i := 0; i < len(resp.Users); i++ {
 		if resp.Users[i].Props != nil && resp.Users[i].Props.JobName != nil {
 			resp.Users[i].Job = *resp.Users[i].Props.JobName
@@ -290,7 +292,7 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 		return nil, ErrJobGradeNoPermission
 	}
 
-	if utils.InSlice(s.publicJobs, resp.User.Job) {
+	if utils.InSlice(s.publicJobs, resp.User.Job) || utils.InSlice(s.hiddenJobs, resp.User.Job) {
 		// Make sure user has permission to see that grade
 		jobGradesAttr, err := s.p.Attr(userInfo, permscitizenstore.CitizenStoreServicePerm, permscitizenstore.CitizenStoreServiceGetUserPerm, permscitizenstore.CitizenStoreServiceGetUserJobsPermField)
 		if err != nil {
@@ -313,9 +315,6 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 				return nil, ErrJobGradeNoPermission
 			}
 		}
-	} else {
-		resp.User.Job = s.unemployedJob
-		resp.User.JobGrade = s.unemployedJobGrade
 	}
 
 	if resp.User.Props != nil && resp.User.Props.JobName != nil {
@@ -453,7 +452,7 @@ func (s *Server) ListUserActivity(ctx context.Context, req *ListUserActivityRequ
 		}
 	}
 
-	jobInfoFn := s.enricher.EnrichJobInfoFunc(userInfo)
+	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
 	for i := 0; i < len(resp.Activity); i++ {
 		if resp.Activity[i].SourceUser != nil {
 			jobInfoFn(resp.Activity[i].SourceUser)

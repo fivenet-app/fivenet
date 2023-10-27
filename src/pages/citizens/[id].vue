@@ -47,7 +47,12 @@ async function getUser(): Promise<User> {
 <template>
     <ContentWrapper>
         <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.citizen', 1)])" />
-        <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.citizen', 1)])" :retry="refresh" />
+        <DataErrorBlock
+            v-else-if="error"
+            :title="$t('common.unable_to_load', [$t('common.citizen', 1)])"
+            :message="$t(error.message)"
+            :retry="refresh"
+        />
         <div v-else>
             <Info :user="user!" />
             <ClipboardButton />

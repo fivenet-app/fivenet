@@ -182,7 +182,7 @@ func (s *Server) GetDocumentReferences(ctx context.Context, req *GetDocumentRefe
 		}
 	}
 
-	jobInfoFn := s.enricher.EnrichJobInfoFunc(userInfo)
+	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
 	for i := 0; i < len(dest); i++ {
 		if dest[i].Creator != nil {
 			jobInfoFn(dest[i].Creator)
@@ -607,7 +607,7 @@ func (s *Server) getDocumentRelations(ctx context.Context, userInfo *userinfo.Us
 		}
 	}
 
-	jobInfoFn := s.enricher.EnrichJobInfoFunc(userInfo)
+	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
 	for i := 0; i < len(dest); i++ {
 		if dest[i].SourceUser != nil {
 			jobInfoFn(dest[i].SourceUser)

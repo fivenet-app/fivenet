@@ -41,7 +41,7 @@ func (s *Server) GetDocumentAccess(ctx context.Context, req *GetDocumentAccessRe
 		s.enricher.EnrichJobInfo(access.Jobs[i])
 	}
 
-	jobInfoFn := s.enricher.EnrichJobInfoFunc(userInfo)
+	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
 	for i := 0; i < len(access.Users); i++ {
 		if access.Users[i].User != nil {
 			jobInfoFn(access.Users[i].User)
