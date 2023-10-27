@@ -757,16 +757,6 @@ const config = {
 </script>
 
 <style>
-.ql-size-large {
-    font-size: 36px;
-}
-.ql-align-center {
-    text-align: center;
-}
-.ql-align-justify {
-    text-align: justify;
-}
-
 .jodit-wysiwyg {
     min-width: 100%;
 }
