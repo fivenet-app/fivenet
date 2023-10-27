@@ -121,7 +121,7 @@ func (b *Manager) Start(job string) error {
 		return nil
 	}
 
-	b.logger.Info("Starting centrum dispatch bot", zap.String("job", job))
+	b.logger.Info("starting centrum dispatch bot", zap.String("job", job))
 	bot := NewBot(b.logger.With(zap.String("job", job)), job, b.state)
 	ctx, cancel := context.WithCancel(b.ctx)
 	b.bots.Store(job, cancel)
@@ -145,7 +145,7 @@ func (b *Manager) Stop(job string) error {
 		return nil
 	}
 
-	b.logger.Info("Stopping centrum dispatch bot", zap.String("job", job))
+	b.logger.Info("stopping centrum dispatch bot", zap.String("job", job))
 
 	cancel()
 

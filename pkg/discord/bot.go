@@ -167,7 +167,7 @@ func (b *Bot) setBotPresence() error {
 			return err
 		}
 	}
-	b.logger.Info("Set bot presence")
+	b.logger.Info("bot presence has been set")
 
 	return nil
 }
@@ -183,7 +183,7 @@ func (b *Bot) refreshBotGuilds() error {
 }
 
 func (b *Bot) Sync() error {
-	b.logger.Info("Sleeping 5 seconds before running first discord sync")
+	b.logger.Info("sleeping 5 seconds before running first discord sync")
 	time.Sleep(5 * time.Second)
 
 	if err := b.runSync(); err != nil {
@@ -196,7 +196,7 @@ func (b *Bot) Sync() error {
 			return nil
 
 		case <-time.After(b.syncInterval):
-			b.logger.Info("Running Discord Sync")
+			b.logger.Info("running Discord Sync")
 			if err := b.runSync(); err != nil {
 				b.logger.Error("failed to sync roles", zap.Error(err))
 			}

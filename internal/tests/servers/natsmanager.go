@@ -28,14 +28,14 @@ func (m *natsServer) Setup() {
 	var err error
 	m.pool, err = dockertest.NewPool("")
 	if err != nil {
-		log.Fatalf("Could not construct pool: %q", err)
+		log.Fatalf("could not construct pool: %q", err)
 	}
 	m.pool.MaxWait = 3 * time.Minute
 
 	// uses pool to try to connect to Docker
 	err = m.pool.Client.Ping()
 	if err != nil {
-		log.Fatalf("Could not connect to Docker: %q", err)
+		log.Fatalf("could not connect to Docker: %q", err)
 	}
 
 	// pulls an image, creates a container based on it and runs it
@@ -58,7 +58,7 @@ func (m *natsServer) Setup() {
 		},
 	)
 	if err != nil {
-		log.Fatalf("Could not start resource: %q", err)
+		log.Fatalf("could not start resource: %q", err)
 	}
 
 	// exponential backoff-retry, because the application in the container might not be ready to accept connections yet
@@ -75,7 +75,7 @@ func (m *natsServer) Setup() {
 
 		return nil
 	}); err != nil {
-		log.Fatalf("Could not connect to nats: %q", err)
+		log.Fatalf("could not connect to nats: %q", err)
 	}
 }
 
@@ -91,6 +91,6 @@ func (m *natsServer) Stop() {
 
 	// You can't defer this because os.Exit doesn't care for defer
 	if err := m.pool.Purge(m.resource); err != nil {
-		log.Fatalf("Could not purge container resource: %q", err)
+		log.Fatalf("could not purge container resource: %q", err)
 	}
 }

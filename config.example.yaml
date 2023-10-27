@@ -112,8 +112,10 @@ discord:
         fraktionsverwaltung:
           roleName: "Fraktionsverwaltung"
           #permissions: 0
+          #color: "#9B59B6"
         teamleitung:
           roleName: "Teamleitung"
           #permissions: 0
+          #color: "#9B59B6"
     commands:
       enabled: true

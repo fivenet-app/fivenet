@@ -207,9 +207,11 @@ fivenet:
             #fraktionsverwaltung:
             #  roleName: "Fraktionsverwaltung"
             #  permissions: 414690258631
+            #  color: "#9B59B6"
             #teamleitung:
             #  roleName: "Teamleitung"
             #  permissions: 416032435935
+            #  color: "#9B59B6"
         commands:
           enabled: true
 

@@ -2,6 +2,7 @@ package modules
 
 import (
 	"fmt"
+	"math/big"
 	"net/http"
 	"strings"
 
@@ -10,6 +11,8 @@ import (
 	"github.com/galexrt/fivenet/pkg/utils"
 	jet "github.com/go-jet/jet/v2/mysql"
 )
+
+const GroupSyncDefaultRoleColor = "#9B59B6"
 
 type GroupSync struct {
 	*BaseModule
@@ -60,9 +63,20 @@ func (g *GroupSync) createGroupRoles() error {
 				continue
 			}
 
+			var color string
+			if dcRole.Color != "" {
+				color = dcRole.Color
+			}
+			color = strings.TrimLeft(color, "#")
+
+			n := new(big.Int)
+			n.SetString(color, 16)
+			colorDec := int(n.Int64())
+
 			role, err := g.discord.GuildRoleEdit(g.guild.ID, g.roles[dcRole.RoleName].ID, &discordgo.RoleParams{
 				Name:        dcRole.RoleName,
 				Permissions: dcRole.Permissions,
+				Color:       &colorDec,
 			})
 			if err != nil {
 				return fmt.Errorf("failed to edit role %s permissions: %w", g.roles[dcRole.RoleName].ID, err)
@@ -96,9 +110,9 @@ type GroupSyncUser struct {
 }
 
 func (g *GroupSync) syncGroups() error {
-	groups := []jet.Expression{}
-	for serverGroup := range g.groupsToSync {
-		groups = append(groups, jet.String(serverGroup))
+	serverGroups := []jet.Expression{}
+	for sGroup := range g.groupsToSync {
+		serverGroups = append(serverGroups, jet.String(sGroup))
 	}
 
 	stmt := tOauth2Accs.
@@ -117,7 +131,7 @@ func (g *GroupSync) syncGroups() error {
 		).
 		WHERE(jet.AND(
 			tOauth2Accs.Provider.EQ(jet.String("discord")),
-			tUsers.Group.IN(groups...),
+			tUsers.Group.IN(serverGroups...),
 		))
 
 	var dest []*GroupSyncUser

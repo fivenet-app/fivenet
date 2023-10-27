@@ -233,6 +233,7 @@ type DiscordGroupSync struct {
 type DiscordGroupRole struct {
 	RoleName    string `yaml:"roleName"`
 	Permissions *int64 `yaml:"omitempty,permissions"`
+	Color       string `yaml:"color"`
 }
 
 type DiscordCommands struct {

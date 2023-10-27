@@ -60,7 +60,6 @@ func (p *PermifyModule) generate(f pgs.File) {
 	}
 
 	fqn := strings.Split(f.FullyQualifiedName(), ".")
-	p.Logf("TEST: %+v", fqn)
 	data := struct {
 		F                     pgs.File
 		GoPath                string

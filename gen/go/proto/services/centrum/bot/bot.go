@@ -68,7 +68,7 @@ func (b *Bot) Run(ctx context.Context) error {
 			unit, ok := b.getAvailableUnit(ctx)
 			if !ok {
 				// No unit available
-				b.logger.Warn("No available units for dispatch", zap.Uint64("dispatch_id", dsp.Id))
+				b.logger.Warn("no available units for dispatch", zap.Uint64("dispatch_id", dsp.Id))
 				break
 			}
 
@@ -77,7 +77,7 @@ func (b *Bot) Run(ctx context.Context) error {
 				[]uint64{unit.Id}, nil,
 				b.state.DispatchAssignmentExpirationTime(),
 			); err != nil {
-				b.logger.Warn("Failed to assgin unit to dispatch", zap.Uint64("dispatch_id", dsp.Id), zap.Uint64("unit_id", unit.Id))
+				b.logger.Warn("failed to assgin unit to dispatch", zap.Uint64("dispatch_id", dsp.Id), zap.Uint64("unit_id", unit.Id))
 				break
 			}
 		}
