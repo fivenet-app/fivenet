@@ -15,7 +15,7 @@ import {
     PencilIcon,
     TrashCanIcon,
 } from 'mdi-vue3';
-import { DefineComponent } from 'vue';
+import { type DefineComponent } from 'vue';
 import AddToButton from '~/components/clipboard/AddToButton.vue';
 import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';

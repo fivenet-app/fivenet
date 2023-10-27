@@ -25,7 +25,7 @@ import {
     TargetIcon,
     ViewListOutlineIcon,
 } from 'mdi-vue3';
-import { DefineComponent } from 'vue';
+import { type DefineComponent } from 'vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import { useAuthStore } from '~/store/auth';
 import { getUser, useClipboardStore } from '~/store/clipboard';

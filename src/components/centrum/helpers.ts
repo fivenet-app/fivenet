@@ -8,7 +8,7 @@ import {
     HelpCircleIcon,
     MarkerCheckIcon,
 } from 'mdi-vue3';
-import { DefineComponent } from 'vue';
+import { type DefineComponent } from 'vue';
 import { StatusDispatch } from '~~/gen/ts/resources/dispatch/dispatches';
 import { StatusUnit } from '~~/gen/ts/resources/dispatch/units';
 

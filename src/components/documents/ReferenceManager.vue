@@ -26,7 +26,7 @@ import {
     LockClockIcon,
     OpenInNewIcon,
 } from 'mdi-vue3';
-import { DefineComponent } from 'vue';
+import { type DefineComponent } from 'vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import Time from '~/components/partials/elements/Time.vue';
 import { ClipboardDocument, getDocument, getUser, useClipboardStore } from '~/store/clipboard';

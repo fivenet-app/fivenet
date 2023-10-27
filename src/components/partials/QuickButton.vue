@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { CalculatorIcon, HelpCircleIcon } from 'mdi-vue3';
-import { DefineComponent } from 'vue';
+import { type DefineComponent } from 'vue';
 import ComponentModal from '~/components/partials/elements/ComponentModal.vue';
 import Calculator from '~/components/penaltycalculator/Calculator.vue';
 

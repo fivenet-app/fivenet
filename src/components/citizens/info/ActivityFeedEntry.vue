@@ -14,7 +14,7 @@ import {
     RunFastIcon,
     TrafficConeIcon,
 } from 'mdi-vue3';
-import { DefineComponent } from 'vue';
+import { type DefineComponent } from 'vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import Time from '~/components/partials/elements/Time.vue';
 import { RoutesNamedLocations } from '~~/.nuxt/typed-router/__routes';

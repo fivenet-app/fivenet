@@ -70,7 +70,7 @@
         "@types/zxcvbn": "^4.4.3",
         "@unhead/vue": "^1.7.4",
         "@vitejs/plugin-vue": "^4.4.0",
-        "@volar/vue-typescript": "^1.6.5",
+        "@vue/typescript": "^1.8.20",
         "@vueuse/router": "^10.5.0",
         "@vueuse/sound": "^2.0.1",
         "autoprefixer": "^10.4.16",

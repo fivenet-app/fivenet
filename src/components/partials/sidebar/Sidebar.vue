@@ -17,7 +17,7 @@ import {
     MenuIcon,
     UnfoldMoreHorizontalIcon,
 } from 'mdi-vue3';
-import { DefineComponent } from 'vue';
+import { type DefineComponent } from 'vue';
 import QuickButtons from '~/components/partials/QuickButtons.vue';
 import FiveNetLogo from '~/components/partials/logos/FiveNetLogo.vue';
 import JobSwitcher from '~/components/partials/sidebar/JobSwitcher.vue';

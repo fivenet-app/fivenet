@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { CloseCircleIcon } from 'mdi-vue3';
-import { DefineComponent } from 'vue';
+import { type DefineComponent } from 'vue';
 
 withDefaults(
     defineProps<{

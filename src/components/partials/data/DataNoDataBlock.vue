@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { MagnifyIcon } from 'mdi-vue3';
-import { DefineComponent } from 'vue';
+import { type DefineComponent } from 'vue';
 
 const props = withDefaults(
     defineProps<{

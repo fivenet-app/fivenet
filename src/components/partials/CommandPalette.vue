@@ -25,7 +25,7 @@ import {
     MapIcon,
     RefreshIcon,
 } from 'mdi-vue3';
-import { DefineComponent } from 'vue';
+import { type DefineComponent } from 'vue';
 import '~/assets/css/command-palette.scss';
 import { toggleTablet } from '~/composables/nui';
 import { DocumentShort } from '~~/gen/ts/resources/documents/documents';
