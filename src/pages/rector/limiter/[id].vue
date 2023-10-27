@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import AttrView from '~/components/rector/attrs/AttrView.vue';
-import { TypedRouteFromName } from '~~/.nuxt/typed-router/__router';
+import { type TypedRouteFromName } from '@typed-router';
 
 useHead({
     title: 'pages.rector.limiter.title',

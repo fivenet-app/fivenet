@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
+import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { useConfirmDialog } from '@vueuse/core';
 import { PencilIcon, TrashCanIcon } from 'mdi-vue3';
-import ColorInput from 'vue-color-input';
+import ColorInput from 'vue-color-input/dist/color-input.esm';
 import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
 import { Unit } from '~~/gen/ts/resources/dispatch/units';
 import CreateOrUpdateUnitModal from './CreateOrUpdateUnitModal.vue';

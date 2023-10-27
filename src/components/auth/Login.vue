@@ -1,12 +1,12 @@
 <script lang="ts" setup>
-import { NavigationFailure } from 'vue-router';
+import { type NavigationFailure } from 'vue-router';
 import FiveNetLogo from '~/components/partials/logos/FiveNetLogo.vue';
 import { useAuthStore } from '~/store/auth';
 import { useConfigStore } from '~/store/config';
-import { TypedRouteFromName } from '~~/.nuxt/typed-router/__router';
 import ForgotPasswordForm from './ForgotPasswordForm.vue';
 import LoginForm from './LoginForm.vue';
 import RegistrationForm from './RegistrationForm.vue';
+import type { TypedRouteFromName } from '@typed-router';
 
 const authStore = useAuthStore();
 const { accessToken } = storeToRefs(authStore);

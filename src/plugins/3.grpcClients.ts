@@ -1,16 +1,16 @@
 import { GrpcWebFetchTransport } from '@protobuf-ts/grpcweb-transport';
-import { RpcTransport } from '@protobuf-ts/runtime-rpc';
 import {
-    MethodInfo,
-    NextServerStreamingFn,
-    NextUnaryFn,
     RpcError,
-    RpcInterceptor,
-    RpcOptions,
     ServerStreamingCall,
     UnaryCall,
-} from '@protobuf-ts/runtime-rpc/build/types';
-import { Notification } from '~/composables/notification/interfaces/Notification.interface';
+    type MethodInfo,
+    type NextServerStreamingFn,
+    type NextUnaryFn,
+    type RpcInterceptor,
+    type RpcOptions,
+    type RpcTransport,
+} from '@protobuf-ts/runtime-rpc';
+import { type Notification } from '~/composables/notification/interfaces/Notification.interface';
 import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
 import { AuthServiceClient } from '~~/gen/ts/services/auth/auth.client';

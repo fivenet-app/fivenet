@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/vue';
-import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
+import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { Quill, QuillEditor } from '@vueup/vue-quill';
 import { useConfirmDialog } from '@vueuse/core';
 import {

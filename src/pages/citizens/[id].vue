@@ -1,11 +1,11 @@
 <script lang="ts" setup>
-import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
+import { RpcError } from '@protobuf-ts/runtime-rpc';
 import Info from '~/components/citizens/info/Info.vue';
 import ClipboardButton from '~/components/clipboard/ClipboardButton.vue';
 import ContentWrapper from '~/components/partials/ContentWrapper.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import { TypedRouteFromName } from '~~/.nuxt/typed-router/__router';
+import { type TypedRouteFromName } from '@typed-router';
 import { User } from '~~/gen/ts/resources/users/users';
 
 useHead({

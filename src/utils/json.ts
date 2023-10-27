@@ -1,4 +1,4 @@
-import { StateTree } from 'pinia';
+import { type StateTree } from 'pinia';
 
 class JSONSerializer {
     serialize(value: StateTree): string {

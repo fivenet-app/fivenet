@@ -1,4 +1,4 @@
-import { TranslateItem } from '~/composables/i18n';
+import { type TranslateItem } from '~/composables/i18n';
 import { Data, NotificationCategory } from '~~/gen/ts/resources/notifications/notifications';
 import type { NotificationPosition, NotificationType } from './Notification.interface';
 

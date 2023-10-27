@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
+import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { TuneIcon } from 'mdi-vue3';
-import ColorInput from 'vue-color-input';
+import ColorInput from 'vue-color-input/dist/color-input.esm';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { PenaltiesSummary } from './Calculator.vue';
+import { type PenaltiesSummary } from './Calculator.vue';
 
 const props = defineProps<{
     summary: PenaltiesSummary;

@@ -1,4 +1,4 @@
-import { UseTimeAgoMessages, UseTimeAgoOptions, UseTimeAgoUnitNamesDefault, useTimeAgo } from '@vueuse/core';
+import { useTimeAgo, type UseTimeAgoMessages, type UseTimeAgoOptions, type UseTimeAgoUnitNamesDefault } from '@vueuse/core';
 
 // Based on https://github.com/vueuse/vueuse/issues/1592#issuecomment-1341786344
 // https://github.com/vueuse/vueuse/issues/1592#issuecomment-1381020982

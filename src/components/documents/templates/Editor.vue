@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
-import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
+import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { max, min, numeric, required } from '@vee-validate/rules';
 import { useThrottleFn, watchDebounced } from '@vueuse/core';
 import { CheckIcon, LoadingIcon, PlusIcon } from 'mdi-vue3';
@@ -15,7 +15,7 @@ import { DocumentAccess } from '~~/gen/ts/resources/documents/documents';
 import { ObjectSpecs, TemplateJobAccess, TemplateRequirements } from '~~/gen/ts/resources/documents/templates';
 import { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
 import { CreateTemplateRequest, UpdateTemplateRequest } from '~~/gen/ts/services/docstore/docstore';
-import SchemaEditor, { ObjectSpecsValue, SchemaEditorValue } from './SchemaEditor.vue';
+import SchemaEditor, { type ObjectSpecsValue, type SchemaEditorValue } from './SchemaEditor.vue';
 import TemplateHint from './partials/TemplateHint.vue';
 
 const props = defineProps<{

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue';
 import { TranslateIcon } from 'mdi-vue3';
-import { LocaleObject } from 'vue-i18n-routing';
+import { type LocaleObject } from 'vue-i18n-routing';
 import { useNotificatorStore } from '~/store/notificator';
 
 const { locale, locales } = useI18n();

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import View from '~/components/documents/templates/View.vue';
 import ContentWrapper from '~/components/partials/ContentWrapper.vue';
-import { TypedRouteFromName } from '~~/.nuxt/typed-router/__router';
+import { type TypedRouteFromName } from '@typed-router';
 
 useHead({
     title: 'pages.documents.templates.view.title',

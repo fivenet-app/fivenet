@@ -1,5 +1,5 @@
 import Quill from 'quill';
-import divider, { DEFAULT, Options } from './divider';
+import divider, { DEFAULT, type Options } from './divider';
 
 const Module = Quill.import('core/module');
 

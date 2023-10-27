@@ -14,7 +14,7 @@ import { listEnumValues } from '@protobuf-ts/runtime';
 import { watchDebounced } from '@vueuse/core';
 import { CheckIcon, ChevronDownIcon, CloseIcon } from 'mdi-vue3';
 import { useCompletorStore } from '~/store/completor';
-import { ArrayElement } from '~/utils/types';
+import { type ArrayElement } from '~/utils/types';
 import { AccessLevel } from '~~/gen/ts/resources/documents/access';
 import { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
 import { UserShort } from '~~/gen/ts/resources/users/users';

@@ -1,11 +1,11 @@
 <script lang="ts" setup>
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
-import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
+import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { max, min, required } from '@vee-validate/rules';
 import { useThrottleFn } from '@vueuse/core';
 import { CloseIcon, GroupIcon, LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
-import ColorInput from 'vue-color-input';
+import ColorInput from 'vue-color-input/dist/color-input.esm';
 import { Unit } from '~~/gen/ts/resources/dispatch/units';
 
 const props = defineProps<{

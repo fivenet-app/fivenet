@@ -1,5 +1,5 @@
-import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
-import { StoreDefinition, defineStore } from 'pinia';
+import { RpcError } from '@protobuf-ts/runtime-rpc';
+import { defineStore, type StoreDefinition } from 'pinia';
 import { statusOrder } from '~/components/centrum/helpers';
 import { Dispatch, DispatchStatus, StatusDispatch } from '~~/gen/ts/resources/dispatch/dispatches';
 import { CentrumMode, Settings } from '~~/gen/ts/resources/dispatch/settings';

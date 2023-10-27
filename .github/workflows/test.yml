@@ -36,3 +36,6 @@ jobs:
 
       - name: Run yarn build
         run: yarn build
+
+      - name: Run Nuxt typecheck
+        run: yarn typecheck

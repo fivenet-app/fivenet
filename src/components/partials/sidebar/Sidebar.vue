@@ -24,7 +24,7 @@ import JobSwitcher from '~/components/partials/sidebar/JobSwitcher.vue';
 import LanguageSwitcher from '~/components/partials/sidebar/LanguageSwitcher.vue';
 import Notifications from '~/components/partials/sidebar/Notifications.vue';
 import { useAuthStore } from '~/store/auth';
-import { RoutesNamedLocations } from '~~/.nuxt/typed-router/__routes';
+import { type RoutesNamedLocations } from '@typed-router';
 
 const authStore = useAuthStore();
 const { accessToken, activeChar } = storeToRefs(authStore);

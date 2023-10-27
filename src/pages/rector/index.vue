@@ -2,7 +2,7 @@
 import { AccountGroupIcon, CarSpeedLimiterIcon, MathLogIcon, ScaleBalanceIcon, TuneIcon } from 'mdi-vue3';
 import Cards from '~/components/partials/Cards.vue';
 import ContentCenterWrapper from '~/components/partials/ContentCenterWrapper.vue';
-import { CardElements } from '~/utils/types';
+import { type CardElements } from '~/utils/types';
 
 const { t } = useI18n();
 

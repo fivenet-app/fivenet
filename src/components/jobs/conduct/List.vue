@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions, Switch } from '@headlessui/vue';
-import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
+import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { useConfirmDialog, watchDebounced } from '@vueuse/core';
 import { CheckIcon } from 'mdi-vue3';
 import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';

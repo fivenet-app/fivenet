@@ -1,4 +1,4 @@
-import { NavigationGuard, RouteLocationNormalized } from 'vue-router';
+import { type NavigationGuard, type RouteLocationNormalized } from 'vue-router';
 import { useConfigStore } from '~/store/config';
 
 export default defineNuxtRouteMiddleware(

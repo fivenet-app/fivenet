@@ -6,7 +6,7 @@ import 'leaflet-contextmenu';
 import 'leaflet-contextmenu/dist/leaflet.contextmenu.min.css';
 import 'leaflet/dist/leaflet.css';
 import { useLivemapStore } from '~/store/livemap';
-import { ValueOf } from '~/utils/types';
+import { type ValueOf } from '~/utils/types';
 
 const { $loading } = useNuxtApp();
 const route = useRoute();

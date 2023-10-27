@@ -67,18 +67,18 @@ onBeforeMount(async () => {
                         <pre
                             v-if="error.statusMessage"
                             v-text="
-                                //@ts-ignore
+                                // @ts-ignore
                                 error.statusMessage
                             "
                         />
                         <!-- @vue-expect-error -->
                         <pre
                             v-else-if="
-                                //@ts-ignore
+                                // @ts-ignore
                                 error.message
                             "
                             v-text="
-                                //@ts-ignore
+                                // @ts-ignore
                                 error.message
                             "
                         />

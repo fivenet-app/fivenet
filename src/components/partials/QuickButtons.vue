@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import QuickButton, { ButtonComponents as QuickButtonTypes } from '~/components/partials/QuickButton.vue';
+import QuickButton, { type ButtonComponents as QuickButtonTypes } from '~/components/partials/QuickButton.vue';
 import { useAuthStore } from '~/store/auth';
 
 const authStore = useAuthStore();

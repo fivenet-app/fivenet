@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
+import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { useConfirmDialog } from '@vueuse/core';
 import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
 import { useNotificatorStore } from '~/store/notificator';

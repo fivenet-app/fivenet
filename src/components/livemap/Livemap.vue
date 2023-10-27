@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { LControl } from '@vue-leaflet/vue-leaflet';
-import { LeafletMouseEvent } from 'leaflet';
+import { type LeafletMouseEvent } from 'leaflet';
 import 'leaflet-contextmenu';
 import 'leaflet-contextmenu/dist/leaflet.contextmenu.min.css';
 import 'leaflet/dist/leaflet.css';

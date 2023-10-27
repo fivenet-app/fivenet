@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
+import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { LCircleMarker, LMarker, LPopup } from '@vue-leaflet/vue-leaflet';
 import { useConfirmDialog } from '@vueuse/core';
 import L from 'leaflet';

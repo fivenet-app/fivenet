@@ -1,10 +1,10 @@
 <script lang="ts" setup>
-import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
+import { RpcError } from '@protobuf-ts/runtime-rpc';
 import Cards from '~/components/partials/Cards.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import { CardElements } from '~/utils/types';
+import { type CardElements } from '~/utils/types';
 import { TemplateShort } from '~~/gen/ts/resources/documents/templates';
 
 const { $grpc } = useNuxtApp();

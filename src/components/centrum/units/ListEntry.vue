@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { unitStatusToBGColor } from '~/components/centrum/helpers';
-import { RGB } from '~/utils/colour';
+import { type RGB } from '~/utils/colour';
 import { StatusUnit, Unit } from '~~/gen/ts/resources/dispatch/units';
 import Details from './Details.vue';
 

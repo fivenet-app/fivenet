@@ -1,21 +1,20 @@
-import { defineNuxtConfig } from 'nuxt/config';
 import { STRATEGIES } from 'vue-i18n-routing';
 
 const commit: string = process.env.COMMIT_REF || 'COMMIT_REF';
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
-const config = defineNuxtConfig({
+export default defineNuxtConfig({
     srcDir: 'src/',
     telemetry: false,
     ssr: false,
     modules: [
         '@nuxt/devtools',
-        '@pinia/nuxt',
-        '@pinia-plugin-persistedstate/nuxt',
         'nuxt-typed-router',
         '@nuxtjs/robots',
-        '@nuxtjs/i18n',
         '@nuxtjs/tailwindcss',
+        '@nuxtjs/i18n',
+        '@pinia/nuxt',
+        '@pinia-plugin-persistedstate/nuxt',
         '@vee-validate/nuxt',
         '@dargmuesli/nuxt-cookie-control',
         'nuxt-update',
@@ -194,5 +193,3 @@ const config = defineNuxtConfig({
         emitRouteChunkError: 'automatic',
     },
 });
-
-export default config;

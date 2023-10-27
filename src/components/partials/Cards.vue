@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { ChevronRightIcon } from 'mdi-vue3';
-import { CardElement } from '~/utils/types';
+import { type CardElement } from '~/utils/types';
 
 withDefaults(
     defineProps<{

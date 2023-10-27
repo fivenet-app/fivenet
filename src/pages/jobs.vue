@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { CloseIcon, MenuIcon } from 'mdi-vue3';
-import { RoutesNamedLocations } from '~~/.nuxt/typed-router/__routes';
+import { type RoutesNamedLocations } from '@typed-router';
 
 const navigation: { name: string; to: RoutesNamedLocations; permission?: string }[] = [
     { name: 'common.overview', to: { name: 'jobs-overview' }, permission: 'JobsService.ColleaguesList' },

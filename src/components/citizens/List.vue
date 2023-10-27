@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { Disclosure, DisclosureButton, DisclosurePanel, Switch } from '@headlessui/vue';
-import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
+import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { watchDebounced } from '@vueuse/core';
 import { useRouteHash } from '@vueuse/router';
 import { vMaska } from 'maska';

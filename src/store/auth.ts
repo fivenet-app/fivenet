@@ -1,5 +1,5 @@
-import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
-import { StoreDefinition, defineStore } from 'pinia';
+import { RpcError } from '@protobuf-ts/runtime-rpc';
+import { defineStore, type StoreDefinition } from 'pinia';
 import { parseQuery } from 'vue-router';
 import { JobProps } from '~~/gen/ts/resources/users/jobs';
 import { User } from '~~/gen/ts/resources/users/users';

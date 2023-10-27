@@ -10,7 +10,7 @@ import {
     ListboxOption,
     ListboxOptions,
 } from '@headlessui/vue';
-import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
+import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { max, min, required } from '@vee-validate/rules';
 import { Quill, QuillEditor } from '@vueup/vue-quill';
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
@@ -32,7 +32,7 @@ import MagicUrl from 'quill-magic-url';
 // @ts-expect-error
 import QuillPasteSmart from 'quill-paste-smart';
 import { defineRule } from 'vee-validate';
-import { TranslateItem } from '~/composables/i18n';
+import { type TranslateItem } from '~/composables/i18n';
 import Divider from '~/composables/quill/divider/divider';
 import DividerToolbar from '~/composables/quill/divider/quill-divider';
 import { useAuthStore } from '~/store/auth';

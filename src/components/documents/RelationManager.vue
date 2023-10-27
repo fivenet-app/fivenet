@@ -11,7 +11,7 @@ import {
     TransitionChild,
     TransitionRoot,
 } from '@headlessui/vue';
-import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
+import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { watchDebounced } from '@vueuse/core';
 import {
     AccountMinusIcon,
@@ -464,7 +464,7 @@ function removeRelation(id: bigint): void {
                                                                     <td
                                                                         class="py-4 pl-4 pr-3 text-sm font-medium truncate whitespace-nowrap sm:pl-6 lg:pl-8"
                                                                     >
-                                                                        <CitizenInfoPopover :user="getUser(user)" />
+                                                                        <CitizenInfoPopover :user="user" />
                                                                     </td>
                                                                     <td class="px-3 py-4 text-sm whitespace-nowrap">
                                                                         {{ user.jobLabel }}

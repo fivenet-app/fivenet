@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { FingerprintIcon } from 'mdi-vue3';
-import { TranslateItem } from '~/composables/i18n';
+import { type TranslateItem } from '~/composables/i18n';
 import { useNotificatorStore } from '~/store/notificator';
 
 const notifications = useNotificatorStore();

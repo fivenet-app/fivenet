@@ -1,4 +1,4 @@
-import { NavigationGuard, RouteLocationNormalized } from 'vue-router';
+import { type NavigationGuard, type RouteLocationNormalized } from 'vue-router';
 import { useAuthStore } from '~/store/auth';
 
 export default defineNuxtRouteMiddleware(

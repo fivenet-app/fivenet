@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { Locale } from '@dargmuesli/nuxt-cookie-control/dist/runtime/types';
 import { localize, setLocale as veeValidateSetLocale } from '@vee-validate/i18n';
 import de from '@vee-validate/i18n/dist/locale/de.json';
 import en from '@vee-validate/i18n/dist/locale/en.json';
@@ -20,6 +19,8 @@ const { clientConfig, updateAvailable } = storeToRefs(configStore);
 const settings = useSettingsStore();
 
 const route = useRoute();
+
+const { locale: cookieLocale } = useCookieControl();
 
 useHead({
     htmlAttrs: {
@@ -48,8 +49,6 @@ if (__APP_VERSION__ !== settings.version) {
     useDocumentEditorStore().$reset();
     settings.setVersion(__APP_VERSION__);
 }
-
-const cookieLocale = ref<Locale>('en');
 
 configure({
     generateMessage: localize({

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
-import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
+import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { LControl } from '@vue-leaflet/vue-leaflet';
 import { useDebounceFn, useIntervalFn, watchDebounced } from '@vueuse/core';
 import { useSound } from '@vueuse/sound';
@@ -339,7 +339,7 @@ const open = ref(false);
                                     </li>
                                 </ul>
                             </li>
-                            <template v-if="getOwnUnit !== undefined">
+                            <template v-if="ownUnitId !== undefined && getOwnUnit !== undefined">
                                 <li>
                                     <ul role="list" class="-mx-2 space-y-1">
                                         <li>

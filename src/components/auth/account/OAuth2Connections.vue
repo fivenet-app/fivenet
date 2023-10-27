@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
+import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { CloseCircleIcon } from 'mdi-vue3';
 import { OAuth2Account, OAuth2Provider } from '~~/gen/ts/resources/accounts/oauth2';
 import OAuth2ConnectButton from './OAuth2ConnectButton.vue';

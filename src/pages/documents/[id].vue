@@ -2,7 +2,7 @@
 import ClipboardButton from '~/components/clipboard/ClipboardButton.vue';
 import View from '~/components/documents/View.vue';
 import ContentWrapper from '~/components/partials/ContentWrapper.vue';
-import { TypedRouteFromName } from '~~/.nuxt/typed-router/__router';
+import { type TypedRouteFromName } from '@typed-router';
 
 useHead({
     title: 'pages.documents.id.title',

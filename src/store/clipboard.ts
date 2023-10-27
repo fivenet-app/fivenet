@@ -1,4 +1,4 @@
-import { StoreDefinition, defineStore } from 'pinia';
+import { defineStore, type StoreDefinition } from 'pinia';
 import { Category } from '~~/gen/ts/resources/documents/category';
 import { DocContentType, Document, DocumentShort } from '~~/gen/ts/resources/documents/documents';
 import { ObjectSpecs, TemplateData } from '~~/gen/ts/resources/documents/templates';

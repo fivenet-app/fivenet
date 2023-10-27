@@ -1,4 +1,4 @@
-import { RouteLocationNormalized } from 'vue-router';
+import { type RouteLocationNormalized } from 'vue-router';
 import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
 import { toDate } from '~/utils/time';

@@ -2,7 +2,7 @@
 import { AccountMultipleIcon, BriefcaseIcon, CarEmergencyIcon, CarIcon, FileDocumentMultipleIcon, MapIcon } from 'mdi-vue3';
 import Cards from '~/components/partials/Cards.vue';
 import ContentCenterWrapper from '~/components/partials/ContentCenterWrapper.vue';
-import { CardElements } from '~/utils/types';
+import { type CardElements } from '~/utils/types';
 
 useHead({
     title: 'common.overview',

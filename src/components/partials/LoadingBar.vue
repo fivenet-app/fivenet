@@ -84,11 +84,11 @@ const delayedFinish = () => {
 // Hooks
 const nuxt = useNuxtApp();
 
-//@ts-ignore we are currently unable to add custom event types to the typings
+// @ts-ignore we are currently unable to add custom event types to the typings
 nuxt.hook('data:loading:start', start);
-//@ts-ignore we are currently unable to add custom event types to the typings
+// @ts-ignore we are currently unable to add custom event types to the typings
 nuxt.hook('data:loading:finish', delayedFinish);
-//@ts-ignore we are currently unable to add custom event types to the typings
+// @ts-ignore we are currently unable to add custom event types to the typings
 nuxt.hook('data:loading:finish_error', () => {
     data.canSucceed = false;
     delayedFinish();

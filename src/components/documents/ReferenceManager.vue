@@ -11,7 +11,7 @@ import {
     TransitionChild,
     TransitionRoot,
 } from '@headlessui/vue';
-import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
+import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { watchDebounced } from '@vueuse/core';
 import {
     CheckIcon,

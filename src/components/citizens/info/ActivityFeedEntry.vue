@@ -17,7 +17,7 @@ import {
 import { type DefineComponent } from 'vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import Time from '~/components/partials/elements/Time.vue';
-import { RoutesNamedLocations } from '~~/.nuxt/typed-router/__routes';
+import { type RoutesNamedLocations } from '@typed-router';
 import { UserActivity } from '~~/gen/ts/resources/users/users';
 
 const props = defineProps<{

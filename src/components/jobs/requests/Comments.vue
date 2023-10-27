@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
+import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { max, min, required } from '@vee-validate/rules';
 import { useElementVisibility, useThrottleFn, watchOnce } from '@vueuse/core';
 import { CommentTextMultipleIcon, LoadingIcon } from 'mdi-vue3';

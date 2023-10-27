@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
-import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
+import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { useDebounceFn } from '@vueuse/core';
 import { useSound } from '@vueuse/sound';
 import { CarEmergencyIcon, CloseIcon } from 'mdi-vue3';

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { RpcError } from '@protobuf-ts/runtime-rpc/build/types';
+import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { default as TimeclockStatsBlock } from '~/components/jobs/timeclock/Stats.vue';
 import Divider from '~/components/partials/elements/Divider.vue';
 import { TimeclockStats } from '~~/gen/ts/resources/jobs/timeclock';

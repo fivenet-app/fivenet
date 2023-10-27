@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { RGB, hexToRgb, isColourBright, stringToColour } from '~/utils/colour';
+import { type RGB, hexToRgb, isColourBright, stringToColour } from '~/utils/colour';
 
 const props = withDefaults(
     defineProps<{

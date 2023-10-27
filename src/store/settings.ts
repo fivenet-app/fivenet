@@ -1,4 +1,4 @@
-import { StoreDefinition, defineStore } from 'pinia';
+import { defineStore, type StoreDefinition } from 'pinia';
 
 export interface SettingsState {
     version: string;

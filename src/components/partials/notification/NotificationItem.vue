@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { AlertCircleIcon, CheckCircleIcon, CloseCircleIcon, CloseIcon, InformationIcon } from 'mdi-vue3';
-import { Notification } from '~/composables/notification/interfaces/Notification.interface';
+import { type Notification } from '~/composables/notification/interfaces/Notification.interface';
 import { useNotificatorStore } from '~/store/notificator';
 
 const notifications = useNotificatorStore();

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import Editor from '~/components/documents/Editor.vue';
 import ContentWrapper from '~/components/partials/ContentWrapper.vue';
-import { TypedRouteFromName } from '~~/.nuxt/typed-router/__router';
+import { type TypedRouteFromName } from '@typed-router';
 
 useHead({
     title: 'pages.documents.edit.title',
