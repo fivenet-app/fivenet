@@ -10,6 +10,7 @@ import { GetAccountInfoResponse } from '~~/gen/ts/services/auth/auth';
 import ChangePasswordModal from './ChangePasswordModal.vue';
 import DebugInfo from './DebugInfo.vue';
 import OAuth2Connections from './OAuth2Connections.vue';
+import { Switch, SwitchGroup, SwitchLabel } from '@headlessui/vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -17,7 +18,7 @@ const authStore = useAuthStore();
 const { activeChar } = storeToRefs(authStore);
 
 const settings = useSettingsStore();
-const { startpage } = storeToRefs(settings);
+const { startpage, documents } = storeToRefs(settings);
 
 const { data: account, pending, refresh, error } = useLazyAsyncData(`accountinfo`, () => getAccountInfo());
 
@@ -60,6 +61,16 @@ watch(selectedHomepage, () => (startpage.value = selectedHomepage.value?.path ??
 
 onBeforeMount(async () => {
     selectedHomepage.value = homepages.find((h) => h.path === startpage.value);
+});
+
+const darkModeActive = ref(false);
+
+watch(darkModeActive, async () => {
+    if (darkModeActive.value) {
+        documents.value.editorTheme = 'dark';
+    } else {
+        documents.value.editorTheme = 'default';
+    }
 });
 </script>
 
@@ -137,6 +148,35 @@ onBeforeMount(async () => {
                                 <p v-else class="text-neutral">
                                     {{ $t('components.auth.account_info.set_startpage.no_char_selected') }}
                                 </p>
+                            </dd>
+                        </div>
+                        <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
+                            <dt class="text-sm font-medium">
+                                {{ $t('components.auth.account_info.editor_theme.title') }}
+                            </dt>
+                            <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
+                                <SwitchGroup as="div" class="flex items-center">
+                                    <Switch
+                                        v-model="darkModeActive"
+                                        :class="[
+                                            documents.editorTheme === 'dark' ? 'bg-indigo-600' : 'bg-gray-200',
+                                            'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2',
+                                        ]"
+                                    >
+                                        <span
+                                            aria-hidden="true"
+                                            :class="[
+                                                documents.editorTheme === 'dark' ? 'translate-x-5' : 'translate-x-0',
+                                                'pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
+                                            ]"
+                                        />
+                                    </Switch>
+                                    <SwitchLabel as="span" class="ml-3 text-sm">
+                                        <span class="font-medium text-gray-300">{{
+                                            $t('components.auth.account_info.editor_theme.dark_mode')
+                                        }}</span>
+                                    </SwitchLabel>
+                                </SwitchGroup>
                             </dd>
                         </div>
                     </dl>

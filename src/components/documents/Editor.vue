@@ -33,6 +33,7 @@ import { getDocument, getUser, useClipboardStore } from '~/store/clipboard';
 import { useCompletorStore } from '~/store/completor';
 import { useDocumentEditorStore } from '~/store/documenteditor';
 import { useNotificatorStore } from '~/store/notificator';
+import { useSettingsStore } from '~/store/settings';
 import { AccessLevel } from '~~/gen/ts/resources/documents/access';
 import { Category } from '~~/gen/ts/resources/documents/category';
 import {
@@ -58,16 +59,19 @@ const props = defineProps<{
 const { $grpc } = useNuxtApp();
 
 const authStore = useAuthStore();
+const { activeChar } = storeToRefs(authStore);
+
 const clipboardStore = useClipboardStore();
+const completorStore = useCompletorStore();
 const documentStore = useDocumentEditorStore();
 const notifications = useNotificatorStore();
-const completorStore = useCompletorStore();
+
+const settingsStore = useSettingsStore();
+const { documents } = storeToRefs(settingsStore);
 
 const { t } = useI18n();
 
 const route = useRoute();
-
-const { activeChar } = storeToRefs(authStore);
 
 const maxAccessEntries = 10;
 
@@ -683,6 +687,7 @@ const config = {
     spellcheck: true,
     minHeight: 475,
     editorClassName: 'prose',
+    theme: documents.value.editorTheme,
 
     readonly: false,
     defaultActionOnPaste: 'insert_clear_html',

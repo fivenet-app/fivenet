@@ -190,6 +190,10 @@
                 "set_startpage": {
                     "title": "Start Page after character selector",
                     "no_char_selected": "To select a start page you must select a character first."
+                },
+                "editor_theme": {
+                    "title": "Document Editor Theme",
+                    "dark_mode": "Dark Mode"
                 }
             },
             "login": {
