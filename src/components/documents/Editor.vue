@@ -82,12 +82,11 @@ const openclose = [
     { id: 1, label: t('common.close', 2), closed: true },
 ];
 
+const content = ref('');
 const doc = ref<{
-    content: string;
     closed: { id: number; label: string; closed: boolean };
     public: boolean;
 }>({
-    content: '',
     closed: openclose[0],
     public: false,
 });
@@ -140,7 +139,7 @@ onMounted(async () => {
             const template = response.template;
             setFieldValue('title', template?.contentTitle!);
             setFieldValue('state', template?.state!);
-            doc.value.content = template?.content.replace(/\s+/g, ' ')!;
+            content.value = template?.content.replace(/\s+/g, ' ')!;
             selectedCategory.value = template?.category;
 
             if (template?.contentAccess) {
@@ -191,7 +190,7 @@ onMounted(async () => {
             if (document) {
                 setFieldValue('title', document.title);
                 setFieldValue('state', document.state);
-                doc.value.content = document.content;
+                content.value = document.content;
                 doc.value.closed = openclose.find((e) => e.closed === document.closed) as {
                     id: number;
                     label: string;
@@ -242,7 +241,7 @@ onMounted(async () => {
         if (documentStore.$state) {
             setFieldValue('title', documentStore.$state.title);
             setFieldValue('state', documentStore.$state.state);
-            doc.value.content = documentStore.$state.content;
+            content.value = documentStore.$state.content;
             if (documentStore.$state.closed) {
                 doc.value.closed = documentStore.$state.closed;
             }
@@ -300,7 +299,7 @@ async function saveToStore(values: FormData): Promise<void> {
 
     documentStore.save({
         title: values.title,
-        content: doc.value.content,
+        content: content.value,
         state: values.state,
         closed: doc.value.closed,
         category: selectedCategory.value,
@@ -316,9 +315,9 @@ async function findCategories(): Promise<void> {
         entriesCategories.value.push(selectedCategory.value);
 }
 
-watchOnce(doc, () => (changed.value = true));
-
 const changed = ref(false);
+
+watchOnce(content, () => (changed.value = true));
 watchDebounced(
     doc.value,
     async () => {
@@ -327,8 +326,20 @@ watchDebounced(
         }
     },
     {
-        debounce: 1350,
-        maxWait: 4000,
+        debounce: 1000,
+        maxWait: 2500,
+    },
+);
+watchDebounced(
+    content,
+    async () => {
+        if (changed.value) {
+            saveToStore(values);
+        }
+    },
+    {
+        debounce: 1000,
+        maxWait: 3500,
     },
 );
 
@@ -563,7 +574,6 @@ async function updateDocument(id: bigint, values: FormData, content: string, clo
         req.access = reqAccess;
 
         try {
-            console.log(doc.value.content);
             const call = $grpc.getDocStoreClient().updateDocument(req);
             const { response } = await call;
 
@@ -670,9 +680,9 @@ const canSubmit = ref(true);
 const onSubmit = handleSubmit(async (values): Promise<void> => {
     let prom: Promise<void>;
     if (props.id === undefined) {
-        prom = createDocument(values, doc.value.content, doc.value.closed.closed);
+        prom = createDocument(values, content.value, doc.value.closed.closed);
     } else {
-        prom = updateDocument(props.id, values, doc.value.content, doc.value.closed.closed);
+        prom = updateDocument(props.id, values, content.value, doc.value.closed.closed);
     }
 
     await prom.finally(() => setTimeout(() => (canSubmit.value = true), 350));
@@ -686,7 +696,7 @@ const config = {
     language: 'de',
     spellcheck: true,
     minHeight: 475,
-    editorClassName: 'prose' + documents.value.editorTheme === 'dark' ? ' dark:prose-invert' : '',
+    editorClassName: 'prose' + (documents.value.editorTheme === 'dark' ? ' prose-neutral' : ' prose-gray'),
     theme: documents.value.editorTheme,
 
     readonly: false,
@@ -699,8 +709,10 @@ const config = {
     },
     // Clean HTML Plugin
     cleanHTML: {
-        denyTags: 'script',
+        denyTags: 'script,iframe',
+        fillEmptyParagraph: false,
     },
+    nl2brInPlainText: false,
     // Inline Plugin
     toolbarInline: true,
     toolbarInlineForSelection: true,
@@ -759,6 +771,11 @@ const config = {
 <style>
 .jodit-wysiwyg {
     min-width: 100%;
+
+    * {
+        margin-top: 4px;
+        margin-bottom: 4px;
+    }
 }
 </style>
 
@@ -921,10 +938,12 @@ const config = {
                 </div>
             </div>
             <div v-if="canDo.edit" class="bg-neutral">
-                <JoditEditor v-model="doc.content" :config="config" />
+                <JoditEditor v-model="content" :config="config" />
                 <template v-if="saving">
-                    <ContentSaveIcon class="w-6 h-auto mr-2 animate-spin" />
-                    {{ $t('common.save', 2) }}...
+                    <div class="flex justify-center animate-pulse">
+                        <ContentSaveIcon class="w-4 h-auto mr-2 animate-spin" />
+                        {{ $t('common.save', 2) }}...
+                    </div>
                 </template>
             </div>
             <div v-if="canDo.edit" class="flex flex-row">

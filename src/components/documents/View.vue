@@ -146,11 +146,11 @@ const { isRevealed, reveal, confirm, cancel, onConfirm } = useConfirmDialog();
 onConfirm(async (id: bigint) => deleteDocument(id));
 </script>
 
-<style>
+<style scoped>
 .prose {
     * {
-        margin-top: 2px;
-        margin-bottom: 2px;
+        margin-top: 4px;
+        margin-bottom: 4px;
     }
 }
 </style>

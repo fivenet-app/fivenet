@@ -63,7 +63,7 @@ onBeforeMount(async () => {
     selectedHomepage.value = homepages.find((h) => h.path === startpage.value);
 });
 
-const darkModeActive = ref(false);
+const darkModeActive = ref(documents.value.editorTheme === 'dark');
 
 watch(darkModeActive, async () => {
     if (darkModeActive.value) {
