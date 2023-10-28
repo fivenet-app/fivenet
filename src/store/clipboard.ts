@@ -145,7 +145,7 @@ export const useClipboardStore = defineStore('clipboard', {
 
         checkRequirements(reqs: ObjectSpecs, listType: ListType): boolean {
             const length = BigInt(this[listType].length);
-            if (reqs.required && length <= 0n) {
+            if (reqs.required && length <= (reqs.min ?? 1n)) {
                 return false;
             } else if (reqs.min && length < reqs.min && reqs.max && length > reqs.max) {
                 return false;

@@ -60,7 +60,6 @@ async function getJobProps(): Promise<JobProps> {
                 }
 
                 properties.value.discordLastSync = response.jobProps?.discordLastSync;
-                debugger;
             }
 
             return res(response.jobProps!);
