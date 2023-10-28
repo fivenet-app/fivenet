@@ -51,6 +51,8 @@ import AccessEntry from './AccessEntry.vue';
 import ReferenceManager from './ReferenceManager.vue';
 import RelationManager from './RelationManager.vue';
 import { checkDocAccess } from './helpers';
+import type { IJodit } from 'jodit/types/types';
+import type { PasteEvent } from 'jodit/types/plugins/paste/interface';
 
 const props = defineProps<{
     id?: bigint;
@@ -284,6 +286,9 @@ onMounted(async () => {
         });
     });
 
+    setTimeout(() => {
+        setupCheckboxes();
+    }, 25);
     canEdit.value = true;
 
     findCategories();
@@ -701,18 +706,17 @@ const config = {
 
     readonly: false,
     defaultActionOnPaste: 'insert_clear_html',
-    plugins: [],
-    disablePlugins: ['about', 'print', 'classSpan', 'video', 'poweredByJodit'],
+    disablePlugins: ['about', 'poweredByJodit', 'classSpan', 'file', 'video', 'print'],
     // Uploader Plugin
     uploader: {
         insertImageAsBase64URI: true,
     },
     // Clean HTML Plugin
     cleanHTML: {
-        denyTags: 'script,iframe',
+        denyTags: 'script,iframe,form,button,svg',
         fillEmptyParagraph: false,
     },
-    nl2brInPlainText: false,
+    nl2brInPlainText: true,
     // Inline Plugin
     toolbarInline: true,
     toolbarInlineForSelection: true,
@@ -735,7 +739,7 @@ const config = {
         /**
          * Replace inserted youtube/vimeo link to `iframe`
          */
-        processVideoLink: true,
+        processVideoLink: false,
         /**
          * Wrap inserted link
          */
@@ -743,11 +747,11 @@ const config = {
         /**
          * Show `no follow` checkbox in link dialog.
          */
-        noFollowCheckbox: true,
+        noFollowCheckbox: false,
         /**
          * Show `Open in new tab` checkbox in link dialog.
          */
-        openInNewTabCheckbox: true,
+        openInNewTabCheckbox: false,
         /**
          * Use an input text to ask the classname or a select or not ask
          */
@@ -766,6 +770,60 @@ const config = {
         selectOptionsClassName: [],
     },
 };
+
+const plugins: any[] = [];
+
+const extraButtons = [
+    '|',
+    {
+        name: 'insertCheckbox',
+        iconURL: '/images/icons/format-list-checkbox.svg',
+        exec: function (editor: IJodit) {
+            const label = document.createElement('label');
+            label.setAttribute('contenteditable', 'false');
+            const empty = document.createElement('span');
+            empty.innerHTML = '&nbsp;';
+
+            const input = document.createElement('input');
+            input.setAttribute('type', 'checkbox');
+            input.setAttribute('checked', 'true');
+            input.onchange = (ev) => {
+                if (ev.target === null) {
+                    return;
+                }
+                setCheckboxState(ev.target as HTMLInputElement);
+            };
+
+            label.appendChild(input);
+            label.appendChild(empty);
+
+            editor.s.insertHTML(label, true);
+        },
+    },
+];
+
+function setCheckboxState(target: HTMLInputElement): void {
+    const attr = target.getAttribute('checked');
+    const checked = attr !== null ? Boolean(attr) : false;
+    if (checked) {
+        target.removeAttribute('checked');
+    } else {
+        target.setAttribute('checked', 'true');
+    }
+}
+
+function setupCheckboxes(): void {
+    const checkboxes: NodeListOf<HTMLInputElement> = document.querySelectorAll('.jodit-wysiwyg input[type=checkbox]');
+    checkboxes.forEach(
+        (el) =>
+            (el.onchange = (ev) => {
+                if (ev.target === null) {
+                    return;
+                }
+                setCheckboxState(ev.target as HTMLInputElement);
+            }),
+    );
+}
 </script>
 
 <style>
@@ -938,7 +996,7 @@ const config = {
                 </div>
             </div>
             <div v-if="canDo.edit" class="bg-neutral">
-                <JoditEditor v-model="content" :config="config" />
+                <JoditEditor v-model="content" :config="config" :plugins="plugins" :extra-buttons="extraButtons" />
                 <template v-if="saving">
                     <div class="flex justify-center animate-pulse">
                         <ContentSaveIcon class="w-4 h-auto mr-2 animate-spin" />

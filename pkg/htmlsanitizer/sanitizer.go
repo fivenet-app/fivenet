@@ -66,6 +66,11 @@ func init() {
 	p.AllowTables()
 	p.AllowLists()
 
+	// Checkboxes
+	p.AllowAttrs("contenteditable").Matching(regexp.MustCompile(`(?i)false`)).OnElements("label")
+	p.AllowAttrs("type").Matching(regexp.MustCompile(`(?i)checkbox`)).OnElements("input")
+	p.AllowAttrs("checked").Matching(regexp.MustCompile(`(?i)true`)).OnElements("input")
+
 	stripTags = bluemonday.StrictPolicy()
 }
 

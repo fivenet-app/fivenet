@@ -40,14 +40,16 @@ async function select(item: ClipboardUser): Promise<void> {
     }
 
     const selectedLength = BigInt(selected.value.length);
-    if (props.specs) {
-        if (props.specs.min && selectedLength >= props.specs.min) {
+    if (props.specs !== undefined) {
+        if (props.specs.min !== undefined && selectedLength >= props.specs.min) {
             emit('statisfied', true);
-        } else if (props.specs.max && selectedLength === props.specs.max) {
+        } else if (props.specs.max !== undefined && props.specs.max > 0n && selectedLength === props.specs.max) {
             emit('statisfied', true);
         } else {
             emit('statisfied', false);
         }
+    } else {
+        emit('statisfied', true);
     }
 }
 
@@ -152,6 +154,7 @@ watch(props, async (newVal) => {
                             v-model="selected"
                             type="checkbox"
                             class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600"
+                            @click="select(item)"
                         />
                     </template>
                 </td>

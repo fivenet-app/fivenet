@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc';
-import { useConfirmDialog } from '@vueuse/core';
+import { useConfirmDialog, watchOnce } from '@vueuse/core';
 import {
     AccountMultipleIcon,
     CalendarEditIcon,
@@ -141,6 +141,20 @@ function addToClipboard(): void {
         type: 'info',
     });
 }
+
+function setupCheckboxes(): void {
+    const checkboxes: NodeListOf<HTMLInputElement> = document.querySelectorAll('.prose input[type=checkbox]');
+    checkboxes.forEach((el) => {
+        el.setAttribute('disabled', 'disabled');
+        el.onchange = (ev) => ev.preventDefault();
+    });
+}
+
+watchOnce(doc, () =>
+    setTimeout(() => {
+        setupCheckboxes();
+    }, 25),
+);
 
 const { isRevealed, reveal, confirm, cancel, onConfirm } = useConfirmDialog();
 onConfirm(async (id: bigint) => deleteDocument(id));

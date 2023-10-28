@@ -62,7 +62,7 @@
         "@types/splitpanes": "^2.2.4",
         "@types/uuid": "^9.0.6",
         "@types/zxcvbn": "^4.4.3",
-        "@unhead/vue": "^1.7.4",
+        "@unhead/vue": "^1.8.0",
         "@vitejs/plugin-vue": "^4.4.0",
         "@vue/typescript": "^1.8.20",
         "@vueuse/router": "^10.5.0",
