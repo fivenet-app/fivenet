@@ -170,6 +170,7 @@ export class ClipboardUser {
     public firstname: string | undefined;
     public lastname: string | undefined;
     public dateofbirth: string | undefined;
+    public phoneNumber: string | undefined;
 
     constructor(u: UserShort | User) {
         this.userId = u.userId;
@@ -181,6 +182,7 @@ export class ClipboardUser {
         this.firstname = u.firstname;
         this.lastname = u.lastname;
         this.dateofbirth = u.dateofbirth;
+        this.phoneNumber = u.phoneNumber;
 
         return this;
     }
@@ -191,12 +193,13 @@ export function getUser(obj: ClipboardUser): User {
         userId: obj.userId!,
         identifier: obj.identifier!,
         job: obj.job!,
-        jobLabel: obj.jobLabel!,
+        jobLabel: obj.jobLabel ?? '',
         jobGrade: obj.jobGrade!,
-        jobGradeLabel: obj.jobGradeLabel!,
+        jobGradeLabel: obj.jobGradeLabel ?? '',
         firstname: obj.firstname!,
         lastname: obj.lastname!,
-        dateofbirth: obj.dateofbirth!,
+        dateofbirth: obj.dateofbirth ?? '',
+        phoneNumber: obj.phoneNumber ?? '',
         licenses: [],
     };
 

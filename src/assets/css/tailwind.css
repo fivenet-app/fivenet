@@ -42,12 +42,3 @@ body {
 .disabled {
     cursor: not-allowed;
 }
-
-.jodit-wysiwyg {
-    min-width: 100%;
-
-    * {
-        margin-top: 5px;
-        margin-bottom: 5px;
-    }
-}
