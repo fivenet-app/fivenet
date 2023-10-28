@@ -187,7 +187,7 @@ async function saveJobProps(): Promise<void> {
                                 <input
                                     type="text"
                                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                    :class="appConfig.discord.botInviteURL ? 'disabled' : ''"
+                                    :class="appConfig.discord.botInviteURL === undefined ? 'disabled' : ''"
                                     :disabled="appConfig.discord.botInviteURL === undefined"
                                     :placeholder="$t('components.rector.job_props.discord_guild_id')"
                                     :label="$t('components.rector.job_props.discord_guild_id')"
@@ -202,7 +202,7 @@ async function saveJobProps(): Promise<void> {
                                 >
                                     {{ $t('components.rector.job_props.invite_bot') }}
                                 </NuxtLink>
-                                <p v-if="properties.discordLastSync" class="text-base text-xs">
+                                <p v-if="properties.discordLastSync" class="mt-2 text-base text-xs">
                                     {{ $t('components.rector.job_props.last_sync') }}:
                                     <Time :value="properties.discordLastSync" />
                                 </p>
