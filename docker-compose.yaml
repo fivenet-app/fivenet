@@ -17,7 +17,7 @@ services:
 
   mysql:
     container_name: mysql
-    image: docker.io/library/mysql:8.1.0
+    image: docker.io/library/mysql:8.2.0
     command:
       - "mysqld"
       - "--innodb-ft-min-token-size=2"
