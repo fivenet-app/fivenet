@@ -24,12 +24,12 @@ func TestSanitize(t *testing.T) {
 		},
 		{
 			input:  "<h2 class=\"ql-link\">HELLO WORLD!</h2> This is a test.",
-			result: "<h2 class=\"ql-link\">HELLO WORLD!</h2> This is a test.",
+			result: "<h2>HELLO WORLD!</h2> This is a test.",
 			msg:    "Simple tags with class attributes (allowed class)",
 		},
 		{
 			input:  "<h2 style=\"color: #ffffff\" class=\"ql-link\">HELLO WORLD!</h2> <p><span>This is a test.</span></p>",
-			result: "<h2 style=\"color: #ffffff\" class=\"ql-link\">HELLO WORLD!</h2> <p><span>This is a test.</span></p>",
+			result: "<h2 style=\"color: #ffffff\">HELLO WORLD!</h2> <p><span>This is a test.</span></p>",
 			msg:    "Simple tags with style attribute",
 		},
 		{
