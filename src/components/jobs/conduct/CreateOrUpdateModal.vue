@@ -297,6 +297,8 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                                     "
                                                                                     :placeholder="$t('common.target')"
                                                                                     :label="$t('common.target')"
+                                                                                    @focusin="focusTablet(true)"
+                                                                                    @focusout="focusTablet(false)"
                                                                                 />
                                                                             </ComboboxButton>
 

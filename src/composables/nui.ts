@@ -2,8 +2,7 @@ import { useConfigStore } from '~/store/config';
 
 // Checking for `GetParentResourceName` existance doesn't work (anymore) in FiveM NUI iframes
 export function isNUIAvailable(): boolean {
-    //return typeof window.GetParentResourceName !== 'undefined';
-    return useConfigStore().clientConfig.NUIEnabled;
+    return useConfigStore().isNUIAvailable;
 }
 
 function getParentResourceName(): string {
@@ -33,6 +32,14 @@ export async function toggleTablet(state: boolean): Promise<void> {
     }
 
     return await fetchNui(state ? 'openTablet' : 'closeTablet', { ok: true });
+}
+
+export async function focusTablet(state: boolean): Promise<void> {
+    if (!isNUIAvailable()) {
+        return;
+    }
+
+    return await fetchNui('focusTablet', { state: state });
 }
 
 export async function setWaypoint(x: number, y: number): Promise<void> {

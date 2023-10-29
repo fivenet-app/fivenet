@@ -83,6 +83,8 @@ watchDebounced(postalQuery, () => findPostal(), {
             @click="loadPostals"
             :display-value="(postal: any) => (postal ? postal?.code : '')"
             :placeholder="`${$t('common.postal')} ${$t('common.search')}`"
+            @focusin="focusTablet(true)"
+            @focusout="focusTablet(false)"
         />
         <ComboboxOptions class="z-10 w-full py-1 mt-1 overflow-auto bg-neutral">
             <ComboboxOption v-for="postal in filteredPostals" :key="postal.code" :value="postal" v-slot="{ active }">

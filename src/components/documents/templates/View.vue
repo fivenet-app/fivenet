@@ -224,6 +224,8 @@ onConfirm(async (id) => deleteTemplate(id));
                                 class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 disabled
                                 :value="template.weight"
+                                @focusin="focusTablet(true)"
+                                @focusout="focusTablet(false)"
                             />
                         </div>
                     </div>
@@ -266,6 +268,8 @@ onConfirm(async (id) => deleteTemplate(id));
                                 class="whitespace-pre-wrap block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 disabled
                                 :value="template.state"
+                                @focusin="focusTablet(true)"
+                                @focusout="focusTablet(false)"
                             />
                         </div>
                     </div>

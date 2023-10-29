@@ -224,6 +224,8 @@ const templatesOpen = ref(false);
                                                         @change="queryCategories = $event.target.value"
                                                         :display-value="(category: any) => category?.name"
                                                         :placeholder="$t('common.category', 1)"
+                                                        @focusin="focusTablet(true)"
+                                                        @focusout="focusTablet(false)"
                                                     />
                                                 </ComboboxButton>
 
@@ -276,6 +278,8 @@ const templatesOpen = ref(false);
                                                         @change="queryCitizens = $event.target.value"
                                                         :display-value="(char: any) => `${char?.firstname} ${char?.lastname}`"
                                                         :placeholder="$t('common.creator')"
+                                                        @focusin="focusTablet(true)"
+                                                        @focusout="focusTablet(false)"
                                                     />
                                                 </ComboboxButton>
 

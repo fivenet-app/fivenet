@@ -37,8 +37,7 @@ defineEmits<{
 const { $grpc } = useNuxtApp();
 
 const centrumStore = useCentrumStore();
-const { getCurrentMode, getOwnUnit, ownUnitId, dispatches, ownDispatches, pendingDispatches, disponents } =
-    storeToRefs(centrumStore);
+const { getCurrentMode, getOwnUnit, dispatches, ownDispatches, pendingDispatches, disponents } = storeToRefs(centrumStore);
 const { startStream, stopStream } = centrumStore;
 
 const notifications = useNotificatorStore();
@@ -127,13 +126,21 @@ async function updateUtStatus(id: bigint, status?: StatusUnit): Promise<void> {
     });
 }
 
+const open = ref(false);
+
 // Show unit sidebar when ownUnit is set/updated, otherwise it will be hidden (automagically)
-watch(ownUnitId, async () => {
-    if (ownUnitId.value !== undefined) {
+watch(getOwnUnit, async () => {
+    if (getOwnUnit.value !== undefined) {
         open.value = true;
     } else {
         open.value = false;
         joinUnitOpen.value = false;
+    }
+});
+
+watch(open, async () => {
+    if (open.value === true && getOwnUnit.value === undefined) {
+        joinUnitOpen.value = true;
     }
 });
 
@@ -169,18 +176,22 @@ watchDebounced(ownDispatches.value, async () => ensureDispatchSelected(), {
     maxWait: 600,
 });
 
+const { resume, pause } = useIntervalFn(() => checkup(), 1 * 60 * 1000);
+
 onBeforeMount(async () => {
     if (canStream) {
         setTimeout(async () => startStream(), 250);
+        resume();
     }
 });
 
 onBeforeUnmount(async () => {
+    pause();
     stopStream();
     centrumStore.$reset();
 });
 
-const SEVENTEEN_MINUTES = 21 * 60 * 1000;
+const TWENTYONE_MINUTES = 21 * 60 * 1000;
 
 const attentionSound = useSound('/sounds/centrum/attention.mp3', {
     volume: 0.15,
@@ -189,16 +200,21 @@ const attentionSound = useSound('/sounds/centrum/attention.mp3', {
 
 const debouncedPlay = useDebounceFn(() => attentionSound.play(), 950);
 
-useIntervalFn(checkup, SEVENTEEN_MINUTES);
-
 async function checkup(): Promise<void> {
-    console.debug('Centrum: Sidebar - Running unit status checkup');
+    console.debug('Centrum: Sidebar - Running checkup');
     const ownUnit = getOwnUnit.value;
     if (ownUnit === undefined || ownUnit.status === undefined) {
         return;
     }
 
     if (ownUnit.status.status === StatusUnit.AVAILABLE || ownUnit.status.status === StatusUnit.UNAVAILABLE) {
+        return;
+    }
+
+    // TODO check how old the unit status is
+    const now = new Date().getTime();
+    console.log(now - toDate(ownUnit.status.createdAt).getTime());
+    if (now - toDate(ownUnit.status.createdAt).getTime() <= TWENTYONE_MINUTES) {
         return;
     }
 
@@ -212,8 +228,6 @@ async function checkup(): Promise<void> {
         callback: () => debouncedPlay(),
     });
 }
-
-const open = ref(false);
 </script>
 
 <template>
@@ -231,7 +245,7 @@ const open = ref(false);
                     <span v-else class="inline-flex items-center justify-center">
                         <ToggleSwitchOffIcon
                             class="h-6 w-6"
-                            :class="ownUnitId === undefined ? 'animate-pulse' : ''"
+                            :class="getOwnUnit === undefined ? 'animate-pulse' : ''"
                             aria-hidden="true"
                         />
                         <span class="pr-0.5">
@@ -339,7 +353,7 @@ const open = ref(false);
                                     </li>
                                 </ul>
                             </li>
-                            <template v-if="ownUnitId !== undefined && getOwnUnit !== undefined">
+                            <template v-if="getOwnUnit !== undefined">
                                 <li>
                                     <ul role="list" class="-mx-2 space-y-1">
                                         <li>
@@ -377,7 +391,7 @@ const open = ref(false);
                                                                     item.status ? unitStatusToBGColor(item.status) : item.class,
                                                                     item.class,
                                                                 ]"
-                                                                @click="updateUtStatus(ownUnitId, item.status)"
+                                                                @click="updateUtStatus(getOwnUnit.id!, item.status)"
                                                             >
                                                                 <component
                                                                     :is="item.icon ?? HoopHouseIcon"
@@ -399,7 +413,7 @@ const open = ref(false);
                                                             <button
                                                                 type="button"
                                                                 class="col-span-2 bg-base-800 text-neutral hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-1.5 text-xs my-0.5"
-                                                                @click="updateUtStatus(ownUnitId)"
+                                                                @click="updateUtStatus(getOwnUnit.id)"
                                                             >
                                                                 <ListStatusIcon
                                                                     class="text-base-100 group-hover:text-neutral h-5 w-5 shrink-0"

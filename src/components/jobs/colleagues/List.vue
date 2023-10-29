@@ -69,6 +69,8 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                         name="searchName"
                                         :placeholder="$t('common.name')"
                                         class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        @focusin="focusTablet(true)"
+                                        @focusout="focusTablet(false)"
                                     />
                                 </div>
                             </div>

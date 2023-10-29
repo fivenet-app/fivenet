@@ -166,6 +166,8 @@ watchDebounced(queryCitizens, async () => await findChars(), {
                                                         (chars: any) => (chars ? charsGetDisplayValue(chars) : $t('common.na'))
                                                     "
                                                     :placeholder="$t('common.user', 2)"
+                                                    @focusin="focusTablet(true)"
+                                                    @focusout="focusTablet(false)"
                                                 />
                                             </ComboboxButton>
 
@@ -218,6 +220,8 @@ watchDebounced(queryCitizens, async () => await findChars(), {
                                         name="service"
                                         :placeholder="$t('common.service')"
                                         class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        @focusin="focusTablet(true)"
+                                        @focusout="focusTablet(false)"
                                     />
                                 </div>
                             </div>
@@ -232,6 +236,8 @@ watchDebounced(queryCitizens, async () => await findChars(), {
                                         name="method"
                                         :placeholder="$t('common.method')"
                                         class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        @focusin="focusTablet(true)"
+                                        @focusout="focusTablet(false)"
                                     />
                                 </div>
                             </div>
@@ -247,6 +253,8 @@ watchDebounced(queryCitizens, async () => await findChars(), {
                                         name="data"
                                         :placeholder="$t('common.search')"
                                         class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        @focusin="focusTablet(true)"
+                                        @focusout="focusTablet(false)"
                                     />
                                 </div>
                             </div>

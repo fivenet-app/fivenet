@@ -8,7 +8,7 @@ import { UserShort } from '~~/gen/ts/resources/users/users';
 import { useAuthStore } from './auth';
 import { useNotificatorStore } from './notificator';
 
-const THREE_QUARTER_MINUTE = 1 * 45 * 1000;
+const ONE_MIN_THREE_QUARTER_SEC = 1 * 45 * 1000;
 
 // In seconds
 const initialBackoffTime = 2;
@@ -322,7 +322,7 @@ export const useCentrumStore = defineStore('centrum', {
             }
 
             if (this.cleanupIntervalId === undefined) {
-                this.cleanupIntervalId = setInterval(() => this.cleanup(), THREE_QUARTER_MINUTE);
+                this.cleanupIntervalId = setInterval(() => this.cleanup(), ONE_MIN_THREE_QUARTER_SEC);
             }
 
             console.debug('Centrum: Starting Data Stream');
@@ -557,7 +557,7 @@ export const useCentrumStore = defineStore('centrum', {
                     this.removePendingDispatch(pd);
                 } else {
                     this.dispatches.get(pd)?.units.forEach((ua) => {
-                        if (now - toDate(ua.expiresAt).getTime() >= THREE_QUARTER_MINUTE) this.removePendingDispatch(pd);
+                        if (now - toDate(ua.expiresAt).getTime() >= ONE_MIN_THREE_QUARTER_SEC) this.removePendingDispatch(pd);
                     });
                 }
             });
@@ -572,7 +572,7 @@ export const useCentrumStore = defineStore('centrum', {
                     return;
                 }
 
-                if (now - toDate(d.status?.createdAt).getTime() >= THREE_QUARTER_MINUTE) {
+                if (now - toDate(d.status?.createdAt).getTime() >= ONE_MIN_THREE_QUARTER_SEC) {
                     this.removeDispatch(d.id);
                     return;
                 }
@@ -583,7 +583,7 @@ export const useCentrumStore = defineStore('centrum', {
                         return;
                     }
 
-                    if (now - toDate(ua.expiresAt).getTime() >= THREE_QUARTER_MINUTE) {
+                    if (now - toDate(ua.expiresAt).getTime() >= ONE_MIN_THREE_QUARTER_SEC) {
                         d.units.splice(idx, 1);
                     }
                 });

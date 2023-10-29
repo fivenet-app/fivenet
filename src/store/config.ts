@@ -108,6 +108,11 @@ export const useConfigStore = defineStore('config', {
             this.updateAvailable = version;
         },
     },
+    getters: {
+        isNUIAvailable(state): boolean {
+            return state.clientConfig.NUIEnabled ?? false;
+        },
+    },
 });
 
 if (import.meta.hot) {

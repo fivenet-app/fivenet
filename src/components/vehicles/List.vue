@@ -130,6 +130,8 @@ watch(selectedChar, () => {
                                         type="text"
                                         :placeholder="$t('common.license_plate')"
                                         class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        @focusin="focusTablet(true)"
+                                        @focusout="focusTablet(false)"
                                     />
                                 </div>
                             </div>
@@ -144,6 +146,8 @@ watch(selectedChar, () => {
                                         name="model"
                                         :placeholder="$t('common.model')"
                                         class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        @focusin="focusTablet(true)"
+                                        @focusout="focusTablet(false)"
                                     />
                                 </div>
                             </div>
@@ -163,6 +167,8 @@ watch(selectedChar, () => {
                                                         (char: any) => (char ? `${char?.firstname} ${char?.lastname}` : '')
                                                     "
                                                     :placeholder="$t('common.owner')"
+                                                    @focusin="focusTablet(true)"
+                                                    @focusout="focusTablet(false)"
                                                 />
                                             </ComboboxButton>
 

@@ -180,6 +180,8 @@ onConfirm(async (id) => deleteConductEntry(id));
                                                         (chars: any) => (chars ? charsGetDisplayValue(chars) : $t('common.na'))
                                                     "
                                                     :placeholder="$t('common.target')"
+                                                    @focusin="focusTablet(true)"
+                                                    @focusout="focusTablet(false)"
                                                 />
                                             </ComboboxButton>
 
@@ -238,6 +240,8 @@ onConfirm(async (id) => deleteConductEntry(id));
                                                             cTypes ? (cTypes as ConductType[]).join(', ') : $t('common.na')
                                                     "
                                                     :placeholder="$t('common.type')"
+                                                    @focusin="focusTablet(true)"
+                                                    @focusout="focusTablet(false)"
                                                 />
                                             </ComboboxButton>
 

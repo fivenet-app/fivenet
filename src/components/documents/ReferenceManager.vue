@@ -486,6 +486,8 @@ function removeReference(id: bigint): void {
                                                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                     :placeholder="`${$t('common.document', 1)} ${$t('common.title')}`"
                                                     v-model="queryDoc"
+                                                    @focusin="focusTablet(true)"
+                                                    @focusout="focusTablet(false)"
                                                 />
                                             </div>
                                             <div class="flow-root mt-2">

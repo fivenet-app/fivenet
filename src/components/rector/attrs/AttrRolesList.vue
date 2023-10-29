@@ -115,6 +115,8 @@ onBeforeMount(async () => await listJobs());
                                                         :display-value="
                                                             (job: any) => (job ? `${job?.label} (${job?.name})` : '')
                                                         "
+                                                        @focusin="focusTablet(true)"
+                                                        @focusout="focusTablet(false)"
                                                     />
                                                 </ComboboxButton>
 

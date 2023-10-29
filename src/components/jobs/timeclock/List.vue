@@ -161,6 +161,8 @@ onMounted(async () => {
                                                         (chars: any) => (chars ? charsGetDisplayValue(chars) : $t('common.na'))
                                                     "
                                                     :placeholder="$t('common.target')"
+                                                    @focusin="focusTablet(true)"
+                                                    @focusout="focusTablet(false)"
                                                 />
                                             </ComboboxButton>
 

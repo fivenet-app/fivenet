@@ -71,6 +71,8 @@ const open = ref(false);
                     type="text"
                     name="searchPlayer"
                     :placeholder="`${$t('common.dispatch', 2)} ${$t('common.filter')}`"
+                    @focusin="focusTablet(true)"
+                    @focusout="focusTablet(false)"
                 />
             </div>
         </div>

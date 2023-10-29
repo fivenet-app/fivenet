@@ -52,7 +52,6 @@ import ReferenceManager from './ReferenceManager.vue';
 import RelationManager from './RelationManager.vue';
 import { checkDocAccess } from './helpers';
 import type { IJodit } from 'jodit/types/types';
-import type { PasteEvent } from 'jodit/types/plugins/paste/interface';
 
 const props = defineProps<{
     id?: bigint;
@@ -771,7 +770,20 @@ const config = {
     },
 };
 
-const plugins: any[] = [];
+const plugins = [
+    {
+        name: 'focus',
+        callback: (editor: IJodit) => {
+            editor.e
+                .on('blur', () => {
+                    focusTablet(false);
+                })
+                .on('focus', () => {
+                    focusTablet(true);
+                });
+        },
+    },
+];
 
 const extraButtons = [
     '|',
@@ -868,6 +880,8 @@ function setupCheckboxes(): void {
                         :label="$t('common.title')"
                         class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-3xl sm:leading-6"
                         :disabled="!canEdit || !canDo.edit"
+                        @focusin="focusTablet(true)"
+                        @focusout="focusTablet(false)"
                     />
                     <VeeErrorMessage name="title" as="p" class="mt-2 text-sm text-error-400" />
                 </div>
@@ -884,6 +898,8 @@ function setupCheckboxes(): void {
                                         class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                         @change="queryCategories = $event.target.value"
                                         :display-value="(category: any) => category?.name"
+                                        @focusin="focusTablet(true)"
+                                        @focusout="focusTablet(false)"
                                     />
                                 </ComboboxButton>
 
@@ -934,6 +950,8 @@ function setupCheckboxes(): void {
                             :placeholder="`${$t('common.document', 1)} ${$t('common.state')}`"
                             :label="`${$t('common.document', 1)} ${$t('common.state')}`"
                             :disabled="!canEdit || !canDo.edit"
+                            @focusin="focusTablet(true)"
+                            @focusout="focusTablet(false)"
                         />
                         <VeeErrorMessage name="state" as="p" class="mt-2 text-sm text-error-400" />
                     </div>

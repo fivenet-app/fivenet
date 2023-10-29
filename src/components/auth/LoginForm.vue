@@ -81,6 +81,8 @@ watch(
                     :placeholder="$t('common.username')"
                     :label="$t('common.username')"
                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                    @focusin="focusTablet(true)"
+                    @focusout="focusTablet(false)"
                 />
                 <VeeErrorMessage name="username" as="p" class="mt-2 text-sm text-error-400" />
             </div>
@@ -97,6 +99,8 @@ watch(
                     :placeholder="$t('common.password')"
                     :label="$t('common.password')"
                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                    @focusin="focusTablet(true)"
+                    @focusout="focusTablet(false)"
                 />
                 <VeeErrorMessage name="password" as="p" class="mt-2 text-sm text-error-400" />
             </div>

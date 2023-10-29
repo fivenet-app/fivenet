@@ -151,6 +151,8 @@ onMounted(async () => {
                                                                                         : $t('common.na')
                                                                             "
                                                                             :placeholder="$t('common.user', 2)"
+                                                                            @focusin="focusTablet(true)"
+                                                                            @focusout="focusTablet(false)"
                                                                         />
                                                                     </ComboboxButton>
 

@@ -147,6 +147,8 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                             class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                             :placeholder="$t('common.reason')"
                                             :label="$t('common.reason')"
+                                            @focusin="focusTablet(true)"
+                                            @focusout="focusTablet(false)"
                                         />
                                         <VeeErrorMessage name="reason" as="p" class="mt-2 text-sm text-error-400" />
                                     </div>
@@ -164,6 +166,8 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                             class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                             :placeholder="$t('common.traffic_infraction_points')"
                                             :label="$t('common.traffic_infraction_points')"
+                                            @focusin="focusTablet(true)"
+                                            @focusout="focusTablet(false)"
                                         />
                                         <VeeErrorMessage name="trafficPoints" as="p" class="mt-2 text-sm text-error-400" />
                                     </div>

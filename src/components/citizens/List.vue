@@ -12,6 +12,7 @@ import TablePagination from '~/components/partials/elements/TablePagination.vue'
 import { attr } from '~/composables/can';
 import { ListCitizensRequest, ListCitizensResponse } from '~~/gen/ts/services/citizenstore/citizenstore';
 import ListEntry from './ListEntry.vue';
+import GenericInput from '~/composables/partials/forms/GenericInput.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -98,7 +99,7 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                     {{ $t('common.citizen', 1) }}
                                 </label>
                                 <div class="relative flex items-center mt-2">
-                                    <input
+                                    <GenericInput
                                         v-model="query.name"
                                         ref="searchNameInput"
                                         type="text"
@@ -114,7 +115,7 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                     {{ $t('common.date_of_birth') }}
                                 </label>
                                 <div class="relative flex items-center mt-2">
-                                    <input
+                                    <GenericInput
                                         v-model="query.dateofbirth"
                                         type="text"
                                         name="dateofbirth"

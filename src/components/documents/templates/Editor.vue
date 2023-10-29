@@ -519,6 +519,8 @@ onMounted(async () => {
                         max="4294967295"
                         :label="$t('common.weight')"
                         class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                        @focusin="focusTablet(true)"
+                        @focusout="focusTablet(false)"
                     />
                 </div>
             </div>
@@ -533,6 +535,8 @@ onMounted(async () => {
                         name="title"
                         :label="$t('common.title')"
                         class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                        @focusin="focusTablet(true)"
+                        @focusout="focusTablet(false)"
                     />
                     <VeeErrorMessage name="title" as="p" class="mt-2 text-sm text-error-400" />
                 </div>
@@ -548,6 +552,8 @@ onMounted(async () => {
                         name="description"
                         :label="$t('common.description')"
                         class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                        @focusin="focusTablet(true)"
+                        @focusout="focusTablet(false)"
                     />
                     <VeeErrorMessage name="description" as="p" class="mt-2 text-sm text-error-400" />
                 </div>
@@ -589,6 +595,8 @@ onMounted(async () => {
                         name="contentTitle"
                         :label="$t('common.title')"
                         class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                        @focusin="focusTablet(true)"
+                        @focusout="focusTablet(false)"
                     />
                     <VeeErrorMessage name="contentTitle" as="p" class="mt-2 text-sm text-error-400" />
                     <TemplateHint />
@@ -607,6 +615,8 @@ onMounted(async () => {
                                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                     @change="queryCategories = $event.target.value"
                                     :display-value="(category: any) => category?.name"
+                                    @focusin="focusTablet(true)"
+                                    @focusout="focusTablet(false)"
                                 />
                             </ComboboxButton>
 

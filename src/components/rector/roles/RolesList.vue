@@ -118,6 +118,8 @@ const selectedRole = ref<Role | undefined>();
                                                         :display-value="
                                                             (grade: any) => (grade ? `${grade?.label} (${grade?.grade})` : '')
                                                         "
+                                                        @focusin="focusTablet(true)"
+                                                        @focusout="focusTablet(false)"
                                                     />
                                                 </ComboboxButton>
 

@@ -16,6 +16,7 @@ import { max, min, required } from '@vee-validate/rules';
 import { useThrottleFn } from '@vueuse/core';
 import { CheckIcon, CloseIcon, LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
+import GenericInput from '~/composables/partials/forms/GenericInput.vue';
 import { useCompletorStore } from '~/store/completor';
 import { useNotificatorStore } from '~/store/notificator';
 import { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
@@ -174,6 +175,8 @@ onBeforeMount(async () => listJobs());
                                             class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                             :placeholder="$t('common.reason')"
                                             :label="$t('common.reason')"
+                                            @focusin="focusTablet(true)"
+                                            @focusout="focusTablet(false)"
                                         />
                                         <VeeErrorMessage name="reason" as="p" class="mt-2 text-sm text-error-400" />
                                     </div>
@@ -191,6 +194,8 @@ onBeforeMount(async () => listJobs());
                                                         class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                         @change="queryJob = $event.target.value"
                                                         :display-value="(job: any) => job.label"
+                                                        @focusin="focusTablet(true)"
+                                                        @focusout="focusTablet(false)"
                                                     />
                                                 </ComboboxButton>
 
@@ -242,6 +247,8 @@ onBeforeMount(async () => listJobs());
                                                         class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                         @change="queryJobGrade = $event.target.value"
                                                         :display-value="(grade: any) => grade.label"
+                                                        @focusin="focusTablet(true)"
+                                                        @focusout="focusTablet(false)"
                                                     />
                                                 </ComboboxButton>
 

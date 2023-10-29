@@ -79,6 +79,8 @@ watch(selectedJob, () => setJob());
                     @change="queryJob = $event.target.value"
                     :display-value="(job: any) => (job ? job?.label : '')"
                     :placeholder="`${$t('common.select')} ${$t('common.job')}`"
+                    @focusin="focusTablet(true)"
+                    @focusout="focusTablet(false)"
                 />
             </ComboboxButton>
 

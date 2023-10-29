@@ -192,6 +192,8 @@ async function saveJobProps(): Promise<void> {
                                     :label="$t('components.rector.job_props.discord_guild_id')"
                                     maxlength="70"
                                     v-model="properties.discordGuildId"
+                                    @focusin="focusTablet(true)"
+                                    @focusout="focusTablet(false)"
                                 />
                                 <NuxtLink
                                     v-if="appConfig.discord.botInviteURL !== undefined"

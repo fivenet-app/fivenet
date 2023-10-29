@@ -183,6 +183,8 @@ const editing = ref(props.startInEdit);
                 :placeholder="$t('common.crime')"
                 :label="$t('common.crime')"
                 class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                @focusin="focusTablet(true)"
+                @focusout="focusTablet(false)"
             />
             <VeeErrorMessage name="name" as="p" class="mt-2 text-sm text-error-400" />
         </td>
@@ -203,6 +205,8 @@ const editing = ref(props.startInEdit);
                 :placeholder="$t('common.detention_time')"
                 :label="$t('common.detention_time')"
                 class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                @focusin="focusTablet(true)"
+                @focusout="focusTablet(false)"
             />
             <VeeErrorMessage name="detentionTime" as="p" class="mt-2 text-sm text-error-400" />
         </td>
@@ -213,6 +217,8 @@ const editing = ref(props.startInEdit);
                 :placeholder="$t('common.traffic_infraction_points')"
                 :label="$t('common.traffic_infraction_points')"
                 class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                @focusin="focusTablet(true)"
+                @focusout="focusTablet(false)"
             />
             <VeeErrorMessage name="stvoPoints" as="p" class="mt-2 text-sm text-error-400" />
         </td>
@@ -223,6 +229,8 @@ const editing = ref(props.startInEdit);
                 :placeholder="$t('common.description')"
                 :label="$t('common.description')"
                 class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                @focusin="focusTablet(true)"
+                @focusout="focusTablet(false)"
             />
             <VeeErrorMessage name="description" as="p" class="mt-2 text-sm text-error-400" />
         </td>

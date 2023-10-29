@@ -95,6 +95,8 @@ onBeforeUnmount(async () => {
                 type="text"
                 name="searchPlayer"
                 :placeholder="`${$t('common.employee', 1)} ${$t('common.filter')}`"
+                @focusin="focusTablet(true)"
+                @focusout="focusTablet(false)"
             />
         </div>
     </LControl>

@@ -99,6 +99,8 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                     :placeholder="$t('components.auth.create_account.registration_token')"
                     :label="$t('components.auth.create_account.registration_token')"
                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-lg sm:leading-6"
+                    @focusin="focusTablet(true)"
+                    @focusout="focusTablet(false)"
                 />
                 <VeeErrorMessage name="registrationToken" as="p" class="mt-2 text-sm text-error-400" />
             </div>
@@ -115,6 +117,8 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                     :placeholder="$t('common.username')"
                     :label="$t('common.username')"
                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                    @focusin="focusTablet(true)"
+                    @focusout="focusTablet(false)"
                 />
                 <VeeErrorMessage name="username" as="p" class="mt-2 text-sm text-error-400" />
             </div>
@@ -132,6 +136,8 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                     :label="$t('common.password')"
                     v-model:model-value="curPassword"
                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                    @focusin="focusTablet(true)"
+                    @focusout="focusTablet(false)"
                 />
                 <PasswordStrengthMeter :input="curPassword" class="mt-2" />
                 <VeeErrorMessage name="password" as="p" class="mt-2 text-sm text-error-400" />
