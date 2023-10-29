@@ -211,9 +211,8 @@ async function checkup(): Promise<void> {
         return;
     }
 
-    // TODO check how old the unit status is
     const now = new Date().getTime();
-    console.log(now - toDate(ownUnit.status.createdAt).getTime());
+    // If unit status is younger than time X, ignore
     if (now - toDate(ownUnit.status.createdAt).getTime() <= TWENTYONE_MINUTES) {
         return;
     }
