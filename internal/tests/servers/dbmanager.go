@@ -48,7 +48,7 @@ func (m *dbServer) Setup() {
 	m.resource, err = m.pool.RunWithOptions(
 		&dockertest.RunOptions{
 			Repository: "docker.io/library/mysql",
-			Tag:        "8.1.0",
+			Tag:        "8.2.0",
 			Env: []string{
 				"MYSQL_ROOT_PASSWORD=secret",
 				"MYSQL_USER=fivenet",
