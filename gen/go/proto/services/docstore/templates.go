@@ -9,6 +9,7 @@ import (
 	"github.com/Masterminds/sprig/v3"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/documents"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
+	permsdocstore "github.com/galexrt/fivenet/gen/go/proto/services/docstore/perms"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
@@ -99,7 +100,11 @@ func (s *Server) GetTemplate(ctx context.Context, req *GetTemplateRequest) (*Get
 	} else if req.Render != nil && *req.Render && req.Data != nil {
 		resp.Template.ContentTitle, resp.Template.State, resp.Template.Content, err = s.renderTemplate(resp.Template, req.Data)
 		if err != nil {
-			return nil, ErrTemplateFailed
+			if s.ps.Can(userInfo, permsdocstore.DocStoreServicePerm, permsdocstore.DocStoreServiceCreateTemplatePerm) {
+				return nil, err
+			} else {
+				return nil, ErrTemplateFailed
+			}
 		}
 
 		resp.Rendered = true
