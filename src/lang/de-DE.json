@@ -190,6 +190,10 @@
                 "set_startpage": {
                     "title": "Startseite nach Characterauswahl",
                     "no_char_selected": "Um eine Startseite auszuwählen, müssen sie zuerst einen Character auswählen."
+                },
+                "editor_theme": {
+                    "title": "Dokumenten-Editor-Design",
+                    "dark_mode": "Nacht Modus"
                 }
             },
             "login": {
@@ -574,7 +578,6 @@
         "comment": "Kommentar | Kommentare",
         "employee": "Mitarbeiter",
         "dispatch": "Einsatz | Einsätze",
-        "dispatches": "Einsätze",
         "latitude": "Breitengrad",
         "longitude": "Längengrad",
         "filter": "Filter",
@@ -717,7 +720,9 @@
         "na": "Nicht verfügbar",
         "privacy_policy": "Datenschutzerklärung",
         "imprint": "Impressum",
-        "comments": "Keine Kommentare | {n} Kommentar | {n} Kommentare"
+        "comments": "Keine Kommentare | {n} Kommentar | {n} Kommentare",
+        "dispatches": "Einsätze",
+        "refresh": "Neuladen"
     },
     "notifications": {
         "clipboard": {
