@@ -1559,6 +1559,10 @@ func (m *TimeclockListEntriesRequest) validate(all bool) error {
 
 	}
 
+	if m.PerDay != nil {
+		// no validation rules for PerDay
+	}
+
 	if len(errors) > 0 {
 		return TimeclockListEntriesRequestMultiError(errors)
 	}

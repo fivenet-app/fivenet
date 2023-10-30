@@ -486,6 +486,9 @@
                 }
             },
             "timeclock": {
+                "List": {
+                    "per_day": "Per Day"
+                },
                 "Stats": {
                     "title": "Stats: Last 7 days",
                     "sum": "Total on duty time",
@@ -519,6 +522,7 @@
         "date_of_birth": "Date of Birth",
         "next": "Next",
         "previous": "Previous",
+        "forward": "Foward",
         "wanted": "Wanted",
         "loading": "Loading {0}...",
         "unable_to_load": "Unable to load {0}!",
@@ -1280,7 +1284,6 @@
                 "key": "Timeclock Entries: List",
                 "description": "List Timeclock entries.",
                 "attrs": {
-                    "Own": "Own",
                     "All": "All"
                 }
             },

@@ -60,10 +60,16 @@ const onSubmitThrottle = useThrottleFn(async () => {
         </div>
         <div class="flex justify-between flex-1 sm:justify-end">
             <button
-                v-if="refresh"
+                v-if="refresh !== undefined"
                 @click="onSubmitThrottle()"
                 type="button"
                 class="bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500 relative inline-flex items-center px-3 py-2 ml-3 text-sm font-semibold rounded-md cursor-pointer text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                :disabled="!canSubmit"
+                :class="
+                    !canSubmit
+                        ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
+                        : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500'
+                "
             >
                 <RefreshIcon class="h-5 w-5" :class="!canSubmit ? 'animate-spin' : ''" />
             </button>

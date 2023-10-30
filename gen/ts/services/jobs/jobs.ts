@@ -156,6 +156,10 @@ export interface TimeclockListEntriesRequest {
      * @generated from protobuf field: optional resources.timestamp.Timestamp to = 4;
      */
     to?: Timestamp;
+    /**
+     * @generated from protobuf field: optional bool per_day = 5;
+     */
+    perDay?: boolean;
 }
 /**
  * @generated from protobuf message services.jobs.TimeclockListEntriesResponse
@@ -515,7 +519,8 @@ class TimeclockListEntriesRequest$Type extends MessageType<TimeclockListEntriesR
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
             { no: 2, name: "user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ },
             { no: 3, name: "from", kind: "message", T: () => Timestamp },
-            { no: 4, name: "to", kind: "message", T: () => Timestamp }
+            { no: 4, name: "to", kind: "message", T: () => Timestamp },
+            { no: 5, name: "per_day", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
 }

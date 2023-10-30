@@ -22,7 +22,8 @@ var (
 func (s *Server) TimeclockListEntries(ctx context.Context, req *TimeclockListEntriesRequest) (*TimeclockListEntriesResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	condition := tTimeClock.Job.EQ(jet.String(userInfo.Job))
+	condition := jet.Bool(true)
+	condition = condition.AND(tTimeClock.Job.EQ(jet.String(userInfo.Job)))
 
 	// Field Permission Check
 	fieldsAttr, err := s.p.Attr(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceTimeclockListEntriesPerm, permsjobs.JobsServiceTimeclockListEntriesAccessPermField)
@@ -34,7 +35,8 @@ func (s *Server) TimeclockListEntries(ctx context.Context, req *TimeclockListEnt
 		fields = fieldsAttr.([]string)
 	}
 
-	if len(fields) == 0 || !utils.InSlice(fields, "All") {
+	canViewAll := utils.InSlice(fields, "All")
+	if len(fields) == 0 || !canViewAll {
 		condition = condition.AND(tTimeClock.UserID.EQ(jet.Int32(userInfo.UserId)))
 	}
 
@@ -50,13 +52,13 @@ func (s *Server) TimeclockListEntries(ctx context.Context, req *TimeclockListEnt
 	}
 
 	if req.From != nil {
-		condition = condition.AND(tTimeClock.Date.GT_EQ(
-			jet.TimestampT(req.From.AsTime().Add(-24 * time.Hour)),
+		condition = condition.AND(tTimeClock.Date.LT_EQ(
+			jet.TimestampT(utils.TruncateToDay(req.From.AsTime())),
 		))
 	}
 	if req.To != nil {
-		condition = condition.AND(tTimeClock.Date.LT_EQ(
-			jet.TimestampT(req.To.AsTime().Add(1 * time.Hour)),
+		condition = condition.AND(tTimeClock.Date.GT_EQ(
+			jet.TimestampT(utils.TruncateToDay(req.To.AsTime())),
 		))
 	}
 

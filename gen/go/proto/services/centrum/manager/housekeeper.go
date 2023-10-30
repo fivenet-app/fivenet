@@ -244,8 +244,9 @@ func (s *Manager) archiveDispatches(ctx context.Context) error {
 			return err
 		}
 
-		s.GetDispatchesMap(ds.Job).Delete(ds.DispatchID)
-		s.State.DispatchLocations[dsp.Job].Remove(dsp, nil)
+		if err := s.DeleteDispatch(ctx, dsp.Job, dsp.Id); err != nil {
+			return err
+		}
 	}
 
 	return nil

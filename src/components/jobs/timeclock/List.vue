@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
+import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions, Switch } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { watchDebounced } from '@vueuse/core';
-import { CheckIcon } from 'mdi-vue3';
+import { CheckIcon, ChevronLeftIcon, ChevronRightIcon } from 'mdi-vue3';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -17,11 +17,25 @@ import Stats from './Stats.vue';
 
 const { $grpc } = useNuxtApp();
 
+const canAccessAll = can('JobsService.TimeclockListEntries.Access.All');
+
+const today = new Date();
+const currentDay = new Date();
+
+const forwardDay = new Date();
+forwardDay.setDate(forwardDay.getDate() + 1);
+const previousDay = new Date();
+previousDay.setDate(previousDay.getDate() - 1);
+
 const query = ref<{
     user_ids?: User[];
     from?: string;
     to?: string;
-}>({});
+    perDay: boolean;
+}>({
+    from: dateToDateString(currentDay),
+    perDay: canAccessAll,
+});
 const offset = ref(0n);
 
 const { data, pending, refresh, error } = useLazyAsyncData(`jobs-timeclock-${offset.value}`, () => listTimeclockEntries());
@@ -35,6 +49,9 @@ async function listTimeclockEntries(): Promise<TimeclockListEntriesResponse> {
                 },
                 userIds: query.value.user_ids?.map((u) => u.userId) ?? [],
             };
+            if (query.value.perDay !== undefined) {
+                req.perDay = query.value.perDay;
+            }
             if (query.value.from) {
                 req.from = {
                     timestamp: google_protobuf_timestamp_pb.Timestamp.fromDate(fromString(query.value.from)!),
@@ -119,7 +136,7 @@ function charsGetDisplayValue(chars: User[]): string {
 watchDebounced(
     queryTargets,
     async () => {
-        if (can('JobsService.TimeclockListEntries.Access.All')) {
+        if (canAccessAll) {
             entriesChars.value = await listColleagues();
             if (query.value.user_ids) entriesChars.value.unshift(...query.value.user_ids);
         }
@@ -131,10 +148,34 @@ watchDebounced(
 );
 
 onMounted(async () => {
-    if (can('JobsService.TimeclockListEntries.Access.All')) {
+    if (canAccessAll) {
         entriesChars.value = await listColleagues();
     }
 });
+
+function dayForward(): void {
+    currentDay.setDate(currentDay.getDate() + 1);
+
+    updateDates();
+}
+
+function dayBackwards(): void {
+    currentDay.setDate(currentDay.getDate() - 1);
+
+    updateDates();
+}
+
+function updateDates(): void {
+    forwardDay.setDate(currentDay.getDate() + 1);
+    previousDay.setDate(currentDay.getDate() - 1);
+
+    query.value.from = dateToDateString(currentDay);
+    query.value.to = dateToDateString(previousDay);
+}
+
+function dateToDateString(date: Date): string {
+    return date.toJSON().slice(0, 10);
+}
 </script>
 
 <template>
@@ -144,7 +185,7 @@ onMounted(async () => {
                 <div class="sm:flex-auto">
                     <form @submit.prevent="refresh()">
                         <div class="flex flex-row gap-4 mx-auto">
-                            <div v-if="can('JobsService.TimeclockListEntries.Access.All')" class="flex-1 form-control">
+                            <div v-if="canAccessAll" class="flex-1 form-control">
                                 <label for="searchName" class="block text-sm font-medium leading-6 text-neutral">
                                     {{ $t('common.search') }}
                                     {{ $t('common.colleague', 1) }}
@@ -217,7 +258,7 @@ onMounted(async () => {
                                     />
                                 </div>
                             </div>
-                            <div class="flex-1 form-control">
+                            <div v-if="!query.perDay" class="flex-1 form-control">
                                 <label for="search" class="block text-sm font-medium leading-6 text-neutral"
                                     >{{ $t('common.time_range') }}:
                                     {{ $t('common.to') }}
@@ -231,6 +272,59 @@ onMounted(async () => {
                                         class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                     />
                                 </div>
+                            </div>
+                            <div v-if="canAccessAll" class="flex-initial form-control">
+                                <label for="search" class="block text-sm font-medium leading-6 text-neutral">
+                                    {{ $t('components.jobs.timeclock.List.per_day') }}
+                                </label>
+                                <div class="relative flex items-center mt-3">
+                                    <Switch
+                                        v-model="query.perDay"
+                                        :class="[
+                                            query.perDay ? 'bg-primary-500' : 'bg-base-700',
+                                            'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2',
+                                        ]"
+                                    >
+                                        <span class="sr-only">
+                                            {{ $t('components.jobs.timeclock.List.per_day') }}
+                                        </span>
+                                        <span
+                                            aria-hidden="true"
+                                            :class="[
+                                                query.perDay ? 'translate-x-5' : 'translate-x-0',
+                                                'pointer-events-none inline-block h-5 w-5 transform rounded-full bg-neutral ring-0 transition duration-200 ease-in-out',
+                                            ]"
+                                        />
+                                    </Switch>
+                                </div>
+                            </div>
+                        </div>
+                        <div v-if="query.perDay" class="pt-2 flex flex-row gap-4 mx-auto">
+                            <div class="flex-1 form-control">
+                                <button
+                                    type="button"
+                                    :disabled="forwardDay.getDate() > today.getDate()"
+                                    @click="dayForward()"
+                                    :class="[
+                                        forwardDay.getDate() > today.getDate()
+                                            ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
+                                            : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
+                                        'relative w-full inline-flex items-center place-content-start px-3 py-2 text-sm font-semibold rounded-md cursor-pointer text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
+                                    ]"
+                                >
+                                    <ChevronLeftIcon class="h-5 w-5" />
+                                    {{ $t('common.forward') }} - {{ $d(forwardDay, 'date') }}
+                                </button>
+                            </div>
+                            <div class="flex-1 form-control">
+                                <button
+                                    type="button"
+                                    @click="dayBackwards()"
+                                    class="bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500 relative w-full inline-flex items-center place-content-end px-3 py-2 text-sm font-semibold rounded-md cursor-pointer text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                                >
+                                    {{ $d(previousDay, 'date') }} - {{ $t('common.previous') }}
+                                    <ChevronRightIcon class="h-5 w-5" />
+                                </button>
                             </div>
                         </div>
                     </form>
