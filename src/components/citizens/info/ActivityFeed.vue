@@ -65,7 +65,7 @@ watch(offset, async () => refresh());
                 </li>
             </ul>
 
-            <TablePagination :pagination="data?.pagination" @offset-change="offset = $event" />
+            <TablePagination :pagination="data?.pagination" @offset-change="offset = $event" :refresh="refresh" />
         </div>
     </div>
 </template>

@@ -98,7 +98,7 @@ setValues({
 const canSubmit = ref(true);
 const onSubmit = handleSubmit(
     async (values): Promise<LawBook> =>
-        await saveLawBook(props.book.id, values).finally(() => setTimeout(() => (canSubmit.value = true), 350)),
+        await saveLawBook(props.book.id, values).finally(() => setTimeout(() => (canSubmit.value = true), 400)),
 );
 const onSubmitThrottle = useThrottleFn(async (e) => {
     canSubmit.value = false;

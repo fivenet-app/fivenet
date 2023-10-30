@@ -142,7 +142,7 @@ const { handleSubmit, meta, resetForm } = useForm<FormData>({
 const canSubmit = ref(true);
 const onSubmit = handleSubmit(
     async (values): Promise<void> =>
-        await addComment(props.requestId, values).finally(() => setTimeout(() => (canSubmit.value = true), 350)),
+        await addComment(props.requestId, values).finally(() => setTimeout(() => (canSubmit.value = true), 400)),
 );
 const onSubmitThrottle = useThrottleFn(async (e) => {
     canSubmit.value = false;
@@ -233,9 +233,10 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
         </div>
         <TablePagination
             v-if="comments && comments.comments.length > 0"
+            class="mt-2"
             :pagination="comments.pagination"
             @offset-change="offset = $event"
-            class="mt-2"
+            :refresh="refresh"
         />
     </div>
 </template>

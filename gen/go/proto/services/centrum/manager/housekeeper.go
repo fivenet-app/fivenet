@@ -9,7 +9,6 @@ import (
 	centrumutils "github.com/galexrt/fivenet/gen/go/proto/services/centrum/utils"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	jet "github.com/go-jet/jet/v2/mysql"
-	"github.com/paulmach/orb"
 	"github.com/puzpuzpuz/xsync/v3"
 	"go.uber.org/zap"
 )
@@ -240,7 +239,7 @@ func (s *Manager) archiveDispatches(ctx context.Context) error {
 		}
 
 		s.GetDispatchesMap(ds.Job).Delete(ds.DispatchID)
-		s.State.DispatchLocations[dsp.Job].Remove(dsp.X, dsp.Y, nil)
+		s.State.DispatchLocations[dsp.Job].Remove(dsp, nil)
 	}
 
 	return nil
@@ -294,21 +293,20 @@ func (s *Manager) deduplicateDispatches(ctx context.Context) error {
 			return dsps[i].Id < dsps[j].Id
 		})
 
+		if len(dsps) <= 1 {
+			return true
+		}
+
 		dispatchIds := map[uint64]interface{}{}
 		for _, dsp := range dsps {
-			closestsDsp := s.State.DispatchLocations[dsp.Job].KNearest(orb.Point{dsp.X, dsp.Y}, 8, 42.5)
-			if len(closestsDsp) <= 1 {
-				continue
-			}
+			closestsDsp := s.State.DispatchLocations[dsp.Job].KNearest(dsp.Point(), 8, 45.0)
+			for _, dest := range closestsDsp {
+				if dest == nil {
+					continue
+				}
 
-			// Already took care of the dispatch
-			if _, ok := dispatchIds[dsp.Id]; ok {
-				continue
-			}
-			dispatchIds[dsp.Id] = nil
-
-			for _, closeByDsp := range closestsDsp {
-				if closeByDsp == nil || closeByDsp.Id == dsp.Id {
+				closeByDsp := dest.(*dispatch.Dispatch)
+				if dsp.Id == closeByDsp.Id {
 					continue
 				}
 
@@ -334,7 +332,7 @@ func (s *Manager) deduplicateDispatches(ctx context.Context) error {
 					return false
 				}
 
-				s.State.DispatchLocations[closeByDsp.Job].Remove(closeByDsp.X, closeByDsp.Y, nil)
+				s.State.DispatchLocations[closeByDsp.Job].Remove(closeByDsp, nil)
 				return false
 			}
 		}

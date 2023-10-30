@@ -118,7 +118,7 @@ const canSubmit = ref(true);
 const onSubmit = handleSubmit(
     async (values): Promise<void> =>
         await (props.category === undefined ? createCategory(values) : updateCategory(values)).finally(() =>
-            setTimeout(() => (canSubmit.value = true), 350),
+            setTimeout(() => (canSubmit.value = true), 400),
         ),
 );
 const onSubmitThrottle = useThrottleFn(async (e) => {

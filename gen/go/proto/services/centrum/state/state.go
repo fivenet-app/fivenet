@@ -27,7 +27,7 @@ type State struct {
 func New(cfg *config.Config) *State {
 	locs := map[string]*coords.Coords[string, *dispatch.Dispatch]{}
 	for _, job := range cfg.Game.Livemap.Jobs {
-		locs[job] = coords.New[string, *dispatch.Dispatch](coords.GetCoordsKey)
+		locs[job] = coords.New[string, *dispatch.Dispatch]()
 	}
 
 	return &State{

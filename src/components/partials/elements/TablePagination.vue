@@ -1,8 +1,11 @@
 <script lang="ts" setup>
+import { useThrottleFn } from '@vueuse/core';
+import { RefreshIcon } from 'mdi-vue3';
 import { PaginationResponse } from '~~/gen/ts/resources/common/database/database';
 
 const props = defineProps<{
     pagination: undefined | PaginationResponse;
+    refresh?: () => Promise<any>;
 }>();
 
 defineEmits<{
@@ -22,6 +25,16 @@ function calculateOffset(): bigint {
     }
     return o;
 }
+
+const canSubmit = ref(true);
+const onSubmitThrottle = useThrottleFn(async () => {
+    if (props.refresh === undefined) {
+        return;
+    }
+
+    canSubmit.value = false;
+    await props.refresh().finally(() => setTimeout(() => (canSubmit.value = true), 400));
+}, 1000);
 </script>
 
 <template>
@@ -46,6 +59,14 @@ function calculateOffset(): bigint {
             </I18nT>
         </div>
         <div class="flex justify-between flex-1 sm:justify-end">
+            <button
+                v-if="refresh"
+                @click="onSubmitThrottle()"
+                type="button"
+                class="bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500 relative inline-flex items-center px-3 py-2 ml-3 text-sm font-semibold rounded-md cursor-pointer text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+            >
+                <RefreshIcon class="h-5 w-5" :class="!canSubmit ? 'animate-spin' : ''" />
+            </button>
             <button
                 :disabled="offset <= 0n"
                 v-on:click="$emit('offsetChange', calculateOffset())"

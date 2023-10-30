@@ -721,7 +721,8 @@
         "na": "N/A",
         "privacy_policy": "Privacy Policy",
         "imprint": "Imprint",
-        "comments": "No Comments | {n} Comment | {n} Comments"
+        "comments": "No Comments | {n} Comment | {n} Comments",
+        "refresh": "Refresh"
     },
     "notifications": {
         "clipboard": {

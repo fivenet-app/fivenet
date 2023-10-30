@@ -18,7 +18,7 @@ const props = defineProps<{
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (_) => {
     canSubmit.value = false;
-    await chooseCharacter(props.char.userId).finally(() => setTimeout(() => (canSubmit.value = true), 350));
+    await chooseCharacter(props.char.userId).finally(() => setTimeout(() => (canSubmit.value = true), 400));
 }, 1000);
 </script>
 

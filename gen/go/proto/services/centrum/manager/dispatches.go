@@ -278,7 +278,7 @@ func (s *Manager) DeleteDispatch(ctx context.Context, job string, id uint64) err
 	s.events.JS.PublishAsync(eventscentrum.BuildSubject(eventscentrum.TopicDispatch, eventscentrum.TypeDispatchDeleted, job, 0), data)
 
 	s.GetDispatchesMap(job).Delete(id)
-	s.State.DispatchLocations[dsp.Job].Remove(dsp.X, dsp.Y, nil)
+	s.State.DispatchLocations[dsp.Job].Remove(dsp, nil)
 
 	return nil
 }
@@ -413,7 +413,7 @@ func (s *Manager) CreateDispatch(ctx context.Context, d *dispatch.Dispatch) (*di
 	}
 	s.events.JS.PublishAsync(eventscentrum.BuildSubject(eventscentrum.TopicDispatch, eventscentrum.TypeDispatchCreated, d.Job, 0), data)
 
-	s.State.DispatchLocations[dsp.Job].Add(dsp.X, dsp.Y, dsp)
+	s.State.DispatchLocations[dsp.Job].Add(dsp)
 
 	return dsp, nil
 }
@@ -451,7 +451,7 @@ func (s *Manager) UpdateDispatch(ctx context.Context, userInfo *userinfo.UserInf
 		return errorscentrum.ErrFailedQuery
 	}
 
-	s.State.DispatchLocations[dsp.Job].Add(dsp.X, dsp.Y, dsp)
+	s.State.DispatchLocations[dsp.Job].Add(dsp)
 
 	return nil
 }

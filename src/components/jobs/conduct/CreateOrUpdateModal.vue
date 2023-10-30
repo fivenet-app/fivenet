@@ -160,7 +160,7 @@ const canSubmit = ref(true);
 const onSubmit = handleSubmit(
     async (values): Promise<void> =>
         await conductCreateOrUpdateEntry(values, props.entry?.id).finally(() =>
-            setTimeout(() => (canSubmit.value = true), 350),
+            setTimeout(() => (canSubmit.value = true), 400),
         ),
 );
 const onSubmitThrottle = useThrottleFn(async (e) => {

@@ -85,7 +85,7 @@ const { handleSubmit, meta, setFieldValue } = useForm<FormData>({
 const canSubmit = ref(true);
 const onSubmit = handleSubmit(
     async (values): Promise<void> =>
-        await setTrafficPoints(values).finally(() => setTimeout(() => (canSubmit.value = true), 350)),
+        await setTrafficPoints(values).finally(() => setTimeout(() => (canSubmit.value = true), 400)),
 );
 const onSubmitThrottle = useThrottleFn(async (e) => {
     canSubmit.value = false;

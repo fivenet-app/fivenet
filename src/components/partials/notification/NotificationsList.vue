@@ -74,6 +74,7 @@ async function markRead(ids: bigint[]): Promise<void> {
     });
 }
 
+watch(offset, async () => refresh());
 watchDebounced(includeRead, async () => refresh(), { debounce: 500, maxWait: 1500 });
 </script>
 
@@ -185,7 +186,12 @@ watchDebounced(includeRead, async () => refresh(), { debounce: 500, maxWait: 150
                                 </li>
                             </ul>
 
-                            <TablePagination :pagination="data?.pagination" @offset-change="offset = $event" class="mt-2" />
+                            <TablePagination
+                                class="mt-2"
+                                :pagination="data?.pagination"
+                                @offset-change="offset = $event"
+                                :refresh="refresh"
+                            />
                         </div>
                     </div>
                 </div>

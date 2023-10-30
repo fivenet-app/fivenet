@@ -136,7 +136,7 @@ watch(offset, async () => refresh());
                     </li>
                 </ul>
 
-                <TablePagination :pagination="data?.pagination" @offset-change="offset = $event" />
+                <TablePagination :pagination="data?.pagination" @offset-change="offset = $event" :refresh="refresh" />
             </div>
 
             <!-- Relations table (small breakpoint and up) -->
@@ -231,7 +231,11 @@ watch(offset, async () => refresh());
                                 </tbody>
                             </table>
 
-                            <TablePagination :pagination="data?.pagination" @offset-change="offset = $event" />
+                            <TablePagination
+                                :pagination="data?.pagination"
+                                @offset-change="offset = $event"
+                                :refresh="refresh"
+                            />
                         </div>
                     </div>
                 </div>

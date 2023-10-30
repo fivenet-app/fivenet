@@ -689,7 +689,7 @@ const onSubmit = handleSubmit(async (values): Promise<void> => {
         prom = updateDocument(props.id, values, content.value, doc.value.closed.closed);
     }
 
-    await prom.finally(() => setTimeout(() => (canSubmit.value = true), 350));
+    await prom.finally(() => setTimeout(() => (canSubmit.value = true), 400));
 });
 const onSubmitThrottle = useThrottleFn(async (e) => {
     canSubmit.value = false;

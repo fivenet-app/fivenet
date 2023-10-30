@@ -12,7 +12,7 @@ withDefaults(
     }>(),
     {
         showButton: false,
-        hideActions: true,
+        hideActions: false,
     },
 );
 

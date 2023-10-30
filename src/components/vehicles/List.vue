@@ -304,7 +304,11 @@ watch(selectedChar, () => {
                                 </thead>
                             </table>
 
-                            <TablePagination :pagination="data?.pagination" @offset-change="offset = $event" />
+                            <TablePagination
+                                :pagination="data?.pagination"
+                                @offset-change="offset = $event"
+                                :refresh="refresh"
+                            />
                         </div>
                     </div>
                 </div>

@@ -229,7 +229,11 @@ onMounted(async () => {
                                 <ListEntry v-for="request in data?.entries" :request="request" />
                             </ul>
 
-                            <TablePagination :pagination="data?.pagination" @offset-change="offset = $event" />
+                            <TablePagination
+                                :pagination="data?.pagination"
+                                @offset-change="offset = $event"
+                                :refresh="refresh"
+                            />
                         </div>
                     </div>
                 </div>

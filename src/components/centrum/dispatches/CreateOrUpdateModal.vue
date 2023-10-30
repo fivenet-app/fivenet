@@ -76,7 +76,7 @@ const { handleSubmit, meta, resetForm } = useForm<FormData>({
 const canSubmit = ref(true);
 const onSubmit = handleSubmit(
     async (values): Promise<void> =>
-        await createDispatch(values).finally(() => setTimeout(() => (canSubmit.value = true), 350)),
+        await createDispatch(values).finally(() => setTimeout(() => (canSubmit.value = true), 400)),
 );
 const onSubmitThrottle = useThrottleFn(async (e) => {
     canSubmit.value = false;

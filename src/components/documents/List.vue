@@ -437,7 +437,12 @@ const templatesOpen = ref(false);
                                 <ListEntry v-for="doc in data?.documents" :doc="doc" />
                             </ul>
 
-                            <TablePagination :pagination="data?.pagination" @offset-change="offset = $event" class="mt-2" />
+                            <TablePagination
+                                class="mt-2"
+                                :pagination="data?.pagination"
+                                @offset-change="offset = $event"
+                                :refresh="refresh"
+                            />
                         </div>
                     </div>
                 </div>

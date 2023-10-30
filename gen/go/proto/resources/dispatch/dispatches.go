@@ -5,6 +5,7 @@ import (
 
 	"dario.cat/mergo"
 	jsoniter "github.com/json-iterator/go"
+	"github.com/paulmach/orb"
 )
 
 var json = jsoniter.ConfigCompatibleWithStandardLibrary
@@ -38,4 +39,16 @@ func (x *Dispatch) Update(in *Dispatch) {
 	if err != nil {
 		return
 	}
+}
+
+func (x *Dispatch) Point() orb.Point {
+	return orb.Point{x.X, x.Y}
+}
+
+func (x *DispatchStatus) Point() orb.Point {
+	if x.X == nil || x.Y == nil {
+		return orb.Point{}
+	}
+
+	return orb.Point{*x.X, *x.Y}
 }
