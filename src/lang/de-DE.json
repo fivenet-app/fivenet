@@ -491,6 +491,9 @@
                     "sum": "Gesamte Dienstzeit",
                     "avg": "Durchschnittliche Dienstzeit",
                     "max": "Längste Dienstzeit"
+                },
+                "List": {
+                    "per_day": "Pro Tag"
                 }
             }
         }
@@ -722,7 +725,8 @@
         "imprint": "Impressum",
         "comments": "Keine Kommentare | {n} Kommentar | {n} Kommentare",
         "dispatches": "Einsätze",
-        "refresh": "Neuladen"
+        "refresh": "Neuladen",
+        "forward": "Vorwärts"
     },
     "notifications": {
         "clipboard": {
@@ -1280,7 +1284,6 @@
                 "key": "Stempeluhr Einträge: Anzeigen",
                 "description": "Stempeluhr Einträge anzeigen lassen.",
                 "attrs": {
-                    "Own": "Eigene",
                     "All": "Alle"
                 }
             },
