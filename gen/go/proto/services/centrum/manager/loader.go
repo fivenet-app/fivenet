@@ -10,6 +10,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
+	"github.com/paulmach/orb"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -335,7 +336,9 @@ func (s *Manager) LoadDispatches(ctx context.Context, id uint64) error {
 			}
 		}
 
-		if !s.State.DispatchLocations[dispatches[i].Job].Has(dispatches[i]) {
+		if !s.State.DispatchLocations[dispatches[i].Job].Has(dispatches[i], func(p orb.Pointer) bool {
+			return p.(*dispatch.Dispatch).Id == dispatches[i].Id
+		}) {
 			s.State.DispatchLocations[dispatches[i].Job].Add(dispatches[i])
 		}
 	}

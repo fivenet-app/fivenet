@@ -14,8 +14,7 @@ import (
 var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 type Postals struct {
-	tree  *quadtree.Quadtree
-	codes map[string]*Postal
+	tree *quadtree.Quadtree
 }
 
 func New(cfg *config.Config) (*Postals, error) {
@@ -32,30 +31,20 @@ func New(cfg *config.Config) (*Postals, error) {
 		return nil, err
 	}
 
-	codesMap := map[string]*Postal{}
-	tree := quadtree.New(orb.Bound{Min: orb.Point{-4000, -4000}, Max: orb.Point{8000, 6000}})
-	for _, code := range codes {
-		point := orb.Point{code.X, code.Y}
-		tree.Add(point)
-		codesMap[getCoordsKey(point)] = code
+	tree := quadtree.New(orb.Bound{Min: orb.Point{-9_000, -9_000}, Max: orb.Point{11_000, 11_000}})
+	for k := range codes {
+		if err := tree.Add(codes[k]); err != nil {
+			return nil, fmt.Errorf("failed to add postal to postals map: %w", err)
+		}
 	}
 
 	return &Postals{
-		tree:  tree,
-		codes: codesMap,
+		tree: tree,
 	}, nil
 }
 
 func (p *Postals) Closest(x, y float64) *Postal {
 	nearest := p.tree.Find(orb.Point{x, y})
-	postal, ok := p.codes[getCoordsKey(nearest.Point())]
-	if !ok {
-		return nil
-	}
 
-	return postal
-}
-
-func getCoordsKey(point orb.Point) string {
-	return fmt.Sprintf("%f-%f", point.X(), point.Y())
+	return nearest.(*Postal)
 }

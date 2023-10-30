@@ -19,15 +19,15 @@ type State struct {
 	Units      *xsync.MapOf[string, *xsync.MapOf[uint64, *dispatch.Unit]]
 	Dispatches *xsync.MapOf[string, *xsync.MapOf[uint64, *dispatch.Dispatch]]
 
-	DispatchLocations map[string]*coords.Coords[string, *dispatch.Dispatch]
+	DispatchLocations map[string]*coords.Coords[*dispatch.Dispatch]
 
 	UserIDToUnitID *xsync.MapOf[int32, uint64]
 }
 
 func New(cfg *config.Config) *State {
-	locs := map[string]*coords.Coords[string, *dispatch.Dispatch]{}
+	locs := map[string]*coords.Coords[*dispatch.Dispatch]{}
 	for _, job := range cfg.Game.Livemap.Jobs {
-		locs[job] = coords.New[string, *dispatch.Dispatch]()
+		locs[job] = coords.New[*dispatch.Dispatch]()
 	}
 
 	return &State{

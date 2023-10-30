@@ -3,14 +3,20 @@ package manager
 import (
 	"context"
 	"sort"
+	"sync"
 	"time"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
 	centrumutils "github.com/galexrt/fivenet/gen/go/proto/services/centrum/utils"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/paulmach/orb"
 	"github.com/puzpuzpuz/xsync/v3"
 	"go.uber.org/zap"
+)
+
+const (
+	MaxCancelledDispatchesPerRun = 3
 )
 
 func (s *Manager) housekeeper() {
@@ -283,62 +289,77 @@ func (s *Manager) cleanupDispatches(ctx context.Context) error {
 }
 
 func (s *Manager) deduplicateDispatches(ctx context.Context) error {
+	wg := sync.WaitGroup{}
+
 	s.Dispatches.Range(func(job string, _ *xsync.MapOf[uint64, *dispatch.Dispatch]) bool {
-		dsps := s.State.FilterDispatches(job, nil, []dispatch.StatusDispatch{
-			dispatch.StatusDispatch_STATUS_DISPATCH_ARCHIVED,
-			dispatch.StatusDispatch_STATUS_DISPATCH_CANCELLED,
-			dispatch.StatusDispatch_STATUS_DISPATCH_COMPLETED,
-		})
-		sort.Slice(dsps, func(i, j int) bool {
-			return dsps[i].Id < dsps[j].Id
-		})
+		wg.Add(1)
+		go func() {
+			defer wg.Done()
 
-		if len(dsps) <= 1 {
-			return true
-		}
+			dsps := s.State.FilterDispatches(job, nil, []dispatch.StatusDispatch{
+				dispatch.StatusDispatch_STATUS_DISPATCH_ARCHIVED,
+				dispatch.StatusDispatch_STATUS_DISPATCH_CANCELLED,
+				dispatch.StatusDispatch_STATUS_DISPATCH_COMPLETED,
+			})
+			sort.Slice(dsps, func(i, j int) bool {
+				return dsps[i].Id < dsps[j].Id
+			})
 
-		dispatchIds := map[uint64]interface{}{}
-		for _, dsp := range dsps {
-			closestsDsp := s.State.DispatchLocations[dsp.Job].KNearest(dsp.Point(), 8, 45.0)
-			for _, dest := range closestsDsp {
-				if dest == nil {
-					continue
-				}
-
-				closeByDsp := dest.(*dispatch.Dispatch)
-				if dsp.Id == closeByDsp.Id {
-					continue
-				}
-
-				// Already took care of the dispatch
-				if _, ok := dispatchIds[closeByDsp.Id]; ok {
-					continue
-				}
-				dispatchIds[closeByDsp.Id] = nil
-
-				if closeByDsp.Status != nil && centrumutils.IsStatusDispatchComplete(closeByDsp.Status.Status) {
-					continue
-				}
-
-				if closeByDsp.CreatedAt != nil && time.Since(closeByDsp.CreatedAt.AsTime()) >= 3*time.Minute {
-					continue
-				}
-
-				if err := s.UpdateDispatchStatus(ctx, closeByDsp.Job, closeByDsp, &dispatch.DispatchStatus{
-					DispatchId: closeByDsp.Id,
-					Status:     dispatch.StatusDispatch_STATUS_DISPATCH_CANCELLED,
-				}); err != nil {
-					s.logger.Error("failed to update duplicate dispatch status", zap.Error(err))
-					return false
-				}
-
-				s.State.DispatchLocations[closeByDsp.Job].Remove(closeByDsp, nil)
-				return false
+			if len(dsps) <= 1 {
+				return
 			}
-		}
+
+			removedCount := 0
+			dispatchIds := map[uint64]interface{}{}
+			for _, dsp := range dsps {
+				closestsDsp := s.State.DispatchLocations[dsp.Job].KNearest(dsp.Point(), 8, func(p orb.Pointer) bool {
+					return p.(*dispatch.Dispatch).Id != dsp.Id
+				}, 45.0)
+				for _, dest := range closestsDsp {
+					if dest == nil {
+						continue
+					}
+
+					// Already took care of the dispatch
+					closeByDsp := dest.(*dispatch.Dispatch)
+					if _, ok := dispatchIds[closeByDsp.Id]; ok {
+						continue
+					}
+					dispatchIds[closeByDsp.Id] = nil
+
+					if closeByDsp.Status != nil && centrumutils.IsStatusDispatchComplete(closeByDsp.Status.Status) {
+						continue
+					}
+
+					if closeByDsp.CreatedAt != nil && time.Since(closeByDsp.CreatedAt.AsTime()) >= 3*time.Minute {
+						continue
+					}
+
+					if err := s.UpdateDispatchStatus(ctx, closeByDsp.Job, closeByDsp, &dispatch.DispatchStatus{
+						DispatchId: closeByDsp.Id,
+						Status:     dispatch.StatusDispatch_STATUS_DISPATCH_CANCELLED,
+					}); err != nil {
+						s.logger.Error("failed to update duplicate dispatch status", zap.Error(err))
+						return
+					}
+
+					s.State.DispatchLocations[closeByDsp.Job].Remove(closeByDsp, func(p orb.Pointer) bool {
+						return p.(*dispatch.Dispatch).Id == closeByDsp.Id
+					})
+
+					removedCount++
+
+					if removedCount >= MaxCancelledDispatchesPerRun {
+						break
+					}
+				}
+			}
+		}()
 
 		return true
 	})
+
+	wg.Wait()
 
 	return nil
 }
