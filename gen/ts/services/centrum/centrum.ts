@@ -185,11 +185,15 @@ export interface TakeControlResponse {
  */
 export interface ListDispatchesRequest {
     /**
-     * @generated from protobuf field: repeated resources.dispatch.StatusDispatch status = 1;
+     * @generated from protobuf field: resources.common.database.PaginationRequest pagination = 1;
+     */
+    pagination?: PaginationRequest;
+    /**
+     * @generated from protobuf field: repeated resources.dispatch.StatusDispatch status = 2;
      */
     status: StatusDispatch[];
     /**
-     * @generated from protobuf field: repeated resources.dispatch.StatusDispatch not_status = 2;
+     * @generated from protobuf field: repeated resources.dispatch.StatusDispatch not_status = 3;
      */
     notStatus: StatusDispatch[];
 }
@@ -198,7 +202,11 @@ export interface ListDispatchesRequest {
  */
 export interface ListDispatchesResponse {
     /**
-     * @generated from protobuf field: repeated resources.dispatch.Dispatch dispatches = 1;
+     * @generated from protobuf field: resources.common.database.PaginationResponse pagination = 1;
+     */
+    pagination?: PaginationResponse;
+    /**
+     * @generated from protobuf field: repeated resources.dispatch.Dispatch dispatches = 2;
      */
     dispatches: Dispatch[];
 }
@@ -697,8 +705,9 @@ export const TakeControlResponse = new TakeControlResponse$Type();
 class ListDispatchesRequest$Type extends MessageType<ListDispatchesRequest> {
     constructor() {
         super("services.centrum.ListDispatchesRequest", [
-            { no: 1, name: "status", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.dispatch.StatusDispatch", StatusDispatch, "STATUS_DISPATCH_"], options: { "validate.rules": { repeated: { items: { enum: { definedOnly: true } } } } } },
-            { no: 2, name: "not_status", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.dispatch.StatusDispatch", StatusDispatch, "STATUS_DISPATCH_"], options: { "validate.rules": { repeated: { items: { enum: { definedOnly: true } } } } } }
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
+            { no: 2, name: "status", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.dispatch.StatusDispatch", StatusDispatch, "STATUS_DISPATCH_"], options: { "validate.rules": { repeated: { items: { enum: { definedOnly: true } } } } } },
+            { no: 3, name: "not_status", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.dispatch.StatusDispatch", StatusDispatch, "STATUS_DISPATCH_"], options: { "validate.rules": { repeated: { items: { enum: { definedOnly: true } } } } } }
         ]);
     }
 }
@@ -710,7 +719,8 @@ export const ListDispatchesRequest = new ListDispatchesRequest$Type();
 class ListDispatchesResponse$Type extends MessageType<ListDispatchesResponse> {
     constructor() {
         super("services.centrum.ListDispatchesResponse", [
-            { no: 1, name: "dispatches", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Dispatch }
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse },
+            { no: 2, name: "dispatches", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Dispatch }
         ]);
     }
 }

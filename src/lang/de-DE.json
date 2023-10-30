@@ -574,6 +574,7 @@
         "comment": "Kommentar | Kommentare",
         "employee": "Mitarbeiter",
         "dispatch": "Einsatz | Einsätze",
+        "dispatches": "Einsätze",
         "latitude": "Breitengrad",
         "longitude": "Längengrad",
         "filter": "Filter",

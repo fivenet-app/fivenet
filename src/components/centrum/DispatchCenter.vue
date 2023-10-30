@@ -85,7 +85,7 @@ function goto(e: Coordinate) {
             <Pane size="65">
                 <Splitpanes horizontal>
                     <Pane size="55" min-size="2">
-                        <DispatchesList @goto="goto($event)" />
+                        <DispatchesList :show-button="true" @goto="goto($event)" />
                     </Pane>
                     <Pane size="33" min-size="2">
                         <UnitsList @goto="goto($event)" />

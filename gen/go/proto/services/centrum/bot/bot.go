@@ -12,10 +12,10 @@ import (
 	"go.uber.org/zap"
 )
 
-const DelayBetweenDispatchAssignment = 37 * time.Second
-const DelayMinUnits = 2
+const DelayBetweenDispatchAssignment = 35 * time.Second
+const DelayMinUnits = 3
 const PerUnitDelay = 6
-const MaxDelayCap = 90 * time.Second
+const MaxDelayCap = 80 * time.Second
 
 type Bot struct {
 	logger *zap.Logger
@@ -85,27 +85,22 @@ func (b *Bot) Run(ctx context.Context) error {
 }
 
 func (b *Bot) getAvailableUnit(ctx context.Context) (*dispatch.Unit, bool) {
-	units := b.state.GetUnitsMap(b.job)
-
-	unitIds := []uint64{}
-	units.Range(func(unitId uint64, value *dispatch.Unit) bool {
-		if value.Status != nil && value.Status.Status == dispatch.StatusUnit_STATUS_UNIT_AVAILABLE {
-			unitIds = append(unitIds, unitId)
-		}
-		return true
-	})
+	units := b.state.FilterUnits(b.job, []dispatch.StatusUnit{dispatch.StatusUnit_STATUS_UNIT_AVAILABLE}, nil)
+	if len(units) == 0 {
+		return nil, false
+	}
 
 	// Randomize unit ids
-	for i := range unitIds {
+	for i := range units {
 		j := rand.Intn(i + 1)
-		unitIds[i], unitIds[j] = unitIds[j], unitIds[i]
+		units[i], units[j] = units[j], units[i]
 	}
 
 	var unit *dispatch.Unit
-	for _, unitId := range unitIds {
-		t, ok := b.lastAssignedUnits[unitId]
+	for _, u := range units {
+		t, ok := b.lastAssignedUnits[u.Id]
 		if !ok || time.Now().After(t) {
-			unit, _ = units.Load(unitId)
+			unit = u
 
 			// Double check if unit is still available
 			if unit.Status != nil && unit.Status.Status == dispatch.StatusUnit_STATUS_UNIT_AVAILABLE {
@@ -121,8 +116,9 @@ func (b *Bot) getAvailableUnit(ctx context.Context) (*dispatch.Unit, bool) {
 	}
 
 	delay := 0 * time.Second
-	if len(unitIds) > DelayMinUnits {
-		delay = time.Duration(len(unitIds)*PerUnitDelay) * time.Second
+	unitCount := len(units)
+	if unitCount > DelayMinUnits {
+		delay = time.Duration(unitCount*PerUnitDelay) * time.Second
 		if delay >= MaxDelayCap {
 			delay = MaxDelayCap
 		}

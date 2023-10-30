@@ -37,21 +37,9 @@ func (s *Server) ListUnits(ctx context.Context, req *ListUnitsRequest) (*ListUni
 		Units: []*dispatch.Unit{},
 	}
 
-	units, ok := s.state.ListUnits(userInfo.Job)
-	if !ok {
+	resp.Units = s.state.FilterUnits(userInfo.Job, req.Status, nil)
+	if resp.Units == nil {
 		return nil, errorscentrum.ErrModeForbidsAction
-	}
-
-	for i := 0; i < len(units); i++ {
-		if len(req.Status) > 0 {
-			for _, status := range req.Status {
-				if units[i].Status != nil && units[i].Status.Status == status {
-					resp.Units = append(resp.Units, units[i])
-				}
-			}
-		} else {
-			resp.Units = append(resp.Units, units[i])
-		}
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_VIEWED)

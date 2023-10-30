@@ -155,16 +155,11 @@ func (s *Server) sendLatestState(srv CentrumService_StreamServer, job string, us
 	units, _ := s.state.ListUnits(job)
 	ownUnit, _ := s.state.GetUnit(job, unitId)
 
-	dispatches, err := s.ListDispatches(srv.Context(), &ListDispatchesRequest{
-		NotStatus: []dispatch.StatusDispatch{
-			dispatch.StatusDispatch_STATUS_DISPATCH_ARCHIVED,
-			dispatch.StatusDispatch_STATUS_DISPATCH_CANCELLED,
-			dispatch.StatusDispatch_STATUS_DISPATCH_COMPLETED,
-		},
+	dispatches := s.state.FilterDispatches(job, nil, []dispatch.StatusDispatch{
+		dispatch.StatusDispatch_STATUS_DISPATCH_ARCHIVED,
+		dispatch.StatusDispatch_STATUS_DISPATCH_CANCELLED,
+		dispatch.StatusDispatch_STATUS_DISPATCH_COMPLETED,
 	})
-	if err != nil {
-		return 0, isDisponent, err
-	}
 
 	// Send initial state message to client
 	resp := &StreamResponse{
@@ -175,7 +170,7 @@ func (s *Server) sendLatestState(srv CentrumService_StreamServer, job string, us
 				IsDisponent: isDisponent,
 				OwnUnit:     ownUnit,
 				Units:       units,
-				Dispatches:  dispatches.Dispatches,
+				Dispatches:  dispatches,
 			},
 		},
 	}

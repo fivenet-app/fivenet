@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	dispatch "github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
+	"github.com/galexrt/fivenet/pkg/utils"
 	"golang.org/x/exp/slices"
 )
 
@@ -38,4 +39,35 @@ func (s *State) ListUnits(job string) ([]*dispatch.Unit, bool) {
 	})
 
 	return us, true
+}
+
+func (s *State) FilterUnits(job string, statuses []dispatch.StatusUnit, notStatuses []dispatch.StatusUnit) []*dispatch.Unit {
+	units, ok := s.ListUnits(job)
+	if !ok {
+		return nil
+	}
+
+	us := []*dispatch.Unit{}
+	for i := 0; i < len(units); i++ {
+		include := true
+
+		// Include statuses that should be listed
+		if len(statuses) > 0 && !utils.InSlice(statuses, units[i].Status.Status) {
+			include = false
+		} else if len(notStatuses) > 0 {
+			// Which statuses to ignore
+			for _, status := range notStatuses {
+				if units[i].Status != nil && units[i].Status.Status == status {
+					include = false
+					break
+				}
+			}
+		}
+
+		if include {
+			us = append(us, units[i])
+		}
+	}
+
+	return us
 }

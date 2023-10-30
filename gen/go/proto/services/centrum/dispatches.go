@@ -21,6 +21,7 @@ import (
 )
 
 var (
+	tDispatch       = table.FivenetCentrumDispatches.AS("dispatch")
 	tDispatchStatus = table.FivenetCentrumDispatchesStatus.AS("dispatchstatus")
 )
 
@@ -36,8 +37,127 @@ func (s *Server) ListDispatches(ctx context.Context, req *ListDispatchesRequest)
 	}
 	defer s.auditer.Log(auditEntry, req)
 
+	condition := tDispatch.Job.EQ(jet.String(userInfo.Job)).
+		AND(
+			tDispatchStatus.ID.IS_NULL().OR(
+				tDispatchStatus.ID.EQ(
+					jet.RawInt("SELECT MAX(`dispatchstatus`.`id`) FROM `fivenet_centrum_dispatches_status` AS `dispatchstatus` WHERE `dispatchstatus`.`dispatch_id` = `dispatch`.`id`"),
+				),
+			))
+
+	if len(req.Status) > 0 {
+		statuses := make([]jet.Expression, len(req.Status))
+		for i := 0; i < len(req.Status); i++ {
+			statuses[i] = jet.Int16(int16(*req.Status[i].Enum()))
+		}
+
+		condition = condition.AND(tDispatchStatus.Status.IN(statuses...))
+	}
+	if len(req.NotStatus) > 0 {
+		statuses := make([]jet.Expression, len(req.NotStatus))
+		for i := 0; i < len(req.NotStatus); i++ {
+			statuses[i] = jet.Int16(int16(*req.NotStatus[i].Enum()))
+		}
+
+		condition = condition.AND(tDispatchStatus.Status.NOT_IN(statuses...))
+	}
+
+	countStmt := tDispatch.
+		SELECT(
+			jet.COUNT(tDispatch.ID).AS("datacount.totalcount"),
+		).
+		FROM(
+			tDispatch.
+				LEFT_JOIN(tDispatchStatus,
+					tDispatchStatus.DispatchID.EQ(tDispatch.ID),
+				),
+		).
+		WHERE(condition)
+
+	var count database.DataCount
+	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
+		return nil, errorscentrum.ErrFailedQuery
+	}
+
+	pag, limit := req.Pagination.GetResponse()
 	resp := &ListDispatchesResponse{
-		Dispatches: s.state.FilterDispatches(userInfo.Job, req.Status, req.NotStatus),
+		Pagination: pag,
+	}
+	if count.TotalCount <= 0 {
+		return resp, nil
+	}
+
+	stmt := tDispatch.
+		SELECT(
+			tDispatch.ID,
+			tDispatch.CreatedAt,
+			tDispatch.UpdatedAt,
+			tDispatch.Job,
+			tDispatch.Message,
+			tDispatch.Description,
+			tDispatch.Attributes,
+			tDispatch.X,
+			tDispatch.Y,
+			tDispatch.Postal,
+			tDispatch.Anon,
+			tDispatch.CreatorID,
+			tDispatchStatus.ID,
+			tDispatchStatus.CreatedAt,
+			tDispatchStatus.DispatchID,
+			tDispatchStatus.UnitID,
+			tDispatchStatus.Status,
+			tDispatchStatus.Reason,
+			tDispatchStatus.Code,
+			tDispatchStatus.UserID,
+			tDispatchStatus.X,
+			tDispatchStatus.Y,
+			tDispatchStatus.Postal,
+			tUsers.ID,
+			tUsers.Identifier,
+			tUsers.Firstname,
+			tUsers.Lastname,
+			tUsers.Sex,
+			tUsers.Dateofbirth,
+			tUsers.PhoneNumber,
+		).
+		OPTIMIZER_HINTS(jet.OptimizerHint("idx_users_firstname_lastname_fulltext")).
+		FROM(tDispatch.
+			LEFT_JOIN(tDispatchStatus,
+				tDispatchStatus.DispatchID.EQ(tDispatch.ID),
+			).
+			LEFT_JOIN(tUsers,
+				tUsers.ID.EQ(tDispatchStatus.UserID),
+			)).
+		WHERE(condition).
+		OFFSET(req.Pagination.Offset).
+		ORDER_BY(
+			tDispatch.ID.ASC(),
+		).
+		LIMIT(limit)
+
+	if err := stmt.QueryContext(ctx, s.db, &resp.Dispatches); err != nil {
+		return nil, errorscentrum.ErrFailedQuery
+	}
+
+	resp.Pagination.Update(count.TotalCount, len(resp.Dispatches))
+
+	for i := 0; i < len(resp.Dispatches); i++ {
+		var err error
+		resp.Dispatches[i].Units, err = s.state.LoadDispatchAssignments(ctx, resp.Dispatches[i].Job, resp.Dispatches[i].Id)
+		if err != nil {
+			return nil, errorscentrum.ErrFailedQuery
+		}
+
+		if resp.Dispatches[i].CreatorId != nil {
+			resp.Dispatches[i].Creator, err = s.state.ResolveUserById(ctx, *resp.Dispatches[i].CreatorId)
+			if err != nil {
+				return nil, err
+			}
+
+			// Alawys clear dispatch creator's job info
+			resp.Dispatches[i].Creator.Job = ""
+			resp.Dispatches[i].Creator.JobGrade = 0
+		}
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_VIEWED)

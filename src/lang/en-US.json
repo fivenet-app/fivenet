@@ -578,6 +578,7 @@
         "comment": "Comment | Comments",
         "employee": "Employee | Employees",
         "dispatch": "Dispatch | Dispatches",
+        "dispatches": "Dispatches",
         "latitude": "Latitude",
         "longitude": "Longitude",
         "filter": "Filter",

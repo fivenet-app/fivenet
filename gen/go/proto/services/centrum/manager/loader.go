@@ -288,13 +288,13 @@ func (s *Manager) LoadDispatches(ctx context.Context, id uint64) error {
 
 	for i := 0; i < len(dispatches); i++ {
 		var err error
-		dispatches[i].Units, err = s.loadDispatchAssignments(ctx, dispatches[i].Job, dispatches[i].Id)
+		dispatches[i].Units, err = s.LoadDispatchAssignments(ctx, dispatches[i].Job, dispatches[i].Id)
 		if err != nil {
 			return err
 		}
 
 		if dispatches[i].CreatorId != nil {
-			dispatches[i].Creator, err = s.resolveUserById(ctx, *dispatches[i].CreatorId)
+			dispatches[i].Creator, err = s.ResolveUserById(ctx, *dispatches[i].CreatorId)
 			if err != nil {
 				return err
 			}
@@ -344,7 +344,7 @@ func (s *Manager) LoadDispatches(ctx context.Context, id uint64) error {
 	return nil
 }
 
-func (s *Manager) loadDispatchAssignments(ctx context.Context, job string, dispatchId uint64) ([]*dispatch.DispatchAssignment, error) {
+func (s *Manager) LoadDispatchAssignments(ctx context.Context, job string, dispatchId uint64) ([]*dispatch.DispatchAssignment, error) {
 	stmt := tDispatch.
 		SELECT(
 			tDispatchUnit.DispatchID,

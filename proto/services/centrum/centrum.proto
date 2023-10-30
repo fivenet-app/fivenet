@@ -82,12 +82,14 @@ message TakeControlRequest {
 message TakeControlResponse {}
 
 message ListDispatchesRequest {
-  repeated resources.dispatch.StatusDispatch status = 1 [(validate.rules).repeated.items.enum.defined_only = true];
-  repeated resources.dispatch.StatusDispatch not_status = 2 [(validate.rules).repeated.items.enum.defined_only = true];
+  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
+  repeated resources.dispatch.StatusDispatch status = 2 [(validate.rules).repeated.items.enum.defined_only = true];
+  repeated resources.dispatch.StatusDispatch not_status = 3 [(validate.rules).repeated.items.enum.defined_only = true];
 }
 
 message ListDispatchesResponse {
-  repeated resources.dispatch.Dispatch dispatches = 1;
+  resources.common.database.PaginationResponse pagination = 1;
+  repeated resources.dispatch.Dispatch dispatches = 2;
 }
 
 message CreateDispatchRequest {

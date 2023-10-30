@@ -8,7 +8,7 @@ import (
 	jet "github.com/go-jet/jet/v2/mysql"
 )
 
-func (s *Manager) resolveUserById(ctx context.Context, u int32) (*users.User, error) {
+func (s *Manager) ResolveUserById(ctx context.Context, u int32) (*users.User, error) {
 	tUsers := tUsers.AS("user")
 	stmt := tUsers.
 		SELECT(
