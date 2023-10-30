@@ -486,14 +486,14 @@
                 }
             },
             "timeclock": {
-                "List": {
-                    "per_day": "Per Day"
-                },
                 "Stats": {
                     "title": "Stats: Last 7 days",
                     "sum": "Total on duty time",
                     "avg": "Average on duty time",
                     "max": "Longest on duty time"
+                },
+                "List": {
+                    "per_day": "Per Day"
                 }
             }
         }
@@ -522,7 +522,6 @@
         "date_of_birth": "Date of Birth",
         "next": "Next",
         "previous": "Previous",
-        "forward": "Foward",
         "wanted": "Wanted",
         "loading": "Loading {0}...",
         "unable_to_load": "Unable to load {0}!",
@@ -582,7 +581,6 @@
         "comment": "Comment | Comments",
         "employee": "Employee | Employees",
         "dispatch": "Dispatch | Dispatches",
-        "dispatches": "Dispatches",
         "latitude": "Latitude",
         "longitude": "Longitude",
         "filter": "Filter",
@@ -726,7 +724,9 @@
         "privacy_policy": "Privacy Policy",
         "imprint": "Imprint",
         "comments": "No Comments | {n} Comment | {n} Comments",
-        "refresh": "Refresh"
+        "dispatches": "Dispatches",
+        "refresh": "Refresh",
+        "forward": "Foward"
     },
     "notifications": {
         "clipboard": {
