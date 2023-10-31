@@ -354,13 +354,17 @@ function dateToDateString(date: Date): string {
                                 <thead>
                                     <tr>
                                         <th
+                                            v-if="!canAccessAll"
                                             scope="col"
                                             class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-0"
-                                            v-if="!canAccessAll"
                                         >
                                             {{ $t('common.date') }}
                                         </th>
-                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                        <th
+                                            v-if="canAccessAll"
+                                            scope="col"
+                                            class="py-3.5 px-2 text-left text-sm font-semibold text-neutral"
+                                        >
                                             {{ $t('common.name') }}
                                         </th>
                                         <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
@@ -389,7 +393,11 @@ function dateToDateString(date: Date): string {
                                         >
                                             {{ $t('common.date') }}
                                         </th>
-                                        <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">
+                                        <th
+                                            v-if="canAccessAll"
+                                            scope="col"
+                                            class="py-3.5 px-2 text-left text-sm font-semibold text-neutral"
+                                        >
                                             {{ $t('common.name') }}
                                         </th>
                                         <th scope="col" class="py-3.5 px-2 text-left text-sm font-semibold text-neutral">

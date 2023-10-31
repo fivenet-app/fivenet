@@ -24,7 +24,7 @@ const spentTime = parseFloat(((Math.round(props.entry.spentTime * 100) / 100) * 
                 {{ $d(first, 'date') }}
             </template>
         </td>
-        <td class="whitespace-nowrap px-1 py-1 text-left text-base-200">
+        <td v-if="!showDate" class="whitespace-nowrap px-1 py-1 text-left text-base-200">
             <CitizenInfoPopover :user="entry.user" />
         </td>
         <td class="whitespace-nowrap px-1 py-1 text-left text-base-200">
