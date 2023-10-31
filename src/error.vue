@@ -2,7 +2,7 @@
 import ContentCenterWrapper from '~/components/partials/ContentCenterWrapper.vue';
 import HeroFull from '~/components/partials/HeroFull.vue';
 import LoadingBar from '~/components/partials/LoadingBar.vue';
-import FiveNetLogo from './components/partials/logos/FiveNetLogo.vue';
+import FiveNetLogo from '~/components/partials/logos/FiveNetLogo.vue';
 
 useHead({
     title: 'Error occured - FiveNet',
@@ -39,7 +39,7 @@ function startButtonTimer(): void {
     setTimeout(() => $loading.errored(), 400);
 }
 
-onBeforeMount(async () => {
+onBeforeMount(() => {
     $loading.start();
     startButtonTimer();
 });
@@ -91,7 +91,6 @@ onBeforeMount(async () => {
 
                 <div class="flex justify-center">
                     <button
-                        @click="handleError()"
                         :disabled="buttonDisabled"
                         class="rounded-md w-60 px-3.5 py-2.5 text-sm font-semibold text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                         :class="[
@@ -99,12 +98,12 @@ onBeforeMount(async () => {
                                 ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
                                 : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
                         ]"
+                        @click="handleError()"
                     >
                         {{ $t('common.home') }}
                     </button>
 
                     <button
-                        @click="handleError(useRoute().fullPath)"
                         :disabled="buttonDisabled"
                         class="rounded-md w-60 px-3.5 py-2.5 sm:ml-4 text-sm font-semibold text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                         :class="[
@@ -112,15 +111,16 @@ onBeforeMount(async () => {
                                 ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
                                 : 'bg-secondary-500 hover:bg-secondary-400 focus-visible:outline-secondary-500',
                         ]"
+                        @click="handleError(useRoute().fullPath)"
                     >
                         {{ $t('common.retry') }}
                     </button>
 
                     <!-- @vue-expect-error -->
                     <button
-                        @click="copyError"
                         v-if="error && (error.statusMessage || error.message)"
                         class="rounded-md w-60 bg-base-600 sm:ml-4 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-base-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-500"
+                        @click="copyError"
                     >
                         {{ $t('pages.error.copy_error') }}
                     </button>

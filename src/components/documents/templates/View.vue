@@ -44,7 +44,7 @@ async function getTemplate(): Promise<Template | undefined> {
             return res(response.template!);
         } catch (e) {
             $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
+            throw e;
         }
     });
 }
@@ -67,7 +67,7 @@ async function deleteTemplate(id: bigint): Promise<void> {
             return res();
         } catch (e) {
             $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
+            throw e;
         }
     });
 }

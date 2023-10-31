@@ -30,7 +30,7 @@ async function listUnitActivity(): Promise<ListUnitActivityResponse> {
             return res(response);
         } catch (e) {
             $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
+            throw e;
         }
     });
 }

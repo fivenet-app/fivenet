@@ -381,7 +381,7 @@ async function createOrUpdateTemplate(values: FormData, templateId?: bigint): Pr
             return res();
         } catch (e) {
             $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
+            throw e;
         }
     });
 }

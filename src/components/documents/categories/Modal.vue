@@ -43,7 +43,7 @@ async function createCategory(values: FormData): Promise<void> {
             return res();
         } catch (e) {
             $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
+            throw e;
         }
     });
 }
@@ -69,7 +69,7 @@ async function updateCategory(values: FormData): Promise<void> {
             return res();
         } catch (e) {
             $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
+            throw e;
         }
     });
 }
@@ -92,7 +92,7 @@ async function deleteCategory(): Promise<void> {
             return res();
         } catch (e) {
             $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
+            throw e;
         }
     });
 }

@@ -4,7 +4,7 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { useAuthStore } from '~/store/auth';
 import { User } from '~~/gen/ts/resources/users/users';
-import CharacterSelectorCard from './CharacterSelectorCard.vue';
+import CharacterSelectorCard from '~/components/auth/CharacterSelectorCard.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -14,17 +14,15 @@ const { accountID } = storeToRefs(authStore);
 const { data: chars, pending, refresh, error } = useLazyAsyncData(`chars-${accountID}`, () => fetchCharacters());
 
 async function fetchCharacters(): Promise<User[]> {
-    return new Promise(async (res, rej) => {
-        try {
-            const call = $grpc.getAuthClient().getCharacters({});
-            const { response } = await call;
+    try {
+        const call = $grpc.getAuthClient().getCharacters({});
+        const { response } = await call;
 
-            return res(response.chars);
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
-        }
-    });
+        return response.chars;
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 </script>
 
@@ -34,8 +32,8 @@ async function fetchCharacters(): Promise<User[]> {
     <div v-else class="grid grid-flow-row lg:grid-flow-col gap-8 mx-4">
         <CharacterSelectorCard
             v-for="char in chars"
-            :char="char"
             :key="char.userId"
+            :char="char"
             class="flex-auto min-w-[30rem] w-[30rem] max-w-[30rem] mx-auto"
         />
     </div>

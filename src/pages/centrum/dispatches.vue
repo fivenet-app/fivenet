@@ -1,11 +1,11 @@
 <script lang="ts" setup>
-import List from '~/components/centrum/dispatches/List.vue';
-import type { ListDispatchesRequest, ListDispatchesResponse } from '~~/gen/ts/services/centrum/centrum';
 import { RpcError } from '@protobuf-ts/runtime-rpc';
-import TablePagination from '~/components/partials/elements/TablePagination.vue';
-import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
+import List from '~/components/centrum/dispatches/List.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
+import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
+import TablePagination from '~/components/partials/elements/TablePagination.vue';
+import type { ListDispatchesRequest, ListDispatchesResponse } from '~~/gen/ts/services/centrum/centrum';
 
 useHead({
     title: 'common.dispatches',
@@ -40,7 +40,7 @@ async function listDispatches(): Promise<ListDispatchesResponse> {
             return res(response);
         } catch (e) {
             $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
+            throw e;
         }
     });
 }

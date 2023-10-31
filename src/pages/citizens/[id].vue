@@ -1,11 +1,11 @@
 <script lang="ts" setup>
 import { RpcError } from '@protobuf-ts/runtime-rpc';
+import { type TypedRouteFromName } from '@typed-router';
 import Info from '~/components/citizens/info/Info.vue';
 import ClipboardButton from '~/components/clipboard/ClipboardButton.vue';
 import ContentWrapper from '~/components/partials/ContentWrapper.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import { type TypedRouteFromName } from '@typed-router';
 import { User } from '~~/gen/ts/resources/users/users';
 
 useHead({
@@ -38,7 +38,7 @@ async function getUser(): Promise<User> {
             return res(response.user!);
         } catch (e) {
             $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
+            throw e;
         }
     });
 }

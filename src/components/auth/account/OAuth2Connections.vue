@@ -31,7 +31,7 @@ async function disconnect(provider: OAuth2Provider): Promise<void> {
             return res();
         } catch (e) {
             $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
+            throw e;
         }
     });
 }

@@ -1,29 +1,14 @@
 import { type NuxtError } from 'nuxt/app';
 import { defineStore, type StoreDefinition } from 'pinia';
 
-export interface ConfigState {
-    fetched: boolean;
-    appConfig: AppConfig;
-    clientConfig: ClientConfig;
-    updateAvailable: false | string;
-}
-
-type AppConfig = {
-    version: string;
-    sentryDSN?: string;
-    login: LoginConfig;
-    discord: DiscordConfig;
-    links: Links;
+type ProviderConfig = {
+    name: string;
+    label: string;
 };
 
 type LoginConfig = {
     signupEnabled: boolean;
     providers: ProviderConfig[];
-};
-
-type ProviderConfig = {
-    name: string;
-    label: string;
 };
 
 type DiscordConfig = {
@@ -35,10 +20,25 @@ type Links = {
     privacyPolicy?: string;
 };
 
+type AppConfig = {
+    version: string;
+    sentryDSN?: string;
+    login: LoginConfig;
+    discord: DiscordConfig;
+    links: Links;
+};
+
 type ClientConfig = {
     nuiEnabled: boolean;
     nuiResourceName?: string;
 };
+
+export interface ConfigState {
+    fetched: boolean;
+    appConfig: AppConfig;
+    clientConfig: ClientConfig;
+    updateAvailable: false | string;
+}
 
 export const useConfigStore = defineStore('config', {
     state: () =>
@@ -66,43 +66,39 @@ export const useConfigStore = defineStore('config', {
     },
     actions: {
         async loadConfig(): Promise<void> {
-            return new Promise(async (res, rej) => {
-                if (this.fetched) {
-                    return res();
-                }
+            if (this.fetched) {
+                return;
+            }
 
-                try {
-                    // 6 seconds should be enough
-                    const abort = new AbortController();
-                    const tId = setTimeout(() => abort.abort(), 8000);
+            try {
+                // 6 seconds should be enough
+                const abort = new AbortController();
+                const tId = setTimeout(() => abort.abort(), 8000);
 
-                    const resp = await fetch('/api/config', {
-                        method: 'POST',
-                        signal: abort.signal,
+                const resp = await fetch('/api/config', {
+                    method: 'POST',
+                    signal: abort.signal,
+                });
+                clearTimeout(tId);
+
+                if (!resp.ok) {
+                    const text = await resp.text();
+                    throw createError({
+                        statusCode: 500,
+                        statusMessage: 'Failed to get FiveNet config from backend',
+                        message: text,
+                        fatal: true,
+                        unhandled: false,
                     });
-                    clearTimeout(tId);
-
-                    if (!resp.ok) {
-                        const text = await resp.text();
-                        throw createError({
-                            statusCode: 500,
-                            statusMessage: 'Failed to get FiveNet config from backend',
-                            message: text,
-                            fatal: true,
-                            unhandled: false,
-                        });
-                    }
-                    const data = (await resp.json()) as AppConfig;
-                    this.appConfig = data;
-
-                    this.fetched = true;
-
-                    return res();
-                } catch (e) {
-                    showError(e as NuxtError);
-                    return rej(e);
                 }
-            });
+                const data = (await resp.json()) as AppConfig;
+                this.appConfig = data;
+
+                this.fetched = true;
+            } catch (e) {
+                showError(e as NuxtError);
+                throw e;
+            }
         },
         setUpdateAvailable(version: string): void {
             this.updateAvailable = version;

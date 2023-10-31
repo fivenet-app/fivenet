@@ -65,7 +65,7 @@ async function getJobProps(): Promise<JobProps> {
             return res(response.jobProps!);
         } catch (e) {
             $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
+            throw e;
         }
     });
 }
@@ -108,7 +108,7 @@ async function saveJobProps(): Promise<void> {
             return res();
         } catch (e) {
             $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
+            throw e;
         }
     });
 }

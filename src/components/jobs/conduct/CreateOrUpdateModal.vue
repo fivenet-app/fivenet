@@ -67,7 +67,7 @@ async function conductCreateOrUpdateEntry(values: FormData, id?: bigint): Promis
             return res();
         } catch (e) {
             $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
+            throw e;
         }
     });
 }
@@ -89,7 +89,7 @@ async function listColleagues(): Promise<User[]> {
             return res(response.users);
         } catch (e) {
             $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
+            throw e;
         }
     });
 }

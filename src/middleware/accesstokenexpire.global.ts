@@ -20,7 +20,7 @@ export default defineNuxtRouteMiddleware(
                 return navigateTo({
                     name: 'auth-login',
                     // save the location we were at to come back later
-                    query: { redirect: redirect },
+                    query: { redirect },
                 });
             }
         }

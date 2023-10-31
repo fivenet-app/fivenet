@@ -3,12 +3,12 @@ import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
 import { toDate } from '~/utils/time';
 
-export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, from: RouteLocationNormalized) => {
+export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, _: RouteLocationNormalized) => {
     const authStore = useAuthStore();
     const { activeChar, accessToken, lastCharID } = storeToRefs(authStore);
 
     // Default is that a page requires authentication, but if it doesn't exit quickly
-    if (to.meta.hasOwnProperty('requiresAuth') && !to.meta.requiresAuth) {
+    if (to.meta.requiresAuth === false) {
         return true;
     }
 
@@ -31,7 +31,7 @@ export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, fro
                 const redirect = to.query.redirect ?? to.fullPath;
                 return navigateTo({
                     name: 'auth-character-selector',
-                    query: { redirect: redirect },
+                    query: { redirect },
                 });
             }
         }
@@ -68,7 +68,7 @@ export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, fro
     return navigateTo({
         name: 'auth-login',
         // save the location we were at to come back later
-        query: { redirect: redirect },
+        query: { redirect },
     });
 });
 

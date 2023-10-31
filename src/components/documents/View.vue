@@ -69,7 +69,7 @@ async function getDocument(id: bigint): Promise<Document> {
             return res(response.document!);
         } catch (e) {
             $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
+            throw e;
         }
     });
 }
@@ -92,7 +92,7 @@ async function deleteDocument(id: bigint): Promise<void> {
             return res();
         } catch (e) {
             $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
+            throw e;
         }
     });
 }
@@ -124,7 +124,7 @@ async function toggleDocument(id: bigint, closed: boolean): Promise<void> {
             return res();
         } catch (e) {
             $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
+            throw e;
         }
     });
 }

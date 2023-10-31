@@ -34,7 +34,7 @@ async function listUserActivity(): Promise<ListUserActivityResponse> {
             return res(response);
         } catch (e) {
             $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
+            throw e;
         }
     });
 }

@@ -22,7 +22,7 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import TablePagination from '~/components/partials/elements/TablePagination.vue';
 import { useCompletorStore } from '~/store/completor';
-import * as google_protobuf_timestamp_pb from '~~/gen/ts/google/protobuf/timestamp';
+import * as googleProtobufTimestamp_pb from '~~/gen/ts/google/protobuf/timestamp';
 import { Category } from '~~/gen/ts/resources/documents/category';
 import { UserShort } from '~~/gen/ts/resources/users/users';
 import { ListDocumentsRequest, ListDocumentsResponse } from '~~/gen/ts/services/docstore/docstore';
@@ -89,12 +89,12 @@ async function listDocuments(): Promise<ListDocumentsResponse> {
         }
         if (query.value.from) {
             req.from = {
-                timestamp: google_protobuf_timestamp_pb.Timestamp.fromDate(fromString(query.value.from)!),
+                timestamp: googleProtobufTimestamp_pb.Timestamp.fromDate(fromString(query.value.from)!),
             };
         }
         if (query.value.to) {
             req.to = {
-                timestamp: google_protobuf_timestamp_pb.Timestamp.fromDate(fromString(query.value.to)!),
+                timestamp: googleProtobufTimestamp_pb.Timestamp.fromDate(fromString(query.value.to)!),
             };
         }
         if (query.value.closed !== undefined) {
@@ -108,7 +108,7 @@ async function listDocuments(): Promise<ListDocumentsResponse> {
             return res(response);
         } catch (e) {
             $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
+            throw e;
         }
     });
 }

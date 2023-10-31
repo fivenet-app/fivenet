@@ -27,7 +27,7 @@ async function getTimeclockStats(): Promise<TimeclockStats> {
             return res(response.stats);
         } catch (e) {
             $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
+            throw e;
         }
     });
 }

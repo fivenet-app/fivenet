@@ -3,8 +3,8 @@ import { defineStore, type StoreDefinition } from 'pinia';
 import { v4 as uuidv4 } from 'uuid';
 import { type Notification, type NotificationType } from '~/composables/notification/interfaces/Notification.interface';
 import { type NotificationConfig } from '~/composables/notification/interfaces/NotificationConfig.interface';
+import { useAuthStore } from '~/store/auth';
 import { NotificationCategory } from '~~/gen/ts/resources/notifications/notifications';
-import { useAuthStore } from './auth';
 
 // In seconds
 const initialBackoffTime = 2;
@@ -94,6 +94,7 @@ export const useNotificatorStore = defineStore('notifications', {
 
                     if (resp.data.oneofKind !== undefined) {
                         if (resp.data.oneofKind === 'ping') {
+                            // Ping
                         } else if (resp.data.oneofKind === 'token') {
                             const tokenUpdate = resp.data.token;
 
@@ -125,23 +126,17 @@ export const useNotificatorStore = defineStore('notifications', {
                             }
                         } else if (resp.data.oneofKind === 'notifications') {
                             resp.data.notifications.notifications.forEach((n) => {
-                                let nType: NotificationType = (n.type as NotificationType) ?? 'info';
+                                const nType: NotificationType = (n.type as NotificationType) ?? 'info';
+
+                                if (n.title === undefined || n.content === undefined) {
+                                    return;
+                                }
 
                                 switch (n.category) {
-                                    case NotificationCategory.GENERAL:
-                                        this.dispatchNotification({
-                                            title: { key: n.title?.key!, parameters: {} },
-                                            content: { key: n.content?.key!, parameters: {} },
-                                            type: nType,
-                                            category: n.category,
-                                            data: n.data,
-                                        });
-                                        break;
-
                                     default:
                                         this.dispatchNotification({
-                                            title: { key: n.title?.key!, parameters: {} },
-                                            content: { key: n.content?.key!, parameters: {} },
+                                            title: { key: n.title.key },
+                                            content: { key: n.content.key },
                                             type: nType,
                                             category: n.category,
                                             data: n.data,

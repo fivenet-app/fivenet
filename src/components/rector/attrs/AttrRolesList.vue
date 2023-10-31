@@ -2,6 +2,7 @@
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { CheckIcon, SelectIcon } from 'mdi-vue3';
+import AttrView from '~/components/rector/attrs/AttrView.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -9,8 +10,7 @@ import { useCompletorStore } from '~/store/completor';
 import { useNotificatorStore } from '~/store/notificator';
 import { Role } from '~~/gen/ts/resources/permissions/permissions';
 import { Job } from '~~/gen/ts/resources/users/jobs';
-import AttrRolesListEntry from './AttrRolesListEntry.vue';
-import AttrView from './AttrView.vue';
+import AttrRolesListEntry from '~/components/rector/attrs/AttrRolesListEntry.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -23,19 +23,17 @@ const { listJobs } = completorStore;
 const { data: roles, pending, refresh, error } = useLazyAsyncData('rector-roles', () => getRoles());
 
 async function getRoles(): Promise<Role[]> {
-    return new Promise(async (res, rej) => {
-        try {
-            const call = $grpc.getRectorClient().getRoles({
-                lowestRank: true,
-            });
-            const { response } = await call;
+    try {
+        const call = $grpc.getRectorClient().getRoles({
+            lowestRank: true,
+        });
+        const { response } = await call;
 
-            return res(response.roles);
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
-        }
-    });
+        return response.roles;
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 
 const selectedJob = ref<Job | null>(null);
@@ -46,38 +44,34 @@ const availableJobs = computed(
 );
 
 async function createRole(): Promise<void> {
-    return new Promise(async (res, rej) => {
-        if (selectedJob.value === undefined || selectedJob.value?.name === undefined) {
-            return res();
+    if (selectedJob.value === undefined || selectedJob.value?.name === undefined) {
+        return;
+    }
+
+    try {
+        const call = $grpc.getRectorClient().createRole({
+            job: selectedJob.value?.name,
+            grade: 1,
+        });
+        const { response } = await call;
+
+        if (!response.role) {
+            return;
         }
 
-        try {
-            const call = $grpc.getRectorClient().createRole({
-                job: selectedJob.value?.name,
-                grade: 1,
-            });
-            const { response } = await call;
+        notifications.dispatchNotification({
+            title: { key: 'notifications.rector.role_created.title', parameters: {} },
+            content: { key: 'notifications.rector.role_created.content', parameters: {} },
+            type: 'success',
+        });
 
-            if (!response.role) {
-                return res();
-            }
+        roles.value?.push(response.role!);
 
-            notifications.dispatchNotification({
-                title: { key: 'notifications.rector.role_created.title', parameters: {} },
-                content: { key: 'notifications.rector.role_created.content', parameters: {} },
-                type: 'success',
-            });
-
-            roles.value?.push(response.role!);
-
-            selectedRole.value = response.role;
-
-            return res();
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
-        }
-    });
+        selectedRole.value = response.role;
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 
 const selectedRole = ref<Role | undefined>();
@@ -101,8 +95,8 @@ onBeforeMount(async () => await listJobs());
                                             {{ $t('common.job') }}
                                         </label>
                                         <Combobox
-                                            as="div"
                                             v-model="selectedJob"
+                                            as="div"
                                             class="relative flex items-center mt-2 w-full"
                                             nullable
                                         >
@@ -111,10 +105,10 @@ onBeforeMount(async () => await listJobs());
                                                     <ComboboxInput
                                                         autocomplete="off"
                                                         class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                        @change="queryJobRaw = $event.target.value"
                                                         :display-value="
                                                             (job: any) => (job ? `${job?.label} (${job?.name})` : '')
                                                         "
+                                                        @change="queryJobRaw = $event.target.value"
                                                         @focusin="focusTablet(true)"
                                                         @focusout="focusTablet(false)"
                                                     />
@@ -128,8 +122,8 @@ onBeforeMount(async () => await listJobs());
                                                             g.label.toLowerCase().includes(queryJob),
                                                         )"
                                                         :key="job.name"
-                                                        :value="job"
                                                         v-slot="{ active, selected }"
+                                                        :value="job"
                                                     >
                                                         <li
                                                             :class="[
@@ -201,9 +195,10 @@ onBeforeMount(async () => await listJobs());
                                     <tbody class="divide-y divide-base-800">
                                         <AttrRolesListEntry
                                             v-for="role in sortedRoles"
+                                            :key="role.id.toString()"
                                             :role="role"
-                                            @selected="selectedRole = role"
                                             :class="selectedRole?.id === role.id ? 'bg-base-800' : ''"
+                                            @selected="selectedRole = role"
                                         />
                                     </tbody>
                                     <thead>

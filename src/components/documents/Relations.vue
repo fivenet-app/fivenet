@@ -38,7 +38,7 @@ async function getDocumentRelations(): Promise<DocumentRelation[]> {
             return res(response.relations);
         } catch (e) {
             $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
+            throw e;
         }
     });
 }

@@ -10,7 +10,7 @@ import TablePagination from '~/components/partials/elements/TablePagination.vue'
 import { useCompletorStore } from '~/store/completor';
 import { UserShort } from '~~/gen/ts/resources/users/users';
 import { ViewAuditLogRequest, ViewAuditLogResponse } from '~~/gen/ts/services/rector/rector';
-import AuditLogEntry from './AuditLogEntry.vue';
+import AuditLogEntry from '~/components/rector/audit/AuditLogEntry.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -32,45 +32,43 @@ const query = ref<{
 const offset = ref(0n);
 
 async function viewAuditLog(): Promise<ViewAuditLogResponse> {
-    return new Promise(async (res, rej) => {
-        const req: ViewAuditLogRequest = {
-            pagination: {
-                offset: offset.value,
-            },
-            userIds: [],
-        };
-        const users: number[] = [];
-        selectedCitizens.value?.forEach((v) => users.push(v.userId));
-        req.userIds = users;
+    const req: ViewAuditLogRequest = {
+        pagination: {
+            offset: offset.value,
+        },
+        userIds: [],
+    };
+    const users: number[] = [];
+    selectedCitizens.value?.forEach((v) => users.push(v.userId));
+    req.userIds = users;
 
-        if (query.value.from !== '') {
-            req.from = toTimestamp(fromString(query.value.from)!);
-        }
-        if (query.value.from !== '') {
-            req.to = toTimestamp(fromString(query.value.to)!);
-        }
+    if (query.value.from !== '') {
+        req.from = toTimestamp(fromString(query.value.from)!);
+    }
+    if (query.value.from !== '') {
+        req.to = toTimestamp(fromString(query.value.to)!);
+    }
 
-        if (query.value.method !== '') {
-            req.method = query.value.method;
-        }
-        if (query.value.service !== '') {
-            req.service = query.value.service;
-        }
+    if (query.value.method !== '') {
+        req.method = query.value.method;
+    }
+    if (query.value.service !== '') {
+        req.service = query.value.service;
+    }
 
-        if (query.value.search !== '') {
-            req.search = query.value.search;
-        }
+    if (query.value.search !== '') {
+        req.search = query.value.search;
+    }
 
-        try {
-            const call = $grpc.getRectorClient().viewAuditLog(req);
-            const { response } = await call;
+    try {
+        const call = $grpc.getRectorClient().viewAuditLog(req);
+        const { response } = await call;
 
-            return res(response);
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
-        }
-    });
+        return response;
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 
 const { data, pending, refresh, error } = useLazyAsyncData(`rector-audit-${offset}`, () => viewAuditLog());
@@ -155,17 +153,17 @@ watchDebounced(queryCitizens, async () => await findChars(), {
                                     {{ $t('common.user', 2) }}
                                 </label>
                                 <div class="relative items-center mt-2">
-                                    <Combobox as="div" v-model="selectedCitizens" multiple nullable>
+                                    <Combobox v-model="selectedCitizens" as="div" multiple nullable>
                                         <div class="relative">
                                             <ComboboxButton as="div">
                                                 <ComboboxInput
                                                     autocomplete="off"
                                                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                    @change="queryCitizens = $event.target.value"
                                                     :display-value="
                                                         (chars: any) => (chars ? charsGetDisplayValue(chars) : $t('common.na'))
                                                     "
                                                     :placeholder="$t('common.user', 2)"
+                                                    @change="queryCitizens = $event.target.value"
                                                     @focusin="focusTablet(true)"
                                                     @focusout="focusTablet(false)"
                                                 />
@@ -178,9 +176,9 @@ watchDebounced(queryCitizens, async () => await findChars(), {
                                                 <ComboboxOption
                                                     v-for="char in entriesCitizens"
                                                     :key="char?.userId"
+                                                    v-slot="{ active, selected }"
                                                     :value="char"
                                                     as="char"
-                                                    v-slot="{ active, selected }"
                                                 >
                                                     <li
                                                         :class="[
@@ -353,8 +351,8 @@ watchDebounced(queryCitizens, async () => await findChars(), {
 
                             <TablePagination
                                 :pagination="data?.pagination"
-                                @offset-change="offset = $event"
                                 :refresh="refresh"
+                                @offset-change="offset = $event"
                             />
                         </div>
                     </div>

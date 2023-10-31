@@ -41,7 +41,7 @@ async function listConductEntries(): Promise<ConductListEntriesResponse> {
             return res(response);
         } catch (e) {
             $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
+            throw e;
         }
     });
 }
@@ -59,7 +59,7 @@ async function deleteConductEntry(id: bigint): Promise<void> {
             return res();
         } catch (e) {
             $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
+            throw e;
         }
     });
 }
@@ -93,7 +93,7 @@ async function listColleagues(): Promise<User[]> {
             return res(response.users);
         } catch (e) {
             $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
+            throw e;
         }
     });
 }

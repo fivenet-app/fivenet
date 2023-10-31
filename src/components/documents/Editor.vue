@@ -14,9 +14,10 @@ import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { max, min, required } from '@vee-validate/rules';
 import { useThrottleFn, watchDebounced, watchOnce } from '@vueuse/core';
 import 'jodit/build/jodit.min.css';
+import { Jodit } from 'jodit';
 // @ts-expect-error
 import { JoditEditor } from 'jodit-vue';
-import { Jodit } from 'jodit';
+import type { IJodit } from 'jodit/types/types';
 import {
     AccountMultipleIcon,
     CheckIcon,
@@ -51,7 +52,6 @@ import AccessEntry from './AccessEntry.vue';
 import ReferenceManager from './ReferenceManager.vue';
 import RelationManager from './RelationManager.vue';
 import { checkDocAccess } from './helpers';
-import type { IJodit } from 'jodit/types/types';
 
 const props = defineProps<{
     id?: bigint;
@@ -523,7 +523,7 @@ async function createDocument(values: FormData, content: string, closed: boolean
             return res();
         } catch (e) {
             $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
+            throw e;
         }
     });
 }
@@ -641,7 +641,7 @@ async function updateDocument(id: bigint, values: FormData, content: string, clo
             return res();
         } catch (e) {
             $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
+            throw e;
         }
     });
 }

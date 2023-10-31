@@ -86,6 +86,7 @@ watch(locale, () => setLocaleGlobally(locale.value));
 const open = ref(false);
 
 watch(updateAvailable, () => (open.value = true));
+/* eslint vue/no-multiple-template-root: "off" */
 </script>
 
 <template>
@@ -104,15 +105,14 @@ watch(updateAvailable, () => (open.value = true));
         :locale="cookieLocale"
     />
 
-    <template v-if="updateAvailable !== false">
-        <ConfirmDialog
-            :open="open"
-            @close="open = false"
-            :cancel="() => (open = false)"
-            :confirm="() => reloadNuxtApp({ persistState: false, force: true })"
-            :title="$t('system.update_available.title', { version: updateAvailable })"
-            :description="$t('system.update_available.content')"
-            :icon="UpdateIcon"
-        />
-    </template>
+    <ConfirmDialog
+        v-if="updateAvailable !== false"
+        :open="open"
+        :cancel="() => (open = false)"
+        :confirm="() => reloadNuxtApp({ persistState: false, force: true })"
+        :title="$t('system.update_available.title', { version: updateAvailable })"
+        :description="$t('system.update_available.content')"
+        :icon="UpdateIcon"
+        @close="open = false"
+    />
 </template>

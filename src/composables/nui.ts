@@ -6,7 +6,6 @@ export function isNUIAvailable(): boolean {
 }
 
 function getParentResourceName(): string {
-    //return (window as any).GetParentResourceName();
     return useConfigStore().clientConfig.nuiResourceName ?? 'fivenet';
 }
 
@@ -19,7 +18,7 @@ export async function fetchNui<T = any, V = any>(event: string, data: T): Promis
         headers: {
             'Content-Type': 'application/json; charset=UTF-8',
         },
-        body: body,
+        body,
     });
 
     const parsed = resp.json();
@@ -39,7 +38,7 @@ export async function focusTablet(state: boolean): Promise<void> {
         return;
     }
 
-    return await fetchNui('focusTablet', { state: state });
+    return await fetchNui('focusTablet', { state });
 }
 
 export async function setWaypoint(x: number, y: number): Promise<void> {
@@ -47,7 +46,7 @@ export async function setWaypoint(x: number, y: number): Promise<void> {
         return;
     }
 
-    return fetchNui('setWaypoint', { x: x, y: y });
+    return fetchNui('setWaypoint', { x, y });
 }
 
 export async function phoneCallNumber(phoneNumber: string): Promise<void> {
@@ -55,9 +54,9 @@ export async function phoneCallNumber(phoneNumber: string): Promise<void> {
         return;
     }
 
-    return fetchNui('phoneCallNumber', { phoneNumber: phoneNumber });
+    return fetchNui('phoneCallNumber', { phoneNumber });
 }
 
 export async function copyToClipboard(text: string): Promise<void> {
-    return fetchNui('copyToClipboard', { text: text });
+    return fetchNui('copyToClipboard', { text });
 }

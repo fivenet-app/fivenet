@@ -38,51 +38,41 @@ const { canDo } = centrumStore;
 const notificationsStore = useNotificatorStore();
 
 async function selfAssign(id: bigint): Promise<void> {
-    return new Promise(async (res, rej) => {
-        if (ownUnitId.value === undefined) {
-            notificationsStore.dispatchNotification({
-                title: { key: 'notifications.centrum.unitUpdated.not_in_unit.title' },
-                content: { key: 'notifications.centrum.unitUpdated.not_in_unit.content' },
-                type: 'error',
-            });
+    if (ownUnitId.value === undefined) {
+        notificationsStore.dispatchNotification({
+            title: { key: 'notifications.centrum.unitUpdated.not_in_unit.title' },
+            content: { key: 'notifications.centrum.unitUpdated.not_in_unit.content' },
+            type: 'error',
+        });
 
-            return res();
-        }
+        return;
+    }
 
-        try {
-            const call = $grpc.getCentrumClient().takeDispatch({
-                dispatchIds: [id],
-                resp: TakeDispatchResp.ACCEPTED,
-            });
-            await call;
-
-            return res();
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
-        }
-    });
+    try {
+        const call = $grpc.getCentrumClient().takeDispatch({
+            dispatchIds: [id],
+            resp: TakeDispatchResp.ACCEPTED,
+        });
+        await call;
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 
 async function deleteDispatch(id: bigint): Promise<void> {
-    return new Promise(async (res, rej) => {
-        try {
-            const call = $grpc.getCentrumClient().deleteDispatch({
-                id: id,
-            });
-            await call;
-
-            return res();
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
-        }
-    });
+    try {
+        const call = $grpc.getCentrumClient().deleteDispatch({ id });
+        await call;
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 
 const { isRevealed, reveal, confirm, cancel, onConfirm } = useConfirmDialog();
 
-onConfirm(async (id) => deleteDispatch(id));
+onConfirm(async (id) => await deleteDispatch(id));
 
 const dispatchStatusColors = computed(() => dispatchStatusToBGColor(props.dispatch.status?.status ?? 0));
 
@@ -219,6 +209,7 @@ const openStatus = ref(false);
                                                                 >
                                                                     <span
                                                                         v-for="attribute in dispatch.attributes?.list"
+                                                                        :key="attribute"
                                                                         class="inline-flex items-center rounded-md bg-error-400/10 px-2 py-1 text-xs font-medium text-error-400 ring-1 ring-inset ring-error-400/20"
                                                                     >
                                                                         {{ attribute }}

@@ -23,7 +23,7 @@ async function listCategories(): Promise<Category[]> {
             return res(response.category);
         } catch (e) {
             $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
+            throw e;
         }
     });
 }

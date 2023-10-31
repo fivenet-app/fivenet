@@ -10,9 +10,9 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import TablePagination from '~/components/partials/elements/TablePagination.vue';
 import { attr } from '~/composables/can';
+import GenericInput from '~/composables/partials/forms/GenericInput.vue';
 import { ListCitizensRequest, ListCitizensResponse } from '~~/gen/ts/services/citizenstore/citizenstore';
 import ListEntry from './ListEntry.vue';
-import GenericInput from '~/composables/partials/forms/GenericInput.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -70,7 +70,7 @@ async function listCitizens(): Promise<ListCitizensResponse> {
             return res(response);
         } catch (e) {
             $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
+            throw e;
         }
     });
 }

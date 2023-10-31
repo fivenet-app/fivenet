@@ -63,7 +63,7 @@ async function getComments(): Promise<GetCommentsResponse> {
             return res(response);
         } catch (e) {
             $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
+            throw e;
         }
     });
 }
@@ -98,7 +98,7 @@ async function addComment(documentId: bigint, values: FormData): Promise<void> {
             return res();
         } catch (e) {
             $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
+            throw e;
         }
     });
 }

@@ -1,6 +1,6 @@
 import { type TranslateItem } from '~/composables/i18n';
+import type { NotificationPosition, NotificationType } from '~/composables/notification/interfaces/Notification.interface';
 import { Data, NotificationCategory } from '~~/gen/ts/resources/notifications/notifications';
-import type { NotificationPosition, NotificationType } from './Notification.interface';
 
 export interface NotificationConfig {
     title: TranslateItem;

@@ -23,7 +23,7 @@ async function getUnits(): Promise<Unit[]> {
             return res(response.units);
         } catch (e) {
             $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
+            throw e;
         }
     });
 }

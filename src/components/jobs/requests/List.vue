@@ -7,7 +7,7 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import TablePagination from '~/components/partials/elements/TablePagination.vue';
-import * as google_protobuf_timestamp_pb from '~~/gen/ts/google/protobuf/timestamp';
+import * as googleProtobufTimestamp_pb from '~~/gen/ts/google/protobuf/timestamp';
 import { User } from '~~/gen/ts/resources/users/users';
 import { RequestsListEntriesRequest, RequestsListEntriesResponse } from '~~/gen/ts/services/jobs/jobs';
 import ListEntry from './ListEntry.vue';
@@ -34,12 +34,12 @@ async function listRequests(): Promise<RequestsListEntriesResponse> {
             };
             if (query.value.from) {
                 req.from = {
-                    timestamp: google_protobuf_timestamp_pb.Timestamp.fromDate(fromString(query.value.from)!),
+                    timestamp: googleProtobufTimestamp_pb.Timestamp.fromDate(fromString(query.value.from)!),
                 };
             }
             if (query.value.to) {
                 req.to = {
-                    timestamp: google_protobuf_timestamp_pb.Timestamp.fromDate(fromString(query.value.to)!),
+                    timestamp: googleProtobufTimestamp_pb.Timestamp.fromDate(fromString(query.value.to)!),
                 };
             }
 
@@ -49,7 +49,7 @@ async function listRequests(): Promise<RequestsListEntriesResponse> {
             return res(response);
         } catch (e) {
             $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
+            throw e;
         }
     });
 }
@@ -81,7 +81,7 @@ async function listColleagues(): Promise<User[]> {
             return res(response.users);
         } catch (e) {
             $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
+            throw e;
         }
     });
 }

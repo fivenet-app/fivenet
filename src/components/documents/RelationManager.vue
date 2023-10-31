@@ -96,7 +96,7 @@ async function listCitizens(): Promise<User[]> {
             );
         } catch (e) {
             $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
+            throw e;
         }
     });
 }

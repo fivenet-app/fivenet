@@ -1,25 +1,25 @@
-import * as google_protobuf_timestamp from '~~/gen/ts/google/protobuf/timestamp';
-import * as resources_timestamp_timestamp from '~~/gen/ts/resources/timestamp/timestamp';
+import * as googleProtobufTimestamp from '~~/gen/ts/google/protobuf/timestamp';
+import * as resourcesTimestampTimestamp from '~~/gen/ts/resources/timestamp/timestamp';
 
-const seconds_per_minute = 60;
-const seconds_per_hour = seconds_per_minute * 60;
-const seconds_per_day = seconds_per_hour * 24;
-const seconds_per_week = seconds_per_day * 7;
-const seconds_per_year = seconds_per_week * 52;
+const secondsPerMinute = 60;
+const secondsPerHour = secondsPerMinute * 60;
+const secondsPerDay = secondsPerHour * 24;
+const secondsPerWeek = secondsPerDay * 7;
+const secondsPerYear = secondsPerWeek * 52;
 
 export function fromSecondsToFormattedDuration(seconds: number, options?: { seconds?: boolean; emptyText?: string }): string {
     const { t } = useI18n();
 
-    const years = Math.floor(seconds / seconds_per_year);
-    seconds -= years * seconds_per_year;
-    const weeks = Math.floor(seconds / seconds_per_week);
-    seconds -= weeks * seconds_per_week;
-    const days = Math.floor(seconds / seconds_per_day);
-    seconds -= days * seconds_per_day;
-    const hours = Math.floor(seconds / seconds_per_hour);
-    seconds -= hours * seconds_per_hour;
-    const minutes = Math.floor(seconds / seconds_per_minute);
-    seconds -= minutes * seconds_per_minute;
+    const years = Math.floor(seconds / secondsPerYear);
+    seconds -= years * secondsPerYear;
+    const weeks = Math.floor(seconds / secondsPerWeek);
+    seconds -= weeks * secondsPerWeek;
+    const days = Math.floor(seconds / secondsPerDay);
+    seconds -= days * secondsPerDay;
+    const hours = Math.floor(seconds / secondsPerHour);
+    seconds -= hours * secondsPerHour;
+    const minutes = Math.floor(seconds / secondsPerMinute);
+    seconds -= minutes * secondsPerMinute;
 
     const parts: String[] = [];
     if (years > 0) {
@@ -45,37 +45,37 @@ export function fromSecondsToFormattedDuration(seconds: number, options?: { seco
     return text.length > 0 ? text : t(options?.emptyText ?? 'common.unknown');
 }
 
-export function toDate(ts: resources_timestamp_timestamp.Timestamp | undefined): Date {
+export function toDate(ts: resourcesTimestampTimestamp.Timestamp | undefined): Date {
     if (ts === undefined || ts?.timestamp === undefined) {
         return new Date();
     }
 
-    return google_protobuf_timestamp.Timestamp.toDate(ts?.timestamp!);
+    return googleProtobufTimestamp.Timestamp.toDate(ts.timestamp!);
 }
 
-export function toDateLocaleString(ts: resources_timestamp_timestamp.Timestamp | undefined, d?: Function): string {
-    if (typeof ts === undefined) {
+export function toDateLocaleString(ts: resourcesTimestampTimestamp.Timestamp | undefined, d?: Function): string {
+    if (ts === undefined || typeof ts === 'undefined') {
         return '-';
     }
 
     if (d) {
-        return d(google_protobuf_timestamp.Timestamp.toDate(ts?.timestamp!), 'short');
+        return d(googleProtobufTimestamp.Timestamp.toDate(ts.timestamp!), 'short');
     }
 
-    return google_protobuf_timestamp.Timestamp.toDate(ts?.timestamp!).toLocaleDateString();
+    return googleProtobufTimestamp.Timestamp.toDate(ts.timestamp!).toLocaleDateString();
 }
 
 export function fromString(time: string): Date {
     return new Date(Date.parse(time));
 }
 
-export function toTimestamp(date?: Date): resources_timestamp_timestamp.Timestamp | undefined {
+export function toTimestamp(date?: Date): resourcesTimestampTimestamp.Timestamp | undefined {
     if (date === undefined) {
         return;
     }
 
     return {
-        timestamp: google_protobuf_timestamp.Timestamp.fromDate(date),
+        timestamp: googleProtobufTimestamp.Timestamp.fromDate(date),
     };
 }
 

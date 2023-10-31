@@ -24,7 +24,7 @@ async function listTemplates(): Promise<TemplateShort[]> {
             return res(response.templates);
         } catch (e) {
             $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
+            throw e;
         }
     });
 }

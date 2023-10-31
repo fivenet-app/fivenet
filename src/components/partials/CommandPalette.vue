@@ -218,7 +218,7 @@ async function listCitizens(): Promise<void> {
         } catch (e) {
             loading.value = false;
             $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
+            throw e;
         }
     });
 }
@@ -246,7 +246,7 @@ async function listDocuments(): Promise<void> {
         } catch (e) {
             loading.value = false;
             $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
+            throw e;
         }
     });
 }

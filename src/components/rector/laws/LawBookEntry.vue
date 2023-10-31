@@ -6,7 +6,7 @@ import { CancelIcon, ContentSaveIcon, PencilIcon, TrashCanIcon } from 'mdi-vue3'
 import { defineRule } from 'vee-validate';
 import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
 import { LawBook } from '~~/gen/ts/resources/laws/laws';
-import LawEntry from './LawEntry.vue';
+import LawEntry from '~/components/rector/laws/LawEntry.vue';
 
 const props = defineProps<{
     book: LawBook;
@@ -20,57 +20,51 @@ const emit = defineEmits<{
 const { $grpc } = useNuxtApp();
 
 async function deleteLawBook(id: bigint): Promise<void> {
-    return new Promise(async (res, rej) => {
-        if (id < 0) {
-            emit('deleted', id);
-            return;
-        }
+    if (id < 0) {
+        emit('deleted', id);
+        return;
+    }
 
-        try {
-            const call = $grpc.getRectorClient().deleteLawBook({
-                id: id,
-            });
-            await call;
+    try {
+        const call = $grpc.getRectorClient().deleteLawBook({ id });
+        await call;
 
-            emit('deleted', id);
-
-            return res();
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
-        }
-    });
+        emit('deleted', id);
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 
 async function saveLawBook(id: bigint, values: FormData): Promise<LawBook> {
-    return new Promise(async (res, rej) => {
-        try {
-            const call = $grpc.getRectorClient().createOrUpdateLawBook({
-                lawBook: {
-                    id: BigInt(id < 0 ? 0 : id),
-                    name: values.name,
-                    description: values.description,
-                    laws: [],
-                },
-            });
-            const { response } = await call;
-            const lawBook = response.lawBook;
-            if (lawBook === undefined) return rej();
-
-            props.book.id = lawBook.id;
-            props.book.createdAt = lawBook.createdAt;
-            props.book.updatedAt = lawBook.updatedAt;
-            props.book.name = lawBook.name;
-            props.book.description = lawBook.description;
-
-            editing.value = false;
-
-            return res(lawBook);
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
+    try {
+        const call = $grpc.getRectorClient().createOrUpdateLawBook({
+            lawBook: {
+                id: BigInt(id < 0 ? 0 : id),
+                name: values.name,
+                description: values.description,
+                laws: [],
+            },
+        });
+        const { response } = await call;
+        const lawBook = response.lawBook;
+        if (lawBook === undefined) {
+            throw new Error('Failed to retrieve book from response');
         }
-    });
+
+        props.book.id = lawBook.id;
+        props.book.createdAt = lawBook.createdAt;
+        props.book.updatedAt = lawBook.updatedAt;
+        props.book.name = lawBook.name;
+        props.book.description = lawBook.description;
+
+        editing.value = false;
+
+        return lawBook;
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 
 defineRule('required', required);
@@ -136,10 +130,10 @@ const editing = ref(props.startInEdit);
 
     <div class="my-2">
         <div v-if="!editing" class="flex text-neutral items-center gap-x-2">
-            <button type="button" @click="editing = true" :title="$t('common.edit')">
+            <button type="button" :title="$t('common.edit')" @click="editing = true">
                 <PencilIcon class="w-6 h-6" />
             </button>
-            <button type="button" @click="reveal()" :title="$t('common.delete')">
+            <button type="button" :title="$t('common.delete')" @click="reveal()">
                 <TrashCanIcon class="w-6 h-6" />
             </button>
             <h2 class="text-xl">{{ book.name }}</h2>
@@ -148,25 +142,25 @@ const editing = ref(props.startInEdit);
                 <div class="sm:flex-auto w-full">
                     <button
                         type="button"
-                        @click="addLaw"
                         class="px-3 py-2 text-sm font-semibold rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
+                        @click="addLaw"
                     >
                         {{ $t('pages.rector.laws.add_new_law') }}
                     </button>
                 </div>
             </div>
         </div>
-        <form v-else @submit.prevent="onSubmitThrottle" class="w-full flex flex-row gap-x-4 text-neutral items-start">
+        <form v-else class="w-full flex flex-row gap-x-4 text-neutral items-start" @submit.prevent="onSubmitThrottle">
             <button type="submit" :title="$t('common.save')">
                 <ContentSaveIcon class="w-6 h-6" />
             </button>
             <button
                 type="button"
+                :title="$t('common.cancel')"
                 @click="
                     editing = false;
                     book.id < BigInt(0) && $emit('deleted', book.id);
                 "
-                :title="$t('common.cancel')"
             >
                 <CancelIcon class="w-6 h-6" />
             </button>

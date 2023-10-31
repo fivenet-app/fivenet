@@ -1,11 +1,11 @@
 import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { defineStore, type StoreDefinition } from 'pinia';
 import { parseQuery } from 'vue-router';
+import { useClipboardStore } from '~/store/clipboard';
+import { useNotificatorStore } from '~/store/notificator';
+import { useSettingsStore } from '~/store/settings';
 import { JobProps } from '~~/gen/ts/resources/users/jobs';
 import { User } from '~~/gen/ts/resources/users/users';
-import { useClipboardStore } from './clipboard';
-import { useNotificatorStore } from './notificator';
-import { useSettingsStore } from './settings';
 
 export type JobPropsState = {
     quickButtons: String[];
@@ -81,99 +81,84 @@ export const useAuthStore = defineStore('auth', {
 
         // GRPC Calls
         async doLogin(username: string, password: string): Promise<void> {
-            return new Promise(async (res, rej) => {
-                // Start login
-                this.loginStart();
-                this.setActiveChar(null);
-                this.setPermissions([]);
+            // Start login
+            this.loginStart();
+            this.setActiveChar(null);
+            this.setPermissions([]);
 
-                const { $grpc } = useNuxtApp();
-                try {
-                    const call = $grpc.getUnAuthClient().login({
-                        username: username,
-                        password: password,
-                    });
-                    const { response } = await call;
+            const { $grpc } = useNuxtApp();
+            try {
+                const call = $grpc.getUnAuthClient().login({ username, password });
+                const { response } = await call;
 
-                    this.loginStop(null);
-                    this.setAccessToken(response.token, toDate(response.expires) as null | Date);
-
-                    return res();
-                } catch (e) {
-                    this.loginStop((e as RpcError).message);
-                    this.setAccessToken(null, null);
-                    $grpc.handleError(e as RpcError);
-                    return rej(e as RpcError);
-                }
-            });
+                this.loginStop(null);
+                this.setAccessToken(response.token, toDate(response.expires) as null | Date);
+            } catch (e) {
+                this.loginStop((e as RpcError).message);
+                this.setAccessToken(null, null);
+                $grpc.handleError(e as RpcError);
+                throw e;
+            }
         },
         async doLogout(): Promise<void> {
-            return new Promise(async (res, rej) => {
-                const { $grpc } = useNuxtApp();
-                try {
-                    await $grpc.getAuthClient().logout({});
-                    this.clearAuthInfo();
+            const { $grpc } = useNuxtApp();
+            try {
+                await $grpc.getAuthClient().logout({});
+                this.clearAuthInfo();
+            } catch (e) {
+                $grpc.handleError(e as RpcError);
 
-                    return res();
-                } catch (e) {
-                    $grpc.handleError(e as RpcError);
+                useNotificatorStore().dispatchNotification({
+                    title: { key: 'notifications.auth.error_logout.title', parameters: {} },
+                    content: {
+                        key: 'notifications.auth.error_logout.content',
+                        parameters: { msg: (e as RpcError).message },
+                    },
+                    type: 'error',
+                });
+                this.clearAuthInfo();
 
-                    useNotificatorStore().dispatchNotification({
-                        title: { key: 'notifications.auth.error_logout.title', parameters: {} },
-                        content: {
-                            key: 'notifications.auth.error_logout.content',
-                            parameters: { msg: (e as RpcError).message },
-                        },
-                        type: 'error',
-                    });
-                    this.clearAuthInfo();
-
-                    return rej(e as RpcError);
-                }
-            });
+                throw e;
+            }
         },
         async chooseCharacter(charId: number): Promise<void> {
-            return new Promise(async (res, rej) => {
-                const { $grpc } = useNuxtApp();
-                try {
-                    if (this.lastCharID !== charId) {
-                        useClipboardStore().clear();
-                    }
-
-                    const call = $grpc.getAuthClient().chooseCharacter({
-                        charId: charId,
-                    });
-                    const { response } = await call;
-                    if (!response.char) return rej();
-
-                    this.setAccessToken(response.token, toDate(response.expires) as null | Date);
-                    this.setActiveChar(response.char);
-                    this.setPermissions(response.permissions);
-                    if (response.jobProps) {
-                        this.setJobProps(response.jobProps!);
-                    } else {
-                        this.setJobProps(null);
-                    }
-
-                    if (useRoute().query.redirect !== undefined) {
-                        const path = useRoute().query.redirect?.toString() || '/overview';
-                        const url = new URL('https://example.com' + path);
-                        await navigateTo({
-                            path: url.pathname,
-                            query: parseQuery(url.search),
-                            hash: url.hash,
-                        });
-                    } else {
-                        const target = useRouter().resolve(useSettingsStore().startpage);
-                        await navigateTo(target);
-                    }
-
-                    return res();
-                } catch (e) {
-                    $grpc.handleError(e as RpcError);
-                    return rej(e as RpcError);
+            const { $grpc } = useNuxtApp();
+            try {
+                if (this.lastCharID !== charId) {
+                    useClipboardStore().clear();
                 }
-            });
+
+                const call = $grpc.getAuthClient().chooseCharacter({ charId });
+                const { response } = await call;
+                if (!response.char) {
+                    throw new Error('Server Error! No character in choose character response.');
+                }
+
+                this.setAccessToken(response.token, toDate(response.expires) as null | Date);
+                this.setActiveChar(response.char);
+                this.setPermissions(response.permissions);
+                if (response.jobProps) {
+                    this.setJobProps(response.jobProps!);
+                } else {
+                    this.setJobProps(null);
+                }
+
+                if (useRoute().query.redirect !== undefined) {
+                    const path = useRoute().query.redirect?.toString() || '/overview';
+                    const url = new URL('https://example.com' + path);
+                    await navigateTo({
+                        path: url.pathname,
+                        query: parseQuery(url.search),
+                        hash: url.hash,
+                    });
+                } else {
+                    const target = useRouter().resolve(useSettingsStore().startpage);
+                    await navigateTo(target);
+                }
+            } catch (e) {
+                $grpc.handleError(e as RpcError);
+                throw e;
+            }
         },
     },
     getters: {

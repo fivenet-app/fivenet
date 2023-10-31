@@ -23,7 +23,7 @@ export const useCompletorStore = defineStore('completor', {
     actions: {
         // Jobs
         async getJobByName(name: string): Promise<Job | undefined> {
-            return this.listJobs().then((jobs) => jobs.find((j) => j.name === name));
+            return await this.listJobs().then((jobs) => jobs.find((j) => j.name === name));
         },
         async listJobs(): Promise<Job[]> {
             if (this.jobs.length > 0) return this.jobs;
@@ -32,78 +32,67 @@ export const useCompletorStore = defineStore('completor', {
             return this.jobs;
         },
         async completeJobs(req: CompleteJobsRequest): Promise<Job[]> {
-            return new Promise(async (res, rej) => {
-                const { $grpc } = useNuxtApp();
-                try {
-                    const call = $grpc.getCompletorClient().completeJobs(req);
-                    const { response } = await call;
+            const { $grpc } = useNuxtApp();
+            try {
+                const call = $grpc.getCompletorClient().completeJobs(req);
+                const { response } = await call;
 
-                    return res(response.jobs);
-                } catch (e) {
-                    $grpc.handleError(e as RpcError);
-                    return rej(e as RpcError);
-                }
-            });
+                return response.jobs;
+            } catch (e) {
+                $grpc.handleError(e as RpcError);
+                throw e;
+            }
         },
 
         // Citizens
         async findCitizen(userId: number): Promise<UserShort | undefined> {
-            return this.completeCitizens({
-                search: '',
-                userId: userId,
-            }).then((users) => (users.length === 0 ? undefined : users[0]));
+            return await this.completeCitizens({ userId, search: '' }).then((users) =>
+                users.length === 0 ? undefined : users[0],
+            );
         },
         async completeCitizens(req: CompleteCitizensRequest): Promise<UserShort[]> {
-            return new Promise(async (res, rej) => {
-                const { $grpc } = useNuxtApp();
-                try {
-                    const call = $grpc.getCompletorClient().completeCitizens(req);
-                    const { response } = await call;
+            const { $grpc } = useNuxtApp();
+            try {
+                const call = $grpc.getCompletorClient().completeCitizens(req);
+                const { response } = await call;
 
-                    return res(response.users);
-                } catch (e) {
-                    $grpc.handleError(e as RpcError);
-                    return rej(e as RpcError);
-                }
-            });
+                return response.users;
+            } catch (e) {
+                $grpc.handleError(e as RpcError);
+                throw e;
+            }
         },
 
         // Document Categories
         async completeDocumentCategories(search: string): Promise<Category[]> {
-            return new Promise(async (res, rej) => {
-                if (!can('CompletorService.CompleteDocumentCategories')) {
-                    return res([]);
-                }
+            if (!can('CompletorService.CompleteDocumentCategories')) {
+                return [];
+            }
 
-                const { $grpc } = useNuxtApp();
-                try {
-                    const call = $grpc.getCompletorClient().completeDocumentCategories({
-                        search: search,
-                    });
-                    const { response } = await call;
+            const { $grpc } = useNuxtApp();
+            try {
+                const call = $grpc.getCompletorClient().completeDocumentCategories({ search });
+                const { response } = await call;
 
-                    return res(response.categories);
-                } catch (e) {
-                    $grpc.handleError(e as RpcError);
-                    return rej(e as RpcError);
-                }
-            });
+                return response.categories;
+            } catch (e) {
+                $grpc.handleError(e as RpcError);
+                throw e;
+            }
         },
 
         // Laws
         async listLawBooks(): Promise<LawBook[]> {
-            return new Promise(async (res, rej) => {
-                const { $grpc } = useNuxtApp();
-                try {
-                    const call = $grpc.getCompletorClient().listLawBooks({});
-                    const { response } = await call;
+            const { $grpc } = useNuxtApp();
+            try {
+                const call = $grpc.getCompletorClient().listLawBooks({});
+                const { response } = await call;
 
-                    return res(response.books);
-                } catch (e) {
-                    $grpc.handleError(e as RpcError);
-                    return rej(e as RpcError);
-                }
-            });
+                return response.books;
+            } catch (e) {
+                $grpc.handleError(e as RpcError);
+                throw e;
+            }
         },
     },
 });

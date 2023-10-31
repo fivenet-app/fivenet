@@ -32,6 +32,39 @@ export default defineNuxtPlugin(() => {
     };
 });
 
+export class AuthInterceptor implements RpcInterceptor {
+    interceptUnary(next: NextUnaryFn, method: MethodInfo, input: object, options: RpcOptions): UnaryCall {
+        if (!options.meta) {
+            options.meta = {};
+        }
+
+        const { accessToken } = useAuthStore();
+        if (accessToken !== null) {
+            options.meta.Authorization = 'Bearer ' + accessToken;
+        }
+
+        return next(method, input, options);
+    }
+
+    interceptServerStreaming?(
+        next: NextServerStreamingFn,
+        method: MethodInfo,
+        input: object,
+        options: RpcOptions,
+    ): ServerStreamingCall {
+        if (!options.meta) {
+            options.meta = {};
+        }
+
+        const { accessToken } = useAuthStore();
+        if (accessToken !== null) {
+            options.meta.Authorization = 'Bearer ' + accessToken;
+        }
+
+        return next(method, input, options);
+    }
+}
+
 export class GRPCClients {
     private authInterceptor: AuthInterceptor;
     private transport: GrpcWebFetchTransport;
@@ -65,6 +98,7 @@ export class GRPCClients {
         } as Notification;
 
         if (err.code !== undefined) {
+            const route = useRoute();
             switch (err.code.toLowerCase()) {
                 case 'internal':
                     break;
@@ -82,11 +116,9 @@ export class GRPCClients {
                     notification.content = { key: 'notifications.grpc_errors.unauthenticated.content', parameters: {} };
 
                     // Only update the redirect query param if it isn't already set
-                    const route = useRoute();
-                    const redirect = route.query.redirect ?? route.fullPath;
                     navigateTo({
                         name: 'auth-login',
-                        query: { redirect: redirect },
+                        query: { redirect: route.query.redirect ?? route.fullPath },
                         replace: true,
                         force: true,
                     });
@@ -187,38 +219,5 @@ export class GRPCClients {
     // Rector
     getRectorClient(): RectorServiceClient {
         return new RectorServiceClient(this.transport);
-    }
-}
-
-export class AuthInterceptor implements RpcInterceptor {
-    interceptUnary(next: NextUnaryFn, method: MethodInfo, input: object, options: RpcOptions): UnaryCall {
-        if (!options.meta) {
-            options.meta = {};
-        }
-
-        const { accessToken } = useAuthStore();
-        if (accessToken !== null) {
-            options.meta['Authorization'] = 'Bearer ' + accessToken;
-        }
-
-        return next(method, input, options);
-    }
-
-    interceptServerStreaming?(
-        next: NextServerStreamingFn,
-        method: MethodInfo,
-        input: object,
-        options: RpcOptions,
-    ): ServerStreamingCall {
-        if (!options.meta) {
-            options.meta = {};
-        }
-
-        const { accessToken } = useAuthStore();
-        if (accessToken !== null) {
-            options.meta['Authorization'] = 'Bearer ' + accessToken;
-        }
-
-        return next(method, input, options);
     }
 }

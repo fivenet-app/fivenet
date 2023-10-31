@@ -67,7 +67,7 @@ async function updateDispatchStatus(dispatchId: bigint, status: StatusDispatch):
             return res();
         } catch (e) {
             $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
+            throw e;
         }
     });
 }
@@ -107,7 +107,7 @@ async function updateUnitStatus(id: bigint, status: StatusUnit): Promise<void> {
             return res();
         } catch (e) {
             $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
+            throw e;
         }
     });
 }

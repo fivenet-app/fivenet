@@ -12,7 +12,7 @@ class JSONSerializer {
 
 export const jsonSerializer = new JSONSerializer();
 
-function jsonMarshal(key: string, value: any): any {
+function jsonMarshal(_: string, value: any): any {
     if (typeof value === 'bigint') {
         return {
             type: 'bigint',
@@ -27,8 +27,8 @@ export function jsonStringify(obj: any, space?: string | number): string {
     return JSON.stringify(obj, jsonMarshal, space);
 }
 
-function jsonUnmarshal(key: string, value: any) {
-    if (value && value.type == 'bigint') {
+function jsonUnmarshal(_: string, value: any) {
+    if (value && value.type === 'bigint') {
         return BigInt(value.value);
     }
     return value;

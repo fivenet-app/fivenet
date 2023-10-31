@@ -1,12 +1,12 @@
 import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { defineStore, type StoreDefinition } from 'pinia';
 import { statusOrder } from '~/components/centrum/helpers';
+import { useAuthStore } from '~/store/auth';
+import { useNotificatorStore } from '~/store/notificator';
 import { Dispatch, DispatchStatus, StatusDispatch } from '~~/gen/ts/resources/dispatch/dispatches';
 import { CentrumMode, Settings } from '~~/gen/ts/resources/dispatch/settings';
 import { StatusUnit, Unit, UnitStatus } from '~~/gen/ts/resources/dispatch/units';
 import { UserShort } from '~~/gen/ts/resources/users/users';
-import { useAuthStore } from './auth';
-import { useNotificatorStore } from './notificator';
 
 const ONE_MIN_THREE_QUARTER_SEC = 1 * 45 * 1000;
 
@@ -30,6 +30,8 @@ export interface CentrumState {
     ownDispatches: bigint[];
     pendingDispatches: bigint[];
 }
+
+type canDoAction = 'TakeControl' | 'TakeDispatch' | 'AssignDispatch' | 'UpdateDispatchStatus' | 'UpdateUnitStatus';
 
 export const useCentrumStore = defineStore('centrum', {
     state: () =>
@@ -273,14 +275,15 @@ export const useCentrumStore = defineStore('centrum', {
                     dispatch.status?.status === StatusDispatch.COMPLETED
                 ) {
                     this.removePendingDispatch(dispatch.id);
+                    return;
+                }
+
+                // When dispatch has no expiration, it's an accepted/assigned dispatch
+                if (assignment.expiresAt === undefined) {
+                    this.removePendingDispatch(dispatch.id);
+                    this.addOrUpdateOwnDispatch(dispatch.id);
                 } else {
-                    // When dispatch has no expiration, it's an accepted/assigned dispatch
-                    if (assignment.expiresAt === undefined) {
-                        this.removePendingDispatch(dispatch.id);
-                        this.addOrUpdateOwnDispatch(dispatch.id);
-                    } else {
-                        this.addOrUpdatePendingDispatch(dispatch.id);
-                    }
+                    this.addOrUpdatePendingDispatch(dispatch.id);
                 }
             }
         },
@@ -591,8 +594,6 @@ export const useCentrumStore = defineStore('centrum', {
         },
     },
 });
-
-type canDoAction = 'TakeControl' | 'TakeDispatch' | 'AssignDispatch' | 'UpdateDispatchStatus' | 'UpdateUnitStatus';
 
 if (import.meta.hot) {
     import.meta.hot.accept(acceptHMRUpdate(useCentrumStore as unknown as StoreDefinition, import.meta.hot));

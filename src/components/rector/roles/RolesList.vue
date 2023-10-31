@@ -11,8 +11,8 @@ import { useCompletorStore } from '~/store/completor';
 import { useNotificatorStore } from '~/store/notificator';
 import { Role } from '~~/gen/ts/resources/permissions/permissions';
 import { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
-import RoleView from './RoleView.vue';
-import RolesListEntry from './RolesListEntry.vue';
+import RoleView from '~/components/rector/roles/RoleView.vue';
+import RolesListEntry from '~/components/rector/roles/RolesListEntry.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -27,17 +27,15 @@ const { getJobByName } = completorStore;
 const { data: roles, pending, refresh, error } = useLazyAsyncData('rector-roles', () => getRoles());
 
 async function getRoles(): Promise<Role[]> {
-    return new Promise(async (res, rej) => {
-        try {
-            const call = $grpc.getRectorClient().getRoles({});
-            const { response } = await call;
+    try {
+        const call = $grpc.getRectorClient().getRoles({});
+        const { response } = await call;
 
-            return res(response.roles);
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
-        }
-    });
+        return response.roles;
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 
 const job = ref<Job | undefined>();
@@ -51,38 +49,34 @@ const availableJobGrades = computed(
 );
 
 async function createRole(): Promise<void> {
-    return new Promise(async (res, rej) => {
-        if (selectedJobGrade.value === null || selectedJobGrade.value.grade <= 0) {
-            return res();
+    if (selectedJobGrade.value === null || selectedJobGrade.value.grade <= 0) {
+        return;
+    }
+
+    try {
+        const call = $grpc.getRectorClient().createRole({
+            job: activeChar.value!.job,
+            grade: selectedJobGrade.value.grade,
+        });
+        const { response } = await call;
+
+        if (!response.role) {
+            return;
         }
 
-        try {
-            const call = $grpc.getRectorClient().createRole({
-                job: activeChar.value?.job!,
-                grade: selectedJobGrade.value.grade,
-            });
-            const { response } = await call;
+        notifications.dispatchNotification({
+            title: { key: 'notifications.rector.role_created.title', parameters: {} },
+            content: { key: 'notifications.rector.role_created.content', parameters: {} },
+            type: 'success',
+        });
 
-            if (!response.role) {
-                return res();
-            }
+        roles.value?.push(response.role!);
 
-            notifications.dispatchNotification({
-                title: { key: 'notifications.rector.role_created.title', parameters: {} },
-                content: { key: 'notifications.rector.role_created.content', parameters: {} },
-                type: 'success',
-            });
-
-            roles.value?.push(response.role!);
-
-            selectedRole.value = response.role;
-
-            return res();
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
-        }
-    });
+        selectedRole.value = response.role;
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 
 const sortedRoles = computed(() => roles.value?.sort((a, b) => a.grade - b.grade));
@@ -104,8 +98,8 @@ const selectedRole = ref<Role | undefined>();
                                             {{ $t('common.job_grade') }}
                                         </label>
                                         <Combobox
-                                            as="div"
                                             v-model="selectedJobGrade"
+                                            as="div"
                                             class="relative flex items-center mt-2 w-full"
                                             nullable
                                         >
@@ -114,10 +108,10 @@ const selectedRole = ref<Role | undefined>();
                                                     <ComboboxInput
                                                         autocomplete="off"
                                                         class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                        @change="queryJobGradeRaw = $event.target.value"
                                                         :display-value="
                                                             (grade: any) => (grade ? `${grade?.label} (${grade?.grade})` : '')
                                                         "
+                                                        @change="queryJobGradeRaw = $event.target.value"
                                                         @focusin="focusTablet(true)"
                                                         @focusout="focusTablet(false)"
                                                     />
@@ -130,9 +124,9 @@ const selectedRole = ref<Role | undefined>();
                                                         v-for="grade in availableJobGrades.filter((g) =>
                                                             g.label.toLowerCase().includes(queryJobGrade),
                                                         )"
+                                                        v-slot="{ active, selected }"
                                                         :key="grade.grade"
                                                         :value="grade"
-                                                        v-slot="{ active, selected }"
                                                     >
                                                         <li
                                                             :class="[
@@ -204,9 +198,10 @@ const selectedRole = ref<Role | undefined>();
                                     <tbody class="divide-y divide-base-800">
                                         <RolesListEntry
                                             v-for="role in sortedRoles"
+                                            :key="role.id.toString()"
+                                            :class="selectedRole?.id === role.id ? 'bg-base-800' : ''"
                                             :role="role"
                                             @selected="selectedRole = role"
-                                            :class="selectedRole?.id === role.id ? 'bg-base-800' : ''"
                                         />
                                     </tbody>
                                     <thead>

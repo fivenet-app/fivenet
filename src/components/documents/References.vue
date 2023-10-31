@@ -36,7 +36,7 @@ async function getDocumentReferences(): Promise<DocumentReference[]> {
             return res(response.references);
         } catch (e) {
             $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
+            throw e;
         }
     });
 }

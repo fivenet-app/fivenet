@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { Switch, SwitchGroup, SwitchLabel } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { AccountIcon } from 'mdi-vue3';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
@@ -10,7 +11,6 @@ import { GetAccountInfoResponse } from '~~/gen/ts/services/auth/auth';
 import ChangePasswordModal from './ChangePasswordModal.vue';
 import DebugInfo from './DebugInfo.vue';
 import OAuth2Connections from './OAuth2Connections.vue';
-import { Switch, SwitchGroup, SwitchLabel } from '@headlessui/vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -30,7 +30,7 @@ async function getAccountInfo(): Promise<GetAccountInfoResponse | undefined> {
             return res(call.response);
         } catch (e) {
             $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
+            throw e;
         }
     });
 }

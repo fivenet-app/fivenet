@@ -11,7 +11,7 @@ import TablePagination from '~/components/partials/elements/TablePagination.vue'
 import { useCompletorStore } from '~/store/completor';
 import { UserShort } from '~~/gen/ts/resources/users/users';
 import { ListVehiclesResponse } from '~~/gen/ts/services/dmv/vehicles';
-import ListEntry from './ListEntry.vue';
+import ListEntry from '~/components/vehicles/ListEntry.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -66,7 +66,7 @@ async function listVehicles(): Promise<ListVehiclesResponse> {
             return res(response);
         } catch (e) {
             $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
+            throw e;
         }
     });
 }

@@ -5,6 +5,79 @@ import { ObjectSpecs, TemplateData } from '~~/gen/ts/resources/documents/templat
 import { User, UserShort } from '~~/gen/ts/resources/users/users';
 import { Vehicle } from '~~/gen/ts/resources/vehicles/vehicles';
 
+export class ClipboardUser {
+    public userId: number | undefined;
+    public identifier: string | undefined;
+    public job: string | undefined;
+    public jobLabel: string | undefined;
+    public jobGrade: number | undefined;
+    public jobGradeLabel: string | undefined;
+    public firstname: string | undefined;
+    public lastname: string | undefined;
+    public dateofbirth: string | undefined;
+    public phoneNumber: string | undefined;
+
+    constructor(u: UserShort | User) {
+        this.userId = u.userId;
+        this.identifier = u.identifier;
+        this.job = u.job;
+        this.jobLabel = u.jobLabel;
+        this.jobGrade = u.jobGrade;
+        this.jobGradeLabel = u.jobGradeLabel;
+        this.firstname = u.firstname;
+        this.lastname = u.lastname;
+        this.dateofbirth = u.dateofbirth;
+        this.phoneNumber = u.phoneNumber;
+
+        return this;
+    }
+}
+
+export class ClipboardDocument {
+    public id: bigint;
+    public createdAt?: string;
+    public title: string;
+    public creator: ClipboardUser;
+    public category: Category | undefined;
+    public state: string;
+    public closed: boolean;
+    public public: boolean;
+
+    constructor(d: Document) {
+        this.id = d.id;
+        this.createdAt = d.createdAt ? toDate(d.createdAt).toJSON() : undefined;
+        this.category = d.category;
+        this.title = d.title;
+        this.state = d.state;
+        this.creator = new ClipboardUser(d.creator!);
+        this.closed = d.closed;
+        this.public = d.public;
+    }
+}
+
+export class ClipboardVehicle {
+    public plate: string;
+    public model: string;
+    public type: string;
+    public owner: ClipboardUser;
+
+    constructor(v: Vehicle) {
+        this.plate = v.plate;
+        this.model = v.model;
+        this.type = v.type;
+        this.owner = new ClipboardUser(v.owner!);
+    }
+}
+
+export function getVehicle(obj: ClipboardVehicle): Vehicle {
+    return {
+        plate: obj.plate,
+        model: obj.model,
+        type: obj.type,
+        owner: getUser(obj.owner),
+    };
+}
+
 export interface ClipboardData {
     documents: ClipboardDocument[];
     users: ClipboardUser[];
@@ -160,34 +233,6 @@ if (import.meta.hot) {
     import.meta.hot.accept(acceptHMRUpdate(useClipboardStore as unknown as StoreDefinition, import.meta.hot));
 }
 
-export class ClipboardUser {
-    public userId: number | undefined;
-    public identifier: string | undefined;
-    public job: string | undefined;
-    public jobLabel: string | undefined;
-    public jobGrade: number | undefined;
-    public jobGradeLabel: string | undefined;
-    public firstname: string | undefined;
-    public lastname: string | undefined;
-    public dateofbirth: string | undefined;
-    public phoneNumber: string | undefined;
-
-    constructor(u: UserShort | User) {
-        this.userId = u.userId;
-        this.identifier = u.identifier;
-        this.job = u.job;
-        this.jobLabel = u.jobLabel;
-        this.jobGrade = u.jobGrade;
-        this.jobGradeLabel = u.jobGradeLabel;
-        this.firstname = u.firstname;
-        this.lastname = u.lastname;
-        this.dateofbirth = u.dateofbirth;
-        this.phoneNumber = u.phoneNumber;
-
-        return this;
-    }
-}
-
 export function getUser(obj: ClipboardUser): User {
     const u: User = {
         userId: obj.userId!,
@@ -204,28 +249,6 @@ export function getUser(obj: ClipboardUser): User {
     };
 
     return u;
-}
-
-export class ClipboardDocument {
-    public id: bigint;
-    public createdAt?: string;
-    public title: string;
-    public creator: ClipboardUser;
-    public category: Category | undefined;
-    public state: string;
-    public closed: boolean;
-    public public: boolean;
-
-    constructor(d: Document) {
-        this.id = d.id;
-        this.createdAt = d.createdAt ? toDate(d.createdAt).toJSON() : undefined;
-        this.category = d.category;
-        this.title = d.title;
-        this.state = d.state;
-        this.creator = new ClipboardUser(d.creator!);
-        this.closed = d.closed;
-        this.public = d.public;
-    }
 }
 
 export function getDocument(obj: ClipboardDocument): DocumentShort {
@@ -248,27 +271,4 @@ export function getDocument(obj: ClipboardDocument): DocumentShort {
         doc.createdAt = toTimestamp(fromString(obj.createdAt));
     }
     return doc;
-}
-
-export class ClipboardVehicle {
-    public plate: string;
-    public model: string;
-    public type: string;
-    public owner: ClipboardUser;
-
-    constructor(v: Vehicle) {
-        this.plate = v.plate;
-        this.model = v.model;
-        this.type = v.type;
-        this.owner = new ClipboardUser(v.owner!);
-    }
-}
-
-export function getVehicle(obj: ClipboardVehicle): Vehicle {
-    return {
-        plate: obj.plate,
-        model: obj.model,
-        type: obj.type,
-        owner: getUser(obj.owner),
-    };
 }

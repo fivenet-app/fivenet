@@ -1,5 +1,5 @@
-import { type RoutesNamedLocations } from '@typed-router';
 import { type DefineComponent } from 'vue';
+import { type RoutesNamedLocations } from '@typed-router';
 
 export type ArrayElement<ArrayType extends readonly unknown[]> = ArrayType extends readonly (infer ElementType)[]
     ? ElementType

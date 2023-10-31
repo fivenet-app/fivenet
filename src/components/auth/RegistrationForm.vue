@@ -38,7 +38,7 @@ async function createAccount(values: FormData): Promise<void> {
         } catch (e) {
             accountError.value = (e as RpcError).message;
             $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
+            throw e;
         }
     });
 }

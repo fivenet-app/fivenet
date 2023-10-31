@@ -10,5 +10,17 @@ declare module '#app' {
     }
 }
 
+declare module 'vue-router' {
+    interface RouteMeta {
+        title?: string;
+        requiresAuth?: boolean;
+        permission?: string;
+        authOnlyToken?: boolean;
+        showQuickButtons?: boolean;
+        showCookieOptions?: boolean;
+        breadcrumbTitle?: string;
+    }
+}
+
 // It is always important to ensure you import/export something when augmenting a type
 export {};

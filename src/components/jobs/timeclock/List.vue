@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions, Switch } from '@headlessui/vue';
+import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { watchDebounced } from '@vueuse/core';
 import { CalendarIcon, CheckIcon, ChevronLeftIcon, ChevronRightIcon } from 'mdi-vue3';
@@ -8,7 +8,7 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import Divider from '~/components/partials/elements/Divider.vue';
 import TablePagination from '~/components/partials/elements/TablePagination.vue';
-import * as google_protobuf_timestamp_pb from '~~/gen/ts/google/protobuf/timestamp';
+import * as googleProtobufTimestamp_pb from '~~/gen/ts/google/protobuf/timestamp';
 import { TimeclockEntry } from '~~/gen/ts/resources/jobs/timeclock';
 import { User } from '~~/gen/ts/resources/users/users';
 import { TimeclockListEntriesRequest, TimeclockListEntriesResponse } from '~~/gen/ts/services/jobs/jobs';
@@ -54,12 +54,12 @@ async function listTimeclockEntries(): Promise<TimeclockListEntriesResponse> {
             }
             if (query.value.from) {
                 req.from = {
-                    timestamp: google_protobuf_timestamp_pb.Timestamp.fromDate(fromString(query.value.from)!),
+                    timestamp: googleProtobufTimestamp_pb.Timestamp.fromDate(fromString(query.value.from)!),
                 };
             }
             if (query.value.to) {
                 req.to = {
-                    timestamp: google_protobuf_timestamp_pb.Timestamp.fromDate(fromString(query.value.to)!),
+                    timestamp: googleProtobufTimestamp_pb.Timestamp.fromDate(fromString(query.value.to)!),
                 };
             }
 
@@ -69,7 +69,7 @@ async function listTimeclockEntries(): Promise<TimeclockListEntriesResponse> {
             return res(response);
         } catch (e) {
             $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
+            throw e;
         }
     });
 }
@@ -121,7 +121,7 @@ async function listColleagues(): Promise<User[]> {
             return res(response.users);
         } catch (e) {
             $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
+            throw e;
         }
     });
 }

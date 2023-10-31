@@ -45,7 +45,7 @@ async function editComment(documentId: bigint, commentId: bigint, values: FormDa
             return res();
         } catch (e) {
             $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
+            throw e;
         }
     });
 }
@@ -62,7 +62,7 @@ async function deleteComment(id: bigint): Promise<void> {
             return res();
         } catch (e) {
             $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
+            throw e;
         }
     });
 }

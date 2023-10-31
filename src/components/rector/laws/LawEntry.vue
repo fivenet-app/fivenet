@@ -36,7 +36,7 @@ async function deleteLaw(id: bigint): Promise<void> {
             return res();
         } catch (e) {
             $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
+            throw e;
         }
     });
 }
@@ -73,7 +73,7 @@ async function saveLaw(lawBookId: bigint, id: bigint, values: FormData): Promise
             return res();
         } catch (e) {
             $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
+            throw e;
         }
     });
 }

@@ -40,7 +40,7 @@ async function getTemplate(): Promise<Template> {
             return res(response.template!);
         } catch (e) {
             $grpc.handleError(e as RpcError);
-            return rej(e as RpcError);
+            throw e;
         }
     });
 }

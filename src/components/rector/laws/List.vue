@@ -4,7 +4,7 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { useCompletorStore } from '~/store/completor';
-import LawBookEntry from './LawBookEntry.vue';
+import LawBookEntry from '~/components/rector/laws/LawBookEntry.vue';
 
 const completorStore = useCompletorStore();
 
@@ -40,8 +40,8 @@ function addLawBook(): void {
                 <div class="sm:flex-auto w-full">
                     <button
                         type="button"
-                        @click="addLawBook"
                         class="w-full px-3 py-2 text-sm font-semibold rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
+                        @click="addLawBook"
                     >
                         {{ $t('pages.rector.laws.add_new_law_book') }}
                     </button>
@@ -63,9 +63,8 @@ function addLawBook(): void {
                         />
                         <div v-else>
                             <ul role="list" class="space-y-3 divide-base-600 divide-y">
-                                <li v-for="book in lawBooks">
+                                <li v-for="book in lawBooks" :key="book.id.toString()">
                                     <LawBookEntry
-                                        :key="book.id.toString()"
                                         :book="book"
                                         :start-in-edit="book.id < BigInt(0)"
                                         @deleted="deletedLawBook($event)"
