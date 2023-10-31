@@ -135,12 +135,10 @@ func (s *Server) getTimeclockstats(ctx context.Context, condition jet.BoolExpres
 			jet.MAX(tTimeClock.SpentTime).AS("timeclock_stats.spent_time_max"),
 		).
 		FROM(tTimeClock).
-		WHERE(
-			condition.
-				AND(
-					tTimeClock.Date.BETWEEN(jet.CURRENT_DATE().SUB(jet.INTERVAL(7, jet.DAY)), jet.CURRENT_TIMESTAMP()),
-				),
-		)
+		WHERE(jet.AND(
+			condition,
+			tTimeClock.Date.BETWEEN(jet.CURRENT_DATE().SUB(jet.INTERVAL(7, jet.DAY)), jet.CURRENT_TIMESTAMP()),
+		))
 
 	var dest jobs.TimeclockStats
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {

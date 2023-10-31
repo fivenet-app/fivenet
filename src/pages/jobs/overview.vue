@@ -32,7 +32,7 @@ async function getTimeclockStats(): Promise<TimeclockStats> {
 
 <template>
     <div>
-        <div v-if="timeclockStats" class="grid grid-col-2 gap-2">
+        <div class="grid grid-col-2 gap-2">
             <div class="sm:flex-auto">
                 <Divider :label="$t('components.jobs.timeclock.Stats.title')" />
                 <TimeclockStatsBlock :stats="timeclockStats" />
