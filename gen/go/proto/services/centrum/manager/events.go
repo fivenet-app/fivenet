@@ -26,16 +26,18 @@ func (s *Manager) watchUserChanges() {
 				defer span.End()
 
 				for _, userInfo := range event.Added {
-					unitId, err := s.LoadUnitIDForUserID(ctx, userInfo.UserID)
-					if err != nil {
-						s.logger.Error("failed to load user unit id", zap.Error(err))
-						continue
-					}
-					if unitId == 0 {
-						continue
-					}
+					if _, ok := s.UserIDToUnitID.Load(userInfo.UserID); !ok {
+						unitId, err := s.LoadUnitIDForUserID(ctx, userInfo.UserID)
+						if err != nil {
+							s.logger.Error("failed to load user unit id", zap.Error(err))
+							continue
+						}
+						if unitId == 0 {
+							continue
+						}
 
-					s.UserIDToUnitID.Store(userInfo.UserID, unitId)
+						s.UserIDToUnitID.Store(userInfo.UserID, unitId)
+					}
 				}
 
 				for _, userInfo := range event.Removed {

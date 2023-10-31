@@ -6,6 +6,7 @@ import { TimeclockEntry } from '~~/gen/ts/resources/jobs/timeclock';
 const props = defineProps<{
     entry: TimeclockEntry;
     first?: Date;
+    showDate: boolean;
 }>();
 
 // Soooo math with a computer is pretty cool, right? Right guys? Prevent ".349999999" seconds from appearing
@@ -14,7 +15,10 @@ const spentTime = parseFloat(((Math.round(props.entry.spentTime * 100) / 100) * 
 
 <template>
     <tr>
-        <td class="whitespace-nowrap py-1 pl-4 pr-3 text-base font-medium text-neutral sm:pl-0 inline-flex items-center">
+        <td
+            v-if="showDate"
+            class="whitespace-nowrap py-1 pl-4 pr-3 text-base font-medium text-neutral sm:pl-0 inline-flex items-center"
+        >
             <template v-if="first">
                 <CalendarIcon class="w-6 h-6 pr-2" />
                 {{ $d(first, 'date') }}

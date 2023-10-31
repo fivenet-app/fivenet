@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/jobs"
+	"github.com/galexrt/fivenet/pkg/tracker"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -24,10 +25,13 @@ func (s *Server) runTimeclock() {
 				ctx, span := s.tracer.Start(s.ctx, "jobs-timeclock")
 				defer span.End()
 
-				for _, userInfo := range event.Added {
-					if err := s.addTimeclockEntry(ctx, userInfo.UserID); err != nil {
-						s.logger.Error("failed to add timeclock entry", zap.Error(err))
-						continue
+				if len(event.Added) > 0 {
+					if err := s.addTimeclockEntries(ctx, event.Added); err != nil {
+						s.logger.Error("failed to add timeclock entries", zap.Error(err))
+					}
+				} else {
+					if err := s.addTimeclockEntries(ctx, event.Current); err != nil {
+						s.logger.Error("failed to add current timeclock entries", zap.Error(err))
 					}
 				}
 
@@ -40,6 +44,17 @@ func (s *Server) runTimeclock() {
 			}()
 		}
 	}
+}
+
+func (s *Server) addTimeclockEntries(ctx context.Context, users []*tracker.UserInfo) error {
+	for _, userInfo := range users {
+		if err := s.addTimeclockEntry(ctx, userInfo.UserID); err != nil {
+			s.logger.Error("failed to add timeclock entry", zap.Error(err))
+			continue
+		}
+	}
+
+	return nil
 }
 
 func (s *Server) addTimeclockEntry(ctx context.Context, userId int32) error {
@@ -62,7 +77,7 @@ func (s *Server) addTimeclockEntry(ctx context.Context, userId int32) error {
 		}
 	}
 
-	// If start time is not null, the entry is active, keep using it
+	// If start time is not null, the entry is (already) active, keep using it
 	if dest.StartTime != nil {
 		return nil
 	}

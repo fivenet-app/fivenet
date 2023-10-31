@@ -1,12 +1,16 @@
 package utils
 
-import "context"
+import (
+	"context"
+	"sync/atomic"
+)
 
 // Tweaked version of https://stackoverflow.com/a/49877632 CC-BY-SA 4.0 [icza](https://stackoverflow.com/users/1705598/icza)
 
 type Broker[T any] struct {
 	ctx context.Context
 
+	subs      atomic.Int64
 	stopCh    chan struct{}
 	publishCh chan T
 	subCh     chan chan T
@@ -34,8 +38,10 @@ func (b *Broker[T]) Start() {
 			return
 		case msgCh := <-b.subCh:
 			subs[msgCh] = struct{}{}
+			b.subs.Add(1)
 		case msgCh := <-b.unsubCh:
 			delete(subs, msgCh)
+			b.subs.Add(-1)
 		case msg := <-b.publishCh:
 			for msgCh := range subs {
 				// msgCh is buffered, use non-blocking send to protect the broker:
@@ -67,4 +73,8 @@ func (b *Broker[T]) Unsubscribe(msgCh chan T) {
 
 func (b *Broker[T]) Publish(msg T) {
 	b.publishCh <- msg
+}
+
+func (b *Broker[T]) SubCount() int64 {
+	return b.subs.Load()
 }

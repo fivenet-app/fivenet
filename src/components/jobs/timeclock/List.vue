@@ -2,7 +2,7 @@
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions, Switch } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { watchDebounced } from '@vueuse/core';
-import { CheckIcon, ChevronLeftIcon, ChevronRightIcon } from 'mdi-vue3';
+import { CalendarIcon, CheckIcon, ChevronLeftIcon, ChevronRightIcon } from 'mdi-vue3';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -19,13 +19,12 @@ const { $grpc } = useNuxtApp();
 
 const canAccessAll = can('JobsService.TimeclockListEntries.Access.All');
 
-const today = new Date();
-const currentDay = new Date();
+const now = new Date();
+const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+const currentDay = ref(new Date(today.getFullYear(), today.getMonth(), today.getDate()));
 
-const forwardDay = new Date();
-forwardDay.setDate(forwardDay.getDate() + 1);
-const previousDay = new Date();
-previousDay.setDate(previousDay.getDate() - 1);
+const futureDay = ref(new Date(currentDay.value.getFullYear(), currentDay.value.getMonth(), currentDay.value.getDate() + 1));
+const previousDay = ref(new Date(currentDay.value.getFullYear(), currentDay.value.getMonth(), currentDay.value.getDate() - 1));
 
 const query = ref<{
     user_ids?: User[];
@@ -33,7 +32,8 @@ const query = ref<{
     to?: string;
     perDay: boolean;
 }>({
-    from: dateToDateString(currentDay),
+    from: dateToDateString(currentDay.value),
+    to: canAccessAll ? dateToDateString(previousDay.value) : undefined,
     perDay: canAccessAll,
 });
 const offset = ref(0n);
@@ -154,27 +154,43 @@ onMounted(async () => {
 });
 
 function dayForward(): void {
-    currentDay.setDate(currentDay.getDate() + 1);
+    currentDay.value.setDate(currentDay.value.getDate() + 1);
+    currentDay.value = new Date(currentDay.value);
 
     updateDates();
 }
 
 function dayBackwards(): void {
-    currentDay.setDate(currentDay.getDate() - 1);
+    currentDay.value.setDate(currentDay.value.getDate() - 1);
+    currentDay.value = new Date(currentDay.value);
 
     updateDates();
 }
 
 function updateDates(): void {
-    forwardDay.setDate(currentDay.getDate() + 1);
-    previousDay.setDate(currentDay.getDate() - 1);
+    futureDay.value.setTime(
+        new Date(currentDay.value.getFullYear(), currentDay.value.getMonth(), currentDay.value.getDate() + 1).getTime(),
+    );
+    futureDay.value = new Date(futureDay.value);
+    previousDay.value.setTime(
+        new Date(currentDay.value.getFullYear(), currentDay.value.getMonth(), currentDay.value.getDate() - 1).getTime(),
+    );
+    previousDay.value = new Date(previousDay.value);
 
-    query.value.from = dateToDateString(currentDay);
-    query.value.to = dateToDateString(previousDay);
+    query.value.from = dateToDateString(currentDay.value);
+    query.value.to = dateToDateString(previousDay.value);
 }
 
 function dateToDateString(date: Date): string {
-    return date.toJSON().slice(0, 10);
+    var d = new Date(date),
+        month = '' + (d.getMonth() + 1),
+        day = '' + d.getDate(),
+        year = d.getFullYear();
+
+    if (month.length < 2) month = '0' + month;
+    if (day.length < 2) day = '0' + day;
+
+    return [year, month, day].join('-');
 }
 </script>
 
@@ -246,7 +262,11 @@ function dateToDateString(date: Date): string {
                             </div>
                             <div class="flex-1 form-control">
                                 <label for="search" class="block text-sm font-medium leading-6 text-neutral">
-                                    {{ $t('common.time_range') }}: {{ $t('common.from') }}
+                                    <template v-if="canAccessAll"> {{ $t('common.date') }}: </template>
+                                    <template v-else>
+                                        {{ $t('common.time_range') }}:
+                                        {{ $t('common.from') }}
+                                    </template>
                                 </label>
                                 <div class="relative flex items-center mt-2">
                                     <input
@@ -258,9 +278,9 @@ function dateToDateString(date: Date): string {
                                     />
                                 </div>
                             </div>
-                            <div v-if="!query.perDay" class="flex-1 form-control">
-                                <label for="search" class="block text-sm font-medium leading-6 text-neutral"
-                                    >{{ $t('common.time_range') }}:
+                            <div v-if="!canAccessAll" class="flex-1 form-control">
+                                <label for="search" class="block text-sm font-medium leading-6 text-neutral">
+                                    {{ $t('common.time_range') }}:
                                     {{ $t('common.to') }}
                                 </label>
                                 <div class="relative flex items-center mt-2">
@@ -273,47 +293,32 @@ function dateToDateString(date: Date): string {
                                     />
                                 </div>
                             </div>
-                            <div v-if="canAccessAll" class="flex-initial form-control">
-                                <label for="search" class="block text-sm font-medium leading-6 text-neutral">
-                                    {{ $t('components.jobs.timeclock.List.per_day') }}
-                                </label>
-                                <div class="relative flex items-center mt-3">
-                                    <Switch
-                                        v-model="query.perDay"
-                                        :class="[
-                                            query.perDay ? 'bg-primary-500' : 'bg-base-700',
-                                            'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2',
-                                        ]"
-                                    >
-                                        <span class="sr-only">
-                                            {{ $t('components.jobs.timeclock.List.per_day') }}
-                                        </span>
-                                        <span
-                                            aria-hidden="true"
-                                            :class="[
-                                                query.perDay ? 'translate-x-5' : 'translate-x-0',
-                                                'pointer-events-none inline-block h-5 w-5 transform rounded-full bg-neutral ring-0 transition duration-200 ease-in-out',
-                                            ]"
-                                        />
-                                    </Switch>
-                                </div>
-                            </div>
                         </div>
-                        <div v-if="query.perDay" class="pt-2 flex flex-row gap-4 mx-auto">
+                        <div v-if="canAccessAll" class="pt-2 flex flex-row gap-4 mx-auto">
                             <div class="flex-1 form-control">
                                 <button
                                     type="button"
-                                    :disabled="forwardDay.getDate() > today.getDate()"
+                                    :disabled="futureDay.getDate() > today.getDate()"
                                     @click="dayForward()"
                                     :class="[
-                                        forwardDay.getDate() > today.getDate()
+                                        futureDay.getDate() > today.getDate()
                                             ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
                                             : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
                                         'relative w-full inline-flex items-center place-content-start px-3 py-2 text-sm font-semibold rounded-md cursor-pointer text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
                                     ]"
                                 >
                                     <ChevronLeftIcon class="h-5 w-5" />
-                                    {{ $t('common.forward') }} - {{ $d(forwardDay, 'date') }}
+                                    {{ $t('common.forward') }} - {{ $d(futureDay, 'date') }}
+                                </button>
+                            </div>
+                            <div class="flex-initial form-control">
+                                <button
+                                    type="button"
+                                    disabled
+                                    class="disabled inline-flex items-center bg-base-500 hover:bg-base-400 focus-visible:outline-base-500 relative w-full inline-flex items-center place-content-end px-3 py-2 text-sm font-semibold rounded-md cursor-pointer text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                                >
+                                    <CalendarIcon class="h-5 w-5 mr-1" />
+                                    {{ $d(currentDay, 'date') }}
                                 </button>
                             </div>
                             <div class="flex-1 form-control">
@@ -351,6 +356,7 @@ function dateToDateString(date: Date): string {
                                         <th
                                             scope="col"
                                             class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-0"
+                                            v-if="!canAccessAll"
                                         >
                                             {{ $t('common.date') }}
                                         </th>
@@ -370,6 +376,7 @@ function dateToDateString(date: Date): string {
                                             :entry="entry"
                                             class="transition-colors hover:bg-neutral/5"
                                             :first="idx === 0 ? group.date : undefined"
+                                            :show-date="!canAccessAll"
                                         />
                                     </template>
                                 </tbody>
@@ -378,6 +385,7 @@ function dateToDateString(date: Date): string {
                                         <th
                                             scope="col"
                                             class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-0"
+                                            v-if="!canAccessAll"
                                         >
                                             {{ $t('common.date') }}
                                         </th>

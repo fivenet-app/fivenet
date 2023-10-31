@@ -41,6 +41,7 @@ type UserInfo struct {
 type Event struct {
 	Added   []*UserInfo
 	Removed []*UserInfo
+	Current []*UserInfo
 }
 
 type Tracker struct {
@@ -121,26 +122,34 @@ func New(p Params) *Tracker {
 }
 
 func (s *Tracker) start() {
-	time.Sleep(2 * time.Second)
+	ticker := time.NewTicker(30 * time.Second)
+	defer ticker.Stop()
 
 	for {
-		s.refreshCache()
-
 		select {
 		case <-s.ctx.Done():
 			s.broker.Stop()
 			return
 
+		case <-ticker.C:
+			s.refreshCache(true)
+
 		case <-time.After(s.refreshTime):
+			// Only refresh cache if broker has a subscriber
+			if s.broker.SubCount() <= 0 {
+				break
+			}
+
+			s.refreshCache(false)
 		}
 	}
 }
 
-func (s *Tracker) refreshCache() {
+func (s *Tracker) refreshCache(force bool) {
 	ctx, span := s.tracer.Start(s.ctx, "livemap-refresh-cache")
 	defer span.End()
 
-	if err := s.refreshUserLocations(ctx); err != nil {
+	if err := s.refreshUserLocations(ctx, force); err != nil {
 		s.logger.Error("failed to refresh livemap users cache", zap.Error(err))
 	}
 
@@ -170,7 +179,7 @@ func (s *Tracker) cleanupUserIDs() error {
 	return nil
 }
 
-func (s *Tracker) refreshUserLocations(ctx context.Context) error {
+func (s *Tracker) refreshUserLocations(ctx context.Context, force bool) error {
 	tLocs := tLocs.AS("markerInfo")
 	stmt := tLocs.
 		SELECT(
@@ -183,7 +192,7 @@ func (s *Tracker) refreshUserLocations(ctx context.Context) error {
 			tUsers.ID.AS("user.id"),
 			tUsers.ID.AS("markerInfo.id"),
 			tUsers.Identifier,
-			tUsers.Job,
+			tLocs.Job.AS("user.job"),
 			tUsers.JobGrade,
 			tUsers.Firstname,
 			tUsers.Lastname,
@@ -252,21 +261,27 @@ func (s *Tracker) refreshUserLocations(ctx context.Context) error {
 			UserID: userId,
 			Time:   expiration,
 		}
-		if _, ok := s.usersIDs.Load(userId); !ok {
+		if ui, ok := s.usersIDs.LoadOrStore(userId, userInfo); ok {
+			ui.Job = userInfo.Job
+			ui.UserID = userInfo.UserID
+			ui.Time = userInfo.Time
+		} else {
 			// User wasn't in the list, so they must be new so add the user to event for keeping track of users
 			if _, ok := s.GetUserByJobAndID(job, userId); !ok {
 				event.Added = append(event.Added, userInfo)
 			}
 		}
 
-		s.usersIDs.Store(userId, userInfo)
+		if force {
+			event.Current = append(event.Current, userInfo)
+		}
 	}
 
 	for job, marker := range markers {
 		s.usersCache.Store(job, marker)
 	}
 
-	if len(event.Added) > 0 || len(event.Removed) > 0 {
+	if len(event.Added) > 0 || len(event.Removed) > 0 || len(event.Current) > 0 {
 		s.broker.Publish(event)
 	}
 
