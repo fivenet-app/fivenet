@@ -22,11 +22,7 @@ async function getTimeclockStats(): Promise<TimeclockStats> {
         const call = $grpc.getJobsClient().timeclockStats({});
         const { response } = await call;
 
-        if (!response.stats) {
-            throw new Error('failed to get timeclcok stats from server response');
-        }
-
-        return response.stats;
+        return response.stats!;
     } catch (e) {
         $grpc.handleError(e as RpcError);
         throw e;
@@ -39,7 +35,7 @@ async function getTimeclockStats(): Promise<TimeclockStats> {
         <div v-if="timeclockStats" class="grid grid-col-2 gap-2">
             <div class="sm:flex-auto">
                 <Divider :label="$t('components.jobs.timeclock.Stats.title')" />
-                <TimeclockStatsBlock :stats="timeclockStats ?? undefined" />
+                <TimeclockStatsBlock :stats="timeclockStats" />
             </div>
         </div>
     </div>

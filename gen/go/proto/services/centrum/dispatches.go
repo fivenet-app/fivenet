@@ -131,7 +131,7 @@ func (s *Server) ListDispatches(ctx context.Context, req *ListDispatchesRequest)
 		WHERE(condition).
 		OFFSET(req.Pagination.Offset).
 		ORDER_BY(
-			tDispatch.ID.ASC(),
+			tDispatch.ID.DESC(),
 		).
 		LIMIT(limit)
 
