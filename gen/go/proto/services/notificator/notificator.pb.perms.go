@@ -11,7 +11,7 @@ var PermsRemap = map[string]string{
 
 	// Service: NotificatorService
 	"NotificatorService/GetNotifications":  "Any",
-	"NotificatorService/ReadNotifications": "Any",
+	"NotificatorService/MarkNotifications": "Any",
 	"NotificatorService/Stream":            "Any",
 }
 

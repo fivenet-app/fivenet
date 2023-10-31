@@ -5,16 +5,20 @@ import { useConfirmDialog, useThrottleFn } from '@vueuse/core';
 import { CancelIcon, ContentSaveIcon, PencilIcon, TrashCanIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
-import { LawBook } from '~~/gen/ts/resources/laws/laws';
+import { Law, LawBook } from '~~/gen/ts/resources/laws/laws';
 import LawEntry from '~/components/rector/laws/LawEntry.vue';
 
 const props = defineProps<{
-    book: LawBook;
+    modelValue: LawBook;
+    laws: Law[];
     startInEdit?: boolean;
 }>();
 
 const emit = defineEmits<{
     (e: 'deleted', id: bigint): void;
+    (e: 'update:modelValue', book: LawBook): void;
+    (e: 'update:laws', laws: Law[]): void;
+    (e: 'update:law', law: Law): void;
 }>();
 
 const { $grpc } = useNuxtApp();
@@ -53,20 +57,12 @@ async function saveLawBook(id: bigint, values: FormData): Promise<LawBook> {
             },
         });
         const { response } = await call;
-        const lawBook = response.lawBook;
-        if (lawBook === undefined) {
-            throw new Error('Failed to retrieve book from response');
-        }
-
-        props.book.id = lawBook.id;
-        props.book.createdAt = lawBook.createdAt;
-        props.book.updatedAt = lawBook.updatedAt;
-        props.book.name = lawBook.name;
-        props.book.description = lawBook.description;
 
         editing.value = false;
 
-        return lawBook;
+        emit('update:modelValue', response.lawBook!);
+
+        return response.lawBook!;
     } catch (e) {
         $grpc.handleError(e as RpcError);
         throw e;
@@ -85,14 +81,14 @@ const { handleSubmit, setValues } = useForm<FormData>({
     validateOnMount: true,
 });
 setValues({
-    name: props.book.name,
-    description: props.book.description,
+    name: props.modelValue.name,
+    description: props.modelValue.description,
 });
 
 const canSubmit = ref(true);
 const onSubmit = handleSubmit(
     async (values): Promise<LawBook> =>
-        await saveLawBook(props.book.id, values).finally(() => setTimeout(() => (canSubmit.value = true), 400)),
+        await saveLawBook(props.modelValue.id, values).finally(() => setTimeout(() => (canSubmit.value = true), 400)),
 );
 const onSubmitThrottle = useThrottleFn(async (e) => {
     canSubmit.value = false;
@@ -100,21 +96,26 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
 }, 1000);
 
 function deletedLaw(id: bigint): void {
-    const idx = props.book.laws.findIndex((b) => b.id === id);
-    if (idx > -1) props.book.laws.splice(idx, 1);
+    emit(
+        'update:laws',
+        props.laws.filter((b) => b.id !== id),
+    );
 }
 
 const lastNewId = ref<bigint>(BigInt(-1));
 
 function addLaw(): void {
-    props.book.laws?.unshift({
-        lawbookId: props.book.id,
-        id: lastNewId.value,
-        name: '',
-        fine: BigInt(0),
-        detentionTime: BigInt(0),
-        stvoPoints: BigInt(0),
-    });
+    emit('update:laws', [
+        ...props.laws,
+        {
+            lawbookId: props.modelValue.id,
+            id: lastNewId.value,
+            name: '',
+            fine: BigInt(0),
+            detentionTime: BigInt(0),
+            stvoPoints: BigInt(0),
+        },
+    ]);
     lastNewId.value--;
 }
 
@@ -126,7 +127,7 @@ const editing = ref(props.startInEdit);
 </script>
 
 <template>
-    <ConfirmDialog :open="isRevealed" :cancel="cancel" :confirm="() => confirm(book.id)" />
+    <ConfirmDialog :open="isRevealed" :cancel="cancel" :confirm="() => confirm(modelValue.id)" />
 
     <div class="my-2">
         <div v-if="!editing" class="flex text-neutral items-center gap-x-2">
@@ -136,8 +137,8 @@ const editing = ref(props.startInEdit);
             <button type="button" :title="$t('common.delete')" @click="reveal()">
                 <TrashCanIcon class="w-6 h-6" />
             </button>
-            <h2 class="text-xl">{{ book.name }}</h2>
-            <p v-if="book.description" class="pl-2">- {{ $t('common.description') }}: {{ book.description }}</p>
+            <h2 class="text-xl">{{ modelValue.name }}</h2>
+            <p v-if="modelValue.description" class="pl-2">- {{ $t('common.description') }}: {{ modelValue.description }}</p>
             <div class="pl-2">
                 <div class="sm:flex-auto w-full">
                     <button
@@ -159,7 +160,7 @@ const editing = ref(props.startInEdit);
                 :title="$t('common.cancel')"
                 @click="
                     editing = false;
-                    book.id < BigInt(0) && $emit('deleted', book.id);
+                    modelValue.id < BigInt(0) && $emit('deleted', modelValue.id);
                 "
             >
                 <CancelIcon class="w-6 h-6" />
@@ -221,10 +222,11 @@ const editing = ref(props.startInEdit);
             </thead>
             <tbody class="divide-y divide-base-800">
                 <LawEntry
-                    v-for="law in book.laws"
+                    v-for="law in modelValue.laws"
                     :key="law.id.toString()"
                     :law="law"
                     :start-in-edit="law.id < BigInt(0)"
+                    @update:law="$emit('update:law', $event)"
                     @deleted="deletedLaw($event)"
                 />
             </tbody>

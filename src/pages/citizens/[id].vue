@@ -5,6 +5,7 @@ import Info from '~/components/citizens/info/Info.vue';
 import ClipboardButton from '~/components/clipboard/ClipboardButton.vue';
 import ContentWrapper from '~/components/partials/ContentWrapper.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
+import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { User } from '~~/gen/ts/resources/users/users';
 
@@ -51,8 +52,9 @@ async function getUser(): Promise<User> {
             :message="$t(error.message)"
             :retry="refresh"
         />
+        <DataNoDataBlock v-else-if="!user" />
         <div v-else>
-            <Info :user="user!" />
+            <Info :user="user" />
             <ClipboardButton />
         </div>
     </ContentWrapper>

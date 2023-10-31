@@ -224,7 +224,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                 :retry="refresh"
             />
             <DataNoDataBlock
-                v-if="data?.comments.length === 0"
+                v-if="!data || !data.comments || data?.comments.length === 0"
                 :message="$t('components.documents.document_comments.no_comments')"
                 :icon="CommentTextMultipleIcon"
                 :focus="focusComment"
@@ -235,10 +235,10 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
             >
                 <ul role="list" class="divide-y divide-gray-200 px-4">
                     <CommentEntry
-                        v-for="com in data?.comments"
-                        :key="com.id?.toString()"
-                        :comment="com"
-                        @removed="(c: Comment) => removeComment(c)"
+                        v-for="(comment, idx) in data?.comments"
+                        :key="comment.id?.toString()"
+                        v-model:comment="data.comments[idx]"
+                        @deleted="removeComment($event)"
                     />
                 </ul>
             </div>

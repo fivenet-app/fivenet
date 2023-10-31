@@ -12,7 +12,7 @@ const props = defineProps<{
 }>();
 
 const emits = defineEmits<{
-    (e: 'update'): void;
+    (e: 'updated'): void;
 }>();
 
 const { $grpc } = useNuxtApp();
@@ -24,7 +24,7 @@ async function deleteUnit(id: bigint): Promise<void> {
         });
         await call;
 
-        emits('update');
+        emits('updated');
     } catch (e) {
         $grpc.handleError(e as RpcError);
         throw e;
@@ -42,7 +42,13 @@ const open = ref(false);
 
 <template>
     <ConfirmDialog :open="isRevealed" :cancel="cancel" :confirm="() => confirm(unit.id)" />
-    <CreateOrUpdateUnitModal v-if="can('CentrumService.CreateOrUpdateUnit')" :unit="unit" :open="open" @close="open = false" />
+    <CreateOrUpdateUnitModal
+        v-if="can('CentrumService.CreateOrUpdateUnit')"
+        :unit="unit"
+        :open="open"
+        @close="open = false"
+        @updated="$emit('updated')"
+    />
 
     <tr>
         <td class="whitespace-nowrap py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">

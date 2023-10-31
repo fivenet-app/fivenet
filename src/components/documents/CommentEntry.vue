@@ -14,12 +14,13 @@ const authStore = useAuthStore();
 
 const { activeChar, permissions } = storeToRefs(authStore);
 
-const emit = defineEmits<{
-    (e: 'removed', comment: Comment): void;
-}>();
-
 const props = defineProps<{
     comment: Comment;
+}>();
+
+const emit = defineEmits<{
+    (e: 'update:comment', comment: Comment): void;
+    (e: 'deleted', comment: Comment): void;
 }>();
 
 const editing = ref(false);
@@ -36,12 +37,12 @@ async function editComment(documentId: bigint, commentId: bigint, values: FormDa
     };
 
     try {
-        await $grpc.getDocStoreClient().editComment({ comment });
+        const { response } = await $grpc.getDocStoreClient().editComment({ comment });
 
         editing.value = false;
-        props.comment.comment = values.comment;
-
         resetForm();
+
+        emit('update:comment', response.comment!);
     } catch (e) {
         $grpc.handleError(e as RpcError);
         throw e;
@@ -54,7 +55,7 @@ async function deleteComment(id: bigint): Promise<void> {
             commentId: id,
         });
 
-        emit('removed', props.comment);
+        emit('deleted', props.comment);
     } catch (e) {
         $grpc.handleError(e as RpcError);
         throw e;

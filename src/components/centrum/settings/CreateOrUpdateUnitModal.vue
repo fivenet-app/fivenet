@@ -15,7 +15,8 @@ const props = defineProps<{
 
 const emit = defineEmits<{
     (e: 'close'): void;
-    (e: 'update'): void;
+    (e: 'created', unit: Unit): void;
+    (e: 'updated', unit: Unit): void;
 }>();
 
 const { $grpc } = useNuxtApp();
@@ -40,16 +41,13 @@ async function createOrUpdateUnit(values: FormData): Promise<void> {
                 users: [],
             },
         });
-        await call;
+        const { response } = await call;
 
-        if (props.unit) {
-            props.unit.name = values.name;
-            props.unit.initials = values.initials;
-            props.unit.color = values.color.replaceAll('#', '');
-            props.unit.description = values.description;
+        if (props.unit?.id === undefined) {
+            emit('created', response.unit!);
+        } else {
+            emit('updated', response.unit!);
         }
-
-        emit('update');
         emit('close');
     } catch (e) {
         $grpc.handleError(e as RpcError);

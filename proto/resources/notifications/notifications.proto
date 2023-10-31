@@ -21,6 +21,7 @@ message Notification {
   resources.common.TranslateItem content = 7;
   NotificationCategory category = 8 [(validate.rules).enum.defined_only = true];
   optional Data data = 9;
+  optional bool starred = 10;
 }
 
 enum NotificationCategory {

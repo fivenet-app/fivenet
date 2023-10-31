@@ -236,6 +236,10 @@ func (m *Notification) validate(all bool) error {
 
 	}
 
+	if m.Starred != nil {
+		// no validation rules for Starred
+	}
+
 	if len(errors) > 0 {
 		return NotificationMultiError(errors)
 	}

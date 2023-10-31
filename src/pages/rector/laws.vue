@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import Laws from '~/components/rector/laws/List.vue';
+import LawList from '~/components/rector/laws/LawList.vue';
 
 useHead({
     title: 'pages.rector.laws.title',
@@ -14,6 +14,6 @@ definePageMeta({
 
 <template>
     <div>
-        <Laws />
+        <LawList />
     </div>
 </template>

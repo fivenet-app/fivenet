@@ -15,6 +15,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
     (e: 'deleted', id: bigint): void;
+    (e: 'update:law', law: Law): void;
 }>();
 
 const { $grpc } = useNuxtApp();
@@ -60,19 +61,8 @@ async function saveLaw(lawBookId: bigint, id: bigint, values: FormData): Promise
             },
         });
         const { response } = await call;
-        const law = response.law;
-        if (law === undefined) {
-            throw new Error('failed to get law from server response');
-        }
 
-        props.law.id = law.id;
-        props.law.createdAt = law.createdAt;
-        props.law.updatedAt = law.updatedAt;
-        props.law.name = law.name;
-        props.law.description = law.description;
-        props.law.fine = law.fine;
-        props.law.detentionTime = law.detentionTime;
-        props.law.stvoPoints = law.stvoPoints;
+        emit('update:law', response.law!);
 
         editing.value = false;
     } catch (e) {

@@ -5,6 +5,7 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { useCompletorStore } from '~/store/completor';
 import LawBookEntry from '~/components/rector/laws/LawBookEntry.vue';
+import type { Law } from '~~/gen/ts/resources/laws/laws';
 
 const completorStore = useCompletorStore();
 
@@ -30,6 +31,20 @@ function addLawBook(): void {
         laws: [],
     });
     lastNewId.value--;
+}
+
+function updateLaw(law: Law): void {
+    const book = lawBooks.value?.find((b) => b.id === law.lawbookId);
+    if (book === undefined) {
+        return;
+    }
+
+    const idx = book?.laws.findIndex((l) => l.id === law.id);
+    if (idx === -1) {
+        return;
+    }
+
+    book.laws[idx] = law;
 }
 </script>
 
@@ -57,16 +72,18 @@ function addLawBook(): void {
                             :retry="refresh"
                         />
                         <DataNoDataBlock
-                            v-else-if="lawBooks && lawBooks.length === 0"
+                            v-else-if="!lawBooks || lawBooks.length === 0"
                             :icon="GavelIcon"
                             :type="$t('common.law', 2)"
                         />
                         <div v-else>
                             <ul role="list" class="space-y-3 divide-base-600 divide-y">
-                                <li v-for="book in lawBooks" :key="book.id.toString()">
+                                <li v-for="(book, idx) in lawBooks" :key="book.id.toString()">
                                     <LawBookEntry
-                                        :book="book"
+                                        v-model="lawBooks[idx]"
+                                        v-model:laws="lawBooks[idx].laws"
                                         :start-in-edit="book.id < BigInt(0)"
+                                        @update:law="updateLaw($event)"
                                         @deleted="deletedLawBook($event)"
                                     />
                                 </li>

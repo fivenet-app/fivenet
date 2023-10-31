@@ -350,6 +350,10 @@ export interface EditCommentRequest {
  * @generated from protobuf message services.docstore.EditCommentResponse
  */
 export interface EditCommentResponse {
+    /**
+     * @generated from protobuf field: resources.documents.Comment comment = 1;
+     */
+    comment?: Comment;
 }
 /**
  * @generated from protobuf message services.docstore.DeleteCommentRequest
@@ -1038,7 +1042,7 @@ export const PostCommentResponse = new PostCommentResponse$Type();
 class EditCommentRequest$Type extends MessageType<EditCommentRequest> {
     constructor() {
         super("services.docstore.EditCommentRequest", [
-            { no: 1, name: "comment", kind: "message", T: () => Comment }
+            { no: 1, name: "comment", kind: "message", T: () => Comment, options: { "validate.rules": { message: { required: true } } } }
         ]);
     }
 }
@@ -1049,7 +1053,9 @@ export const EditCommentRequest = new EditCommentRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class EditCommentResponse$Type extends MessageType<EditCommentResponse> {
     constructor() {
-        super("services.docstore.EditCommentResponse", []);
+        super("services.docstore.EditCommentResponse", [
+            { no: 1, name: "comment", kind: "message", T: () => Comment }
+        ]);
     }
 }
 /**

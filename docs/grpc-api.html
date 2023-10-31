@@ -1630,11 +1630,11 @@
                 </li>
               
                 <li>
-                  <a href="#services.notificator.ReadNotificationsRequest"><span class="badge">M</span>ReadNotificationsRequest</a>
+                  <a href="#services.notificator.MarkNotificationsRequest"><span class="badge">M</span>MarkNotificationsRequest</a>
                 </li>
               
                 <li>
-                  <a href="#services.notificator.ReadNotificationsResponse"><span class="badge">M</span>ReadNotificationsResponse</a>
+                  <a href="#services.notificator.MarkNotificationsResponse"><span class="badge">M</span>MarkNotificationsResponse</a>
                 </li>
               
                 <li>
@@ -6486,6 +6486,13 @@
                 <tr>
                   <td>data</td>
                   <td><a href="#resources.notifications.Data">Data</a></td>
+                  <td>optional</td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>starred</td>
+                  <td><a href="#bool">bool</a></td>
                   <td>optional</td>
                   <td><p> </p></td>
                 </tr>
@@ -14182,6 +14189,33 @@
           </table>
 
           
+            
+            
+            <h4>Validated Fields</h4>
+            <table>
+              <thead>
+                <tr>
+                  <td>Field</td>
+                  <td>Validations</td>
+                </tr>
+              </thead>
+              <tbody>
+              
+                <tr>
+                  <td>comment</td>
+                  <td>
+                    <ul>
+                    
+                      <li>message.required: true</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+              </tbody>
+            </table>
+            
+          
 
         
       
@@ -14189,6 +14223,23 @@
         <p></p>
 
         
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>comment</td>
+                  <td><a href="#resources.documents.Comment">resources.documents.Comment</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
 
         
       
@@ -17370,7 +17421,7 @@
 
         
       
-        <h3 id="services.notificator.ReadNotificationsRequest">ReadNotificationsRequest</h3>
+        <h3 id="services.notificator.MarkNotificationsRequest">MarkNotificationsRequest</h3>
         <p></p>
 
         
@@ -17430,7 +17481,7 @@
 
         
       
-        <h3 id="services.notificator.ReadNotificationsResponse">ReadNotificationsResponse</h3>
+        <h3 id="services.notificator.MarkNotificationsResponse">MarkNotificationsResponse</h3>
         <p></p>
 
         
@@ -17628,9 +17679,9 @@
               </tr>
             
               <tr>
-                <td>ReadNotifications</td>
-                <td><a href="#services.notificator.ReadNotificationsRequest">ReadNotificationsRequest</a></td>
-                <td><a href="#services.notificator.ReadNotificationsResponse">ReadNotificationsResponse</a></td>
+                <td>MarkNotifications</td>
+                <td><a href="#services.notificator.MarkNotificationsRequest">MarkNotificationsRequest</a></td>
+                <td><a href="#services.notificator.MarkNotificationsResponse">MarkNotificationsResponse</a></td>
                 <td><p>@perm: Name=Any</p></td>
               </tr>
             

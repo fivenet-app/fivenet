@@ -8,10 +8,12 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import TablePagination from '~/components/partials/elements/TablePagination.vue';
 import Time from '~/components/partials/elements/Time.vue';
+import { useNotificatorStore } from '~/store/notificator';
 import { GetNotificationsResponse } from '~~/gen/ts/services/notificator/notificator';
 
 const { $grpc } = useNuxtApp();
 
+const notificator = useNotificatorStore();
 const offset = ref(0n);
 
 const includeRead = ref(false);
@@ -37,31 +39,15 @@ async function getNotifications(): Promise<GetNotificationsResponse> {
 }
 
 async function markAllRead(): Promise<void> {
+    await notificator.markNotifications({
+        ids: [],
+        all: true,
+    });
+
     const now = {
         timestamp: undefined,
     };
-    try {
-        await $grpc.getNotificatorClient().readNotifications({
-            ids: [],
-            all: true,
-        });
-
-        data.value?.notifications.forEach((v) => (v.readAt = now));
-    } catch (e) {
-        $grpc.handleError(e as RpcError);
-        throw e;
-    }
-}
-
-async function markRead(ids: bigint[]): Promise<void> {
-    try {
-        await $grpc.getNotificatorClient().readNotifications({
-            ids,
-        });
-    } catch (e) {
-        $grpc.handleError(e as RpcError);
-        throw e;
-    }
+    data.value?.notifications.forEach((v) => (v.readAt = now));
 }
 
 watch(offset, async () => refresh());

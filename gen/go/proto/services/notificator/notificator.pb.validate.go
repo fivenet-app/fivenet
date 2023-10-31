@@ -346,22 +346,22 @@ var _ interface {
 	ErrorName() string
 } = GetNotificationsResponseValidationError{}
 
-// Validate checks the field values on ReadNotificationsRequest with the rules
+// Validate checks the field values on MarkNotificationsRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *ReadNotificationsRequest) Validate() error {
+func (m *MarkNotificationsRequest) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on ReadNotificationsRequest with the
+// ValidateAll checks the field values on MarkNotificationsRequest with the
 // rules defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// ReadNotificationsRequestMultiError, or nil if none found.
-func (m *ReadNotificationsRequest) ValidateAll() error {
+// MarkNotificationsRequestMultiError, or nil if none found.
+func (m *MarkNotificationsRequest) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *ReadNotificationsRequest) validate(all bool) error {
+func (m *MarkNotificationsRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -371,7 +371,7 @@ func (m *ReadNotificationsRequest) validate(all bool) error {
 	if len(m.GetIds()) > 0 {
 
 		if l := len(m.GetIds()); l < 1 || l > 20 {
-			err := ReadNotificationsRequestValidationError{
+			err := MarkNotificationsRequestValidationError{
 				field:  "Ids",
 				reason: "value must contain between 1 and 20 items, inclusive",
 			}
@@ -388,19 +388,19 @@ func (m *ReadNotificationsRequest) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return ReadNotificationsRequestMultiError(errors)
+		return MarkNotificationsRequestMultiError(errors)
 	}
 
 	return nil
 }
 
-// ReadNotificationsRequestMultiError is an error wrapping multiple validation
-// errors returned by ReadNotificationsRequest.ValidateAll() if the designated
+// MarkNotificationsRequestMultiError is an error wrapping multiple validation
+// errors returned by MarkNotificationsRequest.ValidateAll() if the designated
 // constraints aren't met.
-type ReadNotificationsRequestMultiError []error
+type MarkNotificationsRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m ReadNotificationsRequestMultiError) Error() string {
+func (m MarkNotificationsRequestMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -409,11 +409,11 @@ func (m ReadNotificationsRequestMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m ReadNotificationsRequestMultiError) AllErrors() []error { return m }
+func (m MarkNotificationsRequestMultiError) AllErrors() []error { return m }
 
-// ReadNotificationsRequestValidationError is the validation error returned by
-// ReadNotificationsRequest.Validate if the designated constraints aren't met.
-type ReadNotificationsRequestValidationError struct {
+// MarkNotificationsRequestValidationError is the validation error returned by
+// MarkNotificationsRequest.Validate if the designated constraints aren't met.
+type MarkNotificationsRequestValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -421,24 +421,24 @@ type ReadNotificationsRequestValidationError struct {
 }
 
 // Field function returns field value.
-func (e ReadNotificationsRequestValidationError) Field() string { return e.field }
+func (e MarkNotificationsRequestValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e ReadNotificationsRequestValidationError) Reason() string { return e.reason }
+func (e MarkNotificationsRequestValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e ReadNotificationsRequestValidationError) Cause() error { return e.cause }
+func (e MarkNotificationsRequestValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e ReadNotificationsRequestValidationError) Key() bool { return e.key }
+func (e MarkNotificationsRequestValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e ReadNotificationsRequestValidationError) ErrorName() string {
-	return "ReadNotificationsRequestValidationError"
+func (e MarkNotificationsRequestValidationError) ErrorName() string {
+	return "MarkNotificationsRequestValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e ReadNotificationsRequestValidationError) Error() string {
+func (e MarkNotificationsRequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -450,14 +450,14 @@ func (e ReadNotificationsRequestValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sReadNotificationsRequest.%s: %s%s",
+		"invalid %sMarkNotificationsRequest.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = ReadNotificationsRequestValidationError{}
+var _ error = MarkNotificationsRequestValidationError{}
 
 var _ interface {
 	Field() string
@@ -465,24 +465,24 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = ReadNotificationsRequestValidationError{}
+} = MarkNotificationsRequestValidationError{}
 
-// Validate checks the field values on ReadNotificationsResponse with the rules
+// Validate checks the field values on MarkNotificationsResponse with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *ReadNotificationsResponse) Validate() error {
+func (m *MarkNotificationsResponse) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on ReadNotificationsResponse with the
+// ValidateAll checks the field values on MarkNotificationsResponse with the
 // rules defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// ReadNotificationsResponseMultiError, or nil if none found.
-func (m *ReadNotificationsResponse) ValidateAll() error {
+// MarkNotificationsResponseMultiError, or nil if none found.
+func (m *MarkNotificationsResponse) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *ReadNotificationsResponse) validate(all bool) error {
+func (m *MarkNotificationsResponse) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -492,19 +492,19 @@ func (m *ReadNotificationsResponse) validate(all bool) error {
 	// no validation rules for Updated
 
 	if len(errors) > 0 {
-		return ReadNotificationsResponseMultiError(errors)
+		return MarkNotificationsResponseMultiError(errors)
 	}
 
 	return nil
 }
 
-// ReadNotificationsResponseMultiError is an error wrapping multiple validation
-// errors returned by ReadNotificationsResponse.ValidateAll() if the
+// MarkNotificationsResponseMultiError is an error wrapping multiple validation
+// errors returned by MarkNotificationsResponse.ValidateAll() if the
 // designated constraints aren't met.
-type ReadNotificationsResponseMultiError []error
+type MarkNotificationsResponseMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m ReadNotificationsResponseMultiError) Error() string {
+func (m MarkNotificationsResponseMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -513,11 +513,11 @@ func (m ReadNotificationsResponseMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m ReadNotificationsResponseMultiError) AllErrors() []error { return m }
+func (m MarkNotificationsResponseMultiError) AllErrors() []error { return m }
 
-// ReadNotificationsResponseValidationError is the validation error returned by
-// ReadNotificationsResponse.Validate if the designated constraints aren't met.
-type ReadNotificationsResponseValidationError struct {
+// MarkNotificationsResponseValidationError is the validation error returned by
+// MarkNotificationsResponse.Validate if the designated constraints aren't met.
+type MarkNotificationsResponseValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -525,24 +525,24 @@ type ReadNotificationsResponseValidationError struct {
 }
 
 // Field function returns field value.
-func (e ReadNotificationsResponseValidationError) Field() string { return e.field }
+func (e MarkNotificationsResponseValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e ReadNotificationsResponseValidationError) Reason() string { return e.reason }
+func (e MarkNotificationsResponseValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e ReadNotificationsResponseValidationError) Cause() error { return e.cause }
+func (e MarkNotificationsResponseValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e ReadNotificationsResponseValidationError) Key() bool { return e.key }
+func (e MarkNotificationsResponseValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e ReadNotificationsResponseValidationError) ErrorName() string {
-	return "ReadNotificationsResponseValidationError"
+func (e MarkNotificationsResponseValidationError) ErrorName() string {
+	return "MarkNotificationsResponseValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e ReadNotificationsResponseValidationError) Error() string {
+func (e MarkNotificationsResponseValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -554,14 +554,14 @@ func (e ReadNotificationsResponseValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sReadNotificationsResponse.%s: %s%s",
+		"invalid %sMarkNotificationsResponse.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = ReadNotificationsResponseValidationError{}
+var _ error = MarkNotificationsResponseValidationError{}
 
 var _ interface {
 	Field() string
@@ -569,7 +569,7 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = ReadNotificationsResponseValidationError{}
+} = MarkNotificationsResponseValidationError{}
 
 // Validate checks the field values on StreamRequest with the rules defined in
 // the proto definition for this message. If any rules are violated, the first

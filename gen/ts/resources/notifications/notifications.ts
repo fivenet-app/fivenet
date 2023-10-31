@@ -49,6 +49,10 @@ export interface Notification {
      * @generated from protobuf field: optional resources.notifications.Data data = 9;
      */
     data?: Data;
+    /**
+     * @generated from protobuf field: optional bool starred = 10;
+     */
+    starred?: boolean;
 }
 /**
  * @generated from protobuf message resources.notifications.Data
@@ -109,7 +113,8 @@ class Notification$Type extends MessageType<Notification> {
             { no: 6, name: "type", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "128" } } } },
             { no: 7, name: "content", kind: "message", T: () => TranslateItem },
             { no: 8, name: "category", kind: "enum", T: () => ["resources.notifications.NotificationCategory", NotificationCategory, "NOTIFICATION_CATEGORY_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
-            { no: 9, name: "data", kind: "message", T: () => Data }
+            { no: 9, name: "data", kind: "message", T: () => Data },
+            { no: 10, name: "starred", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
 }

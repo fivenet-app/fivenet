@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { LControl, LControlLayers, LMap, LTileLayer } from '@vue-leaflet/vue-leaflet';
 import { useDebounceFn, useResizeObserver, watchDebounced } from '@vueuse/core';
-import L, { extend, latLngBounds, CRS, Projection, Transformation } from 'leaflet';
+import L, { extend, latLngBounds, CRS, LatLng, Projection, Transformation } from 'leaflet';
 import 'leaflet-contextmenu';
 import 'leaflet-contextmenu/dist/leaflet.contextmenu.min.css';
 import 'leaflet/dist/leaflet.css';
@@ -142,7 +142,7 @@ function parseHash(hash: string): { latlng: L.LatLng; zoom: number } | undefined
     }
 
     return {
-        latlng: new L.LatLng(lat, lng),
+        latlng: new LatLng(lat, lng),
         zoom,
     };
 }

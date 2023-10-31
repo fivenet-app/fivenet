@@ -2,7 +2,7 @@
 import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { LCircleMarker, LMarker, LPopup } from '@vue-leaflet/vue-leaflet';
 import { useConfirmDialog } from '@vueuse/core';
-import L from 'leaflet';
+import { DivIcon, Icon, type PointExpression } from 'leaflet';
 import { TrashCanIcon } from 'mdi-vue3';
 import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
 import PhoneNumber from '~/components/partials/citizens/PhoneNumber.vue';
@@ -22,9 +22,9 @@ defineEmits<{
     (e: 'selected'): void;
 }>();
 
-const iconAnchor: L.PointExpression = [props.size / 2, props.size];
-const popupAnchor: L.PointExpression = [0, (props.size / 2) * -1];
-const icon = new L.DivIcon({
+const iconAnchor: PointExpression = [props.size / 2, props.size];
+const popupAnchor: PointExpression = [0, (props.size / 2) * -1];
+const icon = new DivIcon({
     html: `<div>
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -0.8 16 17.6" fill="${
             props.marker.info?.color ? '#' + props.marker.info?.color : 'currentColor'
@@ -35,7 +35,7 @@ const icon = new L.DivIcon({
     iconSize: [props.size, props.size],
     iconAnchor,
     popupAnchor,
-}) as L.Icon;
+}) as Icon;
 
 const { $grpc } = useNuxtApp();
 

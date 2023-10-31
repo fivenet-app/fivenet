@@ -5,6 +5,7 @@ import { type Notification, type NotificationType } from '~/composables/notifica
 import { type NotificationConfig } from '~/composables/notification/interfaces/NotificationConfig.interface';
 import { useAuthStore } from '~/store/auth';
 import { NotificationCategory } from '~~/gen/ts/resources/notifications/notifications';
+import { MarkNotificationsRequest } from '~~/gen/ts/services/notificator/notificator';
 
 // In seconds
 const initialBackoffTime = 2;
@@ -189,6 +190,18 @@ export const useNotificatorStore = defineStore('notifications', {
             setTimeout(async () => {
                 if (this.restarting) this.startStream();
             }, this.restartBackoffTime * 1000);
+        },
+
+        // Notification Actions
+        async markNotifications(req: MarkNotificationsRequest): Promise<void> {
+            const { $grpc } = useNuxtApp();
+
+            try {
+                await $grpc.getNotificatorClient().markNotifications(req);
+            } catch (e) {
+                $grpc.handleError(e as RpcError);
+                throw e;
+            }
         },
     },
     getters: {

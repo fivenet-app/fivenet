@@ -222,14 +222,17 @@ func (s *Server) EditComment(ctx context.Context, req *EditCommentRequest) (*Edi
 			),
 		)
 
-	resp := &EditCommentResponse{}
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 		return nil, err
 	}
 
+	comment.Comment = req.Comment.Comment
+
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 
-	return resp, nil
+	return &EditCommentResponse{
+		Comment: comment,
+	}, nil
 }
 
 func (s *Server) getComment(ctx context.Context, id uint64) (*documents.Comment, error) {

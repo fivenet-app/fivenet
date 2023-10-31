@@ -21,4 +21,5 @@ type FivenetNotifications struct {
 	Content   *string    `json:"content"`
 	Category  int16      `json:"category"`
 	Data      *string    `json:"data"`
+	Starred   *bool      `json:"starred"`
 }

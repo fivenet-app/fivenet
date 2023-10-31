@@ -7,8 +7,8 @@ import { NotificatorService } from "./notificator.js";
 import type { StreamResponse } from "./notificator.js";
 import type { StreamRequest } from "./notificator.js";
 import type { ServerStreamingCall } from "@protobuf-ts/runtime-rpc";
-import type { ReadNotificationsResponse } from "./notificator.js";
-import type { ReadNotificationsRequest } from "./notificator.js";
+import type { MarkNotificationsResponse } from "./notificator.js";
+import type { MarkNotificationsRequest } from "./notificator.js";
 import { stackIntercept } from "@protobuf-ts/runtime-rpc";
 import type { GetNotificationsResponse } from "./notificator.js";
 import type { GetNotificationsRequest } from "./notificator.js";
@@ -27,9 +27,9 @@ export interface INotificatorServiceClient {
     /**
      * @perm: Name=Any
      *
-     * @generated from protobuf rpc: ReadNotifications(services.notificator.ReadNotificationsRequest) returns (services.notificator.ReadNotificationsResponse);
+     * @generated from protobuf rpc: MarkNotifications(services.notificator.MarkNotificationsRequest) returns (services.notificator.MarkNotificationsResponse);
      */
-    readNotifications(input: ReadNotificationsRequest, options?: RpcOptions): UnaryCall<ReadNotificationsRequest, ReadNotificationsResponse>;
+    markNotifications(input: MarkNotificationsRequest, options?: RpcOptions): UnaryCall<MarkNotificationsRequest, MarkNotificationsResponse>;
     /**
      * @perm: Name=Any
      *
@@ -58,11 +58,11 @@ export class NotificatorServiceClient implements INotificatorServiceClient, Serv
     /**
      * @perm: Name=Any
      *
-     * @generated from protobuf rpc: ReadNotifications(services.notificator.ReadNotificationsRequest) returns (services.notificator.ReadNotificationsResponse);
+     * @generated from protobuf rpc: MarkNotifications(services.notificator.MarkNotificationsRequest) returns (services.notificator.MarkNotificationsResponse);
      */
-    readNotifications(input: ReadNotificationsRequest, options?: RpcOptions): UnaryCall<ReadNotificationsRequest, ReadNotificationsResponse> {
+    markNotifications(input: MarkNotificationsRequest, options?: RpcOptions): UnaryCall<MarkNotificationsRequest, MarkNotificationsResponse> {
         const method = this.methods[1], opt = this._transport.mergeOptions(options);
-        return stackIntercept<ReadNotificationsRequest, ReadNotificationsResponse>("unary", this._transport, method, opt, input);
+        return stackIntercept<MarkNotificationsRequest, MarkNotificationsResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @perm: Name=Any

@@ -142,7 +142,7 @@ func (s *Server) GetNotifications(ctx context.Context, req *GetNotificationsRequ
 	return resp, nil
 }
 
-func (s *Server) ReadNotifications(ctx context.Context, req *ReadNotificationsRequest) (*ReadNotificationsResponse, error) {
+func (s *Server) MarkNotifications(ctx context.Context, req *MarkNotificationsRequest) (*MarkNotificationsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	condition := tNotifications.UserID.EQ(
@@ -157,7 +157,7 @@ func (s *Server) ReadNotifications(ctx context.Context, req *ReadNotificationsRe
 		}
 		condition = condition.AND(tNotifications.ID.IN(ids...))
 	} else if req.All == nil || !*req.All {
-		return &ReadNotificationsResponse{}, nil
+		return &MarkNotificationsResponse{}, nil
 	}
 
 	stmt := tNotifications.
@@ -179,7 +179,7 @@ func (s *Server) ReadNotifications(ctx context.Context, req *ReadNotificationsRe
 		return nil, ErrFailedRequest
 	}
 
-	return &ReadNotificationsResponse{
+	return &MarkNotificationsResponse{
 		Updated: uint64(rows),
 	}, nil
 }

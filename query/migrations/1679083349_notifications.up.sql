@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_notifications` (
   `content` longtext DEFAULT NULL,
   `category` smallint(2) NOT NULL,
   `data` longtext DEFAULT NULL,
+  `starred` tinyint(1) DEFAULT 0,
   PRIMARY KEY (`id`),
   KEY `idx_fivenet_notifications_read_at` (`read_at`),
   KEY `idx_fivenet_notifications_user_id` (`user_id`),

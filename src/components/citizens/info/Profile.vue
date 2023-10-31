@@ -36,7 +36,7 @@ const trafficPointsModal = ref(false);
 <template>
     <TemplatesModal :open="templatesOpen" :auto-fill="true" @close="templatesOpen = false" />
     <WantedModal :open="setWantedModal" :user="user" @close="setWantedModal = false" />
-    <JobModal :open="setJobModal" :user="user" @close="setJobModal = false" />
+    <JobModal :user="user" :open="setJobModal" @close="setJobModal = false" />
     <TrafficPointsModal :open="trafficPointsModal" :user="user" @close="trafficPointsModal = false" />
 
     <div class="w-full mx-auto max-w-7xl grow lg:flex xl:px-2">

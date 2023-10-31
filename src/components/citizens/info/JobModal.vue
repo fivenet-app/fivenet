@@ -61,7 +61,7 @@ interface FormData {
 }
 
 async function setJobProp(values: FormData): Promise<void> {
-    if (!selectedJob.value || selectedJob.value.name === props.user.job) {
+    if (selectedJob.value === undefined || selectedJob.value.name === props.user.job) {
         return;
     }
 
@@ -77,11 +77,11 @@ async function setJobProp(values: FormData): Promise<void> {
             reason: values.reason,
         });
 
-        props.user.job = selectedJob.value?.name!;
-        props.user.jobLabel = selectedJob.value?.label!;
+        props.user.job = selectedJob.value.name;
+        props.user.jobLabel = selectedJob.value.label;
 
-        props.user.jobGrade = selectedJobGrade.value?.grade!;
-        props.user.jobGradeLabel = selectedJob.value?.label!;
+        props.user.jobGrade = selectedJobGrade.value.grade;
+        props.user.jobGradeLabel = selectedJob.value.label;
 
         notifications.dispatchNotification({
             title: { key: 'notifications.action_successfull.title', parameters: {} },

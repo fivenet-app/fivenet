@@ -135,7 +135,7 @@ func (x *GetNotificationsResponse) GetNotifications() []*notifications.Notificat
 	return nil
 }
 
-type ReadNotificationsRequest struct {
+type MarkNotificationsRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -144,8 +144,8 @@ type ReadNotificationsRequest struct {
 	All *bool    `protobuf:"varint,2,opt,name=all,proto3,oneof" json:"all,omitempty"`
 }
 
-func (x *ReadNotificationsRequest) Reset() {
-	*x = ReadNotificationsRequest{}
+func (x *MarkNotificationsRequest) Reset() {
+	*x = MarkNotificationsRequest{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_services_notificator_notificator_proto_msgTypes[2]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -153,13 +153,13 @@ func (x *ReadNotificationsRequest) Reset() {
 	}
 }
 
-func (x *ReadNotificationsRequest) String() string {
+func (x *MarkNotificationsRequest) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ReadNotificationsRequest) ProtoMessage() {}
+func (*MarkNotificationsRequest) ProtoMessage() {}
 
-func (x *ReadNotificationsRequest) ProtoReflect() protoreflect.Message {
+func (x *MarkNotificationsRequest) ProtoReflect() protoreflect.Message {
 	mi := &file_services_notificator_notificator_proto_msgTypes[2]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -171,26 +171,26 @@ func (x *ReadNotificationsRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ReadNotificationsRequest.ProtoReflect.Descriptor instead.
-func (*ReadNotificationsRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use MarkNotificationsRequest.ProtoReflect.Descriptor instead.
+func (*MarkNotificationsRequest) Descriptor() ([]byte, []int) {
 	return file_services_notificator_notificator_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *ReadNotificationsRequest) GetIds() []uint64 {
+func (x *MarkNotificationsRequest) GetIds() []uint64 {
 	if x != nil {
 		return x.Ids
 	}
 	return nil
 }
 
-func (x *ReadNotificationsRequest) GetAll() bool {
+func (x *MarkNotificationsRequest) GetAll() bool {
 	if x != nil && x.All != nil {
 		return *x.All
 	}
 	return false
 }
 
-type ReadNotificationsResponse struct {
+type MarkNotificationsResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -198,8 +198,8 @@ type ReadNotificationsResponse struct {
 	Updated uint64 `protobuf:"varint,1,opt,name=updated,proto3" json:"updated,omitempty"`
 }
 
-func (x *ReadNotificationsResponse) Reset() {
-	*x = ReadNotificationsResponse{}
+func (x *MarkNotificationsResponse) Reset() {
+	*x = MarkNotificationsResponse{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_services_notificator_notificator_proto_msgTypes[3]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -207,13 +207,13 @@ func (x *ReadNotificationsResponse) Reset() {
 	}
 }
 
-func (x *ReadNotificationsResponse) String() string {
+func (x *MarkNotificationsResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*ReadNotificationsResponse) ProtoMessage() {}
+func (*MarkNotificationsResponse) ProtoMessage() {}
 
-func (x *ReadNotificationsResponse) ProtoReflect() protoreflect.Message {
+func (x *MarkNotificationsResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_services_notificator_notificator_proto_msgTypes[3]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -225,12 +225,12 @@ func (x *ReadNotificationsResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use ReadNotificationsResponse.ProtoReflect.Descriptor instead.
-func (*ReadNotificationsResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use MarkNotificationsResponse.ProtoReflect.Descriptor instead.
+func (*MarkNotificationsResponse) Descriptor() ([]byte, []int) {
 	return file_services_notificator_notificator_proto_rawDescGZIP(), []int{3}
 }
 
-func (x *ReadNotificationsResponse) GetUpdated() uint64 {
+func (x *MarkNotificationsResponse) GetUpdated() uint64 {
 	if x != nil {
 		return x.Updated
 	}
@@ -563,13 +563,13 @@ var file_services_notificator_notificator_proto_rawDesc = []byte{
 	0x65, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x73, 0x2e, 0x6e, 0x6f, 0x74, 0x69, 0x66, 0x69, 0x63,
 	0x61, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x2e, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x69, 0x63, 0x61, 0x74,
 	0x69, 0x6f, 0x6e, 0x52, 0x0d, 0x6e, 0x6f, 0x74, 0x69, 0x66, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6f,
-	0x6e, 0x73, 0x22, 0x59, 0x0a, 0x18, 0x52, 0x65, 0x61, 0x64, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x69,
+	0x6e, 0x73, 0x22, 0x59, 0x0a, 0x18, 0x4d, 0x61, 0x72, 0x6b, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x69,
 	0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x1e,
 	0x0a, 0x03, 0x69, 0x64, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x04, 0x42, 0x0c, 0xfa, 0x42, 0x09,
 	0x92, 0x01, 0x06, 0x08, 0x01, 0x10, 0x14, 0x28, 0x01, 0x52, 0x03, 0x69, 0x64, 0x73, 0x12, 0x15,
 	0x0a, 0x03, 0x61, 0x6c, 0x6c, 0x18, 0x02, 0x20, 0x01, 0x28, 0x08, 0x48, 0x00, 0x52, 0x03, 0x61,
 	0x6c, 0x6c, 0x88, 0x01, 0x01, 0x42, 0x06, 0x0a, 0x04, 0x5f, 0x61, 0x6c, 0x6c, 0x22, 0x35, 0x0a,
-	0x19, 0x52, 0x65, 0x61, 0x64, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6f,
+	0x19, 0x4d, 0x61, 0x72, 0x6b, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6f,
 	0x6e, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x18, 0x0a, 0x07, 0x75, 0x70,
 	0x64, 0x61, 0x74, 0x65, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x04, 0x52, 0x07, 0x75, 0x70, 0x64,
 	0x61, 0x74, 0x65, 0x64, 0x22, 0x28, 0x0a, 0x0d, 0x53, 0x74, 0x72, 0x65, 0x61, 0x6d, 0x52, 0x65,
@@ -625,12 +625,12 @@ var file_services_notificator_notificator_proto_rawDesc = []byte{
 	0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x73, 0x2e, 0x6e, 0x6f, 0x74, 0x69, 0x66, 0x69, 0x63,
 	0x61, 0x74, 0x6f, 0x72, 0x2e, 0x47, 0x65, 0x74, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x69, 0x63, 0x61,
 	0x74, 0x69, 0x6f, 0x6e, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x74, 0x0a,
-	0x11, 0x52, 0x65, 0x61, 0x64, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6f,
+	0x11, 0x4d, 0x61, 0x72, 0x6b, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6f,
 	0x6e, 0x73, 0x12, 0x2e, 0x2e, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x73, 0x2e, 0x6e, 0x6f,
-	0x74, 0x69, 0x66, 0x69, 0x63, 0x61, 0x74, 0x6f, 0x72, 0x2e, 0x52, 0x65, 0x61, 0x64, 0x4e, 0x6f,
+	0x74, 0x69, 0x66, 0x69, 0x63, 0x61, 0x74, 0x6f, 0x72, 0x2e, 0x4d, 0x61, 0x72, 0x6b, 0x4e, 0x6f,
 	0x74, 0x69, 0x66, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65,
 	0x73, 0x74, 0x1a, 0x2f, 0x2e, 0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x73, 0x2e, 0x6e, 0x6f,
-	0x74, 0x69, 0x66, 0x69, 0x63, 0x61, 0x74, 0x6f, 0x72, 0x2e, 0x52, 0x65, 0x61, 0x64, 0x4e, 0x6f,
+	0x74, 0x69, 0x66, 0x69, 0x63, 0x61, 0x74, 0x6f, 0x72, 0x2e, 0x4d, 0x61, 0x72, 0x6b, 0x4e, 0x6f,
 	0x74, 0x69, 0x66, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f,
 	0x6e, 0x73, 0x65, 0x12, 0x55, 0x0a, 0x06, 0x53, 0x74, 0x72, 0x65, 0x61, 0x6d, 0x12, 0x23, 0x2e,
 	0x73, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x73, 0x2e, 0x6e, 0x6f, 0x74, 0x69, 0x66, 0x69, 0x63,
@@ -661,8 +661,8 @@ var file_services_notificator_notificator_proto_msgTypes = make([]protoimpl.Mess
 var file_services_notificator_notificator_proto_goTypes = []interface{}{
 	(*GetNotificationsRequest)(nil),     // 0: services.notificator.GetNotificationsRequest
 	(*GetNotificationsResponse)(nil),    // 1: services.notificator.GetNotificationsResponse
-	(*ReadNotificationsRequest)(nil),    // 2: services.notificator.ReadNotificationsRequest
-	(*ReadNotificationsResponse)(nil),   // 3: services.notificator.ReadNotificationsResponse
+	(*MarkNotificationsRequest)(nil),    // 2: services.notificator.MarkNotificationsRequest
+	(*MarkNotificationsResponse)(nil),   // 3: services.notificator.MarkNotificationsResponse
 	(*StreamRequest)(nil),               // 4: services.notificator.StreamRequest
 	(*StreamResponse)(nil),              // 5: services.notificator.StreamResponse
 	(*StreamNotifications)(nil),         // 6: services.notificator.StreamNotifications
@@ -685,10 +685,10 @@ var file_services_notificator_notificator_proto_depIdxs = []int32{
 	12, // 7: services.notificator.TokenUpdate.user_info:type_name -> resources.users.User
 	13, // 8: services.notificator.TokenUpdate.job_props:type_name -> resources.users.JobProps
 	0,  // 9: services.notificator.NotificatorService.GetNotifications:input_type -> services.notificator.GetNotificationsRequest
-	2,  // 10: services.notificator.NotificatorService.ReadNotifications:input_type -> services.notificator.ReadNotificationsRequest
+	2,  // 10: services.notificator.NotificatorService.MarkNotifications:input_type -> services.notificator.MarkNotificationsRequest
 	4,  // 11: services.notificator.NotificatorService.Stream:input_type -> services.notificator.StreamRequest
 	1,  // 12: services.notificator.NotificatorService.GetNotifications:output_type -> services.notificator.GetNotificationsResponse
-	3,  // 13: services.notificator.NotificatorService.ReadNotifications:output_type -> services.notificator.ReadNotificationsResponse
+	3,  // 13: services.notificator.NotificatorService.MarkNotifications:output_type -> services.notificator.MarkNotificationsResponse
 	5,  // 14: services.notificator.NotificatorService.Stream:output_type -> services.notificator.StreamResponse
 	12, // [12:15] is the sub-list for method output_type
 	9,  // [9:12] is the sub-list for method input_type
@@ -728,7 +728,7 @@ func file_services_notificator_notificator_proto_init() {
 			}
 		}
 		file_services_notificator_notificator_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ReadNotificationsRequest); i {
+			switch v := v.(*MarkNotificationsRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -740,7 +740,7 @@ func file_services_notificator_notificator_proto_init() {
 			}
 		}
 		file_services_notificator_notificator_proto_msgTypes[3].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*ReadNotificationsResponse); i {
+			switch v := v.(*MarkNotificationsResponse); i {
 			case 0:
 				return &v.state
 			case 1:

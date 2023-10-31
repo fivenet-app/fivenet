@@ -20,7 +20,7 @@ const _ = grpc.SupportPackageIsVersion7
 
 const (
 	NotificatorService_GetNotifications_FullMethodName  = "/services.notificator.NotificatorService/GetNotifications"
-	NotificatorService_ReadNotifications_FullMethodName = "/services.notificator.NotificatorService/ReadNotifications"
+	NotificatorService_MarkNotifications_FullMethodName = "/services.notificator.NotificatorService/MarkNotifications"
 	NotificatorService_Stream_FullMethodName            = "/services.notificator.NotificatorService/Stream"
 )
 
@@ -31,7 +31,7 @@ type NotificatorServiceClient interface {
 	// @perm: Name=Any
 	GetNotifications(ctx context.Context, in *GetNotificationsRequest, opts ...grpc.CallOption) (*GetNotificationsResponse, error)
 	// @perm: Name=Any
-	ReadNotifications(ctx context.Context, in *ReadNotificationsRequest, opts ...grpc.CallOption) (*ReadNotificationsResponse, error)
+	MarkNotifications(ctx context.Context, in *MarkNotificationsRequest, opts ...grpc.CallOption) (*MarkNotificationsResponse, error)
 	// @perm: Name=Any
 	Stream(ctx context.Context, in *StreamRequest, opts ...grpc.CallOption) (NotificatorService_StreamClient, error)
 }
@@ -53,9 +53,9 @@ func (c *notificatorServiceClient) GetNotifications(ctx context.Context, in *Get
 	return out, nil
 }
 
-func (c *notificatorServiceClient) ReadNotifications(ctx context.Context, in *ReadNotificationsRequest, opts ...grpc.CallOption) (*ReadNotificationsResponse, error) {
-	out := new(ReadNotificationsResponse)
-	err := c.cc.Invoke(ctx, NotificatorService_ReadNotifications_FullMethodName, in, out, opts...)
+func (c *notificatorServiceClient) MarkNotifications(ctx context.Context, in *MarkNotificationsRequest, opts ...grpc.CallOption) (*MarkNotificationsResponse, error) {
+	out := new(MarkNotificationsResponse)
+	err := c.cc.Invoke(ctx, NotificatorService_MarkNotifications_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -101,7 +101,7 @@ type NotificatorServiceServer interface {
 	// @perm: Name=Any
 	GetNotifications(context.Context, *GetNotificationsRequest) (*GetNotificationsResponse, error)
 	// @perm: Name=Any
-	ReadNotifications(context.Context, *ReadNotificationsRequest) (*ReadNotificationsResponse, error)
+	MarkNotifications(context.Context, *MarkNotificationsRequest) (*MarkNotificationsResponse, error)
 	// @perm: Name=Any
 	Stream(*StreamRequest, NotificatorService_StreamServer) error
 	mustEmbedUnimplementedNotificatorServiceServer()
@@ -114,8 +114,8 @@ type UnimplementedNotificatorServiceServer struct {
 func (UnimplementedNotificatorServiceServer) GetNotifications(context.Context, *GetNotificationsRequest) (*GetNotificationsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetNotifications not implemented")
 }
-func (UnimplementedNotificatorServiceServer) ReadNotifications(context.Context, *ReadNotificationsRequest) (*ReadNotificationsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ReadNotifications not implemented")
+func (UnimplementedNotificatorServiceServer) MarkNotifications(context.Context, *MarkNotificationsRequest) (*MarkNotificationsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method MarkNotifications not implemented")
 }
 func (UnimplementedNotificatorServiceServer) Stream(*StreamRequest, NotificatorService_StreamServer) error {
 	return status.Errorf(codes.Unimplemented, "method Stream not implemented")
@@ -151,20 +151,20 @@ func _NotificatorService_GetNotifications_Handler(srv interface{}, ctx context.C
 	return interceptor(ctx, in, info, handler)
 }
 
-func _NotificatorService_ReadNotifications_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ReadNotificationsRequest)
+func _NotificatorService_MarkNotifications_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(MarkNotificationsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(NotificatorServiceServer).ReadNotifications(ctx, in)
+		return srv.(NotificatorServiceServer).MarkNotifications(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: NotificatorService_ReadNotifications_FullMethodName,
+		FullMethod: NotificatorService_MarkNotifications_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NotificatorServiceServer).ReadNotifications(ctx, req.(*ReadNotificationsRequest))
+		return srv.(NotificatorServiceServer).MarkNotifications(ctx, req.(*MarkNotificationsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -202,8 +202,8 @@ var NotificatorService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _NotificatorService_GetNotifications_Handler,
 		},
 		{
-			MethodName: "ReadNotifications",
-			Handler:    _NotificatorService_ReadNotifications_Handler,
+			MethodName: "MarkNotifications",
+			Handler:    _NotificatorService_MarkNotifications_Handler,
 		},
 	},
 	Streams: []grpc.StreamDesc{

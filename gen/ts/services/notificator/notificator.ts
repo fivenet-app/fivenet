@@ -36,9 +36,9 @@ export interface GetNotificationsResponse {
     notifications: Notification[];
 }
 /**
- * @generated from protobuf message services.notificator.ReadNotificationsRequest
+ * @generated from protobuf message services.notificator.MarkNotificationsRequest
  */
-export interface ReadNotificationsRequest {
+export interface MarkNotificationsRequest {
     /**
      * @generated from protobuf field: repeated uint64 ids = 1;
      */
@@ -49,9 +49,9 @@ export interface ReadNotificationsRequest {
     all?: boolean;
 }
 /**
- * @generated from protobuf message services.notificator.ReadNotificationsResponse
+ * @generated from protobuf message services.notificator.MarkNotificationsResponse
  */
-export interface ReadNotificationsResponse {
+export interface MarkNotificationsResponse {
     /**
      * @generated from protobuf field: uint64 updated = 1;
      */
@@ -164,30 +164,30 @@ class GetNotificationsResponse$Type extends MessageType<GetNotificationsResponse
  */
 export const GetNotificationsResponse = new GetNotificationsResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class ReadNotificationsRequest$Type extends MessageType<ReadNotificationsRequest> {
+class MarkNotificationsRequest$Type extends MessageType<MarkNotificationsRequest> {
     constructor() {
-        super("services.notificator.ReadNotificationsRequest", [
+        super("services.notificator.MarkNotificationsRequest", [
             { no: 1, name: "ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/, options: { "validate.rules": { repeated: { minItems: "1", maxItems: "20", ignoreEmpty: true } } } },
             { no: 2, name: "all", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
 }
 /**
- * @generated MessageType for protobuf message services.notificator.ReadNotificationsRequest
+ * @generated MessageType for protobuf message services.notificator.MarkNotificationsRequest
  */
-export const ReadNotificationsRequest = new ReadNotificationsRequest$Type();
+export const MarkNotificationsRequest = new MarkNotificationsRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class ReadNotificationsResponse$Type extends MessageType<ReadNotificationsResponse> {
+class MarkNotificationsResponse$Type extends MessageType<MarkNotificationsResponse> {
     constructor() {
-        super("services.notificator.ReadNotificationsResponse", [
+        super("services.notificator.MarkNotificationsResponse", [
             { no: 1, name: "updated", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
         ]);
     }
 }
 /**
- * @generated MessageType for protobuf message services.notificator.ReadNotificationsResponse
+ * @generated MessageType for protobuf message services.notificator.MarkNotificationsResponse
  */
-export const ReadNotificationsResponse = new ReadNotificationsResponse$Type();
+export const MarkNotificationsResponse = new MarkNotificationsResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class StreamRequest$Type extends MessageType<StreamRequest> {
     constructor() {
@@ -249,6 +249,6 @@ export const TokenUpdate = new TokenUpdate$Type();
  */
 export const NotificatorService = new ServiceType("services.notificator.NotificatorService", [
     { name: "GetNotifications", options: {}, I: GetNotificationsRequest, O: GetNotificationsResponse },
-    { name: "ReadNotifications", options: {}, I: ReadNotificationsRequest, O: ReadNotificationsResponse },
+    { name: "MarkNotifications", options: {}, I: MarkNotificationsRequest, O: MarkNotificationsResponse },
     { name: "Stream", serverStreaming: true, options: {}, I: StreamRequest, O: StreamResponse }
 ]);
