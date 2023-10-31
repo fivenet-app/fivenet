@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { LControl, LControlLayers, LMap, LTileLayer } from '@vue-leaflet/vue-leaflet';
 import { useDebounceFn, useResizeObserver, watchDebounced } from '@vueuse/core';
-import L, { extend, latLngBounds, CRS, LatLng, Projection, Transformation } from 'leaflet';
+import L, { extend, latLngBounds, CRS, LatLng, Projection, Transformation, type PointExpression } from 'leaflet';
 import 'leaflet-contextmenu';
 import 'leaflet-contextmenu/dist/leaflet.contextmenu.min.css';
 import 'leaflet/dist/leaflet.css';
@@ -61,7 +61,8 @@ const customCRS = extend({}, CRS.Simple, {
     infinite: true,
 });
 
-const center: L.PointExpression = [0, 0];
+// eslint-disable-next-line prefer-const
+let center: PointExpression = [0, 0];
 const attribution = '<a href="http://www.rockstargames.com/V/">Grand Theft Auto V</a>';
 const selectedMarker = ref<bigint>();
 
