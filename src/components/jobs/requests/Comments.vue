@@ -212,10 +212,10 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
             >
                 <ul role="list" class="divide-y divide-gray-200 px-4">
                     <CommentEntry
-                        v-for="com in comments.comments"
-                        :key="com.id?.toString()"
-                        :comment="com"
-                        @removed="(c: RequestComment) => removeComment(c)"
+                        v-for="(comment, idx) in comments.comments"
+                        :key="comment.id?.toString()"
+                        v-model:comment="comments.comments[idx]"
+                        @deleted="removeComment($event)"
                     />
                 </ul>
             </div>
