@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { RpcError } from '@protobuf-ts/runtime-rpc';
-import { default as TimeclockStatsBlock } from '~/components/jobs/timeclock/Stats.vue';
+import TimeclockStatsBlock from '~/components/jobs/timeclock/TimeclockStatsBlock.vue';
 import Divider from '~/components/partials/elements/Divider.vue';
 import { TimeclockStats } from '~~/gen/ts/resources/jobs/timeclock';
 
@@ -15,21 +15,22 @@ definePageMeta({
 
 const { $grpc } = useNuxtApp();
 
-const { data: timeclockStats, pending, error } = useLazyAsyncData(`jobs-timeclock-stats`, () => getTimeclockStats());
+const { data: timeclockStats } = useLazyAsyncData(`jobs-timeclock-stats`, () => getTimeclockStats());
 
 async function getTimeclockStats(): Promise<TimeclockStats> {
-    return new Promise(async (res, rej) => {
-        try {
-            const call = $grpc.getJobsClient().timeclockStats({});
-            const { response } = await call;
+    try {
+        const call = $grpc.getJobsClient().timeclockStats({});
+        const { response } = await call;
 
-            if (!response.stats) return rej();
-            return res(response.stats);
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
+        if (!response.stats) {
+            throw new Error('failed to get timeclcok stats from server response');
         }
-    });
+
+        return response.stats;
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 </script>
 

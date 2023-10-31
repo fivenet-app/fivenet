@@ -3,9 +3,9 @@ import { type NavigationFailure } from 'vue-router';
 import FiveNetLogo from '~/components/partials/logos/FiveNetLogo.vue';
 import { useAuthStore } from '~/store/auth';
 import { useConfigStore } from '~/store/config';
-import ForgotPasswordForm from './ForgotPasswordForm.vue';
-import LoginForm from './LoginForm.vue';
-import RegistrationForm from './RegistrationForm.vue';
+import ForgotPasswordForm from '~/components/auth/ForgotPasswordForm.vue';
+import LoginForm from '~/components/auth/LoginForm.vue';
+import RegistrationForm from '~/components/auth/RegistrationForm.vue';
 import type { TypedRouteFromName } from '@typed-router';
 
 const authStore = useAuthStore();
@@ -49,17 +49,17 @@ watch(accessToken, async (): Promise<NavigationFailure | TypedRouteFromName<'aut
                 <div class="mt-6">
                     <button
                         type="button"
-                        @click="forms.forgot = true"
                         class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-secondary-600 text-neutral hover:bg-secondary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300"
+                        @click="forms.forgot = true"
                     >
                         {{ $t('components.auth.login.forgot_password') }}
                     </button>
                 </div>
-                <div class="mt-6" v-if="appConfig.login.signupEnabled">
+                <div v-if="appConfig.login.signupEnabled" class="mt-6">
                     <button
                         type="button"
-                        @click="forms.create = true"
                         class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-secondary-600 text-neutral hover:bg-secondary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300"
+                        @click="forms.create = true"
                     >
                         {{ $t('components.auth.login.register_account') }}
                     </button>

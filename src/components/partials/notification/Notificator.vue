@@ -26,4 +26,5 @@ onBeforeMount(async () => toggleStream());
 onBeforeUnmount(async () => stopStream());
 </script>
 
+<!-- eslint-disable vue/valid-template-root -->
 <template></template>

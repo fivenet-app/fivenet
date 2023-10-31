@@ -5,7 +5,7 @@ import { PencilIcon, TrashCanIcon } from 'mdi-vue3';
 import ColorInput from 'vue-color-input/dist/color-input.esm';
 import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
 import { Unit } from '~~/gen/ts/resources/dispatch/units';
-import CreateOrUpdateUnitModal from './CreateOrUpdateUnitModal.vue';
+import CreateOrUpdateUnitModal from '~/components/centrum/settings/CreateOrUpdateUnitModal.vue';
 
 const props = defineProps<{
     unit: Unit;
@@ -18,21 +18,17 @@ const emits = defineEmits<{
 const { $grpc } = useNuxtApp();
 
 async function deleteUnit(id: bigint): Promise<void> {
-    return new Promise(async (res, rej) => {
-        try {
-            const call = $grpc.getCentrumClient().deleteUnit({
-                unitId: id,
-            });
-            await call;
+    try {
+        const call = $grpc.getCentrumClient().deleteUnit({
+            unitId: id,
+        });
+        await call;
 
-            emits('update');
-
-            return res();
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
-        }
-    });
+        emits('update');
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 
 const color = `#${props.unit.color ?? 'ffffff'}`;
@@ -65,16 +61,16 @@ const open = ref(false);
             <div class="flex flex-row justify-end">
                 <button
                     v-if="can('CentrumService.CreateOrUpdateUnit')"
-                    @click="open = true"
                     class="flex-initial text-primary-500 hover:text-primary-400"
+                    @click="open = true"
                 >
                     <PencilIcon class="h-6 w-6 text-primary-500" aria-hidden="true" />
                 </button>
                 <button
                     v-if="can('CentrumService.DeleteUnit')"
                     type="button"
-                    @click="reveal(unit.id)"
                     class="flex-initial text-primary-500 hover:text-primary-400"
+                    @click="reveal(unit.id)"
                 >
                     <TrashCanIcon class="h-6 w-6 text-primary-500" aria-hidden="true" />
                 </button>

@@ -7,10 +7,11 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import TablePagination from '~/components/partials/elements/TablePagination.vue';
-import * as googleProtobufTimestamp_pb from '~~/gen/ts/google/protobuf/timestamp';
+import * as googleProtobufTimestamp from '~~/gen/ts/google/protobuf/timestamp';
 import { User } from '~~/gen/ts/resources/users/users';
 import { RequestsListEntriesRequest, RequestsListEntriesResponse } from '~~/gen/ts/services/jobs/jobs';
-import ListEntry from './ListEntry.vue';
+import ListEntry from '~/components/jobs/requests/ListEntry.vue';
+import { useJobsStore } from '~/store/jobs';
 
 const { $grpc } = useNuxtApp();
 
@@ -24,37 +25,34 @@ const offset = ref(0n);
 const { data, pending, refresh, error } = useLazyAsyncData(`jobs-requests-${offset.value}`, () => listRequests());
 
 async function listRequests(): Promise<RequestsListEntriesResponse> {
-    return new Promise(async (res, rej) => {
-        try {
-            const req: RequestsListEntriesRequest = {
-                pagination: {
-                    offset: offset.value,
-                },
-                userIds: query.value.user_ids?.map((u) => u.userId) ?? [],
+    try {
+        const req: RequestsListEntriesRequest = {
+            pagination: {
+                offset: offset.value,
+            },
+            userIds: query.value.user_ids?.map((u) => u.userId) ?? [],
+        };
+        if (query.value.from) {
+            req.from = {
+                timestamp: googleProtobufTimestamp.Timestamp.fromDate(fromString(query.value.from)!),
             };
-            if (query.value.from) {
-                req.from = {
-                    timestamp: googleProtobufTimestamp_pb.Timestamp.fromDate(fromString(query.value.from)!),
-                };
-            }
-            if (query.value.to) {
-                req.to = {
-                    timestamp: googleProtobufTimestamp_pb.Timestamp.fromDate(fromString(query.value.to)!),
-                };
-            }
-
-            const call = $grpc.getJobsClient().requestsListEntries(req);
-            const { response } = await call;
-
-            return res(response);
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
         }
-    });
+        if (query.value.to) {
+            req.to = {
+                timestamp: googleProtobufTimestamp.Timestamp.fromDate(fromString(query.value.to)!),
+            };
+        }
+
+        const call = $grpc.getJobsClient().requestsListEntries(req);
+        const { response } = await call;
+
+        return response;
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 
-const entriesChars = ref<User[]>([]);
 const queryTargets = ref<string>('');
 
 const searchNameInput = ref<HTMLInputElement | null>(null);
@@ -67,24 +65,18 @@ function focusSearch(): void {
 watch(offset, async () => refresh());
 watchDebounced(query.value, async () => refresh(), { debounce: 600, maxWait: 1400 });
 
-async function listColleagues(): Promise<User[]> {
-    return new Promise(async (res, rej) => {
-        try {
-            const call = $grpc.getJobsClient().colleaguesList({
-                pagination: {
-                    offset: offset.value,
-                },
-                searchName: queryTargets.value,
-            });
-            const { response } = await call;
-
-            return res(response.users);
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
-        }
-    });
-}
+const jobsStore = useJobsStore();
+const { data: colleagues, refresh: refreshColleagues } = useLazyAsyncData(
+    `jobs-colleagues-0-${queryTargets.value}`,
+    () =>
+        jobsStore.listColleagues({
+            pagination: { offset: 0n },
+            searchName: queryTargets.value,
+        }),
+    {
+        immediate: false,
+    },
+);
 
 function charsGetDisplayValue(chars: User[]): string {
     const cs: string[] = [];
@@ -96,7 +88,9 @@ function charsGetDisplayValue(chars: User[]): string {
 watchDebounced(
     queryTargets,
     async () => {
-        if (can('JobsService.RequestsListEntries.Access.All')) entriesChars.value = await listColleagues();
+        if (can('JobsService.RequestsListEntries.Access.All')) {
+            await refreshColleagues();
+        }
     },
     {
         debounce: 600,
@@ -106,7 +100,7 @@ watchDebounced(
 
 onMounted(async () => {
     if (can('JobsService.RequestsListEntries.Access.All')) {
-        entriesChars.value = await listColleagues();
+        await refreshColleagues();
     }
 });
 </script>
@@ -124,32 +118,32 @@ onMounted(async () => {
                                     {{ $t('common.colleague', 1) }}
                                 </label>
                                 <div class="relative flex items-center mt-2">
-                                    <Combobox as="div" v-model="query.user_ids" class="w-full" multiple nullable>
+                                    <Combobox v-model="query.user_ids" as="div" class="w-full" multiple nullable>
                                         <div class="relative">
                                             <ComboboxButton as="div">
                                                 <ComboboxInput
                                                     autocomplete="off"
                                                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                    @change="queryTargets = $event.target.value"
                                                     :display-value="
                                                         (chars: any) => (chars ? charsGetDisplayValue(chars) : $t('common.na'))
                                                     "
                                                     :placeholder="$t('common.target')"
+                                                    @change="queryTargets = $event.target.value"
                                                     @focusin="focusTablet(true)"
                                                     @focusout="focusTablet(false)"
                                                 />
                                             </ComboboxButton>
 
                                             <ComboboxOptions
-                                                v-if="entriesChars.length > 0"
+                                                v-if="colleagues?.users && colleagues.users.length > 0"
                                                 class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-44 sm:text-sm"
                                             >
                                                 <ComboboxOption
-                                                    v-for="char in entriesChars"
+                                                    v-for="char in colleagues.users"
+                                                    v-slot="{ active, selected }"
                                                     :key="char.identifier"
                                                     :value="char"
                                                     as="char"
-                                                    v-slot="{ active, selected }"
                                                 >
                                                     <li
                                                         :class="[
@@ -226,13 +220,13 @@ onMounted(async () => {
                         />
                         <div v-else>
                             <ul role="list" class="flex flex-col">
-                                <ListEntry v-for="request in data?.entries" :request="request" />
+                                <ListEntry v-for="request in data?.entries" :key="request.id.toString()" :request="request" />
                             </ul>
 
                             <TablePagination
                                 :pagination="data?.pagination"
-                                @offset-change="offset = $event"
                                 :refresh="refresh"
+                                @offset-change="offset = $event"
                             />
                         </div>
                     </div>

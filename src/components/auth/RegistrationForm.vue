@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { RpcError } from '@protobuf-ts/runtime-rpc';
+// eslint-disable-next-line camelcase
 import { alpha_dash, digits, max, min, required } from '@vee-validate/rules';
 import { useThrottleFn } from '@vueuse/core';
 import { LoadingIcon } from 'mdi-vue3';
@@ -19,28 +20,30 @@ defineEmits<{
 const accountError = ref('');
 const curPassword = ref('');
 
+interface FormData {
+    registrationToken: number;
+    username: string;
+    password: string;
+}
+
 async function createAccount(values: FormData): Promise<void> {
-    return new Promise(async (res, rej) => {
-        try {
-            await $grpc.getUnAuthClient().createAccount({
-                regToken: values.registrationToken.toString(),
-                username: values.username,
-                password: values.password,
-            });
+    try {
+        await $grpc.getUnAuthClient().createAccount({
+            regToken: values.registrationToken.toString(),
+            username: values.username,
+            password: values.password,
+        });
 
-            notifications.dispatchNotification({
-                title: { key: 'notifications.auth.account_created.title', parameters: {} },
-                content: { key: 'notifications.auth.account_created.content', parameters: {} },
-                type: 'success',
-            });
-
-            return res();
-        } catch (e) {
-            accountError.value = (e as RpcError).message;
-            $grpc.handleError(e as RpcError);
-            throw e;
-        }
-    });
+        notifications.dispatchNotification({
+            title: { key: 'notifications.auth.account_created.title', parameters: {} },
+            content: { key: 'notifications.auth.account_created.content', parameters: {} },
+            type: 'success',
+        });
+    } catch (e) {
+        accountError.value = (e as RpcError).message;
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 
 defineRule('required', required);
@@ -48,12 +51,6 @@ defineRule('digits', digits);
 defineRule('min', min);
 defineRule('max', max);
 defineRule('alpha_dash', alpha_dash);
-
-interface FormData {
-    registrationToken: number;
-    username: string;
-    password: string;
-}
 
 const { handleSubmit, meta } = useForm<FormData>({
     validationSchema: {
@@ -83,7 +80,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
         {{ $t('components.auth.create_account.subtitle') }}
     </p>
 
-    <form @submit.prevent="onSubmitThrottle" class="my-2 space-y-6">
+    <form class="my-2 space-y-6" @submit.prevent="onSubmitThrottle">
         <div>
             <label for="registrationToken" class="sr-only">
                 {{ $t('components.auth.create_account.registration_token') }}
@@ -129,12 +126,12 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
             </label>
             <div>
                 <VeeField
+                    v-model:model-value="curPassword"
                     name="password"
                     type="password"
                     autocomplete="current-password"
                     :placeholder="$t('common.password')"
                     :label="$t('common.password')"
-                    v-model:model-value="curPassword"
                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                     @focusin="focusTablet(true)"
                     @focusout="focusTablet(false)"
@@ -166,8 +163,8 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
     <div class="mt-6">
         <button
             type="button"
-            @click="$emit('back')"
             class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-secondary-600 text-neutral hover:bg-secondary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300"
+            @click="$emit('back')"
         >
             {{ $t('components.auth.create_account.back_to_login_button') }}
         </button>

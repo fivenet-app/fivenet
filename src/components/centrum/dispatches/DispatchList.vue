@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import { useCentrumStore } from '~/store/centrum';
-import ListEntry from './ListEntry.vue';
-import { Dispatch } from '~~/gen/ts/resources/dispatch/dispatches';
 import { ViewListIcon } from 'mdi-vue3';
+import { useCentrumStore } from '~/store/centrum';
+import DispatchListEntry from '~/components/centrum/dispatches/DispatchListEntry.vue';
+import { Dispatch } from '~~/gen/ts/resources/dispatch/dispatches';
 
 withDefaults(
     defineProps<{
@@ -13,6 +13,7 @@ withDefaults(
     {
         showButton: false,
         hideActions: false,
+        dispatches: undefined,
     },
 );
 
@@ -102,7 +103,7 @@ const { getSortedDispatches } = storeToRefs(centrumStore);
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-base-800">
-                            <ListEntry
+                            <DispatchListEntry
                                 v-for="dispatch in dispatches ?? getSortedDispatches"
                                 :key="dispatch.id.toString()"
                                 :dispatch="dispatch"

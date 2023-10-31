@@ -5,6 +5,8 @@ import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopove
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import Time from '~/components/partials/elements/Time.vue';
 import { DocRelation, DocumentRelation } from '~~/gen/ts/resources/documents/documents';
+import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
+import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -28,31 +30,31 @@ const {
 } = useLazyAsyncData(`document-${props.documentId}-relations`, () => getDocumentRelations());
 
 async function getDocumentRelations(): Promise<DocumentRelation[]> {
-    return new Promise(async (res, rej) => {
-        try {
-            const call = $grpc.getDocStoreClient().getDocumentRelations({
-                documentId: props.documentId,
-            });
-            const { response } = await call;
+    try {
+        const call = $grpc.getDocStoreClient().getDocumentRelations({
+            documentId: props.documentId,
+        });
+        const { response } = await call;
 
-            return res(response.relations);
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
-        }
-    });
+        return response.relations;
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 </script>
 
 <template>
     <div>
+        <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.relation', 2)])" />
+        <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.relation', 2)])" :retry="refresh" />
         <DataNoDataBlock
-            v-if="relations && relations.length === 0"
+            v-if="!relations || relations.length === 0"
             :type="`${$t('common.document', 1)} ${$t('common.relation', 2)}`"
             :icon="AccountMultipleIcon"
         />
 
-        <template v-if="relations && relations.length > 0">
+        <template v-else>
             <!-- Relations list (smallest breakpoint only) -->
             <div class="sm:hidden text-neutral">
                 <ul role="list" class="mt-2 overflow-hidden divide-y divide-gray-600 rounded-lg sm:hidden">

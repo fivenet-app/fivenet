@@ -9,7 +9,7 @@ import Stats from '~/components/penaltycalculator/Stats.vue';
 import { useCompletorStore } from '~/store/completor';
 import { useNotificatorStore } from '~/store/notificator';
 import { Law } from '~~/gen/ts/resources/laws/laws';
-import SummaryTable from './SummaryTable.vue';
+import SummaryTable from '~/components/penaltycalculator/SummaryTable.vue';
 
 const completorStore = useCompletorStore();
 const notifications = useNotificatorStore();
@@ -58,7 +58,7 @@ const filteredLawBooks = computed(
                     });
                 return {
                     ...book,
-                    laws: laws,
+                    laws,
                 };
             })
             .filter((books) => books.laws.length > 0),
@@ -82,10 +82,8 @@ function calculate(e: SelectedPenalty): void {
         if (e.count === 0n) {
             selectedPenalties.value.splice(idx, 1);
         }
-    } else {
-        if (e.count !== 0n) {
-            selectedPenalties.value.push(e);
-        }
+    } else if (e.count !== 0n) {
+        selectedPenalties.value.push(e);
     }
 
     if (e.law.fine) {
@@ -175,11 +173,11 @@ ${t('common.crime', selectedPenalties.value.length)}:
                         </div>
                         <dl class="mt-5 space-y-2 divide-y divide-neutral/10">
                             <Disclosure
-                                as="div"
                                 v-for="lawBook in filteredLawBooks"
-                                :key="`${lawBook.id.toString()}-${query}`"
-                                class="pt-3"
                                 v-slot="{ open }"
+                                :key="`${lawBook.id.toString()}-${query}`"
+                                as="div"
+                                class="pt-3"
                                 :default-open="query.length > 0"
                             >
                                 <dt>
@@ -295,8 +293,8 @@ ${t('common.crime', selectedPenalties.value.length)}:
                 <div class="flex items-center">
                     <button
                         type="button"
-                        @click="copyToClipboard()"
                         class="flex-1 rounded-md bg-info-700 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-info-600"
+                        @click="copyToClipboard()"
                     >
                         {{ $t('common.copy') }}
                     </button>

@@ -4,7 +4,7 @@ import { useThrottleFn } from '@vueuse/core';
 import { AlertBoxIcon, GroupIcon, LoadingIcon, LocationEnterIcon, LocationExitIcon, MonitorIcon } from 'mdi-vue3';
 import { useCentrumStore } from '~/store/centrum';
 import { CentrumMode } from '~~/gen/ts/resources/dispatch/settings';
-import Modal from './Modal.vue';
+import DisponentsModal from '~/components/centrum/disponents/DisponentsModal.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -12,19 +12,15 @@ const centrumStore = useCentrumStore();
 const { getCurrentMode, disponents, isDisponent } = storeToRefs(centrumStore);
 
 async function takeControl(signon: boolean): Promise<void> {
-    return new Promise(async (res, rej) => {
-        try {
-            const call = $grpc.getCentrumClient().takeControl({
-                signon: signon,
-            });
-            await call;
-
-            return res();
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
-        }
-    });
+    try {
+        const call = $grpc.getCentrumClient().takeControl({
+            signon,
+        });
+        await call;
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 
 const canSubmit = ref(true);
@@ -62,10 +58,10 @@ const open = ref(false);
                             class="absolute z-20 inset-0 flex flex-col justify-center items-center bg-gray-600/70"
                         >
                             <button
-                                @click="onSubmitThrottle(true)"
                                 type="button"
                                 class="relative block w-full p-12 text-center border-2 border-dotted rounded-lg border-base-300 hover:border-base-400 focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2"
                                 :disabled="!canSubmit"
+                                @click="onSubmitThrottle(true)"
                             >
                                 <LocationEnterIcon v-if="canSubmit" class="w-12 h-12 mx-auto text-neutral" />
                                 <template v-else>
@@ -105,8 +101,8 @@ const open = ref(false);
                             <button
                                 v-if="!isDisponent"
                                 type="button"
-                                @click="onSubmitThrottle(true)"
                                 class="flex items-center justify-center rounded-full bg-success-500 text-neutral hover:bg-success-400"
+                                @click="onSubmitThrottle(true)"
                             >
                                 <LocationEnterIcon v-if="canSubmit" class="w-7 h-7" />
                                 <template v-else>
@@ -117,8 +113,8 @@ const open = ref(false);
                             <button
                                 v-else
                                 type="button"
-                                @click="onSubmitThrottle(false)"
                                 class="flex items-center justify-center rounded-full bg-primary-500 text-neutral hover:bg-primary-400"
+                                @click="onSubmitThrottle(false)"
                             >
                                 <LocationExitIcon v-if="canSubmit" class="w-7 h-7" />
                                 <template v-else>
@@ -128,7 +124,7 @@ const open = ref(false);
                             </button>
                         </div>
                         <div class="flex-1">
-                            <Modal :open="open" @close="open = false" />
+                            <DisponentsModal :open="open" @close="open = false" />
 
                             <p class="text-neutral text-sm">
                                 <button

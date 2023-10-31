@@ -1,17 +1,17 @@
 <script lang="ts" setup>
 import { Pane, Splitpanes } from 'splitpanes';
 import 'splitpanes/dist/splitpanes.css';
-import { default as DispatchesList } from '~/components/centrum/dispatches/List.vue';
+import DispatchList from '~/components/centrum/dispatches/DispatchList.vue';
 import DisponentsInfo from '~/components/centrum/disponents/DisponentsInfo.vue';
-import { default as UnitsList } from '~/components/centrum/units/List.vue';
+import UnitList from '~/components/centrum/units/UnitList.vue';
 import Livemap from '~/components/livemap/Livemap.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { setWaypoint } from '~/composables/nui';
 import { useCentrumStore } from '~/store/centrum';
 import { useLivemapStore } from '~/store/livemap';
-import Feed from './Feed.vue';
-import DispatchesLayer from './livemap/DispatchesLayer.vue';
+import Feed from '~/components/centrum/Feed.vue';
+import DispatchesLayer from '~/components/centrum/livemap/DispatchesLayer.vue';
 
 const centrumStore = useCentrumStore();
 const { error, abort, restarting, feed } = storeToRefs(centrumStore);
@@ -35,18 +35,6 @@ function goto(e: Coordinate) {
 }
 </script>
 
-<style>
-.splitpanes--vertical > .splitpanes__splitter {
-    min-width: 3px;
-    background-color: #898d9b;
-}
-
-.splitpanes--horizontal > .splitpanes__splitter {
-    min-height: 3px;
-    background-color: #898d9b;
-}
-</style>
-
 <template>
     <div class="relative h-full w-full">
         <div
@@ -68,7 +56,7 @@ function goto(e: Coordinate) {
                 <Splitpanes horizontal>
                     <Pane min-size="80">
                         <Livemap :show-unit-names="true">
-                            <template v-slot:default>
+                            <template #default>
                                 <DispatchesLayer
                                     v-if="can('CentrumService.Stream')"
                                     :show-all-dispatches="true"
@@ -85,10 +73,10 @@ function goto(e: Coordinate) {
             <Pane size="65">
                 <Splitpanes horizontal>
                     <Pane size="55" min-size="2">
-                        <DispatchesList :show-button="true" @goto="goto($event)" />
+                        <DispatchList :show-button="true" @goto="goto($event)" />
                     </Pane>
                     <Pane size="33" min-size="2">
-                        <UnitsList @goto="goto($event)" />
+                        <UnitList @goto="goto($event)" />
                     </Pane>
                     <Pane size="12" min-size="2">
                         <Feed :items="feed" />
@@ -98,3 +86,15 @@ function goto(e: Coordinate) {
         </Splitpanes>
     </div>
 </template>
+
+<style>
+.splitpanes--vertical > .splitpanes__splitter {
+    min-width: 3px;
+    background-color: #898d9b;
+}
+
+.splitpanes--horizontal > .splitpanes__splitter {
+    min-height: 3px;
+    background-color: #898d9b;
+}
+</style>

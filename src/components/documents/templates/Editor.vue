@@ -15,8 +15,8 @@ import { DocumentAccess } from '~~/gen/ts/resources/documents/documents';
 import { ObjectSpecs, TemplateJobAccess, TemplateRequirements } from '~~/gen/ts/resources/documents/templates';
 import { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
 import { CreateTemplateRequest, UpdateTemplateRequest } from '~~/gen/ts/services/docstore/docstore';
-import SchemaEditor, { type ObjectSpecsValue, type SchemaEditorValue } from './SchemaEditor.vue';
-import TemplateHint from './partials/TemplateHint.vue';
+import SchemaEditor, { type ObjectSpecsValue, type SchemaEditorValue } from '~/components/documents/templates/SchemaEditor.vue';
+import TemplateHint from '~/components/documents/templates/partials/TemplateHint.vue';
 
 const props = defineProps<{
     templateId?: bigint;
@@ -269,121 +269,117 @@ function createObjectSpec(v: ObjectSpecsValue): ObjectSpecs {
 }
 
 async function createOrUpdateTemplate(values: FormData, templateId?: bigint): Promise<void> {
-    return new Promise(async (res, rej) => {
-        const tRequirements: TemplateRequirements = {
-            users: createObjectSpec(schema.value.users),
-            documents: createObjectSpec(schema.value.documents),
-            vehicles: createObjectSpec(schema.value.vehicles),
-        };
+    const tRequirements: TemplateRequirements = {
+        users: createObjectSpec(schema.value.users),
+        documents: createObjectSpec(schema.value.documents),
+        vehicles: createObjectSpec(schema.value.vehicles),
+    };
 
-        const jobAccesses: TemplateJobAccess[] = [];
-        access.value.forEach((entry) => {
-            if (entry.values.accessRole === undefined) {
+    const jobAccesses: TemplateJobAccess[] = [];
+    access.value.forEach((entry) => {
+        if (entry.values.accessRole === undefined) {
+            return;
+        }
+
+        if (entry.type === 1) {
+            if (!entry.values.job) {
                 return;
             }
 
-            if (entry.type === 1) {
-                if (!entry.values.job) {
-                    return;
-                }
-
-                jobAccesses.push({
-                    id: 0n,
-                    templateId: templateId ?? 0n,
-                    job: entry.values.job,
-                    minimumGrade: entry.values.minimumGrade ? entry.values.minimumGrade : 0,
-                    access: entry.values.accessRole,
-                });
-            }
-        });
-
-        const reqAccess: DocumentAccess = {
-            jobs: [],
-            users: [],
-        };
-        contentAccess.value.forEach((entry) => {
-            if (entry.values.accessRole === undefined) {
-                return;
-            }
-
-            if (entry.type === 0) {
-                if (!entry.values.char) {
-                    return;
-                }
-
-                reqAccess.users.push({
-                    id: 0n,
-                    documentId: 0n,
-                    userId: entry.values.char,
-                    access: entry.values.accessRole,
-                });
-            } else if (entry.type === 1) {
-                if (!entry.values.job) {
-                    return;
-                }
-
-                reqAccess.jobs.push({
-                    id: 0n,
-                    documentId: 0n,
-                    job: entry.values.job!,
-                    minimumGrade: entry.values.minimumGrade ? entry.values.minimumGrade : 0,
-                    access: entry.values.accessRole,
-                });
-            }
-        });
-
-        if (typeof values.weight === 'string') values.weight = parseInt(values.weight as string);
-
-        const req: CreateTemplateRequest | UpdateTemplateRequest = {
-            template: {
-                id: templateId ?? 0n,
-                weight: values.weight as number,
-                title: values.title,
-                description: values.description,
-                contentTitle: values.contentTitle,
-                content: values.content,
-                state: values.contentState,
-                schema: {
-                    requirements: tRequirements,
-                },
-                contentAccess: reqAccess,
-                jobAccess: jobAccesses,
-                category: selectedCategory.value,
-            },
-        };
-
-        try {
-            if (templateId === undefined) {
-                const call = $grpc.getDocStoreClient().createTemplate(req);
-                const { response } = await call;
-
-                notifications.dispatchNotification({
-                    title: { key: 'notifications.templates.created.title', parameters: {} },
-                    content: { key: 'notifications.templates.created.title', parameters: {} },
-                    type: 'success',
-                });
-
-                await navigateTo({
-                    name: 'documents-templates-id',
-                    params: { id: response.id?.toString() },
-                });
-            } else {
-                const call = $grpc.getDocStoreClient().updateTemplate(req);
-                await call;
-
-                notifications.dispatchNotification({
-                    title: { key: 'notifications.templates.updated.title', parameters: {} },
-                    content: { key: 'notifications.templates.updated.content', parameters: {} },
-                    type: 'success',
-                });
-            }
-
-            return res();
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
+            jobAccesses.push({
+                id: 0n,
+                templateId: templateId ?? 0n,
+                job: entry.values.job,
+                minimumGrade: entry.values.minimumGrade ? entry.values.minimumGrade : 0,
+                access: entry.values.accessRole,
+            });
         }
     });
+
+    const reqAccess: DocumentAccess = {
+        jobs: [],
+        users: [],
+    };
+    contentAccess.value.forEach((entry) => {
+        if (entry.values.accessRole === undefined) {
+            return;
+        }
+
+        if (entry.type === 0) {
+            if (!entry.values.char) {
+                return;
+            }
+
+            reqAccess.users.push({
+                id: 0n,
+                documentId: 0n,
+                userId: entry.values.char,
+                access: entry.values.accessRole,
+            });
+        } else if (entry.type === 1) {
+            if (!entry.values.job) {
+                return;
+            }
+
+            reqAccess.jobs.push({
+                id: 0n,
+                documentId: 0n,
+                job: entry.values.job!,
+                minimumGrade: entry.values.minimumGrade ? entry.values.minimumGrade : 0,
+                access: entry.values.accessRole,
+            });
+        }
+    });
+
+    if (typeof values.weight === 'string') values.weight = parseInt(values.weight as string);
+
+    const req: CreateTemplateRequest | UpdateTemplateRequest = {
+        template: {
+            id: templateId ?? 0n,
+            weight: values.weight as number,
+            title: values.title,
+            description: values.description,
+            contentTitle: values.contentTitle,
+            content: values.content,
+            state: values.contentState,
+            schema: {
+                requirements: tRequirements,
+            },
+            contentAccess: reqAccess,
+            jobAccess: jobAccesses,
+            category: selectedCategory.value,
+        },
+    };
+
+    try {
+        if (templateId === undefined) {
+            const call = $grpc.getDocStoreClient().createTemplate(req);
+            const { response } = await call;
+
+            notifications.dispatchNotification({
+                title: { key: 'notifications.templates.created.title', parameters: {} },
+                content: { key: 'notifications.templates.created.title', parameters: {} },
+                type: 'success',
+            });
+
+            await navigateTo({
+                name: 'documents-templates-id',
+                params: { id: response.id?.toString() },
+            });
+        } else {
+            const call = $grpc.getDocStoreClient().updateTemplate(req);
+            await call;
+
+            notifications.dispatchNotification({
+                title: { key: 'notifications.templates.updated.title', parameters: {} },
+                content: { key: 'notifications.templates.updated.content', parameters: {} },
+                type: 'success',
+            });
+        }
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 
 const entriesCategories = ref<Category[]>([]);
@@ -567,11 +563,11 @@ onMounted(async () => {
                         :init="entry"
                         :access-types="accessTypes"
                         :access-roles="[AccessLevel.VIEW, AccessLevel.EDIT]"
-                        @typeChange="updateAccessEntryType($event)"
-                        @nameChange="updateAccessEntryName($event)"
-                        @rankChange="updateAccessEntryRank($event)"
-                        @accessChange="updateAccessEntryAccess($event)"
-                        @deleteRequest="removeAccessEntry($event)"
+                        @type-change="updateAccessEntryType($event)"
+                        @name-change="updateAccessEntryName($event)"
+                        @rank-change="updateAccessEntryRank($event)"
+                        @access-change="updateAccessEntryAccess($event)"
+                        @delete-request="removeAccessEntry($event)"
                     />
                     <button
                         type="button"
@@ -607,14 +603,14 @@ onMounted(async () => {
                     {{ $t('common.category') }}
                 </label>
                 <div>
-                    <Combobox as="div" v-model="selectedCategory" nullable>
+                    <Combobox v-model="selectedCategory" as="div" nullable>
                         <div class="relative">
                             <ComboboxButton as="div">
                                 <ComboboxInput
                                     autocomplete="off"
                                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                    @change="queryCategories = $event.target.value"
                                     :display-value="(category: any) => category?.name"
+                                    @change="queryCategories = $event.target.value"
                                     @focusin="focusTablet(true)"
                                     @focusout="focusTablet(false)"
                                 />
@@ -626,10 +622,10 @@ onMounted(async () => {
                             >
                                 <ComboboxOption
                                     v-for="category in entriesCategories"
+                                    v-slot="{ active, selected }"
                                     :key="category.id?.toString()"
                                     :value="category"
                                     as="category"
-                                    v-slot="{ active, selected }"
                                 >
                                     <li
                                         :class="[
@@ -697,11 +693,11 @@ onMounted(async () => {
                     :key="entry.id?.toString()"
                     :init="entry"
                     :access-types="contentAccessTypes"
-                    @typeChange="updateContentAccessEntryType($event)"
-                    @nameChange="updateContentAccessEntryName($event)"
-                    @rankChange="updateContentAccessEntryRank($event)"
-                    @accessChange="updateContentAccessEntryAccess($event)"
-                    @deleteRequest="removeContentAccessEntry($event)"
+                    @type-change="updateContentAccessEntryType($event)"
+                    @name-change="updateContentAccessEntryName($event)"
+                    @rank-change="updateContentAccessEntryRank($event)"
+                    @access-change="updateContentAccessEntryAccess($event)"
+                    @delete-request="removeContentAccessEntry($event)"
                 />
                 <button
                     type="button"

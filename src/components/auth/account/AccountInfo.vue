@@ -8,9 +8,9 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { useAuthStore } from '~/store/auth';
 import { useSettingsStore } from '~/store/settings';
 import { GetAccountInfoResponse } from '~~/gen/ts/services/auth/auth';
-import ChangePasswordModal from './ChangePasswordModal.vue';
-import DebugInfo from './DebugInfo.vue';
-import OAuth2Connections from './OAuth2Connections.vue';
+import ChangePasswordModal from '~/components/auth/account/ChangePasswordModal.vue';
+import DebugInfo from '~/components/auth/account/DebugInfo.vue';
+import OAuth2Connections from '~/components/auth/account/OAuth2Connections.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -23,16 +23,14 @@ const { startpage, documents } = storeToRefs(settings);
 const { data: account, pending, refresh, error } = useLazyAsyncData(`accountinfo`, () => getAccountInfo());
 
 async function getAccountInfo(): Promise<GetAccountInfoResponse | undefined> {
-    return new Promise(async (res, rej) => {
-        try {
-            const call = $grpc.getAuthClient().getAccountInfo({});
+    try {
+        const call = $grpc.getAuthClient().getAccountInfo({});
 
-            return res(call.response);
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
-        }
-    });
+        return call.response;
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 
 const changePasswordModal = ref(false);
@@ -119,8 +117,8 @@ watch(darkModeActive, async () => {
                             <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
                                 <button
                                     type="button"
-                                    @click="changePasswordModal = true"
                                     class="rounded-md bg-base-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-base-400"
+                                    @click="changePasswordModal = true"
                                 >
                                     {{ $t('components.auth.account_info.change_password_button') }}
                                 </button>
@@ -136,14 +134,14 @@ watch(darkModeActive, async () => {
                                     v-model="selectedHomepage"
                                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 >
-                                    <template v-for="page in homepages">
-                                        <option
-                                            :value="page"
-                                            :disabled="!(page.permission === undefined || can(page.permission))"
-                                        >
-                                            {{ $t(page.name ?? 'common.page') }}
-                                        </option>
-                                    </template>
+                                    <option
+                                        v-for="page in homepages"
+                                        :key="page.path"
+                                        :value="page"
+                                        :disabled="!(page.permission === undefined || can(page.permission))"
+                                    >
+                                        {{ $t(page.name ?? 'common.page') }}
+                                    </option>
                                 </select>
                                 <p v-else class="text-neutral">
                                     {{ $t('components.auth.account_info.set_startpage.no_char_selected') }}
@@ -185,9 +183,9 @@ watch(darkModeActive, async () => {
 
             <OAuth2Connections
                 v-if="account"
-                @click="removeOAuth2Connection($event)"
                 :providers="account.oauth2Providers"
                 :connections="account.oauth2Connections"
+                @click="removeOAuth2Connection($event)"
             />
 
             <DebugInfo />

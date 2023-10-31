@@ -41,17 +41,17 @@ const onSubmitThrottle = useThrottleFn(async () => {
     <nav class="flex items-center justify-between px-4 py-3 border-t sm:px-6" aria-label="Pagination">
         <div class="hidden sm:block">
             <I18nT keypath="components.partials.table_pagination.showing_results" tag="p" class="text-sm text-gray-300">
-                <template v-slot:start>
+                <template #start>
                     <span class="font-medium text-neutral">
                         {{ start.toString() }}
                     </span>
                 </template>
-                <template v-slot:end>
+                <template #end>
                     <span class="font-medium text-neutral">
                         {{ end.toString() }}
                     </span>
                 </template>
-                <template v-slot:total>
+                <template #total>
                     <span class="font-medium text-neutral">
                         {{ total.toString() }}
                     </span>
@@ -61,7 +61,6 @@ const onSubmitThrottle = useThrottleFn(async () => {
         <div class="flex justify-between flex-1 sm:justify-end">
             <button
                 v-if="refresh !== undefined"
-                @click="onSubmitThrottle()"
                 type="button"
                 class="bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500 relative inline-flex items-center px-3 py-2 ml-3 text-sm font-semibold rounded-md cursor-pointer text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                 :disabled="!canSubmit"
@@ -70,12 +69,12 @@ const onSubmitThrottle = useThrottleFn(async () => {
                         ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
                         : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500'
                 "
+                @click="onSubmitThrottle()"
             >
                 <RefreshIcon class="h-5 w-5" :class="!canSubmit ? 'animate-spin' : ''" />
             </button>
             <button
                 :disabled="offset <= 0n"
-                @click="$emit('offsetChange', calculateOffset())"
                 type="button"
                 :class="[
                     offset <= 0n
@@ -83,12 +82,12 @@ const onSubmitThrottle = useThrottleFn(async () => {
                         : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
                     'relative inline-flex items-center px-3 py-2 ml-3 text-sm font-semibold rounded-md cursor-pointer text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
                 ]"
+                @click="$emit('offsetChange', calculateOffset())"
             >
                 {{ $t('common.previous') }}
             </button>
             <button
                 :disabled="total - end <= 0"
-                @click="$emit('offsetChange', end)"
                 type="button"
                 :class="[
                     total - end <= 0
@@ -96,6 +95,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                         : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
                     'relative inline-flex items-center px-3 py-2 ml-3 text-sm font-semibold rounded-md cursor-pointer text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
                 ]"
+                @click="$emit('offsetChange', end)"
             >
                 {{ $t('common.next') }}
             </button>

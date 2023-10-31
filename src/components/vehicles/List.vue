@@ -50,25 +50,23 @@ const { data, pending, refresh, error } = useLazyAsyncData(`vehicles-${offset.va
 });
 
 async function listVehicles(): Promise<ListVehiclesResponse> {
-    return new Promise(async (res, rej) => {
-        try {
-            const call = $grpc.getDMVClient().listVehicles({
-                pagination: {
-                    offset: offset.value,
-                },
-                orderBy: [],
-                userId: props.userId && props.userId > 0 ? props.userId : query.value.user_id,
-                search: query.value.plate,
-                model: query.value.model,
-            });
-            const { response } = await call;
+    try {
+        const call = $grpc.getDMVClient().listVehicles({
+            pagination: {
+                offset: offset.value,
+            },
+            orderBy: [],
+            userId: props.userId && props.userId > 0 ? props.userId : query.value.user_id,
+            search: query.value.plate,
+            model: query.value.model,
+        });
+        const { response } = await call;
 
-            return res(response);
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
-        }
-    });
+        return response;
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 
 const searchInput = ref<HTMLInputElement | null>(null);
@@ -125,8 +123,8 @@ watch(selectedChar, () => {
                                 </label>
                                 <div class="relative flex items-center mt-2">
                                     <input
-                                        v-model="query.plate"
                                         ref="searchInput"
+                                        v-model="query.plate"
                                         type="text"
                                         :placeholder="$t('common.license_plate')"
                                         class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
@@ -151,22 +149,22 @@ watch(selectedChar, () => {
                                     />
                                 </div>
                             </div>
-                            <div class="flex-1 form-control" v-if="!userId">
+                            <div v-if="!userId" class="flex-1 form-control">
                                 <label for="owner" class="block text-sm font-medium leading-6 text-neutral">
                                     {{ $t('common.owner') }}
                                 </label>
                                 <div class="relative items-center mt-2">
-                                    <Combobox as="div" v-model="selectedChar" nullable>
+                                    <Combobox v-model="selectedChar" as="div" nullable>
                                         <div class="relative">
                                             <ComboboxButton as="div">
                                                 <ComboboxInput
                                                     autocomplete="off"
                                                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                    @change="queryChar = $event.target.value"
                                                     :display-value="
                                                         (char: any) => (char ? `${char?.firstname} ${char?.lastname}` : '')
                                                     "
                                                     :placeholder="$t('common.owner')"
+                                                    @change="queryChar = $event.target.value"
                                                     @focusin="focusTablet(true)"
                                                     @focusout="focusTablet(false)"
                                                 />
@@ -179,9 +177,9 @@ watch(selectedChar, () => {
                                                 <ComboboxOption
                                                     v-for="char in chars"
                                                     :key="char?.userId"
+                                                    v-slot="{ active, selected }"
                                                     :value="char"
                                                     as="char"
-                                                    v-slot="{ active, selected }"
                                                 >
                                                     <li
                                                         :class="[
@@ -306,8 +304,8 @@ watch(selectedChar, () => {
 
                             <TablePagination
                                 :pagination="data?.pagination"
-                                @offset-change="offset = $event"
                                 :refresh="refresh"
+                                @offset-change="offset = $event"
                             />
                         </div>
                     </div>

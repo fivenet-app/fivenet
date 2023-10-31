@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+// eslint-disable-next-line camelcase
 import { alpha_dash, max, min, required } from '@vee-validate/rules';
 import { useThrottleFn } from '@vueuse/core';
 import { LoadingIcon } from 'mdi-vue3';
@@ -68,7 +69,7 @@ watch(
         {{ $t('components.auth.login.title') }}
     </h2>
 
-    <form @submit.prevent="onSubmitThrottle" class="my-2 space-y-6">
+    <form class="my-2 space-y-6" @submit.prevent="onSubmitThrottle">
         <div>
             <label for="username" class="sr-only">
                 {{ $t('common.username') }}
@@ -130,23 +131,23 @@ watch(
             <p v-if="!socialLoginEnabled" class="mt-2 text-sm text-error-400">
                 {{ $t('pages.auth.login.social_login_disabled') }}
             </p>
-            <div v-for="prov in appConfig.login.providers" class="">
+            <div v-for="provider in appConfig.login.providers" :key="provider.name">
                 <button
                     v-if="!socialLoginEnabled"
                     type="button"
                     class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300"
                     :class="!socialLoginEnabled ? 'disabled' : ''"
                 >
-                    {{ prov.label }} {{ $t('common.login') }}
+                    {{ provider.label }} {{ $t('common.login') }}
                 </button>
                 <NuxtLink
                     v-else
                     :external="true"
-                    :to="`/api/oauth2/login/${prov.name}`"
+                    :to="`/api/oauth2/login/${provider.name}`"
                     class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300"
                     :class="!socialLoginEnabled ? 'disabled' : ''"
                 >
-                    {{ prov.label }} {{ $t('common.login') }}
+                    {{ provider.label }} {{ $t('common.login') }}
                 </NuxtLink>
             </div>
         </template>

@@ -32,7 +32,7 @@ const dispatchAnimated = computed(() => (dispatchStatusAnimate(props.dispatch.st
 </script>
 
 <template>
-    <LMarker :key="dispatch.id?.toString()" :latLng="[dispatch.y, dispatch.x]" :name="dispatch.message" :z-index-offset="10">
+    <LMarker :key="dispatch.id?.toString()" :lat-lng="[dispatch.y, dispatch.x]" :name="dispatch.message" :z-index-offset="10">
         <LIcon :icon-anchor="iconAnchor" :popup-anchor="popupAnchor" :icon-size="[size, size]">
             <div class="uppercase flex flex-col items-center">
                 <span
@@ -44,7 +44,7 @@ const dispatchAnimated = computed(() => (dispatchStatusAnimate(props.dispatch.st
             </div>
         </LIcon>
         <LPopup :options="{ closeButton: true }">
-            <IDCopyBadge class="mb-1" prefix="DSP" :id="dispatch.id" :action="selected" />
+            <IDCopyBadge :id="dispatch.id" class="mb-1" prefix="DSP" :action="selected" />
             <ul role="list" class="flex flex-col">
                 <li>
                     <span class="font-semibold">{{ $t('common.status') }}</span

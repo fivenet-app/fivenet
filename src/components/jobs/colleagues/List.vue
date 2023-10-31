@@ -1,42 +1,26 @@
 <script lang="ts" setup>
-import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { watchDebounced } from '@vueuse/core';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import TablePagination from '~/components/partials/elements/TablePagination.vue';
-import { ColleaguesListResponse } from '~~/gen/ts/services/jobs/jobs';
-import ListEntry from './ListEntry.vue';
-
-const { $grpc } = useNuxtApp();
+import ListEntry from '~/components/jobs/colleagues/ListEntry.vue';
+import { useJobsStore } from '~/store/jobs';
 
 const query = ref<{ name: string }>({
     name: '',
 });
 const offset = ref(0n);
 
+const jobsStore = useJobsStore();
 const { data, pending, refresh, error } = useLazyAsyncData(`jobs-colleagues-${offset.value}-${query.value.name}`, () =>
-    listColleagues(),
+    jobsStore.listColleagues({
+        pagination: {
+            offset: offset.value,
+        },
+        searchName: query.value.name,
+    }),
 );
-
-async function listColleagues(): Promise<ColleaguesListResponse> {
-    return new Promise(async (res, rej) => {
-        try {
-            const call = $grpc.getJobsClient().colleaguesList({
-                pagination: {
-                    offset: offset.value,
-                },
-                searchName: query.value.name,
-            });
-            const { response } = await call;
-
-            return res(response);
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
-        }
-    });
-}
 
 const searchNameInput = ref<HTMLInputElement | null>(null);
 function focusSearch(): void {
@@ -63,8 +47,8 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                 </label>
                                 <div class="relative flex items-center mt-2">
                                     <input
-                                        v-model="query.name"
                                         ref="searchNameInput"
+                                        v-model="query.name"
                                         type="text"
                                         name="searchName"
                                         :placeholder="$t('common.name')"
@@ -144,8 +128,8 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
 
                             <TablePagination
                                 :pagination="data?.pagination"
-                                @offset-change="offset = $event"
                                 :refresh="refresh"
+                                @offset-change="offset = $event"
                             />
                         </div>
                     </div>

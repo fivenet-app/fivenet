@@ -83,7 +83,7 @@ async function toggleStringListValue(value: string): Promise<void> {
     }
 
     const array = currentValue.validValues.stringList.strings;
-    if (array.indexOf(value) < 0) {
+    if (array.includes(value) === undefined) {
         array.push(value);
     } else {
         array.splice(array.indexOf(value), 1);
@@ -101,7 +101,7 @@ async function toggleJobListValue(value: string): Promise<void> {
     }
 
     const array = currentValue.validValues.jobList.strings;
-    if (array.indexOf(value) < 0) {
+    if (array.includes(value) === undefined) {
         array.push(value);
     } else {
         array.splice(array.indexOf(value), 1);
@@ -169,11 +169,11 @@ onBeforeMount(async () => {
 <template>
     <div v-if="$props.attribute">
         <Disclosure
+            v-slot="{ open }"
             as="div"
             :class="[
                 $props.disabled ? 'border-neutral/10 text-base-300' : 'hover:border-neutral/70 border-neutral/20 text-neutral',
             ]"
-            v-slot="{ open }"
         >
             <DisclosureButton
                 :disabled="$props.disabled"
@@ -211,8 +211,8 @@ onBeforeMount(async () => {
                                 :name="value"
                                 type="checkbox"
                                 :checked="!!currentValue.validValues.stringList.strings.find((v) => v === value)"
-                                @click="toggleStringListValue(value)"
                                 class="h-4 w-4 my-auto rounded border-base-300 text-primary-500 focus:ring-primary-500"
+                                @click="toggleStringListValue(value)"
                             />
                             <span class="ml-1">{{
                                 $t(`perms.${permission.category}.${permission.name}.attrs.${value.replaceAll('.', '_')}`)
@@ -234,8 +234,8 @@ onBeforeMount(async () => {
                                 :name="job.name"
                                 type="checkbox"
                                 :checked="!!currentValue.validValues.jobList?.strings.find((v) => v === job.name)"
-                                @click="toggleJobListValue(job.name)"
                                 class="h-4 w-4 my-auto rounded border-base-300 text-primary-500 focus:ring-primary-500"
+                                @click="toggleJobListValue(job.name)"
                             />
                             <span class="ml-1">{{ job.label }}</span>
                         </div>
@@ -254,8 +254,8 @@ onBeforeMount(async () => {
                                 :name="job.name"
                                 type="checkbox"
                                 :checked="!!currentValue.validValues?.jobGradeList.jobs[job.name]"
-                                @change="toggleJobGradeValue(job, ($event.target as any).checked)"
                                 class="h-4 w-4 my-auto rounded border-base-300 text-primary-500 focus:ring-primary-500"
+                                @change="toggleJobGradeValue(job, ($event.target as any).checked)"
                             />
                             <span class="flex-1 my-auto">{{ job.label }}</span>
 
@@ -263,8 +263,8 @@ onBeforeMount(async () => {
                                 as="div"
                                 class="flex-1"
                                 :model-value="jobGrades.get(job.name)"
-                                @update:model-value="updateJobGradeValue(job, $event)"
                                 :disabled="!currentValue.validValues.jobGradeList?.jobs[job.name]"
+                                @update:model-value="updateJobGradeValue(job, $event)"
                             >
                                 <div class="relative">
                                     <ListboxButton
@@ -285,11 +285,11 @@ onBeforeMount(async () => {
                                             class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-44 sm:text-sm"
                                         >
                                             <ListboxOption
-                                                as="template"
                                                 v-for="grade in job.grades"
                                                 :key="grade.grade"
-                                                :value="grade"
                                                 v-slot="{ active, selected }"
+                                                as="template"
+                                                :value="grade"
                                             >
                                                 <li
                                                     :class="[

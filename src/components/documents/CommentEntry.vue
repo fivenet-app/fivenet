@@ -24,47 +24,41 @@ const props = defineProps<{
 
 const editing = ref(false);
 
+interface FormData {
+    comment: string;
+}
+
 async function editComment(documentId: bigint, commentId: bigint, values: FormData): Promise<void> {
-    return new Promise(async (res, rej) => {
-        const comment: Comment = {
-            id: commentId,
-            documentId: documentId,
-            comment: values.comment,
-        };
+    const comment: Comment = {
+        id: commentId,
+        documentId,
+        comment: values.comment,
+    };
 
-        try {
-            await $grpc.getDocStoreClient().editComment({
-                comment: comment,
-            });
+    try {
+        await $grpc.getDocStoreClient().editComment({ comment });
 
-            editing.value = false;
-            props.comment.comment = values.comment;
+        editing.value = false;
+        props.comment.comment = values.comment;
 
-            resetForm();
-
-            return res();
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
-        }
-    });
+        resetForm();
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 
 async function deleteComment(id: bigint): Promise<void> {
-    return new Promise(async (res, rej) => {
-        try {
-            await $grpc.getDocStoreClient().deleteComment({
-                commentId: id,
-            });
+    try {
+        await $grpc.getDocStoreClient().deleteComment({
+            commentId: id,
+        });
 
-            emit('removed', props.comment);
-
-            return res();
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
-        }
-    });
+        emit('removed', props.comment);
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 
 const { isRevealed, reveal, confirm, cancel, onConfirm } = useConfirmDialog();
@@ -74,10 +68,6 @@ onConfirm(async (id) => deleteComment(id));
 defineRule('required', required);
 defineRule('min', min);
 defineRule('max', max);
-
-interface FormData {
-    comment: string;
-}
 
 const { handleSubmit, meta, setValues } = useForm<FormData>({
     validationSchema: {
@@ -138,59 +128,61 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                 </p>
             </div>
         </div>
-        <div v-else v-if="can('DocStoreService.PostComment')" class="flex items-start space-x-4">
-            <div class="min-w-0 flex-1">
-                <form @submit.prevent="onSubmitThrottle" class="relative">
-                    <div
-                        class="overflow-hidden rounded-lg shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-primary-600"
-                    >
-                        <label for="comment" class="sr-only">
-                            {{ $t('components.documents.document_comment_entry.edit_comment') }}
-                        </label>
-                        <VeeField
-                            as="textarea"
-                            rows="3"
-                            name="comment"
-                            :label="$t('common.comment')"
-                            :placeholder="$t('components.documents.document_comment_entry.edit_comment')"
-                            class="block w-full resize-none border-0 bg-transparent text-gray-50 placeholder:text-gray-400 focus:ring-0 sm:py-1.5 sm:text-sm sm:leading-6"
-                            ref="commentInput"
-                        />
+        <template v-else>
+            <div v-if="can('DocStoreService.PostComment')" class="flex items-start space-x-4">
+                <div class="min-w-0 flex-1">
+                    <form class="relative" @submit.prevent="onSubmitThrottle">
+                        <div
+                            class="overflow-hidden rounded-lg shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-primary-600"
+                        >
+                            <label for="comment" class="sr-only">
+                                {{ $t('components.documents.document_comment_entry.edit_comment') }}
+                            </label>
+                            <VeeField
+                                ref="commentInput"
+                                as="textarea"
+                                rows="3"
+                                name="comment"
+                                :label="$t('common.comment')"
+                                :placeholder="$t('components.documents.document_comment_entry.edit_comment')"
+                                class="block w-full resize-none border-0 bg-transparent text-gray-50 placeholder:text-gray-400 focus:ring-0 sm:py-1.5 sm:text-sm sm:leading-6"
+                            />
 
-                        <!-- Spacer element to match the height of the toolbar -->
-                        <div class="py-2" aria-hidden="true">
-                            <!-- Matches height of button in toolbar (1px border + 36px content height) -->
-                            <div class="py-px">
-                                <div class="h-9" />
-                                <div class="ml-2">
-                                    <VeeErrorMessage name="comment" as="p" class="mt-2 text-sm text-error-400" />
+                            <!-- Spacer element to match the height of the toolbar -->
+                            <div class="py-2" aria-hidden="true">
+                                <!-- Matches height of button in toolbar (1px border + 36px content height) -->
+                                <div class="py-px">
+                                    <div class="h-9" />
+                                    <div class="ml-2">
+                                        <VeeErrorMessage name="comment" as="p" class="mt-2 text-sm text-error-400" />
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="absolute inset-x-0 bottom-0 flex justify-between py-2 pl-3 pr-2">
-                        <div class="flex items-center space-x-5"></div>
-                        <div class="flex-shrink-0">
-                            <button
-                                type="submit"
-                                class="flex justify-center rounded-md px-3 py-2 text-sm font-semibold text-neutral shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                                :disabled="!meta.valid || !canSubmit"
-                                :class="[
-                                    !meta.valid || !canSubmit
-                                        ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
-                                        : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
-                                ]"
-                            >
-                                <template v-if="!canSubmit">
-                                    <LoadingIcon class="animate-spin h-5 w-5 mr-2" />
-                                </template>
-                                {{ $t('common.edit') }}
-                            </button>
+                        <div class="absolute inset-x-0 bottom-0 flex justify-between py-2 pl-3 pr-2">
+                            <div class="flex items-center space-x-5"></div>
+                            <div class="flex-shrink-0">
+                                <button
+                                    type="submit"
+                                    class="flex justify-center rounded-md px-3 py-2 text-sm font-semibold text-neutral shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                                    :disabled="!meta.valid || !canSubmit"
+                                    :class="[
+                                        !meta.valid || !canSubmit
+                                            ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
+                                            : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
+                                    ]"
+                                >
+                                    <template v-if="!canSubmit">
+                                        <LoadingIcon class="animate-spin h-5 w-5 mr-2" />
+                                    </template>
+                                    {{ $t('common.edit') }}
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
-        </div>
+        </template>
     </li>
 </template>

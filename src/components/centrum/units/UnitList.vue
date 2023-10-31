@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { CogIcon } from 'mdi-vue3';
 import { useCentrumStore } from '~/store/centrum';
-import ListEntry from './ListEntry.vue';
+import UnitListEntry from '~/components/centrum/units/UnitListEntry.vue';
 
 const centrumStore = useCentrumStore();
 const { getSortedUnits } = storeToRefs(centrumStore);
@@ -34,7 +34,12 @@ const sortedUnits = computed(() => getSortedUnits.value);
             <div class="-mx-2 -my-2 sm:-mx-6 lg:-mx-8">
                 <div class="inline-block min-w-full py-2 align-middle sm:px-2 lg:px-2">
                     <ul role="list" class="mt-3 grid grid-cols-1 gap-5 sm:grid-cols-2 sm:gap-2 lg:grid-cols-3">
-                        <ListEntry v-for="unit in sortedUnits" :unit="unit" @goto="$emit('goto', $event)" />
+                        <UnitListEntry
+                            v-for="unit in sortedUnits"
+                            :key="unit.id.toString()"
+                            :unit="unit"
+                            @goto="$emit('goto', $event)"
+                        />
                     </ul>
                 </div>
             </div>

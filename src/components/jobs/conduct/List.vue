@@ -11,8 +11,9 @@ import TablePagination from '~/components/partials/elements/TablePagination.vue'
 import { ConductEntry, ConductType } from '~~/gen/ts/resources/jobs/conduct';
 import { User } from '~~/gen/ts/resources/users/users';
 import { ConductListEntriesResponse } from '~~/gen/ts/services/jobs/jobs';
-import CreateOrUpdateModal from './CreateOrUpdateModal.vue';
-import ListEntry from './ListEntry.vue';
+import CreateOrUpdateModal from '~/components/jobs/conduct/CreateOrUpdateModal.vue';
+import ListEntry from '~/components/jobs/conduct/ListEntry.vue';
+import { useJobsStore } from '~/store/jobs';
 
 const { $grpc } = useNuxtApp();
 
@@ -26,42 +27,34 @@ const offset = ref(0n);
 const { data, pending, refresh, error } = useLazyAsyncData(`jobs-conduct-${offset}`, () => listConductEntries());
 
 async function listConductEntries(): Promise<ConductListEntriesResponse> {
-    return new Promise(async (res, rej) => {
-        try {
-            const call = $grpc.getJobsClient().conductListEntries({
-                pagination: {
-                    offset: offset.value,
-                },
-                types: [],
-                userIds: query.value.user_ids?.map((u) => u.userId) ?? [],
-                showExpired: query.value.showExpired,
-            });
-            const { response } = await call;
+    try {
+        const call = $grpc.getJobsClient().conductListEntries({
+            pagination: {
+                offset: offset.value,
+            },
+            types: [],
+            userIds: query.value.user_ids?.map((u) => u.userId) ?? [],
+            showExpired: query.value.showExpired,
+        });
+        const { response } = await call;
 
-            return res(response);
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
-        }
-    });
+        return response;
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 
 async function deleteConductEntry(id: bigint): Promise<void> {
-    return new Promise(async (res, rej) => {
-        try {
-            const call = $grpc.getJobsClient().conductDeleteEntry({
-                id: id,
-            });
-            await call;
+    try {
+        const call = $grpc.getJobsClient().conductDeleteEntry({ id });
+        await call;
 
-            refresh();
-
-            return res();
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
-        }
-    });
+        refresh();
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 
 const queryTypes = ref('');
@@ -79,24 +72,18 @@ function focusSearch(): void {
 watch(offset, async () => refresh());
 watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
 
-async function listColleagues(): Promise<User[]> {
-    return new Promise(async (res, rej) => {
-        try {
-            const call = $grpc.getJobsClient().colleaguesList({
-                pagination: {
-                    offset: offset.value,
-                },
-                searchName: queryTargets.value,
-            });
-            const { response } = await call;
-
-            return res(response.users);
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
-        }
-    });
-}
+const jobsStore = useJobsStore();
+const { data: colleagues, refresh: refreshColleagues } = useLazyAsyncData(
+    `jobs-colleagues-0-${queryTargets.value}`,
+    () =>
+        jobsStore.listColleagues({
+            pagination: { offset: 0n },
+            searchName: queryTargets.value,
+        }),
+    {
+        immediate: false,
+    },
+);
 
 function charsGetDisplayValue(chars: User[]): string {
     const cs: string[] = [];
@@ -120,8 +107,8 @@ function updateEntryInPlace(entry: ConductEntry): void {
 watchDebounced(
     queryTargets,
     async () => {
-        entriesChars.value = await listColleagues();
-        if (query.value.user_ids) entriesChars.value.unshift(...query.value.user_ids);
+        await refreshColleagues();
+        if (query.value.user_ids) colleagues.value?.users.unshift(...query.value.user_ids);
     },
     {
         debounce: 600,
@@ -130,7 +117,7 @@ watchDebounced(
 );
 
 onMounted(async () => {
-    entriesChars.value = await listColleagues();
+    await refreshColleagues();
 });
 
 const open = ref(false);
@@ -152,8 +139,8 @@ onConfirm(async (id) => deleteConductEntry(id));
 
         <CreateOrUpdateModal
             :open="open"
-            @close="open = false"
             :entry="selectedEntry"
+            @close="open = false"
             @created="data?.entries.unshift($event)"
             @update="updateEntryInPlace($event)"
         />
@@ -169,17 +156,17 @@ onConfirm(async (id) => deleteConductEntry(id));
                                     {{ $t('common.target') }}
                                 </label>
                                 <div class="relative flex items-center mt-2">
-                                    <Combobox as="div" v-model="query.user_ids" class="w-full mt-2" multiple nullable>
+                                    <Combobox v-model="query.user_ids" as="div" class="w-full mt-2" multiple nullable>
                                         <div class="relative">
                                             <ComboboxButton as="div">
                                                 <ComboboxInput
                                                     autocomplete="off"
                                                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                    @change="queryTargets = $event.target.value"
                                                     :display-value="
                                                         (chars: any) => (chars ? charsGetDisplayValue(chars) : $t('common.na'))
                                                     "
                                                     :placeholder="$t('common.target')"
+                                                    @change="queryTargets = $event.target.value"
                                                     @focusin="focusTablet(true)"
                                                     @focusout="focusTablet(false)"
                                                 />
@@ -192,9 +179,9 @@ onConfirm(async (id) => deleteConductEntry(id));
                                                 <ComboboxOption
                                                     v-for="char in entriesChars"
                                                     :key="char.identifier"
+                                                    v-slot="{ active, selected }"
                                                     :value="char"
                                                     as="char"
-                                                    v-slot="{ active, selected }"
                                                 >
                                                     <li
                                                         :class="[
@@ -228,18 +215,18 @@ onConfirm(async (id) => deleteConductEntry(id));
                                     {{ $t('common.type') }}
                                 </label>
                                 <div class="relative flex items-center mt-2">
-                                    <Combobox as="div" v-model="query.types" class="w-full mt-2" multiple nullable>
+                                    <Combobox v-model="query.types" as="div" class="w-full mt-2" multiple nullable>
                                         <div class="relative">
                                             <ComboboxButton as="div">
                                                 <ComboboxInput
                                                     autocomplete="off"
                                                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                    @change="queryTypes = $event.target.value"
                                                     :display-value="
                                                         (cTypes: any) =>
                                                             cTypes ? (cTypes as ConductType[]).join(', ') : $t('common.na')
                                                     "
                                                     :placeholder="$t('common.type')"
+                                                    @change="queryTypes = $event.target.value"
                                                     @focusin="focusTablet(true)"
                                                     @focusout="focusTablet(false)"
                                                 />
@@ -251,9 +238,9 @@ onConfirm(async (id) => deleteConductEntry(id));
                                                 <ComboboxOption
                                                     v-for="cType in ConductType"
                                                     :key="cType.valueOf()"
+                                                    v-slot="{ active, selected }"
                                                     :value="cType"
                                                     as="char"
-                                                    v-slot="{ active, selected }"
                                                 >
                                                     <li
                                                         :class="[
@@ -311,14 +298,14 @@ onConfirm(async (id) => deleteConductEntry(id));
                                     {{ $t('common.create') }}
                                 </label>
                                 <div class="relative flex items-center mt-3">
-                                    <div class="flex-initial form-control" v-if="can('JobsService.ConductCreateEntry')">
+                                    <div v-if="can('JobsService.ConductCreateEntry')" class="flex-initial form-control">
                                         <button
                                             type="button"
+                                            class="inline-flex px-3 py-2 text-sm font-semibold rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
                                             @click="
                                                 selectedEntry = undefined;
                                                 open = true;
                                             "
-                                            class="inline-flex px-3 py-2 text-sm font-semibold rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
                                         >
                                             {{ $t('common.create') }}
                                         </button>
@@ -427,8 +414,8 @@ onConfirm(async (id) => deleteConductEntry(id));
 
                             <TablePagination
                                 :pagination="data?.pagination"
-                                @offset-change="offset = $event"
                                 :refresh="refresh"
+                                @offset-change="offset = $event"
                             />
                         </div>
                     </div>

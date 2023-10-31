@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { RpcError } from '@protobuf-ts/runtime-rpc';
+// eslint-disable-next-line camelcase
 import { max, max_value, min, min_value, required } from '@vee-validate/rules';
 import { useConfirmDialog, useThrottleFn } from '@vueuse/core';
 import { CancelIcon, ContentSaveIcon, PencilIcon, TrashCanIcon } from 'mdi-vue3';
@@ -19,70 +20,23 @@ const emit = defineEmits<{
 const { $grpc } = useNuxtApp();
 
 async function deleteLaw(id: bigint): Promise<void> {
-    return new Promise(async (res, rej) => {
-        if (id < 0) {
-            emit('deleted', id);
-            return;
-        }
+    if (id < 0) {
+        emit('deleted', id);
+        return;
+    }
 
-        try {
-            const call = $grpc.getRectorClient().deleteLaw({
-                id: id,
-            });
-            await call;
+    try {
+        const call = $grpc.getRectorClient().deleteLaw({
+            id,
+        });
+        await call;
 
-            emit('deleted', id);
-
-            return res();
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
-        }
-    });
+        emit('deleted', id);
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
-
-async function saveLaw(lawBookId: bigint, id: bigint, values: FormData): Promise<void> {
-    return new Promise(async (res, rej) => {
-        try {
-            const call = $grpc.getRectorClient().createOrUpdateLaw({
-                law: {
-                    id: BigInt(id < 0 ? 0 : id),
-                    lawbookId: lawBookId,
-                    name: values.name,
-                    description: values.description,
-                    fine: BigInt(values.fine),
-                    detentionTime: BigInt(values.detentionTime),
-                    stvoPoints: BigInt(values.stvoPoints),
-                },
-            });
-            const { response } = await call;
-            const law = response.law;
-            if (law === undefined) return rej();
-
-            props.law.id = law.id;
-            props.law.createdAt = law.createdAt;
-            props.law.updatedAt = law.updatedAt;
-            props.law.name = law.name;
-            props.law.description = law.description;
-            props.law.fine = law.fine;
-            props.law.detentionTime = law.detentionTime;
-            props.law.stvoPoints = law.stvoPoints;
-
-            editing.value = false;
-
-            return res();
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
-        }
-    });
-}
-
-defineRule('required', required);
-defineRule('max', max);
-defineRule('max_value', max_value);
-defineRule('min', min);
-defineRule('min_value', min_value);
 
 interface FormData {
     name: string;
@@ -91,6 +45,47 @@ interface FormData {
     detentionTime: bigint;
     stvoPoints: bigint;
 }
+
+async function saveLaw(lawBookId: bigint, id: bigint, values: FormData): Promise<void> {
+    try {
+        const call = $grpc.getRectorClient().createOrUpdateLaw({
+            law: {
+                id: BigInt(id < 0 ? 0 : id),
+                lawbookId: lawBookId,
+                name: values.name,
+                description: values.description,
+                fine: BigInt(values.fine),
+                detentionTime: BigInt(values.detentionTime),
+                stvoPoints: BigInt(values.stvoPoints),
+            },
+        });
+        const { response } = await call;
+        const law = response.law;
+        if (law === undefined) {
+            throw new Error('failed to get law from server response');
+        }
+
+        props.law.id = law.id;
+        props.law.createdAt = law.createdAt;
+        props.law.updatedAt = law.updatedAt;
+        props.law.name = law.name;
+        props.law.description = law.description;
+        props.law.fine = law.fine;
+        props.law.detentionTime = law.detentionTime;
+        props.law.stvoPoints = law.stvoPoints;
+
+        editing.value = false;
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
+}
+
+defineRule('required', required);
+defineRule('max', max);
+defineRule('max_value', max_value);
+defineRule('min', min);
+defineRule('min_value', min_value);
 
 const { handleSubmit, setValues } = useForm<FormData>({
     validationSchema: {
@@ -139,10 +134,10 @@ const editing = ref(props.startInEdit);
 
     <tr v-if="!editing">
         <td class="py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0 flex flex-row">
-            <button type="button" class="pl-2" @click="editing = true" :title="$t('common.edit')">
+            <button type="button" class="pl-2" :title="$t('common.edit')" @click="editing = true">
                 <PencilIcon class="w-6 h-6" />
             </button>
-            <button type="button" class="pl-2" @click="reveal()" :title="$t('common.delete')">
+            <button type="button" class="pl-2" :title="$t('common.delete')" @click="reveal()">
                 <TrashCanIcon class="w-6 h-6" />
             </button>
         </td>
@@ -162,16 +157,16 @@ const editing = ref(props.startInEdit);
     </tr>
     <tr v-else>
         <td class="py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">
-            <button type="button" @click="onSubmitThrottle" :title="$t('common.save')">
+            <button type="button" :title="$t('common.save')" @click="onSubmitThrottle">
                 <ContentSaveIcon class="w-6 h-6" />
             </button>
             <button
                 type="button"
+                :title="$t('common.cancel')"
                 @click="
                     editing = false;
                     law.id < BigInt(0) && $emit('deleted', law.id);
                 "
-                :title="$t('common.cancel')"
             >
                 <CancelIcon class="w-6 h-6" />
             </button>

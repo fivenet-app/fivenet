@@ -5,10 +5,10 @@ import AddToButton from '~/components/clipboard/AddToButton.vue';
 import { useClipboardStore } from '~/store/clipboard';
 import { useNotificatorStore } from '~/store/notificator';
 import { User } from '~~/gen/ts/resources/users/users';
-import ActivityFeed from './ActivityFeed.vue';
-import Documents from './Documents.vue';
-import Profile from './Profile.vue';
-import Vehicles from './Vehicles.vue';
+import ActivityFeed from '~/components/citizens/info/ActivityFeed.vue';
+import Documents from '~/components/citizens/info/Documents.vue';
+import Profile from '~/components/citizens/info/Profile.vue';
+import Vehicles from '~/components/citizens/info/Vehicles.vue';
 
 const clipboardStore = useClipboardStore();
 const notifications = useNotificatorStore();
@@ -107,13 +107,13 @@ function addToClipboard(): void {
                     <Profile :user="user" />
                 </TabPanel>
                 <TabPanel v-if="can('DMVService.ListVehicles')">
-                    <Vehicles :userId="user.userId" />
+                    <Vehicles :user-id="user.userId" />
                 </TabPanel>
                 <TabPanel v-if="can('DocStoreService.ListUserDocuments')">
-                    <Documents :userId="user.userId" />
+                    <Documents :user-id="user.userId" />
                 </TabPanel>
                 <TabPanel v-if="can('CitizenStoreService.ListUserActivity')">
-                    <ActivityFeed :userId="user.userId" />
+                    <ActivityFeed :user-id="user.userId" />
                 </TabPanel>
             </TabPanels>
         </TabGroup>

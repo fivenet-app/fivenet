@@ -26,8 +26,8 @@ const open = ref(false);
 <template>
     <button
         type="button"
-        @click="open = true"
         class="fixed flex items-center justify-center w-12 h-12 rounded-full z-10 bottom-2 right-20 bg-primary-500 shadow-float text-neutral hover:bg-primary-400"
+        @click="open = true"
     >
         <component :is="icon" class="w-10 h-auto" />
     </button>

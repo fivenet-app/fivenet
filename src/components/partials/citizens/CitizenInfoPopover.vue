@@ -3,7 +3,7 @@ import { Float } from '@headlessui-float/vue';
 import { Popover, PopoverButton, PopoverPanel } from '@headlessui/vue';
 import { AccountIcon } from 'mdi-vue3';
 import { User, UserShort } from '~~/gen/ts/resources/users/users';
-import PhoneNumber from './PhoneNumber.vue';
+import PhoneNumber from '~/components/partials/citizens/PhoneNumber.vue';
 
 defineProps<{
     user: User | UserShort | undefined;

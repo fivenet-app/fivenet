@@ -13,6 +13,8 @@ withDefaults(
         icon?: DefineComponent;
     }>(),
     {
+        title: undefined,
+        description: undefined,
         icon: markRaw(AlertIcon),
     },
 );

@@ -3,8 +3,8 @@ import { useDebounceFn } from '@vueuse/core';
 import { useSound } from '@vueuse/sound';
 import { AccountMultiplePlusIcon, CloseOctagonIcon, DotsVerticalIcon, MapMarkerIcon } from 'mdi-vue3';
 import AssignDispatchModal from '~/components/centrum/dispatches/AssignDispatchModal.vue';
-import Details from '~/components/centrum/dispatches/Details.vue';
-import StatusUpdateModal from '~/components/centrum/dispatches/StatusUpdateModal.vue';
+import DispatchDetails from '~/components/centrum/dispatches/DispatchDetails.vue';
+import DispatchStatusUpdateModal from '~/components/centrum/dispatches/DispatchStatusUpdateModal.vue';
 import { dispatchStatusAnimate, dispatchStatusToBGColor } from '~/components/centrum/helpers';
 import UnitInfoPopover from '~/components/centrum/units/UnitInfoPopover.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
@@ -48,9 +48,14 @@ const openMessage = ref(false);
 
 <template>
     <tr>
-        <Details :dispatch="dispatch" :open="openDetails" @close="openDetails = false" @goto="$emit('goto', $event)" />
+        <DispatchDetails :dispatch="dispatch" :open="openDetails" @close="openDetails = false" @goto="$emit('goto', $event)" />
         <AssignDispatchModal v-if="openAssign" :open="openAssign" :dispatch="dispatch" @close="openAssign = false" />
-        <StatusUpdateModal v-if="openStatus" :open="openStatus" :dispatch-id="dispatch.id" @close="openStatus = false" />
+        <DispatchStatusUpdateModal
+            v-if="openStatus"
+            :open="openStatus"
+            :dispatch-id="dispatch.id"
+            @close="openStatus = false"
+        />
 
         <td
             class="relative items-center whitespace-nowrap pl-0 py-1 pr-0 text-left text-sm font-medium sm:pr-0.5 justify-start"
@@ -107,9 +112,14 @@ const openMessage = ref(false);
         <td class="whitespace-nowrap px-1 py-1 text-sm text-gray-300">
             <span v-if="dispatch.units.length === 0" class="italic">{{ $t('enums.centrum.StatusDispatch.UNASSIGNED') }}</span>
             <span v-else class="mr-1 grid grid-cols-2 gap-1">
-                <template v-for="unit in dispatch.units">
-                    <UnitInfoPopover :unit="unit.unit" :initials-only="true" :badge="true" :assignment="unit" />
-                </template>
+                <UnitInfoPopover
+                    v-for="unit in dispatch.units"
+                    :key="unit.unitId.toString()"
+                    :unit="unit.unit"
+                    :initials-only="true"
+                    :badge="true"
+                    :assignment="unit"
+                />
             </span>
         </td>
         <td class="whitespace-nowrap px-1 py-1 text-sm text-gray-300">
@@ -134,8 +144,8 @@ const openMessage = ref(false);
             <button
                 v-if="dispatch.message.length > 40"
                 type="button"
-                @click="openMessage = !openMessage"
                 class="flex justify-center px-1 py-1 text-sm font-semibold transition-colors rounded-md text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 bg-accent-500 hover:bg-accent-400 focus-visible:outline-accent-500"
+                @click="openMessage = !openMessage"
             >
                 {{ openMessage ? $t('common.read_less') : $t('common.read_more') }}
             </button>

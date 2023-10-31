@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { AccountIcon, MapMarkerIcon } from 'mdi-vue3';
-import Details from '~/components/centrum/dispatches/Details.vue';
+import DispatchDetails from '~/components/centrum/dispatches/DispatchDetails.vue';
 import { dispatchStatusToBGColor } from '~/components/centrum/helpers';
 import UnitInfoPopover from '~/components/centrum/units/UnitInfoPopover.vue';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
@@ -43,7 +43,7 @@ const open = ref(false);
 
 <template>
     <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-        <Details :open="open" @close="open = false" @goto="$emit('goto', $event)" :dispatch="dispatch" />
+        <DispatchDetails :open="open" :dispatch="dispatch" @close="open = false" @goto="$emit('goto', $event)" />
 
         <dt class="text-sm font-medium leading-6 text-neutral">
             <div class="flex h-6 items-center">
@@ -57,7 +57,7 @@ const open = ref(false);
                         $emit('selected', checked);
                     "
                 />
-                <IDCopyBadge class="ml-2" prefix="DSP" :id="dispatch.id" :action="() => (open = true)" />
+                <IDCopyBadge :id="dispatch.id" class="ml-2" prefix="DSP" :action="() => (open = true)" />
             </div>
             <div v-if="expiresAt" class="mt-1 text-neutral text-sm">
                 {{ $t('common.expires_in') }}:
@@ -112,9 +112,14 @@ const open = ref(false);
                         <span class="font-medium mr-1">{{ $t('common.units', 2) }}:</span>
                         <span v-if="dispatch.units.length === 0">{{ $t('common.member', 0) }}</span>
                         <span v-else class="flex-1 ml-2 truncate grid grid-cols-2 gap-1">
-                            <template v-for="unit in dispatch.units">
-                                <UnitInfoPopover :unit="unit.unit" :initials-only="true" :badge="true" :assignment="unit" />
-                            </template>
+                            <UnitInfoPopover
+                                v-for="unit in dispatch.units"
+                                :key="unit.unitId.toString()"
+                                :unit="unit.unit"
+                                :initials-only="true"
+                                :badge="true"
+                                :assignment="unit"
+                            />
                         </span>
                     </div>
                 </li>

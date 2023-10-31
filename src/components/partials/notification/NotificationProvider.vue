@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { useNotificatorStore } from '~/store/notificator';
-import NotificationItem from './NotificationItem.vue';
+import NotificationItem from '~/components/partials/notification/NotificationItem.vue';
 
 const notifications = useNotificatorStore();
 const { getNotifications } = storeToRefs(notifications);

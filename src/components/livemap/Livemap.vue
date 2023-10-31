@@ -4,21 +4,20 @@ import { type LeafletMouseEvent } from 'leaflet';
 import 'leaflet-contextmenu';
 import 'leaflet-contextmenu/dist/leaflet.contextmenu.min.css';
 import 'leaflet/dist/leaflet.css';
-import CreateOrUpdateModal from '~/components/centrum/dispatches/CreateOrUpdateModal.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { isNUIAvailable, setWaypoint } from '~/composables/nui';
 import { useLivemapStore } from '~/store/livemap';
 import { useSettingsStore } from '~/store/settings';
 import { MarkerInfo } from '~~/gen/ts/resources/livemap/livemap';
-import BaseMap from './BaseMap.vue';
-import CreateOrUpdateMarkerModal from './CreateOrUpdateMarkerModal.vue';
-import PlayerAndMarkersLayer from './PlayerAndMarkersLayer.vue';
-import PostalSearch from './controls/PostalSearch.vue';
-import Settings from './controls/Settings.vue';
+import BaseMap from '~/components/livemap/BaseMap.vue';
+import CreateOrUpdateMarkerModal from '~/components/livemap/CreateOrUpdateMarkerModal.vue';
+import PlayerAndMarkersLayer from '~/components/livemap/PlayerAndMarkersLayer.vue';
+import PostalSearch from '~/components/livemap/controls/PostalSearch.vue';
+import Settings from '~/components/livemap/controls/Settings.vue';
+import CreateOrUpdateDispatchModal from '~/components/centrum/dispatches/CreateOrUpdateDispatchModal.vue';
 
 defineProps<{
-    mapOptions?: Record<string, any>;
     showUnitNames?: boolean;
 }>();
 
@@ -84,7 +83,7 @@ async function applySelectedMarkerCentering(): Promise<void> {
 
 <template>
     <div class="relative w-full h-full z-0">
-        <CreateOrUpdateModal
+        <CreateOrUpdateDispatchModal
             v-if="can('CentrumService.CreateDispatch')"
             :open="openCreateDispatch"
             @close="openCreateDispatch = false"
@@ -106,7 +105,7 @@ async function applySelectedMarkerCentering(): Promise<void> {
             />
         </div>
         <BaseMap :map-options="mapOptions">
-            <template v-slot:default>
+            <template #default>
                 <LControl position="bottomright">
                     <div class="form-control flex flex-col gap-2">
                         <Settings />
@@ -115,8 +114,8 @@ async function applySelectedMarkerCentering(): Promise<void> {
 
                 <PlayerAndMarkersLayer
                     v-if="can('LivemapperService.Stream')"
-                    @user-selected="selectedUserMarker = $event.info"
                     :show-unit-names="showUnitNames"
+                    @user-selected="selectedUserMarker = $event.info"
                 />
 
                 <slot />
@@ -126,7 +125,7 @@ async function applySelectedMarkerCentering(): Promise<void> {
                 </LControl>
             </template>
 
-            <template v-slot:afterMap>
+            <template #afterMap>
                 <slot name="afterMap" />
             </template>
         </BaseMap>

@@ -2,7 +2,7 @@
 import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { useIntervalFn } from '@vueuse/core';
 import { ListDispatchActivityResponse } from '~~/gen/ts/services/centrum/centrum';
-import FeedItem from './FeedItem.vue';
+import DispatchFeedItem from '~/components/centrum/dispatches/DispatchFeedItem.vue';
 
 const props = defineProps<{
     dispatchId?: bigint;
@@ -18,22 +18,20 @@ const { data, refresh } = useLazyAsyncData(
 );
 
 async function listDispatchActivity(): Promise<ListDispatchActivityResponse> {
-    return new Promise(async (res, rej) => {
-        try {
-            const call = $grpc.getCentrumClient().listDispatchActivity({
-                pagination: {
-                    offset: offset.value,
-                },
-                id: props.dispatchId ?? 0n,
-            });
-            const { response } = await call;
+    try {
+        const call = $grpc.getCentrumClient().listDispatchActivity({
+            pagination: {
+                offset: offset.value,
+            },
+            id: props.dispatchId ?? 0n,
+        });
+        const { response } = await call;
 
-            return res(response);
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
-        }
-    });
+        return response;
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 
 const { pause, resume } = useIntervalFn(async () => {
@@ -54,12 +52,12 @@ const { pause, resume } = useIntervalFn(async () => {
             <div class="-mx-2 -my-2 overflow-y-auto sm:-mx-6 lg:-mx-8">
                 <div class="inline-block min-w-full py-2 align-middle sm:px-2 lg:px-2">
                     <ul role="list" class="space-y-2">
-                        <FeedItem
+                        <DispatchFeedItem
                             v-for="(activityItem, activityItemIdx) in data?.activity"
                             :key="activityItem.id.toString()"
-                            :activityLength="data?.activity?.length ?? 0"
+                            :activity-length="data?.activity?.length ?? 0"
                             :item="activityItem"
-                            :activityItemIdx="activityItemIdx"
+                            :activity-item-idx="activityItemIdx"
                         />
                     </ul>
                 </div>

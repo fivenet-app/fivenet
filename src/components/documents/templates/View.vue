@@ -5,6 +5,9 @@ import AccessEntry from '~/components/documents/AccessEntry.vue';
 import PreviewModal from '~/components/documents/templates/PreviewModal.vue';
 import RequirementsList from '~/components/documents/templates/RequirementsList.vue';
 import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
+import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
+import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
+import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { useNotificatorStore } from '~/store/notificator';
 import { AccessLevel } from '~~/gen/ts/resources/documents/access';
 import { Template, TemplateRequirements } from '~~/gen/ts/resources/documents/templates';
@@ -29,47 +32,39 @@ const { t } = useI18n();
 const reqs = ref<undefined | TemplateRequirements>();
 
 async function getTemplate(): Promise<Template | undefined> {
-    return new Promise(async (res, rej) => {
-        try {
-            const call = $grpc.getDocStoreClient().getTemplate({
-                templateId: props.templateId,
-                render: false,
-            });
-            const { response } = await call;
+    try {
+        const call = $grpc.getDocStoreClient().getTemplate({
+            templateId: props.templateId,
+            render: false,
+        });
+        const { response } = await call;
 
-            if (response.template?.schema) {
-                reqs.value = response.template?.schema?.requirements;
-            }
-
-            return res(response.template!);
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
+        if (response.template?.schema) {
+            reqs.value = response.template?.schema?.requirements;
         }
-    });
+
+        return response.template!;
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 
 async function deleteTemplate(id: bigint): Promise<void> {
-    return new Promise(async (res, rej) => {
-        try {
-            await $grpc.getDocStoreClient().deleteTemplate({
-                id: id,
-            });
+    try {
+        await $grpc.getDocStoreClient().deleteTemplate({ id });
 
-            notifications.dispatchNotification({
-                title: { key: 'notifications.templates.deleted.title', parameters: {} },
-                content: { key: 'notifications.templates.deleted.content', parameters: {} },
-                type: 'success',
-            });
+        notifications.dispatchNotification({
+            title: { key: 'notifications.templates.deleted.title', parameters: {} },
+            content: { key: 'notifications.templates.deleted.content', parameters: {} },
+            type: 'success',
+        });
 
-            await navigateTo({ name: 'documents-templates' });
-
-            return res();
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
-        }
-    });
+        await navigateTo({ name: 'documents-templates' });
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 
 const templateAccessTypes = [{ id: 1, name: t('common.job', 2) }];
@@ -169,10 +164,12 @@ onConfirm(async (id) => deleteTemplate(id));
 <template>
     <ConfirmDialog :open="isRevealed" :cancel="cancel" :confirm="() => confirm(templateId)" />
 
-    <PreviewModal :id="templateId" :open="openPreview" @close="openPreview = false" v-if="openPreview" />
+    <PreviewModal v-if="openPreview" :id="templateId" :open="openPreview" @close="openPreview = false" />
 
-    <div v-if="template" class="py-2">
-        <div class="px-1 sm:px-2 lg:px-4">
+    <div class="py-2">
+        <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.template', 2)])" />
+        <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.template', 2)])" :retry="refresh" />
+        <div v-else-if="template" class="px-1 sm:px-2 lg:px-4">
             <div class="sm:flex sm:items-center">
                 <div class="sm:flex-auto inline-flex">
                     <NuxtLink
@@ -185,16 +182,16 @@ onConfirm(async (id) => deleteTemplate(id));
                     <button
                         v-if="can('DocStoreService.CreateTemplate')"
                         type="button"
-                        @click="openPreview = true"
                         class="flex justify-center w-full px-3 py-2 ml-4 text-sm font-semibold transition-colors rounded-md bg-accent-600 text-neutral hover:bg-accent-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300"
+                        @click="openPreview = true"
                     >
                         {{ $t('common.preview') }}
                     </button>
                     <button
                         v-if="can('DocStoreService.DeleteTemplate')"
                         type="submit"
-                        @click="reveal()"
                         class="flex justify-center w-full px-3 py-2 ml-4 text-sm font-semibold transition-colors rounded-md bg-error-600 text-neutral hover:bg-error-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300"
+                        @click="reveal()"
                     >
                         {{ $t('common.delete') }}
                     </button>
@@ -229,7 +226,7 @@ onConfirm(async (id) => deleteTemplate(id));
                             />
                         </div>
                     </div>
-                    <div class="my-2" v-if="template.jobAccess">
+                    <div v-if="template.jobAccess" class="my-2">
                         <h3 class="block text-base font-medium leading-6 text-gray-100">
                             {{ $t('common.template', 2) }} {{ $t('common.access') }}
                         </h3>
@@ -318,7 +315,7 @@ onConfirm(async (id) => deleteTemplate(id));
                             </ul>
                         </div>
                     </div>
-                    <div class="my-2" v-if="template.contentAccess">
+                    <div v-if="template.contentAccess" class="my-2">
                         <h3 class="block text-base font-medium leading-6 text-gray-100">
                             {{ $t('common.access') }}
                         </h3>
@@ -335,5 +332,6 @@ onConfirm(async (id) => deleteTemplate(id));
                 </div>
             </div>
         </div>
+        <DataNoDataBlock v-else :type="$t('common.template', 2)" />
     </div>
 </template>

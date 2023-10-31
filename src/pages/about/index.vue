@@ -131,7 +131,7 @@ const faqs = [
                             {{ $t('pages.about.faq.title') }}
                         </h2>
                         <dl class="mt-10 space-y-6 divide-y divide-neutral/10">
-                            <Disclosure as="div" v-for="faq in faqs" :key="faq.question" class="pt-6" v-slot="{ open }">
+                            <Disclosure v-for="faq in faqs" :key="faq.question" v-slot="{ open }" as="div" class="pt-6">
                                 <dt>
                                     <DisclosureButton class="flex w-full items-start justify-between text-left text-neutral">
                                         <span class="text-base font-semibold leading-7">{{ faq.question }}</span>
@@ -144,7 +144,8 @@ const faqs = [
                                     </DisclosureButton>
                                 </dt>
                                 <DisclosurePanel as="dd" class="mt-2 pr-12">
-                                    <p v-html="faq.answer" class="text-base leading-7 text-gray-300"></p>
+                                    <!-- eslint-disable-next-line vue/no-v-html -->
+                                    <p class="text-base leading-7 text-gray-300" v-html="faq.answer"></p>
                                 </DisclosurePanel>
                             </Disclosure>
                         </dl>

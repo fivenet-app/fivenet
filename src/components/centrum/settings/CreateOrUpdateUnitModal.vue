@@ -20,50 +20,46 @@ const emit = defineEmits<{
 
 const { $grpc } = useNuxtApp();
 
-async function createOrUpdateUnit(values: FormData): Promise<void> {
-    return new Promise(async (res, rej) => {
-        try {
-            const call = $grpc.getCentrumClient().createOrUpdateUnit({
-                unit: {
-                    id: props.unit?.id ?? 0n,
-                    job: '',
-                    name: values.name,
-                    initials: values.initials,
-                    color: values.color.replaceAll('#', ''),
-                    description: values.description,
-                    users: [],
-                },
-            });
-            await call;
-
-            if (props.unit) {
-                props.unit.name = values.name;
-                props.unit.initials = values.initials;
-                props.unit.color = values.color.replaceAll('#', '');
-                props.unit.description = values.description;
-            }
-
-            emit('update');
-            emit('close');
-
-            return res();
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
-        }
-    });
-}
-
-defineRule('required', required);
-defineRule('min', min);
-defineRule('max', max);
-
 interface FormData {
     name: string;
     initials: string;
     description: string;
     color: string;
 }
+
+async function createOrUpdateUnit(values: FormData): Promise<void> {
+    try {
+        const call = $grpc.getCentrumClient().createOrUpdateUnit({
+            unit: {
+                id: props.unit?.id ?? 0n,
+                job: '',
+                name: values.name,
+                initials: values.initials,
+                color: values.color.replaceAll('#', ''),
+                description: values.description,
+                users: [],
+            },
+        });
+        await call;
+
+        if (props.unit) {
+            props.unit.name = values.name;
+            props.unit.initials = values.initials;
+            props.unit.color = values.color.replaceAll('#', '');
+            props.unit.description = values.description;
+        }
+
+        emit('update');
+        emit('close');
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
+}
+
+defineRule('required', required);
+defineRule('min', min);
+defineRule('max', max);
 
 const { handleSubmit, meta, setValues } = useForm<FormData>({
     validationSchema: {
@@ -223,10 +219,10 @@ onBeforeMount(async () => updateUnitInForm());
                                                         {{ $t('common.color') }}
                                                     </label>
                                                     <VeeField
+                                                        v-slot="{ field }"
                                                         name="color"
                                                         class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                         :label="$t('common.color')"
-                                                        v-slot="{ field }"
                                                     >
                                                         <ColorInput
                                                             v-model="field.value"

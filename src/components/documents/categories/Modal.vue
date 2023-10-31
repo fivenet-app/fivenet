@@ -21,90 +21,82 @@ const props = defineProps<{
     category?: Category;
 }>();
 
+interface FormData {
+    name: string;
+    description: string;
+}
+
 async function createCategory(values: FormData): Promise<void> {
-    return new Promise(async (res, rej) => {
-        try {
-            await $grpc.getDocStoreClient().createCategory({
-                category: {
-                    id: 0n,
-                    name: values.name,
-                    description: values.description,
-                },
-            });
+    try {
+        await $grpc.getDocStoreClient().createCategory({
+            category: {
+                id: 0n,
+                name: values.name,
+                description: values.description,
+            },
+        });
 
-            notifications.dispatchNotification({
-                title: { key: 'notifications.category_created.title', parameters: {} },
-                content: { key: 'notifications.category_created.content', parameters: {} },
-                type: 'success',
-            });
+        notifications.dispatchNotification({
+            title: { key: 'notifications.category_created.title', parameters: {} },
+            content: { key: 'notifications.category_created.content', parameters: {} },
+            type: 'success',
+        });
 
-            emit('close');
-
-            return res();
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
-        }
-    });
+        emit('close');
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 
 async function updateCategory(values: FormData): Promise<void> {
-    return new Promise(async (res, rej) => {
-        props.category!.name = values.name;
-        props.category!.description = values.description;
+    props.category!.name = values.name;
+    props.category!.description = values.description;
 
-        try {
-            await $grpc.getDocStoreClient().updateCategory({
-                category: props.category!,
-            });
+    try {
+        await $grpc.getDocStoreClient().updateCategory({
+            category: props.category!,
+        });
 
-            notifications.dispatchNotification({
-                title: { key: 'notifications.category_updated.title', parameters: {} },
-                content: { key: 'notifications.category_updated.content', parameters: {} },
-                type: 'success',
-            });
+        notifications.dispatchNotification({
+            title: { key: 'notifications.category_updated.title', parameters: {} },
+            content: { key: 'notifications.category_updated.content', parameters: {} },
+            type: 'success',
+        });
 
-            emit('close');
-
-            return res();
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
-        }
-    });
+        emit('close');
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 
 async function deleteCategory(): Promise<void> {
-    return new Promise(async (res, rej) => {
-        try {
-            await $grpc.getDocStoreClient().deleteCategory({
-                ids: [props.category?.id!],
-            });
+    if (props.category === undefined) {
+        return;
+    }
 
-            notifications.dispatchNotification({
-                title: { key: 'notifications.category_deleted.title', parameters: {} },
-                content: { key: 'notifications.category_deleted.content', parameters: {} },
-                type: 'success',
-            });
-            emit('close');
-            emit('update');
+    try {
+        await $grpc.getDocStoreClient().deleteCategory({
+            ids: [props.category.id!],
+        });
 
-            return res();
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
-        }
-    });
+        notifications.dispatchNotification({
+            title: { key: 'notifications.category_deleted.title', parameters: {} },
+            content: { key: 'notifications.category_deleted.content', parameters: {} },
+            type: 'success',
+        });
+        emit('close');
+        emit('update');
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 
 defineRule('required', required);
 defineRule('min', min);
 defineRule('max', max);
-
-interface FormData {
-    name: string;
-    description: string;
-}
 
 const { handleSubmit, meta } = useForm<FormData>({
     validationSchema: {
@@ -228,7 +220,6 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                     <button
                                         v-if="can('DocStoreService.DeleteCategory')"
                                         type="button"
-                                        @click="deleteCategory()"
                                         class="flex justify-center w-full rounded-md px-3 py-2 text-sm font-semibold text-neutral shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                                         :disabled="!meta.valid || !canSubmit"
                                         :class="[
@@ -236,6 +227,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                 ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
                                                 : 'bg-error-500 hover:bg-error-400 focus-visible:outline-error-500',
                                         ]"
+                                        @click="deleteCategory()"
                                     >
                                         <template v-if="!canSubmit">
                                             <LoadingIcon class="animate-spin h-5 w-5 mr-2" />

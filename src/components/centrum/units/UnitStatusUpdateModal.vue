@@ -23,38 +23,34 @@ const { $grpc } = useNuxtApp();
 
 const status: number = props.status ?? props.unit?.status?.status ?? StatusUnit.UNKNOWN;
 
-async function updateUnitStatus(id: bigint, values: FormData): Promise<void> {
-    return new Promise(async (res, rej) => {
-        try {
-            const call = $grpc.getCentrumClient().updateUnitStatus({
-                unitId: id,
-                status: values.status,
-                code: values.code,
-                reason: values.reason,
-            });
-            await call;
-
-            emit('close');
-
-            setFieldValue('status', values.status.valueOf());
-
-            return res();
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
-        }
-    });
-}
-
-defineRule('required', required);
-defineRule('min', min);
-defineRule('max', max);
-
 interface FormData {
     status: number;
     code?: string;
     reason?: string;
 }
+
+async function updateUnitStatus(id: bigint, values: FormData): Promise<void> {
+    try {
+        const call = $grpc.getCentrumClient().updateUnitStatus({
+            unitId: id,
+            status: values.status,
+            code: values.code,
+            reason: values.reason,
+        });
+        await call;
+
+        emit('close');
+
+        setFieldValue('status', values.status.valueOf());
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
+}
+
+defineRule('required', required);
+defineRule('min', min);
+defineRule('max', max);
 
 const { handleSubmit, meta, setFieldValue } = useForm<FormData>({
     validationSchema: {
@@ -63,7 +59,7 @@ const { handleSubmit, meta, setFieldValue } = useForm<FormData>({
         reason: { required: false, min: 3, max: 255 },
     },
     initialValues: {
-        status: status,
+        status,
     },
     validateOnMount: true,
 });
@@ -104,8 +100,8 @@ watch(props, () => {
                         >
                             <DialogPanel class="pointer-events-auto w-screen max-w-3xl">
                                 <form
-                                    @submit.prevent="onSubmitThrottle"
                                     class="flex h-full flex-col divide-y divide-gray-200 bg-gray-900 shadow-xl"
+                                    @submit.prevent="onSubmitThrottle"
                                 >
                                     <div class="h-0 flex-1 overflow-y-auto">
                                         <div class="bg-primary-700 px-4 py-6 sm:px-6">
@@ -144,15 +140,15 @@ watch(props, () => {
                                                                 class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
                                                             >
                                                                 <VeeField
+                                                                    v-slot="{ field }"
                                                                     name="status"
                                                                     as="div"
                                                                     class="w-full grid grid-cols-2 gap-0.5"
                                                                     :placeholder="$t('common.status')"
                                                                     :label="$t('common.status')"
-                                                                    v-slot="{ field }"
                                                                 >
                                                                     <button
-                                                                        v-for="(item, idx) in unitStatuses"
+                                                                        v-for="item in unitStatuses"
                                                                         :key="item.name"
                                                                         type="button"
                                                                         class="text-neutral bg-primary hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-1.5 text-xs my-0.5"

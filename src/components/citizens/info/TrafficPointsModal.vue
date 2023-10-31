@@ -20,59 +20,54 @@ const emit = defineEmits<{
     (e: 'close'): void;
 }>();
 
+interface FormData {
+    reason: string;
+    trafficPoints: number;
+    reset?: boolean;
+}
+
 async function setTrafficPoints(values: FormData): Promise<void> {
-    return new Promise(async (res, rej) => {
-        if (!values.reset && values.trafficPoints === 0) {
-            return res();
+    if (!values.reset && values.trafficPoints === 0) {
+        return;
+    }
+
+    const points = values.reset ? BigInt(0) : (props.user.props?.trafficInfractionPoints ?? 0n) + BigInt(values.trafficPoints);
+
+    const userProps: UserProps = {
+        userId: props.user.userId,
+        trafficInfractionPoints: points,
+    };
+
+    try {
+        const call = $grpc.getCitizenStoreClient().setUserProps({
+            props: userProps,
+            reason: values.reason,
+        });
+        const { response } = await call;
+
+        if (props.user.props === undefined) {
+            props.user.props = response.props;
+        } else {
+            props.user.props!.trafficInfractionPoints = response.props?.trafficInfractionPoints;
         }
 
-        const points = values.reset
-            ? BigInt(0)
-            : (props.user.props?.trafficInfractionPoints ?? 0n) + BigInt(values.trafficPoints);
+        notifications.dispatchNotification({
+            title: { key: 'notifications.action_successfull.title', parameters: {} },
+            content: { key: 'notifications.action_successfull.content', parameters: {} },
+            type: 'success',
+        });
 
-        const userProps: UserProps = {
-            userId: props.user.userId,
-            trafficInfractionPoints: points,
-        };
-
-        try {
-            const call = $grpc.getCitizenStoreClient().setUserProps({
-                props: userProps,
-                reason: values.reason,
-            });
-            const { response } = await call;
-
-            if (props.user.props === undefined) {
-                props.user.props = response.props;
-            } else {
-                props.user.props!.trafficInfractionPoints = response.props?.trafficInfractionPoints;
-            }
-
-            notifications.dispatchNotification({
-                title: { key: 'notifications.action_successfull.title', parameters: {} },
-                content: { key: 'notifications.action_successfull.content', parameters: {} },
-                type: 'success',
-            });
-
-            emit('close');
-            return res();
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
-        }
-    });
+        emit('close');
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 
 defineRule('required', required);
 defineRule('min', min);
 defineRule('max', max);
 defineRule('numeric', numeric);
-
-interface FormData {
-    reason: string;
-    trafficPoints: number;
-    reset?: boolean;
-}
 
 const { handleSubmit, meta, setFieldValue } = useForm<FormData>({
     validationSchema: {
@@ -181,10 +176,6 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                         {{ $t('common.close', 1) }}
                                     </button>
                                     <button
-                                        @click="
-                                            setFieldValue('reset', true);
-                                            onSubmitThrottle($event);
-                                        "
                                         type="button"
                                         class="flex justify-center flex-1 rounded-bd py-2.5 px-3.5 text-sm font-semibold text-neutral"
                                         :disabled="!meta.valid || !canSubmit"
@@ -193,6 +184,10 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                 ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
                                                 : 'bg-error-500 hover:bg-error-400 focus-visible:outline-error-500',
                                         ]"
+                                        @click="
+                                            setFieldValue('reset', true);
+                                            onSubmitThrottle($event);
+                                        "
                                     >
                                         <template v-if="!canSubmit">
                                             <LoadingIcon class="animate-spin h-5 w-5 mr-2" />
@@ -200,10 +195,6 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                         {{ $t('common.reset') }}
                                     </button>
                                     <button
-                                        @click="
-                                            setFieldValue('reset', false);
-                                            onSubmitThrottle($event);
-                                        "
                                         type="button"
                                         class="flex justify-center flex-1 rounded-bd py-2.5 px-3.5 text-sm font-semibold text-neutral"
                                         :disabled="!meta.valid || !canSubmit"
@@ -212,6 +203,10 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                 ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
                                                 : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
                                         ]"
+                                        @click="
+                                            setFieldValue('reset', false);
+                                            onSubmitThrottle($event);
+                                        "
                                     >
                                         <template v-if="!canSubmit">
                                             <LoadingIcon class="animate-spin h-5 w-5 mr-2" />

@@ -2,9 +2,9 @@
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { ClipboardListIcon } from 'mdi-vue3';
 import { useClipboardStore } from '~/store/clipboard';
-import Citizens from './Citizens.vue';
-import Documents from './Documents.vue';
-import Vehicles from './Vehicles.vue';
+import Citizens from '~/components/clipboard/modal/Citizens.vue';
+import Documents from '~/components/clipboard/modal/Documents.vue';
+import Vehicles from '~/components/clipboard/modal/Vehicles.vue';
 
 const clipboardStore = useClipboardStore();
 

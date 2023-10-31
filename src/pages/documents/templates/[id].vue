@@ -22,6 +22,6 @@ const route = useRoute('documents-templates-id');
 
 <template>
     <ContentWrapper>
-        <View :templateId="BigInt(route.params.id)" />
+        <View :template-id="BigInt(route.params.id)" />
     </ContentWrapper>
 </template>

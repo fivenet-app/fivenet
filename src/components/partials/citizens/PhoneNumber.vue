@@ -59,7 +59,7 @@ async function doCall(): Promise<void> {
             </button>
 
             <template v-if="hideNumber === undefined || !hideNumber">
-                <span v-for="part in (number ?? '').match(/.{1,3}/g)" class="mr-1">{{ part }}</span>
+                <span v-for="(part, idx) in (number ?? '').match(/.{1,3}/g)" :key="idx" class="mr-1">{{ part }}</span>
             </template>
         </template>
     </div>

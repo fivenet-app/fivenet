@@ -35,10 +35,11 @@ const props = withDefaults(
             };
         };
         accessTypes: AccessType[];
-        accessRoles?: AccessLevel[];
+        accessRoles?: undefined | AccessLevel[];
     }>(),
     {
         readOnly: false,
+        accessRoles: undefined,
     },
 );
 
@@ -82,22 +83,23 @@ let entriesMinimumRank = [] as JobGrade[];
 const queryMinimumRank = ref('');
 const selectedMinimumRank = ref<JobGrade | undefined>(undefined);
 
-let entriesAccessRoles: {
+const entriesAccessRoles: {
     id: AccessLevel;
     label: string;
     value: string;
 }[] = [];
-if (!props.accessRoles || props.accessRoles.length === 0) {
-    const enumVals = listEnumValues(AccessLevel);
-    entriesAccessRoles = enumVals
-        .map((e, k) => {
-            return {
-                id: k,
-                label: t(`enums.docstore.AccessLevel.${e.name}`),
-                value: e.name,
-            };
-        })
-        .filter((e) => e.id !== 0);
+if (props.accessRoles === undefined || props.accessRoles.length === 0) {
+    entriesAccessRoles.push(
+        ...listEnumValues(AccessLevel)
+            .map((e, k) => {
+                return {
+                    id: k,
+                    label: t(`enums.docstore.AccessLevel.${e.name}`),
+                    value: e.name,
+                };
+            })
+            .filter((e) => e.id !== 0),
+    );
 } else {
     props.accessRoles.forEach((e) => {
         entriesAccessRoles.push({
@@ -107,6 +109,7 @@ if (!props.accessRoles || props.accessRoles.length === 0) {
         });
     });
 }
+
 const queryAccessRole = ref('');
 const selectedAccessRole = ref<ArrayElement<typeof entriesAccessRoles>>();
 
@@ -115,7 +118,7 @@ async function findChars(userId?: number): Promise<UserShort[]> {
 
     return completorStore.completeCitizens({
         search: queryChar.value,
-        userId: userId,
+        userId,
     });
 }
 
@@ -218,7 +221,7 @@ watch(selectedAccessRole, () => {
                 :value="accessTypes[0].name"
                 class="block pl-3 text-left w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
             />
-            <Listbox v-else as="div" v-model="selectedAccessType" :disabled="readOnly">
+            <Listbox v-else v-model="selectedAccessType" as="div" :disabled="readOnly">
                 <div class="relative">
                     <ListboxButton
                         class="block pl-3 text-left w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
@@ -238,11 +241,11 @@ watch(selectedAccessRole, () => {
                             class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-44 sm:text-sm"
                         >
                             <ListboxOption
-                                as="template"
                                 v-for="accessType in accessTypes"
                                 :key="accessType.id?.toString()"
-                                :value="accessType"
                                 v-slot="{ active, selected }"
+                                as="template"
+                                :value="accessType"
                             >
                                 <li
                                     :class="[
@@ -272,14 +275,14 @@ watch(selectedAccessRole, () => {
         </div>
         <div v-if="selectedAccessType?.id === 0" class="flex flex-grow">
             <div class="flex-1 mr-2">
-                <Combobox as="div" v-model="selectedChar" :disabled="readOnly">
+                <Combobox v-model="selectedChar" as="div" :disabled="readOnly">
                     <div class="relative">
                         <ComboboxButton as="div">
                             <ComboboxInput
                                 autocomplete="off"
                                 class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                @change="queryChar = $event.target.value"
                                 :display-value="(char: any) => `${char?.firstname} ${char?.lastname}`"
+                                @change="queryChar = $event.target.value"
                                 @focusin="focusTablet(true)"
                                 @focusout="focusTablet(false)"
                             />
@@ -292,9 +295,9 @@ watch(selectedAccessRole, () => {
                             <ComboboxOption
                                 v-for="char in entriesChars"
                                 :key="char.identifier"
+                                v-slot="{ active, selected }"
                                 :value="char"
                                 as="char"
-                                v-slot="{ active, selected }"
                             >
                                 <li
                                     :class="[
@@ -324,14 +327,14 @@ watch(selectedAccessRole, () => {
         </div>
         <div v-else class="flex flex-grow">
             <div class="flex-1 mr-2">
-                <Combobox as="div" v-model="selectedJob" :disabled="readOnly">
+                <Combobox v-model="selectedJob" as="div" :disabled="readOnly">
                     <div class="relative">
                         <ComboboxButton as="div">
                             <ComboboxInput
                                 autocomplete="off"
                                 class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                @change="queryJobRaw = $event.target.value"
                                 :display-value="(job: any) => job?.label"
+                                @change="queryJobRaw = $event.target.value"
                                 @focusin="focusTablet(true)"
                                 @focusout="focusTablet(false)"
                             />
@@ -344,8 +347,8 @@ watch(selectedAccessRole, () => {
                             <ComboboxOption
                                 v-for="job in filteredJobs"
                                 :key="job.name"
-                                :value="job"
                                 v-slot="{ active, selected }"
+                                :value="job"
                             >
                                 <li
                                     :class="[
@@ -373,14 +376,14 @@ watch(selectedAccessRole, () => {
                 </Combobox>
             </div>
             <div class="flex-1 mr-2">
-                <Combobox as="div" v-model="selectedMinimumRank" :disabled="readOnly || selectedJob === undefined">
+                <Combobox v-model="selectedMinimumRank" as="div" :disabled="readOnly || selectedJob === undefined">
                     <div class="relative">
                         <ComboboxButton as="div">
                             <ComboboxInput
                                 autocomplete="off"
                                 class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                @change="queryMinimumRank = $event.target.value"
                                 :display-value="(rank: any) => rank?.label"
+                                @change="queryMinimumRank = $event.target.value"
                                 @focusin="focusTablet(true)"
                                 @focusout="focusTablet(false)"
                             />
@@ -393,9 +396,9 @@ watch(selectedAccessRole, () => {
                             <ComboboxOption
                                 v-for="rank in entriesMinimumRank"
                                 :key="rank.grade"
+                                v-slot="{ active, selected }"
                                 :value="rank"
                                 as="minimumGrade"
-                                v-slot="{ active, selected }"
                             >
                                 <li
                                     :class="[
@@ -424,14 +427,14 @@ watch(selectedAccessRole, () => {
             </div>
         </div>
         <div class="mr-2 flex-inital w-60">
-            <Combobox as="div" v-model="selectedAccessRole" :disabled="readOnly">
+            <Combobox v-model="selectedAccessRole" as="div" :disabled="readOnly">
                 <div class="relative">
                     <ComboboxButton as="div">
                         <ComboboxInput
                             autocomplete="off"
                             class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                            @change="queryAccessRole = $event.target.value"
                             :display-value="(role: any) => role.label"
+                            @change="queryAccessRole = $event.target.value"
                             @focusin="focusTablet(true)"
                             @focusout="focusTablet(false)"
                         />
@@ -444,9 +447,9 @@ watch(selectedAccessRole, () => {
                         <ComboboxOption
                             v-for="role in entriesAccessRoles"
                             :key="role.id?.toString()"
+                            v-slot="{ active, selected }"
                             :value="role"
                             as="accessRole"
-                            v-slot="{ active, selected }"
                         >
                             <li
                                 :class="[
@@ -473,12 +476,12 @@ watch(selectedAccessRole, () => {
                 </div>
             </Combobox>
         </div>
-        <div class="flex-initial" v-if="!readOnly">
+        <div v-if="!readOnly" class="flex-initial">
             <button
                 type="button"
                 class="rounded-full bg-primary-500 p-1.5 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
             >
-                <CloseIcon class="w-6 h-6" @click="$emit('deleteRequest', { id: props.init.id })" aria-hidden="true" />
+                <CloseIcon class="w-6 h-6" aria-hidden="true" @click="$emit('deleteRequest', { id: props.init.id })" />
             </button>
         </div>
     </div>

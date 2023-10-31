@@ -36,8 +36,8 @@ defineProps<{
                         {{ doc.title }}
                     </p>
                     <p
-                        class="inline-flex px-2 text-xs font-semibold leading-5 rounded-full bg-primary-100 text-primary-700 my-auto"
                         v-if="doc.state"
+                        class="inline-flex px-2 text-xs font-semibold leading-5 rounded-full bg-primary-100 text-primary-700 my-auto"
                     >
                         {{ doc.state }}
                     </p>
@@ -79,7 +79,7 @@ defineProps<{
                 <div class="mt-2 flex flex-row gap-2 text-base-200">
                     <div class="flex flex-row items-center justify-start flex-1">
                         <CitizenInfoPopover :user="doc.creator">
-                            <template v-slot:before>
+                            <template #before>
                                 <AccountIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400" aria-hidden="true" />
                             </template>
                         </CitizenInfoPopover>

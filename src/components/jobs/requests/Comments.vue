@@ -9,7 +9,7 @@ import TablePagination from '~/components/partials/elements/TablePagination.vue'
 import { useAuthStore } from '~/store/auth';
 import { RequestComment } from '~~/gen/ts/resources/jobs/requests';
 import { RequestsListCommentsResponse } from '~~/gen/ts/services/jobs/jobs';
-import CommentEntry from './CommentEntry.vue';
+import CommentEntry from '~/components/jobs/requests/CommentEntry.vue';
 
 const { $grpc } = useNuxtApp();
 const authStore = useAuthStore();
@@ -20,95 +20,88 @@ const props = defineProps<{
     requestId: bigint;
 }>();
 
-const emit = defineEmits<{
+defineEmits<{
     (e: 'counted', count: bigint): void;
 }>();
 
 const offset = ref(0n);
 
-const {
-    data: comments,
-    pending,
-    refresh,
-    error,
-} = useLazyAsyncData(`jobs-requests-${props.requestId}-comments-${offset}`, () => getComments(), {
-    immediate: false,
-});
+const { data: comments, refresh } = useLazyAsyncData(
+    `jobs-requests-${props.requestId}-comments-${offset}`,
+    () => getComments(),
+    {
+        immediate: false,
+    },
+);
 
 async function getComments(): Promise<RequestsListCommentsResponse> {
-    return new Promise(async (res, rej) => {
-        try {
-            const call = $grpc.getJobsClient().requestsListComments({
-                pagination: {
-                    offset: offset.value,
-                    pageSize: 5n,
-                },
-                requestId: props.requestId,
-            });
-            const { response } = await call;
+    try {
+        const call = $grpc.getJobsClient().requestsListComments({
+            pagination: {
+                offset: offset.value,
+                pageSize: 5n,
+            },
+            requestId: props.requestId,
+        });
+        const { response } = await call;
 
-            return res(response);
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
-        }
-    });
+        return response;
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
+}
+
+interface FormData {
+    comment: string;
 }
 
 async function addComment(documentId: bigint, values: FormData): Promise<void> {
-    return new Promise(async (res, rej) => {
-        if (!comments.value) {
-            return res();
+    if (!comments.value) {
+        return;
+    }
+
+    const comment: RequestComment = {
+        id: 0n,
+        requestId: documentId,
+        comment: values.comment,
+    };
+
+    try {
+        const call = $grpc.getJobsClient().requestsPostComment({ comment });
+        const { response } = await call;
+        if (!response.comment) {
+            return;
         }
 
-        const comment: RequestComment = {
-            id: 0n,
-            requestId: documentId,
-            comment: values.comment,
-        };
+        comment.id = response.comment.id;
+        comment.creator = activeChar.value!;
 
-        try {
-            const call = $grpc.getJobsClient().requestsPostComment({
-                comment: comment,
-            });
-            const { response } = await call;
-            if (!response.comment) return res();
+        comments.value.comments.unshift(comment);
 
-            comment.id = response.comment.id;
-            comment.creator = activeChar.value!;
-
-            comments.value.comments.unshift(comment);
-
-            resetForm();
-
-            return res();
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
-        }
-    });
+        resetForm();
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 
 async function removeComment(comment: RequestComment): Promise<void> {
-    return new Promise(async (res, rej) => {
-        if (!comments.value) {
-            return res();
-        }
+    if (!comments.value) {
+        return;
+    }
 
-        if (!can('DocStoreService.DeleteComment')) {
-            return res();
-        }
+    if (!can('DocStoreService.DeleteComment')) {
+        return;
+    }
 
-        const idx = comments.value.comments.findIndex((c) => {
-            return c.id === comment.id;
-        });
-
-        if (idx > -1) {
-            comments.value.comments.splice(idx, 1);
-        }
-
-        return res();
+    const idx = comments.value.comments.findIndex((c) => {
+        return c.id === comment.id;
     });
+
+    if (idx > -1) {
+        comments.value.comments.splice(idx, 1);
+    }
 }
 
 const commentsEl = ref<HTMLDivElement | null>(null);
@@ -128,10 +121,6 @@ watch(offset, async () => refresh());
 defineRule('required', required);
 defineRule('min', min);
 defineRule('max', max);
-
-interface FormData {
-    comment: string;
-}
 
 const { handleSubmit, meta, resetForm } = useForm<FormData>({
     validationSchema: {
@@ -156,7 +145,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
             <div v-if="can('DocStoreService.PostComment')">
                 <div class="flex items-start space-x-4">
                     <div class="min-w-0 flex-1">
-                        <form @submit.prevent="onSubmitThrottle" class="relative">
+                        <form class="relative" @submit.prevent="onSubmitThrottle">
                             <div
                                 class="overflow-hidden rounded-lg shadow-sm ring-1 ring-inset ring-gray-500 focus-within:ring-2 focus-within:ring-primary-600"
                             >
@@ -164,13 +153,13 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                     {{ $t('components.documents.document_comments.add_comment') }}
                                 </label>
                                 <VeeField
+                                    ref="commentInput"
                                     as="textarea"
                                     rows="3"
                                     name="comment"
                                     :label="$t('common.comment')"
                                     :placeholder="$t('components.documents.document_comments.add_comment')"
                                     class="block w-full resize-none border-0 bg-transparent text-gray-50 placeholder:text-gray-400 focus:ring-0 sm:py-1.5 sm:text-sm sm:leading-6"
-                                    ref="commentInput"
                                 />
 
                                 <!-- Spacer element to match the height of the toolbar -->
@@ -235,8 +224,8 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
             v-if="comments && comments.comments.length > 0"
             class="mt-2"
             :pagination="comments.pagination"
-            @offset-change="offset = $event"
             :refresh="refresh"
+            @offset-change="offset = $event"
         />
     </div>
 </template>

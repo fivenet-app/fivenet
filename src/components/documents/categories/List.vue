@@ -7,7 +7,7 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { type CardElements } from '~/utils/types';
 import { Category } from '~~/gen/ts/resources/documents/category';
-import Modal from './Modal.vue';
+import Modal from '~/components/documents/categories/Modal.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -15,17 +15,15 @@ const { data: categories, pending, refresh, error } = useLazyAsyncData(`document
 const items = ref<CardElements>([]);
 
 async function listCategories(): Promise<Category[]> {
-    return new Promise(async (res, rej) => {
-        try {
-            const call = $grpc.getDocStoreClient().listCategories({});
-            const { response } = await call;
+    try {
+        const call = $grpc.getDocStoreClient().listCategories({});
+        const { response } = await call;
 
-            return res(response.category);
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
-        }
-    });
+        return response.category;
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 
 watch(categories, () => {

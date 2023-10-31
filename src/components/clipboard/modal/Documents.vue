@@ -23,6 +23,7 @@ const props = withDefaults(
     {
         submit: false,
         showSelect: true,
+        specs: undefined,
     },
 );
 
@@ -106,7 +107,7 @@ watch(props, async (newVal) => {
     <table v-else class="min-w-full divide-y divide-gray-700">
         <thead>
             <tr>
-                <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-0" v-if="showSelect">
+                <th v-if="showSelect" scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-0">
                     {{ $t('common.select', 1) }}
                 </th>
                 <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-0">
@@ -125,16 +126,16 @@ watch(props, async (newVal) => {
         </thead>
         <tbody class="divide-y divide-gray-800">
             <tr v-for="item in documents" :key="item.id?.toString()">
-                <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0" v-if="showSelect">
+                <td v-if="showSelect" class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">
                     <template v-if="specs && specs.max === 1n">
                         <button
-                            @click="select(item)"
                             class="inline-flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold text-neutral shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:col-start-2"
                             :class="
                                 selected.includes(item)
                                     ? 'bg-accent-500 hover:bg-accent-400 focus-visible:outline-accent-500'
                                     : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500'
                             "
+                            @click="select(item)"
                         >
                             {{
                                 !selected.includes(item)
@@ -145,11 +146,11 @@ watch(props, async (newVal) => {
                     </template>
                     <template v-else>
                         <input
-                            name="selected"
                             :key="item.id?.toString()"
+                            v-model="selected"
+                            name="selected"
                             :checked="selected.includes(item)"
                             :value="item"
-                            v-model="selected"
                             type="checkbox"
                             class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600"
                         />

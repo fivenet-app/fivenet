@@ -2,7 +2,7 @@
 import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { CloseCircleIcon } from 'mdi-vue3';
 import { OAuth2Account, OAuth2Provider } from '~~/gen/ts/resources/accounts/oauth2';
-import OAuth2ConnectButton from './OAuth2ConnectButton.vue';
+import OAuth2ConnectButton from '~/components/auth/account/OAuth2ConnectButton.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -20,20 +20,16 @@ function getProviderConnection(provider: string): undefined | OAuth2Account {
 }
 
 async function disconnect(provider: OAuth2Provider): Promise<void> {
-    return new Promise(async (res, rej) => {
-        try {
-            await $grpc.getAuthClient().deleteOAuth2Connection({
-                provider: provider.name,
-            });
+    try {
+        await $grpc.getAuthClient().deleteOAuth2Connection({
+            provider: provider.name,
+        });
 
-            emit('disconnected', provider.name);
-
-            return res();
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
-        }
-    });
+        emit('disconnected', provider.name);
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 </script>
 
@@ -49,30 +45,37 @@ async function disconnect(provider: OAuth2Provider): Promise<void> {
         </div>
         <div v-if="providers && providers.length > 0" class="border-t border-base-400 px-4 py-5 sm:p-0">
             <dl class="sm:divide-y sm:divide-base-400">
-                <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5" v-for="prov in providers">
+                <div
+                    v-for="provider in providers"
+                    :key="provider.name"
+                    class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5"
+                >
                     <dt class="text-sm font-medium">
-                        <NuxtLink :external="true" :to="prov.homepage" target="_blank">
-                            {{ prov.label }}
+                        <NuxtLink :external="true" :to="provider.homepage" target="_blank">
+                            {{ provider.label }}
                         </NuxtLink>
                     </dt>
                     <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
-                        <div v-if="getProviderConnection(prov.name) !== undefined" class="flex items-center justify-between">
+                        <div
+                            v-if="getProviderConnection(provider.name) !== undefined"
+                            class="flex items-center justify-between"
+                        >
                             <img
-                                :src="getProviderConnection(prov.name)!.avatar"
+                                :src="getProviderConnection(provider.name)!.avatar"
                                 alt="Avatar"
                                 class="w-auto h-10 rounded-full ring-2 ring-neutral hover:transition-colors text-base-300 bg-base-800 fill-base-300 hover:text-base-100 hover:fill-base-100"
                             />
-                            <span class="text-left" :title="`ID: ${getProviderConnection(prov.name)?.externalId}`">
-                                {{ getProviderConnection(prov.name)?.username }}
+                            <span class="text-left" :title="`ID: ${getProviderConnection(provider.name)?.externalId}`">
+                                {{ getProviderConnection(provider.name)?.username }}
                             </span>
 
-                            <button @click="disconnect(prov)">
+                            <button @click="disconnect(provider)">
                                 <CloseCircleIcon class="w-6 h-6 mx-auto text-neutral" />
                                 {{ $t('common.disconnect') }}
                             </button>
                         </div>
                         <div v-else>
-                            <OAuth2ConnectButton :provider="prov" />
+                            <OAuth2ConnectButton :provider="provider" />
                         </div>
                     </dd>
                 </div>

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { LControl, LLayerGroup } from '@vue-leaflet/vue-leaflet';
-import { default as DispatchDetails } from '~/components/centrum/dispatches/Details.vue';
+import DispatchDetails from '~/components/centrum/dispatches/DispatchDetails.vue';
 import DispatchMarker from '~/components/centrum/livemap/DispatchMarker.vue';
 import { useCentrumStore } from '~/store/centrum';
 import { useSettingsStore } from '~/store/settings';
@@ -40,12 +40,13 @@ const open = ref(false);
     <LLayerGroup key="your_dispatches" :name="$t('common.your_dispatches')" layer-type="overlay" :visible="true">
         <DispatchMarker
             v-for="dispatch in ownDispatches"
+            :key="dispatch.toString()"
             :dispatch="dispatches.get(dispatch)!"
+            :size="livemap.markerSize"
             @selected="
                 selectedDispatch = $event;
                 open = true;
             "
-            :size="livemap.markerSize"
         />
     </LLayerGroup>
 
@@ -54,11 +55,11 @@ const open = ref(false);
             v-for="dispatch in dispatchesFiltered"
             :key="dispatch.id.toString()"
             :dispatch="dispatch"
+            :size="livemap.markerSize"
             @selected="
                 selectedDispatch = $event;
                 open = true;
             "
-            :size="livemap.markerSize"
         />
     </LLayerGroup>
 

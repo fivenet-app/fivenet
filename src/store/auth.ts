@@ -8,7 +8,7 @@ import { JobProps } from '~~/gen/ts/resources/users/jobs';
 import { User } from '~~/gen/ts/resources/users/users';
 
 export type JobPropsState = {
-    quickButtons: String[];
+    quickButtons: string[];
 };
 
 export interface AuthState {
@@ -19,7 +19,7 @@ export interface AuthState {
     activeChar: null | User;
     loggingIn: boolean;
     loginError: null | string;
-    permissions: String[];
+    permissions: string[];
     jobProps: null | JobPropsState;
 }
 
@@ -34,7 +34,7 @@ export const useAuthStore = defineStore('auth', {
         activeChar: null as null | User,
         loggingIn: false as boolean,
         loginError: null as null | string,
-        permissions: [] as String[],
+        permissions: [] as string[],
         jobProps: {
             quickButtons: [],
         } as null | JobPropsState,

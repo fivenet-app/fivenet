@@ -63,9 +63,9 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
                 <div class="flex flex-1 w-0">
                     <button
                         type="button"
-                        @click="onSubmitThrottle(char.userId)"
                         class="relative inline-flex items-center justify-center flex-1 w-0 py-4 text-sm font-semibold transition-colors border border-transparent rounded-b-lg gap-x-3 text-neutral bg-base-700 hover:bg-base-600"
                         :disabled="!canSubmit"
+                        @click="onSubmitThrottle(char.userId)"
                     >
                         <template v-if="!canSubmit">
                             <LoadingIcon class="animate-spin h-5 w-5 mr-2" />

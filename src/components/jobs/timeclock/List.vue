@@ -8,12 +8,14 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import Divider from '~/components/partials/elements/Divider.vue';
 import TablePagination from '~/components/partials/elements/TablePagination.vue';
-import * as googleProtobufTimestamp_pb from '~~/gen/ts/google/protobuf/timestamp';
+import * as googleProtobufTimestamp from '~~/gen/ts/google/protobuf/timestamp';
 import { TimeclockEntry } from '~~/gen/ts/resources/jobs/timeclock';
 import { User } from '~~/gen/ts/resources/users/users';
 import { TimeclockListEntriesRequest, TimeclockListEntriesResponse } from '~~/gen/ts/services/jobs/jobs';
-import ListEntry from './ListEntry.vue';
-import Stats from './Stats.vue';
+import ListEntry from '~/components/jobs/timeclock/ListEntry.vue';
+import TimeclockStatsBlock from '~/components/jobs/timeclock/TimeclockStatsBlock.vue';
+import { useJobsStore } from '~/store/jobs';
+import { dateToDateString } from '~/utils/time';
 
 const { $grpc } = useNuxtApp();
 
@@ -41,48 +43,46 @@ const offset = ref(0n);
 const { data, pending, refresh, error } = useLazyAsyncData(`jobs-timeclock-${offset.value}`, () => listTimeclockEntries());
 
 async function listTimeclockEntries(): Promise<TimeclockListEntriesResponse> {
-    return new Promise(async (res, rej) => {
-        try {
-            const req: TimeclockListEntriesRequest = {
-                pagination: {
-                    offset: offset.value,
-                },
-                userIds: query.value.user_ids?.map((u) => u.userId) ?? [],
-            };
-            if (query.value.perDay !== undefined) {
-                req.perDay = query.value.perDay;
-            }
-            if (query.value.from) {
-                req.from = {
-                    timestamp: googleProtobufTimestamp_pb.Timestamp.fromDate(fromString(query.value.from)!),
-                };
-            }
-            if (query.value.to) {
-                req.to = {
-                    timestamp: googleProtobufTimestamp_pb.Timestamp.fromDate(fromString(query.value.to)!),
-                };
-            }
-
-            const call = $grpc.getJobsClient().timeclockListEntries(req);
-            const { response } = await call;
-
-            return res(response);
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
+    try {
+        const req: TimeclockListEntriesRequest = {
+            pagination: {
+                offset: offset.value,
+            },
+            userIds: query.value.user_ids?.map((u) => u.userId) ?? [],
+        };
+        if (query.value.perDay !== undefined) {
+            req.perDay = query.value.perDay;
         }
-    });
+        if (query.value.from) {
+            req.from = {
+                timestamp: googleProtobufTimestamp.Timestamp.fromDate(fromString(query.value.from)!),
+            };
+        }
+        if (query.value.to) {
+            req.to = {
+                timestamp: googleProtobufTimestamp.Timestamp.fromDate(fromString(query.value.to)!),
+            };
+        }
+
+        const call = $grpc.getJobsClient().timeclockListEntries(req);
+        const { response } = await call;
+
+        return response;
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 
 type GroupedTimeClockEntries = { date: Date; key: string; entries: TimeclockEntry[] }[];
 const grouped = computed(() => {
     const groups: GroupedTimeClockEntries = [];
-    data.value?.entries.map((e) => {
+    data.value?.entries.forEach((e) => {
         const date = toDate(e.date);
         const idx = groups.findIndex((g) => g.key === date.toString());
         if (idx === -1) {
             groups.push({
-                date: date,
+                date,
                 entries: [e],
                 key: date.toString(),
             });
@@ -94,7 +94,6 @@ const grouped = computed(() => {
     return groups;
 });
 
-const entriesChars = ref<User[]>([]);
 const queryTargets = ref<string>('');
 
 const searchNameInput = ref<HTMLInputElement | null>(null);
@@ -107,24 +106,18 @@ function focusSearch(): void {
 watch(offset, async () => refresh());
 watchDebounced(query.value, async () => refresh(), { debounce: 600, maxWait: 1400 });
 
-async function listColleagues(): Promise<User[]> {
-    return new Promise(async (res, rej) => {
-        try {
-            const call = $grpc.getJobsClient().colleaguesList({
-                pagination: {
-                    offset: offset.value,
-                },
-                searchName: queryTargets.value,
-            });
-            const { response } = await call;
-
-            return res(response.users);
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
-        }
-    });
-}
+const jobsStore = useJobsStore();
+const { data: colleagues, refresh: refreshColleagues } = useLazyAsyncData(
+    `jobs-colleagues-0-${queryTargets.value}`,
+    () =>
+        jobsStore.listColleagues({
+            pagination: { offset: 0n },
+            searchName: queryTargets.value,
+        }),
+    {
+        immediate: false,
+    },
+);
 
 function charsGetDisplayValue(chars: User[]): string {
     const cs: string[] = [];
@@ -137,8 +130,8 @@ watchDebounced(
     queryTargets,
     async () => {
         if (canAccessAll) {
-            entriesChars.value = await listColleagues();
-            if (query.value.user_ids) entriesChars.value.unshift(...query.value.user_ids);
+            await refreshColleagues();
+            if (query.value.user_ids) colleagues.value?.users.unshift(...query.value.user_ids);
         }
     },
     {
@@ -149,7 +142,7 @@ watchDebounced(
 
 onMounted(async () => {
     if (canAccessAll) {
-        entriesChars.value = await listColleagues();
+        await refreshColleagues();
     }
 });
 
@@ -180,18 +173,6 @@ function updateDates(): void {
     query.value.from = dateToDateString(currentDay.value);
     query.value.to = dateToDateString(previousDay.value);
 }
-
-function dateToDateString(date: Date): string {
-    var d = new Date(date),
-        month = '' + (d.getMonth() + 1),
-        day = '' + d.getDate(),
-        year = d.getFullYear();
-
-    if (month.length < 2) month = '0' + month;
-    if (day.length < 2) day = '0' + day;
-
-    return [year, month, day].join('-');
-}
 </script>
 
 <template>
@@ -207,32 +188,32 @@ function dateToDateString(date: Date): string {
                                     {{ $t('common.colleague', 1) }}
                                 </label>
                                 <div class="relative flex items-center mt-2">
-                                    <Combobox as="div" v-model="query.user_ids" class="w-full" multiple nullable>
+                                    <Combobox v-model="query.user_ids" as="div" class="w-full" multiple nullable>
                                         <div class="relative">
                                             <ComboboxButton as="div">
                                                 <ComboboxInput
                                                     autocomplete="off"
                                                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                    @change="queryTargets = $event.target.value"
                                                     :display-value="
                                                         (chars: any) => (chars ? charsGetDisplayValue(chars) : $t('common.na'))
                                                     "
                                                     :placeholder="$t('common.target')"
+                                                    @change="queryTargets = $event.target.value"
                                                     @focusin="focusTablet(true)"
                                                     @focusout="focusTablet(false)"
                                                 />
                                             </ComboboxButton>
 
                                             <ComboboxOptions
-                                                v-if="entriesChars.length > 0"
+                                                v-if="colleagues?.users && colleagues?.users?.length > 0"
                                                 class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-44 sm:text-sm"
                                             >
                                                 <ComboboxOption
-                                                    v-for="char in entriesChars"
+                                                    v-for="char in colleagues?.users"
                                                     :key="char.identifier"
+                                                    v-slot="{ active, selected }"
                                                     :value="char"
                                                     as="char"
-                                                    v-slot="{ active, selected }"
                                                 >
                                                     <li
                                                         :class="[
@@ -299,13 +280,13 @@ function dateToDateString(date: Date): string {
                                 <button
                                     type="button"
                                     :disabled="futureDay.getDate() > today.getDate()"
-                                    @click="dayForward()"
                                     :class="[
                                         futureDay.getDate() > today.getDate()
                                             ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
                                             : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
                                         'relative w-full inline-flex items-center place-content-start px-3 py-2 text-sm font-semibold rounded-md cursor-pointer text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
                                     ]"
+                                    @click="dayForward()"
                                 >
                                     <ChevronLeftIcon class="h-5 w-5" />
                                     {{ $t('common.forward') }} - {{ $d(futureDay, 'date') }}
@@ -324,8 +305,8 @@ function dateToDateString(date: Date): string {
                             <div class="flex-1 form-control">
                                 <button
                                     type="button"
-                                    @click="dayBackwards()"
                                     class="bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500 relative w-full inline-flex items-center place-content-end px-3 py-2 text-sm font-semibold rounded-md cursor-pointer text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                                    @click="dayBackwards()"
                                 >
                                     {{ $d(previousDay, 'date') }} - {{ $t('common.previous') }}
                                     <ChevronRightIcon class="h-5 w-5" />
@@ -387,9 +368,9 @@ function dateToDateString(date: Date): string {
                                 <thead>
                                     <tr>
                                         <th
+                                            v-if="!canAccessAll"
                                             scope="col"
                                             class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-0"
-                                            v-if="!canAccessAll"
                                         >
                                             {{ $t('common.date') }}
                                         </th>
@@ -409,8 +390,8 @@ function dateToDateString(date: Date): string {
 
                             <TablePagination
                                 :pagination="data?.pagination"
-                                @offset-change="offset = $event"
                                 :refresh="refresh"
+                                @offset-change="offset = $event"
                             />
                         </div>
                     </div>
@@ -420,7 +401,7 @@ function dateToDateString(date: Date): string {
                 <div class="sm:flex sm:items-center">
                     <div class="sm:flex-auto">
                         <Divider :label="$t('components.jobs.timeclock.Stats.title')" />
-                        <Stats :stats="data.stats" />
+                        <TimeclockStatsBlock :stats="data.stats" />
                     </div>
                 </div>
             </div>

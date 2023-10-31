@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { CarEmergencyIcon } from 'mdi-vue3';
-import { default as DispatchDetails } from '~/components/centrum/dispatches/Details.vue';
+import DispatchDetails from '~/components/centrum/dispatches/DispatchDetails.vue';
 import { dispatchStatusToBGColor } from '~/components/centrum/helpers';
 import Time from '~/components/partials/elements/Time.vue';
 import { Dispatch, StatusDispatch } from '~~/gen/ts/resources/dispatch/dispatches';
@@ -24,10 +24,10 @@ const openDetails = ref(false);
 
         <div class="mr-1.5">
             <input
+                :value="dispatch.id"
                 name="active"
                 type="radio"
                 class="h-4 w-4 border-gray-300 text-primary-600 focus:ring-primary-600"
-                v-bind:value="dispatch.id"
                 :checked="selectedDispatch === dispatch.id"
                 @change="$emit('update:selectedDispatch', dispatch.id)"
             />

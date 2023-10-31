@@ -4,28 +4,26 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { Unit } from '~~/gen/ts/resources/dispatch/units';
-import CreateOrUpdateUnitModal from './CreateOrUpdateUnitModal.vue';
-import ListEntry from './ListEntry.vue';
-import SettingsModal from './SettingsModal.vue';
+import CreateOrUpdateUnitModal from '~/components/centrum/settings/CreateOrUpdateUnitModal.vue';
+import ListEntry from '~/components/centrum/settings/ListEntry.vue';
+import SettingsModal from '~/components/centrum/settings/SettingsModal.vue';
 
 const { $grpc } = useNuxtApp();
 
 const { data: units, pending, refresh, error } = useLazyAsyncData('centrum-units', () => getUnits());
 
 async function getUnits(): Promise<Unit[]> {
-    return new Promise(async (res, rej) => {
-        try {
-            const call = $grpc.getCentrumClient().listUnits({
-                status: [],
-            });
-            const { response } = await call;
+    try {
+        const call = $grpc.getCentrumClient().listUnits({
+            status: [],
+        });
+        const { response } = await call;
 
-            return res(response.units);
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
-        }
-    });
+        return response.units;
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 
 const open = ref(false);
@@ -44,15 +42,15 @@ const openSettings = ref(false);
                         <div class="flex-initial form-control grid grid-cols-2 gap-4">
                             <button
                                 v-if="can('CentrumService.CreateOrUpdateUnit')"
-                                @click="open = true"
                                 class="inline-flex px-3 py-2 text-sm font-semibold rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
+                                @click="open = true"
                             >
                                 {{ $t('components.centrum.units.create_unit') }}
                             </button>
                             <button
                                 v-if="can('CentrumService.Stream')"
-                                @click="openSettings = true"
                                 class="inline-flex px-3 py-2 text-sm font-semibold rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
+                                @click="openSettings = true"
                             >
                                 {{ $t('common.setting', 2) }}
                             </button>
@@ -95,8 +93,8 @@ const openSettings = ref(false);
                                 <tbody class="divide-y divide-base-800">
                                     <ListEntry
                                         v-for="unit in units"
-                                        :unit="unit"
                                         :key="unit.id?.toString()"
+                                        :unit="unit"
                                         @update="refresh()"
                                     />
                                 </tbody>

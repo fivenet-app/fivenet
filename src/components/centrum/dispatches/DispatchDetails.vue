@@ -4,8 +4,8 @@ import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { useConfirmDialog } from '@vueuse/core';
 import { AccountIcon, CloseIcon, MapMarkerIcon, PencilIcon, PlusIcon, TrashCanIcon } from 'mdi-vue3';
 import AssignDispatchModal from '~/components/centrum/dispatches//AssignDispatchModal.vue';
-import Feed from '~/components/centrum/dispatches/Feed.vue';
-import StatusUpdateModal from '~/components/centrum/dispatches/StatusUpdateModal.vue';
+import DispatchFeed from '~/components/centrum/dispatches/DispatchFeed.vue';
+import DispatchStatusUpdateModal from '~/components/centrum/dispatches/DispatchStatusUpdateModal.vue';
 import { dispatchStatusToBGColor } from '~/components/centrum/helpers';
 import UnitInfoPopover from '~/components/centrum/units/UnitInfoPopover.vue';
 import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
@@ -108,16 +108,16 @@ const openStatus = ref(false);
                                                     class="inline-flex items-center text-base font-semibold leading-6 text-neutral"
                                                 >
                                                     {{ $t('common.dispatch') }}:
-                                                    <IDCopyBadge class="ml-2 mr-2" :id="dispatch.id" prefix="DSP" />
+                                                    <IDCopyBadge :id="dispatch.id" class="ml-2 mr-2" prefix="DSP" />
                                                     <p class="truncate max-w-[20rem]" :title="dispatch.message">
                                                         {{ dispatch.message }}
                                                     </p>
                                                     <button
                                                         v-if="can('CentrumService.DeleteDispatch')"
                                                         type="button"
-                                                        @click="reveal()"
                                                         class="flex-initial text-neutral hover:text-gray-300 ml-1"
                                                         :title="$t('common.delete')"
+                                                        @click="reveal()"
                                                     >
                                                         <TrashCanIcon class="h-6 w-6" aria-hidden="true" />
                                                     </button>
@@ -247,7 +247,7 @@ const openStatus = ref(false);
                                                                                 :assignment="unit"
                                                                                 class="flex items-center justify-center"
                                                                             >
-                                                                                <template v-slot:before>
+                                                                                <template #before>
                                                                                     <AccountIcon
                                                                                         class="flex-shrink-0 w-5 h-5 text-base-400 mr-1"
                                                                                         aria-hidden="true"
@@ -255,8 +255,8 @@ const openStatus = ref(false);
                                                                                 </template>
                                                                             </UnitInfoPopover>
                                                                             <span
-                                                                                class="flex-1 ml-2 truncate inline-flex items-center"
                                                                                 v-if="unit.expiresAt"
+                                                                                class="flex-1 ml-2 truncate inline-flex items-center"
                                                                             >
                                                                                 -
                                                                                 {{
@@ -281,8 +281,8 @@ const openStatus = ref(false);
                                                                     <button
                                                                         v-if="canDo('TakeControl')"
                                                                         type="button"
-                                                                        @click="openAssign = true"
                                                                         class="flex flex-row items-center rounded bg-neutral/10 px-2 py-1 text-xs font-semibold text-neutral shadow-sm hover:bg-neutral/20"
+                                                                        @click="openAssign = true"
                                                                     >
                                                                         <PencilIcon class="h-6 w-6" />
                                                                         <span class="truncate ml-0.5">
@@ -292,8 +292,8 @@ const openStatus = ref(false);
                                                                     <button
                                                                         v-if="canDo('TakeDispatch')"
                                                                         type="button"
-                                                                        @click="selfAssign(dispatch.id)"
                                                                         class="flex flex-row items-center ml-2 rounded bg-neutral/10 px-2 py-1 text-xs font-semibold text-neutral shadow-sm hover:bg-neutral/20"
+                                                                        @click="selfAssign(dispatch.id)"
                                                                     >
                                                                         <PlusIcon class="h-6 w-6" />
                                                                         <span class="truncate ml-0.5">{{
@@ -352,7 +352,7 @@ const openStatus = ref(false);
                                                             <dd
                                                                 class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
                                                             >
-                                                                <StatusUpdateModal
+                                                                <DispatchStatusUpdateModal
                                                                     v-if="openStatus"
                                                                     :open="openStatus"
                                                                     :dispatch-id="dispatch.id"
@@ -361,9 +361,9 @@ const openStatus = ref(false);
 
                                                                 <button
                                                                     type="button"
-                                                                    @click="openStatus = true"
                                                                     class="rounded px-2 py-1 text-xs font-semibold text-neutral shadow-sm hover:bg-neutral/20"
                                                                     :class="dispatchStatusColors"
+                                                                    @click="openStatus = true"
                                                                 >
                                                                     {{
                                                                         $t(
@@ -401,7 +401,7 @@ const openStatus = ref(false);
                                                     </dl>
                                                 </div>
 
-                                                <Feed :dispatch-id="dispatch.id" />
+                                                <DispatchFeed :dispatch-id="dispatch.id" />
                                             </div>
                                         </div>
                                     </div>

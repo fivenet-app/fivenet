@@ -18,6 +18,9 @@ withDefaults(
     {
         initialsOnly: false,
         badge: false,
+        assignment: undefined,
+        textClass: '' as any,
+        buttonClass: '' as any,
     },
 );
 </script>
@@ -77,7 +80,7 @@ withDefaults(
                         {{ $t('common.members') }}
                     </p>
                     <ul class="text-sm font-normal">
-                        <li v-for="user in unit.users" class="inline-flex items-center">
+                        <li v-for="user in unit.users" :key="user.userId" class="inline-flex items-center">
                             {{ user.user?.firstname }}
                             {{ user.user?.lastname }}
                             <PhoneNumber class="ml-0.5" :number="user.user?.phoneNumber" :hide-number="true" />

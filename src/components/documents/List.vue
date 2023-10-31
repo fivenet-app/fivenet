@@ -22,12 +22,12 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import TablePagination from '~/components/partials/elements/TablePagination.vue';
 import { useCompletorStore } from '~/store/completor';
-import * as googleProtobufTimestamp_pb from '~~/gen/ts/google/protobuf/timestamp';
+import * as googleProtobufTimestamp from '~~/gen/ts/google/protobuf/timestamp';
 import { Category } from '~~/gen/ts/resources/documents/category';
 import { UserShort } from '~~/gen/ts/resources/users/users';
 import { ListDocumentsRequest, ListDocumentsResponse } from '~~/gen/ts/services/docstore/docstore';
-import ListEntry from './ListEntry.vue';
-import TemplatesModal from './templates/TemplatesModal.vue';
+import ListEntry from '~/components/documents/ListEntry.vue';
+import TemplatesModal from '~/components/documents/templates/TemplatesModal.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -71,46 +71,44 @@ const { data, pending, refresh, error } = useLazyAsyncData(`documents-${offset.v
 });
 
 async function listDocuments(): Promise<ListDocumentsResponse> {
-    return new Promise(async (res, rej) => {
-        const req: ListDocumentsRequest = {
-            pagination: {
-                offset: offset.value,
-            },
-            orderBy: [],
-            search: query.value.title ?? '',
-            categoryIds: [],
-            creatorIds: [],
+    const req: ListDocumentsRequest = {
+        pagination: {
+            offset: offset.value,
+        },
+        orderBy: [],
+        search: query.value.title ?? '',
+        categoryIds: [],
+        creatorIds: [],
+    };
+    if (queryCategory.value) {
+        req.categoryIds.push(queryCategory.value.id);
+    }
+    if (query.value.character) {
+        req.creatorIds.push(query.value.character.userId);
+    }
+    if (query.value.from) {
+        req.from = {
+            timestamp: googleProtobufTimestamp.Timestamp.fromDate(fromString(query.value.from)!),
         };
-        if (queryCategory.value) {
-            req.categoryIds.push(queryCategory.value.id);
-        }
-        if (query.value.character) {
-            req.creatorIds.push(query.value.character.userId);
-        }
-        if (query.value.from) {
-            req.from = {
-                timestamp: googleProtobufTimestamp_pb.Timestamp.fromDate(fromString(query.value.from)!),
-            };
-        }
-        if (query.value.to) {
-            req.to = {
-                timestamp: googleProtobufTimestamp_pb.Timestamp.fromDate(fromString(query.value.to)!),
-            };
-        }
-        if (query.value.closed !== undefined) {
-            req.closed = query.value.closed;
-        }
+    }
+    if (query.value.to) {
+        req.to = {
+            timestamp: googleProtobufTimestamp.Timestamp.fromDate(fromString(query.value.to)!),
+        };
+    }
+    if (query.value.closed !== undefined) {
+        req.closed = query.value.closed;
+    }
 
-        try {
-            const call = $grpc.getDocStoreClient().listDocuments(req);
-            const { response } = await call;
+    try {
+        const call = $grpc.getDocStoreClient().listDocuments(req);
+        const { response } = await call;
 
-            return res(response);
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
-        }
-    });
+        return response;
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 
 const searchInput = ref<HTMLInputElement | null>(null);
@@ -165,24 +163,24 @@ const templatesOpen = ref(false);
                         <div class="flex flex-row items-center gap-2 sm:mx-auto">
                             <div class="flex-1 form-control">
                                 <input
-                                    v-model="query.title"
                                     ref="searchInput"
+                                    v-model="query.title"
                                     type="text"
                                     name="search"
                                     :placeholder="$t('common.title')"
                                     class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 />
                             </div>
-                            <div class="flex-initial form-control" v-if="can('DocStoreService.CreateDocument')">
+                            <div v-if="can('DocStoreService.CreateDocument')" class="flex-initial form-control">
                                 <button
                                     type="button"
-                                    @click="templatesOpen = true"
                                     class="inline-flex px-3 py-2 text-sm font-semibold rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
+                                    @click="templatesOpen = true"
                                 >
                                     {{ $t('common.create') }}
                                 </button>
                             </div>
-                            <div class="flex-initial" v-if="can('CompletorService.CompleteDocumentCategories')">
+                            <div v-if="can('CompletorService.CompleteDocumentCategories')" class="flex-initial">
                                 <NuxtLink
                                     :to="{ name: 'documents-categories' }"
                                     class="inline-flex px-3 py-2 text-sm font-semibold rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
@@ -190,7 +188,7 @@ const templatesOpen = ref(false);
                                     {{ $t('common.category', 2) }}
                                 </NuxtLink>
                             </div>
-                            <div class="flex-initial" v-if="can('DocStoreService.ListTemplates')">
+                            <div v-if="can('DocStoreService.ListTemplates')" class="flex-initial">
                                 <NuxtLink
                                     :to="{ name: 'documents-templates' }"
                                     class="inline-flex px-3 py-2 text-sm font-semibold rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
@@ -199,7 +197,7 @@ const templatesOpen = ref(false);
                                 </NuxtLink>
                             </div>
                         </div>
-                        <Disclosure as="div" class="pt-2" v-slot="{ open }">
+                        <Disclosure v-slot="{ open }" as="div" class="pt-2">
                             <DisclosureButton class="flex w-full items-start justify-between text-left text-neutral">
                                 <span class="text-base-200 leading-7">{{ $t('common.advanced_search') }}</span>
                                 <span class="ml-6 flex h-7 items-center">
@@ -215,15 +213,15 @@ const templatesOpen = ref(false);
                                         <label for="search" class="block text-sm font-medium leading-6 text-neutral">
                                             {{ $t('common.category', 1) }}
                                         </label>
-                                        <Combobox as="div" v-model="queryCategory" class="mt-2" nullable>
+                                        <Combobox v-model="queryCategory" as="div" class="mt-2" nullable>
                                             <div class="relative">
                                                 <ComboboxButton as="div">
                                                     <ComboboxInput
                                                         autocomplete="off"
                                                         class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                        @change="queryCategories = $event.target.value"
                                                         :display-value="(category: any) => category?.name"
                                                         :placeholder="$t('common.category', 1)"
+                                                        @change="queryCategories = $event.target.value"
                                                         @focusin="focusTablet(true)"
                                                         @focusout="focusTablet(false)"
                                                     />
@@ -236,9 +234,9 @@ const templatesOpen = ref(false);
                                                     <ComboboxOption
                                                         v-for="category in entriesCategories"
                                                         :key="category.id?.toString()"
+                                                        v-slot="{ active, selected }"
                                                         :value="category"
                                                         as="category"
-                                                        v-slot="{ active, selected }"
                                                     >
                                                         <li
                                                             :class="[
@@ -269,15 +267,15 @@ const templatesOpen = ref(false);
                                         <label for="search" class="block text-sm font-medium leading-6 text-neutral">
                                             {{ $t('common.creator') }}
                                         </label>
-                                        <Combobox as="div" v-model="query.character" class="mt-2" nullable>
+                                        <Combobox v-model="query.character" as="div" class="mt-2" nullable>
                                             <div class="relative">
                                                 <ComboboxButton as="div">
                                                     <ComboboxInput
                                                         autocomplete="off"
                                                         class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                        @change="queryCitizens = $event.target.value"
                                                         :display-value="(char: any) => `${char?.firstname} ${char?.lastname}`"
                                                         :placeholder="$t('common.creator')"
+                                                        @change="queryCitizens = $event.target.value"
                                                         @focusin="focusTablet(true)"
                                                         @focusout="focusTablet(false)"
                                                     />
@@ -290,9 +288,9 @@ const templatesOpen = ref(false);
                                                     <ComboboxOption
                                                         v-for="char in entriesCitizens"
                                                         :key="char.identifier"
+                                                        v-slot="{ active, selected }"
                                                         :value="char"
                                                         as="char"
-                                                        v-slot="{ active, selected }"
                                                     >
                                                         <li
                                                             :class="[
@@ -352,7 +350,7 @@ const templatesOpen = ref(false);
                                         <label for="search" class="block text-sm font-medium leading-6 text-neutral">
                                             {{ $t('common.close', 2) }}?
                                         </label>
-                                        <Listbox as="div" class="mt-2" v-model="queryClosed">
+                                        <Listbox v-model="queryClosed" as="div" class="mt-2">
                                             <div class="relative">
                                                 <ListboxButton
                                                     class="block pl-3 text-left w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
@@ -376,11 +374,11 @@ const templatesOpen = ref(false);
                                                         class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-44 sm:text-sm"
                                                     >
                                                         <ListboxOption
-                                                            as="template"
                                                             v-for="st in openclose"
-                                                            :key="st.id?.toString()"
-                                                            :value="st"
                                                             v-slot="{ active, selected }"
+                                                            :key="st.id?.toString()"
+                                                            as="template"
+                                                            :value="st"
                                                         >
                                                             <li
                                                                 :class="[
@@ -434,14 +432,14 @@ const templatesOpen = ref(false);
                         />
                         <div v-else>
                             <ul role="list" class="flex flex-col">
-                                <ListEntry v-for="doc in data?.documents" :doc="doc" />
+                                <ListEntry v-for="doc in data?.documents" :key="doc.id.toString()" :doc="doc" />
                             </ul>
 
                             <TablePagination
                                 class="mt-2"
                                 :pagination="data?.pagination"
-                                @offset-change="offset = $event"
                                 :refresh="refresh"
+                                @offset-change="offset = $event"
                             />
                         </div>
                     </div>

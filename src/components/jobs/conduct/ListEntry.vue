@@ -3,7 +3,7 @@ import { PencilIcon, TrashCanIcon } from 'mdi-vue3';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import Time from '~/components/partials/elements/Time.vue';
 import { ConductEntry, ConductType } from '~~/gen/ts/resources/jobs/conduct';
-import { conductTypesToBGColor, conductTypesToRingColor, conductTypesToTextColor } from './helpers';
+import { conductTypesToBGColor, conductTypesToRingColor, conductTypesToTextColor } from '~/components/jobs/conduct/helpers';
 
 defineProps<{
     conduct: ConductEntry;
@@ -47,8 +47,8 @@ const openMessage = ref(false);
             <button
                 v-if="conduct.message.length > 50"
                 type="button"
-                @click="openMessage = !openMessage"
                 class="flex justify-center px-1 py-1 text-sm font-semibold transition-colors rounded-md text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 bg-accent-500 hover:bg-accent-400 focus-visible:outline-accent-500"
+                @click="openMessage = !openMessage"
             >
                 {{ openMessage ? $t('common.read_less') : $t('common.read_more') }}
             </button>

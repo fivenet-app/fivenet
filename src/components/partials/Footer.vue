@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { useConfigStore } from '~/store/config';
-import FiveNetLogo from './logos/FiveNetLogo.vue';
+import FiveNetLogo from '~/components/partials/logos/FiveNetLogo.vue';
 
 const configStore = useConfigStore();
 const { appConfig } = storeToRefs(configStore);

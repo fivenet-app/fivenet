@@ -30,7 +30,7 @@ import '~/assets/css/command-palette.scss';
 import { toggleTablet } from '~/composables/nui';
 import { DocumentShort } from '~~/gen/ts/resources/documents/documents';
 import { UserShort } from '~~/gen/ts/resources/users/users';
-import IDCopyBadge from './IDCopyBadge.vue';
+import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -52,6 +52,7 @@ const keys = useMagicKeys({
         }
     },
 });
+/* eslint dot-notation: "off" */
 const Escape = keys['Escape'];
 
 whenever(Escape, async () => {
@@ -86,7 +87,7 @@ const items = [
         action: () => {
             const id = query.value.substring(query.value.indexOf('-') + 1);
             if (id.length > 0) {
-                navigateTo({ name: 'citizens-id', params: { id: id } });
+                navigateTo({ name: 'citizens-id', params: { id } });
                 open.value = false;
             }
         },
@@ -101,7 +102,7 @@ const items = [
         action: () => {
             const id = query.value.substring(query.value.indexOf('-') + 1);
             if (id.length > 0) {
-                navigateTo({ name: 'documents-id', params: { id: id } });
+                navigateTo({ name: 'documents-id', params: { id } });
                 open.value = false;
             }
         },
@@ -201,54 +202,48 @@ const filteredItems = computed<Item[]>(() =>
 const citizens = ref<UserShort[]>([]);
 
 async function listCitizens(): Promise<void> {
-    return new Promise(async (res, rej) => {
-        try {
-            const call = $grpc.getCitizenStoreClient().listCitizens({
-                pagination: {
-                    offset: 0n,
-                    pageSize: 7n,
-                },
-                searchName: query.value,
-            });
-            const { response } = await call;
+    try {
+        const call = $grpc.getCitizenStoreClient().listCitizens({
+            pagination: {
+                offset: 0n,
+                pageSize: 7n,
+            },
+            searchName: query.value,
+        });
+        const { response } = await call;
 
-            citizens.value = response.users;
-            loading.value = false;
-            return res();
-        } catch (e) {
-            loading.value = false;
-            $grpc.handleError(e as RpcError);
-            throw e;
-        }
-    });
+        citizens.value = response.users;
+        loading.value = false;
+    } catch (e) {
+        loading.value = false;
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 
 const documents = ref<DocumentShort[]>([]);
 
 async function listDocuments(): Promise<void> {
-    return new Promise(async (res, rej) => {
-        try {
-            const call = $grpc.getDocStoreClient().listDocuments({
-                pagination: {
-                    offset: 0n,
-                    pageSize: 7n,
-                },
-                orderBy: [],
-                search: query.value,
-                categoryIds: [],
-                creatorIds: [],
-            });
-            const { response } = await call;
+    try {
+        const call = $grpc.getDocStoreClient().listDocuments({
+            pagination: {
+                offset: 0n,
+                pageSize: 7n,
+            },
+            orderBy: [],
+            search: query.value,
+            categoryIds: [],
+            creatorIds: [],
+        });
+        const { response } = await call;
 
-            documents.value = response.documents;
-            loading.value = false;
-            return res();
-        } catch (e) {
-            loading.value = false;
-            $grpc.handleError(e as RpcError);
-            throw e;
-        }
-    });
+        documents.value = response.documents;
+        loading.value = false;
+    } catch (e) {
+        loading.value = false;
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 
 function resetLists(): void {
@@ -287,11 +282,9 @@ async function onSelect(item: any): Promise<any> {
     if ('userId' in item) {
         navigateTo({ name: 'citizens-id', params: { id: item.userId } });
         open.value = false;
-        return;
     } else if ('title' in item && 'id' in item) {
         navigateTo({ name: 'documents-id', params: { id: item.id } });
         open.value = false;
-        return;
     } else if ('action' in item) {
         return item.action();
     }
@@ -299,7 +292,7 @@ async function onSelect(item: any): Promise<any> {
 </script>
 
 <template>
-    <TransitionRoot :show="open" as="template" @after-leave="rawQuery = ''" appear>
+    <TransitionRoot :show="open" as="template" appear @after-leave="rawQuery = ''">
         <Dialog as="div" class="relative z-30" @close="open = false">
             <TransitionChild
                 as="template"
@@ -326,7 +319,7 @@ async function onSelect(item: any): Promise<any> {
                     <DialogPanel
                         class="mx-auto max-w-3xl transform overflow-hidden rounded-xl bg-gray-900 shadow-2xl ring-1 ring-black ring-opacity-5 transition-all"
                     >
-                        <Combobox @update:modelValue="onSelect">
+                        <Combobox @update:model-value="onSelect">
                             <div class="relative">
                                 <MagnifyIcon
                                     class="pointer-events-none absolute left-4 top-3.5 h-5 w-5 text-gray-400"
@@ -362,9 +355,9 @@ async function onSelect(item: any): Promise<any> {
                                         <ComboboxOption
                                             v-for="citizen in citizens"
                                             :key="citizen.userId"
+                                            v-slot="{ active }"
                                             :value="citizen"
                                             as="template"
-                                            v-slot="{ active }"
                                         >
                                             <li
                                                 :class="[
@@ -386,9 +379,9 @@ async function onSelect(item: any): Promise<any> {
                                         <ComboboxOption
                                             v-for="document in documents"
                                             :key="document.id.toString()"
+                                            v-slot="{ active }"
                                             :value="document"
                                             as="template"
-                                            v-slot="{ active }"
                                         >
                                             <li
                                                 :class="[
@@ -402,35 +395,42 @@ async function onSelect(item: any): Promise<any> {
                                         </ComboboxOption>
                                     </ul>
                                 </li>
-                                <li v-else v-for="[category, items] in Object.entries(groups)" :key="category" class="p-2">
-                                    <h2 class="px-4 py-2.5 text-xs font-semibold text-gray-200">
-                                        {{ $t(`commandpalette.groups.${category}.label`) }}
-                                    </h2>
-                                    <ul class="-mx-2 mt-2 text-sm text-gray-400">
-                                        <ComboboxOption
-                                            v-for="item in items.filter((e) => e.permission === undefined || can(e.permission))"
-                                            :key="item.id"
-                                            :value="item"
-                                            as="template"
-                                            v-slot="{ active }"
-                                        >
-                                            <li
-                                                :class="[
-                                                    'flex cursor-default select-none items-center rounded-md px-3 py-2',
-                                                    active && 'bg-gray-800 text-neutral',
-                                                ]"
+                                <li v-else class="p-2">
+                                    <template v-for="[category, cItems] in Object.entries(groups)" :key="category">
+                                        <h2 class="px-4 py-2.5 text-xs font-semibold text-gray-200">
+                                            {{ $t(`commandpalette.groups.${category}.label`) }}
+                                        </h2>
+                                        <ul class="-mx-2 mt-2 text-sm text-gray-400">
+                                            <ComboboxOption
+                                                v-for="item in cItems.filter(
+                                                    (e) => e.permission === undefined || can(e.permission),
+                                                )"
+                                                :key="item.id"
+                                                v-slot="{ active }"
+                                                :value="item"
+                                                as="template"
                                             >
-                                                <component
-                                                    v-if="item.icon"
-                                                    :is="item.icon"
-                                                    :class="['h-6 w-6 flex-none', active ? 'text-neutral' : 'text-gray-500']"
-                                                    aria-hidden="true"
-                                                />
-                                                <span class="ml-3 flex-auto truncate">{{ item.name }}</span>
-                                                <span v-if="active" class="ml-3 flex-none text-gray-200">Jump to...</span>
-                                            </li>
-                                        </ComboboxOption>
-                                    </ul>
+                                                <li
+                                                    :class="[
+                                                        'flex cursor-default select-none items-center rounded-md px-3 py-2',
+                                                        active && 'bg-gray-800 text-neutral',
+                                                    ]"
+                                                >
+                                                    <component
+                                                        :is="item.icon"
+                                                        v-if="item.icon"
+                                                        :class="[
+                                                            'h-6 w-6 flex-none',
+                                                            active ? 'text-neutral' : 'text-gray-500',
+                                                        ]"
+                                                        aria-hidden="true"
+                                                    />
+                                                    <span class="ml-3 flex-auto truncate">{{ item.name }}</span>
+                                                    <span v-if="active" class="ml-3 flex-none text-gray-200">Jump to...</span>
+                                                </li>
+                                            </ComboboxOption>
+                                        </ul>
+                                    </template>
                                 </li>
                             </ComboboxOptions>
 

@@ -152,6 +152,7 @@ switch (props.activity.key) {
                         <NuxtLink v-if="actionLink" :to="actionLink">
                             {{ actionLinkText }}
                         </NuxtLink>
+                        <!-- eslint-disable-next-line vue/no-v-html -->
                         <span v-else v-html="actionValue"></span>
                     </span>
                     <span v-if="reasonText">

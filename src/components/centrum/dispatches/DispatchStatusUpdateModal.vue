@@ -1,15 +1,18 @@
 <script lang="ts" setup>
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc';
-import { digits, max, min, required } from '@vee-validate/rules';
+import { max, min, required } from '@vee-validate/rules';
 import { useThrottleFn } from '@vueuse/core';
-import { CloseIcon, LoadingIcon } from 'mdi-vue3';
+import { CloseIcon, HoopHouseIcon, LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
-import { useLivemapStore } from '~/store/livemap';
+import { dispatchStatusToBGColor, dispatchStatuses } from '~/components/centrum/helpers';
+import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
+import { StatusDispatch } from '~~/gen/ts/resources/dispatch/dispatches';
 
 const props = defineProps<{
     open: boolean;
-    location?: Coordinate;
+    dispatchId: bigint;
+    status?: StatusDispatch;
 }>();
 
 const emit = defineEmits<{
@@ -18,57 +21,45 @@ const emit = defineEmits<{
 
 const { $grpc } = useNuxtApp();
 
-const livemapStore = useLivemapStore();
-const { location } = storeToRefs(livemapStore);
+const status: number = props.status ?? StatusDispatch.NEW;
 
-async function createDispatch(values: FormData): Promise<void> {
-    return new Promise(async (res, rej) => {
-        try {
-            const call = $grpc.getCentrumClient().createDispatch({
-                dispatch: {
-                    id: 0n,
-                    job: '',
-                    message: values.message,
-                    description: values.description,
-                    anon: values.anon ?? false,
-                    attributes: {
-                        list: [],
-                    },
-                    x: props.location ? props.location.x : location.value?.x ?? 0,
-                    y: props.location ? props.location.y : location.value?.y ?? 0,
-                    units: [],
-                },
-            });
-            await call;
+interface FormData {
+    status: number;
+    code?: string;
+    reason?: string;
+}
 
-            emit('close');
+async function updateDispatchStatus(dispatchId: bigint, values: FormData): Promise<void> {
+    try {
+        const call = $grpc.getCentrumClient().updateDispatchStatus({
+            dispatchId,
+            status: values.status,
+            code: values.code,
+            reason: values.reason,
+        });
+        await call;
 
-            resetForm();
+        emit('close');
 
-            return res();
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
-        }
-    });
+        setFieldValue('status', values.status.valueOf());
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 
 defineRule('required', required);
-defineRule('digits', digits);
 defineRule('min', min);
 defineRule('max', max);
 
-interface FormData {
-    message: string;
-    description?: string;
-    anon: boolean;
-}
-
-const { handleSubmit, meta, resetForm } = useForm<FormData>({
+const { handleSubmit, meta, setFieldValue } = useForm<FormData>({
     validationSchema: {
-        message: { required: true, min: 3, max: 255 },
-        description: { required: false, min: 6, max: 512 },
-        anon: { required: false },
+        status: { required: true },
+        code: { required: false },
+        reason: { required: false, min: 3, max: 255 },
+    },
+    initialValues: {
+        status,
     },
     validateOnMount: true,
 });
@@ -76,12 +67,18 @@ const { handleSubmit, meta, resetForm } = useForm<FormData>({
 const canSubmit = ref(true);
 const onSubmit = handleSubmit(
     async (values): Promise<void> =>
-        await createDispatch(values).finally(() => setTimeout(() => (canSubmit.value = true), 400)),
+        await updateDispatchStatus(props.dispatchId, values).finally(() => setTimeout(() => (canSubmit.value = true), 400)),
 );
 const onSubmitThrottle = useThrottleFn(async (e) => {
     canSubmit.value = false;
     await onSubmit(e);
 }, 1000);
+
+watch(props, () => {
+    if (props.status) {
+        setFieldValue('status', props.status.valueOf());
+    }
+});
 </script>
 
 <template>
@@ -103,14 +100,15 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                         >
                             <DialogPanel class="pointer-events-auto w-screen max-w-3xl">
                                 <form
-                                    @submit.prevent="onSubmitThrottle"
                                     class="flex h-full flex-col divide-y divide-gray-200 bg-gray-900 shadow-xl"
+                                    @submit.prevent="onSubmitThrottle"
                                 >
                                     <div class="h-0 flex-1 overflow-y-auto">
                                         <div class="bg-primary-700 px-4 py-6 sm:px-6">
                                             <div class="flex items-center justify-between">
-                                                <DialogTitle class="text-base font-semibold leading-6 text-neutral">
-                                                    {{ $t('components.centrum.create_dispatch.title') }}
+                                                <DialogTitle class="inline-flex text-base font-semibold leading-6 text-neutral">
+                                                    {{ $t('components.centrum.update_dispatch_status.title') }}:
+                                                    <IDCopyBadge :id="dispatchId" class="ml-2" prefix="DSP" />
                                                 </DialogTitle>
                                                 <div class="ml-3 flex h-7 items-center">
                                                     <button
@@ -123,11 +121,6 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                     </button>
                                                 </div>
                                             </div>
-                                            <div class="mt-1">
-                                                <p class="text-sm text-primary-300">
-                                                    {{ $t('components.centrum.create_dispatch.sub_title') }}
-                                                </p>
-                                            </div>
                                         </div>
                                         <div class="flex flex-1 flex-col justify-between">
                                             <div class="divide-y divide-gray-200 px-4 sm:px-6">
@@ -136,26 +129,65 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                                                             <dt class="text-sm font-medium leading-6 text-neutral">
                                                                 <label
-                                                                    for="message"
+                                                                    for="status"
                                                                     class="block text-sm font-medium leading-6 text-neutral"
                                                                 >
-                                                                    {{ $t('common.message') }}
+                                                                    {{ $t('common.status') }}
                                                                 </label>
                                                             </dt>
                                                             <dd
                                                                 class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
                                                             >
                                                                 <VeeField
-                                                                    type="text"
-                                                                    name="message"
-                                                                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                                    :placeholder="$t('common.message')"
-                                                                    :label="$t('common.message')"
-                                                                    @focusin="focusTablet(true)"
-                                                                    @focusout="focusTablet(false)"
-                                                                />
+                                                                    v-slot="{ field }"
+                                                                    name="status"
+                                                                    as="div"
+                                                                    class="w-full grid grid-cols-2 gap-0.5"
+                                                                    :placeholder="$t('common.status')"
+                                                                    :label="$t('common.status')"
+                                                                >
+                                                                    <button
+                                                                        v-for="(item, idx) in dispatchStatuses"
+                                                                        :key="item.name"
+                                                                        type="button"
+                                                                        class="text-neutral bg-primary hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-1.5 text-xs my-0.5"
+                                                                        :class="[
+                                                                            idx >= dispatchStatuses.length - 1
+                                                                                ? 'col-span-2'
+                                                                                : '',
+                                                                            item.class,
+                                                                            field.value == item.status
+                                                                                ? 'disabled bg-base-500 hover:bg-base-400'
+                                                                                : item.status
+                                                                                ? dispatchStatusToBGColor(item.status)
+                                                                                : item.class,
+                                                                            ,
+                                                                        ]"
+                                                                        :disabled="field.value == item.status"
+                                                                        @click="
+                                                                            setFieldValue('status', item.status?.valueOf() ?? 0)
+                                                                        "
+                                                                    >
+                                                                        <component
+                                                                            :is="item.icon ?? HoopHouseIcon"
+                                                                            class="text-base-100 group-hover:text-neutral h-5 w-5 shrink-0"
+                                                                            aria-hidden="true"
+                                                                        />
+                                                                        <span class="mt-1">
+                                                                            {{
+                                                                                item.status
+                                                                                    ? $t(
+                                                                                          `enums.centrum.StatusDispatch.${
+                                                                                              StatusDispatch[item.status ?? 0]
+                                                                                          }`,
+                                                                                      )
+                                                                                    : $t(item.name)
+                                                                            }}
+                                                                        </span>
+                                                                    </button>
+                                                                </VeeField>
                                                                 <VeeErrorMessage
-                                                                    name="message"
+                                                                    name="status"
                                                                     as="p"
                                                                     class="mt-2 text-sm text-error-400"
                                                                 />
@@ -164,10 +196,10 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                                                             <dt class="text-sm font-medium leading-6 text-neutral">
                                                                 <label
-                                                                    for="description"
+                                                                    for="code"
                                                                     class="block text-sm font-medium leading-6 text-neutral"
                                                                 >
-                                                                    {{ $t('common.description') }}
+                                                                    {{ $t('common.code') }}
                                                                 </label>
                                                             </dt>
                                                             <dd
@@ -175,15 +207,15 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                             >
                                                                 <VeeField
                                                                     type="text"
-                                                                    name="description"
+                                                                    name="code"
                                                                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                                    :placeholder="$t('common.description')"
-                                                                    :label="$t('common.description')"
+                                                                    :placeholder="$t('common.code')"
+                                                                    :label="$t('common.code')"
                                                                     @focusin="focusTablet(true)"
                                                                     @focusout="focusTablet(false)"
                                                                 />
                                                                 <VeeErrorMessage
-                                                                    name="description"
+                                                                    name="code"
                                                                     as="p"
                                                                     class="mt-2 text-sm text-error-400"
                                                                 />
@@ -192,27 +224,26 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                                                             <dt class="text-sm font-medium leading-6 text-neutral">
                                                                 <label
-                                                                    for="anon"
+                                                                    for="reason"
                                                                     class="block text-sm font-medium leading-6 text-neutral"
                                                                 >
-                                                                    {{ $t('common.anon') }}
+                                                                    {{ $t('common.reason') }}
                                                                 </label>
                                                             </dt>
                                                             <dd
                                                                 class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
                                                             >
-                                                                <div class="flex h-6 items-center">
-                                                                    <VeeField
-                                                                        type="checkbox"
-                                                                        name="anon"
-                                                                        class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600 h-6 w-6"
-                                                                        :placeholder="$t('common.anon')"
-                                                                        :label="$t('common.anon')"
-                                                                        :value="true"
-                                                                    />
-                                                                </div>
+                                                                <VeeField
+                                                                    type="text"
+                                                                    name="reason"
+                                                                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                                    :placeholder="$t('common.reason')"
+                                                                    :label="$t('common.reason')"
+                                                                    @focusin="focusTablet(true)"
+                                                                    @focusout="focusTablet(false)"
+                                                                />
                                                                 <VeeErrorMessage
-                                                                    name="anon"
+                                                                    name="reason"
                                                                     as="p"
                                                                     class="mt-2 text-sm text-error-400"
                                                                 />
@@ -227,7 +258,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                         <span class="isolate inline-flex rounded-md shadow-sm pr-4 w-full">
                                             <button
                                                 type="submit"
-                                                class="flex justify-center w-full relative inline-flex items-center rounded-l-md py-2.5 px-3.5 text-sm font-semibold text-neutral"
+                                                class="flex justify-center w-full relative rounded-l-md py-2.5 px-3.5 text-sm font-semibold text-neutral"
                                                 :disabled="!meta.valid || !canSubmit"
                                                 :class="[
                                                     !meta.valid || !canSubmit
@@ -238,7 +269,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                 <template v-if="!canSubmit">
                                                     <LoadingIcon class="animate-spin h-5 w-5 mr-2" />
                                                 </template>
-                                                {{ $t('common.create') }}
+                                                {{ $t('common.update') }}
                                             </button>
                                             <button
                                                 type="button"

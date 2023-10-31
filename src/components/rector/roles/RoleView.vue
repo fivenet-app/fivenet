@@ -42,66 +42,55 @@ const attrList = ref<RoleAttribute[]>([]);
 const attrStates = ref<Map<bigint, AttributeValues | undefined>>(new Map());
 
 async function getRole(id: bigint): Promise<Role> {
-    return new Promise(async (res, rej) => {
-        try {
-            const call = $grpc.getRectorClient().getRole({
-                id: id,
-                filtered: true,
-            });
-            const { response } = await call;
+    try {
+        const call = $grpc.getRectorClient().getRole({
+            id,
+            filtered: true,
+        });
+        const { response } = await call;
 
-            if (response.role === undefined) return rej();
-
-            return res(response.role!);
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
-        }
-    });
+        return response.role!;
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 
 async function deleteRole(id: bigint): Promise<void> {
-    return new Promise(async (res, rej) => {
-        try {
-            await $grpc.getRectorClient().deleteRole({
-                id: id,
-            });
+    try {
+        await $grpc.getRectorClient().deleteRole({
+            id,
+        });
 
-            notifications.dispatchNotification({
-                title: { key: 'notifications.rector.role_deleted.title', parameters: {} },
-                content: { key: 'notifications.rector.role_deleted.content', parameters: {} },
-                type: 'success',
-            });
+        notifications.dispatchNotification({
+            title: { key: 'notifications.rector.role_deleted.title', parameters: {} },
+            content: { key: 'notifications.rector.role_deleted.content', parameters: {} },
+            type: 'success',
+        });
 
-            emit('deleted');
-            return res();
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
-        }
-    });
+        emit('deleted');
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 
 async function getPermissions(roleId: bigint): Promise<void> {
-    return new Promise(async (res, rej) => {
-        try {
-            const call = $grpc.getRectorClient().getPermissions({
-                roleId: roleId,
-                filtered: true,
-            });
-            const { response } = await call;
+    try {
+        const call = $grpc.getRectorClient().getPermissions({
+            roleId,
+            filtered: true,
+        });
+        const { response } = await call;
 
-            permList.value = response.permissions;
-            attrList.value = response.attributes;
+        permList.value = response.permissions;
+        attrList.value = response.attributes;
 
-            genPermissionCategories();
-
-            return res();
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
-        }
-    });
+        genPermissionCategories();
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 
 async function genPermissionCategories(): Promise<void> {
@@ -126,98 +115,94 @@ async function updatePermissionState(perm: bigint, state: boolean | undefined): 
 }
 
 async function updatePermissions(): Promise<void> {
-    return new Promise(async (res, rej) => {
-        const currentPermissions = role.value?.permissions.map((p) => p.id) ?? [];
+    const currentPermissions = role.value?.permissions.map((p) => p.id) ?? [];
 
-        const perms: PermsUpdate = {
-            toRemove: [],
-            toUpdate: [],
-        };
-        permStates.value.forEach((state, perm) => {
-            if (state !== undefined) {
-                const p = role.value?.permissions.find((v) => v.id === perm);
+    const perms: PermsUpdate = {
+        toRemove: [],
+        toUpdate: [],
+    };
+    permStates.value.forEach((state, perm) => {
+        if (state !== undefined) {
+            const p = role.value?.permissions.find((v) => v.id === perm);
 
-                if (p?.val !== state) {
-                    const item: PermItem = {
-                        id: perm,
-                        val: state,
-                    };
+            if (p?.val !== state) {
+                const item: PermItem = {
+                    id: perm,
+                    val: state,
+                };
 
-                    perms.toUpdate.push(item);
-                }
-            } else if (state === undefined && currentPermissions.includes(perm)) {
-                perms.toRemove.push(perm);
+                perms.toUpdate.push(item);
             }
-        });
-
-        const attrs: AttrsUpdate = {
-            toRemove: [],
-            toUpdate: [],
-        };
-        attrStates.value.forEach((state, attr) => {
-            // Make sure the permission exists and is enabled, otherwise attr needs to be removed
-            const a = attrList.value.find((a) => a.attrId === attr);
-            if (a === undefined) {
-                return;
-            }
-            const perm = permStates.value.get(a.permissionId);
-
-            if (perm === undefined || state === undefined) {
-                attrs.toRemove.push({
-                    roleId: role.value!.id,
-                    attrId: attr,
-                    category: '',
-                    key: '',
-                    name: '',
-                    permissionId: 0n,
-                    type: '',
-                });
-            } else if (state !== undefined) {
-                attrs.toUpdate.push({
-                    roleId: role.value!.id,
-                    attrId: attr,
-                    value: state,
-                    category: '',
-                    key: '',
-                    name: '',
-                    permissionId: 0n,
-                    type: '',
-                });
-            }
-        });
-
-        if (
-            perms.toUpdate.length === 0 &&
-            perms.toRemove.length === 0 &&
-            attrs.toUpdate.length === 0 &&
-            attrs.toRemove.length === 0
-        ) {
-            changed.value = false;
-            return res();
-        }
-
-        try {
-            await $grpc.getRectorClient().updateRolePerms({
-                id: props.roleId,
-                perms: perms,
-                attrs: attrs,
-            });
-
-            notifications.dispatchNotification({
-                title: { key: 'notifications.rector.role_updated.title', parameters: {} },
-                content: { key: 'notifications.rector.role_updated.content', parameters: {} },
-                type: 'success',
-            });
-
-            changed.value = false;
-            refresh();
-
-            return res();
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
+        } else if (state === undefined && currentPermissions.includes(perm)) {
+            perms.toRemove.push(perm);
         }
     });
+
+    const attrs: AttrsUpdate = {
+        toRemove: [],
+        toUpdate: [],
+    };
+    attrStates.value.forEach((state, attr) => {
+        // Make sure the permission exists and is enabled, otherwise attr needs to be removed
+        const a = attrList.value.find((a) => a.attrId === attr);
+        if (a === undefined) {
+            return;
+        }
+        const perm = permStates.value.get(a.permissionId);
+
+        if (perm === undefined || state === undefined) {
+            attrs.toRemove.push({
+                roleId: role.value!.id,
+                attrId: attr,
+                category: '',
+                key: '',
+                name: '',
+                permissionId: 0n,
+                type: '',
+            });
+        } else if (state !== undefined) {
+            attrs.toUpdate.push({
+                roleId: role.value!.id,
+                attrId: attr,
+                value: state,
+                category: '',
+                key: '',
+                name: '',
+                permissionId: 0n,
+                type: '',
+            });
+        }
+    });
+
+    if (
+        perms.toUpdate.length === 0 &&
+        perms.toRemove.length === 0 &&
+        attrs.toUpdate.length === 0 &&
+        attrs.toRemove.length === 0
+    ) {
+        changed.value = false;
+        return;
+    }
+
+    try {
+        await $grpc.getRectorClient().updateRolePerms({
+            id: props.roleId,
+            perms,
+            attrs,
+        });
+
+        notifications.dispatchNotification({
+            title: { key: 'notifications.rector.role_updated.title', parameters: {} },
+            content: { key: 'notifications.rector.role_updated.content', parameters: {} },
+            type: 'success',
+        });
+
+        changed.value = false;
+        refresh();
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 
 function clearState(): void {
@@ -271,7 +256,7 @@ onConfirm(async (id) => deleteRole(id));
             <div v-else>
                 <h2 class="text-3xl text-neutral" :title="`ID: ${role.id}`">
                     {{ role?.jobLabel! }} - {{ role?.jobGradeLabel }} ({{ role.grade }})
-                    <button v-if="can('RectorService.DeleteRole')" type="button" @click="reveal()" class="ml-1">
+                    <button v-if="can('RectorService.DeleteRole')" type="button" class="ml-1" @click="reveal()">
                         <TrashCanIcon class="w-6 h-6 mx-auto text-neutral" />
                     </button>
                 </h2>
@@ -279,7 +264,6 @@ onConfirm(async (id) => deleteRole(id));
                 <div class="py-2 flex flex-col gap-4">
                     <button
                         type="button"
-                        @click="updatePermissions()"
                         :disabled="!changed"
                         class="inline-flex px-3 py-2 text-center justify-center transition-colors font-semibold rounded-md text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                         :class="
@@ -287,16 +271,17 @@ onConfirm(async (id) => deleteRole(id));
                                 ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
                                 : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500'
                         "
+                        @click="updatePermissions()"
                     >
                         {{ $t('common.save', 1) }}
                     </button>
 
                     <Disclosure
+                        v-for="category in permCategories"
+                        v-slot="{ open }"
+                        :key="category"
                         as="div"
                         class="text-neutral hover:border-neutral/70 border-neutral/20"
-                        v-for="category in permCategories"
-                        :key="category"
-                        v-slot="{ open }"
                     >
                         <DisclosureButton
                             :class="[
@@ -335,15 +320,15 @@ onConfirm(async (id) => deleteRole(id));
                                         <div class="flex flex-initial flex-row max-h-8 my-auto">
                                             <button
                                                 :data-active="permStates.has(perm.id) ? permStates.get(perm.id) : false"
-                                                @click="updatePermissionState(perm.id, true)"
                                                 class="transition-colors rounded-l-lg p-1 bg-success-600/50 data-[active=true]:bg-success-600 text-base-300 data-[active=true]:text-neutral hover:bg-success-600/70"
+                                                @click="updatePermissionState(perm.id, true)"
                                             >
                                                 <CheckIcon class="w-6 h-6" />
                                             </button>
                                             <button
                                                 :data-active="!permStates.has(perm.id) || permStates.get(perm.id) === undefined"
-                                                @click="updatePermissionState(perm.id, undefined)"
                                                 class="transition-colors p-1 bg-base-700 data-[active=true]:bg-base-500 text-base-300 data-[active=true]:text-neutral hover:bg-base-600"
+                                                @click="updatePermissionState(perm.id, undefined)"
                                             >
                                                 <MinusIcon class="w-6 h-6" />
                                             </button>
@@ -353,8 +338,8 @@ onConfirm(async (id) => deleteRole(id));
                                                         ? permStates.get(perm.id) !== undefined && !permStates.get(perm.id)
                                                         : false
                                                 "
-                                                @click="updatePermissionState(perm.id, false)"
                                                 class="transition-colors rounded-r-lg p-1 bg-error-600/50 data-[active=true]:bg-error-600 text-base-300 data-[active=true]:text-neutral hover:bg-error-600/70"
+                                                @click="updatePermissionState(perm.id, false)"
                                             >
                                                 <CloseIcon class="w-6 h-6" />
                                             </button>
@@ -362,11 +347,12 @@ onConfirm(async (id) => deleteRole(id));
                                     </div>
                                     <RoleViewAttr
                                         v-for="attr in attrList.filter((a) => a.permissionId === perm.id)"
+                                        :key="attr.attrId.toString()"
+                                        v-model:states="attrStates"
                                         :attribute="attr"
                                         :permission="perm"
-                                        v-model:states="attrStates"
-                                        @changed="changed = true"
                                         :disabled="permStates.get(perm.id) !== true"
+                                        @changed="changed = true"
                                     />
                                     <div
                                         v-if="idx !== permList.filter((p) => p.category === category).length - 1"

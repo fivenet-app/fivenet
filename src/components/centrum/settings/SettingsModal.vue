@@ -20,17 +20,15 @@ const { $grpc } = useNuxtApp();
 const { data: settings, refresh } = useLazyAsyncData('rector-centrum-settings', () => getCentrumSettings());
 
 async function getCentrumSettings(): Promise<Settings> {
-    return new Promise(async (res, rej) => {
-        try {
-            const call = $grpc.getCentrumClient().getSettings({});
-            const { response } = await call;
+    try {
+        const call = $grpc.getCentrumClient().getSettings({});
+        const { response } = await call;
 
-            return res(response);
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
-        }
-    });
+        return response;
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 
 const modes = ref<{ mode: CentrumMode; selected?: boolean }[]>([
@@ -40,36 +38,32 @@ const modes = ref<{ mode: CentrumMode; selected?: boolean }[]>([
     { mode: CentrumMode.AUTO_ROUND_ROBIN },
 ]);
 
-async function createOrUpdateUnit(values: FormData): Promise<void> {
-    return new Promise(async (res, rej) => {
-        try {
-            const call = $grpc.getCentrumClient().updateSettings({
-                job: '',
-                enabled: values.enabled,
-                mode: values.mode,
-                fallbackMode: values.fallbackMode,
-            });
-            await call;
-
-            refresh();
-
-            emit('close');
-
-            return res();
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
-        }
-    });
-}
-
-defineRule('required', required);
-
 interface FormData {
     enabled: boolean;
     mode: CentrumMode;
     fallbackMode: CentrumMode;
 }
+
+async function createOrUpdateUnit(values: FormData): Promise<void> {
+    try {
+        const call = $grpc.getCentrumClient().updateSettings({
+            job: '',
+            enabled: values.enabled,
+            mode: values.mode,
+            fallbackMode: values.fallbackMode,
+        });
+        await call;
+
+        refresh();
+
+        emit('close');
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
+}
+
+defineRule('required', required);
 
 const { handleSubmit, meta, setValues } = useForm<FormData>({
     validationSchema: {
@@ -186,11 +180,11 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                         {{ $t('common.mode') }}
                                                     </label>
                                                     <VeeField
+                                                        v-slot="{ field }"
                                                         name="mode"
                                                         as="div"
                                                         :placeholder="$t('common.mode')"
                                                         :label="$t('common.mode')"
-                                                        v-slot="{ field }"
                                                     >
                                                         <select
                                                             v-bind="field"
@@ -198,6 +192,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                         >
                                                             <option
                                                                 v-for="mode in modes"
+                                                                :key="mode.mode"
                                                                 :selected="settings !== null && mode.mode === settings.mode"
                                                                 :value="mode.mode"
                                                             >
@@ -221,11 +216,11 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                         Fallback {{ $t('common.mode') }}
                                                     </label>
                                                     <VeeField
+                                                        v-slot="{ field }"
                                                         name="fallbackMode"
                                                         as="div"
                                                         :placeholder="$t('common.mode')"
                                                         :label="$t('common.mode')"
-                                                        v-slot="{ field }"
                                                     >
                                                         <select
                                                             v-bind="field"
@@ -233,6 +228,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                         >
                                                             <option
                                                                 v-for="mode in modes"
+                                                                :key="mode.mode"
                                                                 :selected="
                                                                     settings !== null && mode.mode === settings.fallbackMode
                                                                 "

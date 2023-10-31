@@ -20,47 +20,44 @@ const emit = defineEmits<{
     (e: 'close'): void;
 }>();
 
+interface FormData {
+    reason: string;
+}
+
 async function setWantedState(values: FormData): Promise<void> {
-    return new Promise(async (res, rej) => {
-        const userProps: UserProps = {
-            userId: props.user.userId,
-            wanted: props.user.props ? !props.user.props.wanted : true,
-        };
+    const userProps: UserProps = {
+        userId: props.user.userId,
+        wanted: props.user.props ? !props.user.props.wanted : true,
+    };
 
-        try {
-            await $grpc.getCitizenStoreClient().setUserProps({
-                props: userProps,
-                reason: values.reason,
-            });
+    try {
+        await $grpc.getCitizenStoreClient().setUserProps({
+            props: userProps,
+            reason: values.reason,
+        });
 
-            if (!props.user.props) {
-                props.user.props = userProps;
-            } else {
-                props.user.props!.wanted = userProps.wanted;
-            }
-
-            notifications.dispatchNotification({
-                title: { key: 'notifications.action_successfull.title', parameters: {} },
-                content: { key: 'notifications.action_successfull.content', parameters: {} },
-                type: 'success',
-            });
-
-            emit('close');
-            return res();
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
+        if (!props.user.props) {
+            props.user.props = userProps;
+        } else {
+            props.user.props!.wanted = userProps.wanted;
         }
-    });
+
+        notifications.dispatchNotification({
+            title: { key: 'notifications.action_successfull.title', parameters: {} },
+            content: { key: 'notifications.action_successfull.content', parameters: {} },
+            type: 'success',
+        });
+
+        emit('close');
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 
 defineRule('required', required);
 defineRule('min', min);
 defineRule('max', max);
-
-interface FormData {
-    reason: string;
-}
 
 const { handleSubmit, meta } = useForm<FormData>({
     validationSchema: {

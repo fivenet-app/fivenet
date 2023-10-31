@@ -1,16 +1,16 @@
 <script lang="ts" setup>
+export interface ObjectSpecsValue {
+    req: boolean;
+    min: bigint;
+    max: bigint;
+}
+
 export interface SchemaEditorValue {
     users: ObjectSpecsValue;
 
     documents: ObjectSpecsValue;
 
     vehicles: ObjectSpecsValue;
-}
-
-export interface ObjectSpecsValue {
-    req: boolean;
-    min: bigint;
-    max: bigint;
 }
 
 defineProps<{

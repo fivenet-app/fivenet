@@ -2,7 +2,7 @@
 import { LIcon, LMarker, LPopup } from '@vue-leaflet/vue-leaflet';
 import L from 'leaflet';
 import { AccountIcon, GroupIcon, MapMarkerIcon } from 'mdi-vue3';
-import Details from '~/components//centrum/units/Details.vue';
+import UnitDetails from '~/components//centrum/units/UnitDetails.vue';
 import PhoneNumber from '~/components/partials/citizens/PhoneNumber.vue';
 import { UserMarker } from '~~/gen/ts/resources/livemap/livemap';
 import { User } from '~~/gen/ts/resources/users/users';
@@ -44,7 +44,7 @@ const openUnit = ref(false);
 </script>
 
 <template>
-    <Details
+    <UnitDetails
         v-if="hasUnit && props.marker.unit !== undefined"
         :unit="props.marker.unit"
         :open="openUnit"
@@ -53,10 +53,10 @@ const openUnit = ref(false);
 
     <LMarker
         :key="marker.info!.id?.toString()"
-        :latLng="[marker.info!.y, marker.info!.x]"
+        :lat-lng="[marker.info!.y, marker.info!.x]"
         :name="marker.info!.name"
-        @click="$emit('selected')"
         :z-index-offset="activeChar && marker.user?.identifier === activeChar.identifier ? 30 : 20"
+        @click="$emit('selected')"
     >
         <LIcon :icon-anchor="iconAnchor" :popup-anchor="popupAnchor" :icon-size="[size, size]">
             <div class="uppercase flex flex-col items-center">
@@ -90,8 +90,8 @@ const openUnit = ref(false);
                 <button
                     v-if="hasUnit"
                     type="button"
-                    @click="openUnit = true"
                     class="inline-flex items-center text-primary-500 hover:text-primary-400"
+                    @click="openUnit = true"
                 >
                     <GroupIcon class="w-4 h-4" />
                     <span class="ml-1">

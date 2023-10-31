@@ -7,8 +7,8 @@ import { useAuthStore } from '~/store/auth';
 import { useLivemapStore } from '~/store/livemap';
 import { useSettingsStore } from '~/store/settings';
 import { Marker, UserMarker } from '~~/gen/ts/resources/livemap/livemap';
-import MarkerMarker from './MarkerMarker.vue';
-import PlayerMarker from './PlayerMarker.vue';
+import MarkerMarker from '~/components/livemap/MarkerMarker.vue';
+import PlayerMarker from '~/components/livemap/PlayerMarker.vue';
 
 withDefaults(
     defineProps<{
@@ -65,9 +65,9 @@ onBeforeUnmount(async () => {
             :key="marker.info!.id?.toString()"
             :marker="marker"
             :active-char="activeChar"
-            @selected="$emit('userSelected', marker)"
             :size="livemap.markerSize"
             :show-unit-names="showUnitNames || livemap.showUnitNames"
+            @selected="$emit('userSelected', marker)"
         />
     </LLayerGroup>
 
@@ -87,7 +87,7 @@ onBeforeUnmount(async () => {
         />
     </LLayerGroup>
 
-    <LControl position="bottomleft" v-if="filterPlayers">
+    <LControl v-if="filterPlayers" position="bottomleft">
         <div class="form-control flex flex-col gap-2">
             <input
                 v-model="playerQuery"

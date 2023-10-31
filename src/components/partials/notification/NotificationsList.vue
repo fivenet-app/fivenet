@@ -19,59 +19,49 @@ const includeRead = ref(false);
 const { data, pending, refresh, error } = useLazyAsyncData(`notifications-${offset.value}`, () => getNotifications());
 
 async function getNotifications(): Promise<GetNotificationsResponse> {
-    return new Promise(async (res, rej) => {
-        try {
-            const call = $grpc.getNotificatorClient().getNotifications({
-                pagination: {
-                    offset: offset.value,
-                },
-                includeRead: includeRead.value,
-            });
+    try {
+        const call = $grpc.getNotificatorClient().getNotifications({
+            pagination: {
+                offset: offset.value,
+            },
+            includeRead: includeRead.value,
+        });
 
-            const { response } = await call;
+        const { response } = await call;
 
-            return res(response);
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
-        }
-    });
+        return response;
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 
 async function markAllRead(): Promise<void> {
-    return new Promise(async (res, rej) => {
-        const now = {
-            timestamp: undefined,
-        };
-        try {
-            await $grpc.getNotificatorClient().readNotifications({
-                ids: [],
-                all: true,
-            });
+    const now = {
+        timestamp: undefined,
+    };
+    try {
+        await $grpc.getNotificatorClient().readNotifications({
+            ids: [],
+            all: true,
+        });
 
-            data.value?.notifications.forEach((v) => (v.readAt = now));
-
-            return res();
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
-        }
-    });
+        data.value?.notifications.forEach((v) => (v.readAt = now));
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 
 async function markRead(ids: bigint[]): Promise<void> {
-    return new Promise(async (res, rej) => {
-        try {
-            await $grpc.getNotificatorClient().readNotifications({
-                ids: ids,
-            });
-
-            return res();
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
-        }
-    });
+    try {
+        await $grpc.getNotificatorClient().readNotifications({
+            ids,
+        });
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 
 watch(offset, async () => refresh());
@@ -112,8 +102,8 @@ watchDebounced(includeRead, async () => refresh(), { debounce: 500, maxWait: 150
                                 <button
                                     type="button"
                                     :disabled="data?.notifications !== undefined && data?.notifications.length > 0"
-                                    @click="markAllRead"
                                     class="inline-flex px-3 py-2 text-sm font-semibold rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
+                                    @click="markAllRead"
                                 >
                                     {{ $t('pages.notifications.mark_all_read') }}
                                 </button>
@@ -181,7 +171,7 @@ watchDebounced(includeRead, async () => refresh(), { debounce: 500, maxWait: 150
                                             class="h-5 w-5 flex-none text-gray-400"
                                             aria-hidden="true"
                                         />
-                                        <span class="h-5 w-5" v-else></span>
+                                        <span v-else class="h-5 w-5"></span>
                                     </div>
                                 </li>
                             </ul>
@@ -189,8 +179,8 @@ watchDebounced(includeRead, async () => refresh(), { debounce: 500, maxWait: 150
                             <TablePagination
                                 class="mt-2"
                                 :pagination="data?.pagination"
-                                @offset-change="offset = $event"
                                 :refresh="refresh"
+                                @offset-change="offset = $event"
                             />
                         </div>
                     </div>

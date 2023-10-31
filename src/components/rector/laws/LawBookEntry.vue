@@ -36,6 +36,12 @@ async function deleteLawBook(id: bigint): Promise<void> {
     }
 }
 
+interface FormData {
+    id: bigint;
+    name: string;
+    description?: string;
+}
+
 async function saveLawBook(id: bigint, values: FormData): Promise<LawBook> {
     try {
         const call = $grpc.getRectorClient().createOrUpdateLawBook({
@@ -70,12 +76,6 @@ async function saveLawBook(id: bigint, values: FormData): Promise<LawBook> {
 defineRule('required', required);
 defineRule('max', max);
 defineRule('min', min);
-
-interface FormData {
-    id: bigint;
-    name: string;
-    description?: string;
-}
 
 const { handleSubmit, setValues } = useForm<FormData>({
     validationSchema: {

@@ -9,7 +9,9 @@ import TablePagination from '~/components/partials/elements/TablePagination.vue'
 import { useAuthStore } from '~/store/auth';
 import { Comment } from '~~/gen/ts/resources/documents/comment';
 import { GetCommentsResponse } from '~~/gen/ts/services/docstore/docstore';
-import CommentEntry from './CommentEntry.vue';
+import CommentEntry from '~/components/documents/CommentEntry.vue';
+import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
+import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 
 const { $grpc } = useNuxtApp();
 const authStore = useAuthStore();
@@ -45,86 +47,78 @@ const { data, pending, refresh, error } = useLazyAsyncData(
 );
 
 async function getComments(): Promise<GetCommentsResponse> {
-    return new Promise(async (res, rej) => {
-        try {
-            const call = $grpc.getDocStoreClient().getComments({
-                pagination: {
-                    offset: offset.value,
-                    pageSize: 5n,
-                },
-                documentId: props.documentId,
-            });
-            const { response } = await call;
+    try {
+        const call = $grpc.getDocStoreClient().getComments({
+            pagination: {
+                offset: offset.value,
+                pageSize: 5n,
+            },
+            documentId: props.documentId,
+        });
+        const { response } = await call;
 
-            if (response.pagination) {
-                emit('counted', response.pagination.totalCount);
-            }
-
-            return res(response);
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
+        if (response.pagination) {
+            emit('counted', response.pagination.totalCount);
         }
-    });
+
+        return response;
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
+}
+
+interface FormData {
+    comment: string;
 }
 
 async function addComment(documentId: bigint, values: FormData): Promise<void> {
-    return new Promise(async (res, rej) => {
-        if (data.value === null) {
-            return res();
-        }
+    if (data.value === null) {
+        return;
+    }
 
-        const comment: Comment = {
-            id: 0n,
-            documentId: documentId,
-            comment: values.comment,
-        };
+    const comment: Comment = {
+        id: 0n,
+        documentId,
+        comment: values.comment,
+    };
 
-        try {
-            const call = $grpc.getDocStoreClient().postComment({
-                comment: comment,
-            });
-            const { response } = await call;
+    try {
+        const call = $grpc.getDocStoreClient().postComment({ comment });
+        const { response } = await call;
 
-            comment.id = response.id;
-            comment.creator = activeChar.value!;
+        comment.id = response.id;
+        comment.creator = activeChar.value!;
 
-            data.value.comments.unshift(comment);
+        data.value.comments.unshift(comment);
 
-            resetForm();
+        resetForm();
 
-            emit('newComment');
-
-            return res();
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
-        }
-    });
+        emit('newComment');
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 
 async function removeComment(comment: Comment): Promise<void> {
-    return new Promise(async (res, _) => {
-        if (!data.value) {
-            return res();
-        }
+    if (!data.value) {
+        return;
+    }
 
-        if (!can('DocStoreService.DeleteComment')) {
-            return res();
-        }
+    if (!can('DocStoreService.DeleteComment')) {
+        return;
+    }
 
-        const idx = data.value.comments.findIndex((c) => {
-            return c.id === comment.id;
-        });
-
-        if (idx > -1) {
-            data.value.comments.splice(idx, 1);
-        }
-
-        emit('deletedComment');
-
-        return res();
+    const idx = data.value.comments.findIndex((c) => {
+        return c.id === comment.id;
     });
+
+    if (idx > -1) {
+        data.value.comments.splice(idx, 1);
+    }
+
+    emit('deletedComment');
 }
 
 const commentsEl = ref<HTMLDivElement | null>(null);
@@ -144,10 +138,6 @@ watch(offset, async () => refresh());
 defineRule('required', required);
 defineRule('min', min);
 defineRule('max', max);
-
-interface FormData {
-    comment: string;
-}
 
 const { handleSubmit, meta, resetForm } = useForm<FormData>({
     validationSchema: {
@@ -172,7 +162,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
             <div v-if="can('DocStoreService.PostComment')">
                 <div v-if="!closed && canComment" class="flex items-start space-x-4">
                     <div class="min-w-0 flex-1">
-                        <form @submit.prevent="onSubmitThrottle" class="relative">
+                        <form class="relative" @submit.prevent="onSubmitThrottle">
                             <div
                                 class="overflow-hidden rounded-lg shadow-sm ring-1 ring-inset ring-gray-500 focus-within:ring-2 focus-within:ring-primary-600"
                             >
@@ -180,13 +170,13 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                     {{ $t('components.documents.document_comments.add_comment') }}
                                 </label>
                                 <VeeField
+                                    ref="commentInput"
                                     as="textarea"
                                     rows="3"
                                     name="comment"
                                     :label="$t('common.comment')"
                                     :placeholder="$t('components.documents.document_comments.add_comment')"
                                     class="block w-full resize-none border-0 bg-transparent text-gray-50 placeholder:text-gray-400 focus:ring-0 sm:py-1.5 sm:text-sm sm:leading-6"
-                                    ref="commentInput"
                                 />
 
                                 <!-- Spacer element to match the height of the toolbar -->
@@ -227,6 +217,12 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
             </div>
         </div>
         <div>
+            <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.comment', 2)])" />
+            <DataErrorBlock
+                v-else-if="error"
+                :title="$t('common.unable_to_load', [$t('common.comment', 2)])"
+                :retry="refresh"
+            />
             <DataNoDataBlock
                 v-if="data?.comments.length === 0"
                 :message="$t('components.documents.document_comments.no_comments')"
@@ -251,8 +247,8 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
             v-if="data !== null && data?.comments.length > 0"
             class="mt-2"
             :pagination="data?.pagination"
-            @offset-change="offset = $event"
             :refresh="refresh"
+            @offset-change="offset = $event"
         />
     </div>
 </template>

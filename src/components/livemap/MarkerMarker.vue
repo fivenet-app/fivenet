@@ -40,19 +40,15 @@ const icon = new L.DivIcon({
 const { $grpc } = useNuxtApp();
 
 async function deleteMarker(id: bigint): Promise<void> {
-    return new Promise(async (res, rej) => {
-        try {
-            const call = $grpc.getLivemapperClient().deleteMarker({
-                id: id,
-            });
-            await call;
-
-            return res();
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
-        }
-    });
+    try {
+        const call = $grpc.getLivemapperClient().deleteMarker({
+            id,
+        });
+        await call;
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 
 const { isRevealed, reveal, confirm, cancel, onConfirm } = useConfirmDialog();
@@ -66,7 +62,7 @@ onConfirm(async (id) => deleteMarker(id));
     <LCircleMarker
         v-if="marker.data?.data.oneofKind === 'circle'"
         :key="marker.info!.id?.toString()"
-        :latLng="[marker.info!.y, marker.info!.x]"
+        :lat-lng="[marker.info!.y, marker.info!.x]"
         :radius="marker.data?.data.circle.radius"
         :color="marker.info?.color ? '#' + marker.info?.color : '#fff'"
         :fill-opacity="(marker.data.data.circle.oapcity ?? 5) / 100"
@@ -77,7 +73,7 @@ onConfirm(async (id) => deleteMarker(id));
                 <li>{{ $t('common.description') }}: {{ marker.info?.description }}</li>
             </ul>
             <template v-if="can('LivemapperService.DeleteMarker')">
-                <button type="button" @click="reveal()" :title="$t('common.delete')" class="flex flex-row items-center">
+                <button type="button" :title="$t('common.delete')" class="flex flex-row items-center" @click="reveal()">
                     <TrashCanIcon class="w-6 h-6" />
                     <span>{{ $t('common.delete') }}</span>
                 </button>
@@ -87,7 +83,7 @@ onConfirm(async (id) => deleteMarker(id));
 
     <LMarker
         v-else
-        :latLng="[marker.info!.y, marker.info!.x]"
+        :lat-lng="[marker.info!.y, marker.info!.x]"
         :name="marker.info!.name"
         :icon="icon"
         @click="$emit('selected')"

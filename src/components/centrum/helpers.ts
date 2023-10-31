@@ -107,7 +107,7 @@ export const unitStatuses: {
     { icon: markRaw(CalendarCheckIcon), name: 'Available', status: StatusUnit.AVAILABLE },
     { icon: markRaw(CoffeeIcon), name: 'On Break', status: StatusUnit.ON_BREAK },
     { icon: markRaw(CalendarRemoveIcon), name: 'Busy', status: StatusUnit.BUSY },
-    //{ icon: markRaw(ListStatusIcon), name: 'components.centrum.update_unit_status.title', class: 'bg-base-800' },
+    // { icon: markRaw(ListStatusIcon), name: 'components.centrum.update_unit_status.title', class: 'bg-base-800' },
 ];
 
 export const dispatchStatuses: {
@@ -122,5 +122,5 @@ export const dispatchStatuses: {
     { icon: markRaw(HelpCircleIcon), name: 'Need Assistance', status: StatusDispatch.NEED_ASSISTANCE },
     { icon: markRaw(CheckBoldIcon), name: 'Completed', status: StatusDispatch.COMPLETED },
     { icon: markRaw(CancelIcon), name: 'Cancelled', status: StatusDispatch.CANCELLED },
-    //{ icon: markRaw(ListStatusIcon), name: 'components.centrum.update_dispatch_status.title', class: 'bg-base-800' },
+    // { icon: markRaw(ListStatusIcon), name: 'components.centrum.update_dispatch_status.title', class: 'bg-base-800' },
 ];

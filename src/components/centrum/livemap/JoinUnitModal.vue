@@ -22,27 +22,23 @@ const centrumStore = useCentrumStore();
 const { ownUnitId, getSortedUnits } = storeToRefs(centrumStore);
 
 async function joinOrLeaveUnit(unitId?: bigint): Promise<void> {
-    return new Promise(async (res, rej) => {
-        try {
-            const call = $grpc.getCentrumClient().joinUnit({
-                unitId: unitId,
-            });
-            const { response } = await call;
+    try {
+        const call = $grpc.getCentrumClient().joinUnit({
+            unitId,
+        });
+        const { response } = await call;
 
-            emit('close');
+        emit('close');
 
-            if (response.unit) {
-                emit('joined', response.unit);
-            } else {
-                emit('left');
-            }
-
-            return res();
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
+        if (response.unit) {
+            emit('joined', response.unit);
+        } else {
+            emit('left');
         }
-    });
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 
 const canSubmit = ref(true);
@@ -136,7 +132,6 @@ const filteredUnits = computed(() =>
                                                                     v-for="unit in filteredUnits"
                                                                     :key="unit.name"
                                                                     type="button"
-                                                                    @click="onSubmitThrottle(unit.id)"
                                                                     :disabled="!canSubmit"
                                                                     class="text-neutral hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-1 text-xs my-0.5"
                                                                     :class="[
@@ -146,6 +141,7 @@ const filteredUnits = computed(() =>
                                                                             ? 'bg-warn-500 hover:bg-warn-100/10'
                                                                             : 'bg-primary-500 hover:bg-primary-100/10',
                                                                     ]"
+                                                                    @click="onSubmitThrottle(unit.id)"
                                                                 >
                                                                     <span class="mt-0.5 text-base">
                                                                         <span class="font-semibold">{{ unit.initials }}</span
@@ -176,7 +172,6 @@ const filteredUnits = computed(() =>
                                             <button
                                                 v-if="ownUnitId !== undefined"
                                                 type="button"
-                                                @click="onSubmitThrottle()"
                                                 :disabled="!canSubmit"
                                                 class="w-full relative inline-flex items-center rounded-l-md py-2.5 px-3.5 text-sm font-semibold text-neutral"
                                                 :class="[
@@ -184,6 +179,7 @@ const filteredUnits = computed(() =>
                                                         ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
                                                         : 'bg-error-500 hover:bg-primary-400',
                                                 ]"
+                                                @click="onSubmitThrottle()"
                                             >
                                                 <template v-if="!canSubmit">
                                                     <LoadingIcon class="animate-spin h-5 w-5 mr-2" />

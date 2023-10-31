@@ -75,15 +75,15 @@ async function resetLocalStorage(): Promise<void> {
                         <span class="isolate inline-flex rounded-md shadow-sm">
                             <button
                                 type="button"
-                                @click="clipboardStore.clear()"
                                 class="inline-flex items-center w-full rounded-md bg-base-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-base-400"
+                                @click="clipboardStore.clear()"
                             >
                                 {{ $t('components.debug_info.reset_clipboard') }}
                             </button>
                             <button
                                 type="button"
-                                @click="resetLocalStorage()"
                                 class="inline-flex items-center w-full rounded-md bg-base-500 py-2.5 px-3.5 ml-2 text-sm font-semibold text-neutral hover:bg-base-400"
+                                @click="resetLocalStorage()"
                             >
                                 {{ $t('components.debug_info.reset_local_storage') }}
                             </button>
@@ -105,6 +105,7 @@ async function resetLocalStorage(): Promise<void> {
                         <ul role="list" class="divide-y divide-gray-100 rounded-md border border-gray-200">
                             <li
                                 v-for="perm in permissions"
+                                :key="perm"
                                 class="flex items-center justify-between py-4 pl-4 pr-5 text-sm leading-6"
                             >
                                 <KeyIcon class="h-5 w-5 flex-shrink-0 text-gray-400" aria-hidden="true" />

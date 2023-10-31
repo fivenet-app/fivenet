@@ -3,6 +3,7 @@ import { defineStore, type StoreDefinition } from 'pinia';
 import { Marker, UserMarker } from '~~/gen/ts/resources/livemap/livemap';
 import { Job } from '~~/gen/ts/resources/users/jobs';
 import { LivemapperServiceClient } from '~~/gen/ts/services/livemapper/livemap.client';
+import { type Coordinate } from '~/composables/livemap';
 
 // In seconds
 const initialBackoffTime = 2;

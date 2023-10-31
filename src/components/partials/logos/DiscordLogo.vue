@@ -1,9 +1,3 @@
-<style scoped>
-.cls-1 {
-    fill: #5865f2;
-}
-</style>
-
 <template>
     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 127.14 96.36">
         <g id="图层_2" data-name="图层 2">
@@ -18,3 +12,9 @@
         </g>
     </svg>
 </template>
+
+<style scoped>
+.cls-1 {
+    fill: #5865f2;
+}
+</style>

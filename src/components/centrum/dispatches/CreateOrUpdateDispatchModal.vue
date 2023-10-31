@@ -1,18 +1,15 @@
 <script lang="ts" setup>
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc';
-import { max, min, required } from '@vee-validate/rules';
+import { digits, max, min, required } from '@vee-validate/rules';
 import { useThrottleFn } from '@vueuse/core';
-import { CloseIcon, HoopHouseIcon, LoadingIcon } from 'mdi-vue3';
+import { CloseIcon, LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
-import { dispatchStatusToBGColor, dispatchStatuses } from '~/components/centrum/helpers';
-import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
-import { StatusDispatch } from '~~/gen/ts/resources/dispatch/dispatches';
+import { useLivemapStore } from '~/store/livemap';
 
 const props = defineProps<{
     open: boolean;
-    dispatchId: bigint;
-    status?: StatusDispatch;
+    location?: Coordinate;
 }>();
 
 const emit = defineEmits<{
@@ -21,49 +18,53 @@ const emit = defineEmits<{
 
 const { $grpc } = useNuxtApp();
 
-const status: number = props.status ?? StatusDispatch.NEW;
+const livemapStore = useLivemapStore();
+const { location: storeLocation } = storeToRefs(livemapStore);
 
-async function updateDispatchStatus(dispatchId: bigint, values: FormData): Promise<void> {
-    return new Promise(async (res, rej) => {
-        try {
-            const call = $grpc.getCentrumClient().updateDispatchStatus({
-                dispatchId: dispatchId,
-                status: values.status,
-                code: values.code,
-                reason: values.reason,
-            });
-            await call;
+interface FormData {
+    message: string;
+    description?: string;
+    anon: boolean;
+}
 
-            emit('close');
+async function createDispatch(values: FormData): Promise<void> {
+    try {
+        const call = $grpc.getCentrumClient().createDispatch({
+            dispatch: {
+                id: 0n,
+                job: '',
+                message: values.message,
+                description: values.description,
+                anon: values.anon ?? false,
+                attributes: {
+                    list: [],
+                },
+                x: props.location ? props.location.x : storeLocation.value?.x ?? 0,
+                y: props.location ? props.location.y : storeLocation.value?.y ?? 0,
+                units: [],
+            },
+        });
+        await call;
 
-            setFieldValue('status', values.status.valueOf());
+        emit('close');
 
-            return res();
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
-        }
-    });
+        resetForm();
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 
 defineRule('required', required);
+defineRule('digits', digits);
 defineRule('min', min);
 defineRule('max', max);
 
-interface FormData {
-    status: number;
-    code?: string;
-    reason?: string;
-}
-
-const { handleSubmit, meta, setFieldValue } = useForm<FormData>({
+const { handleSubmit, meta, resetForm } = useForm<FormData>({
     validationSchema: {
-        status: { required: true },
-        code: { required: false },
-        reason: { required: false, min: 3, max: 255 },
-    },
-    initialValues: {
-        status: status,
+        message: { required: true, min: 3, max: 255 },
+        description: { required: false, min: 6, max: 512 },
+        anon: { required: false },
     },
     validateOnMount: true,
 });
@@ -71,18 +72,12 @@ const { handleSubmit, meta, setFieldValue } = useForm<FormData>({
 const canSubmit = ref(true);
 const onSubmit = handleSubmit(
     async (values): Promise<void> =>
-        await updateDispatchStatus(props.dispatchId, values).finally(() => setTimeout(() => (canSubmit.value = true), 400)),
+        await createDispatch(values).finally(() => setTimeout(() => (canSubmit.value = true), 400)),
 );
 const onSubmitThrottle = useThrottleFn(async (e) => {
     canSubmit.value = false;
     await onSubmit(e);
 }, 1000);
-
-watch(props, () => {
-    if (props.status) {
-        setFieldValue('status', props.status.valueOf());
-    }
-});
 </script>
 
 <template>
@@ -104,15 +99,14 @@ watch(props, () => {
                         >
                             <DialogPanel class="pointer-events-auto w-screen max-w-3xl">
                                 <form
-                                    @submit.prevent="onSubmitThrottle"
                                     class="flex h-full flex-col divide-y divide-gray-200 bg-gray-900 shadow-xl"
+                                    @submit.prevent="onSubmitThrottle"
                                 >
                                     <div class="h-0 flex-1 overflow-y-auto">
                                         <div class="bg-primary-700 px-4 py-6 sm:px-6">
                                             <div class="flex items-center justify-between">
-                                                <DialogTitle class="inline-flex text-base font-semibold leading-6 text-neutral">
-                                                    {{ $t('components.centrum.update_dispatch_status.title') }}:
-                                                    <IDCopyBadge class="ml-2" :id="dispatchId" prefix="DSP" />
+                                                <DialogTitle class="text-base font-semibold leading-6 text-neutral">
+                                                    {{ $t('components.centrum.create_dispatch.title') }}
                                                 </DialogTitle>
                                                 <div class="ml-3 flex h-7 items-center">
                                                     <button
@@ -125,6 +119,11 @@ watch(props, () => {
                                                     </button>
                                                 </div>
                                             </div>
+                                            <div class="mt-1">
+                                                <p class="text-sm text-primary-300">
+                                                    {{ $t('components.centrum.create_dispatch.sub_title') }}
+                                                </p>
+                                            </div>
                                         </div>
                                         <div class="flex flex-1 flex-col justify-between">
                                             <div class="divide-y divide-gray-200 px-4 sm:px-6">
@@ -133,65 +132,26 @@ watch(props, () => {
                                                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                                                             <dt class="text-sm font-medium leading-6 text-neutral">
                                                                 <label
-                                                                    for="status"
+                                                                    for="message"
                                                                     class="block text-sm font-medium leading-6 text-neutral"
                                                                 >
-                                                                    {{ $t('common.status') }}
+                                                                    {{ $t('common.message') }}
                                                                 </label>
                                                             </dt>
                                                             <dd
                                                                 class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
                                                             >
                                                                 <VeeField
-                                                                    name="status"
-                                                                    as="div"
-                                                                    class="w-full grid grid-cols-2 gap-0.5"
-                                                                    :placeholder="$t('common.status')"
-                                                                    :label="$t('common.status')"
-                                                                    v-slot="{ field }"
-                                                                >
-                                                                    <button
-                                                                        v-for="(item, idx) in dispatchStatuses"
-                                                                        :key="item.name"
-                                                                        type="button"
-                                                                        class="text-neutral bg-primary hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-1.5 text-xs my-0.5"
-                                                                        :class="[
-                                                                            idx >= dispatchStatuses.length - 1
-                                                                                ? 'col-span-2'
-                                                                                : '',
-                                                                            item.class,
-                                                                            field.value == item.status
-                                                                                ? 'disabled bg-base-500 hover:bg-base-400'
-                                                                                : item.status
-                                                                                ? dispatchStatusToBGColor(item.status)
-                                                                                : item.class,
-                                                                            ,
-                                                                        ]"
-                                                                        :disabled="field.value == item.status"
-                                                                        @click="
-                                                                            setFieldValue('status', item.status?.valueOf() ?? 0)
-                                                                        "
-                                                                    >
-                                                                        <component
-                                                                            :is="item.icon ?? HoopHouseIcon"
-                                                                            class="text-base-100 group-hover:text-neutral h-5 w-5 shrink-0"
-                                                                            aria-hidden="true"
-                                                                        />
-                                                                        <span class="mt-1">
-                                                                            {{
-                                                                                item.status
-                                                                                    ? $t(
-                                                                                          `enums.centrum.StatusDispatch.${
-                                                                                              StatusDispatch[item.status ?? 0]
-                                                                                          }`,
-                                                                                      )
-                                                                                    : $t(item.name)
-                                                                            }}
-                                                                        </span>
-                                                                    </button>
-                                                                </VeeField>
+                                                                    type="text"
+                                                                    name="message"
+                                                                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                                    :placeholder="$t('common.message')"
+                                                                    :label="$t('common.message')"
+                                                                    @focusin="focusTablet(true)"
+                                                                    @focusout="focusTablet(false)"
+                                                                />
                                                                 <VeeErrorMessage
-                                                                    name="status"
+                                                                    name="message"
                                                                     as="p"
                                                                     class="mt-2 text-sm text-error-400"
                                                                 />
@@ -200,10 +160,10 @@ watch(props, () => {
                                                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                                                             <dt class="text-sm font-medium leading-6 text-neutral">
                                                                 <label
-                                                                    for="code"
+                                                                    for="description"
                                                                     class="block text-sm font-medium leading-6 text-neutral"
                                                                 >
-                                                                    {{ $t('common.code') }}
+                                                                    {{ $t('common.description') }}
                                                                 </label>
                                                             </dt>
                                                             <dd
@@ -211,15 +171,15 @@ watch(props, () => {
                                                             >
                                                                 <VeeField
                                                                     type="text"
-                                                                    name="code"
+                                                                    name="description"
                                                                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                                    :placeholder="$t('common.code')"
-                                                                    :label="$t('common.code')"
+                                                                    :placeholder="$t('common.description')"
+                                                                    :label="$t('common.description')"
                                                                     @focusin="focusTablet(true)"
                                                                     @focusout="focusTablet(false)"
                                                                 />
                                                                 <VeeErrorMessage
-                                                                    name="code"
+                                                                    name="description"
                                                                     as="p"
                                                                     class="mt-2 text-sm text-error-400"
                                                                 />
@@ -228,26 +188,27 @@ watch(props, () => {
                                                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                                                             <dt class="text-sm font-medium leading-6 text-neutral">
                                                                 <label
-                                                                    for="reason"
+                                                                    for="anon"
                                                                     class="block text-sm font-medium leading-6 text-neutral"
                                                                 >
-                                                                    {{ $t('common.reason') }}
+                                                                    {{ $t('common.anon') }}
                                                                 </label>
                                                             </dt>
                                                             <dd
                                                                 class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
                                                             >
-                                                                <VeeField
-                                                                    type="text"
-                                                                    name="reason"
-                                                                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                                    :placeholder="$t('common.reason')"
-                                                                    :label="$t('common.reason')"
-                                                                    @focusin="focusTablet(true)"
-                                                                    @focusout="focusTablet(false)"
-                                                                />
+                                                                <div class="flex h-6 items-center">
+                                                                    <VeeField
+                                                                        type="checkbox"
+                                                                        name="anon"
+                                                                        class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600 h-6 w-6"
+                                                                        :placeholder="$t('common.anon')"
+                                                                        :label="$t('common.anon')"
+                                                                        :value="true"
+                                                                    />
+                                                                </div>
                                                                 <VeeErrorMessage
-                                                                    name="reason"
+                                                                    name="anon"
                                                                     as="p"
                                                                     class="mt-2 text-sm text-error-400"
                                                                 />
@@ -262,7 +223,7 @@ watch(props, () => {
                                         <span class="isolate inline-flex rounded-md shadow-sm pr-4 w-full">
                                             <button
                                                 type="submit"
-                                                class="flex justify-center w-full relative rounded-l-md py-2.5 px-3.5 text-sm font-semibold text-neutral"
+                                                class="flex justify-center w-full relative inline-flex items-center rounded-l-md py-2.5 px-3.5 text-sm font-semibold text-neutral"
                                                 :disabled="!meta.valid || !canSubmit"
                                                 :class="[
                                                     !meta.valid || !canSubmit
@@ -273,7 +234,7 @@ watch(props, () => {
                                                 <template v-if="!canSubmit">
                                                     <LoadingIcon class="animate-spin h-5 w-5 mr-2" />
                                                 </template>
-                                                {{ $t('common.update') }}
+                                                {{ $t('common.create') }}
                                             </button>
                                             <button
                                                 type="button"

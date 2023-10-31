@@ -32,6 +32,8 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import Time from '~/components/partials/elements/Time.vue';
 import { ClipboardDocument, getDocument, getUser, useClipboardStore } from '~/store/clipboard';
 import { DocReference, DocumentReference, DocumentShort } from '~~/gen/ts/resources/documents/documents';
+import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
+import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 
 const { $grpc } = useNuxtApp();
 const clipboardStore = useClipboardStore();
@@ -40,7 +42,7 @@ const { t } = useI18n();
 
 const props = defineProps<{
     open: boolean;
-    document?: bigint;
+    documentId?: bigint;
     modelValue: Map<bigint, DocumentReference>;
 }>();
 
@@ -68,7 +70,7 @@ const {
     pending,
     refresh,
     error,
-} = useLazyAsyncData(`document-${props.document?.toString()}-references-docs-${queryDoc}`, () => listDocuments());
+} = useLazyAsyncData(`document-${props.documentId?.toString()}-references-docs-${queryDoc}`, () => listDocuments());
 
 watchDebounced(queryDoc, async () => await refresh(), {
     debounce: 600,
@@ -76,33 +78,29 @@ watchDebounced(queryDoc, async () => await refresh(), {
 });
 
 async function listDocuments(): Promise<DocumentShort[]> {
-    return new Promise(async (res, rej) => {
-        try {
-            const call = $grpc.getDocStoreClient().listDocuments({
-                pagination: {
-                    offset: 0n,
-                    pageSize: 8n,
-                },
-                orderBy: [],
-                search: queryDoc.value,
-                categoryIds: [],
-                creatorIds: [],
-            });
-            const { response } = await call;
+    try {
+        const call = $grpc.getDocStoreClient().listDocuments({
+            pagination: {
+                offset: 0n,
+                pageSize: 8n,
+            },
+            orderBy: [],
+            search: queryDoc.value,
+            categoryIds: [],
+            creatorIds: [],
+        });
+        const { response } = await call;
 
-            return res(
-                response.documents.filter(
-                    (doc) =>
-                        !Array.from(props.modelValue.values()).find(
-                            (r) => r.targetDocumentId === doc.id || doc.id === props.document,
-                        ),
+        return response.documents.filter(
+            (doc) =>
+                !Array.from(props.modelValue.values()).find(
+                    (r) => r.targetDocumentId === doc.id || doc.id === props.documentId,
                 ),
-            );
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
-        }
-    });
+        );
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 
 function addReference(doc: DocumentShort, reference: DocReference): void {
@@ -111,8 +109,8 @@ function addReference(doc: DocumentShort, reference: DocReference): void {
 
     props.modelValue.set(key, {
         id: key,
-        sourceDocumentId: props.document ?? 0n,
-        reference: reference,
+        sourceDocumentId: props.documentId ?? 0n,
+        reference,
         targetDocumentId: doc.id,
         targetDocument: doc,
     });
@@ -292,13 +290,13 @@ function removeReference(id: bigint): void {
                                                                             <div class="flex">
                                                                                 <button
                                                                                     role="button"
-                                                                                    @click="removeReference(reference.id!)"
                                                                                     data-te-toggle="tooltip"
                                                                                     :title="
                                                                                         $t(
                                                                                             'components.documents.document_managers.remove_reference',
                                                                                         )
                                                                                     "
+                                                                                    @click="removeReference(reference.id!)"
                                                                                 >
                                                                                     <FileDocumentMinusIcon
                                                                                         class="w-6 h-auto text-error-400 hover:text-error-200"
@@ -391,16 +389,16 @@ function removeReference(id: bigint): void {
                                                                             <div class="flex">
                                                                                 <button
                                                                                     role="button"
-                                                                                    @click="
-                                                                                        addReferenceClipboard(
-                                                                                            document,
-                                                                                            DocReference.LINKED,
-                                                                                        )
-                                                                                    "
                                                                                     data-te-toggle="tooltip"
                                                                                     :title="
                                                                                         $t(
                                                                                             'components.documents.document_managers.links',
+                                                                                        )
+                                                                                    "
+                                                                                    @click="
+                                                                                        addReferenceClipboard(
+                                                                                            document,
+                                                                                            DocReference.LINKED,
                                                                                         )
                                                                                     "
                                                                                 >
@@ -410,16 +408,16 @@ function removeReference(id: bigint): void {
                                                                                 </button>
                                                                                 <button
                                                                                     role="button"
-                                                                                    @click="
-                                                                                        addReferenceClipboard(
-                                                                                            document,
-                                                                                            DocReference.SOLVES,
-                                                                                        )
-                                                                                    "
                                                                                     data-te-toggle="tooltip"
                                                                                     :title="
                                                                                         $t(
                                                                                             'components.documents.document_managers.solves',
+                                                                                        )
+                                                                                    "
+                                                                                    @click="
+                                                                                        addReferenceClipboard(
+                                                                                            document,
+                                                                                            DocReference.SOLVES,
                                                                                         )
                                                                                     "
                                                                                 >
@@ -429,16 +427,16 @@ function removeReference(id: bigint): void {
                                                                                 </button>
                                                                                 <button
                                                                                     role="button"
-                                                                                    @click="
-                                                                                        addReferenceClipboard(
-                                                                                            document,
-                                                                                            DocReference.CLOSES,
-                                                                                        )
-                                                                                    "
                                                                                     data-te-toggle="tooltip"
                                                                                     :title="
                                                                                         $t(
                                                                                             'components.documents.document_managers.closes',
+                                                                                        )
+                                                                                    "
+                                                                                    @click="
+                                                                                        addReferenceClipboard(
+                                                                                            document,
+                                                                                            DocReference.CLOSES,
                                                                                         )
                                                                                     "
                                                                                 >
@@ -448,16 +446,16 @@ function removeReference(id: bigint): void {
                                                                                 </button>
                                                                                 <button
                                                                                     role="button"
-                                                                                    @click="
-                                                                                        addReferenceClipboard(
-                                                                                            document,
-                                                                                            DocReference.DEPRECATES,
-                                                                                        )
-                                                                                    "
                                                                                     data-te-toggle="tooltip"
                                                                                     :title="
                                                                                         $t(
                                                                                             'components.documents.document_managers.deprecates',
+                                                                                        )
+                                                                                    "
+                                                                                    @click="
+                                                                                        addReferenceClipboard(
+                                                                                            document,
+                                                                                            DocReference.DEPRECATES,
                                                                                         )
                                                                                     "
                                                                                 >
@@ -481,11 +479,11 @@ function removeReference(id: bigint): void {
                                                     >{{ $t('common.document', 1) }} {{ $t('common.title') }}</label
                                                 >
                                                 <input
+                                                    v-model="queryDoc"
                                                     type="text"
                                                     name="title"
                                                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                     :placeholder="`${$t('common.document', 1)} ${$t('common.title')}`"
-                                                    v-model="queryDoc"
                                                     @focusin="focusTablet(true)"
                                                     @focusout="focusTablet(false)"
                                                 />
@@ -493,7 +491,20 @@ function removeReference(id: bigint): void {
                                             <div class="flow-root mt-2">
                                                 <div class="mx-0 -my-2 overflow-x-auto">
                                                     <div class="inline-block min-w-full py-2 align-middle">
-                                                        <table class="min-w-full divide-y divide-base-200">
+                                                        <DataPendingBlock
+                                                            v-if="pending"
+                                                            :message="$t('common.loading', [$t('common.document', 2)])"
+                                                        />
+                                                        <DataErrorBlock
+                                                            v-else-if="error"
+                                                            :title="$t('common.unable_to_load', [$t('common.document', 2)])"
+                                                            :retry="refresh"
+                                                        />
+                                                        <DataNoDataBlock
+                                                            v-else-if="!documents || documents.length === 0"
+                                                            :message="$t('components.citizens.citizens_list.no_citizens')"
+                                                        />
+                                                        <table v-else class="min-w-full divide-y divide-base-200">
                                                             <thead>
                                                                 <tr>
                                                                     <th
@@ -530,110 +541,108 @@ function removeReference(id: bigint): void {
                                                                 </tr>
                                                             </thead>
                                                             <tbody class="divide-y divide-base-500">
-                                                                <template v-if="documents">
-                                                                    <tr
-                                                                        v-for="document in documents.slice(0, 8)"
-                                                                        :key="document.id?.toString()"
+                                                                <tr
+                                                                    v-for="document in documents.slice(0, 8)"
+                                                                    :key="document.id?.toString()"
+                                                                >
+                                                                    <td
+                                                                        class="py-4 pl-4 pr-3 text-sm font-medium truncate whitespace-nowrap sm:pl-6 lg:pl-8 max-w-xl"
                                                                     >
-                                                                        <td
-                                                                            class="py-4 pl-4 pr-3 text-sm font-medium truncate whitespace-nowrap sm:pl-6 lg:pl-8 max-w-xl"
-                                                                        >
-                                                                            {{ document.title }}
-                                                                        </td>
-                                                                        <td class="px-3 py-4 text-sm whitespace-nowrap">
-                                                                            {{ document.state }}
-                                                                        </td>
-                                                                        <td class="px-3 py-4 text-sm whitespace-nowrap">
-                                                                            <CitizenInfoPopover :user="document.creator" />
-                                                                        </td>
-                                                                        <td class="px-3 py-4 text-sm whitespace-nowrap">
-                                                                            {{ $t('common.created') }}
-                                                                            <Time :value="document.createdAt" :ago="true" />
-                                                                        </td>
-                                                                        <td class="px-3 py-4 text-sm whitespace-nowrap">
-                                                                            <div class="flex flex-row gap-2">
-                                                                                <div class="flex">
-                                                                                    <button
-                                                                                        role="button"
-                                                                                        @click="
-                                                                                            addReference(
-                                                                                                document,
-                                                                                                DocReference.LINKED,
-                                                                                            )
-                                                                                        "
-                                                                                        data-te-toggle="tooltip"
-                                                                                        :title="
-                                                                                            $t(
-                                                                                                'components.documents.document_managers.links',
-                                                                                            )
-                                                                                        "
-                                                                                    >
-                                                                                        <LinkIcon
-                                                                                            class="w-6 h-auto text-info-500 hover:text-info-300"
-                                                                                        />
-                                                                                    </button>
-                                                                                    <button
-                                                                                        role="button"
-                                                                                        @click="
-                                                                                            addReference(
-                                                                                                document,
-                                                                                                DocReference.SOLVES,
-                                                                                            )
-                                                                                        "
-                                                                                        data-te-toggle="tooltip"
-                                                                                        :title="
-                                                                                            $t(
-                                                                                                'components.documents.document_managers.solves',
-                                                                                            )
-                                                                                        "
-                                                                                    >
-                                                                                        <CheckIcon
-                                                                                            class="w-6 h-auto text-success-500 hover:text-success-300"
-                                                                                        />
-                                                                                    </button>
-                                                                                    <button
-                                                                                        role="button"
-                                                                                        @click="
-                                                                                            addReference(
-                                                                                                document,
-                                                                                                DocReference.CLOSES,
-                                                                                            )
-                                                                                        "
-                                                                                        data-te-toggle="tooltip"
-                                                                                        :title="
-                                                                                            $t(
-                                                                                                'components.documents.document_managers.closes',
-                                                                                            )
-                                                                                        "
-                                                                                    >
-                                                                                        <CloseBoxIcon
-                                                                                            class="w-6 h-auto text-error-500 hover:text-error-300"
-                                                                                        />
-                                                                                    </button>
-                                                                                    <button
-                                                                                        role="button"
-                                                                                        @click="
-                                                                                            addReference(
-                                                                                                document,
-                                                                                                DocReference.DEPRECATES,
-                                                                                            )
-                                                                                        "
-                                                                                        data-te-toggle="tooltip"
-                                                                                        :title="
-                                                                                            $t(
-                                                                                                'components.documents.document_managers.deprecates',
-                                                                                            )
-                                                                                        "
-                                                                                    >
-                                                                                        <LockClockIcon
-                                                                                            class="w-6 h-auto text-warn-500 hover:text-warn-300"
-                                                                                        />
-                                                                                    </button>
-                                                                                </div>
+                                                                        {{ document.title }}
+                                                                    </td>
+                                                                    <td class="px-3 py-4 text-sm whitespace-nowrap">
+                                                                        {{ document.state }}
+                                                                    </td>
+                                                                    <td class="px-3 py-4 text-sm whitespace-nowrap">
+                                                                        <CitizenInfoPopover :user="document.creator" />
+                                                                    </td>
+                                                                    <td class="px-3 py-4 text-sm whitespace-nowrap">
+                                                                        {{ $t('common.created') }}
+                                                                        <Time :value="document.createdAt" :ago="true" />
+                                                                    </td>
+                                                                    <td class="px-3 py-4 text-sm whitespace-nowrap">
+                                                                        <div class="flex flex-row gap-2">
+                                                                            <div class="flex">
+                                                                                <button
+                                                                                    role="button"
+                                                                                    data-te-toggle="tooltip"
+                                                                                    :title="
+                                                                                        $t(
+                                                                                            'components.documents.document_managers.links',
+                                                                                        )
+                                                                                    "
+                                                                                    @click="
+                                                                                        addReference(
+                                                                                            document,
+                                                                                            DocReference.LINKED,
+                                                                                        )
+                                                                                    "
+                                                                                >
+                                                                                    <LinkIcon
+                                                                                        class="w-6 h-auto text-info-500 hover:text-info-300"
+                                                                                    />
+                                                                                </button>
+                                                                                <button
+                                                                                    role="button"
+                                                                                    data-te-toggle="tooltip"
+                                                                                    :title="
+                                                                                        $t(
+                                                                                            'components.documents.document_managers.solves',
+                                                                                        )
+                                                                                    "
+                                                                                    @click="
+                                                                                        addReference(
+                                                                                            document,
+                                                                                            DocReference.SOLVES,
+                                                                                        )
+                                                                                    "
+                                                                                >
+                                                                                    <CheckIcon
+                                                                                        class="w-6 h-auto text-success-500 hover:text-success-300"
+                                                                                    />
+                                                                                </button>
+                                                                                <button
+                                                                                    role="button"
+                                                                                    data-te-toggle="tooltip"
+                                                                                    :title="
+                                                                                        $t(
+                                                                                            'components.documents.document_managers.closes',
+                                                                                        )
+                                                                                    "
+                                                                                    @click="
+                                                                                        addReference(
+                                                                                            document,
+                                                                                            DocReference.CLOSES,
+                                                                                        )
+                                                                                    "
+                                                                                >
+                                                                                    <CloseBoxIcon
+                                                                                        class="w-6 h-auto text-error-500 hover:text-error-300"
+                                                                                    />
+                                                                                </button>
+                                                                                <button
+                                                                                    role="button"
+                                                                                    data-te-toggle="tooltip"
+                                                                                    :title="
+                                                                                        $t(
+                                                                                            'components.documents.document_managers.deprecates',
+                                                                                        )
+                                                                                    "
+                                                                                    @click="
+                                                                                        addReference(
+                                                                                            document,
+                                                                                            DocReference.DEPRECATES,
+                                                                                        )
+                                                                                    "
+                                                                                >
+                                                                                    <LockClockIcon
+                                                                                        class="w-6 h-auto text-warn-500 hover:text-warn-300"
+                                                                                    />
+                                                                                </button>
                                                                             </div>
-                                                                        </td>
-                                                                    </tr>
-                                                                </template>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
                                                             </tbody>
                                                         </table>
                                                     </div>

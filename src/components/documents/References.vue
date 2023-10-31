@@ -5,6 +5,8 @@ import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopove
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import Time from '~/components/partials/elements/Time.vue';
 import { DocReference, DocumentReference } from '~~/gen/ts/resources/documents/documents';
+import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
+import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -26,31 +28,31 @@ const {
 } = useLazyAsyncData(`document-${props.documentId}-references`, () => getDocumentReferences());
 
 async function getDocumentReferences(): Promise<DocumentReference[]> {
-    return new Promise(async (res, rej) => {
-        try {
-            const call = $grpc.getDocStoreClient().getDocumentReferences({
-                documentId: props.documentId,
-            });
-            const { response } = await call;
+    try {
+        const call = $grpc.getDocStoreClient().getDocumentReferences({
+            documentId: props.documentId,
+        });
+        const { response } = await call;
 
-            return res(response.references);
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
-        }
-    });
+        return response.references;
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 </script>
 
 <template>
     <div>
+        <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.reference', 2)])" />
+        <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.reference', 2)])" :retry="refresh" />
         <DataNoDataBlock
-            v-if="references && references.length === 0"
+            v-else-if="!references || references.length === 0"
             :type="`${$t('common.document', 1)} ${$t('common.reference', 2)}`"
             :mdi="FileDocumentMultipleIcon"
         />
 
-        <template v-if="references && references.length > 0">
+        <template v-else>
             <!-- Relations list (smallest breakpoint only) -->
             <div class="sm:hidden text-neutral">
                 <ul role="list" class="mt-2 divide-y divide-gray-600 rounded-lg sm:hidden">

@@ -2,6 +2,9 @@
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { CloseIcon } from 'mdi-vue3';
+import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
+import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
+import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { useAuthStore } from '~/store/auth';
 import { useClipboardStore } from '~/store/clipboard';
 import { Template } from '~~/gen/ts/resources/documents/templates';
@@ -24,25 +27,23 @@ defineEmits<{
 const { data: template, pending, refresh, error } = useLazyAsyncData(`documents-templates-${props.id}`, () => getTemplate());
 
 async function getTemplate(): Promise<Template> {
-    return new Promise(async (res, rej) => {
-        try {
-            const data = clipboardStore.getTemplateData();
-            data.activeChar = activeChar.value!;
-            console.debug('Documents: Editor - Clipboard Template Data', data);
+    try {
+        const data = clipboardStore.getTemplateData();
+        data.activeChar = activeChar.value!;
+        console.debug('Documents: Editor - Clipboard Template Data', data);
 
-            const call = $grpc.getDocStoreClient().getTemplate({
-                templateId: props.id,
-                data: data,
-                render: true,
-            });
-            const { response } = await call;
+        const call = $grpc.getDocStoreClient().getTemplate({
+            templateId: props.id,
+            data,
+            render: true,
+        });
+        const { response } = await call;
 
-            return res(response.template!);
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
-        }
-    });
+        return response.template!;
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 </script>
 
@@ -94,33 +95,46 @@ async function getTemplate(): Promise<Template> {
                                         </DialogTitle>
                                         <div class="mt-2">
                                             <div class="pt-4">
-                                                <div>
-                                                    <label class="block mb-2 text-sm font-medium leading-6 text-neutral">
-                                                        {{ $t('common.title') }}
-                                                    </label>
-                                                    <h1
-                                                        class="p-2 mt-4 rounded-lg text-2xl font-bold text-neutral bg-base-800 break-words"
-                                                    >
-                                                        {{ template?.title }}
-                                                    </h1>
-                                                </div>
-                                                <div>
-                                                    <label class="block mb-2 text-sm font-medium leading-6 text-neutral">
-                                                        {{ $t('common.state') }}
-                                                    </label>
-                                                    <p
-                                                        class="p-2 mt-4 rounded-lg text-base font-bold text-neutral bg-base-800 break-words"
-                                                    >
-                                                        {{ template?.state }}
-                                                    </p>
-                                                </div>
+                                                <DataPendingBlock
+                                                    v-if="pending"
+                                                    :message="$t('common.loading', [$t('common.template', 2)])"
+                                                />
+                                                <DataErrorBlock
+                                                    v-else-if="error"
+                                                    :title="$t('common.unable_to_load', [$t('common.template', 2)])"
+                                                    :retry="refresh"
+                                                />
+                                                <DataNoDataBlock v-else-if="!template" :type="$t('common.template', 2)" />
+                                                <template v-else>
+                                                    <div>
+                                                        <label class="block mb-2 text-sm font-medium leading-6 text-neutral">
+                                                            {{ $t('common.title') }}
+                                                        </label>
+                                                        <h1
+                                                            class="p-2 mt-4 rounded-lg text-2xl font-bold text-neutral bg-base-800 break-words"
+                                                        >
+                                                            {{ template?.title }}
+                                                        </h1>
+                                                    </div>
+                                                    <div>
+                                                        <label class="block mb-2 text-sm font-medium leading-6 text-neutral">
+                                                            {{ $t('common.state') }}
+                                                        </label>
+                                                        <p
+                                                            class="p-2 mt-4 rounded-lg text-base font-bold text-neutral bg-base-800 break-words"
+                                                        >
+                                                            {{ template?.state }}
+                                                        </p>
+                                                    </div>
 
-                                                <label class="block mb-2 text-sm font-medium leading-6 text-neutral">
-                                                    {{ $t('common.content') }}
-                                                </label>
-                                                <div class="p-2 mt-4 rounded-lg text-neutral bg-base-800 break-words">
-                                                    <p v-html="template?.content"></p>
-                                                </div>
+                                                    <label class="block mb-2 text-sm font-medium leading-6 text-neutral">
+                                                        {{ $t('common.content') }}
+                                                    </label>
+                                                    <div class="p-2 mt-4 rounded-lg text-neutral bg-base-800 break-words">
+                                                        <!-- eslint-disable-next-line vue/no-v-html -->
+                                                        <p v-html="template?.content"></p>
+                                                    </div>
+                                                </template>
                                             </div>
                                         </div>
                                     </div>

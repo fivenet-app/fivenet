@@ -56,50 +56,49 @@ const filteredJobs = computed(() =>
 
 const queryJobGrade = ref<string>('');
 
+interface FormData {
+    reason: string;
+}
+
 async function setJobProp(values: FormData): Promise<void> {
-    return new Promise(async (res, rej) => {
-        if (!selectedJob.value || selectedJob.value.name === props.user.job) return res();
+    if (!selectedJob.value || selectedJob.value.name === props.user.job) {
+        return;
+    }
 
-        const userProps: UserProps = {
-            userId: props.user.userId,
-            jobName: selectedJob.value.name,
-            jobGradeNumber: selectedJobGrade.value ? selectedJobGrade.value?.grade : 1,
-        };
+    const userProps: UserProps = {
+        userId: props.user.userId,
+        jobName: selectedJob.value.name,
+        jobGradeNumber: selectedJobGrade.value ? selectedJobGrade.value?.grade : 1,
+    };
 
-        try {
-            await $grpc.getCitizenStoreClient().setUserProps({
-                props: userProps,
-                reason: values.reason,
-            });
+    try {
+        await $grpc.getCitizenStoreClient().setUserProps({
+            props: userProps,
+            reason: values.reason,
+        });
 
-            props.user.job = selectedJob.value?.name!;
-            props.user.jobLabel = selectedJob.value?.label!;
+        props.user.job = selectedJob.value?.name!;
+        props.user.jobLabel = selectedJob.value?.label!;
 
-            props.user.jobGrade = selectedJobGrade.value?.grade!;
-            props.user.jobGradeLabel = selectedJob.value?.label!;
+        props.user.jobGrade = selectedJobGrade.value?.grade!;
+        props.user.jobGradeLabel = selectedJob.value?.label!;
 
-            notifications.dispatchNotification({
-                title: { key: 'notifications.action_successfull.title', parameters: {} },
-                content: { key: 'notifications.action_successfull.content', parameters: {} },
-                type: 'success',
-            });
+        notifications.dispatchNotification({
+            title: { key: 'notifications.action_successfull.title', parameters: {} },
+            content: { key: 'notifications.action_successfull.content', parameters: {} },
+            type: 'success',
+        });
 
-            emit('close');
-            return res();
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
-        }
-    });
+        emit('close');
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 
 defineRule('required', required);
 defineRule('min', min);
 defineRule('max', max);
-
-interface FormData {
-    reason: string;
-}
 
 const { handleSubmit, meta } = useForm<FormData>({
     validationSchema: {
@@ -185,14 +184,14 @@ onBeforeMount(async () => listJobs());
                                         <label for="job" class="block text-sm font-medium leading-6 text-neutral">
                                             {{ $t('common.job') }}
                                         </label>
-                                        <Combobox as="div" v-model="selectedJob" nullable>
+                                        <Combobox v-model="selectedJob" as="div" nullable>
                                             <div class="relative">
                                                 <ComboboxButton as="div">
                                                     <ComboboxInput
                                                         autocomplete="off"
                                                         class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                        @change="queryJob = $event.target.value"
                                                         :display-value="(job: any) => job.label"
+                                                        @change="queryJob = $event.target.value"
                                                         @focusin="focusTablet(true)"
                                                         @focusout="focusTablet(false)"
                                                     />
@@ -205,9 +204,9 @@ onBeforeMount(async () => listJobs());
                                                     <ComboboxOption
                                                         v-for="job in filteredJobs"
                                                         :key="job.name"
+                                                        v-slot="{ active, selected }"
                                                         :value="job"
                                                         as="char"
-                                                        v-slot="{ active, selected }"
                                                     >
                                                         <li
                                                             :class="[
@@ -238,14 +237,14 @@ onBeforeMount(async () => listJobs());
                                         <label for="job" class="block text-sm font-medium leading-6 text-neutral">
                                             {{ $t('common.job_grade') }}
                                         </label>
-                                        <Combobox as="div" v-model="selectedJobGrade" nullable>
+                                        <Combobox v-model="selectedJobGrade" as="div" nullable>
                                             <div class="relative">
                                                 <ComboboxButton as="div">
                                                     <ComboboxInput
                                                         autocomplete="off"
                                                         class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                        @change="queryJobGrade = $event.target.value"
                                                         :display-value="(grade: any) => grade.label"
+                                                        @change="queryJobGrade = $event.target.value"
                                                         @focusin="focusTablet(true)"
                                                         @focusout="focusTablet(false)"
                                                     />
@@ -260,9 +259,9 @@ onBeforeMount(async () => listJobs());
                                                             g.label.toLowerCase().includes(queryJobGrade.toLowerCase()),
                                                         )"
                                                         :key="grade.grade"
+                                                        v-slot="{ active, selected }"
                                                         :value="grade"
                                                         as="char"
-                                                        v-slot="{ active, selected }"
                                                     >
                                                         <li
                                                             :class="[

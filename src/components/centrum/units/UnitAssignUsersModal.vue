@@ -36,35 +36,31 @@ const selectedCitizens = ref<UserShort[]>(props.unit.users.filter((u) => u !== u
 const queryCitizens = ref('');
 
 async function assignUnit(): Promise<void> {
-    return new Promise(async (res, rej) => {
-        try {
-            const toAdd: number[] = [];
-            const toRemove: number[] = [];
-            selectedCitizens.value?.forEach((u) => {
-                toAdd.push(u.userId);
-            });
-            props.unit.users?.forEach((u) => {
-                const idx = selectedCitizens.value.findIndex((su) => su.userId === u.userId);
-                if (idx === -1) {
-                    toRemove.push(u.userId);
-                }
-            });
+    try {
+        const toAdd: number[] = [];
+        const toRemove: number[] = [];
+        selectedCitizens.value?.forEach((u) => {
+            toAdd.push(u.userId);
+        });
+        props.unit.users?.forEach((u) => {
+            const idx = selectedCitizens.value.findIndex((su) => su.userId === u.userId);
+            if (idx === -1) {
+                toRemove.push(u.userId);
+            }
+        });
 
-            const call = $grpc.getCentrumClient().assignUnit({
-                unitId: props.unit.id,
-                toAdd: toAdd,
-                toRemove: toRemove,
-            });
-            await call;
+        const call = $grpc.getCentrumClient().assignUnit({
+            unitId: props.unit.id,
+            toAdd,
+            toRemove,
+        });
+        await call;
 
-            emit('close');
-
-            return res();
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
-        }
-    });
+        emit('close');
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 
 async function findCitizens(): Promise<void> {
@@ -137,13 +133,12 @@ onMounted(async () => {
                                                 <div class="mt-1">
                                                     <div class="my-2 space-y-24">
                                                         <div class="flex-1 form-control">
-                                                            <Combobox as="div" v-model="selectedCitizens" multiple nullable>
+                                                            <Combobox v-model="selectedCitizens" as="div" multiple nullable>
                                                                 <div class="relative">
                                                                     <ComboboxButton as="div">
                                                                         <ComboboxInput
                                                                             autocomplete="off"
                                                                             class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                                            @change="queryCitizens = $event.target.value"
                                                                             :display-value="
                                                                                 (chars: any) =>
                                                                                     chars
@@ -151,6 +146,7 @@ onMounted(async () => {
                                                                                         : $t('common.na')
                                                                             "
                                                                             :placeholder="$t('common.user', 2)"
+                                                                            @change="queryCitizens = $event.target.value"
                                                                             @focusin="focusTablet(true)"
                                                                             @focusout="focusTablet(false)"
                                                                         />
@@ -162,10 +158,10 @@ onMounted(async () => {
                                                                     >
                                                                         <ComboboxOption
                                                                             v-for="user in entriesCitizens"
+                                                                            v-slot="{ active, selected }"
                                                                             :key="user?.userId"
                                                                             :value="user"
                                                                             as="char"
-                                                                            v-slot="{ active, selected }"
                                                                         >
                                                                             <li
                                                                                 :class="[
@@ -206,7 +202,7 @@ onMounted(async () => {
                                                                 <ul
                                                                     class="text-sm font-medium max-w-md space-y-1 text-gray-100 list-disc list-inside dark:text-gray-300"
                                                                 >
-                                                                    <li v-for="user in selectedCitizens">
+                                                                    <li v-for="user in selectedCitizens" :key="user.userId">
                                                                         {{ user?.firstname }}
                                                                         {{ user?.lastname }}
                                                                     </li>

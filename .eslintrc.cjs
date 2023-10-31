@@ -10,10 +10,10 @@ module.exports = {
         parser: '@typescript-eslint/parser',
     },
     extends: ['@nuxtjs/eslint-config-typescript', 'plugin:vue/vue3-recommended', 'plugin:prettier/recommended'],
-    ignorePatterns: ['./gen/'],
     plugins: [],
     rules: {
         'no-console': 0,
         'require-await': 0,
+        'vue/multi-word-component-names': 0,
     },
 };

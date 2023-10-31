@@ -9,8 +9,8 @@ import PhoneNumber from '~/components/partials/citizens/PhoneNumber.vue';
 import { attr } from '~/composables/can';
 import { useClipboardStore } from '~/store/clipboard';
 import { User } from '~~/gen/ts/resources/users/users';
-import TrafficPointsModal from './TrafficPointsModal.vue';
-import WantedModal from './WantedModal.vue';
+import TrafficPointsModal from '~/components/citizens/info/TrafficPointsModal.vue';
+import WantedModal from '~/components/citizens/info/WantedModal.vue';
 
 const clipboardStore = useClipboardStore();
 
@@ -34,10 +34,10 @@ const trafficPointsModal = ref(false);
 </script>
 
 <template>
-    <TemplatesModal :open="templatesOpen" @close="templatesOpen = false" :auto-fill="true" />
-    <WantedModal :open="setWantedModal" @close="setWantedModal = false" :user="user" />
-    <JobModal :open="setJobModal" @close="setJobModal = false" :user="user" />
-    <TrafficPointsModal :open="trafficPointsModal" @close="trafficPointsModal = false" :user="user" />
+    <TemplatesModal :open="templatesOpen" :auto-fill="true" @close="templatesOpen = false" />
+    <WantedModal :open="setWantedModal" :user="user" @close="setWantedModal = false" />
+    <JobModal :open="setJobModal" :user="user" @close="setJobModal = false" />
+    <TrafficPointsModal :open="trafficPointsModal" :user="user" @close="trafficPointsModal = false" />
 
     <div class="w-full mx-auto max-w-7xl grow lg:flex xl:px-2">
         <div class="flex-1 xl:flex">
@@ -132,6 +132,7 @@ const trafficPointsModal = ref(false);
                                     <ul v-else role="list" class="border divide-y rounded-md divide-base-200 border-base-200">
                                         <li
                                             v-for="license in user?.licenses"
+                                            :key="license.type"
                                             class="flex items-center justify-between py-3 pl-3 pr-4 text-sm"
                                         >
                                             <div class="flex items-center flex-1">

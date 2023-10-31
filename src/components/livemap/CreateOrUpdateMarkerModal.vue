@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc';
+// eslint-disable-next-line camelcase
 import { digits, max, max_value, min, min_value, required } from '@vee-validate/rules';
 import { useThrottleFn } from '@vueuse/core';
 import { CloseIcon, LoadingIcon } from 'mdi-vue3';
@@ -22,47 +23,52 @@ const { $grpc } = useNuxtApp();
 const livemapStore = useLivemapStore();
 const { location } = storeToRefs(livemapStore);
 
+interface FormData {
+    name: string;
+    description: string;
+    markerType: MarkerType.CIRCLE;
+    color: string;
+    circleRadius: number;
+    circleOpacity: number;
+}
+
 async function createMarker(values: FormData): Promise<void> {
-    return new Promise(async (res, rej) => {
-        try {
-            const marker: Marker = {
-                info: {
-                    id: BigInt(0),
-                    job: '',
-                    name: values.name,
-                    description: values.description,
-                    x: location.value?.x ?? 0,
-                    y: location.value?.y ?? 0,
-                    color: values.color.substring(1),
-                },
-                type: values.markerType,
-            };
+    try {
+        const marker: Marker = {
+            info: {
+                id: BigInt(0),
+                job: '',
+                name: values.name,
+                description: values.description,
+                x: location.value?.x ?? 0,
+                y: location.value?.y ?? 0,
+                color: values.color.substring(1),
+            },
+            type: values.markerType,
+        };
 
-            if (values.markerType === MarkerType.CIRCLE) {
-                marker.data = {
-                    data: {
-                        oneofKind: 'circle',
-                        circle: {
-                            radius: values.circleRadius,
-                            oapcity: values.circleOpacity,
-                        },
+        if (values.markerType === MarkerType.CIRCLE) {
+            marker.data = {
+                data: {
+                    oneofKind: 'circle',
+                    circle: {
+                        radius: values.circleRadius,
+                        oapcity: values.circleOpacity,
                     },
-                };
-            }
-
-            const call = $grpc.getLivemapperClient().createOrUpdateMarker({
-                marker: marker,
-            });
-            await call;
-
-            emit('close');
-
-            return res();
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
+                },
+            };
         }
-    });
+
+        const call = $grpc.getLivemapperClient().createOrUpdateMarker({
+            marker,
+        });
+        await call;
+
+        emit('close');
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 
 const markerTypes = ref<{ status: MarkerType; selected?: boolean }[]>([{ status: MarkerType.CIRCLE }]);
@@ -73,15 +79,6 @@ defineRule('min', min);
 defineRule('max', max);
 defineRule('min_value', min_value);
 defineRule('max_value', max_value);
-
-interface FormData {
-    name: string;
-    description: string;
-    markerType: MarkerType.CIRCLE;
-    color: string;
-    circleRadius: number;
-    circleOpacity: number;
-}
 
 const { handleSubmit, meta, values, setValues } = useForm<FormData>({
     validationSchema: {
@@ -137,8 +134,8 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                         >
                             <DialogPanel class="pointer-events-auto w-screen max-w-3xl">
                                 <form
-                                    @submit.prevent="onSubmitThrottle"
                                     class="flex h-full flex-col divide-y divide-gray-200 bg-gray-900 shadow-xl"
+                                    @submit.prevent="onSubmitThrottle"
                                 >
                                     <div class="h-0 flex-1 overflow-y-auto">
                                         <div class="bg-primary-700 px-4 py-6 sm:px-6">
@@ -236,11 +233,11 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                 class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
                                                             >
                                                                 <VeeField
+                                                                    v-slot="{ field }"
                                                                     name="color"
                                                                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                                     :placeholder="$t('common.color')"
                                                                     :label="$t('common.color')"
-                                                                    v-slot="{ field }"
                                                                 >
                                                                     <ColorInput
                                                                         v-model="field.value"
@@ -269,12 +266,12 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                 class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
                                                             >
                                                                 <VeeField
+                                                                    v-slot="{ field }"
                                                                     as="div"
                                                                     name="markerType"
                                                                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                                     :placeholder="$t('common.marker')"
                                                                     :label="$t('common.marker')"
-                                                                    v-slot="{ field }"
                                                                 >
                                                                     <select
                                                                         v-bind="field"
@@ -282,6 +279,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                     >
                                                                         <option
                                                                             v-for="mtype in markerTypes"
+                                                                            :key="mtype.status"
                                                                             :selected="mtype.selected"
                                                                             :value="mtype.status"
                                                                         >

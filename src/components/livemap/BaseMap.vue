@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { LControl, LControlLayers, LMap, LTileLayer } from '@vue-leaflet/vue-leaflet';
 import { useDebounceFn, useResizeObserver, watchDebounced } from '@vueuse/core';
-import L, { latLngBounds } from 'leaflet';
+import L, { extend, latLngBounds, CRS, Projection, Transformation } from 'leaflet';
 import 'leaflet-contextmenu';
 import 'leaflet-contextmenu/dist/leaflet.contextmenu.min.css';
 import 'leaflet/dist/leaflet.css';
@@ -22,7 +22,7 @@ const emit = defineEmits<{
 const livemapStore = useLivemapStore();
 const { location, zoom } = storeToRefs(livemapStore);
 
-let map: L.Map | undefined = undefined;
+let map: L.Map | undefined;
 
 function mapResize(): void {
     if (map === undefined) {
@@ -44,8 +44,8 @@ const scaleY = 0.0205;
 const bounds = latLngBounds([-4_000, -4_000], [8_000, 8_000]);
 const maxBounds = latLngBounds([-9_000, -9_000], [11_000, 11_000]);
 
-const customCRS = L.extend({}, L.CRS.Simple, {
-    projection: L.Projection.LonLat,
+const customCRS = extend({}, CRS.Simple, {
+    projection: Projection.LonLat,
     scale: function (zoom: number): number {
         return Math.pow(2, zoom);
     },
@@ -53,15 +53,15 @@ const customCRS = L.extend({}, L.CRS.Simple, {
         return Math.log(sc) / 0.6931471805599453;
     },
     distance: function (pos1: L.LatLng, pos2: L.LatLng): number {
-        var x_difference = pos2.lng - pos1.lng;
-        var y_difference = pos2.lat - pos1.lat;
-        return Math.sqrt(x_difference * x_difference + y_difference * y_difference);
+        const xDiff = pos2.lng - pos1.lng;
+        const yDiff = pos2.lat - pos1.lat;
+        return Math.sqrt(xDiff * xDiff + yDiff * yDiff);
     },
-    transformation: new L.Transformation(scaleX, centerX, -scaleY, centerY),
+    transformation: new Transformation(scaleX, centerX, -scaleY, centerY),
     infinite: true,
 });
 
-let center: L.PointExpression = [0, 0];
+const center: L.PointExpression = [0, 0];
 const attribution = '<a href="http://www.rockstargames.com/V/">Grand Theft Auto V</a>';
 const selectedMarker = ref<bigint>();
 
@@ -80,7 +80,7 @@ watch(location, () => {
     map?.setZoom(5, {
         animate: false,
     });
-    map?.panTo([location.value?.y!, location.value?.x!], {
+    map?.panTo([location.value.y!, location.value.x!], {
         animate: true,
         duration: 1.0,
     });
@@ -111,10 +111,10 @@ async function updateBackground(layer: string): Promise<void> {
     switch (layer) {
         case 'Satelite':
             backgroundColor.value = backgroundColorList.Satelite;
-            return;
+            break;
         case 'Postal':
             backgroundColor.value = backgroundColorList.Postal;
-            return;
+            break;
     }
 }
 
@@ -193,6 +193,58 @@ onBeforeUnmount(() => {
 });
 </script>
 
+<template>
+    <div ref="mapContainer" class="h-full flex flex-row" :style="{ backgroundColor }">
+        <LMap
+            v-model:zoom="zoom"
+            v-model:center="center"
+            :bounds="bounds"
+            :max-bounds="maxBounds"
+            class="z-0"
+            :crs="customCRS"
+            :min-zoom="1"
+            :max-zoom="7"
+            :inertia="false"
+            :style="{ backgroundColor: 'rgba(0,0,0,0.0)' }"
+            :use-global-leaflet="true"
+            :options="mapOptions"
+            @click="selectedMarker = undefined"
+            @ready="onMapReady($event)"
+        >
+            <LTileLayer
+                url="/images/livemap/tiles/postal/{z}/{x}/{y}.png"
+                layer-type="base"
+                name="Postal"
+                :no-wrap="true"
+                :tms="true"
+                :visible="true"
+                :attribution="attribution"
+            />
+            <!-- <LTileLayer
+                url="/images/livemap/tiles/satelite/{z}/{x}/{y}.png"
+                layer-type="base"
+                name="Satelite"
+                :no-wrap="true"
+                :tms="true"
+                :visible="false"
+                :attribution="attribution"
+            /> -->
+
+            <LControlLayers />
+
+            <LControl position="bottomleft" class="leaflet-control-attribution mouseposition text-xs">
+                <span class="font-semibold">{{ $t('common.longitude') }}</span
+                >: {{ mouseLat }} | <span class="font-semibold">{{ $t('common.latitude') }}</span
+                >: {{ mouseLong }}
+            </LControl>
+
+            <slot />
+        </LMap>
+
+        <slot name="afterMap" />
+    </div>
+</template>
+
 <style lang="scss">
 .leaflet-container {
     font-family: var(--font-sans);
@@ -231,55 +283,3 @@ onBeforeUnmount(() => {
     background-color: #16171a;
 }
 </style>
-
-<template>
-    <div ref="mapContainer" class="h-full flex flex-row" :style="{ backgroundColor }">
-        <LMap
-            :bounds="bounds"
-            :max-bounds="maxBounds"
-            class="z-0"
-            v-model:zoom="zoom"
-            v-model:center="center"
-            :crs="customCRS"
-            :min-zoom="1"
-            :max-zoom="7"
-            @click="selectedMarker = undefined"
-            :inertia="false"
-            :style="{ backgroundColor: 'rgba(0,0,0,0.0)' }"
-            @ready="onMapReady($event)"
-            :use-global-leaflet="true"
-            :options="mapOptions"
-        >
-            <LTileLayer
-                url="/images/livemap/tiles/postal/{z}/{x}/{y}.png"
-                layer-type="base"
-                name="Postal"
-                :no-wrap="true"
-                :tms="true"
-                :visible="true"
-                :attribution="attribution"
-            />
-            <!-- <LTileLayer
-                url="/images/livemap/tiles/satelite/{z}/{x}/{y}.png"
-                layer-type="base"
-                name="Satelite"
-                :no-wrap="true"
-                :tms="true"
-                :visible="false"
-                :attribution="attribution"
-            /> -->
-
-            <LControlLayers />
-
-            <LControl position="bottomleft" class="leaflet-control-attribution mouseposition text-xs">
-                <span class="font-semibold">{{ $t('common.longitude') }}</span
-                >: {{ mouseLat }} | <span class="font-semibold">{{ $t('common.latitude') }}</span
-                >: {{ mouseLong }}
-            </LControl>
-
-            <slot />
-        </LMap>
-
-        <slot name="afterMap" />
-    </div>
-</template>

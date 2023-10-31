@@ -23,44 +23,41 @@ const queryJob = ref('');
 const selectedJob = ref<undefined | Job>();
 
 async function setJob(): Promise<void> {
-    return new Promise(async (res, rej) => {
-        try {
-            const grades = selectedJob.value?.grades;
-            if (!grades) {
-                return;
-            }
-
-            const call = $grpc.getAuthClient().setJob({
-                charId: activeChar.value?.userId!,
-                job: selectedJob.value?.name!,
-                jobGrade: grades[grades.length - 1].grade,
-            });
-            const { response } = await call;
-
-            setAccessToken(response.token, toDate(response.expires) as null | Date);
-            setActiveChar(response.char!);
-            if (response.jobProps) {
-                setJobProps(response.jobProps!);
-            } else {
-                setJobProps(null);
-            }
-
-            notifications.dispatchNotification({
-                title: { key: 'notifications.job_switcher.setjob.title', parameters: {} },
-                content: { key: 'notifications.job_switcher.setjob.title', parameters: { job: selectedJob.value?.label! } },
-                type: 'info',
-            });
-
-            await navigateTo({ name: 'overview' });
-
-            queryJob.value = '';
-            return res();
-        } catch (e) {
-            queryJob.value = '';
-            $grpc.handleError(e as RpcError);
-            throw e;
+    try {
+        const grades = selectedJob.value?.grades;
+        if (!grades) {
+            return;
         }
-    });
+
+        const call = $grpc.getAuthClient().setJob({
+            charId: activeChar.value!.userId,
+            job: selectedJob.value!.name,
+            jobGrade: grades[grades.length - 1].grade,
+        });
+        const { response } = await call;
+
+        setAccessToken(response.token, toDate(response.expires) as null | Date);
+        setActiveChar(response.char!);
+        if (response.jobProps) {
+            setJobProps(response.jobProps!);
+        } else {
+            setJobProps(null);
+        }
+
+        notifications.dispatchNotification({
+            title: { key: 'notifications.job_switcher.setjob.title', parameters: {} },
+            content: { key: 'notifications.job_switcher.setjob.title', parameters: { job: selectedJob.value!.label! } },
+            type: 'info',
+        });
+
+        await navigateTo({ name: 'overview' });
+
+        queryJob.value = '';
+    } catch (e) {
+        queryJob.value = '';
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 
 const filteredJobs = computed(() => jobs.value.filter((g) => g.label.toLowerCase().includes(queryJob.value.toLowerCase())));
@@ -69,16 +66,16 @@ watch(selectedJob, () => setJob());
 </script>
 
 <template>
-    <Combobox as="div" v-model="selectedJob" nullable>
+    <Combobox v-model="selectedJob" as="div" nullable>
         <div class="relative">
             <ComboboxButton as="div">
                 <ComboboxInput
                     autocomplete="off"
-                    @click="listJobs"
                     class="hidden md:block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                    @change="queryJob = $event.target.value"
                     :display-value="(job: any) => (job ? job?.label : '')"
                     :placeholder="`${$t('common.select')} ${$t('common.job')}`"
+                    @click="listJobs"
+                    @change="queryJob = $event.target.value"
                     @focusin="focusTablet(true)"
                     @focusout="focusTablet(false)"
                 />
@@ -88,7 +85,7 @@ watch(selectedJob, () => setJob());
                 v-if="filteredJobs.length > 0"
                 class="absolute z-40 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-44 sm:text-sm"
             >
-                <ComboboxOption v-for="job in filteredJobs" :key="job.name" :value="job" v-slot="{ active, selected }">
+                <ComboboxOption v-for="job in filteredJobs" :key="job.name" v-slot="{ active, selected }" :value="job">
                     <li
                         :class="[
                             'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',

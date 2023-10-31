@@ -25,36 +25,32 @@ const { $grpc } = useNuxtApp();
 const selectedUnits = ref<bigint[]>(props.dispatch.units.map((du) => du.unitId));
 
 async function assignDispatch(): Promise<void> {
-    return new Promise(async (res, rej) => {
-        try {
-            const toAdd: bigint[] = [];
-            const toRemove: bigint[] = [];
-            selectedUnits.value?.forEach((u) => {
-                toAdd.push(u);
-            });
-            props.dispatch.units?.forEach((u) => {
-                const idx = selectedUnits.value.findIndex((su) => su === u.unitId);
-                if (idx === -1) {
-                    toRemove.push(u.unitId);
-                }
-            });
+    try {
+        const toAdd: bigint[] = [];
+        const toRemove: bigint[] = [];
+        selectedUnits.value?.forEach((u) => {
+            toAdd.push(u);
+        });
+        props.dispatch.units?.forEach((u) => {
+            const idx = selectedUnits.value.findIndex((su) => su === u.unitId);
+            if (idx === -1) {
+                toRemove.push(u.unitId);
+            }
+        });
 
-            const call = $grpc.getCentrumClient().assignDispatch({
-                dispatchId: props.dispatch.id,
-                toAdd: toAdd,
-                toRemove: toRemove,
-            });
-            await call;
+        const call = $grpc.getCentrumClient().assignDispatch({
+            dispatchId: props.dispatch.id,
+            toAdd,
+            toRemove,
+        });
+        await call;
 
-            selectedUnits.value.length = 0;
-            emit('close');
-
-            return res();
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
-        }
-    });
+        selectedUnits.value.length = 0;
+        emit('close');
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 
 function selectUnit(item: Unit): void {
@@ -93,7 +89,7 @@ const sortedUnits = computed(() => getSortedUnits.value);
                                             <div class="flex items-center justify-between">
                                                 <DialogTitle class="inline-flex text-base font-semibold leading-6 text-neutral">
                                                     {{ $t('components.centrum.assign_dispatch.title') }}:
-                                                    <IDCopyBadge class="ml-2" :id="dispatch.id" prefix="DSP" />
+                                                    <IDCopyBadge :id="dispatch.id" class="ml-2" prefix="DSP" />
                                                 </DialogTitle>
                                                 <div class="ml-3 flex h-7 items-center">
                                                     <button

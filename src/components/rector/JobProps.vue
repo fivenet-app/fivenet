@@ -35,82 +35,76 @@ const properties = ref<{
 });
 
 async function getJobProps(): Promise<JobProps> {
-    return new Promise(async (res, rej) => {
-        try {
-            const call = $grpc.getRectorClient().getJobProps({});
-            const { response } = await call;
+    try {
+        const call = $grpc.getRectorClient().getJobProps({});
+        const { response } = await call;
 
-            if (response.jobProps) {
-                properties.value.theme = response.jobProps?.theme ?? 'default';
-                properties.value.livemapMarkerColor = '#' + response.jobProps?.livemapMarkerColor;
+        if (response.jobProps) {
+            properties.value.theme = response.jobProps?.theme ?? 'default';
+            properties.value.livemapMarkerColor = '#' + response.jobProps?.livemapMarkerColor;
 
-                const components = response.jobProps!.quickButtons.split(';').filter((v) => v !== '');
-                components.forEach((v) => {
-                    switch (v) {
-                        case 'PenaltyCalculator':
-                            properties.value.quickButtons.PenaltyCalculator = true;
-                            break;
-                        default:
-                            break;
-                    }
-                });
-
-                if (response.jobProps.discordGuildId && response.jobProps.discordGuildId > 0) {
-                    properties.value.discordGuildId = response.jobProps.discordGuildId?.toString();
+            const components = response.jobProps!.quickButtons.split(';').filter((v) => v !== '');
+            components.forEach((v) => {
+                switch (v) {
+                    case 'PenaltyCalculator':
+                        properties.value.quickButtons.PenaltyCalculator = true;
+                        break;
+                    default:
+                        break;
                 }
+            });
 
-                properties.value.discordLastSync = response.jobProps?.discordLastSync;
+            if (response.jobProps.discordGuildId && response.jobProps.discordGuildId > 0) {
+                properties.value.discordGuildId = response.jobProps.discordGuildId?.toString();
             }
 
-            return res(response.jobProps!);
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
+            properties.value.discordLastSync = response.jobProps?.discordLastSync;
         }
-    });
+
+        return response.jobProps!;
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 
 const { data: jobProps, pending, refresh, error } = useLazyAsyncData(`rector-jobprops`, () => getJobProps());
 
 async function saveJobProps(): Promise<void> {
-    return new Promise(async (res, rej) => {
-        // How scuffed do you want this code to be: "Yes"
-        let quickButtons = '';
-        if (properties.value.quickButtons.PenaltyCalculator) {
-            quickButtons += 'PenaltyCalculator;';
-        }
+    // How scuffed do you want this code to be: "Yes"
+    let quickButtons = '';
+    if (properties.value.quickButtons.PenaltyCalculator) {
+        quickButtons += 'PenaltyCalculator;';
+    }
 
-        const jProps: JobProps = {
-            job: '',
-            theme: properties.value.theme,
-            // Remove '#' from color code
-            livemapMarkerColor: properties.value.livemapMarkerColor.substring(1),
-            quickButtons: '',
-            discordGuildId:
-                properties.value.discordGuildId && properties.value.discordGuildId !== ''
-                    ? BigInt(properties.value.discordGuildId)
-                    : undefined,
-        };
+    const jProps: JobProps = {
+        job: '',
+        theme: properties.value.theme,
+        // Remove '#' from color code
+        livemapMarkerColor: properties.value.livemapMarkerColor.substring(1),
+        quickButtons: '',
+        discordGuildId:
+            properties.value.discordGuildId && properties.value.discordGuildId !== ''
+                ? BigInt(properties.value.discordGuildId)
+                : undefined,
+    };
 
-        jProps.quickButtons = quickButtons.replace(/;$/, '');
+    jProps.quickButtons = quickButtons.replace(/;$/, '');
 
-        try {
-            await $grpc.getRectorClient().setJobProps({
-                jobProps: jProps,
-            });
+    try {
+        await $grpc.getRectorClient().setJobProps({
+            jobProps: jProps,
+        });
 
-            notifications.dispatchNotification({
-                title: { key: 'notifications.rector.job_props.title', parameters: {} },
-                content: { key: 'notifications.rector.job_props.content', parameters: {} },
-                type: 'success',
-            });
-
-            return res();
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
-        }
-    });
+        notifications.dispatchNotification({
+            title: { key: 'notifications.rector.job_props.title', parameters: {} },
+            content: { key: 'notifications.rector.job_props.content', parameters: {} },
+            type: 'success',
+        });
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 </script>
 

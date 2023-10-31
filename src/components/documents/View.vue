@@ -27,10 +27,10 @@ import { useClipboardStore } from '~/store/clipboard';
 import { useNotificatorStore } from '~/store/notificator';
 import { AccessLevel } from '~~/gen/ts/resources/documents/access';
 import { Document, DocumentAccess } from '~~/gen/ts/resources/documents/documents';
-import Comments from './Comments.vue';
-import References from './References.vue';
-import Relations from './Relations.vue';
-import { checkDocAccess } from './helpers';
+import Comments from '~/components/documents/Comments.vue';
+import References from '~/components/documents/References.vue';
+import Relations from '~/components/documents/Relations.vue';
+import { checkDocAccess } from '~/components/documents/helpers';
 
 const { $grpc } = useNuxtApp();
 const clipboardStore = useClipboardStore();
@@ -57,76 +57,66 @@ const {
 } = useLazyAsyncData(`document-${props.documentId}`, () => getDocument(props.documentId));
 
 async function getDocument(id: bigint): Promise<Document> {
-    return new Promise(async (res, rej) => {
-        try {
-            const call = $grpc.getDocStoreClient().getDocument({
-                documentId: id,
-            });
-            const { response } = await call;
+    try {
+        const call = $grpc.getDocStoreClient().getDocument({
+            documentId: id,
+        });
+        const { response } = await call;
 
-            access.value = response.access;
+        access.value = response.access;
 
-            return res(response.document!);
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
-        }
-    });
+        return response.document!;
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 
 async function deleteDocument(id: bigint): Promise<void> {
-    return new Promise(async (res, rej) => {
-        try {
-            await $grpc.getDocStoreClient().deleteDocument({
-                documentId: id,
-            });
+    try {
+        await $grpc.getDocStoreClient().deleteDocument({
+            documentId: id,
+        });
 
-            notifications.dispatchNotification({
-                title: { key: 'notifications.document_deleted.title', parameters: {} },
-                content: { key: 'notifications.document_deleted.content', parameters: {} },
-                type: 'success',
-            });
+        notifications.dispatchNotification({
+            title: { key: 'notifications.document_deleted.title', parameters: {} },
+            content: { key: 'notifications.document_deleted.content', parameters: {} },
+            type: 'success',
+        });
 
-            await navigateTo({ name: 'documents' });
-
-            return res();
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
-        }
-    });
+        await navigateTo({ name: 'documents' });
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 
 async function toggleDocument(id: bigint, closed: boolean): Promise<void> {
-    return new Promise(async (res, rej) => {
-        try {
-            await $grpc.getDocStoreClient().toggleDocument({
-                documentId: id,
-                closed: closed,
+    try {
+        await $grpc.getDocStoreClient().toggleDocument({
+            documentId: id,
+            closed,
+        });
+
+        doc.value!.closed = closed;
+
+        if (!closed) {
+            notifications.dispatchNotification({
+                title: { key: `notifications.document_toggled.open.title`, parameters: {} },
+                content: { key: `notifications.document_toggled.open.content`, parameters: {} },
+                type: 'success',
             });
-
-            doc.value!.closed = closed;
-
-            if (!closed) {
-                notifications.dispatchNotification({
-                    title: { key: `notifications.document_toggled.open.title`, parameters: {} },
-                    content: { key: `notifications.document_toggled.open.content`, parameters: {} },
-                    type: 'success',
-                });
-            } else {
-                notifications.dispatchNotification({
-                    title: { key: `notifications.document_toggled.closed.title`, parameters: {} },
-                    content: { key: `notifications.document_toggled.closed.content`, parameters: {} },
-                    type: 'success',
-                });
-            }
-
-            return res();
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
+        } else {
+            notifications.dispatchNotification({
+                title: { key: `notifications.document_toggled.closed.title`, parameters: {} },
+                content: { key: `notifications.document_toggled.closed.content`, parameters: {} },
+                type: 'success',
+            });
         }
-    });
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 
 function addToClipboard(): void {
@@ -159,15 +149,6 @@ watchOnce(doc, () =>
 const { isRevealed, reveal, confirm, cancel, onConfirm } = useConfirmDialog();
 onConfirm(async (id: bigint) => deleteDocument(id));
 </script>
-
-<style scoped>
-.prose {
-    * {
-        margin-top: 4px;
-        margin-bottom: 4px;
-    }
-}
-</style>
 
 <template>
     <div class="m-2">
@@ -221,8 +202,8 @@ onConfirm(async (id: bigint) => deleteDocument(id));
                                 >
                                     <button
                                         type="button"
-                                        @click="toggleDocument(documentId, !doc?.closed)"
                                         class="inline-flex items-center justify-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
+                                        @click="toggleDocument(documentId, !doc?.closed)"
                                     >
                                         <template v-if="doc?.closed">
                                             <LockOpenVariantIcon class="w-5 h-5 text-success-500" aria-hidden="true" />
@@ -260,8 +241,8 @@ onConfirm(async (id: bigint) => deleteDocument(id));
                                         checkDocAccess(access, doc.creator, AccessLevel.EDIT, 'DocStoreService.DeleteDocument')
                                     "
                                     type="button"
-                                    @click="reveal(documentId)"
                                     class="inline-flex justify-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
+                                    @click="reveal(documentId)"
                                 >
                                     <TrashCanIcon class="-ml-0.5 w-5 h-auto" aria-hidden="true" />
                                     {{ $t('common.delete') }}
@@ -333,8 +314,8 @@ onConfirm(async (id: bigint) => deleteDocument(id));
                                 <span class="text-sm font-medium text-info-800"
                                     >{{ entry.jobLabel
                                     }}<span
-                                        :title="`${entry.jobLabel} - ${$t('common.rank')} ${entry.minimumGrade}`"
                                         v-if="entry.minimumGrade > 0"
+                                        :title="`${entry.jobLabel} - ${$t('common.rank')} ${entry.minimumGrade}`"
                                     >
                                         ({{ entry.jobGradeLabel }})</span
                                     >
@@ -363,9 +344,10 @@ onConfirm(async (id: bigint) => deleteDocument(id));
                                 {{ $t('common.content') }}
                             </h2>
                             <div class="mt-4 mb-2 rounded-lg text-neutral bg-base-800 break-words">
+                                <!-- eslint-disable vue/no-v-html -->
                                 <div
-                                    v-html="doc.content"
                                     class="min-w-full bg-base-900 rounded-md px-4 py-4 prose prose-invert"
+                                    v-html="doc.content"
                                 ></div>
                             </div>
                         </div>
@@ -383,12 +365,12 @@ onConfirm(async (id: bigint) => deleteDocument(id));
                                             :aria-current="selected ? 'page' : undefined"
                                         >
                                             <component
+                                                :is="tab.icon"
                                                 :class="[
                                                     selected ? 'text-primary-500' : 'text-base-300 group-hover:text-base-200',
                                                     '-ml-0.5 mr-2 h-5 w-5 transition-colors',
                                                 ]"
                                                 aria-hidden="true"
-                                                :is="tab.icon"
                                             />
                                             <span>{{ tab.name }}</span>
                                         </button>
@@ -425,3 +407,12 @@ onConfirm(async (id: bigint) => deleteDocument(id));
 
     <AddToButton :callback="addToClipboard" :title="$t('components.clipboard.clipboard_button.add')" />
 </template>
+
+<style scoped>
+.prose {
+    * {
+        margin-top: 4px;
+        margin-bottom: 4px;
+    }
+}
+</style>

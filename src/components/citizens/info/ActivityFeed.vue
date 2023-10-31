@@ -6,7 +6,7 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import TablePagination from '~/components/partials/elements/TablePagination.vue';
 import { ListUserActivityResponse } from '~~/gen/ts/services/citizenstore/citizenstore';
-import ActivityFeedEntry from './ActivityFeedEntry.vue';
+import ActivityFeedEntry from '~/components/citizens/info/ActivityFeedEntry.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -21,22 +21,20 @@ const { data, pending, refresh, error } = useLazyAsyncData(`citizeninfo-activity
 );
 
 async function listUserActivity(): Promise<ListUserActivityResponse> {
-    return new Promise(async (res, rej) => {
-        try {
-            const call = $grpc.getCitizenStoreClient().listUserActivity({
-                pagination: {
-                    offset: offset.value,
-                },
-                userId: props.userId,
-            });
-            const { response } = await call;
+    try {
+        const call = $grpc.getCitizenStoreClient().listUserActivity({
+            pagination: {
+                offset: offset.value,
+            },
+            userId: props.userId,
+        });
+        const { response } = await call;
 
-            return res(response);
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
-        }
-    });
+        return response;
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 
 watch(offset, async () => refresh());
@@ -65,7 +63,7 @@ watch(offset, async () => refresh());
                 </li>
             </ul>
 
-            <TablePagination :pagination="data?.pagination" @offset-change="offset = $event" :refresh="refresh" />
+            <TablePagination :pagination="data?.pagination" :refresh="refresh" @offset-change="offset = $event" />
         </div>
     </div>
 </template>

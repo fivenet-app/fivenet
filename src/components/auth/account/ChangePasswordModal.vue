@@ -25,40 +25,37 @@ defineEmits<{
 
 const newPassword = ref('');
 
+interface FormData {
+    currentPassword: string;
+    newPassword: string;
+}
+
 async function changePassword(values: FormData): Promise<void> {
-    return new Promise(async (res, rej) => {
-        try {
-            const call = $grpc.getAuthClient().changePassword({
-                current: values.currentPassword,
-                new: values.newPassword,
-            });
-            const { response } = await call;
+    try {
+        const call = $grpc.getAuthClient().changePassword({
+            current: values.currentPassword,
+            new: values.newPassword,
+        });
+        const { response } = await call;
 
-            setAccessToken(response.token, toDate(response.expires) as null | Date);
+        setAccessToken(response.token, toDate(response.expires) as null | Date);
 
-            notifications.dispatchNotification({
-                title: { key: 'notifications.auth.changed_password.title', parameters: {} },
-                content: { key: 'notifications.auth.changed_password.content', parameters: {} },
-                type: 'success',
-            });
-            await navigateTo({ name: 'overview' });
+        notifications.dispatchNotification({
+            title: { key: 'notifications.auth.changed_password.title', parameters: {} },
+            content: { key: 'notifications.auth.changed_password.content', parameters: {} },
+            type: 'success',
+        });
 
-            return res();
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
-        }
-    });
+        await navigateTo({ name: 'overview' });
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 
 defineRule('required', required);
 defineRule('min', min);
 defineRule('max', max);
-
-interface FormData {
-    currentPassword: string;
-    newPassword: string;
-}
 
 const { handleSubmit, meta } = useForm<FormData>({
     validationSchema: {
@@ -127,7 +124,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                         Change Password
                                     </DialogTitle>
                                     <div class="mt-2">
-                                        <form @submit.prevent="onSubmitThrottle" class="my-2 space-y-6">
+                                        <form class="my-2 space-y-6" @submit.prevent="onSubmitThrottle">
                                             <div>
                                                 <label for="currentPassword" class="sr-only">Password</label>
                                                 <div>
@@ -152,13 +149,13 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                 <label for="newPassword" class="sr-only">Password</label>
                                                 <div>
                                                     <VeeField
+                                                        v-model:model-value="newPassword"
                                                         name="newPassword"
                                                         type="password"
                                                         autocomplete="new-password"
                                                         :placeholder="$t('components.auth.change_password_modal.new_password')"
                                                         :label="$t('components.auth.change_password_modal.new_password')"
                                                         class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                        v-model:model-value="newPassword"
                                                     />
                                                     <PasswordStrengthMeter :input="newPassword" class="mt-2" />
                                                     <VeeErrorMessage

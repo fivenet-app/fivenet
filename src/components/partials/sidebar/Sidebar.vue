@@ -232,26 +232,27 @@ watch(router.currentRoute, () => updateActiveItem());
                             <span class="mt-2">{{ $t('pages.auth.character_selector.title') }}</span>
                         </NuxtLink>
                     </span>
-                    <NuxtLink
-                        v-else-if="accessToken && activeChar"
-                        v-for="item in sidebarNavigation.filter((e) => e.position === 'top' && can(e.permission))"
-                        :key="item.name"
-                        :to="item.href"
-                        :class="[
-                            item.current
-                                ? 'bg-accent-100/20 text-neutral font-bold'
-                                : 'text-accent-100 hover:bg-accent-100/10 hover:text-neutral font-medium',
-                            'hover:transition-all group flex w-full flex-col items-center rounded-md p-3 text-xs my-2',
-                        ]"
-                        :aria-current="item.current ? 'page' : undefined"
-                    >
-                        <component
-                            :is="item.icon"
-                            :class="[item.current ? 'text-neutral' : 'text-accent-100 group-hover:text-neutral', 'h-6 w-6']"
-                            aria-hidden="true"
-                        />
-                        <span class="mt-2">{{ $t(item.name) }}</span>
-                    </NuxtLink>
+                    <template v-else-if="accessToken && activeChar">
+                        <NuxtLink
+                            v-for="item in sidebarNavigation.filter((e) => e.position === 'top' && can(e.permission))"
+                            :key="item.name"
+                            :to="item.href"
+                            :class="[
+                                item.current
+                                    ? 'bg-accent-100/20 text-neutral font-bold'
+                                    : 'text-accent-100 hover:bg-accent-100/10 hover:text-neutral font-medium',
+                                'hover:transition-all group flex w-full flex-col items-center rounded-md p-3 text-xs my-2',
+                            ]"
+                            :aria-current="item.current ? 'page' : undefined"
+                        >
+                            <component
+                                :is="item.icon"
+                                :class="[item.current ? 'text-neutral' : 'text-accent-100 group-hover:text-neutral', 'h-6 w-6']"
+                                aria-hidden="true"
+                            />
+                            <span class="mt-2">{{ $t(item.name) }}</span>
+                        </NuxtLink>
+                    </template>
                 </div>
                 <div class="flex-initial w-full px-2 space-y-1 text-center">
                     <NuxtLink
@@ -333,7 +334,7 @@ watch(router.currentRoute, () => updateActiveItem());
                                             v-if="!accessToken || !activeChar"
                                             :to="{ name: 'index' }"
                                             class="text-accent-100 hover:bg-accent-100/10 hover:text-neutral font-medium group flex items-center rounded-md py-2 px-3 text-sm"
-                                            @click.native="mobileMenuOpen = false"
+                                            @click="mobileMenuOpen = false"
                                         >
                                             <HomeIcon
                                                 class="text-accent-100 group-hover:text-neutral mr-3 h-6 w-6"
@@ -355,7 +356,7 @@ watch(router.currentRoute, () => updateActiveItem());
                                                 'group flex items-center rounded-md py-2 px-3 text-sm',
                                             ]"
                                             :aria-current="item.current ? 'page' : undefined"
-                                            @click.native="mobileMenuOpen = false"
+                                            @click="mobileMenuOpen = false"
                                         >
                                             <component
                                                 :is="item.icon"
@@ -386,7 +387,7 @@ watch(router.currentRoute, () => updateActiveItem());
                                                 'group flex items-center rounded-md py-2 px-3 text-sm',
                                             ]"
                                             :aria-current="item.current ? 'page' : undefined"
-                                            @click.native="mobileMenuOpen = false"
+                                            @click="mobileMenuOpen = false"
                                         >
                                             <component
                                                 :is="item.icon"

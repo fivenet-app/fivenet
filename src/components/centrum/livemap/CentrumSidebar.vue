@@ -15,20 +15,20 @@ import {
     ToggleSwitchIcon,
     ToggleSwitchOffIcon,
 } from 'mdi-vue3';
-import { default as DispatchStatusUpdateModal } from '~/components/centrum/dispatches/StatusUpdateModal.vue';
-import { default as DisponentsModal } from '~/components/centrum/disponents/Modal.vue';
+import DispatchStatusUpdateModal from '~/components/centrum/dispatches/DispatchStatusUpdateModal.vue';
+import DisponentsModal from '~/components/centrum/disponents/DisponentsModal.vue';
 import { dispatchStatusToBGColor, dispatchStatuses, unitStatusToBGColor, unitStatuses } from '~/components/centrum/helpers';
-import { default as UnitDetails } from '~/components/centrum/units/Details.vue';
-import { default as UnitStatusUpdateModal } from '~/components/centrum/units/StatusUpdateModal.vue';
+import UnitDetails from '~/components/centrum/units/UnitDetails.vue';
+import UnitStatusUpdateModal from '~/components/centrum/units/UnitStatusUpdateModal.vue';
 import { useCentrumStore } from '~/store/centrum';
 import { useNotificatorStore } from '~/store/notificator';
 import { StatusDispatch } from '~~/gen/ts/resources/dispatch/dispatches';
 import { CentrumMode } from '~~/gen/ts/resources/dispatch/settings';
 import { StatusUnit } from '~~/gen/ts/resources/dispatch/units';
-import DispatchEntry from './DispatchEntry.vue';
-import DispatchesLayer from './DispatchesLayer.vue';
-import JoinUnitModal from './JoinUnitModal.vue';
-import TakeDispatchModal from './TakeDispatchModal.vue';
+import DispatchEntry from '~/components/centrum/livemap/DispatchEntry.vue';
+import DispatchesLayer from '~/components/centrum/livemap/DispatchesLayer.vue';
+import JoinUnitModal from '~/components/centrum/livemap/JoinUnitModal.vue';
+import TakeDispatchModal from '~/components/centrum/livemap/TakeDispatchModal.vue';
 
 defineEmits<{
     (e: 'goto', loc: Coordinate): void;
@@ -56,20 +56,13 @@ const openUnitStatus = ref(false);
 const openDisponents = ref(false);
 
 async function updateDispatchStatus(dispatchId: bigint, status: StatusDispatch): Promise<void> {
-    return new Promise(async (res, rej) => {
-        try {
-            const call = $grpc.getCentrumClient().updateDispatchStatus({
-                dispatchId: dispatchId,
-                status: status,
-            });
-            await call;
-
-            return res();
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
-        }
-    });
+    try {
+        const call = $grpc.getCentrumClient().updateDispatchStatus({ dispatchId, status });
+        await call;
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 
 async function updateDspStatus(dispatchId?: bigint, status?: StatusDispatch): Promise<void> {
@@ -96,20 +89,16 @@ async function updateDspStatus(dispatchId?: bigint, status?: StatusDispatch): Pr
 }
 
 async function updateUnitStatus(id: bigint, status: StatusUnit): Promise<void> {
-    return new Promise(async (res, rej) => {
-        try {
-            const call = $grpc.getCentrumClient().updateUnitStatus({
-                unitId: id,
-                status: status,
-            });
-            await call;
-
-            return res();
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
-        }
-    });
+    try {
+        const call = $grpc.getCentrumClient().updateUnitStatus({
+            unitId: id,
+            status,
+        });
+        await call;
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 
 async function updateUtStatus(id: bigint, status?: StatusUnit): Promise<void> {
@@ -231,7 +220,7 @@ async function checkup(): Promise<void> {
 
 <template>
     <Livemap>
-        <template v-slot:default v-if="canStream">
+        <template v-if="canStream" #default>
             <DispatchesLayer :show-all-dispatches="getCurrentMode === CentrumMode.SIMPLIFIED" @goto="$emit('goto', $event)" />
 
             <LControl position="bottomright">
@@ -254,7 +243,7 @@ async function checkup(): Promise<void> {
                 </button>
             </LControl>
         </template>
-        <template v-slot:afterMap v-if="canStream">
+        <template v-if="canStream" #afterMap>
             <div class="lg:inset-y-0 lg:flex lg:w-50 lg:flex-col">
                 <!-- Dispatch -->
                 <TakeDispatchModal
@@ -267,8 +256,8 @@ async function checkup(): Promise<void> {
                 <DispatchStatusUpdateModal
                     v-if="selectedDispatch"
                     :open="openDispatchStatus"
-                    @close="openDispatchStatus = false"
                     :dispatch-id="selectedDispatch"
+                    @close="openDispatchStatus = false"
                 />
 
                 <div class="h-full flex grow gap-y-5 overflow-y-auto overflow-x-hidden bg-base-600 px-4 py-0.5">
@@ -308,10 +297,10 @@ async function checkup(): Promise<void> {
                                     <li>
                                         <template v-if="getOwnUnit !== undefined">
                                             <button
-                                                @click="openUnitDetails = true"
                                                 type="button"
                                                 class="text-neutral hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-1.5 text-xs"
                                                 :class="ownUnitStatus"
+                                                @click="openUnitDetails = true"
                                             >
                                                 <InformationOutlineIcon class="h-5 w-5" aria-hidden="true" />
                                                 <span class="mt-1 truncate">
@@ -337,15 +326,17 @@ async function checkup(): Promise<void> {
                                             />
                                         </template>
                                         <button
-                                            @click="joinUnitOpen = true"
                                             type="button"
-                                            class="text-neutral bg-info-700 hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-1.5 text-xs my-0.5"
+                                            class="text-neutral bg-info-700 hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-1.5 text-xs my-0.5 flex w-full flex-col items-center"
+                                            @click="joinUnitOpen = true"
                                         >
-                                            <template v-if="getOwnUnit === undefined" class="flex w-full flex-col items-center">
+                                            <template v-if="getOwnUnit === undefined">
                                                 <InformationOutlineIcon class="h-5 w-5" aria-hidden="true" />
                                                 <span class="mt-1 truncate">{{ $t('common.no_own_unit') }}</span>
                                             </template>
-                                            <template v-else class="truncate">{{ $t('common.leave_unit') }}</template>
+                                            <template v-else>
+                                                <span class="truncate">{{ $t('common.leave_unit') }}</span>
+                                            </template>
                                         </button>
 
                                         <JoinUnitModal :open="joinUnitOpen" @close="joinUnitOpen = false" />
@@ -356,7 +347,7 @@ async function checkup(): Promise<void> {
                                 <li>
                                     <ul role="list" class="-mx-2 space-y-1">
                                         <li>
-                                            <Disclosure as="div" v-slot="{ open }">
+                                            <Disclosure as="div">
                                                 <DisclosureButton
                                                     class="flex w-full items-start justify-between text-left text-neutral"
                                                 >
@@ -382,7 +373,7 @@ async function checkup(): Promise<void> {
                                                             />
 
                                                             <button
-                                                                v-for="(item, idx) in unitStatuses"
+                                                                v-for="item in unitStatuses"
                                                                 :key="item.name"
                                                                 type="button"
                                                                 class="text-neutral bg-primary hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-1.5 text-xs my-0.5"
@@ -500,9 +491,10 @@ async function checkup(): Promise<void> {
                                         <template v-else>
                                             <DispatchEntry
                                                 v-for="id in ownDispatches.slice().reverse()"
+                                                :key="id.toString()"
+                                                v-model:selected-dispatch="selectedDispatch"
                                                 :dispatch="dispatches.get(id)!"
                                                 @goto="$emit('goto', $event)"
-                                                v-model:selected-dispatch="selectedDispatch"
                                             />
                                         </template>
                                     </ul>
@@ -519,7 +511,7 @@ async function checkup(): Promise<void> {
 
                 <!-- "Take Dispatches" Button -->
                 <span v-if="getOwnUnit !== undefined" class="fixed inline-flex z-30 bottom-2 right-1/2">
-                    <span class="flex absolute h-3 w-3 top-0 right-0 -mt-1 -mr-1" v-if="pendingDispatches.length > 0">
+                    <span v-if="pendingDispatches.length > 0" class="flex absolute h-3 w-3 top-0 right-0 -mt-1 -mr-1">
                         <span
                             class="animate-ping absolute inline-flex h-full w-full rounded-full bg-error-400 opacity-75"
                         ></span>
@@ -527,8 +519,8 @@ async function checkup(): Promise<void> {
                     </span>
                     <button
                         type="button"
-                        @click="openTakeDispatch = true"
                         class="flex items-center justify-center w-12 h-12 rounded-full bg-primary-500 shadow-float text-neutral hover:bg-primary-400"
+                        @click="openTakeDispatch = true"
                     >
                         <CarEmergencyIcon class="w-10 h-auto" />
                     </button>

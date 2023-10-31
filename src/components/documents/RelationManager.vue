@@ -32,6 +32,8 @@ import { useAuthStore } from '~/store/auth';
 import { getUser, useClipboardStore } from '~/store/clipboard';
 import { DocRelation, DocumentRelation } from '~~/gen/ts/resources/documents/documents';
 import { User } from '~~/gen/ts/resources/users/users';
+import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
+import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 
 const { $grpc } = useNuxtApp();
 const authStore = useAuthStore();
@@ -71,7 +73,7 @@ const {
     pending,
     refresh,
     error,
-} = useLazyAsyncData(`document-${props.document?.toString()}-relations-citzens-${queryCitizens}`, () => listCitizens());
+} = useLazyAsyncData(`document-${props.document?.toString()}-relations-citzens-${queryCitizens.value}`, () => listCitizens());
 
 watchDebounced(queryCitizens, async () => await refresh(), {
     debounce: 600,
@@ -79,26 +81,22 @@ watchDebounced(queryCitizens, async () => await refresh(), {
 });
 
 async function listCitizens(): Promise<User[]> {
-    return new Promise(async (res, rej) => {
-        try {
-            const call = $grpc.getCitizenStoreClient().listCitizens({
-                pagination: {
-                    offset: 0n,
-                },
-                searchName: queryCitizens.value,
-            });
-            const { response } = await call;
+    try {
+        const call = $grpc.getCitizenStoreClient().listCitizens({
+            pagination: {
+                offset: 0n,
+            },
+            searchName: queryCitizens.value,
+        });
+        const { response } = await call;
 
-            return res(
-                response.users.filter(
-                    (user) => !Array.from(props.modelValue.values()).find((r) => r.targetUserId === user.userId),
-                ),
-            );
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
-        }
-    });
+        return response.users.filter(
+            (user) => !Array.from(props.modelValue.values()).find((r) => r.targetUserId === user.userId),
+        );
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 
 function addRelation(user: User, relation: DocRelation): void {
@@ -112,7 +110,7 @@ function addRelation(user: User, relation: DocRelation): void {
         sourceUser: activeChar.value!,
         targetUserId: user.userId,
         targetUser: user,
-        relation: relation,
+        relation,
     });
     refresh();
 }
@@ -273,13 +271,13 @@ function removeRelation(id: bigint): void {
                                                                             <div class="flex">
                                                                                 <button
                                                                                     role="button"
-                                                                                    @click="removeRelation(relation.id!)"
                                                                                     data-te-toggle="tooltip"
                                                                                     :title="
                                                                                         $t(
                                                                                             'components.documents.document_managers.remove_relation',
                                                                                         )
                                                                                     "
+                                                                                    @click="removeRelation(relation.id!)"
                                                                                 >
                                                                                     <AccountMinusIcon
                                                                                         class="w-6 h-auto text-error-400 hover:text-error-200"
@@ -349,16 +347,16 @@ function removeRelation(id: bigint): void {
                                                                             <div class="flex">
                                                                                 <button
                                                                                     role="button"
-                                                                                    @click="
-                                                                                        addRelation(
-                                                                                            getUser(user),
-                                                                                            DocRelation.MENTIONED,
-                                                                                        )
-                                                                                    "
                                                                                     data-te-toggle="tooltip"
                                                                                     :title="
                                                                                         $t(
                                                                                             'components.documents.document_managers.mentioned',
+                                                                                        )
+                                                                                    "
+                                                                                    @click="
+                                                                                        addRelation(
+                                                                                            getUser(user),
+                                                                                            DocRelation.MENTIONED,
                                                                                         )
                                                                                     "
                                                                                 >
@@ -370,16 +368,16 @@ function removeRelation(id: bigint): void {
                                                                             <div class="flex">
                                                                                 <button
                                                                                     role="button"
-                                                                                    @click="
-                                                                                        addRelation(
-                                                                                            getUser(user),
-                                                                                            DocRelation.TARGETS,
-                                                                                        )
-                                                                                    "
                                                                                     data-te-toggle="tooltip"
                                                                                     :title="
                                                                                         $t(
                                                                                             'components.documents.document_managers.targets',
+                                                                                        )
+                                                                                    "
+                                                                                    @click="
+                                                                                        addRelation(
+                                                                                            getUser(user),
+                                                                                            DocRelation.TARGETS,
                                                                                         )
                                                                                     "
                                                                                 >
@@ -391,16 +389,16 @@ function removeRelation(id: bigint): void {
                                                                             <div class="flex">
                                                                                 <button
                                                                                     role="button"
-                                                                                    @click="
-                                                                                        addRelation(
-                                                                                            getUser(user),
-                                                                                            DocRelation.CAUSED,
-                                                                                        )
-                                                                                    "
                                                                                     data-te-toggle="tooltip"
                                                                                     :title="
                                                                                         $t(
                                                                                             'components.documents.document_managers.caused',
+                                                                                        )
+                                                                                    "
+                                                                                    @click="
+                                                                                        addRelation(
+                                                                                            getUser(user),
+                                                                                            DocRelation.CAUSED,
                                                                                         )
                                                                                     "
                                                                                 >
@@ -422,11 +420,11 @@ function removeRelation(id: bigint): void {
                                             <div>
                                                 <label for="name" class="sr-only">Name</label>
                                                 <input
+                                                    v-model="queryCitizens"
                                                     type="text"
                                                     name="name"
                                                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                     :placeholder="`${$t('common.citizen', 1)} ${$t('common.name')}`"
-                                                    v-model="queryCitizens"
                                                     @focusin="focusTablet(true)"
                                                     @focusout="focusTablet(false)"
                                                 />
@@ -434,7 +432,20 @@ function removeRelation(id: bigint): void {
                                             <div class="flow-root mt-2">
                                                 <div class="mx-0 -my-2 overflow-x-auto">
                                                     <div class="inline-block min-w-full py-2 align-middle">
-                                                        <table class="min-w-full divide-y divide-base-200">
+                                                        <DataPendingBlock
+                                                            v-if="pending"
+                                                            :message="$t('common.loading', [$t('common.citizen', 2)])"
+                                                        />
+                                                        <DataErrorBlock
+                                                            v-else-if="error"
+                                                            :title="$t('common.unable_to_load', [$t('common.citizen', 2)])"
+                                                            :retry="refresh"
+                                                        />
+                                                        <DataNoDataBlock
+                                                            v-else-if="!citizens || citizens.length === 0"
+                                                            :message="$t('components.citizens.citizens_list.no_citizens')"
+                                                        />
+                                                        <table v-else class="min-w-full divide-y divide-base-200">
                                                             <thead>
                                                                 <tr>
                                                                     <th
@@ -461,7 +472,7 @@ function removeRelation(id: bigint): void {
                                                                     </th>
                                                                 </tr>
                                                             </thead>
-                                                            <tbody v-if="citizens" class="divide-y divide-base-500">
+                                                            <tbody class="divide-y divide-base-500">
                                                                 <tr v-for="user in citizens.slice(0, 8)" :key="user.userId">
                                                                     <td
                                                                         class="py-4 pl-4 pr-3 text-sm font-medium truncate whitespace-nowrap sm:pl-6 lg:pl-8"
@@ -476,14 +487,14 @@ function removeRelation(id: bigint): void {
                                                                             <div class="flex">
                                                                                 <button
                                                                                     role="button"
-                                                                                    @click="
-                                                                                        addRelation(user, DocRelation.MENTIONED)
-                                                                                    "
                                                                                     data-te-toggle="tooltip"
                                                                                     :title="
                                                                                         $t(
                                                                                             'components.documents.document_managers.mentioned',
                                                                                         )
+                                                                                    "
+                                                                                    @click="
+                                                                                        addRelation(user, DocRelation.MENTIONED)
                                                                                     "
                                                                                 >
                                                                                     <AtIcon
@@ -494,14 +505,14 @@ function removeRelation(id: bigint): void {
                                                                             <div class="flex">
                                                                                 <button
                                                                                     role="button"
-                                                                                    @click="
-                                                                                        addRelation(user, DocRelation.TARGETS)
-                                                                                    "
                                                                                     data-te-toggle="tooltip"
                                                                                     :title="
                                                                                         $t(
                                                                                             'components.documents.document_managers.targets',
                                                                                         )
+                                                                                    "
+                                                                                    @click="
+                                                                                        addRelation(user, DocRelation.TARGETS)
                                                                                     "
                                                                                 >
                                                                                     <TargetIcon
@@ -512,14 +523,14 @@ function removeRelation(id: bigint): void {
                                                                             <div class="flex">
                                                                                 <button
                                                                                     role="button"
-                                                                                    @click="
-                                                                                        addRelation(user, DocRelation.CAUSED)
-                                                                                    "
                                                                                     data-te-toggle="tooltip"
                                                                                     :title="
                                                                                         $t(
                                                                                             'components.documents.document_managers.caused',
                                                                                         )
+                                                                                    "
+                                                                                    @click="
+                                                                                        addRelation(user, DocRelation.CAUSED)
                                                                                     "
                                                                                 >
                                                                                     <SourceCommitStartIcon

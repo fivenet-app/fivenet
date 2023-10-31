@@ -28,19 +28,17 @@ const route = useRoute('citizens-id');
 const { data: user, pending, refresh, error } = useLazyAsyncData(`citizen-${route.params.id}`, () => getUser());
 
 async function getUser(): Promise<User> {
-    return new Promise(async (res, rej) => {
-        try {
-            const call = $grpc.getCitizenStoreClient().getUser({
-                userId: parseInt(route.params.id),
-            });
-            const { response } = await call;
+    try {
+        const call = $grpc.getCitizenStoreClient().getUser({
+            userId: parseInt(route.params.id),
+        });
+        const { response } = await call;
 
-            return res(response.user!);
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
-        }
-    });
+        return response.user!;
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 </script>
 

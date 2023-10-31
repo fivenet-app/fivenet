@@ -1,11 +1,11 @@
 // https://github.com/timostamm/protobuf-ts/pull/233#issuecomment-1289053379
 // From @smnbbrv on GitHub
-import glob from 'glob';
 import fs from 'fs';
+import glob from 'glob';
 
 const protoRoot = './gen/ts';
 
-glob(protoRoot + '/**/*.ts', async (err, files) => {
+glob(protoRoot + '/**/*.ts', async (_, files) => {
     files.forEach((file) => {
         let content = fs.readFileSync(file, 'utf-8');
 

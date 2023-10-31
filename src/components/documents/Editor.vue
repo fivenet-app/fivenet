@@ -48,10 +48,10 @@ import {
 import { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
 import { UserShort } from '~~/gen/ts/resources/users/users';
 import { CreateDocumentRequest, UpdateDocumentRequest } from '~~/gen/ts/services/docstore/docstore';
-import AccessEntry from './AccessEntry.vue';
-import ReferenceManager from './ReferenceManager.vue';
-import RelationManager from './RelationManager.vue';
-import { checkDocAccess } from './helpers';
+import AccessEntry from '~/components/documents/AccessEntry.vue';
+import ReferenceManager from '~/components/documents/ReferenceManager.vue';
+import RelationManager from '~/components/documents/RelationManager.vue';
+import { checkDocAccess } from '~/components/documents/helpers';
 
 const props = defineProps<{
     id?: bigint;
@@ -77,6 +77,12 @@ const route = useRoute();
 const maxAccessEntries = 10;
 
 const canEdit = ref(false);
+
+interface FormData {
+    title: string;
+    state: string;
+    public: boolean;
+}
 
 const openclose = [
     { id: 0, label: t('common.open', 2), closed: false },
@@ -132,22 +138,26 @@ onMounted(async () => {
         try {
             const call = $grpc.getDocStoreClient().getTemplate({
                 templateId: BigInt(route.query.templateId as string),
-                data: data,
+                data,
                 render: true,
             });
             const { response } = await call;
 
+            if (response.template === undefined) {
+                throw new Error('failed to get template from server response');
+            }
+
             const template = response.template;
-            setFieldValue('title', template?.contentTitle!);
-            setFieldValue('state', template?.state!);
-            content.value = template?.content.replace(/\s+/g, ' ')!;
+            setFieldValue('title', template.contentTitle!);
+            setFieldValue('state', template.state!);
+            content.value = template.content.replace(/\s+/g, ' ')!;
             selectedCategory.value = template?.category;
 
             if (template?.contentAccess) {
                 if (authStore.activeChar !== null) {
                     docCreator.value = authStore.activeChar;
                 }
-                const docAccess = template?.contentAccess!;
+                const docAccess = template.contentAccess!;
                 let accessId = 0n;
                 docAccess.users.forEach((user) => {
                     access.value.set(accessId, {
@@ -248,7 +258,7 @@ onMounted(async () => {
             }
         }
 
-        let accessId = 0n;
+        const accessId = 0n;
         access.value.set(accessId, {
             id: accessId,
             type: 1,
@@ -263,7 +273,7 @@ onMounted(async () => {
     clipboardStore.activeStack.documents.forEach((doc, i) => {
         const id = BigInt(i);
         referenceManagerData.value.set(id, {
-            id: id,
+            id,
             sourceDocumentId: props.id ?? 0n,
             targetDocumentId: doc.id!,
             targetDocument: getDocument(doc),
@@ -275,7 +285,7 @@ onMounted(async () => {
     clipboardStore.activeStack.users.forEach((user, i) => {
         const id = BigInt(i);
         relationManagerData.value.set(id, {
-            id: id,
+            id,
             documentId: props.id ?? 0n,
             targetUserId: user.userId!,
             targetUser: getUser(user),
@@ -430,220 +440,208 @@ function updateAccessEntryAccess(event: { id: bigint; access: AccessLevel }): vo
 }
 
 async function createDocument(values: FormData, content: string, closed: boolean): Promise<void> {
-    return new Promise(async (res, rej) => {
-        // Prepare request
-        const req: CreateDocumentRequest = {
-            title: values.title,
-            content: content,
-            contentType: DocContentType.HTML,
-            closed: closed,
-            state: values.state,
-            public: doc.value.public,
-        };
-        if (selectedCategory.value !== undefined) req.categoryId = selectedCategory.value.id;
+    // Prepare request
+    const req: CreateDocumentRequest = {
+        title: values.title,
+        content,
+        contentType: DocContentType.HTML,
+        closed,
+        state: values.state,
+        public: doc.value.public,
+    };
+    if (selectedCategory.value !== undefined) req.categoryId = selectedCategory.value.id;
 
-        const reqAccess: DocumentAccess = {
-            jobs: [],
-            users: [],
-        };
-        access.value.forEach((entry) => {
-            if (entry.values.accessRole === undefined) {
+    const reqAccess: DocumentAccess = {
+        jobs: [],
+        users: [],
+    };
+    access.value.forEach((entry) => {
+        if (entry.values.accessRole === undefined) {
+            return;
+        }
+
+        if (entry.type === 0) {
+            if (!entry.values.char) {
                 return;
             }
 
-            if (entry.type === 0) {
-                if (!entry.values.char) {
-                    return;
-                }
-
-                reqAccess.users.push({
-                    id: 0n,
-                    documentId: 0n,
-                    userId: entry.values.char,
-                    access: entry.values.accessRole,
-                });
-            } else if (entry.type === 1) {
-                if (!entry.values.job) {
-                    return;
-                }
-
-                reqAccess.jobs.push({
-                    id: 0n,
-                    documentId: 0n,
-                    job: entry.values.job,
-                    minimumGrade: entry.values.minimumGrade ? entry.values.minimumGrade : 0,
-                    access: entry.values.accessRole,
-                });
-            }
-        });
-        req.access = reqAccess;
-
-        // Try to submit to server
-        try {
-            const call = $grpc.getDocStoreClient().createDocument(req);
-            const { response } = await call;
-
-            const promises: Promise<any>[] = [];
-            if (canDo.value.references) {
-                referenceManagerData.value.forEach((ref) => {
-                    ref.sourceDocumentId = response.documentId;
-
-                    const prom = $grpc.getDocStoreClient().addDocumentReference({
-                        reference: ref,
-                    });
-                    promises.push(prom.response);
-                });
-            }
-
-            if (canDo.value.relations) {
-                relationManagerData.value.forEach((rel) => {
-                    rel.documentId = response.documentId;
-
-                    const prom = $grpc.getDocStoreClient().addDocumentRelation({
-                        relation: rel,
-                    });
-                    promises.push(prom.response);
-                });
-            }
-            await Promise.all(promises);
-
-            notifications.dispatchNotification({
-                title: { key: 'notifications.document_created.title', parameters: {} },
-                content: { key: 'notifications.document_created.content', parameters: {} },
-                type: 'success',
+            reqAccess.users.push({
+                id: 0n,
+                documentId: 0n,
+                userId: entry.values.char,
+                access: entry.values.accessRole,
             });
-            clipboardStore.clear();
-            documentStore.clear();
+        } else if (entry.type === 1) {
+            if (!entry.values.job) {
+                return;
+            }
 
-            await navigateTo({
-                name: 'documents-id',
-                params: { id: response.documentId.toString() },
+            reqAccess.jobs.push({
+                id: 0n,
+                documentId: 0n,
+                job: entry.values.job,
+                minimumGrade: entry.values.minimumGrade ? entry.values.minimumGrade : 0,
+                access: entry.values.accessRole,
             });
-
-            return res();
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
         }
     });
+    req.access = reqAccess;
+
+    // Try to submit to server
+    try {
+        const call = $grpc.getDocStoreClient().createDocument(req);
+        const { response } = await call;
+
+        const promises: Promise<any>[] = [];
+        if (canDo.value.references) {
+            referenceManagerData.value.forEach((ref) => {
+                ref.sourceDocumentId = response.documentId;
+
+                const prom = $grpc.getDocStoreClient().addDocumentReference({
+                    reference: ref,
+                });
+                promises.push(prom.response);
+            });
+        }
+
+        if (canDo.value.relations) {
+            relationManagerData.value.forEach((rel) => {
+                rel.documentId = response.documentId;
+
+                const prom = $grpc.getDocStoreClient().addDocumentRelation({
+                    relation: rel,
+                });
+                promises.push(prom.response);
+            });
+        }
+        await Promise.all(promises);
+
+        notifications.dispatchNotification({
+            title: { key: 'notifications.document_created.title', parameters: {} },
+            content: { key: 'notifications.document_created.content', parameters: {} },
+            type: 'success',
+        });
+        clipboardStore.clear();
+        documentStore.clear();
+
+        await navigateTo({
+            name: 'documents-id',
+            params: { id: response.documentId.toString() },
+        });
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 
 async function updateDocument(id: bigint, values: FormData, content: string, closed: boolean): Promise<void> {
-    return new Promise(async (res, rej) => {
-        const req: UpdateDocumentRequest = {
-            documentId: id,
-            title: values.title,
-            content: content,
-            contentType: DocContentType.HTML,
-            closed: closed,
-            state: values.state,
-            public: doc.value.public,
-        };
-        if (selectedCategory.value !== undefined) req.categoryId = selectedCategory.value.id;
+    const req: UpdateDocumentRequest = {
+        documentId: id,
+        title: values.title,
+        content,
+        contentType: DocContentType.HTML,
+        closed,
+        state: values.state,
+        public: doc.value.public,
+    };
+    if (selectedCategory.value !== undefined) req.categoryId = selectedCategory.value.id;
 
-        const reqAccess: DocumentAccess = {
-            jobs: [],
-            users: [],
-        };
-        access.value.forEach((entry) => {
-            if (entry.values.accessRole === undefined) {
+    const reqAccess: DocumentAccess = {
+        jobs: [],
+        users: [],
+    };
+    access.value.forEach((entry) => {
+        if (entry.values.accessRole === undefined) {
+            return;
+        }
+
+        if (entry.type === 0) {
+            if (!entry.values.char) {
                 return;
             }
 
-            if (entry.type === 0) {
-                if (!entry.values.char) {
-                    return;
-                }
-
-                reqAccess.users.push({
-                    id: 0n,
-                    documentId: id,
-                    userId: entry.values.char,
-                    access: entry.values.accessRole,
-                });
-            } else if (entry.type === 1) {
-                if (!entry.values.job) {
-                    return;
-                }
-
-                reqAccess.jobs.push({
-                    id: 0n,
-                    documentId: id,
-                    job: entry.values.job,
-                    minimumGrade: entry.values.minimumGrade ? entry.values.minimumGrade : 0,
-                    access: entry.values.accessRole,
-                });
-            }
-        });
-        req.access = reqAccess;
-
-        try {
-            const call = $grpc.getDocStoreClient().updateDocument(req);
-            const { response } = await call;
-
-            if (canDo.value.references) {
-                const referencesToRemove: bigint[] = [];
-                currentReferences.value.forEach((ref) => {
-                    if (!referenceManagerData.value.has(ref.id!)) referencesToRemove.push(ref.id!);
-                });
-                referencesToRemove.forEach((id) => {
-                    $grpc.getDocStoreClient().removeDocumentReference({
-                        id: id,
-                    });
-                });
-                referenceManagerData.value.forEach((ref) => {
-                    if (currentReferences.value.find((r) => r.id === ref.id!)) {
-                        return;
-                    }
-                    ref.sourceDocumentId = response.documentId;
-
-                    $grpc.getDocStoreClient().addDocumentReference({
-                        reference: ref,
-                    });
-                });
-            }
-
-            if (canDo.value.relations) {
-                const relationsToRemove: bigint[] = [];
-                currentRelations.value.forEach((rel) => {
-                    if (!relationManagerData.value.has(rel.id!)) relationsToRemove.push(rel.id!);
-                });
-                relationsToRemove.forEach((id) => {
-                    $grpc.getDocStoreClient().removeDocumentRelation({
-                        id: id,
-                    });
-                });
-                relationManagerData.value.forEach((rel) => {
-                    if (currentRelations.value.find((r) => r.id === rel.id!)) {
-                        return;
-                    }
-                    rel.documentId = response.documentId;
-
-                    $grpc.getDocStoreClient().addDocumentRelation({
-                        relation: rel,
-                    });
-                });
-            }
-
-            notifications.dispatchNotification({
-                title: { key: 'notifications.document_updated.title', parameters: {} },
-                content: { key: 'notifications.document_updated.content', parameters: {} },
-                type: 'success',
+            reqAccess.users.push({
+                id: 0n,
+                documentId: id,
+                userId: entry.values.char,
+                access: entry.values.accessRole,
             });
-            clipboardStore.clear();
-            documentStore.clear();
+        } else if (entry.type === 1) {
+            if (!entry.values.job) {
+                return;
+            }
 
-            await navigateTo({
-                name: 'documents-id',
-                params: { id: response.documentId.toString() },
+            reqAccess.jobs.push({
+                id: 0n,
+                documentId: id,
+                job: entry.values.job,
+                minimumGrade: entry.values.minimumGrade ? entry.values.minimumGrade : 0,
+                access: entry.values.accessRole,
             });
-
-            return res();
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
         }
     });
+    req.access = reqAccess;
+
+    try {
+        const call = $grpc.getDocStoreClient().updateDocument(req);
+        const { response } = await call;
+
+        if (canDo.value.references) {
+            const referencesToRemove: bigint[] = [];
+            currentReferences.value.forEach((ref) => {
+                if (!referenceManagerData.value.has(ref.id!)) referencesToRemove.push(ref.id!);
+            });
+            referencesToRemove.forEach((id) => {
+                $grpc.getDocStoreClient().removeDocumentReference({ id });
+            });
+            referenceManagerData.value.forEach((ref) => {
+                if (currentReferences.value.find((r) => r.id === ref.id!)) {
+                    return;
+                }
+                ref.sourceDocumentId = response.documentId;
+
+                $grpc.getDocStoreClient().addDocumentReference({
+                    reference: ref,
+                });
+            });
+        }
+
+        if (canDo.value.relations) {
+            const relationsToRemove: bigint[] = [];
+            currentRelations.value.forEach((rel) => {
+                if (!relationManagerData.value.has(rel.id!)) relationsToRemove.push(rel.id!);
+            });
+            relationsToRemove.forEach((id) => {
+                $grpc.getDocStoreClient().removeDocumentRelation({ id });
+            });
+            relationManagerData.value.forEach((rel) => {
+                if (currentRelations.value.find((r) => r.id === rel.id!)) {
+                    return;
+                }
+                rel.documentId = response.documentId;
+
+                $grpc.getDocStoreClient().addDocumentRelation({
+                    relation: rel,
+                });
+            });
+        }
+
+        notifications.dispatchNotification({
+            title: { key: 'notifications.document_updated.title', parameters: {} },
+            content: { key: 'notifications.document_updated.content', parameters: {} },
+            type: 'success',
+        });
+        clipboardStore.clear();
+        documentStore.clear();
+
+        await navigateTo({
+            name: 'documents-id',
+            params: { id: response.documentId.toString() },
+        });
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 
 const canDo = computed(() => ({
@@ -662,12 +660,6 @@ const canDo = computed(() => ({
 defineRule('required', required);
 defineRule('max', max);
 defineRule('min', min);
-
-interface FormData {
-    title: string;
-    state: string;
-    public: boolean;
-}
 
 const { handleSubmit, values, setFieldValue, meta } = useForm<FormData>({
     validationSchema: {
@@ -838,17 +830,6 @@ function setupCheckboxes(): void {
 }
 </script>
 
-<style>
-.jodit-wysiwyg {
-    min-width: 100%;
-
-    * {
-        margin-top: 4px;
-        margin-bottom: 4px;
-    }
-}
-</style>
-
 <template>
     <div class="m-2">
         <form @submit.prevent="onSubmitThrottle">
@@ -861,7 +842,7 @@ function setupCheckboxes(): void {
             <ReferenceManager
                 v-model="referenceManagerData"
                 :open="referenceManagerShow"
-                :document="$props.id"
+                :document-id="$props.id"
                 @close="referenceManagerShow = false"
             />
 
@@ -890,14 +871,14 @@ function setupCheckboxes(): void {
                         <label for="category" class="block font-medium text-sm">
                             {{ $t('common.category') }}
                         </label>
-                        <Combobox as="div" v-model="selectedCategory" :disabled="!canEdit || !canDo.edit" nullable>
+                        <Combobox v-model="selectedCategory" as="div" :disabled="!canEdit || !canDo.edit" nullable>
                             <div class="relative">
                                 <ComboboxButton as="div">
                                     <ComboboxInput
                                         autocomplete="off"
                                         class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                        @change="queryCategories = $event.target.value"
                                         :display-value="(category: any) => category?.name"
+                                        @change="queryCategories = $event.target.value"
                                         @focusin="focusTablet(true)"
                                         @focusout="focusTablet(false)"
                                     />
@@ -910,9 +891,9 @@ function setupCheckboxes(): void {
                                     <ComboboxOption
                                         v-for="category in entriesCategories"
                                         :key="category.id?.toString()"
+                                        v-slot="{ active, selected }"
                                         :value="category"
                                         as="category"
-                                        v-slot="{ active, selected }"
                                     >
                                         <li
                                             :class="[
@@ -957,7 +938,7 @@ function setupCheckboxes(): void {
                     </div>
                     <div class="flex-1">
                         <label for="closed" class="block font-medium text-sm"> {{ $t('common.close', 2) }}? </label>
-                        <Listbox as="div" v-model="doc.closed" :disabled="!canEdit || !canDo.edit">
+                        <Listbox v-model="doc.closed" as="div" :disabled="!canEdit || !canDo.edit">
                             <div class="relative">
                                 <ListboxButton
                                     class="block pl-3 text-left w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
@@ -979,11 +960,11 @@ function setupCheckboxes(): void {
                                         class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-44 sm:text-sm"
                                     >
                                         <ListboxOption
-                                            as="template"
                                             v-for="st in openclose"
                                             :key="st.closed?.toString()"
-                                            :value="st"
                                             v-slot="{ active, selected }"
+                                            as="template"
+                                            :value="st"
                                         >
                                             <li
                                                 :class="[
@@ -1067,12 +1048,12 @@ function setupCheckboxes(): void {
                     :key="entry.id?.toString()"
                     :init="entry"
                     :access-types="accessTypes"
-                    @typeChange="updateAccessEntryType($event)"
-                    @nameChange="updateAccessEntryName($event)"
-                    @rankChange="updateAccessEntryRank($event)"
-                    @accessChange="updateAccessEntryAccess($event)"
-                    @deleteRequest="removeAccessEntry($event)"
                     :read-only="!canDo.access"
+                    @type-change="updateAccessEntryType($event)"
+                    @name-change="updateAccessEntryName($event)"
+                    @rank-change="updateAccessEntryRank($event)"
+                    @access-change="updateAccessEntryAccess($event)"
+                    @delete-request="removeAccessEntry($event)"
                 />
                 <button
                     type="button"
@@ -1110,3 +1091,14 @@ function setupCheckboxes(): void {
         </form>
     </div>
 </template>
+
+<style>
+.jodit-wysiwyg {
+    min-width: 100%;
+
+    * {
+        margin-top: 4px;
+        margin-bottom: 4px;
+    }
+}
+</style>

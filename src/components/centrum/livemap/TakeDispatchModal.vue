@@ -9,7 +9,7 @@ import { useCentrumStore } from '~/store/centrum';
 import { Dispatch, StatusDispatch } from '~~/gen/ts/resources/dispatch/dispatches';
 import { CentrumMode } from '~~/gen/ts/resources/dispatch/settings';
 import { TakeDispatchResp } from '~~/gen/ts/services/centrum/centrum';
-import TakeDispatchEntry from './TakeDispatchEntry.vue';
+import TakeDispatchEntry from '~/components/centrum/livemap/TakeDispatchEntry.vue';
 
 defineProps<{
     open: boolean;
@@ -29,28 +29,24 @@ const selectedDispatches = ref<bigint[]>([]);
 const queryDispatches = ref('');
 
 async function takeDispatches(resp: TakeDispatchResp): Promise<void> {
-    return new Promise(async (res, rej) => {
-        try {
-            if (selectedDispatches.value.length === 0 || !canTakeDispatch.value) {
-                return;
-            }
-
-            const call = $grpc.getCentrumClient().takeDispatch({
-                dispatchIds: selectedDispatches.value,
-                resp: resp,
-            });
-            await call;
-
-            selectedDispatches.value.length = 0;
-
-            emit('close');
-
-            return res();
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
+    try {
+        if (selectedDispatches.value.length === 0 || !canTakeDispatch.value) {
+            return;
         }
-    });
+
+        const call = $grpc.getCentrumClient().takeDispatch({
+            dispatchIds: selectedDispatches.value,
+            resp,
+        });
+        await call;
+
+        selectedDispatches.value.length = 0;
+
+        emit('close');
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 
 function selectDispatch(id: bigint, state: boolean): void {
@@ -174,6 +170,7 @@ const filteredDispatches = computed(() => {
 
                                                                 <TakeDispatchEntry
                                                                     v-for="pd in filteredDispatches"
+                                                                    :key="pd.toString()"
                                                                     :dispatch="dispatches.get(pd)!"
                                                                     :preselected="false"
                                                                     @selected="selectDispatch(pd, $event)"
@@ -188,13 +185,15 @@ const filteredDispatches = computed(() => {
                                                                 :icon="CarEmergencyIcon"
                                                                 :type="$t('common.dispatch', 2)"
                                                             />
-                                                            <TakeDispatchEntry
-                                                                v-else
-                                                                v-for="pd in pendingDispatches"
-                                                                :dispatch="dispatches.get(pd)!"
-                                                                @selected="selectDispatch(pd, $event)"
-                                                                @goto="$emit('goto', $event)"
-                                                            />
+                                                            <template v-else>
+                                                                <TakeDispatchEntry
+                                                                    v-for="pd in pendingDispatches"
+                                                                    :key="pd.toString()"
+                                                                    :dispatch="dispatches.get(pd)!"
+                                                                    @selected="selectDispatch(pd, $event)"
+                                                                    @goto="$emit('goto', $event)"
+                                                                />
+                                                            </template>
                                                         </template>
                                                     </dl>
                                                 </div>

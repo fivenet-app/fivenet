@@ -35,7 +35,7 @@ onBeforeMount(async () => updateStats());
 <template>
     <div class="mx-auto max-w-7xl">
         <div class="grid grid-cols-1 gap-px bg-neutral/5 sm:grid-cols-2 lg:grid-cols-3">
-            <div v-for="stat in entries" class="bg-gray-900 px-4 py-4 sm:px-4 lg:px-4">
+            <div v-for="stat in entries" :key="stat.name" class="bg-gray-900 px-4 py-4 sm:px-4 lg:px-4">
                 <p class="text-sm font-medium leading-6 text-gray-400">{{ $t(stat.name) }}</p>
                 <p class="mt-2 flex items-baseline gap-x-2">
                     <span class="text-3xl font-semibold tracking-tight text-neutral">{{

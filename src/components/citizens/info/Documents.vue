@@ -23,23 +23,21 @@ const { data, pending, refresh, error } = useLazyAsyncData(`citizeninfo-document
 );
 
 async function listUserDocuments(): Promise<ListUserDocumentsResponse> {
-    return new Promise(async (res, rej) => {
-        try {
-            const call = $grpc.getDocStoreClient().listUserDocuments({
-                pagination: {
-                    offset: offset.value,
-                },
-                userId: props.userId,
-                relations: [],
-            });
-            const { response } = await call;
+    try {
+        const call = $grpc.getDocStoreClient().listUserDocuments({
+            pagination: {
+                offset: offset.value,
+            },
+            userId: props.userId,
+            relations: [],
+        });
+        const { response } = await call;
 
-            return res(response);
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
-        }
-    });
+        return response;
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 
 watch(offset, async () => refresh());
@@ -136,7 +134,7 @@ watch(offset, async () => refresh());
                     </li>
                 </ul>
 
-                <TablePagination :pagination="data?.pagination" @offset-change="offset = $event" :refresh="refresh" />
+                <TablePagination :pagination="data?.pagination" :refresh="refresh" @offset-change="offset = $event" />
             </div>
 
             <!-- Relations table (small breakpoint and up) -->
@@ -233,8 +231,8 @@ watch(offset, async () => refresh());
 
                             <TablePagination
                                 :pagination="data?.pagination"
-                                @offset-change="offset = $event"
                                 :refresh="refresh"
+                                @offset-change="offset = $event"
                             />
                         </div>
                     </div>

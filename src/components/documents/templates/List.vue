@@ -16,17 +16,15 @@ defineEmits<{
 const { data: templates, pending, refresh, error } = useLazyAsyncData(`documents-templates`, () => listTemplates());
 
 async function listTemplates(): Promise<TemplateShort[]> {
-    return new Promise(async (res, rej) => {
-        try {
-            const call = $grpc.getDocStoreClient().listTemplates({});
-            const { response } = await call;
+    try {
+        const call = $grpc.getDocStoreClient().listTemplates({});
+        const { response } = await call;
 
-            return res(response.templates);
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
-        }
-    });
+        return response.templates;
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 
 const items = ref<CardElements>([]);

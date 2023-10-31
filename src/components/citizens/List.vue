@@ -12,7 +12,7 @@ import TablePagination from '~/components/partials/elements/TablePagination.vue'
 import { attr } from '~/composables/can';
 import GenericInput from '~/composables/partials/forms/GenericInput.vue';
 import { ListCitizensRequest, ListCitizensResponse } from '~~/gen/ts/services/citizenstore/citizenstore';
-import ListEntry from './ListEntry.vue';
+import ListEntry from '~/components/citizens/ListEntry.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -40,39 +40,37 @@ const { data, pending, refresh, error } = useLazyAsyncData(
 );
 
 async function listCitizens(): Promise<ListCitizensResponse> {
-    return new Promise(async (res, rej) => {
-        try {
-            const req: ListCitizensRequest = {
-                pagination: {
-                    offset: offset.value,
-                },
-                searchName: query.value.name ?? '',
-            };
-            if (query.value.wanted) {
-                req.wanted = query.value.wanted;
-            }
-            if (query.value.phoneNumber) {
-                req.phoneNumber = query.value.phoneNumber;
-            }
-            if (query.value.trafficPoints) {
-                req.trafficPoints = BigInt(query.value.trafficPoints?.toString() ?? '0');
-            }
-            if (query.value.fines) {
-                req.openFines = BigInt(query.value.fines?.toString() ?? '0');
-            }
-            if (query.value.dateofbirth) {
-                req.dateofbirth = query.value.dateofbirth;
-            }
-
-            const call = $grpc.getCitizenStoreClient().listCitizens(req);
-            const { response } = await call;
-
-            return res(response);
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
+    try {
+        const req: ListCitizensRequest = {
+            pagination: {
+                offset: offset.value,
+            },
+            searchName: query.value.name ?? '',
+        };
+        if (query.value.wanted) {
+            req.wanted = query.value.wanted;
         }
-    });
+        if (query.value.phoneNumber) {
+            req.phoneNumber = query.value.phoneNumber;
+        }
+        if (query.value.trafficPoints) {
+            req.trafficPoints = BigInt(query.value.trafficPoints?.toString() ?? '0');
+        }
+        if (query.value.fines) {
+            req.openFines = BigInt(query.value.fines?.toString() ?? '0');
+        }
+        if (query.value.dateofbirth) {
+            req.dateofbirth = query.value.dateofbirth;
+        }
+
+        const call = $grpc.getCitizenStoreClient().listCitizens(req);
+        const { response } = await call;
+
+        return response;
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 
 const searchNameInput = ref<HTMLInputElement | null>(null);
@@ -100,8 +98,8 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                 </label>
                                 <div class="relative flex items-center mt-2">
                                     <GenericInput
-                                        v-model="query.name"
                                         ref="searchNameInput"
+                                        v-model="query.name"
                                         type="text"
                                         name="searchName"
                                         :placeholder="`${$t('common.citizen', 1)} ${$t('common.name')}`"
@@ -117,9 +115,9 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                 <div class="relative flex items-center mt-2">
                                     <GenericInput
                                         v-model="query.dateofbirth"
+                                        v-maska
                                         type="text"
                                         name="dateofbirth"
-                                        v-maska
                                         data-maska="##.##.####"
                                         :placeholder="`${$t('common.date_of_birth')} (DD.MM.YYYY)`"
                                         class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
@@ -127,8 +125,8 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                 </div>
                             </div>
                             <div
-                                class="flex-initial form-control"
                                 v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'UserProps.Wanted')"
+                                class="flex-initial form-control"
                             >
                                 <label for="search" class="block text-sm font-medium leading-6 text-neutral">
                                     {{ $t('components.citizens.citizens_list.only_wanted') }}
@@ -155,7 +153,7 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                 </div>
                             </div>
                         </div>
-                        <Disclosure as="div" class="pt-2" v-slot="{ open }">
+                        <Disclosure v-slot="{ open }" as="div" class="pt-2">
                             <DisclosureButton class="flex w-full items-start justify-between text-left text-neutral">
                                 <span class="text-base-200 leading-7">{{ $t('common.advanced_search') }}</span>
                                 <span class="ml-6 flex h-7 items-center">
@@ -168,8 +166,8 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                             <DisclosurePanel class="mt-2 pr-4">
                                 <div class="flex flex-row gap-2">
                                     <div
-                                        class="flex-1 form-control"
                                         v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'PhoneNumber')"
+                                        class="flex-1 form-control"
                                     >
                                         <label for="searchPhone" class="block text-sm font-medium leading-6 text-neutral">
                                             {{ $t('common.search') }}
@@ -201,8 +199,8 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                         </div>
                                     </div>
                                     <div
-                                        class="flex-initial form-control"
                                         v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'UserProps.OpenFines')"
+                                        class="flex-initial form-control"
                                     >
                                         <label for="search" class="block text-sm font-medium leading-6 text-neutral">
                                             {{ $t('components.citizens.citizens_list.open_fine') }}
@@ -354,8 +352,8 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
 
                             <TablePagination
                                 :pagination="data?.pagination"
-                                @offset-change="offset = $event"
                                 :refresh="refresh"
+                                @offset-change="offset = $event"
                             />
                         </div>
                     </div>

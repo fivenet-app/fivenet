@@ -2,9 +2,9 @@
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { AccountIcon, CloseIcon, MapMarkerIcon, PencilIcon } from 'mdi-vue3';
 import { unitStatusToBGColor } from '~/components/centrum//helpers';
-import AssignUnitModal from '~/components/centrum/units/AssignUnitModal.vue';
-import Feed from '~/components/centrum/units/Feed.vue';
-import StatusUpdateModal from '~/components/centrum/units/StatusUpdateModal.vue';
+import UnitAssignUsersModal from '~/components/centrum/units/UnitAssignUsersModal.vue';
+import Feed from '~/components/centrum/units/UnitFeed.vue';
+import UnitStatusUpdateModal from '~/components/centrum/units/UnitStatusUpdateModal.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import Time from '~/components/partials/elements/Time.vue';
 import { StatusUnit, Unit } from '~~/gen/ts/resources/dispatch/units';
@@ -90,18 +90,18 @@ const openStatus = ref(false);
                                                             <dd
                                                                 class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
                                                             >
-                                                                <StatusUpdateModal
+                                                                <UnitStatusUpdateModal
                                                                     :open="openStatus"
                                                                     :unit="unit"
-                                                                    @close="openStatus = false"
                                                                     :status="statusSelected"
+                                                                    @close="openStatus = false"
                                                                 />
 
                                                                 <button
                                                                     type="button"
-                                                                    @click="openStatus = true"
                                                                     class="rounded px-2 py-1 text-xs font-semibold text-neutral shadow-sm hover:bg-neutral/20"
                                                                     :class="unitStatusColors"
+                                                                    @click="openStatus = true"
                                                                 >
                                                                     {{
                                                                         $t(
@@ -174,6 +174,7 @@ const openStatus = ref(false);
                                                                 >
                                                                     <li
                                                                         v-for="user in unit.users"
+                                                                        :key="user.userId"
                                                                         class="flex items-center justify-between py-3 pl-3 pr-4 text-sm"
                                                                     >
                                                                         <div class="flex items-center flex-1">
@@ -181,7 +182,7 @@ const openStatus = ref(false);
                                                                                 :user="user.user"
                                                                                 class="flex items-center justify-center"
                                                                             >
-                                                                                <template v-slot:before>
+                                                                                <template #before>
                                                                                     <AccountIcon
                                                                                         class="flex-shrink-0 w-5 h-5 text-base-400 mr-1"
                                                                                         aria-hidden="true"
@@ -192,7 +193,7 @@ const openStatus = ref(false);
                                                                     </li>
                                                                 </ul>
 
-                                                                <AssignUnitModal
+                                                                <UnitAssignUsersModal
                                                                     :open="openAssign"
                                                                     :unit="unit"
                                                                     @close="openAssign = false"
@@ -202,8 +203,8 @@ const openStatus = ref(false);
                                                                     <button
                                                                         v-if="can('CentrumService.TakeControl')"
                                                                         type="button"
-                                                                        @click="openAssign = true"
                                                                         class="flex flex-row items-center rounded bg-neutral/10 px-2 py-1 text-xs font-semibold text-neutral shadow-sm hover:bg-neutral/20"
+                                                                        @click="openAssign = true"
                                                                     >
                                                                         <PencilIcon class="h-6 w-6" />
                                                                         <span class="truncate ml-0.5">

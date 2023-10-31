@@ -20,8 +20,8 @@ defineEmits<{
             <div class="flex flex-row justify-end">
                 <button
                     type="button"
-                    @click="$emit('selected', role)"
                     class="flex-initial text-primary-500 hover:text-primary-400"
+                    @click="$emit('selected', role)"
                 >
                     <EyeIcon class="h-6 w-6 text-primary-500" aria-hidden="true" />
                 </button>

@@ -3,7 +3,7 @@ import { AccountPlusIcon, AccountRemoveIcon, BriefcaseIcon, CoffeeIcon, HelpIcon
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import Time from '~/components/partials/elements/Time.vue';
 import { StatusUnit, UnitStatus } from '~~/gen/ts/resources/dispatch/units';
-import UnitInfoPopover from './UnitInfoPopover.vue';
+import UnitInfoPopover from '~/components/centrum/units/UnitInfoPopover.vue';
 
 defineProps<{
     activityLength: number;

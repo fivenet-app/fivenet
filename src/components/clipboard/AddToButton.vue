@@ -16,8 +16,8 @@ withDefaults(
     <button
         type="button"
         :title="title"
-        @click="callback()"
         class="fixed flex items-center justify-center w-12 h-12 rounded-full z-10 bottom-16 right-6 bg-primary-500 shadow-float text-neutral hover:bg-primary-400"
+        @click="callback()"
     >
         <ClipboardPlusIcon class="w-10 h-auto" />
     </button>

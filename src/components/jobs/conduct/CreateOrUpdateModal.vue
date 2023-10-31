@@ -16,8 +16,9 @@ import { digits, max, min, required } from '@vee-validate/rules';
 import { useThrottleFn, watchDebounced } from '@vueuse/core';
 import { CheckIcon, CloseIcon, LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
+import { useJobsStore } from '~/store/jobs';
 import { ConductEntry, ConductType } from '~~/gen/ts/resources/jobs/conduct';
-import { User, UserShort } from '~~/gen/ts/resources/users/users';
+import { UserShort } from '~~/gen/ts/resources/users/users';
 
 const props = defineProps<{
     open: boolean;
@@ -32,69 +33,60 @@ const emit = defineEmits<{
 
 const { $grpc } = useNuxtApp();
 
-async function conductCreateOrUpdateEntry(values: FormData, id?: bigint): Promise<void> {
-    return new Promise(async (res, rej) => {
-        try {
-            const expiresAt = values.expiresAt ? toTimestamp(new Date(values.expiresAt)) : undefined;
-
-            const req = {
-                entry: {
-                    id: id ?? 0n,
-                    job: '',
-                    type: values.type,
-                    message: values.message,
-                    creatorId: 1,
-                    targetUserId: values.targetUser!,
-                    expiresAt: expiresAt,
-                },
-            };
-
-            if (id === undefined) {
-                const call = $grpc.getJobsClient().conductCreateEntry(req);
-                const { response } = await call;
-
-                emit('created', response.entry!);
-            } else {
-                const call = $grpc.getJobsClient().conductUpdateEntry(req);
-                const { response } = await call;
-
-                emit('update', response.entry!);
-            }
-
-            resetForm();
-            emit('close');
-
-            return res();
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
-        }
-    });
+interface FormData {
+    targetUser?: number;
+    type: ConductType;
+    message: string;
+    expiresAt?: string;
 }
 
-const entriesChars = ref<User[]>([]);
-const queryTargets = ref<string>('');
+async function conductCreateOrUpdateEntry(values: FormData, id?: bigint): Promise<void> {
+    try {
+        const expiresAt = values.expiresAt ? toTimestamp(new Date(values.expiresAt)) : undefined;
 
-async function listColleagues(): Promise<User[]> {
-    return new Promise(async (res, rej) => {
-        try {
-            const call = $grpc.getJobsClient().colleaguesList({
-                pagination: {
-                    offset: 0n,
-                },
-                searchName: queryTargets.value,
-            });
+        const req = {
+            entry: {
+                id: id ?? 0n,
+                job: '',
+                type: values.type,
+                message: values.message,
+                creatorId: 1,
+                targetUserId: values.targetUser!,
+                expiresAt,
+            },
+        };
+
+        if (id === undefined) {
+            const call = $grpc.getJobsClient().conductCreateEntry(req);
             const { response } = await call;
 
-            return res(response.users);
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
+            emit('created', response.entry!);
+        } else {
+            const call = $grpc.getJobsClient().conductUpdateEntry(req);
+            const { response } = await call;
+
+            emit('update', response.entry!);
         }
-    });
+
+        resetForm();
+        emit('close');
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
 }
 
-watchDebounced(queryTargets, async () => (entriesChars.value = await listColleagues()), {
+const queryTargets = ref<string>('');
+
+const jobsStore = useJobsStore();
+const { data, refresh } = useLazyAsyncData(`jobs-colleagues-0-${queryTargets.value}`, () =>
+    jobsStore.listColleagues({
+        pagination: { offset: 0n },
+        searchName: queryTargets.value,
+    }),
+);
+
+watchDebounced(queryTargets, async () => refresh(), {
     debounce: 600,
     maxWait: 1400,
 });
@@ -121,13 +113,6 @@ defineRule('digits', digits);
 defineRule('min', min);
 defineRule('max', max);
 
-interface FormData {
-    targetUser?: number;
-    type: ConductType;
-    message: string;
-    expiresAt?: string;
-}
-
 const { handleSubmit, meta, setValues, setFieldValue, resetForm } = useForm<FormData>({
     validationSchema: {
         targetUser: { required: true },
@@ -150,10 +135,6 @@ watch(props, () => {
         message: props.entry?.message,
         expiresAt: props.entry?.expiresAt ? toDatetimeLocal(toDate(props.entry?.expiresAt)) : undefined,
     });
-});
-
-onMounted(async () => {
-    entriesChars.value = await listColleagues();
 });
 
 const canSubmit = ref(true);
@@ -188,8 +169,8 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                         >
                             <DialogPanel class="pointer-events-auto w-screen max-w-6xl">
                                 <form
-                                    @submit.prevent="onSubmitThrottle"
                                     class="flex h-full flex-col divide-y divide-gray-200 bg-gray-900 shadow-xl"
+                                    @submit.prevent="onSubmitThrottle"
                                 >
                                     <div class="h-0 flex-1 overflow-y-auto">
                                         <div class="bg-primary-700 px-4 py-6 sm:px-6">
@@ -230,11 +211,11 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                 class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
                                                             >
                                                                 <VeeField
+                                                                    v-slot="{ field }"
                                                                     as="div"
                                                                     name="type"
                                                                     :placeholder="$t('common.type')"
                                                                     :label="$t('common.type')"
-                                                                    v-slot="{ field }"
                                                                 >
                                                                     <select
                                                                         v-bind="field"
@@ -242,6 +223,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                     >
                                                                         <option
                                                                             v-for="mtype in cTypes"
+                                                                            :key="mtype.status"
                                                                             :selected="mtype.selected"
                                                                             :value="mtype.status"
                                                                         >
@@ -282,13 +264,12 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                     :placeholder="$t('common.target')"
                                                                     :label="$t('common.target')"
                                                                 >
-                                                                    <Combobox as="div" v-model="targetUser" class="w-full mt-2">
+                                                                    <Combobox v-model="targetUser" as="div" class="w-full mt-2">
                                                                         <div class="relative">
                                                                             <ComboboxButton as="div">
                                                                                 <ComboboxInput
                                                                                     autocomplete="off"
                                                                                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                                                    @change="queryTargets = $event.target.value"
                                                                                     :display-value="
                                                                                         (char: any) =>
                                                                                             char
@@ -297,6 +278,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                                     "
                                                                                     :placeholder="$t('common.target')"
                                                                                     :label="$t('common.target')"
+                                                                                    @change="queryTargets = $event.target.value"
                                                                                     @focusin="focusTablet(true)"
                                                                                     @focusout="focusTablet(false)"
                                                                                 />
@@ -306,11 +288,11 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                                 class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-44 sm:text-sm"
                                                                             >
                                                                                 <ComboboxOption
-                                                                                    v-for="char in entriesChars"
+                                                                                    v-for="char in data?.users"
                                                                                     :key="char.identifier"
+                                                                                    v-slot="{ active, selected }"
                                                                                     :value="char"
                                                                                     as="char"
-                                                                                    v-slot="{ active, selected }"
                                                                                 >
                                                                                     <li
                                                                                         :class="[

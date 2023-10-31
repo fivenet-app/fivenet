@@ -6,8 +6,8 @@ import Documents from '~/components/clipboard/modal/Documents.vue';
 import Vehicles from '~/components/clipboard/modal/Vehicles.vue';
 import { useClipboardStore } from '~/store/clipboard';
 import { TemplateRequirements, TemplateShort } from '~~/gen/ts/resources/documents/templates';
-import List from './List.vue';
-import RequirementsList from './RequirementsList.vue';
+import List from '~/components/documents/templates/List.vue';
+import RequirementsList from '~/components/documents/templates/RequirementsList.vue';
 
 const clipboardStore = useClipboardStore();
 
@@ -273,13 +273,13 @@ async function clipboardDialog(): Promise<void> {
                                         <button
                                             type="button"
                                             class="inline-flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold text-neutral shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:col-start-2"
-                                            @click="clipboardDialog()"
                                             :disabled="!readyToCreate"
                                             :class="[
                                                 !readyToCreate
                                                     ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
                                                     : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
                                             ]"
+                                            @click="clipboardDialog()"
                                         >
                                             {{ $t('common.create') }}
                                         </button>

@@ -16,7 +16,7 @@ import {
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import Time from '~/components/partials/elements/Time.vue';
 import { Request } from '~~/gen/ts/resources/jobs/requests';
-import Comments from './Comments.vue';
+import Comments from '~/components/jobs/requests/Comments.vue';
 
 defineProps<{
     request: Request;
@@ -45,14 +45,14 @@ const open = ref(false);
                     {{ request.title }}
                 </p>
                 <p
-                    class="inline-flex px-2 text-xs font-semibold leading-5 rounded-full bg-primary-100 text-primary-700 my-auto"
                     v-if="request.status"
+                    class="inline-flex px-2 text-xs font-semibold leading-5 rounded-full bg-primary-100 text-primary-700 my-auto"
                 >
                     {{ request.status }}
                 </p>
                 <div
-                    class="flex flex-row items-center justify-center flex-1 text-base-200"
                     v-if="request?.approved !== undefined"
+                    class="flex flex-row items-center justify-center flex-1 text-base-200"
                 >
                     <div
                         v-if="request?.approved"
@@ -63,7 +63,10 @@ const open = ref(false);
                             {{ $t('common.approve', 2) }}
                         </span>
                     </div>
-                    <div v-else="request.approved" class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-error-100">
+                    <div
+                        v-else-if="request.approved"
+                        class="flex flex-row flex-initial gap-1 px-2 py-1 rounded-full bg-error-100"
+                    >
                         <CancelIcon class="w-5 h-5 text-error-700" aria-hidden="true" />
                         <span class="text-sm font-medium text-success-700">
                             {{ $t('common.decline', 2) }}
@@ -121,13 +124,13 @@ const open = ref(false);
             <div class="mt-2 flex flex-row gap-2 text-base-200">
                 <div class="flex flex-row items-center justify-start flex-1 gap-2">
                     <CitizenInfoPopover :user="request.creator">
-                        <template v-slot:before>
+                        <template #before>
                             <AccountIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400" aria-hidden="true" />
                         </template>
                     </CitizenInfoPopover>
 
                     <CitizenInfoPopover v-if="request.approverUser" :user="request.approverUser">
-                        <template v-slot:before>
+                        <template #before>
                             <AsteriskIcon class="mr-1.5 h-5 w-5 flex-shrink-0 text-base-400" aria-hidden="true" />
                         </template>
                     </CitizenInfoPopover>
@@ -157,9 +160,9 @@ const open = ref(false);
                     </template>
                 </button>
                 <button
+                    v-if="request.approved !== undefined"
                     type="button"
                     class="inline-flex justify-center px-3 py-2 text-sm font-semibold rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
-                    v-if="request.approved !== undefined"
                 >
                     <template v-if="request.approved">
                         <CancelIcon class="w-5 h-5 text-error-400" aria-hidden="true" />
@@ -195,8 +198,8 @@ const open = ref(false);
                 </button>
                 <button
                     type="button"
-                    @click="open = false"
                     class="inline-flex items-center justify-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
+                    @click="open = false"
                 >
                     <CloseIcon class="h-5 w-5" />
                     {{ $t('common.hide') }}

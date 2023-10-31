@@ -21,8 +21,8 @@ const data = reactive({
 });
 
 // Local variables
-let _timer: undefined | number | NodeJS.Timeout = undefined;
-let _throttle: undefined | NodeJS.Timeout = undefined;
+let _timer: undefined | number | NodeJS.Timeout;
+let _throttle: undefined | NodeJS.Timeout;
 const _cut = 10000 / Math.floor(props.duration);
 
 // Functions
@@ -41,19 +41,9 @@ const start = () => {
         startTimer();
     }
 };
-const set = (num: number) => {
-    data.show = true;
-    data.canSucceed = true;
-    data.percent = Math.min(100, Math.max(0, Math.floor(num)));
-};
 const increase = (num: number) => {
     data.percent = Math.min(100, Math.floor(data.percent + num));
 };
-const decrease = (num: number) => {
-    data.percent = Math.max(0, Math.floor(data.percent - num));
-};
-const pause = () => clearInterval(_timer);
-const resume = () => startTimer();
 const finish = () => {
     data.percent = 100;
     hide();
@@ -100,6 +90,19 @@ nuxt.hook('data:loading:finish_error', () => {
 onBeforeUnmount(() => clear);
 </script>
 
+<template>
+    <div
+        :class="['nuxt-progress', !data.canSucceed ? 'nuxt-progress-failed' : '']"
+        :style="{
+            width: data.percent + '%',
+            left: data.left,
+            height: props.height + 'px',
+            opacity: data.show ? 1 : 0,
+            backgroundSize: (100 / data.percent) * 100 + '% auto',
+        }"
+    />
+</template>
+
 <style scoped>
 .nuxt-progress {
     position: fixed;
@@ -120,16 +123,3 @@ onBeforeUnmount(() => clear);
     background: repeating-linear-gradient(to right, #d72638 0%, #ac1e2d 50%, #d72638 100%);
 }
 </style>
-
-<template>
-    <div
-        :class="['nuxt-progress', !data.canSucceed ? 'nuxt-progress-failed' : '']"
-        :style="{
-            width: data.percent + '%',
-            left: data.left,
-            height: props.height + 'px',
-            opacity: data.show ? 1 : 0,
-            backgroundSize: (100 / data.percent) * 100 + '% auto',
-        }"
-    />
-</template>
