@@ -78,11 +78,11 @@ type Item = {
 
 const items = [
     {
-        id: 1,
+        id: -1,
         name: t('commandpalette.groups.shortcuts.goto', { key: t('common.citizen', 1), prefix: 'CIT-...' }),
         icon: markRaw(AccountIcon),
         category: 'shortcuts',
-        permission: 'CitizenStoreService.GetCitizen',
+        permission: 'CitizenStoreService.GetUser',
         prefix: 'CIT-',
         action: () => {
             const id = query.value.substring(query.value.indexOf('-') + 1);
@@ -93,7 +93,7 @@ const items = [
         },
     },
     {
-        id: 2,
+        id: -2,
         name: t('commandpalette.groups.shortcuts.goto', { key: t('common.document', 1), prefix: 'DOC-...' }),
         icon: markRaw(FileDocumentIcon),
         category: 'shortcuts',
@@ -109,7 +109,7 @@ const items = [
     },
     // Pages
     {
-        id: 9,
+        id: -9,
         name: t('common.overview'),
         action: () => {
             navigateTo({ name: 'overview' });
@@ -119,7 +119,7 @@ const items = [
         category: 'pages',
     },
     {
-        id: 10,
+        id: -10,
         name: t('common.citizen'),
         action: () => {
             navigateTo({ name: 'citizens' });
@@ -130,7 +130,7 @@ const items = [
         category: 'pages',
     },
     {
-        id: 11,
+        id: -11,
         name: t('common.vehicle'),
         action: () => {
             navigateTo({ name: 'vehicles' });
@@ -141,7 +141,7 @@ const items = [
         category: 'pages',
     },
     {
-        id: 12,
+        id: -12,
         name: t('common.document'),
         action: () => {
             navigateTo({ name: 'documents' });
@@ -152,7 +152,7 @@ const items = [
         category: 'pages',
     },
     {
-        id: 13,
+        id: -13,
         name: t('common.job'),
         action: () => {
             navigateTo({ name: 'jobs-overview' });
@@ -163,7 +163,7 @@ const items = [
         category: 'pages',
     },
     {
-        id: 14,
+        id: -14,
         name: t('common.livemap'),
         action: () => {
             navigateTo({ name: 'livemap' });
@@ -174,7 +174,7 @@ const items = [
         category: 'pages',
     },
     {
-        id: 15,
+        id: -15,
         name: t('common.control_panel'),
         action: () => {
             navigateTo({ name: 'rector' });
