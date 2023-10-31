@@ -114,29 +114,10 @@ func (e *Enricher) GetJobGrade(job string, grade int32) (*users.Job, *users.JobG
 }
 
 func (e *Enricher) EnrichJobInfoSafe(userInfo *userinfo.UserInfo, usrs ...common.IJobInfo) {
-	jobGradesAttr, _ := e.ps.Attr(userInfo, permscitizenstore.CitizenStoreServicePerm, permscitizenstore.CitizenStoreServiceGetUserPerm, permscitizenstore.CitizenStoreServiceGetUserJobsPermField)
-	var jobGrades perms.JobGradeList
-	if jobGradesAttr != nil {
-		jobGrades = jobGradesAttr.(map[string]int32)
-	}
+	enrichFn := e.EnrichJobInfoSafeFunc(userInfo)
 
 	for _, usr := range usrs {
-		// Make sure user has permission to see that grade, otherwise "hide" the user's job grade
-		grade, ok := jobGrades[usr.GetJob()]
-		if !ok {
-			if !utils.InSlice(e.publicJobs, usr.GetJob()) {
-				usr.SetJob(e.unemployedJob)
-				usr.SetJobGrade(e.unemployedJobGrade)
-			} else {
-				usr.SetJobGrade(0)
-			}
-		} else {
-			if usr.GetJobGrade() < grade && !userInfo.SuperUser {
-				usr.SetJobGrade(0)
-			}
-		}
-
-		e.EnrichJobInfo(usr)
+		enrichFn(usr)
 	}
 }
 
@@ -158,7 +139,7 @@ func (e *Enricher) EnrichJobInfoSafeFunc(userInfo *userinfo.UserInfo) func(usr c
 				usr.SetJobGrade(0)
 			}
 		} else {
-			if usr.GetJobGrade() < grade && !userInfo.SuperUser {
+			if usr.GetJobGrade() > grade && !userInfo.SuperUser {
 				usr.SetJobGrade(0)
 			}
 		}
