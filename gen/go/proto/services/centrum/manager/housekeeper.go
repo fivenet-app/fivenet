@@ -313,6 +313,13 @@ func (s *Manager) deduplicateDispatches(ctx context.Context) error {
 			removedCount := 0
 			dispatchIds := map[uint64]interface{}{}
 			for _, dsp := range dsps {
+				// Add the handled dispatch to the list
+				dispatchIds[dsp.Id] = nil
+
+				if dsp.Status != nil && centrumutils.IsStatusDispatchComplete(dsp.Status.Status) {
+					continue
+				}
+
 				closestsDsp := s.State.DispatchLocations[dsp.Job].KNearest(dsp.Point(), 8, func(p orb.Pointer) bool {
 					return p.(*dispatch.Dispatch).Id != dsp.Id
 				}, 45.0)
@@ -336,6 +343,10 @@ func (s *Manager) deduplicateDispatches(ctx context.Context) error {
 						continue
 					}
 
+					s.State.DispatchLocations[closeByDsp.Job].Remove(closeByDsp, func(p orb.Pointer) bool {
+						return p.(*dispatch.Dispatch).Id == closeByDsp.Id
+					})
+
 					if err := s.UpdateDispatchStatus(ctx, closeByDsp.Job, closeByDsp, &dispatch.DispatchStatus{
 						DispatchId: closeByDsp.Id,
 						Status:     dispatch.StatusDispatch_STATUS_DISPATCH_CANCELLED,
@@ -343,10 +354,6 @@ func (s *Manager) deduplicateDispatches(ctx context.Context) error {
 						s.logger.Error("failed to update duplicate dispatch status", zap.Error(err))
 						return
 					}
-
-					s.State.DispatchLocations[closeByDsp.Job].Remove(closeByDsp, func(p orb.Pointer) bool {
-						return p.(*dispatch.Dispatch).Id == closeByDsp.Id
-					})
 
 					removedCount++
 
