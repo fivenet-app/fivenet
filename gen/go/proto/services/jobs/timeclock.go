@@ -24,6 +24,7 @@ func (s *Server) TimeclockListEntries(ctx context.Context, req *TimeclockListEnt
 
 	condition := jet.Bool(true)
 	condition = condition.AND(tTimeClock.Job.EQ(jet.String(userInfo.Job)))
+	statsCondition := tTimeClock.Job.EQ(jet.String(userInfo.Job))
 
 	// Field Permission Check
 	fieldsAttr, err := s.p.Attr(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceTimeclockListEntriesPerm, permsjobs.JobsServiceTimeclockListEntriesAccessPermField)
@@ -38,6 +39,7 @@ func (s *Server) TimeclockListEntries(ctx context.Context, req *TimeclockListEnt
 	canViewAll := utils.InSlice(fields, "All")
 	if len(fields) == 0 || !canViewAll {
 		condition = condition.AND(tTimeClock.UserID.EQ(jet.Int32(userInfo.UserId)))
+		statsCondition = statsCondition.AND(tTimeClock.UserID.EQ(jet.Int32(userInfo.UserId)))
 	}
 
 	if len(req.UserIds) > 0 {
@@ -123,7 +125,7 @@ func (s *Server) TimeclockListEntries(ctx context.Context, req *TimeclockListEnt
 		}
 	}
 
-	resp.Stats, err = s.getTimeclockstats(ctx, condition)
+	resp.Stats, err = s.getTimeclockstats(ctx, statsCondition)
 	if err != nil {
 		return nil, ErrFailedQuery
 	}
