@@ -36,8 +36,8 @@ type Links = {
 };
 
 type ClientConfig = {
-    NUIEnabled: boolean;
-    NUIResourceName?: string;
+    nuiEnabled: boolean;
+    nuiResourceName?: string;
 };
 
 export const useConfigStore = defineStore('config', {
@@ -57,7 +57,7 @@ export const useConfigStore = defineStore('config', {
                 links: {},
             } as AppConfig,
             clientConfig: {
-                NUIEnabled: false,
+                nuiEnabled: false,
             } as ClientConfig,
             updateAvailable: false,
         }) as ConfigState,
@@ -110,7 +110,7 @@ export const useConfigStore = defineStore('config', {
     },
     getters: {
         isNUIAvailable(state): boolean {
-            return state.clientConfig.NUIEnabled ?? false;
+            return state.clientConfig.nuiEnabled ?? false;
         },
     },
 });

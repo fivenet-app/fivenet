@@ -2,14 +2,14 @@
 import { useDebounceFn } from '@vueuse/core';
 import { useSound } from '@vueuse/sound';
 import { AccountMultiplePlusIcon, CloseOctagonIcon, DotsVerticalIcon, MapMarkerIcon } from 'mdi-vue3';
+import AssignDispatchModal from '~/components/centrum/dispatches/AssignDispatchModal.vue';
+import Details from '~/components/centrum/dispatches/Details.vue';
+import StatusUpdateModal from '~/components/centrum/dispatches/StatusUpdateModal.vue';
+import { dispatchStatusAnimate, dispatchStatusToBGColor } from '~/components/centrum/helpers';
 import UnitInfoPopover from '~/components/centrum/units/UnitInfoPopover.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import Time from '~/components/partials/elements/Time.vue';
 import { Dispatch, StatusDispatch } from '~~/gen/ts/resources/dispatch/dispatches';
-import { dispatchStatusAnimate, dispatchStatusToBGColor } from '../helpers';
-import AssignDispatchModal from './AssignDispatchModal.vue';
-import Details from './Details.vue';
-import StatusUpdateModal from './StatusUpdateModal.vue';
 
 const props = withDefaults(
     defineProps<{

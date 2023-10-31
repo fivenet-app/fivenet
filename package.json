@@ -11,7 +11,8 @@
         "postinstall": "COMMIT_REF=$(git describe --tags --exclude='fivenet-*') yarn nuxi prepare",
         "pretty": "yarn prettier --write ./src/",
         "analyze": "yarn nuxi analyze",
-        "typecheck": "yarn nuxi typecheck"
+        "typecheck": "yarn nuxi typecheck",
+        "lint": "yarn eslint ."
     },
     "dependencies": {
         "@fontsource/inter": "^5.0.15",
@@ -50,6 +51,8 @@
     "devDependencies": {
         "@dargmuesli/nuxt-cookie-control": "^7.0.1",
         "@nuxt/devtools": "^1.0.0",
+        "@nuxtjs/eslint-config-typescript": "^12.1.0",
+        "@nuxtjs/eslint-module": "^4.1.0",
         "@nuxtjs/i18n": "^8.0.0-rc.5",
         "@nuxtjs/tailwindcss": "^6.8.1",
         "@pinia-plugin-persistedstate/nuxt": "^1.2.0",
@@ -58,7 +61,7 @@
         "@total-typescript/ts-reset": "^0.5.1",
         "@types/google-protobuf": "^3.15.9",
         "@types/leaflet": "^1.9.7",
-        "@types/node": "^20.8.9",
+        "@types/node": "^20.8.10",
         "@types/splitpanes": "^2.2.4",
         "@types/uuid": "^9.0.6",
         "@types/zxcvbn": "^4.4.3",
@@ -70,6 +73,8 @@
         "autoprefixer": "^10.4.16",
         "cssnano": "^6.0.1",
         "eslint": "^8.52.0",
+        "eslint-config-prettier": "^9.0.0",
+        "eslint-plugin-prettier": "^5.0.1",
         "eslint-plugin-vue": "^9.18.1",
         "nuxi": "^3.9.1",
         "nuxt": "^3.8.0",

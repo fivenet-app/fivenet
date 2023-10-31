@@ -343,7 +343,7 @@ export const useCentrumStore = defineStore('centrum', {
                     },
                 );
 
-                for await (let resp of call.responses) {
+                for await (const resp of call.responses) {
                     this.error = undefined;
 
                     if (resp === undefined || !resp.change) {

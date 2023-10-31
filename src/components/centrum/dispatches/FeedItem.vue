@@ -13,11 +13,11 @@ import {
     MapMarkerIcon,
     NewBoxIcon,
 } from 'mdi-vue3';
+import DispatchStatusInfoPopover from '~/components/centrum/dispatches/DispatchStatusInfoPopover.vue';
+import UnitInfoPopover from '~/components/centrum/units/UnitInfoPopover.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import Time from '~/components/partials/elements/Time.vue';
 import { DispatchStatus, StatusDispatch } from '~~/gen/ts/resources/dispatch/dispatches';
-import UnitInfoPopover from '../units/UnitInfoPopover.vue';
-import DispatchStatusInfoPopover from './DispatchStatusInfoPopover.vue';
 
 withDefaults(
     defineProps<{

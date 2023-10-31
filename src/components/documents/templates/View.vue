@@ -1,13 +1,13 @@
 <script lang="ts" setup>
 import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { useConfirmDialog } from '@vueuse/core';
+import AccessEntry from '~/components/documents/AccessEntry.vue';
+import PreviewModal from '~/components/documents/templates/PreviewModal.vue';
+import RequirementsList from '~/components/documents/templates/RequirementsList.vue';
 import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
 import { useNotificatorStore } from '~/store/notificator';
 import { AccessLevel } from '~~/gen/ts/resources/documents/access';
 import { Template, TemplateRequirements } from '~~/gen/ts/resources/documents/templates';
-import AccessEntry from '../AccessEntry.vue';
-import PreviewModal from './PreviewModal.vue';
-import RequirementsList from './RequirementsList.vue';
 
 const props = defineProps<{
     templateId: bigint;

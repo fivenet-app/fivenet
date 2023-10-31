@@ -75,7 +75,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
             </button>
             <button
                 :disabled="offset <= 0n"
-                v-on:click="$emit('offsetChange', calculateOffset())"
+                @click="$emit('offsetChange', calculateOffset())"
                 type="button"
                 :class="[
                     offset <= 0n
@@ -88,7 +88,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
             </button>
             <button
                 :disabled="total - end <= 0"
-                v-on:click="$emit('offsetChange', end)"
+                @click="$emit('offsetChange', end)"
                 type="button"
                 :class="[
                     total - end <= 0

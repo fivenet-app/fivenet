@@ -4,11 +4,11 @@ import de from '@vee-validate/i18n/dist/locale/de.json';
 import en from '@vee-validate/i18n/dist/locale/en.json';
 import { UpdateIcon } from 'mdi-vue3';
 import { configure } from 'vee-validate';
+import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
 import { useClipboardStore } from '~/store/clipboard';
 import { useConfigStore } from '~/store/config';
 import { useDocumentEditorStore } from '~/store/documenteditor';
 import { useSettingsStore } from '~/store/settings';
-import ConfirmDialog from './components/partials/ConfirmDialog.vue';
 
 const { t, locale, finalizePendingLocaleChange } = useI18n();
 
@@ -85,7 +85,7 @@ watch(locale, () => setLocaleGlobally(locale.value));
 // Open update available confirm dialog
 const open = ref(false);
 
-watch(updateAvailable, async () => (open.value = true));
+watch(updateAvailable, () => (open.value = true));
 </script>
 
 <template>
@@ -100,7 +100,7 @@ watch(updateAvailable, async () => (open.value = true));
     </NuxtLayout>
 
     <CookieControl
-        v-if="!clientConfig.NUIEnabled && route.meta.showCookieOptions !== undefined && route.meta.showCookieOptions"
+        v-if="!clientConfig.nuiEnabled && route.meta.showCookieOptions !== undefined && route.meta.showCookieOptions"
         :locale="cookieLocale"
     />
 

@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import { CarEmergencyIcon } from 'mdi-vue3';
 import { default as DispatchDetails } from '~/components/centrum/dispatches/Details.vue';
+import { dispatchStatusToBGColor } from '~/components/centrum/helpers';
 import Time from '~/components/partials/elements/Time.vue';
 import { Dispatch, StatusDispatch } from '~~/gen/ts/resources/dispatch/dispatches';
-import { dispatchStatusToBGColor } from '../helpers';
 
 defineProps<{
     dispatch: Dispatch;

@@ -10,6 +10,7 @@ export default defineNuxtConfig({
     modules: [
         '@nuxt/devtools',
         'nuxt-typed-router',
+        '@nuxtjs/eslint-module',
         '@nuxtjs/robots',
         '@nuxtjs/tailwindcss',
         '@nuxtjs/i18n',
@@ -19,6 +20,9 @@ export default defineNuxtConfig({
         '@dargmuesli/nuxt-cookie-control',
         'nuxt-update',
     ],
+    sourcemap: {
+        client: true,
+    },
     devtools: {
         enabled: true,
         vscode: {},
@@ -26,8 +30,8 @@ export default defineNuxtConfig({
             enabled: true,
         },
     },
-    sourcemap: {
-        client: true,
+    eslint: {
+        lintOnStart: false,
     },
     robots: {
         rules: {

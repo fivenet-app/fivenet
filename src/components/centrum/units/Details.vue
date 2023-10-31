@@ -1,13 +1,13 @@
 <script lang="ts" setup>
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { AccountIcon, CloseIcon, MapMarkerIcon, PencilIcon } from 'mdi-vue3';
+import { unitStatusToBGColor } from '~/components/centrum//helpers';
+import AssignUnitModal from '~/components/centrum/units/AssignUnitModal.vue';
+import Feed from '~/components/centrum/units/Feed.vue';
+import StatusUpdateModal from '~/components/centrum/units/StatusUpdateModal.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import Time from '~/components/partials/elements/Time.vue';
 import { StatusUnit, Unit } from '~~/gen/ts/resources/dispatch/units';
-import { unitStatusToBGColor } from '../helpers';
-import AssignUnitModal from './AssignUnitModal.vue';
-import Feed from './Feed.vue';
-import StatusUpdateModal from './StatusUpdateModal.vue';
 
 const props = defineProps<{
     open: boolean;

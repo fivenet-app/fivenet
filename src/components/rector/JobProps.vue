@@ -5,11 +5,11 @@ import ColorInput from 'vue-color-input/dist/color-input.esm';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
+import Time from '~/components/partials/elements/Time.vue';
 import { useConfigStore } from '~/store/config';
 import { useNotificatorStore } from '~/store/notificator';
 import { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 import { JobProps } from '~~/gen/ts/resources/users/jobs';
-import Time from '../partials/elements/Time.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -161,10 +161,10 @@ async function saveJobProps(): Promise<void> {
                                         <div class="relative flex items-start">
                                             <div class="flex h-6 items-center">
                                                 <input
+                                                    v-model="properties.quickButtons.PenaltyCalculator"
                                                     aria-describedby="comments-description"
                                                     name="comments"
                                                     type="checkbox"
-                                                    v-model="properties.quickButtons.PenaltyCalculator"
                                                     class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600"
                                                 />
                                             </div>
@@ -184,6 +184,7 @@ async function saveJobProps(): Promise<void> {
                             </dt>
                             <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
                                 <input
+                                    v-model="properties.discordGuildId"
                                     type="text"
                                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                     :class="appConfig.discord.botInviteURL === undefined ? 'disabled' : ''"
@@ -191,7 +192,6 @@ async function saveJobProps(): Promise<void> {
                                     :placeholder="$t('components.rector.job_props.discord_guild_id')"
                                     :label="$t('components.rector.job_props.discord_guild_id')"
                                     maxlength="70"
-                                    v-model="properties.discordGuildId"
                                     @focusin="focusTablet(true)"
                                     @focusout="focusTablet(false)"
                                 />
@@ -217,8 +217,8 @@ async function saveJobProps(): Promise<void> {
                             <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
                                 <button
                                     type="button"
-                                    @click="saveJobProps()"
                                     class="rounded-md bg-success-600 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-success-400"
+                                    @click="saveJobProps()"
                                 >
                                     {{ $t('common.save', 1) }}
                                 </button>

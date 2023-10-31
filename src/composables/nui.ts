@@ -7,7 +7,7 @@ export function isNUIAvailable(): boolean {
 
 function getParentResourceName(): string {
     //return (window as any).GetParentResourceName();
-    return useConfigStore().clientConfig.NUIResourceName ?? 'fivenet';
+    return useConfigStore().clientConfig.nuiResourceName ?? 'fivenet';
 }
 
 export async function fetchNui<T = any, V = any>(event: string, data: T): Promise<V> {

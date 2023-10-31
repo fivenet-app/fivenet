@@ -44,7 +44,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
 }, 1000);
 
 const socialLoginEnabled = ref(false);
-if (clientConfig.value.NUIEnabled) {
+if (clientConfig.value.nuiEnabled) {
     socialLoginEnabled.value = true;
 } else if (cookiesEnabledIds.value?.includes('social_login')) {
     socialLoginEnabled.value = true;
@@ -126,7 +126,7 @@ watch(
     </form>
 
     <div class="my-4 space-y-2">
-        <template v-if="!clientConfig.NUIEnabled">
+        <template v-if="!clientConfig.nuiEnabled">
             <p v-if="!socialLoginEnabled" class="mt-2 text-sm text-error-400">
                 {{ $t('pages.auth.login.social_login_disabled') }}
             </p>

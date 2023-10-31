@@ -27,11 +27,11 @@ import {
     OpenInNewIcon,
 } from 'mdi-vue3';
 import { type DefineComponent } from 'vue';
+import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import Time from '~/components/partials/elements/Time.vue';
 import { ClipboardDocument, getDocument, getUser, useClipboardStore } from '~/store/clipboard';
 import { DocReference, DocumentReference, DocumentShort } from '~~/gen/ts/resources/documents/documents';
-import CitizenInfoPopover from '../partials/citizens/CitizenInfoPopover.vue';
 
 const { $grpc } = useNuxtApp();
 const clipboardStore = useClipboardStore();

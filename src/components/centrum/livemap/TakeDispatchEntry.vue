@@ -1,12 +1,12 @@
 <script lang="ts" setup>
 import { AccountIcon, MapMarkerIcon } from 'mdi-vue3';
+import Details from '~/components/centrum/dispatches/Details.vue';
+import { dispatchStatusToBGColor } from '~/components/centrum/helpers';
 import UnitInfoPopover from '~/components/centrum/units/UnitInfoPopover.vue';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import { useCentrumStore } from '~/store/centrum';
 import { Dispatch, StatusDispatch } from '~~/gen/ts/resources/dispatch/dispatches';
-import Details from '../dispatches/Details.vue';
-import { dispatchStatusToBGColor } from '../helpers';
 
 const props = withDefaults(
     defineProps<{

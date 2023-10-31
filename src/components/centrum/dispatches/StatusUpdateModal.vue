@@ -5,9 +5,9 @@ import { max, min, required } from '@vee-validate/rules';
 import { useThrottleFn } from '@vueuse/core';
 import { CloseIcon, HoopHouseIcon, LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
+import { dispatchStatusToBGColor, dispatchStatuses } from '~/components/centrum/helpers';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import { StatusDispatch } from '~~/gen/ts/resources/dispatch/dispatches';
-import { dispatchStatusToBGColor, dispatchStatuses } from '../helpers';
 
 const props = defineProps<{
     open: boolean;

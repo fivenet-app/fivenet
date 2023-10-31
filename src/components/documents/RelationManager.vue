@@ -26,12 +26,12 @@ import {
     ViewListOutlineIcon,
 } from 'mdi-vue3';
 import { type DefineComponent } from 'vue';
+import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import { useAuthStore } from '~/store/auth';
 import { getUser, useClipboardStore } from '~/store/clipboard';
 import { DocRelation, DocumentRelation } from '~~/gen/ts/resources/documents/documents';
 import { User } from '~~/gen/ts/resources/users/users';
-import CitizenInfoPopover from '../partials/citizens/CitizenInfoPopover.vue';
 
 const { $grpc } = useNuxtApp();
 const authStore = useAuthStore();

@@ -2,10 +2,10 @@
 import { LIcon, LMarker, LPopup } from '@vue-leaflet/vue-leaflet';
 import L from 'leaflet';
 import { AccountIcon, GroupIcon, MapMarkerIcon } from 'mdi-vue3';
+import Details from '~/components//centrum/units/Details.vue';
+import PhoneNumber from '~/components/partials/citizens/PhoneNumber.vue';
 import { UserMarker } from '~~/gen/ts/resources/livemap/livemap';
 import { User } from '~~/gen/ts/resources/users/users';
-import Details from '../centrum/units/Details.vue';
-import PhoneNumber from '../partials/citizens/PhoneNumber.vue';
 
 const props = withDefaults(
     defineProps<{

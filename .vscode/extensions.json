@@ -7,7 +7,8 @@
         "moalamri.inline-fold",
         "yoavbls.pretty-ts-errors",
         "lokalise.i18n-ally",
-        "esbenp.prettier-vscode"
+        "esbenp.prettier-vscode",
+        "dbaeumer.vscode-eslint"
     ],
     "unwantedRecommendations": [
         "vscode.typescript-language-features"

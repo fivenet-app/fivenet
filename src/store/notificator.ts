@@ -89,7 +89,7 @@ export const useNotificatorStore = defineStore('notifications', {
                     },
                 );
 
-                for await (let resp of call.responses) {
+                for await (const resp of call.responses) {
                     if (resp.lastId > this.getLastId) this.setLastId(resp.lastId);
 
                     if (resp.data.oneofKind !== undefined) {
