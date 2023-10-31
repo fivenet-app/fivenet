@@ -19,7 +19,7 @@ import (
 )
 
 var (
-	botActive = promauto.NewGaugeVec(prometheus.GaugeOpts{
+	metricBotActive = promauto.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: metrics.Namespace,
 		Subsystem: "centrum_bot",
 		Name:      "active",
@@ -131,7 +131,7 @@ func (b *Manager) Start(job string) error {
 		bot.Run(ctx)
 	}()
 
-	botActive.WithLabelValues(job).Set(1)
+	metricBotActive.WithLabelValues(job).Set(1)
 
 	return nil
 }
@@ -149,7 +149,7 @@ func (b *Manager) Stop(job string) error {
 
 	cancel()
 
-	botActive.WithLabelValues(job).Set(0)
+	metricBotActive.WithLabelValues(job).Set(0)
 
 	b.bots.Delete(job)
 

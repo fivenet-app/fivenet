@@ -406,6 +406,7 @@ func (s *Manager) CreateDispatch(ctx context.Context, d *dispatch.Dispatch) (*di
 		dsp.Creator = nil
 		dsp.CreatorId = nil
 	}
+	metricsDispatchLastID.WithLabelValues(d.Job).Set(float64(lastId))
 
 	data, err := proto.Marshal(dsp)
 	if err != nil {
