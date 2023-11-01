@@ -19,6 +19,7 @@ import CreateOrUpdateDispatchModal from '~/components/centrum/dispatches/CreateO
 
 defineProps<{
     showUnitNames?: boolean;
+    showUnitStatus?: boolean;
 }>();
 
 const { t } = useI18n();
@@ -115,6 +116,7 @@ async function applySelectedMarkerCentering(): Promise<void> {
                 <PlayerAndMarkersLayer
                     v-if="can('LivemapperService.Stream')"
                     :show-unit-names="showUnitNames"
+                    :show-unit-status="showUnitStatus"
                     @user-selected="selectedUserMarker = $event.info"
                 />
 

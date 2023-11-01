@@ -7,6 +7,7 @@ export interface SettingsState {
         markerSize: number;
         centerSelectedMarker: boolean;
         showUnitNames: boolean;
+        showUnitStatus: boolean;
     };
     documents: {
         editorTheme: 'default' | 'dark';
@@ -23,6 +24,7 @@ export const useSettingsStore = defineStore('settings', {
                 markerSize: 22,
                 centerSelectedMarker: false,
                 showUnitNames: false,
+                showUnitStatus: false,
             },
             documents: {},
             startpage: '/overview',

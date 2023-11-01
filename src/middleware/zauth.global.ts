@@ -36,7 +36,7 @@ export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, _: 
             }
         }
 
-        // No route permission check, so we can go ahead and return
+        // No route permission check, so we can go ahead and return true
         if (!to.meta.permission) {
             return true;
         }

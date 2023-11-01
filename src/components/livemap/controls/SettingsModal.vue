@@ -1,5 +1,14 @@
 <script lang="ts" setup>
-import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
+import {
+    Dialog,
+    DialogPanel,
+    DialogTitle,
+    Switch,
+    SwitchGroup,
+    SwitchLabel,
+    TransitionChild,
+    TransitionRoot,
+} from '@headlessui/vue';
 import { CloseIcon, CogIcon } from 'mdi-vue3';
 import { useSettingsStore } from '~/store/settings';
 
@@ -71,12 +80,21 @@ const { livemap } = storeToRefs(settingsStore);
                                                 >
                                                     {{ $t('components.livemap.center_selected_marker') }}
                                                 </label>
-                                                <input
+                                                <Switch
                                                     v-model="livemap.centerSelectedMarker"
-                                                    class="my-auto"
-                                                    name="centerSelectedMarker"
-                                                    type="checkbox"
-                                                />
+                                                    :class="[
+                                                        livemap.centerSelectedMarker ? 'bg-indigo-600' : 'bg-gray-200',
+                                                        'my-2 relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2',
+                                                    ]"
+                                                >
+                                                    <span
+                                                        aria-hidden="true"
+                                                        :class="[
+                                                            livemap.centerSelectedMarker ? 'translate-x-5' : 'translate-x-0',
+                                                            'pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
+                                                        ]"
+                                                    />
+                                                </Switch>
                                             </div>
                                             <div class="flex-1 form-control">
                                                 <label
@@ -88,28 +106,37 @@ const { livemap } = storeToRefs(settingsStore);
                                                 <input
                                                     name="livemapMarkerSize"
                                                     type="range"
-                                                    class="h-1.5 w-full cursor-grab rounded-full my-auto"
+                                                    class="my-2 h-1.5 w-full cursor-grab rounded-full my-auto"
                                                     min="14"
                                                     max="30"
                                                     step="2"
                                                     :value="livemap.markerSize"
                                                     @change="livemap.markerSize = parseInt(($event.target as any).value)"
                                                 />
-                                                <span class="text-sm mr-2 text-gray-300">{{ livemap.markerSize }}</span>
+                                                <span class="text-sm text-gray-300">{{ livemap.markerSize }}</span>
                                             </div>
-                                            <div class="flex-1 form-control">
+                                            <div class="flex-1 form-control items-center">
                                                 <label
                                                     for="showUnitNames"
                                                     class="block text-sm font-medium leading-6 text-neutral"
                                                 >
                                                     {{ $t('components.livemap.show_unit_names') }}
                                                 </label>
-                                                <input
+                                                <Switch
                                                     v-model="livemap.showUnitNames"
-                                                    class="my-auto"
-                                                    name="showUnitNames"
-                                                    type="checkbox"
-                                                />
+                                                    :class="[
+                                                        livemap.showUnitNames ? 'bg-indigo-600' : 'bg-gray-200',
+                                                        'my-2 relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2',
+                                                    ]"
+                                                >
+                                                    <span
+                                                        aria-hidden="true"
+                                                        :class="[
+                                                            livemap.showUnitNames ? 'translate-x-5' : 'translate-x-0',
+                                                            'pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
+                                                        ]"
+                                                    />
+                                                </Switch>
                                             </div>
                                         </div>
                                     </div>

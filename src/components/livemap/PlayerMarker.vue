@@ -6,6 +6,7 @@ import UnitDetails from '~/components//centrum/units/UnitDetails.vue';
 import PhoneNumber from '~/components/partials/citizens/PhoneNumber.vue';
 import { UserMarker } from '~~/gen/ts/resources/livemap/livemap';
 import { User } from '~~/gen/ts/resources/users/users';
+import { unitStatusToBGColor } from '~/components/centrum/helpers';
 
 const props = withDefaults(
     defineProps<{
@@ -13,10 +14,12 @@ const props = withDefaults(
         activeChar: null | User;
         size?: number;
         showUnitNames?: boolean;
+        showUnitStatus?: boolean;
     }>(),
     {
         size: 20,
         showUnitNames: false,
+        showUnitStatus: false,
     },
 );
 
@@ -39,6 +42,8 @@ const inverseColor = computed(() => hexToRgb(props.marker.unit?.color ?? '#00000
 const hasUnit = computed(() => props.showUnitNames && props.marker.unit !== undefined);
 const iconAnchor = computed<L.PointExpression | undefined>(() => [props.size / 2, props.size * (hasUnit.value ? 1.8 : 0.95)]);
 const popupAnchor = computed<L.PointExpression>(() => (hasUnit.value ? [0, -(props.size * 1.7)] : [0, -(props.size * 0.8)]));
+
+const unitStatusColor = computed(() => unitStatusToBGColor(props.marker.unit?.status?.status ?? 0));
 
 const openUnit = ref(false);
 </script>
@@ -69,6 +74,11 @@ const openUnit = ref(false);
                     {{ marker.unit?.initials }}
                 </span>
                 <MapMarkerIcon class="w-full h-full" :style="{ color: '#' + props.marker.info?.color ?? '000000' }" />
+            </div>
+            <div v-if="showUnitStatus && marker.unit" class="uppercase pointer-events-none">
+                <span class="flex absolute h-3 w-3 top-0 right-0 -mt-1.5 -mr-2">
+                    <span class="relative inline-flex rounded-full h-3 w-3" :class="unitStatusColor"></span>
+                </span>
             </div>
         </LIcon>
         <LPopup :options="{ closeButton: true }">
