@@ -373,7 +373,8 @@
                 "title": "Markierung aktualisieren",
                 "sub_title": "Existierende Markierung aktualisieren."
             },
-            "show_unit_names": "Zeige Einheiten Namen (gilt nur für Livemap)"
+            "show_unit_names": "Zeige Einheiten Namen (gilt nur für Livemap)",
+            "show_unit_status": "Zeige Einheiten Status Farbe"
         },
         "rector": {
             "job_props": {

@@ -1,14 +1,5 @@
 <script lang="ts" setup>
-import {
-    Dialog,
-    DialogPanel,
-    DialogTitle,
-    Switch,
-    SwitchGroup,
-    SwitchLabel,
-    TransitionChild,
-    TransitionRoot,
-} from '@headlessui/vue';
+import { Dialog, DialogPanel, DialogTitle, Switch, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { CloseIcon, CogIcon } from 'mdi-vue3';
 import { useSettingsStore } from '~/store/settings';
 
@@ -133,6 +124,29 @@ const { livemap } = storeToRefs(settingsStore);
                                                         aria-hidden="true"
                                                         :class="[
                                                             livemap.showUnitNames ? 'translate-x-5' : 'translate-x-0',
+                                                            'pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
+                                                        ]"
+                                                    />
+                                                </Switch>
+                                            </div>
+                                            <div class="flex-1 form-control items-center">
+                                                <label
+                                                    for="showUnitStatus"
+                                                    class="block text-sm font-medium leading-6 text-neutral"
+                                                >
+                                                    {{ $t('components.livemap.show_unit_status') }}
+                                                </label>
+                                                <Switch
+                                                    v-model="livemap.showUnitStatus"
+                                                    :class="[
+                                                        livemap.showUnitStatus ? 'bg-indigo-600' : 'bg-gray-200',
+                                                        'my-2 relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2',
+                                                    ]"
+                                                >
+                                                    <span
+                                                        aria-hidden="true"
+                                                        :class="[
+                                                            livemap.showUnitStatus ? 'translate-x-5' : 'translate-x-0',
                                                             'pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
                                                         ]"
                                                     />

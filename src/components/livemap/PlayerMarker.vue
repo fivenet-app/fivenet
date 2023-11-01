@@ -77,7 +77,10 @@ const openUnit = ref(false);
             </div>
             <div v-if="showUnitStatus && marker.unit" class="uppercase pointer-events-none">
                 <span class="flex absolute h-3 w-3 top-0 right-0 -mt-1.5 -mr-2">
-                    <span class="relative inline-flex rounded-full h-3 w-3" :class="unitStatusColor"></span>
+                    <span
+                        class="relative inline-flex rounded-full h-3 w-3 border-2 border-black/20 inset-0"
+                        :class="unitStatusColor"
+                    ></span>
                 </span>
             </div>
         </LIcon>

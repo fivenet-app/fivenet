@@ -373,7 +373,8 @@
                 "title": "Update Marker",
                 "sub_title": "Update existing Marker."
             },
-            "show_unit_names": "Show Unit Names (only affects Livemap)"
+            "show_unit_names": "Show Unit Names (only affects Livemap)",
+            "show_unit_status": "Show Unit Status Color"
         },
         "rector": {
             "job_props": {
