@@ -65,10 +65,13 @@ async function setJobProp(values: FormData): Promise<void> {
         return;
     }
 
+    const jobGrade = selectedJobGrade.value?.grade ? selectedJobGrade.value?.grade : 1;
+    const jobGradeLabel = selectedJobGrade.value?.label ? selectedJobGrade.value.label : '';
+
     const userProps: UserProps = {
         userId: props.user.userId,
         jobName: selectedJob.value.name,
-        jobGradeNumber: selectedJobGrade.value ? selectedJobGrade.value?.grade : 1,
+        jobGradeNumber: jobGrade,
     };
 
     try {
@@ -80,8 +83,8 @@ async function setJobProp(values: FormData): Promise<void> {
         props.user.job = selectedJob.value.name;
         props.user.jobLabel = selectedJob.value.label;
 
-        props.user.jobGrade = selectedJobGrade.value.grade;
-        props.user.jobGradeLabel = selectedJob.value.label;
+        props.user.jobGrade = jobGrade;
+        props.user.jobGradeLabel = jobGradeLabel;
 
         notifications.dispatchNotification({
             title: { key: 'notifications.action_successfull.title', parameters: {} },

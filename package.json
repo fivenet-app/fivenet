@@ -49,7 +49,7 @@
         "vue-template-compiler": "^2.7.15"
     },
     "devDependencies": {
-        "@dargmuesli/nuxt-cookie-control": "^7.0.1",
+        "@dargmuesli/nuxt-cookie-control": "^7.0.2",
         "@nuxt/devtools": "^1.0.0",
         "@nuxtjs/eslint-config-typescript": "^12.1.0",
         "@nuxtjs/eslint-module": "^4.1.0",
@@ -65,7 +65,7 @@
         "@types/splitpanes": "^2.2.4",
         "@types/uuid": "^9.0.6",
         "@types/zxcvbn": "^4.4.3",
-        "@unhead/vue": "^1.8.1",
+        "@unhead/vue": "^1.8.2",
         "@vitejs/plugin-vue": "^4.4.0",
         "@vue/typescript": "^1.8.20",
         "@vueuse/router": "^10.5.0",
