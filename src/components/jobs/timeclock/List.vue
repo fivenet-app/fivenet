@@ -279,9 +279,9 @@ function updateDates(): void {
                             <div class="flex-1 form-control">
                                 <button
                                     type="button"
-                                    :disabled="futureDay >= today"
+                                    :disabled="futureDay > today"
                                     :class="[
-                                        futureDay >= today
+                                        futureDay > today
                                             ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
                                             : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
                                         'relative w-full inline-flex items-center place-content-start px-3 py-2 text-sm font-semibold rounded-md cursor-pointer text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',

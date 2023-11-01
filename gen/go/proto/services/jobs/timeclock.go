@@ -36,8 +36,7 @@ func (s *Server) TimeclockListEntries(ctx context.Context, req *TimeclockListEnt
 		fields = fieldsAttr.([]string)
 	}
 
-	canViewAll := utils.InSlice(fields, "All")
-	if len(fields) == 0 || !canViewAll {
+	if len(fields) == 0 || !utils.InSlice(fields, "All") {
 		condition = condition.AND(tTimeClock.UserID.EQ(jet.Int32(userInfo.UserId)))
 		statsCondition = statsCondition.AND(tTimeClock.UserID.EQ(jet.Int32(userInfo.UserId)))
 	}
@@ -78,6 +77,12 @@ func (s *Server) TimeclockListEntries(ctx context.Context, req *TimeclockListEnt
 	resp := &TimeclockListEntriesResponse{
 		Pagination: pag,
 	}
+
+	resp.Stats, err = s.getTimeclockstats(ctx, statsCondition)
+	if err != nil {
+		return nil, ErrFailedQuery
+	}
+
 	if count.TotalCount <= 0 {
 		return resp, nil
 	}
@@ -123,11 +128,6 @@ func (s *Server) TimeclockListEntries(ctx context.Context, req *TimeclockListEnt
 		if resp.Entries[i].User != nil {
 			s.enricher.EnrichJobInfo(resp.Entries[i].User)
 		}
-	}
-
-	resp.Stats, err = s.getTimeclockstats(ctx, statsCondition)
-	if err != nil {
-		return nil, ErrFailedQuery
 	}
 
 	resp.Pagination.Update(count.TotalCount, len(resp.Entries))
