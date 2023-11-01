@@ -8,7 +8,7 @@ import { CentrumMode, Settings } from '~~/gen/ts/resources/dispatch/settings';
 import { StatusUnit, Unit, UnitStatus } from '~~/gen/ts/resources/dispatch/units';
 import { UserShort } from '~~/gen/ts/resources/users/users';
 
-const ONE_MIN_THREE_QUARTER_SEC = 1 * 45 * 1000;
+const cleanupInterval = 1 * 45 * 1000;
 
 // In seconds
 const initialBackoffTime = 2;
@@ -325,7 +325,7 @@ export const useCentrumStore = defineStore('centrum', {
             }
 
             if (this.cleanupIntervalId === undefined) {
-                this.cleanupIntervalId = setInterval(() => this.cleanup(), ONE_MIN_THREE_QUARTER_SEC);
+                this.cleanupIntervalId = setInterval(() => this.cleanup(), cleanupInterval);
             }
 
             console.debug('Centrum: Starting Data Stream');
@@ -560,7 +560,7 @@ export const useCentrumStore = defineStore('centrum', {
                     this.removePendingDispatch(pd);
                 } else {
                     this.dispatches.get(pd)?.units.forEach((ua) => {
-                        if (now - toDate(ua.expiresAt).getTime() >= ONE_MIN_THREE_QUARTER_SEC) this.removePendingDispatch(pd);
+                        if (now - toDate(ua.expiresAt).getTime() >= cleanupInterval) this.removePendingDispatch(pd);
                     });
                 }
             });
@@ -575,7 +575,7 @@ export const useCentrumStore = defineStore('centrum', {
                     return;
                 }
 
-                if (now - toDate(d.status?.createdAt).getTime() >= ONE_MIN_THREE_QUARTER_SEC) {
+                if (now - toDate(d.status?.createdAt).getTime() >= cleanupInterval) {
                     this.removeDispatch(d.id);
                     return;
                 }
@@ -586,7 +586,7 @@ export const useCentrumStore = defineStore('centrum', {
                         return;
                     }
 
-                    if (now - toDate(ua.expiresAt).getTime() >= ONE_MIN_THREE_QUARTER_SEC) {
+                    if (now - toDate(ua.expiresAt).getTime() >= cleanupInterval) {
                         d.units.splice(idx, 1);
                     }
                 });

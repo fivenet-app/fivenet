@@ -180,7 +180,8 @@ onBeforeUnmount(async () => {
     centrumStore.$reset();
 });
 
-const TWENTYONE_MINUTES = 21 * 60 * 1000;
+const unitCheckupStatusAge = 20 * 60 * 1000;
+const unitCheckupStatusReping = 12 * 60 * 1000;
 
 const attentionSound = useSound('/sounds/centrum/attention.mp3', {
     volume: 0.15,
@@ -188,6 +189,8 @@ const attentionSound = useSound('/sounds/centrum/attention.mp3', {
 });
 
 const debouncedPlay = useDebounceFn(() => attentionSound.play(), 950);
+
+const lastCheckupNotification = ref<Date | undefined>();
 
 async function checkup(): Promise<void> {
     console.debug('Centrum: Sidebar - Running checkup');
@@ -200,14 +203,20 @@ async function checkup(): Promise<void> {
         return;
     }
 
-    const now = new Date().getTime();
-    // If unit status is younger than time X, ignore
-    if (now - toDate(ownUnit.status.createdAt).getTime() <= TWENTYONE_MINUTES) {
+    const now = new Date();
+    // If unit status is younger than time X, ignore and continue
+    if (now.getTime() - toDate(ownUnit.status.createdAt).getTime() <= unitCheckupStatusAge) {
+        return;
+    }
+
+    if (
+        lastCheckupNotification.value !== undefined &&
+        now.getTime() - lastCheckupNotification.value.getTime() <= unitCheckupStatusReping
+    ) {
         return;
     }
 
     const notifications = useNotificatorStore();
-
     notifications.dispatchNotification({
         title: { key: 'notifications.centrum.unitUpdated.checkup.title', parameters: {} },
         content: { key: 'notifications.centrum.unitUpdated.checkup.content', parameters: {} },
@@ -215,6 +224,8 @@ async function checkup(): Promise<void> {
         duration: 10000,
         callback: () => debouncedPlay(),
     });
+
+    lastCheckupNotification.value = now;
 }
 </script>
 
