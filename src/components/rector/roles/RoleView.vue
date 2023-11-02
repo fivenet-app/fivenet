@@ -7,7 +7,7 @@ import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import Divider from '~/components/partials/elements/Divider.vue';
+import GenericDivider from '~/components/partials/elements/GenericDivider.vue';
 import RoleViewAttr from '~/components/rector/roles/RoleViewAttr.vue';
 import { useNotificatorStore } from '~/store/notificator';
 import { AttributeValues, Permission, Role, RoleAttribute } from '~~/gen/ts/resources/permissions/permissions';
@@ -260,7 +260,7 @@ onConfirm(async (id) => deleteRole(id));
                         <TrashCanIcon class="w-6 h-6 mx-auto text-neutral" />
                     </button>
                 </h2>
-                <Divider label="Permissions" />
+                <GenericDivider :label="$t('common.permission', 2)" />
                 <div class="py-2 flex flex-col gap-4">
                     <button
                         type="button"

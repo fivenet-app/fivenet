@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import ContentCenterWrapper from '~/components/partials/ContentCenterWrapper.vue';
-import Footer from '~/components/partials/Footer.vue';
+import PageFooter from '~/components/partials/PageFooter.vue';
 import HeroFull from '~/components/partials/HeroFull.vue';
 import { useAuthStore } from '~/store/auth';
 
@@ -47,6 +47,6 @@ onMounted(async () => {
                 </p>
             </ContentCenterWrapper>
         </HeroFull>
-        <Footer />
+        <PageFooter />
     </div>
 </template>

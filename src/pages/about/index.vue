@@ -2,7 +2,7 @@
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 import { ChevronDownIcon, LicenseIcon, LockIcon, MagnifyIcon, MapIcon } from 'mdi-vue3';
 import '~/assets/css/herofull-pattern.css';
-import Footer from '~/components/partials/Footer.vue';
+import PageFooter from '~/components/partials/PageFooter.vue';
 import DiscordLogo from '~/components/partials/logos/DiscordLogo.vue';
 
 const { t } = useI18n();
@@ -196,6 +196,6 @@ const faqs = [
                 </div>
             </div>
         </div>
-        <Footer />
+        <PageFooter />
     </div>
 </template>

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 import { ChevronDownIcon } from 'mdi-vue3';
-import Footer from '~/components/partials/Footer.vue';
+import PageFooter from '~/components/partials/PageFooter.vue';
 import LicenseHolder from '~/components/partials/LicenseHolder.vue';
 
 useHead({
@@ -75,6 +75,6 @@ const licenses = [
                 </div>
             </div>
         </div>
-        <Footer />
+        <PageFooter />
     </div>
 </template>

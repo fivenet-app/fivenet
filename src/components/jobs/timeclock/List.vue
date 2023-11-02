@@ -6,7 +6,7 @@ import { CalendarIcon, CheckIcon, ChevronLeftIcon, ChevronRightIcon } from 'mdi-
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import Divider from '~/components/partials/elements/Divider.vue';
+import GenericDivider from '~/components/partials/elements/GenericDivider.vue';
 import TablePagination from '~/components/partials/elements/TablePagination.vue';
 import * as googleProtobufTimestamp from '~~/gen/ts/google/protobuf/timestamp';
 import { TimeclockEntry } from '~~/gen/ts/resources/jobs/timeclock';
@@ -400,7 +400,7 @@ function updateDates(): void {
             <div v-if="data && data.stats" class="flow-root mb-4">
                 <div class="sm:flex sm:items-center">
                     <div class="sm:flex-auto">
-                        <Divider :label="$t('components.jobs.timeclock.Stats.title')" />
+                        <GenericDivider :label="$t('components.jobs.timeclock.Stats.title')" />
                         <TimeclockStatsBlock :stats="data.stats" />
                     </div>
                 </div>

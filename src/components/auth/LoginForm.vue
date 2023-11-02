@@ -4,7 +4,7 @@ import { alpha_dash, max, min, required } from '@vee-validate/rules';
 import { useThrottleFn } from '@vueuse/core';
 import { LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
-import Alert from '~/components/partials/elements/Alert.vue';
+import GenericAlert from '~/components/partials/elements/GenericAlert.vue';
 import { useAuthStore } from '~/store/auth';
 import { useConfigStore } from '~/store/config';
 
@@ -153,7 +153,7 @@ watch(
         </template>
     </div>
 
-    <Alert
+    <GenericAlert
         v-if="loginError"
         :title="$t('components.auth.login.login_error')"
         :message="loginError.startsWith('errors.') ? $t(loginError) : loginError"
