@@ -53,7 +53,7 @@ watch(offset, async () => refresh());
         <DataNoDataBlock v-else-if="data?.dispatches.length === 0" :type="$t('common.dispatches')" />
 
         <div v-else>
-            <DispatchList :show-button="false" :hide-actions="true" :dispatches="data?.dispatches" />
+            <DispatchList :show-button="false" :hide-actions="true" :always-show-day="true" :dispatches="data?.dispatches" />
 
             <TablePagination :pagination="data?.pagination" :refresh="refresh" @offset-change="offset = $event" />
         </div>

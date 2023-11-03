@@ -123,6 +123,20 @@ message RequestsDeleteEntryRequest {
 
 message RequestsDeleteEntryResponse {}
 
+message RequestsApproveEntryRequest {
+  uint64 id = 1;
+  bool approve = 2;
+}
+
+message RequestsApproveEntryResponse {}
+
+message RequestsCloseEntryRequest {
+  uint64 id = 1;
+  bool close = 2;
+}
+
+message RequestsCloseEntryResponse {}
+
 message RequestsListTypesRequest {}
 
 message RequestsListTypesResponse {

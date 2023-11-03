@@ -3,17 +3,20 @@ import { ViewListIcon } from 'mdi-vue3';
 import { useCentrumStore } from '~/store/centrum';
 import DispatchListEntry from '~/components/centrum/dispatches/DispatchListEntry.vue';
 import { Dispatch } from '~~/gen/ts/resources/dispatch/dispatches';
+import Time from '~/components/partials/elements/Time.vue';
 
-withDefaults(
+const props = withDefaults(
     defineProps<{
         dispatches?: Dispatch[];
         showButton?: boolean;
         hideActions?: boolean;
+        alwaysShowDay?: boolean;
     }>(),
     {
+        dispatches: undefined,
         showButton: false,
         hideActions: false,
-        dispatches: undefined,
+        alwaysShowDay: false,
     },
 );
 
@@ -23,6 +26,27 @@ defineEmits<{
 
 const centrumStore = useCentrumStore();
 const { getSortedDispatches } = storeToRefs(centrumStore);
+
+type GroupedDispatches = { date: Date; key: string; dispatches: Dispatch[] }[];
+
+const grouped = computed(() => {
+    const groups: GroupedDispatches = [];
+    (props.dispatches ?? getSortedDispatches.value).forEach((e) => {
+        const date = toDate(e.createdAt);
+        const idx = groups.findIndex((g) => g.key === dateToDateString(date));
+        if (idx === -1) {
+            groups.push({
+                date,
+                dispatches: [e],
+                key: dateToDateString(date),
+            });
+        } else {
+            groups[idx].dispatches.push(e);
+        }
+    });
+
+    return groups;
+});
 </script>
 
 <template>
@@ -103,13 +127,20 @@ const { getSortedDispatches } = storeToRefs(centrumStore);
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-base-800">
-                            <DispatchListEntry
-                                v-for="dispatch in dispatches ?? getSortedDispatches"
-                                :key="dispatch.id.toString()"
-                                :dispatch="dispatch"
-                                :hide-actions="hideActions"
-                                @goto="$emit('goto', $event)"
-                            />
+                            <template v-for="(group, idx) in grouped" :key="group.key">
+                                <tr v-if="alwaysShowDay || idx !== 0">
+                                    <td class="whitespace-nowrap px-1 py-1 text-sm text-gray-300" colspan="5">
+                                        <Time :value="group.date" type="date" />
+                                    </td>
+                                </tr>
+                                <DispatchListEntry
+                                    v-for="dispatch in group.dispatches"
+                                    :key="dispatch.id.toString()"
+                                    :dispatch="dispatch"
+                                    :hide-actions="hideActions"
+                                    @goto="$emit('goto', $event)"
+                                />
+                            </template>
                         </tbody>
                     </table>
                 </div>

@@ -354,7 +354,7 @@ function updateDates(): void {
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-base-800">
-                                    <template v-for="group in grouped">
+                                    <template v-for="group in grouped" :key="group.key">
                                         <ListEntry
                                             v-for="(entry, idx) in group.entries"
                                             :key="entry.userId + toDate(entry.date).toString()"

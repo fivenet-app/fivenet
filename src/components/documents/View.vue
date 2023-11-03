@@ -226,7 +226,7 @@ onConfirm(async (id: bigint) => deleteDocument(id));
                                         )
                                     "
                                     :to="{
-                                        name: 'documents-edit-id',
+                                        name: 'documents-id-edit',
                                         params: { id: doc?.id.toString() ?? 0 },
                                     }"
                                     type="button"

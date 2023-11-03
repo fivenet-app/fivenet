@@ -285,6 +285,42 @@ export interface RequestsDeleteEntryRequest {
 export interface RequestsDeleteEntryResponse {
 }
 /**
+ * @generated from protobuf message services.jobs.RequestsApproveEntryRequest
+ */
+export interface RequestsApproveEntryRequest {
+    /**
+     * @generated from protobuf field: uint64 id = 1;
+     */
+    id: bigint;
+    /**
+     * @generated from protobuf field: bool approve = 2;
+     */
+    approve: boolean;
+}
+/**
+ * @generated from protobuf message services.jobs.RequestsApproveEntryResponse
+ */
+export interface RequestsApproveEntryResponse {
+}
+/**
+ * @generated from protobuf message services.jobs.RequestsCloseEntryRequest
+ */
+export interface RequestsCloseEntryRequest {
+    /**
+     * @generated from protobuf field: uint64 id = 1;
+     */
+    id: bigint;
+    /**
+     * @generated from protobuf field: bool close = 2;
+     */
+    close: boolean;
+}
+/**
+ * @generated from protobuf message services.jobs.RequestsCloseEntryResponse
+ */
+export interface RequestsCloseEntryResponse {
+}
+/**
  * @generated from protobuf message services.jobs.RequestsListTypesRequest
  */
 export interface RequestsListTypesRequest {
@@ -663,6 +699,52 @@ class RequestsDeleteEntryResponse$Type extends MessageType<RequestsDeleteEntryRe
  * @generated MessageType for protobuf message services.jobs.RequestsDeleteEntryResponse
  */
 export const RequestsDeleteEntryResponse = new RequestsDeleteEntryResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class RequestsApproveEntryRequest$Type extends MessageType<RequestsApproveEntryRequest> {
+    constructor() {
+        super("services.jobs.RequestsApproveEntryRequest", [
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 2, name: "approve", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.RequestsApproveEntryRequest
+ */
+export const RequestsApproveEntryRequest = new RequestsApproveEntryRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class RequestsApproveEntryResponse$Type extends MessageType<RequestsApproveEntryResponse> {
+    constructor() {
+        super("services.jobs.RequestsApproveEntryResponse", []);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.RequestsApproveEntryResponse
+ */
+export const RequestsApproveEntryResponse = new RequestsApproveEntryResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class RequestsCloseEntryRequest$Type extends MessageType<RequestsCloseEntryRequest> {
+    constructor() {
+        super("services.jobs.RequestsCloseEntryRequest", [
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 2, name: "close", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.RequestsCloseEntryRequest
+ */
+export const RequestsCloseEntryRequest = new RequestsCloseEntryRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class RequestsCloseEntryResponse$Type extends MessageType<RequestsCloseEntryResponse> {
+    constructor() {
+        super("services.jobs.RequestsCloseEntryResponse", []);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.RequestsCloseEntryResponse
+ */
+export const RequestsCloseEntryResponse = new RequestsCloseEntryResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class RequestsListTypesRequest$Type extends MessageType<RequestsListTypesRequest> {
     constructor() {

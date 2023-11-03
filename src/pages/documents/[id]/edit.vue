@@ -11,13 +11,13 @@ definePageMeta({
     requiresAuth: true,
     permission: 'DocStoreService.CreateDocument',
     validate: async (route) => {
-        route = route as TypedRouteFromName<'documents-edit-id'>;
+        route = route as TypedRouteFromName<'documents-id-edit'>;
         // Check if the id is made up of digits
         return /^\d+$/.test(route.params.id);
     },
 });
 
-const route = useRoute('documents-edit-id');
+const route = useRoute('documents-id-edit');
 </script>
 
 <template>

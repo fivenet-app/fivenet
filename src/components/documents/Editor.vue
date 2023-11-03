@@ -657,6 +657,17 @@ const canDo = computed(() => ({
     relations: can('DocStoreService.AddDocumentRelation'),
 }));
 
+console.info(
+    'Documents Editor - Can Do: Edit',
+    canDo.value.edit,
+    'Access',
+    canDo.value.access,
+    'References',
+    canDo.value.references,
+    'Relations',
+    canDo.value.relations,
+);
+
 defineRule('required', required);
 defineRule('max', max);
 defineRule('min', min);
