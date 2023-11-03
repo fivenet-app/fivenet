@@ -73,18 +73,18 @@ const open = ref(false);
                             </button>
                             <div class="flex flex-row gap-4">
                                 <NuxtLink
-                                    :to="{ name: 'centrum-units' }"
-                                    class="mt-4 px-2 py-1 flex items-center justify-center rounded-full bg-primary-500 text-neutral hover:bg-primary-400"
-                                >
-                                    <GroupIcon class="w-8 h-8" />
-                                    <span class="px-1">{{ $t('common.units') }}</span>
-                                </NuxtLink>
-                                <NuxtLink
                                     :to="{ name: 'centrum-dispatches' }"
                                     class="mt-4 px-2 py-1 flex items-center justify-center rounded-full bg-primary-500 text-neutral hover:bg-primary-400"
                                 >
                                     <AlertBoxIcon class="w-8 h-8" />
                                     <span class="px-1">{{ $t('common.dispatches') }}</span>
+                                </NuxtLink>
+                                <NuxtLink
+                                    :to="{ name: 'centrum-units' }"
+                                    class="mt-4 px-2 py-1 flex items-center justify-center rounded-full bg-primary-500 text-neutral hover:bg-primary-400"
+                                >
+                                    <GroupIcon class="w-8 h-8" />
+                                    <span class="px-1">{{ $t('common.units') }}</span>
                                 </NuxtLink>
                                 <button
                                     type="button"
