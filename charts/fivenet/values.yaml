@@ -83,19 +83,15 @@ fivenet:
       path: /readiness
       port: http
     failureThreshold: 3
-    initialDelaySeconds: 15
+    initialDelaySeconds: 25
     periodSeconds: 10
-  readinessProbe:
-    httpGet:
-      path: /readiness
-      port: http
-    initialDelaySeconds: 10
-    periodSeconds: 7
+  readinessProbe: {}
   startupProbe:
     httpGet:
       path: /readiness
       port: http
     failureThreshold: 30
+    initialDelaySeconds: 20
     periodSeconds: 10
   additionalEnv: []
   serviceMonitor:
@@ -250,17 +246,13 @@ discordBot:
       port: metrics
     initialDelaySeconds: 15
     periodSeconds: 10
-  readinessProbe:
-    httpGet:
-      path: /readiness
-      port: metrics
-    initialDelaySeconds: 10
-    periodSeconds: 7
+  readinessProbe: {}
   startupProbe:
     httpGet:
       path: /readiness
-      port: http
-    failureThreshold: 15
+      port: metrics
+    initialDelaySeconds: 5
+    failureThreshold: 20
     periodSeconds: 10
   additionalEnv: []
   serviceMonitor:
@@ -398,7 +390,7 @@ envoy:
                         "@type": type.googleapis.com/envoy.extensions.filters.http.router.v3.Router
       clusters:
         - name: fivenet_service
-          connect_timeout: 0.25s
+          connect_timeout: 0.5s
           type: logical_dns
           http2_protocol_options: {}
           lb_policy: round_robin
