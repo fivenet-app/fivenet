@@ -50,12 +50,18 @@ spec:
             - name: metrics
               containerPort: 7070
               protocol: TCP
+          {{- with .Values.fivenet.livenessProbe }}
           livenessProbe:
-            {{- toYaml .Values.fivenet.livenessProbe | nindent 12 }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.fivenet.readinessProbe }}
           readinessProbe:
-            {{- toYaml .Values.fivenet.readinessProbe | nindent 12 }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
+          {{- with .Values.fivenet.startupProbe }}
           startupProbe:
-            {{- toYaml .Values.fivenet.startupProbe | nindent 12 }}
+            {{- toYaml . | nindent 12 }}
+          {{- end }}
           volumeMounts:
             - name: fivenet-config
               mountPath: /config

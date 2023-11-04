@@ -46,12 +46,18 @@ spec:
             - name: metrics
               containerPort: 7070
               protocol: TCP
+          {{- with .Values.discordBot.livenessProbe }}
           livenessProbe:
             {{- toYaml .Values.discordBot.livenessProbe | nindent 12 }}
+          {{- end }}
+          {{- with .Values.discordBot.readinessProbe }}
           readinessProbe:
             {{- toYaml .Values.discordBot.readinessProbe | nindent 12 }}
+          {{- end }}
+          {{- with .Values.discordBot.startupProbe }}
           startupProbe:
             {{- toYaml .Values.discordBot.startupProbe | nindent 12 }}
+          {{- end }}
           volumeMounts:
             - name: fivenet-config
               mountPath: /config

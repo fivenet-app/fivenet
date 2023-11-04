@@ -47,12 +47,18 @@ spec:
             - name: admin
               containerPort: 9901
               protocol: TCP
+          {{- with .Values.envoy.livenessProbe }}
           livenessProbe:
             {{- toYaml .Values.envoy.livenessProbe | nindent 12 }}
+          {{- end }}
+          {{- with .Values.envoy.readinessProbe }}
           readinessProbe:
             {{- toYaml .Values.envoy.readinessProbe | nindent 12 }}
+          {{- end }}
+          {{- with .Values.envoy.startupProbe }}
           startupProbe:
             {{- toYaml .Values.envoy.startupProbe | nindent 12 }}
+          {{- end }}
           volumeMounts:
             - name: envoy-config
               mountPath: /config
