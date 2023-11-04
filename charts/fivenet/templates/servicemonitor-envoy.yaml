@@ -16,6 +16,7 @@ spec:
   endpoints:
     - port: admin
       interval: {{ .Values.envoy.serviceMonitor.scrapeInterval }}
+      path: /stats/prometheus
     {{- if .Values.envoy.serviceMonitor.honorLabels }}
       honorLabels: true
     {{- end }}
