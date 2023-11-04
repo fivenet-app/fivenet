@@ -44,7 +44,7 @@ async function takeDispatches(resp: TakeDispatchResp): Promise<void> {
                 }
 
                 // Dispatch has no status? Just continue..
-                return dsp.status === undefined ? true : isStatusDispatchCompleted(dsp.status.status);
+                return dsp.status === undefined ? true : !isStatusDispatchCompleted(dsp.status.status);
             }),
             resp,
         });
