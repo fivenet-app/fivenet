@@ -57,6 +57,7 @@ func NewGuild(b *Bot, guild *discordgo.Guild, job string) (*Guild, error) {
 }
 
 func (g *Guild) Setup() error {
+	g.logger.Info("setting up guild")
 	if g.commands != nil {
 		return g.commands.Register(g.bot.discord)
 	}
