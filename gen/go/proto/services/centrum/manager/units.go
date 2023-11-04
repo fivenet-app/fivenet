@@ -117,7 +117,7 @@ func (s *Manager) UpdateUnitStatus(ctx context.Context, job string, unit *dispat
 	}
 
 	var oldStatus *dispatch.UnitStatus
-	if unit.Status.Status == dispatch.StatusUnit_STATUS_UNIT_USER_ADDED || unit.Status.Status == dispatch.StatusUnit_STATUS_UNIT_USER_REMOVED {
+	if unit.Status != nil && (unit.Status.Status == dispatch.StatusUnit_STATUS_UNIT_USER_ADDED || unit.Status.Status == dispatch.StatusUnit_STATUS_UNIT_USER_REMOVED) {
 		oldStatus = unit.Status
 		unit.Status = status
 	} else {

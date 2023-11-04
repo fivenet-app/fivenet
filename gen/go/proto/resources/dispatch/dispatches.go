@@ -35,7 +35,7 @@ func (x *Dispatch) Update(in *Dispatch) {
 		return
 	}
 
-	err := mergo.Merge(x, in)
+	err := mergo.Merge(x, in, mergo.WithOverride)
 	if err != nil {
 		return
 	}

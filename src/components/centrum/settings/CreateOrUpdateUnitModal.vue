@@ -28,6 +28,8 @@ interface FormData {
     color: string;
 }
 
+const color = ref('#000000');
+
 async function createOrUpdateUnit(values: FormData): Promise<void> {
     try {
         const call = $grpc.getCentrumClient().createOrUpdateUnit({
@@ -36,7 +38,7 @@ async function createOrUpdateUnit(values: FormData): Promise<void> {
                 job: '',
                 name: values.name,
                 initials: values.initials,
-                color: values.color.replaceAll('#', ''),
+                color: color.value.replaceAll('#', ''),
                 description: values.description,
                 users: [],
             },
@@ -59,15 +61,11 @@ defineRule('required', required);
 defineRule('min', min);
 defineRule('max', max);
 
-const { handleSubmit, meta, setValues } = useForm<FormData>({
+const { handleSubmit, meta, setFieldValue, setValues } = useForm<FormData>({
     validationSchema: {
         name: { required: true, min: 3, max: 24 },
         initials: { required: true, min: 2, max: 4 },
         description: { required: false, max: 255 },
-        color: { required: true, max: 7 },
-    },
-    initialValues: {
-        color: '#000000',
     },
     validateOnMount: true,
 });
@@ -88,8 +86,8 @@ async function updateUnitInForm(): Promise<void> {
             name: props.unit.name,
             initials: props.unit.initials,
             description: props.unit.description,
-            color: `#${props.unit.color}`,
         });
+        color.value = `#${props.unit.color}`;
     }
 }
 
@@ -216,20 +214,13 @@ onBeforeMount(async () => updateUnitInForm());
                                                     <label for="color" class="block text-sm font-medium leading-6 text-neutral">
                                                         {{ $t('common.color') }}
                                                     </label>
-                                                    <VeeField
-                                                        v-slot="{ field }"
-                                                        name="color"
-                                                        class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                        :label="$t('common.color')"
-                                                    >
-                                                        <ColorInput
-                                                            v-model="field.value"
-                                                            disable-alpha
-                                                            format="hex"
-                                                            position="top"
-                                                        />
-                                                    </VeeField>
-                                                    <VeeErrorMessage name="color" as="p" class="mt-2 text-sm text-error-400" />
+                                                    <ColorInput
+                                                        v-model="color"
+                                                        disable-alpha
+                                                        format="hex"
+                                                        position="top"
+                                                        @change="setFieldValue('color', $event)"
+                                                    />
                                                 </div>
                                             </div>
                                         </div>

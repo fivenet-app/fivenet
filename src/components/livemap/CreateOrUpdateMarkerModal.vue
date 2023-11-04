@@ -27,10 +27,11 @@ interface FormData {
     name: string;
     description: string;
     markerType: MarkerType.CIRCLE;
-    color: string;
     circleRadius: number;
     circleOpacity: number;
 }
+
+const color = ref('#EE4B2B');
 
 async function createMarker(values: FormData): Promise<void> {
     try {
@@ -42,7 +43,6 @@ async function createMarker(values: FormData): Promise<void> {
                 description: values.description,
                 x: location.value?.x ?? 0,
                 y: location.value?.y ?? 0,
-                color: values.color.substring(1),
             },
             type: values.markerType,
         };
@@ -88,7 +88,6 @@ const { handleSubmit, meta, values, setValues } = useForm<FormData>({
         circleOpacity: { required: false, min_value: 1, max_value: 75 },
     },
     initialValues: {
-        color: '#EE4B2B',
         circleRadius: 50,
         circleOpacity: 5,
     },
@@ -232,24 +231,11 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                             <dd
                                                                 class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
                                                             >
-                                                                <VeeField
-                                                                    v-slot="{ field }"
-                                                                    name="color"
-                                                                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                                    :placeholder="$t('common.color')"
-                                                                    :label="$t('common.color')"
-                                                                >
-                                                                    <ColorInput
-                                                                        v-model="field.value"
-                                                                        disable-alpha
-                                                                        format="hex"
-                                                                        position="top"
-                                                                    />
-                                                                </VeeField>
-                                                                <VeeErrorMessage
-                                                                    name="color"
-                                                                    as="p"
-                                                                    class="mt-2 text-sm text-error-400"
+                                                                <ColorInput
+                                                                    v-model="color"
+                                                                    disable-alpha
+                                                                    format="hex"
+                                                                    position="top"
                                                                 />
                                                             </dd>
                                                         </div>
