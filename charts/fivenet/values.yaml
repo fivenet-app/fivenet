@@ -82,6 +82,7 @@ fivenet:
     httpGet:
       path: /readiness
       port: http
+    failureThreshold: 3
     initialDelaySeconds: 15
     periodSeconds: 10
   readinessProbe:
@@ -90,6 +91,12 @@ fivenet:
       port: http
     initialDelaySeconds: 10
     periodSeconds: 7
+  startupProbe:
+    httpGet:
+      path: /readiness
+      port: http
+    failureThreshold: 30
+    periodSeconds: 10
   additionalEnv: []
   serviceMonitor:
     # -- Specifies whether a prometheus-operator ServiceMonitor should be created
@@ -249,6 +256,12 @@ discordBot:
       port: metrics
     initialDelaySeconds: 10
     periodSeconds: 7
+  startupProbe:
+    httpGet:
+      path: /readiness
+      port: http
+    failureThreshold: 15
+    periodSeconds: 10
   additionalEnv: []
   serviceMonitor:
     # -- Specifies whether a prometheus-operator ServiceMonitor should be created
@@ -292,6 +305,7 @@ envoy:
     httpGet:
       path: /ready
       port: admin
+  startupProbe: {}
   serviceMonitor:
     # -- Specifies whether a prometheus-operator ServiceMonitor should be created
     enabled: false

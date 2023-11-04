@@ -50,6 +50,8 @@ spec:
             {{- toYaml .Values.discordBot.livenessProbe | nindent 12 }}
           readinessProbe:
             {{- toYaml .Values.discordBot.readinessProbe | nindent 12 }}
+          startupProbe:
+            {{- toYaml .Values.discordBot.startupProbe | nindent 12 }}
           volumeMounts:
             - name: fivenet-config
               mountPath: /config

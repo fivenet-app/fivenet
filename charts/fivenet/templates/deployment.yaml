@@ -54,6 +54,8 @@ spec:
             {{- toYaml .Values.fivenet.livenessProbe | nindent 12 }}
           readinessProbe:
             {{- toYaml .Values.fivenet.readinessProbe | nindent 12 }}
+          startupProbe:
+            {{- toYaml .Values.fivenet.startupProbe | nindent 12 }}
           volumeMounts:
             - name: fivenet-config
               mountPath: /config

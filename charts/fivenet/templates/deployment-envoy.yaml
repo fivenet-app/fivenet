@@ -51,6 +51,8 @@ spec:
             {{- toYaml .Values.envoy.livenessProbe | nindent 12 }}
           readinessProbe:
             {{- toYaml .Values.envoy.readinessProbe | nindent 12 }}
+          startupProbe:
+            {{- toYaml .Values.envoy.startupProbe | nindent 12 }}
           volumeMounts:
             - name: envoy-config
               mountPath: /config
