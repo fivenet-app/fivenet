@@ -10,6 +10,7 @@ import { Dispatch, StatusDispatch } from '~~/gen/ts/resources/dispatch/dispatche
 import { CentrumMode } from '~~/gen/ts/resources/dispatch/settings';
 import { TakeDispatchResp } from '~~/gen/ts/services/centrum/centrum';
 import TakeDispatchEntry from '~/components/centrum/livemap/TakeDispatchEntry.vue';
+import { isStatusDispatchCompleted } from '~/components/centrum/helpers';
 
 defineProps<{
     open: boolean;
@@ -30,12 +31,21 @@ const queryDispatches = ref('');
 
 async function takeDispatches(resp: TakeDispatchResp): Promise<void> {
     try {
-        if (selectedDispatches.value.length === 0 || !canTakeDispatch.value) {
+        if (!canTakeDispatch.value || selectedDispatches.value.length === 0) {
             return;
         }
 
+        // Make sure all selected dispatches are still existing and not in a "completed"
         const call = $grpc.getCentrumClient().takeDispatch({
-            dispatchIds: selectedDispatches.value,
+            dispatchIds: selectedDispatches.value.filter((sd) => {
+                const dsp = dispatches.value.get(sd);
+                if (dsp === undefined) {
+                    return false;
+                }
+
+                // Dispatch has no status? Just continue..
+                return dsp.status === undefined ? true : isStatusDispatchCompleted(dsp.status.status);
+            }),
             resp,
         });
         await call;

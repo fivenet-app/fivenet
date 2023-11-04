@@ -4,11 +4,10 @@ import { useConfigStore } from '~/store/config';
 export default defineNuxtRouteMiddleware(
     (to: RouteLocationNormalized, from: RouteLocationNormalized): ReturnType<NavigationGuard> => {
         const route = from ?? to;
-        if (route.query?.nui) {
-            const nuiQuery = route.query?.nui as string;
+        if (route.query?.nui !== undefined) {
+            const nuiQuery = route.query.nui as string;
             const configStore = useConfigStore();
             const { clientConfig } = storeToRefs(configStore);
-
             if (nuiQuery.toLowerCase() !== 'false') {
                 clientConfig.value.nuiEnabled = true;
                 clientConfig.value.nuiResourceName = nuiQuery;

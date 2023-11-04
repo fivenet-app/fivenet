@@ -124,3 +124,7 @@ export const dispatchStatuses: {
     { icon: markRaw(CancelIcon), name: 'Cancelled', status: StatusDispatch.CANCELLED },
     // { icon: markRaw(ListStatusIcon), name: 'components.centrum.update_dispatch_status.title', class: 'bg-base-800' },
 ];
+
+export function isStatusDispatchCompleted(status: StatusDispatch): boolean {
+    return status === StatusDispatch.ARCHIVED || status === StatusDispatch.CANCELLED || status === StatusDispatch.COMPLETED;
+}
