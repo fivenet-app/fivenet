@@ -292,6 +292,21 @@ envoy:
     httpGet:
       path: /ready
       port: admin
+  serviceMonitor:
+    # -- Specifies whether a prometheus-operator ServiceMonitor should be created
+    enabled: false
+    # -- Additional Labels for the ServiceMonitor object
+    additionalLabels: {}
+    #namespace: "monitoring"
+    namespaceSelector:
+    # Default: scrape .Release.Namespace only
+    # To scrape all, use the following:
+    #  matchNames:
+    #    - monitoring
+    #   any: true
+    # -- (duration) Interval at which metrics should be scraped
+    scrapeInterval: 30s
+    # honorLabels: true
   # -- Envoy config
   config:
     admin:
