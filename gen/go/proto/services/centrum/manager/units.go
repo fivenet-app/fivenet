@@ -219,16 +219,20 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, userInfo *userinfo.
 			notFound = append(notFound, toAdd[i])
 		}
 
-		for _, id := range addIds {
+		if len(addIds) > 0 {
 			stmt := tUnitUser.
 				INSERT(
 					tUnitUser.UnitID,
 					tUnitUser.UserID,
-				).
-				VALUES(
-					unit.Id,
-					id,
 				)
+
+			for _, id := range addIds {
+				stmt = stmt.
+					VALUES(
+						unit.Id,
+						id,
+					)
+			}
 
 			if _, err := stmt.ExecContext(ctx, tx); err != nil {
 				if !dbutils.IsDuplicateError(err) {

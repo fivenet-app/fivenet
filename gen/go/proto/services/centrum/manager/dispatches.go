@@ -165,6 +165,14 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 			expiresAtTS = timestamp.New(expiresAt)
 			expiresAtVal = jet.TimeT(expiresAt)
 		}
+
+		stmt := tDispatchUnit.
+			INSERT(
+				tDispatchUnit.DispatchID,
+				tDispatchUnit.UnitID,
+				tDispatchUnit.ExpiresAt,
+			)
+		needInsert := false
 		for k := 0; k < len(toAdd); k++ {
 			found := false
 			for i := 0; i < len(dsp.Units); i++ {
@@ -185,26 +193,13 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 
 			// Only add unit to dispatch if not already assigned
 			if !found {
-				stmt := tDispatchUnit.
-					INSERT(
-						tDispatchUnit.DispatchID,
-						tDispatchUnit.UnitID,
-						tDispatchUnit.ExpiresAt,
-					).
+				stmt = stmt.
 					VALUES(
 						dsp.Id,
 						unit.Id,
 						expiresAtVal,
-					).
-					ON_DUPLICATE_KEY_UPDATE(
-						tDispatchUnit.ExpiresAt.SET(jet.RawTimestamp("VALUES(`expires_at`)")),
 					)
-
-				if _, err := stmt.ExecContext(ctx, tx); err != nil {
-					if !dbutils.IsDuplicateError(err) {
-						return errorscentrum.ErrFailedQuery
-					}
-				}
+				needInsert = true
 
 				dsp.Units = append(dsp.Units, &dispatch.DispatchAssignment{
 					UnitId:     unit.Id,
@@ -222,6 +217,18 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 					Y:          y,
 					Postal:     postal,
 				}); err != nil {
+					return errorscentrum.ErrFailedQuery
+				}
+			}
+		}
+
+		if needInsert {
+			stmt = stmt.ON_DUPLICATE_KEY_UPDATE(
+				tDispatchUnit.ExpiresAt.SET(jet.RawTimestamp("VALUES(`expires_at`)")),
+			)
+
+			if _, err := stmt.ExecContext(ctx, tx); err != nil {
+				if !dbutils.IsDuplicateError(err) {
 					return errorscentrum.ErrFailedQuery
 				}
 			}

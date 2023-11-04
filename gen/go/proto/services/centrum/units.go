@@ -59,14 +59,6 @@ func (s *Server) CreateOrUpdateUnit(ctx context.Context, req *CreateOrUpdateUnit
 	}
 	defer s.auditer.Log(auditEntry, req)
 
-	// Begin transaction
-	tx, err := s.db.BeginTx(ctx, nil)
-	if err != nil {
-		return nil, errorscentrum.ErrFailedQuery
-	}
-	// Defer a rollback in case anything fails
-	defer tx.Rollback()
-
 	// No unit id set
 	if req.Unit.Id <= 0 {
 		tUnits := table.FivenetCentrumUnits
@@ -86,7 +78,7 @@ func (s *Server) CreateOrUpdateUnit(ctx context.Context, req *CreateOrUpdateUnit
 				req.Unit.Description,
 			)
 
-		result, err := stmt.ExecContext(ctx, tx)
+		result, err := stmt.ExecContext(ctx, s.db)
 		if err != nil {
 			return nil, errorscentrum.ErrFailedQuery
 		}
@@ -123,17 +115,11 @@ func (s *Server) CreateOrUpdateUnit(ctx context.Context, req *CreateOrUpdateUnit
 				tUnits.ID.EQ(jet.Uint64(req.Unit.Id)),
 			))
 
-		if _, err := stmt.ExecContext(ctx, tx); err != nil {
+		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 			return nil, errorscentrum.ErrFailedQuery
 		}
 
 		auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
-	}
-
-	// Commit the transaction
-	if err := tx.Commit(); err != nil {
-		auditEntry.State = int16(rector.EventType_EVENT_TYPE_ERRORED)
-		return nil, errorscentrum.ErrFailedQuery
 	}
 
 	// Load new/updated unit from database

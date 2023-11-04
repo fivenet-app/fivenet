@@ -66,8 +66,15 @@ defineProps<{
                         </NuxtLink>
                     </p>
                     <p v-if="user.jobLabel" class="text-sm font-normal">
+                        <span class="font-semibold">{{ $t('common.job') }}</span
+                        >:
                         {{ user.jobLabel }}
-                        <span v-if="user.jobGradeLabel"> ({{ $t('common.rank') }}: {{ user.jobGradeLabel }})</span>
+                        <span v-if="user.jobGrade > 0 && user.jobGradeLabel"> ({{ user.jobGradeLabel }})</span>
+                    </p>
+                    <p v-if="user.dateofbirth" class="text-sm font-normal">
+                        <span class="font-semibold">{{ $t('common.date_of_birth') }}</span
+                        >:
+                        {{ user.dateofbirth }}
                     </p>
                 </div>
             </PopoverPanel>
