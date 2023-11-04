@@ -31,21 +31,27 @@ const queryDispatches = ref('');
 
 async function takeDispatches(resp: TakeDispatchResp): Promise<void> {
     try {
-        if (!canTakeDispatch.value || selectedDispatches.value.length === 0) {
+        if (!canTakeDispatch.value) {
+            return;
+        }
+
+        const dispatchIds = selectedDispatches.value.filter((sd) => {
+            const dsp = dispatches.value.get(sd);
+            if (dsp === undefined) {
+                return false;
+            }
+
+            // Dispatch has no status or is not completed?
+            return dsp.status === undefined ? true : !isStatusDispatchCompleted(dsp.status.status);
+        });
+
+        if (dispatchIds.length === 0) {
             return;
         }
 
         // Make sure all selected dispatches are still existing and not in a "completed"
         const call = $grpc.getCentrumClient().takeDispatch({
-            dispatchIds: selectedDispatches.value.filter((sd) => {
-                const dsp = dispatches.value.get(sd);
-                if (dsp === undefined) {
-                    return false;
-                }
-
-                // Dispatch has no status? Just continue..
-                return dsp.status === undefined ? true : !isStatusDispatchCompleted(dsp.status.status);
-            }),
+            dispatchIds,
             resp,
         });
         await call;
