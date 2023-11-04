@@ -58,7 +58,7 @@ func main() {
 		fx.WithLogger(func(log *zap.Logger) fxevent.Logger {
 			return &fxevent.ZapLogger{Logger: log}
 		}),
-		fx.StartTimeout(60 * time.Second),
+		fx.StartTimeout(90 * time.Second),
 
 		LoggerModule,
 		config.Module,
