@@ -312,6 +312,7 @@ async function checkup(): Promise<void> {
                                                 :class="ownUnitStatus"
                                                 @click="openUnitDetails = true"
                                             >
+                                                <InformationOutlineIcon class="h-5 w-5" aria-hidden="true" />
                                                 <span class="mt-1 truncate">
                                                     <span class="font-semibold">{{ getOwnUnit.initials }}</span
                                                     >: {{ getOwnUnit.name }}</span
