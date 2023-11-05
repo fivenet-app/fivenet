@@ -2016,12 +2016,12 @@
   dependencies:
     "@volar/source-map" "1.10.6"
 
-"@volar/language-core@1.11.0":
-  version "1.11.0"
-  resolved "https://registry.yarnpkg.com/@volar/language-core/-/language-core-1.11.0.tgz#1594a8c9257c90ec1c63476762b462dfcbca9141"
-  integrity sha512-AT9dp0yNpOi5YAlUUWs/UBWMvs0y4cG4yDzgSoyhrt7I0RbM/rxr4JZ1+HOL0rMSOKqmik97Jog4wAAWeAE/Dg==
+"@volar/language-core@1.11.1":
+  version "1.11.1"
+  resolved "https://registry.yarnpkg.com/@volar/language-core/-/language-core-1.11.1.tgz#ecdf12ea8dc35fb8549e517991abcbf449a5ad4f"
+  integrity sha512-dOcNn3i9GgZAcJt43wuaEykSluAuOkQgzni1cuxLxTV0nJKanQztp7FxyswdRILaKH+P2XZMPRp2S4MV/pElCw==
   dependencies:
-    "@volar/source-map" "1.11.0"
+    "@volar/source-map" "1.11.1"
 
 "@volar/source-map@1.10.6", "@volar/source-map@~1.10.5":
   version "1.10.6"
@@ -2030,19 +2030,19 @@
   dependencies:
     muggle-string "^0.3.1"
 
-"@volar/source-map@1.11.0":
-  version "1.11.0"
-  resolved "https://registry.yarnpkg.com/@volar/source-map/-/source-map-1.11.0.tgz#8718db4e65a6a0cf72b50eb1bf49d27f62e5bf34"
-  integrity sha512-tbqO0ruTyOn7c2SQCSBAwpQpkKmU4sOj4GV5kMyja+NAtmbmLmNGmqaNNs8yVZzLQQ1cx+xguYb2Ol+oHGMxaQ==
+"@volar/source-map@1.11.1":
+  version "1.11.1"
+  resolved "https://registry.yarnpkg.com/@volar/source-map/-/source-map-1.11.1.tgz#535b0328d9e2b7a91dff846cab4058e191f4452f"
+  integrity sha512-hJnOnwZ4+WT5iupLRnuzbULZ42L7BWWPMmruzwtLhJfpDVoZLjNBxHDi2sY2bgZXCKlpU5XcsMFoYrsQmPhfZg==
   dependencies:
     muggle-string "^0.3.1"
 
-"@volar/typescript@^1.11.0":
-  version "1.11.0"
-  resolved "https://registry.yarnpkg.com/@volar/typescript/-/typescript-1.11.0.tgz#99f39b991a0ed997ed8a6281ad0a5fa19c3a7def"
-  integrity sha512-GzcHIt31pdS+fuvgoDxFjBd6/wkjrNkneVnUjkzHs9ghrhYl1jyIJaZJvjc/Hbxn2DdQvm39As0mXYPNrWK6Tg==
+"@volar/typescript@^1.11.1":
+  version "1.11.1"
+  resolved "https://registry.yarnpkg.com/@volar/typescript/-/typescript-1.11.1.tgz#ba86c6f326d88e249c7f5cfe4b765be3946fd627"
+  integrity sha512-iU+t2mas/4lYierSnoFOeRFQUhAEMgsFuQxoxvwn5EdQopw43j+J27a4lt9LMInx1gLJBC6qL14WYGlgymaSMQ==
   dependencies:
-    "@volar/language-core" "1.11.0"
+    "@volar/language-core" "1.11.1"
     path-browserify "^1.0.1"
 
 "@volar/typescript@~1.10.5":

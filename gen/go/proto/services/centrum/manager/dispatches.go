@@ -9,12 +9,12 @@ import (
 	errorscentrum "github.com/galexrt/fivenet/gen/go/proto/services/centrum/errors"
 	eventscentrum "github.com/galexrt/fivenet/gen/go/proto/services/centrum/events"
 	centrumutils "github.com/galexrt/fivenet/gen/go/proto/services/centrum/utils"
-	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/pkg/utils/dbutils"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
+	"github.com/paulmach/orb"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -426,7 +426,7 @@ func (s *Manager) CreateDispatch(ctx context.Context, d *dispatch.Dispatch) (*di
 	return dsp, nil
 }
 
-func (s *Manager) UpdateDispatch(ctx context.Context, userInfo *userinfo.UserInfo, dsp *dispatch.Dispatch) error {
+func (s *Manager) UpdateDispatch(ctx context.Context, userJob string, userId *int32, dsp *dispatch.Dispatch) error {
 	stmt := tDispatch.
 		UPDATE(
 			tDispatch.Job,
@@ -440,7 +440,7 @@ func (s *Manager) UpdateDispatch(ctx context.Context, userInfo *userinfo.UserInf
 			tDispatch.CreatorID,
 		).
 		SET(
-			userInfo.Job,
+			dsp.Job,
 			dsp.Message,
 			dsp.Description,
 			dsp.Attributes,
@@ -448,10 +448,10 @@ func (s *Manager) UpdateDispatch(ctx context.Context, userInfo *userinfo.UserInf
 			dsp.Y,
 			dsp.Postal,
 			dsp.Anon,
-			userInfo.UserId,
+			dsp.CreatorId,
 		).
 		WHERE(jet.AND(
-			tDispatch.Job.EQ(jet.String(userInfo.Job)),
+			tDispatch.Job.EQ(jet.String(userJob)),
 			tDispatch.ID.EQ(jet.Uint64(dsp.Id)),
 		))
 
@@ -459,7 +459,11 @@ func (s *Manager) UpdateDispatch(ctx context.Context, userInfo *userinfo.UserInf
 		return errorscentrum.ErrFailedQuery
 	}
 
-	s.State.DispatchLocations[dsp.Job].Add(dsp)
+	if !s.State.DispatchLocations[dsp.Job].Has(dsp, func(p orb.Pointer) bool {
+		return p.(*dispatch.Dispatch).Id == dsp.Id
+	}) {
+		s.State.DispatchLocations[dsp.Job].Add(dsp)
+	}
 
 	return nil
 }

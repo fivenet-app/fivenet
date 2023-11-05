@@ -9,6 +9,7 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
 	centrumutils "github.com/galexrt/fivenet/gen/go/proto/services/centrum/utils"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
+	"github.com/galexrt/fivenet/pkg/utils"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/paulmach/orb"
 	"github.com/puzpuzpuz/xsync/v3"
@@ -323,6 +324,14 @@ func (s *Manager) deduplicateDispatches(ctx context.Context) error {
 				closestsDsp := s.State.DispatchLocations[dsp.Job].KNearest(dsp.Point(), 8, func(p orb.Pointer) bool {
 					return p.(*dispatch.Dispatch).Id != dsp.Id
 				}, 45.0)
+				// Add "multiple" attribute when multiple dispatches close by
+				if len(closestsDsp) > 0 {
+					if err := s.addAttributeToDispatch(ctx, dsp, "multiple"); err != nil {
+						s.logger.Error("failed to update original dispatch attribute", zap.Error(err))
+						return
+					}
+				}
+
 				for _, dest := range closestsDsp {
 					if dest == nil {
 						continue
@@ -372,6 +381,29 @@ func (s *Manager) deduplicateDispatches(ctx context.Context) error {
 	return nil
 }
 
+func (s *Manager) addAttributeToDispatch(ctx context.Context, dsp *dispatch.Dispatch, attribute string) error {
+	update := false
+	if dsp.Attributes == nil {
+		dsp.Attributes = &dispatch.Attributes{
+			List: []string{attribute},
+		}
+		update = true
+	} else {
+		if !utils.InSlice(dsp.Attributes.List, attribute) {
+			dsp.Attributes.List = append(dsp.Attributes.List, attribute)
+			update = true
+		}
+	}
+
+	if update {
+		if err := s.UpdateDispatch(ctx, dsp.Job, nil, dsp); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 // Remove empty units from dispatches (if no other unit is assigned to dispatch update status to UNASSIGNED) by
 // iterating over the dispatches and making sure the assigned units aren't empty
 func (s *Manager) removeDispatchesFromEmptyUnits(ctx context.Context) error {
@@ -394,8 +426,9 @@ func (s *Manager) removeDispatchesFromEmptyUnits(ctx context.Context) error {
 					continue
 				}
 
-				if err := s.UpdateDispatchAssignments(ctx, job, nil, dsp, nil, []uint64{dsp.Units[i].UnitId}, time.Time{}); err != nil {
-					s.logger.Error("failed to remove empty unit from dispatch", zap.Error(err))
+				if err := s.UpdateDispatchAssignments(ctx, job, nil, dsp, nil, []uint64{unit.Id}, time.Time{}); err != nil {
+					s.logger.Error("failed to remove empty unit from dispatch",
+						zap.String("job", unit.Job), zap.Uint64("unit_id", unit.Id), zap.Error(err))
 					continue
 				}
 			}
@@ -411,8 +444,8 @@ func (s *Manager) removeDispatchesFromEmptyUnits(ctx context.Context) error {
 
 // Iterate over units to ensure that, e.g., an empty unit status is set to `unavailable`
 func (s *Manager) cleanupUnitStatus(ctx context.Context) error {
-	s.Units.Range(func(job string, value *xsync.MapOf[uint64, *dispatch.Unit]) bool {
-		value.Range(func(id uint64, unit *dispatch.Unit) bool {
+	s.Units.Range(func(job string, units *xsync.MapOf[uint64, *dispatch.Unit]) bool {
+		units.Range(func(id uint64, unit *dispatch.Unit) bool {
 			if len(unit.Users) > 0 {
 				return true
 			}
@@ -428,7 +461,8 @@ func (s *Manager) cleanupUnitStatus(ctx context.Context) error {
 					Status: dispatch.StatusUnit_STATUS_UNIT_UNAVAILABLE,
 					UserId: userId,
 				}); err != nil {
-					s.logger.Error("failed to update empty unit status to unavailable", zap.Error(err))
+					s.logger.Error("failed to update empty unit status to unavailable",
+						zap.String("job", unit.Job), zap.Uint64("unit_id", unit.Id), zap.Error(err))
 					return true
 				}
 			}
@@ -443,8 +477,8 @@ func (s *Manager) cleanupUnitStatus(ctx context.Context) error {
 }
 
 func (s *Manager) checkUnitUsers(ctx context.Context) error {
-	s.Units.Range(func(job string, value *xsync.MapOf[uint64, *dispatch.Unit]) bool {
-		value.Range(func(id uint64, unit *dispatch.Unit) bool {
+	s.Units.Range(func(job string, units *xsync.MapOf[uint64, *dispatch.Unit]) bool {
+		units.Range(func(id uint64, unit *dispatch.Unit) bool {
 			for i := len(unit.Users) - 1; i >= 0; i-- {
 				if i > len(unit.Users)-1 {
 					break
@@ -455,8 +489,9 @@ func (s *Manager) checkUnitUsers(ctx context.Context) error {
 						UserId: unit.Users[i].UserId,
 						Job:    job,
 					}, unit, nil, []int32{unit.Users[i].UserId}); err != nil {
-						s.logger.Error("failed to remove off-duty users from unit", zap.Error(err))
-						return false
+						s.logger.Error("failed to remove off-duty users from unit",
+							zap.String("job", unit.Job), zap.Uint64("unit_id", unit.Id), zap.Int32("user_id", unit.Users[i].UserId), zap.Error(err))
+						continue
 					}
 				}
 			}

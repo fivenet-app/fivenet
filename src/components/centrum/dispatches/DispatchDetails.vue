@@ -212,7 +212,11 @@ const openStatus = ref(false);
                                                                         :key="attribute"
                                                                         class="inline-flex items-center rounded-md bg-error-400/10 px-2 py-1 text-xs font-medium text-error-400 ring-1 ring-inset ring-error-400/20"
                                                                     >
-                                                                        {{ attribute }}
+                                                                        {{
+                                                                            $t(
+                                                                                `components.centrum.update_dispatch.attributes.${attribute}`,
+                                                                            )
+                                                                        }}
                                                                     </span>
                                                                 </template>
                                                                 <span v-else>

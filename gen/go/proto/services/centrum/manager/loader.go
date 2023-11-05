@@ -7,7 +7,6 @@ import (
 
 	dispatch "github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
 	users "github.com/galexrt/fivenet/gen/go/proto/resources/users"
-	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/paulmach/orb"
@@ -309,10 +308,7 @@ func (s *Manager) LoadDispatches(ctx context.Context, id uint64) error {
 			postal := s.postals.Closest(dispatches[i].X, dispatches[i].Y)
 			dispatches[i].Postal = postal.Code
 
-			if err := s.UpdateDispatch(ctx, &userinfo.UserInfo{
-				UserId: *dispatches[i].CreatorId,
-				Job:    dispatches[i].Job,
-			}, dispatches[i]); err != nil {
+			if err := s.UpdateDispatch(ctx, dispatches[i].Job, dispatches[i].CreatorId, dispatches[i]); err != nil {
 				return err
 			}
 		}

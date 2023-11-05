@@ -67,7 +67,7 @@
         "@types/zxcvbn": "^4.4.3",
         "@unhead/vue": "^1.8.3",
         "@vitejs/plugin-vue": "^4.4.0",
-        "@volar/typescript": "^1.11.0",
+        "@volar/typescript": "^1.11.1",
         "@vueuse/router": "^10.5.0",
         "@vueuse/sound": "^2.0.1",
         "autoprefixer": "^10.4.16",

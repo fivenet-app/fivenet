@@ -78,12 +78,9 @@ watch(location, () => {
         return;
     }
 
-    map?.setZoom(5, {
-        animate: false,
-    });
     map?.panTo([location.value.y!, location.value.x!], {
         animate: true,
-        duration: 1.0,
+        duration: 0.85,
     });
 });
 
@@ -155,7 +152,9 @@ async function onMapReady($event: any): Promise<void> {
 
     const startingHash = route.hash;
     const startPos = parseHash(startingHash);
-    if (startPos) map.setView(startPos.latlng, startPos.zoom);
+    if (startPos) {
+        map.setView(startPos.latlng, startPos.zoom);
+    }
 
     map.on('baselayerchange', async (event: L.LayersControlEvent) => {
         updateBackground(event.name);

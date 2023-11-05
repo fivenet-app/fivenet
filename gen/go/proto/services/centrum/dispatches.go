@@ -212,7 +212,7 @@ func (s *Server) UpdateDispatch(ctx context.Context, req *UpdateDispatchRequest)
 		s.state.DispatchLocations[oldDsp.Job].Remove(oldDsp, nil)
 	}
 
-	if err := s.state.UpdateDispatch(ctx, userInfo, req.Dispatch); err != nil {
+	if err := s.state.UpdateDispatch(ctx, userInfo.Job, &userInfo.UserId, req.Dispatch); err != nil {
 		return nil, errorscentrum.ErrFailedQuery
 	}
 

@@ -417,6 +417,11 @@
                 "title": "Take Dispatches",
                 "sub_title": "Take assigned dispatches quickly or take dispatches normally."
             },
+            "update_dispatch": {
+                "attributes": {
+                    "multiple": "Multiple Dispatches"
+                }
+            },
             "update_dispatch_status": {
                 "title": "Update Dispatch Status"
             },

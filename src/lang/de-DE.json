@@ -417,6 +417,11 @@
                 "title": "Einsatz Annehmen",
                 "sub_title": "Übernehme zugewiesene Einsätze schnell und einfach."
             },
+            "update_dispatch": {
+                "attributes": {
+                    "multiple": "Multiple Dispatches"
+                }
+            },
             "update_dispatch_status": {
                 "title": "Aktualisiere Einsatz Status"
             },
