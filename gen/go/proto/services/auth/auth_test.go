@@ -86,6 +86,7 @@ func TestFullAuthFlow(t *testing.T) {
 	assert.NoError(t, err)
 	enricher := mstlystcdata.NewEnricher(c, p, cfg)
 	srv := NewServer(Params{
+		Logger:   logger,
 		DB:       db,
 		Auth:     auth.NewGRPCAuth(ui, tm),
 		TM:       tm,
