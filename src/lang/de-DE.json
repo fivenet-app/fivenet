@@ -417,11 +417,6 @@
                 "title": "Einsatz Annehmen",
                 "sub_title": "Übernehme zugewiesene Einsätze schnell und einfach."
             },
-            "update_dispatch": {
-                "attributes": {
-                    "multiple": "Multiple Dispatches"
-                }
-            },
             "update_dispatch_status": {
                 "title": "Aktualisiere Einsatz Status"
             },
@@ -473,6 +468,11 @@
                         "UNIT_DECLINED": "Einsatz von Einheit abgelehnt",
                         "UNSPECIFIED": "Unbekannter Einsatz-Status"
                     }
+                }
+            },
+            "update_dispatch": {
+                "attributes": {
+                    "multiple": "Mehrere Einsätze"
                 }
             }
         },
