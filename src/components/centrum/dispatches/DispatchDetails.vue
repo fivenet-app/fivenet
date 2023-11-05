@@ -210,7 +210,7 @@ const openStatus = ref(false);
                                                                     <span
                                                                         v-for="attribute in dispatch.attributes?.list"
                                                                         :key="attribute"
-                                                                        class="inline-flex items-center rounded-md bg-error-400/10 px-2 py-1 text-xs font-medium text-error-400 ring-1 ring-inset ring-error-400/20"
+                                                                        class="inline-flex items-center rounded-md bg-warn-400/10 px-2 py-1 text-xs font-medium text-warn-400 ring-1 ring-inset ring-warn-400/20"
                                                                     >
                                                                         {{
                                                                             $t(
@@ -233,10 +233,11 @@ const openStatus = ref(false);
                                                             <dd
                                                                 class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
                                                             >
-                                                                <span class="block">
+                                                                <span v-if="dispatch.units.length === 0" class="block">
                                                                     {{ $t('common.unit', dispatch.units.length) }}
                                                                 </span>
                                                                 <ul
+                                                                    v-else
                                                                     role="list"
                                                                     class="border divide-y rounded-md divide-base-200 border-base-200"
                                                                 >
