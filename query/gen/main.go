@@ -9,27 +9,18 @@ import (
 	genmysql "github.com/go-jet/jet/v2/generator/mysql"
 	"github.com/go-jet/jet/v2/generator/template"
 	"github.com/go-jet/jet/v2/mysql"
-	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"golang.org/x/exp/slices"
 )
-
-var rootCmd = &cobra.Command{
-	Use: "gen",
-	RunE: func(cmd *cobra.Command, args []string) error {
-		destDir := "./query"
-
-		return genmysql.GenerateDSN(viper.GetString("dsn"), destDir, genTemplate())
-	},
-}
 
 func main() {
 	viper.SetConfigFile("./query/gen/gen.yaml")
 	viper.ReadInConfig()
 
-	// Run Command
-	if err := rootCmd.Execute(); err != nil {
-		fmt.Fprintln(os.Stderr, err)
+	destDir := "./query"
+
+	if err := genmysql.GenerateDSN(viper.GetString("dsn"), destDir, genTemplate()); err != nil {
+		fmt.Println(err)
 		os.Exit(1)
 	}
 }
