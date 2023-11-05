@@ -21,6 +21,8 @@ import (
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
+	"go.uber.org/fx"
+	"go.uber.org/zap"
 	"golang.org/x/crypto/bcrypt"
 	grpc "google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
@@ -52,6 +54,7 @@ var (
 type Server struct {
 	AuthServiceServer
 
+	logger   *zap.Logger
 	db       *sql.DB
 	auth     *auth.GRPCAuth
 	tm       *auth.TokenMgr
@@ -65,18 +68,33 @@ type Server struct {
 	oauth2Providers []*config.OAuth2Provider
 }
 
-func NewServer(db *sql.DB, auth *auth.GRPCAuth, tm *auth.TokenMgr, p perms.Permissions, enricher *mstlystcdata.Enricher, aud audit.IAuditer, ui userinfo.UserInfoRetriever, cfg *config.Config) *Server {
+type Params struct {
+	fx.In
+
+	Logger   *zap.Logger
+	DB       *sql.DB
+	Auth     *auth.GRPCAuth
+	TM       *auth.TokenMgr
+	Perms    perms.Permissions
+	Enricher *mstlystcdata.Enricher
+	Aud      audit.IAuditer
+	UI       userinfo.UserInfoRetriever
+	Cfg      *config.Config
+}
+
+func NewServer(p Params) *Server {
 	return &Server{
-		db:              db,
-		auth:            auth,
-		tm:              tm,
-		p:               p,
-		enricher:        enricher,
-		a:               aud,
-		ui:              ui,
-		signupEnabled:   cfg.Game.SignupEnabled,
-		superuserGroups: cfg.Game.SuperuserGroups,
-		oauth2Providers: cfg.OAuth2.Providers,
+		logger:          p.Logger.Named("server_grpc_auth"),
+		db:              p.DB,
+		auth:            p.Auth,
+		tm:              p.TM,
+		p:               p.Perms,
+		enricher:        p.Enricher,
+		a:               p.Aud,
+		ui:              p.UI,
+		signupEnabled:   p.Cfg.Game.SignupEnabled,
+		superuserGroups: p.Cfg.Game.SuperuserGroups,
+		oauth2Providers: p.Cfg.OAuth2.Providers,
 	}
 }
 
@@ -185,14 +203,9 @@ func (s *Server) CreateAccount(ctx context.Context, req *CreateAccountRequest) (
 		return nil, ErrSignupDisabled
 	}
 
-	acc, err := s.getAccountFromDB(ctx, jet.AND(
-		tAccounts.RegToken.EQ(jet.String(req.RegToken)),
-	))
+	acc, err := s.getAccountFromDB(ctx, tAccounts.RegToken.EQ(jet.String(req.RegToken)))
 	if err != nil {
-		if !errors.Is(qrm.ErrNoRows, err) {
-			return nil, ErrAccountCreateFailed
-		}
-
+		s.logger.Error("failed to get account from database by registration token", zap.Error(err))
 		return nil, ErrAccountCreateFailed
 	}
 
@@ -226,6 +239,7 @@ func (s *Server) CreateAccount(ctx context.Context, req *CreateAccountRequest) (
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+		s.logger.Error("failed to update account in database during account creation", zap.Error(err))
 		return nil, ErrAccountCreateFailed
 	}
 

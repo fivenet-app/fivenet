@@ -428,7 +428,7 @@ func (s *Manager) removeDispatchesFromEmptyUnits(ctx context.Context) error {
 
 				if err := s.UpdateDispatchAssignments(ctx, job, nil, dsp, nil, []uint64{unit.Id}, time.Time{}); err != nil {
 					s.logger.Error("failed to remove empty unit from dispatch",
-						zap.String("job", unit.Job), zap.Uint64("unit_id", unit.Id), zap.Error(err))
+						zap.String("job", unit.Job), zap.Uint64("unit_id", unit.Id), zap.Uint64("dispatch_id", dsp.Id), zap.Error(err))
 					continue
 				}
 			}
@@ -450,21 +450,23 @@ func (s *Manager) cleanupUnitStatus(ctx context.Context) error {
 				return true
 			}
 
-			if unit.Status == nil || unit.Status.Status != dispatch.StatusUnit_STATUS_UNIT_UNAVAILABLE {
-				var userId *int32
-				if unit.Status != nil {
-					userId = unit.Status.UserId
-				}
+			if unit.Status != nil && unit.Status.Status == dispatch.StatusUnit_STATUS_UNIT_UNAVAILABLE {
+				return true
+			}
 
-				if err := s.UpdateUnitStatus(ctx, job, unit, &dispatch.UnitStatus{
-					UnitId: unit.Id,
-					Status: dispatch.StatusUnit_STATUS_UNIT_UNAVAILABLE,
-					UserId: userId,
-				}); err != nil {
-					s.logger.Error("failed to update empty unit status to unavailable",
-						zap.String("job", unit.Job), zap.Uint64("unit_id", unit.Id), zap.Error(err))
-					return true
-				}
+			var userId *int32
+			if unit.Status != nil && unit.Status.UserId != nil {
+				userId = unit.Status.UserId
+			}
+
+			if err := s.UpdateUnitStatus(ctx, job, unit, &dispatch.UnitStatus{
+				UnitId: unit.Id,
+				Status: dispatch.StatusUnit_STATUS_UNIT_UNAVAILABLE,
+				UserId: userId,
+			}); err != nil {
+				s.logger.Error("failed to update empty unit status to unavailable",
+					zap.String("job", unit.Job), zap.Uint64("unit_id", unit.Id), zap.Error(err))
+				return true
 			}
 
 			return true
@@ -484,15 +486,17 @@ func (s *Manager) checkUnitUsers(ctx context.Context) error {
 					break
 				}
 
-				if !s.tracker.IsUserOnDuty(job, unit.Users[i].UserId) {
-					if err := s.UpdateUnitAssignments(ctx, &userinfo.UserInfo{
-						UserId: unit.Users[i].UserId,
-						Job:    job,
-					}, unit, nil, []int32{unit.Users[i].UserId}); err != nil {
-						s.logger.Error("failed to remove off-duty users from unit",
-							zap.String("job", unit.Job), zap.Uint64("unit_id", unit.Id), zap.Int32("user_id", unit.Users[i].UserId), zap.Error(err))
-						continue
-					}
+				if s.tracker.IsUserOnDuty(job, unit.Users[i].UserId) {
+					continue
+				}
+
+				if err := s.UpdateUnitAssignments(ctx, &userinfo.UserInfo{
+					UserId: unit.Users[i].UserId,
+					Job:    job,
+				}, unit, nil, []int32{unit.Users[i].UserId}); err != nil {
+					s.logger.Error("failed to remove off-duty users from unit",
+						zap.String("job", unit.Job), zap.Uint64("unit_id", unit.Id), zap.Int32("user_id", unit.Users[i].UserId), zap.Error(err))
+					continue
 				}
 			}
 

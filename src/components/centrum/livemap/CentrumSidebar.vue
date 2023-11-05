@@ -9,7 +9,6 @@ import {
     ChevronDownIcon,
     HoopHouseIcon,
     InformationOutlineIcon,
-    ListStatusIcon,
     MonitorIcon,
     RobotIcon,
     ToggleSwitchIcon,
@@ -313,7 +312,6 @@ async function checkup(): Promise<void> {
                                                 :class="ownUnitStatus"
                                                 @click="openUnitDetails = true"
                                             >
-                                                <InformationOutlineIcon class="h-5 w-5" aria-hidden="true" />
                                                 <span class="mt-1 truncate">
                                                     <span class="font-semibold">{{ getOwnUnit.initials }}</span
                                                     >: {{ getOwnUnit.name }}</span
@@ -416,13 +414,7 @@ async function checkup(): Promise<void> {
                                                                 class="col-span-2 bg-base-800 text-neutral hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-1.5 text-xs my-0.5"
                                                                 @click="updateUtStatus(getOwnUnit.id)"
                                                             >
-                                                                <ListStatusIcon
-                                                                    class="text-base-100 group-hover:text-neutral h-5 w-5 shrink-0"
-                                                                    aria-hidden="true"
-                                                                />
-                                                                <span class="mt-1">
-                                                                    {{ $t('components.centrum.update_unit_status.title') }}
-                                                                </span>
+                                                                {{ $t('components.centrum.update_unit_status.title') }}
                                                             </button>
                                                         </div>
                                                     </div>
@@ -473,13 +465,7 @@ async function checkup(): Promise<void> {
                                                     class="col-span-2 bg-base-800 text-neutral hover:bg-primary-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-1.5 text-xs my-0.5"
                                                     @click="updateDspStatus(selectedDispatch)"
                                                 >
-                                                    <ListStatusIcon
-                                                        class="text-base-100 group-hover:text-neutral h-5 w-5 shrink-0"
-                                                        aria-hidden="true"
-                                                    />
-                                                    <span class="mt-1">
-                                                        {{ $t('components.centrum.update_dispatch_status.title') }}
-                                                    </span>
+                                                    {{ $t('components.centrum.update_dispatch_status.title') }}
                                                 </button>
                                             </div>
                                         </li>

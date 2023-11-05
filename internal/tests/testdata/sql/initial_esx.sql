@@ -54,7 +54,7 @@ CREATE TABLE IF NOT EXISTS `user_licenses` (
   `type` varchar(60) NOT NULL,
   `owner` varchar(64) NOT NULL,
   PRIMARY KEY (`type`,`owner`),
-  KEY `user_licenses_owner_IDX` (`owner`) USING BTREE
+  KEY `user_licenses_owner_IDX` (`owner`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 -- Table data: Add some user licenses for more realistic testing that all data is retrieved from the database
 INSERT INTO user_licenses (`type`, owner) VALUES('aircraft', 'char1:3c7681d6f7ad895eb7b1cc05cf895c7f1d1622c4');
@@ -176,7 +176,7 @@ CREATE TABLE IF NOT EXISTS `owned_vehicles` (
   `owners` longtext DEFAULT NULL,
   `trunk` longtext DEFAULT NULL,
   PRIMARY KEY (`plate`),
-  UNIQUE KEY `IDX_OWNED_VEHICLES_OWNERPLATE` (`owner`,`plate`) USING BTREE,
+  UNIQUE KEY `IDX_OWNED_VEHICLES_OWNERPLATE` (`owner`,`plate`),
   KEY `IDX_OWNED_VEHICLES_OWNER` (`owner`),
   KEY `IDX_OWNED_VEHICLES_OWNERTYPE` (`owner`,`type`),
   KEY `IDX_OWNED_VEHICLES_OWNERRMODELTYPE` (`owner`,`model`,`type`)

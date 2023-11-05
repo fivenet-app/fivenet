@@ -400,7 +400,7 @@ func (s *Server) AddDocumentRelation(ctx context.Context, req *AddDocumentRelati
 
 	result, err := stmt.ExecContext(ctx, tx)
 	if err != nil {
-		return nil, err
+		return nil, ErrFailedQuery
 	}
 
 	lastId, err := result.LastInsertId()

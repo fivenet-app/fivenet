@@ -31,7 +31,7 @@ BEGIN;
 --   `owners` longtext DEFAULT NULL,
 --   `trunk` longtext DEFAULT NULL,
 --   PRIMARY KEY (`plate`),
---   UNIQUE KEY `IDX_OWNED_VEHICLES_OWNERPLATE` (`owner`,`plate`) USING BTREE,
+--   UNIQUE KEY `IDX_OWNED_VEHICLES_OWNERPLATE` (`owner`,`plate`),
 --   KEY `IDX_OWNED_VEHICLES_OWNER` (`owner`),
 --   KEY `IDX_OWNED_VEHICLES_OWNERTYPE` (`owner`,`type`),
 --   KEY `IDX_OWNED_VEHICLES_OWNERRMODELTYPE` (`owner`,`model`,`type`)
@@ -52,7 +52,7 @@ EXECUTE stmt;
 --   `type` varchar(60) NOT NULL,
 --   `owner` varchar(64) NOT NULL,
 --   PRIMARY KEY (`type`,`owner`),
---   KEY `idx_user_licenses_owner` (`owner`) USING BTREE
+--   KEY `idx_user_licenses_owner` (`owner`)
 -- ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- Table: users - Should already exist

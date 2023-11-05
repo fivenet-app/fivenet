@@ -39,6 +39,8 @@ async function createAccount(values: FormData): Promise<void> {
             content: { key: 'notifications.auth.account_created.content', parameters: {} },
             type: 'success',
         });
+
+        await navigateTo({ name: 'auth-login' });
     } catch (e) {
         accountError.value = (e as RpcError).message;
         $grpc.handleError(e as RpcError);
