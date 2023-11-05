@@ -1395,6 +1395,7 @@
         "AuthService": {
             "ErrGenericAccount": "Fehler beim Anzeigen/ Aktualisieren ihres Accounts.",
             "ErrAccountCreateFailed": "Bitte überprüfen sie ihren Registrierungstoken!",
+            "ErrAccountDuplicate": "Benutzername bereits verwendet, bitte nutzen sie einen anderen Benutzernamen.",
             "ErrInvalidLogin": "Falscher Username oder Passwort!",
             "ErrNoAccount": "Sie müssen zuerst einen Account mit ihrem Registrierungstoken erstellen.",
             "ErrNoCharFound": "Keine(n) Character für deinen Account gefunden.",

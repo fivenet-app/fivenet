@@ -17,6 +17,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/perms"
 	"github.com/galexrt/fivenet/pkg/server/audit"
 	"github.com/galexrt/fivenet/pkg/utils"
+	"github.com/galexrt/fivenet/pkg/utils/dbutils"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -39,6 +40,7 @@ var (
 
 var (
 	ErrAccountCreateFailed = status.Error(codes.InvalidArgument, "errors.AuthService.ErrAccountCreateFailed")
+	ErrAccountDuplicate    = status.Error(codes.InvalidArgument, "errors.AuthService.ErrAccountDuplicate")
 	ErrAccountExistsFailed = status.Error(codes.InvalidArgument, "errors.AuthService.ErrAccountExistsFailed")
 	ErrInvalidLogin        = status.Error(codes.InvalidArgument, "errors.AuthService.ErrInvalidLogin")
 	ErrNoAccount           = status.Error(codes.InvalidArgument, "errors.AuthService.ErrNoAccount")
@@ -239,6 +241,10 @@ func (s *Server) CreateAccount(ctx context.Context, req *CreateAccountRequest) (
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+		if dbutils.IsDuplicateError(err) {
+			return nil, ErrAccountDuplicate
+		}
+
 		s.logger.Error("failed to update account in database during account creation", zap.Error(err))
 		return nil, ErrAccountCreateFailed
 	}
