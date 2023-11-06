@@ -486,16 +486,20 @@ func (s *Manager) checkUnitUsers(ctx context.Context) error {
 					break
 				}
 
-				if s.tracker.IsUserOnDuty(job, unit.Users[i].UserId) {
+				userId := unit.Users[i].UserId
+
+				unitId, _ := s.UserIDToUnitID.Load(userId)
+				// If user is in that unit and still on duty, nothing to do, otherwise remove the user from the unit
+				if (unit.Id == unitId) && s.tracker.IsUserOnDuty(job, userId) {
 					continue
 				}
 
 				if err := s.UpdateUnitAssignments(ctx, &userinfo.UserInfo{
-					UserId: unit.Users[i].UserId,
+					UserId: userId,
 					Job:    job,
-				}, unit, nil, []int32{unit.Users[i].UserId}); err != nil {
+				}, unit, nil, []int32{userId}); err != nil {
 					s.logger.Error("failed to remove off-duty users from unit",
-						zap.String("job", unit.Job), zap.Uint64("unit_id", unit.Id), zap.Int32("user_id", unit.Users[i].UserId), zap.Error(err))
+						zap.String("job", unit.Job), zap.Uint64("unit_id", unit.Id), zap.Int32("user_id", userId), zap.Error(err))
 					continue
 				}
 			}

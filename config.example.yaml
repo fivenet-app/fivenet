@@ -119,3 +119,11 @@ discord:
           #color: "#9B59B6"
     commands:
       enabled: true
+storage:
+  enabled: false
+  endpoint: ""
+  region: "us-east-1"
+  accessKeyID: ""
+  secretAccessKey: ""
+  useSSL: true
+  bucketName: ""

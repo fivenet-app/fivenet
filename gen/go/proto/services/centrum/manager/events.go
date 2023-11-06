@@ -94,123 +94,111 @@ func (s *Manager) watchEvents() error {
 
 	// Watch for events from message queue
 	for {
-		func() error {
-			ctx, span := s.tracer.Start(s.ctx, "centrum-state-events")
-			defer span.End()
+		select {
+		case <-s.ctx.Done():
+			return nil
 
-			select {
-			case <-s.ctx.Done():
-				return nil
+		case msg := <-msgCh:
+			msg.Ack()
 
-			case msg := <-msgCh:
-				msg.Ack()
+			job, topic, tType := eventscentrum.SplitSubject(msg.Subject)
 
-				job, topic, tType := eventscentrum.SplitSubject(msg.Subject)
-
-				switch topic {
-				case eventscentrum.TopicGeneral:
-					switch tType {
-					case eventscentrum.TypeGeneralDisponents:
-						var dest dispatch.DisponentsChange
-						if err := proto.Unmarshal(msg.Data, &dest); err != nil {
-							return err
-						}
-
-						s.Disponents.Store(job, dest.Disponents)
-
-					case eventscentrum.TypeGeneralSettings:
-						var dest dispatch.Settings
-						if err := proto.Unmarshal(msg.Data, &dest); err != nil {
-							return err
-						}
-
-						settings, ok := s.Settings.LoadOrStore(job, &dest)
-						if ok {
-							settings.Enabled = dest.Enabled
-							settings.Mode = dest.Mode
-							settings.FallbackMode = dest.FallbackMode
-						}
+			switch topic {
+			case eventscentrum.TopicGeneral:
+				switch tType {
+				case eventscentrum.TypeGeneralDisponents:
+					var dest dispatch.DisponentsChange
+					if err := proto.Unmarshal(msg.Data, &dest); err != nil {
+						s.logger.Error("failed to unmarshal disponents message", zap.Error(err))
+						continue
 					}
 
-				case eventscentrum.TopicDispatch:
-					switch tType {
-					case eventscentrum.TypeDispatchCreated:
-						fallthrough
-					case eventscentrum.TypeDispatchStatus:
-						dest := &dispatch.Dispatch{}
-						if err := proto.Unmarshal(msg.Data, dest); err != nil {
-							return err
-						}
+					s.Disponents.Store(job, dest.Disponents)
 
-						s.GetDispatchesMap(job).Store(dest.Id, dest)
-
-					case eventscentrum.TypeDispatchUpdated:
-						dest := &dispatch.Dispatch{}
-						if err := proto.Unmarshal(msg.Data, dest); err != nil {
-							return err
-						}
-
-						s.GetDispatchesMap(job).Store(dest.Id, dest)
-
-					case eventscentrum.TypeDispatchDeleted:
-						dest := &dispatch.Dispatch{}
-						if err := proto.Unmarshal(msg.Data, dest); err != nil {
-							return err
-						}
-
-						s.GetDispatchesMap(job).Delete(dest.Id)
-
+				case eventscentrum.TypeGeneralSettings:
+					var dest dispatch.Settings
+					if err := proto.Unmarshal(msg.Data, &dest); err != nil {
+						s.logger.Error("failed to unmarshal settings message", zap.Error(err))
+						continue
 					}
 
-				case eventscentrum.TopicUnit:
-					switch tType {
-					case eventscentrum.TypeUnitDeleted:
-						dest := &dispatch.Unit{}
-						if err := proto.Unmarshal(msg.Data, dest); err != nil {
-							return err
-						}
-
-						units, ok := s.Units.Load(dest.Job)
-						if ok {
-							units.Delete(dest.Id)
-						}
-
-					case eventscentrum.TypeUnitUpdated:
-						dest := &dispatch.Unit{}
-						if err := proto.Unmarshal(msg.Data, dest); err != nil {
-							return err
-						}
-
-						s.GetUnitsMap(job).Store(dest.Id, dest)
-
-					case eventscentrum.TypeUnitStatus:
-						dest := &dispatch.Unit{}
-						if err := proto.Unmarshal(msg.Data, dest); err != nil {
-							return err
-						}
-
-						if dest.Status.Status == dispatch.StatusUnit_STATUS_UNIT_USER_ADDED {
-							s.UserIDToUnitID.Store(*dest.Status.UserId, dest.Status.UnitId)
-						} else if dest.Status.Status == dispatch.StatusUnit_STATUS_UNIT_USER_REMOVED {
-							s.UserIDToUnitID.Delete(*dest.Status.UserId)
-						}
-
-						unit, ok := s.GetUnitsMap(job).Load(dest.Id)
-						if ok {
-							if dest.Status.Status != dispatch.StatusUnit_STATUS_UNIT_USER_ADDED && dest.Status.Status != dispatch.StatusUnit_STATUS_UNIT_USER_REMOVED {
-								unit.Status = dest.Status
-							}
-						} else {
-							// "Cache/State miss" load from database
-							if err := s.LoadUnits(ctx, dest.Id); err != nil {
-								s.logger.Error("failed to load unit", zap.Error(err))
-							}
-						}
+					settings, ok := s.Settings.LoadOrStore(job, &dest)
+					if ok {
+						settings.Enabled = dest.Enabled
+						settings.Mode = dest.Mode
+						settings.FallbackMode = dest.FallbackMode
 					}
 				}
-			}
 
-			return nil
-		}()
+			case eventscentrum.TopicDispatch:
+				switch tType {
+				case eventscentrum.TypeDispatchCreated:
+					fallthrough
+				case eventscentrum.TypeDispatchStatus:
+					fallthrough
+				case eventscentrum.TypeDispatchUpdated:
+					dest := &dispatch.Dispatch{}
+					if err := proto.Unmarshal(msg.Data, dest); err != nil {
+						s.logger.Error("failed to unmarshal dispatch message", zap.Error(err))
+						continue
+					}
+
+					if d, ok := s.GetDispatchesMap(job).LoadOrStore(dest.Id, dest); ok {
+						d.Update(dest)
+					}
+
+				case eventscentrum.TypeDispatchDeleted:
+					dest := &dispatch.Dispatch{}
+					if err := proto.Unmarshal(msg.Data, dest); err != nil {
+						s.logger.Error("failed to unmarshal dispatch message", zap.Error(err))
+						continue
+					}
+
+					s.GetDispatchesMap(job).Delete(dest.Id)
+
+				}
+
+			case eventscentrum.TopicUnit:
+				switch tType {
+				case eventscentrum.TypeUnitUpdated:
+					dest := &dispatch.Unit{}
+					if err := proto.Unmarshal(msg.Data, dest); err != nil {
+						s.logger.Error("failed to unmarshal unit message", zap.Error(err))
+						continue
+					}
+
+					if unit, ok := s.GetUnitsMap(job).LoadOrStore(dest.Id, dest); ok {
+						unit.Update(dest)
+					}
+
+				case eventscentrum.TypeUnitStatus:
+					dest := &dispatch.Unit{}
+					if err := proto.Unmarshal(msg.Data, dest); err != nil {
+						s.logger.Error("failed to unmarshal unit message", zap.Error(err))
+						continue
+					}
+
+					if unit, ok := s.GetUnitsMap(job).LoadOrStore(dest.Id, dest); ok {
+						unit.Update(dest)
+					}
+
+					if dest.Status.Status == dispatch.StatusUnit_STATUS_UNIT_USER_ADDED {
+						s.UserIDToUnitID.Store(*dest.Status.UserId, dest.Status.UnitId)
+					} else if dest.Status.Status == dispatch.StatusUnit_STATUS_UNIT_USER_REMOVED {
+						s.UserIDToUnitID.Delete(*dest.Status.UserId)
+					}
+
+				case eventscentrum.TypeUnitDeleted:
+					dest := &dispatch.Unit{}
+					if err := proto.Unmarshal(msg.Data, dest); err != nil {
+						s.logger.Error("failed to unmarshal unit message", zap.Error(err))
+						continue
+					}
+
+					s.GetUnitsMap(dest.Job).Delete(dest.Id)
+
+				}
+			}
+		}
 	}
 }

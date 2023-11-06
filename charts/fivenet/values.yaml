@@ -219,6 +219,14 @@ fivenet:
             #  color: "#9B59B6"
         commands:
           enabled: true
+    storage:
+      enabled: false
+      endpoint: ""
+      region: "us-east-1"
+      accessKeyID: ""
+      secretAccessKey: ""
+      useSSL: true
+      bucketName: ""
 
 # -- FiveNet Discord Bot deployment config
 discordBot:
@@ -431,3 +439,6 @@ nats:
             # You should change the username and password
             - user: "fivenet"
               password: "fivenet"
+
+# -- Extra objects to deploy (value evaluated as a template)
+extraObjects: []

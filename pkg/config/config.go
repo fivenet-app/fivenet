@@ -23,6 +23,7 @@ type Result struct {
 
 func Load() (*Config, error) {
 	// Viper Config reading setup
+	viper.SetEnvPrefix("FIVENET")
 	viper.SetConfigName("config")
 	viper.SetConfigType("yaml")
 	viper.AddConfigPath(".")
@@ -70,6 +71,8 @@ type Config struct {
 
 	Game    Game    `yaml:"game"`
 	Discord Discord `yaml:"discord"`
+
+	Storage Storage `yaml:"storage"`
 }
 
 type Sentry struct {
@@ -239,4 +242,14 @@ type DiscordGroupRole struct {
 
 type DiscordCommands struct {
 	Enabled bool `default:"false" yaml:"enabled"`
+}
+
+type Storage struct {
+	Enabled         bool   `default:"false" yaml:"enabled"`
+	Endpoint        string `yaml:"endpoint"`
+	Region          string `default:"us-east-1" yaml:"region"`
+	AccessKeyID     string `yaml:"accessKeyID"`
+	SecretAccessKey string `yaml:"secretAccessKey"`
+	UseSSL          bool   `default:"true" yaml:"useSSL"`
+	BucketName      string `yaml:"bucketName"`
 }
