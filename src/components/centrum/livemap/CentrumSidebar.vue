@@ -180,7 +180,7 @@ onBeforeUnmount(async () => {
 });
 
 const unitCheckupStatusAge = 20 * 60 * 1000;
-const unitCheckupStatusReping = 12 * 60 * 1000;
+const unitCheckupStatusReping = 13.5 * 60 * 1000;
 
 const attentionSound = useSound('/sounds/centrum/attention.mp3', {
     volume: 0.15,
