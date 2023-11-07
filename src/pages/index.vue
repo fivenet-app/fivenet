@@ -43,7 +43,13 @@ onBeforeMount(async () => {
                             :to="{ name: 'auth-login' }"
                             class="w-48 max-w-96 rounded-md bg-primary-500 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
                         >
-                            {{ $t('pages.auth.login.menu_item') }}
+                            {{ $t('pages.auth.login.title') }}
+                        </NuxtLink>
+                        <NuxtLink
+                            :to="{ name: 'auth-registration' }"
+                            class="w-48 max-w-96 rounded-md bg-secondary-500 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-secondary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-secondary-500"
+                        >
+                            {{ $t('components.auth.registration_form.title') }}
                         </NuxtLink>
                     </div>
                 </div>
