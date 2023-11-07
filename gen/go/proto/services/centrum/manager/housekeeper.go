@@ -8,7 +8,6 @@ import (
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
 	centrumutils "github.com/galexrt/fivenet/gen/go/proto/services/centrum/utils"
-	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/galexrt/fivenet/pkg/utils"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/paulmach/orb"
@@ -494,10 +493,7 @@ func (s *Manager) checkUnitUsers(ctx context.Context) error {
 					continue
 				}
 
-				if err := s.UpdateUnitAssignments(ctx, &userinfo.UserInfo{
-					UserId: userId,
-					Job:    job,
-				}, unit, nil, []int32{userId}); err != nil {
+				if err := s.UpdateUnitAssignments(ctx, job, &userId, unit, nil, []int32{userId}); err != nil {
 					s.logger.Error("failed to remove off-duty users from unit",
 						zap.String("job", unit.Job), zap.Uint64("unit_id", unit.Id), zap.Int32("user_id", userId), zap.Error(err))
 					continue

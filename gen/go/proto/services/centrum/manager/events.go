@@ -6,7 +6,6 @@ import (
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
 	eventscentrum "github.com/galexrt/fivenet/gen/go/proto/services/centrum/events"
-	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/nats-io/nats.go"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/proto"
@@ -41,15 +40,15 @@ func (s *Manager) watchUserChanges() {
 				}
 
 				for _, userInfo := range event.Removed {
-					s.handleRemovedUserFromDisponents(ctx, userInfo.Job, userInfo.UserID)
-					s.handleRemovedUserFromUnit(ctx, userInfo.Job, userInfo.UserID)
+					s.handleRemoveUserFromDisponents(ctx, userInfo.Job, userInfo.UserID)
+					s.handleRemoveUserFromUnit(ctx, userInfo.Job, userInfo.UserID)
 				}
 			}()
 		}
 	}
 }
 
-func (s *Manager) handleRemovedUserFromDisponents(ctx context.Context, job string, userId int32) {
+func (s *Manager) handleRemoveUserFromDisponents(ctx context.Context, job string, userId int32) {
 	if s.CheckIfUserIsDisponent(job, userId) {
 		if err := s.DisponentSignOn(ctx, job, userId, false); err != nil {
 			s.logger.Error("failed to remove user from disponents", zap.Error(err))
@@ -58,24 +57,19 @@ func (s *Manager) handleRemovedUserFromDisponents(ctx context.Context, job strin
 	}
 }
 
-func (s *Manager) handleRemovedUserFromUnit(ctx context.Context, job string, userId int32) bool {
+func (s *Manager) handleRemoveUserFromUnit(ctx context.Context, job string, userId int32) bool {
 	unitId, ok := s.UserIDToUnitID.Load(userId)
 	if !ok {
 		// Nothing to do
 		return false
 	}
 
-	s.UserIDToUnitID.Delete(userId)
-
 	unit, ok := s.GetUnit(job, unitId)
 	if !ok {
 		return false
 	}
 
-	if err := s.UpdateUnitAssignments(ctx, &userinfo.UserInfo{
-		UserId: userId,
-		Job:    job,
-	}, unit, nil, []int32{userId}); err != nil {
+	if err := s.UpdateUnitAssignments(ctx, job, &userId, unit, nil, []int32{userId}); err != nil {
 		s.logger.Error("failed to remove user from unit", zap.Error(err))
 		return false
 	}
@@ -161,16 +155,7 @@ func (s *Manager) watchEvents() error {
 			case eventscentrum.TopicUnit:
 				switch tType {
 				case eventscentrum.TypeUnitUpdated:
-					dest := &dispatch.Unit{}
-					if err := proto.Unmarshal(msg.Data, dest); err != nil {
-						s.logger.Error("failed to unmarshal unit message", zap.Error(err))
-						continue
-					}
-
-					if unit, ok := s.GetUnitsMap(job).LoadOrStore(dest.Id, dest); ok {
-						unit.Update(dest)
-					}
-
+					fallthrough
 				case eventscentrum.TypeUnitStatus:
 					dest := &dispatch.Unit{}
 					if err := proto.Unmarshal(msg.Data, dest); err != nil {

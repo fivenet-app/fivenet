@@ -287,7 +287,7 @@ func (s *Server) AssignUnit(ctx context.Context, req *AssignUnitRequest) (*Assig
 		return nil, errorscentrum.ErrFailedQuery
 	}
 
-	if err := s.state.UpdateUnitAssignments(ctx, userInfo, unit, req.ToAdd, req.ToRemove); err != nil {
+	if err := s.state.UpdateUnitAssignments(ctx, userInfo.Job, &userInfo.UserId, unit, req.ToAdd, req.ToRemove); err != nil {
 		return nil, err
 	}
 
@@ -318,7 +318,7 @@ func (s *Server) JoinUnit(ctx context.Context, req *JoinUnitRequest) (*JoinUnitR
 	if req.UnitId != nil && *req.UnitId > 0 {
 		// Remove user from his current unit
 		if currentUnit != nil {
-			if err := s.state.UpdateUnitAssignments(ctx, userInfo, currentUnit, nil, []int32{userInfo.UserId}); err != nil {
+			if err := s.state.UpdateUnitAssignments(ctx, userInfo.Job, &userInfo.UserId, currentUnit, nil, []int32{userInfo.UserId}); err != nil {
 				return nil, errorscentrum.ErrFailedQuery
 			}
 		}
@@ -328,7 +328,7 @@ func (s *Server) JoinUnit(ctx context.Context, req *JoinUnitRequest) (*JoinUnitR
 			return nil, errorscentrum.ErrFailedQuery
 		}
 
-		if err := s.state.UpdateUnitAssignments(ctx, userInfo, newUnit, []int32{userInfo.UserId}, nil); err != nil {
+		if err := s.state.UpdateUnitAssignments(ctx, userInfo.Job, &userInfo.UserId, newUnit, []int32{userInfo.UserId}, nil); err != nil {
 			return nil, errorscentrum.ErrFailedQuery
 		}
 
@@ -336,7 +336,7 @@ func (s *Server) JoinUnit(ctx context.Context, req *JoinUnitRequest) (*JoinUnitR
 	} else {
 		// User leaves his current unit (if he is in an unit)
 		if currentUnit != nil {
-			if err := s.state.UpdateUnitAssignments(ctx, userInfo, currentUnit, nil, []int32{userInfo.UserId}); err != nil {
+			if err := s.state.UpdateUnitAssignments(ctx, userInfo.Job, &userInfo.UserId, currentUnit, nil, []int32{userInfo.UserId}); err != nil {
 				return nil, errorscentrum.ErrFailedQuery
 			}
 		}

@@ -5,7 +5,6 @@ import (
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
 	eventscentrum "github.com/galexrt/fivenet/gen/go/proto/services/centrum/events"
-	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/pkg/utils/dbutils"
 	"github.com/galexrt/fivenet/query/fivenet/table"
@@ -135,14 +134,16 @@ func (s *Manager) UpdateUnitStatus(ctx context.Context, job string, unit *dispat
 	return nil
 }
 
-func (s *Manager) UpdateUnitAssignments(ctx context.Context, userInfo *userinfo.UserInfo, unit *dispatch.Unit, toAdd []int32, toRemove []int32) error {
+func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId *int32, unit *dispatch.Unit, toAdd []int32, toRemove []int32) error {
 	var x, y *float64
 	var postal *string
-	marker, ok := s.tracker.GetUserById(userInfo.UserId)
-	if ok {
-		x = &marker.Info.X
-		y = &marker.Info.Y
-		postal = marker.Info.Postal
+	if userId != nil {
+		marker, ok := s.tracker.GetUserById(*userId)
+		if ok {
+			x = &marker.Info.X
+			y = &marker.Info.Y
+			postal = marker.Info.Postal
+		}
 	}
 
 	// Begin transaction
@@ -177,24 +178,25 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, userInfo *userinfo.
 			}
 
 			for k := 0; k < len(toRemove); k++ {
-				if unit.Users[i].UserId == toRemove[k] {
-					unit.Users = utils.RemoveFromSlice(unit.Users, i)
-
-					if err := s.UpdateUnitStatus(ctx, userInfo.Job, unit, &dispatch.UnitStatus{
-						UnitId:    unit.Id,
-						Status:    dispatch.StatusUnit_STATUS_UNIT_USER_REMOVED,
-						UserId:    &toRemove[k],
-						CreatorId: &userInfo.UserId,
-						X:         x,
-						Y:         y,
-						Postal:    postal,
-					}); err != nil {
-						return err
-					}
-
-					s.UserIDToUnitID.Delete(toRemove[k])
-					break
+				if unit.Users[i].UserId != toRemove[k] {
+					continue
 				}
+
+				unit.Users = utils.RemoveFromSlice(unit.Users, i)
+
+				if err := s.UpdateUnitStatus(ctx, job, unit, &dispatch.UnitStatus{
+					UnitId:    unit.Id,
+					Status:    dispatch.StatusUnit_STATUS_UNIT_USER_REMOVED,
+					UserId:    &toRemove[k],
+					CreatorId: userId,
+					X:         x,
+					Y:         y,
+					Postal:    postal,
+				}); err != nil {
+					return err
+				}
+
+				s.UserIDToUnitID.Delete(toRemove[k])
 			}
 		}
 	}
@@ -253,11 +255,11 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, userInfo *userinfo.
 				User:   user,
 			})
 
-			if err := s.UpdateUnitStatus(ctx, userInfo.Job, unit, &dispatch.UnitStatus{
+			if err := s.UpdateUnitStatus(ctx, job, unit, &dispatch.UnitStatus{
 				UnitId:    unit.Id,
 				Status:    dispatch.StatusUnit_STATUS_UNIT_USER_ADDED,
 				UserId:    &user.UserId,
-				CreatorId: &userInfo.UserId,
+				CreatorId: userId,
 				X:         x,
 				Y:         y,
 				Postal:    postal,
@@ -278,15 +280,15 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, userInfo *userinfo.
 	if err != nil {
 		return err
 	}
-	s.events.JS.PublishAsync(eventscentrum.BuildSubject(eventscentrum.TopicUnit, eventscentrum.TypeUnitUpdated, userInfo.Job, unit.Id), data)
+	s.events.JS.PublishAsync(eventscentrum.BuildSubject(eventscentrum.TopicUnit, eventscentrum.TypeUnitUpdated, job, unit.Id), data)
 
 	// Unit is empty, set unit status to be unavailable automatically
 	if len(unit.Users) == 0 {
-		if err := s.UpdateUnitStatus(ctx, userInfo.Job, unit, &dispatch.UnitStatus{
+		if err := s.UpdateUnitStatus(ctx, job, unit, &dispatch.UnitStatus{
 			UnitId:    unit.Id,
 			Status:    dispatch.StatusUnit_STATUS_UNIT_UNAVAILABLE,
-			UserId:    &userInfo.UserId,
-			CreatorId: &userInfo.UserId,
+			UserId:    userId,
+			CreatorId: userId,
 			X:         x,
 			Y:         y,
 			Postal:    postal,
