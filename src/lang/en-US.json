@@ -201,14 +201,6 @@
                 "title": "Login",
                 "forgot_password": "Forgot Password"
             },
-            "registration_form": {
-                "title": "Create Account",
-                "registration_token": "Registration Token",
-                "submit_button": "Create Account",
-                "back_to_login_button": "Back to Login",
-                "create_error": "There was an error creating your account, please try again!",
-                "subtitle": "To create an account join the FiveM server and run /fivenet command."
-            },
             "change_password_modal": {
                 "change_password": "Change Password",
                 "current_password": "Current Password",
@@ -225,6 +217,14 @@
                 "submit_button": "Set new Password",
                 "back_to_login_button": "Back to Login",
                 "create_error": "There was an error setting your new password, please try again!"
+            },
+            "registration_form": {
+                "title": "Create Account",
+                "registration_token": "Registration Token",
+                "submit_button": "Create Account",
+                "back_to_login_button": "Back to Login",
+                "create_error": "There was an error creating your account, please try again!",
+                "subtitle": "To create an account join the FiveM server and run /fivenet command."
             }
         },
         "citizens": {
@@ -1394,7 +1394,6 @@
         "AuthService": {
             "ErrGenericAccount": "Failed to get/ update your account, please try again.",
             "ErrAccountCreateFailed": "Please check the token you have typed in!",
-            "ErrAccountDuplicate": "Username already taken, please use a different username.",
             "ErrInvalidLogin": "Wrong username or password!",
             "ErrNoAccount": "You need to use your registration token to create an account first.",
             "ErrNoCharFound": "No character(s) found for your account.",
@@ -1404,7 +1403,8 @@
             "ErrChangePassword": "Failed to change your password!",
             "ErrForgotPassword": "Failed to reset password!",
             "ErrAccountExistsFailed": "Please use use the forgot password function!",
-            "ErrSignupDisabled": "Account signup is disabled!"
+            "ErrSignupDisabled": "Account signup is disabled!",
+            "ErrAccountDuplicate": "Username already taken, please use a different username."
         },
         "CitizenStoreService": {
             "ErrFailedQuery": "Failed to list/ get citizens data!",
