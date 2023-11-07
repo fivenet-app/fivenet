@@ -1,4 +1,4 @@
-package metrics
+package admin
 
 import (
 	"context"
@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/galexrt/fivenet/pkg/config"
+	"github.com/gin-contrib/pprof"
 	ginzap "github.com/gin-contrib/zap"
 	"github.com/gin-gonic/gin"
 	"github.com/prometheus/client_golang/prometheus"
@@ -16,7 +17,7 @@ import (
 )
 
 const (
-	Namespace = "fivenet"
+	MetricsNamespace = "fivenet"
 )
 
 var Module = fx.Module("metricsserver",
@@ -30,7 +31,7 @@ func wrapLogger(log *zap.Logger) *zap.Logger {
 	return log.Named("metrics_server")
 }
 
-type MetricsServer *http.Server
+type AdminServer *http.Server
 
 type Params struct {
 	fx.In
@@ -44,7 +45,7 @@ type Params struct {
 type Result struct {
 	fx.Out
 
-	Server MetricsServer
+	Server AdminServer
 }
 
 func NewServer(p Params) (Result, error) {
@@ -67,6 +68,8 @@ func NewServer(p Params) (Result, error) {
 	e.GET("/readiness", func(c *gin.Context) {
 		c.String(http.StatusOK, "OK")
 	})
+
+	pprof.Register(e)
 
 	// Create HTTP Server for graceful shutdown handling
 	srv := &http.Server{

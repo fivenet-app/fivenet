@@ -8,7 +8,7 @@ import (
 	dispatch "github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
 	"github.com/galexrt/fivenet/gen/go/proto/services/centrum/manager"
 	"github.com/galexrt/fivenet/pkg/events"
-	"github.com/galexrt/fivenet/pkg/server/metrics"
+	"github.com/galexrt/fivenet/pkg/server/admin"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
 	"github.com/puzpuzpuz/xsync/v3"
@@ -20,7 +20,7 @@ import (
 
 var (
 	metricBotActive = promauto.NewGaugeVec(prometheus.GaugeOpts{
-		Namespace: metrics.Namespace,
+		Namespace: admin.MetricsNamespace,
 		Subsystem: "centrum_bot",
 		Name:      "active",
 		Help:      "If centrum bot is active or not.",

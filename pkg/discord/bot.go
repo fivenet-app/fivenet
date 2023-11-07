@@ -9,7 +9,7 @@ import (
 	"github.com/bwmarrin/discordgo"
 	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
-	"github.com/galexrt/fivenet/pkg/server/metrics"
+	"github.com/galexrt/fivenet/pkg/server/admin"
 	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -39,7 +39,7 @@ var BotModule = fx.Module("discord_bot",
 
 var (
 	lastSync = promauto.NewGaugeVec(prometheus.GaugeOpts{
-		Namespace: metrics.Namespace,
+		Namespace: admin.MetricsNamespace,
 		Subsystem: "discord_bot",
 		Name:      "last_sync",
 		Help:      "Last time sync has completed.",
