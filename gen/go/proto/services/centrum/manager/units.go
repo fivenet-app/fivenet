@@ -78,6 +78,7 @@ func (s *Manager) UpdateUnitStatus(ctx context.Context, job string, unit *dispat
 	tUnitStatus := table.FivenetCentrumUnitsStatus
 	stmt := tUnitStatus.
 		INSERT(
+			tUnitStatus.CreatedAt,
 			tUnitStatus.UnitID,
 			tUnitStatus.Status,
 			tUnitStatus.Reason,
@@ -89,6 +90,7 @@ func (s *Manager) UpdateUnitStatus(ctx context.Context, job string, unit *dispat
 			tUnitStatus.CreatorID,
 		).
 		VALUES(
+			jet.CURRENT_TIMESTAMP(),
 			in.UnitId,
 			in.Status,
 			in.Reason,
