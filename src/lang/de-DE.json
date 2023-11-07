@@ -185,15 +185,7 @@
                 "subtitle": "Deine FiveNet Konto Informationen.",
                 "license": "Identifier/ Lizenz",
                 "change_password": "Passwort ändern",
-                "change_password_button": "Konto Passwort ändern",
-                "set_startpage": {
-                    "title": "Startseite nach Characterauswahl",
-                    "no_char_selected": "Um eine Startseite auszuwählen, müssen sie zuerst einen Character auswählen."
-                },
-                "editor_theme": {
-                    "title": "Dokumenten-Editor-Design",
-                    "dark_mode": "Nacht Modus"
-                }
+                "change_password_button": "Konto Passwort ändern"
             },
             "login": {
                 "register_account": "Konto mit Token erstellen",
@@ -225,6 +217,18 @@
                 "back_to_login_button": "Zurück zur Anmeldung",
                 "create_error": "Es gab einen Fehler während dein Konto erstellt wurde, bitte versuche es erneut!",
                 "subtitle": "Um ein Konto zu erstellen, treten Sie dem FiveM-Server bei und geben Sie den Befehl /fivenet ein."
+            },
+            "settings_panel": {
+                "title": "Einstellungen",
+                "subtitle": "Client-seitige FiveNet-Einstellungen.",
+                "set_startpage": {
+                    "title": "Startseite nach Characterauswahl",
+                    "no_char_selected": "Um eine Startseite auszuwählen, müssen sie zuerst einen Character auswählen."
+                },
+                "editor_theme": {
+                    "title": "Dokumenten-Editor-Design",
+                    "dark_mode": "Nacht Modus"
+                }
             }
         },
         "citizens": {
