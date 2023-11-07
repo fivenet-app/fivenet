@@ -197,12 +197,12 @@
                 }
             },
             "login": {
-                "register_account": "Konto mit Token registrieren",
+                "register_account": "Konto mit Token erstellen",
                 "login_error": "Es gab einen Fehler beim Login, bitte versuche es erneut!",
                 "title": "Anmeldung",
                 "forgot_password": "Passwort vergessen"
             },
-            "create_account": {
+            "registration_form": {
                 "title": "Konto erstellen",
                 "registration_token": "Registrierungstoken",
                 "submit_button": "Konto erstellen",

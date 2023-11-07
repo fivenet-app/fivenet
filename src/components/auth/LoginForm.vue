@@ -8,6 +8,10 @@ import GenericAlert from '~/components/partials/elements/GenericAlert.vue';
 import { useAuthStore } from '~/store/auth';
 import { useConfigStore } from '~/store/config';
 
+defineEmits<{
+    (e: 'toggle'): void;
+}>();
+
 const authStore = useAuthStore();
 const { loginError } = storeToRefs(authStore);
 const { doLogin } = authStore;
@@ -65,97 +69,118 @@ watch(
 </script>
 
 <template>
-    <h2 class="pb-4 text-3xl text-center text-neutral">
-        {{ $t('components.auth.login.title') }}
-    </h2>
+    <div>
+        <h2 class="pb-4 text-3xl text-center text-neutral">
+            {{ $t('components.auth.login.title') }}
+        </h2>
 
-    <form class="my-2 space-y-6" @submit.prevent="onSubmitThrottle">
-        <div>
-            <label for="username" class="sr-only">
-                {{ $t('common.username') }}
-            </label>
+        <form class="my-2 space-y-6" @submit.prevent="onSubmitThrottle">
             <div>
-                <VeeField
-                    name="username"
-                    type="text"
-                    autocomplete="username"
-                    :placeholder="$t('common.username')"
-                    :label="$t('common.username')"
-                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                    @focusin="focusTablet(true)"
-                    @focusout="focusTablet(false)"
-                />
-                <VeeErrorMessage name="username" as="p" class="mt-2 text-sm text-error-400" />
+                <label for="username" class="sr-only">
+                    {{ $t('common.username') }}
+                </label>
+                <div>
+                    <VeeField
+                        name="username"
+                        type="text"
+                        autocomplete="username"
+                        :placeholder="$t('common.username')"
+                        :label="$t('common.username')"
+                        class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                        @focusin="focusTablet(true)"
+                        @focusout="focusTablet(false)"
+                    />
+                    <VeeErrorMessage name="username" as="p" class="mt-2 text-sm text-error-400" />
+                </div>
             </div>
-        </div>
-        <div>
-            <label for="password" class="sr-only">
-                {{ $t('common.password') }}
-            </label>
             <div>
-                <VeeField
-                    name="password"
-                    type="password"
-                    autocomplete="current-password"
-                    :placeholder="$t('common.password')"
-                    :label="$t('common.password')"
-                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                    @focusin="focusTablet(true)"
-                    @focusout="focusTablet(false)"
-                />
-                <VeeErrorMessage name="password" as="p" class="mt-2 text-sm text-error-400" />
+                <label for="password" class="sr-only">
+                    {{ $t('common.password') }}
+                </label>
+                <div>
+                    <VeeField
+                        name="password"
+                        type="password"
+                        autocomplete="current-password"
+                        :placeholder="$t('common.password')"
+                        :label="$t('common.password')"
+                        class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                        @focusin="focusTablet(true)"
+                        @focusout="focusTablet(false)"
+                    />
+                    <VeeErrorMessage name="password" as="p" class="mt-2 text-sm text-error-400" />
+                </div>
             </div>
+
+            <div>
+                <button
+                    type="submit"
+                    class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                    :disabled="!meta.valid || !canSubmit"
+                    :class="[
+                        !meta.valid || !canSubmit
+                            ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
+                            : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
+                    ]"
+                >
+                    <template v-if="!canSubmit">
+                        <LoadingIcon class="animate-spin h-5 w-5 mr-2" />
+                    </template>
+                    {{ $t('common.login') }}
+                </button>
+            </div>
+        </form>
+
+        <div class="my-4 space-y-2">
+            <template v-if="!clientConfig.nuiEnabled">
+                <p v-if="!socialLoginEnabled" class="mt-2 text-sm text-error-400">
+                    {{ $t('pages.auth.login.social_login_disabled') }}
+                </p>
+                <div v-for="provider in appConfig.login.providers" :key="provider.name">
+                    <button
+                        v-if="!socialLoginEnabled"
+                        type="button"
+                        class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300"
+                        :class="!socialLoginEnabled ? 'disabled' : ''"
+                    >
+                        {{ provider.label }} {{ $t('common.login') }}
+                    </button>
+                    <NuxtLink
+                        v-else
+                        :external="true"
+                        :to="`/api/oauth2/login/${provider.name}`"
+                        class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300"
+                        :class="!socialLoginEnabled ? 'disabled' : ''"
+                    >
+                        {{ provider.label }} {{ $t('common.login') }}
+                    </NuxtLink>
+                </div>
+            </template>
         </div>
 
-        <div>
+        <GenericAlert
+            v-if="loginError"
+            :title="$t('components.auth.login.login_error')"
+            :message="loginError.startsWith('errors.') ? $t(loginError) : loginError"
+        />
+
+        <div class="mt-6">
             <button
-                type="submit"
-                class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                :disabled="!meta.valid || !canSubmit"
-                :class="[
-                    !meta.valid || !canSubmit
-                        ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
-                        : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
-                ]"
+                type="button"
+                class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-secondary-600 text-neutral hover:bg-secondary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300"
+                @click="$emit('toggle')"
             >
-                <template v-if="!canSubmit">
-                    <LoadingIcon class="animate-spin h-5 w-5 mr-2" />
-                </template>
-                {{ $t('common.login') }}
+                {{ $t('components.auth.login.forgot_password') }}
             </button>
         </div>
-    </form>
-
-    <div class="my-4 space-y-2">
-        <template v-if="!clientConfig.nuiEnabled">
-            <p v-if="!socialLoginEnabled" class="mt-2 text-sm text-error-400">
-                {{ $t('pages.auth.login.social_login_disabled') }}
-            </p>
-            <div v-for="provider in appConfig.login.providers" :key="provider.name">
-                <button
-                    v-if="!socialLoginEnabled"
-                    type="button"
-                    class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300"
-                    :class="!socialLoginEnabled ? 'disabled' : ''"
-                >
-                    {{ provider.label }} {{ $t('common.login') }}
-                </button>
-                <NuxtLink
-                    v-else
-                    :external="true"
-                    :to="`/api/oauth2/login/${provider.name}`"
-                    class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-primary-500 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300"
-                    :class="!socialLoginEnabled ? 'disabled' : ''"
-                >
-                    {{ provider.label }} {{ $t('common.login') }}
-                </NuxtLink>
-            </div>
-        </template>
+        <div v-if="appConfig.login.signupEnabled" class="mt-6">
+            <NuxtLink
+                :to="{ name: 'auth-registration' }"
+                type="button"
+                class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-secondary-600 text-neutral hover:bg-secondary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300"
+            >
+                {{ $t('components.auth.login.register_account') }}
+            </NuxtLink>
+        </div>
     </div>
-
-    <GenericAlert
-        v-if="loginError"
-        :title="$t('components.auth.login.login_error')"
-        :message="loginError.startsWith('errors.') ? $t(loginError) : loginError"
-    />
 </template>

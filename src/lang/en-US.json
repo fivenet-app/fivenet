@@ -18,7 +18,6 @@
             "login": {
                 "title": "Login",
                 "social_login_disabled": "Social login requires you to accept the social login cookies.",
-                "menu_item": "Login or Register"
             }
         },
         "about": {
@@ -197,12 +196,12 @@
                 }
             },
             "login": {
-                "register_account": "Register Account using Token",
+                "register_account": "Register Account with Token",
                 "login_error": "There was an error signing you in, please try again!",
                 "title": "Login",
                 "forgot_password": "Forgot Password"
             },
-            "create_account": {
+            "registration_form": {
                 "title": "Create Account",
                 "registration_token": "Registration Token",
                 "submit_button": "Create Account",

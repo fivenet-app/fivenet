@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { Dialog, DialogPanel, Menu, MenuButton, MenuItem, MenuItems, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import {
+    AccountPlusIcon,
     AccountIcon,
     AccountMultipleIcon,
     BriefcaseIcon,
@@ -120,7 +121,8 @@ const sidebarNavigation = ref<
     },
 ]);
 const userNavigation = ref<{ name: string; href: RoutesNamedLocations; permission?: string }[]>([
-    { name: 'pages.auth.login.menu_item', href: { name: 'auth-login' } },
+    { name: 'pages.auth.login.title', href: { name: 'auth-login' } },
+    { name: 'components.auth.registration_form.title', href: { name: 'auth-registration' } },
 ]);
 const breadcrumbs = useBreadcrumbs();
 const mobileMenuOpen = ref(false);
@@ -148,7 +150,10 @@ function updateUserNav(): void {
         );
     }
     if (userNavigation.value.length === 0) {
-        userNavigation.value = [{ name: 'pages.auth.login.menu_item', href: { name: 'auth-login' } }];
+        userNavigation.value = [
+            { name: 'pages.auth.login.title', href: { name: 'auth-login' } },
+            { name: 'components.auth.registration_form.title', href: { name: 'auth-registration' } },
+        ];
     }
 }
 
@@ -207,7 +212,17 @@ watch(router.currentRoute, () => updateActiveItem());
                             aria-current-value="page"
                         >
                             <LoginIcon class="h-6 w-6" aria-hidden="true" />
-                            <span class="mt-2">{{ $t('pages.auth.login.menu_item') }}</span>
+                            <span class="mt-2">{{ $t('pages.auth.login.title') }}</span>
+                        </NuxtLink>
+                        <NuxtLink
+                            :to="{ name: 'auth-registration' }"
+                            active-class="bg-accent-100/20 text-neutral font-bold"
+                            class="text-accent-100 hover:bg-accent-100/10 hover:text-neutral font-medium hover:transition-all group flex w-full flex-col items-center rounded-md p-3 text-xs my-2"
+                            exact-active-class="text-neutral"
+                            aria-current-value="page"
+                        >
+                            <AccountPlusIcon class="h-6 w-6" aria-hidden="true" />
+                            <span class="mt-2">{{ $t('components.auth.registration_form.title') }}</span>
                         </NuxtLink>
                     </span>
                     <span v-if="accessToken && !activeChar">
@@ -473,18 +488,16 @@ watch(router.currentRoute, () => updateActiveItem());
 
                             <!-- Account dropdown -->
                             <Menu as="div" class="relative flex-shrink-0">
-                                <div>
-                                    <MenuButton
-                                        class="flex text-sm rounded-full bg-base-800 ring-2 ring-base-600 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
-                                    >
-                                        <span class="sr-only">
-                                            {{ $t('components.partials.sidebar.open_usermenu') }}
-                                        </span>
-                                        <AccountIcon
-                                            class="w-auto h-10 rounded-full hover:transition-colors text-base-300 bg-base-800 fill-base-300 hover:text-base-100 hover:fill-base-100"
-                                        />
-                                    </MenuButton>
-                                </div>
+                                <MenuButton
+                                    class="flex text-sm rounded-full bg-base-800 ring-2 ring-base-600 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+                                >
+                                    <span class="sr-only">
+                                        {{ $t('components.partials.sidebar.open_usermenu') }}
+                                    </span>
+                                    <AccountIcon
+                                        class="w-auto h-10 rounded-full hover:transition-colors text-base-300 bg-base-800 fill-base-300 hover:text-base-100 hover:fill-base-100"
+                                    />
+                                </MenuButton>
                                 <transition
                                     enter-active-class="transition duration-100 ease-out"
                                     enter-from-class="transform scale-95 opacity-0"
@@ -501,14 +514,13 @@ watch(router.currentRoute, () => updateActiveItem());
                                                 (e) => e.permission === undefined || can(e.permission),
                                             )"
                                             :key="item.name"
-                                            v-slot="{ active }"
+                                            v-slot="{ close }"
                                         >
                                             <NuxtLink
                                                 :to="item.href"
-                                                :class="[
-                                                    active ? 'bg-primary-500' : '',
-                                                    'block px-4 py-2 text-sm text-neutral hover:transition-colors',
-                                                ]"
+                                                class="block px-4 py-2 text-sm text-neutral hover:transition-colors"
+                                                active-class="bg-primary-500"
+                                                @mouseup="close"
                                             >
                                                 {{ $t(item.name) }}
                                             </NuxtLink>

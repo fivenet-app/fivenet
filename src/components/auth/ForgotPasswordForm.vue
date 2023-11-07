@@ -13,7 +13,7 @@ const { $grpc } = useNuxtApp();
 const notifications = useNotificatorStore();
 
 defineEmits<{
-    (e: 'back'): void;
+    (e: 'toggle'): void;
 }>();
 
 const newPassword = ref('');
@@ -69,85 +69,87 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
 </script>
 
 <template>
-    <h2 class="pb-4 text-3xl text-center text-neutral">
-        {{ $t('components.auth.forgot_password.title') }}
-    </h2>
+    <div>
+        <h2 class="pb-4 text-3xl text-center text-neutral">
+            {{ $t('components.auth.forgot_password.title') }}
+        </h2>
 
-    <p class="pb-4 text-sm text-neutral">
-        {{ $t('components.auth.forgot_password.subtitle') }}
-    </p>
+        <p class="pb-4 text-sm text-neutral">
+            {{ $t('components.auth.forgot_password.subtitle') }}
+        </p>
 
-    <form class="my-2 space-y-6" @submit.prevent="onSubmitThrottle">
-        <div>
-            <label for="registrationToken" class="sr-only">
-                {{ $t('components.auth.forgot_password.registration_token') }}
-            </label>
+        <form class="my-2 space-y-6" @submit.prevent="onSubmitThrottle">
             <div>
-                <VeeField
-                    name="registrationToken"
-                    type="text"
-                    inputmode="numeric"
-                    aria-describedby="hint"
-                    pattern="[0-9]*"
-                    autocomplete="registrationToken"
-                    :placeholder="$t('components.auth.forgot_password.registration_token')"
-                    :label="$t('components.auth.forgot_password.registration_token')"
-                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-lg sm:leading-6"
-                    @focusin="focusTablet(true)"
-                    @focusout="focusTablet(false)"
-                />
-                <VeeErrorMessage name="registrationToken" as="p" class="mt-2 text-sm text-error-400" />
+                <label for="registrationToken" class="sr-only">
+                    {{ $t('components.auth.forgot_password.registration_token') }}
+                </label>
+                <div>
+                    <VeeField
+                        name="registrationToken"
+                        type="text"
+                        inputmode="numeric"
+                        aria-describedby="hint"
+                        pattern="[0-9]*"
+                        autocomplete="registrationToken"
+                        :placeholder="$t('components.auth.forgot_password.registration_token')"
+                        :label="$t('components.auth.forgot_password.registration_token')"
+                        class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-lg sm:leading-6"
+                        @focusin="focusTablet(true)"
+                        @focusout="focusTablet(false)"
+                    />
+                    <VeeErrorMessage name="registrationToken" as="p" class="mt-2 text-sm text-error-400" />
+                </div>
             </div>
-        </div>
-        <div>
-            <label for="password" class="sr-only">
-                {{ $t('common.password') }}
-            </label>
             <div>
-                <VeeField
-                    v-model:model-value="newPassword"
-                    name="password"
-                    type="password"
-                    autocomplete="current-password"
-                    :placeholder="$t('common.password')"
-                    :label="$t('common.password')"
-                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                    @focusin="focusTablet(true)"
-                    @focusout="focusTablet(false)"
-                />
-                <PasswordStrengthMeter :input="newPassword" class="mt-2" />
-                <VeeErrorMessage name="password" as="p" class="mt-2 text-sm text-error-400" />
+                <label for="password" class="sr-only">
+                    {{ $t('common.password') }}
+                </label>
+                <div>
+                    <VeeField
+                        v-model:model-value="newPassword"
+                        name="password"
+                        type="password"
+                        autocomplete="current-password"
+                        :placeholder="$t('common.password')"
+                        :label="$t('common.password')"
+                        class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                        @focusin="focusTablet(true)"
+                        @focusout="focusTablet(false)"
+                    />
+                    <PasswordStrengthMeter :input="newPassword" class="mt-2" />
+                    <VeeErrorMessage name="password" as="p" class="mt-2 text-sm text-error-400" />
+                </div>
             </div>
-        </div>
 
-        <div>
+            <div>
+                <button
+                    type="submit"
+                    class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                    :disabled="!meta.valid || !canSubmit"
+                    :class="[
+                        !meta.valid || !canSubmit
+                            ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
+                            : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
+                    ]"
+                >
+                    <template v-if="!canSubmit">
+                        <LoadingIcon class="animate-spin h-5 w-5 mr-2" />
+                    </template>
+                    {{ $t('components.auth.forgot_password.submit_button') }}
+                </button>
+            </div>
+        </form>
+
+        <div class="mt-6">
             <button
-                type="submit"
-                class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                :disabled="!meta.valid || !canSubmit"
-                :class="[
-                    !meta.valid || !canSubmit
-                        ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
-                        : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
-                ]"
+                type="button"
+                class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-secondary-600 text-neutral hover:bg-secondary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300"
+                @click="$emit('toggle')"
             >
-                <template v-if="!canSubmit">
-                    <LoadingIcon class="animate-spin h-5 w-5 mr-2" />
-                </template>
-                {{ $t('components.auth.forgot_password.submit_button') }}
+                {{ $t('components.auth.forgot_password.back_to_login_button') }}
             </button>
         </div>
-    </form>
 
-    <div class="mt-6">
-        <button
-            type="button"
-            class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-secondary-600 text-neutral hover:bg-secondary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300"
-            @click="$emit('back')"
-        >
-            {{ $t('components.auth.forgot_password.back_to_login_button') }}
-        </button>
+        <GenericAlert v-if="accountError" :title="$t('components.auth.forgot_password.create_error')" :message="accountError" />
     </div>
-
-    <GenericAlert v-if="accountError" :title="$t('components.auth.forgot_password.create_error')" :message="accountError" />
 </template>

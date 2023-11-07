@@ -13,10 +13,6 @@ const { $grpc } = useNuxtApp();
 
 const notifications = useNotificatorStore();
 
-defineEmits<{
-    (e: 'back'): void;
-}>();
-
 const accountError = ref('');
 const curPassword = ref('');
 
@@ -75,17 +71,17 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
 
 <template>
     <h2 class="pb-4 text-3xl text-center text-neutral">
-        {{ $t('components.auth.create_account.title') }}
+        {{ $t('components.auth.registration_form.title') }}
     </h2>
 
     <p class="pb-4 text-sm text-neutral">
-        {{ $t('components.auth.create_account.subtitle') }}
+        {{ $t('components.auth.registration_form.subtitle') }}
     </p>
 
     <form class="my-2 space-y-6" @submit.prevent="onSubmitThrottle">
         <div>
             <label for="registrationToken" class="sr-only">
-                {{ $t('components.auth.create_account.registration_token') }}
+                {{ $t('components.auth.registration_form.registration_token') }}
             </label>
             <div>
                 <VeeField
@@ -95,8 +91,8 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                     aria-describedby="hint"
                     pattern="[0-9]*"
                     autocomplete="registrationToken"
-                    :placeholder="$t('components.auth.create_account.registration_token')"
-                    :label="$t('components.auth.create_account.registration_token')"
+                    :placeholder="$t('components.auth.registration_form.registration_token')"
+                    :label="$t('components.auth.registration_form.registration_token')"
                     class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-lg sm:leading-6"
                     @focusin="focusTablet(true)"
                     @focusout="focusTablet(false)"
@@ -157,24 +153,23 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                 <template v-if="!canSubmit">
                     <LoadingIcon class="animate-spin h-5 w-5 mr-2" />
                 </template>
-                {{ $t('components.auth.create_account.submit_button') }}
+                {{ $t('components.auth.registration_form.submit_button') }}
             </button>
         </div>
     </form>
 
     <div class="mt-6">
-        <button
-            type="button"
+        <NuxtLink
+            :to="{ name: 'auth-login' }"
             class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md bg-secondary-600 text-neutral hover:bg-secondary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300"
-            @click="$emit('back')"
         >
-            {{ $t('components.auth.create_account.back_to_login_button') }}
-        </button>
+            {{ $t('components.auth.registration_form.back_to_login_button') }}
+        </NuxtLink>
     </div>
 
     <GenericAlert
         v-if="accountError"
-        :title="$t('components.auth.create_account.create_error')"
+        :title="$t('components.auth.registration_form.create_error')"
         :message="accountError.startsWith('errors.') ? $t(accountError) : accountError"
     />
 </template>
