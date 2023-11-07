@@ -1724,9 +1724,9 @@
   integrity sha512-uK2z1ZHJyC0nQRbuovXFt4mzXDwf27vQeUWNhfKGwRcWW429GOhP8HxUHlM6TLH4bzmlv/HlEjpvJh3JfmGsAA==
 
 "@types/google-protobuf@^3.15.9":
-  version "3.15.9"
-  resolved "https://registry.yarnpkg.com/@types/google-protobuf/-/google-protobuf-3.15.9.tgz#a983fc4bc35acb2b84a824d2ec8107d084e8603f"
-  integrity sha512-l51aVJnCNNMBkmSUQddSStXinB2qSXqfrmY9zkdcE9sqPzDneQ3BGg/hu7LfeOCUeGHOu+Rly89YhuDhvbmmPw==
+  version "3.15.10"
+  resolved "https://registry.yarnpkg.com/@types/google-protobuf/-/google-protobuf-3.15.10.tgz#e4dc3e37af6a106a7a76bb86de0078cf3a3b5598"
+  integrity sha512-uiyKJCa8hbmPE4yxwjbkMOALaBAiOVcatW/yEGbjTqwAh4kzNgQPWRlJMNPXpB5CPUM66xsYufiSX9WKHZCE9g==
 
 "@types/http-proxy@^1.17.13":
   version "1.17.13"
