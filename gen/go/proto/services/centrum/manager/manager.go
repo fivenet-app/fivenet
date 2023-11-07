@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"fmt"
 	"sync"
-	"time"
 
 	"github.com/adrg/strutil/metrics"
 	eventscentrum "github.com/galexrt/fivenet/gen/go/proto/services/centrum/events"
@@ -99,11 +98,6 @@ func New(p Params) *Manager {
 		s.wg.Add(1)
 		go func() {
 			defer s.wg.Done()
-			s.loadDataLoop()
-		}()
-		s.wg.Add(1)
-		go func() {
-			defer s.wg.Done()
 			s.watchUserChanges()
 		}()
 		s.wg.Add(1)
@@ -122,20 +116,6 @@ func New(p Params) *Manager {
 	}))
 
 	return s
-}
-
-func (s *Manager) loadDataLoop() {
-	for {
-		if err := s.loadData(); err != nil {
-			s.logger.Error("failed to refresh centrum state data", zap.Error(err))
-		}
-
-		select {
-		case <-s.ctx.Done():
-			return
-		case <-time.After(10 * time.Second):
-		}
-	}
 }
 
 func (s *Manager) loadData() error {

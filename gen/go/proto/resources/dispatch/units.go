@@ -10,7 +10,7 @@ func (x *Unit) Update(in *Unit) {
 		return
 	}
 
-	err := mergo.Merge(x, in, mergo.WithOverride)
+	err := mergo.Merge(x, in, mergo.WithOverride, mergo.WithAppendSlice)
 	if err != nil {
 		return
 	}

@@ -327,7 +327,6 @@ func (s *Manager) deduplicateDispatches(ctx context.Context) error {
 				if len(closestsDsp) > 0 {
 					if err := s.addAttributeToDispatch(ctx, dsp, "multiple"); err != nil {
 						s.logger.Error("failed to update original dispatch attribute", zap.Error(err))
-						return
 					}
 				}
 
