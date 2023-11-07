@@ -81,24 +81,24 @@ func (s *Manager) resolveUserShortsByIds(ctx context.Context, u []int32) ([]*use
 	return dest, nil
 }
 
-func (s *Manager) resolveUsersForUnit(ctx context.Context, u []*dispatch.UnitAssignment) ([]*dispatch.UnitAssignment, error) {
-	userIds := make([]int32, len(u))
-	for i := 0; i < len(u); i++ {
-		userIds[i] = u[i].UserId
+func (s *Manager) resolveUsersForUnit(ctx context.Context, u *[]*dispatch.UnitAssignment) error {
+	userIds := make([]int32, len(*u))
+	for i := 0; i < len(*u); i++ {
+		userIds[i] = (*u)[i].UserId
 	}
 
 	if len(userIds) == 0 {
-		return nil, nil
+		return nil
 	}
 
 	us, err := s.resolveUserShortsByIds(ctx, userIds)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
-	for i := 0; i < len(u); i++ {
-		u[i].User = us[i]
+	for i := 0; i < len(*u); i++ {
+		(*u)[i].User = us[i]
 	}
 
-	return u, nil
+	return nil
 }

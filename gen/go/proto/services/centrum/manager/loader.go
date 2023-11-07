@@ -169,9 +169,7 @@ func (s *Manager) LoadUnits(ctx context.Context, id uint64) error {
 	}
 
 	for i := 0; i < len(units); i++ {
-		var err error
-		units[i].Users, err = s.resolveUsersForUnit(ctx, units[i].Users)
-		if err != nil {
+		if err := s.resolveUsersForUnit(ctx, &units[i].Users); err != nil {
 			return err
 		}
 

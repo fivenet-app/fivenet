@@ -66,6 +66,7 @@ func (s *Manager) handleRemoveUserFromUnit(ctx context.Context, job string, user
 
 	unit, ok := s.GetUnit(job, unitId)
 	if !ok {
+		s.UserIDToUnitID.Delete(userId)
 		return false
 	}
 

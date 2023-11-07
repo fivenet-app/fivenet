@@ -480,23 +480,40 @@ func (s *Manager) cleanupUnitStatus(ctx context.Context) error {
 func (s *Manager) checkUnitUsers(ctx context.Context) error {
 	s.Units.Range(func(job string, units *xsync.MapOf[uint64, *dispatch.Unit]) bool {
 		units.Range(func(id uint64, unit *dispatch.Unit) bool {
+			if len(unit.Users) == 0 {
+				return true
+			}
+
+			toRemove := []int32{}
 			for i := len(unit.Users) - 1; i >= 0; i-- {
 				if i > len(unit.Users)-1 {
 					break
 				}
 
-				userId := unit.Users[i].UserId
+				var userId int32
+				if unit.Users[i].User != nil {
+					userId = unit.Users[i].User.UserId
+				} else {
+					userId = unit.Users[i].UserId
+				}
 
-				unitId, _ := s.UserIDToUnitID.Load(userId)
-				// If user is in that unit and still on duty, nothing to do, otherwise remove the user from the unit
-				if (unit.Id == unitId) && s.tracker.IsUserOnDuty(job, userId) {
+				if userId == 0 {
 					continue
 				}
 
-				if err := s.UpdateUnitAssignments(ctx, job, &userId, unit, nil, []int32{userId}); err != nil {
-					s.logger.Error("failed to remove off-duty users from unit",
-						zap.String("job", unit.Job), zap.Uint64("unit_id", unit.Id), zap.Int32("user_id", userId), zap.Error(err))
+				unitId, _ := s.UserIDToUnitID.Load(userId)
+				// If user is in that unit and still on duty, nothing to do, otherwise remove the user from the unit
+				if unit.Id == unitId && s.tracker.IsUserOnDuty(job, userId) {
 					continue
+				}
+
+				toRemove = append(toRemove, userId)
+			}
+
+			if len(toRemove) > 0 {
+				if err := s.UpdateUnitAssignments(ctx, job, nil, unit, nil, toRemove); err != nil {
+					s.logger.Error("failed to remove off-duty users from unit",
+						zap.String("job", unit.Job), zap.Uint64("unit_id", unit.Id), zap.Int32s("user_ids", toRemove), zap.Error(err))
 				}
 			}
 
