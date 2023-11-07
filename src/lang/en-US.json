@@ -17,7 +17,7 @@
             },
             "login": {
                 "title": "Login",
-                "social_login_disabled": "Social login requires you to accept the social login cookies.",
+                "social_login_disabled": "Social login requires you to accept the social login cookies."
             }
         },
         "about": {
