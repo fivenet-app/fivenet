@@ -187,18 +187,6 @@
                 "change_password": "Change Password",
                 "change_password_button": "Change Account Password"
             },
-            "settings_panel": {
-                "title": "Settings",
-                "subtitle": "Client-side FiveNet Settings.",
-                "set_startpage": {
-                    "title": "Start Page after character selector",
-                    "no_char_selected": "To select a start page you must select a character first."
-                },
-                "editor_theme": {
-                    "title": "Document Editor Theme",
-                    "dark_mode": "Dark Mode"
-                }
-            },
             "login": {
                 "register_account": "Register Account with Token",
                 "login_error": "There was an error signing you in, please try again!",
@@ -229,6 +217,18 @@
                 "back_to_login_button": "Back to Login",
                 "create_error": "There was an error creating your account, please try again!",
                 "subtitle": "To create an account join the FiveM server and run /fivenet command."
+            },
+            "settings_panel": {
+                "title": "Settings",
+                "subtitle": "Client-side FiveNet Settings.",
+                "set_startpage": {
+                    "title": "Start Page after character selector",
+                    "no_char_selected": "To select a start page you must select a character first."
+                },
+                "editor_theme": {
+                    "title": "Document Editor Theme",
+                    "dark_mode": "Dark Mode"
+                }
             }
         },
         "citizens": {
