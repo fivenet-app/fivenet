@@ -19,89 +19,89 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	DocStoreService_Upload_FullMethodName = "/services.filestore.DocStoreService/Upload"
+	FileStoreService_Upload_FullMethodName = "/services.filestore.FileStoreService/Upload"
 )
 
-// DocStoreServiceClient is the client API for DocStoreService service.
+// FileStoreServiceClient is the client API for FileStoreService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type DocStoreServiceClient interface {
+type FileStoreServiceClient interface {
 	Upload(ctx context.Context, in *UploadRequest, opts ...grpc.CallOption) (*UploadResponse, error)
 }
 
-type docStoreServiceClient struct {
+type fileStoreServiceClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewDocStoreServiceClient(cc grpc.ClientConnInterface) DocStoreServiceClient {
-	return &docStoreServiceClient{cc}
+func NewFileStoreServiceClient(cc grpc.ClientConnInterface) FileStoreServiceClient {
+	return &fileStoreServiceClient{cc}
 }
 
-func (c *docStoreServiceClient) Upload(ctx context.Context, in *UploadRequest, opts ...grpc.CallOption) (*UploadResponse, error) {
+func (c *fileStoreServiceClient) Upload(ctx context.Context, in *UploadRequest, opts ...grpc.CallOption) (*UploadResponse, error) {
 	out := new(UploadResponse)
-	err := c.cc.Invoke(ctx, DocStoreService_Upload_FullMethodName, in, out, opts...)
+	err := c.cc.Invoke(ctx, FileStoreService_Upload_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// DocStoreServiceServer is the server API for DocStoreService service.
-// All implementations must embed UnimplementedDocStoreServiceServer
+// FileStoreServiceServer is the server API for FileStoreService service.
+// All implementations must embed UnimplementedFileStoreServiceServer
 // for forward compatibility
-type DocStoreServiceServer interface {
+type FileStoreServiceServer interface {
 	Upload(context.Context, *UploadRequest) (*UploadResponse, error)
-	mustEmbedUnimplementedDocStoreServiceServer()
+	mustEmbedUnimplementedFileStoreServiceServer()
 }
 
-// UnimplementedDocStoreServiceServer must be embedded to have forward compatible implementations.
-type UnimplementedDocStoreServiceServer struct {
+// UnimplementedFileStoreServiceServer must be embedded to have forward compatible implementations.
+type UnimplementedFileStoreServiceServer struct {
 }
 
-func (UnimplementedDocStoreServiceServer) Upload(context.Context, *UploadRequest) (*UploadResponse, error) {
+func (UnimplementedFileStoreServiceServer) Upload(context.Context, *UploadRequest) (*UploadResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Upload not implemented")
 }
-func (UnimplementedDocStoreServiceServer) mustEmbedUnimplementedDocStoreServiceServer() {}
+func (UnimplementedFileStoreServiceServer) mustEmbedUnimplementedFileStoreServiceServer() {}
 
-// UnsafeDocStoreServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to DocStoreServiceServer will
+// UnsafeFileStoreServiceServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to FileStoreServiceServer will
 // result in compilation errors.
-type UnsafeDocStoreServiceServer interface {
-	mustEmbedUnimplementedDocStoreServiceServer()
+type UnsafeFileStoreServiceServer interface {
+	mustEmbedUnimplementedFileStoreServiceServer()
 }
 
-func RegisterDocStoreServiceServer(s grpc.ServiceRegistrar, srv DocStoreServiceServer) {
-	s.RegisterService(&DocStoreService_ServiceDesc, srv)
+func RegisterFileStoreServiceServer(s grpc.ServiceRegistrar, srv FileStoreServiceServer) {
+	s.RegisterService(&FileStoreService_ServiceDesc, srv)
 }
 
-func _DocStoreService_Upload_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _FileStoreService_Upload_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UploadRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(DocStoreServiceServer).Upload(ctx, in)
+		return srv.(FileStoreServiceServer).Upload(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: DocStoreService_Upload_FullMethodName,
+		FullMethod: FileStoreService_Upload_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(DocStoreServiceServer).Upload(ctx, req.(*UploadRequest))
+		return srv.(FileStoreServiceServer).Upload(ctx, req.(*UploadRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// DocStoreService_ServiceDesc is the grpc.ServiceDesc for DocStoreService service.
+// FileStoreService_ServiceDesc is the grpc.ServiceDesc for FileStoreService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var DocStoreService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "services.filestore.DocStoreService",
-	HandlerType: (*DocStoreServiceServer)(nil),
+var FileStoreService_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "services.filestore.FileStoreService",
+	HandlerType: (*FileStoreServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "Upload",
-			Handler:    _DocStoreService_Upload_Handler,
+			Handler:    _FileStoreService_Upload_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

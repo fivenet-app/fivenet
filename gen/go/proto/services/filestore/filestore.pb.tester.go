@@ -13,14 +13,14 @@ import (
 	"google.golang.org/grpc/test/bufconn"
 )
 
-func NewTestDocStoreServiceClient(srv DocStoreServiceServer) (DocStoreServiceClient, context.Context, context.CancelFunc) {
+func NewTestFileStoreServiceClient(srv FileStoreServiceServer) (FileStoreServiceClient, context.Context, context.CancelFunc) {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	buffer := 101024 * 1024
 	lis := bufconn.Listen(buffer)
 
 	server := grpc.NewServer()
-	RegisterDocStoreServiceServer(server, srv)
+	RegisterFileStoreServiceServer(server, srv)
 	go func() {
 		if err := server.Serve(lis); err != nil {
 			log.Printf("error serving test grpc server: %v", err)
@@ -44,6 +44,6 @@ func NewTestDocStoreServiceClient(srv DocStoreServiceServer) (DocStoreServiceCli
 		server.Stop()
 	}()
 
-	client := NewDocStoreServiceClient(conn)
+	client := NewFileStoreServiceClient(conn)
 	return client, ctx, cancel
 }

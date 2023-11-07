@@ -31,6 +31,6 @@ message UploadResponse {
   optional string url = 2;
 }
 
-service DocStoreService {
+service FileStoreService {
   rpc Upload(UploadRequest) returns (UploadResponse);
 }

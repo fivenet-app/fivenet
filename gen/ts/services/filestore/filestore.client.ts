@@ -3,28 +3,28 @@
 // tslint:disable
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
-import { DocStoreService } from "./filestore.js";
+import { FileStoreService } from "./filestore.js";
 import { stackIntercept } from "@protobuf-ts/runtime-rpc";
 import type { UploadResponse } from "./filestore.js";
 import type { UploadRequest } from "./filestore.js";
 import type { UnaryCall } from "@protobuf-ts/runtime-rpc";
 import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
 /**
- * @generated from protobuf service services.filestore.DocStoreService
+ * @generated from protobuf service services.filestore.FileStoreService
  */
-export interface IDocStoreServiceClient {
+export interface IFileStoreServiceClient {
     /**
      * @generated from protobuf rpc: Upload(services.filestore.UploadRequest) returns (services.filestore.UploadResponse);
      */
     upload(input: UploadRequest, options?: RpcOptions): UnaryCall<UploadRequest, UploadResponse>;
 }
 /**
- * @generated from protobuf service services.filestore.DocStoreService
+ * @generated from protobuf service services.filestore.FileStoreService
  */
-export class DocStoreServiceClient implements IDocStoreServiceClient, ServiceInfo {
-    typeName = DocStoreService.typeName;
-    methods = DocStoreService.methods;
-    options = DocStoreService.options;
+export class FileStoreServiceClient implements IFileStoreServiceClient, ServiceInfo {
+    typeName = FileStoreService.typeName;
+    methods = FileStoreService.methods;
+    options = FileStoreService.options;
     constructor(private readonly _transport: RpcTransport) {
     }
     /**

@@ -8,5 +8,5 @@ import (
 )
 
 func (s *Server) RegisterServer(srv *grpc.Server) {
-	RegisterDocStoreServiceServer(srv, s)
+	RegisterFileStoreServiceServer(srv, s)
 }

@@ -74,8 +74,8 @@ class UploadResponse$Type extends MessageType<UploadResponse> {
  */
 export const UploadResponse = new UploadResponse$Type();
 /**
- * @generated ServiceType for protobuf service services.filestore.DocStoreService
+ * @generated ServiceType for protobuf service services.filestore.FileStoreService
  */
-export const DocStoreService = new ServiceType("services.filestore.DocStoreService", [
+export const FileStoreService = new ServiceType("services.filestore.FileStoreService", [
     { name: "Upload", options: {}, I: UploadRequest, O: UploadResponse }
 ]);
