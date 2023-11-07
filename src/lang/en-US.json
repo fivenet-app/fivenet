@@ -185,7 +185,11 @@
                 "subtitle": "Your FiveNet account details.",
                 "license": "Identifier/ License",
                 "change_password": "Change Password",
-                "change_password_button": "Change Account Password",
+                "change_password_button": "Change Account Password"
+            },
+            "settings_panel": {
+                "title": "Settings",
+                "subtitle": "Client-side FiveNet Settings.",
                 "set_startpage": {
                     "title": "Start Page after character selector",
                     "no_char_selected": "To select a start page you must select a character first."
