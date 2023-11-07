@@ -288,7 +288,7 @@ func (s *Server) AssignUnit(ctx context.Context, req *AssignUnitRequest) (*Assig
 	}
 
 	if err := s.state.UpdateUnitAssignments(ctx, userInfo.Job, &userInfo.UserId, unit, req.ToAdd, req.ToRemove); err != nil {
-		return nil, err
+		return nil, errorscentrum.ErrFailedQuery
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)

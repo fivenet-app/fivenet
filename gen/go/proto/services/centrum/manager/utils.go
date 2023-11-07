@@ -48,7 +48,7 @@ func (s *Manager) CheckIfUserPartOfUnit(job string, userId int32, unit *dispatch
 	}
 
 	for i := 0; i < len(unit.Users); i++ {
-		if unit.Users[i].UserId == userId {
+		if (unit.Users[i].User != nil && unit.Users[i].User.UserId == userId) || unit.Users[i].UserId == userId {
 			return true
 		}
 	}

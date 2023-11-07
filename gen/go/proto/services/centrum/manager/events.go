@@ -156,7 +156,16 @@ func (s *Manager) watchEvents() error {
 			case eventscentrum.TopicUnit:
 				switch tType {
 				case eventscentrum.TypeUnitUpdated:
-					fallthrough
+					dest := &dispatch.Unit{}
+					if err := proto.Unmarshal(msg.Data, dest); err != nil {
+						s.logger.Error("failed to unmarshal unit message", zap.Error(err))
+						continue
+					}
+
+					if unit, ok := s.GetUnitsMap(job).LoadOrStore(dest.Id, dest); ok {
+						unit.Update(dest)
+					}
+
 				case eventscentrum.TypeUnitStatus:
 					dest := &dispatch.Unit{}
 					if err := proto.Unmarshal(msg.Data, dest); err != nil {

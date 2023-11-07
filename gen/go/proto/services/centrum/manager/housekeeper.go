@@ -478,8 +478,13 @@ func (s *Manager) cleanupUnitStatus(ctx context.Context) error {
 }
 
 func (s *Manager) checkUnitUsers(ctx context.Context) error {
-	s.Units.Range(func(job string, units *xsync.MapOf[uint64, *dispatch.Unit]) bool {
-		units.Range(func(id uint64, unit *dispatch.Unit) bool {
+	s.Units.Range(func(job string, _ *xsync.MapOf[uint64, *dispatch.Unit]) bool {
+		units, ok := s.ListUnits(job)
+		if !ok {
+			return true
+		}
+
+		for _, unit := range units {
 			if len(unit.Users) == 0 {
 				return true
 			}
@@ -516,9 +521,7 @@ func (s *Manager) checkUnitUsers(ctx context.Context) error {
 						zap.String("job", unit.Job), zap.Uint64("unit_id", unit.Id), zap.Int32s("user_ids", toRemove), zap.Error(err))
 				}
 			}
-
-			return true
-		})
+		}
 
 		return true
 	})

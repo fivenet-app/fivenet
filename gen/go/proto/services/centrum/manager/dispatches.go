@@ -456,7 +456,7 @@ func (s *Manager) UpdateDispatch(ctx context.Context, userJob string, userId *in
 		))
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return errorscentrum.ErrFailedQuery
+		return err
 	}
 
 	if !s.State.DispatchLocations[dsp.Job].Has(dsp, func(p orb.Pointer) bool {

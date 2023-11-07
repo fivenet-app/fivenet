@@ -58,6 +58,12 @@ async function updateDispatchStatus(dispatchId: bigint, status: StatusDispatch):
     try {
         const call = $grpc.getCentrumClient().updateDispatchStatus({ dispatchId, status });
         await call;
+
+        notifications.dispatchNotification({
+            title: { key: 'notifications.centrum.sidebar.dispatch_status_updated.title', parameters: {} },
+            content: { key: 'notifications.centrum.sidebar.dispatch_status_updated.content', parameters: {} },
+            type: 'success',
+        });
     } catch (e) {
         $grpc.handleError(e as RpcError);
         throw e;
@@ -79,12 +85,7 @@ async function updateDspStatus(dispatchId?: bigint, status?: StatusDispatch): Pr
         return;
     }
 
-    updateDispatchStatus(dispatchId, status);
-    notifications.dispatchNotification({
-        title: { key: 'notifications.centrum.sidebar.dispatch_status_updated.title', parameters: {} },
-        content: { key: 'notifications.centrum.sidebar.dispatch_status_updated.content', parameters: {} },
-        type: 'success',
-    });
+    await updateDispatchStatus(dispatchId, status);
 }
 
 async function updateUnitStatus(id: bigint, status: StatusUnit): Promise<void> {
@@ -94,6 +95,12 @@ async function updateUnitStatus(id: bigint, status: StatusUnit): Promise<void> {
             status,
         });
         await call;
+
+        notifications.dispatchNotification({
+            title: { key: 'notifications.centrum.sidebar.dispatch_status_updated.title', parameters: {} },
+            content: { key: 'notifications.centrum.sidebar.dispatch_status_updated.content', parameters: {} },
+            type: 'success',
+        });
     } catch (e) {
         $grpc.handleError(e as RpcError);
         throw e;
@@ -106,12 +113,7 @@ async function updateUtStatus(id: bigint, status?: StatusUnit): Promise<void> {
         return;
     }
 
-    updateUnitStatus(id, status);
-    notifications.dispatchNotification({
-        title: { key: 'notifications.centrum.sidebar.dispatch_status_updated.title', parameters: {} },
-        content: { key: 'notifications.centrum.sidebar.dispatch_status_updated.content', parameters: {} },
-        type: 'success',
-    });
+    await updateUnitStatus(id, status);
 }
 
 const open = ref(false);
