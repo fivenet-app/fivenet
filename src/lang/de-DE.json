@@ -201,14 +201,6 @@
                 "title": "Anmeldung",
                 "forgot_password": "Passwort vergessen"
             },
-            "registration_form": {
-                "title": "Konto erstellen",
-                "registration_token": "Registrierungstoken",
-                "submit_button": "Konto erstellen",
-                "back_to_login_button": "Zurück zur Anmeldung",
-                "create_error": "Es gab einen Fehler während dein Konto erstellt wurde, bitte versuche es erneut!",
-                "subtitle": "Um ein Konto zu erstellen, treten Sie dem FiveM-Server bei und geben Sie den Befehl /fivenet ein."
-            },
             "change_password_modal": {
                 "change_password": "Passwort ändern",
                 "current_password": "Momentanes Passwort",
@@ -225,6 +217,14 @@
                 "submit_button": "Neues Passwort festlegen",
                 "back_to_login_button": "Zurück zur Anmeldung",
                 "create_error": "Es ist ein Fehler beim Festlegen Ihres neuen Passworts aufgetreten, bitte versuchen Sie es erneut!"
+            },
+            "registration_form": {
+                "title": "Konto erstellen",
+                "registration_token": "Registrierungstoken",
+                "submit_button": "Konto erstellen",
+                "back_to_login_button": "Zurück zur Anmeldung",
+                "create_error": "Es gab einen Fehler während dein Konto erstellt wurde, bitte versuche es erneut!",
+                "subtitle": "Um ein Konto zu erstellen, treten Sie dem FiveM-Server bei und geben Sie den Befehl /fivenet ein."
             }
         },
         "citizens": {
@@ -1394,7 +1394,6 @@
         "AuthService": {
             "ErrGenericAccount": "Fehler beim Anzeigen/ Aktualisieren ihres Accounts.",
             "ErrAccountCreateFailed": "Bitte überprüfen sie ihren Registrierungstoken!",
-            "ErrAccountDuplicate": "Benutzername bereits verwendet, bitte nutzen sie einen anderen Benutzernamen.",
             "ErrInvalidLogin": "Falscher Username oder Passwort!",
             "ErrNoAccount": "Sie müssen zuerst einen Account mit ihrem Registrierungstoken erstellen.",
             "ErrNoCharFound": "Keine(n) Character für deinen Account gefunden.",
@@ -1404,7 +1403,8 @@
             "ErrChangePassword": "Fehler beim Ändern Ihres Passworts!",
             "ErrForgotPassword": "Fehler beim zurücksetzen ihres Passworts!",
             "ErrAccountExistsFailed": "Bitte nutzen sie die Passwort vergessen Funktion!",
-            "ErrSignupDisabled": "Konto-Erstellung ist deaktiviert!"
+            "ErrSignupDisabled": "Konto-Erstellung ist deaktiviert!",
+            "ErrAccountDuplicate": "Benutzername bereits verwendet, bitte nutzen sie einen anderen Benutzernamen."
         },
         "CitizenStoreService": {
             "ErrFailedQuery": "Fehler beim Laden von Bürger Daten!",
