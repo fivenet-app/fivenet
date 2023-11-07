@@ -59,7 +59,6 @@ type Tracker struct {
 	broker *utils.Broker[*Event]
 
 	refreshTime time.Duration
-	visibleJobs []string
 }
 
 type Params struct {
@@ -96,7 +95,6 @@ func New(p Params) *Tracker {
 		broker: broker,
 
 		refreshTime: p.Config.Game.Livemap.RefreshTime,
-		visibleJobs: p.Config.Game.Livemap.Jobs,
 	}
 
 	p.LC.Append(fx.StartHook(func(_ context.Context) error {

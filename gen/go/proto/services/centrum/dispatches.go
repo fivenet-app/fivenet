@@ -112,10 +112,11 @@ func (s *Server) ListDispatches(ctx context.Context, req *ListDispatchesRequest)
 			tDispatchStatus.X,
 			tDispatchStatus.Y,
 			tDispatchStatus.Postal,
-			tUsers.ID,
 			tUsers.Identifier,
 			tUsers.Firstname,
 			tUsers.Lastname,
+			tUsers.Job,
+			tUsers.JobGrade,
 			tUsers.Sex,
 			tUsers.Dateofbirth,
 			tUsers.PhoneNumber,
@@ -154,8 +155,10 @@ func (s *Server) ListDispatches(ctx context.Context, req *ListDispatchesRequest)
 				return nil, err
 			}
 
-			// Alawys clear dispatch creator's job info
-			resp.Dispatches[i].Creator.Job = ""
+			// Clear dispatch creator's job info if not a visible job
+			if !utils.InSlice(s.publicJobs, resp.Dispatches[i].Creator.Job) {
+				resp.Dispatches[i].Creator.Job = ""
+			}
 			resp.Dispatches[i].Creator.JobGrade = 0
 		}
 	}

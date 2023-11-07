@@ -36,7 +36,8 @@ type Manager struct {
 	tracker  *tracker.Tracker
 	postals  *postals.Postals
 
-	visibleJobs []string
+	trackedJobs []string
+	publicJobs  []string
 
 	*state.State
 }
@@ -76,7 +77,8 @@ func New(p Params) *Manager {
 		postals:  p.Postals,
 		tracker:  p.Tracker,
 
-		visibleJobs: p.Config.Game.Livemap.Jobs,
+		trackedJobs: p.Config.Game.Livemap.Jobs,
+		publicJobs:  p.Config.Game.PublicJobs,
 
 		State: p.State,
 	}

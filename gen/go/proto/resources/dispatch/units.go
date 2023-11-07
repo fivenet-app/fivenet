@@ -1,19 +1,48 @@
 package dispatch
 
 import (
-	"dario.cat/mergo"
 	"github.com/paulmach/orb"
+	"google.golang.org/protobuf/proto"
 )
 
-func (x *Unit) Update(in *Unit) {
+func (x *Unit) Merge(in *Unit) {
 	if x.Id != in.Id {
 		return
 	}
 
-	err := mergo.Merge(x, in, mergo.WithOverride, mergo.WithAppendSlice)
-	if err != nil {
-		return
+	if in.CreatedAt != nil {
+		proto.Merge(x.CreatedAt, in.CreatedAt)
 	}
+
+	if in.UpdatedAt != nil {
+		proto.Merge(x.UpdatedAt, in.UpdatedAt)
+	}
+
+	if x.Job != in.Job {
+		x.Job = in.Job
+	}
+
+	if x.Name != in.Name {
+		x.Name = in.Name
+	}
+
+	if x.Initials != in.Initials {
+		x.Initials = in.Initials
+	}
+
+	if x.Color != in.Color {
+		x.Color = in.Color
+	}
+
+	if in.Description != nil && x.Description != in.Description {
+		x.Description = in.Description
+	}
+
+	if in.Status != nil {
+		proto.Merge(x.Status, in.Status)
+	}
+
+	x.Users = in.Users
 }
 
 func (x *UnitStatus) Point() orb.Point {

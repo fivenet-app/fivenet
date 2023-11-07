@@ -49,6 +49,7 @@ type Server struct {
 	postals  *postals.Postals
 
 	convertJobs []string
+	publicJobs  []string
 
 	state *manager.Manager
 }
@@ -91,6 +92,7 @@ func NewServer(p Params) (*Server, error) {
 		postals:  p.Postals,
 
 		convertJobs: p.Config.Game.DispatchCenter.ConvertJobs,
+		publicJobs:  p.Config.Game.PublicJobs,
 
 		state: p.Manager,
 	}

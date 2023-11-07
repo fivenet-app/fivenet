@@ -7,6 +7,7 @@ import (
 
 	dispatch "github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
 	users "github.com/galexrt/fivenet/gen/go/proto/resources/users"
+	"github.com/galexrt/fivenet/pkg/utils"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/paulmach/orb"
@@ -77,7 +78,7 @@ func (s *Manager) LoadDisponents(ctx context.Context, job string) error {
 	}
 
 	perJob := map[string][]*users.UserShort{}
-	for _, j := range s.visibleJobs {
+	for _, j := range s.trackedJobs {
 		if _, ok := perJob[j]; !ok {
 			perJob[j] = []*users.UserShort{}
 		}
@@ -174,8 +175,8 @@ func (s *Manager) LoadUnits(ctx context.Context, id uint64) error {
 		}
 
 		um := s.GetUnitsMap(units[i].Job)
-		if u, loaded := um.LoadOrStore(units[i].Id, units[i]); loaded {
-			u.Update(units[i])
+		if unit, loaded := um.LoadOrStore(units[i].Id, units[i]); loaded {
+			unit.Merge(units[i])
 		}
 
 		for _, user := range units[i].Users {
@@ -297,8 +298,10 @@ func (s *Manager) LoadDispatches(ctx context.Context, id uint64) error {
 				return err
 			}
 
-			// Alawys clear dispatch creator's job info
-			dispatches[i].Creator.Job = ""
+			// Clear dispatch creator's job info if not a visible job
+			if !utils.InSlice(s.publicJobs, dispatches[i].Creator.Job) {
+				dispatches[i].Creator.Job = ""
+			}
 			dispatches[i].Creator.JobGrade = 0
 		}
 
@@ -312,12 +315,12 @@ func (s *Manager) LoadDispatches(ctx context.Context, id uint64) error {
 		}
 
 		dm := s.GetDispatchesMap(dispatches[i].Job)
-		if d, loaded := dm.LoadOrStore(dispatches[i].Id, dispatches[i]); loaded {
-			if d.X != dispatches[i].X || d.Y != dispatches[i].Y {
-				s.State.DispatchLocations[d.Job].Remove(d, nil)
+		if dispatch, loaded := dm.LoadOrStore(dispatches[i].Id, dispatches[i]); loaded {
+			if dispatch.X != dispatches[i].X || dispatch.Y != dispatches[i].Y {
+				s.State.DispatchLocations[dispatch.Job].Remove(dispatch, nil)
 			}
 
-			d.Update(dispatches[i])
+			dispatch.Merge(dispatches[i])
 		}
 
 		// Ensure dispatch has status new if nil

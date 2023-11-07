@@ -138,8 +138,8 @@ func (s *Manager) watchEvents() error {
 						continue
 					}
 
-					if d, ok := s.GetDispatchesMap(job).LoadOrStore(dest.Id, dest); ok {
-						d.Update(dest)
+					if dispatch, ok := s.GetDispatchesMap(job).LoadOrStore(dest.Id, dest); ok {
+						dispatch.Merge(dest)
 					}
 
 				case eventscentrum.TypeDispatchDeleted:
@@ -163,7 +163,7 @@ func (s *Manager) watchEvents() error {
 					}
 
 					if unit, ok := s.GetUnitsMap(job).LoadOrStore(dest.Id, dest); ok {
-						unit.Update(dest)
+						unit.Merge(dest)
 					}
 
 				case eventscentrum.TypeUnitStatus:
@@ -174,7 +174,7 @@ func (s *Manager) watchEvents() error {
 					}
 
 					if unit, ok := s.GetUnitsMap(job).LoadOrStore(dest.Id, dest); ok {
-						unit.Update(dest)
+						unit.Merge(dest)
 					}
 
 					if dest.Status.Status == dispatch.StatusUnit_STATUS_UNIT_USER_ADDED {

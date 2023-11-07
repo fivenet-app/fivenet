@@ -381,10 +381,12 @@ func (s *Server) ListUnitActivity(ctx context.Context, req *ListUnitActivityRequ
 			tUnitStatus.X,
 			tUnitStatus.Y,
 			tUnitStatus.Postal,
+			tUsers.Identifier,
 			tUsers.Firstname,
 			tUsers.Lastname,
 			tUsers.Job,
 			tUsers.JobGrade,
+			tUsers.Sex,
 			tUsers.Dateofbirth,
 			tUsers.PhoneNumber,
 		).

@@ -56,7 +56,7 @@ type Server struct {
 	broker *utils.Broker[interface{}]
 
 	refreshTime time.Duration
-	visibleJobs []string
+	trackedJobs []string
 }
 
 type Params struct {
@@ -94,7 +94,7 @@ func NewServer(p Params) *Server {
 		broker: broker,
 
 		refreshTime: p.Config.Game.Livemap.RefreshTime,
-		visibleJobs: p.Config.Game.Livemap.Jobs,
+		trackedJobs: p.Config.Game.Livemap.Jobs,
 	}
 
 	p.LC.Append(fx.StartHook(func(_ context.Context) error {
@@ -150,7 +150,7 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 		dispatchesJobs = dispatchesAttr.([]string)
 	}
 	if userInfo.SuperUser {
-		dispatchesJobs = s.visibleJobs
+		dispatchesJobs = s.trackedJobs
 	}
 
 	var playersJobs map[string]int32
@@ -160,7 +160,7 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 
 	if userInfo.SuperUser {
 		playersJobs = map[string]int32{}
-		for _, j := range s.visibleJobs {
+		for _, j := range s.trackedJobs {
 			playersJobs[j] = -1
 		}
 	}
@@ -313,7 +313,7 @@ func (s *Server) refreshMarkers(ctx context.Context) error {
 	}
 
 	markers := map[string][]*livemap.Marker{}
-	for _, job := range s.visibleJobs {
+	for _, job := range s.trackedJobs {
 		markers[job] = []*livemap.Marker{}
 	}
 	for _, m := range dest {

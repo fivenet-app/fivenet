@@ -3,9 +3,9 @@ package dispatch
 import (
 	"database/sql/driver"
 
-	"dario.cat/mergo"
 	jsoniter "github.com/json-iterator/go"
 	"github.com/paulmach/orb"
+	"google.golang.org/protobuf/proto"
 )
 
 var json = jsoniter.ConfigCompatibleWithStandardLibrary
@@ -30,15 +30,64 @@ func (x *Attributes) Value() (driver.Value, error) {
 	return out, err
 }
 
-func (x *Dispatch) Update(in *Dispatch) {
+func (x *Dispatch) Merge(in *Dispatch) {
 	if x.Id != in.Id {
 		return
 	}
 
-	err := mergo.Merge(x, in, mergo.WithOverride, mergo.WithAppendSlice)
-	if err != nil {
-		return
+	if in.CreatedAt != nil {
+		proto.Merge(x.CreatedAt, in.CreatedAt)
 	}
+
+	if in.UpdatedAt != nil {
+		proto.Merge(x.UpdatedAt, in.UpdatedAt)
+	}
+
+	if x.Job != in.Job {
+		x.Job = in.Job
+	}
+
+	if in.Status != nil {
+		proto.Merge(x.Status, in.Status)
+	}
+
+	if x.Message != in.Message {
+		x.Message = in.Message
+	}
+
+	if in.Description != nil && x.Description != in.Description {
+		x.Description = in.Description
+	}
+
+	if in.Attributes != nil && x.Attributes != in.Attributes {
+		x.Attributes.List = in.Attributes.List
+	}
+
+	if x.X != in.X {
+		x.X = in.X
+	}
+
+	if x.Y != in.Y {
+		x.Y = in.Y
+	}
+
+	if in.Postal != nil && x.Postal != in.Postal {
+		x.Postal = in.Postal
+	}
+
+	if x.Anon != in.Anon {
+		x.Anon = in.Anon
+	}
+
+	if in.CreatorId != nil && x.CreatorId != in.CreatorId {
+		x.CreatorId = in.CreatorId
+	}
+
+	if in.Creator != nil {
+		proto.Merge(x.Creator, in.Creator)
+	}
+
+	x.Units = in.Units
 }
 
 func (x *Dispatch) Point() orb.Point {
