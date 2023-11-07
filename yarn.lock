@@ -1806,9 +1806,9 @@
   integrity sha512-MMzuxN3GdFwskAnb6fz0orFvhfqi752yjaXylr0Rp4oDg5H0Zn1IuyRhDVvYOwAXoJirx2xuS16I3WjxnAIHiQ==
 
 "@types/splitpanes@^2.2.4":
-  version "2.2.4"
-  resolved "https://registry.yarnpkg.com/@types/splitpanes/-/splitpanes-2.2.4.tgz#ec89e546ece83313bfae851eb66dfea881085262"
-  integrity sha512-k1bLppuHIRMEZSSLLZDtzK9Nq2/sCGmSzdNMZzrMNvbeSkYkV+KD2wpMb4pAdZ4XDvqenK6TMTGVK4hFyT//kA==
+  version "2.2.5"
+  resolved "https://registry.yarnpkg.com/@types/splitpanes/-/splitpanes-2.2.5.tgz#6184841ebb567bd592862ad3dcdc36f4688c78c1"
+  integrity sha512-6NXCErgbgBsuBmXmD94Vgj/rrefNJqOum1tawqhEKAlF8vlsnK1sGUQ10j/8/5f1/hIu1N5JrTSRckZMaGrt0w==
   dependencies:
     vue "^2.0.0"
 
@@ -6499,9 +6499,9 @@ mz@^2.7.0:
     thenify-all "^1.0.0"
 
 nanoid@^3.3.6:
-  version "3.3.6"
-  resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-3.3.6.tgz#443380c856d6e9f9824267d960b4236ad583ea4c"
-  integrity sha512-BGcqMMJuToF7i1rt+2PWSNVnWIkGCU78jBG3RxO/bZlnZPK2Cmi2QaffxGO/2RvWi9sL+FAiRiXMgsyxQ1DIDA==
+  version "3.3.7"
+  resolved "https://registry.yarnpkg.com/nanoid/-/nanoid-3.3.7.tgz#d0c301a691bc8d54efa0a2226ccf3fe2fd656bd8"
+  integrity sha512-eSRppjcPIatRIMC1U6UngP8XFcz8MQWGQdt1MTBQ7NaAmvXDfvNxbvWV3x2y6CdEUciCSsDHDQZbhYaB8QEo2g==
 
 nanoid@^4.0.2:
   version "4.0.2"
