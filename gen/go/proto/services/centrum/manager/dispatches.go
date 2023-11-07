@@ -105,14 +105,6 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 		}
 	}
 
-	// Begin transaction
-	tx, err := s.db.BeginTx(ctx, nil)
-	if err != nil {
-		return errorscentrum.ErrFailedQuery
-	}
-	// Defer a rollback in case anything fails
-	defer tx.Rollback()
-
 	tDispatchUnit := table.FivenetCentrumDispatchesAsgmts
 	if len(toRemove) > 0 {
 		removeIds := make([]jet.Expression, len(toRemove))
@@ -127,10 +119,11 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 				tDispatchUnit.UnitID.IN(removeIds...),
 			))
 
-		if _, err := stmt.ExecContext(ctx, tx); err != nil {
+		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 			return errorscentrum.ErrFailedQuery
 		}
 
+		announceList := []uint64{}
 		for i := len(dsp.Units) - 1; i >= 0; i-- {
 			if i > len(dsp.Units)-1 {
 				break
@@ -139,20 +132,23 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 			for k := 0; k < len(toRemove); k++ {
 				if dsp.Units[i].UnitId == toRemove[k] {
 					dsp.Units = utils.RemoveFromSlice(dsp.Units, i)
-
-					if err := s.UpdateDispatchStatus(ctx, job, dsp, &dispatch.DispatchStatus{
-						DispatchId: dsp.Id,
-						UnitId:     &toRemove[k],
-						UserId:     userId,
-						Status:     dispatch.StatusDispatch_STATUS_DISPATCH_UNIT_UNASSIGNED,
-						X:          x,
-						Y:          y,
-						Postal:     postal,
-					}); err != nil {
-						return errorscentrum.ErrFailedQuery
-					}
+					announceList = append(announceList, toRemove[k])
 					break
 				}
+			}
+		}
+
+		for _, unitId := range announceList {
+			if err := s.UpdateDispatchStatus(ctx, job, dsp, &dispatch.DispatchStatus{
+				DispatchId: dsp.Id,
+				UnitId:     &unitId,
+				UserId:     userId,
+				Status:     dispatch.StatusDispatch_STATUS_DISPATCH_UNIT_UNASSIGNED,
+				X:          x,
+				Y:          y,
+				Postal:     postal,
+			}); err != nil {
+				return errorscentrum.ErrFailedQuery
 			}
 		}
 	}
@@ -172,12 +168,15 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 				tDispatchUnit.UnitID,
 				tDispatchUnit.ExpiresAt,
 			)
+
+		announceList := []uint64{}
 		needInsert := false
 		for k := 0; k < len(toAdd); k++ {
 			found := false
 			for i := 0; i < len(dsp.Units); i++ {
 				if dsp.Units[i].UnitId == toAdd[k] {
 					found = true
+					announceList = append(announceList, toAdd[k])
 					break
 				}
 			}
@@ -207,18 +206,6 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 					Unit:       unit,
 					ExpiresAt:  expiresAtTS,
 				})
-
-				if err := s.UpdateDispatchStatus(ctx, job, dsp, &dispatch.DispatchStatus{
-					DispatchId: dsp.Id,
-					UnitId:     &unit.Id,
-					UserId:     userId,
-					Status:     dispatch.StatusDispatch_STATUS_DISPATCH_UNIT_ASSIGNED,
-					X:          x,
-					Y:          y,
-					Postal:     postal,
-				}); err != nil {
-					return errorscentrum.ErrFailedQuery
-				}
 			}
 		}
 
@@ -227,17 +214,26 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 				tDispatchUnit.ExpiresAt.SET(jet.RawTimestamp("VALUES(`expires_at`)")),
 			)
 
-			if _, err := stmt.ExecContext(ctx, tx); err != nil {
+			if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 				if !dbutils.IsDuplicateError(err) {
 					return errorscentrum.ErrFailedQuery
 				}
 			}
 		}
-	}
 
-	// Commit the transaction
-	if err := tx.Commit(); err != nil {
-		return errorscentrum.ErrFailedQuery
+		for _, unitId := range announceList {
+			if err := s.UpdateDispatchStatus(ctx, job, dsp, &dispatch.DispatchStatus{
+				DispatchId: dsp.Id,
+				UnitId:     &unitId,
+				UserId:     userId,
+				Status:     dispatch.StatusDispatch_STATUS_DISPATCH_UNIT_ASSIGNED,
+				X:          x,
+				Y:          y,
+				Postal:     postal,
+			}); err != nil {
+				return errorscentrum.ErrFailedQuery
+			}
+		}
 	}
 
 	// Dispatch has not units assigned anymore
