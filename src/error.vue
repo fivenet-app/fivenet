@@ -18,10 +18,18 @@ const buttonDisabled = ref(true);
 
 function handleError(url?: string): void {
     $loading.start();
-
     startButtonTimer();
-    if (url === undefined) url = '/';
-    clearError({ redirect: url });
+
+    if (url === undefined) {
+        url = '/';
+    }
+
+    reloadNuxtApp({
+        path: url,
+        persistState: false,
+        ttl: 2000,
+    });
+    clearError();
 }
 
 function copyError(): void {

@@ -869,6 +869,258 @@ var _ interface {
 	ErrorName() string
 } = ChangePasswordResponseValidationError{}
 
+// Validate checks the field values on ChangeUsernameRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ChangeUsernameRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ChangeUsernameRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ChangeUsernameRequestMultiError, or nil if none found.
+func (m *ChangeUsernameRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ChangeUsernameRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if l := utf8.RuneCountInString(m.GetCurrent()); l < 3 || l > 24 {
+		err := ChangeUsernameRequestValidationError{
+			field:  "Current",
+			reason: "value length must be between 3 and 24 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if !_ChangeUsernameRequest_Current_Pattern.MatchString(m.GetCurrent()) {
+		err := ChangeUsernameRequestValidationError{
+			field:  "Current",
+			reason: "value does not match regex pattern \"(?i)^[0-9A-ZÄÖÜß_-]{3,24}$\"",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if l := utf8.RuneCountInString(m.GetNew()); l < 3 || l > 24 {
+		err := ChangeUsernameRequestValidationError{
+			field:  "New",
+			reason: "value length must be between 3 and 24 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if !_ChangeUsernameRequest_New_Pattern.MatchString(m.GetNew()) {
+		err := ChangeUsernameRequestValidationError{
+			field:  "New",
+			reason: "value does not match regex pattern \"(?i)^[0-9A-ZÄÖÜß_-]{3,24}$\"",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return ChangeUsernameRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// ChangeUsernameRequestMultiError is an error wrapping multiple validation
+// errors returned by ChangeUsernameRequest.ValidateAll() if the designated
+// constraints aren't met.
+type ChangeUsernameRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ChangeUsernameRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ChangeUsernameRequestMultiError) AllErrors() []error { return m }
+
+// ChangeUsernameRequestValidationError is the validation error returned by
+// ChangeUsernameRequest.Validate if the designated constraints aren't met.
+type ChangeUsernameRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ChangeUsernameRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ChangeUsernameRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ChangeUsernameRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ChangeUsernameRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ChangeUsernameRequestValidationError) ErrorName() string {
+	return "ChangeUsernameRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ChangeUsernameRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sChangeUsernameRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ChangeUsernameRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ChangeUsernameRequestValidationError{}
+
+var _ChangeUsernameRequest_Current_Pattern = regexp.MustCompile("(?i)^[0-9A-ZÄÖÜß_-]{3,24}$")
+
+var _ChangeUsernameRequest_New_Pattern = regexp.MustCompile("(?i)^[0-9A-ZÄÖÜß_-]{3,24}$")
+
+// Validate checks the field values on ChangeUsernameResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ChangeUsernameResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ChangeUsernameResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ChangeUsernameResponseMultiError, or nil if none found.
+func (m *ChangeUsernameResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ChangeUsernameResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return ChangeUsernameResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// ChangeUsernameResponseMultiError is an error wrapping multiple validation
+// errors returned by ChangeUsernameResponse.ValidateAll() if the designated
+// constraints aren't met.
+type ChangeUsernameResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ChangeUsernameResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ChangeUsernameResponseMultiError) AllErrors() []error { return m }
+
+// ChangeUsernameResponseValidationError is the validation error returned by
+// ChangeUsernameResponse.Validate if the designated constraints aren't met.
+type ChangeUsernameResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ChangeUsernameResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ChangeUsernameResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ChangeUsernameResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ChangeUsernameResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ChangeUsernameResponseValidationError) ErrorName() string {
+	return "ChangeUsernameResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ChangeUsernameResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sChangeUsernameResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ChangeUsernameResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ChangeUsernameResponseValidationError{}
+
 // Validate checks the field values on ForgotPasswordRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.

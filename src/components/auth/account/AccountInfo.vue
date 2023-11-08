@@ -6,6 +6,7 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { GetAccountInfoResponse } from '~~/gen/ts/services/auth/auth';
 import ChangePasswordModal from '~/components/auth/account/ChangePasswordModal.vue';
+import ChangeUsernameModal from '~/components/auth/account/ChangeUsernameModal.vue';
 import DebugInfo from '~/components/auth/account/DebugInfo.vue';
 import OAuth2Connections from '~/components/auth/account/OAuth2Connections.vue';
 import SettingsPanel from '~/components/auth/account/SettingsPanel.vue';
@@ -26,6 +27,7 @@ async function getAccountInfo(): Promise<GetAccountInfoResponse | undefined> {
 }
 
 const changePasswordModal = ref(false);
+const changeUsernameModal = ref(false);
 
 async function removeOAuth2Connection(provider: string): Promise<void> {
     const idx = account.value?.oauth2Connections.findIndex((v) => v.providerName === provider);
@@ -39,7 +41,9 @@ async function removeOAuth2Connection(provider: string): Promise<void> {
 
 <template>
     <div class="py-2 max-w-5xl mx-auto">
+        <ChangeUsernameModal :open="changeUsernameModal" @close="changeUsernameModal = false" />
         <ChangePasswordModal :open="changePasswordModal" @close="changePasswordModal = false" />
+
         <DataPendingBlock v-if="pending" :message="$t('common.loading', [`${$t('common.account')} ${$t('common.info')}`])" />
         <DataErrorBlock
             v-else-if="error"
@@ -73,6 +77,20 @@ async function removeOAuth2Connection(provider: string): Promise<void> {
                             </dt>
                             <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
                                 {{ account.account?.license }}
+                            </dd>
+                        </div>
+                        <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
+                            <dt class="text-sm font-medium">
+                                {{ $t('components.auth.account_info.change_username') }}
+                            </dt>
+                            <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
+                                <button
+                                    type="button"
+                                    class="rounded-md bg-base-500 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-base-400"
+                                    @click="changeUsernameModal = true"
+                                >
+                                    {{ $t('components.auth.account_info.change_username_button') }}
+                                </button>
                             </dd>
                         </div>
                         <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">

@@ -92,6 +92,24 @@ export interface ChangePasswordResponse {
     expires?: Timestamp;
 }
 /**
+ * @generated from protobuf message services.auth.ChangeUsernameRequest
+ */
+export interface ChangeUsernameRequest {
+    /**
+     * @generated from protobuf field: string current = 1;
+     */
+    current: string;
+    /**
+     * @generated from protobuf field: string new = 2;
+     */
+    new: string;
+}
+/**
+ * @generated from protobuf message services.auth.ChangeUsernameResponse
+ */
+export interface ChangeUsernameResponse {
+}
+/**
  * @generated from protobuf message services.auth.ForgotPasswordRequest
  */
 export interface ForgotPasswordRequest {
@@ -329,6 +347,29 @@ class ChangePasswordResponse$Type extends MessageType<ChangePasswordResponse> {
  */
 export const ChangePasswordResponse = new ChangePasswordResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class ChangeUsernameRequest$Type extends MessageType<ChangeUsernameRequest> {
+    constructor() {
+        super("services.auth.ChangeUsernameRequest", [
+            { no: 1, name: "current", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "24", pattern: "(?i)^[0-9A-Z\u00C4\u00D6\u00DC\u00DF_-]{3,24}$" } } } },
+            { no: 2, name: "new", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "24", pattern: "(?i)^[0-9A-Z\u00C4\u00D6\u00DC\u00DF_-]{3,24}$" } } } }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.auth.ChangeUsernameRequest
+ */
+export const ChangeUsernameRequest = new ChangeUsernameRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ChangeUsernameResponse$Type extends MessageType<ChangeUsernameResponse> {
+    constructor() {
+        super("services.auth.ChangeUsernameResponse", []);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.auth.ChangeUsernameResponse
+ */
+export const ChangeUsernameResponse = new ChangeUsernameResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class ForgotPasswordRequest$Type extends MessageType<ForgotPasswordRequest> {
     constructor() {
         super("services.auth.ForgotPasswordRequest", [
@@ -507,6 +548,7 @@ export const AuthService = new ServiceType("services.auth.AuthService", [
     { name: "Login", options: {}, I: LoginRequest, O: LoginResponse },
     { name: "Logout", options: {}, I: LogoutRequest, O: LogoutResponse },
     { name: "CreateAccount", options: {}, I: CreateAccountRequest, O: CreateAccountResponse },
+    { name: "ChangeUsername", options: {}, I: ChangeUsernameRequest, O: ChangeUsernameResponse },
     { name: "ChangePassword", options: {}, I: ChangePasswordRequest, O: ChangePasswordResponse },
     { name: "ForgotPassword", options: {}, I: ForgotPasswordRequest, O: ForgotPasswordResponse },
     { name: "GetCharacters", options: {}, I: GetCharactersRequest, O: GetCharactersResponse },

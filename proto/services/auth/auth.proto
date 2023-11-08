@@ -65,6 +65,21 @@ message ChangePasswordResponse {
   resources.timestamp.Timestamp expires = 2;
 }
 
+message ChangeUsernameRequest {
+  string current = 1 [(validate.rules).string = {
+    min_len: 3,
+    max_len: 24,
+    pattern: "(?i)^[0-9A-ZÄÖÜß_-]{3,24}$",
+  }];
+  string new = 2 [(validate.rules).string = {
+    min_len: 3,
+    max_len: 24,
+    pattern: "(?i)^[0-9A-ZÄÖÜß_-]{3,24}$",
+  }];
+}
+
+message ChangeUsernameResponse {}
+
 message ForgotPasswordRequest {
   string reg_token = 1 [(validate.rules).string = {
     len: 6,
@@ -136,6 +151,7 @@ service AuthService {
   rpc Logout(LogoutRequest) returns (LogoutResponse);
 
   rpc CreateAccount(CreateAccountRequest) returns (CreateAccountResponse);
+  rpc ChangeUsername(ChangeUsernameRequest) returns (ChangeUsernameResponse);
   rpc ChangePassword(ChangePasswordRequest) returns (ChangePasswordResponse);
   rpc ForgotPassword(ForgotPasswordRequest) returns (ForgotPasswordResponse);
 

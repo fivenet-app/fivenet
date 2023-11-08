@@ -1,11 +1,11 @@
 <script lang="ts" setup>
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc';
-import { max, min, required } from '@vee-validate/rules';
+// eslint-disable-next-line camelcase
+import { alpha_dash, max, min, required } from '@vee-validate/rules';
 import { useThrottleFn } from '@vueuse/core';
-import { AccountKeyIcon, CloseIcon, LoadingIcon } from 'mdi-vue3';
+import { AccountEditIcon, CloseIcon, LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
-import PasswordStrengthMeter from '~/components/auth/PasswordStrengthMeter.vue';
 import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
 
@@ -23,30 +23,31 @@ defineEmits<{
     (e: 'close'): void;
 }>();
 
-const newPassword = ref('');
-
 interface FormData {
-    currentPassword: string;
-    newPassword: string;
+    currentUsername: string;
+    newUsername: string;
 }
 
-async function changePassword(values: FormData): Promise<void> {
+async function changeUsername(values: FormData): Promise<void> {
     try {
-        const call = $grpc.getAuthClient().changePassword({
-            current: values.currentPassword,
-            new: values.newPassword,
+        const call = $grpc.getAuthClient().changeUsername({
+            current: values.currentUsername,
+            new: values.newUsername,
         });
         const { response } = await call;
 
         setAccessToken(response.token, toDate(response.expires) as null | Date);
 
         notifications.dispatchNotification({
-            title: { key: 'notifications.auth.changed_password.title', parameters: {} },
-            content: { key: 'notifications.auth.changed_password.content', parameters: {} },
+            title: { key: 'notifications.auth.change_username.title', parameters: {} },
+            content: { key: 'notifications.auth.change_username.content', parameters: {} },
             type: 'success',
         });
 
-        await navigateTo({ name: 'overview' });
+        await navigateTo({ name: 'auth-logout' });
+        setTimeout(() => {
+            authStore.clearAuthInfo();
+        }, 1);
     } catch (e) {
         $grpc.handleError(e as RpcError);
         throw e;
@@ -56,11 +57,12 @@ async function changePassword(values: FormData): Promise<void> {
 defineRule('required', required);
 defineRule('min', min);
 defineRule('max', max);
+defineRule('alpha_dash', alpha_dash);
 
 const { handleSubmit, meta } = useForm<FormData>({
     validationSchema: {
-        currentPassword: { required: true, min: 6, max: 70 },
-        newPassword: { required: true, min: 6, max: 70 },
+        currentUsername: { required: true, min: 6, max: 70 },
+        newUsername: { required: true, min: 6, max: 70 },
     },
     validateOnMount: true,
 });
@@ -68,7 +70,7 @@ const { handleSubmit, meta } = useForm<FormData>({
 const canSubmit = ref(true);
 const onSubmit = handleSubmit(
     async (values): Promise<void> =>
-        await changePassword(values).finally(() => setTimeout(() => (canSubmit.value = true), 400)),
+        await changeUsername(values).finally(() => setTimeout(() => (canSubmit.value = true), 400)),
 );
 const onSubmitThrottle = useThrottleFn(async (e) => {
     canSubmit.value = false;
@@ -117,53 +119,51 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                             </div>
                             <div>
                                 <div class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-base-700">
-                                    <AccountKeyIcon class="h-6 w-6 text-primary-500" aria-hidden="true" />
+                                    <AccountEditIcon class="h-6 w-6 text-primary-500" aria-hidden="true" />
                                 </div>
                                 <div class="mt-3 text-center sm:mt-5">
                                     <DialogTitle as="h3" class="text-base font-semibold leading-6">
-                                        {{ $t('components.auth.change_password_modal.change_password') }}
+                                        {{ $t('components.auth.change_username_modal.change_username') }}
                                     </DialogTitle>
                                     <div class="mt-2">
                                         <form class="my-2 space-y-6" @submit.prevent="onSubmitThrottle">
                                             <div>
-                                                <label for="currentPassword" class="sr-only">{{
-                                                    $t('components.auth.change_password_modal.current_password')
+                                                <label for="currentUsername" class="sr-only">{{
+                                                    $t('components.auth.change_username_modal.current_username')
                                                 }}</label>
                                                 <div>
                                                     <VeeField
-                                                        name="currentPassword"
-                                                        type="password"
-                                                        autocomplete="current-password"
+                                                        name="currentUsername"
+                                                        type="text"
+                                                        autocomplete="current-username"
                                                         :placeholder="
-                                                            $t('components.auth.change_password_modal.current_password')
+                                                            $t('components.auth.change_username_modal.current_username')
                                                         "
-                                                        :label="$t('components.auth.change_password_modal.current_password')"
+                                                        :label="$t('components.auth.change_username_modal.current_username')"
                                                         class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                     />
                                                     <VeeErrorMessage
-                                                        name="currentPassword"
+                                                        name="currentUsername"
                                                         as="p"
                                                         class="mt-2 text-sm text-error-400"
                                                     />
                                                 </div>
                                             </div>
                                             <div>
-                                                <label for="newPassword" class="sr-only">{{
-                                                    $t('components.auth.change_password_modal.new_password')
+                                                <label for="newUsername" class="sr-only">{{
+                                                    $t('components.auth.change_username_modal.new_username')
                                                 }}</label>
                                                 <div>
                                                     <VeeField
-                                                        v-model:model-value="newPassword"
-                                                        name="newPassword"
-                                                        type="password"
-                                                        autocomplete="new-password"
-                                                        :placeholder="$t('components.auth.change_password_modal.new_password')"
-                                                        :label="$t('components.auth.change_password_modal.new_password')"
+                                                        name="newUsername"
+                                                        type="text"
+                                                        autocomplete="new-username"
+                                                        :placeholder="$t('components.auth.change_username_modal.new_username')"
+                                                        :label="$t('components.auth.change_username_modal.new_username')"
                                                         class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                     />
-                                                    <PasswordStrengthMeter :input="newPassword" class="mt-2" />
                                                     <VeeErrorMessage
-                                                        name="newPassword"
+                                                        name="newUsername"
                                                         as="p"
                                                         class="mt-2 text-sm text-error-400"
                                                     />
@@ -184,7 +184,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                     <template v-if="!canSubmit">
                                                         <LoadingIcon class="animate-spin h-5 w-5 mr-2" />
                                                     </template>
-                                                    {{ $t('components.auth.change_password_modal.change_password') }}
+                                                    {{ $t('components.auth.change_username_modal.change_username') }}
                                                 </button>
                                             </div>
                                         </form>

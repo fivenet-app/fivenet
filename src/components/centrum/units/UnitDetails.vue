@@ -3,7 +3,7 @@ import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } fro
 import { AccountIcon, CloseIcon, MapMarkerIcon, PencilIcon } from 'mdi-vue3';
 import { unitStatusToBGColor } from '~/components/centrum//helpers';
 import UnitAssignUsersModal from '~/components/centrum/units/UnitAssignUsersModal.vue';
-import Feed from '~/components/centrum/units/UnitFeed.vue';
+import UnitFeed from '~/components/centrum/units/UnitFeed.vue';
 import UnitStatusUpdateModal from '~/components/centrum/units/UnitStatusUpdateModal.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import Time from '~/components/partials/elements/Time.vue';
@@ -217,7 +217,7 @@ const openStatus = ref(false);
                                                     </dl>
                                                 </div>
 
-                                                <Feed :unit-id="unit.id" />
+                                                <UnitFeed :unit-id="unit.id" />
                                             </div>
                                         </div>
                                     </div>

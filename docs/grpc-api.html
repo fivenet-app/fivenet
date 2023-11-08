@@ -822,6 +822,14 @@
                 </li>
               
                 <li>
+                  <a href="#services.auth.ChangeUsernameRequest"><span class="badge">M</span>ChangeUsernameRequest</a>
+                </li>
+              
+                <li>
+                  <a href="#services.auth.ChangeUsernameResponse"><span class="badge">M</span>ChangeUsernameResponse</a>
+                </li>
+              
+                <li>
                   <a href="#services.auth.ChooseCharacterRequest"><span class="badge">M</span>ChooseCharacterRequest</a>
                 </li>
               
@@ -10293,6 +10301,90 @@
 
         
       
+        <h3 id="services.auth.ChangeUsernameRequest">ChangeUsernameRequest</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>current</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+                <tr>
+                  <td>new</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+            
+            
+            <h4>Validated Fields</h4>
+            <table>
+              <thead>
+                <tr>
+                  <td>Field</td>
+                  <td>Validations</td>
+                </tr>
+              </thead>
+              <tbody>
+              
+                <tr>
+                  <td>current</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.min_len: 3</li>
+                    
+                      <li>string.max_len: 24</li>
+                    
+                      <li>string.pattern: (?i)^[0-9A-ZÄÖÜß_-]{3,24}$</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+                <tr>
+                  <td>new</td>
+                  <td>
+                    <ul>
+                    
+                      <li>string.min_len: 3</li>
+                    
+                      <li>string.max_len: 24</li>
+                    
+                      <li>string.pattern: (?i)^[0-9A-ZÄÖÜß_-]{3,24}$</li>
+                    
+                    </ul>
+                  </td>
+                </tr>
+              
+              </tbody>
+            </table>
+            
+          
+
+        
+      
+        <h3 id="services.auth.ChangeUsernameResponse">ChangeUsernameResponse</h3>
+        <p></p>
+
+        
+
+        
+      
         <h3 id="services.auth.ChooseCharacterRequest">ChooseCharacterRequest</h3>
         <p></p>
 
@@ -11054,6 +11146,13 @@
                 <td>CreateAccount</td>
                 <td><a href="#services.auth.CreateAccountRequest">CreateAccountRequest</a></td>
                 <td><a href="#services.auth.CreateAccountResponse">CreateAccountResponse</a></td>
+                <td><p></p></td>
+              </tr>
+            
+              <tr>
+                <td>ChangeUsername</td>
+                <td><a href="#services.auth.ChangeUsernameRequest">ChangeUsernameRequest</a></td>
+                <td><a href="#services.auth.ChangeUsernameResponse">ChangeUsernameResponse</a></td>
                 <td><p></p></td>
               </tr>
             

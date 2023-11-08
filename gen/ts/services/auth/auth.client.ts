@@ -18,6 +18,8 @@ import type { ForgotPasswordResponse } from "./auth.js";
 import type { ForgotPasswordRequest } from "./auth.js";
 import type { ChangePasswordResponse } from "./auth.js";
 import type { ChangePasswordRequest } from "./auth.js";
+import type { ChangeUsernameResponse } from "./auth.js";
+import type { ChangeUsernameRequest } from "./auth.js";
 import type { CreateAccountResponse } from "./auth.js";
 import type { CreateAccountRequest } from "./auth.js";
 import type { LogoutResponse } from "./auth.js";
@@ -43,6 +45,10 @@ export interface IAuthServiceClient {
      * @generated from protobuf rpc: CreateAccount(services.auth.CreateAccountRequest) returns (services.auth.CreateAccountResponse);
      */
     createAccount(input: CreateAccountRequest, options?: RpcOptions): UnaryCall<CreateAccountRequest, CreateAccountResponse>;
+    /**
+     * @generated from protobuf rpc: ChangeUsername(services.auth.ChangeUsernameRequest) returns (services.auth.ChangeUsernameResponse);
+     */
+    changeUsername(input: ChangeUsernameRequest, options?: RpcOptions): UnaryCall<ChangeUsernameRequest, ChangeUsernameResponse>;
     /**
      * @generated from protobuf rpc: ChangePassword(services.auth.ChangePasswordRequest) returns (services.auth.ChangePasswordResponse);
      */
@@ -105,24 +111,31 @@ export class AuthServiceClient implements IAuthServiceClient, ServiceInfo {
         return stackIntercept<CreateAccountRequest, CreateAccountResponse>("unary", this._transport, method, opt, input);
     }
     /**
+     * @generated from protobuf rpc: ChangeUsername(services.auth.ChangeUsernameRequest) returns (services.auth.ChangeUsernameResponse);
+     */
+    changeUsername(input: ChangeUsernameRequest, options?: RpcOptions): UnaryCall<ChangeUsernameRequest, ChangeUsernameResponse> {
+        const method = this.methods[3], opt = this._transport.mergeOptions(options);
+        return stackIntercept<ChangeUsernameRequest, ChangeUsernameResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
      * @generated from protobuf rpc: ChangePassword(services.auth.ChangePasswordRequest) returns (services.auth.ChangePasswordResponse);
      */
     changePassword(input: ChangePasswordRequest, options?: RpcOptions): UnaryCall<ChangePasswordRequest, ChangePasswordResponse> {
-        const method = this.methods[3], opt = this._transport.mergeOptions(options);
+        const method = this.methods[4], opt = this._transport.mergeOptions(options);
         return stackIntercept<ChangePasswordRequest, ChangePasswordResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: ForgotPassword(services.auth.ForgotPasswordRequest) returns (services.auth.ForgotPasswordResponse);
      */
     forgotPassword(input: ForgotPasswordRequest, options?: RpcOptions): UnaryCall<ForgotPasswordRequest, ForgotPasswordResponse> {
-        const method = this.methods[4], opt = this._transport.mergeOptions(options);
+        const method = this.methods[5], opt = this._transport.mergeOptions(options);
         return stackIntercept<ForgotPasswordRequest, ForgotPasswordResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: GetCharacters(services.auth.GetCharactersRequest) returns (services.auth.GetCharactersResponse);
      */
     getCharacters(input: GetCharactersRequest, options?: RpcOptions): UnaryCall<GetCharactersRequest, GetCharactersResponse> {
-        const method = this.methods[5], opt = this._transport.mergeOptions(options);
+        const method = this.methods[6], opt = this._transport.mergeOptions(options);
         return stackIntercept<GetCharactersRequest, GetCharactersResponse>("unary", this._transport, method, opt, input);
     }
     /**
@@ -131,28 +144,28 @@ export class AuthServiceClient implements IAuthServiceClient, ServiceInfo {
      * @generated from protobuf rpc: ChooseCharacter(services.auth.ChooseCharacterRequest) returns (services.auth.ChooseCharacterResponse);
      */
     chooseCharacter(input: ChooseCharacterRequest, options?: RpcOptions): UnaryCall<ChooseCharacterRequest, ChooseCharacterResponse> {
-        const method = this.methods[6], opt = this._transport.mergeOptions(options);
+        const method = this.methods[7], opt = this._transport.mergeOptions(options);
         return stackIntercept<ChooseCharacterRequest, ChooseCharacterResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: GetAccountInfo(services.auth.GetAccountInfoRequest) returns (services.auth.GetAccountInfoResponse);
      */
     getAccountInfo(input: GetAccountInfoRequest, options?: RpcOptions): UnaryCall<GetAccountInfoRequest, GetAccountInfoResponse> {
-        const method = this.methods[7], opt = this._transport.mergeOptions(options);
+        const method = this.methods[8], opt = this._transport.mergeOptions(options);
         return stackIntercept<GetAccountInfoRequest, GetAccountInfoResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: DeleteOAuth2Connection(services.auth.DeleteOAuth2ConnectionRequest) returns (services.auth.DeleteOAuth2ConnectionResponse);
      */
     deleteOAuth2Connection(input: DeleteOAuth2ConnectionRequest, options?: RpcOptions): UnaryCall<DeleteOAuth2ConnectionRequest, DeleteOAuth2ConnectionResponse> {
-        const method = this.methods[8], opt = this._transport.mergeOptions(options);
+        const method = this.methods[9], opt = this._transport.mergeOptions(options);
         return stackIntercept<DeleteOAuth2ConnectionRequest, DeleteOAuth2ConnectionResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @generated from protobuf rpc: SetJob(services.auth.SetJobRequest) returns (services.auth.SetJobResponse);
      */
     setJob(input: SetJobRequest, options?: RpcOptions): UnaryCall<SetJobRequest, SetJobResponse> {
-        const method = this.methods[9], opt = this._transport.mergeOptions(options);
+        const method = this.methods[10], opt = this._transport.mergeOptions(options);
         return stackIntercept<SetJobRequest, SetJobResponse>("unary", this._transport, method, opt, input);
     }
 }

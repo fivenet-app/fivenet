@@ -185,7 +185,9 @@
                 "subtitle": "Your FiveNet account details.",
                 "license": "Identifier/ License",
                 "change_password": "Change Password",
-                "change_password_button": "Change Account Password"
+                "change_password_button": "Change Account Password",
+                "change_username": "Change Username",
+                "change_username_button": "Change Account Username"
             },
             "login": {
                 "register_account": "Register Account with Token",
@@ -197,6 +199,11 @@
                 "change_password": "Change Password",
                 "current_password": "Current Password",
                 "new_password": "New Password"
+            },
+            "change_username_modal": {
+                "change_username": "Change Username",
+                "current_username": "Current Username",
+                "new_username": "New Username"
             },
             "oauth2_connections": {
                 "title": "Social Login Connections",
@@ -869,6 +876,10 @@
                 "title": "Password has been changed",
                 "content": "Your new password has been set"
             },
+            "changed_username": {
+                "title": "Username has been changed",
+                "content": "Your new username has been set. Please login again."
+            },
             "account_created": {
                 "title": "Account created!",
                 "content": "Your account was successfully created"
@@ -1408,7 +1419,8 @@
             "ErrForgotPassword": "Failed to reset password!",
             "ErrAccountExistsFailed": "Please use use the forgot password function!",
             "ErrSignupDisabled": "Account signup is disabled!",
-            "ErrAccountDuplicate": "Username already taken, please use a different username."
+            "ErrAccountDuplicate": "Username already taken, please use a different username.",
+            "ErrChangeUsername": "Failed to change your username!"
         },
         "CitizenStoreService": {
             "ErrFailedQuery": "Failed to list/ get citizens data!",

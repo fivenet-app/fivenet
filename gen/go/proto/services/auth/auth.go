@@ -40,7 +40,6 @@ var (
 
 var (
 	ErrAccountCreateFailed = status.Error(codes.InvalidArgument, "errors.AuthService.ErrAccountCreateFailed")
-	ErrAccountDuplicate    = status.Error(codes.InvalidArgument, "errors.AuthService.ErrAccountDuplicate")
 	ErrAccountExistsFailed = status.Error(codes.InvalidArgument, "errors.AuthService.ErrAccountExistsFailed")
 	ErrInvalidLogin        = status.Error(codes.InvalidArgument, "errors.AuthService.ErrInvalidLogin")
 	ErrNoAccount           = status.Error(codes.InvalidArgument, "errors.AuthService.ErrNoAccount")
@@ -51,6 +50,8 @@ var (
 	ErrChangePassword      = status.Error(codes.InvalidArgument, "errors.AuthService.ErrChangePassword")
 	ErrForgotPassword      = status.Error(codes.InvalidArgument, "errors.AuthService.ErrForgotPassword")
 	ErrSignupDisabled      = status.Error(codes.InvalidArgument, "errors.AuthService.ErrSignupDisabled")
+	ErrAccountDuplicate    = status.Error(codes.InvalidArgument, "errors.AuthService.ErrAccountDuplicate")
+	ErrChangeUsername      = status.Error(codes.InvalidArgument, "errors.AuthService.ErrChangeUsername")
 )
 
 type Server struct {
@@ -324,6 +325,72 @@ func (s *Server) ChangePassword(ctx context.Context, req *ChangePasswordRequest)
 		Token:   newToken,
 		Expires: timestamp.New(newClaims.ExpiresAt.Time),
 	}, nil
+}
+
+func (s *Server) ChangeUsername(ctx context.Context, req *ChangeUsernameRequest) (*ChangeUsernameResponse, error) {
+	token, err := auth.GetTokenFromGRPCContext(ctx)
+	if err != nil {
+		return nil, auth.ErrInvalidToken
+	}
+
+	claims, err := s.tm.ParseWithClaims(token)
+	if err != nil {
+		return nil, ErrChangeUsername
+	}
+
+	acc, err := s.getAccountFromDB(ctx, tAccounts.ID.EQ(jet.Uint64(claims.AccID)))
+	if err != nil {
+		if errors.Is(qrm.ErrNoRows, err) {
+			return nil, ErrChangeUsername
+		}
+
+		return nil, ErrChangeUsername
+	}
+
+	// No username nor password set on account, fail
+	if acc.Username == nil || acc.Password == nil {
+		return nil, ErrNoAccount
+	}
+
+	resp := &ChangeUsernameResponse{}
+
+	req.New = strings.TrimSpace(req.New)
+	username := req.New
+
+	// Same username.. just return here.
+	if *acc.Username == username {
+		return resp, nil
+	}
+
+	// If there is an account with the new username, fail
+	newAcc, err := s.getAccountFromDB(ctx, tAccounts.Username.EQ(jet.String(username)))
+	if err != nil && !errors.Is(qrm.ErrNoRows, err) {
+		// Other database error
+		return nil, ErrChangeUsername
+	}
+	// An account with the requested username was found, fail
+	if newAcc != nil {
+		return nil, ErrChangeUsername
+	}
+
+	acc.Username = &username
+
+	stmt := tAccounts.
+		UPDATE(
+			tAccounts.Username,
+		).
+		SET(
+			tAccounts.Username.SET(jet.String(username)),
+		).
+		WHERE(
+			tAccounts.ID.EQ(jet.Uint64(acc.ID)),
+		)
+
+	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+		return nil, ErrUpdateAccount
+	}
+
+	return resp, nil
 }
 
 func (s *Server) ForgotPassword(ctx context.Context, req *ForgotPasswordRequest) (*ForgotPasswordResponse, error) {
