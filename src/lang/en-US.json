@@ -200,11 +200,6 @@
                 "current_password": "Current Password",
                 "new_password": "New Password"
             },
-            "change_username_modal": {
-                "change_username": "Change Username",
-                "current_username": "Current Username",
-                "new_username": "New Username"
-            },
             "oauth2_connections": {
                 "title": "Social Login Connections",
                 "subtitle": "Your Social Login connections, for faster login and cool additional features."
@@ -236,6 +231,11 @@
                     "title": "Document Editor Theme",
                     "dark_mode": "Dark Mode"
                 }
+            },
+            "change_username_modal": {
+                "change_username": "Change Username",
+                "current_username": "Current Username",
+                "new_username": "New Username"
             }
         },
         "citizens": {
@@ -876,10 +876,6 @@
                 "title": "Password has been changed",
                 "content": "Your new password has been set"
             },
-            "changed_username": {
-                "title": "Username has been changed",
-                "content": "Your new username has been set. Please login again."
-            },
             "account_created": {
                 "title": "Account created!",
                 "content": "Your account was successfully created"
@@ -911,6 +907,10 @@
                     "title": "Failed to connect your account",
                     "content": "Error while connecting your social login (Reason: {0}), please try again."
                 }
+            },
+            "changed_username": {
+                "title": "Username has been changed",
+                "content": "Your new username has been set. Please login again."
             }
         },
         "language_switched": {
