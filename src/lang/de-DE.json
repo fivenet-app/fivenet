@@ -907,10 +907,6 @@
                     "title": "Fehler beim verbinden deines Kontos",
                     "content": "Fehler beim Social Login ihres Kontos (Fehler: {0}), bitte versuchen sie es erneut."
                 }
-            },
-            "changed_username": {
-                "title": "Benutzername wurde geändert",
-                "content": "Neuer Benutzername gesetzt. Bitte erneut anmelden."
             }
         },
         "language_switched": {

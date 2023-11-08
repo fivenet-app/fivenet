@@ -10,9 +10,10 @@ import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
 
 const { $grpc } = useNuxtApp();
-const authStore = useAuthStore();
+
 const notifications = useNotificatorStore();
 
+const authStore = useAuthStore();
 const { setAccessToken } = authStore;
 
 defineProps<{

@@ -352,12 +352,16 @@ func (s *Server) ChangeUsername(ctx context.Context, req *ChangeUsernameRequest)
 		return nil, ErrNoAccount
 	}
 
-	resp := &ChangeUsernameResponse{}
+	// Make sure current username matches the sent current username
+	if !strings.EqualFold(*acc.Username, req.Current) {
+		return nil, ErrChangeUsername
+	}
 
 	req.New = strings.TrimSpace(req.New)
 	username := req.New
 
-	// Same username.. just return here.
+	// New username is same as current username.. just return here.
+	resp := &ChangeUsernameResponse{}
 	if *acc.Username == username {
 		return resp, nil
 	}

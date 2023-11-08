@@ -10,10 +10,11 @@ import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
 
 const { $grpc } = useNuxtApp();
-const authStore = useAuthStore();
-const notifications = useNotificatorStore();
 
-const { setAccessToken } = authStore;
+const authStore = useAuthStore();
+const { clearAuthInfo } = authStore;
+
+const notifications = useNotificatorStore();
 
 defineProps<{
     open: boolean;
@@ -34,9 +35,7 @@ async function changeUsername(values: FormData): Promise<void> {
             current: values.currentUsername,
             new: values.newUsername,
         });
-        const { response } = await call;
-
-        setAccessToken(response.token, toDate(response.expires) as null | Date);
+        await call;
 
         notifications.dispatchNotification({
             title: { key: 'notifications.auth.change_username.title', parameters: {} },
@@ -46,7 +45,7 @@ async function changeUsername(values: FormData): Promise<void> {
 
         await navigateTo({ name: 'auth-logout' });
         setTimeout(() => {
-            authStore.clearAuthInfo();
+            clearAuthInfo();
         }, 1);
     } catch (e) {
         $grpc.handleError(e as RpcError);

@@ -876,6 +876,10 @@
                 "title": "Password has been changed",
                 "content": "Your new password has been set"
             },
+            "change_username": {
+                "title": "Username has been changed",
+                "content": "Your new username has been set. Please login again."
+            },
             "account_created": {
                 "title": "Account created!",
                 "content": "Your account was successfully created"
@@ -907,10 +911,6 @@
                     "title": "Failed to connect your account",
                     "content": "Error while connecting your social login (Reason: {0}), please try again."
                 }
-            },
-            "changed_username": {
-                "title": "Username has been changed",
-                "content": "Your new username has been set. Please login again."
             }
         },
         "language_switched": {
