@@ -181,11 +181,11 @@
     "components": {
         "auth": {
             "account_info": {
-                "title": "Konto Info",
+                "title": "Konto-Info",
                 "subtitle": "Deine FiveNet Konto Informationen.",
                 "license": "Identifier/ Lizenz",
                 "change_password": "Passwort ändern",
-                "change_password_button": "Konto Passwort ändern",
+                "change_password_button": "Konto-Passwort ändern",
                 "change_username": "Benutzername ändern",
                 "change_username_button": "Konto-Benutzername ändern"
             },
@@ -285,7 +285,7 @@
                 "account_info": "Konto-Informationen",
                 "open_sidebar": "Seitenleiste öffnen",
                 "close_sidebar": "Seitenleiste schließen",
-                "open_usermenu": "Konto Menü öffnen",
+                "open_usermenu": "Konto-Menü öffnen",
                 "open_navigation": "Navigation öffnen"
             },
             "table_pagination": {
