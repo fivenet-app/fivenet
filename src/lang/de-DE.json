@@ -185,7 +185,9 @@
                 "subtitle": "Deine FiveNet Konto Informationen.",
                 "license": "Identifier/ Lizenz",
                 "change_password": "Passwort ändern",
-                "change_password_button": "Konto Passwort ändern"
+                "change_password_button": "Konto Passwort ändern",
+                "change_username": "Benutzername ändern",
+                "change_username_button": "Konto-Benutzername ändern"
             },
             "login": {
                 "register_account": "Konto mit Token erstellen",
@@ -229,6 +231,11 @@
                     "title": "Dokumenten-Editor-Design",
                     "dark_mode": "Nacht Modus"
                 }
+            },
+            "change_username_modal": {
+                "change_username": "Benutzername ändern",
+                "current_username": "Momentaner Benutzername",
+                "new_username": "Neuer Benutzername"
             }
         },
         "citizens": {
@@ -900,6 +907,10 @@
                     "title": "Fehler beim verbinden deines Kontos",
                     "content": "Fehler beim Social Login ihres Kontos (Fehler: {0}), bitte versuchen sie es erneut."
                 }
+            },
+            "changed_username": {
+                "title": "Benutzername wurde geändert",
+                "content": "Neuer Benutzername gesetzt. Bitte erneut anmelden."
             }
         },
         "language_switched": {
@@ -1408,7 +1419,8 @@
             "ErrForgotPassword": "Fehler beim zurücksetzen ihres Passworts!",
             "ErrAccountExistsFailed": "Bitte nutzen sie die Passwort vergessen Funktion!",
             "ErrSignupDisabled": "Konto-Erstellung ist deaktiviert!",
-            "ErrAccountDuplicate": "Benutzername bereits verwendet, bitte nutzen sie einen anderen Benutzernamen."
+            "ErrAccountDuplicate": "Benutzername bereits verwendet, bitte nutzen sie einen anderen Benutzernamen.",
+            "ErrChangeUsername": "Fehler beim Ändern des Benutzernamen!"
         },
         "CitizenStoreService": {
             "ErrFailedQuery": "Fehler beim Laden von Bürger Daten!",
