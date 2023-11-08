@@ -23,7 +23,7 @@ require (
 	github.com/gin-gonic/gin v1.9.1
 	github.com/go-jet/jet/v2 v2.10.1
 	github.com/go-sql-driver/mysql v1.7.1
-	github.com/golang-jwt/jwt/v5 v5.0.0
+	github.com/golang-jwt/jwt/v5 v5.1.0
 	github.com/golang-migrate/migrate/v4 v4.16.2
 	github.com/gosimple/slug v1.13.1
 	github.com/grpc-ecosystem/go-grpc-middleware/providers/prometheus v1.0.0
