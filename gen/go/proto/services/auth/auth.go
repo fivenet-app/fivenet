@@ -52,6 +52,7 @@ var (
 	ErrSignupDisabled      = status.Error(codes.InvalidArgument, "errors.AuthService.ErrSignupDisabled")
 	ErrAccountDuplicate    = status.Error(codes.InvalidArgument, "errors.AuthService.ErrAccountDuplicate")
 	ErrChangeUsername      = status.Error(codes.InvalidArgument, "errors.AuthService.ErrChangeUsername")
+	ErrBadUsername         = status.Error(codes.InvalidArgument, "errors.AuthService.ErrBadUsername")
 )
 
 type Server struct {
@@ -354,7 +355,7 @@ func (s *Server) ChangeUsername(ctx context.Context, req *ChangeUsernameRequest)
 
 	// Make sure current username matches the sent current username
 	if !strings.EqualFold(*acc.Username, req.Current) {
-		return nil, ErrChangeUsername
+		return nil, ErrBadUsername
 	}
 
 	req.New = strings.TrimSpace(req.New)
@@ -363,18 +364,18 @@ func (s *Server) ChangeUsername(ctx context.Context, req *ChangeUsernameRequest)
 	// New username is same as current username.. just return here.
 	resp := &ChangeUsernameResponse{}
 	if *acc.Username == username {
-		return resp, nil
+		return nil, ErrBadUsername
 	}
 
 	// If there is an account with the new username, fail
 	newAcc, err := s.getAccountFromDB(ctx, tAccounts.Username.EQ(jet.String(username)))
 	if err != nil && !errors.Is(qrm.ErrNoRows, err) {
 		// Other database error
-		return nil, ErrChangeUsername
+		return nil, ErrBadUsername
 	}
 	// An account with the requested username was found, fail
 	if newAcc != nil {
-		return nil, ErrChangeUsername
+		return nil, ErrBadUsername
 	}
 
 	acc.Username = &username

@@ -1420,7 +1420,8 @@
             "ErrAccountExistsFailed": "Bitte nutzen sie die Passwort vergessen Funktion!",
             "ErrSignupDisabled": "Konto-Erstellung ist deaktiviert!",
             "ErrAccountDuplicate": "Benutzername bereits verwendet, bitte nutzen sie einen anderen Benutzernamen.",
-            "ErrChangeUsername": "Fehler beim Ändern des Benutzernamen!"
+            "ErrChangeUsername": "Fehler beim Ändern des Benutzernamen!",
+            "ErrBadUsername": "Bitte überprüfen Sie die Korrektheit der Benutzernamens! Probieren sie einen anderen Benutzernamen."
         },
         "CitizenStoreService": {
             "ErrFailedQuery": "Fehler beim Laden von Bürger Daten!",

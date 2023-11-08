@@ -1420,7 +1420,8 @@
             "ErrAccountExistsFailed": "Please use use the forgot password function!",
             "ErrSignupDisabled": "Account signup is disabled!",
             "ErrAccountDuplicate": "Username already taken, please use a different username.",
-            "ErrChangeUsername": "Failed to change your username!"
+            "ErrChangeUsername": "Failed to change your username!",
+            "ErrBadUsername": "Please verify the usernames correctness! Please try with a different username."
         },
         "CitizenStoreService": {
             "ErrFailedQuery": "Failed to list/ get citizens data!",

@@ -60,8 +60,8 @@ defineRule('alpha_dash', alpha_dash);
 
 const { handleSubmit, meta } = useForm<FormData>({
     validationSchema: {
-        currentUsername: { required: true, min: 6, max: 70 },
-        newUsername: { required: true, min: 6, max: 70 },
+        currentUsername: { required: true, min: 3, max: 24, alpha_dash: true },
+        newUsername: { required: true, min: 3, max: 24, alpha_dash: true },
     },
     validateOnMount: true,
 });
