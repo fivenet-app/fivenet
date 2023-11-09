@@ -140,7 +140,7 @@ async function toggleStringListValue(value: string): Promise<void> {
     }
 
     const array = currentValue.validValues.stringList.strings;
-    if (array.includes(value) === undefined) {
+    if (!array.includes(value)) {
         array.push(value);
     } else {
         array.splice(array.indexOf(value), 1);
@@ -158,7 +158,7 @@ async function toggleJobListValue(value: string): Promise<void> {
     }
 
     const array = currentValue.validValues.jobList.strings;
-    if (array.includes(value) === undefined) {
+    if (!array.includes(value)) {
         array.push(value);
     } else {
         array.splice(array.indexOf(value), 1);

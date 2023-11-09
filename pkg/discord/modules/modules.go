@@ -6,9 +6,11 @@ import (
 	"fmt"
 
 	"github.com/bwmarrin/discordgo"
+	"github.com/galexrt/fivenet/gen/go/proto/resources/users"
 	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/query/fivenet/table"
+	jet "github.com/go-jet/jet/v2/mysql"
 	"go.uber.org/zap"
 )
 
@@ -16,6 +18,7 @@ var (
 	tOauth2Accs = table.FivenetOauth2Accounts
 	tAccs       = table.FivenetAccounts
 	tUsers      = table.Users.AS("users")
+	tJobProps   = table.FivenetJobProps.AS("jobprops")
 )
 
 var Modules = map[string]NewModuleFunc{}
@@ -62,4 +65,22 @@ func NewBaseModule(ctx context.Context, logger *zap.Logger, db *sql.DB, discord 
 
 		enricher: enricher,
 	}
+}
+
+func (g *BaseModule) GetSyncSettings(ctx context.Context, job string) (*users.DiscordSyncSettings, error) {
+	stmt := tJobProps.
+		SELECT(
+			tJobProps.DiscordSyncSettings,
+		).
+		FROM(tJobProps).
+		WHERE(
+			tJobProps.Job.EQ(jet.String(job)),
+		)
+
+	var jobProps users.DiscordSyncSettings
+	if err := stmt.QueryContext(ctx, g.db, &jobProps); err != nil {
+		return nil, err
+	}
+
+	return &jobProps, nil
 }

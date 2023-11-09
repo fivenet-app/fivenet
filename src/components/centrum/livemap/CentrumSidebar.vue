@@ -162,8 +162,8 @@ watchDebounced(
 );
 
 watchDebounced(ownDispatches.value, async () => ensureDispatchSelected(), {
-    debounce: 150,
-    maxWait: 600,
+    debounce: 125,
+    maxWait: 350,
 });
 
 const { resume, pause } = useIntervalFn(() => checkup(), 1 * 60 * 1000);

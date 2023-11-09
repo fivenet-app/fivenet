@@ -53,6 +53,15 @@ func NewUserInfo(base *BaseModule) (Module, error) {
 }
 
 func (g *UserInfo) Run() error {
+	settings, err := g.GetSyncSettings(g.ctx, g.job)
+	if err != nil {
+		return err
+	}
+
+	if settings == nil || !settings.UserInfoSync {
+		return nil
+	}
+
 	if err := g.createJobRoles(); err != nil {
 		return err
 	}
