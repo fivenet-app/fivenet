@@ -33,7 +33,7 @@ function mapResize(): void {
 }
 
 const mapContainer = ref<HTMLElement | null>(null);
-const mapResizeDebounced = useDebounceFn(mapResize, 250);
+const mapResizeDebounced = useDebounceFn(mapResize, 350, { maxWait: 750 });
 useResizeObserver(mapContainer, (_) => mapResizeDebounced());
 
 const centerX = 117.3;
@@ -100,17 +100,14 @@ watchDebounced(
 );
 
 const backgroundColorList = {
-    Satelite: '#143d6b',
     Postal: '#74aace',
 } as const;
 const backgroundColor = ref<ValueOf<typeof backgroundColorList>>(backgroundColorList.Postal);
 
 async function updateBackground(layer: string): Promise<void> {
     switch (layer) {
-        case 'Satelite':
-            backgroundColor.value = backgroundColorList.Satelite;
-            break;
         case 'Postal':
+        default:
             backgroundColor.value = backgroundColorList.Postal;
             break;
     }

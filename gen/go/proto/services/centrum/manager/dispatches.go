@@ -124,6 +124,7 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 			return err
 		}
 
+		toAnnounce := []uint64{}
 		for i := len(dsp.Units) - 1; i >= 0; i-- {
 			if i > len(dsp.Units)-1 {
 				break
@@ -135,18 +136,22 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 				}
 
 				dsp.Units = utils.RemoveFromSlice(dsp.Units, i)
+				toAnnounce = append(toAnnounce, toRemove[i])
+			}
+		}
 
-				if err := s.UpdateDispatchStatus(ctx, job, dsp, &dispatch.DispatchStatus{
-					DispatchId: dsp.Id,
-					UnitId:     &toRemove[k],
-					Status:     dispatch.StatusDispatch_STATUS_DISPATCH_UNIT_UNASSIGNED,
-					UserId:     userId,
-					X:          x,
-					Y:          y,
-					Postal:     postal,
-				}); err != nil {
-					return err
-				}
+		// Send updates
+		for _, unit := range toAnnounce {
+			if err := s.UpdateDispatchStatus(ctx, job, dsp, &dispatch.DispatchStatus{
+				DispatchId: dsp.Id,
+				UnitId:     &unit,
+				Status:     dispatch.StatusDispatch_STATUS_DISPATCH_UNIT_UNASSIGNED,
+				UserId:     userId,
+				X:          x,
+				Y:          y,
+				Postal:     postal,
+			}); err != nil {
+				return err
 			}
 		}
 	}
@@ -222,7 +227,9 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 				Unit:       unit,
 				ExpiresAt:  expiresAtTS,
 			})
+		}
 
+		for _, unitId := range units {
 			if err := s.UpdateDispatchStatus(ctx, job, dsp, &dispatch.DispatchStatus{
 				DispatchId: dsp.Id,
 				UnitId:     &unitId,

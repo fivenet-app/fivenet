@@ -173,6 +173,7 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 			return err
 		}
 
+		toAnnounce := []int32{}
 		for i := len(unit.Users) - 1; i >= 0; i-- {
 			if i > len(unit.Users)-1 {
 				break
@@ -183,21 +184,24 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 					continue
 				}
 
-				unit.Users = utils.RemoveFromSlice(unit.Users, i)
-
-				if err := s.UpdateUnitStatus(ctx, job, unit, &dispatch.UnitStatus{
-					UnitId:    unit.Id,
-					Status:    dispatch.StatusUnit_STATUS_UNIT_USER_REMOVED,
-					UserId:    &toRemove[k],
-					CreatorId: userId,
-					X:         x,
-					Y:         y,
-					Postal:    postal,
-				}); err != nil {
-					return err
-				}
-
 				s.UserIDToUnitID.Delete(toRemove[k])
+				toAnnounce = append(toAnnounce, toRemove[k])
+				unit.Users = utils.RemoveFromSlice(unit.Users, i)
+			}
+		}
+
+		// Send updates
+		for _, user := range toAnnounce {
+			if err := s.UpdateUnitStatus(ctx, job, unit, &dispatch.UnitStatus{
+				UnitId:    unit.Id,
+				Status:    dispatch.StatusUnit_STATUS_UNIT_USER_REMOVED,
+				UserId:    &user,
+				CreatorId: userId,
+				X:         x,
+				Y:         y,
+				Postal:    postal,
+			}); err != nil {
+				return err
 			}
 		}
 	}
@@ -255,6 +259,10 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 				User:   user,
 			})
 
+			s.UserIDToUnitID.Store(user.UserId, unit.Id)
+		}
+
+		for _, user := range users {
 			if err := s.UpdateUnitStatus(ctx, job, unit, &dispatch.UnitStatus{
 				UnitId:    unit.Id,
 				Status:    dispatch.StatusUnit_STATUS_UNIT_USER_ADDED,
@@ -266,8 +274,6 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 			}); err != nil {
 				return err
 			}
-
-			s.UserIDToUnitID.Store(user.UserId, unit.Id)
 		}
 	}
 
