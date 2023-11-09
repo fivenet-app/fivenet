@@ -9,7 +9,6 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/timestamp"
 	errorscentrum "github.com/galexrt/fivenet/gen/go/proto/services/centrum/errors"
-	eventscentrum "github.com/galexrt/fivenet/gen/go/proto/services/centrum/events"
 	centrumutils "github.com/galexrt/fivenet/gen/go/proto/services/centrum/utils"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/utils"
@@ -17,7 +16,6 @@ import (
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
-	"google.golang.org/protobuf/proto"
 )
 
 var (
@@ -215,25 +213,9 @@ func (s *Server) UpdateDispatch(ctx context.Context, req *UpdateDispatchRequest)
 		s.state.DispatchLocations[oldDsp.Job].Remove(oldDsp, nil)
 	}
 
-	if err := s.state.UpdateDispatch(ctx, userInfo.Job, &userInfo.UserId, req.Dispatch); err != nil {
+	if err := s.state.UpdateDispatch(ctx, userInfo.Job, &userInfo.UserId, req.Dispatch, true); err != nil {
 		return nil, errorscentrum.ErrFailedQuery
 	}
-
-	// Load dispatch into cache
-	if err := s.state.LoadDispatches(ctx, req.Dispatch.Id); err != nil {
-		return nil, errorscentrum.ErrFailedQuery
-	}
-
-	dsp, ok := s.state.GetDispatch(userInfo.Job, req.Dispatch.Id)
-	if !ok {
-		return nil, errorscentrum.ErrFailedQuery
-	}
-
-	data, err := proto.Marshal(dsp)
-	if err != nil {
-		return nil, errorscentrum.ErrFailedQuery
-	}
-	s.events.JS.PublishAsync(eventscentrum.BuildSubject(eventscentrum.TopicDispatch, eventscentrum.TypeDispatchUpdated, userInfo.Job, 0), data)
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 

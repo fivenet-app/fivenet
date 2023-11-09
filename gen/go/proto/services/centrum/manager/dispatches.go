@@ -2,6 +2,7 @@ package manager
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
@@ -244,6 +245,10 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 		}
 	}
 
+	for _, unit := range dsp.Units {
+		fmt.Println("DISPATCH ASSIGNMENTS - Dispatch Units", dsp.Id, unit.Unit.Name, "length", len(dsp.Units))
+	}
+
 	// Dispatch has not units assigned anymore
 	if len(dsp.Units) == 0 {
 		// Check dispatch status to not be completed/archived, etc.
@@ -430,7 +435,7 @@ func (s *Manager) CreateDispatch(ctx context.Context, d *dispatch.Dispatch) (*di
 	return dsp, nil
 }
 
-func (s *Manager) UpdateDispatch(ctx context.Context, userJob string, userId *int32, dsp *dispatch.Dispatch) error {
+func (s *Manager) UpdateDispatch(ctx context.Context, userJob string, userId *int32, dsp *dispatch.Dispatch, publish bool) error {
 	stmt := tDispatch.
 		UPDATE(
 			tDispatch.Job,
@@ -467,6 +472,25 @@ func (s *Manager) UpdateDispatch(ctx context.Context, userJob string, userId *in
 		return p.(*dispatch.Dispatch).Id == dsp.Id
 	}) {
 		s.State.DispatchLocations[dsp.Job].Add(dsp)
+	}
+
+	// Load dispatch into cache
+	if err := s.LoadDispatches(ctx, dsp.Id); err != nil {
+		return err
+	}
+
+	dsp, ok := s.GetDispatch(userJob, dsp.Id)
+	if !ok {
+		return errorscentrum.ErrFailedQuery
+	}
+
+	if publish {
+		data, err := proto.Marshal(dsp)
+		if err != nil {
+			return err
+		}
+
+		s.events.JS.PublishAsync(eventscentrum.BuildSubject(eventscentrum.TopicDispatch, eventscentrum.TypeDispatchUpdated, userJob, 0), data)
 	}
 
 	return nil

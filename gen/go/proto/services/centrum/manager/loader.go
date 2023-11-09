@@ -276,7 +276,7 @@ func (s *Manager) LoadDispatches(ctx context.Context, id uint64) error {
 		).
 		WHERE(condition).
 		ORDER_BY(
-			tDispatch.ID.ASC(),
+			tDispatch.ID.DESC(),
 		).
 		LIMIT(200)
 
@@ -309,7 +309,7 @@ func (s *Manager) LoadDispatches(ctx context.Context, id uint64) error {
 			postal := s.postals.Closest(dispatches[i].X, dispatches[i].Y)
 			dispatches[i].Postal = postal.Code
 
-			if err := s.UpdateDispatch(ctx, dispatches[i].Job, dispatches[i].CreatorId, dispatches[i]); err != nil {
+			if err := s.UpdateDispatch(ctx, dispatches[i].Job, dispatches[i].CreatorId, dispatches[i], false); err != nil {
 				return err
 			}
 		}
@@ -323,7 +323,7 @@ func (s *Manager) LoadDispatches(ctx context.Context, id uint64) error {
 			dispatch.Merge(dispatches[i])
 		}
 
-		// Ensure dispatch has status new if nil
+		// Ensure dispatch has status new if it currently doesn't have one
 		if dispatches[i].Status == nil {
 			if err := s.UpdateDispatchStatus(ctx, dispatches[i].Job, dispatches[i], &dispatch.DispatchStatus{
 				DispatchId: dispatches[i].Id,

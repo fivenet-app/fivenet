@@ -2,6 +2,7 @@ package dispatch
 
 import (
 	"database/sql/driver"
+	"fmt"
 
 	jsoniter "github.com/json-iterator/go"
 	"github.com/paulmach/orb"
@@ -87,6 +88,9 @@ func (x *Dispatch) Merge(in *Dispatch) {
 		proto.Merge(x.Creator, in.Creator)
 	}
 
+	for _, unit := range x.Units {
+		fmt.Println("MERGE - Dispatch Units", x.Id, unit.Unit.Name, "length", len(x.Units))
+	}
 	x.Units = in.Units
 }
 

@@ -2,6 +2,7 @@ package manager
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
 	eventscentrum "github.com/galexrt/fivenet/gen/go/proto/services/centrum/events"
@@ -275,6 +276,10 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 				return err
 			}
 		}
+	}
+
+	for _, user := range unit.Users {
+		fmt.Println("UNIT ASSIGNMENTS - Unit Users", unit.Id, user.UnitId, user.UserId, "length", len(unit.Users))
 	}
 
 	// Commit the transaction

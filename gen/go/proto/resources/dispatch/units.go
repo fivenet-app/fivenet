@@ -1,6 +1,8 @@
 package dispatch
 
 import (
+	"fmt"
+
 	"github.com/paulmach/orb"
 	"google.golang.org/protobuf/proto"
 )
@@ -42,6 +44,9 @@ func (x *Unit) Merge(in *Unit) {
 		proto.Merge(x.Status, in.Status)
 	}
 
+	for _, user := range x.Users {
+		fmt.Println("MERGE - Unit Users", x.Id, user.UnitId, user.UserId, "length", len(x.Users))
+	}
 	x.Users = in.Users
 }
 
