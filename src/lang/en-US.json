@@ -394,7 +394,9 @@
                 "quick_buttons": "Quick Access Buttons",
                 "discord_guild_id": "Discord Guild/ Server ID",
                 "invite_bot": "Invite Bot",
-                "last_sync": "Last Sync"
+                "last_sync": "Last Sync",
+                "discord_sync_settings": "Discord Sync Settings",
+                "user_info_sync": "User Info Sync (Names and Job Grade Roles)"
             },
             "role_view": {
                 "add_permission": "Add Permission"

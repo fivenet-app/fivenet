@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import QuickButton, { type ButtonComponents as QuickButtonTypes } from '~/components/partials/QuickButton.vue';
 import { useAuthStore } from '~/store/auth';
+import PenaltyCalculator from '~/components/partials/quickbuttons/PenaltyCalculator.vue';
 
 const authStore = useAuthStore();
 
@@ -8,5 +8,5 @@ const { jobProps } = storeToRefs(authStore);
 </script>
 
 <template>
-    <QuickButton v-for="button in jobProps?.quickButtons" :key="button" :comp="button as QuickButtonTypes" />
+    <PenaltyCalculator v-if="jobProps?.quickButtons?.penaltyCalculator" />
 </template>

@@ -4,11 +4,11 @@ import { parseQuery } from 'vue-router';
 import { useClipboardStore } from '~/store/clipboard';
 import { useNotificatorStore } from '~/store/notificator';
 import { useSettingsStore } from '~/store/settings';
-import { JobProps } from '~~/gen/ts/resources/users/jobs';
+import { JobProps, QuickButtons } from '~~/gen/ts/resources/users/jobs';
 import { User } from '~~/gen/ts/resources/users/users';
 
 export type JobPropsState = {
-    quickButtons: string[];
+    quickButtons?: QuickButtons;
 };
 
 export interface AuthState {
@@ -36,7 +36,7 @@ export const useAuthStore = defineStore('auth', {
         loginError: null as null | string,
         permissions: [] as string[],
         jobProps: {
-            quickButtons: [],
+            quickButtons: {} as QuickButtons,
         } as null | JobPropsState,
     }),
     persist: {
@@ -68,7 +68,7 @@ export const useAuthStore = defineStore('auth', {
                 this.jobProps = null;
             } else {
                 this.jobProps = {
-                    quickButtons: jp.quickButtons.split(';').filter((v) => v !== ''),
+                    quickButtons: jp.quickButtons,
                 };
             }
         },

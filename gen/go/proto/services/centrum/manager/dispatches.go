@@ -99,8 +99,7 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 	var x, y *float64
 	var postal *string
 	if userId != nil {
-		marker, ok := s.tracker.GetUserById(*userId)
-		if ok {
+		if marker, ok := s.tracker.GetUserById(*userId); ok {
 			x = &marker.Info.X
 			y = &marker.Info.Y
 			postal = marker.Info.Postal

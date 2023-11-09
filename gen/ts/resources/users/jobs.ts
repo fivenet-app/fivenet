@@ -54,40 +54,39 @@ export interface JobProps {
      */
     livemapMarkerColor: string;
     /**
-     * @sanitize: method=StripTags
-     *
-     * @generated from protobuf field: string quick_buttons = 4;
+     * @generated from protobuf field: resources.users.QuickButtons quick_buttons = 4;
      */
-    quickButtons: string;
+    quickButtons?: QuickButtons;
     /**
      * @generated from protobuf field: optional uint64 discord_guild_id = 5;
      */
     discordGuildId?: bigint;
     /**
-     * @generated from protobuf field: optional resources.users.DiscordBotMode discord_mode = 6;
-     */
-    discordMode?: DiscordBotMode;
-    /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp discord_last_sync = 7;
+     * @generated from protobuf field: optional resources.timestamp.Timestamp discord_last_sync = 6;
      */
     discordLastSync?: Timestamp;
+    /**
+     * @generated from protobuf field: resources.users.DiscordSyncSettings discord_sync_settings = 7;
+     */
+    discordSyncSettings?: DiscordSyncSettings;
 }
 /**
- * @generated from protobuf enum resources.users.DiscordBotMode
+ * @generated from protobuf message resources.users.QuickButtons
  */
-export enum DiscordBotMode {
+export interface QuickButtons {
     /**
-     * @generated from protobuf enum value: DISCORD_BOT_MODE_UNSPECIFIED = 0;
+     * @generated from protobuf field: bool penalty_calculator = 1;
      */
-    UNSPECIFIED = 0,
+    penaltyCalculator: boolean;
+}
+/**
+ * @generated from protobuf message resources.users.DiscordSyncSettings
+ */
+export interface DiscordSyncSettings {
     /**
-     * @generated from protobuf enum value: DISCORD_BOT_MODE_ADDITIVE = 1;
+     * @generated from protobuf field: bool user_info_sync = 1;
      */
-    ADDITIVE = 1,
-    /**
-     * @generated from protobuf enum value: DISCORD_BOT_MODE_SUBSTRACTIVE = 2;
-     */
-    SUBSTRACTIVE = 2
+    userInfoSync: boolean;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Job$Type extends MessageType<Job> {
@@ -124,10 +123,10 @@ class JobProps$Type extends MessageType<JobProps> {
             { no: 1, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 2, name: "theme", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 3, name: "livemap_marker_color", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { len: "6", pattern: "^[A-Fa-f0-9]{6}$" } } } },
-            { no: 4, name: "quick_buttons", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 4, name: "quick_buttons", kind: "message", T: () => QuickButtons },
             { no: 5, name: "discord_guild_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 6, name: "discord_mode", kind: "enum", opt: true, T: () => ["resources.users.DiscordBotMode", DiscordBotMode, "DISCORD_BOT_MODE_"] },
-            { no: 7, name: "discord_last_sync", kind: "message", T: () => Timestamp }
+            { no: 6, name: "discord_last_sync", kind: "message", T: () => Timestamp },
+            { no: 7, name: "discord_sync_settings", kind: "message", T: () => DiscordSyncSettings }
         ]);
     }
 }
@@ -135,3 +134,27 @@ class JobProps$Type extends MessageType<JobProps> {
  * @generated MessageType for protobuf message resources.users.JobProps
  */
 export const JobProps = new JobProps$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class QuickButtons$Type extends MessageType<QuickButtons> {
+    constructor() {
+        super("resources.users.QuickButtons", [
+            { no: 1, name: "penalty_calculator", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.users.QuickButtons
+ */
+export const QuickButtons = new QuickButtons$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class DiscordSyncSettings$Type extends MessageType<DiscordSyncSettings> {
+    constructor() {
+        super("resources.users.DiscordSyncSettings", [
+            { no: 1, name: "user_info_sync", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.users.DiscordSyncSettings
+ */
+export const DiscordSyncSettings = new DiscordSyncSettings$Type();

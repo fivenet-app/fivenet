@@ -12,16 +12,10 @@ import (
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
-	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/status"
 )
 
 var (
 	tJobProps = table.FivenetJobProps
-)
-
-var (
-	ErrInvalidJPQuickButton = status.Error(codes.InvalidArgument, "Invalid quick access button found!")
 )
 
 func (s *Server) GetJobProps(ctx context.Context, req *GetJobPropsRequest) (*GetJobPropsResponse, error) {
@@ -37,6 +31,7 @@ func (s *Server) GetJobProps(ctx context.Context, req *GetJobPropsRequest) (*Get
 			jobProps.QuickButtons,
 			jobProps.DiscordGuildID,
 			jobProps.DiscordLastSync,
+			jobProps.DiscordSyncSettings,
 		).
 		FROM(jobProps).
 		WHERE(
@@ -74,10 +69,6 @@ func (s *Server) SetJobProps(ctx context.Context, req *SetJobPropsRequest) (*Set
 
 	req.JobProps.LivemapMarkerColor = strings.ToLower(strings.ReplaceAll(req.JobProps.LivemapMarkerColor, "#", ""))
 
-	if !s.validateJobPropsQuickButtons(req.JobProps.QuickButtons) {
-		return nil, ErrInvalidJPQuickButton
-	}
-
 	stmt := tJobProps.
 		INSERT(
 			tJobProps.Job,
@@ -85,6 +76,7 @@ func (s *Server) SetJobProps(ctx context.Context, req *SetJobPropsRequest) (*Set
 			tJobProps.LivemapMarkerColor,
 			tJobProps.QuickButtons,
 			tJobProps.DiscordGuildID,
+			tJobProps.DiscordSyncSettings,
 		).
 		VALUES(
 			req.JobProps.Job,
@@ -92,12 +84,14 @@ func (s *Server) SetJobProps(ctx context.Context, req *SetJobPropsRequest) (*Set
 			req.JobProps.LivemapMarkerColor,
 			req.JobProps.QuickButtons,
 			req.JobProps.DiscordGuildId,
+			req.JobProps.DiscordSyncSettings,
 		).
 		ON_DUPLICATE_KEY_UPDATE(
 			tJobProps.Theme.SET(jet.String(req.JobProps.Theme)),
 			tJobProps.LivemapMarkerColor.SET(jet.String(req.JobProps.LivemapMarkerColor)),
-			tJobProps.QuickButtons.SET(jet.String(req.JobProps.QuickButtons)),
+			tJobProps.QuickButtons.SET(jet.StringExp(jet.Raw("VALUES(`quick_buttons`)"))),
 			tJobProps.DiscordGuildID.SET(jet.IntExp(jet.Raw("VALUES(`discord_guild_id`)"))),
+			tJobProps.DiscordSyncSettings.SET(jet.StringExp(jet.Raw("VALUES(`discord_sync_settings`)"))),
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -107,18 +101,4 @@ func (s *Server) SetJobProps(ctx context.Context, req *SetJobPropsRequest) (*Set
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 
 	return &SetJobPropsResponse{}, nil
-}
-
-func (s *Server) validateJobPropsQuickButtons(in string) bool {
-	if in == "" {
-		return true
-	}
-
-	for _, comp := range strings.Split(in, ";") {
-		if comp != "PenaltyCalculator" {
-			return false
-		}
-	}
-
-	return true
 }

@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { Switch, SwitchGroup, SwitchLabel } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { TuneIcon } from 'mdi-vue3';
 import ColorInput from 'vue-color-input/dist/color-input.esm';
@@ -8,7 +9,6 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import Time from '~/components/partials/elements/Time.vue';
 import { useConfigStore } from '~/store/config';
 import { useNotificatorStore } from '~/store/notificator';
-import { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 import { JobProps } from '~~/gen/ts/resources/users/jobs';
 
 const { $grpc } = useNuxtApp();
@@ -18,47 +18,22 @@ const { appConfig } = storeToRefs(configStore);
 
 const notifications = useNotificatorStore();
 
-const properties = ref<{
-    theme: string;
-    livemapMarkerColor: string;
-    quickButtons: {
-        PenaltyCalculator: boolean;
-    };
-    discordGuildId?: string;
-    discordLastSync?: Timestamp;
-}>({
-    theme: 'default',
-    livemapMarkerColor: '#5C7AFF',
-    quickButtons: {
-        PenaltyCalculator: false,
-    },
-});
-
 async function getJobProps(): Promise<JobProps> {
     try {
         const call = $grpc.getRectorClient().getJobProps({});
         const { response } = await call;
 
         if (response.jobProps) {
-            properties.value.theme = response.jobProps?.theme ?? 'default';
-            properties.value.livemapMarkerColor = '#' + response.jobProps?.livemapMarkerColor;
-
-            const components = response.jobProps!.quickButtons.split(';').filter((v) => v !== '');
-            components.forEach((v) => {
-                switch (v) {
-                    case 'PenaltyCalculator':
-                        properties.value.quickButtons.PenaltyCalculator = true;
-                        break;
-                    default:
-                        break;
-                }
-            });
-
-            if (response.jobProps.discordGuildId && response.jobProps.discordGuildId > 0) {
-                properties.value.discordGuildId = response.jobProps.discordGuildId?.toString();
+            if (response.jobProps.quickButtons === undefined) {
+                response.jobProps.quickButtons = {
+                    penaltyCalculator: false,
+                };
             }
-
-            properties.value.discordLastSync = response.jobProps?.discordLastSync;
+            if (response.jobProps.discordSyncSettings === undefined) {
+                response.jobProps.discordSyncSettings = {
+                    userInfoSync: false,
+                };
+            }
         }
 
         return response.jobProps!;
@@ -71,29 +46,13 @@ async function getJobProps(): Promise<JobProps> {
 const { data: jobProps, pending, refresh, error } = useLazyAsyncData(`rector-jobprops`, () => getJobProps());
 
 async function saveJobProps(): Promise<void> {
-    // How scuffed do you want this code to be: "Yes"
-    let quickButtons = '';
-    if (properties.value.quickButtons.PenaltyCalculator) {
-        quickButtons += 'PenaltyCalculator;';
+    if (!jobProps.value) {
+        return;
     }
-
-    const jProps: JobProps = {
-        job: '',
-        theme: properties.value.theme,
-        // Remove '#' from color code
-        livemapMarkerColor: properties.value.livemapMarkerColor.substring(1),
-        quickButtons: '',
-        discordGuildId:
-            properties.value.discordGuildId && properties.value.discordGuildId !== ''
-                ? BigInt(properties.value.discordGuildId)
-                : undefined,
-    };
-
-    jProps.quickButtons = quickButtons.replace(/;$/, '');
 
     try {
         await $grpc.getRectorClient().setJobProps({
-            jobProps: jProps,
+            jobProps: jobProps.value,
         });
 
         notifications.dispatchNotification({
@@ -109,116 +68,164 @@ async function saveJobProps(): Promise<void> {
 </script>
 
 <template>
-    <div class="py-2 mt-5 max-w-5xl mx-auto">
-        <DataPendingBlock v-if="pending" :message="$t('common.loading', [`${$t('common.job', 1)} ${$t('common.prop')}`])" />
-        <DataErrorBlock
-            v-else-if="error"
-            :title="$t('common.unable_to_load', [`${$t('common.job', 1)} ${$t('common.prop')}`])"
-            :retry="refresh"
-        />
-        <DataNoDataBlock v-else-if="!jobProps" :icon="TuneIcon" :type="`${$t('common.job', 1)} ${$t('common.prop')}`" />
-        <div v-else>
-            <div class="overflow-hidden bg-base-800 shadow sm:rounded-lg text-neutral">
-                <div class="px-4 py-5 sm:px-6">
-                    <h3 class="text-base font-semibold leading-6">
-                        {{ $t('components.rector.job_props.job_properties') }}
-                    </h3>
-                    <p class="mt-1 max-w-2xl text-sm">
-                        {{ $t('components.rector.job_props.your_job_properties') }}
-                    </p>
-                </div>
-                <div class="border-t border-base-400 px-4 py-5 sm:p-0">
-                    <dl class="sm:divide-y sm:divide-base-400">
-                        <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
-                            <dt class="text-sm font-medium">
-                                {{ $t('common.theme') }}
-                            </dt>
-                            <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
-                                {{ jobProps.theme }}
-                            </dd>
-                        </div>
-                        <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
-                            <dt class="text-sm font-medium">
-                                {{ $t('components.rector.job_props.livemap_marker_color') }}
-                            </dt>
-                            <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
-                                <ColorInput v-model="properties.livemapMarkerColor" disable-alpha format="hex" position="top" />
-                            </dd>
-                        </div>
-                        <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
-                            <dt class="text-sm font-medium">
-                                {{ $t('components.rector.job_props.quick_buttons') }}
-                            </dt>
-                            <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
-                                <fieldset>
-                                    <div class="space-y-5">
-                                        <div class="relative flex items-start">
-                                            <div class="flex h-6 items-center">
-                                                <input
-                                                    v-model="properties.quickButtons.PenaltyCalculator"
-                                                    aria-describedby="comments-description"
-                                                    name="comments"
-                                                    type="checkbox"
-                                                    class="h-4 w-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600"
-                                                />
-                                            </div>
-                                            <div class="ml-3 text-sm leading-6">
-                                                <label for="comments" class="font-medium text-neutral">
-                                                    {{ $t('components.penaltycalculator.title') }}
-                                                </label>
-                                            </div>
+    <div class="p-2">
+        <div class="max-w-5xl mx-auto">
+            <DataPendingBlock v-if="pending" :message="$t('common.loading', [`${$t('common.job', 1)} ${$t('common.prop')}`])" />
+            <DataErrorBlock
+                v-else-if="error"
+                :title="$t('common.unable_to_load', [`${$t('common.job', 1)} ${$t('common.prop')}`])"
+                :retry="refresh"
+            />
+            <DataNoDataBlock v-else-if="!jobProps" :icon="TuneIcon" :type="`${$t('common.job', 1)} ${$t('common.prop')}`" />
+            <div v-else>
+                <div class="overflow-hidden bg-base-800 shadow sm:rounded-lg text-neutral">
+                    <div class="px-4 py-5 sm:px-6">
+                        <h3 class="text-base font-semibold leading-6">
+                            {{ $t('components.rector.job_props.job_properties') }}
+                        </h3>
+                        <p class="mt-1 max-w-2xl text-sm">
+                            {{ $t('components.rector.job_props.your_job_properties') }}
+                        </p>
+                    </div>
+                    <div class="border-t border-base-400 px-4 py-5 sm:p-0">
+                        <dl class="sm:divide-y sm:divide-base-400">
+                            <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
+                                <dt class="text-sm font-medium">
+                                    {{ $t('common.theme') }}
+                                </dt>
+                                <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
+                                    {{ jobProps.theme }}
+                                </dd>
+                            </div>
+                            <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
+                                <dt class="text-sm font-medium">
+                                    {{ $t('components.rector.job_props.livemap_marker_color') }}
+                                </dt>
+                                <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
+                                    <ColorInput
+                                        v-model="jobProps.livemapMarkerColor"
+                                        disable-alpha
+                                        format="hex"
+                                        position="top"
+                                    />
+                                </dd>
+                            </div>
+                            <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
+                                <dt class="text-sm font-medium">
+                                    {{ $t('components.rector.job_props.quick_buttons') }}
+                                </dt>
+                                <dd v-if="jobProps.quickButtons" class="mt-1 text-sm sm:col-span-2 sm:mt-0">
+                                    <fieldset>
+                                        <div class="space-y-5">
+                                            <SwitchGroup as="div" class="flex items-center">
+                                                <Switch
+                                                    v-model="jobProps.quickButtons.penaltyCalculator"
+                                                    :class="[
+                                                        jobProps.quickButtons.penaltyCalculator
+                                                            ? 'bg-indigo-600'
+                                                            : 'bg-gray-200',
+                                                        'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2',
+                                                    ]"
+                                                >
+                                                    <span
+                                                        aria-hidden="true"
+                                                        :class="[
+                                                            jobProps.quickButtons.penaltyCalculator
+                                                                ? 'translate-x-5'
+                                                                : 'translate-x-0',
+                                                            'pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
+                                                        ]"
+                                                    />
+                                                </Switch>
+                                                <SwitchLabel as="span" class="ml-3 text-sm">
+                                                    <span class="font-medium text-gray-300">{{
+                                                        $t('components.penaltycalculator.title')
+                                                    }}</span>
+                                                </SwitchLabel>
+                                            </SwitchGroup>
                                         </div>
-                                    </div>
-                                </fieldset>
-                            </dd>
-                        </div>
-                        <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
-                            <dt class="text-sm font-medium">
-                                {{ $t('components.rector.job_props.discord_guild_id') }}
-                            </dt>
-                            <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
-                                <input
-                                    v-model="properties.discordGuildId"
-                                    type="text"
-                                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                    :class="appConfig.discord.botInviteURL === undefined ? 'disabled' : ''"
-                                    :disabled="appConfig.discord.botInviteURL === undefined"
-                                    :placeholder="$t('components.rector.job_props.discord_guild_id')"
-                                    :label="$t('components.rector.job_props.discord_guild_id')"
-                                    maxlength="70"
-                                    @focusin="focusTablet(true)"
-                                    @focusout="focusTablet(false)"
-                                />
-                                <NuxtLink
-                                    v-if="appConfig.discord.botInviteURL !== undefined"
-                                    :to="appConfig.discord.botInviteURL"
-                                    :external="true"
-                                    class="mt-2 flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300 bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500"
-                                >
-                                    {{ $t('components.rector.job_props.invite_bot') }}
-                                </NuxtLink>
-                                <p v-if="properties.discordLastSync" class="mt-2 text-base text-xs">
-                                    {{ $t('components.rector.job_props.last_sync') }}:
-                                    <Time :value="properties.discordLastSync" />
-                                </p>
-                            </dd>
-                        </div>
-                        <div
-                            v-if="can('RectorService.SetJobProps')"
-                            class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5"
-                        >
-                            <dt class="text-sm font-medium"></dt>
-                            <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
-                                <button
-                                    type="button"
-                                    class="rounded-md bg-success-600 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-success-400"
-                                    @click="saveJobProps()"
-                                >
-                                    {{ $t('common.save', 1) }}
-                                </button>
-                            </dd>
-                        </div>
-                    </dl>
+                                    </fieldset>
+                                </dd>
+                            </div>
+                            <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
+                                <dt class="text-sm font-medium">
+                                    {{ $t('components.rector.job_props.discord_guild_id') }}
+                                </dt>
+                                <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
+                                    <input
+                                        v-model="jobProps.discordGuildId"
+                                        type="text"
+                                        class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        :class="appConfig.discord.botInviteURL === undefined ? 'disabled' : ''"
+                                        :disabled="appConfig.discord.botInviteURL === undefined"
+                                        :placeholder="$t('components.rector.job_props.discord_guild_id')"
+                                        :label="$t('components.rector.job_props.discord_guild_id')"
+                                        maxlength="70"
+                                        @focusin="focusTablet(true)"
+                                        @focusout="focusTablet(false)"
+                                    />
+                                    <NuxtLink
+                                        v-if="appConfig.discord.botInviteURL !== undefined"
+                                        :to="appConfig.discord.botInviteURL"
+                                        :external="true"
+                                        class="mt-2 flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300 bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500"
+                                    >
+                                        {{ $t('components.rector.job_props.invite_bot') }}
+                                    </NuxtLink>
+                                    <p v-if="jobProps.discordLastSync" class="mt-2 text-base text-xs">
+                                        {{ $t('components.rector.job_props.last_sync') }}:
+                                        <Time :value="jobProps.discordLastSync" />
+                                    </p>
+                                </dd>
+                            </div>
+                            <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5">
+                                <dt class="text-sm font-medium">
+                                    {{ $t('components.rector.job_props.discord_sync_settings') }}
+                                </dt>
+                                <dd v-if="jobProps.discordSyncSettings" class="mt-1 text-sm sm:col-span-2 sm:mt-0">
+                                    <SwitchGroup as="div" class="flex items-center">
+                                        <Switch
+                                            v-model="jobProps.discordSyncSettings.userInfoSync"
+                                            :class="[
+                                                jobProps.discordSyncSettings.userInfoSync ? 'bg-indigo-600' : 'bg-gray-200',
+                                                'relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2',
+                                            ]"
+                                        >
+                                            <span
+                                                aria-hidden="true"
+                                                :class="[
+                                                    jobProps.discordSyncSettings.userInfoSync
+                                                        ? 'translate-x-5'
+                                                        : 'translate-x-0',
+                                                    'pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
+                                                ]"
+                                            />
+                                        </Switch>
+                                        <SwitchLabel as="span" class="ml-3 text-sm">
+                                            <span class="font-medium text-gray-300">{{
+                                                $t('components.rector.job_props.user_info_sync')
+                                            }}</span>
+                                        </SwitchLabel>
+                                    </SwitchGroup>
+                                </dd>
+                            </div>
+                            <div
+                                v-if="can('RectorService.SetJobProps')"
+                                class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6 sm:py-5"
+                            >
+                                <dt class="text-sm font-medium"></dt>
+                                <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
+                                    <button
+                                        type="button"
+                                        class="rounded-md bg-success-600 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-success-400"
+                                        @click="saveJobProps()"
+                                    >
+                                        {{ $t('common.save', 1) }}
+                                    </button>
+                                </dd>
+                            </div>
+                        </dl>
+                    </div>
                 </div>
             </div>
         </div>

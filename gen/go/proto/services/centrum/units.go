@@ -134,8 +134,7 @@ func (s *Server) CreateOrUpdateUnit(ctx context.Context, req *CreateOrUpdateUnit
 
 	var x, y *float64
 	var postal *string
-	marker, ok := s.tracker.GetUserById(userInfo.UserId)
-	if ok {
+	if marker, ok := s.tracker.GetUserById(userInfo.UserId); ok {
 		x = &marker.Info.X
 		y = &marker.Info.Y
 		postal = marker.Info.Postal
@@ -241,8 +240,7 @@ func (s *Server) UpdateUnitStatus(ctx context.Context, req *UpdateUnitStatusRequ
 
 	var x, y *float64
 	var postal *string
-	marker, ok := s.tracker.GetUserById(userInfo.UserId)
-	if ok {
+	if marker, ok := s.tracker.GetUserById(userInfo.UserId); ok {
 		x = &marker.Info.X
 		y = &marker.Info.Y
 		postal = marker.Info.Postal

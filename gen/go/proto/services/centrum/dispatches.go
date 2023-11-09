@@ -264,8 +264,7 @@ func (s *Server) TakeDispatch(ctx context.Context, req *TakeDispatchRequest) (*T
 	settings := s.state.GetSettings(userInfo.Job)
 	var x, y *float64
 	var postal *string
-	marker, ok := s.tracker.GetUserById(userInfo.UserId)
-	if ok {
+	if marker, ok := s.tracker.GetUserById(userInfo.UserId); ok {
 		x = &marker.Info.X
 		y = &marker.Info.Y
 		postal = marker.Info.Postal
@@ -437,8 +436,7 @@ func (s *Server) UpdateDispatchStatus(ctx context.Context, req *UpdateDispatchSt
 
 	var x, y *float64
 	var postal *string
-	marker, ok := s.tracker.GetUserById(userInfo.UserId)
-	if ok {
+	if marker, ok := s.tracker.GetUserById(userInfo.UserId); ok {
 		x = &marker.Info.X
 		y = &marker.Info.Y
 		postal = marker.Info.Postal

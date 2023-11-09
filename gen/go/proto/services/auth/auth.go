@@ -552,7 +552,7 @@ func (s *Server) getCharacter(ctx context.Context, charId int32) (*users.User, *
 	var dest struct {
 		users.User
 		Group    string
-		JobProps users.JobProps
+		JobProps *users.JobProps
 	}
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		if errors.Is(qrm.ErrNoRows, err) {
@@ -561,7 +561,7 @@ func (s *Server) getCharacter(ctx context.Context, charId int32) (*users.User, *
 		return nil, nil, "", err
 	}
 
-	return &dest.User, &dest.JobProps, dest.Group, nil
+	return &dest.User, dest.JobProps, dest.Group, nil
 }
 
 func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterRequest) (*ChooseCharacterResponse, error) {

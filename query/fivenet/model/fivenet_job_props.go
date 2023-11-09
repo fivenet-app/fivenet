@@ -12,11 +12,12 @@ import (
 )
 
 type FivenetJobProps struct {
-	Job                string     `json:"job"`
-	UpdatedAt          *time.Time `json:"updated_at"`
-	Theme              *string    `json:"theme"`
-	LivemapMarkerColor *string    `json:"livemap_marker_color"`
-	QuickButtons       *string    `json:"quick_buttons"`
-	DiscordGuildID     *uint64    `json:"discord_guild_id"`
-	DiscordLastSync    *time.Time `json:"discord_last_sync"`
+	Job                 string     `json:"job"`
+	UpdatedAt           *time.Time `json:"updated_at"`
+	Theme               *string    `json:"theme"`
+	LivemapMarkerColor  *string    `json:"livemap_marker_color"`
+	QuickButtons        *string    `json:"quick_buttons"`
+	DiscordGuildID      *uint64    `json:"discord_guild_id"`
+	DiscordLastSync     *time.Time `json:"discord_last_sync"`
+	DiscordSyncSettings *string    `json:"discord_sync_settings"`
 }

@@ -676,6 +676,10 @@
             <ul>
               
                 <li>
+                  <a href="#resources.users.DiscordSyncSettings"><span class="badge">M</span>DiscordSyncSettings</a>
+                </li>
+              
+                <li>
                   <a href="#resources.users.Job"><span class="badge">M</span>Job</a>
                 </li>
               
@@ -687,10 +691,10 @@
                   <a href="#resources.users.JobProps"><span class="badge">M</span>JobProps</a>
                 </li>
               
-              
                 <li>
-                  <a href="#resources.users.DiscordBotMode"><span class="badge">E</span>DiscordBotMode</a>
+                  <a href="#resources.users.QuickButtons"><span class="badge">M</span>QuickButtons</a>
                 </li>
+              
               
               
               
@@ -8416,6 +8420,30 @@
       <p></p>
 
       
+        <h3 id="resources.users.DiscordSyncSettings">DiscordSyncSettings</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>user_info_sync</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
         <h3 id="resources.users.Job">Job</h3>
         <p></p>
 
@@ -8612,9 +8640,9 @@
               
                 <tr>
                   <td>quick_buttons</td>
-                  <td><a href="#string">string</a></td>
+                  <td><a href="#resources.users.QuickButtons">QuickButtons</a></td>
                   <td></td>
-                  <td><p>@sanitize: method=StripTags </p></td>
+                  <td><p> </p></td>
                 </tr>
               
                 <tr>
@@ -8625,16 +8653,16 @@
                 </tr>
               
                 <tr>
-                  <td>discord_mode</td>
-                  <td><a href="#resources.users.DiscordBotMode">DiscordBotMode</a></td>
+                  <td>discord_last_sync</td>
+                  <td><a href="#resources.timestamp.Timestamp">resources.timestamp.Timestamp</a></td>
                   <td>optional</td>
                   <td><p> </p></td>
                 </tr>
               
                 <tr>
-                  <td>discord_last_sync</td>
-                  <td><a href="#resources.timestamp.Timestamp">resources.timestamp.Timestamp</a></td>
-                  <td>optional</td>
+                  <td>discord_sync_settings</td>
+                  <td><a href="#resources.users.DiscordSyncSettings">DiscordSyncSettings</a></td>
+                  <td></td>
                   <td><p> </p></td>
                 </tr>
               
@@ -8696,36 +8724,31 @@
 
         
       
-
-      
-        <h3 id="resources.users.DiscordBotMode">DiscordBotMode</h3>
+        <h3 id="resources.users.QuickButtons">QuickButtons</h3>
         <p></p>
-        <table class="enum-table">
-          <thead>
-            <tr><td>Name</td><td>Number</td><td>Description</td></tr>
-          </thead>
-          <tbody>
-            
-              <tr>
-                <td>DISCORD_BOT_MODE_UNSPECIFIED</td>
-                <td>0</td>
-                <td><p></p></td>
-              </tr>
-            
-              <tr>
-                <td>DISCORD_BOT_MODE_ADDITIVE</td>
-                <td>1</td>
-                <td><p></p></td>
-              </tr>
-            
-              <tr>
-                <td>DISCORD_BOT_MODE_SUBSTRACTIVE</td>
-                <td>2</td>
-                <td><p></p></td>
-              </tr>
-            
-          </tbody>
-        </table>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>penalty_calculator</td>
+                  <td><a href="#bool">bool</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
+
       
 
       
