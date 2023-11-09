@@ -115,11 +115,9 @@ func (s *Manager) LoadDisponents(ctx context.Context, job string) error {
 }
 
 func (s *Manager) LoadUnits(ctx context.Context, id uint64) error {
-	condition := jet.AND(tUnitStatus.ID.IS_NULL().OR(
-		tUnitStatus.ID.EQ(
-			jet.RawInt("SELECT MAX(`unitstatus`.`id`) FROM `fivenet_centrum_units_status` AS `unitstatus` WHERE `unitstatus`.`unit_id` = `unit`.`id`  AND `unitstatus`.`status` NOT IN (2, 3)"),
-		),
-	))
+	condition := tUnitStatus.ID.EQ(
+		jet.RawInt("SELECT MAX(`unitstatus`.`id`) FROM `fivenet_centrum_units_status` AS `unitstatus` WHERE `unitstatus`.`unit_id` = `unit`.`id`  AND `unitstatus`.`status` NOT IN (2, 3)"),
+	)
 
 	if id > 0 {
 		condition = condition.AND(
