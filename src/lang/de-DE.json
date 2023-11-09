@@ -394,7 +394,9 @@
                 "quick_buttons": "Schnellzugriff Knöpfe",
                 "discord_guild_id": "Discord Guild/Server ID",
                 "invite_bot": "Bot einladen",
-                "last_sync": "Letzte Synchronisation"
+                "last_sync": "Letzte Synchronisation",
+                "discord_sync_settings": "Discord-Synchronisation-Einstellungen",
+                "user_info_sync": "Mitarbeiter Sync (Namen und Ränge-Rollen)"
             },
             "role_view": {
                 "add_permission": "Berechtigung hinzufügen"
@@ -1421,7 +1423,7 @@
             "ErrSignupDisabled": "Konto-Erstellung ist deaktiviert!",
             "ErrAccountDuplicate": "Benutzername bereits verwendet, bitte nutzen sie einen anderen Benutzernamen.",
             "ErrChangeUsername": "Fehler beim Ändern des Benutzernamen!",
-            "ErrBadUsername": "Bitte überprüfen Sie die Korrektheit der Benutzernamens! Probieren sie einen anderen Benutzernamen."
+            "ErrBadUsername": "Bitte stellen sie sicher, dass der jetzige Benutzername korrekt ist! Versuchen es mit einem anderen neuen Benutzernamen erneut."
         },
         "CitizenStoreService": {
             "ErrFailedQuery": "Fehler beim Laden von Bürger Daten!",
