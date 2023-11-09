@@ -63,8 +63,8 @@ export const useAuthStore = defineStore('auth', {
             this.permissions.length = 0;
             this.permissions.push(...permissions.sort());
         },
-        setJobProps(jp: null | JobProps): void {
-            if (jp === null) {
+        setJobProps(jp: undefined | JobProps): void {
+            if (jp === undefined) {
                 this.jobProps = null;
             } else {
                 this.jobProps = {
@@ -76,7 +76,7 @@ export const useAuthStore = defineStore('auth', {
             this.setAccessToken(null, null);
             this.setActiveChar(null);
             this.setPermissions([]);
-            this.setJobProps(null);
+            this.setJobProps(undefined);
         },
 
         // GRPC Calls
@@ -137,11 +137,7 @@ export const useAuthStore = defineStore('auth', {
                 this.setAccessToken(response.token, toDate(response.expires) as null | Date);
                 this.setActiveChar(response.char);
                 this.setPermissions(response.permissions);
-                if (response.jobProps) {
-                    this.setJobProps(response.jobProps!);
-                } else {
-                    this.setJobProps(null);
-                }
+                this.setJobProps(response.jobProps);
 
                 if (useRoute().query.redirect !== undefined) {
                     const path = useRoute().query.redirect?.toString() || '/overview';

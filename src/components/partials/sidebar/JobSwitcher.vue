@@ -38,11 +38,7 @@ async function setJob(): Promise<void> {
 
         setAccessToken(response.token, toDate(response.expires) as null | Date);
         setActiveChar(response.char!);
-        if (response.jobProps) {
-            setJobProps(response.jobProps!);
-        } else {
-            setJobProps(null);
-        }
+        setJobProps(response.jobProps);
 
         notifications.dispatchNotification({
             title: { key: 'notifications.job_switcher.setjob.title', parameters: {} },

@@ -107,11 +107,7 @@ export const useNotificatorStore = defineStore('notifications', {
 
                                 authStore.setActiveChar(tokenUpdate.userInfo);
                                 authStore.setPermissions(tokenUpdate.permissions);
-                                if (tokenUpdate.jobProps) {
-                                    authStore.setJobProps(tokenUpdate.jobProps!);
-                                } else {
-                                    authStore.setJobProps(null);
-                                }
+                                authStore.setJobProps(tokenUpdate.jobProps);
                             }
 
                             if (tokenUpdate.newToken && tokenUpdate.expires) {

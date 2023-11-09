@@ -22,7 +22,7 @@ const { setActiveChar, setPermissions, setJobProps } = authStore;
 onMounted(async () => {
     setActiveChar(null);
     setPermissions([]);
-    setJobProps(null);
+    setJobProps(undefined);
     documentEditorStore.clear();
 });
 </script>

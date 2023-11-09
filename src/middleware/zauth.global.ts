@@ -88,14 +88,10 @@ async function chooseCharacter(): Promise<any> {
         setAccessToken(response.token, toDate(response.expires) as null | Date);
         setActiveChar(response.char!);
         setPermissions(response.permissions);
-        if (response.jobProps) {
-            setJobProps(response.jobProps!);
-        } else {
-            setJobProps(null);
-        }
+        setJobProps(response.jobProps);
     } catch (e) {
         setActiveChar(null);
         setPermissions([]);
-        setJobProps(null);
+        setJobProps(undefined);
     }
 }
