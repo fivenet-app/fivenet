@@ -17,9 +17,19 @@ const DefaultNicknameRegex = `^(?P<prefix>\[\S+][ ]*)?(?P<name>[^\[]+)(?P<suffix
 type UserInfo struct {
 	*BaseModule
 
-	nicknameRegex *regexp.Regexp
-	roleFormat    string
-	jobRoles      map[int32]*discordgo.Role
+	nicknameRegex      *regexp.Regexp
+	roleFormat         string
+	employeeRoleFormat string
+
+	jobRoles     map[int32]*discordgo.Role
+	employeeRole *discordgo.Role
+}
+
+type UserRoleMapping struct {
+	ExternalID string `alias:"external_id"`
+	JobGrade   int32  `alias:"job_grade"`
+	Firstname  string `alias:"firstname"`
+	Lastname   string `alias:"lastname"`
 }
 
 func init() {
@@ -33,10 +43,11 @@ func NewUserInfo(base *BaseModule) (Module, error) {
 	}
 
 	return &UserInfo{
-		BaseModule:    base,
-		nicknameRegex: nicknameRegex,
-		roleFormat:    base.cfg.UserInfoSync.RoleFormat,
-		jobRoles:      map[int32]*discordgo.Role{},
+		BaseModule:         base,
+		nicknameRegex:      nicknameRegex,
+		roleFormat:         base.cfg.UserInfoSync.RoleFormat,
+		employeeRoleFormat: base.cfg.UserInfoSync.EmployeeRoleFormat,
+		jobRoles:           map[int32]*discordgo.Role{},
 	}, nil
 }
 
@@ -51,10 +62,10 @@ func (g *UserInfo) Run() error {
 func (g *UserInfo) syncUserInfo() error {
 	stmt := tOauth2Accs.
 		SELECT(
-			tOauth2Accs.ExternalID.AS("external_id"),
-			tUsers.JobGrade.AS("job_grade"),
-			tUsers.Firstname.AS("firstname"),
-			tUsers.Lastname.AS("lastname"),
+			tOauth2Accs.ExternalID.AS("userrolemapping.external_id"),
+			tUsers.JobGrade.AS("userrolemapping.job_grade"),
+			tUsers.Firstname.AS("userrolemapping.firstname"),
+			tUsers.Lastname.AS("userrolemapping.lastname"),
 		).
 		FROM(
 			tOauth2Accs.
@@ -70,12 +81,7 @@ func (g *UserInfo) syncUserInfo() error {
 			tUsers.Job.EQ(jet.String(g.job)),
 		))
 
-	var dest []struct {
-		ExternalID string
-		JobGrade   int32
-		Firstname  string
-		Lastname   string
-	}
+	var dest []*UserRoleMapping
 	if err := stmt.QueryContext(g.ctx, g.db, &dest); err != nil {
 		return err
 	}
@@ -102,7 +108,7 @@ func (g *UserInfo) syncUserInfo() error {
 		}
 	}
 
-	return nil
+	return g.cleanupUserJobRoles(dest)
 }
 
 func (g *UserInfo) setUserNickName(member *discordgo.Member, firstname string, lastname string) error {
@@ -190,6 +196,23 @@ func (g *UserInfo) createJobRoles() error {
 		g.jobRoles[grade.Grade] = role
 	}
 
+	employeeRoleName := fmt.Sprintf(g.employeeRoleFormat, job.Label)
+	if !utils.InSliceFunc(guild.Roles, func(in *discordgo.Role) bool {
+		if in.Name == employeeRoleName {
+			g.employeeRole = in
+			return true
+		}
+		return false
+	}) {
+		role, err := g.discord.GuildRoleCreate(guild.ID, &discordgo.RoleParams{
+			Name: employeeRoleName,
+		})
+		if err != nil {
+			return fmt.Errorf("failed to create employee role %s: %w", job.Label, err)
+		}
+		g.employeeRole = role
+	}
+
 	return nil
 }
 
@@ -199,9 +222,15 @@ func (g *UserInfo) setUserJobRole(member *discordgo.Member, grade int32) error {
 		return fmt.Errorf("no role for user's job and grade %d found", grade)
 	}
 
+	hasEmployeeRole := false
 	found := false
 	removeRoles := []*discordgo.Role{}
 	for _, mr := range member.Roles {
+		if mr == g.employeeRole.ID {
+			hasEmployeeRole = true
+			continue
+		}
+
 		role, ok := g.findGradeRoleByID(mr)
 		if ok {
 			if r.ID == role.ID {
@@ -213,11 +242,15 @@ func (g *UserInfo) setUserJobRole(member *discordgo.Member, grade int32) error {
 		}
 	}
 
-	if false {
-		for _, role := range removeRoles {
-			if err := g.discord.GuildMemberRoleRemove(g.guild.ID, member.User.ID, role.ID); err != nil {
-				return fmt.Errorf("failed to remove role %s (%s) member %s: %w", role.Name, role.ID, member.User.ID, err)
-			}
+	for _, role := range removeRoles {
+		if err := g.discord.GuildMemberRoleRemove(g.guild.ID, member.User.ID, role.ID); err != nil {
+			return fmt.Errorf("failed to remove role %s (%s) member %s: %w", role.Name, role.ID, member.User.ID, err)
+		}
+	}
+
+	if !hasEmployeeRole {
+		if err := g.discord.GuildMemberRoleAdd(g.guild.ID, member.User.ID, g.employeeRole.ID); err != nil {
+			return fmt.Errorf("failed to add employee role %s (%s) member %s: %w", r.Name, g.employeeRole.ID, member.User.ID, err)
 		}
 	}
 
@@ -239,4 +272,54 @@ func (g *UserInfo) findGradeRoleByID(id string) (*discordgo.Role, bool) {
 	}
 
 	return nil, false
+}
+
+func (g *UserInfo) cleanupUserJobRoles(users []*UserRoleMapping) error {
+	guild, err := g.discord.State.Guild(g.guild.ID)
+	if err != nil {
+		return err
+	}
+
+	for i := 0; i < len(guild.Members); i++ {
+		for _, role := range g.jobRoles {
+			// If user isn't in one of the synced job roles, continue
+			if !utils.InSlice(guild.Members[i].Roles, role.ID) {
+				continue
+			}
+
+			// Check if user is suposed to have that role
+			user := guild.Members[i].User
+			if utils.InSliceFunc(users, func(in *UserRoleMapping) bool {
+				r, ok := g.findGradeRoleByID(role.ID)
+				return in.ExternalID == user.ID && (ok && r.ID == role.ID)
+			}) {
+				continue
+			}
+
+			if err := g.discord.GuildMemberRoleRemove(g.guild.ID, user.ID, role.ID); err != nil {
+				return fmt.Errorf("failed to remove member from role %s (%s): %w", role.Name, role.ID, err)
+			}
+		}
+
+		role := g.employeeRole
+		// If user isn't in one of the synced roles, continue
+		if !utils.InSlice(guild.Members[i].Roles, role.ID) {
+			continue
+		}
+
+		// Check if user is suposed to have the employee role
+		user := guild.Members[i].User
+		if utils.InSliceFunc(users, func(in *UserRoleMapping) bool {
+			r, ok := g.findGradeRoleByID(role.ID)
+			return in.ExternalID == user.ID && (ok && r.ID == role.ID)
+		}) {
+			continue
+		}
+
+		if err := g.discord.GuildMemberRoleRemove(g.guild.ID, user.ID, role.ID); err != nil {
+			return fmt.Errorf("failed to remove member from employee job role %s (%s): %w", role.Name, role.ID, err)
+		}
+	}
+
+	return nil
 }

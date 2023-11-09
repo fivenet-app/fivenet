@@ -349,10 +349,10 @@
   resolved "https://registry.yarnpkg.com/@csstools/selector-specificity/-/selector-specificity-3.0.0.tgz#798622546b63847e82389e473fd67f2707d82247"
   integrity sha512-hBI9tfBtuPIi885ZsZ32IMEU/5nlZH/KOVYJCOh7gyMxaVLGmLedYqFN6Ui1LXkI8JlC8IsuC0rF0btcRZKd5g==
 
-"@dargmuesli/nuxt-cookie-control@^7.1.1":
-  version "7.1.1"
-  resolved "https://registry.yarnpkg.com/@dargmuesli/nuxt-cookie-control/-/nuxt-cookie-control-7.1.1.tgz#6f6c70436ea603f5d8bdabc5da9f80a1c8bab302"
-  integrity sha512-xHG1FNwtgpwySvKdXtrNMW0vBKGD+Tp6derwQjRXaMnOOrxeoFb2EAGNoN4FhHQ/qN1rnvfWZf3KWexJ6icxVQ==
+"@dargmuesli/nuxt-cookie-control@^7.1.2":
+  version "7.1.2"
+  resolved "https://registry.yarnpkg.com/@dargmuesli/nuxt-cookie-control/-/nuxt-cookie-control-7.1.2.tgz#6901e2e91db982f3e287ce3e965bfd2e7caf0c20"
+  integrity sha512-z9QL9jcS4Ntc+RY+U6tMjZkrUhSdqLBU6LDtNoxxidZHs1T6zteFiUIWq4X+Y45Dx46lInMzuIRfpujLLqlp6g==
   dependencies:
     "@nuxt/kit" "^3.8.0"
     "@sindresorhus/slugify" "^2.2.1"
@@ -2021,6 +2021,11 @@
   version "4.4.0"
   resolved "https://registry.yarnpkg.com/@vitejs/plugin-vue/-/plugin-vue-4.4.0.tgz#8ae96573236cdb12de6850a6d929b5537ec85390"
   integrity sha512-xdguqb+VUwiRpSg+nsc2HtbAUSGak25DXYvpQQi4RVU1Xq1uworyoH/md9Rfd8zMmPR/pSghr309QNcftUVseg==
+
+"@vitejs/plugin-vue@^4.4.1":
+  version "4.4.1"
+  resolved "https://registry.yarnpkg.com/@vitejs/plugin-vue/-/plugin-vue-4.4.1.tgz#5050895fb8b2258d2f228110849df4a8a94b9038"
+  integrity sha512-HCQG8VDFDM7YDAdcj5QI5DvUi+r6xvo9LgvYdk7LSkUNwdpempdB5horkMSZsbdey9Ywsf5aaU8kEPw9M5kREA==
 
 "@volar/language-core@1.10.6", "@volar/language-core@~1.10.5":
   version "1.10.6"

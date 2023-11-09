@@ -205,6 +205,7 @@ fivenet:
         userInfoSync:
           enabled: false
           roleFormat: "[%02d] %s"
+          employeeRoleFormat: "%s Personal"
           nicknameRegex: "^(?P<prefix>\\[\\S+][ ]*)?(?P<name>[^\\[]+)(?P<suffix>[ ]*\\[\\S+])?"
         groupSync:
           enabled: false
