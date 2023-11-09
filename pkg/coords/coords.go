@@ -28,11 +28,11 @@ func (p *Coords[V]) Has(point orb.Pointer, fn quadtree.FilterFunc) bool {
 	return found != nil
 }
 
-func (p *Coords[V]) Add(point orb.Pointer) {
+func (p *Coords[V]) Add(point orb.Pointer) error {
 	p.mutex.Lock()
 	defer p.mutex.Unlock()
 
-	p.tree.Add(point)
+	return p.tree.Add(point)
 }
 
 func (p *Coords[V]) Remove(point orb.Pointer, fn quadtree.FilterFunc) bool {

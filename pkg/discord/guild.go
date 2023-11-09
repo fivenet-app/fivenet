@@ -21,7 +21,8 @@ type Guild struct {
 func NewGuild(b *Bot, guild *discordgo.Guild, job string) (*Guild, error) {
 	ms := map[string]modules.Module{}
 
-	base := modules.NewBaseModule(b.ctx, b.logger, b.db, b.discord, guild, job, b.cfg, b.enricher)
+	base := modules.NewBaseModule(b.ctx, b.logger.Named("module").With(zap.String("job", job), zap.String("discord_guild_id", guild.ID)),
+		b.db, b.discord, guild, job, b.cfg, b.enricher)
 
 	gModules := []string{}
 	if b.cfg.UserInfoSync.Enabled {

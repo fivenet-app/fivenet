@@ -26,6 +26,7 @@ type UserInfo struct {
 }
 
 type UserRoleMapping struct {
+	AccountID  uint64 `alias:"account_id"`
 	ExternalID string `alias:"external_id"`
 	JobGrade   int32  `alias:"job_grade"`
 	Firstname  string `alias:"firstname"`
@@ -62,6 +63,7 @@ func (g *UserInfo) Run() error {
 func (g *UserInfo) syncUserInfo() error {
 	stmt := tOauth2Accs.
 		SELECT(
+			tOauth2Accs.AccountID.AS("userrolemapping.account_id"),
 			tOauth2Accs.ExternalID.AS("userrolemapping.external_id"),
 			tUsers.JobGrade.AS("userrolemapping.job_grade"),
 			tUsers.Firstname.AS("userrolemapping.firstname"),
@@ -79,7 +81,8 @@ func (g *UserInfo) syncUserInfo() error {
 		WHERE(jet.AND(
 			tOauth2Accs.Provider.EQ(jet.String("discord")),
 			tUsers.Job.EQ(jet.String(g.job)),
-		))
+		)).
+		ORDER_BY(tUsers.ID.ASC())
 
 	var dest []*UserRoleMapping
 	if err := stmt.QueryContext(g.ctx, g.db, &dest); err != nil {
@@ -92,7 +95,7 @@ func (g *UserInfo) syncUserInfo() error {
 			if restErr, ok := err.(*discordgo.RESTError); ok {
 				if restErr.Response.StatusCode == http.StatusNotFound {
 					g.logger.Warn("user not found on job discord server",
-						zap.String("job", g.job), zap.String("user", fmt.Sprintf("%s, %s (%d)", user.Firstname, user.Lastname, user.JobGrade)))
+						zap.String("discord_user_id", user.ExternalID), zap.Uint64("account_id", user.AccountID), zap.String("user", fmt.Sprintf("%s, %s", user.Firstname, user.Lastname)), zap.Int32("job_grade", user.JobGrade))
 					continue
 				}
 			}
@@ -190,7 +193,7 @@ func (g *UserInfo) createJobRoles() error {
 			Name: name,
 		})
 		if err != nil {
-			return fmt.Errorf("failed to create role %s (Grade: %s): %w", name, grade, err)
+			return fmt.Errorf("failed to create job grade role %s (Grade: %s): %w", name, grade, err)
 		}
 
 		g.jobRoles[grade.Grade] = role
@@ -222,6 +225,8 @@ func (g *UserInfo) setUserJobRole(member *discordgo.Member, grade int32) error {
 		return fmt.Errorf("no role for user's job and grade %d found", grade)
 	}
 
+	logger := g.logger.With(zap.String("discord_user_id", member.User.ID), zap.String("discord_nickname", member.Nick))
+
 	hasEmployeeRole := false
 	found := false
 	removeRoles := []*discordgo.Role{}
@@ -243,18 +248,20 @@ func (g *UserInfo) setUserJobRole(member *discordgo.Member, grade int32) error {
 	}
 
 	for _, role := range removeRoles {
+		logger.Debug("removing role from member", zap.String("discord_role_name", role.Name), zap.String("discord_role_id", role.ID))
 		if err := g.discord.GuildMemberRoleRemove(g.guild.ID, member.User.ID, role.ID); err != nil {
-			return fmt.Errorf("failed to remove role %s (%s) member %s: %w", role.Name, role.ID, member.User.ID, err)
+			return fmt.Errorf("failed to remove role %s (%s) from member %s: %w", role.Name, role.ID, member.User.ID, err)
 		}
 	}
 
 	if !hasEmployeeRole {
+		logger.Debug("adding employee role to member", zap.String("discord_role_name", g.employeeRole.Name), zap.String("discord_role_id", g.employeeRole.ID))
 		if err := g.discord.GuildMemberRoleAdd(g.guild.ID, member.User.ID, g.employeeRole.ID); err != nil {
 			return fmt.Errorf("failed to add employee role %s (%s) member %s: %w", r.Name, g.employeeRole.ID, member.User.ID, err)
 		}
 	}
 
-	// Only add user to the rank role if user isn't in it already
+	// Only add user to the grade role if user isn't in it already
 	if !found {
 		if err := g.discord.GuildMemberRoleAdd(g.guild.ID, member.User.ID, r.ID); err != nil {
 			return fmt.Errorf("failed to add role %s (%s) member %s: %w", r.Name, r.ID, member.User.ID, err)
@@ -281,44 +288,51 @@ func (g *UserInfo) cleanupUserJobRoles(users []*UserRoleMapping) error {
 	}
 
 	for i := 0; i < len(guild.Members); i++ {
+		member := guild.Members[i]
 		for _, role := range g.jobRoles {
 			// If user isn't in one of the synced job roles, continue
 			if !utils.InSlice(guild.Members[i].Roles, role.ID) {
 				continue
 			}
 
-			// Check if user is suposed to have that role
-			user := guild.Members[i].User
+			// Check if user is suposed to have that job grade role
+			var accountId uint64
 			if utils.InSliceFunc(users, func(in *UserRoleMapping) bool {
 				r, ok := g.findGradeRoleByID(role.ID)
-				return in.ExternalID == user.ID && (ok && r.ID == role.ID)
+				if in.ExternalID == member.User.ID && (ok && r.ID == role.ID) {
+					accountId = in.AccountID
+					return true
+				}
+				return false
 			}) {
 				continue
 			}
 
-			if err := g.discord.GuildMemberRoleRemove(g.guild.ID, user.ID, role.ID); err != nil {
-				return fmt.Errorf("failed to remove member from role %s (%s): %w", role.Name, role.ID, err)
-			}
+			g.logger.Debug("removing job grade role from member", zap.String("discord_role_name", role.Name), zap.String("discord_role_id", role.ID),
+				zap.String("discord_user_id", member.User.ID), zap.String("discord_nickname", member.Nick), zap.Uint64("account_id", accountId))
+			//if err := g.discord.GuildMemberRoleRemove(g.guild.ID, member.User.ID, role.ID); err != nil {
+			//	return fmt.Errorf("failed to remove member from role %s (%s): %w", role.Name, role.ID, err)
+			//}
 		}
 
 		role := g.employeeRole
-		// If user isn't in one of the synced roles, continue
+		// If user isn't in the employee role, continue
 		if !utils.InSlice(guild.Members[i].Roles, role.ID) {
 			continue
 		}
 
-		// Check if user is suposed to have the employee role
-		user := guild.Members[i].User
+		// Check if member is suposed to have the employee role
 		if utils.InSliceFunc(users, func(in *UserRoleMapping) bool {
-			r, ok := g.findGradeRoleByID(role.ID)
-			return in.ExternalID == user.ID && (ok && r.ID == role.ID)
+			return in.ExternalID == member.User.ID
 		}) {
 			continue
 		}
 
-		if err := g.discord.GuildMemberRoleRemove(g.guild.ID, user.ID, role.ID); err != nil {
-			return fmt.Errorf("failed to remove member from employee job role %s (%s): %w", role.Name, role.ID, err)
-		}
+		g.logger.Debug("removing employee role from member", zap.String("discord_role_name", g.employeeRole.Name), zap.String("discord_role_id", g.employeeRole.ID),
+			zap.String("discord_user_id", member.User.ID), zap.String("discord_nickname", member.Nick))
+		//if err := g.discord.GuildMemberRoleRemove(g.guild.ID, member.User.ID, role.ID); err != nil {
+		//	return fmt.Errorf("failed to remove member from employee job role %s (%s): %w", role.Name, role.ID, err)
+		//}
 	}
 
 	return nil

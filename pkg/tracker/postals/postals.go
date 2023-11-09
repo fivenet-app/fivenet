@@ -6,15 +6,14 @@ import (
 	"os"
 
 	"github.com/galexrt/fivenet/pkg/config"
+	"github.com/galexrt/fivenet/pkg/coords"
 	jsoniter "github.com/json-iterator/go"
-	"github.com/paulmach/orb"
-	"github.com/paulmach/orb/quadtree"
 )
 
 var json = jsoniter.ConfigCompatibleWithStandardLibrary
 
 type Postals struct {
-	tree *quadtree.Quadtree
+	*coords.Coords[*Postal]
 }
 
 func New(cfg *config.Config) (*Postals, error) {
@@ -31,20 +30,14 @@ func New(cfg *config.Config) (*Postals, error) {
 		return nil, err
 	}
 
-	tree := quadtree.New(orb.Bound{Min: orb.Point{-9_000, -9_000}, Max: orb.Point{11_000, 11_000}})
+	cs := coords.New[*Postal]()
 	for k := range codes {
-		if err := tree.Add(codes[k]); err != nil {
+		if err := cs.Add(codes[k]); err != nil {
 			return nil, fmt.Errorf("failed to add postal to postals map: %w", err)
 		}
 	}
 
 	return &Postals{
-		tree: tree,
+		Coords: cs,
 	}, nil
-}
-
-func (p *Postals) Closest(x, y float64) *Postal {
-	nearest := p.tree.Find(orb.Point{x, y})
-
-	return nearest.(*Postal)
 }

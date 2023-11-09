@@ -117,7 +117,7 @@ async function removeOAuth2Connection(provider: string): Promise<void> {
                 v-if="account"
                 :providers="account.oauth2Providers"
                 :connections="account.oauth2Connections"
-                @click="removeOAuth2Connection($event)"
+                @disconnected="removeOAuth2Connection($event)"
             />
 
             <DebugInfo />
