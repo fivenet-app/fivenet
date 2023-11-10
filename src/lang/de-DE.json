@@ -514,6 +514,9 @@
                     "per_day": "Pro Tag"
                 }
             }
+        },
+        "bodycheckup": {
+            "title": "Körpfer Untersuchung"
         }
     },
     "common": {
@@ -1016,6 +1019,10 @@
         "category_created": {
             "title": "Kategorie erstellt!",
             "content": "Kategorie wurde erfolgreich erstellt"
+        },
+        "bodycheckup": {
+            "title": "Körpfer Untersuchung: Zusammenfassung kopiert",
+            "content": "Zusammenfassung wurde zur Zwischenablage hinzugefügt."
         }
     },
     "perms": {
