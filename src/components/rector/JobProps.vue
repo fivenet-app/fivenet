@@ -1,7 +1,8 @@
 <script lang="ts" setup>
 import { Switch, SwitchGroup, SwitchLabel } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc';
-import { TuneIcon } from 'mdi-vue3';
+import { useThrottleFn } from '@vueuse/core';
+import { LoadingIcon, TuneIcon } from 'mdi-vue3';
 import ColorInput from 'vue-color-input/dist/color-input.esm';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
@@ -66,6 +67,12 @@ async function saveJobProps(): Promise<void> {
         throw e;
     }
 }
+
+const canSubmit = ref(true);
+const onSubmitThrottle = useThrottleFn(async (_) => {
+    canSubmit.value = false;
+    await saveJobProps().finally(() => setTimeout(() => (canSubmit.value = true), 400));
+}, 1000);
 </script>
 
 <template>
@@ -244,9 +251,18 @@ async function saveJobProps(): Promise<void> {
                                 <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
                                     <button
                                         type="button"
-                                        class="rounded-md bg-success-600 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-success-400"
-                                        @click="saveJobProps()"
+                                        class="flex justify-center w-full px-3 py-2 text-sm font-semibold transition-colors rounded-md text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                                        :class="[
+                                            !canSubmit
+                                                ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
+                                                : 'bg-success-600 hover:bg-success-400 focus-visible:outline-success-500',
+                                        ]"
+                                        :disabled="!canSubmit"
+                                        @click="onSubmitThrottle"
                                     >
+                                        <template v-if="!canSubmit">
+                                            <LoadingIcon class="animate-spin h-5 w-5 mr-2" />
+                                        </template>
                                         {{ $t('common.save', 1) }}
                                     </button>
                                 </dd>
