@@ -1,7 +1,14 @@
 <script lang="ts" setup>
-defineProps<{
-    label?: string;
-}>();
+withDefaults(
+    defineProps<{
+        label?: string;
+        labelClass?: unknown;
+    }>(),
+    {
+        label: undefined,
+        labelClass: 'bg-primary-900 text-gray-200' as any,
+    },
+);
 </script>
 
 <template>
@@ -10,7 +17,7 @@ defineProps<{
             <div class="w-full border-t border-gray-300"></div>
         </div>
         <div v-if="label" class="relative flex justify-center">
-            <span class="bg-primary-900 px-3 text-base font-semibold leading-6 text-gray-200">{{ label }}</span>
+            <span class="px-3 text-base font-semibold leading-6" :class="labelClass">{{ label }}</span>
         </div>
     </div>
 </template>

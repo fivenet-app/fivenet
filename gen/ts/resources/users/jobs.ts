@@ -78,6 +78,10 @@ export interface QuickButtons {
      * @generated from protobuf field: bool penalty_calculator = 1;
      */
     penaltyCalculator: boolean;
+    /**
+     * @generated from protobuf field: bool body_checkup = 2;
+     */
+    bodyCheckup: boolean;
 }
 /**
  * @generated from protobuf message resources.users.DiscordSyncSettings
@@ -138,7 +142,8 @@ export const JobProps = new JobProps$Type();
 class QuickButtons$Type extends MessageType<QuickButtons> {
     constructor() {
         super("resources.users.QuickButtons", [
-            { no: 1, name: "penalty_calculator", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+            { no: 1, name: "penalty_calculator", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 2, name: "body_checkup", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
 }

@@ -10,6 +10,7 @@ import { useCompletorStore } from '~/store/completor';
 import { useNotificatorStore } from '~/store/notificator';
 import { Law } from '~~/gen/ts/resources/laws/laws';
 import SummaryTable from '~/components/penaltycalculator/SummaryTable.vue';
+import GenericDivider from '~/components/partials/elements/GenericDivider.vue';
 
 const completorStore = useCompletorStore();
 const notifications = useNotificatorStore();
@@ -262,16 +263,7 @@ ${t('common.crime', selectedPenalties.value.length)}:
                     </div>
                 </div>
             </div>
-            <div class="relative">
-                <div class="absolute inset-0 flex items-center" aria-hidden="true">
-                    <div class="w-full border-t border-gray-300" />
-                </div>
-                <div class="relative flex justify-center">
-                    <span class="bg-neutral px-3 text-base font-semibold leading-6 text-gray-900">
-                        {{ $t('common.result') }}
-                    </span>
-                </div>
-            </div>
+            <GenericDivider :label="$t('common.result')" />
             <div class="flow-root mt-2">
                 <div class="overflow-x-auto sm:-mx-6 lg:-mx-8">
                     <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">

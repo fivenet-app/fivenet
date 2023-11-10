@@ -34,6 +34,7 @@ message JobProps {
 
 message QuickButtons {
   bool penalty_calculator = 1;
+  bool body_checkup = 2;
 }
 
 message DiscordSyncSettings {

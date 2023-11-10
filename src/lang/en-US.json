@@ -417,6 +417,9 @@
         "penaltycalculator": {
             "title": "Penalty Calculator"
         },
+        "bodycheckup": {
+            "title": "Body Checkup"
+        },
         "centrum": {
             "create_dispatch": {
                 "title": "Create Dispatch",
@@ -921,6 +924,10 @@
         },
         "penaltycalculator": {
             "title": "Penalty Calculator: Copied to clipboard",
+            "content": "Summary copied to clipboard."
+        },
+        "bodycheckup": {
+            "title": "Body Checkup: Copied to clipboard",
             "content": "Summary copied to clipboard."
         },
         "document_view": {

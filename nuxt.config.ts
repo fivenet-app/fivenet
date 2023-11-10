@@ -1,4 +1,5 @@
 import { STRATEGIES } from 'vue-i18n-routing';
+import svgLoader from 'vite-svg-loader';
 
 const commit: string = process.env.COMMIT_REF || 'COMMIT_REF';
 
@@ -116,6 +117,7 @@ export default defineNuxtConfig({
         optimizeDeps: {
             exclude: ['vue-demi'],
         },
+        plugins: [svgLoader()],
     },
     css: [
         // Inter font (all weights)
