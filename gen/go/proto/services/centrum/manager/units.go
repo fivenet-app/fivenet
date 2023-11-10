@@ -2,7 +2,6 @@ package manager
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
 	eventscentrum "github.com/galexrt/fivenet/gen/go/proto/services/centrum/events"
@@ -118,19 +117,10 @@ func (s *Manager) UpdateUnitStatus(ctx context.Context, job string, unit *dispat
 		return err
 	}
 
-	var oldStatus *dispatch.UnitStatus
-	if unit.Status != nil && (unit.Status.Status == dispatch.StatusUnit_STATUS_UNIT_USER_ADDED || unit.Status.Status == dispatch.StatusUnit_STATUS_UNIT_USER_REMOVED) {
-		oldStatus = unit.Status
-		unit.Status = status
-	} else {
-		unit.Status = status
-	}
+	unit.Status = status
 	data, err := proto.Marshal(unit)
 	if err != nil {
 		return err
-	}
-	if oldStatus != nil {
-		unit.Status = oldStatus
 	}
 	s.events.JS.PublishAsync(eventscentrum.BuildSubject(eventscentrum.TopicUnit, eventscentrum.TypeUnitStatus, job, status.UnitId), data)
 
@@ -263,6 +253,11 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 			s.UserIDToUnitID.Store(user.UserId, unit.Id)
 		}
 
+		var previousStatus proto.Message
+		if unit.Status != nil {
+			previousStatus = proto.Clone(unit.Status)
+		}
+
 		for _, user := range users {
 			if err := s.UpdateUnitStatus(ctx, job, unit, &dispatch.UnitStatus{
 				UnitId:    unit.Id,
@@ -276,10 +271,13 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 				return err
 			}
 		}
-	}
 
-	for _, user := range unit.Users {
-		fmt.Println("UNIT ASSIGNMENTS - Unit Users", unit.Id, user.UnitId, user.UserId, "length", len(unit.Users))
+		// F*ck it, just set the unit status to what it was before (again)
+		if previousStatus != nil {
+			if err := s.UpdateUnitStatus(ctx, job, unit, previousStatus.(*dispatch.UnitStatus)); err != nil {
+				return err
+			}
+		}
 	}
 
 	// Commit the transaction

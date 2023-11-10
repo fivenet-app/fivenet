@@ -2,7 +2,6 @@ package manager
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
@@ -243,10 +242,6 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 				return err
 			}
 		}
-	}
-
-	for _, unit := range dsp.Units {
-		fmt.Println("DISPATCH ASSIGNMENTS - Dispatch Units", dsp.Id, unit.Unit.Name, "length", len(dsp.Units))
 	}
 
 	// Dispatch has not units assigned anymore
