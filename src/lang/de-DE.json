@@ -516,7 +516,8 @@
             }
         },
         "bodycheckup": {
-            "title": "Körper Untersuchung"
+            "title": "Körpfer Untersuchung",
+            "no_points": "Keine Punkte ausgewählt!"
         }
     },
     "common": {
@@ -747,7 +748,8 @@
         "comments": "Keine Kommentare | {n} Kommentar | {n} Kommentare",
         "dispatches": "Einsätze",
         "refresh": "Neuladen",
-        "forward": "Vorwärts"
+        "forward": "Vorwärts",
+        "points": "Punkt | Punkte"
     },
     "notifications": {
         "clipboard": {
@@ -1021,7 +1023,7 @@
             "content": "Kategorie wurde erfolgreich erstellt"
         },
         "bodycheckup": {
-            "title": "Körper Untersuchung: Zusammenfassung kopiert",
+            "title": "Körpfer Untersuchung: Zusammenfassung kopiert",
             "content": "Zusammenfassung wurde zur Zwischenablage hinzugefügt."
         }
     },
