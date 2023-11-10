@@ -1,11 +1,13 @@
 <script lang="ts" setup>
 import { TrashCanIcon, VectorPointSelectIcon } from 'mdi-vue3';
+import { vMaska } from 'maska';
 import { useNotificatorStore } from '~/store/notificator';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
+import { watchDebounced } from '@vueuse/core';
 
 const notifications = useNotificatorStore();
 
-const { t, d } = useI18n();
+const { t } = useI18n();
 
 type Pin = {
     x: number;
@@ -42,9 +44,11 @@ function removePin(idx: number): void {
 }
 
 async function copyToClipboard(): Promise<void> {
-    const text = t('components.bodycheckup.title') + ` (` + d(new Date(), 'long') + `)`;
+    let text = t('components.bodycheckup.title') + `\n`;
 
-    // TODO
+    pins.value.forEach((p, idx) => {
+        text += (idx + 1).toString() + '. ' + p.description + '\n';
+    });
 
     notifications.dispatchNotification({
         title: { key: 'notifications.bodycheckup.title', parameters: {} },
@@ -53,6 +57,21 @@ async function copyToClipboard(): Promise<void> {
     });
 
     return copyToClipboardWrapper(text);
+}
+
+const height = ref<string>('165');
+const mass = ref<string>('83');
+const bmi = ref(0);
+
+watchDebounced(height, () => bmiCalculate(), {
+    debounce: 200,
+});
+watchDebounced(mass, () => bmiCalculate(), {
+    debounce: 200,
+});
+
+function bmiCalculate(): void {
+    bmi.value = parseInt(mass.value) / parseInt(height.value) ** 2;
 }
 </script>
 
@@ -66,7 +85,7 @@ async function copyToClipboard(): Promise<void> {
             </div>
             <div class="sm:flex sm:items-center pb-4">
                 <div class="sm:flex-auto">
-                    <div class="w-full grid grid-cols-2 gap-4">
+                    <div class="w-full grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div>
                             <svg
                                 ref="svgRef"
@@ -192,7 +211,7 @@ async function copyToClipboard(): Promise<void> {
                                     </li>
                                 </ol>
                             </div>
-                            <div class="flex-initial">
+                            <div class="flex-initial mb-4">
                                 <button
                                     type="button"
                                     class="w-full rounded-md bg-info-700 py-2.5 px-3.5 text-sm font-semibold text-neutral hover:bg-info-600"
@@ -200,6 +219,69 @@ async function copyToClipboard(): Promise<void> {
                                 >
                                     {{ $t('common.copy') }}
                                 </button>
+                            </div>
+                            <div>
+                                <h3 class="text-xl font-semibold leading-6">
+                                    {{ $t('components.bodycheckup.bmi_calculator') }}
+                                </h3>
+                                <div>
+                                    <div>
+                                        <label for="height" class="block text-sm font-medium leading-6 text-neutral">
+                                            {{ $t('components.bodycheckup.height') }}
+                                        </label>
+                                        <div>
+                                            <div class="relative rounded-md shadow-sm">
+                                                <input
+                                                    v-model="height"
+                                                    v-maska
+                                                    data-maska="#,##"
+                                                    name="height"
+                                                    type="text"
+                                                    :placeholder="$t('components.bodycheckup.height')"
+                                                    :label="$t('components.bodycheckup.height')"
+                                                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                    @focusin="focusTablet(true)"
+                                                    @focusout="focusTablet(false)"
+                                                />
+                                                <div
+                                                    class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3"
+                                                >
+                                                    <span class="text-gray-300 sm:text-sm">m</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label for="mass" class="block text-sm font-medium leading-6 text-neutral">
+                                            {{ $t('components.bodycheckup.mass') }}
+                                        </label>
+                                        <div>
+                                            <div class="relative rounded-md shadow-sm">
+                                                <input
+                                                    v-model="mass"
+                                                    v-maska
+                                                    data-maska="###,##"
+                                                    name="mass"
+                                                    type="text"
+                                                    :placeholder="$t('components.bodycheckup.mass')"
+                                                    :label="$t('components.bodycheckup.mass')"
+                                                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                    @focusin="focusTablet(true)"
+                                                    @focusout="focusTablet(false)"
+                                                />
+                                                <div
+                                                    class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3"
+                                                >
+                                                    <span class="text-gray-300 sm:text-sm">kg</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p class="ablock text-sm font-medium leading-6 text-neutral">
+                                        BMI: <span class="font-semibold">{{ bmi.toFixed(2) }}</span>
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </div>

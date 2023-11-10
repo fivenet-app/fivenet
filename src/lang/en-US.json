@@ -517,7 +517,11 @@
         },
         "bodycheckup": {
             "title": "Body Checkup",
-            "no_points": "No points selected!"
+            "no_points": "No points selected!",
+            "bmi_calculator": "BMI Calculator",
+            "bmi": "BMI",
+            "mass": "Mass (in KG)",
+            "height": "Height (in meters)"
         }
     },
     "common": {

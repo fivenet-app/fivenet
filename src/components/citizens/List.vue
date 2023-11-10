@@ -113,7 +113,7 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                     {{ $t('common.date_of_birth') }}
                                 </label>
                                 <div class="relative flex items-center mt-2">
-                                    <GenericInput
+                                    <input
                                         v-model="query.dateofbirth"
                                         v-maska
                                         type="text"
@@ -121,6 +121,8 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                         data-maska="##.##.####"
                                         :placeholder="`${$t('common.date_of_birth')} (DD.MM.YYYY)`"
                                         class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        @focusin="focusTablet(true)"
+                                        @focusout="focusTablet(false)"
                                     />
                                 </div>
                             </div>
