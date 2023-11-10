@@ -42,7 +42,7 @@ func (m *natsServer) Setup() {
 	m.resource, err = m.pool.RunWithOptions(
 		&dockertest.RunOptions{
 			Repository: "docker.io/library/nats",
-			Tag:        "2.10.4-alpine3.18",
+			Tag:        "2.10.5-alpine3.18",
 			Cmd: []string{
 				"--user=fivenet",
 				"--pass=changeme",
