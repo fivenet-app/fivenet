@@ -666,7 +666,6 @@
         "law_book": "Law Book | Law Books",
         "traffic_infraction_points": "Traffic Point | Traffic Points",
         "point": "No Points | {n} Point | {n} Points",
-        "points": "Point | Points",
         "deleted": "Deleted",
         "summary": "Summary",
         "update": "Update",
@@ -749,7 +748,8 @@
         "comments": "No Comments | {n} Comment | {n} Comments",
         "dispatches": "Dispatches",
         "refresh": "Refresh",
-        "forward": "Foward"
+        "forward": "Foward",
+        "points": "Point | Points"
     },
     "notifications": {
         "clipboard": {
