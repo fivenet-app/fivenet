@@ -516,7 +516,7 @@
             }
         },
         "bodycheckup": {
-            "title": "Körpfer Untersuchung",
+            "title": "Körper Untersuchung",
             "no_points": "Keine Punkte ausgewählt!"
         }
     },
@@ -1023,7 +1023,7 @@
             "content": "Kategorie wurde erfolgreich erstellt"
         },
         "bodycheckup": {
-            "title": "Körpfer Untersuchung: Zusammenfassung kopiert",
+            "title": "Körper Untersuchung: Zusammenfassung kopiert",
             "content": "Zusammenfassung wurde zur Zwischenablage hinzugefügt."
         }
     },
