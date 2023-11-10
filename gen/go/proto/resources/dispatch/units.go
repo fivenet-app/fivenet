@@ -13,11 +13,19 @@ func (x *Unit) Merge(in *Unit) {
 	}
 
 	if in.CreatedAt != nil {
-		proto.Merge(x.CreatedAt, in.CreatedAt)
+		if x.CreatedAt == nil {
+			x.CreatedAt = in.CreatedAt
+		} else {
+			proto.Merge(x.CreatedAt, in.CreatedAt)
+		}
 	}
 
 	if in.UpdatedAt != nil {
-		proto.Merge(x.UpdatedAt, in.UpdatedAt)
+		if x.UpdatedAt == nil {
+			x.UpdatedAt = in.UpdatedAt
+		} else {
+			proto.Merge(x.UpdatedAt, in.UpdatedAt)
+		}
 	}
 
 	if x.Job != in.Job {
@@ -36,12 +44,16 @@ func (x *Unit) Merge(in *Unit) {
 		x.Color = in.Color
 	}
 
-	if in.Description != nil && x.Description != in.Description {
+	if in.Description != nil && (x.Description == nil || x.Description != in.Description) {
 		x.Description = in.Description
 	}
 
 	if in.Status != nil {
-		proto.Merge(x.Status, in.Status)
+		if x.Status == nil {
+			x.Status = in.Status
+		} else {
+			proto.Merge(x.Status, in.Status)
+		}
 	}
 
 	for _, user := range x.Users {

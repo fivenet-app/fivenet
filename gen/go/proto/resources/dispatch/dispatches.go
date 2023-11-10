@@ -37,11 +37,19 @@ func (x *Dispatch) Merge(in *Dispatch) {
 	}
 
 	if in.CreatedAt != nil {
-		proto.Merge(x.CreatedAt, in.CreatedAt)
+		if x.CreatedAt == nil {
+			x.CreatedAt = in.CreatedAt
+		} else {
+			proto.Merge(x.CreatedAt, in.CreatedAt)
+		}
 	}
 
 	if in.UpdatedAt != nil {
-		proto.Merge(x.UpdatedAt, in.UpdatedAt)
+		if x.UpdatedAt == nil {
+			x.UpdatedAt = in.UpdatedAt
+		} else {
+			proto.Merge(x.UpdatedAt, in.UpdatedAt)
+		}
 	}
 
 	if x.Job != in.Job {
@@ -49,19 +57,27 @@ func (x *Dispatch) Merge(in *Dispatch) {
 	}
 
 	if in.Status != nil {
-		proto.Merge(x.Status, in.Status)
+		if x.Status == nil {
+			x.Status = in.Status
+		} else {
+			proto.Merge(x.Status, in.Status)
+		}
 	}
 
 	if x.Message != in.Message {
 		x.Message = in.Message
 	}
 
-	if in.Description != nil && x.Description != in.Description {
+	if in.Description != nil && (x.Description == nil || x.Description != in.Description) {
 		x.Description = in.Description
 	}
 
-	if in.Attributes != nil && x.Attributes != in.Attributes {
-		x.Attributes.List = in.Attributes.List
+	if in.Attributes != nil {
+		if x.Attributes == nil {
+			x.Attributes = in.Attributes
+		} else {
+			x.Attributes.List = in.Attributes.List
+		}
 	}
 
 	if x.X != in.X {
@@ -72,7 +88,7 @@ func (x *Dispatch) Merge(in *Dispatch) {
 		x.Y = in.Y
 	}
 
-	if in.Postal != nil && x.Postal != in.Postal {
+	if in.Postal != nil && (x.Postal == nil || x.Postal != in.Postal) {
 		x.Postal = in.Postal
 	}
 
@@ -80,12 +96,16 @@ func (x *Dispatch) Merge(in *Dispatch) {
 		x.Anon = in.Anon
 	}
 
-	if in.CreatorId != nil && x.CreatorId != in.CreatorId {
+	if in.CreatorId != nil && (x.CreatorId == nil || x.CreatorId != in.CreatorId) {
 		x.CreatorId = in.CreatorId
 	}
 
 	if in.Creator != nil {
-		proto.Merge(x.Creator, in.Creator)
+		if x.Creator == nil {
+			x.Creator = in.Creator
+		} else {
+			proto.Merge(x.Creator, in.Creator)
+		}
 	}
 
 	for _, unit := range x.Units {
