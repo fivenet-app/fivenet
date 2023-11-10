@@ -519,7 +519,7 @@
             "title": "Body Checkup",
             "no_points": "No points selected!",
             "bmi_calculator": "BMI Calculator",
-            "bmi": "BMI",
+            "bmi": "Body Mass Index",
             "mass": "Mass (in KG)",
             "height": "Height (in meters)"
         }
