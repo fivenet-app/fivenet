@@ -14,6 +14,7 @@ const open = ref(false);
     >
         <HumanIcon class="w-10 h-auto" />
     </button>
+
     <ComponentModal :open="open" @close="open = false">
         <BodyCheckup />
     </ComponentModal>

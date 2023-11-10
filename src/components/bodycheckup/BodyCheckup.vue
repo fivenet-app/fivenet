@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { TrashCanIcon } from 'mdi-vue3';
+import { TrashCanIcon, VectorPointSelectIcon } from 'mdi-vue3';
 import { useNotificatorStore } from '~/store/notificator';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 
@@ -174,7 +174,7 @@ async function copyToClipboard(): Promise<void> {
                                 <DataNoDataBlock
                                     v-if="pins.length === 0"
                                     :message="$t('components.bodycheckup.no_points')"
-                                    :icon="markRaw()"
+                                    :icon="VectorPointSelectIcon"
                                 />
                                 <ol v-else>
                                     <li v-for="(pin, idx) in pins" :key="idx" class="my-2 inline-flex items-center w-full">
