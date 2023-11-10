@@ -146,6 +146,13 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
+	var previousStatus proto.Message
+	if len(toAdd) > 0 || len(toRemove) > 0 {
+		if unit.Status != nil {
+			previousStatus = proto.Clone(unit.Status)
+		}
+	}
+
 	tUnitUser := table.FivenetCentrumUnitsUsers
 	if len(toRemove) > 0 {
 		removeIds := make([]jet.Expression, len(toRemove))
@@ -253,11 +260,6 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 			s.UserIDToUnitID.Store(user.UserId, unit.Id)
 		}
 
-		var previousStatus proto.Message
-		if unit.Status != nil {
-			previousStatus = proto.Clone(unit.Status)
-		}
-
 		for _, user := range users {
 			if err := s.UpdateUnitStatus(ctx, job, unit, &dispatch.UnitStatus{
 				UnitId:    unit.Id,
@@ -268,13 +270,6 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 				Y:         y,
 				Postal:    postal,
 			}); err != nil {
-				return err
-			}
-		}
-
-		// F*ck it, just set the unit status to what it was before (again)
-		if previousStatus != nil {
-			if err := s.UpdateUnitStatus(ctx, job, unit, previousStatus.(*dispatch.UnitStatus)); err != nil {
 				return err
 			}
 		}
@@ -303,6 +298,13 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 			Postal:    postal,
 		}); err != nil {
 			return err
+		}
+	} else {
+		// F*ck it, just set the unit status to what it was before (again)
+		if previousStatus != nil {
+			if err := s.UpdateUnitStatus(ctx, job, unit, previousStatus.(*dispatch.UnitStatus)); err != nil {
+				return err
+			}
 		}
 	}
 
