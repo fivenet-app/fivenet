@@ -1021,10 +1021,10 @@
     "@nuxt/schema" "^3.7.4"
     execa "^7.2.0"
 
-"@nuxt/devtools-kit@1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@nuxt/devtools-kit/-/devtools-kit-1.0.1.tgz#45279c79dd2f0998c28f56d9cc66ba924f8e5330"
-  integrity sha512-tR+9mqic2O76LWkmdH0q5xPEnrOo8DmHvKyXA99be7NQfkjf47roWfa+gvQbksqwNw3SZVw2fq9Lotk4vZj4RA==
+"@nuxt/devtools-kit@1.0.2":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@nuxt/devtools-kit/-/devtools-kit-1.0.2.tgz#0c91d20ef59481b0b6e93d9a32a7eb72dc7542f9"
+  integrity sha512-iFi54NNCcPsF/jW14HbRlq3aOClOWdfiein0CvKoQ5shobHgn1s3xULh8o9QPKI2oTarcuJL+EFIK43CwfoXyw==
   dependencies:
     "@nuxt/kit" "^3.8.1"
     "@nuxt/schema" "^3.8.1"
@@ -1046,16 +1046,16 @@
     rc9 "^2.1.1"
     semver "^7.5.4"
 
-"@nuxt/devtools-wizard@1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@nuxt/devtools-wizard/-/devtools-wizard-1.0.1.tgz#1f1c737ac8a920bdde029b2b1601429cad3de1d5"
-  integrity sha512-p44qhWWKR4aEy1cRHGkHQyNJ93rfpDUPhQoqrMBmGQNBWJxLCbZCrdhOWJi9kOlu2qSBbvz/4mOHEXQ2G8APsA==
+"@nuxt/devtools-wizard@1.0.2":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@nuxt/devtools-wizard/-/devtools-wizard-1.0.2.tgz#6b6fd8e3b638925173c3d0f6da1e1fa1e4247092"
+  integrity sha512-fY9Y0eCJG7eSuUgnjImWVfLZPZymoHxjrVsdhfKs3yRJvB2siaabluxvdy2OTYc+WpIxuey0hjqpv+dVtnYw1A==
   dependencies:
     consola "^3.2.3"
     diff "^5.1.0"
     execa "^7.2.0"
     global-directory "^4.0.1"
-    magicast "^0.3.1"
+    magicast "^0.3.2"
     pathe "^1.1.1"
     pkg-types "^1.0.3"
     prompts "^2.4.2"
@@ -1106,14 +1106,14 @@
     which "^3.0.1"
     ws "^8.14.2"
 
-"@nuxt/devtools@^1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@nuxt/devtools/-/devtools-1.0.1.tgz#1a307cb0e6fc2296cdeb13b880ab86a95c00c4b9"
-  integrity sha512-VwuX4g0QmKBE3GyDqVkLIt3xOz/aTFZbD1SxyT/ani4FfOAec2ksjbF4CQmGonfjL2lN1glvoew83zj4P5vi/g==
+"@nuxt/devtools@^1.0.2":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@nuxt/devtools/-/devtools-1.0.2.tgz#e55bc4776271d8e11dd54b2eb5c6161dae77ab3b"
+  integrity sha512-nfqvRc36Sh20gDVs3pViHvcyyz3NmaNqgJnWUXgfjSCsT7G/p2wHsoNUXYYTF7kpk3kbNusftaWrIzAiTiXC9A==
   dependencies:
     "@antfu/utils" "^0.7.6"
-    "@nuxt/devtools-kit" "1.0.1"
-    "@nuxt/devtools-wizard" "1.0.1"
+    "@nuxt/devtools-kit" "1.0.2"
+    "@nuxt/devtools-wizard" "1.0.2"
     "@nuxt/kit" "^3.8.1"
     birpc "^0.2.14"
     consola "^3.2.3"
@@ -1129,7 +1129,7 @@
     is-installed-globally "^1.0.0"
     launch-editor "^2.6.1"
     local-pkg "^0.5.0"
-    magicast "^0.3.1"
+    magicast "^0.3.2"
     nitropack "^2.7.2"
     nypm "^0.3.3"
     ofetch "^1.3.3"
@@ -1742,10 +1742,10 @@
   dependencies:
     escape-string-regexp "^5.0.0"
 
-"@tailwindcss/forms@^0.5.6":
-  version "0.5.6"
-  resolved "https://registry.yarnpkg.com/@tailwindcss/forms/-/forms-0.5.6.tgz#29c6c2b032b363e0c5110efed1499867f6d7e868"
-  integrity sha512-Fw+2BJ0tmAwK/w01tEFL5TiaJBX1NLT1/YbWgvm7ws3Qcn11kiXxzNTEQDMs5V3mQemhB56l3u0i9dwdzSQldA==
+"@tailwindcss/forms@^0.5.7":
+  version "0.5.7"
+  resolved "https://registry.yarnpkg.com/@tailwindcss/forms/-/forms-0.5.7.tgz#db5421f062a757b5f828bc9286ba626c6685e821"
+  integrity sha512-QE7X69iQI+ZXwldE+rzasvbJiyV/ju1FGHH0Qn2W3FKbuYtqp8LKcy6iSw79fVUT5/Vvf+0XgLCeYVG+UV6hOw==
   dependencies:
     mini-svg-data-uri "^1.2.3"
 
@@ -6282,10 +6282,10 @@ magicast@^0.3.0:
     "@babel/types" "^7.22.19"
     source-map-js "^1.0.2"
 
-magicast@^0.3.1:
-  version "0.3.1"
-  resolved "https://registry.yarnpkg.com/magicast/-/magicast-0.3.1.tgz#6b8977f448a122026dd2269b823974cb76019f83"
-  integrity sha512-4OS+6e5iHr9VxOeA8TqWNudbdTmKvGNd6iCeOsIDwZn7iLLg3uV3BoQfsaXgFVK5x1fXPBx5X0f6w4sb6HYSQA==
+magicast@^0.3.2:
+  version "0.3.2"
+  resolved "https://registry.yarnpkg.com/magicast/-/magicast-0.3.2.tgz#42dcade5573ed8f10f5540f9d04964e21dba9130"
+  integrity sha512-Fjwkl6a0syt9TFN0JSYpOybxiMCkYNEeOTnOTNRbjphirLakznZXAqrXgj/7GG3D1dvETONNwrBfinvAbpunDg==
   dependencies:
     "@babel/parser" "^7.23.3"
     "@babel/types" "^7.23.3"
