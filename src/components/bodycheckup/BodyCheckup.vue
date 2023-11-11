@@ -71,7 +71,7 @@ watchDebounced(mass, () => bmiCalculate(), {
 });
 
 function bmiCalculate(): void {
-    bmi.value = parseInt(mass.value) / parseInt(height.value) ** 2;
+    bmi.value = parseInt(mass.value) / (parseInt(height.value) / 100) ** 2;
 }
 </script>
 
@@ -234,7 +234,7 @@ function bmiCalculate(): void {
                                                 <input
                                                     v-model="height"
                                                     v-maska
-                                                    data-maska="#,##"
+                                                    data-maska="###"
                                                     name="height"
                                                     type="text"
                                                     :placeholder="$t('components.bodycheckup.height')"
@@ -246,7 +246,7 @@ function bmiCalculate(): void {
                                                 <div
                                                     class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3"
                                                 >
-                                                    <span class="text-gray-300 sm:text-sm">m</span>
+                                                    <span class="text-gray-300 sm:text-sm">cm</span>
                                                 </div>
                                             </div>
                                         </div>
@@ -279,7 +279,7 @@ function bmiCalculate(): void {
                                         </div>
                                     </div>
                                     <p class="ablock text-sm font-medium leading-6 text-neutral">
-                                        BMI: <span class="font-semibold">{{ bmi.toFixed(2) }}</span>
+                                        BMI: <span class="font-semibold">{{ bmi.toFixed(1) }}</span>
                                     </p>
                                 </div>
                             </div>

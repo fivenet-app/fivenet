@@ -420,7 +420,7 @@ func (s *Manager) removeDispatchesFromEmptyUnits(ctx context.Context) error {
 
 				unit, _ := s.GetUnit(job, dsp.Units[i].UnitId)
 				// If unit isn't empty, continue with the loop
-				if unit != nil && len(unit.Users) > 0 {
+				if unit == nil || len(unit.Users) > 0 {
 					continue
 				}
 
@@ -494,14 +494,9 @@ func (s *Manager) checkUnitUsers(ctx context.Context) error {
 					break
 				}
 
-				var userId int32
-				if unit.Users[i].User != nil {
-					userId = unit.Users[i].User.UserId
-				} else {
-					userId = unit.Users[i].UserId
-				}
-
+				userId := unit.Users[i].UserId
 				if userId == 0 {
+					s.logger.Warn("zero user id found during unit user checkup", zap.Uint64("unit_id", unit.Id))
 					continue
 				}
 
