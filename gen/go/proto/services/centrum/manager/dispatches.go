@@ -136,7 +136,7 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 				}
 
 				dsp.Units = utils.RemoveFromSlice(dsp.Units, i)
-				toAnnounce = append(toAnnounce, toRemove[i])
+				toAnnounce = append(toAnnounce, toRemove[k])
 			}
 		}
 
