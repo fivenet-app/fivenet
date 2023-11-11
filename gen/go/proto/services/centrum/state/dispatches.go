@@ -42,7 +42,6 @@ func (s *State) FilterDispatches(job string, statuses []dispatch.StatusDispatch,
 		// Hide user info when dispatch is anonymous
 		if dispatches[i].Anon {
 			dispatches[i].Creator = nil
-			dispatches[i].CreatorId = nil
 		}
 
 		include := true

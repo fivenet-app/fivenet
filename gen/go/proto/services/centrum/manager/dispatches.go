@@ -415,7 +415,6 @@ func (s *Manager) CreateDispatch(ctx context.Context, d *dispatch.Dispatch) (*di
 	// Hide user info when dispatch is anonymous
 	if dsp.Anon {
 		dsp.Creator = nil
-		dsp.CreatorId = nil
 	}
 	metricsDispatchLastID.WithLabelValues(d.Job).Set(float64(lastId))
 

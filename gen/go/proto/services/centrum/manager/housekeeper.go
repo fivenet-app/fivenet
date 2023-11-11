@@ -394,7 +394,7 @@ func (s *Manager) addAttributeToDispatch(ctx context.Context, dsp *dispatch.Disp
 	}
 
 	if update {
-		if err := s.UpdateDispatch(ctx, dsp.Job, nil, dsp, true); err != nil {
+		if err := s.UpdateDispatch(ctx, dsp.Job, dsp.CreatorId, dsp, true); err != nil {
 			return err
 		}
 	}
