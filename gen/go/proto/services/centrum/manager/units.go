@@ -147,10 +147,8 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 	defer tx.Rollback()
 
 	var previousStatus proto.Message
-	if len(toAdd) > 0 || len(toRemove) > 0 {
-		if unit.Status != nil {
-			previousStatus = proto.Clone(unit.Status)
-		}
+	if unit.Status != nil && (len(toAdd) > 0 || len(toRemove) > 0) {
+		previousStatus = proto.Clone(unit.Status)
 	}
 
 	tUnitUser := table.FivenetCentrumUnitsUsers
@@ -182,9 +180,9 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 					continue
 				}
 
-				s.UserIDToUnitID.Delete(toRemove[k])
 				toAnnounce = append(toAnnounce, toRemove[k])
 				unit.Users = utils.RemoveFromSlice(unit.Users, i)
+				s.UserIDToUnitID.Delete(toRemove[k])
 			}
 		}
 
@@ -251,13 +249,13 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 		}
 
 		for _, user := range users {
+			s.UserIDToUnitID.Store(user.UserId, unit.Id)
+
 			unit.Users = append(unit.Users, &dispatch.UnitAssignment{
 				UnitId: unit.Id,
 				UserId: user.UserId,
 				User:   user,
 			})
-
-			s.UserIDToUnitID.Store(user.UserId, unit.Id)
 		}
 
 		for _, user := range users {
