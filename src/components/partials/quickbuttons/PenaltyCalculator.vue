@@ -9,7 +9,7 @@ const open = ref(false);
 <template>
     <button
         type="button"
-        class="fixed flex items-center justify-center w-12 h-12 rounded-full z-10 bottom-2 right-20 bg-primary-500 shadow-float text-neutral hover:bg-primary-400"
+        class="flex items-center justify-center w-12 h-12 rounded-full bg-primary-500 shadow-float text-neutral hover:bg-primary-400"
         @click="open = true"
     >
         <CalculatorIcon class="w-10 h-auto" />
