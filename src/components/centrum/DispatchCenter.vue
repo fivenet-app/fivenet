@@ -54,7 +54,7 @@ function goto(e: Coordinate) {
         <Splitpanes v-else class="h-full w-full">
             <Pane min-size="25">
                 <Splitpanes horizontal>
-                    <Pane min-size="80">
+                    <Pane min-size="80" size="90">
                         <Livemap :show-unit-names="true" :show-unit-status="true">
                             <template #default>
                                 <DispatchesLayer
@@ -65,7 +65,7 @@ function goto(e: Coordinate) {
                             </template>
                         </Livemap>
                     </Pane>
-                    <Pane min-size="8" size="8">
+                    <Pane min-size="8" size="10">
                         <DisponentsInfo />
                     </Pane>
                 </Splitpanes>

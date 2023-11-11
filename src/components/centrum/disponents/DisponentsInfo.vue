@@ -53,50 +53,6 @@ const open = ref(false);
             <div class="-mx-2 -my-2 sm:-mx-6 lg:-mx-8">
                 <div class="inline-block min-w-full py-2 align-middle sm:px-2 lg:px-2">
                     <div class="grid grid-cols-1 sm:grid-cols-3 items-center justify-items-center">
-                        <div
-                            v-if="!isDisponent"
-                            class="absolute z-20 inset-0 flex flex-col justify-center items-center bg-gray-600/70"
-                        >
-                            <button
-                                type="button"
-                                class="relative block w-full p-12 text-center border-2 border-dotted rounded-lg border-base-300 hover:border-base-400 focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2"
-                                :disabled="!canSubmit"
-                                @click="onSubmitThrottle(true)"
-                            >
-                                <LocationEnterIcon v-if="canSubmit" class="w-12 h-12 mx-auto text-neutral" />
-                                <template v-else>
-                                    <LoadingIcon class="animate-spin w-12 h-12 mx-auto text-neutral" />
-                                </template>
-                                <span class="block mt-2 text-sm font-semibold text-gray-300">
-                                    {{ $t('components.centrum.dispatch_center.join_center') }}
-                                </span>
-                            </button>
-                            <div class="flex flex-row gap-4">
-                                <NuxtLink
-                                    :to="{ name: 'centrum-dispatches' }"
-                                    class="mt-4 px-2 py-1 flex items-center justify-center rounded-full bg-primary-500 text-neutral hover:bg-primary-400"
-                                >
-                                    <AlertBoxIcon class="w-8 h-8" />
-                                    <span class="px-1">{{ $t('common.dispatches') }}</span>
-                                </NuxtLink>
-                                <NuxtLink
-                                    :to="{ name: 'centrum-units' }"
-                                    class="mt-4 px-2 py-1 flex items-center justify-center rounded-full bg-primary-500 text-neutral hover:bg-primary-400"
-                                >
-                                    <GroupIcon class="w-8 h-8" />
-                                    <span class="px-1">{{ $t('common.units') }}</span>
-                                </NuxtLink>
-                                <button
-                                    type="button"
-                                    class="mt-4 px-2 py-1 flex items-center justify-center rounded-full bg-primary-500 text-neutral hover:bg-primary-400"
-                                    @click="open = true"
-                                >
-                                    <MonitorIcon class="w-8 h-8" />
-                                    <span class="px-1">{{ $t('common.disponents', 2) }}</span>
-                                </button>
-                            </div>
-                        </div>
-
                         <div class="flex-1 inline-flex">
                             <button
                                 v-if="!isDisponent"
