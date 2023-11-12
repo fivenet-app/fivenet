@@ -193,7 +193,7 @@ watch(router.currentRoute, () => updateActiveItem());
                     </NuxtLink>
                 </div>
                 <div class="flex-grow w-full px-2 mt-6 space-y-1 text-center">
-                    <span v-if="!accessToken && !activeChar">
+                    <template v-if="!accessToken && !activeChar">
                         <NuxtLink
                             :to="{ name: 'index' }"
                             active-class="bg-accent-100/20 text-neutral font-bold"
@@ -224,8 +224,8 @@ watch(router.currentRoute, () => updateActiveItem());
                             <AccountPlusIcon class="h-6 w-6" aria-hidden="true" />
                             <span class="mt-2">{{ $t('components.auth.registration_form.title') }}</span>
                         </NuxtLink>
-                    </span>
-                    <span v-if="accessToken && !activeChar">
+                    </template>
+                    <template v-if="accessToken && !activeChar">
                         <NuxtLink
                             :to="{ name: 'index' }"
                             active-class="bg-accent-100/20 text-neutral font-bold"
@@ -246,7 +246,7 @@ watch(router.currentRoute, () => updateActiveItem());
                             <UnfoldMoreHorizontalIcon class="h-6 w-6" aria-hidden="true" />
                             <span class="mt-2">{{ $t('pages.auth.character_selector.title') }}</span>
                         </NuxtLink>
-                    </span>
+                    </template>
                     <template v-else-if="accessToken && activeChar">
                         <NuxtLink
                             v-for="item in sidebarNavigation.filter((e) => e.position === 'top' && can(e.permission))"
@@ -345,18 +345,50 @@ watch(router.currentRoute, () => updateActiveItem());
                             <div class="flex-grow h-0 px-2 mt-5 overflow-y-auto">
                                 <nav class="flex flex-col h-full">
                                     <div class="space-y-1">
-                                        <NuxtLink
-                                            v-if="!accessToken || !activeChar"
-                                            :to="{ name: 'index' }"
-                                            class="text-accent-100 hover:bg-accent-100/10 hover:text-neutral font-medium group flex items-center rounded-md py-2 px-3 text-sm"
-                                            @click="mobileMenuOpen = false"
-                                        >
-                                            <HomeIcon
-                                                class="text-accent-100 group-hover:text-neutral mr-3 h-6 w-6"
-                                                aria-hidden="true"
-                                            />
-                                            <span>{{ $t('common.home') }}</span>
-                                        </NuxtLink>
+                                        <template v-if="!accessToken && !activeChar">
+                                            <NuxtLink
+                                                :to="{ name: 'index' }"
+                                                active-class="bg-accent-100/20 text-neutral font-bold"
+                                                class="text-accent-100 hover:bg-accent-100/10 hover:text-neutral font-medium group flex items-center rounded-md py-2 px-3 text-sm"
+                                                exact-active-class="text-neutral"
+                                                aria-current-value="page"
+                                                @click="mobileMenuOpen = false"
+                                            >
+                                                <HomeIcon
+                                                    class="text-accent-100 group-hover:text-neutral mr-3 h-6 w-6"
+                                                    aria-hidden="true"
+                                                />
+                                                <span>{{ $t('common.home') }}</span>
+                                            </NuxtLink>
+                                            <NuxtLink
+                                                :to="{ name: 'auth-login' }"
+                                                active-class="bg-accent-100/20 text-neutral font-bold"
+                                                class="text-accent-100 hover:bg-accent-100/10 hover:text-neutral font-medium group flex items-center rounded-md py-2 px-3 text-sm"
+                                                exact-active-class="text-neutral"
+                                                aria-current-value="page"
+                                                @click="mobileMenuOpen = false"
+                                            >
+                                                <LoginIcon
+                                                    class="text-accent-100 group-hover:text-neutral mr-3 h-6 w-6"
+                                                    aria-hidden="true"
+                                                />
+                                                <span>{{ $t('pages.auth.login.title') }}</span>
+                                            </NuxtLink>
+                                            <NuxtLink
+                                                :to="{ name: 'auth-registration' }"
+                                                active-class="bg-accent-100/20 text-neutral font-bold"
+                                                class="text-accent-100 hover:bg-accent-100/10 hover:text-neutral font-medium group flex items-center rounded-md py-2 px-3 text-sm"
+                                                exact-active-class="text-neutral"
+                                                aria-current-value="page"
+                                                @click="mobileMenuOpen = false"
+                                            >
+                                                <AccountPlusIcon
+                                                    class="text-accent-100 group-hover:text-neutral mr-3 h-6 w-6"
+                                                    aria-hidden="true"
+                                                />
+                                                <span>{{ $t('components.auth.registration_form.title') }}</span>
+                                            </NuxtLink>
+                                        </template>
                                         <NuxtLink
                                             v-for="item in sidebarNavigation.filter(
                                                 (e) => e.position === 'top' && can(e.permission),
