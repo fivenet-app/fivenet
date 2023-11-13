@@ -532,6 +532,9 @@
             },
             "startpage": {
                 "content": "You can set the start page FiveNet opens up on in your Account information."
+            },
+            "documenteditor": {
+                "content": "You can enable a dark mode for the document editor."
             }
         }
     },

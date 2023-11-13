@@ -13,7 +13,11 @@ const hints = shuffle([
     },
     {
         key: 'startpage',
-        link: { name: 'auth-account-info' },
+        link: { name: 'auth-account-info', hash: '#settings' },
+    },
+    {
+        key: 'documenteditor',
+        link: { name: 'auth-account-info', hash: '#settings' },
     },
 ] as Hint[]);
 
@@ -50,23 +54,21 @@ function nextHint(): void {
                 class="pointer-events-auto flex items-center justify-between gap-x-6 bg-gray-900 px-6 py-2.5 sm:rounded-xl sm:py-3 sm:pl-4 sm:pr-3.5"
             >
                 <button type="button" class="text-white" @click="previousHint()">
-                    <ArrowLeftBoldCircleIcon class="h-5 w-5" />
+                    <ArrowLeftBoldCircleIcon class="h-7 w-7" />
                 </button>
-                <div class="">
-                    <p class="inline-flex items-center text-sm leading-6 text-white">
-                        <InformationSlabCircleIcon class="h-5 w-5" />
-                        <strong class="mx-1 font-semibold">{{ $t('components.hints.start_text') }}</strong>
-                        {{ $t(`components.hints.${hint.key}.content`) }}
-                        <GenericBadge v-if="hint.keyboard" class="ml-1 text-black" color="gray">
-                            <kbd class="font-sans">{{ $t(`components.hints.${hint.key}.keyboard`) }}</kbd>
-                        </GenericBadge>
-                        <NuxtLink v-else-if="hint.link" :to="hint.link" class="ml-1 text-base-200 underline">
-                            {{ $t('components.hints.click_me') }}
-                        </NuxtLink>
-                    </p>
-                </div>
+                <p class="inline-flex items-center text-sm leading-6 text-white max-w-5xl">
+                    <InformationSlabCircleIcon class="h-7 w-7" />
+                    <strong class="mx-1 font-semibold">{{ $t('components.hints.start_text') }}</strong>
+                    {{ $t(`components.hints.${hint.key}.content`) }}
+                    <GenericBadge v-if="hint.keyboard" class="ml-1 text-black" color="gray">
+                        <kbd class="font-sans">{{ $t(`components.hints.${hint.key}.keyboard`) }}</kbd>
+                    </GenericBadge>
+                    <NuxtLink v-else-if="hint.link" :to="hint.link" class="ml-1 text-base-200 underline">
+                        {{ $t('components.hints.click_me') }}
+                    </NuxtLink>
+                </p>
                 <button type="button" class="text-white" @click="nextHint()">
-                    <ArrowRightBoldCircleIcon class="h-5 w-5" />
+                    <ArrowRightBoldCircleIcon class="h-7 w-7" />
                 </button>
             </div>
         </div>

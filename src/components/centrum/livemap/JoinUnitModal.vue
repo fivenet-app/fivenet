@@ -138,8 +138,8 @@ const filteredUnits = computed(() =>
                                                                         !canSubmit
                                                                             ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
                                                                             : ownUnitId !== undefined && ownUnitId === unit.id
-                                                                              ? 'bg-warn-500 hover:bg-warn-100/10'
-                                                                              : 'bg-primary-500 hover:bg-primary-100/10',
+                                                                            ? 'bg-warn-500 hover:bg-warn-100/10'
+                                                                            : 'bg-primary-500 hover:bg-primary-100/10',
                                                                     ]"
                                                                     @click="onSubmitThrottle(unit.id)"
                                                                 >

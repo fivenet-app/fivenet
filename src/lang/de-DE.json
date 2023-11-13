@@ -527,11 +527,14 @@
             "start_text": "Wussten sie schon...?",
             "click_me": "Klicke hier.",
             "commandpalette": {
-                "content": "FiveNet hat eine Befehlspalette für Power-User? Sie können diesse mit folgenden Tastenkombination öffnen:",
+                "content": "FiveNet hat eine Befehlspalette für Power-User? Sie können diese mit folgenden Tastenkombination öffnen:",
                 "keyboard": "STRG+K"
             },
             "startpage": {
                 "content": "Die Startseite von FiveNet können Sie in Ihren Kontoinformationen festlegen."
+            },
+            "documenteditor": {
+                "content": "Der Dokumenten-Editor hat einen Nacht-Modus, der in Ihren Kontoinformationen aktiviert werden kann."
             }
         }
     },

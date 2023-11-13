@@ -39,7 +39,7 @@ watch(darkModeActive, async () => {
 
 <template>
     <div class="overflow-hidden bg-base-800 shadow sm:rounded-lg text-neutral mt-3">
-        <div class="px-4 py-5 sm:px-6">
+        <div id="settings" class="px-4 py-5 sm:px-6">
             <h3 class="text-base font-semibold leading-6">
                 {{ $t('components.auth.settings_panel.title') }}
             </h3>
