@@ -120,6 +120,16 @@ func (s *Server) ListDocuments(ctx context.Context, req *ListDocumentsRequest) (
 			jet.Bool(*req.Closed),
 		))
 	}
+	if len(req.DocumentIds) > 0 {
+		ids := make([]jet.Expression, len(req.DocumentIds))
+		for i := 0; i < len(req.DocumentIds); i++ {
+			ids[i] = jet.Uint64(req.DocumentIds[i])
+		}
+
+		condition = condition.AND(
+			tDocs.ID.IN(ids...),
+		)
+	}
 
 	countStmt := s.listDocumentsQuery(
 		condition, jet.ProjectionList{jet.COUNT(jet.DISTINCT(tDocs.ID)).AS("datacount.totalcount")},

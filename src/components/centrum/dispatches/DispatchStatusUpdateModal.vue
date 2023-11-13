@@ -159,8 +159,8 @@ watch(props, () => {
                                                                             field.value == item.status
                                                                                 ? 'disabled bg-base-500 hover:bg-base-400'
                                                                                 : item.status
-                                                                                ? dispatchStatusToBGColor(item.status)
-                                                                                : item.class,
+                                                                                  ? dispatchStatusToBGColor(item.status)
+                                                                                  : item.class,
                                                                             ,
                                                                         ]"
                                                                         :disabled="field.value == item.status"

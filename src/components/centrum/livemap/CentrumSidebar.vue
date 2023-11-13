@@ -285,8 +285,8 @@ async function checkup(): Promise<void> {
                                         getCurrentMode === CentrumMode.AUTO_ROUND_ROBIN
                                             ? 'bg-info-400/10 text-info-500 ring-info-400/20'
                                             : disponents.length === 0
-                                            ? 'bg-warn-400/10 text-warn-500 ring-warn-400/20'
-                                            : 'bg-success-500/10 text-success-400 ring-success-500/20'
+                                              ? 'bg-warn-400/10 text-warn-500 ring-warn-400/20'
+                                              : 'bg-success-500/10 text-success-400 ring-success-500/20'
                                     "
                                     @click="openDisponents = true"
                                 >

@@ -522,6 +522,13 @@
             "bmi": "Body-Mass-Index",
             "mass": "Gewicht (in KG)",
             "height": "Größe (in Metern)"
+        },
+        "hints": {
+            "start_text": "Wussten sie schon...?",
+            "click_me": "Klicke hier.",
+            "commandpalette": {
+                "keyboard": "STRG+K"
+            }
         }
     },
     "common": {

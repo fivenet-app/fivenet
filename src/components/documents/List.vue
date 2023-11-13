@@ -43,6 +43,7 @@ const openclose: OpenClose[] = [
 ];
 
 const query = ref<{
+    id?: string;
     title: string;
     character?: UserShort;
     from?: string;
@@ -79,12 +80,17 @@ async function listDocuments(): Promise<ListDocumentsResponse> {
         search: query.value.title ?? '',
         categoryIds: [],
         creatorIds: [],
+        documentIds: [],
     };
     if (queryCategory.value) {
         req.categoryIds.push(queryCategory.value.id);
     }
     if (query.value.character) {
         req.creatorIds.push(query.value.character.userId);
+    }
+    if (query.value.id) {
+        const id = query.value.id.replaceAll('DOC-', '').trim();
+        req.documentIds.push(BigInt(id));
     }
     if (query.value.from) {
         req.from = {
@@ -211,6 +217,20 @@ const templatesOpen = ref(false);
                                 <div class="flex flex-row gap-2">
                                     <div class="flex-1 form-control">
                                         <label for="search" class="block text-sm font-medium leading-6 text-neutral">
+                                            {{ $t('common.document') }} {{ $t('common.id') }}
+                                        </label>
+                                        <div class="relative flex items-center mt-2">
+                                            <input
+                                                v-model="query.id"
+                                                type="text"
+                                                name="search"
+                                                placeholder="DOC-..."
+                                                class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div class="flex-1 form-control">
+                                        <label for="search" class="block text-sm font-medium leading-6 text-neutral">
                                             {{ $t('common.category', 1) }}
                                         </label>
                                         <Combobox v-model="queryCategory" as="div" class="mt-2" nullable>
@@ -320,35 +340,8 @@ const templatesOpen = ref(false);
                                             </div>
                                         </Combobox>
                                     </div>
-                                    <div class="flex-1 form-control">
-                                        <label for="search" class="block text-sm font-medium leading-6 text-neutral">
-                                            {{ $t('common.time_range') }}: {{ $t('common.from') }}
-                                        </label>
-                                        <div class="relative flex items-center mt-2">
-                                            <input
-                                                v-model="query.from"
-                                                type="datetime-local"
-                                                name="search"
-                                                :placeholder="`${$t('common.time_range')} ${$t('common.from')}`"
-                                                class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                            />
-                                        </div>
-                                    </div>
-                                    <div class="flex-1 form-control">
-                                        <label for="search" class="block text-sm font-medium leading-6 text-neutral"
-                                            >{{ $t('common.time_range') }}:
-                                            {{ $t('common.to') }}
-                                        </label>
-                                        <div class="relative flex items-center mt-2">
-                                            <input
-                                                v-model="query.to"
-                                                type="datetime-local"
-                                                name="search"
-                                                :placeholder="`${$t('common.time_range')} ${$t('common.to')}`"
-                                                class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                            />
-                                        </div>
-                                    </div>
+                                </div>
+                                <div class="flex flex-row gap-2">
                                     <div class="flex-1 form-control">
                                         <label for="search" class="block text-sm font-medium leading-6 text-neutral">
                                             {{ $t('common.close', 2) }}?
@@ -412,6 +405,35 @@ const templatesOpen = ref(false);
                                                 </transition>
                                             </div>
                                         </Listbox>
+                                    </div>
+                                    <div class="flex-1 form-control">
+                                        <label for="search" class="block text-sm font-medium leading-6 text-neutral">
+                                            {{ $t('common.time_range') }}: {{ $t('common.from') }}
+                                        </label>
+                                        <div class="relative flex items-center mt-2">
+                                            <input
+                                                v-model="query.from"
+                                                type="datetime-local"
+                                                name="search"
+                                                :placeholder="`${$t('common.time_range')} ${$t('common.from')}`"
+                                                class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div class="flex-1 form-control">
+                                        <label for="search" class="block text-sm font-medium leading-6 text-neutral"
+                                            >{{ $t('common.time_range') }}:
+                                            {{ $t('common.to') }}
+                                        </label>
+                                        <div class="relative flex items-center mt-2">
+                                            <input
+                                                v-model="query.to"
+                                                type="datetime-local"
+                                                name="search"
+                                                :placeholder="`${$t('common.time_range')} ${$t('common.to')}`"
+                                                class="block w-full rounded-md border-0 py-1.5 pr-14 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                            />
+                                        </div>
                                     </div>
                                 </div>
                             </DisclosurePanel>

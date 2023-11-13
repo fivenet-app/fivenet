@@ -63,6 +63,7 @@ message ListDocumentsRequest {
   optional resources.timestamp.Timestamp from = 6;
   optional resources.timestamp.Timestamp to = 7;
   optional bool closed = 8;
+  repeated uint64 document_ids = 9;
 }
 
 message ListDocumentsResponse {

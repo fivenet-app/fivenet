@@ -522,6 +522,17 @@
             "bmi": "Body Mass Index",
             "mass": "Mass (in KG)",
             "height": "Height (in meters)"
+        },
+        "hints": {
+            "start_text": "Did you know...?",
+            "click_me": "Click here.",
+            "commandpalette": {
+                "content": "FiveNet has a command palette for power users? You can open it using:",
+                "keyboard": "CTRL+K"
+            },
+            "startpage": {
+                "content": "You can set the start page FiveNet opens up on in your Account information."
+            }
         }
     },
     "common": {
@@ -753,7 +764,8 @@
         "dispatches": "Dispatches",
         "refresh": "Refresh",
         "forward": "Foward",
-        "points": "Point | Points"
+        "points": "Point | Points",
+        "hints": "Hint | Hints"
     },
     "notifications": {
         "clipboard": {

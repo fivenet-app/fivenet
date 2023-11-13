@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { useThrottleFn } from '@vueuse/core';
-import { AlertBoxIcon, GroupIcon, LoadingIcon, LocationEnterIcon, LocationExitIcon, MonitorIcon } from 'mdi-vue3';
+import { LoadingIcon, LocationEnterIcon, LocationExitIcon } from 'mdi-vue3';
 import { useCentrumStore } from '~/store/centrum';
 import { CentrumMode } from '~~/gen/ts/resources/dispatch/settings';
 import DisponentsModal from '~/components/centrum/disponents/DisponentsModal.vue';
