@@ -527,7 +527,11 @@
             "start_text": "Wussten sie schon...?",
             "click_me": "Klicke hier.",
             "commandpalette": {
+                "content": "FiveNet hat eine Befehlspalette für Power-User? Sie können sie mit öffnen:",
                 "keyboard": "STRG+K"
+            },
+            "startpage": {
+                "content": "Die Startseite von FiveNet können Sie in Ihren Kontoinformationen festlegen."
             }
         }
     },
@@ -760,7 +764,8 @@
         "dispatches": "Einsätze",
         "refresh": "Neuladen",
         "forward": "Vorwärts",
-        "points": "Punkt | Punkte"
+        "points": "Punkt | Punkte",
+        "hints": "Hinweis | Hinweise"
     },
     "notifications": {
         "clipboard": {
