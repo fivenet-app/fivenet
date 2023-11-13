@@ -234,6 +234,7 @@ async function listDocuments(): Promise<void> {
             search: query.value,
             categoryIds: [],
             creatorIds: [],
+            documentIds: [],
         });
         const { response } = await call;
 

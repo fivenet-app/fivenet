@@ -101,4 +101,4 @@ title: "Dispatch Center"
 
 ## Limitations
 
-* All dispatches that are `NEW` are loaded/ sent to the users.
+* All dispatches that are not completed or archived are loaded/ sent to the users.
