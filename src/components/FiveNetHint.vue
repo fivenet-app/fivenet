@@ -55,7 +55,7 @@ function nextHint(): void {
                 <div class="">
                     <p class="inline-flex items-center text-sm leading-6 text-white">
                         <InformationSlabCircleIcon class="h-5 w-5" />
-                        <strong class="mx-1 font-semibold">{{ $t('common.hints') }}</strong>
+                        <strong class="mx-1 font-semibold">{{ $t('components.hints.start_text') }}</strong>
                         {{ $t(`components.hints.${hint.key}.content`) }}
                         <GenericBadge v-if="hint.keyboard" class="ml-1 text-black" color="gray">
                             <kbd class="font-sans">{{ $t(`components.hints.${hint.key}.keyboard`) }}</kbd>

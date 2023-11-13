@@ -527,7 +527,7 @@
             "start_text": "Did you know...?",
             "click_me": "Click here.",
             "commandpalette": {
-                "content": "FiveNet has a command palette for power users? You can open it using:",
+                "content": "FiveNet has a command palette for power users, you can open it using:",
                 "keyboard": "CTRL+K"
             },
             "startpage": {
