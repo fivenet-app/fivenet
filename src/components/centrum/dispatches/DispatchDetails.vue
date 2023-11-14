@@ -14,9 +14,8 @@ import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopove
 import Time from '~/components/partials/elements/Time.vue';
 import { useCentrumStore } from '~/store/centrum';
 import { useNotificatorStore } from '~/store/notificator';
-import { Dispatch, StatusDispatch } from '~~/gen/ts/resources/dispatch/dispatches';
+import { Dispatch, StatusDispatch, TakeDispatchResp } from '~~/gen/ts/resources/dispatch/dispatches';
 import { Settings } from '~~/gen/ts/resources/dispatch/settings';
-import { TakeDispatchResp } from '~~/gen/ts/services/centrum/centrum';
 
 const props = defineProps<{
     open: boolean;

@@ -25,7 +25,7 @@ func (s *Manager) watchUserChanges() {
 				defer span.End()
 
 				for _, userInfo := range event.Added {
-					if _, ok := s.UserIDToUnitID.Load(userInfo.UserID); !ok {
+					if _, ok := s.GetUserUnitID(userInfo.UserID); !ok {
 						unitId, err := s.LoadUnitIDForUserID(ctx, userInfo.UserID)
 						if err != nil {
 							s.logger.Error("failed to load user unit id", zap.Error(err))
@@ -35,7 +35,7 @@ func (s *Manager) watchUserChanges() {
 							continue
 						}
 
-						s.UserIDToUnitID.Store(userInfo.UserID, unitId)
+						s.SetUnitForUser(userInfo.UserID, unitId)
 					}
 				}
 
@@ -58,7 +58,7 @@ func (s *Manager) handleRemoveUserFromDisponents(ctx context.Context, job string
 }
 
 func (s *Manager) handleRemoveUserFromUnit(ctx context.Context, job string, userId int32) bool {
-	unitId, ok := s.UserIDToUnitID.Load(userId)
+	unitId, ok := s.GetUserUnitID(userId)
 	if !ok {
 		// Nothing to do
 		return false
@@ -66,7 +66,7 @@ func (s *Manager) handleRemoveUserFromUnit(ctx context.Context, job string, user
 
 	unit, ok := s.GetUnit(job, unitId)
 	if !ok {
-		s.UserIDToUnitID.Delete(userId)
+		s.UnsetUnitForUser(userId)
 		return false
 	}
 
@@ -117,12 +117,10 @@ func (s *Manager) watchEvents() error {
 						continue
 					}
 
-					settings, ok := s.Settings.LoadOrStore(job, &dest)
-					if ok {
-						settings.Enabled = dest.Enabled
-						settings.Mode = dest.Mode
-						settings.FallbackMode = dest.FallbackMode
-					}
+					settings := s.GetSettings(job)
+					settings.Enabled = dest.Enabled
+					settings.Mode = dest.Mode
+					settings.FallbackMode = dest.FallbackMode
 				}
 
 			case eventscentrum.TopicDispatch:
@@ -178,9 +176,9 @@ func (s *Manager) watchEvents() error {
 					}
 
 					if dest.Status.Status == dispatch.StatusUnit_STATUS_UNIT_USER_ADDED {
-						s.UserIDToUnitID.Store(*dest.Status.UserId, dest.Status.UnitId)
+						s.SetUnitForUser(*dest.Status.UserId, dest.Status.UnitId)
 					} else if dest.Status.Status == dispatch.StatusUnit_STATUS_UNIT_USER_REMOVED {
-						s.UserIDToUnitID.Delete(*dest.Status.UserId)
+						s.UnsetUnitForUser(*dest.Status.UserId)
 					}
 
 				case eventscentrum.TypeUnitDeleted:

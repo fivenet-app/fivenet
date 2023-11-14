@@ -11,7 +11,6 @@ import (
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/paulmach/orb"
-	"google.golang.org/protobuf/proto"
 )
 
 func (s *Manager) LoadSettings(ctx context.Context, job string) error {
@@ -37,9 +36,8 @@ func (s *Manager) LoadSettings(ctx context.Context, job string) error {
 	}
 
 	for _, settings := range dest {
-		set, ok := s.Settings.LoadOrStore(settings.Job, settings)
-		if ok {
-			proto.Merge(set, settings)
+		if err := s.UpdateSettings(settings.Job, settings); err != nil {
+			return err
 		}
 	}
 
@@ -178,7 +176,7 @@ func (s *Manager) LoadUnits(ctx context.Context, id uint64) error {
 		}
 
 		for _, user := range units[i].Users {
-			s.UserIDToUnitID.Store(user.UserId, units[i].Id)
+			s.SetUnitForUser(user.UserId, units[i].Id)
 		}
 	}
 

@@ -6,9 +6,8 @@ import { useSound } from '@vueuse/sound';
 import { CarEmergencyIcon, CloseIcon } from 'mdi-vue3';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import { useCentrumStore } from '~/store/centrum';
-import { Dispatch, StatusDispatch } from '~~/gen/ts/resources/dispatch/dispatches';
+import { Dispatch, StatusDispatch, TakeDispatchResp } from '~~/gen/ts/resources/dispatch/dispatches';
 import { CentrumMode } from '~~/gen/ts/resources/dispatch/settings';
-import { TakeDispatchResp } from '~~/gen/ts/services/centrum/centrum';
 import TakeDispatchEntry from '~/components/centrum/livemap/TakeDispatchEntry.vue';
 import { isStatusDispatchCompleted } from '~/components/centrum/helpers';
 

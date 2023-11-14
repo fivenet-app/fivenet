@@ -18,7 +18,7 @@ func (s *State) GetUnit(job string, id uint64) (*dispatch.Unit, bool) {
 }
 
 func (s *State) GetUnitIDForUserID(userId int32) (uint64, bool) {
-	return s.UserIDToUnitID.Load(userId)
+	return s.userIDToUnitID.Load(userId)
 }
 
 func (s *State) ListUnits(job string) ([]*dispatch.Unit, bool) {

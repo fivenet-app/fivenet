@@ -25,7 +25,7 @@ type State struct {
 	Dispatches        *xsync.MapOf[string, *xsync.MapOf[uint64, *dispatch.Dispatch]]
 	DispatchLocations map[string]*coords.Coords[*dispatch.Dispatch]
 
-	UserIDToUnitID *xsync.MapOf[int32, uint64]
+	userIDToUnitID *xsync.MapOf[int32, uint64]
 }
 
 func New(cfg *config.Config) *State {
@@ -44,6 +44,6 @@ func New(cfg *config.Config) *State {
 		Dispatches:        xsync.NewMapOf[string, *xsync.MapOf[uint64, *dispatch.Dispatch]](),
 		DispatchLocations: locs,
 
-		UserIDToUnitID: xsync.NewMapOf[int32, uint64](),
+		userIDToUnitID: xsync.NewMapOf[int32, uint64](),
 	}
 }

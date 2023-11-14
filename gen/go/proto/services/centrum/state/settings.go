@@ -1,18 +1,26 @@
 package state
 
-import "github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
+import (
+	"github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
+	"google.golang.org/protobuf/proto"
+)
 
 func (s *State) GetSettings(job string) *dispatch.Settings {
-	settings, ok := s.Settings.Load(job)
-	if !ok {
-		// Return default settings
+	settings, _ := s.Settings.LoadOrCompute(job, func() *dispatch.Settings {
 		return &dispatch.Settings{
 			Job:          job,
 			Enabled:      false,
 			Mode:         dispatch.CentrumMode_CENTRUM_MODE_MANUAL,
 			FallbackMode: dispatch.CentrumMode_CENTRUM_MODE_MANUAL,
 		}
-	}
+	})
 
 	return settings
+}
+
+func (s *State) UpdateSettings(job string, in *dispatch.Settings) error {
+	current := s.GetSettings(job)
+	proto.Merge(current, in)
+
+	return nil
 }

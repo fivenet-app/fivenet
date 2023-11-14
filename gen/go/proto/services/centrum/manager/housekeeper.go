@@ -500,7 +500,7 @@ func (s *Manager) checkUnitUsers(ctx context.Context) error {
 					continue
 				}
 
-				unitId, _ := s.UserIDToUnitID.Load(userId)
+				unitId, _ := s.GetUserUnitID(userId)
 				// If user is in that unit and still on duty, nothing to do, otherwise remove the user from the unit
 				if unit.Id == unitId && s.tracker.IsUserOnDuty(job, userId) {
 					continue
