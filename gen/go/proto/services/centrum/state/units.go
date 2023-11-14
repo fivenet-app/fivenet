@@ -77,4 +77,6 @@ func (s *State) DeleteUnit(job string, id uint64) {
 	if ok {
 		units.Delete(id)
 	}
+
+	s.UnitsLocks.Delete(id)
 }

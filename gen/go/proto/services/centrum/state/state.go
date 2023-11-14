@@ -1,6 +1,8 @@
 package state
 
 import (
+	"sync"
+
 	"github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/users"
 	"github.com/galexrt/fivenet/pkg/config"
@@ -16,9 +18,11 @@ var StateModule = fx.Module("centrum_state", fx.Provide(
 type State struct {
 	Settings   *xsync.MapOf[string, *dispatch.Settings]
 	Disponents *xsync.MapOf[string, []*users.UserShort]
-	Units      *xsync.MapOf[string, *xsync.MapOf[uint64, *dispatch.Unit]]
-	Dispatches *xsync.MapOf[string, *xsync.MapOf[uint64, *dispatch.Dispatch]]
 
+	Units      *xsync.MapOf[string, *xsync.MapOf[uint64, *dispatch.Unit]]
+	UnitsLocks *xsync.MapOf[uint64, *sync.Mutex]
+
+	Dispatches        *xsync.MapOf[string, *xsync.MapOf[uint64, *dispatch.Dispatch]]
 	DispatchLocations map[string]*coords.Coords[*dispatch.Dispatch]
 
 	UserIDToUnitID *xsync.MapOf[int32, uint64]
@@ -33,9 +37,11 @@ func New(cfg *config.Config) *State {
 	return &State{
 		Settings:   xsync.NewMapOf[string, *dispatch.Settings](),
 		Disponents: xsync.NewMapOf[string, []*users.UserShort](),
-		Units:      xsync.NewMapOf[string, *xsync.MapOf[uint64, *dispatch.Unit]](),
-		Dispatches: xsync.NewMapOf[string, *xsync.MapOf[uint64, *dispatch.Dispatch]](),
 
+		Units:      xsync.NewMapOf[string, *xsync.MapOf[uint64, *dispatch.Unit]](),
+		UnitsLocks: xsync.NewMapOf[uint64, *sync.Mutex](),
+
+		Dispatches:        xsync.NewMapOf[string, *xsync.MapOf[uint64, *dispatch.Dispatch]](),
 		DispatchLocations: locs,
 
 		UserIDToUnitID: xsync.NewMapOf[int32, uint64](),

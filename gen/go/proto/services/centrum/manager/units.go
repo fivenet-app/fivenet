@@ -128,6 +128,10 @@ func (s *Manager) UpdateUnitStatus(ctx context.Context, job string, unit *dispat
 }
 
 func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId *int32, unit *dispatch.Unit, toAdd []int32, toRemove []int32) error {
+	lock := s.State.GetUnitLock(unit.Id)
+	lock.Lock()
+	defer lock.Unlock()
+
 	var x, y *float64
 	var postal *string
 	if userId != nil {
