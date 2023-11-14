@@ -252,6 +252,27 @@ export enum StatusDispatch {
      */
     ARCHIVED = 13
 }
+/**
+ * @generated from protobuf enum resources.dispatch.TakeDispatchResp
+ */
+export enum TakeDispatchResp {
+    /**
+     * @generated from protobuf enum value: TAKE_DISPATCH_RESP_UNSPECIFIED = 0;
+     */
+    UNSPECIFIED = 0,
+    /**
+     * @generated from protobuf enum value: TAKE_DISPATCH_RESP_TIMEOUT = 1;
+     */
+    TIMEOUT = 1,
+    /**
+     * @generated from protobuf enum value: TAKE_DISPATCH_RESP_ACCEPTED = 2;
+     */
+    ACCEPTED = 2,
+    /**
+     * @generated from protobuf enum value: TAKE_DISPATCH_RESP_DECLINED = 3;
+     */
+    DECLINED = 3
+}
 // @generated message type with reflection information, may provide speed optimized methods
 class Dispatch$Type extends MessageType<Dispatch> {
     constructor() {

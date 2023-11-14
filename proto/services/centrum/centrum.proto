@@ -145,16 +145,9 @@ message JoinUnitResponse {
   resources.dispatch.Unit unit = 1;
 }
 
-enum TakeDispatchResp {
-  TAKE_DISPATCH_RESP_UNSPECIFIED = 0;
-  TAKE_DISPATCH_RESP_TIMEOUT = 1;
-  TAKE_DISPATCH_RESP_ACCEPTED = 2;
-  TAKE_DISPATCH_RESP_DECLINED = 3;
-}
-
 message TakeDispatchRequest {
   repeated uint64 dispatch_ids = 1 [(validate.rules).repeated.min_items = 1];
-  TakeDispatchResp resp = 2 [(validate.rules).enum.defined_only = true];
+  resources.dispatch.TakeDispatchResp resp = 2 [(validate.rules).enum.defined_only = true];
   // @sanitize
   optional string reason = 3 [(validate.rules).string.max_len = 255];
 }

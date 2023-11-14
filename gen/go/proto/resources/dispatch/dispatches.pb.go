@@ -105,6 +105,58 @@ func (StatusDispatch) EnumDescriptor() ([]byte, []int) {
 	return file_resources_dispatch_dispatches_proto_rawDescGZIP(), []int{0}
 }
 
+type TakeDispatchResp int32
+
+const (
+	TakeDispatchResp_TAKE_DISPATCH_RESP_UNSPECIFIED TakeDispatchResp = 0
+	TakeDispatchResp_TAKE_DISPATCH_RESP_TIMEOUT     TakeDispatchResp = 1
+	TakeDispatchResp_TAKE_DISPATCH_RESP_ACCEPTED    TakeDispatchResp = 2
+	TakeDispatchResp_TAKE_DISPATCH_RESP_DECLINED    TakeDispatchResp = 3
+)
+
+// Enum value maps for TakeDispatchResp.
+var (
+	TakeDispatchResp_name = map[int32]string{
+		0: "TAKE_DISPATCH_RESP_UNSPECIFIED",
+		1: "TAKE_DISPATCH_RESP_TIMEOUT",
+		2: "TAKE_DISPATCH_RESP_ACCEPTED",
+		3: "TAKE_DISPATCH_RESP_DECLINED",
+	}
+	TakeDispatchResp_value = map[string]int32{
+		"TAKE_DISPATCH_RESP_UNSPECIFIED": 0,
+		"TAKE_DISPATCH_RESP_TIMEOUT":     1,
+		"TAKE_DISPATCH_RESP_ACCEPTED":    2,
+		"TAKE_DISPATCH_RESP_DECLINED":    3,
+	}
+)
+
+func (x TakeDispatchResp) Enum() *TakeDispatchResp {
+	p := new(TakeDispatchResp)
+	*p = x
+	return p
+}
+
+func (x TakeDispatchResp) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (TakeDispatchResp) Descriptor() protoreflect.EnumDescriptor {
+	return file_resources_dispatch_dispatches_proto_enumTypes[1].Descriptor()
+}
+
+func (TakeDispatchResp) Type() protoreflect.EnumType {
+	return &file_resources_dispatch_dispatches_proto_enumTypes[1]
+}
+
+func (x TakeDispatchResp) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use TakeDispatchResp.Descriptor instead.
+func (TakeDispatchResp) EnumDescriptor() ([]byte, []int) {
+	return file_resources_dispatch_dispatches_proto_rawDescGZIP(), []int{1}
+}
+
 type Dispatch struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -763,12 +815,21 @@ var file_resources_dispatch_dispatches_proto_rawDesc = []byte{
 	0x53, 0x5f, 0x44, 0x49, 0x53, 0x50, 0x41, 0x54, 0x43, 0x48, 0x5f, 0x43, 0x41, 0x4e, 0x43, 0x45,
 	0x4c, 0x4c, 0x45, 0x44, 0x10, 0x0c, 0x12, 0x1c, 0x0a, 0x18, 0x53, 0x54, 0x41, 0x54, 0x55, 0x53,
 	0x5f, 0x44, 0x49, 0x53, 0x50, 0x41, 0x54, 0x43, 0x48, 0x5f, 0x41, 0x52, 0x43, 0x48, 0x49, 0x56,
-	0x45, 0x44, 0x10, 0x0d, 0x42, 0x45, 0x5a, 0x43, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63,
-	0x6f, 0x6d, 0x2f, 0x67, 0x61, 0x6c, 0x65, 0x78, 0x72, 0x74, 0x2f, 0x66, 0x69, 0x76, 0x65, 0x6e,
-	0x65, 0x74, 0x2f, 0x67, 0x65, 0x6e, 0x2f, 0x67, 0x6f, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2f,
-	0x72, 0x65, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x73, 0x2f, 0x64, 0x69, 0x73, 0x70, 0x61, 0x74,
-	0x63, 0x68, 0x3b, 0x64, 0x69, 0x73, 0x70, 0x61, 0x74, 0x63, 0x68, 0x62, 0x06, 0x70, 0x72, 0x6f,
-	0x74, 0x6f, 0x33,
+	0x45, 0x44, 0x10, 0x0d, 0x2a, 0x98, 0x01, 0x0a, 0x10, 0x54, 0x61, 0x6b, 0x65, 0x44, 0x69, 0x73,
+	0x70, 0x61, 0x74, 0x63, 0x68, 0x52, 0x65, 0x73, 0x70, 0x12, 0x22, 0x0a, 0x1e, 0x54, 0x41, 0x4b,
+	0x45, 0x5f, 0x44, 0x49, 0x53, 0x50, 0x41, 0x54, 0x43, 0x48, 0x5f, 0x52, 0x45, 0x53, 0x50, 0x5f,
+	0x55, 0x4e, 0x53, 0x50, 0x45, 0x43, 0x49, 0x46, 0x49, 0x45, 0x44, 0x10, 0x00, 0x12, 0x1e, 0x0a,
+	0x1a, 0x54, 0x41, 0x4b, 0x45, 0x5f, 0x44, 0x49, 0x53, 0x50, 0x41, 0x54, 0x43, 0x48, 0x5f, 0x52,
+	0x45, 0x53, 0x50, 0x5f, 0x54, 0x49, 0x4d, 0x45, 0x4f, 0x55, 0x54, 0x10, 0x01, 0x12, 0x1f, 0x0a,
+	0x1b, 0x54, 0x41, 0x4b, 0x45, 0x5f, 0x44, 0x49, 0x53, 0x50, 0x41, 0x54, 0x43, 0x48, 0x5f, 0x52,
+	0x45, 0x53, 0x50, 0x5f, 0x41, 0x43, 0x43, 0x45, 0x50, 0x54, 0x45, 0x44, 0x10, 0x02, 0x12, 0x1f,
+	0x0a, 0x1b, 0x54, 0x41, 0x4b, 0x45, 0x5f, 0x44, 0x49, 0x53, 0x50, 0x41, 0x54, 0x43, 0x48, 0x5f,
+	0x52, 0x45, 0x53, 0x50, 0x5f, 0x44, 0x45, 0x43, 0x4c, 0x49, 0x4e, 0x45, 0x44, 0x10, 0x03, 0x42,
+	0x45, 0x5a, 0x43, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x67, 0x61,
+	0x6c, 0x65, 0x78, 0x72, 0x74, 0x2f, 0x66, 0x69, 0x76, 0x65, 0x6e, 0x65, 0x74, 0x2f, 0x67, 0x65,
+	0x6e, 0x2f, 0x67, 0x6f, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2f, 0x72, 0x65, 0x73, 0x6f, 0x75,
+	0x72, 0x63, 0x65, 0x73, 0x2f, 0x64, 0x69, 0x73, 0x70, 0x61, 0x74, 0x63, 0x68, 0x3b, 0x64, 0x69,
+	0x73, 0x70, 0x61, 0x74, 0x63, 0x68, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -783,35 +844,36 @@ func file_resources_dispatch_dispatches_proto_rawDescGZIP() []byte {
 	return file_resources_dispatch_dispatches_proto_rawDescData
 }
 
-var file_resources_dispatch_dispatches_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
+var file_resources_dispatch_dispatches_proto_enumTypes = make([]protoimpl.EnumInfo, 2)
 var file_resources_dispatch_dispatches_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_resources_dispatch_dispatches_proto_goTypes = []interface{}{
 	(StatusDispatch)(0),         // 0: resources.dispatch.StatusDispatch
-	(*Dispatch)(nil),            // 1: resources.dispatch.Dispatch
-	(*Attributes)(nil),          // 2: resources.dispatch.Attributes
-	(*DispatchAssignments)(nil), // 3: resources.dispatch.DispatchAssignments
-	(*DispatchAssignment)(nil),  // 4: resources.dispatch.DispatchAssignment
-	(*DispatchStatus)(nil),      // 5: resources.dispatch.DispatchStatus
-	(*timestamp.Timestamp)(nil), // 6: resources.timestamp.Timestamp
-	(*users.User)(nil),          // 7: resources.users.User
-	(*Unit)(nil),                // 8: resources.dispatch.Unit
-	(*users.UserShort)(nil),     // 9: resources.users.UserShort
+	(TakeDispatchResp)(0),       // 1: resources.dispatch.TakeDispatchResp
+	(*Dispatch)(nil),            // 2: resources.dispatch.Dispatch
+	(*Attributes)(nil),          // 3: resources.dispatch.Attributes
+	(*DispatchAssignments)(nil), // 4: resources.dispatch.DispatchAssignments
+	(*DispatchAssignment)(nil),  // 5: resources.dispatch.DispatchAssignment
+	(*DispatchStatus)(nil),      // 6: resources.dispatch.DispatchStatus
+	(*timestamp.Timestamp)(nil), // 7: resources.timestamp.Timestamp
+	(*users.User)(nil),          // 8: resources.users.User
+	(*Unit)(nil),                // 9: resources.dispatch.Unit
+	(*users.UserShort)(nil),     // 10: resources.users.UserShort
 }
 var file_resources_dispatch_dispatches_proto_depIdxs = []int32{
-	6,  // 0: resources.dispatch.Dispatch.created_at:type_name -> resources.timestamp.Timestamp
-	6,  // 1: resources.dispatch.Dispatch.updated_at:type_name -> resources.timestamp.Timestamp
-	5,  // 2: resources.dispatch.Dispatch.status:type_name -> resources.dispatch.DispatchStatus
-	2,  // 3: resources.dispatch.Dispatch.attributes:type_name -> resources.dispatch.Attributes
-	7,  // 4: resources.dispatch.Dispatch.creator:type_name -> resources.users.User
-	4,  // 5: resources.dispatch.Dispatch.units:type_name -> resources.dispatch.DispatchAssignment
-	4,  // 6: resources.dispatch.DispatchAssignments.units:type_name -> resources.dispatch.DispatchAssignment
-	8,  // 7: resources.dispatch.DispatchAssignment.unit:type_name -> resources.dispatch.Unit
-	6,  // 8: resources.dispatch.DispatchAssignment.created_at:type_name -> resources.timestamp.Timestamp
-	6,  // 9: resources.dispatch.DispatchAssignment.expires_at:type_name -> resources.timestamp.Timestamp
-	6,  // 10: resources.dispatch.DispatchStatus.created_at:type_name -> resources.timestamp.Timestamp
-	8,  // 11: resources.dispatch.DispatchStatus.unit:type_name -> resources.dispatch.Unit
+	7,  // 0: resources.dispatch.Dispatch.created_at:type_name -> resources.timestamp.Timestamp
+	7,  // 1: resources.dispatch.Dispatch.updated_at:type_name -> resources.timestamp.Timestamp
+	6,  // 2: resources.dispatch.Dispatch.status:type_name -> resources.dispatch.DispatchStatus
+	3,  // 3: resources.dispatch.Dispatch.attributes:type_name -> resources.dispatch.Attributes
+	8,  // 4: resources.dispatch.Dispatch.creator:type_name -> resources.users.User
+	5,  // 5: resources.dispatch.Dispatch.units:type_name -> resources.dispatch.DispatchAssignment
+	5,  // 6: resources.dispatch.DispatchAssignments.units:type_name -> resources.dispatch.DispatchAssignment
+	9,  // 7: resources.dispatch.DispatchAssignment.unit:type_name -> resources.dispatch.Unit
+	7,  // 8: resources.dispatch.DispatchAssignment.created_at:type_name -> resources.timestamp.Timestamp
+	7,  // 9: resources.dispatch.DispatchAssignment.expires_at:type_name -> resources.timestamp.Timestamp
+	7,  // 10: resources.dispatch.DispatchStatus.created_at:type_name -> resources.timestamp.Timestamp
+	9,  // 11: resources.dispatch.DispatchStatus.unit:type_name -> resources.dispatch.Unit
 	0,  // 12: resources.dispatch.DispatchStatus.status:type_name -> resources.dispatch.StatusDispatch
-	9,  // 13: resources.dispatch.DispatchStatus.user:type_name -> resources.users.UserShort
+	10, // 13: resources.dispatch.DispatchStatus.user:type_name -> resources.users.UserShort
 	14, // [14:14] is the sub-list for method output_type
 	14, // [14:14] is the sub-list for method input_type
 	14, // [14:14] is the sub-list for extension type_name
@@ -895,7 +957,7 @@ func file_resources_dispatch_dispatches_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_resources_dispatch_dispatches_proto_rawDesc,
-			NumEnums:      1,
+			NumEnums:      2,
 			NumMessages:   5,
 			NumExtensions: 0,
 			NumServices:   0,

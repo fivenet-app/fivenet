@@ -83,3 +83,10 @@ message DispatchStatus {
   // @sanitize
   optional string postal = 13  [(validate.rules).string.max_len = 48];
 }
+
+enum TakeDispatchResp {
+  TAKE_DISPATCH_RESP_UNSPECIFIED = 0;
+  TAKE_DISPATCH_RESP_TIMEOUT = 1;
+  TAKE_DISPATCH_RESP_ACCEPTED = 2;
+  TAKE_DISPATCH_RESP_DECLINED = 3;
+}

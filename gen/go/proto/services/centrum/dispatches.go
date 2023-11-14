@@ -7,12 +7,9 @@ import (
 	database "github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
 	dispatch "github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
-	"github.com/galexrt/fivenet/gen/go/proto/resources/timestamp"
 	errorscentrum "github.com/galexrt/fivenet/gen/go/proto/services/centrum/errors"
-	centrumutils "github.com/galexrt/fivenet/gen/go/proto/services/centrum/utils"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/utils"
-	"github.com/galexrt/fivenet/pkg/utils/dbutils"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -238,146 +235,9 @@ func (s *Server) TakeDispatch(ctx context.Context, req *TakeDispatchRequest) (*T
 	if !ok {
 		return nil, errorscentrum.ErrFailedQuery
 	}
-	unit, ok := s.state.GetUnit(userInfo.Job, unitId)
-	if !ok {
-		return nil, errorscentrum.ErrFailedQuery
-	}
 
-	settings := s.state.GetSettings(userInfo.Job)
-	var x, y *float64
-	var postal *string
-	if marker, ok := s.tracker.GetUserById(userInfo.UserId); ok {
-		x = &marker.Info.X
-		y = &marker.Info.Y
-		postal = marker.Info.Postal
-	}
-
-	for _, dispatchId := range req.DispatchIds {
-		dsp, ok := s.state.GetDispatch(userInfo.Job, dispatchId)
-		if !ok {
-			return nil, errorscentrum.ErrFailedQuery
-		}
-
-		// If the dispatch center is in central command mode, units can't self assign dispatches
-		if settings.Mode == dispatch.CentrumMode_CENTRUM_MODE_CENTRAL_COMMAND {
-			if !utils.InSliceFunc(dsp.Units, func(in *dispatch.DispatchAssignment) bool {
-				return in.UnitId == unitId
-			}) {
-				return nil, errorscentrum.ErrModeForbidsAction
-			}
-		}
-
-		// If dispatch is completed, disallow to accept the dispatch
-		if dsp.Status != nil && centrumutils.IsStatusDispatchComplete(dsp.Status.Status) {
-			return nil, errorscentrum.ErrDispatchAlreadyCompleted
-		}
-
-		status := dispatch.StatusDispatch_STATUS_DISPATCH_UNSPECIFIED
-
-		tDispatchUnit := table.FivenetCentrumDispatchesAsgmts
-		// Dispatch accepted
-		if req.Resp == TakeDispatchResp_TAKE_DISPATCH_RESP_ACCEPTED {
-			status = dispatch.StatusDispatch_STATUS_DISPATCH_UNIT_ACCEPTED
-
-			stmt := tDispatchUnit.
-				INSERT(
-					tDispatchUnit.DispatchID,
-					tDispatchUnit.UnitID,
-					tDispatchUnit.ExpiresAt,
-				).
-				VALUES(
-					dsp.Id,
-					unit.Id,
-					jet.NULL,
-				).
-				ON_DUPLICATE_KEY_UPDATE(
-					tDispatchUnit.ExpiresAt.SET(jet.TimestampExp(jet.NULL)),
-				)
-
-			if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-				if !dbutils.IsDuplicateError(err) {
-					return nil, errorscentrum.ErrFailedQuery
-				}
-			}
-
-			found := false
-			accepted := true
-			// Set unit expires at to nil
-			for _, ua := range dsp.Units {
-				if ua.UnitId == unit.Id {
-					found = true
-					// If there's no expiration time the unit has been directly assigned
-					if ua.ExpiresAt == nil {
-						accepted = false
-					}
-					ua.ExpiresAt = nil
-					break
-				}
-			}
-
-			if !found {
-				dsp.Units = append(dsp.Units, &dispatch.DispatchAssignment{
-					DispatchId: dsp.Id,
-					UnitId:     unit.Id,
-					Unit:       unit,
-					CreatedAt:  timestamp.Now(),
-				})
-			}
-
-			if accepted {
-				// Set unit to busy when unit accepts a dispatch
-				if unit.Status == nil || unit.Status.Status != dispatch.StatusUnit_STATUS_UNIT_BUSY {
-					if err := s.state.UpdateUnitStatus(ctx, userInfo.Job, unit, &dispatch.UnitStatus{
-						UnitId:    unit.Id,
-						Status:    dispatch.StatusUnit_STATUS_UNIT_BUSY,
-						UserId:    &userInfo.UserId,
-						CreatorId: &userInfo.UserId,
-						X:         x,
-						Y:         y,
-						Postal:    postal,
-					}); err != nil {
-						return nil, errorscentrum.ErrFailedQuery
-					}
-				}
-			}
-		} else {
-			// Dispatch declined
-			status = dispatch.StatusDispatch_STATUS_DISPATCH_UNIT_DECLINED
-
-			stmt := tDispatchUnit.
-				DELETE().
-				WHERE(jet.AND(
-					tDispatchUnit.DispatchID.EQ(jet.Uint64(dsp.Id)),
-					tDispatchUnit.UnitID.EQ(jet.Uint64(unit.Id)),
-				)).
-				LIMIT(1)
-
-			if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-				if !dbutils.IsDuplicateError(err) {
-					return nil, errorscentrum.ErrFailedQuery
-				}
-			}
-
-			// Remove the unit's assignment
-			for k, u := range dsp.Units {
-				if u.UnitId == unit.Id {
-					dsp.Units = utils.RemoveFromSlice(dsp.Units, k)
-					break
-				}
-			}
-		}
-
-		if err := s.state.UpdateDispatchStatus(ctx, userInfo.Job, dsp, &dispatch.DispatchStatus{
-			DispatchId: dispatchId,
-			Status:     status,
-			UnitId:     &unitId,
-			UserId:     &userInfo.UserId,
-			X:          x,
-			Y:          y,
-			Postal:     postal,
-		}); err != nil {
-			return nil, errorscentrum.ErrFailedQuery
-		}
+	if err := s.state.TakeDispatch(ctx, userInfo.Job, userInfo.UserId, unitId, req.Resp, req.DispatchIds); err != nil {
+		return nil, err
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)

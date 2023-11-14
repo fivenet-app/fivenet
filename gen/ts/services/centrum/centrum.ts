@@ -6,6 +6,7 @@ import { MessageType } from "@protobuf-ts/runtime";
 import { DisponentsChange } from "../../resources/dispatch/settings.js";
 import { UserShort } from "../../resources/users/users.js";
 import { Settings } from "../../resources/dispatch/settings.js";
+import { TakeDispatchResp } from "../../resources/dispatch/dispatches.js";
 import { DispatchStatus } from "../../resources/dispatch/dispatches.js";
 import { Dispatch } from "../../resources/dispatch/dispatches.js";
 import { StatusDispatch } from "../../resources/dispatch/dispatches.js";
@@ -352,7 +353,7 @@ export interface TakeDispatchRequest {
      */
     dispatchIds: bigint[];
     /**
-     * @generated from protobuf field: services.centrum.TakeDispatchResp resp = 2;
+     * @generated from protobuf field: resources.dispatch.TakeDispatchResp resp = 2;
      */
     resp: TakeDispatchResp;
     /**
@@ -489,27 +490,6 @@ export interface StreamResponse {
      * @generated from protobuf field: optional bool restart = 13;
      */
     restart?: boolean;
-}
-/**
- * @generated from protobuf enum services.centrum.TakeDispatchResp
- */
-export enum TakeDispatchResp {
-    /**
-     * @generated from protobuf enum value: TAKE_DISPATCH_RESP_UNSPECIFIED = 0;
-     */
-    UNSPECIFIED = 0,
-    /**
-     * @generated from protobuf enum value: TAKE_DISPATCH_RESP_TIMEOUT = 1;
-     */
-    TIMEOUT = 1,
-    /**
-     * @generated from protobuf enum value: TAKE_DISPATCH_RESP_ACCEPTED = 2;
-     */
-    ACCEPTED = 2,
-    /**
-     * @generated from protobuf enum value: TAKE_DISPATCH_RESP_DECLINED = 3;
-     */
-    DECLINED = 3
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class ListDispatchActivityRequest$Type extends MessageType<ListDispatchActivityRequest> {
@@ -888,7 +868,7 @@ class TakeDispatchRequest$Type extends MessageType<TakeDispatchRequest> {
     constructor() {
         super("services.centrum.TakeDispatchRequest", [
             { no: 1, name: "dispatch_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/, options: { "validate.rules": { repeated: { minItems: "1" } } } },
-            { no: 2, name: "resp", kind: "enum", T: () => ["services.centrum.TakeDispatchResp", TakeDispatchResp, "TAKE_DISPATCH_RESP_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
+            { no: 2, name: "resp", kind: "enum", T: () => ["resources.dispatch.TakeDispatchResp", TakeDispatchResp, "TAKE_DISPATCH_RESP_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 3, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } }
         ]);
     }

@@ -3925,7 +3925,7 @@ func (m *TakeDispatchRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if _, ok := TakeDispatchResp_name[int32(m.GetResp())]; !ok {
+	if _, ok := dispatch.TakeDispatchResp_name[int32(m.GetResp())]; !ok {
 		err := TakeDispatchRequestValidationError{
 			field:  "Resp",
 			reason: "value must be one of the defined enum values",
