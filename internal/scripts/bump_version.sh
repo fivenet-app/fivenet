@@ -48,6 +48,8 @@ sed \
     --expression 's~^version: [0-9\.]+~version: '"${version_rest}.${version_patch_new}"'~' \
         ./charts/fivenet/Chart.yaml
 
+make helm-docs
+
 git add --all
 
 git commit \
