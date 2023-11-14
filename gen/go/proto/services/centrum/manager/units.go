@@ -308,3 +308,32 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 
 	return nil
 }
+
+func (s *Manager) DeleteUnit(ctx context.Context, job string, id uint64) error {
+	unit, ok := s.State.GetUnit(job, id)
+	if !ok {
+		return nil
+	}
+
+	stmt := tUnits.
+		DELETE().
+		WHERE(jet.AND(
+			tUnits.Job.EQ(jet.String(job)),
+			tUnits.ID.EQ(jet.Uint64(id)),
+		)).
+		LIMIT(1)
+
+	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+		return err
+	}
+
+	data, err := proto.Marshal(unit)
+	if err != nil {
+		return err
+	}
+	s.events.JS.PublishAsync(eventscentrum.BuildSubject(eventscentrum.TopicUnit, eventscentrum.TypeUnitDeleted, job, id), data)
+
+	s.State.DeleteUnit(job, id)
+
+	return nil
+}

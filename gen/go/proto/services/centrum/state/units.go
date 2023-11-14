@@ -71,3 +71,10 @@ func (s *State) FilterUnits(job string, statuses []dispatch.StatusUnit, notStatu
 
 	return us
 }
+
+func (s *State) DeleteUnit(job string, id uint64) {
+	units, ok := s.Units.Load(job)
+	if ok {
+		units.Delete(id)
+	}
+}

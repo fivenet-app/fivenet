@@ -66,3 +66,17 @@ func (s *State) FilterDispatches(job string, statuses []dispatch.StatusDispatch,
 
 	return dsps
 }
+
+func (s *State) DeleteDispatch(job string, id uint64) {
+	dsp, ok := s.GetDispatch(job, id)
+	if !ok {
+		return
+	}
+
+	s.DispatchLocations[job].Remove(dsp, nil)
+
+	dispatches, ok := s.Dispatches.Load(job)
+	if ok {
+		dispatches.Delete(id)
+	}
+}

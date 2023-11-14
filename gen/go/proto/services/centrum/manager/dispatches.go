@@ -288,8 +288,7 @@ func (s *Manager) DeleteDispatch(ctx context.Context, job string, id uint64) err
 	}
 	s.events.JS.PublishAsync(eventscentrum.BuildSubject(eventscentrum.TopicDispatch, eventscentrum.TypeDispatchDeleted, job, 0), data)
 
-	s.GetDispatchesMap(job).Delete(id)
-	s.State.DispatchLocations[dsp.Job].Remove(dsp, nil)
+	s.State.DeleteDispatch(job, id)
 
 	return nil
 }

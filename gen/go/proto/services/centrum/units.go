@@ -184,35 +184,11 @@ func (s *Server) DeleteUnit(ctx context.Context, req *DeleteUnitRequest) (*Delet
 
 	resp := &DeleteUnitResponse{}
 
-	unit, ok := s.state.GetUnit(userInfo.Job, req.UnitId)
-	if !ok {
-		return resp, nil
+	if err := s.state.DeleteUnit(ctx, userInfo.Job, req.UnitId); err != nil {
+		return nil, errorscentrum.ErrFailedQuery
 	}
-
-	stmt := tUnits.
-		DELETE().
-		WHERE(jet.AND(
-			tUnits.Job.EQ(jet.String(userInfo.Job)),
-			tUnits.ID.EQ(jet.Uint64(req.UnitId)),
-		)).
-		LIMIT(1)
-
-	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return nil, err
-	}
-
-	data, err := proto.Marshal(unit)
-	if err != nil {
-		return nil, err
-	}
-	s.events.JS.PublishAsync(eventscentrum.BuildSubject(eventscentrum.TopicUnit, eventscentrum.TypeUnitDeleted, userInfo.Job, req.UnitId), data)
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)
-
-	units, ok := s.state.Units.Load(userInfo.Job)
-	if ok {
-		units.Delete(req.UnitId)
-	}
 
 	return resp, nil
 }
