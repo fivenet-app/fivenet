@@ -126,7 +126,7 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 
 		toAnnounce := []uint64{}
 		for i := len(dsp.Units) - 1; i >= 0; i-- {
-			if i > len(dsp.Units)-1 {
+			if i > (len(dsp.Units) - 1) {
 				break
 			}
 

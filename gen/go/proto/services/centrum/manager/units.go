@@ -175,7 +175,7 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 
 		toAnnounce := []int32{}
 		for i := len(unit.Users) - 1; i >= 0; i-- {
-			if i > len(unit.Users)-1 {
+			if i > (len(unit.Users) - 1) {
 				break
 			}
 

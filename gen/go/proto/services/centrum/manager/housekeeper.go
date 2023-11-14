@@ -414,7 +414,7 @@ func (s *Manager) removeDispatchesFromEmptyUnits(ctx context.Context) error {
 
 		for _, dsp := range dsps {
 			for i := len(dsp.Units) - 1; i >= 0; i-- {
-				if i > len(dsp.Units)-1 {
+				if i > (len(dsp.Units) - 1) {
 					break
 				}
 
@@ -490,7 +490,7 @@ func (s *Manager) checkUnitUsers(ctx context.Context) error {
 
 			toRemove := []int32{}
 			for i := len(unit.Users) - 1; i >= 0; i-- {
-				if i > len(unit.Users)-1 {
+				if i > (len(unit.Users) - 1) {
 					break
 				}
 
