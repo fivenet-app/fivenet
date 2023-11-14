@@ -88,6 +88,7 @@ async function listDocuments(): Promise<DocumentShort[]> {
             search: queryDoc.value,
             categoryIds: [],
             creatorIds: [],
+            documentIds: [],
         });
         const { response } = await call;
 
