@@ -1,9 +1,7 @@
 package state
 
 import (
-	"fmt"
 	"sync"
-	"time"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/users"
@@ -48,27 +46,6 @@ func New(cfg *config.Config) *State {
 
 		userIDToUnitID: xsync.NewMapOf[int32, uint64](),
 	}
-
-	go func() {
-		for {
-			time.Sleep(5 * time.Second)
-
-			units, ok := s.units.Load("ambulance")
-			if !ok {
-				continue
-			}
-
-			unit, ok := units.Load(5)
-			if !ok {
-				continue
-			}
-
-			fmt.Printf("UNIT %d, %s - %p\n", len(unit.Users), time.Now().String(), unit)
-			for _, user := range unit.Users {
-				fmt.Printf("UNIT User - %d %d - %p\n", user.UnitId, user.UserId, user)
-			}
-		}
-	}()
 
 	return s
 }

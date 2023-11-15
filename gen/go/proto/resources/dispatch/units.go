@@ -1,9 +1,6 @@
 package dispatch
 
 import (
-	"fmt"
-	"time"
-
 	"github.com/paulmach/orb"
 	"google.golang.org/protobuf/proto"
 )
@@ -61,14 +58,6 @@ func (x *Unit) Merge(in *Unit) {
 		x.Users = []*UnitAssignment{}
 	} else {
 		x.Users = in.Users
-	}
-
-	fmt.Printf("MERGE - %s, %+v - %p\n", time.Now().String(), in.Users, x)
-	for _, user := range in.Users {
-		fmt.Printf("IN User - %d %d - %p\n", user.UnitId, user.UserId, user)
-	}
-	for _, user := range x.Users {
-		fmt.Printf("X User - %d %d - %p\n", user.UnitId, user.UserId, user)
 	}
 }
 
