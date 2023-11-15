@@ -768,7 +768,8 @@
         "refresh": "Refresh",
         "forward": "Foward",
         "points": "Point | Points",
-        "hints": "Hint | Hints"
+        "hints": "Hint | Hints",
+        "icon": "Icon"
     },
     "notifications": {
         "clipboard": {
@@ -1629,7 +1630,7 @@
                 "UNSPECIFIED": "Unspecified",
                 "DOT": "Dot",
                 "CIRCLE": "Circle",
-                "POLYGON": "Polygon"
+                "ICON": "Icon"
             }
         },
         "jobs": {

@@ -124,11 +124,11 @@ export interface MarkerData {
          */
         circle: CircleMarker;
     } | {
-        oneofKind: "polygon";
+        oneofKind: "icon";
         /**
-         * @generated from protobuf field: resources.livemap.PolygonMarker polygon = 4;
+         * @generated from protobuf field: resources.livemap.IconMarker icon = 4;
          */
-        polygon: PolygonMarker;
+        icon: IconMarker;
     } | {
         oneofKind: undefined;
     };
@@ -160,13 +160,13 @@ export interface Coords {
     y: number;
 }
 /**
- * @generated from protobuf message resources.livemap.PolygonMarker
+ * @generated from protobuf message resources.livemap.IconMarker
  */
-export interface PolygonMarker {
+export interface IconMarker {
     /**
-     * @generated from protobuf field: repeated resources.livemap.Coords coords = 1;
+     * @generated from protobuf field: string icon = 1;
      */
-    coords: Coords[];
+    icon: string;
 }
 /**
  * @generated from protobuf enum resources.livemap.MarkerType
@@ -185,9 +185,9 @@ export enum MarkerType {
      */
     CIRCLE = 2,
     /**
-     * @generated from protobuf enum value: MARKER_TYPE_POLYGON = 3;
+     * @generated from protobuf enum value: MARKER_TYPE_ICON = 3;
      */
-    POLYGON = 3
+    ICON = 3
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class MarkerInfo$Type extends MessageType<MarkerInfo> {
@@ -248,7 +248,7 @@ class MarkerData$Type extends MessageType<MarkerData> {
     constructor() {
         super("resources.livemap.MarkerData", [
             { no: 3, name: "circle", kind: "message", oneof: "data", T: () => CircleMarker },
-            { no: 4, name: "polygon", kind: "message", oneof: "data", T: () => PolygonMarker }
+            { no: 4, name: "icon", kind: "message", oneof: "data", T: () => IconMarker }
         ]);
     }
 }
@@ -283,14 +283,14 @@ class Coords$Type extends MessageType<Coords> {
  */
 export const Coords = new Coords$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class PolygonMarker$Type extends MessageType<PolygonMarker> {
+class IconMarker$Type extends MessageType<IconMarker> {
     constructor() {
-        super("resources.livemap.PolygonMarker", [
-            { no: 1, name: "coords", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Coords }
+        super("resources.livemap.IconMarker", [
+            { no: 1, name: "icon", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
         ]);
     }
 }
 /**
- * @generated MessageType for protobuf message resources.livemap.PolygonMarker
+ * @generated MessageType for protobuf message resources.livemap.IconMarker
  */
-export const PolygonMarker = new PolygonMarker$Type();
+export const IconMarker = new IconMarker$Type();

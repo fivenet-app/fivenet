@@ -24,12 +24,6 @@ function addPin(event: MouseEvent): void {
         return;
     }
 
-    const target = event.target;
-    if (target instanceof SVGCircleElement || target instanceof SVGTextElement) {
-        console.log(event.target);
-        return;
-    }
-
     const pt = svgRef.value.createSVGPoint();
     pt.x = event.clientX;
     pt.y = event.clientY;

@@ -602,6 +602,10 @@
                 </li>
               
                 <li>
+                  <a href="#resources.livemap.IconMarker"><span class="badge">M</span>IconMarker</a>
+                </li>
+              
+                <li>
                   <a href="#resources.livemap.Marker"><span class="badge">M</span>Marker</a>
                 </li>
               
@@ -611,10 +615,6 @@
               
                 <li>
                   <a href="#resources.livemap.MarkerInfo"><span class="badge">M</span>MarkerInfo</a>
-                </li>
-              
-                <li>
-                  <a href="#resources.livemap.PolygonMarker"><span class="badge">M</span>PolygonMarker</a>
                 </li>
               
                 <li>
@@ -7480,6 +7480,30 @@
 
         
       
+        <h3 id="resources.livemap.IconMarker">IconMarker</h3>
+        <p></p>
+
+        
+          <table class="field-table">
+            <thead>
+              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
+            </thead>
+            <tbody>
+              
+                <tr>
+                  <td>icon</td>
+                  <td><a href="#string">string</a></td>
+                  <td></td>
+                  <td><p> </p></td>
+                </tr>
+              
+            </tbody>
+          </table>
+
+          
+
+        
+      
         <h3 id="resources.livemap.Marker">Marker</h3>
         <p></p>
 
@@ -7550,8 +7574,8 @@
                 </tr>
               
                 <tr>
-                  <td>polygon</td>
-                  <td><a href="#resources.livemap.PolygonMarker">PolygonMarker</a></td>
+                  <td>icon</td>
+                  <td><a href="#resources.livemap.IconMarker">IconMarker</a></td>
                   <td></td>
                   <td><p> </p></td>
                 </tr>
@@ -7697,30 +7721,6 @@
 
         
       
-        <h3 id="resources.livemap.PolygonMarker">PolygonMarker</h3>
-        <p></p>
-
-        
-          <table class="field-table">
-            <thead>
-              <tr><td>Field</td><td>Type</td><td>Label</td><td>Description</td></tr>
-            </thead>
-            <tbody>
-              
-                <tr>
-                  <td>coords</td>
-                  <td><a href="#resources.livemap.Coords">Coords</a></td>
-                  <td>repeated</td>
-                  <td><p> </p></td>
-                </tr>
-              
-            </tbody>
-          </table>
-
-          
-
-        
-      
         <h3 id="resources.livemap.UserMarker">UserMarker</h3>
         <p></p>
 
@@ -7829,7 +7829,7 @@
               </tr>
             
               <tr>
-                <td>MARKER_TYPE_POLYGON</td>
+                <td>MARKER_TYPE_ICON</td>
                 <td>3</td>
                 <td><p></p></td>
               </tr>

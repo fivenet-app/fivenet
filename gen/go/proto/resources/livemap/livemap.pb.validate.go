@@ -730,7 +730,7 @@ func (m *MarkerData) validate(all bool) error {
 			}
 		}
 
-	case *MarkerData_Polygon:
+	case *MarkerData_Icon:
 		if v == nil {
 			err := MarkerDataValidationError{
 				field:  "Data",
@@ -743,11 +743,11 @@ func (m *MarkerData) validate(all bool) error {
 		}
 
 		if all {
-			switch v := interface{}(m.GetPolygon()).(type) {
+			switch v := interface{}(m.GetIcon()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
 					errors = append(errors, MarkerDataValidationError{
-						field:  "Polygon",
+						field:  "Icon",
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -755,16 +755,16 @@ func (m *MarkerData) validate(all bool) error {
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
 					errors = append(errors, MarkerDataValidationError{
-						field:  "Polygon",
+						field:  "Icon",
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
 				}
 			}
-		} else if v, ok := interface{}(m.GetPolygon()).(interface{ Validate() error }); ok {
+		} else if v, ok := interface{}(m.GetIcon()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
 				return MarkerDataValidationError{
-					field:  "Polygon",
+					field:  "Icon",
 					reason: "embedded message failed validation",
 					cause:  err,
 				}
@@ -1059,76 +1059,43 @@ var _ interface {
 	ErrorName() string
 } = CoordsValidationError{}
 
-// Validate checks the field values on PolygonMarker with the rules defined in
-// the proto definition for this message. If any rules are violated, the first
+// Validate checks the field values on IconMarker with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
-func (m *PolygonMarker) Validate() error {
+func (m *IconMarker) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on PolygonMarker with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in PolygonMarkerMultiError, or
+// ValidateAll checks the field values on IconMarker with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in IconMarkerMultiError, or
 // nil if none found.
-func (m *PolygonMarker) ValidateAll() error {
+func (m *IconMarker) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *PolygonMarker) validate(all bool) error {
+func (m *IconMarker) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
 	var errors []error
 
-	for idx, item := range m.GetCoords() {
-		_, _ = idx, item
-
-		if all {
-			switch v := interface{}(item).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, PolygonMarkerValidationError{
-						field:  fmt.Sprintf("Coords[%v]", idx),
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, PolygonMarkerValidationError{
-						field:  fmt.Sprintf("Coords[%v]", idx),
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return PolygonMarkerValidationError{
-					field:  fmt.Sprintf("Coords[%v]", idx),
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	}
+	// no validation rules for Icon
 
 	if len(errors) > 0 {
-		return PolygonMarkerMultiError(errors)
+		return IconMarkerMultiError(errors)
 	}
 
 	return nil
 }
 
-// PolygonMarkerMultiError is an error wrapping multiple validation errors
-// returned by PolygonMarker.ValidateAll() if the designated constraints
-// aren't met.
-type PolygonMarkerMultiError []error
+// IconMarkerMultiError is an error wrapping multiple validation errors
+// returned by IconMarker.ValidateAll() if the designated constraints aren't met.
+type IconMarkerMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m PolygonMarkerMultiError) Error() string {
+func (m IconMarkerMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -1137,11 +1104,11 @@ func (m PolygonMarkerMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m PolygonMarkerMultiError) AllErrors() []error { return m }
+func (m IconMarkerMultiError) AllErrors() []error { return m }
 
-// PolygonMarkerValidationError is the validation error returned by
-// PolygonMarker.Validate if the designated constraints aren't met.
-type PolygonMarkerValidationError struct {
+// IconMarkerValidationError is the validation error returned by
+// IconMarker.Validate if the designated constraints aren't met.
+type IconMarkerValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -1149,22 +1116,22 @@ type PolygonMarkerValidationError struct {
 }
 
 // Field function returns field value.
-func (e PolygonMarkerValidationError) Field() string { return e.field }
+func (e IconMarkerValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e PolygonMarkerValidationError) Reason() string { return e.reason }
+func (e IconMarkerValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e PolygonMarkerValidationError) Cause() error { return e.cause }
+func (e IconMarkerValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e PolygonMarkerValidationError) Key() bool { return e.key }
+func (e IconMarkerValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e PolygonMarkerValidationError) ErrorName() string { return "PolygonMarkerValidationError" }
+func (e IconMarkerValidationError) ErrorName() string { return "IconMarkerValidationError" }
 
 // Error satisfies the builtin error interface
-func (e PolygonMarkerValidationError) Error() string {
+func (e IconMarkerValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -1176,14 +1143,14 @@ func (e PolygonMarkerValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sPolygonMarker.%s: %s%s",
+		"invalid %sIconMarker.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = PolygonMarkerValidationError{}
+var _ error = IconMarkerValidationError{}
 
 var _ interface {
 	Field() string
@@ -1191,4 +1158,4 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = PolygonMarkerValidationError{}
+} = IconMarkerValidationError{}

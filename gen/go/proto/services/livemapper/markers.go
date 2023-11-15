@@ -23,7 +23,8 @@ var (
 )
 
 var (
-	tMarkers = table.FivenetCentrumMarkers
+	tUsers   = table.Users.AS("creator")
+	tMarkers = table.FivenetCentrumMarkers.AS("marker")
 )
 
 func (s *Server) checkIfHasAccessToMarker(levels []string, marker *livemap.Marker, userInfo *userinfo.UserInfo) bool {
@@ -81,6 +82,7 @@ func (s *Server) CreateOrUpdateMarker(ctx context.Context, req *CreateOrUpdateMa
 
 	// No marker id set
 	if req.Marker.Info.Id <= 0 {
+		tMarkers := table.FivenetCentrumMarkers
 		stmt := tMarkers.INSERT(
 			tMarkers.Job,
 			tMarkers.Name,
@@ -92,6 +94,7 @@ func (s *Server) CreateOrUpdateMarker(ctx context.Context, req *CreateOrUpdateMa
 			tMarkers.Icon,
 			tMarkers.MarkerType,
 			tMarkers.MarkerData,
+			tMarkers.CreatorID,
 		).VALUES(
 			userInfo.Job,
 			req.Marker.Info.Name,
@@ -103,6 +106,7 @@ func (s *Server) CreateOrUpdateMarker(ctx context.Context, req *CreateOrUpdateMa
 			req.Marker.Info.Icon,
 			req.Marker.Type,
 			req.Marker.Data,
+			userInfo.UserId,
 		)
 
 		res, err := stmt.ExecContext(ctx, s.db)
@@ -229,8 +233,6 @@ func (s *Server) DeleteMarker(ctx context.Context, req *DeleteMarkerRequest) (*D
 }
 
 func (s *Server) getMarker(ctx context.Context, id uint64) (*livemap.Marker, error) {
-	tUsers := tUsers.AS("creator")
-	tMarkers := tMarkers.AS("marker")
 	stmt := tMarkers.
 		SELECT(
 			tMarkers.ID.AS("markerinfo.id"),
@@ -240,6 +242,8 @@ func (s *Server) getMarker(ctx context.Context, id uint64) (*livemap.Marker, err
 			tMarkers.X.AS("markerinfo.x"),
 			tMarkers.Y.AS("markerinfo.y"),
 			tMarkers.Postal.AS("markerinfo.postal"),
+			tMarkers.Color.AS("markerinfo.color"),
+			tMarkers.Icon.AS("markerinfo.icon"),
 			tMarkers.MarkerType,
 			tMarkers.MarkerData,
 			tMarkers.CreatorID,
@@ -269,4 +273,85 @@ func (s *Server) getMarker(ctx context.Context, id uint64) (*livemap.Marker, err
 	}
 
 	return &dest, nil
+}
+
+func (s *Server) getMarkers(jobs []string) ([]*livemap.Marker, error) {
+	ds := []*livemap.Marker{}
+
+	for _, job := range jobs {
+		markers, ok := s.markersCache.Load(job)
+		if !ok {
+			continue
+		}
+
+		ds = append(ds, markers...)
+	}
+
+	return ds, nil
+}
+
+func (s *Server) refreshMarkers(ctx context.Context) error {
+	tUsers := tUsers.AS("creator")
+	tMarkers := tMarkers.AS("marker")
+	stmt := tMarkers.
+		SELECT(
+			tMarkers.ID.AS("markerinfo.id"),
+			tMarkers.Job.AS("markerinfo.job"),
+			tMarkers.Name.AS("markerinfo.name"),
+			tMarkers.Description.AS("markerinfo.description"),
+			tMarkers.X.AS("markerinfo.x"),
+			tMarkers.Y.AS("markerinfo.y"),
+			tMarkers.Postal.AS("markerinfo.postal"),
+			tMarkers.Color.AS("markerinfo.color"),
+			tMarkers.Icon.AS("markerinfo.icon"),
+			tMarkers.MarkerType,
+			tMarkers.MarkerData,
+			tMarkers.CreatorID,
+			tUsers.ID,
+			tUsers.Identifier,
+			tUsers.Job,
+			tUsers.JobGrade,
+			tUsers.Firstname,
+			tUsers.Lastname,
+			tUsers.Sex,
+			tUsers.PhoneNumber,
+		).
+		FROM(
+			tMarkers.
+				LEFT_JOIN(tUsers,
+					tMarkers.CreatorID.EQ(tUsers.ID),
+				),
+		).
+		WHERE(
+			tMarkers.CreatedAt.GT_EQ(
+				jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(60, jet.MINUTE)),
+			),
+		)
+
+	var dest []*livemap.Marker
+	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
+		return err
+	}
+
+	markers := map[string][]*livemap.Marker{}
+	for _, job := range s.trackedJobs {
+		markers[job] = []*livemap.Marker{}
+	}
+	for _, m := range dest {
+		if _, ok := markers[m.Info.Job]; !ok {
+			markers[m.Info.Job] = []*livemap.Marker{}
+		}
+
+		markers[m.Info.Job] = append(markers[m.Info.Job], m)
+	}
+
+	for job, ms := range markers {
+		if len(ms) == 0 {
+			s.markersCache.Delete(job)
+		} else {
+			s.markersCache.Store(job, ms)
+		}
+	}
+
+	return nil
 }
