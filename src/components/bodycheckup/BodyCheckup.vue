@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { TrashCanIcon, VectorPointSelectIcon } from 'mdi-vue3';
 import { vMaska } from 'maska';
-import { useTimeoutFn, watchDebounced } from '@vueuse/core';
+import { watchDebounced } from '@vueuse/core';
 import { useNotificatorStore } from '~/store/notificator';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 
