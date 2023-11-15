@@ -43,10 +43,10 @@ async function changeUsername(values: FormData): Promise<void> {
             type: 'success',
         });
 
-        await navigateTo({ name: 'auth-logout' });
-        setTimeout(() => {
+        setTimeout(async () => {
+            await navigateTo({ name: 'auth-logout' });
             clearAuthInfo();
-        }, 1);
+        }, 1500);
     } catch (e) {
         $grpc.handleError(e as RpcError);
         throw e;
@@ -79,7 +79,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
 
 <template>
     <TransitionRoot as="template" :show="open">
-        <Dialog as="div" class="relative z-30" @close="$emit('close')">
+        <Dialog as="div" class="relative z-30" @close="canSubmit && $emit('close')">
             <TransitionChild
                 as="template"
                 enter="ease-out duration-300"
