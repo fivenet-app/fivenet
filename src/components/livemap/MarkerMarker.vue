@@ -1,13 +1,13 @@
 <script lang="ts" setup>
 import { RpcError } from '@protobuf-ts/runtime-rpc';
-import { LCircleMarker, LIcon, LMarker } from '@vue-leaflet/vue-leaflet';
+import { LCircleMarker, LIcon, LMarker, LPopup } from '@vue-leaflet/vue-leaflet';
 import { useConfirmDialog } from '@vueuse/core';
 import { type PointExpression } from 'leaflet';
-import { HelpIcon } from 'mdi-vue3';
+import { HelpIcon, TrashCanIcon } from 'mdi-vue3';
 import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
 import { Marker } from '~~/gen/ts/resources/livemap/livemap';
-import MarkerMarkerPopup from '~/components/livemap/MarkerMarkerPopup.vue';
 import { markerIcons } from '~/components/livemap/helpers';
+import PhoneNumber from '~/components/partials/citizens/PhoneNumber.vue';
 
 const props = withDefaults(
     defineProps<{
@@ -60,7 +60,32 @@ console.log(
         :color="marker.info?.color ? '#' + marker.info?.color : '#fff'"
         :fill-opacity="(marker.data.data.circle.oapcity ?? 5) / 100"
     >
-        <MarkerMarkerPopup :marker="marker" @delete="reveal()" />
+        <LPopup :options="{ closeButton: true }">
+            <ul>
+                <li class="inline-flex items-center">
+                    {{ marker.info?.name }}
+                    <template v-if="can('LivemapperService.DeleteMarker')">
+                        <button type="button" :title="$t('common.delete')" class="flex flex-row items-center" @click="reveal()">
+                            <TrashCanIcon class="w-6 h-6" />
+                            <span class="sr-only">{{ $t('common.delete') }}</span>
+                        </button>
+                    </template>
+                </li>
+                <li v-if="marker.info?.description">{{ $t('common.description') }}: {{ marker.info?.description }}</li>
+                <li class="italic">
+                    <span class="font-semibold">{{ $t('common.sent_by') }}</span
+                    >:
+                    <span v-if="marker.creator">
+                        {{ marker.creator?.firstname }}, {{ marker.creator?.lastname }} (<PhoneNumber
+                            :number="marker.creator.phoneNumber"
+                        />)
+                    </span>
+                    <span v-else>
+                        {{ $t('common.unknown') }}
+                    </span>
+                </li>
+            </ul>
+        </LPopup>
     </LCircleMarker>
 
     <LMarker
@@ -79,7 +104,33 @@ console.log(
                 :style="{ color: marker.info?.color ? '#' + marker.info?.color : 'currentColor' }"
             />
         </LIcon>
-        <MarkerMarkerPopup :marker="marker" @delete="reveal()" />"
+
+        <LPopup :options="{ closeButton: true }">
+            <ul>
+                <li class="inline-flex items-center">
+                    {{ marker.info?.name }}
+                    <template v-if="can('LivemapperService.DeleteMarker')">
+                        <button type="button" :title="$t('common.delete')" class="flex flex-row items-center" @click="reveal()">
+                            <TrashCanIcon class="w-6 h-6" />
+                            <span class="sr-only">{{ $t('common.delete') }}</span>
+                        </button>
+                    </template>
+                </li>
+                <li v-if="marker.info?.description">{{ $t('common.description') }}: {{ marker.info?.description }}</li>
+                <li class="italic">
+                    <span class="font-semibold">{{ $t('common.sent_by') }}</span
+                    >:
+                    <span v-if="marker.creator">
+                        {{ marker.creator?.firstname }}, {{ marker.creator?.lastname }} (<PhoneNumber
+                            :number="marker.creator.phoneNumber"
+                        />)
+                    </span>
+                    <span v-else>
+                        {{ $t('common.unknown') }}
+                    </span>
+                </li>
+            </ul>
+        </LPopup>
     </LMarker>
 
     <LMarker v-else :lat-lng="[marker.info!.y, marker.info!.x]" :name="marker.info!.name" @click="$emit('selected')">
@@ -95,6 +146,32 @@ console.log(
                 </svg>
             </div>
         </LIcon>
-        <MarkerMarkerPopup :marker="marker" @delete="reveal()" />"
+
+        <LPopup :options="{ closeButton: true }">
+            <ul>
+                <li class="inline-flex items-center">
+                    {{ marker.info?.name }}
+                    <template v-if="can('LivemapperService.DeleteMarker')">
+                        <button type="button" :title="$t('common.delete')" class="flex flex-row items-center" @click="reveal()">
+                            <TrashCanIcon class="w-6 h-6" />
+                            <span class="sr-only">{{ $t('common.delete') }}</span>
+                        </button>
+                    </template>
+                </li>
+                <li v-if="marker.info?.description">{{ $t('common.description') }}: {{ marker.info?.description }}</li>
+                <li class="italic">
+                    <span class="font-semibold">{{ $t('common.sent_by') }}</span
+                    >:
+                    <span v-if="marker.creator">
+                        {{ marker.creator?.firstname }}, {{ marker.creator?.lastname }} (<PhoneNumber
+                            :number="marker.creator.phoneNumber"
+                        />)
+                    </span>
+                    <span v-else>
+                        {{ $t('common.unknown') }}
+                    </span>
+                </li>
+            </ul>
+        </LPopup>
     </LMarker>
 </template>
