@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { TrashCanIcon, VectorPointSelectIcon } from 'mdi-vue3';
 import { vMaska } from 'maska';
-import { watchDebounced } from '@vueuse/core';
+import { useTimeoutFn, watchDebounced } from '@vueuse/core';
 import { useNotificatorStore } from '~/store/notificator';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 
@@ -24,6 +24,12 @@ function addPin(event: MouseEvent): void {
         return;
     }
 
+    const target = event.target;
+    if (target instanceof SVGCircleElement || target instanceof SVGTextElement) {
+        console.log(event.target);
+        return;
+    }
+
     const pt = svgRef.value.createSVGPoint();
     pt.x = event.clientX;
     pt.y = event.clientY;
@@ -35,9 +41,14 @@ function addPin(event: MouseEvent): void {
     });
 }
 
-function showPin(p: Pin): void {
-    console.log(p);
-    // TODO
+const selectedPin = ref<Pin | undefined>();
+function selectPin(p: Pin): void {
+    if (selectedPin.value !== undefined) {
+        selectedPin.value.selected = false;
+    }
+
+    p.selected = true;
+    selectedPin.value = p;
 }
 
 function removePin(idx: number): void {
@@ -101,7 +112,7 @@ function bmiCalculate(): void {
                                 enable-background="new 0 0 420 780"
                                 xml:space="preserve"
                             >
-                                <g @click="addPin">
+                                <g>
                                     <path
                                         fill="#FFDEC7"
                                         d="M375.86,438.039c-4.383-1.051-14.305-5.084-17.721-7.705c-3.414-2.625-9.121-5.25-10.98-10.928
@@ -160,6 +171,7 @@ function bmiCalculate(): void {
                                         height="416"
                                         xlink:href="/images/components/bodycheckup/human-organs.png"
                                         transform="matrix(1 0 0 1 150.0002 12.8901)"
+                                        @click="addPin"
                                     ></image>
 
                                     <template v-for="(pin, idx) in pins" :key="idx">
@@ -167,10 +179,10 @@ function bmiCalculate(): void {
                                             :cx="pin.x"
                                             :cy="pin.y"
                                             r="12"
-                                            class="newcircle"
+                                            :class="pin.selected ? 'animate-pulse' : ''"
                                             :data-x="pin.x - 50"
                                             :data-y="pin.y - 50"
-                                            @click="showPin(pin)"
+                                            @click="selectPin(pin)"
                                         />
                                         <text
                                             :x="pin.x"
@@ -179,6 +191,7 @@ function bmiCalculate(): void {
                                             stroke="#ffffff"
                                             stroke-width="1.5px"
                                             dy=".3em"
+                                            @click="selectPin(pin)"
                                         >
                                             {{ idx + 1 }}
                                         </text>
@@ -203,7 +216,10 @@ function bmiCalculate(): void {
                                             v-model="pin.description"
                                             type="text"
                                             class="ml-1.5 grow block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                            @focusin="focusTablet(true)"
+                                            @focusin="
+                                                focusTablet(true);
+                                                selectPin(pin);
+                                            "
                                             @focusout="focusTablet(false)"
                                         />
                                         <span class="ml-1" @click="removePin(idx)">
