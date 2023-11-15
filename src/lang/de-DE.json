@@ -534,7 +534,7 @@
                 "content": "Die Startseite von FiveNet können Sie in Ihren Kontoinformationen festlegen."
             },
             "documenteditor": {
-                "content": "Der Dokumenten-Editor hat einen Nacht-Modus, der in Ihren Kontoinformationen aktiviert werden kann."
+                "content": "Sie können in den Konto-Einstellungen einen Nacht-Modus für den Editor aktivieren."
             }
         }
     },
@@ -1630,7 +1630,7 @@
                 "UNSPECIFIED": "Unbestimmt",
                 "DOT": "Punkt",
                 "CIRCLE": "Kreis",
-                "POLYGON": "Polygon"
+                "ICON": "Icon"
             }
         },
         "jobs": {
