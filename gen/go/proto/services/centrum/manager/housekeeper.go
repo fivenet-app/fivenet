@@ -71,26 +71,31 @@ func NewHousekeeper(p HousekeeperParams) *Housekeeper {
 			defer s.wg.Done()
 			s.runHandleDispatchAssignmentExpiration()
 		}()
+
 		s.wg.Add(1)
 		go func() {
 			defer s.wg.Done()
 			s.runArchiveDispatches()
 		}()
+
 		s.wg.Add(1)
 		go func() {
 			defer s.wg.Done()
 			s.runDispatchDeduplication()
 		}()
+
 		s.wg.Add(1)
 		go func() {
 			defer s.wg.Done()
 			s.runCleanupUnits()
 		}()
+
 		s.wg.Add(1)
 		go func() {
 			defer s.wg.Done()
 			s.watchUserChanges()
 		}()
+
 		s.wg.Add(1)
 		go func() {
 			defer s.wg.Done()
@@ -170,6 +175,7 @@ func (s *Housekeeper) handleDispatchAssignmentExpiration(ctx context.Context) er
 		assignments[ua.Job][ua.DispatchID] = append(assignments[ua.Job][ua.DispatchID], ua.UnitID)
 	}
 
+	s.logger.Debug("handling dispatch assignment expiration", zap.Int("expired_assignments", len(assignments)))
 	for job, dsps := range assignments {
 		for dispatchId, units := range dsps {
 			dsp, ok := s.GetDispatch(job, dispatchId)
