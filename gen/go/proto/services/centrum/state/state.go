@@ -16,14 +16,14 @@ var StateModule = fx.Module("centrum_state", fx.Provide(
 ))
 
 type State struct {
-	Settings   *xsync.MapOf[string, *dispatch.Settings]
-	Disponents *xsync.MapOf[string, []*users.UserShort]
+	settings   *xsync.MapOf[string, *dispatch.Settings]
+	disponents *xsync.MapOf[string, []*users.UserShort]
 
-	Units      *xsync.MapOf[string, *xsync.MapOf[uint64, *dispatch.Unit]]
-	UnitsLocks *xsync.MapOf[uint64, *sync.Mutex]
+	units      *xsync.MapOf[string, *xsync.MapOf[uint64, *dispatch.Unit]]
+	unitsLocks *xsync.MapOf[uint64, *sync.Mutex]
 
-	Dispatches        *xsync.MapOf[string, *xsync.MapOf[uint64, *dispatch.Dispatch]]
-	DispatchLocations map[string]*coords.Coords[*dispatch.Dispatch]
+	dispatches        *xsync.MapOf[string, *xsync.MapOf[uint64, *dispatch.Dispatch]]
+	dispatchLocations map[string]*coords.Coords[*dispatch.Dispatch]
 
 	userIDToUnitID *xsync.MapOf[int32, uint64]
 }
@@ -35,14 +35,14 @@ func New(cfg *config.Config) *State {
 	}
 
 	return &State{
-		Settings:   xsync.NewMapOf[string, *dispatch.Settings](),
-		Disponents: xsync.NewMapOf[string, []*users.UserShort](),
+		settings:   xsync.NewMapOf[string, *dispatch.Settings](),
+		disponents: xsync.NewMapOf[string, []*users.UserShort](),
 
-		Units:      xsync.NewMapOf[string, *xsync.MapOf[uint64, *dispatch.Unit]](),
-		UnitsLocks: xsync.NewMapOf[uint64, *sync.Mutex](),
+		units:      xsync.NewMapOf[string, *xsync.MapOf[uint64, *dispatch.Unit]](),
+		unitsLocks: xsync.NewMapOf[uint64, *sync.Mutex](),
 
-		Dispatches:        xsync.NewMapOf[string, *xsync.MapOf[uint64, *dispatch.Dispatch]](),
-		DispatchLocations: locs,
+		dispatches:        xsync.NewMapOf[string, *xsync.MapOf[uint64, *dispatch.Dispatch]](),
+		dispatchLocations: locs,
 
 		userIDToUnitID: xsync.NewMapOf[int32, uint64](),
 	}

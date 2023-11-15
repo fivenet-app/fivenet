@@ -5,7 +5,6 @@ import { ServiceType } from "@protobuf-ts/runtime-rpc";
 import { MessageType } from "@protobuf-ts/runtime";
 import { DisponentsChange } from "../../resources/dispatch/settings.js";
 import { UserShort } from "../../resources/users/users.js";
-import { Settings } from "../../resources/dispatch/settings.js";
 import { TakeDispatchResp } from "../../resources/dispatch/dispatches.js";
 import { DispatchStatus } from "../../resources/dispatch/dispatches.js";
 import { Dispatch } from "../../resources/dispatch/dispatches.js";
@@ -14,6 +13,7 @@ import { UnitStatus } from "../../resources/dispatch/units.js";
 import { PaginationResponse } from "../../resources/common/database/database.js";
 import { Unit } from "../../resources/dispatch/units.js";
 import { StatusUnit } from "../../resources/dispatch/units.js";
+import { Settings } from "../../resources/dispatch/settings.js";
 import { PaginationRequest } from "../../resources/common/database/database.js";
 // Common
 
@@ -47,6 +47,33 @@ export interface ListUnitActivityRequest {
  * @generated from protobuf message services.centrum.GetSettingsRequest
  */
 export interface GetSettingsRequest {
+}
+/**
+ * @generated from protobuf message services.centrum.GetSettingsResponse
+ */
+export interface GetSettingsResponse {
+    /**
+     * @generated from protobuf field: resources.dispatch.Settings settings = 1;
+     */
+    settings?: Settings;
+}
+/**
+ * @generated from protobuf message services.centrum.UpdateSettingsRequest
+ */
+export interface UpdateSettingsRequest {
+    /**
+     * @generated from protobuf field: resources.dispatch.Settings settings = 1;
+     */
+    settings?: Settings;
+}
+/**
+ * @generated from protobuf message services.centrum.UpdateSettingsResponse
+ */
+export interface UpdateSettingsResponse {
+    /**
+     * @generated from protobuf field: resources.dispatch.Settings settings = 1;
+     */
+    settings?: Settings;
 }
 // Unit Management
 
@@ -430,11 +457,11 @@ export interface StreamResponse {
          */
         disponents: DisponentsChange;
     } | {
-        oneofKind: "unitAssigned";
+        oneofKind: "unitCreated";
         /**
-         * @generated from protobuf field: resources.dispatch.Unit unit_assigned = 4;
+         * @generated from protobuf field: resources.dispatch.Unit unit_created = 4;
          */
-        unitAssigned: Unit;
+        unitCreated: Unit;
     } | {
         oneofKind: "unitDeleted";
         /**
@@ -454,17 +481,17 @@ export interface StreamResponse {
          */
         unitStatus: Unit;
     } | {
-        oneofKind: "dispatchDeleted";
-        /**
-         * @generated from protobuf field: uint64 dispatch_deleted = 8;
-         */
-        dispatchDeleted: bigint;
-    } | {
         oneofKind: "dispatchCreated";
         /**
-         * @generated from protobuf field: resources.dispatch.Dispatch dispatch_created = 9;
+         * @generated from protobuf field: resources.dispatch.Dispatch dispatch_created = 8;
          */
         dispatchCreated: Dispatch;
+    } | {
+        oneofKind: "dispatchDeleted";
+        /**
+         * @generated from protobuf field: uint64 dispatch_deleted = 9;
+         */
+        dispatchDeleted: bigint;
     } | {
         oneofKind: "dispatchUpdated";
         /**
@@ -527,6 +554,42 @@ class GetSettingsRequest$Type extends MessageType<GetSettingsRequest> {
  * @generated MessageType for protobuf message services.centrum.GetSettingsRequest
  */
 export const GetSettingsRequest = new GetSettingsRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class GetSettingsResponse$Type extends MessageType<GetSettingsResponse> {
+    constructor() {
+        super("services.centrum.GetSettingsResponse", [
+            { no: 1, name: "settings", kind: "message", T: () => Settings }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.centrum.GetSettingsResponse
+ */
+export const GetSettingsResponse = new GetSettingsResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class UpdateSettingsRequest$Type extends MessageType<UpdateSettingsRequest> {
+    constructor() {
+        super("services.centrum.UpdateSettingsRequest", [
+            { no: 1, name: "settings", kind: "message", T: () => Settings }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.centrum.UpdateSettingsRequest
+ */
+export const UpdateSettingsRequest = new UpdateSettingsRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class UpdateSettingsResponse$Type extends MessageType<UpdateSettingsResponse> {
+    constructor() {
+        super("services.centrum.UpdateSettingsResponse", [
+            { no: 1, name: "settings", kind: "message", T: () => Settings }
+        ]);
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.centrum.UpdateSettingsResponse
+ */
+export const UpdateSettingsResponse = new UpdateSettingsResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class ListUnitsRequest$Type extends MessageType<ListUnitsRequest> {
     constructor() {
@@ -921,12 +984,12 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
             { no: 1, name: "latest_state", kind: "message", oneof: "change", T: () => LatestState },
             { no: 2, name: "settings", kind: "message", oneof: "change", T: () => Settings },
             { no: 3, name: "disponents", kind: "message", oneof: "change", T: () => DisponentsChange },
-            { no: 4, name: "unit_assigned", kind: "message", oneof: "change", T: () => Unit },
+            { no: 4, name: "unit_created", kind: "message", oneof: "change", T: () => Unit },
             { no: 5, name: "unit_deleted", kind: "message", oneof: "change", T: () => Unit },
             { no: 6, name: "unit_updated", kind: "message", oneof: "change", T: () => Unit },
             { no: 7, name: "unit_status", kind: "message", oneof: "change", T: () => Unit },
-            { no: 8, name: "dispatch_deleted", kind: "scalar", oneof: "change", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 9, name: "dispatch_created", kind: "message", oneof: "change", T: () => Dispatch },
+            { no: 8, name: "dispatch_created", kind: "message", oneof: "change", T: () => Dispatch },
+            { no: 9, name: "dispatch_deleted", kind: "scalar", oneof: "change", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
             { no: 10, name: "dispatch_updated", kind: "message", oneof: "change", T: () => Dispatch },
             { no: 11, name: "dispatch_status", kind: "message", oneof: "change", T: () => Dispatch },
             { no: 12, name: "ping", kind: "scalar", oneof: "change", T: 9 /*ScalarType.STRING*/ },
@@ -942,7 +1005,7 @@ export const StreamResponse = new StreamResponse$Type();
  * @generated ServiceType for protobuf service services.centrum.CentrumService
  */
 export const CentrumService = new ServiceType("services.centrum.CentrumService", [
-    { name: "UpdateSettings", options: {}, I: Settings, O: Settings },
+    { name: "UpdateSettings", options: {}, I: UpdateSettingsRequest, O: UpdateSettingsResponse },
     { name: "CreateDispatch", options: {}, I: CreateDispatchRequest, O: CreateDispatchResponse },
     { name: "UpdateDispatch", options: {}, I: UpdateDispatchRequest, O: UpdateDispatchResponse },
     { name: "DeleteDispatch", options: {}, I: DeleteDispatchRequest, O: DeleteDispatchResponse },
@@ -950,7 +1013,7 @@ export const CentrumService = new ServiceType("services.centrum.CentrumService",
     { name: "AssignDispatch", options: {}, I: AssignDispatchRequest, O: AssignDispatchResponse },
     { name: "AssignUnit", options: {}, I: AssignUnitRequest, O: AssignUnitResponse },
     { name: "Stream", serverStreaming: true, options: {}, I: StreamRequest, O: StreamResponse },
-    { name: "GetSettings", options: {}, I: GetSettingsRequest, O: Settings },
+    { name: "GetSettings", options: {}, I: GetSettingsRequest, O: GetSettingsResponse },
     { name: "JoinUnit", options: {}, I: JoinUnitRequest, O: JoinUnitResponse },
     { name: "ListUnits", options: {}, I: ListUnitsRequest, O: ListUnitsResponse },
     { name: "ListUnitActivity", options: {}, I: ListUnitActivityRequest, O: ListUnitActivityResponse },

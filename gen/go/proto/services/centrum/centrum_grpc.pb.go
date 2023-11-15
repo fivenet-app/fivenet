@@ -8,7 +8,6 @@ package centrum
 
 import (
 	context "context"
-	dispatch "github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -46,7 +45,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CentrumServiceClient interface {
 	// @perm
-	UpdateSettings(ctx context.Context, in *dispatch.Settings, opts ...grpc.CallOption) (*dispatch.Settings, error)
+	UpdateSettings(ctx context.Context, in *UpdateSettingsRequest, opts ...grpc.CallOption) (*UpdateSettingsResponse, error)
 	// @perm
 	CreateDispatch(ctx context.Context, in *CreateDispatchRequest, opts ...grpc.CallOption) (*CreateDispatchResponse, error)
 	// @perm
@@ -62,7 +61,7 @@ type CentrumServiceClient interface {
 	// @perm
 	Stream(ctx context.Context, in *StreamRequest, opts ...grpc.CallOption) (CentrumService_StreamClient, error)
 	// @perm: Name=Stream
-	GetSettings(ctx context.Context, in *GetSettingsRequest, opts ...grpc.CallOption) (*dispatch.Settings, error)
+	GetSettings(ctx context.Context, in *GetSettingsRequest, opts ...grpc.CallOption) (*GetSettingsResponse, error)
 	// @perm: Name=Stream
 	JoinUnit(ctx context.Context, in *JoinUnitRequest, opts ...grpc.CallOption) (*JoinUnitResponse, error)
 	// @perm: Name=Stream
@@ -93,8 +92,8 @@ func NewCentrumServiceClient(cc grpc.ClientConnInterface) CentrumServiceClient {
 	return &centrumServiceClient{cc}
 }
 
-func (c *centrumServiceClient) UpdateSettings(ctx context.Context, in *dispatch.Settings, opts ...grpc.CallOption) (*dispatch.Settings, error) {
-	out := new(dispatch.Settings)
+func (c *centrumServiceClient) UpdateSettings(ctx context.Context, in *UpdateSettingsRequest, opts ...grpc.CallOption) (*UpdateSettingsResponse, error) {
+	out := new(UpdateSettingsResponse)
 	err := c.cc.Invoke(ctx, CentrumService_UpdateSettings_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -188,8 +187,8 @@ func (x *centrumServiceStreamClient) Recv() (*StreamResponse, error) {
 	return m, nil
 }
 
-func (c *centrumServiceClient) GetSettings(ctx context.Context, in *GetSettingsRequest, opts ...grpc.CallOption) (*dispatch.Settings, error) {
-	out := new(dispatch.Settings)
+func (c *centrumServiceClient) GetSettings(ctx context.Context, in *GetSettingsRequest, opts ...grpc.CallOption) (*GetSettingsResponse, error) {
+	out := new(GetSettingsResponse)
 	err := c.cc.Invoke(ctx, CentrumService_GetSettings_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -292,7 +291,7 @@ func (c *centrumServiceClient) UpdateDispatchStatus(ctx context.Context, in *Upd
 // for forward compatibility
 type CentrumServiceServer interface {
 	// @perm
-	UpdateSettings(context.Context, *dispatch.Settings) (*dispatch.Settings, error)
+	UpdateSettings(context.Context, *UpdateSettingsRequest) (*UpdateSettingsResponse, error)
 	// @perm
 	CreateDispatch(context.Context, *CreateDispatchRequest) (*CreateDispatchResponse, error)
 	// @perm
@@ -308,7 +307,7 @@ type CentrumServiceServer interface {
 	// @perm
 	Stream(*StreamRequest, CentrumService_StreamServer) error
 	// @perm: Name=Stream
-	GetSettings(context.Context, *GetSettingsRequest) (*dispatch.Settings, error)
+	GetSettings(context.Context, *GetSettingsRequest) (*GetSettingsResponse, error)
 	// @perm: Name=Stream
 	JoinUnit(context.Context, *JoinUnitRequest) (*JoinUnitResponse, error)
 	// @perm: Name=Stream
@@ -336,7 +335,7 @@ type CentrumServiceServer interface {
 type UnimplementedCentrumServiceServer struct {
 }
 
-func (UnimplementedCentrumServiceServer) UpdateSettings(context.Context, *dispatch.Settings) (*dispatch.Settings, error) {
+func (UnimplementedCentrumServiceServer) UpdateSettings(context.Context, *UpdateSettingsRequest) (*UpdateSettingsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateSettings not implemented")
 }
 func (UnimplementedCentrumServiceServer) CreateDispatch(context.Context, *CreateDispatchRequest) (*CreateDispatchResponse, error) {
@@ -360,7 +359,7 @@ func (UnimplementedCentrumServiceServer) AssignUnit(context.Context, *AssignUnit
 func (UnimplementedCentrumServiceServer) Stream(*StreamRequest, CentrumService_StreamServer) error {
 	return status.Errorf(codes.Unimplemented, "method Stream not implemented")
 }
-func (UnimplementedCentrumServiceServer) GetSettings(context.Context, *GetSettingsRequest) (*dispatch.Settings, error) {
+func (UnimplementedCentrumServiceServer) GetSettings(context.Context, *GetSettingsRequest) (*GetSettingsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetSettings not implemented")
 }
 func (UnimplementedCentrumServiceServer) JoinUnit(context.Context, *JoinUnitRequest) (*JoinUnitResponse, error) {
@@ -407,7 +406,7 @@ func RegisterCentrumServiceServer(s grpc.ServiceRegistrar, srv CentrumServiceSer
 }
 
 func _CentrumService_UpdateSettings_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(dispatch.Settings)
+	in := new(UpdateSettingsRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -419,7 +418,7 @@ func _CentrumService_UpdateSettings_Handler(srv interface{}, ctx context.Context
 		FullMethod: CentrumService_UpdateSettings_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CentrumServiceServer).UpdateSettings(ctx, req.(*dispatch.Settings))
+		return srv.(CentrumServiceServer).UpdateSettings(ctx, req.(*UpdateSettingsRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }

@@ -381,6 +381,8 @@ export const useCentrumStore = defineStore('centrum', {
                                 resp.restart = true;
                             }
                         }
+                    } else if (resp.change.oneofKind === 'unitCreated') {
+                        this.addOrUpdateUnit(resp.change.unitCreated);
                     } else if (resp.change.oneofKind === 'unitDeleted') {
                         this.removeUnit(resp.change.unitDeleted);
                     } else if (resp.change.oneofKind === 'unitUpdated') {

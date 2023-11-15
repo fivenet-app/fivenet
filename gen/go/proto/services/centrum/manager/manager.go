@@ -4,7 +4,6 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	"sync"
 
 	"github.com/adrg/strutil/metrics"
 	eventscentrum "github.com/galexrt/fivenet/gen/go/proto/services/centrum/events"
@@ -27,7 +26,6 @@ var Module = fx.Module("centrum_manager", fx.Provide(
 type Manager struct {
 	ctx    context.Context
 	logger *zap.Logger
-	wg     sync.WaitGroup
 
 	tracer   trace.Tracer
 	db       *sql.DB
@@ -68,9 +66,8 @@ func New(p Params) *Manager {
 	s := &Manager{
 		ctx:    ctx,
 		logger: p.Logger.Named("centrum_state"),
-		wg:     sync.WaitGroup{},
 
-		tracer:   p.TP.Tracer("centrum-state"),
+		tracer:   p.TP.Tracer("centrum-manager"),
 		db:       p.DB,
 		events:   p.Events,
 		enricher: p.Enricher,
@@ -84,7 +81,7 @@ func New(p Params) *Manager {
 	}
 
 	p.LC.Append(fx.StartHook(func(ctx context.Context) error {
-		if err := eventscentrum.RegisterEvents(ctx, s.events); err != nil {
+		if err := eventscentrum.RegisterStreams(ctx, s.events); err != nil {
 			return fmt.Errorf("failed to register events: %w", err)
 		}
 
@@ -92,21 +89,9 @@ func New(p Params) *Manager {
 			return err
 		}
 
-		/*s.wg.Add(1)
-		go func() {
-			defer s.wg.Done()
-			s.watchEvents()
-		}()*/
-		s.wg.Add(1)
-		go func() {
-			defer s.wg.Done()
-			s.watchUserChanges()
-		}()
-		s.wg.Add(1)
-		go func() {
-			defer s.wg.Done()
-			s.housekeeper()
-		}()
+		if err := s.registerSubscriptions(); err != nil {
+			return err
+		}
 
 		return nil
 	}))

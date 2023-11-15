@@ -9,7 +9,6 @@ import (
 
 	dispatch "github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
-	"github.com/galexrt/fivenet/gen/go/proto/services/centrum/bot"
 	eventscentrum "github.com/galexrt/fivenet/gen/go/proto/services/centrum/events"
 	"github.com/galexrt/fivenet/gen/go/proto/services/centrum/manager"
 	"github.com/galexrt/fivenet/pkg/config"
@@ -48,8 +47,7 @@ type Server struct {
 	tracker  *tracker.Tracker
 	postals  *postals.Postals
 
-	convertJobs []string
-	publicJobs  []string
+	publicJobs []string
 
 	state *manager.Manager
 }
@@ -59,18 +57,17 @@ type Params struct {
 
 	LC fx.Lifecycle
 
-	Logger     *zap.Logger
-	TP         *tracesdk.TracerProvider
-	DB         *sql.DB
-	Perms      perms.Permissions
-	Audit      audit.IAuditer
-	Events     *events.Eventus
-	Enricher   *mstlystcdata.Enricher
-	Tracker    *tracker.Tracker
-	Postals    *postals.Postals
-	Config     *config.Config
-	Manager    *manager.Manager
-	BotManager *bot.Manager
+	Logger   *zap.Logger
+	TP       *tracesdk.TracerProvider
+	DB       *sql.DB
+	Perms    perms.Permissions
+	Audit    audit.IAuditer
+	Events   *events.Eventus
+	Enricher *mstlystcdata.Enricher
+	Tracker  *tracker.Tracker
+	Postals  *postals.Postals
+	Config   *config.Config
+	Manager  *manager.Manager
 }
 
 func NewServer(p Params) (*Server, error) {
@@ -91,22 +88,15 @@ func NewServer(p Params) (*Server, error) {
 		tracker:  p.Tracker,
 		postals:  p.Postals,
 
-		convertJobs: p.Config.Game.DispatchCenter.ConvertJobs,
-		publicJobs:  p.Config.Game.PublicJobs,
+		publicJobs: p.Config.Game.PublicJobs,
 
 		state: p.Manager,
 	}
 
 	p.LC.Append(fx.StartHook(func(ctx context.Context) error {
-		if err := eventscentrum.RegisterEvents(ctx, s.events); err != nil {
+		if err := eventscentrum.RegisterStreams(ctx, s.events); err != nil {
 			return fmt.Errorf("failed to register events: %w", err)
 		}
-
-		s.wg.Add(1)
-		go func() {
-			defer s.wg.Done()
-			s.ConvertPhoneJobMsgToDispatch()
-		}()
 
 		return nil
 	}))
@@ -313,6 +303,16 @@ func (s *Server) stream(srv CentrumService_StreamServer, isDisponent bool, job s
 
 			case eventscentrum.TopicUnit:
 				switch tType {
+				case eventscentrum.TypeUnitCreated:
+					dest := &dispatch.Unit{}
+					if err := proto.Unmarshal(msg.Data, dest); err != nil {
+						return true, err
+					}
+
+					resp.Change = &StreamResponse_UnitCreated{
+						UnitCreated: dest,
+					}
+
 				case eventscentrum.TypeUnitDeleted:
 					dest := &dispatch.Unit{}
 					if err := proto.Unmarshal(msg.Data, dest); err != nil {

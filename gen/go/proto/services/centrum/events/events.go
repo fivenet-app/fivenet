@@ -19,12 +19,13 @@ const (
 	TypeGeneralDisponents events.Type  = "disponents"
 
 	TopicDispatch       events.Topic = "dispatch"
-	TypeDispatchCreated events.Type  = "created"
 	TypeDispatchDeleted events.Type  = "deleted"
+	TypeDispatchCreated events.Type  = "created"
 	TypeDispatchUpdated events.Type  = "updated"
 	TypeDispatchStatus  events.Type  = "status"
 
 	TopicUnit       events.Topic = "unit"
+	TypeUnitCreated events.Type  = "created"
 	TypeUnitDeleted events.Type  = "deleted"
 	TypeUnitUpdated events.Type  = "updated"
 	TypeUnitStatus  events.Type  = "status"
@@ -49,13 +50,13 @@ func BuildSubject(topic events.Topic, tType events.Type, job string, id uint64) 
 	return fmt.Sprintf(format+".%d", BaseSubject, job, id)
 }
 
-func RegisterEvents(ctx context.Context, ev *events.Eventus) error {
+func RegisterStreams(ctx context.Context, ev *events.Eventus) error {
 	cfg := &nats.StreamConfig{
 		Name:      "CENTRUM",
 		Retention: nats.InterestPolicy,
 		Subjects:  []string{fmt.Sprintf("%s.>", BaseSubject)},
 		Discard:   nats.DiscardOld,
-		MaxAge:    30 * time.Second,
+		MaxAge:    120 * time.Second,
 	}
 
 	if _, err := ev.JS.UpdateStream(cfg); err != nil {

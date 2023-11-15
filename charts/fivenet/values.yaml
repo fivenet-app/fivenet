@@ -230,7 +230,7 @@ fivenet:
       bucketName: ""
 
 # -- FiveNet Discord Bot deployment config
-discordBot:
+worker:
   enabled: true
   replicaCount: 1
   image:

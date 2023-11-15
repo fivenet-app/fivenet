@@ -24,7 +24,7 @@ async function getCentrumSettings(): Promise<Settings> {
         const call = $grpc.getCentrumClient().getSettings({});
         const { response } = await call;
 
-        return response;
+        return response.settings!;
     } catch (e) {
         $grpc.handleError(e as RpcError);
         throw e;
@@ -47,10 +47,12 @@ interface FormData {
 async function createOrUpdateUnit(values: FormData): Promise<void> {
     try {
         const call = $grpc.getCentrumClient().updateSettings({
-            job: '',
-            enabled: values.enabled,
-            mode: values.mode,
-            fallbackMode: values.fallbackMode,
+            settings: {
+                job: '',
+                enabled: values.enabled,
+                mode: values.mode,
+                fallbackMode: values.fallbackMode,
+            },
         });
         await call;
 

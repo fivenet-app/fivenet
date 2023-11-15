@@ -5,11 +5,12 @@ import (
 
 	dispatch "github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
 	"github.com/galexrt/fivenet/pkg/utils"
+	"github.com/puzpuzpuz/xsync/v3"
 	"golang.org/x/exp/slices"
 )
 
 func (s *State) GetUnit(job string, id uint64) (*dispatch.Unit, bool) {
-	units, ok := s.Units.Load(job)
+	units, ok := s.units.Load(job)
 	if !ok {
 		return nil, false
 	}
@@ -24,7 +25,7 @@ func (s *State) GetUnitIDForUserID(userId int32) (uint64, bool) {
 func (s *State) ListUnits(job string) ([]*dispatch.Unit, bool) {
 	us := []*dispatch.Unit{}
 
-	units, ok := s.Units.Load(job)
+	units, ok := s.units.Load(job)
 	if !ok {
 		return nil, false
 	}
@@ -73,10 +74,29 @@ func (s *State) FilterUnits(job string, statuses []dispatch.StatusUnit, notStatu
 }
 
 func (s *State) DeleteUnit(job string, id uint64) {
-	units, ok := s.Units.Load(job)
+	units, ok := s.units.Load(job)
 	if ok {
 		units.Delete(id)
 	}
 
-	s.UnitsLocks.Delete(id)
+	s.ClearUnitLock(id)
+}
+
+func (s *State) UpdateUnit(job string, unitId uint64, unit *dispatch.Unit) error {
+	if dispatch, ok := s.GetUnitsMap(job).LoadOrStore(unitId, unit); ok {
+		dispatch.Merge(unit)
+	}
+
+	return nil
+}
+
+func (s *State) GetUnitsJobs() []string {
+	list := []string{}
+
+	s.units.Range(func(job string, _ *xsync.MapOf[uint64, *dispatch.Unit]) bool {
+		list = append(list, job)
+		return true
+	})
+
+	return list
 }

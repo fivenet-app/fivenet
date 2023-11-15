@@ -7,7 +7,6 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
 	errorscentrum "github.com/galexrt/fivenet/gen/go/proto/services/centrum/errors"
-	eventscentrum "github.com/galexrt/fivenet/gen/go/proto/services/centrum/events"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
@@ -16,7 +15,6 @@ import (
 )
 
 var (
-	tUnits      = table.FivenetCentrumUnits.AS("unit")
 	tUnitStatus = table.FivenetCentrumUnitsStatus.AS("unitstatus")
 	tUsers      = table.Users.AS("usershort")
 )
@@ -59,110 +57,23 @@ func (s *Server) CreateOrUpdateUnit(ctx context.Context, req *CreateOrUpdateUnit
 	}
 	defer s.auditer.Log(auditEntry, req)
 
+	var unit *dispatch.Unit
+	var err error
 	// No unit id set
 	if req.Unit.Id <= 0 {
-		tUnits := table.FivenetCentrumUnits
-		stmt := tUnits.
-			INSERT(
-				tUnits.Job,
-				tUnits.Name,
-				tUnits.Initials,
-				tUnits.Color,
-				tUnits.Description,
-			).
-			VALUES(
-				userInfo.Job,
-				req.Unit.Name,
-				req.Unit.Initials,
-				req.Unit.Color,
-				req.Unit.Description,
-			)
-
-		result, err := stmt.ExecContext(ctx, s.db)
+		unit, err = s.state.CreateUnit(ctx, userInfo.Job, req.Unit)
 		if err != nil {
-			return nil, errorscentrum.ErrFailedQuery
+			return nil, err
 		}
-
-		lastId, err := result.LastInsertId()
-		if err != nil {
-			return nil, errorscentrum.ErrFailedQuery
-		}
-
-		req.Unit.Id = uint64(lastId)
 
 		auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
 	} else {
-		description := ""
-		if req.Unit.Description != nil {
-			description = *req.Unit.Description
-		}
-
-		stmt := tUnits.
-			UPDATE(
-				tUnits.Name,
-				tUnits.Initials,
-				tUnits.Color,
-				tUnits.Description,
-			).
-			SET(
-				tUnits.Name.SET(jet.String(req.Unit.Name)),
-				tUnits.Initials.SET(jet.String(req.Unit.Initials)),
-				tUnits.Color.SET(jet.String(req.Unit.Color)),
-				tUnits.Description.SET(jet.String(description)),
-			).
-			WHERE(jet.AND(
-				tUnits.Job.EQ(jet.String(userInfo.Job)),
-				tUnits.ID.EQ(jet.Uint64(req.Unit.Id)),
-			))
-
-		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-			return nil, errorscentrum.ErrFailedQuery
+		unit, err = s.state.UpdateUnit(ctx, userInfo.Job, req.Unit)
+		if err != nil {
+			return nil, err
 		}
 
 		auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
-	}
-
-	// Load new/updated unit from database
-	if err := s.state.LoadUnits(ctx, req.Unit.Id); err != nil {
-		return nil, errorscentrum.ErrFailedQuery
-	}
-
-	unit, ok := s.state.GetUnit(userInfo.Job, req.Unit.Id)
-	if !ok {
-		return nil, errorscentrum.ErrFailedQuery
-	}
-
-	var x, y *float64
-	var postal *string
-	if marker, ok := s.tracker.GetUserById(userInfo.UserId); ok {
-		x = &marker.Info.X
-		y = &marker.Info.Y
-		postal = marker.Info.Postal
-	}
-
-	// A new unit shouldn't have a status, so we make sure it has one
-	if unit.Status == nil {
-		if err := s.state.UpdateUnitStatus(ctx, userInfo.Job, unit, &dispatch.UnitStatus{
-			UnitId:    unit.Id,
-			Status:    dispatch.StatusUnit_STATUS_UNIT_UNKNOWN,
-			UserId:    &userInfo.UserId,
-			CreatorId: &userInfo.UserId,
-			X:         x,
-			Y:         y,
-			Postal:    postal,
-		}); err != nil {
-			return nil, errorscentrum.ErrFailedQuery
-		}
-	}
-
-	data, err := proto.Marshal(unit)
-	if err != nil {
-		return nil, errorscentrum.ErrFailedQuery
-	}
-	s.events.JS.PublishAsync(eventscentrum.BuildSubject(eventscentrum.TopicUnit, eventscentrum.TypeUnitUpdated, userInfo.Job, unit.Id), data)
-
-	if err := s.state.LoadUnits(ctx, unit.Id); err != nil {
-		return nil, errorscentrum.ErrFailedQuery
 	}
 
 	return &CreateOrUpdateUnitResponse{

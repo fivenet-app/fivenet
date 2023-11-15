@@ -36,7 +36,7 @@ func (s *Manager) LoadSettings(ctx context.Context, job string) error {
 	}
 
 	for _, settings := range dest {
-		if err := s.UpdateSettings(settings.Job, settings); err != nil {
+		if err := s.State.UpdateSettings(settings.Job, settings); err != nil {
 			return err
 		}
 	}
@@ -93,19 +93,10 @@ func (s *Manager) LoadDisponents(ctx context.Context, job string) error {
 	}
 
 	if len(perJob) == 0 {
-		if job != "" {
-			s.Disponents.Delete(job)
-		} else {
-			// No disponents for any jobs found, clear lists
-			s.Disponents.Clear()
-		}
+		s.UpdateDisponents("", nil)
 	} else {
 		for job, us := range perJob {
-			if len(us) == 0 {
-				s.Disponents.Delete(job)
-			} else {
-				s.Disponents.Store(job, us)
-			}
+			s.UpdateDisponents(job, us)
 		}
 	}
 
@@ -313,7 +304,7 @@ func (s *Manager) LoadDispatches(ctx context.Context, id uint64) error {
 		dm := s.GetDispatchesMap(dispatches[i].Job)
 		if dispatch, loaded := dm.LoadOrStore(dispatches[i].Id, dispatches[i]); loaded {
 			if dispatch.X != dispatches[i].X || dispatch.Y != dispatches[i].Y {
-				s.State.DispatchLocations[dispatch.Job].Remove(dispatch, nil)
+				s.State.GetDispatchLocations(dispatch.Job).Remove(dispatch, nil)
 			}
 
 			dispatch.Merge(dispatches[i])
@@ -329,10 +320,10 @@ func (s *Manager) LoadDispatches(ctx context.Context, id uint64) error {
 			}
 		}
 
-		if !s.State.DispatchLocations[dispatches[i].Job].Has(dispatches[i], func(p orb.Pointer) bool {
+		if !s.State.GetDispatchLocations(dispatches[i].Job).Has(dispatches[i], func(p orb.Pointer) bool {
 			return p.(*dispatch.Dispatch).Id == dispatches[i].Id
 		}) {
-			s.State.DispatchLocations[dispatches[i].Job].Add(dispatches[i])
+			s.State.GetDispatchLocations(dispatches[i].Job).Add(dispatches[i])
 		}
 	}
 

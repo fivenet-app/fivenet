@@ -24,6 +24,7 @@ import type { ListUnitsResponse } from "./centrum.js";
 import type { ListUnitsRequest } from "./centrum.js";
 import type { JoinUnitResponse } from "./centrum.js";
 import type { JoinUnitRequest } from "./centrum.js";
+import type { GetSettingsResponse } from "./centrum.js";
 import type { GetSettingsRequest } from "./centrum.js";
 import type { StreamResponse } from "./centrum.js";
 import type { StreamRequest } from "./centrum.js";
@@ -41,7 +42,8 @@ import type { UpdateDispatchRequest } from "./centrum.js";
 import type { CreateDispatchResponse } from "./centrum.js";
 import type { CreateDispatchRequest } from "./centrum.js";
 import { stackIntercept } from "@protobuf-ts/runtime-rpc";
-import type { Settings } from "../../resources/dispatch/settings.js";
+import type { UpdateSettingsResponse } from "./centrum.js";
+import type { UpdateSettingsRequest } from "./centrum.js";
 import type { UnaryCall } from "@protobuf-ts/runtime-rpc";
 import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
 /**
@@ -51,9 +53,9 @@ export interface ICentrumServiceClient {
     /**
      * @perm
      *
-     * @generated from protobuf rpc: UpdateSettings(resources.dispatch.Settings) returns (resources.dispatch.Settings);
+     * @generated from protobuf rpc: UpdateSettings(services.centrum.UpdateSettingsRequest) returns (services.centrum.UpdateSettingsResponse);
      */
-    updateSettings(input: Settings, options?: RpcOptions): UnaryCall<Settings, Settings>;
+    updateSettings(input: UpdateSettingsRequest, options?: RpcOptions): UnaryCall<UpdateSettingsRequest, UpdateSettingsResponse>;
     /**
      * @perm
      *
@@ -99,9 +101,9 @@ export interface ICentrumServiceClient {
     /**
      * @perm: Name=Stream
      *
-     * @generated from protobuf rpc: GetSettings(services.centrum.GetSettingsRequest) returns (resources.dispatch.Settings);
+     * @generated from protobuf rpc: GetSettings(services.centrum.GetSettingsRequest) returns (services.centrum.GetSettingsResponse);
      */
-    getSettings(input: GetSettingsRequest, options?: RpcOptions): UnaryCall<GetSettingsRequest, Settings>;
+    getSettings(input: GetSettingsRequest, options?: RpcOptions): UnaryCall<GetSettingsRequest, GetSettingsResponse>;
     /**
      * @perm: Name=Stream
      *
@@ -175,11 +177,11 @@ export class CentrumServiceClient implements ICentrumServiceClient, ServiceInfo 
     /**
      * @perm
      *
-     * @generated from protobuf rpc: UpdateSettings(resources.dispatch.Settings) returns (resources.dispatch.Settings);
+     * @generated from protobuf rpc: UpdateSettings(services.centrum.UpdateSettingsRequest) returns (services.centrum.UpdateSettingsResponse);
      */
-    updateSettings(input: Settings, options?: RpcOptions): UnaryCall<Settings, Settings> {
+    updateSettings(input: UpdateSettingsRequest, options?: RpcOptions): UnaryCall<UpdateSettingsRequest, UpdateSettingsResponse> {
         const method = this.methods[0], opt = this._transport.mergeOptions(options);
-        return stackIntercept<Settings, Settings>("unary", this._transport, method, opt, input);
+        return stackIntercept<UpdateSettingsRequest, UpdateSettingsResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @perm
@@ -247,11 +249,11 @@ export class CentrumServiceClient implements ICentrumServiceClient, ServiceInfo 
     /**
      * @perm: Name=Stream
      *
-     * @generated from protobuf rpc: GetSettings(services.centrum.GetSettingsRequest) returns (resources.dispatch.Settings);
+     * @generated from protobuf rpc: GetSettings(services.centrum.GetSettingsRequest) returns (services.centrum.GetSettingsResponse);
      */
-    getSettings(input: GetSettingsRequest, options?: RpcOptions): UnaryCall<GetSettingsRequest, Settings> {
+    getSettings(input: GetSettingsRequest, options?: RpcOptions): UnaryCall<GetSettingsRequest, GetSettingsResponse> {
         const method = this.methods[8], opt = this._transport.mergeOptions(options);
-        return stackIntercept<GetSettingsRequest, Settings>("unary", this._transport, method, opt, input);
+        return stackIntercept<GetSettingsRequest, GetSettingsResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @perm: Name=Stream

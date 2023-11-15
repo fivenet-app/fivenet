@@ -2,47 +2,116 @@ package manager
 
 import (
 	"context"
+	"database/sql"
 	"sort"
 	"sync"
 	"time"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
 	centrumutils "github.com/galexrt/fivenet/gen/go/proto/services/centrum/utils"
+	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/utils"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/paulmach/orb"
-	"github.com/puzpuzpuz/xsync/v3"
+	tracesdk "go.opentelemetry.io/otel/sdk/trace"
+	"go.opentelemetry.io/otel/trace"
+	"go.uber.org/fx"
 	"go.uber.org/zap"
 )
 
 const (
-	MaxCancelledDispatchesPerRun = 3
+	MaxCancelledDispatchesPerRun = 4
 )
 
-func (s *Manager) housekeeper() {
-	s.wg.Add(1)
-	go func() {
-		defer s.wg.Done()
-		s.runHandleDispatchAssignmentExpiration()
-	}()
-	s.wg.Add(1)
-	go func() {
-		defer s.wg.Done()
-		s.runArchiveDispatches()
-	}()
-	s.wg.Add(1)
-	go func() {
-		defer s.wg.Done()
-		s.runDispatchDeduplication()
-	}()
-	s.wg.Add(1)
-	go func() {
-		defer s.wg.Done()
-		s.runRemoveDispatchesFromEmptyUnits()
-	}()
+var HousekeeperModule = fx.Module("centrum_manager_housekeeper", fx.Provide(
+	NewHousekeeper,
+))
+
+type Housekeeper struct {
+	ctx    context.Context
+	logger *zap.Logger
+	wg     sync.WaitGroup
+
+	tracer trace.Tracer
+	db     *sql.DB
+
+	convertJobs []string
+
+	*Manager
 }
 
-func (s *Manager) runHandleDispatchAssignmentExpiration() {
+type HousekeeperParams struct {
+	fx.In
+
+	LC fx.Lifecycle
+
+	Logger  *zap.Logger
+	TP      *tracesdk.TracerProvider
+	DB      *sql.DB
+	Manager *Manager
+	Config  *config.Config
+}
+
+func NewHousekeeper(p HousekeeperParams) *Housekeeper {
+	ctx, cancel := context.WithCancel(context.Background())
+
+	s := &Housekeeper{
+		ctx:         ctx,
+		logger:      p.Logger.Named("centrum_manager_housekeeper"),
+		wg:          sync.WaitGroup{},
+		tracer:      p.TP.Tracer("centrum-manager-housekeeper"),
+		db:          p.DB,
+		convertJobs: p.Config.Game.DispatchCenter.ConvertJobs,
+		Manager:     p.Manager,
+	}
+
+	p.LC.Append(fx.StartHook(func(ctx context.Context) error {
+		s.wg.Add(1)
+		go func() {
+			defer s.wg.Done()
+			s.runHandleDispatchAssignmentExpiration()
+		}()
+		s.wg.Add(1)
+		go func() {
+			defer s.wg.Done()
+			s.runArchiveDispatches()
+		}()
+		s.wg.Add(1)
+		go func() {
+			defer s.wg.Done()
+			s.runDispatchDeduplication()
+		}()
+		s.wg.Add(1)
+		go func() {
+			defer s.wg.Done()
+			s.runRemoveDispatchesFromEmptyUnits()
+		}()
+		s.wg.Add(1)
+		go func() {
+			defer s.wg.Done()
+			s.watchUserChanges()
+		}()
+		s.wg.Add(1)
+		go func() {
+			defer s.wg.Done()
+			s.ConvertPhoneJobMsgToDispatch()
+		}()
+
+		return nil
+	}))
+
+	p.LC.Append(fx.StopHook(func(_ context.Context) error {
+		cancel()
+
+		s.wg.Wait()
+
+		return nil
+	}))
+
+	return s
+}
+
+func (s *Housekeeper) runHandleDispatchAssignmentExpiration() {
 	for {
 		select {
 		case <-s.ctx.Done():
@@ -61,77 +130,8 @@ func (s *Manager) runHandleDispatchAssignmentExpiration() {
 	}
 }
 
-func (s *Manager) runArchiveDispatches() {
-	for {
-		select {
-		case <-s.ctx.Done():
-			return
-
-		case <-time.After(4 * time.Second):
-			func() {
-				ctx, span := s.tracer.Start(s.ctx, "centrum-dispatch-archival")
-				defer span.End()
-
-				if err := s.archiveDispatches(ctx); err != nil {
-					s.logger.Error("failed to archive dispatches", zap.Error(err))
-				}
-
-				if err := s.cleanupDispatches(ctx); err != nil {
-					s.logger.Error("failed to cleanup dispatches", zap.Error(err))
-				}
-			}()
-		}
-	}
-}
-
-func (s *Manager) runDispatchDeduplication() {
-	for {
-		select {
-		case <-s.ctx.Done():
-			return
-
-		case <-time.After(2 * time.Second):
-			func() {
-				ctx, span := s.tracer.Start(s.ctx, "centrum-dispatch-deduplicatation")
-				defer span.End()
-
-				if err := s.deduplicateDispatches(ctx); err != nil {
-					s.logger.Error("failed to deduplicate dispatches", zap.Error(err))
-				}
-			}()
-		}
-	}
-}
-
-func (s *Manager) runRemoveDispatchesFromEmptyUnits() {
-	for {
-		select {
-		case <-s.ctx.Done():
-			return
-
-		case <-time.After(5 * time.Second):
-			func() {
-				ctx, span := s.tracer.Start(s.ctx, "centrum-units-empty")
-				defer span.End()
-
-				if err := s.removeDispatchesFromEmptyUnits(ctx); err != nil {
-					s.logger.Error("failed to clean empty units from dispatches", zap.Error(err))
-				}
-
-				if err := s.cleanupUnitStatus(ctx); err != nil {
-					s.logger.Error("failed to clean up unit status", zap.Error(err))
-				}
-
-				if err := s.checkUnitUsers(ctx); err != nil {
-					s.logger.Error("failed to check duty state of unit users", zap.Error(err))
-				}
-			}()
-		}
-	}
-}
-
 // Handle expired dispatch unit assignments
-func (s *Manager) handleDispatchAssignmentExpiration(ctx context.Context) error {
+func (s *Housekeeper) handleDispatchAssignmentExpiration(ctx context.Context) error {
 	stmt := tDispatchUnit.
 		SELECT(
 			tDispatchUnit.DispatchID.AS("dispatch_id"),
@@ -186,8 +186,31 @@ func (s *Manager) handleDispatchAssignmentExpiration(ctx context.Context) error 
 	return nil
 }
 
+func (s *Housekeeper) runArchiveDispatches() {
+	for {
+		select {
+		case <-s.ctx.Done():
+			return
+
+		case <-time.After(4 * time.Second):
+			func() {
+				ctx, span := s.tracer.Start(s.ctx, "centrum-dispatch-archival")
+				defer span.End()
+
+				if err := s.archiveDispatches(ctx); err != nil {
+					s.logger.Error("failed to archive dispatches", zap.Error(err))
+				}
+
+				if err := s.deleteOldDispatches(ctx); err != nil {
+					s.logger.Error("failed to cleanup dispatches", zap.Error(err))
+				}
+			}()
+		}
+	}
+}
+
 // Set `COMPLETED`/`CANCELLED` dispatches to status `ARCHIVED` when the status is older than 5 minutes
-func (s *Manager) archiveDispatches(ctx context.Context) error {
+func (s *Housekeeper) archiveDispatches(ctx context.Context) error {
 	stmt := tDispatchStatus.
 		SELECT(
 			tDispatchStatus.DispatchID.AS("dispatch_id"),
@@ -244,7 +267,7 @@ func (s *Manager) archiveDispatches(ctx context.Context) error {
 			return err
 		}
 
-		if err := s.DeleteDispatch(ctx, dsp.Job, dsp.Id); err != nil {
+		if err := s.DeleteDispatch(ctx, dsp.Job, dsp.Id, false); err != nil {
 			return err
 		}
 	}
@@ -252,7 +275,7 @@ func (s *Manager) archiveDispatches(ctx context.Context) error {
 	return nil
 }
 
-func (s *Manager) cleanupDispatches(ctx context.Context) error {
+func (s *Housekeeper) deleteOldDispatches(ctx context.Context) error {
 	stmt := tDispatch.
 		SELECT(
 			tDispatch.ID.AS("dispatch_id"),
@@ -263,7 +286,7 @@ func (s *Manager) cleanupDispatches(ctx context.Context) error {
 		).
 		WHERE(jet.AND(
 			tDispatch.CreatedAt.LT_EQ(
-				jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(90, jet.MINUTE)),
+				jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(14, jet.DAY)),
 			),
 		))
 
@@ -281,20 +304,38 @@ func (s *Manager) cleanupDispatches(ctx context.Context) error {
 			continue
 		}
 
-		if err := s.DeleteDispatch(ctx, dsp.Job, dsp.Id); err != nil {
+		if err := s.DeleteDispatch(ctx, dsp.Job, dsp.Id, true); err != nil {
 			return err
 		}
 	}
 
 	return nil
 }
+func (s *Housekeeper) runDispatchDeduplication() {
+	for {
+		select {
+		case <-s.ctx.Done():
+			return
 
-func (s *Manager) deduplicateDispatches(ctx context.Context) error {
+		case <-time.After(2 * time.Second):
+			func() {
+				ctx, span := s.tracer.Start(s.ctx, "centrum-dispatch-deduplicatation")
+				defer span.End()
+
+				if err := s.deduplicateDispatches(ctx); err != nil {
+					s.logger.Error("failed to deduplicate dispatches", zap.Error(err))
+				}
+			}()
+		}
+	}
+}
+
+func (s *Housekeeper) deduplicateDispatches(ctx context.Context) error {
 	wg := sync.WaitGroup{}
 
-	s.Dispatches.Range(func(job string, _ *xsync.MapOf[uint64, *dispatch.Dispatch]) bool {
+	for _, job := range s.GetDispatchesJobs() {
 		wg.Add(1)
-		go func() {
+		go func(job string) {
 			defer wg.Done()
 
 			dsps := s.State.FilterDispatches(job, nil, []dispatch.StatusDispatch{
@@ -320,7 +361,7 @@ func (s *Manager) deduplicateDispatches(ctx context.Context) error {
 					continue
 				}
 
-				closestsDsp := s.State.DispatchLocations[dsp.Job].KNearest(dsp.Point(), 8, func(p orb.Pointer) bool {
+				closestsDsp := s.State.GetDispatchLocations(dsp.Job).KNearest(dsp.Point(), 8, func(p orb.Pointer) bool {
 					return p.(*dispatch.Dispatch).Id != dsp.Id
 				}, 45.0)
 				// Add "multiple" attribute when multiple dispatches close by
@@ -350,7 +391,7 @@ func (s *Manager) deduplicateDispatches(ctx context.Context) error {
 						continue
 					}
 
-					s.State.DispatchLocations[closeByDsp.Job].Remove(closeByDsp, func(p orb.Pointer) bool {
+					s.State.GetDispatchLocations(closeByDsp.Job).Remove(closeByDsp, func(p orb.Pointer) bool {
 						return p.(*dispatch.Dispatch).Id == closeByDsp.Id
 					})
 
@@ -369,17 +410,15 @@ func (s *Manager) deduplicateDispatches(ctx context.Context) error {
 					}
 				}
 			}
-		}()
-
-		return true
-	})
+		}(job)
+	}
 
 	wg.Wait()
 
 	return nil
 }
 
-func (s *Manager) addAttributeToDispatch(ctx context.Context, dsp *dispatch.Dispatch, attribute string) error {
+func (s *Housekeeper) addAttributeToDispatch(ctx context.Context, dsp *dispatch.Dispatch, attribute string) error {
 	update := false
 	if dsp.Attributes == nil {
 		dsp.Attributes = &dispatch.Attributes{
@@ -402,10 +441,37 @@ func (s *Manager) addAttributeToDispatch(ctx context.Context, dsp *dispatch.Disp
 	return nil
 }
 
+func (s *Housekeeper) runRemoveDispatchesFromEmptyUnits() {
+	for {
+		select {
+		case <-s.ctx.Done():
+			return
+
+		case <-time.After(5 * time.Second):
+			func() {
+				ctx, span := s.tracer.Start(s.ctx, "centrum-units-empty")
+				defer span.End()
+
+				if err := s.removeDispatchesFromEmptyUnits(ctx); err != nil {
+					s.logger.Error("failed to clean empty units from dispatches", zap.Error(err))
+				}
+
+				if err := s.cleanupUnitStatus(ctx); err != nil {
+					s.logger.Error("failed to clean up unit status", zap.Error(err))
+				}
+
+				if err := s.checkUnitUsers(ctx); err != nil {
+					s.logger.Error("failed to check duty state of unit users", zap.Error(err))
+				}
+			}()
+		}
+	}
+}
+
 // Remove empty units from dispatches (if no other unit is assigned to dispatch update status to UNASSIGNED) by
 // iterating over the dispatches and making sure the assigned units aren't empty
-func (s *Manager) removeDispatchesFromEmptyUnits(ctx context.Context) error {
-	s.Dispatches.Range(func(job string, _ *xsync.MapOf[uint64, *dispatch.Dispatch]) bool {
+func (s *Housekeeper) removeDispatchesFromEmptyUnits(ctx context.Context) error {
+	for _, job := range s.GetDispatchesJobs() {
 		dsps := s.State.FilterDispatches(job, nil, []dispatch.StatusDispatch{
 			dispatch.StatusDispatch_STATUS_DISPATCH_ARCHIVED,
 			dispatch.StatusDispatch_STATUS_DISPATCH_CANCELLED,
@@ -430,26 +496,27 @@ func (s *Manager) removeDispatchesFromEmptyUnits(ctx context.Context) error {
 					continue
 				}
 			}
-
-			return true
 		}
-
-		return true
-	})
+	}
 
 	return nil
 }
 
 // Iterate over units to ensure that, e.g., an empty unit status is set to `unavailable`
-func (s *Manager) cleanupUnitStatus(ctx context.Context) error {
-	s.Units.Range(func(job string, units *xsync.MapOf[uint64, *dispatch.Unit]) bool {
-		units.Range(func(id uint64, unit *dispatch.Unit) bool {
+func (s *Housekeeper) cleanupUnitStatus(ctx context.Context) error {
+	for _, job := range s.GetUnitsJobs() {
+		units, ok := s.ListUnits(job)
+		if !ok {
+			continue
+		}
+
+		for _, unit := range units {
 			if len(unit.Users) > 0 {
-				return true
+				continue
 			}
 
 			if unit.Status != nil && unit.Status.Status == dispatch.StatusUnit_STATUS_UNIT_UNAVAILABLE {
-				return true
+				continue
 			}
 
 			var userId *int32
@@ -464,28 +531,24 @@ func (s *Manager) cleanupUnitStatus(ctx context.Context) error {
 			}); err != nil {
 				s.logger.Error("failed to update empty unit status to unavailable",
 					zap.String("job", unit.Job), zap.Uint64("unit_id", unit.Id), zap.Error(err))
-				return true
+				continue
 			}
-
-			return true
-		})
-
-		return true
-	})
+		}
+	}
 
 	return nil
 }
 
-func (s *Manager) checkUnitUsers(ctx context.Context) error {
-	s.Units.Range(func(job string, _ *xsync.MapOf[uint64, *dispatch.Unit]) bool {
+func (s *Housekeeper) checkUnitUsers(ctx context.Context) error {
+	for _, job := range s.GetUnitsJobs() {
 		units, ok := s.ListUnits(job)
 		if !ok {
-			return true
+			continue
 		}
 
 		for _, unit := range units {
 			if len(unit.Users) == 0 {
-				return true
+				continue
 			}
 
 			toRemove := []int32{}
@@ -516,9 +579,74 @@ func (s *Manager) checkUnitUsers(ctx context.Context) error {
 				}
 			}
 		}
-
-		return true
-	})
+	}
 
 	return nil
+}
+
+func (s *Housekeeper) watchUserChanges() {
+	userCh := s.tracker.Subscribe()
+
+	for {
+		select {
+		case <-s.ctx.Done():
+			return
+
+		case event := <-userCh:
+			func() {
+				ctx, span := s.tracer.Start(s.ctx, "centrum-watch-users")
+				defer span.End()
+
+				for _, userInfo := range event.Added {
+					if _, ok := s.GetUserUnitID(userInfo.UserID); !ok {
+						unitId, err := s.LoadUnitIDForUserID(ctx, userInfo.UserID)
+						if err != nil {
+							s.logger.Error("failed to load user unit id", zap.Error(err))
+							continue
+						}
+						if unitId == 0 {
+							continue
+						}
+
+						s.SetUnitForUser(userInfo.UserID, unitId)
+					}
+				}
+
+				for _, userInfo := range event.Removed {
+					s.handleRemoveUserFromDisponents(ctx, userInfo.Job, userInfo.UserID)
+					s.handleRemoveUserFromUnit(ctx, userInfo.Job, userInfo.UserID)
+				}
+			}()
+		}
+	}
+}
+
+func (s *Housekeeper) handleRemoveUserFromDisponents(ctx context.Context, job string, userId int32) {
+	if s.CheckIfUserIsDisponent(job, userId) {
+		if err := s.DisponentSignOn(ctx, job, userId, false); err != nil {
+			s.logger.Error("failed to remove user from disponents", zap.Error(err))
+			return
+		}
+	}
+}
+
+func (s *Housekeeper) handleRemoveUserFromUnit(ctx context.Context, job string, userId int32) bool {
+	unitId, ok := s.GetUserUnitID(userId)
+	if !ok {
+		// Nothing to do
+		return false
+	}
+
+	unit, ok := s.GetUnit(job, unitId)
+	if !ok {
+		s.UnsetUnitForUser(userId)
+		return false
+	}
+
+	if err := s.UpdateUnitAssignments(ctx, job, &userId, unit, nil, []int32{userId}); err != nil {
+		s.logger.Error("failed to remove user from unit", zap.Error(err))
+		return false
+	}
+
+	return true
 }

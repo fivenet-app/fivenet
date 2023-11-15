@@ -4,11 +4,13 @@ import (
 	"context"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
+	errorscentrum "github.com/galexrt/fivenet/gen/go/proto/services/centrum/errors"
 	eventscentrum "github.com/galexrt/fivenet/gen/go/proto/services/centrum/events"
 	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/pkg/utils/dbutils"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/qrm"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -128,10 +130,6 @@ func (s *Manager) UpdateUnitStatus(ctx context.Context, job string, unit *dispat
 }
 
 func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId *int32, unit *dispatch.Unit, toAdd []int32, toRemove []int32) error {
-	lock := s.State.GetUnitLock(unit.Id)
-	lock.Lock()
-	defer lock.Unlock()
-
 	var x, y *float64
 	var postal *string
 	if userId != nil {
@@ -142,13 +140,9 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 		}
 	}
 
-	// Begin transaction
-	tx, err := s.db.BeginTx(ctx, nil)
-	if err != nil {
-		return err
-	}
-	// Defer a rollback in case anything fails
-	defer tx.Rollback()
+	lock := s.State.GetUnitLock(unit.Id)
+	lock.Lock()
+	defer lock.Unlock()
 
 	var previousStatus proto.Message
 	if unit.Status != nil && (len(toAdd) > 0 || len(toRemove) > 0) {
@@ -169,7 +163,7 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 				tUnitUser.UserID.IN(removeIds...),
 			))
 
-		if _, err := stmt.ExecContext(ctx, tx); err != nil {
+		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 			return err
 		}
 
@@ -240,7 +234,7 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 					)
 			}
 
-			if _, err := stmt.ExecContext(ctx, tx); err != nil {
+			if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 				if !dbutils.IsDuplicateError(err) {
 					return err
 				}
@@ -277,11 +271,6 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 		}
 	}
 
-	// Commit the transaction
-	if err := tx.Commit(); err != nil {
-		return err
-	}
-
 	data, err := proto.Marshal(unit)
 	if err != nil {
 		return err
@@ -308,6 +297,156 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 				return err
 			}
 		}
+	}
+
+	return nil
+}
+
+func (s *Manager) CreateUnit(ctx context.Context, job string, unit *dispatch.Unit) (*dispatch.Unit, error) {
+	// Begin transaction
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return nil, err
+	}
+	// Defer a rollback in case anything fails
+	defer tx.Rollback()
+
+	tUnits := table.FivenetCentrumUnits
+	stmt := tUnits.
+		INSERT(
+			tUnits.Job,
+			tUnits.Name,
+			tUnits.Initials,
+			tUnits.Color,
+			tUnits.Description,
+		).
+		VALUES(
+			job,
+			unit.Name,
+			unit.Initials,
+			unit.Color,
+			unit.Description,
+		)
+
+	result, err := stmt.ExecContext(ctx, tx)
+	if err != nil {
+		return nil, errorscentrum.ErrFailedQuery
+	}
+
+	lastId, err := result.LastInsertId()
+	if err != nil {
+		return nil, errorscentrum.ErrFailedQuery
+	}
+
+	// A new unit shouldn't have a status, so we make sure it has one
+	if err := s.AddUnitStatus(ctx, tx, &dispatch.UnitStatus{
+		UnitId: uint64(lastId),
+		Status: dispatch.StatusUnit_STATUS_UNIT_UNKNOWN,
+	}); err != nil {
+		return nil, errorscentrum.ErrFailedQuery
+	}
+
+	// Commit the transaction
+	if err := tx.Commit(); err != nil {
+		return nil, err
+	}
+
+	// Load new/updated unit from database
+	if err := s.LoadUnits(ctx, uint64(lastId)); err != nil {
+		return nil, errorscentrum.ErrFailedQuery
+	}
+
+	unit, ok := s.GetUnit(job, uint64(lastId))
+	if !ok {
+		return nil, errorscentrum.ErrFailedQuery
+	}
+
+	data, err := proto.Marshal(unit)
+	if err != nil {
+		return nil, errorscentrum.ErrFailedQuery
+	}
+	s.events.JS.PublishAsync(eventscentrum.BuildSubject(eventscentrum.TopicUnit, eventscentrum.TypeUnitCreated, job, unit.Id), data)
+
+	return unit, nil
+}
+
+func (s *Manager) UpdateUnit(ctx context.Context, job string, unit *dispatch.Unit) (*dispatch.Unit, error) {
+	description := ""
+	if unit.Description != nil {
+		description = *unit.Description
+	}
+
+	stmt := tUnits.
+		UPDATE(
+			tUnits.Name,
+			tUnits.Initials,
+			tUnits.Color,
+			tUnits.Description,
+		).
+		SET(
+			tUnits.Name.SET(jet.String(unit.Name)),
+			tUnits.Initials.SET(jet.String(unit.Initials)),
+			tUnits.Color.SET(jet.String(unit.Color)),
+			tUnits.Description.SET(jet.String(description)),
+		).
+		WHERE(jet.AND(
+			tUnits.Job.EQ(jet.String(job)),
+			tUnits.ID.EQ(jet.Uint64(unit.Id)),
+		))
+
+	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+		return nil, errorscentrum.ErrFailedQuery
+	}
+
+	// Load new/updated unit from database
+	if err := s.LoadUnits(ctx, unit.Id); err != nil {
+		return nil, errorscentrum.ErrFailedQuery
+	}
+
+	unit, ok := s.GetUnit(job, unit.Id)
+	if !ok {
+		return nil, errorscentrum.ErrFailedQuery
+	}
+
+	data, err := proto.Marshal(unit)
+	if err != nil {
+		return nil, errorscentrum.ErrFailedQuery
+	}
+	s.events.JS.PublishAsync(eventscentrum.BuildSubject(eventscentrum.TopicUnit, eventscentrum.TypeUnitUpdated, job, unit.Id), data)
+
+	return unit, nil
+}
+
+func (s *Manager) AddUnitStatus(ctx context.Context, tx qrm.DB, status *dispatch.UnitStatus) error {
+	tUnitStatus := table.FivenetCentrumUnitsStatus
+	stmt := tUnitStatus.
+		INSERT(
+			tUnitStatus.CreatedAt,
+			tUnitStatus.UnitID,
+			tUnitStatus.Status,
+			tUnitStatus.Reason,
+			tUnitStatus.Code,
+			tUnitStatus.UserID,
+			tUnitStatus.X,
+			tUnitStatus.Y,
+			tUnitStatus.Postal,
+			tUnitStatus.CreatorID,
+		).
+		VALUES(
+			jet.CURRENT_TIMESTAMP(),
+			status.UnitId,
+			status.Status,
+			status.Reason,
+			status.Code,
+			status.UserId,
+			status.X,
+			status.Y,
+			status.Postal,
+			status.CreatorId,
+		)
+
+	if _, err := stmt.ExecContext(ctx, tx); err != nil {
+		return err
 	}
 
 	return nil

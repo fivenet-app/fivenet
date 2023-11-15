@@ -6,7 +6,7 @@ import (
 )
 
 func (s *State) GetSettings(job string) *dispatch.Settings {
-	settings, _ := s.Settings.LoadOrCompute(job, func() *dispatch.Settings {
+	settings, _ := s.settings.LoadOrCompute(job, func() *dispatch.Settings {
 		return &dispatch.Settings{
 			Job:          job,
 			Enabled:      false,
@@ -24,4 +24,15 @@ func (s *State) UpdateSettings(job string, in *dispatch.Settings) error {
 	proto.Merge(current, in)
 
 	return nil
+}
+
+func (s *State) ListSettings() []*dispatch.Settings {
+	list := []*dispatch.Settings{}
+
+	s.settings.Range(func(_ string, settings *dispatch.Settings) bool {
+		list = append(list, settings)
+		return true
+	})
+
+	return list
 }

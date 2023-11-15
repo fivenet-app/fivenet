@@ -5,7 +5,6 @@ import (
 	"sync"
 	"time"
 
-	dispatch "github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
 	"github.com/galexrt/fivenet/gen/go/proto/services/centrum/manager"
 	"github.com/galexrt/fivenet/pkg/events"
 	"github.com/galexrt/fivenet/pkg/server/admin"
@@ -157,19 +156,17 @@ func (b *Manager) Stop(job string) error {
 }
 
 func (s *Manager) checkIfBotsAreNeeded(ctx context.Context) error {
-	s.state.Settings.Range(func(job string, value *dispatch.Settings) bool {
-		if s.state.CheckIfBotNeeded(job) {
-			if err := s.Start(job); err != nil {
-				s.logger.Error("failed to start dispatch center bot for job", zap.String("job", job))
+	for _, settings := range s.state.ListSettings() {
+		if s.state.CheckIfBotNeeded(settings.Job) {
+			if err := s.Start(settings.Job); err != nil {
+				s.logger.Error("failed to start dispatch center bot for job", zap.String("job", settings.Job))
 			}
 		} else {
-			if err := s.Stop(job); err != nil {
-				s.logger.Error("failed to stop dispatch center bot for job", zap.String("job", job))
+			if err := s.Stop(settings.Job); err != nil {
+				s.logger.Error("failed to stop dispatch center bot for job", zap.String("job", settings.Job))
 			}
 		}
-
-		return true
-	})
+	}
 
 	return nil
 }

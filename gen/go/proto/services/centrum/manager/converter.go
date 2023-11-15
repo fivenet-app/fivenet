@@ -1,4 +1,4 @@
-package centrum
+package manager
 
 import (
 	"context"
@@ -18,7 +18,7 @@ var (
 	tGksPhoneSettings = table.GksphoneSettings
 )
 
-func (s *Server) ConvertPhoneJobMsgToDispatch() error {
+func (s *Housekeeper) ConvertPhoneJobMsgToDispatch() error {
 	if len(s.convertJobs) == 0 {
 		return nil
 	}
@@ -32,7 +32,7 @@ func (s *Server) ConvertPhoneJobMsgToDispatch() error {
 	}
 }
 
-func (s *Server) convertPhoneJobMsgToDispatch() error {
+func (s *Housekeeper) convertPhoneJobMsgToDispatch() error {
 	stmt := tGksPhoneJMsg.
 		SELECT(
 			tGksPhoneJMsg.ID,
@@ -94,7 +94,7 @@ func (s *Server) convertPhoneJobMsgToDispatch() error {
 			CreatorId: &msg.UserId,
 		}
 
-		if _, err := s.state.CreateDispatch(s.ctx, dsp); err != nil {
+		if _, err := s.CreateDispatch(s.ctx, dsp); err != nil {
 			return err
 		}
 
@@ -106,7 +106,7 @@ func (s *Server) convertPhoneJobMsgToDispatch() error {
 	return nil
 }
 
-func (s *Server) closePhoneJobMsg(ctx context.Context, id int32) error {
+func (s *Housekeeper) closePhoneJobMsg(ctx context.Context, id int32) error {
 	stmt := tGksPhoneJMsg.
 		UPDATE(
 			tGksPhoneJMsg.Owner,

@@ -18,16 +18,17 @@
             }
         },
         {
-            "name": "Launch Discord Bot",
+            "name": "Launch Worker",
             "type": "go",
             "request": "launch",
             "mode": "auto",
             "program": "${workspaceFolder}",
             "cwd": "${workspaceFolder}",
-            "args": ["discord"],
+            "args": ["worker"],
             "buildFlags": "-a -installsuffix cgo",
             "env": {
-                "CGO_ENABLED": "0"
+                "CGO_ENABLED": "0",
+                "FIVENET_CONFIG_FILE": "./config.worker.yaml"
             }
         },
         {

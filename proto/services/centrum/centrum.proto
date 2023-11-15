@@ -25,6 +25,18 @@ message ListUnitActivityRequest {
 
 message GetSettingsRequest {}
 
+message GetSettingsResponse {
+  resources.dispatch.Settings settings = 1;
+}
+
+message UpdateSettingsRequest {
+  resources.dispatch.Settings settings = 1;
+}
+
+message UpdateSettingsResponse {
+  resources.dispatch.Settings settings = 1;
+}
+
 // Unit Management
 
 message ListUnitsRequest {
@@ -172,13 +184,13 @@ message StreamResponse {
     resources.dispatch.Settings settings = 2;
     resources.dispatch.DisponentsChange disponents = 3;
 
-    resources.dispatch.Unit unit_assigned = 4;
+    resources.dispatch.Unit unit_created = 4;
     resources.dispatch.Unit unit_deleted = 5;
     resources.dispatch.Unit unit_updated = 6;
     resources.dispatch.Unit unit_status = 7;
 
-    uint64 dispatch_deleted = 8;
-    resources.dispatch.Dispatch dispatch_created = 9;
+    resources.dispatch.Dispatch dispatch_created = 8;
+    uint64 dispatch_deleted = 9;
     resources.dispatch.Dispatch dispatch_updated = 10;
     resources.dispatch.Dispatch dispatch_status = 11;
 
@@ -189,7 +201,7 @@ message StreamResponse {
 
 service CentrumService {
   // @perm
-  rpc UpdateSettings(resources.dispatch.Settings) returns (resources.dispatch.Settings);
+  rpc UpdateSettings(UpdateSettingsRequest) returns (UpdateSettingsResponse);
 
   // @perm
   rpc CreateDispatch(CreateDispatchRequest) returns (CreateDispatchResponse);
@@ -207,8 +219,9 @@ service CentrumService {
 
   // @perm
   rpc Stream(StreamRequest) returns (stream StreamResponse);
+
   // @perm: Name=Stream
-  rpc GetSettings(GetSettingsRequest) returns (resources.dispatch.Settings);
+  rpc GetSettings(GetSettingsRequest) returns (GetSettingsResponse);
 
   // @perm: Name=Stream
   rpc JoinUnit(JoinUnitRequest) returns (JoinUnitResponse);

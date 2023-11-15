@@ -4,12 +4,10 @@ import (
 	"context"
 	"database/sql"
 	"sync"
-	"time"
 
 	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
-	jet "github.com/go-jet/jet/v2/mysql"
 	jsoniter "github.com/json-iterator/go"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
@@ -22,6 +20,12 @@ var (
 )
 
 var json = jsoniter.ConfigCompatibleWithStandardLibrary
+
+var Module = fx.Module("audit",
+	fx.Provide(
+		New,
+	),
+)
 
 type IAuditer interface {
 	Log(in *model.FivenetAuditLog, data any)
@@ -51,8 +55,8 @@ func New(p Params) IAuditer {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	a := &AuditStorer{
-		logger: p.Logger,
-		tracer: p.TP.Tracer("audit-storer"),
+		logger: p.Logger.Named("audit"),
+		tracer: p.TP.Tracer("audit"),
 		db:     p.DB,
 		ctx:    ctx,
 		wg:     sync.WaitGroup{},
@@ -63,14 +67,6 @@ func New(p Params) IAuditer {
 		for i := 0; i < 4; i++ {
 			a.wg.Add(1)
 			go a.worker()
-		}
-
-		if p.Config.Game.AuditRetentionDays != nil {
-			// Now minus retention days
-			t := time.Now().AddDate(0, 0, -*p.Config.Game.AuditRetentionDays)
-			if err := a.Cleanup(t); err != nil {
-				return err
-			}
 		}
 
 		return nil
@@ -101,28 +97,6 @@ func (a *AuditStorer) worker() {
 	}
 }
 
-func (a *AuditStorer) Cleanup(before time.Time) error {
-	stmt := tAudit.
-		DELETE().
-		WHERE(tAudit.CreatedAt.LT_EQ(
-			jet.TimestampT(before),
-		))
-
-	res, err := stmt.ExecContext(a.ctx, a.db)
-	if err != nil {
-		return err
-	}
-
-	affected, err := res.RowsAffected()
-	if err != nil {
-		return err
-	}
-
-	a.logger.Info("audit store cleanup completed", zap.Int64("affected_rows", affected))
-
-	return nil
-}
-
 func (a *AuditStorer) Log(in *model.FivenetAuditLog, data any) {
 	if in == nil {
 		return
@@ -137,7 +111,7 @@ func (a *AuditStorer) store(in *model.FivenetAuditLog) error {
 		return nil
 	}
 
-	ctx, span := a.tracer.Start(a.ctx, "audit-log-store")
+	ctx, span := a.tracer.Start(a.ctx, "audit-store")
 	defer span.End()
 
 	stmt := tAudit.

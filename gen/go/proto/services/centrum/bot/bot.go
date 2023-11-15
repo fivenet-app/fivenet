@@ -12,10 +12,12 @@ import (
 	"go.uber.org/zap"
 )
 
-const DelayBetweenDispatchAssignment = 35 * time.Second
-const DelayMinUnits = 3
-const PerUnitDelay = 6
-const MaxDelayCap = 80 * time.Second
+const (
+	DelayBetweenDispatchAssignment = 35 * time.Second
+	AddDelayMinUnitCount           = 3
+	PerUnitDelaySeconds            = 6
+	MaxDelayCap                    = 80 * time.Second
+)
 
 type Bot struct {
 	logger *zap.Logger
@@ -100,13 +102,12 @@ func (b *Bot) getAvailableUnit(ctx context.Context) (*dispatch.Unit, bool) {
 	for _, u := range units {
 		t, ok := b.lastAssignedUnits[u.Id]
 		if !ok || time.Now().After(t) {
-			unit = u
-
 			// Double check if unit is still available
-			if unit.Status != nil && unit.Status.Status == dispatch.StatusUnit_STATUS_UNIT_AVAILABLE {
+			if u.Status != nil && u.Status.Status != dispatch.StatusUnit_STATUS_UNIT_AVAILABLE {
 				continue
 			}
 
+			unit = u
 			break
 		}
 	}
@@ -117,12 +118,13 @@ func (b *Bot) getAvailableUnit(ctx context.Context) (*dispatch.Unit, bool) {
 
 	delay := 0 * time.Second
 	unitCount := len(units)
-	if unitCount > DelayMinUnits {
-		delay = time.Duration(unitCount*PerUnitDelay) * time.Second
+	if unitCount > AddDelayMinUnitCount {
+		delay = time.Duration(unitCount*PerUnitDelaySeconds) * time.Second
 		if delay >= MaxDelayCap {
 			delay = MaxDelayCap
 		}
 	}
+
 	b.lastAssignedUnits[unit.Id] = time.Now().Add(DelayBetweenDispatchAssignment).Add(delay)
 
 	return unit, true

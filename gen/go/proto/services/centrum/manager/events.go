@@ -1,7 +1,6 @@
 package manager
 
 import (
-	"context"
 	"fmt"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
@@ -11,187 +10,124 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-func (s *Manager) watchUserChanges() {
-	userCh := s.tracker.Subscribe()
-
-	for {
-		select {
-		case <-s.ctx.Done():
-			return
-
-		case event := <-userCh:
-			func() {
-				ctx, span := s.tracer.Start(s.ctx, "centrum-watch-users")
-				defer span.End()
-
-				for _, userInfo := range event.Added {
-					if _, ok := s.GetUserUnitID(userInfo.UserID); !ok {
-						unitId, err := s.LoadUnitIDForUserID(ctx, userInfo.UserID)
-						if err != nil {
-							s.logger.Error("failed to load user unit id", zap.Error(err))
-							continue
-						}
-						if unitId == 0 {
-							continue
-						}
-
-						s.SetUnitForUser(userInfo.UserID, unitId)
-					}
-				}
-
-				for _, userInfo := range event.Removed {
-					s.handleRemoveUserFromDisponents(ctx, userInfo.Job, userInfo.UserID)
-					s.handleRemoveUserFromUnit(ctx, userInfo.Job, userInfo.UserID)
-				}
-			}()
-		}
-	}
-}
-
-func (s *Manager) handleRemoveUserFromDisponents(ctx context.Context, job string, userId int32) {
-	if s.CheckIfUserIsDisponent(job, userId) {
-		if err := s.DisponentSignOn(ctx, job, userId, false); err != nil {
-			s.logger.Error("failed to remove user from disponents", zap.Error(err))
-			return
-		}
-	}
-}
-
-func (s *Manager) handleRemoveUserFromUnit(ctx context.Context, job string, userId int32) bool {
-	unitId, ok := s.GetUserUnitID(userId)
-	if !ok {
-		// Nothing to do
-		return false
-	}
-
-	unit, ok := s.GetUnit(job, unitId)
-	if !ok {
-		s.UnsetUnitForUser(userId)
-		return false
-	}
-
-	if err := s.UpdateUnitAssignments(ctx, job, &userId, unit, nil, []int32{userId}); err != nil {
-		s.logger.Error("failed to remove user from unit", zap.Error(err))
-		return false
-	}
-
-	return true
-}
-
-func (s *Manager) watchEvents() error {
-	msgCh := make(chan *nats.Msg, 256)
-
-	sub, err := s.events.JS.ChanSubscribe(fmt.Sprintf("%s.>", eventscentrum.BaseSubject), msgCh, nats.DeliverLastPerSubject())
-	if err != nil {
+func (s *Manager) registerSubscriptions() error {
+	if _, err := s.events.JS.Subscribe(fmt.Sprintf("%s.%s.>", eventscentrum.BaseSubject, eventscentrum.TopicGeneral), s.watchTopicGeneral, nats.DeliverLastPerSubject()); err != nil {
+		s.logger.Error("failed to subscribe to centrum general topic", zap.Error(err))
 		return err
 	}
-	defer sub.Unsubscribe()
 
-	// Watch for events from message queue
-	for {
-		select {
-		case <-s.ctx.Done():
-			return nil
+	if _, err := s.events.JS.Subscribe(fmt.Sprintf("%s.%s.>", eventscentrum.BaseSubject, eventscentrum.TopicUnit), s.watchTopicUnits, nats.DeliverLastPerSubject()); err != nil {
+		s.logger.Error("failed to subscribe to centrum units topic", zap.Error(err))
+		return err
+	}
 
-		case msg := <-msgCh:
-			msg.Ack()
+	if _, err := s.events.JS.Subscribe(fmt.Sprintf("%s.%s.>", eventscentrum.BaseSubject, eventscentrum.TopicDispatch), s.watchTopicDispatches, nats.DeliverLastPerSubject()); err != nil {
+		s.logger.Error("failed to subscribe to centrum dispatch topic", zap.Error(err))
+		return err
+	}
 
-			job, topic, tType := eventscentrum.SplitSubject(msg.Subject)
+	return nil
+}
 
-			switch topic {
-			case eventscentrum.TopicGeneral:
-				switch tType {
-				case eventscentrum.TypeGeneralDisponents:
-					var dest dispatch.DisponentsChange
-					if err := proto.Unmarshal(msg.Data, &dest); err != nil {
-						s.logger.Error("failed to unmarshal disponents message", zap.Error(err))
-						continue
-					}
+func (s *Manager) watchTopicGeneral(msg *nats.Msg) {
+	msg.Ack()
 
-					s.Disponents.Store(job, dest.Disponents)
+	job, _, tType := eventscentrum.SplitSubject(msg.Subject)
 
-				case eventscentrum.TypeGeneralSettings:
-					var dest dispatch.Settings
-					if err := proto.Unmarshal(msg.Data, &dest); err != nil {
-						s.logger.Error("failed to unmarshal settings message", zap.Error(err))
-						continue
-					}
+	switch tType {
+	case eventscentrum.TypeGeneralDisponents:
+		var dest dispatch.DisponentsChange
+		if err := proto.Unmarshal(msg.Data, &dest); err != nil {
+			s.logger.Error("failed to unmarshal disponents message", zap.Error(err))
+			return
+		}
 
-					settings := s.GetSettings(job)
-					settings.Enabled = dest.Enabled
-					settings.Mode = dest.Mode
-					settings.FallbackMode = dest.FallbackMode
-				}
+		s.UpdateDisponents(job, dest.Disponents)
 
-			case eventscentrum.TopicDispatch:
-				switch tType {
-				case eventscentrum.TypeDispatchCreated:
-					fallthrough
-				case eventscentrum.TypeDispatchStatus:
-					fallthrough
-				case eventscentrum.TypeDispatchUpdated:
-					dest := &dispatch.Dispatch{}
-					if err := proto.Unmarshal(msg.Data, dest); err != nil {
-						s.logger.Error("failed to unmarshal dispatch message", zap.Error(err))
-						continue
-					}
+	case eventscentrum.TypeGeneralSettings:
+		var dest dispatch.Settings
+		if err := proto.Unmarshal(msg.Data, &dest); err != nil {
+			s.logger.Error("failed to unmarshal settings message", zap.Error(err))
+			return
+		}
 
-					if dispatch, ok := s.GetDispatchesMap(job).LoadOrStore(dest.Id, dest); ok {
-						dispatch.Merge(dest)
-					}
+		if err := s.State.UpdateSettings(job, &dest); err != nil {
+			s.logger.Error("failed to update settings", zap.Error(err))
+			return
+		}
+	}
+}
 
-				case eventscentrum.TypeDispatchDeleted:
-					dest := &dispatch.Dispatch{}
-					if err := proto.Unmarshal(msg.Data, dest); err != nil {
-						s.logger.Error("failed to unmarshal dispatch message", zap.Error(err))
-						continue
-					}
+func (s *Manager) watchTopicUnits(msg *nats.Msg) {
+	msg.Ack()
 
-					s.GetDispatchesMap(job).Delete(dest.Id)
+	job, _, tType := eventscentrum.SplitSubject(msg.Subject)
 
-				}
+	switch tType {
+	case eventscentrum.TypeUnitCreated:
+		fallthrough
+	case eventscentrum.TypeUnitStatus:
+		fallthrough
+	case eventscentrum.TypeUnitUpdated:
+		dest := &dispatch.Unit{}
+		if err := proto.Unmarshal(msg.Data, dest); err != nil {
+			s.logger.Error("failed to unmarshal unit message", zap.Error(err))
+			return
+		}
 
-			case eventscentrum.TopicUnit:
-				switch tType {
-				case eventscentrum.TypeUnitUpdated:
-					dest := &dispatch.Unit{}
-					if err := proto.Unmarshal(msg.Data, dest); err != nil {
-						s.logger.Error("failed to unmarshal unit message", zap.Error(err))
-						continue
-					}
+		if err := s.State.UpdateUnit(job, dest.Id, dest); err != nil {
+			s.logger.Error("failed to update unit", zap.Error(err))
+			return
+		}
 
-					if unit, ok := s.GetUnitsMap(job).LoadOrStore(dest.Id, dest); ok {
-						unit.Merge(dest)
-					}
-
-				case eventscentrum.TypeUnitStatus:
-					dest := &dispatch.Unit{}
-					if err := proto.Unmarshal(msg.Data, dest); err != nil {
-						s.logger.Error("failed to unmarshal unit message", zap.Error(err))
-						continue
-					}
-
-					if unit, ok := s.GetUnitsMap(job).LoadOrStore(dest.Id, dest); ok {
-						unit.Merge(dest)
-					}
-
-					if dest.Status.Status == dispatch.StatusUnit_STATUS_UNIT_USER_ADDED {
-						s.SetUnitForUser(*dest.Status.UserId, dest.Status.UnitId)
-					} else if dest.Status.Status == dispatch.StatusUnit_STATUS_UNIT_USER_REMOVED {
-						s.UnsetUnitForUser(*dest.Status.UserId)
-					}
-
-				case eventscentrum.TypeUnitDeleted:
-					dest := &dispatch.Unit{}
-					if err := proto.Unmarshal(msg.Data, dest); err != nil {
-						s.logger.Error("failed to unmarshal unit message", zap.Error(err))
-						continue
-					}
-
-					s.GetUnitsMap(dest.Job).Delete(dest.Id)
-
-				}
+		if tType == eventscentrum.TypeUnitStatus {
+			if dest.Status.Status == dispatch.StatusUnit_STATUS_UNIT_USER_ADDED {
+				s.SetUnitForUser(*dest.Status.UserId, dest.Status.UnitId)
+			} else if dest.Status.Status == dispatch.StatusUnit_STATUS_UNIT_USER_REMOVED {
+				s.UnsetUnitForUser(*dest.Status.UserId)
 			}
 		}
+
+	case eventscentrum.TypeUnitDeleted:
+		dest := &dispatch.Unit{}
+		if err := proto.Unmarshal(msg.Data, dest); err != nil {
+			s.logger.Error("failed to unmarshal unit message", zap.Error(err))
+			return
+		}
+
+		s.State.DeleteUnit(job, dest.Id)
+	}
+}
+
+func (s *Manager) watchTopicDispatches(msg *nats.Msg) {
+	msg.Ack()
+
+	job, _, tType := eventscentrum.SplitSubject(msg.Subject)
+
+	switch tType {
+	case eventscentrum.TypeDispatchCreated:
+		fallthrough
+	case eventscentrum.TypeDispatchStatus:
+		fallthrough
+	case eventscentrum.TypeDispatchUpdated:
+		dest := &dispatch.Dispatch{}
+		if err := proto.Unmarshal(msg.Data, dest); err != nil {
+			s.logger.Error("failed to unmarshal dispatch message", zap.Error(err))
+			return
+		}
+
+		if err := s.State.UpdateDispatch(job, dest.Id, dest); err != nil {
+			s.logger.Error("failed to update dispatch", zap.Error(err))
+			return
+		}
+
+	case eventscentrum.TypeDispatchDeleted:
+		dest := &dispatch.Dispatch{}
+		if err := proto.Unmarshal(msg.Data, dest); err != nil {
+			s.logger.Error("failed to unmarshal dispatch message", zap.Error(err))
+			return
+		}
+
+		s.State.DeleteDispatch(job, dest.Id)
 	}
 }

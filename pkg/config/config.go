@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"os"
 	"time"
 
 	"github.com/creasty/defaults"
@@ -24,10 +25,17 @@ type Result struct {
 func Load() (*Config, error) {
 	// Viper Config reading setup
 	viper.SetEnvPrefix("FIVENET")
-	viper.SetConfigName("config")
 	viper.SetConfigType("yaml")
-	viper.AddConfigPath(".")
-	viper.AddConfigPath("/config")
+
+	configFile := os.Getenv("FIVENET_CONFIG_FILE")
+	if configFile != "" {
+		viper.SetConfigFile(configFile)
+	} else {
+		viper.SetConfigName("config")
+		viper.AddConfigPath(".")
+		viper.AddConfigPath("/config")
+	}
+
 	// Find and read the config file
 	if err := viper.ReadInConfig(); err != nil {
 		return nil, fmt.Errorf("fatal error config file: %w", err)

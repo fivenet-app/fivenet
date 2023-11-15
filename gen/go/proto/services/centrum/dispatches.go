@@ -207,7 +207,7 @@ func (s *Server) UpdateDispatch(ctx context.Context, req *UpdateDispatchRequest)
 		return nil, errorscentrum.ErrFailedQuery
 	}
 	if oldDsp.X != req.Dispatch.X || oldDsp.Y != req.Dispatch.Y {
-		s.state.DispatchLocations[oldDsp.Job].Remove(oldDsp, nil)
+		s.state.GetDispatchLocations(oldDsp.Job).Remove(oldDsp, nil)
 	}
 
 	if err := s.state.UpdateDispatch(ctx, userInfo.Job, &userInfo.UserId, req.Dispatch, true); err != nil {
@@ -443,7 +443,7 @@ func (s *Server) DeleteDispatch(ctx context.Context, req *DeleteDispatchRequest)
 	}
 	defer s.auditer.Log(auditEntry, req)
 
-	if err := s.state.DeleteDispatch(ctx, userInfo.Job, req.Id); err != nil {
+	if err := s.state.DeleteDispatch(ctx, userInfo.Job, req.Id, true); err != nil {
 		return nil, errorscentrum.ErrFailedQuery
 	}
 

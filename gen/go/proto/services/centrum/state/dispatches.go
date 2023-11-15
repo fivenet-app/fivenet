@@ -3,11 +3,12 @@ package state
 import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
 	"github.com/galexrt/fivenet/pkg/utils"
+	"github.com/puzpuzpuz/xsync/v3"
 	"golang.org/x/exp/slices"
 )
 
 func (s *State) GetDispatch(job string, id uint64) (*dispatch.Dispatch, bool) {
-	dispatches, ok := s.Dispatches.Load(job)
+	dispatches, ok := s.dispatches.Load(job)
 	if !ok {
 		return nil, false
 	}
@@ -18,7 +19,7 @@ func (s *State) GetDispatch(job string, id uint64) (*dispatch.Dispatch, bool) {
 func (s *State) ListDispatches(job string) []*dispatch.Dispatch {
 	ds := []*dispatch.Dispatch{}
 
-	dispatches, ok := s.Dispatches.Load(job)
+	dispatches, ok := s.dispatches.Load(job)
 	if !ok {
 		return nil
 	}
@@ -73,10 +74,29 @@ func (s *State) DeleteDispatch(job string, id uint64) {
 		return
 	}
 
-	s.DispatchLocations[job].Remove(dsp, nil)
+	s.GetDispatchLocations(job).Remove(dsp, nil)
 
-	dispatches, ok := s.Dispatches.Load(job)
+	dispatches, ok := s.dispatches.Load(job)
 	if ok {
 		dispatches.Delete(id)
 	}
+}
+
+func (s *State) UpdateDispatch(job string, dispatchId uint64, dsp *dispatch.Dispatch) error {
+	if dispatch, ok := s.GetDispatchesMap(job).LoadOrStore(dispatchId, dsp); ok {
+		dispatch.Merge(dsp)
+	}
+
+	return nil
+}
+
+func (s *State) GetDispatchesJobs() []string {
+	list := []string{}
+
+	s.dispatches.Range(func(job string, _ *xsync.MapOf[uint64, *dispatch.Dispatch]) bool {
+		list = append(list, job)
+		return true
+	})
+
+	return list
 }

@@ -6,13 +6,13 @@ import (
 )
 
 func (s *Manager) CheckIfUserIsDisponent(job string, userId int32) bool {
-	ds, ok := s.Disponents.Load(job)
-	if !ok {
+	disponents := s.GetDisponents(job)
+	if len(disponents) == 0 {
 		return false
 	}
 
-	for i := 0; i < len(ds); i++ {
-		if userId == ds[i].UserId {
+	for i := 0; i < len(disponents); i++ {
+		if userId == disponents[i].UserId {
 			return true
 		}
 	}

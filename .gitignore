@@ -31,6 +31,8 @@ __debug_bin*
 /fivenet
 
 /config.yaml
+/config.*.yaml
+!/config.example.yaml
 /.env
 /*.sql
 

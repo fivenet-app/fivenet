@@ -264,17 +264,19 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 	return nil
 }
 
-func (s *Manager) DeleteDispatch(ctx context.Context, job string, id uint64) error {
-	stmt := tDispatch.
-		DELETE().
-		WHERE(jet.AND(
-			tDispatch.Job.EQ(jet.String(job)),
-			tDispatch.ID.EQ(jet.Uint64(id)),
-		)).
-		LIMIT(1)
+func (s *Manager) DeleteDispatch(ctx context.Context, job string, id uint64, allTheWay bool) error {
+	if allTheWay {
+		stmt := tDispatch.
+			DELETE().
+			WHERE(jet.AND(
+				tDispatch.Job.EQ(jet.String(job)),
+				tDispatch.ID.EQ(jet.Uint64(id)),
+			)).
+			LIMIT(1)
 
-	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return errorscentrum.ErrFailedQuery
+		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+			return errorscentrum.ErrFailedQuery
+		}
 	}
 
 	dsp, ok := s.GetDispatch(job, id)
@@ -423,7 +425,7 @@ func (s *Manager) CreateDispatch(ctx context.Context, d *dispatch.Dispatch) (*di
 	}
 	s.events.JS.PublishAsync(eventscentrum.BuildSubject(eventscentrum.TopicDispatch, eventscentrum.TypeDispatchCreated, d.Job, 0), data)
 
-	s.State.DispatchLocations[dsp.Job].Add(dsp)
+	s.State.GetDispatchLocations(dsp.Job).Add(dsp)
 
 	return dsp, nil
 }
@@ -461,10 +463,10 @@ func (s *Manager) UpdateDispatch(ctx context.Context, userJob string, userId *in
 		return err
 	}
 
-	if !s.State.DispatchLocations[dsp.Job].Has(dsp, func(p orb.Pointer) bool {
+	if !s.State.GetDispatchLocations(dsp.Job).Has(dsp, func(p orb.Pointer) bool {
 		return p.(*dispatch.Dispatch).Id == dsp.Id
 	}) {
-		s.State.DispatchLocations[dsp.Job].Add(dsp)
+		s.State.GetDispatchLocations(dsp.Job).Add(dsp)
 	}
 
 	// Load dispatch into cache

@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"os"
 	"time"
 
 	"github.com/alecthomas/kong"
@@ -44,15 +45,24 @@ import (
 )
 
 var CLI struct {
+	Config string `help:"Alternative config file (env var: FIVENET_CONFIG_FILE)"`
+
 	Server struct {
 	} `cmd:"" help:"Run FiveNet server."`
 
-	Discord struct {
-	} `cmd:"" help:"Run Discord bot."`
+	Worker struct {
+	} `cmd:"" help:"Run FiveNet worker."`
 }
 
 func main() {
 	ctx := kong.Parse(&CLI)
+
+	// Cli flag always overrides env var
+	if CLI.Config != "" {
+		if err := os.Setenv("FIVENET_CONFIG_FILE", CLI.Config); err != nil {
+			panic(err)
+		}
+	}
 
 	fxOpts := []fx.Option{
 		fx.WithLogger(func(log *zap.Logger) fxevent.Logger {
@@ -72,9 +82,11 @@ func main() {
 		perms.Module,
 		events.Module,
 		audit.Module,
+		audit.RetentionModule,
 		state.StateModule,
 		bot.Module,
 		manager.Module,
+		manager.HousekeeperModule,
 		discord.BotModule,
 
 		fx.Provide(
@@ -110,10 +122,15 @@ func main() {
 			fx.Invoke(func(*grpcserver.Server) {}),
 			fx.Invoke(func(server.HTTPServer) {}),
 		)
-	case "discord":
+
+	case "worker":
 		fxOpts = append(fxOpts,
 			fx.Invoke(func(*discord.Bot) {}),
+			fx.Invoke(func(*bot.Manager) {}),
+			fx.Invoke(func(*manager.Housekeeper) {}),
+			fx.Invoke(func(*audit.Retention) {}),
 		)
+
 	default:
 		panic(ctx.Error)
 	}
