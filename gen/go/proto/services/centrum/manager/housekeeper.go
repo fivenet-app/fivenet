@@ -84,7 +84,7 @@ func NewHousekeeper(p HousekeeperParams) *Housekeeper {
 		s.wg.Add(1)
 		go func() {
 			defer s.wg.Done()
-			s.runRemoveDispatchesFromEmptyUnits()
+			s.runCleanupUnits()
 		}()
 		s.wg.Add(1)
 		go func() {
@@ -441,7 +441,7 @@ func (s *Housekeeper) addAttributeToDispatch(ctx context.Context, dsp *dispatch.
 	return nil
 }
 
-func (s *Housekeeper) runRemoveDispatchesFromEmptyUnits() {
+func (s *Housekeeper) runCleanupUnits() {
 	for {
 		select {
 		case <-s.ctx.Done():
@@ -484,15 +484,15 @@ func (s *Housekeeper) removeDispatchesFromEmptyUnits(ctx context.Context) error 
 					break
 				}
 
-				unit, _ := s.GetUnit(job, dsp.Units[i].UnitId)
+				unitId := dsp.Units[i].UnitId
 				// If unit isn't empty, continue with the loop
-				if unit == nil || len(unit.Users) > 0 {
+				if unitId > 0 {
 					continue
 				}
 
-				if err := s.UpdateDispatchAssignments(ctx, job, nil, dsp, nil, []uint64{unit.Id}, time.Time{}); err != nil {
+				if err := s.UpdateDispatchAssignments(ctx, job, nil, dsp, nil, []uint64{unitId}, time.Time{}); err != nil {
 					s.logger.Error("failed to remove empty unit from dispatch",
-						zap.String("job", unit.Job), zap.Uint64("unit_id", unit.Id), zap.Uint64("dispatch_id", dsp.Id), zap.Error(err))
+						zap.String("job", job), zap.Uint64("unit_id", unitId), zap.Uint64("dispatch_id", dsp.Id), zap.Error(err))
 					continue
 				}
 			}
@@ -639,7 +639,7 @@ func (s *Housekeeper) handleRemoveUserFromUnit(ctx context.Context, job string, 
 
 	unit, ok := s.GetUnit(job, unitId)
 	if !ok {
-		s.UnsetUnitForUser(userId)
+		s.UnsetUnitIDForUser(userId)
 		return false
 	}
 

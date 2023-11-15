@@ -68,7 +68,7 @@ const open = ref(false);
             <div>
                 <input
                     v-model="dispatchQuery"
-                    class="w-full p-0.5 px-1 bg-clip-padding rounded-md border-2 border-black/20"
+                    class="w-full max-w-[11rem] p-0.5 px-1 bg-clip-padding rounded-md border-2 border-black/20"
                     type="text"
                     name="searchPlayer"
                     :placeholder="`${$t('common.dispatch', 2)} ${$t('common.filter')}`"

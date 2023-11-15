@@ -11,6 +11,7 @@ import (
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
+	"go.uber.org/zap"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -77,6 +78,8 @@ func (s *Manager) UpdateUnitStatus(ctx context.Context, job string, unit *dispat
 		return nil
 	}
 
+	s.logger.Debug("updating unit status", zap.Uint64("unit_id", unit.Id))
+
 	tUnitStatus := table.FivenetCentrumUnitsStatus
 	stmt := tUnitStatus.
 		INSERT(
@@ -130,6 +133,8 @@ func (s *Manager) UpdateUnitStatus(ctx context.Context, job string, unit *dispat
 }
 
 func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId *int32, unit *dispatch.Unit, toAdd []int32, toRemove []int32) error {
+	s.logger.Debug("updating unit assignments", zap.String("job", job), zap.Uint64("unit_id", unit.Id), zap.Int32s("toAdd", toAdd), zap.Int32s("toRemove", toRemove))
+
 	var x, y *float64
 	var postal *string
 	if userId != nil {
@@ -140,14 +145,14 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 		}
 	}
 
-	lock := s.State.GetUnitLock(unit.Id)
-	lock.Lock()
-	defer lock.Unlock()
-
 	var previousStatus proto.Message
 	if unit.Status != nil && (len(toAdd) > 0 || len(toRemove) > 0) {
 		previousStatus = proto.Clone(unit.Status)
 	}
+
+	lock := s.State.GetUnitLock(unit.Id)
+	lock.Lock()
+	defer lock.Unlock()
 
 	tUnitUser := table.FivenetCentrumUnitsUsers
 	if len(toRemove) > 0 {
@@ -180,7 +185,7 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 
 				toAnnounce = append(toAnnounce, toRemove[k])
 				unit.Users = utils.RemoveFromSlice(unit.Users, i)
-				s.UnsetUnitForUser(toRemove[k])
+				s.UnsetUnitIDForUser(toRemove[k])
 			}
 		}
 

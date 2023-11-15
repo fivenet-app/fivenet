@@ -14,7 +14,7 @@ import (
 
 const (
 	DelayBetweenDispatchAssignment = 35 * time.Second
-	AddDelayMinUnitCount           = 3
+	MinUnitCountForDelay           = 3
 	PerUnitDelaySeconds            = 6
 	MaxDelayCap                    = 80 * time.Second
 )
@@ -118,7 +118,7 @@ func (b *Bot) getAvailableUnit(ctx context.Context) (*dispatch.Unit, bool) {
 
 	delay := 0 * time.Second
 	unitCount := len(units)
-	if unitCount > AddDelayMinUnitCount {
+	if unitCount > MinUnitCountForDelay {
 		delay = time.Duration(unitCount*PerUnitDelaySeconds) * time.Second
 		if delay >= MaxDelayCap {
 			delay = MaxDelayCap

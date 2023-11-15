@@ -72,7 +72,7 @@ watchDebounced(postalQuery, () => findPostal(), {
 </script>
 
 <template>
-    <Combobox v-model="selectedPostal" as="div" class="w-full" nullable>
+    <Combobox v-model="selectedPostal" as="div" class="w-full max-w-[11rem]" nullable>
         <ComboboxInput
             autocomplete="off"
             class="w-full p-0.5 px-1 bg-clip-padding rounded-md border-2 border-black/20"

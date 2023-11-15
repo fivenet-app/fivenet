@@ -37,6 +37,7 @@ function addPin(event: MouseEvent): void {
 
 function showPin(p: Pin): void {
     console.log(p);
+    // TODO
 }
 
 function removePin(idx: number): void {

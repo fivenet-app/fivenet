@@ -57,7 +57,8 @@ func (p *Perms) registerEvents(ctx context.Context) error {
 
 func (p *Perms) handleMessage(msg *nats.Msg) {
 	msg.Ack()
-	p.logger.Debug("received message", zap.String("subject", msg.Subject))
+
+	p.logger.Debug("received event message", zap.String("subject", msg.Subject))
 
 	switch events.Type(strings.TrimPrefix(msg.Subject, string(BaseSubject)+".")) {
 	case RolePermUpdateSubject:

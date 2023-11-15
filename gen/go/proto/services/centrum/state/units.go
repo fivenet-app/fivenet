@@ -7,6 +7,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/puzpuzpuz/xsync/v3"
 	"golang.org/x/exp/slices"
+	"google.golang.org/protobuf/proto"
 )
 
 func (s *State) GetUnit(job string, id uint64) (*dispatch.Unit, bool) {
@@ -15,7 +16,12 @@ func (s *State) GetUnit(job string, id uint64) (*dispatch.Unit, bool) {
 		return nil, false
 	}
 
-	return units.Load(id)
+	unit, ok := units.Load(id)
+	if !ok {
+		return nil, false
+	}
+
+	return proto.Clone(unit).(*dispatch.Unit), true
 }
 
 func (s *State) GetUnitIDForUserID(userId int32) (uint64, bool) {
@@ -25,10 +31,7 @@ func (s *State) GetUnitIDForUserID(userId int32) (uint64, bool) {
 func (s *State) ListUnits(job string) ([]*dispatch.Unit, bool) {
 	us := []*dispatch.Unit{}
 
-	units, ok := s.units.Load(job)
-	if !ok {
-		return nil, false
-	}
+	units := s.GetUnitsMap(job)
 
 	units.Range(func(key uint64, unit *dispatch.Unit) bool {
 		us = append(us, unit)
@@ -83,8 +86,12 @@ func (s *State) DeleteUnit(job string, id uint64) {
 }
 
 func (s *State) UpdateUnit(job string, unitId uint64, unit *dispatch.Unit) error {
-	if dispatch, ok := s.GetUnitsMap(job).LoadOrStore(unitId, unit); ok {
-		dispatch.Merge(unit)
+	if u, ok := s.GetUnitsMap(job).LoadOrStore(unitId, unit); ok {
+		lock := s.GetUnitLock(unitId)
+		lock.Lock()
+		defer lock.Unlock()
+
+		u.Merge(unit)
 	}
 
 	return nil

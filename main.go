@@ -125,10 +125,10 @@ func main() {
 
 	case "worker":
 		fxOpts = append(fxOpts,
+			fx.Invoke(func(*audit.Retention) {}),
 			fx.Invoke(func(*discord.Bot) {}),
 			fx.Invoke(func(*bot.Manager) {}),
 			fx.Invoke(func(*manager.Housekeeper) {}),
-			fx.Invoke(func(*audit.Retention) {}),
 		)
 
 	default:

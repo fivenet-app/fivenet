@@ -122,6 +122,7 @@ const open = ref(false);
 watch(getOwnUnit, async () => {
     if (getOwnUnit.value !== undefined) {
         open.value = true;
+        joinUnitOpen.value = false;
     } else {
         open.value = false;
         joinUnitOpen.value = false;

@@ -141,10 +141,10 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 		}
 
 		// Send updates
-		for _, unit := range toAnnounce {
+		for _, unitId := range toAnnounce {
 			if err := s.UpdateDispatchStatus(ctx, job, dsp, &dispatch.DispatchStatus{
 				DispatchId: dsp.Id,
-				UnitId:     &unit,
+				UnitId:     &unitId,
 				Status:     dispatch.StatusDispatch_STATUS_DISPATCH_UNIT_UNASSIGNED,
 				UserId:     userId,
 				X:          x,
@@ -179,6 +179,7 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 				continue
 			}
 
+			// Skip empty units
 			if len(unit.Users) == 0 {
 				continue
 			}
@@ -539,6 +540,10 @@ func (s *Manager) TakeDispatch(ctx context.Context, job string, userId int32, un
 		postal = marker.Info.Postal
 	}
 
+	lock := s.State.GetUnitLock(unit.Id)
+	lock.Lock()
+	defer lock.Unlock()
+
 	for _, dispatchId := range dispatchIds {
 		dsp, ok := s.GetDispatch(job, dispatchId)
 		if !ok {
@@ -649,7 +654,6 @@ func (s *Manager) TakeDispatch(ctx context.Context, job string, userId int32, un
 			for k, u := range dsp.Units {
 				if u.UnitId == unit.Id {
 					dsp.Units = utils.RemoveFromSlice(dsp.Units, k)
-					break
 				}
 			}
 		}

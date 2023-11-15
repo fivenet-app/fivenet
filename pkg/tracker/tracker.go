@@ -126,7 +126,6 @@ func (s *Tracker) start() {
 	for {
 		select {
 		case <-s.ctx.Done():
-			s.broker.Stop()
 			return
 
 		case <-ticker.C:

@@ -11,17 +11,17 @@ import (
 )
 
 func (s *Manager) registerSubscriptions() error {
-	if _, err := s.events.JS.Subscribe(fmt.Sprintf("%s.%s.>", eventscentrum.BaseSubject, eventscentrum.TopicGeneral), s.watchTopicGeneral, nats.DeliverLastPerSubject()); err != nil {
+	if _, err := s.events.JS.Subscribe(fmt.Sprintf("%s.*.%s.>", eventscentrum.BaseSubject, eventscentrum.TopicGeneral), s.watchTopicGeneral, nats.DeliverLastPerSubject()); err != nil {
 		s.logger.Error("failed to subscribe to centrum general topic", zap.Error(err))
 		return err
 	}
 
-	if _, err := s.events.JS.Subscribe(fmt.Sprintf("%s.%s.>", eventscentrum.BaseSubject, eventscentrum.TopicUnit), s.watchTopicUnits, nats.DeliverLastPerSubject()); err != nil {
+	if _, err := s.events.JS.Subscribe(fmt.Sprintf("%s.*.%s.>", eventscentrum.BaseSubject, eventscentrum.TopicUnit), s.watchTopicUnits, nats.DeliverLastPerSubject()); err != nil {
 		s.logger.Error("failed to subscribe to centrum units topic", zap.Error(err))
 		return err
 	}
 
-	if _, err := s.events.JS.Subscribe(fmt.Sprintf("%s.%s.>", eventscentrum.BaseSubject, eventscentrum.TopicDispatch), s.watchTopicDispatches, nats.DeliverLastPerSubject()); err != nil {
+	if _, err := s.events.JS.Subscribe(fmt.Sprintf("%s.*.%s.>", eventscentrum.BaseSubject, eventscentrum.TopicDispatch), s.watchTopicDispatches, nats.DeliverLastPerSubject()); err != nil {
 		s.logger.Error("failed to subscribe to centrum dispatch topic", zap.Error(err))
 		return err
 	}
@@ -84,7 +84,7 @@ func (s *Manager) watchTopicUnits(msg *nats.Msg) {
 			if dest.Status.Status == dispatch.StatusUnit_STATUS_UNIT_USER_ADDED {
 				s.SetUnitForUser(*dest.Status.UserId, dest.Status.UnitId)
 			} else if dest.Status.Status == dispatch.StatusUnit_STATUS_UNIT_USER_REMOVED {
-				s.UnsetUnitForUser(*dest.Status.UserId)
+				s.UnsetUnitIDForUser(*dest.Status.UserId)
 			}
 		}
 

@@ -8,6 +8,6 @@ func (s *State) SetUnitForUser(userId int32, unitId uint64) {
 	s.userIDToUnitID.Store(userId, unitId)
 }
 
-func (s *State) UnsetUnitForUser(userId int32) {
+func (s *State) UnsetUnitIDForUser(userId int32) {
 	s.userIDToUnitID.Delete(userId)
 }

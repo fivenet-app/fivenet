@@ -93,7 +93,7 @@ onBeforeUnmount(async () => {
         <div class="form-control flex flex-col gap-2">
             <input
                 v-model="playerQuery"
-                class="w-full p-0.5 px-1 bg-clip-padding rounded-md border-2 border-black/20"
+                class="w-full max-w-[11rem] p-0.5 px-1 bg-clip-padding rounded-md border-2 border-black/20"
                 type="text"
                 name="searchPlayer"
                 :placeholder="`${$t('common.employee', 1)} ${$t('common.filter')}`"

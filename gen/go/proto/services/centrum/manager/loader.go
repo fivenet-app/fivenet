@@ -161,9 +161,8 @@ func (s *Manager) LoadUnits(ctx context.Context, id uint64) error {
 			return err
 		}
 
-		um := s.GetUnitsMap(units[i].Job)
-		if unit, loaded := um.LoadOrStore(units[i].Id, units[i]); loaded {
-			unit.Merge(units[i])
+		if err := s.State.UpdateUnit(units[i].Job, units[i].Id, units[i]); err != nil {
+			return err
 		}
 
 		for _, user := range units[i].Users {
@@ -307,7 +306,9 @@ func (s *Manager) LoadDispatches(ctx context.Context, id uint64) error {
 				s.State.GetDispatchLocations(dispatch.Job).Remove(dispatch, nil)
 			}
 
-			dispatch.Merge(dispatches[i])
+			if err := s.State.UpdateDispatch(dispatches[i].Job, dispatches[i].Id, dispatches[i]); err != nil {
+				return err
+			}
 		}
 
 		// Ensure dispatch has status new if it currently doesn't have one
