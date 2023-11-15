@@ -389,9 +389,14 @@ func (s *Manager) CreateDispatch(ctx context.Context, d *dispatch.Dispatch) (*di
 		return nil, err
 	}
 
+	var userId *int32
+	if !d.Anon && d.CreatorId != nil {
+		userId = d.CreatorId
+	}
+
 	if err := s.AddDispatchStatus(ctx, tx, &dispatch.DispatchStatus{
 		DispatchId: uint64(lastId),
-		UserId:     d.CreatorId,
+		UserId:     userId,
 		Status:     dispatch.StatusDispatch_STATUS_DISPATCH_NEW,
 		X:          &d.X,
 		Y:          &d.Y,
