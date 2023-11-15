@@ -33,7 +33,8 @@ func (p *Perms) registerEvents(ctx context.Context) error {
 		Retention: nats.InterestPolicy,
 		Subjects:  []string{fmt.Sprintf("%s.>", BaseSubject)},
 		Discard:   nats.DiscardOld,
-		MaxAge:    10 * time.Second,
+		MaxAge:    15 * time.Second,
+		Storage:   nats.MemoryStorage,
 	}
 
 	if _, err := p.events.JS.UpdateStream(cfg); err != nil {

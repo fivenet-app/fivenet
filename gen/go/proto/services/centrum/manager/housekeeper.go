@@ -603,6 +603,7 @@ func (s *Housekeeper) watchUserChanges() {
 				ctx, span := s.tracer.Start(s.ctx, "centrum-watch-users")
 				defer span.End()
 
+				s.logger.Debug("received user changes", zap.Int("added", len(event.Added)), zap.Int("removed", len(event.Removed)))
 				for _, userInfo := range event.Added {
 					if _, ok := s.GetUserUnitID(userInfo.UserID); !ok {
 						unitId, err := s.LoadUnitIDForUserID(ctx, userInfo.UserID)

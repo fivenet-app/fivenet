@@ -59,6 +59,7 @@ func RegisterStreams(ctx context.Context, ev *events.Eventus) error {
 		Subjects:    []string{fmt.Sprintf("%s.>", BaseSubject)},
 		Discard:     nats.DiscardOld,
 		MaxAge:      120 * time.Second,
+		Storage:     nats.MemoryStorage,
 	}
 
 	if _, err := ev.JS.UpdateStream(cfg); err != nil {
