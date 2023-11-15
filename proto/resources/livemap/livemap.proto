@@ -13,7 +13,7 @@ enum MarkerType {
   MARKER_TYPE_UNSPECIFIED = 0;
   MARKER_TYPE_DOT = 1;
   MARKER_TYPE_CIRCLE = 2;
-  MARKER_TYPE_POLYGON = 3;
+  MARKER_TYPE_ICON = 3;
 }
 
 message MarkerInfo {
@@ -56,7 +56,7 @@ message Marker {
 message MarkerData {
   oneof data {
     CircleMarker circle = 3;
-    PolygonMarker polygon = 4;
+    IconMarker icon = 4;
   }
 }
 
@@ -70,6 +70,6 @@ message Coords {
   double y = 2;
 }
 
-message PolygonMarker {
-  repeated Coords coords = 1;
+message IconMarker {
+  string icon = 1;
 }

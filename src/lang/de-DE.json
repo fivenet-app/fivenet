@@ -768,7 +768,8 @@
         "refresh": "Neuladen",
         "forward": "Vorwärts",
         "points": "Punkt | Punkte",
-        "hints": "Hinweis | Hinweise"
+        "hints": "Hinweis | Hinweise",
+        "icon": "Icon"
     },
     "notifications": {
         "clipboard": {

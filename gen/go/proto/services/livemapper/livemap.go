@@ -16,8 +16,6 @@ import (
 	"github.com/galexrt/fivenet/pkg/server/audit"
 	"github.com/galexrt/fivenet/pkg/tracker"
 	"github.com/galexrt/fivenet/pkg/utils"
-	"github.com/galexrt/fivenet/query/fivenet/table"
-	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/puzpuzpuz/xsync/v3"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
@@ -33,10 +31,6 @@ const (
 
 var (
 	ErrStreamFailed = status.Error(codes.Internal, "errors.LivemapperService.ErrStreamFailed")
-)
-
-var (
-	tUsers = table.Users.AS("user")
 )
 
 type Server struct {
@@ -254,83 +248,4 @@ func (s *Server) getUserLocations(jobs map[string]int32, userInfo *userinfo.User
 	}
 
 	return nil, false, nil
-}
-
-func (s *Server) getMarkers(jobs []string) ([]*livemap.Marker, error) {
-	ds := []*livemap.Marker{}
-
-	for _, job := range jobs {
-		markers, ok := s.markersCache.Load(job)
-		if !ok {
-			continue
-		}
-
-		ds = append(ds, markers...)
-	}
-
-	return ds, nil
-}
-
-func (s *Server) refreshMarkers(ctx context.Context) error {
-	tUsers := tUsers.AS("creator")
-	tMarkers := tMarkers.AS("marker")
-	stmt := tMarkers.
-		SELECT(
-			tMarkers.ID.AS("markerinfo.id"),
-			tMarkers.Job.AS("markerinfo.job"),
-			tMarkers.Name.AS("markerinfo.name"),
-			tMarkers.Description.AS("markerinfo.description"),
-			tMarkers.X.AS("markerinfo.x"),
-			tMarkers.Y.AS("markerinfo.y"),
-			tMarkers.Postal.AS("markerinfo.postal"),
-			tMarkers.Color.AS("markerinfo.color"),
-			tMarkers.Icon.AS("markerinfo.icon"),
-			tMarkers.MarkerType,
-			tMarkers.MarkerData,
-			tMarkers.CreatorID,
-			tUsers.ID,
-			tUsers.Identifier,
-			tUsers.Job,
-			tUsers.JobGrade,
-			tUsers.Firstname,
-			tUsers.Lastname,
-		).
-		FROM(
-			tMarkers.
-				LEFT_JOIN(tUsers,
-					tMarkers.CreatorID.EQ(tUsers.ID),
-				),
-		).
-		WHERE(
-			tMarkers.CreatedAt.GT_EQ(
-				jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(60, jet.MINUTE)),
-			),
-		)
-
-	var dest []*livemap.Marker
-	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
-		return err
-	}
-
-	markers := map[string][]*livemap.Marker{}
-	for _, job := range s.trackedJobs {
-		markers[job] = []*livemap.Marker{}
-	}
-	for _, m := range dest {
-		if _, ok := markers[m.Info.Job]; !ok {
-			markers[m.Info.Job] = []*livemap.Marker{}
-		}
-
-		markers[m.Info.Job] = append(markers[m.Info.Job], m)
-	}
-
-	for job, ms := range markers {
-		if len(ms) == 0 {
-			s.markersCache.Delete(job)
-		} else {
-			s.markersCache.Store(job, ms)
-		}
-	}
-
-	return nil
 }

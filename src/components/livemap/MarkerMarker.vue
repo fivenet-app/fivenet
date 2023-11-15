@@ -1,12 +1,13 @@
 <script lang="ts" setup>
 import { RpcError } from '@protobuf-ts/runtime-rpc';
-import { LCircleMarker, LMarker, LPopup } from '@vue-leaflet/vue-leaflet';
+import { LCircleMarker, LIcon, LMarker } from '@vue-leaflet/vue-leaflet';
 import { useConfirmDialog } from '@vueuse/core';
-import { DivIcon, Icon, type PointExpression } from 'leaflet';
-import { TrashCanIcon } from 'mdi-vue3';
+import { type PointExpression } from 'leaflet';
+import { HelpIcon } from 'mdi-vue3';
 import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
-import PhoneNumber from '~/components/partials/citizens/PhoneNumber.vue';
 import { Marker } from '~~/gen/ts/resources/livemap/livemap';
+import MarkerMarkerPopup from '~/components/livemap/MarkerMarkerPopup.vue';
+import { markerIcons } from '~/components/livemap/helpers';
 
 const props = withDefaults(
     defineProps<{
@@ -24,18 +25,6 @@ defineEmits<{
 
 const iconAnchor: PointExpression = [props.size / 2, props.size];
 const popupAnchor: PointExpression = [0, (props.size / 2) * -1];
-const icon = new DivIcon({
-    html: `<div>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 -0.8 16 17.6" fill="${
-            props.marker.info?.color ? '#' + props.marker.info?.color : 'currentColor'
-        }" class="w-full h-full">
-                <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z"/>
-            </svg>
-        </div>`,
-    iconSize: [props.size, props.size],
-    iconAnchor,
-    popupAnchor,
-}) as Icon;
 
 const { $grpc } = useNuxtApp();
 
@@ -54,6 +43,10 @@ async function deleteMarker(id: bigint): Promise<void> {
 const { isRevealed, reveal, confirm, cancel, onConfirm } = useConfirmDialog();
 
 onConfirm(async (id) => deleteMarker(id));
+console.log(
+    props.marker.info?.icon,
+    markerIcons.find((i) => i.name === props.marker.info?.icon),
+);
 </script>
 
 <template>
@@ -67,44 +60,41 @@ onConfirm(async (id) => deleteMarker(id));
         :color="marker.info?.color ? '#' + marker.info?.color : '#fff'"
         :fill-opacity="(marker.data.data.circle.oapcity ?? 5) / 100"
     >
-        <LPopup :options="{ closeButton: true }">
-            <ul>
-                <li>{{ marker.info?.name }}</li>
-                <li>{{ $t('common.description') }}: {{ marker.info?.description }}</li>
-            </ul>
-            <template v-if="can('LivemapperService.DeleteMarker')">
-                <button type="button" :title="$t('common.delete')" class="flex flex-row items-center" @click="reveal()">
-                    <TrashCanIcon class="w-6 h-6" />
-                    <span>{{ $t('common.delete') }}</span>
-                </button>
-            </template>
-        </LPopup>
+        <MarkerMarkerPopup :marker="marker" @delete="reveal()" />
     </LCircleMarker>
 
     <LMarker
-        v-else
+        v-else-if="marker.data?.data.oneofKind === 'icon'"
         :lat-lng="[marker.info!.y, marker.info!.x]"
         :name="marker.info!.name"
-        :icon="icon"
         @click="$emit('selected')"
     >
-        <LPopup :options="{ closeButton: true }">
-            <ul>
-                <li>{{ marker.info?.name }}</li>
-                <li v-if="marker.info?.description">{{ $t('common.description') }}: {{ marker.info?.description }}</li>
-                <li class="italic">
-                    <span class="font-semibold">{{ $t('common.sent_by') }}</span
-                    >:
-                    <span v-if="marker.creator">
-                        {{ marker.creator?.firstname }}, {{ marker.creator?.lastname }} (<PhoneNumber
-                            :number="marker.creator.phoneNumber"
-                        />)
-                    </span>
-                    <span v-else>
-                        {{ $t('common.unknown') }}
-                    </span>
-                </li>
-            </ul>
-        </LPopup>
+        <LIcon :icon-size="[size, size]" :icon-anchor="iconAnchor" :popup-anchor="popupAnchor">
+            <component
+                :is="
+                    markerIcons.find((i) => marker.data?.data.oneofKind === 'icon' && i.name === marker.data?.data.icon.icon) ??
+                    HelpIcon
+                "
+                class="w-6 h-6"
+                :style="{ color: marker.info?.color ? '#' + marker.info?.color : 'currentColor' }"
+            />
+        </LIcon>
+        <MarkerMarkerPopup :marker="marker" @delete="reveal()" />"
+    </LMarker>
+
+    <LMarker v-else :lat-lng="[marker.info!.y, marker.info!.x]" :name="marker.info!.name" @click="$emit('selected')">
+        <LIcon :icon-size="[size, size]" :icon-anchor="iconAnchor" :popup-anchor="popupAnchor">
+            <div>
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 -0.8 16 17.6"
+                    :fill="marker.info?.color ? '#' + marker.info?.color : 'currentColor'"
+                    class="w-full h-full"
+                >
+                    <path d="M8 16s6-5.686 6-10A6 6 0 0 0 2 6c0 4.314 6 10 6 10zm0-7a3 3 0 1 1 0-6 3 3 0 0 1 0 6z" />
+                </svg>
+            </div>
+        </LIcon>
+        <MarkerMarkerPopup :marker="marker" @delete="reveal()" />"
     </LMarker>
 </template>

@@ -1,14 +1,26 @@
 <script lang="ts" setup>
-import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
+import {
+    Dialog,
+    DialogPanel,
+    DialogTitle,
+    Listbox,
+    ListboxButton,
+    ListboxOption,
+    ListboxOptions,
+    TransitionChild,
+    TransitionRoot,
+} from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc';
 // eslint-disable-next-line camelcase
 import { digits, max, max_value, min, min_value, required } from '@vee-validate/rules';
 import { useThrottleFn } from '@vueuse/core';
-import { CloseIcon, LoadingIcon } from 'mdi-vue3';
+import { CheckIcon, ChevronDownIcon, CloseIcon, HelpIcon, LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
+import type { DefineComponent } from 'vue';
 import ColorInput from 'vue-color-input/dist/color-input.esm';
 import { useLivemapStore } from '~/store/livemap';
 import { Marker, MarkerType } from '~~/gen/ts/resources/livemap/livemap';
+import { markerIcons } from '~/components/livemap/helpers';
 
 defineProps<{
     open: boolean;
@@ -32,6 +44,7 @@ interface FormData {
 }
 
 const color = ref('#EE4B2B');
+const selectedIcon = shallowRef<DefineComponent>(HelpIcon);
 
 async function createMarker(values: FormData): Promise<void> {
     try {
@@ -43,6 +56,7 @@ async function createMarker(values: FormData): Promise<void> {
                 description: values.description,
                 x: location.value?.x ?? 0,
                 y: location.value?.y ?? 0,
+                color: color.value.replaceAll('#', ''),
             },
             type: values.markerType,
         };
@@ -54,6 +68,15 @@ async function createMarker(values: FormData): Promise<void> {
                     circle: {
                         radius: values.circleRadius,
                         oapcity: values.circleOpacity,
+                    },
+                },
+            };
+        } else if (values.markerType === MarkerType.ICON) {
+            marker.data = {
+                data: {
+                    oneofKind: 'icon',
+                    icon: {
+                        icon: selectedIcon.value.name,
                     },
                 },
             };
@@ -71,7 +94,11 @@ async function createMarker(values: FormData): Promise<void> {
     }
 }
 
-const markerTypes = ref<{ status: MarkerType; selected?: boolean }[]>([{ status: MarkerType.CIRCLE }]);
+const markerTypes = ref<{ status: MarkerType; selected?: boolean }[]>([
+    { status: MarkerType.CIRCLE },
+    { status: MarkerType.DOT },
+    { status: MarkerType.ICON },
+]);
 
 defineRule('required', required);
 defineRule('digits', digits);
@@ -255,7 +282,6 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                     v-slot="{ field }"
                                                                     as="div"
                                                                     name="markerType"
-                                                                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                                     :placeholder="$t('common.marker')"
                                                                     :label="$t('common.marker')"
                                                                 >
@@ -288,36 +314,158 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                                 />
                                                             </dd>
                                                         </div>
-                                                        <template v-if="values.markerType === MarkerType.CIRCLE">
-                                                            <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                                                <dt class="text-sm font-medium leading-6 text-neutral">
-                                                                    <label
-                                                                        for="circleRadius"
-                                                                        class="block text-sm font-medium leading-6 text-neutral"
-                                                                    >
-                                                                        {{ $t('common.radius') }}
-                                                                    </label>
-                                                                </dt>
-                                                                <dd
-                                                                    class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
+                                                        <div
+                                                            v-if="values.markerType === MarkerType.CIRCLE"
+                                                            class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0"
+                                                        >
+                                                            <dt class="text-sm font-medium leading-6 text-neutral">
+                                                                <label
+                                                                    for="circleRadius"
+                                                                    class="block text-sm font-medium leading-6 text-neutral"
                                                                 >
-                                                                    <VeeField
-                                                                        type="number"
-                                                                        name="circleRadius"
-                                                                        min="5"
-                                                                        max="250"
-                                                                        class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                                        :placeholder="$t('common.radius')"
-                                                                        :label="$t('common.radius')"
-                                                                    />
-                                                                    <VeeErrorMessage
-                                                                        name="circleRadius"
-                                                                        as="p"
-                                                                        class="mt-2 text-sm text-error-400"
-                                                                    />
-                                                                </dd>
-                                                            </div>
-                                                        </template>
+                                                                    {{ $t('common.radius') }}
+                                                                </label>
+                                                            </dt>
+                                                            <dd
+                                                                class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
+                                                            >
+                                                                <VeeField
+                                                                    type="number"
+                                                                    name="circleRadius"
+                                                                    min="5"
+                                                                    max="250"
+                                                                    class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                                    :placeholder="$t('common.radius')"
+                                                                    :label="$t('common.radius')"
+                                                                />
+                                                                <VeeErrorMessage
+                                                                    name="circleRadius"
+                                                                    as="p"
+                                                                    class="mt-2 text-sm text-error-400"
+                                                                />
+                                                            </dd>
+                                                        </div>
+                                                        <div
+                                                            v-else-if="values.markerType === MarkerType.ICON"
+                                                            class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0"
+                                                        >
+                                                            <dt class="text-sm font-medium leading-6 text-neutral">
+                                                                <label
+                                                                    for="icon"
+                                                                    class="block text-sm font-medium leading-6 text-neutral"
+                                                                >
+                                                                    {{ $t('common.radius') }}
+                                                                </label>
+                                                            </dt>
+                                                            <dd
+                                                                class="mt-1 text-sm leading-6 text-gray-400 sm:col-span-2 sm:mt-0"
+                                                            >
+                                                                <VeeField
+                                                                    as="div"
+                                                                    name="icon"
+                                                                    :placeholder="$t('common.icon')"
+                                                                    :label="$t('common.icon')"
+                                                                >
+                                                                    <Listbox v-model="selectedIcon" as="div" class="mt-2">
+                                                                        <div class="relative">
+                                                                            <ListboxButton
+                                                                                class="block pl-3 text-left w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                                            >
+                                                                                <span
+                                                                                    class="block truncate inline-flex items-center"
+                                                                                >
+                                                                                    <component
+                                                                                        :is="selectedIcon"
+                                                                                        v-if="selectedIcon"
+                                                                                        class="w-5 h-5 mr-1"
+                                                                                        :style="{ color: color }"
+                                                                                    />
+                                                                                    {{
+                                                                                        (selectedIcon.name ?? 'N/A').replace(
+                                                                                            'Icon',
+                                                                                            '',
+                                                                                        )
+                                                                                    }}
+                                                                                </span>
+                                                                                <span
+                                                                                    class="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none"
+                                                                                >
+                                                                                    <ChevronDownIcon
+                                                                                        class="w-5 h-5 text-gray-400"
+                                                                                        aria-hidden="true"
+                                                                                    />
+                                                                                </span>
+                                                                            </ListboxButton>
+
+                                                                            <transition
+                                                                                leave-active-class="transition duration-100 ease-in"
+                                                                                leave-from-class="opacity-100"
+                                                                                leave-to-class="opacity-0"
+                                                                            >
+                                                                                <ListboxOptions
+                                                                                    class="absolute z-10 w-full py-1 mt-1 overflow-auto text-base rounded-md bg-base-700 max-h-44 sm:text-sm"
+                                                                                >
+                                                                                    <ListboxOption
+                                                                                        v-for="icon in markerIcons"
+                                                                                        v-slot="{ active, selected }"
+                                                                                        :key="icon.name"
+                                                                                        as="template"
+                                                                                        :value="icon"
+                                                                                    >
+                                                                                        <li
+                                                                                            :class="[
+                                                                                                active ? 'bg-primary-500' : '',
+                                                                                                'text-neutral relative cursor-default select-none py-2 pl-8 pr-4',
+                                                                                            ]"
+                                                                                        >
+                                                                                            <span
+                                                                                                :class="[
+                                                                                                    selected
+                                                                                                        ? 'font-semibold'
+                                                                                                        : 'font-normal',
+                                                                                                    'block truncate inline-flex items-center',
+                                                                                                ]"
+                                                                                            >
+                                                                                                <component
+                                                                                                    :is="icon"
+                                                                                                    class="w-5 h-5 mr-1"
+                                                                                                />
+                                                                                                {{
+                                                                                                    icon.name.replace(
+                                                                                                        'Icon',
+                                                                                                        '',
+                                                                                                    )
+                                                                                                }}
+                                                                                            </span>
+
+                                                                                            <span
+                                                                                                v-if="selected"
+                                                                                                :class="[
+                                                                                                    active
+                                                                                                        ? 'text-neutral'
+                                                                                                        : 'text-primary-500',
+                                                                                                    'absolute inset-y-0 left-0 flex items-center pl-1.5',
+                                                                                                ]"
+                                                                                            >
+                                                                                                <CheckIcon
+                                                                                                    class="w-5 h-5"
+                                                                                                    aria-hidden="true"
+                                                                                                />
+                                                                                            </span>
+                                                                                        </li>
+                                                                                    </ListboxOption>
+                                                                                </ListboxOptions>
+                                                                            </transition>
+                                                                        </div>
+                                                                    </Listbox>
+                                                                </VeeField>
+                                                                <VeeErrorMessage
+                                                                    name="icon"
+                                                                    as="p"
+                                                                    class="mt-2 text-sm text-error-400"
+                                                                />
+                                                            </dd>
+                                                        </div>
                                                     </dl>
                                                 </div>
                                             </div>
