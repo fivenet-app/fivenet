@@ -16,14 +16,14 @@ export interface LivemapState {
 
     location: Coordinate | undefined;
     zoom: number;
-    jobs: {
-        users: Job[];
-        markers: Job[];
-    };
-    markers: {
-        users: UserMarker[];
-        markers: Marker[];
-    };
+
+    initiated: boolean;
+
+    jobsMarkers: Job[];
+    jobsUsers: Job[];
+
+    markersMarkers: Marker[];
+    markersUsers: UserMarker[];
 }
 
 export const useLivemapStore = defineStore('livemap', {
@@ -36,12 +36,14 @@ export const useLivemapStore = defineStore('livemap', {
 
             location: { x: 0, y: 0 },
             zoom: 2,
-            jobs: {
-                users: [] as Job[],
-            },
-            markers: {
-                users: [] as UserMarker[],
-            },
+
+            initiated: false,
+
+            jobsMarkers: [] as Job[],
+            jobsUsers: [] as Job[],
+
+            markersMarkers: [] as Marker[],
+            markersUsers: [] as UserMarker[],
         }) as LivemapState,
     persist: false,
     actions: {
@@ -72,10 +74,15 @@ export const useLivemapStore = defineStore('livemap', {
                         continue;
                     }
 
-                    this.jobs.users = resp.jobsUsers;
-                    this.markers.users = resp.users;
-                    this.jobs.markers = resp.jobsMarkers;
-                    this.markers.markers = resp.markers;
+                    if (!this.initiated) {
+                        this.jobsMarkers = resp.jobsMarkers;
+                        this.jobsUsers = resp.jobsUsers;
+
+                        this.initiated = true;
+                    }
+
+                    this.markersUsers = resp.users;
+                    this.markersMarkers = resp.markers;
                 }
             } catch (e) {
                 const error = e as RpcError;

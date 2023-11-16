@@ -29,7 +29,7 @@ defineEmits<{
 }>();
 
 const livemapStore = useLivemapStore();
-const { markers, jobs } = storeToRefs(livemapStore);
+const { jobsUsers, jobsMarkers, markersMarkers, markersUsers } = storeToRefs(livemapStore);
 const { startStream, stopStream } = livemapStore;
 
 const settingsStore = useSettingsStore();
@@ -40,7 +40,7 @@ const { activeChar } = storeToRefs(authStore);
 
 const playerQuery = ref<string>('');
 const playerMarkersFiltered = computedAsync(async () =>
-    markers.value.users.filter((m) =>
+    markersUsers.value.filter((m) =>
         (m.user?.firstname + ' ' + m.user?.lastname).toLowerCase().includes(playerQuery.value.toLowerCase()),
     ),
 );
@@ -55,7 +55,7 @@ onBeforeUnmount(async () => {
 
 <template>
     <LMarkerClusterGroup
-        v-for="job in jobs.users"
+        v-for="job in jobsUsers"
         :key="`users_${job.name}`"
         :name="`${$t('common.employee', 2)} ${job.label}`"
         layer-type="overlay"
@@ -63,6 +63,8 @@ onBeforeUnmount(async () => {
         :max-cluster-radius="15"
         :disable-clustering-at-zoom="2"
         :chunked-loading="true"
+        :animate="true"
+        :animate-adding-markers="true"
     >
         <PlayerMarker
             v-for="marker in playerMarkersFiltered.filter((p) => p.user?.job === job.name)"
@@ -77,7 +79,7 @@ onBeforeUnmount(async () => {
     </LMarkerClusterGroup>
 
     <LMarkerClusterGroup
-        v-for="job in jobs.markers"
+        v-for="job in jobsMarkers"
         :key="`markers_${job.name}`"
         :name="`${$t('common.marker', 2)} ${job.label}`"
         layer-type="overlay"
@@ -85,9 +87,11 @@ onBeforeUnmount(async () => {
         :max-cluster-radius="0"
         :disable-clustering-at-zoom="1"
         :chunked-loading="true"
+        :animate="true"
+        :animate-adding-markers="true"
     >
         <MarkerMarker
-            v-for="marker in markers.markers"
+            v-for="marker in markersMarkers"
             :key="marker.info!.id"
             :marker="marker"
             :size="livemap.markerSize"

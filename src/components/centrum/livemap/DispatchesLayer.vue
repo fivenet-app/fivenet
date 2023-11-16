@@ -36,6 +36,7 @@ const open = ref(false);
         :max-cluster-radius="0"
         :disable-clustering-at-zoom="1"
         :chunked-loading="true"
+        :animate="true"
     >
         <DispatchMarker
             v-for="dispatch in ownDispatches"
@@ -57,6 +58,7 @@ const open = ref(false);
         :max-cluster-radius="15"
         :disable-clustering-at-zoom="2"
         :chunked-loading="true"
+        :animate="true"
     >
         <DispatchMarker
             v-for="[id, dispatch] in dispatches"
