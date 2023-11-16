@@ -301,9 +301,11 @@ func (s *Manager) LoadDispatches(ctx context.Context, id uint64) error {
 		}
 
 		dm := s.GetDispatchesMap(dispatches[i].Job)
-		if dispatch, loaded := dm.LoadOrStore(dispatches[i].Id, dispatches[i]); loaded {
-			if dispatch.X != dispatches[i].X || dispatch.Y != dispatches[i].Y {
-				s.State.GetDispatchLocations(dispatch.Job).Remove(dispatch, nil)
+		if dsp, loaded := dm.LoadOrStore(dispatches[i].Id, dispatches[i]); loaded {
+			if dsp.X != dispatches[i].X || dsp.Y != dispatches[i].Y {
+				s.State.GetDispatchLocations(dsp.Job).Remove(dsp, func(p orb.Pointer) bool {
+					return p.(*dispatch.Dispatch).Id == dsp.Id
+				})
 			}
 
 			if err := s.State.UpdateDispatch(dispatches[i].Job, dispatches[i].Id, dispatches[i]); err != nil {

@@ -40,8 +40,10 @@ const { activeChar } = storeToRefs(authStore);
 
 const playerQuery = ref<string>('');
 const playerMarkersFiltered = computedAsync(async () =>
-    markersUsers.value.filter((m) =>
-        (m.user?.firstname + ' ' + m.user?.lastname).toLowerCase().includes(playerQuery.value.toLowerCase()),
+    markersUsers.value.filter(
+        (m) =>
+            playerQuery.value === '' ||
+            (m.user?.firstname + ' ' + m.user?.lastname).toLowerCase().includes(playerQuery.value.toLowerCase()),
     ),
 );
 

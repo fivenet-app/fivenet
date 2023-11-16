@@ -13,6 +13,7 @@ import (
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/paulmach/orb"
 )
 
 var (
@@ -207,7 +208,9 @@ func (s *Server) UpdateDispatch(ctx context.Context, req *UpdateDispatchRequest)
 		return nil, errorscentrum.ErrFailedQuery
 	}
 	if oldDsp.X != req.Dispatch.X || oldDsp.Y != req.Dispatch.Y {
-		s.state.GetDispatchLocations(oldDsp.Job).Remove(oldDsp, nil)
+		s.state.GetDispatchLocations(oldDsp.Job).Remove(oldDsp, func(p orb.Pointer) bool {
+			return p.(*dispatch.Dispatch).Id == oldDsp.Id
+		})
 	}
 
 	if err := s.state.UpdateDispatch(ctx, userInfo.Job, &userInfo.UserId, req.Dispatch, true); err != nil {

@@ -3,6 +3,7 @@ package state
 import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
 	"github.com/galexrt/fivenet/pkg/utils"
+	"github.com/paulmach/orb"
 	"github.com/puzpuzpuz/xsync/v3"
 	"golang.org/x/exp/slices"
 )
@@ -70,11 +71,13 @@ func (s *State) FilterDispatches(job string, statuses []dispatch.StatusDispatch,
 
 func (s *State) DeleteDispatch(job string, id uint64) {
 	dsp, ok := s.GetDispatch(job, id)
-	if !ok {
+	if !ok || dsp == nil {
 		return
 	}
 
-	s.GetDispatchLocations(job).Remove(dsp, nil)
+	s.GetDispatchLocations(job).Remove(dsp, func(p orb.Pointer) bool {
+		return p.(*dispatch.Dispatch).Id == dsp.Id
+	})
 
 	dispatches, ok := s.dispatches.Load(job)
 	if ok {
