@@ -9805,6 +9805,13 @@ vue-json-pretty@^2.2.4:
   resolved "https://registry.yarnpkg.com/vue-json-pretty/-/vue-json-pretty-2.2.4.tgz#4c82fa78aeb987460c727c3b31e45a58f58d9c95"
   integrity sha512-JX80b3QDrspcH43C53CdtYeq/froApQGSV5y43bEMWFj2LGOxB96aH1VmvrFA21nD1WTP6nwfFMQqGXuS4jyFQ==
 
+vue-leaflet-markercluster@^0.5.1:
+  version "0.5.1"
+  resolved "https://registry.yarnpkg.com/vue-leaflet-markercluster/-/vue-leaflet-markercluster-0.5.1.tgz#dbedf6f00af35f4a1c64eda396171029808fe2a9"
+  integrity sha512-sEdF9aNqh3xSdsSRIC5w+sVUikHlhEC2IbGzEELo+YGaOqZgvrkDx8A7svDt2zKLCYgSRZim2aYwDZ7qliT5eg==
+  dependencies:
+    vue "^3.3.4"
+
 vue-router@^4.2.5:
   version "4.2.5"
   resolved "https://registry.yarnpkg.com/vue-router/-/vue-router-4.2.5.tgz#b9e3e08f1bd9ea363fdd173032620bc50cf0e98a"
@@ -9848,7 +9855,7 @@ vue@^3.2.25:
     "@vue/server-renderer" "3.3.7"
     "@vue/shared" "3.3.7"
 
-vue@^3.3.8:
+vue@^3.3.4, vue@^3.3.8:
   version "3.3.8"
   resolved "https://registry.yarnpkg.com/vue/-/vue-3.3.8.tgz#532ff071af24f6a69e5ecc53a66858a9ee874ffc"
   integrity sha512-5VSX/3DabBikOXMsxzlW8JyfeLKlG9mzqnWgLQLty88vdZL7ZJgrdgBOmrArwxiLtmS+lNNpPcBYqrhE6TQW5w==

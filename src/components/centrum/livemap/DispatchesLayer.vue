@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { LLayerGroup } from '@vue-leaflet/vue-leaflet';
+import { LMarkerClusterGroup } from 'vue-leaflet-markercluster';
 import DispatchDetails from '~/components/centrum/dispatches/DispatchDetails.vue';
 import DispatchMarker from '~/components/centrum/livemap/DispatchMarker.vue';
 import { useCentrumStore } from '~/store/centrum';
@@ -28,7 +28,15 @@ const open = ref(false);
         <DispatchDetails :dispatch="selectedDispatch" :open="open" @close="open = false" @goto="$emit('goto', $event)" />
     </template>
 
-    <LLayerGroup key="your_dispatches" :name="$t('common.your_dispatches')" layer-type="overlay" :visible="true">
+    <LMarkerClusterGroup
+        key="your_dispatches"
+        :name="$t('common.your_dispatches')"
+        layer-type="overlay"
+        :visible="true"
+        :max-cluster-radius="0"
+        :disable-clustering-at-zoom="1"
+        :chunked-loading="true"
+    >
         <DispatchMarker
             v-for="dispatch in ownDispatches"
             :key="dispatch"
@@ -39,9 +47,17 @@ const open = ref(false);
                 open = true;
             "
         />
-    </LLayerGroup>
+    </LMarkerClusterGroup>
 
-    <LLayerGroup key="all_dispatches" :name="$t('common.dispatch', 2)" layer-type="overlay" :visible="showAllDispatches">
+    <LMarkerClusterGroup
+        key="all_dispatches"
+        :name="$t('common.dispatch', 2)"
+        layer-type="overlay"
+        :visible="showAllDispatches"
+        :max-cluster-radius="15"
+        :disable-clustering-at-zoom="2"
+        :chunked-loading="true"
+    >
         <DispatchMarker
             v-for="[id, dispatch] in dispatches"
             :key="id"
@@ -52,5 +68,5 @@ const open = ref(false);
                 open = true;
             "
         />
-    </LLayerGroup>
+    </LMarkerClusterGroup>
 </template>

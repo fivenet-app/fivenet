@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import { LControl, LLayerGroup } from '@vue-leaflet/vue-leaflet';
 import { computedAsync } from '@vueuse/core';
+import { LMarkerClusterGroup } from 'vue-leaflet-markercluster';
+import 'vue-leaflet-markercluster/dist/style.css';
 import { useAuthStore } from '~/store/auth';
 import { useLivemapStore } from '~/store/livemap';
 import { useSettingsStore } from '~/store/settings';
@@ -52,12 +54,15 @@ onBeforeUnmount(async () => {
 </script>
 
 <template>
-    <LLayerGroup
+    <LMarkerClusterGroup
         v-for="job in jobs.users"
         :key="`users_${job.name}`"
         :name="`${$t('common.employee', 2)} ${job.label}`"
         layer-type="overlay"
         :visible="true"
+        :max-cluster-radius="15"
+        :disable-clustering-at-zoom="2"
+        :chunked-loading="true"
     >
         <PlayerMarker
             v-for="marker in playerMarkersFiltered.filter((p) => p.user?.job === job.name)"
@@ -69,14 +74,17 @@ onBeforeUnmount(async () => {
             :show-unit-status="showUnitStatus || livemap.showUnitStatus"
             @selected="$emit('userSelected', marker)"
         />
-    </LLayerGroup>
+    </LMarkerClusterGroup>
 
-    <LLayerGroup
+    <LMarkerClusterGroup
         v-for="job in jobs.markers"
         :key="`markers_${job.name}`"
         :name="`${$t('common.marker', 2)} ${job.label}`"
         layer-type="overlay"
         :visible="true"
+        :max-cluster-radius="0"
+        :disable-clustering-at-zoom="1"
+        :chunked-loading="true"
     >
         <MarkerMarker
             v-for="marker in markers.markers"
@@ -85,7 +93,7 @@ onBeforeUnmount(async () => {
             :size="livemap.markerSize"
             @selected="$emit('markerSelected', marker)"
         />
-    </LLayerGroup>
+    </LMarkerClusterGroup>
 
     <LControl v-if="filterPlayers" position="bottomleft">
         <div class="form-control flex flex-col gap-2">
