@@ -31,11 +31,6 @@ const (
 	TypeUnitStatus  events.Type  = "status"
 )
 
-func GetEventTypeFromSubject(subject string) (events.Topic, events.Type) {
-	_, topic, eType := SplitSubject(subject)
-	return topic, eType
-}
-
 func SplitSubject(subject string) (string, events.Topic, events.Type) {
 	split := strings.Split(subject, ".")
 	if len(split) < 3 {

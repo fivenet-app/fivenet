@@ -75,6 +75,7 @@ func (s *Manager) UpdateUnitStatus(ctx context.Context, job string, unit *dispat
 			in.Status == dispatch.StatusUnit_STATUS_UNIT_BUSY ||
 			in.Status == dispatch.StatusUnit_STATUS_UNIT_UNAVAILABLE ||
 			in.Status == dispatch.StatusUnit_STATUS_UNIT_AVAILABLE) {
+		s.logger.Debug("skipping unit status update due to same status", zap.Uint64("unit_id", unit.Id), zap.String("status", in.Status.String()))
 		return nil
 	}
 
@@ -123,7 +124,13 @@ func (s *Manager) UpdateUnitStatus(ctx context.Context, job string, unit *dispat
 	}
 
 	unit.Status = status
-	data, err := proto.Marshal(unit)
+	newUnit, ok := s.GetUnit(job, unit.Id)
+	if !ok {
+		return nil
+	}
+
+	newUnit.Status = status
+	data, err := proto.Marshal(newUnit)
 	if err != nil {
 		return err
 	}
