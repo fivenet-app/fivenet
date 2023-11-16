@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { LControl, LLayerGroup } from '@vue-leaflet/vue-leaflet';
+import { LControl } from '@vue-leaflet/vue-leaflet';
 import { computedAsync } from '@vueuse/core';
 import { LMarkerClusterGroup } from 'vue-leaflet-markercluster';
 import 'vue-leaflet-markercluster/dist/style.css';
