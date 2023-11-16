@@ -3,6 +3,7 @@ package manager
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"sort"
 	"sync"
 	"time"
@@ -496,6 +497,18 @@ func (s *Housekeeper) removeDispatchesFromEmptyUnits(ctx context.Context) error 
 					continue
 				}
 
+				unit, ok := s.GetUnit(job, unitId)
+				if !ok || unit == nil {
+					continue
+				}
+
+				if len(unit.Users) > 0 {
+					continue
+				}
+
+				s.logger.Debug("removing empty unit from dispatch",
+					zap.String("job", job), zap.Uint64("unit_id", unitId), zap.Uint64("dispatch_id", dsp.Id))
+
 				if err := s.UpdateDispatchAssignments(ctx, job, nil, dsp, nil, []uint64{unitId}, time.Time{}); err != nil {
 					s.logger.Error("failed to remove empty unit from dispatch",
 						zap.String("job", job), zap.Uint64("unit_id", unitId), zap.Uint64("dispatch_id", dsp.Id), zap.Error(err))
@@ -530,6 +543,8 @@ func (s *Housekeeper) cleanupUnitStatus(ctx context.Context) error {
 				userId = unit.Status.UserId
 			}
 
+			s.logger.Debug("cleaning up unit status to unavailable because it is empty",
+				zap.String("job", job), zap.Uint64("unit_id", unit.Id))
 			if err := s.UpdateUnitStatus(ctx, job, unit, &dispatch.UnitStatus{
 				UnitId: unit.Id,
 				Status: dispatch.StatusUnit_STATUS_UNIT_UNAVAILABLE,
@@ -579,6 +594,9 @@ func (s *Housekeeper) checkUnitUsers(ctx context.Context) error {
 			}
 
 			if len(toRemove) > 0 {
+				s.logger.Debug("removing off-duty users from unit",
+					zap.String("job", job), zap.Uint64("unit_id", unit.Id), zap.Int32s("to_remove", toRemove))
+
 				if err := s.UpdateUnitAssignments(ctx, job, nil, unit, nil, toRemove); err != nil {
 					s.logger.Error("failed to remove off-duty users from unit",
 						zap.String("job", unit.Job), zap.Uint64("unit_id", unit.Id), zap.Int32s("user_ids", toRemove), zap.Error(err))
@@ -603,20 +621,25 @@ func (s *Housekeeper) watchUserChanges() {
 				ctx, span := s.tracer.Start(s.ctx, "centrum-watch-users")
 				defer span.End()
 
-				s.logger.Debug("received user changes", zap.Int("added", len(event.Added)), zap.Int("removed", len(event.Removed)))
+				s.logger.Debug("received user changes", zap.Int("added", len(event.Added)), zap.String("added_users", fmt.Sprintf("%+v", event.Added)),
+					zap.Int("removed", len(event.Removed)), zap.String("removed_users", fmt.Sprintf("%+v", event.Removed)))
 				for _, userInfo := range event.Added {
-					if _, ok := s.GetUserUnitID(userInfo.UserID); !ok {
-						unitId, err := s.LoadUnitIDForUserID(ctx, userInfo.UserID)
-						if err != nil {
-							s.logger.Error("failed to load user unit id", zap.Error(err))
-							continue
-						}
-						if unitId == 0 {
-							continue
-						}
-
-						s.SetUnitForUser(userInfo.UserID, unitId)
+					if _, ok := s.GetUserUnitID(userInfo.UserID); ok {
+						break
 					}
+
+					unitId, err := s.LoadUnitIDForUserID(ctx, userInfo.UserID)
+					if err != nil {
+						s.logger.Error("failed to load user unit id", zap.Error(err))
+						continue
+					}
+
+					if unitId == 0 {
+						s.UnsetUnitIDForUser(userInfo.UserID)
+						continue
+					}
+
+					s.SetUnitForUser(userInfo.UserID, unitId)
 				}
 
 				for _, userInfo := range event.Removed {

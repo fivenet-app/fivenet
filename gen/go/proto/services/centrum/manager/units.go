@@ -82,7 +82,7 @@ func (s *Manager) UpdateUnitStatus(ctx context.Context, job string, unit *dispat
 		return nil
 	}
 
-	s.logger.Debug("updating unit status", zap.Uint64("unit_id", unit.Id))
+	s.logger.Debug("updating unit status", zap.Uint64("unit_id", unit.Id), zap.String("status", in.Status.String()))
 
 	tUnitStatus := table.FivenetCentrumUnitsStatus
 	stmt := tUnitStatus.
