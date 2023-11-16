@@ -1,6 +1,5 @@
 <script lang="ts" setup>
-import { LControl, LLayerGroup } from '@vue-leaflet/vue-leaflet';
-import { computedAsync } from '@vueuse/core';
+import { LLayerGroup } from '@vue-leaflet/vue-leaflet';
 import DispatchDetails from '~/components/centrum/dispatches/DispatchDetails.vue';
 import DispatchMarker from '~/components/centrum/livemap/DispatchMarker.vue';
 import { useCentrumStore } from '~/store/centrum';
@@ -19,15 +18,6 @@ const centrumStore = useCentrumStore();
 const { dispatches, ownDispatches } = storeToRefs(centrumStore);
 const settingsStore = useSettingsStore();
 const { livemap } = storeToRefs(settingsStore);
-
-const dispatchQuery = ref<string>('');
-const dispatchesFiltered = computedAsync(async () =>
-    [...dispatches.value.values()].filter(
-        (m) =>
-            !ownDispatches.value.includes(m.id) &&
-            (m.creator?.firstname + ' ' + m.creator?.lastname).toLowerCase().includes(dispatchQuery.value.toLowerCase()),
-    ),
-);
 
 const selectedDispatch = ref<Dispatch | undefined>();
 const open = ref(false);
@@ -53,8 +43,8 @@ const open = ref(false);
 
     <LLayerGroup key="all_dispatches" :name="$t('common.dispatch', 2)" layer-type="overlay" :visible="showAllDispatches">
         <DispatchMarker
-            v-for="dispatch in dispatchesFiltered"
-            :key="dispatch.id.toString()"
+            v-for="[id, dispatch] in dispatches"
+            :key="id.toString()"
             :dispatch="dispatch"
             :size="livemap.markerSize"
             @selected="
@@ -63,20 +53,4 @@ const open = ref(false);
             "
         />
     </LLayerGroup>
-
-    <LControl position="bottomleft">
-        <div class="form-control flex flex-col gap-2">
-            <div>
-                <input
-                    v-model="dispatchQuery"
-                    class="w-full max-w-[11rem] p-0.5 px-1 bg-clip-padding rounded-md border-2 border-black/20"
-                    type="text"
-                    name="searchPlayer"
-                    :placeholder="`${$t('common.dispatch', 2)} ${$t('common.filter')}`"
-                    @focusin="focusTablet(true)"
-                    @focusout="focusTablet(false)"
-                />
-            </div>
-        </div>
-    </LControl>
 </template>

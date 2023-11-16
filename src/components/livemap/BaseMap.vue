@@ -2,9 +2,9 @@
 import { LControl, LControlLayers, LMap, LTileLayer } from '@vue-leaflet/vue-leaflet';
 import { useDebounceFn, useResizeObserver, watchDebounced } from '@vueuse/core';
 import L, { extend, latLngBounds, CRS, LatLng, Projection, Transformation, type PointExpression } from 'leaflet';
+import 'leaflet/dist/leaflet.css';
 import 'leaflet-contextmenu';
 import 'leaflet-contextmenu/dist/leaflet.contextmenu.min.css';
-import 'leaflet/dist/leaflet.css';
 import { useLivemapStore } from '~/store/livemap';
 import { type ValueOf } from '~/utils/types';
 
@@ -186,6 +186,9 @@ onBeforeMount(() => {
 });
 
 onBeforeUnmount(() => {
+    if (map !== undefined) {
+        map.remove();
+    }
     map = undefined;
 });
 </script>
@@ -216,9 +219,11 @@ onBeforeUnmount(() => {
                 :tms="true"
                 :visible="true"
                 :attribution="attribution"
+                :min-zoom="1"
+                :max-zoom="7"
             />
 
-            <LControlLayers />
+            <LControlLayers :hide-single-base="true" />
 
             <LControl position="bottomleft" class="leaflet-control-attribution mouseposition text-xs">
                 <span class="font-semibold">{{ $t('common.longitude') }}</span

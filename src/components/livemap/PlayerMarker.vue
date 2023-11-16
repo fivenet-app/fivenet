@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { LIcon, LMarker, LPopup } from '@vue-leaflet/vue-leaflet';
-import L from 'leaflet';
+import { type PointExpression } from 'leaflet';
 import { AccountIcon, GroupIcon, MapMarkerIcon } from 'mdi-vue3';
 import UnitDetails from '~/components//centrum/units/UnitDetails.vue';
 import PhoneNumber from '~/components/partials/citizens/PhoneNumber.vue';
@@ -40,8 +40,8 @@ updateMarkerColor();
 const inverseColor = computed(() => hexToRgb(props.marker.unit?.color ?? '#000000') ?? ({ r: 0, g: 0, b: 0 } as RGB));
 
 const hasUnit = computed(() => props.showUnitNames && props.marker.unit !== undefined);
-const iconAnchor = computed<L.PointExpression | undefined>(() => [props.size / 2, props.size * (hasUnit.value ? 1.8 : 0.95)]);
-const popupAnchor = computed<L.PointExpression>(() => (hasUnit.value ? [0, -(props.size * 1.7)] : [0, -(props.size * 0.8)]));
+const iconAnchor = computed<PointExpression | undefined>(() => [props.size / 2, props.size * (hasUnit.value ? 1.8 : 0.95)]);
+const popupAnchor = computed<PointExpression>(() => (hasUnit.value ? [0, -(props.size * 1.7)] : [0, -(props.size * 0.8)]));
 
 const unitStatusColor = computed(() => unitStatusToBGColor(props.marker.unit?.status?.status ?? 0));
 

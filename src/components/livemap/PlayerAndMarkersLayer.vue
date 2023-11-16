@@ -1,8 +1,5 @@
 <script lang="ts" setup>
 import { LControl, LLayerGroup } from '@vue-leaflet/vue-leaflet';
-import 'leaflet-contextmenu';
-import 'leaflet-contextmenu/dist/leaflet.contextmenu.min.css';
-import 'leaflet/dist/leaflet.css';
 import { computedAsync } from '@vueuse/core';
 import { useAuthStore } from '~/store/auth';
 import { useLivemapStore } from '~/store/livemap';
@@ -64,7 +61,7 @@ onBeforeUnmount(async () => {
     >
         <PlayerMarker
             v-for="marker in playerMarkersFiltered.filter((p) => p.user?.job === job.name)"
-            :key="marker.info!.id?.toString()"
+            :key="marker.userId"
             :marker="marker"
             :active-char="activeChar"
             :size="livemap.markerSize"

@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { LIcon, LMarker, LPopup } from '@vue-leaflet/vue-leaflet';
+import { type PointExpression } from 'leaflet';
 import { BellIcon } from 'mdi-vue3';
 import { dispatchStatusAnimate, dispatchStatusToBGColor, dispatchStatusToFillColor } from '~/components/centrum/helpers';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
@@ -20,8 +21,8 @@ const emit = defineEmits<{
     (e: 'selected', dsp: Dispatch): void;
 }>();
 
-const iconAnchor: L.PointExpression = [props.size / 2, props.size * 1.65];
-const popupAnchor: L.PointExpression = [0, -(props.size * 1.7)];
+const iconAnchor: PointExpression = [props.size / 2, props.size * 1.65];
+const popupAnchor: PointExpression = [0, -(props.size * 1.7)];
 
 function selected(_: bigint | number | string) {
     emit('selected', props.dispatch);
