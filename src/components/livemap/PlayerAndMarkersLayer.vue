@@ -61,10 +61,9 @@ onBeforeUnmount(async () => {
         layer-type="overlay"
         :visible="true"
         :max-cluster-radius="15"
-        :disable-clustering-at-zoom="2"
+        :disable-clustering-at-zoom="3"
         :chunked-loading="true"
         :animate="true"
-        :animate-adding-markers="true"
     >
         <PlayerMarker
             v-for="marker in playerMarkersFiltered.filter((p) => p.user?.job === job.name)"
@@ -85,10 +84,9 @@ onBeforeUnmount(async () => {
         layer-type="overlay"
         :visible="true"
         :max-cluster-radius="0"
-        :disable-clustering-at-zoom="1"
+        :disable-clustering-at-zoom="0"
         :chunked-loading="true"
         :animate="true"
-        :animate-adding-markers="true"
     >
         <MarkerMarker
             v-for="marker in markersMarkers"
