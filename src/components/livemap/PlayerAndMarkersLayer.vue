@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { LControl } from '@vue-leaflet/vue-leaflet';
-import { computedAsync } from '@vueuse/core';
+import { computedAsync, useTimeoutFn } from '@vueuse/core';
 import { LMarkerClusterGroup } from 'vue-leaflet-markercluster';
 import 'vue-leaflet-markercluster/dist/style.css';
 import { useAuthStore } from '~/store/auth';
@@ -45,9 +45,12 @@ const playerMarkersFiltered = computedAsync(async () =>
     ),
 );
 
-onBeforeMount(async () => startStream());
+const { start, stop } = useTimeoutFn(async () => startStream(), 650);
+
+onBeforeMount(async () => start());
 
 onBeforeUnmount(async () => {
+    stop();
     stopStream();
     livemapStore.$reset();
 });

@@ -2,6 +2,7 @@ package manager
 
 import (
 	"context"
+	"time"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
 	errorscentrum "github.com/galexrt/fivenet/gen/go/proto/services/centrum/errors"
@@ -74,8 +75,10 @@ func (s *Manager) UpdateUnitStatus(ctx context.Context, job string, unit *dispat
 		(in.Status == dispatch.StatusUnit_STATUS_UNIT_ON_BREAK ||
 			in.Status == dispatch.StatusUnit_STATUS_UNIT_BUSY ||
 			in.Status == dispatch.StatusUnit_STATUS_UNIT_UNAVAILABLE ||
-			in.Status == dispatch.StatusUnit_STATUS_UNIT_AVAILABLE) {
-		s.logger.Debug("skipping unit status update due to same status", zap.Uint64("unit_id", unit.Id), zap.String("status", in.Status.String()))
+			in.Status == dispatch.StatusUnit_STATUS_UNIT_AVAILABLE) &&
+		// Additionally if the status is older than 2 minutes allow it to be updated again
+		(unit.Status.CreatedAt == nil || time.Since(unit.Status.CreatedAt.AsTime()) < 3*time.Minute) {
+		s.logger.Debug("skipping unit status update due to same status or time", zap.Uint64("unit_id", unit.Id), zap.String("status", in.Status.String()))
 		return nil
 	}
 

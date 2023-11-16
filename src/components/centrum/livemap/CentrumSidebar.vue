@@ -2,7 +2,7 @@
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { LControl } from '@vue-leaflet/vue-leaflet';
-import { useDebounceFn, useIntervalFn, watchDebounced } from '@vueuse/core';
+import { useDebounceFn, useIntervalFn, useTimeoutFn, watchDebounced } from '@vueuse/core';
 import { useSound } from '@vueuse/sound';
 import {
     CarEmergencyIcon,
@@ -169,15 +169,18 @@ watchDebounced(ownDispatches.value, async () => ensureDispatchSelected(), {
 
 const { resume, pause } = useIntervalFn(() => checkup(), 1 * 60 * 1000);
 
+const { start, stop } = useTimeoutFn(async () => startStream(), 650);
+
 onBeforeMount(async () => {
     if (canStream) {
-        setTimeout(async () => startStream(), 250);
+        start();
         resume();
     }
 });
 
 onBeforeUnmount(async () => {
     pause();
+    stop();
     stopStream();
     centrumStore.$reset();
 });
