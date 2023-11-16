@@ -195,7 +195,7 @@ onBeforeMount(async () => await listJobs());
                                     <tbody class="divide-y divide-base-800">
                                         <AttrRolesListEntry
                                             v-for="role in sortedRoles"
-                                            :key="role.id.toString()"
+                                            :key="role.id"
                                             :role="role"
                                             :class="selectedRole?.id === role.id ? 'bg-base-800' : ''"
                                             @selected="selectedRole = role"

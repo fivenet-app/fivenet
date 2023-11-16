@@ -11,9 +11,9 @@ import { Timestamp } from "../timestamp/timestamp.js";
  */
 export interface Dispatch {
     /**
-     * @generated from protobuf field: uint64 id = 1;
+     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
      */
-    id: bigint; // @gotags: sql:"primary_key" alias:"id"
+    id: string; // @gotags: sql:"primary_key" alias:"id"
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
      */
@@ -91,9 +91,9 @@ export interface Attributes {
  */
 export interface DispatchAssignments {
     /**
-     * @generated from protobuf field: uint64 dispatch_id = 1;
+     * @generated from protobuf field: uint64 dispatch_id = 1 [jstype = JS_STRING];
      */
-    dispatchId: bigint;
+    dispatchId: string;
     /**
      * @generated from protobuf field: string job = 2;
      */
@@ -108,13 +108,13 @@ export interface DispatchAssignments {
  */
 export interface DispatchAssignment {
     /**
-     * @generated from protobuf field: uint64 dispatch_id = 1;
+     * @generated from protobuf field: uint64 dispatch_id = 1 [jstype = JS_STRING];
      */
-    dispatchId: bigint; // @gotags: sql:"primary_key" alias:"dispatch_id"
+    dispatchId: string; // @gotags: sql:"primary_key" alias:"dispatch_id"
     /**
-     * @generated from protobuf field: uint64 unit_id = 2;
+     * @generated from protobuf field: uint64 unit_id = 2 [jstype = JS_STRING];
      */
-    unitId: bigint; // @gotags: sql:"primary_key" alias:"unit_id"
+    unitId: string; // @gotags: sql:"primary_key" alias:"unit_id"
     /**
      * @generated from protobuf field: optional resources.dispatch.Unit unit = 3;
      */
@@ -133,21 +133,21 @@ export interface DispatchAssignment {
  */
 export interface DispatchStatus {
     /**
-     * @generated from protobuf field: uint64 id = 1;
+     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
      */
-    id: bigint; // @gotags: sql:"primary_key" alias:"id"
+    id: string; // @gotags: sql:"primary_key" alias:"id"
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
      */
     createdAt?: Timestamp;
     /**
-     * @generated from protobuf field: uint64 dispatch_id = 3;
+     * @generated from protobuf field: uint64 dispatch_id = 3 [jstype = JS_STRING];
      */
-    dispatchId: bigint;
+    dispatchId: string;
     /**
-     * @generated from protobuf field: optional uint64 unit_id = 4;
+     * @generated from protobuf field: optional uint64 unit_id = 4 [jstype = JS_STRING];
      */
-    unitId?: bigint;
+    unitId?: string;
     /**
      * @generated from protobuf field: optional resources.dispatch.Unit unit = 5;
      */
@@ -277,7 +277,7 @@ export enum TakeDispatchResp {
 class Dispatch$Type extends MessageType<Dispatch> {
     constructor() {
         super("resources.dispatch.Dispatch", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
@@ -315,7 +315,7 @@ export const Attributes = new Attributes$Type();
 class DispatchAssignments$Type extends MessageType<DispatchAssignments> {
     constructor() {
         super("resources.dispatch.DispatchAssignments", [
-            { no: 1, name: "dispatch_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 1, name: "dispatch_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 3, name: "units", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => DispatchAssignment }
         ]);
@@ -329,8 +329,8 @@ export const DispatchAssignments = new DispatchAssignments$Type();
 class DispatchAssignment$Type extends MessageType<DispatchAssignment> {
     constructor() {
         super("resources.dispatch.DispatchAssignment", [
-            { no: 1, name: "dispatch_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 2, name: "unit_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 1, name: "dispatch_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 2, name: "unit_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 3, name: "unit", kind: "message", T: () => Unit },
             { no: 4, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 5, name: "expires_at", kind: "message", T: () => Timestamp }
@@ -345,10 +345,10 @@ export const DispatchAssignment = new DispatchAssignment$Type();
 class DispatchStatus$Type extends MessageType<DispatchStatus> {
     constructor() {
         super("resources.dispatch.DispatchStatus", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
-            { no: 3, name: "dispatch_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 4, name: "unit_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 3, name: "dispatch_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 4, name: "unit_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/ },
             { no: 5, name: "unit", kind: "message", T: () => Unit },
             { no: 6, name: "status", kind: "enum", T: () => ["resources.dispatch.StatusDispatch", StatusDispatch, "STATUS_DISPATCH_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 7, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },

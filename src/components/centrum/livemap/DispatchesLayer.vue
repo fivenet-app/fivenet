@@ -31,7 +31,7 @@ const open = ref(false);
     <LLayerGroup key="your_dispatches" :name="$t('common.your_dispatches')" layer-type="overlay" :visible="true">
         <DispatchMarker
             v-for="dispatch in ownDispatches"
-            :key="dispatch.toString()"
+            :key="dispatch"
             :dispatch="dispatches.get(dispatch)!"
             :size="livemap.markerSize"
             @selected="
@@ -44,7 +44,7 @@ const open = ref(false);
     <LLayerGroup key="all_dispatches" :name="$t('common.dispatch', 2)" layer-type="overlay" :visible="showAllDispatches">
         <DispatchMarker
             v-for="[id, dispatch] in dispatches"
-            :key="id.toString()"
+            :key="id"
             :dispatch="dispatch"
             :size="livemap.markerSize"
             @selected="

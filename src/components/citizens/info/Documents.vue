@@ -63,7 +63,7 @@ watch(offset, async () => refresh());
             <!-- Relations list (smallest breakpoint only) -->
             <div v-if="data?.relations.length > 0" class="sm:hidden text-neutral">
                 <ul role="list" class="mt-2 overflow-hidden divide-y divide-gray-600 rounded-lg sm:hidden">
-                    <li v-for="relation in data?.relations" :key="relation.id?.toString()">
+                    <li v-for="relation in data?.relations" :key="relation.id">
                         <a href="#" class="block px-4 py-4 bg-base-800 hover:bg-base-700">
                             <span class="flex items-center space-x-4">
                                 <span class="flex flex-1 space-x-2 truncate">
@@ -74,7 +74,7 @@ watch(offset, async () => refresh());
                                                 :to="{
                                                     name: 'documents-id',
                                                     params: {
-                                                        id: relation.documentId.toString(),
+                                                        id: relation.documentId,
                                                     },
                                                 }"
                                             >
@@ -163,13 +163,13 @@ watch(offset, async () => refresh());
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-gray-600 bg-base-800 text-neutral">
-                                    <tr v-for="relation in data?.relations" :key="relation.id?.toString()">
+                                    <tr v-for="relation in data?.relations" :key="relation.id">
                                         <td class="px-6 py-4 text-sm">
                                             <NuxtLink
                                                 :to="{
                                                     name: 'documents-id',
                                                     params: {
-                                                        id: relation.documentId.toString(),
+                                                        id: relation.documentId,
                                                     },
                                                 }"
                                             >

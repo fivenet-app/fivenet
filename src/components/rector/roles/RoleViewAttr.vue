@@ -15,13 +15,13 @@ import { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
 
 const props = defineProps<{
     attribute: RoleAttribute;
-    states: Map<bigint, AttributeValues | undefined>;
+    states: Map<string, AttributeValues | undefined>;
     disabled?: boolean;
     permission: Permission;
 }>();
 
 const emit = defineEmits<{
-    (e: 'update:states', payload: Map<bigint, AttributeValues | undefined>): void;
+    (e: 'update:states', payload: Map<string, AttributeValues | undefined>): void;
     (e: 'changed'): void;
 }>();
 
@@ -32,7 +32,7 @@ const { listJobs } = completorStore;
 const jobGrades = ref<Map<string, JobGrade>>(new Map());
 
 const states = ref<typeof props.states>(props.states);
-const id = ref<bigint>(props.attribute.attrId);
+const id = ref<string>(props.attribute.attrId);
 
 let maxValues = props.attribute.maxValues;
 if (maxValues === undefined) {

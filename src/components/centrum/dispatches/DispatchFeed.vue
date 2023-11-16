@@ -5,16 +5,15 @@ import { ListDispatchActivityResponse } from '~~/gen/ts/services/centrum/centrum
 import DispatchFeedItem from '~/components/centrum/dispatches/DispatchFeedItem.vue';
 
 const props = defineProps<{
-    dispatchId?: bigint;
+    dispatchId?: string;
 }>();
 
 const { $grpc } = useNuxtApp();
 
 const offset = ref(0n);
 
-const { data, refresh } = useLazyAsyncData(
-    `centrum-dispatch-${(props.dispatchId ?? 0n).toString()}-activity-${offset.value}`,
-    () => listDispatchActivity(),
+const { data, refresh } = useLazyAsyncData(`centrum-dispatch-${props.dispatchId ?? '0'}-activity-${offset.value}`, () =>
+    listDispatchActivity(),
 );
 
 async function listDispatchActivity(): Promise<ListDispatchActivityResponse> {
@@ -23,7 +22,7 @@ async function listDispatchActivity(): Promise<ListDispatchActivityResponse> {
             pagination: {
                 offset: offset.value,
             },
-            id: props.dispatchId ?? 0n,
+            id: props.dispatchId ?? '0',
         });
         const { response } = await call;
 
@@ -54,7 +53,7 @@ const { pause, resume } = useIntervalFn(async () => {
                     <ul role="list" class="space-y-2">
                         <DispatchFeedItem
                             v-for="(activityItem, activityItemIdx) in data?.activity"
-                            :key="activityItem.id.toString()"
+                            :key="activityItem.id"
                             :activity-length="data?.activity?.length ?? 0"
                             :item="activityItem"
                             :activity-item-idx="activityItemIdx"

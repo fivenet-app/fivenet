@@ -311,7 +311,7 @@ watchDebounced(queryCitizens, async () => await findChars(), {
                                 <tbody class="divide-y divide-base-800">
                                     <AuditLogEntry
                                         v-for="log in data?.logs"
-                                        :key="log.id?.toString()"
+                                        :key="log.id"
                                         :log="log"
                                         class="transition-colors hover:bg-neutral/5"
                                     />

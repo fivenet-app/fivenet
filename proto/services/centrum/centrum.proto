@@ -15,12 +15,12 @@ option go_package = "github.com/galexrt/fivenet/gen/go/proto/services/centrum;ce
 
 message ListDispatchActivityRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
-  uint64 id = 2;
+  uint64 id = 2 [jstype = JS_STRING];
 }
 
 message ListUnitActivityRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
-  uint64 id = 2;
+  uint64 id = 2 [jstype = JS_STRING];
 }
 
 message GetSettingsRequest {}
@@ -56,13 +56,13 @@ message CreateOrUpdateUnitResponse {
 }
 
 message DeleteUnitRequest {
-  uint64 unit_id = 1;
+  uint64 unit_id = 1 [jstype = JS_STRING];
 }
 
 message DeleteUnitResponse {}
 
 message UpdateUnitStatusRequest {
-  uint64 unit_id = 1;
+  uint64 unit_id = 1 [jstype = JS_STRING];
   resources.dispatch.StatusUnit status = 2 [(validate.rules).enum.defined_only = true];
   // @sanitize
   optional string reason = 3 [(validate.rules).string.max_len = 255];
@@ -73,7 +73,7 @@ message UpdateUnitStatusRequest {
 message UpdateUnitStatusResponse {}
 
 message AssignUnitRequest {
-  uint64 unit_id = 1;
+  uint64 unit_id = 1 [jstype = JS_STRING];
   repeated int32 to_add = 2;
   repeated int32 to_remove = 3;
 }
@@ -119,13 +119,13 @@ message UpdateDispatchRequest {
 message UpdateDispatchResponse {}
 
 message DeleteDispatchRequest {
-  uint64 id = 1 [(validate.rules).uint64.gt = 0];
+  uint64 id = 1 [jstype = JS_STRING, (validate.rules).uint64.gt = 0];
 }
 
 message DeleteDispatchResponse {}
 
 message UpdateDispatchStatusRequest {
-  uint64 dispatch_id = 1;
+  uint64 dispatch_id = 1 [jstype = JS_STRING];
   resources.dispatch.StatusDispatch status = 2 [(validate.rules).enum.defined_only = true];
   // @sanitize
   optional string reason = 3;
@@ -136,9 +136,9 @@ message UpdateDispatchStatusRequest {
 message UpdateDispatchStatusResponse {}
 
 message AssignDispatchRequest {
-  uint64 dispatch_id = 1;
-  repeated uint64 to_add = 2;
-  repeated uint64 to_remove = 3;
+  uint64 dispatch_id = 1 [jstype = JS_STRING];
+  repeated uint64 to_add = 2 [jstype = JS_STRING];
+  repeated uint64 to_remove = 3 [jstype = JS_STRING];
   optional bool forced = 4;
 }
 
@@ -150,7 +150,7 @@ message ListDispatchActivityResponse {
 }
 
 message JoinUnitRequest {
-  optional uint64 unit_id = 1;
+  optional uint64 unit_id = 1 [jstype = JS_STRING];
 }
 
 message JoinUnitResponse {
@@ -158,7 +158,7 @@ message JoinUnitResponse {
 }
 
 message TakeDispatchRequest {
-  repeated uint64 dispatch_ids = 1 [(validate.rules).repeated.min_items = 1];
+  repeated uint64 dispatch_ids = 1 [jstype = JS_STRING, (validate.rules).repeated.min_items = 1];
   resources.dispatch.TakeDispatchResp resp = 2 [(validate.rules).enum.defined_only = true];
   // @sanitize
   optional string reason = 3 [(validate.rules).string.max_len = 255];
@@ -190,7 +190,7 @@ message StreamResponse {
     resources.dispatch.Unit unit_status = 7;
 
     resources.dispatch.Dispatch dispatch_created = 8;
-    uint64 dispatch_deleted = 9;
+    uint64 dispatch_deleted = 9 [jstype = JS_STRING];
     resources.dispatch.Dispatch dispatch_updated = 10;
     resources.dispatch.Dispatch dispatch_status = 11;
 

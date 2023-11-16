@@ -46,7 +46,7 @@ var (
 	ErrPropsTrafficPointsDenied = status.Error(codes.PermissionDenied, "errors.CitizenStoreService.ErrPropsTrafficPointsDenied")
 )
 
-var ZeroTrafficInfractionPoints uint64 = 0
+var ZeroTrafficInfractionPoints uint32 = 0
 
 type Server struct {
 	CitizenStoreServiceServer
@@ -121,8 +121,8 @@ func (s *Server) ListCitizens(ctx context.Context, req *ListCitizensRequest) (*L
 			selectors = append(selectors, tUserProps.Job, tUserProps.JobGrade)
 		case "UserProps.TrafficInfractionPoints":
 			selectors = append(selectors, tUserProps.TrafficInfractionPoints)
-			if req.TrafficPoints != nil && *req.TrafficPoints > 0 {
-				condition = condition.AND(tUserProps.TrafficInfractionPoints.GT_EQ(jet.Uint64(*req.TrafficPoints)))
+			if req.TrafficInfractionPoints != nil && *req.TrafficInfractionPoints > 0 {
+				condition = condition.AND(tUserProps.TrafficInfractionPoints.GT_EQ(jet.Uint32(*req.TrafficInfractionPoints)))
 			}
 		case "UserProps.OpenFines":
 			selectors = append(selectors, tUserProps.OpenFines)
@@ -561,7 +561,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 			return nil, ErrPropsTrafficPointsDenied
 		}
 
-		updateSets = append(updateSets, tUserProps.TrafficInfractionPoints.SET(jet.Uint64(*req.Props.TrafficInfractionPoints)))
+		updateSets = append(updateSets, tUserProps.TrafficInfractionPoints.SET(jet.Uint32(*req.Props.TrafficInfractionPoints)))
 	} else {
 		req.Props.TrafficInfractionPoints = props.TrafficInfractionPoints
 	}

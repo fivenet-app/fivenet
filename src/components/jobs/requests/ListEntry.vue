@@ -27,7 +27,7 @@ const open = ref(false);
 
 <template>
     <li
-        :key="request.id.toString()"
+        :key="request.id"
         :class="[
             request.deletedAt ? 'hover:bg-warn-700 bg-warn-800' : 'hover:bg-base-700 bg-base-800',
             'flex-initial my-1 rounded-lg',

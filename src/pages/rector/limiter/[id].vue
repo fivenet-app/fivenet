@@ -22,6 +22,6 @@ const route = useRoute('rector-limiter-id');
 
 <template>
     <div class="w-full">
-        <AttrView :role-id="BigInt(route.params.id)" />
+        <AttrView :role-id="route.params.id as string" />
     </div>
 </template>

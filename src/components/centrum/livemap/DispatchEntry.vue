@@ -7,12 +7,12 @@ import { Dispatch, StatusDispatch } from '~~/gen/ts/resources/dispatch/dispatche
 
 defineProps<{
     dispatch: Dispatch;
-    selectedDispatch: bigint | undefined;
+    selectedDispatch: string | undefined;
 }>();
 
 defineEmits<{
     (e: 'goto', loc: Coordinate): void;
-    (e: 'update:selectedDispatch', dsp: bigint | undefined): void;
+    (e: 'update:selectedDispatch', dsp: string | undefined): void;
 }>();
 
 const openDetails = ref(false);

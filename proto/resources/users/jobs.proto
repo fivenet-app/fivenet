@@ -27,7 +27,7 @@ message JobProps {
     pattern: "^[A-Fa-f0-9]{6}$",
   }];
   QuickButtons quick_buttons = 4;
-  optional uint64 discord_guild_id = 5;
+  optional uint64 discord_guild_id = 5 [jstype = JS_STRING];
   optional resources.timestamp.Timestamp discord_last_sync = 6;
   DiscordSyncSettings discord_sync_settings = 7;
 }

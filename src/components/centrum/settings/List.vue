@@ -91,12 +91,7 @@ const openSettings = ref(false);
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-base-800">
-                                    <ListEntry
-                                        v-for="unit in units"
-                                        :key="unit.id?.toString()"
-                                        :unit="unit"
-                                        @updated="refresh()"
-                                    />
+                                    <ListEntry v-for="unit in units" :key="unit.id" :unit="unit" @updated="refresh()" />
                                 </tbody>
                                 <thead>
                                     <tr>

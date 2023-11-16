@@ -34,7 +34,7 @@ export class ClipboardUser {
 }
 
 export class ClipboardDocument {
-    public id: bigint;
+    public id: string;
     public createdAt?: string;
     public title: string;
     public creator: ClipboardUser;
@@ -155,7 +155,7 @@ export const useClipboardStore = defineStore('clipboard', {
                 this.documents.unshift(new ClipboardDocument(document));
             }
         },
-        removeDocument(id: bigint): void {
+        removeDocument(id: string): void {
             const idx = this.documents.findIndex((o: ClipboardDocument) => {
                 return o.id === id;
             });
@@ -217,8 +217,8 @@ export const useClipboardStore = defineStore('clipboard', {
         },
 
         checkRequirements(reqs: ObjectSpecs, listType: ListType): boolean {
-            const length = BigInt(this[listType].length);
-            if (reqs.required && length <= (reqs.min ?? 1n)) {
+            const length = this[listType].length;
+            if (reqs.required && length <= (reqs.min ?? 1)) {
                 return false;
             } else if (reqs.min && length < reqs.min && reqs.max && length > reqs.max) {
                 return false;
@@ -255,8 +255,8 @@ export function getDocument(obj: ClipboardDocument): DocumentShort {
     const user = getUser(obj.creator);
 
     const doc: DocumentShort = {
-        id: BigInt(obj.id),
-        categoryId: obj.category && obj.category.id ? obj.category.id : 0n,
+        id: obj.id,
+        categoryId: obj.category && obj.category.id ? obj.category.id : '0',
         category: obj.category,
         title: obj.title,
         contentType: DocContentType.HTML,

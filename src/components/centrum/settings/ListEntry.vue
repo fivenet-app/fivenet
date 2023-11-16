@@ -17,7 +17,7 @@ const emits = defineEmits<{
 
 const { $grpc } = useNuxtApp();
 
-async function deleteUnit(id: bigint): Promise<void> {
+async function deleteUnit(id: string): Promise<void> {
     try {
         const call = $grpc.getCentrumClient().deleteUnit({
             unitId: id,

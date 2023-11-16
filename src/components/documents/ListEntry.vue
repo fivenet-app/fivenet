@@ -12,7 +12,7 @@ defineProps<{
 
 <template>
     <li
-        :key="doc.id?.toString()"
+        :key="doc.id"
         :class="[
             doc.deletedAt ? 'hover:bg-warn-700 bg-warn-800' : 'hover:bg-base-700 bg-base-800',
             'flex-initial my-1 rounded-lg',
@@ -21,7 +21,7 @@ defineProps<{
         <NuxtLink
             :to="{
                 name: 'documents-id',
-                params: { id: doc.id.toString() },
+                params: { id: doc.id },
             }"
         >
             <div class="mx-2 mt-1 mb-4">

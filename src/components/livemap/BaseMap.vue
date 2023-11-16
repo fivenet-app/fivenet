@@ -64,7 +64,7 @@ const customCRS = extend({}, CRS.Simple, {
 // eslint-disable-next-line prefer-const
 let center: PointExpression = [0, 0];
 const attribution = '<a href="http://www.rockstargames.com/V/">Grand Theft Auto V</a>';
-const selectedMarker = ref<bigint>();
+const selectedMarker = ref<string>();
 
 const mouseLat = ref<string>((0).toFixed(3));
 const mouseLong = ref<string>((0).toFixed(3));

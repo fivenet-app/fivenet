@@ -50,7 +50,7 @@ async function createMarker(values: FormData): Promise<void> {
     try {
         const marker: Marker = {
             info: {
-                id: BigInt(0),
+                id: '0',
                 job: '',
                 name: values.name,
                 description: values.description,

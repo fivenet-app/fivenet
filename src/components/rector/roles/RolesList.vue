@@ -198,7 +198,7 @@ const selectedRole = ref<Role | undefined>();
                                     <tbody class="divide-y divide-base-800">
                                         <RolesListEntry
                                             v-for="role in sortedRoles"
-                                            :key="role.id.toString()"
+                                            :key="role.id"
                                             :class="selectedRole?.id === role.id ? 'bg-base-800' : ''"
                                             :role="role"
                                             @selected="selectedRole = role"

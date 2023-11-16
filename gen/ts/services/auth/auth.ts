@@ -31,9 +31,9 @@ export interface CreateAccountRequest {
  */
 export interface CreateAccountResponse {
     /**
-     * @generated from protobuf field: uint64 account_id = 1;
+     * @generated from protobuf field: uint64 account_id = 1 [jstype = JS_STRING];
      */
-    accountId: bigint;
+    accountId: string;
 }
 /**
  * @generated from protobuf message services.auth.LoginRequest
@@ -61,9 +61,9 @@ export interface LoginResponse {
      */
     expires?: Timestamp;
     /**
-     * @generated from protobuf field: uint64 account_id = 3;
+     * @generated from protobuf field: uint64 account_id = 3 [jstype = JS_STRING];
      */
-    accountId: bigint;
+    accountId: string;
 }
 /**
  * @generated from protobuf message services.auth.ChangePasswordRequest
@@ -285,7 +285,7 @@ export const CreateAccountRequest = new CreateAccountRequest$Type();
 class CreateAccountResponse$Type extends MessageType<CreateAccountResponse> {
     constructor() {
         super("services.auth.CreateAccountResponse", [
-            { no: 1, name: "account_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+            { no: 1, name: "account_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
         ]);
     }
 }
@@ -312,7 +312,7 @@ class LoginResponse$Type extends MessageType<LoginResponse> {
         super("services.auth.LoginResponse", [
             { no: 1, name: "token", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 2, name: "expires", kind: "message", T: () => Timestamp },
-            { no: 3, name: "account_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+            { no: 3, name: "account_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
         ]);
     }
 }

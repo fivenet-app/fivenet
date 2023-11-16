@@ -5,16 +5,14 @@ import { ListUnitActivityResponse } from '~~/gen/ts/services/centrum/centrum';
 import UnitFeedItem from '~/components/centrum/units/UnitFeedItem.vue';
 
 const props = defineProps<{
-    unitId: bigint;
+    unitId: string;
 }>();
 
 const { $grpc } = useNuxtApp();
 
 const offset = ref(0n);
 
-const { data, refresh } = useLazyAsyncData(`centrum-unit-${props.unitId.toString()}-activity-${offset.value}`, () =>
-    listUnitActivity(),
-);
+const { data, refresh } = useLazyAsyncData(`centrum-unit-${props.unitId}-activity-${offset.value}`, () => listUnitActivity());
 
 async function listUnitActivity(): Promise<ListUnitActivityResponse> {
     try {
@@ -53,7 +51,7 @@ const { pause, resume } = useIntervalFn(async () => {
                     <ul role="list" class="space-y-2">
                         <UnitFeedItem
                             v-for="(activityItem, activityItemIdx) in data?.activity"
-                            :key="activityItem.id.toString()"
+                            :key="activityItem.id"
                             :activity-length="data?.activity?.length ?? 0"
                             :item="activityItem"
                             :activity-item-idx="activityItemIdx"

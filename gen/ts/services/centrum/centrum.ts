@@ -26,9 +26,9 @@ export interface ListDispatchActivityRequest {
      */
     pagination?: PaginationRequest;
     /**
-     * @generated from protobuf field: uint64 id = 2;
+     * @generated from protobuf field: uint64 id = 2 [jstype = JS_STRING];
      */
-    id: bigint;
+    id: string;
 }
 /**
  * @generated from protobuf message services.centrum.ListUnitActivityRequest
@@ -39,9 +39,9 @@ export interface ListUnitActivityRequest {
      */
     pagination?: PaginationRequest;
     /**
-     * @generated from protobuf field: uint64 id = 2;
+     * @generated from protobuf field: uint64 id = 2 [jstype = JS_STRING];
      */
-    id: bigint;
+    id: string;
 }
 /**
  * @generated from protobuf message services.centrum.GetSettingsRequest
@@ -118,9 +118,9 @@ export interface CreateOrUpdateUnitResponse {
  */
 export interface DeleteUnitRequest {
     /**
-     * @generated from protobuf field: uint64 unit_id = 1;
+     * @generated from protobuf field: uint64 unit_id = 1 [jstype = JS_STRING];
      */
-    unitId: bigint;
+    unitId: string;
 }
 /**
  * @generated from protobuf message services.centrum.DeleteUnitResponse
@@ -132,9 +132,9 @@ export interface DeleteUnitResponse {
  */
 export interface UpdateUnitStatusRequest {
     /**
-     * @generated from protobuf field: uint64 unit_id = 1;
+     * @generated from protobuf field: uint64 unit_id = 1 [jstype = JS_STRING];
      */
-    unitId: bigint;
+    unitId: string;
     /**
      * @generated from protobuf field: resources.dispatch.StatusUnit status = 2;
      */
@@ -162,9 +162,9 @@ export interface UpdateUnitStatusResponse {
  */
 export interface AssignUnitRequest {
     /**
-     * @generated from protobuf field: uint64 unit_id = 1;
+     * @generated from protobuf field: uint64 unit_id = 1 [jstype = JS_STRING];
      */
-    unitId: bigint;
+    unitId: string;
     /**
      * @generated from protobuf field: repeated int32 to_add = 2;
      */
@@ -275,9 +275,9 @@ export interface UpdateDispatchResponse {
  */
 export interface DeleteDispatchRequest {
     /**
-     * @generated from protobuf field: uint64 id = 1;
+     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
      */
-    id: bigint;
+    id: string;
 }
 /**
  * @generated from protobuf message services.centrum.DeleteDispatchResponse
@@ -289,9 +289,9 @@ export interface DeleteDispatchResponse {
  */
 export interface UpdateDispatchStatusRequest {
     /**
-     * @generated from protobuf field: uint64 dispatch_id = 1;
+     * @generated from protobuf field: uint64 dispatch_id = 1 [jstype = JS_STRING];
      */
-    dispatchId: bigint;
+    dispatchId: string;
     /**
      * @generated from protobuf field: resources.dispatch.StatusDispatch status = 2;
      */
@@ -319,17 +319,17 @@ export interface UpdateDispatchStatusResponse {
  */
 export interface AssignDispatchRequest {
     /**
-     * @generated from protobuf field: uint64 dispatch_id = 1;
+     * @generated from protobuf field: uint64 dispatch_id = 1 [jstype = JS_STRING];
      */
-    dispatchId: bigint;
+    dispatchId: string;
     /**
-     * @generated from protobuf field: repeated uint64 to_add = 2;
+     * @generated from protobuf field: repeated uint64 to_add = 2 [jstype = JS_STRING];
      */
-    toAdd: bigint[];
+    toAdd: string[];
     /**
-     * @generated from protobuf field: repeated uint64 to_remove = 3;
+     * @generated from protobuf field: repeated uint64 to_remove = 3 [jstype = JS_STRING];
      */
-    toRemove: bigint[];
+    toRemove: string[];
     /**
      * @generated from protobuf field: optional bool forced = 4;
      */
@@ -358,9 +358,9 @@ export interface ListDispatchActivityResponse {
  */
 export interface JoinUnitRequest {
     /**
-     * @generated from protobuf field: optional uint64 unit_id = 1;
+     * @generated from protobuf field: optional uint64 unit_id = 1 [jstype = JS_STRING];
      */
-    unitId?: bigint;
+    unitId?: string;
 }
 /**
  * @generated from protobuf message services.centrum.JoinUnitResponse
@@ -376,9 +376,9 @@ export interface JoinUnitResponse {
  */
 export interface TakeDispatchRequest {
     /**
-     * @generated from protobuf field: repeated uint64 dispatch_ids = 1;
+     * @generated from protobuf field: repeated uint64 dispatch_ids = 1 [jstype = JS_STRING];
      */
-    dispatchIds: bigint[];
+    dispatchIds: string[];
     /**
      * @generated from protobuf field: resources.dispatch.TakeDispatchResp resp = 2;
      */
@@ -489,9 +489,9 @@ export interface StreamResponse {
     } | {
         oneofKind: "dispatchDeleted";
         /**
-         * @generated from protobuf field: uint64 dispatch_deleted = 9;
+         * @generated from protobuf field: uint64 dispatch_deleted = 9 [jstype = JS_STRING];
          */
-        dispatchDeleted: bigint;
+        dispatchDeleted: string;
     } | {
         oneofKind: "dispatchUpdated";
         /**
@@ -523,7 +523,7 @@ class ListDispatchActivityRequest$Type extends MessageType<ListDispatchActivityR
     constructor() {
         super("services.centrum.ListDispatchActivityRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
-            { no: 2, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+            { no: 2, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
         ]);
     }
 }
@@ -536,7 +536,7 @@ class ListUnitActivityRequest$Type extends MessageType<ListUnitActivityRequest> 
     constructor() {
         super("services.centrum.ListUnitActivityRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
-            { no: 2, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+            { no: 2, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
         ]);
     }
 }
@@ -642,7 +642,7 @@ export const CreateOrUpdateUnitResponse = new CreateOrUpdateUnitResponse$Type();
 class DeleteUnitRequest$Type extends MessageType<DeleteUnitRequest> {
     constructor() {
         super("services.centrum.DeleteUnitRequest", [
-            { no: 1, name: "unit_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+            { no: 1, name: "unit_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
         ]);
     }
 }
@@ -664,7 +664,7 @@ export const DeleteUnitResponse = new DeleteUnitResponse$Type();
 class UpdateUnitStatusRequest$Type extends MessageType<UpdateUnitStatusRequest> {
     constructor() {
         super("services.centrum.UpdateUnitStatusRequest", [
-            { no: 1, name: "unit_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 1, name: "unit_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "status", kind: "enum", T: () => ["resources.dispatch.StatusUnit", StatusUnit, "STATUS_UNIT_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 3, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
             { no: 4, name: "code", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } }
@@ -689,7 +689,7 @@ export const UpdateUnitStatusResponse = new UpdateUnitStatusResponse$Type();
 class AssignUnitRequest$Type extends MessageType<AssignUnitRequest> {
     constructor() {
         super("services.centrum.AssignUnitRequest", [
-            { no: 1, name: "unit_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 1, name: "unit_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "to_add", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ },
             { no: 3, name: "to_remove", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ }
         ]);
@@ -821,7 +821,7 @@ export const UpdateDispatchResponse = new UpdateDispatchResponse$Type();
 class DeleteDispatchRequest$Type extends MessageType<DeleteDispatchRequest> {
     constructor() {
         super("services.centrum.DeleteDispatchRequest", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/, options: { "validate.rules": { uint64: { gt: "0" } } } }
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, options: { "validate.rules": { uint64: { gt: "0" } } } }
         ]);
     }
 }
@@ -843,7 +843,7 @@ export const DeleteDispatchResponse = new DeleteDispatchResponse$Type();
 class UpdateDispatchStatusRequest$Type extends MessageType<UpdateDispatchStatusRequest> {
     constructor() {
         super("services.centrum.UpdateDispatchStatusRequest", [
-            { no: 1, name: "dispatch_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 1, name: "dispatch_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "status", kind: "enum", T: () => ["resources.dispatch.StatusDispatch", StatusDispatch, "STATUS_DISPATCH_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 3, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
             { no: 4, name: "code", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
@@ -868,9 +868,9 @@ export const UpdateDispatchStatusResponse = new UpdateDispatchStatusResponse$Typ
 class AssignDispatchRequest$Type extends MessageType<AssignDispatchRequest> {
     constructor() {
         super("services.centrum.AssignDispatchRequest", [
-            { no: 1, name: "dispatch_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 2, name: "to_add", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 3, name: "to_remove", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 1, name: "dispatch_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 2, name: "to_add", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/ },
+            { no: 3, name: "to_remove", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/ },
             { no: 4, name: "forced", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
@@ -906,7 +906,7 @@ export const ListDispatchActivityResponse = new ListDispatchActivityResponse$Typ
 class JoinUnitRequest$Type extends MessageType<JoinUnitRequest> {
     constructor() {
         super("services.centrum.JoinUnitRequest", [
-            { no: 1, name: "unit_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+            { no: 1, name: "unit_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/ }
         ]);
     }
 }
@@ -930,7 +930,7 @@ export const JoinUnitResponse = new JoinUnitResponse$Type();
 class TakeDispatchRequest$Type extends MessageType<TakeDispatchRequest> {
     constructor() {
         super("services.centrum.TakeDispatchRequest", [
-            { no: 1, name: "dispatch_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/, options: { "validate.rules": { repeated: { minItems: "1" } } } },
+            { no: 1, name: "dispatch_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, options: { "validate.rules": { repeated: { minItems: "1" } } } },
             { no: 2, name: "resp", kind: "enum", T: () => ["resources.dispatch.TakeDispatchResp", TakeDispatchResp, "TAKE_DISPATCH_RESP_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 3, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } }
         ]);
@@ -989,7 +989,7 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
             { no: 6, name: "unit_updated", kind: "message", oneof: "change", T: () => Unit },
             { no: 7, name: "unit_status", kind: "message", oneof: "change", T: () => Unit },
             { no: 8, name: "dispatch_created", kind: "message", oneof: "change", T: () => Dispatch },
-            { no: 9, name: "dispatch_deleted", kind: "scalar", oneof: "change", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 9, name: "dispatch_deleted", kind: "scalar", oneof: "change", T: 4 /*ScalarType.UINT64*/ },
             { no: 10, name: "dispatch_updated", kind: "message", oneof: "change", T: () => Dispatch },
             { no: 11, name: "dispatch_status", kind: "message", oneof: "change", T: () => Dispatch },
             { no: 12, name: "ping", kind: "scalar", oneof: "change", T: 9 /*ScalarType.STRING*/ },

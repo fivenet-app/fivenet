@@ -9,9 +9,9 @@ import { Timestamp } from "../timestamp/timestamp.js";
  */
 export interface Comment {
     /**
-     * @generated from protobuf field: uint64 id = 1;
+     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
      */
-    id: bigint; // @gotags: alias:"id"
+    id: string; // @gotags: alias:"id"
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
      */
@@ -25,9 +25,9 @@ export interface Comment {
      */
     deletedAt?: Timestamp;
     /**
-     * @generated from protobuf field: uint64 document_id = 5;
+     * @generated from protobuf field: uint64 document_id = 5 [jstype = JS_STRING];
      */
-    documentId: bigint;
+    documentId: string;
     /**
      * @sanitize: method=StripTags
      *
@@ -47,11 +47,11 @@ export interface Comment {
 class Comment$Type extends MessageType<Comment> {
     constructor() {
         super("resources.documents.Comment", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "deleted_at", kind: "message", T: () => Timestamp },
-            { no: 5, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 5, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 6, name: "comment", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxBytes: "2048" } } } },
             { no: 7, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
             { no: 8, name: "creator", kind: "message", T: () => UserShort }

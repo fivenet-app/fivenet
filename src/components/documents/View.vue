@@ -46,7 +46,7 @@ const tabs = ref<{ name: string; icon: DefineComponent }[]>([
 ]);
 
 const props = defineProps<{
-    documentId: bigint;
+    documentId: string;
 }>();
 
 const {
@@ -56,7 +56,7 @@ const {
     error,
 } = useLazyAsyncData(`document-${props.documentId}`, () => getDocument(props.documentId));
 
-async function getDocument(id: bigint): Promise<Document> {
+async function getDocument(id: string): Promise<Document> {
     try {
         const call = $grpc.getDocStoreClient().getDocument({
             documentId: id,
@@ -72,7 +72,7 @@ async function getDocument(id: bigint): Promise<Document> {
     }
 }
 
-async function deleteDocument(id: bigint): Promise<void> {
+async function deleteDocument(id: string): Promise<void> {
     try {
         await $grpc.getDocStoreClient().deleteDocument({
             documentId: id,
@@ -91,7 +91,7 @@ async function deleteDocument(id: bigint): Promise<void> {
     }
 }
 
-async function toggleDocument(id: bigint, closed: boolean): Promise<void> {
+async function toggleDocument(id: string, closed: boolean): Promise<void> {
     try {
         await $grpc.getDocStoreClient().toggleDocument({
             documentId: id,
@@ -147,7 +147,7 @@ watchOnce(doc, () =>
 );
 
 const { isRevealed, reveal, confirm, cancel, onConfirm } = useConfirmDialog();
-onConfirm(async (id: bigint) => deleteDocument(id));
+onConfirm(async (id: string) => deleteDocument(id));
 </script>
 
 <template>
@@ -227,7 +227,7 @@ onConfirm(async (id: bigint) => deleteDocument(id));
                                     "
                                     :to="{
                                         name: 'documents-id-edit',
-                                        params: { id: doc?.id.toString() ?? 0 },
+                                        params: { id: doc?.id ?? 0 },
                                     }"
                                     type="button"
                                     class="inline-flex justify-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
@@ -295,7 +295,7 @@ onConfirm(async (id: bigint) => deleteDocument(id));
                                 <span class="text-sm font-medium text-primary-700">
                                     {{
                                         commentCount !== undefined
-                                            ? $t('common.comments', parseInt(commentCount?.toString()))
+                                            ? $t('common.comments', parseInt(commentCount.toString()))
                                             : '? ' + $t('common.comment', 2)
                                     }}
                                 </span>
@@ -307,7 +307,7 @@ onConfirm(async (id: bigint) => deleteDocument(id));
                         >
                             <div
                                 v-for="entry in access?.jobs"
-                                :key="entry.id?.toString()"
+                                :key="entry.id"
                                 class="flex flex-row items-center flex-initial gap-1 px-2 py-1 rounded-full bg-info-100 whitespace-nowrap snap-start"
                             >
                                 <span class="w-2 h-2 rounded-full bg-info-500" aria-hidden="true" />
@@ -325,7 +325,7 @@ onConfirm(async (id: bigint) => deleteDocument(id));
                             </div>
                             <div
                                 v-for="entry in access?.users"
-                                :key="entry.id?.toString()"
+                                :key="entry.id"
                                 class="flex flex-row items-center flex-initial gap-1 px-2 py-1 rounded-full bg-secondary-100 whitespace-nowrap snap-start"
                             >
                                 <span class="w-2 h-2 rounded-full bg-secondary-400" aria-hidden="true" />

@@ -15,13 +15,13 @@ import { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
 
 const props = defineProps<{
     attribute: RoleAttribute;
-    states: Map<bigint, AttributeValues | undefined>;
+    states: Map<string, AttributeValues | undefined>;
     disabled?: boolean;
     permission: Permission;
 }>();
 
 const emit = defineEmits<{
-    (e: 'update:states', payload: Map<bigint, AttributeValues | undefined>): void;
+    (e: 'update:states', payload: Map<string, AttributeValues | undefined>): void;
     (e: 'changed'): void;
 }>();
 
@@ -32,7 +32,7 @@ const { listJobs } = completorStore;
 const jobGrades = ref<Map<string, JobGrade>>(new Map());
 
 const states = ref<typeof props.states>(props.states);
-const id = ref<bigint>(props.attribute.attrId);
+const id = ref<string>(props.attribute.attrId);
 
 if (!states.value.has(id.value) || states.value.get(id.value) === undefined) {
     switch (lowercaseFirstLetter(props.attribute.type)) {
@@ -182,7 +182,7 @@ onBeforeMount(async () => {
                     $props.disabled ? 'cursor-not-allowed' : '',
                     'flex w-full items-start justify-between text-left border-2 p-2 border-inherit transition-colors',
                 ]"
-                :title="`${$t('common.id')}: ${attribute.attrId.toString()}`"
+                :title="`${$t('common.id')}: ${attribute.attrId}`"
             >
                 <span class="text-base leading-7 transition-colors">
                     {{ $t(`attrs.${attribute.category}.${attribute.name}.${attribute.key}`) }}

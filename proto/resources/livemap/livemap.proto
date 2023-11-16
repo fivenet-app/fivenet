@@ -17,7 +17,7 @@ enum MarkerType {
 }
 
 message MarkerInfo {
-  uint64 id = 1;
+  uint64 id = 1 [jstype = JS_STRING];
   optional resources.timestamp.Timestamp created_at = 2;
   optional resources.timestamp.Timestamp updated_at = 3;
   string job = 4;
@@ -41,7 +41,7 @@ message UserMarker {
 
   int32 user_id = 2 [(validate.rules).int32.gt = 0];
   resources.users.UserShort user = 3; // @gotags: alias:"user"
-  optional uint64 unit_id = 4;
+  optional uint64 unit_id = 4 [jstype = JS_STRING];
   optional resources.dispatch.Unit unit = 5;
 }
 

@@ -40,9 +40,9 @@ export interface GetNotificationsResponse {
  */
 export interface MarkNotificationsRequest {
     /**
-     * @generated from protobuf field: repeated uint64 ids = 1;
+     * @generated from protobuf field: repeated uint64 ids = 1 [jstype = JS_STRING];
      */
-    ids: bigint[];
+    ids: string[];
     /**
      * @generated from protobuf field: optional bool all = 2;
      */
@@ -167,7 +167,7 @@ export const GetNotificationsResponse = new GetNotificationsResponse$Type();
 class MarkNotificationsRequest$Type extends MessageType<MarkNotificationsRequest> {
     constructor() {
         super("services.notificator.MarkNotificationsRequest", [
-            { no: 1, name: "ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/, options: { "validate.rules": { repeated: { minItems: "1", maxItems: "20", ignoreEmpty: true } } } },
+            { no: 1, name: "ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, options: { "validate.rules": { repeated: { minItems: "1", maxItems: "20", ignoreEmpty: true } } } },
             { no: 2, name: "all", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }

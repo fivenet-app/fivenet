@@ -25,7 +25,7 @@ const { $grpc } = useNuxtApp();
 const centrumStore = useCentrumStore();
 const { dispatches, pendingDispatches, getCurrentMode } = storeToRefs(centrumStore);
 
-const selectedDispatches = ref<bigint[]>([]);
+const selectedDispatches = ref<string[]>([]);
 const queryDispatches = ref('');
 
 async function takeDispatches(resp: TakeDispatchResp): Promise<void> {
@@ -64,7 +64,7 @@ async function takeDispatches(resp: TakeDispatchResp): Promise<void> {
     }
 }
 
-function selectDispatch(id: bigint, state: boolean): void {
+function selectDispatch(id: string, state: boolean): void {
     const idx = selectedDispatches.value.findIndex((did) => did === id);
     if (idx > -1 && !state) {
         selectedDispatches.value.splice(idx, 1);
@@ -99,7 +99,7 @@ const canTakeDispatch = computed(
 const filteredDispatches = computedAsync(async () => {
     const filtered: Dispatch[] = [];
     dispatches.value.forEach((d) => {
-        if (d.id.toString().includes(queryDispatches.value) || d.message.includes(queryDispatches.value)) {
+        if (d.id.includes(queryDispatches.value) || d.message.includes(queryDispatches.value)) {
             if (d.status === undefined || d.status.status < StatusDispatch.COMPLETED) filtered.push(d);
         }
     });
@@ -185,7 +185,7 @@ const filteredDispatches = computedAsync(async () => {
 
                                                                 <TakeDispatchEntry
                                                                     v-for="pd in filteredDispatches"
-                                                                    :key="pd.toString()"
+                                                                    :key="pd"
                                                                     :dispatch="dispatches.get(pd)!"
                                                                     :preselected="false"
                                                                     @selected="selectDispatch(pd, $event)"
@@ -203,7 +203,7 @@ const filteredDispatches = computedAsync(async () => {
                                                             <template v-else>
                                                                 <TakeDispatchEntry
                                                                     v-for="pd in pendingDispatches"
-                                                                    :key="pd.toString()"
+                                                                    :key="pd"
                                                                     :dispatch="dispatches.get(pd)!"
                                                                     @selected="selectDispatch(pd, $event)"
                                                                     @goto="$emit('goto', $event)"

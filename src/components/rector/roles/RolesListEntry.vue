@@ -12,7 +12,7 @@ defineEmits<{
 </script>
 
 <template>
-    <tr :key="role.id?.toString()">
+    <tr :key="role.id">
         <td class="whitespace-nowrap py-2 pl-2 pr-3 text-sm font-medium text-neutral" :title="`ID: ${role.id}`">
             {{ role.jobLabel }} - {{ role.jobGradeLabel }} ({{ role.grade }})
         </td>

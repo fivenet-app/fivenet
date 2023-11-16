@@ -14,7 +14,7 @@ message ListCitizensRequest {
   string search_name = 2 [(validate.rules).string.max_len = 50];
   optional bool wanted = 3;
   optional string phone_number = 4 [(validate.rules).string.max_len = 20];
-  optional uint64 traffic_points = 5;
+  optional uint32 traffic_infraction_points = 5;
   optional string dateofbirth = 6 [(validate.rules).string.max_len = 10];
   optional uint64 open_fines = 7;
 }

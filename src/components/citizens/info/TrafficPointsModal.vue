@@ -31,7 +31,7 @@ async function setTrafficPoints(values: FormData): Promise<void> {
         return;
     }
 
-    const points = values.reset ? BigInt(0) : (props.user.props?.trafficInfractionPoints ?? 0n) + BigInt(values.trafficPoints);
+    const points = values.reset ? 0 : (props.user.props?.trafficInfractionPoints ?? 0) + values.trafficPoints;
 
     const userProps: UserProps = {
         userId: props.user.userId,

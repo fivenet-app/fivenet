@@ -11,9 +11,9 @@ import { Timestamp } from "../timestamp/timestamp.js";
  */
 export interface Document {
     /**
-     * @generated from protobuf field: uint64 id = 1;
+     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
      */
-    id: bigint;
+    id: string;
     /**
      * @generated from protobuf field: resources.timestamp.Timestamp created_at = 2;
      */
@@ -27,9 +27,9 @@ export interface Document {
      */
     deletedAt?: Timestamp;
     /**
-     * @generated from protobuf field: optional uint64 category_id = 5;
+     * @generated from protobuf field: optional uint64 category_id = 5 [jstype = JS_STRING];
      */
-    categoryId?: bigint; // @gotags: alias:"category_id"
+    categoryId?: string; // @gotags: alias:"category_id"
     /**
      * @generated from protobuf field: optional resources.documents.Category category = 6;
      */
@@ -84,9 +84,9 @@ export interface Document {
  */
 export interface DocumentShort {
     /**
-     * @generated from protobuf field: uint64 id = 1;
+     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
      */
-    id: bigint;
+    id: string;
     /**
      * @generated from protobuf field: resources.timestamp.Timestamp created_at = 2;
      */
@@ -100,9 +100,9 @@ export interface DocumentShort {
      */
     deletedAt?: Timestamp;
     /**
-     * @generated from protobuf field: optional uint64 category_id = 5;
+     * @generated from protobuf field: optional uint64 category_id = 5 [jstype = JS_STRING];
      */
-    categoryId?: bigint; // @gotags: alias:"category_id"
+    categoryId?: string; // @gotags: alias:"category_id"
     /**
      * @generated from protobuf field: optional resources.documents.Category category = 6;
      */
@@ -164,17 +164,17 @@ export interface DocumentAccess {
  */
 export interface DocumentJobAccess {
     /**
-     * @generated from protobuf field: uint64 id = 1;
+     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
      */
-    id: bigint;
+    id: string;
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
      */
     createdAt?: Timestamp;
     /**
-     * @generated from protobuf field: uint64 document_id = 3;
+     * @generated from protobuf field: uint64 document_id = 3 [jstype = JS_STRING];
      */
-    documentId: bigint;
+    documentId: string;
     /**
      * @generated from protobuf field: string job = 4;
      */
@@ -201,17 +201,17 @@ export interface DocumentJobAccess {
  */
 export interface DocumentUserAccess {
     /**
-     * @generated from protobuf field: uint64 id = 1;
+     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
      */
-    id: bigint;
+    id: string;
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
      */
     createdAt?: Timestamp;
     /**
-     * @generated from protobuf field: uint64 document_id = 3;
+     * @generated from protobuf field: uint64 document_id = 3 [jstype = JS_STRING];
      */
-    documentId: bigint;
+    documentId: string;
     /**
      * @generated from protobuf field: int32 user_id = 4;
      */
@@ -230,17 +230,17 @@ export interface DocumentUserAccess {
  */
 export interface DocumentReference {
     /**
-     * @generated from protobuf field: optional uint64 id = 1;
+     * @generated from protobuf field: optional uint64 id = 1 [jstype = JS_STRING];
      */
-    id?: bigint;
+    id?: string;
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
      */
     createdAt?: Timestamp;
     /**
-     * @generated from protobuf field: uint64 source_document_id = 3;
+     * @generated from protobuf field: uint64 source_document_id = 3 [jstype = JS_STRING];
      */
-    sourceDocumentId: bigint; // @gotags: alias:"source_document_id"
+    sourceDocumentId: string; // @gotags: alias:"source_document_id"
     /**
      * @generated from protobuf field: optional resources.documents.DocumentShort source_document = 4;
      */
@@ -250,9 +250,9 @@ export interface DocumentReference {
      */
     reference: DocReference; // @gotags: alias:"reference"
     /**
-     * @generated from protobuf field: uint64 target_document_id = 6;
+     * @generated from protobuf field: uint64 target_document_id = 6 [jstype = JS_STRING];
      */
-    targetDocumentId: bigint; // @gotags: alias:"target_document_id"
+    targetDocumentId: string; // @gotags: alias:"target_document_id"
     /**
      * @generated from protobuf field: optional resources.documents.DocumentShort target_document = 7;
      */
@@ -271,17 +271,17 @@ export interface DocumentReference {
  */
 export interface DocumentRelation {
     /**
-     * @generated from protobuf field: optional uint64 id = 1;
+     * @generated from protobuf field: optional uint64 id = 1 [jstype = JS_STRING];
      */
-    id?: bigint;
+    id?: string;
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
      */
     createdAt?: Timestamp;
     /**
-     * @generated from protobuf field: uint64 document_id = 3;
+     * @generated from protobuf field: uint64 document_id = 3 [jstype = JS_STRING];
      */
-    documentId: bigint;
+    documentId: string;
     /**
      * @generated from protobuf field: optional resources.documents.DocumentShort document = 4;
      */
@@ -374,11 +374,11 @@ export enum DocRelation {
 class Document$Type extends MessageType<Document> {
     constructor() {
         super("resources.documents.Document", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "deleted_at", kind: "message", T: () => Timestamp },
-            { no: 5, name: "category_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 5, name: "category_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/ },
             { no: 6, name: "category", kind: "message", T: () => Category },
             { no: 7, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxBytes: "21845" } } } },
             { no: 8, name: "content_type", kind: "enum", T: () => ["resources.documents.DocContentType", DocContentType, "DOC_CONTENT_TYPE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
@@ -400,11 +400,11 @@ export const Document = new Document$Type();
 class DocumentShort$Type extends MessageType<DocumentShort> {
     constructor() {
         super("resources.documents.DocumentShort", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "deleted_at", kind: "message", T: () => Timestamp },
-            { no: 5, name: "category_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 5, name: "category_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/ },
             { no: 6, name: "category", kind: "message", T: () => Category },
             { no: 7, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3" } } } },
             { no: 8, name: "content_type", kind: "enum", T: () => ["resources.documents.DocContentType", DocContentType, "DOC_CONTENT_TYPE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
@@ -438,9 +438,9 @@ export const DocumentAccess = new DocumentAccess$Type();
 class DocumentJobAccess$Type extends MessageType<DocumentJobAccess> {
     constructor() {
         super("resources.documents.DocumentJobAccess", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
-            { no: 3, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 3, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 4, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 5, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
             { no: 6, name: "minimum_grade", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
@@ -457,9 +457,9 @@ export const DocumentJobAccess = new DocumentJobAccess$Type();
 class DocumentUserAccess$Type extends MessageType<DocumentUserAccess> {
     constructor() {
         super("resources.documents.DocumentUserAccess", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
-            { no: 3, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 3, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 4, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
             { no: 5, name: "user", kind: "message", T: () => UserShort },
             { no: 6, name: "access", kind: "enum", T: () => ["resources.documents.AccessLevel", AccessLevel, "ACCESS_LEVEL_"], options: { "validate.rules": { enum: { definedOnly: true } } } }
@@ -474,12 +474,12 @@ export const DocumentUserAccess = new DocumentUserAccess$Type();
 class DocumentReference$Type extends MessageType<DocumentReference> {
     constructor() {
         super("resources.documents.DocumentReference", [
-            { no: 1, name: "id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 1, name: "id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
-            { no: 3, name: "source_document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 3, name: "source_document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 4, name: "source_document", kind: "message", T: () => DocumentShort },
             { no: 5, name: "reference", kind: "enum", T: () => ["resources.documents.DocReference", DocReference, "DOC_REFERENCE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
-            { no: 6, name: "target_document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 6, name: "target_document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 7, name: "target_document", kind: "message", T: () => DocumentShort },
             { no: 8, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
             { no: 9, name: "creator", kind: "message", T: () => UserShort }
@@ -494,9 +494,9 @@ export const DocumentReference = new DocumentReference$Type();
 class DocumentRelation$Type extends MessageType<DocumentRelation> {
     constructor() {
         super("resources.documents.DocumentRelation", [
-            { no: 1, name: "id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 1, name: "id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
-            { no: 3, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 3, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 4, name: "document", kind: "message", T: () => DocumentShort },
             { no: 5, name: "source_user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
             { no: 6, name: "source_user", kind: "message", T: () => UserShort },

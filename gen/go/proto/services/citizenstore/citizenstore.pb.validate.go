@@ -127,8 +127,8 @@ func (m *ListCitizensRequest) validate(all bool) error {
 
 	}
 
-	if m.TrafficPoints != nil {
-		// no validation rules for TrafficPoints
+	if m.TrafficInfractionPoints != nil {
+		// no validation rules for TrafficInfractionPoints
 	}
 
 	if m.Dateofbirth != nil {

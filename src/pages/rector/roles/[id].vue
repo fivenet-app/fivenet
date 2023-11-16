@@ -22,6 +22,6 @@ const route = useRoute('rector-roles-id');
 
 <template>
     <div class="w-full">
-        <RoleView :role-id="BigInt(route.params.id)" />
+        <RoleView :role-id="route.params.id as string" />
     </div>
 </template>

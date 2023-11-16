@@ -10,9 +10,9 @@ import { Timestamp } from "../timestamp/timestamp.js";
  */
 export interface MarkerInfo {
     /**
-     * @generated from protobuf field: uint64 id = 1;
+     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
      */
-    id: bigint;
+    id: string;
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
      */
@@ -77,9 +77,9 @@ export interface UserMarker {
      */
     user?: UserShort; // @gotags: alias:"user"
     /**
-     * @generated from protobuf field: optional uint64 unit_id = 4;
+     * @generated from protobuf field: optional uint64 unit_id = 4 [jstype = JS_STRING];
      */
-    unitId?: bigint;
+    unitId?: string;
     /**
      * @generated from protobuf field: optional resources.dispatch.Unit unit = 5;
      */
@@ -193,7 +193,7 @@ export enum MarkerType {
 class MarkerInfo$Type extends MessageType<MarkerInfo> {
     constructor() {
         super("resources.livemap.MarkerInfo", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
@@ -218,7 +218,7 @@ class UserMarker$Type extends MessageType<UserMarker> {
             { no: 1, name: "info", kind: "message", T: () => MarkerInfo },
             { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
             { no: 3, name: "user", kind: "message", T: () => UserShort },
-            { no: 4, name: "unit_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 4, name: "unit_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/ },
             { no: 5, name: "unit", kind: "message", T: () => Unit }
         ]);
     }

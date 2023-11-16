@@ -11,7 +11,7 @@ import { StatusDispatch } from '~~/gen/ts/resources/dispatch/dispatches';
 
 const props = defineProps<{
     open: boolean;
-    dispatchId: bigint;
+    dispatchId: string;
     status?: StatusDispatch;
 }>();
 
@@ -29,7 +29,7 @@ interface FormData {
     reason?: string;
 }
 
-async function updateDispatchStatus(dispatchId: bigint, values: FormData): Promise<void> {
+async function updateDispatchStatus(dispatchId: string, values: FormData): Promise<void> {
     try {
         const call = $grpc.getCentrumClient().updateDispatchStatus({
             dispatchId,

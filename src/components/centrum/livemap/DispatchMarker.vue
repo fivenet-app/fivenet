@@ -24,7 +24,7 @@ const emit = defineEmits<{
 const iconAnchor: PointExpression = [props.size / 2, props.size * 1.65];
 const popupAnchor: PointExpression = [0, -(props.size * 1.7)];
 
-function selected(_: bigint | number | string) {
+function selected(_: string | number | string) {
     emit('selected', props.dispatch);
 }
 
@@ -33,7 +33,7 @@ const dispatchAnimated = computed(() => (dispatchStatusAnimate(props.dispatch.st
 </script>
 
 <template>
-    <LMarker :key="dispatch.id?.toString()" :lat-lng="[dispatch.y, dispatch.x]" :name="dispatch.message" :z-index-offset="10">
+    <LMarker :key="dispatch.id" :lat-lng="[dispatch.y, dispatch.x]" :name="dispatch.message" :z-index-offset="10">
         <LIcon :icon-anchor="iconAnchor" :popup-anchor="popupAnchor" :icon-size="[size, size]">
             <div class="uppercase flex flex-col items-center">
                 <span

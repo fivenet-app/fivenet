@@ -116,7 +116,7 @@ watchDebounced(includeRead, async () => refresh(), { debounce: 500, maxWait: 150
                             <ul class="flex flex-col">
                                 <li
                                     v-for="not in data?.notifications"
-                                    :key="not.id.toString()"
+                                    :key="not.id"
                                     class="relative flex justify-between my-1 gap-x-6 px-4 py-5 hover:bg-base-700 bg-base-800 sm:px-6 rounded-lg"
                                 >
                                     <div class="flex gap-x-4">

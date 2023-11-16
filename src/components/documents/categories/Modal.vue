@@ -30,7 +30,7 @@ async function createCategory(values: FormData): Promise<void> {
     try {
         await $grpc.getDocStoreClient().createCategory({
             category: {
-                id: 0n,
+                id: '0',
                 name: values.name,
                 description: values.description,
             },

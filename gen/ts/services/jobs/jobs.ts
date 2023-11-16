@@ -123,9 +123,9 @@ export interface ConductUpdateEntryResponse {
  */
 export interface ConductDeleteEntryRequest {
     /**
-     * @generated from protobuf field: uint64 id = 1;
+     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
      */
-    id: bigint;
+    id: string;
 }
 /**
  * @generated from protobuf message services.jobs.ConductDeleteEntryResponse
@@ -275,9 +275,9 @@ export interface RequestsUpdateEntryResponse {
  */
 export interface RequestsDeleteEntryRequest {
     /**
-     * @generated from protobuf field: uint64 id = 1;
+     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
      */
-    id: bigint;
+    id: string;
 }
 /**
  * @generated from protobuf message services.jobs.RequestsDeleteEntryResponse
@@ -289,9 +289,9 @@ export interface RequestsDeleteEntryResponse {
  */
 export interface RequestsApproveEntryRequest {
     /**
-     * @generated from protobuf field: uint64 id = 1;
+     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
      */
-    id: bigint;
+    id: string;
     /**
      * @generated from protobuf field: bool approve = 2;
      */
@@ -307,9 +307,9 @@ export interface RequestsApproveEntryResponse {
  */
 export interface RequestsCloseEntryRequest {
     /**
-     * @generated from protobuf field: uint64 id = 1;
+     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
      */
-    id: bigint;
+    id: string;
     /**
      * @generated from protobuf field: bool close = 2;
      */
@@ -357,9 +357,9 @@ export interface RequestsCreateOrUpdateTypeResponse {
  */
 export interface RequestsDeleteTypeRequest {
     /**
-     * @generated from protobuf field: uint64 id = 1;
+     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
      */
-    id: bigint;
+    id: string;
 }
 /**
  * @generated from protobuf message services.jobs.RequestsDeleteTypeResponse
@@ -375,9 +375,9 @@ export interface RequestsListCommentsRequest {
      */
     pagination?: PaginationRequest;
     /**
-     * @generated from protobuf field: uint64 request_id = 2;
+     * @generated from protobuf field: uint64 request_id = 2 [jstype = JS_STRING];
      */
-    requestId: bigint;
+    requestId: string;
 }
 /**
  * @generated from protobuf message services.jobs.RequestsListCommentsResponse
@@ -415,9 +415,9 @@ export interface RequestsPostCommentResponse {
  */
 export interface RequestsDeleteCommentRequest {
     /**
-     * @generated from protobuf field: uint64 id = 1;
+     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
      */
-    id: bigint;
+    id: string;
 }
 /**
  * @generated from protobuf message services.jobs.RequestsDeleteCommentResponse
@@ -530,7 +530,7 @@ export const ConductUpdateEntryResponse = new ConductUpdateEntryResponse$Type();
 class ConductDeleteEntryRequest$Type extends MessageType<ConductDeleteEntryRequest> {
     constructor() {
         super("services.jobs.ConductDeleteEntryRequest", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
         ]);
     }
 }
@@ -681,7 +681,7 @@ export const RequestsUpdateEntryResponse = new RequestsUpdateEntryResponse$Type(
 class RequestsDeleteEntryRequest$Type extends MessageType<RequestsDeleteEntryRequest> {
     constructor() {
         super("services.jobs.RequestsDeleteEntryRequest", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
         ]);
     }
 }
@@ -703,7 +703,7 @@ export const RequestsDeleteEntryResponse = new RequestsDeleteEntryResponse$Type(
 class RequestsApproveEntryRequest$Type extends MessageType<RequestsApproveEntryRequest> {
     constructor() {
         super("services.jobs.RequestsApproveEntryRequest", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "approve", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
@@ -726,7 +726,7 @@ export const RequestsApproveEntryResponse = new RequestsApproveEntryResponse$Typ
 class RequestsCloseEntryRequest$Type extends MessageType<RequestsCloseEntryRequest> {
     constructor() {
         super("services.jobs.RequestsCloseEntryRequest", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "close", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
@@ -795,7 +795,7 @@ export const RequestsCreateOrUpdateTypeResponse = new RequestsCreateOrUpdateType
 class RequestsDeleteTypeRequest$Type extends MessageType<RequestsDeleteTypeRequest> {
     constructor() {
         super("services.jobs.RequestsDeleteTypeRequest", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
         ]);
     }
 }
@@ -818,7 +818,7 @@ class RequestsListCommentsRequest$Type extends MessageType<RequestsListCommentsR
     constructor() {
         super("services.jobs.RequestsListCommentsRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
-            { no: 2, name: "request_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+            { no: 2, name: "request_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
         ]);
     }
 }
@@ -867,7 +867,7 @@ export const RequestsPostCommentResponse = new RequestsPostCommentResponse$Type(
 class RequestsDeleteCommentRequest$Type extends MessageType<RequestsDeleteCommentRequest> {
     constructor() {
         super("services.jobs.RequestsDeleteCommentRequest", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
         ]);
     }
 }

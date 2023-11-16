@@ -58,9 +58,9 @@ export interface JobProps {
      */
     quickButtons?: QuickButtons;
     /**
-     * @generated from protobuf field: optional uint64 discord_guild_id = 5;
+     * @generated from protobuf field: optional uint64 discord_guild_id = 5 [jstype = JS_STRING];
      */
-    discordGuildId?: bigint;
+    discordGuildId?: string;
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp discord_last_sync = 6;
      */
@@ -128,7 +128,7 @@ class JobProps$Type extends MessageType<JobProps> {
             { no: 2, name: "theme", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 3, name: "livemap_marker_color", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { len: "6", pattern: "^[A-Fa-f0-9]{6}$" } } } },
             { no: 4, name: "quick_buttons", kind: "message", T: () => QuickButtons },
-            { no: 5, name: "discord_guild_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 5, name: "discord_guild_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/ },
             { no: 6, name: "discord_last_sync", kind: "message", T: () => Timestamp },
             { no: 7, name: "discord_sync_settings", kind: "message", T: () => DiscordSyncSettings }
         ]);

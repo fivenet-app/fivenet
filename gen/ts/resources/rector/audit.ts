@@ -9,17 +9,17 @@ import { Timestamp } from "../timestamp/timestamp.js";
  */
 export interface AuditEntry {
     /**
-     * @generated from protobuf field: uint64 id = 1;
+     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
      */
-    id: bigint; // @gotags: alias:"id"
+    id: string; // @gotags: alias:"id"
     /**
      * @generated from protobuf field: resources.timestamp.Timestamp created_at = 2;
      */
     createdAt?: Timestamp;
     /**
-     * @generated from protobuf field: uint64 user_id = 3;
+     * @generated from protobuf field: uint64 user_id = 3 [jstype = JS_STRING];
      */
-    userId: bigint; // @gotags: alias:"user_id"
+    userId: string; // @gotags: alias:"user_id"
     /**
      * @generated from protobuf field: optional resources.users.UserShort user = 4;
      */
@@ -29,9 +29,9 @@ export interface AuditEntry {
      */
     userJob: string; // @gotags: alias:"user_job"
     /**
-     * @generated from protobuf field: optional string target_user_id = 6;
+     * @generated from protobuf field: optional int32 target_user_id = 6;
      */
-    targetUserId?: string; // @gotags: alias:"target_user_id"
+    targetUserId?: number; // @gotags: alias:"target_user_id"
     /**
      * @generated from protobuf field: optional resources.users.UserShort target_user = 7;
      */
@@ -86,12 +86,12 @@ export enum EventType {
 class AuditEntry$Type extends MessageType<AuditEntry> {
     constructor() {
         super("resources.rector.AuditEntry", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
-            { no: 3, name: "user_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 3, name: "user_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 4, name: "user", kind: "message", T: () => UserShort },
             { no: 5, name: "user_job", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 6, name: "target_user_id", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 6, name: "target_user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
             { no: 7, name: "target_user", kind: "message", T: () => UserShort },
             { no: 8, name: "service", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 9, name: "method", kind: "scalar", T: 9 /*ScalarType.STRING*/ },

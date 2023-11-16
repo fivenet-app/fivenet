@@ -54,7 +54,7 @@ import RelationManager from '~/components/documents/RelationManager.vue';
 import { checkDocAccess } from '~/components/documents/helpers';
 
 const props = defineProps<{
-    id?: bigint;
+    id?: string;
 }>();
 
 const { $grpc } = useNuxtApp();
@@ -99,9 +99,9 @@ const doc = ref<{
 });
 const access = ref<
     Map<
-        bigint,
+        string,
         {
-            id: bigint;
+            id: string;
             type: number;
             values: {
                 job?: string;
@@ -116,12 +116,12 @@ const docAccess = ref<DocumentAccess>();
 const docCreator = ref<UserShort | undefined>();
 
 const relationManagerShow = ref<boolean>(false);
-const relationManagerData = ref<Map<bigint, DocumentRelation>>(new Map());
+const relationManagerData = ref<Map<string, DocumentRelation>>(new Map());
 const currentRelations = ref<Readonly<DocumentRelation>[]>([]);
 watch(currentRelations, () => currentRelations.value.forEach((e) => relationManagerData.value.set(e.id!, e)));
 
 const referenceManagerShow = ref<boolean>(false);
-const referenceManagerData = ref<Map<bigint, DocumentReference>>(new Map());
+const referenceManagerData = ref<Map<string, DocumentReference>>(new Map());
 const currentReferences = ref<Readonly<DocumentReference>[]>([]);
 watch(currentReferences, () => currentReferences.value.forEach((e) => referenceManagerData.value.set(e.id!, e)));
 
@@ -137,7 +137,7 @@ onMounted(async () => {
 
         try {
             const call = $grpc.getDocStoreClient().getTemplate({
-                templateId: BigInt(route.query.templateId as string),
+                templateId: route.query.templateId as string,
                 data,
                 render: true,
             });
@@ -158,10 +158,11 @@ onMounted(async () => {
                     docCreator.value = authStore.activeChar;
                 }
                 const docAccess = template.contentAccess!;
-                let accessId = 0n;
+                let accessId = 0;
                 docAccess.users.forEach((user) => {
-                    access.value.set(accessId, {
-                        id: accessId,
+                    const id = accessId.toString();
+                    access.value.set(id, {
+                        id,
                         type: 0,
                         values: { char: user.userId, accessRole: user.access },
                     });
@@ -169,8 +170,9 @@ onMounted(async () => {
                 });
 
                 docAccess.jobs.forEach((job) => {
-                    access.value.set(accessId, {
-                        id: accessId,
+                    const id = accessId.toString();
+                    access.value.set(id, {
+                        id,
                         type: 1,
                         values: {
                             job: job.job,
@@ -217,11 +219,12 @@ onMounted(async () => {
             }
 
             if (response.access) {
-                let accessId = 0n;
+                let accessId = 0;
 
                 response.access.users.forEach((user) => {
-                    access.value.set(accessId, {
-                        id: accessId,
+                    const id = accessId.toString();
+                    access.value.set(id, {
+                        id,
                         type: 0,
                         values: { char: user.userId, accessRole: user.access },
                     });
@@ -229,8 +232,9 @@ onMounted(async () => {
                 });
 
                 response.access.jobs.forEach((job) => {
-                    access.value.set(accessId, {
-                        id: accessId,
+                    const id = accessId.toString();
+                    access.value.set(id, {
+                        id,
                         type: 1,
                         values: {
                             job: job.job,
@@ -258,9 +262,9 @@ onMounted(async () => {
             }
         }
 
-        const accessId = 0n;
-        access.value.set(accessId, {
-            id: accessId,
+        const accessId = 0;
+        access.value.set(accessId.toString(), {
+            id: accessId.toString(),
             type: 1,
             values: {
                 job: activeChar.value?.job,
@@ -271,10 +275,10 @@ onMounted(async () => {
     }
 
     clipboardStore.activeStack.documents.forEach((doc, i) => {
-        const id = BigInt(i);
+        const id = i.toString();
         referenceManagerData.value.set(id, {
             id,
-            sourceDocumentId: props.id ?? 0n,
+            sourceDocumentId: props.id ?? '0',
             targetDocumentId: doc.id!,
             targetDocument: getDocument(doc),
             creatorId: activeChar.value!.userId,
@@ -283,10 +287,10 @@ onMounted(async () => {
         });
     });
     clipboardStore.activeStack.users.forEach((user, i) => {
-        const id = BigInt(i);
+        const id = i.toString();
         relationManagerData.value.set(id, {
             id,
-            documentId: props.id ?? 0n,
+            documentId: props.id ?? '0',
             targetUserId: user.userId!,
             targetUser: getUser(user),
             sourceUserId: activeChar.value!.userId,
@@ -380,19 +384,19 @@ function addAccessEntry(): void {
         return;
     }
 
-    const id = access.value.size > 0 ? ([...access.value.keys()].pop() as bigint) + 1n : 0n;
-    access.value.set(id, {
-        id,
+    const id = access.value.size > 0 ? parseInt([...access.value.keys()]?.pop() ?? '1') + 1 : 0;
+    access.value.set(id.toString(), {
+        id: id.toString(),
         type: 1,
         values: {},
     });
 }
 
-function removeAccessEntry(event: { id: bigint }): void {
+function removeAccessEntry(event: { id: string }): void {
     access.value.delete(event.id);
 }
 
-function updateAccessEntryType(event: { id: bigint; type: number }): void {
+function updateAccessEntryType(event: { id: string; type: number }): void {
     const accessEntry = access.value.get(event.id);
     if (!accessEntry) {
         return;
@@ -402,7 +406,7 @@ function updateAccessEntryType(event: { id: bigint; type: number }): void {
     access.value.set(event.id, accessEntry);
 }
 
-function updateAccessEntryName(event: { id: bigint; job?: Job; char?: UserShort }): void {
+function updateAccessEntryName(event: { id: string; job?: Job; char?: UserShort }): void {
     const accessEntry = access.value.get(event.id);
     if (!accessEntry) {
         return;
@@ -419,7 +423,7 @@ function updateAccessEntryName(event: { id: bigint; job?: Job; char?: UserShort 
     access.value.set(event.id, accessEntry);
 }
 
-function updateAccessEntryRank(event: { id: bigint; rank: JobGrade }): void {
+function updateAccessEntryRank(event: { id: string; rank: JobGrade }): void {
     const accessEntry = access.value.get(event.id);
     if (!accessEntry) {
         return;
@@ -429,7 +433,7 @@ function updateAccessEntryRank(event: { id: bigint; rank: JobGrade }): void {
     access.value.set(event.id, accessEntry);
 }
 
-function updateAccessEntryAccess(event: { id: bigint; access: AccessLevel }): void {
+function updateAccessEntryAccess(event: { id: string; access: AccessLevel }): void {
     const accessEntry = access.value.get(event.id);
     if (!accessEntry) {
         return;
@@ -466,8 +470,8 @@ async function createDocument(values: FormData, content: string, closed: boolean
             }
 
             reqAccess.users.push({
-                id: 0n,
-                documentId: 0n,
+                id: '0',
+                documentId: '0',
                 userId: entry.values.char,
                 access: entry.values.accessRole,
             });
@@ -477,8 +481,8 @@ async function createDocument(values: FormData, content: string, closed: boolean
             }
 
             reqAccess.jobs.push({
-                id: 0n,
-                documentId: 0n,
+                id: '0',
+                documentId: '0',
                 job: entry.values.job,
                 minimumGrade: entry.values.minimumGrade ? entry.values.minimumGrade : 0,
                 access: entry.values.accessRole,
@@ -526,7 +530,7 @@ async function createDocument(values: FormData, content: string, closed: boolean
 
         await navigateTo({
             name: 'documents-id',
-            params: { id: response.documentId.toString() },
+            params: { id: response.documentId },
         });
     } catch (e) {
         $grpc.handleError(e as RpcError);
@@ -534,7 +538,7 @@ async function createDocument(values: FormData, content: string, closed: boolean
     }
 }
 
-async function updateDocument(id: bigint, values: FormData, content: string, closed: boolean): Promise<void> {
+async function updateDocument(id: string, values: FormData, content: string, closed: boolean): Promise<void> {
     const req: UpdateDocumentRequest = {
         documentId: id,
         title: values.title,
@@ -561,7 +565,7 @@ async function updateDocument(id: bigint, values: FormData, content: string, clo
             }
 
             reqAccess.users.push({
-                id: 0n,
+                id: '0',
                 documentId: id,
                 userId: entry.values.char,
                 access: entry.values.accessRole,
@@ -572,7 +576,7 @@ async function updateDocument(id: bigint, values: FormData, content: string, clo
             }
 
             reqAccess.jobs.push({
-                id: 0n,
+                id: '0',
                 documentId: id,
                 job: entry.values.job,
                 minimumGrade: entry.values.minimumGrade ? entry.values.minimumGrade : 0,
@@ -587,7 +591,7 @@ async function updateDocument(id: bigint, values: FormData, content: string, clo
         const { response } = await call;
 
         if (canDo.value.references) {
-            const referencesToRemove: bigint[] = [];
+            const referencesToRemove: string[] = [];
             currentReferences.value.forEach((ref) => {
                 if (!referenceManagerData.value.has(ref.id!)) referencesToRemove.push(ref.id!);
             });
@@ -607,7 +611,7 @@ async function updateDocument(id: bigint, values: FormData, content: string, clo
         }
 
         if (canDo.value.relations) {
-            const relationsToRemove: bigint[] = [];
+            const relationsToRemove: string[] = [];
             currentRelations.value.forEach((rel) => {
                 if (!relationManagerData.value.has(rel.id!)) relationsToRemove.push(rel.id!);
             });
@@ -636,7 +640,7 @@ async function updateDocument(id: bigint, values: FormData, content: string, clo
 
         await navigateTo({
             name: 'documents-id',
-            params: { id: response.documentId.toString() },
+            params: { id: response.documentId },
         });
     } catch (e) {
         $grpc.handleError(e as RpcError);
@@ -901,7 +905,7 @@ function setupCheckboxes(): void {
                                 >
                                     <ComboboxOption
                                         v-for="category in entriesCategories"
-                                        :key="category.id?.toString()"
+                                        :key="category.id"
                                         v-slot="{ active, selected }"
                                         :value="category"
                                         as="category"
@@ -972,7 +976,7 @@ function setupCheckboxes(): void {
                                     >
                                         <ListboxOption
                                             v-for="st in openclose"
-                                            :key="st.closed?.toString()"
+                                            :key="st.closed.toString()"
                                             v-slot="{ active, selected }"
                                             as="template"
                                             :value="st"
@@ -1056,7 +1060,7 @@ function setupCheckboxes(): void {
                 </h2>
                 <AccessEntry
                     v-for="entry in access.values()"
-                    :key="entry.id?.toString()"
+                    :key="entry.id"
                     :init="entry"
                     :access-types="accessTypes"
                     :read-only="!canDo.access"

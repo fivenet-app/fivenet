@@ -20,7 +20,7 @@ message ListTemplatesResponse {
 }
 
 message GetTemplateRequest {
-  uint64 template_id = 1;
+  uint64 template_id = 1 [jstype = JS_STRING];
   optional resources.documents.TemplateData data = 2;
   optional bool render = 3;
 }
@@ -35,7 +35,7 @@ message CreateTemplateRequest {
 }
 
 message CreateTemplateResponse {
-  uint64 id = 1;
+  uint64 id = 1 [jstype = JS_STRING];
 }
 
 message UpdateTemplateRequest {
@@ -43,11 +43,11 @@ message UpdateTemplateRequest {
 }
 
 message UpdateTemplateResponse {
-  uint64 id = 1;
+  uint64 id = 1 [jstype = JS_STRING];
 }
 
 message DeleteTemplateRequest {
-  uint64 id = 1;
+  uint64 id = 1 [jstype = JS_STRING];
 }
 
 message DeleteTemplateResponse {}
@@ -58,12 +58,12 @@ message ListDocumentsRequest {
   repeated resources.common.database.OrderBy orderBy = 2 [(validate.rules).repeated.max_items = 3];
   // Search params
   optional string search = 3;
-  repeated uint64 category_ids = 4;
+  repeated uint64 category_ids = 4 [jstype = JS_STRING];
   repeated int32 creator_ids = 5;
   optional resources.timestamp.Timestamp from = 6;
   optional resources.timestamp.Timestamp to = 7;
   optional bool closed = 8;
-  repeated uint64 document_ids = 9;
+  repeated uint64 document_ids = 9 [jstype = JS_STRING];
 }
 
 message ListDocumentsResponse {
@@ -72,7 +72,7 @@ message ListDocumentsResponse {
 }
 
 message GetDocumentRequest {
-  uint64 document_id = 1;
+  uint64 document_id = 1 [jstype = JS_STRING];
 }
 
 message GetDocumentResponse {
@@ -81,7 +81,7 @@ message GetDocumentResponse {
 }
 
 message GetDocumentReferencesRequest {
-  uint64 document_id = 1;
+  uint64 document_id = 1 [jstype = JS_STRING];
 }
 
 message GetDocumentReferencesResponse {
@@ -89,7 +89,7 @@ message GetDocumentReferencesResponse {
 }
 
 message GetDocumentRelationsRequest {
-  uint64 document_id = 1;
+  uint64 document_id = 1 [jstype = JS_STRING];
 }
 
 message GetDocumentRelationsResponse {
@@ -101,11 +101,11 @@ message AddDocumentReferenceRequest {
 }
 
 message AddDocumentReferenceResponse {
-  uint64 id = 1;
+  uint64 id = 1 [jstype = JS_STRING];
 }
 
 message RemoveDocumentReferenceRequest {
-  uint64 id = 1;
+  uint64 id = 1 [jstype = JS_STRING];
 }
 
 message RemoveDocumentReferenceResponse {}
@@ -115,11 +115,11 @@ message AddDocumentRelationRequest {
 }
 
 message AddDocumentRelationResponse {
-  uint64 id = 1;
+  uint64 id = 1 [jstype = JS_STRING];
 }
 
 message RemoveDocumentRelationRequest {
-  uint64 id = 1;
+  uint64 id = 1 [jstype = JS_STRING];
 }
 
 message RemoveDocumentRelationResponse {}
@@ -127,7 +127,7 @@ message RemoveDocumentRelationResponse {}
 // Comments ===============================================================
 message GetCommentsRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
-  uint64 document_id = 2;
+  uint64 document_id = 2 [jstype = JS_STRING];
 }
 
 message GetCommentsResponse {
@@ -140,7 +140,7 @@ message PostCommentRequest {
 }
 
 message PostCommentResponse {
-  uint64 id = 1;
+  uint64 id = 1 [jstype = JS_STRING];
 }
 
 message EditCommentRequest {
@@ -152,13 +152,13 @@ message EditCommentResponse {
 }
 
 message DeleteCommentRequest {
-  uint64 comment_id = 1;
+  uint64 comment_id = 1 [jstype = JS_STRING];
 }
 
 message DeleteCommentResponse {}
 
 message CreateDocumentRequest {
-  optional uint64 category_id = 1; // @gotags: alias:"category_id"
+  optional uint64 category_id = 1 [jstype = JS_STRING]; // @gotags: alias:"category_id"
   // @sanitize: method=StripTags
   string title = 2 [(validate.rules).string = {
     min_len: 3,
@@ -181,12 +181,12 @@ message CreateDocumentRequest {
 }
 
 message CreateDocumentResponse {
-  uint64 document_id = 1; // @gotags: alias:"id"
+  uint64 document_id = 1 [jstype = JS_STRING]; // @gotags: alias:"id"
 }
 
 message UpdateDocumentRequest {
-  uint64 document_id = 1; // @gotags: alias:"id"
-  optional uint64 category_id = 2; // @gotags: alias:"category_id"
+  uint64 document_id = 1 [jstype = JS_STRING]; // @gotags: alias:"id"
+  optional uint64 category_id = 2 [jstype = JS_STRING]; // @gotags: alias:"category_id"
   // @sanitize: method=StripTags
   string title = 3 [(validate.rules).string = {
     min_len: 3,
@@ -209,17 +209,17 @@ message UpdateDocumentRequest {
 }
 
 message UpdateDocumentResponse {
-  uint64 document_id = 1; // @gotags: alias:"id"
+  uint64 document_id = 1 [jstype = JS_STRING]; // @gotags: alias:"id"
 }
 
 message DeleteDocumentRequest {
-  uint64 document_id = 1; // @gotags: alias:"id"
+  uint64 document_id = 1 [jstype = JS_STRING]; // @gotags: alias:"id"
 }
 
 message DeleteDocumentResponse {}
 
 message ToggleDocumentRequest {
-  uint64 document_id = 1;
+  uint64 document_id = 1 [jstype = JS_STRING];
   bool closed = 2;
 }
 
@@ -227,7 +227,7 @@ message ToggleDocumentResponse {}
 
 // Access =================================================================
 message GetDocumentAccessRequest {
-  uint64 document_id = 1;
+  uint64 document_id = 1 [jstype = JS_STRING];
 }
 
 message GetDocumentAccessResponse {
@@ -242,7 +242,7 @@ enum AccessLevelUpdateMode {
 }
 
 message SetDocumentAccessRequest {
-  uint64 document_id = 1;
+  uint64 document_id = 1 [jstype = JS_STRING];
   AccessLevelUpdateMode mode = 2 [(validate.rules).enum.defined_only = true];
   resources.documents.DocumentAccess access = 3 [(validate.rules).message.required = true];
 }
@@ -272,7 +272,7 @@ message CreateCategoryRequest {
 }
 
 message CreateCategoryResponse {
-  uint64 id = 1;
+  uint64 id = 1 [jstype = JS_STRING];
 }
 
 message UpdateCategoryRequest {
@@ -282,7 +282,7 @@ message UpdateCategoryRequest {
 message UpdateCategoryResponse {}
 
 message DeleteCategoryRequest {
-  repeated uint64 ids = 1;
+  repeated uint64 ids = 1 [jstype = JS_STRING];
 }
 
 message DeleteCategoryResponse {}

@@ -12,7 +12,7 @@ const { $grpc } = useNuxtApp();
 
 const props = withDefaults(
     defineProps<{
-        documentId: bigint;
+        documentId: string;
         showDocument?: boolean;
         showSource?: boolean;
     }>(),
@@ -58,7 +58,7 @@ async function getDocumentRelations(): Promise<DocumentRelation[]> {
             <!-- Relations list (smallest breakpoint only) -->
             <div class="sm:hidden text-neutral">
                 <ul role="list" class="mt-2 overflow-hidden divide-y divide-gray-600 rounded-lg sm:hidden">
-                    <li v-for="relation in relations" :key="relation.id?.toString()">
+                    <li v-for="relation in relations" :key="relation.id">
                         <a href="#" class="block px-4 py-4 bg-base-800 hover:bg-base-700">
                             <span class="flex items-center space-x-4">
                                 <span class="flex flex-1 space-x-2 truncate">
@@ -69,7 +69,7 @@ async function getDocumentRelations(): Promise<DocumentRelation[]> {
                                                 :to="{
                                                     name: 'documents-id',
                                                     params: {
-                                                        id: relation.documentId.toString(),
+                                                        id: relation.documentId,
                                                     },
                                                 }"
                                             >
@@ -131,13 +131,13 @@ async function getDocumentRelations(): Promise<DocumentRelation[]> {
                                     </tr>
                                 </thead>
                                 <tbody class="divide-y divide-y divide-gray-600 bg-base-700 text-neutral">
-                                    <tr v-for="relation in relations" :key="relation.id?.toString()">
+                                    <tr v-for="relation in relations" :key="relation.id">
                                         <td v-if="showDocument" class="px-6 py-4 text-sm">
                                             <NuxtLink
                                                 :to="{
                                                     name: 'documents-id',
                                                     params: {
-                                                        id: relation.documentId.toString(),
+                                                        id: relation.documentId,
                                                     },
                                                 }"
                                             >

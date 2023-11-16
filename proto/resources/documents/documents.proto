@@ -17,11 +17,11 @@ enum DocContentType {
 }
 
 message Document {
-  uint64 id = 1;
+  uint64 id = 1 [jstype = JS_STRING];
   resources.timestamp.Timestamp created_at = 2;
   optional resources.timestamp.Timestamp updated_at = 3;
   optional resources.timestamp.Timestamp deleted_at = 4;
-  optional uint64 category_id = 5; // @gotags: alias:"category_id"
+  optional uint64 category_id = 5 [jstype = JS_STRING]; // @gotags: alias:"category_id"
   optional resources.documents.Category category = 6; // @gotags: alias:"category"
   // @sanitize
   string title = 7 [(validate.rules).string = {
@@ -47,11 +47,11 @@ message Document {
 }
 
 message DocumentShort {
-  uint64 id = 1;
+  uint64 id = 1 [jstype = JS_STRING];
   resources.timestamp.Timestamp created_at = 2;
   optional resources.timestamp.Timestamp updated_at = 3;
   optional resources.timestamp.Timestamp deleted_at = 4;
-  optional uint64 category_id = 5; // @gotags: alias:"category_id"
+  optional uint64 category_id = 5 [jstype = JS_STRING]; // @gotags: alias:"category_id"
   optional resources.documents.Category category = 6; // @gotags: alias:"category"
   // @sanitize
   string title = 7 [(validate.rules).string.min_len = 3]; // @gotags: alias:"title"
@@ -72,9 +72,9 @@ message DocumentAccess {
 }
 
 message DocumentJobAccess {
-  uint64 id = 1;
+  uint64 id = 1 [jstype = JS_STRING];
   optional resources.timestamp.Timestamp created_at = 2;
-  uint64 document_id = 3;
+  uint64 document_id = 3 [jstype = JS_STRING];
   string job = 4 [(validate.rules).string.max_len = 20]; // @gotags: alias:"job"
   optional string job_label = 5 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job_label"
   int32 minimum_grade = 6 [(validate.rules).int32.gt = 0]; // @gotags: alias:"minimum_grade"
@@ -83,9 +83,9 @@ message DocumentJobAccess {
 }
 
 message DocumentUserAccess {
-  uint64 id = 1;
+  uint64 id = 1 [jstype = JS_STRING];
   optional resources.timestamp.Timestamp created_at = 2;
-  uint64 document_id = 3;
+  uint64 document_id = 3 [jstype = JS_STRING];
   int32 user_id = 4 [(validate.rules).int32.gt = 0];
   optional resources.users.UserShort user = 5;
   resources.documents.AccessLevel access = 6 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"access"
@@ -100,12 +100,12 @@ enum DocReference {
 }
 
 message DocumentReference {
-  optional uint64 id = 1;
+  optional uint64 id = 1 [jstype = JS_STRING];
   optional resources.timestamp.Timestamp created_at = 2;
-  uint64 source_document_id = 3; // @gotags: alias:"source_document_id"
+  uint64 source_document_id = 3 [jstype = JS_STRING]; // @gotags: alias:"source_document_id"
   optional resources.documents.DocumentShort source_document = 4; // @gotags: alias:"source_document"
   DocReference reference = 5 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"reference"
-  uint64 target_document_id = 6; // @gotags: alias:"target_document_id"
+  uint64 target_document_id = 6 [jstype = JS_STRING]; // @gotags: alias:"target_document_id"
   optional resources.documents.DocumentShort target_document = 7; // @gotags: alias:"target_document"
   optional int32 creator_id = 8; // @gotags: alias:"creator_id"
   optional resources.users.UserShort creator = 9; // @gotags: alias:"ref_creator"
@@ -119,9 +119,9 @@ enum DocRelation {
 }
 
 message DocumentRelation {
-  optional uint64 id = 1;
+  optional uint64 id = 1 [jstype = JS_STRING];
   optional resources.timestamp.Timestamp created_at = 2;
-  uint64 document_id = 3;
+  uint64 document_id = 3 [jstype = JS_STRING];
   optional resources.documents.DocumentShort document = 4; // @gotags: alias:"document"
   int32 source_user_id = 5 [(validate.rules).int32.gt = 0]; // @gotags: alias:"source_user_id"
   optional resources.users.UserShort source_user = 6; // @gotags: alias:"source_user"

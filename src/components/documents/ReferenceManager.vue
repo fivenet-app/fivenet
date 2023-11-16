@@ -42,13 +42,13 @@ const { t } = useI18n();
 
 const props = defineProps<{
     open: boolean;
-    documentId?: bigint;
-    modelValue: Map<bigint, DocumentReference>;
+    documentId?: string;
+    modelValue: Map<string, DocumentReference>;
 }>();
 
 const emit = defineEmits<{
     (e: 'close'): void;
-    (e: 'update:modelValue', payload: Map<bigint, DocumentReference>): void;
+    (e: 'update:modelValue', payload: Map<string, DocumentReference>): void;
 }>();
 
 const tabs = ref<{ name: string; icon: DefineComponent }[]>([
@@ -70,7 +70,7 @@ const {
     pending,
     refresh,
     error,
-} = useLazyAsyncData(`document-${props.documentId?.toString()}-references-docs-${queryDoc}`, () => listDocuments());
+} = useLazyAsyncData(`document-${props.documentId}-references-docs-${queryDoc}`, () => listDocuments());
 
 watchDebounced(queryDoc, async () => await refresh(), {
     debounce: 600,
@@ -106,11 +106,11 @@ async function listDocuments(): Promise<DocumentShort[]> {
 
 function addReference(doc: DocumentShort, reference: DocReference): void {
     const keys = Array.from(props.modelValue.keys());
-    const key = !keys.length ? 1n : keys[keys.length - 1] + 1n;
+    const key = !keys.length ? '1' : (parseInt(keys[keys.length - 1]) + 1).toString();
 
     props.modelValue.set(key, {
         id: key,
-        sourceDocumentId: props.documentId ?? 0n,
+        sourceDocumentId: props.documentId ?? '0',
         reference,
         targetDocumentId: doc.id,
         targetDocument: doc,
@@ -122,7 +122,7 @@ function addReferenceClipboard(doc: ClipboardDocument, reference: DocReference):
     addReference(getDocument(doc), reference);
 }
 
-function removeReference(id: bigint): void {
+function removeReference(id: string): void {
     props.modelValue.delete(id);
     listDocuments();
 }
@@ -272,7 +272,7 @@ function removeReference(id: bigint): void {
                                                                                     :to="{
                                                                                         name: 'documents-id',
                                                                                         params: {
-                                                                                            id: reference.targetDocumentId.toString(),
+                                                                                            id: reference.targetDocumentId,
                                                                                         },
                                                                                     }"
                                                                                     target="_blank"
@@ -364,7 +364,7 @@ function removeReference(id: bigint): void {
                                                             <tbody class="divide-y divide-base-500">
                                                                 <tr
                                                                     v-for="document in clipboardStore.$state.documents"
-                                                                    :key="document.id?.toString()"
+                                                                    :key="document.id"
                                                                 >
                                                                     <td
                                                                         class="py-4 pl-4 pr-3 text-sm font-medium truncate whitespace-nowrap sm:pl-6 lg:pl-8 max-w-xl"
@@ -544,7 +544,7 @@ function removeReference(id: bigint): void {
                                                             <tbody class="divide-y divide-base-500">
                                                                 <tr
                                                                     v-for="document in documents.slice(0, 8)"
-                                                                    :key="document.id?.toString()"
+                                                                    :key="document.id"
                                                                 >
                                                                     <td
                                                                         class="py-4 pl-4 pr-3 text-sm font-medium truncate whitespace-nowrap sm:pl-6 lg:pl-8 max-w-xl"

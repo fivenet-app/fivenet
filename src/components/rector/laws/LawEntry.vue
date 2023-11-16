@@ -14,14 +14,15 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-    (e: 'deleted', id: bigint): void;
+    (e: 'deleted', id: string): void;
     (e: 'update:law', law: Law): void;
 }>();
 
 const { $grpc } = useNuxtApp();
 
-async function deleteLaw(id: bigint): Promise<void> {
-    if (id < 0) {
+async function deleteLaw(id: string): Promise<void> {
+    const i = parseInt(id);
+    if (i < 0) {
         emit('deleted', id);
         return;
     }
@@ -42,22 +43,22 @@ async function deleteLaw(id: bigint): Promise<void> {
 interface FormData {
     name: string;
     description?: string;
-    fine: bigint;
-    detentionTime: bigint;
-    stvoPoints: bigint;
+    fine: number;
+    detentionTime: number;
+    stvoPoints: number;
 }
 
-async function saveLaw(lawBookId: bigint, id: bigint, values: FormData): Promise<void> {
+async function saveLaw(lawBookId: string, id: string, values: FormData): Promise<void> {
     try {
         const call = $grpc.getRectorClient().createOrUpdateLaw({
             law: {
-                id: BigInt(id < 0 ? 0 : id),
+                id: parseInt(id) < 0 ? '0' : id,
                 lawbookId: lawBookId,
                 name: values.name,
                 description: values.description,
-                fine: BigInt(values.fine),
-                detentionTime: BigInt(values.detentionTime),
-                stvoPoints: BigInt(values.stvoPoints),
+                fine: values.fine,
+                detentionTime: values.detentionTime,
+                stvoPoints: values.stvoPoints,
             },
         });
         const { response } = await call;
@@ -155,7 +156,7 @@ const editing = ref(props.startInEdit);
                 :title="$t('common.cancel')"
                 @click="
                     editing = false;
-                    law.id < BigInt(0) && $emit('deleted', law.id);
+                    parseInt(law.id) < 0 && $emit('deleted', law.id);
                 "
             >
                 <CancelIcon class="w-6 h-6" />

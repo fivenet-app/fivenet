@@ -15,7 +15,6 @@ export interface AuthState {
     accessToken: null | string;
     accessTokenExpiration: null | Date;
     lastCharID: number;
-    accountID: bigint;
     activeChar: null | User;
     loggingIn: boolean;
     loginError: null | string;
@@ -30,7 +29,6 @@ export const useAuthStore = defineStore('auth', {
         accessTokenExpiration: null as null | Date,
         lastCharID: 0 as number,
         // Temporary
-        accountID: 0n as bigint,
         activeChar: null as null | User,
         loggingIn: false as boolean,
         loginError: null as null | string,
@@ -52,7 +50,9 @@ export const useAuthStore = defineStore('auth', {
         },
         setAccessToken(accessToken: null | string, expiration: null | bigint | Date): void {
             this.accessToken = accessToken;
-            if (typeof expiration === 'bigint') expiration = new Date(expiration.toString());
+            if (typeof expiration === 'bigint') {
+                expiration = new Date(expiration.toString());
+            }
             this.accessTokenExpiration = expiration;
         },
         setActiveChar(char: null | User): void {

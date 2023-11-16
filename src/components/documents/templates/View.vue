@@ -13,7 +13,7 @@ import { AccessLevel } from '~~/gen/ts/resources/documents/access';
 import { Template, TemplateRequirements } from '~~/gen/ts/resources/documents/templates';
 
 const props = defineProps<{
-    templateId: bigint;
+    templateId: string;
 }>();
 
 const {
@@ -50,7 +50,7 @@ async function getTemplate(): Promise<Template | undefined> {
     }
 }
 
-async function deleteTemplate(id: bigint): Promise<void> {
+async function deleteTemplate(id: string): Promise<void> {
     try {
         await $grpc.getDocStoreClient().deleteTemplate({ id });
 
@@ -75,9 +75,9 @@ const contentAccessTypes = [
 
 const templateAccess = ref<
     Map<
-        bigint,
+        string,
         {
-            id: bigint;
+            id: string;
             type: number;
             values: {
                 job?: string;
@@ -87,11 +87,12 @@ const templateAccess = ref<
         }
     >
 >(new Map());
+
 const contentAccess = ref<
     Map<
-        bigint,
+        string,
         {
-            id: bigint;
+            id: string;
             type: number;
             values: {
                 job?: string;
@@ -110,11 +111,12 @@ watch(template, () => {
 
     const tplAccess = template.value.jobAccess;
     if (tplAccess) {
-        let accessId = 0n;
+        let accessId = 0;
 
         tplAccess.forEach((job) => {
-            templateAccess.value.set(accessId, {
-                id: accessId,
+            const id = accessId.toString();
+            templateAccess.value.set(id, {
+                id,
                 type: 1,
                 values: {
                     job: job.job,
@@ -128,11 +130,12 @@ watch(template, () => {
 
     const docAccess = template.value.contentAccess;
     if (docAccess) {
-        let accessId = 0n;
+        let accessId = 0;
 
         docAccess.users.forEach((user) => {
-            contentAccess.value.set(accessId, {
-                id: accessId,
+            const id = accessId.toString();
+            contentAccess.value.set(id, {
+                id,
                 type: 0,
                 values: { char: user.userId, accessRole: user.access },
             });
@@ -140,8 +143,9 @@ watch(template, () => {
         });
 
         docAccess.jobs.forEach((job) => {
-            contentAccess.value.set(accessId, {
-                id: accessId,
+            const id = accessId.toString();
+            contentAccess.value.set(id, {
+                id,
                 type: 1,
                 values: {
                     job: job.job,
@@ -233,7 +237,7 @@ onConfirm(async (id) => deleteTemplate(id));
                         <div class="my-2">
                             <AccessEntry
                                 v-for="entry in templateAccess.values()"
-                                :key="entry.id?.toString()"
+                                :key="entry.id"
                                 :init="entry"
                                 :access-types="templateAccessTypes"
                                 :read-only="true"
@@ -322,7 +326,7 @@ onConfirm(async (id) => deleteTemplate(id));
                         <div class="my-2">
                             <AccessEntry
                                 v-for="entry in contentAccess.values()"
-                                :key="entry.id?.toString()"
+                                :key="entry.id"
                                 :init="entry"
                                 :access-types="contentAccessTypes"
                                 :read-only="true"

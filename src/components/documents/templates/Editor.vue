@@ -19,7 +19,7 @@ import SchemaEditor, { type ObjectSpecsValue, type SchemaEditorValue } from '~/c
 import TemplateHint from '~/components/documents/templates/partials/TemplateHint.vue';
 
 const props = defineProps<{
-    templateId?: bigint;
+    templateId?: string;
 }>();
 
 const { $grpc } = useNuxtApp();
@@ -75,27 +75,27 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
 const schema = ref<SchemaEditorValue>({
     users: {
         req: false,
-        min: 0n,
-        max: 0n,
+        min: 0,
+        max: 0,
     },
 
     documents: {
         req: false,
-        min: 0n,
-        max: 0n,
+        min: 0,
+        max: 0,
     },
 
     vehicles: {
         req: false,
-        min: 0n,
-        max: 0n,
+        min: 0,
+        max: 0,
     },
 });
 const access = ref<
     Map<
-        bigint,
+        string,
         {
-            id: bigint;
+            id: string;
             type: number;
             values: {
                 job?: string;
@@ -118,19 +118,19 @@ function addAccessEntry(): void {
         return;
     }
 
-    const id = access.value.size > 0 ? ([...access.value.keys()].pop() as bigint) + 1n : 0n;
-    access.value.set(id, {
-        id,
+    const id = access.value.size > 0 ? parseInt([...access.value.keys()].pop() ?? '0') + 1 : 0;
+    access.value.set(id.toString(), {
+        id: id.toString(),
         type: 1,
         values: {},
     });
 }
 
-function removeAccessEntry(event: { id: bigint }): void {
+function removeAccessEntry(event: { id: string }): void {
     access.value.delete(event.id);
 }
 
-function updateAccessEntryType(event: { id: bigint; type: number }): void {
+function updateAccessEntryType(event: { id: string; type: number }): void {
     const accessEntry = access.value.get(event.id);
     if (!accessEntry) {
         return;
@@ -140,7 +140,7 @@ function updateAccessEntryType(event: { id: bigint; type: number }): void {
     access.value.set(event.id, accessEntry);
 }
 
-function updateAccessEntryName(event: { id: bigint; job?: Job }): void {
+function updateAccessEntryName(event: { id: string; job?: Job }): void {
     const accessEntry = access.value.get(event.id);
     if (!accessEntry) {
         return;
@@ -153,7 +153,7 @@ function updateAccessEntryName(event: { id: bigint; job?: Job }): void {
     }
 }
 
-function updateAccessEntryRank(event: { id: bigint; rank: JobGrade }): void {
+function updateAccessEntryRank(event: { id: string; rank: JobGrade }): void {
     const accessEntry = access.value.get(event.id);
     if (!accessEntry) {
         return;
@@ -163,7 +163,7 @@ function updateAccessEntryRank(event: { id: bigint; rank: JobGrade }): void {
     access.value.set(event.id, accessEntry);
 }
 
-function updateAccessEntryAccess(event: { id: bigint; access: AccessLevel }): void {
+function updateAccessEntryAccess(event: { id: string; access: AccessLevel }): void {
     const accessEntry = access.value.get(event.id);
     if (!accessEntry) {
         return;
@@ -175,9 +175,9 @@ function updateAccessEntryAccess(event: { id: bigint; access: AccessLevel }): vo
 
 const contentAccess = ref<
     Map<
-        bigint,
+        string,
         {
-            id: bigint;
+            id: string;
             type: number;
             values: {
                 job?: string;
@@ -204,19 +204,19 @@ function addContentAccessEntry(): void {
         return;
     }
 
-    const id = contentAccess.value.size > 0 ? ([...contentAccess.value.keys()].pop() as bigint) + 1n : 0n;
-    contentAccess.value.set(id, {
-        id,
+    const id = contentAccess.value.size > 0 ? parseInt([...contentAccess.value.keys()].pop() ?? '0') + 1 : 0;
+    contentAccess.value.set(id.toString(), {
+        id: id.toString(),
         type: 1,
         values: {},
     });
 }
 
-function removeContentAccessEntry(event: { id: bigint }): void {
+function removeContentAccessEntry(event: { id: string }): void {
     contentAccess.value.delete(event.id);
 }
 
-function updateContentAccessEntryType(event: { id: bigint; type: number }): void {
+function updateContentAccessEntryType(event: { id: string; type: number }): void {
     const accessEntry = contentAccess.value.get(event.id);
     if (!accessEntry) {
         return;
@@ -226,7 +226,7 @@ function updateContentAccessEntryType(event: { id: bigint; type: number }): void
     contentAccess.value.set(event.id, accessEntry);
 }
 
-function updateContentAccessEntryName(event: { id: bigint; job?: Job }): void {
+function updateContentAccessEntryName(event: { id: string; job?: Job }): void {
     const accessEntry = contentAccess.value.get(event.id);
     if (!accessEntry) {
         return;
@@ -239,7 +239,7 @@ function updateContentAccessEntryName(event: { id: bigint; job?: Job }): void {
     }
 }
 
-function updateContentAccessEntryRank(event: { id: bigint; rank: JobGrade }): void {
+function updateContentAccessEntryRank(event: { id: string; rank: JobGrade }): void {
     const accessEntry = contentAccess.value.get(event.id);
     if (!accessEntry) {
         return;
@@ -249,7 +249,7 @@ function updateContentAccessEntryRank(event: { id: bigint; rank: JobGrade }): vo
     contentAccess.value.set(event.id, accessEntry);
 }
 
-function updateContentAccessEntryAccess(event: { id: bigint; access: AccessLevel }): void {
+function updateContentAccessEntryAccess(event: { id: string; access: AccessLevel }): void {
     const accessEntry = contentAccess.value.get(event.id);
     if (!accessEntry) {
         return;
@@ -268,7 +268,7 @@ function createObjectSpec(v: ObjectSpecsValue): ObjectSpecs {
     return o;
 }
 
-async function createOrUpdateTemplate(values: FormData, templateId?: bigint): Promise<void> {
+async function createOrUpdateTemplate(values: FormData, templateId?: string): Promise<void> {
     const tRequirements: TemplateRequirements = {
         users: createObjectSpec(schema.value.users),
         documents: createObjectSpec(schema.value.documents),
@@ -287,8 +287,8 @@ async function createOrUpdateTemplate(values: FormData, templateId?: bigint): Pr
             }
 
             jobAccesses.push({
-                id: 0n,
-                templateId: templateId ?? 0n,
+                id: '0',
+                templateId: templateId ?? '0',
                 job: entry.values.job,
                 minimumGrade: entry.values.minimumGrade ? entry.values.minimumGrade : 0,
                 access: entry.values.accessRole,
@@ -311,8 +311,8 @@ async function createOrUpdateTemplate(values: FormData, templateId?: bigint): Pr
             }
 
             reqAccess.users.push({
-                id: 0n,
-                documentId: 0n,
+                id: '0',
+                documentId: '0',
                 userId: entry.values.char,
                 access: entry.values.accessRole,
             });
@@ -322,8 +322,8 @@ async function createOrUpdateTemplate(values: FormData, templateId?: bigint): Pr
             }
 
             reqAccess.jobs.push({
-                id: 0n,
-                documentId: 0n,
+                id: '0',
+                documentId: '0',
                 job: entry.values.job!,
                 minimumGrade: entry.values.minimumGrade ? entry.values.minimumGrade : 0,
                 access: entry.values.accessRole,
@@ -335,7 +335,7 @@ async function createOrUpdateTemplate(values: FormData, templateId?: bigint): Pr
 
     const req: CreateTemplateRequest | UpdateTemplateRequest = {
         template: {
-            id: templateId ?? 0n,
+            id: templateId ?? '0',
             weight: values.weight as number,
             title: values.title,
             description: values.description,
@@ -364,7 +364,7 @@ async function createOrUpdateTemplate(values: FormData, templateId?: bigint): Pr
 
             await navigateTo({
                 name: 'documents-templates-id',
-                params: { id: response.id?.toString() },
+                params: { id: response.id },
             });
         } else {
             const call = $grpc.getDocStoreClient().updateTemplate(req);
@@ -423,11 +423,12 @@ onMounted(async () => {
 
             const tplAccess = tpl.jobAccess;
             if (tplAccess) {
-                let accessId = 0n;
+                let accessId = 0;
 
                 tplAccess.forEach((job) => {
-                    access.value.set(accessId, {
-                        id: accessId,
+                    const id = accessId.toString();
+                    access.value.set(id, {
+                        id,
                         type: 1,
                         values: {
                             job: job.job,
@@ -444,8 +445,9 @@ onMounted(async () => {
                 let accessId = 0n;
 
                 ctAccess.users.forEach((user) => {
-                    contentAccess.value.set(accessId, {
-                        id: accessId,
+                    const id = accessId.toString();
+                    contentAccess.value.set(id, {
+                        id,
                         type: 0,
                         values: { char: user.userId, accessRole: user.access },
                     });
@@ -453,8 +455,9 @@ onMounted(async () => {
                 });
 
                 ctAccess.jobs.forEach((job) => {
-                    contentAccess.value.set(accessId, {
-                        id: accessId,
+                    const id = accessId.toString();
+                    contentAccess.value.set(id, {
+                        id,
                         type: 1,
                         values: {
                             job: job.job,
@@ -467,16 +470,16 @@ onMounted(async () => {
             }
 
             schema.value.users.req = tpl.schema?.requirements?.users?.required ?? false;
-            schema.value.users.min = tpl.schema?.requirements?.users?.min ?? 0n;
-            schema.value.users.max = tpl.schema?.requirements?.users?.max ?? 0n;
+            schema.value.users.min = tpl.schema?.requirements?.users?.min ?? 0;
+            schema.value.users.max = tpl.schema?.requirements?.users?.max ?? 0;
 
             schema.value.documents.req = tpl.schema?.requirements?.documents?.required ?? false;
-            schema.value.documents.min = tpl.schema?.requirements?.documents?.min ?? 0n;
-            schema.value.documents.max = tpl.schema?.requirements?.documents?.max ?? 0n;
+            schema.value.documents.min = tpl.schema?.requirements?.documents?.min ?? 0;
+            schema.value.documents.max = tpl.schema?.requirements?.documents?.max ?? 0;
 
             schema.value.vehicles.req = tpl.schema?.requirements?.vehicles?.required ?? false;
-            schema.value.vehicles.min = tpl.schema?.requirements?.vehicles?.min ?? 0n;
-            schema.value.vehicles.max = tpl.schema?.requirements?.vehicles?.max ?? 0n;
+            schema.value.vehicles.min = tpl.schema?.requirements?.vehicles?.min ?? 0;
+            schema.value.vehicles.max = tpl.schema?.requirements?.vehicles?.max ?? 0;
         } catch (e) {
             $grpc.handleError(e as RpcError);
         }
@@ -485,8 +488,8 @@ onMounted(async () => {
             weight: 0,
         });
 
-        access.value.set(0n, {
-            id: 0n,
+        access.value.set('0', {
+            id: '0',
             type: 1,
             values: {
                 job: activeChar.value?.job,
@@ -559,7 +562,7 @@ onMounted(async () => {
                     <h2 class="text-neutral">{{ $t('common.template') }} {{ $t('common.access') }}</h2>
                     <AccessEntry
                         v-for="entry in access.values()"
-                        :key="entry.id?.toString()"
+                        :key="entry.id"
                         :init="entry"
                         :access-types="accessTypes"
                         :access-roles="[AccessLevel.VIEW, AccessLevel.EDIT]"
@@ -623,7 +626,7 @@ onMounted(async () => {
                                 <ComboboxOption
                                     v-for="category in entriesCategories"
                                     v-slot="{ active, selected }"
-                                    :key="category.id?.toString()"
+                                    :key="category.id"
                                     :value="category"
                                     as="category"
                                 >
@@ -690,7 +693,7 @@ onMounted(async () => {
                 <h2 class="text-neutral">{{ $t('common.content') }} {{ $t('common.access') }}</h2>
                 <AccessEntry
                     v-for="entry in contentAccess.values()"
-                    :key="entry.id?.toString()"
+                    :key="entry.id"
                     :init="entry"
                     :access-types="contentAccessTypes"
                     @type-change="updateContentAccessEntryType($event)"

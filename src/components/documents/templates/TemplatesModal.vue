@@ -107,7 +107,7 @@ async function templateSelected(t: TemplateShort): Promise<void> {
         } else {
             await navigateTo({
                 name: 'documents-create',
-                query: { templateId: template.value?.id.toString() },
+                query: { templateId: template.value?.id },
             });
         }
     } else {
@@ -131,7 +131,7 @@ async function clipboardDialog(): Promise<void> {
     submit.value = true;
     await navigateTo({
         name: 'documents-create',
-        query: { templateId: template.value?.id.toString() },
+        query: { templateId: template.value?.id },
     });
 }
 </script>

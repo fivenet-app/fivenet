@@ -30,7 +30,7 @@ interface FormData {
     comment: string;
 }
 
-async function editComment(documentId: bigint, commentId: bigint, values: FormData): Promise<void> {
+async function editComment(documentId: string, commentId: string, values: FormData): Promise<void> {
     const comment: Comment = {
         id: commentId,
         documentId,
@@ -50,7 +50,7 @@ async function editComment(documentId: bigint, commentId: bigint, values: FormDa
     }
 }
 
-async function deleteComment(id: bigint): Promise<void> {
+async function deleteComment(id: string): Promise<void> {
     try {
         await $grpc.getDocStoreClient().deleteComment({
             commentId: id,

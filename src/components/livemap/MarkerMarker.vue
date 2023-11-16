@@ -28,7 +28,7 @@ const popupAnchor: PointExpression = [0, (props.size / 2) * -1];
 
 const { $grpc } = useNuxtApp();
 
-async function deleteMarker(id: bigint): Promise<void> {
+async function deleteMarker(id: string): Promise<void> {
     try {
         const call = $grpc.getLivemapperClient().deleteMarker({
             id,
@@ -54,7 +54,7 @@ console.log(
 
     <LCircleMarker
         v-if="marker.data?.data.oneofKind === 'circle'"
-        :key="marker.info!.id?.toString()"
+        :key="marker.info!.id"
         :lat-lng="[marker.info!.y, marker.info!.x]"
         :radius="marker.data?.data.circle.radius"
         :color="marker.info?.color ? '#' + marker.info?.color : '#fff'"

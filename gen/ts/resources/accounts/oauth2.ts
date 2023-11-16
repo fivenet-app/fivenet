@@ -8,9 +8,9 @@ import { Timestamp } from "../timestamp/timestamp.js";
  */
 export interface OAuth2Account {
     /**
-     * @generated from protobuf field: uint64 account_id = 1;
+     * @generated from protobuf field: uint64 account_id = 1 [jstype = JS_STRING];
      */
-    accountId: bigint;
+    accountId: string;
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
      */
@@ -24,9 +24,9 @@ export interface OAuth2Account {
      */
     provider?: OAuth2Provider;
     /**
-     * @generated from protobuf field: uint64 external_id = 5;
+     * @generated from protobuf field: uint64 external_id = 5 [jstype = JS_STRING];
      */
-    externalId: bigint;
+    externalId: string;
     /**
      * @generated from protobuf field: string username = 6;
      */
@@ -57,11 +57,11 @@ export interface OAuth2Provider {
 class OAuth2Account$Type extends MessageType<OAuth2Account> {
     constructor() {
         super("resources.accounts.OAuth2Account", [
-            { no: 1, name: "account_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 1, name: "account_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "provider_name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 4, name: "provider", kind: "message", T: () => OAuth2Provider },
-            { no: 5, name: "external_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 5, name: "external_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 6, name: "username", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 7, name: "avatar", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
         ]);

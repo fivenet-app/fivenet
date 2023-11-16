@@ -17,11 +17,11 @@ const authStore = useAuthStore();
 const { activeChar } = storeToRefs(authStore);
 
 const props = defineProps<{
-    requestId: bigint;
+    requestId: string;
 }>();
 
 defineEmits<{
-    (e: 'counted', count: bigint): void;
+    (e: 'counted', count: string): void;
 }>();
 
 const offset = ref(0n);
@@ -56,13 +56,13 @@ interface FormData {
     comment: string;
 }
 
-async function addComment(documentId: bigint, values: FormData): Promise<void> {
+async function addComment(documentId: string, values: FormData): Promise<void> {
     if (!comments.value) {
         return;
     }
 
     const comment: RequestComment = {
-        id: 0n,
+        id: '0',
         requestId: documentId,
         comment: values.comment,
     };
@@ -213,7 +213,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                 <ul role="list" class="divide-y divide-gray-200 px-4">
                     <CommentEntry
                         v-for="(comment, idx) in comments.comments"
-                        :key="comment.id?.toString()"
+                        :key="comment.id"
                         v-model:comment="comments.comments[idx]"
                         @deleted="removeComment($event)"
                     />

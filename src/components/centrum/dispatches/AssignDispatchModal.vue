@@ -22,12 +22,12 @@ const emit = defineEmits<{
 
 const { $grpc } = useNuxtApp();
 
-const selectedUnits = ref<bigint[]>(props.dispatch.units.map((du) => du.unitId));
+const selectedUnits = ref<string[]>(props.dispatch.units.map((du) => du.unitId));
 
 async function assignDispatch(): Promise<void> {
     try {
-        const toAdd: bigint[] = [];
-        const toRemove: bigint[] = [];
+        const toAdd: string[] = [];
+        const toRemove: string[] = [];
         selectedUnits.value?.forEach((u) => {
             toAdd.push(u);
         });

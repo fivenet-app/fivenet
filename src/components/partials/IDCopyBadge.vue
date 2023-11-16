@@ -6,11 +6,11 @@ import { useNotificatorStore } from '~/store/notificator';
 const notifications = useNotificatorStore();
 
 const props = defineProps<{
-    id: bigint | number | string;
+    id: string | number | string;
     prefix: string;
     title?: TranslateItem;
     content?: TranslateItem;
-    action?: (id: bigint | number | string) => void;
+    action?: (id: string | number | string) => void;
 }>();
 
 function copyDocumentIDToClipboard(): void {

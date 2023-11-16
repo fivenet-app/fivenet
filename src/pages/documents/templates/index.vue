@@ -13,7 +13,7 @@ definePageMeta({
 });
 
 async function selected(t: TemplateShort): Promise<void> {
-    await navigateTo({ name: 'documents-templates-id', params: { id: t.id.toString() } });
+    await navigateTo({ name: 'documents-templates-id', params: { id: t.id } });
 }
 </script>
 

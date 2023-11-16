@@ -40,11 +40,11 @@ async function select(item: ClipboardUser): Promise<void> {
         selected.value.push(item);
     }
 
-    const selectedLength = BigInt(selected.value.length);
+    const selectedLength = selected.value.length;
     if (props.specs !== undefined) {
         if (props.specs.min !== undefined && selectedLength >= props.specs.min) {
             emit('statisfied', true);
-        } else if (props.specs.max !== undefined && props.specs.max > 0n && selectedLength === props.specs.max) {
+        } else if (props.specs.max && selectedLength === props.specs.max) {
             emit('statisfied', true);
         } else {
             emit('statisfied', false);
@@ -127,9 +127,9 @@ watch(props, async (newVal) => {
             </tr>
         </thead>
         <tbody class="divide-y divide-gray-800">
-            <tr v-for="item in users" :key="item.userId?.toString()">
+            <tr v-for="item in users" :key="item.userId">
                 <td v-if="showSelect" class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">
-                    <template v-if="specs && specs.max === 1n">
+                    <template v-if="specs && specs.max === 1">
                         <button
                             class="inline-flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold text-neutral shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:col-start-2"
                             :class="
@@ -148,7 +148,7 @@ watch(props, async (newVal) => {
                     </template>
                     <template v-else>
                         <input
-                            :key="item.userId?.toString()"
+                            :key="item.userId"
                             v-model="selected"
                             name="selected"
                             :checked="selected.includes(item)"

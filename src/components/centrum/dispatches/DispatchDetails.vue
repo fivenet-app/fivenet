@@ -36,7 +36,7 @@ const { canDo } = centrumStore;
 
 const notificationsStore = useNotificatorStore();
 
-async function selfAssign(id: bigint): Promise<void> {
+async function selfAssign(id: string): Promise<void> {
     if (ownUnitId.value === undefined) {
         notificationsStore.dispatchNotification({
             title: { key: 'notifications.centrum.unitUpdated.not_in_unit.title' },
@@ -59,7 +59,7 @@ async function selfAssign(id: bigint): Promise<void> {
     }
 }
 
-async function deleteDispatch(id: bigint): Promise<void> {
+async function deleteDispatch(id: string): Promise<void> {
     try {
         const call = $grpc.getCentrumClient().deleteDispatch({ id });
         await call;
@@ -242,7 +242,7 @@ const openStatus = ref(false);
                                                                 >
                                                                     <li
                                                                         v-for="unit in dispatch.units"
-                                                                        :key="unit.unitId.toString()"
+                                                                        :key="unit.unitId"
                                                                         class="flex items-center justify-between py-3 pl-3 pr-4 text-sm"
                                                                     >
                                                                         <div class="flex items-center flex-1">

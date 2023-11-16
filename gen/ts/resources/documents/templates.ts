@@ -15,9 +15,9 @@ import { Timestamp } from "../timestamp/timestamp.js";
  */
 export interface Template {
     /**
-     * @generated from protobuf field: uint64 id = 1;
+     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
      */
-    id: bigint; // @gotags: alias:"id"
+    id: string; // @gotags: alias:"id"
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
      */
@@ -88,9 +88,9 @@ export interface Template {
  */
 export interface TemplateShort {
     /**
-     * @generated from protobuf field: uint64 id = 1;
+     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
      */
-    id: bigint; // @gotags: alias:"id"
+    id: string; // @gotags: alias:"id"
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
      */
@@ -171,13 +171,13 @@ export interface ObjectSpecs {
      */
     required?: boolean;
     /**
-     * @generated from protobuf field: optional int64 min = 2;
+     * @generated from protobuf field: optional int32 min = 2;
      */
-    min?: bigint;
+    min?: number;
     /**
-     * @generated from protobuf field: optional int64 max = 3;
+     * @generated from protobuf field: optional int32 max = 3;
      */
-    max?: bigint;
+    max?: number;
 }
 /**
  * @generated from protobuf message resources.documents.TemplateData
@@ -205,17 +205,17 @@ export interface TemplateData {
  */
 export interface TemplateJobAccess {
     /**
-     * @generated from protobuf field: uint64 id = 1;
+     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
      */
-    id: bigint; // @gotags: alias:"id"
+    id: string; // @gotags: alias:"id"
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
      */
     createdAt?: Timestamp;
     /**
-     * @generated from protobuf field: uint64 template_id = 3;
+     * @generated from protobuf field: uint64 template_id = 3 [jstype = JS_STRING];
      */
-    templateId: bigint; // @gotags: alias:"template_id"
+    templateId: string; // @gotags: alias:"template_id"
     /**
      * @generated from protobuf field: string job = 4;
      */
@@ -241,7 +241,7 @@ export interface TemplateJobAccess {
 class Template$Type extends MessageType<Template> {
     constructor() {
         super("resources.documents.Template", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "category", kind: "message", T: () => Category },
@@ -268,7 +268,7 @@ export const Template = new Template$Type();
 class TemplateShort$Type extends MessageType<TemplateShort> {
     constructor() {
         super("resources.documents.TemplateShort", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "category", kind: "message", T: () => Category },
@@ -317,8 +317,8 @@ class ObjectSpecs$Type extends MessageType<ObjectSpecs> {
     constructor() {
         super("resources.documents.ObjectSpecs", [
             { no: 1, name: "required", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
-            { no: 2, name: "min", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 3, name: "max", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 0 /*LongType.BIGINT*/ }
+            { no: 2, name: "min", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 3, name: "max", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ }
         ]);
     }
 }
@@ -345,9 +345,9 @@ export const TemplateData = new TemplateData$Type();
 class TemplateJobAccess$Type extends MessageType<TemplateJobAccess> {
     constructor() {
         super("resources.documents.TemplateJobAccess", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
-            { no: 3, name: "template_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 3, name: "template_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 4, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 5, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
             { no: 6, name: "minimum_grade", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },

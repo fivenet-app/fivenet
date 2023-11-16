@@ -10,7 +10,7 @@ import "validate/validate.proto";
 option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/dispatch;dispatch";
 
 message Dispatch {
-  uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
+  uint64 id = 1 [jstype = JS_STRING]; // @gotags: sql:"primary_key" alias:"id"
   optional resources.timestamp.Timestamp created_at = 2;
   optional resources.timestamp.Timestamp updated_at = 3;
   string job = 4 [(validate.rules).string.max_len = 20];
@@ -35,14 +35,14 @@ message Attributes {
 }
 
 message DispatchAssignments {
-  uint64 dispatch_id = 1;
+  uint64 dispatch_id = 1 [jstype = JS_STRING];
   string job = 2 [(validate.rules).string.max_len = 20];
   repeated DispatchAssignment units = 3;
 }
 
 message DispatchAssignment {
-  uint64 dispatch_id = 1; // @gotags: sql:"primary_key" alias:"dispatch_id"
-  uint64 unit_id = 2; // @gotags: sql:"primary_key" alias:"unit_id"
+  uint64 dispatch_id = 1 [jstype = JS_STRING]; // @gotags: sql:"primary_key" alias:"dispatch_id"
+  uint64 unit_id = 2 [jstype = JS_STRING]; // @gotags: sql:"primary_key" alias:"unit_id"
   optional resources.dispatch.Unit unit = 3;
   optional resources.timestamp.Timestamp created_at = 4;
   optional resources.timestamp.Timestamp expires_at = 5;
@@ -66,10 +66,10 @@ enum StatusDispatch {
 }
 
 message DispatchStatus {
-  uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
+  uint64 id = 1 [jstype = JS_STRING]; // @gotags: sql:"primary_key" alias:"id"
   optional resources.timestamp.Timestamp created_at = 2;
-  uint64 dispatch_id = 3;
-  optional uint64 unit_id = 4;
+  uint64 dispatch_id = 3 [jstype = JS_STRING];
+  optional uint64 unit_id = 4 [jstype = JS_STRING];
   optional resources.dispatch.Unit unit = 5;
   StatusDispatch status = 6 [(validate.rules).enum.defined_only = true];
   // @sanitize

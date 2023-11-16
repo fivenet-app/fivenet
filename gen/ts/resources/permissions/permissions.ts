@@ -8,9 +8,9 @@ import { Timestamp } from "../timestamp/timestamp.js";
  */
 export interface Permission {
     /**
-     * @generated from protobuf field: uint64 id = 1;
+     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
      */
-    id: bigint; // @gotags: alias:"id"
+    id: string; // @gotags: alias:"id"
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
      */
@@ -37,9 +37,9 @@ export interface Permission {
  */
 export interface Role {
     /**
-     * @generated from protobuf field: uint64 id = 1;
+     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
      */
-    id: bigint; // @gotags: alias:"id"
+    id: string; // @gotags: alias:"id"
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
      */
@@ -74,21 +74,21 @@ export interface Role {
  */
 export interface RawRoleAttribute {
     /**
-     * @generated from protobuf field: uint64 role_id = 1;
+     * @generated from protobuf field: uint64 role_id = 1 [jstype = JS_STRING];
      */
-    roleId: bigint; // @gotags: alias:"role_id"
+    roleId: string; // @gotags: alias:"role_id"
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
      */
     createdAt?: Timestamp;
     /**
-     * @generated from protobuf field: uint64 attr_id = 3;
+     * @generated from protobuf field: uint64 attr_id = 3 [jstype = JS_STRING];
      */
-    attrId: bigint; // @gotags: alias:"attr_id"
+    attrId: string; // @gotags: alias:"attr_id"
     /**
-     * @generated from protobuf field: uint64 permission_id = 4;
+     * @generated from protobuf field: uint64 permission_id = 4 [jstype = JS_STRING];
      */
-    permissionId: bigint; // @gotags: alias:"permission_id"
+    permissionId: string; // @gotags: alias:"permission_id"
     /**
      * @generated from protobuf field: string category = 5;
      */
@@ -127,21 +127,21 @@ export interface RawRoleAttribute {
  */
 export interface RoleAttribute {
     /**
-     * @generated from protobuf field: uint64 role_id = 1;
+     * @generated from protobuf field: uint64 role_id = 1 [jstype = JS_STRING];
      */
-    roleId: bigint; // @gotags: alias:"role_id"
+    roleId: string; // @gotags: alias:"role_id"
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
      */
     createdAt?: Timestamp;
     /**
-     * @generated from protobuf field: uint64 attr_id = 3;
+     * @generated from protobuf field: uint64 attr_id = 3 [jstype = JS_STRING];
      */
-    attrId: bigint; // @gotags: alias:"attr_id"
+    attrId: string; // @gotags: alias:"attr_id"
     /**
-     * @generated from protobuf field: uint64 permission_id = 4;
+     * @generated from protobuf field: uint64 permission_id = 4 [jstype = JS_STRING];
      */
-    permissionId: bigint; // @gotags: alias:"permission_id"
+    permissionId: string; // @gotags: alias:"permission_id"
     /**
      * @generated from protobuf field: string category = 5;
      */
@@ -228,7 +228,7 @@ export interface JobGradeList {
 class Permission$Type extends MessageType<Permission> {
     constructor() {
         super("resources.permissions.Permission", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "category", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "128" } } } },
             { no: 4, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
@@ -245,7 +245,7 @@ export const Permission = new Permission$Type();
 class Role$Type extends MessageType<Role> {
     constructor() {
         super("resources.permissions.Role", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
             { no: 4, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
@@ -264,10 +264,10 @@ export const Role = new Role$Type();
 class RawRoleAttribute$Type extends MessageType<RawRoleAttribute> {
     constructor() {
         super("resources.permissions.RawRoleAttribute", [
-            { no: 1, name: "role_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 1, name: "role_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
-            { no: 3, name: "attr_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 4, name: "permission_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 3, name: "attr_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 4, name: "permission_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 5, name: "category", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "128" } } } },
             { no: 6, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
             { no: 7, name: "key", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
@@ -287,10 +287,10 @@ export const RawRoleAttribute = new RawRoleAttribute$Type();
 class RoleAttribute$Type extends MessageType<RoleAttribute> {
     constructor() {
         super("resources.permissions.RoleAttribute", [
-            { no: 1, name: "role_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 1, name: "role_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
-            { no: 3, name: "attr_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 4, name: "permission_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 3, name: "attr_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 4, name: "permission_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 5, name: "category", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "128" } } } },
             { no: 6, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
             { no: 7, name: "key", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },

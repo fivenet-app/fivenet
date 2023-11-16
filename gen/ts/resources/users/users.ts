@@ -161,9 +161,9 @@ export interface UserProps {
      */
     jobGrade?: JobGrade;
     /**
-     * @generated from protobuf field: optional uint64 traffic_infraction_points = 7;
+     * @generated from protobuf field: optional uint32 traffic_infraction_points = 7;
      */
-    trafficInfractionPoints?: bigint;
+    trafficInfractionPoints?: number;
     /**
      * @generated from protobuf field: optional int64 open_fines = 8;
      */
@@ -174,9 +174,9 @@ export interface UserProps {
  */
 export interface UserActivity {
     /**
-     * @generated from protobuf field: uint64 id = 1;
+     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
      */
-    id: bigint; // @gotags: alias:"fivenet_user_activity.id"
+    id: string; // @gotags: alias:"fivenet_user_activity.id"
     /**
      * @generated from protobuf field: resources.users.UserActivityType type = 2;
      */
@@ -306,7 +306,7 @@ class UserProps$Type extends MessageType<UserProps> {
             { no: 4, name: "job", kind: "message", T: () => Job },
             { no: 5, name: "job_grade_number", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
             { no: 6, name: "job_grade", kind: "message", T: () => JobGrade },
-            { no: 7, name: "traffic_infraction_points", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 7, name: "traffic_infraction_points", kind: "scalar", opt: true, T: 13 /*ScalarType.UINT32*/ },
             { no: 8, name: "open_fines", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 0 /*LongType.BIGINT*/ }
         ]);
     }
@@ -319,7 +319,7 @@ export const UserProps = new UserProps$Type();
 class UserActivity$Type extends MessageType<UserActivity> {
     constructor() {
         super("resources.users.UserActivity", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "type", kind: "enum", T: () => ["resources.users.UserActivityType", UserActivityType, "USER_ACTIVITY_TYPE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 3, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "source_user", kind: "message", T: () => UserShort },

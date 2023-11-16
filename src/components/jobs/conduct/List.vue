@@ -45,7 +45,7 @@ async function listConductEntries(): Promise<ConductListEntriesResponse> {
     }
 }
 
-async function deleteConductEntry(id: bigint): Promise<void> {
+async function deleteConductEntry(id: string): Promise<void> {
     try {
         const call = $grpc.getJobsClient().conductDeleteEntry({ id });
         await call;
@@ -366,7 +366,7 @@ onConfirm(async (id) => deleteConductEntry(id));
                                 <tbody class="divide-y divide-base-800">
                                     <ListEntry
                                         v-for="conduct in data?.entries"
-                                        :key="conduct.id.toString()"
+                                        :key="conduct.id"
                                         :conduct="conduct"
                                         class="transition-colors hover:bg-neutral/5"
                                         @selected="

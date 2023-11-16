@@ -114,7 +114,7 @@ const openMessage = ref(false);
             <span v-else class="mr-1 grid grid-cols-2 gap-1">
                 <UnitInfoPopover
                     v-for="unit in dispatch.units"
-                    :key="unit.unitId.toString()"
+                    :key="unit.unitId"
                     :unit="unit.unit"
                     :initials-only="true"
                     :badge="true"

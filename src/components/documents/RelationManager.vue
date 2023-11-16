@@ -45,13 +45,13 @@ const { t } = useI18n();
 
 const props = defineProps<{
     open: boolean;
-    document?: bigint;
-    modelValue: Map<bigint, DocumentRelation>;
+    document?: string;
+    modelValue: Map<string, DocumentRelation>;
 }>();
 
 const emit = defineEmits<{
     (e: 'close'): void;
-    (e: 'update:modelValue', payload: Map<bigint, DocumentRelation>): void;
+    (e: 'update:modelValue', payload: Map<string, DocumentRelation>): void;
 }>();
 
 const tabs = ref<{ name: string; icon: DefineComponent }[]>([
@@ -101,11 +101,11 @@ async function listCitizens(): Promise<User[]> {
 
 function addRelation(user: User, relation: DocRelation): void {
     const keys = Array.from(props.modelValue.keys());
-    const key = !keys.length ? 1n : keys[keys.length - 1] + 1n;
+    const key = !keys.length ? '1' : (parseInt(keys[keys.length - 1]) + 1).toString();
 
     props.modelValue.set(key, {
         id: key,
-        documentId: props.document ?? 0n,
+        documentId: props.document ?? '0',
         sourceUserId: activeChar.value!.userId,
         sourceUser: activeChar.value!,
         targetUserId: user.userId,
@@ -115,7 +115,7 @@ function addRelation(user: User, relation: DocRelation): void {
     refresh();
 }
 
-function removeRelation(id: bigint): void {
+function removeRelation(id: string): void {
     props.modelValue.delete(id);
     refresh();
 }
@@ -332,7 +332,7 @@ function removeRelation(id: bigint): void {
                                                             <tbody class="divide-y divide-base-500">
                                                                 <tr
                                                                     v-for="user in clipboardStore.$state.users"
-                                                                    :key="user.userId?.toString()"
+                                                                    :key="user.userId"
                                                                 >
                                                                     <td
                                                                         class="py-4 pl-4 pr-3 text-sm font-medium truncate whitespace-nowrap sm:pl-6 lg:pl-8"

@@ -57,7 +57,7 @@ const openUnit = ref(false);
     />
 
     <LMarker
-        :key="marker.info!.id?.toString()"
+        :key="marker.info!.id"
         :lat-lng="[marker.info!.y, marker.info!.x]"
         :name="marker.info!.name"
         :z-index-offset="activeChar && marker.user?.identifier === activeChar.identifier ? 30 : 20"

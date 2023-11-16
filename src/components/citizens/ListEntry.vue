@@ -54,9 +54,9 @@ function addToClipboard(): void {
         <td
             v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'UserProps.TrafficInfractionPoints')"
             class="whitespace-nowrap px-1 py-1 text-left text-base-200 text-sm"
-            :class="(user?.props?.trafficInfractionPoints ?? 0n) >= 10 ? 'text-error-500' : ''"
+            :class="(user?.props?.trafficInfractionPoints ?? 0) >= 10 ? 'text-error-500' : ''"
         >
-            {{ user.props?.trafficInfractionPoints ?? 0n }}
+            {{ user.props?.trafficInfractionPoints ?? 0 }}
         </td>
         <td
             v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'UserProps.OpenFines')"

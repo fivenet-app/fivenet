@@ -57,7 +57,7 @@ message ConductUpdateEntryResponse {
 }
 
 message ConductDeleteEntryRequest {
-  uint64 id = 1;
+  uint64 id = 1 [jstype = JS_STRING];
 }
 
 message ConductDeleteEntryResponse {}
@@ -118,20 +118,20 @@ message RequestsUpdateEntryResponse {
 }
 
 message RequestsDeleteEntryRequest {
-  uint64 id = 1;
+  uint64 id = 1 [jstype = JS_STRING];
 }
 
 message RequestsDeleteEntryResponse {}
 
 message RequestsApproveEntryRequest {
-  uint64 id = 1;
+  uint64 id = 1 [jstype = JS_STRING];
   bool approve = 2;
 }
 
 message RequestsApproveEntryResponse {}
 
 message RequestsCloseEntryRequest {
-  uint64 id = 1;
+  uint64 id = 1 [jstype = JS_STRING];
   bool close = 2;
 }
 
@@ -152,14 +152,14 @@ message RequestsCreateOrUpdateTypeResponse {
 }
 
 message RequestsDeleteTypeRequest {
-  uint64 id = 1;
+  uint64 id = 1 [jstype = JS_STRING];
 }
 
 message RequestsDeleteTypeResponse {}
 
 message RequestsListCommentsRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
-  uint64 request_id = 2;
+  uint64 request_id = 2 [jstype = JS_STRING];
 }
 
 message RequestsListCommentsResponse {
@@ -176,7 +176,7 @@ message RequestsPostCommentResponse {
 }
 
 message RequestsDeleteCommentRequest {
-  uint64 id = 1;
+  uint64 id = 1 [jstype = JS_STRING];
 }
 
 message RequestsDeleteCommentResponse {}

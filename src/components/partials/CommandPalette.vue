@@ -379,7 +379,7 @@ async function onSelect(item: any): Promise<any> {
                                     <ul class="-mx-2 mt-2 text-sm text-gray-400">
                                         <ComboboxOption
                                             v-for="document in documents"
-                                            :key="document.id.toString()"
+                                            :key="document.id"
                                             v-slot="{ active }"
                                             :value="document"
                                             as="template"

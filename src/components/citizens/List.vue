@@ -20,7 +20,7 @@ const query = ref<{
     name?: string;
     phoneNumber?: string;
     wanted?: boolean;
-    trafficPoints?: number;
+    trafficInfractionPoints?: number;
     fines?: number;
     dateofbirth?: string;
 }>({});
@@ -53,8 +53,8 @@ async function listCitizens(): Promise<ListCitizensResponse> {
         if (query.value.phoneNumber) {
             req.phoneNumber = query.value.phoneNumber;
         }
-        if (query.value.trafficPoints) {
-            req.trafficPoints = BigInt(query.value.trafficPoints?.toString() ?? '0');
+        if (query.value.trafficInfractionPoints) {
+            req.trafficInfractionPoints = query.value.trafficInfractionPoints ?? 0;
         }
         if (query.value.fines) {
             req.openFines = BigInt(query.value.fines?.toString() ?? '0');
@@ -186,15 +186,18 @@ watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
                                         </div>
                                     </div>
                                     <div class="flex-1 form-control">
-                                        <label for="trafficPoints" class="block text-sm font-medium leading-6 text-neutral">
+                                        <label
+                                            for="trafficInfractionPoints"
+                                            class="block text-sm font-medium leading-6 text-neutral"
+                                        >
                                             {{ $t('common.search') }}
                                             {{ $t('common.traffic_infraction_points', 2) }}
                                         </label>
                                         <div class="relative flex items-center mt-2">
                                             <input
-                                                v-model="query.trafficPoints"
+                                                v-model="query.trafficInfractionPoints"
                                                 type="number"
-                                                name="trafficPoints"
+                                                name="trafficInfractionPoints"
                                                 :placeholder="`${$t('common.traffic_infraction_points')}`"
                                                 class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                             />

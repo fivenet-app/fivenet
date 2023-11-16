@@ -21,7 +21,7 @@ const { $grpc } = useNuxtApp();
 const centrumStore = useCentrumStore();
 const { ownUnitId, getSortedUnits } = storeToRefs(centrumStore);
 
-async function joinOrLeaveUnit(unitId?: bigint): Promise<void> {
+async function joinOrLeaveUnit(unitId?: string): Promise<void> {
     try {
         const call = $grpc.getCentrumClient().joinUnit({
             unitId,
@@ -42,7 +42,7 @@ async function joinOrLeaveUnit(unitId?: bigint): Promise<void> {
 }
 
 const canSubmit = ref(true);
-const onSubmitThrottle = useThrottleFn(async (unitID?: bigint) => {
+const onSubmitThrottle = useThrottleFn(async (unitID?: string) => {
     canSubmit.value = false;
     await joinOrLeaveUnit(unitID).finally(() => setTimeout(() => (canSubmit.value = true), 400));
 }, 1000);

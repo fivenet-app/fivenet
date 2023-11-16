@@ -10,9 +10,9 @@ import { Timestamp } from "../timestamp/timestamp.js";
  */
 export interface Notification {
     /**
-     * @generated from protobuf field: uint64 id = 1;
+     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
      */
-    id: bigint;
+    id: string;
     /**
      * @generated from protobuf field: resources.timestamp.Timestamp created_at = 2;
      */
@@ -105,7 +105,7 @@ export enum NotificationCategory {
 class Notification$Type extends MessageType<Notification> {
     constructor() {
         super("resources.notifications.Notification", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "read_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },

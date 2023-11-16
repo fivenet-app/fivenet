@@ -220,7 +220,7 @@ onMounted(async () => {
                         />
                         <div v-else>
                             <ul role="list" class="flex flex-col">
-                                <ListEntry v-for="request in data?.entries" :key="request.id.toString()" :request="request" />
+                                <ListEntry v-for="request in data?.entries" :key="request.id" :request="request" />
                             </ul>
 
                             <TablePagination

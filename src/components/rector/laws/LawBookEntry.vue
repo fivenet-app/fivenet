@@ -15,7 +15,7 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-    (e: 'deleted', id: bigint): void;
+    (e: 'deleted', id: string): void;
     (e: 'update:modelValue', book: LawBook): void;
     (e: 'update:laws', laws: Law[]): void;
     (e: 'update:law', law: Law): void;
@@ -23,8 +23,9 @@ const emit = defineEmits<{
 
 const { $grpc } = useNuxtApp();
 
-async function deleteLawBook(id: bigint): Promise<void> {
-    if (id < 0) {
+async function deleteLawBook(id: string): Promise<void> {
+    const i = parseInt(id);
+    if (i < 0) {
         emit('deleted', id);
         return;
     }
@@ -41,16 +42,18 @@ async function deleteLawBook(id: bigint): Promise<void> {
 }
 
 interface FormData {
-    id: bigint;
+    id: string;
     name: string;
     description?: string;
 }
 
-async function saveLawBook(id: bigint, values: FormData): Promise<LawBook> {
+async function saveLawBook(id: string, values: FormData): Promise<LawBook> {
+    const i = parseInt(id);
+
     try {
         const call = $grpc.getRectorClient().createOrUpdateLawBook({
             lawBook: {
-                id: BigInt(id < 0 ? 0 : id),
+                id: i < 0 ? '0' : id,
                 name: values.name,
                 description: values.description,
                 laws: [],
@@ -95,25 +98,25 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
     await onSubmit(e);
 }, 1000);
 
-function deletedLaw(id: bigint): void {
+function deletedLaw(id: string): void {
     emit(
         'update:laws',
         props.laws.filter((b) => b.id !== id),
     );
 }
 
-const lastNewId = ref<bigint>(BigInt(-1));
+const lastNewId = ref(-1);
 
 function addLaw(): void {
     emit('update:laws', [
         ...props.laws,
         {
             lawbookId: props.modelValue.id,
-            id: lastNewId.value,
+            id: lastNewId.value.toString(),
             name: '',
-            fine: BigInt(0),
-            detentionTime: BigInt(0),
-            stvoPoints: BigInt(0),
+            fine: 0,
+            detentionTime: 0,
+            stvoPoints: 0,
         },
     ]);
     lastNewId.value--;
@@ -160,7 +163,7 @@ const editing = ref(props.startInEdit);
                 :title="$t('common.cancel')"
                 @click="
                     editing = false;
-                    modelValue.id < BigInt(0) && $emit('deleted', modelValue.id);
+                    parseInt(modelValue.id) < 0 && $emit('deleted', modelValue.id);
                 "
             >
                 <CancelIcon class="w-6 h-6" />
@@ -223,9 +226,9 @@ const editing = ref(props.startInEdit);
             <tbody class="divide-y divide-base-800">
                 <LawEntry
                     v-for="law in modelValue.laws"
-                    :key="law.id.toString()"
+                    :key="law.id"
                     :law="law"
-                    :start-in-edit="law.id < BigInt(0)"
+                    :start-in-edit="parseInt(law.id) < 0"
                     @update:law="$emit('update:law', $event)"
                     @deleted="deletedLaw($event)"
                 />

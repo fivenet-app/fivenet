@@ -4,7 +4,7 @@ import { Law } from '~~/gen/ts/resources/laws/laws';
 
 const props = defineProps<{
     law: Law;
-    count: bigint;
+    count: number;
 }>();
 
 defineEmits<{
@@ -34,7 +34,7 @@ const count = ref(props.count);
                 v-model="count"
                 name="count"
                 class="mb-1 block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-primary-600 sm:text-sm sm:leading-6"
-                @change="$emit('selected', { law: law, count: BigInt(count) })"
+                @change="$emit('selected', { law: law, count: count })"
             >
                 <option v-for="(_, i) in 7" :key="i">
                     {{ i }}

@@ -9,9 +9,9 @@ import { Timestamp } from "../timestamp/timestamp.js";
  */
 export interface Unit {
     /**
-     * @generated from protobuf field: uint64 id = 1;
+     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
      */
-    id: bigint; // @gotags: sql:"primary_key" alias:"id"
+    id: string; // @gotags: sql:"primary_key" alias:"id"
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
      */
@@ -60,9 +60,9 @@ export interface Unit {
  */
 export interface UnitAssignments {
     /**
-     * @generated from protobuf field: uint64 unit_id = 1;
+     * @generated from protobuf field: uint64 unit_id = 1 [jstype = JS_STRING];
      */
-    unitId: bigint;
+    unitId: string;
     /**
      * @generated from protobuf field: string job = 2;
      */
@@ -77,9 +77,9 @@ export interface UnitAssignments {
  */
 export interface UnitAssignment {
     /**
-     * @generated from protobuf field: uint64 unit_id = 1;
+     * @generated from protobuf field: uint64 unit_id = 1 [jstype = JS_STRING];
      */
-    unitId: bigint; // @gotags: sql:"primary_key" alias:"unit_id"
+    unitId: string; // @gotags: sql:"primary_key" alias:"unit_id"
     /**
      * @generated from protobuf field: int32 user_id = 2;
      */
@@ -94,17 +94,17 @@ export interface UnitAssignment {
  */
 export interface UnitStatus {
     /**
-     * @generated from protobuf field: uint64 id = 1;
+     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
      */
-    id: bigint; // @gotags: sql:"primary_key" alias:"id"
+    id: string; // @gotags: sql:"primary_key" alias:"id"
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
      */
     createdAt?: Timestamp;
     /**
-     * @generated from protobuf field: uint64 unit_id = 3;
+     * @generated from protobuf field: uint64 unit_id = 3 [jstype = JS_STRING];
      */
-    unitId: bigint;
+    unitId: string;
     /**
      * @generated from protobuf field: optional resources.dispatch.Unit unit = 4;
      */
@@ -197,7 +197,7 @@ export enum StatusUnit {
 class Unit$Type extends MessageType<Unit> {
     constructor() {
         super("resources.dispatch.Unit", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
@@ -218,7 +218,7 @@ export const Unit = new Unit$Type();
 class UnitAssignments$Type extends MessageType<UnitAssignments> {
     constructor() {
         super("resources.dispatch.UnitAssignments", [
-            { no: 1, name: "unit_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 1, name: "unit_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 3, name: "users", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => UnitAssignment }
         ]);
@@ -232,7 +232,7 @@ export const UnitAssignments = new UnitAssignments$Type();
 class UnitAssignment$Type extends MessageType<UnitAssignment> {
     constructor() {
         super("resources.dispatch.UnitAssignment", [
-            { no: 1, name: "unit_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 1, name: "unit_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 3, name: "user", kind: "message", T: () => UserShort }
         ]);
@@ -246,9 +246,9 @@ export const UnitAssignment = new UnitAssignment$Type();
 class UnitStatus$Type extends MessageType<UnitStatus> {
     constructor() {
         super("resources.dispatch.UnitStatus", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
-            { no: 3, name: "unit_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 3, name: "unit_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 4, name: "unit", kind: "message", T: () => Unit },
             { no: 5, name: "status", kind: "enum", T: () => ["resources.dispatch.StatusUnit", StatusUnit, "STATUS_UNIT_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 6, name: "reason", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },

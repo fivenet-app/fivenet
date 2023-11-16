@@ -8,7 +8,7 @@ const props = defineProps<{
     selectedLaws: SelectedPenalty[];
 }>();
 
-function getNameForLawBookId(id: bigint): string | undefined {
+function getNameForLawBookId(id: string): string | undefined {
     return props.lawBooks.filter((b) => b.id === id)[0].name;
 }
 </script>
@@ -49,7 +49,7 @@ function getNameForLawBookId(id: bigint): string | undefined {
             </tr>
         </thead>
         <tbody>
-            <tr v-for="p in selectedLaws" :key="`${p.law.lawbookId}-${p.law.id.toString()}`">
+            <tr v-for="p in selectedLaws" :key="`${p.law.lawbookId}-${p.law.id}`">
                 <td class="py-2 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">
                     {{ getNameForLawBookId(p.law.lawbookId) }} - {{ p.law.name }}
                 </td>

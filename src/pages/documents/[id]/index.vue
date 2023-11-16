@@ -23,7 +23,7 @@ const route = useRoute('documents-id');
 
 <template>
     <ContentWrapper>
-        <View :document-id="BigInt(route.params.id)" />
+        <View :document-id="route.params.id as string" />
         <ClipboardButton />
     </ContentWrapper>
 </template>

@@ -90,7 +90,7 @@ async function listDocuments(): Promise<ListDocumentsResponse> {
     }
     if (query.value.id) {
         const id = query.value.id.replaceAll('DOC-', '').trim();
-        req.documentIds.push(BigInt(id));
+        req.documentIds.push(id);
     }
     if (query.value.from) {
         req.from = {
@@ -253,7 +253,7 @@ const templatesOpen = ref(false);
                                                 >
                                                     <ComboboxOption
                                                         v-for="category in entriesCategories"
-                                                        :key="category.id?.toString()"
+                                                        :key="category.id"
                                                         v-slot="{ active, selected }"
                                                         :value="category"
                                                         as="category"
@@ -372,7 +372,7 @@ const templatesOpen = ref(false);
                                                         <ListboxOption
                                                             v-for="st in openclose"
                                                             v-slot="{ active, selected }"
-                                                            :key="st.id?.toString()"
+                                                            :key="st.id"
                                                             as="template"
                                                             :value="st"
                                                         >
@@ -457,7 +457,7 @@ const templatesOpen = ref(false);
                         />
                         <div v-else>
                             <ul role="list" class="flex flex-col">
-                                <ListEntry v-for="doc in data?.documents" :key="doc.id.toString()" :doc="doc" />
+                                <ListEntry v-for="doc in data?.documents" :key="doc.id" :doc="doc" />
                             </ul>
 
                             <TablePagination

@@ -64,9 +64,9 @@ export interface GetRolesResponse {
  */
 export interface GetRoleRequest {
     /**
-     * @generated from protobuf field: uint64 id = 1;
+     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
      */
-    id: bigint;
+    id: string;
     /**
      * @generated from protobuf field: optional bool filtered = 2;
      */
@@ -108,9 +108,9 @@ export interface CreateRoleResponse {
  */
 export interface DeleteRoleRequest {
     /**
-     * @generated from protobuf field: uint64 id = 1;
+     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
      */
-    id: bigint;
+    id: string;
 }
 /**
  * @generated from protobuf message services.rector.DeleteRoleResponse
@@ -122,9 +122,9 @@ export interface DeleteRoleResponse {
  */
 export interface UpdateRolePermsRequest {
     /**
-     * @generated from protobuf field: uint64 id = 1;
+     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
      */
-    id: bigint;
+    id: string;
     /**
      * @generated from protobuf field: optional services.rector.PermsUpdate perms = 2;
      */
@@ -143,18 +143,18 @@ export interface PermsUpdate {
      */
     toUpdate: PermItem[];
     /**
-     * @generated from protobuf field: repeated uint64 to_remove = 2;
+     * @generated from protobuf field: repeated uint64 to_remove = 2 [jstype = JS_STRING];
      */
-    toRemove: bigint[];
+    toRemove: string[];
 }
 /**
  * @generated from protobuf message services.rector.PermItem
  */
 export interface PermItem {
     /**
-     * @generated from protobuf field: uint64 id = 1;
+     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
      */
-    id: bigint;
+    id: string;
     /**
      * @generated from protobuf field: bool val = 2;
      */
@@ -183,9 +183,9 @@ export interface UpdateRolePermsResponse {
  */
 export interface GetPermissionsRequest {
     /**
-     * @generated from protobuf field: uint64 role_id = 1;
+     * @generated from protobuf field: uint64 role_id = 1 [jstype = JS_STRING];
      */
-    roleId: bigint;
+    roleId: string;
     /**
      * @generated from protobuf field: optional bool filtered = 2;
      */
@@ -255,9 +255,9 @@ export interface ViewAuditLogResponse {
  */
 export interface UpdateRoleLimitsRequest {
     /**
-     * @generated from protobuf field: uint64 role_id = 1;
+     * @generated from protobuf field: uint64 role_id = 1 [jstype = JS_STRING];
      */
-    roleId: bigint;
+    roleId: string;
     /**
      * @generated from protobuf field: optional services.rector.PermsUpdate perms = 2;
      */
@@ -297,9 +297,9 @@ export interface CreateOrUpdateLawBookResponse {
  */
 export interface DeleteLawBookRequest {
     /**
-     * @generated from protobuf field: uint64 id = 1;
+     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
      */
-    id: bigint;
+    id: string;
 }
 /**
  * @generated from protobuf message services.rector.DeleteLawBookResponse
@@ -329,9 +329,9 @@ export interface CreateOrUpdateLawResponse {
  */
 export interface DeleteLawRequest {
     /**
-     * @generated from protobuf field: uint64 id = 1;
+     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
      */
-    id: bigint;
+    id: string;
 }
 /**
  * @generated from protobuf message services.rector.DeleteLawResponse
@@ -410,7 +410,7 @@ export const GetRolesResponse = new GetRolesResponse$Type();
 class GetRoleRequest$Type extends MessageType<GetRoleRequest> {
     constructor() {
         super("services.rector.GetRoleRequest", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "filtered", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
@@ -460,7 +460,7 @@ export const CreateRoleResponse = new CreateRoleResponse$Type();
 class DeleteRoleRequest$Type extends MessageType<DeleteRoleRequest> {
     constructor() {
         super("services.rector.DeleteRoleRequest", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
         ]);
     }
 }
@@ -482,7 +482,7 @@ export const DeleteRoleResponse = new DeleteRoleResponse$Type();
 class UpdateRolePermsRequest$Type extends MessageType<UpdateRolePermsRequest> {
     constructor() {
         super("services.rector.UpdateRolePermsRequest", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "perms", kind: "message", T: () => PermsUpdate },
             { no: 3, name: "attrs", kind: "message", T: () => AttrsUpdate }
         ]);
@@ -497,7 +497,7 @@ class PermsUpdate$Type extends MessageType<PermsUpdate> {
     constructor() {
         super("services.rector.PermsUpdate", [
             { no: 1, name: "to_update", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => PermItem },
-            { no: 2, name: "to_remove", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+            { no: 2, name: "to_remove", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/ }
         ]);
     }
 }
@@ -509,7 +509,7 @@ export const PermsUpdate = new PermsUpdate$Type();
 class PermItem$Type extends MessageType<PermItem> {
     constructor() {
         super("services.rector.PermItem", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "val", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
@@ -545,7 +545,7 @@ export const UpdateRolePermsResponse = new UpdateRolePermsResponse$Type();
 class GetPermissionsRequest$Type extends MessageType<GetPermissionsRequest> {
     constructor() {
         super("services.rector.GetPermissionsRequest", [
-            { no: 1, name: "role_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 1, name: "role_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "filtered", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
@@ -602,7 +602,7 @@ export const ViewAuditLogResponse = new ViewAuditLogResponse$Type();
 class UpdateRoleLimitsRequest$Type extends MessageType<UpdateRoleLimitsRequest> {
     constructor() {
         super("services.rector.UpdateRoleLimitsRequest", [
-            { no: 1, name: "role_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 1, name: "role_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "perms", kind: "message", T: () => PermsUpdate },
             { no: 3, name: "attrs", kind: "message", T: () => AttrsUpdate }
         ]);
@@ -650,7 +650,7 @@ export const CreateOrUpdateLawBookResponse = new CreateOrUpdateLawBookResponse$T
 class DeleteLawBookRequest$Type extends MessageType<DeleteLawBookRequest> {
     constructor() {
         super("services.rector.DeleteLawBookRequest", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
         ]);
     }
 }
@@ -696,7 +696,7 @@ export const CreateOrUpdateLawResponse = new CreateOrUpdateLawResponse$Type();
 class DeleteLawRequest$Type extends MessageType<DeleteLawRequest> {
     constructor() {
         super("services.rector.DeleteLawRequest", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
         ]);
     }
 }

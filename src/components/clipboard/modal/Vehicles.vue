@@ -40,7 +40,7 @@ async function select(item: ClipboardVehicle): Promise<void> {
         selected.value.push(item);
     }
 
-    const selectedLength = BigInt(selected.value.length);
+    const selectedLength = selected.value.length;
     if (props.specs) {
         if (props.specs.min && selectedLength >= props.specs.min) {
             emit('statisfied', true);
@@ -130,7 +130,7 @@ watch(props, (newVal) => {
         <tbody class="divide-y divide-gray-800">
             <tr v-for="item in vehicles" :key="item.plate">
                 <td v-if="showSelect" class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-0">
-                    <template v-if="specs && specs.max && specs.max === 1n">
+                    <template v-if="specs && specs.max && specs.max === 1">
                         <button
                             class="inline-flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold text-neutral shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:col-start-2"
                             :class="

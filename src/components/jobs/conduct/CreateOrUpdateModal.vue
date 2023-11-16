@@ -40,13 +40,13 @@ interface FormData {
     expiresAt?: string;
 }
 
-async function conductCreateOrUpdateEntry(values: FormData, id?: bigint): Promise<void> {
+async function conductCreateOrUpdateEntry(values: FormData, id?: string): Promise<void> {
     try {
         const expiresAt = values.expiresAt ? toTimestamp(new Date(values.expiresAt)) : undefined;
 
         const req = {
             entry: {
-                id: id ?? 0n,
+                id: id ?? '0',
                 job: '',
                 type: values.type,
                 message: values.message,

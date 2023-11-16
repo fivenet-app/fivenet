@@ -71,7 +71,7 @@ message UserProps {
   optional resources.users.Job job = 4;
   optional int32 job_grade_number = 5; // @gotags: alias:"job_grade"
   optional resources.users.JobGrade job_grade = 6;
-  optional uint64 traffic_infraction_points = 7;
+  optional uint32 traffic_infraction_points = 7;
   optional int64 open_fines = 8;
 }
 
@@ -83,7 +83,7 @@ enum UserActivityType {
 }
 
 message UserActivity {
-  uint64 id = 1; // @gotags: alias:"fivenet_user_activity.id"
+  uint64 id = 1 [jstype = JS_STRING]; // @gotags: alias:"fivenet_user_activity.id"
   UserActivityType type = 2 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"fivenet_user_activity.type"
   resources.timestamp.Timestamp created_at = 3; // @gotags: alias:"fivenet_user_activity.created_at"
   UserShort source_user = 4; // @gotags: alias:"source_user"

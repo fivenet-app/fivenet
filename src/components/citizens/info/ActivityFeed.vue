@@ -58,7 +58,7 @@ watch(offset, async () => refresh());
         />
         <div v-else>
             <ul role="list" class="divide-y divide-gray-200">
-                <li v-for="activity in data?.activity" :key="activity.id?.toString()" class="py-4">
+                <li v-for="activity in data?.activity" :key="activity.id" class="py-4">
                     <ActivityFeedEntry :activity="activity" />
                 </li>
             </ul>

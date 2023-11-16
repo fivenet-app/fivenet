@@ -97,9 +97,9 @@ const trafficPointsModal = ref(false);
                                 </dt>
                                 <dd
                                     class="mt-1 text-sm text-base-300 sm:col-span-2 sm:mt-0 sm:ml-6"
-                                    :class="(user?.props?.trafficInfractionPoints ?? 0n) >= 10 ? 'text-error-500' : ''"
+                                    :class="(user?.props?.trafficInfractionPoints ?? 0) >= 10 ? 'text-error-500' : ''"
                                 >
-                                    {{ $t('common.point', parseInt((user?.props?.trafficInfractionPoints ?? 0n).toString())) }}
+                                    {{ $t('common.point', user?.props?.trafficInfractionPoints ?? 0) }}
                                 </dd>
                             </div>
                             <div
@@ -203,7 +203,7 @@ const trafficPointsModal = ref(false);
             </div>
             <div class="flex-initial">
                 <IDCopyBadge
-                    :id="user.userId.toString()"
+                    :id="user.userId"
                     prefix="CIT"
                     :title="{ key: 'notifications.citizen_info.copy_citizen_id.title', parameters: {} }"
                     :content="{ key: 'notifications.citizen_info.copy_citizen_id.content', parameters: {} }"

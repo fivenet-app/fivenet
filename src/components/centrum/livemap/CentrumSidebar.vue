@@ -45,7 +45,7 @@ const canStream = can('CentrumService.Stream');
 
 const joinUnitOpen = ref(false);
 
-const selectedDispatch = ref<bigint | undefined>();
+const selectedDispatch = ref<string | undefined>();
 const openDispatchStatus = ref(false);
 const openTakeDispatch = ref(false);
 
@@ -54,7 +54,7 @@ const openUnitStatus = ref(false);
 
 const openDisponents = ref(false);
 
-async function updateDispatchStatus(dispatchId: bigint, status: StatusDispatch): Promise<void> {
+async function updateDispatchStatus(dispatchId: string, status: StatusDispatch): Promise<void> {
     try {
         const call = $grpc.getCentrumClient().updateDispatchStatus({ dispatchId, status });
         await call;
@@ -70,7 +70,7 @@ async function updateDispatchStatus(dispatchId: bigint, status: StatusDispatch):
     }
 }
 
-async function updateDspStatus(dispatchId?: bigint, status?: StatusDispatch): Promise<void> {
+async function updateDspStatus(dispatchId?: string, status?: StatusDispatch): Promise<void> {
     if (!dispatchId) {
         notifications.dispatchNotification({
             title: { key: 'notifications.centrum.sidebar.no_dispatch_selected.title', parameters: {} },
@@ -88,7 +88,7 @@ async function updateDspStatus(dispatchId?: bigint, status?: StatusDispatch): Pr
     await updateDispatchStatus(dispatchId, status);
 }
 
-async function updateUnitStatus(id: bigint, status: StatusUnit): Promise<void> {
+async function updateUnitStatus(id: string, status: StatusUnit): Promise<void> {
     try {
         const call = $grpc.getCentrumClient().updateUnitStatus({
             unitId: id,
@@ -107,7 +107,7 @@ async function updateUnitStatus(id: bigint, status: StatusUnit): Promise<void> {
     }
 }
 
-async function updateUtStatus(id: bigint, status?: StatusUnit): Promise<void> {
+async function updateUtStatus(id: string, status?: StatusUnit): Promise<void> {
     if (status === undefined) {
         openUnitStatus.value = true;
         return;
@@ -492,7 +492,7 @@ async function checkup(): Promise<void> {
                                         <template v-else>
                                             <DispatchEntry
                                                 v-for="id in ownDispatches.slice().reverse()"
-                                                :key="id.toString()"
+                                                :key="id"
                                                 v-model:selected-dispatch="selectedDispatch"
                                                 :dispatch="dispatches.get(id)!"
                                                 @goto="$emit('goto', $event)"

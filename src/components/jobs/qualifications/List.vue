@@ -4,7 +4,7 @@ import ListEntry from '~/components/jobs/qualifications/ListEntry.vue';
 
 const trainings = ref<Qualification[]>([
     {
-        id: 0n,
+        id: '0',
         job: 'ambulance',
         title: 'Test Training Title',
         description: 'Test training module',
@@ -18,6 +18,6 @@ const trainings = ref<Qualification[]>([
 
 <template>
     <ul role="list" class="divide-y divide-gray-100">
-        <ListEntry v-for="training in trainings" :key="training.id.toString()" :qualification="training" />
+        <ListEntry v-for="training in trainings" :key="training.id" :qualification="training" />
     </ul>
 </template>

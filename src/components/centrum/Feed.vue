@@ -25,7 +25,7 @@ defineProps<{
                         <template v-for="(activityItem, activityItemIdx) in items">
                             <DispatchFeedItem
                                 v-if="'dispatchId' in activityItem"
-                                :key="'dsp-' + activityItem.id.toString()"
+                                :key="'dsp' + activityItem.id"
                                 :activity-length="items?.length ?? 0"
                                 :item="activityItem"
                                 :activity-item-idx="activityItemIdx"
@@ -33,7 +33,7 @@ defineProps<{
                             />
                             <UnitFeedItem
                                 v-else
-                                :key="'unit-' + activityItem.id.toString()"
+                                :key="'unit' + activityItem.id"
                                 :activity-length="items?.length ?? 0"
                                 :item="activityItem"
                                 :activity-item-idx="activityItemIdx"

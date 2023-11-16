@@ -40,9 +40,9 @@ export interface ListTemplatesResponse {
  */
 export interface GetTemplateRequest {
     /**
-     * @generated from protobuf field: uint64 template_id = 1;
+     * @generated from protobuf field: uint64 template_id = 1 [jstype = JS_STRING];
      */
-    templateId: bigint;
+    templateId: string;
     /**
      * @generated from protobuf field: optional resources.documents.TemplateData data = 2;
      */
@@ -79,9 +79,9 @@ export interface CreateTemplateRequest {
  */
 export interface CreateTemplateResponse {
     /**
-     * @generated from protobuf field: uint64 id = 1;
+     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
      */
-    id: bigint;
+    id: string;
 }
 /**
  * @generated from protobuf message services.docstore.UpdateTemplateRequest
@@ -97,18 +97,18 @@ export interface UpdateTemplateRequest {
  */
 export interface UpdateTemplateResponse {
     /**
-     * @generated from protobuf field: uint64 id = 1;
+     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
      */
-    id: bigint;
+    id: string;
 }
 /**
  * @generated from protobuf message services.docstore.DeleteTemplateRequest
  */
 export interface DeleteTemplateRequest {
     /**
-     * @generated from protobuf field: uint64 id = 1;
+     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
      */
-    id: bigint;
+    id: string;
 }
 /**
  * @generated from protobuf message services.docstore.DeleteTemplateResponse
@@ -136,9 +136,9 @@ export interface ListDocumentsRequest {
      */
     search?: string;
     /**
-     * @generated from protobuf field: repeated uint64 category_ids = 4;
+     * @generated from protobuf field: repeated uint64 category_ids = 4 [jstype = JS_STRING];
      */
-    categoryIds: bigint[];
+    categoryIds: string[];
     /**
      * @generated from protobuf field: repeated int32 creator_ids = 5;
      */
@@ -156,9 +156,9 @@ export interface ListDocumentsRequest {
      */
     closed?: boolean;
     /**
-     * @generated from protobuf field: repeated uint64 document_ids = 9;
+     * @generated from protobuf field: repeated uint64 document_ids = 9 [jstype = JS_STRING];
      */
-    documentIds: bigint[];
+    documentIds: string[];
 }
 /**
  * @generated from protobuf message services.docstore.ListDocumentsResponse
@@ -178,9 +178,9 @@ export interface ListDocumentsResponse {
  */
 export interface GetDocumentRequest {
     /**
-     * @generated from protobuf field: uint64 document_id = 1;
+     * @generated from protobuf field: uint64 document_id = 1 [jstype = JS_STRING];
      */
-    documentId: bigint;
+    documentId: string;
 }
 /**
  * @generated from protobuf message services.docstore.GetDocumentResponse
@@ -200,9 +200,9 @@ export interface GetDocumentResponse {
  */
 export interface GetDocumentReferencesRequest {
     /**
-     * @generated from protobuf field: uint64 document_id = 1;
+     * @generated from protobuf field: uint64 document_id = 1 [jstype = JS_STRING];
      */
-    documentId: bigint;
+    documentId: string;
 }
 /**
  * @generated from protobuf message services.docstore.GetDocumentReferencesResponse
@@ -218,9 +218,9 @@ export interface GetDocumentReferencesResponse {
  */
 export interface GetDocumentRelationsRequest {
     /**
-     * @generated from protobuf field: uint64 document_id = 1;
+     * @generated from protobuf field: uint64 document_id = 1 [jstype = JS_STRING];
      */
-    documentId: bigint;
+    documentId: string;
 }
 /**
  * @generated from protobuf message services.docstore.GetDocumentRelationsResponse
@@ -245,18 +245,18 @@ export interface AddDocumentReferenceRequest {
  */
 export interface AddDocumentReferenceResponse {
     /**
-     * @generated from protobuf field: uint64 id = 1;
+     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
      */
-    id: bigint;
+    id: string;
 }
 /**
  * @generated from protobuf message services.docstore.RemoveDocumentReferenceRequest
  */
 export interface RemoveDocumentReferenceRequest {
     /**
-     * @generated from protobuf field: uint64 id = 1;
+     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
      */
-    id: bigint;
+    id: string;
 }
 /**
  * @generated from protobuf message services.docstore.RemoveDocumentReferenceResponse
@@ -277,18 +277,18 @@ export interface AddDocumentRelationRequest {
  */
 export interface AddDocumentRelationResponse {
     /**
-     * @generated from protobuf field: uint64 id = 1;
+     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
      */
-    id: bigint;
+    id: string;
 }
 /**
  * @generated from protobuf message services.docstore.RemoveDocumentRelationRequest
  */
 export interface RemoveDocumentRelationRequest {
     /**
-     * @generated from protobuf field: uint64 id = 1;
+     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
      */
-    id: bigint;
+    id: string;
 }
 /**
  * @generated from protobuf message services.docstore.RemoveDocumentRelationResponse
@@ -306,9 +306,9 @@ export interface GetCommentsRequest {
      */
     pagination?: PaginationRequest;
     /**
-     * @generated from protobuf field: uint64 document_id = 2;
+     * @generated from protobuf field: uint64 document_id = 2 [jstype = JS_STRING];
      */
-    documentId: bigint;
+    documentId: string;
 }
 /**
  * @generated from protobuf message services.docstore.GetCommentsResponse
@@ -337,9 +337,9 @@ export interface PostCommentRequest {
  */
 export interface PostCommentResponse {
     /**
-     * @generated from protobuf field: uint64 id = 1;
+     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
      */
-    id: bigint;
+    id: string;
 }
 /**
  * @generated from protobuf message services.docstore.EditCommentRequest
@@ -364,9 +364,9 @@ export interface EditCommentResponse {
  */
 export interface DeleteCommentRequest {
     /**
-     * @generated from protobuf field: uint64 comment_id = 1;
+     * @generated from protobuf field: uint64 comment_id = 1 [jstype = JS_STRING];
      */
-    commentId: bigint;
+    commentId: string;
 }
 /**
  * @generated from protobuf message services.docstore.DeleteCommentResponse
@@ -378,9 +378,9 @@ export interface DeleteCommentResponse {
  */
 export interface CreateDocumentRequest {
     /**
-     * @generated from protobuf field: optional uint64 category_id = 1;
+     * @generated from protobuf field: optional uint64 category_id = 1 [jstype = JS_STRING];
      */
-    categoryId?: bigint; // @gotags: alias:"category_id"
+    categoryId?: string; // @gotags: alias:"category_id"
     /**
      * @sanitize: method=StripTags
      *
@@ -425,22 +425,22 @@ export interface CreateDocumentRequest {
  */
 export interface CreateDocumentResponse {
     /**
-     * @generated from protobuf field: uint64 document_id = 1;
+     * @generated from protobuf field: uint64 document_id = 1 [jstype = JS_STRING];
      */
-    documentId: bigint; // @gotags: alias:"id"
+    documentId: string; // @gotags: alias:"id"
 }
 /**
  * @generated from protobuf message services.docstore.UpdateDocumentRequest
  */
 export interface UpdateDocumentRequest {
     /**
-     * @generated from protobuf field: uint64 document_id = 1;
+     * @generated from protobuf field: uint64 document_id = 1 [jstype = JS_STRING];
      */
-    documentId: bigint; // @gotags: alias:"id"
+    documentId: string; // @gotags: alias:"id"
     /**
-     * @generated from protobuf field: optional uint64 category_id = 2;
+     * @generated from protobuf field: optional uint64 category_id = 2 [jstype = JS_STRING];
      */
-    categoryId?: bigint; // @gotags: alias:"category_id"
+    categoryId?: string; // @gotags: alias:"category_id"
     /**
      * @sanitize: method=StripTags
      *
@@ -485,18 +485,18 @@ export interface UpdateDocumentRequest {
  */
 export interface UpdateDocumentResponse {
     /**
-     * @generated from protobuf field: uint64 document_id = 1;
+     * @generated from protobuf field: uint64 document_id = 1 [jstype = JS_STRING];
      */
-    documentId: bigint; // @gotags: alias:"id"
+    documentId: string; // @gotags: alias:"id"
 }
 /**
  * @generated from protobuf message services.docstore.DeleteDocumentRequest
  */
 export interface DeleteDocumentRequest {
     /**
-     * @generated from protobuf field: uint64 document_id = 1;
+     * @generated from protobuf field: uint64 document_id = 1 [jstype = JS_STRING];
      */
-    documentId: bigint; // @gotags: alias:"id"
+    documentId: string; // @gotags: alias:"id"
 }
 /**
  * @generated from protobuf message services.docstore.DeleteDocumentResponse
@@ -508,9 +508,9 @@ export interface DeleteDocumentResponse {
  */
 export interface ToggleDocumentRequest {
     /**
-     * @generated from protobuf field: uint64 document_id = 1;
+     * @generated from protobuf field: uint64 document_id = 1 [jstype = JS_STRING];
      */
-    documentId: bigint;
+    documentId: string;
     /**
      * @generated from protobuf field: bool closed = 2;
      */
@@ -528,9 +528,9 @@ export interface ToggleDocumentResponse {
  */
 export interface GetDocumentAccessRequest {
     /**
-     * @generated from protobuf field: uint64 document_id = 1;
+     * @generated from protobuf field: uint64 document_id = 1 [jstype = JS_STRING];
      */
-    documentId: bigint;
+    documentId: string;
 }
 /**
  * @generated from protobuf message services.docstore.GetDocumentAccessResponse
@@ -546,9 +546,9 @@ export interface GetDocumentAccessResponse {
  */
 export interface SetDocumentAccessRequest {
     /**
-     * @generated from protobuf field: uint64 document_id = 1;
+     * @generated from protobuf field: uint64 document_id = 1 [jstype = JS_STRING];
      */
-    documentId: bigint;
+    documentId: string;
     /**
      * @generated from protobuf field: services.docstore.AccessLevelUpdateMode mode = 2;
      */
@@ -623,9 +623,9 @@ export interface CreateCategoryRequest {
  */
 export interface CreateCategoryResponse {
     /**
-     * @generated from protobuf field: uint64 id = 1;
+     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
      */
-    id: bigint;
+    id: string;
 }
 /**
  * @generated from protobuf message services.docstore.UpdateCategoryRequest
@@ -646,9 +646,9 @@ export interface UpdateCategoryResponse {
  */
 export interface DeleteCategoryRequest {
     /**
-     * @generated from protobuf field: repeated uint64 ids = 1;
+     * @generated from protobuf field: repeated uint64 ids = 1 [jstype = JS_STRING];
      */
-    ids: bigint[];
+    ids: string[];
 }
 /**
  * @generated from protobuf message services.docstore.DeleteCategoryResponse
@@ -702,7 +702,7 @@ export const ListTemplatesResponse = new ListTemplatesResponse$Type();
 class GetTemplateRequest$Type extends MessageType<GetTemplateRequest> {
     constructor() {
         super("services.docstore.GetTemplateRequest", [
-            { no: 1, name: "template_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 1, name: "template_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "data", kind: "message", T: () => TemplateData },
             { no: 3, name: "render", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
@@ -741,7 +741,7 @@ export const CreateTemplateRequest = new CreateTemplateRequest$Type();
 class CreateTemplateResponse$Type extends MessageType<CreateTemplateResponse> {
     constructor() {
         super("services.docstore.CreateTemplateResponse", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
         ]);
     }
 }
@@ -765,7 +765,7 @@ export const UpdateTemplateRequest = new UpdateTemplateRequest$Type();
 class UpdateTemplateResponse$Type extends MessageType<UpdateTemplateResponse> {
     constructor() {
         super("services.docstore.UpdateTemplateResponse", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
         ]);
     }
 }
@@ -777,7 +777,7 @@ export const UpdateTemplateResponse = new UpdateTemplateResponse$Type();
 class DeleteTemplateRequest$Type extends MessageType<DeleteTemplateRequest> {
     constructor() {
         super("services.docstore.DeleteTemplateRequest", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
         ]);
     }
 }
@@ -802,12 +802,12 @@ class ListDocumentsRequest$Type extends MessageType<ListDocumentsRequest> {
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
             { no: 2, name: "orderBy", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => OrderBy, options: { "validate.rules": { repeated: { maxItems: "3" } } } },
             { no: 3, name: "search", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
-            { no: 4, name: "category_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 4, name: "category_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/ },
             { no: 5, name: "creator_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ },
             { no: 6, name: "from", kind: "message", T: () => Timestamp },
             { no: 7, name: "to", kind: "message", T: () => Timestamp },
             { no: 8, name: "closed", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
-            { no: 9, name: "document_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+            { no: 9, name: "document_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/ }
         ]);
     }
 }
@@ -832,7 +832,7 @@ export const ListDocumentsResponse = new ListDocumentsResponse$Type();
 class GetDocumentRequest$Type extends MessageType<GetDocumentRequest> {
     constructor() {
         super("services.docstore.GetDocumentRequest", [
-            { no: 1, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+            { no: 1, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
         ]);
     }
 }
@@ -857,7 +857,7 @@ export const GetDocumentResponse = new GetDocumentResponse$Type();
 class GetDocumentReferencesRequest$Type extends MessageType<GetDocumentReferencesRequest> {
     constructor() {
         super("services.docstore.GetDocumentReferencesRequest", [
-            { no: 1, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+            { no: 1, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
         ]);
     }
 }
@@ -881,7 +881,7 @@ export const GetDocumentReferencesResponse = new GetDocumentReferencesResponse$T
 class GetDocumentRelationsRequest$Type extends MessageType<GetDocumentRelationsRequest> {
     constructor() {
         super("services.docstore.GetDocumentRelationsRequest", [
-            { no: 1, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+            { no: 1, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
         ]);
     }
 }
@@ -917,7 +917,7 @@ export const AddDocumentReferenceRequest = new AddDocumentReferenceRequest$Type(
 class AddDocumentReferenceResponse$Type extends MessageType<AddDocumentReferenceResponse> {
     constructor() {
         super("services.docstore.AddDocumentReferenceResponse", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
         ]);
     }
 }
@@ -929,7 +929,7 @@ export const AddDocumentReferenceResponse = new AddDocumentReferenceResponse$Typ
 class RemoveDocumentReferenceRequest$Type extends MessageType<RemoveDocumentReferenceRequest> {
     constructor() {
         super("services.docstore.RemoveDocumentReferenceRequest", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
         ]);
     }
 }
@@ -963,7 +963,7 @@ export const AddDocumentRelationRequest = new AddDocumentRelationRequest$Type();
 class AddDocumentRelationResponse$Type extends MessageType<AddDocumentRelationResponse> {
     constructor() {
         super("services.docstore.AddDocumentRelationResponse", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
         ]);
     }
 }
@@ -975,7 +975,7 @@ export const AddDocumentRelationResponse = new AddDocumentRelationResponse$Type(
 class RemoveDocumentRelationRequest$Type extends MessageType<RemoveDocumentRelationRequest> {
     constructor() {
         super("services.docstore.RemoveDocumentRelationRequest", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
         ]);
     }
 }
@@ -998,7 +998,7 @@ class GetCommentsRequest$Type extends MessageType<GetCommentsRequest> {
     constructor() {
         super("services.docstore.GetCommentsRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
-            { no: 2, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+            { no: 2, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
         ]);
     }
 }
@@ -1035,7 +1035,7 @@ export const PostCommentRequest = new PostCommentRequest$Type();
 class PostCommentResponse$Type extends MessageType<PostCommentResponse> {
     constructor() {
         super("services.docstore.PostCommentResponse", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
         ]);
     }
 }
@@ -1071,7 +1071,7 @@ export const EditCommentResponse = new EditCommentResponse$Type();
 class DeleteCommentRequest$Type extends MessageType<DeleteCommentRequest> {
     constructor() {
         super("services.docstore.DeleteCommentRequest", [
-            { no: 1, name: "comment_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+            { no: 1, name: "comment_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
         ]);
     }
 }
@@ -1093,7 +1093,7 @@ export const DeleteCommentResponse = new DeleteCommentResponse$Type();
 class CreateDocumentRequest$Type extends MessageType<CreateDocumentRequest> {
     constructor() {
         super("services.docstore.CreateDocumentRequest", [
-            { no: 1, name: "category_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 1, name: "category_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "255" } } } },
             { no: 3, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "20", maxBytes: "1750000" } } } },
             { no: 4, name: "content_type", kind: "enum", T: () => ["resources.documents.DocContentType", DocContentType, "DOC_CONTENT_TYPE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
@@ -1113,7 +1113,7 @@ export const CreateDocumentRequest = new CreateDocumentRequest$Type();
 class CreateDocumentResponse$Type extends MessageType<CreateDocumentResponse> {
     constructor() {
         super("services.docstore.CreateDocumentResponse", [
-            { no: 1, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+            { no: 1, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
         ]);
     }
 }
@@ -1125,8 +1125,8 @@ export const CreateDocumentResponse = new CreateDocumentResponse$Type();
 class UpdateDocumentRequest$Type extends MessageType<UpdateDocumentRequest> {
     constructor() {
         super("services.docstore.UpdateDocumentRequest", [
-            { no: 1, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 2, name: "category_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 1, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 2, name: "category_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/ },
             { no: 3, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "255" } } } },
             { no: 4, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "20", maxBytes: "1750000" } } } },
             { no: 5, name: "content_type", kind: "enum", T: () => ["resources.documents.DocContentType", DocContentType, "DOC_CONTENT_TYPE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
@@ -1146,7 +1146,7 @@ export const UpdateDocumentRequest = new UpdateDocumentRequest$Type();
 class UpdateDocumentResponse$Type extends MessageType<UpdateDocumentResponse> {
     constructor() {
         super("services.docstore.UpdateDocumentResponse", [
-            { no: 1, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+            { no: 1, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
         ]);
     }
 }
@@ -1158,7 +1158,7 @@ export const UpdateDocumentResponse = new UpdateDocumentResponse$Type();
 class DeleteDocumentRequest$Type extends MessageType<DeleteDocumentRequest> {
     constructor() {
         super("services.docstore.DeleteDocumentRequest", [
-            { no: 1, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+            { no: 1, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
         ]);
     }
 }
@@ -1180,7 +1180,7 @@ export const DeleteDocumentResponse = new DeleteDocumentResponse$Type();
 class ToggleDocumentRequest$Type extends MessageType<ToggleDocumentRequest> {
     constructor() {
         super("services.docstore.ToggleDocumentRequest", [
-            { no: 1, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 1, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
@@ -1203,7 +1203,7 @@ export const ToggleDocumentResponse = new ToggleDocumentResponse$Type();
 class GetDocumentAccessRequest$Type extends MessageType<GetDocumentAccessRequest> {
     constructor() {
         super("services.docstore.GetDocumentAccessRequest", [
-            { no: 1, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+            { no: 1, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
         ]);
     }
 }
@@ -1227,7 +1227,7 @@ export const GetDocumentAccessResponse = new GetDocumentAccessResponse$Type();
 class SetDocumentAccessRequest$Type extends MessageType<SetDocumentAccessRequest> {
     constructor() {
         super("services.docstore.SetDocumentAccessRequest", [
-            { no: 1, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 1, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "mode", kind: "enum", T: () => ["services.docstore.AccessLevelUpdateMode", AccessLevelUpdateMode, "ACCESS_LEVEL_UPDATE_MODE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 3, name: "access", kind: "message", T: () => DocumentAccess, options: { "validate.rules": { message: { required: true } } } }
         ]);
@@ -1312,7 +1312,7 @@ export const CreateCategoryRequest = new CreateCategoryRequest$Type();
 class CreateCategoryResponse$Type extends MessageType<CreateCategoryResponse> {
     constructor() {
         super("services.docstore.CreateCategoryResponse", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
         ]);
     }
 }
@@ -1346,7 +1346,7 @@ export const UpdateCategoryResponse = new UpdateCategoryResponse$Type();
 class DeleteCategoryRequest$Type extends MessageType<DeleteCategoryRequest> {
     constructor() {
         super("services.docstore.DeleteCategoryRequest", [
-            { no: 1, name: "ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+            { no: 1, name: "ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/ }
         ]);
     }
 }

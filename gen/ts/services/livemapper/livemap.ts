@@ -55,9 +55,9 @@ export interface CreateOrUpdateMarkerResponse {
  */
 export interface DeleteMarkerRequest {
     /**
-     * @generated from protobuf field: uint64 id = 1;
+     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
      */
-    id: bigint;
+    id: string;
 }
 /**
  * @generated from protobuf message services.livemapper.DeleteMarkerResponse
@@ -117,7 +117,7 @@ export const CreateOrUpdateMarkerResponse = new CreateOrUpdateMarkerResponse$Typ
 class DeleteMarkerRequest$Type extends MessageType<DeleteMarkerRequest> {
     constructor() {
         super("services.livemapper.DeleteMarkerRequest", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
         ]);
     }
 }

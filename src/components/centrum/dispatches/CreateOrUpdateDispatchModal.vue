@@ -31,7 +31,7 @@ async function createDispatch(values: FormData): Promise<void> {
     try {
         const call = $grpc.getCentrumClient().createDispatch({
             dispatch: {
-                id: 0n,
+                id: '0',
                 job: '',
                 message: values.message,
                 description: values.description,

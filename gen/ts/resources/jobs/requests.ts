@@ -9,9 +9,9 @@ import { Timestamp } from "../timestamp/timestamp.js";
  */
 export interface RequestType {
     /**
-     * @generated from protobuf field: uint64 id = 1;
+     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
      */
-    id: bigint;
+    id: string;
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
      */
@@ -46,9 +46,9 @@ export interface RequestType {
  */
 export interface Request {
     /**
-     * @generated from protobuf field: uint64 id = 1;
+     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
      */
-    id: bigint; // @gotags: sql:"primary_key"
+    id: string; // @gotags: sql:"primary_key"
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
      */
@@ -66,9 +66,9 @@ export interface Request {
      */
     job: string;
     /**
-     * @generated from protobuf field: optional uint64 type_id = 6;
+     * @generated from protobuf field: optional uint64 type_id = 6 [jstype = JS_STRING];
      */
-    typeId?: bigint;
+    typeId?: string;
     /**
      * @generated from protobuf field: optional resources.jobs.RequestType type = 7;
      */
@@ -129,9 +129,9 @@ export interface Request {
  */
 export interface RequestComment {
     /**
-     * @generated from protobuf field: uint64 id = 1;
+     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
      */
-    id: bigint;
+    id: string;
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
      */
@@ -145,9 +145,9 @@ export interface RequestComment {
      */
     deletedAt?: Timestamp;
     /**
-     * @generated from protobuf field: uint64 request_id = 5;
+     * @generated from protobuf field: uint64 request_id = 5 [jstype = JS_STRING];
      */
-    requestId: bigint;
+    requestId: string;
     /**
      * @sanitize: method=StripTags
      *
@@ -167,7 +167,7 @@ export interface RequestComment {
 class RequestType$Type extends MessageType<RequestType> {
     constructor() {
         super("resources.jobs.RequestType", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "deleted_at", kind: "message", T: () => Timestamp },
@@ -186,12 +186,12 @@ export const RequestType = new RequestType$Type();
 class Request$Type extends MessageType<Request> {
     constructor() {
         super("resources.jobs.Request", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "deleted_at", kind: "message", T: () => Timestamp },
             { no: 5, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
-            { no: 6, name: "type_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 6, name: "type_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/ },
             { no: 7, name: "type", kind: "message", T: () => RequestType },
             { no: 8, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "255" } } } },
             { no: 9, name: "message", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "4096" } } } },
@@ -215,11 +215,11 @@ export const Request = new Request$Type();
 class RequestComment$Type extends MessageType<RequestComment> {
     constructor() {
         super("resources.jobs.RequestComment", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "deleted_at", kind: "message", T: () => Timestamp },
-            { no: 5, name: "request_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 5, name: "request_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 6, name: "comment", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxBytes: "2048" } } } },
             { no: 7, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
             { no: 8, name: "creator", kind: "message", T: () => UserShort }

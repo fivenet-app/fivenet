@@ -16,7 +16,7 @@ const clipboardStore = useClipboardStore();
 const { activeChar } = storeToRefs(authStore);
 
 const props = defineProps<{
-    id: bigint;
+    id: string;
     open: boolean;
 }>();
 

@@ -14,7 +14,7 @@ import { AttrsUpdate, PermItem, PermsUpdate } from '~~/gen/ts/services/rector/re
 import AttrViewAttr from '~/components/rector/attrs/AttrViewAttr.vue';
 
 const props = defineProps<{
-    roleId: bigint;
+    roleId: string;
 }>();
 
 const emit = defineEmits<{
@@ -25,23 +25,18 @@ const { $grpc } = useNuxtApp();
 
 const notifications = useNotificatorStore();
 
-const {
-    data: role,
-    pending,
-    refresh,
-    error,
-} = useLazyAsyncData(`rector-roles-${props.roleId.toString()}`, () => getRole(props.roleId));
+const { data: role, pending, refresh, error } = useLazyAsyncData(`rector-roles-${props.roleId}`, () => getRole(props.roleId));
 
 const changed = ref(false);
 
 const permList = ref<Permission[]>([]);
 const permCategories = ref<Set<string>>(new Set());
-const permStates = ref<Map<bigint, boolean | undefined>>(new Map());
+const permStates = ref<Map<string, boolean | undefined>>(new Map());
 
 const attrList = ref<RoleAttribute[]>([]);
-const attrStates = ref<Map<bigint, AttributeValues | undefined>>(new Map());
+const attrStates = ref<Map<string, AttributeValues | undefined>>(new Map());
 
-async function getRole(id: bigint): Promise<Role> {
+async function getRole(id: string): Promise<Role> {
     try {
         const call = $grpc.getRectorClient().getRole({
             id,
@@ -60,7 +55,7 @@ async function getRole(id: bigint): Promise<Role> {
     }
 }
 
-async function deleteRole(id: bigint): Promise<void> {
+async function deleteRole(id: string): Promise<void> {
     try {
         await $grpc.getRectorClient().deleteRole({ id });
 
@@ -77,7 +72,7 @@ async function deleteRole(id: bigint): Promise<void> {
     }
 }
 
-async function getPermissions(roleId: bigint): Promise<void> {
+async function getPermissions(roleId: string): Promise<void> {
     try {
         const call = $grpc.getRectorClient().getPermissions({
             roleId,
@@ -111,7 +106,7 @@ async function propogatePermissionStates(): Promise<void> {
     });
 }
 
-async function updatePermissionState(perm: bigint, state: boolean | undefined): Promise<void> {
+async function updatePermissionState(perm: string, state: boolean | undefined): Promise<void> {
     changed.value = true;
     permStates.value.set(perm, state);
 }
@@ -159,7 +154,7 @@ async function updatePermissions(): Promise<void> {
                 category: '',
                 key: '',
                 name: '',
-                permissionId: 0n,
+                permissionId: '0',
                 type: '',
             });
         } else if (state !== undefined) {
@@ -170,7 +165,7 @@ async function updatePermissions(): Promise<void> {
                 category: '',
                 key: '',
                 name: '',
-                permissionId: 0n,
+                permissionId: '0',
                 type: '',
             });
         }
@@ -307,12 +302,12 @@ onConfirm(async (id) => deleteRole(id));
                             <div class="flex flex-col gap-2 mx-auto my-2">
                                 <div
                                     v-for="(perm, idx) in permList.filter((p) => p.category === category)"
-                                    :key="perm.id?.toString()"
+                                    :key="perm.id"
                                     class="flex flex-col gap-2"
                                 >
                                     <div class="flex flex-row gap-4">
                                         <div class="flex flex-1 flex-col my-auto">
-                                            <span class="truncate" :title="`${$t('common.id')}: ${perm.id.toString()}`">
+                                            <span class="truncate" :title="`${$t('common.id')}: ${perm.id}`">
                                                 {{ $t(`perms.${perm.category}.${perm.name}.key`) }}
                                             </span>
                                             <span class="text-base-500 truncate">
@@ -338,7 +333,7 @@ onConfirm(async (id) => deleteRole(id));
                                     </div>
                                     <AttrViewAttr
                                         v-for="attr in attrList.filter((a) => a.permissionId === perm.id)"
-                                        :key="attr.attrId.toString()"
+                                        :key="attr.attrId"
                                         v-model:states="attrStates"
                                         :attribute="attr"
                                         :permission="perm"

@@ -114,7 +114,7 @@ const open = ref(false);
                         <span v-else class="flex-1 ml-2 truncate grid grid-cols-2 gap-1">
                             <UnitInfoPopover
                                 v-for="unit in dispatch.units"
-                                :key="unit.unitId.toString()"
+                                :key="unit.unitId"
                                 :unit="unit.unit"
                                 :initials-only="true"
                                 :badge="true"

@@ -8,7 +8,7 @@ import "validate/validate.proto";
 option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/laws;laws";
 
 message LawBook {
-  uint64 id = 1; // @gotags: sql:"primary_key" alias:"id"
+  uint64 id = 1 [jstype = JS_STRING]; // @gotags: sql:"primary_key" alias:"id"
   optional resources.timestamp.Timestamp created_at = 2;
   optional resources.timestamp.Timestamp updated_at = 3;
   // @sanitize
@@ -19,15 +19,15 @@ message LawBook {
 }
 
 message Law {
-  uint64 id = 1; // @gotags: sql:"primary_key" alias:"law.id"
+  uint64 id = 1 [jstype = JS_STRING]; // @gotags: sql:"primary_key" alias:"law.id"
   optional resources.timestamp.Timestamp created_at = 2;
   optional resources.timestamp.Timestamp updated_at = 3;
-  uint64 lawbook_id = 4;
+  uint64 lawbook_id = 4 [jstype = JS_STRING];
   // @sanitize
   string name = 5 [(validate.rules).string = {min_len: 3, max_len: 128}];
   // @sanitize
   optional string description = 6 [(validate.rules).string.max_len = 511];
-  optional uint64 fine = 7;
-  optional uint64 detention_time = 8;
-  optional uint64 stvo_points = 9;
+  optional uint32 fine = 7;
+  optional uint32 detention_time = 8;
+  optional uint32 stvo_points = 9;
 }

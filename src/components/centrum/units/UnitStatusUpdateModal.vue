@@ -29,7 +29,7 @@ interface FormData {
     reason?: string;
 }
 
-async function updateUnitStatus(id: bigint, values: FormData): Promise<void> {
+async function updateUnitStatus(id: string, values: FormData): Promise<void> {
     try {
         const call = $grpc.getCentrumClient().updateUnitStatus({
             unitId: id,

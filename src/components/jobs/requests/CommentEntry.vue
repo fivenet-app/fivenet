@@ -29,7 +29,7 @@ interface FormData {
     comment: string;
 }
 
-async function editComment(requestId: bigint, commentId: bigint, values: FormData): Promise<void> {
+async function editComment(requestId: string, commentId: string, values: FormData): Promise<void> {
     const comment: RequestComment = {
         id: commentId,
         requestId,
@@ -49,7 +49,7 @@ async function editComment(requestId: bigint, commentId: bigint, values: FormDat
     }
 }
 
-async function deleteComment(id: bigint): Promise<void> {
+async function deleteComment(id: string): Promise<void> {
     try {
         await $grpc.getJobsClient().requestsDeleteComment({
             id,

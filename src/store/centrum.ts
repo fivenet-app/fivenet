@@ -24,11 +24,11 @@ export interface CentrumState {
     isDisponent: boolean;
     disponents: UserShort[];
     feed: (DispatchStatus | UnitStatus)[];
-    units: Map<bigint, Unit>;
-    dispatches: Map<bigint, Dispatch>;
-    ownUnitId: bigint | undefined;
-    ownDispatches: bigint[];
-    pendingDispatches: bigint[];
+    units: Map<string, Unit>;
+    dispatches: Map<string, Dispatch>;
+    ownUnitId: string | undefined;
+    ownDispatches: string[];
+    pendingDispatches: string[];
 }
 
 type canDoAction = 'TakeControl' | 'TakeDispatch' | 'AssignDispatch' | 'UpdateDispatchStatus' | 'UpdateUnitStatus';
@@ -45,11 +45,11 @@ export const useCentrumStore = defineStore('centrum', {
             isDisponent: false,
             disponents: [] as UserShort[],
             feed: [] as (DispatchStatus | UnitStatus)[],
-            units: new Map<bigint, Unit>(),
-            dispatches: new Map<bigint, Dispatch>(),
+            units: new Map<string, Unit>(),
+            dispatches: new Map<string, Dispatch>(),
             ownUnitId: undefined,
-            ownDispatches: [] as bigint[],
-            pendingDispatches: [] as bigint[],
+            ownDispatches: [] as string[],
+            pendingDispatches: [] as string[],
         }) as CentrumState,
     persist: false,
     getters: {
@@ -88,7 +88,7 @@ export const useCentrumStore = defineStore('centrum', {
                 if (unit.status === undefined) {
                     unit.status = {
                         unitId: unit.id,
-                        id: 0n,
+                        id: '0',
                         status: StatusUnit.UNKNOWN,
                     };
                 }
@@ -119,7 +119,7 @@ export const useCentrumStore = defineStore('centrum', {
 
             const u = this.units.get(status.unitId);
             if (u === undefined) {
-                console.error('Centrum: Processed Unit Status for unknown Unit', status.unitId.toString());
+                console.error('Centrum: Processed Unit Status for unknown Unit', status.unitId);
                 return;
             }
 
@@ -145,7 +145,7 @@ export const useCentrumStore = defineStore('centrum', {
                 u.status!.creatorId = status.creatorId;
             }
         },
-        setOwnUnit(id: bigint | undefined): void {
+        setOwnUnit(id: string | undefined): void {
             if (id === undefined) {
                 this.ownUnitId = undefined;
             } else {
@@ -161,7 +161,7 @@ export const useCentrumStore = defineStore('centrum', {
             this.units.delete(unit.id);
         },
 
-        checkIfUnitAssignedToDispatch(dsp: Dispatch, unit: bigint | undefined): boolean {
+        checkIfUnitAssignedToDispatch(dsp: Dispatch, unit: string | undefined): boolean {
             if (unit === undefined) return false;
 
             return dsp.units.findIndex((d) => d.unitId === unit) > -1;
@@ -173,7 +173,7 @@ export const useCentrumStore = defineStore('centrum', {
                 if (dispatch.status === undefined) {
                     dispatch.status = {
                         dispatchId: dispatch.id,
-                        id: 0n,
+                        id: '0',
                         status: StatusDispatch.NEW,
                     };
                 }
@@ -210,7 +210,7 @@ export const useCentrumStore = defineStore('centrum', {
 
             const d = this.dispatches.get(status.dispatchId);
             if (d === undefined) {
-                console.error('Centrum: Processed Dispatch Status for unknown Dispatch', status.dispatchId.toString(), status);
+                console.error('Centrum: Processed Dispatch Status for unknown Dispatch', status.dispatchId, status);
                 return;
             }
 
@@ -232,19 +232,19 @@ export const useCentrumStore = defineStore('centrum', {
                 d!.status!.postal = status.postal;
             }
         },
-        removeDispatch(id: bigint): void {
+        removeDispatch(id: string): void {
             this.removePendingDispatch(id);
             this.removeOwnDispatch(id);
 
             this.dispatches.delete(id);
         },
-        addOrUpdateOwnDispatch(id: bigint): void {
+        addOrUpdateOwnDispatch(id: string): void {
             const idx = this.ownDispatches?.findIndex((d) => d === id) ?? -1;
             if (idx === -1) {
                 this.ownDispatches.push(id);
             }
         },
-        removeOwnDispatch(id: bigint): void {
+        removeOwnDispatch(id: string): void {
             const idx = this.ownDispatches?.findIndex((d) => d === id) ?? -1;
             if (idx > -1) {
                 this.ownDispatches?.splice(idx, 1);
@@ -288,7 +288,7 @@ export const useCentrumStore = defineStore('centrum', {
             }
         },
 
-        addOrUpdatePendingDispatch(id: bigint): void {
+        addOrUpdatePendingDispatch(id: string): void {
             const idx = this.pendingDispatches?.findIndex((d) => d === id) ?? -1;
             if (idx === -1) {
                 this.pendingDispatches.push(id);
@@ -301,7 +301,7 @@ export const useCentrumStore = defineStore('centrum', {
             }
         },
 
-        removePendingDispatch(id: bigint): void {
+        removePendingDispatch(id: string): void {
             const idx = this.pendingDispatches.findIndex((d) => d === id);
             if (idx > -1) {
                 this.pendingDispatches.splice(idx, 1);

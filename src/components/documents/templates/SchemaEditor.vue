@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 export interface ObjectSpecsValue {
     req: boolean;
-    min: bigint;
-    max: bigint;
+    min: number;
+    max: number;
 }
 
 export interface SchemaEditorValue {

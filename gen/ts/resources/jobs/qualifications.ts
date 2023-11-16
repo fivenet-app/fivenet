@@ -9,9 +9,9 @@ import { Timestamp } from "../timestamp/timestamp.js";
  */
 export interface Qualification {
     /**
-     * @generated from protobuf field: uint64 id = 1;
+     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
      */
-    id: bigint; // @gotags: sql:"primary_key" alias:"id"
+    id: string; // @gotags: sql:"primary_key" alias:"id"
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
      */
@@ -64,9 +64,9 @@ export interface Qualification {
  */
 export interface QualificationResult {
     /**
-     * @generated from protobuf field: uint64 id = 1;
+     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
      */
-    id: bigint;
+    id: string;
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
      */
@@ -76,9 +76,9 @@ export interface QualificationResult {
      */
     deletedAt?: Timestamp;
     /**
-     * @generated from protobuf field: uint64 training_id = 4;
+     * @generated from protobuf field: uint64 training_id = 4 [jstype = JS_STRING];
      */
-    trainingId: bigint;
+    trainingId: string;
     /**
      * @generated from protobuf field: int32 user_id = 5;
      */
@@ -122,17 +122,17 @@ export interface Access {
  */
 export interface JobAccess {
     /**
-     * @generated from protobuf field: uint64 id = 1;
+     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
      */
-    id: bigint; // @gotags: alias:"id"
+    id: string; // @gotags: alias:"id"
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
      */
     createdAt?: Timestamp;
     /**
-     * @generated from protobuf field: uint64 template_id = 4;
+     * @generated from protobuf field: uint64 template_id = 4 [jstype = JS_STRING];
      */
-    templateId: bigint; // @gotags: alias:"template_id"
+    templateId: string; // @gotags: alias:"template_id"
     /**
      * @generated from protobuf field: string job = 5;
      */
@@ -159,17 +159,17 @@ export interface JobAccess {
  */
 export interface RequiredQualificationAccess {
     /**
-     * @generated from protobuf field: uint64 id = 1;
+     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
      */
-    id: bigint; // @gotags: alias:"id"
+    id: string; // @gotags: alias:"id"
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
      */
     createdAt?: Timestamp;
     /**
-     * @generated from protobuf field: uint64 training_id = 3;
+     * @generated from protobuf field: uint64 training_id = 3 [jstype = JS_STRING];
      */
-    trainingId: bigint;
+    trainingId: string;
 }
 /**
  * @generated from protobuf enum resources.jobs.AccessLevel
@@ -196,7 +196,7 @@ export enum AccessLevel {
 class Qualification$Type extends MessageType<Qualification> {
     constructor() {
         super("resources.jobs.Qualification", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "deleted_at", kind: "message", T: () => Timestamp },
@@ -218,10 +218,10 @@ export const Qualification = new Qualification$Type();
 class QualificationResult$Type extends MessageType<QualificationResult> {
     constructor() {
         super("resources.jobs.QualificationResult", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "deleted_at", kind: "message", T: () => Timestamp },
-            { no: 4, name: "training_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 4, name: "training_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 5, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 6, name: "user", kind: "message", T: () => UserShort },
             { no: 7, name: "rating", kind: "scalar", T: 13 /*ScalarType.UINT32*/, options: { "validate.rules": { uint32: { lt: 100 } } } },
@@ -252,9 +252,9 @@ export const Access = new Access$Type();
 class JobAccess$Type extends MessageType<JobAccess> {
     constructor() {
         super("resources.jobs.JobAccess", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
-            { no: 4, name: "template_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 4, name: "template_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 5, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 6, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
             { no: 7, name: "minimum_grade", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
@@ -271,9 +271,9 @@ export const JobAccess = new JobAccess$Type();
 class RequiredQualificationAccess$Type extends MessageType<RequiredQualificationAccess> {
     constructor() {
         super("resources.jobs.RequiredQualificationAccess", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
-            { no: 3, name: "training_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+            { no: 3, name: "training_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
         ]);
     }
 }

@@ -80,7 +80,7 @@ onBeforeUnmount(async () => {
     >
         <MarkerMarker
             v-for="marker in markers.markers"
-            :key="marker.info!.id?.toString()"
+            :key="marker.info!.id"
             :marker="marker"
             :size="livemap.markerSize"
             @selected="$emit('markerSelected', marker)"

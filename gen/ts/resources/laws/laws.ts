@@ -8,9 +8,9 @@ import { Timestamp } from "../timestamp/timestamp.js";
  */
 export interface LawBook {
     /**
-     * @generated from protobuf field: uint64 id = 1;
+     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
      */
-    id: bigint; // @gotags: sql:"primary_key" alias:"id"
+    id: string; // @gotags: sql:"primary_key" alias:"id"
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
      */
@@ -41,9 +41,9 @@ export interface LawBook {
  */
 export interface Law {
     /**
-     * @generated from protobuf field: uint64 id = 1;
+     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
      */
-    id: bigint; // @gotags: sql:"primary_key" alias:"law.id"
+    id: string; // @gotags: sql:"primary_key" alias:"law.id"
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
      */
@@ -53,9 +53,9 @@ export interface Law {
      */
     updatedAt?: Timestamp;
     /**
-     * @generated from protobuf field: uint64 lawbook_id = 4;
+     * @generated from protobuf field: uint64 lawbook_id = 4 [jstype = JS_STRING];
      */
-    lawbookId: bigint;
+    lawbookId: string;
     /**
      * @sanitize
      *
@@ -69,23 +69,23 @@ export interface Law {
      */
     description?: string;
     /**
-     * @generated from protobuf field: optional uint64 fine = 7;
+     * @generated from protobuf field: optional uint32 fine = 7;
      */
-    fine?: bigint;
+    fine?: number;
     /**
-     * @generated from protobuf field: optional uint64 detention_time = 8;
+     * @generated from protobuf field: optional uint32 detention_time = 8;
      */
-    detentionTime?: bigint;
+    detentionTime?: number;
     /**
-     * @generated from protobuf field: optional uint64 stvo_points = 9;
+     * @generated from protobuf field: optional uint32 stvo_points = 9;
      */
-    stvoPoints?: bigint;
+    stvoPoints?: number;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class LawBook$Type extends MessageType<LawBook> {
     constructor() {
         super("resources.laws.LawBook", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "128" } } } },
@@ -102,15 +102,15 @@ export const LawBook = new LawBook$Type();
 class Law$Type extends MessageType<Law> {
     constructor() {
         super("resources.laws.Law", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
-            { no: 4, name: "lawbook_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
+            { no: 4, name: "lawbook_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 5, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "128" } } } },
             { no: 6, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "511" } } } },
-            { no: 7, name: "fine", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 8, name: "detention_time", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 9, name: "stvo_points", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 0 /*LongType.BIGINT*/ }
+            { no: 7, name: "fine", kind: "scalar", opt: true, T: 13 /*ScalarType.UINT32*/ },
+            { no: 8, name: "detention_time", kind: "scalar", opt: true, T: 13 /*ScalarType.UINT32*/ },
+            { no: 9, name: "stvo_points", kind: "scalar", opt: true, T: 13 /*ScalarType.UINT32*/ }
         ]);
     }
 }

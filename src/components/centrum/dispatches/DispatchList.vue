@@ -136,7 +136,7 @@ const grouped = computedAsync(async () => {
                                 </tr>
                                 <DispatchListEntry
                                     v-for="dispatch in group.dispatches"
-                                    :key="dispatch.id.toString()"
+                                    :key="dispatch.id"
                                     :dispatch="dispatch"
                                     :hide-actions="hideActions"
                                     @goto="$emit('goto', $event)"

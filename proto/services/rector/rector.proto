@@ -33,7 +33,7 @@ message GetRolesResponse {
 }
 
 message GetRoleRequest {
-  uint64 id = 1;
+  uint64 id = 1 [jstype = JS_STRING];
   optional bool filtered = 2;
 }
 
@@ -51,24 +51,24 @@ message CreateRoleResponse {
 }
 
 message DeleteRoleRequest {
-  uint64 id = 1;
+  uint64 id = 1 [jstype = JS_STRING];
 }
 
 message DeleteRoleResponse {}
 
 message UpdateRolePermsRequest {
-  uint64 id = 1;
+  uint64 id = 1 [jstype = JS_STRING];
   optional PermsUpdate perms = 2;
   optional AttrsUpdate attrs = 3;
 }
 
 message PermsUpdate {
   repeated PermItem to_update = 1;
-  repeated uint64 to_remove = 2;
+  repeated uint64 to_remove = 2 [jstype = JS_STRING];
 }
 
 message PermItem {
-  uint64 id = 1;
+  uint64 id = 1 [jstype = JS_STRING];
   bool val = 2;
 }
 
@@ -80,7 +80,7 @@ message AttrsUpdate {
 message UpdateRolePermsResponse {}
 
 message GetPermissionsRequest {
-  uint64 role_id = 1;
+  uint64 role_id = 1 [jstype = JS_STRING];
   optional bool filtered = 2;
 }
 
@@ -105,7 +105,7 @@ message ViewAuditLogResponse {
 }
 
 message UpdateRoleLimitsRequest {
-  uint64 role_id = 1;
+  uint64 role_id = 1 [jstype = JS_STRING];
   optional PermsUpdate perms = 2;
   optional AttrsUpdate attrs = 3;
 }
@@ -123,7 +123,7 @@ message CreateOrUpdateLawBookResponse {
 }
 
 message DeleteLawBookRequest {
-  uint64 id = 1;
+  uint64 id = 1 [jstype = JS_STRING];
 }
 message DeleteLawBookResponse {}
 
@@ -136,7 +136,7 @@ message CreateOrUpdateLawResponse {
 }
 
 message DeleteLawRequest {
-  uint64 id = 1;
+  uint64 id = 1 [jstype = JS_STRING];
 }
 
 message DeleteLawResponse {}

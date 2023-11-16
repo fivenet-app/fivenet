@@ -21,14 +21,14 @@ const { data: lawBooks, pending, refresh, error } = useLazyAsyncData(`lawbooks`,
 
 export type SelectedPenalty = {
     law: Law;
-    count: bigint;
+    count: number;
 };
 
 export type PenaltiesSummary = {
-    fine: bigint;
-    detentionTime: bigint;
-    stvoPoints: bigint;
-    count: bigint;
+    fine: number;
+    detentionTime: number;
+    stvoPoints: number;
+    count: number;
 };
 
 const rawQuery = ref('');
@@ -36,10 +36,10 @@ const query = computed(() => rawQuery.value.toLowerCase());
 const selectedPenalties = ref<SelectedPenalty[]>([]);
 
 const summary = ref<PenaltiesSummary>({
-    fine: 0n,
-    detentionTime: 0n,
-    stvoPoints: 0n,
-    count: 0n,
+    fine: 0,
+    detentionTime: 0,
+    stvoPoints: 0,
+    count: 0,
 });
 
 const filteredLawBooks = computed(
@@ -65,7 +65,7 @@ const filteredLawBooks = computed(
             .filter((books) => books.laws.length > 0),
 );
 
-function getNameForLawBookId(id: bigint): string | undefined {
+function getNameForLawBookId(id: string): string | undefined {
     return lawBooks.value?.filter((b) => b.id === id)[0].name;
 }
 
@@ -80,10 +80,10 @@ function calculate(e: SelectedPenalty): void {
             count = e.count - existing.count;
         }
         // If the selected penalty count is 0, remove it from the list
-        if (e.count === 0n) {
+        if (e.count === 0) {
             selectedPenalties.value.splice(idx, 1);
         }
-    } else if (e.count !== 0n) {
+    } else if (e.count !== 0) {
         selectedPenalties.value.push(e);
     }
 
@@ -176,7 +176,7 @@ ${t('common.crime', selectedPenalties.value.length)}:
                             <Disclosure
                                 v-for="lawBook in filteredLawBooks"
                                 v-slot="{ open }"
-                                :key="`${lawBook.id.toString()}-${query}`"
+                                :key="`${lawBook.id}-${query}`"
                                 as="div"
                                 class="pt-3"
                                 :default-open="query.length > 0"
@@ -245,10 +245,10 @@ ${t('common.crime', selectedPenalties.value.length)}:
                                                     <tbody class="divide-y divide-base-800">
                                                         <ListEntry
                                                             v-for="law in lawBook.laws"
-                                                            :key="law.id.toString()"
+                                                            :key="law.id"
                                                             :law="law"
                                                             :count="
-                                                                selectedPenalties.find((p) => p.law.id === law.id)?.count ?? 0n
+                                                                selectedPenalties.find((p) => p.law.id === law.id)?.count ?? 0
                                                             "
                                                             @selected="calculate($event)"
                                                         />
