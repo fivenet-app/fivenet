@@ -18,5 +18,12 @@ export default defineNuxtRouteMiddleware(
                 console.info('Disabled NUI integration!');
             }
         }
+
+        if (route.query?.refreshApp !== undefined) {
+            reloadNuxtApp({
+                persistState: false,
+                ttl: 10000,
+            });
+        }
     },
 );

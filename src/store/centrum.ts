@@ -11,7 +11,7 @@ import { UserShort } from '~~/gen/ts/resources/users/users';
 const cleanupInterval = 1 * 45 * 1000;
 
 // In seconds
-const initialBackoffTime = 2;
+const initialBackoffTime = 0.75;
 
 export interface CentrumState {
     error: RpcError | undefined;
@@ -39,7 +39,7 @@ export const useCentrumStore = defineStore('centrum', {
             error: undefined,
             abort: undefined,
             restarting: false,
-            restartBackoffTime: 0,
+            restartBackoffTime: initialBackoffTime,
 
             settings: undefined,
             isDisponent: false,
@@ -464,7 +464,7 @@ export const useCentrumStore = defineStore('centrum', {
                     }
 
                     if (resp.restart !== undefined && resp.restart) {
-                        this.restartBackoffTime = 0 - initialBackoffTime;
+                        this.restartBackoffTime = initialBackoffTime;
                         this.restartStream(isCenter);
                         break;
                     }

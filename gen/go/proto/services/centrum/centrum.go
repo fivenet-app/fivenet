@@ -273,6 +273,8 @@ func (s *Server) watchForChanges(msg *nats.Msg) {
 	}
 
 	broker.Publish(resp)
+
+	s.logger.Debug("sent centrum message broker", zap.String("job", job))
 }
 
 func (s *Server) TakeControl(ctx context.Context, req *TakeControlRequest) (*TakeControlResponse, error) {

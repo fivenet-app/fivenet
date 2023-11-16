@@ -6,7 +6,7 @@ import { LivemapperServiceClient } from '~~/gen/ts/services/livemapper/livemap.c
 import { type Coordinate } from '~/composables/livemap';
 
 // In seconds
-const initialBackoffTime = 2;
+const initialBackoffTime = 1.75;
 
 export interface LivemapState {
     error: RpcError | undefined;
