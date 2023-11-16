@@ -186,9 +186,6 @@ onBeforeMount(() => {
 });
 
 onBeforeUnmount(() => {
-    if (map !== undefined) {
-        map.remove();
-    }
     map = undefined;
 });
 </script>
