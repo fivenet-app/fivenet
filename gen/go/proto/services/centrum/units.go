@@ -11,6 +11,7 @@ import (
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
+	"go.uber.org/zap"
 	"google.golang.org/protobuf/proto"
 )
 
@@ -201,6 +202,7 @@ func (s *Server) JoinUnit(ctx context.Context, req *JoinUnitRequest) (*JoinUnitR
 
 	// User joins unit
 	if req.UnitId != nil && *req.UnitId > 0 {
+		s.logger.Debug("user joining unit", zap.Uint64("current_unit_id", currentUnitId), zap.Uint64p("unit_id", req.UnitId))
 		// Remove user from his current unit
 		if currentUnit != nil {
 			if err := s.state.UpdateUnitAssignments(ctx, userInfo.Job, &userInfo.UserId, currentUnit, nil, []int32{userInfo.UserId}); err != nil {
@@ -219,6 +221,7 @@ func (s *Server) JoinUnit(ctx context.Context, req *JoinUnitRequest) (*JoinUnitR
 
 		resp.Unit = newUnit
 	} else {
+		s.logger.Debug("user leaving unit", zap.Uint64("current_unit_id", currentUnitId), zap.Uint64p("unit_id", req.UnitId))
 		// User leaves his current unit (if he is in an unit)
 		if currentUnit != nil {
 			if err := s.state.UpdateUnitAssignments(ctx, userInfo.Job, &userInfo.UserId, currentUnit, nil, []int32{userInfo.UserId}); err != nil {

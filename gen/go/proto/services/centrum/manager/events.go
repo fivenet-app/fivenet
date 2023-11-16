@@ -34,6 +34,8 @@ func (s *Manager) watchTopicGeneral(msg *nats.Msg) {
 
 	job, _, tType := eventscentrum.SplitSubject(msg.Subject)
 
+	s.logger.Debug("received general message", zap.String("job", job), zap.String("type", string(tType)))
+
 	switch tType {
 	case eventscentrum.TypeGeneralDisponents:
 		var dest dispatch.DisponentsChange
@@ -56,12 +58,16 @@ func (s *Manager) watchTopicGeneral(msg *nats.Msg) {
 			return
 		}
 	}
+
+	s.logger.Debug("handled general message", zap.String("job", job), zap.String("type", string(tType)))
 }
 
 func (s *Manager) watchTopicUnits(msg *nats.Msg) {
 	msg.Ack()
 
 	job, _, tType := eventscentrum.SplitSubject(msg.Subject)
+
+	s.logger.Debug("received unit message", zap.String("job", job), zap.String("type", string(tType)))
 
 	switch tType {
 	case eventscentrum.TypeUnitCreated:
@@ -97,12 +103,16 @@ func (s *Manager) watchTopicUnits(msg *nats.Msg) {
 
 		s.State.DeleteUnit(job, dest.Id)
 	}
+
+	s.logger.Debug("handled unit message", zap.String("job", job), zap.String("type", string(tType)))
 }
 
 func (s *Manager) watchTopicDispatches(msg *nats.Msg) {
 	msg.Ack()
 
 	job, _, tType := eventscentrum.SplitSubject(msg.Subject)
+
+	s.logger.Debug("received dispatch message", zap.String("job", job), zap.String("type", string(tType)))
 
 	switch tType {
 	case eventscentrum.TypeDispatchCreated:
@@ -130,4 +140,6 @@ func (s *Manager) watchTopicDispatches(msg *nats.Msg) {
 
 		s.State.DeleteDispatch(job, dest.Id)
 	}
+
+	s.logger.Debug("handled dispatch message", zap.String("job", job), zap.String("type", string(tType)))
 }

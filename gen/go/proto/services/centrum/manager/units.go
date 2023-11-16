@@ -195,7 +195,6 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 
 				toAnnounce = append(toAnnounce, toRemove[k])
 				unit.Users = utils.RemoveFromSlice(unit.Users, i)
-				s.UnsetUnitIDForUser(toRemove[k])
 			}
 		}
 
@@ -262,8 +261,6 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 		}
 
 		for _, user := range users {
-			s.SetUnitForUser(user.UserId, unit.Id)
-
 			unit.Users = append(unit.Users, &dispatch.UnitAssignment{
 				UnitId: unit.Id,
 				UserId: user.UserId,
