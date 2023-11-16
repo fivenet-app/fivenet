@@ -34,7 +34,7 @@ const open = ref(false);
         layer-type="overlay"
         :visible="true"
         :max-cluster-radius="0"
-        :disable-clustering-at-zoom="1"
+        :disable-clustering-at-zoom="0"
         :chunked-loading="true"
         :animate="true"
     >
@@ -56,7 +56,7 @@ const open = ref(false);
         layer-type="overlay"
         :visible="showAllDispatches"
         :max-cluster-radius="15"
-        :disable-clustering-at-zoom="2"
+        :disable-clustering-at-zoom="0"
         :chunked-loading="true"
         :animate="true"
     >

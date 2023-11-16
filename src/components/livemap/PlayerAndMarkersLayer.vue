@@ -62,6 +62,7 @@ onBeforeUnmount(async () => {
         :visible="true"
         :max-cluster-radius="15"
         :disable-clustering-at-zoom="3"
+        :single-marker-mode="true"
         :chunked-loading="true"
         :animate="true"
     >
@@ -85,6 +86,7 @@ onBeforeUnmount(async () => {
         :visible="true"
         :max-cluster-radius="0"
         :disable-clustering-at-zoom="0"
+        :single-marker-mode="true"
         :chunked-loading="true"
         :animate="true"
     >
