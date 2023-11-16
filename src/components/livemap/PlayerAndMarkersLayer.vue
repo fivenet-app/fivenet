@@ -3,6 +3,7 @@ import { LControl, LLayerGroup } from '@vue-leaflet/vue-leaflet';
 import 'leaflet-contextmenu';
 import 'leaflet-contextmenu/dist/leaflet.contextmenu.min.css';
 import 'leaflet/dist/leaflet.css';
+import { computedAsync } from '@vueuse/core';
 import { useAuthStore } from '~/store/auth';
 import { useLivemapStore } from '~/store/livemap';
 import { useSettingsStore } from '~/store/settings';
@@ -39,7 +40,7 @@ const authStore = useAuthStore();
 const { activeChar } = storeToRefs(authStore);
 
 const playerQuery = ref<string>('');
-const playerMarkersFiltered = computed(() =>
+const playerMarkersFiltered = computedAsync(async () =>
     markers.value.users.filter((m) =>
         (m.user?.firstname + ' ' + m.user?.lastname).toLowerCase().includes(playerQuery.value.toLowerCase()),
     ),

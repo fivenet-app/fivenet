@@ -61,8 +61,6 @@ function selectUnit(item: Unit): void {
         selectedUnits.value.push(item.id);
     }
 }
-
-const sortedUnits = computed(() => getSortedUnits.value);
 </script>
 
 <template>
@@ -110,7 +108,7 @@ const sortedUnits = computed(() => getSortedUnits.value);
                                                         <div class="flex-1 form-control">
                                                             <div class="grid grid-cols-3 gap-4">
                                                                 <button
-                                                                    v-for="unit in sortedUnits"
+                                                                    v-for="unit in getSortedUnits"
                                                                     :key="unit.name"
                                                                     type="button"
                                                                     :disabled="unit.users.length === 0"

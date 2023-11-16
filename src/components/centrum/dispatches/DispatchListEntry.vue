@@ -134,12 +134,8 @@ const openMessage = ref(false);
             </span>
         </td>
         <td class="px-1 py-1 text-sm text-gray-300">
-            <p class="break-all" :class="openMessage ? '' : 'max-h-24 max-w-sm'">
-                {{
-                    openMessage
-                        ? dispatch.message
-                        : dispatch.message.substring(0, 40) + (dispatch.message.length > 40 ? '...' : '')
-                }}
+            <p class="break-all max-h-22" :class="openMessage ? '' : 'line-clamp-1 max-w-sm'">
+                {{ dispatch.message }}
             </p>
             <button
                 v-if="dispatch.message.length > 40"

@@ -43,6 +43,7 @@ const dispatchAnimated = computed(() => (dispatchStatusAnimate(props.dispatch.st
                 <BellIcon class="w-full h-full" :class="[dispatchBackground, dispatchAnimated]" />
             </div>
         </LIcon>
+
         <LPopup :options="{ closeButton: true }">
             <IDCopyBadge :id="dispatch.id" class="mb-1" prefix="DSP" :action="selected" />
             <ul role="list" class="flex flex-col">

@@ -29,15 +29,7 @@ const onSubmitThrottle = useThrottleFn(async (e: boolean) => {
     await takeControl(e).finally(() => setTimeout(() => (canSubmit.value = true), 850));
 }, 1000);
 
-const disponentsNames = computed(() => {
-    const names: string[] = [];
-
-    disponents.value.forEach((u) => {
-        names.push(`${u.firstname} ${u.lastname}`);
-    });
-
-    return names.join(', ');
-});
+const disponentsNames = computed(() => disponents.value.map((u) => `${u.firstname} ${u.lastname}`));
 
 const open = ref(false);
 </script>
@@ -90,7 +82,7 @@ const open = ref(false);
                                             ? 'bg-warn-400/10 text-warn-500 ring-warn-400/20'
                                             : 'bg-success-500/10 text-success-400 ring-success-500/20'
                                     "
-                                    :title="disponentsNames"
+                                    :title="disponentsNames.join(', ')"
                                     @click="open = true"
                                 >
                                     {{ $t('common.disponent', disponents.length) }}

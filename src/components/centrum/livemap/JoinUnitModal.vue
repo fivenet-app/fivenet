@@ -49,9 +49,8 @@ const onSubmitThrottle = useThrottleFn(async (unitID?: bigint) => {
 
 const queryUnit = ref('');
 
-const sortedUnits = computed(() => getSortedUnits.value);
 const filteredUnits = computed(() =>
-    sortedUnits.value
+    getSortedUnits.value
         .filter(
             (u) =>
                 u.name.toLowerCase().includes(queryUnit.value.toLowerCase()) ||

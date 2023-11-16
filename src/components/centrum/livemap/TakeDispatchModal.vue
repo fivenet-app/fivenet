@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { RpcError } from '@protobuf-ts/runtime-rpc';
-import { useDebounceFn } from '@vueuse/core';
+import { computedAsync, useDebounceFn } from '@vueuse/core';
 import { useSound } from '@vueuse/sound';
 import { CarEmergencyIcon, CloseIcon } from 'mdi-vue3';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
@@ -96,7 +96,7 @@ const canTakeDispatch = computed(
         (pendingDispatches.value.length > 0 || (getCurrentMode.value === CentrumMode.SIMPLIFIED && dispatches.value.size > 0)),
 );
 
-const filteredDispatches = computed(() => {
+const filteredDispatches = computedAsync(async () => {
     const filtered: Dispatch[] = [];
     dispatches.value.forEach((d) => {
         if (d.id.toString().includes(queryDispatches.value) || d.message.includes(queryDispatches.value)) {

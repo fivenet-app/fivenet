@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { LControl, LLayerGroup } from '@vue-leaflet/vue-leaflet';
+import { computedAsync } from '@vueuse/core';
 import DispatchDetails from '~/components/centrum/dispatches/DispatchDetails.vue';
 import DispatchMarker from '~/components/centrum/livemap/DispatchMarker.vue';
 import { useCentrumStore } from '~/store/centrum';
@@ -20,7 +21,7 @@ const settingsStore = useSettingsStore();
 const { livemap } = storeToRefs(settingsStore);
 
 const dispatchQuery = ref<string>('');
-const dispatchesFiltered = computed(() =>
+const dispatchesFiltered = computedAsync(async () =>
     [...dispatches.value.values()].filter(
         (m) =>
             !ownDispatches.value.includes(m.id) &&

@@ -84,6 +84,7 @@ const openUnit = ref(false);
                 </span>
             </div>
         </LIcon>
+
         <LPopup :options="{ closeButton: true }">
             <div class="flex items-center gap-2 mb-1">
                 <NuxtLink

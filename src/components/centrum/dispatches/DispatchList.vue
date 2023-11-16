@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { ViewListIcon } from 'mdi-vue3';
+import { computedAsync } from '@vueuse/core';
 import { useCentrumStore } from '~/store/centrum';
 import DispatchListEntry from '~/components/centrum/dispatches/DispatchListEntry.vue';
 import { Dispatch } from '~~/gen/ts/resources/dispatch/dispatches';
@@ -29,7 +30,7 @@ const { getSortedDispatches } = storeToRefs(centrumStore);
 
 type GroupedDispatches = { date: Date; key: string; dispatches: Dispatch[] }[];
 
-const grouped = computed(() => {
+const grouped = computedAsync(async () => {
     const groups: GroupedDispatches = [];
     (props.dispatches ?? getSortedDispatches.value).forEach((e) => {
         const date = toDate(e.createdAt);
