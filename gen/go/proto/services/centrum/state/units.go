@@ -24,10 +24,6 @@ func (s *State) GetUnit(job string, id uint64) (*dispatch.Unit, bool) {
 	return proto.Clone(unit).(*dispatch.Unit), true
 }
 
-func (s *State) GetUnitIDForUserID(userId int32) (uint64, bool) {
-	return s.userIDToUnitID.Load(userId)
-}
-
 func (s *State) ListUnits(job string) ([]*dispatch.Unit, bool) {
 	us := []*dispatch.Unit{}
 

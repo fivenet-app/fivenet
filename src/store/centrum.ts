@@ -391,11 +391,6 @@ export const useCentrumStore = defineStore('centrum', {
                             continue;
                         }
 
-                        // Ignore unit assignments for other units
-                        if (this.ownUnitId !== undefined && this.ownUnitId !== resp.change.unitUpdated.id) {
-                            continue;
-                        }
-
                         // User added/in this unit
                         const idx = resp.change.unitUpdated.users.findIndex((u) => u.userId === authStore.activeChar?.userId);
                         if (idx > -1) {
@@ -412,6 +407,8 @@ export const useCentrumStore = defineStore('centrum', {
                                 content: { key: 'notifications.centrum.unitUpdated.joined.content', parameters: {} },
                                 type: 'success',
                             });
+
+                            this.dispatches.forEach((d) => this.handleDispatchAssignment(d));
                         } else {
                             if (this.ownUnitId === undefined) {
                                 continue;
@@ -428,13 +425,50 @@ export const useCentrumStore = defineStore('centrum', {
                             this.ownDispatches.length = 0;
                             this.pendingDispatches.length = 0;
                         }
-
-                        this.dispatches.forEach((d) => this.handleDispatchAssignment(d));
                     } else if (resp.change.oneofKind === 'unitStatus') {
                         this.addOrUpdateUnit(resp.change.unitStatus);
 
+                        if (isCenter) {
+                            continue;
+                        }
+
                         if (this.isDisponent && resp.change.unitStatus.status) {
                             this.addFeedItem(resp.change.unitStatus.status);
+                        }
+
+                        // User added/in this unit
+                        const idx = resp.change.unitStatus.users.findIndex((u) => u.userId === authStore.activeChar?.userId);
+                        if (idx > -1) {
+                            // User already in unit
+                            if (this.ownUnitId === resp.change.unitStatus.id) {
+                                continue;
+                            }
+
+                            this.setOwnUnit(resp.change.unitStatus.id);
+
+                            // User has been newly added to unit
+                            notifications.dispatchNotification({
+                                title: { key: 'notifications.centrum.unitUpdated.joined.title', parameters: {} },
+                                content: { key: 'notifications.centrum.unitUpdated.joined.content', parameters: {} },
+                                type: 'success',
+                            });
+
+                            this.dispatches.forEach((d) => this.handleDispatchAssignment(d));
+                        } else {
+                            if (this.ownUnitId === undefined) {
+                                continue;
+                            }
+
+                            notifications.dispatchNotification({
+                                title: { key: 'notifications.centrum.unitUpdated.removed.title', parameters: {} },
+                                content: { key: 'notifications.centrum.unitUpdated.removed.content', parameters: {} },
+                                type: 'warning',
+                            });
+
+                            // User has been removed from the unit
+                            this.setOwnUnit(undefined);
+                            this.ownDispatches.length = 0;
+                            this.pendingDispatches.length = 0;
                         }
                     } else if (resp.change.oneofKind === 'dispatchCreated') {
                         this.addOrUpdateDispatch(resp.change.dispatchCreated);

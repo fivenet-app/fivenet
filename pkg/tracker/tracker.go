@@ -219,7 +219,7 @@ func (s *Tracker) refreshUserLocations(ctx context.Context, force bool) error {
 	}
 
 	event := &Event{}
-	expiration := time.Now().Add(3 * s.refreshTime)
+	expiration := time.Now().Add(7 * s.refreshTime)
 	markers := map[string]*xsync.MapOf[int32, *livemap.UserMarker]{}
 	for i := 0; i < len(dest); i++ {
 		s.enricher.EnrichJobInfo(dest[i].User)

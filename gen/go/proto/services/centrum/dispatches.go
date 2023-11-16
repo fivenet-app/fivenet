@@ -234,7 +234,7 @@ func (s *Server) TakeDispatch(ctx context.Context, req *TakeDispatchRequest) (*T
 	}
 	defer s.auditer.Log(auditEntry, req)
 
-	unitId, ok := s.state.GetUnitIDForUserID(userInfo.UserId)
+	unitId, ok := s.state.GetUserUnitID(userInfo.UserId)
 	if !ok {
 		return nil, errorscentrum.ErrFailedQuery
 	}
@@ -270,7 +270,7 @@ func (s *Server) UpdateDispatchStatus(ctx context.Context, req *UpdateDispatchSt
 	}
 
 	var statusUnitId *uint64
-	unitId, ok := s.state.GetUnitIDForUserID(userInfo.UserId)
+	unitId, ok := s.state.GetUserUnitID(userInfo.UserId)
 	if !ok {
 		if !s.state.CheckIfUserIsDisponent(userInfo.Job, userInfo.UserId) {
 			return nil, errorscentrum.ErrNotPartOfDispatch

@@ -86,7 +86,10 @@ func (s *Manager) UpdateDispatchStatus(ctx context.Context, job string, dsp *dis
 	if err != nil {
 		return errorscentrum.ErrFailedQuery
 	}
-	s.events.JS.PublishAsync(eventscentrum.BuildSubject(eventscentrum.TopicDispatch, eventscentrum.TypeDispatchStatus, job, 0), data)
+
+	if _, err := s.events.JS.Publish(eventscentrum.BuildSubject(eventscentrum.TopicDispatch, eventscentrum.TypeDispatchStatus, job, 0), data); err != nil {
+		return err
+	}
 
 	return nil
 }
@@ -289,7 +292,10 @@ func (s *Manager) DeleteDispatch(ctx context.Context, job string, id uint64, all
 	if err != nil {
 		return errorscentrum.ErrFailedQuery
 	}
-	s.events.JS.PublishAsync(eventscentrum.BuildSubject(eventscentrum.TopicDispatch, eventscentrum.TypeDispatchDeleted, job, 0), data)
+
+	if _, err := s.events.JS.Publish(eventscentrum.BuildSubject(eventscentrum.TopicDispatch, eventscentrum.TypeDispatchDeleted, job, 0), data); err != nil {
+		return err
+	}
 
 	s.State.DeleteDispatch(job, id)
 
@@ -429,9 +435,12 @@ func (s *Manager) CreateDispatch(ctx context.Context, d *dispatch.Dispatch) (*di
 	if err != nil {
 		return nil, err
 	}
-	s.events.JS.PublishAsync(eventscentrum.BuildSubject(eventscentrum.TopicDispatch, eventscentrum.TypeDispatchCreated, d.Job, 0), data)
 
 	s.State.GetDispatchLocations(dsp.Job).Add(dsp)
+
+	if _, err := s.events.JS.Publish(eventscentrum.BuildSubject(eventscentrum.TopicDispatch, eventscentrum.TypeDispatchCreated, d.Job, 0), data); err != nil {
+		return nil, err
+	}
 
 	return dsp, nil
 }
@@ -491,7 +500,9 @@ func (s *Manager) UpdateDispatch(ctx context.Context, userJob string, userId *in
 			return err
 		}
 
-		s.events.JS.PublishAsync(eventscentrum.BuildSubject(eventscentrum.TopicDispatch, eventscentrum.TypeDispatchUpdated, userJob, 0), data)
+		if _, err := s.events.JS.Publish(eventscentrum.BuildSubject(eventscentrum.TopicDispatch, eventscentrum.TypeDispatchUpdated, userJob, 0), data); err != nil {
+			return err
+		}
 	}
 
 	return nil

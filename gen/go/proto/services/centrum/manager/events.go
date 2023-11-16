@@ -85,11 +85,6 @@ func (s *Manager) watchTopicUnits(msg *nats.Msg) {
 			return
 		}
 
-		if err := s.State.UpdateUnit(job, dest.Id, dest); err != nil {
-			s.logger.Error("failed to update unit", zap.Error(err))
-			return
-		}
-
 		if tType == eventscentrum.TypeUnitStatus && dest.Status != nil {
 			s.logger.Debug("handling unit status message", zap.String("job", job), zap.String("type", string(tType)), zap.String("status", dest.Status.Status.String()))
 
@@ -98,6 +93,11 @@ func (s *Manager) watchTopicUnits(msg *nats.Msg) {
 			} else if dest.Status.Status == dispatch.StatusUnit_STATUS_UNIT_USER_REMOVED {
 				s.UnsetUnitIDForUser(*dest.Status.UserId)
 			}
+		}
+
+		if err := s.State.UpdateUnit(job, dest.Id, dest); err != nil {
+			s.logger.Error("failed to update unit", zap.Error(err))
+			return
 		}
 
 	case eventscentrum.TypeUnitDeleted:

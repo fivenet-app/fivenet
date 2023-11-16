@@ -187,10 +187,11 @@ func (s *Server) JoinUnit(ctx context.Context, req *JoinUnitRequest) (*JoinUnitR
 
 	// Check if user is on duty
 	if _, ok := s.tracker.GetUserByJobAndID(userInfo.Job, userInfo.UserId); !ok {
+		s.state.UnsetUnitIDForUser(userInfo.UserId)
 		return nil, errorscentrum.ErrNotOnDuty
 	}
 
-	currentUnitId, _ := s.state.GetUnitIDForUserID(userInfo.UserId)
+	currentUnitId, _ := s.state.GetUserUnitID(userInfo.UserId)
 
 	resp := &JoinUnitResponse{}
 	// User tries to join his own unit

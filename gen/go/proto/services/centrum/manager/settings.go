@@ -46,7 +46,10 @@ func (s *Manager) UpdateSettingsInDB(ctx context.Context, job string, settings *
 	if err != nil {
 		return nil, errorscentrum.ErrFailedQuery
 	}
-	s.events.JS.PublishAsync(eventscentrum.BuildSubject(eventscentrum.TopicGeneral, eventscentrum.TypeGeneralSettings, job, 0), data)
+
+	if _, err := s.events.JS.Publish(eventscentrum.BuildSubject(eventscentrum.TopicGeneral, eventscentrum.TypeGeneralSettings, job, 0), data); err != nil {
+		return nil, err
+	}
 
 	return set, nil
 }

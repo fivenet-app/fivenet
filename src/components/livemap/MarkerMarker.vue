@@ -43,10 +43,6 @@ async function deleteMarker(id: string): Promise<void> {
 const { isRevealed, reveal, confirm, cancel, onConfirm } = useConfirmDialog();
 
 onConfirm(async (id) => deleteMarker(id));
-console.log(
-    props.marker.info?.icon,
-    markerIcons.find((i) => i.name === props.marker.info?.icon),
-);
 </script>
 
 <template>

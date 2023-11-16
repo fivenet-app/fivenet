@@ -127,17 +127,14 @@ func (s *Manager) UpdateUnitStatus(ctx context.Context, job string, unit *dispat
 	}
 
 	unit.Status = status
-	newUnit, ok := s.GetUnit(job, unit.Id)
-	if !ok {
-		return nil
-	}
-
-	newUnit.Status = status
-	data, err := proto.Marshal(newUnit)
+	data, err := proto.Marshal(unit)
 	if err != nil {
 		return err
 	}
-	s.events.JS.PublishAsync(eventscentrum.BuildSubject(eventscentrum.TopicUnit, eventscentrum.TypeUnitStatus, job, status.UnitId), data)
+
+	if _, err := s.events.JS.Publish(eventscentrum.BuildSubject(eventscentrum.TopicUnit, eventscentrum.TypeUnitStatus, job, status.UnitId), data); err != nil {
+		return err
+	}
 
 	return nil
 }
@@ -283,12 +280,6 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 		}
 	}
 
-	data, err := proto.Marshal(unit)
-	if err != nil {
-		return err
-	}
-	s.events.JS.PublishAsync(eventscentrum.BuildSubject(eventscentrum.TopicUnit, eventscentrum.TypeUnitUpdated, job, unit.Id), data)
-
 	// Unit is empty, set unit status to be unavailable automatically
 	if len(unit.Users) == 0 {
 		if err := s.UpdateUnitStatus(ctx, job, unit, &dispatch.UnitStatus{
@@ -377,7 +368,10 @@ func (s *Manager) CreateUnit(ctx context.Context, job string, unit *dispatch.Uni
 	if err != nil {
 		return nil, errorscentrum.ErrFailedQuery
 	}
-	s.events.JS.PublishAsync(eventscentrum.BuildSubject(eventscentrum.TopicUnit, eventscentrum.TypeUnitCreated, job, unit.Id), data)
+
+	if _, err := s.events.JS.Publish(eventscentrum.BuildSubject(eventscentrum.TopicUnit, eventscentrum.TypeUnitCreated, job, unit.Id), data); err != nil {
+		return nil, err
+	}
 
 	return unit, nil
 }
@@ -424,7 +418,10 @@ func (s *Manager) UpdateUnit(ctx context.Context, job string, unit *dispatch.Uni
 	if err != nil {
 		return nil, errorscentrum.ErrFailedQuery
 	}
-	s.events.JS.PublishAsync(eventscentrum.BuildSubject(eventscentrum.TopicUnit, eventscentrum.TypeUnitUpdated, job, unit.Id), data)
+
+	if _, err := s.events.JS.Publish(eventscentrum.BuildSubject(eventscentrum.TopicUnit, eventscentrum.TypeUnitUpdated, job, unit.Id), data); err != nil {
+		return nil, err
+	}
 
 	return unit, nil
 }
@@ -486,9 +483,12 @@ func (s *Manager) DeleteUnit(ctx context.Context, job string, id uint64) error {
 	if err != nil {
 		return err
 	}
-	s.events.JS.PublishAsync(eventscentrum.BuildSubject(eventscentrum.TopicUnit, eventscentrum.TypeUnitDeleted, job, id), data)
 
 	s.State.DeleteUnit(job, id)
+
+	if _, err := s.events.JS.Publish(eventscentrum.BuildSubject(eventscentrum.TopicUnit, eventscentrum.TypeUnitDeleted, job, id), data); err != nil {
+		return err
+	}
 
 	return nil
 }

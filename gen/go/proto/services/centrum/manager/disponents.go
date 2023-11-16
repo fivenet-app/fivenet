@@ -70,7 +70,10 @@ func (s *Manager) DisponentSignOn(ctx context.Context, job string, userId int32,
 	if err != nil {
 		return errorscentrum.ErrFailedQuery
 	}
-	s.events.JS.PublishAsync(eventscentrum.BuildSubject(eventscentrum.TopicGeneral, eventscentrum.TypeGeneralDisponents, job, 0), data)
+
+	if _, err := s.events.JS.Publish(eventscentrum.BuildSubject(eventscentrum.TopicGeneral, eventscentrum.TypeGeneralDisponents, job, 0), data); err != nil {
+		return err
+	}
 
 	return nil
 }

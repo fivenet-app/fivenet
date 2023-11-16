@@ -311,9 +311,9 @@ func (s *Server) sendLatestState(srv CentrumService_StreamServer, job string, us
 	settings := s.state.GetSettings(job)
 	disponents := s.state.GetDisponents(job)
 	isDisponent := s.state.CheckIfUserIsDisponent(job, userId)
-	unitId, _ := s.state.GetUnitIDForUserID(userId)
+	ownUnitId, _ := s.state.GetUserUnitID(userId)
 	units, _ := s.state.ListUnits(job)
-	ownUnit, _ := s.state.GetUnit(job, unitId)
+	ownUnit, _ := s.state.GetUnit(job, ownUnitId)
 
 	dispatches := s.state.FilterDispatches(job, nil, []dispatch.StatusDispatch{
 		dispatch.StatusDispatch_STATUS_DISPATCH_ARCHIVED,
@@ -338,7 +338,7 @@ func (s *Server) sendLatestState(srv CentrumService_StreamServer, job string, us
 		return 0, isDisponent, err
 	}
 
-	return unitId, isDisponent, nil
+	return ownUnitId, isDisponent, nil
 }
 
 func (s *Server) Stream(req *StreamRequest, srv CentrumService_StreamServer) error {
