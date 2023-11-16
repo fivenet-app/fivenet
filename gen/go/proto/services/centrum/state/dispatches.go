@@ -6,6 +6,7 @@ import (
 	"github.com/paulmach/orb"
 	"github.com/puzpuzpuz/xsync/v3"
 	"golang.org/x/exp/slices"
+	"google.golang.org/protobuf/proto"
 )
 
 func (s *State) GetDispatch(job string, id uint64) (*dispatch.Dispatch, bool) {
@@ -14,7 +15,12 @@ func (s *State) GetDispatch(job string, id uint64) (*dispatch.Dispatch, bool) {
 		return nil, false
 	}
 
-	return dispatches.Load(id)
+	dsp, ok := dispatches.Load(id)
+	if !ok {
+		return nil, false
+	}
+
+	return proto.Clone(dsp).(*dispatch.Dispatch), true
 }
 
 func (s *State) ListDispatches(job string) []*dispatch.Dispatch {
