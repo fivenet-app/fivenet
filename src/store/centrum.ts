@@ -455,7 +455,7 @@ export const useCentrumStore = defineStore('centrum', {
 
                             this.dispatches.forEach((d) => this.handleDispatchAssignment(d));
                         } else {
-                            if (this.ownUnitId === undefined) {
+                            if (this.ownUnitId === undefined || this.ownUnitId !== resp.change.unitStatus.id) {
                                 continue;
                             }
 
