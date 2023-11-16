@@ -81,8 +81,9 @@ export const useLivemapStore = defineStore('livemap', {
                         this.initiated = true;
                     }
 
-                    this.markersUsers = resp.users;
-                    this.markersMarkers = resp.markers;
+                    // Sort markers by id
+                    this.markersUsers = resp.users.sort((a, b) => (a.info?.id ?? '0').localeCompare(b.info?.id ?? '0'));
+                    this.markersMarkers = resp.markers.sort((a, b) => (a.info?.id ?? '0').localeCompare(b.info?.id ?? '0'));
                 }
             } catch (e) {
                 const error = e as RpcError;

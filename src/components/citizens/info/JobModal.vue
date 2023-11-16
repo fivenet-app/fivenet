@@ -28,6 +28,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
     (e: 'close'): void;
+    (e: 'update:job', value: { job: Job; grade: JobGrade }): void;
 }>();
 
 const { $grpc } = useNuxtApp();
@@ -66,7 +67,6 @@ async function setJobProp(values: FormData): Promise<void> {
     }
 
     const jobGrade = selectedJobGrade.value?.grade ? selectedJobGrade.value?.grade : 1;
-    const jobGradeLabel = selectedJobGrade.value?.label ? selectedJobGrade.value.label : '';
 
     const userProps: UserProps = {
         userId: props.user.userId,
@@ -80,11 +80,7 @@ async function setJobProp(values: FormData): Promise<void> {
             reason: values.reason,
         });
 
-        props.user.job = selectedJob.value.name;
-        props.user.jobLabel = selectedJob.value.label;
-
-        props.user.jobGrade = jobGrade;
-        props.user.jobGradeLabel = jobGradeLabel;
+        emit('update:job', { job: selectedJob.value, grade: selectedJobGrade.value ?? { grade: 1, label: '' } });
 
         notifications.dispatchNotification({
             title: { key: 'notifications.action_successfull.title', parameters: {} },

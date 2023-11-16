@@ -18,6 +18,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
     (e: 'close'): void;
+    (e: 'update:trafficInfractionPoints', value: number): void;
 }>();
 
 interface FormData {
@@ -45,11 +46,7 @@ async function setTrafficPoints(values: FormData): Promise<void> {
         });
         const { response } = await call;
 
-        if (props.user.props === undefined) {
-            props.user.props = response.props;
-        } else {
-            props.user.props!.trafficInfractionPoints = response.props?.trafficInfractionPoints;
-        }
+        emit('update:trafficInfractionPoints', response.props?.trafficInfractionPoints ?? 0);
 
         notifications.dispatchNotification({
             title: { key: 'notifications.action_successfull.title', parameters: {} },

@@ -28,8 +28,10 @@ function selected(_: string | number | string) {
     emit('selected', props.dispatch);
 }
 
-const dispatchBackground = computed(() => dispatchStatusToFillColor(props.dispatch.status?.status));
-const dispatchAnimated = computed(() => (dispatchStatusAnimate(props.dispatch.status?.status) ? 'animate-wiggle' : ''));
+const dispatchClasses = computed(() => [
+    dispatchStatusToFillColor(props.dispatch.status!.status),
+    dispatchStatusAnimate(props.dispatch.status!.status) ? 'animate-wiggle' : '',
+]);
 </script>
 
 <template>
@@ -41,7 +43,7 @@ const dispatchAnimated = computed(() => (dispatchStatusAnimate(props.dispatch.st
                 >
                     DSP-{{ dispatch.id }}
                 </span>
-                <BellIcon class="w-full h-full" :class="[dispatchBackground, dispatchAnimated]" />
+                <BellIcon class="w-full h-full" :class="dispatchClasses" />
             </div>
         </LIcon>
 

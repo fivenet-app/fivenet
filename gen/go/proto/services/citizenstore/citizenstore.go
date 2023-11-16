@@ -625,8 +625,16 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 		return nil, ErrFailedQuery
 	}
 
+	// Get and return new user props
+	user, err := s.GetUser(ctx, &GetUserRequest{
+		UserId: req.Props.UserId,
+	})
+	if err != nil {
+		return nil, ErrFailedQuery
+	}
+
+	resp.Props = user.User.Props
 	// Set Job info
-	resp.Props = req.Props
 	resp.Props.Job, resp.Props.JobGrade = s.enricher.GetJobGrade(*resp.Props.JobName, *resp.Props.JobGradeNumber)
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)

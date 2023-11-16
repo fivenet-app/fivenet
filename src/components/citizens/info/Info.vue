@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { RpcError } from '@protobuf-ts/runtime-rpc';
 import { Tab, TabGroup, TabList, TabPanel, TabPanels } from '@headlessui/vue';
 import { AccountIcon, BulletinBoardIcon, CarIcon, FileDocumentMultipleIcon } from 'mdi-vue3';
 import AddToButton from '~/components/clipboard/AddToButton.vue';
@@ -9,6 +10,16 @@ import ActivityFeed from '~/components/citizens/info/ActivityFeed.vue';
 import Documents from '~/components/citizens/info/Documents.vue';
 import Profile from '~/components/citizens/info/Profile.vue';
 import Vehicles from '~/components/citizens/info/Vehicles.vue';
+import ClipboardButton from '~/components/clipboard/ClipboardButton.vue';
+import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
+import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
+import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
+
+const props = defineProps<{
+    id: string;
+}>();
+
+const { $grpc } = useNuxtApp();
 
 const clipboardStore = useClipboardStore();
 const notifications = useNotificatorStore();
@@ -38,12 +49,32 @@ const tabs = [
     },
 ];
 
-const props = defineProps<{
-    user: User;
-}>();
+const { data: user, pending, refresh, error } = useLazyAsyncData(`citizen-${props.id}`, () => getUser(parseInt(props.id)));
+
+async function getUser(userId: number): Promise<User> {
+    try {
+        const call = $grpc.getCitizenStoreClient().getUser({ userId });
+        const { response } = await call;
+
+        if (response.user?.props === undefined) {
+            response.user!.props = {
+                userId: response.user!.userId,
+            };
+        }
+
+        return response.user!;
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
+}
 
 function addToClipboard(): void {
-    clipboardStore.addUser(props.user);
+    if (user.value === null) {
+        return;
+    }
+
+    clipboardStore.addUser(user.value);
 
     notifications.dispatchNotification({
         title: { key: 'notifications.clipboard.citizen_add.title', parameters: {} },
@@ -55,68 +86,95 @@ function addToClipboard(): void {
 </script>
 
 <template>
-    <div class="py-2 pb-14">
-        <div class="flex flex-row items-center gap-3">
-            <h3 class="text-xl font-bold text-neutral sm:text-4xl inline-flex lg:px-4">
-                {{ user?.firstname }}, {{ user?.lastname }}
-            </h3>
-            <span class="inline-flex items-center rounded-full bg-base-100 px-2.5 py-0.5 text-sm font-medium text-base-800">
-                {{ user.jobLabel }}
-                <span v-if="user.jobGrade > 0">&nbsp;({{ $t('common.rank') }}: {{ user.jobGradeLabel }})</span>
-            </span>
-            <span
-                v-if="user.props?.wanted"
-                class="inline-flex items-center rounded-full bg-error-100 px-2.5 py-0.5 text-sm font-medium text-error-700"
-            >
-                {{ $t('common.wanted').toUpperCase() }}
-            </span>
-        </div>
-        <TabGroup>
-            <TabList class="border-b border-base-200 flex flex-row">
-                <Tab
-                    v-for="tab in tabs.filter((tab) => can(tab.permission))"
-                    :key="tab.name"
-                    v-slot="{ selected }"
-                    class="flex-1"
-                >
-                    <button
-                        :class="[
-                            selected
-                                ? 'border-primary-400 text-primary-500'
-                                : 'border-transparent text-base-500 hover:border-base-300 hover:text-base-300',
-                            'w-full justify-center group inline-flex items-center border-b-2 py-4 px-1 text-sm font-medium transition-colors',
-                        ]"
-                        :aria-current="selected ? 'page' : undefined"
+    <div>
+        <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.citizen', 1)])" />
+        <DataErrorBlock
+            v-else-if="error"
+            :title="$t('common.unable_to_load', [$t('common.citizen', 1)])"
+            :message="$t(error.message)"
+            :retry="refresh"
+        />
+        <DataNoDataBlock v-else-if="!user" />
+
+        <div v-else>
+            <ClipboardButton />
+            <div class="py-2 pb-14">
+                <div class="flex flex-row items-center gap-3">
+                    <h3 class="text-xl font-bold text-neutral sm:text-4xl inline-flex lg:px-4">
+                        {{ user?.firstname }}, {{ user?.lastname }}
+                    </h3>
+                    <span
+                        class="inline-flex items-center rounded-full bg-base-100 px-2.5 py-0.5 text-sm font-medium text-base-800"
                     >
-                        <component
-                            :is="tab.icon"
-                            :class="[
-                                selected ? 'text-primary-400' : 'text-base-500 group-hover:text-base-300',
-                                '-ml-0.5 mr-2 h-5 w-5',
-                            ]"
-                            aria-hidden="true"
-                        />
-                        <span>
-                            {{ tab.name }}
-                        </span>
-                    </button>
-                </Tab>
-            </TabList>
-            <TabPanels>
-                <TabPanel>
-                    <Profile :user="user" />
-                </TabPanel>
-                <TabPanel v-if="can('DMVService.ListVehicles')">
-                    <Vehicles :user-id="user.userId" />
-                </TabPanel>
-                <TabPanel v-if="can('DocStoreService.ListUserDocuments')">
-                    <Documents :user-id="user.userId" />
-                </TabPanel>
-                <TabPanel v-if="can('CitizenStoreService.ListUserActivity')">
-                    <ActivityFeed :user-id="user.userId" />
-                </TabPanel>
-            </TabPanels>
-        </TabGroup>
+                        {{ user.jobLabel }}
+                        <span v-if="user.jobGrade > 0">&nbsp;({{ $t('common.rank') }}: {{ user.jobGradeLabel }})</span>
+                    </span>
+                    <span
+                        v-if="user.props?.wanted"
+                        class="inline-flex items-center rounded-full bg-error-100 px-2.5 py-0.5 text-sm font-medium text-error-700"
+                    >
+                        {{ $t('common.wanted').toUpperCase() }}
+                    </span>
+                </div>
+
+                <TabGroup>
+                    <TabList class="border-b border-base-200 flex flex-row">
+                        <Tab
+                            v-for="tab in tabs.filter((tab) => can(tab.permission))"
+                            :key="tab.name"
+                            v-slot="{ selected }"
+                            class="flex-1"
+                        >
+                            <button
+                                :class="[
+                                    selected
+                                        ? 'border-primary-400 text-primary-500'
+                                        : 'border-transparent text-base-500 hover:border-base-300 hover:text-base-300',
+                                    'w-full justify-center group inline-flex items-center border-b-2 py-4 px-1 text-sm font-medium transition-colors',
+                                ]"
+                                :aria-current="selected ? 'page' : undefined"
+                            >
+                                <component
+                                    :is="tab.icon"
+                                    :class="[
+                                        selected ? 'text-primary-400' : 'text-base-500 group-hover:text-base-300',
+                                        '-ml-0.5 mr-2 h-5 w-5',
+                                    ]"
+                                    aria-hidden="true"
+                                />
+                                <span>
+                                    {{ tab.name }}
+                                </span>
+                            </button>
+                        </Tab>
+                    </TabList>
+                    <TabPanels>
+                        <TabPanel>
+                            <Profile
+                                :user="user"
+                                @update:wanted-status="user.props!.wanted = $event"
+                                @update:job="
+                                    user.job = $event.job.name;
+                                    user.jobLabel = $event.job.label;
+                                    user.jobGrade = $event.grade.grade;
+                                    user.jobGradeLabel = $event.grade.label;
+                                "
+                                @update:traffic-infraction-points="user.props!.trafficInfractionPoints = $event"
+                            />
+                        </TabPanel>
+                        <TabPanel v-if="can('DMVService.ListVehicles')">
+                            <Vehicles :user-id="user.userId" />
+                        </TabPanel>
+                        <TabPanel v-if="can('DocStoreService.ListUserDocuments')">
+                            <Documents :user-id="user.userId" />
+                        </TabPanel>
+                        <TabPanel v-if="can('CitizenStoreService.ListUserActivity')">
+                            <ActivityFeed :user-id="user.userId" />
+                        </TabPanel>
+                    </TabPanels>
+                </TabGroup>
+            </div>
+        </div>
     </div>
 
     <AddToButton :callback="addToClipboard" :title="$t('components.clipboard.clipboard_button.add')" />

@@ -18,6 +18,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
     (e: 'close'): void;
+    (e: 'update:wantedStatus', value: boolean): void;
 }>();
 
 interface FormData {
@@ -31,16 +32,13 @@ async function setWantedState(values: FormData): Promise<void> {
     };
 
     try {
-        await $grpc.getCitizenStoreClient().setUserProps({
+        const call = $grpc.getCitizenStoreClient().setUserProps({
             props: userProps,
             reason: values.reason,
         });
+        const { response } = await call;
 
-        if (!props.user.props) {
-            props.user.props = userProps;
-        } else {
-            props.user.props!.wanted = userProps.wanted;
-        }
+        emit('update:wantedStatus', response.props?.wanted ?? false);
 
         notifications.dispatchNotification({
             title: { key: 'notifications.action_successfull.title', parameters: {} },

@@ -41,29 +41,41 @@ watch(offset, async () => refresh());
 </script>
 
 <template>
-    <div class="mt-2">
-        <DataPendingBlock
-            v-if="pending"
-            :message="$t('common.loading', [`${$t('common.user', 1)} ${$t('common.activity')}`])"
-        />
-        <DataErrorBlock
-            v-else-if="error"
-            :title="$t('common.not_found', [`${$t('common.user', 1)} ${$t('common.activity')}`])"
-            :retry="refresh"
-        />
-        <DataNoDataBlock
-            v-else-if="data?.activity.length === 0"
-            :icon="BulletinBoardIcon"
-            :type="`${$t('common.citizen', 1)} ${$t('common.activity')}`"
-        />
-        <div v-else>
-            <ul role="list" class="divide-y divide-gray-200">
-                <li v-for="activity in data?.activity" :key="activity.id" class="py-4">
-                    <ActivityFeedEntry :activity="activity" />
-                </li>
-            </ul>
+    <div class="py-2 pb-14">
+        <div class="px-1 sm:px-2 lg:px-4">
+            <div class="flow-root">
+                <div class="mx-0 -my-2 overflow-x-auto">
+                    <div class="inline-block min-w-full align-middle px-1">
+                        <DataPendingBlock
+                            v-if="pending"
+                            :message="$t('common.loading', [`${$t('common.user', 1)} ${$t('common.activity')}`])"
+                        />
+                        <DataErrorBlock
+                            v-else-if="error"
+                            :title="$t('common.not_found', [`${$t('common.user', 1)} ${$t('common.activity')}`])"
+                            :retry="refresh"
+                        />
+                        <DataNoDataBlock
+                            v-else-if="data?.activity.length === 0"
+                            :icon="BulletinBoardIcon"
+                            :type="`${$t('common.citizen', 1)} ${$t('common.activity')}`"
+                        />
+                        <div v-else>
+                            <ul role="list" class="divide-y divide-gray-200">
+                                <li v-for="activity in data?.activity" :key="activity.id" class="py-4">
+                                    <ActivityFeedEntry :activity="activity" />
+                                </li>
+                            </ul>
 
-            <TablePagination :pagination="data?.pagination" :refresh="refresh" @offset-change="offset = $event" />
+                            <TablePagination
+                                :pagination="data?.pagination"
+                                :refresh="refresh"
+                                @offset-change="offset = $event"
+                            />
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </template>
