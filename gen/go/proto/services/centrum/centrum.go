@@ -150,6 +150,8 @@ func (s *Server) watchForChanges(msg *nats.Msg) {
 		return
 	}
 
+	meta, _ := msg.Metadata()
+
 	resp := &StreamResponse{}
 	switch topic {
 	case eventscentrum.TopicGeneral:
@@ -274,7 +276,8 @@ func (s *Server) watchForChanges(msg *nats.Msg) {
 
 	broker.Publish(resp)
 
-	s.logger.Debug("sent centrum message broker", zap.String("job", job))
+	s.logger.Debug("sent centrum message broker", zap.Uint64("sequence_consumer_id", meta.Sequence.Consumer),
+		zap.String("job", job), zap.String("topic", string(topic)), zap.String("type", string(tType)))
 }
 
 func (s *Server) TakeControl(ctx context.Context, req *TakeControlRequest) (*TakeControlResponse, error) {

@@ -198,11 +198,11 @@ func (s *Server) JoinUnit(ctx context.Context, req *JoinUnitRequest) (*JoinUnitR
 		return resp, nil
 	}
 
-	currentUnit, _ := s.state.GetUnit(userInfo.Job, currentUnitId)
+	currentUnit, ok := s.state.GetUnit(userInfo.Job, currentUnitId)
 
 	// User joins unit
 	if req.UnitId != nil && *req.UnitId > 0 {
-		s.logger.Debug("user joining unit", zap.Uint64("current_unit_id", currentUnitId), zap.Uint64p("unit_id", req.UnitId))
+		s.logger.Debug("user joining unit", zap.Uint64("current_unit_id", currentUnitId), zap.Uint64p("unit_id", req.UnitId), zap.Bool("current_unit", ok))
 		// Remove user from his current unit
 		if currentUnit != nil {
 			if err := s.state.UpdateUnitAssignments(ctx, userInfo.Job, &userInfo.UserId, currentUnit, nil, []int32{userInfo.UserId}); err != nil {
@@ -221,7 +221,7 @@ func (s *Server) JoinUnit(ctx context.Context, req *JoinUnitRequest) (*JoinUnitR
 
 		resp.Unit = newUnit
 	} else {
-		s.logger.Debug("user leaving unit", zap.Uint64("current_unit_id", currentUnitId), zap.Uint64p("unit_id", req.UnitId))
+		s.logger.Debug("user leaving unit", zap.Uint64("current_unit_id", currentUnitId), zap.Uint64p("unit_id", req.UnitId), zap.Bool("current_unit", ok))
 		// User leaves his current unit (if he is in an unit)
 		if currentUnit != nil {
 			if err := s.state.UpdateUnitAssignments(ctx, userInfo.Job, &userInfo.UserId, currentUnit, nil, []int32{userInfo.UserId}); err != nil {

@@ -1,6 +1,8 @@
 package dispatch
 
 import (
+	"fmt"
+
 	"github.com/paulmach/orb"
 	"google.golang.org/protobuf/proto"
 )
@@ -59,6 +61,7 @@ func (x *Unit) Merge(in *Unit) {
 	} else {
 		x.Users = in.Users
 	}
+	fmt.Printf("merging users of dispatch id %d: %+v\n", x.Id, in.Users)
 }
 
 func (x *UnitStatus) Point() orb.Point {

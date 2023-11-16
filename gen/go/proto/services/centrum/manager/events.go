@@ -34,7 +34,9 @@ func (s *Manager) watchTopicGeneral(msg *nats.Msg) {
 
 	job, _, tType := eventscentrum.SplitSubject(msg.Subject)
 
-	s.logger.Debug("received general message", zap.String("job", job), zap.String("type", string(tType)))
+	meta, _ := msg.Metadata()
+	s.logger.Debug("received general message", zap.Uint64("sequence_consumer_id", meta.Sequence.Consumer),
+		zap.String("job", job), zap.String("type", string(tType)))
 
 	switch tType {
 	case eventscentrum.TypeGeneralDisponents:
@@ -67,7 +69,9 @@ func (s *Manager) watchTopicUnits(msg *nats.Msg) {
 
 	job, _, tType := eventscentrum.SplitSubject(msg.Subject)
 
-	s.logger.Debug("received unit message", zap.String("job", job), zap.String("type", string(tType)))
+	meta, _ := msg.Metadata()
+	s.logger.Debug("received unit message", zap.Uint64("sequence_consumer_id", meta.Sequence.Consumer),
+		zap.String("job", job), zap.String("type", string(tType)))
 
 	switch tType {
 	case eventscentrum.TypeUnitCreated:
@@ -86,7 +90,9 @@ func (s *Manager) watchTopicUnits(msg *nats.Msg) {
 			return
 		}
 
-		if tType == eventscentrum.TypeUnitStatus {
+		if tType == eventscentrum.TypeUnitStatus && dest.Status != nil {
+			s.logger.Debug("handling unit status message", zap.String("job", job), zap.String("type", string(tType)), zap.String("status", dest.Status.Status.String()))
+
 			if dest.Status.Status == dispatch.StatusUnit_STATUS_UNIT_USER_ADDED {
 				s.SetUnitForUser(*dest.Status.UserId, dest.Status.UnitId)
 			} else if dest.Status.Status == dispatch.StatusUnit_STATUS_UNIT_USER_REMOVED {
@@ -104,7 +110,8 @@ func (s *Manager) watchTopicUnits(msg *nats.Msg) {
 		s.State.DeleteUnit(job, dest.Id)
 	}
 
-	s.logger.Debug("handled unit message", zap.String("job", job), zap.String("type", string(tType)))
+	s.logger.Debug("handled unit message", zap.Uint64("sequence_consumer_id", meta.Sequence.Consumer),
+		zap.String("job", job), zap.String("type", string(tType)))
 }
 
 func (s *Manager) watchTopicDispatches(msg *nats.Msg) {
@@ -112,7 +119,9 @@ func (s *Manager) watchTopicDispatches(msg *nats.Msg) {
 
 	job, _, tType := eventscentrum.SplitSubject(msg.Subject)
 
-	s.logger.Debug("received dispatch message", zap.String("job", job), zap.String("type", string(tType)))
+	meta, _ := msg.Metadata()
+	s.logger.Debug("received dispatch message", zap.Uint64("sequence_consumer_id", meta.Sequence.Consumer),
+		zap.String("job", job), zap.String("type", string(tType)))
 
 	switch tType {
 	case eventscentrum.TypeDispatchCreated:
@@ -141,5 +150,6 @@ func (s *Manager) watchTopicDispatches(msg *nats.Msg) {
 		s.State.DeleteDispatch(job, dest.Id)
 	}
 
-	s.logger.Debug("handled dispatch message", zap.String("job", job), zap.String("type", string(tType)))
+	s.logger.Debug("handled dispatch message", zap.Uint64("sequence_consumer_id", meta.Sequence.Consumer),
+		zap.String("job", job), zap.String("type", string(tType)))
 }
