@@ -231,6 +231,14 @@ export const useCentrumStore = defineStore('centrum', {
                 d!.status!.x = status.x;
                 d!.status!.y = status.y;
                 d!.status!.postal = status.postal;
+
+                // Make sure the unit is removed (quickly)
+                if (d.status.status === StatusDispatch.UNIT_UNASSIGNED) {
+                    const idx = d.units.findIndex((ua) => ua.unitId === status.unitId);
+                    if (idx > -1) {
+                        d.units.splice(idx, 1);
+                    }
+                }
             }
         },
         removeDispatch(id: string): void {

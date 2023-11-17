@@ -176,8 +176,8 @@ func (s *Housekeeper) handleDispatchAssignmentExpiration(ctx context.Context) er
 		assignments[ua.Job][ua.DispatchID] = append(assignments[ua.Job][ua.DispatchID], ua.UnitID)
 	}
 
-	s.logger.Debug("handling dispatch assignment expiration", zap.Int("expired_assignments", len(assignments)))
 	for job, dsps := range assignments {
+		s.logger.Debug("handling dispatch assignment expiration", zap.String("job", job), zap.Int("expired_assignments", len(dsps)))
 		for dispatchId, units := range dsps {
 			dsp, ok := s.GetDispatch(job, dispatchId)
 			if !ok {
