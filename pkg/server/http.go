@@ -20,8 +20,10 @@ import (
 	"github.com/gin-gonic/gin"
 	"go.opentelemetry.io/contrib/instrumentation/github.com/gin-gonic/gin/otelgin"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
+	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 )
 
 var HTTPServerModule = fx.Module("httpserver",
@@ -91,7 +93,25 @@ func setupHTTPServer(p Params) *gin.Engine {
 	e := gin.New()
 
 	// Add Zap Logger to Gin
-	e.Use(ginzap.Ginzap(p.Logger, time.RFC3339, true))
+	e.Use(ginzap.GinzapWithConfig(p.Logger, &ginzap.Config{
+		UTC:        true,
+		TimeFormat: time.RFC3339,
+		Context: ginzap.Fn(func(c *gin.Context) []zapcore.Field {
+			fields := []zapcore.Field{}
+			// log request ID
+			if requestID := c.Writer.Header().Get("X-Request-Id"); requestID != "" {
+				fields = append(fields, zap.String("request_id", requestID))
+			}
+
+			// log trace and span ID
+			if trace.SpanFromContext(c.Request.Context()).SpanContext().IsValid() {
+				fields = append(fields, zap.String("traceId", trace.SpanFromContext(c.Request.Context()).SpanContext().TraceID().String()))
+				fields = append(fields, zap.String("spanId", trace.SpanFromContext(c.Request.Context()).SpanContext().SpanID().String()))
+			}
+
+			return fields
+		}),
+	}))
 	e.Use(ginzap.RecoveryWithZap(p.Logger, true))
 
 	// Sessions

@@ -117,7 +117,6 @@ func (s *Server) ListDispatches(ctx context.Context, req *ListDispatchesRequest)
 			tUsers.Dateofbirth,
 			tUsers.PhoneNumber,
 		).
-		OPTIMIZER_HINTS(jet.OptimizerHint("idx_users_firstname_lastname_fulltext")).
 		FROM(tDispatch.
 			LEFT_JOIN(tDispatchStatus,
 				tDispatchStatus.DispatchID.EQ(tDispatch.ID),

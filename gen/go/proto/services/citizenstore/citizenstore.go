@@ -152,6 +152,7 @@ func (s *Server) ListCitizens(ctx context.Context, req *ListCitizensRequest) (*L
 		SELECT(
 			jet.COUNT(tUser.ID).AS("datacount.totalcount"),
 		).
+		OPTIMIZER_HINTS(jet.OptimizerHint("idx_users_firstname_lastname_fulltext")).
 		FROM(
 			tUser.
 				LEFT_JOIN(tUserProps,
