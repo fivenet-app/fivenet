@@ -56,10 +56,9 @@ func (x *Dispatch) Merge(in *Dispatch) {
 	}
 
 	if in.Status != nil {
-		if x.Status == nil {
+		// Only update status if it is newer (higher ID)
+		if x.Status == nil || x.Status.Id < in.Status.Id {
 			x.Status = in.Status
-		} else {
-			proto.Merge(x.Status, in.Status)
 		}
 	}
 
