@@ -2,6 +2,7 @@ package centrum
 
 import (
 	"context"
+	"errors"
 	"time"
 
 	database "github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
@@ -13,6 +14,7 @@ import (
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/qrm"
 	"github.com/paulmach/orb"
 )
 
@@ -420,7 +422,9 @@ func (s *Server) ListDispatchActivity(ctx context.Context, req *ListDispatchActi
 		LIMIT(limit)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Activity); err != nil {
-		return nil, errorscentrum.ErrFailedQuery
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, errorscentrum.ErrFailedQuery
+		}
 	}
 	for i := 0; i < len(resp.Activity); i++ {
 		if resp.Activity[i].UnitId != nil && *resp.Activity[i].UnitId > 0 {

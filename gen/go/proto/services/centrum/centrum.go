@@ -29,8 +29,6 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-const pingTickerTime = 30 * time.Second
-
 type Server struct {
 	CentrumServiceServer
 

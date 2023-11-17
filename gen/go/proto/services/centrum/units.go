@@ -2,6 +2,7 @@ package centrum
 
 import (
 	"context"
+	"errors"
 
 	database "github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
@@ -11,6 +12,7 @@ import (
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/proto"
 )
@@ -293,7 +295,9 @@ func (s *Server) ListUnitActivity(ctx context.Context, req *ListUnitActivityRequ
 		LIMIT(limit)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Activity); err != nil {
-		return nil, err
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, err
+		}
 	}
 
 	for i := 0; i < len(resp.Activity); i++ {
