@@ -131,8 +131,7 @@ func NewServer(p Params) (*Server, error) {
 }
 
 func (s *Server) RegisterSubscriptions(ctx context.Context) error {
-	if _, err := s.events.JS.Subscribe(fmt.Sprintf("%s.>", eventscentrum.BaseSubject), s.watchForChanges,
-		nats.DeliverLastPerSubject(), nats.MaxAckPending(128)); err != nil {
+	if _, err := s.events.JS.Subscribe(fmt.Sprintf("%s.>", eventscentrum.BaseSubject), s.watchForChanges, nats.DeliverLastPerSubject()); err != nil {
 		return err
 	}
 
@@ -140,8 +139,6 @@ func (s *Server) RegisterSubscriptions(ctx context.Context) error {
 }
 
 func (s *Server) watchForChanges(msg *nats.Msg) {
-	msg.Ack()
-
 	job, topic, tType := eventscentrum.SplitSubject(msg.Subject)
 
 	broker, ok := s.getJobBroker(job)
@@ -276,7 +273,7 @@ func (s *Server) watchForChanges(msg *nats.Msg) {
 
 	broker.Publish(resp)
 
-	s.logger.Debug("sent centrum message broker", zap.Uint64("sequence_consumer_id", meta.Sequence.Consumer),
+	s.logger.Debug("sent centrum message broker", zap.Uint64("stream_sequence_id", meta.Sequence.Stream),
 		zap.String("job", job), zap.String("topic", string(topic)), zap.String("type", string(tType)))
 }
 

@@ -30,12 +30,10 @@ func (s *Manager) registerSubscriptions() error {
 }
 
 func (s *Manager) watchTopicGeneral(msg *nats.Msg) {
-	msg.Ack()
-
 	job, _, tType := eventscentrum.SplitSubject(msg.Subject)
 
 	meta, _ := msg.Metadata()
-	s.logger.Debug("received general message", zap.Uint64("sequence_consumer_id", meta.Sequence.Consumer),
+	s.logger.Debug("received general message", zap.Uint64("stream_sequence_id", meta.Sequence.Stream),
 		zap.String("job", job), zap.String("type", string(tType)))
 
 	switch tType {
@@ -65,12 +63,10 @@ func (s *Manager) watchTopicGeneral(msg *nats.Msg) {
 }
 
 func (s *Manager) watchTopicUnits(msg *nats.Msg) {
-	msg.Ack()
-
 	job, _, tType := eventscentrum.SplitSubject(msg.Subject)
 
 	meta, _ := msg.Metadata()
-	s.logger.Debug("received unit message", zap.Uint64("sequence_consumer_id", meta.Sequence.Consumer),
+	s.logger.Debug("received unit message", zap.Uint64("stream_sequence_id", meta.Sequence.Stream),
 		zap.String("job", job), zap.String("type", string(tType)))
 
 	switch tType {
@@ -110,17 +106,15 @@ func (s *Manager) watchTopicUnits(msg *nats.Msg) {
 		s.State.DeleteUnit(job, dest.Id)
 	}
 
-	s.logger.Debug("handled unit message", zap.Uint64("sequence_consumer_id", meta.Sequence.Consumer),
+	s.logger.Debug("handled unit message", zap.Uint64("stream_sequence_id", meta.Sequence.Stream),
 		zap.String("job", job), zap.String("type", string(tType)))
 }
 
 func (s *Manager) watchTopicDispatches(msg *nats.Msg) {
-	msg.Ack()
-
 	job, _, tType := eventscentrum.SplitSubject(msg.Subject)
 
 	meta, _ := msg.Metadata()
-	s.logger.Debug("received dispatch message", zap.Uint64("sequence_consumer_id", meta.Sequence.Consumer),
+	s.logger.Debug("received dispatch message", zap.Uint64("stream_sequence_id", meta.Sequence.Stream),
 		zap.String("job", job), zap.String("type", string(tType)))
 
 	switch tType {
@@ -150,6 +144,6 @@ func (s *Manager) watchTopicDispatches(msg *nats.Msg) {
 		s.State.DeleteDispatch(job, dest.Id)
 	}
 
-	s.logger.Debug("handled dispatch message", zap.Uint64("sequence_consumer_id", meta.Sequence.Consumer),
+	s.logger.Debug("handled dispatch message", zap.Uint64("stream_sequence_id", meta.Sequence.Stream),
 		zap.String("job", job), zap.String("type", string(tType)))
 }

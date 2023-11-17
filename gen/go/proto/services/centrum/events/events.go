@@ -55,7 +55,7 @@ func RegisterStreams(ctx context.Context, ev *events.Eventus) error {
 		Discard:     nats.DiscardOld,
 		MaxAge:      120 * time.Second,
 		Storage:     nats.MemoryStorage,
-		Duplicates:  30 * time.Second,
+		Duplicates:  20 * time.Second,
 	}
 
 	if _, err := ev.JS.UpdateStream(cfg); err != nil {

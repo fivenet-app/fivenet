@@ -38,7 +38,7 @@ func New(p Params) (*Eventus, error) {
 	}
 
 	// Default `defaultAsyncPubAckInflight` is `4000` (`nats.go`)
-	js, err := nc.JetStream(nats.PublishAsyncMaxPending(3000))
+	js, err := nc.JetStream(nats.PublishAsyncMaxPending(256))
 	if err != nil {
 		return nil, err
 	}
