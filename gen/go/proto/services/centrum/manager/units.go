@@ -2,6 +2,7 @@ package manager
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/dispatch"
@@ -133,7 +134,7 @@ func (s *Manager) UpdateUnitStatus(ctx context.Context, job string, unit *dispat
 	}
 
 	if _, err := s.events.JS.Publish(eventscentrum.BuildSubject(eventscentrum.TopicUnit, eventscentrum.TypeUnitStatus, job, status.UnitId), data); err != nil {
-		return err
+		return fmt.Errorf("failed to publish unit status event (size: %d): %w", len(data), err)
 	}
 
 	return nil

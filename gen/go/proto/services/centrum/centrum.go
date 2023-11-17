@@ -357,7 +357,7 @@ func (s *Server) Stream(req *StreamRequest, srv CentrumService_StreamServer) err
 			s.logger.Error("error during stream", zap.Error(err))
 		}
 
-		time.Sleep(150 * time.Millisecond)
+		time.Sleep(200 * time.Millisecond)
 	}
 }
 
@@ -369,6 +369,7 @@ func (s *Server) getJobBroker(job string) (*utils.Broker[*StreamResponse], bool)
 func (s *Server) stream(srv CentrumService_StreamServer, isDisponent bool, job string, userId int32, unitId uint64) (bool, error) {
 	broker, ok := s.getJobBroker(job)
 	if !ok {
+		s.logger.Error("failed to get job broker", zap.String("job", job), zap.Int32("user_id", userId))
 		return false, errorscentrum.ErrFailedQuery
 	}
 
