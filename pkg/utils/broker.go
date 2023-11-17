@@ -69,7 +69,6 @@ func (b *Broker[T]) Subscribe() chan T {
 
 func (b *Broker[T]) Unsubscribe(msgCh chan T) {
 	b.unsubCh <- msgCh
-	close(msgCh)
 }
 
 func (b *Broker[T]) Publish(msg T) {

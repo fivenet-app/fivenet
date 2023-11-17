@@ -8,7 +8,8 @@ import { CentrumMode, Settings } from '~~/gen/ts/resources/dispatch/settings';
 import { StatusUnit, Unit, UnitStatus } from '~~/gen/ts/resources/dispatch/units';
 import { UserShort } from '~~/gen/ts/resources/users/users';
 
-const cleanupInterval = 1 * 45 * 1000;
+const cleanupInterval = 1 * 40 * 1000;
+const dispatchEndOfLifeTime = 2 * 60 * 60 * 1000;
 
 // In seconds
 const initialBackoffTime = 0.75;
@@ -601,8 +602,15 @@ export const useCentrumStore = defineStore('centrum', {
                 }
             });
 
-            // Remove completed, cancelled and archived dispatches after the status is 1 minutes or older
             this.dispatches.forEach((d) => {
+                // Remove dispatches older than 2 hours
+                const endTime = now - toDate(d.status?.createdAt ?? d.createdAt).getTime();
+
+                if (endTime >= dispatchEndOfLifeTime) {
+                    this.removeDispatch(d.id);
+                    return;
+                }
+
                 if (
                     d.status?.status !== StatusDispatch.COMPLETED &&
                     d.status?.status !== StatusDispatch.CANCELLED &&
@@ -611,7 +619,8 @@ export const useCentrumStore = defineStore('centrum', {
                     return;
                 }
 
-                if (now - toDate(d.status?.createdAt).getTime() >= cleanupInterval) {
+                // Remove completed/cancelled/archived dispatches after their status is consider "old"
+                if (endTime >= cleanupInterval) {
                     this.removeDispatch(d.id);
                     return;
                 }
