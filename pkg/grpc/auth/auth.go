@@ -22,7 +22,9 @@ const (
 	PermAny       = "Any"
 )
 
-var UserInfoKey struct{}
+type userInfoCtxMarker struct{}
+
+var userInfoCtxMarkerKey = &userInfoCtxMarker{}
 
 var (
 	ErrNoToken          = status.Errorf(codes.Unauthenticated, "errors.pkg-auth.ErrNoToken")
@@ -72,7 +74,7 @@ func (g *GRPCAuth) GRPCAuthFunc(ctx context.Context, fullMethod string) (context
 		AuthActiveCharIDCtxTag, tInfo.CharID,
 	})
 
-	return context.WithValue(ctx, UserInfoKey, userInfo), nil
+	return context.WithValue(ctx, userInfoCtxMarkerKey, userInfo), nil
 }
 
 func (g *GRPCAuth) GRPCAuthFuncWithoutUserInfo(ctx context.Context, fullMethod string) (context.Context, error) {

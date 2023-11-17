@@ -635,8 +635,15 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 	}
 
 	resp.Props = user.User.Props
-	// Set Job info
-	resp.Props.Job, resp.Props.JobGrade = s.enricher.GetJobGrade(*resp.Props.JobName, *resp.Props.JobGradeNumber)
+	// Set Job info if set
+	if resp.Props != nil && resp.Props.JobName != nil {
+		grade := int32(1)
+		if resp.Props.JobGradeNumber != nil {
+			grade = *resp.Props.JobGradeNumber
+		}
+
+		resp.Props.Job, resp.Props.JobGrade = s.enricher.GetJobGrade(*resp.Props.JobName, grade)
+	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 

@@ -8,7 +8,7 @@ import (
 )
 
 func FromContext(ctx context.Context) (*userinfo.UserInfo, bool) {
-	c, ok := ctx.Value(UserInfoKey).(*userinfo.UserInfo)
+	c, ok := ctx.Value(userInfoCtxMarkerKey).(*userinfo.UserInfo)
 	return c, ok
 }
 

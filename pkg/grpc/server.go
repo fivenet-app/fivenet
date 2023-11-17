@@ -71,7 +71,7 @@ type ServerResult struct {
 }
 
 func NewServer(p ServerParams) (ServerResult, error) {
-	logTraceID := func(ctx context.Context) logging.Fields {
+	extraLogFields := func(ctx context.Context) logging.Fields {
 		if span := trace.SpanContextFromContext(ctx); span.IsSampled() {
 			return logging.Fields{"traceID", span.TraceID().String()}
 		}
@@ -120,7 +120,7 @@ func NewServer(p ServerParams) (ServerResult, error) {
 			otelgrpc.UnaryServerInterceptor(),
 			srvMetrics.UnaryServerInterceptor(grpcprom.WithExemplarFromContext(exemplarFromContext)),
 			logging.UnaryServerInterceptor(InterceptorLogger(p.Logger),
-				logging.WithFieldsFromContext(logTraceID),
+				logging.WithFieldsFromContext(extraLogFields),
 				logging.WithLogOnEvents(logging.StartCall, logging.FinishCall),
 			),
 			grpc_auth.UnaryServerInterceptor(grpcAuth.GRPCAuthFunc),
@@ -135,7 +135,7 @@ func NewServer(p ServerParams) (ServerResult, error) {
 			otelgrpc.StreamServerInterceptor(),
 			srvMetrics.StreamServerInterceptor(grpcprom.WithExemplarFromContext(exemplarFromContext)),
 			logging.StreamServerInterceptor(InterceptorLogger(p.Logger),
-				logging.WithFieldsFromContext(logTraceID),
+				logging.WithFieldsFromContext(extraLogFields),
 				logging.WithLogOnEvents(logging.StartCall, logging.FinishCall),
 			),
 			grpc_auth.StreamServerInterceptor(grpcAuth.GRPCAuthFunc),

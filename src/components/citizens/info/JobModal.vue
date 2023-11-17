@@ -62,7 +62,11 @@ interface FormData {
 }
 
 async function setJobProp(values: FormData): Promise<void> {
-    if (selectedJob.value === undefined || selectedJob.value.name === props.user.job) {
+    if (
+        selectedJob.value === undefined ||
+        (selectedJob.value.name === props.user.job && selectedJobGrade.value?.grade === props.user.jobGrade)
+    ) {
+        emit('close');
         return;
     }
 
@@ -94,6 +98,10 @@ async function setJobProp(values: FormData): Promise<void> {
         throw e;
     }
 }
+
+watch(selectedJob, () => {
+    selectedJobGrade.value = selectedJob.value?.grades[0] ?? undefined;
+});
 
 defineRule('required', required);
 defineRule('min', min);
@@ -236,13 +244,13 @@ onBeforeMount(async () => listJobs());
                                         <label for="job" class="block text-sm font-medium leading-6 text-neutral">
                                             {{ $t('common.job_grade') }}
                                         </label>
-                                        <Combobox v-model="selectedJobGrade" as="div" nullable>
+                                        <Combobox v-model="selectedJobGrade" as="div">
                                             <div class="relative">
                                                 <ComboboxButton as="div">
                                                     <ComboboxInput
                                                         autocomplete="off"
                                                         class="block w-full rounded-md border-0 py-1.5 bg-base-700 text-neutral placeholder:text-base-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                        :display-value="(grade: any) => grade.label"
+                                                        :display-value="(grade: any) => grade?.label ?? 'N/A'"
                                                         @change="queryJobGrade = $event.target.value"
                                                         @focusin="focusTablet(true)"
                                                         @focusout="focusTablet(false)"
