@@ -10,7 +10,6 @@ import (
 	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
-	"github.com/galexrt/fivenet/pkg/grpc/errors"
 	grpc_auth "github.com/galexrt/fivenet/pkg/grpc/interceptors/auth"
 	grpc_permission "github.com/galexrt/fivenet/pkg/grpc/interceptors/permission"
 	grpc_sanitizer "github.com/galexrt/fivenet/pkg/grpc/interceptors/sanitizer"
@@ -125,10 +124,9 @@ func NewServer(p ServerParams) (ServerResult, error) {
 				logging.WithLogOnEvents(logging.StartCall, logging.FinishCall),
 			),
 			grpc_auth.UnaryServerInterceptor(grpcAuth.GRPCAuthFunc),
-			grpc_sanitizer.UnaryServerInterceptor(),
-			validator.UnaryServerInterceptor(),
 			grpc_permission.UnaryServerInterceptor(grpcPerm.GRPCPermissionUnaryFunc),
-			errors.UnaryServerInterceptor(),
+			validator.UnaryServerInterceptor(),
+			grpc_sanitizer.UnaryServerInterceptor(),
 			recovery.UnaryServerInterceptor(
 				recovery.WithRecoveryHandler(grpcPanicRecoveryHandler),
 			),
@@ -141,9 +139,8 @@ func NewServer(p ServerParams) (ServerResult, error) {
 				logging.WithLogOnEvents(logging.StartCall, logging.FinishCall),
 			),
 			grpc_auth.StreamServerInterceptor(grpcAuth.GRPCAuthFunc),
-			validator.StreamServerInterceptor(),
 			grpc_permission.StreamServerInterceptor(grpcPerm.GRPCPermissionStreamFunc),
-			errors.StreamServerInterceptor(),
+			validator.StreamServerInterceptor(),
 			recovery.StreamServerInterceptor(
 				recovery.WithRecoveryHandler(grpcPanicRecoveryHandler),
 			),
@@ -201,24 +198,36 @@ func NewServer(p ServerParams) (ServerResult, error) {
 func InterceptorLogger(l *zap.Logger) logging.Logger {
 	return logging.LoggerFunc(func(ctx context.Context, lvl logging.Level, msg string, fields ...any) {
 		f := make([]zap.Field, 0, len(fields)/2)
-		iter := logging.Fields(fields).Iterator()
-		for iter.Next() {
-			k, v := iter.At()
-			f = append(f, zap.Any(k, v))
+
+		for i := 0; i < len(fields); i += 2 {
+			key := fields[i]
+			value := fields[i+1]
+
+			switch v := value.(type) {
+			case string:
+				f = append(f, zap.String(key.(string), v))
+			case int:
+				f = append(f, zap.Int(key.(string), v))
+			case bool:
+				f = append(f, zap.Bool(key.(string), v))
+			default:
+				f = append(f, zap.Any(key.(string), v))
+			}
 		}
-		l := l.WithOptions(zap.AddCallerSkip(1)).With(f...)
+
+		logger := l.WithOptions(zap.AddCallerSkip(1)).With(f...)
 
 		switch lvl {
 		case logging.LevelDebug:
-			l.Debug(msg)
+			logger.Debug(msg)
 		case logging.LevelInfo:
-			l.Info(msg)
+			logger.Info(msg)
 		case logging.LevelWarn:
-			l.Warn(msg)
+			logger.Warn(msg)
 		case logging.LevelError:
-			l.Error(msg)
+			logger.Error(msg)
 		default:
-			l.Error(fmt.Sprintf("unknown log level '%v' for message", lvl), zap.String("msg", msg))
+			panic(fmt.Sprintf("unknown level %v", lvl))
 		}
 	})
 }

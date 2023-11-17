@@ -69,6 +69,7 @@ func (g *GRPCAuth) GRPCAuthFunc(ctx context.Context, fullMethod string) (context
 	ctx = logging.InjectFields(ctx, logging.Fields{
 		AuthSubCtxTag, tInfo.Subject,
 		AuthAccIDCtxTag, tInfo.CharID,
+		AuthActiveCharIDCtxTag, tInfo.CharID,
 	})
 
 	return context.WithValue(ctx, UserInfoKey, userInfo), nil
@@ -93,6 +94,7 @@ func (g *GRPCAuth) GRPCAuthFuncWithoutUserInfo(ctx context.Context, fullMethod s
 	ctx = logging.InjectFields(ctx, logging.Fields{
 		AuthSubCtxTag, tInfo.Subject,
 		AuthAccIDCtxTag, tInfo.CharID,
+		AuthActiveCharIDCtxTag, tInfo.CharID,
 	})
 
 	return ctx, nil

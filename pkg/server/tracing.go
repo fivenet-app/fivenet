@@ -53,6 +53,7 @@ func NewTracerProvider(p TracingParams) (*tracesdk.TracerProvider, error) {
 	}
 
 	tp := tracesdk.NewTracerProvider(
+		tracesdk.WithSampler(tracesdk.TraceIDRatioBased(p.Config.Tracing.Ratio)),
 		// Always be sure to batch in production.
 		tracesdk.WithBatcher(exporter),
 		// Record information about this application in a Resource.
@@ -64,10 +65,11 @@ func NewTracerProvider(p TracingParams) (*tracesdk.TracerProvider, error) {
 	)
 
 	p.LC.Append(fx.StopHook(func(ctx context.Context) error {
-		ctx, cancel := context.WithTimeout(ctx, time.Second*3)
+		ctx, cancel := context.WithTimeout(ctx, 3*time.Second)
 		defer cancel()
+
 		if err := tp.Shutdown(ctx); err != nil {
-			return fmt.Errorf("failed to cleanly shut down tracing: %w", err)
+			return fmt.Errorf("failed to cleanly shut down tracing provider: %w", err)
 		}
 
 		return nil

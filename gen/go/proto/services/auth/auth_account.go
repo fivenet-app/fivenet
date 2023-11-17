@@ -6,6 +6,7 @@ import (
 
 	accounts "github.com/galexrt/fivenet/gen/go/proto/resources/accounts"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
+	"github.com/galexrt/fivenet/pkg/grpc/errswrap"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -20,18 +21,18 @@ var (
 func (s *Server) GetAccountInfo(ctx context.Context, req *GetAccountInfoRequest) (*GetAccountInfoResponse, error) {
 	token, err := auth.GetTokenFromGRPCContext(ctx)
 	if err != nil {
-		return nil, auth.ErrInvalidToken
+		return nil, errswrap.NewError(auth.ErrInvalidToken, err)
 	}
 
 	claims, err := s.tm.ParseWithClaims(token)
 	if err != nil {
-		return nil, ErrGenericAccount
+		return nil, errswrap.NewError(ErrGenericAccount, err)
 	}
 
 	// Load account
 	acc, err := s.getAccountFromDB(ctx, tAccounts.ID.EQ(jet.Uint64(claims.AccID)))
 	if err != nil && !errors.Is(qrm.ErrNoRows, err) {
-		return nil, ErrGenericAccount
+		return nil, errswrap.NewError(ErrGenericAccount, err)
 	}
 	if acc == nil || acc.ID == 0 {
 		return nil, ErrGenericAccount
@@ -68,7 +69,7 @@ func (s *Server) GetAccountInfo(ctx context.Context, req *GetAccountInfoRequest)
 	oauth2Conns := []*accounts.OAuth2Account{}
 	if err := stmt.QueryContext(ctx, s.db, &oauth2Conns); err != nil {
 		if !errors.Is(qrm.ErrNoRows, err) {
-			return nil, ErrGenericAccount
+			return nil, errswrap.NewError(ErrGenericAccount, err)
 		}
 	}
 

@@ -124,6 +124,7 @@ fivenet:
       # Jaeger Tracing endpoint (should have the right API path in the URL `/api/traces`)
       url: ""
       environment: "live"
+      ratio: 0.1
     http:
       listen: ":8080"
       adminListen: ":7070"

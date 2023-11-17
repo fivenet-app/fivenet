@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
+	"github.com/galexrt/fivenet/pkg/grpc/errswrap"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 )
@@ -32,7 +33,7 @@ func (s *Server) DeleteOAuth2Connection(ctx context.Context, req *DeleteOAuth2Co
 		LIMIT(1)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return nil, ErrGenericAccount
+		return nil, errswrap.NewError(ErrGenericAccount, err)
 	}
 
 	return &DeleteOAuth2ConnectionResponse{
